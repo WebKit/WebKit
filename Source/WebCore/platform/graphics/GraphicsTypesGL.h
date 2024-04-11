@@ -65,9 +65,9 @@ typedef GCGLuint PlatformGLObject;
 using GCGLDisplay = void*;
 using GCGLConfig = void*;
 using GCGLContext = void*;
-using GCEGLImage = void*;
-using GCEGLSuface = void*;
-using GCEGLSync = void*;
+using GCEGLSurface = void*;
+using GCGLExternalImage = unsigned;
+using GCGLExternalSync = unsigned;
 
 #if !PLATFORM(COCOA)
 typedef unsigned GLuint;

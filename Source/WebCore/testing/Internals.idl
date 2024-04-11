@@ -1345,4 +1345,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     sequence<PDFAnnotationRect> pdfAnnotationRectsForTesting(Element element);
     undefined registerPDFTest(VoidCallback callback, Element element);
+
+    readonly attribute DOMString defaultSpatialTrackingLabel;
 };

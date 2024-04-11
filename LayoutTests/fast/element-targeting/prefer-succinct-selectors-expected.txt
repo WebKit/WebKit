@@ -1,0 +1,6 @@
+PASS firstTarget is "#overlay"
+PASS secondTarget is ".fixed"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test requires WebKitTestRunner.

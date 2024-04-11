@@ -683,10 +683,10 @@ index 503cae9acc842efc57c740021b5b8b16f5df6578..69f2f96ff53d0cf7fc674efaa2c88a94
      const gl::State &mState;
      gl::MemoryProgramCache *mMemoryProgramCache;
 diff --git a/src/libANGLE/renderer/gl/StateManagerGL.cpp b/src/libANGLE/renderer/gl/StateManagerGL.cpp
-index c041ffa4ff5acdba55c3b15550a8c873a620cece..56615a98d7bf80ef0eaa5f0f0b2e1f358e6d520a 100644
+index fcbdbc47b7ef7bb71736d3487aa3ff5ff76dda8d..74f3c3450374df2675049015787f352162f0c210 100644
 --- a/src/libANGLE/renderer/gl/StateManagerGL.cpp
 +++ b/src/libANGLE/renderer/gl/StateManagerGL.cpp
-@@ -2467,6 +2467,12 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
+@@ -2487,6 +2487,12 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                          case gl::state::EXTENDED_DIRTY_BIT_SHADING_RATE:
                              // Unimplemented extensions.
                              break;
@@ -746,7 +746,7 @@ index 2eab2f1f9c1c55b7b7156a754e470ce32d5e0ffd..afcdb0a6c143fc7e8ab8817378a34e32
  };
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 7814194df88c4fc9c145b8f3738bfa5bdc07b73e..ea771b5e11cc6fef8170739f4d352483b082ba74 100644
+index 7814194df88c4fc9c145b8f3738bfa5bdc07b73e..dd66cefef922b31372cb2b88685ca80626f59e43 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
 @@ -263,6 +263,8 @@ void ContextMtl::onDestroy(const gl::Context *context)
@@ -844,8 +844,12 @@ index 7814194df88c4fc9c145b8f3738bfa5bdc07b73e..ea771b5e11cc6fef8170739f4d352483
      }
      return angle::Result::Continue;
  }
-@@ -2642,7 +2698,7 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
-                 mRenderEncoder.setViewport(mViewport);
+@@ -2639,10 +2695,10 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
+                     mState.getBlendColor().blue, mState.getBlendColor().alpha);
+                 break;
+             case DIRTY_BIT_VIEWPORT:
+-                mRenderEncoder.setViewport(mViewport);
++                mRenderEncoder.setViewport(mViewport, mRenderEncoder.rasterizationRateMapForPass(mRasterizationRateMap, mRasterizationRateMapTexture));
                  break;
              case DIRTY_BIT_SCISSOR:
 -                mRenderEncoder.setScissorRect(mScissorRect);
@@ -858,7 +862,7 @@ index 7814194df88c4fc9c145b8f3738bfa5bdc07b73e..ea771b5e11cc6fef8170739f4d352483
                  // Already handled.
                  break;
 +            case DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
-+                if (getState().privateState().isVariableRasterizationRateEnabled())
++                if (getState().privateState().isVariableRasterizationRateEnabled() && mRasterizationRateMap)
 +                {
 +                    mRenderEncoder.setRasterizationRateMap(mRenderEncoder.rasterizationRateMapForPass(mRasterizationRateMap, mRasterizationRateMapTexture));
 +                }
@@ -1096,7 +1100,7 @@ index b0726b984f41119e930897b043a7da70a446a12a..d1877ade8fb10211d437c2d0dba8ea27
      params.srcDefaultAlphaData  = convertedFormat.defaultAlpha;
  
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.h b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-index 9d72fa50090a581422ca5ed603a60e48a6f04e1d..7b5964f6598c801e830bc312c88b481edfc6c4ac 100644
+index 9d72fa50090a581422ca5ed603a60e48a6f04e1d..f99ce9fd8ceba2be71bf34d43a081ddf64ced2d4 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.h
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.h
 @@ -101,6 +101,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
@@ -1117,17 +1121,20 @@ index 9d72fa50090a581422ca5ed603a60e48a6f04e1d..7b5964f6598c801e830bc312c88b481e
  };
  
  class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::NonCopyable
-@@ -413,7 +417,8 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -412,8 +416,10 @@ class RenderCommandEncoder final : public CommandEncoder
+     RenderCommandEncoder &setStencilRefVals(uint32_t frontRef, uint32_t backRef);
      RenderCommandEncoder &setStencilRefVal(uint32_t ref);
  
-     RenderCommandEncoder &setViewport(const MTLViewport &viewport);
+-    RenderCommandEncoder &setViewport(const MTLViewport &viewport);
 -    RenderCommandEncoder &setScissorRect(const MTLScissorRect &rect);
++    RenderCommandEncoder &setViewport(const MTLViewport &viewport,
++                                      id<MTLRasterizationRateMap> map);
 +    RenderCommandEncoder &setScissorRect(const MTLScissorRect &rect,
 +                                         id<MTLRasterizationRateMap> map);
  
      RenderCommandEncoder &setBlendColor(float r, float g, float b, float a);
  
-@@ -562,6 +567,8 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -562,6 +568,8 @@ class RenderCommandEncoder final : public CommandEncoder
      RenderCommandEncoder &setDepthLoadAction(MTLLoadAction action, double clearValue);
      RenderCommandEncoder &setStencilLoadAction(MTLLoadAction action, uint32_t clearValue);
  
@@ -1136,7 +1143,7 @@ index 9d72fa50090a581422ca5ed603a60e48a6f04e1d..7b5964f6598c801e830bc312c88b481e
      void setLabel(NSString *label);
  
      void pushDebugGroup(NSString *label) override;
-@@ -569,8 +576,11 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -569,8 +577,11 @@ class RenderCommandEncoder final : public CommandEncoder
  
      const RenderPassDesc &renderPassDesc() const { return mRenderPassDesc; }
      bool hasDrawCalls() const { return mHasDrawCalls; }
@@ -1149,7 +1156,7 @@ index 9d72fa50090a581422ca5ed603a60e48a6f04e1d..7b5964f6598c801e830bc312c88b481e
    private:
      // Override CommandEncoder
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.mm b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-index 470f8c1df7a8c24f9e2aaacffb5b762e844456ef..efc4e7e85d7eee1b03ecaafff67895e10893f6a6 100644
+index 470f8c1df7a8c24f9e2aaacffb5b762e844456ef..84f21a6c03382e4ccba7f6cdb0fba84bda733177 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 @@ -373,12 +373,20 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
@@ -1210,7 +1217,35 @@ index 470f8c1df7a8c24f9e2aaacffb5b762e844456ef..efc4e7e85d7eee1b03ecaafff67895e1
      mCommands.clear();
  }
  
-@@ -1745,12 +1769,22 @@ RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewp
+@@ -1732,8 +1756,26 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilRefVal(uint32_t ref)
+     return setStencilRefVals(ref, ref);
+ }
+ 
+-RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewport)
++RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &intialViewport,
++                                                        id<MTLRasterizationRateMap> map)
+ {
++    auto viewport = intialViewport;
++    if (map)
++    {
++        auto adjustedOrigin =
++            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(viewport.originX, (int)viewport.originY)
++                                       forLayer:0];
++        auto adjustedSize =
++            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(viewport.width, viewport.height)
++                                       forLayer:0];
++
++        viewport.originX      = std::max<double>(0, adjustedOrigin.x);
++        viewport.originY      = std::max<double>(0, adjustedOrigin.y);
++        MTLSize screenSize = [map screenSize];
++        viewport.width  = std::min<double>(screenSize.width, ceilf(adjustedSize.x));
++        viewport.height = std::min<double>(screenSize.height, ceilf(adjustedSize.y));
++    }
++
+     if (mStateCache.viewport.valid() && mStateCache.viewport.value() == viewport)
+     {
+         return *this;
+@@ -1745,12 +1787,22 @@ RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewp
      return *this;
  }
  
@@ -1236,7 +1271,7 @@ index 470f8c1df7a8c24f9e2aaacffb5b762e844456ef..efc4e7e85d7eee1b03ecaafff67895e1
  
      MTLScissorRect clampedRect = {rect.x, rect.y, std::min(rect.width, clampedWidth),
                                    std::min(rect.height, clampedHeight)};
-@@ -1762,6 +1796,23 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect
+@@ -1762,6 +1814,23 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect
  
      mStateCache.scissorRect = clampedRect;
  
@@ -1260,20 +1295,25 @@ index 470f8c1df7a8c24f9e2aaacffb5b762e844456ef..efc4e7e85d7eee1b03ecaafff67895e1
      mCommands.push(CmdType::SetScissorRect).push(clampedRect);
  
      return *this;
-@@ -2168,6 +2219,12 @@ void RenderCommandEncoder::popDebugGroup()
+@@ -2168,6 +2237,17 @@ void RenderCommandEncoder::popDebugGroup()
      mCommands.push(CmdType::PopDebugGroup);
  }
  
 +id<MTLRasterizationRateMap> RenderCommandEncoder::rasterizationRateMapForPass(id<MTLRasterizationRateMap> map,
-+                                                                              id<MTLTexture>) const
++                                                                              id<MTLTexture> texture) const
 +{
-+    return map;
++    if (!mCachedRenderPassDescObjC.get())
++        return nil;
++
++    MTLSize size = [map physicalSizeForLayer:0];
++    id<MTLTexture> t = mCachedRenderPassDescObjC.get().colorAttachments[0].texture;
++    return t.width == size.width && t.height == size.height ? map : nil;
 +}
 +
  RenderCommandEncoder &RenderCommandEncoder::setColorStoreAction(MTLStoreAction action,
                                                                  uint32_t colorAttachmentIndex)
  {
-@@ -2263,6 +2320,16 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilLoadAction(MTLLoadAction a
+@@ -2263,6 +2343,16 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilLoadAction(MTLLoadAction a
      return *this;
  }
  
@@ -1304,7 +1344,7 @@ index b430aa0263545ce6d35ae410e62b035cd41b6c23..96438f09f8b4f576ee2280206b3bdbf4
  // of "virtual" level modified by OpenGL's base level.
  using MipmapNativeLevel = gl::LevelIndexWrapper<uint32_t>;
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index 9e5487d393a0a2bd64106fc70e7b3f73626e2490..9550ca0f6de4c2da141a96d2a511f0029922c52b 100644
+index 9e5487d393a0a2bd64106fc70e7b3f73626e2490..956808f2cd03665bd09d95cf4af90e2eeacdd0ef 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 @@ -607,7 +607,8 @@ void DispatchCompute(ContextMtl *contextMtl,
@@ -1321,18 +1361,21 @@ index 9e5487d393a0a2bd64106fc70e7b3f73626e2490..9550ca0f6de4c2da141a96d2a511f002
          GetViewport(params.dstRect, params.dstTextureSize.height, params.dstFlipY);
      MTLScissorRect scissorRectMtl =
          GetScissorRect(params.dstScissorRect, params.dstTextureSize.height, params.dstFlipY);
-+
-     cmdEncoder->setViewport(viewportMtl);
+-    cmdEncoder->setViewport(viewportMtl);
 -    cmdEncoder->setScissorRect(scissorRectMtl);
++
++    cmdEncoder->setViewport(viewportMtl, nil);
 +    cmdEncoder->setScissorRect(scissorRectMtl, nil);
  
      if (params.src)
      {
-@@ -1223,7 +1225,7 @@ angle::Result ClearUtils::setupClearWithDraw(const gl::Context *context,
+@@ -1222,8 +1224,8 @@ angle::Result ClearUtils::setupClearWithDraw(const gl::Context *context,
+ 
      scissorRect = GetScissorRect(params.clearArea, params.dstTextureSize.height, params.flipY);
  
-     cmdEncoder->setViewport(viewport);
+-    cmdEncoder->setViewport(viewport);
 -    cmdEncoder->setScissorRect(scissorRect);
++    cmdEncoder->setViewport(viewport, nil);
 +    cmdEncoder->setScissorRect(scissorRect, nil);
  
      // uniform
@@ -1412,7 +1455,7 @@ index 3eaa9a64e79af26faa786102ece3f0bdea84d090..7ecb6db9d993df8985fcb6f701dfe7ca
 +
 +#endif /* LIBANGLE_RENDERER_METAL_RESOURCE_SPI_H_ */
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.mm b/src/libANGLE/renderer/metal/mtl_resources.mm
-index 1a16ccf79c85d0c88e6251ec52207ae06a7084f0..a52ca7218803a9265f69977a782dea26b03a9cbd 100644
+index 99388f85e1a0991ef2f6aba0ade19c4d9ffb49e5..c1b1cd2c9ed1e907811f8dc770091aee5ed0522f 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.mm
 +++ b/src/libANGLE/renderer/metal/mtl_resources.mm
 @@ -78,12 +78,10 @@ MTLResourceOptions resourceOptionsForStorageMode(MTLStorageMode storageMode)
@@ -1572,10 +1615,10 @@ index 0000000000000000000000000000000000000000..23e8295bcc16412d3aef3fc8e85748fa
 +if __name__ == '__main__':
 +    sys.exit(main())
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index b764ae703b2fe3258f7b7d304578bc9c1693602f..7214c5925861bb5c8f6b250b9122e8975e0d1175 100644
+index 5612e3539554c46ac8906bab9f43abb28fc2dceb..2f5ca22890750f5deb7732bb0a19a601e42c57a9 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-@@ -5913,6 +5913,13 @@ angle::Result ContextVk::syncState(const gl::Context *context,
+@@ -5917,6 +5917,13 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                                  mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE);
                              }
                              break;
@@ -1611,7 +1654,7 @@ index e598b74be6f88d30502d3f7b9dab159f10ca3eed..56f5da80651018288fae595d7244b460
                   }
                   break;
 diff --git a/src/libANGLE/validationES2.cpp b/src/libANGLE/validationES2.cpp
-index 80b11ea1e587834cde10192f7c49d27152344c5e..cd0c7e2fd0295e9a041d64b290dbb7326fda50c3 100644
+index f75b106cb20997b0d751ca147d6558422afa5284..f707aaed426e48455beb32cba0f97183522543b6 100644
 --- a/src/libANGLE/validationES2.cpp
 +++ b/src/libANGLE/validationES2.cpp
 @@ -685,6 +685,10 @@ bool ValidCap(const PrivateState &state, ErrorSet *errors, GLenum cap, bool quer
@@ -1625,7 +1668,7 @@ index 80b11ea1e587834cde10192f7c49d27152344c5e..cd0c7e2fd0295e9a041d64b290dbb732
          default:
              break;
      }
-@@ -6340,6 +6344,18 @@ bool ValidateMaxShaderCompilerThreadsKHR(const Context *context,
+@@ -6338,6 +6342,18 @@ bool ValidateMaxShaderCompilerThreadsKHR(const Context *context,
      return true;
  }
  
@@ -1917,10 +1960,10 @@ index 1d97825639c15db5a79b539d29c44801c138a71e..0f85476b8c8b5af8d6ffbafa27061a7a
      window->makeCurrent();
  
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index 9fa36a57ee5acd2486a536340de434a3df3d665f..09e9df57640275c0def595cbb289bd89567b64a7 100644
+index 6d38e97a37ed3d258d3289baed3585bcf7d4b356..e01a07c2af3a860530992616f20edd0d2a24dc1b 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
-@@ -197,6 +197,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
+@@ -199,6 +199,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
      {Feature::HasShaderStencilOutput, "hasShaderStencilOutput"},
      {Feature::HasStencilAutoResolve, "hasStencilAutoResolve"},
      {Feature::HasTextureSwizzle, "hasTextureSwizzle"},
@@ -1929,10 +1972,10 @@ index 9fa36a57ee5acd2486a536340de434a3df3d665f..09e9df57640275c0def595cbb289bd89
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
      {Feature::InjectAsmStatementIntoLoopBodies, "injectAsmStatementIntoLoopBodies"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index fe6782b15a65ad0af8b90d9457e8f9b1d617cb35..12f114e8780833d0ddf28b5cfdc3cffdbd5bcf1d 100644
+index 4e120e4b638e028a163d56b618208b7df11df393..a2b616b9bb7874ed2bc9e3923ce9532c9159739f 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
-@@ -197,6 +197,7 @@ enum class Feature
+@@ -199,6 +199,7 @@ enum class Feature
      HasShaderStencilOutput,
      HasStencilAutoResolve,
      HasTextureSwizzle,

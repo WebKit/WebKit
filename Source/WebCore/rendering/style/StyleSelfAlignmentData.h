@@ -26,7 +26,6 @@
 #pragma once
 
 #include "RenderStyleConstants.h"
-#include <wtf/EnumTraits.h>
 
 namespace WTF {
 class TextStream;

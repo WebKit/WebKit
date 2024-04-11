@@ -42,7 +42,7 @@ static CString toHex(WTF::Vector<uint8_t>&& hash)
         buffer[2 * i + 1] = hex[lo];
     }
 
-    return CString(buffer.data(), buffer.size());
+    return buffer.span();
 }
 
 static void expect(PAL::CryptoDigest::Algorithm algorithm, const CString& input, int repeat, const CString& expected)

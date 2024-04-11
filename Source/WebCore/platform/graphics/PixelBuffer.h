@@ -47,27 +47,25 @@ public:
     const PixelBufferFormat& format() const { return m_format; }
     const IntSize& size() const { return m_size; }
 
-    uint8_t* bytes() const { return m_bytes; }
-    size_t sizeInBytes() const { return m_sizeInBytes; }
+    std::span<uint8_t> bytes() const { return m_bytes; }
 
     virtual bool isByteArrayPixelBuffer() const { return false; }
     virtual RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const = 0;
 
-    bool setRange(const uint8_t* data, size_t dataByteLength, size_t byteOffset);
+    bool setRange(std::span<const uint8_t> data, size_t byteOffset);
     WEBCORE_EXPORT bool zeroRange(size_t byteOffset, size_t rangeByteLength);
-    void zeroFill() { zeroRange(0, sizeInBytes()); }
+    void zeroFill() { zeroRange(0, bytes().size()); }
 
     WEBCORE_EXPORT uint8_t item(size_t index) const;
     void set(size_t index, double value);
 
 protected:
-    WEBCORE_EXPORT PixelBuffer(const PixelBufferFormat&, const IntSize&, uint8_t* bytes, size_t sizeInBytes);
+    WEBCORE_EXPORT PixelBuffer(const PixelBufferFormat&, const IntSize&, std::span<uint8_t> bytes);
     
     PixelBufferFormat m_format;
     IntSize m_size;
 
-    uint8_t* m_bytes { nullptr };
-    size_t m_sizeInBytes { 0 };
+    std::span<uint8_t> m_bytes;
 };
 
 } // namespace WebCore

@@ -1837,6 +1837,7 @@ enum class ImageLayout
 
     // Color (Write):
     ColorWrite,
+    MSRTTEmulationColorUnresolveAndResolve,
 
     // Depth (Write), Stencil (Write)
     DepthWriteStencilWrite,
@@ -1865,6 +1866,7 @@ enum class ImageLayout
 
     // Depth/stencil resolve is special because it uses the _color_ output stage and mask
     DepthStencilResolve,
+    MSRTTEmulationDepthStencilUnresolveAndResolve,
 
     Present,
     SharedPresent,

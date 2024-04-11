@@ -669,4 +669,16 @@ bool ImageDecoderCG::canDecodeType(const String& mimeType)
 
 }
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ImageDecoderCGAdditions.cpp>)
+#include <WebKitAdditions/ImageDecoderCGAdditions.cpp>
+#else
+namespace WebCore {
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+bool ImageDecoderCG::shouldUseQuickLookForFullscreen() const { return false; }
+#endif // ENABLE(QUICKLOOK_FULLSCREEN)
+
+}
+#endif
+
 #endif // USE(CG)

@@ -186,6 +186,10 @@ private:
 
     SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext&, const FloatSize& scaleFactor, AllowImageSubsampling) final;
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    bool shouldUseQuickLookForFullscreen() const;
+#endif
+
     // ImageFrame metadata
     IntSize frameSizeAtIndex(unsigned index, SubsamplingLevel = SubsamplingLevel::Default) const;
     ImageOrientation frameOrientationAtIndex(unsigned index) const final;

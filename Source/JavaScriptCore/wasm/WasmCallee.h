@@ -52,8 +52,10 @@ class LLIntOffsetsExtractor;
 
 namespace Wasm {
 
+// This class is fast allocated (instead of using TZone) because
+// the subclass JSEntrypointInterpreterCalleeMetadata is variable-sized
 class Callee : public NativeCallee {
-    WTF_MAKE_TZONE_ALLOCATED(Callee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Callee);
 public:
     IndexOrName indexOrName() const { return m_indexOrName; }
     CompilationMode compilationMode() const { return m_compilationMode; }
@@ -87,17 +89,21 @@ protected:
     FixedVector<HandlerInfo> m_exceptionHandlers;
 };
 
-#if ENABLE(JIT)
 class JITCallee : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(JITCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JITCallee);
 public:
     friend class Callee;
     FixedVector<UnlinkedWasmToWasmCall>& wasmToWasmCallsites() { return m_wasmToWasmCallsites; }
+
+#if ENABLE(JIT)
+    void setEntrypoint(Wasm::Entrypoint&&);
+#endif
 
 protected:
     JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode);
     JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode, size_t, std::pair<const Name*, RefPtr<NameSection>>&&);
 
+#if ENABLE(JIT)
     std::tuple<void*, void*> rangeImpl() const
     {
         void* start = m_entrypoint.compilation->codeRef().executableMemory()->start().untaggedPtr();
@@ -108,22 +114,25 @@ protected:
     CodePtr<WasmEntryPtrTag> entrypointImpl() const { return m_entrypoint.compilation->code().retagged<WasmEntryPtrTag>(); }
 
     RegisterAtOffsetList* calleeSaveRegistersImpl() { return &m_entrypoint.calleeSaveRegisters; }
-
-    void setEntrypoint(Wasm::Entrypoint&&);
+#else
+    std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; }
+    CodePtr<WasmEntryPtrTag> entrypointImpl() const { return { }; }
+    RegisterAtOffsetList* calleeSaveRegistersImpl() { return nullptr; }
+#endif
 
     FixedVector<UnlinkedWasmToWasmCall> m_wasmToWasmCallsites;
+#if ENABLE(JIT)
     Wasm::Entrypoint m_entrypoint;
+#endif
 };
 
 class JSEntrypointCallee final : public JITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(JSEntrypointCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSEntrypointCallee);
 public:
     static Ref<JSEntrypointCallee> create()
     {
         return adoptRef(*new JSEntrypointCallee);
     }
-
-    using JITCallee::setEntrypoint;
 
 private:
     JSEntrypointCallee()
@@ -132,37 +141,8 @@ private:
     }
 };
 
-#else
-
-class JSEntrypointCallee final : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(JSEntrypointCallee);
-public:
-    friend class Callee;
-
-    static Ref<JSEntrypointCallee> create()
-    {
-        return adoptRef(*new JSEntrypointCallee);
-    }
-
-private:
-    JSEntrypointCallee()
-        : Callee(Wasm::CompilationMode::JSEntrypointMode)
-    {
-    }
-
-    std::tuple<void*, void*> rangeImpl() const
-    {
-        return { nullptr, nullptr };
-    }
-
-    CodePtr<WasmEntryPtrTag> entrypointImpl() const { return { }; }
-
-    RegisterAtOffsetList* calleeSaveRegistersImpl() { return nullptr; }
-};
-#endif // ENABLE(JIT)
-
 class WasmToJSCallee final : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(WasmToJSCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(WasmToJSCallee);
 public:
     friend class Callee;
 
@@ -186,7 +166,7 @@ private:
 
 #if ENABLE(JIT)
 class JSToWasmICCallee final : public JITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(JSToWasmICCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSToWasmICCallee);
 public:
     static Ref<JSToWasmICCallee> create()
     {
@@ -213,7 +193,7 @@ struct WasmCodeOrigin {
 };
 
 class OptimizingJITCallee : public JITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(OptimizingJITCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(OptimizingJITCallee);
 public:
     const StackMap& stackmap(CallSiteIndex) const;
 
@@ -247,7 +227,7 @@ constexpr int32_t stackCheckUnset = 0;
 constexpr int32_t stackCheckNotNeeded = -1;
 
 class OSREntryCallee final : public OptimizingJITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(OSREntryCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(OSREntryCallee);
 public:
     static Ref<OSREntryCallee> create(CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
     {
@@ -294,7 +274,7 @@ private:
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 
 class OMGCallee final : public OptimizingJITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(OMGCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(OMGCallee);
 public:
     static Ref<OMGCallee> create(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     {
@@ -316,7 +296,7 @@ private:
 
 
 class BBQCallee final : public OptimizingJITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(BBQCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BBQCallee);
 public:
     static constexpr unsigned extraOSRValuesForLoopIndex = 1;
 
@@ -405,7 +385,7 @@ private:
 
 
 class IPIntCallee final : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(IPIntCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(IPIntCallee);
     friend class JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:
@@ -477,7 +457,7 @@ public:
 };
 
 class LLIntCallee final : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(LLIntCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LLIntCallee);
     friend JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:

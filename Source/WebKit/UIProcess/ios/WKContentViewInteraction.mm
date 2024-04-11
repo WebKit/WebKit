@@ -114,6 +114,7 @@
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FontAttributeChanges.h>
+#import <WebCore/FrameIdentifier.h>
 #import <WebCore/InputMode.h>
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/KeyboardScroll.h>
@@ -549,7 +550,7 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @property (nonatomic) NSUInteger location;
 @property (nonatomic) NSUInteger length;
-@property (nonatomic, copy) NSString *frameIdentifier;
+@property (nonatomic) WebCore::FrameIdentifier frameIdentifier;
 @property (nonatomic) NSUInteger order;
 
 + (WKFoundTextRange *)foundTextRangeWithWebFoundTextRange:(WebKit::WebFoundTextRange)range;
@@ -6319,7 +6320,7 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
     _autocorrectionContextNeedsUpdate = YES;
     _candidateViewNeedsUpdate = !self.hasMarkedText && _isDeferringKeyEventsToInputMethod;
     _markedText = markedText;
-    _page->setCompositionAsync(markedText, underlines, highlights, { }, selectedRange, { });
+    _page->setCompositionAsync(markedText, underlines, highlights, selectedRange, { });
 }
 
 - (void)unmarkText
@@ -6900,11 +6901,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if (_focusedElementInformation.hasEverBeenPasswordField) {
         if ([privateTraits respondsToSelector:@selector(setLearnsCorrections:)])
             privateTraits.learnsCorrections = NO;
-#if USE(BROWSERENGINEKIT)
         extendedTraits.typingAdaptationEnabled = NO;
-#else
-        extendedTraits.typingAdaptationDisabled = YES;
-#endif
     }
 
     if ([privateTraits respondsToSelector:@selector(setShortcutConversionType:)])
@@ -13043,7 +13040,10 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     if (!_extendedTextInputTraits)
         _extendedTextInputTraits = adoptNS([WKExtendedTextInputTraits new]);
 
-    if (!_isBlurringFocusedElement)
+    if (!self._hasFocusedElement && !_isFocusingElementWithKeyboard) {
+        [_extendedTextInputTraits restoreDefaultValues];
+        [_extendedTextInputTraits setSelectionColorsToMatchTintColor:[self _cascadeInteractionTintColor]];
+    } else if (!_isBlurringFocusedElement)
         [self _updateTextInputTraits:_extendedTextInputTraits.get()];
 
     return _extendedTextInputTraits.get();
@@ -14659,7 +14659,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)dealloc
 {
-    [_frameIdentifier release];
     [super dealloc];
 }
 

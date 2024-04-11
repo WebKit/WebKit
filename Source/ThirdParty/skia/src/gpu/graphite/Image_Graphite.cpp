@@ -18,10 +18,16 @@
 #include "src/gpu/RefCntedCallback.h"
 #include "src/gpu/SkBackingFit.h"
 #include "src/gpu/graphite/Caps.h"
+#include "src/gpu/graphite/Device.h"
 #include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/RecorderPriv.h"
 #include "src/gpu/graphite/ResourceProvider.h"
 #include "src/gpu/graphite/Texture.h"
+
+#if defined(GRAPHITE_TEST_UTILS)
+#include "include/gpu/graphite/Context.h"
+#include "src/gpu/graphite/ContextPriv.h"
+#endif
 
 namespace skgpu::graphite {
 
@@ -29,10 +35,21 @@ Image::Image(uint32_t uniqueID,
              TextureProxyView view,
              const SkColorInfo& info)
     : Image_Base(SkImageInfo::Make(view.proxy()->dimensions(), info), uniqueID)
-    , fTextureProxyView(std::move(view)) {
-}
+    , fTextureProxyView(std::move(view)) {}
 
-Image::~Image() {}
+Image::~Image() = default;
+
+sk_sp<Image> Image::MakeView(sk_sp<Device> device) {
+    TextureProxyView proxy = device->readSurfaceView();
+    if (!proxy) {
+        return nullptr;
+    }
+    sk_sp<Image> view = sk_make_sp<Image>(kNeedNewImageUniqueID,
+                                          std::move(proxy),
+                                          device->imageInfo().colorInfo());
+    view->linkDevice(std::move(device));
+    return view;
+}
 
 size_t Image::textureSize() const {
     if (!fTextureProxyView.proxy()) {
@@ -78,6 +95,8 @@ sk_sp<SkImage> Image::copyImage(const SkIRect& subset,
         return nullptr;
     }
 
+    this->notifyInUse(recorder);
+
     auto mm = requiredProps.fMipmapped ? skgpu::Mipmapped::kYes : skgpu::Mipmapped::kNo;
     TextureProxyView copiedView = TextureProxyView::Copy(
             recorder, this->imageInfo().colorInfo(), srcView, subset, mm, SkBackingFit::kExact);
@@ -91,9 +110,13 @@ sk_sp<SkImage> Image::copyImage(const SkIRect& subset,
 }
 
 sk_sp<SkImage> Image::onReinterpretColorSpace(sk_sp<SkColorSpace> newCS) const {
-    return sk_make_sp<Image>(kNeedNewImageUniqueID,
-                             fTextureProxyView,
-                             this->imageInfo().colorInfo().makeColorSpace(std::move(newCS)));
+    sk_sp<Image> view = sk_make_sp<Image>(kNeedNewImageUniqueID,
+                                          fTextureProxyView,
+                                          this->imageInfo().colorInfo()
+                                                           .makeColorSpace(std::move(newCS)));
+    // The new Image object shares the same texture proxy, so it should also share linked Devices
+    view->linkDevices(this);
+    return view;
 }
 
 sk_sp<SkImage> Image::makeColorTypeAndColorSpace(Recorder* recorder,
@@ -196,3 +219,31 @@ sk_sp<TextureProxy> Image::MakePromiseImageLazyProxy(
                                   isVolatile,
                                   std::move(callback));
 }
+
+#if defined(GRAPHITE_TEST_UTILS)
+bool Image::onReadPixelsGraphite(Recorder* recorder,
+                                 const SkPixmap& dst,
+                                 int srcX,
+                                 int srcY) const {
+    if (Context* context = recorder->priv().context()) {
+        // Add all previous commands generated to the command buffer.
+        // If the client snaps later they'll only get post-read commands in their Recording,
+        // but since they're doing a readPixels in the middle that shouldn't be unexpected.
+        std::unique_ptr<Recording> recording = recorder->snap();
+        if (!recording) {
+            return false;
+        }
+        InsertRecordingInfo info;
+        info.fRecording = recording.get();
+        if (!context->insertRecording(info)) {
+            return false;
+        }
+        return context->priv().readPixels(dst,
+                                          fTextureProxyView.proxy(),
+                                          this->imageInfo(),
+                                          srcX,
+                                          srcY);
+    }
+    return false;
+}
+#endif

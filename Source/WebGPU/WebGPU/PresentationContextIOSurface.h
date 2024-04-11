@@ -55,7 +55,7 @@ private:
     PresentationContextIOSurface(const WGPUSurfaceDescriptor&, const Instance&);
 
     void renderBuffersWereRecreated(NSArray<IOSurface *> *renderBuffers);
-    void onSubmittedWorkScheduled(CompletionHandler<void()>&&);
+    void onSubmittedWorkScheduled(Function<void()>&&);
 
     NSArray<IOSurface *> *m_ioSurfaces { nil };
     struct RenderBuffer {

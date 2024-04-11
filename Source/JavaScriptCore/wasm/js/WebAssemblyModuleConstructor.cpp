@@ -85,7 +85,8 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleCustomSections, (JSGlobalObject* globa
 
     const auto& customSections = module->moduleInformation().customSections;
     for (const Wasm::CustomSection& section : customSections) {
-        if (String::fromUTF8(section.name) == sectionNameString) {
+        // FIXME: Add a function that compares a String with a span<char8_t> so we don't need to make a string.
+        if (WTF::makeString(section.name) == sectionNameString) {
             auto buffer = ArrayBuffer::tryCreate(section.payload.data(), section.payload.size());
             if (!buffer)
                 return JSValue::encode(throwException(globalObject, throwScope, createOutOfMemoryError(globalObject)));
@@ -118,8 +119,8 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleImports, (JSGlobalObject* globalObject
         for (const Wasm::Import& imp : imports) {
             JSObject* obj = constructEmptyObject(globalObject);
             RETURN_IF_EXCEPTION(throwScope, { });
-            obj->putDirect(vm, module, jsString(vm, String::fromUTF8(imp.module)));
-            obj->putDirect(vm, name, jsString(vm, String::fromUTF8(imp.field)));
+            obj->putDirect(vm, module, jsString(vm, WTF::makeString(imp.module)));
+            obj->putDirect(vm, name, jsString(vm, WTF::makeString(imp.field)));
             obj->putDirect(vm, kind, jsString(vm, String::fromLatin1(makeString(imp.kind))));
             result->push(globalObject, obj);
             RETURN_IF_EXCEPTION(throwScope, { });
@@ -148,7 +149,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleExports, (JSGlobalObject* globalObject
         for (const Wasm::Export& exp : exports) {
             JSObject* obj = constructEmptyObject(globalObject);
             RETURN_IF_EXCEPTION(throwScope, { });
-            obj->putDirect(vm, name, jsString(vm, String::fromUTF8(exp.field)));
+            obj->putDirect(vm, name, jsString(vm, WTF::makeString(exp.field)));
             obj->putDirect(vm, kind, jsString(vm, String::fromLatin1(makeString(exp.kind))));
             result->push(globalObject, obj);
             RETURN_IF_EXCEPTION(throwScope, { });

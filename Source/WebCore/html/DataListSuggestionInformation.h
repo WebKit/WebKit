@@ -26,7 +26,6 @@
 #pragma once
 
 #include "IntRect.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(DATALIST_ELEMENT)

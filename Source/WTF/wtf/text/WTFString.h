@@ -484,7 +484,7 @@ inline String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& string, 
 ALWAYS_INLINE String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& string, UChar target, ASCIILiteral literal)
 {
     if (auto impl = string.impl())
-        return String { impl->replace(target, literal.characters(), literal.length()) };
+        return String { impl->replace(target, literal.span8()) };
     return string;
 }
 

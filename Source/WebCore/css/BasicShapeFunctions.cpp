@@ -80,6 +80,12 @@ static SVGPathByteStream copySVGPathByteStream(const SVGPathByteStream& source, 
     return source;
 }
 
+Ref<CSSValue> valueForSVGPath(const BasicShapePath& path, SVGPathConversion conversion)
+{
+    ASSERT(path.pathData());
+    return CSSPathValue::create(copySVGPathByteStream(*path.pathData(), conversion), path.windRule());
+}
+
 Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& basicShape, SVGPathConversion conversion)
 {
     auto createValue = [&](const Length& length) {
@@ -148,11 +154,8 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
             values.append(CSSPrimitiveValue::create(value, style));
         return CSSPolygonValue::create(WTFMove(values), polygon.windRule());
     }
-    case BasicShape::Type::Path: {
-        auto& pathShape = uncheckedDowncast<BasicShapePath>(basicShape);
-        ASSERT(pathShape.pathData());
-        return CSSPathValue::create(copySVGPathByteStream(*pathShape.pathData(), conversion), pathShape.windRule());
-    }
+    case BasicShape::Type::Path:
+        return valueForSVGPath(uncheckedDowncast<BasicShapePath>(basicShape), conversion);
     case BasicShape::Type::Inset: {
         auto& inset = uncheckedDowncast<BasicShapeInset>(basicShape);
         return CSSInsetShapeValue::create(createValue(inset.top()), createValue(inset.right()),
@@ -317,13 +320,17 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         rect->setBottomLeftRadius(convertToLengthSize(conversionData, rectValue->protectedBottomLeftRadius().get()));
         return rect;
     }
-    if (auto* pathValue = dynamicDowncast<CSSPathValue>(value)) {
-        auto path = BasicShapePath::create(pathValue->pathData().copy());
-        path->setWindRule(pathValue->windRule());
-        path->setZoom(zoom);
-        return path;
-    }
+    if (auto* pathValue = dynamicDowncast<CSSPathValue>(value))
+        return basicShapePathForValue(*pathValue, zoom);
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+Ref<BasicShapePath> basicShapePathForValue(const CSSPathValue& value, float zoom)
+{
+    auto path = BasicShapePath::create(value.pathData().copy());
+    path->setWindRule(value.windRule());
+    path->setZoom(zoom);
+    return path;
 }
 
 float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate& center, float boxDimension)

@@ -642,11 +642,11 @@ void TextIterator::handleTextRun()
         auto hasPrecedingCollapsedWhitespace = m_lastTextNodeEndedWithCollapsedSpace || (m_textRun == firstTextRun && textRunStart == runStart && runStart);
         auto shouldEmitWhitespace = !isAfterRangeEnd && hasPrecedingCollapsedWhitespace && m_lastCharacter && !renderer->style().isCollapsibleWhiteSpace(m_lastCharacter);
         if (shouldEmitWhitespace) {
-            if (m_lastTextNode == textNode.ptr() && runStart && rendererText[runStart - 1] == ' ') {
+            if (m_lastTextNode == textNode.ptr() && runStart && renderer->style().isCollapsibleWhiteSpace(rendererText[runStart - 1])) {
                 unsigned spaceRunStart = runStart - 1;
-                while (spaceRunStart && rendererText[spaceRunStart - 1] == ' ')
+                while (spaceRunStart && renderer->style().isCollapsibleWhiteSpace(rendererText[spaceRunStart - 1]))
                     --spaceRunStart;
-                emitText(textNode, renderer, spaceRunStart, spaceRunStart + 1);
+                emitCharacter(' ', WTFMove(textNode), nullptr, spaceRunStart, spaceRunStart + 1);
             } else
                 emitCharacter(' ', WTFMove(textNode), nullptr, runStart, runStart);
             return;
@@ -1180,6 +1180,15 @@ RefPtr<Node> TextIterator::protectedCurrentNode() const
     return m_currentNode;
 }
 
+#if ENABLE(TREE_DEBUGGING)
+void TextIterator::showTreeForThis() const
+{
+    if (m_currentNode)
+        m_currentNode->showTreeForThis();
+    fprintf(stderr, "offset: %d\n", m_offset);
+}
+#endif
+
 // --------
 
 SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const SimpleRange& range)
@@ -1635,43 +1644,45 @@ StringView WordAwareIterator::text() const
 
 // --------
 
-static inline UChar foldQuoteMark(UChar c)
+static inline UChar foldQuoteMarkAndReplaceNoBreakSpace(UChar c)
 {
     switch (c) {
-        case hebrewPunctuationGershayim:
-        case leftDoubleQuotationMark:
-        case leftLowDoubleQuotationMark:
-        case rightDoubleQuotationMark:
-        case leftPointingDoubleAngleQuotationMark:
-        case rightPointingDoubleAngleQuotationMark:
-        case doubleHighReversed9QuotationMark:
-        case doubleLowReversed9QuotationMark:
-        case reversedDoublePrimeQuotationMark:
-        case doublePrimeQuotationMark:
-        case lowDoublePrimeQuotationMark:
-        case fullwidthQuotationMark:
-            return '"';
-        case hebrewPunctuationGeresh:
-        case leftSingleQuotationMark:
-        case leftLowSingleQuotationMark:
-        case rightSingleQuotationMark:
-        case singleLow9QuotationMark:
-        case singleLeftPointingAngleQuotationMark:
-        case singleRightPointingAngleQuotationMark:
-        case leftCornerBracket:
-        case rightCornerBracket:
-        case leftWhiteCornerBracket:
-        case rightWhiteCornerBracket:
-        case presentationFormForVerticalLeftCornerBracket:
-        case presentationFormForVerticalRightCornerBracket:
-        case presentationFormForVerticalLeftWhiteCornerBracket:
-        case presentationFormForVerticalRightWhiteCornerBracket:
-        case fullwidthApostrophe:
-        case halfwidthLeftCornerBracket:
-        case halfwidthRightCornerBracket:
-            return '\'';
-        default:
-            return c;
+    case hebrewPunctuationGershayim:
+    case leftDoubleQuotationMark:
+    case leftLowDoubleQuotationMark:
+    case rightDoubleQuotationMark:
+    case leftPointingDoubleAngleQuotationMark:
+    case rightPointingDoubleAngleQuotationMark:
+    case doubleHighReversed9QuotationMark:
+    case doubleLowReversed9QuotationMark:
+    case reversedDoublePrimeQuotationMark:
+    case doublePrimeQuotationMark:
+    case lowDoublePrimeQuotationMark:
+    case fullwidthQuotationMark:
+        return '"';
+    case hebrewPunctuationGeresh:
+    case leftSingleQuotationMark:
+    case leftLowSingleQuotationMark:
+    case rightSingleQuotationMark:
+    case singleLow9QuotationMark:
+    case singleLeftPointingAngleQuotationMark:
+    case singleRightPointingAngleQuotationMark:
+    case leftCornerBracket:
+    case rightCornerBracket:
+    case leftWhiteCornerBracket:
+    case rightWhiteCornerBracket:
+    case presentationFormForVerticalLeftCornerBracket:
+    case presentationFormForVerticalRightCornerBracket:
+    case presentationFormForVerticalLeftWhiteCornerBracket:
+    case presentationFormForVerticalRightWhiteCornerBracket:
+    case fullwidthApostrophe:
+    case halfwidthLeftCornerBracket:
+    case halfwidthRightCornerBracket:
+        return '\'';
+    case noBreakSpace:
+        return ' ';
+    default:
+        return c;
     }
 }
 
@@ -2076,7 +2087,7 @@ inline size_t SearchBuffer::append(StringView text)
     ASSERT(usableLength);
     m_buffer.grow(oldLength + usableLength);
     for (unsigned i = 0; i < usableLength; ++i)
-        m_buffer[oldLength + i] = foldQuoteMark(text[i]);
+        m_buffer[oldLength + i] = foldQuoteMarkAndReplaceNoBreakSpace(text[i]);
     return usableLength;
 }
 
@@ -2343,7 +2354,7 @@ inline bool SearchBuffer::atBreak() const
 
 inline void SearchBuffer::append(UChar c, bool isStart)
 {
-    m_buffer[m_cursor] = c == noBreakSpace ? ' ' : foldQuoteMark(c);
+    m_buffer[m_cursor] = foldQuoteMarkAndReplaceNoBreakSpace(c);
     m_isCharacterStartBuffer[m_cursor] = isStart;
     if (++m_cursor == m_target.length()) {
         m_cursor = 0;
@@ -2658,3 +2669,18 @@ bool containsPlainText(const String& document, const String& target, FindOptions
 }
 
 }
+
+#if ENABLE(TREE_DEBUGGING)
+
+void showTree(const WebCore::TextIterator& pos)
+{
+    pos.showTreeForThis();
+}
+
+void showTree(const WebCore::TextIterator* pos)
+{
+    if (pos)
+        pos->showTreeForThis();
+}
+
+#endif

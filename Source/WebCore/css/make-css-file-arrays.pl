@@ -67,11 +67,11 @@ for my $in (@ARGV) {
     # Write out a C array of the characters.
     my $length = length $text;
     if ($in =~ /(\w+)\.css$/) {
-        print HEADER "extern const char ${name}UserAgentStyleSheet[${length}];\n";
-        print OUT "extern const char ${name}UserAgentStyleSheet[${length}] = {\n";
+        print HEADER "extern const std::array<const char, ${length}> ${name}UserAgentStyleSheet;\n";
+        print OUT "extern const std::array<const char, ${length}> ${name}UserAgentStyleSheet = {\n";
     } else {
-        print HEADER "extern const char ${name}JavaScript[${length}];\n";
-        print OUT "extern const char ${name}JavaScript[${length}] = {\n";
+        print HEADER "extern const std::array<const char, ${length}> ${name}JavaScript;\n";
+        print OUT "extern const std::array<const char, ${length}> ${name}JavaScript = {\n";
     }
     my $i = 0;
     while ($i < $length) {

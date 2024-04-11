@@ -72,12 +72,17 @@ pas_enumerator* pas_enumerator_create(pas_root* remote_root_address,
                                       pas_enumerator_object_recording_mode record_object)
 {
     pas_enumerator* result;
-    uintptr_t* compact_heap_base;
-    size_t* compact_heap_size;
-    size_t* compact_heap_guard_size;
+    uintptr_t compact_heap_base;
+    pas_root* remote_root;
+    uintptr_t* compact_heap_base_ptr;
+    size_t* compact_heap_size_ptr;
+    size_t* compact_heap_guard_size_ptr;
+    size_t compact_heap_size;
+    size_t compact_heap_guard_size;
     pas_enumerator_region* region;
-    const pas_heap_config** configs;
+    const pas_heap_config* configs[pas_heap_config_kind_num_kinds];
     pas_heap_config_kind config_kind;
+    const pas_heap_config** remote_configs;
 
     region = NULL;
 
@@ -95,39 +100,52 @@ pas_enumerator* pas_enumerator_create(pas_root* remote_root_address,
         result, sizeof(void*) * pas_heap_config_kind_num_kinds);
     pas_zero_memory(result->heap_config_datas, sizeof(void*) * pas_heap_config_kind_num_kinds);
 
-    result->root = reader(result, remote_root_address, sizeof(pas_root), reader_arg);
-    if (!result->root)
+    /*
+     * Some non-obvious behavior: even if we expect the remote address of a value (like the
+     * remote pas_root) to be persistent, our local mapping of the remote memory is allowed to
+     * change, and can in fact change any time we call the reader. So, it's unsafe to store
+     * a pointer to the remote memory across a call to reader, and we need to instead allocate
+     * local storage for these values and copy the remote values in.
+     */
+
+    remote_root = reader(result, remote_root_address, sizeof(pas_root), reader_arg);
+    if (!remote_root)
         goto fail;
+    result->root = pas_enumerator_region_allocate(&region, sizeof(pas_root));
+    memcpy(result->root, remote_root, sizeof(pas_root));
 
     PAS_ASSERT_WITH_DETAIL(result->root->magic == PAS_ROOT_MAGIC);
     PAS_ASSERT_WITH_DETAIL(result->root->num_heap_configs == pas_heap_config_kind_num_kinds);
 
-    compact_heap_base = reader(
+    compact_heap_base_ptr = reader(
         result, result->root->compact_heap_reservation_base, sizeof(uintptr_t), reader_arg);
-    if (!compact_heap_base)
+    if (!compact_heap_base_ptr)
         goto fail;
+    compact_heap_base = *compact_heap_base_ptr;
 
-    compact_heap_size = reader(
+    compact_heap_size_ptr = reader(
         result, result->root->compact_heap_reservation_size, sizeof(size_t), reader_arg);
-    if (!compact_heap_size)
+    if (!compact_heap_size_ptr)
         goto fail;
+    compact_heap_size = *compact_heap_size_ptr;
 
-    compact_heap_guard_size = reader(
+    compact_heap_guard_size_ptr = reader(
         result, result->root->compact_heap_reservation_guard_size, sizeof(size_t), reader_arg);
-    if (!compact_heap_size)
+    if (!compact_heap_guard_size_ptr)
         goto fail;
+    compact_heap_guard_size = *compact_heap_guard_size_ptr;
 
-    result->compact_heap_remote_base = (void*)*compact_heap_base;
+    result->compact_heap_remote_base = (void*)compact_heap_base;
     result->compact_heap_copy_base = (void*)(
         (uintptr_t)reader(
-            result, (void*)(*compact_heap_base + *compact_heap_guard_size), *compact_heap_size,
+            result, (void*)(compact_heap_base + compact_heap_guard_size), compact_heap_size,
             reader_arg)
-        - *compact_heap_guard_size);
+        - compact_heap_guard_size);
     if (!result->compact_heap_copy_base)
         goto fail;
     
-    result->compact_heap_size = *compact_heap_size;
-    result->compact_heap_guard_size = *compact_heap_guard_size;
+    result->compact_heap_size = compact_heap_size;
+    result->compact_heap_guard_size = compact_heap_guard_size;
 
     result->unaccounted_pages = pas_enumerator_allocate(result, sizeof(pas_ptr_hash_set));
     pas_ptr_hash_set_construct(result->unaccounted_pages);
@@ -140,13 +158,15 @@ pas_enumerator* pas_enumerator_create(pas_root* remote_root_address,
     result->record_payload = record_payload;
     result->record_object = record_object;
 
-    configs = reader(
+    remote_configs = reader(
         result,
         result->root->heap_configs,
         sizeof(const pas_heap_config*) * pas_heap_config_kind_num_kinds,
         reader_arg);
-    if (!configs)
+    if (!remote_configs)
         goto fail;
+    for (PAS_EACH_HEAP_CONFIG_KIND(config_kind))
+        configs[config_kind] = remote_configs[config_kind];
     
     for (PAS_EACH_HEAP_CONFIG_KIND(config_kind)) {
         const pas_heap_config* config;

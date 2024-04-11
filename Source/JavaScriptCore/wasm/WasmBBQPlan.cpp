@@ -348,7 +348,7 @@ void BBQPlan::initializeCallees(const CalleeInitializer& callback)
 {
     ASSERT(!failed());
     for (unsigned internalFunctionIndex = 0; internalFunctionIndex < m_wasmInternalFunctions.size(); ++internalFunctionIndex) {
-        RefPtr<JSEntrypointCallee> jsEntrypointCallee;
+        RefPtr<JITCallee> jsEntrypointCallee;
         RefPtr<BBQCallee> wasmEntrypointCallee = m_callees[internalFunctionIndex];
         {
             auto iter = m_jsToWasmInternalFunctions.find(internalFunctionIndex);

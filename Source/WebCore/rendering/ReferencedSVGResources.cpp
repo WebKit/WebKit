@@ -54,6 +54,8 @@ public:
 
     void resourceChanged(SVGElement&) final;
 
+    const RenderElement& renderer() const final { return m_clientRenderer; }
+
 private:
     RenderElement& m_clientRenderer;
 };

@@ -2,7 +2,6 @@
   <body>
     <script>
       const doTest = async () => {
-        try {
           const adapter = await navigator.gpu.requestAdapter();
           const device = await adapter.requestDevice();
           const module = device.createShaderModule({
@@ -36,7 +35,6 @@
               }
             `,
           });
-        } catch (e) { }
         if (window.testRunner) { testRunner.notifyDone() }
       };
       if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }

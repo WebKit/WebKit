@@ -411,6 +411,16 @@ if not JSVALUE64
     subp 8, ws1 # align stack pointer
 end
 
+if TRACING
+    probe(
+         macro()
+             move cfr, a1
+             move ws1, a2
+             call _logWasmPrologue
+         end
+     )
+end
+
     bpa ws1, cfr, .stackOverflow
     bpbeq Wasm::Instance::m_softStackLimit[wasmInstance], ws1, .stackHeightOK
 
@@ -570,6 +580,10 @@ end
 end
     break
 end
+
+op(js_to_wasm_wrapper_entry, macro ()
+    break
+end)
 
 macro traceExecution()
     if TRACING
@@ -770,6 +784,11 @@ macro doReturn()
 end
 
 # Entry point
+
+op(wasm_function_prologue_trampoline, macro ()
+    tagReturnAddress sp
+    jmp _wasm_function_prologue
+end)
 
 op(wasm_function_prologue, macro ()
     if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN

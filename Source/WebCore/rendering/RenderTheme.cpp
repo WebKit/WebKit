@@ -158,6 +158,20 @@ StyleAppearance RenderTheme::adjustAppearanceForElement(RenderStyle& style, cons
         return autoAppearance;
     }
 
+#if ENABLE(APPLE_PAY)
+    // Only apply `appearance: -apple-pay-button` on buttons and non-form controls.
+    if (appearance == StyleAppearance::ApplePayButton) {
+        if (autoAppearance == StyleAppearance::Button)
+            return appearance;
+
+        if (!inputElement && autoAppearance == StyleAppearance::None)
+            return appearance;
+
+        style.setUsedAppearance(autoAppearance);
+        return autoAppearance;
+    }
+#endif
+
     return appearance;
 }
 
@@ -1540,6 +1554,16 @@ auto RenderTheme::colorCache(OptionSet<StyleColorOptions> options) const -> Colo
     }).iterator->value;
 }
 
+static Color defaultLinkColor(bool useDarkAppearance)
+{
+    return useDarkAppearance ? SRGBA<uint8_t> { 158, 158, 255 } : SRGBA<uint8_t> { 0, 0, 238 };
+}
+
+static Color defaultVisitedLinkColor(bool useDarkAppearance)
+{
+    return useDarkAppearance ? SRGBA<uint8_t> { 208, 173, 240 } : SRGBA<uint8_t> { 85, 26, 139 };
+}
+
 Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOptions> options) const
 {
     auto useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance);
@@ -1559,12 +1583,12 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOption
     // https://drafts.csswg.org/css-color-4/#valdef-system-color-linktext
     // Text in non-active, non-visited links. For light backgrounds, traditionally blue.
     case CSSValueLinktext:
-        return SRGBA<uint8_t> { 0, 0, 238 };
+        return defaultLinkColor(useDarkAppearance);
 
     // https://drafts.csswg.org/css-color-4/#valdef-system-color-visitedtext
     // Text in visited links. For light backgrounds, traditionally purple.
     case CSSValueVisitedtext:
-        return SRGBA<uint8_t> { 85, 26, 139 };
+        return defaultVisitedLinkColor(useDarkAppearance);
 
     // https://drafts.csswg.org/css-color-4/#valdef-system-color-activetext
     // Text in active links. For light backgrounds, traditionally red.
@@ -1652,9 +1676,9 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOption
 
     // Non-standard addition.
     case CSSValueWebkitLink: {
-        if (useDarkAppearance)
-            return forVisitedLink ? SRGBA<uint8_t> { 208, 173, 240 } : SRGBA<uint8_t> { 158, 158, 255 };
-        return forVisitedLink ? SRGBA<uint8_t> { 85, 26, 139 } : SRGBA<uint8_t> { 0, 0, 238 };
+        if (forVisitedLink)
+            return defaultVisitedLinkColor(useDarkAppearance);
+        return defaultLinkColor(useDarkAppearance);
     }
 
     // Deprecated system-colors:

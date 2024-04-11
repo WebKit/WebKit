@@ -786,6 +786,7 @@ MacroAssemblerCodeRef<JSEntryPtrTag> returnLocationThunk(OpcodeID opcodeID, Opco
     LLINT_RETURN_LOCATION(op_call_varargs)
     LLINT_RETURN_LOCATION(op_construct_varargs)
     LLINT_RETURN_LOCATION(op_get_by_id)
+    LLINT_RETURN_LOCATION(op_get_length)
     LLINT_RETURN_LOCATION(op_get_by_val)
     LLINT_RETURN_LOCATION(op_put_by_id)
     LLINT_RETURN_LOCATION(op_put_by_val)

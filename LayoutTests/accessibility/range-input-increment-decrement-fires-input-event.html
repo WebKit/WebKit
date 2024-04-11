@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="range" type="range" value="50" min="0" max="100"/>
+
+<script>
+var output = "This test ensures that incrementing and decrementing a range input fires the input event.\n\n";
+
+var inputEventCount = 0;
+document.getElementById("range").addEventListener("input", (e) => {
+    inputEventCount++;
+});
+
+function increment(axElement) {
+    if (accessibilityController.platformName === "mac") {
+        // On macOS, this exercises the same API that ATs do, so use it.
+        axElement.asyncIncrement();
+    } else
+        axElement.increment();
+}
+
+function decrement(axElement) {
+    if (accessibilityController.platformName === "mac")
+        axElement.asyncDecrement();
+    else
+        axElement.decrement();
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var axRange = accessibilityController.accessibleElementById("range");
+    output += expect("inputEventCount", "0");
+    output += expect("axRange.intValue", "50");
+
+    increment(axRange);
+    setTimeout(async function() {
+        output += await expectAsync("inputEventCount", "1");
+        output += await expectAsync("axRange.intValue > 50", "true");
+
+        decrement(axRange);
+        decrement(axRange);
+        output += await expectAsync("inputEventCount", "3");
+        output += await expectAsync("axRange.intValue < 50", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

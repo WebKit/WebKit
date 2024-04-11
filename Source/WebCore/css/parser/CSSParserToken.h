@@ -149,7 +149,7 @@ public:
     void serialize(StringBuilder&, const CSSParserToken* nextToken = nullptr, SerializationMode = SerializationMode::Normal) const;
 
     template<typename CharacterType>
-    void updateCharacters(const CharacterType* characters, unsigned length);
+    void updateCharacters(std::span<const CharacterType> characters);
 
 private:
     void initValueFromStringView(StringView string)
@@ -185,11 +185,11 @@ private:
 };
 
 template<typename CharacterType>
-inline void CSSParserToken::updateCharacters(const CharacterType* characters, unsigned length)
+inline void CSSParserToken::updateCharacters(std::span<const CharacterType> characters)
 {
-    m_valueLength = length;
+    m_valueLength = characters.size();
     m_valueIs8Bit = (sizeof(CharacterType) == 1);
-    m_valueDataCharRaw = characters;
+    m_valueDataCharRaw = characters.data();
 }
 
 } // namespace WebCore

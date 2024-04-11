@@ -165,7 +165,7 @@ private:
 
     bool canHaveChildren() const override { return true; }
 
-    void willBeRemovedFromTree(IsInternalMove) override;
+    void willBeRemovedFromTree() override;
 
     void layout() override;
 

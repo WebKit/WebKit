@@ -37,6 +37,7 @@ public:
 
     virtual void resourceChanged(SVGElement&) = 0;
 
+    virtual const RenderElement& renderer() const = 0;
 };
 
 } // namespace WebCore

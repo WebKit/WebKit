@@ -195,3 +195,64 @@ void main() {
     EXPECT_TRUE(compile(kShader));
     EXPECT_FALSE(foundInIntermediateTree("anonymous"));
 }
+
+// Tests that constant folding a division of a void variable does not crash during parsing.
+TEST_F(ParseTest, ConstStructWithVoidAndDivNoCrash)
+{
+    const char kShader[] = R"(
+const struct s { void i; } ss = s();
+void main() {
+    highp vec3 q = ss.i / ss.i;
+})";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("illegal use of type 'void'"));
+    EXPECT_TRUE(foundInIntermediateTree("constructor does not have any arguments"));
+    EXPECT_TRUE(foundInIntermediateTree("operation with void operands"));
+    EXPECT_TRUE(foundInIntermediateTree(
+        "wrong operand types - no operation '/' exists that takes a left-hand operand of type "
+        "'const void' and a right operand of type 'const void'"));
+    EXPECT_TRUE(foundInIntermediateTree(
+        "cannot convert from 'const void' to 'highp 3-component vector of float'"));
+}
+
+// Tests that division of void variable returns the same errors as division of constant
+// void variable (see above).
+TEST_F(ParseTest, StructWithVoidAndDivErrorCheck)
+{
+    const char kShader[] = R"(
+struct s { void i; } ss = s();
+void main() {
+    highp vec3 q = ss.i / ss.i;
+})";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("illegal use of type 'void'"));
+    EXPECT_TRUE(foundInIntermediateTree("constructor does not have any arguments"));
+    EXPECT_TRUE(foundInIntermediateTree("operation with void operands"));
+    EXPECT_TRUE(foundInIntermediateTree(
+        "wrong operand types - no operation '/' exists that takes a left-hand operand of type "
+        "'void' and a right operand of type 'void'"));
+    EXPECT_TRUE(foundInIntermediateTree(
+        "cannot convert from 'void' to 'highp 3-component vector of float'"));
+}
+
+// Tests that imod of const void variable does not crash during parsing.
+TEST_F(ParseTest, ConstStructVoidAndImodAndNoCrash)
+{
+    const char kShader[] = R"(#version 310 es
+const struct s { void i; } ss = s();
+void main() {
+    highp vec3 q = ss.i % ss.i;
+})";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("illegal use of type 'void'"));
+    EXPECT_TRUE(foundInIntermediateTree("constructor does not have any arguments"));
+    EXPECT_TRUE(foundInIntermediateTree("operation with void operands"));
+    EXPECT_TRUE(foundInIntermediateTree(
+        "wrong operand types - no operation '%' exists that takes a left-hand operand of type "
+        "'const void' and a right operand of type 'const void'"));
+    EXPECT_TRUE(foundInIntermediateTree(
+        "cannot convert from 'const void' to 'highp 3-component vector of float'"));
+}

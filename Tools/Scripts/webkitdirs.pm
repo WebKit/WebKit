@@ -2999,6 +2999,8 @@ sub setupIOSWebKitEnvironment($)
 
     prependToEnvironmentVariableList("DYLD_FRAMEWORK_PATH", $dyldFrameworkPath);
     prependToEnvironmentVariableList("DYLD_LIBRARY_PATH", $dyldFrameworkPath);
+    prependToEnvironmentVariableList("__XPC_DYLD_FRAMEWORK_PATH", $dyldFrameworkPath);
+    prependToEnvironmentVariableList("__XPC_DYLD_LIBRARY_PATH", $dyldFrameworkPath);
     prependToEnvironmentVariableList("METAL_DEVICE_WRAPPER_TYPE", "1");
 
     setUpGuardMallocIfNeeded();

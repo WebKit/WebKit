@@ -40,7 +40,10 @@ std::unique_ptr<GraphiteTestContext> DawnTestContext::Make(wgpu::BackendType bac
     sOnce([&]{
         DawnProcTable backendProcs = dawn::native::GetProcs();
         dawnProcSetProcs(&backendProcs);
-        sInstance = std::make_unique<dawn::native::Instance>();
+        WGPUInstanceDescriptor desc{};
+        // need for WaitAny with timeout > 0
+        desc.features.timedWaitAnyEnable = true;
+        sInstance = std::make_unique<dawn::native::Instance>(&desc);
     });
 
     dawn::native::Adapter matchedAdaptor;
@@ -100,6 +103,12 @@ std::unique_ptr<GraphiteTestContext> DawnTestContext::Make(wgpu::BackendType bac
     }
     if (adapter.HasFeature(wgpu::FeatureName::BufferMapExtendedUsages)) {
         features.push_back(wgpu::FeatureName::BufferMapExtendedUsages);
+    }
+    if (adapter.HasFeature(wgpu::FeatureName::TextureCompressionETC2)) {
+        features.push_back(wgpu::FeatureName::TextureCompressionETC2);
+    }
+    if (adapter.HasFeature(wgpu::FeatureName::TextureCompressionBC)) {
+        features.push_back(wgpu::FeatureName::TextureCompressionBC);
     }
 
     wgpu::DeviceDescriptor desc;

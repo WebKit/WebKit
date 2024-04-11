@@ -44,13 +44,14 @@ private:
     bool currentCharacterStartsSurrogatePair() const;
 
     void initializeMeasurementWithTextRenderer(RenderSVGInlineText&);
-    void walkTree(RenderElement&, RenderSVGInlineText* stopAtLeaf, MeasureTextData*);
-    void measureTextRenderer(RenderSVGInlineText&, MeasureTextData*);
+    void walkTree(RenderElement&, RenderSVGInlineText* stopAtLeaf, MeasureTextData&);
+    std::tuple<unsigned, UChar> measureTextRenderer(RenderSVGInlineText&, const MeasureTextData&, std::tuple<unsigned, UChar>);
 
     RenderSVGInlineText* m_text;
     TextRun m_run;
     unsigned m_textPosition;
-    bool m_isComplexText;
+    bool m_isComplexText { false };
+    bool m_canUseSimplifiedTextMeasuring { false };
     SVGTextMetrics m_currentMetrics;
     float m_totalWidth;
 

@@ -14,6 +14,7 @@
 #include "include/core/SkSurface.h"
 #include "include/effects/SkRuntimeEffect.h"
 #include "src/core/SkBlurEngine.h"
+#include "src/core/SkCompressedDataUtils.h"
 #include "src/core/SkDevice.h"
 #include "src/core/SkImageFilterCache.h"
 #include "src/core/SkImageFilterTypes.h"
@@ -33,7 +34,6 @@
 #include "src/gpu/graphite/Buffer.h"
 #include "src/gpu/graphite/Caps.h"
 #include "src/gpu/graphite/CommandBuffer.h"
-#include "src/gpu/graphite/CopyTask.h"
 #include "src/gpu/graphite/Device.h"
 #include "src/gpu/graphite/Image_Graphite.h"
 #include "src/gpu/graphite/Log.h"
@@ -41,9 +41,11 @@
 #include "src/gpu/graphite/ResourceProvider.h"
 #include "src/gpu/graphite/SpecialImage_Graphite.h"
 #include "src/gpu/graphite/Surface_Graphite.h"
-#include "src/gpu/graphite/SynchronizeToCpuTask.h"
 #include "src/gpu/graphite/Texture.h"
-#include "src/gpu/graphite/UploadTask.h"
+#include "src/gpu/graphite/task/CopyTask.h"
+#include "src/gpu/graphite/task/SynchronizeToCpuTask.h"
+#include "src/gpu/graphite/task/UploadTask.h"
+
 
 #include <array>
 
@@ -432,15 +434,24 @@ sk_sp<SkImage> MakeFromBitmap(Recorder* recorder,
                                               colorInfo.makeColorType(ct));
 }
 
-
-// TODO: Make this computed size more generic to handle compressed textures
 size_t ComputeSize(SkISize dimensions,
                    const TextureInfo& info) {
-    // TODO: Should we make sure the backends return zero here if the TextureInfo is for a
-    // memoryless texture?
-    size_t bytesPerPixel = info.bytesPerPixel();
 
-    size_t colorSize = (size_t)dimensions.width() * dimensions.height() * bytesPerPixel;
+    SkTextureCompressionType compression = info.compressionType();
+
+    size_t colorSize = 0;
+
+    if (compression != SkTextureCompressionType::kNone) {
+        colorSize =  SkCompressedFormatDataSize(compression,
+                                                dimensions,
+                                                info.mipmapped() == skgpu::Mipmapped::kYes);
+    } else {
+        // TODO: Should we make sure the backends return zero here if the TextureInfo is for a
+        // memoryless texture?
+        size_t bytesPerPixel = info.bytesPerPixel();
+
+        colorSize = (size_t)dimensions.width() * dimensions.height() * bytesPerPixel;
+    }
 
     size_t finalSize = colorSize * info.numSamples();
 
@@ -524,6 +535,7 @@ sk_sp<SkImage> RescaleImage(Recorder* recorder,
         SkRect gammaDstRect = SkRect::Make(srcIRect.size());
 
         SkPaint paint;
+        paint.setBlendMode(SkBlendMode::kSrc);
         gammaDst->drawImageRect(tempInput, srcRect, gammaDstRect,
                                 SkSamplingOptions(SkFilterMode::kNearest), &paint,
                                 SkCanvas::kStrict_SrcRectConstraint);
@@ -575,6 +587,7 @@ sk_sp<SkImage> RescaleImage(Recorder* recorder,
                                SkSamplingOptions(SkFilterMode::kLinear);
         }
         SkPaint paint;
+        paint.setBlendMode(SkBlendMode::kSrc);
         stepDst->drawImageRect(tempInput, srcRect, stepDstRect, samplingOptions, &paint,
                                SkCanvas::kStrict_SrcRectConstraint);
 
@@ -594,8 +607,13 @@ bool GenerateMipmaps(Recorder* recorder,
 
     // Within a rescaling pass scratchImg is read from and a scratch surface is written to.
     // At the end of the pass the scratch surface's texture is wrapped and assigned to scratchImg.
+
+    // The scratch surface we create below will use a write swizzle derived from SkColorType and
+    // pixel format. We have to be consistent and swizzle on the read.
+    auto imgSwizzle = recorder->priv().caps()->getReadSwizzle(colorInfo.colorType(),
+                                                              texture->textureInfo());
     sk_sp<SkImage> scratchImg(
-            new Image(kNeedNewImageUniqueID, TextureProxyView(texture), colorInfo));
+            new Image(kNeedNewImageUniqueID, TextureProxyView(texture, imgSwizzle), colorInfo));
 
     SkISize srcSize = texture->dimensions();
     const SkColorInfo outColorInfo = colorInfo.makeAlphaType(kPremul_SkAlphaType);
@@ -622,6 +640,7 @@ bool GenerateMipmaps(Recorder* recorder,
         SkSurface* scratchSurface = scratchSurfaces[(mipLevel - 1) & 1].get();
 
         SkPaint paint;
+        paint.setBlendMode(SkBlendMode::kSrc);
         scratchSurface->getCanvas()->drawImageRect(scratchImg,
                                                    SkRect::Make(srcSize),
                                                    SkRect::Make(dstSize),
@@ -690,35 +709,20 @@ std::pair<sk_sp<SkImage>, SkSamplingOptions> GetGraphiteBacked(Recorder* recorde
     return { result, sampling };
 }
 
-std::tuple<skgpu::graphite::TextureProxyView, SkColorType> AsView(Recorder* recorder,
-                                                                  const SkImage* image,
-                                                                  skgpu::Mipmapped mipmapped) {
-    if (!recorder || !image) {
+skgpu::graphite::TextureProxyView AsView(const SkImage* image) {
+    if (!image) {
         return {};
     }
-
     if (!as_IB(image)->isGraphiteBacked()) {
         return {};
     }
-    // TODO(b/238756380): YUVA not supported yet
+    // A YUVA image (even if backed by graphite textures) is not a single texture
     if (as_IB(image)->isYUVA()) {
         return {};
     }
 
     auto gi = reinterpret_cast<const skgpu::graphite::Image*>(image);
-
-    if (gi->dimensions().area() <= 1) {
-        mipmapped = skgpu::Mipmapped::kNo;
-    }
-
-    if (mipmapped == skgpu::Mipmapped::kYes &&
-        gi->textureProxyView().proxy()->mipmapped() != skgpu::Mipmapped::kYes) {
-        SKGPU_LOG_W("Graphite does not auto-generate mipmap levels");
-        return {};
-    }
-
-    SkColorType ct = gi->colorType();
-    return {gi->textureProxyView(), ct};
+    return gi->textureProxyView();
 }
 
 SkColorType ComputeShaderCoverageMaskTargetFormat(const Caps* caps) {

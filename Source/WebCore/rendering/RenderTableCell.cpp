@@ -98,9 +98,9 @@ RenderTableCell::RenderTableCell(Document& document, RenderStyle&& style)
     ASSERT(isRenderTableCell());
 }
 
-void RenderTableCell::willBeRemovedFromTree(IsInternalMove isInternalMove)
+void RenderTableCell::willBeRemovedFromTree()
 {
-    RenderBlockFlow::willBeRemovedFromTree(isInternalMove);
+    RenderBlockFlow::willBeRemovedFromTree();
     if (!table() || !section())
         return;
     RenderTableSection* section = this->section();

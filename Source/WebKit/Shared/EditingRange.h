@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ArgumentCoders.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

@@ -272,11 +272,13 @@ void RenderListMarker::layout()
 
 void RenderListMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
 {
-    if (m_image && o == m_image->data()) {
-        if (width() != m_image->imageSize(this, style().usedZoom()).width() || height() != m_image->imageSize(this, style().usedZoom()).height() || m_image->errorOccurred())
-            setNeedsLayoutAndPrefWidthsRecalc();
-        else
-            repaint();
+    if (parent()) {
+        if (m_image && o == m_image->data()) {
+            if (width() != m_image->imageSize(this, style().usedZoom()).width() || height() != m_image->imageSize(this, style().usedZoom()).height() || m_image->errorOccurred())
+                setNeedsLayoutAndPrefWidthsRecalc();
+            else
+                repaint();
+        }
     }
     RenderBox::imageChanged(o, rect);
 }

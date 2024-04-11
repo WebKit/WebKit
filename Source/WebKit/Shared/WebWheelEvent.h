@@ -29,7 +29,6 @@
 #include "WebEvent.h"
 #include <WebCore/FloatSize.h>
 #include <WebCore/IntPoint.h>
-#include <wtf/EnumTraits.h>
 
 namespace WebKit {
 

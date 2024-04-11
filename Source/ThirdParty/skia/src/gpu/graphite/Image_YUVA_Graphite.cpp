@@ -8,16 +8,20 @@
 #include "src/gpu/graphite/Image_YUVA_Graphite.h"
 
 #include "include/core/SkBitmap.h"
+#include "include/core/SkCanvas.h"
 #include "include/core/SkColorSpace.h"
 #include "include/core/SkImage.h"
+#include "include/core/SkSurface.h"
 #include "include/core/SkYUVAInfo.h"
 #include "include/core/SkYUVAPixmaps.h"
 #include "include/gpu/GpuTypes.h"
 #include "include/gpu/graphite/Image.h"
 #include "include/gpu/graphite/Recorder.h"
+#include "include/gpu/graphite/Surface.h"
 #include "include/gpu/graphite/YUVABackendTextures.h"
 #include "src/gpu/RefCntedCallback.h"
 #include "src/gpu/graphite/Caps.h"
+#include "src/gpu/graphite/Image_Graphite.h"
 #include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/RecorderPriv.h"
 #include "src/gpu/graphite/ResourceProvider.h"
@@ -25,6 +29,7 @@
 #include "src/gpu/graphite/TextureProxy.h"
 #include "src/gpu/graphite/TextureProxyView.h"
 #include "src/gpu/graphite/TextureUtils.h"
+#include "src/shaders/SkImageShader.h"
 
 namespace {
 constexpr auto kAssumedColorType = kRGBA_8888_SkColorType;
@@ -50,6 +55,42 @@ Image_YUVA::Image_YUVA(uint32_t uniqueID,
     SkASSERT(fYUVAProxies.isValid());
 }
 
+Image_YUVA::~Image_YUVA() = default;
+
+sk_sp<Image_YUVA> Image_YUVA::MakeView(const Caps* caps,
+                                       const SkYUVAInfo& yuvaInfo,
+                                       SkSpan<const sk_sp<SkImage>> images,
+                                       sk_sp<SkColorSpace> imageColorSpace) {
+    int numPlanes = yuvaInfo.numPlanes();
+    if ((size_t) numPlanes > images.size()) {
+        return nullptr;
+    }
+    TextureProxyView textureProxyViews[SkYUVAInfo::kMaxPlanes];
+    for (int plane = 0; plane < numPlanes; ++plane) {
+        if (as_IB(images[plane])->type() != SkImage_Base::Type::kGraphite) {
+            return nullptr;
+        }
+
+        textureProxyViews[plane] = static_cast<Image*>(images[plane].get())->textureProxyView();
+        // YUVATextureProxies expects to sample from the red channel for single-channel textures, so
+        // reset the swizzle for alpha-only textures to compensate for that
+        if (images[plane]->isAlphaOnly()) {
+            textureProxyViews[plane] = textureProxyViews[plane].makeSwizzle(skgpu::Swizzle("aaaa"));
+        }
+    }
+    YUVATextureProxies yuvaProxies(caps, yuvaInfo, SkSpan<TextureProxyView>(textureProxyViews));
+    SkASSERT(yuvaProxies.isValid());
+    sk_sp<Image_YUVA> view = sk_make_sp<Image_YUVA>(
+            kNeedNewImageUniqueID, std::move(yuvaProxies), std::move(imageColorSpace));
+    // Unlike the other factories, this YUVA image shares the texture proxies with each plane Image,
+    // so if those are linked to Devices, it must inherit those same links.
+    for (int plane = 0; plane < numPlanes; ++plane) {
+        SkASSERT(as_IB(images[plane])->isGraphiteBacked());
+        view->linkDevices(static_cast<Image_Base*>(images[plane].get()));
+    }
+    return view;
+}
+
 size_t Image_YUVA::textureSize() const {
     size_t size = 0;
     for (int i = 0; i < fYUVAProxies.numPlanes(); ++i) {
@@ -61,7 +102,67 @@ size_t Image_YUVA::textureSize() const {
 }
 
 sk_sp<SkImage> Image_YUVA::onReinterpretColorSpace(sk_sp<SkColorSpace> newCS) const {
-    return sk_make_sp<Image_YUVA>(kNeedNewImageUniqueID, fYUVAProxies, std::move(newCS));
+    sk_sp<Image_YUVA> view = sk_make_sp<Image_YUVA>(kNeedNewImageUniqueID,
+                                                    fYUVAProxies,
+                                                    std::move(newCS));
+    // The new Image object shares the same texture planes, so it should also share linked Devices
+    view->linkDevices(this);
+    return view;
+}
+
+sk_sp<SkImage> Image_YUVA::makeTextureImage(Recorder* recorder,
+                                            RequiredProperties requiredProps) const {
+    // Not clear if we want a flattened image here or not
+    auto mm = requiredProps.fMipmapped ? skgpu::Mipmapped::kYes : skgpu::Mipmapped::kNo;
+    sk_sp<SkSurface> s = SkSurfaces::RenderTarget(recorder, this->imageInfo(), mm);
+    if (!s) {
+        return nullptr;
+    }
+
+    s->getCanvas()->drawImage(this, 0, 0);
+    return SkSurfaces::AsImage(s);
+}
+
+sk_sp<SkImage> Image_YUVA::onMakeSubset(Recorder* recorder,
+                                        const SkIRect& subset,
+                                        RequiredProperties requiredProps) const {
+
+    SkImageInfo info = this->imageInfo().makeWH(subset.width(), subset.height());
+    auto mm = requiredProps.fMipmapped ? skgpu::Mipmapped::kYes : skgpu::Mipmapped::kNo;
+    sk_sp<SkSurface> s = SkSurfaces::RenderTarget(recorder, info, mm);
+    if (!s) {
+        return nullptr;
+    }
+
+    // Translate the subset to the origin of the destination
+    SkMatrix m = SkMatrix::Translate(-subset.x(), -subset.y());
+    SkPaint p;
+    p.setShader(SkImageShader::MakeSubset(sk_ref_sp(this),
+                                          SkRect::Make(subset),
+                                          SkTileMode::kClamp, SkTileMode::kClamp,
+                                          SkSamplingOptions(SkFilterMode::kNearest), &m));
+    s->getCanvas()->drawRect(SkRect::Make(info.bounds()), p);
+
+    return SkSurfaces::AsImage(s);
+}
+
+sk_sp<SkImage> Image_YUVA::makeColorTypeAndColorSpace(Recorder* recorder,
+                                                      SkColorType targetCT,
+                                                      sk_sp<SkColorSpace> targetCS,
+                                                      RequiredProperties requiredProps) const {
+    SkAlphaType at = (this->alphaType() == kOpaque_SkAlphaType) ? kPremul_SkAlphaType
+                                                                : this->alphaType();
+
+    SkImageInfo ii = SkImageInfo::Make(this->dimensions(), targetCT, at, std::move(targetCS));
+
+    auto mm = requiredProps.fMipmapped ? skgpu::Mipmapped::kYes : skgpu::Mipmapped::kNo;
+    sk_sp<SkSurface> s = SkSurfaces::RenderTarget(recorder, ii, mm);
+    if (!s) {
+        return nullptr;
+    }
+
+    s->getCanvas()->drawImage(this, 0, 0);
+    return SkSurfaces::AsImage(s);
 }
 
 }  // namespace skgpu::graphite

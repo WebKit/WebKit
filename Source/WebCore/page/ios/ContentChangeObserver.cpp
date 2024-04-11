@@ -65,7 +65,7 @@ static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
     fullscreenManager = document.fullscreenManagerIfExists();
     if (!fullscreenManager)
         return false;
-    auto* fullscreenElement = fullscreenManager->fullscreenElement();
+    RefPtr fullscreenElement = fullscreenManager->fullscreenElement();
     if (!fullscreenElement)
         return true;
     return !descendantCandidate.isDescendantOf(*fullscreenElement);

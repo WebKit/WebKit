@@ -29,7 +29,6 @@
 #include <optional>
 #include <variant>
 #include <vector>
-#include <wtf/EnumTraits.h>
 #include <wtf/Hasher.h>
 #include <wtf/Markable.h>
 

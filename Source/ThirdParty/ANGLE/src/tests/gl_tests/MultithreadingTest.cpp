@@ -3744,6 +3744,109 @@ TEST_P(MultithreadingTestES3, SharedFoveatedTexture)
     ASSERT_NE(currentStep, Step::Abort);
 }
 
+// Test that a program linked in one context can be bound in another context while link may be
+// happening in parallel.
+TEST_P(MultithreadingTest, ProgramLinkAndBind)
+{
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+
+    GLuint vs;
+    GLuint redfs;
+    GLuint greenfs;
+
+    GLuint program;
+
+    // Sync primitives
+    std::mutex mutex;
+    std::condition_variable condVar;
+
+    enum class Step
+    {
+        Start,
+        Thread1Ready,
+        Thread0ProgramLinked,
+        Thread1FinishedDrawing,
+        Finish,
+        Abort,
+    };
+    Step currentStep = Step::Start;
+
+    // Threads to create programs and draw.
+    auto thread0 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
+
+        // Wait for thread 1 to bind the program before linking it
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1Ready));
+
+        glUseProgram(program);
+
+        // Link a program, but don't resolve link.
+        glDetachShader(program, greenfs);
+        glAttachShader(program, redfs);
+        glLinkProgram(program);
+
+        // Let the other thread bind and use the program.
+        threadSynchronization.nextStep(Step::Thread0ProgramLinked);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1FinishedDrawing));
+
+        // Draw in this context too
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+
+        // Verify results
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+        ASSERT_GL_NO_ERROR();
+
+        threadSynchronization.nextStep(Step::Finish);
+    };
+
+    auto thread1 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
+
+        vs      = CompileShader(GL_VERTEX_SHADER, essl1_shaders::vs::Simple());
+        redfs   = CompileShader(GL_FRAGMENT_SHADER, essl1_shaders::fs::Red());
+        greenfs = CompileShader(GL_FRAGMENT_SHADER, essl1_shaders::fs::Green());
+        program = glCreateProgram();
+
+        glAttachShader(program, vs);
+        glAttachShader(program, greenfs);
+        glLinkProgram(program);
+        ASSERT_NE(CheckLinkStatusAndReturnProgram(program, true), 0u);
+
+        // Bind the program before it's relinked.  Otherwise the program is resolved before the
+        // binding happens.
+        glUseProgram(program);
+
+        threadSynchronization.nextStep(Step::Thread1Ready);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread0ProgramLinked));
+
+        // Unbind and rebind for extra testing
+        glUseProgram(0);
+        glUseProgram(program);
+
+        // Issue a draw call
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+
+        // Verify results
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+        ASSERT_GL_NO_ERROR();
+
+        // Tell the other thread to finish up.
+        threadSynchronization.nextStep(Step::Thread1FinishedDrawing);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
+    };
+
+    std::array<LockStepThreadFunc, 2> threadFuncs = {
+        std::move(thread0),
+        std::move(thread1),
+    };
+
+    RunLockStepThreads(getEGLWindow(), threadFuncs.size(), threadFuncs.data());
+
+    ASSERT_NE(currentStep, Step::Abort);
+}
+
 ANGLE_INSTANTIATE_TEST(
     MultithreadingTest,
     ES2_OPENGL(),

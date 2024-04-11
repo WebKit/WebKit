@@ -181,7 +181,7 @@ void RenderThemeCocoa::adjustApplePayButtonStyle(RenderStyle& style, const Eleme
 String RenderThemeCocoa::mediaControlsStyleSheet()
 {
     if (m_mediaControlsStyleSheet.isEmpty())
-        m_mediaControlsStyleSheet = StringImpl::createWithoutCopying(ModernMediaControlsUserAgentStyleSheet, sizeof(ModernMediaControlsUserAgentStyleSheet));
+        m_mediaControlsStyleSheet = StringImpl::createWithoutCopying(ModernMediaControlsUserAgentStyleSheet);
     return m_mediaControlsStyleSheet;
 }
 
@@ -194,7 +194,7 @@ Vector<String, 2> RenderThemeCocoa::mediaControlsScripts()
     }
 
     if (m_mediaControlsScript.isEmpty())
-        m_mediaControlsScript = StringImpl::createWithoutCopying(ModernMediaControlsJavaScript, sizeof(ModernMediaControlsJavaScript));
+        m_mediaControlsScript = StringImpl::createWithoutCopying(ModernMediaControlsJavaScript);
 
     return {
         m_mediaControlsLocalizedStringsScript,

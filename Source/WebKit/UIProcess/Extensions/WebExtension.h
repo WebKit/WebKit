@@ -115,6 +115,11 @@ public:
         DocumentEnd,
     };
 
+    enum class Environment : bool {
+        Document,
+        ServiceWorker,
+    };
+
     using PermissionsSet = HashSet<String>;
     using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
 
@@ -357,6 +362,7 @@ private:
     RetainPtr<NSString> m_backgroundPagePath;
     RetainPtr<NSString> m_backgroundServiceWorkerPath;
     RetainPtr<NSString> m_generatedBackgroundContent;
+    Environment m_backgroundContentEnvironment { Environment::Document };
 
     RetainPtr<NSString> m_inspectorBackgroundPagePath;
 
@@ -364,7 +370,7 @@ private:
     RetainPtr<NSString> m_overrideNewTabPagePath;
 
     bool m_backgroundContentIsPersistent : 1 { false };
-    bool m_backgroundPageUsesModules : 1 { false };
+    bool m_backgroundContentUsesModules : 1 { false };
     bool m_parsedManifest : 1 { false };
     bool m_parsedManifestDisplayStrings : 1 { false };
     bool m_parsedManifestContentSecurityPolicyStrings : 1 { false };

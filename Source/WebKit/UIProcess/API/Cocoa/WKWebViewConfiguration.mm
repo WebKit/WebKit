@@ -290,7 +290,30 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return wrapper(_pageConfiguration->copy().leakRef());
+    WKWebViewConfiguration *configuration = [(WKWebViewConfiguration *)[[self class] allocWithZone:zone] init];
+    configuration->_pageConfiguration->copyDataFrom(*_pageConfiguration);
+    return configuration;
+}
+
+- (void)setValue:(id)value forKey:(NSString *)key
+{
+    if (([key isEqualToString:@"allowUniversalAccessFromFileURLs"] || [key isEqualToString:@"_allowUniversalAccessFromFileURLs"]) && [value isKindOfClass:[NSNumber class]] && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ThrowOnKVCInstanceVariableAccess)) {
+        RELEASE_LOG_FAULT(API, "Do not mutate private state `%{public}@` via KVC. Doing this when linking against newer SDKs will result in a crash.", key);
+        [self _setAllowUniversalAccessFromFileURLs:[(NSNumber *)value boolValue]];
+        return;
+    }
+
+    [super setValue:value forKey:key];
+}
+
+- (id)valueForKey:(NSString *)key
+{
+    if (([key isEqualToString:@"allowUniversalAccessFromFileURLs"] || [key isEqualToString:@"_allowUniversalAccessFromFileURLs"]) && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ThrowOnKVCInstanceVariableAccess)) {
+        RELEASE_LOG_FAULT(API, "Do not access private state `%{public}@` via KVC. Doing this when linking against newer SDKs will result in a crash.", key);
+        return @([self _allowUniversalAccessFromFileURLs]);
+    }
+
+    return [super valueForKey:key];
 }
 
 - (WKProcessPool *)processPool

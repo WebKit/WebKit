@@ -13,7 +13,6 @@ function videoWithData() {
 }
 
 onload = async () => {
-  try {
     let video = await videoWithData();
     let videoFrame = new VideoFrame(video, {timestamp: 0});
     try { videoFrame.close() } catch {}
@@ -23,8 +22,6 @@ onload = async () => {
       label: 'a',
       requiredFeatures: [
         'depth32float-stencil8',
-        'texture-compression-etc2',
-        'texture-compression-astc',
         'shader-f16',
         'rg11b10ufloat-renderable'
       ],
@@ -32,12 +29,11 @@ onload = async () => {
       maxVertexAttributes: 22,
       maxVertexBufferArrayStride: 51879,
       maxStorageTexturesPerShaderStage: 25,
-      maxBindingsPerBindGroup: 1319,
+      maxBindingsPerBindGroup: 319,
       },
     });
     let externalTexture15 = device3.importExternalTexture({ label: 'a', source: video6, colorSpace: 'srgb', });
-  } catch {}
-  globalThis.testRunner?.notifyDone();
+    globalThis.testRunner?.notifyDone();
 };
 </script>
 This test passes if it does not crash.

@@ -516,12 +516,11 @@ RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const Gr
         bitmapInfo |= kCGImageAlphaLast;
 
     Ref protectedPixelBuffer = pixelBuffer;
-    auto dataSize = pixelBuffer->sizeInBytes();
     auto data = pixelBuffer->bytes();
 
-    verifyImageBufferIsBigEnough(data, dataSize);
+    verifyImageBufferIsBigEnough(data.data(), data.size());
 
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(&protectedPixelBuffer.leakRef(), data, dataSize, [] (void* context, const void*, size_t) {
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(&protectedPixelBuffer.leakRef(), data.data(), data.size(), [] (void* context, const void*, size_t) {
         static_cast<PixelBuffer*>(context)->deref();
     }));
 

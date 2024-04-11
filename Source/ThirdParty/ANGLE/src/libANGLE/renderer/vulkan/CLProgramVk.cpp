@@ -7,6 +7,7 @@
 
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
+#include "libANGLE/renderer/vulkan/CLDeviceVk.h"
 
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLKernel.h"
@@ -150,6 +151,7 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                     kernelArgs.at(kernelArg.ordinal) = std::move(kernelArg);
                     break;
                 }
+                case NonSemanticClspvReflectionPushConstantGlobalSize:
                 case NonSemanticClspvReflectionPushConstantGlobalOffset:
                 case NonSemanticClspvReflectionPushConstantRegionOffset:
                 {
@@ -161,7 +163,7 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                 }
                 case NonSemanticClspvReflectionSpecConstantWorkgroupSize:
                 {
-                    reflectionData.specConstantWGS = {
+                    reflectionData.specConstantWorkgroupSizeIDs = {
                         reflectionData.spvIntLookup[spvInstr.words[5]],
                         reflectionData.spvIntLookup[spvInstr.words[6]],
                         reflectionData.spvIntLookup[spvInstr.words[7]]};
@@ -364,15 +366,12 @@ angle::Result CLProgramVk::init(const size_t *lengths,
 
 CLProgramVk::~CLProgramVk()
 {
-    for (vk::BindingPointer<vk::DescriptorSetLayout, vk::AtomicRefCounted<vk::DescriptorSetLayout>>
-             &dsLayouts : mDescriptorSetLayouts)
-    {
-        dsLayouts.reset();
-    }
     for (vk::BindingPointer<rx::vk::DynamicDescriptorPool> &pool : mDescriptorPools)
     {
         pool.reset();
     }
+    mPoolBinding.reset();
+    mShader.get().destroy(mContext->getDevice());
     mMetaDescriptorPool.destroy(mContext->getRenderer());
     mDescSetLayoutCache.destroy(mContext->getRenderer());
     mPipelineLayoutCache.destroy(mContext->getRenderer());
@@ -619,6 +618,8 @@ angle::Result CLProgramVk::createKernel(const cl::Kernel &kernel,
                                         const char *name,
                                         CLKernelImpl::Ptr *kernelOut)
 {
+    std::scoped_lock<std::mutex> sl(mProgramMutex);
+
     const auto devProgram = getDeviceProgramData(name);
     ASSERT(devProgram != nullptr);
 
@@ -635,7 +636,7 @@ angle::Result CLProgramVk::createKernel(const cl::Kernel &kernel,
     }
 
     // Update push contant range and add layout bindings for arguments
-    vk::DescriptorSetLayoutDesc descriptorSetDesc;
+    vk::DescriptorSetLayoutDesc descriptorSetLayoutDesc;
     VkPushConstantRange pcRange = devProgram->pushConstRange;
     for (const auto &arg : kernelImpl->getArgs())
     {
@@ -661,42 +662,35 @@ angle::Result CLProgramVk::createKernel(const cl::Kernel &kernel,
             default:
                 continue;
         }
-        descriptorSetDesc.update(arg.descriptorBinding, descType, 1, VK_SHADER_STAGE_COMPUTE_BIT,
-                                 nullptr);
+        descriptorSetLayoutDesc.update(arg.descriptorBinding, descType, 1,
+                                       VK_SHADER_STAGE_COMPUTE_BIT, nullptr);
     }
 
     // Get descriptor set layout from cache (creates if missed)
-    ANGLE_CL_IMPL_TRY_ERROR(mDescSetLayoutCache.getDescriptorSetLayout(
-                                mContext, descriptorSetDesc,
-                                &mDescriptorSetLayouts[DescriptorSetIndex::ShaderResource]),
-                            CL_INVALID_OPERATION);
+    ANGLE_CL_IMPL_TRY_ERROR(
+        mDescSetLayoutCache.getDescriptorSetLayout(
+            mContext, descriptorSetLayoutDesc,
+            &kernelImpl->getDescriptorSetLayouts()[DescriptorSetIndex::ShaderResource]),
+        CL_INVALID_OPERATION);
 
     // Get pipeline layout from cache (creates if missed)
     vk::PipelineLayoutDesc pipelineLayoutDesc;
     pipelineLayoutDesc.updateDescriptorSetLayout(DescriptorSetIndex::ShaderResource,
-                                                 descriptorSetDesc);
+                                                 descriptorSetLayoutDesc);
     pipelineLayoutDesc.updatePushConstantRange(pcRange.stageFlags, pcRange.offset, pcRange.size);
-    ANGLE_CL_IMPL_TRY_ERROR(
-        mPipelineLayoutCache.getPipelineLayout(mContext, pipelineLayoutDesc, mDescriptorSetLayouts,
-                                               &kernelImpl->getPipelineLayout()),
-        CL_INVALID_OPERATION);
+    ANGLE_CL_IMPL_TRY_ERROR(mPipelineLayoutCache.getPipelineLayout(
+                                mContext, pipelineLayoutDesc, kernelImpl->getDescriptorSetLayouts(),
+                                &kernelImpl->getPipelineLayout()),
+                            CL_INVALID_OPERATION);
 
-    // Setup descriptor pool and allocate/get descriptor set
-    vk::RefCountedDescriptorPoolBinding poolBinding;
+    // Setup descriptor pool
     ANGLE_CL_IMPL_TRY_ERROR(mMetaDescriptorPool.bindCachedDescriptorPool(
-                                mContext, descriptorSetDesc, 1, &mDescSetLayoutCache,
+                                mContext, descriptorSetLayoutDesc, 1, &mDescSetLayoutCache,
                                 &mDescriptorPools[DescriptorSetIndex::ShaderResource]),
                             CL_INVALID_OPERATION);
-    if (!descriptorSetDesc.empty())
-    {
-        ANGLE_CL_IMPL_TRY_ERROR(
-            mDescriptorPools[DescriptorSetIndex::ShaderResource].get().allocateDescriptorSet(
-                mContext, mDescriptorSetLayouts[DescriptorSetIndex::ShaderResource].get(),
-                &poolBinding, &kernelImpl->getDescriptorSet()),
-            CL_INVALID_OPERATION);
-    }
 
     *kernelOut = std::move(kernelImpl);
+
     return angle::Result::Continue;
 }
 
@@ -868,7 +862,8 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
             }
         }
 
-        // Extract reflection info from spv binary and populate reflection data
+        // Extract reflection info from spv binary and populate reflection data, as well as create
+        // the shader module
         if (deviceProgramData.binaryType == CL_PROGRAM_BINARY_TYPE_EXECUTABLE)
         {
             spvtools::SpirvTools spvTool(SPV_ENV_UNIVERSAL_1_5);
@@ -883,6 +878,26 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
             if (!parseRet)
             {
                 ERR() << "Failed to parse reflection info from SPIR-V!";
+                deviceProgramData.buildStatus = CL_BUILD_ERROR;
+                return false;
+            }
+
+            if (mShader.get().valid())
+            {
+                // User is recompiling program, we need to recreate the shader module
+                mShader.get().destroy(mContext->getDevice());
+            }
+            // Strip SPIR-V binary if Vk implementation does not support non-semantic info
+            angle::spirv::Blob spvBlob =
+                !mContext->getRenderer()->getFeatures().supportsShaderNonSemanticInfo.enabled
+                    ? stripReflection(&deviceProgramData)
+                    : deviceProgramData.binary;
+            ASSERT(!spvBlob.empty());
+            if (IsError(vk::InitShaderModule(mContext, &mShader.get(), spvBlob.data(),
+                                             spvBlob.size() * sizeof(uint32_t))))
+            {
+                ERR() << "Failed to init Vulkan Shader Module!";
+                deviceProgramData.buildStatus = CL_BUILD_ERROR;
                 return false;
             }
 
@@ -931,6 +946,19 @@ angle::spirv::Blob CLProgramVk::stripReflection(const DeviceProgramData *deviceP
         ERR() << "Could not strip reflection data from binary!";
     }
     return binaryStripped;
+}
+
+angle::Result CLProgramVk::allocateDescriptorSet(const vk::DescriptorSetLayout &descriptorSetLayout,
+                                                 VkDescriptorSet *descriptorSetOut)
+{
+    if (mDescriptorPools[DescriptorSetIndex::ShaderResource].get().valid())
+    {
+        ANGLE_CL_IMPL_TRY_ERROR(
+            mDescriptorPools[DescriptorSetIndex::ShaderResource].get().allocateDescriptorSet(
+                mContext, descriptorSetLayout, &mPoolBinding, descriptorSetOut),
+            CL_INVALID_OPERATION);
+    }
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

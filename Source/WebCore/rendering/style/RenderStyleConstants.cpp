@@ -862,6 +862,7 @@ TextStream& operator<<(TextStream& ts, PseudoId pseudoId)
     case PseudoId::FirstLetter: ts << "first-letter"; break;
     case PseudoId::GrammarError: ts << "grammar-error"; break;
     case PseudoId::Highlight: ts << "highlight"; break;
+    case PseudoId::InternalWritingSuggestions: ts << "-internal-writing-suggestions"; break;
     case PseudoId::Marker: ts << "marker"; break;
     case PseudoId::Backdrop: ts << "backdrop"; break;
     case PseudoId::Before: ts << "before"; break;

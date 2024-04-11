@@ -30,9 +30,81 @@
 #include "libANGLE/renderer/wgpu/TextureWgpu.h"
 #include "libANGLE/renderer/wgpu/TransformFeedbackWgpu.h"
 #include "libANGLE/renderer/wgpu/VertexArrayWgpu.h"
+#include "libANGLE/renderer/wgpu/wgpu_utils.h"
 
 namespace rx
 {
+
+namespace
+{
+
+constexpr angle::PackedEnumMap<webgpu::RenderPassClosureReason, const char *>
+    kRenderPassClosureReason = {{
+        {webgpu::RenderPassClosureReason::NewRenderPass,
+         "Render pass closed due to starting a new render pass"},
+    }};
+
+bool RenderPassColorAttachmentEqual(const wgpu::RenderPassColorAttachment &attachment1,
+                                    const wgpu::RenderPassColorAttachment &attachment2)
+{
+
+    if (attachment1.nextInChain != nullptr || attachment2.nextInChain != nullptr)
+    {
+        return false;
+    }
+
+    return attachment1.view.Get() == attachment2.view.Get() &&
+           attachment1.depthSlice == attachment2.depthSlice &&
+           attachment1.resolveTarget.Get() == attachment2.resolveTarget.Get() &&
+           attachment1.loadOp == attachment2.loadOp && attachment1.storeOp == attachment2.storeOp &&
+           attachment1.clearValue.r == attachment2.clearValue.r &&
+           attachment1.clearValue.g == attachment2.clearValue.g &&
+           attachment1.clearValue.b == attachment2.clearValue.b &&
+           attachment1.clearValue.a == attachment2.clearValue.a;
+}
+
+bool RenderPassDepthStencilAttachmentEqual(
+    const wgpu::RenderPassDepthStencilAttachment &attachment1,
+    const wgpu::RenderPassDepthStencilAttachment &attachment2)
+{
+    return attachment1.view.Get() == attachment2.view.Get() &&
+           attachment1.depthLoadOp == attachment2.depthLoadOp &&
+           attachment1.depthStoreOp == attachment2.depthStoreOp &&
+           attachment1.depthClearValue == attachment2.depthClearValue &&
+           attachment1.stencilLoadOp == attachment2.stencilLoadOp &&
+           attachment1.stencilStoreOp == attachment2.stencilStoreOp &&
+           attachment1.stencilClearValue == attachment2.stencilClearValue &&
+           attachment1.stencilReadOnly == attachment2.stencilReadOnly;
+}
+
+bool RenderPassDescEqual(const wgpu::RenderPassDescriptor &desc1,
+                         const wgpu::RenderPassDescriptor &desc2)
+{
+
+    if (desc1.nextInChain != nullptr || desc2.nextInChain != nullptr)
+    {
+        return false;
+    }
+
+    if (desc1.colorAttachmentCount != desc2.colorAttachmentCount)
+    {
+        return false;
+    }
+
+    for (uint32_t i = 0; i < desc1.colorAttachmentCount; ++i)
+    {
+        if (!RenderPassColorAttachmentEqual(desc1.colorAttachments[i], desc2.colorAttachments[i]))
+        {
+            return false;
+        }
+    }
+
+    // TODO(anglebug.com/8582): for now ignore `occlusionQuerySet` and `timestampWrites`.
+
+    return RenderPassDepthStencilAttachmentEqual(*desc1.depthStencilAttachment,
+                                                 *desc2.depthStencilAttachment);
+}
+}  // namespace
 
 ContextWgpu::ContextWgpu(const gl::State &state, gl::ErrorSet *errorSet, DisplayWgpu *display)
     : ContextImpl(state, errorSet), mDisplay(display)
@@ -524,4 +596,45 @@ void ContextWgpu::handleError(GLenum errorCode,
     errorStream << "Internal Wgpu back-end error: " << message << ".";
     mErrors->handleError(errorCode, errorStream.str().c_str(), file, function, line);
 }
+
+angle::Result ContextWgpu::ensureRenderPassStarted(const wgpu::RenderPassDescriptor &desc)
+{
+    if (!mCurrentCommandEncoder)
+    {
+        mCurrentCommandEncoder = getDevice().CreateCommandEncoder(nullptr);
+    }
+    if (mCurrentRenderPass)
+    {
+        // TODO(anglebug.com/8582): this should eventually ignore load and store operations so we
+        // can avoid starting a new render pass in more situations.
+        if (RenderPassDescEqual(mCurrentRenderPassDesc, desc))
+        {
+            return angle::Result::Continue;
+        }
+        ANGLE_TRY(endRenderPass(webgpu::RenderPassClosureReason::NewRenderPass));
+    }
+    mCurrentRenderPass     = mCurrentCommandEncoder.BeginRenderPass(&desc);
+    mCurrentRenderPassDesc = desc;
+
+    return angle::Result::Continue;
+}
+
+angle::Result ContextWgpu::endRenderPass(webgpu::RenderPassClosureReason closure_reason)
+{
+
+    const char *reasonText = kRenderPassClosureReason[closure_reason];
+    INFO() << reasonText;
+    mCurrentRenderPass.End();
+    mCurrentRenderPass = nullptr;
+    return angle::Result::Continue;
+}
+
+angle::Result ContextWgpu::flush()
+{
+    wgpu::CommandBuffer command_buffer = mCurrentCommandEncoder.Finish();
+    getQueue().Submit(1, &command_buffer);
+    mCurrentCommandEncoder = nullptr;
+    return angle::Result::Continue;
+}
+
 }  // namespace rx

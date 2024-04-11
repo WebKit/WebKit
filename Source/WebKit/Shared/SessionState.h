@@ -32,7 +32,6 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <wtf/ArgumentCoder.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/RunLoop.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>

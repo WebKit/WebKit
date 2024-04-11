@@ -895,7 +895,11 @@ bool RenderLayer::canRender3DTransforms() const
 
 bool RenderLayer::paintsWithFilters() const
 {
-    if (!hasFilter())
+    const auto& filter = renderer().style().filter();
+    if (filter.isEmpty())
+        return false;
+
+    if (renderer().isRenderOrLegacyRenderSVGRoot() && filter.isReferenceFilter())
         return false;
 
     if (RenderLayerFilters::isIdentity(renderer()))
@@ -5602,15 +5606,12 @@ void RenderLayer::clearLayerScrollableArea()
 
 void RenderLayer::updateFiltersAfterStyleChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    if (!paintsWithFilters()) {
-        clearLayerFilters();
-        return;
-    }
-
     if (renderer().style().filter().hasReferenceFilter()) {
         ensureLayerFilters();
         m_filters->updateReferenceFilterClients(renderer().style().filter());
-    } else if (m_filters)
+    } else if (!paintsWithFilters())
+        clearLayerFilters();
+    else if (m_filters)
         m_filters->removeReferenceFilterClients();
 
     if (diff >= StyleDifference::RepaintLayer && oldStyle && oldStyle->filter() != renderer().style().filter())

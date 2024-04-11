@@ -37,15 +37,15 @@ RenderTableCaption::RenderTableCaption(Element& element, RenderStyle&& style)
 
 RenderTableCaption::~RenderTableCaption() = default;
 
-void RenderTableCaption::insertedIntoTree(IsInternalMove isInternalMove)
+void RenderTableCaption::insertedIntoTree()
 {
-    RenderBlockFlow::insertedIntoTree(isInternalMove);
+    RenderBlockFlow::insertedIntoTree();
     table()->addCaption(*this);
 }
 
-void RenderTableCaption::willBeRemovedFromTree(IsInternalMove isInternalMove)
+void RenderTableCaption::willBeRemovedFromTree()
 {
-    RenderBlockFlow::willBeRemovedFromTree(isInternalMove);
+    RenderBlockFlow::willBeRemovedFromTree();
     table()->removeCaption(*this);
 }
 

@@ -72,7 +72,8 @@ class WatchPort(DevicePort):
         for version in versions_to_fallback:
             if apple_additions():
                 apple_name = VersionNameMap.map(self.host.platform).to_name(version, platform=WatchPort.port_name, table=INTERNAL_TABLE)
-                expectations.append(self._apple_baseline_path('{}-{}'.format(self.port_name, apple_name.lower().replace(' ', ''))))
+                if apple_name:
+                    expectations.append(self._apple_baseline_path('{}-{}'.format(self.port_name, apple_name.lower().replace(' ', ''))))
             expectations.append(self._webkit_baseline_path('{}-{}'.format(self.port_name, version.major)))
 
         if apple_additions():

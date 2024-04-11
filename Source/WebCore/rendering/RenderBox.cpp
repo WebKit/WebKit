@@ -250,16 +250,15 @@ void RenderBox::removeFloatingAndInvalidateForLayout()
 
 void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
 {
-    ASSERT(isFloatingOrOutOfFlowPositioned());
-
-    if (renderTreeBeingDestroyed())
-        return;
+    ASSERT(!renderTreeBeingDestroyed());
 
     if (isFloating())
-        removeFloatingAndInvalidateForLayout();
+        return removeFloatingAndInvalidateForLayout();
 
     if (isOutOfFlowPositioned())
-        RenderBlock::removePositionedObject(*this);
+        return RenderBlock::removePositionedObject(*this);
+
+    ASSERT_NOT_REACHED();
 }
 
 void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
@@ -284,7 +283,7 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
                 // current containing block chain for preferred widths recalculation.
                 setNeedsLayoutAndPrefWidthsRecalc();
             } else
-                markContainingBlocksForLayout();
+                scheduleLayout(markContainingBlocksForLayout());
             
             if (oldStyle->position() != PositionType::Static && newStyle.hasOutOfFlowPosition())
                 parent()->setChildNeedsLayout();
@@ -2031,12 +2030,10 @@ static StyleImage* findLayerUsedImage(WrappedImagePtr image, const FillLayer& la
 
 void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 {
-    if (!parent())
-        return;
-
     if ((style().borderImage().image() && style().borderImage().image()->data() == image) ||
         (style().maskBorder().image() && style().maskBorder().image()->data() == image)) {
-        repaint();
+        if (parent())
+            repaint();
         return;
     }
 
@@ -2049,6 +2046,9 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
     bool didFullRepaint = false;
 
     auto repaintForBackgroundAndMask = [&](auto& style) {
+        if (!parent())
+            return;
+
         if (!didFullRepaint)
             didFullRepaint = repaintLayerRectsForImage(image, style.backgroundLayers(), true);
         if (!didFullRepaint)
@@ -3111,13 +3111,6 @@ static bool shouldFlipBeforeAfterMargins(const RenderStyle& containingBlockStyle
         shouldFlip = !shouldFlip;
 
     return shouldFlip;
-}
-
-void RenderBox::willBeRemovedFromTree(IsInternalMove isInternalMove)
-{
-    RenderBoxModelObject::willBeRemovedFromTree(isInternalMove);
-    if (CheckedPtr parentFlexibleBox = dynamicDowncast<RenderFlexibleBox>(parent()))
-        parentFlexibleBox->clearCachedMainSizeForChild(*this);
 }
 
 void RenderBox::cacheIntrinsicContentLogicalHeightForFlexItem(LayoutUnit height) const

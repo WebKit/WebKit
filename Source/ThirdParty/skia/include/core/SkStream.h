@@ -392,13 +392,9 @@ public:
     */
     void setMemoryOwned(const void* data, size_t length);
 
-#if !defined(SK_REMOVE_LEGACY_STREAM_AS_DATA)
-    sk_sp<SkData> asData() const { return fData; }
-#endif
     sk_sp<SkData> getData() const override { return fData; }
     void setData(sk_sp<SkData> data);
 
-    void skipToAlign4();
     const void* getAtPos();
 
     size_t read(void* buffer, size_t size) override;

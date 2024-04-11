@@ -34,6 +34,7 @@ namespace WebCore {
 
 class AnimationList;
 class AutosizeStatus;
+class BasicShapePath;
 class BorderData;
 class BorderValue;
 class CSSCustomPropertyValue;
@@ -1683,6 +1684,10 @@ public:
     inline void setX(Length&&);
     inline const Length& y() const;
     inline void setY(Length&&);
+
+    inline void setD(RefPtr<BasicShapePath>&&);
+    inline BasicShapePath* d() const;
+    static BasicShapePath* initialD() { return nullptr; }
 
     inline float floodOpacity() const;
     inline void setFloodOpacity(float);

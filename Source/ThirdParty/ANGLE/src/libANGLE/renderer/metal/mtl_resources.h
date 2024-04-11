@@ -337,16 +337,18 @@ class Texture final : public Resource,
             bool renderTargetOnly);
 
     // Create a texture view
-    Texture(Texture *original, MTLPixelFormat format);
-    Texture(Texture *original, MTLTextureType type, NSRange mipmapLevelRange, NSRange slices);
-    Texture(Texture *original, MTLPixelFormat format, const TextureSwizzleChannels &swizzle);
-
-    // Creates a view for a shader image binding.
+    Texture(Texture *original, MTLPixelFormat pixelFormat);
     Texture(Texture *original,
-            MTLTextureType type,
-            const MipmapNativeLevel &level,
-            int layer,
-            MTLPixelFormat pixelFormat);
+            MTLPixelFormat pixelFormat,
+            MTLTextureType textureType,
+            NSRange levels,
+            NSRange slices);
+    Texture(Texture *original,
+            MTLPixelFormat pixelFormat,
+            MTLTextureType textureType,
+            NSRange levels,
+            NSRange slices,
+            const TextureSwizzleChannels &swizzle);
 
     void syncContentIfNeeded(ContextMtl *context);
 

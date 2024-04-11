@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 

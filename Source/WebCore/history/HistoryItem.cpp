@@ -330,11 +330,6 @@ const Vector<Ref<HistoryItem>>& HistoryItem::children() const
     return m_children;
 }
 
-bool HistoryItem::hasChildren() const
-{
-    return !m_children.isEmpty();
-}
-
 void HistoryItem::clearChildren()
 {
     m_children.clear();
@@ -372,24 +367,6 @@ bool HistoryItem::hasSameDocumentTree(HistoryItem& otherItem) const
         auto& child = children()[i].get();
         auto* otherChild = otherItem.childItemWithDocumentSequenceNumber(child.documentSequenceNumber());
         if (!otherChild || !child.hasSameDocumentTree(*otherChild))
-            return false;
-    }
-
-    return true;
-}
-
-// Does a non-recursive check that this item and its immediate children have the
-// same frames as the other item.
-bool HistoryItem::hasSameFrames(HistoryItem& otherItem) const
-{
-    if (target() != otherItem.target())
-        return false;
-        
-    if (children().size() != otherItem.children().size())
-        return false;
-
-    for (size_t i = 0; i < children().size(); i++) {
-        if (!otherItem.childItemWithTarget(children()[i]->target()))
             return false;
     }
 

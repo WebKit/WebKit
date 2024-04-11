@@ -1122,7 +1122,8 @@ public:
     void getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);
     void characterIndexForPointAsync(const WebCore::IntPoint&, CompletionHandler<void(uint64_t)>&&);
     void firstRectForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::IntRect&, const EditingRange&)>&&);
-    void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>&, const Vector<WebCore::CompositionHighlight>&, const HashMap<String, Vector<WebCore::CharacterRange>>&, const EditingRange& selectionRange, const EditingRange& replacementRange);
+    void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>&, const Vector<WebCore::CompositionHighlight>&, const EditingRange& selectionRange, const EditingRange& replacementRange);
+    void setWritingSuggestion(const String& text, const EditingRange& selectionRange);
     void confirmCompositionAsync();
 
     void setScrollPerformanceDataCollectionEnabled(bool);
@@ -2193,6 +2194,7 @@ public:
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     void removeTextIndicatorStyleForID(const WTF::UUID&);
+    void enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID&);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -2426,8 +2428,9 @@ public:
     template<typename M> void sendToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&);
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    void setSpatialTrackingLabel(const String&);
-    const String& spatialTrackingLabel() const;
+    void setDefaultSpatialTrackingLabel(const String&);
+    const String& defaultSpatialTrackingLabel() const;
+    void updateDefaultSpatialTrackingLabel();
 #endif
 
 private:
@@ -3547,6 +3550,10 @@ private:
 #endif
 
     std::unique_ptr<WebsitePoliciesData> m_mainFrameWebsitePoliciesData;
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    String m_defaultSpatialTrackingLabel;
+#endif
 };
 
 } // namespace WebKit

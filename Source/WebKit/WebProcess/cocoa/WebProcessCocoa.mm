@@ -115,6 +115,7 @@
 #import <pal/spi/cocoa/pthreadSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <stdio.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/Language.h>
 #import <wtf/LogInitialization.h>
@@ -1532,15 +1533,19 @@ void WebProcess::systemDidWake()
 #if PLATFORM(MAC)
 void WebProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle, SandboxExtension::Handle&& machBootstrapHandle)
 {
-    auto bootstrapExtension = SandboxExtension::create(WTFMove(machBootstrapHandle));
+    auto cacheInvalidationHandler = [handle = WTFMove(handle), machBootstrapHandle = WTFMove(machBootstrapHandle)] () mutable {
+        auto bootstrapExtension = SandboxExtension::create(WTFMove(machBootstrapHandle));
 
-    if (bootstrapExtension)
-        bootstrapExtension->consume();
-    
-    AuxiliaryProcess::openDirectoryCacheInvalidated(WTFMove(handle));
-    
-    if (bootstrapExtension)
-        bootstrapExtension->revoke();
+        if (bootstrapExtension)
+            bootstrapExtension->consume();
+
+        AuxiliaryProcess::openDirectoryCacheInvalidated(WTFMove(handle));
+
+        if (bootstrapExtension)
+            bootstrapExtension->revoke();
+    };
+
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), makeBlockPtr(WTFMove(cacheInvalidationHandler)).get());
 }
 #endif
 

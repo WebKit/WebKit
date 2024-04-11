@@ -72,7 +72,7 @@ private:
             return AtomString(string);
 
         auto& slot = atomStringCacheSlot(string.front(), string.back(), string.size());
-        if (!equal(slot.impl(), string.data(), string.size())) {
+        if (!equal(slot.impl(), string)) {
             AtomString result { string };
             slot = result;
             return result;
@@ -91,7 +91,7 @@ private:
             return QualifiedName(nullAtom(), AtomString(string), nullAtom());
 
         auto& slot = qualifiedNameCacheSlot(string.front(), string.back(), string.size());
-        if (!slot || !equal(slot->m_localName.impl(), string.data(), string.size())) {
+        if (!slot || !equal(slot->m_localName.impl(), string)) {
             QualifiedName result(nullAtom(), AtomString(string), nullAtom());
             slot = result.impl();
             return result;

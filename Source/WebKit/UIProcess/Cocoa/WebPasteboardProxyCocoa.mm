@@ -27,6 +27,7 @@
 #import "WebPasteboardProxy.h"
 
 #import "Connection.h"
+#import "PageLoadState.h"
 #import "PasteboardAccessIntent.h"
 #import "RemotePageProxy.h"
 #import "SandboxExtension.h"
@@ -107,6 +108,9 @@ std::optional<WebPasteboardProxy::PasteboardAccessType> WebPasteboardProxy::acce
 
     for (Ref page : process->pages()) {
         Ref preferences = page->preferences();
+        if (preferences->shouldSuppressTextInputFromEditingDuringProvisionalNavigation() && page->pageLoadState().isProvisional())
+            continue;
+
         if (!preferences->domPasteAllowed() || !preferences->javaScriptCanAccessClipboard())
             continue;
 
@@ -645,16 +649,6 @@ std::optional<DataOwnerType> WebPasteboardProxy::determineDataOwner(IPC::Connect
         }
     }
 
-    for (WeakPtr<RemotePageProxy> remotePage : process->remotePages()) {
-        if (!remotePage)
-            continue;
-
-        RefPtr page = remotePage->page();
-        if (page && page->webPageID() == *pageID) {
-            result = page->dataOwnerForPasteboard(intent);
-            break;
-        }
-    }
     // If this message check is hit, then the incoming web page ID doesn't correspond to any page
     // currently known to the UI process.
     MESSAGE_CHECK_WITH_RETURN_VALUE(result.has_value(), std::nullopt);

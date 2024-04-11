@@ -265,6 +265,9 @@ struct AttachmentInfo
 {
     bool usedAsInputAttachment;
     bool isInvalidated;
+    // If only one aspect of a depth/stencil image is resolved, the following is used to retain the
+    // other aspect.
+    bool isUnused;
 };
 
 void UnpackColorResolveAttachmentDesc(VkAttachmentDescription2 *desc,
@@ -297,7 +300,8 @@ void UnpackColorResolveAttachmentDesc(VkAttachmentDescription2 *desc,
     desc->finalLayout    = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 }
 
-void UnpackDepthStencilResolveAttachmentDesc(VkAttachmentDescription2 *desc,
+void UnpackDepthStencilResolveAttachmentDesc(vk::Context *context,
+                                             VkAttachmentDescription2 *desc,
                                              angle::FormatID formatID,
                                              const AttachmentInfo &depthInfo,
                                              const AttachmentInfo &stencilInfo)
@@ -316,18 +320,45 @@ void UnpackDepthStencilResolveAttachmentDesc(VkAttachmentDescription2 *desc,
     ASSERT(angleFormat.depthBits > 0 || depthInfo.isInvalidated);
     ASSERT(angleFormat.stencilBits > 0 || stencilInfo.isInvalidated);
 
+    const bool supportsLoadStoreOpNone =
+        context->getRenderer()->getFeatures().supportsRenderPassLoadStoreOpNone.enabled;
+    const bool supportsStoreOpNone =
+        supportsLoadStoreOpNone ||
+        context->getRenderer()->getFeatures().supportsRenderPassStoreOpNone.enabled;
+
+    const VkAttachmentLoadOp preserveLoadOp =
+        supportsLoadStoreOpNone ? VK_ATTACHMENT_LOAD_OP_NONE_EXT : VK_ATTACHMENT_LOAD_OP_LOAD;
+    const VkAttachmentStoreOp preserveStoreOp =
+        supportsStoreOpNone ? VK_ATTACHMENT_STORE_OP_NONE : VK_ATTACHMENT_STORE_OP_STORE;
+
     // Similarly to color resolve attachments, sample count is 1, loadOp is LOAD or DONT_CARE based
     // on whether unresolve is required, and storeOp is STORE or DONT_CARE based on whether the
     // attachment is invalidated or the aspect exists.
     desc->samples = VK_SAMPLE_COUNT_1_BIT;
-    desc->loadOp  = depthInfo.usedAsInputAttachment ? VK_ATTACHMENT_LOAD_OP_LOAD
-                                                    : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-    desc->storeOp =
-        depthInfo.isInvalidated ? VK_ATTACHMENT_STORE_OP_DONT_CARE : VK_ATTACHMENT_STORE_OP_STORE;
-    desc->stencilLoadOp = stencilInfo.usedAsInputAttachment ? VK_ATTACHMENT_LOAD_OP_LOAD
-                                                            : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-    desc->stencilStoreOp =
-        stencilInfo.isInvalidated ? VK_ATTACHMENT_STORE_OP_DONT_CARE : VK_ATTACHMENT_STORE_OP_STORE;
+    if (depthInfo.isUnused)
+    {
+        desc->loadOp  = preserveLoadOp;
+        desc->storeOp = preserveStoreOp;
+    }
+    else
+    {
+        desc->loadOp  = depthInfo.usedAsInputAttachment ? VK_ATTACHMENT_LOAD_OP_LOAD
+                                                        : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        desc->storeOp = depthInfo.isInvalidated ? VK_ATTACHMENT_STORE_OP_DONT_CARE
+                                                : VK_ATTACHMENT_STORE_OP_STORE;
+    }
+    if (stencilInfo.isUnused)
+    {
+        desc->stencilLoadOp  = preserveLoadOp;
+        desc->stencilStoreOp = preserveStoreOp;
+    }
+    else
+    {
+        desc->stencilLoadOp  = stencilInfo.usedAsInputAttachment ? VK_ATTACHMENT_LOAD_OP_LOAD
+                                                                 : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        desc->stencilStoreOp = stencilInfo.isInvalidated ? VK_ATTACHMENT_STORE_OP_DONT_CARE
+                                                         : VK_ATTACHMENT_STORE_OP_STORE;
+    }
     desc->initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
     desc->finalLayout   = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 }
@@ -6720,9 +6751,9 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
     // Track invalidated attachments so their resolve attachments can be invalidated as well.
     // Resolve attachments can be removed in that case if the render pass has only one subpass
     // (which is the case if there are no unresolve attachments).
-    gl::DrawBufferMask isColorInvalidated;
-    bool isDepthInvalidated   = false;
-    bool isStencilInvalidated = false;
+    gl::DrawBufferMask isMSRTTEmulationColorInvalidated;
+    bool isMSRTTEmulationDepthInvalidated   = false;
+    bool isMSRTTEmulationStencilInvalidated = false;
     const bool hasUnresolveAttachments =
         desc.getColorUnresolveAttachmentMask().any() || desc.hasDepthStencilUnresolveAttachment();
     const bool canRemoveResolveAttachments =
@@ -6808,7 +6839,14 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         }
         ASSERT(attachmentDescs[attachmentCount.get()].format != VK_FORMAT_UNDEFINED);
 
-        isColorInvalidated.set(colorIndexGL, ops[attachmentCount].isInvalidated);
+        // When multisampled-render-to-texture is used, invalidating an attachment invalidates both
+        // the multisampled and the resolve attachments.  Otherwise, the resolve attachment is
+        // independent of the multisampled attachment, and is never invalidated.
+        // This is also the case for external format resolve
+        if (isRenderToTextureThroughEmulation)
+        {
+            isMSRTTEmulationColorInvalidated.set(colorIndexGL, ops[attachmentCount].isInvalidated);
+        }
 
         ++attachmentCount;
     }
@@ -6831,8 +6869,11 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         vk::UnpackAttachmentDesc(context, &attachmentDescs[attachmentCount.get()],
                                  attachmentFormatID, attachmentSamples, ops[attachmentCount]);
 
-        isDepthInvalidated   = ops[attachmentCount].isInvalidated;
-        isStencilInvalidated = ops[attachmentCount].isStencilInvalidated;
+        if (isRenderToTextureThroughEmulation)
+        {
+            isMSRTTEmulationDepthInvalidated   = ops[attachmentCount].isInvalidated;
+            isMSRTTEmulationStencilInvalidated = ops[attachmentCount].isStencilInvalidated;
+        }
 
         ++attachmentCount;
     }
@@ -6872,7 +6913,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         colorRef.aspectMask             = VK_IMAGE_ASPECT_COLOR_BIT;
 
         // If color attachment is invalidated, try to remove its resolve attachment altogether.
-        if (canRemoveResolveAttachments && isColorInvalidated.test(colorIndexGL))
+        if (canRemoveResolveAttachments && isMSRTTEmulationColorInvalidated.test(colorIndexGL))
         {
             colorResolveAttachmentRefs.push_back(kUnusedAttachment);
         }
@@ -6881,12 +6922,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
             colorResolveAttachmentRefs.push_back(colorRef);
         }
 
-        // When multisampled-render-to-texture is used, invalidating an attachment invalidates both
-        // the multisampled and the resolve attachments.  Otherwise, the resolve attachment is
-        // independent of the multisampled attachment, and is never invalidated.
-        // This is also the case for external format resolve
-        bool isInvalidated =
-            isColorInvalidated.test(colorIndexGL) && isRenderToTextureThroughEmulation;
+        const bool isInvalidated = isMSRTTEmulationColorInvalidated.test(colorIndexGL);
 
         if (isYUVExternalFormat &&
             context->getRenderer()->nullColorAttachmentWithExternalFormatResolve())
@@ -6898,7 +6934,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         {
             vk::UnpackColorResolveAttachmentDesc(
                 &attachmentDescs[attachmentCount.get()], attachmentFormatID,
-                {desc.hasColorUnresolveAttachment(colorIndexGL), isInvalidated});
+                {desc.hasColorUnresolveAttachment(colorIndexGL), isInvalidated, false});
         }
 
 #if defined(ANGLE_PLATFORM_ANDROID)
@@ -6928,33 +6964,45 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         angle::FormatID attachmentFormatID = desc[depthStencilIndexGL];
         const angle::Format &angleFormat   = angle::Format::Get(attachmentFormatID);
 
+        bool isDepthUnused   = false;
+        bool isStencilUnused = false;
+
         // Treat missing aspect as invalidated for the purpose of the resolve attachment.
         if (angleFormat.depthBits == 0)
         {
-            isDepthInvalidated = true;
+            isMSRTTEmulationDepthInvalidated = true;
+        }
+        else if (!desc.hasDepthResolveAttachment())
+        {
+            isDepthUnused = true;
         }
         if (angleFormat.stencilBits == 0)
         {
-            isStencilInvalidated = true;
+            isMSRTTEmulationStencilInvalidated = true;
+        }
+        else if (!desc.hasStencilResolveAttachment())
+        {
+            isStencilUnused = true;
         }
 
         depthStencilResolveAttachmentRef.attachment = attachmentCount.get();
         depthStencilResolveAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
         depthStencilResolveAttachmentRef.aspectMask = 0;
 
-        if (!isDepthInvalidated)
+        if (!isMSRTTEmulationDepthInvalidated && !isDepthUnused)
         {
             depthStencilResolveAttachmentRef.aspectMask |= VK_IMAGE_ASPECT_DEPTH_BIT;
         }
-        if (!isStencilInvalidated)
+        if (!isMSRTTEmulationStencilInvalidated && !isStencilUnused)
         {
             depthStencilResolveAttachmentRef.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
 
         vk::UnpackDepthStencilResolveAttachmentDesc(
-            &attachmentDescs[attachmentCount.get()], attachmentFormatID,
-            {desc.hasDepthUnresolveAttachment(), isDepthInvalidated},
-            {desc.hasStencilUnresolveAttachment(), isStencilInvalidated});
+            context, &attachmentDescs[attachmentCount.get()], attachmentFormatID,
+            {desc.hasDepthUnresolveAttachment(), isMSRTTEmulationDepthInvalidated, isDepthUnused},
+            {desc.hasStencilUnresolveAttachment(), isMSRTTEmulationStencilInvalidated,
+             isStencilUnused});
 
         ++attachmentCount;
     }
@@ -7026,13 +7074,36 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         ASSERT(!isRenderToTextureThroughExtension);
 
         depthStencilResolve.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE;
-        depthStencilResolve.depthResolveMode   = VK_RESOLVE_MODE_SAMPLE_ZERO_BIT;
-        depthStencilResolve.stencilResolveMode = VK_RESOLVE_MODE_SAMPLE_ZERO_BIT;
+
+        if (!context->getFeatures().supportsDepthStencilIndependentResolveNone.enabled)
+        {
+            // Assert that depth/stencil is not separately resolved without this feature
+            uint32_t depthStencilIndexGL =
+                static_cast<uint32_t>(desc.depthStencilAttachmentIndex());
+            const angle::Format &angleFormat = angle::Format::Get(desc[depthStencilIndexGL]);
+            ASSERT(desc.hasDepthResolveAttachment() || angleFormat.depthBits == 0);
+            ASSERT(desc.hasStencilResolveAttachment() || angleFormat.stencilBits == 0);
+
+            depthStencilResolve.depthResolveMode   = VK_RESOLVE_MODE_SAMPLE_ZERO_BIT;
+            depthStencilResolve.stencilResolveMode = VK_RESOLVE_MODE_SAMPLE_ZERO_BIT;
+        }
+        else
+        {
+            depthStencilResolve.depthResolveMode =
+                desc.hasDepthResolveAttachment() && !isMSRTTEmulationDepthInvalidated
+                    ? VK_RESOLVE_MODE_SAMPLE_ZERO_BIT
+                    : VK_RESOLVE_MODE_NONE;
+            depthStencilResolve.stencilResolveMode =
+                desc.hasStencilResolveAttachment() && !isMSRTTEmulationStencilInvalidated
+                    ? VK_RESOLVE_MODE_SAMPLE_ZERO_BIT
+                    : VK_RESOLVE_MODE_NONE;
+        }
 
         // If depth/stencil attachment is invalidated, try to remove its resolve attachment
         // altogether.
-        const bool removeDepthStencilResolve =
-            canRemoveResolveAttachments && isDepthInvalidated && isStencilInvalidated;
+        const bool removeDepthStencilResolve = canRemoveResolveAttachments &&
+                                               isMSRTTEmulationDepthInvalidated &&
+                                               isMSRTTEmulationStencilInvalidated;
         if (!removeDepthStencilResolve)
         {
             depthStencilResolve.pDepthStencilResolveAttachment = &depthStencilResolveAttachmentRef;
@@ -7180,7 +7251,16 @@ angle::Result GraphicsPipelineCache<Hash>::createPipeline(
                                                       specConsts, &newPipeline, &feedback));
     }
 
-    addToCache(source, desc, std::move(newPipeline), feedback, descPtrOut, pipelineOut);
+    if (source == PipelineSource::WarmUp)
+    {
+        // ProgramExecutableVk::prepareForWarmUpPipelineCache should have inserted a placeholder
+        // entry in the cache, we just need to update it with the newly created Pipeline.
+        update(desc, std::move(newPipeline));
+    }
+    else
+    {
+        addToCache(source, desc, std::move(newPipeline), feedback, descPtrOut, pipelineOut);
+    }
     return angle::Result::Continue;
 }
 
@@ -7259,9 +7339,31 @@ void GraphicsPipelineCache<Hash>::populate(const vk::GraphicsPipelineDesc &desc,
         return;
     }
 
-    // Note: this function is only used for testing.
+    // This function is used by -
+    // 1. WarmUp tasks to insert placeholder pipelines
+    // 2. VulkanPipelineCachePerfTest
     mPayload.emplace(std::piecewise_construct, std::forward_as_tuple(desc),
                      std::forward_as_tuple(std::move(pipeline), vk::CacheLookUpFeedback::None));
+}
+
+template <typename Hash>
+void GraphicsPipelineCache<Hash>::update(const vk::GraphicsPipelineDesc &desc,
+                                         vk::Pipeline &&pipeline)
+{
+    // Note: this function is only used by WarmUp tasks to replace placeholder pipelines
+    // with valid ones when available.
+
+    auto item = mPayload.find(desc);
+    ASSERT(item != mPayload.end());
+
+    const vk::GraphicsPipelineDesc *placeholderDesc = &item->first;
+    vk::PipelineHelper *placeholderPipeline         = &item->second;
+    ASSERT(memcmp(placeholderDesc, &desc, sizeof(vk::GraphicsPipelineDesc)) == 0);
+    ASSERT(!placeholderPipeline->valid());
+
+    *placeholderPipeline =
+        vk::PipelineHelper(std::move(pipeline), vk::CacheLookUpFeedback::WarmUpMiss);
+    ASSERT(mPayload[desc].valid());
 }
 
 // Instantiate the pipeline cache functions

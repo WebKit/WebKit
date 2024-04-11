@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+
+.fixed, #overlay {
+    top: 0;
+    left: 0;
+    background: tomato;
+    position: fixed;
+    width: 300px;
+    height: 150px;
+    display: block;
+    visibility: visible;
+    opacity: 0.5;
+}
+
+#overlay {
+    z-index: 1000;
+}
+
+.fixed {
+    z-index: 100;
+}
+
+.content {
+    width: 320px;
+    height: 200px;
+}
+</style>
+</head>
+<body>
+<div class="a0715da0-b1f2-4042-b3c5-31f4c6cd48ef" id="overlay"></div>
+<div class="fixed" id="c0340e6a-b85a-422f-a501-9315c248d230"></div>
+<p class="content">This test requires WebKitTestRunner.</p>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    firstTarget = await UIHelper.adjustVisibilityForFrontmostTarget(150, 75);
+    shouldBeEqualToString("firstTarget", "#overlay");
+    secondTarget = await UIHelper.adjustVisibilityForFrontmostTarget(150, 75);
+    shouldBeEqualToString("secondTarget", ".fixed");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

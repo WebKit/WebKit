@@ -92,6 +92,7 @@
 #include "OESTextureHalfFloatLinear.h"
 #include "OESVertexArrayObject.h"
 #include "Page.h"
+#include "PermissionsPolicy.h"
 #include "RenderBox.h"
 #include "Settings.h"
 #include "WebCodecsVideoFrame.h"
@@ -2854,9 +2855,16 @@ void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promi
         return;
     }
 
-    // 1. Let promise be a new Promise.
-    // 2. Let context be the target WebGLRenderingContextBase object.
-    // 3. Ensure an immersive XR device is selected.
+    // 1. If the requesting document’s origin is not allowed to use the "xr-spatial-tracking"
+    // permissions policy, resolve promise and return it.
+    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::XRSpatialTracking, canvas->document(), LogPermissionsPolicyFailure::Yes)) {
+        promise.resolve();
+        return;
+    }
+
+    // 2. Let promise be a new Promise.
+    // 3. Let context be the target WebGLRenderingContextBase object.
+    // 4. Ensure an immersive XR device is selected.
     auto& xrSystem = NavigatorWebXR::xr(window->navigator());
     xrSystem.ensureImmersiveXRDeviceIsSelected([this, protectedThis = Ref { *this }, promise = WTFMove(promise), protectedXrSystem = Ref { xrSystem }]() mutable {
         auto rejectPromiseWithInvalidStateError = makeScopeExit([&]() {

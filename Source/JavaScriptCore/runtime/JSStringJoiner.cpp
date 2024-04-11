@@ -46,7 +46,7 @@ static inline void appendStringToData(CharacterType*& data, StringView string)
 template<typename OutputCharacterType, typename SeparatorCharacterType>
 static inline void appendStringToData(OutputCharacterType*& data, std::span<const SeparatorCharacterType> separator)
 {
-    StringImpl::copyCharacters(data, separator.data(), separator.size());
+    StringImpl::copyCharacters(data, separator);
     data += separator.size();
 }
 

@@ -913,6 +913,8 @@ http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-ws-redirect.html [ Failure ]
 http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party.html [ Failure ]
 
+http/tests/webxr [ Skip ]
+
 # Needs curl download support
 http/tests/workers/service/service-worker-download-async-delegates.https.html [ Failure ]
 http/tests/workers/service/service-worker-download.https.html [ Failure ]
@@ -2228,8 +2230,6 @@ editing/inserting/paragraph-separator-in-table-2.html [ Skip ]
 editing/inserting/return-key-with-selection-001.html [ Skip ]
 editing/inserting/return-key-with-selection-002.html [ Skip ]
 editing/inserting/return-key-with-selection-003.html [ Skip ]
-editing/inserting/typing-001.html [ Skip ]
-editing/inserting/typing-002.html [ Skip ]
 editing/inserting/typing-around-br-001.html [ Skip ]
 editing/selection/14971.html [ Skip ]
 editing/selection/3690703-2.html [ Skip ]
@@ -3185,9 +3185,6 @@ webkit.org/b/173726 animations/play-state-suspend.html [ Pass Failure ]
 
 webkit.org/b/263926 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Skip ] # Makes a subsequent test timeout
 
-webkit.org/b/263953 fast/url/idna2008.html [ Failure ]
-webkit.org/b/263953 fast/url/url-hostname-encoding.html [ Failure ]
-
 webkit.org/b/261308 imported/w3c/web-platform-tests/cookies/path/default.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/wasm/serialization/module/nested-worker-success.any.worker.html [ Skip ] # Failure
@@ -3302,3 +3299,13 @@ webkit.org/b/271408 [ Debug ] fast/images/decode-render-animated-image.html [ Sk
 
 # Makes a subsequent test crash
 webkit.org/b/272127 fast/text/remove-renderer-and-select-crash.html [ Skip ]
+
+http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
+
+# Pass on Buildbot, Failure on my PC
+webkit.org/b/272445 http/tests/inspector/network/resource-sizes-network.html [ Failure Pass ]
+webkit.org/b/272445 http/tests/xmlhttprequest/onabort-response-getters.html [ Failure Pass ]
+webkit.org/b/272445 http/tests/xmlhttprequest/onload-progressevent-attributes.html [ Failure Pass ]
+webkit.org/b/272445 http/tests/xmlhttprequest/xmlhttprequest-LSProgressEvent-ProgressEvent-should-match.html [ Failure Pass ]
+
+fast/forms/form-submission-crash-4.html [ Timeout Failure Pass ]

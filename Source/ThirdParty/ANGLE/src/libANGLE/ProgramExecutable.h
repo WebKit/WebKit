@@ -21,6 +21,7 @@
 namespace rx
 {
 class GLImplFactory;
+class LinkSubTask;
 class ProgramExecutableImpl;
 }  // namespace rx
 
@@ -710,6 +711,26 @@ class ProgramExecutable final : public angle::Subject
         return mUniformBlockIndexToBufferBinding;
     }
 
+    // Post-link task helpers
+    const std::vector<std::shared_ptr<rx::LinkSubTask>> &getPostLinkSubTasks() const
+    {
+        return mPostLinkSubTasks;
+    }
+
+    const std::vector<std::shared_ptr<angle::WaitableEvent>> &getPostLinkSubTaskWaitableEvents()
+        const
+    {
+        return mPostLinkSubTaskWaitableEvents;
+    }
+
+    void onPostLinkTasksComplete() const
+    {
+        mPostLinkSubTasks.clear();
+        mPostLinkSubTaskWaitableEvents.clear();
+    }
+
+    void waitForPostLinkTasks(const Context *context);
+
   private:
     friend class Program;
     friend class ProgramPipeline;
@@ -974,6 +995,13 @@ class ProgramExecutable final : public angle::Subject
 
     // Cache for sampler validation
     mutable Optional<bool> mCachedValidateSamplersResult;
+
+    // Post-link subtask and wait events
+    // These tasks are not waited on in |resolveLink|, but instead they are free to
+    // run until first usage of the program (or relink).  This is used by the backends (currently
+    // only Vulkan) to run post-link optimization tasks which don't affect the link results.
+    mutable std::vector<std::shared_ptr<rx::LinkSubTask>> mPostLinkSubTasks;
+    mutable std::vector<std::shared_ptr<angle::WaitableEvent>> mPostLinkSubTaskWaitableEvents;
 };
 
 void InstallExecutable(const Context *context,

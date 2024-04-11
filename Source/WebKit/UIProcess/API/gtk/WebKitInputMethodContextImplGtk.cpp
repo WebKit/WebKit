@@ -200,7 +200,7 @@ static void webkitInputMethodContextImplGtkNotifyCursorArea(WebKitInputMethodCon
 static void webkitInputMethodContextImplGtkNotifySurrounding(WebKitInputMethodContext* context, const gchar* text, unsigned length, unsigned cursorIndex, unsigned)
 {
     auto* priv = WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(context)->priv;
-    priv->surroundingText = { text, length };
+    priv->surroundingText = std::span { text, length };
     priv->surroundingCursorIndex = cursorIndex;
 }
 

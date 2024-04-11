@@ -28,33 +28,31 @@
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE Ref<ExternalStringImpl> ExternalStringImpl::create(const LChar* characters, unsigned length, void* ctx, ExternalStringImplFreeFunction&& free)
+WTF_EXPORT_PRIVATE Ref<ExternalStringImpl> ExternalStringImpl::create(std::span<const LChar> characters, void* context, ExternalStringImplFreeFunction&& free)
 {
-    return adoptRef(*new ExternalStringImpl(characters, length, ctx, WTFMove(free)));
+    return adoptRef(*new ExternalStringImpl(characters, context, WTFMove(free)));
 }
 
-WTF_EXPORT_PRIVATE Ref<ExternalStringImpl> ExternalStringImpl::create(const UChar* characters, unsigned length, void* ctx, ExternalStringImplFreeFunction&& free)
+WTF_EXPORT_PRIVATE Ref<ExternalStringImpl> ExternalStringImpl::create(std::span<const UChar> characters, void* context, ExternalStringImplFreeFunction&& free)
 {
-    return adoptRef(*new ExternalStringImpl(characters, length, ctx, WTFMove(free)));
+    return adoptRef(*new ExternalStringImpl(characters, context, WTFMove(free)));
 }
 
-WTF_EXPORT_PRIVATE Ref<ExternalStringImpl> ExternalStringImpl::createStatic(const LChar* characters, unsigned length)
+
+WTF_EXPORT_PRIVATE Ref<ExternalStringImpl> ExternalStringImpl::createStatic(std::span<const LChar> characters)
 {
-    return adoptRef(*new ExternalStringImpl(characters, length));
+    return adoptRef(*new ExternalStringImpl(characters, nullptr, [](auto, auto, auto) -> void {}));
 }
 
-WTF_EXPORT_PRIVATE Ref<ExternalStringImpl> ExternalStringImpl::createStatic(const char* string)
+WTF_EXPORT_PRIVATE Ref<ExternalStringImpl> ExternalStringImpl::createStatic(std::span<const UChar> characters)
 {
-    return adoptRef(*new ExternalStringImpl(reinterpret_cast<const LChar*>(string), strlen(string)));
+    return adoptRef(*new ExternalStringImpl(characters, nullptr, [](auto, auto, auto) -> void {}));
 }
 
-WTF_EXPORT_PRIVATE Ref<ExternalStringImpl> ExternalStringImpl::createStatic(const UChar* characters, unsigned length)
-{
-    return adoptRef(*new ExternalStringImpl(characters, length));
-}
 
-ExternalStringImpl::ExternalStringImpl(const LChar* characters, unsigned length, void* ctx, ExternalStringImplFreeFunction&& free)
-    : StringImpl(characters, length, ConstructWithoutCopying)
+
+ExternalStringImpl::ExternalStringImpl(std::span<const LChar> characters, void* ctx, ExternalStringImplFreeFunction&& free)
+    : StringImpl(characters, ConstructWithoutCopying)
     , m_free(WTFMove(free))
 {
     ASSERT(m_free);
@@ -62,8 +60,9 @@ ExternalStringImpl::ExternalStringImpl(const LChar* characters, unsigned length,
     m_hashAndFlags = (m_hashAndFlags & ~s_hashMaskBufferOwnership) | BufferExternal;
 }
 
-ExternalStringImpl::ExternalStringImpl(const UChar* characters, unsigned length, void* ctx, ExternalStringImplFreeFunction&& free)
-    : StringImpl(characters, length, ConstructWithoutCopying)
+
+ExternalStringImpl::ExternalStringImpl(std::span<const UChar> characters, void* ctx, ExternalStringImplFreeFunction&& free)
+    : StringImpl(characters, ConstructWithoutCopying)
     , m_free(WTFMove(free))
 {
     ASSERT(m_free);
@@ -71,23 +70,26 @@ ExternalStringImpl::ExternalStringImpl(const UChar* characters, unsigned length,
     m_hashAndFlags = (m_hashAndFlags & ~s_hashMaskBufferOwnership) | BufferExternal;
 }
 
-ExternalStringImpl::ExternalStringImpl(const LChar* characters, unsigned length)
-    : StringImpl(characters, length, ConstructWithoutCopying)
+ExternalStringImpl::ExternalStringImpl(std::span<const LChar> characters, ExternalStringImplFreeFunction&& free)
+    : StringImpl(characters, ConstructWithoutCopying)
+    , m_free(WTFMove(free))
 {
-    m_free = nullptr;
+    ASSERT(m_free);
     m_freeCtx = nullptr;
     m_hashAndFlags = (m_hashAndFlags & ~s_hashMaskBufferOwnership) | BufferExternal;
     m_refCount |= s_refCountFlagIsStaticString;
 }
 
-ExternalStringImpl::ExternalStringImpl(const UChar* characters, unsigned length)
-    : StringImpl(characters, length, ConstructWithoutCopying)
 
+ExternalStringImpl::ExternalStringImpl(std::span<const UChar> characters, ExternalStringImplFreeFunction&& free)
+    : StringImpl(characters, ConstructWithoutCopying)
+    , m_free(WTFMove(free))
 {
-    m_free = nullptr;
+    ASSERT(m_free);
     m_freeCtx = nullptr;
     m_hashAndFlags = (m_hashAndFlags & ~s_hashMaskBufferOwnership) | BufferExternal;
     m_refCount |= s_refCountFlagIsStaticString;
 }
+
 
 } // namespace WTF

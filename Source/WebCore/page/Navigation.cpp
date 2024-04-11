@@ -44,6 +44,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
+#include "UserGestureIndicator.h"
 #include <optional>
 #include <wtf/Assertions.h>
 #include <wtf/IsoMallocInlines.h>
@@ -424,9 +425,9 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         downloadRequestFilename,
         info,
         canIntercept,
-        false, // FIXME: userInitiated
+        UserGestureIndicator::processingUserGesture(document.get()),
         hashChange,
-        false, // FIXME: hasUAVisualTransition
+        document->page() && document->page()->isInSwipeAnimation(),
     };
 
     // Free up no longer needed info.

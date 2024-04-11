@@ -12,29 +12,19 @@
 #include "include/gpu/GrTypes.h"
 #include "include/private/base/SkAssert.h" // IWYU pragma: keep
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
+#include "src/gpu/DataUtils.h"
 #include "src/gpu/ganesh/GrBackendSurfacePriv.h"
-#include "src/gpu/ganesh/GrDataUtils.h"
 
 #ifdef SK_DIRECT3D
 #include "src/gpu/ganesh/d3d/GrD3DUtil.h"
-#endif
-
-#ifdef SK_METAL
-#include "src/gpu/ganesh/mtl/GrMtlCppUtil.h"
 #endif
 
 SkTextureCompressionType GrBackendFormatToCompressionType(const GrBackendFormat& format) {
     switch (format.backend()) {
         case GrBackendApi::kOpenGL:
         case GrBackendApi::kVulkan:
+        case GrBackendApi::kMetal:
             return GrBackendSurfacePriv::GetBackendData(format)->compressionType();
-        case GrBackendApi::kMetal: {
-#ifdef SK_METAL
-            return GrMtlBackendFormatToCompressionType(format);
-#else
-            break;
-#endif
-        }
         case GrBackendApi::kDirect3D: {
 #ifdef SK_DIRECT3D
             DXGI_FORMAT dxgiFormat;
@@ -63,14 +53,8 @@ size_t GrBackendFormatBytesPerBlock(const GrBackendFormat& format) {
     switch (format.backend()) {
         case GrBackendApi::kOpenGL:
         case GrBackendApi::kVulkan:
+        case GrBackendApi::kMetal:
             return GrBackendSurfacePriv::GetBackendData(format)->bytesPerBlock();
-        case GrBackendApi::kMetal: {
-#ifdef SK_METAL
-            return GrMtlBackendFormatBytesPerBlock(format);
-#else
-            break;
-#endif
-        }
         case GrBackendApi::kDirect3D: {
 #ifdef SK_DIRECT3D
             DXGI_FORMAT dxgiFormat;
@@ -83,7 +67,7 @@ size_t GrBackendFormatBytesPerBlock(const GrBackendFormat& format) {
         case GrBackendApi::kMock: {
             SkTextureCompressionType compression = format.asMockCompressionType();
             if (compression != SkTextureCompressionType::kNone) {
-                return GrCompressedRowBytes(compression, 1);
+                return skgpu::CompressedRowBytes(compression, 1);
             } else if (format.isMockStencilFormat()) {
                 static constexpr int kMockStencilSize = 4;
                 return kMockStencilSize;
@@ -108,14 +92,8 @@ int GrBackendFormatStencilBits(const GrBackendFormat& format) {
     switch (format.backend()) {
         case GrBackendApi::kOpenGL:
         case GrBackendApi::kVulkan:
+        case GrBackendApi::kMetal:
             return GrBackendSurfacePriv::GetBackendData(format)->stencilBits();
-        case GrBackendApi::kMetal: {
-#ifdef SK_METAL
-            return GrMtlBackendFormatStencilBits(format);
-#else
-            break;
-#endif
-        }
         case GrBackendApi::kDirect3D: {
 #ifdef SK_DIRECT3D
             DXGI_FORMAT dxgiFormat;

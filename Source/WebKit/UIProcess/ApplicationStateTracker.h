@@ -65,6 +65,7 @@ private:
     void applicationWillEnterForeground();
     void willBeginSnapshotSequence();
     void didCompleteSnapshotSequence();
+    void removeAllObservers();
 
     WeakObjCPtr<UIView> m_view;
     WeakObjCPtr<UIWindow> m_window;

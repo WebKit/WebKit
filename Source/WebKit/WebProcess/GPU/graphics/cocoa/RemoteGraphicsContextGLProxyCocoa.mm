@@ -131,10 +131,6 @@ private:
 
 class RemoteGraphicsContextGLProxyCocoa final : public RemoteGraphicsContextGLProxy {
 public:
-    // GraphicsContextGL override.
-    GCEGLImage createAndBindEGLImage(GCGLenum, GCGLenum, WebCore::GraphicsContextGL::EGLImageSource, GCGLint) final;
-    GCEGLSync createEGLSync(ExternalEGLSyncEvent) final;
-
     // RemoteGraphicsContextGLProxy overrides.
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
     void prepareForDisplay() final;
@@ -156,33 +152,6 @@ private:
     Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
     friend class RemoteGraphicsContextGLProxy;
 };
-
-GCEGLImage RemoteGraphicsContextGLProxyCocoa::createAndBindEGLImage(GCGLenum target, GCGLenum internalFormat, WebCore::GraphicsContextGL::EGLImageSource source, GCGLint layer)
-{
-    if (isContextLost())
-        return nullptr;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateAndBindEGLImage(target, internalFormat, WTFMove(source), layer));
-    if (!sendResult.succeeded()) {
-        markContextLost();
-        return nullptr;
-    }
-    auto& [returnValue] = sendResult.reply();
-    return reinterpret_cast<GCEGLImage>(static_cast<intptr_t>(returnValue));
-}
-
-GCEGLSync RemoteGraphicsContextGLProxyCocoa::createEGLSync(ExternalEGLSyncEvent syncEvent)
-{
-    if (isContextLost())
-        return { };
-    auto [eventHandle, signalValue] = syncEvent;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateEGLSync(WTFMove(eventHandle), signalValue));
-    if (!sendResult.succeeded()) {
-        markContextLost();
-        return { };
-    }
-    auto& [returnValue] = sendResult.reply();
-    return reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(returnValue));
-}
 
 void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
 {

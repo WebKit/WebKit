@@ -144,7 +144,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     auto result = adoptNS([[JSScript alloc] init]);
     result->m_virtualMachine = vm;
     result->m_type = type;
-    result->m_source = String(StringImpl::createWithoutCopying(bitwise_cast<const LChar*>(fileData.data()), fileData.size()));
+    result->m_source = String(StringImpl::createWithoutCopying(fileData.span()));
     result->m_mappedSource = WTFMove(fileData);
     result->m_sourceURL = sourceURL;
     result->m_cachePath = cachePath;

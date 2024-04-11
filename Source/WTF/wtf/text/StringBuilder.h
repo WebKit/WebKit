@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,17 +51,11 @@ public:
     bool hasOverflowed() const { return m_length > String::MaxLength; }
     bool crashesOnOverflow() const { return m_shouldCrashOnOverflow; }
 
-    WTF_EXPORT_PRIVATE void appendCharacters(std::span<const UChar>);
-    WTF_EXPORT_PRIVATE void appendCharacters(std::span<const LChar>);
-
-    // FIXME: Port callers to pass a span and remove these overloads.
-    void appendCharacters(const char* characters, size_t length) { appendCharacters({ reinterpret_cast<const LChar*>(characters), length }); }
-    void appendCharacters(const UChar* characters, size_t length) { appendCharacters({ characters, length }); }
-    void appendCharacters(const LChar* characters, size_t length) { appendCharacters({ characters, length }); }
-
     template<typename... StringTypes> void append(StringTypes...);
 
     // FIXME: We should keep these overloads only if optimizations make them more efficient than the single-argument form of the variadic append above.
+    WTF_EXPORT_PRIVATE void append(std::span<const UChar>);
+    WTF_EXPORT_PRIVATE void append(std::span<const LChar>);
     void append(const AtomString& string) { append(string.string()); }
     void append(const String&);
     void append(StringView);
@@ -172,7 +166,7 @@ inline void StringBuilder::append(UChar character)
             return;
         }
     }
-    appendCharacters(&character, 1);
+    append(WTF::span(character));
 }
 
 inline void StringBuilder::append(LChar character)
@@ -184,7 +178,7 @@ inline void StringBuilder::append(LChar character)
             const_cast<UChar*>(m_buffer->characters<UChar>())[m_length++] = character;
         return;
     }
-    appendCharacters(&character, 1);
+    append(WTF::span(character));
 }
 
 inline void StringBuilder::append(const String& string)
@@ -217,14 +211,14 @@ inline void StringBuilder::append(const StringBuilder& other)
 inline void StringBuilder::append(StringView string)
 {
     if (string.is8Bit())
-        appendCharacters(string.characters8(), string.length());
+        append(string.span8());
     else
-        appendCharacters(string.characters16(), string.length());
+        append(string.span16());
 }
 
 inline void StringBuilder::append(ASCIILiteral string)
 {
-    appendCharacters(string.characters8(), string.length());
+    append(string.span8());
 }
 
 inline void StringBuilder::appendSubstring(const String& string, unsigned offset, unsigned length)
@@ -330,7 +324,7 @@ template<typename CharacterType> bool equal(const StringBuilder& builder, const 
 template<> struct IntegerToStringConversionTrait<StringBuilder> {
     using ReturnType = void;
     using AdditionalArgumentType = StringBuilder;
-    static void flush(std::span<const LChar> characters, StringBuilder* builder) { builder->appendCharacters(characters); }
+    static void flush(std::span<const LChar> characters, StringBuilder* builder) { builder->append(characters); }
 };
 
 } // namespace WTF

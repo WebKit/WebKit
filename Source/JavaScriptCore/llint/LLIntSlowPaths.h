@@ -36,6 +36,7 @@ struct ProtoCallFrame;
 
 namespace LLInt {
 
+extern "C" void logWasmPrologue(uint64_t i, uint64_t* fp, uint64_t* sp)  REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair llint_trace_operand(CallFrame*, const JSInstruction*, int fromWhere, int operand) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair llint_trace_value(CallFrame*, const JSInstruction*, int fromWhere, VirtualRegister operand) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair llint_default_call(CallFrame*, CallLinkInfo*) REFERENCED_FROM_ASM WTF_INTERNAL;
@@ -74,6 +75,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_create_cloned_arguments);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_try_get_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id_direct);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_length);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id_with_this);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_in_by_id);

@@ -34,8 +34,8 @@ namespace Wasm {
 
 class BranchHintsSectionParser : public Parser<void> {
 public:
-    BranchHintsSectionParser(const uint8_t* sourceBuffer, size_t sourceLength, ModuleInformation& info)
-        : Parser(sourceBuffer, sourceLength)
+    BranchHintsSectionParser(std::span<const uint8_t> source, ModuleInformation& info)
+        : Parser(source)
         , m_info(info)
     {
     }

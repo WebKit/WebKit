@@ -121,7 +121,6 @@ protected:
 
     void createLayer();
     void willBeDestroyed() override;
-    void willBeRemovedFromTree(IsInternalMove) override;
 
     virtual void updateFromStyle() { }
 

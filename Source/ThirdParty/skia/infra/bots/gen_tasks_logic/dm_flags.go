@@ -304,6 +304,7 @@ func (b *taskBuilder) dmFlags(internalHardwareLabel string) {
 			skip(ALL, "test", ALL, "ImageReadPixels_Gpu")
 			skip(ALL, "test", ALL, "ImageScalePixels_Gpu")
 			skip(ALL, "test", ALL, "ImageShaderTest")
+			skip(ALL, "test", ALL, "ImageWrapTextureMipmapsTest")
 			skip(ALL, "test", ALL, "MatrixColorFilter_TransparentBlack")
 			skip(ALL, "test", ALL, "MorphologyFilterRadiusWithMirrorCTM_Gpu")
 			skip(ALL, "test", ALL, "MultisampleRetainTest")
@@ -418,8 +419,8 @@ func (b *taskBuilder) dmFlags(internalHardwareLabel string) {
 				skip(ALL, "test", ALL, "GraphitePurgeNotUsedSinceResourcesTest")
 				skip(ALL, "test", ALL, "PaintParamsKeyTest")
 
-				if b.matchOs("Win10") || b.matchGpu("MaliG78", "Adreno620") {
-					// The Dawn Win10 and some Android device jobs OOMs (skbug.com/14410, b/318725123)
+				if b.matchOs("Win10") || b.matchGpu("MaliG78", "Adreno620", "QuadroP400") {
+					// The Dawn Win10 and some Android/Linux device jobs OOMs (skbug.com/14410, b/318725123)
 					skip(ALL, "test", ALL, "BigImageTest_Graphite")
 				}
 				if b.matchGpu("Adreno620") {

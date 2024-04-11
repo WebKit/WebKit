@@ -115,7 +115,7 @@ void initialize()
 
         AssemblyCommentRegistry::initialize();
 #if ENABLE(WEBASSEMBLY)
-        if (Options::useWasmIPInt())
+        if (Options::useWasmIPInt() || Options::useIPIntWrappers())
             IPInt::initialize();
 #endif
         LLInt::initialize();

@@ -1,7 +1,6 @@
 <script>
 if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
 onload = async () => {
-  try {
     let adapter1 = await navigator.gpu.requestAdapter(
     {
     }
@@ -15,13 +14,13 @@ onload = async () => {
     maxVertexAttributes: 30,
     maxVertexBufferArrayStride: 52234,
     maxStorageTexturesPerShaderStage: 5,
-    maxBindingsPerBindGroup: 2969,
+    maxBindingsPerBindGroup: 969,
     maxTextureArrayLayers: 896,
     maxTextureDimension1D: 12165,
     maxTextureDimension2D: 10419,
     maxVertexBuffers: 12,
-    minStorageBufferOffsetAlignment: 32,
-    minUniformBufferOffsetAlignment: 64,
+    minStorageBufferOffsetAlignment: 256,
+    minUniformBufferOffsetAlignment: 256,
     },
     }
     );
@@ -68,8 +67,7 @@ onload = async () => {
     },
     {width: 10, height: 0, depthOrArrayLayers: 1}
     );
-  } catch { }
-  if (window.testRunner) { testRunner.notifyDone() }
+    if (window.testRunner) { testRunner.notifyDone() }
 };
 </script>
 This test passes if it does not crash.

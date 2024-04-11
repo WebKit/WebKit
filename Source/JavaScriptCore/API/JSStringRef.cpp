@@ -37,7 +37,7 @@ using namespace WTF::Unicode;
 JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)
 {
     JSC::initialize();
-    return &OpaqueJSString::create(reinterpret_cast<const UChar*>(chars), numChars).leakRef();
+    return &OpaqueJSString::create({ reinterpret_cast<const UChar*>(chars), numChars }).leakRef();
 }
 
 JSStringRef JSStringCreateWithUTF8CString(const char* string)
@@ -48,49 +48,20 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
         Vector<UChar, 1024> buffer(length);
         UChar* p = buffer.data();
         bool sourceContainsOnlyASCII;
-        const LChar* stringStart = reinterpret_cast<const LChar*>(string);
-        if (convertUTF8ToUTF16(string, string + length, &p, p + length, &sourceContainsOnlyASCII)) {
+        if (convertUTF8ToUTF16(std::span { reinterpret_cast<const char8_t*>(string), length }, &p, p + length, &sourceContainsOnlyASCII)) {
             if (sourceContainsOnlyASCII)
-                return &OpaqueJSString::create(stringStart, length).leakRef();
-            return &OpaqueJSString::create(buffer.data(), p - buffer.data()).leakRef();
+                return &OpaqueJSString::create({ reinterpret_cast<const LChar*>(string), length }).leakRef();
+            return &OpaqueJSString::create({ buffer.data(), p }).leakRef();
         }
     }
 
     return &OpaqueJSString::create().leakRef();
 }
 
-JSStringRef JSStringCreate(const char* string, size_t length)
-{
-    JSC::initialize();
-    return &OpaqueJSString::create((reinterpret_cast<const LChar*>(string)), length).leakRef();
-}
-
-JSStringRef JSStringCreateStatic(const char* string, size_t length)
-{
-    JSC::initialize();
-
-    Ref<ExternalStringImpl> impl = ExternalStringImpl::createStatic(reinterpret_cast<const LChar*>(string), length);
-    String str = *new String(impl.get());
-    return OpaqueJSString::tryCreate(str).leakRef();
-}
-
-JSStringRef JSStringCreateExternal(const char* string, size_t length, void* finalize_ptr, const ExternalStringFinalizer finalizer)
-{
-    JSC::initialize();
-
-    Ref<ExternalStringImpl> impl = ExternalStringImpl::create(reinterpret_cast<const LChar*>(string), length, finalize_ptr, [finalizer](void * finalize_ptr, void * buffer, unsigned bufferSize) -> void {
-        if (finalizer != nullptr) finalizer(finalize_ptr, buffer, bufferSize);
-	});
-    String str = *new String(impl.get());
-    return OpaqueJSString::tryCreate(str).leakRef();
-}
-
 JSStringRef JSStringCreateWithCharactersNoCopy(const JSChar* chars, size_t numChars)
 {
     JSC::initialize();
-    Ref<ExternalStringImpl> impl = ExternalStringImpl::createStatic(reinterpret_cast<const UChar*>(chars), numChars);
-    String str = *new String(impl.get());
-    return OpaqueJSString::tryCreate(str).leakRef();
+    return OpaqueJSString::tryCreate(StringImpl::createWithoutCopying({ reinterpret_cast<const UChar*>(chars), numChars })).leakRef();
 }
 
 JSStringRef JSStringRetain(JSStringRef string)
@@ -116,13 +87,6 @@ const JSChar* JSStringGetCharactersPtr(JSStringRef string)
     if (!string)
         return nullptr;
     return reinterpret_cast<const JSChar*>(string->characters());
-}
-
-const char* JSStringGetCharacters8Ptr(JSStringRef string)
-{
-    if (!string)
-        return nullptr;
-    return reinterpret_cast<const char*>(string->characters8());
 }
 
 size_t JSStringGetMaximumUTF8CStringSize(JSStringRef string)
@@ -151,34 +115,13 @@ size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSiz
     return failed ? 0 : destination - buffer;
 }
 
-char JSStringEncoding(JSStringRef string)
-{
-    if (!string || string->isEmpty()) {
-        return 0;
-    }
-
-    return string->is8Bit() ? 8 : 16;
-}
-
-bool JSStringIsEqual(JSStringRef a, JSStringRef b)
-{
-    return OpaqueJSString::equal(a, b);
-}
-
 bool JSStringIsEqualToUTF8CString(JSStringRef a, const char* b)
 {
     return JSStringIsEqual(a, adoptRef(JSStringCreateWithUTF8CString(b)).get());
 }
 
-bool JSStringIsStatic(JSStringRef string)
-{
-    return string->isStatic();
-}
 
-bool JSStringIsExternal(JSStringRef string)
-{
-    return string->isExternal();
-}
+
 
 // char JSStringMetadata(JSStringRef string)
 // {

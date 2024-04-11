@@ -69,12 +69,9 @@ struct JSONPData {
     Strong<Unknown> m_value;
 };
 
-template <typename CharType>
-struct LiteralParserToken {
-private:
-WTF_MAKE_NONCOPYABLE(LiteralParserToken);
+template<typename CharacterType> struct LiteralParserToken {
+    WTF_MAKE_NONCOPYABLE(LiteralParserToken);
 
-public:
     LiteralParserToken() = default;
 
     TokenType type;
@@ -82,10 +79,14 @@ public:
     unsigned stringOrIdentifierLength : 31;
     union {
         double numberToken; // Only used for TokNumber.
-        const CharType* identifierStart;
+        const CharacterType* identifierStart;
         const LChar* stringStart8;
         const UChar* stringStart16;
     };
+
+    std::span<const CharacterType> identifier() const { return { identifierStart, stringOrIdentifierLength }; }
+    std::span<const LChar> string8() const { return { stringStart8, stringOrIdentifierLength }; }
+    std::span<const UChar> string16() const { return { stringStart16, stringOrIdentifierLength }; }
 };
 
 template <typename CharType>

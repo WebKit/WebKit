@@ -61,9 +61,6 @@ public:
 private:
     ASCIILiteral renderName() const final { return "RenderListItem"_s; }
     
-    void insertedIntoTree(IsInternalMove) final;
-    void willBeRemovedFromTree(IsInternalMove) final;
-
     void paint(PaintInfo&, const LayoutPoint&) final;
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;

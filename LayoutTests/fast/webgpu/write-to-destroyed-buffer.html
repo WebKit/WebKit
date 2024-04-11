@@ -4,7 +4,6 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 }
 onload = async () => {
-  try {
 let adapter0 = await navigator.gpu.requestAdapter(
 {
 }
@@ -19,8 +18,6 @@ let device0 = await adapter0.requestDevice(
 label: 'a',
 requiredFeatures: [
 'depth-clip-control',
-'texture-compression-etc2',
-'texture-compression-astc',
 'indirect-first-instance',
 'shader-f16',
 'rg11b10ufloat-renderable',
@@ -290,7 +287,6 @@ let device2 = await (await navigator.gpu.requestAdapter(
 label: 'a',
 requiredFeatures: [
 'depth32float-stencil8',
-'texture-compression-astc',
 'shader-f16',
 'rg11b10ufloat-renderable',
 'bgra8unorm-storage'
@@ -579,8 +575,7 @@ new ArrayBuffer(3659080)
 } catch {}
 try { videoFrame0.close(); } catch {}
 try { videoFrame2.close(); } catch {}
-  } catch { }
-  if (window.testRunner) { testRunner.notifyDone() }
+if (window.testRunner) { testRunner.notifyDone() }
 };
 </script>
 This test passes if it does not crash.

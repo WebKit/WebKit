@@ -238,7 +238,7 @@ void appendNumberFormatDigitOptionsToSkeleton(IntlType* intlInstance, StringBuil
             skeletonBuilder.append("0.");
             for (unsigned i = 0; i < (intlInstance->m_maximumFractionDigits - string.size()); ++i)
                 skeletonBuilder.append('0');
-            skeletonBuilder.appendCharacters(string.data(), string.size());
+            skeletonBuilder.append(string);
         } else {
             unsigned nonFraction = string.size() - intlInstance->m_maximumFractionDigits;
             skeletonBuilder.append(std::span(string.data(), nonFraction), '.', std::span(string.data() + nonFraction, intlInstance->m_maximumFractionDigits));

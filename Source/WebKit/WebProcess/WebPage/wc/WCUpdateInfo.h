@@ -33,7 +33,6 @@
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/TextureMapperSparseBackingStore.h>
 #include <optional>
-#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 
 namespace WebKit {

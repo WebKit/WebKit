@@ -52,17 +52,17 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
     do {
         Vector<JSONPPathEntry> path;
         // Unguarded next to start off the lexer
-        Identifier name = Identifier::fromString(vm, m_lexer.currentToken()->identifierStart, m_lexer.currentToken()->stringOrIdentifierLength);
+        Identifier name = Identifier::fromString(vm, m_lexer.currentToken()->identifier());
         JSONPPathEntry entry;
         if (name == vm.propertyNames->varKeyword) {
             if (m_lexer.next() != TokIdentifier)
                 return false;
             entry.m_type = JSONPPathEntryTypeDeclareVar;
-            entry.m_pathEntryName = Identifier::fromString(vm, m_lexer.currentToken()->identifierStart, m_lexer.currentToken()->stringOrIdentifierLength);
+            entry.m_pathEntryName = Identifier::fromString(vm, m_lexer.currentToken()->identifier());
             path.append(entry);
         } else {
             entry.m_type = JSONPPathEntryTypeDot;
-            entry.m_pathEntryName = Identifier::fromString(vm, m_lexer.currentToken()->identifierStart, m_lexer.currentToken()->stringOrIdentifierLength);
+            entry.m_pathEntryName = Identifier::fromString(vm, m_lexer.currentToken()->identifier());
             path.append(entry);
         }
         if (isLexerKeyword(entry.m_pathEntryName))
@@ -89,7 +89,7 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
                 entry.m_type = JSONPPathEntryTypeDot;
                 if (m_lexer.next() != TokIdentifier)
                     return false;
-                entry.m_pathEntryName = Identifier::fromString(vm, m_lexer.currentToken()->identifierStart, m_lexer.currentToken()->stringOrIdentifierLength);
+                entry.m_pathEntryName = Identifier::fromString(vm, m_lexer.currentToken()->identifier());
                 break;
             }
             case TokLParen: {
@@ -130,11 +130,11 @@ template <typename CharType>
 ALWAYS_INLINE Identifier LiteralParser<CharType>::makeIdentifier(VM& vm, typename Lexer::LiteralParserTokenPtr token)
 {
     if (token->type == TokIdentifier)
-        return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->identifierStart, token->stringOrIdentifierLength));
+        return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->identifier()));
     ASSERT(token->type == TokString);
     if (token->stringIs8Bit)
-        return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->stringStart8, token->stringOrIdentifierLength));
-    return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->stringStart16, token->stringOrIdentifierLength));
+        return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->string8()));
+    return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->string16()));
 }
 
 template <typename CharType>
@@ -144,11 +144,11 @@ ALWAYS_INLINE JSString* LiteralParser<CharType>::makeJSString(VM& vm, typename L
     if (token->stringIs8Bit) {
         if (token->stringOrIdentifierLength > maxAtomizeStringLength)
             return jsNontrivialString(vm, String({ token->stringStart8, token->stringOrIdentifierLength }));
-        return jsString(vm, Identifier::fromString(vm, token->stringStart8, token->stringOrIdentifierLength).string());
+        return jsString(vm, Identifier::fromString(vm, token->string8()).string());
     }
     if (token->stringOrIdentifierLength > maxAtomizeStringLength)
         return jsNontrivialString(vm, String({ token->stringStart16, token->stringOrIdentifierLength }));
-    return jsString(vm, Identifier::fromString(vm, token->stringStart16, token->stringOrIdentifierLength).string());
+    return jsString(vm, Identifier::fromString(vm, token->string16()).string());
 }
 
 [[maybe_unused]] static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(LChar)
@@ -900,12 +900,12 @@ TokenType LiteralParser<CharType>::Lexer::lexStringSlow(LiteralParserToken<CharT
         }
 
         if (!m_builder.isEmpty())
-            m_builder.appendCharacters(runStart, m_ptr - runStart);
+            m_builder.append(std::span { runStart, m_ptr });
 
 slowPathBegin:
         if ((m_mode != SloppyJSON) && m_ptr < m_end && *m_ptr == '\\') {
             if (m_builder.isEmpty() && runStart < m_ptr)
-                m_builder.appendCharacters(runStart, m_ptr - runStart);
+                m_builder.append(std::span { runStart, m_ptr });
             ++m_ptr;
             if (m_ptr >= m_end) {
                 m_lexErrorMessage = "Unterminated string"_s;
@@ -1087,7 +1087,7 @@ TokenType LiteralParser<CharType>::Lexer::lexNumber(LiteralParserToken<CharType>
     
     token.type = TokNumber;
     size_t parsedLength;
-    token.numberToken = parseDouble(start, m_ptr - start, parsedLength);
+    token.numberToken = parseDouble(std::span { start, m_ptr }, parsedLength);
     return TokNumber;
 }
 

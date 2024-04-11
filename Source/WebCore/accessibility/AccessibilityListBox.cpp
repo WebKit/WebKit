@@ -97,8 +97,8 @@ void AccessibilityListBox::setSelectedChildren(const AccessibilityChildrenVector
         dynamicDowncast<AccessibilityListBoxOption>(object)->setSelected(true);
     }
 }
-    
-AXCoreObject::AccessibilityChildrenVector AccessibilityListBox::selectedChildren()
+
+std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityListBox::selectedChildren()
 {
     if (!childrenInitialized())
         addChildren();

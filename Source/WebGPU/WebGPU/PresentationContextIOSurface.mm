@@ -77,7 +77,7 @@ void PresentationContextIOSurface::renderBuffersWereRecreated(NSArray<IOSurface 
     m_renderBuffers.clear();
 }
 
-void PresentationContextIOSurface::onSubmittedWorkScheduled(CompletionHandler<void()>&& completionHandler)
+void PresentationContextIOSurface::onSubmittedWorkScheduled(Function<void()>&& completionHandler)
 {
     if (m_device)
         m_device->getQueue().onSubmittedWorkScheduled(WTFMove(completionHandler));

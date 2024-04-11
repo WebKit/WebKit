@@ -30,19 +30,20 @@
 TEST(WTF, CStringNullStringConstructor)
 {
     CString string;
+    constexpr size_t zeroLength = 0;
     ASSERT_TRUE(string.isNull());
     ASSERT_EQ(string.data(), static_cast<const char*>(0));
-    ASSERT_EQ(string.length(), static_cast<size_t>(0));
+    ASSERT_EQ(string.length(), zeroLength);
 
     CString stringFromCharPointer(static_cast<const char*>(0));
     ASSERT_TRUE(stringFromCharPointer.isNull());
     ASSERT_EQ(stringFromCharPointer.data(), static_cast<const char*>(0));
-    ASSERT_EQ(stringFromCharPointer.length(), static_cast<size_t>(0));
+    ASSERT_EQ(stringFromCharPointer.length(), zeroLength);
 
-    CString stringFromCharAndLength(static_cast<const char*>(0), 0);
+    CString stringFromCharAndLength({ static_cast<const char*>(0), zeroLength });
     ASSERT_TRUE(stringFromCharAndLength.isNull());
     ASSERT_EQ(stringFromCharAndLength.data(), static_cast<const char*>(0));
-    ASSERT_EQ(stringFromCharAndLength.length(), static_cast<size_t>(0));
+    ASSERT_EQ(stringFromCharAndLength.length(), zeroLength);
 }
 
 TEST(WTF, CStringEmptyEmptyConstructor)
@@ -53,7 +54,7 @@ TEST(WTF, CStringEmptyEmptyConstructor)
     ASSERT_EQ(string.length(), static_cast<size_t>(0));
     ASSERT_EQ(string.data()[0], 0);
 
-    CString stringWithLength(emptyString, 0);
+    CString stringWithLength(""_span);
     ASSERT_FALSE(stringWithLength.isNull());
     ASSERT_EQ(stringWithLength.length(), static_cast<size_t>(0));
     ASSERT_EQ(stringWithLength.data()[0], 0);
@@ -68,7 +69,7 @@ TEST(WTF, CStringEmptyRegularConstructor)
     ASSERT_EQ(string.length(), strlen(referenceString));
     ASSERT_STREQ(referenceString, string.data());
 
-    CString stringWithLength(referenceString, 6);
+    CString stringWithLength({ referenceString, 6 });
     ASSERT_FALSE(stringWithLength.isNull());
     ASSERT_EQ(stringWithLength.length(), strlen(referenceString));
     ASSERT_STREQ(referenceString, stringWithLength.data());
@@ -92,7 +93,7 @@ TEST(WTF, CStringUninitializedConstructor)
 TEST(WTF, CStringZeroTerminated)
 {
     const char* referenceString = "WebKit";
-    CString stringWithLength(referenceString, 3);
+    CString stringWithLength({ referenceString, 3 });
     ASSERT_EQ(stringWithLength.data()[3], 0);
 }
 

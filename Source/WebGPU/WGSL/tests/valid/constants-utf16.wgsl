@@ -66,7 +66,6 @@ fn testConstantAddition()
 }
 
 
-@compute @workgroup_size(1)
 fn testVectorConstants() -> i32
 {
     if (false) {

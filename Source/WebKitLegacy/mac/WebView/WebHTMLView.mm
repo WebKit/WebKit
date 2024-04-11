@@ -2964,11 +2964,11 @@ IGNORE_WARNINGS_END
         return [self _hasSelection];
 
     if (action == @selector(paste:) || action == @selector(pasteAsPlainText:))
-        return frame && (frame->editor().canDHTMLPaste() || frame->editor().canPaste());
+        return frame && (frame->editor().canDHTMLPaste() || frame->editor().canEdit());
 
     if (action == @selector(pasteAsRichText:))
         return frame && (frame->editor().canDHTMLPaste()
-            || (frame->editor().canPaste() && frame->selection().selection().isContentRichlyEditable()));
+            || (frame->editor().canEdit() && frame->selection().selection().isContentRichlyEditable()));
 
     if (action == @selector(performFindPanelAction:))
         return NO;
@@ -6570,7 +6570,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (replacementRange.location != NSNotFound)
         [[self _frame] _selectNSRange:replacementRange];
 
-    coreFrame->editor().setComposition(text, underlines, { }, { }, newSelRange.location, NSMaxRange(newSelRange));
+    coreFrame->editor().setComposition(text, underlines, { }, newSelRange.location, NSMaxRange(newSelRange));
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN

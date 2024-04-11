@@ -26,7 +26,6 @@
 #pragma once
 
 #include "IDBKeyRangeData.h"
-#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 

@@ -615,7 +615,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'update-working-directory',
             'show-identifier',
             'install-hooks',
-            'commit-patch',
+            'apply-patch',
             'validate-squashed',
             'add-reviewer-to-commit-message',
             'validate-commit-message',

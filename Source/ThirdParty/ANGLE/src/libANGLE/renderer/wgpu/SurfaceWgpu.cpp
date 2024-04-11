@@ -112,4 +112,14 @@ egl::Error SurfaceWgpu::detachFromFramebuffer(const gl::Context *context,
     return egl::NoError();
 }
 
+angle::Result SurfaceWgpu::getAttachmentRenderTarget(const gl::Context *context,
+                                                     GLenum binding,
+                                                     const gl::ImageIndex &imageIndex,
+                                                     GLsizei samples,
+                                                     FramebufferAttachmentRenderTarget **rtOut)
+{
+    UNIMPLEMENTED();
+    return angle::Result::Stop;
+}
+
 }  // namespace rx

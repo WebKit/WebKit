@@ -30,6 +30,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 63}
 AXElementBusy: 0
 
 ------------
@@ -63,6 +64,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 0}
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
 AXLinkRelationshipType:
@@ -100,6 +102,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 0}
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
 AXLinkRelationshipType:

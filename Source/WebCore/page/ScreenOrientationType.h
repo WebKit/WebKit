@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 #if PLATFORM(IOS) || PLATFORM(VISION)
 #import <pal/system/ios/Device.h>
 #endif

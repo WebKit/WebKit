@@ -1,0 +1,66 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that async stream messages can be sent and replies received</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function runTest() {
+    const defaultTimeout = 1000;
+    const bufferSizeLog2 = 9;
+    const streamTesterID = 447;
+    const IPCStreamTester_AsyncPingName = IPC.messages.IPCStreamTester_AsyncPing.name;
+    const IPCStreamTester_AsyncPingReplyName = IPC.messages.IPCStreamTester_AsyncPingReply.name;
+
+    for (const processTarget of IPC.processTargets) {
+        const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSizeLog2);
+        streamConnection.open();
+        IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateStreamTester.name, [
+            { type: 'uint64_t', value: streamTesterID },
+            { type: 'StreamServerConnectionHandle', value: serverConnectionHandle },
+        ]);
+        const arguments = streamConnection.waitForMessage(streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name, defaultTimeout);
+        streamConnection.setSemaphores(arguments[0].value, arguments[1].value);
+        // Test starts here.
+        try {
+            let results = { };
+            let asyncReplyIDs = { };
+            const requestCount = 100;
+            for (let request = 0; request < requestCount; ++request) {
+                asyncReplyIDs[request] = streamConnection.sendWithAsyncReply(streamTesterID, IPCStreamTester_AsyncPingName, defaultTimeout, [{type: 'uint32_t', value: request}], (message) => {
+                    results[request] = message;
+                });
+                assert_greater_than(asyncReplyIDs[request], 0, "asyncReplyID is valid");
+                if (request == 17)
+                    await sleep(100); // Let some requests be fullfilled asynchronously and some are force-waited.
+            }
+            for (let request = 0; request < requestCount; ++request) {
+                if (typeof results[request] === "undefined")
+                    streamConnection.waitForAsyncReplyAndDispatchImmediately(asyncReplyIDs[request], IPCStreamTester_AsyncPingReplyName, defaultTimeout);
+            }
+            for (let request = 0; request < requestCount; ++request) {
+                const subcase = `${processTarget} request:${request}`
+                const result = results[request];
+                assert_equals(typeof result, "object", subcase);
+                const firstReply = result.arguments[0];
+                assert_equals(firstReply.type, "uint32_t", subcase);
+                assert_equals(firstReply.value, request + 1, subcase);
+            }
+        } finally {
+            IPC.sendSyncMessage(processTarget, 0, IPC.messages.IPCTester_ReleaseStreamTester.name, defaultTimeout, [{ type: 'uint64_t', value: streamTesterID }]);
+            streamConnection.invalidate();
+        }
+    }
+    done();
+}
+
+setup({ single_test: true });
+if (window.IPC)
+    runTest();
+else
+    done();
+
+</script>
+</body>

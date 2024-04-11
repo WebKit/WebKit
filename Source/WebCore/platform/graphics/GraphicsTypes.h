@@ -29,7 +29,6 @@
 #include "FloatSize.h"
 #include "WindRule.h"
 #include <optional>
-#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 
 namespace WTF {

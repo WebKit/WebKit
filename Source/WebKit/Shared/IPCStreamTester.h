@@ -62,7 +62,7 @@ private:
     void syncMessageEmptyReply(uint32_t, CompletionHandler<void()>&&);
     void syncCrashOnZero(int32_t, CompletionHandler<void(int32_t)>&&);
     void checkAutoreleasePool(CompletionHandler<void(int32_t)>&&);
-    void asyncMessage(bool value, CompletionHandler<void(bool)>&&);
+    void asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&&);
 
     const Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     const Ref<IPC::StreamServerConnection> m_streamConnection;

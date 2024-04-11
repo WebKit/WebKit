@@ -89,7 +89,7 @@ void QueueImpl::writeTexture(
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void QueueImpl::writeBuffer(
+void QueueImpl::writeBufferNoCopy(
     const Buffer& buffer,
     Size64 bufferOffset,
     std::span<uint8_t> source,

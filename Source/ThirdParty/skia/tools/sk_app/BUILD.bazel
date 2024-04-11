@@ -6,7 +6,7 @@ licenses(["notice"])
 exports_files_legacy()
 
 skia_cc_library(
-    name = "sk_app",
+    name = "legacy_sk_app",
     testonly = True,
     srcs = [
         "CommandSet.cpp",
@@ -27,15 +27,46 @@ skia_cc_library(
         "//tools:legacy_tool_utils",
         "//tools/skui",
         "//tools/timer:legacy_timer",
-        "//tools/window",
+        "//tools/window:legacy_window",
     ] + select({
         "@platforms//os:linux": ["//tools/sk_app/unix:deps"],
         "//conditions:default": [],
     }),
 )
 
+skia_cc_library(
+    name = "sk_app",
+    testonly = True,
+    srcs = [
+        "CommandSet.cpp",
+        "Window.cpp",
+    ] + select({
+        "@platforms//os:linux": ["//tools/sk_app/unix:srcs"],
+        "//conditions:default": [],
+        # TODO(kjlubick) add Windows/Mac support
+    }),
+    hdrs = [
+        "Application.h",
+        "CommandSet.h",
+        "Window.h",
+    ],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//:core",
+        "//:ganesh_gl",
+        "//tools:tool_utils",
+        "//tools/skui",
+        "//tools/timer",
+        "//tools/window",
+    ] + select({
+        # TODO(kjlubick): These dependencies should probably be modularized and added here.
+        # "@platforms//os:linux": ["//tools/sk_app/unix:deps"],
+        "//conditions:default": [],
+    }),
+)
+
 skia_objc_library(
-    name = "sk_app_objc",
+    name = "legacy_sk_app_objc",
     testonly = True,
     srcs = [
         "RasterWindowContext.h",

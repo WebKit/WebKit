@@ -65,7 +65,7 @@ AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
     // including rows and interactive rowgroups. In addition, poorly-formed grids may contain elements
     // which pass the tests for inclusion.
     return dynamicDowncast<AccessibilityTable>(Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const auto& ancestor) {
-        auto* ancestorTable = dynamicDowncast<AccessibilityTable>(ancestor);
+        RefPtr ancestorTable = dynamicDowncast<AccessibilityTable>(ancestor);
         return ancestorTable && ancestorTable->isExposable() && !ancestorTable->accessibilityIsIgnored();
     }));
 }
@@ -77,7 +77,7 @@ String AccessibilityARIAGridCell::readOnlyValue() const
 
     // ARIA 1.1 requires user agents to propagate the grid's aria-readonly value to all
     // gridcell elements if the property is not present on the gridcell element itelf.
-    if (auto* parent = parentTable())
+    if (RefPtr parent = parentTable())
         return parent->readOnlyValue();
 
     return String();

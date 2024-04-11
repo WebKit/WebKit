@@ -4287,46 +4287,70 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ariaListboxSelect
     return result;
 }
 
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::selectedChildren()
+bool AccessibilityObject::canHaveSelectedChildren() const
+{
+    switch (roleValue()) {
+    // These roles are containers whose children support aria-selected:
+    case AccessibilityRole::Grid:
+    case AccessibilityRole::ListBox:
+    case AccessibilityRole::TabList:
+    case AccessibilityRole::Tree:
+    case AccessibilityRole::TreeGrid:
+    case AccessibilityRole::List:
+    // These roles are containers whose children are treated as selected by assistive
+    // technologies. We can get the "selected" item via aria-activedescendant or the
+    // focused element.
+    case AccessibilityRole::Menu:
+    case AccessibilityRole::MenuBar:
+    case AccessibilityRole::ComboBox:
+#if USE(ATSPI)
+    case AccessibilityRole::MenuListPopup:
+#endif
+        return true;
+    default:
+        return false;
+    }
+}
+
+std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityObject::selectedChildren()
 {
     if (!canHaveSelectedChildren())
-        return { };
+        return std::nullopt;
 
-    AccessibilityChildrenVector result;
     switch (roleValue()) {
     case AccessibilityRole::ComboBox:
         if (auto* descendant = activeDescendant())
-            result = { descendant };
+            return { { descendant } };
         break;
     case AccessibilityRole::ListBox:
         // native list boxes would be AccessibilityListBoxes, so only check for aria list boxes
-        result = ariaListboxSelectedChildren();
+        return ariaListboxSelectedChildren();
         break;
     case AccessibilityRole::Grid:
     case AccessibilityRole::Tree:
     case AccessibilityRole::TreeGrid:
-        result = ariaSelectedRows();
+        return ariaSelectedRows();
         break;
     case AccessibilityRole::TabList:
         if (auto* selectedTab = selectedTabItem())
-            result = { selectedTab };
+            return { { selectedTab } };
         break;
     case AccessibilityRole::List:
-        if (auto* selectedListItemChild = selectedListItem())
-            result = { selectedListItemChild };
+        if (auto* selectedListItem = this->selectedListItem())
+            return { { selectedListItem } };
         break;
     case AccessibilityRole::Menu:
     case AccessibilityRole::MenuBar:
         if (auto* descendant = activeDescendant())
-            result = { descendant };
+            return { { descendant } };
         else if (auto* focusedElement = focusedUIElement())
-            result = { focusedElement };
+            return { { focusedElement } };
         break;
     default:
         ASSERT_NOT_REACHED();
         break;
     }
-    return result;
+    return std::nullopt;
 }
 
 AccessibilityObject* AccessibilityObject::selectedListItem()

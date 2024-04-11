@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ ShouldSuppressTextInputFromEditingDuringProvisionalNavigation=true ] -->
 <html>
 <body>
     <a href="resources/keyboard-events-after-navigation.html" accesskey="z"></a>
@@ -7,7 +7,6 @@
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
-            internals.settings.setShouldSuppressTextInputFromEditingDuringProvisionalNavigation(true);
         }
 
         runBeforeTest(window);

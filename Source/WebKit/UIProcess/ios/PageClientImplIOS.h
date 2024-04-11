@@ -69,6 +69,7 @@ private:
     bool isViewWindowActive() override;
     bool isViewFocused() override;
     bool isViewVisible() override;
+    void viewIsBecomingVisible() override;
     bool canTakeForegroundAssertions() override;
     bool isViewInWindow() override;
     bool isViewVisibleOrOccluded() override;

@@ -661,7 +661,7 @@ std::optional<String> mapHostName(const String& hostName, URLDecodeFunction deco
     if (length && (U_FAILURE(uerror) || processingDetails.errors & ~allowedErrors))
         return std::nullopt;
     
-    if (numCharactersConverted == static_cast<int32_t>(length) && equal(sourceBuffer.data(), destinationBuffer, length))
+    if (numCharactersConverted == static_cast<int32_t>(length) && equal(sourceBuffer.data(), { destinationBuffer, length }))
         return String();
 
     if (!decodeFunction && !allCharactersInAllowedIDNScriptList(destinationBuffer, numCharactersConverted) && !allCharactersAllowedByTLDRules(destinationBuffer, numCharactersConverted))
@@ -852,9 +852,9 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
 
     outBuffer.grow(i);
     if (sourceBuffer.is8Bit())
-        StringImpl::copyCharacters(outBuffer.data(), sourceBuffer.characters8(), i);
+        StringImpl::copyCharacters(outBuffer.data(), sourceBuffer.span8().first(i));
     else
-        StringImpl::copyCharacters(outBuffer.data(), sourceBuffer.characters16(), i);
+        StringImpl::copyCharacters(outBuffer.data(), sourceBuffer.span16().first(i));
 
     for (; i < length; ) {
         char32_t c = sourceBuffer.characterStartingAt(i);

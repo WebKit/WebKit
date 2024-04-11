@@ -7226,6 +7226,19 @@ RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange& range, const CSSParse
     return consumeBasicShapeRayOrBox(range, context, options);
 }
 
+RefPtr<CSSValue> consumePath(CSSParserTokenRange& range, const CSSParserContext&)
+{
+    if (range.peek().type() != FunctionToken)
+        return nullptr;
+    if (range.peek().functionId() != CSSValuePath)
+        return nullptr;
+    auto args = consumeFunction(range);
+    auto result = consumeBasicShapePath(args, { });
+    if (!result || !args.atEnd())
+        return nullptr;
+    return result;
+}
+
 RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueNone)

@@ -831,6 +831,13 @@ SubsamplingLevel BitmapImageSource::subsamplingLevelForScaleFactor(GraphicsConte
 #endif
 }
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+bool BitmapImageSource::shouldUseQuickLookForFullscreen() const
+{
+    return m_decoder->shouldUseQuickLookForFullscreen();
+}
+#endif
+
 IntSize BitmapImageSource::frameSizeAtIndex(unsigned index, SubsamplingLevel subsamplingLevel) const
 {
     return const_cast<BitmapImageSource&>(*this).frameAtIndexCacheIfNeeded(index, subsamplingLevel).size();

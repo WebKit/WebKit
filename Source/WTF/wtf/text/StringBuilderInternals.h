@@ -41,7 +41,7 @@ template<typename AllocationCharacterType, typename CurrentCharacterType> void S
     }
 
     ASSERT(!hasOverflowed());
-    StringImpl::copyCharacters(bufferCharacters, currentCharacters, m_length);
+    StringImpl::copyCharacters(bufferCharacters, { currentCharacters, m_length });
 
     m_buffer = WTFMove(buffer);
     m_string = { };

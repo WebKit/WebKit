@@ -118,7 +118,6 @@ SKIA_PUBLIC_HDRS = [
     "include/effects/Sk1DPathEffect.h",
     "include/effects/Sk2DPathEffect.h",
     "include/effects/SkBlenders.h",
-    "include/effects/SkBlurDrawLooper.h",
     "include/effects/SkBlurMaskFilter.h",
     "include/effects/SkColorMatrixFilter.h",
     "include/effects/SkColorMatrix.h",
@@ -149,7 +148,11 @@ SKIA_PUBLIC_HDRS = [
     "include/gpu/ganesh/SkSurfaceGanesh.h",
     "include/gpu/ganesh/gl/GrGLBackendSurface.h",
     "include/gpu/ganesh/gl/GrGLDirectContext.h",
+    "include/gpu/ganesh/mtl/GrMtlBackendContext.h",
     "include/gpu/ganesh/mtl/GrMtlBackendSemaphore.h",
+    "include/gpu/ganesh/mtl/GrMtlBackendSurface.h",
+    "include/gpu/ganesh/mtl/GrMtlDirectContext.h",
+    "include/gpu/ganesh/mtl/GrMtlTypes.h",
     "include/gpu/ganesh/mtl/SkSurfaceMetal.h",
     "include/gpu/ganesh/vk/GrBackendDrawableInfo.h",
     "include/gpu/ganesh/vk/GrVkBackendSemaphore.h",
@@ -179,8 +182,6 @@ SKIA_PUBLIC_HDRS = [
     "include/gpu/gl/GrGLInterface.h",
     "include/gpu/gl/GrGLTypes.h",
     "include/gpu/mock/GrMockTypes.h",
-    "include/gpu/mtl/GrMtlBackendContext.h",
-    "include/gpu/mtl/GrMtlTypes.h",
     "include/gpu/mtl/MtlMemoryAllocator.h",
     "include/gpu/vk/GrVkBackendContext.h",
     "include/gpu/vk/GrVkExtensions.h",
@@ -781,6 +782,8 @@ BASE_SRCS_ALL = [
     "src/gpu/BlurUtils.cpp",
     "src/gpu/BlurUtils.h",
     "src/gpu/BufferWriter.h",
+    "src/gpu/DataUtils.cpp",
+    "src/gpu/DataUtils.h",
     "src/gpu/DitherUtils.cpp",
     "src/gpu/DitherUtils.h",
     "src/gpu/GpuRefCnt.h",
@@ -1678,6 +1681,7 @@ BASE_SRCS_ALL = [
     "src/sksl/transform/SkSLEliminateDeadGlobalVariables.cpp",
     "src/sksl/transform/SkSLEliminateDeadLocalVariables.cpp",
     "src/sksl/transform/SkSLEliminateEmptyStatements.cpp",
+    "src/sksl/transform/SkSLEliminateUnnecessaryBraces.cpp",
     "src/sksl/transform/SkSLEliminateUnreachableCode.cpp",
     "src/sksl/transform/SkSLFindAndDeclareBuiltinFunctions.cpp",
     "src/sksl/transform/SkSLFindAndDeclareBuiltinStructs.cpp",
@@ -2117,10 +2121,12 @@ MTL_HDRS = [
 MTL_SRCS = [
     "src/gpu/ganesh/mtl/GrMtlAttachment.mm",
     "src/gpu/ganesh/mtl/GrMtlBackendSemaphore.mm",
+    "src/gpu/ganesh/mtl/GrMtlBackendSurface.mm",
     "src/gpu/ganesh/mtl/GrMtlBuffer.mm",
     "src/gpu/ganesh/mtl/GrMtlCaps.mm",
     "src/gpu/ganesh/mtl/GrMtlCommandBuffer.mm",
     "src/gpu/ganesh/mtl/GrMtlDepthStencil.mm",
+    "src/gpu/ganesh/mtl/GrMtlDirectContext.mm",
     "src/gpu/ganesh/mtl/GrMtlFramebuffer.mm",
     "src/gpu/ganesh/mtl/GrMtlGpu.mm",
     "src/gpu/ganesh/mtl/GrMtlOpsRenderPass.mm",
@@ -2560,19 +2566,23 @@ SKOTTIE_SHAPER_SRCS = [
 SKUNICODE_ICU_BUILTIN_SRCS = [
     "modules/skunicode/src/SkUnicode.cpp",
     "modules/skunicode/src/SkUnicode_icu.cpp",
-    "modules/skunicode/src/SkUnicode_icu.h",
+    "modules/skunicode/src/SkUnicode_icupriv.h",
     "modules/skunicode/src/SkUnicode_icu_bidi.cpp",
     "modules/skunicode/src/SkUnicode_icu_bidi.h",
     "modules/skunicode/src/SkUnicode_icu_builtin.cpp",
+    "modules/skunicode/src/SkBidiFactory_icu_full.cpp",
+    "modules/skunicode/src/SkBidiFactory_icu_full.h",
 ]
 
 SKUNICODE_ICU_RUNTIME_SRCS = [
     "modules/skunicode/src/SkUnicode.cpp",
     "modules/skunicode/src/SkUnicode_icu.cpp",
-    "modules/skunicode/src/SkUnicode_icu.h",
+    "modules/skunicode/src/SkUnicode_icupriv.h",
     "modules/skunicode/src/SkUnicode_icu_bidi.cpp",
     "modules/skunicode/src/SkUnicode_icu_bidi.h",
     "modules/skunicode/src/SkUnicode_icu_runtime.cpp",
+    "modules/skunicode/src/SkBidiFactory_icu_full.cpp",
+    "modules/skunicode/src/SkBidiFactory_icu_full.h",
 ]
 
 SKUNICODE_CLIENT_SRCS = [
@@ -2580,21 +2590,30 @@ SKUNICODE_CLIENT_SRCS = [
     "modules/skunicode/src/SkUnicode_client.cpp",
     "modules/skunicode/src/SkUnicode_icu_bidi.cpp",
     "modules/skunicode/src/SkUnicode_icu_bidi.h",
+    "modules/skunicode/src/SkBidiFactory_icu_subset.cpp",
+    "modules/skunicode/src/SkBidiFactory_icu_subset.h",
 ]
 
 SKUNICODE_HDRS = [
     "modules/skunicode/include/SkUnicode.h",
+    "modules/skunicode/include/SkUnicode_client.h",
+    "modules/skunicode/include/SkUnicode_icu.h",
+    "modules/skunicode/include/SkUnicode_icu4x.h",
+    "modules/skunicode/include/SkUnicode_libgrapheme.h",
 ]
 
 SKSHAPER_HDRS = [
     "modules/skshaper/include/SkShaper.h",
-    "modules/skshaper/include/SkShaper_harfbuzz.h",
     "modules/skshaper/include/SkShaper_coretext.h",
+    "modules/skshaper/include/SkShaper_factory.h",
+    "modules/skshaper/include/SkShaper_harfbuzz.h",
     "modules/skshaper/include/SkShaper_skunicode.h",
+    "modules/skshaper/utils/FactoryHelpers.h",
 ]
 
 SKSHAPER_HARFBUZZ_SRCS = [
     "modules/skshaper/src/SkShaper.cpp",
+    "modules/skshaper/src/SkShaper_factory.cpp",
     "modules/skshaper/src/SkShaper_harfbuzz.cpp",
     "modules/skshaper/src/SkShaper_primitive.cpp",
     "modules/skshaper/src/SkShaper_skunicode.cpp",
@@ -2603,11 +2622,13 @@ SKSHAPER_HARFBUZZ_SRCS = [
 SKSHAPER_CORETEXT_SRCS = [
     "modules/skshaper/src/SkShaper.cpp",
     "modules/skshaper/src/SkShaper_coretext.cpp",
+    "modules/skshaper/src/SkShaper_factory.cpp",
     "modules/skshaper/src/SkShaper_primitive.cpp",
 ]
 
 SKSHAPER_PRIMITIVE_SRCS = [
     "modules/skshaper/src/SkShaper.cpp",
+    "modules/skshaper/src/SkShaper_factory.cpp",
     "modules/skshaper/src/SkShaper_primitive.cpp",
 ]
 

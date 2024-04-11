@@ -184,7 +184,7 @@ public:
 
     double backingStoreMemoryEstimate() const override;
 
-    WEBCORE_EXPORT Vector<std::pair<String, double>> acceleratedAnimationsForTesting(const Settings&) const final;
+    Vector<std::pair<String, double>> acceleratedAnimationsForTesting(const Settings&) const final;
 
 private:
     enum class FlushNotification {

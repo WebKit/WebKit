@@ -4,10 +4,8 @@
 * Use of this source code is governed by a BSD-style license that can be
 * found in the LICENSE file.
 */
+#include "modules/skunicode/include/SkUnicode_icu4x.h"
 
-#include <cstdint>
-#include <memory>
-#include <unicode/umachine.h>
 #include "include/core/SkSpan.h"
 #include "include/core/SkString.h"
 #include "include/core/SkTypes.h"
@@ -18,27 +16,21 @@
 #include "src/base/SkBitmaskEnum.h"
 #include "src/base/SkUTF.h"
 
-#include <diplomat_runtime.hpp>
-
-//#include <ICU4XBidi.h>
-
+#include <ICU4XBidi.hpp>
+#include <ICU4XCaseMapper.hpp>
+#include <ICU4XCodePointMapData8.hpp>
+#include <ICU4XCodePointSetData.hpp>
 #include <ICU4XDataProvider.hpp>
 #include <ICU4XGraphemeClusterSegmenter.hpp>
 #include <ICU4XLineSegmenter.hpp>
 #include <ICU4XWordSegmenter.hpp>
-#include <ICU4XBidi.hpp>
 
-#include <cstdint>
-#include <unicode/umachine.h>
 #include <algorithm>
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
-#include <ICU4XCodePointSetData.hpp>
-#include <ICU4XCodePointMapData8.hpp>
-#include <ICU4XCaseMapper.hpp>
 
 class SkUnicode_icu4x :  public SkUnicode {
 public:
@@ -63,10 +55,6 @@ public:
     }
 
     ~SkUnicode_icu4x() override = default;
-
-    std::unique_ptr<SkUnicode> copy() override {
-        return std::make_unique<SkUnicode_icu4x>();
-    }
 
     void reset();
 
@@ -414,6 +402,8 @@ std::unique_ptr<SkBreakIterator> SkUnicode_icu4x::makeBreakIterator(BreakType br
     SkASSERT(false); return nullptr;
 }
 
-std::unique_ptr<SkUnicode> SkUnicode::MakeIcu4xBasedUnicode() {
-    return std::make_unique<SkUnicode_icu4x>();
+namespace SkUnicodes::ICU4X {
+sk_sp<SkUnicode> Make() {
+    return sk_make_sp<SkUnicode_icu4x>();
+}
 }

@@ -1392,13 +1392,7 @@ sub generateFindNameForLength
                     }
                     print F ")) {\n";
                 } else {
-                    print F "${indent}static constexpr characterType rest[] = { ";
-                    for (my $index = $currentIndex; $index < $length; $index = $index + 1) {
-                        my $letter = substr($string, $index, 1);
-                        print F "'$letter', ";
-                    }
-                    print F "};\n";
-                    print F "${indent}if (WTF::equal($bufferStart, rest, $lengthToCompare)) {\n";
+                    print F "${indent}if (WTF::equal($bufferStart, \"". substr($string, $currentIndex, $length - $currentIndex) . "\"_span)) {\n";
                 }
             }
             print F "$indent    return ${enumClass}::$enumValue;\n";

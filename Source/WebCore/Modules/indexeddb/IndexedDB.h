@@ -26,8 +26,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
 namespace IndexedDB {

@@ -49,6 +49,8 @@ a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
 a=fingerprint:sha-256 {fingerprint:OK}
 a=extmap:1 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01
 a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:mid
+a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
+a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
 a=fmtp:96 minptime=10;useinbandfec=1
 a=recvonly
 a=fingerprint:sha-256 {fingerprint:OK}

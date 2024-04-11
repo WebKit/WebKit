@@ -1,0 +1,15 @@
+Tests for the JavaScript code completion feature used by the console and other code inputs in various breakpoint editors.
+
+
+== Running test suite: console.jsCompletions
+-- Running test case: console.jsCompletions.variableCompletions
+PASS: Completions should not contain myVariable by default.
+PASS: Completions should not change before cache is cleared.
+PASS: Completions should still not contain myVariable before cache is cleared.
+PASS: Completions should change after cache is cleared.
+PASS: Completions should contain myVariable after it's created by code run in console.
+PASS: Completions should not change before cache is cleared.
+PASS: Completions should still contain myVariable before cache is cleared.
+PASS: Completions should change after cache is cleared.
+PASS: Completions should not contain myVariable after it's deleted by code run in console.
+

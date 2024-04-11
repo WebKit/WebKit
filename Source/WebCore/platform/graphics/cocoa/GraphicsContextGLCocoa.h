@@ -76,16 +76,17 @@ public:
     void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
     void destroyPbufferAndDetachIOSurface(void* handle);
 
-    GCEGLImage createAndBindEGLImage(GCGLenum, GCGLenum, EGLImageSource, GCGLint) final;
+    GCGLExternalImage createExternalImage(ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) final;
+    void bindExternalImage(GCGLenum target, GCGLExternalImage) final;
 
-    bool createFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) final;
+    bool addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) final;
     void enableFoveation(GCGLuint) final;
     void disableFoveation() final;
 
     RetainPtr<id> newSharedEventWithMachPort(mach_port_t);
-    GCEGLSync createEGLSync(ExternalEGLSyncEvent) final;
+    GCGLExternalSync createExternalSync(ExternalSyncSource&&) final;
     // Short term support for in-process WebGL.
-    GCEGLSync createEGLSync(id, uint64_t);
+    GCGLExternalSync createExternalSync(id, uint64_t);
 
     bool enableRequiredWebXRExtensions() final;
 

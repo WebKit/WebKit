@@ -30,7 +30,7 @@
 
 namespace WebGPU {
 
-std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, const PipelineLayout* pipelineLayout, const String& untransformedEntryPoint, NSString *label, uint32_t constantCount, const WGPUConstantEntry* constants)
+std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, const PipelineLayout* pipelineLayout, const String& untransformedEntryPoint, NSString *label, uint32_t constantCount, const WGPUConstantEntry* constants, NSError **error)
 {
     // FIXME: Remove below line when https://bugs.webkit.org/show_bug.cgi?id=266774 is completed
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
@@ -135,7 +135,9 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
     }
 
     auto msl = WGSL::generate(*ast, result, wgslConstantValues);
-    auto library = ShaderModule::createLibrary(device, msl, label);
+    auto library = ShaderModule::createLibrary(device, msl, label, error);
+    if (error && *error)
+        return { };
 
     return { { library, entryPointInformation, wgslConstantValues } };
 }

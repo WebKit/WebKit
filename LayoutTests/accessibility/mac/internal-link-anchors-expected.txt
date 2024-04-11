@@ -30,8 +30,8 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXStaticText>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXIntersectionWithSelectionRange: (null)
 AXVisibleCharacterRange: NSRange: {0, 9}
+AXIntersectionWithSelectionRange: (null)
 AXElementBusy: 0
 AXPath: (null)
 

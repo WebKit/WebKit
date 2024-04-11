@@ -173,7 +173,7 @@ function matchAll(strArg)
     matcher.lastIndex = @toLength(regExp.lastIndex);
 
     var global = @stringIncludesInternal.@call(flags, "g");
-    var fullUnicode = @stringIncludesInternal.@call(flags, "u");
+    var fullUnicode = @stringIncludesInternal.@call(flags, "u") || @stringIncludesInternal.@call(flags, "v");
 
     return new @RegExpStringIterator(matcher, string, global, fullUnicode);
 }

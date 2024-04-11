@@ -1403,6 +1403,7 @@ class PipelineHelper final : public Resource
     PipelineHelper();
     ~PipelineHelper() override;
     inline explicit PipelineHelper(Pipeline &&pipeline, CacheLookUpFeedback feedback);
+    PipelineHelper &operator=(PipelineHelper &&other);
 
     void destroy(VkDevice device);
     void release(Context *context);
@@ -1519,6 +1520,16 @@ class FramebufferHelper : public Resource
 ANGLE_INLINE PipelineHelper::PipelineHelper(Pipeline &&pipeline, CacheLookUpFeedback feedback)
     : mPipeline(std::move(pipeline)), mCacheLookUpFeedback(feedback)
 {}
+
+ANGLE_INLINE PipelineHelper &PipelineHelper::operator=(PipelineHelper &&other)
+{
+    ASSERT(!mPipeline.valid());
+
+    std::swap(mPipeline, other.mPipeline);
+    mCacheLookUpFeedback = other.mCacheLookUpFeedback;
+
+    return *this;
+}
 
 struct ImageSubresourceRange
 {
@@ -2519,6 +2530,7 @@ class GraphicsPipelineCache final : public HasCacheStats<VulkanCacheType::Graphi
                     vk::CacheLookUpFeedback feedback,
                     const vk::GraphicsPipelineDesc **descPtrOut,
                     vk::PipelineHelper **pipelineOut);
+    void update(const vk::GraphicsPipelineDesc &desc, vk::Pipeline &&pipeline);
 
     using KeyEqual = typename GraphicsPipelineCacheTypeHelper<Hash>::KeyEqual;
     std::unordered_map<vk::GraphicsPipelineDesc, vk::PipelineHelper, Hash, KeyEqual> mPayload;

@@ -250,6 +250,7 @@
         "-internal-loading-auto-fill-button": {
             "user-agent-part": true
         },
+        "-internal-writing-suggestions": {},
         "-webkit-caps-lock-indicator": {
             "status": "non-standard",
             "user-agent-part": true

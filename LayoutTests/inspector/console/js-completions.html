@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("console.jsCompletions");
+
+    suite.addTestCase({
+        name: "console.jsCompletions.variableCompletions",
+        description: "Test that the JavaScript completions for variables and its cache work as expected.",
+        async test() {
+            const generateJSCompletions = () => new Promise((resolve, reject) => {
+                let mockCompletionController = {
+                    mode: null,
+                    updateCompletions: (completions) => {
+                        resolve(completions);
+                    },
+                };
+
+                const defaultCompletions = [];
+                const baseString = "";
+                const prefix = "";
+                const suffix = "";
+                const forced = true;
+                WI.javaScriptRuntimeCompletionProvider.completionControllerCompletionsNeeded(mockCompletionController, defaultCompletions, baseString, prefix, suffix, forced);
+            });
+
+            let completionsBeforeEvaluating = await generateJSCompletions();
+            InspectorTest.expectFalse(completionsBeforeEvaluating.includes("myVariable"), "Completions should not contain myVariable by default.");
+
+            await InspectorTest.evaluateInPage(`myVariable = 42;`);
+            let completionsAfterEvaluatingBeforeClearing = await generateJSCompletions();
+            InspectorTest.expectShallowEqual(completionsAfterEvaluatingBeforeClearing, completionsBeforeEvaluating, "Completions should not change before cache is cleared.");
+            InspectorTest.expectFalse(completionsAfterEvaluatingBeforeClearing.includes("myVariable"), "Completions should still not contain myVariable before cache is cleared.");
+
+            WI.javaScriptRuntimeCompletionProvider.clearCachedPropertyNames();
+            let completionsAfterEvaluatingAndClearing = await generateJSCompletions();
+            InspectorTest.expectNotShallowEqual(completionsAfterEvaluatingAndClearing, completionsAfterEvaluatingBeforeClearing, "Completions should change after cache is cleared.");
+            InspectorTest.expectTrue(completionsAfterEvaluatingAndClearing.includes("myVariable"), "Completions should contain myVariable after it's created by code run in console.");
+
+            await InspectorTest.evaluateInPage(`delete myVariable;`);
+            let completionsAfterDeletingBeforeClearing = await generateJSCompletions();
+            InspectorTest.expectShallowEqual(completionsAfterDeletingBeforeClearing, completionsAfterEvaluatingAndClearing, "Completions should not change before cache is cleared.");
+            InspectorTest.expectTrue(completionsAfterDeletingBeforeClearing.includes("myVariable"), "Completions should still contain myVariable before cache is cleared.");
+
+            WI.javaScriptRuntimeCompletionProvider.clearCachedPropertyNames();
+            let completionsAfterDeletingAndClearing = await generateJSCompletions();
+            InspectorTest.expectNotShallowEqual(completionsAfterDeletingAndClearing, completionsAfterDeletingBeforeClearing, "Completions should change after cache is cleared.");
+            InspectorTest.expectFalse(completionsAfterDeletingAndClearing.includes("myVariable"), "Completions should not contain myVariable after it's deleted by code run in console.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests for the JavaScript code completion feature used by the console and other code inputs in various breakpoint editors.
+</p>
+</body>
+</html>

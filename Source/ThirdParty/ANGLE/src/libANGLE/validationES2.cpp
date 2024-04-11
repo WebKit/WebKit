@@ -2619,9 +2619,7 @@ bool ValidateClear(const Context *context, angle::EntryPoint entryPoint, GLbitfi
 
     if (extensions.webglCompatibilityANGLE && (mask & GL_COLOR_BUFFER_BIT) != 0)
     {
-        const gl::DrawBufferMask intOrUnsignedIntMask =
-            GetIntOrUnsignedIntDrawBufferMask(fbo->getDrawBufferTypeMask());
-        if ((intOrUnsignedIntMask & fbo->getDrawBufferMask()).any())
+        if (GetIntOrUnsignedIntDrawBufferMask(fbo->getDrawBufferTypeMask()).any())
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kNoDefinedClearConversion);
             return false;

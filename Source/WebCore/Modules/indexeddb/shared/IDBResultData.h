@@ -35,7 +35,6 @@
 #include "IDBTransactionInfo.h"
 #include "ThreadSafeDataBuffer.h"
 #include <wtf/ArgumentCoder.h>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 

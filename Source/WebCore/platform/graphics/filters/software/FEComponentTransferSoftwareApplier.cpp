@@ -114,8 +114,8 @@ FEComponentTransferSoftwareApplier::LookupTable FEComponentTransferSoftwareAppli
 
 void FEComponentTransferSoftwareApplier::applyPlatform(PixelBuffer& pixelBuffer) const
 {
-    auto* data = pixelBuffer.bytes();
-    auto pixelByteLength = pixelBuffer.sizeInBytes();
+    auto* data = pixelBuffer.bytes().data();
+    auto pixelByteLength = pixelBuffer.bytes().size();
 
     auto redTable   = computeLookupTable(m_effect.redFunction());
     auto greenTable = computeLookupTable(m_effect.greenFunction());

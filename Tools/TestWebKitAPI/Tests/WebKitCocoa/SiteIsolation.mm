@@ -376,7 +376,7 @@ struct WebViewAndDelegates {
     RetainPtr<TestUIDelegate> uiDelegate;
 };
 
-static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(const HTTPServer& server, NSString *url = @"https://example.com/example")
+static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(const HTTPServer& server, NSString *url = @"https://example.com/example", bool waitForOpenedNavigation = true)
 {
     __block WebViewAndDelegates opener;
     __block WebViewAndDelegates opened;
@@ -402,7 +402,8 @@ static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(
     [opener.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
     while (!opened.webView)
         Util::spinRunLoop();
-    [opened.navigationDelegate waitForDidFinishNavigation];
+    if (waitForOpenedNavigation)
+        [opened.navigationDelegate waitForDidFinishNavigation];
     return { WTFMove(opener), WTFMove(opened) };
 }
 
@@ -2435,6 +2436,20 @@ TEST(SiteIsolation, NavigateOpener)
     EXPECT_EQ(opened.webView.get()._webProcessIdentifier, opener.webView.get()._webProcessIdentifier);
     checkFrameTreesInProcesses(opener.webView.get(), { { "https://webkit.org"_s } });
     checkFrameTreesInProcesses(opened.webView.get(), { { "https://webkit.org"_s } });
+}
+
+TEST(SiteIsolation, OpenThenClose)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr<WKWebView> retainOpener;
+    @autoreleasepool {
+        auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/example", false);
+        retainOpener = opener.webView;
+    }
 }
 
 TEST(SiteIsolation, CustomUserAgent)

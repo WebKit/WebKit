@@ -348,7 +348,26 @@ class Dashboard {
         if (!this.ref.state.displayed || !this.requestData)
             return;
 
-        const now = Math.floor(Date.now() / 1000);
+        const globalParams = this.documentParams()
+        let now = Math.floor(Date.now() / 1000);
+        if (Object.hasOwn(globalParams, 'before_time'))
+            now = Math.min(now, globalParams.before_time[0]);
+        if (Object.hasOwn(globalParams, 'before_timestamp'))
+            now = Math.min(now, globalPaarams.before_timestamp[0]);
+        if (Object.hasOwn(globalParams, 'before_uuid'))
+            now = Math.min(now, Math.floor(globalParams.before_uuid[0] / 100));
+        if (Object.hasOwn(globalParams, 'before_ref')) {
+            let commit_bank = CommitBank;
+            if (Object.hasOwn(globalParams, 'branch'))
+                commit_bank = CommitBank.forBranch(globalParams.branch);
+            for (const commit of CommitBank.commits) {
+                if (commit.identifier == globalParams.before_ref[0] || commit.revision == globalParams.before_ref[0] || commit.hash == globalParams.before_ref[0]) {
+                    now = Math.min(now, commit.timestamp);
+                    break;
+                }
+            }
+        }
+
         let oldestUuid = now * 100;
         let totalStatus = Expectations.stringToStateId('PASS');
         let tiles = [];

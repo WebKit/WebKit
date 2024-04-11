@@ -168,6 +168,14 @@ bool PageClientImpl::isViewVisible()
     return false;
 }
 
+void PageClientImpl::viewIsBecomingVisible()
+{
+#if ENABLE(PAGE_LOAD_OBSERVER)
+    if (RetainPtr webView = this->webView())
+        [webView _updatePageLoadObserverState];
+#endif
+}
+
 bool PageClientImpl::canTakeForegroundAssertions()
 {
     if (EndowmentStateTracker::singleton().isVisible()) {

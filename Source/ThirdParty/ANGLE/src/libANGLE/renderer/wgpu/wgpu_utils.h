@@ -19,6 +19,14 @@ namespace webgpu
 // WebGPU image level index.
 using LevelIndex = gl::LevelIndexWrapper<uint32_t>;
 
+enum class RenderPassClosureReason
+{
+    NewRenderPass,
+
+    InvalidEnum,
+    EnumCount = InvalidEnum,
+};
+
 }  // namespace webgpu
 
 namespace wgpu_gl

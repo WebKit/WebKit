@@ -321,7 +321,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
         Checked<int, AssertNoOverflow> bufferPos = 0;
         for (int i = 0; i < rangeCount; i++) {
             int srcLen = substringRanges[i].distance();
-            StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData + substringRanges[i].begin(), srcLen);
+            StringImpl::copyCharacters(buffer + bufferPos.value(), { sourceData + substringRanges[i].begin(), static_cast<size_t>(srcLen) });
             bufferPos += srcLen;
         }
 
@@ -340,7 +340,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
     Checked<int, AssertNoOverflow> bufferPos = 0;
     for (int i = 0; i < rangeCount; i++) {
         int srcLen = substringRanges[i].distance();
-        StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData + substringRanges[i].begin(), srcLen);
+        StringImpl::copyCharacters(buffer + bufferPos.value(), { sourceData + substringRanges[i].begin(), static_cast<size_t>(srcLen) });
         bufferPos += srcLen;
     }
 
@@ -1201,13 +1201,11 @@ static ALWAYS_INLINE bool splitStringByOneCharacterImpl(Indice& result, StringIm
     // 12. Let q = p.
     size_t matchPosition;
     size_t position = 0;
-    unsigned stringLength = string->length();
-    const CharacterType* characters = string->characters<CharacterType>();
     // 13. Repeat, while q != s
     //   a. Call SplitMatch(S, q, R) and let z be its MatchResult result.
     //   b. If z is failure, then let q = q+1.
     //   c. Else, z is not failure
-    while ((matchPosition = WTF::find(characters, stringLength, separatorCharacter, position)) != notFound) {
+    while ((matchPosition = WTF::find(string->span<CharacterType>(), separatorCharacter, position)) != notFound) {
         // 1. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
         //    through q (exclusive).
         // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),

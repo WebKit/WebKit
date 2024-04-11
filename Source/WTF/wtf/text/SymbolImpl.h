@@ -89,8 +89,8 @@ protected:
 
     friend class StringImpl;
 
-    SymbolImpl(const LChar* characters, unsigned length, Ref<StringImpl>&& base, Flags flags = s_flagDefault)
-        : UniquedStringImpl(CreateSymbol, characters, length)
+    SymbolImpl(std::span<const LChar> characters, Ref<StringImpl>&& base, Flags flags = s_flagDefault)
+        : UniquedStringImpl(CreateSymbol, characters)
         , m_owner(&base.leakRef())
         , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
         , m_flags(flags)
@@ -98,8 +98,8 @@ protected:
         ASSERT(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
     }
 
-    SymbolImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base, Flags flags = s_flagDefault)
-        : UniquedStringImpl(CreateSymbol, characters, length)
+    SymbolImpl(std::span<const UChar> characters, Ref<StringImpl>&& base, Flags flags = s_flagDefault)
+        : UniquedStringImpl(CreateSymbol, characters)
         , m_owner(&base.leakRef())
         , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
         , m_flags(flags)
@@ -129,13 +129,13 @@ public:
     WTF_EXPORT_PRIVATE static Ref<PrivateSymbolImpl> create(StringImpl& rep);
 
 private:
-    PrivateSymbolImpl(const LChar* characters, unsigned length, Ref<StringImpl>&& base)
-        : SymbolImpl(characters, length, WTFMove(base), s_flagIsPrivate)
+    PrivateSymbolImpl(std::span<const LChar> characters, Ref<StringImpl>&& base)
+        : SymbolImpl(characters, WTFMove(base), s_flagIsPrivate)
     {
     }
 
-    PrivateSymbolImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base)
-        : SymbolImpl(characters, length, WTFMove(base), s_flagIsPrivate)
+    PrivateSymbolImpl(std::span<const UChar> characters, Ref<StringImpl>&& base)
+        : SymbolImpl(characters, WTFMove(base), s_flagIsPrivate)
     {
     }
 };
@@ -152,14 +152,14 @@ private:
     static Ref<RegisteredSymbolImpl> create(StringImpl& rep, SymbolRegistry&);
     static Ref<RegisteredSymbolImpl> createPrivate(StringImpl& rep, SymbolRegistry&);
 
-    RegisteredSymbolImpl(const LChar* characters, unsigned length, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags = s_flagIsRegistered)
-        : SymbolImpl(characters, length, WTFMove(base), flags)
+    RegisteredSymbolImpl(std::span<const LChar> characters, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags = s_flagIsRegistered)
+        : SymbolImpl(characters, WTFMove(base), flags)
         , m_symbolRegistry(&registry)
     {
     }
 
-    RegisteredSymbolImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags = s_flagIsRegistered)
-        : SymbolImpl(characters, length, WTFMove(base), flags)
+    RegisteredSymbolImpl(std::span<const UChar> characters, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags = s_flagIsRegistered)
+        : SymbolImpl(characters, WTFMove(base), flags)
         , m_symbolRegistry(&registry)
     {
     }

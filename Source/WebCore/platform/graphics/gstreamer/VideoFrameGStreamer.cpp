@@ -301,8 +301,8 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
     ensureVideoFrameDebugCategoryInitialized();
     auto size = pixelBuffer->size();
 
-    auto sizeInBytes = pixelBuffer->sizeInBytes();
-    auto dataBaseAddress = pixelBuffer->bytes();
+    auto sizeInBytes = pixelBuffer->bytes().size();
+    auto dataBaseAddress = pixelBuffer->bytes().data();
     auto leakedPixelBuffer = &pixelBuffer.leakRef();
 
     auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, dataBaseAddress, sizeInBytes, 0, sizeInBytes, leakedPixelBuffer, [](gpointer userData) {

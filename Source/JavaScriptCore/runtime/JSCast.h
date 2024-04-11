@@ -124,9 +124,14 @@ using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSh
 #define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD_FORWARD_DECLARED(macro) \
     macro(JSImmutableButterfly, JSType::JSImmutableButterflyType, JSType::JSImmutableButterflyType) \
     macro(JSStringIterator, JSType::JSStringIteratorType, JSType::JSStringIteratorType) \
+    macro(Structure, JSType::StructureType, JSType::StructureType) \
     macro(JSString, JSType::StringType, JSType::StringType) \
     macro(JSBigInt, JSType::HeapBigIntType, JSType::HeapBigIntType) \
     macro(Symbol, JSType::SymbolType, JSType::SymbolType) \
+    macro(GetterSetter, JSType::GetterSetterType, JSType::GetterSetterType) \
+    macro(CustomGetterSetter, JSType::CustomGetterSetterType, JSType::CustomGetterSetterType) \
+    macro(NativeExecutable, JSType::NativeExecutableType, JSType::NativeExecutableType) \
+    macro(CodeBlock, JSType::CodeBlockType, JSType::CodeBlockType) \
     macro(JSObject, FirstObjectType, LastObjectType) \
     macro(JSFinalObject, JSType::FinalObjectType, JSType::FinalObjectType) \
     macro(JSFunction, JSType::JSFunctionType, JSType::JSFunctionType) \

@@ -50,7 +50,7 @@ class ResourceProvider;
 class RuntimeEffectDictionary;
 class SharedContext;
 class Task;
-class TaskGraph;
+class TaskList;
 class TextureDataBlock;
 class TextureInfo;
 class UniformDataBlock;
@@ -129,6 +129,21 @@ public:
                               int numLevels);
 
     /**
+     * If possible, updates a compressed backend texture filled with the provided raw data. The
+     * client should check the return value to see if the update was successful. The client is
+     * required to insert a Recording into the Context and call `submit` to send the upload work to
+     * the gpu.
+     * If the backend texture is mip mapped, the data for all the mipmap levels must be provided.
+     * Additionally, all the miplevels must be sized correctly (please see
+     * SkMipMap::ComputeLevelSize and ComputeLevelCount).
+     * For the Vulkan backend after a successful update the layout of the created VkImage will be:
+     *      VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+     */
+    bool updateCompressedBackendTexture(const BackendTexture&,
+                                        const void* data,
+                                        size_t dataSize);
+
+    /**
      * Called to delete the passed in BackendTexture. This should only be called if the
      * BackendTexture was created by calling Recorder::createBackendTexture on a Recorder that is
      * associated with the same Context. If the BackendTexture is not valid or does not match the
@@ -167,9 +182,15 @@ public:
     void performDeferredCleanup(std::chrono::milliseconds msNotUsed);
 
     /**
-     * Returns the number of bytes of gpu memory currently budgeted in the Recorder's cache.
+     * Returns the number of bytes of the Recorder's gpu memory cache budget that are currently in
+     * use.
      */
     size_t currentBudgetedBytes() const;
+
+    /**
+     * Returns the size of Recorder's gpu memory cache budget in bytes.
+     */
+    size_t maxBudgetedBytes() const;
 
     /**
      * Enumerates all cached GPU resources owned by the Recorder and dumps their memory to
@@ -196,9 +217,10 @@ private:
     // SkSurface/Device first we will flush all the Device's into the Recorder before deregistering
     // it from the Recorder.
     //
-    // We do not need to take a ref on the Device since the Device will flush and deregister itself
-    // in its dtor. There is no other need for the Recorder to know about the Device after this
-    // point.
+    // We take a ref on the Device so that ~Device() does not have to deregister the recorder
+    // (which can happen on any thread if the Device outlives the Surface via an Image view).
+    // Recorder::flushTrackedDevices() cleans up uniquely held and immutable Devices on the recorder
+    // thread so this extra ref is not significantly increasing the Device lifetime.
     //
     // Note: We could probably get by with only registering Devices directly connected to
     // SkSurfaces. All other one off Devices will be created in a controlled scope where the
@@ -214,12 +236,13 @@ private:
     std::unique_ptr<ResourceProvider> fResourceProvider;
     std::unique_ptr<RuntimeEffectDictionary> fRuntimeEffectDict;
 
-    std::unique_ptr<TaskGraph> fGraph;
+    // NOTE: These are stored by pointer to allow them to be forward declared.
+    std::unique_ptr<TaskList> fRootTaskList;
     std::unique_ptr<UniformDataCache> fUniformDataCache;
     std::unique_ptr<TextureDataCache> fTextureDataCache;
     std::unique_ptr<DrawBufferManager> fDrawBufferManager;
     std::unique_ptr<UploadBufferManager> fUploadBufferManager;
-    std::vector<Device*> fTrackedDevices;
+    std::vector<sk_sp<Device>> fTrackedDevices;
 
     uint32_t fUniqueID;  // Needed for MessageBox handling for text
     uint32_t fNextRecordingID = 1;

@@ -4743,7 +4743,7 @@ fn testTextureStore()
 
 // 16.8. Atomic Built-in Functions (https://www.w3.org/TR/WGSL/#atomic-builtin-functions)
 var<workgroup> x: atomic<i32>;
-@group(8) @binding(0) var<storage, read_write> y: atomic<i32>;
+@group(7) @binding(10) var<storage, read_write> y: atomic<i32>;
 
 // RUN: %metal-compile testAtomicFunctions
 @compute @workgroup_size(1)

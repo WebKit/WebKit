@@ -230,7 +230,7 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
                 return std::nullopt;
 
             auto* image = renderImage->cachedImage()->image();
-            if (!image || !image->isBitmapImage())
+            if (!image || !image->shouldUseQuickLookForFullscreen())
                 return std::nullopt;
 
             auto* buffer = renderImage->cachedImage()->resourceBuffer();
@@ -246,9 +246,12 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
 
         auto mimeType = emptyString();
         if (auto* cachedImage = renderImage->cachedImage()) {
-            if (auto* image = cachedImage->image())
+            if (RefPtr image = cachedImage->image()) {
                 mimeType = image->mimeType();
 
+                if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+                    mimeType = MIMETypeRegistry::mimeTypeForExtension(image->filenameExtension());
+            }
             if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
                 mimeType = MIMETypeRegistry::mimeTypeForPath(cachedImage->url().string());
         }

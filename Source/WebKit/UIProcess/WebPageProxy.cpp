@@ -2649,6 +2649,10 @@ void WebPageProxy::viewDidLeaveWindow()
     if (m_videoPresentationManager && m_videoPresentationManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard))
         m_videoPresentationManager->requestHideAndExitFullscreen();
 #endif
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateDefaultSpatialTrackingLabel();
+#endif
 }
 
 void WebPageProxy::viewDidEnterWindow()
@@ -2658,6 +2662,10 @@ void WebPageProxy::viewDidEnterWindow()
         internals().layerHostingMode = layerHostingMode;
         send(Messages::WebPage::SetLayerHostingMode(layerHostingMode));
     }
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateDefaultSpatialTrackingLabel();
+#endif
 }
 
 void WebPageProxy::dispatchActivityStateChange()
@@ -6647,6 +6655,9 @@ void WebPageProxy::viewIsBecomingVisible()
     if (m_userMediaPermissionRequestManager)
         m_userMediaPermissionRequestManager->viewIsBecomingVisible();
 #endif
+
+    Ref protectedPageClient { pageClient() };
+    protectedPageClient->viewIsBecomingVisible();
 }
 
 void WebPageProxy::processIsNoLongerAssociatedWithPage(WebProcessProxy& process)
@@ -11376,7 +11387,7 @@ void WebPageProxy::firstRectForCharacterRangeAsync(const EditingRange& range, Co
     sendWithAsyncReply(Messages::WebPage::FirstRectForCharacterRangeAsync(range), WTFMove(callbackFunction));
 }
 
-void WebPageProxy::setCompositionAsync(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const HashMap<String, Vector<CharacterRange>>& annotations, const EditingRange& selectionRange, const EditingRange& replacementRange)
+void WebPageProxy::setCompositionAsync(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const EditingRange& selectionRange, const EditingRange& replacementRange)
 {
     if (!hasRunningProcess()) {
         // If this fails, we should call -discardMarkedText on input context to notify the input method.
@@ -11384,7 +11395,18 @@ void WebPageProxy::setCompositionAsync(const String& text, const Vector<Composit
         return;
     }
 
-    send(Messages::WebPage::SetCompositionAsync(text, underlines, highlights, annotations, selectionRange, replacementRange));
+    send(Messages::WebPage::SetCompositionAsync(text, underlines, highlights, selectionRange, replacementRange));
+}
+
+void WebPageProxy::setWritingSuggestion(const String& text, const EditingRange& selectionRange)
+{
+    if (!hasRunningProcess()) {
+        // If this fails, we should call -discardMarkedText on input context to notify the input method.
+        // This will happen naturally later, as part of reloading the page.
+        return;
+    }
+
+    send(Messages::WebPage::SetWritingSuggestion(text, selectionRange));
 }
 
 void WebPageProxy::confirmCompositionAsync()
@@ -13902,14 +13924,35 @@ void WebPageProxy::numberOfVisibilityAdjustmentRects(CompletionHandler<void(uint
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-void WebPageProxy::setSpatialTrackingLabel(const String& spatialTrackingLabel)
+void WebPageProxy::setDefaultSpatialTrackingLabel(const String& spatialTrackingLabel)
 {
-    send(Messages::WebPage::SetDefaultSpatialTrackingLabel(spatialTrackingLabel));
+    if (spatialTrackingLabel == m_defaultSpatialTrackingLabel)
+        return;
+    m_defaultSpatialTrackingLabel = spatialTrackingLabel;
+    updateDefaultSpatialTrackingLabel();
 }
 
-const String& WebPageProxy::spatialTrackingLabel() const
+const String& WebPageProxy::defaultSpatialTrackingLabel() const
 {
-    return protectedPageClient()->spatialTrackingLabel();
+    return m_defaultSpatialTrackingLabel;
+}
+
+void WebPageProxy::updateDefaultSpatialTrackingLabel()
+{
+    auto effectiveSpatialTrackingLabel = [&] {
+        // Use the explicitly set tracking label, if set.
+        if (!m_defaultSpatialTrackingLabel.isNull())
+            return m_defaultSpatialTrackingLabel;
+
+        // Otherwise, use the pageClient's tracking label, if the page is parented.
+        Ref pageClient = protectedPageClient();
+        if (pageClient->isViewInWindow())
+            return protectedPageClient()->spatialTrackingLabel();
+
+        // If there is no explicit tracking label, and the view is unparented, use a null tracking label.
+        return nullString();
+    };
+    send(Messages::WebPage::SetDefaultSpatialTrackingLabel(effectiveSpatialTrackingLabel()));
 }
 #endif
 

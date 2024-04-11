@@ -19,7 +19,6 @@
 #include "src/gpu/graphite/CommandBuffer.h"
 #include "src/gpu/graphite/ContextPriv.h"
 #include "src/gpu/graphite/ContextUtils.h"
-#include "src/gpu/graphite/CopyTask.h"
 #include "src/gpu/graphite/DrawContext.h"
 #include "src/gpu/graphite/DrawList.h"
 #include "src/gpu/graphite/DrawParams.h"
@@ -40,6 +39,7 @@
 #include "src/gpu/graphite/geom/IntersectionTree.h"
 #include "src/gpu/graphite/geom/Shape.h"
 #include "src/gpu/graphite/geom/Transform_graphite.h"
+#include "src/gpu/graphite/task/CopyTask.h"
 #include "src/gpu/graphite/text/TextAtlasManager.h"
 
 #include "include/core/SkColorSpace.h"
@@ -61,7 +61,6 @@
 #include "src/core/SkTraceEvent.h"
 #include "src/core/SkVerticesPriv.h"
 #include "src/gpu/TiledTextureUtils.h"
-#include "src/shaders/SkImageShader.h"
 #include "src/text/GlyphRun.h"
 #include "src/text/gpu/GlyphVector.h"
 #include "src/text/gpu/SlugImpl.h"
@@ -250,7 +249,8 @@ sk_sp<TextureProxy> make_draw_target(const Recorder* recorder,
                               budgeted);
 }
 
-sk_sp<DrawContext> make_draw_context(sk_sp<TextureProxy> target,
+sk_sp<DrawContext> make_draw_context(const Recorder* recorder,
+                                     sk_sp<TextureProxy> target,
                                      const SkISize& dimensions,
                                      const SkColorInfo& colorInfo,
                                      const SkSurfaceProps& props) {
@@ -259,7 +259,8 @@ sk_sp<DrawContext> make_draw_context(sk_sp<TextureProxy> target,
         colorInfo.alphaType() == kUnpremul_SkAlphaType) {
         return nullptr;
     }
-    return DrawContext::Make(std::move(target), dimensions, colorInfo, props);
+    return DrawContext::Make(recorder->priv().caps(), std::move(target),
+                             dimensions, colorInfo, props);
 }
 
 }  // anonymous namespace
@@ -272,6 +273,10 @@ sk_sp<Device> Device::Make(Recorder* recorder,
                            const SkSurfaceProps& props,
                            bool addInitialClear) {
     SkASSERT(!(mipmapped == Mipmapped::kYes && backingFit == SkBackingFit::kApprox));
+
+    if (!recorder) {
+        return nullptr;
+    }
 
     Protected isProtected = Protected(recorder->priv().caps()->protectedSupport());
     sk_sp<TextureProxy> target = make_draw_target(
@@ -307,7 +312,8 @@ sk_sp<Device> Device::Make(Recorder* recorder,
         return nullptr;
     }
 
-    sk_sp<DrawContext> dc = make_draw_context(std::move(target), deviceSize, colorInfo, props);
+    sk_sp<DrawContext> dc =
+            make_draw_context(recorder, std::move(target), deviceSize, colorInfo, props);
     if (!dc) {
         return nullptr;
     }
@@ -332,7 +338,7 @@ sk_sp<Device> Device::MakeScratch(Recorder* recorder,
     }
 
     sk_sp<DrawContext> dc =
-            make_draw_context(std::move(target), ii.dimensions(), ii.colorInfo(), props);
+            make_draw_context(recorder, std::move(target), ii.dimensions(), ii.colorInfo(), props);
     if (!dc) {
         return nullptr;
     }
@@ -388,14 +394,37 @@ Device::Device(Recorder* recorder,
 }
 
 Device::~Device() {
-    if (fRecorder) {
-        this->flushPendingWorkToRecorder();
-        fRecorder->deregisterDevice(this);
-    }
+    // The Device should have been marked immutable before it's destroyed, or the Recorder was the
+    // last holder of a reference to it and de-registered the device as part of its cleanup.
+    // However, if the Device was not registered with the recorder (i.e. a scratch device) and that
+    // device had to be deleted before it was adopted by a surface due to some initialization error,
+    // abandonRecorder() may not have been called. In these cases there's no clean up that has to
+    // happen since nothing else is tracking the device and device itself is being destroyed so the
+    // value of fRecorder is unimportant.
+#if defined(GRAPHITE_TEST_UTILS)
+    // This is only checked when built with GRAPHITE_TEST_UTILS because that defines
+    // deviceIsRegistered(), but should be sufficient to catch issues with teardown.
+    SkASSERT(!fRecorder || !fRecorder->priv().deviceIsRegistered(this));
+#endif
 }
 
 void Device::abandonRecorder() {
     fRecorder = nullptr;
+}
+
+void Device::setImmutable() {
+    if (fRecorder) {
+        // Push any pending work to the Recorder now. setImmutable() is only called by the
+        // destructor of a client-owned Surface, or explicitly in layer/filtering workflows. In
+        // both cases this is restricted to the Recorder's thread. This is in contrast to ~Device(),
+        // which might be called from another thread if it was linked to an Image used in multiple
+        // recorders.
+        this->flushPendingWorkToRecorder();
+        fRecorder->deregisterDevice(this);
+        // Abandoning the recorder ensures that there are no further operations that can be recorded
+        // and is relied on by Image::notifyInUse() to detect when it can unlink from a Device.
+        this->abandonRecorder();
+    }
 }
 
 const Transform& Device::localToDeviceTransform() {
@@ -438,9 +467,7 @@ sk_sp<SkSurface> Device::makeSurface(const SkImageInfo& ii, const SkSurfaceProps
 TextureProxyView Device::createCopy(const SkIRect* subset,
                                     Mipmapped mipmapped,
                                     SkBackingFit backingFit) {
-    this->flushPendingWorkToRecorder();
-
-    TextureProxyView srcView = this->readSurfaceView();
+    const TextureProxyView& srcView = this->readSurfaceView();
     if (!srcView) {
         return {};
     }
@@ -455,25 +482,23 @@ TextureProxyView Device::createCopy(const SkIRect* subset,
                                                 this->imageInfo().makeDimensions(size),
                                                 mipmapped);
 
-        auto image = sk_make_sp<Image>(kNeedNewImageUniqueID,
-                                       readSurfaceView(),
-                                       this->imageInfo().colorInfo());
+        // Any pending work is flushed automatically when this image is drawn to `surface`
+        auto image = Image::MakeView(sk_ref_sp(this));
         SkPaint paint;
         paint.setBlendMode(SkBlendMode::kSrc);
         auto pt = subset ? subset->topLeft() : SkIPoint{0, 0};
         surface->getCanvas()->drawImage(image, -pt.x(), -pt.y(), SkFilterMode::kNearest, &paint);
-
-        auto readView = static_cast<Surface*>(surface.get())->readSurfaceView();
-        if (mipmapped == Mipmapped::kYes) {
-            if (!GenerateMipmaps(fRecorder, readView.refProxy(), this->imageInfo().colorInfo())) {
-                SKGPU_LOG_W("Device::createCopy: Failed to generate mipmaps");
-            }
-        }
-
+        Flush(surface.get());
+        const TextureProxyView& readView = static_cast<Surface*>(surface.get())->readSurfaceView();
+        // TODO(b/297344089): For mipmapped surfaces, the above Flush() also generates the mipmaps.
+        // When automatic mipmap generation happens lazily on first-read, this function should
+        // explicitly trigger the one-time mipmap generation.
+        SkASSERT(readView.proxy()->mipmapped() == mipmapped);
         return readView;
     }
 
     SkIRect srcRect = subset ? *subset : SkIRect::MakeSize(this->imageInfo().dimensions());
+    this->flushPendingWorkToRecorder();
     return TextureProxyView::Copy(this->recorder(),
                                   this->imageInfo().colorInfo(),
                                   srcView,
@@ -526,8 +551,10 @@ TextureProxyView TextureProxyView::Copy(Recorder* recorder,
 
 bool Device::onReadPixels(const SkPixmap& pm, int srcX, int srcY) {
 #if defined(GRAPHITE_TEST_UTILS)
+    // This testing-only function should only be called before the Device has detached from its
+    // Recorder, since it's accessed via the test-held Surface.
+    SkASSERT(fRecorder);
     if (Context* context = fRecorder->priv().context()) {
-        this->flushPendingWorkToRecorder();
         // Add all previous commands generated to the command buffer.
         // If the client snaps later they'll only get post-read commands in their Recording,
         // but since they're doing a readPixels in the middle that shouldn't be unexpected.
@@ -548,6 +575,7 @@ bool Device::onReadPixels(const SkPixmap& pm, int srcX, int srcY) {
 }
 
 bool Device::onWritePixels(const SkPixmap& src, int x, int y) {
+    SkASSERT(fRecorder);
     // TODO: we may need to share this in a more central place to handle uploads
     // to backend textures
 
@@ -598,28 +626,14 @@ bool Device::onWritePixels(const SkPixmap& src, int x, int y) {
     std::vector<MipLevel> levels;
     levels.push_back({addr, src.rowBytes()});
 
-    this->flushPendingWorkToRecorder();
-
-    if (!fDC->recordUpload(fRecorder, fDC->refTarget(), src.info().colorInfo(),
-                           this->imageInfo().colorInfo(), levels, dstRect, nullptr)) {
-        return false;
-    }
-
-    // TODO(b/297344089): This always regenerates mipmaps on the draw target when it's drawn to.
-    // This could be wasteful if we draw to a target multiple times before reading from it with
-    // downscaling.
-    if (target->mipmapped() == Mipmapped::kYes) {
-        sk_sp<Task> uploadTask = fDC->snapUploadTask(fRecorder);
-        SkASSERT(uploadTask);
-        if (uploadTask) {
-            fRecorder->priv().add(std::move(uploadTask));
-        }
-        if (!GenerateMipmaps(fRecorder, fDC->refTarget(), fDC->colorInfo())) {
-            SKGPU_LOG_W("Device::onWritePixels: Failed to generate mipmaps for draw target");
-        }
-    }
-
-    return true;
+    // The writePixels() still respects painter's order, so flush everything to tasks before this
+    // recording the upload for the pixel data.
+    this->internalFlush();
+    // The new upload will be executed before any new draws are recorded and also ensures that
+    // the next call to flushDeviceToRecorder() will produce a non-null DrawTask. If this Device's
+    // target is mipmapped, mipmap generation tasks will be added automatically at that point.
+    return fDC->recordUpload(fRecorder, fDC->refTarget(), src.info().colorInfo(),
+                             this->imageInfo().colorInfo(), levels, dstRect, nullptr);
 }
 
 
@@ -726,6 +740,7 @@ void Device::replaceClip(const SkIRect& rect) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void Device::drawPaint(const SkPaint& paint) {
+    SkASSERT(fRecorder);
     // We never want to do a fullscreen clear on a fully-lazy render target, because the device size
     // may be smaller than the final surface we draw to, in which case we don't want to fill the
     // entire final surface.
@@ -975,6 +990,7 @@ sktext::gpu::AtlasDrawDelegate Device::atlasDelegate() {
 void Device::onDrawGlyphRunList(SkCanvas* canvas,
                                 const sktext::GlyphRunList& glyphRunList,
                                 const SkPaint& paint) {
+    SkASSERT(fRecorder);
     fRecorder->priv().textBlobCache()->drawGlyphRunList(canvas,
                                                         this->localToDevice(),
                                                         glyphRunList,
@@ -988,6 +1004,8 @@ void Device::drawAtlasSubRun(const sktext::gpu::AtlasSubRun* subRun,
                              const SkPaint& paint,
                              sk_sp<SkRefCnt> subRunStorage,
                              sktext::gpu::RendererData rendererData) {
+    SkASSERT(fRecorder);
+
     const int subRunEnd = subRun->glyphCount();
     auto regenerateDelegate = [&](sktext::gpu::GlyphVector* glyphs,
                                   int begin,
@@ -1046,6 +1064,8 @@ void Device::drawGeometry(const Transform& localToDevice,
                           SkEnumBitMask<DrawFlags> flags,
                           sk_sp<SkBlender> primitiveBlender,
                           bool skipColorXform) {
+    SkASSERT(fRecorder);
+
     if (!localToDevice.valid()) {
         // If the transform is not invertible or not finite then drawing isn't well defined.
         SKGPU_LOG_W("Skipping draw with non-invertible/non-finite transform.");
@@ -1275,6 +1295,10 @@ void Device::drawGeometry(const Transform& localToDevice,
                                                                  clip.drawBounds());
         order.dependsOnStencil(setIndex);
     }
+
+    // TODO(b/330864257): This is an extra traversal of all paint effects, that can be avoided when
+    // the paint key itself is determined inside this function.
+    shading.notifyImagesInUse(fRecorder, fDC.get());
 
     // If an atlas path renderer was chosen, then record a single CoverageMaskShape draw.
     // The shape will be scheduled to be rendered or uploaded into the atlas during the
@@ -1514,61 +1538,51 @@ void Device::flushPendingWorkToRecorder() {
     TRACE_EVENT0("skia.gpu", TRACE_FUNC);
     SkASSERT(fRecorder);
 
-    // TODO: we may need to further split this function up since device->device drawList and
-    // DrawPass stealing will need to share some of the same logic w/o becoming a Task.
-
-    // Push any pending uploads from the atlasProvider
-    fRecorder->priv().atlasProvider()->recordUploads(fDC.get());
-
-    auto uploadTask = fDC->snapUploadTask(fRecorder);
-    if (uploadTask) {
-        fRecorder->priv().add(std::move(uploadTask));
-    }
-
-    fClip.recordDeferredClipDraws();
-
-    // Snap the render pass task before snapping the compute task because creating a DrawPass may
-    // record DispatchGroups that it depends on (e.g. to process geometry or atlas draws).
-    auto drawTask = fDC->snapRenderPassTask(fRecorder);
-    auto computeTask = fDC->snapComputeTask(fRecorder);
-    const bool addingDrawTask = SkToBool(drawTask);
-
-    // Execute the compute task before the draw task.
-    if (computeTask) {
-        fRecorder->priv().add(std::move(computeTask));
-    }
+    this->internalFlush();
+    sk_sp<Task> drawTask = fDC->snapDrawTask(fRecorder);
     if (drawTask) {
         fRecorder->priv().add(std::move(drawTask));
-    }
 
-    // TODO(b/297344089): This always regenerates mipmaps on the draw target when it's drawn to.
-    // This could be wasteful if we draw to a target multiple times before reading from it with
-    // downscaling.
-    if (addingDrawTask && fDC->target()->mipmapped() == Mipmapped::kYes) {
-        if (!GenerateMipmaps(fRecorder, fDC->refTarget(), fDC->colorInfo())) {
-            SKGPU_LOG_W("Device::flushPendingWorkToRecorder: Failed to generate mipmaps for draw "
-                        "target");
+        // TODO(b/297344089): This always regenerates mipmaps on the draw target when it's drawn to.
+        // This could be wasteful if we draw to a target multiple times before reading from it with
+        // downscaling.
+        if (fDC->target()->mipmapped() == Mipmapped::kYes) {
+            if (!GenerateMipmaps(fRecorder, fDC->refTarget(), fDC->colorInfo())) {
+                SKGPU_LOG_W("Device::flushPendingWorkToRecorder: Failed to generate mipmaps");
+            }
         }
     }
+}
 
-    // Reset accumulated state tracking since everything that it referred to has been moved into
-    // an immutable DrawPass.
+void Device::internalFlush() {
+    TRACE_EVENT0("skia.gpu", TRACE_FUNC);
+    SkASSERT(fRecorder);
+
+    // Push any pending uploads from the atlas provider that pending draws reference.
+    fRecorder->priv().atlasProvider()->recordUploads(fDC.get());
+
+    // Clip shapes are depth-only draws, but aren't recorded in the DrawContext until a flush in
+    // order to determine the Z values for each element.
+    fClip.recordDeferredClipDraws();
+
+    // Flush all pending items to the internal task list and reset Device tracking state
+    fDC->flush(fRecorder);
+
     fColorDepthBoundsManager->reset();
     fDisjointStencilSet->reset();
     fCurrentDepth = DrawOrder::kClearDepth;
 
-    // Any cleanup in the AtlasProvider
+     // Any cleanup in the AtlasProvider
     fRecorder->priv().atlasProvider()->postFlush();
 }
 
 bool Device::needsFlushBeforeDraw(int numNewRenderSteps, DstReadRequirement dstReadReq) const {
     // Must also account for the elements in the clip stack that might need to be recorded.
     numNewRenderSteps += fClip.maxDeferredClipDraws() * Renderer::kMaxRenderSteps;
-    return
-            // Need flush if we don't have room to record into the current list.
-            (DrawList::kMaxRenderSteps - fDC->pendingRenderSteps()) < numNewRenderSteps ||
-            // Need flush if this draw needs to copy the dst surface for reading.
-            dstReadReq == DstReadRequirement::kTextureCopy;
+    return // Need flush if we don't have room to record into the current list.
+           (DrawList::kMaxRenderSteps - fDC->pendingRenderSteps()) < numNewRenderSteps ||
+           // Need flush if this draw needs to copy the dst surface for reading.
+           dstReadReq == DstReadRequirement::kTextureCopy;
 }
 
 void Device::drawSpecial(SkSpecialImage* special,
@@ -1658,11 +1672,21 @@ sk_sp<SkSpecialImage> Device::makeSpecial(const SkImage*) {
 }
 
 sk_sp<SkSpecialImage> Device::snapSpecial(const SkIRect& subset, bool forceCopy) {
-    this->flushPendingWorkToRecorder();
+    if (fRecorder) {
+        this->flushPendingWorkToRecorder();
+    }
 
     SkIRect finalSubset = subset;
     TextureProxyView view = this->readSurfaceView();
     if (forceCopy || !view || view.proxy()->isFullyLazy()) {
+        // snapSpecial() can be called after setImmutable() is called, but in that case it should
+        // never be a copy (that would otherwise require access to the recorder), and shouldn't be
+        // a non-readable or fully lazy proxy (since those come from client Surfaces).
+        SkASSERT(fRecorder);
+        if (!fRecorder) {
+            return nullptr;
+        }
+
         // TODO: this doesn't address the non-readable surface view case, in which view is empty and
         // createCopy will return an empty view as well.
         view = this->createCopy(&subset, Mipmapped::kNo, SkBackingFit::kApprox);
@@ -1672,6 +1696,8 @@ sk_sp<SkSpecialImage> Device::snapSpecial(const SkIRect& subset, bool forceCopy)
         finalSubset = SkIRect::MakeSize(subset.size());
     }
 
+    // For non-copying "snapSpecial", the semantics are returning an image view of the surface data,
+    // and relying on higher-level draw and restore logic for the contents to make sense.
     return SkSpecialImages::MakeGraphite(finalSubset,
                                          kNeedNewImageUniqueID_SpecialImage,
                                          std::move(view),
@@ -1686,12 +1712,7 @@ sk_sp<skif::Backend> Device::createImageFilteringBackend(const SkSurfaceProps& s
 
 TextureProxy* Device::target() { return fDC->target(); }
 
-TextureProxyView Device::readSurfaceView() const {
-    if (!fRecorder) {
-        return {};
-    }
-    return fDC->readSurfaceView(fRecorder->priv().caps());
-}
+TextureProxyView Device::readSurfaceView() const { return fDC->readSurfaceView(); }
 
 sk_sp<sktext::gpu::Slug> Device::convertGlyphRunListToSlug(const sktext::GlyphRunList& glyphRunList,
                                                            const SkPaint& paint) {

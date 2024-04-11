@@ -38,7 +38,7 @@ class ProcessIdentity;
 
 namespace WebCore::WebGPU {
 
-using WorkItem = CompletionHandler<void(void)>;
+using WorkItem = Function<void()>;
 using ScheduleWorkFunction = Function<void(WorkItem&&)>;
 WEBCORE_EXPORT RefPtr<GPU> create(ScheduleWorkFunction&&, const WebCore::ProcessIdentity*);
 

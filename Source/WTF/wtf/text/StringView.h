@@ -30,7 +30,6 @@
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/ConversionMode.h>
 #include <wtf/text/LChar.h>
@@ -623,12 +622,12 @@ template<bool isSpecialCharacter(UChar)> inline bool StringView::containsOnly() 
 
 template<typename CharacterType> inline void StringView::getCharacters8(CharacterType* destination) const
 {
-    StringImpl::copyCharacters(destination, characters8(), m_length);
+    StringImpl::copyCharacters(destination, span8());
 }
 
 template<typename CharacterType> inline void StringView::getCharacters16(CharacterType* destination) const
 {
-    StringImpl::copyCharacters(destination, characters16(), m_length);
+    StringImpl::copyCharacters(destination, span16());
 }
 
 template<typename CharacterType> inline void StringView::getCharacters(CharacterType* destination) const
@@ -646,10 +645,8 @@ inline StringView::UpconvertedCharactersWithSize<N>::UpconvertedCharactersWithSi
         m_characters = string.characters16();
         return;
     }
-    const LChar* characters8 = string.characters8();
-    unsigned length = string.m_length;
-    m_upconvertedCharacters.grow(length);
-    StringImpl::copyCharacters(m_upconvertedCharacters.data(), characters8, length);
+    m_upconvertedCharacters.grow(string.m_length);
+    StringImpl::copyCharacters(m_upconvertedCharacters.data(), string.span8());
     m_characters = m_upconvertedCharacters.data();
 }
 
@@ -691,37 +688,37 @@ inline double StringView::toDouble(bool& isValid) const
 inline String StringView::toStringWithoutCopying() const
 {
     if (is8Bit())
-        return StringImpl::createWithoutCopying(characters8(), m_length);
-    return StringImpl::createWithoutCopying(characters16(), m_length);
+        return StringImpl::createWithoutCopying(span8());
+    return StringImpl::createWithoutCopying(span16());
 }
 
 inline size_t StringView::find(UChar character, unsigned start) const
 {
     if (is8Bit())
-        return WTF::find(characters8(), m_length, character, start);
-    return WTF::find(characters16(), m_length, character, start);
+        return WTF::find(span8(), character, start);
+    return WTF::find(span16(), character, start);
 }
 
 inline size_t StringView::find(LChar character, unsigned start) const
 {
     if (is8Bit())
-        return WTF::find(characters8(), m_length, character, start);
-    return WTF::find(characters16(), m_length, character, start);
+        return WTF::find(span8(), character, start);
+    return WTF::find(span16(), character, start);
 }
 
 template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>*>
 inline size_t StringView::find(CodeUnitMatchFunction&& matchFunction, unsigned start) const
 {
     if (is8Bit())
-        return WTF::find(characters8(), m_length, std::forward<CodeUnitMatchFunction>(matchFunction), start);
-    return WTF::find(characters16(), m_length, std::forward<CodeUnitMatchFunction>(matchFunction), start);
+        return WTF::find(span8(), std::forward<CodeUnitMatchFunction>(matchFunction), start);
+    return WTF::find(span16(), std::forward<CodeUnitMatchFunction>(matchFunction), start);
 }
 
 inline size_t StringView::reverseFind(UChar character, unsigned start) const
 {
     if (is8Bit())
-        return WTF::reverseFind(characters8(), m_length, character, start);
-    return WTF::reverseFind(characters16(), m_length, character, start);
+        return WTF::reverseFind(span8(), character, start);
+    return WTF::reverseFind(span16(), character, start);
 }
 
 #if !CHECK_STRINGVIEW_LIFETIME
@@ -781,13 +778,13 @@ inline bool equal(StringView a, const LChar* b)
     if (a.isEmpty())
         return !b;
 
-    unsigned aLength = a.length();
-    if (aLength != strlen(reinterpret_cast<const char*>(b)))
+    auto bSpan = span8(reinterpret_cast<const char*>(b));
+    if (a.length() != bSpan.size())
         return false;
 
     if (a.is8Bit())
-        return equal(a.characters8(), b, aLength);
-    return equal(a.characters16(), b, aLength);
+        return equal(a.characters8(), bSpan);
+    return equal(a.characters16(), bSpan);
 }
 
 ALWAYS_INLINE bool equal(StringView a, ASCIILiteral b)
@@ -1213,8 +1210,8 @@ inline size_t findCommon(StringView haystack, StringView needle, unsigned start)
     if (needleLength == 1) {
         UChar firstCharacter = needle.unsafeCharacterAt(0);
         if (haystack.is8Bit())
-            return WTF::find(haystack.characters8(), haystack.length(), firstCharacter, start);
-        return WTF::find(haystack.characters16(), haystack.length(), firstCharacter, start);
+            return WTF::find(haystack.span8(), firstCharacter, start);
+        return WTF::find(haystack.span16(), firstCharacter, start);
     }
 
     if (start > haystack.length())
@@ -1229,14 +1226,14 @@ inline size_t findCommon(StringView haystack, StringView needle, unsigned start)
 
     if (haystack.is8Bit()) {
         if (needle.is8Bit())
-            return findInner(haystack.characters8() + start, needle.characters8(), start, searchLength, needleLength);
-        return findInner(haystack.characters8() + start, needle.characters16(), start, searchLength, needleLength);
+            return findInner(haystack.span8().subspan(start), needle.span8(), start);
+        return findInner(haystack.span8().subspan(start), needle.span16(), start);
     }
 
     if (needle.is8Bit())
-        return findInner(haystack.characters16() + start, needle.characters8(), start, searchLength, needleLength);
+        return findInner(haystack.span16().subspan(start), needle.span8(), start);
 
-    return findInner(haystack.characters16() + start, needle.characters16(), start, searchLength, needleLength);
+    return findInner(haystack.span16().subspan(start), needle.span16(), start);
 }
 
 inline size_t findIgnoringASCIICase(StringView source, StringView stringToFind, unsigned start)
@@ -1255,46 +1252,43 @@ inline size_t findIgnoringASCIICase(StringView source, StringView stringToFind, 
 
     if (source.is8Bit()) {
         if (stringToFind.is8Bit())
-            return findIgnoringASCIICase(source.characters8(), stringToFind.characters8(), start, searchLength, matchLength);
-        return findIgnoringASCIICase(source.characters8(), stringToFind.characters16(), start, searchLength, matchLength);
+            return findIgnoringASCIICase(source.span8().first(searchLength), stringToFind.span8(), static_cast<size_t>(start));
+        return findIgnoringASCIICase(source.span8().first(searchLength), stringToFind.span16(), static_cast<size_t>(start));
     }
 
     if (stringToFind.is8Bit())
-        return findIgnoringASCIICase(source.characters16(), stringToFind.characters8(), start, searchLength, matchLength);
-
-    return findIgnoringASCIICase(source.characters16(), stringToFind.characters16(), start, searchLength, matchLength);
+        return findIgnoringASCIICase(source.span16().first(searchLength), stringToFind.span8(), static_cast<size_t>(start));
+    return findIgnoringASCIICase(source.span16().first(searchLength), stringToFind.span16(), static_cast<size_t>(start));
 }
 
 inline bool startsWith(StringView reference, StringView prefix)
 {
-    unsigned prefixLength = prefix.length();
-    if (prefixLength > reference.length())
+    if (prefix.length() > reference.length())
         return false;
 
     if (reference.is8Bit()) {
         if (prefix.is8Bit())
-            return equal(reference.characters8(), prefix.characters8(), prefixLength);
-        return equal(reference.characters8(), prefix.characters16(), prefixLength);
+            return equal(reference.characters8(), prefix.span8());
+        return equal(reference.characters8(), prefix.span16());
     }
     if (prefix.is8Bit())
-        return equal(reference.characters16(), prefix.characters8(), prefixLength);
-    return equal(reference.characters16(), prefix.characters16(), prefixLength);
+        return equal(reference.characters16(), prefix.span8());
+    return equal(reference.characters16(), prefix.span16());
 }
 
 inline bool startsWithIgnoringASCIICase(StringView reference, StringView prefix)
 {
-    unsigned prefixLength = prefix.length();
-    if (prefixLength > reference.length())
+    if (prefix.length() > reference.length())
         return false;
 
     if (reference.is8Bit()) {
         if (prefix.is8Bit())
-            return equalIgnoringASCIICase(reference.characters8(), prefix.characters8(), prefixLength);
-        return equalIgnoringASCIICase(reference.characters8(), prefix.characters16(), prefixLength);
+            return equalIgnoringASCIICase(reference.characters8(), prefix.span8());
+        return equalIgnoringASCIICase(reference.characters8(), prefix.span16());
     }
     if (prefix.is8Bit())
-        return equalIgnoringASCIICase(reference.characters16(), prefix.characters8(), prefixLength);
-    return equalIgnoringASCIICase(reference.characters16(), prefix.characters16(), prefixLength);
+        return equalIgnoringASCIICase(reference.characters16(), prefix.span8());
+    return equalIgnoringASCIICase(reference.characters16(), prefix.span16());
 }
 
 inline bool endsWith(StringView reference, StringView suffix)
@@ -1308,12 +1302,12 @@ inline bool endsWith(StringView reference, StringView suffix)
 
     if (reference.is8Bit()) {
         if (suffix.is8Bit())
-            return equal(reference.characters8() + startOffset, suffix.characters8(), suffixLength);
-        return equal(reference.characters8() + startOffset, suffix.characters16(), suffixLength);
+            return equal(reference.characters8() + startOffset, suffix.span8());
+        return equal(reference.characters8() + startOffset, suffix.span16());
     }
     if (suffix.is8Bit())
-        return equal(reference.characters16() + startOffset, suffix.characters8(), suffixLength);
-    return equal(reference.characters16() + startOffset, suffix.characters16(), suffixLength);
+        return equal(reference.characters16() + startOffset, suffix.span8());
+    return equal(reference.characters16() + startOffset, suffix.span16());
 }
 
 inline bool endsWithIgnoringASCIICase(StringView reference, StringView suffix)
@@ -1327,12 +1321,12 @@ inline bool endsWithIgnoringASCIICase(StringView reference, StringView suffix)
 
     if (reference.is8Bit()) {
         if (suffix.is8Bit())
-            return equalIgnoringASCIICase(reference.characters8() + startOffset, suffix.characters8(), suffixLength);
-        return equalIgnoringASCIICase(reference.characters8() + startOffset, suffix.characters16(), suffixLength);
+            return equalIgnoringASCIICase(reference.characters8() + startOffset, suffix.span8());
+        return equalIgnoringASCIICase(reference.characters8() + startOffset, suffix.span16());
     }
     if (suffix.is8Bit())
-        return equalIgnoringASCIICase(reference.characters16() + startOffset, suffix.characters8(), suffixLength);
-    return equalIgnoringASCIICase(reference.characters16() + startOffset, suffix.characters16(), suffixLength);
+        return equalIgnoringASCIICase(reference.characters16() + startOffset, suffix.span8());
+    return equalIgnoringASCIICase(reference.characters16() + startOffset, suffix.span16());
 }
 
 inline size_t String::find(StringView string) const
@@ -1436,7 +1430,7 @@ inline bool String::hasInfixEndingAt(StringView suffix, unsigned end) const
     return m_impl && suffix && m_impl->hasInfixEndingAt(suffix, end);
 }
 
-inline size_t AtomString::find(StringView string, unsigned start) const
+inline size_t AtomString::find(StringView string, size_t start) const
 {
     return m_string.find(string, start);
 }
@@ -1446,7 +1440,7 @@ inline size_t AtomString::findIgnoringASCIICase(StringView string) const
     return m_string.findIgnoringASCIICase(string);
 }
 
-inline size_t AtomString::findIgnoringASCIICase(StringView string, unsigned start) const
+inline size_t AtomString::findIgnoringASCIICase(StringView string, size_t start) const
 {
     return m_string.findIgnoringASCIICase(string, start);
 }
@@ -1485,8 +1479,8 @@ template<typename Func>
 inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8ConversionError> StringView::tryGetUTF8(const Func& function, ConversionMode mode) const
 {
     if (is8Bit())
-        return StringImpl::tryGetUTF8ForCharacters(function, characters8(), length());
-    return StringImpl::tryGetUTF8ForCharacters(function, characters16(), length(), mode);
+        return StringImpl::tryGetUTF8ForCharacters(function, span8());
+    return StringImpl::tryGetUTF8ForCharacters(function, span16(), mode);
 }
 
 template<> struct VectorTraits<StringView> : VectorTraitsBase<false, void> {

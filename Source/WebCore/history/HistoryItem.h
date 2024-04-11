@@ -151,11 +151,9 @@ public:
     WEBCORE_EXPORT HistoryItem* childItemWithTarget(const AtomString&);
     HistoryItem* childItemWithDocumentSequenceNumber(long long number);
     WEBCORE_EXPORT const Vector<Ref<HistoryItem>>& children() const;
-    WEBCORE_EXPORT bool hasChildren() const;
     void clearChildren();
     
     bool shouldDoSameDocumentNavigationTo(HistoryItem& otherItem) const;
-    bool hasSameFrames(HistoryItem& otherItem) const;
 
     bool isCurrentDocument(Document&) const;
     

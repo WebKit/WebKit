@@ -33,6 +33,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 0}
 AXURL: LayoutTests/accessibility/mac/document-links.html#Link1
 AXAccessKey: (null)
 AXLinkRelationshipType:
@@ -70,6 +71,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 0}
 AXURL: LayoutTests/accessibility/mac/document-links.html#Link2
 AXAccessKey: (null)
 AXLinkRelationshipType:
@@ -107,6 +109,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink: 'Link3'>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 5}
 AXURL: LayoutTests/accessibility/mac/document-links.html#Link3
 AXAccessKey: (null)
 AXLinkRelationshipType:
@@ -143,6 +146,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink: 'Link4'>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 5}
 AXURL: LayoutTests/accessibility/mac/document-links.html#Link4
 AXAccessKey: (null)
 AXLinkRelationshipType:
