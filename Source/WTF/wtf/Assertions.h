@@ -792,7 +792,7 @@ template<typename T>
 ALWAYS_INLINE uint64_t wtfCrashArg(T* arg) { return reinterpret_cast<uintptr_t>(arg); }
 
 template<typename T>
-ALWAYS_INLINE uint64_t wtfCrashArg(T arg) { return arg; }
+ALWAYS_INLINE uint64_t wtfCrashArg(T arg) { return static_cast<uint64_t>(arg); }
 
 template<typename T>
 NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void WTFCrashWithInfo(int line, const char* file, const char* function, int counter, T reason)

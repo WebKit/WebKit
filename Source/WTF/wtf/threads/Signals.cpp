@@ -369,14 +369,14 @@ inline void setExceptionPorts(const AbstractLocker& threadGroupLocker, Thread& t
         // Otherwise use the new style
         const exception_behavior_t newBehavior = MACH_EXCEPTION_CODES | EXCEPTION_STATE_IDENTITY_PROTECTED;
         kern_return_t result = thread_adopt_exception_handler(thread.machThread(), handlers.exceptionPort, handlers.addedExceptions & activeExceptions, newBehavior, MACHINE_THREAD_STATE);
-        RELEASE_ASSERT_WITH_MESSAGE(result == KERN_SUCCESS, "thread adopt port failed due to %s", mach_error_string(result));
+        RELEASE_ASSERT(result == KERN_SUCCESS, result, handlers.exceptionPort, handlers.addedExceptions, activeExceptions);
         return;
     }
 #endif // CPU(ARM64) && HAVE(HARDENED_MACH_EXCEPTIONS)
 
     const exception_behavior_t newBehavior = MACH_EXCEPTION_CODES | EXCEPTION_STATE;
     kern_return_t result = thread_set_exception_ports(thread.machThread(), handlers.addedExceptions & activeExceptions, handlers.exceptionPort, newBehavior, MACHINE_THREAD_STATE);
-    RELEASE_ASSERT_WITH_MESSAGE(result == KERN_SUCCESS, "thread set port failed due to %s", mach_error_string(result));
+    RELEASE_ASSERT(result == KERN_SUCCESS, result, handlers.exceptionPort, handlers.addedExceptions, activeExceptions);
 }
 
 static ThreadGroup& activeThreads()
@@ -392,7 +392,7 @@ static ThreadGroup& activeThreads()
 
 void registerThreadForMachExceptionHandling(Thread& thread)
 {
-    RELEASE_ASSERT(g_wtfConfig.signalHandlers.initState == SignalHandlers::InitState::AddedHandlers);
+    RELEASE_ASSERT(g_wtfConfig.signalHandlers.initState == SignalHandlers::InitState::AddedHandlers, g_wtfConfig.signalHandlers.initState);
     Locker locker { activeThreads().getLock() };
     if (activeThreads().add(locker, thread) == ThreadGroupAddResult::NewlyAdded)
         setExceptionPorts(locker, thread);
