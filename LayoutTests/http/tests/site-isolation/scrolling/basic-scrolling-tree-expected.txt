@@ -21,15 +21,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     (frame hosting node
       (has hosting context identifier )
       (frame scrolling node
-        (scrollable area size width=800 height=600)
-        (total content size width=800 height=600)
+        (scrollable area size width=300 height=300)
+        (total content size width=300 height=300)
         (last committed scroll position (0,0))
         (scrollable area parameters
           (horizontal scroll elasticity 0)
           (vertical scroll elasticity 0)
           (horizontal scrollbar mode 0)
           (vertical scrollbar mode 0))
-        (layout viewport (0,0) width=800 height=600)
+        (layout viewport (0,0) width=300 height=300)
         (min layoutViewport origin (0,0))
         (max layoutViewport origin (0,0))
         (behavior for fixed 1)))))

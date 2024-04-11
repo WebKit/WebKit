@@ -1760,9 +1760,14 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
 
 void Page::layoutIfNeeded(OptionSet<LayoutOptions> layoutOptions)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
-    if (RefPtr view = localMainFrame ? localMainFrame->view() : nullptr)
+    for (auto& rootFrame : m_rootFrames) {
+        ASSERT(rootFrame->isRootFrame());
+        RefPtr view = rootFrame->view();
+        if (!view)
+            continue;
+
         view->updateLayoutAndStyleIfNeededRecursive(layoutOptions);
+    }
 }
 
 void Page::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps)
