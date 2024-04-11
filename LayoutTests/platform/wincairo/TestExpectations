@@ -405,6 +405,7 @@ fast/canvas/offscreen-clipped.html [ Skip ]
 fast/canvas/offscreen-enabled.html [ Skip ]
 fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Skip ]
 fast/canvas/offscreen-giant.html [ Skip ]
+fast/canvas/offscreen-nested-worker-serialization.html [ Skip ]
 fast/canvas/offscreen-scaling.html [ Skip ]
 fast/canvas/offscreen-toggle-display.html [ Skip ]
 fast/images/protected-image-queue.html [ Skip ]
@@ -3307,3 +3308,5 @@ webkit.org/b/272445 http/tests/xmlhttprequest/onload-progressevent-attributes.ht
 webkit.org/b/272445 http/tests/xmlhttprequest/xmlhttprequest-LSProgressEvent-ProgressEvent-should-match.html [ Failure Pass ]
 
 fast/forms/form-submission-crash-4.html [ Timeout Failure Pass ]
+
+css3/filters/backdrop-filter-page-scale.html [ ImageOnlyFailure ]
