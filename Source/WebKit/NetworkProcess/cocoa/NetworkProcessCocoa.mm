@@ -234,7 +234,7 @@ void NetworkProcess::setBackupExclusionPeriodForTesting(PAL::SessionID sessionID
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     if (auto* session = networkSession(sessionID))
-        session->storageManager().setBackupExclusionPeriodForTesting(period, [callbackAggregator] { });
+        session->protectedStorageManager()->setBackupExclusionPeriodForTesting(period, [callbackAggregator] { });
 }
 #endif // PLATFORM(IOS_FAMILY)
 
