@@ -1150,15 +1150,7 @@ void WebProcessPool::setProcessesShouldSuspend(bool shouldSuspend)
 void WebProcessPool::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
 {
     for (Ref process : m_processes)
-        process->send(Messages::WebProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
-
-#if ENABLE(GPU_PROCESS)
-    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
-        gpuProcess->send(Messages::GPUProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
-#endif
-    
-    if (RefPtr networkProcess = NetworkProcessProxy::defaultNetworkProcess().get())
-        networkProcess->send(Messages::NetworkProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
+        process->notifyPreferencesChanged(domain, key, encodedValue);
 
     if (key == WKLockdownModeEnabledKey)
         lockdownModeStateChanged();

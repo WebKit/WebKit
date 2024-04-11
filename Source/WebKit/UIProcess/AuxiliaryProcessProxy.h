@@ -216,6 +216,10 @@ public:
     std::optional<TaskInfo> taskInfo() const;
 #endif
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
+#endif
+
     enum ResumeReason : bool { ForegroundActivity, BackgroundActivity };
     virtual void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) = 0;
     virtual void sendProcessDidResume(ResumeReason) = 0;

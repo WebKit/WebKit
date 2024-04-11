@@ -178,12 +178,22 @@
 {
 #if ENABLE(CFPREFS_DIRECT_MODE)
     RunLoop::main().dispatch([domain = retainPtr(domain), key = retainPtr(key), encodedValue = retainPtr(encodedValue)] {
-        std::optional<String> encodedString;
+        std::optional<String> encodedValueString;
         if (encodedValue)
-            encodedString = String(encodedValue.get());
+            encodedValueString = String(encodedValue.get());
+        String domainString = domain.get();
+        String keyString = key.get();
+
+#if ENABLE(GPU_PROCESS)
+        if (RefPtr gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated())
+            gpuProcess->notifyPreferencesChanged(domainString, keyString, encodedValueString);
+#endif
+
+        if (RefPtr networkProcess = WebKit::NetworkProcessProxy::defaultNetworkProcess().get())
+            networkProcess->notifyPreferencesChanged(domainString, keyString, encodedValueString);
 
         for (auto& processPool : WebKit::WebProcessPool::allProcessPools())
-            processPool->notifyPreferencesChanged(domain.get(), key.get(), encodedString);
+            processPool->notifyPreferencesChanged(domainString, keyString, encodedValueString);
     });
 #endif
 }
