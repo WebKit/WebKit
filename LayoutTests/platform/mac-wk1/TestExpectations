@@ -2811,6 +2811,7 @@ compositing/filters/backdrop-filter-root-element-no-backdrop-root.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-backdrop-filter-1.html [ ImageOnlyFailure ]
+css3/filters/hidpi-backdrop-filter-rasterization-scale.html [ ImageOnlyFailure ]
 
 # webkit.org/b/271865 REGRESSION (276749@main): [ MacOS WK1 ] 2X backdrop-filter tests are consistent failures 
 [ Sonoma+ ] css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html [ ImageOnlyFailure ]

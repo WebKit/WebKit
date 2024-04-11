@@ -55,6 +55,12 @@
 {
     ASSERT(!_tileController);
     _tileController = makeUnique<WebCore::TileController>(rootLayer);
+
+    // Sync the underlying layer with the controller's scale, and keep the rasterization scale the same, as PlatformCALayerCocoa does.
+    CGFloat initialScale = _tileController->contentsScale();
+    [super setContentsScale:initialScale];
+    [super setRasterizationScale:initialScale];
+
     return _tileController.get();
 }
 
@@ -115,6 +121,7 @@
 
 - (void)setContentsScale:(CGFloat)contentsScale
 {
+    [super setContentsScale:contentsScale];
     _tileController->setContentsScale(contentsScale);
 }
 
