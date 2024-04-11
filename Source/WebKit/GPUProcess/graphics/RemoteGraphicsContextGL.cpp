@@ -245,6 +245,14 @@ void RemoteGraphicsContextGL::paintNativeImageToImageBuffer(NativeImage& image, 
     });
 }
 
+bool RemoteGraphicsContextGL::webXREnabled() const
+{
+    RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get();
+    if (gpuConnectionToWebProcess)
+        return gpuConnectionToWebProcess->isWebXREnabled();
+    return false;
+}
+
 void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
 {
     assertIsCurrent(workQueue());

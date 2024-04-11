@@ -334,6 +334,7 @@ GPUProcessPreferencesForWebProcess PageConfiguration::preferencesForGPUProcess()
     return {
         preferences->webGLEnabled(),
         preferences->webGPUEnabled(),
+        preferences->webXREnabled(),
         preferences->useGPUProcessForDOMRenderingEnabled(),
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
         preferences->useCGDisplayListsForDOMRendering(),
