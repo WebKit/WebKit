@@ -2870,10 +2870,19 @@ void GraphicsContextGLANGLE::bindExternalImage(GCGLenum, GCGLExternalImage)
     notImplemented();
 }
 
-void GraphicsContextGLANGLE::deleteExternalImage(GCGLExternalImage handle)
+void GraphicsContextGLANGLE::deleteExternalImage(GCGLExternalImage image)
 {
-    bool result = EGL_DestroyImageKHR(platformDisplay(), m_eglImages.take(handle));
-    ASSERT_UNUSED(result, !!result);
+    if (UNLIKELY(!image))
+        return;
+    auto eglImage = m_eglImages.take(image);
+    if (UNLIKELY(!eglImage)) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
+    bool result = EGL_DestroyImageKHR(platformDisplay(), eglImage);
+    ASSERT(result);
+    if (UNLIKELY(!result))
+        addError(GCGLErrorCode::InvalidOperation);
 }
 
 GCGLExternalSync GraphicsContextGLANGLE::createExternalSync(ExternalSyncSource&&)
@@ -2884,13 +2893,32 @@ GCGLExternalSync GraphicsContextGLANGLE::createExternalSync(ExternalSyncSource&&
 
 void GraphicsContextGLANGLE::deleteExternalSync(GCGLExternalSync sync)
 {
-    bool result = EGL_DestroySync(platformDisplay(), m_eglSyncs.take(sync));
-    ASSERT_UNUSED(result, !!result);
+    if (UNLIKELY(!sync))
+        return;
+    EGLSync eglSync = m_eglSyncs.take(sync);
+    if (UNLIKELY(!eglSync)) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
+    bool result = EGL_DestroySync(platformDisplay(), eglSync);
+    ASSERT(result);
+    if (UNLIKELY(!result))
+        addError(GCGLErrorCode::InvalidOperation);
 }
 
 bool GraphicsContextGLANGLE::clientWaitExternalSyncWithFlush(GCGLExternalSync sync, uint64_t timeout)
 {
-    auto ret = EGL_ClientWaitSync(platformDisplay(), m_eglSyncs.get(sync), EGL_SYNC_FLUSH_COMMANDS_BIT, timeout);
+    EGLSync eglSync = m_eglSyncs.get(sync);
+    if (UNLIKELY(!eglSync)) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return false;
+    }
+    auto ret = EGL_ClientWaitSync(platformDisplay(), eglSync, EGL_SYNC_FLUSH_COMMANDS_BIT, timeout);
+    if (ret == EGL_FALSE) {
+        ASSERT_NOT_REACHED();
+        addError(GCGLErrorCode::InvalidOperation);
+        return false;
+    }
     return ret == EGL_CONDITION_SATISFIED;
 }
 

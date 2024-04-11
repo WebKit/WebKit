@@ -703,10 +703,13 @@ GCGLExternalImage GraphicsContextGLCocoa::createExternalImage(ExternalImageSourc
 
 void GraphicsContextGLCocoa::bindExternalImage(GCGLenum target, GCGLExternalImage image)
 {
-    auto* eglImage = m_eglImages.get(image);
-    if (!eglImage) {
-        addError(GCGLErrorCode::InvalidOperation);
-        return;
+    EGLImage eglImage = EGL_NO_IMAGE_KHR;
+    if (image) {
+        eglImage = m_eglImages.get(image);
+        if (!eglImage) {
+            addError(GCGLErrorCode::InvalidOperation);
+            return;
+        }
     }
     if (target == RENDERBUFFER)
         GL_EGLImageTargetRenderbufferStorageOES(RENDERBUFFER, eglImage);

@@ -880,9 +880,16 @@ class webkit_ipc_cpp_impl(object):
             if self.is_create:
                 self.pre_call_stmts += [f"if (UNLIKELY(!{a.name})) {{", f"    ASSERT_IS_TESTING_IPC();", f"    return;", f"}}"]
             if self.is_delete:
-                self.pre_call_stmts += [f"{a.name} = m_objectNames.take({a.name});"]
+                self.pre_call_stmts += [
+                    f"if (UNLIKELY(!{a.name}))",
+                    f"    return;",
+                    f"{a.name} = m_objectNames.take({a.name});"
+                ]
             else:
-                self.pre_call_stmts += [f"{a.name} = m_objectNames.get({a.name});"]
+                self.pre_call_stmts += [
+                    f"if ({a.name})",
+                    f"    {a.name} = m_objectNames.get({a.name});"
+                ]
 
     def process_out_arg(self, a: cpp_arg):
         if a.type.is_pointer():
