@@ -40,6 +40,7 @@
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/WTFProcess.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/threads/BinarySemaphore.h>
@@ -525,7 +526,33 @@ UniqueRef<Encoder> Connection::createSyncMessageEncoder(MessageName messageName,
     return encoder;
 }
 
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+
+void* Connection::generateSignpostIdentifier()
+{
+    static std::atomic<uintptr_t> identifier;
+    return reinterpret_cast<void*>(++identifier);
+}
+
+#endif
+
 Error Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
+{
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    auto signpostIdentifier = generateSignpostIdentifier();
+    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendMessage: %{public}s", description(encoder->messageName()));
+#endif
+
+    auto error = sendMessageImpl(WTFMove(encoder), sendOptions, qos);
+
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    WTFEndSignpost(signpostIdentifier, IPCConnection);
+#endif
+
+    return error;
+}
+
+Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
 {
     if (!isValid())
         return Error::InvalidConnection;
@@ -616,8 +643,20 @@ Error Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncR
     ASSERT(replyHandler.completionHandler);
     auto replyID = replyHandler.replyID;
     encoder.get() << replyID;
+
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    auto signpostIdentifier = generateSignpostIdentifier();
+    replyHandler.completionHandler = CompletionHandler<void(Decoder*)>([signpostIdentifier, handler = WTFMove(replyHandler.completionHandler)](Decoder *decoder) mutable {
+        WTFEndSignpost(signpostIdentifier, IPCConnection);
+        handler(decoder);
+    });
+
+    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendMessageWithAsyncReply: %{public}s", description(encoder->messageName()));
+#endif
+
     addAsyncReplyHandler(WTFMove(replyHandler));
-    auto error = sendMessage(WTFMove(encoder), sendOptions, qos);
+
+    auto error = sendMessageImpl(WTFMove(encoder), sendOptions, qos);
     if (error == Error::NoError)
         return Error::NoError;
 
@@ -650,7 +689,7 @@ Error Connection::sendMessageWithAsyncReplyWithDispatcher(UniqueRef<Encoder>&& e
 
 Error Connection::sendSyncReply(UniqueRef<Encoder>&& encoder)
 {
-    return sendMessage(WTFMove(encoder), { });
+    return sendMessageImpl(WTFMove(encoder), { });
 }
 
 Timeout Connection::timeoutRespectingIgnoreTimeoutsForTesting(Timeout timeout) const
@@ -662,6 +701,14 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
 {
     if (!isValid())
         return makeUnexpected(Error::InvalidConnection);
+
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    auto signpostIdentifier = generateSignpostIdentifier();
+    WTFBeginSignpost(signpostIdentifier, IPCConnection, "waitForMessage: %{public}s", description(messageName));
+    auto endSignpost = makeScopeExit([&] {
+        WTFEndSignpost(signpostIdentifier, IPCConnection);
+    });
+#endif
 
     assertIsCurrent(dispatcher());
     Ref protectedThis { *this };
@@ -799,14 +846,23 @@ auto Connection::sendSyncMessage(SyncRequestID syncRequestID, UniqueRef<Encoder>
 
     auto messageName = encoder->messageName();
 
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    auto signpostIdentifier = generateSignpostIdentifier();
+    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendSyncMessage: %{public}s", description(messageName));
+#endif
+
     // Since sync IPC is blocking the current thread, make sure we use the same priority for the IPC sending thread
     // as the current thread.
-    sendMessage(WTFMove(encoder), sendOptions, Thread::currentThreadQOS());
+    sendMessageImpl(WTFMove(encoder), sendOptions, Thread::currentThreadQOS());
 
     // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so
     // keep an extra reference to the connection here in case it's invalidated.
     Ref<Connection> protect(*this);
     auto replyOrError = waitForSyncReply(syncRequestID, messageName, timeout, sendSyncOptions);
+
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    WTFEndSignpost(signpostIdentifier, IPCConnection);
+#endif
 
     popPendingSyncRequestID(syncRequestID);
 
