@@ -11721,7 +11721,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 }
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType
+- (void)addTextIndicatorStyleForID:(NSUUID *)uuid
 {
     if (!_page->preferences().textIndicatorStylingEnabled())
         return;
@@ -11729,7 +11729,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     if (!_textStyleManager)
         _textStyleManager = adoptNS([WebKit::allocWKSTextStyleManagerInstance() initWithDelegate:self]);
 
-    [_textStyleManager addTextIndicatorStyleForID:uuid withStyleType:styleType];
+    [_textStyleManager addTextIndicatorStyleForID:uuid];
 }
 
 - (void)removeTextIndicatorStyleForID:(NSUUID *)uuid

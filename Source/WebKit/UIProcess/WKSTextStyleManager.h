@@ -25,14 +25,12 @@
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 
-#import "WKTextIndicatorStyleType.h"
-
 @protocol WKSTextStyleSourceDelegate;
 
 @interface WKSTextStyleManager : NSObject
 
 - (instancetype)initWithDelegate:(id <WKSTextStyleSourceDelegate>)delegate NS_DESIGNATED_INITIALIZER;
-- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType;
+- (void)addTextIndicatorStyleForID:(NSUUID *)uuid;
 - (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
 @end
 

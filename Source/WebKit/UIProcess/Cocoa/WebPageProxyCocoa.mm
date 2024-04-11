@@ -1211,14 +1211,6 @@ void WebPageProxy::enableTextIndicatorStyleAfterElementWithID(const String& elem
     send(Messages::WebPage::EnableTextIndicatorStyleAfterElementWithID(elementID, uuid));
 }
 
-void WebPageProxy::enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID& uuid)
-{
-    if (!hasRunningProcess())
-        return;
-
-    send(Messages::WebPage::EnableTextIndicatorStyleForElementWithID(elementID, uuid));
-}
-
 #endif
 
 } // namespace WebKit

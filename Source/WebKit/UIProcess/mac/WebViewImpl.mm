@@ -4500,7 +4500,7 @@ void WebViewImpl::saveBackForwardSnapshotForItem(WebBackForwardListItem& item)
 }
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
-void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid, WKTextIndicatorStyleType styleType)
+void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid)
 {
     if (!m_page->preferences().textIndicatorStylingEnabled())
         return;
@@ -4511,7 +4511,7 @@ void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid, WKTextIndicatorStyl
     if (!m_textIndicatorStyleManager)
         m_textIndicatorStyleManager = adoptNS([[WKTextIndicatorStyleManager alloc] initWithWebViewImpl:*this]);
 
-    [m_textIndicatorStyleManager addTextIndicatorStyleForID:uuid withStyleType:styleType];
+    [m_textIndicatorStyleManager addTextIndicatorStyleForID:uuid];
 }
 
 void WebViewImpl::removeTextIndicatorStyleForID(WTF::UUID uuid)

@@ -25,11 +25,9 @@
 
 #pragma once
 
-#import <Foundation/Foundation.h>
-
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 
-#import "WKTextIndicatorStyleType.h"
+#import <Foundation/Foundation.h>
 
 namespace WebKit {
 class WebViewImpl;
@@ -40,7 +38,7 @@ class WebViewImpl;
 + (BOOL)supportsTextIndicatorStyle;
 
 - (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)view;
-- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType;
+- (void)addTextIndicatorStyleForID:(NSUUID *)uuid;
 - (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
 
 @end

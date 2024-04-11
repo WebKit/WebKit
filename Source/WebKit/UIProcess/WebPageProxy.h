@@ -2196,7 +2196,6 @@ public:
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     void removeTextIndicatorStyleForID(const WTF::UUID&);
     void enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID&);
-    void enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID&);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
