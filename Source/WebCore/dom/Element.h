@@ -166,6 +166,7 @@ public:
     // attribute or one of the SVG animatable attributes.
     inline bool hasAttributeWithoutSynchronization(const QualifiedName&) const;
     inline const AtomString& attributeWithoutSynchronization(const QualifiedName&) const;
+    inline const AtomString& attributeWithDefaultARIA(const QualifiedName&) const;
 
 #if DUMP_NODE_STATISTICS
     bool hasNamedNodeMap() const;
@@ -381,7 +382,7 @@ public:
 
     CustomElementDefaultARIA& customElementDefaultARIA();
     CheckedRef<CustomElementDefaultARIA> checkedCustomElementDefaultARIA();
-    CustomElementDefaultARIA* customElementDefaultARIAIfExists();
+    CustomElementDefaultARIA* customElementDefaultARIAIfExists() const;
 
     bool isInActiveChain() const { return isUserActionElement() && isUserActionElementInActiveChain(); }
     bool active() const { return isUserActionElement() && isUserActionElementActive(); }

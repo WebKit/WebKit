@@ -310,14 +310,7 @@ AXObjectCache::~AXObjectCache()
 
 bool AXObjectCache::isModalElement(Element& element) const
 {
-    bool hasDialogRole = nodeHasRole(&element, "dialog"_s) || nodeHasRole(&element, "alertdialog"_s);
-    AtomString modalValue = element.attributeWithoutSynchronization(aria_modalAttr);
-    if (modalValue.isNull()) {
-        if (auto* defaultARIA = element.customElementDefaultARIAIfExists())
-            modalValue = defaultARIA->valueForAttribute(element, aria_modalAttr);
-    }
-    bool isAriaModal = equalLettersIgnoringASCIICase(modalValue, "true"_s);
-    if (hasDialogRole && isAriaModal)
+    if ((nodeHasRole(&element, "dialog"_s) || nodeHasRole(&element, "alertdialog"_s)) && equalLettersIgnoringASCIICase(element.attributeWithDefaultARIA(aria_modalAttr), "true"_s))
         return true;
 
     RefPtr dialog = dynamicDowncast<HTMLDialogElement>(element);
@@ -585,11 +578,7 @@ bool nodeHasRole(Node* node, StringView role)
     if (!element)
         return false;
 
-    auto roleValue = element->attributeWithoutSynchronization(roleAttr);
-    if (roleValue.isNull()) {
-        if (auto* defaultARIA = element->customElementDefaultARIAIfExists())
-            roleValue = defaultARIA->valueForAttribute(*element, roleAttr);
-    }
+    auto roleValue = element->attributeWithDefaultARIA(roleAttr);
     if (role.isNull())
         return roleValue.isEmpty();
     if (roleValue.isEmpty())

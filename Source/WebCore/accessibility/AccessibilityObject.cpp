@@ -2536,14 +2536,8 @@ bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
 
 const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
 {
-    if (RefPtr element = this->element()) {
-        auto& value = element->attributeWithoutSynchronization(attribute);
-        if (!value.isNull())
-            return value;
-        if (auto* defaultARIA = element->customElementDefaultARIAIfExists())
-            return defaultARIA->valueForAttribute(*element, attribute);
-    }
-    return nullAtom();
+    RefPtr element = this->element();
+    return element ? element->attributeWithDefaultARIA(attribute) : nullAtom();
 }
 
 String AccessibilityObject::nameAttribute() const
@@ -3989,7 +3983,16 @@ bool AccessibilityObject::accessibilityIsIgnoredByDefault() const
 
 bool AccessibilityObject::isARIAHidden() const
 {
-    return equalLettersIgnoringASCIICase(getAttribute(aria_hiddenAttr), "true"_s) && !isFocused();
+    if (isFocused())
+        return false;
+
+    auto* node = this->node();
+    if (auto* assignedSlot = node ? node->assignedSlot() : nullptr) {
+        if (equalLettersIgnoringASCIICase(assignedSlot->attributeWithDefaultARIA(aria_hiddenAttr), "true"_s))
+            return true;
+    }
+
+    return equalLettersIgnoringASCIICase(getAttribute(aria_hiddenAttr), "true"_s);
 }
 
 // ARIA component of hidden definition.

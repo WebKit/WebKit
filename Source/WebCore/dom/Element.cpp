@@ -3138,7 +3138,7 @@ CheckedRef<CustomElementDefaultARIA> Element::checkedCustomElementDefaultARIA()
     return customElementDefaultARIA();
 }
 
-CustomElementDefaultARIA* Element::customElementDefaultARIAIfExists()
+CustomElementDefaultARIA* Element::customElementDefaultARIAIfExists() const
 {
     return isPrecustomizedOrDefinedCustomElement() && hasRareData() ? elementRareData()->customElementDefaultARIA() : nullptr;
 }

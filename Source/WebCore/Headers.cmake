@@ -925,6 +925,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ContextDestructionObserver.h
     dom/ContextDestructionObserverInlines.h
     dom/CrossOriginMode.h
+    dom/CustomElementDefaultARIA.h
     dom/CustomElementReactionQueue.h
     dom/DOMException.h
     dom/DOMHighResTimeStamp.h
