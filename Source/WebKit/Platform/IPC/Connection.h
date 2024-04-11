@@ -515,6 +515,8 @@ private:
     void addAsyncReplyHandlerWithDispatcher(AsyncReplyHandlerWithDispatcher&&);
     void cancelAsyncReplyHandlers();
 
+    static constexpr size_t largeOutgoingMessageQueueCountThreshold { 128 };
+
     static Lock s_connectionMapLock;
     Client* m_client { nullptr };
     std::unique_ptr<SyncMessageState, SyncMessageStateRelease> m_syncState;
