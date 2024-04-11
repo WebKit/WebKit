@@ -182,9 +182,11 @@ static std::optional<unsigned> retrieveTemporalIndex(const GRefPtr<GstSample>& s
             return { };
         }
 
-        GST_TRACE("Looking-up layer id in %" GST_PTR_FORMAT, meta->structure);
+        auto metaStructure = gst_custom_meta_get_structure(meta);
+        RELEASE_ASSERT(metaStructure);
+        GST_TRACE("Looking-up layer id in %" GST_PTR_FORMAT, metaStructure);
         unsigned temporalLayerId;
-        if (!gst_structure_get_uint(meta->structure, "layer-id", &temporalLayerId))
+        if (!gst_structure_get_uint(metaStructure, "layer-id", &temporalLayerId))
             return { };
 
         return temporalLayerId;
