@@ -1086,6 +1086,7 @@
 		449316A325DC7DC400AA66DE /* _WKAppHighlight.h in Headers */ = {isa = PBXBuildFile; fileRef = 449316A125DC7DC300AA66DE /* _WKAppHighlight.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		449316A625DC9D0000AA66DE /* _WKAppHighlightInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 449316A525DC9D0000AA66DE /* _WKAppHighlightInternal.h */; };
 		449D90DA21FDC30B00F677C0 /* LocalAuthenticationSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */; };
+		44A555F02BC6328900C4B663 /* WKTextIndicatorStyleType.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A555EF2BC6322F00C4B663 /* WKTextIndicatorStyleType.h */; };
 		44C51844266BE8C4006DD522 /* TCCSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 44C51842266BE8C3006DD522 /* TCCSoftLink.h */; };
 		44DBDA4E2BAE451F004E3712 /* WKSTextStyleSourceDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DBDA4D2BAE451F004E3712 /* WKSTextStyleSourceDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44DBDA502BB23DE9004E3712 /* WKSTextStyleSourceDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DBDA4D2BAE451F004E3712 /* WKSTextStyleSourceDelegate.h */; };
@@ -5301,6 +5302,7 @@
 		449316A525DC9D0000AA66DE /* _WKAppHighlightInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAppHighlightInternal.h; sourceTree = "<group>"; };
 		449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalAuthenticationSoftLink.mm; sourceTree = "<group>"; };
 		44A481C621F2D27B00F2F919 /* ClientCertificateAuthenticationXPCConstants.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClientCertificateAuthenticationXPCConstants.cpp; sourceTree = "<group>"; };
+		44A555EF2BC6322F00C4B663 /* WKTextIndicatorStyleType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKTextIndicatorStyleType.h; sourceTree = "<group>"; };
 		44C51842266BE8C3006DD522 /* TCCSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCCSoftLink.h; sourceTree = "<group>"; };
 		44C51843266BE8C3006DD522 /* TCCSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TCCSoftLink.mm; sourceTree = "<group>"; };
 		44DBDA4D2BAE451F004E3712 /* WKSTextStyleSourceDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKSTextStyleSourceDelegate.h; sourceTree = "<group>"; };
@@ -11785,6 +11787,7 @@
 				374436871820E7240049579F /* WKObject.mm */,
 				E31869C32B1A7C2400571519 /* WKProcessExtension.h */,
 				E31869C22B1A7C2400571519 /* WKProcessExtension.mm */,
+				44A555EF2BC6322F00C4B663 /* WKTextIndicatorStyleType.h */,
 				C14D306724B794E700480387 /* XPCEndpoint.h */,
 				C14D306524B794E700480387 /* XPCEndpoint.mm */,
 				C14D306824B794E700480387 /* XPCEndpointClient.h */,
@@ -17418,6 +17421,7 @@
 				F48EC3582B75895800D1B886 /* WKTextExtractionUtilities.h in Headers */,
 				2DD67A351BD861060053B251 /* WKTextFinderClient.h in Headers */,
 				440C0BE52BBCAA3C0086046E /* WKTextIndicatorStyleManager.h in Headers */,
+				44A555F02BC6328900C4B663 /* WKTextIndicatorStyleType.h in Headers */,
 				F4D5F51D206087A10038BBA8 /* WKTextInputListViewController.h in Headers */,
 				0FCB4E6818BBE3D9000FCFC9 /* WKTextInputWindowController.h in Headers */,
 				F4C359532AF19BC40083B0EA /* WKTextInteractionWrapper.h in Headers */,

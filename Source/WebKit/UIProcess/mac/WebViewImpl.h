@@ -32,6 +32,7 @@
 #include "ImageAnalysisUtilities.h"
 #include "PDFPluginIdentifier.h"
 #include "WKLayoutMode.h"
+#include "WKTextIndicatorStyleType.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/ScrollTypes.h>
@@ -736,7 +737,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
-    void addTextIndicatorStyleForID(WTF::UUID);
+    void addTextIndicatorStyleForID(WTF::UUID, WKTextIndicatorStyleType);
     void removeTextIndicatorStyleForID(WTF::UUID);
 #endif
 

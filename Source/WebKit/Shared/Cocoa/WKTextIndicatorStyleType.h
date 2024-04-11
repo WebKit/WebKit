@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,7 @@
 
 #pragma once
 
-#import <Foundation/Foundation.h>
-
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-
-#import "WKTextIndicatorStyleType.h"
-
-namespace WebKit {
-class WebViewImpl;
-}
-
-@interface WKTextIndicatorStyleManager : NSObject
-
-+ (BOOL)supportsTextIndicatorStyle;
-
-- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)view;
-- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType;
-- (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
-
-@end
-
-#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+typedef NS_ENUM(NSInteger, WKTextIndicatorStyleType) {
+    WKTextIndicatorStyleTypeInitial,
+    WKTextIndicatorStyleTypeFinal
+};

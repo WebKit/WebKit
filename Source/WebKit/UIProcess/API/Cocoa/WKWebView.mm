@@ -85,6 +85,7 @@
 #import "WKSnapshotConfigurationPrivate.h"
 #import "WKTextExtractionItem.h"
 #import "WKTextExtractionUtilities.h"
+#import "WKTextIndicatorStyleType.h"
 #import "WKUIDelegate.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKUserContentControllerInternal.h"
@@ -2783,12 +2784,34 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     _page->enableTextIndicatorStyleAfterElementWithID(elementID, *uuid);
 
 #if PLATFORM(IOS_FAMILY)
-    [_contentView addTextIndicatorStyleForID:nsUUID.get()];
+    [_contentView addTextIndicatorStyleForID:nsUUID.get() withStyleType:WKTextIndicatorStyleTypeInitial];
 #elif PLATFORM(MAC) && ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
-    _impl->addTextIndicatorStyleForID(*uuid);
+    _impl->addTextIndicatorStyleForID(*uuid, WKTextIndicatorStyleTypeInitial);
 #endif
     return nsUUID.get();
-#else
+#else // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    return nil;
+#endif
+}
+
+- (NSUUID *)_enableTextIndicatorStylingForElementWithID:(NSString *)elementID
+{
+    RetainPtr nsUUID = [NSUUID UUID];
+
+    auto uuid = WTF::UUID::fromNSUUID(nsUUID.get());
+    if (!uuid)
+        return nil;
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    _page->enableTextIndicatorStyleForElementWithID(elementID, *uuid);
+
+#if PLATFORM(IOS_FAMILY)
+    [_contentView addTextIndicatorStyleForID:nsUUID.get() withStyleType:WKTextIndicatorStyleTypeFinal];
+#elif PLATFORM(MAC) && ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+    _impl->addTextIndicatorStyleForID(*uuid, WKTextIndicatorStyleTypeFinal);
+#endif
+    return nsUUID.get();
+#else // ENABLE(UNIFIED_TEXT_REPLACEMENT)
     return nil;
 #endif
 }
