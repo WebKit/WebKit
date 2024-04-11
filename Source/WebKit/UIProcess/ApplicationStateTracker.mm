@@ -37,8 +37,10 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/TextStream.h>
+
 
 @interface UIWindow (WKDetails)
 - (BOOL)_isHostedInAnotherProcess;
@@ -78,6 +80,9 @@ void* WKUIWindowSceneObserverContext = &WKUIWindowSceneObserverContext;
 
 - (void)setObservedWindow:(UIWindow *)window
 {
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ApplicationStateTrackerDoesNotObserveWindow))
+        return;
+
     RetainPtr newWindow = window;
     RetainPtr oldWindow = _window.get();
     if (oldWindow == newWindow)
