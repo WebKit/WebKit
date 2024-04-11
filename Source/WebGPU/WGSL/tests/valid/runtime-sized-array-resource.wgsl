@@ -6,4 +6,7 @@
 fn main()
 {
     x[0] = x[42];
+
+    // pointer access
+    _ = (&x)[0];
 }
