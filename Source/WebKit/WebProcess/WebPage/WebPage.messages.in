@@ -506,7 +506,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ReplaceSelectionWithPasteboardData(Vector<String> types, std::span<const uint8_t> data)
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    InsertMultiRepresentationHEIC(std::span<const uint8_t> data)
+    InsertMultiRepresentationHEIC(std::span<const uint8_t> data, String altText)
 #endif
 
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Synchronous

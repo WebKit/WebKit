@@ -6042,9 +6042,9 @@ bool WebViewImpl::isContentRichlyEditable() const
 }
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-void WebViewImpl::insertMultiRepresentationHEIC(NSData *data)
+void WebViewImpl::insertMultiRepresentationHEIC(NSData *data, NSString *altText)
 {
-    m_page->insertMultiRepresentationHEIC(data);
+    m_page->insertMultiRepresentationHEIC(data, altText);
 }
 #endif
 

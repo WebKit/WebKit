@@ -873,14 +873,14 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, Completi
 }
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-void WebPage::insertMultiRepresentationHEIC(std::span<const uint8_t> data)
+void WebPage::insertMultiRepresentationHEIC(std::span<const uint8_t> data, const String& altText)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
     if (frame->selection().isNone())
         return;
-    frame->editor().insertMultiRepresentationHEIC(data);
+    frame->editor().insertMultiRepresentationHEIC(data, altText);
 }
 #endif
 

@@ -973,10 +973,9 @@ bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
-void WebPageProxy::insertMultiRepresentationHEIC(NSData *data)
+void WebPageProxy::insertMultiRepresentationHEIC(NSData *data, NSString *altText)
 {
-    send(Messages::WebPage::InsertMultiRepresentationHEIC(span(data)));
-
+    send(Messages::WebPage::InsertMultiRepresentationHEIC(span(data), altText));
 }
 
 #endif

@@ -399,7 +399,7 @@ void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName,
 }
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data)
+void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data, const String& altText)
 {
     auto document = protectedDocument();
 
@@ -419,6 +419,8 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data)
 
     auto image = HTMLImageElement::create(document);
     image->setSrc(AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), fallbackBuffer->copyData(), fallbackType)) });
+    if (!altText.isEmpty())
+        image->setAttributeWithoutSynchronization(HTMLNames::altAttr, AtomString { altText });
     picture->appendChild(WTFMove(image));
 
     auto fragment = document->createDocumentFragment();

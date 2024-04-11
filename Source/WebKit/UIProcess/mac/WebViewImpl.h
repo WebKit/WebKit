@@ -595,7 +595,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     bool isContentRichlyEditable() const;
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    void insertMultiRepresentationHEIC(NSData *);
+    void insertMultiRepresentationHEIC(NSData *, NSString *);
 #endif
 
     void mouseMoved(NSEvent *);

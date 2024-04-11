@@ -1379,7 +1379,7 @@ public:
     void assistiveTechnologyMakeFirstResponder();
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    void insertMultiRepresentationHEIC(NSData *);
+    void insertMultiRepresentationHEIC(NSData *, NSString *);
 #endif
 #endif
 
