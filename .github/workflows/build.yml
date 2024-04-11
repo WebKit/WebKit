@@ -74,7 +74,7 @@ jobs:
       - name: Run
         env:
           ICU_INCLUDE_DIRS: ${{matrix.brew_prefix}}/icu4c/include
-          LDFLAGS: "${{env.LDFLAGS}} -L${{matrix.brew_prefix}}/llvm/lib/c++ -Wl,-rpath,${{matrix.brew_prefix}}/llvm/lib/c++"
+          LDFLAGS: "${{env.LDFLAGS}}"
           CC: "${{matrix.brew_prefix}}/llvm@17/bin/clang"
           CXX: "${{matrix.brew_prefix}}/llvm@17/bin/clang++"
           CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@17/bin/clang"
