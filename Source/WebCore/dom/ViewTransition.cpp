@@ -643,6 +643,10 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& e
         if (!container)
             break;
         LayoutSize containerOffset = renderer->offsetFromContainer(*container, LayoutPoint());
+        if (container->isRenderView()) {
+            auto frameView = renderer->view().protectedFrameView();
+            containerOffset -= toLayoutSize(frameView->scrollPositionRespectingCustomFixedPosition());
+        }
         TransformationMatrix localTransform;
         renderer->getTransformFromContainer(containerOffset, localTransform);
         transform = localTransform * transform;

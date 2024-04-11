@@ -3909,6 +3909,7 @@ imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mis
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-old-with-class-new-without.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-on-top-of-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change.html [ ImageOnlyFailure ]
 
