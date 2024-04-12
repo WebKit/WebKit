@@ -459,7 +459,6 @@ workers [ Skip ]
 ####################
 # Tests that crash #
 ####################
-http/tests/navigation/page-cache-shared-worker.html [ Skip ]
 http/tests/security/beforeload-iframe-server-redirect.html [ Skip ]
 http/tests/security/cross-frame-access-call.html [ Skip ]
 http/tests/security/cross-frame-access-custom.html [ Skip ]
