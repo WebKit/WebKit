@@ -65,8 +65,7 @@ namespace IPC {
 constexpr size_t maxPendingIncomingMessagesKillingThreshold { 50000 };
 #endif
 
-constexpr size_t largeOutgoingMessageQueueCountThreshold { 1024 };
-constexpr Seconds largeOutgoingMessageQueueTimeThreshold { 30_s };
+constexpr Seconds largeOutgoingMessageQueueTimeThreshold { 20_s };
 
 std::atomic<unsigned> UnboundedSynchronousIPCScope::unboundedSynchronousIPCCount = 0;
 
