@@ -481,7 +481,6 @@ http/tests/site-isolation/iframe-process-termination-after-navigation-completed.
 http/tests/site-isolation/iframe-process-termination.html [ Skip ]
 http/tests/site-isolation/selection-focus.html [ Skip ]
 
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/top-level-data-url.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/cross-origin-video.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/name-attribute.window.html [ Skip ]
 
@@ -853,6 +852,7 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-function-src.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-function.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-src-about-blank.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/top-level-data-url.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/anchor-fragment-history-back-on-click.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/cross-document-nav-cross-document-nav.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/cross-document-nav-cross-document-traversal.html [ Skip ]

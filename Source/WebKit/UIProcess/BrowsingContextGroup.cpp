@@ -56,7 +56,7 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForConnection(IPC::Connecti
         for (auto& process : m_processMap.values()) {
             if (!process)
                 continue;
-            if (process->process().connection() == &connection)
+            if (process->process().hasConnection(connection))
                 return *process;
         }
     }
