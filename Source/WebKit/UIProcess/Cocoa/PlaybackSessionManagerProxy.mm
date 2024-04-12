@@ -73,6 +73,7 @@ void PlaybackSessionModelContext::sendRemoteCommand(WebCore::PlatformMediaSessio
 
 void PlaybackSessionModelContext::setVideoReceiverEndpoint(const WebCore::VideoReceiverEndpoint& endpoint)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->setVideoReceiverEndpoint(m_contextId, endpoint);
 }

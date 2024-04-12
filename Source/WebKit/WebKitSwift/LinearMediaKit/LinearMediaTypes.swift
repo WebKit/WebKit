@@ -122,6 +122,23 @@ extension WKSLinearMediaContentType {
     }
 }
 
+extension WKSLinearMediaPresentationState: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .inline:
+            return "inline"
+        case .enteringFullscreen:
+            return "enteringFullscreen"
+        case .fullscreen:
+            return "fullscreen"
+        case .exitingFullscreen:
+            return "exitingFullscreen"
+        @unknown default:
+            fatalError()
+        }
+    }
+}
+
 extension WKSLinearMediaViewingMode {
     init(_ viewingMode: ViewingMode?) {
         switch viewingMode {
