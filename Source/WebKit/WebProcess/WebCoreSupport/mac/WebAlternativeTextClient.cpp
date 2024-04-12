@@ -35,14 +35,15 @@ namespace WebKit {
 using namespace WebCore;
 
 WebAlternativeTextClient::WebAlternativeTextClient(WebPage* webPage)
-: m_page(webPage)
+    : m_page(webPage)
 {
 }
 
 WebAlternativeTextClient::~WebAlternativeTextClient()
 {
 #if USE(AUTOCORRECTION_PANEL)
-    m_page->send(Messages::WebPageProxy::DismissCorrectionPanel(ReasonForDismissingAlternativeText::Ignored));
+    if (m_page)
+        m_page->send(Messages::WebPageProxy::DismissCorrectionPanel(ReasonForDismissingAlternativeText::Ignored));
 #endif
 }
 
