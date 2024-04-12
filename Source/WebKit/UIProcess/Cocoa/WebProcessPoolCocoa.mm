@@ -94,8 +94,6 @@
 #include <notify.h>
 #endif
 
-#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
-
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
 #import <JavaScriptCore/RemoteInspectorConstants.h>
