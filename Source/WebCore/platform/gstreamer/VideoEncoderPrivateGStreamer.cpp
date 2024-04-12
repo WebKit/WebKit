@@ -924,6 +924,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                 layerSyncFlags = { false, true, true, false, false, false, false, false };
                 break;
             }
+            g_value_unset(&intValue);
 
             GST_DEBUG_OBJECT(encoder, "Configuring for %s scalability mode", scalabilityString);
             g_object_set(encoder, "temporal-scalability-number-layers", numberLayers,
@@ -942,6 +943,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
 
                 g_object_set_property(G_OBJECT(encoder), "temporal-scalability-layer-sync-flags", &layerSyncFlagsValue);
                 g_value_unset(&layerSyncFlagsValue);
+                g_value_unset(&boolValue);
                 gst_util_set_object_arg(G_OBJECT(encoder), "temporal-scalability-layer-flags", layerFlags);
             }
 
