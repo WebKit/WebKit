@@ -2638,9 +2638,7 @@ inline void SelectorCodeGenerator::generateWalkToPreviousAdjacentElement(Assembl
 {
     Assembler::Label loopStart = m_assembler.label();
     m_assembler.loadPtr(Assembler::Address(workRegister, Node::previousSiblingMemoryOffset()), workRegister);
-    LocalRegister previousNodePointerMask(m_registerAllocator);
-    m_assembler.move(Assembler::TrustedImmPtr(Node::previousSiblingPointerMask()), previousNodePointerMask);
-    m_assembler.andPtr(previousNodePointerMask, workRegister);
+    m_assembler.andPtr(Assembler::TrustedImmPtr(Node::previousSiblingPointerMask()), workRegister);
     failureCases.append(m_assembler.branchTestPtr(Assembler::Zero, workRegister));
     DOMJIT::branchTestIsElementFlagOnNode(m_assembler, Assembler::Zero, workRegister).linkTo(loopStart, &m_assembler);
 }
