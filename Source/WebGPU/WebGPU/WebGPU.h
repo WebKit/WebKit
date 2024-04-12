@@ -179,6 +179,11 @@ struct WGPUVertexState;
 struct WGPUFragmentState;
 struct WGPURenderPipelineDescriptor;
 
+typedef enum WGPUColorSpace {
+    SRGB,
+    DisplayP3,
+} WGPUColorSpace;
+
 typedef enum WGPUAdapterType {
     WGPUAdapterType_DiscreteGPU = 0x00000000,
     WGPUAdapterType_IntegratedGPU = 0x00000001,
@@ -1087,6 +1092,8 @@ typedef struct WGPUSwapChainDescriptor {
 #ifdef __cplusplus
     Vector<WGPUTextureFormat> viewFormats;
 #endif
+    WGPUColorSpace colorSpace;
+    WGPUCompositeAlphaMode compositeAlphaMode;
     bool reportValidationErrors;
 } WGPUSwapChainDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 

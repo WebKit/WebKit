@@ -120,6 +120,7 @@ public:
     void setCommandEncoder(CommandEncoder&) const;
     static const char* formatToString(WGPUTextureFormat);
     bool isCanvasBacking() const;
+    void waitForCommandBufferCompletion();
 
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);

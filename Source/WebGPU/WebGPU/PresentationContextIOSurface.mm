@@ -85,6 +85,53 @@ void PresentationContextIOSurface::onSubmittedWorkScheduled(Function<void()>&& c
         completionHandler();
 }
 
+RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint32_t bufferIndex)
+{
+    auto* device = m_device.get();
+    if (!device || bufferIndex >= m_renderBuffers.size())
+        return nullptr;
+
+    auto& renderBuffer = m_renderBuffers[bufferIndex];
+    auto* texture = renderBuffer.luminanceClampTexture.get() ? renderBuffer.luminanceClampTexture.get() : renderBuffer.texture.ptr();
+    if (!texture)
+        return nullptr;
+
+    texture->waitForCommandBufferCompletion();
+    id<MTLTexture> mtlTexture = texture->texture();
+    if (!mtlTexture || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm)
+        return nullptr;
+
+    bool fp16 = mtlTexture.pixelFormat == MTLPixelFormatRGBA16Float;
+    CFStringRef colorSpaceName = kCGColorSpaceSRGB;
+    switch (m_colorSpace) {
+    case WGPUColorSpace::SRGB:
+        colorSpaceName = kCGColorSpaceSRGB;
+        break;
+    case WGPUColorSpace::DisplayP3:
+        colorSpaceName = kCGColorSpaceDisplayP3;
+        break;
+    }
+
+    auto colorSpace = adoptCF(CGColorSpaceCreateWithName(colorSpaceName));
+    auto bytesPerPixel = fp16 ? 8 : 4;
+    auto width = mtlTexture.width;
+    auto height = mtlTexture.height;
+    auto bytesPerRow = bytesPerPixel * width;
+    auto bitsPerComponent = bytesPerPixel * 2;
+    auto bitsPerPixel = bitsPerComponent * 4;
+    bool isOpaque = m_alphaMode == WGPUCompositeAlphaMode_Opaque;
+    CGBitmapInfo bitmapInfo = static_cast<CGBitmapInfo>(isOpaque ? kCGImageAlphaNoneSkipLast : kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGImageByteOrder32Big);
+    if (fp16)
+        bitmapInfo = static_cast<CGBitmapInfo>(isOpaque ? kCGImageAlphaNoneSkipLast : kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
+
+    Vector<uint8_t> imageBytes(bytesPerRow * height);
+    [mtlTexture getBytes:&imageBytes[0] bytesPerRow:bytesPerRow fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
+
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, &imageBytes[0], imageBytes.size(), nullptr));
+
+    return adoptCF(CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace.get(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+}
+
 static void generateAValidationError(Device& device, NSString* message, bool generateValidationError)
 {
     if (generateValidationError)
@@ -129,8 +176,11 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         descriptor.viewFormats.size() ?: 1,
         descriptor.viewFormats.size() ? &descriptor.viewFormats[0] : &effectiveFormat,
     };
+    m_colorSpace = descriptor.colorSpace;
+    m_alphaMode = descriptor.compositeAlphaMode;
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(effectiveFormat) width:width height:height mipmapped:NO];
     textureDescriptor.usage = Texture::usage(descriptor.usage, effectiveFormat);
+    textureDescriptor.storageMode = device.hasUnifiedMemory() ? MTLStorageModeShared : MTLStorageModeManaged;
     bool needsLuminanceClampFunction = false;
     for (IOSurface *iosurface in m_ioSurfaces) {
         if (iosurface.height != static_cast<NSInteger>(height) || iosurface.width != static_cast<NSInteger>(width))

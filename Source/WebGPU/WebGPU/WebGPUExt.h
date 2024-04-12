@@ -26,8 +26,11 @@
 #ifndef WEBGPUEXT_H_
 #define WEBGPUEXT_H_
 
+#include <CoreGraphics/CGImage.h>
 #include <CoreVideo/CoreVideo.h>
 #include <IOSurface/IOSurfaceRef.h>
+
+#include <wtf/RetainPtr.h>
 
 #ifdef NDEBUG
 #define WGPU_FUZZER_ASSERT_NOT_REACHED(...) (WTFLogAlways(__VA_ARGS__), ASSERT_WITH_SECURITY_IMPLICATION(0))
@@ -39,7 +42,6 @@
 #include <optional>
 #include <wtf/Vector.h>
 
-extern "C" {
 #endif
 
 typedef struct WGPUExternalTextureImpl* WGPUExternalTexture;
@@ -53,11 +55,6 @@ typedef enum WGPUBufferBindingTypeExtended {
     WGPUBufferBindingType_Float4x3 = WGPUBufferBindingType_Force32 - 2,
     WGPUBufferBindingType_ArrayLength = WGPUBufferBindingType_Force32 - 3,
 } WGPUBufferBindingTypeExtended;
-
-typedef enum WGPUColorSpace {
-    SRGB,
-    DisplayP3,
-} WGPUColorSpace;
 
 typedef enum WGPUSTypeExtended {
     WGPUSTypeExtended_InstanceCocoaDescriptor = 0x151BBC00, // Random
@@ -137,10 +134,8 @@ WGPU_EXPORT void wgpuExternalTextureDestroy(WGPUExternalTexture texture) WGPU_FU
 WGPU_EXPORT void wgpuExternalTextureUndestroy(WGPUExternalTexture texture) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPULimits wgpuDefaultLimits() WGPU_FUNCTION_ATTRIBUTE;
 
-#endif  // !defined(WGPU_SKIP_DECLARATIONS)
+WGPU_EXPORT RetainPtr<CGImageRef> wgpuSwapChainGetTextureAsNativeImage(WGPUSwapChain swapChain, uint32_t bufferIndex);
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
+#endif  // !defined(WGPU_SKIP_DECLARATIONS)
 
 #endif // WEBGPUEXT_H_

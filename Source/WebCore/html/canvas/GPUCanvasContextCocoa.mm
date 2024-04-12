@@ -183,14 +183,19 @@ void GPUCanvasContextCocoa::reshape(int width, int height, int oldWidth, int old
 void GPUCanvasContextCocoa::drawBufferToCanvas(SurfaceBuffer)
 {
     // FIXME(https://bugs.webkit.org/show_bug.cgi?id=263957): WebGPU should support obtaining drawing buffer for Web Inspector.
-    auto& base = canvasBase();
-    base.clearCopiedImage();
-    if (auto buffer = base.buffer(); buffer && m_configuration) {
-        buffer->flushDrawingContext();
-        if (m_compositorIntegration)
-            m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, m_configuration->frameCount);
-        present();
-    }
+    m_compositorIntegration->prepareForDisplay([this, weakThis = WeakPtr { *this }] {
+        if (!weakThis)
+            return;
+
+        auto& base = canvasBase();
+        base.clearCopiedImage();
+        if (auto buffer = base.buffer(); buffer && m_configuration) {
+            buffer->flushDrawingContext();
+            if (m_compositorIntegration)
+                m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, m_configuration->frameCount);
+            present();
+        }
+    });
 }
 
 ExceptionOr<RefPtr<ImageBitmap>> GPUCanvasContextCocoa::getCurrentTextureAsImageBitmap(ImageBuffer& buffer, bool originClean)
@@ -206,7 +211,7 @@ ExceptionOr<RefPtr<ImageBitmap>> GPUCanvasContextCocoa::getCurrentTextureAsImage
         return { ImageBitmap::create(buffer, originClean) };
     }
 
-    return Exception { ExceptionCode::NotSupportedError };
+    return { ImageBitmap::create(buffer, originClean) };
 }
 
 GPUCanvasContext::CanvasType GPUCanvasContextCocoa::canvas()
@@ -259,7 +264,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
     if (!m_compositorIntegration)
         return { };
 
-    auto renderBuffers = m_compositorIntegration->recreateRenderBuffers(m_width, m_height, toWebCoreColorSpace(configuration.colorSpace), configuration.alphaMode == GPUCanvasAlphaMode::Premultiplied ? WebCore::AlphaPremultiplication::Premultiplied : WebCore::AlphaPremultiplication::Unpremultiplied);
+    auto renderBuffers = m_compositorIntegration->recreateRenderBuffers(m_width, m_height, toWebCoreColorSpace(configuration.colorSpace), configuration.alphaMode == GPUCanvasAlphaMode::Premultiplied ? WebCore::AlphaPremultiplication::Premultiplied : WebCore::AlphaPremultiplication::Unpremultiplied, configuration.device->backing());
     // FIXME: This ASSERT() is wrong. It's totally possible for the IPC to the GPU process to timeout if the GPUP is busy, and return nothing here.
     ASSERT(!renderBuffers.isEmpty());
 
@@ -313,7 +318,7 @@ ExceptionOr<RefPtr<GPUTexture>> GPUCanvasContextCocoa::getCurrentTexture()
 
 PixelFormat GPUCanvasContextCocoa::pixelFormat() const
 {
-    return PixelFormat::BGRA8;
+    return m_configuration ? PixelFormat::BGRA8 : PixelFormat::BGRX8;
 }
 
 DestinationColorSpace GPUCanvasContextCocoa::colorSpace() const

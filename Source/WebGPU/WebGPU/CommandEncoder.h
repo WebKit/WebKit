@@ -101,6 +101,7 @@ public:
     void decrementBufferMapCount();
     void endEncoding(id<MTLCommandEncoder>);
     void setLastError(NSString*);
+    void waitForCommandBufferCompletion();
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
