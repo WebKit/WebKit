@@ -180,7 +180,11 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     m_alphaMode = descriptor.compositeAlphaMode;
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(effectiveFormat) width:width height:height mipmapped:NO];
     textureDescriptor.usage = Texture::usage(descriptor.usage, effectiveFormat);
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     textureDescriptor.storageMode = device.hasUnifiedMemory() ? MTLStorageModeShared : MTLStorageModeManaged;
+#else
+    textureDescriptor.storageMode = MTLStorageModeShared;
+#endif
     bool needsLuminanceClampFunction = false;
     for (IOSurface *iosurface in m_ioSurfaces) {
         if (iosurface.height != static_cast<NSInteger>(height) || iosurface.width != static_cast<NSInteger>(width))
