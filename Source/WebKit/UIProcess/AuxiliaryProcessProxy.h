@@ -223,7 +223,7 @@ public:
     enum ResumeReason : bool { ForegroundActivity, BackgroundActivity };
     virtual void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) = 0;
     virtual void sendProcessDidResume(ResumeReason) = 0;
-    virtual void didChangeThrottleState(ProcessThrottleState) { };
+    virtual void didChangeThrottleState(ProcessThrottleState);
     virtual ASCIILiteral clientName() const = 0;
     virtual String environmentIdentifier() const { return emptyString(); }
     virtual void prepareToDropLastAssertion(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
@@ -279,6 +279,7 @@ private:
     IPC::MessageReceiverMap m_messageReceiverMap;
     bool m_alwaysRunsAtBackgroundPriority { false };
     bool m_didBeginResponsivenessChecks { false };
+    bool m_isSuspended { false };
     const WebCore::ProcessIdentifier m_processIdentifier { WebCore::ProcessIdentifier::generate() };
     std::optional<UseLazyStop> m_delayedResponsivenessCheck;
     MonotonicTime m_processStart;
@@ -292,6 +293,9 @@ private:
 #endif
 #if ENABLE(EXTENSION_CAPABILITIES)
     ExtensionCapabilityGrantMap m_extensionCapabilityGrants;
+#endif
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    HashMap<std::pair<String /* domain */, String /* key */>, std::optional<String>> m_preferencesUpdatedWhileSuspended;
 #endif
 };
 
