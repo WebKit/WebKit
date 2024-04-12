@@ -258,7 +258,7 @@ Element::~Element()
     ASSERT(!beforePseudoElement());
     ASSERT(!afterPseudoElement());
 
-    if (UNLIKELY(hasElementStateFlag(ElementStateFlag::HasElementIdentifier)))
+    if (UNLIKELY(hasEventTargetFlag(EventTargetFlag::HasElementIdentifier)))
         elementIdentifiersMap().remove(*this);
     else
         ASSERT(!elementIdentifiersMap().contains(*this));
@@ -5462,7 +5462,7 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsO
 ElementIdentifier Element::identifier() const
 {
     return elementIdentifiersMap().ensure(const_cast<Element&>(*this), [&] {
-        setElementStateFlag(ElementStateFlag::HasElementIdentifier);
+        const_cast<Element&>(*this).setEventTargetFlag(EventTargetFlag::HasElementIdentifier);
         return ElementIdentifier::generate();
     }).iterator->value;
 }

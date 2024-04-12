@@ -145,15 +145,10 @@ public:
     inline RefPtr<ContainerNode> protectedParentNode() const; // Defined in ContainerNode.h.
     static ptrdiff_t parentNodeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_parentNode); }
     inline Element* parentElement() const;
-    Node* previousSibling() const { return m_previous.pointer(); }
-    RefPtr<Node> protectedPreviousSibling() const { return m_previous.pointer(); }
+    Node* previousSibling() const { return m_previous; }
+    RefPtr<Node> protectedPreviousSibling() const { return m_previous; }
 
     static ptrdiff_t previousSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_previous); }
-#if CPU(ADDRESS64)
-    static uintptr_t previousSiblingPointerMask() { return CompactPointerTuple<Node*, uint16_t>::pointerMask; }
-#else
-    static uintptr_t previousSiblingPointerMask() { return -1; }
-#endif
     Node* nextSibling() const { return m_next; }
     RefPtr<Node> protectedNextSibling() const { return m_next; }
     static ptrdiff_t nextSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_next); }
@@ -335,7 +330,7 @@ public:
     WEBCORE_EXPORT Element* enclosingLinkEventParentOrSelf();
 
     // These low-level calls give the caller responsibility for maintaining the integrity of the tree.
-    void setPreviousSibling(Node* previous) { m_previous.setPointer(previous); }
+    void setPreviousSibling(Node* previous) { m_previous = previous; }
     void setNextSibling(Node* next) { m_next = next; }
 
     virtual bool canContainRangeEndPoint() const { return false; }
@@ -632,11 +627,6 @@ protected:
         IsInCustomElementReactionQueue = 1 << 15,
     };
 
-    enum class ElementStateFlag : uint16_t {
-        HasElementIdentifier = 1 << 0,
-        // 15-bits free.
-    };
-
     enum class TabIndexState : uint8_t {
         NotSet = 0,
         Zero = 1,
@@ -662,10 +652,6 @@ protected:
     bool hasStateFlag(StateFlag flag) const { return m_stateFlags.contains(flag); }
     void setStateFlag(StateFlag flag, bool value = true) const { m_stateFlags.set(flag, value); }
     void clearStateFlag(StateFlag flag) const { setStateFlag(flag, false); }
-
-    bool hasElementStateFlag(ElementStateFlag flag) const { return OptionSet<ElementStateFlag>::fromRaw(m_previous.type()).contains(flag); }
-    inline void setElementStateFlag(ElementStateFlag, bool value = true) const;
-    void clearElementStateFlag(ElementStateFlag flag) const { setElementStateFlag(flag, false); }
 
     RareDataBitFields rareDataBitfields() const { return bitwise_cast<RareDataBitFields>(m_rareDataWithBitfields.type()); }
     void setRareDataBitfields(RareDataBitFields bitfields) { m_rareDataWithBitfields.setType(bitwise_cast<uint16_t>(bitfields)); }
@@ -782,7 +768,7 @@ private:
 
     ContainerNode* m_parentNode { nullptr };
     TreeScope* m_treeScope { nullptr };
-    CompactPointerTuple<Node*, uint16_t> m_previous;
+    Node* m_previous { nullptr };
     Node* m_next { nullptr };
     CompactPointerTuple<RenderObject*, uint16_t> m_rendererWithStyleFlags;
     CompactUniquePtrTuple<NodeRareData, uint16_t> m_rareDataWithBitfields;
@@ -875,13 +861,6 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 {
     ASSERT(!isShadowRoot());
     return parentNode();
-}
-
-inline void Node::setElementStateFlag(ElementStateFlag flag, bool value) const
-{
-    auto set = OptionSet<ElementStateFlag>::fromRaw(m_previous.type());
-    set.set(flag, value);
-    const_cast<Node&>(*this).m_previous.setType(set.toRaw());
 }
 
 ALWAYS_INLINE void Node::setStyleFlag(NodeStyleFlag flag)

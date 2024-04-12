@@ -117,7 +117,7 @@ struct SameSizeAsNode : EventTarget {
     uint32_t nodeFlags;
     void* parentNode;
     void* treeScope;
-    uint8_t previous[8];
+    void* previous;
     void* next;
     uint8_t rendererWithStyleFlags[8];
     uint8_t rareDataWithBitfields[8];
@@ -430,7 +430,7 @@ Node::~Node()
 
     ASSERT(!renderer());
     ASSERT(!parentNode());
-    ASSERT(!m_previous.pointer());
+    ASSERT(!m_previous);
     ASSERT(!m_next);
 
     {
