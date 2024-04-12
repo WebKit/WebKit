@@ -47,6 +47,9 @@ public:
 
     CompilationPath compileSync(JITCompilationEffort);
 
+    bool isKnownToBeLiveAfterGC() final;
+    bool isKnownToBeLiveDuringGC(AbstractSlotVisitor&) final;
+
 private:
     CompilationPath compileInThreadImpl(JITCompilationEffort);
 
