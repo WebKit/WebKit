@@ -1527,7 +1527,8 @@ private:
         }
             
         case GetArrayLength:
-        case GetVectorLength: {
+        case GetVectorLength:
+        case GetUndetachedTypeArrayLength: {
             setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
             break;
         }

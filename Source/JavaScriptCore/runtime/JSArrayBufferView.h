@@ -278,8 +278,6 @@ public:
         return JSC::canUseArrayBufferViewRawFieldsDirectly(m_mode);
     }
 
-    void detach();
-
     bool hasVector() const { return !!m_vector; }
     void* vector() const { return m_vector.getMayBeNull(); }
     void* vectorWithoutPACValidation() const { return m_vector.getUnsafe(); }
@@ -359,9 +357,12 @@ private:
 
     JS_EXPORT_PRIVATE ArrayBuffer* slowDownAndWasteMemory();
     static void finalize(JSCell*);
+    void detachFromArrayBuffer();
+
 
 protected:
     friend class LLIntOffsetsExtractor;
+    friend class ArrayBuffer;
 
     ArrayBuffer* existingBufferInButterfly();
 

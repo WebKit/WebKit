@@ -692,6 +692,7 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_varInjectionWatchpointSet(WatchpointSet::create(IsWatched))
     , m_varReadOnlyWatchpointSet(WatchpointSet::create(IsWatched))
     , m_regExpRecompiledWatchpointSet(WatchpointSet::create(IsWatched))
+    , m_arrayBufferDetachWatchpointSet(WatchpointSet::create(IsWatched))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : cryptographicallyRandomNumber<uint32_t>())
     , m_runtimeFlags()
     , m_stackTraceLimit(Options::defaultErrorStackTraceLimit())
@@ -2003,6 +2004,11 @@ void JSGlobalObject::setGlobalScopeExtension(JSScope* scope)
 void JSGlobalObject::clearGlobalScopeExtension()
 {
     m_globalScopeExtension.clear();
+}
+
+void JSGlobalObject::notifyArrayBufferDetachingSlow()
+{
+    m_arrayBufferDetachWatchpointSet->fireAll(vm(), "ArrayBuffer detached");
 }
 
 static inline JSObject* lastInPrototypeChain(JSObject* object)

@@ -154,6 +154,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case EnumeratorHasOwnProperty:
         case GetIndexedPropertyStorage:
         case GetArrayLength:
+        case GetUndetachedTypeArrayLength:
         case GetTypedArrayLengthAsInt52:
         case GetTypedArrayByteOffset:
         case GetTypedArrayByteOffsetAsInt52:
@@ -1596,6 +1597,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 def(HeapLocation(ArrayLengthLoc, MiscFields, node->child1()), LazyNode(node));
             return;
         }
+    }
+
+    case GetUndetachedTypeArrayLength: {
+        ArrayMode mode = node->arrayMode();
+        DFG_ASSERT(graph, node, mode.isSomeTypedArrayView());
+        DFG_ASSERT(graph, node, !mode.mayBeResizableOrGrowableSharedTypedArray());
+        def(PureValue(node, mode.asWord()));
+        return;
     }
 
     case GetTypedArrayLengthAsInt52: {

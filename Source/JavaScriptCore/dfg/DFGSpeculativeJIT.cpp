@@ -3797,16 +3797,23 @@ static double clampDoubleToByte(double d)
     return std::nearbyint(d);
 }
 
-static void compileClampIntegerToByte(JITCompiler& jit, GPRReg result)
+static void compileClampIntegerToByte(JITCompiler& jit, GPRReg resultGPR, GPRReg scratch1GPR)
 {
-    MacroAssembler::Jump inBounds = jit.branch32(MacroAssembler::BelowOrEqual, result, JITCompiler::TrustedImm32(0xff));
-    MacroAssembler::Jump tooBig = jit.branch32(MacroAssembler::GreaterThan, result, JITCompiler::TrustedImm32(0xff));
-    jit.xorPtr(result, result);
+#if CPU(ARM64)
+    jit.clearBitsWithMaskRightShift32(resultGPR, resultGPR, CCallHelpers::TrustedImm32(31), resultGPR);
+    jit.move(CCallHelpers::TrustedImm32(0xff), scratch1GPR);
+    jit.moveConditionally32(CCallHelpers::Below, resultGPR, scratch1GPR, resultGPR, scratch1GPR, resultGPR);
+#else
+    UNUSED_PARAM(scratch1GPR);
+    MacroAssembler::Jump inBounds = jit.branch32(MacroAssembler::BelowOrEqual, resultGPR, JITCompiler::TrustedImm32(0xff));
+    MacroAssembler::Jump tooBig = jit.branch32(MacroAssembler::GreaterThan, resultGPR, JITCompiler::TrustedImm32(0xff));
+    jit.xorPtr(resultGPR, resultGPR);
     MacroAssembler::Jump clamped = jit.jump();
     tooBig.link(&jit);
-    jit.move(JITCompiler::TrustedImm32(255), result);
+    jit.move(JITCompiler::TrustedImm32(255), resultGPR);
     clamped.link(&jit);
     inBounds.link(&jit);
+#endif
 }
 
 static void compileClampDoubleToByte(JITCompiler& jit, GPRReg result, FPRReg source, FPRReg scratch)
@@ -4073,12 +4080,17 @@ bool SpeculativeJIT::getIntTypedArrayStoreOperand(
         switch (valueUse.useKind()) {
         case Int32Use: {
             SpeculateInt32Operand valueOp(this, valueUse);
-            GPRTemporary scratch(this);
-            GPRReg scratchReg = scratch.gpr();
-            move(valueOp.gpr(), scratchReg);
-            if (isClamped)
-                compileClampIntegerToByte(*this, scratchReg);
-            value.adopt(scratch);
+            GPRTemporary scratch1(this);
+            GPRReg scratch1GPR = scratch1.gpr();
+            if (isClamped) {
+                GPRTemporary scratch2(this);
+                GPRReg valueGPR = valueOp.gpr();
+                GPRReg scratch2GPR = scratch2.gpr();
+                move(valueGPR, scratch1GPR);
+                compileClampIntegerToByte(*this, scratch1GPR, scratch2GPR);
+            } else
+                move(valueOp.gpr(), scratch1GPR);
+            value.adopt(scratch1);
             break;
         }
             
@@ -4190,9 +4202,14 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(Node* node, TypedArrayType 
 {
     ASSERT(isInt(type));
 
-    SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
-    SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
-    StorageOperand storage(this, m_graph.varArgChild(node, 3));
+    Edge child1 = m_graph.varArgChild(node, 0);
+    Edge child2 = m_graph.varArgChild(node, 1);
+    Edge child3 = m_graph.varArgChild(node, 2);
+    Edge child4 = m_graph.varArgChild(node, 3);
+
+    SpeculateCellOperand base(this, child1);
+    SpeculateStrictInt32Operand property(this, child2);
+    StorageOperand storage(this, child4);
 
     GPRTemporary scratch(this);
     std::optional<GPRTemporary> scratch2;
@@ -4208,12 +4225,28 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(Node* node, TypedArrayType 
 
     JumpList slowPathCases;
 
+    bool isClamped = JSC::isClamped(type);
+    if (isClamped) {
+        if (child3->op() == GetByVal) {
+            switch (child3->arrayMode().type()) {
+            case Array::Uint8Array:
+            case Array::Uint8ClampedArray: {
+                // If the value is coming from Uint8Array / Uint8ClampedArray, the value is always within uint8_t.
+                isClamped = false;
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    }
+
     bool result = getIntTypedArrayStoreOperand(
         value, propertyReg,
 #if USE(JSVALUE32_64)
         propertyTag, valueTag,
 #endif
-        m_graph.varArgChild(node, 2), slowPathCases, isClamped(type));
+        child3, slowPathCases, isClamped);
     if (!result) {
         noResult(node);
         return;

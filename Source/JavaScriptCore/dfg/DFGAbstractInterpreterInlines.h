@@ -3880,9 +3880,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         makeHeapTopForNode(node);
         break;
             
-    case GetArrayLength: {
-        if (JSValue constant = forNode(node->child1()).m_value) {
-            JSArrayBufferView* view = m_graph.tryGetFoldableView(constant, node->arrayMode());
+    case GetArrayLength:
+    case GetUndetachedTypeArrayLength: {
+        ArrayMode arrayMode = node->arrayMode();
+        AbstractValue& abstractValue = forNode(node->child1());
+        if (JSValue constant = abstractValue.m_value) {
+            JSArrayBufferView* view = m_graph.tryGetFoldableView(constant, arrayMode);
             if (view && !view->isResizableOrGrowableShared() && isInBounds<int32_t>(view->length())) {
                 setConstant(node, jsNumber(view->length()));
                 break;
@@ -3893,6 +3896,32 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
         }
+
+        if (node->op() == GetArrayLength) {
+            if (arrayMode.type() != Array::AnyTypedArray && arrayMode.isSomeTypedArrayView() && !arrayMode.mayBeResizableOrGrowableSharedTypedArray()) {
+                if ((abstractValue.m_type && !(abstractValue.m_type & ~SpecObject)) && abstractValue.m_structure.isFinite()) {
+                    bool canFold = !abstractValue.m_structure.isClear();
+                    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                    abstractValue.m_structure.forEach([&](RegisteredStructure structure) {
+                        if (!arrayMode.structureWouldPassArrayModeFiltering(structure.get())) {
+                            canFold = false;
+                            return;
+                        }
+
+                        if (structure->globalObject() != globalObject) {
+                            canFold = false;
+                            return;
+                        }
+                    });
+
+                    if (canFold) {
+                        if (m_graph.isWatchingArrayBufferDetachWatchpoint(node))
+                            m_state.setShouldTryConstantFolding(true);
+                    }
+                }
+            }
+        }
+
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
     }

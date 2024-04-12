@@ -1133,6 +1133,7 @@ private:
 
         case GetTypedArrayByteOffset:
         case GetArrayLength:
+        case GetUndetachedTypeArrayLength:
         case GetVectorLength: {
             setPrediction(SpecInt32Only);
             break;

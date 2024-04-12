@@ -281,6 +281,7 @@ private:
                 case PutByValMegamorphic:
                 case EnumeratorPutByVal:
                 case GetArrayLength:
+                case GetUndetachedTypeArrayLength:
                 case GetTypedArrayLengthAsInt52:
                 case CheckArray:
                 case CheckDetached:
@@ -366,6 +367,7 @@ private:
                 case PutByValMegamorphic:
                 case EnumeratorPutByVal:
                 case GetArrayLength:
+                case GetUndetachedTypeArrayLength:
                 case GetTypedArrayLengthAsInt52:
                 case GetIndexedPropertyStorage:
                 case ResolveRope:
