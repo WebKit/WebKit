@@ -1,0 +1,3 @@
+
+PASS assertSelection(inputText, tester, expectedText, options)
+
