@@ -111,7 +111,8 @@ public:
     bool isAccessibilityARIAGridCellInstance() const override { return false; }
     virtual bool isAccessibilityLabelInstance() const { return false; }
     virtual bool isAccessibilityListBoxInstance() const { return false; }
-    bool isAXIsolatedObjectInstance() const override { return false; }
+    virtual bool isAccessibilityListBoxOptionInstance() const { return false; }
+    bool isAXIsolatedObjectInstance() const final { return false; }
 
     virtual bool isAttachmentElement() const { return false; }
     bool isLink() const override { return false; }
@@ -119,7 +120,6 @@ public:
     bool isContainedBySecureField() const;
     bool isNativeTextControl() const override { return false; }
     virtual bool isSearchField() const { return false; }
-    bool isListBoxOption() const override { return false; }
     bool isAttachment() const override { return false; }
     bool isMediaTimeline() const { return false; }
     bool isFileUploadButton() const final;

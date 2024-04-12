@@ -1650,12 +1650,6 @@ int AXIsolatedObject::lineForPosition(const VisiblePosition& position) const
     return axObject ? axObject->lineForPosition(position) : -1;
 }
 
-bool AXIsolatedObject::isListBoxOption() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isMockObject() const
 {
     ASSERT_NOT_REACHED();
