@@ -46,6 +46,7 @@
 #import "WKMouseInteraction.h"
 #import "WKSTextStyleManager.h"
 #import "WKSTextStyleSourceDelegate.h"
+#import "WKTextIndicatorStyleType.h"
 #import <WebKit/WKActionSheetAssistant.h>
 #import <WebKit/WKAirPlayRoutePicker.h>
 #import <WebKit/WKContactPicker.h>
@@ -845,7 +846,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation;
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-- (void)addTextIndicatorStyleForID:(NSUUID *)uuid;
+- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType;
 - (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
 #endif
 

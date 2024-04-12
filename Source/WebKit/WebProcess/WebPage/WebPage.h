@@ -1736,9 +1736,9 @@ public:
 
     void textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState, const WTF::UUID& replacementUUID);
 
-    void removeTextIndicatorStyleForID(const WTF::UUID&);
-
     void enableTextIndicatorStyleAfterElementWithID(const String&, const WTF::UUID&);
+    void enableTextIndicatorStyleForElementWithID(const String&, const WTF::UUID&);
+    void removeTextIndicatorStyleForID(const WTF::UUID&);
 #endif
 
     void startObservingNowPlayingMetadata();
