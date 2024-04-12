@@ -39,7 +39,7 @@ class BaselineJITPlan final : public JITPlan {
     using Base = JITPlan;
 
 public:
-    BaselineJITPlan(CodeBlock*, BytecodeIndex loopOSREntryBytecodeIndex);
+    BaselineJITPlan(CodeBlock*);
 
     CompilationPath compileInThreadImpl() final;
     size_t codeSize() const final;
@@ -53,8 +53,6 @@ public:
 private:
     CompilationPath compileInThreadImpl(JITCompilationEffort);
 
-
-    BytecodeIndex m_loopOSREntryBytecodeIndex;
     RefPtr<BaselineJITCode> m_jitCode;
 };
 

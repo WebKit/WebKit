@@ -32,9 +32,8 @@
 
 namespace JSC {
 
-BaselineJITPlan::BaselineJITPlan(CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
+BaselineJITPlan::BaselineJITPlan(CodeBlock* codeBlock)
     : JITPlan(JITCompilationMode::Baseline, codeBlock)
-    , m_loopOSREntryBytecodeIndex(loopOSREntryBytecodeIndex)
 {
     JIT::doMainThreadPreparationBeforeCompile(codeBlock->vm());
 }
@@ -48,7 +47,7 @@ auto BaselineJITPlan::compileInThreadImpl(JITCompilationEffort effort) -> Compil
         Safepoint safepoint(*this, result);
         safepoint.begin();
 
-        JIT jit(*m_vm, *this, m_codeBlock, m_loopOSREntryBytecodeIndex);
+        JIT jit(*m_vm, *this, m_codeBlock);
         auto jitCode = jit.compileAndLinkWithoutFinalizing(effort);
         m_jitCode = WTFMove(jitCode);
     }

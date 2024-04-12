@@ -67,14 +67,13 @@ Seconds totalFTLCompileTime;
 Seconds totalFTLDFGCompileTime;
 Seconds totalFTLB3CompileTime;
 
-JIT::JIT(VM& vm, BaselineJITPlan& plan, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
+JIT::JIT(VM& vm, BaselineJITPlan& plan, CodeBlock* codeBlock)
     : JSInterfaceJIT(&vm, nullptr)
     , m_plan(plan)
     , m_labels(codeBlock ? codeBlock->instructions().size() : 0)
     , m_pcToCodeOriginMapBuilder(vm)
     , m_canBeOptimized(false)
     , m_shouldEmitProfiling(false)
-    , m_loopOSREntryBytecodeIndex(loopOSREntryBytecodeIndex)
     , m_profiledCodeBlock(codeBlock)
     , m_unlinkedCodeBlock(codeBlock->unlinkedCodeBlock())
 {
@@ -1040,7 +1039,7 @@ CompilationResult JIT::finalizeOnMainThread(CodeBlock* codeBlock, BaselineJITPla
 
 CompilationResult JIT::compileSync(VM&, CodeBlock* codeBlock, JITCompilationEffort effort)
 {
-    auto plan = adoptRef(*new BaselineJITPlan(codeBlock, BytecodeIndex(0)));
+    auto plan = adoptRef(*new BaselineJITPlan(codeBlock));
     plan->compileSync(effort);
     return plan->finalize();
 }
