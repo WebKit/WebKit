@@ -21,36 +21,48 @@ namespace rx
 {
 
 // TextureImageSiblingMtl implementation
-TextureImageSiblingMtl::TextureImageSiblingMtl(EGLClientBuffer buffer)
-    : mBuffer(buffer), mGLFormat(GL_NONE)
+TextureImageSiblingMtl::TextureImageSiblingMtl(EGLClientBuffer buffer,
+                                               const egl::AttributeMap &attribs)
+    : mBuffer(buffer), mAttribs(attribs), mGLFormat(GL_NONE)
 {}
 
 TextureImageSiblingMtl::~TextureImageSiblingMtl() {}
 
 // Static
-bool TextureImageSiblingMtl::ValidateClientBuffer(const DisplayMtl *display, EGLClientBuffer buffer)
+egl::Error TextureImageSiblingMtl::ValidateClientBuffer(const DisplayMtl *display,
+                                                        EGLClientBuffer buffer,
+                                                        const egl::AttributeMap &attribs)
 {
     id<MTLTexture> texture = (__bridge id<MTLTexture>)(buffer);
     if (!texture || texture.device != display->getMetalDevice())
     {
-        return false;
+        return egl::EglBadAttribute();
     }
 
-    if (texture.textureType != MTLTextureType2D && texture.textureType != MTLTextureTypeCube)
+    if (texture.textureType != MTLTextureType2D && texture.textureType != MTLTextureTypeCube &&
+        texture.textureType != MTLTextureType2DArray)
     {
-        return false;
+        return egl::EglBadAttribute();
     }
 
     angle::FormatID angleFormatId = mtl::Format::MetalToAngleFormatID(texture.pixelFormat);
     const mtl::Format &format     = display->getPixelFormat(angleFormatId);
     if (!format.valid())
     {
-        ERR() << "Unrecognized format";
-        // Not supported
-        return false;
+        return egl::EglBadAttribute() << "Unrecognized format";
+    }
+    unsigned textureArraySlice =
+        static_cast<unsigned>(attribs.getAsInt(EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, 0));
+    if (texture.textureType != MTLTextureType2DArray && textureArraySlice > 0)
+    {
+        return egl::EglBadAttribute() << "Invalid texture type for non-zero texture array slice";
+    }
+    if (textureArraySlice >= texture.arrayLength)
+    {
+        return egl::EglBadAttribute() << "Invalid texture array slice: " << textureArraySlice;
     }
 
-    return true;
+    return egl::NoError();
 }
 
 egl::Error TextureImageSiblingMtl::initialize(const egl::Display *display)
@@ -67,6 +79,15 @@ egl::Error TextureImageSiblingMtl::initialize(const egl::Display *display)
 angle::Result TextureImageSiblingMtl::initImpl(DisplayMtl *displayMtl)
 {
     mNativeTexture = mtl::Texture::MakeFromMetal((__bridge id<MTLTexture>)(mBuffer));
+
+    if (mNativeTexture->textureType() == MTLTextureType2DArray)
+    {
+        mtl::TextureRef baseTexture = std::move(mNativeTexture);
+        unsigned textureArraySlice =
+            static_cast<unsigned>(mAttribs.getAsInt(EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, 0));
+        mNativeTexture =
+            baseTexture->createSliceMipView(textureArraySlice, mtl::kZeroNativeMipLevel);
+    }
 
     angle::FormatID angleFormatId =
         mtl::Format::MetalToAngleFormatID(mNativeTexture->pixelFormat());
@@ -153,6 +174,7 @@ egl::Error ImageMtl::initialize(const egl::Display *display)
         switch (mNativeTexture->textureType())
         {
             case MTLTextureType2D:
+            case MTLTextureType2DArray:
                 mImageTextureType = gl::TextureType::_2D;
                 break;
             case MTLTextureTypeCube:

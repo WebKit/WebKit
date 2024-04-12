@@ -36,6 +36,13 @@
             ]
         },
         {
+            "name": "clears_with_gaps_need_flush",
+            "category": "Workarounds",
+            "description": [
+                "Clearing an FBO with multiple attachments may need a flush to avoid race conditions"
+            ]
+        },
+        {
             "name": "does_SRGB_clears_on_linear_framebuffer_attachments",
             "category": "Workarounds",
             "description": [
@@ -769,6 +776,22 @@
                 "Resync depth range to apply clip control updates."
             ],
             "issue": "https://anglebug.com/8381"
+        },
+        {
+            "name": "corrupt_program_binary_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Corrupt the program binary retrieved from the driver for testing purposes."
+            ],
+            "issue": "https://anglebug.com/8471"
+        },
+        {
+            "name": "use_intermediate_texture_for_generate_mipmap",
+            "category": "Workarounds",
+            "description": [
+                "Some drivers lose context when repeatedly generating mipmaps on textures that were used as framebuffers."
+            ],
+            "issue": "https://crbug.com/40279678"
         }
     ]
 }

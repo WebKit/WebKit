@@ -12,6 +12,8 @@
 #include "common/MemoryBuffer.h"
 #include "libANGLE/renderer/BufferImpl.h"
 
+#include <optional>
+
 namespace rx
 {
 
@@ -64,7 +66,7 @@ class BufferGL : public BufferImpl
     size_t mMapOffset;
     size_t mMapSize;
 
-    angle::MemoryBuffer mShadowCopy;
+    std::optional<angle::MemoryBuffer> mShadowCopy;
 
     size_t mBufferSize;
 

@@ -68,7 +68,7 @@ ContextGL::ContextGL(const gl::State &state,
 
 ContextGL::~ContextGL() {}
 
-angle::Result ContextGL::initialize()
+angle::Result ContextGL::initialize(const angle::ImageLoadContext &imageLoadContext)
 {
     return angle::Result::Continue;
 }

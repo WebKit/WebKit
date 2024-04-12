@@ -1118,10 +1118,11 @@ void LogFeatureStatus(const angle::FeatureSetBase &features,
     }
 }
 
-void ApplyFeatureOverrides(angle::FeatureSetBase *features, const egl::DisplayState &state)
+void ApplyFeatureOverrides(angle::FeatureSetBase *features,
+                           const angle::FeatureOverrides &overrides)
 {
-    features->overrideFeatures(state.featureOverridesEnabled, true);
-    features->overrideFeatures(state.featureOverridesDisabled, false);
+    features->overrideFeatures(overrides.enabled, true);
+    features->overrideFeatures(overrides.disabled, false);
 
     // Override with environment as well.
     constexpr char kAngleFeatureOverridesEnabledEnvName[]  = "ANGLE_FEATURE_OVERRIDES_ENABLED";

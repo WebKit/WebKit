@@ -10,6 +10,7 @@
 //   meant to be using the D3D9 renderer.
 
 #include "test_utils/ANGLETest.h"
+#include "util/test_utils.h"
 
 #include "common/string_utils.h"
 
@@ -162,7 +163,9 @@ TEST_P(RendererTest, SimpleOperation)
 
 // Select configurations (e.g. which renderer, which GLES major version) these tests should be run
 // against.
-
+// TODO(http://anglebug.com/8485): move ES2_WEBGPU to the definition of ANGLE_ALL_TEST_PLATFORMS_ES2
+// once webgpu is developed enough to run more tests.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND_NULL_AND(RendererTest,
-                                                         ANGLE_ALL_TEST_PLATFORMS_GL32_CORE);
+                                                         ANGLE_ALL_TEST_PLATFORMS_GL32_CORE,
+                                                         ES2_WEBGPU());
 }  // anonymous namespace

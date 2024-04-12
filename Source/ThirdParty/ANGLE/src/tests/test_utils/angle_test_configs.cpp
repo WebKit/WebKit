@@ -99,6 +99,11 @@ bool PlatformParameters::isVulkan() const
     return eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE;
 }
 
+bool PlatformParameters::isWebGPU() const
+{
+    return eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE;
+}
+
 bool PlatformParameters::isANGLE() const
 {
     return driver == GLESDriverType::AngleEGL;
@@ -160,6 +165,8 @@ const char *GetRendererName(EGLint renderer)
             return "OpenGLES";
         case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
             return "Vulkan";
+        case EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE:
+            return "WebGPU";
         default:
             return "Undefined";
     }
@@ -534,6 +541,11 @@ EGLPlatformParameters VULKAN_SWIFTSHADER()
 EGLPlatformParameters METAL()
 {
     return EGLPlatformParameters(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
+}
+
+EGLPlatformParameters WEBGPU()
+{
+    return EGLPlatformParameters(EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE);
 }
 
 }  // namespace egl_platform
@@ -928,6 +940,11 @@ PlatformParameters ES31_ANGLE_Vulkan_Secondaries()
 PlatformParameters ES32_ANGLE_Vulkan_Secondaries()
 {
     return WithVulkanSecondaries(ES32_VULKAN());
+}
+
+PlatformParameters ES2_WEBGPU()
+{
+    return PlatformParameters(EGL_OPENGL_ES_API, 2, 0, 0, egl_platform::WEBGPU());
 }
 
 PlatformParameters ES1_Zink()

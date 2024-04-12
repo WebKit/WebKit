@@ -34,6 +34,7 @@ bool IsPixel2XL();
 bool IsPixel4();
 bool IsPixel4XL();
 bool IsPixel6();
+bool IsGalaxyS22();
 bool IsNVIDIAShield();
 
 // GPU vendors.

@@ -55,6 +55,8 @@ class ImageSibling : public gl::FramebufferAttachmentObject
     bool isExternalImageWithoutIndividualSync() const override;
     bool hasFrontBufferUsage() const override;
     bool hasProtectedContent() const override;
+    bool hasFoveatedRendering() const override { return false; }
+    const gl::FoveationState *getFoveationState() const override { return nullptr; }
 
   protected:
     // Set the image target of this sibling
@@ -158,7 +160,7 @@ struct ImageState : private angle::NonCopyable
     angle::FlatUnorderedSet<ImageSibling *, kTargetsSetSize> targets;
 };
 
-class Image final : public RefCountObject, public LabeledObject
+class Image final : public ThreadSafeRefCountObject, public LabeledObject
 {
   public:
     Image(rx::EGLImplFactory *factory,

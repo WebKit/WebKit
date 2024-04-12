@@ -12,6 +12,7 @@
 #include <cerrno>
 #include <cstring>
 #include <fstream>
+#include <queue>
 #include <string>
 
 #include "sys/stat.h"
@@ -1463,6 +1464,43 @@ void MaybeResetResources(gl::ContextID contextID,
             }
             break;
         }
+        case ResourceIDType::Image:
+        {
+            TrackedResource &trackedEGLImages =
+                resourceTracker->getTrackedResource(contextID, ResourceIDType::Image);
+            ResourceSet &newEGLImages         = trackedEGLImages.getNewResources();
+            ResourceSet &eglImagesToDelete    = trackedEGLImages.getResourcesToDelete();
+            ResourceSet &eglImagesToRegen     = trackedEGLImages.getResourcesToRegen();
+            ResourceCalls &eglImageRegenCalls = trackedEGLImages.getResourceRegenCalls();
+
+            if (!newEGLImages.empty() || !eglImagesToDelete.empty())
+            {
+                for (GLuint oldResource : eglImagesToDelete)
+                {
+                    out << "    DestroyEGLImageKHR(gEGLDisplay, gEGLImageMap2[" << oldResource
+                        << "], " << oldResource << ");\n";
+                }
+
+                for (GLuint newResource : newEGLImages)
+                {
+                    out << "    DestroyEGLImageKHR(gEGLDisplay, gEGLImageMap2[" << newResource
+                        << "], " << newResource << ");\n";
+                }
+            }
+            // If any of our starting EGLImages were deleted during the run, recreate them
+            for (GLuint id : eglImagesToRegen)
+            {
+                // Emit their regen calls
+                for (CallCapture &call : eglImageRegenCalls[id])
+                {
+                    out << "    ";
+                    WriteCppReplayForCall(call, replayWriter, out, header, binaryData,
+                                          maxResourceIDBufferSize);
+                    out << ";\n";
+                }
+            }
+            break;
+        }
         default:
             // TODO (http://anglebug.com/4599): Reset more resource types
             break;
@@ -1769,6 +1807,155 @@ void WriteCppReplayFunctionWithParts(const gl::ContextID contextID,
                                    ++partCount)
                     << "\n";
                 out << "{\n";
+            }
+        }
+    }
+    out << "}\n";
+
+    if (partCount > 0)
+    {
+        out << "\n";
+        out << "void "
+            << FmtFunction(replayFunc, contextID, FuncUsage::Definition, frameIndex, kNoPartId)
+            << "\n";
+        out << "{\n";
+
+        // Write out the main call which calls all the parts.
+        for (int i = 1; i <= partCount; i++)
+        {
+            out << "    " << FmtFunction(replayFunc, contextID, FuncUsage::Call, frameIndex, i)
+                << ";\n";
+        }
+
+        out << "}\n";
+    }
+}
+
+// Performance can be gained by reordering traced calls and grouping them by context.
+// Side context calls (as opposed to main context) can be grouped together paying attention
+// to synchronization points in the original call stream.
+void WriteCppReplayFunctionWithPartsMultiContext(const gl::ContextID contextID,
+                                                 ReplayFunc replayFunc,
+                                                 ReplayWriter &replayWriter,
+                                                 uint32_t frameIndex,
+                                                 std::vector<uint8_t> *binaryData,
+                                                 std::vector<CallCapture> &calls,
+                                                 std::stringstream &header,
+                                                 std::stringstream &out,
+                                                 size_t *maxResourceIDBufferSize)
+{
+    int callCount = 0;
+    int partCount = 0;
+
+    if (calls.size() > kFunctionSizeLimit)
+    {
+        out << "void "
+            << FmtFunction(replayFunc, contextID, FuncUsage::Definition, frameIndex, ++partCount)
+            << "\n";
+    }
+    else
+    {
+        out << "void "
+            << FmtFunction(replayFunc, contextID, FuncUsage::Definition, frameIndex, kNoPartId)
+            << "\n";
+    }
+
+    out << "{\n";
+
+    std::map<gl::ContextID, std::queue<int>> sideContextCallIndices;
+
+    // Helper lambda to write a context change command to the call stream
+    auto writeMakeCurrentCall = [&](gl::ContextID cID) {
+        CallCapture makeCurrentCall =
+            egl::CaptureMakeCurrent(nullptr, true, nullptr, {0}, {0}, cID, EGL_TRUE);
+        out << "    ";
+        WriteCppReplayForCall(makeCurrentCall, replayWriter, out, header, binaryData,
+                              maxResourceIDBufferSize);
+        out << ";\n";
+        callCount++;
+    };
+
+    // Helper lambda to write a call to the call stream
+    auto writeCall = [&](CallCapture &outCall, gl::ContextID cID) {
+        out << "    ";
+        WriteCppReplayForCall(outCall, replayWriter, out, header, binaryData,
+                              maxResourceIDBufferSize);
+        out << ";\n";
+        if (cID != contextID)
+        {
+            sideContextCallIndices[cID].pop();
+        }
+        callCount++;
+    };
+
+    int callIndex = 0;
+    // Iterate through calls saving side context call indices in a per-side-context queue
+    for (CallCapture &call : calls)
+    {
+        if (call.contextID != contextID)
+        {
+            sideContextCallIndices[call.contextID].push(callIndex);
+        }
+        callIndex++;
+    }
+
+    // At the beginning of the frame, output all side context calls occuring before a sync point.
+    // If no sync points are present, all calls in that side context are written at this time
+    for (auto const &sideContext : sideContextCallIndices)
+    {
+        gl::ContextID sideContextID = sideContext.first;
+
+        // Make sidecontext current if there are commands before the first syncpoint
+        if (!calls[sideContextCallIndices[sideContextID].front()].isSyncPoint)
+        {
+            writeMakeCurrentCall(sideContextID);
+        }
+        // Output all commands in sidecontext until a syncpoint is reached
+        while (!sideContextCallIndices[sideContextID].empty() &&
+               !calls[sideContextCallIndices[sideContextID].front()].isSyncPoint)
+        {
+            writeCall(calls[sideContextCallIndices[sideContextID].front()], sideContextID);
+        }
+    }
+
+    // Make mainContext current
+    writeMakeCurrentCall(contextID);
+
+    // Iterate through calls writing out main context calls. When a sync point is reached, write the
+    // next queued sequence of side context calls until another sync point is reached.
+    for (CallCapture &call : calls)
+    {
+        if (call.contextID == contextID)
+        {
+            writeCall(call, call.contextID);
+        }
+        else
+        {
+            if (call.isSyncPoint)
+            {
+                // Make sideContext current
+                writeMakeCurrentCall(call.contextID);
+
+                do
+                {
+                    writeCall(calls[sideContextCallIndices[call.contextID].front()],
+                              call.contextID);
+                } while (!sideContextCallIndices[call.contextID].empty() &&
+                         !calls[sideContextCallIndices[call.contextID].front()].isSyncPoint);
+
+                // Make mainContext current
+                writeMakeCurrentCall(contextID);
+
+                if (partCount > 0 && ++callCount % kFunctionSizeLimit == 0)
+                {
+                    out << "}\n";
+                    out << "\n";
+                    out << "void "
+                        << FmtFunction(replayFunc, contextID, FuncUsage::Definition, frameIndex,
+                                       ++partCount)
+                        << "\n";
+                    out << "{\n";
+                }
             }
         }
     }
@@ -3269,18 +3456,6 @@ void CaptureTextureContents(std::vector<CallCapture> *setupCalls,
         return;
     }
 
-    if (index.getType() == gl::TextureType::External)
-    {
-        // The generated glTexImage2D call is for creating the staging texture
-        Capture(setupCalls,
-                CaptureTexImage2D(*replayState, true, gl::TextureTarget::_2D, index.getLevelIndex(),
-                                  format.internalFormat, desc.size.width, desc.size.height, 0,
-                                  format.format, format.type, data));
-
-        // For external textures, we're done
-        return;
-    }
-
     bool is3D =
         (index.getType() == gl::TextureType::_3D || index.getType() == gl::TextureType::_2DArray ||
          index.getType() == gl::TextureType::CubeMapArray);
@@ -3410,18 +3585,58 @@ void CaptureCustomFenceSync(CallCapture &call, std::vector<CallCapture> &callsOu
     params.addValueParam("fenceSync", ParamType::TGLuint64,
                          params.getReturnValue().value.GLuint64Val);
     call.customFunctionName = "FenceSync2";
+    call.isSyncPoint        = true;
     callsOut.emplace_back(std::move(call));
 }
 
-void CaptureCustomCreateEGLImage(const char *name,
+const egl::Image *GetImageFromParam(const gl::Context *context, const ParamCapture &param)
+{
+    const egl::ImageID eglImageID = egl::PackParam<egl::ImageID>(param.value.EGLImageVal);
+    const egl::Image *eglImage    = context->getDisplay()->getImage(eglImageID);
+    ASSERT(eglImage != nullptr);
+    return eglImage;
+}
+
+void CaptureCustomCreateEGLImage(const gl::Context *context,
+                                 const char *name,
+                                 size_t width,
+                                 size_t height,
                                  CallCapture &call,
                                  std::vector<CallCapture> &callsOut)
 {
-    ParamBuffer &&params = std::move(call.params);
-    EGLImage returnVal   = params.getReturnValue().value.EGLImageVal;
-    egl::ImageID imageID = egl::PackParam<egl::ImageID>(returnVal);
-    params.addValueParam("image", ParamType::TGLuint, imageID.value);
+    ParamBuffer &&params    = std::move(call.params);
+    EGLImage returnVal      = params.getReturnValue().value.EGLImageVal;
+    egl::ImageID imageID    = egl::PackParam<egl::ImageID>(returnVal);
     call.customFunctionName = name;
+
+    // Clear client buffer value if it is a pointer to a hardware buffer. It is
+    // not used by replay and will not be portable to 32-bit builds
+    if (params.getParam("target", ParamType::TEGLenum, 2).value.EGLenumVal ==
+        EGL_NATIVE_BUFFER_ANDROID)
+    {
+        params.setValueParamAtIndex("buffer", ParamType::TEGLClientBuffer,
+                                    reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(0)),
+                                    3);
+    }
+
+    // Record image dimensions in case a backing resource needs to be created during replay
+    params.addValueParam("width", ParamType::TGLsizei, static_cast<GLsizei>(width));
+    params.addValueParam("height", ParamType::TGLsizei, static_cast<GLsizei>(height));
+
+    params.addValueParam("image", ParamType::TGLuint, imageID.value);
+    callsOut.emplace_back(std::move(call));
+}
+
+void CaptureCustomDestroyEGLImage(const char *name,
+                                  CallCapture &call,
+                                  std::vector<CallCapture> &callsOut)
+{
+    call.customFunctionName = name;
+    ParamBuffer &&params    = std::move(call.params);
+
+    const ParamCapture &imageID = params.getParam("imagePacked", ParamType::TImageID, 1);
+    params.addValueParam("imageID", ParamType::TGLuint, imageID.value.ImageIDVal.value);
+
     callsOut.emplace_back(std::move(call));
 }
 
@@ -3571,7 +3786,7 @@ void GenerateLinkedProgram(const gl::Context *context,
          uniformBlockIndex < static_cast<uint32_t>(executable.getUniformBlocks().size());
          uniformBlockIndex++)
     {
-        GLuint blockBinding = executable.getUniformBlockBinding(uniformBlockIndex);
+        GLuint blockBinding = executable.getUniformBlocks()[uniformBlockIndex].pod.inShaderBinding;
         CallCapture updateCallCapture =
             CaptureUniformBlockBinding(replayState, true, id, {uniformBlockIndex}, blockBinding);
         CaptureCustomUniformBlockBinding(updateCallCapture, *setupCalls);
@@ -3999,6 +4214,36 @@ void CaptureShareGroupMidExecutionSetup(
         replayState.getMutablePrivateStateForCapture()->setUnpackAlignment(1);
     }
 
+    const egl::ImageMap eglImageMap = context->getDisplay()->getImagesForCapture();
+    for (const auto &[eglImageID, eglImage] : eglImageMap)
+    {
+        // Track this as a starting resource that may need to be restored.
+        TrackedResource &trackedImages =
+            resourceTracker->getTrackedResource(context->id(), ResourceIDType::Image);
+        trackedImages.getStartingResources().insert(eglImageID);
+
+        ResourceCalls &imageRegenCalls = trackedImages.getResourceRegenCalls();
+        CallVector imageGenCalls({setupCalls, &imageRegenCalls[eglImageID]});
+
+        auto eglImageAttribIter = resourceTracker->getImageToAttribTable().find(
+            reinterpret_cast<EGLImage>(static_cast<uintptr_t>(eglImageID)));
+        ASSERT(eglImageAttribIter != resourceTracker->getImageToAttribTable().end());
+        const egl::AttributeMap &attribs = eglImageAttribIter->second;
+
+        for (std::vector<CallCapture> *calls : imageGenCalls)
+        {
+            // Create the image on demand with the same attrib retrieved above
+            CallCapture eglCreateImageKHRCall = egl::CaptureCreateImageKHR(
+                nullptr, true, nullptr, context->id(), EGL_GL_TEXTURE_2D,
+                reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(0)), attribs,
+                reinterpret_cast<EGLImage>(static_cast<uintptr_t>(eglImageID)));
+
+            // Convert the CaptureCreateImageKHR CallCapture to the customized CallCapture
+            CaptureCustomCreateEGLImage(context, "CreateEGLImageKHR", eglImage->getWidth(),
+                                        eglImage->getHeight(), eglCreateImageKHRCall, *calls);
+        }
+    }
+
     // Capture Texture setup and data.
     const gl::TextureManager &textures = apiState.getTextureManagerForCapture();
 
@@ -4207,21 +4452,40 @@ void CaptureShareGroupMidExecutionSetup(
                 continue;
             }
 
-            // create a staging GL_TEXTURE_2D texture to create the eglImage with
-            gl::TextureID stagingTexId = {maxAccessedResourceIDs[ResourceIDType::Texture] + 1};
             if (index.getType() == gl::TextureType::External)
             {
-                Capture(setupCalls, CaptureGenTextures(replayState, true, 1, &stagingTexId));
-                MaybeCaptureUpdateResourceIDs(context, resourceTracker, setupCalls);
-                Capture(setupCalls,
-                        CaptureBindTexture(replayState, true, gl::TextureType::_2D, stagingTexId));
-                Capture(setupCalls, CaptureTexParameteri(replayState, true, gl::TextureType::_2D,
-                                                         GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-                Capture(setupCalls, CaptureTexParameteri(replayState, true, gl::TextureType::_2D,
-                                                         GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+                // Lookup the eglImage ID associated with this texture when the app issued
+                // glEGLImageTargetTexture2DOES()
+                auto eglImageIter = resourceTracker->getTextureIDToImageTable().find(id.value);
+                egl::ImageID eglImageID;
+                if (eglImageIter != resourceTracker->getTextureIDToImageTable().end())
+                {
+                    eglImageID = eglImageIter->second;
+                }
+                else
+                {
+                    // Original image was deleted and needs to be recreated first
+                    eglImageID = {maxAccessedResourceIDs[ResourceIDType::Image] + 1};
+                    for (std::vector<CallCapture> *calls : texSetupCalls)
+                    {
+                        egl::AttributeMap attribs = egl::AttributeMap::CreateFromIntArray(nullptr);
+                        CallCapture eglCreateImageKHRCall = egl::CaptureCreateImageKHR(
+                            nullptr, true, nullptr, context->id(), EGL_GL_TEXTURE_2D,
+                            reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(0)), attribs,
+                            reinterpret_cast<EGLImage>(static_cast<uintptr_t>(eglImageID.value)));
+                        CaptureCustomCreateEGLImage(context, "CreateEGLImageKHR", desc.size.width,
+                                                    desc.size.height, eglCreateImageKHRCall,
+                                                    *calls);
+                    }
+                }
+                // Pass the eglImage to the texture that is bound to GL_TEXTURE_EXTERNAL_OES target
+                for (std::vector<CallCapture> *calls : texSetupCalls)
+                {
+                    Capture(calls, CaptureEGLImageTargetTexture2DOES(
+                                       replayState, true, gl::TextureType::External, eglImageID));
+                }
             }
-
-            if (context->getExtensions().getImageANGLE)
+            else if (context->getExtensions().getImageANGLE)
             {
                 // Use ANGLE_get_image to read back pixel data.
                 angle::MemoryBuffer data;
@@ -4286,54 +4550,6 @@ void CaptureShareGroupMidExecutionSetup(
                 {
                     CaptureTextureContents(calls, &replayState, texture, index, desc,
                                            static_cast<GLuint>(data.size()), data.data());
-                }
-
-                if (index.getType() == gl::TextureType::External)
-                {
-                    // Look up the attribs used when the image was created
-                    // Firstly, lookup the eglImage ID associated with this texture when the app
-                    // issued glEGLImageTargetTexture2DOES()
-                    auto eglImageIter = resourceTracker->getTextureIDToImageTable().find(id.value);
-                    ASSERT(eglImageIter != resourceTracker->getTextureIDToImageTable().end());
-
-                    const egl::ImageID eglImageID = eglImageIter->second;
-                    const EGLImage eglImage =
-                        reinterpret_cast<EGLImage>(static_cast<uintptr_t>(eglImageID.value));
-
-                    // Secondly, lookup the attrib we used to create the eglImage
-                    auto eglImageAttribIter =
-                        resourceTracker->getImageToAttribTable().find(eglImage);
-                    ASSERT(eglImageAttribIter != resourceTracker->getImageToAttribTable().end());
-
-                    const egl::AttributeMap &retrievedAttribs = eglImageAttribIter->second;
-
-                    // Create the image on demand with the same attrib retrieved above
-                    CallCapture eglCreateImageKHRCall = egl::CaptureCreateImageKHR(
-                        nullptr, true, nullptr, context->id(), EGL_GL_TEXTURE_2D_KHR,
-                        reinterpret_cast<EGLClientBuffer>(
-                            static_cast<GLuint64>(stagingTexId.value)),
-                        retrievedAttribs, eglImage);
-
-                    // Convert the CaptureCreateImageKHR CallCapture to the customized CallCapture
-                    std::vector<CallCapture> eglCustomCreateImageKHRCall;
-                    CaptureCustomCreateEGLImage("CreateEGLImageKHR", eglCreateImageKHRCall,
-                                                eglCustomCreateImageKHRCall);
-                    ASSERT(eglCustomCreateImageKHRCall.size() > 0);
-
-                    // Append the customized CallCapture to the setupCalls list
-                    Capture(setupCalls, std::move(eglCustomCreateImageKHRCall[0]));
-
-                    // Pass the eglImage to the texture that is bound to GL_TEXTURE_EXTERNAL_OES
-                    // target
-                    for (std::vector<CallCapture> *calls : texSetupCalls)
-                    {
-                        Capture(calls,
-                                CaptureEGLImageTargetTexture2DOES(
-                                    replayState, true, gl::TextureType::External, eglImageID));
-                    }
-
-                    // Delete the staging texture
-                    Capture(setupCalls, CaptureDeleteTextures(replayState, true, 1, &stagingTexId));
                 }
             }
             else
@@ -5792,8 +6008,7 @@ void FrameCapture::reset()
 }
 
 FrameCaptureShared::FrameCaptureShared()
-    : mLastContextId{0},
-      mEnabled(true),
+    : mEnabled(true),
       mSerializeStateEnabled(false),
       mCompression(true),
       mClientVertexArrayMap{},
@@ -7011,12 +7226,26 @@ void FrameCaptureShared::maybeOverrideEntryPoint(const gl::Context *context,
         }
         case EntryPoint::EGLCreateImage:
         {
-            CaptureCustomCreateEGLImage("CreateEGLImage", inCall, outCalls);
+            const egl::Image *eglImage = GetImageFromParam(context, inCall.params.getReturnValue());
+            CaptureCustomCreateEGLImage(context, "CreateEGLImage", eglImage->getWidth(),
+                                        eglImage->getHeight(), inCall, outCalls);
             break;
         }
         case EntryPoint::EGLCreateImageKHR:
         {
-            CaptureCustomCreateEGLImage("CreateEGLImageKHR", inCall, outCalls);
+            const egl::Image *eglImage = GetImageFromParam(context, inCall.params.getReturnValue());
+            CaptureCustomCreateEGLImage(context, "CreateEGLImageKHR", eglImage->getWidth(),
+                                        eglImage->getHeight(), inCall, outCalls);
+            break;
+        }
+        case EntryPoint::EGLDestroyImage:
+        {
+            CaptureCustomDestroyEGLImage("DestroyEGLImage", inCall, outCalls);
+            break;
+        }
+        case EntryPoint::EGLDestroyImageKHR:
+        {
+            CaptureCustomDestroyEGLImage("DestroyEGLImageKHR", inCall, outCalls);
             break;
         }
         case EntryPoint::EGLCreateSync:
@@ -7766,12 +7995,52 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             CreateEGLImagePreCallUpdate<EGLAttrib>(call, mResourceTracker,
                                                    ParamType::TEGLAttribPointer,
                                                    egl::AttributeMap::CreateFromAttribArray);
+            if (isCaptureActive())
+            {
+                EGLImage eglImage    = call.params.getReturnValue().value.EGLImageVal;
+                egl::ImageID imageID = egl::PackParam<egl::ImageID>(eglImage);
+                handleGennedResource(context, imageID);
+            }
             break;
         }
         case EntryPoint::EGLCreateImageKHR:
         {
             CreateEGLImagePreCallUpdate<EGLint>(call, mResourceTracker, ParamType::TEGLintPointer,
                                                 egl::AttributeMap::CreateFromIntArray);
+            if (isCaptureActive())
+            {
+                EGLImageKHR eglImage = call.params.getReturnValue().value.EGLImageKHRVal;
+                egl::ImageID imageID = egl::PackParam<egl::ImageID>(eglImage);
+                handleGennedResource(context, imageID);
+            }
+            break;
+        }
+        case EntryPoint::EGLDestroyImage:
+        case EntryPoint::EGLDestroyImageKHR:
+        {
+            egl::ImageID eglImageID =
+                call.params.getParam("imagePacked", ParamType::TImageID, 1).value.ImageIDVal;
+
+            // Clear any texture->image mappings that involve this image
+            for (auto texImageIter = mResourceTracker.getTextureIDToImageTable().begin();
+                 texImageIter != mResourceTracker.getTextureIDToImageTable().end();)
+            {
+                if (texImageIter->second == eglImageID)
+                {
+                    texImageIter = mResourceTracker.getTextureIDToImageTable().erase(texImageIter);
+                }
+                else
+                {
+                    ++texImageIter;
+                }
+            }
+
+            FrameCaptureShared *frameCaptureShared =
+                context->getShareGroup()->getFrameCaptureShared();
+            if (frameCaptureShared->isCaptureActive())
+            {
+                handleDeletedResource(context, eglImageID);
+            }
             break;
         }
         case EntryPoint::EGLCreateSync:
@@ -7967,21 +8236,13 @@ void FrameCaptureShared::captureCall(gl::Context *context, CallCapture &&inCall,
 
     if (isCallValid)
     {
-        // If the context ID has changed, then we need to inject an eglMakeCurrent() call. Only do
-        // this if there is more than 1 context in the share group to avoid unnecessary
-        // eglMakeCurrent() calls.
-        size_t contextCount = context->getShareGroup()->getContexts().size();
-        if (contextCount > 1 && mLastContextId != context->id())
-        {
-            // Inject the eglMakeCurrent() call. Ignore the display and surface.
-            CallCapture makeCurrentCall =
-                egl::CaptureMakeCurrent(nullptr, true, nullptr, {0}, {0}, context->id(), EGL_TRUE);
-            mFrameCalls.emplace_back(std::move(makeCurrentCall));
-            mLastContextId = context->id();
-        }
+        // Save the call's contextID
+        inCall.contextID = context->id();
 
         // Update resource counts before we override entry points with custom calls.
         updateResourceCountsFromCallCapture(inCall);
+
+        size_t j = mFrameCalls.size();
 
         std::vector<CallCapture> outCalls;
         maybeOverrideEntryPoint(context, inCall, outCalls);
@@ -7999,6 +8260,12 @@ void FrameCaptureShared::captureCall(gl::Context *context, CallCapture &&inCall,
                                        &mResourceIDToSetupCalls);
             mFrameCalls.emplace_back(std::move(call));
             maybeCapturePostCallUpdates(context);
+        }
+
+        // Tag all 'added' commands with this context
+        for (size_t k = j; k < mFrameCalls.size(); k++)
+        {
+            mFrameCalls[k].contextID = context->id();
         }
 
         // Evaluate the validation expression to determine if we insert a validation checkpoint.
@@ -8160,6 +8427,12 @@ void FrameCaptureShared::captureClientArraySnapshot(const gl::Context *context,
                                                     size_t vertexCount,
                                                     size_t instanceCount)
 {
+    if (vertexCount == 0)
+    {
+        // Nothing to capture
+        return;
+    }
+
     const gl::VertexArray *vao = context->getState().getVertexArray();
 
     // Capture client array data.
@@ -9344,14 +9617,23 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
         protoStream << "void "
                     << FmtReplayFunction(context->id(), FuncUsage::Prototype, frameIndex);
         std::string proto = protoStream.str();
-
         std::stringstream headerStream;
         std::stringstream bodyStream;
 
-        WriteCppReplayFunctionWithParts(context->id(), ReplayFunc::Replay, mReplayWriter,
-                                        frameIndex, &mBinaryData, mFrameCalls, headerStream,
-                                        bodyStream, &mResourceIDBufferSize);
-
+        if (context->getShareGroup()->getContexts().size() > 1)
+        {
+            // Only ReplayFunc::Replay trace file output functions are affected by multi-context
+            // call grouping so they can safely be special-cased here.
+            WriteCppReplayFunctionWithPartsMultiContext(
+                context->id(), ReplayFunc::Replay, mReplayWriter, frameIndex, &mBinaryData,
+                mFrameCalls, headerStream, bodyStream, &mResourceIDBufferSize);
+        }
+        else
+        {
+            WriteCppReplayFunctionWithParts(context->id(), ReplayFunc::Replay, mReplayWriter,
+                                            frameIndex, &mBinaryData, mFrameCalls, headerStream,
+                                            bodyStream, &mResourceIDBufferSize);
+        }
         mReplayWriter.addPrivateFunction(proto, headerStream, bodyStream);
     }
 

@@ -11,6 +11,7 @@
 #define LIBANGLE_RENDERER_D3D_D3D9_CONTEXT9_H_
 
 #include <stack>
+#include "image_util/loadimage.h"
 #include "libANGLE/renderer/d3d/ContextD3D.h"
 
 namespace rx
@@ -23,7 +24,7 @@ class Context9 : public ContextD3D
     Context9(const gl::State &state, gl::ErrorSet *errorSet, Renderer9 *renderer);
     ~Context9() override;
 
-    angle::Result initialize() override;
+    angle::Result initialize(const angle::ImageLoadContext &imageLoadContext) override;
     void onDestroy(const gl::Context *context) override;
 
     // Shader creation
@@ -247,7 +248,7 @@ class Context9 : public ContextD3D
     angle::Result memoryBarrierByRegion(const gl::Context *context, GLbitfield barriers) override;
 
     Renderer9 *getRenderer() const { return mRenderer; }
-    angle::ImageLoadContext getImageLoadContext() const;
+    const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }
 
     angle::Result getIncompleteTexture(const gl::Context *context,
                                        gl::TextureType type,
@@ -261,6 +262,7 @@ class Context9 : public ContextD3D
 
   private:
     Renderer9 *mRenderer;
+    angle::ImageLoadContext mImageLoadContext;
     IncompleteTextureSet mIncompleteTextures;
     std::stack<std::string> mMarkerStack;
 };

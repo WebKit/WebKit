@@ -14,7 +14,6 @@
 #include "common/vulkan/vk_headers.h"
 #include "libANGLE/Error.h"
 
-class ContextVk;
 class Buffer;
 class DeviceMemory;
 
@@ -22,10 +21,11 @@ namespace rx
 {
 
 class RendererVk;
+class Context;
 
 namespace vk
 {
-angle::Result InitAndroidExternalMemory(ContextVk *contextVk,
+angle::Result InitAndroidExternalMemory(Context *context,
                                         EGLClientBuffer clientBuffer,
                                         VkMemoryPropertyFlags memoryProperties,
                                         Buffer *buffer,

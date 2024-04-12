@@ -161,17 +161,12 @@ bool SimplifyLoopConditionsTraverser::visitBranch(Visit visit, TIntermBranch *no
     return true;
 }
 
-TIntermBlock *CreateFromBody(TIntermLoop *node, bool *bodyEndsInBranchOut)
+static TIntermBlock *CreateFromBody(TIntermLoop *node, bool *bodyEndsInBranchOut)
 {
-    TIntermBlock *newBody = new TIntermBlock();
-    *bodyEndsInBranchOut  = false;
-
+    TIntermBlock *newBody  = new TIntermBlock();
     TIntermBlock *nodeBody = node->getBody();
-    if (nodeBody != nullptr)
-    {
-        newBody->getSequence()->push_back(nodeBody);
-        *bodyEndsInBranchOut = EndsInBranch(nodeBody);
-    }
+    newBody->getSequence()->push_back(nodeBody);
+    *bodyEndsInBranchOut = EndsInBranch(nodeBody);
     return newBody;
 }
 
@@ -470,8 +465,7 @@ void SimplifyLoopConditionsTraverser::traverseLoop(TIntermLoop *node)
     mFoundLoopToChange = false;
 
     // We traverse the body of the loop even if the loop is transformed.
-    if (node->getBody())
-        node->getBody()->traverse(this);
+    node->getBody()->traverse(this);
 
     mLoop = prevLoop;
 }

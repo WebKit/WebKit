@@ -145,7 +145,7 @@ endif()
 if(is_win)
     list(APPEND libangle_common_sources "src/common/system_utils_win.cpp")
 
-    if(target_os STREQUAL "winuwp")
+    if(angle_is_winuwp)
         list(APPEND libangle_common_sources "src/common/system_utils_winuwp.cpp")
     else()
         list(APPEND libangle_common_sources "src/common/system_utils_win32.cpp")
@@ -540,7 +540,7 @@ set(libangle_cl_headers
     "src/libANGLE/CLProgram.h"
     "src/libANGLE/CLRefPointer.h"
     "src/libANGLE/CLSampler.h"
-    "src/libANGLE/CLtypes.h"
+    "src/libANGLE/cl_types.h"
     "src/libANGLE/cl_utils.h"
     "src/libANGLE/renderer/CLCommandQueueImpl.h"
     "src/libANGLE/renderer/CLContextImpl.h"
@@ -552,7 +552,7 @@ set(libangle_cl_headers
     "src/libANGLE/renderer/CLPlatformImpl.h"
     "src/libANGLE/renderer/CLProgramImpl.h"
     "src/libANGLE/renderer/CLSamplerImpl.h"
-    "src/libANGLE/renderer/CLtypes.h"
+    "src/libANGLE/renderer/cl_types.h"
     "src/libANGLE/validationCL.h"
     "src/libANGLE/validationCL_autogen.h"
 )

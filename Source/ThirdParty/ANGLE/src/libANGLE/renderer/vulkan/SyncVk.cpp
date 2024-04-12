@@ -138,10 +138,10 @@ SyncHelper::~SyncHelper() {}
 
 void SyncHelper::releaseToRenderer(RendererVk *renderer) {}
 
-angle::Result SyncHelper::initialize(ContextVk *contextVk, bool isEGLSyncObject)
+angle::Result SyncHelper::initialize(ContextVk *contextVk, SyncFenceScope scope)
 {
     ASSERT(!mUse.valid());
-    return contextVk->onSyncObjectInit(this, isEGLSyncObject);
+    return contextVk->onSyncObjectInit(this, scope);
 }
 
 angle::Result SyncHelper::prepareForClientWait(Context *context,
@@ -574,7 +574,7 @@ angle::Result SyncVk::set(const gl::Context *context, GLenum condition, GLbitfie
     ASSERT(condition == GL_SYNC_GPU_COMMANDS_COMPLETE);
     ASSERT(flags == 0);
 
-    return mSyncHelper.initialize(vk::GetImpl(context), false);
+    return mSyncHelper.initialize(vk::GetImpl(context), SyncFenceScope::CurrentContextToShareGroup);
 }
 
 angle::Result SyncVk::clientWait(const gl::Context *context,
@@ -630,10 +630,14 @@ egl::Error EGLSyncVk::initialize(const egl::Display *display,
     switch (type)
     {
         case EGL_SYNC_FENCE_KHR:
+        case EGL_SYNC_GLOBAL_FENCE_ANGLE:
         {
             vk::SyncHelper *syncHelper = new vk::SyncHelper();
             mSyncHelper.reset(syncHelper);
-            if (syncHelper->initialize(vk::GetImpl(context), true) == angle::Result::Stop)
+            const SyncFenceScope scope = type == EGL_SYNC_GLOBAL_FENCE_ANGLE
+                                             ? SyncFenceScope::AllContextsToAllContexts
+                                             : SyncFenceScope::CurrentContextToAllContexts;
+            if (syncHelper->initialize(vk::GetImpl(context), scope) == angle::Result::Stop)
             {
                 return egl::Error(EGL_BAD_ALLOC, "eglCreateSyncKHR failed to create sync object");
             }

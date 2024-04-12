@@ -32,6 +32,17 @@
           'isolated_scripts': 'isolated_scripts_group_pixel6',
         },
       },
+      'android-arm64-exp-s22': {
+        'os_type': 'android',
+        'mixins': [
+          'gpu-swarming-pool',
+          'samsung_s22',
+        ],
+        'test_suites': {
+          'gtest_tests': 'android_vulkan_gtests',
+          'isolated_scripts': 'isolated_scripts_group_s22',
+        },
+      },
       'android-arm64-pixel4': {
         'os_type': 'android',
         'mixins': [

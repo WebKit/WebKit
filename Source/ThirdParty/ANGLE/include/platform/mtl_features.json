@@ -442,6 +442,15 @@
                 "Always automatically resolve MSAA render buffers to single sampled texture."
             ],
             "issue": "http://crbug.com/1486094"
+        },
+        {
+            "name": "inject_asm_statement_into_loop_bodies",
+            "category": "Features",
+            "description": [
+                "Inject asm(\"\") statements into loop bodies to force all loops to be treated as ",
+                "having side effects and not optimized out."
+            ],
+            "issue": "http://crbug.com/1513738"
         }
     ]
 }

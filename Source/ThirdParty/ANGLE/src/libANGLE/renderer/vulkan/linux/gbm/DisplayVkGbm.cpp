@@ -78,14 +78,9 @@ const char *DisplayVkGbm::getWSIExtension() const
     return nullptr;
 }
 
-bool DisplayVkGbm::isUsingSwapchain() const
+angle::NativeWindowSystem DisplayVkGbm::getWindowSystem() const
 {
-    return true;
-}
-
-bool DisplayVkGbm::isGBM() const
-{
-    return true;
+    return angle::NativeWindowSystem::Gbm;
 }
 
 bool IsVulkanGbmDisplayAvailable()

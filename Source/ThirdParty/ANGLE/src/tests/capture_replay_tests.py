@@ -53,7 +53,7 @@ SUBPROCESS_TIMEOUT = 600  # in seconds
 DEFAULT_RESULT_FILE = "results.txt"
 DEFAULT_LOG_LEVEL = "info"
 DEFAULT_MAX_JOBS = 8
-DEFAULT_MAX_NINJA_JOBS = 3
+DEFAULT_MAX_NINJA_JOBS = 1
 REPLAY_BINARY = "capture_replay_tests"
 if sys.platform == "win32":
     REPLAY_BINARY += ".exe"
@@ -850,6 +850,15 @@ def main(args):
     logger.setLevel(level=args.log.upper())
 
     is_bot = getpass.getuser() == 'chrome-bot'
+
+    if is_bot:
+        # bots need different re-client auth settings than developers b/319246651
+        os.environ["RBE_use_gce_credentials"] = "true"
+        os.environ["RBE_use_application_default_credentials"] = "false"
+        os.environ["RBE_automatic_auth"] = "false"
+        os.environ["RBE_experimental_credentials_helper"] = ""
+        os.environ["RBE_experimental_credentials_helper_args"] = ""
+
     if sys.platform == 'linux' and is_bot:
         logger.warning('Test is currently a no-op https://anglebug.com/6085')
         return EXIT_SUCCESS

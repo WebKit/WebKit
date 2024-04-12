@@ -471,7 +471,7 @@ class WindowSurfaceVk : public SurfaceVk
     // than two frame ahead of the frame being rendered (and three frames ahead of the one being
     // presented).  This is a failsafe, as the application should ensure command buffer recording is
     // not ahead of the frame being rendered by *one* frame.
-    angle::Result throttleCPU(DisplayVk *displayVk, const QueueSerial &currentSubmitSerial);
+    angle::Result throttleCPU(vk::Context *context, const QueueSerial &currentSubmitSerial);
 
     // Finish all GPU operations on the surface
     angle::Result finish(vk::Context *context);

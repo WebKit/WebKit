@@ -152,81 +152,72 @@ inline void LoadToNativeUbyte3To4Impl(const ImageLoadContext &context,
             // If the uint8_t addresses are not aligned to 4 bytes, there may be undefined behavior
             // if they are used to copy 32-bit data. In that case, pixels are copied to the output
             // one at a time until 4-byte alignment has been achieved for the source.
-            size_t pixelIndexStart = 0;
-            size_t srcIndexStart   = 0;
-            size_t destIndexStart  = 0;
+            size_t pixelIndex = 0;
 
             uint32_t source4Mod = reinterpret_cast<uintptr_t>(source8) % 4;
-            while (source4Mod != 0 && pixelIndexStart < width)
+            while (source4Mod != 0 && pixelIndex < width)
             {
-                dest8[destIndexStart]     = source8[srcIndexStart];
-                dest8[destIndexStart + 1] = source8[srcIndexStart + 1];
-                dest8[destIndexStart + 2] = source8[srcIndexStart + 2];
-                dest8[destIndexStart + 3] = fourthValue;
+                dest8[0] = source8[0];
+                dest8[1] = source8[1];
+                dest8[2] = source8[2];
+                dest8[3] = fourthValue;
 
-                srcIndexStart += 3;
+                source8 += 3;
                 source4Mod = (source4Mod + 3) % 4;
-                destIndexStart += 4;
-                pixelIndexStart++;
+                dest8 += 4;
+                pixelIndex++;
+            }
+
+            if (pixelIndex == width)
+            {
+                continue;
             }
 
             // In the following loop, 4 RGB pixels will be read in each iteration. If the remaining
             // pixels are not a multiple of 4, the rest at the end of the row will be copied one at
             // a time.
-            const uint32_t *source32 = reinterpret_cast<const uint32_t *>(source8 + srcIndexStart);
-            uint32_t *dest32         = reinterpret_cast<uint32_t *>(dest8 + destIndexStart);
+            const uint32_t *source32 = reinterpret_cast<const uint32_t *>(source8);
+            uint32_t *dest32         = reinterpret_cast<uint32_t *>(dest8);
 
-            size_t remainingWidth = width - pixelIndexStart;
-            size_t pixelPackIndex = 0;
+            size_t remainingWidth = width - pixelIndex;
             if (remainingWidth >= 4)
             {
-                const uint32_t *source32Index = source32;
-
                 size_t fourByteCopyThreshold = remainingWidth - 4;
-                for (; pixelPackIndex <= fourByteCopyThreshold; pixelPackIndex += 4)
+                for (; pixelIndex <= fourByteCopyThreshold; pixelIndex += 4)
                 {
                     // Three 32-bit values from the input contain 4 RGB pixels in total. This
                     // translates to four 32-bits on the output.
                     // (RGBR GBRG BRGB -> RGBA RGBA RGBA RGBA)
-                    uint32_t newPixelData0 = source32Index[0];
-                    uint32_t newPixelData1 = source32Index[1];
-                    uint32_t newPixelData2 = source32Index[2];
+                    uint32_t newPixelData[3];
+                    uint32_t rgbaPixelData[4];
+                    memcpy(&newPixelData[0], &source32[0], sizeof(uint32_t) * 3);
 
-                    uint32_t rgbaPixel0 = (newPixelData0 & 0x00FFFFFF) | fourthValue32;
-                    uint32_t rgbaPixel1 =
-                        (newPixelData0 >> 24) | ((newPixelData1 & 0x0000FFFF) << 8) | fourthValue32;
-                    uint32_t rgbaPixel2 = (newPixelData1 >> 16) |
-                                          ((newPixelData2 & 0x000000FF) << 16) | fourthValue32;
-                    uint32_t rgbaPixel3 = (newPixelData2 >> 8) | fourthValue32;
+                    rgbaPixelData[0] = (newPixelData[0] & 0x00FFFFFF) | fourthValue32;
+                    rgbaPixelData[1] = (newPixelData[0] >> 24) |
+                                       ((newPixelData[1] & 0x0000FFFF) << 8) | fourthValue32;
+                    rgbaPixelData[2] = (newPixelData[1] >> 16) |
+                                       ((newPixelData[2] & 0x000000FF) << 16) | fourthValue32;
+                    rgbaPixelData[3] = (newPixelData[2] >> 8) | fourthValue32;
 
-                    dest32[pixelPackIndex]     = rgbaPixel0;
-                    dest32[pixelPackIndex + 1] = rgbaPixel1;
-                    dest32[pixelPackIndex + 2] = rgbaPixel2;
-                    dest32[pixelPackIndex + 3] = rgbaPixel3;
+                    memcpy(&dest32[0], &rgbaPixelData[0], sizeof(uint32_t) * 4);
 
-                    source32Index += 3;
+                    source32 += 3;
+                    dest32 += 4;
                 }
             }
 
             // We should copy the remaining pixels at the end one by one.
-            size_t pixelIndexEnd = pixelPackIndex + pixelIndexStart;
-            if (pixelIndexEnd == width)
+            source8 = reinterpret_cast<const uint8_t *>(source32);
+            dest8   = reinterpret_cast<uint8_t *>(dest32);
+            for (; pixelIndex < width; pixelIndex++)
             {
-                continue;
-            }
-            ASSERT(pixelIndexEnd < width);
+                dest8[0] = source8[0];
+                dest8[1] = source8[1];
+                dest8[2] = source8[2];
+                dest8[3] = fourthValue;
 
-            size_t srcIndexEnd  = pixelIndexEnd * 3;
-            size_t destIndexEnd = pixelIndexEnd * 4;
-            for (; pixelIndexEnd < width; pixelIndexEnd++)
-            {
-                dest8[destIndexEnd]     = source8[srcIndexEnd];
-                dest8[destIndexEnd + 1] = source8[srcIndexEnd + 1];
-                dest8[destIndexEnd + 2] = source8[srcIndexEnd + 2];
-                dest8[destIndexEnd + 3] = fourthValue;
-
-                srcIndexEnd += 3;
-                destIndexEnd += 4;
+                source8 += 3;
+                dest8 += 4;
             }
         }
     }

@@ -141,6 +141,10 @@ typedef struct _cl_image_desc {
 #pragma warning( push )
 #pragma warning( disable : 4201 )   /* Prevents warning about nameless struct/union in /W4 builds */
 #endif
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc11-extensions" /* Prevents warning about nameless union being C11 extension*/
+#endif
 #if defined(_MSC_VER) && defined(__STDC__)
     /* Anonymous unions are not supported in /Za builds */
 #else
@@ -157,6 +161,9 @@ typedef struct _cl_image_desc {
 #endif
 #if defined(_MSC_VER) && !defined(__STDC__)
 #pragma warning( pop )
+#endif
+#ifdef __clang__
+#pragma clang diagnostic pop
 #endif
 #endif
 } cl_image_desc;
@@ -562,11 +569,8 @@ typedef struct _cl_name_version {
 #define CL_RGx                                      0x10BB
 #define CL_RGBx                                     0x10BC
 #endif
-#ifdef CL_VERSION_1_2
-#define CL_DEPTH                                    0x10BD
-#define CL_DEPTH_STENCIL                            0x10BE
-#endif
 #ifdef CL_VERSION_2_0
+#define CL_DEPTH                                    0x10BD
 #define CL_sRGB                                     0x10BF
 #define CL_sRGBx                                    0x10C0
 #define CL_sRGBA                                    0x10C1
@@ -590,9 +594,6 @@ typedef struct _cl_name_version {
 #define CL_UNSIGNED_INT32                           0x10DC
 #define CL_HALF_FLOAT                               0x10DD
 #define CL_FLOAT                                    0x10DE
-#ifdef CL_VERSION_1_2
-#define CL_UNORM_INT24                              0x10DF
-#endif
 #ifdef CL_VERSION_2_1
 #define CL_UNORM_INT_101010_2                       0x10E0
 #endif
@@ -941,6 +942,13 @@ typedef struct _cl_name_version {
 #endif
 
 /********************************************************************************************************/
+
+/* CL_NO_PROTOTYPES implies CL_NO_CORE_PROTOTYPES: */
+#if defined(CL_NO_PROTOTYPES) && !defined(CL_NO_CORE_PROTOTYPES)
+#define CL_NO_CORE_PROTOTYPES
+#endif
+
+#if !defined(CL_NO_CORE_PROTOTYPES)
 
 /* Platform API */
 extern CL_API_ENTRY cl_int CL_API_CALL
@@ -1921,6 +1929,8 @@ clEnqueueTask(cl_command_queue  command_queue,
               cl_uint           num_events_in_wait_list,
               const cl_event *  event_wait_list,
               cl_event *        event) CL_API_SUFFIX__VERSION_1_2_DEPRECATED;
+
+#endif /* !defined(CL_NO_CORE_PROTOTYPES) */
 
 #ifdef __cplusplus
 }

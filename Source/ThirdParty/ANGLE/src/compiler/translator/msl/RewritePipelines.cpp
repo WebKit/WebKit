@@ -814,7 +814,7 @@ class UpdatePipelineFunctions : private TIntermRebuild
                     auto *var        = new TVariable(&mSymbolTable, field->name(), field->type(),
                                                      field->symbolType());
                     auto *symbol     = new TIntermSymbol(var);
-                    auto &accessNode = AccessField(*mPipelineMainLocalVar.internal, var->name());
+                    auto &accessNode = AccessField(*mPipelineMainLocalVar.internal, Name(*var));
                     auto *assignNode = new TIntermBinary(TOperator::EOpAssign, &accessNode, symbol);
                     newBody->appendStatement(assignNode);
                 }
@@ -828,8 +828,8 @@ class UpdatePipelineFunctions : private TIntermRebuild
                 auto &lastFragmentOut = *mPipelineMainLocalVar.externalExtra;
                 for (const TField *field : lastFragmentOut.getType().getStruct()->fields())
                 {
-                    auto &accessNode = AccessField(*mPipelineMainLocalVar.internal, field->name());
-                    auto &sourceNode = AccessField(lastFragmentOut, field->name());
+                    auto &accessNode = AccessField(*mPipelineMainLocalVar.internal, Name(*field));
+                    auto &sourceNode = AccessField(lastFragmentOut, Name(*field));
                     auto *assignNode =
                         new TIntermBinary(TOperator::EOpAssign, &accessNode, &sourceNode);
                     newBody->appendStatement(assignNode);
@@ -848,10 +848,12 @@ class UpdatePipelineFunctions : private TIntermRebuild
                     const TVariable &samplerParam = *func.getParam(paramIndex++);
 
                     auto go = [&](TIntermTyped &env, const int *index) {
-                        TIntermTyped &textureField = AccessField(
-                            AccessIndex(*env.deepCopy(), index), ImmutableString("texture"));
-                        TIntermTyped &samplerField = AccessField(
-                            AccessIndex(*env.deepCopy(), index), ImmutableString("sampler"));
+                        TIntermTyped &textureField =
+                            AccessField(AccessIndex(*env.deepCopy(), index),
+                                        Name("texture", SymbolType::BuiltIn));
+                        TIntermTyped &samplerField =
+                            AccessField(AccessIndex(*env.deepCopy(), index),
+                                        Name("sampler", SymbolType::BuiltIn));
 
                         auto mkAssign = [&](TIntermTyped &field, const TVariable &param) {
                             return new TIntermBinary(TOperator::EOpAssign, &field,
@@ -865,7 +867,7 @@ class UpdatePipelineFunctions : private TIntermRebuild
                         newBody->appendStatement(mkAssign(samplerField, samplerParam));
                     };
 
-                    TIntermTyped &env = AccessField(*mPipelineMainLocalVar.internal, field->name());
+                    TIntermTyped &env = AccessField(*mPipelineMainLocalVar.internal, Name(*field));
                     const TType &envType = env.getType();
 
                     if (envType.isArray())
@@ -962,7 +964,7 @@ bool UpdatePipelineSymbols(Pipeline::Type pipelineType,
             structInstanceVar = owner->getParam(0);
         }
         ASSERT(structInstanceVar);
-        return AccessField(*structInstanceVar, var.name());
+        return AccessField(*structInstanceVar, Name(var));
     };
     return MapSymbols(compiler, root, map);
 }

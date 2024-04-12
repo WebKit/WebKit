@@ -122,7 +122,8 @@ bool TranslatorESSL::translate(TIntermBlock *root,
     if (getShaderType() == GL_VERTEX_SHADER)
     {
         // Emulate GL_CLIP_DISTANCEi_EXT state if needed
-        if (hasClipDistance() && compileOptions.emulateClipDistanceState)
+        if (mMetadataFlags[MetadataFlags::HasClipDistance] &&
+            compileOptions.emulateClipDistanceState)
         {
             constexpr const ImmutableString kClipDistanceEnabledName("angle_ClipDistanceEnabled");
 
@@ -281,7 +282,8 @@ void TranslatorESSL::writeExtensionBehavior(const ShCompileOptions &compileOptio
                 sink << "#extension GL_EXT_clip_cull_distance : " << GetBehaviorString(iter->second)
                      << "\n";
                 if (areClipDistanceOrCullDistanceRedeclared() ||
-                    (hasClipDistance() && compileOptions.emulateClipDistanceState))
+                    (mMetadataFlags[MetadataFlags::HasClipDistance] &&
+                     compileOptions.emulateClipDistanceState))
                 {
                     sink << "#extension GL_EXT_shader_io_blocks : "
                          << GetBehaviorString(iter->second) << "\n";

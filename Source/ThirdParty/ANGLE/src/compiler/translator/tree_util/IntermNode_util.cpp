@@ -341,12 +341,22 @@ TIntermBlock *EnsureBlock(TIntermNode *node)
         return nullptr;
     TIntermBlock *blockNode = node->getAsBlock();
     if (blockNode != nullptr)
+    {
         return blockNode;
-
+    }
     blockNode = new TIntermBlock();
     blockNode->setLine(node->getLine());
     blockNode->appendStatement(node);
     return blockNode;
+}
+
+TIntermBlock *EnsureLoopBodyBlock(TIntermNode *node)
+{
+    if (node == nullptr)
+    {
+        return new TIntermBlock();
+    }
+    return EnsureBlock(node);
 }
 
 TIntermSymbol *ReferenceGlobalVariable(const ImmutableString &name, const TSymbolTable &symbolTable)

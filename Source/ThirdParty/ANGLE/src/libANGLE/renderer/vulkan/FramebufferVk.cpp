@@ -349,6 +349,14 @@ FramebufferVk::~FramebufferVk() = default;
 void FramebufferVk::destroy(const gl::Context *context)
 {
     ContextVk *contextVk = vk::GetImpl(context);
+
+    if (mFragmentShadingRateImage.valid())
+    {
+        RendererVk *renderer = contextVk->getRenderer();
+        mFragmentShadingRateImageView.release(renderer, mFragmentShadingRateImage.getResourceUse());
+        mFragmentShadingRateImage.releaseImage(renderer);
+    }
+
     releaseCurrentFramebuffer(contextVk);
 }
 
@@ -1624,6 +1632,224 @@ void FramebufferVk::updateLayerCount()
     mCurrentFramebufferDesc.updateIsMultiview(isMultiview);
 }
 
+angle::Result FramebufferVk::ensureFragmentShadingRateImageAndViewInitialized(
+    ContextVk *contextVk,
+    const uint32_t fragmentShadingRateAttachmentWidth,
+    const uint32_t fragmentShadingRateAttachmentHeight)
+{
+    RendererVk *renderer = contextVk->getRenderer();
+
+    // Release current valid image iff attachment extents need to change.
+    if (mFragmentShadingRateImage.valid() &&
+        (mFragmentShadingRateImage.getExtents().width != fragmentShadingRateAttachmentWidth ||
+         mFragmentShadingRateImage.getExtents().height != fragmentShadingRateAttachmentHeight))
+    {
+        mFragmentShadingRateImageView.release(renderer, mFragmentShadingRateImage.getResourceUse());
+        mFragmentShadingRateImage.releaseImage(contextVk->getRenderer());
+    }
+
+    if (!mFragmentShadingRateImage.valid())
+    {
+        ANGLE_TRY(mFragmentShadingRateImage.init(
+            contextVk, gl::TextureType::_2D,
+            VkExtent3D{fragmentShadingRateAttachmentWidth, fragmentShadingRateAttachmentHeight, 1},
+            renderer->getFormat(angle::FormatID::R8_UINT), 1,
+            VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR |
+                VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+            gl::LevelIndex(0), 1, 1, false,
+            contextVk->getProtectionType() == vk::ProtectionType::Protected));
+        ANGLE_TRY(contextVk->initImageAllocation(
+            &mFragmentShadingRateImage, false, renderer->getMemoryProperties(),
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vk::MemoryAllocationType::TextureImage));
+
+        mFragmentShadingRateImageView.init(renderer);
+        ANGLE_TRY(mFragmentShadingRateImageView.initFragmentShadingRateView(
+            contextVk, &mFragmentShadingRateImage));
+    }
+
+    return angle::Result::Continue;
+}
+
+angle::Result FramebufferVk::generateFragmentShadingRateWithCPU(
+    ContextVk *contextVk,
+    const bool isGainZero,
+    const uint32_t fragmentShadingRateWidth,
+    const uint32_t fragmentShadingRateHeight,
+    const uint32_t fragmentShadingRateBlockWidth,
+    const uint32_t fragmentShadingRateBlockHeight,
+    const uint32_t foveatedAttachmentWidth,
+    const uint32_t foveatedAttachmentHeight,
+    const std::vector<gl::FocalPoint> &activeFocalPoints)
+{
+    // Fill in image with fragment shading rate data
+    size_t bufferSize                   = fragmentShadingRateWidth * fragmentShadingRateHeight;
+    VkBufferCreateInfo bufferCreateInfo = {};
+    bufferCreateInfo.sType              = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferCreateInfo.size               = bufferSize;
+    bufferCreateInfo.usage              = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+    bufferCreateInfo.sharingMode        = VK_SHARING_MODE_EXCLUSIVE;
+    vk::RendererScoped<vk::BufferHelper> stagingBuffer(contextVk->getRenderer());
+    vk::BufferHelper *buffer = &stagingBuffer.get();
+    ANGLE_TRY(buffer->init(contextVk, bufferCreateInfo, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT));
+    uint8_t *mappedBuffer;
+    ANGLE_TRY(buffer->map(contextVk, &mappedBuffer));
+    uint8_t val = 0;
+    memset(mappedBuffer, 0, bufferSize);
+    if (!isGainZero)
+    {
+        // The spec requires min_pixel_density to be computed thusly -
+        //
+        // min_pixel_density=0.;
+        // for(int i=0;i<focalPointsPerLayer;++i)
+        // {
+        //     focal_point_density = 1./max((focalX[i]-px)^2*gainX[i]^2+
+        //                         (focalY[i]-py)^2*gainY[i]^2-foveaArea[i],1.);
+        //
+        //     min_pixel_density=max(min_pixel_density,focal_point_density);
+        // }
+        float minPixelDensity   = 0.0f;
+        float focalPointDensity = 0.0f;
+        for (uint32_t y = 0; y < fragmentShadingRateHeight; y++)
+        {
+            for (uint32_t x = 0; x < fragmentShadingRateWidth; x++)
+            {
+                minPixelDensity = 0.0f;
+                float px        = (static_cast<float>(x) * fragmentShadingRateBlockWidth /
+                                foveatedAttachmentWidth -
+                            0.5f) *
+                           2.0f;
+                float py = (static_cast<float>(y) * fragmentShadingRateBlockHeight /
+                                foveatedAttachmentHeight -
+                            0.5f) *
+                           2.0f;
+                focalPointDensity = 0.0f;
+                for (uint32_t point = 0; point < activeFocalPoints.size(); point++)
+                {
+                    float density =
+                        1.0f / std::max(std::powf(activeFocalPoints[point].focalX - px, 2) *
+                                                std::powf(activeFocalPoints[point].gainX, 2) +
+                                            std::powf(activeFocalPoints[point].focalY - py, 2) *
+                                                std::powf(activeFocalPoints[point].gainY, 2) -
+                                            activeFocalPoints[point].foveaArea,
+                                        1.0f);
+
+                    // When focal points are overlapping choose the highest quality of all
+                    if (density > focalPointDensity)
+                    {
+                        focalPointDensity = density;
+                    }
+                }
+                minPixelDensity = std::max(minPixelDensity, focalPointDensity);
+
+                // https://docs.vulkan.org/spec/latest/chapters/primsrast.html#primsrast-fragment-shading-rate-attachment
+                //
+                // w = 2^((texel/4) & 3)
+                // h = 2^(texel & 3)
+                // `texel` would then be => log2(w) << 2 | log2(h).
+                //
+                // 1) The supported shading rates are - 1x1, 1x2, 2x1, 2x2
+                // 2) log2(1) == 0, log2(2) == 1
+                if (minPixelDensity > 0.75f)
+                {
+                    // Use shading rate 1x1
+                    val = 0;
+                }
+                else if (minPixelDensity > 0.5f)
+                {
+                    // Use shading rate 2x1
+                    val = (1 << 2);
+                }
+                else
+                {
+                    // Use shading rate 2x2
+                    val = (1 << 2) | 1;
+                }
+                mappedBuffer[y * fragmentShadingRateWidth + x] = val;
+            }
+        }
+    }
+    ANGLE_TRY(buffer->flush(contextVk->getRenderer(), 0, buffer->getSize()));
+    buffer->unmap(contextVk->getRenderer());
+    // copy data from staging buffer to image
+    vk::CommandBufferAccess access;
+    access.onBufferTransferRead(buffer);
+    access.onImageTransferWrite(gl::LevelIndex(0), 1, 0, 1, VK_IMAGE_ASPECT_COLOR_BIT,
+                                &mFragmentShadingRateImage);
+    vk::OutsideRenderPassCommandBuffer *dataUpload;
+    ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &dataUpload));
+    VkBufferImageCopy copy           = {};
+    copy.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    copy.imageSubresource.layerCount = 1;
+    copy.imageExtent.depth           = 1;
+    copy.imageExtent.width           = fragmentShadingRateWidth;
+    copy.imageExtent.height          = fragmentShadingRateHeight;
+    dataUpload->copyBufferToImage(buffer->getBuffer().getHandle(),
+                                  mFragmentShadingRateImage.getImage(),
+                                  VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copy);
+    return angle::Result::Continue;
+}
+
+angle::Result FramebufferVk::updateFragmentShadingRateAttachment(
+    ContextVk *contextVk,
+    const gl::FoveationState &foveationState,
+    const gl::Extents &foveatedAttachmentSize)
+{
+    const VkExtent2D fragmentShadingRateExtent =
+        contextVk->getRenderer()->getMaxFragmentShadingRateAttachmentTexelSize();
+    const uint32_t fragmentShadingRateBlockWidth  = fragmentShadingRateExtent.width;
+    const uint32_t fragmentShadingRateBlockHeight = fragmentShadingRateExtent.height;
+    const uint32_t foveatedAttachmentWidth        = foveatedAttachmentSize.width;
+    const uint32_t foveatedAttachmentHeight       = foveatedAttachmentSize.height;
+    const uint32_t fragmentShadingRateWidth =
+        UnsignedCeilDivide(foveatedAttachmentWidth, fragmentShadingRateBlockWidth);
+    const uint32_t fragmentShadingRateHeight =
+        UnsignedCeilDivide(foveatedAttachmentHeight, fragmentShadingRateBlockHeight);
+
+    ANGLE_TRY(ensureFragmentShadingRateImageAndViewInitialized(contextVk, fragmentShadingRateWidth,
+                                                               fragmentShadingRateHeight));
+    ASSERT(mFragmentShadingRateImage.valid());
+
+    bool isGainZero = true;
+    std::vector<gl::FocalPoint> activeFocalPoints;
+    for (uint32_t point = 0; point < gl::IMPLEMENTATION_MAX_FOCAL_POINTS; point++)
+    {
+        const gl::FocalPoint &focalPoint = foveationState.getFocalPoint(0, point);
+        if (focalPoint != gl::kInvalidFocalPoint)
+        {
+            isGainZero = isGainZero && focalPoint.gainX == 0 && focalPoint.gainY == 0;
+            activeFocalPoints.push_back(focalPoint);
+        }
+    }
+
+    return generateFragmentShadingRateWithCPU(
+        contextVk, isGainZero, fragmentShadingRateWidth, fragmentShadingRateHeight,
+        fragmentShadingRateBlockWidth, fragmentShadingRateBlockHeight, foveatedAttachmentWidth,
+        foveatedAttachmentHeight, activeFocalPoints);
+}
+
+angle::Result FramebufferVk::updateFoveationState(ContextVk *contextVk,
+                                                  const gl::FoveationState &newFoveationState,
+                                                  const gl::Extents &foveatedAttachmentSize)
+{
+    mFoveationState                               = newFoveationState;
+    const bool isFoveationEnabled                 = mFoveationState.isFoveated();
+    vk::ImageOrBufferViewSubresourceSerial serial = vk::kInvalidImageOrBufferViewSubresourceSerial;
+    if (isFoveationEnabled)
+    {
+        ANGLE_TRY(updateFragmentShadingRateAttachment(contextVk, newFoveationState,
+                                                      foveatedAttachmentSize));
+        ASSERT(mFragmentShadingRateImage.valid());
+
+        serial = mFragmentShadingRateImageView.getSubresourceSerial(
+            gl::LevelIndex(0), 1, 0, vk::LayerMode::All, vk::SrgbDecodeMode::SkipDecode,
+            gl::SrgbOverride::Default);
+    }
+
+    mCurrentFramebufferDesc.updateFragmentShadingRate(serial);
+    mRenderPassDesc.setFragmentShadingAttachment(isFoveationEnabled);
+    return angle::Result::Continue;
+}
+
 angle::Result FramebufferVk::resolveColorWithSubpass(ContextVk *contextVk,
                                                      const UtilsVk::BlitResolveParameters &params)
 {
@@ -2087,6 +2313,10 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
     bool shouldUpdateLayerCount           = false;
     bool shouldUpdateSrgbWriteControlMode = false;
 
+    // Cache new foveation state, if any
+    const gl::FoveationState *newFoveationState = nullptr;
+    gl::Extents foveatedAttachmentSize;
+
     // For any updated attachments we'll update their Serials below
     ASSERT(dirtyBits.any());
     for (size_t dirtyBit : dirtyBits)
@@ -2122,6 +2352,13 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
             case gl::Framebuffer::DIRTY_BIT_DEFAULT_LAYERS:
                 shouldUpdateLayerCount = true;
                 break;
+            case gl::Framebuffer::DIRTY_BIT_FOVEATION:
+                // This dirty bit is set iff the framebuffer itself is foveated
+                ASSERT(mState.isFoveationEnabled());
+
+                newFoveationState      = &mState.getFoveationState();
+                foveatedAttachmentSize = mState.getExtents();
+                break;
             default:
             {
                 static_assert(gl::Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0 == 0, "FB dirty bits");
@@ -2140,6 +2377,20 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
                 }
 
                 ANGLE_TRY(updateColorAttachment(context, colorIndexGL));
+
+                // Check if attachment has foveated rendering, if so grab foveation state
+                const gl::FramebufferAttachment *attachment =
+                    mState.getColorAttachment(colorIndexGL);
+                if (attachment && attachment->hasFoveatedRendering())
+                {
+                    // If attachment is foveated the framebuffer must not be.
+                    ASSERT(!mState.isFoveationEnabled());
+
+                    newFoveationState = attachment->getFoveationState();
+                    ASSERT(newFoveationState != nullptr);
+
+                    foveatedAttachmentSize = attachment->getSize();
+                }
 
                 // Window system framebuffer only have one color attachment and its property should
                 // never change unless via DIRTY_BIT_DRAW_BUFFERS bit.
@@ -2173,6 +2424,11 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
     if (shouldUpdateLayerCount)
     {
         updateLayerCount();
+    }
+
+    if (newFoveationState && mFoveationState != *newFoveationState)
+    {
+        ANGLE_TRY(updateFoveationState(contextVk, *newFoveationState, foveatedAttachmentSize));
     }
 
     // Defer clears for draw framebuffer ops.  Note that this will result in a render area that
@@ -2335,6 +2591,8 @@ void FramebufferVk::updateRenderPassDesc(ContextVk *contextVk)
 
     mCurrentFramebufferDesc.updateUnresolveMask({});
     mRenderPassDesc.setWriteControlMode(mCurrentFramebufferDesc.getWriteControlMode());
+    mRenderPassDesc.setFragmentShadingAttachment(
+        mCurrentFramebufferDesc.hasFragmentShadingRateAttachment());
 
     updateLegacyDither(contextVk);
 }
@@ -2426,6 +2684,13 @@ angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
         attachments->push_back(imageView->getHandle());
         renderTargetsInfoOut->emplace_back(
             RenderTargetInfo(depthStencilRenderTarget, RenderTargetImage::ResolveImage));
+    }
+
+    // Fragment shading rate attachment.
+    if (mCurrentFramebufferDesc.hasFragmentShadingRateAttachment())
+    {
+        const vk::ImageViewHelper *imageViewHelper = &mFragmentShadingRateImageView;
+        attachments->push_back(imageViewHelper->getFragmentShadingRateImageView().getHandle());
     }
 
     return angle::Result::Continue;
@@ -2576,10 +2841,34 @@ angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
             fbAttachmentImageInfo.flags = renderTargetImage->getCreateFlags();
             fbAttachmentImageInfo.usage = renderTargetImage->getUsage();
             fbAttachmentImageInfo.viewFormatCount =
-                static_cast<uint32_t>(renderTargetImage->getViewFormats().max_size());
+                static_cast<uint32_t>(renderTargetImage->getViewFormats().size());
             fbAttachmentImageInfo.pViewFormats = renderTargetImage->getViewFormats().data();
 
             fbAttachmentImageInfoArray.push_back(fbAttachmentImageInfo);
+
+            if (mCurrentFramebufferDesc.hasFragmentShadingRateAttachment())
+            {
+                VkFramebufferAttachmentImageInfoKHR fragmentShadingRatebAttachmentImageInfo = {};
+                fragmentShadingRatebAttachmentImageInfo.sType =
+                    VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO_KHR;
+
+                fragmentShadingRatebAttachmentImageInfo.width =
+                    mFragmentShadingRateImage.getExtents().width;
+                fragmentShadingRatebAttachmentImageInfo.height =
+                    mFragmentShadingRateImage.getExtents().height;
+
+                fragmentShadingRatebAttachmentImageInfo.layerCount = 1;
+                fragmentShadingRatebAttachmentImageInfo.flags =
+                    mFragmentShadingRateImage.getCreateFlags();
+                fragmentShadingRatebAttachmentImageInfo.usage =
+                    mFragmentShadingRateImage.getUsage();
+                fragmentShadingRatebAttachmentImageInfo.viewFormatCount =
+                    static_cast<uint32_t>(mFragmentShadingRateImage.getViewFormats().size());
+                fragmentShadingRatebAttachmentImageInfo.pViewFormats =
+                    mFragmentShadingRateImage.getViewFormats().data();
+
+                fbAttachmentImageInfoArray.push_back(fragmentShadingRatebAttachmentImageInfo);
+            }
         }
 
         VkFramebufferAttachmentsCreateInfoKHR fbAttachmentsCreateInfo = {};
@@ -2820,23 +3109,25 @@ void FramebufferVk::clearWithCommand(ContextVk *contextVk,
     {
         if (clears->getColorMask().test(colorIndexGL))
         {
-            if (!renderPassCommands->hasAnyColorAccess(colorIndexVk) && optimizeWithLoadOp)
+            if (renderPassCommands->hasAnyColorAccess(colorIndexVk) ||
+                renderPassCommands->getRenderPassDesc().hasColorUnresolveAttachment(colorIndexGL) ||
+                !optimizeWithLoadOp)
+            {
+                attachments.emplace_back(VkClearAttachment{VK_IMAGE_ASPECT_COLOR_BIT,
+                                                           static_cast<uint32_t>(colorIndexGL),
+                                                           (*clears)[colorIndexGL]});
+                clears->reset(colorIndexGL);
+                ++contextVk->getPerfCounters().colorClearAttachments;
+
+                renderPassCommands->onColorAccess(colorIndexVk, vk::ResourceAccess::ReadWrite);
+            }
+            else
             {
                 // Skip this attachment, so we can use a renderpass loadOp to clear it instead.
                 // Note that if loadOp=Clear was already used for this color attachment, it will be
                 // overriden by the new clear, which is valid because the attachment wasn't used in
                 // between.
-                ++colorIndexVk;
-                continue;
             }
-
-            attachments.emplace_back(VkClearAttachment{VK_IMAGE_ASPECT_COLOR_BIT,
-                                                       static_cast<uint32_t>(colorIndexGL),
-                                                       (*clears)[colorIndexGL]});
-            clears->reset(colorIndexGL);
-            ++contextVk->getPerfCounters().colorClearAttachments;
-
-            renderPassCommands->onColorAccess(colorIndexVk, vk::ResourceAccess::ReadWrite);
         }
         ++colorIndexVk;
     }
@@ -2846,7 +3137,10 @@ void FramebufferVk::clearWithCommand(ContextVk *contextVk,
     VkClearValue dsClearValue         = {};
     dsClearValue.depthStencil.depth   = clears->getDepthValue();
     dsClearValue.depthStencil.stencil = clears->getStencilValue();
-    if (clears->testDepth() && (renderPassCommands->hasAnyDepthAccess() || !optimizeWithLoadOp))
+    if (clears->testDepth() &&
+        (renderPassCommands->hasAnyDepthAccess() ||
+         renderPassCommands->getRenderPassDesc().hasDepthUnresolveAttachment() ||
+         !optimizeWithLoadOp))
     {
         dsAspectFlags |= VK_IMAGE_ASPECT_DEPTH_BIT;
         // Explicitly mark a depth write because we are clearing the depth buffer.
@@ -2855,7 +3149,10 @@ void FramebufferVk::clearWithCommand(ContextVk *contextVk,
         ++contextVk->getPerfCounters().depthClearAttachments;
     }
 
-    if (clears->testStencil() && (renderPassCommands->hasAnyStencilAccess() || !optimizeWithLoadOp))
+    if (clears->testStencil() &&
+        (renderPassCommands->hasAnyStencilAccess() ||
+         renderPassCommands->getRenderPassDesc().hasStencilUnresolveAttachment() ||
+         !optimizeWithLoadOp))
     {
         dsAspectFlags |= VK_IMAGE_ASPECT_STENCIL_BIT;
         // Explicitly mark a stencil write because we are clearing the stencil buffer.
@@ -3239,6 +3536,12 @@ angle::Result FramebufferVk::startNewRenderPass(ContextVk *contextVk,
     if (unresolveChanged || anyUnresolve)
     {
         contextVk->onDrawFramebufferRenderPassDescChange(this, renderPassDescChangedOut);
+    }
+
+    // Add fragment shading rate to the tracking list.
+    if (mCurrentFramebufferDesc.hasFragmentShadingRateAttachment())
+    {
+        contextVk->onFragmentShadingRateRead(&mFragmentShadingRateImage);
     }
 
     return angle::Result::Continue;

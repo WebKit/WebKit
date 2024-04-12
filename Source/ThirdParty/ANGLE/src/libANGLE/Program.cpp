@@ -916,11 +916,8 @@ void Program::makeNewExecutable(const Context *context)
     onStateChange(angle::SubjectMessage::ProgramUnlinked);
 }
 
-angle::Result Program::link(const Context *context, angle::JobResultExpectancy resultExpectancy)
+void Program::setupExecutableForLink(const Context *context)
 {
-    auto *platform   = ANGLEPlatformCurrent();
-    double startTime = platform->currentTime(platform);
-
     // Create a new executable to hold the result of the link.  The previous executable may still be
     // referenced by the contexts the program is current on, and any program pipelines it may be
     // used in.  Once link succeeds, the users of the program are notified to update their
@@ -971,6 +968,14 @@ angle::Result Program::link(const Context *context, angle::JobResultExpectancy r
     mState.mExecutable->mPod.isSeparable                 = mState.mSeparable;
 
     mState.mInfoLog.reset();
+}
+
+angle::Result Program::link(const Context *context, angle::JobResultExpectancy resultExpectancy)
+{
+    auto *platform   = ANGLEPlatformCurrent();
+    double startTime = platform->currentTime(platform);
+
+    setupExecutableForLink(context);
 
     mProgramHash              = {0};
     MemoryProgramCache *cache = context->getMemoryProgramCache();
@@ -979,21 +984,33 @@ angle::Result Program::link(const Context *context, angle::JobResultExpectancy r
     if (cache && !isSeparable())
     {
         std::lock_guard<std::mutex> cacheLock(context->getProgramCacheMutex());
-        bool success = false;
-        ANGLE_TRY(cache->getProgram(context, this, &mProgramHash, &success));
+        egl::CacheGetResult result = egl::CacheGetResult::NotFound;
+        ANGLE_TRY(cache->getProgram(context, this, &mProgramHash, &result));
 
-        if (success)
+        switch (result)
         {
-            // No need to care about the compile jobs any more.
-            mState.mShaderCompileJobs = {};
+            case egl::CacheGetResult::Success:
+            {
+                // No need to care about the compile jobs any more.
+                mState.mShaderCompileJobs = {};
 
-            std::scoped_lock lock(mHistogramMutex);
-            // Succeeded in loading the binaries in the front-end, back end may still be loading
-            // asynchronously
-            double delta = platform->currentTime(platform) - startTime;
-            int us       = static_cast<int>(delta * 1000'000.0);
-            ANGLE_HISTOGRAM_COUNTS("GPU.ANGLE.ProgramCache.ProgramCacheHitTimeUS", us);
-            return angle::Result::Continue;
+                std::scoped_lock lock(mHistogramMutex);
+                // Succeeded in loading the binaries in the front-end, back end may still be loading
+                // asynchronously
+                double delta = platform->currentTime(platform) - startTime;
+                int us       = static_cast<int>(delta * 1000'000.0);
+                ANGLE_HISTOGRAM_COUNTS("GPU.ANGLE.ProgramCache.ProgramCacheHitTimeUS", us);
+                return angle::Result::Continue;
+            }
+            case egl::CacheGetResult::Rejected:
+                // If the program binary was found but rejected, the program executable may be in an
+                // inconsistent half-loaded state.  In that case, start over.
+                mLinkingState.reset();
+                setupExecutableForLink(context);
+                break;
+            case egl::CacheGetResult::NotFound:
+            default:
+                break;
         }
     }
 
@@ -1127,8 +1144,9 @@ angle::Result Program::linkJobImpl(const Caps &caps,
         const SharedCompiledShaderState &vertexShader = mState.mAttachedShaders[ShaderType::Vertex];
         if (vertexShader)
         {
-            mState.mExecutable->mPod.numViews        = vertexShader->numViews;
-            mState.mExecutable->mPod.hasClipDistance = vertexShader->hasClipDistance;
+            mState.mExecutable->mPod.numViews = vertexShader->numViews;
+            mState.mExecutable->mPod.hasClipDistance =
+                vertexShader->metadataFlags.test(sh::MetadataFlags::HasClipDistance);
             mState.mExecutable->mPod.specConstUsageBits |= vertexShader->specConstUsageBits;
         }
 
@@ -1151,12 +1169,23 @@ angle::Result Program::linkJobImpl(const Caps &caps,
                 return angle::Result::Stop;
             }
 
-            mState.mExecutable->mPod.hasDiscard = fragmentShader->hasDiscard;
+            mState.mExecutable->mPod.hasDiscard =
+                fragmentShader->metadataFlags.test(sh::MetadataFlags::HasDiscard);
             mState.mExecutable->mPod.enablesPerSampleShading =
-                fragmentShader->enablesPerSampleShading;
+                fragmentShader->metadataFlags.test(sh::MetadataFlags::EnablesPerSampleShading);
             mState.mExecutable->mPod.advancedBlendEquations =
                 fragmentShader->advancedBlendEquations;
             mState.mExecutable->mPod.specConstUsageBits |= fragmentShader->specConstUsageBits;
+
+            for (uint32_t index = 0; index < IMPLEMENTATION_MAX_DRAW_BUFFERS; ++index)
+            {
+                const sh::MetadataFlags flag = static_cast<sh::MetadataFlags>(
+                    static_cast<uint32_t>(sh::MetadataFlags::HasInputAttachment0) + index);
+                if (fragmentShader->metadataFlags.test(flag))
+                {
+                    mState.mExecutable->mPod.fragmentInoutIndices.set(index);
+                }
+            }
         }
 
         *mergedVaryingsOut = GetMergedVaryingsFromLinkingVariables(*linkingVariables);
@@ -1370,15 +1399,17 @@ angle::Result Program::setBinary(const Context *context,
 
     makeNewExecutable(context);
 
-    bool success = false;
-    return loadBinary(context, binary, length, &success);
+    egl::CacheGetResult result = egl::CacheGetResult::NotFound;
+    return loadBinary(context, binary, length, &result);
 }
 
 angle::Result Program::loadBinary(const Context *context,
                                   const void *binary,
                                   GLsizei length,
-                                  bool *successOut)
+                                  egl::CacheGetResult *resultOut)
 {
+    *resultOut = egl::CacheGetResult::Rejected;
+
     ASSERT(mLinkingState);
     unlink();
 
@@ -1390,12 +1421,8 @@ angle::Result Program::loadBinary(const Context *context,
     // Currently we require the full shader text to compute the program hash.
     // We could also store the binary in the internal program cache.
 
-    for (size_t uniformBlockIndex = 0;
-         uniformBlockIndex < mState.mExecutable->getUniformBlocks().size(); ++uniformBlockIndex)
-    {
-        // After deserializing, we need to set every block dirty
-        mState.mExecutable->mDirtyBits.set(uniformBlockIndex);
-    }
+    // Initialize the uniform block -> buffer index map based on serialized data.
+    mState.mExecutable->initInterfaceBlockBindings();
 
     // If load does not succeed, we know for sure that the binary is not compatible with the
     // backend.  The loaded binary could have been read from the on-disk shader cache and be
@@ -1403,8 +1430,8 @@ angle::Result Program::loadBinary(const Context *context,
     // backend.  Returning to the caller results in link happening using the original shader
     // sources.
     std::shared_ptr<rx::LinkTask> loadTask;
-    ANGLE_TRY(mProgram->load(context, &stream, &loadTask, successOut));
-    if (!*successOut)
+    ANGLE_TRY(mProgram->load(context, &stream, &loadTask, resultOut));
+    if (*resultOut == egl::CacheGetResult::Rejected)
     {
         return angle::Result::Continue;
     }
@@ -1427,7 +1454,7 @@ angle::Result Program::loadBinary(const Context *context,
     mLinkingState->linkingFromBinary = true;
     mLinkingState->linkEvent         = std::move(loadEvent);
 
-    *successOut = true;
+    *resultOut = egl::CacheGetResult::Success;
 
     return angle::Result::Continue;
 }
@@ -1603,31 +1630,12 @@ void Program::bindUniformBlock(UniformBlockIndex uniformBlockIndex, GLuint unifo
 {
     ASSERT(!mLinkingState);
 
-    if (mState.mExecutable->mPod.activeUniformBlockBindings[uniformBlockIndex.value])
-    {
-        GLuint previousBinding =
-            mState.mExecutable->mUniformBlocks[uniformBlockIndex.value].pod.binding;
-        if (previousBinding >= mUniformBlockBindingMasks.size())
-        {
-            mUniformBlockBindingMasks.resize(previousBinding + 1, UniformBlockBindingMask());
-        }
-        mUniformBlockBindingMasks[previousBinding].reset(uniformBlockIndex.value);
-    }
+    mState.mExecutable->remapUniformBlockBinding(uniformBlockIndex, uniformBlockBinding);
 
-    mState.mExecutable->mUniformBlocks[uniformBlockIndex.value].setBinding(uniformBlockBinding);
-    if (uniformBlockBinding >= mUniformBlockBindingMasks.size())
-    {
-        mUniformBlockBindingMasks.resize(uniformBlockBinding + 1, UniformBlockBindingMask());
-    }
-    mUniformBlockBindingMasks[uniformBlockBinding].set(uniformBlockIndex.value);
-    mState.mExecutable->mPod.activeUniformBlockBindings.set(uniformBlockIndex.value,
-                                                            uniformBlockBinding != 0);
+    mProgram->onUniformBlockBinding(uniformBlockIndex);
 
-    onUniformBufferStateChange(
-        gl::ProgramExecutable::DirtyBitType::DIRTY_BIT_UNIFORM_BLOCK_BINDING_0 +
-        uniformBlockIndex.value);
-
-    onStateChange(angle::SubjectMessage::ProgramUniformBlockBindingUpdated);
+    onStateChange(
+        angle::ProgramUniformBlockBindingUpdatedMessageFromIndex(uniformBlockIndex.value));
 }
 
 void Program::setTransformFeedbackVaryings(const Context *context,
@@ -1764,24 +1772,19 @@ bool Program::linkValidateShaders()
             //   - <program> is not separable and contains no objects to form a vertex shader; or
             //   - the input primitive type, output primitive type, or maximum output vertex count
             //     is not specified in the compiled geometry shader object.
-            Optional<PrimitiveMode> inputPrimitive =
-                geometryShader->geometryShaderInputPrimitiveType;
-            if (!inputPrimitive.valid())
+            if (!geometryShader->hasValidGeometryShaderInputPrimitiveType())
             {
                 mState.mInfoLog << "Input primitive type is not specified in the geometry shader.";
                 return false;
             }
 
-            Optional<PrimitiveMode> outputPrimitive =
-                geometryShader->geometryShaderOutputPrimitiveType;
-            if (!outputPrimitive.valid())
+            if (!geometryShader->hasValidGeometryShaderOutputPrimitiveType())
             {
                 mState.mInfoLog << "Output primitive type is not specified in the geometry shader.";
                 return false;
             }
 
-            Optional<GLint> maxVertices = geometryShader->geometryShaderMaxVertices;
-            if (!maxVertices.valid())
+            if (!geometryShader->hasValidGeometryShaderMaxVertices())
             {
                 mState.mInfoLog << "'max_vertices' is not specified in the geometry shader.";
                 return false;
@@ -1850,15 +1853,12 @@ void Program::linkShaders()
         const SharedCompiledShaderState &geometryShader = shaders[ShaderType::Geometry];
         if (geometryShader)
         {
-            Optional<PrimitiveMode> inputPrimitive =
+            mState.mExecutable->mPod.geometryShaderInputPrimitiveType =
                 geometryShader->geometryShaderInputPrimitiveType;
-            Optional<PrimitiveMode> outputPrimitive =
+            mState.mExecutable->mPod.geometryShaderOutputPrimitiveType =
                 geometryShader->geometryShaderOutputPrimitiveType;
-            Optional<GLint> maxVertices = geometryShader->geometryShaderMaxVertices;
-
-            mState.mExecutable->mPod.geometryShaderInputPrimitiveType  = inputPrimitive.value();
-            mState.mExecutable->mPod.geometryShaderOutputPrimitiveType = outputPrimitive.value();
-            mState.mExecutable->mPod.geometryShaderMaxVertices         = maxVertices.value();
+            mState.mExecutable->mPod.geometryShaderMaxVertices =
+                geometryShader->geometryShaderMaxVertices;
             mState.mExecutable->mPod.geometryShaderInvocations =
                 geometryShader->geometryShaderInvocations;
         }
@@ -2126,24 +2126,13 @@ bool Program::linkAttributes(const Caps &caps,
     return true;
 }
 
-void Program::initInterfaceBlockBindings()
-{
-    // Set initial bindings from shader.
-    for (size_t blockIndex = 0; blockIndex < mState.mExecutable->getUniformBlocks().size();
-         blockIndex++)
-    {
-        InterfaceBlock &uniformBlock = mState.mExecutable->mUniformBlocks[blockIndex];
-        bindUniformBlock({static_cast<uint32_t>(blockIndex)}, uniformBlock.pod.binding);
-    }
-}
-
 angle::Result Program::syncState(const Context *context)
 {
     ASSERT(!mLinkingState);
     // Wait for the link tasks.  This is because these optimization passes are not currently
     // thread-safe with draw's usage of the executable.
     waitForOptionalLinkTasks(context);
-    return mProgram->syncState(context);
+    return angle::Result::Continue;
 }
 
 angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *binaryOut)
@@ -2330,12 +2319,11 @@ bool Program::deserialize(const Context *context, BinaryInputStream &stream)
 
 void Program::postResolveLink(const Context *context)
 {
-    initInterfaceBlockBindings();
-
     mState.updateActiveSamplers();
     mState.mExecutable->mActiveImageShaderBits.fill({});
     mState.mExecutable->updateActiveImages(getExecutable());
 
+    mState.mExecutable->initInterfaceBlockBindings();
     mState.mExecutable->setUniformValuesFromBindingQualifiers();
 
     if (context->getExtensions().multiDrawANGLE)
@@ -2400,23 +2388,5 @@ void Program::dumpProgramInfo(const Context *context) const
 
     writeFile(path.c_str(), dump.c_str(), dump.length());
     INFO() << "Dumped program: " << path;
-}
-
-void Program::onPPOUniformBufferStateChange(ShaderType shaderType,
-                                            size_t uniformBufferIndex,
-                                            ProgramExecutable *ppoExecutable,
-                                            const ProgramPipelineUniformBlockIndexMap &blockMap)
-{
-    if (uniformBufferIndex >= mUniformBlockBindingMasks.size())
-    {
-        mUniformBlockBindingMasks.resize(uniformBufferIndex + 1, UniformBlockBindingMask());
-    }
-    for (size_t index : mUniformBlockBindingMasks[uniformBufferIndex])
-    {
-        if (getExecutable().getUniformBlocks()[index].isActive(shaderType))
-        {
-            ppoExecutable->mDirtyBits.set(blockMap[static_cast<uint32_t>(index)]);
-        }
-    }
 }
 }  // namespace gl

@@ -1204,6 +1204,61 @@ bool Texture::isMipmapComplete() const
     return mState.computeMipmapCompleteness();
 }
 
+GLuint Texture::getFoveatedFeatureBits() const
+{
+    return mState.mFoveationState.getFoveatedFeatureBits();
+}
+
+void Texture::setFoveatedFeatureBits(const GLuint features)
+{
+    mState.mFoveationState.setFoveatedFeatureBits(features);
+}
+
+bool Texture::isFoveationEnabled() const
+{
+    return (mState.mFoveationState.getFoveatedFeatureBits() & GL_FOVEATION_ENABLE_BIT_QCOM);
+}
+
+GLuint Texture::getSupportedFoveationFeatures() const
+{
+    return mState.mFoveationState.getSupportedFoveationFeatures();
+}
+
+GLfloat Texture::getMinPixelDensity() const
+{
+    return mState.mFoveationState.getMinPixelDensity();
+}
+
+void Texture::setMinPixelDensity(const GLfloat density)
+{
+    mState.mFoveationState.setMinPixelDensity(density);
+}
+
+void Texture::setFocalPoint(uint32_t layer,
+                            uint32_t focalPointIndex,
+                            float focalX,
+                            float focalY,
+                            float gainX,
+                            float gainY,
+                            float foveaArea)
+{
+    gl::FocalPoint newFocalPoint(focalX, focalY, gainX, gainY, foveaArea);
+    if (mState.mFoveationState.getFocalPoint(layer, focalPointIndex) == newFocalPoint)
+    {
+        // Nothing to do, early out.
+        return;
+    }
+
+    mState.mFoveationState.setFocalPoint(layer, focalPointIndex, newFocalPoint);
+    mState.mFoveationState.setFoveatedFeatureBits(GL_FOVEATION_ENABLE_BIT_QCOM);
+    onStateChange(angle::SubjectMessage::FoveatedRenderingStateChanged);
+}
+
+const FocalPoint &Texture::getFocalPoint(uint32_t layer, uint32_t focalPoint) const
+{
+    return mState.mFoveationState.getFocalPoint(layer, focalPoint);
+}
+
 egl::Surface *Texture::getBoundSurface() const
 {
     return mBoundSurface;

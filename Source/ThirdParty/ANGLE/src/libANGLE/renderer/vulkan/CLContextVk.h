@@ -9,19 +9,29 @@
 #define LIBANGLE_RENDERER_VULKAN_CLCONTEXTVK_H_
 
 #include "libANGLE/renderer/vulkan/cl_types.h"
+#include "libANGLE/renderer/vulkan/vk_utils.h"
 
 #include "libANGLE/renderer/CLContextImpl.h"
 
 #include "libANGLE/CLDevice.h"
+#include "libANGLE/Display.h"
 
 namespace rx
 {
 
-class CLContextVk : public CLContextImpl
+class CLContextVk : public CLContextImpl, public vk::Context
 {
   public:
-    CLContextVk(const cl::Context &context);
+    CLContextVk(const cl::Context &context,
+                const egl::Display *display,
+                const cl::DevicePtrs devicePtrs);
+
     ~CLContextVk() override;
+
+    void handleError(VkResult errorCode,
+                     const char *file,
+                     const char *function,
+                     unsigned int line) override;
 
     bool hasMemory(cl_mem memory) const;
 
@@ -80,6 +90,11 @@ class CLContextVk : public CLContextImpl
     angle::Result createUserEvent(const cl::Event &event, CLEventImpl::Ptr *eventOut) override;
 
     angle::Result waitForEvents(const cl::EventPtrs &events) override;
+
+  private:
+    void handleDeviceLost() const;
+
+    const cl::DevicePtrs mAssociatedDevices;
 };
 
 }  // namespace rx

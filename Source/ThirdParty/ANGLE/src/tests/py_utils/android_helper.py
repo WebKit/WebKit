@@ -32,7 +32,6 @@ class _Global(object):
     initialized = False
     is_android = False
     current_suite = None
-    lib_extension = None
     traces_outside_of_apk = False
     temp_dir = None
 
@@ -82,13 +81,8 @@ def _InitializeAndroid(apk_path):
 
     apk_files = subprocess.check_output([_FindAapt(), 'list', apk_path]).decode().split()
     apk_so_libs = [posixpath.basename(f) for f in apk_files if f.endswith('.so')]
-    if 'libangle_util.cr.so' in apk_so_libs:
-        _Global.lib_extension = '.cr.so'
-    else:
-        assert 'libangle_util.so' in apk_so_libs
-        _Global.lib_extension = '.so'
     # When traces are outside of the apk this lib is also outside
-    interpreter_so_lib = 'libangle_trace_interpreter' + _Global.lib_extension
+    interpreter_so_lib = 'libangle_trace_interpreter.so'
     _Global.traces_outside_of_apk = interpreter_so_lib not in apk_so_libs
 
     if logging.getLogger().isEnabledFor(logging.DEBUG):
@@ -210,14 +204,17 @@ def _AddDeqpFiles(suite_name):
     ]
     if '_gles2_' in suite_name:
         patterns.append('gen/vk_gl_cts_data/data/gles2/**')
-    if '_gles3_' in suite_name:
+    elif '_gles3_' in suite_name:
         patterns.append('gen/vk_gl_cts_data/data/gles3/**')
         patterns.append('gen/vk_gl_cts_data/data/gl_cts/data/gles3/**')
-    if '_gles31_' in suite_name:
+    elif '_gles31_' in suite_name:
         patterns.append('gen/vk_gl_cts_data/data/gles31/**')
         patterns.append('gen/vk_gl_cts_data/data/gl_cts/data/gles31/**')
-    if '_gles32_' in suite_name:
+    elif '_gles32_' in suite_name:
         patterns.append('gen/vk_gl_cts_data/data/gl_cts/data/gles32/**')
+    else:
+        # Harness crashes if vk_gl_cts_data/data dir doesn't exist, so add a file
+        patterns.append('gen/vk_gl_cts_data/data/gles2/data/brick.png')
 
     _MakeTar('/sdcard/chromium_tests_root/deqp.tar', patterns)
     _AdbShell('r=/sdcard/chromium_tests_root; tar -xf $r/deqp.tar -C $r/ && rm $r/deqp.tar')
@@ -376,7 +373,7 @@ def PrepareRestrictedTraces(traces):
         _Push('../../' + path_from_root, path_from_root)
 
         if _Global.traces_outside_of_apk:
-            lib_name = 'libangle_restricted_traces_' + trace + _Global.lib_extension
+            lib_name = 'libangle_restricted_traces_' + trace + '.so'
             _PushLibToAppDir(lib_name)
 
         tracegz = 'gen/tracegz_' + trace + '.gz'
@@ -384,7 +381,7 @@ def PrepareRestrictedTraces(traces):
 
     # Push one additional file when running outside the APK
     if _Global.traces_outside_of_apk:
-        _PushLibToAppDir('libangle_trace_interpreter' + _Global.lib_extension)
+        _PushLibToAppDir('libangle_trace_interpreter.so')
 
     logging.info('Synced files for %d traces (%.1fMB, %d files already ok) in %.1fs', len(traces),
                  total_size / 1e6, skipped,
@@ -540,7 +537,7 @@ def RunTests(test_suite, args, stdoutfile=None, log_output=True):
 
             if '--list-tests' in args:
                 # When listing tests, there may be no output file. We parse stdout anyways.
-                test_output = '{"interrupted": false}'
+                test_output = b'{"interrupted": false}'
             else:
                 try:
                     test_output = _ReadDeviceFile(device_test_output_path)

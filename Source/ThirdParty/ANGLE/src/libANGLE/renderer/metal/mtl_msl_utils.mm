@@ -8,11 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+#include <variant>
+#include "common/string_utils.h"
 #include "common/utilities.h"
+#include "compiler/translator/msl/Name.h"
 #include "compiler/translator/msl/TranslatorMSL.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/ShaderMtl.h"
 #include "libANGLE/renderer/metal/mtl_msl_utils.h"
+
 namespace rx
 {
 namespace
@@ -22,19 +26,108 @@ constexpr char kXfbOutMarker[]          = "ANGLE_@@XFB-OUT@@";
 constexpr char kUserDefinedNamePrefix[] = "_u";  // Defined in GLSLANG/ShaderLang.h
 constexpr char kAttribBindingsMarker[]  = "@@Attrib-Bindings@@\n";
 
-template <size_t N>
-constexpr size_t ConstStrLen(const char (&)[N])
-{
-    static_assert(N > 0, "C++ shouldn't allow N to be zero");
-    
-    // The length of a string defined as a char array is the size of the array minus 1 (the
-    // terminating '\0').
-    return N - 1;
-}
-
 std::string GetXfbBufferNameMtl(const uint32_t bufferIndex)
 {
     return "xfbBuffer" + Str(bufferIndex);
+}
+
+// Name format needs to match sh::Name.
+struct UserDefinedNameExpr
+{
+    std::string name;
+};
+
+std::ostream &operator<<(std::ostream &stream, const UserDefinedNameExpr &expr)
+{
+    return stream << kUserDefinedNamePrefix << expr.name;
+}
+
+struct UserDefinedNameComponentExpr
+{
+    UserDefinedNameExpr name;
+    int component;
+};
+
+std::ostream &operator<<(std::ostream &stream, const UserDefinedNameComponentExpr &expr)
+{
+    return stream << expr.name << '[' << expr.component << ']';
+}
+
+struct InternalNameExpr
+{
+    std::string name;
+};
+
+std::ostream &operator<<(std::ostream &stream, const InternalNameExpr &expr)
+{
+    return stream << sh::kAngleInternalPrefix << '_' << expr.name;
+}
+
+struct InternalNameComponentExpr
+{
+    InternalNameExpr name;
+    int component;
+};
+
+std::ostream &operator<<(std::ostream &stream, const InternalNameComponentExpr &expr)
+{
+    return stream << expr.name << '_' << expr.component;
+}
+
+// ModifyStructs phase forwarded a single-component user-defined name or created a new AngleInternal
+// field name to support multi-component fields as multiple single-component fields.
+std::variant<UserDefinedNameExpr, InternalNameComponentExpr>
+ResolveModifiedAttributeName(const std::string &name, int registerIndex, int registerCount)
+{
+    if (registerCount < 2)
+    {
+        return UserDefinedNameExpr{name};
+    }
+    return InternalNameComponentExpr{InternalNameExpr{name}, registerIndex};
+}
+
+std::variant<UserDefinedNameExpr, InternalNameComponentExpr>
+ResolveModifiedOutputName(const std::string &name, int component, int componentCount)
+{
+    if (componentCount == 0)
+    {
+        return UserDefinedNameExpr{name};
+    }
+    return InternalNameComponentExpr{InternalNameExpr{name}, component};
+}
+
+// Accessing unmodified structs uses user-defined name, business as usual.
+std::variant<UserDefinedNameExpr, UserDefinedNameComponentExpr>
+ResolveUserDefinedName(const std::string &name, int component, int componentCount)
+{
+    if (componentCount == 0)
+    {
+        return UserDefinedNameExpr{name};
+    }
+    return UserDefinedNameComponentExpr{{name}, component};
+}
+
+template <class T>
+struct ApplyOStream
+{
+    const T &value;
+};
+
+template <class T>
+ApplyOStream(T) -> ApplyOStream<T>;
+
+template <class T>
+std::ostream &operator<<(std::ostream &stream, ApplyOStream<T> sv)
+{
+    stream << sv.value;
+    return stream;
+}
+
+template <class... Ts>
+std::ostream &operator<<(std::ostream &stream, ApplyOStream<std::variant<Ts...>> sv)
+{
+    std::visit([&stream](auto &&v) { stream << ApplyOStream{v}; }, sv.value);
+    return stream;
 }
 
 }  // namespace
@@ -185,12 +278,9 @@ std::string UpdateAliasedShaderAttributes(std::string shaderSourceIn,
         const uint8_t components = gl::VariableColumnCount(attribute.getType());
         for (int i = 0; i < registers; i++)
         {
-            stream << "#define ANGLE_ALIASED_" << attribute.name;
-            if (registers > 1)
-            {
-                stream << "_" << i;
-            }
-            stream << " ANGLE_modified.ANGLE_ATTRIBUTE_" << (location + i);
+            stream << "#define ANGLE_ALIASED_"
+                   << ApplyOStream{ResolveModifiedAttributeName(attribute.name, i, registers)}
+                   << " ANGLE_modified.ANGLE_ATTRIBUTE_" << (location + i);
             if (components != maxComponents[location + i])
             {
                 ASSERT(components < maxComponents[location + i]);
@@ -225,7 +315,7 @@ std::string UpdateAliasedShaderAttributes(std::string shaderSourceIn,
     std::string outputSource = shaderSourceIn;
     size_t markerFound       = outputSource.find(kAttribBindingsMarker);
     ASSERT(markerFound != std::string::npos);
-    outputSource.replace(markerFound, strlen(kAttribBindingsMarker), stream.str());
+    outputSource.replace(markerFound, angle::ConstStrLen(kAttribBindingsMarker), stream.str());
     return outputSource;
 }
 
@@ -238,24 +328,14 @@ std::string updateShaderAttributes(std::string shaderSourceIn,
     std::unordered_map<std::string, uint32_t> attributeBindings;
     for (auto &attribute : programAttributes)
     {
-        const int regs = gl::VariableRegisterCount(attribute.getType());
-        if (regs > 1)
-        {
-            for (int i = 0; i < regs; i++)
-            {
-                stream.str("");
-                stream << " " << kUserDefinedNamePrefix << attribute.name << "_"
-                       << std::to_string(i) << sh::kUnassignedAttributeString;
-                attributeBindings.insert({std::string(stream.str()), i + attribute.getLocation()});
-            }
-        }
-        else
+        const int registers = gl::VariableRegisterCount(attribute.getType());
+        for (int i = 0; i < registers; i++)
         {
             stream.str("");
-            stream << " " << kUserDefinedNamePrefix << attribute.name
+            stream << ' '
+                   << ApplyOStream{ResolveModifiedAttributeName(attribute.name, i, registers)}
                    << sh::kUnassignedAttributeString;
-            attributeBindings.insert({std::string(stream.str()), attribute.getLocation()});
-            stream.str("");
+            attributeBindings.insert({stream.str(), i + attribute.getLocation()});
         }
     }
     // Rewrite attributes
@@ -268,8 +348,9 @@ std::string updateShaderAttributes(std::string shaderSourceIn,
             stream.str("");
             stream << "[[attribute(" << it->second << ")]]";
             outputSource = outputSource.replace(
-                attribFound + it->first.length() - strlen(sh::kUnassignedAttributeString),
-                strlen(sh::kUnassignedAttributeString), stream.str());
+                attribFound + it->first.length() -
+                    angle::ConstStrLen(sh::kUnassignedAttributeString),
+                angle::ConstStrLen(sh::kUnassignedAttributeString), stream.str());
         }
     }
     return outputSource;
@@ -297,43 +378,33 @@ std::string UpdateFragmentShaderOutputs(std::string shaderSourceIn,
             }
 
             const gl::ProgramOutput &outputVar = outputVariables[outputLocation.index];
-
-            ASSERT(outputVar.pod.location >= 0);
-            int elementLocation = outputVar.pod.location;
-
+            const int index                    = outputLocation.arrayIndex;
+            const int location                 = outputVar.pod.location + index;
+            const int arraySize                = outputVar.getOutermostArraySize();
             stream.str("");
-            stream << outputVar.mappedName;
-            if (outputVar.getOutermostArraySize() > 0)
-            {
-                ASSERT(outputLocation.arrayIndex >= 0);
-                elementLocation += outputLocation.arrayIndex;
-                stream << "_" << outputLocation.arrayIndex;
-            }
-            stream << " [[" << sh::kUnassignedFragmentOutputString;
+            stream << ApplyOStream{ResolveModifiedOutputName(outputVar.name, index, arraySize)}
+                   << " [[" << sh::kUnassignedFragmentOutputString;
             const std::string placeholder(stream.str());
 
+            ASSERT(outputVar.pod.location >= 0);
             size_t outputFound = outputSource.find(placeholder);
             if (outputFound != std::string::npos)
             {
                 stream.str("");
-                stream << "color(" << elementLocation << (secondary ? "), index(1)" : ")");
-                outputSource =
-                    outputSource.replace(outputFound + placeholder.length() -
-                                             strlen(sh::kUnassignedFragmentOutputString),
-                                         strlen(sh::kUnassignedFragmentOutputString), stream.str());
+                stream << "color(" << location << (secondary ? "), index(1)" : ")");
+                outputSource = outputSource.replace(
+                    outputFound + placeholder.length() -
+                        angle::ConstStrLen(sh::kUnassignedFragmentOutputString),
+                    angle::ConstStrLen(sh::kUnassignedFragmentOutputString), stream.str());
             }
 
-            if (defineAlpha0 && elementLocation == 0 && !secondary &&
-                outputVar.pod.type == GL_FLOAT_VEC4)
+            if (defineAlpha0 && location == 0 && !secondary && outputVar.pod.type == GL_FLOAT_VEC4)
             {
                 ASSERT(alphaOutputName.empty());
                 std::ostringstream nameStream;
-                nameStream << "ANGLE_fragmentOut." << outputVar.mappedName;
-                if (outputVar.getOutermostArraySize() > 0)
-                {
-                    nameStream << "[" << outputLocation.arrayIndex << "]";
-                }
-                nameStream << ".a";
+                nameStream << "ANGLE_fragmentOut."
+                           << ApplyOStream{ResolveUserDefinedName(outputVar.name, index, arraySize)}
+                           << ".a";
                 alphaOutputName = nameStream.str();
             }
         }
@@ -382,11 +453,12 @@ std::string SubstituteTransformFeedbackMarkers(const std::string &originalSource
 {
     const size_t xfbBindingsMarkerStart = originalSource.find(kXfbBindingsMarker);
     bool hasBindingsMarker              = xfbBindingsMarkerStart != std::string::npos;
-    const size_t xfbBindingsMarkerEnd   = xfbBindingsMarkerStart + ConstStrLen(kXfbBindingsMarker);
+    const size_t xfbBindingsMarkerEnd =
+        xfbBindingsMarkerStart + angle::ConstStrLen(kXfbBindingsMarker);
 
     const size_t xfbOutMarkerStart = originalSource.find(kXfbOutMarker, xfbBindingsMarkerStart);
     bool hasOutMarker              = xfbOutMarkerStart != std::string::npos;
-    const size_t xfbOutMarkerEnd   = xfbOutMarkerStart + ConstStrLen(kXfbOutMarker);
+    const size_t xfbOutMarkerEnd   = xfbOutMarkerStart + angle::ConstStrLen(kXfbOutMarker);
 
     // The shader is the following form:
     //

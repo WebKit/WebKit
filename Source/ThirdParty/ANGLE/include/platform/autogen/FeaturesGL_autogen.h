@@ -48,6 +48,13 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo clearsWithGapsNeedFlush = {
+        "clearsWithGapsNeedFlush",
+        FeatureCategory::OpenGLWorkarounds,
+        "Clearing an FBO with multiple attachments may need a flush to avoid race conditions",
+        &members,
+    };
+
     FeatureInfo doesSRGBClearsOnLinearFramebufferAttachments = {
         "doesSRGBClearsOnLinearFramebufferAttachments",
         FeatureCategory::OpenGLWorkarounds,
@@ -708,6 +715,20 @@ struct FeaturesGL : FeatureSetBase
         FeatureCategory::OpenGLWorkarounds,
         "Resync depth range to apply clip control updates.",
         &members, "https://anglebug.com/8381"
+    };
+
+    FeatureInfo corruptProgramBinaryForTesting = {
+        "corruptProgramBinaryForTesting",
+        FeatureCategory::OpenGLWorkarounds,
+        "Corrupt the program binary retrieved from the driver for testing purposes.",
+        &members, "https://anglebug.com/8471"
+    };
+
+    FeatureInfo useIntermediateTextureForGenerateMipmap = {
+        "useIntermediateTextureForGenerateMipmap",
+        FeatureCategory::OpenGLWorkarounds,
+        "Some drivers lose context when repeatedly generating mipmaps on textures that were used as framebuffers.",
+        &members, "https://crbug.com/40279678"
     };
 
 };

@@ -106,6 +106,7 @@ class TextureStorage11 : public TextureStorage
     bool supportsNativeMipmapFunction() const override;
     int getLevelCount() const override;
     bool isUnorderedAccess() const override { return mBindFlags & D3D11_BIND_UNORDERED_ACCESS; }
+    bool isMultiplanar(const gl::Context *context) override;
     bool requiresTypelessTextureFormat() const;
     angle::Result generateMipmap(const gl::Context *context,
                                  const gl::ImageIndex &sourceIndex,

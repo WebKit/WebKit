@@ -78,10 +78,6 @@ TEST_P(VulkanFramebufferTest, TextureAttachmentMipIncomplete)
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
 
-    // http://anglebug.com/4686: The Vulkan backend is allocating three mips of sizes 100x100,
-    // 50x50 and 25x25 instead of one mip of size 100x100.
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     rx::TextureVk *textureVk = hackTexture(texture);
     EXPECT_EQ(textureVk->getImage().getLevelCount(), 1u);
 }

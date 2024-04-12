@@ -4550,6 +4550,38 @@ TEST_P(ImageTestES3, RGBXAHBImportThenUpload)
     destroyAndroidHardwareBuffer(ahb);
 }
 
+// Tests interaction of emulated channel being cleared with a following data upload and immediately
+// ends to check that the image updates are processed and flushed without errors. It is similar to
+// RGBXAHBImportThenUpload, but there is no pixel reading or destroying the image to avoid extra
+// staged update flushes.
+TEST_P(ImageTestES3, IncompleteRGBXAHBImportThenUploadThenEnd)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    const GLubyte kInitColor[] = {132, 55, 219, 12, 132, 55, 219, 12};
+
+    // Create the Image
+    AHardwareBuffer *ahb;
+    EGLImageKHR ahbImage;
+    createEGLImageAndroidHardwareBufferSource(2, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM,
+                                              kDefaultAHBUsage, kDefaultAttribs, {{kInitColor, 4}},
+                                              &ahb, &ahbImage);
+
+    GLTexture ahbTexture;
+    createEGLImageTargetTexture2D(ahbImage, ahbTexture);
+
+    // Upload data
+    const GLubyte kUploadColor[] = {63, 127, 191, 55};
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 1, 0, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, kUploadColor);
+    ASSERT_GL_NO_ERROR();
+
+    // Clean up
+    destroyAndroidHardwareBuffer(ahb);
+    // This test relies on internal assertions to catch the issue regarding unflushed updates after
+    // clearing emulated channels.
+}
+
 // Test that RGBX data are preserved when importing from AHB.  Tests interaction of emulated channel
 // being cleared with occlusion queries.
 TEST_P(ImageTestES3, RGBXAHBImportOcclusionQueryNotCounted)

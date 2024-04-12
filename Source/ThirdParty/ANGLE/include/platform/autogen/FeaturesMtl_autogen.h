@@ -428,6 +428,14 @@ struct FeaturesMtl : FeatureSetBase
         &members, "http://crbug.com/1486094"
     };
 
+    FeatureInfo injectAsmStatementIntoLoopBodies = {
+        "injectAsmStatementIntoLoopBodies",
+        FeatureCategory::MetalFeatures,
+        "Inject asm("") statements into loop bodies to force all loops to be treated as "
+        "having side effects and not optimized out.",
+        &members, "http://crbug.com/1513738"
+    };
+
 };
 
 inline FeaturesMtl::FeaturesMtl()  = default;

@@ -153,6 +153,8 @@ class FramebufferVk : public FramebufferImpl
         return (mAttachmentHasFrontBufferUsage & mState.getColorAttachmentsMask()).any();
     }
 
+    bool isFoveationEnabled() { return mFoveationState.isFoveated(); }
+
     enum class RenderTargetImage
     {
         AttachmentImage,
@@ -260,6 +262,27 @@ class FramebufferVk : public FramebufferImpl
 
     void updateLayerCount();
 
+    angle::Result ensureFragmentShadingRateImageAndViewInitialized(
+        ContextVk *contextVk,
+        const uint32_t fragmentShadingRateAttachmentWidth,
+        const uint32_t fragmentShadingRateAttachmentHeight);
+    angle::Result generateFragmentShadingRateWithCPU(
+        ContextVk *contextVk,
+        const bool isGainZero,
+        const uint32_t fragmentShadingRateWidth,
+        const uint32_t fragmentShadingRateHeight,
+        const uint32_t fragmentShadingRateBlockWidth,
+        const uint32_t fragmentShadingRateBlockHeight,
+        const uint32_t foveatedAttachmentWidth,
+        const uint32_t foveatedAttachmentHeight,
+        const std::vector<gl::FocalPoint> &activeFocalPoints);
+    angle::Result updateFragmentShadingRateAttachment(ContextVk *contextVk,
+                                                      const gl::FoveationState &foveationState,
+                                                      const gl::Extents &foveatedAttachmentSize);
+    angle::Result updateFoveationState(ContextVk *contextVk,
+                                       const gl::FoveationState &newFoveationState,
+                                       const gl::Extents &foveatedAttachmentSize);
+
     void insertCache(ContextVk *contextVk,
                      const vk::FramebufferDesc &desc,
                      vk::FramebufferHelper &&newFramebuffer);
@@ -297,6 +320,10 @@ class FramebufferVk : public FramebufferImpl
 
     bool mIsCurrentFramebufferCached;
     bool mIsYUVResolve;
+
+    gl::FoveationState mFoveationState;
+    vk::ImageHelper mFragmentShadingRateImage;
+    vk::ImageViewHelper mFragmentShadingRateImageView;
 
     // Serial of the render pass this framebuffer has opened, if any.
     QueueSerial mLastRenderPassQueueSerial;

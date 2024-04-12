@@ -534,6 +534,14 @@ bool ValidatePlatformType(const ValidationContext *val,
             }
             break;
 
+        case EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE:
+            if (!clientExtensions.platformANGLEWebgpu)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE, "WebGPU platform is unsupported.");
+                return false;
+            }
+            break;
+
         case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
             if (!clientExtensions.platformANGLEVulkan)
             {
@@ -1347,6 +1355,7 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
     switch (type)
     {
         case EGL_SYNC_FENCE_KHR:
+        case EGL_SYNC_GLOBAL_FENCE_ANGLE:
             if (!attribs.isEmpty())
             {
                 val->setError(EGL_BAD_ATTRIBUTE, "Invalid attribute");
@@ -1357,6 +1366,16 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
             {
                 val->setError(EGL_BAD_MATCH, "EGL_KHR_fence_sync extension is not available");
                 return false;
+            }
+
+            if (type == EGL_SYNC_GLOBAL_FENCE_ANGLE)
+            {
+                if (!display->getExtensions().globalFenceSyncANGLE)
+                {
+                    val->setError(EGL_BAD_MATCH,
+                                  "EGL_ANGLE_global_fence_sync extension is not available");
+                    return false;
+                }
             }
 
             if (display != currentDisplay)
@@ -1403,7 +1422,7 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
             if (!currentContext->getExtensions().EGLSyncOES)
             {
                 val->setError(EGL_BAD_MATCH,
-                              "EGL_SYNC_FENCE_KHR cannot be used without "
+                              "EGL_SYNC_NATIVE_FENCE_ANDROID cannot be used without "
                               "GL_OES_EGL_sync support.");
                 return false;
             }
@@ -1532,6 +1551,7 @@ bool ValidateGetSyncAttribBase(const ValidationContext *val,
             {
                 case EGL_SYNC_FENCE_KHR:
                 case EGL_SYNC_NATIVE_FENCE_ANDROID:
+                case EGL_SYNC_GLOBAL_FENCE_ANGLE:
                 case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
                     break;
 
@@ -3492,6 +3512,15 @@ bool ValidateCreateImage(const ValidationContext *val,
                     return false;
                 }
                 break;
+            case EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE:
+                if (!displayExtensions.mtlTextureClientBuffer)
+                {
+                    val->setError(EGL_BAD_ATTRIBUTE,
+                                  "EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE cannot be used without "
+                                  "EGL_ANGLE_metal_texture_client_buffer support.");
+                    return false;
+                }
+                break;
 
             case EGL_WIDTH:
             case EGL_HEIGHT:
@@ -5266,9 +5295,10 @@ bool ValidateCreatePlatformWindowSurfaceEXT(const ValidationContext *val,
         return false;
     }
 
-    const void *actualNativeWindow = display->getImplementation()->isX11()
-                                         ? *reinterpret_cast<const void *const *>(nativeWindow)
-                                         : nativeWindow;
+    const void *actualNativeWindow =
+        display->getImplementation()->getWindowSystem() == angle::NativeWindowSystem::X11
+            ? *reinterpret_cast<const void *const *>(nativeWindow)
+            : nativeWindow;
 
     return ValidateCreatePlatformWindowSurface(val, display, configuration, actualNativeWindow,
                                                attributes);

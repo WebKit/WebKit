@@ -112,11 +112,7 @@ class DoWhileRewriter : public TIntermTraverser
             TIntermLoop *newLoop = nullptr;
             {
                 TIntermBlock *body = loop->getBody();
-                if (body == nullptr)
-                {
-                    body = new TIntermBlock();
-                }
-                auto sequence = body->getSequence();
+                auto sequence      = body->getSequence();
                 sequence->insert(sequence->begin(), assignTrue);
                 sequence->insert(sequence->begin(), breakIf);
 

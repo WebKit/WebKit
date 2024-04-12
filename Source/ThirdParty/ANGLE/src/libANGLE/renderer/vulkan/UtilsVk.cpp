@@ -1218,6 +1218,10 @@ void ResetDynamicState(ContextVk *contextVk, vk::RenderPassCommandBuffer *comman
     {
         commandBuffer->setLogicOp(VK_LOGIC_OP_COPY);
     }
+    if (contextVk->getFeatures().supportsVertexInputDynamicState.enabled)
+    {
+        commandBuffer->setVertexInput(0, nullptr, 0, nullptr);
+    }
 
     // Let ContextVk know that it should refresh all dynamic state.
     contextVk->invalidateAllDynamicState();
@@ -1813,7 +1817,7 @@ angle::Result UtilsVk::setupComputeProgram(
 
     vk::PipelineHelper *pipeline;
     vk::PipelineCacheAccess pipelineCache;
-    ANGLE_TRY(renderer->getPipelineCache(&pipelineCache));
+    ANGLE_TRY(renderer->getPipelineCache(contextVk, &pipelineCache));
     ANGLE_TRY(programAndPipelines->program.getOrCreateComputePipeline(
         contextVk, &programAndPipelines->pipelines, &pipelineCache, pipelineLayout.get(),
         contextVk->getComputePipelineFlags(), PipelineSource::Utils, &pipeline));
@@ -1866,7 +1870,7 @@ angle::Result UtilsVk::setupGraphicsProgramWithLayout(
 
     // This value is not used but is passed to getGraphicsPipeline to avoid a nullptr check.
     vk::PipelineCacheAccess pipelineCache;
-    ANGLE_TRY(renderer->getPipelineCache(&pipelineCache));
+    ANGLE_TRY(renderer->getPipelineCache(contextVk, &pipelineCache));
 
     // Pull in a compatible RenderPass.
     const vk::RenderPass *compatibleRenderPass = nullptr;
@@ -3097,7 +3101,7 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
     memoryBarrier.dstAccessMask   = VK_ACCESS_TRANSFER_READ_BIT;
 
     commandBuffer->memoryBarrier(VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-                                 VK_PIPELINE_STAGE_TRANSFER_BIT, &memoryBarrier);
+                                 VK_PIPELINE_STAGE_TRANSFER_BIT, memoryBarrier);
 
     // Copy the resulting buffer into dst.
     VkBufferImageCopy region           = {};
@@ -3266,7 +3270,6 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
         (params.srcRotation == SurfaceRotation::Rotated270Degrees))
     {
         // The surface is rotated 90/270 degrees.  This changes the aspect ratio of the surface.
-        std::swap(renderArea.x, renderArea.y);
         std::swap(renderArea.width, renderArea.height);
     }
 
@@ -3454,7 +3457,7 @@ angle::Result UtilsVk::copyImageBits(ContextVk *contextVk,
     memoryBarrier.dstAccessMask   = VK_ACCESS_SHADER_READ_BIT;
 
     commandBuffer->memoryBarrier(VK_PIPELINE_STAGE_TRANSFER_BIT,
-                                 VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, &memoryBarrier);
+                                 VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, memoryBarrier);
 
     // Set up ConvertVertex shader to convert between the formats.  Only the following three cases
     // are possible:
@@ -3554,7 +3557,7 @@ angle::Result UtilsVk::copyImageBits(ContextVk *contextVk,
     memoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 
     commandBuffer->memoryBarrier(VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-                                 VK_PIPELINE_STAGE_TRANSFER_BIT, &memoryBarrier);
+                                 VK_PIPELINE_STAGE_TRANSFER_BIT, memoryBarrier);
 
     // Copy buffer into dst.  It's completely packed.
     VkBufferImageCopy dstRegion               = {};

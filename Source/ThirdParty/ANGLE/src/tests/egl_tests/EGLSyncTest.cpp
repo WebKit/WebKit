@@ -629,4 +629,83 @@ TEST_P(EGLSyncTest, AndroidNativeFence_ExternalFenceWaitVVLBug)
     glFinish();
 }
 
+// Test functionality of EGL_ANGLE_global_fence_sync.
+TEST_P(EGLSyncTest, GlobalFenceSync)
+{
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension());
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_global_fence_sync"));
+
+    // Create a second context
+    EGLContext context1     = eglGetCurrentContext();
+    EGLSurface drawSurface1 = eglGetCurrentSurface(EGL_DRAW);
+    EGLSurface readSurface1 = eglGetCurrentSurface(EGL_READ);
+    EGLConfig config        = getEGLWindow()->getConfig();
+
+    const EGLint contextAttribs[] = {
+        EGL_CONTEXT_CLIENT_VERSION, getEGLWindow()->getClientMajorVersion(),
+        EGL_CONTEXT_MINOR_VERSION_KHR, getEGLWindow()->getClientMinorVersion(), EGL_NONE};
+
+    EGLContext context2 = eglCreateContext(display, config, context1, contextAttribs);
+    ASSERT_NE(EGL_NO_CONTEXT, context2);
+
+    const EGLint pbufferAttribs[] = {EGL_WIDTH, getWindowWidth(), EGL_HEIGHT, getWindowHeight(),
+                                     EGL_NONE};
+    EGLSurface drawSurface2       = eglCreatePbufferSurface(display, config, pbufferAttribs);
+    ASSERT_NE(EGL_NO_SURFACE, drawSurface2);
+
+    // Do an expensive draw in context 2
+    eglMakeCurrent(display, drawSurface2, drawSurface2, context2);
+
+    constexpr char kCostlyVS[] = R"(attribute highp vec4 position;
+varying highp vec4 testPos;
+void main(void)
+{
+    testPos     = position;
+    gl_Position = position;
+})";
+
+    constexpr char kCostlyFS[] = R"(precision highp float;
+varying highp vec4 testPos;
+void main(void)
+{
+    vec4 test = testPos;
+    for (int i = 0; i < 500; i++)
+    {
+        test = sqrt(test);
+    }
+    gl_FragColor = test;
+})";
+
+    ANGLE_GL_PROGRAM(expensiveProgram, kCostlyVS, kCostlyFS);
+    drawQuad(expensiveProgram, "position", 0.0f);
+
+    // Signal a fence sync for testing
+    EGLSyncKHR sync2 = eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, nullptr);
+
+    // Switch to context 1, and create a global fence sync
+    eglMakeCurrent(display, drawSurface1, readSurface1, context1);
+
+    EGLSyncKHR sync1 = eglCreateSyncKHR(display, EGL_SYNC_GLOBAL_FENCE_ANGLE, nullptr);
+
+    // Wait for the global fence sync to finish.
+    constexpr GLuint64 kTimeout = 1'000'000'000;  // 1 second
+    ASSERT_EQ(EGL_CONDITION_SATISFIED_KHR, eglClientWaitSyncKHR(display, sync1, 0, kTimeout));
+
+    // If the global fence sync is signaled, then the signal from context2 must also be signaled.
+    // Note that if sync1 was an EGL_SYNC_FENCE_KHR, this would not necessarily be true.
+    EGLint value = 0;
+    EXPECT_EGL_TRUE(eglGetSyncAttribKHR(display, sync2, EGL_SYNC_STATUS_KHR, &value));
+    EXPECT_EQ(value, EGL_SIGNALED_KHR);
+
+    EXPECT_EQ(EGL_CONDITION_SATISFIED_KHR, eglClientWaitSyncKHR(display, sync2, 0, 0));
+
+    EXPECT_EGL_TRUE(eglDestroySyncKHR(display, sync1));
+    EXPECT_EGL_TRUE(eglDestroySyncKHR(display, sync2));
+
+    EXPECT_EGL_TRUE(eglDestroySurface(display, drawSurface2));
+    EXPECT_EGL_TRUE(eglDestroyContext(display, context2));
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(EGLSyncTest);

@@ -1676,6 +1676,9 @@ inline const char *getQualifierString(TQualifier q)
     case EvqLocalInvocationIndex:      return "LocalInvocationIndex";
     case EvqReadOnly:                  return "readonly";
     case EvqWriteOnly:                 return "writeonly";
+    case EvqCoherent:                  return "coherent";
+    case EvqRestrict:                  return "restrict";
+    case EvqVolatile:                  return "volatile";
     case EvqGeometryIn:                return "in";
     case EvqGeometryOut:               return "out";
     case EvqPerVertexIn:               return "gl_in";

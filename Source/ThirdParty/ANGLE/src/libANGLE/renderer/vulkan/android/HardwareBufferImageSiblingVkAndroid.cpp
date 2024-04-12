@@ -263,15 +263,6 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
         vk::AddToPNextChain(&bufferFormatProperties, &bufferFormatResolveProperties);
     }
 
-    VkAndroidHardwareBufferFormatProperties2ANDROID bufferFormatProperties2 = {};
-    if (renderer->getFeatures().supportsFormatFeatureFlags2.enabled)
-    {
-        bufferFormatProperties2.sType =
-            VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_2_ANDROID;
-        bufferFormatProperties2.pNext = nullptr;
-        vk::AddToPNextChain(&bufferFormatProperties, &bufferFormatProperties2);
-    }
-
     VkDevice device = renderer->getDevice();
     ANGLE_VK_TRY(displayVk, vkGetAndroidHardwareBufferPropertiesANDROID(device, hardwareBuffer,
                                                                         &bufferProperties));
@@ -333,14 +324,19 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
         if (externalFormat.externalFormat != 0 && !externalRenderTargetSupported)
         {
             // Clear all other bits except sampled
-            usage = (renderer->getFeatures().forceSampleUsageForImageWithExternalFormat.enabled)
-                        ? VK_IMAGE_USAGE_SAMPLED_BIT
-                        : (usage & VK_IMAGE_USAGE_SAMPLED_BIT);
+            usage &= VK_IMAGE_USAGE_SAMPLED_BIT;
         }
 
         // If the pNext chain includes a VkExternalFormatANDROID structure whose externalFormat
         // member is not 0, tiling must be VK_IMAGE_TILING_OPTIMAL
         imageTilingMode = VK_IMAGE_TILING_OPTIMAL;
+    }
+
+    // If forceSampleUsageForAhbBackedImages feature is enabled force enable
+    // VK_IMAGE_USAGE_SAMPLED_BIT
+    if (renderer->getFeatures().forceSampleUsageForAhbBackedImages.enabled)
+    {
+        usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
     }
 
     VkExternalMemoryImageCreateInfo externalMemoryImageCreateInfo = {};
@@ -368,6 +364,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
 
     mImage->setTilingMode(imageTilingMode);
     VkImageCreateFlags imageCreateFlags = AhbDescUsageToVkImageCreateFlags(ahbDescription);
+    vk::YcbcrConversionDesc conversionDesc{};
 
     if (isExternal)
     {
@@ -386,6 +383,31 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
             // If not renderable, don't burn a slot on it.
             vkFormat = &renderer->getFormat(angle::FormatID::NONE);
         }
+
+        // Note from Vulkan spec: Since GL_OES_EGL_image_external does not require the same sampling
+        // and conversion calculations as Vulkan does, achieving identical results between APIs may
+        // not be possible on some implementations.
+        ANGLE_VK_CHECK(displayVk, renderer->getFeatures().supportsYUVSamplerConversion.enabled,
+                       VK_ERROR_FEATURE_NOT_PRESENT);
+        ASSERT(externalFormat.pNext == nullptr);
+
+        // This may not actually mean the format is YUV. But the rest of ANGLE makes this
+        // assumption and needs this member variable.
+        mYUV = true;
+
+        vk::YcbcrLinearFilterSupport linearFilterSupported =
+            (bufferFormatProperties.formatFeatures &
+             VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT) != 0
+                ? vk::YcbcrLinearFilterSupport::Supported
+                : vk::YcbcrLinearFilterSupport::Unsupported;
+
+        conversionDesc.update(
+            renderer, bufferFormatProperties.externalFormat,
+            bufferFormatProperties.suggestedYcbcrModel, bufferFormatProperties.suggestedYcbcrRange,
+            bufferFormatProperties.suggestedXChromaOffset,
+            bufferFormatProperties.suggestedYChromaOffset, vk::kDefaultYCbCrChromaFilter,
+            bufferFormatProperties.samplerYcbcrConversionComponents, angle::FormatID::NONE,
+            linearFilterSupported);
     }
 
     const gl::TextureType textureType = AhbDescUsageToTextureType(ahbDescription, layerCount);
@@ -400,7 +422,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
         displayVk, textureType, vkExtents, vkFormat->getIntendedFormatID(),
         vkFormat->getActualRenderableImageFormatID(), 1, usage, imageCreateFlags,
         vk::ImageLayout::ExternalPreInitialized, imageCreateInfoPNext, gl::LevelIndex(0),
-        mLevelCount, layerCount, robustInitEnabled, hasProtectedContent()));
+        mLevelCount, layerCount, robustInitEnabled, hasProtectedContent(), conversionDesc));
 
     VkImportAndroidHardwareBufferInfoANDROID importHardwareBufferInfo = {};
     importHardwareBufferInfo.sType  = VK_STRUCTURE_TYPE_IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;
@@ -421,27 +443,6 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     const VkMemoryPropertyFlags flags =
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT |
         (hasProtectedContent() ? VK_MEMORY_PROPERTY_PROTECTED_BIT : 0);
-
-    if (isExternal)
-    {
-        // Note from Vulkan spec: Since GL_OES_EGL_image_external does not require the same sampling
-        // and conversion calculations as Vulkan does, achieving identical results between APIs may
-        // not be possible on some implementations.
-        ANGLE_VK_CHECK(displayVk, renderer->getFeatures().supportsYUVSamplerConversion.enabled,
-                       VK_ERROR_FEATURE_NOT_PRESENT);
-        ASSERT(externalFormat.pNext == nullptr);
-
-        // Update the SamplerYcbcrConversionCache key
-        mImage->updateYcbcrConversionDesc(
-            renderer, bufferFormatProperties.externalFormat,
-            bufferFormatProperties.suggestedYcbcrModel, bufferFormatProperties.suggestedYcbcrRange,
-            bufferFormatProperties.suggestedXChromaOffset,
-            bufferFormatProperties.suggestedYChromaOffset, vk::kDefaultYCbCrChromaFilter,
-            bufferFormatProperties.samplerYcbcrConversionComponents, angle::FormatID::NONE);
-        // This may not actually mean the format is YUV. But the rest of ANGLE makes this
-        // assumption and needs this member variable.
-        mYUV = true;
-    }
 
     ANGLE_TRY(mImage->initExternalMemory(displayVk, renderer->getMemoryProperties(),
                                          externalMemoryRequirements, 1, &dedicatedAllocInfoPtr,

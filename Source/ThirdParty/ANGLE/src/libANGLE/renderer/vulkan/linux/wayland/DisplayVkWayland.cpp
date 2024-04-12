@@ -109,9 +109,9 @@ const char *DisplayVkWayland::getWSIExtension() const
     return VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
 }
 
-bool DisplayVkWayland::isWayland() const
+angle::NativeWindowSystem DisplayVkWayland::getWindowSystem() const
 {
-    return true;
+    return angle::NativeWindowSystem::Wayland;
 }
 
 bool IsVulkanWaylandDisplayAvailable()

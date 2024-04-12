@@ -115,6 +115,19 @@ template("angle_vulkan_backend_template") {
       deps += [ "$angle_root:angle_version_info" ]
     }
 
+    # OpenCL on ANGLE needs both spirv-tools and clspv for compiler
+    if (angle_enable_cl) {
+      deps += [
+        "$angle_root/third_party/clspv/:clspv_core_shared",
+        "$angle_root/third_party/vulkan-deps/spirv-tools/src/:spvtools",
+        "$angle_root/third_party/vulkan-deps/spirv-tools/src/:spvtools_opt",
+      ]
+      include_dirs = [
+        "$angle_root/third_party/vulkan-deps/spirv-tools/src/include",
+        "$angle_root/third_party/clspv/src/include",
+      ]
+    }
+
     public_deps = [
       "$angle_root:libANGLE_headers",
       "$angle_root/src/common/vulkan",

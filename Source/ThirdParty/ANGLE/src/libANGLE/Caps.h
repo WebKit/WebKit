@@ -682,8 +682,11 @@ struct DisplayExtensions
     // EGL_KHR_partial_update
     bool partialUpdateKHR = false;
 
-    // EGL_ANGLE_sync_mtl_shared_event
+    // EGL_ANGLE_metal_shared_event_sync
     bool mtlSyncSharedEventANGLE = false;
+
+    // EGL_ANGLE_global_fence_sync
+    bool globalFenceSyncANGLE = false;
 };
 
 struct DeviceExtensions
@@ -755,6 +758,9 @@ struct ClientExtensions
 
     // EGL_ANGLE_platform_angle_null
     bool platformANGLENULL = false;
+
+    // EGL_ANGLE_platform_angle_webgpu
+    bool platformANGLEWebgpu = false;
 
     // EGL_ANGLE_platform_angle_vulkan
     bool platformANGLEVulkan = false;

@@ -17,6 +17,7 @@
       'android-arm-compile': 'angle_reclient_android_arm_release_bot',
       'android-arm-dbg-compile': 'angle_reclient_android_arm_debug_bot',
       'android-arm64-dbg-compile': 'angle_reclient_android_arm64_debug_bot',
+      'android-arm64-exp-s22-test': 'angle_reclient_android_arm64_release_bot',
       'android-arm64-exp-test': 'angle_reclient_android_arm64_release_bot',
       'android-arm64-test': 'angle_reclient_android_arm64_release_bot',
       'android-pixel4-perf': 'angle_reclient_android_perf_bot',

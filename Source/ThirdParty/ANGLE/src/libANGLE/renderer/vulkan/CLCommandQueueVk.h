@@ -9,7 +9,15 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLCOMMANDQUEUEVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLCOMMANDQUEUEVK_H_
 
+#include <vector>
+
+#include "libANGLE/renderer/vulkan/DisplayVk.h"
+#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
+#include "libANGLE/renderer/vulkan/vk_command_buffer_utils.h"
+#include "libANGLE/renderer/vulkan/vk_helpers.h"
+#include "libANGLE/renderer/vulkan/vk_utils.h"
+#include "libANGLE/renderer/vulkan/vk_wrapper.h"
 
 #include "libANGLE/renderer/CLCommandQueueImpl.h"
 
@@ -42,9 +50,9 @@ class CLCommandQueueVk : public CLCommandQueueImpl
 
     angle::Result enqueueReadBufferRect(const cl::Buffer &buffer,
                                         bool blocking,
-                                        const size_t bufferOrigin[3],
-                                        const size_t hostOrigin[3],
-                                        const size_t region[3],
+                                        const cl::MemOffsets &bufferOrigin,
+                                        const cl::MemOffsets &hostOrigin,
+                                        const cl::Coordinate &region,
                                         size_t bufferRowPitch,
                                         size_t bufferSlicePitch,
                                         size_t hostRowPitch,
@@ -55,9 +63,9 @@ class CLCommandQueueVk : public CLCommandQueueImpl
 
     angle::Result enqueueWriteBufferRect(const cl::Buffer &buffer,
                                          bool blocking,
-                                         const size_t bufferOrigin[3],
-                                         const size_t hostOrigin[3],
-                                         const size_t region[3],
+                                         const cl::MemOffsets &bufferOrigin,
+                                         const cl::MemOffsets &hostOrigin,
+                                         const cl::Coordinate &region,
                                          size_t bufferRowPitch,
                                          size_t bufferSlicePitch,
                                          size_t hostRowPitch,
@@ -76,9 +84,9 @@ class CLCommandQueueVk : public CLCommandQueueImpl
 
     angle::Result enqueueCopyBufferRect(const cl::Buffer &srcBuffer,
                                         const cl::Buffer &dstBuffer,
-                                        const size_t srcOrigin[3],
-                                        const size_t dstOrigin[3],
-                                        const size_t region[3],
+                                        const cl::MemOffsets &srcOrigin,
+                                        const cl::MemOffsets &dstOrigin,
+                                        const cl::Coordinate &region,
                                         size_t srcRowPitch,
                                         size_t srcSlicePitch,
                                         size_t dstRowPitch,
@@ -105,8 +113,8 @@ class CLCommandQueueVk : public CLCommandQueueImpl
 
     angle::Result enqueueReadImage(const cl::Image &image,
                                    bool blocking,
-                                   const size_t origin[3],
-                                   const size_t region[3],
+                                   const cl::MemOffsets &origin,
+                                   const cl::Coordinate &region,
                                    size_t rowPitch,
                                    size_t slicePitch,
                                    void *ptr,
@@ -115,8 +123,8 @@ class CLCommandQueueVk : public CLCommandQueueImpl
 
     angle::Result enqueueWriteImage(const cl::Image &image,
                                     bool blocking,
-                                    const size_t origin[3],
-                                    const size_t region[3],
+                                    const cl::MemOffsets &origin,
+                                    const cl::Coordinate &region,
                                     size_t inputRowPitch,
                                     size_t inputSlicePitch,
                                     const void *ptr,
@@ -125,23 +133,23 @@ class CLCommandQueueVk : public CLCommandQueueImpl
 
     angle::Result enqueueCopyImage(const cl::Image &srcImage,
                                    const cl::Image &dstImage,
-                                   const size_t srcOrigin[3],
-                                   const size_t dstOrigin[3],
-                                   const size_t region[3],
+                                   const cl::MemOffsets &srcOrigin,
+                                   const cl::MemOffsets &dstOrigin,
+                                   const cl::Coordinate &region,
                                    const cl::EventPtrs &waitEvents,
                                    CLEventImpl::CreateFunc *eventCreateFunc) override;
 
     angle::Result enqueueFillImage(const cl::Image &image,
                                    const void *fillColor,
-                                   const size_t origin[3],
-                                   const size_t region[3],
+                                   const cl::MemOffsets &origin,
+                                   const cl::Coordinate &region,
                                    const cl::EventPtrs &waitEvents,
                                    CLEventImpl::CreateFunc *eventCreateFunc) override;
 
     angle::Result enqueueCopyImageToBuffer(const cl::Image &srcImage,
                                            const cl::Buffer &dstBuffer,
-                                           const size_t srcOrigin[3],
-                                           const size_t region[3],
+                                           const cl::MemOffsets &srcOrigin,
+                                           const cl::Coordinate &region,
                                            size_t dstOffset,
                                            const cl::EventPtrs &waitEvents,
                                            CLEventImpl::CreateFunc *eventCreateFunc) override;
@@ -149,16 +157,16 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     angle::Result enqueueCopyBufferToImage(const cl::Buffer &srcBuffer,
                                            const cl::Image &dstImage,
                                            size_t srcOffset,
-                                           const size_t dstOrigin[3],
-                                           const size_t region[3],
+                                           const cl::MemOffsets &dstOrigin,
+                                           const cl::Coordinate &region,
                                            const cl::EventPtrs &waitEvents,
                                            CLEventImpl::CreateFunc *eventCreateFunc) override;
 
     angle::Result enqueueMapImage(const cl::Image &image,
                                   bool blocking,
                                   cl::MapFlags mapFlags,
-                                  const size_t origin[3],
-                                  const size_t region[3],
+                                  const cl::MemOffsets &origin,
+                                  const cl::Coordinate &region,
                                   size_t *imageRowPitch,
                                   size_t *imageSlicePitch,
                                   const cl::EventPtrs &waitEvents,
@@ -210,6 +218,18 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     angle::Result flush() override;
 
     angle::Result finish() override;
+
+  private:
+    vk::ProtectionType getProtectionType() const { return vk::ProtectionType::Unprotected; }
+
+    CLContextVk *mContext;
+    const CLDeviceVk *mDevice;
+
+    vk::SecondaryCommandPools mCommandPool;
+    vk::OutsideRenderPassCommandBufferHelper *mComputePassCommands;
+    vk::SecondaryCommandMemoryAllocator mOutsideRenderPassCommandsAllocator;
+
+    std::vector<std::string> mCommandBufferDiagnostics;
 };
 
 }  // namespace rx

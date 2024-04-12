@@ -144,13 +144,9 @@ bool ValidateLimitationsTraverser::visitLoop(Visit, TIntermLoop *node)
     if (!validateForLoopHeader(node))
         return false;
 
-    TIntermNode *body = node->getBody();
-    if (body != nullptr)
-    {
-        mLoopSymbolIds.push_back(GetLoopSymbolId(node));
-        body->traverse(this);
-        mLoopSymbolIds.pop_back();
-    }
+    mLoopSymbolIds.push_back(GetLoopSymbolId(node));
+    node->getBody()->traverse(this);
+    mLoopSymbolIds.pop_back();
 
     // The loop is fully processed - no need to visit children.
     return false;

@@ -1600,7 +1600,7 @@ void AtomicCounterBufferLinker::link(const std::map<int, unsigned int> &sizeMap)
 {
     for (auto &atomicCounterBuffer : *mAtomicCounterBuffersOut)
     {
-        auto bufferSize = sizeMap.find(atomicCounterBuffer.pod.binding);
+        auto bufferSize = sizeMap.find(atomicCounterBuffer.pod.inShaderBinding);
         ASSERT(bufferSize != sizeMap.end());
         atomicCounterBuffer.pod.dataSize = bufferSize->second;
     }

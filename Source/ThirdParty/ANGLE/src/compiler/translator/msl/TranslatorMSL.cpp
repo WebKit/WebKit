@@ -772,8 +772,9 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
 {
     ASSERT(shaderType == GL_VERTEX_SHADER || shaderType == GL_FRAGMENT_SHADER);
 
-    const TVariable *clipDistanceVar =
-        &FindSymbolNode(root, ImmutableString("gl_ClipDistance"))->variable();
+    const TIntermSymbol *symbolNode = FindSymbolNode(root, ImmutableString("gl_ClipDistance"));
+    ASSERT(symbolNode != nullptr);
+    const TVariable *clipDistanceVar = &symbolNode->variable();
 
     const bool fragment = shaderType == GL_FRAGMENT_SHADER;
     if (fragment)

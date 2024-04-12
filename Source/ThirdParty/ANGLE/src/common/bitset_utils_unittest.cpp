@@ -101,6 +101,27 @@ TYPED_TEST(BitSetTest, Basic)
     EXPECT_EQ(mBits.count(), 0u);
 }
 
+// Test of gaps detection
+TYPED_TEST(BitSetTest, Gaps)
+{
+    // Test and cache all bitsets with no gaps
+    std::vector<TypeParam> gaplessValues;
+    for (size_t i = 0; i <= TypeParam::size(); ++i)
+    {
+        EXPECT_FALSE(TypeParam::Mask(i).hasGaps());
+        gaplessValues.push_back(TypeParam::Mask(i));
+    }
+
+    // Explicitly check all 8-bit masks
+    for (size_t i = 0; i < 256; ++i)
+    {
+        const TypeParam bits = TypeParam(i);
+        const bool notFound =
+            std::find(gaplessValues.begin(), gaplessValues.end(), bits) == std::end(gaplessValues);
+        EXPECT_EQ(bits.hasGaps(), notFound);
+    }
+}
+
 // Test that BitSetT's initializer list constructor works correctly.
 TYPED_TEST(BitSetTest, InitializerList)
 {

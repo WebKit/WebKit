@@ -70,6 +70,7 @@ angle_end2end_tests_sources = [
   "gl_tests/DrawBaseVertexBaseInstanceTest.cpp",
   "gl_tests/DrawBaseVertexVariantsTest.cpp",
   "gl_tests/DrawBuffersTest.cpp",
+  "gl_tests/DrawElementsIndirectTest.cpp",
   "gl_tests/DrawElementsTest.cpp",
   "gl_tests/DrawRangeElementsTest.cpp",
   "gl_tests/EGLImageMECFriendlyTest.cpp",

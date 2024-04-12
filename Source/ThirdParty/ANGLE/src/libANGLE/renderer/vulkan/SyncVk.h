@@ -81,7 +81,7 @@ class SyncHelper final : public vk::Resource, public SyncHelperInterface
     SyncHelper();
     ~SyncHelper() override;
 
-    angle::Result initialize(ContextVk *contextVk, bool isEGLSyncObject);
+    angle::Result initialize(ContextVk *contextVk, SyncFenceScope scope);
 
     // SyncHelperInterface
 

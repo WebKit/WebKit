@@ -6,9 +6,6 @@
 
 // DisplayGLX.cpp: GLX implementation of egl::Display
 
-#include "libANGLE/renderer/gl/glx/DisplayGLX.h"
-
-#include <EGL/eglext.h>
 #include <algorithm>
 #include <cstring>
 #include <fstream>
@@ -21,11 +18,17 @@
 #include "libANGLE/Surface.h"
 #include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
+#include "libANGLE/renderer/gl/renderergl_utils.h"
+
+#include "libANGLE/renderer/gl/glx/DisplayGLX.h"
+
+#include <EGL/eglext.h>
+
+#include "libANGLE/renderer/gl/glx/DisplayGLX_api.h"
 #include "libANGLE/renderer/gl/glx/PbufferSurfaceGLX.h"
 #include "libANGLE/renderer/gl/glx/PixmapSurfaceGLX.h"
 #include "libANGLE/renderer/gl/glx/WindowSurfaceGLX.h"
 #include "libANGLE/renderer/gl/glx/glx_utils.h"
-#include "libANGLE/renderer/gl/renderergl_utils.h"
 
 namespace
 {
@@ -749,7 +752,7 @@ egl::Error DisplayGLX::waitClient(const gl::Context *context)
 
 egl::Error DisplayGLX::waitNative(const gl::Context *context, EGLint engine)
 {
-    // eglWaitNative is used to notice the driver of changes in X11 for the current surface, such as
+    // eglWaitNative is used to notify the driver of changes in X11 for the current surface, such as
     // changes of the window size. We use this event to update the child window of WindowSurfaceGLX
     // to match its parent window's size.
     // Handling eglWaitNative this way helps the application control when resize happens. This is
@@ -953,9 +956,14 @@ RendererGL *DisplayGLX::getRenderer() const
     return mRenderer.get();
 }
 
-bool DisplayGLX::isX11() const
+angle::NativeWindowSystem DisplayGLX::getWindowSystem() const
 {
-    return true;
+    return angle::NativeWindowSystem::X11;
+}
+
+DisplayImpl *CreateGLXDisplay(const egl::DisplayState &state)
+{
+    return new DisplayGLX(state);
 }
 
 }  // namespace rx

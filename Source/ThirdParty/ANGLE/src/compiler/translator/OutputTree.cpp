@@ -598,9 +598,7 @@ void TOutputTraverser::visitConstantUnion(TIntermConstantUnion *node)
                 else
                     mOut << "false";
 
-                mOut << " ("
-                     << "const bool"
-                     << ")";
+                mOut << " (" << "const bool" << ")";
                 mOut << "\n";
                 break;
             case EbtFloat:
@@ -651,15 +649,8 @@ bool TOutputTraverser::visitLoop(Visit visit, TIntermLoop *node)
     }
 
     OutputTreeText(mOut, node, getCurrentIndentDepth());
-    if (node->getBody())
-    {
-        mOut << "Loop Body\n";
-        node->getBody()->traverse(this);
-    }
-    else
-    {
-        mOut << "No loop body\n";
-    }
+    mOut << "Loop Body\n";
+    node->getBody()->traverse(this);
 
     if (node->getExpression())
     {

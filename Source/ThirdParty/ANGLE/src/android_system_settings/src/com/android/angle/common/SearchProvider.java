@@ -33,6 +33,8 @@ import android.database.MatrixCursor;
 import android.provider.SearchIndexablesProvider;
 import android.provider.Settings;
 
+import com.android.angle.R;
+
 public class SearchProvider extends SearchIndexablesProvider
 {
 

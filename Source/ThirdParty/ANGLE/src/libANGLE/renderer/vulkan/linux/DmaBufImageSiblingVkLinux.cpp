@@ -513,18 +513,7 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
 
     constexpr bool kIsRobustInitEnabled = false;
 
-    ANGLE_TRY(mImage->initExternal(
-        displayVk, gl::TextureType::_2D, vkExtents, intendedFormatID, actualImageFormatID, 1,
-        usageFlags, createFlags, vk::ImageLayout::ExternalPreInitialized, imageCreateInfoPNext,
-        gl::LevelIndex(0), 1, 1, kIsRobustInitEnabled, hasProtectedContent()));
-
-    VkMemoryRequirements externalMemoryRequirements;
-    mImage->getImage().getMemoryRequirements(renderer->getDevice(), &externalMemoryRequirements);
-
-    const VkMemoryPropertyFlags flags =
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT |
-        (hasProtectedContent() ? VK_MEMORY_PROPERTY_PROTECTED_BIT : 0);
-
+    vk::YcbcrConversionDesc conversionDesc{};
     if (mYUV)
     {
         const VkChromaLocation xChromaOffset =
@@ -543,9 +532,31 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
         ANGLE_VK_CHECK(displayVk, renderer->getFeatures().supportsYUVSamplerConversion.enabled,
                        VK_ERROR_FEATURE_NOT_PRESENT);
 
-        mImage->updateYcbcrConversionDesc(renderer, 0, model, range, xChromaOffset, yChromaOffset,
-                                          VK_FILTER_NEAREST, components, intendedFormatID);
+        const vk::YcbcrLinearFilterSupport linearFilterSupported =
+            renderer->hasImageFormatFeatureBits(
+                actualImageFormatID,
+                VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT)
+                ? vk::YcbcrLinearFilterSupport::Supported
+                : vk::YcbcrLinearFilterSupport::Unsupported;
+
+        // Build an appropriate conversion desc. This is not an android-style external format,
+        // but requires Ycbcr sampler conversion.
+        conversionDesc.update(renderer, 0, model, range, xChromaOffset, yChromaOffset,
+                              VK_FILTER_NEAREST, components, intendedFormatID,
+                              linearFilterSupported);
     }
+
+    ANGLE_TRY(mImage->initExternal(
+        displayVk, gl::TextureType::_2D, vkExtents, intendedFormatID, actualImageFormatID, 1,
+        usageFlags, createFlags, vk::ImageLayout::ExternalPreInitialized, imageCreateInfoPNext,
+        gl::LevelIndex(0), 1, 1, kIsRobustInitEnabled, hasProtectedContent(), conversionDesc));
+
+    VkMemoryRequirements externalMemoryRequirements;
+    mImage->getImage().getMemoryRequirements(renderer->getDevice(), &externalMemoryRequirements);
+
+    const VkMemoryPropertyFlags flags =
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT |
+        (hasProtectedContent() ? VK_MEMORY_PROPERTY_PROTECTED_BIT : 0);
 
     AllocateInfo allocateInfo;
     uint32_t allocateInfoCount;

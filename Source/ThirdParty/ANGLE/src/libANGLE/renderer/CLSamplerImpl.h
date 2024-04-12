@@ -8,7 +8,7 @@
 #ifndef LIBANGLE_RENDERER_CLSAMPLERIMPL_H_
 #define LIBANGLE_RENDERER_CLSAMPLERIMPL_H_
 
-#include "libANGLE/renderer/CLtypes.h"
+#include "libANGLE/renderer/cl_types.h"
 
 namespace rx
 {

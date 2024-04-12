@@ -59,12 +59,6 @@ template("angle_trace_libs") {
     _trace_counter = 1
   }
 
-  if (is_android && is_component_build) {
-    _cr_suffix = ".cr"
-  } else {
-    _cr_suffix = ""
-  }
-
   foreach(_trace_and_version, invoker.trace_list) {
     _trace_and_version_arr = []
     _trace_and_version_arr = string_split(_trace_and_version)
@@ -112,7 +106,7 @@ template("angle_trace_libs") {
     }
 
     _trace_targets += [ ":$_target" ]
-    _trace_lib_files += [ "${root_out_dir}/lib${_target}${_cr_suffix}.so" ]
+    _trace_lib_files += [ "${root_out_dir}/lib${_target}.so" ]
   }
 
   angle_shared_library(target_name) {
@@ -132,8 +126,8 @@ template("angle_trace_libs") {
       ]
 
       # Also need files listed as data to be picked up by isolate
-      data = _trace_lib_files +
-             [ "${root_out_dir}/libangle_trace_interpreter${_cr_suffix}.so" ]
+      data =
+          _trace_lib_files + [ "${root_out_dir}/libangle_trace_interpreter.so" ]
     }
   }
 }

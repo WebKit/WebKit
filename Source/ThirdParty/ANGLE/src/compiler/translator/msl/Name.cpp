@@ -8,8 +8,8 @@
 #include "common/debug.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 
-using namespace sh;
-
+namespace sh
+{
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
@@ -65,6 +65,12 @@ bool Name::beginsWith(const Name &prefix) const
 
 void Name::emit(TInfoSinkBase &out) const
 {
+    emitImpl(out);
+}
+
+template <typename T>
+void Name::emitImpl(T &out) const
+{
     switch (mSymbolType)
     {
         case SymbolType::BuiltIn:
@@ -104,6 +110,12 @@ void Name::emit(TInfoSinkBase &out) const
             UNREACHABLE();
             break;
     }
+}
+
+std::ostream &operator<<(std::ostream &out, const Name &name)
+{
+    name.emitImpl(out);
+    return out;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -222,9 +234,11 @@ class ExpressionContainsNameVisitor : public TIntermTraverser
 
 }  // anonymous namespace
 
-bool sh::ExpressionContainsName(const Name &name, TIntermTyped &node)
+bool ExpressionContainsName(const Name &name, TIntermTyped &node)
 {
     ExpressionContainsNameVisitor visitor(name);
     node.traverse(&visitor);
     return visitor.foundName();
 }
+
+}  // namespace sh

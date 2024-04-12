@@ -6,7 +6,10 @@
 // CLPlatformVk.cpp: Implements the class methods for CLPlatformVk.
 
 #include "libANGLE/renderer/vulkan/CLPlatformVk.h"
+#include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
+#include "libANGLE/renderer/vulkan/DisplayVk.h"
+#include "libANGLE/renderer/vulkan/RendererVk.h"
 
 #include "libANGLE/CLPlatform.h"
 #include "libANGLE/cl_utils.h"
@@ -35,33 +38,76 @@ std::string CreateExtensionString(const NameVersionVector &extList)
     return extensions;
 }
 
+angle::Result InitBackendRenderer(egl::Display *display)
+{
+    // Initialize the backend RendererVk by initializing a dummy/default EGL display object
+    // TODO(aannestrand) Implement display-less RendererVk init
+    // http://anglebug.com/8515
+    // TODO(aannestrand) Add CL and EGL context testing
+    // http://anglebug.com/8514
+    if (display == nullptr || IsError(display->initialize()))
+    {
+        ERR() << "Failed to init renderer!";
+        ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
+    }
+    return angle::Result::Continue;
+}
+
 }  // namespace
 
-CLPlatformVk::~CLPlatformVk() = default;
+CLPlatformVk::~CLPlatformVk()
+{
+    mDisplay->getImplementation()->terminate();
+}
 
 CLPlatformImpl::Info CLPlatformVk::createInfo() const
 {
     NameVersionVector extList = {
-        cl_name_version{CL_MAKE_VERSION(1, 0, 0), "cl_khr_icd"},
-        cl_name_version{CL_MAKE_VERSION(1, 0, 0), "cl_khr_extended_versioning"}};
+        cl_name_version{CL_MAKE_VERSION(3, 0, 0), "cl_khr_icd"},
+        cl_name_version{CL_MAKE_VERSION(3, 0, 0), "cl_khr_extended_versioning"}};
 
     Info info;
-    info.initializeExtensions(CreateExtensionString(extList));
+    info.name.assign("ANGLE Vulkan");
     info.profile.assign("FULL_PROFILE");
     info.versionStr.assign(GetVersionString());
-    info.version = GetVersion();
-    info.name.assign("ANGLE Vulkan");
-    info.extensionsWithVersion = std::move(extList);
     info.hostTimerRes          = 0u;
+    info.extensionsWithVersion = std::move(extList);
+    info.version               = GetVersion();
+    info.initializeExtensions(CreateExtensionString(extList));
     return info;
 }
 
 CLDeviceImpl::CreateDatas CLPlatformVk::createDevices() const
 {
-    cl::DeviceType type;  // TODO(jplate) Fetch device type from Vulkan
+    ASSERT(mDisplay);
+    ASSERT(mDisplay->isInitialized());
+
     CLDeviceImpl::CreateDatas createDatas;
-    createDatas.emplace_back(
-        type, [](const cl::Device &device) { return CLDeviceVk::Ptr(new CLDeviceVk(device)); });
+
+    // Convert Vk device type to CL equivalent
+    cl_device_type type = CL_DEVICE_TYPE_DEFAULT;
+    switch (GetImplAs<DisplayVk>(mDisplay)->getRenderer()->getPhysicalDeviceProperties().deviceType)
+    {
+        case VK_PHYSICAL_DEVICE_TYPE_CPU:
+            type |= CL_DEVICE_TYPE_CPU;
+            break;
+        case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+        case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+        case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+            type |= CL_DEVICE_TYPE_GPU;
+            break;
+        case VK_PHYSICAL_DEVICE_TYPE_OTHER:
+        case VK_PHYSICAL_DEVICE_TYPE_MAX_ENUM:
+            // The default OpenCL device must not be a CL_DEVICE_TYPE_CUSTOM device.
+            // Thus, we override type bitfield to custom only.
+            type = CL_DEVICE_TYPE_CUSTOM;
+            break;
+    }
+
+    createDatas.emplace_back(type, [this](const cl::Device &device) {
+        return CLDeviceVk::Ptr(
+            new CLDeviceVk(device, GetImplAs<DisplayVk>(mDisplay)->getRenderer()));
+    });
     return createDatas;
 }
 
@@ -70,8 +116,12 @@ angle::Result CLPlatformVk::createContext(cl::Context &context,
                                           bool userSync,
                                           CLContextImpl::Ptr *contextOut)
 {
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+    *contextOut = CLContextImpl::Ptr(new (std::nothrow) CLContextVk(context, mDisplay, devices));
+    if (*contextOut == nullptr)
+    {
+        ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
+    }
+    return angle::Result::Continue;
 }
 
 angle::Result CLPlatformVk::createContextFromType(cl::Context &context,
@@ -79,8 +129,49 @@ angle::Result CLPlatformVk::createContextFromType(cl::Context &context,
                                                   bool userSync,
                                                   CLContextImpl::Ptr *contextOut)
 {
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+    ASSERT(mDisplay);
+    ASSERT(mDisplay->isInitialized());
+
+    const VkPhysicalDeviceType &vkPhysicalDeviceType =
+        GetImplAs<DisplayVk>(mDisplay)->getRenderer()->getPhysicalDeviceProperties().deviceType;
+
+    if (deviceType.isSet(CL_DEVICE_TYPE_CPU) && vkPhysicalDeviceType != VK_PHYSICAL_DEVICE_TYPE_CPU)
+    {
+        ANGLE_CL_RETURN_ERROR(CL_DEVICE_NOT_FOUND);
+    }
+    else if (deviceType.isSet(CL_DEVICE_TYPE_GPU))
+    {
+        switch (vkPhysicalDeviceType)
+        {
+            case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+            case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+            case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+                break;
+            default:
+                ANGLE_CL_RETURN_ERROR(CL_DEVICE_NOT_FOUND);
+        }
+    }
+    else
+    {
+        ANGLE_CL_RETURN_ERROR(CL_DEVICE_NOT_FOUND);
+    }
+
+    cl::DevicePtrs devices;
+    for (const auto &platformDevice : mPlatform.getDevices())
+    {
+        const auto &platformDeviceInfo = platformDevice->getInfo();
+        if (platformDeviceInfo.type.isSet(deviceType))
+        {
+            devices.push_back(platformDevice);
+        }
+    }
+
+    *contextOut = CLContextImpl::Ptr(new (std::nothrow) CLContextVk(context, mDisplay, devices));
+    if (*contextOut == nullptr)
+    {
+        ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
+    }
+    return angle::Result::Continue;
 }
 
 angle::Result CLPlatformVk::unloadCompiler()
@@ -103,6 +194,11 @@ const std::string &CLPlatformVk::GetVersionString()
     return *sVersion;
 }
 
-CLPlatformVk::CLPlatformVk(const cl::Platform &platform) : CLPlatformImpl(platform) {}
+CLPlatformVk::CLPlatformVk(const cl::Platform &platform) : CLPlatformImpl(platform)
+{
+    mDisplay = egl::Display::GetDisplayFromNativeDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+                                                         EGL_DEFAULT_DISPLAY, egl::AttributeMap{});
+    ANGLE_CL_IMPL_TRY(InitBackendRenderer(mDisplay));
+}
 
 }  // namespace rx

@@ -142,6 +142,18 @@ class PbufferTest : public ANGLETest<>
                                            pBufferSrgbAttributes);
     }
 
+    void drawColorQuad(GLColor color)
+    {
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+        glUseProgram(program);
+        GLint colorUniformLocation =
+            glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+        ASSERT_NE(colorUniformLocation, -1);
+        glUniform4fv(colorUniformLocation, 1, color.toNormalizedVector().data());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+        glUseProgram(0);
+    }
+
     GLuint mTextureProgram;
     GLint mTextureUniformLocation;
 
@@ -273,8 +285,7 @@ TEST_P(PbufferTest, BindTexImageAlreadyBound)
     ANGLE_SKIP_TEST_IF(status == GL_FRAMEBUFFER_UNSUPPORTED);
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, status);
 
-    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    drawColorQuad(GLColor::magenta);
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_COLOR_EQ(static_cast<GLint>(mPbufferSize) / 2,
@@ -291,6 +302,7 @@ TEST_P(PbufferTest, BindTexImageOverwrite)
     // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
     // textures.
     ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
+
     EGLWindow *window = getEGLWindow();
     window->makeCurrent();
 
@@ -313,8 +325,7 @@ TEST_P(PbufferTest, BindTexImageOverwrite)
     ANGLE_SKIP_TEST_IF(status == GL_FRAMEBUFFER_UNSUPPORTED);
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, status);
 
-    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    drawColorQuad(GLColor::magenta);
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_COLOR_EQ(static_cast<GLint>(mPbufferSize) / 2,
@@ -326,8 +337,7 @@ TEST_P(PbufferTest, BindTexImageOverwrite)
     EXPECT_TRUE(eglBindTexImage(window->getDisplay(), otherPbuffer, EGL_BACK_BUFFER));
     ASSERT_EGL_SUCCESS();
 
-    glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    drawColorQuad(GLColor::yellow);
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_COLOR_EQ(static_cast<GLint>(mPbufferSize) / 2,
@@ -408,8 +418,7 @@ TEST_P(PbufferTest, BindTexImageReleaseViaTextureDestroy)
         ANGLE_SKIP_TEST_IF(status == GL_FRAMEBUFFER_UNSUPPORTED);
         EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, status);
 
-        glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        drawColorQuad(GLColor::magenta);
         ASSERT_GL_NO_ERROR();
     }
 
@@ -502,8 +511,7 @@ TEST_P(PbufferTest, BindTexImagePbufferDestroyWhileBound)
     ANGLE_SKIP_TEST_IF(status == GL_FRAMEBUFFER_UNSUPPORTED);
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, status);
 
-    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    drawColorQuad(GLColor::magenta);
     ASSERT_GL_NO_ERROR();
 
     // This is being tested: destroy the pbuffer, but the underlying binding still works.
@@ -524,6 +532,7 @@ TEST_P(PbufferTest, BindTexImageOverwriteReleasesOrphanedPbuffer)
     // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
     // textures.
     ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
+
     EGLWindow *window = getEGLWindow();
     window->makeCurrent();
 
@@ -547,8 +556,7 @@ TEST_P(PbufferTest, BindTexImageOverwriteReleasesOrphanedPbuffer)
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, status);
 
     // Write magenta. This shouldn't be read below.
-    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    drawColorQuad(GLColor::magenta);
     ASSERT_GL_NO_ERROR();
 
     // This is being tested: destroy the pbuffer, but the underlying binding still works.
@@ -562,8 +570,7 @@ TEST_P(PbufferTest, BindTexImageOverwriteReleasesOrphanedPbuffer)
     EXPECT_TRUE(eglBindTexImage(window->getDisplay(), otherPbuffer, EGL_BACK_BUFFER));
 
     // Write yellow.
-    glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    drawColorQuad(GLColor::yellow);
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_COLOR_EQ(static_cast<GLint>(mPbufferSize) / 2,
@@ -952,6 +959,9 @@ TEST_P(PbufferTest, UseAsFramebufferColorThenDestroy)
     ASSERT_GL_NO_ERROR();
 }
 
+// Bind the Pbuffer to a texture, use that texture as Framebuffer color attachment and then
+// destroy framebuffer, texture and Pbuffer. A bound but released TexImages are destroyed
+// only when the binding is overwritten.
 TEST_P(PbufferTest, UseAsFramebufferColorThenDeferredDestroy)
 {
     // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA

@@ -9,7 +9,6 @@
 
 #include "libANGLE/renderer/vulkan/linux/xcb/DisplayVkXcb.h"
 
-#include <X11/Xutil.h>
 #include <xcb/xcb.h>
 
 #include "common/system_utils.h"
@@ -157,7 +156,10 @@ DisplayImpl *CreateVulkanXcbDisplay(const egl::DisplayState &state)
 
 angle::Result DisplayVkXcb::waitNativeImpl()
 {
-    XSync(reinterpret_cast<Display *>(mState.displayId), False);
+    // The following is the implementation of xcb_aux_sync (equivalent of XSync).  xcb_aux_sync is
+    // not called directly because it's in the libxcb-util package, which Chrome does not want to
+    // depend on (due to different package versions in popular distros).
+    free(xcb_get_input_focus_reply(mXcbConnection, xcb_get_input_focus(mXcbConnection), nullptr));
     return angle::Result::Continue;
 }
 }  // namespace rx

@@ -6,11 +6,11 @@
 
 // PbufferSurfaceGLX.cpp: GLX implementation of egl::Surface for PBuffers
 
-#include "libANGLE/renderer/gl/glx/PbufferSurfaceGLX.h"
-
 #include "common/debug.h"
 #include "libANGLE/renderer/gl/glx/DisplayGLX.h"
+
 #include "libANGLE/renderer/gl/glx/FunctionsGLX.h"
+#include "libANGLE/renderer/gl/glx/PbufferSurfaceGLX.h"
 
 namespace rx
 {

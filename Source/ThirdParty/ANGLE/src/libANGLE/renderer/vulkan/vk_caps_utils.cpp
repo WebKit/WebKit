@@ -301,6 +301,7 @@ void RendererVk::ensureCapsInitialized() const
     mNativeExtensions.copyCompressedTextureCHROMIUM = true;
     mNativeExtensions.debugMarkerEXT                = true;
     mNativeExtensions.robustnessEXT                 = true;
+    mNativeExtensions.translatedShaderSourceANGLE   = true;
     mNativeExtensions.discardFramebufferEXT         = true;
     mNativeExtensions.stencilTexturingANGLE         = true;
     mNativeExtensions.packReverseRowOrderANGLE      = true;
@@ -1137,7 +1138,10 @@ void RendererVk::ensureCapsInitialized() const
     mNativeExtensions.multiviewOVR =
         mFeatures.supportsMultiview.enabled && mFeatures.bresenhamLineRasterization.enabled;
     mNativeExtensions.multiview2OVR = mNativeExtensions.multiviewOVR;
-    mNativeCaps.maxViews            = mMultiviewProperties.maxMultiviewViewCount;
+    // Max views affects the number of Vulkan queries per GL query in render pass, and
+    // SecondaryCommandBuffer's ResetQueryPoolParams would like this to have an upper limit (of
+    // 255).
+    mNativeCaps.maxViews = std::min(mMultiviewProperties.maxMultiviewViewCount, 8u);
 
     // GL_ANGLE_yuv_internal_format
     mNativeExtensions.yuvInternalFormatANGLE =
@@ -1168,6 +1172,11 @@ void RendererVk::ensureCapsInitialized() const
 
     // GL_QCOM_shading_rate
     mNativeExtensions.shadingRateQCOM = mFeatures.supportsFragmentShadingRate.enabled;
+
+    // GL_QCOM_framebuffer_foveated
+    mNativeExtensions.framebufferFoveatedQCOM = mFeatures.supportsFoveatedRendering.enabled;
+    // GL_QCOM_texture_foveated
+    mNativeExtensions.textureFoveatedQCOM = mFeatures.supportsFoveatedRendering.enabled;
 
     // GL_ANGLE_shader_pixel_local_storage
     mNativeExtensions.shaderPixelLocalStorageANGLE = true;

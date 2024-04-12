@@ -35,7 +35,7 @@ class DisplayVkWayland : public DisplayVkLinux
 
     const char *getWSIExtension() const override;
 
-    bool isWayland() const override;
+    angle::NativeWindowSystem getWindowSystem() const override;
 
   private:
     bool mOwnDisplay;

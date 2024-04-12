@@ -2918,11 +2918,6 @@ TEST_P(WebGL2CompatibilityTest, CopyMip0ToMip1)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
 
-    // When reading back the framebuffer, the attached texture is not rebased, so the framebuffer
-    // still sees the 1x1 mip.  The copy is flushed to this mip, which is incorrect.
-    // http://anglebug.com/4792.
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     // Bind framebuffer to mip 1 and make sure the copy was done.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 1);

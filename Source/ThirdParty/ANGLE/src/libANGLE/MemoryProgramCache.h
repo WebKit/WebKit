@@ -59,7 +59,7 @@ class MemoryProgramCache final : angle::NonCopyable
     angle::Result getProgram(const Context *context,
                              Program *program,
                              egl::BlobCache::Key *hashOut,
-                             bool *successOut);
+                             egl::CacheGetResult *resultOut);
 
     // Empty the cache.
     void clear();

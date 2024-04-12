@@ -1037,6 +1037,13 @@ void StateManagerGL::updateProgramUniformBufferBindings(const gl::Context *conte
     // Sync the current program executable state
     const gl::State &glState                = context->getState();
     const gl::ProgramExecutable *executable = glState.getProgramExecutable();
+    ProgramExecutableGL *executableGL       = GetImplAs<ProgramExecutableGL>(executable);
+
+    // If any calls to glUniformBlockBinding have been made, make them effective.  Note that if PPOs
+    // are ever supported in this backend, this needs to look at the Program's attached to PPOs
+    // instead of the PPOs own executable.  This is because glUniformBlockBinding operates on
+    // programs directly.
+    executableGL->syncUniformBlockBindings();
 
     for (size_t uniformBlockIndex = 0; uniformBlockIndex < executable->getUniformBlocks().size();
          uniformBlockIndex++)
@@ -1066,10 +1073,12 @@ void StateManagerGL::updateProgramAtomicCounterBufferBindings(const gl::Context 
     const gl::State &glState                = context->getState();
     const gl::ProgramExecutable *executable = glState.getProgramExecutable();
 
-    for (const auto &atomicCounterBuffer : executable->getAtomicCounterBuffers())
+    const std::vector<gl::AtomicCounterBuffer> &atomicCounterBuffers =
+        executable->getAtomicCounterBuffers();
+    for (size_t index = 0; index < atomicCounterBuffers.size(); ++index)
     {
-        GLuint binding     = atomicCounterBuffer.pod.binding;
-        const auto &buffer = glState.getIndexedAtomicCounterBuffer(binding);
+        const GLuint binding = executable->getAtomicCounterBufferBinding(index);
+        const auto &buffer   = glState.getIndexedAtomicCounterBuffer(binding);
 
         if (buffer.get() != nullptr)
         {

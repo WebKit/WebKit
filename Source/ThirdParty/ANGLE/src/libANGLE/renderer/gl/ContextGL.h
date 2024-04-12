@@ -46,7 +46,7 @@ class ContextGL : public ContextImpl
               RobustnessVideoMemoryPurgeStatus robustnessVideoMemoryPurgeStatus);
     ~ContextGL() override;
 
-    angle::Result initialize() override;
+    angle::Result initialize(const angle::ImageLoadContext &imageLoadContext) override;
 
     // Shader creation
     CompilerImpl *createCompiler() override;

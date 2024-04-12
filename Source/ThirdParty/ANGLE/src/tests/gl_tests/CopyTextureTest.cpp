@@ -509,10 +509,6 @@ class CopyTextureVariationsTest : public ANGLETest<CopyTextureVariationsTestPara
             sourceFormat == GL_ALPHA || destFormat == GL_LUMINANCE ||
             destFormat == GL_LUMINANCE_ALPHA || destFormat == GL_ALPHA)
         {
-            // Old drivers buggy with optimized ImageCopy shader given LUMA textures.
-            // http://anglebug.com/4721
-            ANGLE_SKIP_TEST_IF(IsLinux() && IsNVIDIA() && IsVulkan());
-
             // http://anglebug.com/4939
             ANGLE_SKIP_TEST_IF(IsOpenGL() && destFormat == GL_SRGB_ALPHA_EXT);
         }
@@ -606,10 +602,6 @@ class CopyTextureVariationsTest : public ANGLETest<CopyTextureVariationsTestPara
             sourceFormat == GL_ALPHA || destFormat == GL_LUMINANCE ||
             destFormat == GL_LUMINANCE_ALPHA || destFormat == GL_ALPHA)
         {
-            // Old drivers buggy with optimized ImageCopy shader given LUMA textures.
-            // http://anglebug.com/4721
-            ANGLE_SKIP_TEST_IF(IsLinux() && IsNVIDIA() && IsVulkan());
-
             // http://anglebug.com/4939
             ANGLE_SKIP_TEST_IF(IsOpenGL() && destFormat == GL_SRGB_ALPHA_EXT);
         }
@@ -1536,9 +1528,6 @@ TEST_P(CopyTextureTest, CopyOutsideMipmap)
 
     // http://anglebug.com/4716
     ANGLE_SKIP_TEST_IF(IsD3D());
-
-    // Failing on older drivers.  http://anglebug.com/4718
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsNVIDIA() && IsOpenGL());
 
     // http://anglebug.com/5246
     ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsOpenGL());
@@ -3015,11 +3004,6 @@ TEST_P(CopyTextureTestES3, DrawThenCopyThenBlend)
     EXPECT_PIXEL_RECT_EQ(kHalfSize + 1, 1, kHalfSize / 2 - 2, kHalfSize / 2 - 2,
                          GLColor::transparentBlack);
 }
-
-#ifdef Bool
-// X11 craziness.
-#    undef Bool
-#endif
 
 ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTest);
 ANGLE_INSTANTIATE_TEST_COMBINE_6(CopyTextureVariationsTest,

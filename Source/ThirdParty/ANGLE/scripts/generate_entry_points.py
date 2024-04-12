@@ -599,7 +599,7 @@ TEMPLATE_CL_STUBS_HEADER = """\
 #ifndef LIBGLESV2_{annotation_upper}_STUBS_AUTOGEN_H_
 #define LIBGLESV2_{annotation_upper}_STUBS_AUTOGEN_H_
 
-#include "libANGLE/CLtypes.h"
+#include "libANGLE/cl_types.h"
 
 namespace cl
 {{

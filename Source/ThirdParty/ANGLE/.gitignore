@@ -46,6 +46,7 @@
 /third_party/clspv/src
 /third_party/colorama/src
 /third_party/cpu_features/src
+/third_party/dawn
 /third_party/depot_tools
 /third_party/EGL-Registry/src
 /third_party/flatbuffers/src
@@ -74,6 +75,7 @@
 /third_party/OpenCL-Docs/src
 /third_party/OpenCL-ICD-Loader/src
 /third_party/OpenGL-Registry/src
+/third_party/perfetto
 /third_party/proguard/lib
 /third_party/protobuf
 /third_party/Python-Markdown

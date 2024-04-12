@@ -250,6 +250,48 @@ void ValidateClipCullDistanceTraverser::validate(TDiagnostics *diagnostics,
     *clipDistanceUsedOut       = (mMaxClipDistanceIndex != -1) || mHasNonConstClipDistanceIndex;
 }
 
+class ValidateClipCullDistanceLengthTraverser : public TIntermTraverser
+{
+  public:
+    ValidateClipCullDistanceLengthTraverser(TDiagnostics *diagnostics,
+                                            uint8_t clipDistanceSized,
+                                            uint8_t cullDistanceSized);
+
+  private:
+    bool visitUnary(Visit visit, TIntermUnary *node) override;
+
+    TDiagnostics *mDiagnostics;
+    const bool mClipDistanceSized;
+    const bool mCullDistanceSized;
+};
+
+ValidateClipCullDistanceLengthTraverser::ValidateClipCullDistanceLengthTraverser(
+    TDiagnostics *diagnostics,
+    uint8_t clipDistanceSize,
+    uint8_t cullDistanceSize)
+    : TIntermTraverser(true, false, false),
+      mDiagnostics(diagnostics),
+      mClipDistanceSized(clipDistanceSize > 0),
+      mCullDistanceSized(cullDistanceSize > 0)
+{}
+
+bool ValidateClipCullDistanceLengthTraverser::visitUnary(Visit visit, TIntermUnary *node)
+{
+    if (node->getOp() == EOpArrayLength)
+    {
+        TIntermTyped *operand = node->getOperand();
+        if ((operand->getQualifier() == EvqClipDistance && !mClipDistanceSized) ||
+            (operand->getQualifier() == EvqCullDistance && !mCullDistanceSized))
+        {
+            error(*operand->getAsSymbolNode(),
+                  "The length() method cannot be called on an array that is not "
+                  "runtime sized and also has not yet been explicitly sized",
+                  mDiagnostics);
+        }
+    }
+    return true;
+}
+
 }  // anonymous namespace
 
 bool ValidateClipCullDistance(TIntermBlock *root,
@@ -268,6 +310,10 @@ bool ValidateClipCullDistance(TIntermBlock *root,
     varyingValidator.validate(diagnostics, maxCullDistances, maxCombinedClipAndCullDistances,
                               clipDistanceSizeOut, cullDistanceSizeOut, clipDistanceRedeclaredOut,
                               cullDistanceRedeclaredOut, clipDistanceUsedOut);
+
+    ValidateClipCullDistanceLengthTraverser lengthValidator(diagnostics, *clipDistanceSizeOut,
+                                                            *cullDistanceSizeOut);
+    root->traverse(&lengthValidator);
     return (diagnostics->numErrors() == numErrorsBefore);
 }
 

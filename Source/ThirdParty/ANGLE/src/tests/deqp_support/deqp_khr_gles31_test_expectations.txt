@@ -267,6 +267,62 @@
 // Failure since VK-GL-CTS roll (2023-05-03)
 8166 WIN SWIFTSHADER : KHR-GLES31.core.texture_buffer.texture_buffer_errors = FAIL
 
+// Samsung Galaxy S22 (Xclipse)
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.sample_shading.render.rgba32f.full = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.sample_shading.render.rgba32f.half = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.sample_shading.render.rgba8.full = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.sample_shading.render.rgba8.half = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.sample_shading.render.rgba8i.full = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.sample_shading.render.rgba8i.half = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.sample_shading.render.rgba8ui.full = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.sample_shading.render.rgba8ui.half = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.sample_variables.position.fixed.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.sample_variables.position.fixed.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.sample_variables.position.non-fixed.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.sample_variables.position.non-fixed.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset.rgba32f.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset.rgba32f.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset.rgba8.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset.rgba8.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset.rgba8i.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset.rgba8i.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset.rgba8ui.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset.rgba8ui.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset_check.rgba32f.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset_check.rgba32f.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset_check.rgba8.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset_check.rgba8.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset_check.rgba8i.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset_check.rgba8i.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset_check.rgba8ui.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_offset_check.rgba8ui.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample.rgba32f.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample.rgba32f.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample.rgba8.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample.rgba8.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample.rgba8i.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample.rgba8i.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample.rgba8ui.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample.rgba8ui.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample_check.rgba32f.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample_check.rgba32f.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample_check.rgba8.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample_check.rgba8.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample_check.rgba8i.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample_check.rgba8i.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample_check.rgba8ui.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.interpolate_at_sample_check.rgba8ui.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.sample.rgba32f.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.sample.rgba32f.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.sample.rgba8.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.sample.rgba8.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.sample.rgba8i.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.sample.rgba8i.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.sample.rgba8ui.samples_2 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.render.sample.rgba8ui.samples_4 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.vertex_attrib_binding.basic-input-case5 = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.vertex_attrib_binding.basic-input-case6 = SKIP
+
 // Samsung Galaxy S23
 8157 GALAXYS23 VULKAN : KHR-GLES31.core.arrays_of_arrays.InteractionFunctionCalls2 = SKIP
 8157 GALAXYS23 VULKAN : KHR-GLES31.core.blend_equation_advanced.* = SKIP
@@ -276,6 +332,31 @@
 8157 GALAXYS23 VULKAN : KHR-GLES31.core.shader_bitfield_operation.* = SKIP
 8157 GALAXYS23 VULKAN : KHR-GLES31.core.texture_cube_map_array.color_depth_attachments = SKIP
 8157 GALAXYS23 VULKAN : KHR-GLES31.core.texture_storage_multisample.FunctionalTests.blitting_multisampled_depth_attachment = SKIP
+
+// Snapdragon 8 Gen3 Mobile Reference Device
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.blend_equation_advanced.blend* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.blend_equation_advanced.test_coherency.mixedSequence = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.compute_shader.resource-texture = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.draw_buffers_indexed.* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.framebuffer_no_attachments.render = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.geometry_shader.blitting.* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.geometry_shader.layered* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.geometry_shader.limits.max_input_components = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.layout_binding.sampler3D* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.pixelstoragemodes.* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.shader_bitfield_operation.unpack* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.shader_image_load_store.basic-allTargets-* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.shader_image_size.* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_border_clamp* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_buffer.texture_buffer* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_cube_map_array.sampling = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_cube_map_array* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_gather*cube* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_storage_multisample.APIGLGetTexLevelParameterifv.functional_test = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.viewport_array.* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.shaders.aggressive_optimizations.* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.shaders.layout_location.* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES31.shaders.negative.* = SKIP
 
 // Mali G710
 8212 MALIG710 VULKAN : KHR-GLES31.core.texture_border_clamp.Texture2DDC32FLinear = FAIL

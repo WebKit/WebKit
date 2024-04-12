@@ -52,6 +52,8 @@ class TextureStorage : public angle::Subject
     virtual bool supportsNativeMipmapFunction() const = 0;
     virtual int getLevelCount() const                 = 0;
 
+    virtual bool isMultiplanar(const gl::Context *context) = 0;
+
     virtual angle::Result findRenderTarget(const gl::Context *context,
                                            const gl::ImageIndex &index,
                                            GLsizei samples,
