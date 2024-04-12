@@ -223,6 +223,7 @@ protected:
 
     void logInvalidMessage(IPC::Connection&, IPC::MessageName);
     virtual ASCIILiteral processName() const = 0;
+    void didChangeThrottleState(ProcessThrottleState) override;
 
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&);
     virtual void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&) { }
@@ -265,6 +266,7 @@ private:
     bool m_alwaysRunsAtBackgroundPriority { false };
     bool m_didBeginResponsivenessChecks { false };
     WebCore::ProcessIdentifier m_processIdentifier { WebCore::ProcessIdentifier::generate() };
+    bool m_isSuspended { false };
     std::optional<UseLazyStop> m_delayedResponsivenessCheck;
     MonotonicTime m_processStart;
 #if USE(RUNNINGBOARD)
@@ -276,6 +278,9 @@ private:
 #endif
 #if ENABLE(EXTENSION_CAPABILITIES)
     ExtensionCapabilityGrantMap m_extensionCapabilityGrants;
+#endif
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    HashMap<std::pair<String /* domain */, String /* key */>, std::optional<String>> m_preferencesUpdatedWhileSuspended;
 #endif
 };
 

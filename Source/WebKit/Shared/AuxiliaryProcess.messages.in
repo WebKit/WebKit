@@ -28,6 +28,7 @@ messages -> AuxiliaryProcess NotRefCounted {
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
     PreferenceDidUpdate(String domain, String key, std::optional<String> encodedValue)
+    PreferencesDidUpdate(HashMap<std::pair<String, String>, std::optional<String>> preferences)
 #endif
 
 #if OS(LINUX)
