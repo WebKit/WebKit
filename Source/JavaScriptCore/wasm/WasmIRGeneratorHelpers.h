@@ -46,8 +46,9 @@ struct PatchpointExceptionHandleBase {
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 struct PatchpointExceptionHandle : public PatchpointExceptionHandleBase {
-    PatchpointExceptionHandle(std::optional<bool> hasExceptionHandlers)
+    PatchpointExceptionHandle(std::optional<bool> hasExceptionHandlers, unsigned callSiteIndex)
         : m_hasExceptionHandlers(hasExceptionHandlers)
+        , m_callSiteIndex(callSiteIndex)
     { }
 
     PatchpointExceptionHandle(std::optional<bool> hasExceptionHandlers, unsigned callSiteIndex, unsigned numLiveValues)
@@ -59,26 +60,26 @@ struct PatchpointExceptionHandle : public PatchpointExceptionHandleBase {
     template <typename Generator>
     void generate(CCallHelpers& jit, const B3::StackmapGenerationParams& params, Generator* generator) const
     {
-        if (m_callSiteIndex == s_invalidCallSiteIndex) {
-            if (!m_hasExceptionHandlers || m_hasExceptionHandlers.value())
-                jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
-            return;
-        }
+        JIT_COMMENT(jit, "Store call site index ", m_callSiteIndex, " at throw or call site.");
+        jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
-        StackMap values(m_numLiveValues);
-        unsigned paramsOffset = params.size() - m_numLiveValues;
-        unsigned childrenOffset = params.value()->numChildren() - m_numLiveValues;
-        for (unsigned i = 0; i < m_numLiveValues; ++i)
+        if (m_hasExceptionHandlers && !*m_hasExceptionHandlers)
+            return;
+        if (!m_numLiveValues)
+            return;
+
+        StackMap values(*m_numLiveValues);
+        unsigned paramsOffset = params.size() - *m_numLiveValues;
+        unsigned childrenOffset = params.value()->numChildren() - *m_numLiveValues;
+        for (unsigned i = 0; i < *m_numLiveValues; ++i)
             values[i] = OSREntryValue(params[i + paramsOffset], params.value()->child(i + childrenOffset)->type());
 
         generator->addStackMap(m_callSiteIndex, WTFMove(values));
-        JIT_COMMENT(jit, "Store call site index ", m_callSiteIndex, " at throw or call site.");
-        jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
     }
 
     std::optional<bool> m_hasExceptionHandlers;
     unsigned m_callSiteIndex { s_invalidCallSiteIndex };
-    unsigned m_numLiveValues;
+    std::optional<unsigned> m_numLiveValues { };
 };
 #else
 

@@ -107,7 +107,7 @@ void OSREntryPlan::work(CompilationEffort)
 
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;
-    auto parseAndCompileResult = parseAndCompileB3(context, callee.get(), function, signature, unlinkedCalls, m_moduleInformation.get(), m_mode, targetCompilationMode, m_functionIndex, m_hasExceptionHandlers, m_loopIndex);
+    auto parseAndCompileResult = parseAndCompileB3(context, callee.get(), function, signature, unlinkedCalls, m_calleeGroup.get(), m_moduleInformation.get(), m_mode, targetCompilationMode, m_functionIndex, m_hasExceptionHandlers, m_loopIndex);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };

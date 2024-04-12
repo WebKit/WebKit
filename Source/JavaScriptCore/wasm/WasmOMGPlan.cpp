@@ -114,7 +114,7 @@ void OMGPlan::work(CompilationEffort)
 
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;
-    auto parseAndCompileResult = parseAndCompileB3(context, callee.get(), function, signature, unlinkedCalls, m_moduleInformation.get(), m_mode, CompilationMode::OMGMode, m_functionIndex, m_hasExceptionHandlers, UINT32_MAX);
+    auto parseAndCompileResult = parseAndCompileB3(context, callee.get(), function, signature, unlinkedCalls, m_calleeGroup.get(), m_moduleInformation.get(), m_mode, CompilationMode::OMGMode, m_functionIndex, m_hasExceptionHandlers, UINT32_MAX);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
