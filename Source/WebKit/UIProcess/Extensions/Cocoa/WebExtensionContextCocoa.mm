@@ -3064,6 +3064,9 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
     configuration._requiredWebExtensionBaseURL = baseURL();
     configuration._shouldRelaxThirdPartyCookieBlocking = YES;
 
+    // By default extension URLs are masked, for extension pages we can relax this.
+    configuration._maskedURLSchemes = [NSSet set];
+
     configuration.defaultWebpagePreferences._autoplayPolicy = _WKWebsiteAutoplayPolicyAllow;
 
     if (purpose == WebViewPurpose::Tab) {
