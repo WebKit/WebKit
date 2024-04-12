@@ -887,6 +887,7 @@ private:
     bool m_shouldDeferViewInWindowChanges { false };
     bool m_viewInWindowChangeWasDeferred { false };
     bool m_isPreparingToUnparentView { false };
+    bool m_isObservingWindow { false };
     RetainPtr<NSWindow> m_targetWindowForMovePreparation;
 
     id m_flagsChangedEventMonitor { nullptr };
