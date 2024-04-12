@@ -41,6 +41,7 @@
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/ImageRotationSessionVT.h>
 #include <WebCore/MediaConstraints.h>
+#include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/VideoFrameCV.h>
 #include <WebCore/WebAudioBufferList.h>
@@ -587,7 +588,8 @@ void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentif
 #endif
 #if ENABLE(EXTENSION_CAPABILITIES)
     bool hasValidMediaEnvironmentOrIdentity = m_connectionProxy->setCurrentMediaEnvironment(pageIdentifier) || RealtimeMediaSourceCenter::singleton().hasIdentity();
-    if (!hasValidMediaEnvironmentOrIdentity && proxy->source().deviceType() == CaptureDevice::DeviceType::Camera && WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s)) {
+    if (PlatformMediaSessionManager::mediaCapabilityGrantsEnabled() && !hasValidMediaEnvironmentOrIdentity && proxy->source().deviceType() == CaptureDevice::DeviceType::Camera
+        && WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s)) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to set media environment, failing capture.");
         proxy->source().captureFailed();
         return;
