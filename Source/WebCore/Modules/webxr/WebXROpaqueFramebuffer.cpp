@@ -223,9 +223,10 @@ void WebXROpaqueFramebuffer::endFrame()
     if (m_completionSyncEvent) {
         auto completionSync = gl->createExternalSync(std::tuple(m_completionSyncEvent, m_renderingFrameIndex));
         ASSERT(completionSync);
-        constexpr uint64_t kTimeout = 1'000'000'000; // 1 second
-        gl->clientWaitExternalSyncWithFlush(completionSync, kTimeout);
-        gl->deleteExternalSync(completionSync);
+        if (completionSync) {
+            gl->flush();
+            gl->deleteExternalSync(completionSync);
+        }
     } else
         gl->finish();
 

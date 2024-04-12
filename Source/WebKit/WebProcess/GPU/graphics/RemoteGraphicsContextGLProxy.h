@@ -370,7 +370,6 @@ public:
     void bindExternalImage(GCGLenum target, GCGLExternalImage) final;
     GCGLExternalSync createExternalSync(WebCore::GraphicsContextGL::ExternalSyncSource&&) final;
     void deleteExternalSync(GCGLExternalSync) final;
-    bool clientWaitExternalSyncWithFlush(GCGLExternalSync, uint64_t timeout) final;
 
     bool enableRequiredWebXRExtensions() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
     bool addFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;

@@ -3143,19 +3143,6 @@ void RemoteGraphicsContextGLProxy::deleteExternalSync(GCGLExternalSync arg0)
     }
 }
 
-bool RemoteGraphicsContextGLProxy::clientWaitExternalSyncWithFlush(GCGLExternalSync arg0, uint64_t timeout)
-{
-    if (isContextLost())
-        return { };
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ClientWaitExternalSyncWithFlush(arg0, timeout));
-    if (!sendResult.succeeded()) {
-        markContextLost();
-        return { };
-    }
-    auto& [returnValue] = sendResult.reply();
-    return returnValue;
-}
-
 bool RemoteGraphicsContextGLProxy::enableRequiredWebXRExtensions()
 {
     if (isContextLost())

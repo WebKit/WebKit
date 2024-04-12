@@ -2906,22 +2906,6 @@ void GraphicsContextGLANGLE::deleteExternalSync(GCGLExternalSync sync)
         addError(GCGLErrorCode::InvalidOperation);
 }
 
-bool GraphicsContextGLANGLE::clientWaitExternalSyncWithFlush(GCGLExternalSync sync, uint64_t timeout)
-{
-    EGLSync eglSync = m_eglSyncs.get(sync);
-    if (UNLIKELY(!eglSync)) {
-        addError(GCGLErrorCode::InvalidOperation);
-        return false;
-    }
-    auto ret = EGL_ClientWaitSync(platformDisplay(), eglSync, EGL_SYNC_FLUSH_COMMANDS_BIT, timeout);
-    if (ret == EGL_FALSE) {
-        ASSERT_NOT_REACHED();
-        addError(GCGLErrorCode::InvalidOperation);
-        return false;
-    }
-    return ret == EGL_CONDITION_SATISFIED;
-}
-
 void GraphicsContextGLANGLE::multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts)
 {
     if (!makeContextCurrent())

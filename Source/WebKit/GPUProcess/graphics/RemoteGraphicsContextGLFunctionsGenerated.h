@@ -1694,15 +1694,6 @@
         arg0 = m_objectNames.take(arg0);
         m_context->deleteExternalSync(arg0);
     }
-    void clientWaitExternalSyncWithFlush(uint32_t arg0, uint64_t timeout, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        bool returnValue = { };
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = m_context->clientWaitExternalSyncWithFlush(arg0, timeout);
-        completionHandler(returnValue);
-    }
     void enableRequiredWebXRExtensions(CompletionHandler<void(bool)>&& completionHandler)
     {
         assertIsCurrent(workQueue());

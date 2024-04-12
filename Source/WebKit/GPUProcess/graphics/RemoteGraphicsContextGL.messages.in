@@ -328,7 +328,6 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void BindExternalImage(uint32_t target, uint32_t arg1)
     void CreateExternalSync(uint32_t externalSync, WebCore::GraphicsContextGL::ExternalSyncSource arg0) NotStreamEncodable
     void DeleteExternalSync(uint32_t arg0)
-    void ClientWaitExternalSyncWithFlush(uint32_t arg0, uint64_t timeout) -> (bool returnValue) Synchronous
     [EnabledIf='webXREnabled()'] void EnableRequiredWebXRExtensions() -> (bool returnValue) Synchronous
     [EnabledIf='webXREnabled()'] void AddFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const float> horizontalSamplesLeft, std::span<const float> verticalSamples, std::span<const float> horizontalSamplesRight) -> (bool returnValue) Synchronous
     [EnabledIf='webXREnabled()'] void EnableFoveation(uint32_t arg0)
