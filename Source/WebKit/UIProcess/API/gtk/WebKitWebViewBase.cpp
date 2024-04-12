@@ -3493,3 +3493,12 @@ void webkitWebViewBaseSetPlugID(WebKitWebViewBase* webViewBase, const String& pl
 #endif // GTK_ACCESSIBILITY_ATSPI
 }
 #endif
+
+RendererBufferFormat webkitWebViewBaseGetRendererBufferFormat(WebKitWebViewBase* webViewBase)
+{
+    auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(webViewBase->priv->pageProxy->drawingArea());
+    if (!drawingArea || !drawingArea->isInAcceleratedCompositingMode())
+        return { };
+
+    return webViewBase->priv->acceleratedBackingStore->bufferFormat();
+}

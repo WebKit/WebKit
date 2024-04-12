@@ -514,7 +514,7 @@ def types_that_cannot_be_forward_declared():
 
 def conditions_for_header(header):
     conditions = {
-        '"DMABufRendererBufferFormat.h"': ["USE(GBM)"],
+        '"DMABufRendererBufferFormat.h"': ["PLATFORM(GTK)", "PLATFORM(WPE)"],
         '"GestureTypes.h"': ["PLATFORM(IOS_FAMILY)"],
         '"InputMethodState.h"': ["PLATFORM(GTK)", "PLATFORM(WPE)"],
         '"MediaPlaybackTargetContextSerialized.h"': ["ENABLE(WIRELESS_PLAYBACK_TARGET)"],

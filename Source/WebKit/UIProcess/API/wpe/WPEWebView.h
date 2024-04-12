@@ -30,6 +30,7 @@
 #include "InputMethodFilter.h"
 #include "KeyAutoRepeatHandler.h"
 #include "PageClientImpl.h"
+#include "RendererBufferFormat.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebKitWebViewAccessible.h"
 #include "WebPageProxy.h"
@@ -142,6 +143,7 @@ public:
 
 #if ENABLE(WPE_PLATFORM)
     void updateAcceleratedSurface(uint64_t);
+    WebKit::RendererBufferFormat renderBufferFormat() const;
 #endif
 
     void setCursor(const WebCore::Cursor&);

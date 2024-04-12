@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,17 @@
 
 #pragma once
 
-#include <wtf/Vector.h>
+#include "DMABufRendererBufferFormat.h"
 
 namespace WebKit {
 
-enum class DMABufRendererBufferFormatUsage : uint8_t {
-    Rendering,
-    Mapping,
-    Scanout
-};
+struct RendererBufferFormat {
+    enum class Type : bool { DMABuf, SharedMemory };
 
-struct DMABufRendererBufferFormat {
-    bool operator==(const DMABufRendererBufferFormat& other) const
-    {
-        return usage == other.usage && fourcc == other.fourcc && modifiers == other.modifiers;
-    }
-
-    using Usage = DMABufRendererBufferFormatUsage;
-    Usage usage { Usage::Rendering };
+    Type type { Type::DMABuf };
+    DMABufRendererBufferFormat::Usage usage { DMABufRendererBufferFormat::Usage::Rendering };
     uint32_t fourcc { 0 };
-    Vector<uint64_t, 1> modifiers;
+    uint64_t modifier { 0 };
 };
 
 } // namespace WebKit

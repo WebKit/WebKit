@@ -211,17 +211,17 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
         return nullptr;
     }
 
-    return makeUnique<RenderTargetEGLImage>(surfaceID, size, image, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier);
+    return makeUnique<RenderTargetEGLImage>(surfaceID, size, image, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier, dmabufFormat.usage);
 }
 
-AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(uint64_t surfaceID, const WebCore::IntSize& size, EGLImage image, uint32_t format, Vector<UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier)
+AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(uint64_t surfaceID, const WebCore::IntSize& size, EGLImage image, uint32_t format, Vector<UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier, DMABufRendererBufferFormat::Usage usage)
     : RenderTargetColorBuffer(surfaceID, size)
     , m_image(image)
 {
     glBindRenderbuffer(GL_RENDERBUFFER, m_colorBuffer);
     glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_image);
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::DidCreateBuffer(m_id, size, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier), surfaceID);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::DidCreateBuffer(m_id, size, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier, usage), surfaceID);
 }
 
 AcceleratedSurfaceDMABuf::RenderTargetEGLImage::~RenderTargetEGLImage()
@@ -322,7 +322,7 @@ AcceleratedSurfaceDMABuf::RenderTargetTexture::RenderTargetTexture(uint64_t surf
     : RenderTarget(surfaceID, size)
     , m_texture(texture)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::DidCreateBuffer(m_id, size, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier), surfaceID);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::DidCreateBuffer(m_id, size, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier, DMABufRendererBufferFormat::Usage::Rendering), surfaceID);
 }
 
 AcceleratedSurfaceDMABuf::RenderTargetTexture::~RenderTargetTexture()
@@ -367,7 +367,7 @@ void AcceleratedSurfaceDMABuf::SwapChain::setupBufferFormat(const Vector<DMABufR
     // The preferred formats vector is sorted by usage, but all formats for the same usage has the same priority.
     // We split the preferred formats by usage to find in them separately.
     Vector<std::pair<unsigned, unsigned>, 3> tranches;
-    std::optional<DMABufRendererBufferFormatUsage> previousUsage;
+    std::optional<DMABufRendererBufferFormat::Usage> previousUsage;
     for (unsigned i = 0; i < preferredFormats.size(); ++i) {
         if (previousUsage) {
             if (previousUsage.value() != preferredFormats[i].usage) {

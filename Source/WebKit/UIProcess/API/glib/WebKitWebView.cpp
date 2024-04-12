@@ -3052,6 +3052,17 @@ void webkitWebViewPermissionStateQuery(WebKitWebView* webView, WebKitPermissionS
     g_signal_emit(webView, signals[QUERY_PERMISSION_STATE], 0, query, &result);
 }
 
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+RendererBufferFormat webkitWebViewGetRendererBufferFormat(WebKitWebView* webView)
+{
+#if PLATFORM(GTK)
+    return webkitWebViewBaseGetRendererBufferFormat(WEBKIT_WEB_VIEW_BASE(webView));
+#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    return webView->priv->view->renderBufferFormat();
+#endif
+}
+#endif
+
 #if PLATFORM(WPE)
 /**
  * webkit_web_view_get_backend:
