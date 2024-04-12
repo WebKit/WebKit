@@ -27,6 +27,7 @@
 #if ENABLE(PDFJS)
 
 #include "HTMLDocument.h"
+#include "HTMLScriptElement.h"
 
 namespace WebCore {
 
@@ -48,7 +49,7 @@ public:
     void injectStyleAndContentScript();
 
     void postMessageToIframe(const String& name, JSC::JSObject* data);
-    void sendPDFArrayBuffer();
+    void finishLoadingPDF();
 
     bool isFinishedParsing() const { return m_isFinishedParsing; }
     void setContentScriptLoaded(bool loaded) { m_isContentScriptLoaded = loaded; }
@@ -59,9 +60,12 @@ private:
     Ref<DocumentParser> createParser() override;
 
     void createDocumentStructure();
+    void sendPDFArrayBuffer();
+    bool m_injectedStyleAndScript { false };
     bool m_isFinishedParsing { false };
     bool m_isContentScriptLoaded { false };
     RefPtr<HTMLIFrameElement> m_iframe;
+    RefPtr<HTMLScriptElement> m_script;
     RefPtr<PDFDocumentEventListener> m_listener;
 };
 
