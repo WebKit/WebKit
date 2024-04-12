@@ -4850,7 +4850,7 @@ bool WebPageProxy::supportsTextZoom() const
 
 void WebPageProxy::setTextZoomFactor(double zoomFactor)
 {
-    if (m_textZoomFactor == zoomFactor)
+    if (!m_mainFramePluginHandlesPageScaleGesture && m_textZoomFactor == zoomFactor)
         return;
 
     m_textZoomFactor = zoomFactor;
@@ -4863,7 +4863,7 @@ void WebPageProxy::setTextZoomFactor(double zoomFactor)
 
 void WebPageProxy::setPageZoomFactor(double zoomFactor)
 {
-    if (m_pageZoomFactor == zoomFactor)
+    if (!m_mainFramePluginHandlesPageScaleGesture && m_pageZoomFactor == zoomFactor)
         return;
 
     closeOverlayedViews();
@@ -4878,7 +4878,7 @@ void WebPageProxy::setPageZoomFactor(double zoomFactor)
 
 void WebPageProxy::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
 {
-    if (m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
+    if (!m_mainFramePluginHandlesPageScaleGesture && m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
         return;
 
     closeOverlayedViews();
