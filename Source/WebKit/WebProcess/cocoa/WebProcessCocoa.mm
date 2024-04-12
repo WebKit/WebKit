@@ -1364,11 +1364,6 @@ void WebProcess::handlePreferenceChange(const String& domain, const String& key,
     AuxiliaryProcess::handlePreferenceChange(domain, key, value);
 }
 
-void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
-{
-    preferenceDidUpdate(domain, key, encodedValue);
-}
-
 void WebProcess::accessibilitySettingsDidChange()
 {
     for (auto& page : m_pageMap.values())

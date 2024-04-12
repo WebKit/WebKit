@@ -26,6 +26,10 @@ messages -> AuxiliaryProcess NotRefCounted {
 
     MainThreadPing() -> ()
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    PreferenceDidUpdate(String domain, String key, std::optional<String> encodedValue)
+#endif
+
 #if OS(LINUX)
     void DidReceiveMemoryPressureEvent(bool isCritical)
 #endif
