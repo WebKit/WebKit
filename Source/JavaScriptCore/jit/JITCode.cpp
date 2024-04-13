@@ -125,7 +125,7 @@ FTL::ForOSREntryJITCode* JITCode::ftlForOSREntry()
     return nullptr;
 }
 
-void JITCode::shrinkToFit(const ConcurrentJSLocker&)
+void JITCode::shrinkToFit()
 {
 }
 

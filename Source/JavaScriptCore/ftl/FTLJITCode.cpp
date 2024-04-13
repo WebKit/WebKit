@@ -134,7 +134,7 @@ const DFG::CommonData* JITCode::dfgCommon() const
     return &common;
 }
 
-void JITCode::shrinkToFit(const ConcurrentJSLocker&)
+void JITCode::shrinkToFit()
 {
     common.shrinkToFit();
     m_osrExit.shrinkToFit();

@@ -47,7 +47,7 @@ void AdaptiveInferredPropertyValueWatchpointBase::initialize(const ObjectPropert
 
 void AdaptiveInferredPropertyValueWatchpointBase::install(VM& vm)
 {
-    RELEASE_ASSERT(m_key.isWatchable(PropertyCondition::MakeNoChanges));
+    ASSERT(m_key.isWatchable(PropertyCondition::MakeNoChanges)); // This is really costly.
 
     Structure* structure = m_key.object()->structure();
 

@@ -107,7 +107,7 @@ public:
 
 private:
     CompilationPath compileInThreadImpl() override;
-    void finalizeInThread();
+    void finalizeInThread(Ref<JSC::JITCode>);
     
     bool isStillValidCodeBlock();
     bool reallyAdd(CommonData*);

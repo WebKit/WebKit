@@ -52,17 +52,24 @@ struct DesiredWatchpointCounts {
 class WatchpointCollector final {
     WTF_MAKE_NONCOPYABLE(WatchpointCollector);
 public:
-    WatchpointCollector() = default;
+    WatchpointCollector(CommonData& commonData)
+        : m_watchpoints(WTFMove(commonData.m_watchpoints))
+        , m_adaptiveStructureWatchpoints(WTFMove(commonData.m_adaptiveStructureWatchpoints))
+        , m_adaptiveInferredPropertyValueWatchpoints(WTFMove(commonData.m_adaptiveInferredPropertyValueWatchpoints))
+    { }
 
-    DesiredWatchpointCounts counts() const { return m_counts; }
+    DesiredWatchpointCounts counts() { return m_counts; }
 
-    void materialize(DesiredWatchpointCounts counts)
+    void materialize()
     {
-        m_counts = counts;
-        m_watchpoints = FixedVector<CodeBlockJettisoningWatchpoint>(counts.m_watchpointCount);
-        m_adaptiveStructureWatchpoints = FixedVector<AdaptiveStructureWatchpoint>(counts.m_adaptiveStructureWatchpointCount);
-        m_adaptiveInferredPropertyValueWatchpoints = FixedVector<AdaptiveInferredPropertyValueWatchpoint>(counts.m_adaptiveInferredPropertyValueWatchpointCount);
         m_mode = WatchpointRegistrationMode::Add;
+    }
+
+    void finalize(CommonData& commonData)
+    {
+        commonData.m_watchpoints = WTFMove(m_watchpoints);
+        commonData.m_adaptiveStructureWatchpoints = WTFMove(m_adaptiveStructureWatchpoints);
+        commonData.m_adaptiveInferredPropertyValueWatchpoints = WTFMove(m_adaptiveInferredPropertyValueWatchpoints);
     }
 
     template<typename Func>
@@ -92,8 +99,6 @@ public:
         return true;
     }
 
-    void finalize(CodeBlock*, CommonData&);
-
     WatchpointRegistrationMode mode() const { return m_mode; }
 
 private:
@@ -102,11 +107,10 @@ private:
     unsigned m_watchpointIndex { 0 };
     unsigned m_adaptiveStructureWatchpointsIndex { 0 };
     unsigned m_adaptiveInferredPropertyValueWatchpointsIndex { 0 };
-
+    WatchpointRegistrationMode m_mode { WatchpointRegistrationMode::Collect };
     FixedVector<CodeBlockJettisoningWatchpoint> m_watchpoints;
     FixedVector<AdaptiveStructureWatchpoint> m_adaptiveStructureWatchpoints;
     FixedVector<AdaptiveInferredPropertyValueWatchpoint> m_adaptiveInferredPropertyValueWatchpoints;
-    WatchpointRegistrationMode m_mode { WatchpointRegistrationMode::Collect };
 };
 
 template<typename T>
@@ -242,8 +246,8 @@ public:
     
     void addLazily(WatchpointSet&);
     void addLazily(InlineWatchpointSet&);
-    void addLazily(SymbolTable*);
-    void addLazily(FunctionExecutable*);
+    void addLazily(Graph&, SymbolTable*);
+    void addLazily(Graph&, FunctionExecutable*);
     void addLazily(JSArrayBufferView*);
     
     // It's recommended that you don't call this directly. Use Graph::watchCondition(), which does
@@ -254,7 +258,7 @@ public:
     
     bool consider(Structure*);
 
-    void countWatchpoints(CodeBlock*, DesiredIdentifiers&);
+    void countWatchpoints(CodeBlock*, DesiredIdentifiers&, CommonData*);
     
     bool reallyAdd(CodeBlock*, DesiredIdentifiers&, CommonData*);
     
@@ -294,7 +298,6 @@ private:
     GenericDesiredWatchpoints<JSArrayBufferView*, ArrayBufferViewWatchpointAdaptor> m_bufferViews;
     GenericDesiredWatchpoints<ObjectPropertyCondition, AdaptiveStructureWatchpointAdaptor> m_adaptiveStructureSets;
     DesiredGlobalProperties m_globalProperties;
-    DesiredWatchpointCounts m_counts;
 };
 
 } } // namespace JSC::DFG

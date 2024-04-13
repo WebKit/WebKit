@@ -210,7 +210,7 @@ JITCode* JITCode::dfg()
     return this;
 }
 
-void JITCode::shrinkToFit(const ConcurrentJSLocker&)
+void JITCode::shrinkToFit()
 {
     common.shrinkToFit();
     minifiedDFG.prepareAndShrink();

@@ -356,8 +356,11 @@ Plan::CompilationPath Plan::compileInThreadImpl()
                 speculativeJIT.compile();
         }
 
-        finalizeInThread();
-        
+        if (m_finalizer) {
+            if (auto jitCode = m_finalizer->jitCode())
+                finalizeInThread(jitCode.releaseNonNull());
+        }
+
         return DFGPath;
     }
     
@@ -500,8 +503,11 @@ Plan::CompilationPath Plan::compileInThreadImpl()
             return FTLPath;
         }
 
-        finalizeInThread();
-        
+        if (m_finalizer) {
+            if (auto jitCode = m_finalizer->jitCode())
+                finalizeInThread(jitCode.releaseNonNull());
+        }
+
         return FTLPath;
 #else
         RELEASE_ASSERT_NOT_REACHED();
@@ -517,10 +523,11 @@ Plan::CompilationPath Plan::compileInThreadImpl()
 #undef RUN_PHASE
 }
 
-void Plan::finalizeInThread()
+void Plan::finalizeInThread(Ref<JSC::JITCode> jitCode)
 {
-    m_watchpoints.countWatchpoints(m_codeBlock, m_identifiers);
+    m_watchpoints.countWatchpoints(m_codeBlock, m_identifiers, jitCode->dfgCommon());
     m_weakReferences.finalize();
+    jitCode->shrinkToFit();
 }
 
 bool Plan::isStillValidCodeBlock()
@@ -591,7 +598,6 @@ CompilationResult Plan::finalize()
 
         {
             ConcurrentJSLocker locker(m_codeBlock->m_lock);
-            m_codeBlock->jitCode()->shrinkToFit(locker);
             m_codeBlock->shrinkToFit(locker, CodeBlock::ShrinkMode::LateShrink);
         }
 

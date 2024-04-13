@@ -3628,7 +3628,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetCallee:
         if (FunctionExecutable* executable = jsDynamicCast<FunctionExecutable*>(m_codeBlock->ownerExecutable())) {
             if (JSFunction* function = executable->singleton().inferredValue()) {
-                m_graph.watchpoints().addLazily(executable);
+                m_graph.watchpoints().addLazily(m_graph, executable);
                 setConstant(node, *m_graph.freeze(function));
                 break;
             }
