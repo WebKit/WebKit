@@ -1,6 +1,6 @@
 
-FAIL getTotalLength() with d property assert_equals: the total length expected 10 but got 0
-FAIL getPointAtLength() with d property assert_equals: x-axis position expected 10 but got 0
+PASS getTotalLength() with d property
+PASS getPointAtLength() with d property
 PASS isPointInFill() with d property
 PASS isPointInStroke() with d property
 

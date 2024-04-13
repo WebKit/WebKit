@@ -96,7 +96,7 @@ public:
     Ref<SVGPathSegList>& pathSegList() { return m_pathSegList->baseVal(); }
     RefPtr<SVGPathSegList>& animatedPathSegList() { return m_pathSegList->animVal(); }
 
-    const SVGPathByteStream& pathByteStream() const { return m_pathSegList->currentPathByteStream(); }
+    const SVGPathByteStream& pathByteStream() const;
     Path path() const;
     size_t approximateMemoryCost() const final { return m_pathSegList->approximateMemoryCost(); }
 
