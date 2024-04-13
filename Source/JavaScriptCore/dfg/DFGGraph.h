@@ -1160,6 +1160,8 @@ public:
 
     const BoyerMooreHorspoolTable<uint8_t>* tryAddStringSearchTable8(const String&);
 
+    bool afterFixup() { return m_planStage >= PlanStage::AfterFixup; }
+
     StackCheck m_stackChecker;
     VM& m_vm;
     Plan& m_plan;
