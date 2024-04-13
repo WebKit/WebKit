@@ -1292,8 +1292,8 @@ WebViewImpl::~WebViewImpl()
 #endif
 #endif
 
-    if (m_isObservingWindow) {
-        [m_windowVisibilityObserver stopObserving:m_targetWindowForMovePreparation.get() ?: [m_view window]];
+    if (m_targetWindowForMovePreparation) {
+        [m_windowVisibilityObserver stopObserving:m_targetWindowForMovePreparation.get()];
         m_targetWindowForMovePreparation = nil;
     }
 
@@ -2169,7 +2169,6 @@ void WebViewImpl::viewWillMoveToWindowImpl(NSWindow *window)
         NSWindow *stopObservingWindow = m_targetWindowForMovePreparation.get() ?: [m_view window];
         [m_windowVisibilityObserver stopObserving:stopObservingWindow];
         [m_windowVisibilityObserver startObserving:window];
-        m_isObservingWindow = true;
     }
 
 #if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
