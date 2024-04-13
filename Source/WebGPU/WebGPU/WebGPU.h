@@ -1094,7 +1094,7 @@ typedef struct WGPUSwapChainDescriptor {
 #endif
     WGPUColorSpace colorSpace;
     WGPUCompositeAlphaMode compositeAlphaMode;
-    bool reportValidationErrors;
+    WGPUBool reportValidationErrors;
 } WGPUSwapChainDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUTextureBindingLayout {
