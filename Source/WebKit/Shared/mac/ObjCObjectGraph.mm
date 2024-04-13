@@ -148,11 +148,7 @@ void ObjCObjectGraph::encode(IPC::Encoder& encoder, id object)
         return;
 
     case ObjCType::NSArray: {
-        NSArray *array = object;
-
-        encoder << static_cast<uint64_t>(array.count);
-        for (id element in array)
-            encode(encoder, element);
+        IPC::encode(encoder, static_cast<NSArray *>(object));
         return;
     }
 
@@ -167,13 +163,7 @@ void ObjCObjectGraph::encode(IPC::Encoder& encoder, id object)
     }
 
     case ObjCType::NSDictionary: {
-        NSDictionary *dictionary = object;
-
-        encoder << static_cast<uint64_t>(dictionary.count);
-        [dictionary enumerateKeysAndObjectsUsingBlock:[&encoder](id key, id object, BOOL *stop) {
-            encode(encoder, key);
-            encode(encoder, object);
-        }];
+        IPC::encode(encoder, static_cast<NSDictionary *>(object));
         return;
     }
 
@@ -210,24 +200,16 @@ bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
     }
 
     case ObjCType::NSArray: {
-        uint64_t size;
-        if (!decoder.decode(size))
+        auto array = decoder.decode<RetainPtr<NSArray>>();
+        if (!array)
             return false;
 
-        auto array = adoptNS([[NSMutableArray alloc] init]);
-        for (uint64_t i = 0; i < size; ++i) {
-            RetainPtr<id> element;
-            if (!decode(decoder, element))
-                return false;
-            [array addObject:element.get()];
-        }
-
-        result = WTFMove(array);
+        result = WTFMove(*array);
         return true;
     }
 
     case ObjCType::NSData: {
-        std::optional<RetainPtr<NSData>> data = decoder.decode<RetainPtr<NSData>>();
+        auto data = decoder.decode<RetainPtr<NSData>>();
         if (!data)
             return false;
 
@@ -236,7 +218,7 @@ bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
     }
 
     case ObjCType::NSDate: {
-        std::optional<RetainPtr<NSDate>> date = decoder.decode<RetainPtr<NSDate>>();
+        auto date = decoder.decode<RetainPtr<NSDate>>();
         if (!date)
             return false;
 
@@ -245,33 +227,16 @@ bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
     }
 
     case ObjCType::NSDictionary: {
-        uint64_t size;
-        if (!decoder.decode(size))
+        auto dictionary = decoder.decode<RetainPtr<NSDictionary>>();
+        if (!dictionary)
             return false;
 
-        auto dictionary = adoptNS([[NSMutableDictionary alloc] init]);
-        for (uint64_t i = 0; i < size; ++i) {
-            RetainPtr<id> key;
-            if (!decode(decoder, key))
-                return false;
-
-            RetainPtr<id> object;
-            if (!decode(decoder, object))
-                return false;
-
-            @try {
-                [dictionary setObject:object.get() forKey:key.get()];
-            } @catch (id) {
-                return false;
-            }
-        }
-
-        result = WTFMove(dictionary);
+        result = WTFMove(*dictionary);
         return true;
     }
 
     case ObjCType::NSNumber: {
-        std::optional<RetainPtr<NSNumber>> number = decoder.decode<RetainPtr<NSNumber>>();
+        auto number = decoder.decode<RetainPtr<NSNumber>>();
         if (!number)
             return false;
 
