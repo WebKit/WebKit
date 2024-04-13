@@ -28,7 +28,8 @@
 
 #if USE(EXTENSIONKIT)
 #import "AssertionCapability.h"
-
+#import "ExtensionCapability.h"
+#import "ExtensionKitSPI.h"
 #import <BrowserEngineKit/BrowserEngineKit.h>
 
 namespace WebKit {
@@ -47,6 +48,13 @@ ExtensionProcess::ExtensionProcess(BERenderingProcess *process)
     : m_process(process)
 {
 }
+
+#if USE(LEGACY_EXTENSIONKIT_SPI)
+ExtensionProcess::ExtensionProcess(_SEExtensionProcess *process)
+    : m_process(process)
+{
+}
+#endif
 
 void ExtensionProcess::invalidate() const
 {
@@ -71,7 +79,32 @@ RetainPtr<BEProcessCapabilityGrant> ExtensionProcess::grantCapability(BEProcessC
     RetainPtr<BEProcessCapabilityGrant> grant;
     WTF::switchOn(m_process, [&] (auto& process) {
         grant = [process grantCapability:capability error:&error];
+    }, [] (const RetainPtr<_SEExtensionProcess>&) {
     });
+    return grant;
+}
+
+PlatformGrant ExtensionProcess::grantCapability(const PlatformCapability& capability) const
+{
+    NSError *error = nil;
+    PlatformGrant grant;
+#if USE(LEGACY_EXTENSIONKIT_SPI)
+    WTF::switchOn(m_process, [&] (auto& process) {
+        WTF::switchOn(capability, [&] (const RetainPtr<BEProcessCapability>& capability) {
+            grant = [process grantCapability:capability.get() error:&error];
+        }, [] (const RetainPtr<_SECapability>&) {
+        });
+    }, [&] (const RetainPtr<_SEExtensionProcess>& process) {
+        WTF::switchOn(capability, [] (const RetainPtr<BEProcessCapability>&) {
+        }, [&] (const RetainPtr<_SECapability>& capability) {
+            grant = [process grantCapability:capability.get() error:&error];
+        });
+    });
+#else
+    WTF::switchOn(m_process, [&] (auto& process) {
+        grant = [process grantCapability:capability.get() error:&error];
+    });
+#endif
     return grant;
 }
 
@@ -80,9 +113,9 @@ RetainPtr<UIInteraction> ExtensionProcess::createVisibilityPropagationInteractio
     RetainPtr<UIInteraction> interaction;
     WTF::switchOn(m_process, [&] (RetainPtr<BEWebContentProcess> process) {
         interaction = [process createVisibilityPropagationInteraction];
-    }, [&] (RetainPtr<BENetworkingProcess> process) {
     }, [&] (RetainPtr<BERenderingProcess> process) {
         interaction = [process createVisibilityPropagationInteraction];
+    }, [] (auto& process) {
     });
     return interaction;
 }

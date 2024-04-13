@@ -31,8 +31,15 @@
 #include <wtf/text/WTFString.h>
 
 OBJC_PROTOCOL(BEProcessCapabilityGrant);
+OBJC_PROTOCOL(_SEGrant);
 
 namespace WebKit {
+
+#if USE(LEGACY_EXTENSIONKIT_SPI)
+using PlatformGrant = std::variant<RetainPtr<BEProcessCapabilityGrant>, RetainPtr<_SEGrant>>;
+#else
+using PlatformGrant = RetainPtr<BEProcessCapabilityGrant>;
+#endif
 
 class ExtensionCapabilityGrant {
 public:
@@ -48,13 +55,15 @@ public:
     bool isEmpty() const;
     bool isValid() const;
 
-    void setPlatformGrant(RetainPtr<BEProcessCapabilityGrant>&&);
+    void setPlatformGrant(PlatformGrant&&);
+
+    void invalidate();
 
 private:
-    ExtensionCapabilityGrant(String&&, RetainPtr<BEProcessCapabilityGrant>&&);
+    ExtensionCapabilityGrant(String&&, PlatformGrant&&);
 
     String m_environmentIdentifier;
-    RetainPtr<BEProcessCapabilityGrant> m_platformGrant;
+    PlatformGrant m_platformGrant;
 };
 
 } // namespace WebKit

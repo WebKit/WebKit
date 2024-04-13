@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include "ExtensionCapability.h"
+#include "ExtensionCapabilityGrant.h"
+
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 
@@ -33,22 +36,33 @@ OBJC_CLASS BEWebContentProcess;
 OBJC_CLASS BENetworkingProcess;
 OBJC_CLASS BERenderingProcess;
 OBJC_CLASS BEProcessCapability;
+OBJC_CLASS _SEExtensionProcess;
 OBJC_PROTOCOL(BEProcessCapabilityGrant);
 OBJC_PROTOCOL(UIInteraction);
 
-using ExtensionProcessVariant = std::variant<RetainPtr<BEWebContentProcess>, RetainPtr<BENetworkingProcess>, RetainPtr<BERenderingProcess>>;
-
 namespace WebKit {
+
+#if USE(LEGACY_EXTENSIONKIT_SPI)
+using ExtensionProcessVariant = std::variant<RetainPtr<BEWebContentProcess>, RetainPtr<BENetworkingProcess>, RetainPtr<BERenderingProcess>, RetainPtr<_SEExtensionProcess>>;
+#else
+using ExtensionProcessVariant = std::variant<RetainPtr<BEWebContentProcess>, RetainPtr<BENetworkingProcess>, RetainPtr<BERenderingProcess>>;
+#endif
+
+class ExtensionCapability;
 
 class ExtensionProcess {
 public:
     ExtensionProcess(BEWebContentProcess *);
     ExtensionProcess(BENetworkingProcess *);
     ExtensionProcess(BERenderingProcess *);
+#if USE(LEGACY_EXTENSIONKIT_SPI)
+    ExtensionProcess(_SEExtensionProcess *);
+#endif
 
     void invalidate() const;
     OSObjectPtr<xpc_connection_t> makeLibXPCConnection() const;
     RetainPtr<BEProcessCapabilityGrant> grantCapability(BEProcessCapability *) const;
+    PlatformGrant grantCapability(const PlatformCapability&) const;
     RetainPtr<UIInteraction> createVisibilityPropagationInteraction() const;
 
 private:
