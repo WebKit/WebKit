@@ -1290,6 +1290,7 @@
 		F4FA2A4F24D1F05700618A46 /* AttributedSubstringForProposedRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2A4E24D1F05700618A46 /* AttributedSubstringForProposedRange.mm */; };
 		F4FA91811E61849B007B8C1D /* WKWebViewMacEditingTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FA917F1E61849B007B8C1D /* WKWebViewMacEditingTests.mm */; };
 		F4FA91831E61857B007B8C1D /* double-click-does-not-select-trailing-space.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4FA91821E618566007B8C1D /* double-click-does-not-select-trailing-space.html */; };
+		F4FB84A82BC9F1F6000D0B47 /* element-targeting-5.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4FB84A02BC9F13A000D0B47 /* element-targeting-5.html */; };
 		F4FC077720F013B600CA043C /* significant-text-milestone.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4FC077620F0108100CA043C /* significant-text-milestone.html */; };
 		F660AA1115A5F631003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */; };
 		F660AA1515A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA1415A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp */; };
@@ -1632,6 +1633,7 @@
 				F4365E2B2BB11829005E8C1A /* element-targeting-2.html in Copy Resources */,
 				F41E446D2BBCDD81002A856F /* element-targeting-3.html in Copy Resources */,
 				F44A2A772BC205060044694E /* element-targeting-4.html in Copy Resources */,
+				F4FB84A82BC9F1F6000D0B47 /* element-targeting-5.html in Copy Resources */,
 				51C8E1A91F27F49600BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist in Copy Resources */,
 				49D902B328209B3300E2C3B8 /* emptyTable.html in Copy Resources */,
 				A14AAB651E78DC5400C1ADC2 /* encrypted.pdf in Copy Resources */,
@@ -3698,6 +3700,7 @@
 		F4FA2A4E24D1F05700618A46 /* AttributedSubstringForProposedRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedSubstringForProposedRange.mm; sourceTree = "<group>"; };
 		F4FA917F1E61849B007B8C1D /* WKWebViewMacEditingTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewMacEditingTests.mm; sourceTree = "<group>"; };
 		F4FA91821E618566007B8C1D /* double-click-does-not-select-trailing-space.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "double-click-does-not-select-trailing-space.html"; path = "Tests/WebKitCocoa/double-click-does-not-select-trailing-space.html"; sourceTree = SOURCE_ROOT; };
+		F4FB84A02BC9F13A000D0B47 /* element-targeting-5.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "element-targeting-5.html"; sourceTree = "<group>"; };
 		F4FC077620F0108100CA043C /* significant-text-milestone.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "significant-text-milestone.html"; sourceTree = "<group>"; };
 		F660AA0C15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetInjectedBundleInitializationUserDataCallback.cpp; sourceTree = "<group>"; };
 		F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetInjectedBundleInitializationUserDataCallback_Bundle.cpp; sourceTree = "<group>"; };
@@ -4844,6 +4847,7 @@
 				F4365E232BB1181A005E8C1A /* element-targeting-2.html */,
 				F41E44652BBCDC74002A856F /* element-targeting-3.html */,
 				F44A2A6E2BC202840044694E /* element-targeting-4.html */,
+				F4FB84A02BC9F13A000D0B47 /* element-targeting-5.html */,
 				51C8E1A81F27F47300BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist */,
 				F4C2AB211DD6D94100E06D5B /* enormous-video-with-sound.html */,
 				F407FE381F1D0DE60017CF25 /* enormous.svg */,

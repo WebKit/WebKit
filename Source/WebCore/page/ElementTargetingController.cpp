@@ -101,24 +101,29 @@ static inline bool querySelectorMatchesOneElement(Document& document, const Stri
 
 struct ChildElementPosition {
     size_t index { notFound };
-    size_t childCountOfType { 0 };
+    bool firstOfType { false };
+    bool lastOfType { false };
 };
 
-static inline ChildElementPosition childIndexByType(Element& element, Element& parent)
+static inline ChildElementPosition findChild(Element& element, Element& parent)
 {
-    ChildElementPosition result;
     auto elementTagName = element.tagName();
+    RefPtr<Element> firstOfType;
+    RefPtr<Element> lastOfType;
+    size_t index = notFound;
+    size_t currentChildIndex = 0;
     for (auto& child : childrenOfType<Element>(parent)) {
-        if (child.tagName() != elementTagName)
-            continue;
-
         if (&child == &element)
-            result.index = result.childCountOfType;
+            index = currentChildIndex;
 
-        result.childCountOfType++;
+        if (child.tagName() == elementTagName) {
+            if (!firstOfType)
+                firstOfType = &child;
+            lastOfType = &child;
+        }
+        currentChildIndex++;
     }
-
-    return result;
+    return { index, &element == firstOfType, &element == lastOfType };
 }
 
 static inline String computeIDSelector(Element& element)
@@ -221,17 +226,17 @@ static String parentRelativeSelectorRecursive(Element& element, ElementSelectorC
 
     if (auto selector = selectorForElementRecursive(*parent, cache); !selector.isEmpty()) {
         auto selectorPrefix = makeString(WTFMove(selector), " > "_s, element.tagName());
-        auto [childIndex, childCountOfType] = childIndexByType(element, *parent);
+        auto [childIndex, firstOfType, lastOfType] = findChild(element, *parent);
         if (childIndex == notFound)
             return emptyString();
 
-        if (childCountOfType == 1)
+        if (firstOfType && lastOfType)
             return selectorPrefix;
 
-        if (!childIndex)
+        if (firstOfType)
             return makeString(WTFMove(selectorPrefix), ":first-of-type"_s);
 
-        if (childIndex == childCountOfType - 1)
+        if (lastOfType)
             return makeString(WTFMove(selectorPrefix), ":last-of-type"_s);
 
         return makeString(WTFMove(selectorPrefix), ":nth-child("_s, childIndex + 1, ')');

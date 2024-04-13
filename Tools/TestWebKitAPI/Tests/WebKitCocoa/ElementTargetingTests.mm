@@ -337,4 +337,22 @@ TEST(ElementTargeting, ContentInsideShadowRoot)
     EXPECT_TRUE([[elements firstObject].selectors containsObject:@"#container"]);
 }
 
+TEST(ElementTargeting, ParentRelativeSelectors)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-5"];
+
+    auto checkTargetedSelector = [&](NSString *expectedSelector, CGPoint point) {
+        RetainPtr elements = [webView targetedElementInfoAt:point];
+        EXPECT_EQ([elements count], 1U);
+        NSString *preferredSelector = [elements firstObject].selectors.firstObject;
+        EXPECT_WK_STREQ(preferredSelector, expectedSelector);
+    };
+
+    checkTargetedSelector(@"BODY > DIV:first-of-type", CGPointMake(100, 50));
+    checkTargetedSelector(@"BODY > DIV:nth-child(3)", CGPointMake(100, 150));
+    checkTargetedSelector(@"BODY > DIV:last-of-type", CGPointMake(100, 250));
+    checkTargetedSelector(@"BODY > SECTION", CGPointMake(100, 350));
+}
+
 } // namespace TestWebKitAPI
