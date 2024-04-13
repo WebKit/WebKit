@@ -7445,7 +7445,5 @@ imported/w3c/web-platform-tests/svg/painting/reftests/markers-orient-002.svg [ I
 imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-002.svg [ ImageOnlyFailure ]
 
-webkit.org/b/272416 imported/w3c/web-platform-tests/svg/path/property/mpath.svg [ ImageOnlyFailure ]
-
 # re-import css/css-align WPT failure
 webkit.org/b/271692 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-020.html [ ImageOnlyFailure ]

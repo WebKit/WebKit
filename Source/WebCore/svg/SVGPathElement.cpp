@@ -243,4 +243,9 @@ void SVGPathElement::collectPresentationalHintsForAttribute(const QualifiedName&
         SVGGeometryElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
+void SVGPathElement::pathDidChange()
+{
+    invalidateMPathDependencies();
+}
+
 }
