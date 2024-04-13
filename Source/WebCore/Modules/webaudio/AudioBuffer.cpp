@@ -144,6 +144,19 @@ AudioBuffer::AudioBuffer(AudioBus& bus)
     m_channelWrappers = FixedVector<JSValueInWrappedObject> { m_channels.size() };
 }
 
+// FIXME: We don't currently implement "acquire the content" [1] and
+// AudioBuffer::getChannelData() correctly. As a result, the audio thread
+// may be reading an array buffer that the JS can detach. To guard against
+// this, we mark the array buffers as non-detachable as soon as their content
+// has been acquired.
+// [1] https://www.w3.org/TR/webaudio/#acquire-the-content
+void AudioBuffer::markBuffersAsNonDetachable()
+{
+    Locker locker { m_channelsLock };
+    for (auto& channel : m_channels)
+        channel->setDetachable(false);
+}
+
 void AudioBuffer::invalidate()
 {
     releaseMemory();

@@ -409,6 +409,15 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     return true;
 }
 
+void AudioBufferSourceNode::acquireBufferContent()
+{
+    ASSERT(isMainThread());
+
+    // FIXME: We should implement https://www.w3.org/TR/webaudio/#acquire-the-content.
+    if (m_buffer)
+        m_buffer->markBuffersAsNonDetachable();
+}
+
 ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer>&& buffer)
 {
     ASSERT(isMainThread());
@@ -445,6 +454,9 @@ ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer
     // In case the buffer gets set after playback has started, we need to clamp the grain parameters now.
     if (m_isGrain)
         adjustGrainParameters();
+
+    if (isPlayingOrScheduled())
+        acquireBufferContent();
 
     return { };
 }
@@ -513,6 +525,7 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
 
     adjustGrainParameters();
 
+    acquireBufferContent();
     m_playbackState = SCHEDULED_STATE;
 
     return { };
