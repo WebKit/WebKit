@@ -30,6 +30,7 @@ class RenderSVGBlock : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGBlock);
 public:
     inline SVGGraphicsElement& graphicsElement() const;
+    inline Ref<SVGGraphicsElement> protectedGraphicsElement() const;
 
 protected:
     RenderSVGBlock(Type, SVGGraphicsElement&, RenderStyle&&);

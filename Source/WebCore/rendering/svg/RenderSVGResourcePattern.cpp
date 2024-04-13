@@ -150,7 +150,7 @@ bool RenderSVGResourcePattern::prepareStrokeOperation(GraphicsContext& context, 
     context.setAlpha(svgStyle.strokeOpacity());
     SVGRenderSupport::applyStrokeStyleToContext(context, style, targetRenderer);
     if (svgStyle.vectorEffect() == VectorEffect::NonScalingStroke) {
-        if (auto* shape = dynamicDowncast<RenderSVGShape>(targetRenderer))
+        if (CheckedPtr shape = dynamicDowncast<RenderSVGShape>(targetRenderer))
             pattern->setPatternSpaceTransform(shape->nonScalingStrokeTransform().multiply(m_transformMap.get(targetRenderer)));
     }
     context.setStrokePattern(*pattern);
@@ -177,7 +177,7 @@ bool RenderSVGResourcePattern::buildTileImageTransform(const RenderElement& rend
 
 RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(GraphicsContext& context, const PatternAttributes& attributes, const FloatSize& size, const FloatSize& scale, const AffineTransform& tileImageTransform) const
 {
-    auto* patternRenderer = static_cast<RenderSVGResourcePattern*>(attributes.patternContentElement()->renderer());
+    CheckedPtr patternRenderer = static_cast<RenderSVGResourcePattern*>(attributes.patternContentElement()->renderer());
     ASSERT(patternRenderer);
     ASSERT(patternRenderer->hasLayer());
 
@@ -205,7 +205,7 @@ RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(GraphicsContext& c
     GraphicsContextStateSaver stateSaver(tileImageContext);
 
     // Draw the content into the ImageBuffer.
-    patternRenderer->layer()->paintSVGResourceLayer(tileImageContext, tileImageTransform);
+    patternRenderer->checkedLayer()->paintSVGResourceLayer(tileImageContext, tileImageTransform);
     return tileImage;
 }
 

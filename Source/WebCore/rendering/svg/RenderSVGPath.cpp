@@ -222,20 +222,20 @@ void RenderSVGPath::drawMarkers(PaintInfo& paintInfo)
 
     SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
-    auto* markerStart = svgMarkerStartResourceFromStyle();
-    auto* markerMid = svgMarkerMidResourceFromStyle();
-    auto* markerEnd = svgMarkerEndResourceFromStyle();
+    CheckedPtr markerStart = svgMarkerStartResourceFromStyle();
+    CheckedPtr markerMid = svgMarkerMidResourceFromStyle();
+    CheckedPtr markerEnd = svgMarkerEndResourceFromStyle();
     if (!markerStart && !markerMid && !markerEnd)
         return;
 
     float strokeWidth = this->strokeWidth();
     for (auto& markerPosition : m_markerPositions) {
-        if (auto* marker = markerForType(markerPosition.type, markerStart, markerMid, markerEnd); marker && marker->hasLayer()) {
+        if (auto* marker = markerForType(markerPosition.type, markerStart.get(), markerMid.get(), markerEnd.get()); marker && marker->hasLayer()) {
             auto& context = paintInfo.context();
             GraphicsContextStateSaver stateSaver(context);
 
             auto contentTransform = marker->markerTransformation(markerPosition.origin, markerPosition.angle, strokeWidth);
-            marker->layer()->paintSVGResourceLayer(context, contentTransform);
+            marker->checkedLayer()->paintSVGResourceLayer(context, contentTransform);
         }
     }
 }
@@ -253,15 +253,15 @@ FloatRect RenderSVGPath::computeMarkerBoundingBox(const SVGBoundingBoxComputatio
 
     SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
-    auto* markerStart = svgMarkerStartResourceFromStyle();
-    auto* markerMid = svgMarkerMidResourceFromStyle();
-    auto* markerEnd = svgMarkerEndResourceFromStyle();
+    CheckedPtr markerStart = svgMarkerStartResourceFromStyle();
+    CheckedPtr markerMid = svgMarkerMidResourceFromStyle();
+    CheckedPtr markerEnd = svgMarkerEndResourceFromStyle();
     if (!markerStart && !markerMid && !markerEnd)
         return { };
 
     FloatRect boundaries;
     for (auto& markerPosition : m_markerPositions) {
-        if (auto* marker = markerForType(markerPosition.type, markerStart, markerMid, markerEnd))
+        if (auto* marker = markerForType(markerPosition.type, markerStart.get(), markerMid.get(), markerEnd.get()))
             boundaries.unite(marker->computeMarkerBoundingBox(options, marker->markerTransformation(markerPosition.origin, markerPosition.angle, strokeWidth())));
     }
 
