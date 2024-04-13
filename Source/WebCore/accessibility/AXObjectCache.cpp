@@ -4834,7 +4834,7 @@ bool AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType
             return false;
     }
 
-    return addRelation(getOrCreate(*origin, IsPartOfRelation::Yes), getOrCreate(*target, IsPartOfRelation::Yes), relationType);
+    return addRelation(RefPtr { getOrCreate(*origin, IsPartOfRelation::Yes) }.get(), RefPtr { getOrCreate(*target, IsPartOfRelation::Yes) }.get(), relationType);
 }
 
 static bool canHaveRelations(Element& element)
@@ -5079,7 +5079,7 @@ void AXObjectCache::addLabelForRelation(Element& origin)
     } else if (origin.hasTagName(figcaptionTag)) {
         RefPtr parent = origin.parentNode();
         if (parent && parent->hasTagName(figureTag))
-            addedRelation = addRelation(getOrCreate(origin), getOrCreate(*parent), AXRelationType::LabelFor);
+            addedRelation = addRelation(RefPtr { getOrCreate(origin) }.get(), RefPtr { getOrCreate(*parent) }.get(), AXRelationType::LabelFor);
     }
 
     if (addedRelation)
