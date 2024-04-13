@@ -1,0 +1,8 @@
+This test ensures that aria-hidden='true' is not respected on the html element.
+
+PASS: accessibilityController.accessibleElementById('button').role.toLowerCase().includes('button') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Submit
