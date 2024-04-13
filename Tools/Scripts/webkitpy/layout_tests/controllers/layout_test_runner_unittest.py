@@ -173,7 +173,7 @@ class LayoutTestRunnerTests(unittest.TestCase):
 
     def test_servers_started(self):
 
-        def start_http_server():
+        def start_http_server(additional_dirs=None):
             self.http_started = True
 
         def start_websocket_server():

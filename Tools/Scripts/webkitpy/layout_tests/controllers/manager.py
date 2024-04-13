@@ -377,7 +377,7 @@ class Manager(object):
         # Create the output directory if it doesn't already exist.
         self._port.host.filesystem.maybe_make_directory(self._results_directory)
 
-        needs_http = any(test.needs_http_server for tests in itervalues(tests_to_run_by_device) for test in tests)
+        needs_http = (any(test.needs_http_server for tests in itervalues(tests_to_run_by_device) for test in tests) or self._options.load_in_cross_origin_iframe)
         needs_web_platform_test_server = any(test.needs_wpt_server for tests in itervalues(tests_to_run_by_device) for test in tests)
         needs_websockets = any(test.needs_websocket_server for tests in itervalues(tests_to_run_by_device) for test in tests)
         self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory,
