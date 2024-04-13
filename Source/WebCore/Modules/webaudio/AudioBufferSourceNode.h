@@ -85,6 +85,8 @@ public:
 private:
     AudioBufferSourceNode(BaseAudioContext&);
 
+    void acquireBufferContent() WTF_REQUIRES_LOCK(m_processLock);
+
     double tailTime() const final { return 0; }
     double latencyTime() const final { return 0; }
 

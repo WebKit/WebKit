@@ -59,6 +59,8 @@ public:
     size_t length() const { return hasDetachedChannelBuffer() ? 0 : m_originalLength; }
     double duration() const { return length() / static_cast<double>(sampleRate()); }
 
+    void markBuffersAsNonDetachable();
+
     // Channel data access
     unsigned numberOfChannels() const { return m_channels.size(); }
     ExceptionOr<JSC::JSValue> getChannelData(JSDOMGlobalObject&, unsigned channelIndex);
