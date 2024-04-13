@@ -314,8 +314,6 @@ public:
     const SVGPathByteStream* pathData() const { return m_byteStream.get(); }
     const std::unique_ptr<SVGPathByteStream>& byteStream() const { return m_byteStream; }
 
-    const Path& path(const FloatRect&) final;
-
     bool canBlend(const BasicShape&) const final;
     Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const final;
 
@@ -324,6 +322,8 @@ private:
     BasicShapePath(std::unique_ptr<SVGPathByteStream>&&, float zoom, WindRule);
 
     Type type() const final { return Type::Path; }
+
+    const Path& path(const FloatRect&) final;
 
     bool operator==(const BasicShape&) const final;
 

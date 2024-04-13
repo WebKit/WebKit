@@ -382,9 +382,4 @@ void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties&
     style.setProperty(propertyID, value, false, CSSParserContext(document()));
 }
 
-void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, RefPtr<CSSValue>&& value)
-{
-    style.setProperty(propertyID, WTFMove(value), false);
-}
-
 }

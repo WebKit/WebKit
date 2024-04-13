@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGPathElement.h"
 
-#include "CSSBasicShapes.h"
 #include "LegacyRenderSVGPath.h"
 #include "LegacyRenderSVGResource.h"
 #include "RenderSVGPath.h"
@@ -32,7 +31,6 @@
 #include "SVGNames.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
-#include "SVGRenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -145,7 +143,6 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
             path->setNeedsShapeUpdate();
 
         updateSVGRendererForElementChange();
-        setPresentationalHintStyleIsDirty();
         invalidateResourceImageBuffersIfNeeded();
         return;
     }
@@ -178,15 +175,11 @@ void SVGPathElement::removedFromAncestor(RemovalType removalType, ContainerNode&
 
 float SVGPathElement::getTotalLength() const
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
-
     return getTotalLengthOfSVGPathByteStream(pathByteStream());
 }
 
 ExceptionOr<Ref<SVGPoint>> SVGPathElement::getPointAtLength(float distance) const
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
-
     // Spec: Clamp distance to [0, length].
     distance = clampTo<float>(distance, 0, getTotalLength());
 
@@ -196,8 +189,6 @@ ExceptionOr<Ref<SVGPoint>> SVGPathElement::getPointAtLength(float distance) cons
 
 unsigned SVGPathElement::getPathSegAtLength(float length) const
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
-
     return getSVGPathSegAtLengthFromSVGPathByteStream(pathByteStream(), length);
 }
 
@@ -224,46 +215,6 @@ RenderPtr<RenderElement> SVGPathElement::createElementRenderer(RenderStyle&& sty
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGPath>(*this, WTFMove(style));
     return createRenderer<LegacyRenderSVGPath>(*this, WTFMove(style));
-}
-
-const SVGPathByteStream& SVGPathElement::pathByteStream() const
-{
-    if (auto* renderer = this->renderer()) {
-        if (auto* basicShapePath = renderer->style().d()) {
-            if (auto* pathData = basicShapePath->pathData())
-                return *pathData;
-        }
-    }
-
-    return m_pathSegList->currentPathByteStream();
-}
-
-Path SVGPathElement::path() const
-{
-    if (auto* renderer = this->renderer()) {
-        if (auto* basicShapePath = renderer->style().d())
-            return basicShapePath->path({ });
-    }
-
-    return m_pathSegList->currentPath();
-}
-
-void SVGPathElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
-{
-    if (name == SVGNames::dAttr) {
-        // In the case of the `d` property, we want to avoid providing a string value since it will require
-        // the path data to be parsed again and path data can be unwieldy.
-        auto property = cssPropertyIdForSVGAttributeName(name);
-        // The WindRule value passed here is not relevant for the `d` property.
-        auto cssPathValue = CSSPathValue::create(m_pathSegList->currentPathByteStream(), WindRule::NonZero);
-        addPropertyToPresentationalHintStyle(style, property, WTFMove(cssPathValue));
-    } else
-        SVGGeometryElement::collectPresentationalHintsForAttribute(name, value, style);
-}
-
-void SVGPathElement::pathDidChange()
-{
-    invalidateMPathDependencies();
 }
 
 }

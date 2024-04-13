@@ -10,7 +10,7 @@ PASS x, y, width, and height presentation attributes supported on use element
 PASS r presentation attribute supported on circle element
 PASS rx and ry presentation attributes supported on ellipse element
 PASS rx and ry presentation attributes supported on rect element
-PASS d presentation attribute supported on path element
+FAIL d presentation attribute supported on path element assert_true: Presentation attribute d="M0,0 L1,1" should be supported on path element expected true got false
 FAIL cx and cy presentation attributes not supported on other elements assert_false: Presentation attribute cx="1" should not be supported on g element expected false got true
 FAIL x, y, width, and height presentation attributes not supported on other elements assert_false: Presentation attribute x="1" should not be supported on g element expected false got true
 FAIL r presentation attribute not supported on other elements assert_false: Presentation attribute r="1" should not be supported on g element expected false got true
