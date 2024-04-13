@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGPathElement.h"
 
+#include "CSSBasicShapes.h"
 #include "LegacyRenderSVGPath.h"
 #include "LegacyRenderSVGResource.h"
 #include "RenderSVGPath.h"
@@ -31,6 +32,7 @@
 #include "SVGNames.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
+#include "SVGRenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -143,6 +145,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
             path->setNeedsShapeUpdate();
 
         updateSVGRendererForElementChange();
+        setPresentationalHintStyleIsDirty();
         invalidateResourceImageBuffersIfNeeded();
         return;
     }
@@ -215,6 +218,29 @@ RenderPtr<RenderElement> SVGPathElement::createElementRenderer(RenderStyle&& sty
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGPath>(*this, WTFMove(style));
     return createRenderer<LegacyRenderSVGPath>(*this, WTFMove(style));
+}
+
+Path SVGPathElement::path() const
+{
+    if (auto* renderer = this->renderer()) {
+        if (auto* basicShapePath = renderer->style().d())
+            return basicShapePath->path({ });
+    }
+
+    return m_pathSegList->currentPath();
+}
+
+void SVGPathElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+{
+    if (name == SVGNames::dAttr) {
+        // In the case of the `d` property, we want to avoid providing a string value since it will require
+        // the path data to be parsed again and path data can be unwieldy.
+        auto property = cssPropertyIdForSVGAttributeName(name);
+        // The WindRule value passed here is not relevant for the `d` property.
+        auto cssPathValue = CSSPathValue::create(m_pathSegList->currentPathByteStream(), WindRule::NonZero);
+        addPropertyToPresentationalHintStyle(style, property, WTFMove(cssPathValue));
+    } else
+        SVGGeometryElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 }

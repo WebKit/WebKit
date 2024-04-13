@@ -97,7 +97,7 @@ public:
     RefPtr<SVGPathSegList>& animatedPathSegList() { return m_pathSegList->animVal(); }
 
     const SVGPathByteStream& pathByteStream() const { return m_pathSegList->currentPathByteStream(); }
-    Path path() const { return m_pathSegList->currentPath(); }
+    Path path() const;
     size_t approximateMemoryCost() const final { return m_pathSegList->approximateMemoryCost(); }
 
     static void clearCache();
@@ -119,6 +119,8 @@ private:
     void removedFromAncestor(RemovalType, ContainerNode&) final;
 
     void invalidateMPathDependencies();
+
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
 private:
     Ref<SVGAnimatedPathSegList> m_pathSegList { SVGAnimatedPathSegList::create(this) };

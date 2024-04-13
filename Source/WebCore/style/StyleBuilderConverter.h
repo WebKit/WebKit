@@ -746,10 +746,10 @@ inline RefPtr<PathOperation> BuilderConverter::convertRayPathOperation(BuilderSt
     return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining());
 }
 
-inline RefPtr<BasicShapePath> BuilderConverter::convertSVGPath(BuilderState& builderState, const CSSValue& value)
+inline RefPtr<BasicShapePath> BuilderConverter::convertSVGPath(BuilderState&, const CSSValue& value)
 {
     if (auto* pathValue = dynamicDowncast<CSSPathValue>(value))
-        return basicShapePathForValue(*pathValue, builderState.style().usedZoom());
+        return basicShapePathForValue(*pathValue);
 
     ASSERT(is<CSSPrimitiveValue>(value));
     ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
