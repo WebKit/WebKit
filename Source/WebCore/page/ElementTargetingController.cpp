@@ -511,8 +511,20 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
         if (checkForNearbyTargets && computeViewportAreaRatio(targetBoundingBox) < maximumAreaRatioForNearbyTargets)
             additionalRegionForNearbyElements.unite(targetBoundingBox);
 
+        auto targetEncompassesOtherCandidate = [](Element& target, Element& candidate) {
+            if (&target == &candidate)
+                return true;
+
+            RefPtr<Element> candidateOrHost;
+            if (RefPtr pseudo = dynamicDowncast<PseudoElement>(candidate))
+                candidateOrHost = pseudo->hostElement();
+            else
+                candidateOrHost = &candidate;
+            return candidateOrHost && target.containsIncludingShadowDOM(candidateOrHost.get());
+        };
+
         candidates.removeAllMatching([&](auto& candidate) {
-            if (target.ptr() != candidate.ptr() && !target->containsIncludingShadowDOM(candidate.ptr()))
+            if (!targetEncompassesOtherCandidate(target, candidate))
                 return false;
 
             if (checkForNearbyTargets) {
