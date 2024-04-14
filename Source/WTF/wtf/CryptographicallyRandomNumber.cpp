@@ -31,7 +31,9 @@
 #include "config.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 
+#include <array>
 #include <mutex>
+#include <wtf/IteratorRange.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OSRandomSource.h>
@@ -45,21 +47,21 @@ class ARC4Stream {
 public:
     ARC4Stream();
 
-    uint8_t i;
-    uint8_t j;
-    uint8_t s[256];
+    uint8_t i { 0 };
+    uint8_t j { 0 };
+    std::array<uint8_t, 256> s;
 };
 
 class ARC4RandomNumberGenerator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ARC4RandomNumberGenerator();
+    ARC4RandomNumberGenerator() = default;
 
     uint32_t randomNumber();
-    void randomValues(void* buffer, size_t length);
+    void randomValues(std::span<uint8_t>);
 
 private:
-    inline void addRandomData(const unsigned char *data, int length);
+    inline void addRandomData(std::span<const uint8_t, 128>);
     void stir() WTF_REQUIRES_LOCK(m_lock);
     void stirIfNeeded() WTF_REQUIRES_LOCK(m_lock);
     inline uint8_t getByte();
@@ -67,29 +69,22 @@ private:
 
     Lock m_lock;
     ARC4Stream m_stream;
-    int m_count;
+    int m_count { 0 };
 };
 
 ARC4Stream::ARC4Stream()
 {
-    for (int n = 0; n < 256; n++)
+    for (unsigned n = 0; n < 256; ++n)
         s[n] = n;
-    i = 0;
-    j = 0;
 }
 
-ARC4RandomNumberGenerator::ARC4RandomNumberGenerator()
-    : m_count(0)
+void ARC4RandomNumberGenerator::addRandomData(std::span<const uint8_t, 128> data)
 {
-}
-
-void ARC4RandomNumberGenerator::addRandomData(const unsigned char* data, int length)
-{
-    m_stream.i--;
-    for (int n = 0; n < 256; n++) {
-        m_stream.i++;
+    --m_stream.i;
+    for (unsigned n = 0; n < 256; ++n) {
+        ++m_stream.i;
         uint8_t si = m_stream.s[m_stream.i];
-        m_stream.j += si + data[n % length];
+        m_stream.j += si + data[n % data.size()];
         m_stream.s[m_stream.i] = m_stream.s[m_stream.j];
         m_stream.s[m_stream.j] = si;
     }
@@ -98,14 +93,13 @@ void ARC4RandomNumberGenerator::addRandomData(const unsigned char* data, int len
 
 void ARC4RandomNumberGenerator::stir()
 {
-    unsigned char randomness[128];
-    size_t length = sizeof(randomness);
-    cryptographicallyRandomValuesFromOS(randomness, length);
-    addRandomData(randomness, length);
+    std::array<uint8_t, 128> randomness;
+    cryptographicallyRandomValuesFromOS(randomness);
+    addRandomData(randomness);
 
     // Discard early keystream, as per recommendations in:
     // http://www.wisdom.weizmann.ac.il/~itsik/RC4/Papers/Rc4_ksa.ps
-    for (int i = 0; i < 256; i++)
+    for (unsigned i = 0; i < 256; ++i)
         getByte();
     m_count = 1600000;
 }
@@ -146,16 +140,15 @@ uint32_t ARC4RandomNumberGenerator::randomNumber()
     return getWord();
 }
 
-void ARC4RandomNumberGenerator::randomValues(void* buffer, size_t length)
+void ARC4RandomNumberGenerator::randomValues(std::span<uint8_t> buffer)
 {
     Locker locker { m_lock };
 
-    auto result = static_cast<unsigned char*>(buffer);
     stirIfNeeded();
-    while (length--) {
+    for (auto& byte : WTF::makeReversedRange(buffer)) {
         m_count--;
         stirIfNeeded();
-        result[length] = getByte();
+        byte = getByte();
     }
 }
 
@@ -179,9 +172,9 @@ template<> unsigned cryptographicallyRandomNumber<unsigned>()
     return sharedRandomNumberGenerator().randomNumber();
 }
 
-void cryptographicallyRandomValues(void* buffer, size_t length)
+void cryptographicallyRandomValues(std::span<uint8_t> buffer)
 {
-    sharedRandomNumberGenerator().randomValues(buffer, length);
+    sharedRandomNumberGenerator().randomValues(buffer);
 }
 
 template<> uint64_t cryptographicallyRandomNumber<uint64_t>()

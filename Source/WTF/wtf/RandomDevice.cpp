@@ -85,16 +85,16 @@ RandomDevice::~RandomDevice()
 
 // FIXME: Make this call fast by creating the pool in RandomDevice.
 // https://bugs.webkit.org/show_bug.cgi?id=170190
-void RandomDevice::cryptographicallyRandomValues(unsigned char* buffer, size_t length)
+void RandomDevice::cryptographicallyRandomValues(std::span<uint8_t> buffer)
 {
 #if OS(DARWIN)
-    RELEASE_ASSERT(!CCRandomGenerateBytes(buffer, length));
+    RELEASE_ASSERT(!CCRandomGenerateBytes(buffer.data(), buffer.size()));
 #elif OS(FUCHSIA)
-    zx_cprng_draw(buffer, length);
+    zx_cprng_draw(buffer.data(), buffer.size());
 #elif OS(UNIX)
     ssize_t amountRead = 0;
-    while (static_cast<size_t>(amountRead) < length) {
-        ssize_t currentRead = read(m_fd, buffer + amountRead, length - amountRead);
+    while (static_cast<size_t>(amountRead) < buffer.size()) {
+        ssize_t currentRead = read(m_fd, buffer.data() + amountRead, buffer.size() - amountRead);
         // We need to check for both EAGAIN and EINTR since on some systems /dev/urandom
         // is blocking and on others it is non-blocking.
         if (currentRead == -1) {
@@ -109,7 +109,7 @@ void RandomDevice::cryptographicallyRandomValues(unsigned char* buffer, size_t l
     HCRYPTPROV hCryptProv = 0;
     if (!CryptAcquireContext(&hCryptProv, nullptr, MS_DEF_PROV, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
         CRASH();
-    if (!CryptGenRandom(hCryptProv, length, buffer))
+    if (!CryptGenRandom(hCryptProv, buffer.size(), buffer.data()))
         CRASH();
     CryptReleaseContext(hCryptProv, 0);
 #else

@@ -40,7 +40,7 @@ using namespace WebCore;
 
 static std::span<const uint8_t> span(const ASCIILiteral& data)
 {
-    return { reinterpret_cast<const uint8_t*>(data.characters()), data.length() };
+    return data.span8();
 }
 
 static CurlResponse createCurlResponse(std::optional<String> contentType = "multipart/x-mixed-replace"_s, std::optional<String> boundary = "boundary"_s)

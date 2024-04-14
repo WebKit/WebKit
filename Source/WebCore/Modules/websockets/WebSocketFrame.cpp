@@ -132,7 +132,7 @@ static void appendFramePayload(const WebSocketFrame& frame, Vector<uint8_t>& fra
     frameData.append(frame.payload);
 
     if (frame.masked) {
-        cryptographicallyRandomValues(frameData.data() + maskingKeyStart, maskingKeyWidthInBytes);
+        cryptographicallyRandomValues(frameData.mutableSpan().subspan(maskingKeyStart, maskingKeyWidthInBytes));
         for (size_t i = 0; i < frame.payload.size(); ++i)
             frameData[payloadStart + i] ^= frameData[maskingKeyStart + i % maskingKeyWidthInBytes];
     }

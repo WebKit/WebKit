@@ -31,6 +31,7 @@
 #include "SQLiteDatabaseTracker.h"
 #include <sqlite3.h>
 #include <variant>
+#include <wtf/Algorithms.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/StringView.h>
 
@@ -107,13 +108,13 @@ int SQLiteStatement::bindBlob(int index, const String& text)
     // treats as a null, so we supply a non-null pointer for that case.
     auto upconvertedCharacters = StringView(text).upconvertedCharacters();
     UChar anyCharacter = 0;
-    const UChar* characters;
+    std::span<const UChar> characters;
     if (text.isEmpty() && !text.isNull())
-        characters = &anyCharacter;
+        characters = span(anyCharacter);
     else
-        characters = upconvertedCharacters;
+        characters = upconvertedCharacters.span();
 
-    return bindBlob(index, std::span(reinterpret_cast<const uint8_t*>(characters), text.length() * sizeof(UChar)));
+    return bindBlob(index, asBytes(characters));
 }
 
 int SQLiteStatement::bindText(int index, StringView text)

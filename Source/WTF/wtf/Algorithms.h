@@ -67,6 +67,18 @@ std::span<T> spanReinterpretCast(std::span<U> span)
     return std::span<T> { reinterpret_cast<T*>(const_cast<std::remove_const_t<U>*>(span.data())), span.size_bytes() / sizeof(T) };
 }
 
+template<typename T, std::size_t Extent>
+std::span<const uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> asBytes(std::span<T, Extent> span)
+{
+    return std::span<const uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> { reinterpret_cast<const uint8_t*>(span.data()), span.size_bytes() };
+}
+
+template<typename T, std::size_t Extent>
+std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> asWritableBytes(std::span<T, Extent> span)
+{
+    return std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> { reinterpret_cast<uint8_t*>(span.data()), span.size_bytes() };
+}
+
 template<typename T>
 bool equalSpans(std::span<T> a, std::span<T> b)
 {
@@ -94,6 +106,8 @@ void memsetSpan(std::span<T> destination, uint8_t byte)
 
 } // namespace WTF
 
+using WTF::asBytes;
+using WTF::asWritableBytes;
 using WTF::spanReinterpretCast;
 using WTF::equalSpans;
 using WTF::memcpySpan;

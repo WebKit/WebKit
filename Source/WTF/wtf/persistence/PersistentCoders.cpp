@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/persistence/PersistentCoders.h>
 
+#include <wtf/Algorithms.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -94,15 +95,14 @@ void Coder<String>::encodeForPersistence(Encoder& encoder, const String& string)
         return;
     }
 
-    uint32_t length = string.length();
     bool is8Bit = string.is8Bit();
 
-    encoder << length << is8Bit;
+    encoder << string.length() << is8Bit;
 
     if (is8Bit)
-        encoder.encodeFixedLengthData({ string.characters8(), length });
+        encoder.encodeFixedLengthData(string.span8());
     else
-        encoder.encodeFixedLengthData({ reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar) });
+        encoder.encodeFixedLengthData(asBytes(string.span16()));
 }
 
 template <typename CharacterType>

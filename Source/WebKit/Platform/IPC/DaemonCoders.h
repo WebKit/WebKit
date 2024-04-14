@@ -28,6 +28,7 @@
 #include "ArgumentCoders.h"
 #include <WebCore/PushSubscriptionIdentifier.h>
 #include <optional>
+#include <wtf/Algorithms.h>
 #include <wtf/Forward.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
@@ -178,15 +179,14 @@ template<> struct Coder<WTF::String> {
             return;
         }
 
-        uint32_t length = string.length();
         bool is8Bit = string.is8Bit();
 
-        encoder << length << is8Bit;
+        encoder << string.length() << is8Bit;
 
         if (is8Bit)
             encoder.encodeFixedLengthData(string.span8());
         else
-            encoder.encodeFixedLengthData({ reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar) });
+            encoder.encodeFixedLengthData(asBytes(string.span16()));
     }
 
     template<typename CharacterType, typename Decoder>

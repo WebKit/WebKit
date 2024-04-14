@@ -135,7 +135,7 @@ public:
         *this << length;
 
         *this << static_cast<uint64_t>(length * sizeof(UChar));
-        encodeFixedLengthData({ reinterpret_cast<const uint8_t*>(StringView(value).upconvertedCharacters().get()), length * sizeof(UChar) }, alignof(UChar));
+        encodeFixedLengthData(asBytes(StringView(value).upconvertedCharacters().span()), alignof(UChar));
 
         return *this;
     }

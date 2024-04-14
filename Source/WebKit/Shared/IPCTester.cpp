@@ -62,10 +62,9 @@ extern "C" {
 static void defaultTestDriver(WKMessageTestSendMessageFunc sendMessageFunc, void* context)
 {
     Vector<uint8_t> data(1000);
-    for (int i = 0; i < 1000; i++) {
-        cryptographicallyRandomValues(data.data(), data.size());
-        int ret = sendMessageFunc(data.span(), context);
-        if (ret)
+    for (unsigned i = 0; i < 1000; ++i) {
+        cryptographicallyRandomValues(data.mutableSpan());
+        if (sendMessageFunc(data.span(), context))
             return;
     }
 }

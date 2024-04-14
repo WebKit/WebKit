@@ -45,7 +45,7 @@ public:
     // This function attempts to fill buffer with randomness from the operating
     // system. Rather than calling this function directly, consider calling
     // cryptographicallyRandomNumber or cryptographicallyRandomValues.
-    void cryptographicallyRandomValues(unsigned char* buffer, size_t length);
+    void cryptographicallyRandomValues(std::span<uint8_t> buffer);
 
 private:
 #if OS(DARWIN) || OS(FUCHSIA) || OS(WINDOWS)

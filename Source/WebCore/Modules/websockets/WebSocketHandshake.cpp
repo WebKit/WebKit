@@ -92,10 +92,10 @@ static String trimInputSample(std::span<const uint8_t> input)
 
 static String generateSecWebSocketKey()
 {
-    static const size_t nonceSize = 16;
-    unsigned char key[nonceSize];
-    cryptographicallyRandomValues(key, nonceSize);
-    return base64EncodeToString(key, nonceSize);
+    constexpr size_t nonceSize = 16;
+    std::array<uint8_t, nonceSize> key;
+    cryptographicallyRandomValues(key);
+    return base64EncodeToString(key);
 }
 
 String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocketKey)

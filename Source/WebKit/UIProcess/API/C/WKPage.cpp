@@ -101,6 +101,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/WindowFeatures.h>
+#include <wtf/Algorithms.h>
 
 #ifdef __BLOCKS__
 #include <Block.h>
@@ -262,7 +263,7 @@ static String encodingOf(const String& string)
 static std::span<const uint8_t> dataFrom(const String& string)
 {
     if (string.isNull() || !string.is8Bit())
-        return { reinterpret_cast<const uint8_t*>(string.characters16()), string.length() * sizeof(UChar) };
+        return asBytes(string.span16());
     return string.span8();
 }
 
