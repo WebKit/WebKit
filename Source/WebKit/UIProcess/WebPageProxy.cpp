@@ -5381,9 +5381,9 @@ void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions
 
 void WebPageProxy::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& callbackFunction)
 {
-    auto sendFindStringMessage = [&]<typename M>(M&& message, auto&& completionHandler)
+    auto sendAndAggregateFindStringMessage = [&]<typename M>(M&& message, CompletionHandler<void(bool)>&& completionHandler)
     {
-        Ref callbackAggregator = FindStringCallbackAggregator::create(*this, string, options, maxMatchCount, std::forward<decltype(completionHandler)>(completionHandler));
+        Ref callbackAggregator = FindStringCallbackAggregator::create(*this, string, options, maxMatchCount, WTFMove(completionHandler));
         forEachWebContentProcess([&](auto& webProcess, auto pageID) {
             webProcess.sendWithAsyncReply(std::forward<M>(message), [callbackAggregator](std::optional<FrameIdentifier> frameID, Vector<IntRect>&&, uint32_t matchCount, int32_t, bool didWrap) {
                 callbackAggregator->foundString(frameID, matchCount, didWrap);
@@ -5391,11 +5391,24 @@ void WebPageProxy::findString(const String& string, OptionSet<FindOptions> optio
         });
     };
 
-    sendFindStringMessage(Messages::WebPage::FindString(string, options | FindOptions::DoNotSetSelection, maxMatchCount), WTFMove(callbackFunction));
 #if ENABLE(IMAGE_ANALYSIS)
     if (m_preferences->imageAnalysisDuringFindInPageEnabled())
-        sendFindStringMessage(Messages::WebPage::FindStringIncludingImages(string, options | FindOptions::DoNotSetSelection, maxMatchCount), [](bool) { });
+        sendAndAggregateFindStringMessage(Messages::WebPage::FindStringIncludingImages(string, options | FindOptions::DoNotSetSelection, maxMatchCount), [](bool) { });
 #endif
+
+    if (!m_browsingContextGroup->hasRemotePages(*this)) {
+        auto completionHandler = [protectedThis = Ref { *this }, string, callbackFunction = WTFMove(callbackFunction)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrap) mutable {
+            if (!frameID)
+                protectedThis->findClient().didFailToFindString(protectedThis.ptr(), string);
+            else
+                protectedThis->findClient().didFindString(protectedThis.ptr(), string, matchRects, matchCount, matchIndex, didWrap);
+            callbackFunction(frameID.has_value());
+        };
+        sendWithAsyncReply(Messages::WebPage::FindString(string, options, maxMatchCount), WTFMove(completionHandler));
+        return;
+    }
+
+    sendAndAggregateFindStringMessage(Messages::WebPage::FindString(string, options | FindOptions::DoNotSetSelection, maxMatchCount), WTFMove(callbackFunction));
 }
 
 void WebPageProxy::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)

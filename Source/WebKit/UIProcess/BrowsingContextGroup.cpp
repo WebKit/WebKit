@@ -204,4 +204,10 @@ void BrowsingContextGroup::transitionPageToRemotePage(WebPageProxy& page, const 
     set.add(WTFMove(newRemotePage));
 }
 
+bool BrowsingContextGroup::hasRemotePages(const WebPageProxy& page)
+{
+    auto it = m_remotePages.find(page);
+    return it != m_remotePages.end() && !it->value.isEmpty();
+}
+
 } // namespace WebKit
