@@ -85,14 +85,14 @@ inline bool needsLineBreakIterator(UChar character)
 
 // When in non-loose mode, we can use the ASCII shortcut table.
 template<typename CharacterType, NonBreakingSpaceBehavior nonBreakingSpaceBehavior, CanUseShortcut canUseShortcut>
-inline unsigned nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, const CharacterType* string, unsigned length, unsigned startPosition)
+inline size_t nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, std::span<const CharacterType> string, size_t startPosition)
 {
     std::optional<unsigned> nextBreak;
 
     CharacterType lastLastCharacter = startPosition > 1 ? string[startPosition - 2] : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().secondToLastCharacter());
     CharacterType lastCharacter = startPosition > 0 ? string[startPosition - 1] : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().lastCharacter());
-    unsigned priorContextLength = lineBreakIteratorFactory.priorContext().length();
-    for (unsigned i = startPosition; i < length; i++) {
+    auto priorContextLength = lineBreakIteratorFactory.priorContext().length();
+    for (size_t i = startPosition; i < string.size(); ++i) {
         CharacterType character = string[i];
 
         if (isBreakableSpace<nonBreakingSpaceBehavior>(character) || (canUseShortcut == CanUseShortcut::Yes && shouldBreakAfter(lastLastCharacter, lastCharacter, character)))
@@ -114,14 +114,14 @@ inline unsigned nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakI
         lastCharacter = character;
     }
 
-    return length;
+    return string.size();
 }
 
 template<typename CharacterType, NonBreakingSpaceBehavior nonBreakingSpaceBehavior>
-inline unsigned nextBreakablePositionKeepingAllWords(const CharacterType* string, unsigned length, unsigned startPosition)
+inline size_t nextBreakablePositionKeepingAllWords(std::span<const CharacterType> string, size_t startPosition)
 {
     // FIXME: Use ICU instead.
-    for (unsigned i = startPosition; i < length; i++) {
+    for (size_t i = startPosition; i < string.size(); ++i) {
         if (isBreakableSpace<nonBreakingSpaceBehavior>(string[i]))
             return i;
         // FIXME: This should either be in isBreakableSpace (though previous attempts broke the world) or should use ICU instead.
@@ -130,55 +130,55 @@ inline unsigned nextBreakablePositionKeepingAllWords(const CharacterType* string
         if (string[i] == ideographicSpace)
             return i + 1;
     }
-    return length;
+    return string.size();
 }
 
 inline unsigned nextBreakablePositionKeepingAllWords(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
     auto stringView = lineBreakIteratorFactory.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePositionKeepingAllWords<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak>(stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePositionKeepingAllWords<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak>(stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePositionKeepingAllWords<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak>(stringView.span8(), startPosition);
+    return nextBreakablePositionKeepingAllWords<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak>(stringView.span16(), startPosition);
 }
 
 inline unsigned nextBreakablePositionKeepingAllWordsIgnoringNBSP(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
     auto stringView = lineBreakIteratorFactory.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePositionKeepingAllWords<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace>(stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePositionKeepingAllWords<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace>(stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePositionKeepingAllWords<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace>(stringView.span8(), startPosition);
+    return nextBreakablePositionKeepingAllWords<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace>(stringView.span16(), startPosition);
 }
 
 inline unsigned nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
     auto stringView = lineBreakIteratorFactory.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::Yes>(lineBreakIteratorFactory, stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::Yes>(lineBreakIteratorFactory, stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::Yes>(lineBreakIteratorFactory, stringView.span8(), startPosition);
+    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::Yes>(lineBreakIteratorFactory, stringView.span16(), startPosition);
 }
 
 inline unsigned nextBreakablePositionIgnoringNBSP(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
     auto stringView = lineBreakIteratorFactory.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::Yes>(lineBreakIteratorFactory, stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::Yes>(lineBreakIteratorFactory, stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::Yes>(lineBreakIteratorFactory, stringView.span8(), startPosition);
+    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::Yes>(lineBreakIteratorFactory, stringView.span16(), startPosition);
 }
 
 inline unsigned nextBreakablePositionWithoutShortcut(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
     auto stringView = lineBreakIteratorFactory.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::No>(lineBreakIteratorFactory, stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::No>(lineBreakIteratorFactory, stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::No>(lineBreakIteratorFactory, stringView.span8(), startPosition);
+    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::No>(lineBreakIteratorFactory, stringView.span16(), startPosition);
 }
 
 inline unsigned nextBreakablePositionIgnoringNBSPWithoutShortcut(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
     auto stringView = lineBreakIteratorFactory.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::No>(lineBreakIteratorFactory, stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::No>(lineBreakIteratorFactory, stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::No>(lineBreakIteratorFactory, stringView.span8(), startPosition);
+    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::No>(lineBreakIteratorFactory, stringView.span16(), startPosition);
 }
 
 inline unsigned nextBreakablePositionBreakCharacter(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
