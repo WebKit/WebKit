@@ -26,15 +26,7 @@
 #include "config.h"
 #include "APIUserStyleSheet.h"
 
-#include <wtf/text/StringConcatenateNumbers.h>
-
 namespace API {
-
-WTF::URL UserStyleSheet::generateUniqueURL()
-{
-    static uint64_t identifier;
-    return { { }, makeString("user-style-sheet:", ++identifier) };
-}
 
 UserStyleSheet::UserStyleSheet(WebCore::UserStyleSheet userStyleSheet, API::ContentWorld& world)
     : m_userStyleSheet(userStyleSheet)

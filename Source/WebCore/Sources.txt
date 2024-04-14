@@ -2022,6 +2022,8 @@ page/UndoManager.cpp
 page/UserContentController.cpp
 page/UserContentProvider.cpp
 page/UserContentURLPattern.cpp
+page/UserScript.cpp
+page/UserStyleSheet.cpp
 page/VisitedLinkStore.cpp
 page/VisualViewport.cpp
 page/WheelEventDeltaFilter.cpp

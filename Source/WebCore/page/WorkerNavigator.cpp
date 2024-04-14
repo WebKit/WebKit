@@ -30,6 +30,7 @@
 #include "Chrome.h"
 #include "GPU.h"
 #include "JSDOMPromiseDeferred.h"
+#include "Page.h"
 #include "PushNotificationEvent.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "WorkerBadgeProxy.h"
