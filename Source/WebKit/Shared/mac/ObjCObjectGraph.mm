@@ -139,7 +139,7 @@ void ObjCObjectGraph::encode(IPC::Encoder& encoder, id object)
 
     auto type = typeFromObject(object);
     if (!type)
-        [NSException raise:NSInvalidArgumentException format:@"Can not encode objects of class type '%@'", static_cast<NSString *>(NSStringFromClass([object class]))];
+        [NSException raise:NSInvalidArgumentException format:@"Can not encode objects of class type '%@'", checked_objc_cast<NSString>(NSStringFromClass([object class]))];
 
     encoder << *type;
 
@@ -148,38 +148,38 @@ void ObjCObjectGraph::encode(IPC::Encoder& encoder, id object)
         return;
 
     case ObjCType::NSArray: {
-        IPC::encode(encoder, static_cast<NSArray *>(object));
+        IPC::encode(encoder, checked_objc_cast<NSArray>(object));
         return;
     }
 
     case ObjCType::NSData: {
-        IPC::encode(encoder, static_cast<NSData *>(object));
+        IPC::encode(encoder, checked_objc_cast<NSData>(object));
         return;
     }
 
     case ObjCType::NSDate: {
-        IPC::encode(encoder, static_cast<NSDate *>(object));
+        IPC::encode(encoder, checked_objc_cast<NSDate>(object));
         return;
     }
 
     case ObjCType::NSDictionary: {
-        IPC::encode(encoder, static_cast<NSDictionary *>(object));
+        IPC::encode(encoder, checked_objc_cast<NSDictionary>(object));
         return;
     }
 
     case ObjCType::NSNumber: {
-        IPC::encode(encoder, static_cast<NSNumber *>(object));
+        IPC::encode(encoder, checked_objc_cast<NSNumber>(object));
         return;
     }
 
     case ObjCType::NSString: {
-        IPC::encode(encoder, static_cast<NSString *>(object));
+        IPC::encode(encoder, checked_objc_cast<NSString>(object));
         return;
     }
 
     case ObjCType::WKBrowsingContextHandle: {
-        encoder << static_cast<WKBrowsingContextHandle *>(object).pageProxyID;
-        encoder << static_cast<WKBrowsingContextHandle *>(object).webPageID;
+        encoder << checked_objc_cast<WKBrowsingContextHandle>(object).pageProxyID;
+        encoder << checked_objc_cast<WKBrowsingContextHandle>(object).webPageID;
         return;
     }
     }
