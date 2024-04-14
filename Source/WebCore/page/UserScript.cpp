@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "UserScript.h"
 
-#include "APIContentWorld.h"
-#include "APIObject.h"
-#include <WebCore/UserStyleSheet.h>
-#include <wtf/Identified.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
-namespace API {
+namespace WebCore {
 
-class UserStyleSheet final : public ObjectImpl<Object::Type::UserStyleSheet>, public Identified<UserStyleSheet> {
-public:
-    static Ref<UserStyleSheet> create(WebCore::UserStyleSheet userStyleSheet, API::ContentWorld& world)
-    {
-        return adoptRef(*new UserStyleSheet(WTFMove(userStyleSheet), world));
-    }
+static WTF::URL generateUniqueURL()
+{
+    static uint64_t identifier;
+    return { { }, makeString("user-script:", ++identifier) };
+}
 
-    UserStyleSheet(WebCore::UserStyleSheet, API::ContentWorld&);
+UserScript::UserScript(String&& source, URL&& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, WaitForNotificationBeforeInjecting waitForNotification)
+    : m_source(WTFMove(source))
+    , m_url(url.isEmpty() ? generateUniqueURL() : WTFMove(url))
+    , m_allowlist(WTFMove(allowlist))
+    , m_blocklist(WTFMove(blocklist))
+    , m_injectionTime(injectionTime)
+    , m_injectedFrames(injectedFrames)
+    , m_waitForNotificationBeforeInjecting(waitForNotification)
+{
+}
 
-    const WebCore::UserStyleSheet& userStyleSheet() const { return m_userStyleSheet; }
-
-    ContentWorld& contentWorld() { return m_world; }
-    const ContentWorld& contentWorld() const { return m_world; }
-
-private:
-    WebCore::UserStyleSheet m_userStyleSheet;
-    Ref<ContentWorld> m_world;
-};
-
-} // namespace API
+} // namespace WebCore
