@@ -521,11 +521,14 @@ class StringView::UpconvertedCharactersWithSize {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit UpconvertedCharactersWithSize(StringView);
-    operator const UChar*() const { return m_characters; }
-    const UChar* get() const { return m_characters; }
+    operator const UChar*() const { return m_characters.data(); }
+    const UChar* get() const { return m_characters.data(); }
+    operator std::span<const UChar>() const { return m_characters; }
+    std::span<const UChar> span() const { return m_characters; }
+
 private:
     Vector<UChar, N> m_upconvertedCharacters;
-    const UChar* m_characters;
+    std::span<const UChar> m_characters;
 };
 
 template<size_t N>
@@ -642,12 +645,12 @@ template<size_t N>
 inline StringView::UpconvertedCharactersWithSize<N>::UpconvertedCharactersWithSize(StringView string)
 {
     if (!string.is8Bit()) {
-        m_characters = string.characters16();
+        m_characters = string.span16();
         return;
     }
     m_upconvertedCharacters.grow(string.m_length);
     StringImpl::copyCharacters(m_upconvertedCharacters.data(), string.span8());
-    m_characters = m_upconvertedCharacters.data();
+    m_characters = m_upconvertedCharacters.span();
 }
 
 inline String StringView::toString() const

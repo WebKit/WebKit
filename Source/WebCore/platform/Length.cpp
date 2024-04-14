@@ -105,15 +105,15 @@ UniqueArray<Length> newLengthArray(const String& string, int& len)
 
     auto upconvertedCharacters = StringView(str.get()).upconvertedCharacters();
     while ((pos2 = str->find(',', pos)) != notFound) {
-        r[i++] = parseLength({ upconvertedCharacters + pos, pos2 - pos });
+        r[i++] = parseLength(upconvertedCharacters.span().subspan(pos, pos2 - pos));
         pos = pos2+1;
     }
 
     ASSERT(i == len - 1);
 
     // IE Quirk: If the last comma is the last char skip it and reduce len by one.
-    if (str->length()-pos > 0)
-        r[i] = parseLength({ upconvertedCharacters + pos, str->length() - pos });
+    if (str->length() - pos > 0)
+        r[i] = parseLength(upconvertedCharacters.span().subspan(pos));
     else
         len--;
 

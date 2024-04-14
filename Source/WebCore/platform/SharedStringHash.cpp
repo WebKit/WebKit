@@ -285,8 +285,7 @@ SharedStringHash computeVisitedLinkHash(const URL& base, const AtomString& attri
         return computeSharedStringHashInline(base, attributeURL.span8());
 
     auto upconvertedCharacters = StringView(attributeURL.string()).upconvertedCharacters();
-    const UChar* characters = upconvertedCharacters;
-    return computeSharedStringHashInline(base, std::span { characters, attributeURL.length() });
+    return computeSharedStringHashInline(base, upconvertedCharacters.span());
 }
 
 } // namespace WebCore

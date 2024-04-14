@@ -71,10 +71,10 @@ bool isSupported()
     return phoneNumbersScanner() != nullptr;
 }
 
-bool find(const UChar* buffer, unsigned length, int* startPos, int* endPos)
+bool find(std::span<const UChar> buffer, int* startPos, int* endPos)
 {
     ASSERT(isSupported());
-    return DDDFAScannerFirstResultInUnicharArray(phoneNumbersScanner(), reinterpret_cast<const UniChar*>(buffer), length, startPos, endPos);
+    return DDDFAScannerFirstResultInUnicharArray(phoneNumbersScanner(), reinterpret_cast<const UniChar*>(buffer.data()), buffer.size(), startPos, endPos);
 }
 
 } // namespace TelephoneNumberDetector
