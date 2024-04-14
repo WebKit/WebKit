@@ -18,7 +18,7 @@ dictionary DigitalCredentialRequestOptions {
 
 dictionary IdentityRequestProvider {
     required DOMString protocol;
-    required DOMString request;
+    required object request;
 };
 
 [Exposed=Window, SecureContext]
