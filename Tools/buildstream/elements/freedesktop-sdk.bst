@@ -22,3 +22,5 @@ config:
   options:
     target_arch: '%{arch}'
     bootstrap_build_arch: '%{bootstrap_build_arch}'
+  overrides:
+    components/dav1d.bst: sdk/dav1d.bst
