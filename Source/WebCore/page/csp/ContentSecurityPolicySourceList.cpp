@@ -249,7 +249,7 @@ template<typename CharacterType> void ContentSecurityPolicySourceList::parse(Str
         auto beginSource = buffer.position();
         skipWhile<isSourceCharacter>(buffer);
 
-        auto sourceBuffer = StringParsingBuffer { beginSource, buffer.position() };
+        StringParsingBuffer sourceBuffer(std::span { beginSource, buffer.position() });
 
         if (parseNonceSource(sourceBuffer))
             continue;
@@ -349,7 +349,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
     if (buffer.atEnd()) {
         // host
         //     ^
-        auto host = parseHost(StringParsingBuffer { beginHost, buffer.position() });
+        auto host = parseHost(std::span { beginHost, buffer.position() });
         if (!host)
             return std::nullopt;
 
@@ -360,11 +360,11 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
     if (buffer.hasCharactersRemaining() && *buffer == '/') {
         // host/path || host/ || /
         //     ^            ^    ^
-        auto host = parseHost(StringParsingBuffer { beginHost, buffer.position() });
+        auto host = parseHost(std::span { beginHost, buffer.position() });
         if (!host)
             return std::nullopt;
 
-        auto path = parsePath(buffer);
+        auto path = parsePath(buffer.span());
         if (!path)
             return std::nullopt;
 
@@ -377,7 +377,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         if (buffer.lengthRemaining() == 1) {
             // scheme:
             //       ^
-            auto scheme = parseScheme(StringParsingBuffer { begin, buffer.position() });
+            auto scheme = parseScheme(StringParsingBuffer(std::span { begin, buffer.position() }));
             if (!scheme)
                 return std::nullopt;
 
@@ -388,7 +388,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         if (buffer[1] == '/') {
             // scheme://host || scheme://
             //       ^                ^
-            auto scheme = parseScheme(StringParsingBuffer { begin, buffer.position() });
+            auto scheme = parseScheme(StringParsingBuffer(std::span { begin, buffer.position() }));
             if (!scheme
                 || !skipExactly(buffer, ':')
                 || !skipExactly(buffer, '/')
@@ -420,12 +420,12 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         beginPath = buffer.position();
     }
 
-    auto host = parseHost(StringParsingBuffer { beginHost, beginPort ? beginPort : beginPath });
+    auto host = parseHost(std::span { beginHost, beginPort ? beginPort : beginPath });
     if (!host)
         return std::nullopt;
 
     if (beginPort) {
-        auto port = parsePort(StringParsingBuffer { beginPort, beginPath });
+        auto port = parsePort(std::span { beginPort, beginPath });
         if (!port)
             return std::nullopt;
 
@@ -433,7 +433,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
     }
 
     if (beginPath != buffer.end()) {
-        auto path = parsePath(StringParsingBuffer { beginPath, buffer.end() });
+        auto path = parsePath(std::span { beginPath, buffer.end() });
         if (!path)
             return std::nullopt;
 
@@ -471,8 +471,9 @@ template<typename CharacterType> StringView ContentSecurityPolicySourceList::par
 //                   / "*"
 // host-char         = ALPHA / DIGIT / "-"
 //
-template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::Host> ContentSecurityPolicySourceList::parseHost(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::Host> ContentSecurityPolicySourceList::parseHost(std::span<const CharacterType> span)
 {
+    StringParsingBuffer buffer { span };
     ASSERT(buffer.position() <= buffer.end());
 
     if (buffer.atEnd())
@@ -507,8 +508,9 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
     return host;
 }
 
-template<typename CharacterType> String ContentSecurityPolicySourceList::parsePath(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> String ContentSecurityPolicySourceList::parsePath(std::span<const CharacterType> span)
 {
+    StringParsingBuffer buffer { span };
     ASSERT(buffer.position() <= buffer.end());
     
     auto begin = buffer.position();
@@ -526,8 +528,9 @@ template<typename CharacterType> String ContentSecurityPolicySourceList::parsePa
 
 // port              = ":" ( 1*DIGIT / "*" )
 //
-template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::Port> ContentSecurityPolicySourceList::parsePort(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::Port> ContentSecurityPolicySourceList::parsePort(std::span<const CharacterType> span)
 {
+    StringParsingBuffer buffer { span };
     ASSERT(buffer.position() <= buffer.end());
     
     if (!skipExactly(buffer, ':'))

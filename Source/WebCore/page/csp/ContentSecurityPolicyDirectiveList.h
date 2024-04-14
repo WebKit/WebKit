@@ -103,7 +103,7 @@ private:
         String name;
         String value;
     };
-    template<typename CharacterType> std::optional<ParsedDirective> parseDirective(StringParsingBuffer<CharacterType>);
+    template<typename CharacterType> std::optional<ParsedDirective> parseDirective(std::span<const CharacterType>);
     void parseReportTo(ParsedDirective&&);
     void parseReportURI(ParsedDirective&&);
     void parseRequireTrustedTypesFor(ParsedDirective&&);

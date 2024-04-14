@@ -70,7 +70,7 @@ struct CSSCustomPropertySyntax {
     static CSSCustomPropertySyntax universal() { return { }; }
 
 private:
-    template<typename CharacterType> static std::optional<Component> parseComponent(StringParsingBuffer<CharacterType>);
+    template<typename CharacterType> static std::optional<Component> parseComponent(std::span<const CharacterType>);
     static Type typeForTypeName(StringView);
 };
 
