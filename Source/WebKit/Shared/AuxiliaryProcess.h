@@ -106,7 +106,7 @@ public:
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
     virtual void preferenceDidUpdate(const String& domain, const String& key, const std::optional<String>& encodedValue);
-    void preferencesDidUpdate(HashMap<std::pair<String, String>, std::optional<String>>);
+    void preferencesDidUpdate(HashMap<String, std::optional<String>> domainlessPreferences, HashMap<std::pair<String, String>, std::optional<String>> preferences);
 #endif
 
 protected:

@@ -578,8 +578,8 @@ void AuxiliaryProcessProxy::didChangeThrottleState(ProcessThrottleState state)
         return;
     m_isSuspended = isNowSuspended;
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    if (!m_isSuspended && !m_preferencesUpdatedWhileSuspended.isEmpty())
-        send(Messages::AuxiliaryProcess::PreferencesDidUpdate(std::exchange(m_preferencesUpdatedWhileSuspended, { })), 0);
+    if (!m_isSuspended && (!m_domainlessPreferencesUpdatedWhileSuspended.isEmpty() || !m_preferencesUpdatedWhileSuspended.isEmpty()))
+        send(Messages::AuxiliaryProcess::PreferencesDidUpdate(std::exchange(m_domainlessPreferencesUpdatedWhileSuspended, { }), std::exchange(m_preferencesUpdatedWhileSuspended, { })), 0);
 #endif
 }
 
