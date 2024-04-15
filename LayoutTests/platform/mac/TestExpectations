@@ -926,7 +926,6 @@ webkit.org/b/229101 http/tests/media/modern-media-controls/pip-support/pip-suppo
 
 webkit.org/b/174066 inspector/canvas/console-record-webgl2.html [ Pass Timeout ]
 webkit.org/b/174066 inspector/canvas/console-record-offscreen-webgl2.html [ Pass Timeout ]
-webkit.org/b/173931 inspector/canvas/context-attributes.html [ Pass Timeout ]
 webkit.org/b/178028 inspector/canvas/create-context-2d.html [ Pass Failure Timeout ]
 webkit.org/b/174066 inspector/canvas/create-context-webgl2.html [ Pass Failure Timeout ]
 webkit.org/b/174066 inspector/canvas/recording-offscreen-webgl2-frameCount.html [ Pass Failure Timeout ]
@@ -2600,3 +2599,5 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [
 imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
+
+webkit.org/b/272706 inspector/canvas/context-attributes.html [ Failure ]
