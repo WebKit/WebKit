@@ -31,7 +31,6 @@
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLNames.h"
-#include "ImageQualityController.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Page.h"
@@ -95,8 +94,6 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
 
     if (paintInfo.phase == PaintPhase::Foreground)
         page().addRelevantRepaintedObject(*this, intersection(replacedContentRect, contentBoxRect));
-
-    InterpolationQualityMaintainer interpolationMaintainer(context, ImageQualityController::interpolationQualityFromStyle(style()));
 
     canvasElement().setIsSnapshotting(paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting));
     canvasElement().paint(context, replacedContentRect);

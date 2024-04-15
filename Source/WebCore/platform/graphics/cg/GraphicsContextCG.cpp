@@ -369,7 +369,9 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
 
     auto oldCompositeOperator = compositeOperation();
     auto oldBlendMode = blendMode();
+    auto oldImageInterpolationQuality = imageInterpolationQuality();
     setCGBlendMode(context, options.compositeOperator(), options.blendMode());
+    CGContextSetInterpolationQuality(context, toCGInterpolationQuality(options.interpolationQuality()));
 
     // Make the origin be at adjustedDestRect.location()
     CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.y());
@@ -397,6 +399,7 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
         CGContextSetShouldAntialias(context, wasAntialiased);
 #endif
         setCGBlendMode(context, oldCompositeOperator, oldBlendMode);
+        CGContextSetInterpolationQuality(context, toCGInterpolationQuality(oldImageInterpolationQuality));
     }
 
     LOG_WITH_STREAM(Images, stream << "GraphicsContextCG::drawNativeImageInternal " << image.get() << " size " << imageSize << " into " << destRect << " took " << (MonotonicTime::now() - startTime).milliseconds() << "ms");
@@ -427,6 +430,7 @@ void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatRect& d
     CGContextClipToRect(context, destRect);
 
     setCGBlendMode(context, options.compositeOperator(), options.blendMode());
+    CGContextSetInterpolationQuality(context, toCGInterpolationQuality(options.interpolationQuality()));
 
     CGContextTranslateCTM(context, destRect.x(), destRect.y() + destRect.height());
     CGContextScaleCTM(context, 1, -1);

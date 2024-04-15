@@ -218,19 +218,21 @@ void NinePieceImage::paint(GraphicsContext& graphicsContext, const RenderElement
     if (!image)
         return;
 
-    InterpolationQualityMaintainer interpolationMaintainer(graphicsContext, ImageQualityController::interpolationQualityFromStyle(style));
+    auto imageInterpolationQuality = ImageQualityController::interpolationQualityFromStyle(style);
+    auto options = ImagePaintingOptions { op, ImageOrientation::Orientation::FromImage, imageInterpolationQuality.value_or(graphicsContext.imageInterpolationQuality()) };
+
     for (ImagePiece piece = MinPiece; piece < MaxPiece; ++piece) {
         if ((piece == MiddlePiece && !fill()) || isEmptyPieceRect(piece, destinationRects, sourceRects))
             continue;
 
         if (isCornerPiece(piece)) {
-            graphicsContext.drawImage(*image, destinationRects[piece], sourceRects[piece], { op, ImageOrientation::Orientation::FromImage });
+            graphicsContext.drawImage(*image, destinationRects[piece], sourceRects[piece], options);
             continue;
         }
 
         Image::TileRule hRule = isHorizontalPiece(piece) ? static_cast<Image::TileRule>(horizontalRule()) : Image::StretchTile;
         Image::TileRule vRule = isVerticalPiece(piece) ? static_cast<Image::TileRule>(verticalRule()) : Image::StretchTile;
-        graphicsContext.drawTiledImage(*image, destinationRects[piece], sourceRects[piece], tileScales[piece], hRule, vRule, { op, ImageOrientation::Orientation::FromImage });
+        graphicsContext.drawTiledImage(*image, destinationRects[piece], sourceRects[piece], tileScales[piece], hRule, vRule, options);
     }
 }
 
