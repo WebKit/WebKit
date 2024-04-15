@@ -976,33 +976,33 @@ Token Lexer<T>::lexNumber()
         case 'i': {
             if constexpr (std::is_integral_v<decltype(value)>) {
                 if (auto result = convertInteger<int>(value))
-                    return makeLiteralToken(TokenType::IntegerLiteralSigned, *result);
+                    return makeIntegerToken(TokenType::IntegerLiteralSigned, *result);
             }
-            return makeToken(TokenType::Invalid);
+            break;
         }
         case 'u': {
             if constexpr (std::is_integral_v<decltype(value)>) {
                 if (auto result = convertInteger<unsigned>(value))
-                    return makeLiteralToken(TokenType::IntegerLiteralUnsigned, *result);
+                    return makeIntegerToken(TokenType::IntegerLiteralUnsigned, *result);
             }
             break;
         }
         case 'f': {
             if (auto result = convertFloat<float>(value))
-                return makeLiteralToken(TokenType::FloatLiteral, *result);
+                return makeFloatToken(TokenType::FloatLiteral, *result);
             break;
         }
         case 'h':
             if (auto result = convertFloat<half>(value))
-                return makeLiteralToken(TokenType::HalfLiteral, *result);
+                return makeFloatToken(TokenType::HalfLiteral, *result);
             break;
         default:
             if constexpr (std::is_floating_point_v<decltype(value)>) {
                 if (auto result = convertFloat<double>(value))
-                    return makeLiteralToken(TokenType::AbstractFloatLiteral, *result);
+                    return makeFloatToken(TokenType::AbstractFloatLiteral, *result);
             } else {
                 if (auto result = convertInteger<int64_t>(value))
-                    return makeLiteralToken(TokenType::IntegerLiteral, *result);
+                    return makeIntegerToken(TokenType::IntegerLiteral, *result);
             }
         }
         return makeToken(TokenType::Invalid);

@@ -63,10 +63,16 @@ private:
     {
         return { type, m_tokenStartingPosition, currentTokenLength() };
     }
-    Token makeLiteralToken(TokenType type, double literalValue)
+    Token makeFloatToken(TokenType type, double floatValue)
     {
-        return { type, m_tokenStartingPosition, currentTokenLength(), literalValue };
+        return { type, m_tokenStartingPosition, currentTokenLength(), floatValue };
     }
+
+    Token makeIntegerToken(TokenType type, int64_t integerValue)
+    {
+        return { type, m_tokenStartingPosition, currentTokenLength(), integerValue };
+    }
+
     Token makeIdentifierToken(String&& identifier)
     {
         return { WGSL::TokenType::Identifier, m_tokenStartingPosition, currentTokenLength(), WTFMove(identifier) };
