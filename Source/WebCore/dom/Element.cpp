@@ -1847,7 +1847,7 @@ static std::optional<std::pair<CheckedRef<RenderObject>, LayoutRect>> listBoxEle
 
 Ref<DOMRectList> Element::getClientRects()
 {
-    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     CheckedPtr<RenderObject> renderer = this->renderer();
 

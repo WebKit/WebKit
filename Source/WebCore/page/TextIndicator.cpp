@@ -249,7 +249,7 @@ static bool containsOnlyWhiteSpaceText(const SimpleRange& range)
 
 static bool initializeIndicator(TextIndicatorData& data, LocalFrame& frame, const SimpleRange& range, FloatSize margin, bool indicatesCurrentSelection)
 {
-    if (auto* document = frame.document())
+    if (RefPtr document = frame.document())
         document->updateLayoutIgnorePendingStylesheets();
 
     bool treatRangeAsComplexDueToIllegibleTextColors = false;
