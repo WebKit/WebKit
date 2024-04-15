@@ -31,6 +31,7 @@
 #import "AuthenticationChallengeDisposition.h"
 #import "ClientCertificateAuthenticationXPCConstants.h"
 #import "Connection.h"
+#import "XPCUtilities.h"
 #import <pal/spi/cocoa/NSXPCConnectionSPI.h>
 #import <pal/spi/cocoa/SecKeyProxySPI.h>
 #import <wtf/MainThread.h>
@@ -50,6 +51,9 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
     // The following xpc event handler overwrites the boostrap event handler and is only used
     // to capture client certificate credential.
     xpc_connection_set_event_handler(connection->xpcConnection(), ^(xpc_object_t event) {
+
+        handleXPCExitMessage(event);
+
         callOnMainRunLoop([event = OSObjectPtr(event), weakThis = weakThis] {
             RELEASE_ASSERT(isMainRunLoop());
 
