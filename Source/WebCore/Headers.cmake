@@ -2401,7 +2401,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/TransformOperationData.h
 
     rendering/line/LineWidth.h
-    rendering/line/TrailingObjects.h
 
     rendering/shapes/Shape.h
     rendering/shapes/ShapeOutsideInfo.h

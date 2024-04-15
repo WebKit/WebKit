@@ -28,7 +28,6 @@
 #include "LineWidth.h"
 #include "RenderBlock.h"
 #include "RenderLineBoxList.h"
-#include "TrailingObjects.h"
 #include <memory>
 
 namespace WebCore {
