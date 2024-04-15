@@ -3083,13 +3083,17 @@ void WebPageProxy::executeEditCommand(const String& commandName, const String& a
     if (!hasRunningProcess())
         return;
 
+    RefPtr focusedFrame = focusedOrMainFrame();
+    if (!focusedFrame)
+        return;
+
     if (auto pasteAccessCategory = pasteAccessCategoryForCommand(commandName))
         willPerformPasteCommand(*pasteAccessCategory);
 
     if (commandName == ignoreSpellingCommandName)
         ++m_pendingLearnOrIgnoreWordMessageCount;
 
-    send(Messages::WebPage::ExecuteEditCommand(commandName, argument));
+    sendToProcessContainingFrame(focusedFrame->frameID(), Messages::WebPage::ExecuteEditCommand(commandName, argument));
 }
 
 void WebPageProxy::requestFontAttributesAtSelectionStart(CompletionHandler<void(const WebCore::FontAttributes&)>&& callback)

@@ -2801,6 +2801,38 @@ TEST(SiteIsolation, ProvisionalLoadFailureOnCrossSiteRedirect)
     Util::run(&done);
 }
 
+#if PLATFORM(MAC)
+TEST(SiteIsolation, SelectAll)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='iframe' src='https://webkit.org/frame'></iframe>"_s } },
+        { "/frame"_s, { "test"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:^(id, NSError *) {
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    __block RetainPtr<_WKFrameTreeNode> childFrameNode;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrameNode = mainFrame.childFrames[0];
+        done = true;
+    }];
+    Util::run(&done);
+
+    [webView selectAll:nil];
+    while (![webView selectionRangeHasStartOffset:0 endOffset:4 inFrame:childFrameNode.get().info])
+        Util::spinRunLoop();
+}
+#endif
+
 // FIXME: <rdar://121240941> Add tests covering provisional navigation failures in cases like SiteIsolation.NavigateOpener.
 
 }
