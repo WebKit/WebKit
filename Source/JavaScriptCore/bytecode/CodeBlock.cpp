@@ -3474,9 +3474,8 @@ bool CodeBlock::useDataIC() const
     return true;
 }
 
-CodePtr<JSEntryPtrTag> CodeBlock::addressForCallConcurrently(ArityCheckMode arityCheck) const
+CodePtr<JSEntryPtrTag> CodeBlock::addressForCallConcurrently(const ConcurrentJSLocker&, ArityCheckMode arityCheck) const
 {
-    ConcurrentJSLocker locker(m_lock);
     if (!m_jitCode)
         return nullptr;
     return m_jitCode->addressForCall(arityCheck);
