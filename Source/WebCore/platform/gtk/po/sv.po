@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: webkitgtk\n"
 "Report-Msgid-Bugs-To: https://bugs.webkit.org/enter_bug.cgi?"
 "product=WebKit&component=WebKitGTK\n"
-"POT-Creation-Date: 2024-02-18 03:31+0000\n"
-"PO-Revision-Date: 2024-02-24 15:32+0100\n"
+"POT-Creation-Date: 2024-04-03 15:32+0000\n"
+"PO-Revision-Date: 2024-02-26 06:19+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -582,590 +582,602 @@ msgid "year"
 msgstr "år"
 
 #: ../../LocalizedStrings.cpp:743
+msgid "hour"
+msgstr "timme"
+
+#: ../../LocalizedStrings.cpp:748
+msgid "minutes"
+msgstr "minuter"
+
+#: ../../LocalizedStrings.cpp:753
+msgid "seconds"
+msgstr "sekunder"
+
+#: ../../LocalizedStrings.cpp:758
+msgid "milliseconds"
+msgstr "millisekunder"
+
+#: ../../LocalizedStrings.cpp:763
 msgid "date and time field"
 msgstr "datum- och tidsfält"
 
-#: ../../LocalizedStrings.cpp:748
+#: ../../LocalizedStrings.cpp:768
 msgid "month and year field"
 msgstr "månads- och årsfält"
 
-#: ../../LocalizedStrings.cpp:753
+#: ../../LocalizedStrings.cpp:773
 msgid "number field"
 msgstr "nummerfält"
 
-#: ../../LocalizedStrings.cpp:758
+#: ../../LocalizedStrings.cpp:778
 msgid "week and year field"
 msgstr "vecko- och årsfält"
 
-#: ../../LocalizedStrings.cpp:764
+#: ../../LocalizedStrings.cpp:784
 msgid "alert"
 msgstr "varning"
 
-#: ../../LocalizedStrings.cpp:766
+#: ../../LocalizedStrings.cpp:786
 msgid "web alert dialog"
 msgstr "webbvarningsdialog"
 
-#: ../../LocalizedStrings.cpp:768
+#: ../../LocalizedStrings.cpp:788
 msgid "web dialog"
 msgstr "webbdialog"
 
-#: ../../LocalizedStrings.cpp:770
+#: ../../LocalizedStrings.cpp:790
 msgid "log"
 msgstr "logg"
 
 # Aria-roll motsvarande HTML-taggen <marquee>
-#: ../../LocalizedStrings.cpp:772
+#: ../../LocalizedStrings.cpp:792
 msgid "marquee"
 msgstr "marquee"
 
-#: ../../LocalizedStrings.cpp:774
+#: ../../LocalizedStrings.cpp:794
 msgid "application status"
 msgstr "applikationsstatus"
 
-#: ../../LocalizedStrings.cpp:776
+#: ../../LocalizedStrings.cpp:796
 msgid "timer"
 msgstr "tidtagare"
 
-#: ../../LocalizedStrings.cpp:778
+#: ../../LocalizedStrings.cpp:798
 msgid "document"
 msgstr "dokument"
 
-#: ../../LocalizedStrings.cpp:780
+#: ../../LocalizedStrings.cpp:800
 msgid "article"
 msgstr "artikel"
 
-#: ../../LocalizedStrings.cpp:782
+#: ../../LocalizedStrings.cpp:802
 msgid "note"
 msgstr "anteckning"
 
-#: ../../LocalizedStrings.cpp:784
+#: ../../LocalizedStrings.cpp:804
 msgid "web application"
 msgstr "webbapplikation"
 
-#: ../../LocalizedStrings.cpp:786
+#: ../../LocalizedStrings.cpp:806
 msgid "banner"
 msgstr "banderoll"
 
-#: ../../LocalizedStrings.cpp:788
+#: ../../LocalizedStrings.cpp:808
 msgid "complementary"
 msgstr "kompletterande"
 
-#: ../../LocalizedStrings.cpp:790
+#: ../../LocalizedStrings.cpp:810
 msgid "content information"
 msgstr "innehållsinformation"
 
-#: ../../LocalizedStrings.cpp:792
+#: ../../LocalizedStrings.cpp:812
 msgid "main"
 msgstr "huvuddel"
 
-#: ../../LocalizedStrings.cpp:794
+#: ../../LocalizedStrings.cpp:814
 msgid "navigation"
 msgstr "navigering"
 
-#: ../../LocalizedStrings.cpp:796
+#: ../../LocalizedStrings.cpp:816
 msgid "region"
 msgstr "region"
 
-#: ../../LocalizedStrings.cpp:798
+#: ../../LocalizedStrings.cpp:818
 msgid "search"
 msgstr "sök"
 
-#: ../../LocalizedStrings.cpp:800
+#: ../../LocalizedStrings.cpp:820
 msgid "tooltip"
 msgstr "inforuta"
 
-#: ../../LocalizedStrings.cpp:802
+#: ../../LocalizedStrings.cpp:822
 msgid "tab panel"
 msgstr "flikpanel"
 
-#: ../../LocalizedStrings.cpp:804
+#: ../../LocalizedStrings.cpp:824
 msgid "math"
 msgstr "matematik"
 
-#: ../../LocalizedStrings.cpp:810
+#: ../../LocalizedStrings.cpp:830
 msgid "separator"
 msgstr "avskiljare"
 
 # https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Mark_role
-#: ../../LocalizedStrings.cpp:815
+#: ../../LocalizedStrings.cpp:835
 msgid "highlighted"
 msgstr "markerad"
 
-#: ../../LocalizedStrings.cpp:820
+#: ../../LocalizedStrings.cpp:840
 msgid "press"
 msgstr "tryck"
 
-#: ../../LocalizedStrings.cpp:825
+#: ../../LocalizedStrings.cpp:845
 msgid "select"
 msgstr "välj"
 
-#: ../../LocalizedStrings.cpp:830
+#: ../../LocalizedStrings.cpp:850
 msgid "activate"
 msgstr "aktivera"
 
-#: ../../LocalizedStrings.cpp:835
+#: ../../LocalizedStrings.cpp:855
 msgid "uncheck"
 msgstr "avmarkera"
 
-#: ../../LocalizedStrings.cpp:840
+#: ../../LocalizedStrings.cpp:860
 msgid "check"
 msgstr "markera"
 
-#: ../../LocalizedStrings.cpp:845
+#: ../../LocalizedStrings.cpp:865
 msgid "jump"
 msgstr "hoppa"
 
-#: ../../LocalizedStrings.cpp:869
+#: ../../LocalizedStrings.cpp:889
 msgid "Apple Pay"
 msgstr "Apple Pay"
 
-#: ../../LocalizedStrings.cpp:874
+#: ../../LocalizedStrings.cpp:894
 msgid "Buy with Apple Pay"
 msgstr "Köp med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:879
+#: ../../LocalizedStrings.cpp:899
 msgid "Set up with Apple Pay"
 msgstr "Konfigurera med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:884
+#: ../../LocalizedStrings.cpp:904
 msgid "Donate with Apple Pay"
 msgstr "Donera med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:889
+#: ../../LocalizedStrings.cpp:909
 msgid "Check out with Apple Pay"
 msgstr "Checka ut med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:894
+#: ../../LocalizedStrings.cpp:914
 msgid "Book with Apple Pay"
 msgstr "Boka med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:899
+#: ../../LocalizedStrings.cpp:919
 msgid "Subscribe with Apple Pay"
 msgstr "Prenumerera med Apple Pay"
 
 # add money to a card, account, or payment system
-#: ../../LocalizedStrings.cpp:905
+#: ../../LocalizedStrings.cpp:925
 msgid "Reload with Apple Pay"
 msgstr "Ladda med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:909
+#: ../../LocalizedStrings.cpp:929
 msgid "Add money with Apple Pay"
 msgstr "Lägg till pengar med Apple Pay"
 
 # add money to a card, account, or
 # payment system
-#: ../../LocalizedStrings.cpp:913
+#: ../../LocalizedStrings.cpp:933
 msgid "Top up with Apple Pay"
 msgstr "Fyll på med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:917
+#: ../../LocalizedStrings.cpp:937
 msgid "Order with Apple Pay"
 msgstr "Beställ med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:921
+#: ../../LocalizedStrings.cpp:941
 msgid "Rent with Apple Pay"
 msgstr "Hyr med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:925
+#: ../../LocalizedStrings.cpp:945
 msgid "Support with Apple Pay"
 msgstr "Stöd med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:929
+#: ../../LocalizedStrings.cpp:949
 msgid "Contribute with Apple Pay"
 msgstr "Bidra med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:933
+#: ../../LocalizedStrings.cpp:953
 msgid "Tip with Apple Pay"
 msgstr "Ge dricks med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:940
+#: ../../LocalizedStrings.cpp:960
 msgid "password AutoFill"
 msgstr "autofyll lösenord"
 
-#: ../../LocalizedStrings.cpp:945
+#: ../../LocalizedStrings.cpp:965
 msgid "contact info AutoFill"
 msgstr "autofyll kontaktinfo"
 
-#: ../../LocalizedStrings.cpp:950
+#: ../../LocalizedStrings.cpp:970
 msgid "strong password AutoFill"
 msgstr "autofyll starkt lösenord"
 
-#: ../../LocalizedStrings.cpp:955
+#: ../../LocalizedStrings.cpp:975
 msgid "credit card AutoFill"
 msgstr "autofyll kreditkort"
 
-#: ../../LocalizedStrings.cpp:960
+#: ../../LocalizedStrings.cpp:980
 msgid "loading AutoFill"
 msgstr "läser in autofyll"
 
-#: ../../LocalizedStrings.cpp:965
+#: ../../LocalizedStrings.cpp:985
 msgid "Strong Password"
 msgstr "Starkt lösenord"
 
-#: ../../LocalizedStrings.cpp:970
-msgid "Processing page"
-msgstr "Bearbetar sida"
-
-#: ../../LocalizedStrings.cpp:975
+#: ../../LocalizedStrings.cpp:990
 msgid "Missing Plug-in"
 msgstr "Saknar insticksmodul"
 
-#: ../../LocalizedStrings.cpp:980
+#: ../../LocalizedStrings.cpp:995
 msgid "Plug-in Failure"
 msgstr "Insticksmodul misslyckades"
 
-#: ../../LocalizedStrings.cpp:985
+#: ../../LocalizedStrings.cpp:1000
 msgctxt ""
 "Label text to be used if plugin is blocked by a page's Content Security "
 "Policy"
 msgid "Blocked Plug-in"
 msgstr "Blockerad insticksmodul"
 
-#: ../../LocalizedStrings.cpp:990
+#: ../../LocalizedStrings.cpp:1005
 msgctxt ""
 "Label text to be used when an insecure plug-in version was blocked from "
 "loading"
 msgid "Blocked Plug-in"
 msgstr "Blockerad insticksmodul"
 
-#: ../../LocalizedStrings.cpp:995
+#: ../../LocalizedStrings.cpp:1010
 msgctxt ""
 "Label text to be used when an unsupported plug-in was blocked from loading"
 msgid "Unsupported Plug-in"
 msgstr "Insticksmodul stöds ej"
 
-#: ../../LocalizedStrings.cpp:1000
+#: ../../LocalizedStrings.cpp:1015
 msgctxt ""
 "Label text to be used when a plug-in was blocked from loading because it was "
 "too small"
 msgid "Plug-In too small"
 msgstr "Insticksmodulen för liten"
 
-#: ../../LocalizedStrings.cpp:1010
+#: ../../LocalizedStrings.cpp:1025
 msgctxt "Unknown filesize FTP directory listing item"
 msgid "Unknown"
 msgstr "Okänd"
 
-#: ../../LocalizedStrings.cpp:1039
+#: ../../LocalizedStrings.cpp:1054
 msgid "Loading…"
 msgstr "Läser in…"
 
-#: ../../LocalizedStrings.cpp:1044
+#: ../../LocalizedStrings.cpp:1059
 msgid "Live Broadcast"
 msgstr "Live-sändning"
 
-#: ../../LocalizedStrings.cpp:1050
+#: ../../LocalizedStrings.cpp:1065
 msgid "audio playback"
 msgstr "ljuduppspelning"
 
-#: ../../LocalizedStrings.cpp:1052
+#: ../../LocalizedStrings.cpp:1067
 msgid "video playback"
 msgstr "videouppspelning"
 
-#: ../../LocalizedStrings.cpp:1054
+#: ../../LocalizedStrings.cpp:1069
 msgid "mute"
 msgstr "tysta"
 
-#: ../../LocalizedStrings.cpp:1056
+#: ../../LocalizedStrings.cpp:1071
 msgid "unmute"
 msgstr "tysta ej"
 
-#: ../../LocalizedStrings.cpp:1058
+#: ../../LocalizedStrings.cpp:1073
 msgid "play"
 msgstr "spela"
 
-#: ../../LocalizedStrings.cpp:1060
+#: ../../LocalizedStrings.cpp:1075
 msgid "pause"
 msgstr "pausa"
 
-#: ../../LocalizedStrings.cpp:1062
+#: ../../LocalizedStrings.cpp:1077
 msgid "movie time"
 msgstr "filmtid"
 
-#: ../../LocalizedStrings.cpp:1064
+#: ../../LocalizedStrings.cpp:1079
 msgid "timeline slider thumb"
 msgstr "miniatyrbild för tidslinjereglaget"
 
-#: ../../LocalizedStrings.cpp:1066
+#: ../../LocalizedStrings.cpp:1081
 msgid "back 30 seconds"
 msgstr "bakåt 30 sekunder"
 
-#: ../../LocalizedStrings.cpp:1068
+#: ../../LocalizedStrings.cpp:1083
 msgid "return to real time"
 msgstr "åter till realtid"
 
-#: ../../LocalizedStrings.cpp:1070
+#: ../../LocalizedStrings.cpp:1085
 msgid "elapsed time"
 msgstr "förfluten tid"
 
-#: ../../LocalizedStrings.cpp:1072
+#: ../../LocalizedStrings.cpp:1087
 msgid "remaining time"
 msgstr "återstående tid"
 
-#: ../../LocalizedStrings.cpp:1074
+#: ../../LocalizedStrings.cpp:1089
 msgid "status"
 msgstr "status"
 
-#: ../../LocalizedStrings.cpp:1076
+#: ../../LocalizedStrings.cpp:1091
 msgid "enter full screen"
 msgstr "helskärmsläge"
 
-#: ../../LocalizedStrings.cpp:1078
+#: ../../LocalizedStrings.cpp:1093
 msgid "exit full screen"
 msgstr "avsluta helskärmsläge"
 
-#: ../../LocalizedStrings.cpp:1080
+#: ../../LocalizedStrings.cpp:1095
 msgid "fast forward"
 msgstr "spola framåt"
 
-#: ../../LocalizedStrings.cpp:1082
+#: ../../LocalizedStrings.cpp:1097
 msgid "fast reverse"
 msgstr "spola bakåt"
 
-#: ../../LocalizedStrings.cpp:1084
+#: ../../LocalizedStrings.cpp:1099
 msgid "show closed captions"
 msgstr "visa undertexter"
 
-#: ../../LocalizedStrings.cpp:1086
+#: ../../LocalizedStrings.cpp:1101
 msgid "hide closed captions"
 msgstr "dölj undertexter"
 
-#: ../../LocalizedStrings.cpp:1099
+#: ../../LocalizedStrings.cpp:1114
 msgid "audio element playback controls and status display"
 msgstr "uppspelningskontroller för ljud och statusvisning"
 
-#: ../../LocalizedStrings.cpp:1101
+#: ../../LocalizedStrings.cpp:1116
 msgid "video element playback controls and status display"
 msgstr "uppspelningskontroller för video och statusvisning"
 
-#: ../../LocalizedStrings.cpp:1103
+#: ../../LocalizedStrings.cpp:1118
 msgid "mute audio tracks"
 msgstr "tysta ljudspår"
 
-#: ../../LocalizedStrings.cpp:1105
+#: ../../LocalizedStrings.cpp:1120
 msgid "unmute audio tracks"
 msgstr "tysta ej ljudspår"
 
-#: ../../LocalizedStrings.cpp:1107
+#: ../../LocalizedStrings.cpp:1122
 msgid "begin playback"
 msgstr "påbörja uppspelning"
 
-#: ../../LocalizedStrings.cpp:1109
+#: ../../LocalizedStrings.cpp:1124
 msgid "pause playback"
 msgstr "pausa uppspelning"
 
-#: ../../LocalizedStrings.cpp:1111
+#: ../../LocalizedStrings.cpp:1126
 msgid "movie time scrubber"
 msgstr "filmtids-scrubber"
 
-#: ../../LocalizedStrings.cpp:1113
+#: ../../LocalizedStrings.cpp:1128
 msgid "movie time scrubber thumb"
 msgstr "filmtids-scrubber miniatyrbild"
 
-#: ../../LocalizedStrings.cpp:1115
+#: ../../LocalizedStrings.cpp:1130
 msgid "seek movie back 30 seconds"
 msgstr "sök bakåt 30 sekunder i film"
 
-#: ../../LocalizedStrings.cpp:1117
+#: ../../LocalizedStrings.cpp:1132
 msgid "resume real time streaming"
 msgstr "återgå till realtid för strömmande film"
 
-#: ../../LocalizedStrings.cpp:1119
+#: ../../LocalizedStrings.cpp:1134
 msgid "current movie time in seconds"
 msgstr "aktuell filmtid i sekunder"
 
-#: ../../LocalizedStrings.cpp:1121
+#: ../../LocalizedStrings.cpp:1136
 msgid "number of seconds of movie remaining"
 msgstr "återstående sekunder av filmen"
 
-#: ../../LocalizedStrings.cpp:1123
+#: ../../LocalizedStrings.cpp:1138
 msgid "current movie status"
 msgstr "aktuell filmstatus"
 
-#: ../../LocalizedStrings.cpp:1125
+#: ../../LocalizedStrings.cpp:1140
 msgid "seek quickly back"
 msgstr "snabbsök bakåt"
 
-#: ../../LocalizedStrings.cpp:1127
+#: ../../LocalizedStrings.cpp:1142
 msgid "seek quickly forward"
 msgstr "snabbsök framåt"
 
-#: ../../LocalizedStrings.cpp:1129
+#: ../../LocalizedStrings.cpp:1144
 msgid "Play movie in full screen mode"
 msgstr "Spela film i helskärmsläge"
 
-#: ../../LocalizedStrings.cpp:1131
+#: ../../LocalizedStrings.cpp:1146
 msgid "start displaying closed captions"
 msgstr "visa undertexter"
 
-#: ../../LocalizedStrings.cpp:1133
+#: ../../LocalizedStrings.cpp:1148
 msgid "stop displaying closed captions"
 msgstr "visa inte undertexter"
 
-#: ../../LocalizedStrings.cpp:1146
+#: ../../LocalizedStrings.cpp:1161
 msgid "indefinite time"
 msgstr "obestämd tid"
 
-#: ../../LocalizedStrings.cpp:1165
+#: ../../LocalizedStrings.cpp:1180
 msgid "Fill out this field"
 msgstr "Fyll i detta fält"
 
-#: ../../LocalizedStrings.cpp:1170
+#: ../../LocalizedStrings.cpp:1185
 msgid "Select this checkbox"
 msgstr "Välj denna kryssruta"
 
-#: ../../LocalizedStrings.cpp:1175
+#: ../../LocalizedStrings.cpp:1190
 msgid "Select a file"
 msgstr "Välj fil"
 
-#: ../../LocalizedStrings.cpp:1185
+#: ../../LocalizedStrings.cpp:1200
 msgid "Select one of these options"
 msgstr "Välj ett av dessa alternativ"
 
-#: ../../LocalizedStrings.cpp:1190
+#: ../../LocalizedStrings.cpp:1205
 msgid "Select an item in the list"
 msgstr "Välj ett objekt i listan"
 
-#: ../../LocalizedStrings.cpp:1195
+#: ../../LocalizedStrings.cpp:1210
 msgid "Tap this switch"
 msgstr "Slå om denna brytare"
 
-#: ../../LocalizedStrings.cpp:1200
+#: ../../LocalizedStrings.cpp:1215
 msgid "Invalid value"
 msgstr "Ogiltigt värde"
 
-#: ../../LocalizedStrings.cpp:1205
+#: ../../LocalizedStrings.cpp:1220
 msgid "Enter an email address"
 msgstr "Ange en e-postadress"
 
-#: ../../LocalizedStrings.cpp:1215
+#: ../../LocalizedStrings.cpp:1230
 msgid "Enter a URL"
 msgstr "Ange en URL"
 
-#: ../../LocalizedStrings.cpp:1220
+#: ../../LocalizedStrings.cpp:1235
 msgid "Match the requested format"
 msgstr "Använd det begärda formatet"
 
-#: ../../LocalizedStrings.cpp:1257
+#: ../../LocalizedStrings.cpp:1272
 msgid "range underflow"
 msgstr "intervallunderspill"
 
-#: ../../LocalizedStrings.cpp:1269
+#: ../../LocalizedStrings.cpp:1284
 msgid "range overflow"
 msgstr "intervallöverspill"
 
-#: ../../LocalizedStrings.cpp:1275
+#: ../../LocalizedStrings.cpp:1290
 msgid "Enter a valid value"
 msgstr "Ange ett giltigt värde"
 
-#: ../../LocalizedStrings.cpp:1280
+#: ../../LocalizedStrings.cpp:1295
 msgid "Enter a number"
 msgstr "Ange en siffra"
 
-#: ../../LocalizedStrings.cpp:1285
+#: ../../LocalizedStrings.cpp:1300
 msgid "Click to Exit Full Screen"
 msgstr "Klicka för att avsluta helskärmsläge"
 
-#: ../../LocalizedStrings.cpp:1292
+#: ../../LocalizedStrings.cpp:1307
 msgctxt "Menu item label for a audio/text track that has no other name."
 msgid "Unknown"
 msgstr "Okänt"
 
-#: ../../LocalizedStrings.cpp:1297
+#: ../../LocalizedStrings.cpp:1312
 msgctxt ""
 "Menu item label for the track that represents disabling closed captions."
 msgid "Off"
 msgstr "Av"
 
-#: ../../LocalizedStrings.cpp:1302
+#: ../../LocalizedStrings.cpp:1317
 msgctxt "Menu item label for automatic track selection behavior."
 msgid "Auto (Recommended)"
 msgstr "Auto (rekommenderad)"
 
-#: ../../LocalizedStrings.cpp:1436
+#: ../../LocalizedStrings.cpp:1451
 msgid "Show Media Stats"
 msgstr "Visa mediastatistik"
 
-#: ../../LocalizedStrings.cpp:1443
+#: ../../LocalizedStrings.cpp:1458
 msgid "Snapshotted Plug-In"
 msgstr "Insticksmodul för ögonblicksbild"
 
-#: ../../LocalizedStrings.cpp:1448
+#: ../../LocalizedStrings.cpp:1463
 msgid "Click to restart"
 msgstr "Klicka för att starta om"
 
-#: ../../LocalizedStrings.cpp:1453
+#: ../../LocalizedStrings.cpp:1468
 msgid "Show in blocked plug-in"
 msgstr "Visa i blockerad insticksmodul"
 
-#: ../../LocalizedStrings.cpp:1465
+#: ../../LocalizedStrings.cpp:1480
 msgid "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB"
 msgstr ""
 "Används för att kryptera WebCrypto-nycklar i beständig lagring, såsom "
 "IndexedDB"
 
-#: ../../LocalizedStrings.cpp:1474
+#: ../../LocalizedStrings.cpp:1489
 msgctxt "Title of the OK button for the number pad in zoomed form controls."
 msgid "OK"
 msgstr "OK"
 
-#: ../../LocalizedStrings.cpp:1479
+#: ../../LocalizedStrings.cpp:1494
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: ../../LocalizedStrings.cpp:1484
+#: ../../LocalizedStrings.cpp:1499
 msgid "Hide"
 msgstr "Dölj"
 
-#: ../../LocalizedStrings.cpp:1489
+#: ../../LocalizedStrings.cpp:1504
 msgid "Go"
 msgstr "Gå till"
 
-#: ../../LocalizedStrings.cpp:1494
+#: ../../LocalizedStrings.cpp:1509
 msgid "Search"
 msgstr "Sök"
 
-#: ../../LocalizedStrings.cpp:1499
+#: ../../LocalizedStrings.cpp:1514
 msgctxt "Set button below date picker"
 msgid "Set"
 msgstr "Ställ in"
 
-#: ../../LocalizedStrings.cpp:1504
+#: ../../LocalizedStrings.cpp:1519
 msgctxt "Day label in date picker"
 msgid "DAY"
 msgstr "DAG"
 
-#: ../../LocalizedStrings.cpp:1509
+#: ../../LocalizedStrings.cpp:1524
 msgctxt "Month label in date picker"
 msgid "MONTH"
 msgstr "MÅNAD"
 
-#: ../../LocalizedStrings.cpp:1514
+#: ../../LocalizedStrings.cpp:1529
 msgctxt "Year label in date picker"
 msgid "YEAR"
 msgstr "ÅR"
 
-#: ../../LocalizedStrings.cpp:1522
+#: ../../LocalizedStrings.cpp:1537
 msgid "Unacceptable TLS certificate"
 msgstr "Oacceptabelt TLS-certifikat"
 
-#: ../../LocalizedStrings.cpp:1541
+#: ../../LocalizedStrings.cpp:1556
 msgid "Continue with Touch ID."
 msgstr "Fortsätt med Touch-ID."
 
-#: ../../LocalizedStrings.cpp:1547
+#: ../../LocalizedStrings.cpp:1562
 msgid "This document is password protected."
 msgstr "Detta dokument är lösenordsskyddat."
 
-#: ../../LocalizedStrings.cpp:1552
+#: ../../LocalizedStrings.cpp:1567
 msgid "Please enter the password below."
 msgstr "Ange ditt lösenord nedan."
 
-#: ../../LocalizedStrings.cpp:1557
+#: ../../LocalizedStrings.cpp:1572
 msgid "Invalid Password"
 msgstr "Ogiltigt lösenord"
 
-#: ../../LocalizedStrings.cpp:1562
+#: ../../LocalizedStrings.cpp:1577
 msgid "Copy Link to Highlight"
 msgstr "Kopiera länk till markering"
 
@@ -1450,7 +1462,7 @@ msgid "Plug-in handled load"
 msgstr "Insticksmodulen kommer att hantera inläsning"
 
 #: ../../../../WebKit/Shared/WebErrors.cpp:95
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2509
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2507
 msgid "Load request cancelled"
 msgstr "Inläsningsbegäran avbruten"
 
@@ -1478,21 +1490,21 @@ msgstr "Ogiltigt sidintervall"
 msgid "User cancelled the download"
 msgstr "Användaren avbröt hämtningen"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:178
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:180
 msgid "Favicons database not initialized yet"
 msgstr "Databasen för favicons är inte initierad än"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:184
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:186
 #, c-format
 msgid "Page %s does not have a favicon"
 msgstr "Sidan %s har ingen favicon"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:194
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:196
 #, c-format
 msgid "Unknown favicon for page %s"
 msgstr "Okänd favicon för sidan %s"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:254
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:268
 msgid "Failed to create texture"
 msgstr "Misslyckades med att skapa textur"
 
@@ -2016,7 +2028,7 @@ msgid "Whether web security should be disabled."
 msgstr "Huruvida webbsäkerhet ska inaktiveras."
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:358
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5260
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5204
 #: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:281
 #: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:951
 msgid "Operation was cancelled"
@@ -2026,12 +2038,12 @@ msgstr "Åtgärden avbröts"
 msgid "Local files"
 msgstr "Lokala filer"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5017
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5046
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4969
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4993
 msgid "There was an error creating the snapshot"
 msgstr "Ett fel uppstod vid skapandet av ögonblicksbilden"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5266
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5210
 #: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:287
 #: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:957
 #, c-format
@@ -2102,7 +2114,7 @@ msgstr "Stanna på sidan"
 msgid "Leave Page"
 msgstr "Lämna sidan"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2702
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2686
 msgid "Website running in fullscreen mode"
 msgstr "Webbplats körs i helskärmsläge"
 
@@ -2120,18 +2132,21 @@ msgid "Web Inspector"
 msgstr "Webbinspektör"
 
 #. TRANSLATORS: the default action for a desktop notification created by a website.
-#: ../../../../WebKit/UIProcess/Notifications/glib/NotificationService.cpp:403
+#: ../../../../WebKit/UIProcess/Notifications/glib/NotificationService.cpp:457
 msgid "Acknowledge"
 msgstr "Bekräfta"
 
-#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:73
-#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:140
-#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:166
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:214
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:241
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:270
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:333
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:359
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:385
 msgid "Failed to connect to geolocation service"
 msgstr "Misslyckades med att ansluta till platstjänst"
 
-#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:215
-#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:273
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:439
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:521
 msgid "Failed to determine position from geolocation service"
 msgstr "Misslyckades med att bestämma position från platstjänst"
 
@@ -2142,6 +2157,9 @@ msgstr "Välj färg"
 #: ../../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp:40
 msgid "Local documents on your computer"
 msgstr "Lokala dokument på din dator"
+
+#~ msgid "Processing page"
+#~ msgstr "Bearbetar sida"
 
 #~ msgid "Copy"
 #~ msgstr "Kopiera"
@@ -2804,9 +2822,6 @@ msgstr "Lokala dokument på din dator"
 
 #~ msgid "%1$d minutes %2$d seconds"
 #~ msgstr "%1$d minuter %2$d sekunder"
-
-#~ msgid "%1$d seconds"
-#~ msgstr "%1$d sekunder"
 
 #~ msgid "Use at least %d characters"
 #~ msgstr "Använd minst %d tecken"
