@@ -6907,6 +6907,11 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-fr
 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-with-target.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-svg-anchor-fragment.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-userInitiated.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-already-detached.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-detach-in-serialization.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-already-detached.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-detach-in-serialization.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-already-detached.html [ Pass ]
 
 # -- View Transitions -- #
 # Reftest failures:

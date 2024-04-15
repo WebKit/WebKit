@@ -45,8 +45,8 @@ dictionary NavigationReloadOptions : NavigationOptions {
     JSGenerateToJSObject,
 ] 
 dictionary NavigationResult {
-  Promise<NavigationHistoryEntry> committed;
-  Promise<NavigationHistoryEntry> finished;
+  [BypassDocumentFullyActiveCheck] Promise<NavigationHistoryEntry> committed;
+  [BypassDocumentFullyActiveCheck] Promise<NavigationHistoryEntry> finished;
 };
 
 enum NavigationHistoryBehavior {
