@@ -69,11 +69,11 @@
             "properties": [
                 { "name": "id", "type": "string", "description": "Frame unique identifier." },
                 { "name": "parentId", "type": "string", "optional": true, "description": "Parent frame identifier." },
-                { "name": "loaderId", "$ref": "Network.LoaderId", "description": "Identifier of the loader associated with this frame." },
+                { "name": "loaderId", "$ref": "Network.LoaderId", "optional": true, "description": "Identifier of the loader associated with this frame." },
                 { "name": "name", "type": "string", "optional": true, "description": "Frame's name as specified in the tag." },
-                { "name": "url", "type": "string", "description": "Frame document's URL." },
-                { "name": "securityOrigin", "type": "string", "description": "Frame document's security origin." },
-                { "name": "mimeType", "type": "string", "description": "Frame document's mimeType as determined by the browser." }
+                { "name": "url", "type": "string", "optional": true, "description": "Frame document's URL." },
+                { "name": "securityOrigin", "type": "string", "optional": true, "description": "Frame document's security origin." },
+                { "name": "mimeType", "type": "string", "optional": true, "description": "Frame document's mimeType as determined by the browser." }
             ]
         },
         {

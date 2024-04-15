@@ -1,0 +1,8 @@
+
+ERROR: Missing frame for given frameId
+PASS: Page should have a subframe.
+
+== Running test suite: CommandLineAPI.$0.cross-frame
+-- Running test case: AttemptCrossFrame$0AccessFromMainFrame
+Setting $0 to node within subframe.
+
