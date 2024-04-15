@@ -551,7 +551,7 @@ PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* par
         didReceivePageMessageFromInjectedBundle,
         nullptr,
         didReceiveSynchronousPageMessageFromInjectedBundleWithListener,
-        nullptr
+        didReceiveAsyncPageMessageFromInjectedBundleWithListener
     };
     WKPageSetPageInjectedBundleClient(newPage, &injectedBundleClient.base);
 
@@ -1015,7 +1015,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         didReceivePageMessageFromInjectedBundle,
         nullptr,
         didReceiveSynchronousPageMessageFromInjectedBundleWithListener,
-        nullptr
+        didReceiveAsyncPageMessageFromInjectedBundleWithListener
     };
     WKPageSetPageInjectedBundleClient(m_mainWebView->page(), &injectedBundleClient.base);
 
@@ -1819,6 +1819,11 @@ void TestController::didReceiveSynchronousPageMessageFromInjectedBundleWithListe
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody, listener);
 }
 
+void TestController::didReceiveAsyncPageMessageFromInjectedBundleWithListener(WKPageRef, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveAsyncMessageFromInjectedBundle(messageName, messageBody, listener);
+}
+
 void TestController::networkProcessDidCrashWithDetails(WKContextRef context, WKProcessID processID, WKProcessTerminationReason reason, const void *clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->networkProcessDidCrash(processID, reason);
@@ -1945,6 +1950,21 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
 
     m_currentInvocation->didReceiveMessageFromInjectedBundle(messageName, messageBody);
+}
+
+void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef, WKMessageListenerRef listener)
+{
+    auto completionHandler = [listener = retainWK(listener)] (WKTypeRef reply) {
+        WKMessageListenerSendReply(listener.get(), reply);
+    };
+
+    if (WKStringIsEqualToUTF8CString(messageName, "FlushConsoleLogs"))
+        return completionHandler(nullptr);
+
+    if (WKStringIsEqualToUTF8CString(messageName, "GetAllStorageAccessEntries"))
+        return TestController::singleton().getAllStorageAccessEntries(WTFMove(completionHandler));
+
+    ASSERT_NOT_REACHED();
 }
 
 void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener)
@@ -3244,47 +3264,21 @@ void TestController::clearAppPrivacyReportTestingData()
 {
 }
 
-struct GetAllStorageAccessEntriesCallbackContext {
-    GetAllStorageAccessEntriesCallbackContext(TestController& controller, CompletionHandler<void(Vector<String>&&)>&& handler)
-        : testController(controller)
-        , completionHandler(WTFMove(handler))
-    {
-    }
+#endif // !PLATFORM(COCOA)
 
-    TestController& testController;
-    CompletionHandler<void(Vector<String>&&)> completionHandler;
-    bool done { false };
-};
-
-void getAllStorageAccessEntriesCallback(void* userData, WKArrayRef domainList)
+void getAllStorageAccessEntriesCallback(void* context, WKArrayRef domainList)
 {
-    auto* context = static_cast<GetAllStorageAccessEntriesCallbackContext*>(userData);
-
-    Vector<String> resultDomains;
-    for (unsigned i = 0; i < WKArrayGetSize(domainList); i++) {
-        auto domain = reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(domainList, i));
-        auto buffer = std::vector<char>(WKStringGetMaximumUTF8CStringSize(domain));
-        auto stringLength = WKStringGetUTF8CString(domain, buffer.data(), buffer.size());
-
-        resultDomains.append(String::fromUTF8({ buffer.data(), stringLength - 1 }));
-    }
-
-    if (context->completionHandler)
-        context->completionHandler(WTFMove(resultDomains));
-
-    context->done = true;
-    context->testController.notifyDone();
+    auto completionHandler = WTF::adopt(static_cast<Function<void(WKTypeRef)>::Impl*>(context));
+    completionHandler(domainList);
 }
 
-void TestController::getAllStorageAccessEntries()
+void TestController::getAllStorageAccessEntries(CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
-    GetAllStorageAccessEntriesCallbackContext context(*this, [this] (Vector<String>&& domains) {
-        m_currentInvocation->didReceiveAllStorageAccessEntries(WTFMove(domains));
-    });
-
-    WKWebsiteDataStoreGetAllStorageAccessEntries(websiteDataStore(), m_mainWebView->page(), &context, getAllStorageAccessEntriesCallback);
-    runUntil(context.done, noTimeout);
+    auto context = Function<void(WKTypeRef)>(WTFMove(completionHandler)).leak();
+    WKWebsiteDataStoreGetAllStorageAccessEntries(websiteDataStore(), m_mainWebView->page(), context, getAllStorageAccessEntriesCallback);
 }
+
+#if !PLATFORM(COCOA)
 
 struct LoadedSubresourceDomainsCallbackContext {
     explicit LoadedSubresourceDomainsCallbackContext(TestController& controller)

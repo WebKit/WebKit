@@ -278,7 +278,7 @@ public:
 
     void removeAllCookies();
 
-    void getAllStorageAccessEntries();
+    void getAllStorageAccessEntries(CompletionHandler<void(WKTypeRef)>&&);
     void setRequestStorageAccessThrowsExceptionUntilReload(bool enabled);
     void loadedSubresourceDomains();
     void clearLoadedSubresourceDomains();
@@ -512,6 +512,9 @@ private:
     // WKPageInjectedBundleClient
     static void didReceivePageMessageFromInjectedBundle(WKPageRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
     static void didReceiveSynchronousPageMessageFromInjectedBundleWithListener(WKPageRef, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef, const void*);
+    static void didReceiveAsyncPageMessageFromInjectedBundleWithListener(WKPageRef, WKStringRef, WKTypeRef, WKMessageListenerRef, const void*);
+    void didReceiveAsyncMessageFromInjectedBundle(WKStringRef, WKTypeRef, WKMessageListenerRef);
+
     void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
     void didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef);
     WKRetainPtr<WKTypeRef> getInjectedBundleInitializationUserData();

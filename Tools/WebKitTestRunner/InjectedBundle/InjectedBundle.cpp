@@ -398,25 +398,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         m_testRunner->callRemoveAllCookiesCallback();
         return;
     }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidReceiveAllStorageAccessEntries")) {
-        ASSERT(messageBody);
-        ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
 
-        WKArrayRef domainsArray = static_cast<WKArrayRef>(messageBody);
-        auto size = WKArrayGetSize(domainsArray);
-        Vector<String> domains;
-        domains.reserveInitialCapacity(size);
-        for (size_t i = 0; i < size; ++i) {
-            auto item = WKArrayGetItemAtIndex(domainsArray, i);
-            if (item && WKGetTypeID(item) == WKStringGetTypeID())
-                domains.append(toWTFString(static_cast<WKStringRef>(item)));
-        }
-
-        m_testRunner->callDidReceiveAllStorageAccessEntriesCallback(domains);
-        return;
-    }
-    
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidReceiveLoadedSubresourceDomains")) {
         ASSERT(messageBody);
         ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
@@ -1086,10 +1068,10 @@ static JSContextRef firstRootFrameJSContext()
     return WKBundleFrameGetJavaScriptContext(firstRootFrame(mainFrame));
 }
 
-void asyncReplyHandler(WKTypeRef, void* context)
+void asyncReplyHandler(WKTypeRef result, void* context)
 {
-    auto function = WTF::adopt(static_cast<Function<void()>::Impl*>(context));
-    function();
+    auto function = WTF::adopt(static_cast<Function<void(WKTypeRef)>::Impl*>(context));
+    function(result);
 }
 
 void postMessageWithAsyncReply(const char* name, JSValueRef callback)
@@ -1097,16 +1079,27 @@ void postMessageWithAsyncReply(const char* name, JSValueRef callback)
     auto context = firstRootFrameJSContext();
     JSValueProtect(context, callback);
 
-    Function<void()> completionHandler = [callback] () mutable {
+    Function<void(WKTypeRef)> completionHandler = [callback] (WKTypeRef result) mutable {
         auto context = firstRootFrameJSContext();
-        JSObjectCallAsFunction(context, JSValueToObject(context, callback, nullptr), JSContextGetGlobalObject(context), 0, nullptr, nullptr);
+        size_t argumentCount { 0 };
+        JSValueRef* arguments { nullptr };
+        JSValueRef resultJS { nullptr };
+
+        if (result) {
+            ASSERT(WKGetTypeID(result) == WKArrayGetTypeID());
+            resultJS = stringArrayToJS(context, static_cast<WKArrayRef>(result));
+            arguments = &resultJS;
+            argumentCount = 1;
+        }
+
+        JSObjectCallAsFunction(context, JSValueToObject(context, callback, nullptr), JSContextGetGlobalObject(context), argumentCount, arguments, nullptr);
         JSValueUnprotect(context, callback);
     };
 
     if (auto page = InjectedBundle::singleton().pageRef())
         WKBundlePagePostMessageWithAsyncReply(page, toWK(name).get(), nullptr, asyncReplyHandler, completionHandler.leak());
     else
-        completionHandler();
+        completionHandler(nullptr);
 }
 
 } // namespace WTR

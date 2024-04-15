@@ -512,17 +512,6 @@ void TestController::removeAllSessionCredentials()
     }];
 }
 
-void TestController::getAllStorageAccessEntries()
-{
-    auto* parentView = mainWebView();
-    if (!parentView)
-        return;
-
-    [[globalWebViewConfiguration() websiteDataStore] _getAllStorageAccessEntriesFor:parentView->platformView() completionHandler:^(NSArray<NSString *> *domains) {
-        m_currentInvocation->didReceiveAllStorageAccessEntries(makeVector<String>(domains));
-    }];
-}
-
 void TestController::loadedSubresourceDomains()
 {
     auto* parentView = mainWebView();

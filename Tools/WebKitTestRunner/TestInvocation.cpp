@@ -839,11 +839,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "GetAllStorageAccessEntries")) {
-        TestController::singleton().getAllStorageAccessEntries();
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllSessionCredentials")) {
         TestController::singleton().removeAllSessionCredentials();
         return;
@@ -1772,14 +1767,6 @@ void TestInvocation::didSetHasHadUserInteraction()
 void TestInvocation::didRemoveAllCookies()
 {
     postPageMessage("CallDidRemoveAllCookies");
-}
-
-void TestInvocation::didReceiveAllStorageAccessEntries(Vector<String>&& domains)
-{
-    auto messageBody = adoptWK(WKMutableArrayCreate());
-    for (auto& domain : domains)
-        WKArrayAppendItem(messageBody.get(), toWK(domain).get());
-    postPageMessage("CallDidReceiveAllStorageAccessEntries", messageBody);
 }
 
 void TestInvocation::didReceiveLoadedSubresourceDomains(Vector<String>&& domains)

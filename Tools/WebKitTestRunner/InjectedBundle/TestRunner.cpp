@@ -398,12 +398,14 @@ void TestRunner::syncLocalStorage()
     postSynchronousMessage("SyncLocalStorage", true);
 }
 
-static inline JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef strings)
+JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef strings)
 {
+    ASSERT(WKGetTypeID(strings) == WKArrayGetTypeID());
     const size_t count = WKArrayGetSize(strings);
     auto array = JSObjectMakeArray(context, 0, 0, nullptr);
     for (size_t i = 0; i < count; ++i) {
         auto stringRef = static_cast<WKStringRef>(WKArrayGetItemAtIndex(strings, i));
+        ASSERT(WKGetTypeID(stringRef) == WKStringGetTypeID());
         JSObjectSetPropertyAtIndex(context, array, i, JSValueMakeString(context, toJS(stringRef).get()), nullptr);
     }
     return array;
@@ -647,7 +649,6 @@ enum {
     StatisticsDidSetToSameSiteStrictCookiesCallbackID,
     StatisticsDidSetFirstPartyHostCNAMEDomainCallbackID,
     StatisticsDidSetThirdPartyCNAMEDomainCallbackID,
-    AllStorageAccessEntriesCallbackID,
     LoadedSubresourceDomainsCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     GetApplicationManifestCallbackID,
@@ -1830,8 +1831,7 @@ void TestRunner::textFieldDidEndEditingCallback()
 
 void TestRunner::getAllStorageAccessEntries(JSValueRef callback)
 {
-    cacheTestRunnerCallback(AllStorageAccessEntriesCallbackID, callback);
-    postMessage("GetAllStorageAccessEntries");
+    postMessageWithAsyncReply("GetAllStorageAccessEntries", callback);
 }
 
 static JSValueRef makeDomainsValue(const Vector<String>& domains)
@@ -1845,12 +1845,6 @@ static JSValueRef makeDomainsValue(const Vector<String>& domains)
     }
     builder.append(']');
     return JSValueMakeFromJSONString(mainFrameJSContext(), createJSString(builder.toString().utf8().data()).get());
-}
-
-void TestRunner::callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& domains)
-{
-    auto result = makeDomainsValue(domains);
-    callTestRunnerCallback(AllStorageAccessEntriesCallbackID, 1, &result);
 }
 
 void TestRunner::setRequestStorageAccessThrowsExceptionUntilReload(bool enabled)
