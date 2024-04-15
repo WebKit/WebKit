@@ -323,6 +323,10 @@ if (USE_LIBDRM)
     if (NOT LibDRM_FOUND)
         message(FATAL_ERROR "libdrm is required for USE_LIBDRM")
     endif ()
+
+    set(CMAKE_REQUIRED_LIBRARIES LibDRM::LibDRM)
+    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_DRM_GET_FORMAT_NAME drmGetFormatName xf86drm.h)
+    unset(CMAKE_REQUIRED_LIBRARIES)
 endif ()
 
 SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER ON)

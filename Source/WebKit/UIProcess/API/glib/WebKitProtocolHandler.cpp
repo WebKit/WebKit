@@ -200,6 +200,9 @@ static String dmabufRendererWithSupportedBuffers()
 #if USE(LIBDRM)
 static String renderBufferFormat(WebKitURISchemeRequest* request)
 {
+#if !HAVE(DRM_GET_FORMAT_NAME)
+    return "Unknown"_s;
+#else
     StringBuilder bufferFormat;
     auto format = webkitWebViewGetRendererBufferFormat(webkit_uri_scheme_request_get_web_view(request));
     if (format.fourcc) {
@@ -233,6 +236,7 @@ static String renderBufferFormat(WebKitURISchemeRequest* request)
         bufferFormat.append("Unknown"_s);
 
     return bufferFormat.toString();
+#endif
 }
 #endif
 #endif
