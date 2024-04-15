@@ -71,14 +71,14 @@ public:
     };
 
     ExceptionOr<RefPtr<Node>> getActiveDescendant(Node&);
-    ExceptionOr<std::optional<Vector<RefPtr<Node>>>> getChildNodes(Node&);
+    ExceptionOr<std::optional<Vector<Ref<Node>>>> getChildNodes(Node&);
     ExceptionOr<std::optional<ComputedProperties>> getComputedProperties(Node&);
-    ExceptionOr<std::optional<Vector<RefPtr<Node>>>> getControlledNodes(Node&);
-    ExceptionOr<std::optional<Vector<RefPtr<Node>>>> getFlowedNodes(Node&);
+    ExceptionOr<std::optional<Vector<Ref<Node>>>> getControlledNodes(Node&);
+    ExceptionOr<std::optional<Vector<Ref<Node>>>> getFlowedNodes(Node&);
     ExceptionOr<RefPtr<Node>> getMouseEventNode(Node&);
-    ExceptionOr<std::optional<Vector<RefPtr<Node>>>> getOwnedNodes(Node&);
+    ExceptionOr<std::optional<Vector<Ref<Node>>>> getOwnedNodes(Node&);
     ExceptionOr<RefPtr<Node>> getParentNode(Node&);
-    ExceptionOr<std::optional<Vector<RefPtr<Node>>>> getSelectedChildNodes(Node&);
+    ExceptionOr<std::optional<Vector<Ref<Node>>>> getSelectedChildNodes(Node&);
 
 private:
     explicit InspectorAuditAccessibilityObject(Inspector::InspectorAuditAgent&);

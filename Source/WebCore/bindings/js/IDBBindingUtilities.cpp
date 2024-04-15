@@ -406,7 +406,7 @@ static JSValue deserializeIDBValueToJSValue(JSGlobalObject& lexicalGlobalObject,
     auto serializedValue = SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(data));
 
     lexicalGlobalObject.vm().apiLock().lock();
-    Vector<RefPtr<MessagePort>> messagePorts;
+    Vector<Ref<MessagePort>> messagePorts;
     JSValue result = serializedValue->deserialize(lexicalGlobalObject, &globalObject, messagePorts, value.blobURLs(), value.blobFilePaths(), SerializationErrorMode::NonThrowing);
     lexicalGlobalObject.vm().apiLock().unlock();
 

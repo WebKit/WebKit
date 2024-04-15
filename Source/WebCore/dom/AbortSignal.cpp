@@ -76,7 +76,7 @@ Ref<AbortSignal> AbortSignal::timeout(ScriptExecutionContext& context, uint64_t 
     return signal;
 }
 
-Ref<AbortSignal> AbortSignal::any(ScriptExecutionContext& context, const Vector<RefPtr<AbortSignal>>& signals)
+Ref<AbortSignal> AbortSignal::any(ScriptExecutionContext& context, const Vector<Ref<AbortSignal>>& signals)
 {
     Ref resultSignal = AbortSignal::create(&context);
 
@@ -88,7 +88,7 @@ Ref<AbortSignal> AbortSignal::any(ScriptExecutionContext& context, const Vector<
 
     resultSignal->markAsDependent();
     for (auto& signal : signals)
-        resultSignal->addSourceSignal(*signal);
+        resultSignal->addSourceSignal(signal);
 
     return resultSignal;
 }

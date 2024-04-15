@@ -117,7 +117,7 @@ ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGloba
     if (auto origin = targetSecurityOrigin.releaseReturnValue())
         target = origin->data();
 
-    Vector<RefPtr<MessagePort>> ports;
+    Vector<Ref<MessagePort>> ports;
     auto messageData = SerializedScriptValue::create(lexicalGlobalObject, message, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WindowPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();

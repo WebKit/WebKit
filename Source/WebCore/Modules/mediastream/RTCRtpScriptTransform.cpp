@@ -51,7 +51,7 @@ ExceptionOr<Ref<RTCRtpScriptTransform>> RTCRtpScriptTransform::create(JSC::JSGlo
     if (!context)
         return Exception { ExceptionCode::InvalidStateError, "Invalid context"_s };
 
-    Vector<RefPtr<MessagePort>> transferredPorts;
+    Vector<Ref<MessagePort>> transferredPorts;
     auto serializedOptions = SerializedScriptValue::create(state, options, WTFMove(transfer), transferredPorts);
     if (serializedOptions.hasException())
         return serializedOptions.releaseException();

@@ -190,14 +190,11 @@ void MockPaymentCoordinator::completeShippingMethodSelection(std::optional<Apple
 #endif
 }
 
-static Vector<MockPaymentError> convert(Vector<RefPtr<ApplePayError>>&& errors)
+static Vector<MockPaymentError> convert(Vector<Ref<ApplePayError>>&& errors)
 {
-    Vector<MockPaymentError> result;
-    for (auto& error : errors) {
-        if (error)
-            result.append({ error->code(), error->message(), error->contactField() });
-    }
-    return result;
+    return WTF::map(WTFMove(errors), [] (auto&& error) -> MockPaymentError {
+        return { error->code(), error->message(), error->contactField() };
+    });
 }
 
 void MockPaymentCoordinator::completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&& shippingContactUpdate)
@@ -363,7 +360,7 @@ void MockPaymentCoordinator::getSetupFeatures(const ApplePaySetupConfiguration& 
     completionHandler(WTFMove(setupFeaturesCopy));
 }
 
-void MockPaymentCoordinator::beginApplePaySetup(const ApplePaySetupConfiguration& configuration, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&& completionHandler)
+void MockPaymentCoordinator::beginApplePaySetup(const ApplePaySetupConfiguration& configuration, const URL&, Vector<Ref<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&& completionHandler)
 {
     m_setupConfiguration = configuration;
     completionHandler(true);

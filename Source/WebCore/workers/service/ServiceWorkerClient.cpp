@@ -77,7 +77,7 @@ String ServiceWorkerClient::id() const
 
 ExceptionOr<void> ServiceWorkerClient::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
 {
-    Vector<RefPtr<MessagePort>> ports;
+    Vector<Ref<MessagePort>> ports;
     auto messageData = SerializedScriptValue::create(globalObject, messageValue, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WorkerPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();

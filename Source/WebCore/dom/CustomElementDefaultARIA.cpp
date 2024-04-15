@@ -108,9 +108,9 @@ void CustomElementDefaultARIA::setElementForAttribute(const QualifiedName& name,
     m_map.set(name, WeakPtr<Element, WeakPtrImplWithEventTargetData> { element });
 }
 
-Vector<RefPtr<Element>> CustomElementDefaultARIA::elementsForAttribute(const Element& thisElement, const QualifiedName& name) const
+Vector<Ref<Element>> CustomElementDefaultARIA::elementsForAttribute(const Element& thisElement, const QualifiedName& name) const
 {
-    Vector<RefPtr<Element>> result;
+    Vector<Ref<Element>> result;
     auto it = m_map.find(name);
     if (it == m_map.end())
         return result;
@@ -118,30 +118,31 @@ Vector<RefPtr<Element>> CustomElementDefaultARIA::elementsForAttribute(const Ele
         SpaceSplitString idList { stringValue, SpaceSplitString::ShouldFoldCase::No };
         result.reserveCapacity(idList.size());
         if (thisElement.isInTreeScope()) {
-            for (unsigned i = 0; i < idList.size(); ++i)
-                result.append(thisElement.treeScope().getElementById(idList[i]));
+            for (unsigned i = 0; i < idList.size(); ++i) {
+                if (RefPtr element = thisElement.treeScope().getElementById(idList[i]))
+                    result.append(element.releaseNonNull());
+            }
         }
     }, [&](const WeakPtr<Element, WeakPtrImplWithEventTargetData>& weakElementValue) {
         RefPtr element = weakElementValue.get();
         if (element && isElementVisible(*element, thisElement))
-            result.append(WTFMove(element));
+            result.append(element.releaseNonNull());
     }, [&](const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>& elements) {
         result.reserveCapacity(elements.size());
         for (auto& weakElement : elements) {
             if (RefPtr element = weakElement.get(); element && isElementVisible(*element, thisElement))
-                result.append(WTFMove(element));
+                result.append(element.releaseNonNull());
         }
     }), it->value);
     return result;
 }
 
-void CustomElementDefaultARIA::setElementsForAttribute(const QualifiedName& name, std::optional<Vector<RefPtr<Element>>>&& values)
+void CustomElementDefaultARIA::setElementsForAttribute(const QualifiedName& name, std::optional<Vector<Ref<Element>>>&& values)
 {
     Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> elements;
     if (values) {
         for (auto& element : *values) {
-            ASSERT(element);
-            elements.append(WeakPtr<Element, WeakPtrImplWithEventTargetData> { *element });
+            elements.append(WeakPtr<Element, WeakPtrImplWithEventTargetData> { element });
         }
     }
     m_map.set(name, WTFMove(elements));

@@ -2268,15 +2268,16 @@ void Element::setElementAttribute(const QualifiedName& attributeName, Element* e
         cache->updateRelations(*this, attributeName);
 }
 
-std::optional<Vector<RefPtr<Element>>> Element::getElementsArrayAttribute(const QualifiedName& attributeName) const
+std::optional<Vector<Ref<Element>>> Element::getElementsArrayAttribute(const QualifiedName& attributeName) const
 {
     ASSERT(isElementsArrayReflectionAttribute(attributeName));
 
     if (auto* map = explicitlySetAttrElementsMapIfExists()) {
         if (auto it = map->find(attributeName); it != map->end()) {
-            return compactMap(it->value, [&](auto& element) -> std::optional<RefPtr<Element>> {
+            return compactMap(it->value, [&](auto& weakElement) -> std::optional<Ref<Element>> {
+                RefPtr element = weakElement.get();
                 if (element && isDescendantOrShadowDescendantOf(element->rootNode()))
-                    return element.get();
+                    return element.releaseNonNull();
                 return std::nullopt;
             });
         }
@@ -2290,15 +2291,15 @@ std::optional<Vector<RefPtr<Element>>> Element::getElementsArrayAttribute(const 
         return std::nullopt;
 
     SpaceSplitString ids(getAttribute(attr), SpaceSplitString::ShouldFoldCase::No);
-    Vector<RefPtr<Element>> elements;
+    Vector<Ref<Element>> elements;
     for (unsigned i = 0; i < ids.size(); ++i) {
         if (RefPtr element = treeScope().getElementById(ids[i]))
-            elements.append(WTFMove(element));
+            elements.append(element.releaseNonNull());
     }
     return elements;
 }
 
-void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std::optional<Vector<RefPtr<Element>>>&& elements)
+void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std::optional<Vector<Ref<Element>>>&& elements)
 {
     ASSERT(isElementsArrayReflectionAttribute(attributeName));
 

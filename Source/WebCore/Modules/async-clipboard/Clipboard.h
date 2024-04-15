@@ -58,7 +58,7 @@ public:
     void writeText(const String& data, Ref<DeferredPromise>&&);
 
     void read(Ref<DeferredPromise>&&);
-    void write(const Vector<RefPtr<ClipboardItem>>& data, Ref<DeferredPromise>&&);
+    void write(const Vector<Ref<ClipboardItem>>& data, Ref<DeferredPromise>&&);
 
     void getType(ClipboardItem&, const String& type, Ref<DeferredPromise>&&);
 
@@ -88,7 +88,7 @@ private:
 
         ~ItemWriter();
 
-        void write(const Vector<RefPtr<ClipboardItem>>&);
+        void write(const Vector<Ref<ClipboardItem>>&);
         void invalidate();
 
     private:

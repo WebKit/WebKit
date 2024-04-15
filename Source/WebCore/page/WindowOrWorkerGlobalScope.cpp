@@ -50,7 +50,7 @@ void WindowOrWorkerGlobalScope::reportError(JSDOMGlobalObject& globalObject, JSC
 
 ExceptionOr<JSC::JSValue> WindowOrWorkerGlobalScope::structuredClone(JSDOMGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& relevantGlobalObject, JSC::JSValue value, StructuredSerializeOptions&& options)
 {
-    Vector<RefPtr<MessagePort>> ports;
+    Vector<Ref<MessagePort>> ports;
     auto messageData = SerializedScriptValue::create(lexicalGlobalObject, value, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WindowPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();
@@ -59,7 +59,7 @@ ExceptionOr<JSC::JSValue> WindowOrWorkerGlobalScope::structuredClone(JSDOMGlobal
     if (disentangledPorts.hasException())
         return disentangledPorts.releaseException();
 
-    Vector<RefPtr<MessagePort>> entangledPorts;
+    Vector<Ref<MessagePort>> entangledPorts;
     if (auto* scriptExecutionContext = relevantGlobalObject.scriptExecutionContext())
         entangledPorts = MessagePort::entanglePorts(*scriptExecutionContext, disentangledPorts.releaseReturnValue());
 

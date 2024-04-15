@@ -4126,18 +4126,14 @@ Vector<Ref<Element>> AccessibilityObject::elementsFromAttribute(const QualifiedN
         }
     } else if (Element::isElementsArrayReflectionAttribute(attribute)) {
         if (auto reflectedElements = element->getElementsArrayAttribute(attribute)) {
-            return WTF::map(reflectedElements.value(), [](RefPtr<Element> element) -> Ref<Element> {
-                return *element;
-            });
+            return reflectedElements.value();
         }
     }
 
     auto& idsString = getAttribute(attribute);
     if (idsString.isEmpty()) {
         if (auto* defaultARIA = element->customElementDefaultARIAIfExists()) {
-            return WTF::map(defaultARIA->elementsForAttribute(*element, attribute), [](RefPtr<Element> element) -> Ref<Element> {
-                return *element;
-            });
+            return defaultARIA->elementsForAttribute(*element, attribute);
         }
         return { };
     }

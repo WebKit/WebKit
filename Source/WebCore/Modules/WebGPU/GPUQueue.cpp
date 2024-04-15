@@ -60,12 +60,10 @@ void GPUQueue::setLabel(String&& label)
     m_backing->setLabel(WTFMove(label));
 }
 
-void GPUQueue::submit(Vector<RefPtr<GPUCommandBuffer>>&& commandBuffers)
+void GPUQueue::submit(Vector<Ref<GPUCommandBuffer>>&& commandBuffers)
 {
-    auto result = WTF::compactMap(commandBuffers, [](auto& commandBuffer) -> std::optional<std::reference_wrapper<WebGPU::CommandBuffer>> {
-        if (commandBuffer)
-            return commandBuffer->backing();
-        return std::nullopt;
+    auto result = WTF::map(commandBuffers, [](auto& commandBuffer) -> std::reference_wrapper<WebGPU::CommandBuffer> {
+        return commandBuffer->backing();
     });
     m_backing->submit(WTFMove(result));
 }

@@ -42,7 +42,7 @@ class MediaStreamTrack;
 class RTCRtpReceiver;
 class RTCRtpTransceiver;
 
-typedef Vector<RefPtr<MediaStream>> MediaStreamArray;
+typedef Vector<Ref<MediaStream>> MediaStreamArray;
 
 class RTCTrackEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(RTCTrackEvent);

@@ -96,7 +96,7 @@ public:
     void beginOcclusionQuery(GPUSize32 queryIndex);
     void endOcclusionQuery();
 
-    void executeBundles(Vector<RefPtr<GPURenderBundle>>&&);
+    void executeBundles(Vector<Ref<GPURenderBundle>>&&);
     void end();
 
     WebGPU::RenderPassEncoder& backing() { return m_backing; }

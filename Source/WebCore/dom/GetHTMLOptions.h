@@ -31,7 +31,7 @@ class ShadowRoot;
 
 struct GetHTMLOptions {
     bool serializableShadowRoots { false };
-    Vector<RefPtr<ShadowRoot>> shadowRoots;
+    Vector<Ref<ShadowRoot>> shadowRoots;
 };
 
 } // namespace WebCore

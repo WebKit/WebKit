@@ -70,8 +70,8 @@ public:
 
     RefPtr<Element> getElementAttribute(const QualifiedName&) const;
     void setElementAttribute(const QualifiedName&, Element*);
-    std::optional<Vector<RefPtr<Element>>> getElementsArrayAttribute(const QualifiedName&) const;
-    void setElementsArrayAttribute(const QualifiedName&, std::optional<Vector<RefPtr<Element>>>&&);
+    std::optional<Vector<Ref<Element>>> getElementsArrayAttribute(const QualifiedName&) const;
+    void setElementsArrayAttribute(const QualifiedName&, std::optional<Vector<Ref<Element>>>&&);
 
     CustomStateSet& states();
 

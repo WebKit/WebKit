@@ -208,7 +208,7 @@ static void setAssociatedRemoteStreams(RTCRtpReceiver& receiver, const PeerConne
 
     for (auto& stream : state.receiverStreams) {
         if (!anyOf(receiver.associatedStreams(), [&stream](auto& currentStream) { return stream->id() == currentStream->id(); }))
-            addList.append({ *stream, Ref { receiver.track() } });
+            addList.append({ stream, Ref { receiver.track() } });
     }
 
     receiver.setAssociatedStreams(WTF::map(state.receiverStreams, [](auto& stream) { return WeakPtr { stream.get() }; }));

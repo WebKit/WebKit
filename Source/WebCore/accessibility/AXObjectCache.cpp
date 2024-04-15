@@ -4816,10 +4816,17 @@ static bool validRelation(void* origin, void* target, AXRelationType relationTyp
     return origin != target || relationType == AXRelationType::LabeledBy;
 }
 
-bool AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType relationType)
+static bool validRelation(Element& origin, Element& target, AXRelationType relationType)
+{
+    if (relationType == AXRelationType::None)
+        return false;
+    return &origin != &target || relationType == AXRelationType::LabeledBy;
+}
+
+bool AXObjectCache::addRelation(Element& origin, Element& target, AXRelationType relationType)
 {
     AXTRACE("AXObjectCache::addRelation"_s);
-    AXLOG(makeString("origin: ", origin->debugDescription(), " target: ", target->debugDescription(), " relationType ", String::number(static_cast<uint8_t>(relationType))));
+    AXLOG(makeString("origin: ", origin.debugDescription(), " target: ", target.debugDescription(), " relationType ", String::number(static_cast<uint8_t>(relationType))));
 
     if (!validRelation(origin, target, relationType)) {
         ASSERT_NOT_REACHED();
@@ -4828,13 +4835,13 @@ bool AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType
 
     if (relationType == AXRelationType::LabelFor) {
         // Add a LabelFor relation if the target doesn't have an ARIA label which should take precedence.
-        if (target->hasAttributeWithoutSynchronization(aria_labelAttr)
-            || target->hasAttributeWithoutSynchronization(aria_labelledbyAttr)
-            || target->hasAttributeWithoutSynchronization(aria_labeledbyAttr))
+        if (target.hasAttributeWithoutSynchronization(aria_labelAttr)
+            || target.hasAttributeWithoutSynchronization(aria_labelledbyAttr)
+            || target.hasAttributeWithoutSynchronization(aria_labeledbyAttr))
             return false;
     }
 
-    return addRelation(RefPtr { getOrCreate(*origin, IsPartOfRelation::Yes) }.get(), RefPtr { getOrCreate(*target, IsPartOfRelation::Yes) }.get(), relationType);
+    return addRelation(RefPtr { getOrCreate(origin, IsPartOfRelation::Yes) }.get(), RefPtr { getOrCreate(target, IsPartOfRelation::Yes) }.get(), relationType);
 }
 
 static bool canHaveRelations(Element& element)
@@ -5033,11 +5040,11 @@ bool AXObjectCache::addRelation(Element& origin, const QualifiedName& attribute)
     auto relationType = attributeToRelationType(attribute);
     if (Element::isElementReflectionAttribute(Ref { m_document->settings() }, attribute)) {
         if (auto reflectedElement = origin.getElementAttribute(attribute))
-            return addRelation(&origin, reflectedElement.get(), relationType);
+            return addRelation(origin, *reflectedElement, relationType);
     } else if (Element::isElementsArrayReflectionAttribute(attribute)) {
         if (auto reflectedElements = origin.getElementsArrayAttribute(attribute)) {
             for (auto reflectedElement : reflectedElements.value()) {
-                if (addRelation(&origin, reflectedElement.get(), relationType))
+                if (addRelation(origin, reflectedElement, relationType))
                     addedRelation = true;
             }
             return addedRelation;
@@ -5048,7 +5055,7 @@ bool AXObjectCache::addRelation(Element& origin, const QualifiedName& attribute)
     if (value.isNull()) {
         if (auto* defaultARIA = origin.customElementDefaultARIAIfExists()) {
             for (auto& target : defaultARIA->elementsForAttribute(origin, attribute)) {
-                if (addRelation(&origin, target.get(), relationType))
+                if (addRelation(origin, target, relationType))
                     addedRelation = true;
             }
         }
@@ -5061,7 +5068,7 @@ bool AXObjectCache::addRelation(Element& origin, const QualifiedName& attribute)
         if (!target || target == &origin)
             continue;
 
-        if (addRelation(&origin, target.get(), relationType))
+        if (addRelation(origin, *target, relationType))
             addedRelation = true;
     }
 
@@ -5075,7 +5082,7 @@ void AXObjectCache::addLabelForRelation(Element& origin)
     // LabelFor relations are established for <label for=...> and for <figcaption> elements.
     if (RefPtr label = dynamicDowncast<HTMLLabelElement>(origin)) {
         if (RefPtr control = Accessibility::controlForLabelElement(*label))
-            addedRelation = addRelation(&origin, control.get(), AXRelationType::LabelFor);
+            addedRelation = addRelation(origin, *control, AXRelationType::LabelFor);
     } else if (origin.hasTagName(figcaptionTag)) {
         RefPtr parent = origin.parentNode();
         if (parent && parent->hasTagName(figureTag))

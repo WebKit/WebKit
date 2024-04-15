@@ -49,8 +49,8 @@ public:
     void setValueForAttribute(const QualifiedName&, const AtomString&);
     RefPtr<Element> elementForAttribute(const Element& thisElement, const QualifiedName&) const;
     void setElementForAttribute(const QualifiedName&, Element*);
-    Vector<RefPtr<Element>> elementsForAttribute(const Element& thisElement, const QualifiedName&) const;
-    void setElementsForAttribute(const QualifiedName&, std::optional<Vector<RefPtr<Element>>>&&);
+    Vector<Ref<Element>> elementsForAttribute(const Element& thisElement, const QualifiedName&) const;
+    void setElementsForAttribute(const QualifiedName&, std::optional<Vector<Ref<Element>>>&&);
 
 private:
     using WeakElementPtr = WeakPtr<Element, WeakPtrImplWithEventTargetData>;

@@ -53,7 +53,7 @@ void ShareDataReader::start(Document* document, ShareDataWithParsedURL&& shareDa
         m_pendingFileLoads.append(makeUniqueRef<BlobLoader>([this, count, fileName = blob->name()](BlobLoader&) {
             this->didFinishLoading(count, fileName);
         }));
-        m_pendingFileLoads.last()->start(*blob, document, FileReaderLoader::ReadAsArrayBuffer);
+        m_pendingFileLoads.last()->start(blob, document, FileReaderLoader::ReadAsArrayBuffer);
         if (m_pendingFileLoads.isEmpty()) {
             // The previous load failed synchronously and cancel() was called. We should not attempt to do any further loads.
             break;

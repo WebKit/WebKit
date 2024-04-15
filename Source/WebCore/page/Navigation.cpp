@@ -148,7 +148,7 @@ ExceptionOr<RefPtr<SerializedScriptValue>> Navigation::serializeState(JSC::JSVal
     if (state.isUndefined())
         return { nullptr };
 
-    Vector<RefPtr<MessagePort>> dummyPorts;
+    Vector<Ref<MessagePort>> dummyPorts;
     auto serializeResult = SerializedScriptValue::create(*protectedScriptExecutionContext()->globalObject(), state, { }, dummyPorts, SerializationForStorage::Yes);
     if (serializeResult.hasException())
         return serializeResult.releaseException();

@@ -132,8 +132,8 @@ public:
     RadioButtonGroups& radioButtonGroups();
 
     JSC::JSValue adoptedStyleSheetWrapper(JSDOMGlobalObject&);
-    std::span<const RefPtr<CSSStyleSheet>> adoptedStyleSheets() const;
-    ExceptionOr<void> setAdoptedStyleSheets(Vector<RefPtr<CSSStyleSheet>>&&);
+    std::span<const Ref<CSSStyleSheet>> adoptedStyleSheets() const;
+    ExceptionOr<void> setAdoptedStyleSheets(Vector<Ref<CSSStyleSheet>>&&);
 
     void addSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer&);
     void removeSVGResource(const AtomString& id);

@@ -77,7 +77,7 @@ ExceptionOr<Ref<PerformanceMark>> PerformanceMark::create(JSC::JSGlobalObject& g
         detail = JSC::jsNull();
     }
 
-    Vector<RefPtr<MessagePort>> ignoredMessagePorts;
+    Vector<Ref<MessagePort>> ignoredMessagePorts;
     auto serializedDetail = SerializedScriptValue::create(globalObject, detail, { }, ignoredMessagePorts);
     if (serializedDetail.hasException())
         return serializedDetail.releaseException();
