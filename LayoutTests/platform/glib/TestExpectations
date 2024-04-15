@@ -3908,6 +3908,9 @@ imported/w3c/web-platform-tests/css/css-view-transitions/new-content-changes-ove
 
 imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change.html [ ImageOnlyFailure ]
 
+# Cairo doesn't support hardware acceleration, this test will pass once we switch to Skia.
+fast/canvas/canvas-will-read-frequently.html [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

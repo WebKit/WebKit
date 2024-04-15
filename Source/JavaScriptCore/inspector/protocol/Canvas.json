@@ -51,6 +51,7 @@
                 { "name": "alpha", "type": "boolean", "optional": true, "description": "WebGL, WebGL2, ImageBitmapRenderingContext" },
                 { "name": "colorSpace", "$ref": "ColorSpace", "optional": true, "description": "2D" },
                 { "name": "desynchronized", "type": "boolean", "optional": true, "description": "2D" },
+                { "name": "willReadFrequently", "type": "boolean", "optional": true, "description": "2D" },
                 { "name": "depth", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
                 { "name": "stencil", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
                 { "name": "antialias", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
