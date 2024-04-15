@@ -179,8 +179,11 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     bool targetOrRelatedTargetIsInShadowTree = node.isInShadowTree() || isInShadowTree(event.relatedTarget());
     // FIXME: We should also check touch target list.
     bool hasNoEventListnerOrDefaultEventHandler = !shouldDispatchEventToScripts && !typeInfo.hasDefaultEventHandler() && !node.document().hasConnectedPluginElements();
-    if (hasNoEventListnerOrDefaultEventHandler && !targetOrRelatedTargetIsInShadowTree)
+    if (hasNoEventListnerOrDefaultEventHandler && !targetOrRelatedTargetIsInShadowTree) {
+        event.resetBeforeDispatch();
+        event.setTarget(RefPtr { EventPath::eventTargetRespectingTargetRules(node) });
         return;
+    }
 
     EventPath eventPath { node, event };
 
