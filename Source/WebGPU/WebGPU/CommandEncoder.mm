@@ -58,11 +58,11 @@ if (m_state == EncoderState::Ended) \
 else \
     makeInvalid(@"Encoder state is locked");
 
-static MTLLoadAction loadAction(WGPULoadOp loadOp, WGPUStoreOp storeOp)
+static MTLLoadAction loadAction(WGPULoadOp loadOp)
 {
     switch (loadOp) {
     case WGPULoadOp_Load:
-        return storeOp == WGPUStoreOp_Discard ? MTLLoadActionClear : MTLLoadActionLoad;
+        return MTLLoadActionLoad;
     case WGPULoadOp_Clear:
         return MTLLoadActionClear;
     case WGPULoadOp_Undefined:
@@ -73,15 +73,15 @@ static MTLLoadAction loadAction(WGPULoadOp loadOp, WGPUStoreOp storeOp)
     }
 }
 
-static MTLStoreAction storeAction(WGPUStoreOp storeOp, WGPULoadOp loadOp)
+static MTLStoreAction storeAction(WGPUStoreOp storeOp, bool hasResolveTarget = false)
 {
     switch (storeOp) {
     case WGPUStoreOp_Store:
-        return MTLStoreActionStore;
+        return hasResolveTarget ? MTLStoreActionStoreAndMultisampleResolve : MTLStoreActionStore;
     case WGPUStoreOp_Discard:
-        return loadOp == WGPULoadOp_Load ? MTLStoreActionStore : MTLStoreActionDontCare;
+        return hasResolveTarget ? MTLStoreActionMultisampleResolve : MTLStoreActionDontCare;
     case WGPUStoreOp_Undefined:
-        return MTLStoreActionDontCare;
+        return hasResolveTarget ? MTLStoreActionMultisampleResolve : MTLStoreActionDontCare;
     case WGPUStoreOp_Force32:
         ASSERT_NOT_REACHED();
         return MTLStoreActionDontCare;
@@ -363,6 +363,10 @@ void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndCl
         depthStencilAttachmentToClear = nil;
 
     id<MTLDevice> device = m_device->device();
+    if (!device) {
+        endEncoding(existingEncoder);
+        return;
+    }
     id<MTLRenderCommandEncoder> clearRenderCommandEncoder = existingEncoder;
     if (!clearRenderCommandEncoder) {
         MTLRenderPassDescriptor* clearDescriptor = [MTLRenderPassDescriptor new];
@@ -402,6 +406,7 @@ void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndCl
         }
         clearRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:clearDescriptor];
     }
+
     auto [pso, depthStencil] = createSimplePso(attachmentsToClear, depthStencilAttachmentToClear, depthAttachmentToClear, stencilAttachmentToClear, device);
     [clearRenderCommandEncoder setRenderPipelineState:pso];
     if (depthStencil)
@@ -525,8 +530,8 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
         mtlAttachment.depthPlane = textureDimension == WGPUTextureViewDimension_3D ? depthSliceOrArrayLayer : 0;
         mtlAttachment.slice = 0;
-        mtlAttachment.loadAction = loadAction(attachment.loadOp, attachment.storeOp);
-        mtlAttachment.storeAction = attachment.resolveTarget ? MTLStoreActionStoreAndMultisampleResolve : storeAction(attachment.storeOp, attachment.loadOp);
+        mtlAttachment.loadAction = loadAction(attachment.loadOp);
+        mtlAttachment.storeAction = storeAction(attachment.storeOp, !!attachment.resolveTarget);
 
         zeroColorTargets = false;
         id<MTLTexture> textureToClear = nil;
@@ -588,8 +593,8 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
             mtlAttachment.clearDepth = clearDepth;
             mtlAttachment.texture = metalDepthStencilTexture;
             mtlAttachment.level = 0;
-            mtlAttachment.loadAction = loadAction(attachment->depthLoadOp, attachment->depthStoreOp);
-            mtlAttachment.storeAction = storeAction(attachment->depthStoreOp, attachment->depthLoadOp);
+            mtlAttachment.loadAction = loadAction(attachment->depthLoadOp);
+            mtlAttachment.storeAction = storeAction(attachment->depthStoreOp);
 
             if (mtlAttachment.loadAction == MTLLoadActionLoad && mtlAttachment.storeAction == MTLStoreActionDontCare && !textureView.previouslyCleared()) {
                 depthStencilAttachmentToClear = mtlAttachment.texture;
@@ -623,8 +628,8 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         if (hasStencilComponent)
             mtlAttachment.texture = textureView.texture();
         mtlAttachment.clearStencil = attachment->stencilClearValue;
-        mtlAttachment.loadAction = loadAction(attachment->stencilLoadOp, attachment->stencilStoreOp);
-        mtlAttachment.storeAction = storeAction(attachment->stencilStoreOp, attachment->stencilLoadOp);
+        mtlAttachment.loadAction = loadAction(attachment->stencilLoadOp);
+        mtlAttachment.storeAction = storeAction(attachment->stencilStoreOp);
 
         bool isDestroyed = textureView.isDestroyed();
         if (!isDestroyed) {

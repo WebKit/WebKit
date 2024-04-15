@@ -106,13 +106,18 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         if (!textureToClear)
             continue;
         TextureAndClearColor *textureWithClearColor = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
+        bool storeOpDiscardAndLoadOpLoad = false;
         if (attachment.storeOp != WGPUStoreOp_Discard) {
             auto& c = attachment.clearValue;
             textureWithClearColor.clearColor = MTLClearColorMake(c.r, c.g, c.b, c.a);
-        } else if (attachment.loadOp == WGPULoadOp_Load)
+        } else if (attachment.loadOp == WGPULoadOp_Load) {
+            storeOpDiscardAndLoadOpLoad = true;
+            textureWithClearColor.clearColor = MTLClearColorMake(0, 0, 0, 0);
             [m_attachmentsToClear setObject:textureWithClearColor forKey:@(i)];
+        }
 
-        [m_allColorAttachments setObject:textureWithClearColor forKey:@(i)];
+        if (attachment.loadOp == WGPULoadOp_Clear || storeOpDiscardAndLoadOpLoad)
+            [m_allColorAttachments setObject:textureWithClearColor forKey:@(i)];
     }
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {
@@ -632,19 +637,21 @@ void RenderPassEncoder::endPass()
     auto endEncoder = ^{
         m_parentEncoder->endEncoding(m_renderCommandEncoder);
     };
-
     auto issuedDraw = issuedDrawCall();
-    if (issuedDraw)
-        endEncoder();
+    bool useDiscardTextures = m_attachmentsToClear.count || m_clearDepthAttachment || m_clearStencilAttachment;
+    bool hasTexturesToClear = m_allColorAttachments.count || m_attachmentsToClear.count || (m_depthStencilAttachmentToClear && (m_clearDepthAttachment || m_clearStencilAttachment));
 
-    if (m_attachmentsToClear.count || !issuedDraw || (m_depthStencilAttachmentToClear && (m_clearDepthAttachment || m_clearStencilAttachment))) {
-        if (m_depthStencilAttachmentToClear && !issuedDraw) {
+    if ((!issuedDraw || useDiscardTextures) && hasTexturesToClear) {
+        if (m_depthStencilAttachmentToClear && !issuedDraw && !useDiscardTextures) {
             auto pixelFormat = m_depthStencilAttachmentToClear.pixelFormat;
             m_clearDepthAttachment = !Device::isStencilOnlyFormat(pixelFormat);
             m_clearStencilAttachment = pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || pixelFormat == MTLPixelFormatStencil8 || pixelFormat == MTLPixelFormatX32_Stencil8;
         }
-        m_parentEncoder->runClearEncoder(issuedDraw ? m_attachmentsToClear : m_allColorAttachments, m_depthStencilAttachmentToClear, m_clearDepthAttachment, m_clearStencilAttachment, m_depthClearValue, m_stencilClearValue, issuedDraw ? nil : m_renderCommandEncoder);
-    }
+        if (useDiscardTextures)
+            endEncoder();
+        m_parentEncoder->runClearEncoder(useDiscardTextures ? m_attachmentsToClear : m_allColorAttachments, m_depthStencilAttachmentToClear, m_clearDepthAttachment, m_clearStencilAttachment, m_depthClearValue, m_stencilClearValue, useDiscardTextures ? nil : m_renderCommandEncoder);
+    } else
+        endEncoder();
 
     m_renderCommandEncoder = nil;
     m_parentEncoder->lock(false);
