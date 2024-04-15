@@ -100,7 +100,7 @@ void ContentSecurityPolicyTrustedTypesDirective::parse(const String& value)
             auto beginPolicy = buffer.position();
             skipWhile<isTrustedTypeCharacter>(buffer);
 
-            StringParsingBuffer policyBuffer(std::span { beginPolicy, buffer.position() });
+            StringParsingBuffer policyBuffer(std::span(beginPolicy, buffer.position()));
 
             if (skipExactlyIgnoringASCIICase(policyBuffer, "'allow-duplicates'"_s)) {
                 m_allowDuplicates = true;

@@ -249,7 +249,7 @@ template<typename CharacterType> void ContentSecurityPolicySourceList::parse(Str
         auto beginSource = buffer.position();
         skipWhile<isSourceCharacter>(buffer);
 
-        StringParsingBuffer sourceBuffer(std::span { beginSource, buffer.position() });
+        StringParsingBuffer sourceBuffer(std::span(beginSource, buffer.position()));
 
         if (parseNonceSource(sourceBuffer))
             continue;

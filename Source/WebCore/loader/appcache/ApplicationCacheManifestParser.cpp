@@ -119,7 +119,7 @@ std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL&
             while (lineEnd > lineStart && isManifestWhitespace(*lineEnd))
                 --lineEnd;
 
-            StringParsingBuffer lineBuffer(std::span { lineStart, lineEnd + 1 });
+            StringParsingBuffer lineBuffer(std::span(lineStart, lineEnd + 1));
 
             if (lineBuffer[lineBuffer.lengthRemaining() - 1] == ':') {
                 if (skipCharactersExactly(lineBuffer, cacheModeIdentifier<CharacterType>) && lineBuffer.lengthRemaining() == 1) {
