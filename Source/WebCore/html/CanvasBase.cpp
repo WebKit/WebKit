@@ -316,6 +316,12 @@ bool CanvasBase::shouldAccelerate(uint64_t area) const
     if (!scriptExecutionContext()->settingsValues().acceleratedCompositingEnabled)
         return false;
 #endif
+#if USE(SKIA)
+    // FIXME: Skia based ports don't implement accelerated offscreen canvas yet.
+    auto* context = renderingContext();
+    if (context && context->isOffscreen2d())
+        return false;
+#endif
     return true;
 #else
     UNUSED_PARAM(area);
@@ -334,18 +340,21 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer() const
         return nullptr;
     }
 
+    auto* context = renderingContext();
+    auto colorSpace = context ? context->colorSpace() : DestinationColorSpace::SRGB();
+    auto pixelFormat = context ? context->pixelFormat() : PixelFormat::BGRA8;
+#if PLATFORM(COCOA)
+    // Cocoa ports don't handle willReadFrequently yet.
+    bool willReadFrequently = false;
+#else
+    bool willReadFrequently = context ? context->willReadFrequently() : false;
+#endif
+
     OptionSet<ImageBufferOptions> bufferOptions;
-    if (shouldAccelerate(area))
+    if (!willReadFrequently && shouldAccelerate(area))
         bufferOptions.add(ImageBufferOptions::Accelerated);
-
-    auto colorSpace = DestinationColorSpace::SRGB();
-    auto pixelFormat = PixelFormat::BGRA8;
-
-    if (auto* context = renderingContext()) {
+    if (context)
         bufferOptions = context->adjustImageBufferOptionsForTesting(bufferOptions);
-        colorSpace = context->colorSpace();
-        pixelFormat = context->pixelFormat();
-    }
 
     return ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, scriptExecutionContext()->graphicsClient());
 }

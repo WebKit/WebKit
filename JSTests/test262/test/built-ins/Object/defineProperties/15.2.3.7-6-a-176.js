@@ -31,9 +31,14 @@ try {
   throw new Test262Error("Expected to throw TypeError");
 } catch (e) {
   assert(e instanceof TypeError);
-  assert(arr.hasOwnProperty("1"));
-  verifyNotWritable(arr, "length");
-  assert.sameValue(arr[0], 0);
-  assert.sameValue(arr[1], 1);
-  assert.sameValue(arr.length, 2)
 }
+
+assert(arr.hasOwnProperty("1"));
+
+verifyProperty(arr, "length", {
+  value: 2,
+  writable: false,
+});
+
+assert.sameValue(arr[0], 0);
+assert.sameValue(arr[1], 1);

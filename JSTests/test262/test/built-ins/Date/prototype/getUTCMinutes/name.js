@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Date.prototype.getUTCMinutes.name, "getUTCMinutes");
-
-verifyNotEnumerable(Date.prototype.getUTCMinutes, "name");
-verifyNotWritable(Date.prototype.getUTCMinutes, "name");
-verifyConfigurable(Date.prototype.getUTCMinutes, "name");
+verifyProperty(Date.prototype.getUTCMinutes, "name", {
+  value: "getUTCMinutes",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

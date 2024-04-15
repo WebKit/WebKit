@@ -191,7 +191,7 @@ void RenderDeprecatedFlexibleBox::styleWillChange(StyleDifference diff, const Re
         auto hasLineClamp = !newStyle.lineClamp().isNone(); 
         if (hasLineClamp != hadLineClamp) {
             for (auto& child : childrenOfType<RenderBlockFlow>(*this))
-                child.invalidateLineLayoutPath();
+                child.invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::StyleChange);
 
             if (hadLineClamp)
                 clearLineClamp();

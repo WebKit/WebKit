@@ -112,6 +112,8 @@ private:
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setSpatialTrackingLabel(const String&) final;
 #endif
+    void addNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver&) final;
+    void removeNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver&) final;
 
     double playbackStartedTime() const final { return m_playbackStartedTime; }
     double duration() const final { return m_duration; }
@@ -272,6 +274,8 @@ private:
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setSpatialTrackingLabel(PlaybackSessionContextIdentifier, const String&);
 #endif
+    void addNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver&);
+    void removeNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver&);
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(PlaybackSessionContextIdentifier, uint64_t);

@@ -13,11 +13,9 @@ includes: [propertyHelper.js]
 features: [Reflect]
 ---*/
 
-assert.sameValue(
-  Reflect.deleteProperty.name, 'deleteProperty',
-  'The value of `Reflect.deleteProperty.name` is `"deleteProperty"`'
-);
-
-verifyNotEnumerable(Reflect.deleteProperty, 'name');
-verifyNotWritable(Reflect.deleteProperty, 'name');
-verifyConfigurable(Reflect.deleteProperty, 'name');
+verifyProperty(Reflect.deleteProperty, "name", {
+  value: "deleteProperty",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

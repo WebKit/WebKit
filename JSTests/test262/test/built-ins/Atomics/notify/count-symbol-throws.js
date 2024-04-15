@@ -23,4 +23,4 @@ const i32a = new Int32Array(
 
 assert.throws(TypeError, function() {
   Atomics.notify(i32a, 0, Symbol());
-}, '`Atomics.notify(i32a, 0, Symbol())` throws TypeError');
+});

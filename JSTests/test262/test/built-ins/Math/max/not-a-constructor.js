@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Math.max), false, 'isConstructor(Math.max) must r
 
 assert.throws(TypeError, () => {
   new Math.max();
-}, '`new Math.max()` throws TypeError');
+});
 

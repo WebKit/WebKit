@@ -8,7 +8,7 @@ import { parseQuery } from '../internal/query/parseQuery.js';
 import { parseExpectationsForTestQuery, relativeQueryString } from '../internal/query/query.js';
 import { assert } from '../util/util.js';
 
-import { optionEnabled, optionString } from './helper/options.js';
+import { optionEnabled, optionWorkerMode } from './helper/options.js';
 import { TestDedicatedWorker, TestServiceWorker, TestSharedWorker } from './helper/test_worker.js';
 
 // testharness.js API (https://web-platform-tests.org/writing-tests/testharness-api.html)
@@ -31,7 +31,7 @@ setup({
 });
 
 void (async () => {
-  const workerString = optionString('worker');
+  const workerString = optionWorkerMode('worker');
   const dedicatedWorker = workerString === 'dedicated' ? new TestDedicatedWorker() : undefined;
   const sharedWorker = workerString === 'shared' ? new TestSharedWorker() : undefined;
   const serviceWorker = workerString === 'service' ? new TestServiceWorker() : undefined;

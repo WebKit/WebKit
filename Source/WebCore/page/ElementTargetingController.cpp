@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ElementTargetingController.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "DOMTokenList.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -54,15 +56,43 @@
 namespace WebCore {
 
 static constexpr auto maximumNumberOfClasses = 5;
-static constexpr auto maximumAreaRatioForAbsolutelyPositionedContent = 0.75;
-static constexpr auto maximumAreaRatioForInFlowContent = 0.5;
-static constexpr auto maximumAreaRatioForNearbyTargets = 0.25;
-static constexpr auto minimumAreaRatioForInFlowContent = 0.01;
-static constexpr auto maximumAreaRatioForTrackingAdjustmentAreas = 0.25;
 static constexpr auto marginForTrackingAdjustmentRects = 5;
 static constexpr auto minimumDistanceToConsiderEdgesEquidistant = 2;
 static constexpr auto selectorBasedVisibilityAdjustmentTimeLimit = 30_s;
 static constexpr auto adjustmentClientRectCleanUpDelay = 15_s;
+static constexpr auto minimumAreaForInterpolation = 200000;
+static constexpr auto maximumAreaForInterpolation = 800000;
+
+static float linearlyInterpolatedViewportRatio(float viewportArea, float minimumValue, float maximumValue)
+{
+    auto areaRatio = (viewportArea - minimumAreaForInterpolation) / (maximumAreaForInterpolation - minimumAreaForInterpolation);
+    return clampTo(maximumValue - areaRatio * (maximumValue - minimumValue), minimumValue, maximumValue);
+}
+
+static float maximumAreaRatioForAbsolutelyPositionedContent(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.75, 1);
+}
+
+static float maximumAreaRatioForInFlowContent(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.5, 1);
+}
+
+static float maximumAreaRatioForNearbyTargets(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.25, 0.5);
+}
+
+static float minimumAreaRatioForInFlowContent(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.005, 0.01);
+}
+
+static float maximumAreaRatioForTrackingAdjustmentAreas(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.25, 0.3);
+}
 
 using ElementSelectorCache = HashMap<Ref<Element>, std::optional<String>>;
 
@@ -99,24 +129,29 @@ static inline bool querySelectorMatchesOneElement(Document& document, const Stri
 
 struct ChildElementPosition {
     size_t index { notFound };
-    size_t childCountOfType { 0 };
+    bool firstOfType { false };
+    bool lastOfType { false };
 };
 
-static inline ChildElementPosition childIndexByType(Element& element, Element& parent)
+static inline ChildElementPosition findChild(Element& element, Element& parent)
 {
-    ChildElementPosition result;
     auto elementTagName = element.tagName();
+    RefPtr<Element> firstOfType;
+    RefPtr<Element> lastOfType;
+    size_t index = notFound;
+    size_t currentChildIndex = 0;
     for (auto& child : childrenOfType<Element>(parent)) {
-        if (child.tagName() != elementTagName)
-            continue;
-
         if (&child == &element)
-            result.index = result.childCountOfType;
+            index = currentChildIndex;
 
-        result.childCountOfType++;
+        if (child.tagName() == elementTagName) {
+            if (!firstOfType)
+                firstOfType = &child;
+            lastOfType = &child;
+        }
+        currentChildIndex++;
     }
-
-    return result;
+    return { index, &element == firstOfType, &element == lastOfType };
 }
 
 static inline String computeIDSelector(Element& element)
@@ -219,17 +254,17 @@ static String parentRelativeSelectorRecursive(Element& element, ElementSelectorC
 
     if (auto selector = selectorForElementRecursive(*parent, cache); !selector.isEmpty()) {
         auto selectorPrefix = makeString(WTFMove(selector), " > "_s, element.tagName());
-        auto [childIndex, childCountOfType] = childIndexByType(element, *parent);
+        auto [childIndex, firstOfType, lastOfType] = findChild(element, *parent);
         if (childIndex == notFound)
             return emptyString();
 
-        if (childCountOfType == 1)
+        if (firstOfType && lastOfType)
             return selectorPrefix;
 
-        if (!childIndex)
+        if (firstOfType)
             return makeString(WTFMove(selectorPrefix), ":first-of-type"_s);
 
-        if (childIndex == childCountOfType - 1)
+        if (lastOfType)
             return makeString(WTFMove(selectorPrefix), ":last-of-type"_s);
 
         return makeString(WTFMove(selectorPrefix), ":nth-child("_s, childIndex + 1, ')');
@@ -403,7 +438,7 @@ static inline std::optional<IntRect> inflatedClientRectForAdjustmentRegionTracki
     if (clientRect.isEmpty())
         return { };
 
-    if (clientRect.area() / viewportArea >= maximumAreaRatioForTrackingAdjustmentAreas)
+    if (clientRect.area() / viewportArea >= maximumAreaRatioForTrackingAdjustmentAreas(viewportArea))
         return { };
 
     // Keep track of the client rects of elements we're targeting, until the client
@@ -444,6 +479,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     if (!viewportArea)
         return { };
 
+    auto nearbyTargetAreaRatio = maximumAreaRatioForNearbyTargets(viewportArea);
     static constexpr OptionSet hitTestOptions {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::DisallowUserAgentShadowContent,
@@ -491,26 +527,39 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
         auto targetAreaRatio = computeViewportAreaRatio(targetBoundingBox);
         bool shouldAddTarget = targetRenderer->isFixedPositioned()
             || targetRenderer->isStickilyPositioned()
-            || (targetRenderer->isAbsolutelyPositioned() && targetAreaRatio < maximumAreaRatioForAbsolutelyPositionedContent)
-            || (minimumAreaRatioForInFlowContent < targetAreaRatio && targetAreaRatio < maximumAreaRatioForInFlowContent);
+            || (targetRenderer->isAbsolutelyPositioned() && targetAreaRatio < maximumAreaRatioForAbsolutelyPositionedContent(viewportArea))
+            || (minimumAreaRatioForInFlowContent(viewportArea) < targetAreaRatio && targetAreaRatio < maximumAreaRatioForInFlowContent(viewportArea))
+            || !target->firstElementChild();
 
         if (!shouldAddTarget)
             continue;
 
         bool checkForNearbyTargets = request.canIncludeNearbyElements
             && targetRenderer->isOutOfFlowPositioned()
-            && targetAreaRatio < maximumAreaRatioForNearbyTargets;
+            && targetAreaRatio < nearbyTargetAreaRatio;
 
-        if (checkForNearbyTargets && computeViewportAreaRatio(targetBoundingBox) < maximumAreaRatioForNearbyTargets)
+        if (checkForNearbyTargets && computeViewportAreaRatio(targetBoundingBox) < nearbyTargetAreaRatio)
             additionalRegionForNearbyElements.unite(targetBoundingBox);
 
+        auto targetEncompassesOtherCandidate = [](Element& target, Element& candidate) {
+            if (&target == &candidate)
+                return true;
+
+            RefPtr<Element> candidateOrHost;
+            if (RefPtr pseudo = dynamicDowncast<PseudoElement>(candidate))
+                candidateOrHost = pseudo->hostElement();
+            else
+                candidateOrHost = &candidate;
+            return candidateOrHost && target.containsIncludingShadowDOM(candidateOrHost.get());
+        };
+
         candidates.removeAllMatching([&](auto& candidate) {
-            if (target.ptr() != candidate.ptr() && !target->containsIncludingShadowDOM(candidate.ptr()))
+            if (!targetEncompassesOtherCandidate(target, candidate))
                 return false;
 
             if (checkForNearbyTargets) {
                 auto boundingBox = candidate->boundingBoxInRootViewCoordinates();
-                if (computeViewportAreaRatio(boundingBox) < maximumAreaRatioForNearbyTargets)
+                if (computeViewportAreaRatio(boundingBox) < nearbyTargetAreaRatio)
                     additionalRegionForNearbyElements.unite(boundingBox);
             }
 
@@ -563,7 +612,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
             if (!additionalRegionForNearbyElements.contains(boundingBox))
                 continue;
 
-            if (computeViewportAreaRatio(boundingBox) > maximumAreaRatioForNearbyTargets)
+            if (computeViewportAreaRatio(boundingBox) > nearbyTargetAreaRatio)
                 continue;
 
             targets.add(element.releaseNonNull());
@@ -784,6 +833,10 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
 
 void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document& document)
 {
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
     RefPtr loader = document.loader();
     if (!loader)
         return;
@@ -819,9 +872,11 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
         return { { }, VisibilityAdjustment::Subtree };
     };
 
+    document.updateLayoutIgnorePendingStylesheets();
+
     auto viewportArea = m_viewportSizeForVisibilityAdjustment.area();
     Region adjustmentRegion;
-    Vector<String> selectorsToRemove;
+    Vector<String> matchingSelectors;
     for (auto& selectorIncludingPseudo : *m_remainingVisibilityAdjustmentSelectors) {
         auto [selector, adjustment] = resolveSelectorToQuery(selectorIncludingPseudo);
         if (selector.isEmpty()) {
@@ -837,6 +892,13 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
         if (!element)
             continue;
 
+        CheckedPtr renderer = element->renderer();
+        if (!renderer)
+            continue;
+
+        if (computeClientRect(*renderer).isEmpty())
+            continue;
+
         if (adjustment == VisibilityAdjustment::AfterPseudo && !element->afterPseudoElement())
             continue;
 
@@ -845,7 +907,7 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
 
         auto currentAdjustment = element->visibilityAdjustment();
         if (currentAdjustment.contains(adjustment)) {
-            selectorsToRemove.append(selectorIncludingPseudo);
+            matchingSelectors.append(selectorIncludingPseudo);
             continue;
         }
 
@@ -856,7 +918,7 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
             element->invalidateStyle();
 
         m_adjustedElements.add(*element);
-        selectorsToRemove.append(selectorIncludingPseudo);
+        matchingSelectors.append(selectorIncludingPseudo);
 
         if (auto clientRect = inflatedClientRectForAdjustmentRegionTracking(*element, viewportArea))
             adjustmentRegion.unite(*clientRect);
@@ -865,8 +927,11 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
     if (!adjustmentRegion.isEmpty())
         m_adjustmentClientRegion.unite(adjustmentRegion);
 
-    for (auto& selector : selectorsToRemove)
+    for (auto& selector : matchingSelectors)
         m_remainingVisibilityAdjustmentSelectors->remove(selector);
+
+    if (!matchingSelectors.isEmpty())
+        page->chrome().client().didAdjustVisibilityWithSelectors(WTFMove(matchingSelectors));
 }
 
 void ElementTargetingController::reset()

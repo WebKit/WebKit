@@ -108,6 +108,7 @@
 #include <wtf/DataLog.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -998,7 +999,7 @@ template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, std
         return false;
 
 #if ASSUME_LITTLE_ENDIAN
-    buffer.append(std::span { reinterpret_cast<const uint8_t*>(values.data()), values.size() * sizeof(T) });
+    buffer.append(asBytes(values));
 #else
     for (unsigned i = 0; i < values.size(); i++) {
         T value = values[i];

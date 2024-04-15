@@ -21,19 +21,9 @@ Object.defineProperty(obj, "foo", {
 
 Object.freeze(obj);
 
-var desc = Object.getOwnPropertyDescriptor(obj, "foo");
-
-if (desc.configurable !== false) {
-  throw new Test262Error("Expected desc.configurable to be false, actually " + desc.configurable);
-}
-if (desc.writable !== false) {
-  throw new Test262Error("Expected desc.writable to be false, actually " + desc.writable);
-}
-
-verifyEqualTo(obj, "foo", 10);
-
-verifyNotWritable(obj, "foo");
-
-verifyEnumerable(obj, "foo");
-
-verifyNotConfigurable(obj, "foo");
+verifyProperty(obj, "foo", {
+  value: 10,
+  writable: false,
+  enumerable: true,
+  configurable: false,
+});

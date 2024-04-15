@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Math.abs), false, 'isConstructor(Math.abs) must r
 
 assert.throws(TypeError, () => {
   new Math.abs();
-}, '`new Math.abs()` throws TypeError');
+});
 

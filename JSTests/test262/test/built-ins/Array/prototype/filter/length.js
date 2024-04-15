@@ -23,8 +23,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Array.prototype.filter.length, 1);
-
-verifyNotEnumerable(Array.prototype.filter, 'length');
-verifyNotWritable(Array.prototype.filter, 'length');
-verifyConfigurable(Array.prototype.filter, 'length');
+verifyProperty(Array.prototype.filter, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

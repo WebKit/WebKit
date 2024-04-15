@@ -45,6 +45,7 @@ struct WKAppPrivacyReportTestingData {
     BOOL didPerformSoftUpdate;
 };
 
+@class _WKNowPlayingMetadata;
 @protocol _WKMediaSessionCoordinator;
 
 @interface WKWebView (WKTesting)
@@ -63,6 +64,7 @@ struct WKAppPrivacyReportTestingData {
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
 
 - (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, BOOL, NSString*, double, double, NSInteger))callback;
+- (void)_setNowPlayingMetadataObserver:(void(^)(_WKNowPlayingMetadata *))observer;
 
 - (void)_doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:(void (^)(void))updateBlock;
 
@@ -191,6 +193,14 @@ struct _WKMediaPositionState {
 - (void)readyStateChanged:(_WKMediaSessionReadyState)state;
 - (void)playbackStateChanged:(_WKMediaSessionPlaybackState)state;
 - (void)trackIdentifierChanged:(NSString *)trackIdentifier;
+@end
+
+WK_EXTERN
+@interface _WKNowPlayingMetadata : NSObject
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSString *artist;
+@property (nonatomic, copy) NSString *album;
+@property (nonatomic, copy) NSString *sourceApplicationIdentifier;
 @end
 
 NS_ASSUME_NONNULL_END

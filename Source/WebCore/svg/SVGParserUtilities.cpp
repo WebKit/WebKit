@@ -289,8 +289,9 @@ std::optional<HashSet<String>> parseGlyphName(StringView string)
 
 }
 
-template<typename CharacterType> static std::optional<UnicodeRange> parseUnicodeRange(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> static std::optional<UnicodeRange> parseUnicodeRange(std::span<const CharacterType> span)
 {
+    StringParsingBuffer buffer { span };
     unsigned length = buffer.lengthRemaining();
     if (length < 2 || buffer[0] != 'U' || buffer[1] != '+')
         return std::nullopt;
@@ -378,7 +379,7 @@ std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeStri
                 break;
 
             // Try to parse unicode range first
-            if (auto range = parseUnicodeRange(StringParsingBuffer { inputStart, buffer.position() }))
+            if (auto range = parseUnicodeRange(std::span { inputStart, buffer.position() }))
                 rangeList.append(WTFMove(*range));
             else
                 stringList.add(String({ inputStart, buffer.position() }));

@@ -571,4 +571,16 @@ bool AuxiliaryProcessProxy::runningBoardThrottlingEnabled()
 }
 #endif
 
+void AuxiliaryProcessProxy::didChangeThrottleState(ProcessThrottleState state)
+{
+    bool isNowSuspended = state == ProcessThrottleState::Suspended;
+    if (m_isSuspended == isNowSuspended)
+        return;
+    m_isSuspended = isNowSuspended;
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    if (!m_isSuspended && !m_preferencesUpdatedWhileSuspended.isEmpty())
+        send(Messages::AuxiliaryProcess::PreferencesDidUpdate(std::exchange(m_preferencesUpdatedWhileSuspended, { })), 0);
+#endif
+}
+
 } // namespace WebKit

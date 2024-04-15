@@ -8,12 +8,9 @@ author: Jordan Harband
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  Object.getOwnPropertyDescriptors.name,
-  'getOwnPropertyDescriptors',
-  'Expected Object.getOwnPropertyDescriptors.name to be "getOwnPropertyDescriptors"'
-);
-
-verifyNotEnumerable(Object.getOwnPropertyDescriptors, 'name');
-verifyNotWritable(Object.getOwnPropertyDescriptors, 'name');
-verifyConfigurable(Object.getOwnPropertyDescriptors, 'name');
+verifyProperty(Object.getOwnPropertyDescriptors, "name", {
+  value: "getOwnPropertyDescriptors",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

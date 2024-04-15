@@ -51,7 +51,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert.throws(Test262Error, function() {
     Reflect.has(sample, "foo");
-  }, '`Reflect.has(sample, "foo")` throws Test262Error');
+  });
 
   Object.defineProperty(sample, "foo", { value: 42 });
 

@@ -31,9 +31,9 @@ SVGPathStringViewSource::SVGPathStringViewSource(StringView view)
     ASSERT(!view.isEmpty());
 
     if (m_is8BitSource)
-        m_buffer8 = { view.characters8(), view.length() };
+        m_buffer8 = view.span8();
     else
-        m_buffer16 = { view.characters16(), view.length() };
+        m_buffer16 = view.span16();
 }
 
 bool SVGPathStringViewSource::hasMoreData() const

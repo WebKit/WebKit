@@ -11,7 +11,7 @@ features: [SharedArrayBuffer]
 ---*/
 
 testTypedArrayConversions(byteConversionValues, function(TA, value, expected, initial) {
-  if (TA === Float64Array || TA === Float32Array || TA === Uint8ClampedArray) {
+  if (TA === Float64Array || TA === Float32Array || (typeof Float16Array !== 'undefined' && TA === Float16Array) || TA === Uint8ClampedArray) {
     return;
   }
   if (TA === Int32Array) {

@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Promise.resolve), false, 'isConstructor(Promise.r
 
 assert.throws(TypeError, () => {
   new Promise.resolve();
-}, '`new Promise.resolve()` throws TypeError');
+});
 

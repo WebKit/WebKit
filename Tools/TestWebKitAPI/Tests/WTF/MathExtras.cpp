@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Intel Corporation
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 
 #include "config.h"
 
+#include <type_traits>
 #include <wtf/MathExtras.h>
 
 namespace TestWebKitAPI {
@@ -638,6 +639,41 @@ TEST(WTF, fastLog2)
     EXPECT_EQ(WTF::fastLog2(std::numeric_limits<uint32_t>::max() - 2u), 32u);
     EXPECT_EQ(WTF::fastLog2(std::numeric_limits<uint32_t>::max() - 1u), 32u);
     EXPECT_EQ(WTF::fastLog2(std::numeric_limits<uint32_t>::max()), 32u);
+}
+
+TEST(WTF, negate)
+{
+    auto expected_uint8_t = WTF::negate<int8_t>(0);
+    EXPECT_TRUE((std::is_same_v<uint8_t, decltype(expected_uint8_t)>));
+    auto expected_uint16_t = WTF::negate<int16_t>(0);
+    EXPECT_TRUE((std::is_same_v<uint16_t, decltype(expected_uint16_t)>));
+    auto expected_uint32_t = WTF::negate<int32_t>(0);
+    EXPECT_TRUE((std::is_same_v<uint32_t, decltype(expected_uint32_t)>));
+    auto expected_uint64_t = WTF::negate<int64_t>(0);
+    EXPECT_TRUE((std::is_same_v<uint64_t, decltype(expected_uint64_t)>));
+    auto expected_unsigned_long_long = WTF::negate<long long>(0);
+    EXPECT_TRUE((std::is_same_v<unsigned long long, decltype(expected_unsigned_long_long)>));
+
+    EXPECT_EQ(WTF::negate<int8_t>(std::numeric_limits<int8_t>::min()), static_cast<uint8_t>(std::numeric_limits<int8_t>::max()) + 1U);
+    EXPECT_EQ(WTF::negate<int8_t>(std::numeric_limits<int8_t>::min() + 1), static_cast<uint8_t>(std::numeric_limits<int8_t>::max()));
+    EXPECT_EQ(WTF::negate<int8_t>(-1), 1U);
+    EXPECT_EQ(WTF::negate<int8_t>(0), 0U);
+    EXPECT_EQ(WTF::negate<int16_t>(std::numeric_limits<int16_t>::min()), static_cast<uint16_t>(std::numeric_limits<int16_t>::max()) + 1U);
+    EXPECT_EQ(WTF::negate<int16_t>(std::numeric_limits<int16_t>::min() + 1), static_cast<uint16_t>(std::numeric_limits<int16_t>::max()));
+    EXPECT_EQ(WTF::negate<int16_t>(-1), 1U);
+    EXPECT_EQ(WTF::negate<int16_t>(0), 0U);
+    EXPECT_EQ(WTF::negate<int32_t>(std::numeric_limits<int32_t>::min()), static_cast<uint32_t>(std::numeric_limits<int32_t>::max()) + 1U);
+    EXPECT_EQ(WTF::negate<int32_t>(std::numeric_limits<int32_t>::min() + 1), static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+    EXPECT_EQ(WTF::negate<int32_t>(-1), 1U);
+    EXPECT_EQ(WTF::negate<int32_t>(0), 0U);
+    EXPECT_EQ(WTF::negate<int64_t>(std::numeric_limits<int64_t>::min()), static_cast<uint64_t>(std::numeric_limits<int64_t>::max()) + 1UL);
+    EXPECT_EQ(WTF::negate<int64_t>(std::numeric_limits<int64_t>::min() + 1L), static_cast<uint64_t>(std::numeric_limits<int64_t>::max()));
+    EXPECT_EQ(WTF::negate<int64_t>(-1L), 1UL);
+    EXPECT_EQ(WTF::negate<int64_t>(0L), 0UL);
+    EXPECT_EQ(WTF::negate<long long>(std::numeric_limits<long long>::min()), static_cast<unsigned long long>(std::numeric_limits<long long>::max()) + 1ULL);
+    EXPECT_EQ(WTF::negate<long long>(std::numeric_limits<long long>::min() + 1LL), static_cast<unsigned long long>(std::numeric_limits<long long>::max()));
+    EXPECT_EQ(WTF::negate<long long>(-1LL), 1ULL);
+    EXPECT_EQ(WTF::negate<long long>(0LL), 0ULL);
 }
 
 } // namespace TestWebKitAPI

@@ -396,6 +396,9 @@
             "contextsAllowed": ["type"],
             "values": ["*"]
         },
+        "BypassDocumentFullyActiveCheck": {
+            "contextsAllowed": ["type"]
+        },
         "PassContext": {
             "contextsAllowed": ["operation"],
             "notes" : "Only used by WebKitTestRunner and DumpRenderTree"

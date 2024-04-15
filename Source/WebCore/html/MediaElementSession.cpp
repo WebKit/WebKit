@@ -1285,7 +1285,22 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
         sourceApplicationIdentifier = presentingApplicationBundleIdentifier();
 #endif
 
-    NowPlayingInfo info { m_element.mediaSessionTitle(), emptyString(), emptyString(), sourceApplicationIdentifier, duration, currentTime, rate, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, { } };
+    NowPlayingInfo info {
+        {
+            m_element.mediaSessionTitle(),
+            emptyString(),
+            emptyString(),
+            sourceApplicationIdentifier,
+            { }
+        },
+        duration,
+        currentTime,
+        rate,
+        supportsSeeking,
+        m_element.mediaUniqueIdentifier(),
+        isPlaying,
+        allowsNowPlayingControlsVisibility
+    };
 #if ENABLE(MEDIA_SESSION)
     if (RefPtr session = mediaSession())
         session->updateNowPlayingInfo(info);

@@ -4850,7 +4850,7 @@ bool WebPageProxy::supportsTextZoom() const
 
 void WebPageProxy::setTextZoomFactor(double zoomFactor)
 {
-    if (m_textZoomFactor == zoomFactor)
+    if (!m_mainFramePluginHandlesPageScaleGesture && m_textZoomFactor == zoomFactor)
         return;
 
     m_textZoomFactor = zoomFactor;
@@ -4863,7 +4863,7 @@ void WebPageProxy::setTextZoomFactor(double zoomFactor)
 
 void WebPageProxy::setPageZoomFactor(double zoomFactor)
 {
-    if (m_pageZoomFactor == zoomFactor)
+    if (!m_mainFramePluginHandlesPageScaleGesture && m_pageZoomFactor == zoomFactor)
         return;
 
     closeOverlayedViews();
@@ -4878,7 +4878,7 @@ void WebPageProxy::setPageZoomFactor(double zoomFactor)
 
 void WebPageProxy::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
 {
-    if (m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
+    if (!m_mainFramePluginHandlesPageScaleGesture && m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
         return;
 
     closeOverlayedViews();
@@ -5381,9 +5381,9 @@ void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions
 
 void WebPageProxy::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& callbackFunction)
 {
-    auto sendFindStringMessage = [&]<typename M>(M&& message, auto&& completionHandler)
+    auto sendAndAggregateFindStringMessage = [&]<typename M>(M&& message, CompletionHandler<void(bool)>&& completionHandler)
     {
-        Ref callbackAggregator = FindStringCallbackAggregator::create(*this, string, options, maxMatchCount, std::forward<decltype(completionHandler)>(completionHandler));
+        Ref callbackAggregator = FindStringCallbackAggregator::create(*this, string, options, maxMatchCount, WTFMove(completionHandler));
         forEachWebContentProcess([&](auto& webProcess, auto pageID) {
             webProcess.sendWithAsyncReply(std::forward<M>(message), [callbackAggregator](std::optional<FrameIdentifier> frameID, Vector<IntRect>&&, uint32_t matchCount, int32_t, bool didWrap) {
                 callbackAggregator->foundString(frameID, matchCount, didWrap);
@@ -5391,11 +5391,24 @@ void WebPageProxy::findString(const String& string, OptionSet<FindOptions> optio
         });
     };
 
-    sendFindStringMessage(Messages::WebPage::FindString(string, options | FindOptions::DoNotSetSelection, maxMatchCount), WTFMove(callbackFunction));
 #if ENABLE(IMAGE_ANALYSIS)
     if (m_preferences->imageAnalysisDuringFindInPageEnabled())
-        sendFindStringMessage(Messages::WebPage::FindStringIncludingImages(string, options | FindOptions::DoNotSetSelection, maxMatchCount), [](bool) { });
+        sendAndAggregateFindStringMessage(Messages::WebPage::FindStringIncludingImages(string, options | FindOptions::DoNotSetSelection, maxMatchCount), [](bool) { });
 #endif
+
+    if (!m_browsingContextGroup->hasRemotePages(*this)) {
+        auto completionHandler = [protectedThis = Ref { *this }, string, callbackFunction = WTFMove(callbackFunction)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrap) mutable {
+            if (!frameID)
+                protectedThis->findClient().didFailToFindString(protectedThis.ptr(), string);
+            else
+                protectedThis->findClient().didFindString(protectedThis.ptr(), string, matchRects, matchCount, matchIndex, didWrap);
+            callbackFunction(frameID.has_value());
+        };
+        sendWithAsyncReply(Messages::WebPage::FindString(string, options, maxMatchCount), WTFMove(completionHandler));
+        return;
+    }
+
+    sendAndAggregateFindStringMessage(Messages::WebPage::FindString(string, options | FindOptions::DoNotSetSelection, maxMatchCount), WTFMove(callbackFunction));
 }
 
 void WebPageProxy::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
@@ -9799,6 +9812,9 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #if ENABLE(EXTENSION_CAPABILITIES)
     setMediaCapability(std::nullopt);
 #endif
+
+    m_nowPlayingMetadataObservers.clear();
+    m_nowPlayingMetadataObserverForTesting = nullptr;
 }
 
 void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason terminationReason)
@@ -13955,6 +13971,45 @@ void WebPageProxy::updateDefaultSpatialTrackingLabel()
     send(Messages::WebPage::SetDefaultSpatialTrackingLabel(effectiveSpatialTrackingLabel()));
 }
 #endif
+
+void WebPageProxy::addNowPlayingMetadataObserver(const NowPlayingMetadataObserver& observer)
+{
+    ASSERT(!m_nowPlayingMetadataObservers.contains(observer));
+    if (m_nowPlayingMetadataObservers.isEmptyIgnoringNullReferences())
+        send(Messages::WebPage::StartObservingNowPlayingMetadata());
+    m_nowPlayingMetadataObservers.add(observer);
+}
+
+void WebPageProxy::removeNowPlayingMetadataObserver(const NowPlayingMetadataObserver& observer)
+{
+    ASSERT(m_nowPlayingMetadataObservers.contains(observer));
+    m_nowPlayingMetadataObservers.remove(observer);
+    if (m_nowPlayingMetadataObservers.isEmptyIgnoringNullReferences())
+        send(Messages::WebPage::StopObservingNowPlayingMetadata());
+}
+
+void WebPageProxy::setNowPlayingMetadataObserverForTesting(std::unique_ptr<WebCore::NowPlayingMetadataObserver>&& observer)
+{
+    if (auto previousObserver = std::exchange(m_nowPlayingMetadataObserverForTesting, nullptr))
+        removeNowPlayingMetadataObserver(*previousObserver);
+
+    m_nowPlayingMetadataObserverForTesting = WTFMove(observer);
+
+    if (m_nowPlayingMetadataObserverForTesting)
+        addNowPlayingMetadataObserver(*m_nowPlayingMetadataObserverForTesting);
+}
+
+void WebPageProxy::nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata& metadata)
+{
+    m_nowPlayingMetadataObservers.forEach([&](auto& observer) {
+        observer(metadata);
+    });
+}
+
+void WebPageProxy::didAdjustVisibilityWithSelectors(Vector<String>&& selectors)
+{
+    m_uiClient->didAdjustVisibilityWithSelectors(*this, WTFMove(selectors));
+}
 
 } // namespace WebKit
 

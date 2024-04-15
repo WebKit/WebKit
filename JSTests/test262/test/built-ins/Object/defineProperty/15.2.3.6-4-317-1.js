@@ -28,17 +28,15 @@ includes: [propertyHelper.js]
       throw new Test262Error('Expected "b === 2;", actually ' + b);
     }
 
-    verifyEqualTo(arguments, "genericProperty", 1001);
-
-    verifyNotWritable(arguments, "genericProperty");
-
-    verifyNotEnumerable(arguments, "genericProperty");
-
-    verifyNotConfigurable(arguments, "genericProperty");
-
     if (!(e instanceof TypeError)) {
       throw new Test262Error("Expected TypeError, got " + e);
     }
-
   }
+
+  verifyProperty(arguments, "genericProperty", {
+    value: 1001,
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  });
 }(1, 2, 3));

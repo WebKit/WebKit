@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Number.isNaN.name, "isNaN");
-
-verifyNotEnumerable(Number.isNaN, "name");
-verifyNotWritable(Number.isNaN, "name");
-verifyConfigurable(Number.isNaN, "name");
+verifyProperty(Number.isNaN, "name", {
+  value: "isNaN",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

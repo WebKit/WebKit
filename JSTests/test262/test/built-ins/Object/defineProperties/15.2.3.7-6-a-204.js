@@ -39,4 +39,6 @@ if (arr.verifySetter !== 101) {
   throw new Test262Error('Expected arr.verifySetter === 101, actually ' + arr.verifySetter);
 }
 
-verifyNotConfigurable(arr, 0);
+verifyProperty(arr, "0", {
+  configurable: false,
+});

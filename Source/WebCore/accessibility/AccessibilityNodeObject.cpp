@@ -85,6 +85,7 @@
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
 #include <wtf/Scope.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -94,7 +95,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 static String accessibleNameForNode(Node&, Node* labelledbyNode = nullptr);
-static void appendNameToStringBuilder(StringBuilder&, String&&);
+static void appendNameToStringBuilder(StringBuilder&, String&&, bool prependSpace = true);
 
 AccessibilityNodeObject::AccessibilityNodeObject(Node* node)
     : AccessibilityObject()
@@ -2251,14 +2252,56 @@ static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, Text
     return true;
 }
 
-static void appendNameToStringBuilder(StringBuilder& builder, String&& text)
+static void appendNameToStringBuilder(StringBuilder& builder, String&& text, bool prependSpace)
 {
     if (text.isEmpty())
         return;
 
-    if (!isHTMLLineBreak(text[0]) && builder.length() && !isHTMLLineBreak(builder[builder.length() - 1]))
+    if (prependSpace && !isHTMLLineBreak(text[0]) && builder.length() && !isHTMLLineBreak(builder[builder.length() - 1]))
         builder.append(' ');
     builder.append(WTFMove(text));
+}
+
+
+static bool displayTypeNeedsSpace(DisplayType type)
+{
+    return type == DisplayType::Block
+        || type == DisplayType::InlineBlock
+        || type == DisplayType::InlineFlex
+        || type == DisplayType::InlineGrid
+        || type == DisplayType::InlineTable
+        || type == DisplayType::TableCell;
+}
+
+static bool needsSpaceFromDisplay(AXCoreObject& coreObject)
+{
+    // We should always be dealing with non-isolated objects here. Ideally in the future we can strengthen the types
+    // to make this issue impossible.
+    RELEASE_ASSERT(is<AccessibilityObject>(coreObject));
+    RefPtr axObject = dynamicDowncast<AccessibilityObject>(coreObject);
+    if (!axObject)
+        return false;
+
+    CheckedPtr renderer = axObject->renderer();
+    if (is<RenderText>(renderer.get())) {
+        // Never add a space for RenderTexts. They are inherently inline, but take their parent's style, which may
+        // be block, erroneously adding a space.
+        return false;
+    }
+
+    const auto* style = renderer ? &renderer->style() : nullptr;
+    if (!style)
+        style = axObject->style();
+
+    return style ? displayTypeNeedsSpace(style->display()) : false;
+}
+
+static bool shouldPrependSpace(AXCoreObject& object, AXCoreObject* previousObject)
+{
+    return needsSpaceFromDisplay(object)
+        || (previousObject && needsSpaceFromDisplay(*previousObject))
+        || object.isControl()
+        || (previousObject && previousObject->isControl());
 }
 
 String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) const
@@ -2296,26 +2339,39 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
     }
 
     StringBuilder builder;
-    auto appendTextUnderElement = [&] (const RefPtr<AXCoreObject>& object) {
-        auto childText = object->textUnderElement(mode);
-        if (childText.length())
-            appendNameToStringBuilder(builder, WTFMove(childText));
+    RefPtr<AXCoreObject> previous;
+    bool previousRequiresSpace = false;
+    auto appendTextUnderElement = [&] (AXCoreObject& object) {
+        // We don't want to trim whitespace in these intermediate calls to textUnderElement, as doing so will wipe out
+        // spaces we need to build the string properly. If anything (depending on the original `mode`), we will trim
+        // whitespace at the very end.
+        SetForScope resetModeTrim(mode.trimWhitespace, TrimWhitespace::No);
+
+        auto childText = object.textUnderElement(mode);
+        if (childText.length()) {
+            appendNameToStringBuilder(builder, WTFMove(childText), previousRequiresSpace || shouldPrependSpace(object, previous.get()));
+            previousRequiresSpace = false;
+        }
     };
 
-    for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
+    for (RefPtr child = firstChild(); child; previous = child, child = child->nextSibling()) {
         if (mode.ignoredChildNode && child->node() == mode.ignoredChildNode)
             continue;
 
         if (mode.isHidden()) {
             // If we are within a hidden context, don't add any text for this node. Instead, fan out downwards
             // to search for un-hidden nodes (e.g. visibility:visible nodes within a visibility:hidden ancestor).
-            appendTextUnderElement(child);
+            appendTextUnderElement(*child);
             continue;
         }
 
         bool shouldDeriveNameFromAuthor = (mode.childrenInclusion == TextUnderElementMode::Children::IncludeNameFromContentsChildren && !child->accessibleNameDerivesFromContent());
         if (shouldDeriveNameFromAuthor) {
-            appendNameToStringBuilder(builder, accessibleNameForNode(*child->node()));
+            auto nameForNode = accessibleNameForNode(*child->node());
+            bool nameIsEmpty = nameForNode.isEmpty();
+            appendNameToStringBuilder(builder, WTFMove(nameForNode));
+            // Separate author-provided text with a space.
+            previousRequiresSpace = previousRequiresSpace || !nameIsEmpty;
             continue;
         }
 
@@ -2334,6 +2390,8 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
             accessibilityNodeObject->alternativeText(textOrder);
             if (textOrder.size() > 0 && textOrder[0].text.length()) {
                 appendNameToStringBuilder(builder, WTFMove(textOrder[0].text));
+                // Alternative text (e.g. from aria-label, aria-labelledby, alt, etc) requires space separation.
+                previousRequiresSpace = true;
                 continue;
             }
         }
@@ -2349,10 +2407,13 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
                 continue;
         }
 
-        appendTextUnderElement(child);
+        appendTextUnderElement(*child);
     }
 
-    return builder.toString().trim(isUnicodeWhitespace).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
+    auto result = builder.toString();
+    return mode.trimWhitespace == TrimWhitespace::Yes
+        ? result.trim(isUnicodeWhitespace).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak)
+        : result;
 }
 
 String AccessibilityNodeObject::title() const

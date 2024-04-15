@@ -94,6 +94,7 @@ public:
         // WatchpointSet.
         HavingABadTimeWatchpointSet,
         MasqueradesAsUndefinedWatchpointSet,
+        ArrayBufferDetachWatchpointSet,
         ArrayIteratorProtocolWatchpointSet,
         NumberToStringWatchpointSet,
         StructureCacheClearedWatchpointSet,
@@ -244,7 +245,7 @@ public:
     
     void validateReferences(const TrackedReferences&) final;
     
-    void shrinkToFit(const ConcurrentJSLocker&) final;
+    void shrinkToFit() final;
 
     RegisterSetBuilder liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) final;
 #if ENABLE(FTL_JIT)

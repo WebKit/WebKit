@@ -32,10 +32,18 @@ namespace JSC { namespace DFG {
 
 class Graph;
 
-// Infer basic information about how nodes are used by doing a block-local
+// Infer basic information about how nodes are likely to be used by doing a block-local
 // backwards flow analysis.
 
-void performBackwardsPropagation(Graph&);
+
+// Infer information after fixup has run. This should only pessimize the existing information.
+// By this point, we ensure that any new uses inserted by fixup are accounted for.
+//
+// For example, consider:
+//     b = a + 0.1
+// If {b} is PureInt, then we would propagate that to {a}. But we don't actually know
+// until after fixup if {a} may be used as a double.
+bool performBackwardsPropagation(Graph&);
 
 } } // namespace JSC::DFG
 

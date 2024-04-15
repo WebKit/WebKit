@@ -11,11 +11,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  Array.prototype.every.length, 1,
-  'The value of `Array.prototype.every.length` is `1`'
-);
-
-verifyNotEnumerable(Array.prototype.every, 'length');
-verifyNotWritable(Array.prototype.every, 'length');
-verifyConfigurable(Array.prototype.every, 'length');
+verifyProperty(Array.prototype.every, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

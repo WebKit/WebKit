@@ -39,6 +39,13 @@ static auto *dataRecordTestManifest = @{
     @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
 };
 
+static auto *dataRecordTestTwoManifest = @{
+    @"manifest_version": @3,
+    @"name": @"DataRecordTwo",
+    @"permissions": @[ @"storage" ],
+    @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+};
+
 static auto *allDataTypesSet = [NSSet setWithArray:@[ _WKWebExtensionDataTypeLocal, _WKWebExtensionDataTypeSession, _WKWebExtensionDataTypeSync ]];
 
 TEST(WKWebExtensionDataRecord, GetDataRecords)
@@ -66,6 +73,8 @@ TEST(WKWebExtensionDataRecord, GetDataRecords)
 
     __block bool fetchComplete = false;
     [testController fetchDataRecordOfTypes:allDataTypesSet forExtensionContext:context completionHandler:^(_WKWebExtensionDataRecord *dataRecord) {
+        EXPECT_EQ(dataRecord.errors.count, 0UL);
+
         EXPECT_NS_EQUAL(dataRecord.displayName, @"DataRecord");
         EXPECT_NS_EQUAL(dataRecord.uniqueIdentifier, @"org.webkit.test.extension (76C788B8)");
 
@@ -105,7 +114,7 @@ TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
     [testContextOne setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
     testContextOne.uniqueIdentifier = @"org.webkit.testOne.extension (76C788B8)";
 
-    auto *testExtensionTwo = [[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScriptTwo }];
+    auto *testExtensionTwo = [[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestTwoManifest resources:@{ @"background.js": backgroundScriptTwo }];
     auto *testContextTwo = [[_WKWebExtensionContext alloc] initForExtension:testExtensionTwo];
     [testContextTwo setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
     testContextTwo.uniqueIdentifier = @"org.webkit.testTwo.extension (76C788B8)";
@@ -119,6 +128,9 @@ TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
     __block bool fetchComplete = false;
     [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<_WKWebExtensionDataRecord *> *dataRecords) {
         EXPECT_EQ(dataRecords.count, 2UL);
+        EXPECT_EQ(dataRecords[0].errors.count, 0UL);
+        EXPECT_EQ(dataRecords[1].errors.count, 0UL);
+
         _WKWebExtensionDataRecord *dataRecordOne;
         _WKWebExtensionDataRecord *dataRecordTwo;
 
@@ -136,7 +148,7 @@ TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
         }
 
         EXPECT_NS_EQUAL(dataRecordOne.displayName, @"DataRecord");
-        EXPECT_NS_EQUAL(dataRecordTwo.displayName, @"DataRecord");
+        EXPECT_NS_EQUAL(dataRecordTwo.displayName, @"DataRecordTwo");
 
         EXPECT_EQ(dataRecordOne.totalSize, 79UL);
         EXPECT_EQ(dataRecordTwo.totalSize, 158UL);
@@ -155,7 +167,7 @@ TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
     TestWebKitAPI::Util::run(&fetchComplete);
 }
 
-TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecords)
+TEST(WKWebExtensionDataRecord, RemoveDataRecords)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }",
@@ -187,6 +199,8 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecords)
             [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<_WKWebExtensionDataRecord *> *updatedRecords) {
                 EXPECT_EQ(updatedRecords.count, 1UL);
 
+                EXPECT_EQ(updatedRecords[0].errors.count, 0UL);
+
                 // Sync storage should still have data.
                 EXPECT_EQ(updatedRecords.firstObject.totalSize, 79UL);
                 removalComplete = true;
@@ -206,7 +220,6 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecordsForMultipleContexts)
 
     auto *backgroundScriptTwo = Util::constructScript(@[
         @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }",
-        @"await browser?.storage?.session?.set(data)",
         @"await browser?.storage?.sync?.set(data)",
     ]);
 
@@ -217,7 +230,7 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecordsForMultipleContexts)
     [testContextOne setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
     testContextOne.uniqueIdentifier = @"org.webkit.testOne.extension (76C788B8)";
 
-    auto *testExtensionTwo = [[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScriptTwo }];
+    auto *testExtensionTwo = [[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestTwoManifest resources:@{ @"background.js": backgroundScriptTwo }];
     auto *testContextTwo = [[_WKWebExtensionContext alloc] initForExtension:testExtensionTwo];
     [testContextTwo setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
     testContextTwo.uniqueIdentifier = @"org.webkit.testTwo.extension (76C788B8)";
@@ -234,7 +247,12 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecordsForMultipleContexts)
         EXPECT_EQ(dataRecords[0].totalSize + dataRecords[1].totalSize, 237UL);
 
         [testController removeDataOfTypes:allDataTypesSet forDataRecords:dataRecords completionHandler:^{
+            EXPECT_EQ(dataRecords[0].errors.count, 0UL);
+            EXPECT_EQ(dataRecords[1].errors.count, 0UL);
             [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<_WKWebExtensionDataRecord *> *updatedDataRecords) {
+                EXPECT_EQ(updatedDataRecords[0].errors.count, 0UL);
+                EXPECT_EQ(updatedDataRecords[1].errors.count, 0UL);
+
                 EXPECT_EQ(updatedDataRecords.count, 2UL);
                 EXPECT_EQ(updatedDataRecords[0].totalSize, 0UL);
                 EXPECT_EQ(updatedDataRecords[1].totalSize, 0UL);

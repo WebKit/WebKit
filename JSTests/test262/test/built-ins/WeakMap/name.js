@@ -10,11 +10,9 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  WeakMap.name, 'WeakMap',
-  'The value of `WeakMap.name` is "WeakMap"'
-);
-
-verifyNotEnumerable(WeakMap, 'name');
-verifyNotWritable(WeakMap, 'name');
-verifyConfigurable(WeakMap, 'name');
+verifyProperty(WeakMap, "name", {
+  value: "WeakMap",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

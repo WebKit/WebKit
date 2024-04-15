@@ -1,0 +1,44 @@
+[package]
+name = "gst-plugin-dav1d"
+version = "0.13.0-alpha.1"
+authors = ["Philippe Normand <philn@igalia.com>"]
+edition = "2021"
+rust-version = "1.70"
+repository = "https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs"
+license = "MIT OR Apache-2.0"
+description = "GStreamer dav1d AV1 decoder Plugin"
+
+[dependencies]
+dav1d = "0.10.3"
+gst = { package = "gstreamer", version = "0.22", features = ["v1_18"] }
+gst-base = { package = "gstreamer-base", version = "0.22", features = ["v1_18"] }
+gst-video = { package = "gstreamer-video", version = "0.22", features = ["v1_18"] }
+num_cpus = "1.0"
+once_cell = "1.19"
+
+[lib]
+name = "gstdav1d"
+crate-type = ["cdylib", "rlib"]
+path = "src/lib.rs"
+
+[build-dependencies]
+gst-plugin-version-helper = "0.8.2"
+
+[features]
+static = []
+capi = []
+doc = ["gst/v1_18"]
+
+[package.metadata.capi]
+min_version = "0.9.21"
+
+[package.metadata.capi.header]
+enabled = false
+
+[package.metadata.capi.library]
+install_subdir = "gstreamer-1.0"
+versioning = false
+import_library = false
+
+[package.metadata.capi.pkg_config]
+requires_private = "gstreamer-1.0, gstreamer-base-1.0, gstreamer-video-1.0, gobject-2.0, glib-2.0, gmodule-2.0, dav1d"

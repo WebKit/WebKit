@@ -234,7 +234,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::add(FixedVector<CSSNumberish>
 ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::sub(FixedVector<CSSNumberish>&& values)
 {
     return addInternal(WTF::map(WTFMove(values), [] (CSSNumberish&& numberish) {
-        return negate(rectifyNumberish(WTFMove(numberish)));
+        return WebCore::negate(rectifyNumberish(WTFMove(numberish)));
     }));
 }
 

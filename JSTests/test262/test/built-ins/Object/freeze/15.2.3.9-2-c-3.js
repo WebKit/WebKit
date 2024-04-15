@@ -37,7 +37,10 @@ Object.defineProperty(obj, "foo2", {
 
 Object.freeze(obj);
 
-verifyNotConfigurable(obj, "foo2");
+verifyProperty(obj, "foo2", {
+  configurable: false,
+});
+
 verifyEqualTo(obj, "foo2", 10);
 
 obj.foo2 = 12;
@@ -45,24 +48,19 @@ if (!resultSetFun) {
   throw new Test262Error('Expected obj["foo2"] set() to be called, but was not.');
 }
 
-if (!isEnumerable(obj, "foo2")) {
-  throw new Test262Error('Expected obj["foo2"] to be enumerable.');
-}
-
-var desc1 = Object.getOwnPropertyDescriptor(obj, "foo1");
-if (desc1.configurable || desc1.writable) {
-  throw new Test262Error('Expected obj["foo1"] to be non-writable, non-configurable; actually ' + JSON.stringify(desc1));
-}
+verifyProperty(obj, "foo2", {
+  enumerable: true,
+  configurable: false,
+});
 
 var desc2 = Object.getOwnPropertyDescriptor(obj, "foo2");
-if (desc2.configurable || desc2.writable) {
+if (desc2.writable) {
   throw new Test262Error('Expected obj["foo2"] to be non-writable, non-configurable; actually ' + JSON.stringify(desc2));
 }
 
-verifyEqualTo(obj, "foo1", 10);
-
-verifyNotWritable(obj, "foo1");
-
-verifyEnumerable(obj, "foo1");
-
-verifyNotConfigurable(obj, "foo1");
+verifyProperty(obj, "foo1", {
+  value: 10,
+  writable: false,
+  enumerable: true,
+  configurable: false,
+});

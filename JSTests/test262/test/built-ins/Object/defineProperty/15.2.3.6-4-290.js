@@ -31,7 +31,8 @@ includes: [propertyHelper.js]
 
   verifyWritable(arguments, "0", "setVerifyHelpProp");
 
-  verifyEnumerable(arguments, "0");
-
-  verifyConfigurable(arguments, "0");
+  verifyProperty(arguments, "0", {
+    enumerable: true,
+    configurable: true,
+  });
 }(0, 1, 2));

@@ -24,6 +24,9 @@ Object.defineProperties(arr, {
 });
 
 assert(!arr.hasOwnProperty("1"));
-assert.sameValue(arr.length, 0);
 assert(!arr.hasOwnProperty("0"));
-verifyNotWritable(arr, "length");
+
+verifyProperty(arr, "length", {
+  value: 0,
+  writable: false,
+});

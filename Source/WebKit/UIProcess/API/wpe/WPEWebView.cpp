@@ -785,6 +785,14 @@ void View::updateAcceleratedSurface(uint64_t surfaceID)
         m_backingStore->updateSurfaceID(surfaceID);
 }
 
+RendererBufferFormat View::renderBufferFormat() const
+{
+    if (!m_backingStore)
+        return { };
+
+    return m_backingStore->bufferFormat();
+}
+
 void View::updateDisplayID()
 {
     auto* monitor = wpe_view_get_monitor(m_wpeView.get());

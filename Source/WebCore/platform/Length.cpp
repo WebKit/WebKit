@@ -105,15 +105,15 @@ UniqueArray<Length> newLengthArray(const String& string, int& len)
 
     auto upconvertedCharacters = StringView(str.get()).upconvertedCharacters();
     while ((pos2 = str->find(',', pos)) != notFound) {
-        r[i++] = parseLength({ upconvertedCharacters + pos, pos2 - pos });
+        r[i++] = parseLength(upconvertedCharacters.span().subspan(pos, pos2 - pos));
         pos = pos2+1;
     }
 
     ASSERT(i == len - 1);
 
     // IE Quirk: If the last comma is the last char skip it and reduce len by one.
-    if (str->length()-pos > 0)
-        r[i] = parseLength({ upconvertedCharacters + pos, str->length() - pos });
+    if (str->length() - pos > 0)
+        r[i] = parseLength(upconvertedCharacters.span().subspan(pos));
     else
         len--;
 
@@ -355,6 +355,26 @@ Length convertTo100PercentMinusLength(const Length& length)
     
     // Turn this into a calc expression: calc(100% - length)
     return makeCalculated(CalcOperator::Subtract, Length(100, LengthType::Percent), length);
+}
+
+Length convertTo100PercentMinusLengthSum(const Length& a, const Length& b)
+{
+    // FIXME: The main simplification code does not deal with substract expressions so this does some basic steps.
+    // A seperate calc node type for pixel-and-percent values would make simplifications easier.
+
+    if (a.isPercent() && b.isPercent())
+        return Length(100 - a.value() - b.value(), LengthType::Percent);
+
+    if (a.isPercent()) {
+        auto percent = Length(100 - a.value(), LengthType::Percent);
+        return makeCalculated(CalcOperator::Subtract, percent, b);
+    }
+    if (b.isPercent()) {
+        auto percent = Length(100 - b.value(), LengthType::Percent);
+        return makeCalculated(CalcOperator::Subtract, percent, a);
+    }
+    auto sum = makeCalculated(CalcOperator::Add, a, b);
+    return convertTo100PercentMinusLength(sum);
 }
 
 static Length blendMixedTypes(const Length& from, const Length& to, const BlendingContext& context)

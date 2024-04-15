@@ -131,7 +131,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     context.beginTransparencyLayer(1);
 
     if (missingMaskerData) {
-        layer()->paintSVGResourceLayer(maskImage->context(), contentTransform);
+        checkedLayer()->paintSVGResourceLayer(maskImage->context(), contentTransform);
 
 #if !USE(CG)
         maskImage->transformToColorSpace(drawColorSpace);

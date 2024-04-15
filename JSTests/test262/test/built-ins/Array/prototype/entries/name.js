@@ -12,11 +12,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  Array.prototype.entries.name, 'entries',
-  'The value of `Array.prototype.entries.name` is `"entries"`'
-);
-
-verifyNotEnumerable(Array.prototype.entries, 'name');
-verifyNotWritable(Array.prototype.entries, 'name');
-verifyConfigurable(Array.prototype.entries, 'name');
+verifyProperty(Array.prototype.entries, "name", {
+  value: "entries",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

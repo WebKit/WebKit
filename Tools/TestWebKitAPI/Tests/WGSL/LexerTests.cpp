@@ -58,10 +58,15 @@ static WGSL::Token checkSingleToken(const String& string, WGSL::TokenType type)
     return result;
 }
 
-static void checkSingleLiteral(const String& string, WGSL::TokenType type, double literalValue)
+static void checkSingleIntegerLiteral(const String& string, WGSL::TokenType type, int64_t integerValue)
 {
     WGSL::Token result = checkSingleToken(string, type);
-    EXPECT_EQ(result.literalValue, literalValue);
+    EXPECT_EQ(result.integerValue, integerValue);
+}
+static void checkSingleFloatLiteral(const String& string, WGSL::TokenType type, double floatValue)
+{
+    WGSL::Token result = checkSingleToken(string, type);
+    EXPECT_EQ(result.floatValue, floatValue);
 }
 
 static WGSL::Token checkNextTokenIs(TestLexer& lexer, WGSL::TokenType type, unsigned lineNumber)
@@ -78,10 +83,16 @@ static void checkNextTokenIsIdentifier(TestLexer& lexer, const String& ident, un
     EXPECT_EQ(result.ident, ident);
 }
 
-static void checkNextTokenIsLiteral(TestLexer& lexer, WGSL::TokenType type, double literalValue, unsigned lineNumber)
+static void checkNextTokenIsIntegerLiteral(TestLexer& lexer, WGSL::TokenType type, int64_t integerValue, unsigned lineNumber)
 {
     WGSL::Token result = checkNextTokenIs(lexer, type, lineNumber);
-    EXPECT_EQ(result.literalValue, literalValue);
+    EXPECT_EQ(result.integerValue, integerValue);
+}
+
+static void checkNextTokenIsFloatLiteral(TestLexer& lexer, WGSL::TokenType type, double floatValue, unsigned lineNumber)
+{
+    WGSL::Token result = checkNextTokenIs(lexer, type, lineNumber);
+    EXPECT_EQ(result.floatValue, floatValue);
 }
 
 static void checkNextTokensAreBuiltinAttr(TestLexer& lexer, const String& attr, unsigned lineNumber)
@@ -111,25 +122,25 @@ TEST(WGSLLexerTests, SingleTokens)
     using WGSL::TokenType;
 
     checkSingleToken(""_s, TokenType::EndOfFile);
-    checkSingleLiteral("1"_s, TokenType::IntegerLiteral, 1);
-    checkSingleLiteral("0"_s, TokenType::IntegerLiteral, 0);
-    checkSingleLiteral("142"_s, TokenType::IntegerLiteral, 142);
-    checkSingleLiteral("142f"_s, TokenType::FloatLiteral, 142.0);
-    checkSingleLiteral("1.1"_s, TokenType::AbstractFloatLiteral, 1.1);
-    checkSingleLiteral("0.4"_s, TokenType::AbstractFloatLiteral, 0.4);
-    checkSingleLiteral("0123.456"_s, TokenType::AbstractFloatLiteral, 0123.456);
+    checkSingleIntegerLiteral("1"_s, TokenType::IntegerLiteral, 1);
+    checkSingleIntegerLiteral("0"_s, TokenType::IntegerLiteral, 0);
+    checkSingleIntegerLiteral("142"_s, TokenType::IntegerLiteral, 142);
+    checkSingleFloatLiteral("142f"_s, TokenType::FloatLiteral, 142.0);
+    checkSingleFloatLiteral("1.1"_s, TokenType::AbstractFloatLiteral, 1.1);
+    checkSingleFloatLiteral("0.4"_s, TokenType::AbstractFloatLiteral, 0.4);
+    checkSingleFloatLiteral("0123.456"_s, TokenType::AbstractFloatLiteral, 0123.456);
     checkSingleToken("0123"_s, TokenType::Invalid);
-    checkSingleLiteral("0123."_s, TokenType::AbstractFloatLiteral, 123);
-    checkSingleLiteral(".456"_s, TokenType::AbstractFloatLiteral, 0.456);
+    checkSingleFloatLiteral("0123."_s, TokenType::AbstractFloatLiteral, 123);
+    checkSingleFloatLiteral(".456"_s, TokenType::AbstractFloatLiteral, 0.456);
     checkSingleToken("."_s, TokenType::Period);
-    checkSingleLiteral("42f"_s, TokenType::FloatLiteral, 42);
-    checkSingleLiteral("42e0f"_s, TokenType::FloatLiteral, 42);
-    checkSingleLiteral("042e0f"_s, TokenType::FloatLiteral, 42);
+    checkSingleFloatLiteral("42f"_s, TokenType::FloatLiteral, 42);
+    checkSingleFloatLiteral("42e0f"_s, TokenType::FloatLiteral, 42);
+    checkSingleFloatLiteral("042e0f"_s, TokenType::FloatLiteral, 42);
     checkSingleToken("042f"_s, TokenType::Invalid);
-    checkSingleLiteral("0123.f"_s, TokenType::FloatLiteral, 123);
-    checkSingleLiteral(".456f"_s, TokenType::FloatLiteral, 0.456f);
-    checkSingleLiteral("42e-3"_s, TokenType::AbstractFloatLiteral, 42e-3);
-    checkSingleLiteral("42e-3f"_s, TokenType::FloatLiteral, 42e-3f);
+    checkSingleFloatLiteral("0123.f"_s, TokenType::FloatLiteral, 123);
+    checkSingleFloatLiteral(".456f"_s, TokenType::FloatLiteral, 0.456f);
+    checkSingleFloatLiteral("42e-3"_s, TokenType::AbstractFloatLiteral, 42e-3);
+    checkSingleFloatLiteral("42e-3f"_s, TokenType::FloatLiteral, 42e-3f);
 }
 
 TEST(WGSLLexerTests, KeywordTokens)
@@ -254,12 +265,12 @@ TEST(WGSLLexerTests, ComputeShader)
     checkNextTokenIs(lexer, WGSL::TokenType::Attribute, lineNumber);
     checkNextTokenIsIdentifier(lexer, "group"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::IntegerLiteral, 0, lineNumber);
+    checkNextTokenIsIntegerLiteral(lexer, WGSL::TokenType::IntegerLiteral, 0, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Attribute, lineNumber);
     checkNextTokenIsIdentifier(lexer, "binding"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::IntegerLiteral, 0, lineNumber);
+    checkNextTokenIsIntegerLiteral(lexer, WGSL::TokenType::IntegerLiteral, 0, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
 
     // var<storage, read_write> x: B;
@@ -294,7 +305,7 @@ TEST(WGSLLexerTests, ComputeShader)
     checkNextTokenIs(lexer, WGSL::TokenType::Period, lineNumber);
     checkNextTokenIsIdentifier(lexer, "a"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Equal, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::IntegerLiteral, 42, lineNumber);
+    checkNextTokenIsIntegerLiteral(lexer, WGSL::TokenType::IntegerLiteral, 42, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Semicolon, lineNumber);
 
     // }
@@ -330,7 +341,7 @@ TEST(WGSLLexerTests, GraphicsShader)
     checkNextTokenIs(lexer, WGSL::TokenType::Attribute, lineNumber);
     checkNextTokenIsIdentifier(lexer, "location"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::IntegerLiteral, 0, lineNumber);
+    checkNextTokenIsIntegerLiteral(lexer, WGSL::TokenType::IntegerLiteral, 0, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
     checkNextTokenIsIdentifier(lexer, "x"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Colon, lineNumber);
@@ -376,7 +387,7 @@ TEST(WGSLLexerTests, GraphicsShader)
     checkNextTokenIs(lexer, WGSL::TokenType::Attribute, lineNumber);
     checkNextTokenIsIdentifier(lexer, "location"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::IntegerLiteral, 0, lineNumber);
+    checkNextTokenIsIntegerLiteral(lexer, WGSL::TokenType::IntegerLiteral, 0, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
     checkNextTokenIsIdentifier(lexer, "vec4"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
@@ -392,13 +403,13 @@ TEST(WGSLLexerTests, GraphicsShader)
     checkNextTokenIsIdentifier(lexer, "f32"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.4, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.4, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.4, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.4, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.8, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.8, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 1.0, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 1.0, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Semicolon, lineNumber);
 
@@ -465,7 +476,7 @@ TEST(WGSLLexerTests, TriangleVert)
     checkNextTokenIsIdentifier(lexer, "f32"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::IntegerLiteral, 3, lineNumber);
+    checkNextTokenIsIntegerLiteral(lexer, WGSL::TokenType::IntegerLiteral, 3, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
 
@@ -476,9 +487,9 @@ TEST(WGSLLexerTests, TriangleVert)
     checkNextTokenIsIdentifier(lexer, "f32"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.0, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.0, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
 
@@ -490,10 +501,10 @@ TEST(WGSLLexerTests, TriangleVert)
     checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Minus, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Minus, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
 
@@ -504,10 +515,10 @@ TEST(WGSLLexerTests, TriangleVert)
     checkNextTokenIsIdentifier(lexer, "f32"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Minus, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
 
     ++lineNumber;
@@ -533,14 +544,14 @@ TEST(WGSLLexerTests, TriangleVert)
     checkNextTokenIsIdentifier(lexer, "f32"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.5, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.0, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 0.0, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
-    checkNextTokenIsLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 1.0, lineNumber);
+    checkNextTokenIsFloatLiteral(lexer, WGSL::TokenType::AbstractFloatLiteral, 1.0, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Semicolon, lineNumber);
 

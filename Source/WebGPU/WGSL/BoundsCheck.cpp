@@ -159,22 +159,27 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
             );
             target.m_inferredType = m_shaderModule.types().bottomType();
 
-            auto& argument = m_shaderModule.astBuilder().construct<AST::UnaryExpression>(
-                SourceSpan::empty(),
-                access.base(),
-                AST::UnaryOperation::AddressOf
-            );
-            auto& reference = std::get<Types::Reference>(*access.base().inferredType());
-            argument.m_inferredType = m_shaderModule.types().pointerType(
-                reference.addressSpace,
-                reference.element,
-                reference.accessMode
-            );
 
+            auto* argument = &access.base();
+            if (auto* reference = std::get_if<Types::Reference>(access.base().inferredType())) {
+                auto& addressOf = m_shaderModule.astBuilder().construct<AST::UnaryExpression>(
+                    SourceSpan::empty(),
+                    access.base(),
+                    AST::UnaryOperation::AddressOf
+                );
+                addressOf.m_inferredType = m_shaderModule.types().pointerType(
+                    reference->addressSpace,
+                    reference->element,
+                    reference->accessMode
+                );
+                argument = &addressOf;
+            }
+
+            RELEASE_ASSERT(std::holds_alternative<Types::Pointer>(*argument->inferredType()));
             auto& call = m_shaderModule.astBuilder().construct<AST::CallExpression>(
                 SourceSpan::empty(),
                 target,
-                AST::Expression::List { argument }
+                AST::Expression::List { *argument }
             );
             call.m_inferredType = m_shaderModule.types().u32Type();
 

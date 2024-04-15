@@ -1,0 +1,6 @@
+
+PASS :no_direct_recursion:target="a"
+PASS :no_direct_recursion:target="b"
+PASS :no_indirect_recursion:target="a"
+PASS :no_indirect_recursion:target="b"
+

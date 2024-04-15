@@ -126,19 +126,66 @@ protected:
 #endif
 };
 
-class JSEntrypointCallee final : public JITCallee {
+class JSEntrypointCallee : public Callee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSEntrypointCallee);
+protected:
+    JS_EXPORT_PRIVATE JSEntrypointCallee(Wasm::CompilationMode mode) : Callee(mode) { }
+};
+
+class JSEntrypointJITCallee final : public JSEntrypointCallee {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSEntrypointJITCallee);
 public:
-    static Ref<JSEntrypointCallee> create()
+    friend class Callee;
+
+#if ENABLE(JIT)
+    void setEntrypoint(Wasm::Entrypoint&&);
+#endif
+
+    static inline Ref<JSEntrypointJITCallee> create()
     {
-        return adoptRef(*new JSEntrypointCallee);
+        return adoptRef(*new JSEntrypointJITCallee);
     }
 
 private:
-    JSEntrypointCallee()
-        : JITCallee(Wasm::CompilationMode::JSEntrypointMode)
+    inline JSEntrypointJITCallee()
+        : JSEntrypointCallee(Wasm::CompilationMode::JSEntrypointJITMode)
     {
     }
+
+#if ENABLE(JIT)
+    std::tuple<void*, void*> rangeImpl() const
+    {
+        void* start = m_entrypoint.compilation->codeRef().executableMemory()->start().untaggedPtr();
+        void* end = m_entrypoint.compilation->codeRef().executableMemory()->end().untaggedPtr();
+        return { start, end };
+    }
+
+    CodePtr<WasmEntryPtrTag> entrypointImpl() const { return m_entrypoint.compilation->code().retagged<WasmEntryPtrTag>(); }
+
+    RegisterAtOffsetList* calleeSaveRegistersImpl() { return &m_entrypoint.calleeSaveRegisters; }
+#else
+    std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; }
+    CodePtr<WasmEntryPtrTag> entrypointImpl() const { return { }; }
+    RegisterAtOffsetList* calleeSaveRegistersImpl() { return nullptr; }
+#endif
+
+#if ENABLE(JIT)
+    Wasm::Entrypoint m_entrypoint;
+#endif
+};
+
+// TODO: this is a stub.
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointInterpreterCallee);
+class JSEntrypointInterpreterCallee final : public JSEntrypointCallee {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSEntrypointInterpreterCallee);
+public:
+
+    CodePtr<WasmEntryPtrTag> entrypointImpl() const;
+    JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
+    std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; }
+
+private:
+    JSEntrypointInterpreterCallee();
 };
 
 class WasmToJSCallee final : public Callee {

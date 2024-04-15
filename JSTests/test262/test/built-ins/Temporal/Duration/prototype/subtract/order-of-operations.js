@@ -92,6 +92,7 @@ const expectedOpsForPlainRelativeTo = expected.concat([
   "has options.relativeTo.calendar.year",
   "has options.relativeTo.calendar.yearMonthFromFields",
   "has options.relativeTo.calendar.yearOfWeek",
+  "get options.relativeTo.calendar.dateFromFields",
   "get options.relativeTo.calendar.fields",
   "call options.relativeTo.calendar.fields",
   // PrepareTemporalFields
@@ -116,13 +117,13 @@ const expectedOpsForPlainRelativeTo = expected.concat([
   "get options.relativeTo.year.valueOf",
   "call options.relativeTo.year.valueOf",
   // InterpretTemporalDateTimeFields
-  "get options.relativeTo.calendar.dateFromFields",
   "call options.relativeTo.calendar.dateFromFields",
-  // AddDuration
+  // lookup in AddDurationToOrSubtractDurationFromDuration
   "get options.relativeTo.calendar.dateAdd",
-  "call options.relativeTo.calendar.dateAdd",
-  "call options.relativeTo.calendar.dateAdd",
   "get options.relativeTo.calendar.dateUntil",
+  // AddDuration
+  "call options.relativeTo.calendar.dateAdd",
+  "call options.relativeTo.calendar.dateAdd",
   "call options.relativeTo.calendar.dateUntil",
 ]);
 
@@ -203,6 +204,7 @@ const expectedOpsForPlainRelativeToNoCalendarOperations = [
   "has options.relativeTo.calendar.year",
   "has options.relativeTo.calendar.yearMonthFromFields",
   "has options.relativeTo.calendar.yearOfWeek",
+  "get options.relativeTo.calendar.dateFromFields",
   "get options.relativeTo.calendar.fields",
   "call options.relativeTo.calendar.fields",
   // PrepareTemporalFields
@@ -227,8 +229,10 @@ const expectedOpsForPlainRelativeToNoCalendarOperations = [
   "get options.relativeTo.year.valueOf",
   "call options.relativeTo.year.valueOf",
   // InterpretTemporalDateTimeFields
-  "get options.relativeTo.calendar.dateFromFields",
   "call options.relativeTo.calendar.dateFromFields",
+  // lookup in AddDurationToOrSubtractDurationFromDuration
+  "get options.relativeTo.calendar.dateAdd",
+  "get options.relativeTo.calendar.dateUntil",
 ];
 
 const noCalendarInstance = new Temporal.Duration(0, 0, 0, 4, 5, 6, 7, 987, 654, 321);
@@ -271,6 +275,7 @@ const expectedOpsForZonedRelativeTo = expected.concat([
   "has options.relativeTo.calendar.year",
   "has options.relativeTo.calendar.yearMonthFromFields",
   "has options.relativeTo.calendar.yearOfWeek",
+  "get options.relativeTo.calendar.dateFromFields",
   "get options.relativeTo.calendar.fields",
   "call options.relativeTo.calendar.fields",
   // PrepareTemporalFields
@@ -309,54 +314,32 @@ const expectedOpsForZonedRelativeTo = expected.concat([
   "get options.relativeTo.year.valueOf",
   "call options.relativeTo.year.valueOf",
   // InterpretTemporalDateTimeFields
-  "get options.relativeTo.calendar.dateFromFields",
   "call options.relativeTo.calendar.dateFromFields",
   // ToRelativeTemporalObject again
   "has options.relativeTo.timeZone.getOffsetNanosecondsFor",
   "has options.relativeTo.timeZone.getPossibleInstantsFor",
   "has options.relativeTo.timeZone.id",
   // InterpretISODateTimeOffset
+  "get options.relativeTo.timeZone.getOffsetNanosecondsFor",
   "get options.relativeTo.timeZone.getPossibleInstantsFor",
   "call options.relativeTo.timeZone.getPossibleInstantsFor",
-  "get options.relativeTo.timeZone.getOffsetNanosecondsFor",
   "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
+  // lookup in AddDurationToOrSubtractDurationFromDuration
+  "get options.relativeTo.calendar.dateAdd",
+  "get options.relativeTo.calendar.dateUntil",
   // AddDuration
-  "get options.relativeTo.timeZone.getOffsetNanosecondsFor",
   "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
   // AddDuration → AddZonedDateTime 1
-  "get options.relativeTo.calendar.dateAdd",
   "call options.relativeTo.calendar.dateAdd",
-  "get options.relativeTo.timeZone.getPossibleInstantsFor",
   "call options.relativeTo.timeZone.getPossibleInstantsFor",
   // AddDuration → AddZonedDateTime 2
-  "get options.relativeTo.timeZone.getOffsetNanosecondsFor",
   "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
-  "get options.relativeTo.calendar.dateAdd",
   "call options.relativeTo.calendar.dateAdd",
-  "get options.relativeTo.timeZone.getPossibleInstantsFor",
   "call options.relativeTo.timeZone.getPossibleInstantsFor",
   // AddDuration → DifferenceZonedDateTime
-  "get options.relativeTo.timeZone.getOffsetNanosecondsFor",
   "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
-  // AddDuration → DifferenceZonedDateTime → DifferenceISODateTime
-  "get options.relativeTo.calendar.dateUntil",
+  "call options.relativeTo.timeZone.getPossibleInstantsFor",
   "call options.relativeTo.calendar.dateUntil",
-  // AddDuration → DifferenceZonedDateTime → AddZonedDateTime
-  "get options.relativeTo.calendar.dateAdd",
-  "call options.relativeTo.calendar.dateAdd",
-  "get options.relativeTo.timeZone.getPossibleInstantsFor",
-  "call options.relativeTo.timeZone.getPossibleInstantsFor",
-  // AddDuration → DifferenceZonedDateTime → NanosecondsToDays
-  "get options.relativeTo.timeZone.getOffsetNanosecondsFor",
-  "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
-  "get options.relativeTo.timeZone.getOffsetNanosecondsFor",
-  "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
-  // AddDuration → DifferenceZonedDateTime → NanosecondsToDays → AddZonedDateTime 1
-  "get options.relativeTo.timeZone.getPossibleInstantsFor",
-  "call options.relativeTo.timeZone.getPossibleInstantsFor",
-  // AddDuration → DifferenceZonedDateTime → NanosecondsToDays → AddZonedDateTime 2
-  "get options.relativeTo.timeZone.getPossibleInstantsFor",
-  "call options.relativeTo.timeZone.getPossibleInstantsFor",
 ]);
 
 const zonedRelativeTo = TemporalHelpers.propertyBagObserver(actual, {
@@ -377,3 +360,121 @@ const zonedRelativeTo = TemporalHelpers.propertyBagObserver(actual, {
 
 instance.subtract(fields, createOptionsObserver(zonedRelativeTo));
 assert.compareArray(actual, expectedOpsForZonedRelativeTo, "order of operations with ZonedDateTime relativeTo");
+actual.splice(0); // clear
+
+const expectedOpsForZonedRelativeToNoDaysOperations = [
+  // ToTemporalDurationRecord
+  "get fields.days",
+  "get fields.hours",
+  "get fields.hours.valueOf",
+  "call fields.hours.valueOf",
+  "get fields.microseconds",
+  "get fields.microseconds.valueOf",
+  "call fields.microseconds.valueOf",
+  "get fields.milliseconds",
+  "get fields.milliseconds.valueOf",
+  "call fields.milliseconds.valueOf",
+  "get fields.minutes",
+  "get fields.minutes.valueOf",
+  "call fields.minutes.valueOf",
+  "get fields.months",
+  "get fields.nanoseconds",
+  "get fields.nanoseconds.valueOf",
+  "call fields.nanoseconds.valueOf",
+  "get fields.seconds",
+  "get fields.seconds.valueOf",
+  "call fields.seconds.valueOf",
+  "get fields.weeks",
+  "get fields.years",
+  // ToRelativeTemporalObject
+  "get options.relativeTo",
+  "get options.relativeTo.calendar",
+  "has options.relativeTo.calendar.dateAdd",
+  "has options.relativeTo.calendar.dateFromFields",
+  "has options.relativeTo.calendar.dateUntil",
+  "has options.relativeTo.calendar.day",
+  "has options.relativeTo.calendar.dayOfWeek",
+  "has options.relativeTo.calendar.dayOfYear",
+  "has options.relativeTo.calendar.daysInMonth",
+  "has options.relativeTo.calendar.daysInWeek",
+  "has options.relativeTo.calendar.daysInYear",
+  "has options.relativeTo.calendar.fields",
+  "has options.relativeTo.calendar.id",
+  "has options.relativeTo.calendar.inLeapYear",
+  "has options.relativeTo.calendar.mergeFields",
+  "has options.relativeTo.calendar.month",
+  "has options.relativeTo.calendar.monthCode",
+  "has options.relativeTo.calendar.monthDayFromFields",
+  "has options.relativeTo.calendar.monthsInYear",
+  "has options.relativeTo.calendar.weekOfYear",
+  "has options.relativeTo.calendar.year",
+  "has options.relativeTo.calendar.yearMonthFromFields",
+  "has options.relativeTo.calendar.yearOfWeek",
+  "get options.relativeTo.calendar.dateFromFields",
+  "get options.relativeTo.calendar.fields",
+  "call options.relativeTo.calendar.fields",
+  // PrepareTemporalFields
+  "get options.relativeTo.day",
+  "get options.relativeTo.day.valueOf",
+  "call options.relativeTo.day.valueOf",
+  "get options.relativeTo.hour",
+  "get options.relativeTo.hour.valueOf",
+  "call options.relativeTo.hour.valueOf",
+  "get options.relativeTo.microsecond",
+  "get options.relativeTo.microsecond.valueOf",
+  "call options.relativeTo.microsecond.valueOf",
+  "get options.relativeTo.millisecond",
+  "get options.relativeTo.millisecond.valueOf",
+  "call options.relativeTo.millisecond.valueOf",
+  "get options.relativeTo.minute",
+  "get options.relativeTo.minute.valueOf",
+  "call options.relativeTo.minute.valueOf",
+  "get options.relativeTo.month",
+  "get options.relativeTo.month.valueOf",
+  "call options.relativeTo.month.valueOf",
+  "get options.relativeTo.monthCode",
+  "get options.relativeTo.monthCode.toString",
+  "call options.relativeTo.monthCode.toString",
+  "get options.relativeTo.nanosecond",
+  "get options.relativeTo.nanosecond.valueOf",
+  "call options.relativeTo.nanosecond.valueOf",
+  "get options.relativeTo.offset",
+  "get options.relativeTo.offset.toString",
+  "call options.relativeTo.offset.toString",
+  "get options.relativeTo.second",
+  "get options.relativeTo.second.valueOf",
+  "call options.relativeTo.second.valueOf",
+  "get options.relativeTo.timeZone",
+  "get options.relativeTo.year",
+  "get options.relativeTo.year.valueOf",
+  "call options.relativeTo.year.valueOf",
+  // InterpretTemporalDateTimeFields
+  "call options.relativeTo.calendar.dateFromFields",
+  // ToRelativeTemporalObject again
+  "has options.relativeTo.timeZone.getOffsetNanosecondsFor",
+  "has options.relativeTo.timeZone.getPossibleInstantsFor",
+  "has options.relativeTo.timeZone.id",
+  // InterpretISODateTimeOffset
+  "get options.relativeTo.timeZone.getOffsetNanosecondsFor",
+  "get options.relativeTo.timeZone.getPossibleInstantsFor",
+  "call options.relativeTo.timeZone.getPossibleInstantsFor",
+  "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
+  // lookup in AddDurationToOrSubtractDurationFromDuration
+  "get options.relativeTo.calendar.dateAdd",
+  "get options.relativeTo.calendar.dateUntil",
+];
+
+const noDaysInstance = new Temporal.Duration(0, 0, 0, 0, 5, 6, 7, 987, 654, 321);
+
+const noDaysFields = TemporalHelpers.propertyBagObserver(actual, {
+  hours: 1,
+  minutes: 1,
+  seconds: 1,
+  milliseconds: 1,
+  microseconds: 1,
+  nanoseconds: 1,
+}, "fields");
+
+noDaysInstance.subtract(noDaysFields, createOptionsObserver(zonedRelativeTo));
+assert.compareArray(actual, expectedOpsForZonedRelativeToNoDaysOperations, "order of operations with ZonedDateTime relativeTo and no units above days");
+actual.splice(0); // clear

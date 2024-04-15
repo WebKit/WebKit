@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Promise.race), false, 'isConstructor(Promise.race
 
 assert.throws(TypeError, () => {
   new Promise.race([]);
-}, '`new Promise.race([])` throws TypeError');
+});
 

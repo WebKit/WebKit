@@ -367,9 +367,6 @@ public:
 #endif
     void unblockServicesRequiredByAccessibility(Vector<SandboxExtension::Handle>&&);
     static id accessibilityFocusedUIElement();
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
-#endif
     void powerSourceDidChange(bool);
 #endif
 

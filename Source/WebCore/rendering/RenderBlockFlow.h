@@ -338,7 +338,13 @@ public:
     void setChildrenInline(bool) final;
 
     bool hasLines() const;
-    void invalidateLineLayoutPath() final;
+
+    enum InvalidationReason : uint8_t {
+        StyleChange,
+        InsertionOrRemoval, // renderer gets constructed/goes away
+        ContentChange       // existing renderer gets changed (text content only atm)
+    };
+    void invalidateLineLayoutPath(InvalidationReason);
     void computeAndSetLineLayoutPath();
 
     enum LineLayoutPath { UndeterminedPath = 0, ModernPath, LegacyPath, ForcedLegacyPath };
@@ -499,8 +505,6 @@ private:
     bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     void addOverflowFromInlineChildren() override;
-
-    void markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit logicalBottom, LegacyRootInlineBox* highest = 0);
 
     GapRects inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*) override;

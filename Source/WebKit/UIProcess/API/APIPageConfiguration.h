@@ -239,8 +239,8 @@ public:
     const Vector<WTF::String>& corsDisablingPatterns() const { return m_data.corsDisablingPatterns; }
     void setCORSDisablingPatterns(Vector<WTF::String>&& patterns) { m_data.corsDisablingPatterns = WTFMove(patterns); }
 
-    const HashSet<WTF::String>& maskedURLSchemes() const { return m_data.maskedURLSchemes; }
-    void setMaskedURLSchemes(HashSet<WTF::String>&& schemes) { m_data.maskedURLSchemes = WTFMove(schemes); }
+    HashSet<WTF::String> maskedURLSchemes() const;
+    void setMaskedURLSchemes(HashSet<WTF::String>&& schemes) { m_data.maskedURLSchemesWasSet = true; m_data.maskedURLSchemes = WTFMove(schemes); }
 
     bool userScriptsShouldWaitUntilNotification() const { return m_data.userScriptsShouldWaitUntilNotification; }
     void setUserScriptsShouldWaitUntilNotification(bool value) { m_data.userScriptsShouldWaitUntilNotification = value; }
@@ -509,6 +509,7 @@ private:
         HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> urlSchemeHandlers;
         Vector<WTF::String> corsDisablingPatterns;
         HashSet<WTF::String> maskedURLSchemes;
+        bool maskedURLSchemesWasSet { false };
         bool userScriptsShouldWaitUntilNotification { true };
         bool crossOriginAccessControlCheckEnabled { true };
         WTF::String processDisplayName;

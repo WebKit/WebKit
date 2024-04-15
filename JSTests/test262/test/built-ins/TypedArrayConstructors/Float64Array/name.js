@@ -21,8 +21,9 @@ includes: [propertyHelper.js]
 features: [TypedArray]
 ---*/
 
-assert.sameValue(Float64Array.name, "Float64Array");
-
-verifyNotEnumerable(Float64Array, "name");
-verifyNotWritable(Float64Array, "name");
-verifyConfigurable(Float64Array, "name");
+verifyProperty(Float64Array, "name", {
+  value: "Float64Array",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   let re = new RegExp(''); new re.exec();
-}, '`let re = new RegExp(\'\'); new re.exec()` throws TypeError');
+});
 

@@ -143,7 +143,7 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    if (auto* referencedClipperRenderer = svgClipperResourceFromStyle())
+    if (CheckedPtr referencedClipperRenderer = svgClipperResourceFromStyle())
         referencedClipperRenderer->applyMaskClipping(paintInfo, targetRenderer, objectBoundingBox);
 
     AffineTransform contentTransform;
@@ -178,7 +178,7 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
         context.setCompositeOperation(CompositeOperator::SourceOver);
     }
 
-    layer()->paintSVGResourceLayer(context, contentTransform);
+    checkedLayer()->paintSVGResourceLayer(context, contentTransform);
 
     if (pushTransparencyLayer)
         context.endTransparencyLayer();

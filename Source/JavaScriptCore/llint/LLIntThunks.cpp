@@ -800,6 +800,24 @@ MacroAssemblerCodeRef<JSEntryPtrTag> returnLocationThunk(OpcodeID opcodeID, Opco
 
 } // namespace LLInt
 
+#else // ENABLE(JIT)
+
+namespace LLInt {
+
+#if ENABLE(WEBASSEMBLY)
+MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunk()
+{
+    return { };
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunkSIMD()
+{
+    return { };
+}
+#endif // ENABLE(WEBASSEMBLY)
+
+} // namespace LLInt
+
 #endif // ENABLE(JIT)
 
 #if ENABLE(C_LOOP)

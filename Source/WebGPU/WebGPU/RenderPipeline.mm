@@ -784,8 +784,8 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
     for (auto& bgl : pipelineLayout.bindGroupLayouts)
         maxGroupIndex = std::max<uint32_t>(maxGroupIndex, bgl.group);
 
-    size_t bindGroupLayoutCount = maxGroupIndex + 1;
-    if (bindGroupLayoutCount > deviceLimits.maxBindGroups)
+    size_t bindGroupLayoutCount = static_cast<size_t>(maxGroupIndex) + 1;
+    if (bindGroupLayoutCount > deviceLimits.maxBindGroups || !bindGroupLayoutCount)
         return [NSString stringWithFormat:@"too many bind groups, limit %u, attempted %zu", deviceLimits.maxBindGroups, bindGroupLayoutCount];
 
     if (pipelineEntries.size() < bindGroupLayoutCount)
@@ -805,14 +805,15 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
             WGPUBindGroupLayoutEntry newEntry = { };
             uint64_t minBindingSize = 0;
             WGPUBufferBindingType bufferTypeOverride = WGPUBufferBindingType_Undefined;
-            auto& entryName = entry.name;
-            if (entryName.endsWith("_ArrayLength"_s)) {
-                bufferTypeOverride = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_ArrayLength);
-                auto shortName = entryName.substring(2, entryName.length() - (sizeof("_ArrayLength") + 1));
-                if (auto it = entryMap.find(shortName); it != entryMap.end())
-                    minBindingSize = it->value;
-            } else
-                entryMap.set(entryName, entry.webBinding);
+            if (auto& entryName = entry.name; entryName.length()) {
+                if (entryName.endsWith("_ArrayLength"_s)) {
+                    bufferTypeOverride = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_ArrayLength);
+                    auto shortName = entryName.substring(2, entryName.length() - (sizeof("_ArrayLength") + 1));
+                    if (auto it = entryMap.find(shortName); it != entryMap.end())
+                        minBindingSize = it->value;
+                } else
+                    entryMap.set(entryName, entry.webBinding);
+            }
 
             newEntry.binding = entry.webBinding;
             newEntry.metalBinding = entry.binding;

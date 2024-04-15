@@ -25,7 +25,13 @@ async function reportTestResults(ev) {
   const [rec, result] = log.record(testcase.query.toString());
   await testcase.run(rec, expectations);
 
-  this.postMessage({ query, result });
+  this.postMessage({
+    query,
+    result: {
+      ...result,
+      logs: result.logs?.map((l) => l.toRawData())
+    }
+  });
 }
 
 self.onmessage = (ev) => {

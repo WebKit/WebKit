@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(String.fromCharCode), false, 'isConstructor(Strin
 
 assert.throws(TypeError, () => {
   new String.fromCharCode();
-}, '`new String.fromCharCode()` throws TypeError');
+});
 

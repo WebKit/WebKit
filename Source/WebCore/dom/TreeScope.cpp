@@ -103,40 +103,6 @@ void TreeScope::deref() const
         downcast<ShadowRoot>(m_rootNode).deref();
 }
 
-#if CHECKED_POINTER_DEBUG
-void TreeScope::registerCheckedPtr(const void* pointer) const
-{
-    if (auto* document = dynamicDowncast<Document>(m_rootNode))
-        document->registerCheckedPtr(pointer);
-    else
-        downcast<ShadowRoot>(m_rootNode).registerCheckedPtr(pointer);
-}
-
-void TreeScope::copyCheckedPtr(const void* source, const void* destination) const
-{
-    if (auto* document = dynamicDowncast<Document>(m_rootNode))
-        document->copyCheckedPtr(source, destination);
-    else
-        downcast<ShadowRoot>(m_rootNode).copyCheckedPtr(source, destination);
-}
-
-void TreeScope::moveCheckedPtr(const void* source, const void* destination) const
-{
-    if (auto* document = dynamicDowncast<Document>(m_rootNode))
-        document->moveCheckedPtr(source, destination);
-    else
-        downcast<ShadowRoot>(m_rootNode).moveCheckedPtr(source, destination);
-}
-
-void TreeScope::unregisterCheckedPtr(const void* pointer) const
-{
-    if (auto* document = dynamicDowncast<Document>(m_rootNode))
-        document->unregisterCheckedPtr(pointer);
-    else
-        downcast<ShadowRoot>(m_rootNode).unregisterCheckedPtr(pointer);
-}
-#endif // CHECKED_POINTER_DEBUG
-
 IdTargetObserverRegistry& TreeScope::ensureIdTargetObserverRegistry()
 {
     if (!m_idTargetObserverRegistry)

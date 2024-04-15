@@ -24,6 +24,7 @@ Object.defineProperty(arrObj, "0", {
 
 verifyWritable(arrObj, "0", "setVerifyHelpProp");
 
-verifyEnumerable(arrObj, "0");
-
-verifyConfigurable(arrObj, "0");
+verifyProperty(arrObj, "0", {
+  enumerable: true,
+  configurable: true,
+});

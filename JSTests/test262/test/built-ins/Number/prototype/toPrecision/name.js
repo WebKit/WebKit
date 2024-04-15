@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Number.prototype.toPrecision.name, "toPrecision");
-
-verifyNotEnumerable(Number.prototype.toPrecision, "name");
-verifyNotWritable(Number.prototype.toPrecision, "name");
-verifyConfigurable(Number.prototype.toPrecision, "name");
+verifyProperty(Number.prototype.toPrecision, "name", {
+  value: "toPrecision",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

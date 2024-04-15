@@ -357,6 +357,9 @@ def parse_args(args):
             "--site-isolation", action="store_true", default=False,
             help=("Run each test in a cross origin iframe with and without site isolation enabled and compare the results. Uses site-isolation test expectations")),
         optparse.make_option(
+            "--load-in-cross-origin-iframe", action="store_true", default=False,
+            help=("Run each test in a cross origin iframe.")),
+        optparse.make_option(
             "--no-use-gpu-process", action="store_true", default=False,
             help=("Disable GPU process for DOM rendering.")),
         optparse.make_option(
@@ -477,8 +480,15 @@ def _set_up_derived_options(port, options):
             options.additional_platform_directory = []
         options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-gpup'))
 
-    if port.port_name == "mac" and options.site_isolation:
+    if options.site_isolation:
+        if not options.load_in_cross_origin_iframe:
+            _log.warning("Option --site-isolation will set --load-in-cross-origin-iframe")
+        options.load_in_cross_origin_iframe = True
+
+    if options.load_in_cross_origin_iframe:
         options.additional_header = 'runInCrossOriginFrame=true'
+
+    if port.port_name == "mac" and options.site_isolation:
         host = Host()
         host.initialize_scm()
         options.additional_expectations.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation/TestExpectations'))

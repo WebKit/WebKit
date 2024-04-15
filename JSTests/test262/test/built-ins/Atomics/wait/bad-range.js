@@ -22,5 +22,5 @@ const i32a = new Int32Array(
 testWithAtomicsOutOfBoundsIndices(function(IdxGen) {
   assert.throws(RangeError, function() {
     Atomics.wait(i32a, IdxGen(i32a), 0, 0);
-  }, '`Atomics.wait(i32a, IdxGen(i32a), 0, 0)` throws RangeError');
+  });
 });

@@ -504,29 +504,33 @@ bool GLContext::isExtensionSupported(const char* extensionList, const char* exte
     return false;
 }
 
+unsigned GLContext::versionFromString(const char* versionStringAsChar)
+{
+    auto versionString = String::fromLatin1(versionStringAsChar);
+    Vector<String> versionStringComponents = versionString.split(' ');
+
+    Vector<String> versionDigits;
+    if (versionStringComponents[0] == "OpenGL"_s) {
+        // If the version string starts with "OpenGL" it can be GLES 1 or 2. In GLES1 version string starts
+        // with "OpenGL ES-<profile> major.minor" and in GLES2 with "OpenGL ES major.minor". Version is the
+        // third component in both cases.
+        versionDigits = versionStringComponents[2].split('.');
+    } else {
+        // Version is the first component. The version number is always "major.minor" or
+        // "major.minor.release". Ignore the release number.
+        versionDigits = versionStringComponents[0].split('.');
+    }
+
+    return parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[0]).value_or(0) * 100 + parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[1]).value_or(0) * 10;
+}
+
 unsigned GLContext::version()
 {
     if (!m_version) {
-        // Version string can start with the version number (all versions except GLES 1 and 2) or with
-        // "OpenGL". Different fields inside the version string are separated by spaces.
-        auto versionString = String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_VERSION)));
-        Vector<String> versionStringComponents = versionString.split(' ');
-
-        Vector<String> versionDigits;
-        if (versionStringComponents[0] == "OpenGL"_s) {
-            // If the version string starts with "OpenGL" it can be GLES 1 or 2. In GLES1 version string starts
-            // with "OpenGL ES-<profile> major.minor" and in GLES2 with "OpenGL ES major.minor". Version is the
-            // third component in both cases.
-            versionDigits = versionStringComponents[2].split('.');
-        } else {
-            // Version is the first component. The version number is always "major.minor" or
-            // "major.minor.release". Ignore the release number.
-            versionDigits = versionStringComponents[0].split('.');
-        }
-
-        m_version = parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[0]).value_or(0) * 100
-            + parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[1]).value_or(0) * 10;
+        auto* versionString = reinterpret_cast<const char*>(::glGetString(GL_VERSION));
+        m_version = versionFromString(versionString);
     }
+
     return m_version;
 }
 

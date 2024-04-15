@@ -33,10 +33,7 @@ testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(result.constructor, TA);
   assert.sameValue(Object.getPrototypeOf(result), TA.prototype);
 },
-[
-  Float32Array,
-  Float64Array
-]);
+floatArrayConstructors);
 
 testWithTypedArrayConstructors(function(TA) {
   var result = TA.from([NaN, undefined]);
@@ -46,13 +43,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(result.constructor, TA);
   assert.sameValue(Object.getPrototypeOf(result), TA.prototype);
 },
-[
-  Int8Array,
-  Int32Array,
-  Int16Array,
-  Int8Array,
-  Uint32Array,
-  Uint16Array,
-  Uint8Array,
-  Uint8ClampedArray
-]);
+intArrayConstructors);

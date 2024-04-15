@@ -25,6 +25,7 @@ Object.defineProperties(arr, {
   }
 });
 
-verifyNotEnumerable(arr, "1");
-
-verifyNotConfigurable(arr, "1");
+verifyProperty(arr, "1", {
+  enumerable: false,
+  configurable: false,
+});

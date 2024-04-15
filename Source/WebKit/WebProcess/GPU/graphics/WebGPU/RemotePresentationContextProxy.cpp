@@ -84,6 +84,12 @@ void RemotePresentationContextProxy::present(bool presentToGPUProcess)
     }
 }
 
+RefPtr<WebCore::NativeImage> RemotePresentationContextProxy::getMetalTextureAsNativeImage(uint32_t)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 } // namespace WebKit::WebGPU
 
 #endif // ENABLE(GPU_PROCESS)

@@ -29,6 +29,7 @@
 
 #include "PlatformMediaSession.h"
 #include "VideoReceiverEndpoint.h"
+#include <WebCore/NowPlayingMetadataObserver.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -88,6 +89,9 @@ public:
     virtual void setSpatialTrackingLabel(const String&) { }
 #endif
 
+    virtual void addNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver&) { }
+    virtual void removeNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver&) { }
+
     using ExternalPlaybackTargetType = PlaybackSessionModelExternalPlaybackTargetType;
 
     virtual double playbackStartedTime() const = 0;
@@ -134,6 +138,12 @@ public:
     virtual uint32_t ptrCount() const = 0;
     virtual void incrementPtrCount() const = 0;
     virtual void decrementPtrCount() const = 0;
+#if CHECKED_POINTER_DEBUG
+    virtual void registerCheckedPtr(const void* pointer) const = 0;
+    virtual void copyCheckedPtr(const void* source, const void* destination) const = 0;
+    virtual void moveCheckedPtr(const void* source, const void* destination) const = 0;
+    virtual void unregisterCheckedPtr(const void* pointer) const = 0;
+#endif // CHECKED_POINTER_DEBUG
 
     virtual void durationChanged(double) { }
     virtual void currentTimeChanged(double /* currentTime */, double /* anchorTime */) { }

@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Number.parseFloat), false, 'isConstructor(Number.
 
 assert.throws(TypeError, () => {
   new Number.parseFloat();
-}, '`new Number.parseFloat()` throws TypeError');
+});
 

@@ -62,7 +62,7 @@ bool JITFinalizer::finalize()
 
     CodeBlock* codeBlock = m_plan.codeBlock();
 
-    codeBlock->setJITCode(*jitCode);
+    codeBlock->setJITCode(*m_jitCode);
 
     if (UNLIKELY(m_plan.compilation()))
         vm.m_perBytecodeProfiler->addCompilation(codeBlock, *m_plan.compilation());

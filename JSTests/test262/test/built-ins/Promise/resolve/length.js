@@ -18,8 +18,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Promise.resolve.length, 1);
-
-verifyNotEnumerable(Promise.resolve, 'length');
-verifyNotWritable(Promise.resolve, 'length');
-verifyConfigurable(Promise.resolve, 'length');
+verifyProperty(Promise.resolve, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

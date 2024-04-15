@@ -29,8 +29,8 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Function.prototype.apply;
-}, '`new Function.prototype.apply` throws TypeError');
+});
 
 assert.throws(TypeError, () => {
   new Function.prototype.apply();
-}, '`new Function.prototype.apply()` throws TypeError');
+});

@@ -24,10 +24,9 @@ Object.defineProperty(obj, "foo", {
   configurable: false
 });
 
-assert.sameValue(obj.foo, NaN);
-
-verifyNotWritable(obj, "foo");
-
-verifyNotEnumerable(obj, "foo");
-
-verifyNotConfigurable(obj, "foo");
+verifyProperty(obj, "foo", {
+  value: NaN,
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

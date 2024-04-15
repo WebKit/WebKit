@@ -261,10 +261,16 @@ class LayoutTestRunner(object):
                         TestExpectations.EXPECTATION_DESCRIPTION[new_result.type], 'expected' if now_expected else 'unexpected'))
                 self._current_run_results.change_result_to_failure(existing_result, new_result, was_expected, now_expected)
 
+    def _additional_dirs_for_http_server(self):
+        if not self._options.load_in_cross_origin_iframe:
+            return {}
+
+        return {"root": "."}
+
     def start_servers(self):
         if self._needs_http and not self._did_start_http_server and not self._port.is_http_server_running():
             self.printer.write_update('Starting HTTP server ...')
-            self._port.start_http_server()
+            self._port.start_http_server(self._additional_dirs_for_http_server())
             self._did_start_http_server = True
         if self._needs_websockets and not self._did_start_websocket_server and not self._port.is_websocket_server_running():
             self.printer.write_update('Starting WebSocket server ...')

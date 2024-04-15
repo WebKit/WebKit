@@ -9,7 +9,8 @@ import {
   i32,
   toVector,
   u32,
-  abstractFloat } from
+  abstractFloat,
+  abstractInt } from
 '../../../../../util/conversion.js';
 import { FP, FPInterval } from '../../../../../util/floating_point.js';
 import {
@@ -629,11 +630,19 @@ export const d = makeCaseCache('bitcast', {
   f16_to_f16: () =>
   f16FiniteInF16.map((e) => ({ input: f16(e), expected: bitcastF16ToF16Comparator(e) })),
 
-  // i32,u32,f32 to different i32,u32,f32
+  // i32,u32,f32,Abstract to different i32,u32,f32
   i32_to_u32: () => fullI32Range().map((e) => ({ input: i32(e), expected: u32(e) })),
   i32_to_f32: () =>
   i32RangeForF32Finite.map((e) => ({
     input: i32(e),
+    expected: bitcastI32ToF32Comparator(e)
+  })),
+  ai_to_i32: () => fullI32Range().map((e) => ({ input: abstractInt(BigInt(e)), expected: i32(e) })),
+  ai_to_u32: () => fullU32Range().map((e) => ({ input: abstractInt(BigInt(e)), expected: u32(e) })),
+  ai_to_f32: () =>
+  // AbstractInt is converted to i32, because there is no explicit overload
+  i32RangeForF32Finite.map((e) => ({
+    input: abstractInt(BigInt(e)),
     expected: bitcastI32ToF32Comparator(e)
   })),
   i32_to_f32_inf_nan: () =>
@@ -668,7 +677,7 @@ export const d = makeCaseCache('bitcast', {
   f32_to_u32: () =>
   f32FiniteRange.map((e) => ({ input: f32(e), expected: bitcastF32ToU32Comparator(e) })),
 
-  // i32,u32,f32 to vec2<f16>
+  // i32,u32,f32,AbstractInt to vec2<f16>
   u32_to_vec2_f16_inf_nan: () =>
   u32RangeForF16Vec2FiniteInfNaN.map((e) => ({
     input: u32(e),
@@ -689,6 +698,12 @@ export const d = makeCaseCache('bitcast', {
     input: i32(e),
     expected: bitcastI32ToVec2F16Comparator(e)
   })),
+  ai_to_vec2_f16: () =>
+  // AbstractInt is converted to i32, because there is no explicit overload
+  i32RangeForF16Vec2Finite.map((e) => ({
+    input: abstractInt(BigInt(e)),
+    expected: bitcastI32ToVec2F16Comparator(e)
+  })),
   f32_inf_nan_to_vec2_f16_inf_nan: () =>
   f32RangeWithInfAndNaNForF16Vec2FiniteInfNaN.map((e) => ({
     input: f32(e),
@@ -705,7 +720,7 @@ export const d = makeCaseCache('bitcast', {
     expected: bitcastF32ToVec2F16Comparator(e)
   })),
 
-  // vec2<i32>, vec2<u32>, vec2<f32> to vec4<f16>
+  // vec2<i32>, vec2<u32>, vec2<f32>, vec2<AbstractInt> to vec4<f16>
   vec2_i32_to_vec4_f16_inf_nan: () =>
   slidingSlice(i32RangeForF16Vec2FiniteInfNaN, 2).map((e) => ({
     input: toVector(e, i32),
@@ -714,6 +729,12 @@ export const d = makeCaseCache('bitcast', {
   vec2_i32_to_vec4_f16: () =>
   slidingSlice(i32RangeForF16Vec2Finite, 2).map((e) => ({
     input: toVector(e, i32),
+    expected: bitcastVec2I32ToVec4F16Comparator(e)
+  })),
+  vec2_ai_to_vec4_f16: () =>
+  // AbstractInt is converted to i32, because there is no explicit overload
+  slidingSlice(i32RangeForF16Vec2Finite, 2).map((e) => ({
+    input: toVector(e, (n) => abstractInt(BigInt(n))),
     expected: bitcastVec2I32ToVec4F16Comparator(e)
   })),
   vec2_u32_to_vec4_f16_inf_nan: () =>

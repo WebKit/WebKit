@@ -43,6 +43,8 @@ public:
     bool finalize() final;
     bool isFailed() final { return false; }
 
+    RefPtr<JSC::JITCode> jitCode() final { return m_jitCode.ptr(); }
+
 private:
     
     Ref<DFG::JITCode> m_jitCode;

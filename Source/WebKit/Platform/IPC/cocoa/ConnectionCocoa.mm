@@ -195,7 +195,7 @@ void Connection::platformOpen()
     }
 
     // Change the message queue length for the receive port.
-    setMachPortQueueLength(m_receivePort, MACH_PORT_QLIMIT_LARGE);
+    setMachPortQueueLength(m_receivePort, largeOutgoingMessageQueueCountThreshold);
 
     m_receiveSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, m_connectionQueue->dispatchQueue()));
     dispatch_source_set_event_handler(m_receiveSource.get(), [this, protectedThis = Ref { *this }] {

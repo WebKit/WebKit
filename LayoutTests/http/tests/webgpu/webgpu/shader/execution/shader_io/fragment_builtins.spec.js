@@ -17,10 +17,6 @@ is evaluated per-fragment or per-sample. With @interpolate(, sample) or usage of
 
 * frag_depth output is tested in
   src/webgpu/api/operation/rendering/depth_clip_clamp.spec.ts
-
-TODO:
-* test sample_mask in
-  Consider extending the sample_mask out test.
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { ErrorWithExtra, assert, range, unreachable } from '../../../../common/util/util.js';
 

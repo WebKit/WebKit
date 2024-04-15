@@ -839,6 +839,13 @@ public:
         return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::MasqueradesAsUndefinedWatchpointSet);
     }
 
+    bool isWatchingArrayBufferDetachWatchpoint(Node* node)
+    {
+        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        WatchpointSet& set = globalObject->arrayBufferDetachWatchpointSet();
+        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::ArrayBufferDetachWatchpointSet);
+    }
+
     bool isWatchingArrayIteratorProtocolWatchpoint(Node* node)
     {
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
@@ -1152,6 +1159,8 @@ public:
     bool isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(const AbstractValue&);
 
     const BoyerMooreHorspoolTable<uint8_t>* tryAddStringSearchTable8(const String&);
+
+    bool afterFixup() { return m_planStage >= PlanStage::AfterFixup; }
 
     StackCheck m_stackChecker;
     VM& m_vm;

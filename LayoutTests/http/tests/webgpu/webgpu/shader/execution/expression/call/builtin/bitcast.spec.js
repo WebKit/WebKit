@@ -569,63 +569,75 @@ fn(async (t) => {
 });
 
 // Abstract Int
-
-// bitcast<i32>(12)
-//  - cases: scalarI32Range
 g.test('ai_to_i32').
 specURL('https://www.w3.org/TR/WGSL/#bitcast-builtin').
 desc(`bitcast abstract int to i32 tests`).
 params((u) =>
 u.
 combine('inputSource', onlyConstInputSource).
-combine('vectorize', [undefined, 2, 3, 4])
+combine('vectorize', [undefined, 2, 3, 4]).
+combine('alias', [false, true])
 ).
-unimplemented();
+fn(async (t) => {
+  const cases = await d.get('ai_to_i32');
+  await run(t, bitcastBuilder('i32', t.params), [Type.abstractInt], Type.i32, t.params, cases);
+});
 
-// bitcast<u32>(12)
-//  - cases: scalarU32Range
 g.test('ai_to_u32').
 specURL('https://www.w3.org/TR/WGSL/#bitcast-builtin').
 desc(`bitcast abstract int to u32 tests`).
 params((u) =>
 u.
 combine('inputSource', onlyConstInputSource).
-combine('vectorize', [undefined, 2, 3, 4])
+combine('vectorize', [undefined, 2, 3, 4]).
+combine('alias', [false, true])
 ).
-unimplemented();
+fn(async (t) => {
+  const cases = await d.get('ai_to_u32');
+  await run(t, bitcastBuilder('u32', t.params), [Type.abstractInt], Type.u32, t.params, cases);
+});
 
-// bitcast<f32>(12)
-//  - cases: scalarF32Range
 g.test('ai_to_f32').
 specURL('https://www.w3.org/TR/WGSL/#bitcast-builtin').
-desc(`bitcast abstract flointat to f32 tests`).
+desc(`bitcast abstract int to f32 tests`).
 params((u) =>
 u.
 combine('inputSource', onlyConstInputSource).
-combine('vectorize', [undefined, 2, 3, 4])
+combine('vectorize', [undefined, 2, 3, 4]).
+combine('alias', [false, true])
 ).
-unimplemented();
+fn(async (t) => {
+  const cases = await d.get('ai_to_f32');
+  await run(t, bitcastBuilder('f32', t.params), [Type.abstractInt], Type.f32, t.params, cases);
+});
 
-// bitcast<vec2<f16>>(12)
-//  - cases: scalarF16Range
-g.test('ai_to_vec2f16').
+g.test('ai_to_vec2h').
 specURL('https://www.w3.org/TR/WGSL/#bitcast-builtin').
-desc(`bitcast abstract int to vec2f16 tests`).
-params((u) =>
-u.
-combine('inputSource', onlyConstInputSource).
-combine('vectorize', [undefined, 2, 3, 4])
-).
-unimplemented();
+desc(`bitcast ai to vec2h tests`).
+params((u) => u.combine('inputSource', onlyConstInputSource).combine('alias', [false, true])).
+beforeAllSubcases((t) => {
+  t.selectDeviceOrSkipTestCase('shader-f16');
+}).
+fn(async (t) => {
+  const cases = await d.get('ai_to_vec2_f16');
+  await run(
+    t,
+    bitcastBuilder('vec2<f16>', t.params),
+    [Type.abstractInt],
+    Type.vec2h,
+    t.params,
+    cases
+  );
+});
 
-// bitcast<vec4<f16>>(vec2(12, 12))
-//  - cases: sparseVectorF16Range
-g.test('vec2ai_to_vec4f16').
+g.test('vec2ai_to_vec4h').
 specURL('https://www.w3.org/TR/WGSL/#bitcast-builtin').
-desc(`bitcast vec2ai to vec4f16 tests`).
-params((u) =>
-u.
-combine('inputSource', onlyConstInputSource).
-combine('vectorize', [undefined, 2, 3, 4])
-).
-unimplemented();
+desc(`bitcast vec2ai to vec4h tests`).
+params((u) => u.combine('inputSource', onlyConstInputSource).combine('alias', [false, true])).
+beforeAllSubcases((t) => {
+  t.selectDeviceOrSkipTestCase('shader-f16');
+}).
+fn(async (t) => {
+  const cases = await d.get('vec2_ai_to_vec4_f16');
+  await run(t, bitcastBuilder('vec4<f16>', t.params), [Type.vec2ai], Type.vec4h, t.params, cases);
+});

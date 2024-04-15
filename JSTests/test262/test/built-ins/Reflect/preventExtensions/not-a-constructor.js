@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Reflect.preventExtensions({});
-}, '`new Reflect.preventExtensions({})` throws TypeError');
+});
 

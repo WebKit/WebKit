@@ -63,6 +63,8 @@ public:
     std::unique_ptr<RemotePageProxy> takeRemotePageInProcessForProvisionalPage(const WebPageProxy&, const WebCore::RegistrableDomain&);
     void transitionPageToRemotePage(WebPageProxy&, const WebCore::RegistrableDomain& openerDomain);
 
+    bool hasRemotePages(const WebPageProxy&);
+
 private:
     BrowsingContextGroup();
 

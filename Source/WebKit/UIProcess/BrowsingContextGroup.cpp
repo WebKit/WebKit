@@ -56,7 +56,7 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForConnection(IPC::Connecti
         for (auto& process : m_processMap.values()) {
             if (!process)
                 continue;
-            if (process->process().connection() == &connection)
+            if (process->process().hasConnection(connection))
                 return *process;
         }
     }
@@ -202,6 +202,12 @@ void BrowsingContextGroup::transitionPageToRemotePage(WebPageProxy& page, const 
     }
 #endif
     set.add(WTFMove(newRemotePage));
+}
+
+bool BrowsingContextGroup::hasRemotePages(const WebPageProxy& page)
+{
+    auto it = m_remotePages.find(page);
+    return it != m_remotePages.end() && !it->value.isEmpty();
 }
 
 } // namespace WebKit

@@ -380,6 +380,7 @@ private:
 
     PixelFormat pixelFormat() const final;
     DestinationColorSpace colorSpace() const final;
+    bool willReadFrequently() const final;
 
     void unwindStateStack();
     void realizeSavesLoop();

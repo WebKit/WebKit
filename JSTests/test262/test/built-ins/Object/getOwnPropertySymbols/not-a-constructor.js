@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Object.getOwnPropertySymbols({});
-}, '`new Object.getOwnPropertySymbols({})` throws TypeError');
+});
 

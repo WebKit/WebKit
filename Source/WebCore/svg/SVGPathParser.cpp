@@ -268,10 +268,10 @@ bool SVGPathParser::parseArcToSegment()
     // http://www.w3.org/TR/SVG/implnote.html#ArcOutOfRangeParameters
     // If the current point and target point for the arc are identical, it should be treated as a zero length
     // path. This ensures continuity in animations.
-    result->rx = std::abs(result->rx);
-    result->ry = std::abs(result->ry);
     bool arcIsZeroLength = false;
     if (m_pathParsingMode == NormalizedParsing) {
+        result->rx = std::abs(result->rx);
+        result->ry = std::abs(result->ry);
         if (m_mode == RelativeCoordinates)
             arcIsZeroLength = result->targetPoint == FloatPoint::zero();
         else

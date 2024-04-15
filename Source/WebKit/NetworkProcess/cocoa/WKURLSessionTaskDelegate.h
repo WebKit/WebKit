@@ -36,7 +36,7 @@ class NetworkSessionCocoa;
 NS_ASSUME_NONNULL_BEGIN
 
 @interface WKURLSessionTaskDelegate : NSObject<NSURLSessionTaskDelegate>
-- (instancetype)initWithIdentifier:(WebKit::DataTaskIdentifier)identifier session:(WebKit::NetworkSessionCocoa&)session;
+- (instancetype)initWithTask:(NSURLSessionTask *)task identifier:(WebKit::DataTaskIdentifier)identifier session:(WebKit::NetworkSessionCocoa&)session;
 @end
 
 NS_ASSUME_NONNULL_END

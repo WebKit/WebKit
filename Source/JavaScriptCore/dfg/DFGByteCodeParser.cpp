@@ -376,7 +376,7 @@ private:
             // case if the function is a singleton then we already know it.
             if (FunctionExecutable* executable = jsDynamicCast<FunctionExecutable*>(m_codeBlock->ownerExecutable())) {
                 if (JSFunction* function = executable->singleton().inferredValue()) {
-                    m_graph.watchpoints().addLazily(executable);
+                    m_graph.watchpoints().addLazily(m_graph, executable);
                     return weakJSConstant(function);
                 }
             }
@@ -8558,7 +8558,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                 if (symbolTable) {
                     if (JSScope* scope = symbolTable->singleton().inferredValue()) {
-                        m_graph.watchpoints().addLazily(symbolTable);
+                        m_graph.watchpoints().addLazily(m_graph, symbolTable);
                         set(bytecode.m_dst, weakJSConstant(scope));
                         break;
                     }

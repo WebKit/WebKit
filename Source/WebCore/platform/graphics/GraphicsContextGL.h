@@ -1531,7 +1531,6 @@ public:
     using ExternalSyncSource = GraphicsContextGLExternalSyncSource;
     virtual GCGLExternalSync createExternalSync(ExternalSyncSource&&) = 0;
     virtual void deleteExternalSync(GCGLExternalSync) = 0;
-    virtual bool clientWaitExternalSyncWithFlush(GCGLExternalSync, uint64_t timeout) = 0;
 
     // ========== Extension related entry points.
 

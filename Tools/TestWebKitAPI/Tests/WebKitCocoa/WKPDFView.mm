@@ -527,4 +527,27 @@ TEST(PDF, PrintSize)
     TestWebKitAPI::Util::run(&receivedSize);
 }
 
+TEST(PDF, SetPageZoomFactorDoesNotBailIncorrectly)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:adoptNS([WKWebViewConfiguration new]).get()]);
+    [webView loadData:pdfData() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    double scaleBeforeZooming = [webView _pageZoomFactor];
+
+    EXPECT_EQ([webView _pdfHUDs].count, 1u);
+    [[webView _pdfHUDs].anyObject performSelector:NSSelectorFromString(@"_performActionForControl:") withObject:@"plus.magnifyingglass"];
+    [webView waitForNextPresentationUpdate];
+
+    double scaleAfterZooming = [webView _pageZoomFactor];
+    EXPECT_GT(scaleAfterZooming, scaleBeforeZooming);
+
+    [webView _setPageZoomFactor:1];
+    [webView waitForNextPresentationUpdate];
+
+    double scaleAfterResetting = [webView _pageZoomFactor];
+    EXPECT_LT(scaleAfterResetting, scaleAfterZooming);
+    EXPECT_EQ(scaleAfterResetting, 1.0);
+}
+
 #endif

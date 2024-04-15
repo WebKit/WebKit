@@ -17,8 +17,9 @@ includes: [propertyHelper.js]
 features: [Symbol.replace]
 ---*/
 
-assert.sameValue(RegExp.prototype[Symbol.replace].name, '[Symbol.replace]');
-
-verifyNotEnumerable(RegExp.prototype[Symbol.replace], 'name');
-verifyNotWritable(RegExp.prototype[Symbol.replace], 'name');
-verifyConfigurable(RegExp.prototype[Symbol.replace], 'name');
+verifyProperty(RegExp.prototype[Symbol.replace], "name", {
+  value: "[Symbol.replace]",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

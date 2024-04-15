@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.padStart();
-}, '`new String.prototype.padStart()` throws TypeError');
+});
 

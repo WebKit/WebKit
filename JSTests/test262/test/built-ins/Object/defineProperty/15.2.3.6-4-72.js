@@ -24,10 +24,10 @@ var obj2 = {
 Object.defineProperty(obj, "foo", {
   value: obj2
 });
-verifyEqualTo(obj, "foo", obj2);
 
-verifyWritable(obj, "foo");
-
-verifyEnumerable(obj, "foo");
-
-verifyConfigurable(obj, "foo");
+verifyProperty(obj, "foo", {
+  value: obj2,
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

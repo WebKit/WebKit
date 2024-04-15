@@ -490,10 +490,10 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocale()
 
 upconvert:
     auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
-    const UChar* source16 = upconvertedCharacters;
+    auto source16 = upconvertedCharacters.span();
 
     UChar* data16;
-    auto newImpl = createUninitialized(m_length, data16);
+    auto newImpl = createUninitialized(source16.size(), data16);
     
     // Do a faster loop for the case where all the characters are ASCII.
     unsigned ored = 0;
@@ -507,12 +507,12 @@ upconvert:
 
     // Do a slower implementation for cases that include non-ASCII characters.
     UErrorCode status = U_ZERO_ERROR;
-    int32_t realLength = u_strToUpper(data16, length, source16, m_length, "", &status);
+    int32_t realLength = u_strToUpper(data16, length, source16.data(), source16.size(), "", &status);
     if (U_SUCCESS(status) && realLength == length)
         return newImpl;
     newImpl = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
-    u_strToUpper(data16, realLength, source16, m_length, "", &status);
+    u_strToUpper(data16, realLength, source16.data(), source16.size(), "", &status);
     if (U_FAILURE(status))
         return *this;
     return newImpl;
@@ -561,19 +561,18 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithLocale(const AtomString& local
 
     if (m_length > MaxLength)
         CRASH();
-    int length = m_length;
 
     auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
-    const UChar* source16 = upconvertedCharacters;
+    auto source16 = upconvertedCharacters.span();
     UChar* data16;
-    auto newString = createUninitialized(length, data16);
+    auto newString = createUninitialized(source16.size(), data16);
     UErrorCode status = U_ZERO_ERROR;
-    int realLength = u_strToLower(data16, length, source16, length, locale, &status);
-    if (U_SUCCESS(status) && realLength == length)
+    size_t realLength = u_strToLower(data16, source16.size(), source16.data(), source16.size(), locale, &status);
+    if (U_SUCCESS(status) && realLength == source16.size())
         return newString;
     newString = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
-    u_strToLower(data16, realLength, source16, length, locale, &status);
+    u_strToLower(data16, realLength, source16.data(), source16.size(), locale, &status);
     if (U_FAILURE(status))
         return *this;
     return newString;
@@ -597,19 +596,18 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithLocale(const AtomString& local
 
     if (m_length > MaxLength)
         CRASH();
-    int length = m_length;
 
     auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
-    const UChar* source16 = upconvertedCharacters;
+    auto source16 = upconvertedCharacters.span();
     UChar* data16;
-    auto newString = createUninitialized(length, data16);
+    auto newString = createUninitialized(source16.size(), data16);
     UErrorCode status = U_ZERO_ERROR;
-    int realLength = u_strToUpper(data16, length, source16, length, locale, &status);
-    if (U_SUCCESS(status) && realLength == length)
+    size_t realLength = u_strToUpper(data16, source16.size(), source16.data(), source16.size(), locale, &status);
+    if (U_SUCCESS(status) && realLength == source16.size())
         return newString;
     newString = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
-    u_strToUpper(data16, realLength, source16, length, locale, &status);
+    u_strToUpper(data16, realLength, source16.data(), source16.size(), locale, &status);
     if (U_FAILURE(status))
         return *this;
     return newString;
@@ -681,18 +679,18 @@ SlowPath:
         CRASH();
 
     auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
+    auto source16 = upconvertedCharacters.span();
 
     UChar* data;
-    auto folded = createUninitializedInternalNonEmpty(m_length, data);
-    int32_t length = m_length;
+    auto folded = createUninitializedInternalNonEmpty(source16.size(), data);
     UErrorCode status = U_ZERO_ERROR;
-    int32_t realLength = u_strFoldCase(data, length, upconvertedCharacters, length, U_FOLD_CASE_DEFAULT, &status);
-    if (U_SUCCESS(status) && realLength == length)
+    size_t realLength = u_strFoldCase(data, source16.size(), source16.data(), source16.size(), U_FOLD_CASE_DEFAULT, &status);
+    if (U_SUCCESS(status) && realLength == source16.size())
         return folded;
-    ASSERT(realLength > length);
+    ASSERT(realLength > source16.size());
     folded = createUninitializedInternalNonEmpty(realLength, data);
     status = U_ZERO_ERROR;
-    u_strFoldCase(data, realLength, upconvertedCharacters, length, U_FOLD_CASE_DEFAULT, &status);
+    u_strFoldCase(data, realLength, source16.data(), source16.size(), U_FOLD_CASE_DEFAULT, &status);
     if (U_FAILURE(status))
         return *this;
     return folded;

@@ -17,4 +17,4 @@ let s = "01";
 
 assert.throws(TypeError, () => {
   s.at(Symbol());
-}, '`s.at(Symbol())` throws TypeError');
+});

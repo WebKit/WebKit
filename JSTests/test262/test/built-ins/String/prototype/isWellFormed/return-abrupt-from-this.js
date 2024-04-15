@@ -15,8 +15,8 @@ assert.sameValue(typeof String.prototype.isWellFormed, 'function');
 
 assert.throws(TypeError, function () {
   String.prototype.isWellFormed.call(undefined);
-}, '`String.prototype.isWellFormed.call(undefined)` throws TypeError');
+});
 
 assert.throws(TypeError, function () {
   String.prototype.isWellFormed.call(null);
-}, '`String.prototype.isWellFormed.call(null)` throws TypeError');
+});

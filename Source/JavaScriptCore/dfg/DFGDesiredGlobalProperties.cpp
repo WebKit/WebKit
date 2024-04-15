@@ -55,20 +55,25 @@ bool DesiredGlobalProperties::isStillValidOnMainThread(VM& vm, DesiredIdentifier
     return isStillValid;
 }
 
-void DesiredGlobalProperties::reallyAdd(CodeBlock* codeBlock, DesiredIdentifiers& identifiers, WatchpointCollector& collector)
+bool DesiredGlobalProperties::reallyAdd(CodeBlock* codeBlock, DesiredIdentifiers& identifiers, WatchpointCollector& collector)
 {
     for (const auto& property : m_set) {
-        collector.addWatchpoint([&](CodeBlockJettisoningWatchpoint& watchpoint) {
+        bool result = collector.addWatchpoint([&](CodeBlockJettisoningWatchpoint& watchpoint) {
+            auto* uid = identifiers.at(property.identifierNumber());
+            JSGlobalObject* globalObject = property.globalObject();
             {
                 ConcurrentJSLocker locker(codeBlock->m_lock);
                 watchpoint.initialize(codeBlock);
             }
-            auto* uid = identifiers.at(property.identifierNumber());
-            auto& watchpointSet = property.globalObject()->ensureReferencedPropertyWatchpointSet(uid);
+            auto& watchpointSet = globalObject->ensureReferencedPropertyWatchpointSet(uid);
             ASSERT(watchpointSet.isStillValid());
             watchpointSet.add(&watchpoint);
+            return true;
         });
+        if (!result)
+            return false;
     }
+    return true;
 }
 
 } } // namespace JSC::DFG

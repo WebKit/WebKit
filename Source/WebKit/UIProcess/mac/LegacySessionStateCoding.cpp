@@ -29,9 +29,9 @@
 #include "APIData.h"
 #include "SessionState.h"
 #include <mutex>
-#include <wtf/Algorithms.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MallocPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/cf/VectorCF.h>
 #include <wtf/text/StringView.h>
@@ -135,7 +135,7 @@ public:
         *this << length;
 
         *this << static_cast<uint64_t>(length * sizeof(UChar));
-        encodeFixedLengthData({ reinterpret_cast<const uint8_t*>(StringView(value).upconvertedCharacters().get()), length * sizeof(UChar) }, alignof(UChar));
+        encodeFixedLengthData(asBytes(StringView(value).upconvertedCharacters().span()), alignof(UChar));
 
         return *this;
     }

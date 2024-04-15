@@ -29,13 +29,13 @@
 
 #include "AcceleratedSurface.h"
 
+#include "DMABufRendererBufferFormat.h"
 #include "MessageReceiver.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if USE(GBM)
-#include "DMABufRendererBufferFormat.h"
 #include <atomic>
 #include <wtf/Lock.h>
 typedef void *EGLImage;
@@ -124,7 +124,7 @@ private:
     class RenderTargetEGLImage final : public RenderTargetColorBuffer {
     public:
         static std::unique_ptr<RenderTarget> create(uint64_t, const WebCore::IntSize&, const DMABufRendererBufferFormat&);
-        RenderTargetEGLImage(uint64_t, const WebCore::IntSize&, EGLImage, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
+        RenderTargetEGLImage(uint64_t, const WebCore::IntSize&, EGLImage, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier, DMABufRendererBufferFormat::Usage);
         ~RenderTargetEGLImage();
 
     private:

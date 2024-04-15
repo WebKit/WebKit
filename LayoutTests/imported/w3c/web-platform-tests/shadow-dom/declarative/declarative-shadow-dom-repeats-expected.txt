@@ -1,5 +1,5 @@
 
 PASS Repeated declarative shadow roots keep only the first
-PASS Calling attachShadow() on declarative shadow root must match type
+PASS Calling attachShadow() on declarative shadow root must match mode
 PASS Calling attachShadow() on declarative shadow root must match all parameters
 

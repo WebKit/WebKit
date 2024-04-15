@@ -986,6 +986,9 @@ std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexWithHover
 double UnifiedPDFPlugin::scaleForActualSize() const
 {
 #if PLATFORM(MAC)
+    if (size().isEmpty())
+        return 1;
+
     if (!m_frame || !m_frame->coreLocalFrame())
         return 1;
 
@@ -1129,6 +1132,11 @@ void UnifiedPDFPlugin::setScaleFactor(double scale, std::optional<WebCore::IntPo
     updateLayerPositions();
     updatePageBackgroundLayers();
     updateSnapOffsets();
+
+#if PLATFORM(MAC)
+    if (m_activeAnnotation)
+        m_activeAnnotation->updateGeometry();
+#endif
 
     if (RefPtr asyncRenderer = asyncRendererIfExists())
         asyncRenderer->layoutConfigurationChanged();
@@ -2019,6 +2027,9 @@ static bool isContextMenuEvent(const WebMouseEvent& event)
 bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 {
     m_lastMouseEvent = event;
+
+    if (!m_pdfDocument)
+        return false;
 
     // Even if the mouse event isn't handled (e.g. because the event is over a page we shouldn't
     // display in Single Page mode), we should stop tracking selections (and soon autoscrolling) on MouseUp.

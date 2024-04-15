@@ -28,6 +28,16 @@ import WebKitSwift
 
 // MARK: Objective-C Implementations
 
+@_objcImplementation extension WKSLinearMediaContentMetadata {
+    let title: String?
+    let subtitle: String?
+    
+    init(title: String?, subtitle: String?) {
+        self.title = title
+        self.subtitle = subtitle
+    }
+}
+
 @_objcImplementation extension WKSLinearMediaTimeRange {
     let lowerBound: TimeInterval
     let upperBound: TimeInterval
@@ -47,6 +57,15 @@ import WebKitSwift
 }
 
 // MARK: LinearMediaKit Extensions
+
+extension WKSLinearMediaContentMetadata {
+    var contentMetadata: ContentMetadataContainer {
+        var container = ContentMetadataContainer()
+        container.displayTitle = title
+        container.displaySubtitle = subtitle
+        return container
+    }
+}
 
 extension WKSLinearMediaContentMode {
     init(_ contentMode: ContentMode?) {
@@ -97,6 +116,23 @@ extension WKSLinearMediaContentType {
             .planar
         case .audioOnly:
             .audioOnly
+        @unknown default:
+            fatalError()
+        }
+    }
+}
+
+extension WKSLinearMediaPresentationState: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .inline:
+            return "inline"
+        case .enteringFullscreen:
+            return "enteringFullscreen"
+        case .fullscreen:
+            return "fullscreen"
+        case .exitingFullscreen:
+            return "exitingFullscreen"
         @unknown default:
             fatalError()
         }

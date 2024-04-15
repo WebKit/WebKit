@@ -13,11 +13,9 @@ includes: [propertyHelper.js]
 features: [Reflect]
 ---*/
 
-assert.sameValue(
-  Reflect.get.name, 'get',
-  'The value of `Reflect.get.name` is `"get"`'
-);
-
-verifyNotEnumerable(Reflect.get, 'name');
-verifyNotWritable(Reflect.get, 'name');
-verifyConfigurable(Reflect.get, 'name');
+verifyProperty(Reflect.get, "name", {
+  value: "get",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

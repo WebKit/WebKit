@@ -426,10 +426,10 @@ float SVGAnimationElement::calculatePercentForSpline(float percent, unsigned spl
 
 float SVGAnimationElement::calculatePercentFromKeyPoints(float percent) const
 {
-    const auto& keyTimes = this->keyTimes();
+    const auto& keyTimes = m_keyTimesFromAttribute;
 
     ASSERT(!m_keyPoints.isEmpty());
-    ASSERT(calcMode() != CalcMode::Paced);
+    ASSERT(calcMode() != CalcMode::Paced || animationMode() == AnimationMode::Path);
     ASSERT(keyTimes.size() > 1);
     ASSERT(m_keyPoints.size() == keyTimes.size());
 
@@ -543,11 +543,11 @@ void SVGAnimationElement::startedActiveInterval()
     if (!hasValidAttributeType())
         return;
 
-    const auto& keyTimes = this->keyTimes();
-
     // These validations are appropriate for all animation modes.
-    if (hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) && m_keyPoints.size() != keyTimes.size())
+    if (hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) && m_keyPoints.size() != m_keyTimesFromAttribute.size())
         return;
+
+    const auto& keyTimes = this->keyTimes();
 
     AnimationMode animationMode = this->animationMode();
     CalcMode calcMode = this->calcMode();
@@ -611,7 +611,7 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount)
             m_lastValuesAnimationFrom = from;
             m_lastValuesAnimationTo = to;
         }
-    } else if (!m_keyPoints.isEmpty() && calcMode != CalcMode::Paced)
+    } else if (!m_keyPoints.isEmpty() && (calcMode != CalcMode::Paced || animationMode == AnimationMode::Path))
         effectivePercent = calculatePercentFromKeyPoints(percent);
     else if (m_keyPoints.isEmpty() && calcMode == CalcMode::Spline && keyTimes().size() > 1)
         effectivePercent = calculatePercentForSpline(percent, calculateKeyTimesIndex(percent));

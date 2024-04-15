@@ -908,9 +908,9 @@ window.UIHelper = class UIHelper {
         if (!this.isWebKit2() || this.isIOSFamily())
             return Promise.resolve();
 
-        var scrollingNodeID = internalFunctions.scrollingNodeIDForNode(scroller);
-        if (internals.isUsingUISideCompositing() && (!scroller || (scroller.nodeName != "SELECT" && scrollingNodeID[0] != 0))) {
-            return new Promise(resolve => {
+            if (internals.isUsingUISideCompositing() && (!scroller || scroller.nodeName != "SELECT")) {
+                var scrollingNodeID = internalFunctions.scrollingNodeIDForNode(scroller);
+                return new Promise(resolve => {
                 testRunner.runUIScript(`(function() {
                     uiController.doAfterNextStablePresentationUpdate(function() {
                         uiController.uiScriptComplete(uiController.scrollbarStateForScrollingNodeID(${scrollingNodeID[0]}, ${scrollingNodeID[1]}, ${isVertical}));

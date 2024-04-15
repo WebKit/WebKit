@@ -11,8 +11,9 @@ features: [SharedArrayBuffer]
 
 var desc = Object.getOwnPropertyDescriptor(SharedArrayBuffer.prototype, "byteLength");
 
-assert.sameValue(desc.get.length, 0);
-
-verifyNotEnumerable(desc.get, "length");
-verifyNotWritable(desc.get, "length");
-verifyConfigurable(desc.get, "length");
+verifyProperty(desc.get, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

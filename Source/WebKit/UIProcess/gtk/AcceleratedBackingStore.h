@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RendererBufferFormat.h"
 #include <wtf/Noncopyable.h>
 
 typedef struct _cairo cairo_t;
@@ -59,6 +60,7 @@ public:
     virtual void realize() { };
     virtual void unrealize() { };
     virtual int renderHostFileDescriptor() { return -1; }
+    virtual RendererBufferFormat bufferFormat() const { return { }; }
 
 protected:
     AcceleratedBackingStore(WebPageProxy&);

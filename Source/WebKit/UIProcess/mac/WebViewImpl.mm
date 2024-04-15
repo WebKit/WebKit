@@ -4500,7 +4500,7 @@ void WebViewImpl::saveBackForwardSnapshotForItem(WebBackForwardListItem& item)
 }
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
-void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid)
+void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid, WKTextIndicatorStyleType styleType)
 {
     if (!m_page->preferences().textIndicatorStylingEnabled())
         return;
@@ -4511,7 +4511,7 @@ void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid)
     if (!m_textIndicatorStyleManager)
         m_textIndicatorStyleManager = adoptNS([[WKTextIndicatorStyleManager alloc] initWithWebViewImpl:*this]);
 
-    [m_textIndicatorStyleManager addTextIndicatorStyleForID:uuid];
+    [m_textIndicatorStyleManager addTextIndicatorStyleForID:uuid withStyleType:styleType];
 }
 
 void WebViewImpl::removeTextIndicatorStyleForID(WTF::UUID uuid)
@@ -6042,9 +6042,9 @@ bool WebViewImpl::isContentRichlyEditable() const
 }
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-void WebViewImpl::insertMultiRepresentationHEIC(NSData *data)
+void WebViewImpl::insertMultiRepresentationHEIC(NSData *data, NSString *altText)
 {
-    m_page->insertMultiRepresentationHEIC(data);
+    m_page->insertMultiRepresentationHEIC(data, altText);
 }
 #endif
 
@@ -6102,7 +6102,7 @@ void WebViewImpl::nowPlayingMediaTitleAndArtist(void(^completionHandler)(NSStrin
     }
 
     m_page->requestActiveNowPlayingSessionInfo([completionHandler = makeBlockPtr(completionHandler)] (bool registeredAsNowPlayingApplication, WebCore::NowPlayingInfo&& nowPlayingInfo) {
-        completionHandler(nowPlayingInfo.title, nowPlayingInfo.artist);
+        completionHandler(nowPlayingInfo.metadata.title, nowPlayingInfo.metadata.artist);
     });
 #else
     completionHandler(nil, nil);

@@ -23,6 +23,6 @@ assert.sameValue(
 assert.sameValue(isConstructor(revocationFunction), false, 'isConstructor(revocationFunction) must return false');
 assert.throws(TypeError, () => {
   new revocationFunction();
-}, '`new revocationFunction()` throws TypeError');
+});
 
 

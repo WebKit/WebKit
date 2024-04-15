@@ -30,6 +30,7 @@
 #include <windows.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -235,7 +236,7 @@ String TextCodecWin::decode(std::span<const uint8_t> bytes, bool flush, bool sto
 {
     if (!m_decodeBuffer.isEmpty()) {
         m_decodeBuffer.append(bytes);
-        bytes = std::span { reinterpret_cast<const uint8_t*>(m_decodeBuffer.data()), m_decodeBuffer.size() };
+        bytes = asBytes(m_decodeBuffer.span());
     }
 
     size_t left;

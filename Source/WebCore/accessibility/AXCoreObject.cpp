@@ -249,7 +249,7 @@ bool AXCoreObject::hasPopup() const
     if (!equalLettersIgnoringASCIICase(popupValue(), "false"_s))
         return true;
 
-    for (auto* ancestor = parentObject(); ancestor; ancestor = ancestor->parentObject()) {
+    for (RefPtr ancestor = parentObject(); ancestor; ancestor = ancestor->parentObject()) {
         if (!ancestor->isLink())
             continue;
 
@@ -265,7 +265,7 @@ unsigned AXCoreObject::tableLevel() const
         return 0;
 
     unsigned level = 0;
-    auto* current = exposedTableAncestor(true /* includeSelf */);
+    RefPtr current = exposedTableAncestor(true /* includeSelf */);
     while (current) {
         level++;
         current = current->exposedTableAncestor(false);
@@ -362,7 +362,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::selectedCells()
             selectedCells.append(cell);
     }
 
-    if (auto* activeDescendant = this->activeDescendant()) {
+    if (RefPtr activeDescendant = this->activeDescendant()) {
         if (activeDescendant->isExposedTableCell() && !selectedCells.contains(activeDescendant))
             selectedCells.append(activeDescendant);
     }
@@ -535,7 +535,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::linkedObjects() const
     auto linkedObjects = flowToObjects();
 
     if (isLink()) {
-        if (auto* linkedAXElement = internalLinkElement())
+        if (RefPtr linkedAXElement = internalLinkElement())
             linkedObjects.append(linkedAXElement);
     } else if (isRadioButton())
         appendRadioButtonGroupMembers(linkedObjects);
@@ -566,7 +566,7 @@ void AXCoreObject::appendRadioButtonGroupMembers(AccessibilityChildrenVector& li
             linkedUIElements.append(radioSibling);
     } else {
         // If we didn't find any radio button siblings with the traditional naming, lets search for a radio group role and find its children.
-        for (auto* parent = parentObject(); parent; parent = parent->parentObject()) {
+        for (RefPtr parent = parentObject(); parent; parent = parent->parentObject()) {
             if (parent->roleValue() == AccessibilityRole::RadioGroup) {
                 appendRadioButtonDescendants(*parent, linkedUIElements);
                 break;

@@ -114,6 +114,11 @@ private:
                 m_changed = true;
                 break;
             }
+            if (bytecodeCanTruncateInteger(m_node->arithNodeFlags())) {
+                m_node->convertToIdentity();
+                m_changed = true;
+                break;
+            }
             break;
             
         case ArithAdd:

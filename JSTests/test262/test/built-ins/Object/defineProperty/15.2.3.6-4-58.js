@@ -15,10 +15,10 @@ var obj = {};
 obj.foo = 101; // default value of attributes: writable: true, configurable: true, enumerable: true
 
 Object.defineProperty(obj, "foo", {});
-verifyEqualTo(obj, "foo", 101);
 
-verifyWritable(obj, "foo");
-
-verifyEnumerable(obj, "foo");
-
-verifyConfigurable(obj, "foo");
+verifyProperty(obj, "foo", {
+  value: 101,
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

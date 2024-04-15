@@ -179,50 +179,9 @@ RefPtr<StyleImage> CSSConicGradientValue::createStyleImage(Style::BuilderState& 
     return styleImage;
 }
 
-static void appendHueInterpolationMethod(StringBuilder& builder, HueInterpolationMethod hueInterpolationMethod)
-{
-    switch (hueInterpolationMethod) {
-    case HueInterpolationMethod::Shorter:
-        break;
-    case HueInterpolationMethod::Longer:
-        builder.append(" longer hue");
-        break;
-    case HueInterpolationMethod::Increasing:
-        builder.append(" increasing hue");
-        break;
-    case HueInterpolationMethod::Decreasing:
-        builder.append(" decreasing hue");
-        break;
-    }
-}
-
 static bool appendColorInterpolationMethod(StringBuilder& builder, CSSGradientColorInterpolationMethod colorInterpolationMethod, bool needsLeadingSpace)
 {
     return WTF::switchOn(colorInterpolationMethod.method.colorSpace,
-        [&] (const ColorInterpolationMethod::HSL& hsl) {
-            builder.append(needsLeadingSpace ? " " : "", "in hsl");
-            appendHueInterpolationMethod(builder, hsl.hueInterpolationMethod);
-            return true;
-        },
-        [&] (const ColorInterpolationMethod::HWB& hwb) {
-            builder.append(needsLeadingSpace ? " " : "", "in hwb");
-            appendHueInterpolationMethod(builder, hwb.hueInterpolationMethod);
-            return true;
-        },
-        [&] (const ColorInterpolationMethod::LCH& lch) {
-            builder.append(needsLeadingSpace ? " " : "", "in lch");
-            appendHueInterpolationMethod(builder, lch.hueInterpolationMethod);
-            return true;
-        },
-        [&] (const ColorInterpolationMethod::Lab&) {
-            builder.append(needsLeadingSpace ? " " : "", "in lab");
-            return true;
-        },
-        [&] (const ColorInterpolationMethod::OKLCH& oklch) {
-            builder.append(needsLeadingSpace ? " " : "", "in oklch");
-            appendHueInterpolationMethod(builder, oklch.hueInterpolationMethod);
-            return true;
-        },
         [&] (const ColorInterpolationMethod::OKLab&) {
             if (colorInterpolationMethod.defaultMethod != CSSGradientColorInterpolationMethod::Default::OKLab) {
                 builder.append(needsLeadingSpace ? " " : "", "in oklab");
@@ -237,16 +196,10 @@ static bool appendColorInterpolationMethod(StringBuilder& builder, CSSGradientCo
             }
             return false;
         },
-        [&] (const ColorInterpolationMethod::SRGBLinear&) {
-            builder.append(needsLeadingSpace ? " " : "", "in srgb-linear");
-            return true;
-        },
-        [&] (const ColorInterpolationMethod::XYZD50&) {
-            builder.append(needsLeadingSpace ? " " : "", "in xyz-d50");
-            return true;
-        },
-        [&] (const ColorInterpolationMethod::XYZD65&) {
-            builder.append(needsLeadingSpace ? " " : "", "in xyz-d65");
+        [&] (const auto& method) {
+            builder.append(needsLeadingSpace ? " " : "", "in ", serializationForCSS(method.interpolationColorSpace));
+            if constexpr (hasHueInterpolationMethod<decltype(method)>)
+                serializationForCSS(builder, method.hueInterpolationMethod);
             return true;
         }
     );

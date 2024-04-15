@@ -3430,6 +3430,7 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case GetArrayLength:
+    case GetUndetachedTypeArrayLength:
         compileGetArrayLength(node);
         break;
 

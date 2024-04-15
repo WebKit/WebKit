@@ -26,53 +26,62 @@ assert.throws(TypeError, function() {
     new SharedArrayBuffer(Float64Array.BYTES_PER_ELEMENT * 8)
   );
   Atomics.wait(view, poisoned, poisoned, poisoned);
-}, '`const view = new Float64Array( new SharedArrayBuffer(Float64Array.BYTES_PER_ELEMENT * 8) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   const view = new Float32Array(
     new SharedArrayBuffer(Float32Array.BYTES_PER_ELEMENT * 4)
   );
   Atomics.wait(view, poisoned, poisoned, poisoned);
-}, '`const view = new Float32Array( new SharedArrayBuffer(Float32Array.BYTES_PER_ELEMENT * 4) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
+});
+
+if (typeof Float16Array !== 'undefined') {
+  assert.throws(TypeError, function() {
+    const view = new Float16Array(
+      new SharedArrayBuffer(Float16Array.BYTES_PER_ELEMENT * 2)
+    );
+    Atomics.wait(view, poisoned, poisoned, poisoned);
+  });
+}
 
 assert.throws(TypeError, function() {
   const view = new Int16Array(
     new SharedArrayBuffer(Int16Array.BYTES_PER_ELEMENT * 2)
   );
   Atomics.wait(view, poisoned, poisoned, poisoned);
-}, '`const view = new Int16Array( new SharedArrayBuffer(Int16Array.BYTES_PER_ELEMENT * 2) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   const view = new Int8Array(
     new SharedArrayBuffer(Int8Array.BYTES_PER_ELEMENT)
   );
   Atomics.wait(view, poisoned, poisoned, poisoned);
-}, '`const view = new Int8Array( new SharedArrayBuffer(Int8Array.BYTES_PER_ELEMENT) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   const view = new Uint32Array(
     new SharedArrayBuffer(Uint32Array.BYTES_PER_ELEMENT * 4)
   );
   Atomics.wait(view, poisoned, poisoned, poisoned);
-}, '`const view = new Uint32Array( new SharedArrayBuffer(Uint32Array.BYTES_PER_ELEMENT * 4) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   const view = new Uint16Array(
     new SharedArrayBuffer(Uint16Array.BYTES_PER_ELEMENT * 2)
   );
   Atomics.wait(view, poisoned, poisoned, poisoned);
-}, '`const view = new Uint16Array( new SharedArrayBuffer(Uint16Array.BYTES_PER_ELEMENT * 2) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   const view = new Uint8Array(
     new SharedArrayBuffer(Uint8Array.BYTES_PER_ELEMENT)
   );
   Atomics.wait(view, poisoned, poisoned, poisoned);
-}, '`const view = new Uint8Array( new SharedArrayBuffer(Uint8Array.BYTES_PER_ELEMENT) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   const view = new Uint8ClampedArray(
     new SharedArrayBuffer(Uint8ClampedArray.BYTES_PER_ELEMENT)
   );
   Atomics.wait(view, poisoned, poisoned, poisoned);
-}, '`const view = new Uint8ClampedArray( new SharedArrayBuffer(Uint8ClampedArray.BYTES_PER_ELEMENT) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
+});

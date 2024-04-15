@@ -129,9 +129,16 @@ static gboolean wpeViewEventCallback(WPEView* view, WPEEvent* event, WebKitWebVi
     auto modifiers = wpe_event_get_modifiers(event);
     auto keyval = wpe_event_keyboard_get_keyval(event);
 
-    if (modifiers & WPE_MODIFIER_KEYBOARD_CONTROL && keyval == WPE_KEY_q) {
-        g_application_quit(g_application_get_default());
-        return TRUE;
+    if (modifiers & WPE_MODIFIER_KEYBOARD_CONTROL) {
+        if (keyval == WPE_KEY_q) {
+            g_application_quit(g_application_get_default());
+            return TRUE;
+        }
+
+        if (keyval == WPE_KEY_r) {
+            webkit_web_view_reload(webView);
+            return TRUE;
+        }
     }
 
     if (modifiers & WPE_MODIFIER_KEYBOARD_ALT) {

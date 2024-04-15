@@ -42,7 +42,7 @@ Ref<BitmapImageSource> BitmapImageSource::create(BitmapImage& bitmapImage, Alpha
 }
 
 BitmapImageSource::BitmapImageSource(BitmapImage& bitmapImage, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
-    : m_bitmapImage(bitmapImage)
+    : m_bitmapImage(&bitmapImage)
     , m_alphaOption(alphaOption)
     , m_gammaAndColorProfileOption(gammaAndColorProfileOption)
 {
@@ -56,7 +56,7 @@ ImageDecoder* BitmapImageSource::decoder(FragmentedSharedBuffer* data) const
     if (!data)
         return nullptr;
 
-    m_decoder = ImageDecoder::create(*data, m_bitmapImage.mimeType(), m_alphaOption, m_gammaAndColorProfileOption);
+    m_decoder = ImageDecoder::create(*data, mimeType(), m_alphaOption, m_gammaAndColorProfileOption);
     if (!m_decoder)
         return nullptr;
 
@@ -65,8 +65,8 @@ ImageDecoder* BitmapImageSource::decoder(FragmentedSharedBuffer* data) const
             protectedThis->encodedDataStatusChanged(status);
     });
 
-    if (auto expectedContentSize = m_bitmapImage.expectedContentLength())
-        m_decoder->setExpectedContentSize(expectedContentSize);
+    if (auto expectedContentLength = this->expectedContentLength())
+        m_decoder->setExpectedContentSize(expectedContentLength);
 
     return m_decoder.get();
 }
@@ -95,8 +95,8 @@ void BitmapImageSource::encodedDataStatusChanged(EncodedDataStatus status)
     if (status >= EncodedDataStatus::SizeAvailable)
         m_frames.resizeToFit(m_decoder->frameCount());
 
-    if (auto observer = m_bitmapImage.imageObserver())
-        observer->encodedDataStatusChanged(m_bitmapImage, status);
+    if (auto imageObserver = this->imageObserver())
+        imageObserver->encodedDataStatusChanged(*m_bitmapImage, status);
 }
 
 EncodedDataStatus BitmapImageSource::dataChanged(FragmentedSharedBuffer* data, bool allDataReceived)
@@ -146,8 +146,8 @@ void BitmapImageSource::decodedSizeChanged(long long decodedSize)
     if (!decodedSize)
         return;
 
-    if (auto observer = m_bitmapImage.imageObserver())
-        observer->decodedSizeChanged(m_bitmapImage, decodedSize);
+    if (auto imageObserver = this->imageObserver())
+        imageObserver->decodedSizeChanged(*m_bitmapImage, decodedSize);
 }
 
 void BitmapImageSource::decodedSizeIncreased(unsigned decodedSize)
@@ -204,11 +204,10 @@ bool BitmapImageSource::canDestroyDecodedData() const
     if (!isLargeForDecoding())
         return true;
 
-    auto observer = m_bitmapImage.imageObserver();
-    if (!observer)
-        return true;
+    if (auto imageObserver = this->imageObserver())
+        return imageObserver->canDestroyDecodedData(*m_bitmapImage);
 
-    return observer->canDestroyDecodedData(m_bitmapImage);
+    return true;
 }
 
 void BitmapImageSource::didDecodeProperties(unsigned decodedPropertiesSize)
@@ -246,7 +245,9 @@ EncodedDataStatus BitmapImageSource::setData(FragmentedSharedBuffer* data, bool 
 void BitmapImageSource::resetData()
 {
     m_decoder = nullptr;
-    setData(m_bitmapImage.data(), m_allDataReceived);
+
+    if (m_bitmapImage)
+        setData(m_bitmapImage->data(), m_allDataReceived);
 }
 
 void BitmapImageSource::startAnimation()
@@ -301,8 +302,8 @@ bool BitmapImageSource::isAnimationAllowed() const
         return false;
 
     // ImageObserver may disallow animation.
-    if (auto observer = m_bitmapImage.imageObserver())
-        return observer->allowsAnimation(m_bitmapImage);
+    if (auto imageObserver = this->imageObserver())
+        return imageObserver->allowsAnimation(*m_bitmapImage);
 
     return true;
 }
@@ -398,8 +399,8 @@ void BitmapImageSource::imageFrameAtIndexAvailable(unsigned index, ImageAnimatin
     if (decodingStatus == DecodingStatus::Invalid)
         return;
 
-    if (auto observer = m_bitmapImage.imageObserver())
-        observer->imageFrameAvailable(m_bitmapImage, animatingState, nullptr, decodingStatus);
+    if (auto imageObserver = this->imageObserver())
+        imageObserver->imageFrameAvailable(*m_bitmapImage, animatingState, nullptr, decodingStatus);
 }
 
 void BitmapImageSource::imageFrameDecodeAtIndexHasFinished(unsigned index, ImageAnimatingState animatingState, DecodingStatus decodingStatus)
@@ -858,9 +859,25 @@ DecodingStatus BitmapImageSource::frameDecodingStatusAtIndex(unsigned index) con
     return const_cast<BitmapImageSource&>(*this).frameAtIndexCacheIfNeeded(index).decodingStatus();
 }
 
+RefPtr<ImageObserver> BitmapImageSource::imageObserver() const
+{
+    return m_bitmapImage ? m_bitmapImage->imageObserver() : nullptr;
+}
+
+String BitmapImageSource::mimeType() const
+{
+    return m_bitmapImage ? m_bitmapImage->mimeType() : emptyString();
+}
+
+long long BitmapImageSource::expectedContentLength() const
+{
+    return m_bitmapImage ? m_bitmapImage->expectedContentLength() : 0;
+}
+
 const char* BitmapImageSource::sourceUTF8() const
 {
-    return m_bitmapImage.sourceUTF8();
+    constexpr const char* emptyString = "";
+    return m_bitmapImage ? m_bitmapImage->sourceUTF8() : emptyString;
 }
 
 void BitmapImageSource::setMinimumDecodingDurationForTesting(Seconds duration)

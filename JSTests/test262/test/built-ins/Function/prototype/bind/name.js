@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Function.prototype.bind.name, "bind");
-
-verifyNotEnumerable(Function.prototype.bind, "name");
-verifyNotWritable(Function.prototype.bind, "name");
-verifyConfigurable(Function.prototype.bind, "name");
+verifyProperty(Function.prototype.bind, "name", {
+  value: "bind",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

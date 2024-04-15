@@ -28,11 +28,10 @@ includes: [propertyHelper.js]
     throw new Test262Error("Expected a === 0, actually " + a);
   }
 
-  verifyEqualTo(arguments, "0", 10);
-
-  verifyWritable(arguments, "0");
-
-  verifyEnumerable(arguments, "0");
-
-  verifyConfigurable(arguments, "0");
+  verifyProperty(arguments, "0", {
+    value: 10,
+    writable: true,
+    enumerable: true,
+    configurable: true,
+  });
 }(0, 1, 2));

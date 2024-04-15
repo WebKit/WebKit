@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Array.prototype.splice.name, "splice");
-
-verifyNotEnumerable(Array.prototype.splice, "name");
-verifyNotWritable(Array.prototype.splice, "name");
-verifyConfigurable(Array.prototype.splice, "name");
+verifyProperty(Array.prototype.splice, "name", {
+  value: "splice",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

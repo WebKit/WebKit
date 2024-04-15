@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.replace.name, "replace");
-
-verifyNotEnumerable(String.prototype.replace, "name");
-verifyNotWritable(String.prototype.replace, "name");
-verifyConfigurable(String.prototype.replace, "name");
+verifyProperty(String.prototype.replace, "name", {
+  value: "replace",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

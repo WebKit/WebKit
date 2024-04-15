@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(RegExp.prototype.test.name, "test");
-
-verifyNotEnumerable(RegExp.prototype.test, "name");
-verifyNotWritable(RegExp.prototype.test, "name");
-verifyConfigurable(RegExp.prototype.test, "name");
+verifyProperty(RegExp.prototype.test, "name", {
+  value: "test",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

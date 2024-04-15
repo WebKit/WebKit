@@ -24,4 +24,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(RangeError, function() {
     new TA(buffer, 7);
   });
-}, [ Float64Array, Float32Array, Int32Array, Int16Array, Uint32Array, Uint16Array ]);
+}, floatArrayConstructors.concat([ Int32Array, Int16Array, Uint32Array, Uint16Array ]));

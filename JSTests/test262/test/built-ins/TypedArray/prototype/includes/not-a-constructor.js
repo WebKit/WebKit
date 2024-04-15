@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   let u8 = new Uint8Array(1); new u8.includes(1);
-}, '`let u8 = new Uint8Array(1); new u8.includes(1)` throws TypeError');
+});
 

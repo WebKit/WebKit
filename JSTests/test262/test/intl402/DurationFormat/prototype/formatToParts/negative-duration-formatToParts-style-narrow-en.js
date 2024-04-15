@@ -5,7 +5,7 @@
 esid: sec-Intl.DurationFormat.prototype.formatToParts
 description: >
   Test formatToParts method with negative duration and "narrow" style
-locale: [en-US]
+locale: [en]
 includes: [testIntl.js]
 features: [Intl.DurationFormat]
 ---*/

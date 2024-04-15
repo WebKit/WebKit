@@ -38,6 +38,10 @@ class GCGLANGLELayer;
 
 namespace WebCore {
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+class GLFence;
+#endif
+
 class TextureMapperGCGLPlatformLayer;
 
 class WEBCORE_EXPORT GraphicsContextGLTextureMapperANGLE : public GLContextWrapper, public GraphicsContextGLANGLE {
@@ -82,6 +86,10 @@ private:
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 
     GCGLuint m_compositorTexture { 0 };
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    std::unique_ptr<GLFence> m_frameFence;
+#endif
 
 #if USE(NICOSIA)
     GCGLuint m_textureID { 0 };

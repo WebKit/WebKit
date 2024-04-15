@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(eval), false, 'isConstructor(eval) must return fa
 
 assert.throws(TypeError, () => {
   new eval('');
-}, '`new eval(\'\')` throws TypeError');
+});
 

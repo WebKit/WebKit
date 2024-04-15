@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(decodeURIComponent.name, "decodeURIComponent");
-
-verifyNotEnumerable(decodeURIComponent, "name");
-verifyNotWritable(decodeURIComponent, "name");
-verifyConfigurable(decodeURIComponent, "name");
+verifyProperty(decodeURIComponent, "name", {
+  value: "decodeURIComponent",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

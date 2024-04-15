@@ -17,11 +17,9 @@ var descriptor = Object.getOwnPropertyDescriptor(
   DataView.prototype, 'byteOffset'
 );
 
-assert.sameValue(
-  descriptor.get.name, 'get byteOffset',
-  'The value of `descriptor.get.name` is `"get byteOffset"`'
-);
-
-verifyNotEnumerable(descriptor.get, 'name');
-verifyNotWritable(descriptor.get, 'name');
-verifyConfigurable(descriptor.get, 'name');
+verifyProperty(descriptor.get, "name", {
+  value: "get byteOffset",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

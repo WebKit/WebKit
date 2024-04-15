@@ -32,6 +32,7 @@ namespace WebKit {
 struct GPUProcessPreferencesForWebProcess {
     bool isWebGLEnabled { false };
     bool isWebGPUEnabled { false };
+    bool isWebXREnabled { false };
     bool isDOMRenderingEnabled { false };
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     bool isDynamicContentScalingEnabled { false };

@@ -24,8 +24,9 @@ includes: [propertyHelper.js]
 
 var SetIteratorProto = Object.getPrototypeOf(new Set().values());
 
-assert.sameValue(SetIteratorProto.next.length, 0);
-
-verifyNotEnumerable(SetIteratorProto.next, "length");
-verifyNotWritable(SetIteratorProto.next, "length");
-verifyConfigurable(SetIteratorProto.next, "length");
+verifyProperty(SetIteratorProto.next, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

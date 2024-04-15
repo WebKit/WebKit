@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Date.parse.name, "parse");
-
-verifyNotEnumerable(Date.parse, "name");
-verifyNotWritable(Date.parse, "name");
-verifyConfigurable(Date.parse, "name");
+verifyProperty(Date.parse, "name", {
+  value: "parse",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

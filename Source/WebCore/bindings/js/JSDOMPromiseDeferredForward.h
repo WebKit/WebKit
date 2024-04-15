@@ -54,22 +54,23 @@ struct IDLByteString;
 struct IDLUSVString;
 struct IDLObject;
 
-template<typename T> struct IDLInterface;
-template<typename T> struct IDLCallbackInterface;
-template<typename T> struct IDLCallbackFunction;
-template<typename T> struct IDLDictionary;
-template<typename T> struct IDLEnumeration;
-template<typename T> struct IDLNullable;
-template<typename T> struct IDLSequence;
-template<typename T> struct IDLFrozenArray;
-template<typename K, typename V> struct IDLRecord;
-template<typename T> struct IDLPromise;
+template<typename> struct IDLInterface;
+template<typename> struct IDLCallbackInterface;
+template<typename> struct IDLCallbackFunction;
+template<typename> struct IDLDictionary;
+template<typename> struct IDLEnumeration;
+template<typename> struct IDLNullable;
+template<typename> struct IDLSequence;
+template<typename> struct IDLFrozenArray;
+template<typename, typename> struct IDLRecord;
+template<typename> struct IDLPromise;
+template<typename> struct IDLPromiseIgnoringSuspension;
 
 struct IDLError;
 struct IDLDOMException;
 
-template<typename... Ts> struct IDLUnion;
-template<typename T> struct IDLBufferSource;
+template<typename...> struct IDLUnion;
+template<typename> struct IDLBufferSource;
 
 struct IDLArrayBuffer;
 struct IDLArrayBufferView;

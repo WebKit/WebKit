@@ -25,4 +25,5 @@
 
 dictionary IdentityRequestProvider {
     required IdentityCredentialProtocol protocol;
+    required object request;
 };

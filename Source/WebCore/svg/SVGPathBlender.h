@@ -67,7 +67,10 @@ private:
 
     FloatPoint m_fromCurrentPoint;
     FloatPoint m_toCurrentPoint;
-    
+
+    FloatPoint m_fromSubpathPoint;
+    FloatPoint m_toSubpathPoint;
+
     PathCoordinateMode m_fromMode { AbsoluteCoordinates };
     PathCoordinateMode m_toMode { AbsoluteCoordinates };
     unsigned m_addTypesCount { 0 };

@@ -1,0 +1,54 @@
+Test GeolocationCoordinates toJSON() method
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof window.actual === 'object' is true
+PASS window.actual.latitude is window.expected.latitude
+PASS window.actual.longitude is window.expected.longitude
+PASS window.actual.altitude is window.expected.altitude
+PASS window.actual.accuracy is window.expected.accuracy
+PASS window.actual.altitudeAccuracy is window.expected.altitudeAccuracy
+PASS window.actual.heading is window.expected.heading
+PASS window.actual.speed is window.expected.speed
+PASS window.actual.floorLevel is window.expected.floorLevel
+PASS typeof window.actual === 'object' is true
+PASS window.actual.latitude is window.expected.latitude
+PASS window.actual.longitude is window.expected.longitude
+PASS window.actual.altitude is window.expected.altitude
+PASS window.actual.accuracy is window.expected.accuracy
+PASS window.actual.altitudeAccuracy is window.expected.altitudeAccuracy
+PASS window.actual.heading is window.expected.heading
+PASS window.actual.speed is window.expected.speed
+PASS window.actual.floorLevel is window.expected.floorLevel
+PASS typeof window.actual === 'object' is true
+PASS window.actual.latitude is window.expected.latitude
+PASS window.actual.longitude is window.expected.longitude
+PASS window.actual.altitude is window.expected.altitude
+PASS window.actual.accuracy is window.expected.accuracy
+PASS window.actual.altitudeAccuracy is window.expected.altitudeAccuracy
+PASS window.actual.heading is window.expected.heading
+PASS window.actual.speed is window.expected.speed
+PASS window.actual.floorLevel is window.expected.floorLevel
+PASS typeof window.actual === 'object' is true
+PASS window.actual.latitude is window.expected.latitude
+PASS window.actual.longitude is window.expected.longitude
+PASS window.actual.altitude is window.expected.altitude
+PASS window.actual.accuracy is window.expected.accuracy
+PASS window.actual.altitudeAccuracy is window.expected.altitudeAccuracy
+PASS window.actual.heading is window.expected.heading
+PASS window.actual.speed is window.expected.speed
+PASS window.actual.floorLevel is window.expected.floorLevel
+PASS typeof window.actual === 'object' is true
+PASS window.actual.latitude is window.expected.latitude
+PASS window.actual.longitude is window.expected.longitude
+PASS window.actual.altitude is window.expected.altitude
+PASS window.actual.accuracy is window.expected.accuracy
+PASS window.actual.altitudeAccuracy is window.expected.altitudeAccuracy
+PASS window.actual.heading is window.expected.heading
+PASS window.actual.speed is window.expected.speed
+PASS window.actual.floorLevel is window.expected.floorLevel
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

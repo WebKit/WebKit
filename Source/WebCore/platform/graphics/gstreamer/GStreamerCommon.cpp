@@ -1131,11 +1131,16 @@ void configureVideoDecoderForHarnessing(const GRefPtr<GstElement>& element)
     if (gstObjectHasProperty(element.get(), "max-errors"))
         g_object_set(element.get(), "max-errors", 0, nullptr);
 
+    // avdec-specific:
     if (gstObjectHasProperty(element.get(), "std-compliance"))
         gst_util_set_object_arg(G_OBJECT(element.get()), "std-compliance", "strict");
 
     if (gstObjectHasProperty(element.get(), "output-corrupt"))
         g_object_set(element.get(), "output-corrupt", FALSE, nullptr);
+
+    // dav1ddec-specific:
+    if (gstObjectHasProperty(element.get(), "n-threads"))
+        g_object_set(element.get(), "n-threads", 1, nullptr);
 }
 
 void configureMediaStreamVideoDecoder(GstElement* element)

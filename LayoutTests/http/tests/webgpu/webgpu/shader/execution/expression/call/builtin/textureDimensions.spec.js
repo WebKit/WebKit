@@ -325,10 +325,12 @@ beforeAllSubcases((t) => {
   t.selectDeviceOrSkipTestCase(info.feature);
 }).
 fn((t) => {
+  t.skipIfTextureViewDimensionNotSupported(t.params.dimensions);
   const values = testValues(t.params);
   const texture = t.device.createTexture({
     size: values.size,
     dimension: textureDimensionsForViewDimensions(t.params.dimensions),
+    ...(t.isCompatibility && { textureBindingViewDimension: t.params.dimensions }),
     usage:
     t.params.samples === 1 ?
     GPUTextureUsage.TEXTURE_BINDING :
@@ -403,10 +405,12 @@ beforeAllSubcases((t) => {
   t.selectDeviceOrSkipTestCase(info.feature);
 }).
 fn((t) => {
+  t.skipIfTextureViewDimensionNotSupported(t.params.dimensions);
   const values = testValues(t.params);
   const texture = t.device.createTexture({
     size: values.size,
     dimension: textureDimensionsForViewDimensions(t.params.dimensions),
+    ...(t.isCompatibility && { textureBindingViewDimension: t.params.dimensions }),
     usage:
     t.params.samples === 1 ?
     GPUTextureUsage.TEXTURE_BINDING :
@@ -474,6 +478,7 @@ expand('baseMipLevel', baseMipLevel)
 beforeAllSubcases((t) => {
   const info = kTextureFormatInfo[t.params.format];
   t.skipIfTextureFormatNotSupported(t.params.format);
+  t.skipIfTextureFormatNotUsableAsStorageTexture(t.params.format);
   t.selectDeviceOrSkipTestCase(info.feature);
 }).
 fn((t) => {

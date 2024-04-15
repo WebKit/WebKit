@@ -29,14 +29,14 @@ try {
   });
   throw new Test262Error("Expected an exception.");
 } catch (e) {
-  verifyEqualTo(obj, "prop", getFunc());
-
-  verifyNotEnumerable(obj, "prop");
-
-  verifyNotConfigurable(obj, "prop");
-
   if (!(e instanceof TypeError)) {
     throw new Test262Error("Expected TypeError, got " + e);
   }
-
 }
+
+verifyEqualTo(obj, "prop", getFunc());
+
+verifyProperty(obj, "prop", {
+  enumerable: false,
+  configurable: false,
+});

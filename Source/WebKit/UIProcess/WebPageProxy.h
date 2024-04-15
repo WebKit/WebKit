@@ -29,6 +29,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/NowPlayingMetadataObserver.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/OptionSet.h>
@@ -1378,7 +1379,7 @@ public:
     void assistiveTechnologyMakeFirstResponder();
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    void insertMultiRepresentationHEIC(NSData *);
+    void insertMultiRepresentationHEIC(NSData *, NSString *);
 #endif
 #endif
 
@@ -2195,6 +2196,7 @@ public:
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     void removeTextIndicatorStyleForID(const WTF::UUID&);
     void enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID&);
+    void enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID&);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -2432,6 +2434,13 @@ public:
     const String& defaultSpatialTrackingLabel() const;
     void updateDefaultSpatialTrackingLabel();
 #endif
+
+    void addNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver&);
+    void removeNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver&);
+    void setNowPlayingMetadataObserverForTesting(std::unique_ptr<WebCore::NowPlayingMetadataObserver>&&);
+    void nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata&);
+
+    void didAdjustVisibilityWithSelectors(Vector<String>&&);
 
 private:
     std::optional<Vector<uint8_t>> getWebCryptoMasterKey();
@@ -3554,6 +3563,9 @@ private:
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;
 #endif
+
+    WeakHashSet<WebCore::NowPlayingMetadataObserver> m_nowPlayingMetadataObservers;
+    std::unique_ptr<WebCore::NowPlayingMetadataObserver> m_nowPlayingMetadataObserverForTesting;
 };
 
 } // namespace WebKit

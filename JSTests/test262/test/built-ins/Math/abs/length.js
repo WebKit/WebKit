@@ -22,8 +22,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.abs.length, 1);
-
-verifyNotEnumerable(Math.abs, "length");
-verifyNotWritable(Math.abs, "length");
-verifyConfigurable(Math.abs, "length");
+verifyProperty(Math.abs, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

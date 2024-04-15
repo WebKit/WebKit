@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.charCodeAt.name, "charCodeAt");
-
-verifyNotEnumerable(String.prototype.charCodeAt, "name");
-verifyNotWritable(String.prototype.charCodeAt, "name");
-verifyConfigurable(String.prototype.charCodeAt, "name");
+verifyProperty(String.prototype.charCodeAt, "name", {
+  value: "charCodeAt",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

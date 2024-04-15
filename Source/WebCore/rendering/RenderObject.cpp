@@ -1788,7 +1788,7 @@ static void invalidateLineLayoutAfterTreeMutationIfNeeded(RenderObject& renderer
         return !modernLineLayout->insertedIntoTree(*renderer.parent(), renderer);
     };
     if (shouldInvalidateLineLayoutPath())
-        container->invalidateLineLayoutPath();
+        container->invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::InsertionOrRemoval);
 }
 
 void RenderObject::insertedIntoTree()

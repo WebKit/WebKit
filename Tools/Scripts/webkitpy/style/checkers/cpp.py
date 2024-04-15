@@ -4082,15 +4082,22 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
         protector_name = ref_check.group('protector_name')
         protected_name = ref_check.group('protected_name')
         cap_protected_name = protected_name[0].upper() + protected_name[1:]
+
         # Ignore function declarations where cap_protected_name == protected_name indicates a type name.
         if cap_protected_name != protected_name:
             expected_protector_name = 'protected' + cap_protected_name
             if protected_name == 'this' and protector_name != 'protectedThis':
                 error(line_number, 'readability/naming/protected', 4, "\'" + protector_name + "\' is incorrectly named. It should be named \'protectedThis\'.")
-            elif protector_name == expected_protector_name or protector_name == 'protector':
+            elif protected_name == 'this' and protector_name == 'protectedThis':
                 return
+            elif protected_name != 'this' and protector_name == 'protectedThis':
+                error(line_number, 'readability/naming/protected', 4, "Incorrect use of \'protectedThis\'.")
+            elif protector_name.startswith("protected"):
+                error(line_number, 'readability/naming/protected', 4, "\'" + protector_name + "\' is incorrectly named. New variables should not use the \'protected\' prefix.")
+            elif protector_name == 'protector':
+                error(line_number, 'readability/naming/protected', 4, "\'" + protector_name + "\' is incorrectly named. New variables should not be named \'protector\'")
             else:
-                error(line_number, 'readability/naming/protected', 4, "\'" + protector_name + "\' is incorrectly named. It should be named \'protector\' or \'" + expected_protector_name + "\'.")
+                return
 
     # Basically, a declaration is a type name followed by whitespaces
     # followed by an identifier. The type name can be complicated

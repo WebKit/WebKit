@@ -15,10 +15,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  Object.assign.length, 2, "The length property of the assign method should be 2."
-);
-
-verifyNotEnumerable(Object.assign, 'length');
-verifyNotWritable(Object.assign, 'length');
-verifyConfigurable(Object.assign, 'length');
+verifyProperty(Object.assign, "length", {
+  value: 2,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

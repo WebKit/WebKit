@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(TypedArray.of), false, 'isConstructor(TypedArray.
 
 assert.throws(TypeError, () => {
   new TypedArray.of(1, 2, 3, 4);
-}, '`new TypedArray.of(1, 2, 3, 4)` throws TypeError');
+});
 

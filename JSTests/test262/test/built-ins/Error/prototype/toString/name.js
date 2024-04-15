@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Error.prototype.toString.name, "toString");
-
-verifyNotEnumerable(Error.prototype.toString, "name");
-verifyNotWritable(Error.prototype.toString, "name");
-verifyConfigurable(Error.prototype.toString, "name");
+verifyProperty(Error.prototype.toString, "name", {
+  value: "toString",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

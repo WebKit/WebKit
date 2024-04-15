@@ -87,7 +87,7 @@ struct SameSizeAsBorderValue {
 
 static_assert(sizeof(BorderValue) == sizeof(SameSizeAsBorderValue), "BorderValue should not grow");
 
-struct SameSizeAsRenderStyle {
+struct SameSizeAsRenderStyle : CanMakeCheckedPtr<SameSizeAsRenderStyle> {
     void* nonInheritedDataRefs[1];
     struct NonInheritedFlags {
         unsigned m_bitfields[2];

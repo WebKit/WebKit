@@ -633,6 +633,7 @@ static inline void disableAllJITOptions()
 
     Options::dumpDisassembly() = false;
     Options::asyncDisassembly() = false;
+    Options::dumpBaselineDisassembly() = false;
     Options::dumpDFGDisassembly() = false;
     Options::dumpFTLDisassembly() = false;
     Options::dumpRegExpDisassembly() = false;
@@ -740,6 +741,7 @@ void Options::notifyOptionsChanged()
 
         if (Options::dumpDisassembly()
             || Options::asyncDisassembly()
+            || Options::dumpBaselineDisassembly()
             || Options::dumpDFGDisassembly()
             || Options::dumpFTLDisassembly()
             || Options::dumpRegExpDisassembly()

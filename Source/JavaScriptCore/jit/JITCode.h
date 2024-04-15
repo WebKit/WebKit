@@ -278,7 +278,7 @@ public:
     virtual DFG::JITCode* dfg();
     virtual FTL::JITCode* ftl();
     virtual FTL::ForOSREntryJITCode* ftlForOSREntry();
-    virtual void shrinkToFit(const ConcurrentJSLocker&);
+    virtual void shrinkToFit();
     
     virtual void validateReferences(const TrackedReferences&);
     

@@ -11,11 +11,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  WeakMap.prototype.set.name, 'set',
-  'The value of WeakMap.prototype.set.name is "set"'
-);
-
-verifyNotEnumerable(WeakMap.prototype.set, 'name');
-verifyNotWritable(WeakMap.prototype.set, 'name');
-verifyConfigurable(WeakMap.prototype.set, 'name');
+verifyProperty(WeakMap.prototype.set, "name", {
+  value: "set",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

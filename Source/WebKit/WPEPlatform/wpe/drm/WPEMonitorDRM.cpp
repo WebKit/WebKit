@@ -67,12 +67,14 @@ WPEMonitor* wpeMonitorDRMCreate(std::unique_ptr<WPE::DRM::Crtc>&& crtc, const WP
     auto* priv = WPE_MONITOR_DRM(monitor)->priv;
     priv->crtc = WTFMove(crtc);
 
-    wpe_monitor_set_position(monitor, priv->crtc->x(), priv->crtc->y());
-    wpe_monitor_set_size(monitor, priv->crtc->width(), priv->crtc->height());
-    wpe_monitor_set_physical_size(monitor, connector.widthMM(), connector.heightMM());
-
+    double scale = 1;
     if (const char* scaleString = getenv("WPE_DRM_SCALE"))
-        wpe_monitor_set_scale(monitor, g_ascii_strtod(scaleString, nullptr));
+        scale = g_ascii_strtod(scaleString, nullptr);
+
+    wpe_monitor_set_position(monitor, priv->crtc->x() / scale, priv->crtc->y() / scale);
+    wpe_monitor_set_size(monitor, priv->crtc->width() / scale, priv->crtc->height() / scale);
+    wpe_monitor_set_physical_size(monitor, connector.widthMM(), connector.heightMM());
+    wpe_monitor_set_scale(monitor, scale);
 
     if (const auto& mode = priv->crtc->currentMode())
         priv->mode = mode.value();

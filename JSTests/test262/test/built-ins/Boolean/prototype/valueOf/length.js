@@ -22,8 +22,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Boolean.prototype.valueOf.length, 0);
-
-verifyNotEnumerable(Boolean.prototype.valueOf, "length");
-verifyNotWritable(Boolean.prototype.valueOf, "length");
-verifyConfigurable(Boolean.prototype.valueOf, "length");
+verifyProperty(Boolean.prototype.valueOf, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

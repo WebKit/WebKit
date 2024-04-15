@@ -2896,9 +2896,9 @@ static std::optional<HueInterpolationMethod> consumeHueInterpolationMethod(CSSPa
 
 static std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParserTokenRange& args)
 {
-    // <rectangular-color-space> = srgb | srgb-linear | lab | oklab | xyz | xyz-d50 | xyz-d65
+    // <rectangular-color-space> = srgb | srgb-linear | display-p3 | a98-rgb | prophoto-rgb | rec2020 | lab | oklab | xyz | xyz-d50 | xyz-d65
     // <polar-color-space> = hsl | hwb | lch | oklch
-    // <hue-interpolation-method> = [ shorter | longer | increasing | decreasing | specified ] hue
+    // <hue-interpolation-method> = [ shorter | longer | increasing | decreasing ] hue
     // <color-interpolation-method> = in [ <rectangular-color-space> | <polar-color-space> <hue-interpolation-method>? ]
 
     ASSERT(args.peek().id() == CSSValueIn);
@@ -2947,6 +2947,14 @@ static std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(C
         return consumeRectangularColorSpace(args, ColorInterpolationMethod::SRGB { });
     case CSSValueSrgbLinear:
         return consumeRectangularColorSpace(args, ColorInterpolationMethod::SRGBLinear { });
+    case CSSValueDisplayP3:
+        return consumeRectangularColorSpace(args, ColorInterpolationMethod::DisplayP3 { });
+    case CSSValueA98Rgb:
+        return consumeRectangularColorSpace(args, ColorInterpolationMethod::A98RGB { });
+    case CSSValueProphotoRgb:
+        return consumeRectangularColorSpace(args, ColorInterpolationMethod::ProPhotoRGB { });
+    case CSSValueRec2020:
+        return consumeRectangularColorSpace(args, ColorInterpolationMethod::Rec2020 { });
     case CSSValueXyzD50:
         return consumeRectangularColorSpace(args, ColorInterpolationMethod::XYZD50 { });
     case CSSValueXyz:

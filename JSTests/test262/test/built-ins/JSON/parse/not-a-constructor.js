@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(JSON.parse), false, 'isConstructor(JSON.parse) mu
 
 assert.throws(TypeError, () => {
   new JSON.parse('{}');
-}, '`new JSON.parse(\'{}\')` throws TypeError');
+});
 

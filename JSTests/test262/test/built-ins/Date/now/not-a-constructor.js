@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Date.now), false, 'isConstructor(Date.now) must r
 
 assert.throws(TypeError, () => {
   new Date.now();
-}, '`new Date.now()` throws TypeError');
+});
 

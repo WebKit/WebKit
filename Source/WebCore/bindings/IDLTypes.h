@@ -280,6 +280,10 @@ template<typename T> struct IDLPromise : IDLWrapper<DOMPromise> {
     using InnerType = T;
 };
 
+template<typename T> struct IDLPromiseIgnoringSuspension : IDLWrapper<DOMPromise> {
+    using InnerType = T;
+};
+
 struct IDLError : IDLUnsupportedType { };
 struct IDLDOMException : IDLUnsupportedType { };
 

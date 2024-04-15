@@ -28,8 +28,9 @@ includes: [propertyHelper.js]
 
 var getter = Object.getOwnPropertyDescriptor(RegExp.prototype, 'unicode').get;
 
-assert.sameValue(getter.name, 'get unicode');
-
-verifyNotEnumerable(getter, 'name');
-verifyNotWritable(getter, 'name');
-verifyConfigurable(getter, 'name');
+verifyProperty(getter, "name", {
+  value: "get unicode",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

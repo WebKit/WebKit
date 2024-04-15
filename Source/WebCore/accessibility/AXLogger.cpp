@@ -569,6 +569,8 @@ TextStream& operator<<(WTF::TextStream& stream, const TextUnderElementMode& mode
         stream << ", considerHiddenState: 0";
     if (mode.ignoredChildNode)
         stream << ", ignoredChildNode: " << mode.ignoredChildNode;
+    if (mode.trimWhitespace == TrimWhitespace::No)
+        stream << ", trimWhitespace: 0";
     return stream;
 }
 

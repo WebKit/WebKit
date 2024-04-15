@@ -28,11 +28,27 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUConnectionToWebProcess.h"
 #include "RemoteCompositorIntegrationMessages.h"
 #include "RemoteGPU.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUCompositorIntegration.h>
+
+#if PLATFORM(COCOA)
+#define MESSAGE_CHECK(assertion) do { \
+    if (UNLIKELY(!(assertion))) { \
+        if (auto* gpu = m_gpu.ptr()) { \
+            if (auto connection = gpu->gpuConnectionToWebProcess(); connection.get()) \
+                connection->terminateWebProcess(); \
+            \
+            return; \
+        } \
+    } \
+} while (0)
+#else
+#define MESSAGE_CHECK RELEASE_ASSERT
+#endif
 
 namespace WebKit {
 
@@ -57,7 +73,7 @@ void RemoteCompositorIntegration::paintCompositedResultsToCanvas(WebCore::Render
 {
     UNUSED_PARAM(imageBufferIdentifier);
     m_backing->withDisplayBufferAsNativeImage(bufferIndex, [gpu = m_gpu, imageBufferIdentifier, completionHandler = WTFMove(completionHandler)] (WebCore::NativeImage* image) mutable {
-        if (image)
+        if (image && gpu.ptr())
             gpu->paintNativeImageToImageBuffer(*image, imageBufferIdentifier);
         completionHandler();
     });
@@ -69,9 +85,12 @@ void RemoteCompositorIntegration::stopListeningForIPC()
 }
 
 #if PLATFORM(COCOA)
-void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
+void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
 {
-    callback(m_backing->recreateRenderBuffers(width, height, WTFMove(destinationColorSpace), alphaMode));
+    auto convertedDevice = m_objectHeap->convertDeviceFromBacking(deviceIdentifier);
+    MESSAGE_CHECK(convertedDevice);
+
+    callback(m_backing->recreateRenderBuffers(width, height, WTFMove(destinationColorSpace), alphaMode, *convertedDevice));
 }
 #endif
 
@@ -83,5 +102,7 @@ void RemoteCompositorIntegration::prepareForDisplay(CompletionHandler<void(bool)
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif // ENABLE(GPU_PROCESS)

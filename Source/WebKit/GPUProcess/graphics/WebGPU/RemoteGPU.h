@@ -85,6 +85,7 @@ public:
     void stopListeningForIPC();
 
     void paintNativeImageToImageBuffer(WebCore::NativeImage&, WebCore::RenderingResourceIdentifier);
+    RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() const;
 
 private:
     friend class WebGPU::ObjectHeap;

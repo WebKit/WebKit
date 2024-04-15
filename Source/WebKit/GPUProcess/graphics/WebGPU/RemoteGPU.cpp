@@ -205,6 +205,11 @@ void RemoteGPU::createPresentationContext(const WebGPU::PresentationContextDescr
     m_objectHeap->addObject(identifier, remotePresentationContext);
 }
 
+RefPtr<GPUConnectionToWebProcess> RemoteGPU::gpuConnectionToWebProcess() const
+{
+    return m_gpuConnectionToWebProcess.get();
+}
+
 void RemoteGPU::createCompositorIntegration(WebGPUIdentifier identifier)
 {
     assertIsCurrent(workQueue());

@@ -59,7 +59,7 @@ testWithTypedArrayConstructors(function(TA) {
 
     assert.throws(TypeError, () => {
       delete sample[key];
-    }, '`delete sample[key]` throws TypeError');
+    });
 
     delete TypedArray.prototype[key];
   });

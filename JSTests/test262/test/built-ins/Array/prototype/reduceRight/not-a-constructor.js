@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Array.prototype.reduceRight(() => {}, []);
-}, '`new Array.prototype.reduceRight(() => {}, [])` throws TypeError');
+});
 

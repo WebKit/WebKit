@@ -23,8 +23,9 @@ features: [generators]
 function* g() {}
 var GeneratorPrototype = Object.getPrototypeOf(g).prototype;
 
-assert.sameValue(GeneratorPrototype.next.name, "next");
-
-verifyNotEnumerable(GeneratorPrototype.next, "name");
-verifyNotWritable(GeneratorPrototype.next, "name");
-verifyConfigurable(GeneratorPrototype.next, "name");
+verifyProperty(GeneratorPrototype.next, "name", {
+  value: "next",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

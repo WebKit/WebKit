@@ -5,7 +5,7 @@
 /*---
 esid: sec-Intl.DurationFormat.prototype.format
 description: Test if format method formats duration correctly with different "style" arguments
-locale: [en-US]
+locale: [en]
 includes: [testIntl.js]
 features: [Intl.DurationFormat]
 ---*/

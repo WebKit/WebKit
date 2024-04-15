@@ -8,6 +8,8 @@ author: Jordan Harband
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(Object, 'entries');
-verifyWritable(Object, 'entries');
-verifyConfigurable(Object, 'entries');
+verifyProperty(Object, "entries", {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

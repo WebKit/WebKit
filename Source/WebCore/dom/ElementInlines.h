@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CustomElementDefaultARIA.h"
 #include "DocumentInlines.h"
 #include "Element.h"
 #include "ElementData.h"
@@ -96,6 +97,16 @@ inline const AtomString& Element::attributeWithoutSynchronization(const Qualifie
             return attribute->value();
     }
     return nullAtom();
+}
+
+inline const AtomString& Element::attributeWithDefaultARIA(const QualifiedName& name) const
+{
+    auto& value = attributeWithoutSynchronization(name);
+    if (!value.isNull())
+        return value;
+
+    auto* defaultARIA = customElementDefaultARIAIfExists();
+    return defaultARIA ? defaultARIA->valueForAttribute(*this, name) : nullAtom();
 }
 
 inline URL Element::getURLAttributeForBindings(const QualifiedName& name) const

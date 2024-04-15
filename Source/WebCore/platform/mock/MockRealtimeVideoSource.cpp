@@ -429,7 +429,8 @@ void MockRealtimeVideoSource::startProducingData()
     ASSERT(!m_beingConfigured);
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    ASSERT(!RealtimeMediaSourceCenter::singleton().currentMediaEnvironment().isEmpty() || !WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s));
+    if (PlatformMediaSessionManager::mediaCapabilityGrantsEnabled())
+        ASSERT(!RealtimeMediaSourceCenter::singleton().currentMediaEnvironment().isEmpty() || !WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s));
 #endif
 
     startCaptureTimer();

@@ -21,8 +21,9 @@ includes: [propertyHelper.js]
 features: [Promise.prototype.finally]
 ---*/
 
-assert.sameValue(Promise.prototype.finally.name, 'finally');
-
-verifyNotEnumerable(Promise.prototype.finally, 'name');
-verifyNotWritable(Promise.prototype.finally, 'name');
-verifyConfigurable(Promise.prototype.finally, 'name');
+verifyProperty(Promise.prototype.finally, "name", {
+  value: "finally",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

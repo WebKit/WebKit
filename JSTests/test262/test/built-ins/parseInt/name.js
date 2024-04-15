@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(parseInt.name, "parseInt", 'The value of parseInt.name is "parseInt"');
-
-verifyNotEnumerable(parseInt, "name");
-verifyNotWritable(parseInt, "name");
-verifyConfigurable(parseInt, "name");
+verifyProperty(parseInt, "name", {
+  value: "parseInt",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

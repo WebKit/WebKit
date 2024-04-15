@@ -20,8 +20,9 @@ includes: [propertyHelper.js, testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-assert.sameValue(TypedArray.prototype.includes.name, "includes");
-
-verifyNotEnumerable(TypedArray.prototype.includes, "name");
-verifyNotWritable(TypedArray.prototype.includes, "name");
-verifyConfigurable(TypedArray.prototype.includes, "name");
+verifyProperty(TypedArray.prototype.includes, "name", {
+  value: "includes",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

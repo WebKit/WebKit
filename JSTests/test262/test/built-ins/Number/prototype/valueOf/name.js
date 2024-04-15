@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Number.prototype.valueOf.name, "valueOf");
-
-verifyNotEnumerable(Number.prototype.valueOf, "name");
-verifyNotWritable(Number.prototype.valueOf, "name");
-verifyConfigurable(Number.prototype.valueOf, "name");
+verifyProperty(Number.prototype.valueOf, "name", {
+  value: "valueOf",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

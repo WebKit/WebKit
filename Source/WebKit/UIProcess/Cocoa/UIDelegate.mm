@@ -71,6 +71,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "TapHandlingResult.h"
@@ -231,6 +232,8 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 
     m_delegateMethods.webViewUpdatedAppBadge = [delegate respondsToSelector:@selector(_webView:updatedAppBadge:fromSecurityOrigin:)];
     m_delegateMethods.webViewUpdatedClientBadge = [delegate respondsToSelector:@selector(_webView:updatedClientBadge:fromSecurityOrigin:)];
+
+    m_delegateMethods.webViewDidAdjustVisibilityWithSelectors = [delegate respondsToSelector:@selector(_webView:didAdjustVisibilityWithSelectors:)];
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1916,6 +1919,22 @@ void UIDelegate::UIClient::updateClientBadge(WebPageProxy&, const WebCore::Secur
 
     auto apiOrigin = API::SecurityOrigin::create(origin);
     [delegate _webView:m_uiDelegate->m_webView.get().get() updatedClientBadge:nsBadge fromSecurityOrigin:wrapper(apiOrigin.get())];
+}
+
+void UIDelegate::UIClient::didAdjustVisibilityWithSelectors(WebPageProxy&, Vector<String>&& selectors)
+{
+    if (!m_uiDelegate)
+        return;
+
+    if (!m_uiDelegate->m_delegateMethods.webViewDidAdjustVisibilityWithSelectors)
+        return;
+
+    auto delegate = (id<WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return;
+
+    RetainPtr nsSelectors = createNSArray(WTFMove(selectors));
+    [delegate _webView:m_uiDelegate->m_webView.get().get() didAdjustVisibilityWithSelectors:nsSelectors.get()];
 }
 
 #if ENABLE(WEBXR)

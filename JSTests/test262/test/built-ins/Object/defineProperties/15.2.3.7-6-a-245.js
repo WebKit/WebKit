@@ -32,12 +32,12 @@ try {
 } catch (e) {
   verifyEqualTo(arr, "1", get_fun());
 
-  verifyNotEnumerable(arr, "1");
-
-  verifyNotConfigurable(arr, "1");
-
   if (!(e instanceof TypeError)) {
     throw new Test262Error("Expected TypeError, got " + e);
   }
-
 }
+
+verifyProperty(arr, "1", {
+  enumerable: false,
+  configurable: false,
+});

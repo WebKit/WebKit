@@ -34,8 +34,10 @@
 namespace WebCore {
 
 template<typename CharacterType>
-auto CSSCustomPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> buffer) -> std::optional<Component>
+auto CSSCustomPropertySyntax::parseComponent(std::span<const CharacterType> span) -> std::optional<Component>
 {
+    StringParsingBuffer buffer { span };
+
     auto consumeMultiplier = [&] {
         if (skipExactly(buffer, '+'))
             return Multiplier::SpaceList;
@@ -50,7 +52,7 @@ auto CSSCustomPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> 
         if (buffer.position() == begin)
             return { };
 
-        auto dataTypeName = StringView(std::span(begin, buffer.position() - begin));
+        auto dataTypeName = StringView(std::span(begin, buffer.position()));
         if (!skipExactly(buffer, '>'))
             return { };
 
@@ -75,7 +77,7 @@ auto CSSCustomPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> 
         ++buffer;
 
     auto ident = [&] {
-        auto tokenizer = CSSTokenizer::tryCreate(StringView(std::span(begin, buffer.position() - begin)).toStringWithoutCopying());
+        auto tokenizer = CSSTokenizer::tryCreate(StringView(std::span(begin, buffer.position())).toStringWithoutCopying());
         if (!tokenizer)
             return nullAtom();
 
@@ -117,7 +119,7 @@ std::optional<CSSCustomPropertySyntax> CSSCustomPropertySyntax::parse(StringView
 
             skipUntil(buffer, '|');
 
-            auto component = parseComponent(StringParsingBuffer { begin, buffer.position() });
+            auto component = parseComponent(std::span { begin, buffer.position() });
             if (!component)
                 return { };
 

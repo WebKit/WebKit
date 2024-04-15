@@ -33,12 +33,12 @@ try {
 } catch (e) {
   verifyEqualTo(obj, "property", getFunc());
 
-  verifyNotEnumerable(obj, "property");
-
-  verifyNotConfigurable(obj, "property");
-
   if (!(e instanceof TypeError)) {
     throw new Test262Error("Expected TypeError, got " + e);
   }
-
 }
+
+verifyProperty(obj, "property", {
+  enumerable: false,
+  configurable: false,
+});

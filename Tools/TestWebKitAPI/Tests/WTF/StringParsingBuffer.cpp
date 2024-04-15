@@ -47,7 +47,7 @@ TEST(WTF, StringParsingBufferEmpty)
 TEST(WTF, StringParsingBufferInitial)
 {
     StringView string { "abc"_s };
-    StringParsingBuffer<LChar> parsingBuffer { string.characters8(), string.length() };
+    StringParsingBuffer parsingBuffer { string.span8() };
 
     EXPECT_FALSE(parsingBuffer.atEnd());
     EXPECT_TRUE(parsingBuffer.hasCharactersRemaining());
@@ -60,7 +60,7 @@ TEST(WTF, StringParsingBufferInitial)
 TEST(WTF, StringParsingBufferAdvance)
 {
     StringView string { "abc"_s };
-    StringParsingBuffer<LChar> parsingBuffer { string.characters8(), string.length() };
+    StringParsingBuffer parsingBuffer { string.span8() };
 
     parsingBuffer.advance();
     EXPECT_FALSE(parsingBuffer.atEnd());
@@ -72,7 +72,7 @@ TEST(WTF, StringParsingBufferAdvance)
 TEST(WTF, StringParsingBufferAdvanceBy)
 {
     StringView string { "abc"_s };
-    StringParsingBuffer<LChar> parsingBuffer { string.characters8(), string.length() };
+    StringParsingBuffer parsingBuffer { string.span8() };
 
     parsingBuffer.advanceBy(2);
     EXPECT_FALSE(parsingBuffer.atEnd());
@@ -84,7 +84,7 @@ TEST(WTF, StringParsingBufferAdvanceBy)
 TEST(WTF, StringParsingBufferPreIncrement)
 {
     StringView string { "abc"_s };
-    StringParsingBuffer<LChar> parsingBuffer { string.characters8(), string.length() };
+    StringParsingBuffer parsingBuffer { string.span8() };
 
     auto preIncrementedParsingBuffer = ++parsingBuffer;
     EXPECT_FALSE(parsingBuffer.atEnd());
@@ -100,7 +100,7 @@ TEST(WTF, StringParsingBufferPreIncrement)
 TEST(WTF, StringParsingBufferPostIncrement)
 {
     StringView string { "abc"_s };
-    StringParsingBuffer<LChar> parsingBuffer { string.characters8(), string.length() };
+    StringParsingBuffer parsingBuffer { string.span8() };
 
     auto postIncrementedParsingBuffer = parsingBuffer++;
     EXPECT_FALSE(parsingBuffer.atEnd());
@@ -116,7 +116,7 @@ TEST(WTF, StringParsingBufferPostIncrement)
 TEST(WTF, StringParsingBufferPlusEquals)
 {
     StringView string { "abc"_s };
-    StringParsingBuffer<LChar> parsingBuffer { string.characters8(), string.length() };
+    StringParsingBuffer parsingBuffer { string.span8() };
 
     parsingBuffer += 2;
     EXPECT_FALSE(parsingBuffer.atEnd());
@@ -128,7 +128,7 @@ TEST(WTF, StringParsingBufferPlusEquals)
 TEST(WTF, StringParsingBufferEnd)
 {
     StringView string { "abc"_s };
-    StringParsingBuffer<LChar> parsingBuffer { string.characters8(), string.length() };
+    StringParsingBuffer parsingBuffer { string.span8() };
 
     ++parsingBuffer;
     EXPECT_FALSE(parsingBuffer.atEnd());
@@ -148,7 +148,7 @@ TEST(WTF, StringParsingBufferEnd)
 TEST(WTF, StringParsingBufferSubscript)
 {
     StringView string { "abc"_s };
-    StringParsingBuffer<LChar> parsingBuffer { string.characters8(), string.length() };
+    StringParsingBuffer parsingBuffer { string.span8() };
     
     ++parsingBuffer;
     EXPECT_EQ(parsingBuffer[0], 'b');
@@ -158,7 +158,7 @@ TEST(WTF, StringParsingBufferSubscript)
 TEST(WTF, StringParsingBufferStringView)
 {
     StringView string { "abc"_s };
-    StringParsingBuffer<LChar> parsingBuffer { string.characters8(), string.length() };
+    StringParsingBuffer parsingBuffer { string.span8() };
 
     ++parsingBuffer;
     auto viewRemaining = parsingBuffer.stringViewOfCharactersRemaining();

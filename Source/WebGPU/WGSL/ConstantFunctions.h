@@ -703,11 +703,11 @@ CONSTANT_FUNCTION(BitwiseShiftLeft)
             return makeUnexpected(makeString("shift left value must be less than the bit width of the shifted value, which is ", String::number(bitSize)));
 
         if constexpr (std::is_unsigned_v<T>) {
-            uint32_t mask = -1 << (bitSize - right);
+            uint64_t mask = -1ull << (bitSize - right);
             if (left & mask)
                 return makeUnexpected("shift left overflows"_s);
         } else {
-            uint32_t mask = -1 << (bitSize - (right + 1));
+            uint64_t mask = -1ull << (bitSize - (right + 1));
             auto leftBits = left & mask;
             if (leftBits && leftBits != mask)
                 return makeUnexpected("shift left overflows"_s);

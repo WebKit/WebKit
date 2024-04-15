@@ -34,6 +34,7 @@
 #import "WKSLinearMediaTypes.h"
 #import <UIKit/UIKit.h>
 #import <WebCore/WebAVPlayerLayerView.h>
+#import <wtf/BlockPtr.h>
 
 namespace WebKit {
 
@@ -77,14 +78,14 @@ void VideoPresentationInterfaceLMK::invalidatePlayerViewController()
 
 void VideoPresentationInterfaceLMK::presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
-    [linearMediaPlayer() enterFullscreen];
-    completionHandler(YES, nil);
+    playbackSessionInterface().startObservingNowPlayingMetadata();
+    [linearMediaPlayer() enterFullscreenWithCompletionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
 }
 
 void VideoPresentationInterfaceLMK::dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
-    [linearMediaPlayer() exitFullscreen];
-    completionHandler(YES, nil);
+    playbackSessionInterface().stopObservingNowPlayingMetadata();
+    [linearMediaPlayer() exitFullscreenWithCompletionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
 }
 
 UIViewController *VideoPresentationInterfaceLMK::playerViewController() const

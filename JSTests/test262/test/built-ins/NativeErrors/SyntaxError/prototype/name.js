@@ -17,8 +17,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(SyntaxError.prototype.name, "SyntaxError");
-
-verifyNotEnumerable(SyntaxError.prototype, "name");
-verifyWritable(SyntaxError.prototype, "name");
-verifyConfigurable(SyntaxError.prototype, "name");
+verifyProperty(SyntaxError.prototype, "name", {
+  value: "SyntaxError",
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+
+.boxes {
+    width: 200px;
+    height: 100px;
+}
+
+.box {
+    width: 100px;
+    height: 100px;
+    border: 1px solid gray;
+    box-sizing: border-box;
+    background: blue;
+    padding-left: 100px;
+    color: white;
+}
+
+.box::after {
+    content: "::after";
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    border: 1px solid red;
+    box-sizing: border-box;
+    background: tomato;
+    color: white;
+}
+</style>
+</head>
+<body>
+<section class="boxes">
+    <div class="box"></div>
+</section>
+<section class="boxes">
+    <div class="box"></div>
+</section>
+<p>This test requires WebKitTestRunner</p>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async event => {
+    firstSelector = await UIHelper.adjustVisibilityForFrontmostTarget(50, 50);
+    secondSelector = await UIHelper.adjustVisibilityForFrontmostTarget(150, 150);
+
+    shouldBeEqualToString("firstSelector", "BODY > SECTION:first-of-type");
+    shouldBeEqualToString("secondSelector", "BODY > SECTION:last-of-type");
+    finishJSTest();
+});
+</script>
+</html>

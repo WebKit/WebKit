@@ -15,16 +15,13 @@ const timeZone = TemporalHelpers.oneShiftTimeZone(new Temporal.Instant(0n), 3600
 const relativeTo = new Temporal.ZonedDateTime(0n, timeZone, calendar);
 
 // Total of a calendar unit where larger calendar units have to be converted
-// down, to cover the path that goes through UnbalanceDurationRelative
-// The calls come from these paths:
-// Duration.total() ->
-//   UnbalanceDurationRelative -> MoveRelativeDate -> calendar.dateAdd() (3x)
-//   BalanceDuration ->
-//     AddZonedDateTime -> BuiltinTimeZoneGetInstantFor -> calendar.dateAdd()
+// down, to cover the path that goes through UnbalanceDateDurationRelative
+// The calls come from the path:
+// Duration.total() -> UnbalanceDateDurationRelative -> calendar.dateAdd()
 
 const instance1 = new Temporal.Duration(1, 1, 1, 1, 1);
 instance1.total({ unit: "days", relativeTo });
-assert.sameValue(calendar.dateAddCallCount, 3, "converting larger calendar units down");
+assert.sameValue(calendar.dateAddCallCount, 1, "converting larger calendar units down");
 
 // Total of a calendar unit where smaller calendar units have to be converted
 // up, to cover the path that goes through MoveRelativeZonedDateTime

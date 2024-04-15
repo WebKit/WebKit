@@ -2985,6 +2985,12 @@ void Texture::makeCanvasBacking()
     m_canvasBacking = true;
 }
 
+void Texture::waitForCommandBufferCompletion()
+{
+    if (auto* commandEncoder = m_commandEncoder.get())
+        commandEncoder->waitForCommandBufferCompletion();
+}
+
 void Texture::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
     m_commandEncoder = commandEncoder;

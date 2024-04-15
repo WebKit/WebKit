@@ -902,10 +902,6 @@ else ()
     target_link_libraries(Skia PRIVATE WebKit::WTF)
 endif ()
 
-set_target_properties(Skia PROPERTIES
-    CXX_STANDARD 17
-)
-
 target_link_libraries(Skia PRIVATE
     Epoxy::Epoxy
     Fontconfig::Fontconfig

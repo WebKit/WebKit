@@ -41,6 +41,7 @@
 @property (nonatomic, copy) void (^focusWebView)(WKWebView *);
 @property (nonatomic, copy) void (^unfocusWebView)(WKWebView *);
 @property (nonatomic, copy) void (^webViewDidClose)(WKWebView *);
+@property (nonatomic, copy) void (^webViewDidAdjustVisibilityWithSelectors)(WKWebView *, NSArray<NSString *> *);
 
 - (NSString *)waitForAlert;
 - (NSString *)waitForConfirm;

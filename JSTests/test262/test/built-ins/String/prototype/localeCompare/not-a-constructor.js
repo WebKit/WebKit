@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.localeCompare();
-}, '`new String.prototype.localeCompare()` throws TypeError');
+});
 

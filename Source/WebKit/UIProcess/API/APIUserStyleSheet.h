@@ -35,8 +35,6 @@ namespace API {
 
 class UserStyleSheet final : public ObjectImpl<Object::Type::UserStyleSheet>, public Identified<WebKit::UserStyleSheetIdentifier> {
 public:
-    static WTF::URL generateUniqueURL();
-
     static Ref<UserStyleSheet> create(WebCore::UserStyleSheet userStyleSheet, API::ContentWorld& world)
     {
         return adoptRef(*new UserStyleSheet(WTFMove(userStyleSheet), world));

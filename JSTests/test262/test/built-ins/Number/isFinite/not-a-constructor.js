@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Number.isFinite), false, 'isConstructor(Number.is
 
 assert.throws(TypeError, () => {
   new Number.isFinite();
-}, '`new Number.isFinite()` throws TypeError');
+});
 

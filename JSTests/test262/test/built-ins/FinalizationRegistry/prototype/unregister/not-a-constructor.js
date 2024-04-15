@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   let fr = new FinalizationRegistry(() => {}); let token = {}; fr.register(token); new fr.unregister(token);
-}, '`let fr = new FinalizationRegistry(() => {}); let token = {}; fr.register(token); new fr.unregister(token)` throws TypeError');
+});
 

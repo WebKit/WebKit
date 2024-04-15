@@ -31,3 +31,6 @@ PRODUCT_BUNDLE_NAME = GPUExtension;
 
 // For simulator builds, entitlements are added to a special __entitlements section on the binary rather than the signature.
 CODE_SIGN_ENTITLEMENTS[sdk=*simulator] = Shared/AuxiliaryProcessExtensions/GPUProcessExtension.entitlements;
+
+OTHER_LDFLAGS_YES_IOS_SINCE_18 = -Wl,-dyld_env,@$(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/dlsym.WebKit.GPU;
+OTHER_LDFLAGS[sdk=iphone*] = $(inherited) $(OTHER_LDFLAGS_$(USE_INTERNAL_SDK)$(WK_IOS_18));

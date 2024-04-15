@@ -41,7 +41,7 @@ static unsigned isIdentifierStart(UChar character, const UChar* start, const UCh
         return 1;
 
     unsigned length = 1;
-    if (u_charType(*(start + length - 1)) == U_SURROGATE && static_cast<unsigned>(end - start) > length)
+    if (end > start + 1 && u_charType(character) == U_SURROGATE)
         length++;
     if (u_stringHasBinaryProperty(start, length, UCHAR_XID_START))
         return length;
@@ -52,8 +52,9 @@ static unsigned isIdentifierContinue(UChar character, const UChar* start, const 
 {
     if (auto length = isIdentifierStart(character, start, end))
         return length;
+
     unsigned length = 1;
-    if (u_charType(*(start + length - 1)) == U_SURROGATE && static_cast<unsigned>(end - start) > length)
+    if (end > start + 1 && u_charType(character) == U_SURROGATE)
         length++;
     if (u_stringHasBinaryProperty(start, length, UCHAR_XID_CONTINUE))
         return length;
@@ -287,7 +288,10 @@ Token Lexer<T>::nextToken()
             unsigned length = consumed;
             const T* startOfToken = m_code;
             shift(consumed);
-            while (auto consumed = isIdentifierContinue(m_current, m_code, m_codeEnd)) {
+            while (!isAtEndOfFile()) {
+                auto consumed = isIdentifierContinue(m_current, m_code, m_codeEnd);
+                if (!consumed)
+                    break;
                 length += consumed;
                 shift(consumed);
             }
@@ -972,33 +976,33 @@ Token Lexer<T>::lexNumber()
         case 'i': {
             if constexpr (std::is_integral_v<decltype(value)>) {
                 if (auto result = convertInteger<int>(value))
-                    return makeLiteralToken(TokenType::IntegerLiteralSigned, *result);
+                    return makeIntegerToken(TokenType::IntegerLiteralSigned, *result);
             }
-            return makeToken(TokenType::Invalid);
+            break;
         }
         case 'u': {
             if constexpr (std::is_integral_v<decltype(value)>) {
                 if (auto result = convertInteger<unsigned>(value))
-                    return makeLiteralToken(TokenType::IntegerLiteralUnsigned, *result);
+                    return makeIntegerToken(TokenType::IntegerLiteralUnsigned, *result);
             }
             break;
         }
         case 'f': {
             if (auto result = convertFloat<float>(value))
-                return makeLiteralToken(TokenType::FloatLiteral, *result);
+                return makeFloatToken(TokenType::FloatLiteral, *result);
             break;
         }
         case 'h':
             if (auto result = convertFloat<half>(value))
-                return makeLiteralToken(TokenType::HalfLiteral, *result);
+                return makeFloatToken(TokenType::HalfLiteral, *result);
             break;
         default:
             if constexpr (std::is_floating_point_v<decltype(value)>) {
                 if (auto result = convertFloat<double>(value))
-                    return makeLiteralToken(TokenType::AbstractFloatLiteral, *result);
+                    return makeFloatToken(TokenType::AbstractFloatLiteral, *result);
             } else {
                 if (auto result = convertInteger<int64_t>(value))
-                    return makeLiteralToken(TokenType::IntegerLiteral, *result);
+                    return makeIntegerToken(TokenType::IntegerLiteral, *result);
             }
         }
         return makeToken(TokenType::Invalid);

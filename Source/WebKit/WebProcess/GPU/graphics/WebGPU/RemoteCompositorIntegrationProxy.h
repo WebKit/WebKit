@@ -35,6 +35,9 @@
 namespace WebCore {
 class ImageBuffer;
 class NativeImage;
+namespace WebGPU {
+class Device;
+}
 }
 
 namespace WebKit::WebGPU {
@@ -88,7 +91,7 @@ private:
     }
 
 #if PLATFORM(COCOA)
-    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication) override;
+    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::Device&) override;
 #endif
 
     void prepareForDisplay(CompletionHandler<void()>&&) override;

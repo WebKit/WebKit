@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-contrast-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-mix-function.html

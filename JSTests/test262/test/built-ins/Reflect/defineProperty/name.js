@@ -13,11 +13,9 @@ includes: [propertyHelper.js]
 features: [Reflect]
 ---*/
 
-assert.sameValue(
-  Reflect.defineProperty.name, 'defineProperty',
-  'The value of `Reflect.defineProperty.name` is `"defineProperty"`'
-);
-
-verifyNotEnumerable(Reflect.defineProperty, 'name');
-verifyNotWritable(Reflect.defineProperty, 'name');
-verifyConfigurable(Reflect.defineProperty, 'name');
+verifyProperty(Reflect.defineProperty, "name", {
+  value: "defineProperty",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

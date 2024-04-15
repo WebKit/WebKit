@@ -15,8 +15,8 @@ features: [change-array-by-copy]
 
 assert.throws(TypeError, () => {
   Array.prototype.toSorted.call(null);
-}, '`Array.prototype.toSorted.call(null)` throws TypeError');
+});
 
 assert.throws(TypeError, () => {
   Array.prototype.toSorted.call(undefined);
-}, '`Array.prototype.toSorted.call(undefined)` throws TypeError');
+});

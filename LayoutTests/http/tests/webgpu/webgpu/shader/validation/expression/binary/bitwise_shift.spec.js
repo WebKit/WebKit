@@ -39,7 +39,6 @@ desc(
 ).
 params((u) =>
 u.
-combine('op', ['<<', '>>']).
 combine('lhs', keysOf(kScalarAndVectorTypes)).
 combine(
   'rhs',
@@ -48,7 +47,9 @@ combine(
     (value) => !(value.startsWith('vec3') || value.startsWith('vec4'))
   )
 ).
-beginSubcases()
+combine('compound_assignment', [false, true]).
+beginSubcases().
+combine('op', ['<<', '>>'])
 ).
 beforeAllSubcases((t) => {
   if (
@@ -64,7 +65,15 @@ fn((t) => {
   const lhsElement = scalarTypeOf(lhs);
   const rhsElement = scalarTypeOf(rhs);
   const hasF16 = lhsElement === Type.f16 || rhsElement === Type.f16;
-  const code = `
+  const code = t.params.compound_assignment ?
+  `
+${hasF16 ? 'enable f16;' : ''}
+fn f() {
+  var foo = ${lhs.create(0).wgsl()};
+  foo ${t.params.op}= ${rhs.create(0).wgsl()};
+}
+` :
+  `
 ${hasF16 ? 'enable f16;' : ''}
 const lhs = ${lhs.create(0).wgsl()};
 const rhs = ${rhs.create(0).wgsl()};

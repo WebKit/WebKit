@@ -727,6 +727,8 @@ enum class AccessibilityOrientation {
     Undefined,
 };
 
+enum class TrimWhitespace : bool { No, Yes };
+
 struct TextUnderElementMode {
     enum class Children : uint8_t {
         SkipIgnoredChildren,
@@ -738,6 +740,7 @@ struct TextUnderElementMode {
     bool includeFocusableContent;
     bool considerHiddenState { true };
     bool inHiddenSubtree { false };
+    TrimWhitespace trimWhitespace { TrimWhitespace::Yes };
     Node* ignoredChildNode;
 
     TextUnderElementMode(Children childrenInclusion = Children::SkipIgnoredChildren, bool includeFocusable = false, Node* ignoredChild = nullptr)
@@ -844,7 +847,7 @@ public:
     bool isCheckbox() const { return roleValue() == AccessibilityRole::Checkbox; }
     bool isRadioButton() const { return roleValue() == AccessibilityRole::RadioButton; }
     bool isListBox() const { return roleValue() == AccessibilityRole::ListBox; }
-    virtual bool isListBoxOption() const = 0;
+    bool isListBoxOption() const { return roleValue() == AccessibilityRole::ListBoxOption; }
     virtual bool isAttachment() const = 0;
     bool isMenuRelated() const;
     bool isMenu() const { return roleValue() == AccessibilityRole::Menu; }

@@ -242,7 +242,7 @@ void WKAccessibilityTestingInjectPreference(WKBundlePageRef pageRef, WKStringRef
         return;
     
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    WebKit::WebProcess::singleton().notifyPreferencesChanged(WebKit::toWTFString(domain), WebKit::toWTFString(key), WebKit::toWTFString(encodedValue));
+    WebKit::WebProcess::singleton().preferenceDidUpdate(WebKit::toWTFString(domain), WebKit::toWTFString(key), WebKit::toWTFString(encodedValue));
 #endif
 }
 

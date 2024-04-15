@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Math.pow), false, 'isConstructor(Math.pow) must r
 
 assert.throws(TypeError, () => {
   new Math.pow();
-}, '`new Math.pow()` throws TypeError');
+});
 

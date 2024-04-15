@@ -42,5 +42,5 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(delete sample["-0"], true, 'The value of `delete sample["-0"]` is true');
   assert.throws(TypeError, () => {
     delete sample[-0];
-  }, '`delete sample[-0]` throws TypeError');
+  });
 });

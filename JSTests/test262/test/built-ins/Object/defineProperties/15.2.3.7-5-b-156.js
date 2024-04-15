@@ -19,5 +19,6 @@ Object.defineProperties(obj, {
   property: Math
 });
 
-assert(obj.hasOwnProperty("property"));
-verifyNotWritable(obj, "property");
+verifyProperty(obj, "property", {
+  writable: false,
+});

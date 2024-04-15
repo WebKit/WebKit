@@ -405,6 +405,7 @@ fast/canvas/offscreen-clipped.html [ Skip ]
 fast/canvas/offscreen-enabled.html [ Skip ]
 fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Skip ]
 fast/canvas/offscreen-giant.html [ Skip ]
+fast/canvas/offscreen-nested-worker-serialization.html [ Skip ]
 fast/canvas/offscreen-scaling.html [ Skip ]
 fast/canvas/offscreen-toggle-display.html [ Skip ]
 fast/images/protected-image-queue.html [ Skip ]
@@ -1186,7 +1187,6 @@ editing/selection/caret-at-bidi-boundary.html [ Skip ]
 editing/selection/character-granularity-rect.html [ Skip ]
 editing/selection/character-granularity-select-text-with-click-handler.html [ Skip ]
 editing/selection/character-granularity-selected-range-after-dismissing-selection.html [ Skip ]
-editing/selection/click-left-of-rtl-wrapping-text.html [ Skip ]
 editing/selection/extend-by-character-007.html [ Skip ]
 editing/selection/regional-indicators.html [ Skip ]
 [ Debug ] editing/selection/doubleclick-beside-cr-span.html [ Skip ]
@@ -2250,7 +2250,6 @@ editing/selection/5354455-2.html [ Skip ]
 editing/selection/6476.html [ Skip ]
 editing/selection/7152-1.html [ Skip ]
 editing/selection/7152-2.html [ Skip ]
-editing/selection/after-line-wrap.html [ Skip ]
 editing/selection/caret-before-select.html [ Skip ]
 editing/selection/caret-in-div-containing-empty-block.html [ Skip ]
 editing/selection/click-start-of-line.html [ Skip ]
@@ -3309,3 +3308,11 @@ webkit.org/b/272445 http/tests/xmlhttprequest/onload-progressevent-attributes.ht
 webkit.org/b/272445 http/tests/xmlhttprequest/xmlhttprequest-LSProgressEvent-ProgressEvent-should-match.html [ Failure Pass ]
 
 fast/forms/form-submission-crash-4.html [ Timeout Failure Pass ]
+
+css3/filters/backdrop-filter-page-scale.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/trusted-types/trusted-types-navigation.html [ Failure Pass ]
+js/dom/encode-URI-test.html [ Pass Failure ]
+
+# eventSender.leapForward should be reimplemented without Sleep.
+editing/selection/mouse/click-left-of-rtl-wrapping-text.html [ Skip ] # Timeout

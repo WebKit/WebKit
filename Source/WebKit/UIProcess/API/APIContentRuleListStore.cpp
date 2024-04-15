@@ -45,6 +45,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>
@@ -280,9 +281,8 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
                 writeToFile(WebKit::NetworkCache::Data(sourceJSON.span8()));
                 m_sourceWritten += sourceJSON.length();
             } else {
-                size_t serializedLength = sourceJSON.length() * sizeof(UChar);
-                writeToFile(WebKit::NetworkCache::Data({ reinterpret_cast<const uint8_t*>(sourceJSON.characters16()), serializedLength }));
-                m_sourceWritten += serializedLength;
+                writeToFile(WebKit::NetworkCache::Data(asBytes(sourceJSON.span16())));
+                m_sourceWritten += sourceJSON.length() * sizeof(UChar);
             }
         }
 

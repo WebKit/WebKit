@@ -41,7 +41,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert.throws(TypeError, () => {
     delete sample.bar;
-  }, '`delete sample.bar` throws TypeError');
+  });
 
   assert.sameValue(delete sample.baz, true, 'The value of `delete sample.baz` is true');
 });

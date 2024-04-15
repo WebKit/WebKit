@@ -890,7 +890,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
                 replaceHourCycleInSkeleton(skeleton, specifiedHour12);
                 dataLogLnIf(IntlDateTimeFormatInternal::verbose, "replaced:(", StringView { skeleton.span() }, ")");
 
-                patternBuffer = vm.intlCache().getBestDateTimePattern(dataLocaleWithExtensions, skeleton.data(), skeleton.size(), status);
+                patternBuffer = vm.intlCache().getBestDateTimePattern(dataLocaleWithExtensions, skeleton.span(), status);
                 if (U_FAILURE(status)) {
                     throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
                     return;
@@ -929,7 +929,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
         String skeleton = buildSkeleton(weekday, era, year, month, day, hour12, hourCycle, hour, dayPeriod, minute, second, fractionalSecondDigits, timeZoneName);
         UErrorCode status = U_ZERO_ERROR;
-        patternBuffer = vm.intlCache().getBestDateTimePattern(dataLocaleWithExtensions, StringView(skeleton).upconvertedCharacters().get(), skeleton.length(), status);
+        patternBuffer = vm.intlCache().getBestDateTimePattern(dataLocaleWithExtensions, StringView(skeleton).upconvertedCharacters(), status);
         if (U_FAILURE(status)) {
             throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
             return;

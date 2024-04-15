@@ -973,10 +973,9 @@ bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
-void WebPageProxy::insertMultiRepresentationHEIC(NSData *data)
+void WebPageProxy::insertMultiRepresentationHEIC(NSData *data, NSString *altText)
 {
-    send(Messages::WebPage::InsertMultiRepresentationHEIC(span(data)));
-
+    send(Messages::WebPage::InsertMultiRepresentationHEIC(span(data), altText));
 }
 
 #endif
@@ -1210,6 +1209,14 @@ void WebPageProxy::enableTextIndicatorStyleAfterElementWithID(const String& elem
         return;
 
     send(Messages::WebPage::EnableTextIndicatorStyleAfterElementWithID(elementID, uuid));
+}
+
+void WebPageProxy::enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID& uuid)
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::EnableTextIndicatorStyleForElementWithID(elementID, uuid));
 }
 
 #endif

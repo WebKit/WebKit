@@ -6,6 +6,6 @@ TEST COMPLETE
 
 
 --------
-Frame: '<!--frame2-->'
+Frame: '<!--frame1-->'
 --------
 Should be visible.

@@ -39,6 +39,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/SystemTracing.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
 @implementation WKURLSessionTaskDelegate {
@@ -46,13 +47,22 @@
     WeakPtr<WebKit::NetworkSessionCocoa> _session;
 }
 
-- (instancetype)initWithIdentifier:(WebKit::DataTaskIdentifier)identifier session:(WebKit::NetworkSessionCocoa&)session
+- (instancetype)initWithTask:(NSURLSessionTask *)task identifier:(WebKit::DataTaskIdentifier)identifier session:(WebKit::NetworkSessionCocoa&)session
 {
     if (!(self = [super init]))
         return nil;
+
+    WTFBeginSignpost(self, DataTask, "%{public}@ %{private}@", task.originalRequest.HTTPMethod, task.originalRequest.URL);
     _identifier = identifier;
     _session = WeakPtr { session };
+
     return self;
+}
+
+- (void)dealloc
+{
+    WTFEndSignpost(self, DataTask);
+    [super dealloc];
 }
 
 - (IPC::Connection*)connection
@@ -64,6 +74,7 @@
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
+    WTFEmitSignpost(self, DataTask, "received challenge");
     RefPtr connection = [self connection];
     if (!connection)
         return completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
@@ -74,6 +85,7 @@
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
 {
+    WTFEmitSignpost(self, DataTask, "redirect");
     RefPtr connection = [self connection];
     if (!connection)
         return completionHandler(nil);
@@ -84,6 +96,7 @@
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
+    WTFEmitSignpost(self, DataTask, "received response headers");
     RefPtr connection = [self connection];
     if (!connection)
         return completionHandler(NSURLSessionResponseCancel);
@@ -94,6 +107,7 @@
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
+    WTFEmitSignpost(self, DataTask, "received %zu bytes", static_cast<size_t>(data.length));
     RefPtr connection = [self connection];
     if (!connection)
         return;
@@ -102,6 +116,7 @@
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
+    WTFEmitSignpost(self, DataTask, "completed with error: %d", !!error);
     RefPtr connection = [self connection];
     if (!connection)
         return;

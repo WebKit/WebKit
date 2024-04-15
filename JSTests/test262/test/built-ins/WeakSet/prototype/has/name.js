@@ -12,11 +12,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  WeakSet.prototype.has.name, 'has',
-  'The value of WeakSet.prototype.has.name is "has"'
-);
-
-verifyNotEnumerable(WeakSet.prototype.has, 'name');
-verifyNotWritable(WeakSet.prototype.has, 'name');
-verifyConfigurable(WeakSet.prototype.has, 'name');
+verifyProperty(WeakSet.prototype.has, "name", {
+  value: "has",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

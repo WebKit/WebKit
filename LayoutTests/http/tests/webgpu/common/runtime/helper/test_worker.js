@@ -34,12 +34,14 @@ class TestBaseWorker {
 
   onmessage(ev) {
     const query = ev.data.query;
-    const result = ev.data.result;
-    if (result.logs) {
-      for (const l of result.logs) {
-        Object.setPrototypeOf(l, LogMessageWithStack.prototype);
-      }
-    }
+    const transferredResult = ev.data.result;
+
+    const result = {
+      status: transferredResult.status,
+      timems: transferredResult.timems,
+      logs: transferredResult.logs?.map((l) => new LogMessageWithStack(l))
+    };
+
     this.resolvers.get(query)(result);
     this.resolvers.delete(query);
 
@@ -47,9 +49,8 @@ class TestBaseWorker {
     // update the entire results JSON somehow at some point).
   }
 
-  async makeRequestAndRecordResult(
+  makeRequestAndRecordResult(
   target,
-  rec,
   query,
   expectations)
   {
@@ -60,12 +61,30 @@ class TestBaseWorker {
     };
     target.postMessage(request);
 
-    const workerResult = await new Promise((resolve) => {
+    return new Promise((resolve) => {
       assert(!this.resolvers.has(query), "can't request same query twice simultaneously");
       this.resolvers.set(query, resolve);
     });
-    rec.injectResult(workerResult);
   }
+
+  async run(
+  rec,
+  query,
+  expectations = [])
+  {
+    try {
+      rec.injectResult(await this.runImpl(query, expectations));
+    } catch (ex) {
+      rec.start();
+      rec.threw(ex);
+      rec.finish();
+    }
+  }
+
+
+
+
+
 }
 
 export class TestDedicatedWorker extends TestBaseWorker {
@@ -73,44 +92,66 @@ export class TestDedicatedWorker extends TestBaseWorker {
 
   constructor(ctsOptions) {
     super('dedicated', ctsOptions);
-    const selfPath = import.meta.url;
-    const selfPathDir = selfPath.substring(0, selfPath.lastIndexOf('/'));
-    const workerPath = selfPathDir + '/test_worker-worker.js';
-    this.worker = new Worker(workerPath, { type: 'module' });
-    this.worker.onmessage = (ev) => this.onmessage(ev);
+    try {
+      if (typeof Worker === 'undefined') {
+        throw new Error('Dedicated Workers not available');
+      }
+
+      const selfPath = import.meta.url;
+      const selfPathDir = selfPath.substring(0, selfPath.lastIndexOf('/'));
+      const workerPath = selfPathDir + '/test_worker-worker.js';
+      this.worker = new Worker(workerPath, { type: 'module' });
+      this.worker.onmessage = (ev) => this.onmessage(ev);
+    } catch (ex) {
+      assert(ex instanceof Error);
+      // Save the exception to re-throw in runImpl().
+      this.worker = ex;
+    }
   }
 
-  async run(
-  rec,
-  query,
-  expectations = [])
-  {
-    await this.makeRequestAndRecordResult(this.worker, rec, query, expectations);
+  runImpl(query, expectations = []) {
+    if (this.worker instanceof Worker) {
+      return this.makeRequestAndRecordResult(this.worker, query, expectations);
+    } else {
+      throw this.worker;
+    }
   }
 }
 
+/** @deprecated Use TestDedicatedWorker instead. */
 export class TestWorker extends TestDedicatedWorker {}
 
 export class TestSharedWorker extends TestBaseWorker {
+  /** MessagePort to the SharedWorker, or an Error if it couldn't be initialized. */
 
 
   constructor(ctsOptions) {
     super('shared', ctsOptions);
-    const selfPath = import.meta.url;
-    const selfPathDir = selfPath.substring(0, selfPath.lastIndexOf('/'));
-    const workerPath = selfPathDir + '/test_worker-worker.js';
-    const worker = new SharedWorker(workerPath, { type: 'module' });
-    this.port = worker.port;
-    this.port.start();
-    this.port.onmessage = (ev) => this.onmessage(ev);
+    try {
+      if (typeof SharedWorker === 'undefined') {
+        throw new Error('Shared Workers not available');
+      }
+
+      const selfPath = import.meta.url;
+      const selfPathDir = selfPath.substring(0, selfPath.lastIndexOf('/'));
+      const workerPath = selfPathDir + '/test_worker-worker.js';
+      const worker = new SharedWorker(workerPath, { type: 'module' });
+      this.port = worker.port;
+      this.port.start();
+      this.port.onmessage = (ev) => this.onmessage(ev);
+    } catch (ex) {
+      assert(ex instanceof Error);
+      // Save the exception to re-throw in runImpl().
+      this.port = ex;
+    }
   }
 
-  async run(
-  rec,
-  query,
-  expectations = [])
-  {
-    await this.makeRequestAndRecordResult(this.port, rec, query, expectations);
+  runImpl(query, expectations = []) {
+    if (this.port instanceof MessagePort) {
+      return this.makeRequestAndRecordResult(this.port, query, expectations);
+    } else {
+      throw this.port;
+    }
   }
 }
 
@@ -119,16 +160,18 @@ export class TestServiceWorker extends TestBaseWorker {
     super('service', ctsOptions);
   }
 
-  async run(
-  rec,
-  query,
-  expectations = [])
-  {
+  async runImpl(query, expectations = []) {
+    if (!('serviceWorker' in navigator)) {
+      throw new Error('Service Workers not available');
+    }
     const [suite, name] = query.split(':', 2);
     const fileName = name.split(',').join('/');
+
+    const selfPath = import.meta.url;
+    const selfPathDir = selfPath.substring(0, selfPath.lastIndexOf('/'));
+    // Construct the path to the worker file, then use URL to resolve the `../` components.
     const serviceWorkerURL = new URL(
-      `/out/${suite}/webworker/${fileName}.worker.js`,
-      window.location.href
+      `${selfPathDir}/../../../${suite}/webworker/${fileName}.worker.js`
     ).toString();
 
     // If a registration already exists for this path, it will be ignored.
@@ -143,6 +186,6 @@ export class TestServiceWorker extends TestBaseWorker {
     const serviceWorker = registration.active;
 
     navigator.serviceWorker.onmessage = (ev) => this.onmessage(ev);
-    await this.makeRequestAndRecordResult(serviceWorker, rec, query, expectations);
+    return this.makeRequestAndRecordResult(serviceWorker, query, expectations);
   }
 }

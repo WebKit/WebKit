@@ -9,6 +9,7 @@ import { toComparator } from '../shader/execution/expression/expectation.js';
 
 
 import {
+  ArrayValue,
   isFloatValue,
   isScalarValue,
   MatrixValue,
@@ -118,7 +119,7 @@ function compareValue(got, expected) {
     };
   }
 
-  if (got instanceof VectorValue) {
+  if (got instanceof VectorValue || got instanceof ArrayValue) {
     const e = expected;
     const gLen = got.elements.length;
     const eLen = e.elements.length;
@@ -160,7 +161,7 @@ function compareValue(got, expected) {
     };
   }
 
-  throw new Error(`unhandled type '${typeof got}`);
+  throw new Error(`unhandled type '${typeof got}'`);
 }
 
 /**

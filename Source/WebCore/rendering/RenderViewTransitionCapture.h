@@ -34,7 +34,8 @@ class RenderViewTransitionCapture : public RenderReplaced {
 public:
     RenderViewTransitionCapture(Type, Document&, RenderStyle&&);
 
-    void setImage(RefPtr<ImageBuffer>, const LayoutSize&, const LayoutRect& overflowRect);
+    void setImage(RefPtr<ImageBuffer>);
+    void setSize(const LayoutSize&, const LayoutRect& overflowRect);
 
     void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) override;
 
