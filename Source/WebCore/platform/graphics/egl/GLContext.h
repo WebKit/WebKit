@@ -53,6 +53,7 @@ public:
 
     static GLContext* current();
     static bool isExtensionSupported(const char* extensionList, const char* extension);
+    static unsigned versionFromString(const char* versionString);
 
     static const char* errorString(int statusCode);
     static const char* lastErrorString();
