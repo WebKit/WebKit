@@ -316,6 +316,12 @@ bool CanvasBase::shouldAccelerate(uint64_t area) const
     if (!scriptExecutionContext()->settingsValues().acceleratedCompositingEnabled)
         return false;
 #endif
+#if USE(SKIA)
+    // FIXME: Skia based ports don't implement accelerated offscreen canvas yet.
+    auto* context = renderingContext();
+    if (context && context->isOffscreen2d())
+        return false;
+#endif
     return true;
 #else
     UNUSED_PARAM(area);
