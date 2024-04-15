@@ -33,10 +33,22 @@ namespace WebKit {
 
 using namespace WebCore;
 
-const unsigned sharedStringHashTableMaxLoad = 2;
+constexpr unsigned sharedStringHashTableMaxLoad = 2U;
 
-static unsigned nextPowerOf2(unsigned v)
+static inline unsigned sizeForLength(unsigned v)
 {
+    // We want the table to be at least half empty.
+    v *= sharedStringHashTableMaxLoad;
+
+    // Because every argument passed is multiplied by 2,
+    // a value of v being 1 is impossible.
+#if COMPILER(GCC_COMPATIBLE)
+    return 1U << (32 - __builtin_clz(v - 1));
+#elif COMPILER(MSVC)
+    unsigned long ret = 0;
+    _BitScanReverse(&ret, v - 1);
+    return 1U << (ret + 1);
+#else
     // Taken from http://www.cs.utk.edu/~vose/c-stuff/bithacks.html
     // Devised by Sean Anderson, September 14, 2001
 
@@ -49,19 +61,17 @@ static unsigned nextPowerOf2(unsigned v)
     v++;
 
     return v;
+#endif
 }
 
 static unsigned tableLengthForKeyCount(unsigned keyCount)
 {
-    // We want the table to be at least half empty.
-    unsigned tableLength = nextPowerOf2(keyCount * sharedStringHashTableMaxLoad);
+    unsigned tableLength = sizeForLength(keyCount);
 
     // Ensure that the table length is at least the size of a page.
-    size_t minimumTableLength = pageSize() / sizeof(SharedStringHash);
-    if (tableLength < minimumTableLength)
-        return minimumTableLength;
+    unsigned minimumTableLength = pageSize() / sizeof(SharedStringHash);
 
-    return tableLength;
+    return std::max(minimumTableLength, tableLength);
 }
 
 SharedStringHashStore::SharedStringHashStore(Client& client)

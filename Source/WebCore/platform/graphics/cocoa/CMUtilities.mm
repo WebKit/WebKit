@@ -306,20 +306,12 @@ PacketDurationParser::PacketDurationParser(const AudioInfo& info)
             return;
         }
 
-        auto ilog = [] (uint32_t v) {
-            int ret = 0;
-            while (v) {
-                ret++;
-                v >>= 1;
-            }
-            return ret;
-        };
+        const unsigned modeBitCount = 32 - clz(m_vorbisModeInfo->mModeCount - 1);
 
-        uint32_t modeBitCount = ilog(m_vorbisModeInfo->mModeCount - 1);
-        for (uint32_t thisModeBit = 0; thisModeBit < modeBitCount; ++thisModeBit)
-            m_vorbisModeMask |= 1 << thisModeBit;
-        }
+        // Set every bit up to modeBitCount to 1.
+        m_vorbisModeMask |= (1U << modeBitCount) - 1;
         break;
+    }
 #endif
     default:
         // No need to examine the magic cookie.

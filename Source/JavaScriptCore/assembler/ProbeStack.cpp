@@ -70,36 +70,38 @@ void Page::flushWrites()
     size_t offset = 0;
     while (dirtyBits) {
         // Find start.
-        if (dirtyBits & 1) {
-            size_t startOffset = offset;
-            // Find end.
-            do {
-                dirtyBits = dirtyBits >> 1;
-                offset += s_chunkSize;
-            } while (dirtyBits & 1);
+        auto trailingCleanBits = WTF::ctz(dirtyBits);
+        offset += s_chunkSize * trailingCleanBits;
+        dirtyBits >>= trailingCleanBits;
 
-            size_t size = offset - startOffset;
-            uint8_t* src = reinterpret_cast<uint8_t*>(&m_buffer) + startOffset;
-            uint8_t* dst = reinterpret_cast<uint8_t*>(m_baseLogicalAddress) + startOffset;
-            copyStackPage(dst, src, size);
-        }
-        dirtyBits = dirtyBits >> 1;
-        offset += s_chunkSize;
+        // Find end.
+        auto startOffset = offset;
+        auto trailingDirtyBits = WTF::ctz(~dirtyBits);
+
+        // Find size.
+        auto size = s_chunkSize * trailingDirtyBits;
+        offset += size;
+        dirtyBits >>= trailingDirtyBits;
+
+        uint8_t* src = reinterpret_cast<uint8_t*>(&m_buffer) + startOffset;
+        uint8_t* dst = reinterpret_cast<uint8_t*>(m_baseLogicalAddress) + startOffset;
+        copyStackPage(dst, src, size);
     }
     m_dirtyBits = 0;
 }
 
 void* Page::lowWatermarkFromVisitingDirtyChunks()
 {
-    uint64_t dirtyBits = m_dirtyBits;
-    size_t offset = 0;
-    while (dirtyBits) {
-        if (dirtyBits & 1)
-            return reinterpret_cast<uint8_t*>(m_baseLogicalAddress) + offset;
-        dirtyBits = dirtyBits >> 1;
-        offset += s_chunkSize;
-    }
-    return maxLowWatermark;
+    auto dirtyBits = m_dirtyBits;
+
+    // If dirtyBits is 0, we have no set bits
+    if (!dirtyBits)
+        return maxLowWatermark;
+
+    // All non-zero numbers has to have at least 1 set bit
+    auto offset = s_chunkSize * WTF::ctz(dirtyBits);
+
+    return reinterpret_cast<uint8_t*>(m_baseLogicalAddress) + offset;
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Stack);

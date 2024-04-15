@@ -240,9 +240,8 @@ void IsoPage<Config>::forEachLiveObject(const LockHolder&, const Func& func)
         unsigned firstBitIndex = wordIndex * 32;
         char* cellByte = reinterpret_cast<char*>(this) + firstBitIndex * Config::objectSize;
         for (unsigned bitIndex = 0; bitIndex < 32; ++bitIndex) {
-            if (word & 1)
+            if (word & (1U << bitIndex))
                 func(static_cast<void*>(cellByte));
-            word >>= 1;
             cellByte += Config::objectSize;
         }
     }
