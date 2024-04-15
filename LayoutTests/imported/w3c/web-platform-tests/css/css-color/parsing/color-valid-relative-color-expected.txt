@@ -465,7 +465,7 @@ Expected: color(srgb 0.5 0.3 0.7).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.5 +/- 0.01, expected 0.5 but got 128
 FAIL e.style['color'] = "hsl(from rebeccapurple h alpha l / s)" should set the property value Colors do not match.
 Actual:   rgba(102, 0, 204, 0.5)
-Expected: color(srgb 0.4  0.396 0.404).
+Expected: color(srgb 0.4 0.396 0.404).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
 FAIL e.style['color'] = "hsl(from rebeccapurple h l l / l)" should set the property value Colors do not match.
 Actual:   rgba(102, 61, 143, 0.4)
@@ -734,8 +734,8 @@ Expected: color(srgb 0.6 0.4 0.8).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.6 +/- 0.01, expected 0.6 but got 153
 FAIL e.style['color'] = "hwb(from rebeccapurple h alpha w / b)" should set the property value Colors do not match.
 Actual:   rgba(213, 213, 213, 0.4)
-Expected: color(srgb 0.405 0.01 0.8 / 1).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.405 +/- 0.01, expected 0.405 but got 213
+Expected: color(srgb 0.405 0.01 0.8).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
 FAIL e.style['color'] = "hwb(from rebeccapurple h w w / w)" should set the property value Colors do not match.
 Actual:   rgba(128, 51, 204, 0.2)
 Expected: color(srgb 0.5 0.2 0.8).

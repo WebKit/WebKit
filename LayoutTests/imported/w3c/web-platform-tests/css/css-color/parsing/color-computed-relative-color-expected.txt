@@ -229,6 +229,8 @@ Expected: color(srgb 0.2 0.4 0.6 / 0.8).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
 FAIL Property color value 'rgb(from rgb(100 110 120 / 0.8) calc(r + 1) calc(g + 1) calc(b + 1) / calc(alpha + 0.01))' assert_true: 'rgb(from rgb(100 110 120 / 0.8) calc(r + 1) calc(g + 1) calc(b + 1) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'rgb(from rebeccapurple calc((r / 255) * 100%) calc((g / 255) * 100%) calc((b / 255) * 100%) / calc(alpha * 100%))' assert_true: 'rgb(from rebeccapurple calc((r / 255) * 100%) calc((g / 255) * 100%) calc((b / 255) * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'rgb(from rgb(from rebeccapurple r g b / calc(alpha + 0.5)) r g b / calc(alpha - 0.5))' assert_true: 'rgb(from rgb(from rebeccapurple r g b / calc(alpha + 0.5)) r g b / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'rgb(from rgb(from rebeccapurple r g b / calc(alpha - 1.5)) r g b / calc(alpha + 0.5))' assert_true: 'rgb(from rgb(from rebeccapurple r g b / calc(alpha - 1.5)) r g b / calc(alpha + 0.5))' is a supported value for color. expected true got false
 FAIL Property color value 'rgb(from rebeccapurple none none none)' Colors do not match.
 Actual:   rgb(0, 0, 0)
 Expected: color(srgb 0 0 0).
@@ -273,6 +275,10 @@ FAIL Property color value 'rgb(from rgb(20% 40% 60% / none) r g b / alpha)' Colo
 Actual:   rgba(51, 102, 153, 0)
 Expected: color(srgb 0.2 0.4 0.6 / 0).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
+FAIL Property color value 'color-mix(in srgb, rgb(from rebeccapurple none g b), rebeccapurple)' Colors do not match.
+Actual:   color(srgb 0.2 0.2 0.6)
+Expected: color(srgb 0.4 0.2 0.6).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 0.2
 FAIL Property color value 'rgb(from color-mix(in srgb, red, red) r g b / alpha)' assert_true: 'rgb(from color-mix(in srgb, red, red) r g b / alpha)' is a supported value for color. expected true got false
 FAIL Property color value 'hsl(from rebeccapurple h s l)' Colors do not match.
 Actual:   rgb(102, 51, 153)
@@ -396,12 +402,12 @@ Expected: color(srgb 0.5 0.3 0.7).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.5 +/- 0.01, expected 0.5 but got 128
 FAIL Property color value 'hsl(from rebeccapurple h alpha l / s)' Colors do not match.
 Actual:   rgba(102, 0, 204, 0.5)
-Expected: color(srgb 0.4 0.396 0.404 / 1).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
+Expected: color(srgb 0.4 0.396 0.404).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
 FAIL Property color value 'hsl(from rebeccapurple h l l / l)' Colors do not match.
 Actual:   rgba(102, 61, 143, 0.4)
-Expected: color(srgb 0.4 0.24 0.56 / 1).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
+Expected: color(srgb 0.4 0.24 0.56).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
 FAIL Property color value 'hsl(from rebeccapurple h alpha alpha / alpha)' Colors do not match.
 Actual:   rgb(255, 255, 255)
 Expected: color(srgb 0.01 0.01 0.01).
@@ -412,12 +418,12 @@ Expected: color(srgb 0.3 0.5 0.7 / 0.8).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 4 got 3
 FAIL Property color value 'hsl(from rgb(20%, 40%, 60%, 80%) h alpha l / s)' Colors do not match.
 Actual:   rgba(20, 102, 184, 0.5)
-Expected: color(srgb 0.397 0.4 0.403 / 1).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.397 +/- 0.01, expected 0.397 but got 20
+Expected: color(srgb 0.397 0.4 0.403).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
 FAIL Property color value 'hsl(from rgb(20%, 40%, 60%, 80%) h l l / l)' Colors do not match.
 Actual:   rgba(61, 102, 143, 0.4)
-Expected: color(srgb 0.24 0.4 0.56 / 1).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.24 +/- 0.01, expected 0.24 but got 61
+Expected: color(srgb 0.24 0.4 0.56).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
 FAIL Property color value 'hsl(from rgb(20%, 40%, 60%, 80%) h alpha alpha / alpha)' Colors do not match.
 Actual:   rgba(163, 204, 245, 0.8)
 Expected: color(srgb 0.01 0.01 0.01 / 0.8).
@@ -432,6 +438,8 @@ Expected: color(srgb 0.2 0.4 0.6 / 0.8).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
 FAIL Property color value 'hsl(from hsl(20 30 40 / 0.8) calc(h + 1) calc(s + 1) calc(l + 1) / calc(alpha + 0.01))' assert_true: 'hsl(from hsl(20 30 40 / 0.8) calc(h + 1) calc(s + 1) calc(l + 1) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'hsl(from rebeccapurple calc((h / 360) * 360deg) calc((s / 100) * 100%) calc((l / 100) * 100%) / calc(alpha * 100%))' assert_true: 'hsl(from rebeccapurple calc((h / 360) * 360deg) calc((s / 100) * 100%) calc((l / 100) * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'hsl(from hsl(from rebeccapurple h s l / calc(alpha + 0.5)) h s l / calc(alpha - 0.5))' assert_true: 'hsl(from hsl(from rebeccapurple h s l / calc(alpha + 0.5)) h s l / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'hsl(from hsl(from rebeccapurple h s l / calc(alpha - 1.5)) h s l / calc(alpha + 0.5))' assert_true: 'hsl(from hsl(from rebeccapurple h s l / calc(alpha - 1.5)) h s l / calc(alpha + 0.5))' is a supported value for color. expected true got false
 FAIL Property color value 'hsl(from rebeccapurple none none none)' Colors do not match.
 Actual:   rgb(0, 0, 0)
 Expected: color(srgb 0 0 0).
@@ -488,6 +496,7 @@ FAIL Property color value 'hsl(from hsl(none 20% 50% / .5) h s l / alpha)' Color
 Actual:   rgba(153, 102, 102, 0.5)
 Expected: color(srgb 0.6 0.4 0.4 / 0.5).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.6 +/- 0.01, expected 0.6 but got 153
+PASS Property color value 'color-mix(in hsl, hsl(from rebeccapurple none s l), rebeccapurple)'
 FAIL Property color value 'hsl(from color-mix(in srgb, red, red) h s l / alpha)' assert_true: 'hsl(from color-mix(in srgb, red, red) h s l / alpha)' is a supported value for color. expected true got false
 FAIL Property color value 'hwb(from rebeccapurple h w b)' Colors do not match.
 Actual:   rgb(102, 51, 153)
@@ -647,6 +656,8 @@ Expected: color(srgb 0.2 0.4 0.6 / 0.8).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
 FAIL Property color value 'hwb(from hwb(20 30 40 / 0.8) calc(h + 1) calc(w + 1) calc(b + 1) / calc(alpha + 0.01))' assert_true: 'hwb(from hwb(20 30 40 / 0.8) calc(h + 1) calc(w + 1) calc(b + 1) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'hwb(from rebeccapurple calc((h / 360) * 360deg) calc((w / 100) * 100%) calc((b / 100) * 100%) / calc(alpha * 100%))' assert_true: 'hwb(from rebeccapurple calc((h / 360) * 360deg) calc((w / 100) * 100%) calc((b / 100) * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'hwb(from hwb(from rebeccapurple h w b / calc(alpha + 0.5)) h w b / calc(alpha - 0.5))' assert_true: 'hwb(from hwb(from rebeccapurple h w b / calc(alpha + 0.5)) h w b / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'hwb(from hwb(from rebeccapurple h w b / calc(alpha - 1.5)) h w b / calc(alpha + 0.5))' assert_true: 'hwb(from hwb(from rebeccapurple h w b / calc(alpha - 1.5)) h w b / calc(alpha + 0.5))' is a supported value for color. expected true got false
 FAIL Property color value 'hwb(from rebeccapurple none none none)' Colors do not match.
 Actual:   rgb(255, 0, 0)
 Expected: color(srgb 1 0 0).
@@ -703,6 +714,7 @@ FAIL Property color value 'hwb(from hwb(none 20% 50% / .5) h w b / alpha)' Color
 Actual:   rgba(128, 51, 51, 0.5)
 Expected: color(srgb 0.5 0.2 0.2 / 0.5).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.5 +/- 0.01, expected 0.5 but got 128
+PASS Property color value 'color-mix(in hwb, hwb(from rebeccapurple none w b), rebeccapurple)'
 FAIL Property color value 'hwb(from color-mix(in srgb, red, red) h w b / alpha)' assert_true: 'hwb(from color-mix(in srgb, red, red) h w b / alpha)' is a supported value for color. expected true got false
 PASS Property color value 'lab(from lab(25 20 50) l a b)'
 PASS Property color value 'lab(from lab(25 20 50) l a b / alpha)'
@@ -742,6 +754,8 @@ PASS Property color value 'lab(from lab(25 20 50) calc(l) calc(a) calc(b))'
 PASS Property color value 'lab(from lab(25 20 50 / 40%) calc(l) calc(a) calc(b) / calc(alpha))'
 FAIL Property color value 'lab(from lab(50 5 10 / 0.8) calc(l + 1) calc(a + 1) calc(b + 1) / calc(alpha + 0.01))' assert_true: 'lab(from lab(50 5 10 / 0.8) calc(l + 1) calc(a + 1) calc(b + 1) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'lab(from lab(25 20 50) calc((l / 100) * 100%) calc((a / 125) * 100%) calc((b / 125) * 100%) / calc(alpha * 100%))' assert_true: 'lab(from lab(25 20 50) calc((l / 100) * 100%) calc((a / 125) * 100%) calc((b / 125) * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'lab(from lab(from lab(25 20 50) l a b / calc(alpha + 0.5)) l a b / calc(alpha - 0.5))' assert_true: 'lab(from lab(from lab(25 20 50) l a b / calc(alpha + 0.5)) l a b / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'lab(from lab(from lab(25 20 50) l a b / calc(alpha - 1.5)) l a b / calc(alpha + 0.5))' assert_true: 'lab(from lab(from lab(25 20 50) l a b / calc(alpha - 1.5)) l a b / calc(alpha + 0.5))' is a supported value for color. expected true got false
 PASS Property color value 'lab(from lab(25 20 50) none none none)'
 PASS Property color value 'lab(from lab(25 20 50) none none none / none)'
 PASS Property color value 'lab(from lab(25 20 50) l a none)'
@@ -753,6 +767,7 @@ PASS Property color value 'lab(from lab(none none none) l a b)'
 PASS Property color value 'lab(from lab(none none none / none) l a b / alpha)'
 PASS Property color value 'lab(from lab(25 none 50) l a b)'
 PASS Property color value 'lab(from lab(25 20 50 / none) l a b / alpha)'
+PASS Property color value 'color-mix(in lab, lab(from lab(25 20 50) none a b), lab(25 20 50))'
 FAIL Property color value 'lab(from color-mix(in lab, lab(25 20 50), lab(25 20 50)) l a b / alpha)' assert_true: 'lab(from color-mix(in lab, lab(25 20 50), lab(25 20 50)) l a b / alpha)' is a supported value for color. expected true got false
 PASS Property color value 'oklab(from oklab(0.25 0.2 0.5) l a b)'
 PASS Property color value 'oklab(from oklab(0.25 0.2 0.5) l a b / alpha)'
@@ -792,6 +807,8 @@ PASS Property color value 'oklab(from oklab(0.25 0.2 0.5) calc(l) calc(a) calc(b
 PASS Property color value 'oklab(from oklab(0.25 0.2 0.5 / 40%) calc(l) calc(a) calc(b) / calc(alpha))'
 FAIL Property color value 'oklab(from oklab(0.5 .05 0.1 / 0.8) calc(l + 0.01) calc(a + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' assert_true: 'oklab(from oklab(0.5 .05 0.1 / 0.8) calc(l + 0.01) calc(a + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'oklab(from oklab(0.25 0.2 0.5) calc(l * 100%) calc((a / 0.4) * 100%) calc((b / 0.4) * 100%) / calc(alpha * 100%))' assert_true: 'oklab(from oklab(0.25 0.2 0.5) calc(l * 100%) calc((a / 0.4) * 100%) calc((b / 0.4) * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'oklab(from oklab(from oklab(0.25 0.2 0.5) l a b / calc(alpha + 0.5)) l a b / calc(alpha - 0.5))' assert_true: 'oklab(from oklab(from oklab(0.25 0.2 0.5) l a b / calc(alpha + 0.5)) l a b / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'oklab(from oklab(from oklab(0.25 0.2 0.5) l a b / calc(alpha - 1.5)) l a b / calc(alpha + 0.5))' assert_true: 'oklab(from oklab(from oklab(0.25 0.2 0.5) l a b / calc(alpha - 1.5)) l a b / calc(alpha + 0.5))' is a supported value for color. expected true got false
 PASS Property color value 'oklab(from oklab(0.25 0.2 0.5) none none none)'
 PASS Property color value 'oklab(from oklab(0.25 0.2 0.5) none none none / none)'
 PASS Property color value 'oklab(from oklab(0.25 0.2 0.5) l a none)'
@@ -803,6 +820,7 @@ PASS Property color value 'oklab(from oklab(none none none) l a b)'
 PASS Property color value 'oklab(from oklab(none none none / none) l a b / alpha)'
 PASS Property color value 'oklab(from oklab(0.25 none 0.5) l a b)'
 PASS Property color value 'oklab(from oklab(0.25 0.2 0.5 / none) l a b / alpha)'
+PASS Property color value 'color-mix(in oklab, oklab(from oklab(0.25 0.2 0.5) none a b), oklab(0.25 0.2 0.5))'
 FAIL Property color value 'oklab(from color-mix(in oklab, oklab(0.25 0.2 0.5), oklab(0.25 0.2 0.5)) l a b / alpha)' assert_true: 'oklab(from color-mix(in oklab, oklab(0.25 0.2 0.5), oklab(0.25 0.2 0.5)) l a b / alpha)' is a supported value for color. expected true got false
 PASS Property color value 'lch(from lch(0.7 45 30) l c h)'
 PASS Property color value 'lch(from lch(0.7 45 30) l c h / alpha)'
@@ -846,6 +864,8 @@ PASS Property color value 'lch(from lch(0.7 45 30) calc(l) calc(c) calc(h))'
 PASS Property color value 'lch(from lch(0.7 45 30 / 40%) calc(l) calc(c) calc(h) / calc(alpha))'
 FAIL Property color value 'lch(from lch(50 5 10 / 0.8) calc(l + 1) calc(c + 1) calc(h + 1) / calc(alpha + 0.01))' assert_true: 'lch(from lch(50 5 10 / 0.8) calc(l + 1) calc(c + 1) calc(h + 1) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'lch(from lch(0.7 45 30) calc((l / 100) * 100%) calc((c / 150) * 100%) calc((h / 360) * 360deg) / calc(alpha * 100%))' assert_true: 'lch(from lch(0.7 45 30) calc((l / 100) * 100%) calc((c / 150) * 100%) calc((h / 360) * 360deg) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'lch(from lch(from lch(0.7 45 30) l c h / calc(alpha + 0.5)) l c h / calc(alpha - 0.5))' assert_true: 'lch(from lch(from lch(0.7 45 30) l c h / calc(alpha + 0.5)) l c h / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'lch(from lch(from lch(0.7 45 30) l c h / calc(alpha - 1.5)) l c h / calc(alpha + 0.5))' assert_true: 'lch(from lch(from lch(0.7 45 30) l c h / calc(alpha - 1.5)) l c h / calc(alpha + 0.5))' is a supported value for color. expected true got false
 PASS Property color value 'lch(from lch(0.7 45 30) none none none)'
 PASS Property color value 'lch(from lch(0.7 45 30) none none none / none)'
 PASS Property color value 'lch(from lch(0.7 45 30) l c none)'
@@ -857,6 +877,7 @@ PASS Property color value 'lch(from lch(none none none) l c h)'
 PASS Property color value 'lch(from lch(none none none / none) l c h / alpha)'
 PASS Property color value 'lch(from lch(0.7 none 30) l c h)'
 PASS Property color value 'lch(from lch(0.7 45 30 / none) l c h / alpha)'
+PASS Property color value 'color-mix(in lch, lch(from lch(0.7 45 30) l c none), lch(0.7 45 30))'
 FAIL Property color value 'lch(from color-mix(in lch, lch(70 45 30), lch(70 45 30)) l c h / alpha)' assert_true: 'lch(from color-mix(in lch, lch(70 45 30), lch(70 45 30)) l c h / alpha)' is a supported value for color. expected true got false
 PASS Property color value 'oklch(from oklch(0.7 0.45 30) l c h)'
 PASS Property color value 'oklch(from oklch(0.7 0.45 30) l c h / alpha)'
@@ -900,6 +921,8 @@ PASS Property color value 'oklch(from oklch(0.7 0.45 30) calc(l) calc(c) calc(h)
 PASS Property color value 'oklch(from oklch(0.7 0.45 30 / 40%) calc(l) calc(c) calc(h) / calc(alpha))'
 FAIL Property color value 'oklch(from oklch(0.5 .05 0.1 / 0.8) calc(l + 0.01) calc(c + 0.01) calc(h + 0.01) / calc(alpha + 0.01))' assert_true: 'oklch(from oklch(0.5 .05 0.1 / 0.8) calc(l + 0.01) calc(c + 0.01) calc(h + 0.01) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'oklch(from oklch(0.7 0.45 30) calc(l * 100%) calc((c / 0.4) * 100%) calc((h / 360) * 360deg) / calc(alpha * 100%))' assert_true: 'oklch(from oklch(0.7 0.45 30) calc(l * 100%) calc((c / 0.4) * 100%) calc((h / 360) * 360deg) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'oklch(from oklch(from oklch(0.7 0.45 30) l c h / calc(alpha + 0.5)) l c h / calc(alpha - 0.5))' assert_true: 'oklch(from oklch(from oklch(0.7 0.45 30) l c h / calc(alpha + 0.5)) l c h / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'oklch(from oklch(from oklch(0.7 0.45 30) l c h / calc(alpha - 1.5)) l c h / calc(alpha + 0.5))' assert_true: 'oklch(from oklch(from oklch(0.7 0.45 30) l c h / calc(alpha - 1.5)) l c h / calc(alpha + 0.5))' is a supported value for color. expected true got false
 PASS Property color value 'oklch(from oklch(0.7 0.45 30) none none none)'
 PASS Property color value 'oklch(from oklch(0.7 0.45 30) none none none / none)'
 PASS Property color value 'oklch(from oklch(0.7 0.45 30) l c none)'
@@ -911,6 +934,7 @@ PASS Property color value 'oklch(from oklch(none none none) l c h)'
 PASS Property color value 'oklch(from oklch(none none none / none) l c h / alpha)'
 PASS Property color value 'oklch(from oklch(0.7 none 30) l c h)'
 PASS Property color value 'oklch(from oklch(0.7 0.45 30 / none) l c h / alpha)'
+PASS Property color value 'color-mix(in oklch, oklch(from oklch(0.7 0.45 30) l c none), oklch(0.7 0.45 30))'
 FAIL Property color value 'oklch(from color-mix(in oklch, oklch(0.7 0.45 30), oklch(0.7 0.45 30)) l c h / alpha)' assert_true: 'oklch(from color-mix(in oklch, oklch(0.7 0.45 30), oklch(0.7 0.45 30)) l c h / alpha)' is a supported value for color. expected true got false
 PASS Property color value 'color(from color(srgb 0.7 0.5 0.3) srgb r g b)'
 PASS Property color value 'color(from color(srgb 0.7 0.5 0.3) srgb r g b / alpha)'
@@ -980,6 +1004,8 @@ PASS Property color value 'color(from color(srgb 0.7 0.5 0.3) srgb calc(r) calc(
 PASS Property color value 'color(from color(srgb 0.7 0.5 0.3 / 40%) srgb calc(r) calc(g) calc(b) / calc(alpha))'
 FAIL Property color value 'color(from color(srgb 0.7 0.5 0.3 / 0.8) srgb calc(r + 0.01) calc(g + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' assert_true: 'color(from color(srgb 0.7 0.5 0.3 / 0.8) srgb calc(r + 0.01) calc(g + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'color(from color(srgb 0.7 0.5 0.3) srgb calc(r * 100%) calc(g * 100%) calc(b * 100%) / calc(alpha * 100%))' assert_true: 'color(from color(srgb 0.7 0.5 0.3) srgb calc(r * 100%) calc(g * 100%) calc(b * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(srgb 0.7 0.5 0.3) srgb r g b / calc(alpha + 0.5)) srgb r g b / calc(alpha - 0.5))' assert_true: 'color(from color(from color(srgb 0.7 0.5 0.3) srgb r g b / calc(alpha + 0.5)) srgb r g b / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(srgb 0.7 0.5 0.3) srgb r g b / calc(alpha - 1.5)) srgb r g b / calc(alpha + 0.5))' assert_true: 'color(from color(from color(srgb 0.7 0.5 0.3) srgb r g b / calc(alpha - 1.5)) srgb r g b / calc(alpha + 0.5))' is a supported value for color. expected true got false
 PASS Property color value 'color(from color(srgb 0.7 0.5 0.3) srgb none none none)'
 PASS Property color value 'color(from color(srgb 0.7 0.5 0.3) srgb none none none / none)'
 PASS Property color value 'color(from color(srgb 0.7 0.5 0.3) srgb r g none)'
@@ -1060,6 +1086,8 @@ PASS Property color value 'color(from color(srgb-linear 0.7 0.5 0.3) srgb-linear
 PASS Property color value 'color(from color(srgb-linear 0.7 0.5 0.3 / 40%) srgb-linear calc(r) calc(g) calc(b) / calc(alpha))'
 FAIL Property color value 'color(from color(srgb-linear 0.7 0.5 0.3 / 0.8) srgb-linear calc(r + 0.01) calc(g + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' assert_true: 'color(from color(srgb-linear 0.7 0.5 0.3 / 0.8) srgb-linear calc(r + 0.01) calc(g + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'color(from color(srgb-linear 0.7 0.5 0.3) srgb-linear calc(r * 100%) calc(g * 100%) calc(b * 100%) / calc(alpha * 100%))' assert_true: 'color(from color(srgb-linear 0.7 0.5 0.3) srgb-linear calc(r * 100%) calc(g * 100%) calc(b * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(srgb-linear 0.7 0.5 0.3) srgb-linear r g b / calc(alpha + 0.5)) srgb-linear r g b / calc(alpha - 0.5))' assert_true: 'color(from color(from color(srgb-linear 0.7 0.5 0.3) srgb-linear r g b / calc(alpha + 0.5)) srgb-linear r g b / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(srgb-linear 0.7 0.5 0.3) srgb-linear r g b / calc(alpha - 1.5)) srgb-linear r g b / calc(alpha + 0.5))' assert_true: 'color(from color(from color(srgb-linear 0.7 0.5 0.3) srgb-linear r g b / calc(alpha - 1.5)) srgb-linear r g b / calc(alpha + 0.5))' is a supported value for color. expected true got false
 PASS Property color value 'color(from color(srgb-linear 0.7 0.5 0.3) srgb-linear none none none)'
 PASS Property color value 'color(from color(srgb-linear 0.7 0.5 0.3) srgb-linear none none none / none)'
 PASS Property color value 'color(from color(srgb-linear 0.7 0.5 0.3) srgb-linear r g none)'
@@ -1140,6 +1168,8 @@ PASS Property color value 'color(from color(a98-rgb 0.7 0.5 0.3) a98-rgb calc(r)
 PASS Property color value 'color(from color(a98-rgb 0.7 0.5 0.3 / 40%) a98-rgb calc(r) calc(g) calc(b) / calc(alpha))'
 FAIL Property color value 'color(from color(a98-rgb 0.7 0.5 0.3 / 0.8) a98-rgb calc(r + 0.01) calc(g + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' assert_true: 'color(from color(a98-rgb 0.7 0.5 0.3 / 0.8) a98-rgb calc(r + 0.01) calc(g + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'color(from color(a98-rgb 0.7 0.5 0.3) a98-rgb calc(r * 100%) calc(g * 100%) calc(b * 100%) / calc(alpha * 100%))' assert_true: 'color(from color(a98-rgb 0.7 0.5 0.3) a98-rgb calc(r * 100%) calc(g * 100%) calc(b * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(a98-rgb 0.7 0.5 0.3) a98-rgb r g b / calc(alpha + 0.5)) a98-rgb r g b / calc(alpha - 0.5))' assert_true: 'color(from color(from color(a98-rgb 0.7 0.5 0.3) a98-rgb r g b / calc(alpha + 0.5)) a98-rgb r g b / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(a98-rgb 0.7 0.5 0.3) a98-rgb r g b / calc(alpha - 1.5)) a98-rgb r g b / calc(alpha + 0.5))' assert_true: 'color(from color(from color(a98-rgb 0.7 0.5 0.3) a98-rgb r g b / calc(alpha - 1.5)) a98-rgb r g b / calc(alpha + 0.5))' is a supported value for color. expected true got false
 PASS Property color value 'color(from color(a98-rgb 0.7 0.5 0.3) a98-rgb none none none)'
 PASS Property color value 'color(from color(a98-rgb 0.7 0.5 0.3) a98-rgb none none none / none)'
 PASS Property color value 'color(from color(a98-rgb 0.7 0.5 0.3) a98-rgb r g none)'
@@ -1220,6 +1250,8 @@ PASS Property color value 'color(from color(rec2020 0.7 0.5 0.3) rec2020 calc(r)
 PASS Property color value 'color(from color(rec2020 0.7 0.5 0.3 / 40%) rec2020 calc(r) calc(g) calc(b) / calc(alpha))'
 FAIL Property color value 'color(from color(rec2020 0.7 0.5 0.3 / 0.8) rec2020 calc(r + 0.01) calc(g + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' assert_true: 'color(from color(rec2020 0.7 0.5 0.3 / 0.8) rec2020 calc(r + 0.01) calc(g + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'color(from color(rec2020 0.7 0.5 0.3) rec2020 calc(r * 100%) calc(g * 100%) calc(b * 100%) / calc(alpha * 100%))' assert_true: 'color(from color(rec2020 0.7 0.5 0.3) rec2020 calc(r * 100%) calc(g * 100%) calc(b * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(rec2020 0.7 0.5 0.3) rec2020 r g b / calc(alpha + 0.5)) rec2020 r g b / calc(alpha - 0.5))' assert_true: 'color(from color(from color(rec2020 0.7 0.5 0.3) rec2020 r g b / calc(alpha + 0.5)) rec2020 r g b / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(rec2020 0.7 0.5 0.3) rec2020 r g b / calc(alpha - 1.5)) rec2020 r g b / calc(alpha + 0.5))' assert_true: 'color(from color(from color(rec2020 0.7 0.5 0.3) rec2020 r g b / calc(alpha - 1.5)) rec2020 r g b / calc(alpha + 0.5))' is a supported value for color. expected true got false
 PASS Property color value 'color(from color(rec2020 0.7 0.5 0.3) rec2020 none none none)'
 PASS Property color value 'color(from color(rec2020 0.7 0.5 0.3) rec2020 none none none / none)'
 PASS Property color value 'color(from color(rec2020 0.7 0.5 0.3) rec2020 r g none)'
@@ -1300,6 +1332,8 @@ PASS Property color value 'color(from color(prophoto-rgb 0.7 0.5 0.3) prophoto-r
 PASS Property color value 'color(from color(prophoto-rgb 0.7 0.5 0.3 / 40%) prophoto-rgb calc(r) calc(g) calc(b) / calc(alpha))'
 FAIL Property color value 'color(from color(prophoto-rgb 0.7 0.5 0.3 / 0.8) prophoto-rgb calc(r + 0.01) calc(g + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' assert_true: 'color(from color(prophoto-rgb 0.7 0.5 0.3 / 0.8) prophoto-rgb calc(r + 0.01) calc(g + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'color(from color(prophoto-rgb 0.7 0.5 0.3) prophoto-rgb calc(r * 100%) calc(g * 100%) calc(b * 100%) / calc(alpha * 100%))' assert_true: 'color(from color(prophoto-rgb 0.7 0.5 0.3) prophoto-rgb calc(r * 100%) calc(g * 100%) calc(b * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(prophoto-rgb 0.7 0.5 0.3) prophoto-rgb r g b / calc(alpha + 0.5)) prophoto-rgb r g b / calc(alpha - 0.5))' assert_true: 'color(from color(from color(prophoto-rgb 0.7 0.5 0.3) prophoto-rgb r g b / calc(alpha + 0.5)) prophoto-rgb r g b / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(prophoto-rgb 0.7 0.5 0.3) prophoto-rgb r g b / calc(alpha - 1.5)) prophoto-rgb r g b / calc(alpha + 0.5))' assert_true: 'color(from color(from color(prophoto-rgb 0.7 0.5 0.3) prophoto-rgb r g b / calc(alpha - 1.5)) prophoto-rgb r g b / calc(alpha + 0.5))' is a supported value for color. expected true got false
 PASS Property color value 'color(from color(prophoto-rgb 0.7 0.5 0.3) prophoto-rgb none none none)'
 PASS Property color value 'color(from color(prophoto-rgb 0.7 0.5 0.3) prophoto-rgb none none none / none)'
 PASS Property color value 'color(from color(prophoto-rgb 0.7 0.5 0.3) prophoto-rgb r g none)'
@@ -1380,6 +1414,8 @@ PASS Property color value 'color(from color(display-p3 0.7 0.5 0.3) display-p3 c
 PASS Property color value 'color(from color(display-p3 0.7 0.5 0.3 / 40%) display-p3 calc(r) calc(g) calc(b) / calc(alpha))'
 FAIL Property color value 'color(from color(display-p3 0.7 0.5 0.3 / 0.8) display-p3 calc(r + 0.01) calc(g + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' assert_true: 'color(from color(display-p3 0.7 0.5 0.3 / 0.8) display-p3 calc(r + 0.01) calc(g + 0.01) calc(b + 0.01) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'color(from color(display-p3 0.7 0.5 0.3) display-p3 calc(r * 100%) calc(g * 100%) calc(b * 100%) / calc(alpha * 100%))' assert_true: 'color(from color(display-p3 0.7 0.5 0.3) display-p3 calc(r * 100%) calc(g * 100%) calc(b * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(display-p3 0.7 0.5 0.3) display-p3 r g b / calc(alpha + 0.5)) display-p3 r g b / calc(alpha - 0.5))' assert_true: 'color(from color(from color(display-p3 0.7 0.5 0.3) display-p3 r g b / calc(alpha + 0.5)) display-p3 r g b / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(display-p3 0.7 0.5 0.3) display-p3 r g b / calc(alpha - 1.5)) display-p3 r g b / calc(alpha + 0.5))' assert_true: 'color(from color(from color(display-p3 0.7 0.5 0.3) display-p3 r g b / calc(alpha - 1.5)) display-p3 r g b / calc(alpha + 0.5))' is a supported value for color. expected true got false
 PASS Property color value 'color(from color(display-p3 0.7 0.5 0.3) display-p3 none none none)'
 PASS Property color value 'color(from color(display-p3 0.7 0.5 0.3) display-p3 none none none / none)'
 PASS Property color value 'color(from color(display-p3 0.7 0.5 0.3) display-p3 r g none)'
@@ -1430,6 +1466,8 @@ PASS Property color value 'color(from color(xyz 7 -20.5 100) xyz calc(x) calc(y)
 PASS Property color value 'color(from color(xyz 7 -20.5 100 / 40%) xyz calc(x) calc(y) calc(z) / calc(alpha))'
 FAIL Property color value 'color(from color(xyz 7 -20.5 100 / 0.8) xyz calc(x + 1) calc(y + 1) calc(z + 1) / calc(alpha + 0.01))' assert_true: 'color(from color(xyz 7 -20.5 100 / 0.8) xyz calc(x + 1) calc(y + 1) calc(z + 1) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'color(from color(xyz 7 -20.5 100) xyz calc(x * 100%) calc(y * 100%) calc(z * 100%) / calc(alpha * 100%))' assert_true: 'color(from color(xyz 7 -20.5 100) xyz calc(x * 100%) calc(y * 100%) calc(z * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(xyz 7 -20.5 100) xyz x y z / calc(alpha + 0.5)) xyz x y z / calc(alpha - 0.5))' assert_true: 'color(from color(from color(xyz 7 -20.5 100) xyz x y z / calc(alpha + 0.5)) xyz x y z / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(xyz 7 -20.5 100) xyz x y z / calc(alpha - 1.5)) xyz x y z / calc(alpha + 0.5))' assert_true: 'color(from color(from color(xyz 7 -20.5 100) xyz x y z / calc(alpha - 1.5)) xyz x y z / calc(alpha + 0.5))' is a supported value for color. expected true got false
 PASS Property color value 'color(from color(xyz 7 -20.5 100) xyz none none none)'
 PASS Property color value 'color(from color(xyz 7 -20.5 100) xyz none none none / none)'
 PASS Property color value 'color(from color(xyz 7 -20.5 100) xyz x y none)'
@@ -1480,6 +1518,8 @@ PASS Property color value 'color(from color(xyz-d50 7 -20.5 100) xyz-d50 calc(x)
 PASS Property color value 'color(from color(xyz-d50 7 -20.5 100 / 40%) xyz-d50 calc(x) calc(y) calc(z) / calc(alpha))'
 FAIL Property color value 'color(from color(xyz-d50 7 -20.5 100 / 0.8) xyz-d50 calc(x + 1) calc(y + 1) calc(z + 1) / calc(alpha + 0.01))' assert_true: 'color(from color(xyz-d50 7 -20.5 100 / 0.8) xyz-d50 calc(x + 1) calc(y + 1) calc(z + 1) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'color(from color(xyz-d50 7 -20.5 100) xyz-d50 calc(x * 100%) calc(y * 100%) calc(z * 100%) / calc(alpha * 100%))' assert_true: 'color(from color(xyz-d50 7 -20.5 100) xyz-d50 calc(x * 100%) calc(y * 100%) calc(z * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(xyz-d50 7 -20.5 100) xyz-d50 x y z / calc(alpha + 0.5)) xyz-d50 x y z / calc(alpha - 0.5))' assert_true: 'color(from color(from color(xyz-d50 7 -20.5 100) xyz-d50 x y z / calc(alpha + 0.5)) xyz-d50 x y z / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(xyz-d50 7 -20.5 100) xyz-d50 x y z / calc(alpha - 1.5)) xyz-d50 x y z / calc(alpha + 0.5))' assert_true: 'color(from color(from color(xyz-d50 7 -20.5 100) xyz-d50 x y z / calc(alpha - 1.5)) xyz-d50 x y z / calc(alpha + 0.5))' is a supported value for color. expected true got false
 PASS Property color value 'color(from color(xyz-d50 7 -20.5 100) xyz-d50 none none none)'
 PASS Property color value 'color(from color(xyz-d50 7 -20.5 100) xyz-d50 none none none / none)'
 PASS Property color value 'color(from color(xyz-d50 7 -20.5 100) xyz-d50 x y none)'
@@ -1530,6 +1570,8 @@ PASS Property color value 'color(from color(xyz-d65 7 -20.5 100) xyz-d65 calc(x)
 PASS Property color value 'color(from color(xyz-d65 7 -20.5 100 / 40%) xyz-d65 calc(x) calc(y) calc(z) / calc(alpha))'
 FAIL Property color value 'color(from color(xyz-d65 7 -20.5 100 / 0.8) xyz-d65 calc(x + 1) calc(y + 1) calc(z + 1) / calc(alpha + 0.01))' assert_true: 'color(from color(xyz-d65 7 -20.5 100 / 0.8) xyz-d65 calc(x + 1) calc(y + 1) calc(z + 1) / calc(alpha + 0.01))' is a supported value for color. expected true got false
 FAIL Property color value 'color(from color(xyz-d65 7 -20.5 100) xyz-d65 calc(x * 100%) calc(y * 100%) calc(z * 100%) / calc(alpha * 100%))' assert_true: 'color(from color(xyz-d65 7 -20.5 100) xyz-d65 calc(x * 100%) calc(y * 100%) calc(z * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(xyz-d65 7 -20.5 100) xyz-d65 x y z / calc(alpha + 0.5)) xyz-d65 x y z / calc(alpha - 0.5))' assert_true: 'color(from color(from color(xyz-d65 7 -20.5 100) xyz-d65 x y z / calc(alpha + 0.5)) xyz-d65 x y z / calc(alpha - 0.5))' is a supported value for color. expected true got false
+FAIL Property color value 'color(from color(from color(xyz-d65 7 -20.5 100) xyz-d65 x y z / calc(alpha - 1.5)) xyz-d65 x y z / calc(alpha + 0.5))' assert_true: 'color(from color(from color(xyz-d65 7 -20.5 100) xyz-d65 x y z / calc(alpha - 1.5)) xyz-d65 x y z / calc(alpha + 0.5))' is a supported value for color. expected true got false
 PASS Property color value 'color(from color(xyz-d65 7 -20.5 100) xyz-d65 none none none)'
 PASS Property color value 'color(from color(xyz-d65 7 -20.5 100) xyz-d65 none none none / none)'
 PASS Property color value 'color(from color(xyz-d65 7 -20.5 100) xyz-d65 x y none)'
