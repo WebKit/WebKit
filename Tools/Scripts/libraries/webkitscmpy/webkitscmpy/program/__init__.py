@@ -61,7 +61,7 @@ from webkitscmpy import local, log, remote
 def main(
     args=None, path=None, loggers=None, contributors=None,
     identifier_template=None, subversion=None, additional_setup=None, hooks=None,
-    canonical_svn=None, programs=None, classifier=None, **kwargs
+    canonical_svn=None, programs=None, classifier=None, clone_filter=None, **kwargs
 ):
     logging.basicConfig(level=logging.WARNING)
 
@@ -188,4 +188,5 @@ def main(
             additional_setup=additional_setup,
             hooks=hooks,
             canonical_svn=canonical_svn,
+            clone_filter=clone_filter,
         )
