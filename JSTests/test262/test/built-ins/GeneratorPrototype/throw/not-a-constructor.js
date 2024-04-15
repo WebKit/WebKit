@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   function* g() {} let expected = new Test262Error(); let iterator = g();try {new iterator.throw(expected);} catch (e) {if (e !== expected) {throw e;}}
-}, '`function* g() {} let expected = new Test262Error(); let iterator = g();try {new iterator.throw(expected);} catch (e) {if (e !== expected) {throw e;}}` throws TypeError');
+});
 

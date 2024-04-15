@@ -10,8 +10,8 @@ features: [Temporal]
 
 // Based on a test case by André Bargull <andre.bargull@gmail.com>
 
-// Note: February in a leap year.
-const relativeTo = new Temporal.PlainDate(1972, 2, 1);
+// Note: One day after February in a leap year.
+const relativeTo = new Temporal.PlainDate(1972, 3, 1);
 
 const options = {
   largestUnit: "years",

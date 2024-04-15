@@ -15,6 +15,6 @@ testWithBigIntTypedArrayConstructors(TA => {
   testWithAtomicsOutOfBoundsIndices(function(IdxGen) {
     assert.throws(RangeError, function() {
       Atomics.store(view, IdxGen(view), 10n);
-    }, '`Atomics.store(view, IdxGen(view), 10n)` throws RangeError');
+    });
   });
 });

@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   let p = new Promise(() => {}); new p.catch();
-}, '`let p = new Promise(() => {}); new p.catch()` throws TypeError');
+});
 

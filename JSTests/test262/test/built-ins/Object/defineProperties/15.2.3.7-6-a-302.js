@@ -24,10 +24,9 @@ Object.defineProperties(arg, {
   }
 });
 
-verifyEqualTo(arg, "genericProperty", 1001);
-
-verifyWritable(arg, "genericProperty");
-
-verifyEnumerable(arg, "genericProperty");
-
-verifyConfigurable(arg, "genericProperty");
+verifyProperty(arg, "genericProperty", {
+  value: 1001,
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

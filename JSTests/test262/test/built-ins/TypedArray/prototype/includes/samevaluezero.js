@@ -41,4 +41,4 @@ testWithTypedArrayConstructors(function(TA) {
 testWithTypedArrayConstructors(function(FloatArray) {
   var sample = new FloatArray([42, 0, 1, undefined, NaN]);
   assert.sameValue(sample.includes(NaN), true, "NaN");
-}, [Float32Array, Float64Array]);
+}, floatArrayConstructors);

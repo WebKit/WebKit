@@ -24,6 +24,6 @@ Object.defineProperties(arr, {
   }
 });
 
-assert(arr.hasOwnProperty("0"));
-verifyNotConfigurable(arr, "0");
-assert(arr.hasOwnProperty("0"));
+verifyProperty(arr, "0", {
+  configurable: false,
+});

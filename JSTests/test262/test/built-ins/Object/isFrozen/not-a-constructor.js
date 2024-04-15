@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Object.isFrozen), false, 'isConstructor(Object.is
 
 assert.throws(TypeError, () => {
   new Object.isFrozen({});
-}, '`new Object.isFrozen({})` throws TypeError');
+});
 

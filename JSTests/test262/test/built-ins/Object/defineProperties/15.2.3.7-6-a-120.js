@@ -19,10 +19,9 @@ Object.defineProperties(arr, {
   }
 });
 
-verifyEqualTo(arr, "length", 0);
-
-verifyNotWritable(arr, "length");
-
-verifyNotEnumerable(arr, "length");
-
-verifyNotConfigurable(arr, "length");
+verifyProperty(arr, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Math.asinh), false, 'isConstructor(Math.asinh) mu
 
 assert.throws(TypeError, () => {
   new Math.asinh();
-}, '`new Math.asinh()` throws TypeError');
+});
 

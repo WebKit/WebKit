@@ -25,10 +25,9 @@ if (!preCheck) {
   throw new Test262Error('Expected preCheck to be true, actually ' + preCheck);
 }
 
-verifyEqualTo(obj, "foo", 10);
-
-verifyWritable(obj, "foo");
-
-verifyEnumerable(obj, "foo");
-
-verifyNotConfigurable(obj, "foo");
+verifyProperty(obj, "foo", {
+  value: 10,
+  writable: true,
+  enumerable: true,
+  configurable: false,
+});

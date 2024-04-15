@@ -23,8 +23,9 @@ includes: [propertyHelper.js, testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-assert.sameValue(TypedArray.prototype.reduceRight.length, 1);
-
-verifyNotEnumerable(TypedArray.prototype.reduceRight, "length");
-verifyNotWritable(TypedArray.prototype.reduceRight, "length");
-verifyConfigurable(TypedArray.prototype.reduceRight, "length");
+verifyProperty(TypedArray.prototype.reduceRight, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

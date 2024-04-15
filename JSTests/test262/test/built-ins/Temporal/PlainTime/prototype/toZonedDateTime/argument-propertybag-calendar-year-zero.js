@@ -15,7 +15,8 @@ const invalidStrings = [
   "-000000-10-31T17:45+00:00[UTC]",
 ];
 const instance = new Temporal.PlainTime(12, 34, 56, 987, 654, 321);
-invalidStrings.forEach((arg) => {
+invalidStrings.forEach((str) => {
+  const arg = { year: 1976, month: 11, day: 18, calendar: str };
   assert.throws(
     RangeError,
     () => instance.toZonedDateTime({ plainDate: arg, timeZone: "UTC" }),

@@ -26,6 +26,7 @@ verifyEqualTo(arr, "length", 2);
 
 verifyWritable(arr, "length", "length", 5);
 
-verifyNotEnumerable(arr, "length");
-
-verifyNotConfigurable(arr, "length");
+verifyProperty(arr, "length", {
+  enumerable: false,
+  configurable: false,
+});

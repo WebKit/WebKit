@@ -12,5 +12,5 @@ features: [ArrayBuffer, Atomics, DataView, SharedArrayBuffer, Symbol, TypedArray
 testWithAtomicsNonViewValues(function(nonView) {
   assert.throws(TypeError, function() {
     Atomics.notify(nonView, 0, 0);
-  }, '`Atomics.notify(nonView, 0, 0)` throws TypeError'); // Even with count == 0
+  }); // Even with count == 0
 });

@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Array.prototype.keys), false, 'isConstructor(Arra
 
 assert.throws(TypeError, () => {
   new Array.prototype.keys();
-}, '`new Array.prototype.keys()` throws TypeError');
+});
 

@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.fround.name, "fround");
-
-verifyNotEnumerable(Math.fround, "name");
-verifyNotWritable(Math.fround, "name");
-verifyConfigurable(Math.fround, "name");
+verifyProperty(Math.fround, "name", {
+  value: "fround",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

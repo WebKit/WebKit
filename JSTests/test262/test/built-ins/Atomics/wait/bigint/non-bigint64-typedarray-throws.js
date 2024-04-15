@@ -34,8 +34,8 @@ const poisoned = {
 
 assert.throws(TypeError, function() {
   Atomics.wait(i64a, 0, 0n, 0);
-}, '`Atomics.wait(i64a, 0, 0n, 0)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.wait(i64a, poisoned, poisoned, poisoned);
-}, '`Atomics.wait(i64a, poisoned, poisoned, poisoned)` throws TypeError');
+});

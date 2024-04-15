@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Set.prototype.values), false, 'isConstructor(Set.
 
 assert.throws(TypeError, () => {
   let s = new Set([]); new s.values();
-}, '`let s = new Set([]); new s.values()` throws TypeError');
+});
 

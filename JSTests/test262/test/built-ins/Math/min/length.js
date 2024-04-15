@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.min.length, 2);
-
-verifyNotEnumerable(Math.min, "length");
-verifyNotWritable(Math.min, "length");
-verifyConfigurable(Math.min, "length");
+verifyProperty(Math.min, "length", {
+  value: 2,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

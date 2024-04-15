@@ -58,7 +58,7 @@ Promise.prototype.then = function(resolve, reject) {
     assert.sameValue(isConstructor(reject), false, 'isConstructor(reject) must return false');
     assert.throws(TypeError, () => {
       new reject();
-    }, '`new reject()` throws TypeError');
+    });
     assert.sameValue(arguments.length, 2, '`then` invoked with two arguments');
   }
 

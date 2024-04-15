@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Date.prototype.setMilliseconds.name, "setMilliseconds");
-
-verifyNotEnumerable(Date.prototype.setMilliseconds, "name");
-verifyNotWritable(Date.prototype.setMilliseconds, "name");
-verifyConfigurable(Date.prototype.setMilliseconds, "name");
+verifyProperty(Date.prototype.setMilliseconds, "name", {
+  value: "setMilliseconds",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

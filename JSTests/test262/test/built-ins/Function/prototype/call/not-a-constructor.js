@@ -29,11 +29,11 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Function.prototype.call();
-}, '`new Function.prototype.call()` throws TypeError');
+});
 
 assert.throws(TypeError, () => {
   new Function.prototype.call;
-}, '`new Function.prototype.call` throws TypeError');
+});
 
 var call = Function.prototype.call;
 assert.throws(TypeError, () => {

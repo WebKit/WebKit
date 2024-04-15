@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Array.prototype.toSorted();
-}, '`new Array.prototype.toSorted()` throws TypeError');
+});
 

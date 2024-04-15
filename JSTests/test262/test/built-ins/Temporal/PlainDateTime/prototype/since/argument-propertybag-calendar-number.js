@@ -7,7 +7,7 @@ description: A number as calendar in a property bag is not accepted
 features: [Temporal]
 ---*/
 
-const instance = new Temporal.PlainDate(1976, 11, 18);
+const instance = new Temporal.PlainDateTime(1976, 11, 18);
 
 const numbers = [
   1,
@@ -15,6 +15,7 @@ const numbers = [
   -19970327,
   1234567890,
 ];
+
 for (const calendar of numbers) {
   const arg = { year: 1976, monthCode: "M11", day: 18, calendar };
   assert.throws(

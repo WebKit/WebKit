@@ -15,6 +15,8 @@ strObj.foo = 10; // default [[Configurable]] attribute value of foo: true
 
 Object.freeze(strObj);
 
-verifyNotWritable(strObj, "foo");
-verifyNotConfigurable(strObj, "foo");
-assert.sameValue(strObj.foo, 10);
+verifyProperty(strObj, "foo", {
+  value: 10,
+  writable: false,
+  configurable: false,
+});

@@ -24,5 +24,5 @@ assert.sameValue(isConstructor(String.prototype.sub), false, 'isConstructor(Stri
 
 assert.throws(TypeError, () => {
   new String.prototype.sub();
-}, '`new String.prototype.sub()` throws TypeError');
+});
 

@@ -16,6 +16,7 @@ const expected = [
   "get options.disambiguation",
   "get options.disambiguation.toString",
   "call options.disambiguation.toString",
+  "get timeZone.getOffsetNanosecondsFor",
   "get timeZone.getPossibleInstantsFor",
   "call timeZone.getPossibleInstantsFor",
 ];

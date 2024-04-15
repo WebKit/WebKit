@@ -18,8 +18,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.sinh.length, 1);
-
-verifyNotEnumerable(Math.sinh, "length");
-verifyNotWritable(Math.sinh, "length");
-verifyConfigurable(Math.sinh, "length");
+verifyProperty(Math.sinh, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

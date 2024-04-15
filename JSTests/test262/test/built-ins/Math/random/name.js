@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.random.name, "random");
-
-verifyNotEnumerable(Math.random, "name");
-verifyNotWritable(Math.random, "name");
-verifyConfigurable(Math.random, "name");
+verifyProperty(Math.random, "name", {
+  value: "random",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

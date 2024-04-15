@@ -7,6 +7,7 @@ description: >
     Object.create - [[Set]] is set as undefined if it is absent in
     accessor descriptor of one property in 'Properties' (8.12.9 step
     4.b)
+includes: [propertyHelper.js]
 ---*/
 
 var newObj = Object.create({}, {
@@ -27,19 +28,10 @@ if (newObj.prop === "verifyCreate") {
   verifyGet = true;
 }
 
-var verifyEnumerable = false;
-for (var p in newObj) {
-  if (p === "prop") {
-    verifyEnumerable = true;
-  }
-}
-
-var verifyConfigurable = false;
-var hasProperty = newObj.hasOwnProperty("prop");
-delete newObj.prop;
-verifyConfigurable = !newObj.hasOwnProperty("prop") && hasProperty;
-
 assert(verifySet, 'verifySet !== true');
 assert(verifyGet, 'verifyGet !== true');
-assert(verifyEnumerable, 'verifyEnumerable !== true');
-assert(verifyConfigurable, 'verifyConfigurable !== true');
+
+verifyProperty(newObj, "prop", {
+  enumerable: true,
+  configurable: true,
+});

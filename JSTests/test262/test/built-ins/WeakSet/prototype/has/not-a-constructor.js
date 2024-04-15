@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   let ws = new WeakSet(); new ws.has();
-}, '`let ws = new WeakSet(); new ws.has()` throws TypeError');
+});
 

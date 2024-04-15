@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Number.isSafeInteger.name, "isSafeInteger");
-
-verifyNotEnumerable(Number.isSafeInteger, "name");
-verifyNotWritable(Number.isSafeInteger, "name");
-verifyConfigurable(Number.isSafeInteger, "name");
+verifyProperty(Number.isSafeInteger, "name", {
+  value: "isSafeInteger",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

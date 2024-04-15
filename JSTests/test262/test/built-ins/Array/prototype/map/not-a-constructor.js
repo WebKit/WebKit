@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Array.prototype.map), false, 'isConstructor(Array
 
 assert.throws(TypeError, () => {
   new Array.prototype.map(() => {});
-}, '`new Array.prototype.map(() => {})` throws TypeError');
+});
 

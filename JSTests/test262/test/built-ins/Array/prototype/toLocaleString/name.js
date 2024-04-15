@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Array.prototype.toLocaleString.name, "toLocaleString");
-
-verifyNotEnumerable(Array.prototype.toLocaleString, "name");
-verifyNotWritable(Array.prototype.toLocaleString, "name");
-verifyConfigurable(Array.prototype.toLocaleString, "name");
+verifyProperty(Array.prototype.toLocaleString, "name", {
+  value: "toLocaleString",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

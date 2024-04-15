@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(DataView.prototype.setFloat32.name, "setFloat32");
-
-verifyNotEnumerable(DataView.prototype.setFloat32, "name");
-verifyNotWritable(DataView.prototype.setFloat32, "name");
-verifyConfigurable(DataView.prototype.setFloat32, "name");
+verifyProperty(DataView.prototype.setFloat32, "name", {
+  value: "setFloat32",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

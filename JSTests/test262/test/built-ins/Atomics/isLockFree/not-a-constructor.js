@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Atomics.isLockFree), false, 'isConstructor(Atomic
 
 assert.throws(TypeError, () => {
   new Atomics.isLockFree(new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT)));
-}, '`new Atomics.isLockFree(new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT)))` throws TypeError');
+});
 

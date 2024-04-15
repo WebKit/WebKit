@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Date.prototype.getDate.name, "getDate");
-
-verifyNotEnumerable(Date.prototype.getDate, "name");
-verifyNotWritable(Date.prototype.getDate, "name");
-verifyConfigurable(Date.prototype.getDate, "name");
+verifyProperty(Date.prototype.getDate, "name", {
+  value: "getDate",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

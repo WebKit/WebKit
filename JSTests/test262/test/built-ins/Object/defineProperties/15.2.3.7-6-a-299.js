@@ -43,12 +43,12 @@ try {
 } catch (e) {
   verifyEqualTo(arg, "0", get_func());
 
-  verifyNotEnumerable(arg, "0");
-
-  verifyNotConfigurable(arg, "0");
-
   if (!(e instanceof TypeError)) {
     throw new Test262Error("Expected TypeError, got " + e);
   }
-
 }
+
+verifyProperty(arg, "0", {
+  enumerable: false,
+  configurable: false,
+});

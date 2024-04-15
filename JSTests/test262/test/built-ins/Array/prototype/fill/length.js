@@ -8,11 +8,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  Array.prototype.fill.length, 1,
-  'The value of `Array.prototype.fill.length` is `1`'
-);
-
-verifyNotEnumerable(Array.prototype.fill, 'length');
-verifyNotWritable(Array.prototype.fill, 'length');
-verifyConfigurable(Array.prototype.fill, 'length');
+verifyProperty(Array.prototype.fill, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

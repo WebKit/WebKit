@@ -12,6 +12,8 @@ includes: [propertyHelper.js]
 
 assert.sameValue(typeof Object.setPrototypeOf, 'function');
 
-verifyNotEnumerable(Object, 'setPrototypeOf');
-verifyWritable(Object, 'setPrototypeOf');
-verifyConfigurable(Object, 'setPrototypeOf');
+verifyProperty(Object, "setPrototypeOf", {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

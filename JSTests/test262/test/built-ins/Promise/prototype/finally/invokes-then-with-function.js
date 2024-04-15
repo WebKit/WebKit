@@ -48,7 +48,7 @@ assert.sameValue(resolve.name, '', 'The value of resolve.name is ""');
 assert.sameValue(isConstructor(resolve), false, 'isConstructor(resolve) must return false');
 assert.throws(TypeError, () => {
   new resolve();
-}, '`new resolve()` throws TypeError');
+});
 
 
 assert.sameValue(
@@ -62,6 +62,6 @@ assert.sameValue(reject.name, '', 'The value of reject.name is ""');
 assert.sameValue(isConstructor(reject), false, 'isConstructor(reject) must return false');
 assert.throws(TypeError, () => {
   new reject();
-}, '`new reject()` throws TypeError');
+});
 
 assert.sameValue(result, returnValue, 'The value of `result` is expected to equal the value of returnValue');

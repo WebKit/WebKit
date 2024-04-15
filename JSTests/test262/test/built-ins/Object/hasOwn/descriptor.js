@@ -9,6 +9,8 @@ author: Jamie Kyle
 features: [Object.hasOwn]
 ---*/
 
-verifyWritable(Object, "hasOwn");
-verifyNotEnumerable(Object, "hasOwn");
-verifyConfigurable(Object, "hasOwn");
+verifyProperty(Object, "hasOwn", {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

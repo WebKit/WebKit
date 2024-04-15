@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Object.create), false, 'isConstructor(Object.crea
 
 assert.throws(TypeError, () => {
   new Object.create(null);
-}, '`new Object.create(null)` throws TypeError');
+});
 

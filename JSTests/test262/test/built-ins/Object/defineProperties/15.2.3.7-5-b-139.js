@@ -17,4 +17,6 @@ Object.defineProperties(obj, {
   }
 });
 
-verifyNotWritable(obj, "property");
+verifyProperty(obj, "property", {
+  writable: false,
+});

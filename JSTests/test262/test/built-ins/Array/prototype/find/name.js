@@ -12,11 +12,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  Array.prototype.find.name, 'find',
-  'The value of `Array.prototype.find.name` is `"find"`'
-);
-
-verifyNotEnumerable(Array.prototype.find, 'name');
-verifyNotWritable(Array.prototype.find, 'name');
-verifyConfigurable(Array.prototype.find, 'name');
+verifyProperty(Array.prototype.find, "name", {
+  value: "find",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -17,9 +17,9 @@ info: |
   folding mappings.
 ---*/
 
-assert(!/[\u0390]/ui.test("\u1fd3"), "\\u0390 does not match \\u1fd3");
-assert(!/[\u1fd3]/ui.test("\u0390"), "\\u1fd3 does not match \\u0390");
-assert(!/[\u03b0]/ui.test("\u1fe3"), "\\u03b0 does not match \\u1fe3");
-assert(!/[\u1fe3]/ui.test("\u03b0"), "\\u1fe3 does not match \\u03b0");
-assert(!/[\ufb05]/ui.test("\ufb06"), "\\ufb05 does not match \\ufb06");
-assert(!/[\ufb06]/ui.test("\ufb05"), "\\ufb06 does not match \\ufb05");
+assert(/[\u0390]/ui.test("\u1fd3"), "\\u0390 does not match \\u1fd3");
+assert(/[\u1fd3]/ui.test("\u0390"), "\\u1fd3 does not match \\u0390");
+assert(/[\u03b0]/ui.test("\u1fe3"), "\\u03b0 does not match \\u1fe3");
+assert(/[\u1fe3]/ui.test("\u03b0"), "\\u1fe3 does not match \\u03b0");
+assert(/[\ufb05]/ui.test("\ufb06"), "\\ufb05 does not match \\ufb06");
+assert(/[\ufb06]/ui.test("\ufb05"), "\\ufb06 does not match \\ufb05");

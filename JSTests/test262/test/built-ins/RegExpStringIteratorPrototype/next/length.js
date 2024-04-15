@@ -26,8 +26,9 @@ features: [Symbol.matchAll]
 
 var RegExpStringIteratorProto = Object.getPrototypeOf(/./[Symbol.matchAll](''));
 
-assert.sameValue(RegExpStringIteratorProto.next.length, 0);
-
-verifyNotEnumerable(RegExpStringIteratorProto.next, 'length');
-verifyNotWritable(RegExpStringIteratorProto.next, 'length');
-verifyConfigurable(RegExpStringIteratorProto.next, 'length');
+verifyProperty(RegExpStringIteratorProto.next, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

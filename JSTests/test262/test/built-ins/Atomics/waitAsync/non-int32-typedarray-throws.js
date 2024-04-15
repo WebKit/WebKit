@@ -42,6 +42,15 @@ assert.throws(TypeError, () => {
   Atomics.waitAsync(view, poisoned, poisoned, poisoned);
 }, '`const view = new Float32Array( new SharedArrayBuffer(Float32Array.BYTES_PER_ELEMENT * 4) ); Atomics.waitAsync(view, poisoned, poisoned, poisoned)` throws a TypeError exception');
 
+if (typeof Float16Array !== 'undefined') {
+  assert.throws(TypeError, function() {
+    const view = new Float16Array(
+      new SharedArrayBuffer(Float16Array.BYTES_PER_ELEMENT * 2)
+    );
+    Atomics.waitAsync(view, poisoned, poisoned, poisoned);
+  }, '`const view = new Float16Array( new SharedArrayBuffer(Float16Array.BYTES_PER_ELEMENT * 2) ); Atomics.waitAsync(view, poisoned, poisoned, poisoned)` throws a TypeError exception');
+}
+
 assert.throws(TypeError, () => {
   const view = new Int16Array(
     new SharedArrayBuffer(Int16Array.BYTES_PER_ELEMENT * 2)

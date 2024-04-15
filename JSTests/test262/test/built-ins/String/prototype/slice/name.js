@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.slice.name, "slice");
-
-verifyNotEnumerable(String.prototype.slice, "name");
-verifyNotWritable(String.prototype.slice, "name");
-verifyConfigurable(String.prototype.slice, "name");
+verifyProperty(String.prototype.slice, "name", {
+  value: "slice",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

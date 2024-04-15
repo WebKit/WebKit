@@ -12,11 +12,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  String.prototype.normalize.name, 'normalize',
-  'The value of `String.prototype.normalize.name` is `"normalize"`'
-);
-
-verifyNotEnumerable(String.prototype.normalize, 'name');
-verifyNotWritable(String.prototype.normalize, 'name');
-verifyConfigurable(String.prototype.normalize, 'name');
+verifyProperty(String.prototype.normalize, "name", {
+  value: "normalize",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -10,13 +10,13 @@ features: [ArrayBuffer, Atomics, DataView, SharedArrayBuffer, Symbol, TypedArray
 ---*/
 
 var sab = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 2);
-var views = intArrayConstructors.slice();
+var views = nonClampedIntArrayConstructors.slice();
 
 testWithTypedArrayConstructors(function(TA) {
   let view = new TA(sab);
   testWithAtomicsOutOfBoundsIndices(function(IdxGen) {
     assert.throws(RangeError, function() {
       Atomics.xor(view, IdxGen(view), 0);
-    }, '`Atomics.xor(view, IdxGen(view), 0)` throws RangeError');
+    });
   });
 }, views);

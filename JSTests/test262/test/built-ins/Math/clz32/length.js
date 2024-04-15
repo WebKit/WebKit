@@ -22,8 +22,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.clz32.length, 1);
-
-verifyNotEnumerable(Math.clz32, "length");
-verifyNotWritable(Math.clz32, "length");
-verifyConfigurable(Math.clz32, "length");
+verifyProperty(Math.clz32, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

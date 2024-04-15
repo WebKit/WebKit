@@ -24,18 +24,15 @@ try {
     set: function() {}
   });
   throw new Test262Error("Expected an exception.");
-
 } catch (e) {
-  verifyEqualTo(arrObj, "1", 3);
-
-  verifyNotWritable(arrObj, "1");
-
-  verifyNotEnumerable(arrObj, "1");
-
-  verifyNotConfigurable(arrObj, "1");
-
   if (!(e instanceof TypeError)) {
     throw new Test262Error("Expected TypeError, got " + e);
   }
-
 }
+
+verifyProperty(arrObj, "1", {
+  value: 3,
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

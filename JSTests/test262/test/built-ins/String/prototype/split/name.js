@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.split.name, "split");
-
-verifyNotEnumerable(String.prototype.split, "name");
-verifyNotWritable(String.prototype.split, "name");
-verifyConfigurable(String.prototype.split, "name");
+verifyProperty(String.prototype.split, "name", {
+  value: "split",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

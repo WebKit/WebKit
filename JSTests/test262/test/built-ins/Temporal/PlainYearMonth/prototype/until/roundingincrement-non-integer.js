@@ -20,5 +20,6 @@ const earlier = new Temporal.PlainYearMonth(2000, 5);
 const later = new Temporal.PlainYearMonth(2000, 10);
 const result = earlier.until(later, { roundingIncrement: 2.5, roundingMode: "trunc" });
 TemporalHelpers.assertDuration(result, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, "roundingIncrement 2.5 truncates to 2");
-const result2 = earlier.until(later, { smallestUnit: "months", roundingIncrement: 1e9 + 0.5, roundingMode: "expand" });
-TemporalHelpers.assertDuration(result2, 0, 1e9, 0, 0, 0, 0, 0, 0, 0, 0, "roundingIncrement 1e9 + 0.5 truncates to 1e9");
+// Cannot test the upper bound of 1e9 + 0.5 here, because the duration is
+// rounded relative to the receiver PlainYearMonth, and 1e9 months is outside of
+// the PlainYearMonth range.

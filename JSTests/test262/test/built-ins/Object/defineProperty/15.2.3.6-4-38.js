@@ -16,13 +16,12 @@ try {
     configurable: true
   });
 
-  verifyEqualTo(Math, "foo", 12);
-
-  verifyNotWritable(Math, "foo");
-
-  verifyNotEnumerable(Math, "foo");
-
-  verifyConfigurable(Math, "foo");
+  verifyProperty(Math, "foo", {
+    value: 12,
+    writable: false,
+    enumerable: false,
+    configurable: true,
+  });
 } finally {
   delete Math.foo;
 }

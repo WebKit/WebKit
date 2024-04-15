@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.atan.name, "atan");
-
-verifyNotEnumerable(Math.atan, "name");
-verifyNotWritable(Math.atan, "name");
-verifyConfigurable(Math.atan, "name");
+verifyProperty(Math.atan, "name", {
+  value: "atan",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

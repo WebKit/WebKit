@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Object.preventExtensions({});
-}, '`new Object.preventExtensions({})` throws TypeError');
+});
 

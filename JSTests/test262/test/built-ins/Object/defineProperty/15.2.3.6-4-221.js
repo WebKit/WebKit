@@ -25,16 +25,14 @@ try {
   });
   throw new Test262Error("Expected an exception.");
 } catch (e) {
-  verifyEqualTo(arrObj, "0", 101);
-
-  verifyNotWritable(arrObj, "0");
-
-  verifyNotEnumerable(arrObj, "0");
-
-  verifyNotConfigurable(arrObj, "0");
-
   if (!(e instanceof TypeError)) {
     throw new Test262Error("Expected TypeError, got " + e);
   }
-
 }
+
+verifyProperty(arrObj, "0", {
+  value: 101,
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

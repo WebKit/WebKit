@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Math.log2), false, 'isConstructor(Math.log2) must
 
 assert.throws(TypeError, () => {
   new Math.log2();
-}, '`new Math.log2()` throws TypeError');
+});
 

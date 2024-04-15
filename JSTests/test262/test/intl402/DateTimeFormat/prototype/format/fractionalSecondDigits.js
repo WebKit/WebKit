@@ -5,7 +5,7 @@
 esid: sec-createdatetimeformat
 description: Checks basic handling of fractionalSecondDigits.
 features: [Intl.DateTimeFormat-fractionalSecondDigits]
-locale: [en-US]
+locale: [en]
 ---*/
 
 const d1 = new Date(2019, 7, 10,  1, 2, 3, 234);

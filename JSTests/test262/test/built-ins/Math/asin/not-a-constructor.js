@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Math.asin), false, 'isConstructor(Math.asin) must
 
 assert.throws(TypeError, () => {
   new Math.asin();
-}, '`new Math.asin()` throws TypeError');
+});
 

@@ -51,5 +51,5 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert.throws(Test262Error, function() {
     sample['0'] = obj;
-  }, '`sample[\'0\'] = obj` throws Test262Error');
+  });
 });

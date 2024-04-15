@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.search();
-}, '`new String.prototype.search()` throws TypeError');
+});
 

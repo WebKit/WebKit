@@ -23,11 +23,11 @@ includes: [propertyHelper.js]
     enumerable: false,
     configurable: false
   });
-  verifyEqualTo(arguments, "genericProperty", 1002);
 
-  verifyWritable(arguments, "genericProperty");
-
-  verifyNotEnumerable(arguments, "genericProperty");
-
-  verifyNotConfigurable(arguments, "genericProperty");
+  verifyProperty(arguments, "genericProperty", {
+    value: 1002,
+    writable: true,
+    enumerable: false,
+    configurable: false,
+  });
 }(1, 2, 3));

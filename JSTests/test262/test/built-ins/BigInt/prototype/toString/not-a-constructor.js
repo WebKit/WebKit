@@ -28,4 +28,4 @@ assert.sameValue(
 assert.throws(TypeError, () => {
   let n = 1n;
   new n.toString();
-}, '`let n = 1n; new n.toString()` throws TypeError');
+});

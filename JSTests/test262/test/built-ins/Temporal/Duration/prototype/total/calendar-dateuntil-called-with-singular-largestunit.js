@@ -6,21 +6,16 @@ esid: sec-temporal.duration.prototype.total
 description: The options object passed to calendar.dateUntil has a largestUnit property with its value in the singular form
 info: |
     sec-temporal.duration.prototype.total steps 7–11:
-        7. Let _unbalanceResult_ be ? UnbalanceDurationRelative(_duration_.[[Years]], _duration_.[[Months]], _duration_.[[Weeks]], _duration_.[[Days]], _unit_, _relativeTo_).
+        7. Let _unbalanceResult_ be ? UnbalanceDateDurationRelative(_duration_.[[Years]], _duration_.[[Months]], _duration_.[[Weeks]], _duration_.[[Days]], _unit_, _relativeTo_).
         ...
         10. Let _balanceResult_ be ? BalanceDuration(_unbalanceResult_.[[Days]], _unbalanceResult_.[[Hours]], _unbalanceResult_.[[Minutes]], _unbalanceResult_.[[Seconds]], _unbalanceResult_.[[Milliseconds]], _unbalanceResult_.[[Microseconds]], _unbalanceResult_.[[Nanoseconds]], _unit_, _intermediate_).
         11. Let _roundResult_ be ? RoundDuration(_unbalanceResult_.[[Years]], _unbalanceResult_.[[Months]], _unbalanceResult_.[[Weeks]], _balanceResult_.[[Days]], _balanceResult_.[[Hours]], _balanceResult_.[[Minutes]], _balanceResult_.[[Seconds]], _balanceResult_.[[Milliseconds]], _balanceResult_.[[Microseconds]], _balanceResult_.[[Nanoseconds]], 1, _unit_, *"trunc"*, _relativeTo_).
-    sec-temporal-unbalancedurationrelative steps 1 and 9.d.iii–v:
-      1. If _largestUnit_ is *"year"*, or _years_, _months_, _weeks_, and _days_ are all 0, then
-        a. Return ...
-      ...
-      9. If _largestUnit_ is *"month"*, then
+    sec-temporal-unbalancedatedurationrelative step 3:
+      3. If _largestUnit_ is *"month"*, then
         ...
-        d. Repeat, while abs(_years_) > 0,
-          ...
-          iii. Let _untilOptions_ be ! OrdinaryObjectCreate(*null*).
-          iv. Perform ! CreateDataPropertyOrThrow(_untilOptions_, *"largestUnit"*, *"month"*).
-          v. Let _untilResult_ be ? CalendarDateUntil(_calendar_, _relativeTo_, _newRelativeTo_, _untilOptions_, _dateUntil_).
+        g. Let _untilOptions_ be ! OrdinaryObjectCreate(*null*).
+        h. Perform ! CreateDataPropertyOrThrow(_untilOptions_, *"largestUnit"*, *"month"*).
+        i. Let _untilResult_ be ? CalendarDateUntil(_calendarRec_.[[Receiver]], _plainRelativeTo_, _later_, _untilOptions_, _calendarRec_.[[DateUntil]]).
     sec-temporal-balanceduration step 3.a:
       3. If _largestUnit_ is one of *"year"*, *"month"*, *"week"*, or *"day"*, then
         a. Let _result_ be ? NanosecondsToDays(_nanoseconds_, _relativeTo_).
@@ -44,8 +39,8 @@ includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-// Check the paths that go through NanosecondsToDays: only one call with
-// largestUnit: "year" in RoundDuration when the unit is "year". The others all
+// Check the paths that go through NanosecondsToDays: only one call in
+// RoundDuration when the unit is a calendar unit. The others all
 // have largestUnit: "day" so the difference is taken in ISO calendar space.
 
 const duration = new Temporal.Duration(0, 1, 1, 1, 1, 1, 1, 1, 1, 1);
@@ -57,30 +52,8 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
   },
   {
     years: ["year"],
-    months: [],
-    weeks: [],
-    days: [],
-    hours: [],
-    minutes: [],
-    seconds: [],
-    milliseconds: [],
-    microseconds: [],
-    nanoseconds: []
-  }
-);
-
-// Check the path that converts years to months in UnbalanceDurationRelative.
-
-TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
-  (calendar, unit) => {
-    const duration = new Temporal.Duration(5, 1);
-    const relativeTo = new Temporal.PlainDateTime(2000, 5, 2, 0, 0, 0, 0, 0, 0, calendar);
-    duration.total({ unit, relativeTo });
-  },
-  {
-    years: ["year"],
-    months: ["month", "month", "month", "month", "month"],
-    weeks: [],
+    months: ["month"],
+    weeks: ["week"],
     days: [],
     hours: [],
     minutes: [],

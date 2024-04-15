@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.max.name, "max");
-
-verifyNotEnumerable(Math.max, "name");
-verifyNotWritable(Math.max, "name");
-verifyConfigurable(Math.max, "name");
+verifyProperty(Math.max, "name", {
+  value: "max",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

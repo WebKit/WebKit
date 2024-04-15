@@ -36,17 +36,19 @@ var properties = {
 };
 
 Object.defineProperties(obj, properties);
-verifyEqualTo(obj, "foo1", 200);
 
-verifyWritable(obj, "foo1");
+verifyProperty(obj, "foo1", {
+  value: 200,
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});
 
-verifyEnumerable(obj, "foo1");
-
-verifyConfigurable(obj, "foo1");
 verifyEqualTo(obj, "foo2", get_func());
 
 verifyWritable(obj, "foo2", "setVerifyHelpProp");
 
-verifyEnumerable(obj, "foo2");
-
-verifyConfigurable(obj, "foo2");
+verifyProperty(obj, "foo2", {
+  enumerable: true,
+  configurable: true,
+});

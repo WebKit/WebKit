@@ -21,28 +21,28 @@ const poisoned = {
 
 assert.throws(TypeError, function() {
   Atomics.notify(null, poisoned, poisoned);
-}, '`Atomics.notify(null, poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.notify(undefined, poisoned, poisoned);
-}, '`Atomics.notify(undefined, poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.notify(true, poisoned, poisoned);
-}, '`Atomics.notify(true, poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.notify(false, poisoned, poisoned);
-}, '`Atomics.notify(false, poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.notify('***string***', poisoned, poisoned);
-}, '`Atomics.notify(\'***string***\', poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.notify(Number.NEGATIVE_INFINITY, poisoned, poisoned);
-}, '`Atomics.notify(Number.NEGATIVE_INFINITY, poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.notify(Symbol('***symbol***'), poisoned, poisoned);
-}, '`Atomics.notify(Symbol(\'***symbol***\'), poisoned, poisoned)` throws TypeError');
+});

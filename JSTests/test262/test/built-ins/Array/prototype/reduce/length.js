@@ -21,8 +21,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Array.prototype.reduce.length, 1);
-
-verifyNotEnumerable(Array.prototype.reduce, 'length');
-verifyNotWritable(Array.prototype.reduce, 'length');
-verifyConfigurable(Array.prototype.reduce, 'length');
+verifyProperty(Array.prototype.reduce, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.trunc.name, "trunc");
-
-verifyNotEnumerable(Math.trunc, "name");
-verifyNotWritable(Math.trunc, "name");
-verifyConfigurable(Math.trunc, "name");
+verifyProperty(Math.trunc, "name", {
+  value: "trunc",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

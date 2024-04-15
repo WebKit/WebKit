@@ -22,5 +22,5 @@ const i64a = new BigInt64Array(
 testWithAtomicsOutOfBoundsIndices(function(IdxGen) {
   assert.throws(RangeError, function() {
     Atomics.wait(i64a, IdxGen(i64a), 0n, 0);
-  }, '`Atomics.wait(i64a, IdxGen(i64a), 0n, 0)` throws RangeError');
+  });
 });

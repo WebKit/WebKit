@@ -19,5 +19,7 @@ Object.defineProperty(obj, "0", {
   configurable: true
 });
 
-assert.sameValue(obj[0], 2010);
-verifyNotWritable(obj, "0");
+verifyProperty(obj, "0", {
+  value: 2010,
+  writable: false,
+});

@@ -6,22 +6,17 @@ esid: sec-temporal.duration.prototype.round
 description: The options object passed to calendar.dateUntil has a largestUnit property with its value in the singular form
 info: |
     sec-temporal.duration.prototype.round steps 23–27:
-      23. Let _unbalanceResult_ be ? UnbalanceDurationRelative(_duration_.[[Years]], _duration_.[[Months]], _duration_.[[Weeks]], _duration_.[[Days]], _largestUnit_, _relativeTo_).
+      23. Let _unbalanceResult_ be ? UnbalanceDateDurationRelative(_duration_.[[Years]], _duration_.[[Months]], _duration_.[[Weeks]], _duration_.[[Days]], _largestUnit_, _relativeTo_).
       24. Let _roundResult_ be (? RoundDuration(_unbalanceResult_.[[Years]], _unbalanceResult_.[[Months]], _unbalanceResult_.[[Weeks]], _unbalanceResult_.[[Days]], _duration_.[[Hours]], _duration_.[[Minutes]], _duration_.[[Seconds]], _duration_.[[Milliseconds]], _duration_.[[Microseconds]], _duration_.[[Nanoseconds]], _roundingIncrement_, _smallestUnit_, _roundingMode_, _relativeTo_)).[[DurationRecord]].
       25. Let _adjustResult_ be ? AdjustRoundedDurationDays(_roundResult_.[[Years]], _roundResult_.[[Months]], _roundResult_.[[Weeks]], _roundResult_.[[Days]], _roundResult_.[[Hours]], _roundResult_.[[Minutes]], _roundResult_.[[Seconds]], _roundResult_.[[Milliseconds]], _roundResult_.[[Microseconds]], _roundResult_.[[Nanoseconds]], _roundingIncrement_, _smallestUnit_, _roundingMode_, _relativeTo_).
       26. Let _balanceResult_ be ? BalanceDuration(_adjustResult_.[[Days]], _adjustResult_.[[Hours]], _adjustResult_.[[Minutes]], _adjustResult_.[[Seconds]], _adjustResult_.[[Milliseconds]], _adjustResult_.[[Microseconds]], _adjustResult_.[[Nanoseconds]], _largestUnit_, _relativeTo_).
       27. Let _result_ be ? BalanceDurationRelative(_adjustResult_.[[Years]], _adjustResult_.[[Months]], _adjustResult_.[[Weeks]], _balanceResult_.[[Days]], _largestUnit_, _relativeTo_).
-    sec-temporal-unbalancedurationrelative steps 1 and 9.d.iii–v:
-      1. If _largestUnit_ is *"year"*, or _years_, _months_, _weeks_, and _days_ are all 0, then
-        a. Return ...
-      ...
-      9. If _largestUnit_ is *"month"*, then
+    sec-temporal-unbalancedatedurationrelative step 3:
+      3. If _largestUnit_ is *"month"*, then
         ...
-        d. Repeat, while abs(_years_) > 0,
-          ...
-          iii. Let _untilOptions_ be ! OrdinaryObjectCreate(*null*).
-          iv. Perform ! CreateDataPropertyOrThrow(_untilOptions_, *"largestUnit"*, *"month"*).
-          v. Let _untilResult_ be ? CalendarDateUntil(_calendar_, _relativeTo_, _newRelativeTo_, _untilOptions_, _dateUntil_).
+        g. Let _untilOptions_ be ! OrdinaryObjectCreate(*null*).
+        h. Perform ! CreateDataPropertyOrThrow(_untilOptions_, *"largestUnit"*, *"month"*).
+        i. Let _untilResult_ be ? CalendarDateUntil(_calendarRec_.[[Receiver]], _plainRelativeTo_, _later_, _untilOptions_, _calendarRec_.[[DateUntil]]).
     sec-temporal-roundduration steps 5.d and 8.n–p:
       5. If _unit_ is one of *"year"*, *"month"*, *"week"*, or *"day"*, then
         ...
@@ -79,8 +74,8 @@ features: [Temporal]
 // should result in one call to dateUntil() originating from
 // AdjustRoundedDurationDays, with largestUnit equal to the largest unit in
 // the duration higher than "day".
-// Additionally one call with largestUnit: "month" in BalanceDurationRelative
-// when the largestUnit given to round() is "year".
+// Additionally one call in BalanceDateDurationRelative with the same
+// largestUnit.
 // Other calls have largestUnit: "day" so the difference is taken in ISO
 // calendar space.
 
@@ -104,9 +99,9 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
     duration.round({ largestUnit, roundingIncrement: 2, roundingMode: 'ceil', relativeTo });
   },
   {
-    years: ["year", "month"],
-    months: ["month"],
-    weeks: ["week"],
+    years: ["year", "year"],
+    months: ["month", "month"],
+    weeks: ["week", "week"],
     days: [],
     hours: [],
     minutes: [],
@@ -127,9 +122,9 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
     duration.round({ largestUnit, relativeTo });
   },
   {
-    years: ["month", "month", "month", "month", "month", "month"],
-    months: ["month", "month", "month", "month", "month"],
-    weeks: [],
+    years: ["year"],
+    months: ["month", "month"],
+    weeks: ["week"],
     days: [],
     hours: [],
     minutes: [],
@@ -152,8 +147,8 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
     duration.round({ largestUnit, smallestUnit: largestUnit, relativeTo });
   }, {
     years: ["year"],
-    months: [],
-    weeks: [],
+    months: ["month"],
+    weeks: ["week", "week"],
     days: []
   }
 );

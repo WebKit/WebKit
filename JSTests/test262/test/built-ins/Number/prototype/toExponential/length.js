@@ -22,8 +22,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Number.prototype.toExponential.length, 1);
-
-verifyNotEnumerable(Number.prototype.toExponential, "length");
-verifyNotWritable(Number.prototype.toExponential, "length");
-verifyConfigurable(Number.prototype.toExponential, "length");
+verifyProperty(Number.prototype.toExponential, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

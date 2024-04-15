@@ -10,14 +10,14 @@ features: [Temporal]
 
 const actual = [];
 const expected = [
-  // GetPlainDateTimeFor
+  // lookup
   "get this.timeZone.getOffsetNanosecondsFor",
+  "get this.timeZone.getPossibleInstantsFor",
+  // GetPlainDateTimeFor
   "call this.timeZone.getOffsetNanosecondsFor",
   // GetInstantFor
-  "get this.timeZone.getPossibleInstantsFor",
   "call this.timeZone.getPossibleInstantsFor",
   // GetInstantFor
-  "get this.timeZone.getPossibleInstantsFor",
   "call this.timeZone.getPossibleInstantsFor",
 ];
 
@@ -82,28 +82,24 @@ actual.splice(0); // clear
 
 springForwardInstance.hoursInDay;
 assert.compareArray(actual, [
-  // GetPlainDateTimeFor
+  // lookup
   "get this.timeZone.getOffsetNanosecondsFor",
+  "get this.timeZone.getPossibleInstantsFor",
+  // GetPlainDateTimeFor
   "call this.timeZone.getOffsetNanosecondsFor",
   // GetInstantFor
-  "get this.timeZone.getPossibleInstantsFor",
   "call this.timeZone.getPossibleInstantsFor",
   // DisambiguatePossibleInstants
-  "get this.timeZone.getOffsetNanosecondsFor",
   "call this.timeZone.getOffsetNanosecondsFor",
   "call this.timeZone.getOffsetNanosecondsFor",
   // Note, no call to dateAdd as addition takes place in the ISO calendar
-  "get this.timeZone.getPossibleInstantsFor",
   "call this.timeZone.getPossibleInstantsFor",
   // GetInstantFor
-  "get this.timeZone.getPossibleInstantsFor",
   "call this.timeZone.getPossibleInstantsFor",
   // DisambiguatePossibleInstants
-  "get this.timeZone.getOffsetNanosecondsFor",
   "call this.timeZone.getOffsetNanosecondsFor",
   "call this.timeZone.getOffsetNanosecondsFor",
   // Note, no call to dateAdd here either
-  "get this.timeZone.getPossibleInstantsFor",
   "call this.timeZone.getPossibleInstantsFor",
 ], "order of operations with both midnights at skipped wall-clock times");
 actual.splice(0); // clear

@@ -40,22 +40,23 @@ const expected = [
   "get fields.years",
   "get fields.years.valueOf",
   "call fields.years.valueOf",
-  // CalendarFields
+  // lookup
+  "get this.calendar.dateAdd",
+  "get this.calendar.dateFromFields",
+  "get this.calendar.day",
   "get this.calendar.fields",
+  "get this.calendar.yearMonthFromFields",
+  // CalendarFields
   "call this.calendar.fields",
   // PrepareTemporalFields on receiver
   "get this.calendar.monthCode",
   "call this.calendar.monthCode",
   "get this.calendar.year",
   "call this.calendar.year",
-  // CalendarDaysInMonth
-  "get this.calendar.dateFromFields",
+  // calculate last day of month
   "call this.calendar.dateFromFields",
-  "get this.calendar.dateAdd",
   "call this.calendar.dateAdd",
-  "get this.calendar.day",
   "call this.calendar.day",
-  "get this.calendar.dateFromFields",
   "call this.calendar.dateFromFields",
   // CopyDataProperties
   "ownKeys options",
@@ -73,7 +74,6 @@ const expected = [
   "get this.calendar.year",
   "call this.calendar.year",
   // CalendarYearMonthFromFields
-  "get this.calendar.yearMonthFromFields",
   "call this.calendar.yearMonthFromFields",
   // inside Calendar.p.yearMonthFromFields
   "get options.overflow.toString",
@@ -132,8 +132,13 @@ const noCalendarExpected = [
   "call fields.seconds.valueOf",
   "get fields.weeks",
   "get fields.years",
-  // CalendarFields
+  // lookup
+  "get this.calendar.dateAdd",
+  "get this.calendar.dateFromFields",
+  "get this.calendar.day",
   "get this.calendar.fields",
+  "get this.calendar.yearMonthFromFields",
+  // CalendarFields
   "call this.calendar.fields",
   // PrepareTemporalFields on receiver
   "get this.calendar.monthCode",
@@ -141,13 +146,10 @@ const noCalendarExpected = [
   "get this.calendar.year",
   "call this.calendar.year",
   // CalendarDateFromFields
-  "get this.calendar.dateFromFields",
   "call this.calendar.dateFromFields",
-  "get this.calendar.dateAdd",
+  // calculate last day of month
   "call this.calendar.dateAdd",
-  "get this.calendar.day",
   "call this.calendar.day",
-  "get this.calendar.dateFromFields",
   "call this.calendar.dateFromFields",
   // SnapshotOwnProperties
   "ownKeys options",
@@ -163,7 +165,6 @@ const noCalendarExpected = [
   "get this.calendar.year",
   "call this.calendar.year",
   // CalendarYearMonthFromFields
-  "get this.calendar.yearMonthFromFields",
   "call this.calendar.yearMonthFromFields",
   // inside Calendar.p.yearMonthFromFields
   "get options.overflow.toString",

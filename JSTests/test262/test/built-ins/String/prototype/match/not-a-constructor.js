@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.match();
-}, '`new String.prototype.match()` throws TypeError');
+});
 

@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Date.now.name, "now");
-
-verifyNotEnumerable(Date.now, "name");
-verifyNotWritable(Date.now, "name");
-verifyConfigurable(Date.now, "name");
+verifyProperty(Date.now, "name", {
+  value: "now",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.includes(1);
-}, '`new String.prototype.includes(1)` throws TypeError');
+});
 

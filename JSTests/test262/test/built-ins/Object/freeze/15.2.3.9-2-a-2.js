@@ -23,7 +23,8 @@ child.foo = 10; // default [[Configurable]] attribute value of foo: true
 
 Object.freeze(child);
 
-verifyNotWritable(child, "foo");
-verifyNotConfigurable(child, "foo");
-
-assert.sameValue(child.foo, 10);
+verifyProperty(child, "foo", {
+  value: 10,
+  writable: false,
+  configurable: false,
+});

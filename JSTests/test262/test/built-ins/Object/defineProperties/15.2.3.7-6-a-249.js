@@ -19,10 +19,10 @@ Object.defineProperties(arr, {
     value: 12
   }
 });
-verifyEqualTo(arr, "0", 12);
 
-verifyWritable(arr, "0");
-
-verifyEnumerable(arr, "0");
-
-verifyConfigurable(arr, "0");
+verifyProperty(arr, "0", {
+  value: 12,
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

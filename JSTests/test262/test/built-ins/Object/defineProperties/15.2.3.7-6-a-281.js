@@ -27,10 +27,9 @@ Object.defineProperties(arg, {
   }
 });
 
-verifyEqualTo(arg, "0", 20);
-
-verifyNotWritable(arg, "0");
-
-verifyNotEnumerable(arg, "0");
-
-verifyNotConfigurable(arg, "0");
+verifyProperty(arg, "0", {
+  value: 20,
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

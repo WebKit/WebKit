@@ -28,10 +28,10 @@ var poisoned = {
 
 assert.throws(RangeError, function() {
   Atomics.notify(i32a, Infinity, poisoned);
-}, '`Atomics.notify(i32a, Infinity, poisoned)` throws RangeError');
+});
 assert.throws(RangeError, function() {
   Atomics.notify(i32a, 4, poisoned);
-}, '`Atomics.notify(i32a, 4, poisoned)` throws RangeError');
+});
 assert.throws(RangeError, function() {
   Atomics.notify(i32a, 200, poisoned);
-}, '`Atomics.notify(i32a, 200, poisoned)` throws RangeError');
+});

@@ -21,8 +21,9 @@ includes: [propertyHelper.js]
 features: [String.prototype.matchAll]
 ---*/
 
-assert.sameValue(String.prototype.matchAll.name, 'matchAll');
-
-verifyNotEnumerable(String.prototype.matchAll, 'name');
-verifyNotWritable(String.prototype.matchAll, 'name');
-verifyConfigurable(String.prototype.matchAll, 'name');
+verifyProperty(String.prototype.matchAll, "name", {
+  value: "matchAll",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Date.prototype.setUTCFullYear.name, "setUTCFullYear");
-
-verifyNotEnumerable(Date.prototype.setUTCFullYear, "name");
-verifyNotWritable(Date.prototype.setUTCFullYear, "name");
-verifyConfigurable(Date.prototype.setUTCFullYear, "name");
+verifyProperty(Date.prototype.setUTCFullYear, "name", {
+  value: "setUTCFullYear",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

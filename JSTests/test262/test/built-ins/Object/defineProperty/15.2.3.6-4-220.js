@@ -20,10 +20,10 @@ Object.defineProperty(arrObj, "0", {
 Object.defineProperty(arrObj, "0", {
   value: 101
 });
-verifyEqualTo(arrObj, "0", 101);
 
-verifyNotWritable(arrObj, "0");
-
-verifyNotEnumerable(arrObj, "0");
-
-verifyNotConfigurable(arrObj, "0");
+verifyProperty(arrObj, "0", {
+  value: 101,
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

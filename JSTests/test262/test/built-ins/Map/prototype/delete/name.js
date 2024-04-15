@@ -12,11 +12,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  Map.prototype.delete.name, 'delete',
-  'The value of `Map.prototype.delete.name` is `"delete"`'
-);
-
-verifyNotEnumerable(Map.prototype.delete, 'name');
-verifyNotWritable(Map.prototype.delete, 'name');
-verifyConfigurable(Map.prototype.delete, 'name');
+verifyProperty(Map.prototype.delete, "name", {
+  value: "delete",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

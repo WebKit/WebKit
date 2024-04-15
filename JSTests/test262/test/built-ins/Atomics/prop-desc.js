@@ -28,11 +28,11 @@ assert.sameValue(typeof Atomics, "object", 'The value of `typeof Atomics` is "ob
 
 assert.throws(TypeError, function() {
   Atomics();
-}, '`Atomics()` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   new Atomics();
-}, '`new Atomics()` throws TypeError');
+});
 
 verifyProperty(this, "Atomics", {
   enumerable: false,

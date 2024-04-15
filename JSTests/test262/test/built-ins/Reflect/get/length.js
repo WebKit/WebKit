@@ -12,11 +12,9 @@ includes: [propertyHelper.js]
 features: [Reflect]
 ---*/
 
-assert.sameValue(
-  Reflect.get.length, 2,
-  'The value of `Reflect.get.length` is `2`'
-);
-
-verifyNotEnumerable(Reflect.get, 'length');
-verifyNotWritable(Reflect.get, 'length');
-verifyConfigurable(Reflect.get, 'length');
+verifyProperty(Reflect.get, "length", {
+  value: 2,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -21,8 +21,9 @@ includes: [propertyHelper.js]
 
 var getter = Object.getOwnPropertyDescriptor(RegExp.prototype, 'unicode').get;
 
-assert.sameValue(getter.length, 0);
-
-verifyNotEnumerable(getter, 'length');
-verifyNotWritable(getter, 'length');
-verifyConfigurable(getter, 'length');
+verifyProperty(getter, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

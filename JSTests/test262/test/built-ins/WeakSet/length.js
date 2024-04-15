@@ -7,8 +7,9 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(WeakSet.length, 0, 'The value of `WeakSet.length` is `0`');
-
-verifyNotEnumerable(WeakSet, 'length');
-verifyNotWritable(WeakSet, 'length');
-verifyConfigurable(WeakSet, 'length');
+verifyProperty(WeakSet, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

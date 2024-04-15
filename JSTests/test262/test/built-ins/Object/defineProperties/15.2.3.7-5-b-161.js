@@ -19,8 +19,9 @@ var func = function(a, b) {
     property: arguments
   });
 
-  assert(obj.hasOwnProperty("property"));
-  verifyNotWritable(obj, "property");
+  verifyProperty(obj, "property", {
+    writable: false,
+  });
 };
 
 func();

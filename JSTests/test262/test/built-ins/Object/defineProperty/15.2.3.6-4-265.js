@@ -28,6 +28,7 @@ Object.defineProperty(arrObj, "0", {
 });
 verifyEqualTo(arrObj, "0", getFunc());
 
-verifyNotEnumerable(arrObj, "0");
-
-verifyConfigurable(arrObj, "0");
+verifyProperty(arrObj, "0", {
+  enumerable: false,
+  configurable: true,
+});

@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   let s = new Set([]); new s.entries();
-}, '`let s = new Set([]); new s.entries()` throws TypeError');
+});
 

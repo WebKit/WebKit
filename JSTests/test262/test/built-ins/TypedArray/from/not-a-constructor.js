@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(TypedArray.from), false, 'isConstructor(TypedArra
 
 assert.throws(TypeError, () => {
   new TypedArray.from([]);
-}, '`new TypedArray.from([])` throws TypeError');
+});
 

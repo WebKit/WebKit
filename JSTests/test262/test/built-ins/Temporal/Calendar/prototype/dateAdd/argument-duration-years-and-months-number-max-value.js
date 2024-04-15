@@ -4,7 +4,7 @@
 /*---
 esid: sec-temporal.calendar.prototype.dateadd
 description: >
-  Call BalanceISOYearMonth with Number.MAX_VALUE and -Number.MAX_VALUE for years/months.
+  Call BalanceISOYearMonth with 2³² - 1 and -(2³² - 1)  for years/months.
 info: |
   Temporal.Calendar.prototype.dateAdd ( date, duration [ , options ] )
 
@@ -26,8 +26,10 @@ features: [Temporal]
 var cal = new Temporal.Calendar("iso8601");
 var date = new Temporal.PlainDate(1970, 1, 1);
 
-var maxValue = new Temporal.Duration(Number.MAX_VALUE, Number.MAX_VALUE);
-var minValue = new Temporal.Duration(-Number.MAX_VALUE, -Number.MAX_VALUE);
+const max = 4294967295;  // 2³² - 1
+
+var maxValue = new Temporal.Duration(max, max);
+var minValue = new Temporal.Duration(-max, -max);
 
 assert.throws(RangeError, () => cal.dateAdd(date, maxValue), "years/months is +Number.MAX_VALUE");
 assert.throws(RangeError, () => cal.dateAdd(date, minValue), "years/months is -Number.MAX_VALUE");

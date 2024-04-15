@@ -11,16 +11,22 @@ features: [Temporal]
 ---*/
 
 const actual = [];
+
+class CalendarDateUntilObservable extends Temporal.Calendar {
+  dateUntil(...args) {
+    actual.push("call dateUntil");
+    const returnValue = super.dateUntil(...args);
+    TemporalHelpers.observeProperty(actual, returnValue, "months", Infinity);
+    return returnValue;
+  }
+}
+
+const calendar = new CalendarDateUntilObservable("iso8601");
+const relativeTo = new Temporal.PlainDate(2018, 10, 12, calendar);
+
 const expected = [
   "call dateUntil",
-  "call dateUntil",
 ];
-
-const duration = new Temporal.Duration(0, 12);
-TemporalHelpers.observeProperty(actual, duration, "months", 1);
-
-const calendar = TemporalHelpers.calendarDateUntilObservable(actual, duration);
-const relativeTo = new Temporal.PlainDateTime(2018, 10, 12, 0, 0, 0, 0, 0, 0, calendar);
 
 const years = new Temporal.Duration(2);
 const result = years.total({ unit: "months", relativeTo });

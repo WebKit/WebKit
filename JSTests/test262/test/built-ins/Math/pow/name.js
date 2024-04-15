@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.pow.name, "pow");
-
-verifyNotEnumerable(Math.pow, "name");
-verifyNotWritable(Math.pow, "name");
-verifyConfigurable(Math.pow, "name");
+verifyProperty(Math.pow, "name", {
+  value: "pow",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});
