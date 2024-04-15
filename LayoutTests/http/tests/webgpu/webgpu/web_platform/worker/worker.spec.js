@@ -3,9 +3,10 @@
 **/export const description = `
 Tests WebGPU is available in a dedicated worker and a shared worker.
 
-Note: The CTS test can be run respectively in a dedicated worker and a shared worker by
-passing in worker=dedicated and worker=shared as a query parameter. These tests
-are specifically to check that WebGPU is available in a dedicated worker and a shared worker.
+Note: Any CTS test can be run in a worker by passing ?worker=dedicated, ?worker=shared,
+?worker=service as a query parameter. The tests in this file are specifically to check
+that WebGPU is available in each worker type. When run in combination with a ?worker flag,
+they will test workers created from other workers (where APIs exist to do so).
 
 TODO[2]: Figure out how to make these tests run in service workers (not actually
 important unless service workers gain the ability to launch other workers).

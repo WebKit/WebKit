@@ -16,7 +16,7 @@ desc(`Test indexing of concrete vectors`).
 params((u) =>
 u.
 combine('inputSource', allInputSources).
-combine('elementType', ['i32', 'u32', 'f32', 'f16']).
+combine('elementType', ['i32', 'u32', 'f32', 'f16', 'bool']).
 combine('indexType', ['i32', 'u32']).
 combine('width', [2, 3, 4])
 ).
@@ -31,7 +31,11 @@ fn(async (t) => {
   const vectorType = Type.vec(t.params.width, elementType);
   const elements = [];
   for (let i = 0; i < t.params.width; i++) {
-    elements.push(elementType.create((i + 1) * 10));
+    if (t.params.elementType === 'bool') {
+      elements.push(elementType.create(i & 1));
+    } else {
+      elements.push(elementType.create((i + 1) * 10));
+    }
   }
   const vector = new VectorValue(elements);
   const cases = [];

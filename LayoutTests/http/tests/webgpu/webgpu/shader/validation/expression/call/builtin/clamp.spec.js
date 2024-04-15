@@ -7,9 +7,11 @@ import { makeTestGroup } from '../../../../../../common/framework/test_group.js'
 import { keysOf, objectsToRecord } from '../../../../../../common/util/data_tables.js';
 import {
   Type,
-  kFloatScalarsAndVectors,
+  kConvertableToFloatScalarsAndVectors,
   kConcreteIntegerScalarsAndVectors,
-  scalarTypeOf } from
+  scalarTypeOf,
+  f32,
+  isConvertible } from
 '../../../../../util/conversion.js';
 import { ShaderValidationTest } from '../../../shader_validation_test.js';
 
@@ -23,7 +25,7 @@ import {
 export const g = makeTestGroup(ShaderValidationTest);
 
 const kValuesTypes = objectsToRecord([
-...kFloatScalarsAndVectors,
+...kConvertableToFloatScalarsAndVectors,
 ...kConcreteIntegerScalarsAndVectors]
 );
 
@@ -58,4 +60,170 @@ fn((t) => {
     [type.create(t.params.e), type.create(t.params.low), type.create(t.params.high)],
     t.params.stage
   );
+});
+
+g.test('mismatched').
+desc(
+  `
+Validates that even with valid types, if types do not match, ${builtin}() errors
+`
+).
+params((u) =>
+u.
+combine('e', keysOf(kValuesTypes)).
+beginSubcases().
+combine('low', keysOf(kValuesTypes)).
+combine('high', keysOf(kValuesTypes))
+).
+beforeAllSubcases((t) => {
+  if (scalarTypeOf(kValuesTypes[t.params.e]) === Type.f16) {
+    t.selectDeviceOrSkipTestCase('shader-f16');
+  }
+}).
+fn((t) => {
+  const e = kValuesTypes[t.params.e];
+  const low = kValuesTypes[t.params.low];
+  const high = kValuesTypes[t.params.high];
+
+  // Skip if shader-16 isn't available.
+  t.skipIf(scalarTypeOf(low) === Type.f16 || scalarTypeOf(high) === Type.f16);
+
+  // If there exists 1 type of the 3 args that the other 2 can be converted into, then the args
+  // are valid.
+  const expectedResult =
+  isConvertible(low, e) && isConvertible(high, e) ||
+  isConvertible(e, low) && isConvertible(high, low) ||
+  isConvertible(e, high) && isConvertible(low, high);
+  validateConstOrOverrideBuiltinEval(
+    t,
+    builtin,
+    expectedResult,
+    [e.create(1), low.create(0), high.create(2)],
+    'constant'
+  );
+});
+
+g.test('low_high').
+desc(
+  `
+Validates that low <= high.
+`
+).
+params((u) =>
+u.
+combine('stage', kConstantAndOverrideStages).
+beginSubcases().
+combineWithParams([
+{ low: 0, high: 1 },
+{ low: 1, high: 1 },
+{ low: 1, high: 0 }]
+)
+).
+fn((t) => {
+  validateConstOrOverrideBuiltinEval(
+    t,
+    builtin,
+    /* expectedResult */t.params.low <= t.params.high,
+    [f32(1), f32(t.params.low), f32(t.params.high)],
+    t.params.stage
+  );
+});
+
+
+
+
+
+
+
+
+
+
+function typesToArguments(types, pass) {
+  return types.reduce(
+    (res, type) => ({
+      ...res,
+      [type.toString()]: { arg: type.create(0).wgsl(), pass }
+    }),
+    {}
+  );
+}
+
+// f32 is included here to confirm that validation is failing due to a type issue and not something else.
+const kInputArgTypes = {
+  ...typesToArguments([Type.f32], true),
+  ...typesToArguments([Type.bool, Type.mat2x2f], false),
+  alias: { arg: 'f32_alias(1.f)', pass: true },
+  vec_bool: { arg: 'vec2<bool>(false,true)', pass: false },
+  atomic: { arg: 'a', pass: false },
+  array: {
+    preamble: 'var arry: array<f32, 5>;',
+    arg: 'arry',
+    pass: false
+  },
+  array_runtime: { arg: 'k.arry', pass: false },
+  struct: {
+    preamble: 'var x: A;',
+    arg: 'x',
+    pass: false
+  },
+  enumerant: { arg: 'read_write', pass: false },
+  ptr: {
+    preamble: `var<function> f = 1.f;
+               let p: ptr<function, f32> = &f;`,
+    arg: 'p',
+    pass: false
+  },
+  ptr_deref: {
+    preamble: `var<function> f = 1.f;
+               let p: ptr<function, f32> = &f;`,
+    arg: '*p',
+    pass: true
+  },
+  sampler: { arg: 's', pass: false },
+  texture: { arg: 't', pass: false }
+};
+
+g.test('arguments').
+desc(
+  `
+Test compilation validation of ${builtin} with variously typed arguments
+  - Note that this passes the same type for all args. Mismatching types are tested separately above.
+`
+).
+params((u) => u.combine('type', keysOf(kInputArgTypes))).
+fn((t) => {
+  const type = kInputArgTypes[t.params.type];
+  t.expectCompileResult(
+    type.pass,
+    `alias f32_alias = f32;
+
+      @group(0) @binding(0) var s: sampler;
+      @group(0) @binding(1) var t: texture_2d<f32>;
+
+      var<workgroup> a: atomic<u32>;
+
+      struct A {
+        i: u32,
+      }
+      struct B {
+        arry: array<u32>,
+      }
+      @group(0) @binding(3) var<storage> k: B;
+
+
+      @vertex
+      fn main() -> @builtin(position) vec4<f32> {
+        ${type.preamble ? type.preamble : ''}
+        _ = ${builtin}(${type.arg},${type.arg},${type.arg});
+        return vec4<f32>(.4, .2, .3, .1);
+      }`
+  );
+});
+
+g.test('must_use').
+desc(`Result of ${builtin} must be used`).
+params((u) => u.combine('use', [true, false])).
+fn((t) => {
+  const use_it = t.params.use ? '_ = ' : '';
+  t.expectCompileResult(t.params.use, `fn f() { ${use_it}${builtin}(1.f,0.f,1.f); }`);
 });

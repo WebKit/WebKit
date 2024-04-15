@@ -99,10 +99,11 @@ desc(
 params((u) =>
 u.
 combine('addressSpace', kAddressSpaces).
-combine('accessMode', kAccessModes).
-combine('storageType', kStorageTypes).
 combine('compositeType', kCompositeTypes).
+combine('storageType', kStorageTypes).
+beginSubcases().
 combine('derefType', keysOf(kDerefTypes)).
+combine('accessMode', kAccessModes).
 filter((t) => {
   if (t.storageType === 'bool') {
     return t.addressSpace === 'function' || t.addressSpace === 'private';

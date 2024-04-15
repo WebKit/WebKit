@@ -107,6 +107,10 @@ expandWithParams(function* (p) {
       [true, false] :
       [false]) {
         for (const scalarType of supportedScalarTypes({ isAtomic, ...p })) {
+          // Fewer subcases: supportedScalarTypes was expanded to include f16
+          // but that may take too much time. It would require more complex code.
+          if (scalarType === 'f16') continue;
+
           // Fewer subcases: For nested types, skip atomic u32 and non-atomic i32.
           if (p._containerDepth > 0) {
             if (scalarType === 'u32' && isAtomic) continue;

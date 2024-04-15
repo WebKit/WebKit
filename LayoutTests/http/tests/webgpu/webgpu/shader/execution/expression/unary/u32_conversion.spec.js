@@ -5,7 +5,7 @@ Execution Tests for the u32 conversion operations
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../gpu_test.js';
 import { Type } from '../../../../util/conversion.js';
-import { allInputSources, run } from '../expression.js';
+import { allInputSources, run, onlyConstInputSource } from '../expression.js';
 
 import { d } from './u32_conversion.cache.js';
 import { unary } from './unary.js';
@@ -109,12 +109,50 @@ g.test('abstract_int').
 specURL('https://www.w3.org/TR/WGSL/#value-constructor-builtin-function').
 desc(
   `
-u32(e), where e is an Type.abstractInt
+u32(e), where e is an AbstractInt
 
 Identity operation if the e can be represented in u32, otherwise it produces a shader-creation error
 `
 ).
 params((u) =>
-u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4])
+u.
+combine('inputSource', onlyConstInputSource).
+combine('vectorize', [undefined, 2, 3, 4])
 ).
-unimplemented();
+fn(async (t) => {
+  const cases = await d.get('abstractInt');
+  await run(
+    t,
+    vectorizeToExpression(t.params.vectorize),
+    [Type.abstractInt],
+    Type.u32,
+    t.params,
+    cases
+  );
+});
+
+g.test('abstract_float').
+specURL('https://www.w3.org/TR/WGSL/#value-constructor-builtin-function').
+desc(
+  `
+u32(e), where e is an AbstractFloat
+
+e is converted to u32, rounding towards zero
+`
+).
+params((u) =>
+u.
+combine('inputSource', onlyConstInputSource).
+combine('vectorize', [undefined, 2, 3, 4])
+).
+fn(async (t) => {
+  const cases = await d.get('abstractFloat');
+  await run(
+    t,
+    vectorizeToExpression(t.params.vectorize),
+    [Type.abstractFloat],
+    Type.u32,
+    t.params,
+    cases
+  );
+});
