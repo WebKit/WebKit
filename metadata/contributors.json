@@ -3783,6 +3783,16 @@
    },
    {
       "emails" : [
+         "jani@igalia.com"
+      ],
+      "github" : "zhani",
+      "name" : "Jani Hautakangas",
+      "nicks" : [
+         "zhani"
+      ]
+   },
+   {
+      "emails" : [
          "jbadics@inf.u-szeged.hu"
       ],
       "name" : "Janos Badics",
