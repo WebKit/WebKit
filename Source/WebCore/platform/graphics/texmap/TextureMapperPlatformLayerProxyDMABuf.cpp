@@ -190,6 +190,11 @@ void TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::paintToTextureMapper(Te
     if (!m_imageData)
         return;
 
+    if (m_fence) {
+        m_fence->wait(WebCore::GLFence::FlushCommands::No);
+        m_fence = nullptr;
+    }
+
     static constexpr std::array<GLfloat, 16> s_bt601ConversionMatrix {
         1.164383561643836,  0.0,                1.596026785714286, -0.874202217873451,
         1.164383561643836, -0.391762290094914, -0.812967647237771,  0.531667823499146,

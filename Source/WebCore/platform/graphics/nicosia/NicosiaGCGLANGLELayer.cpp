@@ -65,7 +65,7 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
                 DMABufObject(reinterpret_cast<uintptr_t>(swapchain.swapchain.get()) + bo->handle()),
                 [&](auto&& object) {
                     return bo->createDMABufObject(object.handle);
-                }, flags);
+                }, flags, WTFMove(static_cast<GraphicsContextGLGBM&>(m_context).m_frameFence));
         }
         return;
     }
@@ -83,6 +83,9 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
     auto fboSize = m_context.getInternalFramebufferSize();
     Locker locker { proxy.lock() };
     auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(static_cast<GraphicsContextGLTextureMapperANGLE&>(m_context).m_compositorTextureID, fboSize, flags, colorFormat);
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    layerBuffer->setFence(WTFMove(static_cast<GraphicsContextGLTextureMapperANGLE&>(m_context).m_frameFence));
+#endif
     downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
 }
 

@@ -42,6 +42,8 @@ class GCGLANGLELayer;
 
 namespace WebCore {
 
+class GLFence;
+
 class GraphicsContextGLGBM : public GraphicsContextGLANGLE {
 public:
     static RefPtr<GraphicsContextGLGBM> create(WebCore::GraphicsContextGLAttributes&&);
@@ -106,6 +108,7 @@ private:
 
     EGLExtensions m_eglExtensions;
     Swapchain m_swapchain;
+    std::unique_ptr<GLFence> m_frameFence;
 
 #if USE(NICOSIA)
     friend class Nicosia::GCGLANGLELayer;

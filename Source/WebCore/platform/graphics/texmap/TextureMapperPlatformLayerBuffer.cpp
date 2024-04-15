@@ -96,6 +96,13 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerBuff
 
 void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    if (m_fence) {
+        m_fence->wait(WebCore::GLFence::FlushCommands::No);
+        m_fence = nullptr;
+    }
+#endif
+
     if (m_hasManagedTexture) {
         ASSERT(m_texture);
         textureMapper.drawTexture(m_texture->id(), m_extraFlags | m_texture->colorConvertFlags(), targetRect, modelViewMatrix, opacity);
