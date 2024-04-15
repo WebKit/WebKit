@@ -56,7 +56,7 @@ template<typename CharType>
 static void appendDescriptorAndReset(const CharType*& descriptorStart, const CharType* position, Vector<StringView>& descriptors)
 {
     if (position > descriptorStart)
-        descriptors.append(StringView { std::span(descriptorStart, position - descriptorStart) });
+        descriptors.append(StringView { std::span(descriptorStart, position) });
     descriptorStart = nullptr;
 }
 
@@ -70,57 +70,51 @@ static void appendCharacter(const CharType* descriptorStart, const CharType* pos
 }
 
 template<typename CharType>
-static bool isEOF(const CharType* position, const CharType* end)
-{
-    return position >= end;
-}
-
-template<typename CharType>
-static void tokenizeDescriptors(const CharType*& position, const CharType* attributeEnd, Vector<StringView>& descriptors)
+static void tokenizeDescriptors(std::span<const CharType>& position, Vector<StringView>& descriptors)
 {
     DescriptorTokenizerState state = Initial;
-    const CharType* descriptorsStart = position;
+    const CharType* descriptorsStart = position.data();
     const CharType* currentDescriptorStart = descriptorsStart;
-    for (; ; ++position) {
+    for (; ; position = position.subspan(1)) {
         switch (state) {
         case Initial:
-            if (isEOF(position, attributeEnd)) {
-                appendDescriptorAndReset(currentDescriptorStart, attributeEnd, descriptors);
+            if (position.empty()) {
+                appendDescriptorAndReset(currentDescriptorStart, position.data() + position.size(), descriptors);
                 return;
             }
-            if (isComma(*position)) {
-                appendDescriptorAndReset(currentDescriptorStart, position, descriptors);
-                ++position;
+            if (isComma(position.front())) {
+                appendDescriptorAndReset(currentDescriptorStart, position.data(), descriptors);
+                position = position.subspan(1);
                 return;
             }
-            if (isASCIIWhitespace(*position)) {
-                appendDescriptorAndReset(currentDescriptorStart, position, descriptors);
-                currentDescriptorStart = position + 1;
+            if (isASCIIWhitespace(position.front())) {
+                appendDescriptorAndReset(currentDescriptorStart, position.data(), descriptors);
+                currentDescriptorStart = position.data() + 1;
                 state = AfterToken;
-            } else if (*position == '(') {
-                appendCharacter(currentDescriptorStart, position);
+            } else if (position.front() == '(') {
+                appendCharacter(currentDescriptorStart, position.data());
                 state = InParenthesis;
             } else
-                appendCharacter(currentDescriptorStart, position);
+                appendCharacter(currentDescriptorStart, position.data());
             break;
         case InParenthesis:
-            if (isEOF(position, attributeEnd)) {
-                appendDescriptorAndReset(currentDescriptorStart, attributeEnd, descriptors);
+            if (position.empty()) {
+                appendDescriptorAndReset(currentDescriptorStart, position.data() + position.size(), descriptors);
                 return;
             }
-            if (*position == ')') {
-                appendCharacter(currentDescriptorStart, position);
+            if (position.front() == ')') {
+                appendCharacter(currentDescriptorStart, position.data());
                 state = Initial;
             } else
-                appendCharacter(currentDescriptorStart, position);
+                appendCharacter(currentDescriptorStart, position.data());
             break;
         case AfterToken:
-            if (isEOF(position, attributeEnd))
+            if (position.empty())
                 return;
-            if (!isASCIIWhitespace(*position)) {
+            if (!isASCIIWhitespace(position.front())) {
                 state = Initial;
-                currentDescriptorStart = position;
-                --position;
+                currentDescriptorStart = position.data();
+                position = { position.data() - 1, position.data() + position.size() };
             }
             break;
         }
@@ -166,40 +160,38 @@ static bool parseDescriptors(Vector<StringView>& descriptors, DescriptorParsingR
 
 // http://picture.responsiveimages.org/#parse-srcset-attr
 template<typename CharType>
-static Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(const CharType* attributeStart, unsigned length)
+static Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(std::span<const CharType> attribute)
 {
     Vector<ImageCandidate> imageCandidates;
 
-    const CharType* attributeEnd = attributeStart + length;
-
-    for (const CharType* position = attributeStart; position < attributeEnd;) {
+    while (!attribute.empty()) {
         // 4. Splitting loop: Collect a sequence of characters that are space characters or U+002C COMMA characters.
-        skipWhile<isHTMLSpaceOrComma>(position, attributeEnd);
-        if (position == attributeEnd) {
+        skipWhile<isHTMLSpaceOrComma>(attribute);
+        if (attribute.empty()) {
             // Contrary to spec language - descriptor parsing happens on each candidate, so when we reach the attributeEnd, we can exit.
             break;
         }
-        const CharType* imageURLStart = position;
+        auto* imageURLStart = attribute.data();
         // 6. Collect a sequence of characters that are not space characters, and let that be url.
 
-        skipUntil<isASCIIWhitespace>(position, attributeEnd);
-        const CharType* imageURLEnd = position;
+        skipUntil<isASCIIWhitespace>(attribute);
+        auto* imageURLEnd = attribute.data();
 
         DescriptorParsingResult result;
 
         // 8. If url ends with a U+002C COMMA character (,)
-        if (isComma(*(position - 1))) {
+        if (isComma(*(attribute.data() - 1))) {
             // Remove all trailing U+002C COMMA characters from url.
-            imageURLEnd = position - 1;
+            imageURLEnd = attribute.data() - 1;
             reverseSkipWhile<isComma>(imageURLEnd, imageURLStart);
             ++imageURLEnd;
             // If url is empty, then jump to the step labeled splitting loop.
             if (imageURLStart == imageURLEnd)
                 continue;
         } else {
-            skipWhile<isASCIIWhitespace>(position, attributeEnd);
+            skipWhile<isASCIIWhitespace>(attribute);
             Vector<StringView> descriptorTokens;
-            tokenizeDescriptors(position, attributeEnd, descriptorTokens);
+            tokenizeDescriptors(attribute, descriptorTokens);
             // Contrary to spec language - descriptor parsing happens on each candidate.
             // This is a black-box equivalent, to avoid storing descriptor lists for each candidate.
             if (!parseDescriptors(descriptorTokens, result))
@@ -218,9 +210,9 @@ Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(StringView attrib
 {
     // FIXME: We should consider replacing the direct pointers in the parsing process with StringView and positions.
     if (attribute.is8Bit())
-        return parseImageCandidatesFromSrcsetAttribute<LChar>(attribute.characters8(), attribute.length());
+        return parseImageCandidatesFromSrcsetAttribute<LChar>(attribute.span8());
     else
-        return parseImageCandidatesFromSrcsetAttribute<UChar>(attribute.characters16(), attribute.length());
+        return parseImageCandidatesFromSrcsetAttribute<UChar>(attribute.span16());
 }
 
 void getURLsFromSrcsetAttribute(const Element& element, StringView attribute, ListHashSet<URL>& urls)

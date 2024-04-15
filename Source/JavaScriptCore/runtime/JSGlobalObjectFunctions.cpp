@@ -241,9 +241,9 @@ static JSValue decode(JSGlobalObject* globalObject, JSValue argument, const WTF:
 static const int SizeOfInfinity = 8;
 
 template <typename CharType>
-static bool isInfinity(const CharType* data, const CharType* end)
+static bool isInfinity(std::span<const CharType> data)
 {
-    return (end - data) >= SizeOfInfinity
+    return data.size() >= SizeOfInfinity
         && data[0] == 'I'
         && data[1] == 'n'
         && data[2] == 'f'
@@ -256,102 +256,102 @@ static bool isInfinity(const CharType* data, const CharType* end)
 
 // See ecma-262 6th 11.8.3
 template <typename CharType>
-static double jsBinaryIntegerLiteral(const CharType*& data, const CharType* end)
+static double jsBinaryIntegerLiteral(std::span<const CharType>& data)
 {
     // Binary number.
-    data += 2;
-    const CharType* firstDigitPosition = data;
+    data = data.subspan(2);
+    auto firstDigitPosition = data;
     double number = 0;
     while (true) {
-        number = number * 2 + (*data - '0');
-        ++data;
-        if (data == end)
+        number = number * 2 + (data.front() - '0');
+        data = data.subspan(1);
+        if (data.empty())
             break;
-        if (!isASCIIBinaryDigit(*data))
+        if (!isASCIIBinaryDigit(data.front()))
             break;
     }
     if (number >= mantissaOverflowLowerBound)
-        number = parseIntOverflow(firstDigitPosition, data - firstDigitPosition, 2);
+        number = parseIntOverflow(firstDigitPosition.first(data.data() - firstDigitPosition.data()), 2);
 
     return number;
 }
 
 // See ecma-262 6th 11.8.3
 template <typename CharType>
-static double jsOctalIntegerLiteral(const CharType*& data, const CharType* end)
+static double jsOctalIntegerLiteral(std::span<const CharType>& data)
 {
     // Octal number.
-    data += 2;
-    const CharType* firstDigitPosition = data;
+    data = data.subspan(2);
+    auto firstDigitPosition = data;
     double number = 0;
     while (true) {
-        number = number * 8 + (*data - '0');
-        ++data;
-        if (data == end)
+        number = number * 8 + (data.front() - '0');
+        data = data.subspan(1);
+        if (data.empty())
             break;
-        if (!isASCIIOctalDigit(*data))
+        if (!isASCIIOctalDigit(data.front()))
             break;
     }
     if (number >= mantissaOverflowLowerBound)
-        number = parseIntOverflow(firstDigitPosition, data - firstDigitPosition, 8);
+        number = parseIntOverflow(firstDigitPosition.first(data.data() - firstDigitPosition.data()), 8);
 
     return number;
 }
 
 // See ecma-262 6th 11.8.3
 template <typename CharType>
-static double jsHexIntegerLiteral(const CharType*& data, const CharType* end)
+static double jsHexIntegerLiteral(std::span<const CharType>& data)
 {
     // Hex number.
-    data += 2;
-    const CharType* firstDigitPosition = data;
+    data = data.subspan(2);
+    auto firstDigitPosition = data;
     double number = 0;
     while (true) {
-        number = number * 16 + toASCIIHexValue(*data);
-        ++data;
-        if (data == end)
+        number = number * 16 + toASCIIHexValue(data.front());
+        data = data.subspan(1);
+        if (data.empty())
             break;
-        if (!isASCIIHexDigit(*data))
+        if (!isASCIIHexDigit(data.front()))
             break;
     }
     if (number >= mantissaOverflowLowerBound)
-        number = parseIntOverflow(firstDigitPosition, data - firstDigitPosition, 16);
+        number = parseIntOverflow(firstDigitPosition.first(data.data() - firstDigitPosition.data()), 16);
 
     return number;
 }
 
 // See ecma-262 6th 11.8.3
 template <typename CharType>
-static double jsStrDecimalLiteral(const CharType*& data, const CharType* end)
+static double jsStrDecimalLiteral(std::span<const CharType>& data)
 {
-    RELEASE_ASSERT(data < end);
+    RELEASE_ASSERT(!data.empty());
 
     size_t parsedLength;
-    double number = parseDouble(std::span { data, end }, parsedLength);
+    double number = parseDouble(data, parsedLength);
     if (parsedLength) {
-        data += parsedLength;
+        data = data.subspan(parsedLength);
         return number;
     }
 
     // Check for [+-]?Infinity
-    switch (*data) {
+    switch (data.front()) {
     case 'I':
-        if (isInfinity(data, end)) {
-            data += SizeOfInfinity;
+        if (isInfinity(data)) {
+            data = data.subspan(SizeOfInfinity);
             return std::numeric_limits<double>::infinity();
         }
         break;
 
     case '+':
-        if (isInfinity(data + 1, end)) {
-            data += SizeOfInfinity + 1;
+        if (isInfinity(data.subspan(1))) {
+            data = data.subspan(SizeOfInfinity + 1);
             return std::numeric_limits<double>::infinity();
         }
         break;
 
     case '-':
-        if (isInfinity(data + 1, end)) {
-            data += SizeOfInfinity + 1;
+        if (isInfinity(data.subspan(1))) {
+            data = data.subspan(SizeOfInfinity + 1);
             return -std::numeric_limits<double>::infinity();
         }
         break;
@@ -364,38 +364,35 @@ static double jsStrDecimalLiteral(const CharType*& data, const CharType* end)
 template <typename CharacterType>
 static double toDouble(std::span<const CharacterType> characters)
 {
-    const auto* rawCharacters = characters.data();
-    const auto* endRawCharacters = rawCharacters + characters.size();
-
     // Skip leading white space.
-    for (; rawCharacters < endRawCharacters; ++rawCharacters) {
-        if (!isStrWhiteSpace(*rawCharacters))
+    for (; !characters.empty(); characters = characters.subspan(1)) {
+        if (!isStrWhiteSpace(characters.front()))
             break;
     }
 
     // Empty string.
-    if (rawCharacters == endRawCharacters)
+    if (characters.empty())
         return 0.0;
 
     double number;
-    if (rawCharacters[0] == '0' && rawCharacters + 2 < endRawCharacters) {
-        if ((rawCharacters[1] | 0x20) == 'x' && isASCIIHexDigit(rawCharacters[2]))
-            number = jsHexIntegerLiteral(rawCharacters, endRawCharacters);
-        else if ((rawCharacters[1] | 0x20) == 'o' && isASCIIOctalDigit(rawCharacters[2]))
-            number = jsOctalIntegerLiteral(rawCharacters, endRawCharacters);
-        else if ((rawCharacters[1] | 0x20) == 'b' && isASCIIBinaryDigit(rawCharacters[2]))
-            number = jsBinaryIntegerLiteral(rawCharacters, endRawCharacters);
+    if (characters.front() == '0' && characters.size() > 2) {
+        if ((characters[1] | 0x20) == 'x' && isASCIIHexDigit(characters[2]))
+            number = jsHexIntegerLiteral(characters);
+        else if ((characters[1] | 0x20) == 'o' && isASCIIOctalDigit(characters[2]))
+            number = jsOctalIntegerLiteral(characters);
+        else if ((characters[1] | 0x20) == 'b' && isASCIIBinaryDigit(characters[2]))
+            number = jsBinaryIntegerLiteral(characters);
         else
-            number = jsStrDecimalLiteral(rawCharacters, endRawCharacters);
+            number = jsStrDecimalLiteral(characters);
     } else
-        number = jsStrDecimalLiteral(rawCharacters, endRawCharacters);
+        number = jsStrDecimalLiteral(characters);
 
     // Allow trailing white space.
-    for (; rawCharacters < endRawCharacters; ++rawCharacters) {
-        if (!isStrWhiteSpace(*rawCharacters))
+    for (; !characters.empty(); characters = characters.subspan(1)) {
+        if (!isStrWhiteSpace(characters.front()))
             break;
     }
-    if (rawCharacters != endRawCharacters)
+    if (!characters.empty())
         return PNaN;
 
     return number;
@@ -405,9 +402,8 @@ static double toDouble(std::span<const CharacterType> characters)
 template<typename CharacterType>
 static ALWAYS_INLINE double jsToNumber(std::span<const CharacterType> characters)
 {
-    auto* rawCharacters = characters.data();
     if (characters.size() == 1) {
-        auto c = rawCharacters[0];
+        auto c = characters.front();
         if (isASCIIDigit(c))
             return c - '0';
         if (isStrWhiteSpace(c))
@@ -415,8 +411,8 @@ static ALWAYS_INLINE double jsToNumber(std::span<const CharacterType> characters
         return PNaN;
     }
 
-    if (characters.size() == 2 && rawCharacters[0] == '-') {
-        auto c = rawCharacters[1];
+    if (characters.size() == 2 && characters.front() == '-') {
+        auto c = characters[1];
         if (c == '0')
             return -0.0;
         if (isASCIIDigit(c))
@@ -436,9 +432,7 @@ double jsToNumber(StringView s)
 
 static double parseFloat(StringView s)
 {
-    unsigned size = s.length();
-
-    if (size == 1) {
+    if (s.length() == 1) {
         UChar c = s[0];
         if (isASCIIDigit(c))
             return c - '0';
@@ -446,36 +440,34 @@ static double parseFloat(StringView s)
     }
 
     if (s.is8Bit()) {
-        const LChar* data = s.characters8();
-        const LChar* end = data + size;
+        auto data = s.span8();
 
         // Skip leading white space.
-        for (; data < end; ++data) {
-            if (!isStrWhiteSpace(*data))
+        for (; !data.empty(); data = data.subspan(1)) {
+            if (!isStrWhiteSpace(data.front()))
                 break;
         }
 
         // Empty string.
-        if (data == end)
+        if (data.empty())
             return PNaN;
 
-        return jsStrDecimalLiteral(data, end);
+        return jsStrDecimalLiteral(data);
     }
 
-    const UChar* data = s.characters16();
-    const UChar* end = data + size;
+    auto data = s.span16();
 
     // Skip leading white space.
-    for (; data < end; ++data) {
-        if (!isStrWhiteSpace(*data))
+    for (; !data.empty(); data = data.subspan(1)) {
+        if (!isStrWhiteSpace(data.front()))
             break;
     }
 
     // Empty string.
-    if (data == end)
+    if (data.empty())
         return PNaN;
 
-    return jsStrDecimalLiteral(data, end);
+    return jsStrDecimalLiteral(data);
 }
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncEval, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -500,10 +492,10 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEval, (JSGlobalObject* globalObject, CallFram
 
     JSValue parsedObject;
     if (s.is8Bit()) {
-        LiteralParser<LChar> preparser(globalObject, s.characters8(), s.length(), SloppyJSON, nullptr);
+        LiteralParser preparser(globalObject, s.span8(), SloppyJSON, nullptr);
         parsedObject = preparser.tryLiteralParse();
     } else {
-        LiteralParser<UChar> preparser(globalObject, s.characters16(), s.length(), SloppyJSON, nullptr);
+        LiteralParser preparser(globalObject, s.span16(), SloppyJSON, nullptr);
         parsedObject = preparser.tryLiteralParse();
     }
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
