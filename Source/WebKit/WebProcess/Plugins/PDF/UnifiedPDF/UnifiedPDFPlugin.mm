@@ -33,7 +33,6 @@
 #include "FindController.h"
 #include "MessageSenderInlines.h"
 #include "PDFContextMenu.h"
-#include "PDFDataDetectorItem.h"
 #include "PDFDataDetectorOverlayController.h"
 #include "PDFKitSPI.h"
 #include "PDFPageCoverage.h"
@@ -213,6 +212,18 @@ Ref<AsyncPDFRenderer> UnifiedPDFPlugin::asyncRenderer()
 RefPtr<AsyncPDFRenderer> UnifiedPDFPlugin::asyncRendererIfExists() const
 {
     return m_asyncRenderer;
+}
+
+FrameView* UnifiedPDFPlugin::mainFrameView() const
+{
+    if (!m_frame)
+        return nullptr;
+
+    RefPtr webPage = m_frame->page();
+    if (!webPage)
+        return nullptr;
+
+    return webPage->mainFrameView();
 }
 
 void UnifiedPDFPlugin::installPDFDocument()
@@ -3002,17 +3013,22 @@ bool UnifiedPDFPlugin::existingSelectionContainsPoint(const FloatPoint& rootView
     return FloatRect { [m_currentSelection boundsForPage:page.get()] }.contains(pagePoint);
 }
 
-FloatRect UnifiedPDFPlugin::rectForSelectionInPluginSpace(PDFSelection *selection) const
+FloatRect UnifiedPDFPlugin::rectForSelectionInMainFrameContentsSpace(PDFSelection *selection) const
 {
-    if (!selection || !selection.pages)
+    RefPtr mainFrameView = this->mainFrameView();
+    if (!mainFrameView)
         return { };
 
-    RetainPtr page = [selection.pages firstObject];
-    auto pageIndex = m_documentLayout.indexForPage(page);
-    if (!pageIndex)
+    if (!m_frame->coreLocalFrame())
         return { };
 
-    return convertUp(CoordinateSpace::PDFPage, CoordinateSpace::Plugin, FloatRect { [selection boundsForPage:page.get()] }, *pageIndex);
+    RefPtr localFrameView = m_frame->coreLocalFrame()->view();
+    if (!localFrameView)
+        return { };
+
+    auto rectForSelectionInRootView = this->rectForSelectionInRootView(selection);
+    auto rectForSelectionInContents = localFrameView->rootViewToContents(rectForSelectionInRootView);
+    return mainFrameView->windowToContents(localFrameView->contentsToWindow(roundedIntRect(rectForSelectionInContents)));
 }
 
 FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *selection) const

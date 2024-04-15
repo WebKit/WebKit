@@ -41,6 +41,7 @@ OBJC_CLASS PDFPage;
 OBJC_CLASS WKPDFFormMutationObserver;
 
 namespace WebCore {
+class FrameView;
 class PageOverlay;
 
 enum class DelegatedScrollingMode : uint8_t;
@@ -52,7 +53,6 @@ namespace WebKit {
 
 class AsyncPDFRenderer;
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
-class PDFDataDetectorItem;
 class PDFDataDetectorOverlayController;
 #endif
 class PDFPluginPasswordField;
@@ -111,6 +111,8 @@ public:
     };
     using PDFElementTypes = OptionSet<PDFElementType>;
 
+    WebCore::FrameView* mainFrameView() const;
+
     CGRect pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>&) const final;
     void setActiveAnnotation(RetainPtr<PDFAnnotation>&&) final;
     void focusNextAnnotation() final;
@@ -148,7 +150,7 @@ public:
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient&);
     float deviceScaleFactor() const override;
 
-    WebCore::FloatRect rectForSelectionInPluginSpace(PDFSelection *) const;
+    WebCore::FloatRect rectForSelectionInMainFrameContentsSpace(PDFSelection *) const;
 
     /*
         Unified PDF Plugin coordinate spaces, in depth order:
