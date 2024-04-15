@@ -40,6 +40,7 @@
 - (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoAt:(CGPoint)point;
 - (BOOL)adjustVisibilityForTargets:(NSArray<_WKTargetedElementInfo *> *)targets;
 - (BOOL)resetVisibilityAdjustmentsForTargets:(NSArray<_WKTargetedElementInfo *> *)elements;
+- (void)expectSingleTargetedSelector:(NSString *)expectedSelector at:(CGPoint)point;
 
 @property (nonatomic, readonly) NSUInteger numberOfVisibilityAdjustmentRects;
 
@@ -95,6 +96,14 @@
     }];
     TestWebKitAPI::Util::run(&done);
     return result;
+}
+
+- (void)expectSingleTargetedSelector:(NSString *)expectedSelector at:(CGPoint)point
+{
+    RetainPtr elements = [self targetedElementInfoAt:point];
+    EXPECT_EQ([elements count], 1U);
+    NSString *preferredSelector = [elements firstObject].selectors.firstObject;
+    EXPECT_WK_STREQ(preferredSelector, expectedSelector);
 }
 
 @end
@@ -341,18 +350,26 @@ TEST(ElementTargeting, ParentRelativeSelectors)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView synchronouslyLoadTestPageNamed:@"element-targeting-5"];
+    [webView expectSingleTargetedSelector:@"BODY > DIV:first-of-type" at:CGPointMake(100, 50)];
+    [webView expectSingleTargetedSelector:@"BODY > DIV:nth-child(3)" at:CGPointMake(100, 150)];
+    [webView expectSingleTargetedSelector:@"BODY > DIV:last-of-type" at:CGPointMake(100, 250)];
+    [webView expectSingleTargetedSelector:@"BODY > SECTION" at:CGPointMake(100, 350)];
+}
 
-    auto checkTargetedSelector = [&](NSString *expectedSelector, CGPoint point) {
-        RetainPtr elements = [webView targetedElementInfoAt:point];
-        EXPECT_EQ([elements count], 1U);
-        NSString *preferredSelector = [elements firstObject].selectors.firstObject;
-        EXPECT_WK_STREQ(preferredSelector, expectedSelector);
-    };
+TEST(ElementTargeting, TargetInFlowElements)
+{
+    auto center = CGPointMake(200, 200);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-6"];
+    [webView expectSingleTargetedSelector:@"MAIN > P:first-of-type" at:center];
 
-    checkTargetedSelector(@"BODY > DIV:first-of-type", CGPointMake(100, 50));
-    checkTargetedSelector(@"BODY > DIV:nth-child(3)", CGPointMake(100, 150));
-    checkTargetedSelector(@"BODY > DIV:last-of-type", CGPointMake(100, 250));
-    checkTargetedSelector(@"BODY > SECTION", CGPointMake(100, 350));
+    [webView stringByEvaluatingJavaScript:@"scrollBy(0, 400)"];
+    [webView waitForNextPresentationUpdate];
+    [webView expectSingleTargetedSelector:@"IMG" at:center];
+
+    [webView stringByEvaluatingJavaScript:@"scrollBy(0, 400)"];
+    [webView waitForNextPresentationUpdate];
+    [webView expectSingleTargetedSelector:@".bottom-text" at:center];
 }
 
 } // namespace TestWebKitAPI

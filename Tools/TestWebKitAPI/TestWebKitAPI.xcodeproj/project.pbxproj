@@ -1147,6 +1147,7 @@
 		F407FE391F1D0DFC0017CF25 /* enormous.svg in Copy Resources */ = {isa = PBXBuildFile; fileRef = F407FE381F1D0DE60017CF25 /* enormous.svg */; };
 		F4094CC725545BD5003D73E3 /* DisplayListTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4094CC625545BD5003D73E3 /* DisplayListTests.cpp */; };
 		F40B8D5E281086E500346417 /* fade-in-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F40B8D5D2810855900346417 /* fade-in-image.html */; };
+		F41289A92BCC97E700D6E0E7 /* element-targeting-6.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F41289A12BCC97DA00D6E0E7 /* element-targeting-6.html */; };
 		F41462BA2BC346B80027261C /* event.ics in Copy Resources */ = {isa = PBXBuildFile; fileRef = F41462AA2BC346130027261C /* event.ics */; };
 		F415086D1DA040C50044BE9B /* play-audio-on-click.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F415086C1DA040C10044BE9B /* play-audio-on-click.html */; };
 		F418BE151F71B7DC001970E6 /* RoundedRectTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F418BE141F71B7DC001970E6 /* RoundedRectTests.cpp */; };
@@ -1634,6 +1635,7 @@
 				F41E446D2BBCDD81002A856F /* element-targeting-3.html in Copy Resources */,
 				F44A2A772BC205060044694E /* element-targeting-4.html in Copy Resources */,
 				F4FB84A82BC9F1F6000D0B47 /* element-targeting-5.html in Copy Resources */,
+				F41289A92BCC97E700D6E0E7 /* element-targeting-6.html in Copy Resources */,
 				51C8E1A91F27F49600BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist in Copy Resources */,
 				49D902B328209B3300E2C3B8 /* emptyTable.html in Copy Resources */,
 				A14AAB651E78DC5400C1ADC2 /* encrypted.pdf in Copy Resources */,
@@ -3511,6 +3513,7 @@
 		F4094CC625545BD5003D73E3 /* DisplayListTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayListTests.cpp; sourceTree = "<group>"; };
 		F40B8D5D2810855900346417 /* fade-in-image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "fade-in-image.html"; sourceTree = "<group>"; };
 		F4106C6821ACBF84004B89A1 /* WKWebViewFirstResponderTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewFirstResponderTests.mm; sourceTree = "<group>"; };
+		F41289A12BCC97DA00D6E0E7 /* element-targeting-6.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "element-targeting-6.html"; sourceTree = "<group>"; };
 		F41462AA2BC346130027261C /* event.ics */ = {isa = PBXFileReference; lastKnownFileType = text; path = event.ics; sourceTree = "<group>"; };
 		F415086C1DA040C10044BE9B /* play-audio-on-click.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "play-audio-on-click.html"; sourceTree = "<group>"; };
 		F418BE141F71B7DC001970E6 /* RoundedRectTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RoundedRectTests.cpp; sourceTree = "<group>"; };
@@ -4848,6 +4851,7 @@
 				F41E44652BBCDC74002A856F /* element-targeting-3.html */,
 				F44A2A6E2BC202840044694E /* element-targeting-4.html */,
 				F4FB84A02BC9F13A000D0B47 /* element-targeting-5.html */,
+				F41289A12BCC97DA00D6E0E7 /* element-targeting-6.html */,
 				51C8E1A81F27F47300BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist */,
 				F4C2AB211DD6D94100E06D5B /* enormous-video-with-sound.html */,
 				F407FE381F1D0DE60017CF25 /* enormous.svg */,

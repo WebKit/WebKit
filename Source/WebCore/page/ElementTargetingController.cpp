@@ -56,15 +56,43 @@
 namespace WebCore {
 
 static constexpr auto maximumNumberOfClasses = 5;
-static constexpr auto maximumAreaRatioForAbsolutelyPositionedContent = 0.75;
-static constexpr auto maximumAreaRatioForInFlowContent = 0.5;
-static constexpr auto maximumAreaRatioForNearbyTargets = 0.25;
-static constexpr auto minimumAreaRatioForInFlowContent = 0.01;
-static constexpr auto maximumAreaRatioForTrackingAdjustmentAreas = 0.25;
 static constexpr auto marginForTrackingAdjustmentRects = 5;
 static constexpr auto minimumDistanceToConsiderEdgesEquidistant = 2;
 static constexpr auto selectorBasedVisibilityAdjustmentTimeLimit = 30_s;
 static constexpr auto adjustmentClientRectCleanUpDelay = 15_s;
+static constexpr auto minimumAreaForInterpolation = 200000;
+static constexpr auto maximumAreaForInterpolation = 800000;
+
+static float linearlyInterpolatedViewportRatio(float viewportArea, float minimumValue, float maximumValue)
+{
+    auto areaRatio = (viewportArea - minimumAreaForInterpolation) / (maximumAreaForInterpolation - minimumAreaForInterpolation);
+    return clampTo(maximumValue - areaRatio * (maximumValue - minimumValue), minimumValue, maximumValue);
+}
+
+static float maximumAreaRatioForAbsolutelyPositionedContent(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.75, 1);
+}
+
+static float maximumAreaRatioForInFlowContent(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.5, 1);
+}
+
+static float maximumAreaRatioForNearbyTargets(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.25, 0.5);
+}
+
+static float minimumAreaRatioForInFlowContent(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.005, 0.01);
+}
+
+static float maximumAreaRatioForTrackingAdjustmentAreas(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.25, 0.3);
+}
 
 using ElementSelectorCache = HashMap<Ref<Element>, std::optional<String>>;
 
@@ -410,7 +438,7 @@ static inline std::optional<IntRect> inflatedClientRectForAdjustmentRegionTracki
     if (clientRect.isEmpty())
         return { };
 
-    if (clientRect.area() / viewportArea >= maximumAreaRatioForTrackingAdjustmentAreas)
+    if (clientRect.area() / viewportArea >= maximumAreaRatioForTrackingAdjustmentAreas(viewportArea))
         return { };
 
     // Keep track of the client rects of elements we're targeting, until the client
@@ -451,6 +479,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     if (!viewportArea)
         return { };
 
+    auto nearbyTargetAreaRatio = maximumAreaRatioForNearbyTargets(viewportArea);
     static constexpr OptionSet hitTestOptions {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::DisallowUserAgentShadowContent,
@@ -498,17 +527,18 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
         auto targetAreaRatio = computeViewportAreaRatio(targetBoundingBox);
         bool shouldAddTarget = targetRenderer->isFixedPositioned()
             || targetRenderer->isStickilyPositioned()
-            || (targetRenderer->isAbsolutelyPositioned() && targetAreaRatio < maximumAreaRatioForAbsolutelyPositionedContent)
-            || (minimumAreaRatioForInFlowContent < targetAreaRatio && targetAreaRatio < maximumAreaRatioForInFlowContent);
+            || (targetRenderer->isAbsolutelyPositioned() && targetAreaRatio < maximumAreaRatioForAbsolutelyPositionedContent(viewportArea))
+            || (minimumAreaRatioForInFlowContent(viewportArea) < targetAreaRatio && targetAreaRatio < maximumAreaRatioForInFlowContent(viewportArea))
+            || !target->firstElementChild();
 
         if (!shouldAddTarget)
             continue;
 
         bool checkForNearbyTargets = request.canIncludeNearbyElements
             && targetRenderer->isOutOfFlowPositioned()
-            && targetAreaRatio < maximumAreaRatioForNearbyTargets;
+            && targetAreaRatio < nearbyTargetAreaRatio;
 
-        if (checkForNearbyTargets && computeViewportAreaRatio(targetBoundingBox) < maximumAreaRatioForNearbyTargets)
+        if (checkForNearbyTargets && computeViewportAreaRatio(targetBoundingBox) < nearbyTargetAreaRatio)
             additionalRegionForNearbyElements.unite(targetBoundingBox);
 
         auto targetEncompassesOtherCandidate = [](Element& target, Element& candidate) {
@@ -529,7 +559,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
 
             if (checkForNearbyTargets) {
                 auto boundingBox = candidate->boundingBoxInRootViewCoordinates();
-                if (computeViewportAreaRatio(boundingBox) < maximumAreaRatioForNearbyTargets)
+                if (computeViewportAreaRatio(boundingBox) < nearbyTargetAreaRatio)
                     additionalRegionForNearbyElements.unite(boundingBox);
             }
 
@@ -582,7 +612,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
             if (!additionalRegionForNearbyElements.contains(boundingBox))
                 continue;
 
-            if (computeViewportAreaRatio(boundingBox) > maximumAreaRatioForNearbyTargets)
+            if (computeViewportAreaRatio(boundingBox) > nearbyTargetAreaRatio)
                 continue;
 
             targets.add(element.releaseNonNull());
