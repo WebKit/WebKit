@@ -2833,3 +2833,5 @@ imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties
 # webkit.org/b/272081 [web-animations] update WPT import for web-animations
 [ Sonoma ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-drop-shadow.html [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/infinite-duration-animation.html [ ImageOnlyFailure ]
+
+webkit.org/b/272657 fast/canvas/offscreen-nested-worker-serialization.html [ Timeout ]
