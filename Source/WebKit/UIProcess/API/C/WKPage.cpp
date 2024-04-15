@@ -101,7 +101,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/WindowFeatures.h>
-#include <wtf/Algorithms.h>
+#include <wtf/StdLibExtras.h>
 
 #ifdef __BLOCKS__
 #include <Block.h>

@@ -28,9 +28,9 @@
 #include "COMPtr.h"
 #include <mlang.h>
 #include <windows.h>
-#include <wtf/Algorithms.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>

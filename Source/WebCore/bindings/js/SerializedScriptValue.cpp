@@ -103,12 +103,12 @@
 #include <JavaScriptCore/YarrFlags.h>
 #include <limits>
 #include <optional>
-#include <wtf/Algorithms.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/DataLog.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/threads/BinarySemaphore.h>
 

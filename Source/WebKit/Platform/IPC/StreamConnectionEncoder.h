@@ -27,7 +27,6 @@
 
 #include "ArgumentCoders.h"
 #include "MessageNames.h"
-#include <wtf/Algorithms.h>
 #include <wtf/StdLibExtras.h>
 
 namespace IPC {

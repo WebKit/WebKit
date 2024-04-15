@@ -40,12 +40,12 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SharedMemory.h>
 #include <string>
-#include <wtf/Algorithms.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>

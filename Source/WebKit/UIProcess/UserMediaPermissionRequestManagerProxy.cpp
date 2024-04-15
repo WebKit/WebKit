@@ -48,6 +48,7 @@
 #include <WebCore/UserMediaRequest.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Scope.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/WeakHashSet.h>
 
 #if ENABLE(GPU_PROCESS)

@@ -25,7 +25,7 @@
 #include <wtf/text/Base64.h>
 
 #include <limits.h>
-#include <wtf/Algorithms.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WTF {
 

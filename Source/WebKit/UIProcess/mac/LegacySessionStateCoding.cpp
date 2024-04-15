@@ -29,9 +29,9 @@
 #include "APIData.h"
 #include "SessionState.h"
 #include <mutex>
-#include <wtf/Algorithms.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MallocPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/cf/VectorCF.h>
 #include <wtf/text/StringView.h>

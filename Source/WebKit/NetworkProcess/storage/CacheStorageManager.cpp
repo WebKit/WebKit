@@ -117,7 +117,7 @@ static bool writeCachesList(const String& cachesListDirectoryPath, const Vector<
         encoder << caches[index]->uniqueName();
     }
 
-    FileSystem::overwriteEntireFile(cachesListFilePath, std::span(const_cast<uint8_t*>(encoder.buffer()), encoder.bufferSize()));
+    FileSystem::overwriteEntireFile(cachesListFilePath, encoder.span());
     return true;
 }
 

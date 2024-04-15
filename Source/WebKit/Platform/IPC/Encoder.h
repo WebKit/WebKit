@@ -29,9 +29,9 @@
 #include "MessageNames.h"
 #include <WebCore/PlatformExportMacros.h>
 #include <WebCore/SharedBuffer.h>
-#include <wtf/Algorithms.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 namespace IPC {

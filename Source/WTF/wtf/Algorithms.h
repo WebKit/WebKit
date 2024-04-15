@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cstring>
-#include <span>
 #include <type_traits>
 #include <wtf/Assertions.h>
 
@@ -59,56 +58,4 @@ bool allOf(ContainerType&& container, AllOfFunction allOfFunction)
     return true;
 }
 
-template<typename T, typename U>
-std::span<T> spanReinterpretCast(std::span<U> span)
-{
-    RELEASE_ASSERT(!(span.size_bytes() % sizeof(T)));
-    static_assert(std::is_const_v<T> || (!std::is_const_v<T> && !std::is_const_v<U>), "spanCast will not remove constness from source");
-    return std::span<T> { reinterpret_cast<T*>(const_cast<std::remove_const_t<U>*>(span.data())), span.size_bytes() / sizeof(T) };
-}
-
-template<typename T, std::size_t Extent>
-std::span<const uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> asBytes(std::span<T, Extent> span)
-{
-    return std::span<const uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> { reinterpret_cast<const uint8_t*>(span.data()), span.size_bytes() };
-}
-
-template<typename T, std::size_t Extent>
-std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> asWritableBytes(std::span<T, Extent> span)
-{
-    return std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> { reinterpret_cast<uint8_t*>(span.data()), span.size_bytes() };
-}
-
-template<typename T>
-bool equalSpans(std::span<T> a, std::span<T> b)
-{
-    if (a.size() != b.size())
-        return false;
-    return !memcmp(a.data(), b.data(), a.size() * sizeof(T));
-}
-
-template<typename T, typename U>
-void memcpySpan(std::span<T> destination, std::span<U> source)
-{
-    RELEASE_ASSERT(destination.size() == source.size());
-    static_assert(sizeof(T) == sizeof(U));
-    static_assert(std::is_trivially_copyable_v<T>);
-    static_assert(std::is_trivially_copyable_v<U>);
-    memcpy(destination.data(), source.data(), destination.size() * sizeof(T));
-}
-
-template<typename T>
-void memsetSpan(std::span<T> destination, uint8_t byte)
-{
-    static_assert(std::is_trivially_copyable_v<T>);
-    memset(destination.data(), byte, destination.size() * sizeof(T));
-}
-
 } // namespace WTF
-
-using WTF::asBytes;
-using WTF::asWritableBytes;
-using WTF::spanReinterpretCast;
-using WTF::equalSpans;
-using WTF::memcpySpan;
-using WTF::memsetSpan;

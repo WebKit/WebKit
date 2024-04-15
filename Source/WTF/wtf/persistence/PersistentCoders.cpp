@@ -26,7 +26,7 @@
 #include "config.h"
 #include <wtf/persistence/PersistentCoders.h>
 
-#include <wtf/Algorithms.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

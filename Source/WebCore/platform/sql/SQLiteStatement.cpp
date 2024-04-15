@@ -31,8 +31,8 @@
 #include "SQLiteDatabaseTracker.h"
 #include <sqlite3.h>
 #include <variant>
-#include <wtf/Algorithms.h>
 #include <wtf/Assertions.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringView.h>
 
 // SQLite 3.6.16 makes sqlite3_prepare_v2 automatically retry preparing the statement

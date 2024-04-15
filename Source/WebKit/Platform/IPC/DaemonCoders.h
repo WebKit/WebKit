@@ -28,8 +28,8 @@
 #include "ArgumentCoders.h"
 #include <WebCore/PushSubscriptionIdentifier.h>
 #include <optional>
-#include <wtf/Algorithms.h>
 #include <wtf/Forward.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>

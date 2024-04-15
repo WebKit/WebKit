@@ -26,11 +26,11 @@
 #pragma once
 
 #include <utility>
-#include <wtf/Algorithms.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>

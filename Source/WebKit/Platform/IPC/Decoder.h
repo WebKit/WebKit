@@ -28,12 +28,12 @@
 #include "Attachment.h"
 #include "MessageNames.h"
 #include "ReceiverMatcher.h"
-#include <wtf/Algorithms.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)

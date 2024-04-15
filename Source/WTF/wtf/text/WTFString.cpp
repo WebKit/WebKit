@@ -23,10 +23,10 @@
 #include <wtf/text/WTFString.h>
 
 #include <wtf/ASCIICType.h>
-#include <wtf/Algorithms.h>
 #include <wtf/DataLog.h>
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/CString.h>
