@@ -36,6 +36,7 @@
 #include "FidoConstants.h"
 #include "WebAuthenticationConstants.h"
 #include "WebAuthenticationUtils.h"
+#include <wtf/CheckedArithmetic.h>
 
 namespace fido {
 using namespace WebCore;
@@ -116,7 +117,10 @@ static size_t parseX509Length(const Vector<uint8_t>& u2fData, size_t offset)
 static cbor::CBORValue::MapValue createFidoAttestationStatementFromU2fRegisterResponse(const Vector<uint8_t>& u2fData, size_t offset)
 {
     auto x509Length = parseX509Length(u2fData, offset);
-    if (!x509Length || u2fData.size() < offset + x509Length)
+    auto requiredLength = CheckedSize { x509Length } + offset;
+    if (requiredLength.hasOverflowed())
+        return { };
+    if (!x509Length || u2fData.size() < requiredLength)
         return { };
 
     Vector<uint8_t> x509 { u2fData.data() + offset, x509Length };
