@@ -42,6 +42,7 @@
 #include "RenderBox.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
+#include "RenderViewTransitionCapture.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Styleable.h"
@@ -365,9 +366,9 @@ ExceptionOr<void> ViewTransition::captureOldState()
     for (auto& element : captureElements) {
         CapturedElement capture;
 
-        CheckedPtr renderBox = dynamicDowncast<RenderBox>(element->renderer());
+        CheckedPtr renderBox = dynamicDowncast<RenderBoxModelObject>(element->renderer());
         if (renderBox)
-            capture.oldSize = renderBox->size();
+            capture.oldSize = renderBox->borderBoundingBox().size();
         capture.oldProperties = copyElementBaseProperties(element, capture.oldSize);
         if (m_document->frame())
             capture.oldImage = snapshotNodeVisualOverflowClippedToViewport(*m_document->frame(), element.get(), capture.oldOverflowRect);
@@ -632,7 +633,9 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& e
         auto& frameView = renderer->view().frameView();
         props->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(frameView.contentsWidth(), CSSUnitType::CSS_PX));
         props->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(frameView.contentsHeight(), CSSUnitType::CSS_PX));
-
+    } else {
+        props->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(size.width(), CSSUnitType::CSS_PX));
+        props->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(size.height(), CSSUnitType::CSS_PX));
     }
 
     TransformationMatrix transform;
@@ -678,8 +681,23 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
             CheckVisibilityOptions visibilityOptions { .contentVisibilityAuto = true };
             if (!newElement->checkVisibility(visibilityOptions))
                 return Exception { ExceptionCode::InvalidStateError, "One of the transitioned elements has become hidden."_s };
-            CheckedPtr renderBox = dynamicDowncast<RenderBox>(newElement->renderer());
-            properties = copyElementBaseProperties(*newElement, renderBox ? renderBox->size() : LayoutSize { });
+            CheckedPtr renderBox = dynamicDowncast<RenderBoxModelObject>(newElement->renderer());
+            if (!renderBox)
+                continue;
+
+            LayoutSize boxSize = renderBox->borderBoundingBox().size();
+            LayoutRect overflowRect;
+            properties = copyElementBaseProperties(*newElement, boxSize);
+            if (renderBox->hasLayer())
+                overflowRect = renderBox->layer()->localBoundingBox(RenderLayer::IncludeRootBackgroundPaintingArea);
+
+            if (RefPtr documentElement = m_document->documentElement()) {
+                Styleable styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name });
+                CheckedPtr renderer = styleable.renderer();
+                if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer.get()))
+                    viewTransitionCapture->setSize(boxSize, overflowRect);
+            }
+
         } else
             properties = capturedElement->oldProperties;
 

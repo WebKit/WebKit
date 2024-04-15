@@ -40,10 +40,14 @@ RenderViewTransitionCapture::RenderViewTransitionCapture(Type type, Document& do
     : RenderReplaced(type, document, WTFMove(style), { }, ReplacedFlag::IsViewTransitionCapture)
 { }
 
-void RenderViewTransitionCapture::setImage(RefPtr<ImageBuffer> oldImage, const LayoutSize& size, const LayoutRect& overflowRect)
+void RenderViewTransitionCapture::setImage(RefPtr<ImageBuffer> oldImage)
+{
+    m_oldImage = oldImage;
+}
+
+void RenderViewTransitionCapture::setSize(const LayoutSize& size, const LayoutRect& overflowRect)
 {
     setIntrinsicSize(size);
-    m_oldImage = oldImage;
     m_overflowRect = overflowRect;
 }
 
