@@ -1974,7 +1974,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
 {
     RegistrableDomain registrableDomain { navigation.currentRequest().url() };
     if (page.preferences().siteIsolationEnabled() && !registrableDomain.isEmpty()) {
-        RegistrableDomain mainFrameDomain(URL(page.pageLoadState().activeURL()));
+        auto mainFrameDomain = frameInfo.isMainFrame ? registrableDomain : RegistrableDomain(URL(page.pageLoadState().activeURL()));
         if (!frame.isMainFrame() && registrableDomain == mainFrameDomain) {
             Ref mainFrameProcess = page.mainFrame()->protectedProcess();
             if (!mainFrameProcess->isInProcessCache())

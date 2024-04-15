@@ -15,9 +15,7 @@ assert.throws(
   TypeError,
   function () {
     RegExp.prototype.compile.call(otherRealm_regexp);
-  },
-  "`RegExp.prototype.compile.call(otherRealm_regexp)` throws TypeError"
-);
+  });
 
 assert.throws(
   other.TypeError,

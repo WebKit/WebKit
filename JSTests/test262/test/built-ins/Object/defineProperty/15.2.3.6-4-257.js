@@ -31,6 +31,7 @@ Object.defineProperty(arrObj, "1", {
 
 verifyWritable(arrObj, "1", "setVerifyHelpProp");
 
-verifyNotEnumerable(arrObj, "1");
-
-verifyNotConfigurable(arrObj, "1");
+verifyProperty(arrObj, "1", {
+  enumerable: false,
+  configurable: false,
+});

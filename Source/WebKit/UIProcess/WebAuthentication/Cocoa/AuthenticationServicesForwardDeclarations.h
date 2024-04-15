@@ -368,6 +368,7 @@ typedef NS_ERROR_ENUM(ASAuthorizationErrorDomain, ASAuthorizationError) {
     ASAuthorizationErrorNotHandled = 1003,
     ASAuthorizationErrorFailed = 1004,
     ASAuthorizationErrorNotInteractive = 1005,
+    ASAuthorizationErrorMatchedExcludedCredential = 1006,
 };
 
 NS_ASSUME_NONNULL_END

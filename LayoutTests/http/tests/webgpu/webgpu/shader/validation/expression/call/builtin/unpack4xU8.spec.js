@@ -1,25 +1,28 @@
 /**
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/export const description = `Validate unpack4xU8`;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
+**/const kFn = 'unpack4xU8';export const description = `Validate ${kFn}`;
+import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { keysOf } from '../../../../../../common/util/data_tables.js';
 import { ShaderValidationTest } from '../../../shader_validation_test.js';
 
 const kFeature = 'packed_4x8_integer_dot_product';
-const kFn = 'unpack4xU8';
 const kArgCases = {
-  good: '(1u)',
+  good_u32: '(1u)',
+  good_aint: '(1)',
   bad_0args: '()',
   bad_2args: '(1u,2u)',
-  bad_0i32: '(1i)',
-  bad_0f32: '(1f)',
-  bad_0bool: '(false)',
-  bad_0vec2u: '(vec2u())',
-  bad_0vec3u: '(vec3u())',
-  bad_0vec4u: '(vec4u())',
-  bad_0array: '(array(1))',
-  bad_0struct: '(modf(1.1))'
+  bad_i32: '(1i)',
+  bad_f32: '(1f)',
+  bad_f16: '(1h)',
+  bad_bool: '(false)',
+  bad_vec2u: '(vec2u())',
+  bad_vec3u: '(vec3u())',
+  bad_vec4u: '(vec4u())',
+  bad_array: '(array(1))',
+  bad_struct: '(modf(1.1))'
 };
-const kGoodArgs = kArgCases['good'];
+const kGoodArgs = kArgCases['good_u32'];
+const kReturnType = 'vec4u';
 
 export const g = makeTestGroup(ShaderValidationTest);
 
@@ -48,7 +51,24 @@ desc(`Test compilation failure of ${kFn} with various numbers of and types of ar
 params((u) => u.combine('arg', keysOf(kArgCases))).
 fn((t) => {
   t.skipIfLanguageFeatureNotSupported(kFeature);
-  t.expectCompileResult(t.params.arg === 'good', `const c = ${kFn}${kArgCases[t.params.arg]};`);
+
+  let code = '';
+  if (t.params.arg === 'bad_f16') {
+    code += 'enable f16;\n';
+  }
+  code += `const c = ${kFn}${kArgCases[t.params.arg]};`;
+
+  t.expectCompileResult(t.params.arg.startsWith('good'), code);
+});
+
+g.test('return').
+desc(`Test ${kFn} return value type ${kReturnType}`).
+params((u) => u.combine('type', ['vec4u', 'vec4i', 'vec4f', 'vec3u', 'vec2u', 'u32'])).
+fn((t) => {
+  t.expectCompileResult(
+    t.params.type === kReturnType,
+    `const c: ${t.params.type} = ${kFn}${kGoodArgs};`
+  );
 });
 
 g.test('must_use').

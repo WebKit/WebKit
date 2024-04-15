@@ -41,16 +41,7 @@ public:
     UserScript& operator=(const UserScript&) = default;
     UserScript& operator=(UserScript&&) = default;
 
-    UserScript(String&& source, URL&& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, WaitForNotificationBeforeInjecting waitForNotification)
-        : m_source(WTFMove(source))
-        , m_url(WTFMove(url))
-        , m_allowlist(WTFMove(allowlist))
-        , m_blocklist(WTFMove(blocklist))
-        , m_injectionTime(injectionTime)
-        , m_injectedFrames(injectedFrames)
-        , m_waitForNotificationBeforeInjecting(waitForNotification)
-    {
-    }
+    WEBCORE_EXPORT UserScript(String&&, URL&&, Vector<String>&&, Vector<String>&&, UserScriptInjectionTime, UserContentInjectedFrames, WaitForNotificationBeforeInjecting);
 
     const String& source() const { return m_source; }
     const URL& url() const { return m_url; }

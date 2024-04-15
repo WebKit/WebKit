@@ -79,22 +79,24 @@ auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::Contain
     if (containerQuery.containsUnknownFeature == CQ::ContainsUnknownFeature::Yes)
         return { };
 
-    auto* container = selectContainer(containerQuery.requiredAxes, containerQuery.name, m_element.get(), m_selectionMode, m_scopeOrdinal, m_evaluationState);
+    Ref element = m_element;
+    RefPtr container = selectContainer(containerQuery.requiredAxes, containerQuery.name, element.get(), m_selectionMode, m_scopeOrdinal, m_evaluationState);
     if (!container)
         return { };
 
-    auto* containerStyle = styleForContainer(*container, containerQuery.requiredAxes, m_evaluationState);
+    CheckedPtr containerStyle = styleForContainer(*container.get(), containerQuery.requiredAxes, m_evaluationState);
     if (!containerStyle)
         return { };
 
-    auto* containerParent = container->parentElementInComposedTree();
-    auto* containerParentStyle = containerParent ? styleForContainer(*containerParent, containerQuery.requiredAxes, m_evaluationState) : nullptr;
+    RefPtr containerParent = container->parentElementInComposedTree();
+    CheckedPtr containerParentStyle = containerParent ? styleForContainer(*containerParent, containerQuery.requiredAxes, m_evaluationState) : nullptr;
 
-    auto* rootStyle = m_element->document().documentElement()->renderStyle();
+    Ref document = element->document();
+    CheckedPtr rootStyle = document->documentElement()->renderStyle();
 
     return MQ::FeatureEvaluationContext {
-        m_element->document(),
-        CSSToLengthConversionData { *containerStyle, rootStyle, containerParentStyle, m_element->document().renderView(), container },
+        document.get(),
+        CSSToLengthConversionData { *containerStyle, rootStyle.get(), containerParentStyle.get(), document->renderView(), container.get() },
         container->renderer()
     };
 }
@@ -129,7 +131,7 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> requ
     };
 
     auto isContainerForQuery = [&](const Element& candidateElement, const Element* originatingElement = nullptr) {
-        auto* style = styleForContainer(candidateElement, requiredAxes, evaluationState);
+        auto style = styleForContainer(candidateElement, requiredAxes, evaluationState);
         if (!style)
             return false;
         if (!isValidContainerForRequiredAxes(style->containerType(), candidateElement.renderer()))
@@ -140,7 +142,7 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> requ
         return style->containerNames().containsIf([&](auto& scopedName) {
             auto isNameFromAllowedScope = [&](auto& scopedName) {
                 // Names from :host rules are allowed when the candidate is the host element.
-                auto* host = originatingElement ? originatingElement->shadowHost() : element.shadowHost();
+                RefPtr host = originatingElement ? originatingElement->shadowHost() : element.shadowHost();
                 auto isHost = host == &candidateElement;
                 if (scopedName.scopeOrdinal == ScopeOrdinal::Shadow && isHost)
                     return true;
@@ -165,11 +167,11 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> requ
         return nullptr;
     };
 
-    if (auto* originatingElement = findOriginatingElement()) {
+    if (RefPtr originatingElement = findOriginatingElement()) {
         // For selectors with pseudo elements, query containers can be established by the shadow-including inclusive ancestors of the ultimate originating element.
-        for (auto* ancestor = originatingElement; ancestor; ancestor = ancestor->parentOrShadowHostElement()) {
-            if (isContainerForQuery(*ancestor, originatingElement))
-                return ancestor;
+        for (RefPtr ancestor = originatingElement; ancestor; ancestor = ancestor->parentOrShadowHostElement()) {
+            if (isContainerForQuery(*ancestor.get(), originatingElement.get()))
+                return ancestor.get();
         }
         return nullptr;
     }
@@ -187,9 +189,9 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> requ
         return { };
     }
 
-    for (auto* ancestor = element.parentOrShadowHostElement(); ancestor; ancestor = ancestor->parentOrShadowHostElement()) {
-        if (isContainerForQuery(*ancestor))
-            return ancestor;
+    for (RefPtr ancestor = element.parentOrShadowHostElement(); ancestor; ancestor = ancestor->parentOrShadowHostElement()) {
+        if (isContainerForQuery(*ancestor.get()))
+            return ancestor.get();
     }
     return { };
 }

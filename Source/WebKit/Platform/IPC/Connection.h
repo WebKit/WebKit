@@ -428,6 +428,10 @@ public:
     template<typename T, typename C> static void callReply(IPC::Decoder&, C&& completionHandler);
     template<typename T, typename C> static void cancelReply(C&& completionHandler);
 
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    static void* generateSignpostIdentifier();
+#endif
+
 private:
     Connection(Identifier, bool isServer, Thread::QOS = Thread::QOS::Default);
     void platformInitialize(Identifier);
@@ -489,6 +493,8 @@ private:
     Timeout timeoutRespectingIgnoreTimeoutsForTesting(Timeout) const;
     Ref<WorkQueue> protectedConnectionQueue() const { return m_connectionQueue; }
 
+    Error sendMessageImpl(UniqueRef<Encoder>&&, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> = std::nullopt);
+
 #if PLATFORM(COCOA)
     bool sendMessage(std::unique_ptr<MachMessage>);
 #endif
@@ -508,6 +514,8 @@ private:
     void addAsyncReplyHandler(AsyncReplyHandler&&);
     void addAsyncReplyHandlerWithDispatcher(AsyncReplyHandlerWithDispatcher&&);
     void cancelAsyncReplyHandlers();
+
+    static constexpr size_t largeOutgoingMessageQueueCountThreshold { 128 };
 
     static Lock s_connectionMapLock;
     Client* m_client { nullptr };

@@ -24,8 +24,9 @@ Object.defineProperties(arr, {
 assert.sameValue(arr.length, 0);
 
 arr.length = 2;
-assert.sameValue(arr.length, 2);
 
-verifyNotEnumerable(arr, "length");
-
-verifyNotConfigurable(arr, "length");
+verifyProperty(arr, "length", {
+  value: 2,
+  enumerable: false,
+  configurable: false,
+});

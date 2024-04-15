@@ -29,6 +29,7 @@
 #include "AudioSession.h"
 #include "Document.h"
 #include "Logging.h"
+#include "NowPlayingInfo.h"
 #include "PlatformMediaSession.h"
 
 namespace WebCore {
@@ -156,6 +157,11 @@ bool PlatformMediaSessionManager::canProduceAudio() const
     return anyOfSessions([] (auto& session) {
         return session.canProduceAudio();
     });
+}
+
+std::optional<NowPlayingInfo> PlatformMediaSessionManager::nowPlayingInfo() const
+{
+    return { };
 }
 
 int PlatformMediaSessionManager::count(PlatformMediaSession::MediaType type) const
@@ -853,6 +859,26 @@ WeakPtr<PlatformMediaSession> PlatformMediaSessionManager::bestEligibleSessionFo
     }
 
     return eligibleAudioVideoSessions[0]->selectBestMediaSession(eligibleAudioVideoSessions, purpose);
+}
+
+void PlatformMediaSessionManager::addNowPlayingMetadataObserver(const NowPlayingMetadataObserver& observer)
+{
+    ASSERT(!m_nowPlayingMetadataObservers.contains(observer));
+    m_nowPlayingMetadataObservers.add(observer);
+    observer(nowPlayingInfo().value_or(NowPlayingInfo { }).metadata);
+}
+
+void PlatformMediaSessionManager::removeNowPlayingMetadataObserver(const NowPlayingMetadataObserver& observer)
+{
+    ASSERT(m_nowPlayingMetadataObservers.contains(observer));
+    m_nowPlayingMetadataObservers.remove(observer);
+}
+
+void PlatformMediaSessionManager::nowPlayingMetadataChanged(const NowPlayingMetadata& metadata)
+{
+    m_nowPlayingMetadataObservers.forEach([&] (auto& observer) {
+        observer(metadata);
+    });
 }
 
 #if !RELEASE_LOG_DISABLED

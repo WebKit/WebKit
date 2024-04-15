@@ -39,6 +39,8 @@
             const x = scrollerBounds.left + 10;
             const y = scrollerBounds.top + 10;
 
+            await UIHelper.renderingUpdate()
+
             debug('Initial state');
             var scrollbarState = await UIHelper.verticalScrollbarState(scroller);
             debug(scrollbarState);

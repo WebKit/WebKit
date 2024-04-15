@@ -27,6 +27,7 @@ info: |
   9. If IsSharedArrayBuffer(buffer) is false, throw a TypeError exception.
   10. Return buffer.
 
+includes: [testTypedArray.js]
 features: [Atomics.waitAsync, Atomics, TypedArray, SharedArrayBuffer]
 ---*/
 assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
@@ -37,10 +38,7 @@ const index = {
   }
 };
 
-const nonSharedArrayTypes = [
-  Int8Array, Uint8Array, Int16Array, Uint16Array, Uint32Array,
-  Uint8ClampedArray, Float32Array, Float64Array
-];
+var nonSharedArrayTypes = typedArrayConstructors.filter(function(TA) { return TA !== Int32Array; });
 
 for (const nonSharedArrayType of nonSharedArrayTypes) {
   const typedArray = new nonSharedArrayType(new SharedArrayBuffer(8));

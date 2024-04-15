@@ -96,10 +96,12 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
 
         if (attachment.resolveTarget) {
             auto& texture = fromAPI(attachment.resolveTarget);
+            texture.setCommandEncoder(parentEncoder);
             texture.setPreviouslyCleared();
             addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
         }
 
+        texture.setCommandEncoder(parentEncoder);
         id<MTLTexture> textureToClear = texture.texture();
         if (!textureToClear)
             continue;
@@ -116,6 +118,7 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     if (const auto* attachment = descriptor.depthStencilAttachment) {
         auto& textureView = fromAPI(attachment->view);
         textureView.setPreviouslyCleared();
+        textureView.setCommandEncoder(parentEncoder);
         if (textureView.width() && !m_renderTargetWidth) {
             m_renderTargetWidth = textureView.width();
             m_renderTargetHeight = textureView.height();

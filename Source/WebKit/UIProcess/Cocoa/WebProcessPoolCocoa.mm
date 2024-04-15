@@ -262,7 +262,13 @@ static AccessibilityPreferences accessibilityPreferences()
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 void WebProcessPool::setMediaAccessibilityPreferences(WebProcessProxy& process)
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [weakProcess = WeakPtr { process }] {
+    static dispatch_queue_t mediaAccessibilityQueue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        mediaAccessibilityQueue = dispatch_queue_create("MediaAccessibility queue", DISPATCH_QUEUE_SERIAL);
+    });
+
+    dispatch_async(mediaAccessibilityQueue, [weakProcess = WeakPtr { process }] {
         auto captionDisplayMode = WebCore::CaptionUserPreferencesMediaAF::platformCaptionDisplayMode();
         auto preferredLanguages = WebCore::CaptionUserPreferencesMediaAF::platformPreferredLanguages();
         callOnMainRunLoop([weakProcess, captionDisplayMode, preferredLanguages = crossThreadCopy(WTFMove(preferredLanguages))] {
@@ -714,6 +720,7 @@ void WebProcessPool::registerNotificationObservers()
         "com.apple.language.changed"_s,
         "com.apple.mediaaccessibility.captionAppearanceSettingsChanged"_s,
         "com.apple.powerlog.state_changed"_s,
+        "com.apple.system.logging.prefschanged"_s,
         "com.apple.system.lowpowermode"_s,
         "com.apple.system.timezone"_s,
         "com.apple.zoomwindow"_s,
@@ -1149,18 +1156,8 @@ void WebProcessPool::setProcessesShouldSuspend(bool shouldSuspend)
 #if ENABLE(CFPREFS_DIRECT_MODE)
 void WebProcessPool::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
 {
-    for (auto process : m_processes)
-        process->send(Messages::WebProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
-
-#if ENABLE(GPU_PROCESS)
-    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
-        gpuProcess->send(Messages::GPUProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
-#endif
-    
-    WebsiteDataStore::forEachWebsiteDataStore([domain, key, encodedValue] (WebsiteDataStore& dataStore) {
-        if (auto* networkProcess = dataStore.networkProcessIfExists())
-            networkProcess->send(Messages::NetworkProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
-    });
+    for (Ref process : m_processes)
+        process->notifyPreferencesChanged(domain, key, encodedValue);
 
     if (key == WKLockdownModeEnabledKey)
         lockdownModeStateChanged();

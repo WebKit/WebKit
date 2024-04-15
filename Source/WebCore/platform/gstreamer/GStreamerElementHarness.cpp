@@ -476,7 +476,7 @@ class MermaidBuilder {
 public:
     MermaidBuilder();
     void process(GStreamerElementHarness&, bool generateFooter = true);
-    std::span<uint8_t> span();
+    std::span<const uint8_t> span() const;
 
 private:
     String generatePadId(GStreamerElementHarness&,  GstPad*);
@@ -659,10 +659,9 @@ String MermaidBuilder::describeCaps(const GRefPtr<GstCaps>& caps)
     return builder.toString();
 }
 
-std::span<uint8_t> MermaidBuilder::span()
+std::span<const uint8_t> MermaidBuilder::span() const
 {
-    auto data = m_stringBuilder.span<uint8_t>();
-    return std::span(const_cast<uint8_t*>(data.data()), data.size_bytes());
+    return m_stringBuilder.span<uint8_t>();
 }
 #endif
 

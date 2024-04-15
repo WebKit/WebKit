@@ -8,8 +8,9 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(DataView.name, "DataView", "The value of `DataView.name` is `'DataView'`");
-
-verifyNotEnumerable(DataView, "name");
-verifyNotWritable(DataView, "name");
-verifyConfigurable(DataView, "name");
+verifyProperty(DataView, "name", {
+  value: "DataView",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

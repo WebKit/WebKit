@@ -64,10 +64,10 @@ test_computed_value("grid-template-columns", 'fit-content(calc(-0.5em + 10px))',
 // <track-repeat> = repeat( [ <positive-integer> ] , [ <line-names>? <track-size> ]+ <line-names>? )
 test_computed_value("grid-template-columns", 'repeat(1, 10px)', '10px');
 test_computed_value("grid-template-columns", 'repeat(1, [one two] 20%)', '[one two] 60px');
-test_computed_value("grid-template-columns", 'repeat(2, minmax(10px, auto))', '160px 140px');
+test_computed_value("grid-template-columns", 'repeat(2, minmax(10px, auto))', '150px 150px');
 
 test_computed_value("grid-template-columns", 'repeat(2, fit-content(20%) [three four] 30px 40px [five six])',
-                    '30px [three four] 30px 40px [five six] 0px [three four] 30px 40px [five six]');
+                    '30px [three four] 30px 40px [five six] 30px [three four] 30px 40px [five six]');
 
 // <track-list> = [ <line-names>? [ <track-size> | <track-repeat> ] ]+ <line-names>?
 test_computed_value("grid-template-columns", 'min-content repeat(5, minmax(10px, auto))',

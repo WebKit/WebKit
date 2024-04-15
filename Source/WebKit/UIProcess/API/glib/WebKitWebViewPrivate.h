@@ -28,6 +28,7 @@
 
 #include "APIPageConfiguration.h"
 #include "EditingRange.h"
+#include "RendererBufferFormat.h"
 #include "UserMessage.h"
 #include "WebContextMenuItemData.h"
 #include "WebEvent.h"
@@ -127,3 +128,7 @@ void webkitWebViewSetIsWebProcessResponsive(WebKitWebView*, bool);
 
 guint createShowOptionMenuSignal(WebKitWebViewClass*);
 guint createContextMenuSignal(WebKitWebViewClass*);
+
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+WebKit::RendererBufferFormat webkitWebViewGetRendererBufferFormat(WebKitWebView*);
+#endif

@@ -1778,6 +1778,8 @@ void WebProcessProxy::setThrottleStateForTesting(ProcessThrottleState state)
 
 void WebProcessProxy::didChangeThrottleState(ProcessThrottleState type)
 {
+    AuxiliaryProcessProxy::didChangeThrottleState(type);
+
     auto scope = makeScopeExit([this]() {
         updateRuntimeStatistics();
     });

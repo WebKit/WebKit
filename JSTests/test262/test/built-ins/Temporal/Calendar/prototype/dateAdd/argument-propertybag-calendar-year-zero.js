@@ -15,7 +15,8 @@ const invalidStrings = [
   "-000000-10-31T17:45+00:00[UTC]",
 ];
 const instance = new Temporal.Calendar("iso8601");
-invalidStrings.forEach((arg) => {
+invalidStrings.forEach((str) => {
+  const arg = { year: 1976, month: 11, day: 18, calendar: str };
   assert.throws(
     RangeError,
     () => instance.dateAdd(arg, new Temporal.Duration()),

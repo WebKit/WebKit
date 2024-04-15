@@ -10,8 +10,9 @@ includes: [propertyHelper.js]
 features: [Symbol]
 ---*/
 
-assert.sameValue(Symbol.name, "Symbol", "The value of `Symbol.name` is `'Symbol'`");
-
-verifyNotEnumerable(Symbol, "name");
-verifyNotWritable(Symbol, "name");
-verifyConfigurable(Symbol, "name");
+verifyProperty(Symbol, "name", {
+  value: "Symbol",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

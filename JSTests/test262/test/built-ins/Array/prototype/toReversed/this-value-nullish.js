@@ -15,8 +15,8 @@ features: [change-array-by-copy]
 
 assert.throws(TypeError, () => {
   Array.prototype.toReversed.call(null);
-}, '`Array.prototype.toReversed.call(null)` throws TypeError');
+});
 
 assert.throws(TypeError, () => {
   Array.prototype.toReversed.call(undefined);
-}, '`Array.prototype.toReversed.call(undefined)` throws TypeError');
+});

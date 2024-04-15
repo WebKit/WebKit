@@ -53,13 +53,12 @@ try {
 
   verifyWritable(obj, "prop", "verifySetFunc");
 
-  verifyEnumerable(obj, "prop");
-
-  verifyNotConfigurable(obj, "prop");
-
-
   if (!(e instanceof TypeError)) {
     throw new Test262Error("Expected TypeError, got " + e);
   }
-
 }
+
+verifyProperty(obj, "prop", {
+  enumerable: true,
+  configurable: false,
+});

@@ -12,7 +12,7 @@
     .styled {
         display: block;
         border-radius: 0;
-        border: 1px gray solid;
+        border: 5px gray solid;
     }
 </style>
 <script src="../resources/ui-helper.js"></script>
@@ -23,8 +23,11 @@
     <input type="text">
 
     <input class="styled" placeholder="Search" type="search">
+    <input class="styled" placeholder="Search" type="search" value="This is some overflowing text as a test of interaction region clipping">
     <input class="styled" placeholder="Password" type="password">
+    <input class="styled" placeholder="Password" type="password" value="This is some overflowing text as a test of interaction region clipping">
     <input class="styled" type="text">
+    <input class="styled" type="text" value="This is some overflowing text as a test of interaction region clipping">
 </form>
 <pre id="results"></pre>
 <script>

@@ -105,6 +105,14 @@ void PlaybackSessionInterfaceIOS::setPlayerIdentifier(std::optional<MediaPlayerI
     m_playerIdentifier = WTFMove(identifier);
 }
 
+void PlaybackSessionInterfaceIOS::startObservingNowPlayingMetadata()
+{
+}
+
+void PlaybackSessionInterfaceIOS::stopObservingNowPlayingMetadata()
+{
+}
+
 #if !RELEASE_LOG_DISABLED
 const void* PlaybackSessionInterfaceIOS::logIdentifier() const
 {
@@ -135,6 +143,28 @@ void PlaybackSessionInterfaceIOS::decrementPtrCount() const
 {
     CanMakeCheckedPtr::decrementPtrCount();
 }
+
+#if CHECKED_POINTER_DEBUG
+void PlaybackSessionInterfaceIOS::registerCheckedPtr(const void* pointer) const
+{
+    CanMakeCheckedPtr::registerCheckedPtr(pointer);
+}
+
+void PlaybackSessionInterfaceIOS::copyCheckedPtr(const void* source, const void* destination) const
+{
+    CanMakeCheckedPtr::copyCheckedPtr(source, destination);
+}
+
+void PlaybackSessionInterfaceIOS::moveCheckedPtr(const void* source, const void* destination) const
+{
+    CanMakeCheckedPtr::moveCheckedPtr(source, destination);
+}
+
+void PlaybackSessionInterfaceIOS::unregisterCheckedPtr(const void* pointer) const
+{
+    CanMakeCheckedPtr::unregisterCheckedPtr(pointer);
+}
+#endif // CHECKED_POINTER_DEBUG
 
 #endif
 

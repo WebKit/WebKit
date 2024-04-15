@@ -435,7 +435,7 @@ std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&& ori
     // Set a random 8 byte base64 string as issuer/subject.
     X509_NAME* name = X509_NAME_new();
     Vector<uint8_t> buffer(8);
-    WTF::cryptographicallyRandomValues(buffer.data(), buffer.size());
+    WTF::cryptographicallyRandomValues(buffer.mutableSpan());
     auto commonName = base64EncodeToString(buffer);
     X509_NAME_add_entry_by_NID(name, NID_commonName, MBSTRING_ASC, (const guchar*)commonName.ascii().data(), -1, -1, 0);
     X509_set_subject_name(x509.get(), name);

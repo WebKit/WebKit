@@ -21,8 +21,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.log1p.length, 1);
-
-verifyNotEnumerable(Math.log1p, "length");
-verifyNotWritable(Math.log1p, "length");
-verifyConfigurable(Math.log1p, "length");
+verifyProperty(Math.log1p, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

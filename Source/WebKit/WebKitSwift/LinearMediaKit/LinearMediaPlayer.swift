@@ -29,13 +29,17 @@ import LinearMediaKit
 import RealityFoundation
 import UIKit
 import WebKitSwift
+import os
+
+private extension Logger {
+    static let linearMediaPlayer = Logger(subsystem: "com.apple.WebKit", category: "LinearMediaPlayer")
+}
 
 private class SwiftOnlyData: NSObject {
     @Published var renderingConfiguration: RenderingConfiguration?
     @Published var thumbnailMaterial: VideoMaterial?
     @Published var videoMaterial: VideoMaterial?
     @Published var peculiarEntity: PeculiarEntity?
-    @Published var contentMetadata: ContentMetadataContainer?
     
     // FIXME: It should be possible to store these directly on WKSLinearMediaPlayer since they are
     // bridged to NSDate, but a bug prevents that from compiling (rdar://121877511).
@@ -44,6 +48,10 @@ private class SwiftOnlyData: NSObject {
 
     @Published var presentationMode: PresentationMode = .inline
     @Published var presentationState: WKSLinearMediaPresentationState = .inline
+}
+
+enum LinearMediaPlayerErrors: Error {
+    case invalidStateError
 }
 
 @_objcImplementation extension WKSLinearMediaPlayer {
@@ -92,6 +100,7 @@ private class SwiftOnlyData: NSObject {
     var currentLegibleTrack: WKSLinearMediaTrack?
     var legibleTracks: [WKSLinearMediaTrack] = []
     var contentType: WKSLinearMediaContentType = .none
+    var contentMetadata: WKSLinearMediaContentMetadata = .init(title: nil, subtitle: nil)
     var transportBarIncludesTitleView = true
     var artwork: Data?
     var isPlayableOffline = false
@@ -117,6 +126,9 @@ private class SwiftOnlyData: NSObject {
         swiftOnlyData.presentationState
     }
 
+    @nonobjc private var enterFullscreenCompletionHandler: ((Bool, (any Error)?) -> Void)?
+    @nonobjc private var exitFullscreenCompletionHandler: ((Bool, (any Error)?) -> Void)?
+
     @nonobjc private var swiftOnlyData: SwiftOnlyData
     @nonobjc private var cancellables: [AnyCancellable] = []
 
@@ -126,8 +138,11 @@ private class SwiftOnlyData: NSObject {
         swiftOnlyData = .init()
         super.init()
         swiftOnlyData.$presentationState
+            .removeDuplicates()
             .sink { [unowned self] in presentationStateChanged($0) }
             .store(in: &cancellables)
+
+        Logger.linearMediaPlayer.log("\(#function)")
     }
 
     // FIXME: Remove this override once rdar://108224957 is resolved.
@@ -144,23 +159,41 @@ private class SwiftOnlyData: NSObject {
         return viewController
     }
 
-    func enterFullscreen() {
+    func enterFullscreen(completionHandler: @escaping (Bool, (any Error)?) -> Void) {
+        Logger.linearMediaPlayer.log("\(#function)")
+
+        if let enterFullscreenCompletionHandler = enterFullscreenCompletionHandler {
+            Logger.linearMediaPlayer.error("\(#function): invalidating existing enterFullscreenCompletionHandler")
+            enterFullscreenCompletionHandler(false, LinearMediaPlayerErrors.invalidStateError)
+            self.enterFullscreenCompletionHandler = nil
+        }
+
         switch presentationState {
         case .inline, .enteringFullscreen, .exitingFullscreen:
+            enterFullscreenCompletionHandler = completionHandler
             swiftOnlyData.presentationState = .fullscreen
         case .fullscreen:
-            break
+            completionHandler(true, nil)
         @unknown default:
             fatalError()
         }
     }
 
-    func exitFullscreen() {
+    func exitFullscreen(completionHandler: @escaping (Bool, (any Error)?) -> Void) {
+        Logger.linearMediaPlayer.log("\(#function)")
+
+        if let exitFullscreenCompletionHandler = exitFullscreenCompletionHandler {
+            Logger.linearMediaPlayer.error("\(#function): invalidating existing exitFullscreenCompletionHandler")
+            exitFullscreenCompletionHandler(false, LinearMediaPlayerErrors.invalidStateError)
+            self.exitFullscreenCompletionHandler = nil
+        }
+
         switch presentationState {
         case .exitingFullscreen, .fullscreen, .enteringFullscreen:
+            exitFullscreenCompletionHandler = completionHandler
             swiftOnlyData.presentationState = .inline
         case .inline:
-            break
+            completionHandler(true, nil)
         @unknown default:
             fatalError()
         }
@@ -169,6 +202,8 @@ private class SwiftOnlyData: NSObject {
 
 extension WKSLinearMediaPlayer {
     private func presentationStateChanged(_ presentationState: WKSLinearMediaPresentationState) {
+        Logger.linearMediaPlayer.log("\(#function): \(presentationState)")
+
         switch presentationState {
         case .inline:
             swiftOnlyData.presentationMode = .inline
@@ -394,7 +429,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public var contentMetadataPublisher: AnyPublisher<ContentMetadataContainer, Never> {
-        swiftOnlyData.$contentMetadata.compactMap { $0 }.eraseToAnyPublisher()
+        publisher(for: \.contentMetadata).map { $0.contentMetadata }.eraseToAnyPublisher()
     }
 
     public var transportBarIncludesTitleViewPublisher: AnyPublisher<Bool, Never> {
@@ -519,6 +554,8 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func toggleInlineMode() {
+        Logger.linearMediaPlayer.log("\(#function): presentationState=\(self.presentationState)")
+
         switch presentationState {
         case .inline:
             swiftOnlyData.presentationState = .enteringFullscreen
@@ -532,6 +569,8 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func willEnterFullscreen() {
+        Logger.linearMediaPlayer.log("\(#function): presentationState=\(self.presentationState)")
+
         switch presentationState {
         case .inline:
             swiftOnlyData.presentationState = .enteringFullscreen
@@ -542,16 +581,23 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
         }
     }
 
-    public func didCompleteEnterFullscreen(result: Result<Void, Error>) {
+    public func didCompleteEnterFullscreen(result: Result<Void, any Error>) {
+        let completionHandler = enterFullscreenCompletionHandler
+        enterFullscreenCompletionHandler = nil
+
         switch result {
         case .success():
-            delegate?.linearMediaPlayer?(self, didEnterFullscreenWithError: nil)
+            Logger.linearMediaPlayer.log("\(#function): success")
+            completionHandler?(true, nil)
         case .failure(let error):
-            delegate?.linearMediaPlayer?(self, didEnterFullscreenWithError: error)
+            Logger.linearMediaPlayer.error("\(#function): \(error)")
+            completionHandler?(false, error)
         }
     }
 
     public func willExitFullscreen() {
+        Logger.linearMediaPlayer.log("\(#function): presentationState=\(self.presentationState)")
+
         switch presentationState {
         case .fullscreen:
             swiftOnlyData.presentationState = .exitingFullscreen
@@ -562,19 +608,28 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
         }
     }
 
-    public func didCompleteExitFullscreen(result: Result<Void, Error>) {
+    public func didCompleteExitFullscreen(result: Result<Void, any Error>) {
+        let completionHandler = exitFullscreenCompletionHandler
+        exitFullscreenCompletionHandler = nil
+
         switch result {
         case .success():
-            delegate?.linearMediaPlayer?(self, didExitFullscreenWithError: nil)
+            Logger.linearMediaPlayer.log("\(#function): success")
+            completionHandler?(true, nil)
         case .failure(let error):
-            delegate?.linearMediaPlayer?(self, didExitFullscreenWithError: error)
+            Logger.linearMediaPlayer.error("\(#function): \(error)")
+            completionHandler?(false, error)
         }
     }
 
     public func makeDefaultEntity() -> Entity? {
+        Logger.linearMediaPlayer.log("\(#function)")
+
         if let captionLayer = captionLayer {
             return ContentType.makeEntity(captionLayer: captionLayer)
         }
+
+        Logger.linearMediaPlayer.error("\(#function): failed to find captionLayer")
         return nil
     }
 
@@ -627,6 +682,8 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func setVideoReceiverEndpoint(_ endpoint: xpc_object_t) {
+        Logger.linearMediaPlayer.log("\(#function)")
+
         delegate?.linearMediaPlayer?(self, setVideoReceiverEndpoint: endpoint)
     }
 }

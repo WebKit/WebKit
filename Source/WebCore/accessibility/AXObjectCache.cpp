@@ -310,14 +310,7 @@ AXObjectCache::~AXObjectCache()
 
 bool AXObjectCache::isModalElement(Element& element) const
 {
-    bool hasDialogRole = nodeHasRole(&element, "dialog"_s) || nodeHasRole(&element, "alertdialog"_s);
-    AtomString modalValue = element.attributeWithoutSynchronization(aria_modalAttr);
-    if (modalValue.isNull()) {
-        if (auto* defaultARIA = element.customElementDefaultARIAIfExists())
-            modalValue = defaultARIA->valueForAttribute(element, aria_modalAttr);
-    }
-    bool isAriaModal = equalLettersIgnoringASCIICase(modalValue, "true"_s);
-    if (hasDialogRole && isAriaModal)
+    if ((nodeHasRole(&element, "dialog"_s) || nodeHasRole(&element, "alertdialog"_s)) && equalLettersIgnoringASCIICase(element.attributeWithDefaultARIA(aria_modalAttr), "true"_s))
         return true;
 
     RefPtr dialog = dynamicDowncast<HTMLDialogElement>(element);
@@ -585,11 +578,7 @@ bool nodeHasRole(Node* node, StringView role)
     if (!element)
         return false;
 
-    auto roleValue = element->attributeWithoutSynchronization(roleAttr);
-    if (roleValue.isNull()) {
-        if (auto* defaultARIA = element->customElementDefaultARIAIfExists())
-            roleValue = defaultARIA->valueForAttribute(*element, roleAttr);
-    }
+    auto roleValue = element->attributeWithDefaultARIA(roleAttr);
     if (role.isNull())
         return roleValue.isEmpty();
     if (roleValue.isEmpty())
@@ -4845,7 +4834,7 @@ bool AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType
             return false;
     }
 
-    return addRelation(getOrCreate(*origin, IsPartOfRelation::Yes), getOrCreate(*target, IsPartOfRelation::Yes), relationType);
+    return addRelation(RefPtr { getOrCreate(*origin, IsPartOfRelation::Yes) }.get(), RefPtr { getOrCreate(*target, IsPartOfRelation::Yes) }.get(), relationType);
 }
 
 static bool canHaveRelations(Element& element)
@@ -5090,7 +5079,7 @@ void AXObjectCache::addLabelForRelation(Element& origin)
     } else if (origin.hasTagName(figcaptionTag)) {
         RefPtr parent = origin.parentNode();
         if (parent && parent->hasTagName(figureTag))
-            addedRelation = addRelation(getOrCreate(origin), getOrCreate(*parent), AXRelationType::LabelFor);
+            addedRelation = addRelation(RefPtr { getOrCreate(origin) }.get(), RefPtr { getOrCreate(*parent) }.get(), AXRelationType::LabelFor);
     }
 
     if (addedRelation)

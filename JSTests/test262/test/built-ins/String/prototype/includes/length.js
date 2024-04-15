@@ -13,11 +13,9 @@ includes: [propertyHelper.js]
 features: [String.prototype.includes]
 ---*/
 
-assert.sameValue(
-  String.prototype.includes.length, 1,
-  'The value of `String.prototype.includes.length` is `1`'
-);
-
-verifyNotEnumerable(String.prototype.includes, 'length');
-verifyNotWritable(String.prototype.includes, 'length');
-verifyConfigurable(String.prototype.includes, 'length');
+verifyProperty(String.prototype.includes, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

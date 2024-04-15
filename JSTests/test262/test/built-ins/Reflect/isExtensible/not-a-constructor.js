@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Reflect.isExtensible), false, 'isConstructor(Refl
 
 assert.throws(TypeError, () => {
   new Reflect.isExtensible({});
-}, '`new Reflect.isExtensible({})` throws TypeError');
+});
 

@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.trimStart();
-}, '`new String.prototype.trimStart()` throws TypeError');
+});
 

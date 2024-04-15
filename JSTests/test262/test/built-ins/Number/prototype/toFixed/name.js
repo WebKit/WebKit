@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Number.prototype.toFixed.name, "toFixed");
-
-verifyNotEnumerable(Number.prototype.toFixed, "name");
-verifyNotWritable(Number.prototype.toFixed, "name");
-verifyConfigurable(Number.prototype.toFixed, "name");
+verifyProperty(Number.prototype.toFixed, "name", {
+  value: "toFixed",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

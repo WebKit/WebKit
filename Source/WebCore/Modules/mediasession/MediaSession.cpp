@@ -39,6 +39,7 @@
 #include "MediaMetadata.h"
 #include "MediaSessionCoordinator.h"
 #include "Navigator.h"
+#include "NowPlayingInfo.h"
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
 #include <wtf/CryptographicallyRandomNumber.h>
@@ -445,10 +446,10 @@ void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
 
     if (m_metadata && m_metadata->artworkImage()) {
         ASSERT(m_metadata->artworkImage()->data(), "An image must always have associated data");
-        info.artwork = { { m_metadata->artworkSrc(), m_metadata->artworkImage()->mimeType(), m_metadata->artworkImage() } };
-        info.title = m_metadata->title();
-        info.artist = m_metadata->artist();
-        info.album = m_metadata->album();
+        info.metadata.artwork = { { m_metadata->artworkSrc(), m_metadata->artworkImage()->mimeType(), m_metadata->artworkImage() } };
+        info.metadata.title = m_metadata->title();
+        info.metadata.artist = m_metadata->artist();
+        info.metadata.album = m_metadata->album();
     }
 }
 

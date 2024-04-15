@@ -27,6 +27,7 @@
 
 #import "CGImagePixelReader.h"
 #import "PlatformUtilities.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -39,6 +40,7 @@
 - (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoAt:(CGPoint)point;
 - (BOOL)adjustVisibilityForTargets:(NSArray<_WKTargetedElementInfo *> *)targets;
 - (BOOL)resetVisibilityAdjustmentsForTargets:(NSArray<_WKTargetedElementInfo *> *)elements;
+- (void)expectSingleTargetedSelector:(NSString *)expectedSelector at:(CGPoint)point;
 
 @property (nonatomic, readonly) NSUInteger numberOfVisibilityAdjustmentRects;
 
@@ -94,6 +96,14 @@
     }];
     TestWebKitAPI::Util::run(&done);
     return result;
+}
+
+- (void)expectSingleTargetedSelector:(NSString *)expectedSelector at:(CGPoint)point
+{
+    RetainPtr elements = [self targetedElementInfoAt:point];
+    EXPECT_EQ([elements count], 1U);
+    NSString *preferredSelector = [elements firstObject].selectors.firstObject;
+    EXPECT_WK_STREQ(preferredSelector, expectedSelector);
 }
 
 @end
@@ -266,6 +276,12 @@ TEST(ElementTargeting, AdjustVisibilityFromSelectors)
         , @".absolute.top-right"
         , nil]];
 
+    RetainPtr delegate = adoptNS([TestUIDelegate new]);
+    RetainPtr adjustedSelectors = adoptNS([NSMutableSet new]);
+    [delegate setWebViewDidAdjustVisibilityWithSelectors:^(WKWebView *, NSArray<NSString *> *selectors) {
+        [adjustedSelectors addObjectsFromArray:selectors];
+    }];
+    [webView setUIDelegate:delegate.get()];
     [webView synchronouslyLoadTestPageNamed:@"element-targeting-2" preferences:preferences.get()];
     [webView waitForNextPresentationUpdate];
     {
@@ -275,6 +291,10 @@ TEST(ElementTargeting, AdjustVisibilityFromSelectors)
         auto y = static_cast<unsigned>(100 * (pixelReader.height() / CGRectGetHeight(webViewFrame)));
         EXPECT_EQ(pixelReader.at(x, y), WebCore::Color::white);
         EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 1U);
+        EXPECT_TRUE([adjustedSelectors containsObject:@".absolute.top-right"]);
+        EXPECT_TRUE([adjustedSelectors containsObject:@".absolute.bottom-right"]);
+        EXPECT_TRUE([adjustedSelectors containsObject:@".fixed.container"]);
+        EXPECT_TRUE([adjustedSelectors containsObject:@".absolute.bottom-left"]);
     }
 
     [webView resetVisibilityAdjustmentsForTargets:nil];
@@ -297,6 +317,12 @@ TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)
     RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
     auto selectors = [NSSet setWithObjects:@"main::before", @"HTML::AFTER", nil];
     [preferences _setVisibilityAdjustmentSelectors:selectors];
+    RetainPtr delegate = adoptNS([TestUIDelegate new]);
+    RetainPtr adjustedSelectors = adoptNS([NSMutableSet new]);
+    [delegate setWebViewDidAdjustVisibilityWithSelectors:^(WKWebView *, NSArray<NSString *> *selectors) {
+        [adjustedSelectors addObjectsFromArray:selectors];
+    }];
+    [webView setUIDelegate:delegate.get()];
     [webView synchronouslyLoadTestPageNamed:@"element-targeting-3" preferences:preferences.get()];
     [webView waitForNextPresentationUpdate];
 
@@ -306,6 +332,8 @@ TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)
     auto y = static_cast<unsigned>(100 * (pixelReader.height() / CGRectGetHeight(webViewFrame)));
     EXPECT_EQ(pixelReader.at(x, y), WebCore::Color::white);
     EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 1U);
+    EXPECT_TRUE([adjustedSelectors containsObject:@"main::before"]);
+    EXPECT_TRUE([adjustedSelectors containsObject:@"HTML::AFTER"]);
 }
 
 TEST(ElementTargeting, ContentInsideShadowRoot)
@@ -316,6 +344,32 @@ TEST(ElementTargeting, ContentInsideShadowRoot)
     RetainPtr elements = [webView targetedElementInfoAt:CGPointMake(100, 150)];
     EXPECT_EQ([elements count], 1U);
     EXPECT_TRUE([[elements firstObject].selectors containsObject:@"#container"]);
+}
+
+TEST(ElementTargeting, ParentRelativeSelectors)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-5"];
+    [webView expectSingleTargetedSelector:@"BODY > DIV:first-of-type" at:CGPointMake(100, 50)];
+    [webView expectSingleTargetedSelector:@"BODY > DIV:nth-child(3)" at:CGPointMake(100, 150)];
+    [webView expectSingleTargetedSelector:@"BODY > DIV:last-of-type" at:CGPointMake(100, 250)];
+    [webView expectSingleTargetedSelector:@"BODY > SECTION" at:CGPointMake(100, 350)];
+}
+
+TEST(ElementTargeting, TargetInFlowElements)
+{
+    auto center = CGPointMake(200, 200);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-6"];
+    [webView expectSingleTargetedSelector:@"MAIN > P:first-of-type" at:center];
+
+    [webView stringByEvaluatingJavaScript:@"scrollBy(0, 400)"];
+    [webView waitForNextPresentationUpdate];
+    [webView expectSingleTargetedSelector:@"IMG" at:center];
+
+    [webView stringByEvaluatingJavaScript:@"scrollBy(0, 400)"];
+    [webView waitForNextPresentationUpdate];
+    [webView expectSingleTargetedSelector:@".bottom-text" at:center];
 }
 
 } // namespace TestWebKitAPI

@@ -41,13 +41,13 @@ includes: [propertyHelper.js]
 
     verifyWritable(arguments, "genericProperty", "helpVerifyGet");
 
-    verifyNotEnumerable(arguments, "genericProperty");
-
-    verifyNotConfigurable(arguments, "genericProperty");
-
     if (!(e instanceof TypeError)) {
       throw new Test262Error("Expected TypeError, got " + e);
     }
-
   }
+
+  verifyProperty(arguments, "genericProperty", {
+    enumerable: false,
+    configurable: false,
+  });
 }(1, 2, 3));

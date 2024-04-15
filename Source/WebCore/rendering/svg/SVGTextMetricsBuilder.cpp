@@ -107,7 +107,9 @@ void SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer(RenderSVGInlin
         if (auto cachedValue = text.canUseSimplifiedTextMeasuring())
             m_canUseSimplifiedTextMeasuring = cachedValue.value();
         else {
-            m_canUseSimplifiedTextMeasuring = Layout::TextUtil::canUseSimplifiedTextMeasuring(m_run.text(), scaledFont, text.style().collapseWhiteSpace(), &text.firstLineStyle());
+            // Currently SVG implementation does not support first-line, so we always pass nullptr for firstLineStyle.
+            // When supporting first-line, we also need to update firstLineStyle's FontCascade to be aligned with scaledFont in RenderSVGInlineText.
+            m_canUseSimplifiedTextMeasuring = Layout::TextUtil::canUseSimplifiedTextMeasuring(m_run.text(), scaledFont, text.style().collapseWhiteSpace(), nullptr);
             text.setCanUseSimplifiedTextMeasuring(m_canUseSimplifiedTextMeasuring);
         }
     }

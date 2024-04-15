@@ -19,10 +19,10 @@ Object.defineProperties(obj, {
     value: "fghj"
   }
 });
-verifyEqualTo(obj, "foo", "fghj");
 
-verifyWritable(obj, "foo");
-
-verifyEnumerable(obj, "foo");
-
-verifyConfigurable(obj, "foo");
+verifyProperty(obj, "foo", {
+  value: "fghj",
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

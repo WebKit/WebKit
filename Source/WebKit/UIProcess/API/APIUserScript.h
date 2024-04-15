@@ -35,8 +35,6 @@ namespace API {
 
 class UserScript final : public ObjectImpl<Object::Type::UserScript>, public Identified<WebKit::UserScriptIdentifier> {
 public:
-    static WTF::URL generateUniqueURL();
-
     static Ref<UserScript> create(WebCore::UserScript&& userScript, API::ContentWorld& world)
     {
         return adoptRef(*new UserScript(WTFMove(userScript), world));

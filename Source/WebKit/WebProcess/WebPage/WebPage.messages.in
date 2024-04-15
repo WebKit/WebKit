@@ -506,7 +506,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ReplaceSelectionWithPasteboardData(Vector<String> types, std::span<const uint8_t> data)
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    InsertMultiRepresentationHEIC(std::span<const uint8_t> data)
+    InsertMultiRepresentationHEIC(std::span<const uint8_t> data, String altText)
 #endif
 
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Synchronous
@@ -790,6 +790,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     TextReplacementSessionDidReceiveEditAction(WTF::UUID uuid, enum:uint8_t WebKit::WebTextReplacementData::EditAction action);
     
     EnableTextIndicatorStyleAfterElementWithID(String elementID, WTF::UUID uuid);
+    
+    EnableTextIndicatorStyleForElementWithID(String elementID, WTF::UUID uuid);
 #endif
 
     ResetVisibilityAdjustmentsForTargetedElements(Vector<std::pair<WebCore::ElementIdentifier, WebCore::ScriptExecutionContextIdentifier>> identifiers) -> (bool success)
@@ -802,4 +804,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if HAVE(SPATIAL_TRACKING_LABEL)
     SetDefaultSpatialTrackingLabel(String label)
 #endif
+
+    StartObservingNowPlayingMetadata()
+    StopObservingNowPlayingMetadata()
 }

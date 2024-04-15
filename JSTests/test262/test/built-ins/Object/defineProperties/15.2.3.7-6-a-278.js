@@ -30,10 +30,9 @@ Object.defineProperties(arg, {
   }
 });
 
-verifyEqualTo(arg, "0", 10);
-
-verifyWritable(arg, "0");
-
-verifyEnumerable(arg, "0");
-
-verifyConfigurable(arg, "0");
+verifyProperty(arg, "0", {
+  value: 10,
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

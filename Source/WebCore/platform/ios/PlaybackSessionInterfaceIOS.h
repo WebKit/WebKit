@@ -81,6 +81,9 @@ public:
     std::optional<MediaPlayerIdentifier> playerIdentifier() const;
     void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
 
+    virtual void startObservingNowPlayingMetadata();
+    virtual void stopObservingNowPlayingMetadata();
+
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const;
     const Logger* loggerPtr() const;
@@ -101,6 +104,12 @@ private:
     uint32_t ptrCount() const final;
     void incrementPtrCount() const final;
     void decrementPtrCount() const final;
+#if CHECKED_POINTER_DEBUG
+    void registerCheckedPtr(const void* pointer) const final;
+    void copyCheckedPtr(const void* source, const void* destination) const final;
+    void moveCheckedPtr(const void* source, const void* destination) const final;
+    void unregisterCheckedPtr(const void* pointer) const final;
+#endif // CHECKED_POINTER_DEBUG
 
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;
 #if HAVE(SPATIAL_TRACKING_LABEL)

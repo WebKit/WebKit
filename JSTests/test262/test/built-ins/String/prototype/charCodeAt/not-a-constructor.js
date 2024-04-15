@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.charCodeAt();
-}, '`new String.prototype.charCodeAt()` throws TypeError');
+});
 

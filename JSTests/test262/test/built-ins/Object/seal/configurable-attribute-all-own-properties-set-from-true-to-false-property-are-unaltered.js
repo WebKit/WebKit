@@ -40,19 +40,18 @@ if (!preCheck) {
   throw new Test262Error('Expected preCheck to be true, actually ' + preCheck);
 }
 
-
-verifyEqualTo(obj, "foo1", 10);
-
-verifyWritable(obj, "foo1");
-
-verifyEnumerable(obj, "foo1");
-
-verifyNotConfigurable(obj, "foo1");
+verifyProperty(obj, "foo1", {
+  value: 10,
+  writable: true,
+  enumerable: true,
+  configurable: false,
+});
 
 verifyEqualTo(obj, "foo2", get_func());
 
 verifyWritable(obj, "foo2", "variableForHelpVerify");
 
-verifyEnumerable(obj, "foo2");
-
-verifyNotConfigurable(obj, "foo2");
+verifyProperty(obj, "foo2", {
+  enumerable: true,
+  configurable: false,
+});

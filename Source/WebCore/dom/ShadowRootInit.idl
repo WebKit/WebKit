@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,5 +29,6 @@ dictionary ShadowRootInit {
     required ShadowRootMode mode;
     boolean delegatesFocus = false;
     boolean clonable = false;
+    [EnabledBySetting=DeclarativeShadowRootsSerializerAPIsEnabled] boolean serializable = false;
     SlotAssignmentMode slotAssignment = "named";
 };

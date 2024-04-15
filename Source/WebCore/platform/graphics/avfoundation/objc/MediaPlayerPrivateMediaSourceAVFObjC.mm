@@ -744,7 +744,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
 {
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     if (isCopyDisplayedPixelBufferAvailable()) {
-        if (auto pixelBuffer = adoptCF([m_sampleBufferDisplayLayer copyDisplayedPixelBuffer])) {
+        if (auto pixelBuffer = adoptCF([sampleBufferVideoRenderer() copyDisplayedPixelBuffer])) {
             INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", currentTime());
             m_lastPixelBuffer = WTFMove(pixelBuffer);
             return true;
@@ -752,7 +752,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
     }
 #endif
 
-    if (m_sampleBufferDisplayLayer || !m_decompressionSession)
+    if (sampleBufferVideoRenderer() || !m_decompressionSession)
         return false;
 
     auto flags = !m_lastPixelBuffer ? WebCoreDecompressionSession::AllowLater : WebCoreDecompressionSession::ExactTime;
@@ -883,13 +883,13 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureVideoRenderer() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setPresentationSize(const IntSize& newSize)
 {
-    if (!m_sampleBufferDisplayLayer && !newSize.isEmpty())
+    if (!sampleBufferVideoRenderer() && !newSize.isEmpty())
         updateDisplayLayerAndDecompressionSession();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoLayerSizeFenced(const FloatSize& newSize, WTF::MachSendRight&&)
 {
-    if (!m_sampleBufferDisplayLayer && !newSize.isEmpty())
+    if (!sampleBufferVideoRenderer() && !newSize.isEmpty())
         updateDisplayLayerAndDecompressionSession();
 }
 
@@ -1653,7 +1653,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setShouldDisableHDR(bool shouldDisabl
 
 void MediaPlayerPrivateMediaSourceAVFObjC::playerContentBoxRectChanged(const LayoutRect& newRect)
 {
-    if (!m_sampleBufferDisplayLayer && !newRect.isEmpty())
+    if (!sampleBufferVideoRenderer() && !newRect.isEmpty())
         updateDisplayLayerAndDecompressionSession();
 }
 

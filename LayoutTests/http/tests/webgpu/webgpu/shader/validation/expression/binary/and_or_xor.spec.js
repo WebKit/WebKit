@@ -5,13 +5,17 @@ Validation tests for logical and bitwise and/or/xor expressions.
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { keysOf, objectsToRecord } from '../../../../../common/util/data_tables.js';
 import {
+  concreteTypeOf,
+  isAbstractType,
+  isConvertible,
+  isIntegerType,
   kAllScalarsAndVectors,
-  ScalarType,
   scalarTypeOf,
-  Type,
-  VectorType } from
+  Type } from
 '../../../../util/conversion.js';
 import { ShaderValidationTest } from '../../shader_validation_test.js';
+
+import { resultType } from './result_type.js';
 
 export const g = makeTestGroup(ShaderValidationTest);
 
@@ -33,7 +37,6 @@ desc(
 ).
 params((u) =>
 u.
-combine('op', keysOf(kOperators)).
 combine('lhs', keysOf(kScalarAndVectorTypes)).
 combine(
   'rhs',
@@ -43,7 +46,9 @@ combine(
     (value) => !(value.startsWith('vec3') || value.startsWith('vec4'))
   )
 ).
-beginSubcases()
+combine('compound_assignment', [false, true]).
+beginSubcases().
+combine('op', keysOf(kOperators))
 ).
 beforeAllSubcases((t) => {
   if (
@@ -59,42 +64,31 @@ fn((t) => {
   const rhs = kScalarAndVectorTypes[t.params.rhs];
   const lhsElement = scalarTypeOf(lhs);
   const rhsElement = scalarTypeOf(rhs);
+  const hasBool = lhsElement === Type.bool || rhsElement === Type.bool;
   const hasF16 = lhsElement === Type.f16 || rhsElement === Type.f16;
-  const code = `
+  const resType =
+  isIntegerType(lhsElement) && isIntegerType(rhsElement) || hasBool && op.supportsBool ?
+  resultType({ lhs, rhs, canConvertScalarToVector: false }) :
+  null;
+  const resTypeIsTypeable = resType && !isAbstractType(scalarTypeOf(resType));
+  const code = t.params.compound_assignment ?
+  `
+${hasF16 ? 'enable f16;' : ''}
+fn f() {
+  var foo = ${lhs.create(0).wgsl()};
+  foo ${op.op}= ${rhs.create(0).wgsl()};
+}
+` :
+  `
 ${hasF16 ? 'enable f16;' : ''}
 const lhs = ${lhs.create(0).wgsl()};
 const rhs = ${rhs.create(0).wgsl()};
-const foo = lhs ${op.op} rhs;
+const foo ${resTypeIsTypeable ? `: ${resType}` : ''} = lhs ${op.op} rhs;
 `;
 
-  // Determine if the element types are compatible.
-  const kIntegerTypes = [Type.abstractInt, Type.i32, Type.u32];
-  let elementIsCompatible = false;
-  if (lhsElement === Type.abstractInt) {
-    // Abstract integers are compatible with any other integer type.
-    elementIsCompatible = kIntegerTypes.includes(rhsElement);
-  } else if (rhsElement === Type.abstractInt) {
-    // Abstract integers are compatible with any other numeric type.
-    elementIsCompatible = kIntegerTypes.includes(lhsElement);
-  } else if (kIntegerTypes.includes(lhsElement)) {
-    // Concrete integers are only compatible with values with the exact same type.
-    elementIsCompatible = lhsElement === rhsElement;
-  } else if (lhsElement === Type.bool) {
-    // Booleans are only compatible with other booleans.
-    elementIsCompatible = rhsElement === Type.bool;
-  }
-
-  // Determine if the full type is compatible.
-  let valid = false;
-  if (lhs instanceof ScalarType && rhs instanceof ScalarType) {
-    valid = elementIsCompatible;
-  } else if (lhs instanceof VectorType && rhs instanceof VectorType) {
-    // Vectors are only compatible with if the vector widths match.
-    valid = lhs.width === rhs.width && elementIsCompatible;
-  }
-
-  if (lhsElement === Type.bool) {
-    valid &&= op.supportsBool;
+  let valid = resType !== null;
+  if (valid && t.params.compound_assignment) {
+    valid = valid && isConvertible(resType, concreteTypeOf(lhs));
   }
 
   t.expectCompileResult(valid, code);

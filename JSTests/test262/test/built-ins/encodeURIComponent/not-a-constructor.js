@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(encodeURIComponent), false, 'isConstructor(encode
 
 assert.throws(TypeError, () => {
   new encodeURIComponent('');
-}, '`new encodeURIComponent(\'\')` throws TypeError');
+});
 

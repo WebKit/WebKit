@@ -12,11 +12,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  String.prototype.startsWith.name, 'startsWith',
-  'The value of `String.prototype.startsWith.name` is `"startsWith"`'
-);
-
-verifyNotEnumerable(String.prototype.startsWith, 'name');
-verifyNotWritable(String.prototype.startsWith, 'name');
-verifyConfigurable(String.prototype.startsWith, 'name');
+verifyProperty(String.prototype.startsWith, "name", {
+  value: "startsWith",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

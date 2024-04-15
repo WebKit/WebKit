@@ -255,7 +255,7 @@ JSArrayBuffer* JSArrayBufferView::possiblySharedJSBuffer(JSGlobalObject* globalO
     return nullptr;
 }
 
-void JSArrayBufferView::detach()
+void JSArrayBufferView::detachFromArrayBuffer()
 {
     Locker locker { cellLock() };
     RELEASE_ASSERT(hasArrayBuffer());
@@ -263,6 +263,7 @@ void JSArrayBufferView::detach()
     m_length = 0;
     m_byteOffset = 0;
     m_vector.clear();
+    globalObject()->notifyArrayBufferDetaching();
 }
 
 ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()

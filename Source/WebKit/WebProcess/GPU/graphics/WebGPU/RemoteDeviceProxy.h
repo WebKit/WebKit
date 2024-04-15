@@ -51,6 +51,7 @@ public:
 
     RemoteAdapterProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    WebGPUIdentifier backing() const { return m_backing; }
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -62,8 +63,6 @@ private:
     RemoteDeviceProxy& operator=(const RemoteDeviceProxy&) = delete;
     RemoteDeviceProxy& operator=(RemoteDeviceProxy&&) = delete;
 
-    WebGPUIdentifier backing() const { return m_backing; }
-    
     static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)

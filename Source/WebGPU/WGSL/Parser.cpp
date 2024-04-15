@@ -1741,27 +1741,27 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
         RETURN_ARENA_NODE(BoolLiteral, false);
     case TokenType::IntegerLiteral: {
         CONSUME_TYPE_NAMED(lit, IntegerLiteral);
-        RETURN_ARENA_NODE(AbstractIntegerLiteral, lit.literalValue);
+        RETURN_ARENA_NODE(AbstractIntegerLiteral, lit.integerValue);
     }
     case TokenType::IntegerLiteralSigned: {
         CONSUME_TYPE_NAMED(lit, IntegerLiteralSigned);
-        RETURN_ARENA_NODE(Signed32Literal, lit.literalValue);
+        RETURN_ARENA_NODE(Signed32Literal, lit.integerValue);
     }
     case TokenType::IntegerLiteralUnsigned: {
         CONSUME_TYPE_NAMED(lit, IntegerLiteralUnsigned);
-        RETURN_ARENA_NODE(Unsigned32Literal, lit.literalValue);
+        RETURN_ARENA_NODE(Unsigned32Literal, lit.integerValue);
     }
     case TokenType::AbstractFloatLiteral: {
         CONSUME_TYPE_NAMED(lit, AbstractFloatLiteral);
-        RETURN_ARENA_NODE(AbstractFloatLiteral, lit.literalValue);
+        RETURN_ARENA_NODE(AbstractFloatLiteral, lit.floatValue);
     }
     case TokenType::FloatLiteral: {
         CONSUME_TYPE_NAMED(lit, FloatLiteral);
-        RETURN_ARENA_NODE(Float32Literal, lit.literalValue);
+        RETURN_ARENA_NODE(Float32Literal, lit.floatValue);
     }
     case TokenType::HalfLiteral: {
         CONSUME_TYPE_NAMED(lit, HalfLiteral);
-        RETURN_ARENA_NODE(Float16Literal, lit.literalValue);
+        RETURN_ARENA_NODE(Float16Literal, lit.floatValue);
     }
     // TODO: bitcast expression
 

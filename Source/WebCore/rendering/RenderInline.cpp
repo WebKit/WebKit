@@ -197,7 +197,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     if (diff >= StyleDifference::Repaint) {
         if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
             if (selfNeedsLayout())
-                lineLayout->flow().invalidateLineLayoutPath();
+                lineLayout->flow().invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::StyleChange);
             else
                 lineLayout->updateStyle(*this, *oldStyle);
         }

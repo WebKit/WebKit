@@ -327,6 +327,5 @@ std::optional<Vector<SandboxExtension::Handle>> WebProcessProxy::fontdMachExtens
     return SandboxExtension::createHandlesForMachLookup({ "com.apple.fonts"_s }, auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
 }
 
-
 }
 

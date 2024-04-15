@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   function* g() {} let iterator = g(); new iterator.return();
-}, '`function* g() {} let iterator = g(); new iterator.return()` throws TypeError');
+});
 

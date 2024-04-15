@@ -43,6 +43,7 @@ verifyEqualTo(obj, "property", getFunc());
 
 verifyWritable(obj, "property", "verifySetFunction1");
 
-verifyNotEnumerable(obj, "property");
-
-verifyConfigurable(obj, "property");
+verifyProperty(obj, "property", {
+  enumerable: false,
+  configurable: true,
+});

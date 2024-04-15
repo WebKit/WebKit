@@ -250,19 +250,12 @@ void VideoPresentationInterfaceIOS::doSetup()
 
     UIViewController *playerViewController = this->playerViewController();
 
-    UIView *parentView;
-    UIViewController *presentingViewController;
     if (m_viewController) {
-        parentView = [m_viewController view];
-        presentingViewController = m_viewController.get();
-    } else {
-        parentView = m_parentView.get();
-        presentingViewController = this->presentingViewController();
-    }
-
-    [presentingViewController addChildViewController:playerViewController];
-    [parentView addSubview:playerViewController.view];
-    [playerViewController didMoveToParentViewController:presentingViewController];
+        [m_viewController addChildViewController:playerViewController];
+        [[m_viewController view] addSubview:playerViewController.view];
+        [playerViewController didMoveToParentViewController:m_viewController.get()];
+    } else
+        [m_parentView addSubview:playerViewController.view];
 
     playerViewController.view.frame = [m_parentView convertRect:m_inlineRect toView:playerViewController.view.superview];
     playerViewController.view.backgroundColor = clearUIColor();

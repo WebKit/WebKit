@@ -883,26 +883,23 @@ void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect&
     if (!makeGLContextCurrentIfNeeded())
         return;
 
-    FloatRect rect(tileRect);
-    rect.moveBy(phase);
+    FloatPoint phaseOffset(tileRect.location());
+    phaseOffset.scale(patternTransform.a(), patternTransform.d());
+    phaseOffset.moveBy(phase);
     SkMatrix phaseMatrix;
-    phaseMatrix.setTranslate(rect.x(), rect.y());
+    phaseMatrix.setTranslate(phaseOffset.x(), phaseOffset.y());
     SkMatrix shaderMatrix = SkMatrix::Concat(phaseMatrix, patternTransform);
     auto samplingOptions = toSkSamplingOptions(m_state.imageInterpolationQuality());
-    bool needsClip = tileRect.size() != nativeImage.size();
 
     SkPaint paint = createFillPaint();
     paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
 
-    if (spacing.isZero() && !needsClip)
+    if (spacing.isZero() && tileRect.size() == nativeImage.size())
         paint.setShader(image->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, samplingOptions, &shaderMatrix));
     else {
-        if (needsClip) {
-            // FIXME: handle the case where the tile rect has a different size than the image.
-            notImplemented();
-        }
         SkPictureRecorder recorder;
         auto* recordCanvas = recorder.beginRecording(SkRect::MakeWH(tileRect.width() + spacing.width() / patternTransform.a(), tileRect.height() + spacing.height() / patternTransform.d()));
+        // The below call effectively extracts a tile from the image thus performing a clipping.
         recordCanvas->drawImageRect(image, tileRect, SkRect::MakeWH(tileRect.width(), tileRect.height()), samplingOptions, nullptr, SkCanvas::kStrict_SrcRectConstraint);
         auto picture = recorder.finishRecordingAsPicture();
         paint.setShader(picture->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, samplingOptions.filter, &shaderMatrix, nullptr));

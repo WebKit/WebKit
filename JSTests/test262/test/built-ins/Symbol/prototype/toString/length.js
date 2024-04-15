@@ -23,8 +23,9 @@ includes: [propertyHelper.js]
 features: [Symbol]
 ---*/
 
-assert.sameValue(Symbol.prototype.toString.length, 0);
-
-verifyNotEnumerable(Symbol.prototype.toString, "length");
-verifyNotWritable(Symbol.prototype.toString, "length");
-verifyConfigurable(Symbol.prototype.toString, "length");
+verifyProperty(Symbol.prototype.toString, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

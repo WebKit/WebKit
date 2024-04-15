@@ -46,8 +46,10 @@ const char* makeString(CompilationMode mode)
         return "OMG";
     case CompilationMode::OMGForOSREntryMode:
         return "OMGForOSREntry";
-    case CompilationMode::JSEntrypointMode:
+    case CompilationMode::JSEntrypointJITMode:
         return "JSEntrypoint";
+    case CompilationMode::JSEntrypointInterpreterMode:
+        return "JSEntrypointInterpreter";
     case CompilationMode::JSToWasmICMode:
         return "JSToWasmIC";
     case CompilationMode::WasmToJSMode:

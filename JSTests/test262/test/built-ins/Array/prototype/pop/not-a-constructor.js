@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Array.prototype.pop), false, 'isConstructor(Array
 
 assert.throws(TypeError, () => {
   new Array.prototype.pop();
-}, '`new Array.prototype.pop()` throws TypeError');
+});
 

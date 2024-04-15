@@ -832,6 +832,7 @@ static RefPtr<Inspector::Protocol::Canvas::ContextAttributes> buildObjectForCanv
 #endif
         }
         contextAttributesPayload->setDesynchronized(attributes.desynchronized);
+        contextAttributesPayload->setWillReadFrequently(attributes.willReadFrequently);
         return contextAttributesPayload;
     }
 

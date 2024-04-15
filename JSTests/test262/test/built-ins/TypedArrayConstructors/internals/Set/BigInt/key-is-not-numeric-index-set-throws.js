@@ -34,7 +34,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert.throws(Test262Error, function() {
     sample.test262 = 1;
-  }, '`sample.test262 = 1` throws Test262Error');
+  });
 
   assert.sameValue(sample.test262, undefined, 'The value of sample.test262 is expected to equal `undefined`');
 });

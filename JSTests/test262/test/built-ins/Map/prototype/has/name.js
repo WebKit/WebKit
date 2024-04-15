@@ -12,11 +12,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  Map.prototype.has.name, 'has',
-  'The value of `Map.prototype.has.name` is `"has"`'
-);
-
-verifyNotEnumerable(Map.prototype.has, 'name');
-verifyNotWritable(Map.prototype.has, 'name');
-verifyConfigurable(Map.prototype.has, 'name');
+verifyProperty(Map.prototype.has, "name", {
+  value: "has",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

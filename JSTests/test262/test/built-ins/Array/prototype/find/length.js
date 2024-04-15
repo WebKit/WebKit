@@ -8,11 +8,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  Array.prototype.find.length, 1,
-  'The value of `Array.prototype.find.length` is `1`'
-);
-
-verifyNotEnumerable(Array.prototype.find, 'length');
-verifyNotWritable(Array.prototype.find, 'length');
-verifyConfigurable(Array.prototype.find, 'length');
+verifyProperty(Array.prototype.find, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

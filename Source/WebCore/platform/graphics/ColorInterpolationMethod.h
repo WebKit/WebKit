@@ -53,6 +53,10 @@ enum class ColorInterpolationColorSpace : uint8_t {
     OKLab,
     SRGB,
     SRGBLinear,
+    DisplayP3,
+    A98RGB,
+    ProPhotoRGB,
+    Rec2020,
     XYZD50,
     XYZD65
 };
@@ -114,6 +118,26 @@ struct ColorInterpolationMethod {
         using ColorType = WebCore::ExtendedLinearSRGBA<float>;
         friend constexpr bool operator==(const SRGBLinear&, const SRGBLinear&) = default;
     };
+    struct DisplayP3 {
+        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::DisplayP3;
+        using ColorType = WebCore::ExtendedDisplayP3<float>;
+        friend constexpr bool operator==(const DisplayP3&, const DisplayP3&) = default;
+    };
+    struct A98RGB {
+        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::A98RGB;
+        using ColorType = WebCore::ExtendedA98RGB<float>;
+        friend constexpr bool operator==(const A98RGB&, const A98RGB&) = default;
+    };
+    struct ProPhotoRGB {
+        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::ProPhotoRGB;
+        using ColorType = WebCore::ExtendedProPhotoRGB<float>;
+        friend constexpr bool operator==(const ProPhotoRGB&, const ProPhotoRGB&) = default;
+    };
+    struct Rec2020 {
+        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::Rec2020;
+        using ColorType = WebCore::ExtendedRec2020<float>;
+        friend constexpr bool operator==(const Rec2020&, const Rec2020&) = default;
+    };
     struct XYZD50 {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::XYZD50;
         using ColorType = WebCore::XYZA<float, WhitePoint::D50>;
@@ -127,7 +151,22 @@ struct ColorInterpolationMethod {
 
     friend constexpr bool operator==(const ColorInterpolationMethod&, const ColorInterpolationMethod&) = default;
 
-    std::variant<HSL, HWB, LCH, Lab, OKLCH, OKLab, SRGB, SRGBLinear, XYZD50, XYZD65> colorSpace;
+    std::variant<
+        HSL,
+        HWB,
+        LCH,
+        Lab,
+        OKLCH,
+        OKLab,
+        SRGB,
+        SRGBLinear,
+        DisplayP3,
+        A98RGB,
+        ProPhotoRGB,
+        Rec2020,
+        XYZD50,
+        XYZD65
+    > colorSpace;
     AlphaPremultiplication alphaPremultiplication;
 };
 
@@ -144,6 +183,45 @@ inline void add(Hasher& hasher, const ColorInterpolationMethod& colorInterpolati
     );
 }
 
+static constexpr ASCIILiteral serializationForCSS(ColorInterpolationColorSpace interpolationColorSpace)
+{
+    switch (interpolationColorSpace) {
+    case ColorInterpolationColorSpace::HSL:
+        return "hsl"_s;
+    case ColorInterpolationColorSpace::HWB:
+        return "hwb"_s;
+    case ColorInterpolationColorSpace::LCH:
+        return "lch"_s;
+    case ColorInterpolationColorSpace::Lab:
+        return "lab"_s;
+    case ColorInterpolationColorSpace::OKLCH:
+        return "oklch"_s;
+    case ColorInterpolationColorSpace::OKLab:
+        return "oklab"_s;
+    case ColorInterpolationColorSpace::SRGB:
+        return "srgb"_s;
+    case ColorInterpolationColorSpace::SRGBLinear:
+        return "srgb-linear"_s;
+    case ColorInterpolationColorSpace::DisplayP3:
+        return "display-p3"_s;
+    case ColorInterpolationColorSpace::A98RGB:
+        return "a98-rgb"_s;
+    case ColorInterpolationColorSpace::ProPhotoRGB:
+        return "prophoto-rgb"_s;
+    case ColorInterpolationColorSpace::Rec2020:
+        return "rec2020"_s;
+    case ColorInterpolationColorSpace::XYZD50:
+        return "xyz-d50"_s;
+    case ColorInterpolationColorSpace::XYZD65:
+        return "xyz-d65"_s;
+    }
+
+    ASSERT_NOT_REACHED();
+    return ""_s;
+}
+
+void serializationForCSS(StringBuilder&, ColorInterpolationColorSpace);
+void serializationForCSS(StringBuilder&, HueInterpolationMethod);
 void serializationForCSS(StringBuilder&, const ColorInterpolationMethod&);
 String serializationForCSS(const ColorInterpolationMethod&);
 

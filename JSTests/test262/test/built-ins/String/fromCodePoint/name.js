@@ -12,11 +12,9 @@ includes: [propertyHelper.js]
 features: [String.fromCodePoint]
 ---*/
 
-assert.sameValue(
-  String.fromCodePoint.name, 'fromCodePoint',
-  'The value of `String.fromCodePoint.name` is "fromCodePoint"'
-);
-
-verifyNotEnumerable(String.fromCodePoint, 'name');
-verifyNotWritable(String.fromCodePoint, 'name');
-verifyConfigurable(String.fromCodePoint, 'name');
+verifyProperty(String.fromCodePoint, "name", {
+  value: "fromCodePoint",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -8,11 +8,9 @@ includes: [propertyHelper.js]
 features: [Reflect]
 ---*/
 
-assert.sameValue(
-  Reflect.defineProperty.length, 3,
-  'The value of `Reflect.defineProperty.length` is `3`'
-);
-
-verifyNotEnumerable(Reflect.defineProperty, 'length');
-verifyNotWritable(Reflect.defineProperty, 'length');
-verifyConfigurable(Reflect.defineProperty, 'length');
+verifyProperty(Reflect.defineProperty, "length", {
+  value: 3,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Array.prototype.sort.name, "sort");
-
-verifyNotEnumerable(Array.prototype.sort, "name");
-verifyNotWritable(Array.prototype.sort, "name");
-verifyConfigurable(Array.prototype.sort, "name");
+verifyProperty(Array.prototype.sort, "name", {
+  value: "sort",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

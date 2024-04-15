@@ -25,8 +25,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(SyntaxError.length, 1);
-
-verifyNotEnumerable(SyntaxError, "length");
-verifyNotWritable(SyntaxError, "length");
-verifyConfigurable(SyntaxError, "length");
+verifyProperty(SyntaxError, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

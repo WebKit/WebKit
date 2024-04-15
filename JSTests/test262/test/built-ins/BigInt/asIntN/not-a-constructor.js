@@ -23,4 +23,4 @@ assert.sameValue(isConstructor(BigInt.asIntN), false, 'isConstructor(BigInt.asIn
 
 assert.throws(TypeError, () => {
   new BigInt.asIntN(64, 1n);
-}, '`new BigInt.asIntN(64, 1n)` throws TypeError');
+});

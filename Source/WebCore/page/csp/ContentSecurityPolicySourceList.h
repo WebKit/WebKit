@@ -81,9 +81,9 @@ private:
     template<typename CharacterType> void parse(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> std::optional<Source> parseSource(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> StringView parseScheme(StringParsingBuffer<CharacterType>);
-    template<typename CharacterType> std::optional<Host> parseHost(StringParsingBuffer<CharacterType>);
-    template<typename CharacterType> std::optional<Port> parsePort(StringParsingBuffer<CharacterType>);
-    template<typename CharacterType> String parsePath(StringParsingBuffer<CharacterType>);
+    template<typename CharacterType> std::optional<Host> parseHost(std::span<const CharacterType>);
+    template<typename CharacterType> std::optional<Port> parsePort(std::span<const CharacterType>);
+    template<typename CharacterType> String parsePath(std::span<const CharacterType>);
     template<typename CharacterType> bool parseNonceSource(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> bool parseHashSource(StringParsingBuffer<CharacterType>);
 

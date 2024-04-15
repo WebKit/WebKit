@@ -69,6 +69,7 @@
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/MediaControlsContextMenuItem.h>
 #include <WebCore/MediaKeySystemRequest.h>
+#include <WebCore/NowPlayingMetadataObserver.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PlatformLayerIdentifier.h>
@@ -1090,7 +1091,7 @@ public:
     bool performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*);
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    void insertMultiRepresentationHEIC(std::span<const uint8_t>);
+    void insertMultiRepresentationHEIC(std::span<const uint8_t>, const String&);
 #endif
 
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, InsertTextOptions&&);
@@ -1735,10 +1736,15 @@ public:
 
     void textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState, const WTF::UUID& replacementUUID);
 
-    void removeTextIndicatorStyleForID(const WTF::UUID&);
-
     void enableTextIndicatorStyleAfterElementWithID(const String&, const WTF::UUID&);
+    void enableTextIndicatorStyleForElementWithID(const String&, const WTF::UUID&);
+    void removeTextIndicatorStyleForID(const WTF::UUID&);
 #endif
+
+    void startObservingNowPlayingMetadata();
+    void stopObservingNowPlayingMetadata();
+
+    void didAdjustVisibilityWithSelectors(Vector<String>&&);
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
@@ -2782,6 +2788,8 @@ private:
     UniqueRef<UnifiedTextReplacementController> m_unifiedTextReplacementController;
     HashMap<WTF::UUID, Ref<WebCore::Range>> m_textIndicatorStyleEnablementRanges;
 #endif
+
+    std::unique_ptr<WebCore::NowPlayingMetadataObserver> m_nowPlayingMetadataObserver;
 
     mutable RefPtr<Logger> m_logger;
 };

@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Date.UTC), false, 'isConstructor(Date.UTC) must r
 
 assert.throws(TypeError, () => {
   new Date.UTC();
-}, '`new Date.UTC()` throws TypeError');
+});
 

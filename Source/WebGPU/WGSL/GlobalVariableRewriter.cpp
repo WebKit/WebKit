@@ -1548,7 +1548,7 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(const PipelineLay
 {
     Vector<unsigned> groups;
     unsigned group = 0;
-    HashSet<AST::Variable*> serializedVariables;
+    HashMap<AST::Variable*, const BindGroupLayoutEntry*> serializedVariables;
     for (const auto& bindGroupLayout : layout.bindGroupLayouts) {
         Vector<std::pair<unsigned, AST::StructureMember*>> entries;
         Vector<std::pair<unsigned, AST::Variable*>> bufferLengths;
@@ -1581,9 +1581,7 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(const PipelineLay
             auto it = m_globalsByBinding.find({ group + 1, entry.binding + 1 });
             if (it != m_globalsByBinding.end()) {
                 variable = it->value;
-                if (!variableAndEntryMatch(*variable, entry))
-                    return makeUnexpected(Error("Shader is incompatible with layout pipeline"_s, SourceSpan::empty()));
-                serializedVariables.add(variable);
+                serializedVariables.add(variable, &entry);
                 entries.append({ entry.binding, &createArgumentBufferEntry(*argumentBufferIndex, *variable) });
             } else {
                 auto& type = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("u32"_s));
@@ -1608,7 +1606,7 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(const PipelineLay
             if (variable) {
                 auto it = m_bufferLengthMap.find(variable);
                 RELEASE_ASSERT(it != m_bufferLengthMap.end());
-                serializedVariables.add(it->value);
+                serializedVariables.add(it->value, nullptr);
                 entries.append({ binding, &createArgumentBufferEntry(binding, *it->value) });
             } else {
                 entries.append({
@@ -1630,6 +1628,11 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(const PipelineLay
     for (auto& [_, bindingGlobalMap] : usedResources) {
         for (auto [_, global] : bindingGlobalMap) {
             auto* variable = global->declaration;
+            if (auto entryIt = serializedVariables.find(variable); entryIt != serializedVariables.end() && entryIt->value) {
+                if (!variableAndEntryMatch(*variable, *entryIt->value))
+                    return makeUnexpected(Error("Shader is incompatible with layout pipeline"_s, SourceSpan::empty()));
+            }
+
             if (!m_reads.contains(variable->name()))
                 continue;
 

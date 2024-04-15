@@ -31,6 +31,7 @@ const expected = [
   "has one.calendar.year",
   "has one.calendar.yearMonthFromFields",
   "has one.calendar.yearOfWeek",
+  "get one.calendar.dateFromFields",
   "get one.calendar.fields",
   "call one.calendar.fields",
   // PrepareTemporalFields
@@ -72,12 +73,11 @@ const expected = [
   "has one.timeZone.getPossibleInstantsFor",
   "has one.timeZone.id",
   // InterpretTemporalDateTimeFields
-  "get one.calendar.dateFromFields",
   "call one.calendar.dateFromFields",
   // InterpretISODateTimeOffset
+  "get one.timeZone.getOffsetNanosecondsFor",
   "get one.timeZone.getPossibleInstantsFor",
   "call one.timeZone.getPossibleInstantsFor",
-  "get one.timeZone.getOffsetNanosecondsFor",
   "call one.timeZone.getOffsetNanosecondsFor",
   // Same set of operations, for the other argument:
   "get two.calendar",
@@ -102,6 +102,7 @@ const expected = [
   "has two.calendar.year",
   "has two.calendar.yearMonthFromFields",
   "has two.calendar.yearOfWeek",
+  "get two.calendar.dateFromFields",
   "get two.calendar.fields",
   "call two.calendar.fields",
   // PrepareTemporalFields
@@ -143,12 +144,11 @@ const expected = [
   "has two.timeZone.getPossibleInstantsFor",
   "has two.timeZone.id",
   // InterpretTemporalDateTimeFields
-  "get two.calendar.dateFromFields",
   "call two.calendar.dateFromFields",
   // InterpretISODateTimeOffset
+  "get two.timeZone.getOffsetNanosecondsFor",
   "get two.timeZone.getPossibleInstantsFor",
   "call two.timeZone.getPossibleInstantsFor",
-  "get two.timeZone.getOffsetNanosecondsFor",
   "call two.timeZone.getOffsetNanosecondsFor",
 ];
 const actual = [];

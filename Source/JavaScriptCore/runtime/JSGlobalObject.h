@@ -430,6 +430,7 @@ public:
     Ref<WatchpointSet> m_varInjectionWatchpointSet;
     Ref<WatchpointSet> m_varReadOnlyWatchpointSet;
     Ref<WatchpointSet> m_regExpRecompiledWatchpointSet;
+    Ref<WatchpointSet> m_arrayBufferDetachWatchpointSet;
 
     struct RareData;
     std::unique_ptr<RareData> m_rareData;
@@ -985,6 +986,7 @@ public:
     WatchpointSet& varInjectionWatchpointSet() { return m_varInjectionWatchpointSet.get(); }
     WatchpointSet& varReadOnlyWatchpointSet() { return m_varReadOnlyWatchpointSet.get(); }
     WatchpointSet& regExpRecompiledWatchpointSet() { return m_regExpRecompiledWatchpointSet.get(); }
+    WatchpointSet& arrayBufferDetachWatchpointSet() { return m_arrayBufferDetachWatchpointSet.get(); }
 
     bool isHavingABadTime() const
     {
@@ -992,6 +994,14 @@ public:
     }
         
     void haveABadTime(VM&);
+
+    void notifyArrayBufferDetaching()
+    {
+        if (!m_arrayBufferDetachWatchpointSet->isStillValid())
+            return;
+        notifyArrayBufferDetachingSlow();
+    }
+
     void clearStructureCache(VM&);
         
     static bool objectPrototypeIsSaneConcurrently(Structure* objectPrototypeStructure);
@@ -1119,6 +1129,7 @@ private:
 
     static const GlobalObjectMethodTable* baseGlobalObjectMethodTable();
 
+    void notifyArrayBufferDetachingSlow();
     void fireWatchpointAndMakeAllArrayStructuresSlowPut(VM&);
     void setGlobalThis(VM&, JSObject* globalThis);
 

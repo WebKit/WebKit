@@ -8,8 +8,9 @@ author: Jordan Harband
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.padStart.length, 1, 'Expected String#padStart.length to be 1');
-
-verifyNotEnumerable(String.prototype.padStart, 'length');
-verifyNotWritable(String.prototype.padStart, 'length');
-verifyConfigurable(String.prototype.padStart, 'length');
+verifyProperty(String.prototype.padStart, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

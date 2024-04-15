@@ -89,7 +89,7 @@ private:
     static constexpr size_t defaultInlineBufferSize = 2048;
     using LCharBuffer = Vector<LChar, defaultInlineBufferSize>;
 
-    template<typename CharacterType> void parse(const CharacterType*, const unsigned length, const URL&, const URLTextEncoding*);
+    template<typename CharacterType> void parse(std::span<const CharacterType>, const URL&, const URLTextEncoding*);
     template<typename CharacterType> void parseAuthority(CodePointIterator<CharacterType>);
     enum class HostParsingResult : uint8_t { InvalidHost, IPv6WithPort, IPv6WithoutPort, IPv4WithPort, IPv4WithoutPort, DNSNameWithPort, DNSNameWithoutPort, NonSpecialHostWithoutPort, NonSpecialHostWithPort };
     template<typename CharacterType> HostParsingResult parseHostAndPort(CodePointIterator<CharacterType>);

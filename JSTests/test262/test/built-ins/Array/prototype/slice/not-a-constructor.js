@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Array.prototype.slice();
-}, '`new Array.prototype.slice()` throws TypeError');
+});
 

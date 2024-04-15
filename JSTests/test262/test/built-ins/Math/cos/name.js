@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.cos.name, "cos");
-
-verifyNotEnumerable(Math.cos, "name");
-verifyNotWritable(Math.cos, "name");
-verifyConfigurable(Math.cos, "name");
+verifyProperty(Math.cos, "name", {
+  value: "cos",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

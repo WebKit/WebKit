@@ -17,8 +17,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(TypeError.name, "TypeError");
-
-verifyNotEnumerable(TypeError, "name");
-verifyNotWritable(TypeError, "name");
-verifyConfigurable(TypeError, "name");
+verifyProperty(TypeError, "name", {
+  value: "TypeError",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

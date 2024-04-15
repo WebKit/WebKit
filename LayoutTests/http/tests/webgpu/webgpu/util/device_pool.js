@@ -17,6 +17,8 @@ import { getDefaultLimits, kLimits } from '../capability_info.js';
 
 
 
+
+
 class TestFailedButDeviceReusable extends Error {}
 class FeaturesNotSupported extends Error {}
 export class TestOOMedShouldAttemptGC extends Error {}
@@ -286,6 +288,8 @@ descriptor)
  * Holds a GPUDevice and tracks its state (free/acquired) and handles device loss.
  */
 class DeviceHolder {
+  /** Adapter the device was created from. Cannot be reused; just for adapter info. */
+
   /** The device. Will be cleared during cleanup if there were unexpected errors. */
 
   /** Whether the device is in use by a test or not. */
@@ -310,10 +314,11 @@ class DeviceHolder {
     const device = await adapter.requestDevice(descriptor);
     assert(device !== null, 'requestDevice returned null');
 
-    return new DeviceHolder(device);
+    return new DeviceHolder(adapter, device);
   }
 
-  constructor(device) {
+  constructor(adapter, device) {
+    this.adapter = adapter;
     this._device = device;
     void this._device.lost.then((ev) => {
       this.lostInfo = ev;

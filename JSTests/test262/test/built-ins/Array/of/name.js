@@ -12,11 +12,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  Array.of.name, 'of',
-  'The value of Array.of.name is expected to be "of"'
-);
-
-verifyNotEnumerable(Array.of, 'name');
-verifyNotWritable(Array.of, 'name');
-verifyConfigurable(Array.of, 'name');
+verifyProperty(Array.of, "name", {
+  value: "of",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

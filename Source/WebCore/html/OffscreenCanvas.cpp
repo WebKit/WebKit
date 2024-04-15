@@ -366,7 +366,7 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
     if (auto* context = dynamicDowncast<GPUCanvasContext>(*m_context)) {
         auto buffer = allocateImageBuffer();
         if (!buffer)
-            return { RefPtr<ImageBitmap> { nullptr } };
+            return Exception { ExceptionCode::OutOfMemoryError };
 
         Ref<ImageBuffer> bufferRef = buffer.releaseNonNull();
         return context->getCurrentTextureAsImageBitmap(bufferRef, originClean());

@@ -289,7 +289,7 @@ void RenderSVGText::subtreeTextDidChange(RenderSVGInlineText* text)
 static inline void updateFontInAllDescendants(RenderSVGText& text)
 {
     for (RenderObject* descendant = &text; descendant; descendant = descendant->nextInPreOrder(&text)) {
-        if (auto* text = dynamicDowncast<RenderSVGInlineText>(*descendant))
+        if (CheckedPtr text = dynamicDowncast<RenderSVGInlineText>(*descendant))
             text->updateScaledFont();
     }
 }

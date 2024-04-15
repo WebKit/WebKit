@@ -3985,15 +3985,15 @@ static Vector<SimpleRange> scanForTelephoneNumbers(const SimpleRange& range)
 
     auto text = plainText(range);
     Vector<SimpleRange> result;
-    unsigned length = text.length();
-    unsigned scannerPosition = 0;
     int relativeStartPosition = 0;
     int relativeEndPosition = 0;
     auto characters = StringView { text }.upconvertedCharacters();
-    while (scannerPosition < length && TelephoneNumberDetector::find(&characters[scannerPosition], length - scannerPosition, &relativeStartPosition, &relativeEndPosition)) {
-        ASSERT(scannerPosition + relativeEndPosition <= length);
+    auto span = characters.span();
+    while (!span.empty() && TelephoneNumberDetector::find(span, &relativeStartPosition, &relativeEndPosition)) {
+        auto scannerPosition = span.data() - characters.span().data();
+        ASSERT(scannerPosition + relativeEndPosition <= text.length());
         result.append(resolveCharacterRange(range, CharacterRange(scannerPosition + relativeStartPosition, relativeEndPosition - relativeStartPosition)));
-        scannerPosition += relativeEndPosition;
+        span = span.subspan(relativeEndPosition);
     }
     return result;
 }

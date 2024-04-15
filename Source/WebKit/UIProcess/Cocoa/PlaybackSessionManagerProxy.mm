@@ -73,6 +73,7 @@ void PlaybackSessionModelContext::sendRemoteCommand(WebCore::PlatformMediaSessio
 
 void PlaybackSessionModelContext::setVideoReceiverEndpoint(const WebCore::VideoReceiverEndpoint& endpoint)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->setVideoReceiverEndpoint(m_contextId, endpoint);
 }
@@ -84,6 +85,18 @@ void PlaybackSessionModelContext::setSpatialTrackingLabel(const String& label)
         m_manager->setSpatialTrackingLabel(m_contextId, label);
 }
 #endif
+
+void PlaybackSessionModelContext::addNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver& nowPlayingInfo)
+{
+    if (m_manager)
+        m_manager->addNowPlayingMetadataObserver(m_contextId, nowPlayingInfo);
+}
+
+void PlaybackSessionModelContext::removeNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver& nowPlayingInfo)
+{
+    if (m_manager)
+        m_manager->removeNowPlayingMetadataObserver(m_contextId, nowPlayingInfo);
+}
 
 void PlaybackSessionModelContext::play()
 {
@@ -807,6 +820,18 @@ void PlaybackSessionManagerProxy::setSpatialTrackingLabel(PlaybackSessionContext
         m_page->send(Messages::PlaybackSessionManager::SetSpatialTrackingLabel(contextId, label));
 }
 #endif
+
+void PlaybackSessionManagerProxy::addNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver& nowPlayingInfo)
+{
+    if (RefPtr page = m_page.get())
+        page->addNowPlayingMetadataObserver(nowPlayingInfo);
+}
+
+void PlaybackSessionManagerProxy::removeNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver& nowPlayingInfo)
+{
+    if (RefPtr page = m_page.get())
+        page->removeNowPlayingMetadataObserver(nowPlayingInfo);
+}
 
 bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()
 {

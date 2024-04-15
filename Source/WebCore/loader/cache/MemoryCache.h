@@ -140,6 +140,7 @@ public:
     // Track decoded resources that are in the cache and referenced by a Web page.
     void insertInLiveDecodedResourcesList(CachedResource&);
     void removeFromLiveDecodedResourcesList(CachedResource&);
+    void moveToEndOfLiveDecodedResourcesListIfPresent(CachedResource&);
 
     void addToLiveResourcesSize(CachedResource&);
     void removeFromLiveResourcesSize(CachedResource&);

@@ -280,7 +280,7 @@ export const kVideoInfo = makeTable({
       }
     },
     'four-colors-h264-bt601-hflip.mp4': {
-      mimeType: 'video/mp4; codecs=vp09.00.10.08',
+      mimeType: 'video/mp4; codecs=avc1.4d400c',
       colorSpace: 'bt601',
       coded: {
         topLeftColor: 'yellow',
@@ -296,7 +296,7 @@ export const kVideoInfo = makeTable({
       }
     },
     'four-colors-h264-bt601-vflip.mp4': {
-      mimeType: 'video/mp4; codecs=vp09.00.10.08',
+      mimeType: 'video/mp4; codecs=avc1.4d400c',
       colorSpace: 'bt601',
       coded: {
         topLeftColor: 'yellow',
@@ -383,7 +383,12 @@ callback)
 
       video.addEventListener(
         'error',
-        (event) => reject(new ErrorWithExtra('Video received "error" event', () => ({ event }))),
+        (event) =>
+        reject(
+          new ErrorWithExtra('Video received "error" event, message: ' + event.message, () => ({
+            event
+          }))
+        ),
         true
       );
 

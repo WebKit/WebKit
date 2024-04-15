@@ -141,6 +141,7 @@ public:
 
     bool isWebGPUEnabled() const { return m_preferences.isWebGPUEnabled; }
     bool isWebGLEnabled() const { return m_preferences.isWebGLEnabled; }
+    bool isWebXREnabled() const { return m_preferences.isWebXREnabled; }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     bool isDynamicContentScalingEnabled() const { return m_preferences.isDynamicContentScalingEnabled; }

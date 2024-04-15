@@ -76,6 +76,8 @@ std::optional<unsigned> PDFDocumentLayout::indexForPage(RetainPtr<PDFPage> page)
 PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint(FloatPoint documentSpacePoint) const
 {
     auto pageCount = this->pageCount();
+    ASSERT(pageCount);
+
     switch (displayMode()) {
     case PDFDocumentLayout::DisplayMode::TwoUpDiscrete:
     case PDFDocumentLayout::DisplayMode::TwoUpContinuous: {

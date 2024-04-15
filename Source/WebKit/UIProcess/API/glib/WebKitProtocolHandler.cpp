@@ -26,7 +26,7 @@
 #include "WebKitError.h"
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitVersion.h"
-#include "WebKitWebView.h"
+#include "WebKitWebViewPrivate.h"
 #include "WebProcessPool.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/GLContext.h>
@@ -69,6 +69,10 @@
 #if USE(GBM)
 #include <WebCore/PlatformDisplayGBM.h>
 #include <gbm.h>
+#endif
+
+#if USE(LIBDRM)
+#include <xf86drm.h>
 #endif
 
 #if USE(EGL)
@@ -192,6 +196,45 @@ static String dmabufRendererWithSupportedBuffers()
     buffers.append(')');
     return buffers.toString();
 }
+
+#if USE(LIBDRM)
+static String renderBufferFormat(WebKitURISchemeRequest* request)
+{
+    StringBuilder bufferFormat;
+    auto format = webkitWebViewGetRendererBufferFormat(webkit_uri_scheme_request_get_web_view(request));
+    if (format.fourcc) {
+        auto* formatName = drmGetFormatName(format.fourcc);
+        switch (format.type) {
+        case RendererBufferFormat::Type::DMABuf: {
+            auto* modifierVendor = drmGetFormatModifierVendor(format.modifier);
+            auto* modifierName = drmGetFormatModifierName(format.modifier);
+            bufferFormat.append("DMA-BUF: "_s, String::fromUTF8(formatName), " ("_s, String::fromUTF8(modifierVendor), "_"_s, String::fromUTF8(modifierName), ")"_s);
+            free(modifierVendor);
+            free(modifierName);
+            break;
+        }
+        case RendererBufferFormat::Type::SharedMemory:
+            bufferFormat.append("Shared Memory: "_s, String::fromUTF8(formatName));
+            break;
+        }
+        free(formatName);
+        switch (format.usage) {
+        case DMABufRendererBufferFormat::Usage::Rendering:
+            bufferFormat.append(" [Rendering]"_s);
+            break;
+        case DMABufRendererBufferFormat::Usage::Scanout:
+            bufferFormat.append(" [Scanout]"_s);
+            break;
+        case DMABufRendererBufferFormat::Usage::Mapping:
+            bufferFormat.append(" [Mapping]"_s);
+            break;
+        }
+    } else
+        bufferFormat.append("Unknown"_s);
+
+    return bufferFormat.toString();
+}
+#endif
 #endif
 
 void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
@@ -387,11 +430,15 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     if (strcmp(policy, "never")) {
         addTableRow(jsonObject, "API"_s, String::fromUTF8(openGLAPI()));
 #if PLATFORM(GTK)
-        if (usingDMABufRenderer)
+        if (usingDMABufRenderer) {
             addTableRow(hardwareAccelerationObject, "Renderer"_s, dmabufRendererWithSupportedBuffers());
+            addTableRow(hardwareAccelerationObject, "Buffer format"_s, renderBufferFormat(request));
+        }
 #elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
-        if (usingWPEPlatformAPI)
+        if (usingWPEPlatformAPI) {
             addTableRow(hardwareAccelerationObject, "Renderer"_s, dmabufRendererWithSupportedBuffers());
+            addTableRow(hardwareAccelerationObject, "Buffer format"_s, renderBufferFormat(request));
+        }
 #endif
         addTableRow(hardwareAccelerationObject, "Native interface"_s, uiProcessContextIsEGL() ? "EGL"_s : "None"_s);
 
@@ -423,8 +470,18 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
             auto hardwareAccelerationObject = JSON::Object::create();
             startTable("Hardware Acceleration Information (Render Process)"_s);
 
-            if (platformDisplay)
+            if (platformDisplay) {
                 addTableRow(hardwareAccelerationObject, "Platform"_s, String::fromUTF8(platformDisplay->type() == PlatformDisplay::Type::Surfaceless ? "Surfaceless"_s : "GBM"_s));
+
+#if USE(GBM)
+                if (platformDisplay->type() == PlatformDisplay::Type::GBM) {
+                    if (drmVersion* version = drmGetVersion(gbm_device_get_fd(PlatformDisplay::sharedDisplay().gbmDevice()))) {
+                        addTableRow(hardwareAccelerationObject, "DRM version"_s, makeString(version->name, " ("_s, version->desc, ") "_s, version->version_major, '.', version->version_minor, '.', version->version_patchlevel, ". "_s, version->date));
+                        drmFreeVersion(version);
+                    }
+                }
+#endif
+            }
 
             if (uiProcessContextIsEGL()) {
                 GLContext::ScopedGLContext glContext(GLContext::createOffscreen(platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay()));
@@ -472,6 +529,15 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
             startTable("Hardware Acceleration Information (Render Process)"_s);
 
             addTableRow(hardwareAccelerationObject, "Platform"_s, String::fromUTF8(platformDisplay->type() == PlatformDisplay::Type::Surfaceless ? "Surfaceless"_s : "GBM"_s));
+
+#if USE(GBM)
+            if (platformDisplay->type() == PlatformDisplay::Type::GBM) {
+                if (drmVersion* version = drmGetVersion(fd.value())) {
+                    addTableRow(hardwareAccelerationObject, "DRM version"_s, makeString(version->name, " ("_s, version->desc, ") "_s, version->version_major, '.', version->version_minor, '.', version->version_patchlevel, ". "_s, version->date));
+                    drmFreeVersion(version);
+                }
+            }
+#endif
 
             {
                 GLContext::ScopedGLContext glContext(GLContext::createOffscreen(platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay()));

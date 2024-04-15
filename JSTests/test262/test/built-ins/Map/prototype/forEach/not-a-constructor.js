@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   let m = new Map(); new m.forEach();
-}, '`let m = new Map(); new m.forEach()` throws TypeError');
+});
 

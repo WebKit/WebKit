@@ -17,11 +17,9 @@ var descriptor = Object.getOwnPropertyDescriptor(
   DataView.prototype, 'buffer'
 );
 
-assert.sameValue(
-  descriptor.get.name, 'get buffer',
-  'The value of `descriptor.get.name` is `"get buffer"`'
-);
-
-verifyNotEnumerable(descriptor.get, 'name');
-verifyNotWritable(descriptor.get, 'name');
-verifyConfigurable(descriptor.get, 'name');
+verifyProperty(descriptor.get, "name", {
+  value: "get buffer",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -5,7 +5,7 @@ Execution Tests for the i32 conversion operations
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../gpu_test.js';
 import { Type } from '../../../../util/conversion.js';
-import { allInputSources, run } from '../expression.js';
+import { allInputSources, run, onlyConstInputSource } from '../expression.js';
 
 import { d } from './i32_conversion.cache.js';
 import { unary } from './unary.js';
@@ -103,4 +103,56 @@ beforeAllSubcases((t) => {
 fn(async (t) => {
   const cases = await d.get('f16');
   await run(t, vectorizeToExpression(t.params.vectorize), [Type.f16], Type.i32, t.params, cases);
+});
+
+g.test('abstract_int').
+specURL('https://www.w3.org/TR/WGSL/#value-constructor-builtin-function').
+desc(
+  `
+i32(e), where e is an AbstractInt
+
+Identity operation if e is in bounds for i32, otherwise shader creation error
+`
+).
+params((u) =>
+u.
+combine('inputSource', onlyConstInputSource).
+combine('vectorize', [undefined, 2, 3, 4])
+).
+fn(async (t) => {
+  const cases = await d.get('abstractInt');
+  await run(
+    t,
+    vectorizeToExpression(t.params.vectorize),
+    [Type.abstractInt],
+    Type.i32,
+    t.params,
+    cases
+  );
+});
+
+g.test('abstract_float').
+specURL('https://www.w3.org/TR/WGSL/#value-constructor-builtin-function').
+desc(
+  `
+i32(e), where e is an AbstractFloat
+
+e is converted to i32, rounding towards zero
+`
+).
+params((u) =>
+u.
+combine('inputSource', onlyConstInputSource).
+combine('vectorize', [undefined, 2, 3, 4])
+).
+fn(async (t) => {
+  const cases = await d.get('abstractFloat');
+  await run(
+    t,
+    vectorizeToExpression(t.params.vectorize),
+    [Type.abstractFloat],
+    Type.i32,
+    t.params,
+    cases
+  );
 });

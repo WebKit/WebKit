@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2017, Google Inc. All rights reserved.
- * Copyright (c) 2012-2023, Apple Inc. All rights reserved.
+ * Copyright (c) 2012-2024, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -783,7 +783,7 @@ inline float roundToDevicePixel(LayoutUnit value, float pixelSnappingFactor, boo
     // This adjusts directional rounding on negative halfway values. It produces the same direction for both negative and positive values.
     // Instead of rounding negative halfway cases away from zero, we translate them to positive values before rounding.
     // It helps snapping relative negative coordinates to the same position as if they were positive absolute coordinates.
-    unsigned translateOrigin = -value.rawValue();
+    unsigned translateOrigin = WTF::negate(value.rawValue());
     return (round((valueToRound + translateOrigin) * pixelSnappingFactor) / pixelSnappingFactor) - translateOrigin;
 }
 

@@ -57,18 +57,17 @@ public:
     template<typename T, size_t Extent>
     bool encodeSpan(std::span<T, Extent> span)
     {
-        auto* data = reinterpret_cast<const uint8_t*>(span.data());
-        size_t size = span.size_bytes();
+        auto bytes = asBytes(span);
         size_t bufferPointer = static_cast<size_t>(reinterpret_cast<intptr_t>(m_buffer + m_encodedSize));
         size_t newBufferPointer = roundUpToMultipleOf<alignof(T)>(bufferPointer);
         if (newBufferPointer < bufferPointer)
             return false;
         intptr_t alignedSize = m_encodedSize + (newBufferPointer - bufferPointer);
-        if (!reserve(alignedSize, size))
+        if (!reserve(alignedSize, bytes.size()))
             return false;
         uint8_t* buffer = m_buffer + alignedSize;
-        memcpy(buffer, data, size);
-        m_encodedSize = alignedSize + size;
+        memcpy(buffer, bytes.data(), bytes.size());
+        m_encodedSize = alignedSize + bytes.size();
         return true;
     }
 

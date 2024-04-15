@@ -46,7 +46,7 @@ RemoteObjectRegistry::~RemoteObjectRegistry()
 void RemoteObjectRegistry::sendInvocation(const RemoteObjectInvocation& invocation)
 {
 
-    if (auto* replyInfo = invocation.replyInfo()) {
+    if (auto& replyInfo = invocation.replyInfo()) {
         ASSERT(!m_pendingReplies.contains(replyInfo->replyID));
         m_pendingReplies.add(replyInfo->replyID, backgroundActivity("RemoteObjectRegistry invocation"_s));
     }

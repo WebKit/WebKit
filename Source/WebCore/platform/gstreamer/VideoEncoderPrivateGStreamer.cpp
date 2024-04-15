@@ -94,6 +94,7 @@ using SetBitrateFunc = Function<void(GObject* encoder, const char* propertyName,
 using SetupFunc = Function<void(WebKitVideoEncoder*)>;
 using SetBitrateModeFunc = Function<void(GstElement*, BitrateMode)>;
 using SetLatencyModeFunc = Function<void(GstElement*, LatencyMode)>;
+using SetBitRateAllocationFunc = Function<void(GstElement*, const WebKitVideoEncoderBitRateAllocation&)>;
 
 struct EncoderDefinition {
     GRefPtr<GstCaps> caps;
@@ -105,9 +106,15 @@ struct EncoderDefinition {
     SetupFunc setupEncoder;
     SetBitrateModeFunc setBitrateMode;
     SetLatencyModeFunc setLatencyMode;
+    SetBitRateAllocationFunc setBitRateAllocation;
     const char* bitratePropertyName;
     const char* keyframeIntervalPropertyName;
 };
+
+static void defaultSetBitRateAllocation(GstElement*, const WebKitVideoEncoderBitRateAllocation&)
+{
+    notImplemented();
+}
 
 enum EncoderId {
     None,
@@ -133,7 +140,7 @@ public:
     }
 
     static void registerEncoder(EncoderId id, const char* name, const char* parserName, const char* capsString, const char* encodedFormatString,
-        SetupFunc&& setupEncoder, const char* bitratePropertyName, SetBitrateFunc&& setBitrate, const char* keyframeIntervalPropertyName, SetBitrateModeFunc&& setBitrateMode, SetLatencyModeFunc&& setLatency)
+        SetupFunc&& setupEncoder, const char* bitratePropertyName, SetBitrateFunc&& setBitrate, const char* keyframeIntervalPropertyName, SetBitrateModeFunc&& setBitrateMode, SetLatencyModeFunc&& setLatency, SetBitRateAllocationFunc&& setBitRateAllocation = defaultSetBitRateAllocation)
     {
         auto encoderFactory = adoptGRef(gst_element_factory_find(name));
         if (!encoderFactory) {
@@ -173,6 +180,7 @@ public:
             .setupEncoder = WTFMove(setupEncoder),
             .setBitrateMode = WTFMove(setBitrateMode),
             .setLatencyMode = WTFMove(setLatency),
+            .setBitRateAllocation = WTFMove(setBitRateAllocation),
             .bitratePropertyName = bitratePropertyName,
             .keyframeIntervalPropertyName = keyframeIntervalPropertyName,
         }));
@@ -208,6 +216,7 @@ struct _WebKitVideoEncoderPrivate {
     BitrateMode bitrateMode;
     LatencyMode latencyMode;
     String codecString;
+    RefPtr<WebKitVideoEncoderBitRateAllocation> bitRateAllocation;
 };
 
 #define webkit_video_encoder_parent_class parent_class
@@ -492,6 +501,17 @@ bool videoEncoderSetFormat(WebKitVideoEncoder* self, GRefPtr<GstCaps>&& caps, co
     }
 
     return videoEncoderSetEncoder(self, encoderId, WTFMove(caps), codecString);
+}
+
+void videoEncoderSetBitRateAllocation(WebKitVideoEncoder* self, RefPtr<WebKitVideoEncoderBitRateAllocation>&& allocation)
+{
+    auto* priv = self->priv;
+    priv->bitRateAllocation = WTFMove(allocation);
+
+    if (priv->encoderId != None) {
+        auto encoder = Encoders::definition(priv->encoderId);
+        encoder->setBitRateAllocation(priv->encoder.get(), *priv->bitRateAllocation);
+    }
 }
 
 static void videoEncoderSetProperty(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -795,6 +815,139 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                 gst_util_set_object_arg(G_OBJECT(encoder), "end-usage", "cq");
                 break;
             };
+        }, [](GstElement* encoder, const WebKitVideoEncoderBitRateAllocation& bitRateAllocation) {
+            // Allow usage of deprecated GValueArray API.
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN;
+            GUniquePtr<GValueArray> bitrates(g_value_array_new(3));
+            GUniquePtr<GValueArray> layerIds(g_value_array_new(4));
+            GUniquePtr<GValueArray> decimators(g_value_array_new(3));
+            GValue intValue G_VALUE_INIT;
+            GValue boolValue G_VALUE_INIT;
+            unsigned numberLayers = 1;
+            Vector<bool> layerSyncFlags;
+            const char* scalabilityString = nullptr;
+            const char* layerFlags = nullptr;
+
+            g_value_init(&intValue, G_TYPE_INT);
+
+            switch (bitRateAllocation.scalabilityMode()) {
+            case VideoEncoder::ScalabilityMode::L1T1:
+                numberLayers = 1;
+                scalabilityString = "L1T1";
+                if (auto value = bitRateAllocation.getBitRate(0, 0)) {
+                    g_value_set_int(&intValue, *value);
+                    g_value_array_append(bitrates.get(), &intValue);
+                }
+                for (unsigned i = 0; i < 3; i++) {
+                    static const int decimatorValues[] = { 1, 1, 1 };
+                    g_value_set_int(&intValue, decimatorValues[i]);
+                    g_value_array_append(decimators.get(), &intValue);
+                }
+                break;
+            case VideoEncoder::ScalabilityMode::L1T2:
+                numberLayers = 2;
+                scalabilityString = "L1T2";
+                if (auto value = bitRateAllocation.getBitRate(0, 1)) {
+                    g_value_set_int(&intValue, *value);
+                    g_value_array_append(bitrates.get(), &intValue);
+                }
+                if (auto value = bitRateAllocation.getBitRate(0, 0)) {
+                    g_value_set_int(&intValue, *value);
+                    g_value_array_append(bitrates.get(), &intValue);
+                }
+                for (unsigned i = 0; i < 3; i++) {
+                    static const int decimatorValues[] = { 1, 1, 1 };
+                    g_value_set_int(&intValue, decimatorValues[i]);
+                    g_value_array_append(decimators.get(), &intValue);
+                }
+                for (unsigned i = 0; i < 4; i++) {
+                    static const int layerIdValues[] = { 0, 1, 0, 1 };
+                    g_value_set_int(&intValue, layerIdValues[i]);
+                    g_value_array_append(layerIds.get(), &intValue);
+                }
+                g_object_set(encoder, "temporal-scalability-layer-id", layerIds.get(), "temporal-scalability-periodicity", 2, nullptr);
+                layerFlags = \
+                    /* layer 0 */
+                    "<no-ref-golden+no-upd-golden+no-upd-alt,"
+                    /* layer 1 (sync) */
+                    "no-ref-golden+no-upd-last+no-upd-alt,"
+                    /* layer 0 */
+                    "no-ref-golden+no-upd-golden+no-upd-alt,"
+                    /* layer 1 */
+                    "no-upd-last+no-upd-alt>";
+                layerSyncFlags = { false, true, false, false };
+                break;
+            case VideoEncoder::ScalabilityMode::L1T3:
+                numberLayers = 3;
+                scalabilityString = "L1T3";
+                if (auto value = bitRateAllocation.getBitRate(0, 2)) {
+                    g_value_set_int(&intValue, *value);
+                    g_value_array_append(bitrates.get(), &intValue);
+                }
+                if (auto value = bitRateAllocation.getBitRate(0, 1)) {
+                    g_value_set_int(&intValue, *value);
+                    g_value_array_append(bitrates.get(), &intValue);
+                }
+                if (auto value = bitRateAllocation.getBitRate(0, 0)) {
+                    g_value_set_int(&intValue, *value);
+                    g_value_array_append(bitrates.get(), &intValue);
+                }
+                for (unsigned i = 0; i < 3; i++) {
+                    static const int decimatorValues[] = { 4, 2, 1 };
+                    g_value_set_int(&intValue, decimatorValues[i]);
+                    g_value_array_append(decimators.get(), &intValue);
+                }
+                for (unsigned i = 0; i < 4; i++) {
+                    static const int layerIdValues[] = { 0, 2, 1, 2 };
+                    g_value_set_int(&intValue, layerIdValues[i]);
+                    g_value_array_append(layerIds.get(), &intValue);
+                }
+                g_object_set(encoder, "temporal-scalability-layer-id", layerIds.get(), "temporal-scalability-periodicity", 4, nullptr);
+
+                layerFlags = \
+                    /* layer 0 */
+                    "<no-ref-golden+no-upd-golden+no-upd-alt,"
+                    /* layer 2 (sync) */
+                    "no-ref-golden+no-upd-last+no-upd-golden+no-upd-alt+no-upd-entropy,"
+                    /* layer 1 (sync) */
+                    "no-ref-golden+no-upd-last+no-upd-alt,"
+                    /* layer 2 */
+                    "no-upd-last+no-upd-golden+no-upd-alt+no-upd-entropy,"
+                    /* layer 0 */
+                    "no-ref-golden+no-upd-golden+no-upd-alt,"
+                    /* layer 2 */
+                    "no-upd-last+no-upd-golden+no-upd-alt+no-upd-entropy,"
+                    /* layer 1 */
+                    "no-upd-last+no-upd-alt,"
+                    /* layer 2 */
+                    "no-upd-last+no-upd-golden+no-upd-alt+no-upd-entropy>";
+                layerSyncFlags = { false, true, true, false, false, false, false, false };
+                break;
+            }
+            g_value_unset(&intValue);
+
+            GST_DEBUG_OBJECT(encoder, "Configuring for %s scalability mode", scalabilityString);
+            g_object_set(encoder, "temporal-scalability-number-layers", numberLayers,
+                "temporal-scalability-rate-decimator", decimators.get(),
+                "temporal-scalability-target-bitrate", bitrates.get(), nullptr);
+
+            if (layerFlags) {
+                GValue layerSyncFlagsValue G_VALUE_INIT;
+
+                g_value_init(&boolValue, G_TYPE_BOOLEAN);
+                gst_value_array_init(&layerSyncFlagsValue, layerSyncFlags.size());
+                for (auto& flag : layerSyncFlags) {
+                    g_value_set_boolean(&boolValue, flag);
+                    gst_value_array_append_value(&layerSyncFlagsValue, &boolValue);
+                }
+
+                g_object_set_property(G_OBJECT(encoder), "temporal-scalability-layer-sync-flags", &layerSyncFlagsValue);
+                g_value_unset(&layerSyncFlagsValue);
+                g_value_unset(&boolValue);
+                gst_util_set_object_arg(G_OBJECT(encoder), "temporal-scalability-layer-flags", layerFlags);
+            }
+
+            ALLOW_DEPRECATED_DECLARATIONS_END;
         });
 
     Encoders::registerEncoder(Vp9, "vp9enc", nullptr, "video/x-vp9", nullptr,

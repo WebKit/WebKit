@@ -91,7 +91,7 @@ using WebCore::GIFImageDecoder;
     do { \
         m_bytesToConsume = (n); \
         m_state = (s); \
-    } while (0)
+    } while (false)
 
 // Get a 16-bit value stored in little-endian format.
 #define GETINT16(p)   ((p)[1]<<8|(p)[0])
@@ -199,12 +199,8 @@ bool GIFLZWContext::outputRow()
 // Perform Lempel-Ziv-Welch decoding.
 // Returns true if decoding was successful. In this case the block will have been completely consumed and/or rowsRemaining will be 0.
 // Otherwise, decoding failed; returns false in this case, which will always cause the GIFImageReader to set the "decode failed" flag.
-bool GIFLZWContext::doLZW(const unsigned char* block, size_t bytesInBlock)
+bool GIFLZWContext::doLZW(std::span<const uint8_t> block)
 {
-    int code;
-    int incode;
-    const unsigned char *ch;
-
     if (rowPosition == rowBuffer.size())
         return true;
 
@@ -218,15 +214,15 @@ bool GIFLZWContext::doLZW(const unsigned char* block, size_t bytesInBlock)
             return true; \
     } while (0)
 
-    for (ch = block; bytesInBlock-- > 0; ch++) {
+    for (auto ch : block) {
         // Feed the next byte into the decoder's 32-bit input buffer.
-        datum += ((int) *ch) << bits;
+        datum += static_cast<int>(ch) << bits;
         bits += 8;
 
         // Check for underflow of decoder's 32-bit input buffer.
         while (bits >= codesize) {
             // Get the leading variable-length symbol from the data stream.
-            code = datum & codemask;
+            int code = datum & codemask;
             datum >>= codesize;
             bits -= codesize;
 
@@ -256,7 +252,7 @@ bool GIFLZWContext::doLZW(const unsigned char* block, size_t bytesInBlock)
                 continue;
             }
 
-            incode = code;
+            int incode = code;
             if (code >= avail) {
                 stack[stackp++] = firstchar;
                 code = oldcode;
@@ -313,9 +309,9 @@ bool GIFLZWContext::doLZW(const unsigned char* block, size_t bytesInBlock)
 // Perform decoding for this frame. frameDecoded will be true if the entire frame is decoded.
 // Returns false if a decoding error occurred. This is a fatal error and causes the GIFImageReader to set the "decode failed" flag.
 // Otherwise, either not enough data is available to decode further than before, or the new data has been decoded successfully; returns true in this case.
-bool GIFFrameContext::decode(const unsigned char* data, size_t length, WebCore::GIFImageDecoder* client, bool* frameDecoded)
+bool GIFFrameContext::decode(std::span<const uint8_t> data, WebCore::GIFImageDecoder* client, bool& frameDecoded)
 {
-    *frameDecoded = false;
+    frameDecoded = false;
     if (!m_lzwContext) {
         // Wait for more data to properly initialize GIFLZWContext.
         if (!isDataSizeDefined() || !isHeaderDefined())
@@ -334,9 +330,9 @@ bool GIFFrameContext::decode(const unsigned char* data, size_t length, WebCore::
     while (m_currentLzwBlock < m_lzwBlocks.size() && m_lzwContext->hasRemainingRows()) {
         size_t blockPosition = m_lzwBlocks[m_currentLzwBlock].blockPosition;
         size_t blockSize = m_lzwBlocks[m_currentLzwBlock].blockSize;
-        if (blockPosition + blockSize > length)
+        if (data.size() < blockSize || blockPosition > data.size() - blockSize)
             return false;
-        if (!m_lzwContext->doLZW(data + blockPosition, blockSize))
+        if (!m_lzwContext->doLZW(data.subspan(blockPosition, blockSize)))
             return false;
         ++m_currentLzwBlock;
     }
@@ -344,7 +340,7 @@ bool GIFFrameContext::decode(const unsigned char* data, size_t length, WebCore::
     // If this frame is data complete then the previous loop must have completely decoded all LZW blocks.
     // There will be no more decoding for this frame so it's time to cleanup.
     if (isComplete()) {
-        *frameDecoded = true;
+        frameDecoded = true;
         m_lzwContext = nullptr;
     }
     return true;
@@ -373,7 +369,7 @@ bool GIFImageReader::decode(GIFImageDecoder::GIFQuery query, unsigned haltAtFram
         bool frameDecoded = false;
         GIFFrameContext* currentFrame = m_frames[m_currentDecodingFrame].get();
 
-        if (!currentFrame->decode(data(0), m_data->size(), m_client, &frameDecoded))
+        if (!currentFrame->decode(data(0, m_data->size()), m_client, frameDecoded))
             return false;
 
         // We need more data to continue decoding.
@@ -409,7 +405,7 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
     // point to the next component. len will be decremented accordingly.
     while (len >= m_bytesToConsume) {
         const size_t currentComponentPosition = dataPosition;
-        const unsigned char* currentComponent = data(dataPosition);
+        auto currentComponent = data(dataPosition, m_bytesToConsume);
 
         // Mark the current component as consumed. Note that currentComponent will remain pointed at this
         // component until the next loop iteration.
@@ -426,16 +422,16 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
 
         case GIFLZWStart: {
             ASSERT(!m_frames.isEmpty());
-            m_frames.last()->setDataSize(*currentComponent);
+            m_frames.last()->setDataSize(currentComponent.front());
             GETN(1, GIFSubBlock);
             break;
         }
 
         case GIFType: {
             // All GIF files begin with "GIF87a" or "GIF89a".
-            if (!strncmp((char*)currentComponent, "GIF89a", 6))
+            if (!strncmp((char*)currentComponent.data(), "GIF89a", 6))
                 m_version = 89;
-            else if (!strncmp((char*)currentComponent, "GIF87a", 6))
+            else if (!strncmp((char*)currentComponent.data(), "GIF87a", 6))
                 m_version = 87;
             else
                 return false;
@@ -447,8 +443,8 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
             // This is the height and width of the "screen" or frame into which images are rendered. The
             // individual images can be smaller than the screen size and located with an origin anywhere
             // within the screen.
-            m_screenWidth = GETINT16(currentComponent);
-            m_screenHeight = GETINT16(currentComponent + 2);
+            m_screenWidth = GETINT16(currentComponent.data());
+            m_screenHeight = GETINT16(currentComponent.data() + 2);
 
             // CALLBACK: Inform the decoderplugin of our size.
             // Note: A subsequent frame might have dimensions larger than the "screen" dimensions.
@@ -489,12 +485,12 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
         }
 
         case GIFImageStart: {
-            if (*currentComponent == ',') { // image separator.
+            if (currentComponent.front() == ',') { // image separator.
                 GETN(9, GIFImageHeader);
                 break;
             }
 
-            if (*currentComponent == '!') { // extension.
+            if (currentComponent.front() == '!') { // extension.
                 GETN(2, GIFExtension);
                 break;
             }
@@ -514,7 +510,7 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
             size_t bytesInBlock = currentComponent[1];
             GIFState es = GIFSkipBlock;
 
-            switch (*currentComponent) {
+            switch (currentComponent.front()) {
             case 0xf9:
                 es = GIFControlExtension;
                 // The GIF spec mandates that the GIFControlExtension header block length is 4 bytes,
@@ -551,10 +547,10 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
         }
 
         case GIFConsumeBlock: {
-            if (!*currentComponent)
+            if (!currentComponent.front())
                 GETN(1, GIFImageStart);
             else
-                GETN(*currentComponent, GIFSkipBlock);
+                GETN(currentComponent.front(), GIFSkipBlock);
             break;
         }
 
@@ -566,7 +562,7 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
         case GIFControlExtension: {
             addFrameIfNecessary();
             GIFFrameContext* currentFrame = m_frames.last().get();
-            currentFrame->isTransparent = *currentComponent & 0x1;
+            currentFrame->isTransparent = currentComponent.front() & 0x1;
             if (currentFrame->isTransparent)
                 currentFrame->tpixel = currentComponent[3];
 
@@ -574,7 +570,7 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
 
             // NOTE: This relies on the values in the DisposalMethod enum
             // matching those in the GIF spec!
-            int disposalMethod = ((*currentComponent) >> 2) & 0x7;
+            int disposalMethod = (currentComponent.front() >> 2) & 0x7;
             if (disposalMethod < 4)
                 currentFrame->disposalMethod = static_cast<WebCore::ScalableImageDecoderFrame::DisposalMethod>(disposalMethod);
             else if (disposalMethod == 4) {
@@ -582,14 +578,14 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
             // the third bit of the field (i.e. method 4) is. We map both to the same value.
                 currentFrame->disposalMethod = WebCore::ScalableImageDecoderFrame::DisposalMethod::RestoreToPrevious;
             }
-            currentFrame->delayTime = GETINT16(currentComponent + 1) * 10;
+            currentFrame->delayTime = GETINT16(currentComponent.data() + 1) * 10;
             GETN(1, GIFConsumeBlock);
             break;
         }
 
         case GIFCommentExtension: {
-            if (*currentComponent)
-                GETN(*currentComponent, GIFConsumeComment);
+            if (currentComponent.front())
+                GETN(currentComponent.front(), GIFConsumeComment);
             else
                 GETN(1, GIFImageStart);
             break;
@@ -603,7 +599,7 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
         case GIFApplicationExtension: {
             // Check for netscape application extension.
             if (m_bytesToConsume == 11 
-                && (!strncmp((char*)currentComponent, "NETSCAPE2.0", 11) || !strncmp((char*)currentComponent, "ANIMEXTS1.0", 11)))
+                && (!strncmp(reinterpret_cast<const char*>(currentComponent.data()), "NETSCAPE2.0", 11) || !strncmp(reinterpret_cast<const char*>(currentComponent.data()), "ANIMEXTS1.0", 11)))
                 GETN(1, GIFNetscapeExtensionBlock);
             else
                 GETN(1, GIFConsumeBlock);
@@ -613,8 +609,8 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
         // Netscape-specific GIF extension: animation looping.
         case GIFNetscapeExtensionBlock: {
             // GIFConsumeNetscapeExtension always reads 3 bytes from the stream; we should at least wait for this amount.
-            if (*currentComponent)
-                GETN(std::max(3, static_cast<int>(*currentComponent)), GIFConsumeNetscapeExtension);
+            if (currentComponent.front())
+                GETN(std::max(3, static_cast<int>(currentComponent.front())), GIFConsumeNetscapeExtension);
             else
                 GETN(1, GIFImageStart);
             break;
@@ -626,7 +622,7 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
 
             // Loop entire animation specified # of times. Only read the loop count during the first iteration.
             if (netscapeExtension == 1) {
-                m_loopCount = GETINT16(currentComponent + 1);
+                m_loopCount = GETINT16(currentComponent.data() + 1);
 
                 // Zero loop count is infinite animation loop request.
                 if (!m_loopCount)
@@ -651,12 +647,12 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
             unsigned height, width, xOffset, yOffset;
 
             /* Get image offsets, with respect to the screen origin */
-            xOffset = GETINT16(currentComponent);
-            yOffset = GETINT16(currentComponent + 2);
+            xOffset = GETINT16(currentComponent.data());
+            yOffset = GETINT16(currentComponent.data() + 2);
 
             /* Get image width and height. */
-            width  = GETINT16(currentComponent + 4);
-            height = GETINT16(currentComponent + 6);
+            width  = GETINT16(currentComponent.data() + 4);
+            height = GETINT16(currentComponent.data() + 6);
 
             /* Work around broken GIF files where the logical screen
              * size has weird width or height.  We assume that GIF87a
@@ -748,7 +744,7 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
         }
 
         case GIFSubBlock: {
-            const size_t bytesInBlock = *currentComponent;
+            const size_t bytesInBlock = currentComponent.front();
             if (bytesInBlock)
                 GETN(bytesInBlock, GIFLZW);
             else {

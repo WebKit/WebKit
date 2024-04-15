@@ -27,8 +27,10 @@ class F extends ValidationTest {
       this.expectValidationError(() => {
         p = buffer.mapAsync(mode, offset, size);
       }, expectation.validationError);
+
       let caught = false;
       let rejectedEarly = false;
+      let microtaskBRan = false;
       // If mapAsync rejected early, microtask A will run before B.
       // If not, B will run before A.
       p.catch(() => {
@@ -38,20 +40,31 @@ class F extends ValidationTest {
       queueMicrotask(() => {
         // Microtask B
         rejectedEarly = caught;
+        microtaskBRan = true;
       });
-      try {
-        // This await will always complete after microtasks A and B are both done.
-        await p;
-        assert(expectation.rejectName === null, 'mapAsync unexpectedly passed');
-      } catch (ex) {
-        assert(ex instanceof Error, 'mapAsync rejected with non-error');
-        assert(typeof ex.stack === 'string', 'mapAsync rejected without a stack');
-        assert(expectation.rejectName === ex.name, `mapAsync rejected unexpectedly with: ${ex}`);
-        assert(
-          expectation.earlyRejection === rejectedEarly,
-          'mapAsync rejected at an unexpected timing'
-        );
-      }
+
+      // These handlers should always run after microtasks A and B are both done.
+      await p.then(
+        () => {
+          unreachable('mapAsync unexpectedly passed');
+        },
+        (ex) => {
+          const suffix = `\n  Rejection: ${ex}`;
+
+          this.expect(microtaskBRan, 'scheduling problem?: microtaskB has not run yet' + suffix);
+          assert(ex instanceof Error, 'mapAsync rejected with non-error' + suffix);
+          this.expect(typeof ex.stack === 'string', 'mapAsync rejected without a stack' + suffix);
+          this.expect(
+            expectation.rejectName === ex.name,
+            'mapAsync rejected with wrong exception name' + suffix
+          );
+          if (expectation.earlyRejection) {
+            this.expect(rejectedEarly, 'expected early mapAsync rejection, got deferred' + suffix);
+          } else {
+            this.expect(!rejectedEarly, 'expected deferred mapAsync rejection, got early' + suffix);
+          }
+        }
+      );
     }
   }
 

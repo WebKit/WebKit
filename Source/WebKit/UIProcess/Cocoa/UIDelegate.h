@@ -193,6 +193,8 @@ private:
         void updateAppBadge(WebPageProxy&, const WebCore::SecurityOriginData&, std::optional<uint64_t>) final;
         void updateClientBadge(WebPageProxy&, const WebCore::SecurityOriginData&, std::optional<uint64_t>) final;
 
+        void didAdjustVisibilityWithSelectors(WebPageProxy&, Vector<String>&&) final;
+
         WeakPtr<UIDelegate> m_uiDelegate;
     };
 
@@ -300,6 +302,7 @@ private:
         bool webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler : 1;
         bool webViewUpdatedAppBadge : 1;
         bool webViewUpdatedClientBadge : 1;
+        bool webViewDidAdjustVisibilityWithSelectors : 1;
     } m_delegateMethods;
 };
 

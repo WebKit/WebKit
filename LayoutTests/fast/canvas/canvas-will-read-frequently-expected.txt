@@ -1,0 +1,15 @@
+Test checks the behavior of willReadFrequently canvas 2D context setting
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing default value
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing willReadFrequently enabled
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing willReadFrequently disabled
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

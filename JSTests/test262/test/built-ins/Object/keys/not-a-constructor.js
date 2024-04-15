@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Object.keys), false, 'isConstructor(Object.keys) 
 
 assert.throws(TypeError, () => {
   new Object.keys({});
-}, '`new Object.keys({})` throws TypeError');
+});
 

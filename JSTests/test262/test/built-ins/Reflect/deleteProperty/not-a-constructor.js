@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Reflect.deleteProperty({}, '');
-}, '`new Reflect.deleteProperty({}, \'\')` throws TypeError');
+});
 

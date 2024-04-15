@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Math.tanh), false, 'isConstructor(Math.tanh) must
 
 assert.throws(TypeError, () => {
   new Math.tanh();
-}, '`new Math.tanh()` throws TypeError');
+});
 

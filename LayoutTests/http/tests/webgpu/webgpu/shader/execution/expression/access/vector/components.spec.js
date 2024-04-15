@@ -35,7 +35,7 @@ desc(`Test vector component selection of concrete vectors`).
 params((u) =>
 u.
 combine('inputSource', allInputSources).
-combine('elementType', ['i32', 'u32', 'f32', 'f16']).
+combine('elementType', ['i32', 'u32', 'f32', 'f16', 'bool']).
 combine('width', [2, 3, 4]).
 combine('components', ['rgba', 'xyzw']).
 beginSubcases().
@@ -49,7 +49,8 @@ beforeAllSubcases((t) => {
 fn(async (t) => {
   const elementType = Type[t.params.elementType];
   const vectorType = Type.vec(t.params.width, elementType);
-  const elementValues = (i) => (i + 1) * 10;
+  const elementValues =
+  t.params.elementType === 'bool' ? (i) => i & 1 : (i) => (i + 1) * 10;
   const elements = [];
   for (let i = 0; i < t.params.width; i++) {
     elements.push(elementType.create(elementValues(i)));

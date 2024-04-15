@@ -30,6 +30,7 @@
 #include "AcceleratedBackingStore.h"
 #include "DMABufRendererBufferFormat.h"
 #include "MessageReceiver.h"
+#include "RendererBufferFormat.h"
 #include <WebCore/IntSize.h>
 #include <WebCore/RefPtrCairo.h>
 #include <gtk/gtk.h>
@@ -69,13 +70,14 @@ public:
 #endif
     static std::unique_ptr<AcceleratedBackingStoreDMABuf> create(WebPageProxy&);
     ~AcceleratedBackingStoreDMABuf();
+
 private:
     AcceleratedBackingStoreDMABuf(WebPageProxy&);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didCreateBuffer(uint64_t id, const WebCore::IntSize&, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
+    void didCreateBuffer(uint64_t id, const WebCore::IntSize&, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier, DMABufRendererBufferFormat::Usage);
     void didCreateBufferSHM(uint64_t id, WebCore::ShareableBitmapHandle&&);
     void didDestroyBuffer(uint64_t id);
     void frame(uint64_t id);
@@ -90,6 +92,7 @@ private:
 #endif
     void unrealize() override;
     void update(const LayerTreeContext&) override;
+    RendererBufferFormat bufferFormat() const override;
 
     class Buffer : public RefCounted<Buffer> {
     public:
@@ -115,6 +118,8 @@ private:
 #endif
         virtual cairo_surface_t* surface() const { return nullptr; }
 
+        virtual RendererBufferFormat format() const = 0;
+
         uint64_t id() const { return m_id; }
         const WebCore::IntSize& size() const { return m_size; }
         float deviceScaleFactor() const { return m_deviceScaleFactor; }
@@ -122,25 +127,27 @@ private:
         float unscaledHeight() const { return static_cast<float>(m_size.height() / m_deviceScaleFactor); }
 
     protected:
-        Buffer(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor);
+        Buffer(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, DMABufRendererBufferFormat::Usage);
 
         uint64_t m_id { 0 };
         WebCore::IntSize m_size;
         float m_deviceScaleFactor { 1 };
+        DMABufRendererBufferFormat::Usage m_usage { DMABufRendererBufferFormat::Usage::Rendering };
     };
 
 #if GTK_CHECK_VERSION(4, 13, 4)
     class BufferDMABuf final : public Buffer {
     public:
-        static RefPtr<Buffer> create(uint64_t id, GdkDisplay*, const WebCore::IntSize&, float deviceScaleFactor, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
+        static RefPtr<Buffer> create(uint64_t id, GdkDisplay*, const WebCore::IntSize&, float deviceScaleFactor, DMABufRendererBufferFormat::Usage, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
         ~BufferDMABuf() = default;
 
     private:
-        BufferDMABuf(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, Vector<WTF::UnixFileDescriptor>&&, GRefPtr<GdkDmabufTextureBuilder>&&);
+        BufferDMABuf(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, DMABufRendererBufferFormat::Usage, Vector<WTF::UnixFileDescriptor>&&, GRefPtr<GdkDmabufTextureBuilder>&&);
 
         Buffer::Type type() const override { return Buffer::Type::DmaBuf; }
         void didUpdateContents() override;
         GdkTexture* texture() const override { return m_texture.get(); }
+        RendererBufferFormat format() const override;
 
         Vector<WTF::UnixFileDescriptor> m_fds;
         GRefPtr<GdkDmabufTextureBuilder> m_builder;
@@ -150,11 +157,11 @@ private:
 
     class BufferEGLImage final : public Buffer {
     public:
-        static RefPtr<Buffer> create(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
+        static RefPtr<Buffer> create(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, DMABufRendererBufferFormat::Usage, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
         ~BufferEGLImage();
 
     private:
-        BufferEGLImage(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, Vector<WTF::UnixFileDescriptor>&&, EGLImage);
+        BufferEGLImage(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, DMABufRendererBufferFormat::Usage, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, uint64_t modifier, EGLImage);
 
         Buffer::Type type() const override { return Buffer::Type::EglImage; }
         void didUpdateContents() override;
@@ -163,6 +170,7 @@ private:
 #else
         unsigned textureID() const override { return m_textureID; }
 #endif
+        RendererBufferFormat format() const override;
 
         Vector<WTF::UnixFileDescriptor> m_fds;
         EGLImage m_image { nullptr };
@@ -171,20 +179,23 @@ private:
 #else
         unsigned m_textureID { 0 };
 #endif
+        uint32_t m_fourcc { 0 };
+        uint64_t m_modifier { 0 };
     };
 
 #if USE(GBM)
     class BufferGBM final : public Buffer {
     public:
-        static RefPtr<Buffer> create(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, uint32_t format, WTF::UnixFileDescriptor&&, uint32_t stride);
+        static RefPtr<Buffer> create(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, DMABufRendererBufferFormat::Usage, uint32_t format, WTF::UnixFileDescriptor&&, uint32_t stride);
         ~BufferGBM();
 
     private:
-        BufferGBM(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, WTF::UnixFileDescriptor&&, struct gbm_bo*);
+        BufferGBM(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, DMABufRendererBufferFormat::Usage, WTF::UnixFileDescriptor&&, struct gbm_bo*);
 
         Buffer::Type type() const override { return Buffer::Type::Gbm; }
         void didUpdateContents() override;
         cairo_surface_t* surface() const override { return m_surface.get(); }
+        RendererBufferFormat format() const override;
 
         WTF::UnixFileDescriptor m_fd;
         struct gbm_bo* m_buffer { nullptr };
@@ -203,6 +214,7 @@ private:
         Buffer::Type type() const override { return Buffer::Type::SharedMemory; }
         void didUpdateContents() override;
         cairo_surface_t* surface() const override { return m_surface.get(); }
+        RendererBufferFormat format() const override;
 
         RefPtr<WebCore::ShareableBitmap> m_bitmap;
         RefPtr<cairo_surface_t> m_surface;

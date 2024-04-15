@@ -315,16 +315,15 @@ std::optional<GridArea> GridIterator::nextEmptyGridArea(unsigned fixedTrackSpan,
     return { };
 }
 
-GridIterator GridIterator::createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer)
+GridIterator GridIterator::createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer, GridSpan subgridSpanInOuter)
 {
     ASSERT(subgrid.isSubgridInParentDirection(outer.direction()));
     CheckedPtr parent = downcast<RenderGrid>(subgrid.parent());
-    auto fixedSpan = parent->gridSpanForChild(subgrid, outer.direction());
 
     // Translate the current row/column indices into the coordinate
     // space of the subgrid.
     unsigned fixedIndex = (outer.direction() == GridTrackSizingDirection::ForColumns) ? outer.m_columnIndex : outer.m_rowIndex;
-    fixedIndex -= fixedSpan.startLine();
+    fixedIndex -= subgridSpanInOuter.startLine();
 
     auto innerDirection = GridLayoutFunctions::flowAwareDirectionForChild(*parent, subgrid, outer.direction());
     ASSERT(subgrid.isSubgrid(innerDirection));

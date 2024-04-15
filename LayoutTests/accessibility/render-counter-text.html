@@ -29,7 +29,7 @@ if (window.accessibilityController) {
         output += expect("line1.childAtIndex(1).stringValue", "'AXValue: :'");
         output += expect("line1.childAtIndex(2).stringValue", "'AXValue: line1'");
     } else
-        output += expect("line1.stringValue", "'AXValue: 1 : line1'");
+        output += expect("line1.stringValue", "'AXValue: 1:line1'");
 
     var line2 = accessibilityController.accessibleElementById("line2");
     if (accessibilityController.platformName != "atspi") {
@@ -37,7 +37,7 @@ if (window.accessibilityController) {
         output += expect("line2.childAtIndex(1).stringValue", "'AXValue: :'");
         output += expect("line2.childAtIndex(2).stringValue", "'AXValue: line2'");
     } else
-        output += expect("line2.stringValue", "'AXValue: 2 : line2'");
+        output += expect("line2.stringValue", "'AXValue: 2:line2'");
 
     document.getElementById("container").style.display = "none";
     debug(output);

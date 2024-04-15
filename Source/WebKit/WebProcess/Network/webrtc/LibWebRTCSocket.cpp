@@ -83,7 +83,7 @@ void LibWebRTCSocket::signalReadPacket(std::span<const uint8_t> data, rtc::Socke
     SignalReadPacket(this, reinterpret_cast<const char*>(data.data()), data.size(), m_remoteAddress, timestamp);
 }
 
-void LibWebRTCSocket::signalSentPacket(int rtcPacketID, int64_t sendTimeMs)
+void LibWebRTCSocket::signalSentPacket(int64_t rtcPacketID, int64_t sendTimeMs)
 {
     SignalSentPacket(this, rtc::SentPacket(rtcPacketID, sendTimeMs));
 }

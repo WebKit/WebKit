@@ -44,6 +44,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 #include "WebExtensionController.h"
+#include "WebExtensionMatchPattern.h"
 #endif
 
 namespace API {
@@ -171,6 +172,18 @@ void PageConfiguration::setWeakWebExtensionController(WebExtensionController* we
     m_data.weakWebExtensionController = webExtensionController;
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS)
+
+
+HashSet<WTF::String> PageConfiguration::maskedURLSchemes() const
+{
+    if (m_data.maskedURLSchemesWasSet)
+        return m_data.maskedURLSchemes;
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (webExtensionController() || weakWebExtensionController())
+        return WebKit::WebExtensionMatchPattern::extensionSchemes();
+#endif
+    return { };
+}
 
 WebPageGroup* PageConfiguration::pageGroup()
 {
@@ -334,6 +347,7 @@ GPUProcessPreferencesForWebProcess PageConfiguration::preferencesForGPUProcess()
     return {
         preferences->webGLEnabled(),
         preferences->webGPUEnabled(),
+        preferences->webXREnabled(),
         preferences->useGPUProcessForDOMRenderingEnabled(),
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
         preferences->useCGDisplayListsForDOMRendering(),

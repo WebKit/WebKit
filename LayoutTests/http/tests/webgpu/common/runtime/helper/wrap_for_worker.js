@@ -8,6 +8,13 @@ import { assert } from '../../util/util.js';
 
 import { setupWorkerEnvironment } from './utils_worker.js';
 
+/**
+ * Sets up the currently running Web Worker to wrap the TestGroup object `g`.
+ * `g` is the `g` exported from a `.spec.ts` file: a TestGroupBuilder<F> interface,
+ * which underneath is actually a TestGroup<F> object.
+ *
+ * This is used in the generated `.worker.js` files that are generated to use as service workers.
+ */
 export function wrapTestGroupForWorker(g) {
   self.onmessage = async (ev) => {
     const { query, expectations, ctsOptions } = ev.data;
@@ -36,7 +43,11 @@ export function wrapTestGroupForWorker(g) {
       const ex = thrown instanceof Error ? thrown : new Error(`${thrown}`);
       ev.source?.postMessage({
         query,
-        result: { status: 'fail', timems: 0, logs: [new LogMessageWithStack('INTERNAL', ex)] }
+        result: {
+          status: 'fail',
+          timems: 0,
+          logs: [LogMessageWithStack.wrapError('INTERNAL', ex)]
+        }
       });
     }
   };

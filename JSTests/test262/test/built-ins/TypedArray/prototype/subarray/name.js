@@ -20,8 +20,9 @@ includes: [propertyHelper.js, testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-assert.sameValue(TypedArray.prototype.subarray.name, "subarray");
-
-verifyNotEnumerable(TypedArray.prototype.subarray, "name");
-verifyNotWritable(TypedArray.prototype.subarray, "name");
-verifyConfigurable(TypedArray.prototype.subarray, "name");
+verifyProperty(TypedArray.prototype.subarray, "name", {
+  value: "subarray",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -54,6 +54,7 @@ public:
     void present(bool = false);
 
     WGPUSurface backing() const { return m_backing.get(); }
+    RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t bufferIndex) final;
 
 private:
     friend class DowncastConvertToBackingContext;

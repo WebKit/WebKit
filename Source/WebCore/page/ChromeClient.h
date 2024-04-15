@@ -654,6 +654,8 @@ public:
 
     virtual FloatSize screenSizeForFingerprintingProtections(const LocalFrame&, FloatSize defaultSize) const { return defaultSize; }
 
+    virtual void didAdjustVisibilityWithSelectors(Vector<String>&&) { }
+
     WEBCORE_EXPORT virtual ~ChromeClient();
 
 protected:

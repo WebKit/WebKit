@@ -1,0 +1,19 @@
+Test GeolocationPosition toJSON() method
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof window.positionJson === 'object' is true
+PASS typeof window.positionJson.coords === 'object' is true
+PASS window.positionJson.timestamp is window.position.timestamp
+PASS window.positionJson.coords.latitude is window.expectedCoords.latitude
+PASS window.positionJson.coords.longitude is window.expectedCoords.longitude
+PASS window.positionJson.coords.accuracy is window.expectedCoords.accuracy
+PASS window.positionJson.coords.altitude is window.expectedCoords.altitude
+PASS window.positionJson.coords.altitudeAccuracy is window.expectedCoords.altitudeAccuracy
+PASS window.positionJson.coords.heading is window.expectedCoords.heading
+PASS window.positionJson.coords.speed is window.expectedCoords.speed
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

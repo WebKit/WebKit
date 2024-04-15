@@ -34,18 +34,18 @@ try {
   });
   throw new Test262Error("Expected an exception.");
 } catch (e) {
-  verifyNotEnumerable(obj, "foo");
-
-  verifyNotConfigurable(obj, "foo");
-  var desc = Object.getOwnPropertyDescriptor(obj, "foo");
-
-  if (typeof(desc.set) !== "undefined") {
-    throw new Test262Error('Expected typeof (desc.set) === "undefined", actually ' + typeof(desc.set));
-  }
-
-
   if (!(e instanceof TypeError)) {
     throw new Test262Error("Expected TypeError, got " + e);
   }
+}
 
+verifyProperty(obj, "foo", {
+  enumerable: false,
+  configurable: false,
+});
+
+var desc = Object.getOwnPropertyDescriptor(obj, "foo");
+
+if (typeof(desc.set) !== "undefined") {
+  throw new Test262Error('Expected typeof (desc.set) === "undefined", actually ' + typeof(desc.set));
 }

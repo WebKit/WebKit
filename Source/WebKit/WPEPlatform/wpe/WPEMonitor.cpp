@@ -159,8 +159,7 @@ static void wpe_monitor_class_init(WPEMonitorClass* monitorClass)
     /**
      * WPEMonitor:x:
      *
-     * The x coordinate of the monitor position in pixels.
-     * Note this is not device pixels, so not affected by #WPEMonitor:scale.
+     * The x coordinate of the monitor position in logical coordinates.
      */
     sObjProperties[PROP_X] =
         g_param_spec_int(
@@ -172,8 +171,7 @@ static void wpe_monitor_class_init(WPEMonitorClass* monitorClass)
     /**
      * WPEMonitor:y:
      *
-     * The y coordinate of the monitor position in pixels.
-     * Note this is not device pixels, so not affected by #WPEMonitor:scale.
+     * The y coordinate of the monitor position in logical coordinates.
      */
     sObjProperties[PROP_Y] =
         g_param_spec_int(
@@ -185,8 +183,7 @@ static void wpe_monitor_class_init(WPEMonitorClass* monitorClass)
     /**
      * WPEMonitor:width:
      *
-     * The width of the monitor in pixels.
-     * Note this is not device pixels, so not affected by #WPEMonitor:scale.
+     * The width of the monitor in logical coordinates.
      */
     sObjProperties[PROP_WIDTH] =
         g_param_spec_int(
@@ -198,8 +195,7 @@ static void wpe_monitor_class_init(WPEMonitorClass* monitorClass)
     /**
      * WPEMonitor:height:
      *
-     * The height of the monitor in pixels.
-     * Note this is not device pixels, so not affected by #WPEMonitor:scale.
+     * The height of the monitor in logical coordinates.
      */
     sObjProperties[PROP_HEIGHT] =
         g_param_spec_int(
@@ -296,7 +292,7 @@ void wpe_monitor_invalidate(WPEMonitor* monitor)
  * wpe_monitor_get_x:
  * @monitor: a #WPEMonitor
  *
- * Get the x coordinate of the @monitor position.
+ * Get the x coordinate of the @monitor position in logical coordinates.
  *
  * Returns: the x coordinate, or -1 if not available
  */
@@ -311,7 +307,7 @@ int wpe_monitor_get_x(WPEMonitor* monitor)
  * wpe_monitor_get_y:
  * @monitor: a #WPEMonitor
  *
- * Get the y coordinate of the @monitor position.
+ * Get the y coordinate of the @monitor position in logical coordinates.
  *
  * Returns: the y coordinate, or -1 if not available
  */
@@ -328,7 +324,7 @@ int wpe_monitor_get_y(WPEMonitor* monitor)
  * @x: the x coordinate, or -1
  * @y: the y coordinate, or -1
  *
- * Set the position of @monitor
+ * Set the position of @monitor in logical coordinates.
  */
 void wpe_monitor_set_position(WPEMonitor* monitor, int x, int y)
 {
@@ -351,7 +347,7 @@ void wpe_monitor_set_position(WPEMonitor* monitor, int x, int y)
  * wpe_monitor_get_width:
  * @monitor: a #WPEMonitor
  *
- * Get the width of @monitor.
+ * Get the width of @monitor in logical coordinates.
  *
  * Returns: the width of @monitor, or -1 if not available
  */
@@ -366,7 +362,7 @@ int wpe_monitor_get_width(WPEMonitor* monitor)
  * wpe_monitor_get_height:
  * @monitor: a #WPEMonitor
  *
- * Get the height of @monitor.
+ * Get the height of @monitor in logical coordinates.
  *
  * Returns: the height of @monitor, or -1 if not available
  */
@@ -383,7 +379,7 @@ int wpe_monitor_get_height(WPEMonitor* monitor)
  * @width: the width, or -1
  * @height: the height, o -1
  *
- * Set the size of @monitor.
+ * Set the size of @monitor in logical coordinates.
  */
 void wpe_monitor_set_size(WPEMonitor* monitor, int width, int height)
 {

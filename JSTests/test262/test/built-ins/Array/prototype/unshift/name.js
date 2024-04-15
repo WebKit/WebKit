@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Array.prototype.unshift.name, "unshift");
-
-verifyNotEnumerable(Array.prototype.unshift, "name");
-verifyNotWritable(Array.prototype.unshift, "name");
-verifyConfigurable(Array.prototype.unshift, "name");
+verifyProperty(Array.prototype.unshift, "name", {
+  value: "unshift",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

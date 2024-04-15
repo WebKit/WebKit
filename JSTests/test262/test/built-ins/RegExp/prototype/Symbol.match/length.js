@@ -19,8 +19,9 @@ includes: [propertyHelper.js]
 features: [Symbol.match]
 ---*/
 
-assert.sameValue(RegExp.prototype[Symbol.match].length, 1);
-
-verifyNotEnumerable(RegExp.prototype[Symbol.match], 'length');
-verifyNotWritable(RegExp.prototype[Symbol.match], 'length');
-verifyConfigurable(RegExp.prototype[Symbol.match], 'length');
+verifyProperty(RegExp.prototype[Symbol.match], "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

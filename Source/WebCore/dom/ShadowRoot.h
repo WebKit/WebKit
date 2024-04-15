@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -42,6 +43,8 @@ class WebAnimation;
 
 enum class ParserContentPolicy : uint8_t;
 
+struct GetHTMLOptions;
+
 namespace Style {
 class Scope;
 }
@@ -52,12 +55,13 @@ public:
 
     enum class DelegatesFocus : bool { No, Yes };
     enum class Clonable : bool { No, Yes };
+    enum class Serializable : bool { No, Yes };
     enum class AvailableToElementInternals : bool { No, Yes };
 
     static Ref<ShadowRoot> create(Document& document, ShadowRootMode type, SlotAssignmentMode assignmentMode = SlotAssignmentMode::Named,
-        DelegatesFocus delegatesFocus = DelegatesFocus::No, Clonable clonable = Clonable::No, AvailableToElementInternals availableToElementInternals = AvailableToElementInternals::No)
+        DelegatesFocus delegatesFocus = DelegatesFocus::No, Clonable clonable = Clonable::No, Serializable serializable = Serializable::No, AvailableToElementInternals availableToElementInternals = AvailableToElementInternals::No)
     {
-        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus, clonable, availableToElementInternals));
+        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus, clonable, serializable, availableToElementInternals));
     }
 
     static Ref<ShadowRoot> create(Document& document, std::unique_ptr<SlotAssignment>&& assignment)
@@ -82,6 +86,7 @@ public:
     void setContainsFocusedElement(bool flag) { m_containsFocusedElement = flag; }
 
     bool isClonable() const { return m_isClonable; }
+    bool serializable() const { return m_serializable; }
 
     bool isAvailableToElementInternals() const { return m_availableToElementInternals; }
     void setIsAvailableToElementInternals(bool flag) { m_availableToElementInternals = flag; }
@@ -93,6 +98,7 @@ public:
     void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTFMove(host); }
 
     ExceptionOr<void> setHTMLUnsafe(const String&);
+    String getHTML(GetHTMLOptions&&) const;
 
     String innerHTML() const;
     ExceptionOr<void> setInnerHTML(const String&);
@@ -140,7 +146,7 @@ public:
     Vector<RefPtr<WebAnimation>> getAnimations();
 
 private:
-    ShadowRoot(Document&, ShadowRootMode, SlotAssignmentMode, DelegatesFocus, Clonable, AvailableToElementInternals);
+    ShadowRoot(Document&, ShadowRootMode, SlotAssignmentMode, DelegatesFocus, Clonable, Serializable, AvailableToElementInternals);
     ShadowRoot(Document&, std::unique_ptr<SlotAssignment>&&);
 
     bool childTypeAllowed(NodeType) const override;
@@ -155,6 +161,7 @@ private:
     bool m_hasBegunDeletingDetachedChildren : 1 { false };
     bool m_delegatesFocus : 1 { false };
     bool m_isClonable : 1 { false };
+    bool m_serializable : 1 { false };
     bool m_containsFocusedElement : 1 { false };
     bool m_availableToElementInternals : 1 { false };
     bool m_isDeclarativeShadowRoot : 1 { false };

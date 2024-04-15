@@ -17,8 +17,6 @@ class TimeZone extends Temporal.TimeZone {
   }
 }
 
-const units = ["hour", "minute", "second", "millisecond", "microsecond", "nanosecond"];
-for (const smallestUnit of units) {
-  const zdt = new Temporal.ZonedDateTime(0n, new TimeZone("UTC"));
-  assert.throws(RangeError, () => zdt.round({ smallestUnit, roundingIncrement: 2 }), `zero day-length with smallestUnit ${smallestUnit}`);
-}
+const zdt = new Temporal.ZonedDateTime(0n, new TimeZone("UTC"));
+
+assert.throws(RangeError, () => zdt.round({ smallestUnit: "day" }), `zero day-length with smallestUnit 'day'`);

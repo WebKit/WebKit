@@ -110,11 +110,11 @@ bool FECompositeNeonArithmeticApplier::apply(const Filter&, const FilterImageVec
     IntRect effectBDrawingRect = result.absoluteImageRectRelativeTo(input2);
     input2.copyPixelBuffer(*destinationPixelBuffer, effectBDrawingRect);
 
-    auto* sourcePixelBytes = sourcePixelBuffer->bytes();
-    auto* destinationPixelBytes = destinationPixelBuffer->bytes();
+    auto* sourcePixelBytes = sourcePixelBuffer->bytes().data();
+    auto* destinationPixelBytes = destinationPixelBuffer->bytes().data();
 
-    auto length = sourcePixelBuffer->sizeInBytes();
-    ASSERT(length == destinationPixelBuffer->sizeInBytes());
+    auto length = sourcePixelBuffer->bytes().size();
+    ASSERT(length == destinationPixelBuffer->bytes().size());
 
     applyPlatform(sourcePixelBytes, destinationPixelBytes, length, m_effect.k1(), m_effect.k2(), m_effect.k3(), m_effect.k4());
     return true;

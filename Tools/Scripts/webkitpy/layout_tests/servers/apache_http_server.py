@@ -138,6 +138,8 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
 
         if additional_dirs:
             for alias, path in iteritems(additional_dirs):
+                if path == '.':
+                    path = self.tests_dir
                 start_cmd += ['-c', 'Alias %s "%s"' % (alias, path),
                         # Disable CGI handler for additional dirs.
                         '-c', '<Location %s>' % alias,

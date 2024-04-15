@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.substring();
-}, '`new String.prototype.substring()` throws TypeError');
+});
 

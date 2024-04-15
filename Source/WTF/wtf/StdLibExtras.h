@@ -671,6 +671,51 @@ template<typename OptionalType> auto valueOrDefault(OptionalType&& optionalValue
     return optionalValue ? *std::forward<OptionalType>(optionalValue) : std::remove_reference_t<decltype(*optionalValue)> { };
 }
 
+template<typename T, typename U, std::size_t Extent>
+std::span<T, Extent> spanReinterpretCast(std::span<U, Extent> span)
+{
+    RELEASE_ASSERT(!(span.size_bytes() % sizeof(T)));
+    static_assert(std::is_const_v<T> || (!std::is_const_v<T> && !std::is_const_v<U>), "spanCast will not remove constness from source");
+    return std::span<T, Extent> { reinterpret_cast<T*>(const_cast<std::remove_const_t<U>*>(span.data())), span.size_bytes() / sizeof(T) };
+}
+
+template<typename T, std::size_t Extent>
+std::span<const uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> asBytes(std::span<T, Extent> span)
+{
+    return std::span<const uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> { reinterpret_cast<const uint8_t*>(span.data()), span.size_bytes() };
+}
+
+template<typename T, std::size_t Extent>
+std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> asWritableBytes(std::span<T, Extent> span)
+{
+    return std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> { reinterpret_cast<uint8_t*>(span.data()), span.size_bytes() };
+}
+
+template<typename T, std::size_t Extent1, std::size_t Extent2>
+bool equalSpans(std::span<T, Extent1> a, std::span<T, Extent2> b)
+{
+    if (a.size() != b.size())
+        return false;
+    return !memcmp(a.data(), b.data(), a.size_bytes());
+}
+
+template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
+void memcpySpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
+{
+    RELEASE_ASSERT(destination.size() == source.size());
+    static_assert(sizeof(T) == sizeof(U));
+    static_assert(std::is_trivially_copyable_v<T>);
+    static_assert(std::is_trivially_copyable_v<U>);
+    memcpy(destination.data(), source.data(), destination.size_bytes());
+}
+
+template<typename T, std::size_t Extent>
+void memsetSpan(std::span<T, Extent> destination, uint8_t byte)
+{
+    static_assert(std::is_trivially_copyable_v<T>);
+    memset(destination.data(), byte, destination.size_bytes());
+}
+
 } // namespace WTF
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
@@ -703,11 +748,14 @@ using WTF::GB;
 using WTF::KB;
 using WTF::MB;
 using WTF::approximateBinarySearch;
+using WTF::asBytes;
+using WTF::asWritableBytes;
 using WTF::binarySearch;
 using WTF::bitwise_cast;
 using WTF::callStatelessLambda;
 using WTF::checkAndSet;
 using WTF::constructFixedSizeArrayWithArguments;
+using WTF::equalSpans;
 using WTF::findBitInWord;
 using WTF::insertIntoBoundedVector;
 using WTF::is8ByteAligned;
@@ -717,11 +765,14 @@ using WTF::isStatelessLambda;
 using WTF::makeUnique;
 using WTF::makeUniqueWithoutFastMallocCheck;
 using WTF::makeUniqueWithoutRefCountedCheck;
+using WTF::memcpySpan;
+using WTF::memsetSpan;
 using WTF::mergeDeduplicatedSorted;
 using WTF::roundUpToMultipleOf;
 using WTF::roundUpToMultipleOfNonPowerOfTwo;
 using WTF::roundDownToMultipleOf;
 using WTF::safeCast;
+using WTF::spanReinterpretCast;
 using WTF::tryBinarySearch;
 using WTF::valueOrCompute;
 using WTF::valueOrDefault;

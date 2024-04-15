@@ -374,12 +374,15 @@
             hash="sha256:cde1d55e8dd70c3cbb3d1ec72f60e60000041579caa1d6a262bd9c35e93723a5"/>
   </autotools>
 
-  <autotools id="libdrm" autogen-sh="configure">
+  <!-- libdrm required for function 'drmGetFormatName' (defined since 'libdrm-2.4.113') -->
+  <meson id="libdrm" mesonargs="-Dtegra=enabled -Dcairo-tests=disabled -Dman-pages=disabled -Dvalgrind=disabled -Dudev=false -Dtests=false">
     <pkg-config>libdrm.pc</pkg-config>
-    <branch module="/libdrm/libdrm-${version}.tar.bz2" version="2.4.100"
-            repo="dri.freedesktop.org"
-            hash="sha256:c77cc828186c9ceec3e56ae202b43ee99eb932b4a87255038a80e8a1060d0a5d"/>
-  </autotools>
+    <branch module="mesa/drm.git"
+            version="2.4.113"
+            tag="libdrm-2.4.113"
+            checkoutdir="libdrm-2.4.113"
+            repo="git.freedesktop.org" />
+  </meson>
 
   <autotools id="mesa"
              autogen-sh="configure"

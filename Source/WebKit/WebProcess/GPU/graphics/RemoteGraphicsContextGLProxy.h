@@ -43,6 +43,9 @@
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
+// Used by generate-gpup-webgl
+#define IPC_MESSAGE_ATTRIBUTE(x)
+
 namespace WebKit {
 
 struct RemoteGraphicsContextGLInitializationState;
@@ -367,12 +370,11 @@ public:
     void bindExternalImage(GCGLenum target, GCGLExternalImage) final;
     GCGLExternalSync createExternalSync(WebCore::GraphicsContextGL::ExternalSyncSource&&) final;
     void deleteExternalSync(GCGLExternalSync) final;
-    bool clientWaitExternalSyncWithFlush(GCGLExternalSync, uint64_t timeout) final;
 
-    bool enableRequiredWebXRExtensions() final;
-    bool addFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight) final;
-    void enableFoveation(GCGLuint) final;
-    void disableFoveation() final;
+    bool enableRequiredWebXRExtensions() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
+    bool addFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
+    void enableFoveation(GCGLuint) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
+    void disableFoveation() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
 
     // End of list used by generate-gpup-webgl script.
 

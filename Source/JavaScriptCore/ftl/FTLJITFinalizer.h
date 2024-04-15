@@ -45,7 +45,9 @@ public:
     bool finalize() final;
     bool isFailed() final { return false; };
 
-    RefPtr<FTL::JITCode> jitCode;
+    RefPtr<JSC::JITCode> jitCode() final { return m_jitCode; }
+
+    RefPtr<FTL::JITCode> m_jitCode;
     size_t m_codeSize { 0 };
 };
 

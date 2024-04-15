@@ -265,7 +265,7 @@ TEST(WKWebExtensionAPIStorage, SetCustomObject)
 TEST(WKWebExtensionAPIStorage, Get)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'], 'null': null, 'nan': NaN }",
+        @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'], 'null': null, 'nan': NaN, '': 'empty' }",
         @"await browser?.storage?.local?.set(data)",
 
         @"var result = await browser?.storage?.local?.get()",
@@ -277,8 +277,11 @@ TEST(WKWebExtensionAPIStorage, Get)
         @"result = await browser?.storage?.local?.get('nan')",
         @"browser.test.assertEq(result?.nan, null)",
 
-        @"result = await browser?.storage?.local?.get([ 'string', 'number' ])",
-        @"browser.test.assertDeepEq({ 'string': 'string', 'number': 1 }, result)",
+        @"result = await browser?.storage?.local?.get('')",
+        @"browser.test.assertEq(result?.[''], 'empty')",
+
+        @"result = await browser?.storage?.local?.get([ 'string', 'number', 'boolean', 'dictionary', 'array', 'null', 'nan', '' ])",
+        @"browser.test.assertDeepEq(data, result)",
 
         @"result = await browser?.storage?.local?.get({ 'boolean': false, 'unrecognized_key': 'default_value', 'array': [1, true, 'string'], 'null': 42 })",
         @"browser.test.assertDeepEq({ 'boolean': true, 'unrecognized_key': 'default_value', 'array': [1, true, 'string'], 'null': null }, result)",

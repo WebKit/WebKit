@@ -10,8 +10,9 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Set.prototype.delete.length, 1, "The value of `Set.prototype.delete.length` is `1`");
-
-verifyNotEnumerable(Set.prototype.delete, "length");
-verifyNotWritable(Set.prototype.delete, "length");
-verifyConfigurable(Set.prototype.delete, "length");
+verifyProperty(Set.prototype.delete, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

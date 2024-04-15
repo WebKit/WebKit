@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Map.prototype.keys), false, 'isConstructor(Map.pr
 
 assert.throws(TypeError, () => {
   let m = new Map(); new m.keys();
-}, '`let m = new Map(); new m.keys()` throws TypeError');
+});
 

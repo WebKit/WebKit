@@ -380,6 +380,41 @@ void WebPage::enableTextIndicatorStyleAfterElementWithID(const String& elementID
     m_textIndicatorStyleEnablementRanges.add(uuid, createLiveRange(*simpleRange));
 }
 
+void WebPage::enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID& uuid)
+{
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr document = frame->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr root = document->documentElement();
+    if (!root) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr element = document->getElementById(elementID);
+    if (!element) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto elementRange = makeRangeSelectingNodeContents(*element);
+    if (elementRange.collapsed()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    m_textIndicatorStyleEnablementRanges.add(uuid, createLiveRange(elementRange));
+}
+
 #endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
 
 void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, InsertTextOptions&& options)
@@ -873,14 +908,14 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, Completi
 }
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-void WebPage::insertMultiRepresentationHEIC(std::span<const uint8_t> data)
+void WebPage::insertMultiRepresentationHEIC(std::span<const uint8_t> data, const String& altText)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
     if (frame->selection().isNone())
         return;
-    frame->editor().insertMultiRepresentationHEIC(data);
+    frame->editor().insertMultiRepresentationHEIC(data, altText);
 }
 #endif
 

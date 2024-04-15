@@ -5,9 +5,9 @@ PASS insertParagraph at start of a paragraph
 PASS insertParagraph at middle of a paragraph
 PASS insertParagraph at end of a paragraph
 PASS insertParagraph at start of a listitem
-FAIL insertParagraph at middle of a listitem promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'this.editingHost.ownerDocument')"
+PASS insertParagraph at middle of a listitem
 PASS insertParagraph at end of a listitem
-FAIL insertLineBreak at start of a paragraph promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'this.editingHost.ownerDocument')"
+PASS insertLineBreak at start of a paragraph
 PASS insertLineBreak at middle of a paragraph
 PASS insertLineBreak at end of a paragraph
 PASS insertLineBreak at start of a listitem
@@ -29,9 +29,15 @@ PASS insertParagraph at end of a paragraph - second redo
 PASS insertParagraph at start of a listitem - first undo
 PASS insertParagraph at start of a listitem - first redo
 PASS insertParagraph at start of a listitem - second redo
+PASS insertParagraph at middle of a listitem - first undo
+PASS insertParagraph at middle of a listitem - first redo
+PASS insertParagraph at middle of a listitem - second redo
 PASS insertParagraph at end of a listitem - first undo
 PASS insertParagraph at end of a listitem - first redo
 PASS insertParagraph at end of a listitem - second redo
+PASS insertLineBreak at start of a paragraph - first undo
+PASS insertLineBreak at start of a paragraph - first redo
+PASS insertLineBreak at start of a paragraph - second redo
 PASS insertLineBreak at middle of a paragraph - first undo
 PASS insertLineBreak at middle of a paragraph - first redo
 PASS insertLineBreak at middle of a paragraph - second redo

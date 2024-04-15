@@ -10,11 +10,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  Array.prototype.copyWithin.length, 2,
-  'The value of `Array.prototype.copyWithin.length` is `2`'
-);
-
-verifyNotEnumerable(Array.prototype.copyWithin, 'length');
-verifyNotWritable(Array.prototype.copyWithin, 'length');
-verifyConfigurable(Array.prototype.copyWithin, 'length');
+verifyProperty(Array.prototype.copyWithin, "length", {
+  value: 2,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

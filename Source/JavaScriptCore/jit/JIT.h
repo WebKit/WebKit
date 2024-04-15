@@ -164,7 +164,7 @@ namespace JSC {
         using Base = JSInterfaceJIT;
 
     public:
-        JIT(VM&, BaselineJITPlan&, CodeBlock*, BytecodeIndex loopOSREntryBytecodeOffset);
+        JIT(VM&, BaselineJITPlan&, CodeBlock*);
         ~JIT();
 
         VM& vm() { return *JSInterfaceJIT::vm(); }
@@ -948,7 +948,6 @@ namespace JSC {
 
         bool m_canBeOptimized;
         bool m_shouldEmitProfiling;
-        BytecodeIndex m_loopOSREntryBytecodeIndex;
 
         CodeBlock* const m_profiledCodeBlock { nullptr };
         UnlinkedCodeBlock* const m_unlinkedCodeBlock { nullptr };

@@ -521,7 +521,7 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (void)zoomOut:(id)sender
 {
-    if (!self.canZoomIn)
+    if (!self.canZoomOut)
         return;
 
     self.currentZoomFactor /= DefaultZoomFactorRatio;

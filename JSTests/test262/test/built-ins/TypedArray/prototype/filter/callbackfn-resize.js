@@ -15,7 +15,7 @@ assert.sameValue(typeof ArrayBuffer.prototype.resize, 'function');
 
 testWithTypedArrayConstructors(function(TA) {
   var BPE = TA.BYTES_PER_ELEMENT;
-  var NaNvalue = (TA === Float32Array || TA === Float64Array) ? NaN : 0;
+  var NaNvalue = isFloatTypedArrayConstructor(TA) ? NaN : 0;
   var buffer = new ArrayBuffer(BPE * 3, {maxByteLength: BPE * 4});
   var sample = new TA(buffer);
   var finalElement, finalResult, expectedElements, expectedIndices, expectedArrays;

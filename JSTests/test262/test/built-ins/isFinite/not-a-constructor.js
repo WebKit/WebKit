@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(isFinite), false, 'isConstructor(isFinite) must r
 
 assert.throws(TypeError, () => {
   new isFinite(1);
-}, '`new isFinite(1)` throws TypeError');
+});
 

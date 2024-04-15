@@ -2,25 +2,23 @@
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
 **/export const description = `
 Samples a texture.
-
-Must only be used in a fragment shader stage.
-Must only be invoked in uniform control flow.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
-import { GPUTest } from '../../../../../gpu_test.js';
+import { kEncodableTextureFormats, kTextureFormatInfo } from '../../../../../format_info.js';
+import { GPUTest, TextureTestMixin } from '../../../../../gpu_test.js';
+import { hashU32 } from '../../../../../util/math.js';
+import { kTexelRepresentationInfo } from '../../../../../util/texture/texel_data.js';
 
+import {
+
+  createRandomTexelView,
+
+  putDataInTextureThenDrawAndCheckResults,
+  generateSamplePoints,
+  kSamplePointMethods } from
+'./texture_utils.js';
 import { generateCoordBoundaries, generateOffsets } from './utils.js';
 
-export const g = makeTestGroup(GPUTest);
-
-g.test('stage').
-specURL('https://www.w3.org/TR/WGSL/#texturesample').
-desc(
-  `
-Tests that 'textureSample' can only be called in 'fragment' shaders.
-`
-).
-params((u) => u.combine('stage', ['fragment', 'vertex', 'compute'])).
-unimplemented();
+export const g = makeTestGroup(TextureTestMixin(GPUTest));
 
 g.test('control_flow').
 specURL('https://www.w3.org/TR/WGSL/#texturesample').
@@ -70,11 +68,74 @@ Parameters:
       Values outside of this range will result in a shader-creation error.
 `
 ).
-paramsSubcasesOnly((u) =>
+params((u) =>
 u.
-combine('S', ['clamp-to-edge', 'repeat', 'mirror-repeat']).
-combine('coords', generateCoordBoundaries(2)).
-combine('offset', generateOffsets(2))
+combine('format', kEncodableTextureFormats).
+filter((t) => {
+  const type = kTextureFormatInfo[t.format].color?.type;
+  return type === 'float' || type === 'unfilterable-float';
+}).
+combine('sample_points', kSamplePointMethods).
+combine('addressModeU', ['clamp-to-edge', 'repeat', 'mirror-repeat']).
+combine('addressModeV', ['clamp-to-edge', 'repeat', 'mirror-repeat']).
+combine('minFilter', ['nearest', 'linear']).
+combine('offset', [false, true])
+).
+beforeAllSubcases((t) => {
+  const format = kTexelRepresentationInfo[t.params.format];
+  t.skipIfTextureFormatNotSupported(t.params.format);
+  const hasFloat32 = format.componentOrder.some((c) => {
+    const info = format.componentInfo[c];
+    return info.dataType === 'float' && info.bitLength === 32;
+  });
+  if (hasFloat32) {
+    t.selectDeviceOrSkipTestCase('float32-filterable');
+  }
+}).
+fn(async (t) => {
+  const descriptor = {
+    format: t.params.format,
+    size: { width: 8, height: 8 },
+    usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING
+  };
+  const texelView = createRandomTexelView(descriptor);
+  const calls = generateSamplePoints(50, t.params.minFilter === 'nearest', {
+    method: t.params.sample_points,
+    textureWidth: 8,
+    textureHeight: 8
+  }).map((c, i) => {
+    const hash = hashU32(i) & 0xff;
+    return {
+      builtin: 'textureSample',
+      coordType: 'f',
+      coords: c,
+      offset: t.params.offset ? [(hash & 15) - 8, (hash >> 4) - 8] : undefined
+    };
+  });
+  const sampler = {
+    addressModeU: t.params.addressModeU,
+    addressModeV: t.params.addressModeV,
+    minFilter: t.params.minFilter,
+    magFilter: t.params.minFilter
+  };
+  const res = await putDataInTextureThenDrawAndCheckResults(
+    t.device,
+    { texels: texelView, descriptor },
+    sampler,
+    calls
+  );
+  t.expectOK(res);
+});
+
+g.test('sampled_2d_coords,derivatives').
+specURL('https://www.w3.org/TR/WGSL/#texturesample').
+desc(
+  `
+fn textureSample(t: texture_2d<f32>, s: sampler, coords: vec2<f32>) -> vec4<f32>
+fn textureSample(t: texture_2d<f32>, s: sampler, coords: vec2<f32>, offset: vec2<i32>) -> vec4<f32>
+
+test mip level selection based on derivatives
+    `
 ).
 unimplemented();
 

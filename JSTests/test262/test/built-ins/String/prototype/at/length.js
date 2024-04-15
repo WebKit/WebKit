@@ -14,11 +14,9 @@ features: [String.prototype.at]
 ---*/
 assert.sameValue(typeof String.prototype.at, 'function');
 
-assert.sameValue(
-  String.prototype.at.length, 1,
-  'The value of String.prototype.at.length is 1'
-);
-
-verifyNotEnumerable(String.prototype.at, 'length');
-verifyNotWritable(String.prototype.at, 'length');
-verifyConfigurable(String.prototype.at, 'length');
+verifyProperty(String.prototype.at, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -333,6 +333,7 @@ public:
     WEBCORE_EXPORT Ref<Frame> protectedMainFrame() const;
     WEBCORE_EXPORT void setMainFrame(Ref<Frame>&&);
     const URL& mainFrameURL() const { return m_mainFrameURL; }
+    SecurityOrigin& mainFrameOrigin() const;
     WEBCORE_EXPORT void setMainFrameURL(const URL&);
 
     bool openedByDOM() const;
@@ -1202,6 +1203,7 @@ private:
     UniqueRef<EditorClient> m_editorClient;
     Ref<Frame> m_mainFrame;
     URL m_mainFrameURL;
+    RefPtr<SecurityOrigin> m_mainFrameOrigin;
 
     RefPtr<PluginData> m_pluginData;
 

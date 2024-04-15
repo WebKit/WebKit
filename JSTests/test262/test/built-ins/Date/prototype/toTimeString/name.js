@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Date.prototype.toTimeString.name, "toTimeString");
-
-verifyNotEnumerable(Date.prototype.toTimeString, "name");
-verifyNotWritable(Date.prototype.toTimeString, "name");
-verifyConfigurable(Date.prototype.toTimeString, "name");
+verifyProperty(Date.prototype.toTimeString, "name", {
+  value: "toTimeString",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

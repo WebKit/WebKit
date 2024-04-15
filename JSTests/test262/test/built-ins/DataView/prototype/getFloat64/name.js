@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(DataView.prototype.getFloat64.name, "getFloat64");
-
-verifyNotEnumerable(DataView.prototype.getFloat64, "name");
-verifyNotWritable(DataView.prototype.getFloat64, "name");
-verifyConfigurable(DataView.prototype.getFloat64, "name");
+verifyProperty(DataView.prototype.getFloat64, "name", {
+  value: "getFloat64",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

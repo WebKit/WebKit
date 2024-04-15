@@ -246,6 +246,8 @@ void AttributeValidator::visit(AST::Variable& variable)
             auto idValue = constantValue->integerValue();
             if (idValue < 0)
                 error(attribute.span(), "@id value must be non-negative");
+            else if (idValue > std::numeric_limits<uint16_t>::max())
+                error(attribute.span(), "@id value must be between 0 and 65535");
             else {
                 auto uintIdValue = static_cast<unsigned>(idValue);
                 if (m_shaderModule.containsOverride(uintIdValue))

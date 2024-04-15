@@ -730,6 +730,14 @@ void Page::setMainFrame(Ref<Frame>&& frame)
 void Page::setMainFrameURL(const URL& url)
 {
     m_mainFrameURL = url;
+    m_mainFrameOrigin = SecurityOrigin::create(url);
+}
+
+SecurityOrigin& Page::mainFrameOrigin() const
+{
+    if (!m_mainFrameOrigin)
+        return SecurityOrigin::opaqueOrigin();
+    return *m_mainFrameOrigin;
 }
 
 bool Page::openedByDOM() const
@@ -1752,9 +1760,14 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
 
 void Page::layoutIfNeeded(OptionSet<LayoutOptions> layoutOptions)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
-    if (RefPtr view = localMainFrame ? localMainFrame->view() : nullptr)
+    for (auto& rootFrame : m_rootFrames) {
+        ASSERT(rootFrame->isRootFrame());
+        RefPtr view = rootFrame->view();
+        if (!view)
+            continue;
+
         view->updateLayoutAndStyleIfNeededRecursive(layoutOptions);
+    }
 }
 
 void Page::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps)
@@ -4766,7 +4779,8 @@ bool Page::hasActiveImmersiveSession() const
         if (!navigator)
             continue;
 
-        if (NavigatorWebXR::xr(*navigator).hasActiveImmersiveSession())
+        auto* xrSystem = NavigatorWebXR::xrIfExists(*navigator);
+        if (xrSystem && xrSystem->hasActiveImmersiveSession())
             return true;
     }
     return false;

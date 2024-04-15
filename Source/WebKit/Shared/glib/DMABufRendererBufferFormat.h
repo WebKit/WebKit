@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(GBM)
-
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -50,5 +48,3 @@ struct DMABufRendererBufferFormat {
 };
 
 } // namespace WebKit
-
-#endif // USE(GBM)

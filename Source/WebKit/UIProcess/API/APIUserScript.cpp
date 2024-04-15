@@ -26,15 +26,7 @@
 #include "config.h"
 #include "APIUserScript.h"
 
-#include <wtf/text/StringConcatenateNumbers.h>
-
 namespace API {
-
-WTF::URL UserScript::generateUniqueURL()
-{
-    static uint64_t identifier;
-    return { { }, makeString("user-script:", ++identifier) };
-}
 
 UserScript::UserScript(WebCore::UserScript userScript, API::ContentWorld& world)
     : m_userScript(userScript)

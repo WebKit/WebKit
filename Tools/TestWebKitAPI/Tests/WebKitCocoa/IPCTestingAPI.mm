@@ -691,7 +691,6 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"NSURLRequest",
         @"MachSendRight",
         @"CGBitmapInfo",
-        @"WebKit::RemoteObjectInvocation",
         @"NSParagraphStyle",
 #if PLATFORM(MAC)
         @"WKDDActionContext",

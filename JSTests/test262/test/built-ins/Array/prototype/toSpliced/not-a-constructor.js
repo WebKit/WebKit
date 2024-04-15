@@ -29,4 +29,4 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Array.prototype.toSpliced();
-}, '`new Array.prototype.toSpliced()` throws TypeError');
+});

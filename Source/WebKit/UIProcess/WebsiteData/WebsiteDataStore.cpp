@@ -1817,6 +1817,17 @@ void WebsiteDataStore::storePrivateClickMeasurement(const WebCore::PrivateClickM
     protectedNetworkProcess()->send(Messages::NetworkProcess::StorePrivateClickMeasurement(sessionID(), privateClickMeasurement), 0);
 }
 
+void WebsiteDataStore::setStorageSiteValidationEnabled(bool enabled)
+{
+    if (m_storageSiteValidationEnabled == enabled)
+        return;
+
+    m_storageSiteValidationEnabled = enabled;
+
+    if (RefPtr networkProcess = networkProcessIfExists())
+        networkProcess->send(Messages::NetworkProcess::SetStorageSiteValidationEnabled(sessionID(), m_storageSiteValidationEnabled), 0);
+}
+
 void WebsiteDataStore::closeDatabases(CompletionHandler<void()>&& completionHandler)
 {
     Ref callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
@@ -2005,6 +2016,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     createHandleFromResolvedPathIfPossible(networkSessionParameters.serviceWorkerRegistrationDirectory, networkSessionParameters.serviceWorkerRegistrationDirectoryExtensionHandle);
     networkSessionParameters.serviceWorkerProcessTerminationDelayEnabled = m_configuration->serviceWorkerProcessTerminationDelayEnabled();
     networkSessionParameters.inspectionForServiceWorkersAllowed = m_inspectionForServiceWorkersAllowed;
+    networkSessionParameters.storageSiteValidationEnabled = m_storageSiteValidationEnabled;
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     networkSessionParameters.isDeclarativeWebPushEnabled = m_configuration->isDeclarativeWebPushEnabled();
 #endif

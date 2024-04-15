@@ -25,6 +25,7 @@
 struct WebKit::GPUProcessPreferencesForWebProcess {
     bool isWebGLEnabled;
     bool isWebGPUEnabled;
+    bool isWebXREnabled;
     bool isDOMRenderingEnabled;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     bool isDynamicContentScalingEnabled;

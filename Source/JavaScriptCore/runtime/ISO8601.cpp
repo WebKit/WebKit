@@ -348,8 +348,8 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
         return PlainTime(hour, minute, second, 0, 0, 0);
     buffer.advance();
 
-    unsigned digits = 0;
-    unsigned maxCount = std::min(buffer.lengthRemaining(), 9u);
+    size_t digits = 0;
+    size_t maxCount = std::min<size_t>(buffer.lengthRemaining(), 9);
     for (; digits < maxCount; ++digits) {
         if (!isASCIIDigit(buffer[digits]))
             break;
@@ -358,7 +358,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
         return std::nullopt;
 
     Vector<LChar, 9> padded(9, '0');
-    for (unsigned i = 0; i < digits; ++i)
+    for (size_t i = 0; i < digits; ++i)
         padded[i] = buffer[i];
     buffer.advanceBy(digits);
 

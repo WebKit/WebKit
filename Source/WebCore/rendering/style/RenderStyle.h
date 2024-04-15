@@ -26,6 +26,7 @@
 #pragma once
 
 #include <unicode/utypes.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/DataRef.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -294,7 +295,7 @@ struct PseudoStyleCache {
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyle);
-class RenderStyle {
+class RenderStyle : public CanMakeCheckedPtr<RenderStyle> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RenderStyle);
 private:
     enum CloneTag { Clone };

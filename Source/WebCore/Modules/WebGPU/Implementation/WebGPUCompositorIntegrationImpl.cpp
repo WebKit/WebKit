@@ -29,6 +29,8 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUConvertToBackingContext.h"
+#include "WebGPUDevice.h"
+#include "WebGPUQueue.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/IOSurface.h>
 #include <WebCore/NativeImage.h>
@@ -54,9 +56,10 @@ void CompositorIntegrationImpl::prepareForDisplay(CompletionHandler<void()>&& co
 }
 
 #if PLATFORM(COCOA)
-Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& colorSpace, WebCore::AlphaPremultiplication alphaMode)
+Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& colorSpace, WebCore::AlphaPremultiplication alphaMode, Device& device)
 {
     m_renderBuffers.clear();
+    m_device = device;
 
     if (auto* presentationContext = m_presentationContext.get()) {
         static_cast<PresentationContext*>(presentationContext)->unconfigure();
@@ -89,16 +92,19 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
 
 void CompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage*)> completion)
 {
-    if (!m_renderBuffers.size() || bufferIndex >= m_renderBuffers.size())
+    if (!m_renderBuffers.size() || bufferIndex >= m_renderBuffers.size() || !m_device.get())
         return completion(nullptr);
 
     RefPtr<NativeImage> displayImage;
+    if (auto* presentationContextPtr = m_presentationContext.get())
+        displayImage = presentationContextPtr->getMetalTextureAsNativeImage(bufferIndex);
 
-    // Use the IOSurface backed image directly
-    auto& renderBuffer = m_renderBuffers[bufferIndex];
-    RetainPtr<CGContextRef> cgContext = renderBuffer->createPlatformContext();
-    if (cgContext)
-        displayImage = NativeImage::create(renderBuffer->createImage(cgContext.get()));
+    if (!displayImage) {
+        auto& renderBuffer = m_renderBuffers[bufferIndex];
+        RetainPtr<CGContextRef> cgContext = renderBuffer->createPlatformContext();
+        if (cgContext)
+            displayImage = NativeImage::create(renderBuffer->createImage(cgContext.get()));
+    }
 
     if (!displayImage)
         return completion(nullptr);

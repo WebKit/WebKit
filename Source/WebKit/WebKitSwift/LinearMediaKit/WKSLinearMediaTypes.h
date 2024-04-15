@@ -60,6 +60,15 @@ typedef NS_ENUM(NSInteger, WKSLinearMediaViewingMode) {
 };
 
 API_AVAILABLE(visionos(1.0))
+@interface WKSLinearMediaContentMetadata : NSObject
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithTitle:(nullable NSString *)title subtitle:(nullable NSString *)subtitle NS_DESIGNATED_INITIALIZER;
+@property (nonatomic, readonly, copy, nullable) NSString *title;
+@property (nonatomic, readonly, copy, nullable) NSString *subtitle;
+@end
+
+API_AVAILABLE(visionos(1.0))
 @interface WKSLinearMediaTimeRange : NSObject
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;

@@ -28,6 +28,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "NativeImage.h"
 #include "WebGPUCanvasConfiguration.h"
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUDeviceImpl.h"
@@ -55,6 +56,19 @@ void PresentationContextImpl::setSize(uint32_t width, uint32_t height)
     m_height = height;
 }
 
+static WGPUCompositeAlphaMode convertToAlphaMode(WebCore::WebGPU::CanvasAlphaMode compositingAlphaMode)
+{
+    switch (compositingAlphaMode) {
+    case WebCore::WebGPU::CanvasAlphaMode::Opaque:
+        return WGPUCompositeAlphaMode_Opaque;
+    case WebCore::WebGPU::CanvasAlphaMode::Premultiplied:
+        return WGPUCompositeAlphaMode_Premultiplied;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WGPUCompositeAlphaMode_Premultiplied;
+}
+
 bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfiguration)
 {
     m_swapChain = nullptr;
@@ -72,6 +86,8 @@ bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfigu
         .viewFormats = canvasConfiguration.viewFormats.map([&convertToBackingContext = m_convertToBackingContext.get()](auto colorFormat) {
             return convertToBackingContext.convertToBacking(colorFormat);
         }),
+        .colorSpace = canvasConfiguration.colorSpace == WebCore::WebGPU::PredefinedColorSpace::SRGB ? WGPUColorSpace::SRGB : WGPUColorSpace::DisplayP3,
+        .compositeAlphaMode = convertToAlphaMode(canvasConfiguration.compositingAlphaMode),
         .reportValidationErrors = canvasConfiguration.reportValidationErrors
     };
 
@@ -113,6 +129,14 @@ void PresentationContextImpl::present(bool)
     if (auto* surface = m_swapChain.get())
         wgpuSwapChainPresent(surface);
     m_currentTexture = nullptr;
+}
+
+RefPtr<WebCore::NativeImage> PresentationContextImpl::getMetalTextureAsNativeImage(uint32_t bufferIndex)
+{
+    if (auto* surface = m_swapChain.get())
+        return WebCore::NativeImage::create(wgpuSwapChainGetTextureAsNativeImage(surface, bufferIndex));
+
+    return nullptr;
 }
 
 } // namespace WebCore::WebGPU

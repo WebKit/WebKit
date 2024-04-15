@@ -19,12 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  Object.assign.name,
-  'assign',
-  'The value of `Object.assign.name` is `"assign"`'
-);
-
-verifyNotEnumerable(Object.assign, 'name');
-verifyNotWritable(Object.assign, 'name');
-verifyConfigurable(Object.assign, 'name');
+verifyProperty(Object.assign, "name", {
+  value: "assign",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

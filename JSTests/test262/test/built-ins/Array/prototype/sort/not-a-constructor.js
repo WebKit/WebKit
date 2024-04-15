@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Array.prototype.sort), false, 'isConstructor(Arra
 
 assert.throws(TypeError, () => {
   new Array.prototype.sort();
-}, '`new Array.prototype.sort()` throws TypeError');
+});
 

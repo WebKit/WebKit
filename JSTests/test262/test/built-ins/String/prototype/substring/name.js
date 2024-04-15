@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.substring.name, "substring");
-
-verifyNotEnumerable(String.prototype.substring, "name");
-verifyNotWritable(String.prototype.substring, "name");
-verifyConfigurable(String.prototype.substring, "name");
+verifyProperty(String.prototype.substring, "name", {
+  value: "substring",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

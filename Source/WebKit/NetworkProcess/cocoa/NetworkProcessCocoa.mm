@@ -214,13 +214,6 @@ void NetworkProcess::platformFlushCookies(PAL::SessionID sessionID, CompletionHa
     saveCookies(cookieStorage.get(), WTFMove(completionHandler));
 }
 
-#if ENABLE(CFPREFS_DIRECT_MODE)
-void NetworkProcess::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
-{
-    preferenceDidUpdate(domain, key, encodedValue);
-}
-#endif
-
 const String& NetworkProcess::uiProcessBundleIdentifier() const
 {
     if (m_uiProcessBundleIdentifier.isNull())
@@ -234,7 +227,7 @@ void NetworkProcess::setBackupExclusionPeriodForTesting(PAL::SessionID sessionID
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     if (auto* session = networkSession(sessionID))
-        session->storageManager().setBackupExclusionPeriodForTesting(period, [callbackAggregator] { });
+        session->protectedStorageManager()->setBackupExclusionPeriodForTesting(period, [callbackAggregator] { });
 }
 #endif // PLATFORM(IOS_FAMILY)
 

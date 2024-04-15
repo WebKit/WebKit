@@ -21,8 +21,9 @@ includes: [propertyHelper.js]
 features: [TypedArray]
 ---*/
 
-assert.sameValue(Float32Array.name, "Float32Array");
-
-verifyNotEnumerable(Float32Array, "name");
-verifyNotWritable(Float32Array, "name");
-verifyConfigurable(Float32Array, "name");
+verifyProperty(Float32Array, "name", {
+  value: "Float32Array",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

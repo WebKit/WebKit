@@ -15,8 +15,8 @@ features: [change-array-by-copy]
 
 assert.throws(TypeError, () => {
   Array.prototype.with.call(null, 0, 0);
-}, '`Array.prototype.with.call(null, 0, 0)` throws TypeError');
+});
 
 assert.throws(TypeError, () => {
   Array.prototype.with.call(undefined, 0, 0);
-}, '`Array.prototype.with.call(undefined, 0, 0)` throws TypeError');
+});

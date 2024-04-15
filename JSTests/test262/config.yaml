@@ -18,6 +18,9 @@ skip:
     - FinalizationRegistry.prototype.cleanupSome
     - decorators
     - iterator-helpers
+    - Float16Array
+    - explicit-resource-management
+    - regexp-modifiers
   paths:
     - test/built-ins/Temporal/Calendar
     - test/built-ins/Temporal/Instant/prototype/toZonedDateTime

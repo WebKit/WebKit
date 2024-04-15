@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.indexOf();
-}, '`new String.prototype.indexOf()` throws TypeError');
+});
 

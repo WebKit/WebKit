@@ -1,0 +1,6 @@
+PASS firstSelector is "BODY > SECTION:first-of-type"
+PASS secondSelector is "BODY > SECTION:last-of-type"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test requires WebKitTestRunner

@@ -17,10 +17,10 @@ obj.foo = "abcd"; // default value of attributes: writable: true, configurable: 
 Object.defineProperty(obj, "foo", {
   value: "fghj"
 });
-verifyEqualTo(obj, "foo", "fghj");
 
-verifyWritable(obj, "foo");
-
-verifyEnumerable(obj, "foo");
-
-verifyConfigurable(obj, "foo");
+verifyProperty(obj, "foo", {
+  value: "fghj",
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

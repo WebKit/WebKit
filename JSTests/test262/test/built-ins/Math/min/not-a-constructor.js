@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Math.min), false, 'isConstructor(Math.min) must r
 
 assert.throws(TypeError, () => {
   new Math.min();
-}, '`new Math.min()` throws TypeError');
+});
 

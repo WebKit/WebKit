@@ -68,7 +68,7 @@ public:
     DFG::CommonData* dfgCommon() override;
     const DFG::CommonData* dfgCommon() const override;
     static ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }
-    void shrinkToFit(const ConcurrentJSLocker&) override;
+    void shrinkToFit() override;
 
     bool isUnlinked() const { return common.isUnlinked(); }
 

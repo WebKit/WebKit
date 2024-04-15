@@ -22,8 +22,9 @@ features: [Symbol.iterator]
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype[Symbol.iterator].name, '[Symbol.iterator]');
-
-verifyNotEnumerable(String.prototype[Symbol.iterator], 'name');
-verifyNotWritable(String.prototype[Symbol.iterator], 'name');
-verifyConfigurable(String.prototype[Symbol.iterator], 'name');
+verifyProperty(String.prototype[Symbol.iterator], "name", {
+  value: "[Symbol.iterator]",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

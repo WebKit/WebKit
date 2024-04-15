@@ -31,5 +31,8 @@ Object.defineProperty(obj, "foo", {
 assert(Object.isExtensible(obj));
 Object.seal(obj);
 
-verifyNotConfigurable(obj, "foo");
+verifyProperty(obj, "foo", {
+  configurable: false,
+});
+
 assert.sameValue(obj.foo, 10);

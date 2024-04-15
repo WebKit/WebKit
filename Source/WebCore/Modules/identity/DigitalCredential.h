@@ -30,7 +30,6 @@
 #include "BasicCredential.h"
 #include "IDLTypes.h"
 #include "IdentityCredentialProtocol.h"
-#include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -43,11 +42,11 @@ using DigitalCredentialPromise = DOMPromiseDeferred<IDLInterface<DigitalCredenti
 
 class DigitalCredential final : public BasicCredential {
 public:
-    static Ref<DigitalCredential> create(Ref<ArrayBuffer>&& data, IdentityCredentialProtocol);
+    static Ref<DigitalCredential> create(Ref<Uint8Array>&& data, IdentityCredentialProtocol);
 
     virtual ~DigitalCredential();
 
-    ArrayBuffer* data() const
+    Uint8Array* data() const
     {
         return m_data.get();
     };
@@ -58,12 +57,12 @@ public:
     }
 
 private:
-    DigitalCredential(Ref<ArrayBuffer>&& data, IdentityCredentialProtocol);
+    DigitalCredential(Ref<Uint8Array>&& data, IdentityCredentialProtocol);
 
     Type credentialType() const final { return Type::DigitalCredential; }
 
     IdentityCredentialProtocol m_protocol;
-    RefPtr<ArrayBuffer> m_data;
+    RefPtr<Uint8Array> m_data;
 };
 
 } // namespace WebCore

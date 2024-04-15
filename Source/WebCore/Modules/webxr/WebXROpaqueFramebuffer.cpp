@@ -46,6 +46,8 @@ namespace WebCore {
 
 using GL = GraphicsContextGL;
 
+#if PLATFORM(COCOA)
+
 static void ensure(GL& gl, GCGLOwnedFramebuffer& framebuffer)
 {
     if (!framebuffer) {
@@ -55,8 +57,6 @@ static void ensure(GL& gl, GCGLOwnedFramebuffer& framebuffer)
         framebuffer.adopt(gl, object);
     }
 }
-
-#if PLATFORM(COCOA)
 
 static void createAndBindCompositorBuffer(GL& gl, WebXRExternalRenderbuffer& buffer, GCGLenum internalFormat, GL::ExternalImageSource source, GCGLint layer)
 {
@@ -223,9 +223,10 @@ void WebXROpaqueFramebuffer::endFrame()
     if (m_completionSyncEvent) {
         auto completionSync = gl->createExternalSync(std::tuple(m_completionSyncEvent, m_renderingFrameIndex));
         ASSERT(completionSync);
-        constexpr uint64_t kTimeout = 1'000'000'000; // 1 second
-        gl->clientWaitExternalSyncWithFlush(completionSync, kTimeout);
-        gl->deleteExternalSync(completionSync);
+        if (completionSync) {
+            gl->flush();
+            gl->deleteExternalSync(completionSync);
+        }
     } else
         gl->finish();
 
@@ -270,17 +271,19 @@ void WebXROpaqueFramebuffer::resolveMSAAFramebuffer(GraphicsContextGL& gl)
 
 void WebXROpaqueFramebuffer::blitShared(GraphicsContextGL& gl)
 {
+#if PLATFORM(COCOA)
     ASSERT(!m_resolvedFBO, "blitShared should not require intermediate resolve buffers");
 
     ensure(gl, m_displayFBO);
     gl.bindFramebuffer(GL::FRAMEBUFFER, m_displayFBO);
-#if PLATFORM(COCOA)
     gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, m_displayAttachments[0].colorBuffer.renderBufferObject);
-#else
-    gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_colorTexture, 0);
-#endif
     ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
     resolveMSAAFramebuffer(gl);
+#else
+    gl.bindFramebuffer(GL::FRAMEBUFFER, m_drawFramebuffer->object());
+    gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_colorTexture, 0);
+    ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
+#endif
 }
 
 void WebXROpaqueFramebuffer::blitSharedToLayered(GraphicsContextGL& gl)

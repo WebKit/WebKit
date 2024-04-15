@@ -274,8 +274,9 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [_spatialTrackingView layer].separatedState = kCALayerSeparatedStateTracked;
     _spatialTrackingLabel = makeString("WKContentView Label: "_s, createVersion4UUIDString());
     [[_spatialTrackingView layer] setValue:(NSString *)_spatialTrackingLabel forKeyPath:@"separatedOptions.STSLabel"];
-    [_spatialTrackingView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-    [_spatialTrackingView setFrame:self.bounds];
+    [_spatialTrackingView setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin];
+    [_spatialTrackingView setFrame:CGRectMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds), 0, 0)];
+    [_spatialTrackingView setUserInteractionEnabled:NO];
     [self addSubview:_spatialTrackingView.get()];
 #endif
 

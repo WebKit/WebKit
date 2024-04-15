@@ -45,8 +45,8 @@ assert.throws(
   "rounding a week Duration fails without largest/smallest unit"
 );
 
-TemporalHelpers.assertDuration(duration3.round(relativeToYears), 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, "round week duration to years");
-TemporalHelpers.assertDuration(duration3.round(relativeToMonths), 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, "round week duration to months");
+TemporalHelpers.assertDuration(duration3.round(relativeToYears), 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, "round week duration to years");
+TemporalHelpers.assertDuration(duration3.round(relativeToMonths), 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, "round week duration to months");
 TemporalHelpers.assertDuration(duration3.round(relativeToWeeks), 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, "round week duration to weeks");
 TemporalHelpers.assertDuration(duration3.round(relativeToDays), 0, 0, 0, 35, 0, 0, 0, 0, 0, 0, "round week duration to days");
 

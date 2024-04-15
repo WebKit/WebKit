@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Object.getOwnPropertyNames.name, "getOwnPropertyNames");
-
-verifyNotEnumerable(Object.getOwnPropertyNames, "name");
-verifyNotWritable(Object.getOwnPropertyNames, "name");
-verifyConfigurable(Object.getOwnPropertyNames, "name");
+verifyProperty(Object.getOwnPropertyNames, "name", {
+  value: "getOwnPropertyNames",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

@@ -34,6 +34,13 @@
  */
 struct _WPEMonitorWaylandPrivate {
     struct wl_output* wlOutput;
+    struct {
+        int x;
+        int y;
+        int width;
+        int height;
+        int scale;
+    } pendingMonitorUpdate;
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEMonitorWayland, wpe_monitor_wayland, WPE_TYPE_MONITOR, WPEMonitor)
 
@@ -70,7 +77,10 @@ static const struct wl_output_listener outputListener = {
     [](void* data, struct wl_output*, int32_t x, int32_t y, int32_t width, int32_t height, int32_t, const char*, const char*, int32_t transform)
     {
         WPEMonitor* monitor = WPE_MONITOR(data);
-        wpe_monitor_set_position(monitor, x, y);
+        auto* priv = WPE_MONITOR_WAYLAND(monitor)->priv;
+        priv->pendingMonitorUpdate.x = x;
+        priv->pendingMonitorUpdate.y = y;
+
         switch (transform) {
         case WL_OUTPUT_TRANSFORM_90:
         case WL_OUTPUT_TRANSFORM_270:
@@ -90,18 +100,25 @@ static const struct wl_output_listener outputListener = {
             return;
 
         WPEMonitor* monitor = WPE_MONITOR(data);
-        wpe_monitor_set_size(monitor, width, height);
+        auto* priv = WPE_MONITOR_WAYLAND(monitor)->priv;
+        priv->pendingMonitorUpdate.width = width;
+        priv->pendingMonitorUpdate.height = height;
         wpe_monitor_set_refresh_rate(monitor, refresh);
     },
     // done
-    [](void*, struct wl_output*)
+    [](void* data, struct wl_output*)
     {
+        WPEMonitor* monitor = WPE_MONITOR(data);
+        auto* priv = WPE_MONITOR_WAYLAND(monitor)->priv;
+        wpe_monitor_set_position(monitor, priv->pendingMonitorUpdate.x / priv->pendingMonitorUpdate.scale, priv->pendingMonitorUpdate.y / priv->pendingMonitorUpdate.scale);
+        wpe_monitor_set_size(monitor, priv->pendingMonitorUpdate.width / priv->pendingMonitorUpdate.scale, priv->pendingMonitorUpdate.height / priv->pendingMonitorUpdate.scale);
+        wpe_monitor_set_scale(monitor, priv->pendingMonitorUpdate.scale);
     },
     // scale
     [](void* data, struct wl_output*, int32_t factor)
     {
-        WPEMonitor* monitor = WPE_MONITOR(data);
-        wpe_monitor_set_scale(monitor, factor);
+        auto* priv = WPE_MONITOR_WAYLAND(data)->priv;
+        priv->pendingMonitorUpdate.scale = factor;
     },
 #ifdef WL_OUTPUT_NAME_SINCE_VERSION
     // name

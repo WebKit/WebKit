@@ -2,13 +2,6 @@
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
 **/export const description = `
 Validation tests for various texture types in shaders.
-
-TODO:
-- Sampled Texture Types
-- Multisampled Texture Types
-- External Sampled Texture Types
-- Depth Texture Types
-- Sampler Types
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import {
   isTextureFormatUsableAsStorageFormat,
@@ -95,6 +88,16 @@ fn((t) => {
   t.expectCompileResult(kValidTextureSampledTypes.includes(sampledType), wgsl);
 });
 
+g.test('external_sampled_texture_types').
+desc(
+  `Test that texture_extenal compiles and cannot specify address space
+`
+).
+fn((t) => {
+  t.expectCompileResult(true, `@group(0) @binding(0) var tex: texture_external;`);
+  t.expectCompileResult(false, `@group(0) @binding(0) var<private> tex: texture_external;`);
+});
+
 const kAccessModes = ['read', 'write', 'read_write'];
 
 g.test('storage_texture_types').
@@ -121,4 +124,47 @@ fn((t) => {
   const isAccessValid = kAccessModes.includes(access);
   const wgsl = `@group(0) @binding(0) var tex: texture_storage_2d<${format}, ${access}>;`;
   t.expectCompileResult(isFormatValid && isAccessValid, wgsl);
+});
+
+g.test('depth_texture_types').
+desc(
+  `Test that for texture_depth_xx
+- must not specify an address space
+`
+).
+params((u) =>
+u.combine('textureType', [
+'texture_depth_2d',
+'texture_depth_2d_array',
+'texture_depth_cube',
+'texture_depth_cube_array']
+)
+).
+fn((t) => {
+  const { textureType } = t.params;
+  t.expectCompileResult(true, `@group(0) @binding(0) var t: ${textureType};`);
+  t.expectCompileResult(false, `@group(0) @binding(0) var<private> t: ${textureType};`);
+  t.expectCompileResult(false, `@group(0) @binding(0) var<storage, read> t: ${textureType};`);
+});
+
+g.test('sampler_types').
+desc(
+  `Test that for sampler and sampler_comparison
+- cannot specify address space
+- cannot be declared in WGSL function scope
+`
+).
+params((u) => u.combine('samplerType', ['sampler', 'sampler_comparison'])).
+fn((t) => {
+  const { samplerType } = t.params;
+  t.expectCompileResult(true, `@group(0) @binding(0) var s: ${samplerType};`);
+  t.expectCompileResult(false, `@group(0) @binding(0) var<private> s: ${samplerType};`);
+  t.expectCompileResult(
+    false,
+    `
+      @compute @workgroup_size(1) fn main() {
+        var s: ${samplerType};
+      }
+    `
+  );
 });

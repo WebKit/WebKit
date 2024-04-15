@@ -11,8 +11,9 @@ includes: [propertyHelper.js]
 features: [Proxy]
 ---*/
 
-assert.sameValue(Proxy.length, 2, "The value of `Proxy.length` is `2`");
-
-verifyNotEnumerable(Proxy, "length");
-verifyNotWritable(Proxy, "length");
-verifyConfigurable(Proxy, "length");
+verifyProperty(Proxy, "length", {
+  value: 2,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

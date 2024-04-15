@@ -27,7 +27,7 @@
 #include "KeyedEncoderGeneric.h"
 
 #include "SharedBuffer.h"
-#include <wtf/Algorithms.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/persistence/PersistentEncoder.h>
 
 namespace WebCore {

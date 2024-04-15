@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.search.name, "search");
-
-verifyNotEnumerable(String.prototype.search, "name");
-verifyNotWritable(String.prototype.search, "name");
-verifyConfigurable(String.prototype.search, "name");
+verifyProperty(String.prototype.search, "name", {
+  value: "search",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

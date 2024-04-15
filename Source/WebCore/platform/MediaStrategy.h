@@ -33,7 +33,6 @@ namespace WebCore {
 class AudioDestination;
 class AudioIOCallback;
 class CDMFactory;
-struct NowPlayingInfo;
 class NowPlayingManager;
 
 class WEBCORE_EXPORT MediaStrategy {

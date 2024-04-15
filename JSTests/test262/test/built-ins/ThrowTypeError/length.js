@@ -18,8 +18,9 @@ var ThrowTypeError = Object.getOwnPropertyDescriptor(function() {
   return arguments;
 }(), "callee").get;
 
-assert.sameValue(ThrowTypeError.length, 0);
-
-verifyNotEnumerable(ThrowTypeError, "length");
-verifyNotWritable(ThrowTypeError, "length");
-verifyNotConfigurable(ThrowTypeError, "length");
+verifyProperty(ThrowTypeError, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: false
+});

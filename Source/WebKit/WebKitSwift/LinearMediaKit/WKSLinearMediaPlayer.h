@@ -32,6 +32,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class LMPlayableViewController;
+@class WKSLinearMediaContentMetadata;
 @class WKSLinearMediaPlayer;
 @class WKSLinearMediaTimeRange;
 @class WKSLinearMediaTrack;
@@ -79,9 +80,7 @@ API_AVAILABLE(visionos(1.0))
 - (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player updateViewingMode:(WKSLinearMediaViewingMode)viewingMode;
 - (void)linearMediaPlayerTogglePip:(WKSLinearMediaPlayer *)player;
 - (void)linearMediaPlayerEnterFullscreen:(WKSLinearMediaPlayer *)player;
-- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player didEnterFullscreenWithError:(NSError * _Nullable)error;
 - (void)linearMediaPlayerExitFullscreen:(WKSLinearMediaPlayer *)player;
-- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player didExitFullscreenWithError:(NSError * _Nullable)error;
 - (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setTimeResolverInterval:(NSTimeInterval)interval;
 - (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setTimeResolverResolution:(NSTimeInterval)resolution;
 - (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setThumbnailSize:(CGSize)size;
@@ -136,6 +135,7 @@ API_AVAILABLE(visionos(1.0))
 @property (nonatomic, strong, nullable) WKSLinearMediaTrack *currentLegibleTrack;
 @property (nonatomic, copy) NSArray<WKSLinearMediaTrack *> *legibleTracks;
 @property (nonatomic) WKSLinearMediaContentType contentType;
+@property (nonatomic, strong) WKSLinearMediaContentMetadata *contentMetadata;
 @property (nonatomic) BOOL transportBarIncludesTitleView;
 @property (nonatomic, copy, nullable) NSData *artwork;
 @property (nonatomic) BOOL isPlayableOffline;
@@ -150,8 +150,8 @@ API_AVAILABLE(visionos(1.0))
 @property (nonatomic, strong, nullable) NSDate *endDate;
 
 - (LMPlayableViewController *)makeViewController;
-- (void)enterFullscreen;
-- (void)exitFullscreen;
+- (void)enterFullscreenWithCompletionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler;
+- (void)exitFullscreenWithCompletionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler;
 @end
 
 NS_ASSUME_NONNULL_END

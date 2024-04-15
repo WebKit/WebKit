@@ -299,7 +299,7 @@ private:
     void observeComment(unsigned startOffset, unsigned endOffset) override;
     
     Ref<CSSRuleSourceData> popRuleData();
-    template <typename CharacterType> inline void setRuleHeaderEnd(const CharacterType*, unsigned);
+    template <typename CharacterType> inline void setRuleHeaderEnd(std::span<const CharacterType>);
     void fixUnparsedPropertyRanges(CSSRuleSourceData*);
     
     const String& m_parsedText;
@@ -322,18 +322,18 @@ void StyleSheetHandler::startRuleHeader(StyleRuleType type, unsigned offset)
     m_currentRuleDataStack.append(WTFMove(data));
 }
 
-template <typename CharacterType> inline void StyleSheetHandler::setRuleHeaderEnd(const CharacterType* dataStart, unsigned listEndOffset)
+template <typename CharacterType> inline void StyleSheetHandler::setRuleHeaderEnd(std::span<const CharacterType> data)
 {
-    while (listEndOffset > m_currentRuleDataStack.last()->ruleHeaderRange.start) {
-        if (isASCIIWhitespace<CharacterType>(*(dataStart + listEndOffset - 1)))
-            --listEndOffset;
+    while (data.size() > m_currentRuleDataStack.last()->ruleHeaderRange.start) {
+        if (isASCIIWhitespace<CharacterType>(data[data.size() - 1]))
+            data = data.first(data.size() - 1);
         else
             break;
     }
 
-    m_currentRuleDataStack.last()->ruleHeaderRange.end = listEndOffset;
+    m_currentRuleDataStack.last()->ruleHeaderRange.end = data.size();
     if (!m_currentRuleDataStack.last()->selectorRanges.isEmpty())
-        m_currentRuleDataStack.last()->selectorRanges.last().end = listEndOffset;
+        m_currentRuleDataStack.last()->selectorRanges.last().end = data.size();
 }
 
 void StyleSheetHandler::endRuleHeader(unsigned offset)
@@ -341,9 +341,9 @@ void StyleSheetHandler::endRuleHeader(unsigned offset)
     ASSERT(!m_currentRuleDataStack.isEmpty());
     
     if (m_parsedText.is8Bit())
-        setRuleHeaderEnd<LChar>(m_parsedText.characters8(), offset);
+        setRuleHeaderEnd<LChar>(m_parsedText.span8().first(offset));
     else
-        setRuleHeaderEnd<UChar>(m_parsedText.characters16(), offset);
+        setRuleHeaderEnd<UChar>(m_parsedText.span16().first(offset));
 }
 
 void StyleSheetHandler::observeSelector(unsigned startOffset, unsigned endOffset)

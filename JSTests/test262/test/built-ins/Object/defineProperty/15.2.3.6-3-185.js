@@ -15,8 +15,7 @@ Object.defineProperty(obj, "property", {
   writable: NaN
 });
 
-assert(obj.hasOwnProperty("property"));
-
-verifyNotWritable(obj, "property");
-
-assert.sameValue(typeof(obj.property), "undefined");
+verifyProperty(obj, "property", {
+  value: undefined,
+  writable: false,
+});

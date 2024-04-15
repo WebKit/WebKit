@@ -185,9 +185,9 @@ PASS link name from content with ::after
 PASS button name from content with ::before and ::after
 PASS heading name from content with ::before and ::after
 PASS link name from content with ::before and ::after
-FAIL button name from content no space joiners ::before and ::after assert_equals: <button data-expectedlabel="nospacelabelnospace" data-testname="button name from content no space joiners ::before and ::after" class="ex no-space">label</button> expected "nospacelabelnospace" but got "nospace label nospace"
-FAIL heading name from content no space joiners ::before and ::after assert_equals: <h3 data-expectedlabel="nospacelabelnospace" data-testname="heading name from content no space joiners ::before and ::after" class="ex no-space">label</h3> expected "nospacelabelnospace" but got "nospace label nospace"
-FAIL link name from content no space joiners ::before and ::after assert_equals: <a href="#" data-expectedlabel="nospacelabelnospace" data-testname="link name from content no space joiners ::before and ::after" class="ex no-space">label</a> expected "nospacelabelnospace" but got "nospace label nospace"
+PASS button name from content no space joiners ::before and ::after
+PASS heading name from content no space joiners ::before and ::after
+PASS link name from content no space joiners ::before and ::after
 PASS button name from content with ::before and ::after in rtl
 PASS heading name from content with ::before and ::after in rtl
 PASS link name from content with ::before and ::after in rtl
@@ -239,9 +239,9 @@ FAIL heading with link referencing image using aria-labelledby, that in turn ref
   <!-- but it's picked up again (after the self-referencial image alt) in inverse order b/c of cross-referencial aria-labelledby edge case -->
   <img id="nested_image_label4" alt="image" aria-labelledby="nested_image_label4 crossref_link2" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
 </h3> expected "image link" but got "image image link"
-FAIL button name from content for each child (no space, inline) assert_equals: <button data-expectedlabel="onetwothree" data-testname="button name from content for each child (no space, inline)" class="ex"><span>one</span><span>two</span><span>three</span></button> expected "onetwothree" but got "one two three"
-FAIL heading name from content for each child (no space, inline) assert_equals: <h3 data-expectedlabel="onetwothree" data-testname="heading name from content for each child (no space, inline)" class="ex"><span>one</span><span>two</span><span>three</span></h3> expected "onetwothree" but got "one two three"
-FAIL link name from content for each child (no space, inline) assert_equals: <a href="#" data-expectedlabel="onetwothree" data-testname="link name from content for each child (no space, inline)" class="ex"><span>one</span><span>two</span><span>three</span></a> expected "onetwothree" but got "one two three"
+PASS button name from content for each child (no space, inline)
+PASS heading name from content for each child (no space, inline)
+PASS link name from content for each child (no space, inline)
 PASS button name from content for each child (no space, display:block)
 PASS heading name from content for each child (no space, display:block)
 PASS link name from content for each child (no space, display:block)

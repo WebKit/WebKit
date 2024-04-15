@@ -34,6 +34,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/HexNumber.h>
 #include <wtf/RunLoop.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
@@ -208,13 +209,13 @@ void DeviceIdHashSaltStorage::completeDeviceIdHashSaltForOriginCall(SecurityOrig
 {
     auto origins = makeString(documentOrigin.toString(), parentOrigin.toString());
     auto& deviceIdHashSalt = m_deviceIdHashSaltForOrigins.ensure(origins, [documentOrigin = WTFMove(documentOrigin), parentOrigin = WTFMove(parentOrigin)] () mutable {
-        uint64_t randomData[randomDataSize];
-        cryptographicallyRandomValues(randomData, sizeof(randomData));
+        std::array<uint64_t, randomDataSize> randomData;
+        cryptographicallyRandomValues(asWritableBytes(std::span<uint64_t> { randomData }));
 
         StringBuilder builder;
         builder.reserveCapacity(hashSaltSize);
-        for (unsigned i = 0; i < randomDataSize; i++)
-            builder.append(hex(randomData[i]));
+        for (uint64_t number : randomData)
+            builder.append(hex(number));
 
         String deviceIdHashSalt = builder.toString();
 

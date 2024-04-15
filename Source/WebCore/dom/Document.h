@@ -1577,7 +1577,7 @@ public:
 
     SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
     inline Ref<SecurityOrigin> protectedSecurityOrigin() const; // Defined in DocumentInlines.h.
-    SecurityOrigin& topOrigin() const final { return topDocument().securityOrigin(); }
+    WEBCORE_EXPORT SecurityOrigin& topOrigin() const final;
     Ref<SecurityOrigin> protectedTopOrigin() const;
     inline ClientOrigin clientOrigin() const;
 

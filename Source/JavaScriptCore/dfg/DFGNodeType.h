@@ -270,6 +270,7 @@ namespace JSC { namespace DFG {
     macro(MultiPutByOffset, NodeMustGenerate) \
     macro(MultiDeleteByOffset, NodeMustGenerate | NodeResultJS) \
     macro(GetArrayLength, NodeResultInt32) \
+    macro(GetUndetachedTypeArrayLength, NodeResultInt32) \
     /* This is only relevant for TypedArrays, as they are the only ones that can have a length that does not fit in 32 bits. */ \
     macro(GetTypedArrayLengthAsInt52, NodeResultInt52) \
     macro(GetVectorLength, NodeResultInt32) \

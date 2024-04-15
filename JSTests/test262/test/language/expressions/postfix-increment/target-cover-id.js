@@ -25,5 +25,7 @@ info: |
 var y = 1;
 
 (y)++;
-
 assert.sameValue(y, 2);
+
+((y))++;
+assert.sameValue(y, 3);

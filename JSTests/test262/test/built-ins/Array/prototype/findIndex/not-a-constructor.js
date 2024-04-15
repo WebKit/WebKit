@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Array.prototype.findIndex(() => {});
-}, '`new Array.prototype.findIndex(() => {})` throws TypeError');
+});
 

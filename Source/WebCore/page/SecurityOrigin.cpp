@@ -208,6 +208,12 @@ Ref<SecurityOrigin> SecurityOrigin::createOpaque()
     return origin;
 }
 
+SecurityOrigin& SecurityOrigin::opaqueOrigin()
+{
+    static NeverDestroyed<Ref<SecurityOrigin>> origin { createOpaque() };
+    return origin.get();
+}
+
 Ref<SecurityOrigin> SecurityOrigin::createNonLocalWithAllowedFilePath(const URL& url, const String& filePath)
 {
     ASSERT(!url.protocolIsFile());

@@ -75,31 +75,32 @@ bool DesiredWeakReferences::contains(JSCell* cell)
     return m_cells.contains(cell);
 }
 
+void DesiredWeakReferences::finalize()
+{
+    m_finalizedCells = FixedVector<WriteBarrier<JSCell>>(m_cells.size());
+    {
+        unsigned index = 0;
+        for (JSCell* target : m_cells)
+            m_finalizedCells[index++].setWithoutWriteBarrier(target);
+    }
+    m_finalizedStructures = FixedVector<StructureID>(m_structures.size());
+    {
+        unsigned index = 0;
+        for (StructureID structureID : m_structures)
+            m_finalizedStructures[index++] = structureID;
+    }
+}
+
 void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
 {
     // We do not emit WriteBarrier here since (1) GC is deferred and (2) we emit write-barrier on CodeBlock when finishing DFG::Plan::reallyAdd.
     ASSERT_UNUSED(vm, vm.heap.isDeferred());
-
-    FixedVector<WriteBarrier<JSCell>> weakReferences(m_cells.size());
-    {
-        unsigned index = 0;
-        for (JSCell* target : m_cells)
-            weakReferences[index++].setWithoutWriteBarrier(target);
-    }
-
-    FixedVector<StructureID> weakStructureReferences(m_structures.size());
-    {
-        unsigned index = 0;
-        for (StructureID structureID : m_structures)
-            weakStructureReferences[index++] = structureID;
-    }
-
-    if (!weakStructureReferences.isEmpty() || !weakReferences.isEmpty()) {
+    if (!m_finalizedCells.isEmpty() || !m_finalizedStructures.isEmpty()) {
         ConcurrentJSLocker locker(m_codeBlock->m_lock);
         ASSERT(common->m_weakStructureReferences.isEmpty());
         ASSERT(common->m_weakReferences.isEmpty());
-        common->m_weakStructureReferences = WTFMove(weakStructureReferences);
-        common->m_weakReferences = WTFMove(weakReferences);
+        common->m_weakStructureReferences = WTFMove(m_finalizedStructures);
+        common->m_weakReferences = WTFMove(m_finalizedCells);
     }
 }
 

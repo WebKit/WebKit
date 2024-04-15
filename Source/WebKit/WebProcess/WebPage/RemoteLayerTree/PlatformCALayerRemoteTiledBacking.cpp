@@ -38,6 +38,7 @@ PlatformCALayerRemoteTiledBacking::PlatformCALayerRemoteTiledBacking(LayerType l
     : PlatformCALayerRemote(layerType, owner, context)
     , m_tileController(makeUnique<TileController>(this, WebCore::TileController::AllowScrollPerformanceLogging::No))
 {
+    PlatformCALayerRemote::setContentsScale(m_tileController->contentsScale());
 }
 
 PlatformCALayerRemoteTiledBacking::~PlatformCALayerRemoteTiledBacking()
@@ -103,6 +104,7 @@ float PlatformCALayerRemoteTiledBacking::contentsScale() const
 
 void PlatformCALayerRemoteTiledBacking::setContentsScale(float scale)
 {
+    PlatformCALayerRemote::setContentsScale(scale);
     m_tileController->setContentsScale(scale);
 }
 

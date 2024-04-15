@@ -63,12 +63,12 @@ const char* const base64 = "base64";
 static String generateRandomBoundary()
 {
     // Trying to generate random boundaries similar to IE/UnMHT (ex: ----=_NextPart_000_001B_01CC157B.96F808A0).
-    const size_t randomValuesLength = 10;
-    char randomValues[randomValuesLength];
-    cryptographicallyRandomValues(&randomValues, randomValuesLength);
+    constexpr size_t randomValuesLength = 10;
+    std::array<uint8_t, randomValuesLength> randomValues;
+    cryptographicallyRandomValues(randomValues);
     StringBuilder stringBuilder;
     stringBuilder.append("----=_NextPart_000_");
-    for (size_t i = 0; i < randomValuesLength; ++i) {
+    for (size_t i = 0; i < randomValues.size(); ++i) {
         if (i == 2)
             stringBuilder.append('_');
         else if (i == 6)
