@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -18,17 +18,22 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://drafts.csswg.org/cssom/#the-cssstylesheet-interface
+
 [
     Exposed=Window,
     JSGenerateToNativeObject
 ] interface CSSStyleSheet : StyleSheet {
     [CallWith=CurrentDocument] constructor(optional CSSStyleSheetInit options = {});
 
+    // FIXME: `ownerRule` should be nullable.
     readonly attribute CSSRule ownerRule;
+    // FIXME: Add [SameObject] below after https://webkit.org/b/163414
     [ImplementedAs=cssRulesForBindings] readonly attribute CSSRuleList cssRules;
     unsigned long insertRule(DOMString rule, optional unsigned long index = 0);
     undefined deleteRule(unsigned long index);
 
+    // Non-standard.
     readonly attribute CSSRuleList rules;
     long addRule(optional DOMString selector = "undefined", optional DOMString style = "undefined", optional unsigned long index);
     undefined removeRule(optional unsigned long index = 0);

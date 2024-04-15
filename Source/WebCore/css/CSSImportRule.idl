@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -18,6 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://drafts.csswg.org/cssom/#cssimportrule
+
 typedef USVString CSSOMString;
 
 [
@@ -25,6 +27,7 @@ typedef USVString CSSOMString;
 ] interface CSSImportRule : CSSRule {
     readonly attribute USVString href;
     [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
+    // FIXME: `styleSheet` should be nullable.
     [SameObject] readonly attribute CSSStyleSheet styleSheet;
     readonly attribute CSSOMString? layerName;
     readonly attribute CSSOMString? supportsText;

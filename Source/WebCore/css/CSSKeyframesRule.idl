@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/css-animations/#csskeyframesrule
+
 [
     Exposed=Window
 ] interface CSSKeyframesRule : CSSRule {
@@ -33,10 +35,9 @@
     readonly attribute CSSRuleList cssRules;
     readonly attribute unsigned long length;
 
+    getter CSSKeyframeRule (unsigned long index);
     undefined appendRule(DOMString rule);
     undefined deleteRule(DOMString key);
     CSSKeyframeRule? findRule(DOMString key);
-
-    getter CSSKeyframeRule (unsigned long index);
 };
 

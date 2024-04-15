@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -33,8 +33,8 @@
     readonly attribute CSSRule? parentRule;
     readonly attribute CSSStyleSheet? parentStyleSheet;
 
+    // the following attribute and constants are historical
     [ImplementedAs=typeForCSSOM] readonly attribute unsigned short type;
-    
     [ImplementedAs=Unknown] const unsigned short UNKNOWN_RULE = 0;
     [ImplementedAs=Style] const unsigned short STYLE_RULE = 1;
     [ImplementedAs=Charset] const unsigned short CHARSET_RULE = 2;
