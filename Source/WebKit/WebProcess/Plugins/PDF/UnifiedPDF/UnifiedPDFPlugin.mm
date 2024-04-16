@@ -52,6 +52,7 @@
 #include <CoreGraphics/CoreGraphics.h>
 #include <PDFKit/PDFKit.h>
 #include <WebCore/AffineTransform.h>
+#include <WebCore/AutoscrollController.h>
 #include <WebCore/BitmapImage.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ChromeClient.h>
@@ -2047,9 +2048,11 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 
     // Even if the mouse event isn't handled (e.g. because the event is over a page we shouldn't
     // display in Single Page mode), we should stop tracking selections (and soon autoscrolling) on MouseUp.
-    auto stopSelectionTrackingIfNeeded = makeScopeExit([this, isMouseUp = event.type() == WebEventType::MouseUp] {
-        if (isMouseUp)
+    auto stopStateTrackingIfNeeded = makeScopeExit([this, isMouseUp = event.type() == WebEventType::MouseUp] {
+        if (isMouseUp) {
             stopTrackingSelection();
+            stopAutoscroll();
+        }
     });
 
     auto pointInDocumentSpace = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, lastKnownMousePositionInView());
@@ -2901,6 +2904,11 @@ void UnifiedPDFPlugin::continueTrackingSelection(PDFDocumentLayout::PageIndex pa
 {
     freezeCursorDuringSelectionDragIfNeeded(isDraggingSelection);
 
+    auto beginAutoscrollIfNecessary = makeScopeExit([&] {
+        if (isDraggingSelection == IsDraggingSelection::Yes)
+            beginAutoscroll();
+    });
+
     if (m_selectionTrackingData.shouldMakeMarqueeSelection) {
         if (m_selectionTrackingData.startPageIndex != pageIndex)
             return;
@@ -3046,6 +3054,71 @@ FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *selection) 
 
     auto pluginRect = convertUp(CoordinateSpace::PDFPage, CoordinateSpace::Plugin, FloatRect { [selection boundsForPage:page.get()] }, *pageIndex);
     return convertFromPluginToRootView(enclosingIntRect(pluginRect));
+}
+
+#pragma mark Autoscroll
+
+void UnifiedPDFPlugin::beginAutoscroll()
+{
+    if (!std::exchange(m_inActiveAutoscroll, true))
+        m_autoscrollTimer.startRepeating(WebCore::autoscrollInterval);
+}
+
+void UnifiedPDFPlugin::autoscrollTimerFired()
+{
+    if (!m_inActiveAutoscroll)
+        return m_autoscrollTimer.stop();
+
+    continueAutoscroll();
+}
+
+void UnifiedPDFPlugin::continueAutoscroll()
+{
+    if (!m_inActiveAutoscroll || !m_currentSelection || [m_currentSelection isEmpty])
+        return;
+
+    auto lastKnownMousePositionInPluginSpace = lastKnownMousePositionInView();
+
+    // FIXME: If the window is on a screen boundary, the user can't drag-scroll with this delta. Implement something like autoscrollAdjustmentFactorForScreenBoundaries.
+    auto scrollDelta = [&lastKnownMousePositionInPluginSpace, pluginBounds = FloatRect { { }, size() }]() -> IntSize {
+        auto scrollDeltaLength = [](auto position, auto limit) -> int {
+            if (position > limit)
+                return position - limit;
+            return std::min(position, 0);
+        };
+
+        int scrollDeltaHeight = scrollDeltaLength(lastKnownMousePositionInPluginSpace.y(), pluginBounds.height());
+        int scrollDeltaWidth = scrollDeltaLength(lastKnownMousePositionInPluginSpace.x(), pluginBounds.width());
+
+        return { scrollDeltaWidth, scrollDeltaHeight };
+    }();
+
+    if (scrollDelta.isZero())
+        return;
+
+    scrollWithDelta(scrollDelta);
+
+    auto lastKnownMousePositionInDocumentSpace = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, lastKnownMousePositionInPluginSpace);
+    auto pageIndex = m_documentLayout.nearestPageIndexForDocumentPoint(lastKnownMousePositionInDocumentSpace);
+    auto lastKnownMousePositionInPageSpace = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, lastKnownMousePositionInDocumentSpace, pageIndex);
+
+    continueTrackingSelection(pageIndex, lastKnownMousePositionInPageSpace, IsDraggingSelection::Yes);
+}
+
+void UnifiedPDFPlugin::stopAutoscroll()
+{
+    m_inActiveAutoscroll = false;
+}
+
+void UnifiedPDFPlugin::scrollWithDelta(const IntSize& scrollDelta)
+{
+    if (isLocked())
+        return;
+
+    // FIXME: For discrete page modes, should we snap to the next/previous page immediately?
+
+    setScrollOffset(constrainedScrollPosition(ScrollPosition { m_scrollOffset + scrollDelta }));
+    scrollToPointInContentsSpace(scrollPosition());
 }
 
 #pragma mark -

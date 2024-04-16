@@ -33,6 +33,7 @@
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/Page.h>
+#include <WebCore/Timer.h>
 #include <wtf/OptionSet.h>
 
 OBJC_CLASS PDFAction;
@@ -319,6 +320,14 @@ private:
     PDFDocumentLayout::DisplayMode displayModeFromContextMenuItemTag(const ContextMenuItemTag&) const;
 #endif
 
+    // Autoscroll
+    // FIXME: Refactor and hook into WebCore::AutoscrollController instead of manually implementing these.
+    void beginAutoscroll();
+    void autoscrollTimerFired();
+    void continueAutoscroll();
+    void stopAutoscroll();
+    void scrollWithDelta(const WebCore::IntSize&);
+
     // Selections
     enum class SelectionGranularity : uint8_t {
         Character,
@@ -548,6 +557,9 @@ private:
     };
     SelectionTrackingData m_selectionTrackingData;
     RetainPtr<PDFSelection> m_currentSelection;
+
+    bool m_inActiveAutoscroll { false };
+    WebCore::Timer m_autoscrollTimer { *this, &UnifiedPDFPlugin::autoscrollTimerFired };
 
     RetainPtr<WKPDFFormMutationObserver> m_pdfMutationObserver;
 
