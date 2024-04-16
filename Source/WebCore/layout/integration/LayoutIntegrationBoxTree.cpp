@@ -274,20 +274,23 @@ void BoxTree::insertChild(UniqueRef<Layout::Box> childBox, RenderObject& childRe
     parentBox.insertChild(WTFMove(childBox), beforeChildBox);
 }
 
-void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
+void BoxTree::updateStyle(const RenderObject& renderer)
 {
-    auto& layoutBox = layoutBoxForRenderer(renderer);
-    auto& rendererStyle = renderer.style();
+    auto* layoutBox = const_cast<Layout::Box*>(renderer.layoutBox());
+    if (!layoutBox) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (layoutBox->isInlineTextBox()) {
+        ASSERT(is<RenderText>(renderer));
+        layoutBox->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(renderer.style(), DisplayType::Inline), firstLineStyleFor(renderer));
+        return;
+    }
 
     auto firstLineNewStyle = firstLineStyleFor(renderer);
-    auto newStyle = RenderStyle::clone(rendererStyle);
-    adjustStyleIfNeeded(renderer, newStyle, firstLineNewStyle.get());
-    layoutBox.updateStyle(WTFMove(newStyle), WTFMove(firstLineNewStyle));
-
-    for (auto* child = layoutBox.firstChild(); child; child = child->nextSibling()) {
-        if (child->isInlineTextBox())
-            child->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(rendererStyle, DisplayType::Inline), firstLineStyleFor(renderer));
-    }
+    auto newStyle = RenderStyle::clone(renderer.style());
+    adjustStyleIfNeeded(downcast<RenderElement>(renderer), newStyle, firstLineNewStyle.get());
+    layoutBox->updateStyle(WTFMove(newStyle), WTFMove(firstLineNewStyle));
 }
 
 void BoxTree::updateContent(const RenderText& textRenderer)

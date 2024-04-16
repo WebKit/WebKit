@@ -42,12 +42,13 @@ InlineInvalidation::InlineInvalidation(InlineDamage& inlineDamage, const InlineI
 {
 }
 
-void InlineInvalidation::styleChanged(const Box& layoutBox, const RenderStyle& oldStyle)
+bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle& newStyle)
 {
     UNUSED_PARAM(layoutBox);
-    UNUSED_PARAM(oldStyle);
+    UNUSED_PARAM(newStyle);
 
     m_inlineDamage.setDamageReason(InlineDamage::Reason::StyleChange);
+    return true;
 }
 
 struct DamagedContent {

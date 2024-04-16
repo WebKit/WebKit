@@ -44,6 +44,7 @@
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "LayoutElementBox.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LengthFunctions.h"
 #include "LocalFrame.h"
 #include "Logging.h"
@@ -847,6 +848,14 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
     };
 
     if (oldStyle) {
+        if (diff >= StyleDifference::Repaint && layoutBox()) {
+            // FIXME: It is highly unlikely that a style mutation has effect on both the formatting context the box lives in
+            // and the one it establishes but calling only one would require to come up with a list of properties that only affects one or the other.
+            if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*this); inlineFormattingContextRoot && inlineFormattingContextRoot->modernLineLayout())
+                inlineFormattingContextRoot->modernLineLayout()->styleWillChange(*this, newStyle);
+            if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+                lineLayout->styleWillChange(*this, newStyle);
+        }
         // If our z-index changes value or our visibility changes,
         // we need to dirty our stacking context's z-order list.
         bool visibilityChanged = m_style.usedVisibility() != newStyle.usedVisibility()
@@ -1045,6 +1054,9 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         if (controller && (!shouldCheckIfInAncestorChain || (shouldCheckIfInAncestorChain && controller->isInScrollAnchoringAncestorChain(*this))))
             controller->notifyChildHadSuppressingStyleChange();
     }
+
+    if (diff >= StyleDifference::Repaint && layoutBox())
+        LayoutIntegration::LineLayout::updateStyle(*this);
 }
 
 void RenderElement::insertedIntoTree()

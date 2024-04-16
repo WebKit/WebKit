@@ -389,9 +389,6 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     // any override content size set by our container, because it would likely be incorrect after the style change.
     if (isOutOfFlowPositioned() && parent() && parent()->style().isDisplayFlexibleBoxIncludingDeprecatedOrGridBox())
         clearOverridingContentSize();
-
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
-        lineLayout->updateStyle(*this, *oldStyle);
 }
 
 void RenderBox::updateGridPositionAfterStyleChange(const RenderStyle& style, const RenderStyle* oldStyle)

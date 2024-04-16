@@ -2361,9 +2361,6 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
             invalidateLineLayoutPath(InvalidationReason::StyleChange);
     }
 
-    if (auto* lineLayout = modernLineLayout())
-        lineLayout->updateStyle(*this, *oldStyle);
-
     if (multiColumnFlow())
         updateStylesForColumnChildren(oldStyle);
 }

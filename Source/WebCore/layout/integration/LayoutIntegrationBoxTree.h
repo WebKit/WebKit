@@ -51,8 +51,9 @@ public:
     BoxTree(RenderBlock&);
     ~BoxTree();
 
-    void updateStyle(const RenderBoxModelObject&);
+    static void updateStyle(const RenderObject&);
     void updateContent(const RenderText&);
+
     const Layout::Box& insert(const RenderElement& parent, RenderObject& child, const RenderObject* beforeChild = nullptr);
     UniqueRef<Layout::Box> remove(const RenderElement& parent, RenderObject& child);
 
