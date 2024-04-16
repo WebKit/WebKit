@@ -2071,12 +2071,12 @@ JSCValue* jsc_value_new_from_json(JSCContext* context, const char* json)
     JSC::JSValue jsValue;
     String jsonString = String::fromUTF8(json);
     if (jsonString.is8Bit()) {
-        JSC::LiteralParser<LChar> jsonParser(globalObject, jsonString.characters8(), jsonString.length(), JSC::StrictJSON);
+        JSC::LiteralParser jsonParser(globalObject, jsonString.span8(), JSC::StrictJSON);
         jsValue = jsonParser.tryLiteralParse();
         if (!jsValue)
             exception = toRef(JSC::createSyntaxError(globalObject, jsonParser.getErrorMessage()));
     } else {
-        JSC::LiteralParser<UChar> jsonParser(globalObject, jsonString.characters16(), jsonString.length(), JSC::StrictJSON);
+        JSC::LiteralParser jsonParser(globalObject, jsonString.span16(), JSC::StrictJSON);
         jsValue = jsonParser.tryLiteralParse();
         if (!jsValue)
             exception = toRef(JSC::createSyntaxError(globalObject, jsonParser.getErrorMessage()));

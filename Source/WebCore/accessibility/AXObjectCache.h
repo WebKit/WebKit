@@ -714,7 +714,7 @@ private:
     static AXRelationType attributeToRelationType(const QualifiedName&);
     enum class AddSymmetricRelation : bool { No, Yes };
     static AXRelationType symmetricRelation(AXRelationType);
-    bool addRelation(Element*, Element*, AXRelationType);
+    bool addRelation(Element&, Element&, AXRelationType);
     bool addRelation(AccessibilityObject*, AccessibilityObject*, AXRelationType, AddSymmetricRelation = AddSymmetricRelation::Yes);
     bool addRelation(Element&, const QualifiedName&);
     void addLabelForRelation(Element&);

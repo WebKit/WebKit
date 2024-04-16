@@ -37,8 +37,8 @@ class CSSStyleSheetObservableArray : public JSC::ObservableArray {
 public:
     static Ref<CSSStyleSheetObservableArray> create(ContainerNode& treeScope);
 
-    ExceptionOr<void> setSheets(Vector<RefPtr<CSSStyleSheet>>&&);
-    const Vector<RefPtr<CSSStyleSheet>>& sheets() const { return m_sheets; }
+    ExceptionOr<void> setSheets(Vector<Ref<CSSStyleSheet>>&&);
+    const Vector<Ref<CSSStyleSheet>>& sheets() const { return m_sheets; }
 
 private:
     explicit CSSStyleSheetObservableArray(ContainerNode& treeScope);
@@ -58,7 +58,7 @@ private:
     void willRemoveSheet(CSSStyleSheet&);
 
     WeakPtr<ContainerNode, WeakPtrImplWithEventTargetData> m_treeScope;
-    Vector<RefPtr<CSSStyleSheet>> m_sheets;
+    Vector<Ref<CSSStyleSheet>> m_sheets;
 };
 
 } // namespace WebCore

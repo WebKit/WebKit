@@ -384,7 +384,7 @@ void RenderMenuList::showPopup()
     FloatPoint absTopLeft = localToAbsolute(FloatPoint(), UseTransforms);
     IntRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
     absBounds.setLocation(roundedIntPoint(absTopLeft));
-    m_popup->show(absBounds, &view().frameView(), selectElement().optionToListIndex(selectElement().selectedIndex())); // May destroy `this`.
+    m_popup->show(absBounds, view().frameView(), selectElement().optionToListIndex(selectElement().selectedIndex())); // May destroy `this`.
 }
 #endif
 

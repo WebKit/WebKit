@@ -256,9 +256,10 @@ TEST(IPCTestingAPI, CanSendAsyncMessageToGPUProcess)
     [webView setUIDelegate:delegate.get()];
 
     done = false;
-    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>(async function test() {"
-        "window.result = await IPC.sendMessage('GPU', 0, IPC.messages.RemoteAudioDestinationManager_StartAudioDestination.name, [{type: 'uint64_t', value: 12345}]);"
-        "alert(!!result)"
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>(function test() {"
+        "let c = IPC.connectionForProcessTarget('GPU');"
+        "let cb = (result) => { window.result = result; alert(!!result); };"
+        "c.sendWithAsyncReply(0, IPC.messages.RemoteAudioDestinationManager_StartAudioDestination.name, [{type: 'uint64_t', value: 12345}], cb);"
         "})();</script>"];
     TestWebKitAPI::Util::run(&done);
 
@@ -275,10 +276,11 @@ TEST(IPCTestingAPI, CanSendInvalidAsyncMessageToGPUProcessWithoutTermination)
     [webView setUIDelegate:delegate.get()];
 
     done = false;
-    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>(async function test() {"
-        "IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name, []);"
-        "window.result = await IPC.sendMessage('GPU', 0, IPC.messages.RemoteAudioDestinationManager_StartAudioDestination.name, [{type: 'uint64_t', value: 12345}]);"
-        "alert(!!result)"
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>(function test() {"
+        "let c = IPC.connectionForProcessTarget('GPU');"
+        "c.sendMessage(0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name, []);"
+        "let cb = (result) => { window.result = result; alert(!!result); };"
+        "c.sendWithAsyncReply(0, IPC.messages.RemoteAudioDestinationManager_StartAudioDestination.name, [{type: 'uint64_t', value: 12345}], cb);"
         "})();</script>"];
     TestWebKitAPI::Util::run(&done);
 
@@ -363,10 +365,12 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
     [webView setUIDelegate:delegate.get()];
 
     done = false;
-    promptResult = @"foo";
-    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>IPC.sendMessage(\"Networking\", 0, IPC.messages.NetworkConnectionToWebProcess_HasStorageAccess.name,"
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
+        "let c = IPC.connectionForProcessTarget('Networking');"
+        "let cb = (result) => alert(JSON.stringify(result.arguments));"
+        "c.sendWithAsyncReply(0, IPC.messages.NetworkConnectionToWebProcess_HasStorageAccess.name,"
         "[{type: 'RegistrableDomain', value: 'https://ipctestingapi.com'}, {type: 'RegistrableDomain', value: 'https://webkit.org'}, {type: 'FrameID', value: IPC.frameID},"
-        "{type: 'uint64_t', value: IPC.pageID}]).then((result) => alert(JSON.stringify(result.arguments)));</script>"];
+        "{type: 'uint64_t', value: IPC.pageID}], cb);</script>"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_STREQ([alertMessage UTF8String], "[{\"type\":\"bool\",\"value\":false}]");
@@ -426,8 +430,10 @@ TEST(IPCTestingAPI, CanInterceptHasStorageAccess)
     promptResult = @"foo";
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>let targetMessage = {}; const messageName = IPC.messages.NetworkConnectionToWebProcess_HasStorageAccess.name;"
         "IPC.addOutgoingMessageListener('Networking', (currentMessage) => { if (currentMessage.name == messageName) targetMessage = currentMessage; });"
-        "IPC.sendMessage('Networking', 0, messageName, [{type: 'RegistrableDomain', value: 'https://ipctestingapi.com'}, {type: 'RegistrableDomain', value: 'https://webkit.org'},"
-        "{type: 'FrameID', value: IPC.frameID}, {type: 'uint64_t', value: IPC.pageID}]).then((result) => alert(JSON.stringify(result.arguments)));</script>"];
+        "let c = IPC.connectionForProcessTarget('Networking');"
+        "let cb = (result) => alert(JSON.stringify(result.arguments));"
+        "c.sendWithAsyncReply(0, messageName, [{type: 'RegistrableDomain', value: 'https://ipctestingapi.com'}, {type: 'RegistrableDomain', value: 'https://webkit.org'},"
+        "{type: 'FrameID', value: IPC.frameID}, {type: 'uint64_t', value: IPC.pageID}], cb);</script>"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_STREQ([alertMessage UTF8String], "[{\"type\":\"bool\",\"value\":false}]");

@@ -49,6 +49,9 @@ enum class AutoscrollType : uint8_t {
 #endif
 };
 
+// When the autoscroll or the panScroll is triggered when do the scroll every 50ms to make it smooth.
+constexpr Seconds autoscrollInterval { 50_ms };
+
 // AutscrollController handles autoscroll and pan scroll for EventHandler.
 class AutoscrollController {
     WTF_MAKE_FAST_ALLOCATED;

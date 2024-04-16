@@ -14,15 +14,10 @@ a.href = "https://www.mydomain.com:8080/path/";
 a.host = "www.otherdomain.com:0";
 shouldBe("a.href", "'https://www.otherdomain.com:0/path/'");
 
-// IE8 throws "The URL is invalid" exception.
 debug("Set host with '?' in it");
-try {
 a.href = "https://www.mydomain.com:8080/path/?key=value";
 a.host = "www.other?domain.com:8080";
-shouldBe("a.href", "'https://www.other/?domain.com:8080/path/?key=value'");
-} catch(e) {
-debug("Exception: " + e.description);
-}
+shouldBe("a.href", "'https://www.other:8080/path/?key=value'");
 
 debug("Set default port for another protocol");
 a.href = "https://www.mydomain.com:8080/path/";

@@ -413,7 +413,7 @@ void LocalDOMWindow::setCanShowModalDialogOverride(bool allow)
 }
 
 LocalDOMWindow::LocalDOMWindow(Document& document)
-    : DOMWindow(GlobalWindowIdentifier { Process::identifier(), WindowIdentifier::generate() })
+    : DOMWindow(GlobalWindowIdentifier { Process::identifier(), WindowIdentifier::generate() }, DOMWindowType::Local)
     , ContextDestructionObserver(&document)
 {
     ASSERT(frame());
@@ -990,7 +990,7 @@ ExceptionOr<void> LocalDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobal
     if (targetSecurityOrigin.hasException())
         return targetSecurityOrigin.releaseException();
 
-    Vector<RefPtr<MessagePort>> ports;
+    Vector<Ref<MessagePort>> ports;
     auto messageData = SerializedScriptValue::create(lexicalGlobalObject, messageValue, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WindowPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();

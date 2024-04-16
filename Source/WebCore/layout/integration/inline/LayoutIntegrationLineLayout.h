@@ -78,13 +78,14 @@ public:
 
     void updateInlineContentConstraints();
     void updateInlineContentDimensions();
-    void updateStyle(const RenderBoxModelObject&, const RenderStyle& oldStyle);
     void updateOverflow();
+    static void updateStyle(const RenderObject&);
 
     // Partial invalidation.
     bool insertedIntoTree(const RenderElement& parent, RenderObject& child);
     bool removedFromTree(const RenderElement& parent, RenderObject& child);
     bool updateTextContent(const RenderText&, size_t offset, int delta);
+    bool styleWillChange(const RenderElement&, const RenderStyle& newStyle);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
 

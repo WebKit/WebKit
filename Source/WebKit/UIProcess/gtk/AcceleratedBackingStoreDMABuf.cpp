@@ -103,24 +103,34 @@ Vector<DMABufRendererBufferFormat> AcceleratedBackingStoreDMABuf::preferredBuffe
     if (formatString && *formatString) {
         auto tokens = String::fromUTF8(formatString).split(':');
         if (!tokens.isEmpty() && tokens[0].length() >= 2 && tokens[0].length() <= 4) {
-            uint32_t format = fourcc_code(tokens[0][0], tokens[0][1], tokens[0].length() > 2 ? tokens[0][2] : ' ', tokens[0].length() > 3 ? tokens[0][3] : ' ');
+            DMABufRendererBufferFormat format;
+            format.usage = display.gtkEGLDisplay() ? DMABufRendererBufferFormat::Usage::Rendering : DMABufRendererBufferFormat::Usage::Mapping;
+            format.drmDevice = display.drmRenderNodeFile().utf8();
+            uint32_t fourcc = fourcc_code(tokens[0][0], tokens[0][1], tokens[0].length() > 2 ? tokens[0][2] : ' ', tokens[0].length() > 3 ? tokens[0][3] : ' ');
             uint64_t modifier = tokens.size() > 1 ? g_ascii_strtoull(tokens[1].ascii().data(), nullptr, 10) : DRM_FORMAT_MOD_INVALID;
-            return { { display.gtkEGLDisplay() ? DMABufRendererBufferFormat::Usage::Rendering : DMABufRendererBufferFormat::Usage::Mapping, format, { modifier } } };
+            format.formats.append({ fourcc, { modifier } });
+            return { WTFMove(format) };
         }
 
         WTFLogAlways("Invalid format %s set in WEBKIT_DMABUF_RENDERER_BUFFER_FORMAT, ignoring...", formatString);
     }
 
     if (!display.gtkEGLDisplay()) {
-        return {
-            { DMABufRendererBufferFormat::Usage::Mapping, DRM_FORMAT_ARGB8888, { DRM_FORMAT_MOD_LINEAR } },
-            { DMABufRendererBufferFormat::Usage::Mapping, DRM_FORMAT_XRGB8888, { DRM_FORMAT_MOD_LINEAR } }
-        };
+        DMABufRendererBufferFormat format;
+        format.usage = DMABufRendererBufferFormat::Usage::Mapping;
+        format.drmDevice = display.drmRenderNodeFile().utf8();
+        format.formats.append({ DRM_FORMAT_XRGB8888, { DRM_FORMAT_MOD_LINEAR } });
+        format.formats.append({ DRM_FORMAT_ARGB8888, { DRM_FORMAT_MOD_LINEAR } });
+        return { WTFMove(format) };
     }
 
-    return display.dmabufFormats().map([](const auto& format) -> DMABufRendererBufferFormat {
-        return { DMABufRendererBufferFormat::Usage::Rendering, format.fourcc, format.modifiers };
+    DMABufRendererBufferFormat format;
+    format.usage = DMABufRendererBufferFormat::Usage::Rendering;
+    format.drmDevice = display.drmRenderNodeFile().utf8();
+    format.formats = display.dmabufFormats().map([](const auto& format) -> DMABufRendererBufferFormat::Format {
+        return { format.fourcc, format.modifiers };
     });
+    return { WTFMove(format) };
 }
 #endif
 

@@ -1741,7 +1741,7 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram
     return WebGLActiveInfo::create(info.name, info.type, info.size);
 }
 
-std::optional<Vector<RefPtr<WebGLShader>>> WebGLRenderingContextBase::getAttachedShaders(WebGLProgram& program)
+std::optional<Vector<Ref<WebGLShader>>> WebGLRenderingContextBase::getAttachedShaders(WebGLProgram& program)
 {
     if (isContextLost())
         return std::nullopt;
@@ -1752,10 +1752,11 @@ std::optional<Vector<RefPtr<WebGLShader>>> WebGLRenderingContextBase::getAttache
         GraphicsContextGL::VERTEX_SHADER,
         GraphicsContextGL::FRAGMENT_SHADER
     };
-    Vector<RefPtr<WebGLShader>> shaderObjects;
+
+    Vector<Ref<WebGLShader>> shaderObjects;
     for (auto shaderType : shaderTypes) {
         if (RefPtr shader = program.getAttachedShader(shaderType))
-            shaderObjects.append(WTFMove(shader));
+            shaderObjects.append(shader.releaseNonNull());
     }
     return shaderObjects;
 }

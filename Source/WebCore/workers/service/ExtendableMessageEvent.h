@@ -53,7 +53,7 @@ public:
         String origin;
         String lastEventId;
         std::optional<ExtendableMessageEventSource> source;
-        Vector<RefPtr<MessagePort>> ports;
+        Vector<Ref<MessagePort>> ports;
     };
 
     static Ref<ExtendableMessageEvent> create(JSC::JSGlobalObject& state, const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
@@ -61,7 +61,7 @@ public:
         return adoptRef(*new ExtendableMessageEvent(state, type, initializer, isTrusted));
     }
 
-    static Ref<ExtendableMessageEvent> create(Vector<RefPtr<MessagePort>>&&, RefPtr<SerializedScriptValue>&&, const String& origin = { }, const String& lastEventId = { }, std::optional<ExtendableMessageEventSource>&& source = std::nullopt);
+    static Ref<ExtendableMessageEvent> create(Vector<Ref<MessagePort>>&&, RefPtr<SerializedScriptValue>&&, const String& origin = { }, const String& lastEventId = { }, std::optional<ExtendableMessageEventSource>&& source = std::nullopt);
 
     ~ExtendableMessageEvent();
 
@@ -69,17 +69,17 @@ public:
     const String& origin() const { return m_origin; }
     const String& lastEventId() const { return m_lastEventId; }
     const std::optional<ExtendableMessageEventSource>& source() const { return m_source; }
-    const Vector<RefPtr<MessagePort>>& ports() const { return m_ports; }
+    const Vector<Ref<MessagePort>>& ports() const { return m_ports; }
 
 private:
     ExtendableMessageEvent(JSC::JSGlobalObject&, const AtomString&, const Init&, IsTrusted);
-    ExtendableMessageEvent(RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&, Vector<RefPtr<MessagePort>>&&);
+    ExtendableMessageEvent(RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&, Vector<Ref<MessagePort>>&&);
 
     RefPtr<SerializedScriptValue> m_data;
     String m_origin;
     String m_lastEventId;
     std::optional<ExtendableMessageEventSource> m_source;
-    Vector<RefPtr<MessagePort>> m_ports;
+    Vector<Ref<MessagePort>> m_ports;
 };
 
 } // namespace WebCore

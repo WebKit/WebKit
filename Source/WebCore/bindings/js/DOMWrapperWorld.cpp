@@ -22,11 +22,9 @@
 #include "DOMWrapperWorld.h"
 
 #include "CommonVM.h"
-#include "JSLocalDOMWindow.h"
 #include "WebCoreJSClientData.h"
 #include "WindowProxy.h"
 #include <wtf/MainThread.h>
-
 
 namespace WebCore {
 using namespace JSC;

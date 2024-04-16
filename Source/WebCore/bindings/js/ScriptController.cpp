@@ -34,9 +34,9 @@
 #include "InspectorInstrumentation.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMWindow.h"
 #include "JSDocument.h"
 #include "JSExecState.h"
-#include "JSLocalDOMWindow.h"
 #include "LoadableModuleScript.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
@@ -296,7 +296,7 @@ void ScriptController::initScriptForWindowProxy(JSWindowProxy& windowProxy)
     JSC::VM& vm = world.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    jsCast<JSLocalDOMWindow*>(windowProxy.window())->updateDocument();
+    jsCast<JSDOMWindow*>(windowProxy.window())->updateDocument();
     EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
 
     if (RefPtr document = m_frame.document())
@@ -470,7 +470,7 @@ void ScriptController::updateDocument()
 {
     for (auto& jsWindowProxy : windowProxy().jsWindowProxiesAsVector()) {
         JSLockHolder lock(jsWindowProxy->world().vm());
-        jsCast<JSLocalDOMWindow*>(jsWindowProxy->window())->updateDocument();
+        jsCast<JSDOMWindow*>(jsWindowProxy->window())->updateDocument();
     }
 }
 

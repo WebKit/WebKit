@@ -273,7 +273,7 @@ void RemoteInspectorServer::close(SocketConnection& clientConnection, uint64_t c
     ASSERT(m_clientConnection == &clientConnection || m_automationConnection == &clientConnection);
     ASSERT(m_idToRemoteInspectorConnectionMap.contains(connectionID));
     if (&clientConnection == m_automationConnection) {
-        // FIXME: automation.
+        m_automationTargets.remove(std::make_pair(connectionID, targetID));
         return;
     }
 

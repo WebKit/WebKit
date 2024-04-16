@@ -88,7 +88,7 @@ public:
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
     const Vector<Ref<MediaMetadata>>& playlist() const { return m_playlist; }
-    ExceptionOr<void> setPlaylist(ScriptExecutionContext&, Vector<RefPtr<MediaMetadata>>&&);
+    ExceptionOr<void> setPlaylist(ScriptExecutionContext&, Vector<Ref<MediaMetadata>>&&);
 #endif
 
     bool hasActiveActionHandlers() const;

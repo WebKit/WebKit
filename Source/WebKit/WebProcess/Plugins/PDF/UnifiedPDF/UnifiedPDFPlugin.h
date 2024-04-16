@@ -33,6 +33,7 @@
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/Page.h>
+#include <WebCore/Timer.h>
 #include <wtf/OptionSet.h>
 
 OBJC_CLASS PDFAction;
@@ -41,6 +42,7 @@ OBJC_CLASS PDFPage;
 OBJC_CLASS WKPDFFormMutationObserver;
 
 namespace WebCore {
+class FrameView;
 class PageOverlay;
 
 enum class DelegatedScrollingMode : uint8_t;
@@ -52,7 +54,6 @@ namespace WebKit {
 
 class AsyncPDFRenderer;
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
-class PDFDataDetectorItem;
 class PDFDataDetectorOverlayController;
 #endif
 class PDFPluginPasswordField;
@@ -111,6 +112,8 @@ public:
     };
     using PDFElementTypes = OptionSet<PDFElementType>;
 
+    WebCore::FrameView* mainFrameView() const;
+
     CGRect pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>&) const final;
     void setActiveAnnotation(RetainPtr<PDFAnnotation>&&) final;
     void focusNextAnnotation() final;
@@ -148,7 +151,7 @@ public:
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient&);
     float deviceScaleFactor() const override;
 
-    WebCore::FloatRect rectForSelectionInPluginSpace(PDFSelection *) const;
+    WebCore::FloatRect rectForSelectionInMainFrameContentsSpace(PDFSelection *) const;
 
     /*
         Unified PDF Plugin coordinate spaces, in depth order:
@@ -317,6 +320,14 @@ private:
     PDFDocumentLayout::DisplayMode displayModeFromContextMenuItemTag(const ContextMenuItemTag&) const;
 #endif
 
+    // Autoscroll
+    // FIXME: Refactor and hook into WebCore::AutoscrollController instead of manually implementing these.
+    void beginAutoscroll();
+    void autoscrollTimerFired();
+    void continueAutoscroll();
+    void stopAutoscroll();
+    void scrollWithDelta(const WebCore::IntSize&);
+
     // Selections
     enum class SelectionGranularity : uint8_t {
         Character,
@@ -346,11 +357,16 @@ private:
     String selectionString() const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;
     WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const override;
+
+    // Find in PDF
+    enum class HideFindIndicator : bool { No, Yes };
     unsigned countFindMatches(const String&, WebCore::FindOptions, unsigned maxMatchCount) override;
     bool findString(const String&, WebCore::FindOptions, unsigned maxMatchCount) override;
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const WebCore::IntRect&) const final;
     bool drawsFindOverlay() const final { return false; }
     void collectFindMatchRects(const String&, WebCore::FindOptions);
+    void updateFindOverlay(HideFindIndicator = HideFindIndicator::No);
+
     RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition) final;
     RefPtr<WebCore::TextIndicator> textIndicatorForSelection(PDFSelection *, OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition);
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
@@ -541,6 +557,9 @@ private:
     };
     SelectionTrackingData m_selectionTrackingData;
     RetainPtr<PDFSelection> m_currentSelection;
+
+    bool m_inActiveAutoscroll { false };
+    WebCore::Timer m_autoscrollTimer { *this, &UnifiedPDFPlugin::autoscrollTimerFired };
 
     RetainPtr<WKPDFFormMutationObserver> m_pdfMutationObserver;
 

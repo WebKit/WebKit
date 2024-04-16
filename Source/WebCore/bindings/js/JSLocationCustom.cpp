@@ -26,7 +26,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMExceptionHandling.h"
-#include "JSLocalDOMWindowCustom.h"
+#include "JSDOMWindowCustom.h"
 #include "RuntimeApplicationChecks.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSFunction.h>
@@ -43,7 +43,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, JSGlobalObject& lex
     auto* window = thisObject.wrapped().window();
 
     // When accessing Location cross-domain, functions are always the native built-in ones.
-    // See JSLocalDOMWindow::getOwnPropertySlotDelegate for additional details.
+    // See JSDOMWindow::getOwnPropertySlotDelegate for additional details.
 
     // Our custom code is only needed to implement the Window cross-domain scheme, so if access is
     // allowed, return false so the normal lookup will take place.

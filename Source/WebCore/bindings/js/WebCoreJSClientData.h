@@ -68,9 +68,8 @@ private:
     JSC::IsoHeapCellType m_runtimeObjectHeapCellType;
     JSC::IsoHeapCellType m_windowProxyHeapCellType;
 public:
-    JSC::IsoHeapCellType m_heapCellTypeForJSLocalDOMWindow;
+    JSC::IsoHeapCellType m_heapCellTypeForJSDOMWindow;
     JSC::IsoHeapCellType m_heapCellTypeForJSDedicatedWorkerGlobalScope;
-    JSC::IsoHeapCellType m_heapCellTypeForJSRemoteDOMWindow;
     JSC::IsoHeapCellType m_heapCellTypeForJSWorkerGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSSharedWorkerGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSShadowRealmGlobalScope;

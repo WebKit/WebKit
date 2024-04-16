@@ -67,7 +67,7 @@ constexpr auto EntityMaskInHTMLAttributeValue = { EntityMask::Amp, EntityMask::Q
 class MarkupAccumulator {
     WTF_MAKE_NONCOPYABLE(MarkupAccumulator);
 public:
-    MarkupAccumulator(Vector<Ref<Node>>*, ResolveURLs, SerializationSyntax, HashMap<String, String>&& replacementURLStrings = { }, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet = { }, SerializeShadowRoots = SerializeShadowRoots::Explicit, Vector<RefPtr<ShadowRoot>>&& explicitShadowRoots = { }, const Vector<MarkupExclusionRule>& exclusionRules = { });
+    MarkupAccumulator(Vector<Ref<Node>>*, ResolveURLs, SerializationSyntax, HashMap<String, String>&& replacementURLStrings = { }, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet = { }, SerializeShadowRoots = SerializeShadowRoots::Explicit, Vector<Ref<ShadowRoot>>&& explicitShadowRoots = { }, const Vector<MarkupExclusionRule>& exclusionRules = { });
     virtual ~MarkupAccumulator();
 
     String serializeNodes(Node& targetNode, SerializedNodes);
@@ -126,7 +126,7 @@ private:
     HashMap<String, String> m_replacementURLStrings;
     HashMap<RefPtr<CSSStyleSheet>, String> m_replacementURLStringsForCSSStyleSheet;
     SerializeShadowRoots m_serializeShadowRoots;
-    Vector<RefPtr<ShadowRoot>> m_explicitShadowRoots;
+    Vector<Ref<ShadowRoot>> m_explicitShadowRoots;
     Vector<MarkupExclusionRule> m_exclusionRules;
 };
 

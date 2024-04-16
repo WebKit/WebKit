@@ -37,30 +37,31 @@ ALWAYS_INLINE bool isIndex(uint32_t index)
 }
 
 template <typename CharType>
-ALWAYS_INLINE std::optional<uint32_t> parseIndex(const CharType* characters, unsigned length)
+ALWAYS_INLINE std::optional<uint32_t> parseIndex(std::span<const CharType> characters)
 {
     // An empty string is not a number.
-    if (!length)
+    if (characters.empty())
         return std::nullopt;
 
     // Get the first character, turning it into a digit.
-    uint32_t value = characters[0] - '0';
+    uint32_t value = characters.front() - '0';
     if (value > 9)
         return std::nullopt;
 
     // Check for leading zeros. If the first characher is 0, then the
     // length of the string must be one - e.g. "042" is not equal to "42".
-    if (!value && length > 1)
+    if (!value && characters.size() > 1)
         return std::nullopt;
 
-    while (--length) {
+    characters = characters.subspan(1);
+    while (!characters.empty()) {
         // Multiply value by 10, checking for overflow out of 32 bits.
         if (value > 0xFFFFFFFFU / 10)
             return std::nullopt;
         value *= 10;
 
         // Get the next character, turning it into a digit.
-        uint32_t newValue = *(++characters) - '0';
+        uint32_t newValue = characters.front() - '0';
         if (newValue > 9)
             return std::nullopt;
 
@@ -69,6 +70,7 @@ ALWAYS_INLINE std::optional<uint32_t> parseIndex(const CharType* characters, uns
         if (newValue < value)
             return std::nullopt;
         value = newValue;
+        characters = characters.subspan(1);
     }
 
     if (!isIndex(value))
@@ -78,9 +80,7 @@ ALWAYS_INLINE std::optional<uint32_t> parseIndex(const CharType* characters, uns
 
 ALWAYS_INLINE std::optional<uint32_t> parseIndex(StringImpl& impl)
 {
-    if (impl.is8Bit())
-        return parseIndex(impl.characters8(), impl.length());
-    return parseIndex(impl.characters16(), impl.length());
+    return impl.is8Bit() ? parseIndex(impl.span8()) : parseIndex(impl.span16());
 }
 
 class Identifier {
@@ -172,9 +172,6 @@ private:
     Identifier(SymbolImpl& uid)
         : m_string(&uid)
     { }
-
-    template <typename CharType>
-    ALWAYS_INLINE static uint32_t toUInt32FromCharacters(const CharType* characters, unsigned length, bool& ok);
 
     static bool equal(const Identifier& a, const Identifier& b) { return a.m_string.impl() == b.m_string.impl(); }
     static bool equal(const Identifier& a, const LChar* b) { return equal(a.m_string.impl(), b); }

@@ -127,7 +127,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 
-void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
+void PopupMenuMac::show(const IntRect& r, LocalFrameView& frameView, int selectedIndex)
 {
     populate();
     int numItems = [m_popup numberOfItems];
@@ -142,7 +142,7 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
     if (selectedIndex == -1 && numItems == 2 && !m_client->shouldPopOver() && ![[m_popup itemAtIndex:1] isEnabled])
         selectedIndex = 0;
 
-    NSView* view = v->documentView();
+    NSView* view = frameView.documentView();
 
     TextDirection textDirection = m_client->menuStyle().textDirection();
 
@@ -181,7 +181,7 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
     }
     // Save the current event that triggered the popup, so we can clean up our event
     // state after the NSMenu goes away.
-    Ref frame { v->frame() };
+    Ref frame { frameView.frame() };
     RetainPtr<NSEvent> event = frame->eventHandler().currentNSEvent();
     
     Ref<PopupMenuMac> protector(*this);

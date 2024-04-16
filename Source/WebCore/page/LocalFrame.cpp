@@ -67,6 +67,7 @@
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMWindow.h"
 #include "JSNode.h"
 #include "JSServiceWorkerGlobalScope.h"
 #include "JSWindowProxy.h"
@@ -1216,8 +1217,8 @@ void LocalFrame::resetScript()
 LocalFrame* LocalFrame::fromJSContext(JSContextRef context)
 {
     JSC::JSGlobalObject* globalObjectObj = toJS(context);
-    if (auto* window = JSC::jsDynamicCast<JSLocalDOMWindow*>(globalObjectObj))
-        return window->wrapped().frame();
+    if (auto* window = JSC::jsDynamicCast<JSDOMWindow*>(globalObjectObj))
+        return dynamicDowncast<LocalFrame>(window->wrapped().frame());
     if (auto* serviceWorkerGlobalScope = JSC::jsDynamicCast<JSServiceWorkerGlobalScope*>(globalObjectObj))
         return serviceWorkerGlobalScope->wrapped().serviceWorkerPage() ? dynamicDowncast<LocalFrame>(serviceWorkerGlobalScope->wrapped().serviceWorkerPage()->mainFrame()) : nullptr;
     return nullptr;
@@ -1232,8 +1233,8 @@ LocalFrame* LocalFrame::contentFrameFromWindowOrFrameElement(JSContextRef contex
     JSC::JSValue value = toJS(globalObject, valueRef);
     JSC::VM& vm = globalObject->vm();
 
-    if (auto* window = JSLocalDOMWindow::toWrapped(vm, value))
-        return window->frame();
+    if (auto* window = JSDOMWindow::toWrapped(vm, value))
+        return dynamicDowncast<LocalFrame>(window->frame());
 
     auto* jsNode = JSC::jsDynamicCast<JSNode*>(value);
     if (!jsNode)

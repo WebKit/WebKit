@@ -95,10 +95,10 @@ ALWAYS_INLINE void setParserTokenString(LiteralParserToken<CharType>&, const Cha
 template <typename CharType>
 class LiteralParser {
 public:
-    LiteralParser(JSGlobalObject* globalObject, const CharType* characters, unsigned length, ParserMode mode, CodeBlock* nullOrCodeBlock = nullptr)
+    LiteralParser(JSGlobalObject* globalObject, std::span<const CharType> characters, ParserMode mode, CodeBlock* nullOrCodeBlock = nullptr)
         : m_globalObject(globalObject)
         , m_nullOrCodeBlock(nullOrCodeBlock)
-        , m_lexer(characters, length, mode)
+        , m_lexer(characters, mode)
         , m_mode(mode)
     {
     }
@@ -134,10 +134,10 @@ public:
 private:
     class Lexer {
     public:
-        Lexer(const CharType* characters, unsigned length, ParserMode mode)
+        Lexer(std::span<const CharType> characters, ParserMode mode)
             : m_mode(mode)
-            , m_ptr(characters)
-            , m_end(characters + length)
+            , m_ptr(characters.data())
+            , m_end(characters.data() + characters.size())
         {
         }
         

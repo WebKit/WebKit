@@ -34,6 +34,10 @@ namespace IPC {
 class Decoder;
 class Encoder;
 
+#if HAVE(ONLY_MODERN_SERIALIZATION)
+template<typename T, typename = void> struct ArgumentCoder;
+#else
+
 template<typename T, typename I = T, typename = void> struct HasLegacyDecoder : std::false_type { };
 template<typename T, typename I> struct HasLegacyDecoder<T, I, std::void_t<decltype(I::decode(std::declval<Decoder&>(), std::declval<T&>()))>> : std::true_type { };
 template<typename T, typename I = T, typename = void> struct HasModernDecoder : std::false_type { };
@@ -79,6 +83,7 @@ template<typename T, typename = void> struct ArgumentCoder {
         }
     }
 };
+#endif // HAVE(ONLY_MODERN_SERIALIZATION)
 
 template<>
 struct ArgumentCoder<bool> {

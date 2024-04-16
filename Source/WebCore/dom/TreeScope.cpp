@@ -586,9 +586,9 @@ CSSStyleSheetObservableArray& TreeScope::ensureAdoptedStyleSheets()
     return *m_adoptedStyleSheets;
 }
 
-std::span<const RefPtr<CSSStyleSheet>> TreeScope::adoptedStyleSheets() const
+std::span<const Ref<CSSStyleSheet>> TreeScope::adoptedStyleSheets() const
 {
-    return m_adoptedStyleSheets ? m_adoptedStyleSheets->sheets().span() : std::span<const RefPtr<CSSStyleSheet>> { };
+    return m_adoptedStyleSheets ? m_adoptedStyleSheets->sheets().span() : std::span<const Ref<CSSStyleSheet>> { };
 }
 
 JSC::JSValue TreeScope::adoptedStyleSheetWrapper(JSDOMGlobalObject& lexicalGlobalObject)
@@ -596,7 +596,7 @@ JSC::JSValue TreeScope::adoptedStyleSheetWrapper(JSDOMGlobalObject& lexicalGloba
     return JSC::JSObservableArray::create(&lexicalGlobalObject, ensureAdoptedStyleSheets());
 }
 
-ExceptionOr<void> TreeScope::setAdoptedStyleSheets(Vector<RefPtr<CSSStyleSheet>>&& sheets)
+ExceptionOr<void> TreeScope::setAdoptedStyleSheets(Vector<Ref<CSSStyleSheet>>&& sheets)
 {
     if (!m_adoptedStyleSheets && sheets.isEmpty())
         return { };

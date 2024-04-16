@@ -1435,7 +1435,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/IntersectionObserver.idl \
     $(WebCore)/page/IntersectionObserverCallback.idl \
     $(WebCore)/page/IntersectionObserverEntry.idl \
-    $(WebCore)/page/LocalDOMWindow.idl \
     $(WebCore)/page/LocalDOMWindow+CSSOM.idl \
     $(WebCore)/page/LocalDOMWindow+CSSOMView.idl \
     $(WebCore)/page/LocalDOMWindow+Compat.idl \
@@ -1483,7 +1482,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/PerformanceResourceTiming.idl \
     $(WebCore)/page/PerformanceServerTiming.idl \
     $(WebCore)/page/PerformanceTiming.idl \
-    $(WebCore)/page/RemoteDOMWindow.idl \
     $(WebCore)/page/ResizeObserver.idl \
     $(WebCore)/page/ResizeObserverBoxOptions.idl \
     $(WebCore)/page/ResizeObserverCallback.idl \

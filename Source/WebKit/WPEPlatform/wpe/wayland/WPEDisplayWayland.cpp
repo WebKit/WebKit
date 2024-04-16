@@ -401,28 +401,18 @@ static WPEKeymap* wpeDisplayWaylandGetKeymap(WPEDisplay* display, GError** error
     return priv->wlSeat->keymap();
 }
 
-static GList* wpeDisplayWaylandGetPreferredDMABufFormats(WPEDisplay* display)
+static WPEBufferDMABufFormats* wpeDisplayWaylandGetPreferredDMABufFormats(WPEDisplay* display)
 {
     auto* priv = WPE_DISPLAY_WAYLAND(display)->priv;
     if (!priv->linuxDMABuf)
         return nullptr;
 
-    GList* preferredFormats = nullptr;
-    uint32_t previousFormat = 0;
-    GRefPtr<GArray> modifiers = adoptGRef(g_array_new(FALSE, TRUE, sizeof(guint64)));
-    auto linuxDMABufFormatsLength = priv->linuxDMABufFormats.size();
-    for (size_t i = 0; i < linuxDMABufFormatsLength; ++i) {
-        auto [format, modifier] = priv->linuxDMABufFormats[i];
-        g_array_append_val(modifiers.get(), modifier);
-        if (i && format != previousFormat) {
-            preferredFormats = g_list_prepend(preferredFormats, wpe_buffer_dma_buf_format_new(WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING, previousFormat, modifiers.get()));
-            modifiers = adoptGRef(g_array_new(FALSE, TRUE, sizeof(guint64)));
-        }
-        previousFormat = format;
-    }
-    if (previousFormat)
-        preferredFormats = g_list_prepend(preferredFormats, wpe_buffer_dma_buf_format_new(WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING, previousFormat, modifiers.get()));
-    return g_list_reverse(preferredFormats);
+    auto* builder = wpe_buffer_dma_buf_formats_builder_new(priv->drmDevice.data());
+    wpe_buffer_dma_buf_formats_builder_append_group(builder, nullptr, WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING);
+    for (const auto& format : priv->linuxDMABufFormats)
+        wpe_buffer_dma_buf_formats_builder_append_format(builder, format.first, format.second);
+
+    return wpe_buffer_dma_buf_formats_builder_end(builder);
 }
 
 static guint wpeDisplayWaylandGetNMonitors(WPEDisplay* display)

@@ -414,7 +414,7 @@ ExceptionOr<void> ViewTransition::captureNewState()
 
 void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const CapturedElement& capturedElement)
 {
-    auto& resolver = protectedDocument()->styleScope().resolver();
+    Ref resolver = protectedDocument()->styleScope().resolver();
 
     // image animation name rule
     {
@@ -426,7 +426,7 @@ void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const Captur
         Ref props = MutableStyleProperties::create();
         props->setProperty(CSSPropertyAnimationName, WTFMove(valueList));
 
-        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionOld, name, props);
+        resolver->setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionOld, name, props);
     }
 
     {
@@ -438,7 +438,7 @@ void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const Captur
         Ref props = MutableStyleProperties::create();
         props->setProperty(CSSPropertyAnimationName, WTFMove(valueList));
 
-        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionNew, name, props);
+        resolver->setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionNew, name, props);
     }
 
     if (!capturedElement.oldImage || !capturedElement.newElement)
@@ -450,7 +450,7 @@ void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const Captur
         Ref props = MutableStyleProperties::create();
         props->setProperty(CSSPropertyAnimationName, WTFMove(list));
 
-        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, name, props);
+        resolver->setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, name, props);
     }
 
     // image pair isolation rule
@@ -458,7 +458,7 @@ void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const Captur
         Ref props = MutableStyleProperties::create();
         props->setProperty(CSSPropertyIsolation, CSSPrimitiveValue::create(CSSValueID::CSSValueIsolate));
 
-        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionImagePair, name, props);
+        resolver->setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionImagePair, name, props);
     }
 
     if (!capturedElement.oldProperties)
@@ -478,7 +478,7 @@ void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const Captur
     keyframes->wrapperAppendKeyframe(WTFMove(keyframe));
 
     // We can add this to the normal namespace, since we recreate the resolver when the view-transition ends.
-    resolver.addKeyframeStyle(WTFMove(keyframes));
+    resolver->addKeyframeStyle(WTFMove(keyframes));
 }
 
 // https://drafts.csswg.org/css-view-transitions/#setup-transition-pseudo-elements
@@ -672,7 +672,7 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& e
 // https://drafts.csswg.org/css-view-transitions-1/#update-pseudo-element-styles
 ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
 {
-    auto& resolver = protectedDocument()->styleScope().resolver();
+    Ref resolver = protectedDocument()->styleScope().resolver();
 
     for (auto& [name, capturedElement] : m_namedElements.map()) {
         RefPtr<MutableStyleProperties> properties;
@@ -705,7 +705,7 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
             // group styles rule
             if (!capturedElement->groupStyleProperties) {
                 capturedElement->groupStyleProperties = properties;
-                resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, name, *properties);
+                resolver->setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, name, *properties);
             } else
                 capturedElement->groupStyleProperties->mergeAndOverrideOnConflict(*properties);
         }

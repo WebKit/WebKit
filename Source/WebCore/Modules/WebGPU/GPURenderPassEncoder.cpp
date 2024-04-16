@@ -150,12 +150,10 @@ void GPURenderPassEncoder::endOcclusionQuery()
     m_backing->endOcclusionQuery();
 }
 
-void GPURenderPassEncoder::executeBundles(Vector<RefPtr<GPURenderBundle>>&& bundles)
+void GPURenderPassEncoder::executeBundles(Vector<Ref<GPURenderBundle>>&& bundles)
 {
-    auto result = WTF::compactMap(bundles, [](auto& bundle) -> std::optional<std::reference_wrapper<WebGPU::RenderBundle>> {
-        if (bundle)
-            return bundle->backing();
-        return std::nullopt;
+    auto result = WTF::map(bundles, [](auto& bundle) -> std::reference_wrapper<WebGPU::RenderBundle> {
+        return bundle->backing();
     });
     m_backing->executeBundles(WTFMove(result));
 }

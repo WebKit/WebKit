@@ -160,7 +160,8 @@ size_t Plan::codeSize() const
 void Plan::finalizeInGC()
 {
     ASSERT(m_vm);
-    m_recordedStatuses.finalizeWithoutDeleting(*m_vm);
+    if (m_recordedStatuses)
+        m_recordedStatuses->finalizeWithoutDeleting(*m_vm);
 }
 
 void Plan::notifyReady()
@@ -190,7 +191,8 @@ void Plan::cancel()
 Plan::CompilationPath Plan::compileInThreadImpl()
 {
     {
-        CompilerTimingScope timingScope("DFG", "clean must handle values");
+        CompilerTimingScope timingScope("DFG", "initialize");
+        m_recordedStatuses = makeUnique<RecordedStatuses>();
         cleanMustHandleValuesIfNecessary();
     }
 
@@ -528,6 +530,8 @@ void Plan::finalizeInThread(Ref<JSC::JITCode> jitCode)
     m_watchpoints.countWatchpoints(m_codeBlock, m_identifiers, jitCode->dfgCommon());
     m_weakReferences.finalize();
     jitCode->shrinkToFit();
+    if (m_recordedStatuses)
+        m_recordedStatuses->shrinkToFit();
 }
 
 bool Plan::isStillValidCodeBlock()
@@ -556,10 +560,8 @@ bool Plan::reallyAdd(CommonData* commonData)
     m_transitions.reallyAdd(*m_vm, commonData);
     if (!m_watchpoints.reallyAdd(m_codeBlock, m_identifiers, commonData))
         return false;
-    {
-        ConcurrentJSLocker locker(m_codeBlock->m_lock);
-        commonData->recordedStatuses = WTFMove(m_recordedStatuses);
-    }
+
+    commonData->recordedStatuses = WTFMove(m_recordedStatuses);
 
     ASSERT(m_vm->heap.isDeferred());
     for (auto* callLinkInfo : commonData->m_directCallLinkInfos)
@@ -608,7 +610,7 @@ CompilationResult Plan::finalize()
             return CompilationInvalidated;
         }
 
-        if (validationEnabled()) {
+        if (UNLIKELY(validationEnabled())) {
             TrackedReferences trackedReferences;
 
             for (WriteBarrier<JSCell>& reference : m_codeBlock->jitCode()->dfgCommon()->m_weakReferences)
@@ -666,8 +668,10 @@ bool Plan::checkLivenessAndVisitChildren(AbstractSlotVisitor& visitor)
             visitor.appendUnbarriered(value.value());
     }
 
-    m_recordedStatuses.visitAggregate(visitor);
-    m_recordedStatuses.markIfCheap(visitor);
+    if (m_recordedStatuses) {
+        m_recordedStatuses->visitAggregate(visitor);
+        m_recordedStatuses->markIfCheap(visitor);
+    }
 
     visitor.appendUnbarriered(m_codeBlock->alternative());
     visitor.appendUnbarriered(m_profiledDFGCodeBlock);

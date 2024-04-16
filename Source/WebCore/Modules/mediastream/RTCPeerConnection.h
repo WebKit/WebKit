@@ -77,7 +77,7 @@ struct RTCSessionDescriptionInit;
 
 struct RTCRtpTransceiverInit {
     RTCRtpTransceiverDirection direction { RTCRtpTransceiverDirection::Sendrecv };
-    Vector<RefPtr<MediaStream>> streams;
+    Vector<Ref<MediaStream>> streams;
     Vector<RTCRtpEncodingParameters> sendEncodings;
 };
 

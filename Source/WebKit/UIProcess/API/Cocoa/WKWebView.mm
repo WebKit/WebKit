@@ -520,6 +520,8 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences().setSystemPreviewEnabled(!![_configuration _systemPreviewEnabled]);
 #endif
 #endif // PLATFORM(IOS_FAMILY)
+    pageConfiguration->preferences().setScrollToTextFragmentIndicatorEnabled(!![_configuration _scrollToTextFragmentIndicatorEnabled]);
+    pageConfiguration->preferences().setScrollToTextFragmentMarkingEnabled(!![_configuration _scrollToTextFragmentMarkingEnabled]);
 
     WKAudiovisualMediaTypes mediaTypesRequiringUserGesture = [_configuration mediaTypesRequiringUserActionForPlayback];
     pageConfiguration->preferences().setRequiresUserGestureForVideoPlayback((mediaTypesRequiringUserGesture & WKAudiovisualMediaTypeVideo) == WKAudiovisualMediaTypeVideo);

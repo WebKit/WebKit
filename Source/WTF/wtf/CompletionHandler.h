@@ -47,6 +47,7 @@ class CompletionHandler<Out(In...)> {
 public:
     using OutType = Out;
     using InTypes = std::tuple<In...>;
+    using Impl = typename Function<Out(In...)>::Impl;
 
     CompletionHandler() = default;
 
@@ -67,6 +68,8 @@ public:
     }
 
     explicit operator bool() const { return !!m_function; }
+
+    Impl* leak() { return m_function.leak(); }
 
     Out operator()(In... in)
     {
@@ -165,6 +168,11 @@ public:
 private:
     CompletionHandler<void()> m_completionHandler;
 };
+
+template<typename Out, typename... In> CompletionHandler<Out(In...)> adopt(typename CompletionHandler<Out(In...)>::Impl* impl)
+{
+    return Function<Out(In...)>(impl, Function<Out(In...)>::Adopt);
+}
 
 } // namespace WTF
 

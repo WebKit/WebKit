@@ -240,6 +240,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     [coder encodeInteger:self.userInterfaceDirectionPolicy forKey:@"userInterfaceDirectionPolicy"];
 #endif
+    [coder encodeBool:self._scrollToTextFragmentIndicatorEnabled forKey:@"scrollToTextFragmentIndicatorEnabled"];
+    [coder encodeBool:self._scrollToTextFragmentMarkingEnabled forKey:@"scrollToTextFragmentMarkingEnabled"];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder
@@ -284,6 +286,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (userInterfaceDirectionPolicyCandidate == WKUserInterfaceDirectionPolicyContent || userInterfaceDirectionPolicyCandidate == WKUserInterfaceDirectionPolicySystem)
         self.userInterfaceDirectionPolicy = userInterfaceDirectionPolicyCandidate;
 #endif
+    self._scrollToTextFragmentIndicatorEnabled = [coder decodeBoolForKey:@"scrollToTextFragmentIndicatorEnabled"];
+    self._scrollToTextFragmentMarkingEnabled = [coder decodeBoolForKey:@"scrollToTextFragmentMarkingEnabled"];
 
     return self;
 }
@@ -1193,6 +1197,26 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 #if ENABLE(APPLE_PAY)
     _pageConfiguration->setApplePayEnabled(applePayEnabled);
 #endif
+}
+
+- (BOOL)_scrollToTextFragmentIndicatorEnabled
+{
+    return _pageConfiguration->scrollToTextFragmentIndicatorEnabled();
+}
+
+- (void)_setScrollToTextFragmentIndicatorEnabled:(BOOL)enabled
+{
+    _pageConfiguration->setScrollToTextFragmentIndicatorEnabled(enabled);
+}
+
+- (BOOL)_scrollToTextFragmentMarkingEnabled
+{
+    return _pageConfiguration->scrollToTextFragmentMarkingEnabled();
+}
+
+- (void)_setScrollToTextFragmentMarkingEnabled:(BOOL)enabled
+{
+    _pageConfiguration->setScrollToTextFragmentMarkingEnabled(enabled);
 }
 
 - (BOOL)_needsStorageAccessFromFileURLsQuirk

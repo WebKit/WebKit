@@ -106,16 +106,16 @@ Vector<DMABufRendererBufferFormat> WebPageProxy::preferredBufferFormats() const
     if (!view)
         return { };
 
-    GList* formats = wpe_view_get_preferred_dma_buf_formats(view);
+    auto* formats = wpe_view_get_preferred_dma_buf_formats(view);
     if (!formats)
         return { };
 
     Vector<DMABufRendererBufferFormat> dmabufFormats;
-    dmabufFormats.reserveInitialCapacity(g_list_length(formats));
-    for (GList* i = formats; i; i = g_list_next(i)) {
-        auto* format = static_cast<WPEBufferDMABufFormat*>(i->data);
+    const char* mainDevice = wpe_buffer_dma_buf_formats_get_device(formats);
+    auto groupCount = wpe_buffer_dma_buf_formats_get_n_groups(formats);
+    for (unsigned i = 0; i < groupCount; ++i) {
         DMABufRendererBufferFormat dmabufFormat;
-        switch (wpe_buffer_dma_buf_format_get_usage(format)) {
+        switch (wpe_buffer_dma_buf_formats_get_group_usage(formats, i)) {
         case WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING:
             dmabufFormat.usage = DMABufRendererBufferFormat::Usage::Rendering;
             break;
@@ -126,15 +126,24 @@ Vector<DMABufRendererBufferFormat> WebPageProxy::preferredBufferFormats() const
             dmabufFormat.usage = DMABufRendererBufferFormat::Usage::Scanout;
             break;
         }
-        dmabufFormat.fourcc = wpe_buffer_dma_buf_format_get_fourcc(format);
-        auto* modifiers = wpe_buffer_dma_buf_format_get_modifiers(format);
-        dmabufFormat.modifiers.reserveInitialCapacity(modifiers->len);
-        for (guint i = 0; i < modifiers->len; ++i) {
-            guint64* mod = &g_array_index(modifiers, guint64, i);
-            dmabufFormat.modifiers.append(*mod);
+        const char* targetDevice = wpe_buffer_dma_buf_formats_get_group_device(formats, i);
+        dmabufFormat.drmDevice = targetDevice ? targetDevice : mainDevice;
+        auto formatsCount = wpe_buffer_dma_buf_formats_get_group_n_formats(formats, i);
+        dmabufFormat.formats.reserveInitialCapacity(formatsCount);
+        for (unsigned j = 0; j < formatsCount; ++j) {
+            DMABufRendererBufferFormat::Format format;
+            format.fourcc = wpe_buffer_dma_buf_formats_get_format_fourcc(formats, i, j);
+            auto* modifiers = wpe_buffer_dma_buf_formats_get_format_modifiers(formats, i, j);
+            format.modifiers.reserveInitialCapacity(modifiers->len);
+            for (unsigned k = 0; k < modifiers->len; ++k) {
+                auto* modifier = &g_array_index(modifiers, guint64, k);
+                format.modifiers.append(*modifier);
+            }
+            dmabufFormat.formats.append(WTFMove(format));
         }
         dmabufFormats.append(WTFMove(dmabufFormat));
     }
+
     return dmabufFormats;
 #else
     return { };

@@ -285,9 +285,17 @@ public:
     static bool treatAsSpace(char32_t c) { return c == space || c == tabCharacter || c == newlineCharacter || c == noBreakSpace; }
     static bool isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(char32_t character)
     {
-        // https://drafts.csswg.org/css-text-3/#white-space-processing
+        // https://www.w3.org/TR/css-text-3/#white-space-processing
+        // "Control characters (Unicode category Cc)—other than tabs (U+0009), line feeds (U+000A), carriage returns (U+000D) and sequences that form a segment break—must be rendered as a visible glyph"
+        if (character == tabCharacter || character == newlineCharacter || character == carriageReturn)
+            return true;
+        // Also, we're omitting Null (U+0000) from this set because Chrome and Firefox do so and it's needed for compat. See https://github.com/w3c/csswg-drafts/pull/6983.
+        if (character == nullCharacter)
+            return true;
+        if (isControlCharacter(character))
+            return false;
         // "Unsupported Default_ignorable characters must be ignored for text rendering."
-        return isControlCharacter(character) || isDefaultIgnorableCodePoint(character) || isInvisibleReplacementObjectCharacter(character);
+        return isDefaultIgnorableCodePoint(character) || isInvisibleReplacementObjectCharacter(character);
     }
     // FIXME: Callers of treatAsZeroWidthSpace() and treatAsZeroWidthSpaceInComplexScript() should probably be calling isCharacterWhoseGlyphsShouldBeDeletedForTextRendering() instead.
     static bool treatAsZeroWidthSpace(char32_t c) { return treatAsZeroWidthSpaceInComplexScript(c) || c == zeroWidthNonJoiner || c == zeroWidthJoiner; }

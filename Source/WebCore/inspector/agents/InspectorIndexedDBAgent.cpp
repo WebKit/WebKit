@@ -54,7 +54,7 @@
 #include "IDBTransaction.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
-#include "JSLocalDOMWindowCustom.h"
+#include "JSDOMWindowCustom.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "SecurityOrigin.h"

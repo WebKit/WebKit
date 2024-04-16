@@ -34,7 +34,6 @@
 
 namespace WebCore {
 
-class JSLocalDOMWindow;
 enum class RejectAsHandled : bool { No, Yes };
 
 #define DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, globalObject) do { \

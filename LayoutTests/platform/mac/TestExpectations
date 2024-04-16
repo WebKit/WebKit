@@ -2600,3 +2600,5 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [
 imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
+
+[ Monterey Ventura ] imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]

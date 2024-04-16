@@ -759,6 +759,9 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
         ]
         self.build.addStepsAfterCurrentStep(steps_to_add)
 
+        self.failedTestCount = self.countFailures()
+        self.failedTestPluralSuffix = "" if self.failedTestCount == 1 else "s"
+
         return super().run()
 
     def countFailures(self):

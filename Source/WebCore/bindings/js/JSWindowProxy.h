@@ -29,7 +29,6 @@
 #pragma once
 
 #include "JSDOMConvertInterface.h"
-#include "JSLocalDOMWindow.h"
 #include "WindowProxy.h"
 #include <JavaScriptCore/JSGlobalProxy.h>
 
@@ -64,13 +63,17 @@ public:
     DOMWindow& wrapped() const;
     static WindowProxy* toWrapped(JSC::VM&, JSC::JSValue);
 
-    DOMWrapperWorld& world() { return m_world; }
+    DOMWrapperWorld& world();
     Ref<DOMWrapperWorld> protectedWorld();
 
     void attachDebugger(JSC::Debugger*);
 
 private:
+    JSWindowProxy() = delete;
+    JSWindowProxy(const JSWindowProxy&) = delete;
+    JSWindowProxy(JSWindowProxy&&) = delete;
     JSWindowProxy(JSC::VM&, JSC::Structure&, DOMWrapperWorld&);
+    ~JSWindowProxy();
     void finishCreation(JSC::VM&, DOMWindow&);
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM&);
 

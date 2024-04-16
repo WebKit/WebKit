@@ -878,7 +878,7 @@ struct WebCore::ShareData {
     String title;
     String text;
     String url;
-    [NotSerialized] Vector<RefPtr<WebCore::File>> files;
+    [NotSerialized] Vector<Ref<WebCore::File>> files;
 };
 
 enum class WebCore::ShareDataOriginator : bool
@@ -1173,7 +1173,7 @@ struct WebCore::ApplePayDetailsUpdateBase {
 
 struct WebCore::ApplePayPaymentMethodUpdate : WebCore::ApplePayDetailsUpdateBase {
 #if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
-    Vector<RefPtr<WebCore::ApplePayError>> errors;
+    Vector<Ref<WebCore::ApplePayError>> errors;
     Vector<WebCore::ApplePayShippingMethod> newShippingMethods;
 #endif
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
@@ -1182,7 +1182,7 @@ struct WebCore::ApplePayPaymentMethodUpdate : WebCore::ApplePayDetailsUpdateBase
 };
 
 struct WebCore::ApplePayShippingContactUpdate : WebCore::ApplePayDetailsUpdateBase {
-    Vector<RefPtr<WebCore::ApplePayError>> errors;
+    Vector<Ref<WebCore::ApplePayError>> errors;
     Vector<WebCore::ApplePayShippingMethod> newShippingMethods;
 };
 
@@ -1194,7 +1194,7 @@ struct WebCore::ApplePayShippingMethodUpdate : WebCore::ApplePayDetailsUpdateBas
 
 struct WebCore::ApplePayPaymentAuthorizationResult {
     unsigned short status;
-    Vector<RefPtr<WebCore::ApplePayError>> errors;
+    Vector<Ref<WebCore::ApplePayError>> errors;
 #if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
     std::optional<WebCore::ApplePayPaymentOrderDetails> orderDetails;
 #endif
@@ -1273,7 +1273,7 @@ enum class WebCore::ApplePayInstallmentRetailChannel : uint8_t {
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
 struct WebCore::ApplePayCouponCodeUpdate : WebCore::ApplePayDetailsUpdateBase {
-    Vector<RefPtr<WebCore::ApplePayError>> errors;
+    Vector<Ref<WebCore::ApplePayError>> errors;
     Vector<WebCore::ApplePayShippingMethod> newShippingMethods;
 };
 #endif
@@ -7350,7 +7350,7 @@ headers: <JavaScriptCore/WasmModule.h> <WebCore/ImageBitmap.h> <WebCore/MessageP
     [NotSerialized] Vector<std::unique_ptr<WebCore::DetachedOffscreenCanvas>> detachedOffscreenCanvases;
     [NotSerialized] Vector<RefPtr<WebCore::OffscreenCanvas>> inMemoryOffscreenCanvases;
 #endif
-    [NotSerialized] Vector<RefPtr<WebCore::MessagePort>> inMemoryMessagePorts;
+    [NotSerialized] Vector<Ref<WebCore::MessagePort>> inMemoryMessagePorts;
 #if ENABLE(WEBASSEMBLY)
     [NotSerialized] std::unique_ptr<Vector<RefPtr<JSC::Wasm::Module>>> wasmModulesArray;
     [NotSerialized] std::unique_ptr<Vector<RefPtr<JSC::SharedArrayBufferContents>>> wasmMemoryHandlesArray;

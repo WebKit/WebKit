@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-static WTF::URL generateUniqueURL()
+static WTF::URL generateUserStyleUniqueURL()
 {
     static uint64_t identifier;
     return { { }, makeString("user-style:", ++identifier) };
@@ -38,7 +38,7 @@ static WTF::URL generateUniqueURL()
 
 UserStyleSheet::UserStyleSheet(const String& source, const URL& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level, std::optional<PageIdentifier> pageID)
     : m_source(source)
-    , m_url(url.isEmpty() ? generateUniqueURL() : url)
+    , m_url(url.isEmpty() ? generateUserStyleUniqueURL() : url)
     , m_allowlist(WTFMove(allowlist))
     , m_blocklist(WTFMove(blocklist))
     , m_injectedFrames(injectedFrames)

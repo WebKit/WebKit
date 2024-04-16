@@ -416,15 +416,15 @@ ExceptionOr<std::tuple<ApplePayLineItem, Vector<ApplePayLineItem>>> ApplePayPaym
     return {{ WTFMove(total), WTFMove(lineItems) }};
 }
 
-static inline void appendShippingContactInvalidError(String&& message, std::optional<ApplePayErrorContactField> contactField, Vector<RefPtr<ApplePayError>>& errors)
+static inline void appendShippingContactInvalidError(String&& message, std::optional<ApplePayErrorContactField> contactField, Vector<Ref<ApplePayError>>& errors)
 {
     if (!message.isNull())
         errors.append(ApplePayError::create(ApplePayErrorCode::ShippingContactInvalid, WTFMove(contactField), WTFMove(message)));
 }
 
-Vector<RefPtr<ApplePayError>> ApplePayPaymentHandler::computeErrors(String&& error, AddressErrors&& addressErrors, PayerErrorFields&& payerErrors, JSC::JSObject* paymentMethodErrors) const
+Vector<Ref<ApplePayError>> ApplePayPaymentHandler::computeErrors(String&& error, AddressErrors&& addressErrors, PayerErrorFields&& payerErrors, JSC::JSObject* paymentMethodErrors) const
 {
-    Vector<RefPtr<ApplePayError>> errors;
+    Vector<Ref<ApplePayError>> errors;
 
     auto& details = m_paymentRequest->paymentDetails();
 
@@ -443,9 +443,9 @@ Vector<RefPtr<ApplePayError>> ApplePayPaymentHandler::computeErrors(String&& err
     return errors;
 }
 
-Vector<RefPtr<ApplePayError>> ApplePayPaymentHandler::computeErrors(JSC::JSObject* paymentMethodErrors) const
+Vector<Ref<ApplePayError>> ApplePayPaymentHandler::computeErrors(JSC::JSObject* paymentMethodErrors) const
 {
-    Vector<RefPtr<ApplePayError>> errors;
+    Vector<Ref<ApplePayError>> errors;
 
     auto scope = DECLARE_CATCH_SCOPE(scriptExecutionContext()->vm());
     auto exception = computePaymentMethodErrors(paymentMethodErrors, errors);
@@ -457,7 +457,7 @@ Vector<RefPtr<ApplePayError>> ApplePayPaymentHandler::computeErrors(JSC::JSObjec
     return errors;
 }
 
-void ApplePayPaymentHandler::computeAddressErrors(String&& error, AddressErrors&& addressErrors, Vector<RefPtr<ApplePayError>>& errors) const
+void ApplePayPaymentHandler::computeAddressErrors(String&& error, AddressErrors&& addressErrors, Vector<Ref<ApplePayError>>& errors) const
 {
     if (!m_paymentRequest->paymentOptions().requestShipping)
         return;
@@ -473,7 +473,7 @@ void ApplePayPaymentHandler::computeAddressErrors(String&& error, AddressErrors&
     appendShippingContactInvalidError(WTFMove(addressErrors.region), ApplePayErrorContactField::AdministrativeArea, errors);
 }
 
-void ApplePayPaymentHandler::computePayerErrors(PayerErrorFields&& payerErrors, Vector<RefPtr<ApplePayError>>& errors) const
+void ApplePayPaymentHandler::computePayerErrors(PayerErrorFields&& payerErrors, Vector<Ref<ApplePayError>>& errors) const
 {
     auto& options = m_paymentRequest->paymentOptions();
 
@@ -487,7 +487,7 @@ void ApplePayPaymentHandler::computePayerErrors(PayerErrorFields&& payerErrors, 
         appendShippingContactInvalidError(WTFMove(payerErrors.phone), ApplePayErrorContactField::PhoneNumber, errors);
 }
 
-ExceptionOr<void> ApplePayPaymentHandler::computePaymentMethodErrors(JSC::JSObject* paymentMethodErrors, Vector<RefPtr<ApplePayError>>& errors) const
+ExceptionOr<void> ApplePayPaymentHandler::computePaymentMethodErrors(JSC::JSObject* paymentMethodErrors, Vector<Ref<ApplePayError>>& errors) const
 {
     if (!paymentMethodErrors)
         return { };
@@ -498,10 +498,7 @@ ExceptionOr<void> ApplePayPaymentHandler::computePaymentMethodErrors(JSC::JSObje
     if (throwScope.exception())
         return Exception { ExceptionCode::ExistingExceptionError };
 
-    for (auto&& applePayError : WTFMove(applePayErrors)) {
-        if (applePayError)
-            errors.append(WTFMove(applePayError));
-    }
+    errors.appendVector(WTFMove(applePayErrors));
 
     return { };
 }
@@ -673,7 +670,7 @@ ExceptionOr<void> ApplePayPaymentHandler::merchantValidationCompleted(JSC::JSVal
     return { };
 }
 
-ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(Vector<RefPtr<ApplePayError>>&& errors)
+ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(Vector<Ref<ApplePayError>>&& errors)
 {
     ASSERT(m_updateState == UpdateState::ShippingAddress);
     m_updateState = UpdateState::None;
@@ -772,7 +769,7 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingOptionUpdated()
     return { };
 }
 
-ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<RefPtr<ApplePayError>>&& errors)
+ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<Ref<ApplePayError>>&& errors)
 {
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     if (m_updateState == UpdateState::CouponCode) {
@@ -945,7 +942,7 @@ ExceptionOr<void> ApplePayPaymentHandler::complete(Document& document, std::opti
 
 ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& validationErrors)
 {
-    Vector<RefPtr<ApplePayError>> errors;
+    Vector<Ref<ApplePayError>> errors;
 
     computeAddressErrors(WTFMove(validationErrors.error), WTFMove(validationErrors.shippingAddress), errors);
     computePayerErrors(WTFMove(validationErrors.payer), errors);

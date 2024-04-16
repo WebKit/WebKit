@@ -172,7 +172,7 @@ void ElementInternals::setElementAttribute(const QualifiedName& name, Element* v
         cache->deferAttributeChangeIfNeeded(element.get(), name, oldValue, computeValueForAttribute(*element, name));
 }
 
-std::optional<Vector<RefPtr<Element>>> ElementInternals::getElementsArrayAttribute(const QualifiedName& name) const
+std::optional<Vector<Ref<Element>>> ElementInternals::getElementsArrayAttribute(const QualifiedName& name) const
 {
     RefPtr element = m_element.get();
     CheckedPtr defaultARIA = m_element->customElementDefaultARIAIfExists();
@@ -181,7 +181,7 @@ std::optional<Vector<RefPtr<Element>>> ElementInternals::getElementsArrayAttribu
     return defaultARIA->elementsForAttribute(*element, name);
 }
 
-void ElementInternals::setElementsArrayAttribute(const QualifiedName& name, std::optional<Vector<RefPtr<Element>>>&& value)
+void ElementInternals::setElementsArrayAttribute(const QualifiedName& name, std::optional<Vector<Ref<Element>>>&& value)
 {
     RefPtr element = m_element.get();
     auto oldValue = computeValueForAttribute(*element, name);

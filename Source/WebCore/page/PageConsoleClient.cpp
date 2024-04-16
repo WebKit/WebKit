@@ -118,6 +118,16 @@ void PageConsoleClient::unmute()
     muteCount--;
 }
 
+void PageConsoleClient::logMessageToSystemConsole(const Inspector::ConsoleMessage& consoleMessage)
+{
+    if (consoleMessage.type() == MessageType::Image) {
+        ASSERT(consoleMessage.arguments());
+        ConsoleClient::printConsoleMessageWithArguments(consoleMessage.source(), consoleMessage.type(), consoleMessage.level(), consoleMessage.arguments()->globalObject(), *consoleMessage.arguments());
+        return;
+    }
+    ConsoleClient::printConsoleMessage(consoleMessage.source(), consoleMessage.type(), consoleMessage.level(), consoleMessage.toString(), consoleMessage.url(), consoleMessage.line(), consoleMessage.column());
+}
+
 void PageConsoleClient::addMessage(std::unique_ptr<Inspector::ConsoleMessage>&& consoleMessage)
 {
     Ref page = m_page.get();
@@ -138,13 +148,8 @@ void PageConsoleClient::addMessage(std::unique_ptr<Inspector::ConsoleMessage>&& 
         page->chrome().client().addMessageToConsole(consoleMessage->source(), consoleMessage->level(), message, consoleMessage->line(), consoleMessage->column(), consoleMessage->url());
         page->chrome().client().addMessageWithArgumentsToConsole(consoleMessage->source(), consoleMessage->level(), message, additionalArguments, consoleMessage->line(), consoleMessage->column(), consoleMessage->url());
 
-        if (UNLIKELY(page->settings().logsPageMessagesToSystemConsoleEnabled() || shouldPrintExceptions())) {
-            if (consoleMessage->type() == MessageType::Image) {
-                ASSERT(consoleMessage->arguments());
-                ConsoleClient::printConsoleMessageWithArguments(consoleMessage->source(), consoleMessage->type(), consoleMessage->level(), consoleMessage->arguments()->globalObject(), *consoleMessage->arguments());
-            } else
-                ConsoleClient::printConsoleMessage(consoleMessage->source(), consoleMessage->type(), consoleMessage->level(), consoleMessage->toString(), consoleMessage->url(), consoleMessage->line(), consoleMessage->column());
-        }
+        if (UNLIKELY(page->settings().logsPageMessagesToSystemConsoleEnabled() || shouldPrintExceptions()))
+            logMessageToSystemConsole(*consoleMessage);
     }
 
     InspectorInstrumentation::addMessageToConsole(page, WTFMove(consoleMessage));

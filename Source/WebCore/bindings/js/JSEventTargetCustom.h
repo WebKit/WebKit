@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-// Wrapper type for JSEventTarget's castedThis because JSLocalDOMWindow and JSWorkerGlobalScope do not inherit JSEventTarget.
+// Wrapper type for JSEventTarget's castedThis because JSDOMWindow and JSWorkerGlobalScope do not inherit JSEventTarget.
 class JSEventTargetWrapper {
 public:
     JSEventTargetWrapper() = default;

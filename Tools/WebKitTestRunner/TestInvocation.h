@@ -90,9 +90,7 @@ public:
     void didSetPrevalentResource();
     void didSetVeryPrevalentResource();
     void didSetHasHadUserInteraction();
-    void didReceiveAllStorageAccessEntries(Vector<String>&& domains);
     void didReceiveLoadedSubresourceDomains(Vector<String>&& domains);
-    void didRemoveAllCookies();
 
     void didRemoveAllSessionCredentials();
 

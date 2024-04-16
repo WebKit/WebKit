@@ -370,6 +370,9 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     TextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TextSecurity::None;
     if (needsResetText || oldTransform != newStyle.textTransform() || oldSecurity != newStyle.textSecurity())
         RenderText::setText(originalText(), true);
+
+    if (diff >= StyleDifference::Repaint && layoutBox())
+        LayoutIntegration::LineLayout::updateStyle(*this);
 }
 
 void RenderText::removeAndDestroyTextBoxes()

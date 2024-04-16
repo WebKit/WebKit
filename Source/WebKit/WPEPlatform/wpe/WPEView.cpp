@@ -27,7 +27,7 @@
 #include "WPEView.h"
 
 #include "WPEBuffer.h"
-#include "WPEBufferDMABufFormat.h"
+#include "WPEBufferDMABufFormats.h"
 #include "WPEDisplayPrivate.h"
 #include "WPEEnumTypes.h"
 #include "WPEEvent.h"
@@ -51,7 +51,7 @@ struct _WPEViewPrivate {
     gdouble scale { 1 };
     WPEViewState state;
 #if USE(LIBDRM)
-    GList* overridenDMABufFormats;
+    GRefPtr<WPEBufferDMABufFormats> overridenDMABufFormats;
 #endif
 
     struct {
@@ -155,26 +155,12 @@ static void wpeViewConstructed(GObject* object)
     priv->height = 768;
 }
 
-#if USE(LIBDRM)
-static void wpeViewDispose(GObject* object)
-{
-    auto* priv = WPE_VIEW(object)->priv;
-
-    g_clear_list(&priv->overridenDMABufFormats, reinterpret_cast<GDestroyNotify>(wpe_buffer_dma_buf_format_free));
-
-    G_OBJECT_CLASS(wpe_view_parent_class)->dispose(object);
-}
-#endif
-
 static void wpe_view_class_init(WPEViewClass* viewClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(viewClass);
     objectClass->set_property = wpeViewSetProperty;
     objectClass->get_property = wpeViewGetProperty;
     objectClass->constructed = wpeViewConstructed;
-#if USE(LIBDRM)
-    objectClass->dispose = wpeViewDispose;
-#endif
 
     /**
      * WPEView:display:
@@ -833,15 +819,15 @@ void wpe_view_focus_out(WPEView* view)
  *
  * Get the list of preferred DMA-BUF buffer formats for @view.
  *
- * Returns: (transfer none) (element-type WPEBufferDMABufFormat) (nullable): a #GList of #WPEBufferDMABufFormat
+ * Returns: (transfer none) (nullable): a #WPEBufferDMABufFormats
  */
-GList* wpe_view_get_preferred_dma_buf_formats(WPEView* view)
+WPEBufferDMABufFormats* wpe_view_get_preferred_dma_buf_formats(WPEView* view)
 {
     g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
 
 #if USE(LIBDRM)
     if (view->priv->overridenDMABufFormats)
-        return view->priv->overridenDMABufFormats;
+        return view->priv->overridenDMABufFormats.get();
 
     const char* formatString = getenv("WPE_DMABUF_BUFFER_FORMAT");
     if (formatString && *formatString) {
@@ -849,8 +835,6 @@ GList* wpe_view_get_preferred_dma_buf_formats(WPEView* view)
         if (!tokens.isEmpty() && tokens[0].length() >= 2 && tokens[0].length() <= 4) {
             guint32 format = fourcc_code(tokens[0][0], tokens[0][1], tokens[0].length() > 2 ? tokens[0][2] : ' ', tokens[0].length() > 3 ? tokens[0][3] : ' ');
             guint64 modifier = tokens.size() > 1 ? g_ascii_strtoull(tokens[1].ascii().data(), nullptr, 10) : DRM_FORMAT_MOD_INVALID;
-            GRefPtr<GArray> modifiers = adoptGRef(g_array_sized_new(FALSE, TRUE, sizeof(guint64), 1));
-            g_array_append_val(modifiers.get(), modifier);
             WPEBufferDMABufFormatUsage usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING;
             if (tokens.size() > 2) {
                 if (tokens[2] == "rendering"_s)
@@ -860,8 +844,11 @@ GList* wpe_view_get_preferred_dma_buf_formats(WPEView* view)
                 else if (tokens[2] == "scanout"_s)
                     usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_SCANOUT;
             }
-            view->priv->overridenDMABufFormats = g_list_prepend(view->priv->overridenDMABufFormats, wpe_buffer_dma_buf_format_new(usage, format, modifiers.get()));
-            return view->priv->overridenDMABufFormats;
+            auto* builder = wpe_buffer_dma_buf_formats_builder_new(wpe_display_get_drm_render_node(wpe_view_get_display(view)));
+            wpe_buffer_dma_buf_formats_builder_append_group(builder, nullptr, usage);
+            wpe_buffer_dma_buf_formats_builder_append_format(builder, format, modifier);
+            view->priv->overridenDMABufFormats = adoptGRef(wpe_buffer_dma_buf_formats_builder_end(builder));
+            return view->priv->overridenDMABufFormats.get();
         }
 
         WTFLogAlways("Invalid format %s set in WPE_DMABUF_BUFFER_FORMAT, ignoring...", formatString);

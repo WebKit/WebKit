@@ -24,8 +24,8 @@
 #include "JSCSSStyleSheet.h"
 #include "JSDOMConvert.h"
 #include "JSDOMGlobalObjectInlines.h"
+#include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
-#include "JSLocalDOMWindowCustom.h"
 #include "JSXMLDocument.h"
 #include "LocalFrame.h"
 #include "NodeTraversal.h"
@@ -60,7 +60,7 @@ JSObject* cachedDocumentWrapper(JSGlobalObject& lexicalGlobalObject, JSDOMGlobal
     if (!window)
         return nullptr;
 
-    auto* documentGlobalObject = toJSDOMGlobalObject<JSLocalDOMWindow>(lexicalGlobalObject.vm(), toJS(&lexicalGlobalObject, *window));
+    auto* documentGlobalObject = toJSDOMGlobalObject<JSDOMWindow>(lexicalGlobalObject.vm(), toJS(&lexicalGlobalObject, *window));
     if (!documentGlobalObject)
         return nullptr;
 

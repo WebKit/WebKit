@@ -238,7 +238,7 @@ class Dashboard {
 
         let parameters = mergeQueries(this.parameters, this.documentParams());
         if (!Object.hasOwn(parameters, 'limit'))
-            parameters.limit = ['30'];
+            parameters.limit = ['150'];
 
         if (Object.hasOwn(this.parameters, 'branch'))
             this.commit_bank = CommitBank.forBranch(this.parameters.branch);

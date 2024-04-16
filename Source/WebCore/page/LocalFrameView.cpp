@@ -2281,9 +2281,11 @@ bool LocalFrameView::scrollToFragment(const URL& url)
             auto parsedTextDirectives = fragmentDirectiveParser.parsedTextDirectives();
             
             auto highlightRanges = FragmentDirectiveRangeFinder::findRangesFromTextDirectives(parsedTextDirectives, document);
-            for (auto range : highlightRanges)
-                document->fragmentHighlightRegistry().addAnnotationHighlightWithRange(StaticRange::create(range));
-            
+            if (m_frame->settings().scrollToTextFragmentMarkingEnabled()) {
+                for (auto range : highlightRanges)
+                    document->fragmentHighlightRegistry().addAnnotationHighlightWithRange(StaticRange::create(range));
+            }
+
             if (highlightRanges.size()) {
                 auto range = highlightRanges.first();
                 RefPtr commonAncestor = commonInclusiveAncestor<ComposedTree>(range);
@@ -2401,7 +2403,7 @@ void LocalFrameView::maintainScrollPositionAtScrollToTextFragmentRange(SimpleRan
 
 void LocalFrameView::scrollElementToRect(const Element& element, const IntRect& rect)
 {
-    m_frame->document()->updateLayoutIgnorePendingStylesheets();
+    m_frame->protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
     LayoutRect bounds;
     if (RenderElement* renderer = element.renderer())
@@ -3971,7 +3973,7 @@ void LocalFrameView::performFixedWidthAutoSize()
 {
     LOG(Layout, "LocalFrameView %p performFixedWidthAutoSize", this);
 
-    auto* document = m_frame->document();
+    RefPtr document = m_frame->document();
     auto* renderView = document->renderView();
     auto* firstChild = renderView->firstChild();
 

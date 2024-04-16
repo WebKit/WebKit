@@ -143,7 +143,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
         if (protectedForm) {
             // Update layout before processing form actions in case the style changes
             // the Form or button relationships.
-            document().updateLayoutIgnorePendingStylesheets();
+            protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
             if (auto currentForm = form()) {
                 if (m_type == SUBMIT)

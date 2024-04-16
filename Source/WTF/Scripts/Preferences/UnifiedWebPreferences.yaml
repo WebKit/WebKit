@@ -3678,6 +3678,8 @@ LinearMediaPlayerEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      # FIXME: this line can be removed when WebKitSwift is available in Simulators (see rdar://125735304)
+      "PLATFORM(IOS_FAMILY_SIMULATOR)": false
       default: true
     WebCore:
       default: false
@@ -5651,6 +5653,19 @@ ScrollToTextFragmentIndicatorEnabled:
   status: embedder
   humanReadableName: "Scroll To Text Fragment Indicator"
   humanReadableDescription: "Enable Scroll To Text Fragment Indicator"
+  defaultValue:
+    WebKit:
+      default: true
+    WebKitLegacy:
+      default: true
+    WebCore:
+      default: true
+
+ScrollToTextFragmentMarkingEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Scroll To Text Fragment Marking"
+  humanReadableDescription: "Enable Scroll To Text Fragment Marking"
   defaultValue:
     WebKit:
       default: true

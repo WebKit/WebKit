@@ -1372,7 +1372,6 @@ set(WebCore_NON_SVG_IDL_FILES
     page/LocalDOMWindow+RequestIdleCallback.idl
     page/LocalDOMWindow+Selection.idl
     page/LocalDOMWindow+VisualViewport.idl
-    page/LocalDOMWindow.idl
     page/Location.idl
     page/NavigateEvent.idl
     page/Navigation.idl
@@ -1411,7 +1410,6 @@ set(WebCore_NON_SVG_IDL_FILES
     page/PerformanceResourceTiming.idl
     page/PerformanceServerTiming.idl
     page/PerformanceTiming.idl
-    page/RemoteDOMWindow.idl
     page/ResizeObserver.idl
     page/ResizeObserverBoxOptions.idl
     page/ResizeObserverCallback.idl

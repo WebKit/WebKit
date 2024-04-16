@@ -1057,11 +1057,11 @@ bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, 
         }
 
         // When appending media containing B-frames (media whose samples' presentation timestamps
-        // do not increase monotonically, the prior erase steps could leave a sample in the trackBuffer
+        // do not increase monotonically, the prior erase steps could leave samples in the trackBuffer
         // which will be disconnected from its previous I-frame. If the incoming frame is an I-frame,
         // remove all samples in decode order between the incoming I-frame's decode timestamp and the
-        // next I-frame. See <https://github.com/w3c/media-source/issues/187> for a discussion of what
-        // the how the MSE specification should handlie this secnario.
+        // next I-frame that is presented after the incoming I-frame. See <https://github.com/w3c/media-source/issues/187>
+        // for a discussion of how the MSE specification should handle this scenario.
         do {
             if (!sample->isSync())
                 break;
@@ -1071,10 +1071,13 @@ bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, 
             if (nextSampleInDecodeOrder == trackBuffer.samples().decodeOrder().end())
                 break;
 
-            if (nextSampleInDecodeOrder->second->isSync())
+            if (nextSampleInDecodeOrder->second->isSync() && nextSampleInDecodeOrder->second->presentationTime() > sample->presentationTime())
                 break;
 
             auto nextSyncSample = trackBuffer.samples().decodeOrder().findSyncSampleAfterDecodeIterator(nextSampleInDecodeOrder);
+            while (nextSyncSample != trackBuffer.samples().decodeOrder().end() && nextSyncSample->second->presentationTime() <= sample->presentationTime())
+                nextSyncSample = trackBuffer.samples().decodeOrder().findSyncSampleAfterDecodeIterator(nextSyncSample);
+
             INFO_LOG(LOGIDENTIFIER, "Discovered out-of-order frames, from: ", nextSampleInDecodeOrder->second.get(), " to: ", (nextSyncSample == trackBuffer.samples().decodeOrder().end() ? "[end]"_s : toString(nextSyncSample->second.get())));
             erasedSamples.addRange(nextSampleInDecodeOrder, nextSyncSample);
         } while (false);

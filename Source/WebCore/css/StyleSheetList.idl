@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -18,14 +18,18 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://drafts.csswg.org/cssom/#the-stylesheetlist-interface
+
 [
     ExportToWrappedFunction,
     Exposed=Window,
     GenerateIsReachable=ImplOwnerNodeRoot,
 ] interface StyleSheetList {
-    readonly attribute unsigned long length;
+    // FIXME: `getter` should be `CSSStyleSheet` instead of `StyleSheet`.
     getter StyleSheet? item(unsigned long index);
+    readonly attribute unsigned long length;
 
+    // Non-standard API.
     // FIXME: https://drafts.csswg.org/cssom/#the-stylesheetlist-interface does not
     // specify a named getter for StyleSheetList. We should investigate removing this.
     getter CSSStyleSheet (DOMString name);

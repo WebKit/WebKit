@@ -3193,7 +3193,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     auto forcedLayout = ForcedLayout::No;
 
     if (updateLayout == UpdateLayout::Yes) {
-        Document& document = m_element->document();
+        Ref document = m_element->document();
 
         updateStyleIfNeededForProperty(*styledElement, propertyID);
         if (propertyID == CSSPropertyDisplay && !styledRenderer()) {
@@ -3211,22 +3211,22 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             // FIXME: Why?
             if (styledElement->isInShadowTree())
                 return ForcedLayout::Yes;
-            if (!document.ownerElement())
+            if (!document->ownerElement())
                 return ForcedLayout::No;
-            if (!document.styleScope().resolverIfExists())
+            if (!document->styleScope().resolverIfExists())
                 return ForcedLayout::No;
-            if (auto& ruleSets = document.styleScope().resolverIfExists()->ruleSets(); ruleSets.hasViewportDependentMediaQueries() || ruleSets.hasContainerQueries())
+            if (auto& ruleSets = document->styleScope().resolverIfExists()->ruleSets(); ruleSets.hasViewportDependentMediaQueries() || ruleSets.hasContainerQueries())
                 return ForcedLayout::Yes;
             // FIXME: Can we limit this to properties whose computed length value derived from a viewport unit?
-            if (document.hasStyleWithViewportUnits())
+            if (document->hasStyleWithViewportUnits())
                 return ForcedLayout::ParentDocument;
             return ForcedLayout::No;
         }();
 
         if (forcedLayout == ForcedLayout::Yes)
-            document.updateLayoutIgnorePendingStylesheets(LayoutOptions::ContentVisibilityForceLayout, m_element.get());
+            document->updateLayoutIgnorePendingStylesheets(LayoutOptions::ContentVisibilityForceLayout, m_element.get());
         else if (forcedLayout == ForcedLayout::ParentDocument) {
-            if (RefPtr owner = document.ownerElement())
+            if (RefPtr owner = document->ownerElement())
                 owner->document().updateLayout();
             else
                 forcedLayout = ForcedLayout::No;

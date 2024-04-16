@@ -44,7 +44,7 @@ class InlineInvalidation {
 public:
     InlineInvalidation(InlineDamage&, const InlineItemList&, const InlineDisplay::Content&);
 
-    void styleChanged(const Box&, const RenderStyle& oldStyle);
+    bool styleWillChange(const Box&, const RenderStyle& newStyle);
 
     bool textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset = { });
     bool textWillBeRemoved(const InlineTextBox&, std::optional<size_t> offset = { });

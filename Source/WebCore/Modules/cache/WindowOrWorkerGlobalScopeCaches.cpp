@@ -124,15 +124,19 @@ DOMCacheStorage* WorkerGlobalScopeCaches::caches() const
 
 // WindowOrWorkerGlobalScopeCaches.
 
-ExceptionOr<DOMCacheStorage*> WindowOrWorkerGlobalScopeCaches::caches(ScriptExecutionContext& context, LocalDOMWindow& window)
+ExceptionOr<DOMCacheStorage*> WindowOrWorkerGlobalScopeCaches::caches(ScriptExecutionContext& context, DOMWindow& window)
 {
     if (downcast<Document>(context).isSandboxed(SandboxOrigin))
         return Exception { ExceptionCode::SecurityError, "Cache storage is disabled because the context is sandboxed and lacks the 'allow-same-origin' flag"_s };
 
-    if (!window.isCurrentlyDisplayedInFrame())
+    RefPtr localWindow = dynamicDowncast<LocalDOMWindow>(window);
+    if (!localWindow)
         return nullptr;
 
-    return DOMWindowCaches::from(window)->caches();
+    if (!localWindow->isCurrentlyDisplayedInFrame())
+        return nullptr;
+
+    return DOMWindowCaches::from(*localWindow)->caches();
 }
 
 DOMCacheStorage* WindowOrWorkerGlobalScopeCaches::caches(ScriptExecutionContext&, WorkerGlobalScope& scope)

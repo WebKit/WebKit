@@ -128,6 +128,18 @@ template<bool characterPredicate(UChar)> void skipUntil(const UChar*& position, 
         ++position;
 }
 
+template<bool characterPredicate(LChar)> void skipUntil(std::span<const LChar>& buffer)
+{
+    while (!buffer.empty() && !characterPredicate(buffer.front()))
+        buffer = buffer.subspan(1);
+}
+
+template<bool characterPredicate(UChar)> void skipUntil(std::span<const UChar>& buffer)
+{
+    while (!buffer.empty() && !characterPredicate(buffer.front()))
+        buffer = buffer.subspan(1);
+}
+
 template<bool characterPredicate(LChar)> void skipUntil(StringParsingBuffer<LChar>& buffer)
 {
     while (buffer.hasCharactersRemaining() && !characterPredicate(*buffer))

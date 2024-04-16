@@ -195,10 +195,10 @@ static NSError *toNSError(const WebCore::ApplePayError& error)
     return [NSError errorWithDomain:PKPaymentErrorDomain code:toPKPaymentErrorCode(error.code()) userInfo:userInfo.get()];
 }
 
-static RetainPtr<NSArray> toNSErrors(const Vector<RefPtr<WebCore::ApplePayError>>& errors)
+static RetainPtr<NSArray> toNSErrors(const Vector<Ref<WebCore::ApplePayError>>& errors)
 {
     return createNSArray(errors, [] (auto& error) -> NSError * {
-        return error ? toNSError(*error) : nil;
+        return toNSError(error);
     });
 }
 

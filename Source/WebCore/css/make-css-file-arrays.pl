@@ -41,6 +41,9 @@ shift;
 open HEADER, ">", $header or die;
 open OUT, ">", $out or die;
 
+print HEADER "#include <array>\n";
+print OUT "#include <array>\n";
+
 print HEADER "namespace WebCore {\n";
 print OUT "namespace WebCore {\n";
 

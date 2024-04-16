@@ -482,7 +482,8 @@ private:
     void initialize();
     void repatchSpeculatively();
 
-    std::tuple<CodeBlock*, CodePtr<JSEntryPtrTag>> retrieveCallInfo(FunctionExecutable*);
+    CodeBlock* retrieveCodeBlock(FunctionExecutable*);
+    CodePtr<JSEntryPtrTag> retrieveCodePtr(const ConcurrentJSLocker&, CodeBlock*);
 
     CallType m_callType : 4;
     UseDataIC m_useDataIC : 1;

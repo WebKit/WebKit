@@ -28,6 +28,8 @@ PASS Parsing: <file:/example.com/> without base
 PASS Parsing: <file:...> against <http://www.example.com/test>
 PASS Parsing: <file:..> against <http://www.example.com/test>
 PASS Parsing: <file:a> against <http://www.example.com/test>
+PASS Parsing: <file:.> without base
+PASS Parsing: <file:.> against <http://www.example.com/test>
 PASS Parsing: <file:///C%3A/> without base
 PASS Parsing: <file:///C%7C/> without base
 PASS Parsing: <file://%43%3A> without base

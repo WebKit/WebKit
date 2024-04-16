@@ -811,69 +811,69 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
 }
 
 template <typename CharType>
-static bool transformCanLikelyUseFastPath(const CharType* chars, unsigned length)
+static bool transformCanLikelyUseFastPath(std::span<const CharType> characters)
 {
     // Very fast scan that attempts to reject most transforms that couldn't
     // take the fast path. This avoids doing the malloc and string->double
     // conversions in parseSimpleTransformValue only to discard them when we
     // run into a transform component we don't understand.
-    unsigned i = 0;
-    while (i < length) {
-        if (isCSSSpace(chars[i])) {
+    size_t i = 0;
+    while (i < characters.size()) {
+        if (isCSSSpace(characters[i])) {
             ++i;
             continue;
         }
 
-        if (length - i < kShortestValidTransformStringLength)
+        if (characters.size() - i < kShortestValidTransformStringLength)
             return false;
         
-        switch (toASCIILower(chars[i])) {
+        switch (toASCIILower(characters[i])) {
         case 't':
             // translate, translateX, translateY, translateZ, translate3d.
-            if (toASCIILower(chars[i + 8]) != 'e')
+            if (toASCIILower(characters[i + 8]) != 'e')
                 return false;
             i += 9;
             break;
         case 'm':
             // matrix3d.
-            if (toASCIILower(chars[i + 7]) != 'd')
+            if (toASCIILower(characters[i + 7]) != 'd')
                 return false;
             i += 8;
             break;
         case 's':
             // scale3d.
-            if (toASCIILower(chars[i + 6]) != 'd')
+            if (toASCIILower(characters[i + 6]) != 'd')
                 return false;
             i += 7;
             break;
         case 'r':
             // rotate.
-            if (toASCIILower(chars[i + 5]) != 'e')
+            if (toASCIILower(characters[i + 5]) != 'e')
                 return false;
             i += 6;
             // rotateZ
-            if (toASCIILower(chars[i]) == 'z')
+            if (toASCIILower(characters[i]) == 'z')
                 ++i;
             break;
 
         default:
             return false;
         }
-        size_t argumentsEnd = find({ chars, length }, ')', i);
+        size_t argumentsEnd = find(characters, ')', i);
         if (argumentsEnd == notFound)
             return false;
         // Advance to the end of the arguments.
         i = argumentsEnd + 1;
     }
-    return i == length;
+    return i == characters.size();
 }
 
-template<typename CharacterType> static RefPtr<CSSValue> parseSimpleTransformList(const CharacterType* characters, unsigned length)
+template<typename CharacterType> static RefPtr<CSSValue> parseSimpleTransformList(std::span<const CharacterType> characters)
 {
-    if (!transformCanLikelyUseFastPath(characters, length))
+    if (!transformCanLikelyUseFastPath(characters))
         return nullptr;
-    auto* pos = characters;
-    auto* end = characters + length;
+    auto* pos = characters.data();
+    auto* end = characters.data() + characters.size();
     CSSValueListBuilder builder;
     while (pos < end) {
         while (pos < end && isCSSSpace(*pos))
@@ -896,8 +896,8 @@ static RefPtr<CSSValue> parseSimpleTransform(CSSPropertyID propertyID, StringVie
     if (propertyID != CSSPropertyTransform)
         return nullptr;
     if (string.is8Bit())
-        return parseSimpleTransformList(string.characters8(), string.length());
-    return parseSimpleTransformList(string.characters16(), string.length());
+        return parseSimpleTransformList(string.span8());
+    return parseSimpleTransformList(string.span16());
 }
 
 static RefPtr<CSSValue> parseDisplay(StringView string)

@@ -277,6 +277,7 @@ TEST(WebCoreLayoutUnit, FromFloatCeil)
     ASSERT_EQ(LayoutUnit(1.25f + tolerance), LayoutUnit::fromFloatCeil(1.25f + tolerance / 2));
     ASSERT_EQ(LayoutUnit(), LayoutUnit::fromFloatCeil(-tolerance / 2));
 
+#if !COMPILER(MSVC)
     using Limits = std::numeric_limits<float>;
     // Larger than max()
     ASSERT_EQ(LayoutUnit::max(), LayoutUnit::fromFloatCeil(Limits::max()));
@@ -284,6 +285,7 @@ TEST(WebCoreLayoutUnit, FromFloatCeil)
     // Smaller than Min()
     ASSERT_EQ(LayoutUnit::min(), LayoutUnit::fromFloatCeil(Limits::lowest()));
     ASSERT_EQ(LayoutUnit::min(), LayoutUnit::fromFloatCeil(-Limits::infinity()));
+#endif
 }
 
 TEST(WebCoreLayoutUnit, FromFloatFloor)
@@ -292,6 +294,7 @@ TEST(WebCoreLayoutUnit, FromFloatFloor)
     ASSERT_EQ(LayoutUnit(1.25f), LayoutUnit::fromFloatFloor(1.25f + tolerance / 2));
     ASSERT_EQ(LayoutUnit(-tolerance), LayoutUnit::fromFloatFloor(-tolerance / 2));
 
+#if !COMPILER(MSVC)
     using Limits = std::numeric_limits<float>;
     // Larger than max()
     ASSERT_EQ(LayoutUnit::max(), LayoutUnit::fromFloatFloor(Limits::max()));
@@ -299,6 +302,7 @@ TEST(WebCoreLayoutUnit, FromFloatFloor)
     // Smaller than min()
     ASSERT_EQ(LayoutUnit::min(), LayoutUnit::fromFloatFloor(Limits::lowest()));
     ASSERT_EQ(LayoutUnit::min(), LayoutUnit::fromFloatFloor(-Limits::infinity()));
+#endif
 }
 
 TEST(WebCoreLayoutUnit, FromFloatRound)

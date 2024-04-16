@@ -930,7 +930,7 @@ TEST(IPCSerialization, Basic)
     };
 
     // CFCharacterSet
-    auto characterSet = adoptCF(CFCharacterSetGetPredefined(kCFCharacterSetWhitespaceAndNewline));
+    RetainPtr characterSet = CFCharacterSetGetPredefined(kCFCharacterSetWhitespaceAndNewline);
     runTestCF({ characterSet.get() });
 
     // NSNumber

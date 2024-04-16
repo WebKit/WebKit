@@ -66,16 +66,10 @@ public:
     void setOpener(WindowProxy*);
     void frameDetached();
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
-    ExceptionOr<void> postMessage(JSC::JSGlobalObject& globalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
-    {
-        return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { WTFMove(targetOrigin), WTFMove(transfer) });
-    }
 
 private:
     WEBCORE_EXPORT RemoteDOMWindow(RemoteFrame&, GlobalWindowIdentifier&&);
 
-    bool isRemoteDOMWindow() const final { return true; }
-    bool isLocalDOMWindow() const final { return false; }
     void closePage() final;
     void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking) final;
 

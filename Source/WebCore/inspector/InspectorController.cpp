@@ -55,9 +55,8 @@
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMBindingSecurity.h"
+#include "JSDOMWindow.h"
 #include "JSExecState.h"
-#include "JSLocalDOMWindow.h"
-#include "JSLocalDOMWindowCustom.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Page.h"
@@ -482,7 +481,7 @@ bool InspectorController::canAccessInspectedScriptState(JSC::JSGlobalObject* lex
 {
     JSLockHolder lock(lexicalGlobalObject);
 
-    auto* inspectedWindow = jsDynamicCast<JSLocalDOMWindow*>(lexicalGlobalObject);
+    auto* inspectedWindow = jsDynamicCast<JSDOMWindow*>(lexicalGlobalObject);
     if (!inspectedWindow)
         return false;
 

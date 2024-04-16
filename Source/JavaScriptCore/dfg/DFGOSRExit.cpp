@@ -207,7 +207,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame, v
             patchBuffer, OSRExitPtrTag, nullptr,
             "DFG OSR exit #%u (D@%u, %s, %s) from %s, with operands = %s",
                 exitIndex, exit.m_dfgNodeIndex, toCString(exit.m_codeOrigin).data(),
-                exitKindToString(exit.m_kind), toCString(*codeBlock).data(),
+                exitKindToString(exit.m_kind).characters8(), toCString(*codeBlock).data(),
                 toCString(ignoringContext<DumpContext>(operands)).data());
         codeBlock->dfgJITData()->setExitCode(exitIndex, exitCode);
     }

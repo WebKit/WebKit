@@ -121,9 +121,38 @@ private:
     };
 
 #if USE(GBM)
+    struct BufferFormat {
+        BufferFormat() = default;
+        ~BufferFormat() = default;
+        BufferFormat(const BufferFormat&) = delete;
+        BufferFormat& operator=(const BufferFormat&) = delete;
+        BufferFormat(BufferFormat&& other)
+        {
+            *this = WTFMove(other);
+        }
+        BufferFormat& operator=(BufferFormat&& other)
+        {
+            usage = std::exchange(other.usage, DMABufRendererBufferFormat::Usage::Rendering);
+            drmDevice = WTFMove(other.drmDevice);
+            fourcc = std::exchange(other.fourcc, 0);
+            modifiers = WTFMove(other.modifiers);
+            return *this;
+        }
+
+        bool operator==(const BufferFormat& other) const
+        {
+            return usage == other.usage && drmDevice == other.drmDevice && fourcc == other.fourcc && modifiers == other.modifiers;
+        }
+
+        DMABufRendererBufferFormat::Usage usage { DMABufRendererBufferFormat::Usage::Rendering };
+        CString drmDevice;
+        uint32_t fourcc { 0 };
+        Vector<uint64_t, 1> modifiers;
+    };
+
     class RenderTargetEGLImage final : public RenderTargetColorBuffer {
     public:
-        static std::unique_ptr<RenderTarget> create(uint64_t, const WebCore::IntSize&, const DMABufRendererBufferFormat&);
+        static std::unique_ptr<RenderTarget> create(uint64_t, const WebCore::IntSize&, const BufferFormat&);
         RenderTargetEGLImage(uint64_t, const WebCore::IntSize&, EGLImage, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier, DMABufRendererBufferFormat::Usage);
         ~RenderTargetEGLImage();
 
@@ -196,7 +225,7 @@ private:
         Vector<std::unique_ptr<RenderTarget>, s_maximumBuffers> m_lockedTargets;
 #if USE(GBM)
         Lock m_dmabufFormatLock;
-        DMABufRendererBufferFormat m_dmabufFormat WTF_GUARDED_BY_LOCK(m_dmabufFormatLock);
+        BufferFormat m_dmabufFormat WTF_GUARDED_BY_LOCK(m_dmabufFormatLock);
         bool m_dmabufFormatChanged WTF_GUARDED_BY_LOCK(m_dmabufFormatLock) { false };
 #endif
     };

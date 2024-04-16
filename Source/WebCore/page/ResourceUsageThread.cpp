@@ -29,7 +29,6 @@
 #if ENABLE(RESOURCE_USAGE)
 
 #include "CommonVM.h"
-#include "JSLocalDOMWindow.h"
 #include <thread>
 #include <wtf/MainThread.h>
 #include <wtf/Vector.h>

@@ -229,13 +229,21 @@ void LineLayout::updateInlineContentDimensions()
     m_boxGeometryUpdater.setGeometriesForLayout();
 }
 
-void LineLayout::updateStyle(const RenderBoxModelObject& renderer, const RenderStyle& oldStyle)
+void LineLayout::updateStyle(const RenderObject& renderer)
 {
-    if (m_inlineContent) {
-        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() };
-        invalidation.styleChanged(m_boxTree.layoutBoxForRenderer(renderer), oldStyle);
+    BoxTree::updateStyle(renderer);
+}
+
+bool LineLayout::styleWillChange(const RenderElement& renderer, const RenderStyle& newStyle)
+{
+    if (!renderer.layoutBox()) {
+        ASSERT_NOT_REACHED();
+        return false;
     }
-    m_boxTree.updateStyle(renderer);
+    if (!m_inlineContent)
+        return false;
+
+    return Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() }.styleWillChange(*renderer.layoutBox(), newStyle);
 }
 
 void LineLayout::updateOverflow()

@@ -30,7 +30,6 @@
 #include "CommonVM.h"
 #include "Document.h"
 #include "FrameLoader.h"
-#include "JSLocalDOMWindow.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"

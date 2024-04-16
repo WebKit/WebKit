@@ -295,6 +295,7 @@ private:
     ExtensionCapabilityGrantMap m_extensionCapabilityGrants;
 #endif
 #if ENABLE(CFPREFS_DIRECT_MODE)
+    HashMap<String, std::optional<String>> m_domainlessPreferencesUpdatedWhileSuspended;
     HashMap<std::pair<String /* domain */, String /* key */>, std::optional<String>> m_preferencesUpdatedWhileSuspended;
 #endif
 };
