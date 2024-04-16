@@ -2495,6 +2495,7 @@ public:
         case StringCharAt:
         case StringCharCodeAt:
         case StringCodePointAt:
+        case StringAt:
         case CheckArray:
         case CheckArrayOrEmpty:
         case Arrayify:

@@ -395,6 +395,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case StringCharAt:
     case StringCharCodeAt:
     case StringCodePointAt:
+    case StringAt:
         return node->arrayMode().alreadyChecked(graph, node, state.forNode(graph.child(node, 0)));
 
     case ArrayPush:

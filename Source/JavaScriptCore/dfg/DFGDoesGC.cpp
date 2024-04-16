@@ -356,6 +356,7 @@ bool doesGC(Graph& graph, Node* node)
     case ResolveScopeForHoistingFuncDeclInEval:
     case Return:
     case StringCharAt:
+    case StringAt:
     case StringLocaleCompare:
     case TailCall:
     case TailCallForwardVarargs:

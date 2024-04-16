@@ -1293,6 +1293,9 @@ private:
         case MakeAtomString:
             compileMakeAtomString();
             break;
+        case StringAt:
+            compileStringAt();
+            break;
         case StringCharAt:
             compileStringCharAt();
             break;
@@ -9975,16 +9978,19 @@ IGNORE_CLANG_WARNINGS_END
     LValue compileStringCharAtImpl()
     {
         LValue base = lowString(m_graph.child(m_node, 0));
-        LValue index = lowInt32(m_graph.child(m_node, 1));
+        LValue originalIndex = lowInt32(m_graph.child(m_node, 1));
+
+        LValue stringImpl = m_out.loadPtr(base, m_heaps.JSString_value);
+        LValue stringLength = m_out.load32NonNegative(stringImpl, m_heaps.StringImpl_length);
+
+        LValue index = m_node->op() == StringAt ? m_out.select(m_out.lessThan(originalIndex, m_out.int32Zero), m_out.add(originalIndex, stringLength), originalIndex) : originalIndex;
 
         LBasicBlock fastPath = m_out.newBlock();
         LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        LValue stringImpl = m_out.loadPtr(base, m_heaps.JSString_value);
         m_out.branch(
-            m_out.aboveOrEqual(
-                index, m_out.load32NonNegative(stringImpl, m_heaps.StringImpl_length)),
+            m_out.aboveOrEqual(index, stringLength),
             rarely(slowPath), usually(fastPath));
 
         LBasicBlock lastNext = m_out.appendTo(fastPath, slowPath);
@@ -10004,18 +10010,19 @@ IGNORE_CLANG_WARNINGS_END
 
         // FIXME: Need to cage strings!
         // https://bugs.webkit.org/show_bug.cgi?id=174924
-        ValueFromBlock char8Bit = m_out.anchor(
-            m_out.load8ZeroExt32(baseIndexWithProvenValue(m_heaps.characters8, m_out.loadPtr(stringImpl, m_heaps.StringImpl_data), index,
-                m_graph.child(m_node, 1))));
+        LValue char8BitValue = m_out.load8ZeroExt32(m_out.baseIndex(
+            m_heaps.characters8,
+            m_out.loadPtr(stringImpl, m_heaps.StringImpl_data),
+            m_out.zeroExtPtr(index)));
+        ValueFromBlock char8Bit = m_out.anchor(char8BitValue);
         m_out.jump(bitsContinuation);
 
         m_out.appendTo(is16Bit, bigCharacter);
 
-        LValue char16BitValue = m_out.load16ZeroExt32(baseIndexWithProvenValue(
+        LValue char16BitValue = m_out.load16ZeroExt32(m_out.baseIndex(
             m_heaps.characters16,
             m_out.loadPtr(stringImpl, m_heaps.StringImpl_data),
-            index,
-            m_graph.child(m_node, 1)));
+            m_out.zeroExtPtr(index)));
         ValueFromBlock char16Bit = m_out.anchor(char16BitValue);
         m_out.branch(
             m_out.above(char16BitValue, m_out.constInt32(maxSingleCharacterString)),
@@ -10044,6 +10051,9 @@ IGNORE_CLANG_WARNINGS_END
         if (m_node->op() == StringCharAt) {
             // String#charAt can accept out of range index and it always returns an empty string.
             results.append(m_out.anchor(weakPointer(jsEmptyString(vm()))));
+        } else if (m_node->op() == StringAt && m_node->arrayMode().isOutOfBounds()) {
+            // String#at can accept out of range index and it always returns undefined.
+            results.append(m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined()))));
         } else {
             if (m_node->arrayMode().isInBounds()) {
                 speculate(OutOfBounds, noValue(), nullptr, m_out.booleanTrue);
@@ -10079,6 +10089,11 @@ IGNORE_CLANG_WARNINGS_END
     }
 
     void compileStringCharAt()
+    {
+        setJSValue(compileStringCharAtImpl());
+    }
+
+    void compileStringAt()
     {
         setJSValue(compileStringCharAtImpl());
     }

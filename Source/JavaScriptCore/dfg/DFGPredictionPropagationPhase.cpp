@@ -639,7 +639,16 @@ private:
             }
             break;
         }
-            
+
+        case StringAt: {
+            ArrayMode arrayMode = node->arrayMode();
+            if (arrayMode.isOutOfBounds())
+                changed |= mergePrediction(SpecString | SpecOther);
+            else
+                changed |= mergePrediction(SpecString);
+            break;
+        }
+
         case ToThis: {
             // ToThis in methods for primitive types should speculate primitive types in strict mode.
             bool isStrictMode = node->ecmaMode().isStrict();
@@ -1506,7 +1515,8 @@ private:
         case AtomicsOr:
         case AtomicsStore:
         case AtomicsSub:
-        case AtomicsXor: {
+        case AtomicsXor:
+        case StringAt: {
             m_dependentNodes.append(m_currentNode);
             break;
         }
