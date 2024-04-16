@@ -8539,7 +8539,11 @@ uint64_t WebPageProxy::messageSenderDestinationID() const
 
 void WebPageProxy::Internals::valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex)
 {
-    Ref { page }->send(Messages::WebPage::DidChangeSelectedIndexForActivePopupMenu(newSelectedIndex));
+    Ref page = this->page;
+    RefPtr frame = page->focusedOrMainFrame();
+    if (!frame)
+        return;
+    page->sendToProcessContainingFrame(frame->frameID(), Messages::WebPage::DidChangeSelectedIndexForActivePopupMenu(newSelectedIndex));
 }
 
 void WebPageProxy::Internals::setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index)
