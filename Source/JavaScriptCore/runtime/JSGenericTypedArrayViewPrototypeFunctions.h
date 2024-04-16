@@ -714,6 +714,28 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncToReversed(VM& vm, JS
 }
 
 template<typename ElementType, typename Functor>
+static ElementType* typedArrayInsertionSort(VM& vm, ElementType* array, size_t length, const Functor& comparator)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    for (size_t i = 1; i < length; ++i) {
+        auto value = array[i];
+        size_t j = i;
+        for (; j > 0; --j) {
+            auto target = array[j - 1];
+            bool result = comparator(target, value);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (result)
+                break;
+            array[j] = target;
+        }
+        array[j] = value;
+    }
+
+    return array;
+}
+
+template<typename ElementType, typename Functor>
 static void typedArrayMerge(VM& vm, ElementType* dst, ElementType* src, size_t srcIndex, size_t srcEnd, size_t width, const Functor& comparator)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -742,14 +764,19 @@ static void typedArrayMerge(VM& vm, ElementType* dst, ElementType* src, size_t s
 }
 
 template<typename ElementType, typename Functor>
-static ElementType* typedArrayMergeSort(VM& vm, Vector<ElementType, 16>& src, Vector<ElementType, 16>& dst, const Functor& comparator)
+static ElementType* typedArrayStableSort(VM& vm, ElementType* src, ElementType* dst, size_t length, const Functor& comparator)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* to = dst.data();
-    auto* from = src.data();
-    size_t length = src.size();
-    for (size_t width = 1; width < length; width *= 2) {
+    constexpr size_t initialWidth = 8;
+    for (size_t i = 0; i < length; i += initialWidth) {
+        typedArrayInsertionSort(vm, src + i, std::min(i + initialWidth, length) - i, comparator);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    auto* to = dst;
+    auto* from = src;
+    for (size_t width = initialWidth; width < length; width *= 2) {
         for (size_t srcIndex = 0; srcIndex < length; srcIndex += 2 * width) {
             typedArrayMerge(vm, to, from, srcIndex, length, width, comparator);
             RETURN_IF_EXCEPTION(scope, { });
@@ -760,7 +787,7 @@ static ElementType* typedArrayMergeSort(VM& vm, Vector<ElementType, 16>& src, Ve
     return from;
 }
 
-static ALWAYS_INLINE bool coerceComparatorResultToBoolean(JSGlobalObject* globalObject, ThrowScope& scope, JSValue comparatorResult)
+static ALWAYS_INLINE bool coerceComparatorResultToBoolean(JSGlobalObject* globalObject, JSValue comparatorResult)
 {
     if (LIKELY(comparatorResult.isInt32()))
         return comparatorResult.asInt32() < 0;
@@ -769,9 +796,7 @@ static ALWAYS_INLINE bool coerceComparatorResultToBoolean(JSGlobalObject* global
     if (comparatorResult == jsBoolean(false))
         return true;
 
-    double value = comparatorResult.toNumber(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-    return value < 0;
+    return comparatorResult.toNumber(globalObject) < 0;
 }
 
 template<typename ViewClass>
@@ -801,70 +826,74 @@ static ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSortImpl(VM& v
 
     auto* originalArray = thisObject->typedVector();
 
-    Vector<typename ViewClass::ElementType, 16> src;
-    Vector<typename ViewClass::ElementType, 16> dst;
-    if (UNLIKELY(!src.tryGrow(length) || !dst.tryGrow(length))) {
+    Vector<typename ViewClass::ElementType, 256> vector;
+    auto totalSize = CheckedSize { length } * 2U;
+    if (UNLIKELY(totalSize.hasOverflowed() || !vector.tryGrow(totalSize.value()))) {
         throwOutOfMemoryError(globalObject, scope);
         return { };
     }
 
-    WTF::copyElements(src.data(), originalArray, length);
+    auto* src = vector.data();
+    auto* dst = src + length;
+
+    WTF::copyElements(src, originalArray, length);
 
     typename ViewClass::ElementType* result = nullptr;
 
     if (LIKELY(callData.type == CallData::Type::JS)) {
         CachedCall cachedCall(globalObject, jsCast<JSFunction*>(comparatorValue), 2);
         RETURN_IF_EXCEPTION(scope, { });
-        result = typedArrayMergeSort(vm, src, dst, [&](auto left, auto right) -> bool {
+
+        auto comparator = [&](auto left, auto right) ALWAYS_INLINE_LAMBDA {
             auto scope = DECLARE_THROW_SCOPE(vm);
 
             cachedCall.clearArguments();
 
             JSValue leftValue = ViewClass::Adaptor::toJSValue(globalObject, left);
-            RETURN_IF_EXCEPTION(scope, { });
+            RETURN_IF_EXCEPTION(scope, false);
             JSValue rightValue = ViewClass::Adaptor::toJSValue(globalObject, right);
-            RETURN_IF_EXCEPTION(scope, { });
+            RETURN_IF_EXCEPTION(scope, false);
 
             cachedCall.appendArgument(leftValue);
             cachedCall.appendArgument(rightValue);
             cachedCall.setThis(jsUndefined());
             if (UNLIKELY(cachedCall.hasOverflowedArguments())) {
                 throwOutOfMemoryError(globalObject, scope);
-                return { };
+                return false;
             }
 
             JSValue jsResult = cachedCall.call();
-            RETURN_IF_EXCEPTION(scope, { });
-            bool result = coerceComparatorResultToBoolean(globalObject, scope, jsResult);
-            RETURN_IF_EXCEPTION(scope, { });
-            return result;
-        });
+            RETURN_IF_EXCEPTION(scope, false);
+            RELEASE_AND_RETURN(scope, coerceComparatorResultToBoolean(globalObject, jsResult));
+        };
+
+        result = typedArrayStableSort(vm, src, dst, length, comparator);
         RETURN_IF_EXCEPTION(scope, { });
     } else {
         MarkedArgumentBuffer args;
-        result = typedArrayMergeSort(vm, src, dst, [&](auto left, auto right) -> bool {
+        auto comparator = [&](auto left, auto right) ALWAYS_INLINE_LAMBDA {
             auto scope = DECLARE_THROW_SCOPE(vm);
 
             args.clear();
 
             JSValue leftValue = ViewClass::Adaptor::toJSValue(globalObject, left);
-            RETURN_IF_EXCEPTION(scope, { });
+            RETURN_IF_EXCEPTION(scope, false);
             JSValue rightValue = ViewClass::Adaptor::toJSValue(globalObject, right);
-            RETURN_IF_EXCEPTION(scope, { });
+            RETURN_IF_EXCEPTION(scope, false);
 
             args.append(leftValue);
             args.append(rightValue);
             if (UNLIKELY(args.hasOverflowed())) {
                 throwOutOfMemoryError(globalObject, scope);
-                return { };
+                return false;
             }
 
             JSValue jsResult = call(globalObject, comparatorValue, callData, jsUndefined(), args);
-            RETURN_IF_EXCEPTION(scope, { });
-            bool result = coerceComparatorResultToBoolean(globalObject, scope, jsResult);
-            RETURN_IF_EXCEPTION(scope, { });
-            return result;
-        });
+            RETURN_IF_EXCEPTION(scope, false);
+            RELEASE_AND_RETURN(scope, coerceComparatorResultToBoolean(globalObject, jsResult));
+        };
+
+        result = typedArrayStableSort(vm, src, dst, length, comparator);
         RETURN_IF_EXCEPTION(scope, { });
     }
 
