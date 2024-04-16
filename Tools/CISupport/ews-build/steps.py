@@ -1106,8 +1106,10 @@ for l in lines[1:]:
             ['git', 'config', 'user.name', 'EWS'],
             ['git', 'config', 'user.email', FROM_EMAIL],
             ['git', 'am', '--keep-non-patch', '.buildbot-diff'],
-            ['git', 'filter-branch', '-f', '--msg-filter', 'python3 -c "{}"'.format(self.FILTER_BRANCH_PROGRAM), 'HEAD...HEAD~1'],
         ]
+        if not self.has_windows_shell():
+            commands.append(['git', 'filter-branch', '-f', '--msg-filter', 'python3 -c "{}"'.format(self.FILTER_BRANCH_PROGRAM), 'HEAD...HEAD~1'])
+
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
 

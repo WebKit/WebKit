@@ -3850,6 +3850,53 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Applied patch')
         return self.runStep()
 
+    def test_success_wincairo(self):
+        self.setupStep(ApplyPatch())
+        self.setProperty('patch_id', '1234')
+        self.setProperty('platform', 'wincairo')
+        self.assertEqual(ApplyPatch.flunkOnFailure, True)
+        self.assertEqual(ApplyPatch.haltOnFailure, True)
+        buf = []
+        self.expectRemoteCommands(
+            Expect('downloadFile', dict(
+                workerdest='.buildbot-diff', workdir='wkdir',
+                blocksize=1024 * 32, maxsize=None, mode=None,
+                reader=ExpectRemoteRef(remotetransfer.FileReader),
+            ))
+            + Expect.behavior(self.downloadFileRecordingContents(self.READ_LIMIT, buf.append))
+            + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['curl', '-L', 'https://bugs.webkit.org/attachment.cgi?id=1234', '-o', '.buildbot-diff'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'config', 'user.name', 'EWS'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'config', 'user.email', 'ews@webkit.org'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'am', '--keep-non-patch', '.buildbot-diff'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Applied patch')
+        return self.runStep()
+
     def test_failure(self):
         self.setupStep(ApplyPatch())
         self.setProperty('patch_id', '1234')
