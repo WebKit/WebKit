@@ -294,6 +294,13 @@ void UnifiedPDFPlugin::handleClickForDataDetectionResult(const DataDetectorEleme
     page->chrome().client().handleClickForDataDetectionResult(dataDetectorElementInfo, clickPointInPluginSpace);
 }
 
+void UnifiedPDFPlugin::didInvalidateDataDetectorHighlightOverlayRects()
+{
+    auto lastKnownMousePositionInDocumentSpace = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, lastKnownMousePositionInView());
+    auto pageIndex = pageIndexForDocumentPoint(lastKnownMousePositionInDocumentSpace);
+    dataDetectorOverlayController().didInvalidateHighlightOverlayRects(pageIndex);
+}
+
 #endif
 
 #if PLATFORM(MAC)
@@ -1150,6 +1157,10 @@ void UnifiedPDFPlugin::setScaleFactor(double scale, std::optional<WebCore::IntPo
         m_activeAnnotation->updateGeometry();
 #endif
 
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+    didInvalidateDataDetectorHighlightOverlayRects();
+#endif
+
     if (RefPtr asyncRenderer = asyncRendererIfExists())
         asyncRenderer->layoutConfigurationChanged();
 
@@ -1400,9 +1411,7 @@ void UnifiedPDFPlugin::didChangeScrollOffset()
 
     // FIXME: Make the overlay scroll with the tiles instead of repainting constantly.
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
-    auto lastKnownMousePositionInDocumentSpace = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, lastKnownMousePositionInView());
-    auto pageIndex = pageIndexForDocumentPoint(lastKnownMousePositionInDocumentSpace);
-    dataDetectorOverlayController().didInvalidateHighlightOverlayRects(pageIndex);
+    didInvalidateDataDetectorHighlightOverlayRects();
 #endif
 
     scheduleRenderingUpdate();

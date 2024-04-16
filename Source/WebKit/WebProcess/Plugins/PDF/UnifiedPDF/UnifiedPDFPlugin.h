@@ -196,6 +196,7 @@ private:
 
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
     void enableDataDetection();
+    void didInvalidateDataDetectorHighlightOverlayRects();
 
     PDFDataDetectorOverlayController& dataDetectorOverlayController() { return *m_dataDetectorOverlayController; }
 #endif
