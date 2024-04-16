@@ -1362,6 +1362,9 @@ http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
 # Depend on iOS 11 API.
 fast/css/variables/env/ios [ Pass ]
 
+# Tests use resizable popups which are not a thing on iOS.
+imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
+
 ###
 # Known failures
 ##
@@ -7332,5 +7335,3 @@ fast/forms/switch/click-animation-redundant-disabled.html [ ImageOnlyFailure ]
 fast/forms/switch/click-animation.html [ ImageOnlyFailure ]
 
 webkit.org/b/271969 accessibility/ios-simulator/inline-prediction-attributed-string.html [ Failure ]
-
-webkit.org/b/271388 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
