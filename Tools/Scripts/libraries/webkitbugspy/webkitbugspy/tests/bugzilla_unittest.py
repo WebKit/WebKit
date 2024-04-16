@@ -666,3 +666,14 @@ What component in 'WebKit' should the bug be associated with?:
                 issue.relate(blocks=radar_tracker.issue(1))
             self.assertEqual('Cannot relate issues of different types.', str(c.exception))
             self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
+
+    def test_source_changes(self):
+        with OutputCapture() as captured, mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES):
+            tracker = bugzilla.Tracker(self.URL)
+            self.assertEqual(tracker.issue(1).source_changes, [])
+            self.assertIsNone(tracker.issue(1).add_source_change('WebKit, merge, a4daad5b9fbd26d557088037f54dc0935a437182'))
+
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            'Bugzilla does not support source changes at this time\n',
+        )

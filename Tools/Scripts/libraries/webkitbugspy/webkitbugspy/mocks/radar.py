@@ -141,8 +141,10 @@ class RadarModel(object):
         def __init__(self, name):
             self.name = name
 
-    def __init__(self, client, issue):
+    def __init__(self, client, issue, additional_fields=None):
         from datetime import datetime, timedelta
+
+        additional_fields = additional_fields or []
 
         self.client = client
         self._issue = issue
@@ -192,6 +194,9 @@ class RadarModel(object):
             self.component = components[0]
         else:
             self.component = None
+
+        if 'sourceChanges' in additional_fields:
+            self.sourceChanges = issue.get('sourceChanges', None)
 
     def related_radars(self):
         for reference in self._issue.get('references', []):
@@ -246,6 +251,9 @@ class RadarModel(object):
                 self.client.parent.issues[r.related_radar_id]['related'] = list()
             self.client.parent.issues[r.related_radar_id]['related'].append(inverse_r_dict)
 
+        if getattr(self, 'sourceChanges', None):
+            self.client.parent.issues[self.id]['sourceChanges'] = self.sourceChanges
+
     def milestone_associations(self, milestone=None):
         return RadarModel.MilestoneAssociations(milestone or self.milestone)
 
@@ -284,11 +292,11 @@ class RadarClient(object):
         self.parent = parent
         self.authentication_strategy = authentication_strategy
 
-    def radar_for_id(self, problem_id):
+    def radar_for_id(self, problem_id, additional_fields=None):
         found = self.parent.issues.get(problem_id)
         if not found:
             return None
-        return RadarModel(self, found)
+        return RadarModel(self, found, additional_fields=additional_fields)
 
     def find_radars(self, query, return_find_results_directly=False):
         result = []

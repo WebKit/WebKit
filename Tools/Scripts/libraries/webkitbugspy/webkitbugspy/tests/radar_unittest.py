@@ -518,3 +518,32 @@ What version of 'WebKit Text' should the bug be associated with?:
                 issue.relate(fake_relation=issue2)
             self.assertEqual('\'fake_relation\' is an invalid relation', str(c.exception))
             self.assertEqual(issue.related, RELATED_BLANK)
+
+    def test_source_changes(self):
+        with mocks.Radar(issues=mocks.ISSUES):
+            tracker = radar.Tracker()
+            self.assertEqual(tracker.issue(1).source_changes, [])
+            self.assertIsNotNone(tracker.issue(1).add_source_change('WebKit, merge, a4daad5b9fbd26d557088037f54dc0935a437182'))
+            self.assertEqual(tracker.issue(1).source_changes, ['WebKit, merge, a4daad5b9fbd26d557088037f54dc0935a437182'])
+
+            repr = tracker.client.radar_for_id(1, additional_fields=['sourceChanges'])
+            self.assertEqual(
+                repr.sourceChanges,
+                'WebKit, merge, a4daad5b9fbd26d557088037f54dc0935a437182',
+            )
+
+    def test_source_changes_advanced(self):
+        with mocks.Radar(issues=mocks.ISSUES), OutputCapture():
+            tracker = radar.Tracker()
+            self.assertEqual(tracker.issue(1).source_changes, [])
+            self.assertIsNotNone(tracker.issue(1).add_source_change('Repo1, merged, a4daad5b9fbd26d557088037f54dc0935a437182'))
+            self.assertIsNotNone(tracker.issue(1).add_source_change('Repo2, merged, 604395a516c13cff80d4b0400e43a4c322dbb32f'))
+
+            self.assertIsNone(tracker.issue(1).add_source_change('Repo1, merged, a4daad5b9fbd26d557088037f54dc0935a437182'))
+            self.assertIsNone(tracker.issue(1).add_source_change('Repo2, merged, 604395a516c1'))
+
+            self.assertEqual(
+                tracker.issue(1).source_changes, [
+                    'Repo1, merged, a4daad5b9fbd26d557088037f54dc0935a437182',
+                    'Repo2, merged, 604395a516c13cff80d4b0400e43a4c322dbb32f',
+                ])
