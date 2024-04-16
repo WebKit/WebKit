@@ -52,6 +52,7 @@
 #include "ImageBitmapRenderingContextSettings.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
+#include "ImageQualityController.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMConvertDictionary.h"
 #include "JSNodeCustomInlines.h"
@@ -649,10 +650,14 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
             }
         }
 
-        if (shouldPaint) {
-            if (hasCreatedImageBuffer()) {
-                if (ImageBuffer* imageBuffer = buffer())
-                    context.drawImageBuffer(*imageBuffer, snappedIntRect(r), { context.compositeOperation() });
+        if (shouldPaint && hasCreatedImageBuffer()) {
+            if (auto* imageBuffer = buffer()) {
+                auto options = ImagePaintingOptions { context.compositeOperation() };
+                if (renderer()) {
+                    auto imageInterpolationQuality = ImageQualityController::interpolationQualityFromStyle(renderer()->style());
+                    options = { options, imageInterpolationQuality.value_or(context.imageInterpolationQuality()) };
+                }
+                context.drawImageBuffer(*imageBuffer, snappedIntRect(r), options);
             }
         }
     }

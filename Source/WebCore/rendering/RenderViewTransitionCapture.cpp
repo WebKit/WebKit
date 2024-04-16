@@ -63,10 +63,10 @@ void RenderViewTransitionCapture::paintReplaced(PaintInfo& paintInfo, const Layo
     IntPoint position = snappedIntRect(replacedContentRect).location();
     position.moveBy(roundedIntPoint(m_overflowRect.location()));
 
-    InterpolationQualityMaintainer interpolationMaintainer(context, ImageQualityController::interpolationQualityFromStyle(style()));
-    if (m_oldImage)
-        context.drawImageBuffer(*m_oldImage, position, { context.compositeOperation() });
-
+    if (m_oldImage) {
+        auto imageInterpolationQuality = ImageQualityController::interpolationQualityFromStyle(style());
+        context.drawImageBuffer(*m_oldImage, position, { context.compositeOperation(), imageInterpolationQuality.value_or(context.imageInterpolationQuality()) });
+    }
 }
 
 void RenderViewTransitionCapture::layout()

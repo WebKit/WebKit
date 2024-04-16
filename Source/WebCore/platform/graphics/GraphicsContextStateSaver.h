@@ -115,32 +115,4 @@ private:
     unsigned m_stackSize;
 };
 
-class InterpolationQualityMaintainer {
-public:
-    explicit InterpolationQualityMaintainer(GraphicsContext& graphicsContext, InterpolationQuality interpolationQualityToUse)
-        : m_graphicsContext(graphicsContext)
-        , m_currentInterpolationQuality(graphicsContext.imageInterpolationQuality())
-        , m_interpolationQualityChanged(interpolationQualityToUse != InterpolationQuality::Default && m_currentInterpolationQuality != interpolationQualityToUse)
-    {
-        if (m_interpolationQualityChanged)
-            m_graphicsContext.setImageInterpolationQuality(interpolationQualityToUse);
-    }
-
-    explicit InterpolationQualityMaintainer(GraphicsContext& graphicsContext, std::optional<InterpolationQuality> interpolationQuality)
-        : InterpolationQualityMaintainer(graphicsContext, interpolationQuality ? interpolationQuality.value() : graphicsContext.imageInterpolationQuality())
-    {
-    }
-
-    ~InterpolationQualityMaintainer()
-    {
-        if (m_interpolationQualityChanged)
-            m_graphicsContext.setImageInterpolationQuality(m_currentInterpolationQuality);
-    }
-
-private:
-    GraphicsContext& m_graphicsContext;
-    InterpolationQuality m_currentInterpolationQuality;
-    bool m_interpolationQualityChanged;
-};
-
 } // namespace WebCore
