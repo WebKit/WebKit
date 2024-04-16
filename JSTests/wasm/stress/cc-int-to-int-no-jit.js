@@ -1,21 +1,17 @@
 //@ skip if $architecture != "arm64" and $architecture != "x86_64"
-//@ requireOptions("--useIPIntWrappers=1")
+//@ runDefault("-m", "--useJIT=0", "--useWebAssembly=1", "--useIPIntWrappers=1")
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 
 let wat = `
 (module
+    (type $sig_test (func (param i32) (result i32)))
+    (table $t 1 funcref)
+    (elem (i32.const 0) $test)
+
     (func $test (export "test") (param $x i32) (result i32)
         (i32.add (local.get $x) (i32.const 42))
     )
-)
-`
-
-let wat2 = `
-(module
-    (type $sig_test (func (param i32) (result i32)))
-    (import "o" "tbl" (table $t 1 funcref))
-    (import "o" "test" (func $test (param $x i32) (result i32)))
 
     (func (export "test_with_call") (param $x i32) (result i32)
         (i32.add (local.get $x) (call $test (i32.const 1337)))
@@ -32,11 +28,7 @@ let wat2 = `
 
 async function test() {
     const instance = await instantiate(wat, {}, { simd: true })
-    const { test } = instance.exports
-    let tbl = new WebAssembly.Table({ initial: 1, element: "funcref" })
-    tbl.set(0, test)
-    const instance2 = await instantiate(wat2, { o: { test, tbl } }, { simd: true })
-    const { test_with_call, test_with_call_indirect } = instance2.exports
+    const { test, test_with_call, test_with_call_indirect } = instance.exports
 
     for (let i = 0; i < 10000000; ++i) {
         assert.eq(test(5), 42 + 5)

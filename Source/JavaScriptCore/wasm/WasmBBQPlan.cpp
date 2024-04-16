@@ -214,6 +214,43 @@ void BBQPlan::work(CompilationEffort effort)
         }
     }
 
+    // Replace the LLInt interpreted entry callee. Note that we can do this after we publish our
+    // callee because calling into the LLInt should still work.
+    auto* jsEntrypointCallee = m_calleeGroup->m_jsEntrypointCallees.get(m_functionIndex);
+    if (jsEntrypointCallee && jsEntrypointCallee->compilationMode() == CompilationMode::JSEntrypointInterpreterMode) {
+        Locker locker { m_lock };
+        TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
+        const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
+
+        auto callee = JSEntrypointJITCallee::create();
+        context.jsEntrypointJIT = makeUnique<CCallHelpers>();
+        Vector<UnlinkedWasmToWasmCall> newCall;
+        auto jsToWasmInternalFunction = createJSToWasmWrapper(*context.jsEntrypointJIT, callee.get(), nullptr, signature, &newCall, m_moduleInformation.get(), m_mode, m_functionIndex);
+        auto linkBuffer = makeUnique<LinkBuffer>(*context.jsEntrypointJIT, &callee.get(), LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
+
+        if (linkBuffer->isValid()) {
+            jsToWasmInternalFunction->entrypoint.compilation = makeUnique<Compilation>(
+                FINALIZE_WASM_CODE(*linkBuffer, JITCompilationPtrTag, nullptr, "(ipint upgrade edition) JS->WebAssembly entrypoint[%i] %s", m_functionIndex, signature.toString().ascii().data()),
+                nullptr);
+
+            for (auto& call : newCall) {
+                CodePtr<WasmEntryPtrTag> entrypoint;
+                if (call.functionIndexSpace < m_moduleInformation->importFunctionCount())
+                    entrypoint = m_calleeGroup->m_wasmToWasmExitStubs[call.functionIndexSpace].code();
+                else
+                    entrypoint = m_calleeGroup->wasmEntrypointCalleeFromFunctionIndexSpace(locker, call.functionIndexSpace).entrypoint().retagged<WasmEntryPtrTag>();
+
+                MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
+            }
+
+            callee->setEntrypoint(WTFMove(jsToWasmInternalFunction->entrypoint));
+            static_cast<JSEntrypointInterpreterCallee*>(jsEntrypointCallee)->setReplacement(callee.ptr());
+
+            auto result = m_jsToWasmInternalFunctions.add(m_functionIndex, std::tuple { WTFMove(callee), WTFMove(linkBuffer), WTFMove(jsToWasmInternalFunction) });
+            ASSERT_UNUSED(result, result.isNewEntry);
+        }
+    }
+
     dataLogLnIf(WasmBBQPlanInternal::verbose, "Finished BBQ ", m_functionIndex);
 
     Locker locker { m_lock };
