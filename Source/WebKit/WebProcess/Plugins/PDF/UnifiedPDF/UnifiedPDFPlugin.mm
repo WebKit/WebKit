@@ -1187,6 +1187,9 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
     if (scale != 1.0)
         m_shouldUpdateAutoSizeScale = ShouldUpdateAutoSizeScale::No;
 
+    // FIXME: Make the overlay scroll with the tiles instead of repainting constantly.
+    updateFindOverlay(HideFindIndicator::Yes);
+
     auto internalScale = fromNormalizedScaleFactor(scale);
     LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin::setPageScaleFactor " << scale << " mapped to " << internalScale);
     setScaleFactor(internalScale, origin);
@@ -1392,7 +1395,7 @@ void UnifiedPDFPlugin::didChangeScrollOffset()
     determineCurrentlySnappedPage();
 
     // FIXME: Make the overlay scroll with the tiles instead of repainting constantly.
-    m_frame->protectedPage()->findController().didInvalidateFindRects();
+    updateFindOverlay(HideFindIndicator::Yes);
 
     // FIXME: Make the overlay scroll with the tiles instead of repainting constantly.
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
@@ -3144,7 +3147,15 @@ void UnifiedPDFPlugin::collectFindMatchRects(const String& target, WebCore::Find
         }
     }
 
+    updateFindOverlay();
+}
+
+void UnifiedPDFPlugin::updateFindOverlay(HideFindIndicator hideFindIndicator)
+{
     m_frame->protectedPage()->findController().didInvalidateFindRects();
+
+    if (hideFindIndicator == HideFindIndicator::Yes)
+        m_frame->protectedPage()->findController().hideFindIndicator();
 }
 
 Vector<FloatRect> UnifiedPDFPlugin::rectsForTextMatchesInRect(const IntRect&) const
