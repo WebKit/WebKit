@@ -1,25 +1,25 @@
 <style>
-#rel {
+.rel {
     position: relative;
     height: 20px;
     border: 2px solid red;
 }
-#abs {
+.abs {
     position: absolute;
     border: 2px solid green;
-    height: 50%;
     width: 100px;
-    display: none;
-}
-#abs.disp {
     display: block;
 }
 </style>
-<div id=rel>
-<div id=abs>
+<div class=rel>
+<div class=abs style="height:50%">
 </div>
 </div>
-<script>
-document.body.offsetHeight;
-abs.classList.add("disp");
-</script>
+<div class=rel>
+<div class=abs style="top:50%">
+</div>
+</div>
+<div class=rel>
+<div class=abs style="bottom:0px">
+</div>
+</div>
