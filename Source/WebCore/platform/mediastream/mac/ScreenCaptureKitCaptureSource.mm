@@ -364,12 +364,12 @@ void ScreenCaptureKitCaptureSource::startContentStream()
 
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     if (!m_contentFilter) {
-        sessionFailedWithError(nil, "Unkown display device - no content filter"_s);
+        sessionFailedWithError(nil, "Unknown display device - no content filter"_s);
         return;
     }
 #else
     if (!m_sharingSession) {
-        sessionFailedWithError(nil, "Unkown display device - no sharing session"_s);
+        sessionFailedWithError(nil, "Unknown display device - no sharing session"_s);
         return;
     }
 #endif
