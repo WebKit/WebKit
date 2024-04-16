@@ -127,7 +127,7 @@ public:
     FixedVector<AdaptiveStructureWatchpoint> m_adaptiveStructureWatchpoints;
     FixedVector<AdaptiveInferredPropertyValueWatchpoint> m_adaptiveInferredPropertyValueWatchpoints;
     std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
-    RecordedStatuses recordedStatuses;
+    std::unique_ptr<RecordedStatuses> recordedStatuses;
     FixedVector<JumpReplacement> m_jumpReplacements;
     FixedVector<std::unique_ptr<BoyerMooreHorspoolTable<uint8_t>>> m_stringSearchTable8;
     Bag<StructureStubInfo> m_stubInfos;

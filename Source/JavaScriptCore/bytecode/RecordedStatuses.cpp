@@ -28,24 +28,6 @@
 
 namespace JSC {
 
-RecordedStatuses& RecordedStatuses::operator=(RecordedStatuses&& other)
-{
-    calls = WTFMove(other.calls);
-    gets = WTFMove(other.gets);
-    puts = WTFMove(other.puts);
-    ins = WTFMove(other.ins);
-    deletes = WTFMove(other.deletes);
-    checkPrivateBrands = WTFMove(other.checkPrivateBrands);
-    setPrivateBrands = WTFMove(other.setPrivateBrands);
-    shrinkToFit();
-    return *this;
-}
-
-RecordedStatuses::RecordedStatuses(RecordedStatuses&& other)
-{
-    *this = WTFMove(other);
-}
-
 CallLinkStatus* RecordedStatuses::addCallLinkStatus(const CodeOrigin& codeOrigin, const CallLinkStatus& status)
 {
     auto statusPtr = makeUnique<CallLinkStatus>(status);

@@ -1255,9 +1255,10 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, Visitor& visitor
 #if ENABLE(DFG_JIT)
     if (JSC::JITCode::isOptimizingJIT(jitType())) {
         DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
-        
-        dfgCommon->recordedStatuses.markIfCheap(visitor);
-        
+
+        if (auto* statuses = dfgCommon->recordedStatuses.get())
+            statuses->markIfCheap(visitor);
+
         for (StructureID structureID : dfgCommon->m_weakStructureReferences)
             structureID.decode()->markIfCheap(visitor);
 
@@ -1631,7 +1632,8 @@ void CodeBlock::finalizeUnconditionally(VM& vm, CollectionScope)
 #if ENABLE(DFG_JIT)
     if (JSC::JITCode::isOptimizingJIT(jitType())) {
         DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
-        dfgCommon->recordedStatuses.finalize(vm);
+        if (auto* statuses = dfgCommon->recordedStatuses.get())
+            statuses->finalize(vm);
     }
 #endif // ENABLE(DFG_JIT)
 
@@ -1705,16 +1707,18 @@ void CodeBlock::getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result)
                 for (auto& callLinkInfo : jitData->callLinkInfos())
                     result.add(callLinkInfo.codeOrigin(), ICStatus()).iterator->value.callLinkInfo = &callLinkInfo;
             }
-            for (auto& pair : dfgCommon->recordedStatuses.calls)
-                result.add(pair.first, ICStatus()).iterator->value.callStatus = pair.second.get();
-            for (auto& pair : dfgCommon->recordedStatuses.gets)
-                result.add(pair.first, ICStatus()).iterator->value.getStatus = pair.second.get();
-            for (auto& pair : dfgCommon->recordedStatuses.puts)
-                result.add(pair.first, ICStatus()).iterator->value.putStatus = pair.second.get();
-            for (auto& pair : dfgCommon->recordedStatuses.ins)
-                result.add(pair.first, ICStatus()).iterator->value.inStatus = pair.second.get();
-            for (auto& pair : dfgCommon->recordedStatuses.deletes)
-                result.add(pair.first, ICStatus()).iterator->value.deleteStatus = pair.second.get();
+            if (auto* statuses = dfgCommon->recordedStatuses.get()) {
+                for (auto& pair : statuses->calls)
+                    result.add(pair.first, ICStatus()).iterator->value.callStatus = pair.second.get();
+                for (auto& pair : statuses->gets)
+                    result.add(pair.first, ICStatus()).iterator->value.getStatus = pair.second.get();
+                for (auto& pair : statuses->puts)
+                    result.add(pair.first, ICStatus()).iterator->value.putStatus = pair.second.get();
+                for (auto& pair : statuses->ins)
+                    result.add(pair.first, ICStatus()).iterator->value.inStatus = pair.second.get();
+                for (auto& pair : statuses->deletes)
+                    result.add(pair.first, ICStatus()).iterator->value.deleteStatus = pair.second.get();
+            }
 #endif
         }
     }
@@ -1859,7 +1863,8 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
     if (JSC::JITCode::isOptimizingJIT(jitType())) {
 #if ENABLE(DFG_JIT)
         DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
-        dfgCommon->recordedStatuses.visitAggregate(visitor);
+        if (auto* statuses = dfgCommon->recordedStatuses.get())
+            statuses->visitAggregate(visitor);
         visitOSRExitTargets(locker, visitor);
 #endif
     }

@@ -96,9 +96,13 @@ void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
     // We do not emit WriteBarrier here since (1) GC is deferred and (2) we emit write-barrier on CodeBlock when finishing DFG::Plan::reallyAdd.
     ASSERT_UNUSED(vm, vm.heap.isDeferred());
     if (!m_finalizedCells.isEmpty() || !m_finalizedStructures.isEmpty()) {
-        ConcurrentJSLocker locker(m_codeBlock->m_lock);
         ASSERT(common->m_weakStructureReferences.isEmpty());
         ASSERT(common->m_weakReferences.isEmpty());
+        // This is just moving a pointer. And we already synchronized with Lock etc. with compiler threads.
+        // So at this point, these vectors are fully constructed and baked by the compiler threads.
+        // We can just move these pointers to CommonData, and that's enough.
+        static_assert(sizeof(m_finalizedStructures) == sizeof(void*));
+        static_assert(sizeof(m_finalizedCells) == sizeof(void*));
         common->m_weakStructureReferences = WTFMove(m_finalizedStructures);
         common->m_weakReferences = WTFMove(m_finalizedCells);
     }
