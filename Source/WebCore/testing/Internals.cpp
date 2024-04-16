@@ -6816,7 +6816,7 @@ bool Internals::hasSandboxUnixSyscallAccess(const String& process, unsigned sysc
 #endif
 }
 
-String Internals::windowLocationHost(LocalDOMWindow& window)
+String Internals::windowLocationHost(DOMWindow& window)
 {
     return window.location().host();
 }

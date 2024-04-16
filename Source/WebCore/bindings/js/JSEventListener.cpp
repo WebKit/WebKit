@@ -28,6 +28,7 @@
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMWindow.h"
 #include "JSDocument.h"
 #include "JSEvent.h"
 #include "JSEventTarget.h"
@@ -153,8 +154,9 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         return;
 
     if (scriptExecutionContext.isDocument()) {
-        auto* window = jsCast<JSLocalDOMWindow*>(globalObject);
-        if (!window->wrapped().isCurrentlyDisplayedInFrame())
+        auto* window = jsCast<JSDOMWindow*>(globalObject);
+        RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(window->wrapped());
+        if (!localDOMWindow || !localDOMWindow->isCurrentlyDisplayedInFrame())
             return;
         if (wasCreatedFromMarkup()) {
             RefPtr element = dynamicDowncast<Element>(*event.target());
@@ -162,7 +164,9 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
                 return;
         }
         // FIXME: Is this check needed for other contexts?
-        RefPtr frame = window->wrapped().frame();
+        RefPtr frame = dynamicDowncast<LocalFrame>(window->wrapped().frame());
+        if (!frame)
+            return;
         CheckedRef script = frame->script();
         if (!script->canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript) || script->isPaused())
             return;
@@ -171,7 +175,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     auto* jsFunctionGlobalObject = jsFunction->globalObject();
 
     RefPtr<Event> savedEvent;
-    auto* jsFunctionWindow = jsDynamicCast<JSLocalDOMWindow*>(jsFunctionGlobalObject);
+    auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(jsFunctionGlobalObject);
     if (jsFunctionWindow) {
         savedEvent = jsFunctionWindow->currentEvent();
 

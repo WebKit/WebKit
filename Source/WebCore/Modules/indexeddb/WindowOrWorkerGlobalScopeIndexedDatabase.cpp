@@ -152,9 +152,12 @@ IDBFactory* WindowOrWorkerGlobalScopeIndexedDatabase::indexedDB(WorkerGlobalScop
     return scopeIDB ? scopeIDB->indexedDB() : nullptr;
 }
 
-IDBFactory* WindowOrWorkerGlobalScopeIndexedDatabase::indexedDB(LocalDOMWindow& window)
+IDBFactory* WindowOrWorkerGlobalScopeIndexedDatabase::indexedDB(DOMWindow& window)
 {
-    return DOMWindowIndexedDatabase::from(window)->indexedDB();
+    RefPtr localWindow = dynamicDowncast<LocalDOMWindow>(window);
+    if (!localWindow)
+        return nullptr;
+    return DOMWindowIndexedDatabase::from(*localWindow)->indexedDB();
 }
 
 } // namespace WebCore

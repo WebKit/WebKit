@@ -32,17 +32,18 @@
 #include "Supplementable.h"
 
 namespace WebCore {
-    
+
+class DOMWindow;
 class LocalDOMWindow;
 
 class LocalDOMWindowSpeechSynthesis : public Supplement<LocalDOMWindow>, public LocalDOMWindowProperty {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit LocalDOMWindowSpeechSynthesis(LocalDOMWindow*);
+    explicit LocalDOMWindowSpeechSynthesis(DOMWindow*);
     virtual ~LocalDOMWindowSpeechSynthesis();
     
-    WEBCORE_EXPORT static SpeechSynthesis* speechSynthesis(LocalDOMWindow&);
-    static LocalDOMWindowSpeechSynthesis* from(LocalDOMWindow*);
+    WEBCORE_EXPORT static SpeechSynthesis* speechSynthesis(DOMWindow&);
+    static LocalDOMWindowSpeechSynthesis* from(DOMWindow*);
     
 private:
     SpeechSynthesis* speechSynthesis();

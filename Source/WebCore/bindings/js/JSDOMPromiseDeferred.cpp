@@ -29,7 +29,6 @@
 #include "EventLoop.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMPromise.h"
-#include "JSLocalDOMWindow.h"
 #include "LocalDOMWindow.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"

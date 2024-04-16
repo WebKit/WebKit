@@ -39,7 +39,6 @@
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
-#include "JSLocalDOMWindow.h"
 #include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "SQLError.h"

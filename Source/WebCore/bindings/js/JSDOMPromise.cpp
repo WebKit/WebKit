@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSDOMPromise.h"
 
-#include "JSLocalDOMWindow.h"
 #include "LocalDOMWindow.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/CatchScope.h>

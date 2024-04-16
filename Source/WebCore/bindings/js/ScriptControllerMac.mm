@@ -32,7 +32,6 @@
 #import "BridgeJSC.h"
 #import "CommonVM.h"
 #import "FrameLoader.h"
-#import "JSLocalDOMWindow.h"
 #import "LocalDOMWindow.h"
 #import "LocalFrame.h"
 #import "LocalFrameLoaderClient.h"

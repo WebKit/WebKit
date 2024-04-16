@@ -1406,7 +1406,6 @@ http/tests/security/cross-frame-access-object-getPrototypeOf-in-put.html [ Skip 
 http/tests/security/cross-frame-access-object-getPrototypeOf.html [ Skip ]
 http/tests/security/cross-frame-access-selection.html [ Skip ]
 http/tests/security/cross-origin-reified-window-property-access.html [ Skip ]
-http/tests/security/cross-origin-window-property-access.html [ Skip ]
 http/tests/security/local-video-src-from-remote.html [ Skip ]
 http/tests/security/pasteboard-file-url.html [ Skip ]
 http/tests/security/preventExtensions-window-location.html [ Skip ]

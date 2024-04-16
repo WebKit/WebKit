@@ -181,14 +181,12 @@ void WindowProxy::setDOMWindow(DOMWindow* newDOMWindow)
         windowProxy->setWindow(*newDOMWindow);
 
         ScriptController* scriptController = nullptr;
-        Page* page = nullptr;
-        if (auto* localFrame = dynamicDowncast<LocalFrame>(*m_frame)) {
+        Page* page = m_frame->page();
+        if (auto* localFrame = dynamicDowncast<LocalFrame>(*m_frame))
             scriptController = &localFrame->script();
-            page = localFrame->page();
-        }
 
         // ScriptController's m_cacheableBindingRootObject persists between page navigations
-        // so needs to know about the new JSLocalDOMWindow.
+        // so needs to know about the new JSDOMWindow.
         if (auto* cacheableBindingRootObject = scriptController ? scriptController->existingCacheableBindingRootObject() : nullptr)
             cacheableBindingRootObject->updateGlobalObject(windowProxy->window());
 

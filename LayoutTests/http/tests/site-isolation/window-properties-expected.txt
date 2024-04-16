@@ -1,5 +1,5 @@
 ALERT: custom function called
 ALERT: postMessage received: top children: 1, parent children: 1, parent parent is top: true
-ALERT: postMessage received: expected error: SecurityError: The operation is insecure.
+ALERT: postMessage received: expected error: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 ALERT: postMessage received: child successfully navigated by cross-origin grandchild
 

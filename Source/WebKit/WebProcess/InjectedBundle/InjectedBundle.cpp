@@ -63,7 +63,6 @@
 #include <WebCore/GeolocationPositionData.h>
 #include <WebCore/JSDOMConvertBufferSource.h>
 #include <WebCore/JSDOMExceptionHandling.h>
-#include <WebCore/JSLocalDOMWindow.h>
 #include <WebCore/JSNotification.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
@@ -251,11 +250,7 @@ void InjectedBundle::reportException(JSContextRef context, JSValueRef exception)
     JSC::JSGlobalObject* globalObject = toJS(context);
     JSLockHolder lock(globalObject);
 
-    // Make sure the context has a LocalDOMWindow global object, otherwise this context didn't originate from a Page.
-    if (!globalObject->inherits<JSLocalDOMWindow>())
-        return;
-
-    WebCore::reportException(globalObject, toJS(globalObject, exception));
+    WebCore::reportExceptionIfJSDOMWindow(globalObject, toJS(globalObject, exception));
 }
 
 void InjectedBundle::didCreatePage(WebPage& page)

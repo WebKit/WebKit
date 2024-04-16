@@ -35,6 +35,7 @@
 #include "CommonVM.h"
 #include "Document.h"
 #include "GCController.h"
+#include "JSDOMWindow.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
@@ -52,8 +53,8 @@ ScriptCachedFrameData::ScriptCachedFrameData(LocalFrame& frame)
     JSLockHolder lock(commonVM());
 
     for (auto windowProxy : frame.windowProxy().jsWindowProxiesAsVector()) {
-        auto* window = jsCast<JSLocalDOMWindow*>(windowProxy->window());
-        m_windows.add(&windowProxy->world(), Strong<JSLocalDOMWindow>(window->vm(), window));
+        auto* window = jsCast<JSDOMWindow*>(windowProxy->window());
+        m_windows.add(&windowProxy->world(), Strong<JSDOMWindow>(window->vm(), window));
         window->setConsoleClient(nullptr);
     }
 

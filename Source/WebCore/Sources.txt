@@ -644,6 +644,7 @@ bindings/js/JSDOMPromiseDeferred.cpp
 bindings/js/JSDOMQuadCustom.cpp
 bindings/js/JSDOMSetLike.cpp
 bindings/js/JSDOMWindowBase.cpp
+bindings/js/JSDOMWindowCustom.cpp
 bindings/js/JSDOMWindowProperties.cpp
 bindings/js/JSDOMWrapper.cpp
 bindings/js/JSDOMWrapperCache.cpp
@@ -680,7 +681,6 @@ bindings/js/JSIntersectionObserverCustom.cpp
 bindings/js/JSIntersectionObserverEntryCustom.cpp
 bindings/js/JSKeyframeEffectCustom.cpp
 bindings/js/JSLazyEventListener.cpp
-bindings/js/JSLocalDOMWindowCustom.cpp
 bindings/js/JSLocationCustom.cpp
 bindings/js/JSMediaSessionCustom.cpp
 bindings/js/JSMediaSourceCustom.cpp
@@ -708,8 +708,6 @@ bindings/js/JSPromiseRejectionEventCustom.cpp
 bindings/js/JSRTCRtpSFrameTransformCustom.cpp
 bindings/js/JSRangeCustom.cpp
 bindings/js/JSReadableStreamSourceCustom.cpp
-bindings/js/JSRemoteDOMWindowBase.cpp
-bindings/js/JSRemoteDOMWindowCustom.cpp
 bindings/js/JSReportBodyCustom.cpp
 bindings/js/JSResizeObserverCustom.cpp
 bindings/js/JSResizeObserverEntryCustom.cpp
@@ -3464,6 +3462,7 @@ JSDOMStringList.cpp
 JSDOMStringMap.cpp
 JSDOMTokenList.cpp
 JSDOMURL.cpp
+JSDOMWindow.cpp
 JSDataCue.cpp
 JSDataTransfer.cpp
 JSDataTransferItem.cpp
@@ -3873,7 +3872,6 @@ JSKeyframeEffectOptions.cpp
 JSLandmark.cpp
 JSLandmarkType.cpp
 JSLatencyMode.cpp
-JSLocalDOMWindow.cpp
 JSLocation.cpp
 JSLongRange.cpp
 JSMathMLElement.cpp
@@ -4170,7 +4168,6 @@ JSReadableStreamDefaultController.cpp
 JSReadableStreamDefaultReader.cpp
 JSReadableStreamSink.cpp
 JSReadableStreamSource.cpp
-JSRemoteDOMWindow.cpp
 JSRemotePlayback.cpp
 JSRemotePlaybackAvailabilityCallback.cpp
 JSReport.cpp

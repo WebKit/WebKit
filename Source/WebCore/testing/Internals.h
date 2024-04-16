@@ -79,7 +79,7 @@ class DOMRect;
 class DOMRectList;
 class DOMRectReadOnly;
 class DOMURL;
-class LocalDOMWindow;
+class DOMWindow;
 class Document;
 class Element;
 class EventListener;
@@ -1324,7 +1324,7 @@ public:
         
     String highlightPseudoElementColor(const AtomString& highlightName, Element&);
 
-    String windowLocationHost(LocalDOMWindow&);
+    String windowLocationHost(DOMWindow&);
 
     String systemColorForCSSValue(const String& cssValue, bool useDarkModeAppearance, bool useElevatedUserInterfaceLevel);
 

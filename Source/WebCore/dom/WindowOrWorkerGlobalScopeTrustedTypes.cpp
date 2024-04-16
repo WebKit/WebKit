@@ -75,9 +75,12 @@ TrustedTypePolicyFactory* DOMWindowTrustedTypes::trustedTypes() const
     return m_trustedTypes.get();
 }
 
-TrustedTypePolicyFactory* WindowOrWorkerGlobalScopeTrustedTypes::trustedTypes(LocalDOMWindow& window)
+TrustedTypePolicyFactory* WindowOrWorkerGlobalScopeTrustedTypes::trustedTypes(DOMWindow& window)
 {
-    return DOMWindowTrustedTypes::from(window)->trustedTypes();
+    RefPtr localWindow = dynamicDowncast<LocalDOMWindow>(window);
+    if (!localWindow)
+        return nullptr;
+    return DOMWindowTrustedTypes::from(*localWindow)->trustedTypes();
 }
 
 class WorkerGlobalScopeTrustedTypes : public Supplement<WorkerGlobalScope> {

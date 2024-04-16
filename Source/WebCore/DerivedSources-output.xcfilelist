@@ -1757,8 +1757,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow+VisualViewport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow+VisualViewport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow+WebDatabase.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow+WebDatabase.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLongRange.cpp
@@ -2464,8 +2462,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReadableStreamSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReadableStreamSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRedEyeReduction.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRedEyeReduction.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemoteDOMWindow.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemoteDOMWindow.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlayback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlayback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlaybackAvailabilityCallback.cpp

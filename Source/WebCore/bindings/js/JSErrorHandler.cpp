@@ -37,10 +37,10 @@
 #include "Event.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
+#include "JSDOMWindow.h"
 #include "JSEvent.h"
 #include "JSExecState.h"
 #include "JSExecStateInstrumentation.h"
-#include "JSLocalDOMWindow.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/VMEntryScopeInlines.h>
 #include <wtf/Ref.h>
@@ -86,7 +86,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
         Ref<JSErrorHandler> protectedThis(*this);
 
         RefPtr<Event> savedEvent;
-        auto* jsFunctionWindow = jsDynamicCast<JSLocalDOMWindow*>(jsFunction->globalObject());
+        auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(jsFunction->globalObject());
         if (jsFunctionWindow) {
             savedEvent = jsFunctionWindow->currentEvent();
 

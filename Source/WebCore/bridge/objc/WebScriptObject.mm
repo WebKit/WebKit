@@ -28,10 +28,10 @@
 
 #import "BridgeJSC.h"
 #import "JSDOMBindingSecurity.h"
+#import "JSDOMWindow.h"
+#import "JSDOMWindowCustom.h"
 #import "JSExecState.h"
 #import "JSHTMLElement.h"
-#import "JSLocalDOMWindow.h"
-#import "JSLocalDOMWindowCustom.h"
 #import "JSPluginElementFunctions.h"
 #import "LocalFrame.h"
 #import "ObjCRuntimeObject.h"
@@ -122,7 +122,7 @@ id createJSWrapper(JSC::JSObject* object, RefPtr<JSC::Bindings::RootObject>&& or
 static void addExceptionToConsole(JSC::JSGlobalObject* lexicalGlobalObject, JSC::Exception* exception)
 {
     JSC::VM& vm = lexicalGlobalObject->vm();
-    auto* window = asJSLocalDOMWindow(vm.deprecatedVMEntryGlobalObject(lexicalGlobalObject));
+    auto* window = asJSDOMWindow(vm.deprecatedVMEntryGlobalObject(lexicalGlobalObject));
     if (!window || !exception)
         return;
     reportException(lexicalGlobalObject, exception);
