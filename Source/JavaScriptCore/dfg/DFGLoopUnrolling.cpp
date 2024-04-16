@@ -46,7 +46,7 @@
 namespace JSC { namespace DFG {
 
 class UnrollingPhase : public Phase {
-    static constexpr bool verbose = false;
+    static constexpr bool verbose = true;
 
     using NaturalLoop = CPSNaturalLoop;
 
@@ -347,6 +347,7 @@ class UnrollingPhase : public Phase {
     bool canCloneNode(Node* n)
     {
         switch (n->op()) {
+        case ExitOK:
         case Jump:
         case JSConstant:
         case GetLocal:
@@ -357,12 +358,23 @@ class UnrollingPhase : public Phase {
         case SetLocal:
         case Branch:
         case MovHint:
+        case ZombieHint:
         case PhantomLocal:
         case GetButterfly:
         case Flush:
         case CheckArray:
+        case FilterCallLinkStatus:
+        case ArithBitNot:
+        case CheckStructure:
             return (n->op() == PhantomLocal && n->child1()->op() == Phi) || canCloneNode(n->child1().node());
+        case ArrayifyToStructure:
         case ArithAdd:
+        case ArithBitAnd:
+        case ArithBitOr:
+        case ArithBitRShift:
+        case ArithBitLShift:
+        case ArithBitXor:
+        case BitURShift:
         case CompareLess:
             return canCloneNode(n->child1().node()) && canCloneNode(n->child2().node());
         case PutByVal:
@@ -402,6 +414,7 @@ class UnrollingPhase : public Phase {
             into->phis.append(val);
             return val;
         }
+        case ExitOK:
         case LoopHint:
         case InvalidationPoint:
             return into->appendNode(m_graph, n->prediction(), n->op(), n->origin);
@@ -427,11 +440,36 @@ class UnrollingPhase : public Phase {
         case JSConstant:
             return into->appendNode(m_graph, n->prediction(), n->op(), n->origin, OpInfo(n->constant()));
         case Jump:
-            return into->appendNode(m_graph, n->prediction(), n->op(), n->origin, OpInfo(n->targetBlock()));
+            return into->appendNode(m_graph, n->prediction(), n->op(), n->origin, OpInfo(n->successor(0)));
         case Branch:
-            return into->appendNode(m_graph, n->prediction(), n->op(), n->origin, OpInfo(n->branchData()));
+            return into->appendNode(m_graph, n->prediction(), n->op(), n->origin, OpInfo(m_graph.m_branchData.add(BranchData(*n->branchData()))),
+                Edge(cloneNode(m, into, n->child1().node(), b), n->child1().useKind())
+            );
         case CompareLess:
             return into->appendNode(m_graph, n->prediction(), n->op(), n->origin,
+                Edge(cloneNode(m, into, n->child1().node(), b), n->child1().useKind()),
+                Edge(cloneNode(m, into, n->child2().node(), b), n->child2().useKind())
+            );
+        case CheckStructure:
+            return into->appendNode(m_graph, n->prediction(), n->op(), n->origin, OpInfo(&n->structureSet()),
+                Edge(cloneNode(m, into, n->child1().node(), b), n->child1().useKind())
+            );
+        case ArithBitNot:
+            return into->appendNode(m_graph, n->prediction(), n->op(), n->origin, OpInfo(),
+                Edge(cloneNode(m, into, n->child1().node(), b), n->child1().useKind())
+            );
+        case ArrayifyToStructure:
+            return into->appendNode(m_graph, n->prediction(), n->op(), n->origin, OpInfo(n->structure()),
+                Edge(cloneNode(m, into, n->child1().node(), b), n->child1().useKind()),
+                Edge(cloneNode(m, into, n->child2().node(), b), n->child2().useKind())
+            );
+        case ArithBitAnd:
+        case ArithBitOr:
+        case ArithBitRShift:
+        case ArithBitLShift:
+        case ArithBitXor:
+        case BitURShift:
+            return into->appendNode(m_graph, n->prediction(), n->op(), n->origin, OpInfo(),
                 Edge(cloneNode(m, into, n->child1().node(), b), n->child1().useKind()),
                 Edge(cloneNode(m, into, n->child2().node(), b), n->child2().useKind())
             );
@@ -444,12 +482,17 @@ class UnrollingPhase : public Phase {
             return into->appendNode(m_graph, n->prediction(), n->op(), n->origin, OpInfo(n->flags()),
                 Edge(cloneNode(m, into, n->child1().node(), b), n->child1().useKind())
             );
+        case FilterCallLinkStatus:
+            return into->appendNode(m_graph, n->prediction(), n->op(), n->origin, OpInfo(n->callLinkStatus()),
+                Edge(cloneNode(m, into, n->child1().node(), b), n->child1().useKind())
+            );
         case GetLocal:
             return into->appendNode(m_graph, n->prediction(), n->op(), n->origin,
                 OpInfo(n->variableAccessData()),
                 n->child1() ? Edge(cloneNode(m, into, n->child1().node(), b), n->child1().useKind()) : Edge());
         case MovHint:
         case Flush:
+        case ZombieHint:
             return into->appendNode(m_graph, n->prediction(), n->op(), n->origin,
                 n->hasUnlinkedOperand() ? OpInfo(n->unlinkedOperand()) : OpInfo(n->variableAccessData()),
                 Edge(cloneNode(m, into, n->child1().node(), b), n->child1().useKind()));
@@ -479,10 +522,10 @@ public:
     {
         DFG_ASSERT(m_graph, nullptr, m_graph.m_form == ThreadedCPS);
 
-        // if (verbose) {
-        //     dataLog("Graph before Unrolling:\n");
-        //     m_graph.dump();
-        // }
+        if (verbose) {
+            dataLog("Graph before Unrolling:\n");
+            m_graph.dump();
+        }
         m_graph.ensureCPSDominators();
         m_graph.ensureCPSNaturalLoops();
         m_data.resize(m_graph.m_cpsNaturalLoops->numLoops());
@@ -496,7 +539,7 @@ public:
         for (unsigned loopIndex = m_graph.m_cpsNaturalLoops->numLoops(); loopIndex--;) {
             const NaturalLoop& loop = m_graph.m_cpsNaturalLoops->loop(loopIndex);
 
-            if (loop.size() > 2) {
+            if (loop.size() > 20) {
                 dataLogLnIf(verbose, "Skipping loop with header ", loop.header().node(), " since it has size ", loop.size());
                 continue;
             }
@@ -702,8 +745,8 @@ public:
             }
         }
 
-        BasicBlock* preHeader = data.preHeader;
-        BasicBlock* header = loop.header().node();
+        BasicBlock* const preHeader = data.preHeader;
+        BasicBlock* const header = loop.header().node();
         // OSR liveness is based on this, so we need to pick it carefully.
         const NodeOrigin originHeader = preHeader->at(0)->origin.withExitOK(false);
         const NodeOrigin originBody = data.tail->at(data.tail->size() - 1)->origin.withExitOK(false);
@@ -759,25 +802,47 @@ public:
 
             */
 
+        // Replace each successor s of this block bp with functor(s)
+        auto replaceSuccessorsWithFunctor = [&loop] (BasicBlock* bp, auto functor) {
+            for (unsigned i = 0; i < bp->numSuccessors(); ++i) {
+                if (loop.contains(bp->successor(i)))
+                    bp->successor(i) = functor(bp->successor(i));
+            }
+
+            if (bp->terminal()->isBranch()) {
+                auto* targetData = bp->terminal()->branchData();
+                if (loop.contains(targetData->taken.block))
+                    targetData->taken.block = functor(targetData->taken.block);
+                if (loop.contains(targetData->notTaken.block))
+                    targetData->notTaken.block = functor(targetData->notTaken.block);
+
+            } else {
+                ASSERT(bp->terminal()->isJump());
+                if (loop.contains(bp->terminal()->targetBlock()))
+                    bp->terminal()->targetBlock() = functor(bp->terminal()->targetBlock());
+            }
+        };
+
         // Copy: body1; tail[condition -> jump]; body2; tail2[condition -> condition']
         HashMap<BasicBlock*, BasicBlock*> blockMap;
         // Once we decide we can't use the unrolled loop anymore, we copy the original loop's condition.
         // We copy the loop backwards just to make the jumps easier to track.
-        BasicBlock* goToOriginalLoop = makeBlock();
-        BasicBlock* unrolledLoopHeader = makeBlock();
+        BasicBlock* const goToOriginalLoop = makeBlock();
+        BasicBlock* const unrolledLoopHeader = makeBlock();
         BasicBlock* nextLoopIteration = nullptr;
         const int loopFactor = Options::loopFactorFTLLoopUnrolling();
         for (int unrolledLoopIteration = loopFactor - 1; unrolledLoopIteration >= 0; --unrolledLoopIteration) {
             const bool isFinalLoopBodyCopy = unrolledLoopIteration == loopFactor - 1;
             const bool isFirstLoopBodyCopy = unrolledLoopIteration == 0;
-            blockMap = { };
+            blockMap.clear();
             std::queue<BasicBlock*> queue;
             HashMap<Node*, Node*> nodeMap;
             queue.push(header);
 
             while (!queue.empty()) {
-                BasicBlock* b = queue.front();
+                BasicBlock* const b = queue.front();
                 queue.pop();
+
                 if (blockMap.contains(b) || !loop.contains(b))
                     continue;
 
@@ -795,7 +860,7 @@ public:
                 bool updateWouldHaveBeenCommited = false;
 
                 for (unsigned i = 0; i < b->size(); ++i) {
-                    auto* n = b->at(i);
+                    auto* const n = b->at(i);
                     // We will handle this guy below
                     if (b == data.tail && n->isTerminal())
                         continue;
@@ -831,31 +896,15 @@ public:
             auto replaceSuccessors = [&] (BasicBlock* b, HashMap<BasicBlock*, BasicBlock*>& blockMap) {
                 BasicBlock* bp = blockMap.get(b);
                 ASSERT(bp);
-                for (unsigned i = 0; i < b->numSuccessors(); ++i) {
-                    if (loop.contains(bp->successor(i)))
-                        bp->successor(i) = blockMap.get(bp->successor(i));
-                }
+                ASSERT(bp != b);
 
-                if (bp->terminal()->isBranch()) {
-                    auto* targetData = bp->terminal()->branchData();
-                    if (loop.contains(targetData->taken.block))
-                        targetData->taken.block = blockMap.get(targetData->taken.block);
-                    if (loop.contains(targetData->notTaken.block))
-                        targetData->notTaken.block = blockMap.get(targetData->notTaken.block);
-
-                } else {
-                    ASSERT(bp->terminal()->isJump());
-                    if (loop.contains(bp->terminal()->targetBlock()))
-                        bp->terminal()->targetBlock() = blockMap.get(bp->terminal()->targetBlock());
-                }
+                replaceSuccessorsWithFunctor(bp, [&] (BasicBlock* s) { return blockMap.get(s); });
             };
 
-            auto replaceNodes = [&] (auto& iter, bool insertNull) {
+            auto replaceNodes = [&] (auto& iter) {
                 for (unsigned i = 0; i < iter.size(); ++i) {
-                    if (iter.at(i) && (insertNull || nodeMap.contains(iter.at(i)))) {
-                        dataLogLnIf(verbose, "ReplaceNodes: ", iter.at(i), " -> ", nodeMap.get(iter.at(i)));
+                    if (iter.at(i) && nodeMap.contains(iter.at(i)))
                         iter.at(i) = nodeMap.get(iter.at(i));
-                    }
                 }
             };
 
@@ -863,13 +912,14 @@ public:
             // Except: the new termination condition, which should go to goToOriginalLoop
             for (uint64_t i = 0; i < loop.size(); ++i) {
                 BasicBlock* b = loop.at(i).node();
-                ASSERT(blockMap.contains(b));
+                if (!blockMap.contains(b))
+                    continue;
                 BasicBlock* bp = blockMap.get(b);
                 ASSERT(bp);
 
                 // These need to be updated
-                replaceNodes(bp->variablesAtTail, false);
-                replaceNodes(bp->variablesAtHead, false);
+                replaceNodes(bp->variablesAtTail);
+                replaceNodes(bp->variablesAtHead);
 
                 // Update AI
                 b->cfaHasVisited = false;
@@ -905,6 +955,7 @@ public:
         }
 
         // And we fill out the body of goToOriginalLoop
+        dataLogLnIf(verbose, "Tail: ", data.tail->index, " -> ", RawPointer(blockMap.get(data.tail)));
         ASSERT(blockMap.get(data.tail));
         {
             HashMap<Node*, Node*> conditionNodeMap;
@@ -912,6 +963,32 @@ public:
             BranchData* branchData = m_graph.m_branchData.add();
             branchData->taken = BranchTarget(data.tail->terminal()->branchData()->taken);
             branchData->notTaken = BranchTarget(data.tail->terminal()->branchData()->notTaken);
+
+            auto& continueOriginalLoop = loop.contains(branchData->taken.block) ? branchData->taken : branchData->notTaken;
+            auto& exitLoop = loop.contains(branchData->taken.block) ? branchData->notTaken : branchData->taken;
+
+            dataLogLnIf(verbose, "goToOriginalLoop will use: exitLoop ", exitLoop.block->index, " continueOriginalLoop: ", continueOriginalLoop.block->index);
+
+            ASSERT(loop.contains(branchData->taken.block) || loop.contains(branchData->notTaken.block));
+            ASSERT(loop.contains(continueOriginalLoop.block));
+            ASSERT(blockMap.contains(continueOriginalLoop.block));
+            ASSERT(!loop.contains(exitLoop.block));
+
+            // FIXME: We don't want to introduce irreducible control flow here
+            // but we totally do: core_sha1_loop_unrolling.js
+            auto newContinueOriginalLoop = BranchTarget(blockMap.get(continueOriginalLoop.block));
+            
+            replaceSuccessorsWithFunctor(newContinueOriginalLoop.block, [&] (BasicBlock* s) -> BasicBlock* {
+                for (BasicBlock* originalSuccessor : continueOriginalLoop.block->successors()) {
+                    if (blockMap.get(originalSuccessor) == s)
+                        return originalSuccessor;
+                }
+                ASSERT_NOT_REACHED();
+                return nullptr;
+            });
+
+            continueOriginalLoop = newContinueOriginalLoop;
+
             goToOriginalLoop->appendNode(
                 m_graph, SpecNone, Branch, originBody, OpInfo(branchData), Edge(postCondition));
 
@@ -965,10 +1042,16 @@ public:
         // Update AI
         preHeader->cfaDidFinish = false;
 
-        m_blockInsertionSet.execute();
+        Vector<BasicBlock*> loopBlocksCache;
         if (verbose) {
             for (uint64_t i = 0; i < loop.size(); ++i) {
                 BasicBlock* b = loop.at(i).node();
+                loopBlocksCache.append(b);
+            }
+        }
+        m_blockInsertionSet.execute();
+        if (verbose) {
+            for (BasicBlock* b : loopBlocksCache) {
                 ASSERT(blockMap.contains(b));
                 BasicBlock* bp = blockMap.get(b);
                 ASSERT(bp);

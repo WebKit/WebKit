@@ -383,7 +383,6 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         if (Options::useFTLLoopUnrolling()) {
             RUN_PHASE(performCPSRethreading);
             RUN_PHASE(performDFGLoopUnrolling);
-            RUN_PHASE(performCFGSimplification);
             RUN_PHASE(performCriticalEdgeBreaking);
         }
 
@@ -391,8 +390,10 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         RUN_PHASE(performSSAConversion);
         RUN_PHASE(performSSALowering);
 
-        if (Options::useFTLLoopUnrolling())
+        if (Options::useFTLLoopUnrolling()) {
             RUN_PHASE(performCFA);
+            RUN_PHASE(performCriticalEdgeBreaking);
+        }
 
 
         // Ideally, these would be run to fixpoint with the object allocation sinking phase.
