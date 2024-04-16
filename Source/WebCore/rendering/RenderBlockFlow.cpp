@@ -3918,7 +3918,13 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
             // FIXME: This is only needed because of the synchronous layout call in setStaticPositionsForSimpleOutOfFlowContent
             // which itself appears to be a workaround for a bad subtree layout shown by
             // fast/block/positioning/static_out_of_flow_inside_layout_boundary.html
-            if (renderer.style().logicalHeight().isPercentOrCalculated())
+            auto hasParentRelativeHeightOrTop = [&] {
+                auto& style = renderer.style();
+                if (style.logicalHeight().isPercentOrCalculated() || style.logicalTop().isPercentOrCalculated())
+                    return true;
+                return !renderer.style().logicalBottom().isAuto();
+            }();
+            if (hasParentRelativeHeightOrTop)
                 hasSimpleOutOfFlowContentOnly = false;
         } else
             hasSimpleOutOfFlowContentOnly = false;

@@ -1,0 +1,32 @@
+<style>
+.rel {
+    position: relative;
+    height: 20px;
+    border: 2px solid red;
+}
+.abs {
+    position: absolute;
+    border: 2px solid green;
+    width: 100px;
+    display: none;
+}
+.show .abs {
+    display: block;
+}
+</style>
+<div class=rel>
+<div class=abs style="height:50%">
+</div>
+</div>
+<div class=rel>
+<div class=abs style="top:50%">
+</div>
+</div>
+<div class=rel>
+<div class=abs style="bottom:0px">
+</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.body.classList.add("show");
+</script>
