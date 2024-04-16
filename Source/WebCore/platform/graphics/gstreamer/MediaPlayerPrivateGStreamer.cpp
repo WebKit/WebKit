@@ -393,16 +393,16 @@ void MediaPlayerPrivateGStreamer::prepareToPlay()
     }
 }
 
-bool MediaPlayerPrivateGStreamer::isPipelineSeeking(GstState current, GstState pending, GstStateChangeReturn change) const
+bool MediaPlayerPrivateGStreamer::isPipelineWaitingPreroll(GstState current, GstState pending, GstStateChangeReturn change) const
 {
-    return change == GST_STATE_CHANGE_ASYNC && current == GST_STATE_PAUSED && pending == GST_STATE_PAUSED;
+    return change == GST_STATE_CHANGE_ASYNC && current == GST_STATE_PAUSED && pending >= GST_STATE_PAUSED;
 }
 
-bool MediaPlayerPrivateGStreamer::isPipelineSeeking() const
+bool MediaPlayerPrivateGStreamer::isPipelineWaitingPreroll() const
 {
     GstState current, pending;
     GstStateChangeReturn change = gst_element_get_state(m_pipeline.get(), &current, &pending, 0);
-    return isPipelineSeeking(current, pending, change);
+    return isPipelineWaitingPreroll(current, pending, change);
 }
 
 void MediaPlayerPrivateGStreamer::play()
@@ -419,8 +419,8 @@ void MediaPlayerPrivateGStreamer::play()
         return;
     }
 
-    if (isPipelineSeeking()) {
-        GST_DEBUG_OBJECT(pipeline(), "pipeline is seeking, let's delay moving the pipeline to playing right now");
+    if (isPipelineWaitingPreroll()) {
+        GST_DEBUG_OBJECT(pipeline(), "pipeline is waiting preroll (after seek or flush), let's delay moving the pipeline to playing right now");
         return;
     }
 
@@ -487,7 +487,7 @@ bool MediaPlayerPrivateGStreamer::paused() const
         return isPipelinePaused;
 
 #if !defined(GST_DISABLE_GST_DEBUG) || !defined(NDEBUG)
-    if (!isPipelineSeeking(state, pending, stateChange) && isPipelinePaused != !m_isPipelinePlaying
+    if (!isPipelineWaitingPreroll(state, pending, stateChange) && isPipelinePaused != !m_isPipelinePlaying
         && (stateChange == GST_STATE_CHANGE_SUCCESS || stateChange == GST_STATE_CHANGE_NO_PREROLL)) {
         GST_WARNING_OBJECT(pipeline(), "states are not synchronized, player paused %s, pipeline paused %s",
             boolForPrinting(!m_isPipelinePlaying), boolForPrinting(isPipelinePaused));
@@ -994,8 +994,8 @@ MediaPlayerPrivateGStreamer::ChangePipelineStateResult MediaPlayerPrivateGStream
 
     GstState currentState, pending;
     GstStateChangeReturn change = gst_element_get_state(m_pipeline.get(), &currentState, &pending, 0);
-    if (isPipelineSeeking(currentState, pending, change)) {
-        GST_DEBUG_OBJECT(pipeline(), "rejected state change during seek");
+    if (isPipelineWaitingPreroll(currentState, pending, change)) {
+        GST_DEBUG_OBJECT(pipeline(), "rejected state change during preroll");
         return ChangePipelineStateResult::Rejected;
     }
 
@@ -1428,7 +1428,8 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
         return m_cachedPosition;
     }
 
-    GstClockTime gstreamerPosition = gstreamerPositionFromSinks();
+    // We can't trust sinks position when pipeline is flushed (e.g. after MSE samples removal).
+    GstClockTime gstreamerPosition = isPipelineWaitingPreroll() ? GST_CLOCK_TIME_NONE : gstreamerPositionFromSinks();
     GST_TRACE_OBJECT(pipeline(), "Position %" GST_TIME_FORMAT ", canFallBackToLastFinishedSeekPosition: %s", GST_TIME_ARGS(gstreamerPosition), boolForPrinting(m_canFallBackToLastFinishedSeekPosition));
 
     // Cached position is marked as non valid here but we might fail to get a new one so initializing to this as "educated guess".

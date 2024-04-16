@@ -346,8 +346,8 @@ protected:
 
     void setCachedPosition(const MediaTime&) const;
 
-    bool isPipelineSeeking(GstState current, GstState pending, GstStateChangeReturn) const;
-    bool isPipelineSeeking() const;
+    bool isPipelineWaitingPreroll(GstState current, GstState pending, GstStateChangeReturn) const;
+    bool isPipelineWaitingPreroll() const;
 
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     ThreadSafeWeakPtr<MediaPlayer> m_player;
