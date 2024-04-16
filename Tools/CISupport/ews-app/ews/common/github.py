@@ -218,7 +218,7 @@ class GitHubEWS(GitHub):
                           ['', '', 'api-mac-ventura', '', ''],
                           ['', '', 'mac-ventura-wk1', '', ''],
                           ['', '', 'mac-ventura-wk2', '', ''],
-                          ['jsc-ventura-arm64', '', '', '', '']
+                          ['jsc-ventura-arm64', '', '', '', ''],
                           ['', '', 'mac-ventura-wk2-stress', '', '']]
 
     @classmethod
