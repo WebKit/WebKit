@@ -171,10 +171,7 @@ bool Quirks::needsAutoplayPlayPauseEvents() const
 // - iOS PiP
 bool Quirks::needsSeekingSupportDisabled() const
 {
-    if (!needsQuirks())
-        return false;
-
-    return isDomain("netflix.com"_s);
+    return false;
 }
 
 // netflix.com https://bugs.webkit.org/show_bug.cgi?id=193301
@@ -1857,6 +1854,17 @@ bool Quirks::needsGetElementsByNameQuirk() const
 #else
     return false;
 #endif
+}
+
+bool Quirks::needsNetflixMediaSessionQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_shouldIgnorePlaysInlineRequirementQuirk)
+        m_shouldIgnorePlaysInlineRequirementQuirk = m_document->isTopDocument() && isDomain("netflix.com"_s);
+
+    return *m_shouldIgnorePlaysInlineRequirementQuirk;
 }
 
 }

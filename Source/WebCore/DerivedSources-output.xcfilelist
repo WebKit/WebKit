@@ -3435,6 +3435,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/NodeName.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PaintWorkletGlobalScopeConstructors.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PlugInsResources.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PlugInsResourcesData.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/QuirksBuiltins.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/QuirksBuiltins.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/QuirksInternalsBuiltins.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/QuirksInternalsBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableByteStreamControllerBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableByteStreamControllerBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableByteStreamInternalsBuiltins.cpp

@@ -65,7 +65,7 @@ public:
     void setPlaybackState(MediaSessionPlaybackState);
 
     void setActionHandler(MediaSessionAction, RefPtr<MediaSessionActionHandler>&&);
-
+    bool hasActionHandler(MediaSessionAction) const;
     void callActionHandler(const MediaSessionActionDetails&, DOMPromiseDeferred<void>&&);
 
     template <typename Visitor> void visitActionHandlers(Visitor&) const;
