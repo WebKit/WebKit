@@ -4128,13 +4128,13 @@ template <typename TreeBuilder> NEVER_INLINE const char* Parser<LexerType>::meta
 }
 
 template <typename LexerType>
-template <typename TreeBuilder> bool Parser<LexerType>::isSimpleAssignmentTarget(TreeBuilder& context, TreeExpression expr)
+template <typename TreeBuilder> bool Parser<LexerType>::isSimpleAssignmentTarget(TreeBuilder& context, TreeExpression expr, bool ignoreStrictCheck)
 {
     // Web compatibility concerns prevent us from handling a function call LHS as an early error in sloppy mode.
     // This behavior is currently unspecified, but see: https://github.com/tc39/ecma262/issues/257#issuecomment-195106880
-    return context.isLocation(expr) || (!strictMode() && context.isFunctionCall(expr));
+    return context.isLocation(expr) || (!(strictMode() || ignoreStrictCheck) && context.isFunctionCall(expr));
 }
-    
+
 template <typename LexerType>
 template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmentExpression(TreeBuilder& context, ExpressionErrorClassifier& classifier)
 {
@@ -4258,7 +4258,9 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         m_parserState.nonTrivialExpressionCount++;
         hadAssignment = true;
         semanticFailIfTrue(context.isMetaProperty(lhs), metaPropertyName(context, lhs), " can't be the left hand side of an assignment expression");
-        semanticFailIfFalse(isSimpleAssignmentTarget(context, lhs), "Left side of assignment is not a reference");
+        // Even if in sloppy mode, we should throw a syntax error for logical assignment expressions that are not simple.
+        // https://tc39.es/ecma262/#sec-assignment-operators-static-semantics-early-errors
+        semanticFailIfFalse(isSimpleAssignmentTarget(context, lhs, op == Operator::CoalesceEq || op == Operator::OrEq || op == Operator::AndEq), "Left side of assignment is not a reference");
         context.assignmentStackAppend(assignmentStack, lhs, start, tokenStartPosition(), m_parserState.assignmentCount, op);
         start = tokenStartPosition();
         m_parserState.assignmentCount++;
