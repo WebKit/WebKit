@@ -68,6 +68,8 @@ public:
     void addMessage(MessageSource, MessageLevel, const String& message, Ref<Inspector::ScriptCallStack>&&);
     void addMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0, Document* = nullptr);
 
+    static void logMessageToSystemConsole(const Inspector::ConsoleMessage&);
+
 private:
     void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
     void count(JSC::JSGlobalObject*, const String& label) override;

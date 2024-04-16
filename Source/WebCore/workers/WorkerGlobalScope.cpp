@@ -43,6 +43,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSDOMExceptionHandling.h"
 #include "NotImplemented.h"
+#include "PageConsoleClient.h"
 #include "Performance.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include "ReportingScope.h"
@@ -449,6 +450,10 @@ void WorkerGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMess
         postTask(AddConsoleMessageTask(message->source(), message->level(), message->message()));
         return;
     }
+
+    auto sessionID = this->sessionID();
+    if (UNLIKELY(settingsValues().logsPageMessagesToSystemConsoleEnabled && sessionID && !sessionID->isEphemeral()))
+        PageConsoleClient::logMessageToSystemConsole(*message);
 
     InspectorInstrumentation::addMessageToConsole(*this, WTFMove(message));
 }
