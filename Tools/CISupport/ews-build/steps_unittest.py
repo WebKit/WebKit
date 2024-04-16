@@ -3774,7 +3774,10 @@ class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
 
 class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
     READ_LIMIT = 1000
-    ENV = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
+    ENV = dict(
+        FILTER_BRANCH_SQUELCH_WARNING='1',
+        EMAIL='ews@webkit.org',
+    )
 
     @staticmethod
     def downloadFileRecordingContents(limit, recorder):

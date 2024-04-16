@@ -1067,7 +1067,10 @@ class ApplyPatch(steps.ShellSequence, CompositeStepMixin, ShellMixin):
     description = ['apply-patch']
     descriptionDone = ['Applied patch']
     haltOnFailure = True
-    env = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
+    env = dict(
+        FILTER_BRANCH_SQUELCH_WARNING='1',
+        EMAIL=FROM_EMAIL,
+    )
     FILTER_BRANCH_PROGRAM = '''import re
 import sys
 
