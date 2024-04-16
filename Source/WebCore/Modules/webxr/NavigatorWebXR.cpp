@@ -41,6 +41,11 @@ WebXRSystem& NavigatorWebXR::xr(Navigator& navigatorObject)
     return *navigator.m_xr;
 }
 
+WebXRSystem* NavigatorWebXR::xrIfExists(Navigator& navigator)
+{
+    return NavigatorWebXR::from(navigator).m_xr.get();
+}
+
 NavigatorWebXR& NavigatorWebXR::from(Navigator& navigator)
 {
     auto* supplement = static_cast<NavigatorWebXR*>(Supplement<Navigator>::from(&navigator, supplementName()));

@@ -4766,7 +4766,8 @@ bool Page::hasActiveImmersiveSession() const
         if (!navigator)
             continue;
 
-        if (NavigatorWebXR::xr(*navigator).hasActiveImmersiveSession())
+        auto* xrSystem = NavigatorWebXR::xrIfExists(*navigator);
+        if (xrSystem && xrSystem->hasActiveImmersiveSession())
             return true;
     }
     return false;
