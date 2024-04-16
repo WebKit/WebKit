@@ -84,48 +84,17 @@ String URLDecomposition::host() const
     return fullURL().hostAndPort();
 }
 
-static unsigned countASCIIDigits(StringView string)
-{
-    unsigned length = string.length();
-    for (unsigned count = 0; count < length; ++count) {
-        if (!isASCIIDigit(string[count]))
-            return count;
-    }
-    return length;
-}
-
 void URLDecomposition::setHost(StringView value)
 {
     auto fullURL = this->fullURL();
     if (value.isEmpty() && !fullURL.protocolIsFile() && fullURL.hasSpecialScheme())
         return;
 
-    size_t separator = value.reverseFind(':');
-    if (!separator)
-        return;
-
     if (fullURL.hasOpaquePath())
         return;
 
-    // No port if no colon or rightmost colon is within the IPv6 section.
-    size_t ipv6Separator = value.reverseFind(']');
-    if (separator == notFound || (ipv6Separator != notFound && ipv6Separator > separator))
-        fullURL.setHost(value);
-    else {
-        // Multiple colons are acceptable only in case of IPv6.
-        if (value.find(':') != separator && ipv6Separator == notFound)
-            return;
-        unsigned portLength = countASCIIDigits(value.substring(separator + 1));
-        if (!portLength) {
-            fullURL.setHost(value.left(separator));
-        } else {
-            auto portNumber = parseInteger<uint16_t>(value.substring(separator + 1, portLength));
-            if (portNumber && WTF::isDefaultPortForProtocol(*portNumber, fullURL.protocol()))
-                fullURL.setHostAndPort(value.left(separator));
-            else
-                fullURL.setHostAndPort(value.left(separator + 1 + portLength));
-        }
-    }
+    fullURL.setHostAndPort(value);
+
     if (fullURL.isValid())
         setFullURL(fullURL);
 }

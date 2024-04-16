@@ -25,12 +25,6 @@
     function runOneTestThatShouldNotBeAccepted(testIndex) {
         var testCasesThatShouldNotBeAccepted = [
             { hostString : 'icl' + '\uf877' + 'oud.com', description : "'icl' + '\\uf877' + 'oud.com'" }
-            ,{ hostString : 'icloud.com:-1', description : false }
-            ,{ hostString : 'icloud.com:11c', description : false }
-            ,{ hostString : 'icloud.com:11', description : false }
-            ,{ hostString : 'icloud.com:80:', description : false }
-            ,{ hostString : 'icloud.com:80:80', description : false }
-            ,{ hostString : 'icloud.com:', description : false }
             ,{ hostString : ':80', description : false }
             ,{ hostString : ':', description : false }
             ,{ hostString : '', description : "empty string" }
