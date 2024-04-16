@@ -485,6 +485,9 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "DumpBackForwardList"))
+        return m_testRunner->dumpBackForwardList();
+
     postPageMessage("Error", "Unknown");
 }
 

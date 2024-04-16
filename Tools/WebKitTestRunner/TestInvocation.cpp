@@ -883,6 +883,9 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "DumpBackForwardList"))
+        return postPageMessage("DumpBackForwardList");
+
     ASSERT_NOT_REACHED();
 }
 

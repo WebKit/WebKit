@@ -2384,6 +2384,14 @@ void TestRunner::getAndClearReportedWindowProxyAccessDomains(JSValueRef callback
     postMessageWithAsyncReply("GetAndClearReportedWindowProxyAccessDomains", callback);
 }
 
+void TestRunner::dumpBackForwardList()
+{
+    m_shouldDumpBackForwardListsForAllWindows = true;
+    auto& injectedBundle = InjectedBundle::singleton();
+    if (WKBundleFrameIsRemote(WKBundlePageGetMainFrame(injectedBundle.pageRef())))
+        postPageMessage("DumpBackForwardList");
+}
+
 ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WTR

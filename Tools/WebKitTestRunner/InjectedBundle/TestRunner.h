@@ -93,7 +93,7 @@ public:
     unsigned renderTreeDumpOptions() const { return m_renderTreeDumpOptions; }
 
     // Other dumping.
-    void dumpBackForwardList() { m_shouldDumpBackForwardListsForAllWindows = true; }
+    void dumpBackForwardList();
     void dumpChildFrameScrollPositions() { m_shouldDumpAllFrameScrollPositions = true; }
     void dumpEditingCallbacks() { m_dumpEditingCallbacks = true; }
     void dumpSelectionRect() { m_dumpSelectionRect = true; }
