@@ -2564,7 +2564,7 @@ PDFContextMenuItem UnifiedPDFPlugin::separatorContextMenuItem() const
 
 Vector<PDFContextMenuItem> UnifiedPDFPlugin::selectionContextMenuItems(const IntPoint& contextMenuEventRootViewPoint) const
 {
-    if (![m_pdfDocument allowsCopying] || !m_currentSelection)
+    if (![m_pdfDocument allowsCopying] || !m_currentSelection || [m_currentSelection isEmpty])
         return { };
 
     Vector<PDFContextMenuItem> items {
