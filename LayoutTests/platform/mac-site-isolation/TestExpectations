@@ -1415,7 +1415,6 @@ http/tests/security/window-defineProperty-crossOrigin.html [ Skip ]
 http/tests/security/window-name-after-same-origin-main-frame-navigation.html [ Skip ]
 http/tests/security/xss-DENIED-htmlelelment-with-iframe-proto.html [ Skip ]
 http/tests/security/xss-DENIED-mime-type-execute-as-html.html [ Skip ]
-http/tests/security/xss-DENIED-object-element.html [ Skip ]
 
 #########################
 # Image tests that fail #
