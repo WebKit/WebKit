@@ -1067,10 +1067,7 @@ class ApplyPatch(steps.ShellSequence, CompositeStepMixin, ShellMixin):
     description = ['apply-patch']
     descriptionDone = ['Applied patch']
     haltOnFailure = True
-    env = dict(
-        FILTER_BRANCH_SQUELCH_WARNING='1',
-        EMAIL=FROM_EMAIL,
-    )
+    env = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
     FILTER_BRANCH_PROGRAM = '''import re
 import sys
 
@@ -1106,6 +1103,8 @@ for l in lines[1:]:
         if not patch:
             commands += [['curl', '-L', 'https://bugs.webkit.org/attachment.cgi?id={}'.format(self.getProperty('patch_id', '')), '-o', '.buildbot-diff']]
         commands += [
+            ['git', 'config', 'user.name', 'EWS'],
+            ['git', 'config', 'user.email', FROM_EMAIL],
             ['git', 'am', '--keep-non-patch', '.buildbot-diff'],
             ['git', 'filter-branch', '-f', '--msg-filter', 'python3 -c "{}"'.format(self.FILTER_BRANCH_PROGRAM), 'HEAD...HEAD~1'],
         ]

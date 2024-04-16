@@ -3774,10 +3774,7 @@ class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
 
 class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
     READ_LIMIT = 1000
-    ENV = dict(
-        FILTER_BRANCH_SQUELCH_WARNING='1',
-        EMAIL='ews@webkit.org',
-    )
+    ENV = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
 
     @staticmethod
     def downloadFileRecordingContents(limit, recorder):
@@ -3826,6 +3823,20 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
+                command=['git', 'config', 'user.name', 'EWS'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'config', 'user.email', 'ews@webkit.org'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
                 command=['git', 'am', '--keep-non-patch', '.buildbot-diff'],
             ) + 0,
             ExpectShell(
@@ -3857,6 +3868,20 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
                 logEnviron=False,
                 env=self.ENV,
                 command=['curl', '-L', 'https://bugs.webkit.org/attachment.cgi?id=1234', '-o', '.buildbot-diff'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'config', 'user.name', 'EWS'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'config', 'user.email', 'ews@webkit.org'],
             ) + 0,
             ExpectShell(
                 workdir='wkdir',
