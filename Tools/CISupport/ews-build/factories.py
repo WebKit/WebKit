@@ -27,7 +27,7 @@ from buildbot.steps import trigger
 from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                    CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, DetermineLabelOwner,
-                   DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests, GitHub,
+                   DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub,
                    InstallGtkDependencies, InstallHooks, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                    MapBranchAlias, RemoveAndAddLabels, RetrievePRDataFromLabel, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
@@ -38,6 +38,7 @@ from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Cano
 
 class Factory(factory.BuildFactory):
     findModifiedLayoutTests = False
+    skipBuildIfNoResult = True
     branches = None
 
     def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, **kwargs):
@@ -45,8 +46,6 @@ class Factory(factory.BuildFactory):
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments))
         if checkRelevance:
             self.addStep(CheckChangeRelevance())
-        if self.findModifiedLayoutTests:
-            self.addStep(FindModifiedLayoutTests())
         self.addStep(ValidateChange(branches=self.branches))
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
@@ -56,9 +55,14 @@ class Factory(factory.BuildFactory):
         # automatically apply the patch to the repo, and that doesn't handle ChangeLogs well. See https://webkit.org/b/193138
         # Therefore we add CheckOutSpecificRevision step to checkout required revision.
         self.addStep(CheckOutSpecificRevision())
+        if self.findModifiedLayoutTests:
+            self.addStep(GetTestExpectationsBaseline())
         self.addStep(ShowIdentifier())
         self.addStep(ApplyPatch())
         self.addStep(CheckOutPullRequest())
+        if self.findModifiedLayoutTests:
+            self.addStep(GetUpdatedTestExpectations())
+            self.addStep(FindModifiedLayoutTests(skipBuildIfNoResult=self.skipBuildIfNoResult))
 
 
 class StyleFactory(factory.BuildFactory):
@@ -136,6 +140,7 @@ class TestFactory(Factory):
     LayoutTestClass = None
     APITestClass = None
     willTriggerCrashLogSubmission = False
+    skipBuildIfNoResult = False
 
     def getProduct(self):
         self.addStep(DownloadBuiltProduct())
@@ -152,7 +157,6 @@ class TestFactory(Factory):
             self.addStep(WaitForCrashCollection())
         self.addStep(KillOldProcesses())
         if self.LayoutTestClass:
-            self.addStep(FindModifiedLayoutTests(skipBuildIfNoResult=False))
             self.addStep(RunWebKitTestsInStressMode(num_iterations=10, layout_test_class=self.LayoutTestClass))
             self.addStep(self.LayoutTestClass())
         if self.APITestClass:
@@ -217,6 +221,7 @@ class iOSEmbeddedBuildFactory(BuildFactory):
 
 class iOSTestsFactory(TestFactory):
     LayoutTestClass = RunWebKitTests
+    findModifiedLayoutTests = True
     willTriggerCrashLogSubmission = True
 
 
@@ -241,6 +246,7 @@ class tvOSBuildFactory(BuildFactory):
 
 class macOSWK1Factory(TestFactory):
     LayoutTestClass = RunWebKit1Tests
+    findModifiedLayoutTests = True
     willTriggerCrashLogSubmission = True
 
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, checkRelevance=False, **kwargs):
@@ -249,6 +255,7 @@ class macOSWK1Factory(TestFactory):
 
 class macOSWK2Factory(TestFactory):
     LayoutTestClass = RunWebKitTests
+    findModifiedLayoutTests = True
     willTriggerCrashLogSubmission = True
 
 
@@ -268,6 +275,7 @@ class GTKBuildFactory(BuildFactory):
 
 class GTKTestsFactory(TestFactory):
     LayoutTestClass = RunWebKitTestsRedTree
+    findModifiedLayoutTests = True
 
 
 class WPEBuildFactory(BuildFactory):
@@ -280,6 +288,7 @@ class WPESkiaBuildFactory(WPEBuildFactory):
 
 class WPETestsFactory(TestFactory):
     LayoutTestClass = RunWebKitTestsRedTree
+    findModifiedLayoutTests = True
 
 
 class ServicesFactory(Factory):

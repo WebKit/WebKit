@@ -1314,15 +1314,135 @@ class CheckChangeRelevance(AnalyzeChange):
         return None
 
 
-class FindModifiedLayoutTests(AnalyzeChange):
+class GetTestExpectationsBaseline(shell.ShellCommand, ShellMixin):
+    name = 'get-test-expectations-baseline'
+    description = 'get-test-expectations-baseline running'
+    descriptionDone = 'Found baseline expectations for layout tests'
+    command = ['python3', 'Tools/Scripts/run-webkit-tests', '--print-expectations', WithProperties('--%(configuration)s')]
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        platform = self.getProperty('platform')
+        self.setCommand(self.command + customBuildFlag(platform, self.getProperty('fullPlatform')))
+
+        patch_author = self.getProperty('patch_author')
+        if patch_author in ['webkit-wpt-import-bot@igalia.com']:
+            self.setCommand(self.command + ['imported/w3c/web-platform-tests'])
+
+        additionalArguments = self.getProperty('additionalArguments', '')
+        if additionalArguments:
+            self.setCommand(self.command + additionalArguments)
+
+        self.setCommand(self.shell_command(' '.join(self.command) + ' > base-expectations.txt'))
+        rc = yield super().run()
+
+        log_text = log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+        match = re.search(r'Found.*', log_text)
+        if match:
+            defer.returnValue(SUCCESS)
+        defer.returnValue(rc)
+
+
+class GetUpdatedTestExpectations(steps.ShellSequence, ShellMixin):
+    name = 'get-updated-test-expectations'
+    description = 'get-updated-test-expectations running'
+    descriptionDone = 'Found updated expectations for layout tests'
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        configuration_flag = [f"--{self.getProperty('configuration')}"] if self.getProperty('configuration') else []
+        platform_flag = customBuildFlag(self.getProperty('platform'), self.getProperty('fullPlatform'))
+        run_webkit_command = ['python3', 'Tools/Scripts/run-webkit-tests', '--print-expectations'] + configuration_flag + platform_flag
+
+        patch_author = self.getProperty('patch_author')
+        if patch_author in ['webkit-wpt-import-bot@igalia.com']:
+            run_webkit_command += ['imported/w3c/web-platform-tests']
+
+        additionalArguments = self.getProperty('additionalArguments', '')
+        if additionalArguments:
+            run_webkit_command += additionalArguments
+
+        run_webkit_command = ' '.join(run_webkit_command) + ' > new-expectations.txt'
+
+        self.commands = []
+        for command in [
+            self.shell_command(run_webkit_command),
+            self.shell_command("perl -p -i -e 's/\\].*/\\]/' base-expectations.txt"),
+            self.shell_command("perl -p -i -e 's/\\].*/\\]/' new-expectations.txt"),
+        ]:
+            self.commands.append(util.ShellArg(command=command, logname='stdio'))
+
+        rc = yield super().run()
+
+        log_text = log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+        match = re.search(r'Found.*', log_text)
+        if match:
+            defer.returnValue(SUCCESS)
+        defer.returnValue(rc)
+
+
+class FindModifiedLayoutTests(shell.ShellCommandNewStyle, AnalyzeChange):
     name = 'find-modified-layout-tests'
+    description = 'find-modified-layout tests running'
+    descriptionDone = 'Found modified layout tests'
     RE_LAYOUT_TEST = br'^(\+\+\+).*(LayoutTests.*\.html)'
     DIRECTORIES_TO_IGNORE = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
     SUFFIXES_TO_IGNORE = ['-expected', '-expected-mismatch', '-ref', '-notref']
+    command = ['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']
 
     def __init__(self, skipBuildIfNoResult=True):
         self.skipBuildIfNoResult = skipBuildIfNoResult
         super().__init__()
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+        rc = yield super().run()
+        modified_tests = set()
+        log_text = self.log_observer.getStdout()
+        match = re.findall(r'\+(.*\.html)', log_text)
+        yield self._addToLog('stdio', '\nLooking for test expectation changes...\n')
+        for test in match:
+            yield self._addToLog('stdio', f'    LayoutTests/{test}\n')
+            modified_tests.add(f'LayoutTests/{test}')
+        modified_tests = list(modified_tests)
+
+        patch = self._get_patch()
+        if not patch:
+            yield self._addToLog('stdio', 'Unable to access the patch/PR content.\n')
+            self.results = WARNINGS
+            if self.skipBuildIfNoResult:
+                self.build.buildFinished(['{} {} could not be accessed'.format(
+                    self.change_type,
+                    self.getProperty('patch_id', '') or self.getProperty('github.number', ''),
+                )], WARNINGS)
+            return defer.returnValue(self.results)
+
+        yield self._addToLog('stdio', '\nLooking for layout test changes...\n')
+        tests_from_patch = self.find_test_names_from_patch(patch)
+        modified_tests += tests_from_patch
+
+        if modified_tests:
+            yield self._addToLog('stdio', '\nThis change modifies following tests: {}\n'.format(modified_tests))
+            self.setProperty('modified_tests', modified_tests)
+            self.results = SUCCESS
+        else:
+            yield self._addToLog('stdio', 'This change does not modify any layout tests\n')
+            self.results = SKIPPED
+            if self.skipBuildIfNoResult:
+                self.build.results = SKIPPED
+                self.build.buildFinished(['{} {} doesn\'t have relevant changes'.format(
+                    self.change_type,
+                    self.getProperty('patch_id', '') or self.getProperty('github.number', ''),
+                )], SKIPPED)
+        return defer.returnValue(self.results)
 
     def find_test_names_from_patch(self, patch):
         tests = []
@@ -1337,30 +1457,10 @@ class FindModifiedLayoutTests(AnalyzeChange):
                 tests.append(test_name)
         return list(set(tests))
 
-    def start(self):
-        patch = self._get_patch()
-        if not patch:
-            self._addToLog('stdio', 'Unable to access the patch/PR content.')
-            self.finished(WARNINGS)
-            return None
-
-        tests = self.find_test_names_from_patch(patch)
-
-        if tests:
-            self._addToLog('stdio', 'This change modifies following tests: {}'.format(tests))
-            self.setProperty('modified_tests', tests)
-            self.finished(SUCCESS)
-            return None
-
-        self._addToLog('stdio', 'This change does not modify any layout tests')
-        self.finished(SKIPPED)
-        if self.skipBuildIfNoResult:
-            self.build.results = SKIPPED
-            self.build.buildFinished(['{} {} doesn\'t have relevant changes'.format(
-                self.change_type,
-                self.getProperty('patch_id', '') or self.getProperty('github.number', ''),
-            )], SKIPPED)
-        return None
+    def getResultSummary(self):
+        if self.results == WARNINGS:
+            return {'step': '{} could not be accessed'.format(self.change_type)}
+        return super().getResultSummary()
 
 
 class Bugzilla(object):
