@@ -5661,6 +5661,19 @@ ScrollToTextFragmentIndicatorEnabled:
     WebCore:
       default: true
 
+ScrollToTextFragmentMarkingEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Scroll To Text Fragment Marking"
+  humanReadableDescription: "Enable Scroll To Text Fragment Marking"
+  defaultValue:
+    WebKit:
+      default: true
+    WebKitLegacy:
+      default: true
+    WebCore:
+      default: true
+
 ScrollingPerformanceTestingEnabled:
   type: bool
   status: internal

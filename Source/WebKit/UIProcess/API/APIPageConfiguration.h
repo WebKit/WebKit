@@ -393,6 +393,12 @@ public:
     void setAllowTestOnlyIPC(bool enabled) { m_data.allowTestOnlyIPC = enabled; }
     bool allowTestOnlyIPC() const { return m_data.allowTestOnlyIPC; }
 
+    bool scrollToTextFragmentIndicatorEnabled () const { return m_data.scrollToTextFragmentIndicatorEnabled; }
+    void setScrollToTextFragmentIndicatorEnabled(bool enabled) { m_data.scrollToTextFragmentIndicatorEnabled = enabled; }
+
+    bool scrollToTextFragmentMarkingEnabled() const { return m_data.scrollToTextFragmentMarkingEnabled; }
+    void setScrollToTextFragmentMarkingEnabled(bool enabled) { m_data.scrollToTextFragmentMarkingEnabled = enabled; }
+
     void setPortsForUpgradingInsecureSchemeForTesting(uint16_t upgradeFromInsecurePort, uint16_t upgradeToSecurePort) { m_data.portsForUpgradingInsecureSchemeForTesting = { upgradeFromInsecurePort, upgradeToSecurePort }; }
     std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting() const { return m_data.portsForUpgradingInsecureSchemeForTesting; }
 
@@ -563,6 +569,8 @@ private:
         bool attachmentElementEnabled { false };
         bool attachmentWideLayoutEnabled { false };
         bool allowsInlinePredictions { false };
+        bool scrollToTextFragmentIndicatorEnabled { true };
+        bool scrollToTextFragmentMarkingEnabled { true };
 
         WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
         WTF::String attributedBundleIdentifier;

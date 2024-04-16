@@ -2281,9 +2281,11 @@ bool LocalFrameView::scrollToFragment(const URL& url)
             auto parsedTextDirectives = fragmentDirectiveParser.parsedTextDirectives();
             
             auto highlightRanges = FragmentDirectiveRangeFinder::findRangesFromTextDirectives(parsedTextDirectives, document);
-            for (auto range : highlightRanges)
-                document->fragmentHighlightRegistry().addAnnotationHighlightWithRange(StaticRange::create(range));
-            
+            if (m_frame->settings().scrollToTextFragmentMarkingEnabled()) {
+                for (auto range : highlightRanges)
+                    document->fragmentHighlightRegistry().addAnnotationHighlightWithRange(StaticRange::create(range));
+            }
+
             if (highlightRanges.size()) {
                 auto range = highlightRanges.first();
                 RefPtr commonAncestor = commonInclusiveAncestor<ComposedTree>(range);
