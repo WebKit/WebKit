@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ElementTargetingController.h"
 
+#include "AccessibilityObject.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMTokenList.h"
@@ -400,7 +401,29 @@ static inline HTMLElement* findOnlyMainElement(HTMLBodyElement& bodyElement)
     return onlyMainElement.get();
 }
 
-static bool isTargetCandidate(Element& element, const HTMLElement* onlyMainElement)
+static bool isNavigationalElement(Element& element)
+{
+    if (element.hasTagName(HTMLNames::navTag))
+        return true;
+
+    auto roleValue = element.attributeWithoutSynchronization(HTMLNames::roleAttr);
+    return AccessibilityObject::ariaRoleToWebCoreRole(roleValue) == AccessibilityRole::LandmarkNavigation;
+}
+
+static bool containsNavigationalElement(Element& element)
+{
+    if (isNavigationalElement(element))
+        return true;
+
+    for (auto& descendant : descendantsOfType<HTMLElement>(element)) {
+        if (isNavigationalElement(descendant))
+            return true;
+    }
+
+    return false;
+}
+
+static bool isTargetCandidate(Element& element, const HTMLElement* onlyMainElement, const Element* hitTestedElement = nullptr)
 {
     if (!element.renderer())
         return false;
@@ -420,6 +443,9 @@ static bool isTargetCandidate(Element& element, const HTMLElement* onlyMainEleme
         return false;
 
     if (elementAndAncestorsAreOnlyRenderedChildren(element))
+        return false;
+
+    if (is<HTMLFrameOwnerElement>(hitTestedElement) && containsNavigationalElement(element))
         return false;
 
     return true;
@@ -491,13 +517,14 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     HitTestResult result { LayoutPoint { view->rootViewToContents(request.pointInRootView) } };
     document->hitTest(hitTestOptions, result);
 
+    RefPtr hitTestedElement = result.innerNonSharedElement();
     RefPtr onlyMainElement = findOnlyMainElement(*bodyElement);
     auto candidates = [&] {
         auto& results = result.listBasedTestResult();
         Vector<Ref<Element>> elements;
         elements.reserveInitialCapacity(results.size());
         for (auto& node : results) {
-            if (RefPtr element = dynamicDowncast<Element>(node); element && isTargetCandidate(*element, onlyMainElement.get()))
+            if (RefPtr element = dynamicDowncast<Element>(node); element && isTargetCandidate(*element, onlyMainElement.get(), hitTestedElement.get()))
                 elements.append(element.releaseNonNull());
         }
         return elements;
@@ -605,7 +632,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
             if (result.listBasedTestResult().contains(*element))
                 continue;
 
-            if (!isTargetCandidate(*element, onlyMainElement.get()))
+            if (!isTargetCandidate(*element, onlyMainElement.get(), hitTestedElement.get()))
                 continue;
 
             auto boundingBox = element->boundingBoxInRootViewCoordinates();
