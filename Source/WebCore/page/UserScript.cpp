@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-static WTF::URL generateUniqueURL()
+static WTF::URL generateUserScriptUniqueURL()
 {
     static uint64_t identifier;
     return { { }, makeString("user-script:", ++identifier) };
@@ -38,7 +38,7 @@ static WTF::URL generateUniqueURL()
 
 UserScript::UserScript(String&& source, URL&& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, WaitForNotificationBeforeInjecting waitForNotification)
     : m_source(WTFMove(source))
-    , m_url(url.isEmpty() ? generateUniqueURL() : WTFMove(url))
+    , m_url(url.isEmpty() ? generateUserScriptUniqueURL() : WTFMove(url))
     , m_allowlist(WTFMove(allowlist))
     , m_blocklist(WTFMove(blocklist))
     , m_injectionTime(injectionTime)
