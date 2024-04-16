@@ -51,7 +51,7 @@ public:
     WebCore::PopupMenuClient* client() const { return m_popupClient; }
 #endif
 
-    void show(const WebCore::IntRect&, WebCore::LocalFrameView*, int selectedIndex) override;
+    void show(const WebCore::IntRect&, WebCore::LocalFrameView&, int selectedIndex) override;
     void hide() override;
     void updateFromElement() override;
     void disconnectClient() override;
