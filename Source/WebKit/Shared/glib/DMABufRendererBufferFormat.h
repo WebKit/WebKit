@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 namespace WebKit {
 
@@ -36,15 +37,15 @@ enum class DMABufRendererBufferFormatUsage : uint8_t {
 };
 
 struct DMABufRendererBufferFormat {
-    bool operator==(const DMABufRendererBufferFormat& other) const
-    {
-        return usage == other.usage && fourcc == other.fourcc && modifiers == other.modifiers;
-    }
+    struct Format {
+        uint32_t fourcc { 0 };
+        Vector<uint64_t, 1> modifiers;
+    };
 
     using Usage = DMABufRendererBufferFormatUsage;
     Usage usage { Usage::Rendering };
-    uint32_t fourcc { 0 };
-    Vector<uint64_t, 1> modifiers;
+    CString drmDevice;
+    Vector<Format> formats;
 };
 
 } // namespace WebKit

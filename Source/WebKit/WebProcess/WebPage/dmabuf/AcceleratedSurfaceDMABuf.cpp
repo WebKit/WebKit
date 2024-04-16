@@ -36,6 +36,8 @@
 #include <WebCore/ShareableBitmap.h>
 #include <array>
 #include <epoxy/egl.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <wtf/SafeStrerror.h>
 
 #if USE(GBM)
@@ -125,7 +127,7 @@ void AcceleratedSurfaceDMABuf::RenderTargetColorBuffer::willRenderFrame() const
 }
 
 #if USE(GBM)
-std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetEGLImage::create(uint64_t surfaceID, const WebCore::IntSize& size, const DMABufRendererBufferFormat& dmabufFormat)
+std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetEGLImage::create(uint64_t surfaceID, const WebCore::IntSize& size, const BufferFormat& dmabufFormat)
 {
     if (!dmabufFormat.fourcc) {
         WTFLogAlways("Failed to create GBM buffer of size %dx%d: no valid format found", size.width(), size.height());
@@ -364,33 +366,6 @@ AcceleratedSurfaceDMABuf::SwapChain::SwapChain(uint64_t surfaceID)
 #if USE(GBM)
 void AcceleratedSurfaceDMABuf::SwapChain::setupBufferFormat(const Vector<DMABufRendererBufferFormat>& preferredFormats, bool isOpaque)
 {
-    // The preferred formats vector is sorted by usage, but all formats for the same usage has the same priority.
-    // We split the preferred formats by usage to find in them separately.
-    Vector<std::pair<unsigned, unsigned>, 3> tranches;
-    std::optional<DMABufRendererBufferFormat::Usage> previousUsage;
-    for (unsigned i = 0; i < preferredFormats.size(); ++i) {
-        if (previousUsage) {
-            if (previousUsage.value() != preferredFormats[i].usage) {
-                tranches.last().second = i - 1;
-                tranches.append({ i, 0 });
-                previousUsage = preferredFormats[i].usage;
-            }
-        } else {
-            tranches.append({ i, 0 });
-            previousUsage = preferredFormats[i].usage;
-        }
-    }
-    if (!tranches.isEmpty())
-        tranches.last().second = preferredFormats.size() - 1;
-
-    auto findInRange = [&](uint32_t fourcc, const std::pair<unsigned, unsigned>& range) -> size_t {
-        for (size_t i = range.first; i <= range.second; ++i) {
-            if (fourcc == preferredFormats[i].fourcc)
-                return i;
-        }
-        return notFound;
-    };
-
     auto isOpaqueFormat = [](uint32_t fourcc) -> bool {
         return fourcc != DRM_FORMAT_ARGB8888
             && fourcc != DRM_FORMAT_RGBA8888
@@ -402,20 +377,24 @@ void AcceleratedSurfaceDMABuf::SwapChain::setupBufferFormat(const Vector<DMABufR
             && fourcc != DRM_FORMAT_ABGR16161616F;
     };
 
+    // The preferred formats vector is sorted by usage, but all formats for the same usage has the same priority.
     Locker locker { m_dmabufFormatLock };
-    DMABufRendererBufferFormat dmabufFormat;
+    BufferFormat dmabufFormat;
     const auto& supportedFormats = WebCore::PlatformDisplay::sharedDisplayForCompositing().dmabufFormats();
-    for (const auto& tranche : tranches) {
+    for (const auto& bufferFormat : preferredFormats) {
         for (const auto& format : supportedFormats) {
-            auto index = findInRange(format.fourcc, tranche);
+            auto index = bufferFormat.formats.findIf([&](const auto& item) {
+                return format.fourcc == item.fourcc;
+            });
             if (index != notFound) {
-                const auto& preferredFormat = preferredFormats[index];
+                const auto& preferredFormat = bufferFormat.formats[index];
 
                 bool matchesOpacity = isOpaqueFormat(preferredFormat.fourcc) == isOpaque;
                 if (!matchesOpacity && dmabufFormat.fourcc)
                     continue;
 
-                dmabufFormat.usage = preferredFormat.usage;
+                dmabufFormat.usage = bufferFormat.usage;
+                dmabufFormat.drmDevice = bufferFormat.drmDevice;
                 dmabufFormat.fourcc = preferredFormat.fourcc;
                 if (preferredFormat.modifiers[0] == DRM_FORMAT_MOD_INVALID)
                     dmabufFormat.modifiers = preferredFormat.modifiers;

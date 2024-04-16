@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WPEDisplay.h"
 
-#include "WPEBufferDMABufFormat.h"
 #include "WPEDisplayPrivate.h"
 #include "WPEEGLError.h"
 #include "WPEExtensions.h"
@@ -57,7 +56,7 @@ struct _WPEDisplayPrivate {
     EGLDisplay eglDisplay;
     GUniqueOutPtr<GError> eglDisplayError;
     HashMap<String, bool> extensionsMap;
-    GList* preferredDMABufFormats;
+    GRefPtr<WPEBufferDMABufFormats> preferredDMABufFormats;
 };
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WPEDisplay, wpe_display, G_TYPE_OBJECT)
@@ -94,7 +93,6 @@ static void wpeDisplayDispose(GObject* object)
 {
     auto* priv = WPE_DISPLAY(object)->priv;
 
-    g_clear_list(&priv->preferredDMABufFormats, reinterpret_cast<GDestroyNotify>(wpe_buffer_dma_buf_format_free));
     g_clear_pointer(&priv->eglDisplay, eglTerminate);
 
     G_OBJECT_CLASS(wpe_display_parent_class)->dispose(object);
@@ -313,7 +311,7 @@ WPEKeymap* wpe_display_get_keymap(WPEDisplay* display, GError** error)
 }
 
 #if USE(LIBDRM)
-static GList* wpeDisplayPreferredDMABufFormats(WPEDisplay* display)
+static GRefPtr<WPEBufferDMABufFormats> wpeDisplayPreferredDMABufFormats(WPEDisplay* display)
 {
     auto eglDisplay = static_cast<EGLDisplay>(wpe_display_get_egl_display(display, nullptr));
     if (!eglDisplay)
@@ -338,27 +336,29 @@ static GList* wpeDisplayPreferredDMABufFormats(WPEDisplay* display)
     static PFNEGLQUERYDMABUFMODIFIERSEXTPROC s_eglQueryDmaBufModifiersEXT = wpeDisplayCheckEGLExtension(display, "EXT_image_dma_buf_import_modifiers") ?
         reinterpret_cast<PFNEGLQUERYDMABUFMODIFIERSEXTPROC>(eglGetProcAddress("eglQueryDmaBufModifiersEXT")) : nullptr;
 
-    GList* preferredFormats = nullptr;
+    auto modifiersForFormat = [&](EGLint format) -> Vector<EGLuint64KHR> {
+        if (!s_eglQueryDmaBufModifiersEXT)
+            return { DRM_FORMAT_MOD_INVALID };
+
+        EGLint modifiersCount;
+        if (!s_eglQueryDmaBufModifiersEXT(eglDisplay, format, 0, nullptr, nullptr, &modifiersCount) || !modifiersCount)
+            return { DRM_FORMAT_MOD_INVALID };
+
+        Vector<EGLuint64KHR> modifiers(modifiersCount);
+        if (!s_eglQueryDmaBufModifiersEXT(eglDisplay, format, modifiersCount, reinterpret_cast<EGLuint64KHR*>(modifiers.data()), nullptr, &modifiersCount))
+            return { DRM_FORMAT_MOD_INVALID };
+
+        return modifiers;
+    };
+
+    auto* builder = wpe_buffer_dma_buf_formats_builder_new(wpe_display_get_drm_render_node(display));
+    wpe_buffer_dma_buf_formats_builder_append_group(builder, nullptr, WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING);
     for (auto format : formats) {
-        GRefPtr<GArray> dmabufModifiers = adoptGRef(g_array_sized_new(FALSE, TRUE, sizeof(guint64), 1));
-        guint64 invalidModifier = DRM_FORMAT_MOD_INVALID;
-        g_array_append_val(dmabufModifiers.get(), invalidModifier);
-        if (s_eglQueryDmaBufModifiersEXT) {
-            EGLint modifiersCount;
-            if (s_eglQueryDmaBufModifiersEXT(eglDisplay, format, 0, nullptr, nullptr, &modifiersCount) && modifiersCount) {
-                Vector<EGLuint64KHR> modifiers(modifiersCount);
-                if (s_eglQueryDmaBufModifiersEXT(eglDisplay, format, modifiersCount, reinterpret_cast<EGLuint64KHR*>(modifiers.data()), nullptr, &modifiersCount)) {
-                    g_array_set_size(dmabufModifiers.get(), modifiersCount);
-                    for (int i = 0; i < modifiersCount; ++i) {
-                        guint64* modifier = &g_array_index(dmabufModifiers.get(), guint64, i);
-                        *modifier = modifiers[i];
-                    }
-                }
-            }
-        }
-        preferredFormats = g_list_prepend(preferredFormats, wpe_buffer_dma_buf_format_new(WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING, static_cast<guint32>(format), dmabufModifiers.get()));
+        auto modifiers = modifiersForFormat(format);
+        for (auto modifier : modifiers)
+            wpe_buffer_dma_buf_formats_builder_append_format(builder, format, modifier);
     }
-    return g_list_reverse(preferredFormats);
+    return adoptGRef(wpe_buffer_dma_buf_formats_builder_end(builder));
 }
 #endif
 
@@ -368,9 +368,9 @@ static GList* wpeDisplayPreferredDMABufFormats(WPEDisplay* display)
  *
  * Get the list of preferred DMA-BUF buffer formats for @display.
  *
- * Returns: (transfer none) (element-type WPEBufferDMABufFormat) (nullable): a #GList of #WPEBufferDMABufFormat
+ * Returns: (transfer none) (nullable): a #WPEBufferDMABufFormats
  */
-GList* wpe_display_get_preferred_dma_buf_formats(WPEDisplay* display)
+WPEBufferDMABufFormats* wpe_display_get_preferred_dma_buf_formats(WPEDisplay* display)
 {
     g_return_val_if_fail(WPE_IS_DISPLAY(display), nullptr);
 
@@ -378,7 +378,7 @@ GList* wpe_display_get_preferred_dma_buf_formats(WPEDisplay* display)
     if (!priv->preferredDMABufFormats) {
         auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
         if (wpeDisplayClass->get_preferred_dma_buf_formats)
-            priv->preferredDMABufFormats = wpeDisplayClass->get_preferred_dma_buf_formats(display);
+            priv->preferredDMABufFormats = adoptGRef(wpeDisplayClass->get_preferred_dma_buf_formats(display));
 
 #if USE(LIBDRM)
         if (!priv->preferredDMABufFormats)
@@ -386,7 +386,7 @@ GList* wpe_display_get_preferred_dma_buf_formats(WPEDisplay* display)
 #endif
     }
 
-    return display->priv->preferredDMABufFormats;
+    return display->priv->preferredDMABufFormats.get();
 }
 
 /**

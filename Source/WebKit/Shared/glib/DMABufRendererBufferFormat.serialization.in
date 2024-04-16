@@ -24,12 +24,17 @@
 
 struct WebKit::DMABufRendererBufferFormat {
     WebKit::DMABufRendererBufferFormat::Usage usage;
-    uint32_t fourcc;
-    Vector<uint64_t, 1> modifiers;
+    CString drmDevice;
+    Vector<WebKit::DMABufRendererBufferFormat::Format> formats;
 }
 
 enum class WebKit::DMABufRendererBufferFormatUsage : uint8_t {
     Rendering,
     Mapping,
     Scanout
+}
+
+[Nested] struct WebKit::DMABufRendererBufferFormat::Format {
+    uint32_t fourcc;
+    Vector<uint64_t, 1> modifiers;
 }
