@@ -394,11 +394,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidRemoveAllCookies")) {
-        m_testRunner->callRemoveAllCookiesCallback();
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidReceiveLoadedSubresourceDomains")) {
         ASSERT(messageBody);
         ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
@@ -474,20 +469,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
 
     if (WKStringIsEqualToUTF8CString(messageName, "ForceImmediateCompletion")) {
         m_testRunner->forceImmediateCompletion();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "ViewPortSnapshotTaken")) {
-        ASSERT(messageBody);
-        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
-        m_testRunner->viewPortSnapshotTaken(static_cast<WKStringRef>(messageBody));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "DidGetAndClearReportedWindowProxyAccessDomains")) {
-        ASSERT(messageBody);
-        ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
-        m_testRunner->didGetAndClearReportedWindowProxyAccessDomains(static_cast<WKArrayRef>(messageBody));
         return;
     }
 
@@ -1068,10 +1049,17 @@ static JSContextRef firstRootFrameJSContext()
     return WKBundleFrameGetJavaScriptContext(firstRootFrame(mainFrame));
 }
 
-void asyncReplyHandler(WKTypeRef result, void* context)
+static JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef strings)
 {
-    auto function = WTF::adopt(static_cast<Function<void(WKTypeRef)>::Impl*>(context));
-    function(result);
+    ASSERT(WKGetTypeID(strings) == WKArrayGetTypeID());
+    const size_t count = WKArrayGetSize(strings);
+    auto array = JSObjectMakeArray(context, 0, 0, nullptr);
+    for (size_t i = 0; i < count; ++i) {
+        auto stringRef = static_cast<WKStringRef>(WKArrayGetItemAtIndex(strings, i));
+        ASSERT(WKGetTypeID(stringRef) == WKStringGetTypeID());
+        JSObjectSetPropertyAtIndex(context, array, i, JSValueMakeString(context, toJS(stringRef).get()), nullptr);
+    }
+    return array;
 }
 
 void postMessageWithAsyncReply(const char* name, JSValueRef callback)
@@ -1086,8 +1074,12 @@ void postMessageWithAsyncReply(const char* name, JSValueRef callback)
         JSValueRef resultJS { nullptr };
 
         if (result) {
-            ASSERT(WKGetTypeID(result) == WKArrayGetTypeID());
-            resultJS = stringArrayToJS(context, static_cast<WKArrayRef>(result));
+            if (WKGetTypeID(result) == WKArrayGetTypeID())
+                resultJS = stringArrayToJS(context, static_cast<WKArrayRef>(result));
+            else if (WKGetTypeID(result) == WKStringGetTypeID())
+                resultJS = JSValueMakeString(context, toJS(static_cast<WKStringRef>(result)).get());
+            else
+                RELEASE_ASSERT_NOT_REACHED();
             arguments = &resultJS;
             argumentCount = 1;
         }
@@ -1096,9 +1088,12 @@ void postMessageWithAsyncReply(const char* name, JSValueRef callback)
         JSValueUnprotect(context, callback);
     };
 
-    if (auto page = InjectedBundle::singleton().pageRef())
-        WKBundlePagePostMessageWithAsyncReply(page, toWK(name).get(), nullptr, asyncReplyHandler, completionHandler.leak());
-    else
+    if (auto page = InjectedBundle::singleton().pageRef()) {
+        WKBundlePagePostMessageWithAsyncReply(page, toWK(name).get(), nullptr, [] (WKTypeRef result, void* context) {
+            auto function = WTF::adopt(static_cast<Function<void(WKTypeRef)>::Impl*>(context));
+            function(result);
+        }, completionHandler.leak());
+    } else
         completionHandler(nullptr);
 }
 

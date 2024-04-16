@@ -276,7 +276,7 @@ public:
     void setManagedDomains(WKArrayRef originURLs);
     void statisticsResetToConsistentState();
 
-    void removeAllCookies();
+    void removeAllCookies(CompletionHandler<void(WKTypeRef)>&&);
 
     void getAllStorageAccessEntries(CompletionHandler<void(WKTypeRef)>&&);
     void setRequestStorageAccessThrowsExceptionUntilReload(bool enabled);

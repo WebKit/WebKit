@@ -294,7 +294,6 @@ public:
     void setAlwaysAcceptCookies(bool);
     void setOnlyAcceptFirstPartyCookies(bool);
     void removeAllCookies(JSValueRef callback);
-    void callRemoveAllCookiesCallback();
 
     // Custom full screen behavior.
     void setHasCustomFullScreenBehavior(bool value) { m_customFullScreenBehavior = value; }
@@ -580,7 +579,6 @@ public:
     void setIsMediaKeySystemPermissionGranted(bool);
 
     void takeViewPortSnapshot(JSValueRef callback);
-    void viewPortSnapshotTaken(WKStringRef);
 
     void flushConsoleLogs(JSValueRef callback);
 
@@ -588,7 +586,6 @@ public:
     void generateTestReport(JSStringRef message, JSStringRef group);
 
     void getAndClearReportedWindowProxyAccessDomains(JSValueRef);
-    void didGetAndClearReportedWindowProxyAccessDomains(WKArrayRef);
 
 private:
     TestRunner();
@@ -653,7 +650,6 @@ private:
     bool m_hasSetDowngradeReferrerCallback { false };
     bool m_hasSetBlockThirdPartyCookiesCallback { false };
     bool m_hasSetFirstPartyWebsiteDataRemovalModeCallback { false };
-    bool m_takeViewPortSnapshot { false };
 };
 
 } // namespace WTR

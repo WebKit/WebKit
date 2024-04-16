@@ -1964,6 +1964,15 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
     if (WKStringIsEqualToUTF8CString(messageName, "GetAllStorageAccessEntries"))
         return TestController::singleton().getAllStorageAccessEntries(WTFMove(completionHandler));
 
+    if (WKStringIsEqualToUTF8CString(messageName, "GetAndClearReportedWindowProxyAccessDomains"))
+        return completionHandler(TestController::singleton().getAndClearReportedWindowProxyAccessDomains().get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllCookies"))
+        return TestController::singleton().removeAllCookies(WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "TakeViewPortSnapshot"))
+        return completionHandler(TestController::singleton().takeViewPortSnapshot().get());
+
     ASSERT_NOT_REACHED();
 }
 
@@ -3266,16 +3275,13 @@ void TestController::clearAppPrivacyReportTestingData()
 
 #endif // !PLATFORM(COCOA)
 
-void getAllStorageAccessEntriesCallback(void* context, WKArrayRef domainList)
-{
-    auto completionHandler = WTF::adopt(static_cast<Function<void(WKTypeRef)>::Impl*>(context));
-    completionHandler(domainList);
-}
-
 void TestController::getAllStorageAccessEntries(CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
-    auto context = Function<void(WKTypeRef)>(WTFMove(completionHandler)).leak();
-    WKWebsiteDataStoreGetAllStorageAccessEntries(websiteDataStore(), m_mainWebView->page(), context, getAllStorageAccessEntriesCallback);
+    auto context = completionHandler.leak();
+    WKWebsiteDataStoreGetAllStorageAccessEntries(websiteDataStore(), m_mainWebView->page(), context, [] (void* context, WKArrayRef domainList) {
+        auto completionHandler = WTF::adopt(static_cast<CompletionHandler<void(WKTypeRef)>::Impl*>(context));
+        completionHandler(domainList);
+    });
 }
 
 #if !PLATFORM(COCOA)
@@ -4010,12 +4016,13 @@ void TestController::statisticsResetToConsistentState()
     m_currentInvocation->didResetStatisticsToConsistentState();
 }
 
-void TestController::removeAllCookies()
+void TestController::removeAllCookies(CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
-    GenericVoidContext context(*this);
-    WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), &context, genericVoidCallback);
-    runUntil(context.done, noTimeout);
-    m_currentInvocation->didRemoveAllCookies();
+    auto context = completionHandler.leak();
+    WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), context, [] (void* context) {
+        auto completionHandler = WTF::adopt(static_cast<CompletionHandler<void(WKTypeRef)>::Impl*>(context));
+        completionHandler(nullptr);
+    });
 }
 
 void TestController::addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type, WKDictionaryRef properties)

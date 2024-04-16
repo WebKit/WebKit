@@ -778,11 +778,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllCookies")) {
-        TestController::singleton().removeAllCookies();
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearInMemoryAndPersistentStore")) {
         TestController::singleton().statisticsClearInMemoryAndPersistentStore();
         return;
@@ -805,12 +800,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsFirstPartyWebsiteDataRemovalMode")) {
         TestController::singleton().setStatisticsFirstPartyWebsiteDataRemovalMode(booleanValue(messageBody));
-        return;
-    }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "TakeViewPortSnapshot")) {
-        auto value = TestController::singleton().takeViewPortSnapshot();
-        postPageMessage("ViewPortSnapshotTaken", value.get());
         return;
     }
 
@@ -883,12 +872,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
     if (WKStringIsEqualToUTF8CString(messageName, "SkipPolicyDelegateNotifyDone")) {
         TestController::singleton().skipPolicyDelegateNotifyDone();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "GetAndClearReportedWindowProxyAccessDomains")) {
-        auto value = TestController::singleton().getAndClearReportedWindowProxyAccessDomains();
-        postPageMessage("DidGetAndClearReportedWindowProxyAccessDomains", value.get());
         return;
     }
 
@@ -1762,11 +1745,6 @@ void TestInvocation::didSetVeryPrevalentResource()
 void TestInvocation::didSetHasHadUserInteraction()
 {
     postPageMessage("CallDidSetHasHadUserInteraction");
-}
-
-void TestInvocation::didRemoveAllCookies()
-{
-    postPageMessage("CallDidRemoveAllCookies");
 }
 
 void TestInvocation::didReceiveLoadedSubresourceDomains(Vector<String>&& domains)
