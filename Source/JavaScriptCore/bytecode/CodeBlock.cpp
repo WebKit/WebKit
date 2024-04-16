@@ -2958,8 +2958,14 @@ bool CodeBlock::shouldOptimizeNowFromBaseline()
             numberOfSamplesInProfiles, ValueProfile::numberOfBuckets * numberOfNonArgumentValueProfiles());
     }
 
-    if (livenessRate >= Options::desiredProfileLivenessRate() && fullnessRate >= Options::desiredProfileFullnessRate() && static_cast<unsigned>(m_optimizationDelayCounter) + 1 >= Options::minimumOptimizationDelay())
-        return true;
+    if (static_cast<unsigned>(m_optimizationDelayCounter) + 1 >= Options::minimumOptimizationDelay()) {
+        double ratio = static_cast<double>(m_optimizationDelayCounter) / Options::maximumOptimizationDelay();
+        double factor = 1.0 - ratio * ratio;
+        double desiredProfileLivenessRate = Options::desiredProfileLivenessRate() * factor;
+        double desiredProfileFullnessRate = Options::desiredProfileFullnessRate() * factor;
+        if (livenessRate >= desiredProfileLivenessRate && fullnessRate >= desiredProfileFullnessRate)
+            return true;
+    }
 
     auto* codeBlock = this;
     CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("insufficient profiling (", livenessRate,  " / ", fullnessRate, ") for ", numberOfNonArgumentValueProfiles(), " ", totalNumberOfValueProfiles()));
