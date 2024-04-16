@@ -53,7 +53,7 @@ struct ScreenData {
 #endif
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     IntSize screenSize; // In millimeters.
-    double dpi;
+    double dpi; // Already corrected for device scaling.
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)

@@ -385,7 +385,8 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(displayObject, "Screen work area"_s, makeString(rect.x(), ',', rect.y(), ' ', rect.width(), 'x', rect.height()));
     addTableRow(displayObject, "Depth"_s, String::number(screenDepth(nullptr)));
     addTableRow(displayObject, "Bits per color component"_s, String::number(screenDepthPerComponent(nullptr)));
-    addTableRow(displayObject, "DPI"_s, String::number(screenDPI()));
+    addTableRow(displayObject, "Font Scaling DPI"_s, String::number(fontDPI()));
+    addTableRow(displayObject, "Screen DPI"_s, String::number(screenDPI(displayID.value_or(primaryScreenDisplayID()))));
 
     if (displayID) {
         if (auto* displayLink = page.process().processPool().displayLinks().existingDisplayLinkForDisplay(*displayID)) {
