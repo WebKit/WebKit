@@ -131,8 +131,11 @@ hb_font_t* FontPlatformData::hbFont() const
 #if ENABLE(MATHML)
 HbUniquePtr<hb_font_t> FontPlatformData::createOpenTypeMathHarfBuzzFont() const
 {
-    notImplemented();
-    return nullptr;
+    auto* face = hb_font_get_face(hbFont());
+    if (!hb_ot_math_has_data(face))
+        return nullptr;
+
+    return HbUniquePtr<hb_font_t>(hb_font_create(face));
 }
 #endif
 
