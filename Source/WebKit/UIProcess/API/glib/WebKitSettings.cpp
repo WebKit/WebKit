@@ -3835,7 +3835,7 @@ void webkit_settings_set_enable_back_forward_navigation_gestures(WebKitSettings*
  */
 guint32 webkit_settings_font_size_to_points(guint32 pixels)
 {
-    return std::round(pixels * 72 / WebCore::screenDPI());
+    return std::round(pixels * 72 / WebCore::fontDPI());
 }
 
 /**
@@ -3855,7 +3855,7 @@ guint32 webkit_settings_font_size_to_points(guint32 pixels)
  */
 guint32 webkit_settings_font_size_to_pixels(guint32 points)
 {
-    return std::round(points * WebCore::screenDPI() / 72);
+    return std::round(points * WebCore::fontDPI() / 72);
 }
 #endif // PLATFORM(GTK)
 

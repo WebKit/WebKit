@@ -84,7 +84,7 @@ bool screenHasInvertedColors()
     return false;
 }
 
-double screenDPI()
+double fontDPI()
 {
     static GtkSettings* gtkSettings = gtk_settings_get_default();
     if (gtkSettings) {
@@ -96,6 +96,13 @@ double screenDPI()
     auto* data = screenData(primaryScreenDisplayID());
     return data ? data->dpi : 96.;
 }
+
+double screenDPI(PlatformDisplayID screendisplayID)
+{
+    auto* data = screenData(screendisplayID);
+    return data ? data->dpi : 96.;
+}
+
 
 FloatRect screenRect(Widget* widget)
 {

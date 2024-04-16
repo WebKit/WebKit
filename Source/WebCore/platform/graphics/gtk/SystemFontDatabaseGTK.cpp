@@ -55,7 +55,7 @@ auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand) -> Syste
     int size = pango_font_description_get_size(pangoDescription) / PANGO_SCALE;
     // If the size of the font is in points, we need to convert it to pixels.
     if (!pango_font_description_get_size_is_absolute(pangoDescription))
-        size = size * (screenDPI() / 72.0);
+        size = size * (fontDPI() / 72.0);
 
     SystemFontShorthandInfo result { AtomString::fromLatin1(pango_font_description_get_family(pangoDescription)), static_cast<float>(size), normalWeightValue() };
     pango_font_description_free(pangoDescription);

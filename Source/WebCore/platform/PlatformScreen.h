@@ -73,7 +73,8 @@ WEBCORE_EXPORT DestinationColorSpace screenColorSpace(Widget* = nullptr);
 bool screenHasInvertedColors();
 
 #if USE(GLIB)
-double screenDPI();
+double fontDPI(); // dpi to use for font scaling
+double screenDPI(PlatformDisplayID); // dpi of the display device, corrected for device scaling
 #endif
 
 FloatRect screenRect(Widget*);
