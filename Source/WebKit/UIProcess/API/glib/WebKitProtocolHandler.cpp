@@ -34,6 +34,7 @@
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/PlatformDisplaySurfaceless.h>
 #include <WebCore/PlatformScreen.h>
+#include <cstdlib>
 #include <epoxy/gl.h>
 #include <fcntl.h>
 #include <gio/gio.h>
@@ -198,22 +199,62 @@ static String dmabufRendererWithSupportedBuffers()
 }
 
 #if USE(LIBDRM)
+
+// Cherry-pick function 'drmGetFormatName' from 'https://gitlab.freedesktop.org/mesa/drm/-/blob/main/xf86drm.c'.
+// Function is only available since version '2.4.113'. Debian 11 ships '2.4.104'.
+// FIXME: Remove when Debian 11 support ends.
+static char* webkitDrmGetFormatName(uint32_t format)
+{
+    char* str;
+    char code[5];
+    const char* be;
+    size_t strSize, i;
+
+    // Is format big endian?
+    be = (format & (1U<<31)) ? "_BE" : "";
+    format &= ~(1U<<31);
+
+    // If format is DRM_FORMAT_INVALID.
+    if (!format)
+        return strdup("INVALID");
+
+    code[0] = (char) ((format >> 0) & 0xFF);
+    code[1] = (char) ((format >> 8) & 0xFF);
+    code[2] = (char) ((format >> 16) & 0xFF);
+    code[3] = (char) ((format >> 24) & 0xFF);
+    code[4] = '\0';
+
+    // Trim spaces at the end.
+    for (i = 3; i > 0 && code[i] == ' '; i--)
+        code[i] = '\0';
+
+    strSize = strlen(code) + strlen(be) + 1;
+    str = static_cast<char*>(malloc(strSize));
+    if (!str)
+        return nullptr;
+
+    snprintf(str, strSize, "%s%s", code, be);
+
+    return str;
+}
+
 static String renderBufferFormat(WebKitURISchemeRequest* request)
 {
-#if !HAVE(DRM_GET_FORMAT_NAME)
-    return "Unknown"_s;
-#else
     StringBuilder bufferFormat;
     auto format = webkitWebViewGetRendererBufferFormat(webkit_uri_scheme_request_get_web_view(request));
     if (format.fourcc) {
-        auto* formatName = drmGetFormatName(format.fourcc);
+        auto* formatName = webkitDrmGetFormatName(format.fourcc);
         switch (format.type) {
         case RendererBufferFormat::Type::DMABuf: {
+#if HAVE(DRM_GET_FORMAT_MODIFIER_VENDOR) && HAVE(DRM_GET_FORMAT_MODIFIER_NAME)
             auto* modifierVendor = drmGetFormatModifierVendor(format.modifier);
             auto* modifierName = drmGetFormatModifierName(format.modifier);
             bufferFormat.append("DMA-BUF: "_s, String::fromUTF8(formatName), " ("_s, String::fromUTF8(modifierVendor), "_"_s, String::fromUTF8(modifierName), ")"_s);
             free(modifierVendor);
             free(modifierName);
+#else
+            bufferFormat.append("Unknown"_s);
+#endif
             break;
         }
         case RendererBufferFormat::Type::SharedMemory:
@@ -236,7 +277,6 @@ static String renderBufferFormat(WebKitURISchemeRequest* request)
         bufferFormat.append("Unknown"_s);
 
     return bufferFormat.toString();
-#endif
 }
 #endif
 #endif
