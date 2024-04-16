@@ -2414,8 +2414,7 @@ public:
 
 protected:
     GenericCacheEntry(Encoder& encoder, CachedCodeBlockTag tag)
-        : m_cacheVersion(computeJSCBytecodeCacheVersion())
-        , m_tag(tag)
+        : m_tag(tag)
     {
         m_bootSessionUUID.encode(encoder, bootSessionUUIDString());
     }
@@ -2424,7 +2423,7 @@ protected:
 
     bool isUpToDate(Decoder& decoder) const
     {
-        if (m_cacheVersion != computeJSCBytecodeCacheVersion())
+        if (m_cacheVersion != JSCBytecodeCacheVersion)
             return false;
         if (m_bootSessionUUID.decode(decoder) != bootSessionUUIDString())
             return false;
@@ -2432,7 +2431,7 @@ protected:
     }
 
 private:
-    uint32_t m_cacheVersion;
+    uint32_t m_cacheVersion { JSCBytecodeCacheVersion };
     CachedString m_bootSessionUUID;
     CachedCodeBlockTag m_tag;
 };
