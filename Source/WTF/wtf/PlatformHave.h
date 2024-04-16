@@ -1791,3 +1791,8 @@
 #if !defined(HAVE_AUDIO_CONVERTER_SERVICE) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED > 140400
 #define HAVE_AUDIO_CONVERTER_SERVICE 1
 #endif
+
+// FIXME: Other platforms should finish migration to *.serialization.in.
+#if PLATFORM(COCOA)
+#define ONLY_MODERN_SERIALIZATION 1
+#endif
