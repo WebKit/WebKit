@@ -87,6 +87,8 @@ public:
     LayoutUnit intrinsicRatio() const;
     bool hasAspectRatio() const;
 
+    void setListMarkerAttributes(OptionSet<ListMarkerAttribute> listMarkerAttributes) { m_replacedData->listMarkerAttributes = listMarkerAttributes; }
+
     bool isListMarkerImage() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::Image); }
     bool isListMarkerOutside() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::Outside); }
     bool isListMarkerInsideList() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::HasListElementAncestor); }

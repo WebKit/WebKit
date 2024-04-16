@@ -52,7 +52,8 @@ public:
     bool canUseSimpleFontCodePath() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::CanUseSimpledFontCodepath); }
     bool hasPositionDependentContentWidth() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::HasPositionDependentContentWidth); }
 
-    void updateContent(String newContent, OptionSet<ContentCharacteristic>);
+    void setContent(String newContent, OptionSet<ContentCharacteristic>);
+    void setContentCharacteristic(OptionSet<ContentCharacteristic> contentCharacteristicSet) { m_contentCharacteristicSet = contentCharacteristicSet; }
 
 private:
     String m_content;
@@ -60,7 +61,7 @@ private:
     OptionSet<ContentCharacteristic> m_contentCharacteristicSet;
 };
 
-inline void InlineTextBox::updateContent(String newContent, OptionSet<ContentCharacteristic> contentCharacteristicSet)
+inline void InlineTextBox::setContent(String newContent, OptionSet<ContentCharacteristic> contentCharacteristicSet)
 {
     m_content = newContent;
     m_contentCharacteristicSet = contentCharacteristicSet;
