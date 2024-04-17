@@ -52,6 +52,7 @@ class Frame;
 class HTMLFrameOwnerElement;
 class History;
 class IdleRequestCallback;
+class JSDOMGlobalObject;
 class LocalDOMWindow;
 class LocalDOMWindowProperty;
 class Location;
