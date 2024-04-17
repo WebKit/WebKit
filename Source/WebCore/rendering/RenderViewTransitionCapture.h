@@ -29,10 +29,12 @@
 
 namespace WebCore {
 
-class RenderViewTransitionCapture : public RenderReplaced {
+class RenderViewTransitionCapture final : public RenderReplaced {
     WTF_MAKE_ISO_ALLOCATED(RenderViewTransitionCapture);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderViewTransitionCapture);
 public:
     RenderViewTransitionCapture(Type, Document&, RenderStyle&&);
+    virtual ~RenderViewTransitionCapture();
 
     void setImage(RefPtr<ImageBuffer>);
     void setSize(const LayoutSize&, const LayoutRect& overflowRect);

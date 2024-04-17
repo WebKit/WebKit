@@ -165,6 +165,8 @@ UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
 #endif
 }
 
+UnifiedPDFPlugin::~UnifiedPDFPlugin() = default;
+
 static String mutationObserverNotificationString()
 {
     static NeverDestroyed<String> notificationString = "PDFFormDidChangeValue"_s;

@@ -35,7 +35,10 @@ namespace WebCore {
 class RenderText;
 class RenderedDocumentMarker;
 
-struct StyledMarkedText : MarkedText {
+struct StyledMarkedText final : MarkedText {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyledMarkedText);
+
     struct Style {
         Color backgroundColor;
         TextPaintStyle textStyles;

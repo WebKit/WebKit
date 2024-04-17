@@ -33,6 +33,7 @@ class WebPage;
 
 class WebAlternativeTextClient final : public WebCore::AlternativeTextClient {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebAlternativeTextClient);
 public:
     explicit WebAlternativeTextClient(WebPage*);
     virtual ~WebAlternativeTextClient();

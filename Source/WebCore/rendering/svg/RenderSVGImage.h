@@ -34,6 +34,7 @@ class SVGImageElement;
 
 class RenderSVGImage final : public RenderSVGModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGImage);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGImage);
 public:
     RenderSVGImage(SVGImageElement&, RenderStyle&&);
     virtual ~RenderSVGImage();

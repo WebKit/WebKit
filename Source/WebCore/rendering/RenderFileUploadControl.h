@@ -32,6 +32,7 @@ class HTMLInputElement;
 
 class RenderFileUploadControl final : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderFileUploadControl);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFileUploadControl);
 public:
     RenderFileUploadControl(HTMLInputElement&, RenderStyle&&);
     virtual ~RenderFileUploadControl();

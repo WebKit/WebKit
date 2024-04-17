@@ -50,8 +50,9 @@ class SecurityOrigin;
 enum class NewLoadInProgress : bool { No, Yes };
 enum class ScheduleLocationChangeResult : uint8_t { Stopped, Completed, Started };
 
-class NavigationScheduler : public CanMakeCheckedPtr<NavigationScheduler> {
+class NavigationScheduler final : public CanMakeCheckedPtr<NavigationScheduler> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NavigationScheduler);
 public:
     explicit NavigationScheduler(Frame&);
     ~NavigationScheduler();

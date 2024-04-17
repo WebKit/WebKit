@@ -32,6 +32,7 @@ class SVGElement;
 
 class RenderSVGContainer : public RenderSVGModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGContainer);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGContainer);
 public:
     virtual ~RenderSVGContainer();
 

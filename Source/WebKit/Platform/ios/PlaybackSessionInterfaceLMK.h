@@ -38,6 +38,7 @@ namespace WebKit {
 using namespace WebCore;
 
 class PlaybackSessionInterfaceLMK final : public PlaybackSessionInterfaceIOS {
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceLMK);
 public:
     static Ref<PlaybackSessionInterfaceLMK> create(PlaybackSessionModel&);
     ~PlaybackSessionInterfaceLMK();

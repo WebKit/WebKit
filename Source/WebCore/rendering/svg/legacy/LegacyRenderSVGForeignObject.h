@@ -31,6 +31,7 @@ class SVGForeignObjectElement;
 
 class LegacyRenderSVGForeignObject final : public RenderSVGBlock {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGForeignObject);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGForeignObject);
 public:
     LegacyRenderSVGForeignObject(SVGForeignObjectElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGForeignObject();

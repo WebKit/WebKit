@@ -28,8 +28,10 @@ class SVGGraphicsElement;
 
 class RenderSVGInline : public RenderInline {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGInline);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInline);
 public:
     RenderSVGInline(Type, SVGGraphicsElement&, RenderStyle&&);
+    virtual ~RenderSVGInline();
 
     inline SVGGraphicsElement& graphicsElement() const;
 

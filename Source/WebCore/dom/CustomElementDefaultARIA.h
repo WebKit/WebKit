@@ -38,8 +38,9 @@ namespace WebCore {
 class Element;
 class WeakPtrImplWithEventTargetData;
 
-class CustomElementDefaultARIA : public CanMakeCheckedPtr<CustomElementDefaultARIA> {
+class CustomElementDefaultARIA final : public CanMakeCheckedPtr<CustomElementDefaultARIA> {
     WTF_MAKE_ISO_ALLOCATED(CustomElementDefaultARIA);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CustomElementDefaultARIA);
 public:
     CustomElementDefaultARIA();
     ~CustomElementDefaultARIA();

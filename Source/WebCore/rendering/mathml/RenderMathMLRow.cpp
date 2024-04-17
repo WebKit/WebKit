@@ -50,6 +50,8 @@ RenderMathMLRow::RenderMathMLRow(Type type, MathMLRowElement& element, RenderSty
     ASSERT(isRenderMathMLRow());
 }
 
+RenderMathMLRow::~RenderMathMLRow() = default;
+
 MathMLRowElement& RenderMathMLRow::element() const
 {
     return static_cast<MathMLRowElement&>(nodeForNonAnonymous());

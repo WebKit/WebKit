@@ -56,6 +56,8 @@ RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder(RenderM
     ASSERT(isRenderMultiColumnSpannerPlaceholder());
 }
 
+RenderMultiColumnSpannerPlaceholder::~RenderMultiColumnSpannerPlaceholder() = default;
+
 ASCIILiteral RenderMultiColumnSpannerPlaceholder::renderName() const
 {
     return "RenderMultiColumnSpannerPlaceholder"_s;

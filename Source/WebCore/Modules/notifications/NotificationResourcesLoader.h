@@ -55,6 +55,8 @@ private:
     static bool resourceIsSupportedInPlatform(Resource);
 
     class ResourceLoader final : public ThreadableLoaderClient {
+        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ResourceLoader);
     public:
         ResourceLoader(ScriptExecutionContext&, const URL&, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&&);
         ~ResourceLoader();

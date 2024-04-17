@@ -32,9 +32,11 @@ class SVGSVGElement;
 
 class RenderSVGViewportContainer final : public RenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGViewportContainer);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGViewportContainer);
 public:
     RenderSVGViewportContainer(RenderSVGRoot&, RenderStyle&&);
     RenderSVGViewportContainer(SVGSVGElement&, RenderStyle&&);
+    virtual ~RenderSVGViewportContainer();
 
     SVGSVGElement& svgSVGElement() const;
     Ref<SVGSVGElement> protectedSVGSVGElement() const;

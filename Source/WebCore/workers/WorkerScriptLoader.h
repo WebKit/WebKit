@@ -55,8 +55,9 @@ struct ServiceWorkerRegistrationData;
 struct WorkerFetchResult;
 enum class CertificateInfoPolicy : uint8_t;
 
-class WorkerScriptLoader : public RefCounted<WorkerScriptLoader>, public ThreadableLoaderClient {
+class WorkerScriptLoader final : public RefCounted<WorkerScriptLoader>, public ThreadableLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerScriptLoader);
 public:
     static Ref<WorkerScriptLoader> create()
     {

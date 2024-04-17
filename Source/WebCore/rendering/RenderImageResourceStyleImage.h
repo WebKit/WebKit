@@ -35,6 +35,7 @@ class RenderElement;
 
 class RenderImageResourceStyleImage final : public RenderImageResource {
     WTF_MAKE_ISO_ALLOCATED(RenderImageResourceStyleImage);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderImageResourceStyleImage);
 public:
     explicit RenderImageResourceStyleImage(StyleImage&);
 

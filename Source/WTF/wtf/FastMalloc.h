@@ -563,7 +563,7 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
     WTF_ALLOW_STRUCT_COMPACT_POINTERS; \
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(className)
 
-#else
+#else // ENABLE(MALLOC_HEAP_BREAKDOWN)
 
 #define WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(className) \
     WTF_MAKE_FAST_ALLOCATED_IMPL
@@ -593,4 +593,30 @@ public: \
     WTF_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(className) \
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
-#endif
+#endif // ENABLE(MALLOC_HEAP_BREAKDOWN)
+
+// delete(T*, std::destroying_delete_t, size_t) is preferred over delete(void*)
+// in overload resolution, so we can use it to interpose before calling delete(void*).
+// Note: WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR must be declared in every subclass.
+#define WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_IMPL(T) \
+void operator delete(T* object, std::destroying_delete_t, size_t size) { \
+    ASSERT(sizeof(T) == size); \
+    object->T::~T(); \
+    if (UNLIKELY(object->ptrCountWithoutThreadCheck())) { \
+        memset(static_cast<void*>(object), 0, size); \
+        return; \
+    } \
+    T::operator delete(object); \
+} \
+using WTFDidOverrideDeleteForCheckedPtr = int;
+
+// Note: WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR must be declared in the most derived subclass.
+#define WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ClassName) \
+public: \
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_IMPL(ClassName) \
+private: \
+using __thisIsHereToForceASemicolonAfterWTFOverrideDelete UNUSED_TYPE_ALIAS = int
+
+#define WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(ClassName) \
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_IMPL(ClassName) \
+using __thisIsHereToForceASemicolonAfterWTFOverrideDelete UNUSED_TYPE_ALIAS = int

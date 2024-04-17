@@ -40,8 +40,9 @@ class Font;
 
 struct GlyphData;
 
-class TextRun : public CanMakeCheckedPtr<TextRun> {
+class TextRun final : public CanMakeCheckedPtr<TextRun> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextRun);
     friend void add(Hasher&, const TextRun&);
 public:
     explicit TextRun(const String& text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = ExpansionBehavior::defaultBehavior(), TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)

@@ -310,8 +310,9 @@ private:
 };
 
 
-class FrameLoader::FrameProgressTracker : public CanMakeCheckedPtr<FrameLoader::FrameProgressTracker> {
+class FrameLoader::FrameProgressTracker final : public CanMakeCheckedPtr<FrameLoader::FrameProgressTracker> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameProgressTracker);
 public:
     explicit FrameProgressTracker(LocalFrame& frame)
         : m_frame(frame)

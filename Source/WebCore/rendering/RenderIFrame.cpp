@@ -50,6 +50,8 @@ RenderIFrame::RenderIFrame(HTMLIFrameElement& element, RenderStyle&& style)
     ASSERT(isRenderIFrame());
 }
 
+RenderIFrame::~RenderIFrame() = default;
+
 HTMLIFrameElement& RenderIFrame::iframeElement() const
 {
     return downcast<HTMLIFrameElement>(RenderFrameBase::frameOwnerElement());

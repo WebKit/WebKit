@@ -50,6 +50,7 @@ class Page;
 
 class WEBCORE_EXPORT PageConsoleClient final : public JSC::ConsoleClient, public CanMakeCheckedPtr<PageConsoleClient> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageConsoleClient);
 public:
     explicit PageConsoleClient(Page&);
     virtual ~PageConsoleClient();

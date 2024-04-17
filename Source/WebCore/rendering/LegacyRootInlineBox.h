@@ -37,6 +37,7 @@ struct GapRects;
 
 class LegacyRootInlineBox : public LegacyInlineFlowBox, public CanMakeWeakPtr<LegacyRootInlineBox>, public CanMakeCheckedPtr<LegacyRootInlineBox> {
     WTF_MAKE_ISO_ALLOCATED(LegacyRootInlineBox);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRootInlineBox);
 public:
     explicit LegacyRootInlineBox(RenderBlockFlow&);
     virtual ~LegacyRootInlineBox();

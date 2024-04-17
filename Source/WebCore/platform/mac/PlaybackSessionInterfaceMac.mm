@@ -299,6 +299,11 @@ uint32_t PlaybackSessionInterfaceMac::ptrCount() const
     return CanMakeCheckedPtr::ptrCount();
 }
 
+uint32_t PlaybackSessionInterfaceMac::ptrCountWithoutThreadCheck() const
+{
+    return CanMakeCheckedPtr::ptrCountWithoutThreadCheck();
+}
+
 void PlaybackSessionInterfaceMac::incrementPtrCount() const
 {
     CanMakeCheckedPtr::incrementPtrCount();

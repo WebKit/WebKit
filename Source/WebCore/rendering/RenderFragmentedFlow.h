@@ -53,10 +53,11 @@ typedef HashMap<const LegacyRootInlineBox*, SingleThreadWeakPtr<RenderFragmentCo
 // and nodeAtPoint methods to this object. Each RenderFragmentContainer will actually be a viewPort
 // of the RenderFragmentedFlow.
 
-class RenderFragmentedFlow: public RenderBlockFlow {
+class RenderFragmentedFlow : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderFragmentedFlow);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFragmentedFlow);
 public:
-    virtual ~RenderFragmentedFlow() = default;
+    virtual ~RenderFragmentedFlow();
 
     virtual void removeFlowChildInfo(RenderElement&);
 #ifndef NDEBUG

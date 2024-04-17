@@ -67,8 +67,9 @@ class CustomPropertyRegistry;
 class Resolver;
 class RuleSet;
 
-class Scope : public CanMakeWeakPtr<Scope>, public CanMakeCheckedPtr<Scope> {
+class Scope final : public CanMakeWeakPtr<Scope>, public CanMakeCheckedPtr<Scope> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Scope);
 public:
     explicit Scope(Document&);
     explicit Scope(ShadowRoot&);

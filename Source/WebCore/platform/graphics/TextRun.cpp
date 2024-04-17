@@ -28,8 +28,9 @@
 
 namespace WebCore {
 
-struct ExpectedTextRunSize : public CanMakeCheckedPtr<ExpectedTextRunSize> {
+struct ExpectedTextRunSize final : public CanMakeCheckedPtr<ExpectedTextRunSize> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(ExpectedTextRunSize);
 
     String text;
     TabSize tabSize;

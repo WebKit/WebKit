@@ -52,6 +52,7 @@ private:
 
 class RenderFrameSet final : public RenderBox {
     WTF_MAKE_ISO_ALLOCATED(RenderFrameSet);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFrameSet);
 public:
     RenderFrameSet(HTMLFrameSetElement&, RenderStyle&&);
     virtual ~RenderFrameSet();

@@ -57,6 +57,8 @@ RenderMathMLToken::RenderMathMLToken(Type type, Document& document, RenderStyle&
 {
 }
 
+RenderMathMLToken::~RenderMathMLToken() = default;
+
 MathMLTokenElement& RenderMathMLToken::element()
 {
     return static_cast<MathMLTokenElement&>(nodeForNonAnonymous());
