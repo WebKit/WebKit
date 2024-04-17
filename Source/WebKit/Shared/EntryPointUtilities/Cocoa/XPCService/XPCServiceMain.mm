@@ -192,7 +192,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             bool disableLogging = xpc_dictionary_get_bool(event, "disable-logging");
             initializeLogd(disableLogging);
 
-#if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>)
+#if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>) && PLATFORM(IOS)
             register_for_dlsym_callbacks();
 #endif
 
