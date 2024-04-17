@@ -25,7 +25,6 @@
 
 #import "config.h"
 #import "XPCEndpoint.h"
-#import "XPCUtilities.h"
 
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/ASCIILiteral.h>
@@ -46,8 +45,6 @@ XPCEndpoint::XPCEndpoint()
     xpc_connection_set_target_queue(m_connection.get(), dispatch_get_main_queue());
     xpc_connection_set_event_handler(m_connection.get(), ^(xpc_object_t message) {
         xpc_type_t type = xpc_get_type(message);
-
-        handleXPCExitMessage(message);
 
         if (type == XPC_TYPE_CONNECTION) {
             OSObjectPtr<xpc_connection_t> connection = message;
