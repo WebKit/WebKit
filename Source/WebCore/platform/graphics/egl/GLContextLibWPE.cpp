@@ -19,7 +19,7 @@
 #include "config.h"
 #include "GLContext.h"
 
-#if USE(EGL) && USE(WPE_RENDERER)
+#if USE(WPE_RENDERER)
 #include "PlatformDisplayLibWPE.h"
 
 #if USE(LIBEPOXY)
@@ -104,4 +104,4 @@ void GLContext::destroyWPETarget()
 
 } // namespace WebCore
 
-#endif // USE(EGL) && USE(WPE_RENDERER)
+#endif // USE(WPE_RENDERER)

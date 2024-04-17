@@ -19,7 +19,6 @@
 
 #pragma once
 
-#if USE(EGL)
 #include "GLContextWrapper.h"
 #include "IntSize.h"
 #include "PlatformDisplay.h"
@@ -145,5 +144,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // USE(EGL)

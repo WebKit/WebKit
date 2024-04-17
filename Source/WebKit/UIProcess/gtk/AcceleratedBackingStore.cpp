@@ -32,7 +32,7 @@
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
-#if PLATFORM(GTK) && USE(EGL)
+#if PLATFORM(GTK)
 #include "AcceleratedBackingStoreDMABuf.h"
 #endif
 
@@ -64,7 +64,7 @@ static bool gtkCanUseHardwareAcceleration()
 
 bool AcceleratedBackingStore::checkRequirements()
 {
-#if PLATFORM(GTK) && USE(EGL)
+#if PLATFORM(GTK)
     if (AcceleratedBackingStoreDMABuf::checkRequirements())
         return gtkCanUseHardwareAcceleration();
 #endif
@@ -77,7 +77,7 @@ std::unique_ptr<AcceleratedBackingStore> AcceleratedBackingStore::create(WebPage
     if (!HardwareAccelerationManager::singleton().canUseHardwareAcceleration())
         return nullptr;
 
-#if PLATFORM(GTK) && USE(EGL)
+#if PLATFORM(GTK)
     if (AcceleratedBackingStoreDMABuf::checkRequirements())
         return AcceleratedBackingStoreDMABuf::create(webPage);
 #endif

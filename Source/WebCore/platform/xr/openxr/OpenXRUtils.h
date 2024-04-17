@@ -21,7 +21,6 @@
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 
-#if USE(EGL)
 // EGL symbols required by openxr_platform.h
 #if USE(LIBEPOXY)
 #define __GBM__ 1
@@ -29,8 +28,6 @@
 #else
 #include <EGL/egl.h>
 #endif
-
-#endif // USE(EGL)
 
 #include "Logging.h"
 #include "PlatformXR.h"

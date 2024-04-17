@@ -26,7 +26,6 @@
 #include "config.h"
 #include "PlatformDisplaySurfaceless.h"
 
-#if USE(EGL)
 #include "GLContext.h"
 #include <epoxy/egl.h>
 
@@ -62,5 +61,3 @@ PlatformDisplaySurfaceless::~PlatformDisplaySurfaceless()
 }
 
 } // namespace WebCore
-
-#endif // USE(EGL)

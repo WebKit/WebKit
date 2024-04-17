@@ -153,7 +153,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         WebCore::PlatformDisplay::setUseDMABufForRendering(true);
 #endif
 
-#if PLATFORM(GTK) && USE(EGL)
+#if PLATFORM(GTK)
     m_dmaBufRendererBufferMode = parameters.dmaBufRendererBufferMode;
     if (!m_dmaBufRendererBufferMode.isEmpty()) {
 #if USE(GBM)

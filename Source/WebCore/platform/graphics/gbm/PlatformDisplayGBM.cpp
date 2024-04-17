@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformDisplayGBM.h"
 
-#if USE(EGL) && USE(GBM)
+#if USE(GBM)
 #include "GLContext.h"
 #include <epoxy/egl.h>
 #include <gbm.h>
@@ -64,4 +64,4 @@ PlatformDisplayGBM::~PlatformDisplayGBM()
 
 } // namespace WebCore
 
-#endif // USE(EGL) && USE(GBM)
+#endif // USE(GBM)

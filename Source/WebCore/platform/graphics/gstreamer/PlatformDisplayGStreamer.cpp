@@ -26,7 +26,7 @@
 #include "GStreamerCommon.h"
 #define GST_USE_UNSTABLE_API
 #include <gst/gl/gl.h>
-#if USE(EGL) && GST_GL_HAVE_PLATFORM_EGL
+#if GST_GL_HAVE_PLATFORM_EGL
 #include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
 #undef GST_USE_UNSTABLE_API
@@ -39,16 +39,13 @@ namespace WebCore {
 
 GstGLDisplay* PlatformDisplay::gstGLDisplay() const
 {
-#if USE(EGL)
     if (!m_gstGLDisplay)
         m_gstGLDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(eglDisplay())));
-#endif
     return m_gstGLDisplay.get();
 }
 
 GstGLContext* PlatformDisplay::gstGLContext() const
 {
-#if USE(EGL)
     if (m_gstGLContext)
         return m_gstGLContext.get();
 
@@ -70,7 +67,6 @@ GstGLContext* PlatformDisplay::gstGLContext() const
             gst_gl_context_activate(m_gstGLContext.get(), FALSE);
         }
     }
-#endif
     return m_gstGLContext.get();
 }
 
@@ -82,4 +78,4 @@ void PlatformDisplay::clearGStreamerGLState()
 
 } // namespace WebCore
 
-#endif
+#endif // USE(GSTREAMER_GL)

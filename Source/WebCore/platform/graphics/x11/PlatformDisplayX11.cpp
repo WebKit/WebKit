@@ -41,7 +41,7 @@
 #endif
 #endif
 
-#if USE(EGL)
+#if USE(LIBEPOXY)
 #include <epoxy/egl.h>
 #endif
 
@@ -78,9 +78,7 @@ PlatformDisplayX11::PlatformDisplayX11(GdkDisplay* display)
 
 PlatformDisplayX11::~PlatformDisplayX11()
 {
-#if USE(EGL)
     ASSERT(!m_sharingGLContext);
-#endif
 
 #if PLATFORM(GTK)
     bool nativeDisplayOwned = !m_sharedDisplay;
@@ -97,10 +95,7 @@ void PlatformDisplayX11::sharedDisplayDidClose()
     PlatformDisplay::sharedDisplayDidClose();
     m_display = nullptr;
 }
-#endif
 
-#if USE(EGL)
-#if PLATFORM(GTK)
 EGLDisplay PlatformDisplayX11::gtkEGLDisplay()
 {
     if (m_eglDisplay != EGL_NO_DISPLAY)
@@ -148,7 +143,6 @@ void PlatformDisplayX11::initializeEGLDisplay()
     m_angleNativeDisplay = m_display;
 #endif
 }
-#endif // USE(EGL)
 
 #if USE(LCMS)
 cmsHPROFILE PlatformDisplayX11::colorProfile() const
@@ -212,4 +206,3 @@ String PlatformDisplayX11::platformAccessibilityBusAddress() const
 } // namespace WebCore
 
 #endif // PLATFORM(X11)
-

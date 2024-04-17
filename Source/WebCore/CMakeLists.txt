@@ -1956,15 +1956,13 @@ elseif (USE_LIBEPOXY)
 else ()
     list(APPEND WebCore_LIBRARIES OpenGL::GLES)
 
-    if (USE_EGL)
-        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-            ${EGL_INCLUDE_DIRS}
-        )
-        list(APPEND WebCore_LIBRARIES
-            ${EGL_LIBRARIES}
-        )
-        add_definitions(${EGL_DEFINITIONS})
-    endif ()
+    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+        ${EGL_INCLUDE_DIRS}
+    )
+    list(APPEND WebCore_LIBRARIES
+        ${EGL_LIBRARIES}
+    )
+    add_definitions(${EGL_DEFINITIONS})
 endif ()
 
 set(WebCoreTestSupport_FRAMEWORKS ${WebCore_FRAMEWORKS})

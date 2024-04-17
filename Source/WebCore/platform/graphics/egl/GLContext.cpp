@@ -19,7 +19,6 @@
 #include "config.h"
 #include "GLContext.h"
 
-#if USE(EGL)
 #include "GraphicsContextGL.h"
 #include "Logging.h"
 #include <wtf/Vector.h>
@@ -602,5 +601,3 @@ GLContext::ScopedGLContextCurrent::~ScopedGLContextCurrent()
 }
 
 } // namespace WebCore
-
-#endif // USE(EGL)
