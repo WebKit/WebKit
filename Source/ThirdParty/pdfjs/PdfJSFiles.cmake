@@ -189,13 +189,14 @@ set(PdfJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-paperclip.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-paragraph.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-pushpin.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/cursor-editorFreeHighlight.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/cursor-editorFreeText.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/cursor-editorInk.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/cursor-editorTextHighlight.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/editor-toolbar-delete.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/findbarButton-next.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/findbarButton-previous.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/gv-toolbarButton-download.svg
-    ${THIRDPARTY_DIR}/pdfjs/web/images/gv-toolbarButton-openinapp.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/loading-icon.gif
     ${THIRDPARTY_DIR}/pdfjs/web/images/loading.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/secondaryToolbarButton-documentProperties.svg
