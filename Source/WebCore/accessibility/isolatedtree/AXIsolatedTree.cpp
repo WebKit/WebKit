@@ -564,6 +564,15 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
         case AXPropertyName::AccessKey:
             propertyMap.set(AXPropertyName::AccessKey, axObject.accessKey().isolatedCopy());
             break;
+        case AXPropertyName::AccessibilityText: {
+            Vector<AccessibilityText> texts;
+            axObject.accessibilityText(texts);
+            auto axTextValue = texts.map([] (const auto& text) -> AccessibilityText {
+                return { text.text.isolatedCopy(), text.textSource };
+            });
+            propertyMap.set(AXPropertyName::AccessibilityText, axTextValue);
+            break;
+        }
         case AXPropertyName::ARIATreeRows: {
             AXCoreObject::AccessibilityChildrenVector ariaTreeRows;
             axObject.ariaTreeRows(ariaTreeRows);
