@@ -1384,8 +1384,7 @@
 - path: ChakraCore/test/UnifiedRegex/sets.js
   cmd: runChakra :baseline, "NoException", "sets.baseline", []
 - path: ChakraCore/test/UnifiedRegex/split.js
-  # Note that we don't set RegExp.$_ to the last input.
-  cmd: runChakra :baseline, "NoException", "split.baseline-jsc", []
+  cmd: runChakra :baseline, "NoException", "split.baseline", []
 - path: ChakraCore/test/UnifiedRegex/WOOB1138949.js
   cmd: runChakra :baseline, "NoException", "WOOB1138949.baseline", []
 - path: ChakraCore/test/UnifiedRegex/propertyString.js

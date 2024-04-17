@@ -139,7 +139,7 @@ String ResourceResponse::platformSuggestedFilename() const
         return { };
 
     if (contentDisposition.is8Bit())
-        contentDisposition = String::fromUTF8WithLatin1Fallback(contentDisposition.characters8(), contentDisposition.length());
+        contentDisposition = String::fromUTF8WithLatin1Fallback(contentDisposition.span8());
     GUniquePtr<SoupMessageHeaders> soupHeaders(soup_message_headers_new(SOUP_MESSAGE_HEADERS_RESPONSE));
     soup_message_headers_append(soupHeaders.get(), "Content-Disposition", contentDisposition.utf8().data());
     GRefPtr<GHashTable> params;

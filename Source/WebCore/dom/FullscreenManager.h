@@ -31,6 +31,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "GCReachableRef.h"
 #include "HTMLMediaElement.h"
+#include "HTMLMediaElementEnums.h"
 #include "LayoutRect.h"
 #include "Page.h"
 #include <wtf/Deque.h>
@@ -41,8 +42,9 @@ namespace WebCore {
 class DeferredPromise;
 class RenderStyle;
 
-class FullscreenManager final : public CanMakeWeakPtr<FullscreenManager>, public CanMakeCheckedPtr {
+class FullscreenManager final : public CanMakeWeakPtr<FullscreenManager>, public CanMakeCheckedPtr<FullscreenManager> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FullscreenManager);
 public:
     FullscreenManager(Document&);
     ~FullscreenManager();

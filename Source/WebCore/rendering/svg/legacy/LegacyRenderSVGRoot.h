@@ -35,6 +35,7 @@ class SVGSVGElement;
 
 class LegacyRenderSVGRoot final : public RenderReplaced {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGRoot);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGRoot);
 public:
     LegacyRenderSVGRoot(SVGSVGElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGRoot();
@@ -78,8 +79,8 @@ private:
 
     void willBeDestroyed() override;
 
-    void insertedIntoTree(IsInternalMove) override;
-    void willBeRemovedFromTree(IsInternalMove) override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 

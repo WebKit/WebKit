@@ -146,10 +146,12 @@ webkit.org/b/21916 tables/mozilla_expected_failures/bugs/bug178855.xml [ Pass Im
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
+# Skip glib-only combobox accessibility tests.
+accessibility/combobox/gtk [ Skip ]
+
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X.
 accessibility/aria-checkbox-sends-notification.html
 accessibility/aria-switch-sends-notification.html
-accessibility/combobox/combobox-collapsed-selection-changed.html
 accessibility/multiselect-list-reports-active-option.html
 
 # uiController.simulateRotationLikeSafari() is not implemented on macOS.
@@ -773,9 +775,6 @@ fast/css/stylesheet-candidate-nodes-crash.xhtml [ Pass Failure ]
 platform/mac/fast/loader/file-url-mimetypes-3.html [ Failure ]
 platform/mac/fast/loader/file-url-mimetypes.html [ Failure ]
 
-# rdar://92299030 ([ Ventura ] 2 imported/w3c/web-platform-tests/svg/* tests are constant text failures)
-imported/w3c/web-platform-tests/svg/path/distance/pathlength-path.svg [ Failure ]
-
 # This test rarely times out with color being (0, 0, 0, 0), so far only on macOS Ventura.
 http/tests/media/hls/hls-hdr-switch.html [ Pass Timeout ]
 
@@ -1049,6 +1048,8 @@ webkit.org/b/158534 css3/filters/backdrop/dynamic-backdrop-filter-change.html [ 
 webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
 
 fast/css/appearance-apple-pay-button.html [ Pass ]
+fast/css/appearance-apple-pay-button-div.html [ Pass ]
+fast/css/appearance-apple-pay-button-input-type-button.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius-longhands.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-width.html [ Pass ]
@@ -1302,15 +1303,8 @@ webkit.org/b/189483 imported/w3c/web-platform-tests/css/css-fonts/variations/sln
 media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
 
 # Tests which pass on Ventura.
-webkit.org/b/247588 [ BigSur Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.serviceworker.html [ Failure ]
-webkit.org/b/247588 [ BigSur Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.sharedworker.html [ Failure ]
-
-# Tests timing out on BigSur but not timing out on Ventura
-webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html [ Skip ]
-webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [ Skip ]
-webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html [ Skip ]
-webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html [ Skip ]
-webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
+webkit.org/b/247588 [ Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.serviceworker.html [ Failure ]
+webkit.org/b/247588 [ Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.sharedworker.html [ Failure ]
 
 # Flaky subtests. Sometimes fails with Promise rejection, sometimes fails the assertion.
 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tentative.html [ Pass Failure ]
@@ -1590,8 +1584,6 @@ webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height-viewbox.html [ Skip ]
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height.html [ Skip ]
 
-webkit.org/b/206881 [ BigSur ] imported/w3c/web-platform-tests/css/css-fonts/first-available-font-003.html [ ImageOnlyFailure ]
-
 webkit.org/b/205729 webrtc/captureCanvas-webrtc.html [ Pass Failure ]
 
 webkit.org/b/206604 animations/animation-welcome-safari.html [ Pass Failure ]
@@ -1675,15 +1667,6 @@ webkit.org/b/212226 imported/w3c/web-platform-tests/css/css-grid/alignment/self-
 fast/text/text-styles/-apple-system [ Pass ]
 
 webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Pass Failure ]
-
-# These tests require macOS Monterey.
-[ BigSur ] media/media-source/media-webm-vorbis-partial.html [ Skip ]
-[ BigSur ] media/media-source/media-webm-opus-partial.html [ Skip ]
-[ BigSur ] media/media-source/media-webm-opus-partial-abort.html [ Skip ]
-[ BigSur ] webaudio/decode-audio-data-webm-opus.html [ Skip ]
-[ BigSur ] webaudio/decode-audio-data-webm-opus-resample.html [ Skip ]
-[ BigSur ] webaudio/decode-audio-data-webm-vorbis.html [ Skip ]
-[ BigSur ] http/tests/model/model-document.html [ Skip ]
 
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Pass Failure ]
 
@@ -1920,13 +1903,6 @@ webkit.org/b/219965 [ Monterey+ ] imported/w3c/web-platform-tests/fetch/content-
 
 webkit.org/b/217621 media/video-buffering-allowed.html [ Pass Timeout ]
 
-# The system font does not handle all the various width values on older OSes.
-[ BigSur ] fast/text/system-font-width-4.html [ ImageOnlyFailure ]
-[ BigSur ] fast/text/system-font-width-6.html [ ImageOnlyFailure ]
-[ BigSur ] fast/text/system-font-width-7.html [ ImageOnlyFailure ]
-[ BigSur ] fast/text/system-font-width-8.html [ ImageOnlyFailure ]
-[ BigSur ] fast/text/system-font-width-9.html [ ImageOnlyFailure ]
-
 webkit.org/b/221152 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-automatic-pull.https.html [ Pass Failure ]
 
 webkit.org/b/221491 animations/keyframe-pseudo-shadow.html [ Pass ImageOnlyFailure ]
@@ -1941,9 +1917,6 @@ webkit.org/b/222205 css3/calc/transforms-translate.html [ Pass ImageOnlyFailure 
 
 webkit.org/b/222422 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Pass Failure Slow ]
 
-# Not all OSes support the same set of emoji.
-[ BigSur ] fast/text/mending-heart.html [ Failure ]
-
 webkit.org/b/222573 media/media-fullscreen-pause-inline.html [ Pass Failure ]
 
 # webkit.org/b/255294  2 http/tests/media/FairPlay tests are flakey.
@@ -1953,7 +1926,6 @@ http/tests/media/fairplay/legacy-fairplay-mse-v3.html [ Pass Failure ]
 webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeout ]
 
 # webkit.org/b/223223 these two tests fail on Apple Silicon only
-[ Debug arm64 ] imported/w3c/web-platform-tests/svg/import/paths-data-03-f-manual.svg [ Failure ]
 [ Debug arm64 ] svg/W3C-SVG-1.1/paths-data-03-f.svg [ Failure ]
 
 # webkit.org/b/223043 the following tests have issues only on Apple Silicon
@@ -1987,10 +1959,6 @@ webkit.org/b/222239 webgl/2.0.0/conformance/uniforms/uniform-default-values.html
 webkit.org/b/222844 fast/canvas/webgl/match-page-color-space.html [ Pass ImageOnlyFailure ]
 webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-background.html [ Pass ImageOnlyFailure ]
 
-# No WebGL drawingBufferColorSpace (because no PREDEFINED_COLOR_SPACE_DISPLAY_P3) until Monterey.
-webkit.org/b/247165 [ BigSur ] fast/canvas/webgl/colorspaces-test.html [ Failure ]
-webkit.org/b/247165 [ BigSur ] fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
-
 # ASTC may be supported on M1 macs, but we should skip it for now
 fast/canvas/webgl/webgl-compressed-texture-astc.html [ Skip ]
 
@@ -2010,8 +1978,6 @@ webkit.org/b/224123 media/modern-media-controls/macos-inline-media-controls/maco
 webkit.org/b/224212 [ arm64 ] compositing/background-color/no-composited-background-color-when-perspective.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/215397 media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html [ Pass Failure ]
-
-webkit.org/b/224631 [ BigSur ] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html [ Pass ImageOnlyFailure ]
 
 # Buttons are not focusable on Mac so this test doesn't work as expected.
 webkit.org/b/22261 imported/w3c/web-platform-tests/css/selectors/focus-visible-005.html [ Skip ]
@@ -2045,8 +2011,6 @@ webkit.org/b/225804 imported/w3c/web-platform-tests/webxr/xrBoundedReferenceSpac
 webkit.org/b/225882 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-frozen-array.https.html [ Pass Failure ]
 
 webkit.org/b/226050 imported/w3c/web-platform-tests/IndexedDB/blob-valid-before-commit.any.html [ Pass Failure ]
-
-webkit.org/b/226299 [ BigSur ] http/tests/performance/performance-resource-timing-resourcetimingbufferfull-crash.html [ Pass Failure ]
 
 # rdar://78477744 (REGRESSION: [ Monterey ] 3 imported/w3c/web-platform-tests/css/css-text-decor (layout-tests) are constant ImageOnlyFailures)
 [ Monterey ] imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-from-font-variable.html [ Pass ImageOnlyFailure ]
@@ -2090,12 +2054,9 @@ webkit.org/b/229291 imported/w3c/web-platform-tests/html/rendering/replaced-elem
 
 #rdar://82146367 ([Mac, iOS Release] imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html is a flaky failure) imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html [ Pass Failure ]
 
-webkit.org/b/228176 [ BigSur ] fast/text/variable-system-font.html [ ImageOnlyFailure ]
 webkit.org/b/228176 [ Monterey ] fast/text/variable-system-font.html [ Pass ]
 
 webkit.org/b/261316 [ Monterey+ ] fast/animation/request-animation-frame-throttling-detached-iframe.html [ Pass Failure ]
-
-webkit.org/b/229463 [ BigSur Debug ] http/tests/inspector/network/resource-mime-type.html [ Pass Failure Timeout ]
 
 webkit.org/b/228364 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Pass Timeout ]
 
@@ -2152,23 +2113,13 @@ webkit.org/b/231463 fast/css/accent-color/range.html [ ImageOnlyFailure ]
 
 webkit.org/b/229521 pointer-lock/lock-already-locked.html [ Pass Failure ]
 
-webkit.org/b/228176 [ BigSur Monterey ] fast/text/variable-system-font-2.html [ Pass ]
+webkit.org/b/228176 [ Monterey ] fast/text/variable-system-font-2.html [ Pass ]
 
 webkit.org/b/230327 imported/w3c/web-platform-tests/css/css-transforms/crashtests/transform-marquee-resize-div-image-001.html [ Pass Failure ]
 
 webkit.org/b/170629  memory/memory-pressure-simulation.html [ Pass Failure Crash ]
 
-webkit.org/b/230711 [ BigSur ] http/tests/inspector/network/resource-initiatorNode.html [ Pass Failure Crash ]
-
-webkit.org/b/230780 [ BigSur Debug ] fast/workers/use-machine-stack.html [ Pass Crash ]
-
 webkit.org/b/239091 http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Pass Failure ]
-
-webkit.org/b/230862 [ BigSur ] imported/w3c/web-platform-tests/resource-timing/sizes-redirect-img.html [ Pass Failure ]
-
-webkit.org/b/230984 [ BigSur Debug arm64 ] streams/readableStream-then.html [ Pass Crash ]
-
-webkit.org/b/231757 [ BigSur ] inspector/canvas/updateShader-webgl.html [ Pass Failure ]
 
 webkit.org/b/237840 [ Monterey ] webgl/2.0.0/conformance2/glsl3/bool-type-cast-bug-uint-ivec-uvec.html [ Pass Crash ]
 
@@ -2194,10 +2145,8 @@ fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 
 # These tests require platform support.
 # <rdar://problem/87944426>
-[ BigSur Monterey ] fast/text/locale-shaping-2.html [ Pass ImageOnlyFailure ]
-[ BigSur Monterey ] fast/text/locale-shaping-3.html [ Pass ImageOnlyFailure ]
-
-[ BigSur ] imported/w3c/web-platform-tests/url/toascii.window.html [ Skip ]
+[ Monterey ] fast/text/locale-shaping-2.html [ Pass ImageOnlyFailure ]
+[ Monterey ] fast/text/locale-shaping-3.html [ Pass ImageOnlyFailure ]
 
 # Was in LayoutTests/Expectations, now only happening on Mac
 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure ]
@@ -2253,9 +2202,6 @@ imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-disal
 webkit.org/b/245092 webaudio/offlineaudiocontext-gc.html [ Pass Failure ]
 
 webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.worker.html [ Pass Failure ]
-
-# The following test fails on Big Sur EWS bots.
-webkit.org/b/244012 [ BigSur ] imported/w3c/web-platform-tests/css/css-transforms/transform-3d-rotateY-stair-below-001.xht [ Pass ImageOnlyFailure ]
 
 # SVG tests that are broken in the legacy SVG engine, but pass using LBSE.
 svg/transforms/layout-tiny-elements-in-scaled-group.svg [ ImageOnlyFailure ]
@@ -2324,6 +2270,7 @@ http/tests/misc/heic-accept-header.html [ Pass ]
 
 webkit.org/b/254044 webxr [ Skip ]
 webkit.org/b/254044 imported/w3c/web-platform-tests/webxr [ Skip ]
+webkit.org/b/254044 http/tests/webxr [ Skip ]
 webkit.org/b/254044 http/wpt/webxr [ Skip ]
 webkit.org/b/254044 imported/w3c/web-platform-tests/feature-policy/reporting/xr-reporting.https.html [ Skip ]
 
@@ -2531,7 +2478,7 @@ webkit.org/b/266356 imported/w3c/web-platform-tests/video-rvfc/request-video-fra
 webkit.org/b/265957 fullscreen/full-screen-layer-dump.html [ Failure ]
 
 # SVG Animations Failures on WPT Import
-imported/w3c/web-platform-tests/svg/animations/reinserting-svg-into-document.html [ Failure ]
+imported/w3c/web-platform-tests/svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
 imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2.html [ Pass Failure ]
 
 webkit.org/b/266996 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ ImageOnlyFailure ]
@@ -2552,8 +2499,6 @@ http/tests/media/fairplay/fps-mse-unmuxed-mpts.html [ Skip ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-021.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/painting/reftests/percentage-attribute.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/painting/reftests/percentage.svg [ ImageOnlyFailure ]
 
 webkit.org/b/269852 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-behavior.html [ ImageOnlyFailure ]
 
@@ -2641,32 +2586,19 @@ webkit.org/b/270195 [ Monterey+ Debug ] fast/text/emoji-num-glyphs.html [ Timeou
 
 webkit.org/b/270303 [ Ventura ] tables/mozilla/bugs/bug4527.html [ Failure ]
 
-# webkit.org/b/270860 (REGRESSION (275949@main): 18 imported WPT /i18n/.../css-text-line-break* tests are consistent/flaky failures.)
-imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cpm-loose.html  [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-loose.html  [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-iteration-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-po-loose.html  [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-loose.html [ Pass Failure ]
-
 webkit.org/b/270939 [ Ventura ] tables/mozilla/bugs/bug12384.html [ Failure ]
 
 webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
 
 webkit.org/b/271194 accessibility/mac/custom-text-editor.html [ Pass Timeout ]
 
-# webkit.org/b/271792 [ MacOS iOS ] 2x fast/url/* (layout-tests) are constant text failures
-[ Sonoma+ ] fast/url/idna2008.html [ Failure ]
-[ Sonoma+ ] fast/url/url-hostname-encoding.html [ Failure ]
+webkit.org/b/272001 media/media-source/media-managedmse-noresumeafterpause.html [ Pass Failure ]
+
+# webkit.org/b/247632 5 WPT Fetch Metadata tests time out on macOS
+imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
+
+[ Monterey Ventura ] imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]

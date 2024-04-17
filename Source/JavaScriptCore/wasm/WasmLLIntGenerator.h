@@ -39,7 +39,7 @@ struct ModuleInformation;
 enum class UseDefaultValue : bool { No, Yes };
 enum class ArrayGetKind : unsigned { New, NewDefault, NewFixed };
 
-Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileBytecode(const uint8_t*, size_t, const TypeDefinition&, ModuleInformation&, uint32_t functionIndex);
+Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileBytecode(std::span<const uint8_t>, const TypeDefinition&, ModuleInformation&, uint32_t functionIndex);
 
 } } // namespace JSC::Wasm
 

@@ -40,6 +40,7 @@ AXDOMClassList: <array of size 1>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 28}
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXColumnHeaderUIElements: <array of size 0>
@@ -48,6 +49,7 @@ AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
+AXSortDirection: AXUnknownSortDirection
 
 ------------------------
 [3,1]
@@ -81,6 +83,7 @@ AXDOMClassList: <array of size 1>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 5}
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {3, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -122,6 +125,7 @@ AXDOMClassList: <array of size 1>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 28}
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXColumnHeaderUIElements: <array of size 0>
@@ -130,6 +134,7 @@ AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
+AXSortDirection: AXUnknownSortDirection
 
 ------------------------
 [2,2]
@@ -163,6 +168,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 4}
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {2, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -204,6 +210,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 4}
 AXRowIndexRange: NSRange: {5, 1}
 AXColumnIndexRange: NSRange: {3, 1}
 AXColumnHeaderUIElements: <array of size 1>

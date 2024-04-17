@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+
+<div>
+  <label for="first-input" id="first-label" style="visibility: hidden">first, visibility hidden label</label>
+  <input type="checkbox" name="first-input" id="first-input">
+</div>
+
+<div>
+  <label for="second-input" id="second-label" style="display:none">second, display none label</label>
+  <input type="checkbox" name="second-input" id="second-input">
+</div>
+
+<script>
+var output = "This test ensures we gather the text for hidden labels.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += `#first-input:\n${platformTextAlternatives(accessibilityController.accessibleElementById("first-input"))}\n\n`;
+    output += `#second-input:\n${platformTextAlternatives(accessibilityController.accessibleElementById("second-input"))}\n`;
+
+    // Swap the labels for each input.
+    output += "\nSwapping labels.\n";
+    document.getElementById("first-label").setAttribute("for", "second-input");
+    document.getElementById("second-label").setAttribute("for", "first-input");
+
+    var textOne, textTwo;
+    setTimeout(async function() {
+        await waitFor(() => {
+            textOne = platformTextAlternatives(accessibilityController.accessibleElementById("first-input"));
+            textTwo = platformTextAlternatives(accessibilityController.accessibleElementById("second-input"));
+            return textOne && textTwo && textOne.includes("second,") && textTwo.includes("first,");
+        });
+
+        output += `#first-input:\n${textOne}\n\n`;
+        output += `#second-input:\n${textTwo}\n`;
+
+        output += "\nRemoving for attributes entirely.\n";
+        document.getElementById("first-label").removeAttribute("for");
+        document.getElementById("second-label").removeAttribute("for");
+
+        await waitFor(() => {
+            textOne = platformTextAlternatives(accessibilityController.accessibleElementById("first-input"));
+            textTwo = platformTextAlternatives(accessibilityController.accessibleElementById("second-input"));
+            return textOne && textTwo && !textOne.includes("second,") && !textTwo.includes("first,");
+        });
+
+        output += `#first-input:\n${textOne}\n\n`;
+        output += `#second-input:\n${textTwo}\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

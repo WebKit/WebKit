@@ -94,6 +94,7 @@
 #include "JSTestReadOnlyMapLike.h"
 #include "JSTestReadOnlySetLike.h"
 #include "JSTestReportExtraMemoryCost.h"
+#include "JSTestScheduledAction.h"
 #include "JSTestSetLike.h"
 #include "JSTestSetLikeWithOverriddenOperations.h"
 #include "JSTestStringContext.h"
@@ -234,6 +235,7 @@ static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestPluginInterfaceConstruct
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestReadOnlyMapLikeConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestReadOnlySetLikeConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestReportExtraMemoryCostConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestScheduledActionRealConstructor);
 #if ENABLE(Condition1) || ENABLE(Condition2)
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestSerializedScriptValueInterfaceConstructor);
 #endif
@@ -276,8 +278,8 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { -1, -1 },
-    { 67, -1 },
+    { 58, -1 },
+    { 68, -1 },
     { -1, -1 },
     { 4, -1 },
     { -1, -1 },
@@ -297,7 +299,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 71, -1 },
+    { 72, -1 },
     { 15, 261 },
     { -1, -1 },
     { -1, -1 },
@@ -341,7 +343,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { 32, -1 },
-    { 59, -1 },
+    { 60, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -350,7 +352,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 11, 257 },
     { -1, -1 },
-    { 62, -1 },
+    { 63, -1 },
     { 21, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -414,9 +416,9 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 68, -1 },
-    { -1, -1 },
     { 69, -1 },
+    { -1, -1 },
+    { 70, -1 },
     { -1, -1 },
     { 29, -1 },
     { 34, -1 },
@@ -431,7 +433,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 17, 260 },
     { -1, -1 },
-    { 63, -1 },
+    { 64, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -444,7 +446,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 18, 256 },
     { -1, -1 },
-    { 66, -1 },
+    { 67, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -476,7 +478,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 60, -1 },
+    { 61, -1 },
     { -1, -1 },
     { 1, -1 },
     { -1, -1 },
@@ -488,8 +490,8 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { 52, 264 },
     { 9, 263 },
     { -1, -1 },
-    { 64, -1 },
-    { 61, -1 },
+    { 65, -1 },
+    { 62, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -521,9 +523,9 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { 44, -1 },
     { 46, -1 },
     { 53, -1 },
-    { 58, -1 },
-    { 65, -1 },
-    { 70, -1 },
+    { 59, -1 },
+    { 66, -1 },
+    { 71, -1 },
 };
 
 
@@ -599,6 +601,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "TestReadOnlyMapLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReadOnlyMapLikeConstructor, 0 } },
     { "TestReadOnlySetLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReadOnlySetLikeConstructor, 0 } },
     { "TestReportExtraMemoryCost"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReportExtraMemoryCostConstructor, 0 } },
+    { "TestScheduledActionReal"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestScheduledActionRealConstructor, 0 } },
 #if ENABLE(Condition1) || ENABLE(Condition2)
     { "TestSerializedScriptValueInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSerializedScriptValueInterfaceConstructor, 0 } },
 #else
@@ -619,7 +622,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "regularOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestGlobalObjectInstanceFunction_regularOperation, 1 } },
 };
 
-static const HashTable JSTestGlobalObjectTable = { 72, 255, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
+static const HashTable JSTestGlobalObjectTable = { 73, 255, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
 #else
 
 static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
@@ -643,8 +646,8 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { -1, -1 },
-    { 67, -1 },
+    { 58, -1 },
+    { 68, -1 },
     { -1, -1 },
     { 4, -1 },
     { -1, -1 },
@@ -664,7 +667,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 71, -1 },
+    { 72, -1 },
     { 15, 261 },
     { -1, -1 },
     { -1, -1 },
@@ -708,7 +711,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { 32, -1 },
-    { 59, -1 },
+    { 60, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -717,7 +720,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 11, 257 },
     { -1, -1 },
-    { 62, -1 },
+    { 63, -1 },
     { 21, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -781,9 +784,9 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 68, -1 },
-    { -1, -1 },
     { 69, -1 },
+    { -1, -1 },
+    { 70, -1 },
     { -1, -1 },
     { 29, -1 },
     { 34, -1 },
@@ -798,7 +801,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 17, 260 },
     { -1, -1 },
-    { 63, -1 },
+    { 64, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -811,7 +814,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 18, 256 },
     { -1, -1 },
-    { 66, -1 },
+    { 67, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -843,7 +846,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 60, -1 },
+    { 61, -1 },
     { -1, -1 },
     { 1, -1 },
     { -1, -1 },
@@ -855,8 +858,8 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { 52, 264 },
     { 9, 263 },
     { -1, -1 },
-    { 64, -1 },
-    { 61, -1 },
+    { 65, -1 },
+    { 62, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -888,9 +891,9 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { 44, -1 },
     { 46, -1 },
     { 53, -1 },
-    { 58, -1 },
-    { 65, -1 },
-    { 70, -1 },
+    { 59, -1 },
+    { 66, -1 },
+    { 71, -1 },
 };
 
 
@@ -966,6 +969,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "TestReadOnlyMapLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReadOnlyMapLikeConstructor, 0 } },
     { "TestReadOnlySetLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReadOnlySetLikeConstructor, 0 } },
     { "TestReportExtraMemoryCost"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReportExtraMemoryCostConstructor, 0 } },
+    { "TestScheduledActionReal"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestScheduledActionRealConstructor, 0 } },
 #if ENABLE(Condition1) || ENABLE(Condition2)
     { "TestSerializedScriptValueInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSerializedScriptValueInterfaceConstructor, 0 } },
 #else
@@ -986,7 +990,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "regularOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestGlobalObjectInstanceFunction_regularOperation, 1 } },
 };
 
-static const HashTable JSTestGlobalObjectTable = { 72, 255, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
+static const HashTable JSTestGlobalObjectTable = { 73, 255, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
 #endif
 /* Hash table for constructor */
 
@@ -1876,6 +1880,17 @@ static inline JSValue jsTestGlobalObject_TestReportExtraMemoryCostConstructorGet
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestReportExtraMemoryCostConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
     return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObject_TestReportExtraMemoryCostConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
+}
+
+static inline JSValue jsTestGlobalObject_TestScheduledActionRealConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestScheduledAction::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestScheduledActionRealConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
+{
+    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObject_TestScheduledActionRealConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #if ENABLE(Condition1) || ENABLE(Condition2)

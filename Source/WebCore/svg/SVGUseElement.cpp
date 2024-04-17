@@ -182,12 +182,14 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
                 transferSizeAttributesToTargetClone(*targetClone);
         }
         updateSVGRendererForElementChange();
+        invalidateResourceImageBuffersIfNeeded();
         return;
     }
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
         updateExternalDocument();
         invalidateShadowTree();
+        invalidateResourceImageBuffersIfNeeded();
         return;
     }
 

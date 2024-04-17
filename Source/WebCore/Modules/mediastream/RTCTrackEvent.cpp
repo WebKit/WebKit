@@ -42,7 +42,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCTrackEvent);
 
-Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track, Vector<RefPtr<MediaStream>>&& streams, RefPtr<RTCRtpTransceiver>&& transceiver)
+Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track, Vector<Ref<MediaStream>>&& streams, RefPtr<RTCRtpTransceiver>&& transceiver)
 {
     return adoptRef(*new RTCTrackEvent(type, canBubble, cancelable, WTFMove(receiver), WTFMove(track), WTFMove(streams), WTFMove(transceiver)));
 }
@@ -52,7 +52,7 @@ Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomString& type, const Init& ini
     return adoptRef(*new RTCTrackEvent(type, initializer, isTrusted));
 }
 
-RTCTrackEvent::RTCTrackEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track, Vector<RefPtr<MediaStream>>&& streams, RefPtr<RTCRtpTransceiver>&& transceiver)
+RTCTrackEvent::RTCTrackEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track, Vector<Ref<MediaStream>>&& streams, RefPtr<RTCRtpTransceiver>&& transceiver)
     : Event(EventInterfaceType::RTCTrackEvent, type, canBubble, cancelable)
     , m_receiver(WTFMove(receiver))
     , m_track(WTFMove(track))

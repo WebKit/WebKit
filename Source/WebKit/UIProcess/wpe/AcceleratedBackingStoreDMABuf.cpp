@@ -36,6 +36,10 @@
 #include <wpe/wpe-platform.h>
 #include <wtf/glib/GUniquePtr.h>
 
+#if USE(LIBDRM)
+#include <drm_fourcc.h>
+#endif
+
 namespace WebKit {
 
 std::unique_ptr<AcceleratedBackingStoreDMABuf> AcceleratedBackingStoreDMABuf::create(WebPageProxy& webPage, WPEView* view)
@@ -83,20 +87,21 @@ void AcceleratedBackingStoreDMABuf::updateSurfaceID(uint64_t surfaceID)
 
 }
 
-void AcceleratedBackingStoreDMABuf::didCreateBuffer(uint64_t id, const WebCore::IntSize& size, uint32_t format, Vector<WTF::UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier)
+void AcceleratedBackingStoreDMABuf::didCreateBuffer(uint64_t id, const WebCore::IntSize& size, uint32_t format, Vector<WTF::UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier, DMABufRendererBufferFormat::Usage usage)
 {
     Vector<int> fileDescriptors;
     fileDescriptors.reserveInitialCapacity(fds.size());
     for (auto& fd : fds)
         fileDescriptors.append(fd.release());
     GRefPtr<WPEBuffer> buffer = adoptGRef(WPE_BUFFER(wpe_buffer_dma_buf_new(m_wpeView.get(), size.width(), size.height(), format, fds.size(), fileDescriptors.data(), offsets.data(), strides.data(), modifier)));
+    g_object_set_data(G_OBJECT(buffer.get()), "wk-buffer-format-usage", GUINT_TO_POINTER(usage));
     m_bufferIDs.add(buffer.get(), id);
     m_buffers.add(id, WTFMove(buffer));
 }
 
-void AcceleratedBackingStoreDMABuf::didCreateBufferSHM(uint64_t id, ShareableBitmap::Handle&& handle)
+void AcceleratedBackingStoreDMABuf::didCreateBufferSHM(uint64_t id, WebCore::ShareableBitmap::Handle&& handle)
 {
-    auto bitmap = ShareableBitmap::create(WTFMove(handle), SharedMemory::Protection::ReadOnly);
+    auto bitmap = WebCore::ShareableBitmap::create(WTFMove(handle), WebCore::SharedMemory::Protection::ReadOnly);
     if (!bitmap)
         return;
 
@@ -105,7 +110,7 @@ void AcceleratedBackingStoreDMABuf::didCreateBufferSHM(uint64_t id, ShareableBit
     auto dataSize = bitmap->sizeInBytes();
     auto stride = bitmap->bytesPerRow();
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data, dataSize, [](gpointer userData) {
-        delete static_cast<ShareableBitmap*>(userData);
+        delete static_cast<WebCore::ShareableBitmap*>(userData);
     }, bitmap.leakRef()));
 
     GRefPtr<WPEBuffer> buffer = adoptGRef(WPE_BUFFER(wpe_buffer_shm_new(m_wpeView.get(), size.width(), size.height(), WPE_PIXEL_FORMAT_ARGB8888, bytes.get(), stride)));
@@ -144,13 +149,41 @@ void AcceleratedBackingStoreDMABuf::frameDone()
 void AcceleratedBackingStoreDMABuf::bufferRendered()
 {
     frameDone();
-    m_pendingBuffer = nullptr;
+    m_committedBuffer = WTFMove(m_pendingBuffer);
 }
 
 void AcceleratedBackingStoreDMABuf::bufferReleased(WPEBuffer* buffer)
 {
     if (auto id = m_bufferIDs.get(buffer))
         m_webPage.process().send(Messages::AcceleratedSurfaceDMABuf::ReleaseBuffer(id), m_surfaceID);
+}
+
+RendererBufferFormat AcceleratedBackingStoreDMABuf::bufferFormat() const
+{
+    RendererBufferFormat format;
+    auto* buffer = m_committedBuffer ? m_committedBuffer.get() : m_pendingBuffer.get();
+    if (!buffer)
+        return format;
+
+    if (WPE_IS_BUFFER_DMA_BUF(buffer)) {
+        auto* dmabuf = WPE_BUFFER_DMA_BUF(buffer);
+        format.type = RendererBufferFormat::Type::DMABuf;
+        format.fourcc = wpe_buffer_dma_buf_get_format(dmabuf);
+        format.modifier = wpe_buffer_dma_buf_get_modifier(dmabuf);
+        format.usage = static_cast<DMABufRendererBufferFormat::Usage>(GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(buffer), "wk-buffer-format-usage")));
+    } else if (WPE_IS_BUFFER_SHM(buffer)) {
+        format.type = RendererBufferFormat::Type::SharedMemory;
+        switch (wpe_buffer_shm_get_format(WPE_BUFFER_SHM(buffer))) {
+        case WPE_PIXEL_FORMAT_ARGB8888:
+#if USE(LIBDRM)
+            format.fourcc = DRM_FORMAT_ARGB8888;
+#endif
+            break;
+        }
+        format.usage = DMABufRendererBufferFormat::Usage::Rendering;
+    }
+
+    return format;
 }
 
 } // namespace WebKit

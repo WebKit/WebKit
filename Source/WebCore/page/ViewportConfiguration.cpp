@@ -674,8 +674,6 @@ bool ViewportConfiguration::setIsKnownToLayOutWiderThanViewport(bool value)
     return true;
 }
 
-#if !LOG_DISABLED
-
 TextStream& operator<<(TextStream& ts, const ViewportConfiguration::Parameters& parameters)
 {
     ts.startGroup();
@@ -746,6 +744,8 @@ String ViewportConfiguration::description() const
 
     return ts.release();
 }
+
+#if !LOG_DISABLED
 
 void ViewportConfiguration::dump() const
 {

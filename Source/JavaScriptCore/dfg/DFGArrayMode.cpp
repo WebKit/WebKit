@@ -289,9 +289,7 @@ ArrayMode ArrayMode::refine(
     case Array::Float64Array:
     case Array::BigInt64Array:
     case Array::BigUint64Array:
-        // FIXME: no idea why we only preserve this out-of-bounds information for PutByVal and not GetByVal as well.
-        // https://bugs.webkit.org/show_bug.cgi?id=231276
-        if (node->op() == PutByVal) {
+        if (node->op() == PutByVal || node->op() == GetByVal) {
             if (graph.hasExitSite(node->origin.semantic, OutOfBounds) || !isInBounds())
                 return typedArrayResult(withSpeculation(Array::OutOfBounds));
         }
@@ -317,18 +315,10 @@ ArrayMode ArrayMode::refine(
             return withType(type);
         }
         
-        ArrayMode result;
-        switch (node->op()) {
-        case PutByVal:
+        ArrayMode result = withSpeculation(Array::InBounds);
+        if (node->op() == PutByVal || node->op() == GetByVal) {
             if (graph.hasExitSite(node->origin.semantic, OutOfBounds) || !isInBounds())
                 result = withSpeculation(Array::OutOfBounds);
-            else
-                result = withSpeculation(Array::InBounds);
-            break;
-            
-        default:
-            result = withSpeculation(Array::InBounds);
-            break;
         }
 
         if (isInt8ArraySpeculation(base))
@@ -374,63 +364,94 @@ ArrayMode ArrayMode::refine(
     }
 }
 
-Structure* ArrayMode::originalArrayStructure(Graph& graph, const CodeOrigin& codeOrigin) const
+StructureSet ArrayMode::originalArrayStructures(Graph& graph, const CodeOrigin& codeOrigin) const
 {
     JSGlobalObject* globalObject = graph.globalObjectFor(codeOrigin);
-    
-    switch (arrayClass()) {
-    case Array::OriginalCopyOnWriteArray: {
-        if (conversion() == Array::AsIs) {
-            switch (type()) {
-            case Array::Int32:
-                return globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithInt32);
-            case Array::Double:
-                return globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithDouble);
-            case Array::Contiguous:
-                return globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous);
-            default:
-                CRASH();
-                return nullptr;
-            }
-        }
-        FALLTHROUGH;
-    }
 
-    case Array::OriginalArray: {
+    auto addNonCopyOnWriteStructures = [&](StructureSet& set) {
         switch (type()) {
         case Array::Int32:
-            return globalObject->originalArrayStructureForIndexingType(ArrayWithInt32);
+            set.add(globalObject->originalArrayStructureForIndexingType(ArrayWithInt32));
+            return;
         case Array::Double:
-            return globalObject->originalArrayStructureForIndexingType(ArrayWithDouble);
+            set.add(globalObject->originalArrayStructureForIndexingType(ArrayWithDouble));
+            return;
         case Array::Contiguous:
-            return globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous);
+            set.add(globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous));
+            return;
         case Array::Undecided:
-            return globalObject->originalArrayStructureForIndexingType(ArrayWithUndecided);
+            set.add(globalObject->originalArrayStructureForIndexingType(ArrayWithUndecided));
+            return;
         case Array::ArrayStorage:
-            return globalObject->originalArrayStructureForIndexingType(ArrayWithArrayStorage);
+            set.add(globalObject->originalArrayStructureForIndexingType(ArrayWithArrayStorage));
+            return;
         default:
             CRASH();
-            return nullptr;
+            return;
         }
+    };
+
+    auto addCopyOnWriteStructures = [&](StructureSet& set) {
+        switch (type()) {
+        case Array::Int32:
+            set.add(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithInt32));
+            return;
+        case Array::Double:
+            set.add(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithDouble));
+            return;
+        case Array::Contiguous:
+            set.add(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous));
+            return;
+        default:
+            return;
+        }
+    };
+
+    switch (arrayClass()) {
+    case Array::OriginalArray: {
+        StructureSet set;
+        if (conversion() == Array::AsIs) {
+            addCopyOnWriteStructures(set);
+            addNonCopyOnWriteStructures(set);
+            return set;
+        }
+        addNonCopyOnWriteStructures(set);
+        return set;
     }
-        
+
+    case Array::OriginalCopyOnWriteArray: {
+        StructureSet set;
+        if (conversion() == Array::AsIs) {
+            addCopyOnWriteStructures(set);
+            return set;
+        }
+        addNonCopyOnWriteStructures(set);
+        return set;
+    }
+
+    case Array::OriginalNonCopyOnWriteArray: {
+        StructureSet set;
+        addNonCopyOnWriteStructures(set);
+        return set;
+    }
+
     case Array::OriginalNonArray: {
         TypedArrayType type = typedArrayType();
         if (type == NotTypedArray)
-            return nullptr;
+            return { };
 
         bool isResizableOrGrowableShared = false;
-        return globalObject->typedArrayStructureConcurrently(type, isResizableOrGrowableShared);
+        return { globalObject->typedArrayStructureConcurrently(type, isResizableOrGrowableShared) };
     }
-        
+
     default:
-        return nullptr;
+        return { };
     }
 }
 
-Structure* ArrayMode::originalArrayStructure(Graph& graph, Node* node) const
+StructureSet ArrayMode::originalArrayStructures(Graph& graph, Node* node) const
 {
-    return originalArrayStructure(graph, node->origin.semantic);
+    return originalArrayStructures(graph, node->origin.semantic);
 }
 
 bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& value, IndexingType shape) const
@@ -484,16 +505,21 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
         return true;
     }
 
-    // If ArrayMode is Array::OriginalCopyOnWriteArray or Array::OriginalArray, CheckArray is never emitted. Instead, we always emit CheckStructure.
+    // If ArrayMode is Array::OriginalArray, Array::OriginalCopyOnWriteArray, or Array::OriginalNonCopyOnWriteArray, CheckArray is never emitted. Instead, we always emit CheckStructure.
     // So, we should perform the same check to the CheckStructure here.
     case Array::OriginalArray:
+    case Array::OriginalNonCopyOnWriteArray:
     case Array::OriginalCopyOnWriteArray: {
         if (!value.m_structure.isFinite())
             return false;
-        Structure* originalStructure = originalArrayStructure(graph, node);
-        if (value.m_structure.size() != 1)
+        if (!value.m_structure.size())
             return false;
-        return value.m_structure.onlyStructure().get() == originalStructure;
+        auto originalStructures = originalArrayStructures(graph, node);
+        bool pass = true;
+        value.m_structure.forEach([&](auto structure) {
+            pass &= originalStructures.contains(structure.get());
+        });
+        return pass;
     }
     }
     return false;
@@ -529,6 +555,7 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
     case Array::SlowPutArrayStorage:
         switch (arrayClass()) {
         case Array::OriginalArray:
+        case Array::OriginalNonCopyOnWriteArray:
         case Array::OriginalCopyOnWriteArray: {
             CRASH();
             return false;
@@ -718,6 +745,8 @@ const char* arrayClassToString(Array::Class arrayClass)
         return "Array";
     case Array::OriginalArray:
         return "OriginalArray";
+    case Array::OriginalNonCopyOnWriteArray:
+        return "OriginalNonCopyOnWriteArray";
     case Array::OriginalCopyOnWriteArray:
         return "OriginalCopyOnWriteArray";
     case Array::NonArray:

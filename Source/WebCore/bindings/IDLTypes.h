@@ -215,6 +215,7 @@ template<typename T> struct IDLWrapper : IDLType<RefPtr<T>> {
     using RawType = T;
 
     using StorageType = Ref<T>;
+    using SequenceStorageType = Ref<T>;
 
     using ParameterType = T&;
     using NullableParameterType = T*;
@@ -254,18 +255,18 @@ template<typename T> struct IDLNullable : IDLType<typename T::NullableType> {
     template<typename U> static inline auto extractValueFromNullable(U&& value) -> decltype(T::extractValueFromNullable(std::forward<U>(value))) { return T::extractValueFromNullable(std::forward<U>(value)); }
 };
 
-template<typename T> struct IDLSequence : IDLType<Vector<typename T::ImplementationType>> {
+template<typename T> struct IDLSequence : IDLType<Vector<typename T::InnerParameterType>> {
     using InnerType = T;
 
     using ParameterType = const Vector<typename T::InnerParameterType>&;
     using NullableParameterType = const std::optional<Vector<typename T::InnerParameterType>>&;
 };
 
-template<typename T> struct IDLFrozenArray : IDLType<Vector<typename T::ImplementationType>> {
+template<typename T> struct IDLFrozenArray : IDLType<Vector<typename T::InnerParameterType>> {
     using InnerType = T;
 
-    using ParameterType = const Vector<typename T::ImplementationType>&;
-    using NullableParameterType = const std::optional<Vector<typename T::ImplementationType>>&;
+    using ParameterType = const Vector<typename T::InnerParameterType>&;
+    using NullableParameterType = const std::optional<Vector<typename T::InnerParameterType>>&;
 };
 
 template<typename K, typename V> struct IDLRecord : IDLType<Vector<KeyValuePair<typename K::ImplementationType, typename V::ImplementationType>>> {
@@ -277,6 +278,10 @@ template<typename K, typename V> struct IDLRecord : IDLType<Vector<KeyValuePair<
 };
 
 template<typename T> struct IDLPromise : IDLWrapper<DOMPromise> {
+    using InnerType = T;
+};
+
+template<typename T> struct IDLPromiseIgnoringSuspension : IDLWrapper<DOMPromise> {
     using InnerType = T;
 };
 
@@ -295,7 +300,7 @@ template<typename T> struct IDLBufferSource : IDLWrapper<T> { };
 
 struct IDLArrayBuffer : IDLBufferSource<JSC::ArrayBuffer> { };
 // NOTE: WebIDL defines ArrayBufferView as an IDL union of all the TypedArray types.
-//       and DataView. For convience in our implementation, we give it a distinct
+//       and DataView. For convenience in our implementation, we give it a distinct
 //       type that maps to the shared based class of all those classes.
 struct IDLArrayBufferView : IDLBufferSource<JSC::ArrayBufferView> { };
 struct IDLDataView : IDLBufferSource<JSC::DataView> { };

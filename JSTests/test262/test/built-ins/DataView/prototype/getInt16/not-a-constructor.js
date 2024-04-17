@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   let dv = new DataView(new ArrayBuffer(16)); new dv.getInt16(0, 0);
-}, '`let dv = new DataView(new ArrayBuffer(16)); new dv.getInt16(0, 0)` throws TypeError');
+});
 

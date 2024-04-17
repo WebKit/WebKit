@@ -29,6 +29,7 @@
 
 #include "APIPageConfiguration.h"
 #include "InputMethodState.h"
+#include "RendererBufferFormat.h"
 #include "SameDocumentNavigationType.h"
 #include "ViewGestureController.h"
 #include "ViewSnapshotStore.h"
@@ -145,3 +146,5 @@ void webkitWebViewBaseCallAfterNextPresentationUpdate(WebKitWebViewBase*, Comple
 #if USE(GTK4)
 void webkitWebViewBaseSetPlugID(WebKitWebViewBase*, const String&);
 #endif
+
+WebKit::RendererBufferFormat webkitWebViewBaseGetRendererBufferFormat(WebKitWebViewBase*);

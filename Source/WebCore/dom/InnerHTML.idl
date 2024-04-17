@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,8 +24,11 @@
  */
 
 // https://w3c.github.io/DOM-Parsing/#the-innerhtml-mixin
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-parsing-and-serialization
+
 interface mixin InnerHTML {
     [CEReactions=Needed, EnabledBySetting=DeclarativeShadowRootsParserAPIsEnabled] undefined setHTMLUnsafe(HTMLString html);
+    [CEReactions=NotNeeded, EnabledBySetting=DeclarativeShadowRootsSerializerAPIsEnabled] DOMString getHTML(optional GetHTMLOptions options = {});
     [CEReactions=Needed] attribute [LegacyNullToEmptyString] HTMLString innerHTML;
 };
 

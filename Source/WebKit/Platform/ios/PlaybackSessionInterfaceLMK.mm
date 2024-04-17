@@ -31,7 +31,9 @@
 #import "WKSLinearMediaPlayer.h"
 #import "WKSLinearMediaTypes.h"
 #import <WebCore/MediaSelectionOption.h>
+#import <WebCore/NowPlayingInfo.h>
 #import <WebCore/PlaybackSessionModel.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/TimeRanges.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/WeakPtr.h>
@@ -180,13 +182,19 @@
         model->selectLegibleMediaOption(index);
 }
 
-- (void)linearMediaPlayerToggleInlineMode:(WKSLinearMediaPlayer *)player
+- (void)linearMediaPlayerEnterFullscreen:(WKSLinearMediaPlayer *)player
+{
+    if (auto model = _model.get())
+        model->enterFullscreen();
+}
+
+- (void)linearMediaPlayerExitFullscreen:(WKSLinearMediaPlayer *)player
 {
     auto model = _model.get();
     if (!model)
         return;
 
-    model->toggleFullscreen();
+    model->exitFullscreen();
     model->setVideoReceiverEndpoint(nullptr);
 }
 
@@ -207,10 +215,21 @@ Ref<PlaybackSessionInterfaceLMK> PlaybackSessionInterfaceLMK::create(PlaybackSes
     return interface;
 }
 
+static WebCore::NowPlayingMetadataObserver nowPlayingMetadataObserver(PlaybackSessionInterfaceLMK& interface)
+{
+    return {
+        [weakInterface = WeakPtr { interface }](auto& metadata) {
+            if (RefPtr interface = weakInterface.get())
+                interface->nowPlayingMetadataChanged(metadata);
+        }
+    };
+}
+
 PlaybackSessionInterfaceLMK::PlaybackSessionInterfaceLMK(PlaybackSessionModel& model)
     : PlaybackSessionInterfaceIOS { model }
     , m_player { adoptNS([allocWKSLinearMediaPlayerInstance() init]) }
     , m_playerDelegate { adoptNS([[WKLinearMediaPlayerDelegate alloc] initWithModel:model]) }
+    , m_nowPlayingMetadataObserver { nowPlayingMetadataObserver(*this) }
 {
     [m_player setDelegate:m_playerDelegate.get()];
 }
@@ -311,6 +330,46 @@ void PlaybackSessionInterfaceLMK::mutedChanged(bool muted)
 void PlaybackSessionInterfaceLMK::volumeChanged(double volume)
 {
     [m_player setVolume:volume];
+}
+
+void PlaybackSessionInterfaceLMK::startObservingNowPlayingMetadata()
+{
+    if (m_playbackSessionModel)
+        m_playbackSessionModel->addNowPlayingMetadataObserver(m_nowPlayingMetadataObserver);
+}
+
+void PlaybackSessionInterfaceLMK::stopObservingNowPlayingMetadata()
+{
+    if (m_playbackSessionModel)
+        m_playbackSessionModel->removeNowPlayingMetadataObserver(m_nowPlayingMetadataObserver);
+}
+
+static RetainPtr<NSData> artworkData(const WebCore::NowPlayingMetadata& metadata)
+{
+    if (!metadata.artwork)
+        return nil;
+
+    RefPtr image = metadata.artwork->image;
+    if (!image)
+        return nil;
+
+    RefPtr fragmentedData = image->data();
+    if (!fragmentedData || fragmentedData->isEmpty())
+        return nil;
+
+    RetainPtr artworkData = adoptNS([[NSMutableData alloc] initWithCapacity:fragmentedData->size()]);
+    fragmentedData->forEachSegment([&](auto segment) {
+        [artworkData appendBytes:segment.data() length:segment.size()];
+    });
+
+    return adoptNS([artworkData copy]);
+}
+
+void PlaybackSessionInterfaceLMK::nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata& metadata)
+{
+    RetainPtr contentMetadata = [allocWKSLinearMediaContentMetadataInstance() initWithTitle:metadata.title subtitle:metadata.artist];
+    [m_player setContentMetadata:contentMetadata.get()];
+    [m_player setArtwork:artworkData(metadata).get()];
 }
 
 #if !RELEASE_LOG_DISABLED

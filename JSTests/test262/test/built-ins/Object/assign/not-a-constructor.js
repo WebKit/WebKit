@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Object.assign), false, 'isConstructor(Object.assi
 
 assert.throws(TypeError, () => {
   new Object.assign({});
-}, '`new Object.assign({})` throws TypeError');
+});
 

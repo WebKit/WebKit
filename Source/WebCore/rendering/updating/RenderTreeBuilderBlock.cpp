@@ -153,106 +153,136 @@ void RenderTreeBuilder::Block::insertChildToContinuation(RenderBlock& parent, Re
     m_builder.attachIgnoringContinuation(*beforeChildParent, WTFMove(child), beforeChild);
 }
 
+struct ParentAndBeforeChild {
+    RenderElement* parent { nullptr };
+    RenderObject* beforeChild { nullptr };
+};
+static std::optional<ParentAndBeforeChild> findParentAndBeforeChildForNonSibling(RenderBlock& parent, const RenderObject& child, RenderObject& beforeChild)
+{
+    auto* beforeChildContainer = beforeChild.parent();
+    while (beforeChildContainer->parent() != &parent)
+        beforeChildContainer = beforeChildContainer->parent();
+
+    ASSERT(beforeChildContainer);
+    if (!beforeChildContainer || !beforeChildContainer->isAnonymous())
+        return { };
+
+    if (beforeChildContainer->isInline() && child.isInline()) {
+        // The before child happens to be a block level box wrapped in an anonymous inline-block in an inline context (e.g. ruby).
+        // Let's attach this new child before the anonymous inline-block wrapper.
+        ASSERT(beforeChildContainer->isInlineBlockOrInlineTable());
+        return ParentAndBeforeChild { &parent, beforeChildContainer };
+    }
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!beforeChildContainer->isInline() || beforeChildContainer->isRenderTable());
+
+    // If the requested beforeChild is not one of our children, then this is because
+    // there is an anonymous container within this object that contains the beforeChild.
+    auto& beforeChildAnonymousContainer = *beforeChildContainer;
+    if (beforeChildAnonymousContainer.isAnonymousBlock()) {
+        auto mayUseBeforeChildContainerAsParent = [&] {
+            auto isFlexOrGridItemContainer = [&] {
+                if (auto* renderBox = dynamicDowncast<RenderBox>(beforeChildAnonymousContainer))
+                    return renderBox->isFlexItemIncludingDeprecated() || renderBox->isGridItem();
+                return false;
+            };
+            if (child.isOutOfFlowPositioned() && isFlexOrGridItemContainer()) {
+                // Do not try to move an out-of-flow block box under an anonymous flex/grid item. It should stay a direct child of the flex/grid container.
+                // https://www.w3.org/TR/css-flexbox-1/#abspos-items
+                // As it is out-of-flow, an absolutely-positioned child of a flex container does not participate in flex layout.
+                // The static position of an absolutely-positioned child of a flex container is determined such that the
+                // child is positioned as if it were the sole flex item in the flex container,
+                return false;
+            }
+            return child.isInline() || beforeChildAnonymousContainer.firstChild() != &beforeChild;
+        };
+        if (mayUseBeforeChildContainerAsParent())
+            return ParentAndBeforeChild { &beforeChildAnonymousContainer, &beforeChild };
+        return ParentAndBeforeChild { &parent, beforeChild.parent() };
+    }
+
+    ASSERT(beforeChildAnonymousContainer.isRenderTable());
+    if (child.isTablePart()) {
+        // Insert into the anonymous table.
+        return ParentAndBeforeChild { &beforeChildAnonymousContainer, &beforeChild };
+    }
+
+    // parent needs splitting.
+    return ParentAndBeforeChild { };
+}
+
 void RenderTreeBuilder::Block::attachIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    if (beforeChild && beforeChild->parent() != &parent) {
-        RenderElement* beforeChildContainer = beforeChild->parent();
-        while (beforeChildContainer->parent() != &parent)
-            beforeChildContainer = beforeChildContainer->parent();
-        ASSERT(beforeChildContainer);
-
-        if (beforeChildContainer->isAnonymous()) {
-            if (beforeChildContainer->isInline() && child->isInline()) {
-                // The before child happens to be a block level box wrapped in an anonymous inline-block in an inline context (e.g. ruby).
-                // Let's attach this new child before the anonymous inline-block wrapper.
-                ASSERT(beforeChildContainer->isInlineBlockOrInlineTable());
-                m_builder.attach(parent, WTFMove(child), beforeChildContainer);
+    auto parentAndBeforeChildMayNeedAdjustment = beforeChild && beforeChild->parent() != &parent;
+    if (parentAndBeforeChildMayNeedAdjustment) {
+        if (auto parentAndBeforeChild = findParentAndBeforeChildForNonSibling(parent, *child, *beforeChild)) {
+            if (parentAndBeforeChild->parent) {
+                m_builder.attach(*parentAndBeforeChild->parent, WTFMove(child), parentAndBeforeChild->beforeChild);
                 return;
             }
-            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!beforeChildContainer->isInline() || beforeChildContainer->isRenderTable());
-
-            // If the requested beforeChild is not one of our children, then this is because
-            // there is an anonymous container within this object that contains the beforeChild.
-            RenderElement* beforeChildAnonymousContainer = beforeChildContainer;
-            if (beforeChildAnonymousContainer->isAnonymousBlock()) {
-                auto mayUseBeforeChildContainerAsParent = [&] {
-                    if (child->isOutOfFlowPositioned() && beforeChildAnonymousContainer->isFlexItemIncludingDeprecated()) {
-                        // Do not try to move an out-of-flow block box under an anonymous flex item. It should stay a direct child of the flex container.
-                        // https://www.w3.org/TR/css-flexbox-1/#abspos-items
-                        // As it is out-of-flow, an absolutely-positioned child of a flex container does not participate in flex layout.
-                        // The static position of an absolutely-positioned child of a flex container is determined such that the
-                        // child is positioned as if it were the sole flex item in the flex container, 
-                        return false;
-                    }
-                    return child->isInline() || beforeChildAnonymousContainer->firstChild() != beforeChild;
-                };
-                if (mayUseBeforeChildContainerAsParent())
-                    m_builder.attach(*beforeChildAnonymousContainer, WTFMove(child), beforeChild);
-                else
-                    m_builder.attach(parent, WTFMove(child), beforeChild->parent());
-                return;
-            }
-
-            ASSERT(beforeChildAnonymousContainer->isRenderTable());
-
-            if (child->isTablePart()) {
-                // Insert into the anonymous table.
-                m_builder.attach(*beforeChildAnonymousContainer, WTFMove(child), beforeChild);
-                return;
-            }
-
             beforeChild = m_builder.splitAnonymousBoxesAroundChild(parent, *beforeChild);
-
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(beforeChild->parent() == &parent);
         }
     }
 
-    bool madeBoxesNonInline = false;
+    if (child->isFloatingOrOutOfFlowPositioned()) {
+        if (parent.childrenInline() || is<RenderFlexibleBox>(parent) || parent.isRenderGrid()) {
+            m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
+            return;
+        }
+        // In case of sibling block box(es), let's check if we can add this out of flow/floating box under a previous sibling anonymous block.
+        auto* previousSibling = beforeChild ? beforeChild->previousSibling() : parent.lastChild();
+        if (!previousSibling || !previousSibling->isAnonymousBlock()) {
+            m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
+            return;
+        }
+        m_builder.attach(downcast<RenderBlock>(*previousSibling), WTFMove(child));
+        return;
+    }
 
-    // A block has to either have all of its children inline, or all of its children as blocks.
-    // So, if our children are currently inline and a block child has to be inserted, we move all our
-    // inline children into anonymous block boxes.
-    if (parent.childrenInline() && !child->isInline() && !child->isFloatingOrOutOfFlowPositioned()) {
+    // Parent and inflow child match.
+    if ((parent.childrenInline() && child->isInline()) || (!parent.childrenInline() && !child->isInline()))
+        return m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
+
+    // Inline parent with block child.
+    if (parent.childrenInline()) {
+        ASSERT(!child->isInline() && !child->isFloatingOrOutOfFlowPositioned());
+        // A block has to either have all of its children inline, or all of its children as blocks.
+        // So, if our children are currently inline and a block child has to be inserted, we move all our
+        // inline children into anonymous block boxes.
         // This is a block with inline content. Wrap the inline content in anonymous blocks.
-        m_builder.makeChildrenNonInline(parent, beforeChild);
-        madeBoxesNonInline = true;
-
+        m_builder.createAnonymousWrappersForInlineContent(parent, beforeChild);
         if (beforeChild && beforeChild->parent() != &parent) {
             beforeChild = beforeChild->parent();
             ASSERT(beforeChild->isAnonymousBlock());
             ASSERT(beforeChild->parent() == &parent);
         }
-    } else if (!parent.childrenInline() && ((child->isFloatingOrOutOfFlowPositioned() && !is<RenderFlexibleBox>(parent) && !parent.isRenderGrid()) || child->isInline())) {
-        // If we're inserting an inline child but all of our children are blocks, then we have to make sure
-        // it is put into an anomyous block box. We try to use an existing anonymous box if possible, otherwise
-        // a new one is created and inserted into our list of children in the appropriate position.
-        RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : parent.lastChild();
+        m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
 
-        if (afterChild && afterChild->isAnonymousBlock()) {
-            m_builder.attach(downcast<RenderBlock>(*afterChild), WTFMove(child));
-            return;
-        }
-
-        if (child->isInline()) {
-            // No suitable existing anonymous box - create a new one.
-            auto newBox = parent.createAnonymousBlock();
-            auto& box = *newBox;
-            m_builder.attachToRenderElement(parent, WTFMove(newBox), beforeChild);
-            m_builder.attach(box, WTFMove(child));
-            return;
-        }
+        if (is<RenderBlock>(parent.parent()) && parent.isAnonymousBlock())
+            removeLeftoverAnonymousBlock(parent);
+        return;
     }
 
-    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
+    // Block parent with inline child.
+    // If we're inserting an inline child but all of our children are blocks, then we have to make sure
+    // it is put into an anomyous block box. We try to use an existing anonymous box if possible, otherwise
+    // a new one is created and inserted into our list of children in the appropriate position.
+    auto* previousSibling = beforeChild ? beforeChild->previousSibling() : parent.lastChild();
+    if (previousSibling && previousSibling->isAnonymousBlock()) {
+        m_builder.attach(downcast<RenderBlock>(*previousSibling), WTFMove(child));
+        return;
+    }
 
-    if (madeBoxesNonInline && is<RenderBlock>(parent.parent()) && parent.isAnonymousBlock())
-        removeLeftoverAnonymousBlock(parent);
-    // parent object may be dead here
+    // No suitable existing anonymous box - create a new one.
+    auto newBox = parent.createAnonymousBlock();
+    auto& box = *newBox;
+    m_builder.attachToRenderElement(parent, WTFMove(newBox), beforeChild);
+    m_builder.attach(box, WTFMove(child));
 }
 
 void RenderTreeBuilder::Block::childBecameNonInline(RenderBlock& parent, RenderElement&)
 {
-    m_builder.makeChildrenNonInline(parent);
+    m_builder.createAnonymousWrappersForInlineContent(parent);
     if (parent.isAnonymousBlock() && is<RenderBlock>(parent.parent()))
         removeLeftoverAnonymousBlock(parent);
     // parent may be dead here
@@ -274,16 +304,16 @@ void RenderTreeBuilder::Block::removeLeftoverAnonymousBlock(RenderBlock& anonymo
     m_builder.removeFloatingObjects(anonymousBlock);
     // FIXME: This should really just be a moveAllChilrenTo (see webkit.org/b/182495)
     moveAllChildrenToInternal(anonymousBlock, *parent);
-    auto toBeDestroyed = m_builder.detachFromRenderElement(*parent, anonymousBlock);
+    auto toBeDestroyed = m_builder.detachFromRenderElement(*parent, anonymousBlock, WillBeDestroyed::Yes);
     // anonymousBlock is dead here.
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, RenderObject& oldChild, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
+RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, RenderObject& oldChild, RenderTreeBuilder::WillBeDestroyed willBeDestroyed, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
     // No need to waste time in merging or removing empty anonymous blocks.
     // We can just bail out if our document is getting destroyed.
     if (parent.renderTreeBeingDestroyed())
-        return m_builder.detachFromRenderElement(parent, oldChild);
+        return m_builder.detachFromRenderElement(parent, oldChild, willBeDestroyed);
 
     // If this child is a block, and if our previous and next siblings are both anonymous blocks
     // with inline content, then we can fold the inline content back together.
@@ -291,7 +321,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
     WeakPtr next = oldChild.nextSibling();
     bool canMergeAnonymousBlocks = canCollapseAnonymousBlock == CanCollapseAnonymousBlock::Yes && canMergeContiguousAnonymousBlocks(oldChild, prev.get(), next.get());
 
-    auto takenChild = m_builder.detachFromRenderElement(parent, oldChild);
+    auto takenChild = m_builder.detachFromRenderElement(parent, oldChild, willBeDestroyed);
 
     if (canMergeAnonymousBlocks && prev && next) {
         prev->setNeedsLayoutAndPrefWidthsRecalc();
@@ -309,7 +339,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
             ASSERT(!inlineChildrenBlock.continuation());
             // Cache this value as it might get changed in setStyle() call.
             inlineChildrenBlock.setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::Block));
-            auto blockToMove = m_builder.detachFromRenderElement(parent, inlineChildrenBlock);
+            auto blockToMove = m_builder.detachFromRenderElement(parent, inlineChildrenBlock, WillBeDestroyed::No);
 
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
             RenderObject* beforeChild = prev == &inlineChildrenBlock ? blockChildrenBlock.firstChild() : nullptr;
@@ -372,20 +402,20 @@ void RenderTreeBuilder::Block::dropAnonymousBoxChild(RenderBlock& parent, Render
 
     // FIXME: This should really just be a moveAllChilrenTo (see webkit.org/b/182495)
     moveAllChildrenToInternal(child, parent);
-    auto toBeDeleted = m_builder.detachFromRenderElement(parent, child);
+    auto toBeDeleted = m_builder.detachFromRenderElement(parent, child, WillBeDestroyed::Yes);
 
     // Delete the now-empty block's lines and nuke it.
     child.deleteLines();
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlockFlow& parent, RenderObject& child, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
+RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlockFlow& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
     if (!parent.renderTreeBeingDestroyed()) {
         auto* fragmentedFlow = parent.multiColumnFlow();
         if (fragmentedFlow && fragmentedFlow != &child)
             m_builder.multiColumnBuilder().multiColumnRelativeWillBeRemoved(*fragmentedFlow, child, canCollapseAnonymousBlock);
     }
-    return detach(static_cast<RenderBlock&>(parent), child, canCollapseAnonymousBlock);
+    return detach(static_cast<RenderBlock&>(parent), child, willBeDestroyed, canCollapseAnonymousBlock);
 }
 
 }

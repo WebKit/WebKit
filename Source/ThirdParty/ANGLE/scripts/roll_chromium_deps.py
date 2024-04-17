@@ -30,14 +30,19 @@ def FindSrcDirPath():
     return os.path.dirname(os.path.abspath(os.path.join(__file__, '..')))
 
 ANGLE_CHROMIUM_DEPS = [
-    'build',
+    # Pin build because abseil-cpp is pinned, so its DEF files can't be kept in sync with build.
+    # https://skbug.com/330350366
+    # 'build',
     'buildtools',
     'buildtools/linux64',
     'buildtools/mac',
     'buildtools/reclient',
     'buildtools/win',
     'testing',
-    'third_party/abseil-cpp',
+    # Pin abseil-cpp because ANGLE and Dawn share the same build files until Skia is able to build
+    # ToT abseil.
+    # https://skbug.com/330350366
+    # 'third_party/abseil-cpp',
     'third_party/android_build_tools',
     'third_party/android_build_tools/aapt2',
     'third_party/android_build_tools/art',
@@ -63,7 +68,9 @@ ANGLE_CHROMIUM_DEPS = [
     'third_party/jdk/extras',
     'third_party/jinja2',
     'third_party/kotlin_stdlib',
-    'third_party/libc++/src',
+    # Pin libc++ because abseil-cpp is pinned, so its DEF files can't be kept in sync with libc++.
+    # https://skbug.com/330350366
+    # 'third_party/libc++/src',
     'third_party/libc++abi/src',
     'third_party/libjpeg_turbo',
     'third_party/libunwind/src',
@@ -83,7 +90,9 @@ ANGLE_CHROMIUM_DEPS = [
     'third_party/turbine',
     'third_party/zlib',
     'tools/android',
-    'tools/clang',
+    # Pin clang because abseil-cpp is pinned, so its DEF files can't be kept in sync with clang.
+    # https://skbug.com/330350366
+    # 'tools/clang',
     'tools/clang/dsymutil',
     'tools/luci-go',
     'tools/mb',

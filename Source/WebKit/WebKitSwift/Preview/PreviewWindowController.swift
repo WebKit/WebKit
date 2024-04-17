@@ -23,7 +23,7 @@
 
 #if os(visionOS)
 
-#if canImport(QuickLook, _version: 956)
+#if canImport(QuickLook, _version: 957)
 import OSLog
 import WebKitSwift
 
@@ -33,19 +33,27 @@ import WebKitSwift
 public final class PreviewWindowController: NSObject {
     private static let logger = Logger(subsystem: "com.apple.WebKit", category: "Fullscreen")
 
-    private var item: PreviewItem
+    private let item: PreviewItem
+    private let previewConfiguration: PreviewApplication.PreviewConfiguration
     private var previewSession: PreviewSession?
     private var isClosing = false
 
     @objc public weak var delegate: WKSPreviewWindowControllerDelegate?
 
-    @objc(initWithURL:) public init(url: URL) {
+    @objc(initWithURL:sceneID:) public init(url: URL, sceneID: String) {
         self.item = PreviewItem(url: url, displayName: nil, editingMode: .disabled);
+
+        var configuration = PreviewApplication.PreviewConfiguration()
+        configuration.hideDocumentMenu = true
+        configuration.showCloseButton = true
+        configuration.matchScenePlacementID = sceneID
+        self.previewConfiguration = configuration
+
         super.init()
     }
 
     @objc public func presentWindow() {
-        previewSession = PreviewApplication.open(items: [self.item], selectedItem: nil)
+        previewSession = PreviewApplication.open(items: [self.item], selectedItem: nil, configuration: previewConfiguration)
 
         Task.detached { [weak self] in
             guard let session = self?.previewSession else { return }

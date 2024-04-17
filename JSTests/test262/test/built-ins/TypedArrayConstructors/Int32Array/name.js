@@ -21,8 +21,9 @@ includes: [propertyHelper.js]
 features: [TypedArray]
 ---*/
 
-assert.sameValue(Int32Array.name, "Int32Array");
-
-verifyNotEnumerable(Int32Array, "name");
-verifyNotWritable(Int32Array, "name");
-verifyConfigurable(Int32Array, "name");
+verifyProperty(Int32Array, "name", {
+  value: "Int32Array",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

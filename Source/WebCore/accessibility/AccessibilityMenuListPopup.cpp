@@ -68,7 +68,7 @@ bool AccessibilityMenuListPopup::computeAccessibilityIsIgnored() const
     return accessibilityIsIgnoredByDefault();
 }
 
-AXCoreObject::AccessibilityChildrenVector AccessibilityMenuListPopup::selectedChildren()
+std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityMenuListPopup::selectedChildren()
 {
     if (!canHaveSelectedChildren())
         return { };
@@ -90,7 +90,7 @@ AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibi
     if (!element || !element->inRenderedDocument())
         return nullptr;
 
-    return dynamicDowncast<AccessibilityMenuListOption>(document()->axObjectCache()->getOrCreate(element));
+    return dynamicDowncast<AccessibilityMenuListOption>(document()->axObjectCache()->getOrCreate(*element));
 }
 
 bool AccessibilityMenuListPopup::press()

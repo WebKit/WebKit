@@ -54,13 +54,14 @@ class AudioFileReader
 #endif
 {
 public:
-    AudioFileReader(const void* data, size_t dataSize);
+    explicit AudioFileReader(std::span<const uint8_t> data);
     ~AudioFileReader();
 
     RefPtr<AudioBus> createBus(float sampleRate, bool mixToMono); // Returns nullptr on error
 
-    const void* data() const { return m_data; }
-    size_t dataSize() const { return m_dataSize; }
+    const uint8_t* data() const { return m_data.data(); }
+    size_t dataSize() const { return m_data.size(); }
+    std::span<const uint8_t> span() const { return m_data; }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
@@ -71,7 +72,7 @@ public:
 
 private:
 #if ENABLE(MEDIA_SOURCE)
-    bool isMaybeWebM(const uint8_t* data, size_t dataSize) const;
+    bool isMaybeWebM(std::span<const uint8_t>) const;
     std::unique_ptr<AudioFileReaderWebMData> demuxWebMData(std::span<const uint8_t>) const;
     Vector<AudioStreamPacketDescription> getPacketDescriptions(CMSampleBufferRef) const;
     std::optional<size_t> decodeWebMData(AudioBufferList&, size_t numberOfFrames, const AudioStreamBasicDescription& inFormat, const AudioStreamBasicDescription& outFormat) const;
@@ -82,8 +83,7 @@ private:
     std::optional<AudioStreamBasicDescription> fileDataFormat() const;
     AudioStreamBasicDescription clientDataFormat(const AudioStreamBasicDescription& inFormat, float sampleRate) const;
 
-    const void* m_data = { nullptr };
-    size_t m_dataSize = { 0 };
+    std::span<const uint8_t> m_data;
 
     AudioFileID m_audioFileID = { nullptr };
     ExtAudioFileRef m_extAudioFileRef = { nullptr };

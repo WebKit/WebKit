@@ -32,6 +32,7 @@
 #include <sqlite3.h>
 #include <variant>
 #include <wtf/Assertions.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringView.h>
 
 // SQLite 3.6.16 makes sqlite3_prepare_v2 automatically retry preparing the statement
@@ -107,13 +108,13 @@ int SQLiteStatement::bindBlob(int index, const String& text)
     // treats as a null, so we supply a non-null pointer for that case.
     auto upconvertedCharacters = StringView(text).upconvertedCharacters();
     UChar anyCharacter = 0;
-    const UChar* characters;
+    std::span<const UChar> characters;
     if (text.isEmpty() && !text.isNull())
-        characters = &anyCharacter;
+        characters = span(anyCharacter);
     else
-        characters = upconvertedCharacters;
+        characters = upconvertedCharacters.span();
 
-    return bindBlob(index, std::span(reinterpret_cast<const uint8_t*>(characters), text.length() * sizeof(UChar)));
+    return bindBlob(index, asBytes(characters));
 }
 
 int SQLiteStatement::bindText(int index, StringView text)
@@ -213,7 +214,7 @@ SQLValue SQLiteStatement::columnValue(int col)
         return sqlite3_value_double(value);
     case SQLITE_BLOB: // SQLValue and JS don't represent blobs, so use TEXT -case
     case SQLITE_TEXT:
-        return String::fromUTF8(sqlite3_value_text(value), sqlite3_value_bytes(value));
+        return String::fromUTF8(std::span(sqlite3_value_text(value), sqlite3_value_bytes(value)));
     case SQLITE_NULL:
         return nullptr;
     default:
@@ -231,7 +232,7 @@ String SQLiteStatement::columnText(int col)
         return String();
     if (columnCount() <= col)
         return String();
-    return String::fromUTF8(sqlite3_column_text(m_statement, col), sqlite3_column_bytes(m_statement, col));
+    return String::fromUTF8(std::span(sqlite3_column_text(m_statement, col), sqlite3_column_bytes(m_statement, col)));
 }
     
 double SQLiteStatement::columnDouble(int col)
@@ -283,7 +284,7 @@ String SQLiteStatement::columnBlobAsString(int col)
         return String();
 
     ASSERT(!(size % sizeof(UChar)));
-    return StringImpl::create8BitIfPossible(static_cast<const UChar*>(blob), size / sizeof(UChar));
+    return StringImpl::create8BitIfPossible({ static_cast<const UChar*>(blob), size / sizeof(UChar) });
 }
 
 Vector<uint8_t> SQLiteStatement::columnBlob(int col)

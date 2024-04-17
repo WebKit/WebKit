@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2009-2022 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,21 +63,20 @@ namespace WebCore {
 using namespace HTMLNames;
 
 struct EntityDescription {
-    const char* characters;
-    uint8_t length;
+    ASCIILiteral characters;
     std::optional<EntityMask> mask;
 };
 
-static const EntityDescription entitySubstitutionList[] = {
-    { "", 0, std::nullopt },
-    { "&amp;", 5, EntityMask::Amp },
-    { "&lt;", 4, EntityMask::Lt },
-    { "&gt;", 4, EntityMask::Gt },
-    { "&quot;", 6, EntityMask::Quot },
-    { "&nbsp;", 6, EntityMask::Nbsp },
-    { "&#9;", 4, EntityMask::Tab },
-    { "&#10;", 5, EntityMask::LineFeed },
-    { "&#13;", 5, EntityMask::CarriageReturn },
+constexpr EntityDescription entitySubstitutionList[] = {
+    { ""_s, std::nullopt },
+    { "&amp;"_s, EntityMask::Amp },
+    { "&lt;"_s, EntityMask::Lt },
+    { "&gt;"_s, EntityMask::Gt },
+    { "&quot;"_s, EntityMask::Quot },
+    { "&nbsp;"_s, EntityMask::Nbsp },
+    { "&#9;"_s, EntityMask::Tab },
+    { "&#10;"_s, EntityMask::LineFeed },
+    { "&#13;"_s, EntityMask::CarriageReturn },
 };
 
 namespace EntitySubstitutionIndex {
@@ -174,7 +173,7 @@ static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& resu
         uint8_t substitution = character < std::size(entityMap) ? entityMap[character] : static_cast<uint8_t>(EntitySubstitutionIndex::Null);
         if (UNLIKELY(substitution != EntitySubstitutionIndex::Null) && entityMask.contains(*entitySubstitutionList[substitution].mask)) {
             result.appendSubstring(source, offset + positionAfterLastEntity, i - positionAfterLastEntity);
-            result.appendCharacters(entitySubstitutionList[substitution].characters, entitySubstitutionList[substitution].length);
+            result.append(entitySubstitutionList[substitution].characters);
             positionAfterLastEntity = i + 1;
         }
     }
@@ -194,15 +193,17 @@ void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result,
         appendCharactersReplacingEntitiesInternal<UChar>(result, source, offset, length, entityMask);
 }
 
-MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax, HashMap<String, String>&& replacementURLStrings, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet, ShouldIncludeShadowDOM shouldIncludeShadowDOM, const Vector<MarkupExclusionRule>& exclusionRules)
+MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax, HashMap<String, String>&& replacementURLStrings, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet, SerializeShadowRoots serializeShadowRoots, Vector<Ref<ShadowRoot>>&& explicitShadowRoots, const Vector<MarkupExclusionRule>& exclusionRules)
     : m_nodes(nodes)
     , m_resolveURLs(resolveURLs)
     , m_serializationSyntax(serializationSyntax)
     , m_replacementURLStrings(WTFMove(replacementURLStrings))
     , m_replacementURLStringsForCSSStyleSheet(WTFMove(replacementURLStringsForCSSStyleSheet))
-    , m_shouldIncludeShadowDOM(shouldIncludeShadowDOM == ShouldIncludeShadowDOM::Yes)
+    , m_serializeShadowRoots(serializeShadowRoots)
+    , m_explicitShadowRoots(WTFMove(explicitShadowRoots))
     , m_exclusionRules(exclusionRules)
 {
+    ASSERT(serializeShadowRoots != SerializeShadowRoots::AllForInterchange || explicitShadowRoots.isEmpty());
 }
 
 MarkupAccumulator::~MarkupAccumulator() = default;
@@ -230,6 +231,28 @@ bool MarkupAccumulator::appendContentsForNode(StringBuilder& result, const Node&
     return true;
 }
 
+bool MarkupAccumulator::shouldIncludeShadowRoots() const
+{
+    return m_serializeShadowRoots != SerializeShadowRoots::Explicit || !m_explicitShadowRoots.isEmpty();
+}
+
+bool MarkupAccumulator::includeShadowRoot(const ShadowRoot& shadowRoot) const
+{
+    if (shadowRoot.mode() == ShadowRootMode::UserAgent)
+        return false;
+
+    if (m_serializeShadowRoots == SerializeShadowRoots::AllForInterchange)
+        return true;
+
+    if (m_serializeShadowRoots == SerializeShadowRoots::Serializable && shadowRoot.serializable())
+        return true;
+
+    if (m_explicitShadowRoots.containsIf([&shadowRoot](const auto& item) { return item.ptr() == &shadowRoot; }))
+        return true;
+
+    return false;
+}
+
 void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, SerializedNodes root, const Namespaces* namespaces)
 {
     WTF::Vector<Namespaces> namespaceStack;
@@ -244,6 +267,14 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
     } else
         namespaceStack.constructAndAppend();
 
+    auto firstChild = [&](auto& current) -> Node* {
+        bool shouldSkipChidren = appendContentsForNode(m_markup, current);
+        if (shouldSkipChidren)
+            return nullptr;
+        RefPtr currentTemplate = dynamicDowncast<HTMLTemplateElement>(current);
+        return currentTemplate ? currentTemplate->content().firstChild() : current.firstChild();
+    };
+
     RefPtr<const Node> current = &targetNode;
     do {
         bool shouldSkipNode = false;
@@ -257,20 +288,17 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
         bool shouldEmitCloseTag = !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
         shouldSkipNode = shouldSkipNode || !shouldEmitCloseTag;
         if (!shouldSkipNode) {
-            if (m_shouldIncludeShadowDOM) {
+            if (shouldIncludeShadowRoots()) {
                 RefPtr shadowRoot = current->shadowRoot();
-                if (shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent) {
+                if (shadowRoot && includeShadowRoot(*shadowRoot)) {
                     current = shadowRoot;
                     namespaceStack.append(namespaceStack.last());
                     continue;
                 }
             }
 
-            bool shouldSkipChidren = appendContentsForNode(m_markup, *current);
-            RefPtr currentTemplate = dynamicDowncast<HTMLTemplateElement>(*current);
-            auto firstChild = currentTemplate ? currentTemplate->content().firstChild() : current->firstChild();
-            if (!shouldSkipChidren && firstChild) {
-                current = firstChild;
+            if (auto* child = firstChild(*current)) {
+                current = child;
                 namespaceStack.append(namespaceStack.last());
                 continue;
             }
@@ -287,9 +315,16 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
                 break;
             }
 
-            if (m_shouldIncludeShadowDOM && current->isShadowRoot())
+            if (shouldIncludeShadowRoots() && current->isShadowRoot()) {
                 current = current->shadowHost();
-            else
+                if (m_serializeShadowRoots != SerializeShadowRoots::AllForInterchange) {
+                    if (auto* child = firstChild(*current)) {
+                        current = child;
+                        namespaceStack.append(namespaceStack.last());
+                        break;
+                    }
+                }
+            } else
                 current = current->parentNode();
 
             namespaceStack.removeLast();
@@ -336,34 +371,43 @@ std::pair<String, MarkupAccumulator::IsCreatedByURLReplacement> MarkupAccumulato
     return { element.resolveURLStringIfNeeded(urlString, m_resolveURLs), IsCreatedByURLReplacement::No };
 }
 
-RefPtr<Element> MarkupAccumulator::replacementElement(const Node& node)
+const ShadowRoot* MarkupAccumulator::suitableShadowRoot(const Node& node)
 {
-    if (!m_shouldIncludeShadowDOM)
+    if (!shouldIncludeShadowRoots())
         return nullptr;
 
     RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(node);
-    if (!shadowRoot)
+    if (!shadowRoot || !includeShadowRoot(*shadowRoot))
         return nullptr;
-
-    if (shadowRoot->mode() == ShadowRootMode::UserAgent)
-        return nullptr;
-
-    auto element = HTMLTemplateElement::create(HTMLNames::templateTag, node.protectedDocument());
-    if (shadowRoot->mode() == ShadowRootMode::Open)
-        element->setShadowRootMode(AtomString { "open"_s });
-    else if (shadowRoot->mode() == ShadowRootMode::Closed)
-        element->setShadowRootMode(AtomString { "closed"_s });
-
-    return element;
+    return shadowRoot.get();
 }
 
 void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespaces)
 {
     if (RefPtr element = dynamicDowncast<Element>(node))
         appendStartTag(m_markup, *element, namespaces);
-    else if (RefPtr element = replacementElement(node))
-        appendStartTag(m_markup, *element, namespaces);
-    else
+    else if (auto* shadowRoot = suitableShadowRoot(node)) {
+        m_markup.append("<template shadowrootmode=\""_s);
+        switch (shadowRoot->mode()) {
+        case ShadowRootMode::Open:
+            m_markup.append("open"_s);
+            break;
+        case ShadowRootMode::Closed:
+            m_markup.append("closed"_s);
+            break;
+        case ShadowRootMode::UserAgent:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        m_markup.append('"');
+        if (shadowRoot->delegatesFocus())
+            m_markup.append(" shadowrootdelegatesfocus=\"\""_s);
+        if (shadowRoot->serializable())
+            m_markup.append(" shadowrootserializable=\"\""_s);
+        if (shadowRoot->isClonable())
+            m_markup.append(" shadowrootclonable=\"\""_s);
+        m_markup.append('>');
+    } else
         appendNonElementNode(m_markup, node, namespaces);
 
     if (m_nodes)

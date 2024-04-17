@@ -368,7 +368,7 @@ static inline bool shouldJIT(CodeBlock* codeBlock)
 }
 
 // Returns true if we should try to OSR.
-static inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex = BytecodeIndex(0))
+static inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock)
 {
     DeferGCForAWhile deferGC(vm); // My callers don't set top callframe, so we don't want to GC here at all.
     ASSERT(Options::useJIT());
@@ -403,7 +403,7 @@ static inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock, Byte
     }
 
     if (worklistState == JITWorklist::NotKnown) {
-        Ref<BaselineJITPlan> plan = adoptRef(*new BaselineJITPlan(codeBlock, loopOSREntryBytecodeIndex));
+        Ref<BaselineJITPlan> plan = adoptRef(*new BaselineJITPlan(codeBlock));
         JITWorklist::ensureGlobalWorklist().enqueue(WTFMove(plan));
         return codeBlock->jitType() == JITType::BaselineJIT;
     }
@@ -439,6 +439,19 @@ static UGPRPair entryOSR(CodeBlock* codeBlock, const char*, EntryKind)
     LLINT_RETURN_TWO(nullptr, nullptr);
 }
 #endif // ENABLE(JIT)
+
+#if LLINT_TRACING
+extern "C" void logWasmPrologue(uint64_t i, uint64_t* fp, uint64_t* sp)
+{
+    if (!Options::traceLLIntExecution())
+        return;
+    dataLogLn("logWasmPrologue ", i, " ", RawPointer(fp), " ", RawPointer(sp));
+    dataLogLn("FP[+Callee] ", RawHex(fp[static_cast<int>(CallFrameSlot::callee)]));
+    dataLogLn("FP[+CodeBlock] ", RawHex(fp[static_cast<int>(CallFrameSlot::codeBlock)]));
+    dataLogLn("FP[+returnpc] ", RawHex(fp[static_cast<int>(OBJECT_OFFSETOF(CallerFrameAndPC, returnPC) / 8)]));
+    dataLogLn("FP[+callerFrame] ", RawHex(fp[static_cast<int>(OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame) / 8)]));
+}
+#endif
 
 LLINT_SLOW_PATH_DECL(entry_osr)
 {
@@ -487,18 +500,16 @@ LLINT_SLOW_PATH_DECL(loop_osr)
         if (*ptr >= Options::earlyReturnFromInfiniteLoopsLimit())
             LLINT_RETURN_TWO(LLInt::fuzzerReturnEarlyFromLoopHintEntrypoint().code().taggedPtr(), callFrame->topOfFrame());
     }
-    
-    
-    auto loopOSREntryBytecodeIndex = BytecodeIndex(codeBlock->bytecodeOffset(pc));
 
     if (!shouldJIT(codeBlock)) {
         codeBlock->dontJITAnytimeSoon();
         LLINT_RETURN_TWO(nullptr, nullptr);
     }
-    
-    if (!jitCompileAndSetHeuristics(vm, codeBlock, loopOSREntryBytecodeIndex))
+
+    if (!jitCompileAndSetHeuristics(vm, codeBlock))
         LLINT_RETURN_TWO(nullptr, nullptr);
-    
+
+    auto loopOSREntryBytecodeIndex = BytecodeIndex(codeBlock->bytecodeOffset(pc));
     CODEBLOCK_LOG_EVENT(codeBlock, "osrEntry", ("at ", loopOSREntryBytecodeIndex));
 
     RELEASE_ASSERT(codeBlock->jitType() == JITType::BaselineJIT);
@@ -926,14 +937,8 @@ static JSValue performLLIntGetByID(BytecodeIndex bytecodeIndex, CodeBlock* codeB
             if (!(--metadata.hitCountForLLIntCaching))
                 setupGetByIdPrototypeCache(globalObject, vm, codeBlock, bytecodeIndex, metadata, baseCell, slot, ident);
         }
-    } else if (Options::useLLIntICs() && isJSArray(baseValue) && ident == vm.propertyNames->length) {
-        {
-            ConcurrentJSLocker locker(codeBlock->m_lock);
-            metadata.setArrayLengthMode();
-            metadata.arrayLengthMode.arrayProfile.observeStructure(baseValue.asCell()->structure());
-        }
-        vm.writeBarrier(codeBlock);
-    }
+    } else if (Options::useLLIntICs() && isJSArray(baseValue) && ident == vm.propertyNames->length)
+        metadata.setArrayLengthMode();
 
     return result;
 }
@@ -946,6 +951,20 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
     const Identifier& ident = codeBlock->identifier(bytecode.m_property);
     JSValue baseValue = getOperand(callFrame, bytecode.m_base);
 
+    JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc), codeBlock, globalObject, baseValue, ident, metadata.m_modeMetadata);
+    LLINT_RETURN_PROFILED(result);
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_get_length)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpGetLength>();
+    auto& metadata = bytecode.metadata(codeBlock);
+    const Identifier& ident = vm.propertyNames->length;
+    JSValue baseValue = getOperand(callFrame, bytecode.m_base);
+
+    if (baseValue.isCell())
+        metadata.m_arrayProfile.observeStructure(baseValue.asCell()->structure());
     JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc), codeBlock, globalObject, baseValue, ident, metadata.m_modeMetadata);
     LLINT_RETURN_PROFILED(result);
 }

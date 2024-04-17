@@ -26,8 +26,12 @@
 #include "config.h"
 #include "ElementTargetingController.h"
 
+#include "AccessibilityObject.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "DOMTokenList.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementInlines.h"
@@ -53,16 +57,49 @@
 namespace WebCore {
 
 static constexpr auto maximumNumberOfClasses = 5;
-static constexpr auto maximumAreaRatioForAbsolutelyPositionedContent = 0.75;
-static constexpr auto maximumAreaRatioForInFlowContent = 0.5;
-static constexpr auto maximumAreaRatioForNearbyTargets = 0.25;
-static constexpr auto minimumAreaRatioForInFlowContent = 0.01;
-static constexpr auto maximumAreaRatioForTrackingAdjustmentAreas = 0.25;
 static constexpr auto marginForTrackingAdjustmentRects = 5;
 static constexpr auto minimumDistanceToConsiderEdgesEquidistant = 2;
+static constexpr auto selectorBasedVisibilityAdjustmentTimeLimit = 30_s;
+static constexpr auto adjustmentClientRectCleanUpDelay = 15_s;
+static constexpr auto minimumAreaForInterpolation = 200000;
+static constexpr auto maximumAreaForInterpolation = 800000;
+
+static float linearlyInterpolatedViewportRatio(float viewportArea, float minimumValue, float maximumValue)
+{
+    auto areaRatio = (viewportArea - minimumAreaForInterpolation) / (maximumAreaForInterpolation - minimumAreaForInterpolation);
+    return clampTo(maximumValue - areaRatio * (maximumValue - minimumValue), minimumValue, maximumValue);
+}
+
+static float maximumAreaRatioForAbsolutelyPositionedContent(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.75, 1);
+}
+
+static float maximumAreaRatioForInFlowContent(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.5, 1);
+}
+
+static float maximumAreaRatioForNearbyTargets(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.25, 0.5);
+}
+
+static float minimumAreaRatioForInFlowContent(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.005, 0.01);
+}
+
+static float maximumAreaRatioForTrackingAdjustmentAreas(float viewportArea)
+{
+    return linearlyInterpolatedViewportRatio(viewportArea, 0.25, 0.3);
+}
+
+using ElementSelectorCache = HashMap<Ref<Element>, std::optional<String>>;
 
 ElementTargetingController::ElementTargetingController(Page& page)
     : m_page { page }
+    , m_recentAdjustmentClientRectsCleanUpTimer { *this, &ElementTargetingController::cleanUpAdjustmentClientRects, adjustmentClientRectCleanUpDelay }
 {
 }
 
@@ -93,24 +130,29 @@ static inline bool querySelectorMatchesOneElement(Document& document, const Stri
 
 struct ChildElementPosition {
     size_t index { notFound };
-    size_t childCountOfType { 0 };
+    bool firstOfType { false };
+    bool lastOfType { false };
 };
 
-static inline ChildElementPosition childIndexByType(Element& element, Element& parent)
+static inline ChildElementPosition findChild(Element& element, Element& parent)
 {
-    ChildElementPosition result;
     auto elementTagName = element.tagName();
+    RefPtr<Element> firstOfType;
+    RefPtr<Element> lastOfType;
+    size_t index = notFound;
+    size_t currentChildIndex = 0;
     for (auto& child : childrenOfType<Element>(parent)) {
-        if (child.tagName() != elementTagName)
-            continue;
-
         if (&child == &element)
-            result.index = result.childCountOfType;
+            index = currentChildIndex;
 
-        result.childCountOfType++;
+        if (child.tagName() == elementTagName) {
+            if (!firstOfType)
+                firstOfType = &child;
+            lastOfType = &child;
+        }
+        currentChildIndex++;
     }
-
-    return result;
+    return { index, &element == firstOfType, &element == lastOfType };
 }
 
 static inline String computeIDSelector(Element& element)
@@ -120,7 +162,7 @@ static inline String computeIDSelector(Element& element)
         if (auto* matches = element.document().getAllElementsById(elementID); matches && matches->size() == 1)
             return makeString('#', elementID);
     }
-    return { };
+    return emptyString();
 }
 
 static inline String computeClassSelector(Element& element)
@@ -135,54 +177,109 @@ static inline String computeClassSelector(Element& element)
         if (querySelectorMatchesOneElement(element.document(), selector))
             return selector;
     }
-    return { };
+    return emptyString();
 }
 
-static String parentRelativeSelectorRecursive(Element&);
-static String selectorForElementRecursive(Element& element)
+static String siblingRelativeSelectorRecursive(Element&, ElementSelectorCache&);
+static String parentRelativeSelectorRecursive(Element&, ElementSelectorCache&);
+
+static String shortestSelector(const Vector<String>& selectors)
 {
+    auto minLength = std::numeric_limits<size_t>::max();
+    String shortestSelector;
+    for (auto& selector : selectors) {
+        if (selector.length() >= minLength)
+            continue;
+
+        minLength = selector.length();
+        shortestSelector = selector;
+    }
+    return shortestSelector;
+}
+
+static String selectorForElementRecursive(Element& element, ElementSelectorCache& cache)
+{
+    if (auto selector = cache.get(element))
+        return *selector;
+
+    Vector<String> selectors;
+    selectors.reserveInitialCapacity(5);
     if (auto selector = computeIDSelector(element); !selector.isEmpty())
-        return selector;
+        selectors.append(WTFMove(selector));
 
     if (auto selector = computeClassSelector(element); !selector.isEmpty())
-        return selector;
+        selectors.append(WTFMove(selector));
 
     if (querySelectorMatchesOneElement(element.document(), element.tagName()))
-        return element.tagName();
+        selectors.append(element.tagName());
 
-    return parentRelativeSelectorRecursive(element);
+    if (auto selector = shortestSelector(selectors); !selector.isEmpty()) {
+        cache.add(element, selector);
+        return selector;
+    }
+
+    if (auto selector = parentRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+        selectors.append(WTFMove(selector));
+
+    if (auto selector = siblingRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+        selectors.append(WTFMove(selector));
+
+    auto selector = shortestSelector(selectors);
+    cache.add(element, selector);
+    return selector;
 }
 
-static String parentRelativeSelectorRecursive(Element& element)
+static String siblingRelativeSelectorRecursive(Element& element, ElementSelectorCache& cache)
+{
+    RefPtr<Element> siblingElement;
+    for (RefPtr sibling = element.previousSibling(); sibling; sibling = sibling->previousSibling()) {
+        siblingElement = dynamicDowncast<Element>(sibling);
+        if (siblingElement)
+            break;
+    }
+
+    if (!siblingElement)
+        return emptyString();
+
+    if (auto selector = selectorForElementRecursive(*siblingElement, cache); !selector.isEmpty())
+        return makeString(WTFMove(selector), " + "_s, element.tagName());
+
+    return emptyString();
+}
+
+static String parentRelativeSelectorRecursive(Element& element, ElementSelectorCache& cache)
 {
     RefPtr parent = element.parentElement();
     if (!parent)
-        return { };
+        return emptyString();
 
-    if (auto selector = selectorForElementRecursive(*parent); !selector.isEmpty()) {
+    if (auto selector = selectorForElementRecursive(*parent, cache); !selector.isEmpty()) {
         auto selectorPrefix = makeString(WTFMove(selector), " > "_s, element.tagName());
-        auto [childIndex, childCountOfType] = childIndexByType(element, *parent);
+        auto [childIndex, firstOfType, lastOfType] = findChild(element, *parent);
         if (childIndex == notFound)
-            return { };
+            return emptyString();
 
-        if (childCountOfType == 1)
+        if (firstOfType && lastOfType)
             return selectorPrefix;
 
-        if (!childIndex)
+        if (firstOfType)
             return makeString(WTFMove(selectorPrefix), ":first-of-type"_s);
 
-        if (childIndex == childCountOfType - 1)
+        if (lastOfType)
             return makeString(WTFMove(selectorPrefix), ":last-of-type"_s);
 
         return makeString(WTFMove(selectorPrefix), ":nth-child("_s, childIndex + 1, ')');
     }
 
-    return { };
+    return emptyString();
 }
 
 // Returns multiple CSS selectors that uniquely match the target element.
-static Vector<String> selectorsForTarget(Element& element)
+static Vector<String> selectorsForTarget(Element& element, ElementSelectorCache& cache)
 {
+    if (element.isInShadowTree())
+        return { };
+
     if (RefPtr pseudoElement = dynamicDowncast<PseudoElement>(element)) {
         RefPtr host = pseudoElement->hostElement();
         if (!host)
@@ -201,12 +298,13 @@ static Vector<String> selectorsForTarget(Element& element)
         if (pseudoSelector.isEmpty())
             return { };
 
-        return selectorsForTarget(*host).map([&](auto hostSelector) {
+        return selectorsForTarget(*host, cache).map([&](auto hostSelector) {
             return makeString(hostSelector, pseudoSelector);
         });
     }
 
     Vector<String> selectors;
+    selectors.reserveInitialCapacity(5);
     if (auto selector = computeIDSelector(element); !selector.isEmpty())
         selectors.append(WTFMove(selector));
 
@@ -216,11 +314,26 @@ static Vector<String> selectorsForTarget(Element& element)
     if (querySelectorMatchesOneElement(element.document(), element.tagName()))
         selectors.append(element.tagName());
 
-    if (selectors.isEmpty()) {
-        // Only fall back on the parent relative selector as a last resort.
-        if (auto selector = parentRelativeSelectorRecursive(element); !selector.isEmpty())
-            selectors.append(WTFMove(selector));
-    }
+    std::sort(selectors.begin(), selectors.end(), [](auto& first, auto& second) {
+        return first.length() < second.length();
+    });
+
+    Vector<String> relativeSelectors;
+    relativeSelectors.reserveInitialCapacity(2);
+    if (auto selector = parentRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+        relativeSelectors.append(WTFMove(selector));
+
+    if (auto selector = siblingRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+        relativeSelectors.append(WTFMove(selector));
+
+    std::sort(relativeSelectors.begin(), relativeSelectors.end(), [](auto& first, auto& second) {
+        return first.length() < second.length();
+    });
+
+    selectors.appendVector(WTFMove(relativeSelectors));
+
+    if (!selectors.isEmpty())
+        cache.add(element, selectors.first());
 
     return selectors;
 }
@@ -245,8 +358,15 @@ static inline Vector<FrameIdentifier> collectChildFrameIdentifiers(Element& elem
     return identifiers;
 }
 
+static FloatRect computeClientRect(RenderObject& renderer)
+{
+    FloatRect rect = renderer.absoluteBoundingBoxRect();
+    renderer.document().convertAbsoluteToClientRect(rect, renderer.style());
+    return rect;
+}
+
 enum class IsUnderPoint : bool { No, Yes };
-static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint isUnderPoint)
+static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint isUnderPoint, ElementSelectorCache& cache)
 {
     CheckedPtr renderer = element.renderer();
     return {
@@ -254,8 +374,9 @@ static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint is
         .documentIdentifier = element.document().identifier(),
         .offsetEdges = computeOffsetEdges(renderer->style()),
         .renderedText = TextExtraction::extractRenderedText(element),
-        .selectors = selectorsForTarget(element),
+        .selectors = selectorsForTarget(element, cache),
         .boundsInRootView = element.boundingBoxInRootViewCoordinates(),
+        .boundsInClientCoordinates = computeClientRect(*renderer),
         .positionType = renderer->style().position(),
         .childFrameIdentifiers = collectChildFrameIdentifiers(element),
         .isUnderPoint = isUnderPoint == IsUnderPoint::Yes,
@@ -280,7 +401,29 @@ static inline HTMLElement* findOnlyMainElement(HTMLBodyElement& bodyElement)
     return onlyMainElement.get();
 }
 
-static bool isTargetCandidate(Element& element, const HTMLElement* onlyMainElement)
+static bool isNavigationalElement(Element& element)
+{
+    if (element.hasTagName(HTMLNames::navTag))
+        return true;
+
+    auto roleValue = element.attributeWithoutSynchronization(HTMLNames::roleAttr);
+    return AccessibilityObject::ariaRoleToWebCoreRole(roleValue) == AccessibilityRole::LandmarkNavigation;
+}
+
+static bool containsNavigationalElement(Element& element)
+{
+    if (isNavigationalElement(element))
+        return true;
+
+    for (auto& descendant : descendantsOfType<HTMLElement>(element)) {
+        if (isNavigationalElement(descendant))
+            return true;
+    }
+
+    return false;
+}
+
+static bool isTargetCandidate(Element& element, const HTMLElement* onlyMainElement, const Element* hitTestedElement = nullptr)
 {
     if (!element.renderer())
         return false;
@@ -302,14 +445,10 @@ static bool isTargetCandidate(Element& element, const HTMLElement* onlyMainEleme
     if (elementAndAncestorsAreOnlyRenderedChildren(element))
         return false;
 
-    return true;
-}
+    if (is<HTMLFrameOwnerElement>(hitTestedElement) && containsNavigationalElement(element))
+        return false;
 
-static FloatRect computeClientRect(RenderObject& renderer)
-{
-    FloatRect rect = renderer.absoluteBoundingBoxRect();
-    renderer.document().convertAbsoluteToClientRect(rect, renderer.style());
-    return rect;
+    return true;
 }
 
 static inline std::optional<IntRect> inflatedClientRectForAdjustmentRegionTracking(Element& element, float viewportArea)
@@ -325,7 +464,7 @@ static inline std::optional<IntRect> inflatedClientRectForAdjustmentRegionTracki
     if (clientRect.isEmpty())
         return { };
 
-    if (clientRect.area() / viewportArea >= maximumAreaRatioForTrackingAdjustmentAreas)
+    if (clientRect.area() / viewportArea >= maximumAreaRatioForTrackingAdjustmentAreas(viewportArea))
         return { };
 
     // Keep track of the client rects of elements we're targeting, until the client
@@ -366,6 +505,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     if (!viewportArea)
         return { };
 
+    auto nearbyTargetAreaRatio = maximumAreaRatioForNearbyTargets(viewportArea);
     static constexpr OptionSet hitTestOptions {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::DisallowUserAgentShadowContent,
@@ -377,13 +517,14 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     HitTestResult result { LayoutPoint { view->rootViewToContents(request.pointInRootView) } };
     document->hitTest(hitTestOptions, result);
 
+    RefPtr hitTestedElement = result.innerNonSharedElement();
     RefPtr onlyMainElement = findOnlyMainElement(*bodyElement);
     auto candidates = [&] {
         auto& results = result.listBasedTestResult();
         Vector<Ref<Element>> elements;
         elements.reserveInitialCapacity(results.size());
         for (auto& node : results) {
-            if (RefPtr element = dynamicDowncast<Element>(node); element && isTargetCandidate(*element, onlyMainElement.get()))
+            if (RefPtr element = dynamicDowncast<Element>(node); element && isTargetCandidate(*element, onlyMainElement.get(), hitTestedElement.get()))
                 elements.append(element.releaseNonNull());
         }
         return elements;
@@ -391,7 +532,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
 
     auto addOutOfFlowTargetClientRectIfNeeded = [&](Element& element) {
         if (auto rect = inflatedClientRectForAdjustmentRegionTracking(element, viewportArea))
-            m_pendingAdjustmentClientRects.add(element.identifier(), *rect);
+            m_recentAdjustmentClientRects.set(element.identifier(), *rect);
     };
 
     auto computeViewportAreaRatio = [&](IntRect boundingBox) {
@@ -413,26 +554,39 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
         auto targetAreaRatio = computeViewportAreaRatio(targetBoundingBox);
         bool shouldAddTarget = targetRenderer->isFixedPositioned()
             || targetRenderer->isStickilyPositioned()
-            || (targetRenderer->isAbsolutelyPositioned() && targetAreaRatio < maximumAreaRatioForAbsolutelyPositionedContent)
-            || (minimumAreaRatioForInFlowContent < targetAreaRatio && targetAreaRatio < maximumAreaRatioForInFlowContent);
+            || (targetRenderer->isAbsolutelyPositioned() && targetAreaRatio < maximumAreaRatioForAbsolutelyPositionedContent(viewportArea))
+            || (minimumAreaRatioForInFlowContent(viewportArea) < targetAreaRatio && targetAreaRatio < maximumAreaRatioForInFlowContent(viewportArea))
+            || !target->firstElementChild();
 
         if (!shouldAddTarget)
             continue;
 
         bool checkForNearbyTargets = request.canIncludeNearbyElements
             && targetRenderer->isOutOfFlowPositioned()
-            && targetAreaRatio < maximumAreaRatioForNearbyTargets;
+            && targetAreaRatio < nearbyTargetAreaRatio;
 
-        if (checkForNearbyTargets && computeViewportAreaRatio(targetBoundingBox) < maximumAreaRatioForNearbyTargets)
+        if (checkForNearbyTargets && computeViewportAreaRatio(targetBoundingBox) < nearbyTargetAreaRatio)
             additionalRegionForNearbyElements.unite(targetBoundingBox);
 
+        auto targetEncompassesOtherCandidate = [](Element& target, Element& candidate) {
+            if (&target == &candidate)
+                return true;
+
+            RefPtr<Element> candidateOrHost;
+            if (RefPtr pseudo = dynamicDowncast<PseudoElement>(candidate))
+                candidateOrHost = pseudo->hostElement();
+            else
+                candidateOrHost = &candidate;
+            return candidateOrHost && target.containsIncludingShadowDOM(candidateOrHost.get());
+        };
+
         candidates.removeAllMatching([&](auto& candidate) {
-            if (target.ptr() != candidate.ptr() && !target->contains(candidate))
+            if (!targetEncompassesOtherCandidate(target, candidate))
                 return false;
 
             if (checkForNearbyTargets) {
                 auto boundingBox = candidate->boundingBoxInRootViewCoordinates();
-                if (computeViewportAreaRatio(boundingBox) < maximumAreaRatioForNearbyTargets)
+                if (computeViewportAreaRatio(boundingBox) < nearbyTargetAreaRatio)
                     additionalRegionForNearbyElements.unite(boundingBox);
             }
 
@@ -445,12 +599,13 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     if (targets.isEmpty())
         return { };
 
-    m_pendingAdjustmentClientRects.clear();
+    m_recentAdjustmentClientRectsCleanUpTimer.restart();
 
+    ElementSelectorCache cache;
     Vector<TargetedElementInfo> results;
     results.reserveInitialCapacity(targets.size());
     for (auto iterator = targets.rbegin(); iterator != targets.rend(); ++iterator) {
-        results.append(targetedElementInfo(*iterator, IsUnderPoint::Yes));
+        results.append(targetedElementInfo(*iterator, IsUnderPoint::Yes, cache));
         addOutOfFlowTargetClientRectIfNeeded(*iterator);
     }
 
@@ -477,14 +632,14 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
             if (result.listBasedTestResult().contains(*element))
                 continue;
 
-            if (!isTargetCandidate(*element, onlyMainElement.get()))
+            if (!isTargetCandidate(*element, onlyMainElement.get(), hitTestedElement.get()))
                 continue;
 
             auto boundingBox = element->boundingBoxInRootViewCoordinates();
             if (!additionalRegionForNearbyElements.contains(boundingBox))
                 continue;
 
-            if (computeViewportAreaRatio(boundingBox) > maximumAreaRatioForNearbyTargets)
+            if (computeViewportAreaRatio(boundingBox) > nearbyTargetAreaRatio)
                 continue;
 
             targets.add(element.releaseNonNull());
@@ -493,7 +648,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     }();
 
     for (auto& element : nearbyTargets) {
-        results.append(targetedElementInfo(element, IsUnderPoint::No));
+        results.append(targetedElementInfo(element, IsUnderPoint::No, cache));
         addOutOfFlowTargetClientRectIfNeeded(element);
     }
 
@@ -558,13 +713,12 @@ bool ElementTargetingController::adjustVisibility(const Vector<std::pair<Element
 
     Region newAdjustmentRegion;
     for (auto [elementID, documentID] : identifiers) {
-        if (auto rect = m_pendingAdjustmentClientRects.get(elementID); !rect.isEmpty())
+        if (auto rect = m_recentAdjustmentClientRects.get(elementID); !rect.isEmpty())
             newAdjustmentRegion.unite(rect);
     }
 
     m_repeatedAdjustmentClientRegion.unite(intersect(m_adjustmentClientRegion, newAdjustmentRegion));
     m_adjustmentClientRegion.unite(newAdjustmentRegion);
-    m_pendingAdjustmentClientRects.clear();
 
     Vector<Ref<Element>> elements;
     elements.reserveInitialCapacity(identifiers.size());
@@ -662,6 +816,8 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
         adjustRegionAfterViewportSizeChange(m_repeatedAdjustmentClientRegion, previousViewportSize, m_viewportSizeForVisibilityAdjustment);
     }
 
+    applyVisibilityAdjustmentFromSelectors(document);
+
     if (m_repeatedAdjustmentClientRegion.isEmpty())
         return;
 
@@ -702,13 +858,119 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
     }
 }
 
-void ElementTargetingController::resetAdjustmentRegions()
+void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document& document)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    RefPtr loader = document.loader();
+    if (!loader)
+        return;
+
+    auto currentTime = ApproximateTime::now();
+    if (!m_remainingVisibilityAdjustmentSelectors) {
+        m_remainingVisibilityAdjustmentSelectors = loader->visibilityAdjustmentSelectors();
+        m_startTimeForSelectorBasedVisibilityAdjustment = currentTime;
+    }
+
+    if (currentTime - m_startTimeForSelectorBasedVisibilityAdjustment >= selectorBasedVisibilityAdjustmentTimeLimit) {
+        m_remainingVisibilityAdjustmentSelectors->clear();
+        return;
+    }
+
+    if (m_remainingVisibilityAdjustmentSelectors->isEmpty())
+        return;
+
+    auto resolveSelectorToQuery = [](const String& selectorIncludingPseudo) -> std::pair<String, VisibilityAdjustment> {
+        auto components = selectorIncludingPseudo.splitAllowingEmptyEntries("::"_s);
+        if (components.size() == 1)
+            return { components.first(), VisibilityAdjustment::Subtree };
+
+        if (components.size() == 2) {
+            auto pseudo = components.last();
+            if (equalLettersIgnoringASCIICase(pseudo, "after"_s))
+                return { components.first(), VisibilityAdjustment::AfterPseudo };
+
+            if (equalLettersIgnoringASCIICase(pseudo, "before"_s))
+                return { components.first(), VisibilityAdjustment::BeforePseudo };
+        }
+
+        return { { }, VisibilityAdjustment::Subtree };
+    };
+
+    document.updateLayoutIgnorePendingStylesheets();
+
+    auto viewportArea = m_viewportSizeForVisibilityAdjustment.area();
+    Region adjustmentRegion;
+    Vector<String> matchingSelectors;
+    for (auto& selectorIncludingPseudo : *m_remainingVisibilityAdjustmentSelectors) {
+        auto [selector, adjustment] = resolveSelectorToQuery(selectorIncludingPseudo);
+        if (selector.isEmpty()) {
+            // FIXME: Handle the case where the full selector is `::after|before`.
+            continue;
+        }
+
+        auto queryResult = document.querySelector(selector);
+        if (queryResult.hasException())
+            continue;
+
+        RefPtr element = queryResult.releaseReturnValue();
+        if (!element)
+            continue;
+
+        CheckedPtr renderer = element->renderer();
+        if (!renderer)
+            continue;
+
+        if (computeClientRect(*renderer).isEmpty())
+            continue;
+
+        if (adjustment == VisibilityAdjustment::AfterPseudo && !element->afterPseudoElement())
+            continue;
+
+        if (adjustment == VisibilityAdjustment::BeforePseudo && !element->beforePseudoElement())
+            continue;
+
+        auto currentAdjustment = element->visibilityAdjustment();
+        if (currentAdjustment.contains(adjustment)) {
+            matchingSelectors.append(selectorIncludingPseudo);
+            continue;
+        }
+
+        element->setVisibilityAdjustment(currentAdjustment | adjustment);
+        if (adjustment == VisibilityAdjustment::Subtree)
+            element->invalidateStyleAndRenderersForSubtree();
+        else
+            element->invalidateStyle();
+
+        m_adjustedElements.add(*element);
+        matchingSelectors.append(selectorIncludingPseudo);
+
+        if (auto clientRect = inflatedClientRectForAdjustmentRegionTracking(*element, viewportArea))
+            adjustmentRegion.unite(*clientRect);
+    }
+
+    if (!adjustmentRegion.isEmpty())
+        m_adjustmentClientRegion.unite(adjustmentRegion);
+
+    for (auto& selector : matchingSelectors)
+        m_remainingVisibilityAdjustmentSelectors->remove(selector);
+
+    if (!matchingSelectors.isEmpty())
+        page->chrome().client().didAdjustVisibilityWithSelectors(WTFMove(matchingSelectors));
+}
+
+void ElementTargetingController::reset()
 {
     m_adjustmentClientRegion = { };
     m_repeatedAdjustmentClientRegion = { };
     m_viewportSizeForVisibilityAdjustment = { };
-    m_pendingAdjustmentClientRects = { };
     m_adjustedElements = { };
+    m_remainingVisibilityAdjustmentSelectors = { };
+    m_startTimeForSelectorBasedVisibilityAdjustment = { };
+    m_recentAdjustmentClientRectsCleanUpTimer.stop();
+    cleanUpAdjustmentClientRects();
 }
 
 bool ElementTargetingController::resetVisibilityAdjustments(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>& identifiers)
@@ -835,6 +1097,11 @@ uint64_t ElementTargetingController::numberOfVisibilityAdjustmentRects() const
     }
 
     return numberOfRects;
+}
+
+void ElementTargetingController::cleanUpAdjustmentClientRects()
+{
+    m_recentAdjustmentClientRects = { };
 }
 
 } // namespace WebCore

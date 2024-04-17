@@ -39,6 +39,7 @@ G_BEGIN_DECLS
 WPE_DECLARE_DERIVABLE_TYPE (WPEView, wpe_view, WPE, VIEW, GObject)
 
 typedef struct _WPEBuffer WPEBuffer;
+typedef struct _WPEBufferDMABufFormats WPEBufferDMABufFormats;
 typedef struct _WPEDisplay WPEDisplay;
 typedef struct _WPEEvent WPEEvent;
 typedef struct _WPEMonitor WPEMonitor;
@@ -48,30 +49,30 @@ struct _WPEViewClass
 {
     GObjectClass parent_class;
 
-    gboolean    (* render_buffer)                 (WPEView      *view,
-                                                   WPEBuffer    *buffer,
-                                                   GError      **error);
-    WPEMonitor *(* get_monitor)                   (WPEView      *view);
-    gboolean    (* resize)                        (WPEView      *view,
-                                                   int           width,
-                                                   int           height);
-    gboolean    (* set_fullscreen)                (WPEView      *view,
-                                                   gboolean      fullscreen);
-    gboolean    (* set_maximized)                 (WPEView      *view,
-                                                   gboolean      maximized);
-    GList      *(* get_preferred_dma_buf_formats) (WPEView      *view);
-    void        (* set_cursor_from_name)          (WPEView      *view,
-                                                   const char   *name);
-    void        (* set_cursor_from_bytes)         (WPEView      *view,
-                                                   GBytes       *bytes,
-                                                   guint         width,
-                                                   guint         height,
-                                                   guint         stride,
-                                                   guint         hotspot_x,
-                                                   guint         hotspot_y);
-    void        (* set_opaque_rectangles)         (WPEView      *view,
-                                                   WPERectangle *rects,
-                                                   guint         n_rects);
+    gboolean                (* render_buffer)                 (WPEView      *view,
+                                                               WPEBuffer    *buffer,
+                                                               GError      **error);
+    WPEMonitor             *(* get_monitor)                   (WPEView      *view);
+    gboolean                (* resize)                        (WPEView      *view,
+                                                               int           width,
+                                                               int           height);
+    gboolean                (* set_fullscreen)                (WPEView      *view,
+                                                               gboolean      fullscreen);
+    gboolean                (* set_maximized)                 (WPEView      *view,
+                                                               gboolean      maximized);
+    WPEBufferDMABufFormats *(* get_preferred_dma_buf_formats) (WPEView      *view);
+    void                    (* set_cursor_from_name)          (WPEView      *view,
+                                                               const char   *name);
+    void                    (* set_cursor_from_bytes)         (WPEView      *view,
+                                                               GBytes       *bytes,
+                                                               guint         width,
+                                                               guint         height,
+                                                               guint         stride,
+                                                               guint         hotspot_x,
+                                                               guint         hotspot_y);
+    void                    (* set_opaque_rectangles)         (WPEView      *view,
+                                                               WPERectangle *rects,
+                                                               guint         n_rects);
 
     gpointer padding[32];
 };
@@ -102,58 +103,58 @@ typedef enum {
     WPE_VIEW_ERROR_RENDER_FAILED
 } WPEViewError;
 
-WPE_API GQuark       wpe_view_error_quark                   (void);
+WPE_API GQuark                  wpe_view_error_quark                   (void);
 
-WPE_API WPEView     *wpe_view_new                           (WPEDisplay   *display);
-WPE_API WPEDisplay  *wpe_view_get_display                   (WPEView      *view);
-WPE_API int          wpe_view_get_width                     (WPEView      *view);
-WPE_API int          wpe_view_get_height                    (WPEView      *view);
-WPE_API gboolean     wpe_view_resize                        (WPEView      *view,
-                                                             int           width,
-                                                             int           height);
-WPE_API void         wpe_view_resized                       (WPEView      *view,
-                                                             int           width,
-                                                             int           height);
-WPE_API gdouble      wpe_view_get_scale                     (WPEView      *view);
-WPE_API void         wpe_view_scale_changed                 (WPEView      *view,
-                                                             gdouble       scale);
-WPE_API void         wpe_view_set_cursor_from_name          (WPEView      *view,
-                                                             const char   *name);
-WPE_API void         wpe_view_set_cursor_from_bytes         (WPEView      *view,
-                                                             GBytes       *bytes,
-                                                             guint         width,
-                                                             guint         height,
-                                                             guint         stride,
-                                                             guint         hotspot_x,
-                                                             guint         hotspot_y);
-WPE_API WPEViewState wpe_view_get_state                     (WPEView      *view);
-WPE_API void         wpe_view_state_changed                 (WPEView      *view,
-                                                             WPEViewState  state);
-WPE_API WPEMonitor  *wpe_view_get_monitor                   (WPEView      *view);
-WPE_API gboolean     wpe_view_fullscreen                    (WPEView      *view);
-WPE_API gboolean     wpe_view_unfullscreen                  (WPEView      *view);
-WPE_API gboolean     wpe_view_maximize                      (WPEView      *view);
-WPE_API gboolean     wpe_view_unmaximize                    (WPEView      *view);
-WPE_API gboolean     wpe_view_render_buffer                 (WPEView      *view,
-                                                             WPEBuffer    *buffer,
-                                                             GError      **error);
-WPE_API void         wpe_view_buffer_rendered               (WPEView      *view,
-                                                             WPEBuffer    *buffer);
-WPE_API void         wpe_view_buffer_released               (WPEView      *view,
-                                                             WPEBuffer    *buffer);
-WPE_API void         wpe_view_event                         (WPEView      *view,
-                                                             WPEEvent     *event);
-WPE_API guint        wpe_view_compute_press_count           (WPEView      *view,
-                                                             gdouble       x,
-                                                             gdouble       y,
-                                                             guint         button,
-                                                             guint32       time);
-WPE_API void         wpe_view_focus_in                      (WPEView      *view);
-WPE_API void         wpe_view_focus_out                     (WPEView      *view);
-WPE_API GList       *wpe_view_get_preferred_dma_buf_formats (WPEView      *view);
-WPE_API void         wpe_view_set_opaque_rectangles         (WPEView      *view,
-                                                             WPERectangle *rects,
-                                                             guint         n_rects);
+WPE_API WPEView                *wpe_view_new                           (WPEDisplay   *display);
+WPE_API WPEDisplay             *wpe_view_get_display                   (WPEView      *view);
+WPE_API int                     wpe_view_get_width                     (WPEView      *view);
+WPE_API int                     wpe_view_get_height                    (WPEView      *view);
+WPE_API gboolean                wpe_view_resize                        (WPEView      *view,
+                                                                        int           width,
+                                                                        int           height);
+WPE_API void                    wpe_view_resized                       (WPEView      *view,
+                                                                        int           width,
+                                                                        int           height);
+WPE_API gdouble                 wpe_view_get_scale                     (WPEView      *view);
+WPE_API void                    wpe_view_scale_changed                 (WPEView      *view,
+                                                                        gdouble       scale);
+WPE_API void                    wpe_view_set_cursor_from_name          (WPEView      *view,
+                                                                        const char   *name);
+WPE_API void                    wpe_view_set_cursor_from_bytes         (WPEView      *view,
+                                                                        GBytes       *bytes,
+                                                                        guint         width,
+                                                                        guint         height,
+                                                                        guint         stride,
+                                                                        guint         hotspot_x,
+                                                                        guint         hotspot_y);
+WPE_API WPEViewState            wpe_view_get_state                     (WPEView      *view);
+WPE_API void                    wpe_view_state_changed                 (WPEView      *view,
+                                                                        WPEViewState  state);
+WPE_API WPEMonitor             *wpe_view_get_monitor                   (WPEView      *view);
+WPE_API gboolean                wpe_view_fullscreen                    (WPEView      *view);
+WPE_API gboolean                wpe_view_unfullscreen                  (WPEView      *view);
+WPE_API gboolean                wpe_view_maximize                      (WPEView      *view);
+WPE_API gboolean                wpe_view_unmaximize                    (WPEView      *view);
+WPE_API gboolean                wpe_view_render_buffer                 (WPEView      *view,
+                                                                        WPEBuffer    *buffer,
+                                                                        GError      **error);
+WPE_API void                    wpe_view_buffer_rendered               (WPEView      *view,
+                                                                        WPEBuffer    *buffer);
+WPE_API void                    wpe_view_buffer_released               (WPEView      *view,
+                                                                        WPEBuffer    *buffer);
+WPE_API void                    wpe_view_event                         (WPEView      *view,
+                                                                        WPEEvent     *event);
+WPE_API guint                   wpe_view_compute_press_count           (WPEView      *view,
+                                                                        gdouble       x,
+                                                                        gdouble       y,
+                                                                        guint         button,
+                                                                        guint32       time);
+WPE_API void                    wpe_view_focus_in                      (WPEView      *view);
+WPE_API void                    wpe_view_focus_out                     (WPEView      *view);
+WPE_API WPEBufferDMABufFormats *wpe_view_get_preferred_dma_buf_formats (WPEView      *view);
+WPE_API void                    wpe_view_set_opaque_rectangles         (WPEView      *view,
+                                                                        WPERectangle *rects,
+                                                                        guint         n_rects);
 
 G_END_DECLS
 

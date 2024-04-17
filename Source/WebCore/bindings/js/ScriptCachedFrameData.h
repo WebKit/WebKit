@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class DOMWrapperWorld;
-class JSLocalDOMWindow;
+class JSDOMWindow;
 class LocalFrame;
 
 class ScriptCachedFrameData {
@@ -50,8 +50,8 @@ public:
     void clear();
 
 private:
-    typedef HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSLocalDOMWindow>> JSLocalDOMWindowSet;
-    JSLocalDOMWindowSet m_windows;
+    typedef HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindow>> JSDOMWindowSet;
+    JSDOMWindowSet m_windows;
 };
 
 } // namespace WebCore

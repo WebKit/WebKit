@@ -45,6 +45,8 @@ ASCIILiteral processAssertionTypeDescription(ProcessAssertionType type)
         return "foreground"_s;
     case ProcessAssertionType::MediaPlayback:
         return "media-playback"_s;
+    case ProcessAssertionType::FinishTaskCanSleep:
+        return "finish-task-can-sleep"_s;
     case ProcessAssertionType::FinishTaskInterruptable:
         return "finish-task-interruptible"_s;
     case ProcessAssertionType::BoostedJetsam:

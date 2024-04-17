@@ -23,7 +23,7 @@ Promise.prototype.then = function(resolve, reject) {
   assert.sameValue(isConstructor(resolve), false, 'isConstructor(resolve) must return false');
   assert.throws(TypeError, () => {
     new resolve();
-  }, '`new resolve()` throws TypeError');
+  });
 
   assert.sameValue(resolve.length, 1, 'The value of resolve.length is 1');
   assert.sameValue(resolve.name, '', 'The value of resolve.name is ""');

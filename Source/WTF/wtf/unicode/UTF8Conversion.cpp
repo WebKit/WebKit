@@ -91,24 +91,24 @@ ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sour
 }
 
 template<bool replaceInvalidSequences>
-bool convertUTF8ToUTF16Impl(const char* source, const char* sourceEnd, UChar** targetStart, const UChar* targetEnd, bool* sourceAllASCII)
+bool convertUTF8ToUTF16Impl(std::span<const char8_t> source, UChar** targetStart, const UChar* targetEnd, bool* sourceAllASCII)
 {
-    RELEASE_ASSERT(sourceEnd - source <= std::numeric_limits<int>::max());
+    RELEASE_ASSERT(source.size() <= std::numeric_limits<int>::max());
     UBool error = false;
     UChar* target = *targetStart;
-    RELEASE_ASSERT(targetEnd - target <= std::numeric_limits<int>::max());
+    size_t targetSize = targetEnd - target;
     char32_t orAllData = 0;
-    int targetOffset = 0;
-    for (int sourceOffset = 0; sourceOffset < sourceEnd - source; ) {
+    size_t targetOffset = 0;
+    for (size_t sourceOffset = 0; sourceOffset < source.size(); ) {
         char32_t character;
         if constexpr (replaceInvalidSequences) {
-            U8_NEXT_OR_FFFD(source, sourceOffset, sourceEnd - source, character);
+            U8_NEXT_OR_FFFD(source, sourceOffset, source.size(), character);
         } else {
-            U8_NEXT(source, sourceOffset, sourceEnd - source, character);
+            U8_NEXT(source, sourceOffset, source.size(), character);
             if (character == sentinelCodePoint)
                 return false;
         }
-        U16_APPEND(target, targetOffset, targetEnd - target, character, error);
+        U16_APPEND(target, targetOffset, targetSize, character, error);
         if (error)
             return false;
         orAllData |= character;
@@ -120,29 +120,28 @@ bool convertUTF8ToUTF16Impl(const char* source, const char* sourceEnd, UChar** t
     return true;
 }
 
-bool convertUTF8ToUTF16(const char* source, const char* sourceEnd, UChar** targetStart, const UChar* targetEnd, bool* sourceAllASCII)
+bool convertUTF8ToUTF16(std::span<const char8_t> source, UChar** targetStart, const UChar* targetEnd, bool* sourceAllASCII)
 {
-    return convertUTF8ToUTF16Impl<false>(source, sourceEnd, targetStart, targetEnd, sourceAllASCII);
+    return convertUTF8ToUTF16Impl<false>(source, targetStart, targetEnd, sourceAllASCII);
 }
 
-bool convertUTF8ToUTF16ReplacingInvalidSequences(const char* source, const char* sourceEnd, UChar** targetStart, const UChar* targetEnd, bool* sourceAllASCII)
+bool convertUTF8ToUTF16ReplacingInvalidSequences(std::span<const char8_t> source, UChar** targetStart, const UChar* targetEnd, bool* sourceAllASCII)
 {
-    return convertUTF8ToUTF16Impl<true>(source, sourceEnd, targetStart, targetEnd, sourceAllASCII);
+    return convertUTF8ToUTF16Impl<true>(source, targetStart, targetEnd, sourceAllASCII);
 }
 
-ComputeUTFLengthsResult computeUTFLengths(const char* sourceStart, const char* sourceEnd)
+ComputeUTFLengthsResult computeUTFLengths(std::span<const char8_t> source)
 {
-    size_t lengthUTF8 = sourceEnd - sourceStart;
     size_t lengthUTF16 = 0;
     char32_t orAllData = 0;
     ConversionResult result = ConversionResult::Success;
     size_t sourceOffset = 0;
-    while (sourceOffset < lengthUTF8) {
+    while (sourceOffset < source.size()) {
         char32_t character;
         size_t nextSourceOffset = sourceOffset;
-        U8_NEXT(sourceStart, nextSourceOffset, lengthUTF8, character);
+        U8_NEXT(source, nextSourceOffset, source.size(), character);
         if (character == sentinelCodePoint) {
-            result = nextSourceOffset == lengthUTF8 ? ConversionResult::SourceExhausted : ConversionResult::SourceIllegal;
+            result = nextSourceOffset == source.size() ? ConversionResult::SourceExhausted : ConversionResult::SourceIllegal;
             break;
         }
         sourceOffset = nextSourceOffset;
@@ -152,12 +151,13 @@ ComputeUTFLengthsResult computeUTFLengths(const char* sourceStart, const char* s
     return { result, sourceOffset, lengthUTF16, isASCII(orAllData) };
 }
 
-unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(const char* data, const char* dataEnd, unsigned& dataLength, unsigned& utf16Length)
+unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(std::span<const char> span, unsigned& dataLength, unsigned& utf16Length)
 {
     StringHasher stringHasher;
     utf16Length = 0;
     size_t inputOffset = 0;
-    size_t inputLength = dataEnd - data;
+    auto* data = span.data();
+    size_t inputLength = span.size();
     while (inputOffset < inputLength) {
         char32_t character;
         U8_NEXT(data, inputOffset, inputLength, character);

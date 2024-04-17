@@ -34,7 +34,7 @@
 
 namespace WebCore {
     
-AccessibilityARIAGridRow::AccessibilityARIAGridRow(RenderObject* renderer)
+AccessibilityARIAGridRow::AccessibilityARIAGridRow(RenderObject& renderer)
     : AccessibilityTableRow(renderer)
 {
 }
@@ -46,7 +46,7 @@ AccessibilityARIAGridRow::AccessibilityARIAGridRow(Node& node)
 
 AccessibilityARIAGridRow::~AccessibilityARIAGridRow() = default;
 
-Ref<AccessibilityARIAGridRow> AccessibilityARIAGridRow::create(RenderObject* renderer)
+Ref<AccessibilityARIAGridRow> AccessibilityARIAGridRow::create(RenderObject& renderer)
 {
     return adoptRef(*new AccessibilityARIAGridRow(renderer));
 }
@@ -58,7 +58,7 @@ Ref<AccessibilityARIAGridRow> AccessibilityARIAGridRow::create(Node& node)
 
 bool AccessibilityARIAGridRow::isARIATreeGridRow() const
 {
-    AccessibilityObject* parent = parentTable();
+    RefPtr parent = parentTable();
     if (!parent)
         return false;
     
@@ -70,7 +70,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityARIAGridRow::disclosedRow
     AccessibilityChildrenVector disclosedRows;
     // The contiguous disclosed rows will be the rows in the table that 
     // have an aria-level of plus 1 from this row.
-    AccessibilityObject* parent = parentObjectUnignored();
+    RefPtr parent = parentObjectUnignored();
     if (auto* axTable = dynamicDowncast<AccessibilityTable>(*parent); !axTable || !axTable->isExposable())
         return disclosedRows;
 
@@ -84,7 +84,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityARIAGridRow::disclosedRow
     auto allRows = parent->rows();
     int rowCount = allRows.size();
     for (int k = index + 1; k < rowCount; ++k) {
-        auto* row = allRows[k].get();
+        RefPtr row = allRows[k].get();
         // Stop at the first row that doesn't match the correct level.
         if (row->hierarchicalLevel() != level + 1)
             break;
@@ -99,7 +99,7 @@ AXCoreObject* AccessibilityARIAGridRow::disclosedByRow() const
 {
     // The row that discloses this one is the row in the table
     // that is aria-level subtract 1 from this row.
-    AccessibilityObject* parent = parentObjectUnignored();
+    RefPtr parent = parentObjectUnignored();
     if (auto* axTable = dynamicDowncast<AccessibilityTable>(*parent); !axTable || !axTable->isExposable())
         return nullptr;
 

@@ -141,6 +141,10 @@
 	path = third_party/nasm
 	url = https://chromium.googlesource.com/chromium/deps/nasm
 	gclient-condition = not build_with_chromium
+[submodule "third_party/OpenCL-CTS/src"]
+	path = third_party/OpenCL-CTS/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenCL-CTS
+	gclient-condition = not build_with_chromium
 [submodule "third_party/OpenCL-Docs/src"]
 	path = third_party/OpenCL-Docs/src
 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenCL-Docs

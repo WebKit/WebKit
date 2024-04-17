@@ -56,12 +56,12 @@ const WebXRSession& XRInputSourcesChangeEvent::session() const
     return m_session;
 }
 
-const Vector<RefPtr<WebXRInputSource>>& XRInputSourcesChangeEvent::added() const
+const Vector<Ref<WebXRInputSource>>& XRInputSourcesChangeEvent::added() const
 {
     return m_added;
 }
 
-const Vector<RefPtr<WebXRInputSource>>& XRInputSourcesChangeEvent::removed() const
+const Vector<Ref<WebXRInputSource>>& XRInputSourcesChangeEvent::removed() const
 {
     return m_removed;
 }

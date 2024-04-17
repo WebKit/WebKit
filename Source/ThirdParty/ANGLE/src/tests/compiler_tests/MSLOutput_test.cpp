@@ -904,3 +904,20 @@ void main(){
 })";
     compile(kShader);
 }
+
+// Test that emulated clip distance varying passes AST validation
+TEST_F(MSLVertexOutputTest, ClipDistanceVarying)
+{
+    getResources()->ANGLE_clip_cull_distance = 1;
+    const char kShader[]                     = R"(#version 300 es
+#extension GL_ANGLE_clip_cull_distance:require
+void main(){gl_ClipDistance[0];})";
+    compile(kShader);
+}
+
+TEST_F(MSLVertexOutputTest, VertexIDIvecNoCrash)
+{
+    const char kShader[] = R"(#version 300 es
+void main(){ivec2 xy=ivec2((+gl_VertexID));gl_Position=vec4((xy), 0,1);})";
+    compile(kShader);
+}

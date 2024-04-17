@@ -4695,14 +4695,17 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(Compilati
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 
     BBQJIT irGenerator(*compilationContext.wasmEntrypointJIT, signature, callee, function, functionIndex, info, unlinkedWasmToWasmCalls, mode, result.get(), hasExceptionHandlers, loopIndexForOSREntry, tierUp);
-    FunctionParser<BBQJIT> parser(irGenerator, function.data.data(), function.data.size(), signature, info);
+    FunctionParser<BBQJIT> parser(irGenerator, function.data, signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
     if (irGenerator.hasLoops())
         result->bbqSharedLoopEntrypoint = irGenerator.addLoopOSREntrypoint();
 
     irGenerator.finalize();
-    callee.setStackCheckSize(irGenerator.stackCheckSize());
+    auto checkSize = irGenerator.stackCheckSize();
+    if (!checkSize)
+        checkSize = stackCheckNotNeeded;
+    callee.setStackCheckSize(checkSize);
 
     result->exceptionHandlers = irGenerator.takeExceptionHandlers();
     compilationContext.catchEntrypoints = irGenerator.takeCatchEntrypoints();

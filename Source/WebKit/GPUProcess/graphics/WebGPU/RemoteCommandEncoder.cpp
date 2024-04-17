@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUConnectionToWebProcess.h"
 #include "RemoteCommandBuffer.h"
 #include "RemoteCommandEncoderMessages.h"
 #include "RemoteComputePassEncoder.h"
@@ -37,13 +38,26 @@
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUCommandEncoder.h>
 
+#if PLATFORM(COCOA)
+#define MESSAGE_CHECK(assertion) do { \
+    if (UNLIKELY(!(assertion))) { \
+        if (auto connection = m_gpuConnectionToWebProcess.get()) \
+            connection->terminateWebProcess(); \
+        return; \
+    } \
+} while (0)
+#else
+#define MESSAGE_CHECK RELEASE_ASSERT
+#endif
+
 namespace WebKit {
 
-RemoteCommandEncoder::RemoteCommandEncoder(WebCore::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteCommandEncoder::RemoteCommandEncoder(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(commandEncoder)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
+    , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteCommandEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
@@ -63,10 +77,10 @@ void RemoteCommandEncoder::stopListeningForIPC()
 void RemoteCommandEncoder::beginRenderPass(const WebGPU::RenderPassDescriptor& descriptor, WebGPUIdentifier identifier)
 {
     auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
-    RELEASE_ASSERT(convertedDescriptor);
+    MESSAGE_CHECK(convertedDescriptor);
 
     auto renderPassEncoder = m_backing->beginRenderPass(*convertedDescriptor);
-    RELEASE_ASSERT(renderPassEncoder);
+    MESSAGE_CHECK(renderPassEncoder);
     auto remoteRenderPassEncoder = RemoteRenderPassEncoder::create(*renderPassEncoder, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap->addObject(identifier, remoteRenderPassEncoder);
 }
@@ -76,12 +90,12 @@ void RemoteCommandEncoder::beginComputePass(const std::optional<WebGPU::ComputeP
     std::optional<WebCore::WebGPU::ComputePassDescriptor> convertedDescriptor;
     if (descriptor) {
         auto resultDescriptor = m_objectHeap->convertFromBacking(*descriptor);
-        RELEASE_ASSERT(resultDescriptor);
+        MESSAGE_CHECK(resultDescriptor);
         convertedDescriptor = WTFMove(resultDescriptor);
     }
 
     auto computePassEncoder = m_backing->beginComputePass(convertedDescriptor);
-    RELEASE_ASSERT(computePassEncoder);
+    MESSAGE_CHECK(computePassEncoder);
     auto computeRenderPassEncoder = RemoteComputePassEncoder::create(*computePassEncoder, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap->addObject(identifier, computeRenderPassEncoder);
 }
@@ -212,10 +226,10 @@ void RemoteCommandEncoder::resolveQuerySet(
 void RemoteCommandEncoder::finish(const WebGPU::CommandBufferDescriptor& descriptor, WebGPUIdentifier identifier)
 {
     auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
-    RELEASE_ASSERT(convertedDescriptor);
+    MESSAGE_CHECK(convertedDescriptor);
 
     auto commandBuffer = m_backing->finish(*convertedDescriptor);
-    RELEASE_ASSERT(commandBuffer);
+    MESSAGE_CHECK(commandBuffer);
     auto remoteCommandBuffer = RemoteCommandBuffer::create(*commandBuffer, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap->addObject(identifier, remoteCommandBuffer);
 }
@@ -226,5 +240,7 @@ void RemoteCommandEncoder::setLabel(String&& label)
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif // ENABLE(GPU_PROCESS)

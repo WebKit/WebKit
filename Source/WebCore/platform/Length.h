@@ -585,6 +585,7 @@ inline bool Length::isContent() const
 }
 
 Length convertTo100PercentMinusLength(const Length&);
+Length convertTo100PercentMinusLengthSum(const Length&, const Length&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, Length);
 

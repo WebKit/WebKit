@@ -45,7 +45,7 @@ enabled by putting a colon between them, such as the following:
 adb shell setprop debug.angle.feature_overrides_enabled logMemoryReportCallbacks:logMemoryReportStats
 ```
 
-Another way to enable either or both of these feature flags is by editing the `RendererVk.cpp` file,
+Another way to enable either or both of these feature flags is by editing the `vk_renderer.cpp` file,
 and changing `false` in the following lines to `true`:
 ```
     ANGLE_FEATURE_CONDITION(&mFeatures, logMemoryReportCallbacks, false);

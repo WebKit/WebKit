@@ -36,7 +36,6 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/ProcessID.h>
 
 namespace WebKit {

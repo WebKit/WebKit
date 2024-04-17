@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Object.prototype.hasOwnProperty('');
-}, '`new Object.prototype.hasOwnProperty(\'\')` throws TypeError');
+});
 

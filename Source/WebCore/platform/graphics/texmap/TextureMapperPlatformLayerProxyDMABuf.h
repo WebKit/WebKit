@@ -32,6 +32,7 @@
 
 #include "DMABufFormat.h"
 #include "DMABufObject.h"
+#include "GLFence.h"
 #include "TextureMapperFlags.h"
 #include "TextureMapperPlatformLayer.h"
 #include <cstdint>
@@ -45,7 +46,7 @@ class TextureMapper;
 class TextureMapperPlatformLayerProxyDMABuf final : public TextureMapperPlatformLayerProxy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperPlatformLayerProxyDMABuf();
+    explicit TextureMapperPlatformLayerProxyDMABuf(ContentType);
     virtual ~TextureMapperPlatformLayerProxyDMABuf();
 
     bool isDMABufBased() const override { return true; }
@@ -61,6 +62,7 @@ public:
         virtual ~DMABufLayer();
 
         void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = { }, float opacity = 1.0) final;
+        void setFence(std::unique_ptr<GLFence>&& fence) { m_fence = WTFMove(fence); }
 
         void release()
         {
@@ -79,10 +81,11 @@ public:
 
         static constexpr unsigned c_maximumAge { 16 };
         unsigned m_age { 0 };
+        std::unique_ptr<GLFence> m_fence;
     };
 
     template<typename F>
-    void pushDMABuf(DMABufObject&& dmabufObject, const F& constructor, OptionSet<TextureMapperFlags> flags = { })
+    void pushDMABuf(DMABufObject&& dmabufObject, const F& constructor, OptionSet<TextureMapperFlags> flags = { }, std::unique_ptr<GLFence>&& fence = nullptr)
     {
         ASSERT(m_lock.isHeld());
 
@@ -90,6 +93,7 @@ public:
             [&] {
                 return adoptRef(*new DMABufLayer(constructor(WTFMove(dmabufObject)), flags));
             });
+        result.iterator->value->setFence(WTFMove(fence));
         pushDMABuf(result.iterator->value.copyRef());
     }
 

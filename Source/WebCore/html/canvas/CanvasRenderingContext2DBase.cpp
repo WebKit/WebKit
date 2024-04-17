@@ -2886,6 +2886,11 @@ DestinationColorSpace CanvasRenderingContext2DBase::colorSpace() const
     return toDestinationColorSpace(m_settings.colorSpace);
 }
 
+bool CanvasRenderingContext2DBase::willReadFrequently() const
+{
+    return m_settings.willReadFrequently;
+}
+
 OptionSet<ImageBufferOptions> CanvasRenderingContext2DBase::adjustImageBufferOptionsForTesting(OptionSet<ImageBufferOptions> bufferOptions)
 {
     if (!m_settings.renderingModeForTesting)

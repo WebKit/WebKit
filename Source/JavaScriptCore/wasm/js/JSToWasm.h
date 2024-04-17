@@ -42,9 +42,10 @@ class CCallHelpers;
 namespace Wasm {
 
 struct CallInformation;
+class JSEntrypointCallee;
 
 void marshallJSResult(CCallHelpers& jit, const TypeDefinition&, const CallInformation& wasmFrameConvention, const RegisterAtOffsetList& savedResultRegisters);
-std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers&, Callee&, Callee*, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>*, const ModuleInformation&, MemoryMode, uint32_t functionIndex);
+std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers&, JSEntrypointCallee&, Callee*, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>*, const ModuleInformation&, MemoryMode, uint32_t functionIndex);
 
 } } // namespace JSC::Wasm
 

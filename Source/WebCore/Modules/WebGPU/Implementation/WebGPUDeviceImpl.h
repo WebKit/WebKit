@@ -77,8 +77,8 @@ private:
     RefPtr<ShaderModule> createShaderModule(const ShaderModuleDescriptor&) final;
     RefPtr<ComputePipeline> createComputePipeline(const ComputePipelineDescriptor&) final;
     RefPtr<RenderPipeline> createRenderPipeline(const RenderPipelineDescriptor&) final;
-    void createComputePipelineAsync(const ComputePipelineDescriptor&, CompletionHandler<void(RefPtr<ComputePipeline>&&)>&&) final;
-    void createRenderPipelineAsync(const RenderPipelineDescriptor&, CompletionHandler<void(RefPtr<RenderPipeline>&&)>&&) final;
+    void createComputePipelineAsync(const ComputePipelineDescriptor&, CompletionHandler<void(RefPtr<ComputePipeline>&&, String&&)>&&) final;
+    void createRenderPipelineAsync(const RenderPipelineDescriptor&, CompletionHandler<void(RefPtr<RenderPipeline>&&, String&&)>&&) final;
 
     RefPtr<CommandEncoder> createCommandEncoder(const std::optional<CommandEncoderDescriptor>&) final;
     RefPtr<RenderBundleEncoder> createRenderBundleEncoder(const RenderBundleEncoderDescriptor&) final;

@@ -29,10 +29,12 @@
 
 SOFT_LINK_LIBRARY_FOR_HEADER(WebKit, WebKitSwift)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKGroupSessionObserver)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaContentMetadata)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaPlayer)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaTimeRange)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaTrack)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSPreviewWindowController)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSTextStyleManager)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionContainerItem)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionEditable)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionLink)

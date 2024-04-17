@@ -21,4 +21,4 @@ const i64a = new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELE
 
 assert.throws(TypeError, function() {
   Atomics.wait(i64a, 0, 0n, 0);
-}, '`Atomics.wait(i64a, 0, 0n, 0)` throws TypeError');
+});

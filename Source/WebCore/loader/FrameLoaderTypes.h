@@ -31,7 +31,6 @@
 #include "ElementContext.h"
 #include "IntRect.h"
 #include "ProcessIdentifier.h"
-#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 

@@ -597,7 +597,7 @@ static Data encodeRecordMetaData(const RecordMetaData& metaData)
 
     encoder.encodeChecksum();
 
-    return Data(encoder.buffer(), encoder.bufferSize());
+    return Data(encoder.span());
 }
 
 std::optional<BlobStorage::Blob> Storage::storeBodyAsBlob(WriteOperation& writeOperation)
@@ -1010,7 +1010,7 @@ void Storage::traverseWithinRootPath(const String& rootPath, const String& type,
                         static_cast<size_t>(metaData.bodySize),
                         worth,
                         bodyShareCount,
-                        String::fromUTF8(SHA1::hexDigest(metaData.bodyHash))
+                        String::fromUTF8(SHA1::hexDigest(metaData.bodyHash).span())
                     };
                     traverseOperation.handler(&record, info);
                 }

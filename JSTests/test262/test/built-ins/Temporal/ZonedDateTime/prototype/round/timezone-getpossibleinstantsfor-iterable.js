@@ -22,8 +22,6 @@ features: [Temporal]
 ---*/
 
 const expected = [
-  "2001-09-09T00:00:00", // called once on midnight of the input datetime
-  "2001-09-10T00:00:00", // called once on the previous value plus one calendar day
   "2001-09-09T02:00:00",  // called once on the rounding result
 ];
 

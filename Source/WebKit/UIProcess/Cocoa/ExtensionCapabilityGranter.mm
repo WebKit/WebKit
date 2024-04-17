@@ -111,7 +111,7 @@ static bool prepareGrant(const String& environmentIdentifier, AuxiliaryProcessPr
     return true;
 }
 
-static bool finalizeGrant(const String& environmentIdentifier, AuxiliaryProcessProxy* auxiliaryProcess, ExtensionCapabilityGrant&& grant)
+static bool finalizeGrant(ExtensionCapabilityGranter& granter, const String& environmentIdentifier, AuxiliaryProcessProxy* auxiliaryProcess, ExtensionCapabilityGrant&& grant)
 {
     if (!auxiliaryProcess) {
         GRANTER_RELEASE_LOG_ERROR(environmentIdentifier, "auxiliaryProcess is null");
@@ -127,7 +127,13 @@ static bool finalizeGrant(const String& environmentIdentifier, AuxiliaryProcessP
     }
 
     if (grant.isValid()) {
-        iterator->value = WTFMove(grant);
+        auto& existingGrant = iterator->value;
+        ASSERT(!existingGrant.isValid());
+        if (existingGrant.isValid()) {
+            GRANTER_RELEASE_LOG_ERROR(environmentIdentifier, "grant not expected to be valid");
+            granter.invalidateGrants(Vector<ExtensionCapabilityGrant>::from(WTFMove(existingGrant)));
+        }
+        existingGrant = WTFMove(grant);
         return true;
     }
 
@@ -189,7 +195,7 @@ void ExtensionCapabilityGranter::grant(const ExtensionCapability& capability)
         grantsToInvalidate.reserveInitialCapacity(2);
 
         if (needsGPUProcessGrant) {
-            if (finalizeGrant(environmentIdentifier, m_client->gpuProcessForCapabilityGranter(*this).get(), WTFMove(gpuProcessGrant)))
+            if (finalizeGrant(*this, environmentIdentifier, m_client->gpuProcessForCapabilityGranter(*this).get(), WTFMove(gpuProcessGrant)))
                 GRANTER_RELEASE_LOG(environmentIdentifier, "granted for GPU process");
             else {
                 GRANTER_RELEASE_LOG_ERROR(environmentIdentifier, "failed to grant for GPU process");
@@ -199,7 +205,7 @@ void ExtensionCapabilityGranter::grant(const ExtensionCapability& capability)
             ASSERT(gpuProcessGrant.isEmpty());
 
         if (needsWebProcessGrant) {
-            if (finalizeGrant(environmentIdentifier, m_client->webProcessForCapabilityGranter(*this, environmentIdentifier).get(), WTFMove(webProcessGrant)))
+            if (finalizeGrant(*this, environmentIdentifier, m_client->webProcessForCapabilityGranter(*this, environmentIdentifier).get(), WTFMove(webProcessGrant)))
                 GRANTER_RELEASE_LOG(environmentIdentifier, "granted for WebContent process");
             else {
                 GRANTER_RELEASE_LOG_ERROR(environmentIdentifier, "failed to grant for WebContent process");

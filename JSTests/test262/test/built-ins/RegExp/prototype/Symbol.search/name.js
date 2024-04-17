@@ -17,8 +17,9 @@ features: [Symbol.search]
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(RegExp.prototype[Symbol.search].name, '[Symbol.search]');
-
-verifyNotEnumerable(RegExp.prototype[Symbol.search], 'name');
-verifyNotWritable(RegExp.prototype[Symbol.search], 'name');
-verifyConfigurable(RegExp.prototype[Symbol.search], 'name');
+verifyProperty(RegExp.prototype[Symbol.search], "name", {
+  value: "[Symbol.search]",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

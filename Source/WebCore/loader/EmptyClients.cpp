@@ -229,6 +229,9 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
 };
 
 class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EmptyDiagnosticLoggingClient);
+
     void logDiagnosticMessage(const String&, const String&, ShouldSample) final { }
     void logDiagnosticMessageWithResult(const String&, const String&, DiagnosticLoggingResultType, ShouldSample) final { }
     void logDiagnosticMessageWithValue(const String&, const String&, double, unsigned, ShouldSample) final { }
@@ -448,7 +451,7 @@ class EmptyPopupMenu : public PopupMenu {
 public:
     EmptyPopupMenu() = default;
 private:
-    void show(const IntRect&, LocalFrameView*, int) final { }
+    void show(const IntRect&, LocalFrameView&, int) final { }
     void hide() final { }
     void updateFromElement() final { }
     void disconnectClient() final { }

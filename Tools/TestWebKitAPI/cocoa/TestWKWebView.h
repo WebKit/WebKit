@@ -95,6 +95,7 @@ struct AutocorrectionContext {
 @property (nonatomic, readonly) CGImageRef snapshotAfterScreenUpdates;
 @property (nonatomic, readonly) NSUInteger gpuToWebProcessConnectionCount;
 @property (nonatomic, readonly) NSString *contentsAsString;
+@property (nonatomic, readonly) NSData *contentsAsWebArchive;
 @property (nonatomic, readonly) NSArray<NSString *> *tagsInBody;
 @property (nonatomic, readonly) NSString *selectedText;
 - (void)loadTestPageNamed:(NSString *)pageName;
@@ -107,6 +108,7 @@ struct AutocorrectionContext {
 - (void)synchronouslyLoadRequest:(NSURLRequest *)request preferences:(WKWebpagePreferences *)preferences;
 - (void)synchronouslyLoadRequestIgnoringSSLErrors:(NSURLRequest *)request;
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName;
+- (void)synchronouslyLoadTestPageNamed:(NSString *)pageName preferences:(WKWebpagePreferences *)preferences;
 - (BOOL)_synchronouslyExecuteEditCommand:(NSString *)command argument:(NSString *)argument;
 - (void)expectElementTagsInOrder:(NSArray<NSString *> *)tagNames;
 - (void)expectElementCount:(NSInteger)count querySelector:(NSString *)querySelector;

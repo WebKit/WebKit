@@ -109,6 +109,7 @@ enum class PseudoId : uint32_t {
     WebKitScrollbarTrackPiece,
     WebKitScrollbarCorner,
     WebKitResizer,
+    InternalWritingSuggestions,
 
     AfterLastInternalPseudoId,
 

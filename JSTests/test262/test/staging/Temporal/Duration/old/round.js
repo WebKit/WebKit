@@ -208,7 +208,7 @@ assert.sameValue(`${ hours25.round({
   assert.sameValue(`${ d.round({
     smallestUnit: "seconds",
     relativeTo
-  }) }`, "P5Y5M5W5DT5H5M5S");
+  }) }`, "P5Y6M10DT5H5M5S");
 });
 
 // does not accept non-string primitives for relativeTo
@@ -325,24 +325,24 @@ var roundAndBalanceResults = {
     years: "P6Y",
     months: "P5Y6M",
     weeks: "P5Y5M6W",
-    days: "P5Y5M5W5D",
-    hours: "P5Y5M5W5DT5H",
-    minutes: "P5Y5M5W5DT5H5M",
-    seconds: "P5Y5M5W5DT5H5M5S",
-    milliseconds: "P5Y5M5W5DT5H5M5.005S",
-    microseconds: "P5Y5M5W5DT5H5M5.005005S",
-    nanoseconds: "P5Y5M5W5DT5H5M5.005005005S"
+    days: "P5Y6M10D",
+    hours: "P5Y6M10DT5H",
+    minutes: "P5Y6M10DT5H5M",
+    seconds: "P5Y6M10DT5H5M5S",
+    milliseconds: "P5Y6M10DT5H5M5.005S",
+    microseconds: "P5Y6M10DT5H5M5.005005S",
+    nanoseconds: "P5Y6M10DT5H5M5.005005005S"
   },
   months: {
     months: "P66M",
     weeks: "P65M6W",
-    days: "P65M5W5D",
-    hours: "P65M5W5DT5H",
-    minutes: "P65M5W5DT5H5M",
-    seconds: "P65M5W5DT5H5M5S",
-    milliseconds: "P65M5W5DT5H5M5.005S",
-    microseconds: "P65M5W5DT5H5M5.005005S",
-    nanoseconds: "P65M5W5DT5H5M5.005005005S"
+    days: "P66M10D",
+    hours: "P66M10DT5H",
+    minutes: "P66M10DT5H5M",
+    seconds: "P66M10DT5H5M5S",
+    milliseconds: "P66M10DT5H5M5.005S",
+    microseconds: "P66M10DT5H5M5.005005S",
+    nanoseconds: "P66M10DT5H5M5.005005005S"
   },
   weeks: {
     weeks: "P288W",
@@ -521,42 +521,42 @@ assert.sameValue(`${ d.round({
   smallestUnit: "hours",
   roundingIncrement: 3,
   relativeTo
-}) }`, "P5Y5M5W5DT6H");
+}) }`, "P5Y6M10DT6H");
 
 // rounds to an increment of minutes
 assert.sameValue(`${ d.round({
   smallestUnit: "minutes",
   roundingIncrement: 30,
   relativeTo
-}) }`, "P5Y5M5W5DT5H");
+}) }`, "P5Y6M10DT5H");
 
 // rounds to an increment of seconds
 assert.sameValue(`${ d.round({
   smallestUnit: "seconds",
   roundingIncrement: 15,
   relativeTo
-}) }`, "P5Y5M5W5DT5H5M");
+}) }`, "P5Y6M10DT5H5M");
 
 // rounds to an increment of milliseconds
 assert.sameValue(`${ d.round({
   smallestUnit: "milliseconds",
   roundingIncrement: 10,
   relativeTo
-}) }`, "P5Y5M5W5DT5H5M5.01S");
+}) }`, "P5Y6M10DT5H5M5.01S");
 
 // rounds to an increment of microseconds
 assert.sameValue(`${ d.round({
   smallestUnit: "microseconds",
   roundingIncrement: 10,
   relativeTo
-}) }`, "P5Y5M5W5DT5H5M5.00501S");
+}) }`, "P5Y6M10DT5H5M5.00501S");
 
 // rounds to an increment of nanoseconds
 assert.sameValue(`${ d.round({
   smallestUnit: "nanoseconds",
   roundingIncrement: 10,
   relativeTo
-}) }`, "P5Y5M5W5DT5H5M5.00500501S");
+}) }`, "P5Y6M10DT5H5M5.00500501S");
 
 // valid hour increments divide into 24
 [

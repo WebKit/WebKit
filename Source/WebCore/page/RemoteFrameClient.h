@@ -53,6 +53,7 @@ public:
     virtual void unbindRemoteAccessibilityFrames(int) = 0;
     virtual void focus() = 0;
     virtual void unfocus() = 0;
+    virtual void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) = 0;
     virtual ~RemoteFrameClient() { }
 };
 

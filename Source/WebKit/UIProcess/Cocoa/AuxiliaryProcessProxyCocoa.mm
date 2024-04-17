@@ -26,6 +26,7 @@
 #import "config.h"
 #import "AuxiliaryProcessProxy.h"
 
+#import "AuxiliaryProcessMessages.h"
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/WebMAudioUtilitiesCocoa.h>
 #import <mach/mach_init.h>
@@ -140,5 +141,18 @@ std::optional<AuxiliaryProcessProxy::TaskInfo> AuxiliaryProcessProxy::taskInfo()
         static_cast<size_t>(vmInfo.phys_footprint)
     };
 }
+
+#if ENABLE(CFPREFS_DIRECT_MODE)
+void AuxiliaryProcessProxy::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
+{
+    if (m_isSuspended) {
+        if (domain.isNull())
+            m_domainlessPreferencesUpdatedWhileSuspended.set(key, encodedValue);
+        else
+            m_preferencesUpdatedWhileSuspended.set(std::pair { domain , key }, encodedValue);
+    } else
+        send(Messages::AuxiliaryProcess::PreferenceDidUpdate(domain, key, encodedValue), 0);
+}
+#endif
 
 } // namespace WebKit

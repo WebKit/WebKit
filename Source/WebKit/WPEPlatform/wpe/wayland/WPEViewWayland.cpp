@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WPEViewWayland.h"
 
+#include "WPEBufferDMABufFormats.h"
 #include "WPEDisplayWaylandPrivate.h"
 #include "WPEWaylandSHMPool.h"
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
@@ -47,6 +48,10 @@
 #include <wayland-client-protocol.h>
 #include <wayland-egl.h>
 #include <epoxy/egl.h>
+
+#if USE(LIBDRM)
+#include <xf86drm.h>
+#endif
 
 #ifndef EGL_WL_create_wayland_buffer_from_image
 typedef struct wl_buffer *(EGLAPIENTRYP PFNEGLCREATEWAYLANDBUFFERFROMIMAGEWL)(EGLDisplay dpy, EGLImageKHR image);
@@ -100,12 +105,67 @@ struct DMABufFeedback {
     explicit DMABufFeedback(FormatTable&& table)
         : formatTable(WTFMove(table))
     {
+#if USE(LIBDRM)
+        memset(&mainDevice, 0, sizeof(dev_t));
+#endif
     }
 
     ~DMABufFeedback() = default;
 
+    DMABufFeedback(const DMABufFeedback&) = delete;
+    DMABufFeedback& operator=(const DMABufFeedback&) = delete;
+
+    DMABufFeedback(DMABufFeedback&& other)
+        : formatTable(WTFMove(other.formatTable))
+        , pendingTranche(WTFMove(other.pendingTranche))
+        , tranches(WTFMove(other.tranches))
+    {
+#if USE(LIBDRM)
+        memcpy(&mainDevice, &other.mainDevice, sizeof(dev_t));
+        memset(&other.mainDevice, 0, sizeof(dev_t));
+#endif
+    }
+
+#if USE(LIBDRM)
+    static CString drmDeviceForUsage(const dev_t* device, bool isScanout)
+    {
+        drmDevicePtr drmDevice;
+        if (drmGetDeviceFromDevId(*device, 0, &drmDevice))
+            return { };
+
+        CString returnValue;
+        if (isScanout) {
+            if (drmDevice->available_nodes & (1 << DRM_NODE_PRIMARY))
+                returnValue = drmDevice->nodes[DRM_NODE_PRIMARY];
+        } else {
+            if (drmDevice->available_nodes & (1 << DRM_NODE_RENDER))
+                returnValue = drmDevice->nodes[DRM_NODE_RENDER];
+            else if (drmDevice->available_nodes & (1 << DRM_NODE_PRIMARY))
+                returnValue = drmDevice->nodes[DRM_NODE_PRIMARY];
+        }
+
+        drmFreeDevice(&drmDevice);
+
+        return returnValue;
+    }
+#endif
+
+    CString drmDevice() const
+    {
+#if USE(LIBDRM)
+        return drmDeviceForUsage(&mainDevice, false);
+#else
+        return { };
+#endif
+    }
+
     struct Tranche {
-        Tranche() = default;
+        Tranche()
+        {
+#if USE(LIBDRM)
+            memset(&targetDevice, 0, sizeof(dev_t));
+#endif
+        }
         ~Tranche() = default;
         Tranche(const Tranche&) = delete;
         Tranche& operator=(const Tranche&) = delete;
@@ -114,10 +174,26 @@ struct DMABufFeedback {
             , formats(WTFMove(other.formats))
         {
             other.flags = 0;
+#if USE(LIBDRM)
+            memcpy(&targetDevice, &other.targetDevice, sizeof(dev_t));
+            memset(&other.targetDevice, 0, sizeof(dev_t));
+#endif
+        }
+
+        CString drmDevice() const
+        {
+#if USE(LIBDRM)
+            return drmDeviceForUsage(&targetDevice, flags & ZWP_LINUX_DMABUF_FEEDBACK_V1_TRANCHE_FLAGS_SCANOUT);
+#else
+            return { };
+#endif
         }
 
         uint32_t flags { 0 };
         Vector<uint16_t> formats;
+#if USE(LIBDRM)
+        dev_t targetDevice;
+#endif
     };
 
     std::pair<uint32_t, uint64_t> format(uint16_t index)
@@ -128,6 +204,9 @@ struct DMABufFeedback {
     FormatTable formatTable;
     Tranche pendingTranche;
     Vector<Tranche> tranches;
+#if USE(LIBDRM)
+    dev_t mainDevice;
+#endif
 };
 
 /**
@@ -141,6 +220,7 @@ struct _WPEViewWaylandPrivate {
     struct zwp_linux_dmabuf_feedback_v1* dmabufFeedback;
     std::unique_ptr<DMABufFeedback> pendingDMABufFeedback;
     std::unique_ptr<DMABufFeedback> committedDMABufFeedback;
+    GRefPtr<WPEBufferDMABufFormats> preferredDMABufFormats;
 
     Vector<GRefPtr<WPEMonitor>, 1> monitors;
     GRefPtr<WPEMonitor> currentMonitor;
@@ -327,6 +407,7 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
     {
         auto* view = WPE_VIEW_WAYLAND(data);
         view->priv->committedDMABufFeedback = WTFMove(view->priv->pendingDMABufFeedback);
+        view->priv->preferredDMABufFormats = nullptr;
         g_signal_emit_by_name(view, "preferred-dma-buf-formats-changed");
     },
     // format_table
@@ -337,14 +418,16 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
         close(fd);
     },
     // main_device
-    [](void* data, struct zwp_linux_dmabuf_feedback_v1*, struct wl_array*)
+    [](void* data, struct zwp_linux_dmabuf_feedback_v1*, struct wl_array* device)
     {
         auto* priv = WPE_VIEW_WAYLAND(data)->priv;
         // Compositor might not re-send the format table. In that case, try to reuse the previous one.
         if (!priv->pendingDMABufFeedback && priv->committedDMABufFeedback)
             priv->pendingDMABufFeedback = makeUnique<DMABufFeedback>(WTFMove(priv->committedDMABufFeedback->formatTable));
 
-        // FIXME: handle main device.
+#if USE(LIBDRM)
+        memcpy(&priv->pendingDMABufFeedback->mainDevice, device->data, sizeof(dev_t));
+#endif
     },
     // tranche_done
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*)
@@ -356,8 +439,15 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
         priv->pendingDMABufFeedback->tranches.append(WTFMove(priv->pendingDMABufFeedback->pendingTranche));
     },
     // tranche_target_device
-    [](void*, struct zwp_linux_dmabuf_feedback_v1*, struct wl_array*)
+    [](void* data, struct zwp_linux_dmabuf_feedback_v1*, struct wl_array* device)
     {
+#if USE(LIBDRM)
+        auto* priv = WPE_VIEW_WAYLAND(data)->priv;
+        if (!priv->pendingDMABufFeedback)
+            return;
+
+        memcpy(&priv->pendingDMABufFeedback->pendingTranche.targetDevice, device->data, sizeof(dev_t));
+#endif
     },
     // tranche_formats
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*, struct wl_array* indices)
@@ -687,31 +777,30 @@ static gboolean wpeViewWaylandSetMaximized(WPEView* view, gboolean maximized)
     return TRUE;
 }
 
-static GList* wpeViewWaylandGetPreferredDMABufFormats(WPEView* view)
+static WPEBufferDMABufFormats* wpeViewWaylandGetPreferredDMABufFormats(WPEView* view)
 {
     auto* priv = WPE_VIEW_WAYLAND(view)->priv;
+    if (priv->preferredDMABufFormats)
+        return priv->preferredDMABufFormats.get();
+
     if (!priv->committedDMABufFeedback)
         return nullptr;
 
-    GList* preferredFormats = nullptr;
+    auto mainDevice = priv->committedDMABufFeedback->drmDevice();
+    auto* builder = wpe_buffer_dma_buf_formats_builder_new(mainDevice.data());
     for (const auto& tranche : priv->committedDMABufFeedback->tranches) {
-        uint32_t previousFormat = 0;
-        GRefPtr<GArray> modifiers = adoptGRef(g_array_new(FALSE, TRUE, sizeof(guint64)));
         WPEBufferDMABufFormatUsage usage = tranche.flags & ZWP_LINUX_DMABUF_FEEDBACK_V1_TRANCHE_FLAGS_SCANOUT ? WPE_BUFFER_DMA_BUF_FORMAT_USAGE_SCANOUT : WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING;
-        auto formatsLength = tranche.formats.size();
-        for (size_t i = 0; i < formatsLength; ++i) {
-            auto [format, modifier] = priv->committedDMABufFeedback->format(tranche.formats[i]);
-            g_array_append_val(modifiers.get(), modifier);
-            if (i && format != previousFormat) {
-                preferredFormats = g_list_prepend(preferredFormats, wpe_buffer_dma_buf_format_new(usage, previousFormat, modifiers.get()));
-                modifiers = adoptGRef(g_array_new(FALSE, TRUE, sizeof(guint64)));
-            }
-            previousFormat = format;
+        auto targetDevice = tranche.drmDevice();
+        wpe_buffer_dma_buf_formats_builder_append_group(builder, targetDevice.data(), usage);
+
+        for (const auto& format : tranche.formats) {
+            auto [fourcc, modifier] = priv->committedDMABufFeedback->format(format);
+            wpe_buffer_dma_buf_formats_builder_append_format(builder, fourcc, modifier);
         }
-        if (previousFormat)
-            preferredFormats = g_list_prepend(preferredFormats, wpe_buffer_dma_buf_format_new(usage, previousFormat, modifiers.get()));
     }
-    return g_list_reverse(preferredFormats);
+
+    priv->preferredDMABufFormats = adoptGRef(wpe_buffer_dma_buf_formats_builder_end(builder));
+    return priv->preferredDMABufFormats.get();
 }
 
 static void wpeViewWaylandSetCursorFromName(WPEView* view, const char* name)

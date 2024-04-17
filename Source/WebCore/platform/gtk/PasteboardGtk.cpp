@@ -289,7 +289,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
     auto types = platformStrategies()->pasteboardStrategy()->types(m_name);
     if (types.contains("text/html"_s)) {
         auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, "text/html"_s);
-        if (buffer && reader.readHTML(String::fromUTF8(buffer->data(), buffer->size())))
+        if (buffer && reader.readHTML(String::fromUTF8(buffer->span())))
             return;
     }
 
@@ -350,7 +350,7 @@ Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
 {
     if (m_selectionData) {
         ListHashSet<String> types;
-        if (auto* buffer = m_selectionData->customData()) {
+        if (auto& buffer = m_selectionData->customData()) {
             auto customData = PasteboardCustomData::fromSharedBuffer(*buffer);
             if (customData.origin() == origin) {
                 for (auto& type : customData.orderedTypes())
@@ -397,7 +397,7 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
 String Pasteboard::readOrigin()
 {
     if (m_selectionData) {
-        if (auto* buffer = m_selectionData->customData())
+        if (auto& buffer = m_selectionData->customData())
             return PasteboardCustomData::fromSharedBuffer(*buffer).origin();
 
         return { };
@@ -417,7 +417,7 @@ String Pasteboard::readString(const String& type)
             return platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name);
 
         auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, type);
-        return buffer ? String::fromUTF8(buffer->data(), buffer->size()) : String();
+        return buffer ? String::fromUTF8(buffer->span()) : String();
     }
 
     switch (selectionDataTypeFromHTMLClipboardType(type)) {
@@ -440,7 +440,7 @@ String Pasteboard::readString(const String& type)
 String Pasteboard::readStringInCustomData(const String& type)
 {
     if (m_selectionData) {
-        if (auto* buffer = m_selectionData->customData())
+        if (auto& buffer = m_selectionData->customData())
             return PasteboardCustomData::fromSharedBuffer(*buffer).readStringInCustomData(type);
 
         return { };

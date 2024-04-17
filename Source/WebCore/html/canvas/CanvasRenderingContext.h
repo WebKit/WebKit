@@ -110,6 +110,7 @@ public:
 
     virtual PixelFormat pixelFormat() const;
     virtual DestinationColorSpace colorSpace() const;
+    virtual bool willReadFrequently() const;
     virtual OptionSet<ImageBufferOptions> adjustImageBufferOptionsForTesting(OptionSet<ImageBufferOptions> bufferOptions) { return bufferOptions; }
 
     void setIsInPreparationForDisplayOrFlush(bool flag) { m_isInPreparationForDisplayOrFlush = flag; }

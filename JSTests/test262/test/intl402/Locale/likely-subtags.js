@@ -35,12 +35,13 @@ const testDataMaximal = {
     "und": "en-Latn-US",
     "und-Thai": "th-Thai-TH",
     "und-419": "es-Latn-419",
-    "und-150": "ru-Cyrl-RU",
+    "und-150": "en-Latn-150",
     "und-AT": "de-Latn-AT",
     "und-Cyrl-RO": "bg-Cyrl-RO",
 
-    // Undefined primary language not required to change in all cases.
-    "und-AQ": "und-Latn-AQ",
+    // Before CLDR 44, "und" primary language subtag was left unchanged in some
+    // cases. Starting with CLDR 44, the "und" language subtag is always replaced.
+    "und-AQ": "en-Latn-AQ",
 };
 
 const testDataMinimal = {
@@ -67,7 +68,7 @@ const testDataMinimal = {
     "ru-Cyrl-RU": "ru",
     "de-Latn-AT": "de-AT",
     "bg-Cyrl-RO": "bg-RO",
-    "und-Latn-AQ": "und-AQ",
+    "und-Latn-AQ": "en-AQ",
 };
 
 // Add variants, extensions, and privateuse subtags and ensure they don't

@@ -228,8 +228,8 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
 
         // A descendant browsing context's document has a non-empty fullscreen element stack.
         bool descendentHasNonEmptyStack = false;
-        for (auto* descendant = frame() ? frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
-            auto* localFrame = dynamicDowncast<LocalFrame>(descendant);
+        for (RefPtr descendant = frame() ? frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
+            auto* localFrame = dynamicDowncast<LocalFrame>(descendant.get());
             if (!localFrame)
                 continue;
             if (localFrame->document()->fullscreenManager().fullscreenElement()) {
@@ -312,8 +312,8 @@ void FullscreenManager::cancelFullscreen()
         }
 
         // This triggers finishExitFullscreen with ExitMode::Resize, which fully exits the document.
-        if (auto* fullscreenElement = topDocument->fullscreenManager().fullscreenElement())
-            topDocument->page()->chrome().client().exitFullScreenForElement(fullscreenElement);
+        if (RefPtr fullscreenElement = topDocument->fullscreenManager().fullscreenElement())
+            topDocument->page()->chrome().client().exitFullScreenForElement(fullscreenElement.get());
         else
             INFO_LOG(identifier, "Top document has no fullscreen element");
     });
@@ -365,8 +365,7 @@ void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
         exitingDocument = topDocument;
     }
 
-    auto element = exitingDocument->fullscreenManager().fullscreenElement();
-    if (element && !element->isConnected()) {
+    if (RefPtr element = exitingDocument->fullscreenManager().fullscreenElement(); element && !element->isConnected()) {
         addDocumentToFullscreenChangeEventQueue(exitingDocument);
         clearFullscreenFlags(*element);
         element->removeFromTopLayer();
@@ -382,7 +381,7 @@ void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
             return;
         }
 
-        auto* page = this->page();
+        RefPtr page = this->page();
         if (!page) {
             m_pendingExitFullscreen = false;
             if (promise)
@@ -529,9 +528,11 @@ bool FullscreenManager::willEnterFullscreen(Element& element, HTMLMediaElementEn
     INFO_LOG(LOGIDENTIFIER);
     ASSERT(page()->settings().fullScreenEnabled());
 
+#if ENABLE(VIDEO)
     if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(element))
         mediaElement->willBecomeFullscreenElement(mode);
     else
+#endif
         element.willBecomeFullscreenElement();
 
     ASSERT(&element == m_pendingFullscreenElement);
@@ -559,7 +560,7 @@ bool FullscreenManager::willEnterFullscreen(Element& element, HTMLMediaElementEn
             ancestor->removeFromTopLayer();
         ancestor->addToTopLayer();
 
-        markRendererDirtyAfterTopLayerChange(ancestor->renderer(), containingBlockBeforeStyleResolution.get());
+        markRendererDirtyAfterTopLayerChange(ancestor->checkedRenderer().get(), containingBlockBeforeStyleResolution.get());
     }
 
     for (auto ancestor : ancestorsInTreeOrder)

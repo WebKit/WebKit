@@ -163,7 +163,7 @@ static inline void setXSLTLoadCallBack(xsltDocLoaderFunc func, XSLTProcessor* pr
 static int writeToStringBuilder(void* context, const char* buffer, int length)
 {
     auto& builder = *static_cast<StringBuilder*>(context);
-    FromUTF8 adapter(buffer, length);
+    UTF8Adapter adapter({ reinterpret_cast<const char8_t*>(buffer), static_cast<size_t>(length) });
     ASSERT(!adapter.conversionFailed);
     if (adapter.conversionFailed)
         return -1;

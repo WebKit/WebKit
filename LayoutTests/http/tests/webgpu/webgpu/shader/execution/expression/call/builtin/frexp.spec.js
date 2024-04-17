@@ -16,7 +16,15 @@ The magnitude of the significand is in the range of [0.5, 1.0) or 0.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../../gpu_test.js';
 import { Type } from '../../../../../util/conversion.js';
-import { allInputSources, basicExpressionBuilder, run } from '../../expression.js';
+import {
+
+  allInputSources,
+  basicExpressionBuilder,
+  run,
+  abstractFloatShaderBuilder,
+  abstractIntShaderBuilder,
+  onlyConstInputSource } from
+'../../expression.js';
 
 import { d } from './frexp.cache.js';
 
@@ -31,6 +39,161 @@ function fractBuilder() {
 function expBuilder() {
   return basicExpressionBuilder((value) => `frexp(${value}).exp`);
 }
+
+/* @returns an ShaderBuilder that evaluates frexp and returns .fract from the result structure, for abstract inputs */
+function abstractFractBuilder() {
+  return abstractFloatShaderBuilder((value) => `frexp(${value}).fract`);
+}
+
+/* @returns an ShaderBuilder that evaluates frexp and returns .exp from the result structure, for abstract inputs */
+function abstractExpBuilder() {
+  return abstractIntShaderBuilder((value) => `frexp(${value}).exp`);
+}
+
+g.test('abstract_float_fract').
+specURL('https://www.w3.org/TR/WGSL/#float-builtin-functions').
+desc(
+  `
+T is AbstractFloat
+
+struct __frexp_result_abstract {
+  fract : AbstractFloat, // fract part
+  exp : AbstractInt  // exponent part
+}
+`
+).
+params((u) => u.combine('inputSource', onlyConstInputSource)).
+fn(async (t) => {
+  const cases = await d.get('abstract_fract');
+  await run(t, abstractFractBuilder(), [Type.abstractFloat], Type.abstractFloat, t.params, cases);
+});
+
+g.test('abstract_float_exp').
+specURL('https://www.w3.org/TR/WGSL/#float-builtin-functions').
+desc(
+  `
+T is AbstractFloat
+
+struct __frexp_result_abstract {
+  fract : AbstractFloat, // fract part
+  exp : AbstractInt  // exponent part
+}
+`
+).
+params((u) => u.combine('inputSource', onlyConstInputSource)).
+fn(async (t) => {
+  const cases = await d.get('abstract_exp');
+  await run(t, abstractExpBuilder(), [Type.abstractFloat], Type.abstractInt, t.params, cases);
+});
+
+g.test('abstract_float_vec2_fract').
+specURL('https://www.w3.org/TR/WGSL/#float-builtin-functions').
+desc(
+  `
+T is vec2<AbstractFloat>
+
+struct __frexp_result_vec2_abstract {
+  fract : vec2<AbstractFloat>, // fract part
+  exp : vec2<AbstractInt>  // exponent part
+}
+`
+).
+params((u) => u.combine('inputSource', onlyConstInputSource)).
+fn(async (t) => {
+  const cases = await d.get('abstract_vec2_fract');
+  await run(t, abstractFractBuilder(), [Type.vec2af], Type.vec2af, t.params, cases);
+});
+
+g.test('abstract_float_vec2_exp').
+specURL('https://www.w3.org/TR/WGSL/#float-builtin-functions').
+desc(
+  `
+T is vec2<AbstractFloat>
+
+struct __frexp_result_vec2_abstract {
+  fract : vec2<AbstractFloat>, // fractional part
+  exp : vec2<AbstractInt>  // exponent part
+}
+`
+).
+params((u) => u.combine('inputSource', onlyConstInputSource)).
+fn(async (t) => {
+  const cases = await d.get('abstract_vec2_exp');
+  await run(t, abstractExpBuilder(), [Type.vec2af], Type.vec2ai, t.params, cases);
+});
+
+g.test('abstract_float_vec3_fract').
+specURL('https://www.w3.org/TR/WGSL/#float-builtin-functions').
+desc(
+  `
+T is vec3<AbstractFloat>
+
+struct __frexp_result_vec3_abstract {
+  fract : vec3<AbstractFloat>, // fractional part
+  exp : vec3<AbstractInt>  // exponent part
+}
+`
+).
+params((u) => u.combine('inputSource', onlyConstInputSource)).
+fn(async (t) => {
+  const cases = await d.get('abstract_vec3_fract');
+  await run(t, abstractFractBuilder(), [Type.vec3af], Type.vec3af, t.params, cases);
+});
+
+g.test('abstract_float_vec3_exp').
+specURL('https://www.w3.org/TR/WGSL/#float-builtin-functions').
+desc(
+  `
+T is vec3<AbstractFloat>
+
+struct __frexp_result_vec3_abstract {
+  fract : vec3<AbstractFloat>, // fractional part
+  exp : vec3<AbstractInt>  // exponent part
+}
+`
+).
+params((u) => u.combine('inputSource', onlyConstInputSource)).
+fn(async (t) => {
+  const cases = await d.get('abstract_vec3_exp');
+  await run(t, abstractExpBuilder(), [Type.vec3af], Type.vec3ai, t.params, cases);
+});
+
+g.test('abstract_float_vec4_fract').
+specURL('https://www.w3.org/TR/WGSL/#float-builtin-functions').
+desc(
+  `
+T is vec4<AbstractFloat>
+
+struct __frexp_result_vec4_abstract {
+  fract : vec4<AbstractFloat>, // fractional part
+  exp : vec4<AbstractInt>  // exponent part
+}
+`
+).
+params((u) => u.combine('inputSource', onlyConstInputSource)).
+fn(async (t) => {
+  const cases = await d.get('abstract_vec4_fract');
+  await run(t, abstractFractBuilder(), [Type.vec4af], Type.vec4af, t.params, cases);
+});
+
+g.test('abstract_float_vec4_exp').
+specURL('https://www.w3.org/TR/WGSL/#float-builtin-functions').
+desc(
+  `
+T is vec4<AbstractFloat>
+
+struct __frexp_result_vec4_abstract {
+  fract : vec4<AbstractFloat>, // fractional part
+  exp : vec4<AbstractInt>  // exponent part
+}
+`
+).
+params((u) => u.combine('inputSource', onlyConstInputSource)).
+fn(async (t) => {
+  const cases = await d.get('abstract_vec4_exp');
+  await run(t, abstractExpBuilder(), [Type.vec4af], Type.vec4ai, t.params, cases);
+});
+
 g.test('f32_fract').
 specURL('https://www.w3.org/TR/WGSL/#float-builtin-functions').
 desc(

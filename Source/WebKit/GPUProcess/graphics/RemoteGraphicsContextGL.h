@@ -109,7 +109,6 @@ protected:
 
     // Messages to be received.
     void ensureExtensionEnabled(String&&);
-    void createAndBindEGLImage(GCGLenum, GCGLenum, WebCore::GraphicsContextGL::EGLImageSource, GCGLint, CompletionHandler<void(uint64_t)>&&);
     void reshape(int32_t width, int32_t height);
 #if PLATFORM(COCOA)
     virtual void prepareForDisplay(IPC::Semaphore&&, CompletionHandler<void(WTF::MachSendRight&&)>&&) = 0;
@@ -130,9 +129,6 @@ protected:
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
 #endif
-#if PLATFORM(COCOA)
-    virtual void createEGLSync(WTF::MachSendRight syncEvent, uint64_t signalValue, CompletionHandler<void(uint64_t)>&&) = 0;
-#endif
     void simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting);
     void readPixelsInline(WebCore::IntRect, uint32_t format, uint32_t type, CompletionHandler<void(std::optional<WebCore::IntSize>, std::span<const uint8_t>)>&&);
     void readPixelsSharedMemory(WebCore::IntRect, uint32_t format, uint32_t type, WebCore::SharedMemory::Handle, CompletionHandler<void(std::optional<WebCore::IntSize>)>&&);
@@ -147,6 +143,7 @@ protected:
 
 private:
     void paintNativeImageToImageBuffer(WebCore::NativeImage&, WebCore::RenderingResourceIdentifier);
+    bool webXREnabled() const;
 
 protected:
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;

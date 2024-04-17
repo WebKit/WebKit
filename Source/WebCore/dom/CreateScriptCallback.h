@@ -36,6 +36,8 @@ class CreateScriptCallback : public RefCounted<CreateScriptCallback>, public Act
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    virtual bool hasCallback() const = 0;
+
     virtual CallbackResult<String> handleEvent(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments) = 0;
 };
 

@@ -165,18 +165,6 @@ void RemoteGraphicsContextGLProxy::initialize(const RemoteGraphicsContextGLIniti
     m_externalImageBindingQuery = initializationState.externalImageBindingQuery;
 }
 
-GCEGLImage RemoteGraphicsContextGLProxy::createAndBindEGLImage(GCGLenum, GCGLenum, GraphicsContextGL::EGLImageSource, GCGLint)
-{
-    notImplemented();
-    return { };
-}
-
-GCEGLSync RemoteGraphicsContextGLProxy::createEGLSync(ExternalEGLSyncEvent)
-{
-    notImplemented();
-    return { };
-}
-
 std::tuple<GCGLenum, GCGLenum> RemoteGraphicsContextGLProxy::externalImageTextureBindingPoint()
 {
     if (isContextLost())
@@ -363,8 +351,7 @@ void RemoteGraphicsContextGLProxy::readPixels(IntRect rect, GCGLenum format, GCG
         auto [readArea] = sendResult.takeReply();
         if (!readArea)
             return;
-        std::span replyData { reinterpret_cast<uint8_t*>(replyBuffer->data()), replyBuffer->size() };
-        copyToData(replyData, *readArea);
+        copyToData(replyBuffer->span(), *readArea);
         return;
     }
 inlineCase:

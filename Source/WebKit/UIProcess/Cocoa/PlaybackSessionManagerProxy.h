@@ -99,16 +99,21 @@ private:
     void setPlaybackRate(double) final;
     void selectAudioMediaOption(uint64_t) final;
     void selectLegibleMediaOption(uint64_t) final;
-    void toggleFullscreen() final;
     void togglePictureInPicture() final;
     void toggleInWindowFullscreen() final;
     void enterFullscreen() final;
+    void exitFullscreen() final;
     void toggleMuted() final;
     void setMuted(bool) final;
     void setVolume(double) final;
     void setPlayingOnSecondScreen(bool) final;
     void sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&) final;
     void setVideoReceiverEndpoint(const WebCore::VideoReceiverEndpoint&) final;
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    void setSpatialTrackingLabel(const String&) final;
+#endif
+    void addNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver&) final;
+    void removeNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver&) final;
 
     double playbackStartedTime() const final { return m_playbackStartedTime; }
     double duration() const final { return m_duration; }
@@ -256,9 +261,9 @@ private:
     void setPlaybackRate(PlaybackSessionContextIdentifier, double);
     void selectAudioMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
-    void toggleFullscreen(PlaybackSessionContextIdentifier);
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
     void enterFullscreen(PlaybackSessionContextIdentifier);
+    void exitFullscreen(PlaybackSessionContextIdentifier);
     void toggleInWindow(PlaybackSessionContextIdentifier);
     void toggleMuted(PlaybackSessionContextIdentifier);
     void setMuted(PlaybackSessionContextIdentifier, bool);
@@ -266,6 +271,11 @@ private:
     void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool);
     void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
     void setVideoReceiverEndpoint(PlaybackSessionContextIdentifier, const WebCore::VideoReceiverEndpoint&);
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    void setSpatialTrackingLabel(PlaybackSessionContextIdentifier, const String&);
+#endif
+    void addNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver&);
+    void removeNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver&);
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(PlaybackSessionContextIdentifier, uint64_t);

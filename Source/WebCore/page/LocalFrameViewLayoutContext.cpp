@@ -374,15 +374,12 @@ void LocalFrameViewLayoutContext::scheduleLayout()
 
     if (subtreeLayoutRoot())
         convertSubtreeLayoutToFullLayout();
-    if (!isLayoutSchedulingEnabled())
+
+    if (isLayoutPending())
+        return;
+    if (!isLayoutSchedulingEnabled() || !frame().document()->shouldScheduleLayout())
         return;
     if (!needsLayout())
-        return;
-    if (!frame().document()->shouldScheduleLayout())
-        return;
-
-    InspectorInstrumentation::didInvalidateLayout(protectedFrame());
-    if (m_layoutTimer.isActive())
         return;
 
 #if !LOG_DISABLED
@@ -390,6 +387,7 @@ void LocalFrameViewLayoutContext::scheduleLayout()
         LOG(Layout, "LocalFrameView %p layout timer scheduled at %.3fs", this, frame().document()->timeSinceDocumentCreation().value());
 #endif
 
+    InspectorInstrumentation::didInvalidateLayout(protectedFrame());
     m_layoutTimer.startOneShot(0_s);
 }
 
@@ -419,7 +417,7 @@ void LocalFrameViewLayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoo
     ASSERT(frame().view() == &view());
 
     if (renderView.needsLayout() && !subtreeLayoutRoot()) {
-        layoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No);
+        layoutRoot.markContainingBlocksForLayout(&renderView);
         return;
     }
 
@@ -437,21 +435,21 @@ void LocalFrameViewLayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoo
 
     if (!subtreeLayoutRoot) {
         // We already have a pending (full) layout. Just mark the subtree for layout.
-        layoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No);
+        layoutRoot.markContainingBlocksForLayout(&renderView);
         InspectorInstrumentation::didInvalidateLayout(protectedFrame());
         return;
     }
 
     if (isObjectAncestorContainerOf(*subtreeLayoutRoot, layoutRoot)) {
         // Keep the current root.
-        layoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No, subtreeLayoutRoot);
+        layoutRoot.markContainingBlocksForLayout(subtreeLayoutRoot);
         ASSERT(!subtreeLayoutRoot->container() || is<RenderView>(subtreeLayoutRoot->container()) || !subtreeLayoutRoot->container()->needsLayout());
         return;
     }
 
     if (isObjectAncestorContainerOf(layoutRoot, *subtreeLayoutRoot)) {
         // Re-root at newRelayoutRoot.
-        subtreeLayoutRoot->markContainingBlocksForLayout(ScheduleRelayout::No, &layoutRoot);
+        subtreeLayoutRoot->markContainingBlocksForLayout(&layoutRoot);
         setSubtreeLayoutRoot(layoutRoot);
         ASSERT(!layoutRoot.container() || is<RenderView>(layoutRoot.container()) || !layoutRoot.container()->needsLayout());
         InspectorInstrumentation::didInvalidateLayout(protectedFrame());
@@ -459,7 +457,7 @@ void LocalFrameViewLayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoo
     }
     // Two disjoint subtrees need layout. Mark both of them and issue a full layout instead.
     convertSubtreeLayoutToFullLayout();
-    layoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No);
+    layoutRoot.markContainingBlocksForLayout(&renderView);
     InspectorInstrumentation::didInvalidateLayout(protectedFrame());
 }
 
@@ -480,7 +478,7 @@ RenderElement* LocalFrameViewLayoutContext::subtreeLayoutRoot() const
 void LocalFrameViewLayoutContext::convertSubtreeLayoutToFullLayout()
 {
     ASSERT(subtreeLayoutRoot());
-    subtreeLayoutRoot()->markContainingBlocksForLayout(ScheduleRelayout::No);
+    subtreeLayoutRoot()->markContainingBlocksForLayout(renderView());
     clearSubtreeLayoutRoot();
 }
 

@@ -63,7 +63,7 @@ using namespace WebCore;
 
 #define ITP_DEBUG_MODE_RELEASE_LOG(fmt, ...) RELEASE_LOG_INFO(ITPDebug, "ResourceLoadStatisticsStore: " fmt, ##__VA_ARGS__)
 #define ITP_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ResourceLoadStatistics, "%p - [sessionID=%" PRIu64 "] - ResourceLoadStatisticsStore::" fmt, this, m_sessionID.toUInt64(), ##__VA_ARGS__)
-#define ITP_RELEASE_LOG_DATABASE_ERROR(fmt, ...) RELEASE_LOG_ERROR(ResourceLoadStatistics, "%p - [sessionID=%" PRIu64 ", error=%d, message=%{private}s] - ResourceLoadStatisticsStore::" fmt, this, m_sessionID.toUInt64(), m_database.lastError(), m_database.lastErrorMsg(), ##__VA_ARGS__)
+#define ITP_RELEASE_LOG_DATABASE_ERROR(fmt, ...) RELEASE_LOG_ERROR(ResourceLoadStatistics, "%p - [sessionID=%" PRIu64 ", error=%d, message=%" PRIVATE_LOG_STRING "] - ResourceLoadStatisticsStore::" fmt, this, m_sessionID.toUInt64(), m_database.lastError(), m_database.lastErrorMsg(), ##__VA_ARGS__)
 
 
 constexpr unsigned operatingDatesWindowLong { 30 }; // days
@@ -2468,7 +2468,7 @@ std::pair<ResourceLoadStatisticsStore::AddedRecord, std::optional<unsigned>> Res
         auto scopedStatement = this->scopedStatement(m_domainIDFromStringStatement, domainIDFromStringQuery, "ensureResourceStatisticsForRegistrableDomain"_s);
         if (!scopedStatement
             || scopedStatement->bindText(1, domain.string()) != SQLITE_OK) {
-            ITP_RELEASE_LOG_DATABASE_ERROR("ensureResourceStatisticsForRegistrableDomain: reason %{public}s, failed to bind parameter", reason.characters());
+            ITP_RELEASE_LOG_DATABASE_ERROR("ensureResourceStatisticsForRegistrableDomain: reason %" PUBLIC_LOG_STRING ", failed to bind parameter", reason.characters());
             return { AddedRecord::No, 0 };
         }
 
@@ -2482,7 +2482,7 @@ std::pair<ResourceLoadStatisticsStore::AddedRecord, std::optional<unsigned>> Res
     auto result = insertObservedDomain(newObservation);
 
     if (!result) {
-        ITP_RELEASE_LOG_ERROR("ensureResourceStatisticsForRegistrableDomain: reason %{public}s, failed to insert observed domain", reason.characters());
+        ITP_RELEASE_LOG_ERROR("ensureResourceStatisticsForRegistrableDomain: reason %" PUBLIC_LOG_STRING ", failed to insert observed domain", reason.characters());
         return { AddedRecord::No, std::nullopt };
     }
 

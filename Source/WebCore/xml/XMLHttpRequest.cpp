@@ -39,7 +39,6 @@
 #include "HTTPParsers.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMBinding.h"
-#include "JSLocalDOMWindow.h"
 #include "LocalDOMWindow.h"
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"

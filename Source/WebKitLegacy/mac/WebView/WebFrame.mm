@@ -87,7 +87,7 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
-#import <WebCore/JSLocalDOMWindow.h>
+#import <WebCore/JSDOMWindow.h>
 #import <WebCore/JSNode.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/LocalFrame.h>
@@ -1615,7 +1615,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     
     Vector<WebCore::CompositionUnderline> underlines;
     frame->page()->chrome().client().suppressFormNotifications();
-    frame->editor().setComposition(text, underlines, { }, { }, newSelRange.location, NSMaxRange(newSelRange));
+    frame->editor().setComposition(text, underlines, { }, newSelRange.location, NSMaxRange(newSelRange));
     frame->page()->chrome().client().restoreFormNotifications();
 }
 
@@ -1626,7 +1626,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
         return;
         
     Vector<WebCore::CompositionUnderline> underlines;
-    frame->editor().setComposition(text, underlines, { }, { }, 0, [text length]);
+    frame->editor().setComposition(text, underlines, { }, 0, [text length]);
 }
 
 - (void)confirmMarkedText:(NSString *)text
@@ -2071,13 +2071,13 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     // The global object is probably a proxy object? - if so, we know how to use this!
     JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
     if (!strcmp(globalObjectObj->classInfo()->className, "JSWindowProxy"))
-        anyWorldGlobalObject = JSC::jsDynamicCast<WebCore::JSLocalDOMWindow*>(static_cast<WebCore::JSWindowProxy*>(globalObjectObj)->window());
+        anyWorldGlobalObject = JSC::jsDynamicCast<WebCore::JSDOMWindow*>(static_cast<WebCore::JSWindowProxy*>(globalObjectObj)->window());
 
     if (!anyWorldGlobalObject)
         return @"";
 
     // Get the frame frome the global object we've settled on.
-    auto* frame = JSC::jsCast<WebCore::JSLocalDOMWindow*>(anyWorldGlobalObject)->wrapped().frame();
+    auto* frame = dynamicDowncast<WebCore::LocalFrame>(JSC::jsCast<WebCore::JSDOMWindow*>(anyWorldGlobalObject)->wrapped().frame());
     ASSERT(frame->document());
     RetainPtr<WebFrame> webFrame(kit(frame)); // Running arbitrary JavaScript can destroy the frame.
 

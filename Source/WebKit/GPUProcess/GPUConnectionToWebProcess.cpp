@@ -480,7 +480,7 @@ bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
     if (!m_sampleBufferDisplayLayerManager->allowsExitUnderMemoryPressure())
         return false;
 #endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
     if (m_remoteMediaRecorderManager && !m_remoteMediaRecorderManager->allowsExitUnderMemoryPressure())
         return false;
 #endif
@@ -579,7 +579,7 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManager& GPUConnectionToWebProces
 }
 #endif
 
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
 RemoteMediaRecorderManager& GPUConnectionToWebProcess::mediaRecorderManager()
 {
     if (!m_remoteMediaRecorderManager)
@@ -892,7 +892,7 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
     if (decoder.messageReceiverName() == Messages::RemoteMediaRecorderManager::messageReceiverName()) {
         mediaRecorderManager().didReceiveMessageFromWebProcess(connection, decoder);
         return true;

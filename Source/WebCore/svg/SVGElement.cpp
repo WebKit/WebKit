@@ -40,6 +40,7 @@
 #include "LegacyRenderSVGResourceContainer.h"
 #include "NodeName.h"
 #include "RenderAncestorIterator.h"
+#include "RenderSVGResourceContainer.h"
 #include "ResolvedStyle.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementRareData.h"
@@ -286,6 +287,8 @@ Vector<WeakPtr<SVGResourceElementClient>> SVGElement::referencingCSSClients() co
 
 void SVGElement::addReferencingCSSClient(SVGResourceElementClient& client)
 {
+    if (CheckedPtr container = dynamicDowncast<RenderSVGResourceContainer>(this->renderer()))
+        container->addReferencingCSSClient(client.renderer());
     ensureSVGRareData().addReferencingCSSClient(client);
 }
 
@@ -293,6 +296,8 @@ void SVGElement::removeReferencingCSSClient(SVGResourceElementClient& client)
 {
     if (!m_svgRareData)
         return;
+    if (CheckedPtr container = dynamicDowncast<RenderSVGResourceContainer>(this->renderer()))
+        container->removeReferencingCSSClient(client.renderer());
     ensureSVGRareData().removeReferencingCSSClient(client);
 }
 

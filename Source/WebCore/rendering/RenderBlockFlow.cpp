@@ -219,14 +219,8 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
         return;
     }
 
-    RendererToFloatInfoMap floatMap;
-
-    if (m_floatingObjects) {
-        if (childrenInline())
-            m_floatingObjects->moveAllToFloatInfoMap(floatMap);
-        else
-            m_floatingObjects->clear();
-    }
+    if (m_floatingObjects)
+        m_floatingObjects->clear();
 
     // We should not process floats if the parent node is not a RenderBlock. Otherwise, we will add 
     // floats in an invalid context. This will cause a crash arising from a bad cast on the parent.
@@ -255,51 +249,7 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
     if (previousBlock->m_floatingObjects && previousBlock->lowestFloatLogicalBottom() > logicalTopOffset)
         addIntrudingFloats(previousBlock, parentBlock.get(), logicalLeftOffset, logicalTopOffset);
 
-    if (childrenInline()) {
-        LayoutUnit changeLogicalTop = LayoutUnit::max();
-        LayoutUnit changeLogicalBottom = LayoutUnit::min();
-        if (m_floatingObjects) {
-            const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-            auto end = floatingObjectSet.end();
-            for (auto it = floatingObjectSet.begin(); it != end; ++it) {
-                const auto& floatingObject = *it->get();
-                std::unique_ptr<FloatingObject> oldFloatingObject = floatMap.take(&floatingObject.renderer());
-                LayoutUnit logicalBottom = logicalBottomForFloat(floatingObject);
-                if (oldFloatingObject) {
-                    LayoutUnit oldLogicalBottom = logicalBottomForFloat(*oldFloatingObject);
-                    if (logicalWidthForFloat(floatingObject) != logicalWidthForFloat(*oldFloatingObject) || logicalLeftForFloat(floatingObject) != logicalLeftForFloat(*oldFloatingObject)) {
-                        changeLogicalTop = 0;
-                        changeLogicalBottom = std::max(changeLogicalBottom, std::max(logicalBottom, oldLogicalBottom));
-                    } else {
-                        if (logicalBottom != oldLogicalBottom) {
-                            changeLogicalTop = std::min(changeLogicalTop, std::min(logicalBottom, oldLogicalBottom));
-                            changeLogicalBottom = std::max(changeLogicalBottom, std::max(logicalBottom, oldLogicalBottom));
-                        }
-                        LayoutUnit logicalTop = logicalTopForFloat(floatingObject);
-                        LayoutUnit oldLogicalTop = logicalTopForFloat(*oldFloatingObject);
-                        if (logicalTop != oldLogicalTop) {
-                            changeLogicalTop = std::min(changeLogicalTop, std::min(logicalTop, oldLogicalTop));
-                            changeLogicalBottom = std::max(changeLogicalBottom, std::max(logicalTop, oldLogicalTop));
-                        }
-                    }
-                } else {
-                    changeLogicalTop = 0;
-                    changeLogicalBottom = std::max(changeLogicalBottom, logicalBottom);
-                }
-            }
-        }
-
-        auto end = floatMap.end();
-        for (auto it = floatMap.begin(); it != end; ++it) {
-            const auto& floatingObject = *it->value.get();
-            if (!floatingObject.isDescendant()) {
-                changeLogicalTop = 0;
-                changeLogicalBottom = std::max(changeLogicalBottom, logicalBottomForFloat(floatingObject));
-            }
-        }
-
-        markLinesDirtyInBlockRange(changeLogicalTop, changeLogicalBottom);
-    } else if (!oldIntrudingFloatSet.isEmpty()) {
+    if (!childrenInline() && !oldIntrudingFloatSet.isEmpty()) {
         // If there are previously intruding floats that no longer intrude, then children with floats
         // should also get layout because they might need their floating object lists cleared.
         if (m_floatingObjects->set().size() < oldIntrudingFloatSet.size())
@@ -672,8 +622,13 @@ inline LayoutUnit RenderBlockFlow::shiftForAlignContent(LayoutUnit intrinsicLogi
     // Calculate alignment shift.
     LayoutUnit computedLogicalHeight = logicalHeight();
     LayoutUnit space = computedLogicalHeight - intrinsicLogicalHeight;
-    if (space <= 0 && OverflowAlignment::Unsafe != alignment.overflow())
-        return 0_lu; // Floored at zero; we're done
+    if (space <= 0) {
+        bool overflowIsSafe = (alignment.overflow() == OverflowAlignment::Default && !isScrollContainerY())
+            || alignment.overflow() == OverflowAlignment::Safe
+            || alignment.position() == ContentPosition::Normal;
+        if (overflowIsSafe)
+            return 0_lu; // Floored at zero; we're done
+    }
     if (alignment.isCentered())
         space = space / 2;
 
@@ -2403,11 +2358,8 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
             return false;
         };
         if (shouldInvalidateLineLayoutPath())
-            invalidateLineLayoutPath();
+            invalidateLineLayoutPath(InvalidationReason::StyleChange);
     }
-
-    if (auto* lineLayout = modernLineLayout())
-        lineLayout->updateStyle(*this, *oldStyle);
 
     if (multiColumnFlow())
         updateStylesForColumnChildren(oldStyle);
@@ -2658,29 +2610,13 @@ FloatingObject& RenderBlockFlow::insertFloatingObjectForIFC(RenderBox& floatBox)
 
 void RenderBlockFlow::removeFloatingObject(RenderBox& floatBox)
 {
-    if (m_floatingObjects) {
-        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        auto it = floatingObjectSet.find<FloatingObjectHashTranslator>(floatBox);
-        if (it != floatingObjectSet.end()) {
-            auto& floatingObject = *it->get();
-            if (childrenInline()) {
-                LayoutUnit logicalTop = logicalTopForFloat(floatingObject);
-                LayoutUnit logicalBottom = logicalBottomForFloat(floatingObject);
+    if (!m_floatingObjects)
+        return;
 
-                // Fix for https://bugs.webkit.org/show_bug.cgi?id=54995.
-                if (logicalBottom < 0 || logicalBottom < logicalTop || logicalTop == LayoutUnit::max())
-                    logicalBottom = LayoutUnit::max();
-                else {
-                    // Special-case zero- and less-than-zero-height floats: those don't touch
-                    // the line that they're on, but it still needs to be dirtied. This is
-                    // accomplished by pretending they have a height of 1.
-                    logicalBottom = std::max(logicalBottom, logicalTop + 1);
-                }
-                markLinesDirtyInBlockRange(0, logicalBottom);
-            }
-            m_floatingObjects->remove(&floatingObject);
-        }
-    }
+    auto& floatingObjectSet = m_floatingObjects->set();
+    auto it = floatingObjectSet.find<FloatingObjectHashTranslator>(floatBox);
+    if (it != floatingObjectSet.end())
+        m_floatingObjects->remove(it->get());
 }
 
 void RenderBlockFlow::removeFloatingObjectsBelow(FloatingObject* lastFloat, int logicalOffset)
@@ -3302,30 +3238,6 @@ void RenderBlockFlow::addOverflowFromInlineChildren()
         legacyLineLayout()->addOverflowFromInlineChildren();
 }
 
-void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit logicalBottom, LegacyRootInlineBox* highest)
-{
-    if (logicalTop >= logicalBottom)
-        return;
-
-    // Floats currently affect the choice of layout path.
-    if (modernLineLayout()) {
-        invalidateLineLayoutPath();
-        return;
-    }
-
-    LegacyRootInlineBox* lowestDirtyLine = lastRootBox();
-    LegacyRootInlineBox* afterLowest = lowestDirtyLine;
-    while (lowestDirtyLine && lowestDirtyLine->lineBoxBottom() >= logicalBottom && logicalBottom < LayoutUnit::max()) {
-        afterLowest = lowestDirtyLine;
-        lowestDirtyLine = lowestDirtyLine->prevRootBox();
-    }
-
-    while (afterLowest && afterLowest != highest && (afterLowest->lineBoxBottom() >= logicalTop || afterLowest->lineBoxBottom() < 0)) {
-        afterLowest->markDirty();
-        afterLowest = afterLowest->prevRootBox();
-    }
-}
-
 std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
 {
     if (isWritingModeRoot() && !isGridItem() && !isFlexItem())
@@ -3928,7 +3840,7 @@ bool RenderBlockFlow::hasLines() const
     return childrenInline() ? lineCount() : false;
 }
 
-void RenderBlockFlow::invalidateLineLayoutPath()
+void RenderBlockFlow::invalidateLineLayoutPath(InvalidationReason invalidationReason)
 {
     switch (lineLayoutPath()) {
     case UndeterminedPath:
@@ -3941,15 +3853,20 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         // FIXME: Implement partial invalidation.
         if (modernLineLayout()) {
             m_previousModernLineLayoutContentBoxLogicalHeight = modernLineLayout()->contentBoxLogicalHeight();
-            // Since we eagerly remove the display content here, repaints issued between this invalidation (triggered by style change/content mutation) and the subsequent layout would produce empty rects.
-            repaint();
-            for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
-                auto& renderer = *walker.current();
-                if (!renderer.everHadLayout())
-                    continue;
-                if (!renderer.isInFlow() && modernLineLayout()->contains(downcast<RenderElement>(renderer)))
-                    renderer.repaint();
-                renderer.setPreferredLogicalWidthsDirty(true);
+            if (invalidationReason != InvalidationReason::InsertionOrRemoval) {
+                auto repaintAndSetNeedsLayoutIncludingOutOfFlowBoxes = [&] {
+                    // Since we eagerly remove the display content here, repaints issued between this invalidation (triggered by style change/content mutation) and the subsequent layout would produce empty rects.
+                    repaint();
+                    for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
+                        auto& renderer = *walker.current();
+                        if (!renderer.everHadLayout())
+                            continue;
+                        if (!renderer.isInFlow() && modernLineLayout()->contains(downcast<RenderElement>(renderer)))
+                            renderer.repaint();
+                        renderer.setPreferredLogicalWidthsDirty(true);
+                    }
+                };
+                repaintAndSetNeedsLayoutIncludingOutOfFlowBoxes();
             }
         }
         auto path = UndeterminedPath;
@@ -3993,9 +3910,20 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         if (childNeedsPreferredWidthComputation)
             renderer.setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
 
-        if (renderer.isOutOfFlowPositioned())
+        if (renderer.isOutOfFlowPositioned()) {
             renderer.containingBlock()->insertPositionedObject(*box);
-        else
+            // FIXME: This is only needed because of the synchronous layout call in setStaticPositionsForSimpleOutOfFlowContent
+            // which itself appears to be a workaround for a bad subtree layout shown by
+            // fast/block/positioning/static_out_of_flow_inside_layout_boundary.html
+            auto hasParentRelativeHeightOrTop = [&] {
+                auto& style = renderer.style();
+                if (style.logicalHeight().isPercentOrCalculated() || style.logicalTop().isPercentOrCalculated())
+                    return true;
+                return !renderer.style().logicalBottom().isAuto();
+            }();
+            if (hasParentRelativeHeightOrTop)
+                hasSimpleOutOfFlowContentOnly = false;
+        } else
             hasSimpleOutOfFlowContentOnly = false;
 
         if (!renderer.needsLayout() && !renderer.preferredLogicalWidthsDirty())
@@ -4445,8 +4373,7 @@ LayoutOptionalOutsets RenderBlockFlow::allowedLayoutOverflow() const
 {
     LayoutOptionalOutsets allowance = RenderBox::allowedLayoutOverflow();
 
-    auto alignment = style().alignContent();
-    if (!alignment.isNormal() && OverflowAlignment::Unsafe == alignment.overflow()) {
+    if (style().alignContent().position() != ContentPosition::Normal) {
         if (hasRareBlockFlowData()) {
             if (isHorizontalWritingMode())
                 allowance.setTop(-rareBlockFlowData()->m_alignContentShift);

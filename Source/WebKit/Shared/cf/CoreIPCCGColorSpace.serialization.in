@@ -27,5 +27,6 @@ webkit_platform_headers: "CoreIPCCGColorSpace.h"
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCCGColorSpace {
     CGColorSpaceSerialization m_cgColorSpace;
 }
+using CGColorSpaceSerialization = std::variant<WebCore::ColorSpace, RetainPtr<CFStringRef>, RetainPtr<CFTypeRef>>;
 
 #endif

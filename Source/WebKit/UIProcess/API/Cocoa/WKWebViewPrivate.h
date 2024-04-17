@@ -231,6 +231,7 @@ for this property.
 - (void)_evaluateJavaScriptWithoutUserGesture:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler WK_API_AVAILABLE(macos(10.13), ios(11.0));
 - (void)_evaluateJavaScript:(NSString *)javaScriptString inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError * error))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 - (void)_evaluateJavaScript:(NSString *)javaScriptString withSourceURL:(NSURL *)sourceURL inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError * error))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
+- (void)_evaluateJavaScript:(NSString *)javaScriptString withSourceURL:(NSURL *)url inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld withUserGesture:(BOOL)withUserGesture completionHandler:(void (^)(id, NSError *error))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_callAsyncJavaScript:(NSString *)functionBody arguments:(NSDictionary<NSString *, id> *)arguments inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 - (BOOL)_allMediaPresentationsClosed WK_API_AVAILABLE(macos(12.0), ios(15.0));
@@ -394,6 +395,10 @@ for this property.
 - (void)_restoreAndScrollToAppHighlight:(NSData *)highlight WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (void)_addAppHighlight WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (void)_addAppHighlightInNewGroup:(BOOL)newGroup originatedInApp:(BOOL)originatedInApp WK_API_AVAILABLE(macos(12.0), ios(15.0));
+
+- (NSUUID *)_enableTextIndicatorStylingAfterElementWithID:(NSString *)elementID WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (NSUUID *)_enableTextIndicatorStylingForElementWithID:(NSString *)elementID WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_disableTextIndicatorStylingWithUUID:(NSUUID *)nsUUID WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // FIXME: Remove old `-[WKWebView _themeColor]` SPI <rdar://76662644>
 #if TARGET_OS_IPHONE
@@ -674,6 +679,12 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 - (UITextInputTraits *)_textInputTraits WK_API_AVAILABLE(ios(16.4));
 
 @end
+
+#if TARGET_OS_VISION
+@interface WKWebView (WKPrivateVision)
+@property (copy, setter=_setDefaultSTSLabel:) NSString *_defaultSTSLabel;
+@end
+#endif
 
 @interface WKWebView () <UIResponderStandardEditActions>
 @end

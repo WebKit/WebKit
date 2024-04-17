@@ -150,7 +150,7 @@ Usage: $programName [options] [options to pass to build system]
 
   --[no-]use-ccache                 Enable (or disable) CCache, if available
 
-  --export-compile-commands         Generate compile_commands.json (Apple platforms only)
+  --export-compile-commands         Generate compile_commands.json (Xcode builds only)
 
 EOF
 

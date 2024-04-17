@@ -1418,7 +1418,8 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     // ::view-transition-new element. Move the parent graphics layer rect to our
     // position so that layer positions are computed relative to our origin.
     if (renderer().capturedInViewTransition()) {
-        ComputedOffsets computedOffsets(m_owningLayer, compositedAncestor, compositedBounds(), { }, { });
+        auto bounds = m_owningLayer.localBoundingBox({ RenderLayer::DontConstrainForMask , RenderLayer::IncludeRootBackgroundPaintingArea });
+        ComputedOffsets computedOffsets(m_owningLayer, compositedAncestor, bounds, { }, { });
         parentGraphicsLayerRect.move(computedOffsets.fromParentGraphicsLayer());
     }
 

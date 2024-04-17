@@ -740,9 +740,7 @@ void MediaPlayerPrivateAVFoundation::configureInbandTracks()
 {
     RefPtr<InbandTextTrackPrivateAVF> trackToEnable;
     
-#if ENABLE(AVF_CAPTIONS)
     synchronizeTextTrackState();
-#endif
 
     // AVFoundation can only emit cues for one track at a time, so enable the first track that is showing, or the first that
     // is hidden if none are showing. Otherwise disable all tracks.
@@ -795,10 +793,8 @@ void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector
     for (unsigned i = 0; i < trackCount; ++i) {
         RefPtr<InbandTextTrackPrivateAVF> track = m_textTracks[i];
 
-#if ENABLE(AVF_CAPTIONS)
         if (track->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand)
             continue;
-#endif
 
         track->setTextTrackIndex(inBandCount);
         ++inBandCount;

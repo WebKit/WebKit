@@ -44,6 +44,7 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS LMPlayableViewController;
 OBJC_CLASS WKLayerHostView;
 OBJC_CLASS WKVideoView;
 OBJC_CLASS WebAVPlayerLayer;
@@ -191,6 +192,10 @@ public:
     RetainPtr<WKVideoView> createViewWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
 #endif
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    LMPlayableViewController *playableViewController(PlaybackSessionContextIdentifier) const;
+#endif
+
     PlatformLayerContainer createLayerWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
 
     void willRemoveLayerForID(PlaybackSessionContextIdentifier);
@@ -227,6 +232,8 @@ private:
     void preparedToReturnToInline(PlaybackSessionContextIdentifier, bool visible, WebCore::FloatRect inlineRect);
     void preparedToExitFullscreen(PlaybackSessionContextIdentifier);
     void exitFullscreenWithoutAnimationToMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void setVideoFullscreenMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void clearVideoFullscreenMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void setPlayerIdentifier(PlaybackSessionContextIdentifier, std::optional<WebCore::MediaPlayerIdentifier>);
     void textTrackRepresentationUpdate(PlaybackSessionContextIdentifier, WebCore::ShareableBitmap::Handle&& textTrack);
     void textTrackRepresentationSetContentsScale(PlaybackSessionContextIdentifier, float scale);

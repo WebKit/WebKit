@@ -1095,12 +1095,14 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='release')
+        command = ['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--release', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'] + self.commandExtra
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--release', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'] + self.commandExtra,
+                        command=['/bin/sh', '-c', ' '.join(command) + ' 2>&1 | python3 Tools/Scripts/filter-jsc-tests.py'],
                         logfiles={'json': self.jsonFileName},
-                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
+                        timeout=72000,
                         )
             + 0,
         )
@@ -1109,12 +1111,14 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='debug')
+        command = ['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--debug', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'] + self.commandExtra
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--debug', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'] + self.commandExtra,
+                        command=['/bin/sh', '-c', ' '.join(command) + ' 2>&1 | python3 Tools/Scripts/filter-jsc-tests.py'],
                         logfiles={'json': self.jsonFileName},
-                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
+                        timeout=72000,
                         )
             + ExpectShell.log('stdio', stdout='Results for JSC stress tests:\n 9 failures found.')
             + 2,
@@ -1648,7 +1652,8 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 logEnviron=True,
                 logfiles={'json': self.jsonFileName},
-                command=['python3', 'Tools/Scripts/run-webdriver-tests', '--json-output=webdriver_tests.json', '--release'],
+                command=['/bin/sh', '-c', 'python3 Tools/Scripts/run-webdriver-tests --json-output=webdriver_tests.json --release > logs.txt 2>&1'],
+                timeout=5400
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='webdriver-tests')
@@ -1663,7 +1668,8 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 logEnviron=True,
                 logfiles={'json': self.jsonFileName},
-                command=['python3', 'Tools/Scripts/run-webdriver-tests', '--json-output=webdriver_tests.json', '--release'],
+                command=['/bin/sh', '-c', 'python3 Tools/Scripts/run-webdriver-tests --json-output=webdriver_tests.json --release > logs.txt 2>&1'],
+                timeout=5400
             ) + 1,
         )
         self.expectOutcome(result=FAILURE, state_string='webdriver-tests (failure)')

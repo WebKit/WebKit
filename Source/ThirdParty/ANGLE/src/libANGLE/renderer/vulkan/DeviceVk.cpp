@@ -15,7 +15,7 @@
 #include "common/vulkan/vulkan_icd.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
@@ -58,7 +58,7 @@ egl::Error DeviceVk::initialize()
 
 egl::Error DeviceVk::getAttribute(const egl::Display *display, EGLint attribute, void **outValue)
 {
-    RendererVk *renderer =
+    vk::Renderer *renderer =
         static_cast<rx::DisplayVk *>(display->getImplementation())->getRenderer();
     ASSERT(mRenderer == nullptr || mRenderer == renderer);
     mRenderer = renderer;

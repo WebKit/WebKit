@@ -149,7 +149,11 @@ private:
     void cacheGradient(Ref<WebCore::Gradient>&&);
     void cacheFilter(Ref<WebCore::Filter>&&);
     void cacheFont(const WebCore::Font::Attributes&, WebCore::FontPlatformDataAttributes, std::optional<WebCore::RenderingResourceIdentifier>);
+#if PLATFORM(COCOA)
+    void cacheFontCustomPlatformData(WebCore::FontCustomPlatformSerializedData&&);
+#else
     void cacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData>&&);
+#endif
     void releaseAllDrawingResources();
     void releaseAllImageResources();
     void releaseRenderingResource(WebCore::RenderingResourceIdentifier);
@@ -181,6 +185,8 @@ private:
 
     void createDisplayListRecorder(RefPtr<WebCore::ImageBuffer>, WebCore::RenderingResourceIdentifier);
     void releaseDisplayListRecorder(WebCore::RenderingResourceIdentifier);
+
+    bool shouldUseLockdownFontParser() const;
 
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     Ref<IPC::StreamServerConnection> m_streamConnection;

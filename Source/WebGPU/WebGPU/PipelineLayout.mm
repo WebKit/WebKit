@@ -288,7 +288,7 @@ NSString* PipelineLayout::errorValidatingBindGroupCompatibility(const PipelineLa
 
     for (size_t bindGroupIndex = vertexStageInBufferCount; bindGroupIndex < numberOfBindGroupsInPipeline; ++bindGroupIndex) {
         auto it = bindGroups.find(bindGroupIndex);
-        if (it == bindGroups.end())
+        if (it == bindGroups.end() || !it->value.get())
             return [NSString stringWithFormat:@"can not find bind group in pipeline for bindGroup index %zu", bindGroupIndex];
 
         auto* setBindGroupLayout = it->value->bindGroupLayout();

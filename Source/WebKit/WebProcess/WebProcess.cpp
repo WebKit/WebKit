@@ -109,7 +109,6 @@
 #include <WebCore/GCController.h>
 #include <WebCore/GlyphPage.h>
 #include <WebCore/HTMLMediaElement.h>
-#include <WebCore/JSLocalDOMWindow.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrame.h>
@@ -172,10 +171,6 @@
 
 #if HAVE(DISPLAY_LINK)
 #include <WebCore/DisplayRefreshMonitorManager.h>
-#endif
-
-#if USE(RUNNINGBOARD)
-#include "WebSQLiteDatabaseTracker.h"
 #endif
 
 #if ENABLE(NOTIFICATIONS)
@@ -309,9 +304,6 @@ WebProcess::WebProcess()
     , m_dnsPrefetchHystereris([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
     , m_nonVisibleProcessMemoryCleanupTimer(*this, &WebProcess::nonVisibleProcessMemoryCleanupTimerFired)
-#endif
-#if USE(RUNNINGBOARD)
-    , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(isHoldingLockedFiles), 0); })
 #endif
 {
     // Initialize our platform strategies.
@@ -1643,11 +1635,6 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estim
     destroyRenderingResources();
 #endif
 
-#if USE(RUNNINGBOARD)
-    m_webSQLiteDatabaseTracker.setIsSuspended(true);
-    SQLiteDatabase::setIsDatabaseOpeningForbidden(true);
-#endif
-
 #if PLATFORM(IOS_FAMILY)
     accessibilityRelayProcessSuspended(true);
     updateFreezerStatus();
@@ -1721,11 +1708,6 @@ void WebProcess::processDidResume()
 
     cancelMarkAllLayersVolatile();
     unfreezeAllLayerTrees();
-    
-#if USE(RUNNINGBOARD)
-    m_webSQLiteDatabaseTracker.setIsSuspended(false);
-    SQLiteDatabase::setIsDatabaseOpeningForbidden(false);
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     accessibilityRelayProcessSuspended(false);
@@ -2387,21 +2369,6 @@ void WebProcess::setNetworkProcessConnectionID(IPC::Connection::UniqueID uniqueI
     Locker lock { m_lockNetworkProcessConnectionID };
     m_networkProcessConnectionID = uniqueID;
 
-}
-
-void WebProcess::addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&& firstPartyForCookies)
-{
-    if (!HashSet<WebCore::RegistrableDomain>::isValidValue(firstPartyForCookies))
-        return;
-
-    m_allowedFirstPartiesForCookies.add(WTFMove(firstPartyForCookies));
-}
-
-bool WebProcess::allowsFirstPartyForCookies(const URL& firstParty)
-{
-    return AuxiliaryProcess::allowsFirstPartyForCookies(firstParty, [&] {
-        return AuxiliaryProcess::allowsFirstPartyForCookies(WebCore::RegistrableDomain { firstParty }, m_allowedFirstPartiesForCookies);
-    });
 }
 
 WebTransportSession* WebProcess::webTransportSession(WebTransportSessionIdentifier identifier)

@@ -61,7 +61,9 @@ struct UpdateScrollInfoAfterLayoutTransaction {
     SingleThreadWeakHashSet<RenderBlock> blocks;
 };
 
-class LocalFrameViewLayoutContext : public CanMakeCheckedPtr {
+class LocalFrameViewLayoutContext final : public CanMakeCheckedPtr<LocalFrameViewLayoutContext> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LocalFrameViewLayoutContext);
 public:
     LocalFrameViewLayoutContext(LocalFrameView&);
     ~LocalFrameViewLayoutContext();

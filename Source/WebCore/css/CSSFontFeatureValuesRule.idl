@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,7 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// https://www.w3.org/TR/css-fonts-4/#cssfontfeaturevaluesrule
+// https://drafts.csswg.org/css-fonts/#cssfontfeaturevaluesrule
 
 typedef USVString CSSOMString;
 

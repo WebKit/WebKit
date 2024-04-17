@@ -42,12 +42,12 @@
 namespace WebKit {
 namespace NetworkCache {
 
-Data::Data(const uint8_t* data, size_t size)
-    : m_size(size)
+Data::Data(std::span<const uint8_t> data)
+    : m_size(data.size())
 {
-    uint8_t* copiedData = static_cast<uint8_t*>(fastMalloc(size));
-    memcpy(copiedData, data, size);
-    m_buffer = adoptGRef(g_bytes_new_with_free_func(copiedData, size, fastFree, copiedData));
+    uint8_t* copiedData = static_cast<uint8_t*>(fastMalloc(data.size()));
+    memcpy(copiedData, data.data(), data.size());
+    m_buffer = adoptGRef(g_bytes_new_with_free_func(copiedData, data.size(), fastFree, copiedData));
 }
 
 Data::Data(GRefPtr<GBytes>&& buffer, FileSystem::PlatformFileHandle fd)

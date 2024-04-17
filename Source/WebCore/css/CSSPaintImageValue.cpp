@@ -27,8 +27,6 @@
 #include "config.h"
 #include "CSSPaintImageValue.h"
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "CSSVariableData.h"
 #include "StylePaintImage.h"
 #include <wtf/text/StringBuilder.h>
@@ -56,5 +54,3 @@ RefPtr<StyleImage> CSSPaintImageValue::createStyleImage(Style::BuilderState&) co
 }
 
 } // namespace WebCore
-
-#endif

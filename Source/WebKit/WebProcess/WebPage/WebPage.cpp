@@ -230,7 +230,6 @@
 #include <WebCore/ImageOverlay.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/JSDOMExceptionHandling.h>
-#include <WebCore/JSLocalDOMWindow.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LocalFrame.h>
@@ -1495,7 +1494,7 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
             result.postLayoutData = std::optional<EditorState::PostLayoutData> { EditorState::PostLayoutData { } };
         result.postLayoutData->canCut = editor.canCut();
         result.postLayoutData->canCopy = editor.canCopy();
-        result.postLayoutData->canPaste = editor.canPaste();
+        result.postLayoutData->canPaste = editor.canEdit();
 
         if (!result.visualData)
             result.visualData = std::optional<EditorState::VisualData> { EditorState::VisualData { } };
@@ -1908,6 +1907,8 @@ void WebPage::close()
     m_viewGestureGeometryCollector = nullptr;
 #endif
 
+    stopObservingNowPlayingMetadata();
+
     // The WebPage can be destroyed by this call.
     WebProcess::singleton().removeWebPage(m_identifier);
 
@@ -2128,8 +2129,6 @@ void WebPage::loadAlternateHTML(LoadParameters&& loadParameters)
     URL provisionalLoadErrorURL = loadParameters.provisionalLoadErrorURLString.isEmpty() ? URL() : URL { loadParameters.provisionalLoadErrorURLString };
     auto sharedBuffer = SharedBuffer::create(loadParameters.data);
     m_mainFrame->coreLocalFrame()->loader().setProvisionalLoadErrorBeingHandledURL(provisionalLoadErrorURL);
-
-    WebProcess::singleton().addAllowedFirstPartyForCookies(WebCore::RegistrableDomain { baseURL });
 
     ResourceResponse response(URL(), loadParameters.MIMEType, sharedBuffer->size(), loadParameters.encodingName);
     loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), ResourceRequest(baseURL), WTFMove(response), unreachableURL, loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, WebCore::SubstituteData::SessionHistoryVisibility::Hidden);
@@ -6607,7 +6606,7 @@ void WebPage::handleAlternativeTextUIResult(const String& result)
 }
 #endif
 
-void WebPage::setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length, bool suppressUnderline, const Vector<CompositionHighlight>& highlights, const HashMap<String, Vector<WebCore::CharacterRange>>& annotations)
+void WebPage::setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length, bool suppressUnderline, const Vector<CompositionHighlight>& highlights)
 {
     RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
     if (!frame)
@@ -6620,7 +6619,7 @@ void WebPage::setCompositionForTesting(const String& compositionString, uint64_t
     if (!suppressUnderline)
         underlines.append(CompositionUnderline(0, compositionString.length(), CompositionUnderlineColor::TextColor, Color(Color::black), false));
 
-    frame->editor().setComposition(compositionString, underlines, highlights, annotations, from, from + length);
+    frame->editor().setComposition(compositionString, underlines, highlights, from, from + length);
 }
 
 bool WebPage::hasCompositionForTesting()
@@ -6875,7 +6874,7 @@ void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, 
     completionHandler(rect, editingRange);
 }
 
-void WebPage::setCompositionAsync(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const HashMap<String, Vector<CharacterRange>>& annotations, const EditingRange& selection, const EditingRange& replacementEditingRange)
+void WebPage::setCompositionAsync(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const EditingRange& selection, const EditingRange& replacementEditingRange)
 {
     platformWillPerformEditingCommand();
 
@@ -6888,8 +6887,19 @@ void WebPage::setCompositionAsync(const String& text, const Vector<CompositionUn
             if (auto replacementRange = EditingRange::toRange(*frame, replacementEditingRange))
                 frame->selection().setSelection(VisibleSelection(*replacementRange));
         }
-        frame->editor().setComposition(text, underlines, highlights, annotations, selection.location, selection.location + selection.length);
+        frame->editor().setComposition(text, underlines, highlights, selection.location, selection.location + selection.length);
     }
+}
+
+void WebPage::setWritingSuggestion(const String& fullTextWithPrediction, const EditingRange& selection)
+{
+    platformWillPerformEditingCommand();
+
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    frame->editor().setWritingSuggestion(fullTextWithPrediction, { selection.location, selection.length });
 }
 
 void WebPage::confirmCompositionAsync()
@@ -7866,6 +7876,13 @@ void WebPage::postMessage(const String& messageName, API::Object* messageBody)
     send(Messages::WebPageProxy::HandleMessage(messageName, UserData(WebProcess::singleton().transformObjectsToHandles(messageBody))));
 }
 
+void WebPage::postMessageWithAsyncReply(const String& messageName, API::Object* messageBody, CompletionHandler<void(API::Object*)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPageProxy::HandleMessageWithAsyncReply(messageName, UserData(messageBody)), [completionHandler = WTFMove(completionHandler)] (UserData reply) mutable {
+        completionHandler(reply.object());
+    });
+}
+
 void WebPage::postMessageIgnoringFullySynchronousMode(const String& messageName, API::Object* messageBody)
 {
     send(Messages::WebPageProxy::HandleMessage(messageName, UserData(WebProcess::singleton().transformObjectsToHandles(messageBody))), IPC::SendOption::IgnoreFullySynchronousMode);
@@ -8287,7 +8304,7 @@ void WebPage::insertAttachment(const String& identifier, std::optional<uint64_t>
 void WebPage::updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::SharedBufferReference& associatedElementData, CompletionHandler<void()>&& callback)
 {
     if (RefPtr attachment = attachmentElementWithIdentifier(identifier)) {
-        attachment->document().updateLayout();
+        attachment->protectedDocument()->updateLayout();
         attachment->updateAttributes(WTFMove(fileSize), AtomString { contentType }, AtomString { fileName });
         attachment->updateAssociatedElementWithData(contentType, associatedElementData.isNull() ? WebCore::SharedBuffer::create() : associatedElementData.unsafeBuffer().releaseNonNull());
     }
@@ -9030,6 +9047,15 @@ void WebPage::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&& comp
     return completionHandler(mainFrame->document()->loader()->lastNavigationWasAppInitiated());
 }
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
+void WebPage::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
+{
+    send(Messages::WebPageProxy::RemoveTextIndicatorStyleForID(uuid));
+}
+
+#endif
+
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
 void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& info)
@@ -9445,6 +9471,41 @@ void WebPage::numberOfVisibilityAdjustmentRects(CompletionHandler<void(uint64_t)
 {
     RefPtr page = corePage();
     completion(page ? page->checkedElementTargetingController()->numberOfVisibilityAdjustmentRects() : 0);
+}
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void WebPage::setDefaultSpatialTrackingLabel(const String& label)
+{
+    if (RefPtr page = corePage())
+        page->setDefaultSpatialTrackingLabel(label);
+}
+#endif
+
+void WebPage::startObservingNowPlayingMetadata()
+{
+    if (m_nowPlayingMetadataObserver)
+        return;
+
+    m_nowPlayingMetadataObserver = makeUnique<NowPlayingMetadataObserver>([weakThis = WeakPtr { *this }](auto& metadata) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->send(Messages::WebPageProxy::NowPlayingMetadataChanged { metadata });
+    });
+
+    WebCore::PlatformMediaSessionManager::sharedManager().addNowPlayingMetadataObserver(*m_nowPlayingMetadataObserver);
+}
+
+void WebPage::stopObservingNowPlayingMetadata()
+{
+    auto nowPlayingMetadataObserver = std::exchange(m_nowPlayingMetadataObserver, nullptr);
+    if (!nowPlayingMetadataObserver)
+        return;
+
+    WebCore::PlatformMediaSessionManager::sharedManager().removeNowPlayingMetadataObserver(*nowPlayingMetadataObserver);
+}
+
+void WebPage::didAdjustVisibilityWithSelectors(Vector<String>&& selectors)
+{
+    send(Messages::WebPageProxy::DidAdjustVisibilityWithSelectors(WTFMove(selectors)));
 }
 
 } // namespace WebKit

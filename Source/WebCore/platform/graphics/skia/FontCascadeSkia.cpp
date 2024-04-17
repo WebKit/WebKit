@@ -52,12 +52,21 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     auto blob = builder.make();
     auto* canvas = graphicsContext.platformContext();
     auto* skiaGraphicsContext = static_cast<GraphicsContextSkia*>(&graphicsContext);
-    SkPaint paint = skiaGraphicsContext->createFillPaint();
-    paint.setAntiAlias(font.allowsAntialiasing());
-    paint.setImageFilter(skiaGraphicsContext->createDropShadowFilterIfNeeded(GraphicsContextSkia::ShadowStyle::Outset));
-    paint.setColor(SkColor(skiaGraphicsContext->fillColor().colorWithAlphaMultipliedBy(skiaGraphicsContext->alpha())));
 
-    canvas->drawTextBlob(blob, SkFloatToScalar(position.x()), SkFloatToScalar(position.y()), paint);
+    if (graphicsContext.textDrawingMode().contains(TextDrawingMode::Fill)) {
+        SkPaint paint = skiaGraphicsContext->createFillPaint();
+        paint.setAntiAlias(font.allowsAntialiasing());
+        paint.setImageFilter(skiaGraphicsContext->createDropShadowFilterIfNeeded(GraphicsContextSkia::ShadowStyle::Outset));
+        skiaGraphicsContext->setupFillSource(paint);
+        canvas->drawTextBlob(blob, SkFloatToScalar(position.x()), SkFloatToScalar(position.y()), paint);
+    }
+
+    if (graphicsContext.textDrawingMode().contains(TextDrawingMode::Stroke)) {
+        SkPaint paint = skiaGraphicsContext->createStrokePaint();
+        paint.setAntiAlias(font.allowsAntialiasing());
+        skiaGraphicsContext->setupStrokeSource(paint);
+        canvas->drawTextBlob(blob, SkFloatToScalar(position.x()), SkFloatToScalar(position.y()), paint);
+    }
 }
 
 bool FontCascade::canReturnFallbackFontsForComplexText()

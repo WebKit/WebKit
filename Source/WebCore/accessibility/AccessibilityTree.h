@@ -35,12 +35,12 @@ namespace WebCore {
     
 class AccessibilityTree final : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilityTree> create(RenderObject*);
+    static Ref<AccessibilityTree> create(RenderObject&);
     static Ref<AccessibilityTree> create(Node&);
     virtual ~AccessibilityTree();
 
 private:
-    explicit AccessibilityTree(RenderObject*);
+    explicit AccessibilityTree(RenderObject&);
     explicit AccessibilityTree(Node&);
     bool computeAccessibilityIsIgnored() const override;
     AccessibilityRole determineAccessibilityRole() override;

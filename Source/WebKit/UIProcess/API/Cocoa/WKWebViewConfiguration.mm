@@ -240,6 +240,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     [coder encodeInteger:self.userInterfaceDirectionPolicy forKey:@"userInterfaceDirectionPolicy"];
 #endif
+    [coder encodeBool:self._scrollToTextFragmentIndicatorEnabled forKey:@"scrollToTextFragmentIndicatorEnabled"];
+    [coder encodeBool:self._scrollToTextFragmentMarkingEnabled forKey:@"scrollToTextFragmentMarkingEnabled"];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder
@@ -284,13 +286,38 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (userInterfaceDirectionPolicyCandidate == WKUserInterfaceDirectionPolicyContent || userInterfaceDirectionPolicyCandidate == WKUserInterfaceDirectionPolicySystem)
         self.userInterfaceDirectionPolicy = userInterfaceDirectionPolicyCandidate;
 #endif
+    self._scrollToTextFragmentIndicatorEnabled = [coder decodeBoolForKey:@"scrollToTextFragmentIndicatorEnabled"];
+    self._scrollToTextFragmentMarkingEnabled = [coder decodeBoolForKey:@"scrollToTextFragmentMarkingEnabled"];
 
     return self;
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return wrapper(_pageConfiguration->copy().leakRef());
+    WKWebViewConfiguration *configuration = [(WKWebViewConfiguration *)[[self class] allocWithZone:zone] init];
+    configuration->_pageConfiguration->copyDataFrom(*_pageConfiguration);
+    return configuration;
+}
+
+- (void)setValue:(id)value forKey:(NSString *)key
+{
+    if (([key isEqualToString:@"allowUniversalAccessFromFileURLs"] || [key isEqualToString:@"_allowUniversalAccessFromFileURLs"]) && [value isKindOfClass:[NSNumber class]] && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ThrowOnKVCInstanceVariableAccess)) {
+        RELEASE_LOG_FAULT(API, "Do not mutate private state `%{public}@` via KVC. Doing this when linking against newer SDKs will result in a crash.", key);
+        [self _setAllowUniversalAccessFromFileURLs:[(NSNumber *)value boolValue]];
+        return;
+    }
+
+    [super setValue:value forKey:key];
+}
+
+- (id)valueForKey:(NSString *)key
+{
+    if (([key isEqualToString:@"allowUniversalAccessFromFileURLs"] || [key isEqualToString:@"_allowUniversalAccessFromFileURLs"]) && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ThrowOnKVCInstanceVariableAccess)) {
+        RELEASE_LOG_FAULT(API, "Do not access private state `%{public}@` via KVC. Doing this when linking against newer SDKs will result in a crash.", key);
+        return @([self _allowUniversalAccessFromFileURLs]);
+    }
+
+    return [super valueForKey:key];
 }
 
 - (WKProcessPool *)processPool
@@ -1170,6 +1197,26 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 #if ENABLE(APPLE_PAY)
     _pageConfiguration->setApplePayEnabled(applePayEnabled);
 #endif
+}
+
+- (BOOL)_scrollToTextFragmentIndicatorEnabled
+{
+    return _pageConfiguration->scrollToTextFragmentIndicatorEnabled();
+}
+
+- (void)_setScrollToTextFragmentIndicatorEnabled:(BOOL)enabled
+{
+    _pageConfiguration->setScrollToTextFragmentIndicatorEnabled(enabled);
+}
+
+- (BOOL)_scrollToTextFragmentMarkingEnabled
+{
+    return _pageConfiguration->scrollToTextFragmentMarkingEnabled();
+}
+
+- (void)_setScrollToTextFragmentMarkingEnabled:(BOOL)enabled
+{
+    _pageConfiguration->setScrollToTextFragmentMarkingEnabled(enabled);
 }
 
 - (BOOL)_needsStorageAccessFromFileURLsQuirk

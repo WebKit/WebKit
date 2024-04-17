@@ -115,7 +115,7 @@ inline void LoadToNative3To4(const ImageLoadContext &context,
                                outputDepthPitch);
 }
 
-inline void LoadToNativeUbyte3To4Impl(const ImageLoadContext &context,
+inline void LoadToNativeByte3To4Impl(const ImageLoadContext &context,
                                       const uint8_t fourthValue,
                                       size_t width,
                                       size_t height,
@@ -127,6 +127,7 @@ inline void LoadToNativeUbyte3To4Impl(const ImageLoadContext &context,
                                       size_t outputRowPitch,
                                       size_t outputDepthPitch)
 {
+    // This function is used for both signed and unsigned byte copies.
     ASSERT(IsLittleEndian());
     uint32_t fourthValue32 = static_cast<uint32_t>(fourthValue) << 24;
 
@@ -235,7 +236,55 @@ inline void LoadToNative3To4<uint8_t, 0xFF>(const ImageLoadContext &context,
                                             size_t outputRowPitch,
                                             size_t outputDepthPitch)
 {
-    LoadToNativeUbyte3To4Impl(context, 0xFF, width, height, depth, input, inputRowPitch,
+    LoadToNativeByte3To4Impl(context, 0xFF, width, height, depth, input, inputRowPitch,
+                              inputDepthPitch, output, outputRowPitch, outputDepthPitch);
+}
+
+template <>
+inline void LoadToNative3To4<uint8_t, 0x01>(const ImageLoadContext &context,
+                                            size_t width,
+                                            size_t height,
+                                            size_t depth,
+                                            const uint8_t *input,
+                                            size_t inputRowPitch,
+                                            size_t inputDepthPitch,
+                                            uint8_t *output,
+                                            size_t outputRowPitch,
+                                            size_t outputDepthPitch)
+{
+    LoadToNativeByte3To4Impl(context, 0x01, width, height, depth, input, inputRowPitch,
+                              inputDepthPitch, output, outputRowPitch, outputDepthPitch);
+}
+
+template <>
+inline void LoadToNative3To4<int8_t, 0x01>(const ImageLoadContext &context,
+                                            size_t width,
+                                            size_t height,
+                                            size_t depth,
+                                            const uint8_t *input,
+                                            size_t inputRowPitch,
+                                            size_t inputDepthPitch,
+                                            uint8_t *output,
+                                            size_t outputRowPitch,
+                                            size_t outputDepthPitch)
+{
+    LoadToNativeByte3To4Impl(context, 0x01, width, height, depth, input, inputRowPitch,
+                              inputDepthPitch, output, outputRowPitch, outputDepthPitch);
+}
+
+template <>
+inline void LoadToNative3To4<int8_t, 0x7F>(const ImageLoadContext &context,
+                                            size_t width,
+                                            size_t height,
+                                            size_t depth,
+                                            const uint8_t *input,
+                                            size_t inputRowPitch,
+                                            size_t inputDepthPitch,
+                                            uint8_t *output,
+                                            size_t outputRowPitch,
+                                            size_t outputDepthPitch)
+{
+    LoadToNativeByte3To4Impl(context, 0x7F, width, height, depth, input, inputRowPitch,
                               inputDepthPitch, output, outputRowPitch, outputDepthPitch);
 }
 

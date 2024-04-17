@@ -30,12 +30,15 @@
 #include "MessagePortIdentifier.h"
 #include "ProcessIdentifier.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 
-class MessagePortChannelRegistry : public CanMakeWeakPtr<MessagePortChannelRegistry>, public CanMakeCheckedPtr {
+class MessagePortChannelRegistry final : public CanMakeWeakPtr<MessagePortChannelRegistry>, public CanMakeCheckedPtr<MessagePortChannelRegistry> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MessagePortChannelRegistry);
 public:
     WEBCORE_EXPORT MessagePortChannelRegistry();
 

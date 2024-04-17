@@ -49,8 +49,9 @@ struct GetByIdModeMetadataUnset {
 static_assert(sizeof(GetByIdModeMetadataUnset) == 12);
 
 struct GetByIdModeMetadataArrayLength {
-    static ptrdiff_t offsetOfArrayProfile() { return OBJECT_OFFSETOF(GetByIdModeMetadataArrayLength, arrayProfile); }
-    ArrayProfile arrayProfile;
+    unsigned padding1;
+    unsigned padding2;
+    unsigned padding3;
 };
 static_assert(sizeof(GetByIdModeMetadataArrayLength) == 12);
 
@@ -140,7 +141,6 @@ inline void GetByIdModeMetadata::setUnsetMode(Structure* structure)
 inline void GetByIdModeMetadata::setArrayLengthMode()
 {
     mode = GetByIdMode::ArrayLength;
-    new (&arrayLengthMode.arrayProfile) ArrayProfile;
     // Prevent the prototype cache from ever happening.
     hitCountForLLIntCaching = 0;
 }

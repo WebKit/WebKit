@@ -28,9 +28,9 @@ cases = [
     ["look\u034Fout.net","lookout.net"],
     // Mapped characters
     ["gOoGle.com","google.com"],
-    // 1E9E; mapped; 0073 0073
-    ["\u1E9E.com","ss.com"],
-    ["\u1E9E.foo.com","ss.foo.com"],
+    // ẞ U+1E9E is mapped to U+00DF which is handled as per above
+    ["\u1E9E.com","xn--zca.com"],
+    ["\u1E9E.foo.com","xn--zca.foo.com"],
 ];
 
 var url = new URL("http://www.webkit.org");

@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.floor.name, "floor");
-
-verifyNotEnumerable(Math.floor, "name");
-verifyNotWritable(Math.floor, "name");
-verifyConfigurable(Math.floor, "name");
+verifyProperty(Math.floor, "name", {
+  value: "floor",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

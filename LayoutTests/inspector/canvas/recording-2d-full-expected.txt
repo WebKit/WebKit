@@ -31,7 +31,7 @@ initialState:
     imageSmoothingQuality: "low"
     setPath: [""]
   parameters:
-    0: {"colorSpace":"srgb","desynchronized":false}
+    0: {"colorSpace":"srgb","desynchronized":false,"willReadFrequently":false}
   content: <filtered>
 frames:
   0: (duration)

@@ -320,11 +320,12 @@ std::optional<audit_token_t> WebProcessProxy::auditToken() const
     return connection()->getAuditToken();
 }
 
-Vector<SandboxExtension::Handle> WebProcessProxy::fontdMachExtensionHandles(SandboxExtension::MachBootstrapOptions machBootstrapOptions) const
+std::optional<Vector<SandboxExtension::Handle>> WebProcessProxy::fontdMachExtensionHandles()
 {
-    return SandboxExtension::createHandlesForMachLookup({ "com.apple.fonts"_s }, auditToken(), machBootstrapOptions);
+    if (std::exchange(m_sentFontdMachExtensionHandles, true))
+        return std::nullopt;
+    return SandboxExtension::createHandlesForMachLookup({ "com.apple.fonts"_s }, auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
 }
-
 
 }
 

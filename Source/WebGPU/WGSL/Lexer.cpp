@@ -35,6 +35,42 @@
 
 namespace WGSL {
 
+static unsigned isIdentifierStart(UChar character, const UChar* start, const UChar* end)
+{
+    if (character == '_')
+        return 1;
+
+    unsigned length = 1;
+    if (end > start + 1 && u_charType(character) == U_SURROGATE)
+        length++;
+    if (u_stringHasBinaryProperty(start, length, UCHAR_XID_START))
+        return length;
+    return 0;
+}
+
+static unsigned isIdentifierContinue(UChar character, const UChar* start, const UChar* end)
+{
+    if (auto length = isIdentifierStart(character, start, end))
+        return length;
+
+    unsigned length = 1;
+    if (end > start + 1 && u_charType(character) == U_SURROGATE)
+        length++;
+    if (u_stringHasBinaryProperty(start, length, UCHAR_XID_CONTINUE))
+        return length;
+    return 0;
+}
+
+static unsigned isIdentifierStart(LChar character, const LChar*, const LChar*)
+{
+    return isASCIIAlpha(character) || character == '_';
+}
+
+static unsigned isIdentifierContinue(LChar character, const LChar*, const LChar*)
+{
+    return isASCIIAlphanumeric(character) || character == '_';
+}
+
 template <typename T>
 Vector<Token> Lexer<T>::lex()
 {
@@ -248,13 +284,20 @@ Token Lexer<T>::nextToken()
     default:
         if (isASCIIDigit(m_current) || m_current == '.')
             return lexNumber();
-        if (isIdentifierStart(m_current)) {
+        if (auto consumed = isIdentifierStart(m_current, m_code, m_codeEnd)) {
+            unsigned length = consumed;
             const T* startOfToken = m_code;
-            shift();
-            while (isIdentifierContinue(m_current))
-                shift();
+            shift(consumed);
+            while (!isAtEndOfFile()) {
+                auto consumed = isIdentifierContinue(m_current, m_code, m_codeEnd);
+                if (!consumed)
+                    break;
+                length += consumed;
+                shift(consumed);
+            }
+
             // FIXME: a trie would be more efficient here, look at JavaScriptCore/KeywordLookupGenerator.py for an example of code autogeneration that produces such a trie.
-            String view(StringImpl::createWithoutCopying(startOfToken, currentTokenLength()));
+            String view(StringImpl::createWithoutCopying({ startOfToken, currentTokenLength() }));
 
             static constexpr std::pair<ComparableASCIILiteral, TokenType> keywordMappings[] {
                 { "_", TokenType::Underbar },
@@ -423,6 +466,11 @@ FOREACH_KEYWORD(MAPPING_ENTRY)
 
             if (UNLIKELY(reservedWordSet.contains(view)))
                 return makeToken(TokenType::ReservedWord);
+
+
+            if (UNLIKELY(length >= 2 && *startOfToken == '_' && *(startOfToken + 1) == '_'))
+                return makeToken(TokenType::Invalid);
+
 
             return makeIdentifierToken(WTFMove(view));
         }
@@ -928,33 +976,33 @@ Token Lexer<T>::lexNumber()
         case 'i': {
             if constexpr (std::is_integral_v<decltype(value)>) {
                 if (auto result = convertInteger<int>(value))
-                    return makeLiteralToken(TokenType::IntegerLiteralSigned, *result);
+                    return makeIntegerToken(TokenType::IntegerLiteralSigned, *result);
             }
-            return makeToken(TokenType::Invalid);
+            break;
         }
         case 'u': {
             if constexpr (std::is_integral_v<decltype(value)>) {
                 if (auto result = convertInteger<unsigned>(value))
-                    return makeLiteralToken(TokenType::IntegerLiteralUnsigned, *result);
+                    return makeIntegerToken(TokenType::IntegerLiteralUnsigned, *result);
             }
             break;
         }
         case 'f': {
             if (auto result = convertFloat<float>(value))
-                return makeLiteralToken(TokenType::FloatLiteral, *result);
+                return makeFloatToken(TokenType::FloatLiteral, *result);
             break;
         }
         case 'h':
             if (auto result = convertFloat<half>(value))
-                return makeLiteralToken(TokenType::HalfLiteral, *result);
+                return makeFloatToken(TokenType::HalfLiteral, *result);
             break;
         default:
             if constexpr (std::is_floating_point_v<decltype(value)>) {
                 if (auto result = convertFloat<double>(value))
-                    return makeLiteralToken(TokenType::AbstractFloatLiteral, *result);
+                    return makeFloatToken(TokenType::AbstractFloatLiteral, *result);
             } else {
                 if (auto result = convertInteger<int64_t>(value))
-                    return makeLiteralToken(TokenType::IntegerLiteral, *result);
+                    return makeIntegerToken(TokenType::IntegerLiteral, *result);
             }
         }
         return makeToken(TokenType::Invalid);
@@ -994,7 +1042,7 @@ Token Lexer<T>::lexNumber()
 
     if (!isHex) {
         size_t parsedLength;
-        double result = parseDouble(integral, m_code - integral, parsedLength);
+        double result = parseDouble(std::span { integral, m_code }, parsedLength);
         ASSERT(integral + parsedLength == end);
         return convert(result);
     }

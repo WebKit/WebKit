@@ -49,25 +49,18 @@
 @property (nonatomic) UIReturnKeyType returnKeyType;
 @property (nonatomic, getter=isSecureTextEntry) BOOL secureTextEntry;
 @property (nonatomic, getter=isSingleLineDocument) BOOL singleLineDocument;
-#if USE(BROWSERENGINEKIT)
 @property (nonatomic, getter=isTypingAdaptationEnabled) BOOL typingAdaptationEnabled;
-#else
-@property (nonatomic) BOOL typingAdaptationDisabled;
-#endif
 @property (nonatomic, copy) UITextContentType textContentType;
 @property (nonatomic, copy) UITextInputPasswordRules *passwordRules;
 @property (nonatomic) UITextSmartInsertDeleteType smartInsertDeleteType;
 @property (nonatomic) BOOL enablesReturnKeyAutomatically;
 
 @property (nonatomic, strong) UIColor *insertionPointColor;
-#if USE(BROWSERENGINEKIT)
 @property (nonatomic, strong) UIColor *selectionHandleColor;
-#else
-@property (nonatomic, strong) UIColor *selectionBarColor;
-#endif
 @property (nonatomic, strong) UIColor *selectionHighlightColor;
 
 - (void)setSelectionColorsToMatchTintColor:(UIColor *)tintColor;
+- (void)restoreDefaultValues;
 
 @end
 

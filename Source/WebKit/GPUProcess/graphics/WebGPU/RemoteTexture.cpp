@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUConnectionToWebProcess.h"
 #include "RemoteTextureMessages.h"
 #include "RemoteTextureView.h"
 #include "StreamServerConnection.h"
@@ -37,13 +38,26 @@
 #include <WebCore/WebGPUTextureView.h>
 #include <WebCore/WebGPUTextureViewDescriptor.h>
 
+#if PLATFORM(COCOA)
+#define MESSAGE_CHECK(assertion) do { \
+    if (UNLIKELY(!(assertion))) { \
+        if (auto connection = m_gpuConnectionToWebProcess.get()) \
+            connection->terminateWebProcess(); \
+        return; \
+    } \
+} while (0)
+#else
+#define MESSAGE_CHECK RELEASE_ASSERT
+#endif
+
 namespace WebKit {
 
-RemoteTexture::RemoteTexture(WebCore::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteTexture::RemoteTexture(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(texture)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
+    , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteTexture::messageReceiverName(), m_identifier.toUInt64());
 }
@@ -60,11 +74,11 @@ void RemoteTexture::createView(const std::optional<WebGPU::TextureViewDescriptor
     std::optional<WebCore::WebGPU::TextureViewDescriptor> convertedDescriptor;
     if (descriptor) {
         auto resultDescriptor = m_objectHeap->convertFromBacking(*descriptor);
-        RELEASE_ASSERT(resultDescriptor);
+        MESSAGE_CHECK(resultDescriptor);
         convertedDescriptor = WTFMove(resultDescriptor);
     }
     auto textureView = m_backing->createView(convertedDescriptor);
-    RELEASE_ASSERT(textureView);
+    MESSAGE_CHECK(textureView);
     auto remoteTextureView = RemoteTextureView::create(textureView.releaseNonNull(), m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap->addObject(identifier, remoteTextureView);
 }
@@ -85,5 +99,7 @@ void RemoteTexture::setLabel(String&& label)
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif // ENABLE(GPU_PROCESS)

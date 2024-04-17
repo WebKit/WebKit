@@ -199,7 +199,7 @@ void MockHidConnection::feedReports()
         if (stagesMatch() && m_configuration.hid->error == Mock::HidError::WrongNonce)
             payload[0]--;
         payload.grow(kHidInitResponseSize);
-        cryptographicallyRandomValues(payload.data() + writePosition, kCtapChannelIdSize);
+        cryptographicallyRandomValues(payload.mutableSpan().subspan(writePosition, kCtapChannelIdSize));
         auto channel = kHidBroadcastChannel;
         if (stagesMatch() && m_configuration.hid->error == Mock::HidError::WrongChannelId)
             channel--;

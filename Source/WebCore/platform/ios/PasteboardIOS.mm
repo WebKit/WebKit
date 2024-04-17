@@ -305,8 +305,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static bool shouldTreatAsAttachmentByDefault(const String& typeIdentifier)
 {
-    auto type = [UTType typeWithIdentifier:typeIdentifier];
-    return [type conformsToType:UTTypeVCard] || [type conformsToType:UTTypePDF];
+    RetainPtr type = [UTType typeWithIdentifier:typeIdentifier];
+    for (UTType *attachmentType : std::array { UTTypeVCard, UTTypePDF, UTTypeCalendarEvent }) {
+        if ([type conformsToType:attachmentType])
+            return true;
+    }
+    return false;
 }
 
 static bool prefersAttachmentRepresentation(const PasteboardItemInfo& info)

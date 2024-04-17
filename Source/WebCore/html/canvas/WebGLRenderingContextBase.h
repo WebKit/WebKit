@@ -244,7 +244,7 @@ public:
 
     RefPtr<WebGLActiveInfo> getActiveAttrib(WebGLProgram&, GCGLuint index);
     RefPtr<WebGLActiveInfo> getActiveUniform(WebGLProgram&, GCGLuint index);
-    std::optional<Vector<RefPtr<WebGLShader>>> getAttachedShaders(WebGLProgram&);
+    std::optional<Vector<Ref<WebGLShader>>> getAttachedShaders(WebGLProgram&);
     GCGLint getAttribLocation(WebGLProgram&, const String& name);
     WebGLAny getBufferParameter(GCGLenum target, GCGLenum pname);
     WEBCORE_EXPORT std::optional<WebGLContextAttributes> getContextAttributes();
@@ -428,7 +428,7 @@ public:
 
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 
-    void reshape(int width, int height) override;
+    void reshape(int width, int height, int oldWidth, int oldHeight) override;
 
     void drawBufferToCanvas(SurfaceBuffer) final;
 

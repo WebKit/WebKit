@@ -111,7 +111,7 @@ bool SQLiteStorageArea::isEmpty()
 
     auto statement = cachedStatement(StatementType::CountItems);
     if (!statement || statement->step() != SQLITE_ROW) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::isEmpty failed on executing statement (%d) - %{%public}s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::isEmpty failed on executing statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         return true;
     }
 
@@ -139,14 +139,14 @@ bool SQLiteStorageArea::createTableIfNecessary()
     // Table exists but statement is wrong; drop it.
     if (!statement.isEmpty()) {
         if (!m_database->executeCommand("DROP TABLE ItemTable"_s)) {
-            RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::createTableIfNecessary failed to drop existing item table (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+            RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::createTableIfNecessary failed to drop existing item table (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
             return false;
         }
     }
 
     // Table does not exist.
     if (!m_database->executeCommand(createItemTableStatement)) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::createTableIfNecessary failed to create item table (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::createTableIfNecessary failed to create item table (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         return false;
     }
 
@@ -255,7 +255,7 @@ Expected<String, StorageError> SQLiteStorageArea::getItemFromDatabase(const Stri
 
     auto statement = cachedStatement(StatementType::GetItem);
     if (!statement || statement->bindText(1, key)) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::getItemFromDatabase failed on creating statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::getItemFromDatabase failed on creating statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         return makeUnexpected(StorageError::Database);
     }
 
@@ -263,7 +263,7 @@ Expected<String, StorageError> SQLiteStorageArea::getItemFromDatabase(const Stri
     if (result == SQLITE_ROW)
         return statement->columnBlobAsString(0);
     if (result != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::getItemFromDatabase failed on stepping statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::getItemFromDatabase failed on stepping statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         handleDatabaseErrorIfNeeded(result);
 
         return makeUnexpected(StorageError::Database);
@@ -298,7 +298,7 @@ HashMap<String, String> SQLiteStorageArea::allItems()
     // Import from database.
     auto statement = cachedStatement(StatementType::GetAllItems);
     if (!statement) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::allItems failed on creating statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::allItems failed on creating statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         return { };
     }
 
@@ -317,7 +317,7 @@ HashMap<String, String> SQLiteStorageArea::allItems()
     }
 
     if (result != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::allItems failed on executing statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::allItems failed on executing statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         handleDatabaseErrorIfNeeded(result);
     }
 
@@ -341,13 +341,13 @@ Expected<void, StorageError> SQLiteStorageArea::setItem(IPC::Connection::UniqueI
 
     auto statement = cachedStatement(StatementType::SetItem);
     if (!statement || statement->bindText(1, key) || statement->bindBlob(2, value)) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::setItem failed on creating statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::setItem failed on creating statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         return makeUnexpected(StorageError::Database);
     }
 
     const auto result = statement->step();
     if (result != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::setItem failed on stepping statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::setItem failed on stepping statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         handleDatabaseErrorIfNeeded(result);
         return makeUnexpected(StorageError::Database);
     }
@@ -377,13 +377,13 @@ Expected<void, StorageError> SQLiteStorageArea::removeItem(IPC::Connection::Uniq
 
     auto statement = cachedStatement(StatementType::DeleteItem);
     if (!statement || statement->bindText(1, key)) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::removeItem failed on creating statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::removeItem failed on creating statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         return makeUnexpected(StorageError::Database);
     }
 
     const auto result = statement->step();
     if (result != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::removeItem failed on executing statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::removeItem failed on executing statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         handleDatabaseErrorIfNeeded(result);
 
         return makeUnexpected(StorageError::Database);
@@ -416,13 +416,13 @@ Expected<void, StorageError> SQLiteStorageArea::clear(IPC::Connection::UniqueID 
     startTransactionIfNecessary();
     auto statement = cachedStatement(StatementType::DeleteAllItems);
     if (!statement) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::clear failed on creating statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::clear failed on creating statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         return makeUnexpected(StorageError::Database);
     }
 
     const auto result = statement->step();
     if (result != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::clear failed on executing statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::clear failed on executing statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         handleDatabaseErrorIfNeeded(result);
 
         return makeUnexpected(StorageError::Database);

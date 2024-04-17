@@ -28,7 +28,6 @@
 #include "Color.h"
 #include "FontCascade.h"
 #include "Length.h"
-#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 

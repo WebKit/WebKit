@@ -37,12 +37,18 @@ function concatTypedArray(type, elems, modulo) {
   assert.compareArray([].concat(ta), expected);
 }
 var max = [Math.pow(2, 8), Math.pow(2, 16), Math.pow(2, 32), false, false];
-[
+var TAs = [
   Uint8Array,
   Uint16Array,
   Uint32Array,
   Float32Array,
   Float64Array
-].forEach(function(ctor, i) {
+];
+if (typeof Float16Array !== 'undefined') {
+  max.push(false);
+  TAs.push(Float16Array);
+}
+
+TAs.forEach(function(ctor, i) {
   concatTypedArray(ctor, 1, max[i]);
 });

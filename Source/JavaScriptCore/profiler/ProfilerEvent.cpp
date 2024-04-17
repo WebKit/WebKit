@@ -55,7 +55,7 @@ Ref<JSON::Value> Event::toJSON(Dumper& dumper) const
         result->setValue(dumper.keys().m_compilationUID, m_compilation->uid().toJSON(dumper));
     result->setString(dumper.keys().m_summary, String::fromUTF8(m_summary));
     if (m_detail.length())
-        result->setString(dumper.keys().m_detail, String::fromUTF8(m_detail));
+        result->setString(dumper.keys().m_detail, String::fromUTF8(m_detail.span()));
 
     return result;
 }

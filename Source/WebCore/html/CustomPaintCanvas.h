@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "AffineTransform.h"
 #include "CanvasBase.h"
 #include "ContextDestructionObserver.h"
@@ -92,4 +90,3 @@ private:
 
 }
 SPECIALIZE_TYPE_TRAITS_CANVAS(WebCore::CustomPaintCanvas, isCustomPaintCanvas())
-#endif

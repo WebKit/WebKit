@@ -360,8 +360,12 @@ public:
 
     virtual void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) { }
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    virtual const String& defaultSpatialTrackingLabel() const { return emptyString(); }
+    virtual void setDefaultSpatialTrackingLabel(const String&) { }
     virtual const String& spatialTrackingLabel() const { return emptyString(); }
-    virtual void setSpatialTrackingLabel(String&&) { }
+    virtual void setSpatialTrackingLabel(const String&) { }
+#endif
 
 protected:
     mutable PlatformTimeRanges m_seekable;

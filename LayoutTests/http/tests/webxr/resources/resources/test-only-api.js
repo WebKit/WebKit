@@ -1,0 +1,1 @@
+../../../../wpt/webxr/resources/test-only-api.js

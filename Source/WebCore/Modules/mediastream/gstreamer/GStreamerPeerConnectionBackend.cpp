@@ -332,7 +332,7 @@ void GStreamerPeerConnectionBackend::dispatchPendingTrackEvents(MediaStream& med
 {
     auto events = WTFMove(m_pendingTrackEvents);
     for (auto& event : events) {
-        event.streams = Vector<RefPtr<MediaStream>>({ &mediaStream });
+        event.streams = Vector<Ref<MediaStream>>({ mediaStream });
         dispatchTrackEvent(event);
     }
 }

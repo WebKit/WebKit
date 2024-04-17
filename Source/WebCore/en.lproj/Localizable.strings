@@ -175,6 +175,9 @@
 /* Allow button title in user media prompt */
 "Allow (usermedia)" = "Allow";
 
+/* Message for requesting cross-site cookie and website data access. */
+"Allow related %@ websites to share cookies and website data?" = "Allow related %@ websites to share cookies and website data?";
+
 /* Allow screen button title in window and screen sharing prompt */
 "Allow to Share Screen" = "Allow to Share Screen";
 
@@ -208,18 +211,6 @@
 /* Message for user microphone access prompt */
 "Allow “%@” to use your microphone?" = "Allow “%@” to use your microphone?";
 
-/* Informative text for requesting cross-site cookie and website data access for two sites. */
-"Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites.";
-
-/* Informative text for requesting cross-site cookie and website data access for three sites. */
-"Using the same cookies and website data is required for %s, %s, and one more website to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s, %s, and one more website to work correctly, but could make it easier to track your browsing across these websites.";
-
-/* Informative text for requesting cross-site cookie and website data access for four or more sites. */
-"Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites.";
-
-/* Label describing the list of related websites controlled by the same organization. */
-"Related %@ websites" = "Related %@ websites";
-
 /* WKWebExtensionErrorUnknown description */
 "An unknown error has occurred." = "An unknown error has occurred.";
 
@@ -237,9 +228,6 @@
 
 /* Label for the plain Apple Pay button. */
 "Apple Pay" = "Apple Pay";
-
-/* Message for requesting cross-site cookie and website data access. */
-"Allow related %@ websites to share cookies and website data?" = "Allow related %@ websites to share cookies and website data?";
 
 /* Malware confirmation dialog title */
 "Are you sure you wish to go to this site?" = "Are you sure you wish to go to this site?";
@@ -952,8 +940,17 @@
 /* Media Element Source Type */
 "ManagedMediaSource (Media Element Source Type)" = "Managed Media Source";
 
+/* WKWebExtensionErrorInvalidBackgroundContent description for empty or invalid preferred environment key */
+"Manifest `background` entry has an empty or invalid `preferred_environment` key." = "Manifest `background` entry has an empty or invalid `preferred_environment` key.";
+
+/* WKWebExtensionErrorInvalidBackgroundContent description for missing background page or scripts keys */
+"Manifest `background` entry has missing or empty required `page` or `scripts` key for `preferred_environment` of `document`." = "Manifest `background` entry has missing or empty required `page` or `scripts` key for `preferred_environment` of `document`.";
+
 /* WKWebExtensionErrorInvalidBackgroundContent description for missing background required keys */
-"Manifest `background` entry has missing or empty required key `scripts`, `page`, or `service_worker`." = "Manifest `background` entry has missing or empty required key `scripts`, `page`, or `service_worker`.";
+"Manifest `background` entry has missing or empty required `scripts`, `page`, or `service_worker` key." = "Manifest `background` entry has missing or empty required `scripts`, `page`, or `service_worker` key.";
+
+/* WKWebExtensionErrorInvalidBackgroundContent description for missing background service_worker or scripts keys */
+"Manifest `background` entry has missing or empty required `service_worker` or `scripts` key for `preferred_environment` of `service_worker`." = "Manifest `background` entry has missing or empty required `service_worker` or `scripts` key for `preferred_environment` of `service_worker`.";
 
 /* WKWebExtensionErrorInvalidContentScripts description for missing or empty 'js' and 'css' arrays */
 "Manifest `content_scripts` entry has missing or empty 'js' and 'css' arrays." = "Manifest `content_scripts` entry has missing or empty 'js' and 'css' arrays.";
@@ -1191,6 +1188,9 @@
 
 /* label for first item in the menu that appears when clicking on the search field image, used as embedded menu title */
 "Recent Searches" = "Recent Searches";
+
+/* Label describing the list of related websites controlled by the same organization */
+"Related %@ websites" = "Related %@ websites";
 
 /* Reload context menu item */
 "Reload" = "Reload";
@@ -1615,6 +1615,12 @@
 /* The download was cancelled by the user */
 "User cancelled the download" = "User cancelled the download";
 
+/* Informative text for requesting cross-site cookie and website data access for two sites */
+"Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites.";
+
+/* Informative text for requesting cross-site cookie and website data access for four or more sites. */
+"Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites.";
+
 /* Codec Strings */
 "VP8 (Codec String)" = "VP8";
 
@@ -1656,9 +1662,6 @@
 
 /* Unwanted software warning title */
 "Website With Harmful Software Warning" = "Website With Harmful Software Warning";
-
-/* Accessory text for requesting cross-site cookie and website data access. */
-"While you are visiting %@, the following related websites will gain access to their cookies:\n  - %@" = "While you are visiting %@, the following related websites will gain access to their cookies:\n  - %@";
 
 /* Year label in date picker */
 "YEAR (Date picker for extra zoom mode)" = "YEAR";
@@ -1833,9 +1836,6 @@
 
 /* An ARIA accessibility group that contains mathematical symbols. */
 "math" = "math";
-
-/* accessibility label for meridiem fields. */
-"meridiem" = "meridiem";
 
 /* accessibility label for milliseconds fields. */
 "milliseconds" = "milliseconds";

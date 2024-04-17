@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Array.prototype.shift();
-}, '`new Array.prototype.shift()` throws TypeError');
+});
 

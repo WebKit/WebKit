@@ -14,49 +14,39 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
+import typing
 
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.common.options import ArgOptions
 
 
 class Options(ArgOptions):
-    KEY = 'wpe:browserOptions'
+    KEY = "wpe:browserOptions"
 
-    def __init__(self):
-        super(Options, self).__init__()
-        self._binary_location = ''
-        self._caps = DesiredCapabilities.WPEWEBKIT.copy()
-
-    @property
-    def capabilities(self):
-        return self._caps
-
-    def set_capability(self, name, value):
-        """Sets a capability."""
-        self._caps[name] = value
+    def __init__(self) -> None:
+        super().__init__()
+        self._binary_location = ""
 
     @property
-    def binary_location(self):
-        """
-        Returns the location of the browser binary otherwise an empty string
-        """
+    def binary_location(self) -> str:
+        """Returns the location of the browser binary otherwise an empty
+        string."""
         return self._binary_location
 
     @binary_location.setter
-    def binary_location(self, value):
-        """
-        Allows you to set the browser binary to launch
+    def binary_location(self, value: str) -> None:
+        """Allows you to set the browser binary to launch.
 
         :Args:
          - value : path to the browser binary
         """
+        if not isinstance(value, str):
+            raise TypeError(self.BINARY_LOCATION_ERROR)
         self._binary_location = value
 
     def to_capabilities(self):
-        """
-        Creates a capabilities with all the options that have been set and
-        returns a dictionary with everything
-        """
+        """Creates a capabilities with all the options that have been set and
+        returns a dictionary with everything."""
         caps = self._caps
 
         browser_options = {}
@@ -68,3 +58,7 @@ class Options(ArgOptions):
         caps[Options.KEY] = browser_options
 
         return caps
+
+    @property
+    def default_capabilities(self) -> typing.Dict[str, str]:
+        return DesiredCapabilities.WPEWEBKIT.copy()

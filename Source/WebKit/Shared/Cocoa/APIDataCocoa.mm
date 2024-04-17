@@ -26,14 +26,13 @@
 #import "config.h"
 #import "APIData.h"
 
+#import <wtf/cocoa/SpanCocoa.h>
+
 namespace API {
 
 Ref<Data> Data::createWithoutCopying(RetainPtr<NSData> data)
 {
-    const unsigned char* bytes = reinterpret_cast<const unsigned char*>([data bytes]);
-    size_t size = [data length];
-
-    return createWithoutCopying(bytes, size, [](unsigned char*, const void* data) {
+    return createWithoutCopying(WTF::span(data.get()), [](uint8_t*, const void* data) {
         if (!data)
             return;
         CFRelease(data);

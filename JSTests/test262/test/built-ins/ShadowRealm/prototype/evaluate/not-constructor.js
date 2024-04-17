@@ -22,7 +22,7 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new ShadowRealm.prototype.evaluate("");
-}, '`new ShadowRealm.prototype.evaluate("")` throws TypeError');
+});
 
 const r = new ShadowRealm();
 r.evaluate('globalThis.x = 0');

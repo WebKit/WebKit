@@ -1,10 +1,10 @@
 # Supplemental dependencies
+JSDOMWindow.h: LocalDOMWindowConstructors.idl
+LocalDOMWindowConstructors.idl:
 JSDedicatedWorkerGlobalScope.h: DedicatedWorkerGlobalScopeConstructors.idl
 DedicatedWorkerGlobalScopeConstructors.idl:
 JSExposedStar.h: 
 JSExposedToWorkerAndWindow.h: 
-JSLocalDOMWindow.h: LocalDOMWindowConstructors.idl
-LocalDOMWindowConstructors.idl:
 JSPaintWorkletGlobalScope.h: PaintWorkletGlobalScopeConstructors.idl
 PaintWorkletGlobalScopeConstructors.idl:
 JSServiceWorkerGlobalScope.h: ServiceWorkerGlobalScopeConstructors.idl
@@ -103,6 +103,7 @@ JSTestPromiseRejectionEvent.h:
 JSTestReadOnlyMapLike.h: 
 JSTestReadOnlySetLike.h: 
 JSTestReportExtraMemoryCost.h: 
+JSTestScheduledAction.h: 
 JSTestSerializedScriptValueInterface.h: 
 JSTestSetLike.h: 
 JSTestSetLikeWithOverriddenOperations.h: 

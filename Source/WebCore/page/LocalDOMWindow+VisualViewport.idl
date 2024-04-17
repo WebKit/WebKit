@@ -26,6 +26,6 @@
 // https://wicg.github.io/visual-viewport/#extensions-to-the-window-interface
 [
     EnabledBySetting=VisualViewportAPIEnabled
-] partial interface LocalDOMWindow {
+] partial interface DOMWindow {
     [SameObject, Replaceable] readonly attribute VisualViewport visualViewport;
 };

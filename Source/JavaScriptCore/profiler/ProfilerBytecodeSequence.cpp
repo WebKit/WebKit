@@ -76,15 +76,15 @@ const Bytecode& BytecodeSequence::forBytecodeIndex(unsigned bytecodeIndex) const
 
 void BytecodeSequence::addSequenceProperties(Dumper& dumper, JSON::Object& result) const
 {
-    auto header = JSON::Array::create();
-    for (unsigned i = 0; i < m_header.size(); ++i)
-        header->pushString(String::fromUTF8(m_header[i]));
-    result.setValue(dumper.keys().m_header, WTFMove(header));
+    Ref jsonHeader = JSON::Array::create();
+    for (auto& header : m_header)
+        jsonHeader->pushString(String::fromUTF8(header.span()));
+    result.setValue(dumper.keys().m_header, WTFMove(jsonHeader));
 
-    auto sequence = JSON::Array::create();
-    for (unsigned i = 0; i < m_sequence.size(); ++i)
-        sequence->pushValue(m_sequence[i].toJSON(dumper));
-    result.setValue(dumper.keys().m_bytecode, WTFMove(sequence));
+    Ref jsonSequence = JSON::Array::create();
+    for (auto& sequence : m_sequence)
+        jsonSequence->pushValue(sequence.toJSON(dumper));
+    result.setValue(dumper.keys().m_bytecode, WTFMove(jsonSequence));
 }
 
 } } // namespace JSC::Profiler

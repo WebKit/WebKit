@@ -28,12 +28,13 @@
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 
+#import "LinearMediaKitSPI.h"
 #import "PlaybackSessionInterfaceLMK.h"
 #import "WKSLinearMediaPlayer.h"
 #import "WKSLinearMediaTypes.h"
 #import <UIKit/UIKit.h>
 #import <WebCore/WebAVPlayerLayerView.h>
-#import <pal/spi/vision/LinearMediaKitSPI.h>
+#import <wtf/BlockPtr.h>
 
 namespace WebKit {
 
@@ -64,15 +65,10 @@ void VideoPresentationInterfaceLMK::setupFullscreen(UIView& videoView, const Flo
 
 void VideoPresentationInterfaceLMK::setupPlayerViewController()
 {
-    if (m_playerViewController)
-        return;
-
-    linearMediaPlayer().allowFullScreenFromInline = YES;
     linearMediaPlayer().captionLayer = captionsLayer();
     linearMediaPlayer().contentType = WKSLinearMediaContentTypePlanar;
-    linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeInline;
 
-    m_playerViewController = [linearMediaPlayer() makeViewController];
+    ensurePlayableViewController();
 }
 
 void VideoPresentationInterfaceLMK::invalidatePlayerViewController()
@@ -82,16 +78,14 @@ void VideoPresentationInterfaceLMK::invalidatePlayerViewController()
 
 void VideoPresentationInterfaceLMK::presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
-    linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeFullscreenFromInline;
-    // FIXME: Wait until -linearMediaPlayer:didEnterFullscreenWithError: is called before calling completionHandler
-    completionHandler(YES, nil);
+    playbackSessionInterface().startObservingNowPlayingMetadata();
+    [linearMediaPlayer() enterFullscreenWithCompletionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
 }
 
 void VideoPresentationInterfaceLMK::dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
-    linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeInline;
-    // FIXME: Wait until -linearMediaPlayer:didExitFullscreenWithError: is called before calling completionHandler
-    completionHandler(YES, nil);
+    playbackSessionInterface().stopObservingNowPlayingMetadata();
+    [linearMediaPlayer() exitFullscreenWithCompletionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
 }
 
 UIViewController *VideoPresentationInterfaceLMK::playerViewController() const
@@ -117,6 +111,18 @@ void VideoPresentationInterfaceLMK::setupCaptionsLayer(CALayer *, const FloatSiz
     [captionsLayer() setAnchorPoint:CGPointZero];
     [captionsLayer() setBounds:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
     [CATransaction commit];
+}
+
+LMPlayableViewController *VideoPresentationInterfaceLMK::playableViewController()
+{
+    ensurePlayableViewController();
+    return m_playerViewController.get();
+}
+
+void VideoPresentationInterfaceLMK::ensurePlayableViewController()
+{
+    if (!m_playerViewController)
+        m_playerViewController = [linearMediaPlayer() makeViewController];
 }
 
 } // namespace WebKit

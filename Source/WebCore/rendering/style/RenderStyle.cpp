@@ -87,7 +87,7 @@ struct SameSizeAsBorderValue {
 
 static_assert(sizeof(BorderValue) == sizeof(SameSizeAsBorderValue), "BorderValue should not grow");
 
-struct SameSizeAsRenderStyle {
+struct SameSizeAsRenderStyle : CanMakeCheckedPtr<SameSizeAsRenderStyle> {
     void* nonInheritedDataRefs[1];
     struct NonInheritedFlags {
         unsigned m_bitfields[2];
@@ -1220,7 +1220,6 @@ static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData&
     ;
 }
 
-#if ENABLE(CSS_PAINTING_API)
 void RenderStyle::addCustomPaintWatchProperty(const AtomString& name)
 {
     auto& data = m_nonInheritedData.access().rareData.access();
@@ -1265,7 +1264,6 @@ inline static bool changedCustomPaintWatchedProperty(const RenderStyle& a, const
 
     return false;
 }
-#endif
 
 bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
@@ -1312,10 +1310,8 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
         && rareInheritedDataChangeRequiresRepaint(*m_rareInheritedData, *other.m_rareInheritedData))
         return true;
 
-#if ENABLE(CSS_PAINTING_API)
     if (changedCustomPaintWatchedProperty(*this, *m_nonInheritedData->rareData, other, *other.m_nonInheritedData->rareData))
         return true;
-#endif
 
     return false;
 }
@@ -2578,8 +2574,8 @@ const AtomString& RenderStyle::hyphenString() const
         return hyphenationString;
 
     // FIXME: This should depend on locale.
-    static MainThreadNeverDestroyed<const AtomString> hyphenMinusString(&hyphenMinus, 1);
-    static MainThreadNeverDestroyed<const AtomString> hyphenString(&hyphen, 1);
+    static MainThreadNeverDestroyed<const AtomString> hyphenMinusString(span(hyphenMinus));
+    static MainThreadNeverDestroyed<const AtomString> hyphenString(span(hyphen));
     return fontCascade().primaryFont().glyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
 }
 
@@ -2591,28 +2587,28 @@ const AtomString& RenderStyle::textEmphasisMarkString() const
     case TextEmphasisMark::Custom:
         return textEmphasisCustomMark();
     case TextEmphasisMark::Dot: {
-        static MainThreadNeverDestroyed<const AtomString> filledDotString(&bullet, 1);
-        static MainThreadNeverDestroyed<const AtomString> openDotString(&whiteBullet, 1);
+        static MainThreadNeverDestroyed<const AtomString> filledDotString(span(bullet));
+        static MainThreadNeverDestroyed<const AtomString> openDotString(span(whiteBullet));
         return textEmphasisFill() == TextEmphasisFill::Filled ? filledDotString : openDotString;
     }
     case TextEmphasisMark::Circle: {
-        static MainThreadNeverDestroyed<const AtomString> filledCircleString(&blackCircle, 1);
-        static MainThreadNeverDestroyed<const AtomString> openCircleString(&whiteCircle, 1);
+        static MainThreadNeverDestroyed<const AtomString> filledCircleString(span(blackCircle));
+        static MainThreadNeverDestroyed<const AtomString> openCircleString(span(whiteCircle));
         return textEmphasisFill() == TextEmphasisFill::Filled ? filledCircleString : openCircleString;
     }
     case TextEmphasisMark::DoubleCircle: {
-        static MainThreadNeverDestroyed<const AtomString> filledDoubleCircleString(&fisheye, 1);
-        static MainThreadNeverDestroyed<const AtomString> openDoubleCircleString(&bullseye, 1);
+        static MainThreadNeverDestroyed<const AtomString> filledDoubleCircleString(span(fisheye));
+        static MainThreadNeverDestroyed<const AtomString> openDoubleCircleString(span(bullseye));
         return textEmphasisFill() == TextEmphasisFill::Filled ? filledDoubleCircleString : openDoubleCircleString;
     }
     case TextEmphasisMark::Triangle: {
-        static MainThreadNeverDestroyed<const AtomString> filledTriangleString(&blackUpPointingTriangle, 1);
-        static MainThreadNeverDestroyed<const AtomString> openTriangleString(&whiteUpPointingTriangle, 1);
+        static MainThreadNeverDestroyed<const AtomString> filledTriangleString(span(blackUpPointingTriangle));
+        static MainThreadNeverDestroyed<const AtomString> openTriangleString(span(whiteUpPointingTriangle));
         return textEmphasisFill() == TextEmphasisFill::Filled ? filledTriangleString : openTriangleString;
     }
     case TextEmphasisMark::Sesame: {
-        static MainThreadNeverDestroyed<const AtomString> filledSesameString(&sesameDot, 1);
-        static MainThreadNeverDestroyed<const AtomString> openSesameString(&whiteSesameDot, 1);
+        static MainThreadNeverDestroyed<const AtomString> filledSesameString(span(sesameDot));
+        static MainThreadNeverDestroyed<const AtomString> openSesameString(span(whiteSesameDot));
         return textEmphasisFill() == TextEmphasisFill::Filled ? filledSesameString : openSesameString;
     }
     case TextEmphasisMark::Auto:

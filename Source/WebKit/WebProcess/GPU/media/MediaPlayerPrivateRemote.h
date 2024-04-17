@@ -432,9 +432,7 @@ private:
     std::optional<WebCore::VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
     void updateVideoPlaybackMetricsUpdateInterval(const Seconds&);
 
-#if ENABLE(AVF_CAPTIONS)
     void notifyTrackModeChanged() final;
-#endif
 
     void notifyActiveSourceBuffersChanged() final;
 
@@ -466,8 +464,12 @@ private:
 
     void setShouldCheckHardwareSupport(bool) final;
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    const String& defaultSpatialTrackingLabel() const final;
+    void setDefaultSpatialTrackingLabel(const String&) final;
     const String& spatialTrackingLabel() const final;
-    void setSpatialTrackingLabel(String&&) final;
+    void setSpatialTrackingLabel(const String&) final;
+#endif
 
 #if PLATFORM(COCOA)
     void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
@@ -531,6 +533,7 @@ private:
 #if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     bool m_hasBeenAskedToPaintGL { false };
 #endif
+    String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;
 };
 

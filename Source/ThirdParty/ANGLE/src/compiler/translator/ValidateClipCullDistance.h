@@ -11,6 +11,7 @@
 #define COMPILER_TRANSLATOR_VALIDATECLIPCULLDISTANCE_H_
 
 #include "GLSLANG/ShaderVars.h"
+#include "compiler/translator/Compiler.h"
 
 namespace sh
 {
@@ -18,14 +19,12 @@ namespace sh
 class TIntermBlock;
 class TDiagnostics;
 
-bool ValidateClipCullDistance(TIntermBlock *root,
+bool ValidateClipCullDistance(TCompiler *compiler,
+                              TIntermBlock *root,
                               TDiagnostics *diagnostics,
-                              const unsigned int maxCullDistances,
                               const unsigned int maxCombinedClipAndCullDistances,
                               uint8_t *clipDistanceSizeOut,
                               uint8_t *cullDistanceSizeOut,
-                              bool *clipDistanceRedeclaredOut,
-                              bool *cullDistanceRedeclaredOut,
                               bool *clipDistanceUsedOut);
 
 }  // namespace sh

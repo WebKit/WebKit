@@ -2731,11 +2731,20 @@ RegisterID* BytecodeGenerator::emitTryGetById(RegisterID* dst, RegisterID* base,
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitGetLength(RegisterID* dst, RegisterID* base)
+{
+    OpGetLength::emit(this, kill(dst), base, nextValueProfileIndex());
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, const Identifier& property)
 {
     ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with get_by_val.");
 
-    OpGetById::emit(this, kill(dst), base, addConstant(property), nextValueProfileIndex());
+    if (property == m_vm.propertyNames->length)
+        OpGetLength::emit(this, kill(dst), base, nextValueProfileIndex());
+    else
+        OpGetById::emit(this, kill(dst), base, addConstant(property), nextValueProfileIndex());
     return dst;
 }
 

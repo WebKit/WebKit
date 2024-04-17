@@ -109,7 +109,7 @@ class TransformFeedbackVk : public TransformFeedbackImpl, public angle::Observer
   private:
     void initializeXFBVariables(ContextVk *contextVk, uint32_t xfbBufferCount);
 
-    void releaseCounterBuffers(RendererVk *renderer);
+    void releaseCounterBuffers(vk::Renderer *renderer);
 
     // This member variable is set when glBindTransformFeedbackBuffers/glBeginTransformFeedback
     // is called and unset in dirty bit handler for transform feedback state change. If this

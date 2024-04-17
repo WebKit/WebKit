@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.match.name, "match");
-
-verifyNotEnumerable(String.prototype.match, "name");
-verifyNotWritable(String.prototype.match, "name");
-verifyConfigurable(String.prototype.match, "name");
+verifyProperty(String.prototype.match, "name", {
+  value: "match",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

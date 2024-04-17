@@ -25,6 +25,7 @@ import {ArchiveRouter} from '/assets/js/archiveRouter.js';
 import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js';
 import {deepCompare, ErrorDisplay, escapeHTML, paramsToQuery, queryToParams, linkify, escapeEndpoint} from '/assets/js/common.js';
+import {Dashboard} from '/assets/js/dashboard.js';
 import {Expectations} from '/assets/js/expectations.js';
 import {InvestigateDrawer} from '/assets/js/investigate.js';
 import {TypeForSuite} from '/assets/js/suites.js';
@@ -187,7 +188,7 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=n
         if (!params.branch)
             delete params.branch;
         const query = paramsToQuery(params);
-        window.open(`/commit?${query}`, '_blank');
+        window.open(`/commit/info?${query}`, '_blank');
     }
 
     return Timeline.CanvasXAxisComponent(scaleForRepository(scale), {
@@ -1341,6 +1342,7 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false, fl
                     InvestigateDrawer.dispatch();
                     InvestigateDrawer.select(InvestigateDrawer.selected);
                     callback(willFilterExpected);
+                    Dashboard.setWillFilterExpected(willFilterExpected);
                 };
             },
         });

@@ -13,14 +13,13 @@
 #include "common/debug.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/serial_utils.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
+#include "libANGLE/renderer/vulkan/vk_resource.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 #include "libANGLE/renderer/vulkan/vk_wrapper.h"
 
 namespace rx
 {
-class RendererVk;
 enum class MemoryAllocationType;
 
 namespace vk
@@ -35,7 +34,7 @@ class BufferBlock final : angle::NonCopyable
     BufferBlock(BufferBlock &&other);
     ~BufferBlock();
 
-    void destroy(RendererVk *renderer);
+    void destroy(Renderer *renderer);
     VkResult init(Context *context,
                   Buffer &buffer,
                   uint32_t memoryTypeIndex,
@@ -87,7 +86,7 @@ class BufferBlock final : angle::NonCopyable
     {
         mDescriptorSetCacheManager.addKey(sharedCacheKey);
     }
-    void releaseAllCachedDescriptorSetCacheKeys(RendererVk *renderer)
+    void releaseAllCachedDescriptorSetCacheKeys(Renderer *renderer)
     {
         if (!mDescriptorSetCacheManager.empty())
         {
@@ -141,7 +140,7 @@ class BufferBlockGarbageList final : angle::NonCopyable
         mBufferBlockQueue.push(bufferBlock);
     }
 
-    void pruneEmptyBufferBlocks(RendererVk *renderer)
+    void pruneEmptyBufferBlocks(Renderer *renderer)
     {
         if (!mBufferBlockQueue.empty())
         {
@@ -180,7 +179,7 @@ class BufferSuballocation final : angle::NonCopyable
     BufferSuballocation(BufferSuballocation &&other);
     BufferSuballocation &operator=(BufferSuballocation &&other);
 
-    void destroy(RendererVk *renderer);
+    void destroy(Renderer *renderer);
 
     void init(BufferBlock *block,
               VmaVirtualAllocation allocation,
@@ -252,8 +251,8 @@ class BufferSuballocationGarbage
     {}
     ~BufferSuballocationGarbage() = default;
 
-    bool destroyIfComplete(RendererVk *renderer);
-    bool hasResourceUseSubmitted(RendererVk *renderer) const;
+    bool destroyIfComplete(Renderer *renderer);
+    bool hasResourceUseSubmitted(Renderer *renderer) const;
     VkDeviceSize getSize() const { return mSuballocation.getSize(); }
     bool isSuballocated() const { return mSuballocation.isSuballocated(); }
 
@@ -331,7 +330,7 @@ ANGLE_INLINE bool BufferSuballocation::valid() const
     return mBufferBlock != nullptr;
 }
 
-ANGLE_INLINE void BufferSuballocation::destroy(RendererVk *renderer)
+ANGLE_INLINE void BufferSuballocation::destroy(Renderer *renderer)
 {
     if (valid())
     {

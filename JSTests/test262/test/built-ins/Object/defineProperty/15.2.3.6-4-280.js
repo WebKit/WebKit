@@ -21,10 +21,9 @@ Object.defineProperty(arrObj, "property", {
   configurable: false
 });
 
-verifyEqualTo(arrObj, "property", 12);
-
-verifyNotWritable(arrObj, "property");
-
-verifyNotEnumerable(arrObj, "property");
-
-verifyNotConfigurable(arrObj, "property");
+verifyProperty(arrObj, "property", {
+  value: 12,
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

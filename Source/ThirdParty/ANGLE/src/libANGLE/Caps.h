@@ -161,7 +161,8 @@ struct Limitations
     // D3D does not support compressed textures where the base mip level is not a multiple of 4
     bool compressedBaseMipLevelMultipleOfFour = false;
 
-    bool limitWebglMaxTextureSizeTo4096 = false;
+    // An extra limit for WebGL texture size. Ignored if 0.
+    GLint webGLTextureSizeLimit = 0;
 };
 
 struct TypePrecision

@@ -10,8 +10,9 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Set.prototype.values.name, "values", "The value of `Set.prototype.values.name` is `'values'`");
-
-verifyNotEnumerable(Set.prototype.values, "name");
-verifyNotWritable(Set.prototype.values, "name");
-verifyConfigurable(Set.prototype.values, "name");
+verifyProperty(Set.prototype.values, "name", {
+  value: "values",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

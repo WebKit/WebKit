@@ -129,7 +129,7 @@ void Download::didCreateDestination(const String& path)
 void Download::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
 {
     if (!m_hasReceivedData) {
-        DOWNLOAD_RELEASE_LOG("didReceiveData: Started receiving data (id = %" PRIu64 ")", downloadID().toUInt64());
+        DOWNLOAD_RELEASE_LOG("didReceiveData: Started receiving data (id = %" PRIu64 ", expected length = %" PRIu64 ")", downloadID().toUInt64(), totalBytesExpectedToWrite);
         m_hasReceivedData = true;
     }
     

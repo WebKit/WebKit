@@ -18,10 +18,10 @@ arr[0] = 101; // default value of attributes: writable: true, configurable: true
 Object.defineProperties(arr, {
   "0": {}
 });
-verifyEqualTo(arr, "0", 101);
 
-verifyWritable(arr, "0");
-
-verifyEnumerable(arr, "0");
-
-verifyConfigurable(arr, "0");
+verifyProperty(arr, "0", {
+  value: 101,
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

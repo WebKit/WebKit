@@ -43,9 +43,10 @@ class ResourceResponse;
 class ProgressTrackerClient;
 struct ProgressItem;
 
-class ProgressTracker : public CanMakeCheckedPtr {
+class ProgressTracker final : public CanMakeCheckedPtr<ProgressTracker> {
     WTF_MAKE_NONCOPYABLE(ProgressTracker);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProgressTracker);
 public:
     explicit ProgressTracker(Page&, UniqueRef<ProgressTrackerClient>&&);
     ~ProgressTracker();

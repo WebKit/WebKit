@@ -37,5 +37,5 @@ messages -> WebInspector {
     StartElementSelection()
     StopElementSelection()
 
-    SetFrontendConnection(IPC::Connection::Handle connectionHandle)
+    SetFrontendConnection(IPC::ConnectionHandle connectionHandle)
 }

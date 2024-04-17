@@ -1,4 +1,8 @@
 This test passes if it doesn't time out.
 
 
+
+--------
+Frame: '<!--frame1-->'
+--------
 I am a simple document that calls notifyDone when done loading.

@@ -37,9 +37,11 @@ class MathMLTokenElement;
 
 class RenderMathMLToken : public RenderMathMLBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderMathMLToken);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLToken);
 public:
     RenderMathMLToken(Type, MathMLTokenElement&, RenderStyle&&);
     RenderMathMLToken(Type, Document&, RenderStyle&&);
+    virtual ~RenderMathMLToken();
 
     MathMLTokenElement& element();
 

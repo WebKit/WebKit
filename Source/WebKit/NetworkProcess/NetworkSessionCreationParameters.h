@@ -129,6 +129,7 @@ struct NetworkSessionCreationParameters {
     SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
     bool serviceWorkerProcessTerminationDelayEnabled { true };
     bool inspectionForServiceWorkersAllowed { true };
+    bool storageSiteValidationEnabled { false };
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     bool isDeclarativeWebPushEnabled { false };
 #endif

@@ -50,6 +50,15 @@ template<typename CharacterType, typename DelimiterType> bool skipExactly(const 
     return false;
 }
 
+template<typename CharacterType, typename DelimiterType> bool skipExactly(std::span<const CharacterType>& data, DelimiterType delimiter)
+{
+    if (!data.empty() && data.front() == delimiter) {
+        data = data.subspan(1);
+        return true;
+    }
+    return false;
+}
+
 template<typename CharacterType, typename DelimiterType> bool skipExactly(StringParsingBuffer<CharacterType>& buffer, DelimiterType delimiter)
 {
     if (buffer.hasCharactersRemaining() && *buffer == delimiter) {
@@ -119,6 +128,18 @@ template<bool characterPredicate(UChar)> void skipUntil(const UChar*& position, 
         ++position;
 }
 
+template<bool characterPredicate(LChar)> void skipUntil(std::span<const LChar>& buffer)
+{
+    while (!buffer.empty() && !characterPredicate(buffer.front()))
+        buffer = buffer.subspan(1);
+}
+
+template<bool characterPredicate(UChar)> void skipUntil(std::span<const UChar>& buffer)
+{
+    while (!buffer.empty() && !characterPredicate(buffer.front()))
+        buffer = buffer.subspan(1);
+}
+
 template<bool characterPredicate(LChar)> void skipUntil(StringParsingBuffer<LChar>& buffer)
 {
     while (buffer.hasCharactersRemaining() && !characterPredicate(*buffer))
@@ -147,6 +168,18 @@ template<bool characterPredicate(UChar)> void skipWhile(const UChar*& position, 
 {
     while (position < end && characterPredicate(*position))
         ++position;
+}
+
+template<bool characterPredicate(LChar)> void skipWhile(std::span<const LChar>& data)
+{
+    while (!data.empty() && characterPredicate(data.front()))
+        data = data.subspan(1);
+}
+
+template<bool characterPredicate(UChar)> void skipWhile(std::span<const UChar>& data)
+{
+    while (!data.empty() && characterPredicate(data.front()))
+        data = data.subspan(1);
 }
 
 template<bool characterPredicate(LChar)> void skipWhile(StringParsingBuffer<LChar>& buffer)
@@ -180,7 +213,7 @@ template<typename CharacterType> bool skipExactlyIgnoringASCIICase(const Charact
     
     if (position + literalLength > end)
         return false;
-    if (!equalLettersIgnoringASCIICase(position, literalLength, literal))
+    if (!equalLettersIgnoringASCIICase(position, literal))
         return false;
     position += literalLength;
     return true;
@@ -192,7 +225,7 @@ template<typename CharacterType> bool skipExactlyIgnoringASCIICase(StringParsing
 
     if (buffer.lengthRemaining() < literalLength)
         return false;
-    if (!equalLettersIgnoringASCIICase(buffer.position(), literalLength, literal))
+    if (!equalLettersIgnoringASCIICase(buffer.position(), literal))
         return false;
     buffer += literalLength;
     return true;

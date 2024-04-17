@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Array.prototype.forEach(() => {});
-}, '`new Array.prototype.forEach(() => {})` throws TypeError');
+});
 

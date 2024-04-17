@@ -764,6 +764,7 @@ namespace JSC {
         RegisterID* emitInById(RegisterID* dst, RegisterID* base, const Identifier& property);
 
         RegisterID* emitTryGetById(RegisterID* dst, RegisterID* base, const Identifier& property);
+        RegisterID* emitGetLength(RegisterID* dst, RegisterID* base);
         RegisterID* emitGetById(RegisterID* dst, RegisterID* base, const Identifier& property);
         RegisterID* emitGetById(RegisterID* dst, RegisterID* base, RegisterID* thisVal, const Identifier& property);
         RegisterID* emitDirectGetById(RegisterID* dst, RegisterID* base, const Identifier& property);

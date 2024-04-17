@@ -72,6 +72,7 @@ class RenderStyle;
 class SVGQualifiedName;
 class ShadowRoot;
 class TouchEvent;
+class TrustedScript;
 class WebCoreOpaqueRoot;
 
 namespace Style {
@@ -90,7 +91,7 @@ enum class MutationObserverOptionType : uint8_t;
 using MutationObserverOptions = OptionSet<MutationObserverOptionType>;
 using MutationRecordDeliveryOptions = OptionSet<MutationObserverOptionType>;
 
-using NodeOrString = std::variant<RefPtr<Node>, String>;
+using NodeOrStringOrTrustedScript = std::variant<RefPtr<Node>, String, RefPtr<TrustedScript>>;
 
 const int initialNodeVectorSize = 11; // Covers 99.5%. See webkit.org/b/80706
 typedef Vector<Ref<Node>, initialNodeVectorSize> NodeVector;
@@ -217,9 +218,9 @@ public:
     WEBCORE_EXPORT Element* nextElementSibling() const;
 
     // From the ChildNode - https://dom.spec.whatwg.org/#childnode
-    ExceptionOr<void> before(FixedVector<NodeOrString>&&);
-    ExceptionOr<void> after(FixedVector<NodeOrString>&&);
-    ExceptionOr<void> replaceWith(FixedVector<NodeOrString>&&);
+    ExceptionOr<void> before(FixedVector<NodeOrStringOrTrustedScript>&&);
+    ExceptionOr<void> after(FixedVector<NodeOrStringOrTrustedScript>&&);
+    ExceptionOr<void> replaceWith(FixedVector<NodeOrStringOrTrustedScript>&&);
     WEBCORE_EXPORT ExceptionOr<void> remove();
 
     // Other methods (not part of DOM)
@@ -357,7 +358,7 @@ public:
     bool needsStyleRecalc() const { return styleValidity() != Style::Validity::Valid || hasInvalidRenderer(); }
     Style::Validity styleValidity() const { return styleBitfields().styleValidity(); }
     bool hasInvalidRenderer() const { return hasStateFlag(StateFlag::HasInvalidRenderer); }
-    bool styleResolutionShouldRecompositeLayer() const { return hasStyleFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer); }
+    bool styleResolutionShouldRecompositeLayer() const { return hasStateFlag(StateFlag::StyleResolutionShouldRecompositeLayer); }
     bool childNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DescendantNeedsStyleResolution); }
     bool isEditingText() const { return isTextNode() && hasTypeFlag(TypeFlag::IsSpecialInternalNode); }
 
@@ -508,7 +509,7 @@ public:
     void clearNodeLists();
 
     virtual bool willRespondToMouseMoveEvents() const;
-    bool willRespondToMouseClickEvents() const;
+    bool willRespondToMouseClickEvents(const RenderStyle* = nullptr) const;
     Editability computeEditabilityForMouseClickEvents(const RenderStyle* = nullptr) const;
     virtual bool willRespondToMouseClickEventsWithEditability(Editability) const;
     virtual bool willRespondToTouchEvents() const;
@@ -635,12 +636,13 @@ protected:
         EffectiveLangKnownToMatchDocumentElement = 1 << 3,
         IsComputedStyleInvalidFlag = 1 << 4,
         HasInvalidRenderer = 1 << 5,
-        ContainsOnlyASCIIWhitespace = 1 << 6, // Only used on CharacterData.
-        ContainsOnlyASCIIWhitespaceIsValid = 1 << 7, // Only used on CharacterData.
-        HasHeldBackChildrenChanged = 1 << 8,
-        HasStartedDeletion = 1 << 9,
-        ContainsSelectionEndPoint = 1 << 10,
-        // 5-bits free.
+        StyleResolutionShouldRecompositeLayer = 1 << 6,
+        ContainsOnlyASCIIWhitespace = 1 << 7, // Only used on CharacterData.
+        ContainsOnlyASCIIWhitespaceIsValid = 1 << 8, // Only used on CharacterData.
+        HasHeldBackChildrenChanged = 1 << 9,
+        HasStartedDeletion = 1 << 10,
+        ContainsSelectionEndPoint = 1 << 11,
+        // 4 bits free.
     };
 
     enum class ElementStateFlag : uint16_t {
@@ -708,21 +710,20 @@ protected:
     enum class NodeStyleFlag : uint16_t {
         DescendantNeedsStyleResolution                          = 1 << 0,
         DirectChildNeedsStyleResolution                         = 1 << 1,
-        StyleResolutionShouldRecompositeLayer                   = 1 << 2,
 
-        AffectedByHasWithPositionalPseudoClass                  = 1 << 3,
-        ChildrenAffectedByFirstChildRules                       = 1 << 4,
-        ChildrenAffectedByLastChildRules                        = 1 << 5,
-        AffectsNextSiblingElementStyle                          = 1 << 6,
-        StyleIsAffectedByPreviousSibling                        = 1 << 7,
-        DescendantsAffectedByPreviousSibling                    = 1 << 8,
-        StyleAffectedByEmpty                                    = 1 << 9,
+        AffectedByHasWithPositionalPseudoClass                  = 1 << 2,
+        ChildrenAffectedByFirstChildRules                       = 1 << 3,
+        ChildrenAffectedByLastChildRules                        = 1 << 4,
+        AffectsNextSiblingElementStyle                          = 1 << 5,
+        StyleIsAffectedByPreviousSibling                        = 1 << 6,
+        DescendantsAffectedByPreviousSibling                    = 1 << 7,
+        StyleAffectedByEmpty                                    = 1 << 8,
         // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
         // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
-        ChildrenAffectedByForwardPositionalRules                = 1 << 10,
-        DescendantsAffectedByForwardPositionalRules             = 1 << 11,
-        ChildrenAffectedByBackwardPositionalRules               = 1 << 12,
-        DescendantsAffectedByBackwardPositionalRules            = 1 << 13,
+        ChildrenAffectedByForwardPositionalRules                = 1 << 9,
+        DescendantsAffectedByForwardPositionalRules             = 1 << 10,
+        ChildrenAffectedByBackwardPositionalRules               = 1 << 11,
+        DescendantsAffectedByBackwardPositionalRules            = 1 << 12,
     };
 
     struct StyleBitfields {
@@ -741,7 +742,7 @@ protected:
 
     private:
         uint16_t m_styleValidity : 2;
-        uint16_t m_flags : 14;
+        uint16_t m_flags : 13;
     };
 
     StyleBitfields styleBitfields() const { return StyleBitfields::fromRaw(m_rendererWithStyleFlags.type()); }
@@ -767,9 +768,9 @@ protected:
     template<typename NodeClass>
     static NodeClass& traverseToRootNodeInternal(const NodeClass&);
 
-    // FIXME: Replace all uses of convertNodesOrStringsIntoNode by convertNodesOrStringsIntoNodeVector.
-    ExceptionOr<RefPtr<Node>> convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&&);
-    ExceptionOr<NodeVector> convertNodesOrStringsIntoNodeVector(FixedVector<NodeOrString>&&);
+    // FIXME: Replace all uses of convertNodesOrStringsOrTrustedScriptsIntoNode by convertNodesOrStringsOrTrustedScriptsIntoNodeVector.
+    ExceptionOr<RefPtr<Node>> convertNodesOrStringsOrTrustedScriptsIntoNode(RefPtr<Node>, FixedVector<NodeOrStringOrTrustedScript>&&);
+    ExceptionOr<NodeVector> convertNodesOrStringsOrTrustedScriptsIntoNodeVector(RefPtr<Node>, FixedVector<NodeOrStringOrTrustedScript>&&);
 
 private:
     virtual PseudoId customPseudoId() const
@@ -949,10 +950,10 @@ inline void Node::setHasValidStyle()
 {
     auto bitfields = styleBitfields();
     bitfields.setStyleValidity(Style::Validity::Valid);
-    bitfields.clearFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer);
     setStyleBitfields(bitfields);
     clearStateFlag(StateFlag::IsComputedStyleInvalidFlag);
     clearStateFlag(StateFlag::HasInvalidRenderer);
+    clearStateFlag(StateFlag::StyleResolutionShouldRecompositeLayer);
 }
 
 inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)

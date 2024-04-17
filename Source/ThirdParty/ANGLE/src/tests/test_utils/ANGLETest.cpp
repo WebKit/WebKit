@@ -79,7 +79,11 @@ void TestPlatform_logWarning(PlatformMethods *platform, const char *warningMessa
     }
     else
     {
+#if !defined(ANGLE_TRACE_ENABLED) && !defined(ANGLE_ENABLE_ASSERTS)
+        // LoggingAnnotator::logMessage() already logs via gl::Trace() under these defines:
+        // https://crsrc.org/c/third_party/angle/src/common/debug.cpp;drc=d7d69375c25df2dc3980e6a4edc5d032ec940efc;l=62
         std::cerr << "Warning: " << warningMessage << std::endl;
+#endif
     }
 }
 

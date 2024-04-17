@@ -12,11 +12,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  WeakMap.prototype.delete.length, 1,
-  'The value of WeakMap.prototype.delete.length is 1'
-);
-
-verifyNotEnumerable(WeakMap.prototype.delete, 'length');
-verifyNotWritable(WeakMap.prototype.delete, 'length');
-verifyConfigurable(WeakMap.prototype.delete, 'length');
+verifyProperty(WeakMap.prototype.delete, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

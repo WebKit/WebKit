@@ -113,7 +113,7 @@ void LocalFrame::setViewportArguments(const ViewportArguments& arguments)
 
 NSArray *LocalFrame::wordsInCurrentParagraph() const
 {
-    document()->updateLayout();
+    protectedDocument()->updateLayout();
 
     if (!page() || !page()->selection().isCaret())
         return nil;
@@ -578,7 +578,7 @@ Node* LocalFrame::nodeRespondingToScrollWheelEvents(const FloatPoint& viewportLo
 
 int LocalFrame::preferredHeight() const
 {
-    Document* document = this->document();
+    RefPtr document = this->document();
     if (!document)
         return 0;
 
@@ -597,7 +597,7 @@ int LocalFrame::preferredHeight() const
 
 void LocalFrame::updateLayout() const
 {
-    Document* document = this->document();
+    RefPtr document = this->document();
     if (!document)
         return;
 

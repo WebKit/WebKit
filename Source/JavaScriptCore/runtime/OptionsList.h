@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,8 +45,8 @@ namespace JSC {
 #endif
 
 JS_EXPORT_PRIVATE bool canUseJITCage();
-bool canUseWebAssemblyFastMemory();
 bool canUseHandlerIC();
+bool hasCapacityToUseLargeGigacage();
 
 // How do JSC VM options work?
 // ===========================
@@ -135,6 +135,7 @@ bool canUseHandlerIC();
     v(Bool, dumpDisassembly, false, Normal, "dumps disassembly of all JIT compiled code upon compilation") \
     v(Bool, asyncDisassembly, false, Normal, nullptr) \
     v(Bool, logJIT, false, Normal, nullptr) \
+    v(Bool, dumpBaselineDisassembly, false, Normal, "dumps disassembly of Baseline function upon compilation") \
     v(Bool, dumpDFGDisassembly, false, Normal, "dumps disassembly of DFG function upon compilation") \
     v(Bool, dumpFTLDisassembly, false, Normal, "dumps disassembly of FTL function upon compilation") \
     v(Bool, dumpRegExpDisassembly, false, Normal, "dumps disassembly of RegExp upon compilation") \
@@ -361,6 +362,7 @@ bool canUseHandlerIC();
     v(Unsigned, numberOfGCMarkers, computeNumberOfGCMarkers(8), Normal, nullptr) \
     v(Bool, useParallelMarkingConstraintSolver, true, Normal, nullptr) \
     v(Unsigned, opaqueRootMergeThreshold, 1000, Normal, nullptr) \
+    v(Unsigned, maxHeapSizeAsRAMSizeMultiple, 0, Normal, nullptr) \
     v(Double, minHeapUtilization, 0.8, Normal, nullptr) \
     v(Double, minMarkedBlockUtilization, 0.9, Normal, nullptr) \
     v(Unsigned, slowPathAllocsBetweenGCs, 0, Normal, "force a GC on every Nth slow path alloc, where N is specified by this option") \
@@ -509,13 +511,12 @@ bool canUseHandlerIC();
     v(Int32, thresholdForOMGOptimizeSoon, 500, Normal, nullptr) \
     v(Int32, omgTierUpCounterIncrementForLoop, 1, Normal, "The amount the tier up counter is incremented on each loop backedge.") \
     v(Int32, omgTierUpCounterIncrementForEntry, 15, Normal, "The amount the tier up counter is incremented on each function entry.") \
-    /* FIXME: enable fast memories on iOS and pre-allocate them. https://bugs.webkit.org/show_bug.cgi?id=170774 */ \
-    v(Bool, useWebAssemblyFastMemory, canUseWebAssemblyFastMemory(), Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.") \
+    v(Bool, useWebAssemblyFastMemory, true, Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.") \
     v(Bool, logWebAssemblyMemory, false, Normal, nullptr) \
     v(Unsigned, webAssemblyFastMemoryRedzonePages, 128, Normal, "WebAssembly fast memories use 4GiB virtual allocations, plus a redzone (counted as multiple of 64KiB WebAssembly pages) at the end to catch reg+imm accesses which exceed 32-bit, anything beyond the redzone is explicitly bounds-checked") \
     v(Bool, crashIfWebAssemblyCantFastMemory, false, Normal, "If true, we will crash if we can't obtain fast memory for wasm.") \
     v(Bool, crashOnFailedWebAssemblyValidate, false, Normal, "If true, we will crash if we can't validate a wasm module instead of throwing an exception.") \
-    v(Unsigned, maxNumWebAssemblyFastMemories, 4, Normal, nullptr) \
+    v(Unsigned, maxNumWebAssemblyFastMemories, hasCapacityToUseLargeGigacage() ? 8 : 3, Normal, nullptr) \
     v(Bool, verboseBBQJITAllocation, false, Normal, "Logs extra information about register allocation during BBQ JIT") \
     v(Bool, verboseBBQJITInstructions, false, Normal, "Logs instruction information during BBQ JIT") \
     v(Bool, useWasmLLInt, true, Normal, nullptr) \
@@ -577,6 +578,7 @@ bool canUseHandlerIC();
     v(Bool, useWasmIPIntEpilogueOSR, true, Normal, "Allow IPInt to tier up during function epilogues") \
     v(Bool, wasmIPIntTiersUpToBBQ, true, Normal, "Allow IPInt to tier up to BBQ") \
     v(Bool, wasmIPIntTiersUpToOMG, true, Normal, "Allow IPInt to tier up to OMG") \
+    v(Bool, useIPIntWrappers, true, Normal, "Allow IPInt to replace JIT wasm wrappers") \
     v(Bool, forceAllFunctionsToUseSIMD, false, Normal, "Force all functions to act conservatively w.r.t fp/vector registers for testing.") \
     \
     /* Feature Flags */\

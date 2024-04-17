@@ -29,6 +29,7 @@
 #import "WKCrashReporter.h"
 #import "XPCEndpointMessages.h"
 #import "XPCServiceEntryPoint.h"
+#import "XPCUtilities.h"
 #import <CoreFoundation/CoreFoundation.h>
 #import <mach/mach.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
@@ -178,6 +179,8 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             return;
         }
 
+        handleXPCExitMessage(event);
+
         auto* messageName = xpc_dictionary_get_string(event, "message-name");
         if (!messageName) {
             RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: 'message-name' is not present in the XPC dictionary");
@@ -189,7 +192,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             bool disableLogging = xpc_dictionary_get_bool(event, "disable-logging");
             initializeLogd(disableLogging);
 
-#if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>)
+#if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>) && PLATFORM(IOS)
             register_for_dlsym_callbacks();
 #endif
 

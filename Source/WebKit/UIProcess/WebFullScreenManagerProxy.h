@@ -30,6 +30,7 @@
 #include "FullScreenMediaDetails.h"
 #include "MessageReceiver.h"
 #include <WebCore/HTMLMediaElement.h>
+#include <WebCore/HTMLMediaElementEnums.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

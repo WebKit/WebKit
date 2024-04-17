@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGArgumentsEliminationPhase.h"
+#include "DFGBackwardsPropagationPhase.h"
 #include "DFGByteCodeParser.h"
 #include "DFGCFAPhase.h"
 #include "DFGCFGSimplificationPhase.h"
@@ -159,7 +160,8 @@ size_t Plan::codeSize() const
 void Plan::finalizeInGC()
 {
     ASSERT(m_vm);
-    m_recordedStatuses.finalizeWithoutDeleting(*m_vm);
+    if (m_recordedStatuses)
+        m_recordedStatuses->finalizeWithoutDeleting(*m_vm);
 }
 
 void Plan::notifyReady()
@@ -189,7 +191,8 @@ void Plan::cancel()
 Plan::CompilationPath Plan::compileInThreadImpl()
 {
     {
-        CompilerTimingScope timingScope("DFG", "clean must handle values");
+        CompilerTimingScope timingScope("DFG", "initialize");
+        m_recordedStatuses = makeUnique<RecordedStatuses>();
         cleanMustHandleValuesIfNecessary();
     }
 
@@ -274,6 +277,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
     if (validationEnabled())
         validate(dfg);
         
+    RUN_PHASE(performBackwardsPropagation);
     RUN_PHASE(performStrengthReduction);
     RUN_PHASE(performCPSRethreading);
     RUN_PHASE(performCFA);
@@ -353,7 +357,12 @@ Plan::CompilationPath Plan::compileInThreadImpl()
             else
                 speculativeJIT.compile();
         }
-        
+
+        if (m_finalizer) {
+            if (auto jitCode = m_finalizer->jitCode())
+                finalizeInThread(jitCode.releaseNonNull());
+        }
+
         return DFGPath;
     }
     
@@ -495,7 +504,12 @@ Plan::CompilationPath Plan::compileInThreadImpl()
             FTL::fail(state);
             return FTLPath;
         }
-        
+
+        if (m_finalizer) {
+            if (auto jitCode = m_finalizer->jitCode())
+                finalizeInThread(jitCode.releaseNonNull());
+        }
+
         return FTLPath;
 #else
         RELEASE_ASSERT_NOT_REACHED();
@@ -511,7 +525,16 @@ Plan::CompilationPath Plan::compileInThreadImpl()
 #undef RUN_PHASE
 }
 
-bool Plan::isStillValid()
+void Plan::finalizeInThread(Ref<JSC::JITCode> jitCode)
+{
+    m_watchpoints.countWatchpoints(m_codeBlock, m_identifiers, jitCode->dfgCommon());
+    m_weakReferences.finalize();
+    jitCode->shrinkToFit();
+    if (m_recordedStatuses)
+        m_recordedStatuses->shrinkToFit();
+}
+
+bool Plan::isStillValidCodeBlock()
 {
     CodeBlock* replacement = m_codeBlock->replacement();
     if (!replacement)
@@ -522,31 +545,29 @@ bool Plan::isStillValid()
     // https://bugs.webkit.org/show_bug.cgi?id=132707
     if (m_codeBlock->alternative() != replacement->baselineVersion())
         return false;
-    if (!m_watchpoints.areStillValid())
-        return false;
+
     return true;
 }
 
-void Plan::reallyAdd(CommonData* commonData)
+bool Plan::reallyAdd(CommonData* commonData)
 {
+    if (!m_watchpoints.areStillValidOnMainThread(*m_vm, m_identifiers))
+        return false;
+
     ASSERT(m_vm->heap.isDeferred());
     m_identifiers.reallyAdd(*m_vm, commonData);
     m_weakReferences.reallyAdd(*m_vm, commonData);
     m_transitions.reallyAdd(*m_vm, commonData);
-    m_watchpoints.reallyAdd(m_codeBlock, m_identifiers, commonData);
-    {
-        ConcurrentJSLocker locker(m_codeBlock->m_lock);
-        commonData->recordedStatuses = WTFMove(m_recordedStatuses);
-    }
+    if (!m_watchpoints.reallyAdd(m_codeBlock, m_identifiers, commonData))
+        return false;
+
+    commonData->recordedStatuses = WTFMove(m_recordedStatuses);
 
     ASSERT(m_vm->heap.isDeferred());
     for (auto* callLinkInfo : commonData->m_directCallLinkInfos)
         callLinkInfo->validateSpeculativeRepatchOnMainThread(*m_vm);
-}
 
-bool Plan::isStillValidOnMainThread()
-{
-    return m_watchpoints.areStillValidOnMainThread(*m_vm, m_identifiers);
+    return true;
 }
 
 CompilationResult Plan::finalize()
@@ -561,7 +582,7 @@ CompilationResult Plan::finalize()
             return CompilationFailed;
         }
 
-        if (!isStillValidOnMainThread() || !isStillValid()) {
+        if (!isStillValidCodeBlock()) {
             CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("invalidated"));
             return CompilationInvalidated;
         }
@@ -572,10 +593,13 @@ CompilationResult Plan::finalize()
             return CompilationFailed;
         }
 
-        reallyAdd(m_codeBlock->jitCode()->dfgCommon());
+        if (!reallyAdd(m_codeBlock->jitCode()->dfgCommon())) {
+            CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("invalidated"));
+            return CompilationInvalidated;
+        }
+
         {
             ConcurrentJSLocker locker(m_codeBlock->m_lock);
-            m_codeBlock->jitCode()->shrinkToFit(locker);
             m_codeBlock->shrinkToFit(locker, CodeBlock::ShrinkMode::LateShrink);
         }
 
@@ -586,7 +610,7 @@ CompilationResult Plan::finalize()
             return CompilationInvalidated;
         }
 
-        if (validationEnabled()) {
+        if (UNLIKELY(validationEnabled())) {
             TrackedReferences trackedReferences;
 
             for (WriteBarrier<JSCell>& reference : m_codeBlock->jitCode()->dfgCommon()->m_weakReferences)
@@ -644,8 +668,10 @@ bool Plan::checkLivenessAndVisitChildren(AbstractSlotVisitor& visitor)
             visitor.appendUnbarriered(value.value());
     }
 
-    m_recordedStatuses.visitAggregate(visitor);
-    m_recordedStatuses.markIfCheap(visitor);
+    if (m_recordedStatuses) {
+        m_recordedStatuses->visitAggregate(visitor);
+        m_recordedStatuses->markIfCheap(visitor);
+    }
 
     visitor.appendUnbarriered(m_codeBlock->alternative());
     visitor.appendUnbarriered(m_profiledDFGCodeBlock);

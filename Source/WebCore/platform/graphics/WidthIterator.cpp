@@ -261,7 +261,7 @@ struct AdvanceInternalState {
     // rangeFont and font are not necessarily the same, since small-caps might change the range fot for a synthesized font, or a small-caps-synthesized font.
     RefPtr<const Font> rangeFont;
     RefPtr<const Font> nextRangeFont;
-    CheckedRef<GlyphBuffer> glyphBuffer;
+    GlyphBuffer& glyphBuffer;
     unsigned lastGlyphCount { 0 };
     Ref<const Font> primaryFont;
     float widthOfCurrentFontRange { 0 };
@@ -297,8 +297,8 @@ void WidthIterator::commitCurrentFontRange(AdvanceInternalState& advanceInternal
 {
 #if ASSERT_ENABLED
     ASSERT(advanceInternalState.rangeFont);
-    for (unsigned i = advanceInternalState.lastGlyphCount; i < advanceInternalState.glyphBuffer->size(); ++i)
-        ASSERT(&advanceInternalState.glyphBuffer->fontAt(i) == advanceInternalState.rangeFont);
+    for (unsigned i = advanceInternalState.lastGlyphCount; i < advanceInternalState.glyphBuffer.size(); ++i)
+        ASSERT(&advanceInternalState.glyphBuffer.fontAt(i) == advanceInternalState.rangeFont);
 #endif
 
     auto applyFontTransformsResult = applyFontTransforms(advanceInternalState.glyphBuffer, advanceInternalState.lastGlyphCount, *advanceInternalState.rangeFont, advanceInternalState.charactersTreatedAsSpace);
@@ -310,7 +310,7 @@ void WidthIterator::commitCurrentFontRange(AdvanceInternalState& advanceInternal
         m_fallbackFonts->add(*advanceInternalState.rangeFont);
 
     advanceInternalState.widthOfCurrentFontRange = 0;
-    advanceInternalState.lastGlyphCount = advanceInternalState.glyphBuffer->size();
+    advanceInternalState.lastGlyphCount = advanceInternalState.glyphBuffer.size();
 }
 
 static const Font* fontForRange(const Font* font, const SmallCapsState& smallCapsData, bool isSmallCaps)
@@ -756,9 +756,13 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
         }
 
         // https://www.w3.org/TR/css-text-3/#white-space-processing
+        // "Unsupported Default_ignorable characters must be ignored for text rendering."
+        if (FontCascade::isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(characterResponsibleForThisGlyph)) {
+            deleteGlyph(i);
+            continue;
+        }
         // "Control characters (Unicode category Cc)—other than tabs (U+0009), line feeds (U+000A), carriage returns (U+000D) and sequences that form a segment break—must be rendered as a visible glyph"
-        // Also, we're omitting Null (U+0000) from this set because Chrome and Firefox do so and it's needed for compat. See https://github.com/w3c/csswg-drafts/pull/6983.
-        if (characterResponsibleForThisGlyph != nullCharacter && isControlCharacter(characterResponsibleForThisGlyph)) {
+        if (isControlCharacter(characterResponsibleForThisGlyph)) {
             // Let's assume that .notdef is visible.
             GlyphBufferGlyph visibleGlyph = 0;
             clobberGlyph(i, visibleGlyph);
@@ -767,13 +771,6 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
         }
 
         adjustForSyntheticBold(i);
-
-        // https://drafts.csswg.org/css-text-3/#white-space-processing
-        // "Unsupported Default_ignorable characters must be ignored for text rendering."
-        if (FontCascade::isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(characterResponsibleForThisGlyph)) {
-            deleteGlyph(i);
-            continue;
-        }
     }
 }
 

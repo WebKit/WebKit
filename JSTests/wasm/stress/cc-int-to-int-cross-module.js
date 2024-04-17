@@ -1,3 +1,5 @@
+//@ skip if $architecture != "arm64" and $architecture != "x86_64"
+//@ requireOptions("--useIPIntWrappers=1")
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 

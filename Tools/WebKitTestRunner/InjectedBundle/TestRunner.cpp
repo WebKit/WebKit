@@ -398,17 +398,6 @@ void TestRunner::syncLocalStorage()
     postSynchronousMessage("SyncLocalStorage", true);
 }
 
-static inline JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef strings)
-{
-    const size_t count = WKArrayGetSize(strings);
-    auto array = JSObjectMakeArray(context, 0, 0, nullptr);
-    for (size_t i = 0; i < count; ++i) {
-        auto stringRef = static_cast<WKStringRef>(WKArrayGetItemAtIndex(strings, i));
-        JSObjectSetPropertyAtIndex(context, array, i, JSValueMakeString(context, toJS(stringRef).get()), nullptr);
-    }
-    return array;
-}
-
 bool TestRunner::isCommandEnabled(JSStringRef name)
 {
     return WKBundlePageIsEditingCommandEnabled(page(), toWK(name).get());
@@ -647,7 +636,6 @@ enum {
     StatisticsDidSetToSameSiteStrictCookiesCallbackID,
     StatisticsDidSetFirstPartyHostCNAMEDomainCallbackID,
     StatisticsDidSetThirdPartyCNAMEDomainCallbackID,
-    AllStorageAccessEntriesCallbackID,
     LoadedSubresourceDomainsCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     GetApplicationManifestCallbackID,
@@ -660,9 +648,6 @@ enum {
     EnterFullscreenForElementCallbackID,
     ExitFullscreenForElementCallbackID,
     AppBoundRequestContextDataForDomainCallbackID,
-    TakeViewPortSnapshotCallbackID,
-    RemoveAllCookiesCallbackID,
-    GetAndClearReportedWindowProxyAccessDomainsCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -804,13 +789,7 @@ void TestRunner::setOnlyAcceptFirstPartyCookies(bool accept)
 
 void TestRunner::removeAllCookies(JSValueRef callback)
 {
-    cacheTestRunnerCallback(RemoveAllCookiesCallbackID, callback);
-    postMessage("RemoveAllCookies");
-}
-
-void TestRunner::callRemoveAllCookiesCallback()
-{
-    callTestRunnerCallback(RemoveAllCookiesCallbackID);
+    postMessageWithAsyncReply("RemoveAllCookies", callback);
 }
 
 void TestRunner::setEnterFullscreenForElementCallback(JSValueRef callback)
@@ -1830,8 +1809,7 @@ void TestRunner::textFieldDidEndEditingCallback()
 
 void TestRunner::getAllStorageAccessEntries(JSValueRef callback)
 {
-    cacheTestRunnerCallback(AllStorageAccessEntriesCallbackID, callback);
-    postMessage("GetAllStorageAccessEntries");
+    postMessageWithAsyncReply("GetAllStorageAccessEntries", callback);
 }
 
 static JSValueRef makeDomainsValue(const Vector<String>& domains)
@@ -1845,12 +1823,6 @@ static JSValueRef makeDomainsValue(const Vector<String>& domains)
     }
     builder.append(']');
     return JSValueMakeFromJSONString(mainFrameJSContext(), createJSString(builder.toString().utf8().data()).get());
-}
-
-void TestRunner::callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& domains)
-{
-    auto result = makeDomainsValue(domains);
-    callTestRunnerCallback(AllStorageAccessEntriesCallbackID, 1, &result);
 }
 
 void TestRunner::setRequestStorageAccessThrowsExceptionUntilReload(bool enabled)
@@ -2394,19 +2366,12 @@ void TestRunner::setIsMediaKeySystemPermissionGranted(bool granted)
 
 void TestRunner::takeViewPortSnapshot(JSValueRef callback)
 {
-    if (m_takeViewPortSnapshot)
-        return;
-
-    cacheTestRunnerCallback(TakeViewPortSnapshotCallbackID, callback);
-    postMessage("TakeViewPortSnapshot");
-    m_takeViewPortSnapshot = true;
+    postMessageWithAsyncReply("TakeViewPortSnapshot", callback);
 }
 
-void TestRunner::viewPortSnapshotTaken(WKStringRef value)
+void TestRunner::flushConsoleLogs(JSValueRef callback)
 {
-    auto jsValue = JSValueMakeString(mainFrameJSContext(), toJS(value).get());
-    callTestRunnerCallback(TakeViewPortSnapshotCallbackID, 1, &jsValue);
-    m_takeViewPortSnapshot = false;
+    postMessageWithAsyncReply("FlushConsoleLogs", callback);
 }
 
 void TestRunner::generateTestReport(JSStringRef message, JSStringRef group)
@@ -2416,14 +2381,15 @@ void TestRunner::generateTestReport(JSStringRef message, JSStringRef group)
 
 void TestRunner::getAndClearReportedWindowProxyAccessDomains(JSValueRef callback)
 {
-    cacheTestRunnerCallback(GetAndClearReportedWindowProxyAccessDomainsCallbackID, callback);
-    postMessage("GetAndClearReportedWindowProxyAccessDomains");
+    postMessageWithAsyncReply("GetAndClearReportedWindowProxyAccessDomains", callback);
 }
 
-void TestRunner::didGetAndClearReportedWindowProxyAccessDomains(WKArrayRef value)
+void TestRunner::dumpBackForwardList()
 {
-    auto jsValue = stringArrayToJS(mainFrameJSContext(), value);
-    callTestRunnerCallback(GetAndClearReportedWindowProxyAccessDomainsCallbackID, 1, &jsValue);
+    m_shouldDumpBackForwardListsForAllWindows = true;
+    auto& injectedBundle = InjectedBundle::singleton();
+    if (WKBundleFrameIsRemote(WKBundlePageGetMainFrame(injectedBundle.pageRef())))
+        postPageMessage("DumpBackForwardList");
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

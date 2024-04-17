@@ -45,7 +45,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RemoteDOMWindow);
 
 RemoteDOMWindow::RemoteDOMWindow(RemoteFrame& frame, GlobalWindowIdentifier&& identifier)
-    : DOMWindow(WTFMove(identifier))
+    : DOMWindow(WTFMove(identifier), DOMWindowType::Remote)
     , m_frame(frame)
 {
 }
@@ -96,7 +96,7 @@ unsigned RemoteDOMWindow::length() const
 void RemoteDOMWindow::setOpener(WindowProxy*)
 {
     // FIXME: <rdar://118263373> Implement.
-    // JSLocalDOMWindow::setOpener has some security checks. Are they needed here?
+    // JSDOMWindow::setOpener has some security checks. Are they needed here?
 }
 
 ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&& options)
@@ -117,7 +117,7 @@ ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGloba
     if (auto origin = targetSecurityOrigin.releaseReturnValue())
         target = origin->data();
 
-    Vector<RefPtr<MessagePort>> ports;
+    Vector<Ref<MessagePort>> ports;
     auto messageData = SerializedScriptValue::create(lexicalGlobalObject, message, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WindowPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();

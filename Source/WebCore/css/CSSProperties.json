@@ -3382,6 +3382,19 @@
                 "url": "https://www.w3.org/TR/SVG/shapes.html"
             }
         },
+        "d": {
+            "values": [
+                "none"
+            ],
+            "codegen-properties": {
+                "converter": "SVGPath",
+                "parser-grammar": "none | <path()>"
+            },
+            "specification": {
+                "category": "svg",
+                "url": "https://www.w3.org/TR/SVG/paths.html#TheDProperty"
+            }
+        },
         "dominant-baseline": {
             "values": [
                 "auto",

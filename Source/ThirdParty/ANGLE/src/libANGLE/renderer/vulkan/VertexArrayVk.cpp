@@ -15,9 +15,9 @@
 #include "libANGLE/renderer/vulkan/BufferVk.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
+#include "libANGLE/renderer/vulkan/vk_resource.h"
 
 namespace rx
 {
@@ -55,10 +55,14 @@ ANGLE_INLINE bool ClientBindingAligned(const gl::VertexAttribute &attrib,
     return reinterpret_cast<intptr_t>(attrib.pointer) % alignment == 0 && stride % alignment == 0;
 }
 
-bool ShouldCombineAttributes(RendererVk *renderer,
+bool ShouldCombineAttributes(vk::Renderer *renderer,
                              const gl::VertexAttribute &attrib,
                              const gl::VertexBinding &binding)
 {
+    if (!renderer->getFeatures().enableMergeClientAttribBuffer.enabled)
+    {
+        return false;
+    }
     const vk::Format &vertexFormat = renderer->getFormat(attrib.format->id);
     return !vertexFormat.getVertexLoadRequiresConversion(false) && binding.getDivisor() == 0 &&
            ClientBindingAligned(attrib, binding.getStride(),
@@ -91,7 +95,7 @@ angle::Result StreamVertexData(ContextVk *contextVk,
                                size_t srcStride,
                                VertexCopyFunction vertexLoadFunction)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     uint8_t *dst = dstBufferHelper->getMappedMemory() + dstOffset;
 
@@ -119,7 +123,7 @@ angle::Result StreamVertexDataWithDivisor(ContextVk *contextVk,
                                           uint32_t divisor,
                                           size_t numSrcVertices)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     uint8_t *dst = dstBufferHelper->getMappedMemory();
 
@@ -224,7 +228,7 @@ void VertexArrayVk::destroy(const gl::Context *context)
 {
     ContextVk *contextVk = vk::GetImpl(context);
 
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     for (std::unique_ptr<vk::BufferHelper> &buffer : mCachedStreamIndexBuffers)
     {
@@ -356,9 +360,9 @@ angle::Result VertexArrayVk::convertIndexBufferCPU(ContextVk *contextVk,
                                                    BufferBindingDirty *bindingDirty)
 {
     ASSERT(!mState.getElementArrayBuffer() || indexType == gl::DrawElementsType::UnsignedByte);
-    RendererVk *renderer = contextVk->getRenderer();
-    size_t elementSize   = contextVk->getVkIndexTypeSize(indexType);
-    const size_t amount  = elementSize * indexCount;
+    vk::Renderer *renderer = contextVk->getRenderer();
+    size_t elementSize     = contextVk->getVkIndexTypeSize(indexType);
+    const size_t amount    = elementSize * indexCount;
 
     // Applications often time draw a quad with two triangles. This is try to catch all the
     // common used element array buffer with pre-created BufferHelper objects to improve
@@ -736,7 +740,7 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
                                              size_t attribIndex,
                                              bool bufferOnly)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
     if (attrib.enabled)
     {
         const vk::Format &vertexFormat = renderer->getFormat(attrib.format->id);
@@ -927,7 +931,7 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
 }
 
 gl::AttributesMask VertexArrayVk::mergeClientAttribsRange(
-    RendererVk *renderer,
+    vk::Renderer *renderer,
     const gl::AttributesMask activeStreamedAttribs,
     size_t startVertex,
     size_t endVertex,
@@ -1010,8 +1014,8 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
                                                    gl::DrawElementsType indexTypeOrInvalid,
                                                    const void *indices)
 {
-    ContextVk *contextVk = vk::GetImpl(context);
-    RendererVk *renderer = contextVk->getRenderer();
+    ContextVk *contextVk   = vk::GetImpl(context);
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     const gl::AttributesMask activeAttribs =
         context->getStateCache().getActiveClientAttribsMask() |

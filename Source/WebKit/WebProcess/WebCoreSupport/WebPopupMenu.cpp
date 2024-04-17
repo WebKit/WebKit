@@ -90,7 +90,7 @@ Vector<WebPopupItem> WebPopupMenu::populateItems()
     });
 }
 
-void WebPopupMenu::show(const IntRect& rect, LocalFrameView* view, int selectedIndex)
+void WebPopupMenu::show(const IntRect& rect, LocalFrameView& view, int selectedIndex)
 {
     // FIXME: We should probably inform the client to also close the menu.
     Vector<WebPopupItem> items = populateItems();
@@ -105,12 +105,12 @@ void WebPopupMenu::show(const IntRect& rect, LocalFrameView* view, int selectedI
     m_page->setActivePopupMenu(this);
 
     // Move to page coordinates
-    IntRect pageCoordinates(view->contentsToWindow(rect.location()), rect.size());
+    IntRect pageCoordinates(view.contentsToWindow(rect.location()), rect.size());
 
     PlatformPopupMenuData platformData;
     setUpPlatformData(pageCoordinates, platformData);
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowPopupMenu(pageCoordinates, static_cast<uint64_t>(m_popupClient->menuStyle().textDirection()), items, selectedIndex, platformData), m_page->identifier());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowPopupMenuFromFrame(view.frame().frameID(), pageCoordinates, static_cast<uint64_t>(m_popupClient->menuStyle().textDirection()), items, selectedIndex, platformData), m_page->identifier());
 }
 
 void WebPopupMenu::hide()

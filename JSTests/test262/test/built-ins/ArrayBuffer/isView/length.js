@@ -22,8 +22,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(ArrayBuffer.isView.length, 1);
-
-verifyNotEnumerable(ArrayBuffer.isView, "length");
-verifyNotWritable(ArrayBuffer.isView, "length");
-verifyConfigurable(ArrayBuffer.isView, "length");
+verifyProperty(ArrayBuffer.isView, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

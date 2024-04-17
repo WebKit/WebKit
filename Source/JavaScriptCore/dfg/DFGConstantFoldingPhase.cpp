@@ -389,7 +389,38 @@ private:
             }
             case CheckInBoundsInt52:
                 break;
-                
+
+            case GetArrayLength: {
+                ArrayMode arrayMode = node->arrayMode();
+                AbstractValue& abstractValue = m_state.forNode(node->child1());
+                if (arrayMode.type() != Array::AnyTypedArray && arrayMode.isSomeTypedArrayView() && !arrayMode.mayBeResizableOrGrowableSharedTypedArray()) {
+                    if ((abstractValue.m_type && !(abstractValue.m_type & ~SpecObject)) && abstractValue.m_structure.isFinite()) {
+                        bool canFold = !abstractValue.m_structure.isClear();
+                        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                        abstractValue.m_structure.forEach([&](RegisteredStructure structure) {
+                            if (!arrayMode.structureWouldPassArrayModeFiltering(structure.get())) {
+                                canFold = false;
+                                return;
+                            }
+
+                            if (structure->globalObject() != globalObject) {
+                                canFold = false;
+                                return;
+                            }
+                        });
+
+                        if (canFold) {
+                            if (m_graph.isWatchingArrayBufferDetachWatchpoint(node)) {
+                                node->setOp(GetUndetachedTypeArrayLength);
+                                changed = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+
             case GetMyArgumentByVal:
             case GetMyArgumentByValOutOfBounds: {
                 JSValue indexValue = m_state.forNode(node->child2()).value();

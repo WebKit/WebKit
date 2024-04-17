@@ -10,8 +10,9 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Object.is.name, 'is', "The value of `Object.is.name` is `'is'`");
-
-verifyNotEnumerable(Object.is, "name");
-verifyNotWritable(Object.is, "name");
-verifyConfigurable(Object.is, "name");
+verifyProperty(Object.is, "name", {
+  value: "is",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

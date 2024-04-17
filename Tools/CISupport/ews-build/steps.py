@@ -182,10 +182,10 @@ class GitHub(object):
         if prefix in cls._cache:
             return cls._cache[prefix]
 
-        try:
-            passwords = json.load(open('passwords.json'))
-            cls._cache[prefix] = passwords.get(f'{prefix}USERNAME', None), passwords.get(f'{prefix}ACCESS_TOKEN', None)
-        except Exception as e:
+        username, password = load_password(f'{prefix}USERNAME'), load_password(f'{prefix}ACCESS_TOKEN')
+        if username and password:
+            cls._cache[prefix] = username, password
+        else:
             print('Error reading GitHub credentials')
             cls._cache[prefix] = None, None
 
@@ -1062,69 +1062,10 @@ class UpdateWorkingDirectory(steps.ShellSequence, ShellMixin):
         defer.returnValue(rc)
 
 
-class ApplyPatch(shell.ShellCommand, CompositeStepMixin, ShellMixin):
+class ApplyPatch(steps.ShellSequence, CompositeStepMixin, ShellMixin):
     name = 'apply-patch'
-    description = ['applying-patch']
+    description = ['apply-patch']
     descriptionDone = ['Applied patch']
-    haltOnFailure = False
-    command = ['perl', 'Tools/Scripts/svn-apply', '--force', '.buildbot-diff']
-
-    def __init__(self, **kwargs):
-        super().__init__(timeout=10 * 60, logEnviron=False, **kwargs)
-
-    def doStepIf(self, step):
-        return self.getProperty('patch_id', False)
-
-    def _get_patch(self):
-        sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
-        if not sourcestamp or not sourcestamp.patch:
-            return None
-        return sourcestamp.patch[1]
-
-    def start(self):
-        patch = self._get_patch()
-        if not patch:
-            # Forced build, don't have patch_id raw data on the request, need to fech it.
-            patch_id = self.getProperty('patch_id', '')
-            self.command = self.shell_command('curl -L "https://bugs.webkit.org/attachment.cgi?id={}" -o .buildbot-diff && {}'.format(patch_id, ' '.join(self.command)))
-            shell.ShellCommand.start(self)
-            return None
-
-        reviewers_names = self.getProperty('reviewers_full_names', [])
-        if reviewers_names:
-            self.command.extend(['--reviewer', reviewers_names[0]])
-        d = self.downloadFileContentToWorker('.buildbot-diff', patch)
-        d.addCallback(lambda res: shell.ShellCommand.start(self))
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step) or (results == SUCCESS and self.getProperty('sensitive', False))
-
-    def getResultSummary(self):
-        if self.results == SKIPPED:
-            return {'step': "Skipping applying patch since patch_id isn't provided"}
-        if self.results != SUCCESS:
-            return {'step': 'svn-apply failed to apply patch to trunk'}
-        return super().getResultSummary()
-
-    def evaluateCommand(self, cmd):
-        rc = shell.ShellCommand.evaluateCommand(self, cmd)
-        patch_id = self.getProperty('patch_id', '')
-        if rc == FAILURE:
-            message = 'Tools/Scripts/svn-apply failed to apply patch {} to trunk'.format(patch_id)
-            if self.getProperty('buildername', '').lower() == 'commit-queue':
-                comment_text = '{}.\nPlease resolve the conflicts and upload a new patch.'.format(message.replace('patch', 'attachment'))
-                self.setProperty('comment_text', comment_text)
-                self.setProperty('build_finish_summary', message)
-                self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
-            else:
-                self.build.buildFinished([message], FAILURE)
-        return rc
-
-
-class CommitPatch(steps.ShellSequence, CompositeStepMixin, ShellMixin):
-    name = 'commit-patch'
-    description = ['commit-patch']
-    descriptionDone = ['Created commit from patch']
     haltOnFailure = True
     env = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
     FILTER_BRANCH_PROGRAM = '''import re
@@ -1162,9 +1103,13 @@ for l in lines[1:]:
         if not patch:
             commands += [['curl', '-L', 'https://bugs.webkit.org/attachment.cgi?id={}'.format(self.getProperty('patch_id', '')), '-o', '.buildbot-diff']]
         commands += [
+            ['git', 'config', 'user.name', 'EWS'],
+            ['git', 'config', 'user.email', FROM_EMAIL],
             ['git', 'am', '--keep-non-patch', '.buildbot-diff'],
-            ['git', 'filter-branch', '-f', '--msg-filter', 'python3 -c "{}"'.format(self.FILTER_BRANCH_PROGRAM), 'HEAD...HEAD~1'],
         ]
+        if not self.has_windows_shell():
+            commands.append(['git', 'filter-branch', '-f', '--msg-filter', 'python3 -c "{}"'.format(self.FILTER_BRANCH_PROGRAM), 'HEAD...HEAD~1'])
+
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
 
@@ -1173,6 +1118,8 @@ for l in lines[1:]:
         defer.returnValue(res)
 
     def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': "Skipping applying patch since patch_id isn't provided"}
         if self.results != SUCCESS:
             return {'step': 'git failed to apply patch to trunk'}
         return super().getResultSummary()
@@ -1371,15 +1318,135 @@ class CheckChangeRelevance(AnalyzeChange):
         return None
 
 
-class FindModifiedLayoutTests(AnalyzeChange):
+class GetTestExpectationsBaseline(shell.ShellCommand, ShellMixin):
+    name = 'get-test-expectations-baseline'
+    description = 'get-test-expectations-baseline running'
+    descriptionDone = 'Found baseline expectations for layout tests'
+    command = ['python3', 'Tools/Scripts/run-webkit-tests', '--print-expectations', WithProperties('--%(configuration)s')]
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        platform = self.getProperty('platform')
+        self.setCommand(self.command + customBuildFlag(platform, self.getProperty('fullPlatform')))
+
+        patch_author = self.getProperty('patch_author')
+        if patch_author in ['webkit-wpt-import-bot@igalia.com']:
+            self.setCommand(self.command + ['imported/w3c/web-platform-tests'])
+
+        additionalArguments = self.getProperty('additionalArguments', '')
+        if additionalArguments:
+            self.setCommand(self.command + additionalArguments)
+
+        self.setCommand(self.shell_command(' '.join(self.command) + ' > base-expectations.txt'))
+        rc = yield super().run()
+
+        log_text = log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+        match = re.search(r'Found.*', log_text)
+        if match:
+            defer.returnValue(SUCCESS)
+        defer.returnValue(rc)
+
+
+class GetUpdatedTestExpectations(steps.ShellSequence, ShellMixin):
+    name = 'get-updated-test-expectations'
+    description = 'get-updated-test-expectations running'
+    descriptionDone = 'Found updated expectations for layout tests'
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        configuration_flag = [f"--{self.getProperty('configuration')}"] if self.getProperty('configuration') else []
+        platform_flag = customBuildFlag(self.getProperty('platform'), self.getProperty('fullPlatform'))
+        run_webkit_command = ['python3', 'Tools/Scripts/run-webkit-tests', '--print-expectations'] + configuration_flag + platform_flag
+
+        patch_author = self.getProperty('patch_author')
+        if patch_author in ['webkit-wpt-import-bot@igalia.com']:
+            run_webkit_command += ['imported/w3c/web-platform-tests']
+
+        additionalArguments = self.getProperty('additionalArguments', '')
+        if additionalArguments:
+            run_webkit_command += additionalArguments
+
+        run_webkit_command = ' '.join(run_webkit_command) + ' > new-expectations.txt'
+
+        self.commands = []
+        for command in [
+            self.shell_command(run_webkit_command),
+            self.shell_command("perl -p -i -e 's/\\].*/\\]/' base-expectations.txt"),
+            self.shell_command("perl -p -i -e 's/\\].*/\\]/' new-expectations.txt"),
+        ]:
+            self.commands.append(util.ShellArg(command=command, logname='stdio'))
+
+        rc = yield super().run()
+
+        log_text = log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+        match = re.search(r'Found.*', log_text)
+        if match:
+            defer.returnValue(SUCCESS)
+        defer.returnValue(rc)
+
+
+class FindModifiedLayoutTests(shell.ShellCommandNewStyle, AnalyzeChange):
     name = 'find-modified-layout-tests'
+    description = 'find-modified-layout tests running'
+    descriptionDone = 'Found modified layout tests'
     RE_LAYOUT_TEST = br'^(\+\+\+).*(LayoutTests.*\.html)'
     DIRECTORIES_TO_IGNORE = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
     SUFFIXES_TO_IGNORE = ['-expected', '-expected-mismatch', '-ref', '-notref']
+    command = ['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']
 
     def __init__(self, skipBuildIfNoResult=True):
         self.skipBuildIfNoResult = skipBuildIfNoResult
         super().__init__()
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+        rc = yield super().run()
+        modified_tests = set()
+        log_text = self.log_observer.getStdout()
+        match = re.findall(r'\+(.*\.html)', log_text)
+        yield self._addToLog('stdio', '\nLooking for test expectation changes...\n')
+        for test in match:
+            yield self._addToLog('stdio', f'    LayoutTests/{test}\n')
+            modified_tests.add(f'LayoutTests/{test}')
+        modified_tests = list(modified_tests)
+
+        patch = self._get_patch()
+        if not patch:
+            yield self._addToLog('stdio', 'Unable to access the patch/PR content.\n')
+            self.results = WARNINGS
+            if self.skipBuildIfNoResult:
+                self.build.buildFinished(['{} {} could not be accessed'.format(
+                    self.change_type,
+                    self.getProperty('patch_id', '') or self.getProperty('github.number', ''),
+                )], WARNINGS)
+            return defer.returnValue(self.results)
+
+        yield self._addToLog('stdio', '\nLooking for layout test changes...\n')
+        tests_from_patch = self.find_test_names_from_patch(patch)
+        modified_tests += tests_from_patch
+
+        if modified_tests:
+            yield self._addToLog('stdio', '\nThis change modifies following tests: {}\n'.format(modified_tests))
+            self.setProperty('modified_tests', modified_tests)
+            self.results = SUCCESS
+        else:
+            yield self._addToLog('stdio', 'This change does not modify any layout tests\n')
+            self.results = SKIPPED
+            if self.skipBuildIfNoResult:
+                self.build.results = SKIPPED
+                self.build.buildFinished(['{} {} doesn\'t have relevant changes'.format(
+                    self.change_type,
+                    self.getProperty('patch_id', '') or self.getProperty('github.number', ''),
+                )], SKIPPED)
+        return defer.returnValue(self.results)
 
     def find_test_names_from_patch(self, patch):
         tests = []
@@ -1394,30 +1461,10 @@ class FindModifiedLayoutTests(AnalyzeChange):
                 tests.append(test_name)
         return list(set(tests))
 
-    def start(self):
-        patch = self._get_patch()
-        if not patch:
-            self._addToLog('stdio', 'Unable to access the patch/PR content.')
-            self.finished(WARNINGS)
-            return None
-
-        tests = self.find_test_names_from_patch(patch)
-
-        if tests:
-            self._addToLog('stdio', 'This change modifies following tests: {}'.format(tests))
-            self.setProperty('modified_tests', tests)
-            self.finished(SUCCESS)
-            return None
-
-        self._addToLog('stdio', 'This change does not modify any layout tests')
-        self.finished(SKIPPED)
-        if self.skipBuildIfNoResult:
-            self.build.results = SKIPPED
-            self.build.buildFinished(['{} {} doesn\'t have relevant changes'.format(
-                self.change_type,
-                self.getProperty('patch_id', '') or self.getProperty('github.number', ''),
-            )], SKIPPED)
-        return None
+    def getResultSummary(self):
+        if self.results == WARNINGS:
+            return {'step': '{} could not be accessed'.format(self.change_type)}
+        return super().getResultSummary()
 
 
 class Bugzilla(object):
@@ -1628,12 +1675,10 @@ class BugzillaMixin(AddToLogMixin):
             print(f'Error in sending email for infrastructure issue: {e}')
 
     def get_bugzilla_api_key(self):
-        try:
-            passwords = json.load(open('passwords.json'))
-            return passwords.get('BUGZILLA_API_KEY', '')
-        except Exception as e:
+        password = load_password('BUGZILLA_API_KEY', default='')
+        if not password:
             print('Error in reading Bugzilla api key')
-            return ''
+        return password
 
     @defer.inlineCallbacks
     def remove_flags_on_patch(self, patch_id):
@@ -2453,7 +2498,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     flunkOnFailure = False
     haltOnFailure = False
     EMBEDDED_CHECKS = ['ios', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'tv', 'tv-sim', 'watch', 'watch-sim']
-    MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress']
+    MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress', 'jsc', 'jsc-arm64']
     LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'wpe-skia', 'wpe-wk2', 'api-wpe', 'jsc-armv7', 'jsc-armv7-tests']
     WINDOWS_CHECKS = ['wincairo']
     EWS_WEBKIT_FAILED = 0
@@ -2499,14 +2544,6 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
 
     @defer.inlineCallbacks
     def checkPRStatus(self, pr_number):
-        passed_status_check = self.getProperty('passed_status_check')
-        failed_status_check = self.getProperty('failed_status_check')
-        pending_prs = self.getProperty('pending_prs')
-
-        all_pr_data = self.getProperty('all_pr_data')
-        pr_data = [i for i in all_pr_data if i['node']['number'] == pr_number][0]
-        pr_commit_status_data = pr_data['node']['commits']['nodes'][0]['commit']['status']
-
         yield self._addToLog('stdio', f'Checking the status of PR {pr_number}...\n')
         project = self.getProperty('project') or GITHUB_PROJECTS[0]
         owner, name = project.split('/', 1)
@@ -5848,7 +5885,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         FetchBranches(),
                         UpdateWorkingDirectory(),
                         ShowIdentifier(),
-                        CommitPatch(),
+                        ApplyPatch(),
                         AddReviewerToCommitMessage(),
                         Canonicalize(),
                         ValidateChange(addURLs=False, verifycqplus=True),

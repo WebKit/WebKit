@@ -211,6 +211,9 @@ void MediaSessionManagerCocoa::updateSessionState()
     } else
         m_delayCategoryChangeTimer.stop();
 
+    if (mode == AudioSession::Mode::Default && category == AudioSession::CategoryType::PlayAndRecord)
+        mode = AudioSession::Mode::VideoChat;
+
     RouteSharingPolicy policy = (category == AudioSession::CategoryType::MediaPlayback) ? RouteSharingPolicy::LongFormAudio : RouteSharingPolicy::Default;
 
     ALWAYS_LOG(LOGIDENTIFIER, "setting category = ", category, ", mode = ", mode, ", policy = ", policy, ", previous category = ", m_previousCategory);
@@ -412,9 +415,9 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
 
     auto info = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtist, nowPlayingInfo.artist.createCFString().get());
-    CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoAlbum, nowPlayingInfo.album.createCFString().get());
-    CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoTitle, nowPlayingInfo.title.createCFString().get());
+    CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtist, nowPlayingInfo.metadata.artist.createCFString().get());
+    CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoAlbum, nowPlayingInfo.metadata.album.createCFString().get());
+    CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoTitle, nowPlayingInfo.metadata.title.createCFString().get());
 
     if (std::isfinite(nowPlayingInfo.duration) && nowPlayingInfo.duration != MediaPlayer::invalidTime()) {
         auto cfDuration = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &nowPlayingInfo.duration));
@@ -427,7 +430,7 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
 
     // FIXME: This is a workaround Control Center not updating the artwork when refreshed.
     // We force the identifier to be reloaded to the new artwork if available.
-    auto lastUpdatedNowPlayingInfoUniqueIdentifier = nowPlayingInfo.artwork ? nowPlayingInfo.artwork->src.hash() : nowPlayingInfo.uniqueIdentifier.toUInt64();
+    auto lastUpdatedNowPlayingInfoUniqueIdentifier = nowPlayingInfo.metadata.artwork ? nowPlayingInfo.metadata.artwork->src.hash() : nowPlayingInfo.uniqueIdentifier.toUInt64();
     auto cfIdentifier = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &lastUpdatedNowPlayingInfoUniqueIdentifier));
     CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoUniqueIdentifier, cfIdentifier.get());
 
@@ -435,17 +438,17 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
         auto cfCurrentTime = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &nowPlayingInfo.currentTime));
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoElapsedTime, cfCurrentTime.get());
     }
-    RetainPtr tiffImage = nowPlayingInfo.artwork && nowPlayingInfo.artwork->image ? nowPlayingInfo.artwork->image->adapter().tiffRepresentation() : nullptr;
+    RetainPtr tiffImage = nowPlayingInfo.metadata.artwork && nowPlayingInfo.metadata.artwork->image ? nowPlayingInfo.metadata.artwork->image->adapter().tiffRepresentation() : nullptr;
     if (tiffImage) {
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkData, tiffImage.get());
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkMIMEType, @"image/tiff");
-        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkDataWidth, [NSNumber numberWithFloat:nowPlayingInfo.artwork->image->width()]);
-        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkDataHeight, [NSNumber numberWithFloat:nowPlayingInfo.artwork->image->height()]);
-        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkIdentifier, String::number(nowPlayingInfo.artwork->src.hash()).createCFString().get());
+        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkDataWidth, [NSNumber numberWithFloat:nowPlayingInfo.metadata.artwork->image->width()]);
+        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkDataHeight, [NSNumber numberWithFloat:nowPlayingInfo.metadata.artwork->image->height()]);
+        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkIdentifier, String::number(nowPlayingInfo.metadata.artwork->src.hash()).createCFString().get());
     }
 
-    if (canLoad_MediaRemote_MRMediaRemoteSetParentApplication() && !nowPlayingInfo.sourceApplicationIdentifier.isEmpty())
-        MRMediaRemoteSetParentApplication(MRMediaRemoteGetLocalOrigin(), nowPlayingInfo.sourceApplicationIdentifier.createCFString().get());
+    if (canLoad_MediaRemote_MRMediaRemoteSetParentApplication() && !nowPlayingInfo.metadata.sourceApplicationIdentifier.isEmpty())
+        MRMediaRemoteSetParentApplication(MRMediaRemoteGetLocalOrigin(), nowPlayingInfo.metadata.sourceApplicationIdentifier.createCFString().get());
 
     MRPlaybackState playbackState = (nowPlayingInfo.isPlaying) ? kMRPlaybackStatePlaying : kMRPlaybackStatePaused;
     MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(MRMediaRemoteGetLocalOrigin(), playbackState, dispatch_get_main_queue(), ^(MRMediaRemoteError error) {
@@ -506,8 +509,8 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
         String src = "src"_s;
         String title = "title"_s;
 #else
-        String src = nowPlayingInfo->artwork ? nowPlayingInfo->artwork->src : String();
-        String title = nowPlayingInfo->title;
+        String src = nowPlayingInfo->metadata.artwork ? nowPlayingInfo->metadata.artwork->src : String();
+        String title = nowPlayingInfo->metadata.title;
 #endif
         ALWAYS_LOG(LOGIDENTIFIER, "title = \"", title, "\", isPlaying = ", nowPlayingInfo->isPlaying, ", duration = ", nowPlayingInfo->duration, ", now = ", nowPlayingInfo->currentTime, ", id = ", nowPlayingInfo->uniqueIdentifier.toUInt64(), ", registered = ", m_registeredAsNowPlayingApplication, ", src = \"", src, "\"");
     }
@@ -516,8 +519,11 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
         providePresentingApplicationPIDIfNecessary();
     }
 
-    if (!nowPlayingInfo->title.isEmpty())
-        m_lastUpdatedNowPlayingTitle = nowPlayingInfo->title;
+    if (!m_nowPlayingInfo || nowPlayingInfo->metadata != m_nowPlayingInfo->metadata)
+        nowPlayingMetadataChanged(nowPlayingInfo->metadata);
+
+    if (!nowPlayingInfo->metadata.title.isEmpty())
+        m_lastUpdatedNowPlayingTitle = nowPlayingInfo->metadata.title;
 
     double duration = nowPlayingInfo->duration;
     if (std::isfinite(duration) && duration != MediaPlayer::invalidTime())

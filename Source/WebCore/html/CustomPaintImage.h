@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "GeneratedImage.h"
 #include "PaintWorkletGlobalScope.h"
 #include <wtf/WeakPtr.h>
@@ -63,4 +61,3 @@ private:
 }
 
 SPECIALIZE_TYPE_TRAITS_IMAGE(CustomPaintImage)
-#endif

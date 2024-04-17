@@ -21,17 +21,6 @@ PASS Set attribute via NamedNodeMap.setNamedItem on script.onclick.
 PASS Set attribute via attribute node on script.bla.
 PASS Set attribute via attributenode.value on script.bla.
 PASS Set attribute via NamedNodeMap.setNamedItem on script.bla.
-PASS Set attribute via attribute node on embed.src.
-PASS Set attribute via attributenode.value on embed.src.
-PASS Set attribute via NamedNodeMap.setNamedItem on embed.src.
-PASS Set attribute via attribute node on embed.srcdoc.
-PASS Set attribute via attributenode.value on embed.srcdoc.
-PASS Set attribute via NamedNodeMap.setNamedItem on embed.srcdoc.
-PASS Set attribute via attributenode.value on embed.onclick.
-PASS Set attribute via NamedNodeMap.setNamedItem on embed.onclick.
-PASS Set attribute via attribute node on embed.bla.
-PASS Set attribute via attributenode.value on embed.bla.
-PASS Set attribute via NamedNodeMap.setNamedItem on embed.bla.
 PASS Set attribute via attribute node on iframe.src.
 PASS Set attribute via attributenode.value on iframe.src.
 PASS Set attribute via NamedNodeMap.setNamedItem on iframe.src.

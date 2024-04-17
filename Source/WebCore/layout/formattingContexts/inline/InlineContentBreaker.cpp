@@ -85,6 +85,8 @@ static inline bool isNonContentRunsOnly(const InlineContentBreaker::ContinuousCo
         auto& inlineItem = run.inlineItem;
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
             continue;
+        if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem); inlineTextItem && inlineTextItem->isEmpty())
+            continue;
         return false;
     }
     return true;
@@ -682,7 +684,7 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
     }
     // Only non-whitespace text runs with same style.
     auto& fontCascade = style.fontCascade();
-    auto hyphenWidth = InlineLayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
+    auto hyphenWidth = std::max(fontCascade.width(TextRun { StringView { style.hyphenString() } }), 0.f);
     auto availableWidthExcludingHyphen = lineStatus.availableWidth - hyphenWidth;
     if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.size()))
         return { };

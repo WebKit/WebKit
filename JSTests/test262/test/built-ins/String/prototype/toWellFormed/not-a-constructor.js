@@ -29,4 +29,4 @@ assert.sameValue(
 
 assert.throws(TypeError, function () {
   new String.prototype.toWellFormed();
-}, '`new String.prototype.toWellFormed()` throws TypeError');
+});

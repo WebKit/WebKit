@@ -48,7 +48,7 @@ public:
     static RefPtr<AudioBuffer> create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, LegacyPreventDetaching = LegacyPreventDetaching::No);
     static ExceptionOr<Ref<AudioBuffer>> create(const AudioBufferOptions&);
     // Returns nullptr if data is not a valid audio file.
-    static RefPtr<AudioBuffer> createFromAudioFileData(const void* data, size_t dataSize, bool mixToMono, float sampleRate);
+    static RefPtr<AudioBuffer> createFromAudioFileData(std::span<const uint8_t> data, bool mixToMono, float sampleRate);
 
     // Format
     size_t originalLength() const { return m_originalLength; }

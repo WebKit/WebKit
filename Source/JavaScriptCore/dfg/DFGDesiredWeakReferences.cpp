@@ -44,14 +44,22 @@ DesiredWeakReferences::DesiredWeakReferences(CodeBlock* codeBlock)
 {
 }
 
-DesiredWeakReferences::~DesiredWeakReferences()
-{
-}
+DesiredWeakReferences::~DesiredWeakReferences() = default;
 
 void DesiredWeakReferences::addLazily(JSCell* cell)
 {
-    if (cell)
-        m_references.add(cell);
+    if (cell) {
+        if (Structure* structure = jsDynamicCast<Structure*>(cell))
+            m_structures.add(structure->id());
+        else {
+            // There are weird relationships in how optimized CodeBlocks
+            // point to other CodeBlocks. We don't want to have them be
+            // part of the weak pointer set. For example, an optimized CodeBlock
+            // having a weak pointer to itself will cause it to get collected.
+            RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(cell));
+            m_cells.add(cell);
+        }
+    }
 }
 
 void DesiredWeakReferences::addLazily(JSValue value)
@@ -62,42 +70,51 @@ void DesiredWeakReferences::addLazily(JSValue value)
 
 bool DesiredWeakReferences::contains(JSCell* cell)
 {
-    return m_references.contains(cell);
+    if (Structure* structure = jsDynamicCast<Structure*>(cell))
+        return m_structures.contains(structure->id());
+    return m_cells.contains(cell);
+}
+
+void DesiredWeakReferences::finalize()
+{
+    m_finalizedCells = FixedVector<WriteBarrier<JSCell>>(m_cells.size());
+    {
+        unsigned index = 0;
+        for (JSCell* target : m_cells)
+            m_finalizedCells[index++].setWithoutWriteBarrier(target);
+    }
+    m_finalizedStructures = FixedVector<StructureID>(m_structures.size());
+    {
+        unsigned index = 0;
+        for (StructureID structureID : m_structures)
+            m_finalizedStructures[index++] = structureID;
+    }
 }
 
 void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
 {
     // We do not emit WriteBarrier here since (1) GC is deferred and (2) we emit write-barrier on CodeBlock when finishing DFG::Plan::reallyAdd.
-    ASSERT(vm.heap.isDeferred());
-
-    Vector<StructureID> weakStructureReferences;
-    Vector<WriteBarrier<JSCell>> weakReferences;
-    for (JSCell* target : m_references) {
-        if (Structure* structure = jsDynamicCast<Structure*>(target))
-            weakStructureReferences.append(structure->id());
-        else {
-            // There are weird relationships in how optimized CodeBlocks
-            // point to other CodeBlocks. We don't want to have them be
-            // part of the weak pointer set. For example, an optimized CodeBlock
-            // having a weak pointer to itself will cause it to get collected.
-            RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(target));
-            weakReferences.append(WriteBarrier<JSCell>(vm, m_codeBlock, target));
-        }
-    }
-    if (!weakStructureReferences.isEmpty() || !weakReferences.isEmpty()) {
-        ConcurrentJSLocker locker(m_codeBlock->m_lock);
+    ASSERT_UNUSED(vm, vm.heap.isDeferred());
+    if (!m_finalizedCells.isEmpty() || !m_finalizedStructures.isEmpty()) {
         ASSERT(common->m_weakStructureReferences.isEmpty());
         ASSERT(common->m_weakReferences.isEmpty());
-        common->m_weakStructureReferences = WTFMove(weakStructureReferences);
-        common->m_weakReferences = WTFMove(weakReferences);
+        // This is just moving a pointer. And we already synchronized with Lock etc. with compiler threads.
+        // So at this point, these vectors are fully constructed and baked by the compiler threads.
+        // We can just move these pointers to CommonData, and that's enough.
+        static_assert(sizeof(m_finalizedStructures) == sizeof(void*));
+        static_assert(sizeof(m_finalizedCells) == sizeof(void*));
+        common->m_weakStructureReferences = WTFMove(m_finalizedStructures);
+        common->m_weakReferences = WTFMove(m_finalizedCells);
     }
 }
 
 template<typename Visitor>
 void DesiredWeakReferences::visitChildren(Visitor& visitor)
 {
-    for (JSCell* target : m_references)
+    for (JSCell* target : m_cells)
         visitor.appendUnbarriered(target);
+    for (StructureID structureID : m_structures)
+        visitor.appendUnbarriered(structureID.decode());
 }
 
 template void DesiredWeakReferences::visitChildren(AbstractSlotVisitor&);

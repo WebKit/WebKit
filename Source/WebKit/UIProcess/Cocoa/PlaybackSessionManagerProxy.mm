@@ -33,6 +33,7 @@
 #import "PlaybackSessionManagerMessages.h"
 #import "PlaybackSessionManagerProxyMessages.h"
 #import "VideoReceiverEndpointMessage.h"
+#import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
@@ -72,8 +73,29 @@ void PlaybackSessionModelContext::sendRemoteCommand(WebCore::PlatformMediaSessio
 
 void PlaybackSessionModelContext::setVideoReceiverEndpoint(const WebCore::VideoReceiverEndpoint& endpoint)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->setVideoReceiverEndpoint(m_contextId, endpoint);
+}
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void PlaybackSessionModelContext::setSpatialTrackingLabel(const String& label)
+{
+    if (m_manager)
+        m_manager->setSpatialTrackingLabel(m_contextId, label);
+}
+#endif
+
+void PlaybackSessionModelContext::addNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver& nowPlayingInfo)
+{
+    if (m_manager)
+        m_manager->addNowPlayingMetadataObserver(m_contextId, nowPlayingInfo);
+}
+
+void PlaybackSessionModelContext::removeNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver& nowPlayingInfo)
+{
+    if (m_manager)
+        m_manager->removeNowPlayingMetadataObserver(m_contextId, nowPlayingInfo);
 }
 
 void PlaybackSessionModelContext::play()
@@ -185,13 +207,6 @@ void PlaybackSessionModelContext::selectLegibleMediaOption(uint64_t index)
         m_manager->selectLegibleMediaOption(m_contextId, index);
 }
 
-void PlaybackSessionModelContext::toggleFullscreen()
-{
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    if (m_manager)
-        m_manager->toggleFullscreen(m_contextId);
-}
-
 void PlaybackSessionModelContext::togglePictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
@@ -204,6 +219,13 @@ void PlaybackSessionModelContext::enterFullscreen()
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (RefPtr manager = m_manager.get())
         manager->enterFullscreen(m_contextId);
+}
+
+void PlaybackSessionModelContext::exitFullscreen()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (RefPtr manager = m_manager.get())
+        manager->exitFullscreen(m_contextId);
 }
 
 void PlaybackSessionModelContext::toggleInWindowFullscreen()
@@ -707,11 +729,6 @@ void PlaybackSessionManagerProxy::selectLegibleMediaOption(PlaybackSessionContex
     m_page->send(Messages::PlaybackSessionManager::SelectLegibleMediaOption(contextId, index));
 }
 
-void PlaybackSessionManagerProxy::toggleFullscreen(PlaybackSessionContextIdentifier contextId)
-{
-    m_page->send(Messages::PlaybackSessionManager::ToggleFullscreen(contextId));
-}
-
 void PlaybackSessionManagerProxy::togglePictureInPicture(PlaybackSessionContextIdentifier contextId)
 {
     m_page->send(Messages::PlaybackSessionManager::TogglePictureInPicture(contextId));
@@ -720,6 +737,11 @@ void PlaybackSessionManagerProxy::togglePictureInPicture(PlaybackSessionContextI
 void PlaybackSessionManagerProxy::enterFullscreen(PlaybackSessionContextIdentifier contextId)
 {
     m_page->send(Messages::PlaybackSessionManager::EnterFullscreen(contextId));
+}
+
+void PlaybackSessionManagerProxy::exitFullscreen(PlaybackSessionContextIdentifier contextId)
+{
+    m_page->send(Messages::PlaybackSessionManager::ExitFullscreen(contextId));
 }
 
 void PlaybackSessionManagerProxy::toggleInWindow(PlaybackSessionContextIdentifier contextId)
@@ -775,12 +797,40 @@ void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContex
     if (!xpcConnection)
         return;
 
+    // FIXME 125816935: element fullscreen is expected to exit when switching to LinearMediaPlayer
+    // fullscreen, but in order to do so in a way that's not visible to the user we need an API
+    // from LinearMediaKit to know when its scene swap transition has occurred. For now we just
+    // exit element fullscreen when we receive the video receiver endpoint, but this causes the
+    // element fullscreen window to close before the LinearMediaKit scene is visible.
+    if (endpoint && m_page->fullScreenManager() && m_page->fullScreenManager()->isFullScreen())
+        m_page->fullScreenManager()->requestExitFullScreen();
+
     VideoReceiverEndpointMessage endpointMessage(WTFMove(processIdentifier), WTFMove(playerIdentifier), endpoint);
     xpc_connection_send_message(xpcConnection.get(), endpointMessage.encode().get());
 #else
     UNUSED_PARAM(contextId);
     UNUSED_PARAM(endpoint);
 #endif
+}
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void PlaybackSessionManagerProxy::setSpatialTrackingLabel(PlaybackSessionContextIdentifier contextId, const String& label)
+{
+    if (m_page)
+        m_page->send(Messages::PlaybackSessionManager::SetSpatialTrackingLabel(contextId, label));
+}
+#endif
+
+void PlaybackSessionManagerProxy::addNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver& nowPlayingInfo)
+{
+    if (RefPtr page = m_page.get())
+        page->addNowPlayingMetadataObserver(nowPlayingInfo);
+}
+
+void PlaybackSessionManagerProxy::removeNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver& nowPlayingInfo)
+{
+    if (RefPtr page = m_page.get())
+        page->removeNowPlayingMetadataObserver(nowPlayingInfo);
 }
 
 bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()

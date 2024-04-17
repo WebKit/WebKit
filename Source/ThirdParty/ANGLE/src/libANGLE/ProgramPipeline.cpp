@@ -535,6 +535,12 @@ angle::Result ProgramPipeline::link(const Context *context)
     const Version &clientVersion   = context->getClientVersion();
     const bool isWebGL             = context->isWebGL();
 
+    if (mState.mExecutable->hasLinkedShaderStage(gl::ShaderType::TessControl) !=
+        mState.mExecutable->hasLinkedShaderStage(gl::ShaderType::TessEvaluation))
+    {
+        return angle::Result::Stop;
+    }
+
     if (mState.mExecutable->hasLinkedShaderStage(ShaderType::Vertex))
     {
         if (!linkVaryings())
@@ -705,6 +711,15 @@ void ProgramPipeline::validate(const Context *context)
     const Caps &caps = context->getCaps();
     mState.mValid    = true;
     mState.mInfoLog.reset();
+
+    if (mState.mExecutable->hasLinkedShaderStage(gl::ShaderType::TessControl) !=
+        mState.mExecutable->hasLinkedShaderStage(gl::ShaderType::TessEvaluation))
+    {
+        mState.mValid = false;
+        mState.mInfoLog << "Program pipeline must have both a Tessellation Control and Evaluation "
+                           "shader or neither\n";
+        return;
+    }
 
     for (const ShaderType shaderType : mState.mExecutable->getLinkedShaderStages())
     {

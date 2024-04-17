@@ -76,6 +76,7 @@ class KillRing;
 class LocalFrame;
 class Pasteboard;
 class PasteboardWriterData;
+class RenderInline;
 class RenderLayer;
 class FragmentedSharedBuffer;
 class Font;
@@ -87,6 +88,7 @@ class Text;
 class TextCheckerClient;
 class TextEvent;
 class TextPlaceholderElement;
+class WritingSuggestionData;
 
 struct CompositionHighlight;
 struct DictationAlternative;
@@ -172,8 +174,9 @@ private:
     TemporarySelectionChange m_selectionChange;
 };
 
-class Editor : public CanMakeCheckedPtr {
+class Editor final : public CanMakeCheckedPtr<Editor> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Editor);
 public:
     explicit Editor(Document&);
     ~Editor();
@@ -205,7 +208,6 @@ public:
 
     WEBCORE_EXPORT bool canCut() const;
     WEBCORE_EXPORT bool canCopy() const;
-    WEBCORE_EXPORT bool canPaste() const;
     WEBCORE_EXPORT bool canDelete() const;
     WEBCORE_EXPORT bool canSmartCopyOrDelete();
     bool shouldSmartDelete();
@@ -396,7 +398,9 @@ public:
 
     // international text input composition
     bool hasComposition() const { return m_compositionNode; }
-    WEBCORE_EXPORT void setComposition(const String&, const Vector<CompositionUnderline>&, const Vector<CompositionHighlight>&, const HashMap<String, Vector<CharacterRange>>&, unsigned selectionStart, unsigned selectionEnd);
+    WEBCORE_EXPORT void setComposition(const String&, const Vector<CompositionUnderline>&, const Vector<CompositionHighlight>&, unsigned selectionStart, unsigned selectionEnd);
+    WEBCORE_EXPORT void setWritingSuggestion(const String&, const CharacterRange& selection);
+    WEBCORE_EXPORT void setOffset(uint64_t);
     WEBCORE_EXPORT void confirmComposition();
     WEBCORE_EXPORT void confirmComposition(const String&); // if no existing composition, replaces selection
     void confirmOrCancelCompositionAndNotifyClient();
@@ -552,7 +556,7 @@ public:
     WEBCORE_EXPORT void replaceNodeFromPasteboard(Node&, const String& pasteboardName, EditAction = EditAction::Paste);
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    WEBCORE_EXPORT void insertMultiRepresentationHEIC(const std::span<const uint8_t>&);
+    WEBCORE_EXPORT void insertMultiRepresentationHEIC(const std::span<const uint8_t>&, const String&);
 #endif
 
     static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
@@ -606,6 +610,13 @@ public:
 
     bool isPastingFromMenuOrKeyBinding() const { return m_pastingFromMenuOrKeyBinding; }
     bool isCopyingFromMenuOrKeyBinding() const { return m_copyingFromMenuOrKeyBinding; }
+
+    Element* writingSuggestionsContainerElement();
+    WritingSuggestionData* writingSuggestionData() const { return m_writingSuggestionData.get(); }
+    bool isInsertingTextForWritingSuggestion() const { return m_isInsertingTextForWritingSuggestion; }
+
+    RenderInline* writingSuggestionRenderer() const;
+    void setWritingSuggestionRenderer(RenderInline&);
 
 private:
     Document& document() const { return m_document.get(); }
@@ -662,6 +673,8 @@ private:
 
     void postTextStateChangeNotificationForCut(const String&, const VisibleSelection&);
 
+    void removeWritingSuggestionIfNeeded();
+
     WeakPtr<EditorClient> m_client;
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     RefPtr<CompositeEditCommand> m_lastEditCommand;
@@ -684,6 +697,10 @@ private:
     MemoryCompactRobinHoodHashSet<String> m_insertedAttachmentIdentifiers;
     MemoryCompactRobinHoodHashSet<String> m_removedAttachmentIdentifiers;
 #endif
+
+    std::unique_ptr<WritingSuggestionData> m_writingSuggestionData;
+    SingleThreadWeakPtr<RenderInline> m_writingSuggestionRenderer;
+    bool m_isInsertingTextForWritingSuggestion { false };
 
     VisibleSelection m_mark;
     bool m_areMarkedTextMatchesHighlighted { false };

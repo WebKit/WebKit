@@ -68,6 +68,7 @@ per-file third_party/markupsafe=*
 per-file third_party/mesa/src=*
 per-file third_party/meson=*
 per-file third_party/nasm=*
+per-file third_party/OpenCL-CTS/src=*
 per-file third_party/OpenCL-Docs/src=*
 per-file third_party/OpenCL-ICD-Loader/src=*
 per-file third_party/OpenGL-Registry/src=*

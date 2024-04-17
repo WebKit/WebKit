@@ -42,6 +42,7 @@ class LineLayout;
 
 class RenderText : public RenderObject {
     WTF_MAKE_ISO_ALLOCATED(RenderText);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderText);
 public:
     RenderText(Type, Text&, const String&);
     RenderText(Type, Document&, const String&);
@@ -249,7 +250,9 @@ private:
 
     String m_text;
 
+protected:
     std::optional<bool> m_canUseSimplifiedTextMeasuring;
+private:
     std::optional<bool> m_hasPositionDependentContentWidth;
     std::optional<bool> m_hasStrongDirectionalityContent;
     unsigned m_hasBreakableChar : 1 { false }; // Whether or not we can be broken into multiple lines.

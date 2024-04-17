@@ -109,7 +109,7 @@ void main()
 
         // Bind the texture as a framebuffer, render to it, then check the results
         GLFramebuffer fbo;
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo.get());
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
         glBindTexture(GL_TEXTURE_2D, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
 
@@ -149,7 +149,7 @@ TEST_P(SixteenBppTextureTest, RGB565Validation)
 
     // Create a simple RGB565 texture
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -159,7 +159,7 @@ TEST_P(SixteenBppTextureTest, RGB565Validation)
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
     EXPECT_GL_NO_ERROR();
 
-    simpleValidationBase(tex.get());
+    simpleValidationBase(tex);
 }
 
 // Simple validation test for GL_RGB5_A1 textures.
@@ -175,7 +175,7 @@ TEST_P(SixteenBppTextureTest, RGBA5551Validation)
 
     // Create a simple 5551 texture
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -184,7 +184,7 @@ TEST_P(SixteenBppTextureTest, RGBA5551Validation)
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, pixels);
     EXPECT_GL_NO_ERROR();
 
-    simpleValidationBase(tex.get());
+    simpleValidationBase(tex);
 }
 
 // Test to ensure calling Clear() on an RGBA5551 texture does something reasonable
@@ -195,16 +195,16 @@ TEST_P(SixteenBppTextureTest, RGBA5551ClearAlpha)
     GLFramebuffer fbo;
 
     // Create a simple 5551 texture
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     EXPECT_GL_NO_ERROR();
 
     // Bind the texture as a framebuffer, clear it, then check the results
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glBindTexture(GL_TEXTURE_2D, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_UNSUPPORTED)
     {
@@ -237,7 +237,7 @@ TEST_P(SixteenBppTextureTest, RGBA4444Validation)
 
     // Generate a RGBA4444 texture, no mipmaps
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -247,7 +247,7 @@ TEST_P(SixteenBppTextureTest, RGBA4444Validation)
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, pixels);
     EXPECT_GL_NO_ERROR();
 
-    simpleValidationBase(tex.get());
+    simpleValidationBase(tex);
 }
 
 // Test uploading RGBA8 data to RGBA4 textures.
@@ -257,13 +257,13 @@ TEST_P(SixteenBppTextureTestES3, RGBA4UploadRGBA8)
         {GLColor::red, GLColor::green, GLColor::blue, GLColor::yellow}};
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  kFourColors.data());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     ASSERT_GL_NO_ERROR();
-    simpleValidationBase(tex.get());
+    simpleValidationBase(tex);
 }
 
 // Test uploading RGB8 data to RGB565 textures.
@@ -278,13 +278,13 @@ TEST_P(SixteenBppTextureTestES3, RGB565UploadRGB8)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE, fourColors.data());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     ASSERT_GL_NO_ERROR();
 
-    simpleValidationBase(tex.get());
+    simpleValidationBase(tex);
 }
 
 // Test uploading RGBA8 data to RGB5A41 textures.
@@ -297,13 +297,13 @@ TEST_P(SixteenBppTextureTestES3, RGB5A1UploadRGBA8)
     fourColors.push_back(GLColor::yellow);
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB5_A1, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  fourColors.data());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     ASSERT_GL_NO_ERROR();
-    simpleValidationBase(tex.get());
+    simpleValidationBase(tex);
 }
 
 // Test uploading RGB10A2 data to RGB5A1 textures.
@@ -333,13 +333,13 @@ TEST_P(SixteenBppTextureTestES3, RGB5A1UploadRGB10A2)
     fourColors.push_back(yellow);
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB5_A1, 2, 2, 0, GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV,
                  fourColors.data());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     ASSERT_GL_NO_ERROR();
-    simpleValidationBase(tex.get());
+    simpleValidationBase(tex);
 }
 
 // Test reading from RGBA4 textures attached to FBO.
@@ -352,12 +352,12 @@ TEST_P(SixteenBppTextureTestES3, RGBA4FramebufferReadback)
     GLColor expectedColor(rawColor);
 
     GLFramebuffer fbo;
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
 
     glClearColor(rawColor.x(), rawColor.y(), rawColor.z(), rawColor.w());
     glClear(GL_COLOR_BUFFER_BIT);
@@ -403,7 +403,7 @@ TEST_P(SixteenBppTextureTestES3, RGB565FramebufferReadback)
     ANGLE_SKIP_TEST_IF(IsOpenGLES());
 
     GLFramebuffer fbo;
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
     std::vector<GLColor> fourColors;
     fourColors.push_back(GLColor::red);
@@ -442,9 +442,9 @@ TEST_P(SixteenBppTextureTestES3, RGB565FramebufferReadback)
     glViewport(0, 0, w, h);
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
 
     drawIndexedQuad(program, "position", 0.5f);
 
@@ -680,19 +680,19 @@ void SixteenBppTextureDitheringTestES3::bandingTestWithSwitch(GLenum format, Gra
     GLFramebuffer anotherFbo;
 
     // GL_DITHER defaults to enabled
-    bandingTest(fbo.get(), format, gradient, true);
+    bandingTest(fbo, format, gradient, true);
 
     glDisable(GL_DITHER);
-    bandingTest(fbo.get(), format, gradient, false);
+    bandingTest(fbo, format, gradient, false);
 
     // Check that still disabled after switching to another framebuffer
-    bandingTest(anotherFbo.get(), format, gradient, false);
+    bandingTest(anotherFbo, format, gradient, false);
 
     glEnable(GL_DITHER);
-    bandingTest(fbo.get(), format, gradient, true);
+    bandingTest(fbo, format, gradient, true);
 
     // Check that it is now enabled on another framebuffer
-    bandingTest(anotherFbo.get(), format, gradient, true);
+    bandingTest(anotherFbo, format, gradient, true);
 }
 
 // Test dithering applied to RGBA4.

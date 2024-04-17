@@ -116,12 +116,14 @@ bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc:
 
 void LibWebRTCMediaEndpoint::suspend()
 {
+    stopLoggingStats();
     if (m_rtcSocketFactory)
         m_rtcSocketFactory->suspend();
 }
 
 void LibWebRTCMediaEndpoint::resume()
 {
+    startLoggingStats();
     if (m_rtcSocketFactory)
         m_rtcSocketFactory->resume();
 }
@@ -728,8 +730,8 @@ void LibWebRTCMediaEndpoint::setLocalSessionDescriptionSucceeded()
             return;
 
         auto transceiverStates = WTF::map(rtcTransceiverStates, [this](auto& state) -> PeerConnectionBackend::TransceiverState {
-            auto streams = WTF::map(state.receiverStreamIds, [this](auto& id) -> RefPtr<MediaStream> {
-                return &mediaStreamFromRTCStreamId(id);
+            auto streams = WTF::map(state.receiverStreamIds, [this](auto& id) -> Ref<MediaStream> {
+                return mediaStreamFromRTCStreamId(id);
             });
             return { WTFMove(state.mid), WTFMove(streams), state.firedDirection };
         });
@@ -755,8 +757,8 @@ void LibWebRTCMediaEndpoint::setRemoteSessionDescriptionSucceeded()
             return;
 
         auto transceiverStates = WTF::map(rtcTransceiverStates, [this](auto& state) -> PeerConnectionBackend::TransceiverState {
-            auto streams = WTF::map(state.receiverStreamIds, [this](auto& id) -> RefPtr<MediaStream> {
-                return &mediaStreamFromRTCStreamId(id);
+            auto streams = WTF::map(state.receiverStreamIds, [this](auto& id) -> Ref<MediaStream> {
+                return mediaStreamFromRTCStreamId(id);
             });
             return { WTFMove(state.mid), WTFMove(streams), state.firedDirection };
         });

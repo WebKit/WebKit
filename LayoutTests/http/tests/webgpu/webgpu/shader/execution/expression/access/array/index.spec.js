@@ -4,7 +4,16 @@
 Execution Tests for array indexing expressions
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../../gpu_test.js';
-import { Type, array, f32 } from '../../../../../util/conversion.js';
+import {
+  False,
+  True,
+  Type,
+
+  array,
+  f32,
+  scalarTypeOf } from
+'../../../../../util/conversion.js';
+import { align } from '../../../../../util/math.js';
 
 import { allInputSources, basicExpressionBuilder, run } from '../../expression.js';
 
@@ -76,6 +85,44 @@ fn(async (t) => {
   );
 });
 
+g.test('bool').
+specURL('https://www.w3.org/TR/WGSL/#array-access-expr').
+desc(`Test indexing of an array of booleans`).
+params((u) =>
+u.
+combine(
+  'inputSource',
+  // 'uniform' address space requires array stride to be multiple of 16 bytes
+  allInputSources.filter((s) => s !== 'uniform')
+).
+combine('indexType', ['i32', 'u32'])
+).
+fn(async (t) => {
+  const indexType = Type[t.params.indexType];
+  const cases = [
+  {
+    input: [array(True, False, True), indexType.create(0)],
+    expected: True
+  },
+  {
+    input: [array(True, False, True), indexType.create(1)],
+    expected: False
+  },
+  {
+    input: [array(True, False, True), indexType.create(2)],
+    expected: True
+  }];
+
+  await run(
+    t,
+    basicExpressionBuilder((ops) => `${ops[0]}[${ops[1]}]`),
+    [Type.array(3, Type.bool), indexType],
+    Type.bool,
+    t.params,
+    cases
+  );
+});
+
 g.test('abstract_scalar').
 specURL('https://www.w3.org/TR/WGSL/#array-access-expr').
 desc(`Test indexing of an array of scalars`).
@@ -130,6 +177,114 @@ fn(async (t) => {
     { inputSource: 'const' },
     cases
   );
+});
+
+g.test('runtime_sized').
+specURL('https://www.w3.org/TR/WGSL/#array-access-expr').
+desc(`Test indexing of a runtime sized array`).
+params((u) =>
+u.
+combine('elementType', [
+'i32',
+'u32',
+'f32',
+'f16',
+'vec4i',
+'vec2u',
+'vec3f',
+'vec2h']
+).
+combine('indexType', ['i32', 'u32'])
+).
+beforeAllSubcases((t) => {
+  if (scalarTypeOf(Type[t.params.elementType]).kind === 'f16') {
+    t.selectDeviceOrSkipTestCase('shader-f16');
+  }
+}).
+fn((t) => {
+  const elementType = Type[t.params.elementType];
+  const valueArrayType = Type.array(0, elementType);
+  const indexType = Type[t.params.indexType];
+  const indexArrayType = Type.array(0, indexType);
+
+  const wgsl = `
+${scalarTypeOf(elementType).kind === 'f16' ? 'enable f16;' : ''}
+
+@group(0) @binding(0) var<storage, read> input_values : ${valueArrayType};
+@group(0) @binding(1) var<storage, read> input_indices : ${indexArrayType};
+@group(0) @binding(2) var<storage, read_write> output : ${valueArrayType};
+
+@compute @workgroup_size(16)
+fn main(@builtin(local_invocation_index) invocation_id : u32) {
+  let index = input_indices[invocation_id];
+  output[invocation_id] = input_values[index];
+}
+`;
+
+  const pipeline = t.device.createComputePipeline({
+    layout: 'auto',
+    compute: {
+      module: t.device.createShaderModule({ code: wgsl }),
+      entryPoint: 'main'
+    }
+  });
+
+  const values = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53];
+  const indices = [9, 0, 14, 10, 12, 4, 15, 3, 5, 6, 11, 2, 8, 13, 7, 1];
+
+  const inputValues = values.map((i) => elementType.create(i));
+  const inputIndices = indices.map((i) => indexType.create(i));
+  const expected = indices.map((i) => inputValues[i]);
+
+  const bufferSize = (arr) => {
+    let offset = 0;
+    let alignment = 0;
+    for (const value of arr) {
+      alignment = Math.max(alignment, value.type.alignment);
+      offset = align(offset, value.type.alignment) + value.type.size;
+    }
+    return align(offset, alignment);
+  };
+
+  const toArray = (arr) => {
+    const array = new Uint8Array(bufferSize(arr));
+    let offset = 0;
+    for (const value of arr) {
+      offset = align(offset, value.type.alignment);
+      value.copyTo(array, offset);
+      offset += value.type.size;
+    }
+    return array;
+  };
+
+  const inputArrayBuffer = t.makeBufferWithContents(toArray(inputValues), GPUBufferUsage.STORAGE);
+  const inputIndexBuffer = t.makeBufferWithContents(
+    toArray(inputIndices),
+    GPUBufferUsage.STORAGE
+  );
+  const outputBuffer = t.device.createBuffer({
+    size: bufferSize(expected),
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+  });
+
+  const bindGroup = t.device.createBindGroup({
+    layout: pipeline.getBindGroupLayout(0),
+    entries: [
+    { binding: 0, resource: { buffer: inputArrayBuffer } },
+    { binding: 1, resource: { buffer: inputIndexBuffer } },
+    { binding: 2, resource: { buffer: outputBuffer } }]
+
+  });
+
+  const encoder = t.device.createCommandEncoder();
+  const pass = encoder.beginComputePass();
+  pass.setPipeline(pipeline);
+  pass.setBindGroup(0, bindGroup);
+  pass.dispatchWorkgroups(1);
+  pass.end();
+  t.queue.submit([encoder.finish()]);
+
+  t.expectGPUBufferValuesEqual(outputBuffer, toArray(expected));
 });
 
 g.test('vector').

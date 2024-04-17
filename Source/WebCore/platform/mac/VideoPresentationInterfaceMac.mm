@@ -448,7 +448,7 @@ void VideoPresentationInterfaceMac::setupFullscreen(NSView& layerHostedView, con
     UNUSED_PARAM(allowsPictureInPicturePlayback);
     ASSERT(mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
 
-    m_mode = mode;
+    m_mode |= mode;
 
     [videoPresentationInterfaceObjC() setUpPIPForVideoView:&layerHostedView withFrame:(NSRect)initialRect inWindow:parentWindow];
 
@@ -462,7 +462,7 @@ void VideoPresentationInterfaceMac::enterFullscreen()
 {
     LOG(Fullscreen, "VideoPresentationInterfaceMac::enterFullscreen(%p)", this);
 
-    if (mode() == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
+    if (hasMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)) {
         if (auto model = videoPresentationModel())
             model->willEnterPictureInPicture();
         [m_webVideoPresentationInterfaceObjC enterPIP];

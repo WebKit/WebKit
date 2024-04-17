@@ -24,7 +24,7 @@ info: |
         7. Let parts be ! PartitionNumberPattern(nf, value).
         ...
 
-locale: [en-US]
+locale: [en]
 includes: [testIntl.js]
 features: [Intl.DurationFormat]
 ---*/

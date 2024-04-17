@@ -25,7 +25,6 @@
 
 #pragma once
 
-#if USE(EGL)
 #include "PlatformDisplay.h"
 
 namespace WebCore {
@@ -42,5 +41,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // USE(EGL)

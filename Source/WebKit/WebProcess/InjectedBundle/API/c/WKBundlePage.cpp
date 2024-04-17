@@ -242,7 +242,7 @@ void WKAccessibilityTestingInjectPreference(WKBundlePageRef pageRef, WKStringRef
         return;
     
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    WebKit::WebProcess::singleton().notifyPreferencesChanged(WebKit::toWTFString(domain), WebKit::toWTFString(key), WebKit::toWTFString(encodedValue));
+    WebKit::WebProcess::singleton().preferenceDidUpdate(WebKit::toWTFString(domain), WebKit::toWTFString(key), WebKit::toWTFString(encodedValue));
 #endif
 }
 
@@ -631,7 +631,7 @@ WKArrayRef WKBundlePageCopyTrackedRepaintRects(WKBundlePageRef pageRef)
     return WebKit::toAPI(&WebKit::toImpl(pageRef)->trackedRepaintRects().leakRef());
 }
 
-void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int from, int length, bool suppressUnderline, WKArrayRef highlightData, WKArrayRef annotationData)
+void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int from, int length, bool suppressUnderline, WKArrayRef highlightData)
 {
     Vector<WebCore::CompositionHighlight> highlights;
     if (highlightData) {
@@ -657,22 +657,8 @@ void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int f
             });
         }
     }
-    HashMap<String, Vector<WebCore::CharacterRange>> annotations;
-    if (annotationData) {
-        auto* annotationDataArray = WebKit::toImpl(annotationData);
-        for (auto dictionary : annotationDataArray->elementsOfType<API::Dictionary>()) {
-            auto location = static_cast<API::UInt64*>(dictionary->get("from"_s))->value();
-            auto length = static_cast<API::UInt64*>(dictionary->get("length"_s))->value();
-            auto name = static_cast<API::String*>(dictionary->get("annotation"_s))->string();
 
-            auto it = annotations.find(name);
-            if (it == annotations.end())
-                it = annotations.add(name, Vector<WebCore::CharacterRange> { }).iterator;
-            it->value.append({ location, length });
-        }
-    }
-
-    WebKit::toImpl(pageRef)->setCompositionForTesting(WebKit::toWTFString(text), from, length, suppressUnderline, highlights, annotations);
+    WebKit::toImpl(pageRef)->setCompositionForTesting(WebKit::toWTFString(text), from, length, suppressUnderline, highlights);
 }
 
 bool WKBundlePageHasComposition(WKBundlePageRef pageRef)
@@ -818,6 +804,13 @@ void WKBundlePageFlushDeferredDidReceiveMouseEventForTesting(WKBundlePageRef pag
 void WKBundlePagePostMessage(WKBundlePageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)
 {
     WebKit::toImpl(pageRef)->postMessage(WebKit::toWTFString(messageNameRef), WebKit::toImpl(messageBodyRef));
+}
+
+void WKBundlePagePostMessageWithAsyncReply(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody, WKBundlePageMessageReplyCallback replyCallback, void* context)
+{
+    WebKit::toImpl(page)->postMessageWithAsyncReply(WebKit::toWTFString(messageName), WebKit::toImpl(messageBody), [replyCallback, context] (API::Object* reply) mutable {
+        replyCallback(WebKit::toAPI(reply), context);
+    });
 }
 
 void WKBundlePagePostMessageIgnoringFullySynchronousMode(WKBundlePageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)

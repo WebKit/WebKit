@@ -2972,8 +2972,8 @@ TEST(TextManipulation, CompleteTextManipulationCanMergeContentAndPreserveLineBre
 
 TEST(TextManipulation, CompleteTextManipulationIgnoreWhiteSpacesBetweenParagraphs)
 {
-    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
     [webView _setTextManipulationDelegate:delegate.get()];
     [webView synchronouslyLoadHTMLString:@""
         "<style>"
@@ -2986,7 +2986,7 @@ TEST(TextManipulation, CompleteTextManipulationIgnoreWhiteSpacesBetweenParagraph
         "   <li class='list-item float-relative'><a class='inline-block'>hello</a>           <div class='hide-absolute'><a class='inline-block float-relative'>hide</a></div></li>"
         "   <li class='list-item float-relative'><a class='inline-block'>world</a></li>"
         "</ul>"];
-    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+    RetainPtr configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
 
     done = false;
     [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
@@ -3005,6 +3005,48 @@ TEST(TextManipulation, CompleteTextManipulationIgnoreWhiteSpacesBetweenParagraph
     [webView _completeTextManipulationForItems:@[
         createItem(items[0].identifier, {{ items[0].tokens[0].identifier, @"Hello" }}).get(),
         createItem(items[1].identifier, {{ items[1].tokens[0].identifier, @"World" }}).get()
+    ] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors, nil);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(TextManipulation, CompleteTextManipulationDoesNotSkipTabCharacterAtLineWrap)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@""
+        "<!DOCTYPE html>"
+        "<html lang=en-US>"
+        "<div style='width: 32rem;'>"
+            "<p>This is another set of text to be translated. (1) "
+            "<strong>If this text is to be translated, then it should be something noteworthy</strong>"
+            " (2) A monthly subscription is just&#9;$10.</p>"
+        "</div>"];
+    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+    EXPECT_EQ(items[0].tokens.count, 3UL);
+    EXPECT_WK_STREQ("This is another set of text to be translated. (1) ", items[0].tokens[0].content);
+    EXPECT_WK_STREQ("If this text is to be translated, then it should be something noteworthy", items[0].tokens[1].content);
+    EXPECT_WK_STREQ(" (2) A monthly subscription is just $10.", items[0].tokens[2].content);
+
+    [webView stringByEvaluatingJavaScript:@"document.documentElement.setAttribute('lang', 'zh-CN')"];
+
+    done = false;
+    [webView _completeTextManipulationForItems:@[
+        createItem(items[0].identifier, {
+            { items[0].tokens[0].identifier, @"Hello" }
+        }).get(),
     ] completion:^(NSArray<NSError *> *errors) {
         EXPECT_EQ(errors, nil);
         done = true;

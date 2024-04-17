@@ -520,7 +520,7 @@ Element* FocusController::findFocusableElementDescendingIntoSubframes(FocusDirec
         auto* localContentFrame = dynamicDowncast<LocalFrame>(owner->contentFrame());
         if (!localContentFrame || !localContentFrame->document())
             break;
-        localContentFrame->document()->updateLayoutIgnorePendingStylesheets();
+        localContentFrame->protectedDocument()->updateLayoutIgnorePendingStylesheets();
         auto* foundElement = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByIFrame(*owner), nullptr, event);
         if (!foundElement)
             break;
@@ -1193,7 +1193,7 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         RefPtr focusedElement = focusedOrMainFrame ? focusedOrMainFrame->document()->focusedElement() : nullptr;
         if (focusedElement && !hasOffscreenRect(focusedElement.get()))
             rect = nodeRectInAbsoluteCoordinates(focusedElement.get(), true /* ignore border */);
-        dynamicDowncast<LocalFrame>(frameElement->contentFrame())->document()->updateLayoutIgnorePendingStylesheets();
+        dynamicDowncast<LocalFrame>(frameElement->contentFrame())->protectedDocument()->updateLayoutIgnorePendingStylesheets();
         if (!advanceFocusDirectionallyInContainer(dynamicDowncast<LocalFrame>(frameElement->contentFrame())->document(), rect, direction, event)) {
             // The new frame had nothing interesting, need to find another candidate.
             return advanceFocusDirectionallyInContainer(container, nodeRectInAbsoluteCoordinates(RefPtr { focusCandidate.visibleNode.get() }.get(), true), direction, event);

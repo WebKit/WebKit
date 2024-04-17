@@ -15,9 +15,9 @@ Returns e1 * 2^e2. Component-wise when T is a vector.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../../gpu_test.js';
 import { Type } from '../../../../../util/conversion.js';
-import { allInputSources, run } from '../../expression.js';
+import { allInputSources, onlyConstInputSource, run } from '../../expression.js';
 
-import { builtin } from './builtin.js';
+import { abstractFloatBuiltin, builtin } from './builtin.js';
 import { d } from './ldexp.cache.js';
 
 export const g = makeTestGroup(GPUTest);
@@ -29,9 +29,21 @@ desc(
 `
 ).
 params((u) =>
-u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4])
+u.
+combine('inputSource', onlyConstInputSource).
+combine('vectorize', [undefined, 2, 3, 4])
 ).
-unimplemented();
+fn(async (t) => {
+  const cases = await d.get('abstract_const');
+  await run(
+    t,
+    abstractFloatBuiltin('ldexp'),
+    [Type.abstractFloat, Type.abstractInt],
+    Type.abstractFloat,
+    t.params,
+    cases
+  );
+});
 
 g.test('f32').
 specURL('https://www.w3.org/TR/WGSL/#float-builtin-functions').

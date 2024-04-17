@@ -23,6 +23,7 @@
 #include "BidiContext.h"
 #include "LegacyInlineFlowBox.h"
 #include "RenderBox.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -34,8 +35,9 @@ class RenderBlockFlow;
 struct BidiStatus;
 struct GapRects;
 
-class LegacyRootInlineBox : public LegacyInlineFlowBox, public CanMakeWeakPtr<LegacyRootInlineBox>, public CanMakeCheckedPtr {
+class LegacyRootInlineBox : public LegacyInlineFlowBox, public CanMakeWeakPtr<LegacyRootInlineBox>, public CanMakeCheckedPtr<LegacyRootInlineBox> {
     WTF_MAKE_ISO_ALLOCATED(LegacyRootInlineBox);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRootInlineBox);
 public:
     explicit LegacyRootInlineBox(RenderBlockFlow&);
     virtual ~LegacyRootInlineBox();

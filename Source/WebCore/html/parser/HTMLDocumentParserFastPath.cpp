@@ -198,7 +198,7 @@ public:
     HTMLFastPathParser(CharacterSpan source, Document& document, ContainerNode& destinationParent)
         : m_document(document)
         , m_destinationParent(destinationParent)
-        , m_parsingBuffer(source.data(), source.size())
+        , m_parsingBuffer(source)
     {
     }
 

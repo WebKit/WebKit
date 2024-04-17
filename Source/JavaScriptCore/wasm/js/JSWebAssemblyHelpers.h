@@ -62,7 +62,7 @@ ALWAYS_INLINE uint32_t toNonWrappingUint32(JSGlobalObject* globalObject, JSValue
     return { };
 }
 
-ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(JSGlobalObject* globalObject, JSValue value, const WebAssemblySourceProviderBufferGuard&)
+ALWAYS_INLINE std::span<const uint8_t> getWasmBufferFromValue(JSGlobalObject* globalObject, JSValue value, const WebAssemblySourceProviderBufferGuard&)
 {
     VM& vm = getVM(globalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -78,7 +78,7 @@ ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(JSGlobalO
     if (!(arrayBuffer || arrayBufferView)) {
         throwException(globalObject, throwScope, createTypeError(globalObject,
             "first argument must be an ArrayBufferView or an ArrayBuffer"_s, defaultSourceAppender, runtimeTypeForValue(value)));
-        return { nullptr, 0 };
+        return { };
     }
 
     if (arrayBufferView) {
@@ -111,18 +111,15 @@ ALWAYS_INLINE Vector<uint8_t> createSourceBufferFromValue(VM& vm, JSGlobalObject
         provider = static_cast<BaseWebAssemblySourceProvider*>(source->sourceCode().provider());
     WebAssemblySourceProviderBufferGuard bufferGuard(provider);
 
-    auto [data, byteSize] = getWasmBufferFromValue(globalObject, value, bufferGuard);
-    RETURN_IF_EXCEPTION(throwScope, Vector<uint8_t>());
+    auto data = getWasmBufferFromValue(globalObject, value, bufferGuard);
+    RETURN_IF_EXCEPTION(throwScope, { });
 
     Vector<uint8_t> result;
-    if (!result.tryReserveCapacity(byteSize)) {
+    if (!result.tryReserveInitialCapacity(data.size())) {
         throwException(globalObject, throwScope, createOutOfMemoryError(globalObject));
         return result;
     }
-
-    result.grow(byteSize);
-    memcpy(result.data(), data, byteSize);
-
+    result.append(data);
     return result;
 }
 

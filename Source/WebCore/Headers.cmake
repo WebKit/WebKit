@@ -925,6 +925,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ContextDestructionObserver.h
     dom/ContextDestructionObserverInlines.h
     dom/CrossOriginMode.h
+    dom/CustomElementDefaultARIA.h
     dom/CustomElementReactionQueue.h
     dom/DOMException.h
     dom/DOMHighResTimeStamp.h
@@ -984,6 +985,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/FragmentDirectiveRangeFinder.h
     dom/FullscreenManager.h
     dom/GCReachableRef.h
+    dom/GetHTMLOptions.h
     dom/ImageOverlay.h
     dom/InlineStyleSheetOwner.h
     dom/InvokeEvent.h
@@ -1826,6 +1828,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/audio/AudioStreamDescription.h
     platform/audio/AudioUtilities.h
     platform/audio/NowPlayingInfo.h
+    platform/audio/NowPlayingMetadataObserver.h
     platform/audio/PlatformAudioData.h
     platform/audio/PlatformMediaSession.h
     platform/audio/PlatformMediaSessionManager.h
@@ -2622,6 +2625,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/JSCSSStyleDeclaration.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSDOMBindingInternalsBuiltins.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSDOMImplementation.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSDOMWindow.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSDeprecatedCSSOMCounter.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSDeprecatedCSSOMRGBColor.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSDeprecatedCSSOMRect.h
@@ -2634,7 +2638,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/JSHTMLCollection.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSHTMLElement.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSHTMLOptionsCollection.h
-    ${WebCore_DERIVED_SOURCES_DIR}/JSLocalDOMWindow.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSMediaList.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSNamedNodeMap.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSNode.h

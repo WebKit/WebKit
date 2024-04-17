@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.concat();
-}, '`new String.prototype.concat()` throws TypeError');
+});
 

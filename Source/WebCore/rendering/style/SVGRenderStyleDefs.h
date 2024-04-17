@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "BasicShapes.h"
 #include "Length.h"
 #include "SVGLengthValue.h"
 #include "ShadowData.h"
@@ -298,6 +299,7 @@ public:
     Length ry;
     Length x;
     Length y;
+    RefPtr<BasicShapePath> d;
 
 private:
     StyleLayoutData();

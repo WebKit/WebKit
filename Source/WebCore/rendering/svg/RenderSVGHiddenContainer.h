@@ -30,8 +30,10 @@ class SVGElement;
 // <defs>, <linearGradient>, <radialGradient> are all good examples
 class RenderSVGHiddenContainer : public RenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGHiddenContainer);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGHiddenContainer);
 public:
     RenderSVGHiddenContainer(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
+    virtual ~RenderSVGHiddenContainer();
 
 protected:
     void layout() override;

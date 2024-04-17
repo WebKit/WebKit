@@ -37,8 +37,10 @@ class BackForwardClient;
 class HistoryItem;
 class Page;
 
-class BackForwardController : public CanMakeCheckedPtr {
-    WTF_MAKE_NONCOPYABLE(BackForwardController); WTF_MAKE_FAST_ALLOCATED;
+class BackForwardController final : public CanMakeCheckedPtr<BackForwardController> {
+    WTF_MAKE_NONCOPYABLE(BackForwardController);
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BackForwardController);
 public:
     BackForwardController(Page&, Ref<BackForwardClient>&&);
     ~BackForwardController();

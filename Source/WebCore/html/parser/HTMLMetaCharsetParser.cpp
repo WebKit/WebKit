@@ -155,7 +155,7 @@ bool HTMLMetaCharsetParser::checkForMetaCharset(std::span<const uint8_t> data)
     while (auto token = m_tokenizer.nextToken(m_input)) {
         bool isEnd = token->type() == HTMLToken::Type::EndTag;
         if (isEnd || token->type() == HTMLToken::Type::StartTag) {
-            auto knownTagName = AtomString::lookUp(token->name().data(), token->name().size());
+            auto knownTagName = AtomString::lookUp(token->name().span());
             if (!isEnd) {
                 m_tokenizer.updateStateFor(knownTagName);
                 if (knownTagName == metaTag && processMeta(*token)) {

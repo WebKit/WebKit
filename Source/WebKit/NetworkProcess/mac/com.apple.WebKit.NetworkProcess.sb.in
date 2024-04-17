@@ -304,9 +304,13 @@
         "kern.osversion" ;; Needed by WebKit and ASL logging.
         "kern.tcsm_available" ;; Needed for IndexedDB support.
         "kern.tcsm_enable"
+        "kern.willshutdown"
         "vm.malloc_ranges") ;; <rdar://problem/105161083>
     (sysctl-name-prefix "kern.proc.pid.")
     (sysctl-name-prefix "net.routetable"))
+
+(deny sysctl-read (with no-report)
+    (sysctl-name "sysctl.proc_translated"))
 
 (allow sysctl-write
     (sysctl-name

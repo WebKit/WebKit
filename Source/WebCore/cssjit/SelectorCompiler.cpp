@@ -257,7 +257,9 @@ static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesLangPseudo
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullscreenPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullscreenDocumentPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesAnimatingFullscreenTransitionPseudoClass, bool, (const Element&));
+#if ENABLE(VIDEO)
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesInWindowFullScreenPseudoClass, bool, (const Element&));
+#endif
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPictureInPicturePseudoClass, bool, (const Element&));
@@ -909,11 +911,15 @@ JSC_DEFINE_JIT_OPERATION(operationMatchesAnimatingFullscreenTransitionPseudoClas
     COUNT_SELECTOR_OPERATION(operationMatchesAnimatingFullscreenTransitionPseudoClass);
     return matchesAnimatingFullscreenTransitionPseudoClass(element);
 }
+
+#if ENABLE(VIDEO)
 JSC_DEFINE_JIT_OPERATION(operationMatchesInWindowFullScreenPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesInWindowFullScreenPseudoClass);
     return matchesInWindowFullScreenPseudoClass(element);
 }
+#endif
+
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -1112,9 +1118,11 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::InternalAnimatingFullscreenTransition:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesAnimatingFullscreenTransitionPseudoClass));
         return FunctionType::SimpleSelectorChecker;
+#if ENABLE(VIDEO)
     case CSSSelector::PseudoClass::InternalInWindowFullScreen:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesInWindowFullScreenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
+#endif
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -1450,6 +1458,7 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             case CSSSelector::PseudoElement::FirstLetter:
             case CSSSelector::PseudoElement::FirstLine:
             case CSSSelector::PseudoElement::GrammarError:
+            case CSSSelector::PseudoElement::InternalWritingSuggestions:
             case CSSSelector::PseudoElement::Marker:
             case CSSSelector::PseudoElement::WebKitResizer:
             case CSSSelector::PseudoElement::WebKitScrollbar:
@@ -2629,9 +2638,7 @@ inline void SelectorCodeGenerator::generateWalkToPreviousAdjacentElement(Assembl
 {
     Assembler::Label loopStart = m_assembler.label();
     m_assembler.loadPtr(Assembler::Address(workRegister, Node::previousSiblingMemoryOffset()), workRegister);
-    LocalRegister previousNodePointerMask(m_registerAllocator);
-    m_assembler.move(Assembler::TrustedImmPtr(Node::previousSiblingPointerMask()), previousNodePointerMask);
-    m_assembler.andPtr(previousNodePointerMask, workRegister);
+    m_assembler.andPtr(Assembler::TrustedImmPtr(Node::previousSiblingPointerMask()), workRegister);
     failureCases.append(m_assembler.branchTestPtr(Assembler::Zero, workRegister));
     DOMJIT::branchTestIsElementFlagOnNode(m_assembler, Assembler::Zero, workRegister).linkTo(loopStart, &m_assembler);
 }

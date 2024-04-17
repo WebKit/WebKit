@@ -33,38 +33,45 @@
     void attachShader(uint32_t program, uint32_t shader)
     {
         assertIsCurrent(workQueue());
-        program = m_objectNames.get(program);
-        shader = m_objectNames.get(shader);
+        if (program)
+            program = m_objectNames.get(program);
+        if (shader)
+            shader = m_objectNames.get(shader);
         m_context->attachShader(program, shader);
     }
     void bindAttribLocation(uint32_t arg0, uint32_t index, String&& name)
     {
         assertIsCurrent(workQueue());
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         m_context->bindAttribLocation(arg0, index, name);
     }
     void bindBuffer(uint32_t target, uint32_t arg1)
     {
         assertIsCurrent(workQueue());
-        arg1 = m_objectNames.get(arg1);
+        if (arg1)
+            arg1 = m_objectNames.get(arg1);
         m_context->bindBuffer(target, arg1);
     }
     void bindFramebuffer(uint32_t target, uint32_t arg1)
     {
         assertIsCurrent(workQueue());
-        arg1 = m_objectNames.get(arg1);
+        if (arg1)
+            arg1 = m_objectNames.get(arg1);
         m_context->bindFramebuffer(target, arg1);
     }
     void bindRenderbuffer(uint32_t target, uint32_t arg1)
     {
         assertIsCurrent(workQueue());
-        arg1 = m_objectNames.get(arg1);
+        if (arg1)
+            arg1 = m_objectNames.get(arg1);
         m_context->bindRenderbuffer(target, arg1);
     }
     void bindTexture(uint32_t target, uint32_t arg1)
     {
         assertIsCurrent(workQueue());
-        arg1 = m_objectNames.get(arg1);
+        if (arg1)
+            arg1 = m_objectNames.get(arg1);
         m_context->bindTexture(target, arg1);
     }
     void blendColor(float red, float green, float blue, float alpha)
@@ -127,7 +134,8 @@
     void compileShader(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         m_context->compileShader(arg0);
     }
     void copyTexImage2D(uint32_t target, int32_t level, uint32_t internalformat, int32_t x, int32_t y, int32_t width, int32_t height, int32_t border)
@@ -144,37 +152,43 @@
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createBuffer();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void createFramebuffer(uint32_t name)
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createFramebuffer();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void createProgram(uint32_t name)
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createProgram();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void createRenderbuffer(uint32_t name)
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createRenderbuffer();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void createShader(uint32_t name, uint32_t arg0)
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createShader(arg0);
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void createTexture(uint32_t name)
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createTexture();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void cullFace(uint32_t mode)
     {
@@ -184,36 +198,48 @@
     void deleteBuffer(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        if (UNLIKELY(!arg0))
+            return;
         arg0 = m_objectNames.take(arg0);
         m_context->deleteBuffer(arg0);
     }
     void deleteFramebuffer(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        if (UNLIKELY(!arg0))
+            return;
         arg0 = m_objectNames.take(arg0);
         m_context->deleteFramebuffer(arg0);
     }
     void deleteProgram(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        if (UNLIKELY(!arg0))
+            return;
         arg0 = m_objectNames.take(arg0);
         m_context->deleteProgram(arg0);
     }
     void deleteRenderbuffer(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        if (UNLIKELY(!arg0))
+            return;
         arg0 = m_objectNames.take(arg0);
         m_context->deleteRenderbuffer(arg0);
     }
     void deleteShader(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        if (UNLIKELY(!arg0))
+            return;
         arg0 = m_objectNames.take(arg0);
         m_context->deleteShader(arg0);
     }
     void deleteTexture(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        if (UNLIKELY(!arg0))
+            return;
         arg0 = m_objectNames.take(arg0);
         m_context->deleteTexture(arg0);
     }
@@ -232,16 +258,13 @@
         assertIsCurrent(workQueue());
         m_context->depthRange(zNear, zFar);
     }
-    void destroyEGLImage(uint64_t handle)
-    {
-        assertIsCurrent(workQueue());
-        m_context->destroyEGLImage(reinterpret_cast<GCEGLImage>(static_cast<intptr_t>(handle)));
-    }
     void detachShader(uint32_t arg0, uint32_t arg1)
     {
         assertIsCurrent(workQueue());
-        arg0 = m_objectNames.get(arg0);
-        arg1 = m_objectNames.get(arg1);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
+        if (arg1)
+            arg1 = m_objectNames.get(arg1);
         m_context->detachShader(arg0, arg1);
     }
     void disable(uint32_t cap)
@@ -287,13 +310,15 @@
     void framebufferRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3)
     {
         assertIsCurrent(workQueue());
-        arg3 = m_objectNames.get(arg3);
+        if (arg3)
+            arg3 = m_objectNames.get(arg3);
         m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, arg3);
     }
     void framebufferTexture2D(uint32_t target, uint32_t attachment, uint32_t textarget, uint32_t arg3, int32_t level)
     {
         assertIsCurrent(workQueue());
-        arg3 = m_objectNames.get(arg3);
+        if (arg3)
+            arg3 = m_objectNames.get(arg3);
         m_context->framebufferTexture2D(target, attachment, textarget, arg3, level);
     }
     void frontFace(uint32_t mode)
@@ -310,7 +335,8 @@
     {
         assertIsCurrent(workQueue());
         bool returnValue = { };
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         struct WebCore::GraphicsContextGLActiveInfo arg2 { };
         returnValue = m_context->getActiveAttrib(program, index, arg2);
         completionHandler(returnValue, WTFMove(arg2));
@@ -319,7 +345,8 @@
     {
         assertIsCurrent(workQueue());
         bool returnValue = { };
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         struct WebCore::GraphicsContextGLActiveInfo arg2 { };
         returnValue = m_context->getActiveUniform(program, index, arg2);
         completionHandler(returnValue, WTFMove(arg2));
@@ -328,7 +355,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLint returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getAttribLocation(arg0, name);
         completionHandler(returnValue);
     }
@@ -385,7 +413,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLint returnValue = { };
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         returnValue = m_context->getProgrami(program, pname);
         completionHandler(returnValue);
     }
@@ -407,7 +436,8 @@
     {
         assertIsCurrent(workQueue());
         String returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getProgramInfoLog(arg0);
         completionHandler(WTFMove(returnValue));
     }
@@ -422,7 +452,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLint returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getShaderi(arg0, pname);
         completionHandler(returnValue);
     }
@@ -430,7 +461,8 @@
     {
         assertIsCurrent(workQueue());
         String returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getShaderInfoLog(arg0);
         completionHandler(WTFMove(returnValue));
     }
@@ -446,7 +478,8 @@
     {
         assertIsCurrent(workQueue());
         String returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getShaderSource(arg0);
         completionHandler(WTFMove(returnValue));
     }
@@ -467,7 +500,8 @@
     void getUniformfv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         Vector<GCGLfloat, 16> value(valueSize, 0);
         m_context->getUniformfv(program, location, value);
         completionHandler(std::span<const float>(reinterpret_cast<const float*>(value.data()), value.size()));
@@ -475,7 +509,8 @@
     void getUniformiv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         Vector<GCGLint, 4> value(valueSize, 0);
         m_context->getUniformiv(program, location, value);
         completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(value.data()), value.size()));
@@ -483,7 +518,8 @@
     void getUniformuiv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const uint32_t>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         Vector<GCGLuint, 4> value(valueSize, 0);
         m_context->getUniformuiv(program, location, value);
         completionHandler(std::span<const uint32_t>(reinterpret_cast<const uint32_t*>(value.data()), value.size()));
@@ -492,7 +528,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLint returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getUniformLocation(arg0, name);
         completionHandler(returnValue);
     }
@@ -512,7 +549,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLboolean returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isBuffer(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
@@ -527,7 +565,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLboolean returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isFramebuffer(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
@@ -535,7 +574,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLboolean returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isProgram(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
@@ -543,7 +583,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLboolean returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isRenderbuffer(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
@@ -551,7 +592,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLboolean returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isShader(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
@@ -559,7 +601,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLboolean returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isTexture(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
@@ -571,7 +614,8 @@
     void linkProgram(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         m_context->linkProgram(arg0);
     }
     void pixelStorei(uint32_t pname, int32_t param)
@@ -602,7 +646,8 @@
     void shaderSource(uint32_t arg0, String&& arg1)
     {
         assertIsCurrent(workQueue());
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         m_context->shaderSource(arg0, arg1);
     }
     void stencilFunc(uint32_t func, int32_t ref, uint32_t mask)
@@ -743,13 +788,15 @@
     void useProgram(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         m_context->useProgram(arg0);
     }
     void validateProgram(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         m_context->validateProgram(arg0);
     }
     void vertexAttrib1f(uint32_t index, float x)
@@ -881,11 +928,14 @@
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createVertexArray();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void deleteVertexArray(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        if (UNLIKELY(!arg0))
+            return;
         arg0 = m_objectNames.take(arg0);
         m_context->deleteVertexArray(arg0);
     }
@@ -893,14 +943,16 @@
     {
         assertIsCurrent(workQueue());
         GCGLboolean returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isVertexArray(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
     void bindVertexArray(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         m_context->bindVertexArray(arg0);
     }
     void copyBufferSubData(uint32_t readTarget, uint32_t writeTarget, uint64_t readOffset, uint64_t writeOffset, uint64_t arg4)
@@ -923,7 +975,8 @@
     void framebufferTextureLayer(uint32_t target, uint32_t attachment, uint32_t texture, int32_t level, int32_t layer)
     {
         assertIsCurrent(workQueue());
-        texture = m_objectNames.get(texture);
+        if (texture)
+            texture = m_objectNames.get(texture);
         m_context->framebufferTextureLayer(target, attachment, texture, level, layer);
     }
     void invalidateFramebuffer(uint32_t target, std::span<const uint32_t>&& attachments)
@@ -1005,7 +1058,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLint returnValue = { };
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         returnValue = m_context->getFragDataLocation(program, name);
         completionHandler(returnValue);
     }
@@ -1138,11 +1192,14 @@
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createQuery();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void deleteQuery(uint32_t query)
     {
         assertIsCurrent(workQueue());
+        if (UNLIKELY(!query))
+            return;
         query = m_objectNames.take(query);
         m_context->deleteQuery(query);
     }
@@ -1150,14 +1207,16 @@
     {
         assertIsCurrent(workQueue());
         GCGLboolean returnValue = { };
-        query = m_objectNames.get(query);
+        if (query)
+            query = m_objectNames.get(query);
         returnValue = m_context->isQuery(query);
         completionHandler(static_cast<bool>(returnValue));
     }
     void beginQuery(uint32_t target, uint32_t query)
     {
         assertIsCurrent(workQueue());
-        query = m_objectNames.get(query);
+        if (query)
+            query = m_objectNames.get(query);
         m_context->beginQuery(target, query);
     }
     void endQuery(uint32_t target)
@@ -1176,7 +1235,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLuint returnValue = { };
-        query = m_objectNames.get(query);
+        if (query)
+            query = m_objectNames.get(query);
         returnValue = m_context->getQueryObjectui(query, pname);
         completionHandler(returnValue);
     }
@@ -1184,11 +1244,14 @@
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createSampler();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void deleteSampler(uint32_t sampler)
     {
         assertIsCurrent(workQueue());
+        if (UNLIKELY(!sampler))
+            return;
         sampler = m_objectNames.take(sampler);
         m_context->deleteSampler(sampler);
     }
@@ -1196,33 +1259,38 @@
     {
         assertIsCurrent(workQueue());
         GCGLboolean returnValue = { };
-        sampler = m_objectNames.get(sampler);
+        if (sampler)
+            sampler = m_objectNames.get(sampler);
         returnValue = m_context->isSampler(sampler);
         completionHandler(static_cast<bool>(returnValue));
     }
     void bindSampler(uint32_t unit, uint32_t sampler)
     {
         assertIsCurrent(workQueue());
-        sampler = m_objectNames.get(sampler);
+        if (sampler)
+            sampler = m_objectNames.get(sampler);
         m_context->bindSampler(unit, sampler);
     }
     void samplerParameteri(uint32_t sampler, uint32_t pname, int32_t param)
     {
         assertIsCurrent(workQueue());
-        sampler = m_objectNames.get(sampler);
+        if (sampler)
+            sampler = m_objectNames.get(sampler);
         m_context->samplerParameteri(sampler, pname, param);
     }
     void samplerParameterf(uint32_t sampler, uint32_t pname, float param)
     {
         assertIsCurrent(workQueue());
-        sampler = m_objectNames.get(sampler);
+        if (sampler)
+            sampler = m_objectNames.get(sampler);
         m_context->samplerParameterf(sampler, pname, param);
     }
     void getSamplerParameterf(uint32_t sampler, uint32_t pname, CompletionHandler<void(float)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         GCGLfloat returnValue = { };
-        sampler = m_objectNames.get(sampler);
+        if (sampler)
+            sampler = m_objectNames.get(sampler);
         returnValue = m_context->getSamplerParameterf(sampler, pname);
         completionHandler(returnValue);
     }
@@ -1230,7 +1298,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLint returnValue = { };
-        sampler = m_objectNames.get(sampler);
+        if (sampler)
+            sampler = m_objectNames.get(sampler);
         returnValue = m_context->getSamplerParameteri(sampler, pname);
         completionHandler(returnValue);
     }
@@ -1276,11 +1345,14 @@
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createTransformFeedback();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void deleteTransformFeedback(uint32_t id)
     {
         assertIsCurrent(workQueue());
+        if (UNLIKELY(!id))
+            return;
         id = m_objectNames.take(id);
         m_context->deleteTransformFeedback(id);
     }
@@ -1288,14 +1360,16 @@
     {
         assertIsCurrent(workQueue());
         GCGLboolean returnValue = { };
-        id = m_objectNames.get(id);
+        if (id)
+            id = m_objectNames.get(id);
         returnValue = m_context->isTransformFeedback(id);
         completionHandler(static_cast<bool>(returnValue));
     }
     void bindTransformFeedback(uint32_t target, uint32_t id)
     {
         assertIsCurrent(workQueue());
-        id = m_objectNames.get(id);
+        if (id)
+            id = m_objectNames.get(id);
         m_context->bindTransformFeedback(target, id);
     }
     void beginTransformFeedback(uint32_t primitiveMode)
@@ -1311,13 +1385,15 @@
     void transformFeedbackVaryings(uint32_t program, Vector<String>&& varyings, uint32_t bufferMode)
     {
         assertIsCurrent(workQueue());
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         m_context->transformFeedbackVaryings(program, varyings, bufferMode);
     }
     void getTransformFeedbackVarying(uint32_t program, uint32_t index, CompletionHandler<void(struct WebCore::GraphicsContextGLActiveInfo&&)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         struct WebCore::GraphicsContextGLActiveInfo arg2 { };
         m_context->getTransformFeedbackVarying(program, index, arg2);
         completionHandler(WTFMove(arg2));
@@ -1335,20 +1411,23 @@
     void bindBufferBase(uint32_t target, uint32_t index, uint32_t buffer)
     {
         assertIsCurrent(workQueue());
-        buffer = m_objectNames.get(buffer);
+        if (buffer)
+            buffer = m_objectNames.get(buffer);
         m_context->bindBufferBase(target, index, buffer);
     }
     void bindBufferRange(uint32_t target, uint32_t index, uint32_t buffer, uint64_t offset, uint64_t arg4)
     {
         assertIsCurrent(workQueue());
-        buffer = m_objectNames.get(buffer);
+        if (buffer)
+            buffer = m_objectNames.get(buffer);
         m_context->bindBufferRange(target, index, buffer, static_cast<GCGLintptr>(offset), static_cast<GCGLsizeiptr>(arg4));
     }
     void getUniformIndices(uint32_t program, Vector<String>&& uniformNames, CompletionHandler<void(Vector<uint32_t>&&)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         Vector<GCGLuint> returnValue = { };
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         returnValue = m_context->getUniformIndices(program, uniformNames);
         completionHandler(WTFMove(returnValue));
     }
@@ -1356,7 +1435,8 @@
     {
         assertIsCurrent(workQueue());
         Vector<GCGLint> returnValue = { };
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         returnValue = m_context->getActiveUniforms(program, uniformIndices, pname);
         completionHandler(WTFMove(returnValue));
     }
@@ -1364,7 +1444,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLuint returnValue = { };
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         returnValue = m_context->getUniformBlockIndex(program, uniformBlockName);
         completionHandler(returnValue);
     }
@@ -1372,20 +1453,23 @@
     {
         assertIsCurrent(workQueue());
         String returnValue = { };
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         returnValue = m_context->getActiveUniformBlockName(program, uniformBlockIndex);
         completionHandler(WTFMove(returnValue));
     }
     void uniformBlockBinding(uint32_t program, uint32_t uniformBlockIndex, uint32_t uniformBlockBinding)
     {
         assertIsCurrent(workQueue());
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         m_context->uniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
     }
     void getActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, size_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
-        program = m_objectNames.get(program);
+        if (program)
+            program = m_objectNames.get(program);
         Vector<GCGLint, 4> params(paramsSize, 0);
         m_context->getActiveUniformBlockiv(program, uniformBlockIndex, pname, params);
         completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(params.data()), params.size()));
@@ -1394,7 +1478,8 @@
     {
         assertIsCurrent(workQueue());
         String returnValue = { };
-        arg0 = m_objectNames.get(arg0);
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getTranslatedShaderSourceANGLE(arg0);
         completionHandler(WTFMove(returnValue));
     }
@@ -1407,11 +1492,14 @@
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createQueryEXT();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void deleteQueryEXT(uint32_t query)
     {
         assertIsCurrent(workQueue());
+        if (UNLIKELY(!query))
+            return;
         query = m_objectNames.take(query);
         m_context->deleteQueryEXT(query);
     }
@@ -1419,14 +1507,16 @@
     {
         assertIsCurrent(workQueue());
         GCGLboolean returnValue = { };
-        query = m_objectNames.get(query);
+        if (query)
+            query = m_objectNames.get(query);
         returnValue = m_context->isQueryEXT(query);
         completionHandler(static_cast<bool>(returnValue));
     }
     void beginQueryEXT(uint32_t target, uint32_t query)
     {
         assertIsCurrent(workQueue());
-        query = m_objectNames.get(query);
+        if (query)
+            query = m_objectNames.get(query);
         m_context->beginQueryEXT(target, query);
     }
     void endQueryEXT(uint32_t target)
@@ -1437,7 +1527,8 @@
     void queryCounterEXT(uint32_t query, uint32_t target)
     {
         assertIsCurrent(workQueue());
-        query = m_objectNames.get(query);
+        if (query)
+            query = m_objectNames.get(query);
         m_context->queryCounterEXT(query, target);
     }
     void getQueryiEXT(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
@@ -1451,7 +1542,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLint returnValue = { };
-        query = m_objectNames.get(query);
+        if (query)
+            query = m_objectNames.get(query);
         returnValue = m_context->getQueryObjectiEXT(query, pname);
         completionHandler(returnValue);
     }
@@ -1459,7 +1551,8 @@
     {
         assertIsCurrent(workQueue());
         GCGLuint64 returnValue = { };
-        query = m_objectNames.get(query);
+        if (query)
+            query = m_objectNames.get(query);
         returnValue = m_context->getQueryObjectui64EXT(query, pname);
         completionHandler(static_cast<uint64_t>(returnValue));
     }
@@ -1540,11 +1633,6 @@
         assertIsCurrent(workQueue());
         m_context->renderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height);
     }
-    void blitFramebufferANGLE(int32_t srcX0, int32_t srcY0, int32_t srcX1, int32_t srcY1, int32_t dstX0, int32_t dstY0, int32_t dstX1, int32_t dstY1, uint32_t mask, uint32_t filter)
-    {
-        assertIsCurrent(workQueue());
-        m_context->blitFramebufferANGLE(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
-    }
     void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
@@ -1557,22 +1645,49 @@
         assertIsCurrent(workQueue());
         m_context->setDrawingBufferColorSpace(arg0);
     }
-    void drawingBufferToPixelBuffer(WebCore::GraphicsContextGL::FlipY&& arg0, CompletionHandler<void(RefPtr<WebCore::PixelBuffer>&&)>&& completionHandler)
+    void drawingBufferToPixelBuffer(WebCore::GraphicsContextGLFlipY&& arg0, CompletionHandler<void(RefPtr<WebCore::PixelBuffer>&&)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         RefPtr<WebCore::PixelBuffer> returnValue = { };
         returnValue = m_context->drawingBufferToPixelBuffer(arg0);
         completionHandler(WTFMove(returnValue));
     }
-    void destroyEGLSync(uint64_t arg0)
+    void createExternalImage(uint32_t name, WebCore::GraphicsContextGL::ExternalImageSource&& arg0, uint32_t internalFormat, int32_t layer)
     {
         assertIsCurrent(workQueue());
-        m_context->destroyEGLSync(reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(arg0)));
+        auto result = m_context->createExternalImage(WTFMove(arg0), internalFormat, layer);
+        if (result)
+            m_objectNames.add(name, result);
     }
-    void clientWaitEGLSyncWithFlush(uint64_t arg0, uint64_t timeout)
+    void deleteExternalImage(uint32_t handle)
     {
         assertIsCurrent(workQueue());
-        m_context->clientWaitEGLSyncWithFlush(reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(arg0)), timeout);
+        if (UNLIKELY(!handle))
+            return;
+        handle = m_objectNames.take(handle);
+        m_context->deleteExternalImage(handle);
+    }
+    void bindExternalImage(uint32_t target, uint32_t arg1)
+    {
+        assertIsCurrent(workQueue());
+        if (arg1)
+            arg1 = m_objectNames.get(arg1);
+        m_context->bindExternalImage(target, arg1);
+    }
+    void createExternalSync(uint32_t name, WebCore::GraphicsContextGL::ExternalSyncSource&& arg0)
+    {
+        assertIsCurrent(workQueue());
+        auto result = m_context->createExternalSync(WTFMove(arg0));
+        if (result)
+            m_objectNames.add(name, result);
+    }
+    void deleteExternalSync(uint32_t arg0)
+    {
+        assertIsCurrent(workQueue());
+        if (UNLIKELY(!arg0))
+            return;
+        arg0 = m_objectNames.take(arg0);
+        m_context->deleteExternalSync(arg0);
     }
     void enableRequiredWebXRExtensions(CompletionHandler<void(bool)>&& completionHandler)
     {
@@ -1581,17 +1696,17 @@
         returnValue = m_context->enableRequiredWebXRExtensions();
         completionHandler(returnValue);
     }
-    void createFoveation(WebCore::IntSize&& physicalSizeLeft, WebCore::IntSize&& physicalSizeRight, WebCore::IntSize&& screenSize, std::span<const float>&& horizontalSamplesLeft, std::span<const float>&& verticalSamples, std::span<const float>&& horizontalSamplesRight, CompletionHandler<void(bool)>&& completionHandler)
+    void addFoveation(WebCore::IntSize&& physicalSizeLeft, WebCore::IntSize&& physicalSizeRight, WebCore::IntSize&& screenSize, std::span<const float>&& horizontalSamplesLeft, std::span<const float>&& verticalSamples, std::span<const float>&& horizontalSamplesRight, CompletionHandler<void(bool)>&& completionHandler)
     {
-        bool returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->createFoveation(physicalSizeLeft, physicalSizeRight, screenSize, std::span(reinterpret_cast<const GCGLfloat*>(horizontalSamplesLeft.data()), horizontalSamplesLeft.size()), std::span(reinterpret_cast<const GCGLfloat*>(verticalSamples.data()), verticalSamples.size()), std::span(reinterpret_cast<const GCGLfloat*>(horizontalSamplesRight.data()), horizontalSamplesRight.size()));
+        bool returnValue = { };
+        returnValue = m_context->addFoveation(physicalSizeLeft, physicalSizeRight, screenSize, horizontalSamplesLeft, verticalSamples, horizontalSamplesRight);
         completionHandler(returnValue);
     }
-    void enableFoveation(GCGLuint framebuffer)
+    void enableFoveation(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
-        m_context->enableFoveation(framebuffer);
+        m_context->enableFoveation(arg0);
     }
     void disableFoveation()
     {

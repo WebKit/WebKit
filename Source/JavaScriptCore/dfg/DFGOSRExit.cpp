@@ -207,7 +207,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame, v
             patchBuffer, OSRExitPtrTag, nullptr,
             "DFG OSR exit #%u (D@%u, %s, %s) from %s, with operands = %s",
                 exitIndex, exit.m_dfgNodeIndex, toCString(exit.m_codeOrigin).data(),
-                exitKindToString(exit.m_kind), toCString(*codeBlock).data(),
+                exitKindToString(exit.m_kind).characters8(), toCString(*codeBlock).data(),
                 toCString(ignoringContext<DumpContext>(operands)).data());
         codeBlock->dfgJITData()->setExitCode(exitIndex, exitCode);
     }
@@ -330,13 +330,6 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
             CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;
             CodeBlock* codeBlock = jit.baselineCodeBlockFor(codeOrigin);
             if (ArrayProfile* arrayProfile = codeBlock->getArrayProfile(ConcurrentJSLocker(codeBlock->m_lock), codeOrigin.bytecodeIndex())) {
-                const auto* instruction = codeBlock->instructions().at(codeOrigin.bytecodeIndex()).ptr();
-                CCallHelpers::Jump skipProfile;
-                if (instruction->is<OpGetById>()) {
-                    auto& metadata = instruction->as<OpGetById>().metadata(codeBlock);
-                    skipProfile = jit.branch8(CCallHelpers::NotEqual, CCallHelpers::AbsoluteAddress(&metadata.m_modeMetadata.mode), CCallHelpers::TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)));
-                }
-
 #if USE(JSVALUE64)
                 GPRReg usedRegister;
                 if (exit.m_jsValueSource.isAddress())
@@ -412,9 +405,6 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                     jit.pop(scratch2);
                     jit.pop(scratch1);
                 }
-
-                if (skipProfile.isSet())
-                    skipProfile.link(&jit);
             }
         }
 

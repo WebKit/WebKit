@@ -75,6 +75,7 @@
 #import <WebCore/DataDetectionResultsStorage.h>
 #import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/DiagnosticLoggingKeys.h>
+#import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DocumentMarkerController.h>
 #import <WebCore/DragController.h>
@@ -155,6 +156,7 @@
 #import <WebCore/TextPlaceholderElement.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/UserGestureIndicator.h>
+#import <WebCore/ViewportArguments.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebEvent.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
@@ -4133,18 +4135,40 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
         return;
     }
 
-    if (hasMobileDocType) {
+    RefPtr document = frame->coreLocalFrame()->document();
+
+    auto updateViewportConfigurationForMobileDocType = [this, document] {
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::xhtmlMobileParameters());
-        return;
+
+        // Do not update the viewport arguments if they are already configured from, say, a meta tag.
+        if (m_viewportConfiguration.viewportArguments().type >= ViewportArguments::Type::CSSDeviceAdaptation)
+            return;
+
+        if (!document || !document->isViewportDocument())
+            return;
+
+        auto viewportArguments = ViewportArguments { ViewportArguments::Type::CSSDeviceAdaptation };
+        document->setViewportArguments(viewportArguments);
+        viewportPropertiesDidChange(viewportArguments);
+    };
+
+    if (hasMobileDocType) {
+        return updateViewportConfigurationForMobileDocType();
     }
 
-    auto* document = frame->coreLocalFrame()->document();
-    if (document->isImageDocument())
-        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::imageDocumentParameters());
-    else if (document->isTextDocument())
-        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::textDocumentParameters());
-    else
-        m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
+    bool configureWithParametersForStandardFrame = !document;
+
+    if (document) {
+        if (document->isImageDocument())
+            m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::imageDocumentParameters());
+        else if (document->isTextDocument())
+            m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::textDocumentParameters());
+        else
+            configureWithParametersForStandardFrame = true;
+    }
+
+    if (configureWithParametersForStandardFrame)
+        return m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -4965,7 +4989,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
     if (!frame)
         return completionHandler({ });
 
-    RefPtr { frame->document() }->updateLayout(LayoutOptions::IgnorePendingStylesheets);
+    frame->protectedDocument()->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     VisibleSelection selection = frame->selection().selection();
 
@@ -5223,7 +5247,7 @@ void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementCo
     ASSERT(target->document().frame());
     Ref targetFrame = *target->document().frame();
 
-    targetFrame->document()->updateLayout(LayoutOptions::IgnorePendingStylesheets);
+    targetFrame->protectedDocument()->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     // Performing layout could have could torn down the element's renderer. Check that we still
     // have one. Otherwise, bail out as this function only focuses elements that have a visual

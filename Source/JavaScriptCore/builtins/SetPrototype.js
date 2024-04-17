@@ -209,7 +209,7 @@ function symmetricDifference(other)
 
     var result = @setClone(this);
     for (var key of wrapper) {
-        if (result.@has(key))
+        if (this.@has(key))
             result.@delete(key);
         else
             result.@add(key);

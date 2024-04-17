@@ -45,9 +45,6 @@ namespace WebCore {
 // Delay time in second for start autoscroll if pointer is in border edge of scrollable element.
 static const Seconds autoscrollDelay { 200_ms };
 
-// When the autoscroll or the panScroll is triggered when do the scroll every 50ms to make it smooth.
-static const Seconds autoscrollInterval { 50_ms };
-
 #if ENABLE(PAN_SCROLLING)
 static LocalFrame* getMainFrame(LocalFrame* frame)
 {

@@ -56,30 +56,30 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert.throws(TypeError, function() {
     typedArray[0] = 1;
-  }, '`typedArray[0] = 1` throws TypeError');
+  });
 
   assert.throws(TypeError, function() {
     typedArray[0] = Math.pow(2, 63);
-  }, '`typedArray[0] = Math.pow(2, 63)` throws TypeError');
+  });
 
   assert.throws(TypeError, function() {
     typedArray[0] = +0;
-  }, '`typedArray[0] = +0` throws TypeError');
+  });
 
   assert.throws(TypeError, function() {
     typedArray[0] = -0;
-  }, '`typedArray[0] = -0` throws TypeError');
+  });
 
   assert.throws(TypeError, function() {
     typedArray[0] = Infinity;
-  }, '`typedArray[0] = Infinity` throws TypeError');
+  });
 
   assert.throws(TypeError, function() {
     typedArray[0] = -Infinity;
-  }, '`typedArray[0] = -Infinity` throws TypeError');
+  });
 
   assert.throws(TypeError, function() {
     typedArray[0] = NaN;
-  }, '`typedArray[0] = NaN` throws TypeError');
+  });
 
 });

@@ -53,9 +53,10 @@ class WorkerConsoleClient;
 class WorkerOrWorkletGlobalScope;
 class WorkerScriptFetcher;
 
-class WorkerOrWorkletScriptController : public CanMakeCheckedPtr {
+class WorkerOrWorkletScriptController final : public CanMakeCheckedPtr<WorkerOrWorkletScriptController> {
     WTF_MAKE_NONCOPYABLE(WorkerOrWorkletScriptController);
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerOrWorkletScriptController);
 public:
     WorkerOrWorkletScriptController(WorkerThreadType, Ref<JSC::VM>&&, WorkerOrWorkletGlobalScope*);
     ~WorkerOrWorkletScriptController();

@@ -235,18 +235,18 @@ void main()
                            fragmentShaderSource300().c_str());
         EXPECT_GL_NO_ERROR();
         ASSERT_TRUE(program.valid());
-        glUseProgram(program.get());
-        mPositionLoc = glGetAttribLocation(program.get(), "vPosition");
+        glUseProgram(program);
+        mPositionLoc = glGetAttribLocation(program, "vPosition");
         if (!useBaseInstanceBuiltin())
         {
-            mInstanceIDLoc      = glGetAttribLocation(program.get(), "vInstanceID");
-            mInstanceColorIDLoc = glGetAttribLocation(program.get(), "vInstanceColorID");
+            mInstanceIDLoc      = glGetAttribLocation(program, "vInstanceID");
+            mInstanceColorIDLoc = glGetAttribLocation(program, "vInstanceColorID");
         }
     }
 
     void setupNonIndexedBuffers(GLBuffer &vertexBuffer)
     {
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
         glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mNonIndexedVertices.size(),
                      mNonIndexedVertices.data(), getBufferDataUsage());
 
@@ -626,18 +626,18 @@ void main()
                            fragmentShaderSource300().c_str());
         EXPECT_GL_NO_ERROR();
         ASSERT_TRUE(program.valid());
-        glUseProgram(program.get());
-        mPositionLoc = glGetAttribLocation(program.get(), "vPosition");
+        glUseProgram(program);
+        mPositionLoc = glGetAttribLocation(program, "vPosition");
         if (!useBaseInstanceBuiltin())
         {
-            mInstanceIDLoc      = glGetAttribLocation(program.get(), "vInstanceID");
-            mInstanceColorIDLoc = glGetAttribLocation(program.get(), "vInstanceColorID");
+            mInstanceIDLoc      = glGetAttribLocation(program, "vInstanceID");
+            mInstanceColorIDLoc = glGetAttribLocation(program, "vInstanceColorID");
         }
     }
 
     void setupNonIndexedBuffers(GLBuffer &vertexBuffer)
     {
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
         glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mNonIndexedVertices.size(),
                      mNonIndexedVertices.data(), getBufferDataUsage());
 

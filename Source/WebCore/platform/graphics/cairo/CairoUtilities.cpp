@@ -37,7 +37,6 @@
 #include "IntRect.h"
 #include "Path.h"
 #include "RefPtrCairo.h"
-#include "Region.h"
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
 #include <wtf/NeverDestroyed.h>
@@ -370,16 +369,6 @@ void flipImageSurfaceVertically(cairo_surface_t* surface)
         memcpy(top, bottom, stride);
         memcpy(bottom, tmp.get(), stride);
     }
-}
-
-RefPtr<cairo_region_t> toCairoRegion(const Region& region)
-{
-    RefPtr<cairo_region_t> cairoRegion = adoptRef(cairo_region_create());
-    for (const auto& rect : region.rects()) {
-        cairo_rectangle_int_t cairoRect = rect;
-        cairo_region_union_rectangle(cairoRegion.get(), &cairoRect);
-    }
-    return cairoRegion;
 }
 
 cairo_matrix_t toCairoMatrix(const AffineTransform& transform)

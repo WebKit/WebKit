@@ -207,7 +207,7 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
                 }
             }
             if (data.size() >= 3)
-                m_closeEventReason = String::fromUTF8(&data[2], data.size() - 2);
+                m_closeEventReason = String::fromUTF8({ &data[2], data.size() - 2 });
             else
                 m_closeEventReason = emptyString();
 

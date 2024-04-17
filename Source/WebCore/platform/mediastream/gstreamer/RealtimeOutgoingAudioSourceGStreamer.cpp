@@ -54,11 +54,14 @@ RTCRtpCapabilities RealtimeOutgoingAudioSourceGStreamer::rtpCapabilities() const
     return registryScanner.audioRtpCapabilities(GStreamerRegistryScanner::Configuration::Encoding);
 }
 
-bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>& caps)
+bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>& codecPreferences)
 {
+    auto caps = adoptGRef(gst_caps_copy(codecPreferences.get()));
     GST_DEBUG_OBJECT(m_bin.get(), "Setting payload caps: %" GST_PTR_FORMAT, caps.get());
-    auto* structure = gst_caps_get_structure(caps.get(), 0);
-    const char* encodingName = gst_structure_get_string(structure, "encoding-name");
+    // FIXME: We use only the first structure of the caps. This not be the right approach specially
+    // we don't have a payloader or encoder for that format.
+    GUniquePtr<GstStructure> structure(gst_structure_copy(gst_caps_get_structure(caps.get(), 0)));
+    const char* encodingName = gst_structure_get_string(structure.get(), "encoding-name");
     if (!encodingName) {
         GST_ERROR_OBJECT(m_bin.get(), "encoding-name not found");
         return false;
@@ -78,17 +81,30 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         if (!m_encoder)
             return false;
 
+        gst_structure_set(structure.get(), "encoding-name", G_TYPE_STRING, "OPUS", nullptr);
+
         // FIXME: Enable dtx too?
         gst_util_set_object_arg(G_OBJECT(m_encoder.get()), "audio-type", "voice");
+        g_object_set(m_encoder.get(), "perfect-timestamp", TRUE, nullptr);
 
-        const char* useInbandFec = gst_structure_get_string(structure, "useinbandfec");
-        if (!g_strcmp0(useInbandFec, "1"))
-            g_object_set(m_encoder.get(), "inband-fec", true, nullptr);
+        if (const char* useInbandFec = gst_structure_get_string(structure.get(), "useinbandfec")) {
+            if (!g_strcmp0(useInbandFec, "1"))
+                g_object_set(m_encoder.get(), "inband-fec", true, nullptr);
+            gst_structure_remove_field(structure.get(), "useinbandfec");
+        }
 
-        const char* isStereo = gst_structure_get_string(structure, "stereo");
-        if (!g_strcmp0(isStereo, "1"))
-            m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-raw", "channels", G_TYPE_INT, 2, nullptr));
+        if (const char* isStereo = gst_structure_get_string(structure.get(), "stereo")) {
+            if (!g_strcmp0(isStereo, "1"))
+                m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-raw", "channels", G_TYPE_INT, 2, nullptr));
+            gst_structure_remove_field(structure.get(), "stereo");
+        }
 
+        if (gst_caps_is_any(m_inputCaps.get())) {
+            if (const char* encodingParameters = gst_structure_get_string(structure.get(), "encoding-params")) {
+                if (auto channels = parseIntegerAllowingTrailingJunk<int>(StringView::fromLatin1(encodingParameters)))
+                    m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-raw", "channels", G_TYPE_INT, *channels, nullptr));
+            }
+        }
     } else if (encoding == "g722"_s)
         m_encoder = makeGStreamerElement("avenc_g722", nullptr);
     else if (encoding == "pcma"_s)
@@ -108,23 +124,30 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     // Align MTU with libwebrtc implementation, also helping to reduce packet fragmentation.
     g_object_set(m_payloader.get(), "auto-header-extension", TRUE, "mtu", 1200, nullptr);
 
-    if (const char* minPTime = gst_structure_get_string(structure, "minptime")) {
+    if (const char* minPTime = gst_structure_get_string(structure.get(), "minptime")) {
         auto time = String::fromLatin1(minPTime);
         if (auto value = parseIntegerAllowingTrailingJunk<int64_t>(time))
             g_object_set(m_payloader.get(), "min-ptime", *value * GST_MSECOND, nullptr);
+        gst_structure_remove_field(structure.get(), "minptime");
     }
 
     int payloadType;
-    if (gst_structure_get_int(structure, "payload", &payloadType))
+    if (gst_structure_get_int(structure.get(), "payload", &payloadType)) {
         g_object_set(m_payloader.get(), "pt", payloadType, nullptr);
+        gst_structure_remove_field(structure.get(), "payload");
+    }
 
     if (m_payloaderState) {
         g_object_set(m_payloader.get(), "seqnum-offset", m_payloaderState->seqnum, nullptr);
         m_payloaderState.reset();
     }
 
+    auto rtpCaps = adoptGRef(gst_caps_new_empty());
+    gst_caps_append_structure(rtpCaps.get(), structure.release());
+
     g_object_set(m_inputCapsFilter.get(), "caps", m_inputCaps.get(), nullptr);
-    g_object_set(m_capsFilter.get(), "caps", caps.get(), nullptr);
+    g_object_set(m_capsFilter.get(), "caps", rtpCaps.get(), nullptr);
+    GST_DEBUG_OBJECT(m_bin.get(), "RTP caps: %" GST_PTR_FORMAT, rtpCaps.get());
 
     gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_payloader.get(), m_encoder.get(), nullptr);
 

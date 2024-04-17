@@ -60,7 +60,10 @@ using MemoryPtrs   = std::vector<MemoryPtr>;
 using PlatformPtrs = std::vector<PlatformPtr>;
 using ProgramPtrs  = std::vector<ProgramPtr>;
 
-using CompiledWorkgroupSize = std::array<uint32_t, 3>;
+using WorkgroupSize    = std::array<size_t, 3>;
+using GlobalWorkOffset = std::array<size_t, 3>;
+using GlobalWorkSize   = std::array<size_t, 3>;
+using WorkgroupCount   = std::array<uint32_t, 3>;
 
 struct ImageDescriptor
 {
@@ -83,6 +86,44 @@ struct MemOffsets
 struct Coordinate
 {
     size_t x, y, z;
+};
+
+struct NDRange
+{
+    NDRange(cl_uint workDimensionsIn,
+            const size_t *globalWorkOffsetIn,
+            const size_t *globalWorkSizeIn,
+            const size_t *localWorkSizeIn)
+        : workDimensions(workDimensionsIn),
+          globalWorkOffset({0, 0, 0}),
+          globalWorkSize({1, 1, 1}),
+          localWorkSize({1, 1, 1}),
+          nullLocalWorkSize(localWorkSizeIn == nullptr)
+    {
+        for (cl_uint dim = 0; dim < workDimensionsIn; dim++)
+        {
+            if (globalWorkOffsetIn != nullptr)
+            {
+                globalWorkOffset[dim] = globalWorkOffsetIn[dim];
+            }
+            if (globalWorkSizeIn != nullptr)
+            {
+                globalWorkSize[dim] = globalWorkSizeIn[dim];
+            }
+            if (localWorkSizeIn != nullptr)
+            {
+                localWorkSize[dim] = localWorkSizeIn[dim];
+            }
+            ASSERT(globalWorkSize[dim] != 0);
+            ASSERT(localWorkSize[dim] != 0);
+        }
+    }
+
+    cl_uint workDimensions;
+    GlobalWorkOffset globalWorkOffset;
+    GlobalWorkSize globalWorkSize;
+    WorkgroupSize localWorkSize;
+    bool nullLocalWorkSize{false};
 };
 
 }  // namespace cl

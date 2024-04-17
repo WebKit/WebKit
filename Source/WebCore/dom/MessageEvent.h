@@ -46,8 +46,8 @@ class MessageEvent final : public Event {
 public:
     struct JSValueTag { };
     using DataType = std::variant<JSValueTag, Ref<SerializedScriptValue>, String, Ref<Blob>, Ref<ArrayBuffer>>;
-    static Ref<MessageEvent> create(const AtomString& type, DataType&&, const String& origin = { }, const String& lastEventId = { }, std::optional<MessageEventSource>&& = std::nullopt, Vector<RefPtr<MessagePort>>&& = { });
-    static Ref<MessageEvent> create(DataType&&, const String& origin = { }, const String& lastEventId = { }, std::optional<MessageEventSource>&& = std::nullopt, Vector<RefPtr<MessagePort>>&& = { });
+    static Ref<MessageEvent> create(const AtomString& type, DataType&&, const String& origin = { }, const String& lastEventId = { }, std::optional<MessageEventSource>&& = std::nullopt, Vector<Ref<MessagePort>>&& = { });
+    static Ref<MessageEvent> create(DataType&&, const String& origin = { }, const String& lastEventId = { }, std::optional<MessageEventSource>&& = std::nullopt, Vector<Ref<MessagePort>>&& = { });
     static Ref<MessageEvent> createForBindings();
 
     struct MessageEventWithStrongData {
@@ -55,25 +55,25 @@ public:
         JSC::Strong<JSC::JSObject> strongWrapper; // Keep the wrapper alive until the event is fired, since it is what keeps `data` alive.
     };
 
-    static MessageEventWithStrongData create(JSC::JSGlobalObject&, Ref<SerializedScriptValue>&&, const String& origin = { }, const String& lastEventId = { }, std::optional<MessageEventSource>&& = std::nullopt, Vector<RefPtr<MessagePort>>&& = { });
+    static MessageEventWithStrongData create(JSC::JSGlobalObject&, Ref<SerializedScriptValue>&&, const String& origin = { }, const String& lastEventId = { }, std::optional<MessageEventSource>&& = std::nullopt, Vector<Ref<MessagePort>>&& = { });
 
     struct Init : EventInit {
         JSC::JSValue data;
         String origin;
         String lastEventId;
         std::optional<MessageEventSource> source;
-        Vector<RefPtr<MessagePort>> ports;
+        Vector<Ref<MessagePort>> ports;
     };
     static Ref<MessageEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 
     virtual ~MessageEvent();
 
-    void initMessageEvent(const AtomString& type, bool canBubble, bool cancelable, JSC::JSValue data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&&, Vector<RefPtr<MessagePort>>&&);
+    void initMessageEvent(const AtomString& type, bool canBubble, bool cancelable, JSC::JSValue data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&&, Vector<Ref<MessagePort>>&&);
 
     const String& origin() const { return m_origin; }
     const String& lastEventId() const { return m_lastEventId; }
     const std::optional<MessageEventSource>& source() const { return m_source; }
-    const Vector<RefPtr<MessagePort>>& ports() const { return m_ports; }
+    const Vector<Ref<MessagePort>>& ports() const { return m_ports; }
 
     const DataType& data() const { return m_data; }
 
@@ -86,13 +86,13 @@ public:
 private:
     MessageEvent();
     MessageEvent(const AtomString& type, Init&&, IsTrusted);
-    MessageEvent(const AtomString& type, DataType&&, const String& origin, const String& lastEventId = { }, std::optional<MessageEventSource>&& = std::nullopt, Vector<RefPtr<MessagePort>>&& = { });
+    MessageEvent(const AtomString& type, DataType&&, const String& origin, const String& lastEventId = { }, std::optional<MessageEventSource>&& = std::nullopt, Vector<Ref<MessagePort>>&& = { });
 
     DataType m_data WTF_GUARDED_BY_LOCK(m_concurrentDataAccessLock);
     String m_origin;
     String m_lastEventId;
     std::optional<MessageEventSource> m_source;
-    Vector<RefPtr<MessagePort>> m_ports;
+    Vector<Ref<MessagePort>> m_ports;
 
     JSValueInWrappedObject m_jsData;
     JSValueInWrappedObject m_cachedData;

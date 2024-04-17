@@ -12,7 +12,8 @@ ImageHelper::ImageHelper() {}
 
 ImageHelper::~ImageHelper() {}
 
-angle::Result ImageHelper::initImage(wgpu::TextureUsage usage,
+angle::Result ImageHelper::initImage(wgpu::Device &device,
+                                     wgpu::TextureUsage usage,
                                      wgpu::TextureDimension dimension,
                                      wgpu::Extent3D size,
                                      wgpu::TextureFormat format,
@@ -20,33 +21,34 @@ angle::Result ImageHelper::initImage(wgpu::TextureUsage usage,
                                      std::uint32_t sampleCount,
                                      std::size_t viewFormatCount)
 {
+    mTextureDescriptor.usage           = usage;
+    mTextureDescriptor.dimension       = dimension;
+    mTextureDescriptor.size            = size;
+    mTextureDescriptor.format          = format;
+    mTextureDescriptor.mipLevelCount   = mipLevelCount;
+    mTextureDescriptor.sampleCount     = sampleCount;
+    mTextureDescriptor.viewFormatCount = viewFormatCount;
 
-    mUsage           = usage;
-    mDimension       = dimension;
-    mSize            = size;
-    mFormat          = format;
-    mMipLevelCount   = mipLevelCount;
-    mSampleCount     = sampleCount;
-    mViewFormatCount = viewFormatCount;
+    mTexture = device.CreateTexture(&mTextureDescriptor);
 
     return angle::Result::Continue;
 }
 
-void ImageHelper::flushStagedUpdates(wgpu::Device device)
+void ImageHelper::flushStagedUpdates(wgpu::Device &device)
 {
     wgpu::CommandEncoder encoder = device.CreateCommandEncoder();
     wgpu::ImageCopyTexture dst;
     for (const QueuedDataUpload &src : mBufferQueue)
     {
         if (src.targetLevel < mFirstAllocatedLevel ||
-            src.targetLevel >= (mFirstAllocatedLevel + mMipLevelCount))
+            src.targetLevel >= (mFirstAllocatedLevel + mTextureDescriptor.mipLevelCount))
         {
             continue;
         }
         LevelIndex targetLevelWgpu = toWgpuLevel(src.targetLevel);
         dst.texture                = mTexture;
         dst.mipLevel               = targetLevelWgpu.get();
-        encoder.CopyBufferToTexture(&src.copyBuffer, &dst, &mSize);
+        encoder.CopyBufferToTexture(&src.copyBuffer, &dst, &mTextureDescriptor.size);
     }
 }
 
@@ -59,21 +61,12 @@ gl::LevelIndex ImageHelper::toGlLevel(LevelIndex levelIndexWgpu) const
 {
     return wgpu_gl::getLevelIndex(levelIndexWgpu, mFirstAllocatedLevel);
 }
+
+TextureInfo ImageHelper::getWgpuTextureInfo(const gl::ImageIndex &index)
+{
+    TextureInfo textureInfo;
+    textureInfo.dimension     = gl_wgpu::getWgpuTextureDimension(index.getType());
+    textureInfo.mipLevelCount = index.getLayerCount();
+    return textureInfo;
+}
 }  // namespace webgpu
-
-namespace wgpu_gl
-{
-gl::LevelIndex getLevelIndex(webgpu::LevelIndex levelWgpu, gl::LevelIndex baseLevel)
-{
-    return gl::LevelIndex(levelWgpu.get() + baseLevel.get());
-}
-}  // namespace wgpu_gl
-
-namespace gl_wgpu
-{
-webgpu::LevelIndex getLevelIndex(gl::LevelIndex levelGl, gl::LevelIndex baseLevel)
-{
-    ASSERT(baseLevel <= levelGl);
-    return webgpu::LevelIndex(levelGl.get() - baseLevel.get());
-}
-}  // namespace gl_wgpu

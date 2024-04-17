@@ -36,6 +36,7 @@
 #include "WebExtensionControllerConfiguration.h"
 #include "WebExtensionControllerIdentifier.h"
 #include "WebExtensionDataType.h"
+#include "WebExtensionError.h"
 #include "WebExtensionFrameIdentifier.h"
 #include "WebExtensionURLSchemeHandler.h"
 #include "WebProcessProxy.h"
@@ -108,10 +109,9 @@ public:
     void getDataRecords(OptionSet<WebExtensionDataType>, CompletionHandler<void(Vector<Ref<WebExtensionDataRecord>>)>&&);
     void getDataRecord(OptionSet<WebExtensionDataType>, WebExtensionContext&, CompletionHandler<void(RefPtr<WebExtensionDataRecord>)>&&);
     void removeData(OptionSet<WebExtensionDataType>, const Vector<Ref<WebExtensionDataRecord>>&, CompletionHandler<void()>&&);
-    void removeData(OptionSet<WebExtensionDataType>, const WebExtensionContextSet&, CompletionHandler<void()>&&);
 
-    void calculateStorageSize(_WKWebExtensionStorageSQLiteStore *, WebExtensionDataType, CompletionHandler<void(size_t)>&&);
-    void removeStorage(_WKWebExtensionStorageSQLiteStore *, WebExtensionDataType, CompletionHandler<void()>&&);
+    void calculateStorageSize(_WKWebExtensionStorageSQLiteStore *, WebExtensionDataType, CompletionHandler<void(Expected<size_t, WebExtensionError>&&)>&&);
+    void removeStorage(_WKWebExtensionStorageSQLiteStore *, WebExtensionDataType, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
     bool isFreshlyCreated() const { return m_freshlyCreated; }

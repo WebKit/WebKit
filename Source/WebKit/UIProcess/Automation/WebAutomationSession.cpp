@@ -2456,7 +2456,7 @@ void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, std::optional<
     callback->sendSuccess(base64EncodedData.value());
 }
 
-#if !PLATFORM(COCOA) && !USE(CAIRO)
+#if !PLATFORM(COCOA) && !USE(CAIRO) && !USE(SKIA)
 std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(ShareableBitmap::Handle&&)
 {
     return std::nullopt;
@@ -2466,7 +2466,7 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(cons
 {
     return std::nullopt;
 }
-#endif // !PLATFORM(COCOA) && !USE(CAIRO)
+#endif // !PLATFORM(COCOA) && !USE(CAIRO) && !USE(SKIA)
 
 #if !PLATFORM(COCOA)
 std::optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFile(const String&, const String&)

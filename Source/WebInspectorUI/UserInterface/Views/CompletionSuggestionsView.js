@@ -175,10 +175,9 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         if (typeof selectedIndex === "number")
             this._selectedIndex = selectedIndex;
 
-        for (let [index, completion] of completions.entries()) {
+        for (let completion of completions) {
             var itemElement = document.createElement("div");
             itemElement.classList.add("item");
-            itemElement.classList.toggle("selected", index === this._selectedIndex);
 
             if (typeof completion === "string")
                 itemElement.textContent = completion;
@@ -187,6 +186,12 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
 
             this._containerElement.appendChild(itemElement);
             this._delegate?.completionSuggestionsViewCustomizeCompletionElement?.(this, itemElement, completion);
+        }
+
+        let selectedItemElement = this._selectedItemElement;
+        if (selectedItemElement) {
+            selectedItemElement.classList.add("selected");
+            selectedItemElement.scrollIntoViewIfNeeded(false);
         }
     }
 

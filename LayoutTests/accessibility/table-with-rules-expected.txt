@@ -35,6 +35,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 10}
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -48,6 +49,8 @@ AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
 AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 AXElementBusy: 0
 
 
@@ -81,6 +84,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 10}
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -94,6 +98,8 @@ AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
 AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 AXElementBusy: 0
 
 
@@ -127,6 +133,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 10}
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -140,6 +147,8 @@ AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
 AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 AXElementBusy: 0
 
 
@@ -173,7 +182,8 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXVisibleCharacterRange: NSRange: {0, 4}
+AXInlineText: 0
 AXElementBusy: 0
 
 
@@ -207,7 +217,8 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXVisibleCharacterRange: NSRange: {0, 4}
+AXInlineText: 0
 AXElementBusy: 0
 
 

@@ -156,6 +156,11 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     ALWAYS_LOG(logSiteIdentifier);
     UNUSED_PARAM(logSiteIdentifier);
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    m_defaultSpatialTrackingLabel = player->defaultSpatialTrackingLabel();
+    m_spatialTrackingLabel = player->spatialTrackingLabel();
+#endif
+
     // addPeriodicTimeObserverForInterval: throws an exception if you pass a non-numeric CMTime, so just use
     // an arbitrarily large time value of once an hour:
     __block WeakPtr weakThis { *this };
@@ -739,7 +744,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
 {
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     if (isCopyDisplayedPixelBufferAvailable()) {
-        if (auto pixelBuffer = adoptCF([m_sampleBufferDisplayLayer copyDisplayedPixelBuffer])) {
+        if (auto pixelBuffer = adoptCF([sampleBufferVideoRenderer() copyDisplayedPixelBuffer])) {
             INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", currentTime());
             m_lastPixelBuffer = WTFMove(pixelBuffer);
             return true;
@@ -747,7 +752,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
     }
 #endif
 
-    if (m_sampleBufferDisplayLayer || !m_decompressionSession)
+    if (sampleBufferVideoRenderer() || !m_decompressionSession)
         return false;
 
     auto flags = !m_lastPixelBuffer ? WebCoreDecompressionSession::AllowLater : WebCoreDecompressionSession::ExactTime;
@@ -878,13 +883,13 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureVideoRenderer() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setPresentationSize(const IntSize& newSize)
 {
-    if (!m_sampleBufferDisplayLayer && !newSize.isEmpty())
+    if (!sampleBufferVideoRenderer() && !newSize.isEmpty())
         updateDisplayLayerAndDecompressionSession();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoLayerSizeFenced(const FloatSize& newSize, WTF::MachSendRight&&)
 {
-    if (!m_sampleBufferDisplayLayer && !newSize.isEmpty())
+    if (!sampleBufferVideoRenderer() && !newSize.isEmpty())
         updateDisplayLayerAndDecompressionSession();
 }
 
@@ -1648,7 +1653,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setShouldDisableHDR(bool shouldDisabl
 
 void MediaPlayerPrivateMediaSourceAVFObjC::playerContentBoxRectChanged(const LayoutRect& newRect)
 {
-    if (!m_sampleBufferDisplayLayer && !newRect.isEmpty())
+    if (!sampleBufferVideoRenderer() && !newRect.isEmpty())
         updateDisplayLayerAndDecompressionSession();
 }
 
@@ -1676,12 +1681,25 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setShouldMaintainAspectRatio(bool sho
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
+const String& MediaPlayerPrivateMediaSourceAVFObjC::defaultSpatialTrackingLabel() const
+{
+    return m_defaultSpatialTrackingLabel;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setDefaultSpatialTrackingLabel(const String& defaultSpatialTrackingLabel)
+{
+    if (m_defaultSpatialTrackingLabel == defaultSpatialTrackingLabel)
+        return;
+    m_defaultSpatialTrackingLabel = defaultSpatialTrackingLabel;
+    updateSpatialTrackingLabel();
+}
+
 const String& MediaPlayerPrivateMediaSourceAVFObjC::spatialTrackingLabel() const
 {
     return m_spatialTrackingLabel;
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+void MediaPlayerPrivateMediaSourceAVFObjC::setSpatialTrackingLabel(const String& spatialTrackingLabel)
 {
     if (m_spatialTrackingLabel == spatialTrackingLabel)
         return;
@@ -1691,11 +1709,30 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setSpatialTrackingLabel(String&& spat
 
 void MediaPlayerPrivateMediaSourceAVFObjC::updateSpatialTrackingLabel()
 {
+    auto *renderer = m_sampleBufferVideoRenderer ? m_sampleBufferVideoRenderer.get() : [m_sampleBufferDisplayLayer sampleBufferRenderer];
+    if (!m_spatialTrackingLabel.isNull()) {
+        renderer.STSLabel = m_spatialTrackingLabel;
+        return;
+    }
+
+    if (renderer) {
+        // Let AVSBRS manage setting the spatial tracking label in its video renderer itself.
+        renderer.STSLabel = nil;
+        return;
+    }
+
+    if (m_sampleBufferAudioRendererMap.isEmpty()) {
+        // If there are no audio renderers, there's nothing to do.
+        return;
+    }
+
+    // If there is no video renderer, use the default spatial tracking label if available, or
+    // the session's spatial tracking label if not, and set the label directly on each audio
+    // renderer.
     AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
-    if (!m_visible)
-        [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = session.spatialTrackingLabel;
-    else
-        [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = nsStringNilIfNull(m_spatialTrackingLabel);
+    auto *defaultLabel = !m_defaultSpatialTrackingLabel.isNull() ? (NSString *)m_defaultSpatialTrackingLabel : session.spatialTrackingLabel;
+    for (const auto &key : m_sampleBufferAudioRendererMap.keys())
+        [(__bridge AVSampleBufferAudioRenderer *)key.get() setSTSLabel:defaultLabel];
 }
 #endif
 

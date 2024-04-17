@@ -77,12 +77,65 @@ void PresentationContextIOSurface::renderBuffersWereRecreated(NSArray<IOSurface 
     m_renderBuffers.clear();
 }
 
-void PresentationContextIOSurface::onSubmittedWorkScheduled(CompletionHandler<void()>&& completionHandler)
+void PresentationContextIOSurface::onSubmittedWorkScheduled(Function<void()>&& completionHandler)
 {
     if (m_device)
         m_device->getQueue().onSubmittedWorkScheduled(WTFMove(completionHandler));
     else
         completionHandler();
+}
+
+RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint32_t bufferIndex)
+{
+    auto* device = m_device.get();
+    if (!device || bufferIndex >= m_renderBuffers.size())
+        return nullptr;
+
+    auto& renderBuffer = m_renderBuffers[bufferIndex];
+    auto* texture = renderBuffer.luminanceClampTexture.get() ? renderBuffer.luminanceClampTexture.get() : renderBuffer.texture.ptr();
+    if (!texture)
+        return nullptr;
+
+    texture->waitForCommandBufferCompletion();
+    id<MTLTexture> mtlTexture = texture->texture();
+    if (!mtlTexture || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm)
+        return nullptr;
+
+    bool fp16 = mtlTexture.pixelFormat == MTLPixelFormatRGBA16Float;
+    CFStringRef colorSpaceName = kCGColorSpaceSRGB;
+    switch (m_colorSpace) {
+    case WGPUColorSpace::SRGB:
+        colorSpaceName = kCGColorSpaceSRGB;
+        break;
+    case WGPUColorSpace::DisplayP3:
+        colorSpaceName = kCGColorSpaceDisplayP3;
+        break;
+    }
+
+    auto colorSpace = adoptCF(CGColorSpaceCreateWithName(colorSpaceName));
+    auto bytesPerPixel = fp16 ? 8 : 4;
+    auto width = mtlTexture.width;
+    auto height = mtlTexture.height;
+    auto bytesPerRow = bytesPerPixel * width;
+    auto bitsPerComponent = bytesPerPixel * 2;
+    auto bitsPerPixel = bitsPerComponent * 4;
+    bool isOpaque = m_alphaMode == WGPUCompositeAlphaMode_Opaque;
+    CGBitmapInfo bitmapInfo = static_cast<CGBitmapInfo>(isOpaque ? kCGImageAlphaNoneSkipLast : kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGImageByteOrder32Big);
+    if (fp16)
+        bitmapInfo = static_cast<CGBitmapInfo>(isOpaque ? kCGImageAlphaNoneSkipLast : kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
+
+    Vector<uint8_t> imageBytes(bytesPerRow * height);
+    [mtlTexture getBytes:&imageBytes[0] bytesPerRow:bytesPerRow fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
+
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, &imageBytes[0], imageBytes.size(), nullptr));
+
+    return adoptCF(CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace.get(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+}
+
+static void generateAValidationError(Device& device, NSString* message, bool generateValidationError)
+{
+    if (generateValidationError)
+        device.generateAValidationError(message);
 }
 
 void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChainDescriptor& descriptor)
@@ -94,6 +147,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     if (descriptor.nextInChain)
         return;
 
+    bool reportValidationErrors = descriptor.reportValidationErrors;
     m_device = &device;
     auto allowedFormat = ^(WGPUTextureFormat format) {
         return format == WGPUTextureFormat_BGRA8Unorm || format == WGPUTextureFormat_RGBA8Unorm || format == WGPUTextureFormat_RGBA16Float;
@@ -122,39 +176,51 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         descriptor.viewFormats.size() ?: 1,
         descriptor.viewFormats.size() ? &descriptor.viewFormats[0] : &effectiveFormat,
     };
+    m_colorSpace = descriptor.colorSpace;
+    m_alphaMode = descriptor.compositeAlphaMode;
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(effectiveFormat) width:width height:height mipmapped:NO];
     textureDescriptor.usage = Texture::usage(descriptor.usage, effectiveFormat);
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    textureDescriptor.storageMode = device.hasUnifiedMemory() ? MTLStorageModeShared : MTLStorageModeManaged;
+#else
+    textureDescriptor.storageMode = MTLStorageModeShared;
+#endif
     bool needsLuminanceClampFunction = false;
     for (IOSurface *iosurface in m_ioSurfaces) {
         if (iosurface.height != static_cast<NSInteger>(height) || iosurface.width != static_cast<NSInteger>(width))
-            return device.generateAValidationError("Invalid surface size"_s);
+            return generateAValidationError(device, [NSString stringWithFormat:@"Invalid surface size. Backing surface has size (%d, %d) but attempting to configure a size of (%u, %u)", static_cast<int>(iosurface.width), static_cast<int>(iosurface.height), width, height], reportValidationErrors);
     }
 
     if (!allowedFormat(descriptor.format)) {
-        device.generateAValidationError([NSString stringWithFormat:@"Requested texture format %s is not a valid context format", Texture::formatToString(descriptor.format)]);
+        generateAValidationError(device, [NSString stringWithFormat:@"Requested texture format %s is not a valid context format", Texture::formatToString(descriptor.format)], reportValidationErrors);
+        return;
+    }
+
+    if (!width || !height) {
+        generateAValidationError(device, @"Width or height is zero", reportValidationErrors);
         return;
     }
 
     if (descriptor.width > limits.maxTextureDimension2D || descriptor.height > limits.maxTextureDimension2D) {
-        device.generateAValidationError("Requested canvas width and/or height are too large"_s);
+        generateAValidationError(device, @"Requested canvas width and/or height are too large", reportValidationErrors);
         return;
     }
 
     for (auto viewFormat : descriptor.viewFormats) {
         if (!allowedViewFormat(viewFormat)) {
-            device.generateAValidationError("Requested texture view format BGRA8UnormStorage is not enabled"_s);
+            generateAValidationError(device, @"Requested texture view format BGRA8UnormStorage is not enabled", reportValidationErrors);
             return;
         }
     }
 
     Vector viewFormats(std::span { wgpuTextureDescriptor.viewFormats, wgpuTextureDescriptor.viewFormatCount });
     if (NSString *error = device.errorValidatingTextureCreation(wgpuTextureDescriptor, viewFormats)) {
-        device.generateAValidationError(error);
+        generateAValidationError(device, error, reportValidationErrors);
         return;
     }
 
-    if ((descriptor.usage & WGPUTextureUsage_StorageBinding) && !device.hasFeature(WGPUFeatureName_BGRA8UnormStorage)) {
-        device.generateAValidationError("Requested storage format but BGRA8UnormStorage is not enabled"_s);
+    if (descriptor.format == WGPUTextureFormat_BGRA8Unorm && (descriptor.usage & WGPUTextureUsage_StorageBinding) && !device.hasFeature(WGPUFeatureName_BGRA8UnormStorage)) {
+        generateAValidationError(device, @"Requested storage format but BGRA8UnormStorage is not enabled", reportValidationErrors);
         return;
     }
 
@@ -258,13 +324,17 @@ void PresentationContextIOSurface::present()
         [computeEncoder endEncoding];
         m_device->getQueue().commitMTLCommandBuffer(commandBuffer);
     }
+
     m_currentIndex = (m_currentIndex + 1) % m_renderBuffers.size();
 }
 
 Texture* PresentationContextIOSurface::getCurrentTexture()
 {
-    if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= m_currentIndex)
+    if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= m_currentIndex) {
+        if (m_device.get())
+            m_device->generateAValidationError("GPUCanvasContext is not configured correctly"_s);
         return m_invalidTexture.get();
+    }
 
     auto& texturePtr = m_renderBuffers[m_currentIndex].luminanceClampTexture;
     if (texturePtr.get()) {
@@ -273,6 +343,7 @@ Texture* PresentationContextIOSurface::getCurrentTexture()
     }
     auto& texture = m_renderBuffers[m_currentIndex].texture;
     texture->recreateIfNeeded();
+    texture->setPreviouslyCleared(0, 0, false);
     return texture.ptr();
 }
 

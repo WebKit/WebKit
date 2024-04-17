@@ -1443,7 +1443,7 @@ static RetainPtr<NSString> dumpFramesAsText(WebFrame *frame)
     // the result without any conversion.
     if (auto utf8Result = WTF::String(innerText).tryGetUTF8()) {
         auto string = WTFMove(utf8Result.value());
-        [result appendFormat:@"%@\n", String::fromUTF8WithLatin1Fallback(string.data(), string.length()).createCFString().get()];
+        [result appendFormat:@"%@\n", String::fromUTF8WithLatin1Fallback(string.span()).createCFString().get()];
     } else
         [result appendString:@"\n"];
 

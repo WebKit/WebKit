@@ -33,11 +33,11 @@
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSShadowValue.h"
 #include "CSSValuePool.h"
 #include "GridArea.h"
 #include "Length.h"
-#include "StyleColor.h"
 #include "SystemFontDatabase.h"
 #include <variant>
 #include <wtf/OptionSet.h>
@@ -60,74 +60,7 @@ enum class FontTechnology : uint8_t;
 // will not be modified.
 namespace CSSPropertyParserHelpers {
 
-// FIXME: These should probably just be consumeComma and consumeSlash.
-bool consumeCommaIncludingWhitespace(CSSParserTokenRange&);
-bool consumeSlashIncludingWhitespace(CSSParserTokenRange&);
-// consumeFunction expects the range starts with a FunctionToken.
-CSSParserTokenRange consumeFunction(CSSParserTokenRange&);
-
-enum class NegativePercentagePolicy : bool { Forbid, Allow };
-
-enum class UnitlessQuirk : bool { Allow, Forbid };
-enum class UnitlessZeroQuirk : bool { Allow, Forbid };
-
-enum class IntegerValueRange : uint8_t { All, Positive, NonNegative };
-
-struct NoneRaw { };
-
-struct NumberRaw {
-    double value;
-};
-
-struct PercentRaw {
-    double value;
-};
-
-struct AngleRaw {
-    CSSUnitType type;
-    double value;
-};
-
-struct LengthRaw {
-    CSSUnitType type;
-    double value;
-};
-
-using LengthOrPercentRaw = std::variant<LengthRaw, PercentRaw>;
-
-std::optional<int> consumeIntegerRaw(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&);
-std::optional<int> consumeNonNegativeIntegerRaw(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeNonNegativeInteger(CSSParserTokenRange&);
-std::optional<unsigned> consumePositiveIntegerRaw(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, IntegerValueRange);
-
-std::optional<NumberRaw> consumeNumberRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
-RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange);
-RefPtr<CSSPrimitiveValue> consumeNumberOrPercent(CSSParserTokenRange&, ValueRange);
-
-RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
-RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Allow, NegativePercentagePolicy = NegativePercentagePolicy::Forbid);
-
-RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange&, ValueRange);
-
-RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
-
-RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
-
-RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange&);
-
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
-
-std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);
-template<CSSValueID, CSSValueID...> bool identMatches(CSSValueID id);
-template<CSSValueID... allowedIdents> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&);
-template<CSSValueID... allowedIdents> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
-template<typename Predicate, typename... Args> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&, Predicate&&, Args&&...);
-template<typename Predicate, typename... Args> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&, Predicate&&, Args&&...);
 
 RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange&, bool shouldLowercase = false);
 RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange&, bool shouldLowercase = false);
@@ -135,9 +68,6 @@ RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange&);
 
 StringView consumeURLRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeURL(CSSParserTokenRange&);
-
-Color consumeColorWorkerSafe(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, const CSSParserContext&, bool acceptQuirkyColors = false, OptionSet<StyleColor::CSSColorType> = { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System });
 
 enum class PositionSyntax {
     Position, // <position>
@@ -275,6 +205,7 @@ RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange&, CSSParserMode);
 bool consumeRadii(std::array<RefPtr<CSSValue>, 4>& horizontalRadii, std::array<RefPtr<CSSValue>, 4>& verticalRadii, CSSParserTokenRange&, CSSParserMode, bool useLegacyParsing);
 enum PathParsingOption : uint8_t { RejectRay = 1 << 0, RejectFillRule = 1 << 1 };
 RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange&, const CSSParserContext&, OptionSet<PathParsingOption>);
+RefPtr<CSSValue> consumePath(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeContentDistributionOverflowPosition(CSSParserTokenRange&, IsPositionKeyword);
 RefPtr<CSSValue> consumeJustifyContent(CSSParserTokenRange&);
@@ -349,48 +280,6 @@ RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange&);
 
 // Template and inline implementations are at the bottom of the file for readability.
 
-template<typename... emptyBaseCase> bool identMatches(CSSValueID)
-{
-    return false;
-}
-
-template<CSSValueID head, CSSValueID... tail> bool identMatches(CSSValueID id)
-{
-    return id == head || identMatches<tail...>(id);
-}
-
-template<CSSValueID... names> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range)
-{
-    if (range.peek().type() != IdentToken || !identMatches<names...>(range.peek().id()))
-        return std::nullopt;
-    return range.consumeIncludingWhitespace().id();
-}
-
-template<CSSValueID... names> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange& range)
-{
-    if (range.peek().type() != IdentToken || !identMatches<names...>(range.peek().id()))
-        return nullptr;
-    return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().id());
-}
-
-template<typename Predicate, typename... Args> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range, Predicate&& predicate, Args&&... args)
-{
-    if (auto keyword = range.peek().id(); predicate(keyword, std::forward<Args>(args)...)) {
-        range.consumeIncludingWhitespace();
-        return keyword;
-    }
-    return std::nullopt;
-}
-
-template<typename Predicate, typename... Args> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange& range, Predicate&& predicate, Args&&... args)
-{
-    if (auto keyword = range.peek().id(); predicate(keyword, std::forward<Args>(args)...)) {
-        range.consumeIncludingWhitespace();
-        return CSSPrimitiveValue::create(keyword);
-    }
-    return nullptr;
-}
-
 inline bool isFontStyleAngleInRange(double angleInDegrees)
 {
     return angleInDegrees >= -90 && angleInDegrees <= 90;
@@ -408,34 +297,6 @@ inline SystemFontDatabase::FontShorthand lowerFontShorthand(CSSValueID valueID)
     // This needs to stay in sync with SystemFontDatabase::FontShorthand.
     ASSERT(isSystemFontShorthand(valueID));
     return static_cast<SystemFontDatabase::FontShorthand>(valueID - CSSValueCaption);
-}
-
-template<typename SubConsumer, typename... Args>
-RefPtr<CSSValue> consumeCommaSeparatedListWithSingleValueOptimization(CSSParserTokenRange& range, SubConsumer&& subConsumer, Args&&... args)
-{
-    CSSValueListBuilder list;
-    do {
-        auto value = std::invoke(subConsumer, range, std::forward<Args>(args)...);
-        if (!value)
-            return nullptr;
-        list.append(value.releaseNonNull());
-    } while (consumeCommaIncludingWhitespace(range));
-    if (list.size() == 1)
-        return WTFMove(list[0]);
-    return CSSValueList::createCommaSeparated(WTFMove(list));
-}
-
-template<typename SubConsumer, typename... Args>
-RefPtr<CSSValueList> consumeCommaSeparatedListWithoutSingleValueOptimization(CSSParserTokenRange& range, SubConsumer&& subConsumer, Args&&... args)
-{
-    CSSValueListBuilder list;
-    do {
-        auto value = std::invoke(subConsumer, range, std::forward<Args>(args)...);
-        if (!value)
-            return nullptr;
-        list.append(value.releaseNonNull());
-    } while (consumeCommaIncludingWhitespace(range));
-    return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
 } // namespace CSSPropertyParserHelpers

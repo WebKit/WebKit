@@ -55,6 +55,7 @@ public:
     WebCore::PositionType positionType() const { return m_info.positionType; }
     WebCore::FloatRect boundsInRootView() const { return m_info.boundsInRootView; }
     WebCore::FloatRect boundsInWebView() const;
+    WebCore::FloatRect boundsInClientCoordinates() const { return m_info.boundsInClientCoordinates; }
 
     bool isUnderPoint() const { return m_info.isUnderPoint; }
     bool isPseudoElement() const { return m_info.isPseudoElement; }

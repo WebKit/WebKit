@@ -118,6 +118,8 @@ RenderTheme& RenderTheme::singleton()
     return theme;
 }
 
+RenderThemeAdwaita::~RenderThemeAdwaita() = default;
+
 bool RenderThemeAdwaita::supportsFocusRing(const RenderStyle& style) const
 {
     switch (style.usedAppearance()) {
@@ -200,7 +202,7 @@ void RenderThemeAdwaita::platformColorsDidChange()
 
 String RenderThemeAdwaita::extraDefaultStyleSheet()
 {
-    return StringImpl::createWithoutCopying(themeAdwaitaUserAgentStyleSheet, sizeof(themeAdwaitaUserAgentStyleSheet));
+    return StringImpl::createWithoutCopying(themeAdwaitaUserAgentStyleSheet);
 }
 
 #if ENABLE(VIDEO)
@@ -208,7 +210,7 @@ String RenderThemeAdwaita::extraDefaultStyleSheet()
 Vector<String, 2> RenderThemeAdwaita::mediaControlsScripts()
 {
 #if ENABLE(MODERN_MEDIA_CONTROLS)
-    return { StringImpl::createWithoutCopying(ModernMediaControlsJavaScript, sizeof(ModernMediaControlsJavaScript)) };
+    return { StringImpl::createWithoutCopying(ModernMediaControlsJavaScript) };
 #else
     return { };
 #endif
@@ -218,7 +220,7 @@ String RenderThemeAdwaita::mediaControlsStyleSheet()
 {
 #if ENABLE(MODERN_MEDIA_CONTROLS)
     if (m_mediaControlsStyleSheet.isEmpty())
-        m_mediaControlsStyleSheet = StringImpl::createWithoutCopying(ModernMediaControlsUserAgentStyleSheet, sizeof(ModernMediaControlsUserAgentStyleSheet));
+        m_mediaControlsStyleSheet = StringImpl::createWithoutCopying(ModernMediaControlsUserAgentStyleSheet);
     return m_mediaControlsStyleSheet;
 #else
     return emptyString();

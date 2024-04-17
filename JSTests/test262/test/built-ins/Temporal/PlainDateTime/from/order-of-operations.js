@@ -38,8 +38,10 @@ const expected = [
   "has fields.calendar.year",
   "has fields.calendar.yearMonthFromFields",
   "has fields.calendar.yearOfWeek",
-  // CalendarFields
+  // lookup
+  "get fields.calendar.dateFromFields",
   "get fields.calendar.fields",
+  // CalendarFields
   "call fields.calendar.fields",
   // PrepareTemporalFields
   "get fields.day",
@@ -75,7 +77,6 @@ const expected = [
   // InterpretTemporalDateTimeFields
   "get options.overflow.toString",
   "call options.overflow.toString",
-  "get fields.calendar.dateFromFields",
   "call fields.calendar.dateFromFields",
 ];
 const actual = [];

@@ -126,7 +126,7 @@ static std::optional<Lab<float>> sampleColor(Document& document, IntPoint&& loca
     if (!pixelBuffer)
         return std::nullopt;
 
-    if (pixelBuffer->sizeInBytes() < 4)
+    if (pixelBuffer->bytes().size() < 4)
         return std::nullopt;
 
     auto snapshotData = pixelBuffer->bytes();

@@ -159,6 +159,9 @@ public:
 #if ASSERT_ENABLED
     virtual bool hasSolidColor() { return false; }
 #endif
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    virtual bool shouldUseQuickLookForFullscreen() const { return false; }
+#endif
 
     virtual void dump(WTF::TextStream&) const;
 

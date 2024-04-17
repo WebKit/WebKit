@@ -76,7 +76,7 @@ class CopyTexture3DTest : public ANGLETest<>
     {
         std::vector<GLColor> texDataColor(2u * 2u * 2u, sourceColor);
 
-        glBindTexture(testTarget, sourceTexture.get());
+        glBindTexture(testTarget, sourceTexture);
         glTexImage3D(testTarget, 0, GL_RGBA, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                      texDataColor.data());
         glTexParameteri(testTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -86,10 +86,9 @@ class CopyTexture3DTest : public ANGLETest<>
         EXPECT_GL_NO_ERROR();
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(testTarget, destTexture.get());
-        glCopyTexture3DANGLE(sourceTexture.get(), 0, testTarget, destTexture.get(), 0,
-                             destInternalFormat, destType, flipY, premultiplyAlpha,
-                             unmultiplyAlpha);
+        glBindTexture(testTarget, destTexture);
+        glCopyTexture3DANGLE(sourceTexture, 0, testTarget, destTexture, 0, destInternalFormat,
+                             destType, flipY, premultiplyAlpha, unmultiplyAlpha);
         EXPECT_GL_NO_ERROR();
 
         GLRenderbuffer rbo;
@@ -332,11 +331,10 @@ TEST_P(Texture3DCopy, CopySubTexture)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
-    sourceTexture.get();
     std::vector<GLColor> texDataGreen(2u * 2u * 2u, GLColor::green);
     std::vector<GLColor> texDataRed(2u * 2u * 2u, GLColor::red);
 
-    glBindTexture(GL_TEXTURE_3D, sourceTexture.get());
+    glBindTexture(GL_TEXTURE_3D, sourceTexture);
     glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  texDataGreen.data());
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
@@ -344,15 +342,15 @@ TEST_P(Texture3DCopy, CopySubTexture)
     EXPECT_GL_NO_ERROR();
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_3D, destTexture.get());
+    glBindTexture(GL_TEXTURE_3D, destTexture);
     glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  texDataRed.data());
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 0);
     EXPECT_GL_NO_ERROR();
-    glCopySubTexture3DANGLE(sourceTexture.get(), 0, GL_TEXTURE_3D, destTexture.get(), 0, 0, 0, 0, 0,
-                            0, 0, 2, 2, 2, false, false, false);
-    glBindTexture(GL_TEXTURE_3D, destTexture.get());
+    glCopySubTexture3DANGLE(sourceTexture, 0, GL_TEXTURE_3D, destTexture, 0, 0, 0, 0, 0, 0, 0, 2, 2,
+                            2, false, false, false);
+    glBindTexture(GL_TEXTURE_3D, destTexture);
     EXPECT_GL_NO_ERROR();
     drawQuad(mProgram, "position", 0.5f);
 
@@ -367,7 +365,7 @@ TEST_P(Texture3DCopy, CopyFromMipmap)
 
     std::vector<GLColor> texDataGreen(4u * 4u * 4u, GLColor::green);
 
-    glBindTexture(GL_TEXTURE_3D, sourceTexture.get());
+    glBindTexture(GL_TEXTURE_3D, sourceTexture);
     glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, 4, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  texDataGreen.data());
     glTexImage3D(GL_TEXTURE_3D, 1, GL_RGBA, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
@@ -380,7 +378,7 @@ TEST_P(Texture3DCopy, CopyFromMipmap)
     EXPECT_GL_NO_ERROR();
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_3D, destTexture.get());
+    glBindTexture(GL_TEXTURE_3D, destTexture);
     glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -388,9 +386,9 @@ TEST_P(Texture3DCopy, CopyFromMipmap)
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 0);
     EXPECT_GL_NO_ERROR();
 
-    glCopyTexture3DANGLE(sourceTexture.get(), 1, GL_TEXTURE_3D, destTexture.get(), 0, GL_RGBA,
-                         GL_UNSIGNED_BYTE, false, false, false);
-    glBindTexture(GL_TEXTURE_3D, destTexture.get());
+    glCopyTexture3DANGLE(sourceTexture, 1, GL_TEXTURE_3D, destTexture, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                         false, false, false);
+    glBindTexture(GL_TEXTURE_3D, destTexture);
     EXPECT_GL_NO_ERROR();
     drawQuad(mProgram, "position", 0.5f);
 
@@ -424,7 +422,7 @@ TEST_P(Texture3DCopy, OffsetSubCopy)
     rgbaPixels[25] = GLColor(0u, 255u, 0u, 255u);
     rgbaPixels[26] = GLColor(0u, 255u, 0u, 255u);
 
-    glBindTexture(GL_TEXTURE_3D, sourceTexture.get());
+    glBindTexture(GL_TEXTURE_3D, sourceTexture);
     glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, 3, 3, 3, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgbaPixels);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -433,7 +431,7 @@ TEST_P(Texture3DCopy, OffsetSubCopy)
     EXPECT_GL_NO_ERROR();
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_3D, destTexture.get());
+    glBindTexture(GL_TEXTURE_3D, destTexture);
     glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -445,9 +443,9 @@ TEST_P(Texture3DCopy, OffsetSubCopy)
 
     EXPECT_GL_NO_ERROR();
     // Copy the 2x2x2 green cube into a new texture
-    glCopySubTexture3DANGLE(sourceTexture.get(), 0, GL_TEXTURE_3D, destTexture.get(), 0, 0, 0, 0, 1,
-                            1, 1, 2, 2, 2, false, false, false);
-    glBindTexture(GL_TEXTURE_3D, destTexture.get());
+    glCopySubTexture3DANGLE(sourceTexture, 0, GL_TEXTURE_3D, destTexture, 0, 0, 0, 0, 1, 1, 1, 2, 2,
+                            2, false, false, false);
+    glBindTexture(GL_TEXTURE_3D, destTexture);
     EXPECT_GL_NO_ERROR();
     drawQuad(mProgram, "position", 1.0f);
     int width  = getWindowWidth() - 1;
@@ -459,8 +457,8 @@ TEST_P(Texture3DCopy, OffsetSubCopy)
     EXPECT_PIXEL_COLOR_EQ(width, height, GLColor::green);
 
     // Copy the 1x1x1 blue cube into the the 2x2x2 green cube at location (1, 1, 1)
-    glCopySubTexture3DANGLE(sourceTexture.get(), 0, GL_TEXTURE_3D, destTexture.get(), 0, 1, 1, 1, 0,
-                            0, 0, 1, 1, 1, false, false, false);
+    glCopySubTexture3DANGLE(sourceTexture, 0, GL_TEXTURE_3D, destTexture, 0, 1, 1, 1, 0, 0, 0, 1, 1,
+                            1, false, false, false);
     EXPECT_GL_NO_ERROR();
     drawQuad(mProgram, "position", 1.0f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
@@ -478,7 +476,7 @@ TEST_P(Texture3DCopy, FlipY)
     GLColor rgbaPixels[8] = {GLColor::green, GLColor::green, GLColor::red, GLColor::red,
                              GLColor::green, GLColor::green, GLColor::red, GLColor::red};
 
-    glBindTexture(GL_TEXTURE_3D, sourceTexture.get());
+    glBindTexture(GL_TEXTURE_3D, sourceTexture);
     glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgbaPixels);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -503,7 +501,7 @@ TEST_P(Texture3DCopy, FlipY)
     EXPECT_GL_NO_ERROR();
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_3D, destTexture.get());
+    glBindTexture(GL_TEXTURE_3D, destTexture);
     glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, 1, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -515,10 +513,10 @@ TEST_P(Texture3DCopy, FlipY)
     EXPECT_GL_NO_ERROR();
 
     // Flip the y coordinate. This will put the greem half on top, and the red half on the bottom.
-    glCopyTexture3DANGLE(sourceTexture.get(), 0, GL_TEXTURE_3D, destTexture.get(), 0, GL_RGBA,
-                         GL_UNSIGNED_BYTE, true, false, false);
+    glCopyTexture3DANGLE(sourceTexture, 0, GL_TEXTURE_3D, destTexture, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                         true, false, false);
 
-    glBindTexture(GL_TEXTURE_3D, destTexture.get());
+    glBindTexture(GL_TEXTURE_3D, destTexture);
     EXPECT_GL_NO_ERROR();
     drawQuad(mProgram, "position", 1.0f);
 
@@ -556,11 +554,11 @@ void CopyTexture3DTest::testUnsizedFormats(const GLenum testTarget)
              GLColor(128, 191, 255, 200));
 
     testCopy(testTarget, kColorNoAlpha, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, false, false, false,
-             GLColor(255, 204, 153, 102));
+             GLColor(250, 200, 150, 100));
     testCopy(testTarget, kColorPreAlpha, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, false, true, false,
-             GLColor(102, 85, 51, 102));
+             GLColor(98, 78, 59, 100));
     testCopy(testTarget, kColorUnAlpha, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, false, false, true,
-             GLColor(136, 187, 255, 204));
+             GLColor(128, 191, 255, 200));
 
     testCopy(testTarget, kColorNoAlpha, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, false, false, false,
              GLColor(247, 198, 148, 0));
@@ -687,18 +685,18 @@ void CopyTexture3DTest::testUnsignedByteFormats(const GLenum testTarget)
                  GLColor(221, 167, 110, 230));
 
         testCopy(testTarget, kColorNoAlpha, GL_RGBA4, GL_UNSIGNED_BYTE, false, false, false,
-                 GLColor(255, 204, 153, 102));
+                 GLColor(250, 200, 150, 100));
         testCopy(testTarget, kColorPreAlpha, GL_RGBA4, GL_UNSIGNED_BYTE, false, true, false,
-                 GLColor(102, 85, 51, 102));
-        testCopy(testTarget, GLColor(100, 150, 200, 210), GL_RGBA4, GL_UNSIGNED_BYTE, false, false,
-                 true, GLColor(119, 187, 238, 204));
+                 GLColor(98, 78, 59, 100));
+        testCopy(testTarget, kColorUnAlpha, GL_RGBA4, GL_UNSIGNED_BYTE, false, false, true,
+                 GLColor(221, 167, 110, 230));
 
         testCopy(testTarget, kColorNoAlpha, GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4, false, false,
-                 false, GLColor(255, 204, 153, 102));
+                 false, GLColor(250, 200, 150, 100));
         testCopy(testTarget, kColorPreAlpha, GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4, false, true,
-                 false, GLColor(102, 85, 51, 102));
-        testCopy(testTarget, GLColor(100, 150, 200, 210), GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4,
-                 false, false, true, GLColor(119, 187, 238, 204));
+                 false, GLColor(98, 78, 59, 100));
+        testCopy(testTarget, kColorUnAlpha, GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4, false, false, true,
+                 GLColor(221, 167, 110, 230));
 
         testCopy(testTarget, kColorNoAlpha, GL_SRGB8, GL_UNSIGNED_BYTE, false, false, false,
                  GLColor(244, 148, 78, 255));
@@ -1095,7 +1093,7 @@ TEST_P(Texture2DArrayCopy, CopySubTexture)
     std::vector<GLColor> texDataGreen(2u * 2u * 2u, GLColor::green);
     std::vector<GLColor> texDataRed(2u * 2u * 2u, GLColor::red);
 
-    glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTexture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTexture);
     EXPECT_GL_NO_ERROR();
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  texDataGreen.data());
@@ -1107,7 +1105,7 @@ TEST_P(Texture2DArrayCopy, CopySubTexture)
     EXPECT_GL_NO_ERROR();
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, destTexture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, destTexture);
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  texDataRed.data());
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -1115,8 +1113,8 @@ TEST_P(Texture2DArrayCopy, CopySubTexture)
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 0);
     EXPECT_GL_NO_ERROR();
-    glCopySubTexture3DANGLE(sourceTexture.get(), 0, GL_TEXTURE_2D_ARRAY, destTexture.get(), 0, 0, 0,
-                            0, 0, 0, 0, 2, 2, 2, false, false, false);
+    glCopySubTexture3DANGLE(sourceTexture, 0, GL_TEXTURE_2D_ARRAY, destTexture, 0, 0, 0, 0, 0, 0, 0,
+                            2, 2, 2, false, false, false);
     EXPECT_GL_NO_ERROR();
     drawQuad(mProgram, "position", 0.5f);
 
@@ -1133,7 +1131,7 @@ TEST_P(Texture2DArrayCopy, CopyFromMipmap)
     std::vector<GLColor> texDataGreen2(2u * 2u * 2u, GLColor::green);
     std::vector<GLColor> texDataRed2(2u * 2u * 2u, GLColor::red);
 
-    glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTexture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTexture);
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, 4, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  texDataGreen4.data());
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
@@ -1146,7 +1144,7 @@ TEST_P(Texture2DArrayCopy, CopyFromMipmap)
     EXPECT_GL_NO_ERROR();
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, destTexture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, destTexture);
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -1154,7 +1152,7 @@ TEST_P(Texture2DArrayCopy, CopyFromMipmap)
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 0);
 
     EXPECT_GL_NO_ERROR();
-    glCopyTexture3DANGLE(sourceTexture.get(), 1, GL_TEXTURE_2D_ARRAY, destTexture.get(), 0, GL_RGBA,
+    glCopyTexture3DANGLE(sourceTexture, 1, GL_TEXTURE_2D_ARRAY, destTexture, 0, GL_RGBA,
                          GL_UNSIGNED_BYTE, false, false, false);
 
     EXPECT_GL_NO_ERROR();
@@ -1190,7 +1188,7 @@ TEST_P(Texture2DArrayCopy, OffsetSubCopy)
     rgbaPixels[25] = GLColor(0u, 255u, 0u, 255u);
     rgbaPixels[26] = GLColor(0u, 255u, 0u, 255u);
 
-    glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTexture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTexture);
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, 3, 3, 3, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  rgbaPixels);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -1200,7 +1198,7 @@ TEST_P(Texture2DArrayCopy, OffsetSubCopy)
     EXPECT_GL_NO_ERROR();
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, destTexture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, destTexture);
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -1212,9 +1210,9 @@ TEST_P(Texture2DArrayCopy, OffsetSubCopy)
 
     EXPECT_GL_NO_ERROR();
     // Copy the 2x2x2 green cube into a new texture
-    glCopySubTexture3DANGLE(sourceTexture.get(), 0, GL_TEXTURE_2D_ARRAY, destTexture.get(), 0, 0, 0,
-                            0, 1, 1, 1, 2, 2, 2, false, false, false);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, destTexture.get());
+    glCopySubTexture3DANGLE(sourceTexture, 0, GL_TEXTURE_2D_ARRAY, destTexture, 0, 0, 0, 0, 1, 1, 1,
+                            2, 2, 2, false, false, false);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, destTexture);
     EXPECT_GL_NO_ERROR();
     drawQuad(mProgram, "position", 1.0f);
     int width  = getWindowWidth() - 1;
@@ -1226,8 +1224,8 @@ TEST_P(Texture2DArrayCopy, OffsetSubCopy)
     EXPECT_PIXEL_COLOR_EQ(width, height, GLColor::green);
 
     // Copy the 1x1x1 blue cube into the the 2x2x2 green cube at location (1, 1, 1)
-    glCopySubTexture3DANGLE(sourceTexture.get(), 0, GL_TEXTURE_2D_ARRAY, destTexture.get(), 0, 1, 1,
-                            1, 0, 0, 0, 1, 1, 1, false, false, false);
+    glCopySubTexture3DANGLE(sourceTexture, 0, GL_TEXTURE_2D_ARRAY, destTexture, 0, 1, 1, 1, 0, 0, 0,
+                            1, 1, 1, false, false, false);
     EXPECT_GL_NO_ERROR();
     drawQuad(mProgram, "position", 1.0f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
@@ -1245,7 +1243,7 @@ TEST_P(Texture2DArrayCopy, FlipY)
     GLColor rgbaPixels[8] = {GLColor::green, GLColor::green, GLColor::red, GLColor::red,
                              GLColor::green, GLColor::green, GLColor::red, GLColor::red};
 
-    glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTexture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTexture);
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  rgbaPixels);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -1269,7 +1267,7 @@ TEST_P(Texture2DArrayCopy, FlipY)
     EXPECT_GL_NO_ERROR();
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, destTexture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, destTexture);
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, 1, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -1281,10 +1279,10 @@ TEST_P(Texture2DArrayCopy, FlipY)
     EXPECT_GL_NO_ERROR();
 
     // Flip the y coordinate. This will put the greem half on top, and the red half on the bottom.
-    glCopyTexture3DANGLE(sourceTexture.get(), 0, GL_TEXTURE_2D_ARRAY, destTexture.get(), 0, GL_RGBA,
+    glCopyTexture3DANGLE(sourceTexture, 0, GL_TEXTURE_2D_ARRAY, destTexture, 0, GL_RGBA,
                          GL_UNSIGNED_BYTE, true, false, false);
 
-    glBindTexture(GL_TEXTURE_2D_ARRAY, destTexture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, destTexture);
     EXPECT_GL_NO_ERROR();
     drawQuad(mProgram, "position", 1.0f);
 
@@ -1329,9 +1327,6 @@ TEST_P(Texture2DArrayCopy, UnsignedByteFormats)
 TEST_P(Texture2DArrayCopy, FloatFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
-
-    // http://anglebug.com/4756
-    ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
 
     testFloatFormats(GL_TEXTURE_2D_ARRAY);
 }

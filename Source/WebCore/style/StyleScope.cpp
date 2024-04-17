@@ -473,10 +473,10 @@ auto Scope::collectActiveStyleSheets() -> ActiveStyleSheetCollection
     };
 
     for (auto& adoptedStyleSheet : treeScope().adoptedStyleSheets()) {
-        if (!canActivateAdoptedStyleSheet(*adoptedStyleSheet))
+        if (!canActivateAdoptedStyleSheet(adoptedStyleSheet.get()))
             continue;
-        styleSheetsForStyleSheetsList.append(adoptedStyleSheet);
-        sheets.append(adoptedStyleSheet);
+        styleSheetsForStyleSheetsList.append(adoptedStyleSheet.ptr());
+        sheets.append(adoptedStyleSheet.ptr());
     }
 
     return { WTFMove(sheets), WTFMove(styleSheetsForStyleSheetsList) };

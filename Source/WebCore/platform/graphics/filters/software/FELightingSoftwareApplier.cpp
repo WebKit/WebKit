@@ -91,7 +91,7 @@ void FELightingSoftwareApplier::setPixelInternal(int offset, const LightingData&
         static_cast<uint8_t>(lightStrength * lightingData.colorVector.z() * 255.0f)
     };
     
-    data.pixels->setRange(pixelValue, 3, offset);
+    data.pixels->setRange({ pixelValue }, offset);
 }
 
 void FELightingSoftwareApplier::setPixel(int offset, const LightingData& data, const LightSource::PaintingData& paintingData, int x, int y, float factorX, float factorY, IntSize normal2DVector)

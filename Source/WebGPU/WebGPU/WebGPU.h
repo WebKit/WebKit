@@ -179,6 +179,11 @@ struct WGPUVertexState;
 struct WGPUFragmentState;
 struct WGPURenderPipelineDescriptor;
 
+typedef enum WGPUColorSpace {
+    SRGB,
+    DisplayP3,
+} WGPUColorSpace;
+
 typedef enum WGPUAdapterType {
     WGPUAdapterType_DiscreteGPU = 0x00000000,
     WGPUAdapterType_IntegratedGPU = 0x00000001,
@@ -725,8 +730,8 @@ typedef WGPUFlags WGPUTextureUsageFlags WGPU_ENUM_ATTRIBUTE;
 
 typedef void (*WGPUBufferMapCallback)(WGPUBufferMapAsyncStatus status, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUCompilationInfoCallback)(WGPUCompilationInfoRequestStatus status, struct WGPUCompilationInfo const * compilationInfo, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
-typedef void (*WGPUCreateComputePipelineAsyncCallback)(WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, char const * message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
-typedef void (*WGPUCreateRenderPipelineAsyncCallback)(WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, char const * message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUCreateComputePipelineAsyncCallback)(WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, WTF::String&& message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUCreateRenderPipelineAsyncCallback)(WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, WTF::String&& message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUDeviceLostCallback)(WGPUDeviceLostReason reason, char const * message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUErrorCallback)(WGPUErrorType type, char const * message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProc)(void) WGPU_FUNCTION_ATTRIBUTE;
@@ -1087,6 +1092,9 @@ typedef struct WGPUSwapChainDescriptor {
 #ifdef __cplusplus
     Vector<WGPUTextureFormat> viewFormats;
 #endif
+    WGPUColorSpace colorSpace;
+    WGPUCompositeAlphaMode compositeAlphaMode;
+    WGPUBool reportValidationErrors;
 } WGPUSwapChainDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUTextureBindingLayout {

@@ -63,9 +63,11 @@ RenderTableRow::RenderTableRow(Document& document, RenderStyle&& style)
     ASSERT(isRenderTableRow());
 }
 
-void RenderTableRow::willBeRemovedFromTree(IsInternalMove isInternalMove)
+RenderTableRow::~RenderTableRow() = default;
+
+void RenderTableRow::willBeRemovedFromTree()
 {
-    RenderBox::willBeRemovedFromTree(isInternalMove);
+    RenderBox::willBeRemovedFromTree();
 
     section()->setNeedsCellRecalc();
 }
@@ -83,7 +85,7 @@ void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* old
     ASSERT(style().display() == DisplayType::TableRow);
 
     RenderBox::styleDidChange(diff, oldStyle);
-    propagateStyleToAnonymousChildren(PropagateToAllChildren);
+    propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
 
     if (section() && oldStyle && style().logicalHeight() != oldStyle->logicalHeight())
         section()->rowLogicalHeightChanged(rowIndex());
@@ -242,6 +244,8 @@ void RenderTableRow::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 void RenderTableRow::imageChanged(WrappedImagePtr, const IntRect*)
 {
     // FIXME: Examine cells and repaint only the rect the image paints in.
+    if (!parent())
+        return;
     repaint();
 }
 

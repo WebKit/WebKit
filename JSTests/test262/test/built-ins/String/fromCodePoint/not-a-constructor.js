@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(String.fromCodePoint), false, 'isConstructor(Stri
 
 assert.throws(TypeError, () => {
   new String.fromCodePoint();
-}, '`new String.fromCodePoint()` throws TypeError');
+});
 

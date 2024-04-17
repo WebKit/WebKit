@@ -63,6 +63,8 @@ RenderMathMLOperator::RenderMathMLOperator(Type type, Document& document, Render
 {
 }
 
+RenderMathMLOperator::~RenderMathMLOperator() = default;
+
 MathMLOperatorElement& RenderMathMLOperator::element() const
 {
     return static_cast<MathMLOperatorElement&>(nodeForNonAnonymous());

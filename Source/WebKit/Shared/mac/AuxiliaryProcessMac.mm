@@ -65,6 +65,10 @@
 #import <rootless.h>
 #endif
 
+#if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>)
+#import <WebKitAdditions/DyldCallbackAdditions.h>
+#endif
+
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_info)
 SOFT_LINK_OPTIONAL(libsystem_info, mbr_close_connections, int, (), ());
 SOFT_LINK_OPTIONAL(libsystem_info, lookup_close_connections, int, (), ());
@@ -652,6 +656,14 @@ static String getHomeDirectory()
     return String::fromUTF8(pwd.pw_dir);
 }
 
+static void closeOpenDirectoryConnections()
+{
+    if (mbr_close_connectionsPtr())
+        mbr_close_connectionsPtr()();
+    if (lookup_close_connectionsPtr())
+        lookup_close_connectionsPtr()();
+}
+
 static void populateSandboxInitializationParameters(SandboxInitializationParameters& sandboxParameters)
 {
     RELEASE_ASSERT(!sandboxParameters.userDirectorySuffix().isNull());
@@ -696,10 +708,9 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
 #else
 #error "Unknown architecture."
 #endif
-    if (mbr_close_connectionsPtr())
-        mbr_close_connectionsPtr()();
-    if (lookup_close_connectionsPtr())
-        lookup_close_connectionsPtr()();
+
+    closeOpenDirectoryConnections();
+
     if (HIS_XPC_ResetMessageConnectionPtr())
         HIS_XPC_ResetMessageConnectionPtr()();
 }
@@ -740,6 +751,10 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
             exitProcess(EX_NOPERM);
         }
     }
+
+#if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>)
+    register_for_dlsym_callbacks();
+#endif
 }
 
 void AuxiliaryProcess::applySandboxProfileForDaemon(const String& profilePath, const String& userDirectorySuffix)
@@ -810,6 +825,8 @@ void AuxiliaryProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& 
     getHomeDirectory();
 
     sandboxExtension->revoke();
+
+    closeOpenDirectoryConnections();
 }
 #endif // PLATFORM(MAC)
 

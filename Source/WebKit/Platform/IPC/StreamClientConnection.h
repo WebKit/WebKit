@@ -33,6 +33,8 @@
 #include "StreamClientConnectionBuffer.h"
 #include "StreamServerConnection.h"
 #include <wtf/MonotonicTime.h>
+#include <wtf/Scope.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/Threading.h>
 
 namespace WebKit {
@@ -134,6 +136,14 @@ private:
 template<typename T, typename U, typename V>
 Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
 {
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    auto signpostIdentifier = Connection::generateSignpostIdentifier();
+    WTFBeginSignpost(signpostIdentifier, StreamClientConnection, "send: %{public}s", description(message.name()));
+    auto endSignpost = makeScopeExit([&] {
+        WTFEndSignpost(signpostIdentifier, StreamClientConnection);
+    });
+#endif
+
     static_assert(!T::isSync, "Message is sync!");
     auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
     if (error != Error::NoError)
@@ -153,6 +163,11 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> de
 template<typename T, typename C, typename U, typename V>
 StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
 {
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    auto signpostIdentifier = Connection::generateSignpostIdentifier();
+    WTFBeginSignpost(signpostIdentifier, StreamClientConnection, "sendWithAsyncReply: %{public}s", description(message.name()));
+#endif
+
     static_assert(!T::isSync, "Message is sync!");
     auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
     if (error != Error::NoError)
@@ -165,7 +180,14 @@ StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(
     Ref connection = m_connection;
     auto handler = Connection::makeAsyncReplyHandler<T>(std::forward<C>(completionHandler));
     auto replyID = handler.replyID;
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    handler.completionHandler = CompletionHandler<void(Decoder*)>([signpostIdentifier, handler = WTFMove(handler.completionHandler)](Decoder *decoder) mutable {
+        WTFEndSignpost(signpostIdentifier, StreamClientConnection);
+        handler(decoder);
+    });
+#endif
     connection->addAsyncReplyHandler(WTFMove(handler));
+
     if constexpr(T::isStreamEncodable) {
         if (trySendStream(*span, message, replyID))
             return replyID;
@@ -207,6 +229,14 @@ bool StreamClientConnection::trySendStream(std::span<uint8_t> span, T& message, 
 template<typename T, typename U, typename V>
 StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
 {
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    auto signpostIdentifier = Connection::generateSignpostIdentifier();
+    WTFBeginSignpost(signpostIdentifier, StreamClientConnection, "sendSync: %{public}s", description(message.name()));
+    auto endSignpost = makeScopeExit([&] {
+        WTFEndSignpost(signpostIdentifier, StreamClientConnection);
+    });
+#endif
+
     static_assert(T::isSync, "Message is not sync!");
     auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
     if (error != Error::NoError)

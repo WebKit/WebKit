@@ -771,7 +771,14 @@ void GenerateCaps(const FunctionsGL *functions,
         caps->maxElementIndex = static_cast<GLint64>(std::numeric_limits<unsigned int>::max());
     }
 
-    limitations->limitWebglMaxTextureSizeTo4096 = features.limitWebglMaxTextureSizeTo4096.enabled;
+    if (features.limitWebglMaxTextureSizeTo4096.enabled)
+    {
+        limitations->webGLTextureSizeLimit = 4096;
+    }
+    else if (features.limitWebglMaxTextureSizeTo8192.enabled)
+    {
+        limitations->webGLTextureSizeLimit = 8192;
+    }
 
     GLint max3dArrayTextureSizeLimit = std::numeric_limits<GLint>::max();
     if (features.limitMax3dArrayTextureSizeTo1024.enabled)
@@ -2148,6 +2155,12 @@ void GenerateCaps(const FunctionsGL *functions,
     // GL_ANGLE_logic_op
     extensions->logicOpANGLE = functions->isAtLeastGL(gl::Version(2, 0));
 
+    extensions->blendEquationAdvancedKHR =
+        functions->hasGLExtension("GL_NV_blend_equation_advanced") ||
+        functions->hasGLExtension("GL_KHR_blend_equation_advanced") ||
+        functions->isAtLeastGLES(gl::Version(3, 2)) ||
+        functions->hasGLESExtension("GL_KHR_blend_equation_advanced");
+
     // PVRTC1 textures must be squares on Apple platforms.
     if (IsApple())
     {
@@ -2370,14 +2383,19 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     ANGLE_FEATURE_CONDITION(features, queryCounterBitsGeneratesErrors, IsNexus5X(vendor, device));
 
-    bool limitMaxTextureSize = isIntel && IsLinux() && GetLinuxOSVersion() < OSVersion(5, 0, 0);
+    bool isAndroidLessThan14 = IsAndroid() && GetAndroidSDKVersion() < 34;
+    bool isAndroidAtLeast14  = IsAndroid() && GetAndroidSDKVersion() >= 34;
+    bool isIntelLinuxLessThanKernelVersion5 =
+        isIntel && IsLinux() && GetLinuxOSVersion() < OSVersion(5, 0, 0);
     ANGLE_FEATURE_CONDITION(features, limitWebglMaxTextureSizeTo4096,
-                            IsAndroid() || limitMaxTextureSize);
+                            isAndroidLessThan14 || isIntelLinuxLessThanKernelVersion5);
+    ANGLE_FEATURE_CONDITION(features, limitWebglMaxTextureSizeTo8192, isAndroidAtLeast14);
     // On Apple switchable graphics, GL_MAX_SAMPLES may differ between the GPUs.
     // 4 is a lowest common denominator that is always supported.
     ANGLE_FEATURE_CONDITION(features, limitMaxMSAASamplesTo4,
                             IsAndroid() || (IsApple() && (isIntel || isAMD || isNvidia)));
-    ANGLE_FEATURE_CONDITION(features, limitMax3dArrayTextureSizeTo1024, limitMaxTextureSize);
+    ANGLE_FEATURE_CONDITION(features, limitMax3dArrayTextureSizeTo1024,
+                            isIntelLinuxLessThanKernelVersion5);
 
     ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, IsApple());
 
@@ -2571,7 +2589,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, disableMultisampledRenderToTexture,
                             isAdreno4xxOnAndroidLessThan51 || isAdreno4xxOnAndroid70 ||
                                 isAdreno5xxOnAndroidLessThan70 || isAdreno5xxOnAndroid71 ||
-                                isLinuxVivante || IsAndroid() || isWindowsNVIDIA);
+                                isLinuxVivante || isWindowsNVIDIA);
 
     // http://crbug.com/1181068
     ANGLE_FEATURE_CONDITION(features, uploadTextureDataInChunks, IsApple());

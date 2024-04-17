@@ -335,7 +335,7 @@ private:
     AccessibilityOrientation orientation() const final { return static_cast<AccessibilityOrientation>(intAttributeValue(AXPropertyName::Orientation)); }
     unsigned hierarchicalLevel() const final { return unsignedAttributeValue(AXPropertyName::HierarchicalLevel); }
     String language() const final { return stringAttributeValue(AXPropertyName::Language); }
-    AccessibilityChildrenVector selectedChildren() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::SelectedChildren)); }
+    std::optional<AccessibilityChildrenVector> selectedChildren() final;
     void setSelectedChildren(const AccessibilityChildrenVector&) final;
     AccessibilityChildrenVector visibleChildren() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::VisibleChildren)); }
     AtomString tagName() const final;
@@ -463,7 +463,6 @@ private:
     bool isAccessibilityARIAGridCellInstance() const final { return false; }
     bool isAXRemoteFrame() const final { return false; }
     bool isNativeTextControl() const final;
-    bool isListBoxOption() const final;
     bool isMockObject() const final;
     bool isNonNativeTextControl() const final { return boolAttributeValue(AXPropertyName::IsNonNativeTextControl); }
     bool isIndeterminate() const final { return boolAttributeValue(AXPropertyName::IsIndeterminate); }

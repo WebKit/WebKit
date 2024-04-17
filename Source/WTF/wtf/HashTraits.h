@@ -212,8 +212,8 @@ template<typename T> struct HashTraits<UniqueRef<T>> : SimpleClassHashTraits<Uni
 template<> struct HashTraits<ASCIILiteral> : SimpleClassHashTraits<ASCIILiteral> {
     static ASCIILiteral emptyValue() { return { }; }
 
-    static void constructDeletedValue(ASCIILiteral& slot) { slot = ASCIILiteral::fromLiteralUnsafe(reinterpret_cast<const char*>(-1)); }
-    static bool isDeletedValue(const ASCIILiteral& value) { return value.characters() == reinterpret_cast<const char*>(-1); }
+    static void constructDeletedValue(ASCIILiteral& slot) { slot = ASCIILiteral::deletedValue(); }
+    static bool isDeletedValue(const ASCIILiteral& value) { return value.isDeletedValue(); }
 };
 
 template<typename P, typename Q, typename R> struct HashTraits<RefPtr<P, Q, R>> : SimpleClassHashTraits<RefPtr<P, Q, R>> {

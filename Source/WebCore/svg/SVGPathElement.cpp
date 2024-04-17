@@ -143,6 +143,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
             path->setNeedsShapeUpdate();
 
         updateSVGRendererForElementChange();
+        invalidateResourceImageBuffersIfNeeded();
         return;
     }
 

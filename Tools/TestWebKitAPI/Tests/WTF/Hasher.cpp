@@ -27,7 +27,9 @@
 
 #include <array>
 #include <limits>
-#include <wtf/CheckedPtr.h>
+#include <wtf/CheckedRef.h>
+#include <wtf/Compiler.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Hasher.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -229,30 +231,36 @@ TEST(WTF, Hasher_RefPtr)
     EXPECT_EQ(computeHash(refPtrVector), computeHash(ptrVector));
 }
 
+namespace {
+
+struct CheckedObject final : public CanMakeCheckedPtr<CheckedObject> {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(CheckedObject);
+    CheckedObject() = default;
+};
+
+}
+
 TEST(WTF, Hasher_CheckedPtr)
 {
-    struct Test : public CanMakeCheckedPtr {
-        Test() = default;
-    };
+    CheckedObject test;
+    CheckedObject test2;
 
-    Test test;
-    Test test2;
-
-    CheckedPtr<Test> nullCheckedPtr;
-    CheckedPtr<Test> nonNullCheckedPtr = &test;
+    CheckedPtr<CheckedObject> nullCheckedPtr;
+    CheckedPtr<CheckedObject> nonNullCheckedPtr = &test;
 
     EXPECT_EQ(computeHash(nullCheckedPtr), computeHash(nullCheckedPtr.get()));
     EXPECT_EQ(computeHash(nonNullCheckedPtr), computeHash(nonNullCheckedPtr.get()));
 
-    Vector<CheckedPtr<Test>> checkedPtrVector;
-    Vector<Test*> ptrVector;
+    Vector<CheckedPtr<CheckedObject>> checkedPtrVector;
+    Vector<CheckedObject*> ptrVector;
     EXPECT_EQ(computeHash(checkedPtrVector), computeHash(ptrVector));
 
     checkedPtrVector.append(nonNullCheckedPtr);
     ptrVector.append(nonNullCheckedPtr.get());
     EXPECT_EQ(computeHash(checkedPtrVector), computeHash(ptrVector));
 
-    CheckedPtr<Test> nonNullCheckedPtr2 = &test2;
+    CheckedPtr<CheckedObject> nonNullCheckedPtr2 = &test2;
 
     checkedPtrVector.append(nonNullCheckedPtr2);
     ptrVector.append(nonNullCheckedPtr2.get());

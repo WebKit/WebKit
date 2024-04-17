@@ -1,6 +1,0 @@
-Blocked access to external URL https://www1.localhost:9443/payment-request/allowpaymentrequest/echo-PaymentRequest.html
-#PID UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 27916)
-FAIL: Timed out waiting for notifyDone to be called
-
-#EOF
-#EOF

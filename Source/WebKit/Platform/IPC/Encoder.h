@@ -31,6 +31,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -88,6 +89,7 @@ public:
 
     uint8_t* buffer() const { return m_buffer; }
     size_t bufferSize() const { return m_bufferSize; }
+    std::span<const uint8_t> span() const { return { m_buffer, m_bufferSize }; }
 
     void addAttachment(Attachment&&);
     Vector<Attachment> releaseAttachments();
@@ -121,13 +123,12 @@ private:
 template<typename T, size_t Extent>
 inline void Encoder::encodeSpan(std::span<T, Extent> span)
 {
-    auto* data = reinterpret_cast<const uint8_t*>(span.data());
-    size_t size = span.size_bytes();
+    auto bytes = asBytes(span);
     constexpr size_t alignment = alignof(T);
-    ASSERT(!(reinterpret_cast<uintptr_t>(data) % alignment));
+    ASSERT(!(reinterpret_cast<uintptr_t>(bytes.data()) % alignment));
 
-    uint8_t* buffer = grow(alignment, size);
-    memcpy(buffer, data, size);
+    uint8_t* buffer = grow(alignment, bytes.size());
+    memcpy(buffer, bytes.data(), bytes.size());
 }
 
 template<typename T>

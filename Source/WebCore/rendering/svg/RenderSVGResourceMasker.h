@@ -32,6 +32,7 @@ class SVGMaskElement;
 
 class RenderSVGResourceMasker final : public RenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceMasker);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceMasker);
 public:
     RenderSVGResourceMasker(SVGMaskElement&, RenderStyle&&);
     virtual ~RenderSVGResourceMasker();
@@ -45,10 +46,18 @@ public:
     inline SVGUnitTypes::SVGUnitType maskUnits() const;
     inline SVGUnitTypes::SVGUnitType maskContentUnits() const;
 
+    void invalidateMask()
+    {
+        m_masker.clear();
+    }
+
+    void removeReferencingCSSClient(const RenderElement&) final;
+
 private:
     void element() const = delete;
 
     ASCIILiteral renderName() const final { return "RenderSVGResourceMasker"_s; }
+    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, RefPtr<ImageBuffer>> m_masker;
 };
 
 }

@@ -177,10 +177,6 @@ void LayerTreeHost::layerFlushTimerFired()
     if (m_transientZoom)
         applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
 #endif
-
-#if HAVE(DISPLAY_LINK)
-    m_compositor->updateScene();
-#endif
 }
 
 void LayerTreeHost::setRootCompositingLayer(GraphicsLayer* graphicsLayer)

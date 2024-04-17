@@ -44,6 +44,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
+#include "UserGestureIndicator.h"
 #include <optional>
 #include <wtf/Assertions.h>
 #include <wtf/IsoMallocInlines.h>
@@ -147,7 +148,7 @@ ExceptionOr<RefPtr<SerializedScriptValue>> Navigation::serializeState(JSC::JSVal
     if (state.isUndefined())
         return { nullptr };
 
-    Vector<RefPtr<MessagePort>> dummyPorts;
+    Vector<Ref<MessagePort>> dummyPorts;
     auto serializeResult = SerializedScriptValue::create(*protectedScriptExecutionContext()->globalObject(), state, { }, dummyPorts, SerializationForStorage::Yes);
     if (serializeResult.hasException())
         return serializeResult.releaseException();
@@ -177,10 +178,13 @@ Navigation::Result Navigation::reload(ReloadOptions&& options, Ref<DeferredPromi
     if (serializedState.hasException())
         return createErrorResult(committed, finished, serializedState.releaseException());
 
+    if (!window()->protectedDocument()->isFullyActive())
+        return createErrorResult(committed, finished, ExceptionCode::InvalidStateError, "Invalid state"_s);
+
     auto apiMethodTracker = maybeSetUpcomingNonTraversalTracker(WTFMove(committed), WTFMove(finished), WTFMove(options.info), serializedState.releaseReturnValue());
 
     // FIXME: Only a stub to reload for testing.
-    window()->frame()->loader().reload();
+    frame()->loader().reload();
 
     // FIXME: keep track of promises to resolve later.
     Ref entry = NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), { });
@@ -216,13 +220,13 @@ Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& opt
     if (serializedState.hasException())
         return createErrorResult(committed, finished, serializedState.releaseException());
 
-    if (!window()->frame() || !window()->frame()->document())
+    if (!window()->protectedDocument()->isFullyActive())
         return createErrorResult(committed, finished, ExceptionCode::InvalidStateError, "Invalid state"_s);
 
     auto apiMethodTracker = maybeSetUpcomingNonTraversalTracker(WTFMove(committed), WTFMove(finished), WTFMove(options.info), serializedState.releaseReturnValue());
 
     // FIXME: This is not a proper Navigation API initiated traversal, just a simple load for now.
-    window()->frame()->loader().load(FrameLoadRequest(*window()->frame(), newURL));
+    frame()->loader().load(FrameLoadRequest(*frame(), newURL));
 
     if (m_upcomingNonTraverseMethodTracker == apiMethodTracker) {
         // FIXME: Once the frameloader properly promotes the upcoming tracker with the navigate event `m_upcomingNonTraverseMethodTracker` should be unset or this will throw.
@@ -240,8 +244,11 @@ Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& opt
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#performing-a-navigation-api-traversal
 Navigation::Result Navigation::performTraversal(NavigationHistoryEntry& entry, Ref<DeferredPromise> committed, Ref<DeferredPromise> finished)
 {
+    if (!window()->protectedDocument()->isFullyActive())
+        return createErrorResult(committed, finished, ExceptionCode::InvalidStateError, "Invalid state"_s);
+
     // FIXME: This is just a stub that loads a URL for now.
-    window()->frame()->loader().load(FrameLoadRequest(*window()->frame(), URL(entry.url())));
+    frame()->loader().load(FrameLoadRequest(*frame(), URL(entry.url())));
 
     // FIXME: keep track of promises to resolve later.
     auto globalObject = committed->globalObject();
@@ -303,7 +310,7 @@ Navigation::Result Navigation::forward(Options&&, Ref<DeferredPromise>&& committ
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-updatecurrententry
 ExceptionOr<void> Navigation::updateCurrentEntry(UpdateCurrentEntryOptions&& options)
 {
-    if (!window()->frame() || !window()->frame()->document())
+    if (!frame() || !frame()->document())
         return Exception { ExceptionCode::InvalidStateError };
 
     RefPtr current = currentEntry();
@@ -424,9 +431,9 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         downloadRequestFilename,
         info,
         canIntercept,
-        false, // FIXME: userInitiated
+        UserGestureIndicator::processingUserGesture(document.get()),
         hashChange,
-        false, // FIXME: hasUAVisualTransition
+        document->page() && document->page()->isInSwipeAnimation(),
     };
 
     // Free up no longer needed info.

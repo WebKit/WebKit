@@ -54,6 +54,7 @@ verifyEqualTo(obj, "0", 1001);
 
 verifyNotWritable(obj, "0");
 
-verifyEnumerable(obj, "0");
-
-verifyConfigurable(obj, "0");
+verifyProperty(obj, "0", {
+  enumerable: true,
+  configurable: true,
+});

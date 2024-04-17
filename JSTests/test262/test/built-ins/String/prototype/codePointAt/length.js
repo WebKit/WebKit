@@ -12,11 +12,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  String.prototype.codePointAt.length, 1,
-  'The value of `String.prototype.codePointAt.length` is `1`'
-);
-
-verifyNotEnumerable(String.prototype.codePointAt, 'length');
-verifyNotWritable(String.prototype.codePointAt, 'length');
-verifyConfigurable(String.prototype.codePointAt, 'length');
+verifyProperty(String.prototype.codePointAt, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

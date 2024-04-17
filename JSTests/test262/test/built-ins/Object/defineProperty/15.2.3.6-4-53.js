@@ -23,6 +23,7 @@ Object.defineProperty(obj, "property", {
 
 verifyWritable(obj, "property", "setVerifyHelpProp");
 
-verifyEnumerable(obj, "property");
-
-verifyConfigurable(obj, "property");
+verifyProperty(obj, "property", {
+  enumerable: true,
+  configurable: true,
+});

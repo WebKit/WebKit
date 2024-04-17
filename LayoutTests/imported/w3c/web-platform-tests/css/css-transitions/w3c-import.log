@@ -30,7 +30,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/KeyframeEffect-target.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/README.md
-/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/all-with-discrete.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/before-load-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/changing-while-transition-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/changing-while-transition-002.html
@@ -87,6 +86,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-behavior.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-delay-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-duration-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-duration-shorthand.html

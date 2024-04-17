@@ -131,7 +131,7 @@ class StringRange {
     WTF_MAKE_NONCOPYABLE(StringRange);
 public:
     StringRange(const char* begin, const char* end)
-        : m_string(begin, end - begin)
+        : m_string({ begin, end })
     { }
     operator const char*() const { return m_string.data(); }
     const char* get() const { return m_string.data(); }

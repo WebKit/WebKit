@@ -15,10 +15,9 @@ Object.defineProperty(this, "foo", {
   configurable: true
 });
 
-verifyEqualTo(this, "foo", 12);
-
-verifyNotWritable(this, "foo");
-
-verifyNotEnumerable(this, "foo");
-
-verifyConfigurable(this, "foo");
+verifyProperty(this, "foo", {
+  value: 12,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

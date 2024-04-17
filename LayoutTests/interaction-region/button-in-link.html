@@ -9,19 +9,28 @@
         padding: 20px;
         line-height: 25px;
     }
-    a button {
+    .styled {
         float: right;
         appearance: none;
         background: gray;
         border-radius: 6px;
         border: none;
         font-size: 18px;
+        margin: 5px;
+    }
+    .styled-native {
+        width: 100px;
+        text-wrap: nowrap;
+        overflow: hidden;
+        margin: 5px;
+        float: right;
     }
 </style>
 <body>
 <a href="#">
     Some text
-    <button>but also a button</button>
+    <button class="styled">but also a button</button>
+    <button class="styled-native">and another that overflows</button>
 </a>
 
 <pre id="results"></pre>

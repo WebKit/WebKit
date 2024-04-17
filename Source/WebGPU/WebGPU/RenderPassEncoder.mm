@@ -96,25 +96,34 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
 
         if (attachment.resolveTarget) {
             auto& texture = fromAPI(attachment.resolveTarget);
+            texture.setCommandEncoder(parentEncoder);
+            texture.setPreviouslyCleared();
             addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
         }
 
+        texture.setCommandEncoder(parentEncoder);
         id<MTLTexture> textureToClear = texture.texture();
         if (!textureToClear)
             continue;
         TextureAndClearColor *textureWithClearColor = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
+        bool storeOpDiscardAndLoadOpLoad = false;
         if (attachment.storeOp != WGPUStoreOp_Discard) {
             auto& c = attachment.clearValue;
             textureWithClearColor.clearColor = MTLClearColorMake(c.r, c.g, c.b, c.a);
-        } else
+        } else if (attachment.loadOp == WGPULoadOp_Load) {
+            storeOpDiscardAndLoadOpLoad = true;
+            textureWithClearColor.clearColor = MTLClearColorMake(0, 0, 0, 0);
             [m_attachmentsToClear setObject:textureWithClearColor forKey:@(i)];
+        }
 
-        [m_allColorAttachments setObject:textureWithClearColor forKey:@(i)];
+        if (attachment.loadOp == WGPULoadOp_Clear || storeOpDiscardAndLoadOpLoad)
+            [m_allColorAttachments setObject:textureWithClearColor forKey:@(i)];
     }
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {
         auto& textureView = fromAPI(attachment->view);
         textureView.setPreviouslyCleared();
+        textureView.setCommandEncoder(parentEncoder);
         if (textureView.width() && !m_renderTargetWidth) {
             m_renderTargetWidth = textureView.width();
             m_renderTargetHeight = textureView.height();
@@ -123,14 +132,14 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         id<MTLTexture> depthTexture = textureView.texture();
         m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : quantizedDepthValue(attachment->depthClearValue, textureView.format());
         if (!Device::isStencilOnlyFormat(depthTexture.pixelFormat)) {
-            m_clearDepthAttachment = depthTexture && attachment->depthStoreOp == WGPUStoreOp_Discard;
+            m_clearDepthAttachment = depthTexture && attachment->depthStoreOp == WGPUStoreOp_Discard && attachment->depthLoadOp == WGPULoadOp_Load;
             m_depthStencilAttachmentToClear = depthTexture;
             addResourceToActiveResources(textureView, attachment->depthReadOnly ? BindGroupEntryUsage::AttachmentRead : BindGroupEntryUsage::Attachment, WGPUTextureAspect_DepthOnly);
         }
 
         m_stencilClearValue = attachment->stencilStoreOp == WGPUStoreOp_Discard ? 0 : attachment->stencilClearValue;
         if (Texture::stencilOnlyAspectMetalFormat(textureView.descriptor().format)) {
-            m_clearStencilAttachment = depthTexture && attachment->stencilStoreOp == WGPUStoreOp_Discard;
+            m_clearStencilAttachment = depthTexture && attachment->stencilStoreOp == WGPUStoreOp_Discard && attachment->stencilLoadOp == WGPULoadOp_Load;
             m_depthStencilAttachmentToClear = depthTexture;
             addResourceToActiveResources(textureView, attachment->stencilReadOnly ? BindGroupEntryUsage::AttachmentRead : BindGroupEntryUsage::Attachment, WGPUTextureAspect_StencilOnly);
         }
@@ -628,19 +637,21 @@ void RenderPassEncoder::endPass()
     auto endEncoder = ^{
         m_parentEncoder->endEncoding(m_renderCommandEncoder);
     };
-
     auto issuedDraw = issuedDrawCall();
-    if (issuedDraw)
-        endEncoder();
+    bool useDiscardTextures = m_attachmentsToClear.count || m_clearDepthAttachment || m_clearStencilAttachment;
+    bool hasTexturesToClear = m_allColorAttachments.count || m_attachmentsToClear.count || (m_depthStencilAttachmentToClear && (m_clearDepthAttachment || m_clearStencilAttachment));
 
-    if (m_attachmentsToClear.count || !issuedDraw || (m_depthStencilAttachmentToClear && (m_clearDepthAttachment || m_clearStencilAttachment))) {
-        if (m_depthStencilAttachmentToClear && !issuedDraw) {
+    if ((!issuedDraw || useDiscardTextures) && hasTexturesToClear) {
+        if (m_depthStencilAttachmentToClear && !issuedDraw && !useDiscardTextures) {
             auto pixelFormat = m_depthStencilAttachmentToClear.pixelFormat;
             m_clearDepthAttachment = !Device::isStencilOnlyFormat(pixelFormat);
             m_clearStencilAttachment = pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || pixelFormat == MTLPixelFormatStencil8 || pixelFormat == MTLPixelFormatX32_Stencil8;
         }
-        m_parentEncoder->runClearEncoder(issuedDraw ? m_attachmentsToClear : m_allColorAttachments, m_depthStencilAttachmentToClear, m_clearDepthAttachment, m_clearStencilAttachment, m_depthClearValue, m_stencilClearValue, issuedDraw ? nil : m_renderCommandEncoder);
-    }
+        if (useDiscardTextures)
+            endEncoder();
+        m_parentEncoder->runClearEncoder(useDiscardTextures ? m_attachmentsToClear : m_allColorAttachments, m_depthStencilAttachmentToClear, m_clearDepthAttachment, m_clearStencilAttachment, m_depthClearValue, m_stencilClearValue, useDiscardTextures ? nil : m_renderCommandEncoder);
+    } else
+        endEncoder();
 
     m_renderCommandEncoder = nil;
     m_parentEncoder->lock(false);
@@ -812,8 +823,12 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
     }
 
     auto* bindGroupLayout = group.bindGroupLayout();
-    if (!bindGroupLayout || !bindGroupLayout->validateDynamicOffsets(dynamicOffsets, dynamicOffsetCount, group)) {
-        makeInvalid(@"insufficient dynamic offsets in layout for bind group");
+    if (!bindGroupLayout) {
+        makeInvalid(@"GPURenderPassEncoder.setBindGroup: bind group is nil");
+        return;
+    }
+    if (NSString* error = bindGroupLayout->errorValidatingDynamicOffsets(dynamicOffsets, dynamicOffsetCount, group)) {
+        makeInvalid([NSString stringWithFormat:@"GPURenderPassEncoder.setBindGroup: %@", error]);
         return;
     }
 

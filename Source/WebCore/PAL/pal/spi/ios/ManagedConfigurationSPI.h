@@ -35,6 +35,7 @@ WTF_EXTERN_C_BEGIN
 #import <ManagedConfiguration/ManagedConfiguration.h>
 @interface MCProfileConnection ()
 - (NSArray<NSString *> *)crossSiteTrackingPreventionRelaxedDomains;
+- (NSArray<NSString *> *)crossSiteTrackingPreventionRelaxedApps;
 @end
 
 #else

@@ -109,7 +109,7 @@ void createImageControls(HTMLElement& element)
     controlLayer->setAttributeWithoutSynchronization(HTMLNames::contenteditableAttr, falseAtom());
     shadowRoot->appendChild(controlLayer);
     
-    static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageControlsMacUserAgentStyleSheet, sizeof(imageControlsMacUserAgentStyleSheet)));
+    static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageControlsMacUserAgentStyleSheet));
     Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
     style->setTextContent(String { shadowStyle });
     shadowRoot->appendChild(WTFMove(style));

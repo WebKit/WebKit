@@ -51,7 +51,7 @@ GStreamerQuirkWesteros::GStreamerQuirkWesteros()
     }
 }
 
-bool GStreamerQuirkWesteros::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
+void GStreamerQuirkWesteros::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
 {
     if (g_str_has_prefix(GST_ELEMENT_NAME(element), "uridecodebin3")) {
         GRefPtr<GstCaps> defaultCaps;
@@ -59,17 +59,16 @@ bool GStreamerQuirkWesteros::configureElement(GstElement* element, const OptionS
         defaultCaps = adoptGRef(gst_caps_merge(gst_caps_ref(m_sinkCaps.get()), defaultCaps.leakRef()));
         GST_INFO("Setting stop caps to %" GST_PTR_FORMAT, defaultCaps.get());
         g_object_set(element, "caps", defaultCaps.get(), nullptr);
-        return true;
+        return;
     }
 
     if (!characteristics.contains(ElementRuntimeCharacteristics::IsMediaStream))
-        return false;
+        return;
 
     if (!g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstWesterosSink") && gstObjectHasProperty(element, "immediate-output")) {
         GST_INFO("Enable 'immediate-output' in WesterosSink");
         g_object_set(element, "immediate-output", TRUE, nullptr);
     }
-    return true;
 }
 
 std::optional<bool> GStreamerQuirkWesteros::isHardwareAccelerated(GstElementFactory* factory)

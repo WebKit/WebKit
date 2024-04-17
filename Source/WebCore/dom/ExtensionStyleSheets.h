@@ -51,10 +51,12 @@ class StyleSheetContents;
 class StyleSheetList;
 class WeakPtrImplWithEventTargetData;
 
-class ExtensionStyleSheets : public CanMakeCheckedPtr {
+class ExtensionStyleSheets final : public CanMakeCheckedPtr<ExtensionStyleSheets> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ExtensionStyleSheets);
 public:
     explicit ExtensionStyleSheets(Document&);
+    ~ExtensionStyleSheets();
 
     CSSStyleSheet* pageUserSheet();
     const Vector<RefPtr<CSSStyleSheet>>& documentUserStyleSheets() const { return m_userStyleSheets; }

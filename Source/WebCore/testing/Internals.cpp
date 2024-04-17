@@ -6816,7 +6816,7 @@ bool Internals::hasSandboxUnixSyscallAccess(const String& process, unsigned sysc
 #endif
 }
 
-String Internals::windowLocationHost(LocalDOMWindow& window)
+String Internals::windowLocationHost(DOMWindow& window)
 {
     return window.location().host();
 }
@@ -7349,7 +7349,7 @@ AccessibilityObject* Internals::axObjectForElement(Element& element) const
     WebCore::AXObjectCache::enableAccessibility();
 
     auto* cache = document->axObjectCache();
-    return cache ? cache->getOrCreate(&element) : nullptr;
+    return cache ? cache->getOrCreate(element) : nullptr;
 }
 
 String Internals::getComputedLabel(Element& element) const
@@ -7415,6 +7415,18 @@ void Internals::registerPDFTest(Ref<VoidCallback>&& callback, Element& element)
 
     if (RefPtr pluginViewBase = pluginElement->pluginWidget())
         pluginViewBase->registerPDFTestCallback(WTFMove(callback));
+}
+
+const String& Internals::defaultSpatialTrackingLabel() const
+{
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    auto* document = contextDocument();
+    if (!document)
+        return nullString();
+    if (RefPtr page = document->page())
+        return page->defaultSpatialTrackingLabel();
+#endif
+    return nullString();
 }
 
 } // namespace WebCore

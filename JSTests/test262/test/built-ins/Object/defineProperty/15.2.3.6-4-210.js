@@ -15,10 +15,10 @@ var arrObj = [];
 arrObj[0] = 101; // default value of attributes: writable: true, configurable: true, enumerable: true
 
 Object.defineProperty(arrObj, "0", {});
-verifyEqualTo(arrObj, "0", 101);
 
-verifyWritable(arrObj, "0");
-
-verifyEnumerable(arrObj, "0");
-
-verifyConfigurable(arrObj, "0");
+verifyProperty(arrObj, "0", {
+  value: 101,
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

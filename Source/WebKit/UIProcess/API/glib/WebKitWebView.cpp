@@ -95,6 +95,7 @@
 #include "WebKitWebViewBasePrivate.h"
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GdkCairoUtilities.h>
+#include <WebCore/GdkSkiaUtilities.h>
 #include <WebCore/RefPtrCairo.h>
 #endif
 
@@ -2715,7 +2716,7 @@ String webkitWebViewGetCurrentScriptDialogMessage(WebKitWebView* webView)
     if (!webView->priv->currentScriptDialog)
         return { };
 
-    return String::fromUTF8(webView->priv->currentScriptDialog->message);
+    return String::fromUTF8(webView->priv->currentScriptDialog->message.span());
 }
 
 void webkitWebViewSetCurrentScriptDialogUserInput(WebKitWebView* webView, const String& userInput)
@@ -3050,6 +3051,17 @@ void webkitWebViewPermissionStateQuery(WebKitWebView* webView, WebKitPermissionS
     gboolean result;
     g_signal_emit(webView, signals[QUERY_PERMISSION_STATE], 0, query, &result);
 }
+
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+RendererBufferFormat webkitWebViewGetRendererBufferFormat(WebKitWebView* webView)
+{
+#if PLATFORM(GTK)
+    return webkitWebViewBaseGetRendererBufferFormat(WEBKIT_WEB_VIEW_BASE(webView));
+#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    return webView->priv->view->renderBufferFormat();
+#endif
+}
+#endif
 
 #if PLATFORM(WPE)
 /**
@@ -4133,7 +4145,7 @@ static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, cons
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    RunJavaScriptParameters params = { String::fromUTF8(script, length < 0 ? strlen(script) : length), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes, RemoveTransientActivation::Yes };
+    RunJavaScriptParameters params = { String::fromUTF8(std::span(script, length < 0 ? strlen(script) : length)), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes, RemoveTransientActivation::Yes };
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
@@ -4269,7 +4281,7 @@ static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webV
         return;
     }
 
-    RunJavaScriptParameters params = { String::fromUTF8(body, length < 0 ? strlen(body) : length), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::Yes, WTFMove(argumentsMap), ForceUserGesture::Yes, RemoveTransientActivation::Yes };
+    RunJavaScriptParameters params = { String::fromUTF8(std::span(body, length < 0 ? strlen(body) : length)), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::Yes, WTFMove(argumentsMap), ForceUserGesture::Yes, RemoveTransientActivation::Yes };
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
@@ -4896,6 +4908,17 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
 }
 
 #if PLATFORM(GTK)
+#if USE(GTK4)
+#define SNAPSHOT_TYPE GdkTexture*
+#if USE(CAIRO)
+#define PLATFORM_IMAGE_TO_TEXTURE(image) cairoSurfaceToGdkTexture(image)
+#else
+#define PLATFORM_IMAGE_TO_TEXTURE(image) skiaImageToGdkTexture(*image)
+#endif
+#else
+#define SNAPSHOT_TYPE cairo_surface_t*
+#endif
+
 /**
  * webkit_web_view_get_snapshot:
  * @web_view: a #WebKitWebView
@@ -4934,19 +4957,26 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
     getPage(webView).takeSnapshot({ }, { }, snapshotOptions, [task = WTFMove(task)](std::optional<ShareableBitmap::Handle>&& handle) {
-#if USE(CAIRO)
         if (handle) {
             if (auto bitmap = ShareableBitmap::create(WTFMove(*handle), SharedMemory::Protection::ReadOnly)) {
-                if (auto surface = bitmap->createCairoSurface()) {
+#if USE(GTK4)
+                if (auto texture = PLATFORM_IMAGE_TO_TEXTURE(bitmap->createPlatformImage(BackingStoreCopy::DontCopyBackingStore).get())) {
+                    g_task_return_pointer(task.get(), texture.leakRef(), g_object_unref);
+                    return;
+                }
+#else
+#if USE(CAIRO)
+                auto surface = bitmap->createCairoSurface();
+#elif USE(SKIA)
+                auto surface = skiaImageToCairoSurface(*bitmap->createPlatformImage(BackingStoreCopy::DontCopyBackingStore));
+#endif
+                if (surface) {
                     g_task_return_pointer(task.get(), surface.leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
                     return;
                 }
+#endif
             }
         }
-#elif USE(SKIA)
-        notImplemented();
-        UNUSED_PARAM(handle);
-#endif
         g_task_return_new_error(task.get(), WEBKIT_SNAPSHOT_ERROR, WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE, _("There was an error creating the snapshot"));
     });
 }
@@ -4961,32 +4991,20 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
  *
  * Returns: (transfer full): an image with the retrieved snapshot, or %NULL in case of error.
  */
-#if USE(GTK4)
-GdkTexture* webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
-#else
-cairo_surface_t* webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
-#endif
+SNAPSHOT_TYPE webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
     g_return_val_if_fail(g_task_is_valid(result, webView), nullptr);
 
-#if USE(GTK4)
-    auto image = adoptRef(static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error)));
-#if USE(CAIRO)
-    auto texture = image ? cairoSurfaceToGdkTexture(image.get()) : nullptr;
-    if (texture)
-        return texture.leakRef();
-#elif USE(SKIA)
-    notImplemented();
-#endif
+    auto snapshot = g_task_propagate_pointer(G_TASK(result), error);
+    if (snapshot)
+        return static_cast<SNAPSHOT_TYPE>(snapshot);
+
     if (error && !*error)
         g_set_error_literal(error, WEBKIT_SNAPSHOT_ERROR, WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE, _("There was an error creating the snapshot"));
     return nullptr;
-#else
-    return static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error));
-#endif
 }
-#endif
+#endif // PLATFORM(GTK)
 
 void webkitWebViewWebProcessTerminated(WebKitWebView* webView, WebKitWebProcessTerminationReason reason)
 {

@@ -2181,9 +2181,7 @@ sub createPatchCommand($$$$)
     my ($changedFilesString, $gitCommit, $gitIndex, $mergeBase) = @_;
 
     my $command;
-    if (isSVN()) {
-        $command = "'$FindBin::Bin/svn-create-patch --no-style' $changedFilesString";
-    } elsif (isGit()) {
+    if (isGit()) {
         $command = GIT . " diff -M -C " . diffFromToString($gitCommit, $gitIndex, $mergeBase);
         $command .= " -- $changedFilesString" unless $gitCommit;
     }

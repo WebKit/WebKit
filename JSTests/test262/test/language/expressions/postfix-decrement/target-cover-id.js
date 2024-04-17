@@ -22,8 +22,10 @@ info: |
   2. Return true.
 ---*/
 
-var y = 1;
+var y = 2;
 
 (y)--;
+assert.sameValue(y, 1);
 
+((y))--;
 assert.sameValue(y, 0);

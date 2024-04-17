@@ -370,7 +370,7 @@ JSCValue* jsc_value_new_string_from_bytes(JSCContext* context, GBytes* bytes)
 
     gsize dataSize;
     const auto* data = static_cast<const char*>(g_bytes_get_data(bytes, &dataSize));
-    auto string = String::fromUTF8(data, dataSize);
+    auto string = String::fromUTF8(std::span(data, dataSize));
     JSRetainPtr<JSStringRef> jsString(Adopt, OpaqueJSString::tryCreate(WTFMove(string)).leakRef());
     return jscContextGetOrCreateValue(context, JSValueMakeString(jscContextGetJSContext(context), jsString.get())).leakRef();
 }
@@ -2071,12 +2071,12 @@ JSCValue* jsc_value_new_from_json(JSCContext* context, const char* json)
     JSC::JSValue jsValue;
     String jsonString = String::fromUTF8(json);
     if (jsonString.is8Bit()) {
-        JSC::LiteralParser<LChar> jsonParser(globalObject, jsonString.characters8(), jsonString.length(), JSC::StrictJSON);
+        JSC::LiteralParser jsonParser(globalObject, jsonString.span8(), JSC::StrictJSON);
         jsValue = jsonParser.tryLiteralParse();
         if (!jsValue)
             exception = toRef(JSC::createSyntaxError(globalObject, jsonParser.getErrorMessage()));
     } else {
-        JSC::LiteralParser<UChar> jsonParser(globalObject, jsonString.characters16(), jsonString.length(), JSC::StrictJSON);
+        JSC::LiteralParser jsonParser(globalObject, jsonString.span16(), JSC::StrictJSON);
         jsValue = jsonParser.tryLiteralParse();
         if (!jsValue)
             exception = toRef(JSC::createSyntaxError(globalObject, jsonParser.getErrorMessage()));

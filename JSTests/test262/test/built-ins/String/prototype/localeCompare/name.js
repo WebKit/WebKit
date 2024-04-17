@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.localeCompare.name, "localeCompare");
-
-verifyNotEnumerable(String.prototype.localeCompare, "name");
-verifyNotWritable(String.prototype.localeCompare, "name");
-verifyConfigurable(String.prototype.localeCompare, "name");
+verifyProperty(String.prototype.localeCompare, "name", {
+  value: "localeCompare",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

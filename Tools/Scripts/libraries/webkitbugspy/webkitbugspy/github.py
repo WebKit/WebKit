@@ -238,6 +238,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         issue._project = self.name
         issue._keywords = []  # We don't yet have a defined idiom for "keywords" in GitHub Issues
         issue._classification = ''  # We don't yet have a defined idiom for "classification" in GitHub issues
+        issue._source_changes = []  # We need to parse the issue to find any source changes
 
         if member in ('title', 'timestamp', 'modified', 'creator', 'opened', 'assignee', 'description', 'project', 'component', 'version', 'labels', 'milestone'):
             response = self.request(path='issues/{}'.format(issue.id))
@@ -339,7 +340,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, labels=None, original=None, **properties):
+    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, labels=None, original=None, source_changes=None, **properties):
         update_dict = dict()
 
         if properties:
@@ -424,6 +425,10 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
                 if opened is not None:
                     issue._opened = None
                 return None
+
+        if source_changes:
+            sys.stderr.write('GitHub does not support source changes at this time\n')
+            return None
 
         if issue and original:
             issue = self.add_comment(issue, 'Duplicate of #{}'.format(original.id))

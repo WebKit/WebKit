@@ -78,6 +78,8 @@ protected:
     void svgAttributeChanged(const QualifiedName&) override;
     void didAttachRenderers() override;
 
+    void invalidateResourceImageBuffersIfNeeded();
+
 private:
     bool isSVGGraphicsElement() const override { return true; }
 

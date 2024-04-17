@@ -97,7 +97,7 @@ static ExceptionOr<Ref<CSSTransformComponent>> createTransformComponent(CSSFunct
 
 ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(const CSSTransformListValue& list)
 {
-    Vector<RefPtr<CSSTransformComponent>> components;
+    Vector<Ref<CSSTransformComponent>> components;
     for (auto& value : list) {
         auto* functionValue = dynamicDowncast<CSSFunctionValue>(value);
         if (!functionValue)
@@ -110,7 +110,7 @@ ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(const CSSTransform
     return adoptRef(*new CSSTransformValue(WTFMove(components)));
 }
 
-ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(Vector<RefPtr<CSSTransformComponent>>&& transforms)
+ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(Vector<Ref<CSSTransformComponent>>&& transforms)
 {
     // https://drafts.css-houdini.org/css-typed-om/#dom-csstransformvalue-csstransformvalue
     if (transforms.isEmpty())
@@ -120,10 +120,10 @@ ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(Vector<RefPtr<CSST
 
 RefPtr<CSSTransformComponent> CSSTransformValue::item(size_t index)
 {
-    return index < m_components.size() ? m_components[index] : nullptr;
+    return index < m_components.size() ? m_components[index].ptr() : nullptr;
 }
 
-ExceptionOr<RefPtr<CSSTransformComponent>> CSSTransformValue::setItem(size_t index, Ref<CSSTransformComponent>&& value)
+ExceptionOr<Ref<CSSTransformComponent>> CSSTransformValue::setItem(size_t index, Ref<CSSTransformComponent>&& value)
 {
     if (index > m_components.size())
         return Exception { ExceptionCode::RangeError, makeString("Index ", index, " exceeds the range of CSSTransformValue.") };
@@ -133,14 +133,14 @@ ExceptionOr<RefPtr<CSSTransformComponent>> CSSTransformValue::setItem(size_t ind
     else
         m_components[index] = WTFMove(value);
 
-    return RefPtr<CSSTransformComponent> { m_components[index] };
+    return Ref<CSSTransformComponent> { m_components[index] };
 }
 
 bool CSSTransformValue::is2D() const
 {
     // https://drafts.css-houdini.org/css-typed-om/#dom-csstransformvalue-is2d
     return WTF::allOf(m_components, [] (auto& component) {
-        return component && component->is2D();
+        return component->is2D();
     });
 }
 
@@ -162,7 +162,7 @@ ExceptionOr<Ref<DOMMatrix>> CSSTransformValue::toMatrix()
     return DOMMatrix::create(WTFMove(matrix), is2D);
 }
 
-CSSTransformValue::CSSTransformValue(Vector<RefPtr<CSSTransformComponent>>&& transforms)
+CSSTransformValue::CSSTransformValue(Vector<Ref<CSSTransformComponent>>&& transforms)
     : m_components(WTFMove(transforms))
 {
 }

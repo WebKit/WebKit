@@ -44,9 +44,7 @@ Ref<TrustedTypePolicy> TrustedTypePolicy::create(const String& name, const Trust
 
 TrustedTypePolicy::TrustedTypePolicy(const String& name, const TrustedTypePolicyOptions& options)
     : m_name(name)
-    , m_createHTMLCallback(options.createHTML)
-    , m_createScriptCallback(options.createScript)
-    , m_createScriptURLCallback(options.createScriptURL)
+    , m_options(options)
 { }
 
 ExceptionOr<Ref<TrustedHTML>> TrustedTypePolicy::createHTML(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
@@ -84,14 +82,29 @@ ExceptionOr<String> TrustedTypePolicy::getPolicyValue(TrustedType trustedTypeNam
 {
     CallbackResult<String> policyValue(CallbackResultType::UnableToExecute);
     if (trustedTypeName == TrustedType::TrustedHTML) {
-        if (m_createHTMLCallback)
-            policyValue = m_createHTMLCallback->handleEvent(input, WTFMove(arguments));
+        RefPtr<CreateHTMLCallback> protectedCreateHTML;
+        {
+            Locker locker { lock() };
+            protectedCreateHTML = m_options.createHTML;
+        }
+        if (protectedCreateHTML && protectedCreateHTML->hasCallback())
+            policyValue = protectedCreateHTML->handleEvent(input, WTFMove(arguments));
     } else if (trustedTypeName == TrustedType::TrustedScript) {
-        if (m_createScriptCallback)
-            policyValue = m_createScriptCallback->handleEvent(input, WTFMove(arguments));
+        RefPtr<CreateScriptCallback> protectedCreateScript;
+        {
+            Locker locker { lock() };
+            protectedCreateScript = m_options.createScript;
+        }
+        if (protectedCreateScript && protectedCreateScript->hasCallback())
+            policyValue = protectedCreateScript->handleEvent(input, WTFMove(arguments));
     } else if (trustedTypeName == TrustedType::TrustedScriptURL) {
-        if (m_createScriptURLCallback)
-            policyValue = m_createScriptURLCallback->handleEvent(input, WTFMove(arguments));
+        RefPtr<CreateScriptURLCallback> protectedCreateScriptURL;
+        {
+            Locker locker { lock() };
+            protectedCreateScriptURL = m_options.createScriptURL;
+        }
+        if (protectedCreateScriptURL && protectedCreateScriptURL->hasCallback())
+            policyValue = protectedCreateScriptURL->handleEvent(input, WTFMove(arguments));
     } else {
         ASSERT_NOT_REACHED();
         return Exception { ExceptionCode::TypeError };
@@ -111,6 +124,11 @@ ExceptionOr<String> TrustedTypePolicy::getPolicyValue(TrustedType trustedTypeNam
     }
 
     return String(nullString());
+}
+
+WebCoreOpaqueRoot root(TrustedTypePolicy* policy)
+{
+    return WebCoreOpaqueRoot { policy };
 }
 
 } // namespace WebCore

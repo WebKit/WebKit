@@ -480,15 +480,16 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
                 # S3 might not be configured on local instances, achieve similar functionality without S3.
                 steps_to_add.extend([UploadBuiltProduct()])
         # Minified build archive
-        if (triggers and full_platform.startswith(('mac', 'ios-simulator', 'tvos-simulator', 'watchos-simulator'))) or (rc in (SUCCESS, WARNINGS) and self.getProperty('user_provided_git_hash')):
-            steps_to_add += [ArchiveMinifiedBuiltProduct()]
-            if CURRENT_HOSTNAME in BUILD_WEBKIT_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
-                steps_to_add.extend([
-                    GenerateS3URL(f"{full_platform}-{architecture}-{configuration}", minified=True),
-                    UploadFileToS3(f"WebKitBuild/minified-{configuration}.zip", links={self.name: 'Minified Archive'}),
-                ])
-            else:
-                steps_to_add.extend([UploadMinifiedBuiltProduct()])
+        if (full_platform.startswith(('mac', 'ios-simulator', 'tvos-simulator', 'watchos-simulator'))):
+            if (triggers or (rc in (SUCCESS, WARNINGS) and self.getProperty('user_provided_git_hash'))):
+                steps_to_add += [ArchiveMinifiedBuiltProduct()]
+                if CURRENT_HOSTNAME in BUILD_WEBKIT_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
+                    steps_to_add.extend([
+                        GenerateS3URL(f"{full_platform}-{architecture}-{configuration}", minified=True),
+                        UploadFileToS3(f"WebKitBuild/minified-{configuration}.zip", links={self.name: 'Minified Archive'}),
+                    ])
+                else:
+                    steps_to_add.extend([UploadMinifiedBuiltProduct()])
 
         # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
         self.build.addStepsAfterCurrentStep(steps_to_add)
@@ -714,6 +715,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
+        kwargs['timeout'] = 20 * 60 * 60
         if 'sigtermTime' not in kwargs:
             kwargs['sigtermTime'] = 10
         super().__init__(*args, **kwargs)
@@ -742,6 +744,24 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
             self.command += ['--test-writer=ruby']
 
         self.appendCustomBuildFlags(platform, self.getProperty('fullPlatform'))
+        self.command = ['/bin/sh', '-c', ' '.join(self.command) + ' 2>&1 | python3 Tools/Scripts/filter-jsc-tests.py']
+
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'logs.txt',
+                links={self.name: 'Full logs'},
+                content_type='text/plain',
+            )
+        ]
+        self.build.addStepsAfterCurrentStep(steps_to_add)
+
+        self.failedTestCount = self.countFailures()
+        self.failedTestPluralSuffix = "" if self.failedTestCount == 1 else "s"
+
         return super().run()
 
     def countFailures(self):
@@ -1253,6 +1273,10 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
     command = ["python3", "Tools/Scripts/run-webdriver-tests", "--json-output={0}".format(jsonFileName), WithProperties("--%(configuration)s")]
     logfiles = {"json": jsonFileName}
 
+    def __init__(self, **kwargs):
+        kwargs['timeout'] = 90 * 60
+        super().__init__(**kwargs)
+
     @defer.inlineCallbacks
     def run(self):
         additionalArguments = self.getProperty('additionalArguments')
@@ -1260,6 +1284,7 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
             self.command += additionalArguments
 
         self.appendCustomBuildFlags(self.getProperty('platform'), self.getProperty('fullPlatform'))
+        self.command = ['/bin/sh', '-c', ' '.join(self.command) + ' > logs.txt 2>&1']
 
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
@@ -1276,6 +1301,19 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
         foundItems = re.findall(r"^Expected to .+, but passed \((\d+)\)", logText, re.MULTILINE)
         if foundItems:
             self.newPassesCount = int(foundItems[0])
+
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'logs.txt',
+                links={self.name: 'Full logs'},
+                content_type='text/plain',
+            )
+        ]
+        self.build.addStepsAfterCurrentStep(steps_to_add)
 
         if rc != 0:
             defer.returnValue(FAILURE)

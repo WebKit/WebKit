@@ -297,6 +297,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
     void invalidateDriverUniforms();
     void invalidateRenderPipeline();
 
+    void updateIncompatibleAttachments(const gl::State &glState);
+
     // Call this to notify ContextMtl whenever FramebufferMtl's state changed
     void onDrawFrameBufferChangedState(const gl::Context *context,
                                        FramebufferMtl *framebuffer,
@@ -402,22 +404,19 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     const mtl::ContextDevice &getMetalDevice() const { return mContextDevice; }
 
-    angle::Result copy2DTextureSlice0Level0ToWorkTexture(const mtl::TextureRef &srcTexture);
-    const mtl::TextureRef &getWorkTexture() const { return mWorkTexture; }
-    angle::Result copyTextureSliceLevelToWorkBuffer(const gl::Context *context,
-                                                    const mtl::TextureRef &srcTexture,
-                                                    const mtl::MipmapNativeLevel &mipNativeLevel,
-                                                    uint32_t layerIndex);
-    const mtl::BufferRef &getWorkBuffer() const { return mWorkBuffer; }
     mtl::BufferManager &getBufferManager() { return mBufferManager; }
 
     mtl::PipelineCache &getPipelineCache() { return mPipelineCache; }
 
     const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }
 
+    bool getForceResyncDrawFramebuffer() const { return mForceResyncDrawFramebuffer; }
+    gl::DrawBufferMask getIncompatibleAttachments() const { return mIncompatibleAttachments; }
+
   private:
     void ensureCommandBufferReady();
     void endBlitAndComputeEncoding();
+    angle::Result resyncDrawFramebufferIfNeeded(const gl::Context *context);
     angle::Result setupDraw(const gl::Context *context,
                             gl::PrimitiveMode mode,
                             GLint firstVertex,
@@ -608,8 +607,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     VertexArrayMtl *mVertexArray      = nullptr;
     ProgramExecutableMtl *mExecutable = nullptr;
     QueryMtl *mOcclusionQuery         = nullptr;
-    mtl::TextureRef mWorkTexture;
-    mtl::BufferRef mWorkBuffer;
 
     using DirtyBits = angle::BitSet<DIRTY_BIT_MAX>;
 
@@ -632,6 +629,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
     MTLWinding mWinding;
     MTLCullMode mCullMode;
     bool mCullAllPolygons = false;
+
+    // Cached state to handle attachments incompatible with the current program
+    bool mForceResyncDrawFramebuffer = false;
+    gl::DrawBufferMask mIncompatibleAttachments;
 
     mtl::BufferManager mBufferManager;
 

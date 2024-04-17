@@ -133,8 +133,9 @@ enum class ImmediateActionStage : uint8_t {
     ActionCompleted
 };
 
-class EventHandler : public CanMakeCheckedPtr {
+class EventHandler final : public CanMakeCheckedPtr<EventHandler> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventHandler);
 public:
     explicit EventHandler(LocalFrame&);
     ~EventHandler();

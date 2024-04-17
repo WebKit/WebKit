@@ -89,6 +89,10 @@ public:
     virtual String accessibilityDescription() const { return emptyString(); };
     virtual std::optional<IntPoint> hotSpot() const = 0;
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    virtual bool shouldUseQuickLookForFullscreen() const { return false; }
+#endif
+
     virtual IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const = 0;
     virtual bool frameIsCompleteAtIndex(size_t) const = 0;
     virtual ImageOrientation frameOrientationAtIndex(size_t) const { return ImageOrientation::Orientation::None; }

@@ -32,6 +32,10 @@
 #include <WebCore/WebGPUIntegralTypes.h>
 #include <WebCore/WebGPUPresentationContext.h>
 
+namespace WebCore {
+class NativeImage;
+}
+
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
@@ -50,7 +54,7 @@ public:
     RemoteGPUProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
-    void present();
+    void present(bool = false) final;
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -63,6 +67,7 @@ private:
     RemotePresentationContextProxy& operator=(RemotePresentationContextProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t) final;
 
     static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>

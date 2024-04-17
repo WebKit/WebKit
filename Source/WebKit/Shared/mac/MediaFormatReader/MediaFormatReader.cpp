@@ -112,6 +112,12 @@ void MediaFormatReader::startOnMainThread(MTPluginByteSourceRef byteSource)
     });
 }
 
+MediaTime MediaFormatReader::duration() const
+{
+    Locker locker { m_parseTracksLock };
+    return m_duration;
+}
+
 static ConcurrentWorkQueue& readerQueue()
 {
     static NeverDestroyed<Ref<ConcurrentWorkQueue>> queue = ConcurrentWorkQueue::create("WebKit::MediaFormatReader Queue");

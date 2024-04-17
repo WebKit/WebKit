@@ -251,7 +251,7 @@ bool CanvasNoiseInjection::postProcessPixelBufferResults(PixelBuffer& pixelBuffe
     ASSERT(pixelBuffer.format().pixelFormat == PixelFormat::RGBA8);
 
     constexpr int bytesPerPixel = 4;
-    std::span<uint8_t> bytes = std::span(pixelBuffer.bytes(), pixelBuffer.sizeInBytes());
+    auto bytes = pixelBuffer.bytes();
     bool wasPixelBufferModified { false };
 
     // Salt value 0 is used for testing.

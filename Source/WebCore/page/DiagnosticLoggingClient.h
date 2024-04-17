@@ -45,8 +45,9 @@ struct DiagnosticLoggingDictionary {
     void set(String key, Payload value) { dictionary.set(WTFMove(key), WTFMove(value)); }
 };
 
-class DiagnosticLoggingClient : public CanMakeCheckedPtr {
+class DiagnosticLoggingClient : public CanMakeCheckedPtr<DiagnosticLoggingClient> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DiagnosticLoggingClient);
 public:
     virtual void logDiagnosticMessage(const String& message, const String& description, ShouldSample) = 0;
     virtual void logDiagnosticMessageWithResult(const String& message, const String& description, DiagnosticLoggingResultType, ShouldSample) = 0;

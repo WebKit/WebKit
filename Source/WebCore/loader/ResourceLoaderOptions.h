@@ -39,7 +39,6 @@
 #include "RequestPriority.h"
 #include "ServiceWorkerTypes.h"
 #include "StoredCredentialsPolicy.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

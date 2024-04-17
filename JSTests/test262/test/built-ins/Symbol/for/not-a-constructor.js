@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Symbol.for), false, 'isConstructor(Symbol.for) mu
 
 assert.throws(TypeError, () => {
   new Symbol.for();
-}, '`new Symbol.for()` throws TypeError');
+});
 

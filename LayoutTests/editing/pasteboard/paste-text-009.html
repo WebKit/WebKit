@@ -1,38 +1,31 @@
-<html> 
-<head>
-
-<style>
-.editing { 
-    border: 2px solid red; 
-    padding: 12px; 
-    font-size: 24px; 
-}
-</style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/assert-selection.js"></script>
 <script>
-
-function editingTest() {
-    for (i = 0; i < 76; i++)
-        moveSelectionForwardByCharacterCommand();
-    for (i = 0; i < 2; i++)
-        extendSelectionForwardByCharacterCommand();
-    copyCommand();
-    pasteCommand();
-    pasteCommand();
-}
-
+test(() => {
+    assert_not_equals(window.internals, undefined,
+        'This test requires window.internals to access clipboard');
+    assert_selection(
+        [
+            '<div contenteditable>',
+                'one',
+                '<div>two^</div>',
+                't|hree',
+           '</div>',
+        ].join(''),
+        selection => {
+            selection.document.execCommand('copy');
+            selection.document.execCommand('paste');
+            selection.document.execCommand('paste');
+        },
+        [
+            '<div contenteditable>',
+                'one',
+                '<div>two</div>',
+                't<div>t|hree</div>',
+           '</div>',
+        ].join(''),
+        '9 Paste with text crossing start of DIV');
+}, 'Paste text');
 </script>
-
-<title>Editing Test</title> 
-</head> 
-<body contenteditable id="root">
-
-<div class="editing" id="test">Omitted, all the voyage of their life,<div class="editing">Is bound in shallows and in miseries.</div>Upon such a full sea are we now afloat,</div>
- 
-<script>
-runEditingTest();
-</script>
-
-</body>
-</html>

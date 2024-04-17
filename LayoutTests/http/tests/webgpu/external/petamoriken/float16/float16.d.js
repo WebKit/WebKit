@@ -411,6 +411,26 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Returns `true` if the value is a Float16Array instance.
  * @since v3.4.0
@@ -466,6 +486,13 @@
 
 /**
  * Returns the nearest half-precision float representation of a number.
+ * @param x A numeric expression.
+ */
+
+
+/**
+ * Returns the nearest half-precision float representation of a number.
+ * @alias f16round
  * @param x A numeric expression.
  */export {};
 //# sourceMappingURL=float16.d.js.map

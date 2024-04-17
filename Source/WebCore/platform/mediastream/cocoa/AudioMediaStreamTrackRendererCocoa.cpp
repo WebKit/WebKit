@@ -62,8 +62,10 @@ void AudioMediaStreamTrackRendererCocoa::start(CompletionHandler<void()>&& callb
 
 BaseAudioMediaStreamTrackRendererUnit& AudioMediaStreamTrackRendererCocoa::rendererUnit()
 {
+#if USE(LIBWEBRTC)
     if (auto* audioModule = this->audioModule())
         return audioModule->incomingAudioMediaStreamTrackRendererUnit();
+#endif
     return AudioMediaStreamTrackRendererUnit::singleton();
 }
 

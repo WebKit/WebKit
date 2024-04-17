@@ -486,3 +486,9 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic, copy, nullable, getter=_STSLabel) NSString *STSLabel SPI_AVAILABLE(ios(15.0)) API_UNAVAILABLE(macos, tvos, watchos);
 @end
 #endif
+
+#if PLATFORM(VISION)
+@interface AVSampleBufferAudioRenderer (AVSampleBufferAudioRendererWebKitPrivate)
+@property (nonatomic, copy, nullable, getter=_STSLabel) NSString *STSLabel SPI_AVAILABLE(ios(15.0)) API_UNAVAILABLE(macos, tvos, watchos);
+@end
+#endif

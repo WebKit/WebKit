@@ -727,6 +727,8 @@ enum class AccessibilityOrientation {
     Undefined,
 };
 
+enum class TrimWhitespace : bool { No, Yes };
+
 struct TextUnderElementMode {
     enum class Children : uint8_t {
         SkipIgnoredChildren,
@@ -737,6 +739,8 @@ struct TextUnderElementMode {
     Children childrenInclusion;
     bool includeFocusableContent;
     bool considerHiddenState { true };
+    bool inHiddenSubtree { false };
+    TrimWhitespace trimWhitespace { TrimWhitespace::Yes };
     Node* ignoredChildNode;
 
     TextUnderElementMode(Children childrenInclusion = Children::SkipIgnoredChildren, bool includeFocusable = false, Node* ignoredChild = nullptr)
@@ -744,6 +748,8 @@ struct TextUnderElementMode {
         , includeFocusableContent(includeFocusable)
         , ignoredChildNode(ignoredChild)
     { }
+
+    bool isHidden() { return considerHiddenState && inHiddenSubtree; }
 };
 
 enum class AccessibilityVisiblePositionForBounds {
@@ -841,7 +847,7 @@ public:
     bool isCheckbox() const { return roleValue() == AccessibilityRole::Checkbox; }
     bool isRadioButton() const { return roleValue() == AccessibilityRole::RadioButton; }
     bool isListBox() const { return roleValue() == AccessibilityRole::ListBox; }
-    virtual bool isListBoxOption() const = 0;
+    bool isListBoxOption() const { return roleValue() == AccessibilityRole::ListBoxOption; }
     virtual bool isAttachment() const = 0;
     bool isMenuRelated() const;
     bool isMenu() const { return roleValue() == AccessibilityRole::Menu; }
@@ -1258,8 +1264,7 @@ public:
     virtual void detachFromParent() = 0;
     virtual bool isDetachedFromParent() = 0;
 
-    bool canHaveSelectedChildren() const;
-    virtual AccessibilityChildrenVector selectedChildren() = 0;
+    virtual std::optional<AccessibilityChildrenVector> selectedChildren() = 0;
     virtual void setSelectedChildren(const AccessibilityChildrenVector&) = 0;
     virtual AccessibilityChildrenVector visibleChildren() = 0;
     AccessibilityChildrenVector tabChildren();

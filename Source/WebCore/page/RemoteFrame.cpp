@@ -146,4 +146,9 @@ String RemoteFrame::customUserAgentAsSiteSpecificQuirks() const
     return m_customUserAgentAsSiteSpecificQuirks;
 }
 
+void RemoteFrame::documentURLForConsoleLog(CompletionHandler<void(const URL&)>&& completionHandler)
+{
+    m_client->documentURLForConsoleLog(WTFMove(completionHandler));
+}
+
 } // namespace WebCore

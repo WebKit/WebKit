@@ -102,7 +102,7 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, String&&
     auto channel = MessageChannel::create(document);
     auto transferredPort = channel->port2().disentangle();
 
-    ClientOrigin clientOrigin { document.topDocument().securityOrigin().data(), document.securityOrigin().data() };
+    ClientOrigin clientOrigin { document.topOrigin().data(), document.securityOrigin().data() };
     SharedWorkerKey key { clientOrigin, url, options.name };
 
     auto sharedWorker = adoptRef(*new SharedWorker(document, key, channel->port1()));

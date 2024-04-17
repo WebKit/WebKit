@@ -38,8 +38,9 @@ class SWServerWorker;
 class ServiceWorkerJob;
 struct WorkerFetchResult;
 
-class SWServerJobQueue : public CanMakeCheckedPtr {
+class SWServerJobQueue final : public CanMakeCheckedPtr<SWServerJobQueue> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SWServerJobQueue);
 public:
     explicit SWServerJobQueue(SWServer&, const ServiceWorkerRegistrationKey&);
     SWServerJobQueue(const SWServerRegistration&) = delete;

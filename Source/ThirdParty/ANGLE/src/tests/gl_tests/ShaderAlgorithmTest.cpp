@@ -65,12 +65,12 @@ TEST_P(ShaderAlgorithmTest, rgb_to_hsl_vertex_shader)
 
     // Pass the vertex data to VBO
     GLBuffer posBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, posBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(positions[0]) * positions.size(), positions.data(),
                  GL_STATIC_DRAW);
 
     // Link position data to "a_position" vertex attrib
-    GLint posLocation = glGetAttribLocation(program.get(), "a_position");
+    GLint posLocation = glGetAttribLocation(program, "a_position");
     ASSERT_NE(-1, posLocation);
     glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(posLocation);
@@ -86,7 +86,7 @@ TEST_P(ShaderAlgorithmTest, rgb_to_hsl_vertex_shader)
     std::vector<Vector3> unitcoords;
     unitcoords.resize(4);
     GLBuffer unitCoordBuffer;
-    GLint unitCoordLocation = glGetAttribLocation(program.get(), "a_unitCoords");
+    GLint unitCoordLocation = glGetAttribLocation(program, "a_unitCoords");
     ASSERT_NE(-1, unitCoordLocation);
 
     const float epsilon = 1.0e-7;
@@ -104,7 +104,7 @@ TEST_P(ShaderAlgorithmTest, rgb_to_hsl_vertex_shader)
             {
                 unitcoords[vtx] = Vector3(sx, sy, 0.33f * sx + 0.5f * sy);
             }
-            glBindBuffer(GL_ARRAY_BUFFER, unitCoordBuffer.get());
+            glBindBuffer(GL_ARRAY_BUFFER, unitCoordBuffer);
             glBufferData(GL_ARRAY_BUFFER, sizeof(unitcoords[0]) * unitcoords.size(),
                          unitcoords.data(), GL_STATIC_DRAW);
 
@@ -113,7 +113,7 @@ TEST_P(ShaderAlgorithmTest, rgb_to_hsl_vertex_shader)
             glEnableVertexAttribArray(unitCoordLocation);
 
             // Draw and verify
-            glUseProgram(program.get());
+            glUseProgram(program);
             glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
             ASSERT_GL_NO_ERROR();

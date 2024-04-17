@@ -25,7 +25,7 @@
 messages -> GPUProcess LegacyReceiver {
     InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters)
 
-    CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::Connection::Handle connectionHandle, struct WebKit::GPUProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
+    CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::ConnectionHandle connectionHandle, struct WebKit::GPUProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
     UpdateGPUProcessPreferences(struct WebKit::GPUProcessPreferences preferences)
     UpdateSandboxAccess(Vector<WebKit::SandboxExtensionHandle> extensions);
 
@@ -65,10 +65,6 @@ messages -> GPUProcess LegacyReceiver {
 
 #if ENABLE(VIDEO)
     RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (std::optional<WebCore::ShareableBitmapHandle> handle)
-#endif
-
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)
 #endif
 
 #if PLATFORM(MAC)

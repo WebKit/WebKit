@@ -252,6 +252,19 @@ void Page::updateValidationBubbleStateIfNeeded()
         client->updateValidationBubbleStateIfNeeded();
 }
 
+void Page::scheduleValidationMessageUpdate(ValidatedFormListedElement& element, HTMLElement& anchor)
+{
+    m_validationMessageUpdates.append({ element, anchor });
+}
+
+void Page::updateValidationMessages()
+{
+    for (auto& item : std::exchange(m_validationMessageUpdates, { })) {
+        if (RefPtr anchor = item.second.get())
+            item.first->updateVisibleValidationMessage(*anchor);
+    }
+}
+
 static void networkStateChanged(bool isOnLine)
 {
     Vector<WeakPtr<LocalFrame>> frames;
@@ -717,6 +730,14 @@ void Page::setMainFrame(Ref<Frame>&& frame)
 void Page::setMainFrameURL(const URL& url)
 {
     m_mainFrameURL = url;
+    m_mainFrameOrigin = SecurityOrigin::create(url);
+}
+
+SecurityOrigin& Page::mainFrameOrigin() const
+{
+    if (!m_mainFrameOrigin)
+        return SecurityOrigin::opaqueOrigin();
+    return *m_mainFrameOrigin;
 }
 
 bool Page::openedByDOM() const
@@ -1552,7 +1573,7 @@ void Page::didCommitLoad()
         geolocationController->didNavigatePage();
 #endif
 
-    m_elementTargetingController->resetAdjustmentRegions();
+    m_elementTargetingController->reset();
 
     m_isWaitingForLoadToFinish = true;
 }
@@ -1739,9 +1760,14 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
 
 void Page::layoutIfNeeded(OptionSet<LayoutOptions> layoutOptions)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
-    if (RefPtr view = localMainFrame ? localMainFrame->view() : nullptr)
+    for (auto& rootFrame : m_rootFrames) {
+        ASSERT(rootFrame->isRootFrame());
+        RefPtr view = rootFrame->view();
+        if (!view)
+            continue;
+
         view->updateLayoutAndStyleIfNeededRecursive(layoutOptions);
+    }
 }
 
 void Page::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps)
@@ -2013,6 +2039,8 @@ void Page::doAfterUpdateRendering()
 #if ENABLE(IMAGE_ANALYSIS)
     updateElementsWithTextRecognitionResults();
 #endif
+
+    updateValidationMessages();
 
     prioritizeVisibleResources();
 
@@ -4751,11 +4779,25 @@ bool Page::hasActiveImmersiveSession() const
         if (!navigator)
             continue;
 
-        if (NavigatorWebXR::xr(*navigator).hasActiveImmersiveSession())
+        auto* xrSystem = NavigatorWebXR::xrIfExists(*navigator);
+        if (xrSystem && xrSystem->hasActiveImmersiveSession())
             return true;
     }
     return false;
 }
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(WEBXR)
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void Page::setDefaultSpatialTrackingLabel(const String& label)
+{
+    if (m_defaultSpatialTrackingLabel == label)
+        return;
+    m_defaultSpatialTrackingLabel = WTFMove(label);
+
+    forEachDocument([&] (Document& document) {
+        document.defaultSpatialTrackingLabelChanged(m_defaultSpatialTrackingLabel);
+    });
+}
+#endif
 
 } // namespace WebCore

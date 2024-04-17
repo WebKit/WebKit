@@ -20,8 +20,9 @@ features: [Symbol.toPrimitive]
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Date.prototype[Symbol.toPrimitive].length, 1);
-
-verifyNotEnumerable(Date.prototype[Symbol.toPrimitive], 'length');
-verifyNotWritable(Date.prototype[Symbol.toPrimitive], 'length');
-verifyConfigurable(Date.prototype[Symbol.toPrimitive], 'length');
+verifyProperty(Date.prototype[Symbol.toPrimitive], "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

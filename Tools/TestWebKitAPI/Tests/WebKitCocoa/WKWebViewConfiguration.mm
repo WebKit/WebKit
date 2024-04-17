@@ -27,6 +27,7 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestProtocol.h"
 #import "TestUIDelegate.h"
@@ -39,6 +40,46 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+#import <WebKit/_WKWebExtensionController.h>
+#import <WebKit/_WKWebExtensionMatchPattern.h>
+#endif
+
+@interface SubclassWebViewConfiguration : WKWebViewConfiguration {
+    RetainPtr<NSString> _subclassData;
+}
+@end
+
+@implementation SubclassWebViewConfiguration
+
+- (NSString *)subclassData
+{
+    return _subclassData.get();
+}
+
+- (void)setSubclassData:(NSString *)data
+{
+    _subclassData = data;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    id copy = [super copyWithZone:zone];
+    [copy setSubclassData:@"copied"];
+    return copy;
+}
+
+@end
+
+TEST(WebKit, ConfigurationSubclass)
+{
+    auto configuration = adoptNS([SubclassWebViewConfiguration new]);
+    [configuration setSubclassData:@"original"];
+    EXPECT_WK_STREQ([configuration subclassData], "original");
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    EXPECT_WK_STREQ([(SubclassWebViewConfiguration *)[webView configuration] subclassData], "copied");
+}
 
 TEST(WebKit, InvalidConfiguration)
 {
@@ -204,9 +245,28 @@ TEST(WebKit, ConfigurationMaskedURLSchemes)
     [TestProtocol registerWithScheme:@"https"];
 
     auto configuration = adoptNS([WKWebViewConfiguration new]);
-    EXPECT_EQ([configuration _maskedURLSchemes].count, 0U);
+
+    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet set]);
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    auto extensionController = adoptNS([[_WKWebExtensionController alloc] init]);
+    [configuration _setWebExtensionController:extensionController.get()];
+
+    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet setWithObject:@"webkit-extension"]);
+
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-scheme"];
+
+    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], ([NSSet setWithObjects:@"webkit-extension", @"test-scheme", nil]));
+#endif
+
+    [configuration _setMaskedURLSchemes:[NSSet setWithObject:@"test-scheme"]];
+    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet setWithObject:@"test-scheme"]);
+
+    [configuration _setMaskedURLSchemes:[NSSet set]];
+    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet set]);
 
     [configuration _setMaskedURLSchemes:[NSSet setWithObjects:@"test-scheme", @"another-scheme", nil]];
+    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], ([NSSet setWithObjects:@"test-scheme", @"another-scheme", nil]));
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
     auto delegate = adoptNS([TestUIDelegate new]);

@@ -111,8 +111,9 @@ struct Declaration
     TIntermTyped *initExpr;  // Non-null iff declaration is initialized.
 };
 
-// Returns a `Declaration` view of the given node.
-Declaration ViewDeclaration(TIntermDeclaration &declNode);
+// Returns a `Declaration` view of the given node, for declarator `index` of
+// the declarations in `declNode`.
+Declaration ViewDeclaration(TIntermDeclaration &declNode, uint32_t index = 0);
 
 }  // namespace sh
 

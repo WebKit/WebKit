@@ -1408,9 +1408,10 @@ TEST_P(ClipCullDistanceTest, SizedArrayLength)
                      << "{\n"
                      << "    gl_Position = a_position;\n"
                      << "    v_length = float(" << name << ".length()) / 16.0;\n";
-        if (!declare)
+        // Assign all elements to avoid undefined behavior
+        for (int i = 0; i < size; ++i)
         {
-            vertexSource << "    " << name << "[" << (size - 1) << "] = 1.0;\n";
+            vertexSource << "    " << name << "[" << i << "] = 1.0;\n";
         }
         vertexSource << "}";
     };
@@ -1431,6 +1432,7 @@ void main()
         program.makeRaster(vertexSource.str().c_str(), kFS.c_str());
         ASSERT_TRUE(program.valid()) << name;
 
+        glClear(GL_COLOR_BUFFER_BIT);
         drawQuad(program, "a_position", 0);
         EXPECT_PIXEL_NEAR(0, 0, size * 16, 0, 0, 255, 1);
     };
@@ -1461,6 +1463,60 @@ void main()
             checkLength(name, false, i);
             checkLength(name, true, i);
         }
+    }
+}
+
+// Test that pruning clip/cull distance variables does not cause a translator crash
+TEST_P(ClipCullDistanceTest, Pruned)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName));
+
+    std::stringstream vertexSource;
+    auto vs = [=, &vertexSource](std::string name, bool doReturn) {
+        vertexSource.str(std::string());
+        vertexSource.clear();
+        vertexSource << "#version 300 es\n";
+        vertexSource << "#extension " << kExtensionName << " : require\n";
+        vertexSource << "void main()\n"
+                     << "{\n"
+                     << "    " << (doReturn ? "return;\n" : "") << "    " << name << "[1];\n";
+        vertexSource << "}";
+    };
+
+    std::stringstream fragmentSource;
+    auto fs = [=, &fragmentSource](std::string name) {
+        fragmentSource.str(std::string());
+        fragmentSource.clear();
+        fragmentSource << "#version 300 es\n";
+        fragmentSource << "#extension " << kExtensionName << " : require\n";
+        fragmentSource << "out mediump vec4 my_FragColor;\n"
+                       << "void main()\n"
+                       << "{\n"
+                       << "    my_FragColor = vec4(" << name << "[1]);\n";
+        fragmentSource << "}";
+    };
+
+    auto checkPruning = [=, &vertexSource, &fragmentSource](std::string name, bool doReturn) {
+        GLProgram program;
+        vs(name, doReturn);
+        fs(name);
+        program.makeRaster(vertexSource.str().c_str(), fragmentSource.str().c_str());
+        ASSERT_TRUE(program.valid()) << name << (doReturn ? " after return" : "");
+    };
+
+    GLint maxClipDistances = 0;
+    glGetIntegerv(GL_MAX_CLIP_DISTANCES_EXT, &maxClipDistances);
+    ASSERT_GT(maxClipDistances, 0);
+    checkPruning("gl_ClipDistance", false);
+    checkPruning("gl_ClipDistance", true);
+
+    GLint maxCullDistances = 0;
+    glGetIntegerv(GL_MAX_CULL_DISTANCES_EXT, &maxCullDistances);
+    if (mCullDistanceSupportRequired)
+    {
+        ASSERT_GT(maxCullDistances, 0);
+        checkPruning("gl_CullDistance", false);
+        checkPruning("gl_CullDistance", true);
     }
 }
 

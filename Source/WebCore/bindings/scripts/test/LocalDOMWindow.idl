@@ -1,2 +1,0 @@
-[Exposed=Window] interface LocalDOMWindow : EventTarget {
-};

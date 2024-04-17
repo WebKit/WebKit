@@ -306,7 +306,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     if (isWebGPUType(contextId)) {
         GPU* gpu = nullptr;
         if (auto* window = document().domWindow()) {
-            // FIXME: Should we be instead getting this through jsDynamicCast<JSLocalDOMWindow*>(state)->wrapped().navigator().gpu()?
+            // FIXME: Should we be instead getting this through jsDynamicCast<JSDOMWindow*>(state)->wrapped().navigator().gpu()?
             gpu = window->navigator().gpu();
         }
         auto context = createContextWebGPU(contextId, gpu);
@@ -595,9 +595,9 @@ void HTMLCanvasElement::reset()
 
     setSurfaceSize(newSize);
 
-    if (m_context && oldSize != size()) {
+    if (m_context) {
         if (auto* context = dynamicDowncast<GPUBasedCanvasRenderingContext>(*m_context))
-            context->reshape(width(), height());
+            context->reshape(width(), height(), oldSize.width(), oldSize.height());
     }
 
     if (CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer())) {

@@ -104,7 +104,7 @@ struct ImageCandidate {
     OriginAttribute originAttribute;
 };
 
-ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomString& srcAttribute, StringView srcsetAttribute, float sourceSize);
+ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomString& srcAttribute, StringView srcsetAttribute, float sourceSize, Function<bool(const ImageCandidate&)>&& shouldIgnoreCandidateCallback = { });
 
 Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(StringView attribute);
 void getURLsFromSrcsetAttribute(const Element&, StringView attribute, ListHashSet<URL>&);

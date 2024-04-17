@@ -314,7 +314,7 @@ ExceptionOr<void> HTMLFormElement::requestSubmit(HTMLElement* submitter)
 {
     // Update layout before processing form actions in case the style changes
     // the form or button relationships.
-    document().updateLayoutIgnorePendingStylesheets();
+    protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
     RefPtr<HTMLFormControlElement> control;
     if (submitter) {
@@ -807,7 +807,7 @@ bool HTMLFormElement::reportValidity()
 
     // Update layout before processing form actions in case the style changes
     // the form or button relationships.
-    document().updateLayoutIgnorePendingStylesheets();
+    protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
     return validateInteractively();
 }

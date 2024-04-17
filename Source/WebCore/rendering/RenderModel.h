@@ -35,6 +35,7 @@ class HTMLModelElement;
 
 class RenderModel final : public RenderReplaced {
     WTF_MAKE_ISO_ALLOCATED(RenderModel);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderModel);
 public:
     RenderModel(HTMLModelElement&, RenderStyle&&);
     virtual ~RenderModel();

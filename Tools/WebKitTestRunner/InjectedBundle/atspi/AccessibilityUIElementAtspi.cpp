@@ -908,14 +908,14 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
 {
     m_element->updateBackingStore();
-    auto titleValue = makeString("AXTitle: ", String::fromUTF8(m_element->name()));
+    auto titleValue = makeString("AXTitle: ", String::fromUTF8(m_element->name().span()));
     return OpaqueJSString::tryCreate(titleValue).leakRef();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
 {
     m_element->updateBackingStore();
-    auto descriptionValue = makeString("AXDescription: ", String::fromUTF8(m_element->description()));
+    auto descriptionValue = makeString("AXDescription: ", String::fromUTF8(m_element->description().span()));
     return OpaqueJSString::tryCreate(descriptionValue).leakRef();
 }
 
@@ -956,7 +956,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
         // Tests expect the combo box to expose the selected element name as the string value.
         if (auto menu = childAtIndex(0)) {
             if (auto* selectedChild = menu->m_element->selectedChild(0))
-                return OpaqueJSString::tryCreate(makeString("AXValue: ", String::fromUTF8(selectedChild->name()))).leakRef();
+                return OpaqueJSString::tryCreate(makeString("AXValue: ", String::fromUTF8(selectedChild->name().span()))).leakRef();
         }
     }
 

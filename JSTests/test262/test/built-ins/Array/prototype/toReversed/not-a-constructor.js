@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Array.prototype.toReversed();
-}, '`new Array.prototype.toReversed()` throws TypeError');
+});
 

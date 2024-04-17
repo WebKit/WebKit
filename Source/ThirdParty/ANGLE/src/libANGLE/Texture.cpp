@@ -130,6 +130,7 @@ TextureState::TextureState(TextureType type)
       mIsInternalIncompleteTexture(false),
       mHasBeenBoundAsImage(false),
       mHasBeenBoundAsAttachment(false),
+      mHasBeenBoundToMSRTTFramebuffer(false),
       mImmutableFormat(false),
       mImmutableLevels(0),
       mUsage(GL_NONE),
@@ -317,10 +318,15 @@ SamplerFormat TextureState::computeRequiredSamplerFormat(const SamplerState &sam
 bool TextureState::computeSamplerCompleteness(const SamplerState &samplerState,
                                               const State &state) const
 {
-    // Buffer textures cannot be incomplete.
+    // Buffer textures cannot be incomplete. But if they are, the spec says -
+    //
+    //     If no buffer object is bound to the buffer texture,
+    //     the results of the texel access are undefined.
+    //
+    // Mark as incomplete so we use the default IncompleteTexture instead
     if (mType == TextureType::Buffer)
     {
-        return true;
+        return mBuffer.get() != nullptr;
     }
 
     // Check for all non-format-based completeness rules
@@ -397,10 +403,15 @@ bool TextureState::computeSamplerCompleteness(const SamplerState &samplerState,
 bool TextureState::computeSamplerCompletenessForCopyImage(const SamplerState &samplerState,
                                                           const State &state) const
 {
-    // Buffer textures cannot be incomplete.
+    // Buffer textures cannot be incomplete. But if they are, the spec says -
+    //
+    //     If no buffer object is bound to the buffer texture,
+    //     the results of the texel access are undefined.
+    //
+    // Mark as incomplete so we use the default IncompleteTexture instead
     if (mType == TextureType::Buffer)
     {
-        return true;
+        return mBuffer.get() != nullptr;
     }
 
     if (!mImmutableFormat && mBaseLevel > mMaxLevel)
@@ -2538,6 +2549,15 @@ void Texture::onBufferContentsChange()
     mState.mInitState = InitState::MayNeedInit;
     signalDirtyState(DIRTY_BIT_IMPLEMENTATION);
     onStateChange(angle::SubjectMessage::ContentsChanged);
+}
+
+void Texture::onBindToMSRTTFramebuffer()
+{
+    if (!mState.mHasBeenBoundToMSRTTFramebuffer)
+    {
+        mDirtyBits.set(DIRTY_BIT_BOUND_TO_MSRTT_FRAMEBUFFER);
+        mState.mHasBeenBoundToMSRTTFramebuffer = true;
+    }
 }
 
 GLenum Texture::getImplementationColorReadFormat(const Context *context) const

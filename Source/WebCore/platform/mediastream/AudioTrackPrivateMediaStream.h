@@ -29,6 +29,7 @@
 
 #include "AudioTrackPrivate.h"
 #include "MediaStreamTrackPrivate.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -37,8 +38,11 @@ class AudioMediaStreamTrackRenderer;
 class AudioTrackPrivateMediaStream final
     : public AudioTrackPrivate
     , public MediaStreamTrackPrivate::Observer
-    , private RealtimeMediaSource::AudioSampleObserver {
+    , private RealtimeMediaSource::AudioSampleObserver
+    , public CanMakeCheckedPtr<AudioTrackPrivateMediaStream> {
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateMediaStream)
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioTrackPrivateMediaStream);
 public:
     static Ref<AudioTrackPrivateMediaStream> create(MediaStreamTrackPrivate& streamTrack)
     {
@@ -70,6 +74,18 @@ public:
 
 private:
     explicit AudioTrackPrivateMediaStream(MediaStreamTrackPrivate&);
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+#if CHECKED_POINTER_DEBUG
+    void registerCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::registerCheckedPtr(pointer); };
+    void copyCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::copyCheckedPtr(source, destination); }
+    void moveCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::moveCheckedPtr(source, destination); }
+    void unregisterCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::unregisterCheckedPtr(pointer); }
+#endif // CHECKED_POINTER_DEBUG
 
     static std::unique_ptr<AudioMediaStreamTrackRenderer> createRenderer(AudioTrackPrivateMediaStream&);
 

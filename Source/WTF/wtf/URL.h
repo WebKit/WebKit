@@ -201,6 +201,7 @@ public:
 
     // Input is like "foo.com" or "foo.com:8000".
     WTF_EXPORT_PRIVATE void setHostAndPort(StringView);
+    WTF_EXPORT_PRIVATE void removeHostAndPort();
 
     WTF_EXPORT_PRIVATE void setUser(StringView);
     WTF_EXPORT_PRIVATE void setPassword(StringView);

@@ -197,34 +197,30 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         if (!this._highlightResult)
             return;
 
-        function updateEntryShow(entry)
-        {
-            switch (entry.type) {
+        if (show) {
+            for (let entry of this._highlightResult) {
+                switch (entry.type) {
                 case "added":
                     entry.parent.insertBefore(entry.node, entry.nextSibling);
                     break;
                 case "changed":
                     entry.node.textContent = entry.newText;
                     break;
+                }
             }
-        }
-
-        function updateEntryHide(entry)
-        {
-            switch (entry.type) {
+        } else {
+            for (let i = this._highlightResult.length - 1; i >= 0; --i) {
+                let entry = this._highlightResult[i];
+                switch (entry.type) {
                 case "added":
                     entry.node.remove();
                     break;
                 case "changed":
                     entry.node.textContent = entry.oldText;
                     break;
+                }
             }
         }
-
-        var updater = show ? updateEntryShow : updateEntryHide;
-
-        for (var i = 0, size = this._highlightResult.length; i < size; ++i)
-            updater(this._highlightResult[i]);
     }
 
     get hovered()

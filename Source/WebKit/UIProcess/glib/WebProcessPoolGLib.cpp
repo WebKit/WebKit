@@ -53,9 +53,7 @@
 #endif
 
 #if PLATFORM(GTK)
-#if USE(EGL)
 #include "AcceleratedBackingStoreDMABuf.h"
-#endif
 #include "GtkSettingsManager.h"
 #endif
 
@@ -95,7 +93,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 #endif
 
-#if PLATFORM(GTK) && USE(EGL)
+#if PLATFORM(GTK)
     parameters.dmaBufRendererBufferMode = AcceleratedBackingStoreDMABuf::rendererBufferMode();
 #elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     if (usingWPEPlatformAPI) {

@@ -1,7 +1,8 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ spellCheckingDots=true ] -->
 <html>
 <head>
 <script src="../../editing/editing.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <style>
 @font-face {
     font-family: Ahem;
@@ -27,11 +28,18 @@ if (window.internals)
 
 var expected = document.getElementById("expected");
 
-typeText("mispelled a", expected);
-queueCommand(() => window.internals && internals.updateEditorUINowIfScheduled()); // Trigger spell checking
+testRunner.waitUntilDone();
+typeText("mispelled a", expected).then(() => {
+    queueCommand(() => window.internals && internals.updateEditorUINowIfScheduled()); // Trigger spell checking
+});
 
-function typeText(text, element)
+async function typeText(text, element)
 {
+    await UIHelper.setSpellCheckerResults({
+        "mispelled a": [
+            { "type": "spelling", "from": 0, "to": 9 }
+        ]
+    });
     element.focus();
     for (const c of text)
         typeCharacterCommand(c);

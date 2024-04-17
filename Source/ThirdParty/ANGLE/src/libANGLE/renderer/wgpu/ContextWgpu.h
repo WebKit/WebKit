@@ -10,8 +10,12 @@
 #ifndef LIBANGLE_RENDERER_WGPU_CONTEXTWGPU_H_
 #define LIBANGLE_RENDERER_WGPU_CONTEXTWGPU_H_
 
+#include <dawn/webgpu_cpp.h>
+
 #include "image_util/loadimage.h"
 #include "libANGLE/renderer/ContextImpl.h"
+#include "libANGLE/renderer/wgpu/DisplayWgpu.h"
+#include "libANGLE/renderer/wgpu/wgpu_utils.h"
 
 namespace rx
 {
@@ -19,7 +23,7 @@ namespace rx
 class ContextWgpu : public ContextImpl
 {
   public:
-    ContextWgpu(const gl::State &state, gl::ErrorSet *errorSet);
+    ContextWgpu(const gl::State &state, gl::ErrorSet *errorSet, DisplayWgpu *display);
     ~ContextWgpu() override;
 
     angle::Result initialize(const angle::ImageLoadContext &imageLoadContext) override;
@@ -254,6 +258,14 @@ class ContextWgpu : public ContextImpl
 
     const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }
 
+    DisplayWgpu *getDisplay() { return mDisplay; }
+    wgpu::Device &getDevice() { return mDisplay->getDevice(); }
+    wgpu::Queue &getQueue() { return mDisplay->getQueue(); }
+    angle::Result ensureRenderPassStarted(const wgpu::RenderPassDescriptor &desc);
+    angle::Result endRenderPass(webgpu::RenderPassClosureReason closure_reason);
+
+    angle::Result flush();
+
   private:
     gl::Caps mCaps;
     gl::TextureCapsMap mTextureCaps;
@@ -262,6 +274,12 @@ class ContextWgpu : public ContextImpl
     ShPixelLocalStorageOptions mPLSOptions;
 
     angle::ImageLoadContext mImageLoadContext;
+
+    DisplayWgpu *mDisplay;
+
+    wgpu::CommandEncoder mCurrentCommandEncoder;
+    wgpu::RenderPassEncoder mCurrentRenderPass;
+    wgpu::RenderPassDescriptor mCurrentRenderPassDesc;
 };
 
 }  // namespace rx

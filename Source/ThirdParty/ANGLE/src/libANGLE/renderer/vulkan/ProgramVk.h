@@ -16,9 +16,9 @@
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/ProgramExecutableVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/TransformFeedbackVk.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {

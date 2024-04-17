@@ -37,7 +37,7 @@ using namespace WTF::Unicode;
 JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)
 {
     JSC::initialize();
-    return &OpaqueJSString::create(reinterpret_cast<const UChar*>(chars), numChars).leakRef();
+    return &OpaqueJSString::create({ reinterpret_cast<const UChar*>(chars), numChars }).leakRef();
 }
 
 JSStringRef JSStringCreateWithUTF8CString(const char* string)
@@ -48,11 +48,10 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
         Vector<UChar, 1024> buffer(length);
         UChar* p = buffer.data();
         bool sourceContainsOnlyASCII;
-        const LChar* stringStart = reinterpret_cast<const LChar*>(string);
-        if (convertUTF8ToUTF16(string, string + length, &p, p + length, &sourceContainsOnlyASCII)) {
+        if (convertUTF8ToUTF16(std::span { reinterpret_cast<const char8_t*>(string), length }, &p, p + length, &sourceContainsOnlyASCII)) {
             if (sourceContainsOnlyASCII)
-                return &OpaqueJSString::create(stringStart, length).leakRef();
-            return &OpaqueJSString::create(buffer.data(), p - buffer.data()).leakRef();
+                return &OpaqueJSString::create({ reinterpret_cast<const LChar*>(string), length }).leakRef();
+            return &OpaqueJSString::create({ buffer.data(), p }).leakRef();
         }
     }
 
@@ -62,7 +61,7 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
 JSStringRef JSStringCreateWithCharactersNoCopy(const JSChar* chars, size_t numChars)
 {
     JSC::initialize();
-    return OpaqueJSString::tryCreate(StringImpl::createWithoutCopying(reinterpret_cast<const UChar*>(chars), numChars)).leakRef();
+    return OpaqueJSString::tryCreate(StringImpl::createWithoutCopying({ reinterpret_cast<const UChar*>(chars), numChars })).leakRef();
 }
 
 JSStringRef JSStringRetain(JSStringRef string)

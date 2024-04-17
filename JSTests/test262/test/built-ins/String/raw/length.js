@@ -11,11 +11,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  String.raw.length, 1,
-  'The value of `String.raw.length` is `1`'
-);
-
-verifyNotEnumerable(String.raw, 'length');
-verifyNotWritable(String.raw, 'length');
-verifyConfigurable(String.raw, 'length');
+verifyProperty(String.raw, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

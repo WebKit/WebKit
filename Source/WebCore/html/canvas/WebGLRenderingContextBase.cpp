@@ -92,6 +92,7 @@
 #include "OESTextureHalfFloatLinear.h"
 #include "OESVertexArrayObject.h"
 #include "Page.h"
+#include "PermissionsPolicy.h"
 #include "RenderBox.h"
 #include "Settings.h"
 #include "WebCodecsVideoFrame.h"
@@ -814,9 +815,12 @@ WebGLTexture::TextureExtensionFlag WebGLRenderingContextBase::textureExtensionFl
     return static_cast<WebGLTexture::TextureExtensionFlag>((m_oesTextureFloatLinear ? WebGLTexture::TextureExtensionFloatLinearEnabled : 0) | (m_oesTextureHalfFloatLinear ? WebGLTexture::TextureExtensionHalfFloatLinearEnabled : 0));
 }
 
-void WebGLRenderingContextBase::reshape(int width, int height)
+void WebGLRenderingContextBase::reshape(int width, int height, int oldWidth, int oldHeight)
 {
     if (isContextLost())
+        return;
+
+    if (width == oldWidth && height == oldHeight)
         return;
 
     // This is an approximation because at WebGLRenderingContext level we don't
@@ -1737,7 +1741,7 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram
     return WebGLActiveInfo::create(info.name, info.type, info.size);
 }
 
-std::optional<Vector<RefPtr<WebGLShader>>> WebGLRenderingContextBase::getAttachedShaders(WebGLProgram& program)
+std::optional<Vector<Ref<WebGLShader>>> WebGLRenderingContextBase::getAttachedShaders(WebGLProgram& program)
 {
     if (isContextLost())
         return std::nullopt;
@@ -1748,10 +1752,11 @@ std::optional<Vector<RefPtr<WebGLShader>>> WebGLRenderingContextBase::getAttache
         GraphicsContextGL::VERTEX_SHADER,
         GraphicsContextGL::FRAGMENT_SHADER
     };
-    Vector<RefPtr<WebGLShader>> shaderObjects;
+
+    Vector<Ref<WebGLShader>> shaderObjects;
     for (auto shaderType : shaderTypes) {
         if (RefPtr shader = program.getAttachedShader(shaderType))
-            shaderObjects.append(WTFMove(shader));
+            shaderObjects.append(shader.releaseNonNull());
     }
     return shaderObjects;
 }
@@ -2851,9 +2856,16 @@ void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promi
         return;
     }
 
-    // 1. Let promise be a new Promise.
-    // 2. Let context be the target WebGLRenderingContextBase object.
-    // 3. Ensure an immersive XR device is selected.
+    // 1. If the requesting document’s origin is not allowed to use the "xr-spatial-tracking"
+    // permissions policy, resolve promise and return it.
+    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::XRSpatialTracking, canvas->document(), LogPermissionsPolicyFailure::Yes)) {
+        promise.resolve();
+        return;
+    }
+
+    // 2. Let promise be a new Promise.
+    // 3. Let context be the target WebGLRenderingContextBase object.
+    // 4. Ensure an immersive XR device is selected.
     auto& xrSystem = NavigatorWebXR::xr(window->navigator());
     xrSystem.ensureImmersiveXRDeviceIsSelected([this, protectedThis = Ref { *this }, promise = WTFMove(promise), protectedXrSystem = Ref { xrSystem }]() mutable {
         auto rejectPromiseWithInvalidStateError = makeScopeExit([&]() {

@@ -648,6 +648,12 @@ void MemoryCache::removeFromLiveDecodedResourcesList(CachedResource& resource)
     m_liveDecodedResources.remove(resource);
 }
 
+void MemoryCache::moveToEndOfLiveDecodedResourcesListIfPresent(CachedResource& resource)
+{
+    RELEASE_ASSERT(isMainThread());
+    m_liveDecodedResources.moveToLastIfPresent(resource);
+}
+
 void MemoryCache::insertInLiveDecodedResourcesList(CachedResource& resource)
 {
     RELEASE_ASSERT(isMainThread());
@@ -796,9 +802,9 @@ void MemoryCache::prune()
 void MemoryCache::pruneSoon()
 {
     RELEASE_ASSERT(isMainThread());
-    if (m_pruneTimer.isActive())
-        return;
     if (!needsPruning())
+        return;
+    if (m_pruneTimer.isActive())
         return;
     m_pruneTimer.startOneShot(0_s);
 }

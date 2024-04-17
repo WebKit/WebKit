@@ -261,6 +261,14 @@ struct FeaturesGL : FeatureSetBase
         &members, "http://crbug.com/927470"
     };
 
+    FeatureInfo limitWebglMaxTextureSizeTo8192 = {
+        "limitWebglMaxTextureSizeTo8192",
+        FeatureCategory::OpenGLWorkarounds,
+        "Limit webgl max texture size to 8192 to avoid frequent "
+        "out-of-memory errors",
+        &members, "http://anglebug.com/8611"
+    };
+
     FeatureInfo limitMaxMSAASamplesTo4 = {
         "limitMaxMSAASamplesTo4",
         FeatureCategory::OpenGLWorkarounds,

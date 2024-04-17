@@ -30,8 +30,8 @@ class AtomString final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     AtomString();
-    AtomString(const LChar*, unsigned length);
-    AtomString(const UChar*, unsigned length);
+    AtomString(std::span<const LChar>);
+    AtomString(std::span<const UChar>);
 
     ALWAYS_INLINE static AtomString fromLatin1(const char* characters) { return AtomString(characters); }
 
@@ -49,7 +49,7 @@ public:
 
     AtomString(ASCIILiteral);
 
-    static AtomString lookUp(const UChar* characters, unsigned length) { return AtomStringImpl::lookUp(std::span { characters, length }); }
+    static AtomString lookUp(std::span<const UChar> characters) { return AtomStringImpl::lookUp(characters); }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     AtomString(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
@@ -87,12 +87,12 @@ public:
     bool contains(StringView) const;
     bool containsIgnoringASCIICase(StringView) const;
 
-    size_t find(UChar character, unsigned start = 0) const { return m_string.find(character, start); }
-    size_t find(ASCIILiteral literal, unsigned start = 0) const { return m_string.find(literal, start); }
-    size_t find(StringView, unsigned start = 0) const;
+    size_t find(UChar character, size_t start = 0) const { return m_string.find(character, start); }
+    size_t find(ASCIILiteral literal, size_t start = 0) const { return m_string.find(literal, start); }
+    size_t find(StringView, size_t start = 0) const;
     size_t findIgnoringASCIICase(StringView) const;
-    size_t findIgnoringASCIICase(StringView, unsigned start) const;
-    size_t find(CodeUnitMatchFunction matchFunction, unsigned start = 0) const { return m_string.find(matchFunction, start); }
+    size_t findIgnoringASCIICase(StringView, size_t start) const;
+    size_t find(CodeUnitMatchFunction matchFunction, size_t start = 0) const { return m_string.find(matchFunction, start); }
 
     bool startsWith(StringView) const;
     bool startsWithIgnoringASCIICase(StringView) const;
@@ -122,14 +122,14 @@ public:
 
 #if OS(WINDOWS)
     AtomString(const wchar_t* characters, unsigned length)
-        : AtomString(ucharFrom(characters), length) { }
+        : AtomString({ ucharFrom(characters), length }) { }
 
     AtomString(const wchar_t* characters)
         : AtomString(characters, characters ? wcslen(characters) : 0) { }
 #endif
 
     // AtomString::fromUTF8 will return a null string if the input data contains invalid UTF-8 sequences.
-    static AtomString fromUTF8(const char*, size_t);
+    static AtomString fromUTF8(std::span<const char>);
     static AtomString fromUTF8(const char*);
 
 #ifndef NDEBUG
@@ -142,7 +142,7 @@ private:
     enum class CaseConvertType { Upper, Lower };
     template<CaseConvertType> AtomString convertASCIICase() const;
 
-    WTF_EXPORT_PRIVATE static AtomString fromUTF8Internal(const char*, const char*);
+    WTF_EXPORT_PRIVATE static AtomString fromUTF8Internal(std::span<const char>);
 
     String m_string;
 };
@@ -151,7 +151,7 @@ static_assert(sizeof(AtomString) == sizeof(String), "AtomString and String must 
 
 inline bool operator==(const AtomString& a, const AtomString& b) { return a.impl() == b.impl(); }
 inline bool operator==(const AtomString& a, ASCIILiteral b) { return WTF::equal(a.impl(), b); }
-inline bool operator==(const AtomString& a, const Vector<UChar>& b) { return a.impl() && equal(a.impl(), b.data(), b.size()); }    
+inline bool operator==(const AtomString& a, const Vector<UChar>& b) { return a.impl() && equal(a.impl(), b.span()); }
 inline bool operator==(const AtomString& a, const String& b) { return equal(a.impl(), b.impl()); }
 inline bool operator==(const String& a, const AtomString& b) { return equal(a.impl(), b.impl()); }
 inline bool operator==(const Vector<UChar>& a, const AtomString& b) { return b == a; }
@@ -176,13 +176,13 @@ inline AtomString::AtomString(const char* string)
 {
 }
 
-inline AtomString::AtomString(const LChar* string, unsigned length)
-    : m_string(AtomStringImpl::add(std::span { string, length }))
+inline AtomString::AtomString(std::span<const LChar> string)
+    : m_string(AtomStringImpl::add(string))
 {
 }
 
-inline AtomString::AtomString(const UChar* string, unsigned length)
-    : m_string(AtomStringImpl::add(std::span { string, length }))
+inline AtomString::AtomString(std::span<const UChar> string)
+    : m_string(AtomStringImpl::add(string))
 {
 }
 
@@ -269,13 +269,13 @@ inline AtomString::AtomString(ASCIILiteral literal)
 {
 }
 
-inline AtomString AtomString::fromUTF8(const char* characters, size_t length)
+inline AtomString AtomString::fromUTF8(std::span<const char> characters)
 {
-    if (!characters)
+    if (!characters.data())
         return nullAtom();
-    if (!length)
+    if (characters.empty())
         return emptyAtom();
-    return fromUTF8Internal(characters, characters + length);
+    return fromUTF8Internal(characters);
 }
 
 inline AtomString AtomString::fromUTF8(const char* characters)
@@ -284,7 +284,7 @@ inline AtomString AtomString::fromUTF8(const char* characters)
         return nullAtom();
     if (!*characters)
         return emptyAtom();
-    return fromUTF8Internal(characters, nullptr);
+    return fromUTF8Internal(span(characters));
 }
 
 inline AtomString String::toExistingAtomString() const
@@ -343,7 +343,7 @@ ALWAYS_INLINE String WARN_UNUSED_RETURN makeStringByReplacingAll(const AtomStrin
 template<> struct IntegerToStringConversionTrait<AtomString> {
     using ReturnType = AtomString;
     using AdditionalArgumentType = void;
-    static AtomString flush(LChar* characters, unsigned length, void*) { return { characters, length }; }
+    static AtomString flush(std::span<const LChar> characters, void*) { return characters; }
 };
 
 } // namespace WTF

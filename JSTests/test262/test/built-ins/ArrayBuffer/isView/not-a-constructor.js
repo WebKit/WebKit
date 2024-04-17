@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(ArrayBuffer.isView), false, 'isConstructor(ArrayB
 
 assert.throws(TypeError, () => {
   new ArrayBuffer.isView();
-}, '`new ArrayBuffer.isView()` throws TypeError');
+});
 

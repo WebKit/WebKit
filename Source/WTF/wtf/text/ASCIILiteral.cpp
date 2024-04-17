@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>
+ * Copyright (C) 2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +28,13 @@
 #include <wtf/text/ASCIILiteral.h>
 
 #include <wtf/PrintStream.h>
+#include <wtf/text/StringView.h>
 
 namespace WTF {
 
 void ASCIILiteral::dump(PrintStream& out) const
 {
-    out.print(m_characters);
+    out.print(StringView(span8()));
 }
 
 } // namespace WTF

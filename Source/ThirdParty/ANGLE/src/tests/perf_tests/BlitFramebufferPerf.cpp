@@ -230,6 +230,14 @@ TEST_P(BlitFramebufferPerf, Run)
     run();
 }
 
+BlitFramebufferParams Vulkan(BufferType type, unsigned int samples)
+{
+    BlitFramebufferParams params;
+    params.eglParameters = angle::egl_platform::VULKAN();
+    params.type          = type;
+    params.samples       = samples;
+    return params;
+}
 BlitFramebufferParams D3D11(BufferType type, unsigned int samples)
 {
     BlitFramebufferParams params;
@@ -249,7 +257,15 @@ ANGLE_INSTANTIATE_TEST(BlitFramebufferPerf,
                        D3D11(BufferType::COLOR, 2),
                        D3D11(BufferType::DEPTH, 2),
                        D3D11(BufferType::STENCIL, 2),
-                       D3D11(BufferType::DEPTH_STENCIL, 2));
+                       D3D11(BufferType::DEPTH_STENCIL, 2),
+                       Vulkan(BufferType::COLOR, 0),
+                       Vulkan(BufferType::DEPTH, 0),
+                       Vulkan(BufferType::STENCIL, 0),
+                       Vulkan(BufferType::DEPTH_STENCIL, 0),
+                       Vulkan(BufferType::COLOR, 2),
+                       Vulkan(BufferType::DEPTH, 2),
+                       Vulkan(BufferType::STENCIL, 2),
+                       Vulkan(BufferType::DEPTH_STENCIL, 2));
 
 // This test suite is not instantiated on some OSes.
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BlitFramebufferPerf);

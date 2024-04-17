@@ -41,23 +41,23 @@ class XRInputSourcesChangeEvent final : public Event {
 public:
     struct Init : EventInit {
         RefPtr<WebXRSession> session;
-        Vector<RefPtr<WebXRInputSource>> added;
-        Vector<RefPtr<WebXRInputSource>> removed;
+        Vector<Ref<WebXRInputSource>> added;
+        Vector<Ref<WebXRInputSource>> removed;
     };
 
     static Ref<XRInputSourcesChangeEvent> create(const AtomString&, const Init&, IsTrusted = IsTrusted::No);
     virtual ~XRInputSourcesChangeEvent();
 
     const WebXRSession& session() const;
-    const Vector<RefPtr<WebXRInputSource>>& added() const;
-    const Vector<RefPtr<WebXRInputSource>>& removed() const;
+    const Vector<Ref<WebXRInputSource>>& added() const;
+    const Vector<Ref<WebXRInputSource>>& removed() const;
 
 private:
     XRInputSourcesChangeEvent(const AtomString&, const Init&, IsTrusted);
 
     Ref<WebXRSession> m_session;
-    Vector<RefPtr<WebXRInputSource>> m_added;
-    Vector<RefPtr<WebXRInputSource>> m_removed;
+    Vector<Ref<WebXRInputSource>> m_added;
+    Vector<Ref<WebXRInputSource>> m_removed;
 };
 
 } // namespace WebCore

@@ -18,11 +18,11 @@ includes: [propertyHelper.js]
     enumerable: false,
     configurable: false
   });
-  verifyEqualTo(arguments, "0", 20);
 
-  verifyNotWritable(arguments, "0");
-
-  verifyNotEnumerable(arguments, "0");
-
-  verifyNotConfigurable(arguments, "0");
+  verifyProperty(arguments, "0", {
+    value: 20,
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  });
 }(0, 1, 2));

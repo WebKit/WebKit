@@ -26,6 +26,7 @@
 #pragma once
 
 #include <unicode/utypes.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/DataRef.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -34,6 +35,7 @@ namespace WebCore {
 
 class AnimationList;
 class AutosizeStatus;
+class BasicShapePath;
 class BorderData;
 class BorderValue;
 class CSSCustomPropertyValue;
@@ -293,8 +295,9 @@ struct PseudoStyleCache {
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyle);
-class RenderStyle {
+class RenderStyle final : public CanMakeCheckedPtr<RenderStyle> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RenderStyle);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderStyle);
 private:
     enum CloneTag { Clone };
     enum CreateDefaultStyleTag { CreateDefaultStyle };
@@ -1606,9 +1609,7 @@ public:
     inline void setApplePayButtonType(ApplePayButtonType);
 #endif
 
-#if ENABLE(CSS_PAINTING_API)
     void addCustomPaintWatchProperty(const AtomString&);
-#endif
 
     // Support for paint-order, stroke-linecap, stroke-linejoin, and stroke-miterlimit from https://drafts.fxtf.org/paint/.
     inline void setPaintOrder(PaintOrder);
@@ -1683,6 +1684,10 @@ public:
     inline void setX(Length&&);
     inline const Length& y() const;
     inline void setY(Length&&);
+
+    inline void setD(RefPtr<BasicShapePath>&&);
+    inline BasicShapePath* d() const;
+    static BasicShapePath* initialD() { return nullptr; }
 
     inline float floodOpacity() const;
     inline void setFloodOpacity(float);

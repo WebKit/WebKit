@@ -37,6 +37,7 @@ class Document;
 class ImageLoader;
 class Page;
 class RenderImageResource;
+struct ImageCandidate;
 
 template<typename T, typename Counter> class EventSender;
 using ImageEventSender = EventSender<ImageLoader, SingleThreadWeakPtrImpl>;
@@ -64,6 +65,8 @@ public:
     Element& element() { return m_element.get(); }
     const Element& element() const { return m_element.get(); }
     Ref<Element> protectedElement() const { return m_element.get(); }
+
+    bool shouldIgnoreCandidateWhenLoadingFromArchive(const ImageCandidate&) const;
 
     bool imageComplete() const { return m_imageComplete; }
 

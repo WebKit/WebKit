@@ -168,11 +168,11 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
         if (is8Bit()) {
             LChar buffer[maxLengthForOnStackResolve];
             resolveRopeInternalNoSubstring(buffer, stackLimit);
-            atomString = AtomString(buffer, length());
+            atomString = std::span<const LChar> { buffer, length() };
         } else {
             UChar buffer[maxLengthForOnStackResolve];
             resolveRopeInternalNoSubstring(buffer, stackLimit);
-            atomString = AtomString(buffer, length());
+            atomString = std::span<const UChar> { buffer, length() };
         }
     } else
         atomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toAtomString();

@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Array.prototype.reduceRight.name, "reduceRight");
-
-verifyNotEnumerable(Array.prototype.reduceRight, "name");
-verifyNotWritable(Array.prototype.reduceRight, "name");
-verifyConfigurable(Array.prototype.reduceRight, "name");
+verifyProperty(Array.prototype.reduceRight, "name", {
+  value: "reduceRight",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<body>
+<div id="target"></div>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests dispatching a CustomEvent without adding a matching event listener. The event target should still be set.');
+
+window.event = new CustomEvent("event", {});
+target.dispatchEvent(event);
+shouldBe('event.target', 'target');
+
+</script>

@@ -30,7 +30,11 @@
 
 namespace WebCore {
 
-TextureMapperPlatformLayerProxy::TextureMapperPlatformLayerProxy() = default;
+TextureMapperPlatformLayerProxy::TextureMapperPlatformLayerProxy(ContentType contentType)
+    : m_contentType(contentType)
+{
+}
+
 TextureMapperPlatformLayerProxy::~TextureMapperPlatformLayerProxy() = default;
 
 bool TextureMapperPlatformLayerProxy::isActive()

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "JSDOMWrapper.h"
-#include "JSLocalDOMWindow.h"
 
 namespace WebCore {
 

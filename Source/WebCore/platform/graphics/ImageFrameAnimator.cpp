@@ -96,7 +96,8 @@ bool ImageFrameAnimator::imageFrameDecodeAtIndexHasFinished(unsigned index, Imag
     if (index != nextFrameIndex())
         return false;
 
-    ASSERT(hasEverAnimated());
+    if (!hasEverAnimated())
+        return false;
 
     // Don't advance to nextFrame if the timer has not fired yet.
     if (isAnimating())

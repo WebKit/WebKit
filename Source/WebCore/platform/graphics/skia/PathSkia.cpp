@@ -32,8 +32,11 @@
 #include "PathStream.h"
 #include <skia/core/SkPathUtils.h>
 #include <skia/core/SkRRect.h>
-#include <skia/core/SkSurface.h>
 #include <wtf/NeverDestroyed.h>
+
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkSurface.h>
+IGNORE_CLANG_WARNINGS_END
 
 namespace WebCore {
 

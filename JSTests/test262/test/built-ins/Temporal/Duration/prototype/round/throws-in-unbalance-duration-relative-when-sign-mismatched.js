@@ -15,9 +15,11 @@ var duration = Temporal.Duration.from({
 });
 
 var cal = new class extends Temporal.Calendar {
+  called = 0;
   dateUntil(one, two, options) {
+    ++this.called;
     var result = super.dateUntil(one, two, options);
-    return result.negated();
+    return this.called === 1 ? result.negated() : result;
   }
 }("iso8601");
 

@@ -34,9 +34,9 @@
 namespace WebKit {
 namespace NetworkCache {
 
-Data::Data(const uint8_t* data, size_t size)
-    : m_dispatchData(adoptOSObject(dispatch_data_create(data, size, nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT)))
-    , m_size(size)
+Data::Data(std::span<const uint8_t> data)
+    : m_dispatchData(adoptOSObject(dispatch_data_create(data.data(), data.size(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT)))
+    , m_size(data.size())
 {
 }
 

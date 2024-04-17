@@ -80,7 +80,6 @@
 		A10826FA1F576292004772AC /* WebPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10826F81F576292004772AC /* WebPanel.mm */; };
 		A1175B4F1F6B337300C4B9F0 /* PopupMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1175B4D1F6B337300C4B9F0 /* PopupMenu.mm */; };
 		A1175B581F6B470500C4B9F0 /* DefaultSearchProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1175B561F6B470500C4B9F0 /* DefaultSearchProvider.cpp */; };
-		A1D4D22D2B7E04CA0008C40E /* LinearMediaKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D4D22C2B7E04CA0008C40E /* LinearMediaKitSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1F63CA021A4DBF7006FB43B /* PassKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1F63C9E21A4DBF7006FB43B /* PassKitSoftLink.mm */; };
 		A30D41221F0DD0EA00B71954 /* KillRing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30D411F1F0DD0EA00B71954 /* KillRing.cpp */; };
 		A30D41251F0DD12D00B71954 /* KillRingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A30D41241F0DD12D00B71954 /* KillRingMac.mm */; };
@@ -387,6 +386,13 @@
 			remoteGlobalIDString = 1C4FAE8F28FC83DC00FFE212;
 			remoteInfo = libavif;
 		};
+		44EC6BC72BB9CE7100513744 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 44F97F252B2C19420018D785;
+			remoteInfo = avif_decode_fuzzer;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -636,7 +642,6 @@
 		A1175B561F6B470500C4B9F0 /* DefaultSearchProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultSearchProvider.cpp; sourceTree = "<group>"; };
 		A1175B591F6B4A8400C4B9F0 /* NSScrollViewSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSScrollViewSPI.h; sourceTree = "<group>"; };
 		A169B040248EF03900EE8B7B /* PassKitInstallmentsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PassKitInstallmentsSPI.h; sourceTree = "<group>"; };
-		A1D4D22C2B7E04CA0008C40E /* LinearMediaKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinearMediaKitSPI.h; sourceTree = "<group>"; };
 		A1F63C9D21A4DBF7006FB43B /* PassKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PassKitSoftLink.h; sourceTree = "<group>"; };
 		A1F63C9E21A4DBF7006FB43B /* PassKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PassKitSoftLink.mm; sourceTree = "<group>"; };
 		A30D411E1F0DD0EA00B71954 /* KillRing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KillRing.h; sourceTree = "<group>"; };
@@ -752,7 +757,6 @@
 				0C2DA1201F3BE9E700DBC317 /* cocoa */,
 				0C5AF90D1F43A4A4002EAC02 /* ios */,
 				0C77856E1F4512E900F4EBB6 /* mac */,
-				A1D4D2272B7E04AA0008C40E /* vision */,
 			);
 			path = spi;
 			sourceTree = "<group>";
@@ -1041,6 +1045,7 @@
 			isa = PBXGroup;
 			children = (
 				1C2D0DF8296A44CC00BE33A3 /* libavif.a */,
+				44EC6BC82BB9CE7100513744 /* avif_decode_fuzzer */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1193,14 +1198,6 @@
 				A1038D4D2AB21FBB00F57BA4 /* WebAVContentKeyReportGroupExtras.h */,
 			);
 			path = cocoa;
-			sourceTree = "<group>";
-		};
-		A1D4D2272B7E04AA0008C40E /* vision */ = {
-			isa = PBXGroup;
-			children = (
-				A1D4D22C2B7E04CA0008C40E /* LinearMediaKitSPI.h */,
-			);
-			path = vision;
 			sourceTree = "<group>";
 		};
 		A30D411D1F0DD0AC00B71954 /* text */ = {
@@ -1391,7 +1388,6 @@
 				DD20DDE927BC90D70093D175 /* IOPSLibSPI.h in Headers */,
 				DD20DE4F27BC90D80093D175 /* KillRing.h in Headers */,
 				DD20DDED27BC90D70093D175 /* LaunchServicesSPI.h in Headers */,
-				A1D4D22D2B7E04CA0008C40E /* LinearMediaKitSPI.h in Headers */,
 				F47471EE2ACA17AF00E0D4AB /* LinkPresentationSoftLink.h in Headers */,
 				F410F1552ACA2EBA00A79859 /* LinkPresentationSPI.h in Headers */,
 				7A46A8112A3265C8007BDD04 /* LockdownModeSoftLink.h in Headers */,
@@ -1612,6 +1608,13 @@
 			fileType = archive.ar;
 			path = libavif.a;
 			remoteRef = 1C2D0DF7296A44CC00BE33A3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		44EC6BC82BB9CE7100513744 /* avif_decode_fuzzer */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = avif_decode_fuzzer;
+			remoteRef = 44EC6BC72BB9CE7100513744 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

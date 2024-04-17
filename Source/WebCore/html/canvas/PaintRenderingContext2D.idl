@@ -26,7 +26,6 @@
 [
     CustomIsReachable,
     EnabledBySetting=CSSPaintingAPIEnabled,
-    Conditional=CSS_PAINTING_API,
     JSGenerateToJSObject,
     JSCustomMarkFunction,
     Exposed=PaintWorklet,

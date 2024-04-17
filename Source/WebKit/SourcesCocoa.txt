@@ -173,6 +173,7 @@ Shared/Cocoa/SandboxInitialiationParametersCocoa.mm
 Shared/Cocoa/SandboxUtilities.mm
 Shared/Cocoa/SharedCARingBuffer.cpp
 Shared/Cocoa/TCCSoftLink.mm @no-unify
+Shared/Cocoa/UnifiedTextReplacementSoftLink.mm
 Shared/Cocoa/WebCoreArgumentCodersCocoa.mm
 Shared/Cocoa/WebErrorsCocoa.mm
 Shared/Cocoa/WebKit2InitializeCocoa.mm
@@ -562,6 +563,7 @@ UIProcess/mac/WKQuickLookPreviewController.mm
 UIProcess/mac/WKRevealItemPresenter.mm
 UIProcess/mac/WKSharingServicePickerDelegate.mm
 UIProcess/mac/WKTextFinderClient.mm
+UIProcess/mac/WKTextIndicatorStyleManager.mm
 UIProcess/mac/WKTextInputWindowController.mm
 UIProcess/mac/WKViewLayoutStrategy.mm
 UIProcess/mac/WebViewImpl.mm

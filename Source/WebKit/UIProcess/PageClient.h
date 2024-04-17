@@ -245,6 +245,9 @@ public:
     // Return whether the view is visible.
     virtual bool isViewVisible() = 0;
 
+    // Called when the activity state of the page transitions from non-visible to visible.
+    virtual void viewIsBecomingVisible() { }
+
 #if PLATFORM(COCOA)
     virtual bool canTakeForegroundAssertions() = 0;
 #endif
@@ -681,6 +684,9 @@ public:
 #if ENABLE(APP_HIGHLIGHTS)
     virtual void storeAppHighlight(const WebCore::AppHighlight&) = 0;
 #endif
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    virtual void removeTextIndicatorStyleForID(const WTF::UUID&) = 0;
+#endif
     virtual void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) { }
 
 #if PLATFORM(COCOA)
@@ -729,6 +735,10 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     virtual UIViewController *presentingViewController() const = 0;
+#endif
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    virtual const String& spatialTrackingLabel() const = 0;
 #endif
 };
 

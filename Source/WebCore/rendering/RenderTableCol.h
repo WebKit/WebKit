@@ -34,9 +34,11 @@ class RenderTableCell;
 
 class RenderTableCol final : public RenderBox {
     WTF_MAKE_ISO_ALLOCATED(RenderTableCol);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableCol);
 public:
     RenderTableCol(Element&, RenderStyle&&);
     RenderTableCol(Document&, RenderStyle&&);
+    virtual ~RenderTableCol();
 
     void clearPreferredLogicalWidthsDirtyBits();
 
@@ -69,8 +71,8 @@ private:
     ASCIILiteral renderName() const override { return "RenderTableCol"_s; }
     void computePreferredLogicalWidths() override { ASSERT_NOT_REACHED(); }
 
-    void insertedIntoTree(IsInternalMove) override;
-    void willBeRemovedFromTree(IsInternalMove) override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     bool canHaveChildren() const override;

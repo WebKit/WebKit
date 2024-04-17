@@ -5,35 +5,37 @@
 
   <metamodule id="webkitgtk-minimal-dependencies">
     <dependencies>
-      <dep package="wpebackend-fdo"/>
-      <dep package="icu"/>
-      <dep package="manette"/>
-      <dep package="libjxl"/>
-      <dep package="libvpx"/>
-      <dep package="glib"/>
-      <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
+      <dep package="glib"/>
+      <dep package="glib-networking"/>
+      <dep package="icu"/>
+      <dep package="libdrm"/>
+      <dep package="libjxl"/>
       <dep package="libsoup"/>
+      <dep package="libvpx"/>
+      <dep package="manette"/>
       <dep package="wayland"/>
       <dep package="wayland-protocols"/>
+      <dep package="wpebackend-fdo"/>
     </dependencies>
   </metamodule>
 
   <metamodule id="webkitwpe-minimal-dependencies">
     <dependencies>
-      <dep package="wpebackend-fdo"/>
-      <dep package="icu"/>
-      <dep package="openxr"/>
-      <dep package="libjxl"/>
-      <dep package="libvpx"/>
-      <dep package="glib"/>
-      <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
+      <dep package="glib"/>
+      <dep package="glib-networking"/>
+      <dep package="icu"/>
+      <dep package="libdrm"/>
+      <dep package="libjxl"/>
       <dep package="libsoup"/>
+      <dep package="libvpx"/>
+      <dep package="openxr"/>
       <dep package="wayland"/>
       <dep package="wayland-protocols"/>
+      <dep package="wpebackend-fdo"/>
     </dependencies>
   </metamodule>
 
@@ -112,6 +114,16 @@
       <patch file="icudata-stdlibs.patch" strip="1"/>
     </branch>
   </autotools>
+
+  <!-- libdrm required for function 'drmGetFormatName' (defined since 'libdrm-2.4.113') -->
+  <meson id="libdrm" mesonargs="-Dtegra=enabled -Dcairo-tests=disabled -Dman-pages=disabled -Dvalgrind=disabled -Dudev=false -Dtests=false">
+    <pkg-config>libdrm.pc</pkg-config>
+    <branch module="mesa/drm.git"
+            version="2.4.113"
+            tag="libdrm-2.4.113"
+            checkoutdir="libdrm-2.4.113"
+            repo="git.freedesktop.org" />
+  </meson>
 
   <meson id="libsoup" mesonargs="-Dgssapi=disabled -Dvapi=disabled -Dntlm=disabled -Dsysprof=disabled -Dautobahn=disabled -Dpkcs11_tests=disabled">
     <pkg-config>libsoup-3.0.pc</pkg-config>

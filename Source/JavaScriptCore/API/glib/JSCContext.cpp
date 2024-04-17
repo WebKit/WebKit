@@ -873,7 +873,7 @@ JSCValue* jsc_context_evaluate_with_source_uri(JSCContext* context, const char* 
     g_return_val_if_fail(code, nullptr);
 
     JSValueRef exception = nullptr;
-    JSValueRef result = evaluateScriptInContext(context->priv->jsContext.get(), String::fromUTF8(code, length < 0 ? strlen(code) : length), uri, lineNumber, &exception);
+    JSValueRef result = evaluateScriptInContext(context->priv->jsContext.get(), String::fromUTF8(std::span(code, length < 0 ? strlen(code) : length)), uri, lineNumber, &exception);
     if (jscContextHandleExceptionIfNeeded(context, exception))
         return jsc_value_new_undefined(context);
 
@@ -913,7 +913,7 @@ JSCValue* jsc_context_evaluate_in_object(JSCContext* context, const char* code, 
     JSC::JSLockHolder locker(globalObject);
     globalObject->setGlobalScopeExtension(JSC::JSWithScope::create(vm, globalObject, globalObject->globalScope(), toJS(JSContextGetGlobalObject(context->priv->jsContext.get()))));
     JSValueRef exception = nullptr;
-    JSValueRef result = evaluateScriptInContext(objectContext.get(), String::fromUTF8(code, length < 0 ? strlen(code) : length), uri, lineNumber, &exception);
+    JSValueRef result = evaluateScriptInContext(objectContext.get(), String::fromUTF8(std::span(code, length < 0 ? strlen(code) : length)), uri, lineNumber, &exception);
     if (jscContextHandleExceptionIfNeeded(context, exception))
         return jsc_value_new_undefined(context);
 
@@ -973,7 +973,7 @@ JSCCheckSyntaxResult jsc_context_check_syntax(JSCContext* context, const char* c
     JSC::JSLockHolder locker(vm);
 
     URL sourceURL = uri ? URL(String::fromLatin1(uri)) : URL();
-    JSC::SourceCode source = JSC::makeSource(String::fromUTF8(code, length < 0 ? strlen(code) : length), JSC::SourceOrigin { sourceURL }, JSC::SourceTaintedOrigin::Untainted,
+    JSC::SourceCode source = JSC::makeSource(String::fromUTF8(std::span(code, length < 0 ? strlen(code) : length)), JSC::SourceOrigin { sourceURL }, JSC::SourceTaintedOrigin::Untainted,
         sourceURL.string() , TextPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber()));
     bool success = false;
     JSC::ParserError error;

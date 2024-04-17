@@ -514,11 +514,7 @@ class TIntermBinary : public TIntermOperator
 
     bool hasSideEffects() const override
     {
-        // Clip/cull distance built-ins indexed by constant integral
-        // expressions may implicitly affect the array sizes.
-        return isAssignment() || mLeft->hasSideEffects() || mRight->hasSideEffects() ||
-               (mOp == EOpIndexDirect && (mLeft->getQualifier() == EvqClipDistance ||
-                                          mLeft->getQualifier() == EvqCullDistance));
+        return isAssignment() || mLeft->hasSideEffects() || mRight->hasSideEffects();
     }
 
     TIntermTyped *getLeft() const { return mLeft; }

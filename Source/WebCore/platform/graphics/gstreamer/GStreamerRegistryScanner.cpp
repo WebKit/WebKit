@@ -1009,8 +1009,11 @@ static inline Vector<RTCRtpCapabilities::HeaderExtensionCapability> probeRtpExte
 
 void GStreamerRegistryScanner::fillAudioRtpCapabilities(Configuration configuration, RTCRtpCapabilities& capabilities)
 {
-    if (!m_audioRtpExtensions)
-        m_audioRtpExtensions = probeRtpExtensions(m_allAudioRtpExtensions);
+    if (!m_audioRtpExtensions) {
+        auto extensions = m_commonRtpExtensions;
+        extensions.appendVector(m_allAudioRtpExtensions);
+        m_audioRtpExtensions = probeRtpExtensions(extensions);
+    }
     if (m_audioRtpExtensions)
         capabilities.headerExtensions = copyToVector(*m_audioRtpExtensions);
 
@@ -1037,8 +1040,11 @@ void GStreamerRegistryScanner::fillAudioRtpCapabilities(Configuration configurat
 
 void GStreamerRegistryScanner::fillVideoRtpCapabilities(Configuration configuration, RTCRtpCapabilities& capabilities)
 {
-    if (!m_videoRtpExtensions)
-        m_videoRtpExtensions = probeRtpExtensions(m_allVideoRtpExtensions);
+    if (!m_videoRtpExtensions) {
+        auto extensions = m_commonRtpExtensions;
+        extensions.appendVector(m_allVideoRtpExtensions);
+        m_videoRtpExtensions = probeRtpExtensions(extensions);
+    }
     if (m_videoRtpExtensions)
         capabilities.headerExtensions = copyToVector(*m_videoRtpExtensions);
 

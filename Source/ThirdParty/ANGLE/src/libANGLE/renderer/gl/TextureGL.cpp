@@ -1761,6 +1761,7 @@ angle::Result TextureGL::syncState(const gl::Context *context,
                 break;
             case gl::Texture::DIRTY_BIT_BOUND_AS_IMAGE:
             case gl::Texture::DIRTY_BIT_BOUND_AS_ATTACHMENT:
+            case gl::Texture::DIRTY_BIT_BOUND_TO_MSRTT_FRAMEBUFFER:
                 // Only used for Vulkan.
                 break;
 

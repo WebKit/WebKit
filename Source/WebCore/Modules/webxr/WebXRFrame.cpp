@@ -281,7 +281,7 @@ ExceptionOr<RefPtr<WebXRJointPose>> WebXRFrame::getJointPose(const Document& doc
 }
 
 // https://immersive-web.github.io/webxr-hand-input/#dom-xrframe-filljointradii
-ExceptionOr<bool> WebXRFrame::fillJointRadii(const Vector<RefPtr<WebXRJointSpace>>& jointSpaces, Float32Array& radii)
+ExceptionOr<bool> WebXRFrame::fillJointRadii(const Vector<Ref<WebXRJointSpace>>& jointSpaces, Float32Array& radii)
 {
     // If frame’s active boolean is false, throw an InvalidStateError and abort these steps.
     if (!m_active)
@@ -290,7 +290,7 @@ ExceptionOr<bool> WebXRFrame::fillJointRadii(const Vector<RefPtr<WebXRJointSpace
     // For each joint in the jointSpaces:
     // If joint’s session is different from session, throw an InvalidStateError and abort these steps.
     for (const auto& jointSpace : jointSpaces) {
-        if (!jointSpace || jointSpace->session() != m_session.ptr())
+        if (jointSpace->session() != m_session.ptr())
             return Exception { ExceptionCode::InvalidStateError, "Joint space's session does not match frame's session"_s };
     }
 
@@ -321,7 +321,7 @@ ExceptionOr<bool> WebXRFrame::fillJointRadii(const Vector<RefPtr<WebXRJointSpace
 }
 
 // https://immersive-web.github.io/webxr-hand-input/#dom-xrframe-fillposes
-ExceptionOr<bool> WebXRFrame::fillPoses(const Document& document, const Vector<RefPtr<WebXRSpace>>& spaces, const WebXRSpace& baseSpace, Float32Array& transforms)
+ExceptionOr<bool> WebXRFrame::fillPoses(const Document& document, const Vector<Ref<WebXRSpace>>& spaces, const WebXRSpace& baseSpace, Float32Array& transforms)
 {
     // If frame’s active boolean is false, throw an InvalidStateError and abort these steps.
     if (!m_active)
@@ -330,7 +330,7 @@ ExceptionOr<bool> WebXRFrame::fillPoses(const Document& document, const Vector<R
     // For each space in the spaces sequence:
     // If space’s session is different from session, throw an InvalidStateError and abort these steps.
     for (const auto& space : spaces) {
-        if (!space || space->session() != m_session.ptr())
+        if (space->session() != m_session.ptr())
             return Exception { ExceptionCode::InvalidStateError, "Space's session does not match frame's session"_s };
     }
 
@@ -354,7 +354,7 @@ ExceptionOr<bool> WebXRFrame::fillPoses(const Document& document, const Vector<R
     // For each space in the spaces sequence:
     for (size_t spaceIndex = 0; spaceIndex < spaces.size(); ++spaceIndex) {
         // 1. Populate the pose of space in baseSpace at the time represented by frame into pose.
-        auto populatePoseResult = populatePose(document, *(spaces[spaceIndex]), baseSpace);
+        auto populatePoseResult = populatePose(document, spaces[spaceIndex], baseSpace);
         if (populatePoseResult.hasException())
             return populatePoseResult.releaseException();
 

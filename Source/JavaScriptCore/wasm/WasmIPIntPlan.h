@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmCallee.h"
 #include "WasmEntryPlan.h"
 #include "WasmIPIntGenerator.h"
 #include "WasmLLIntPlan.h"

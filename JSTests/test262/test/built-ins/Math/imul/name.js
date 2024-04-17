@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.imul.name, "imul");
-
-verifyNotEnumerable(Math.imul, "name");
-verifyNotWritable(Math.imul, "name");
-verifyConfigurable(Math.imul, "name");
+verifyProperty(Math.imul, "name", {
+  value: "imul",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

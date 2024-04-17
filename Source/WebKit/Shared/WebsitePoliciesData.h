@@ -38,6 +38,7 @@
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 
 namespace IPC {
@@ -58,6 +59,7 @@ public:
 
     HashMap<String, Vector<String>> activeContentRuleListActionPatterns;
     Vector<WebCore::CustomHeaderFields> customHeaderFields;
+    HashSet<String> visibilityAdjustmentSelectors;
     String customUserAgent;
     String customUserAgentAsSiteSpecificQuirks;
     String customNavigatorPlatform;

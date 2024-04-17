@@ -68,6 +68,7 @@
 7566 SWIFTSHADER : KHR-GL46.texture_cube_map_array.* = SKIP
 7566 SWIFTSHADER : KHR-GL46.texture_filter_anisotropic.drawing = SKIP
 7566 SWIFTSHADER : KHR-GL46.texture_gather.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.texture_lod_basic.lod_selection = SKIP
 7566 SWIFTSHADER : KHR-GL46.texture_size_promotion.functional = SKIP
 7566 SWIFTSHADER : KHR-GL46.texture_swizzle.* = SKIP
 7566 SWIFTSHADER : KHR-GL46.transform_feedback_overflow_query_ARB.* = SKIP
@@ -76,3 +77,9 @@
 7566 SWIFTSHADER : KHR-GL46.viewport_array.* = SKIP
 
 7566 SWIFTSHADER UBSAN : KHR-GL46.shader_bitfield_operation.bitfieldInsert.int_3 = SKIP
+
+// The newly added cases are failing
+8636 LINUX : KHR-GL46.framebuffer_blit.framebuffer_blit_functionality_multisampled_to_singlesampled_blit = FAIL
+8636 WIN : KHR-GL46.framebuffer_blit.framebuffer_blit_functionality_multisampled_to_singlesampled_blit = FAIL
+b/332383430 LINUX : KHR-GL46.texture_lod_bias.texture_lod_bias_all = FAIL
+b/332383430 WIN : KHR-GL46.texture_lod_bias.texture_lod_bias_all = FAIL

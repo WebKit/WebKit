@@ -27,6 +27,7 @@
 #pragma once
 
 #include <WebCore/ChromeClient.h>
+#include <WebCore/HTMLVideoElement.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
@@ -320,6 +321,8 @@ private:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode) final;
+    void setVideoFullscreenMode(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void clearVideoFullscreenMode(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -495,6 +498,8 @@ private:
     bool isInStableState() const final;
 
     WebCore::FloatSize screenSizeForFingerprintingProtections(const WebCore::LocalFrame&, WebCore::FloatSize defaultSize) const final;
+
+    void didAdjustVisibilityWithSelectors(Vector<String>&&) final;
 
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };

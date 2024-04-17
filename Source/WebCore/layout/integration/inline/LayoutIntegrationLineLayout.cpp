@@ -229,13 +229,21 @@ void LineLayout::updateInlineContentDimensions()
     m_boxGeometryUpdater.setGeometriesForLayout();
 }
 
-void LineLayout::updateStyle(const RenderBoxModelObject& renderer, const RenderStyle& oldStyle)
+void LineLayout::updateStyle(const RenderObject& renderer)
 {
-    if (m_inlineContent) {
-        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() };
-        invalidation.styleChanged(m_boxTree.layoutBoxForRenderer(renderer), oldStyle);
+    BoxTree::updateStyle(renderer);
+}
+
+bool LineLayout::styleWillChange(const RenderElement& renderer, const RenderStyle& newStyle)
+{
+    if (!renderer.layoutBox()) {
+        ASSERT_NOT_REACHED();
+        return false;
     }
-    m_boxTree.updateStyle(renderer);
+    if (!m_inlineContent)
+        return false;
+
+    return Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() }.styleWillChange(*renderer.layoutBox(), newStyle);
 }
 
 void LineLayout::updateOverflow()
@@ -741,6 +749,8 @@ LayoutUnit LineLayout::lastLineLogicalBaseline() const
 
 Vector<LineAdjustment> LineLayout::adjustContentForPagination(const Layout::BlockLayoutState& blockLayoutState, bool isPartialLayout)
 {
+    ASSERT(!m_lineDamage);
+
     if (!m_inlineContent)
         return { };
 
@@ -755,7 +765,9 @@ Vector<LineAdjustment> LineLayout::adjustContentForPagination(const Layout::Bloc
 
     if (layoutRestartLineIndex) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() };
-        invalidation.restartForPagination(*layoutRestartLineIndex, adjustments[*layoutRestartLineIndex].offset);
+        auto canRestart = invalidation.restartForPagination(*layoutRestartLineIndex, adjustments[*layoutRestartLineIndex].offset);
+        if (!canRestart)
+            m_lineDamage = { };
     }
 
     return adjustments;
@@ -916,6 +928,11 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderInline& renderIn
 const RenderObject& LineLayout::rendererForLayoutBox(const Layout::Box& layoutBox) const
 {
     return m_boxTree.rendererForLayoutBox(layoutBox);
+}
+
+bool LineLayout::hasRendererForLayoutBox(const Layout::Box& layoutBox) const
+{
+    return m_boxTree.hasRendererForLayoutBox(layoutBox);
 }
 
 const Layout::ElementBox& LineLayout::rootLayoutBox() const

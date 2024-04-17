@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(EGL) && USE(GBM)
+#if USE(GBM)
 #include "PlatformDisplay.h"
 
 namespace WebCore {
@@ -43,4 +43,4 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(EGL) && USE(GBM)
+#endif // USE(GBM)

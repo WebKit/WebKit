@@ -54,6 +54,7 @@ public:
 
 class RenderTableSection final : public RenderBox {
     WTF_MAKE_ISO_ALLOCATED(RenderTableSection);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableSection);
 public:
     RenderTableSection(Element&, RenderStyle&&);
     RenderTableSection(Document&, RenderStyle&&);
@@ -165,7 +166,7 @@ private:
 
     bool canHaveChildren() const override { return true; }
 
-    void willBeRemovedFromTree(IsInternalMove) override;
+    void willBeRemovedFromTree() override;
 
     void layout() override;
 

@@ -28,7 +28,6 @@
 #include "DestinationColorSpace.h"
 #include "FloatRect.h"
 #include "PlatformScreen.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -54,7 +53,7 @@ struct ScreenData {
 #endif
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     IntSize screenSize; // In millimeters.
-    double dpi;
+    double dpi; // Already corrected for device scaling.
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)

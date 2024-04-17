@@ -11,8 +11,8 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/TextureVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
@@ -127,8 +127,8 @@ angle::Result SemaphoreVk::signal(gl::Context *context,
                                   const gl::BufferBarrierVector &bufferBarriers,
                                   const gl::TextureBarrierVector &textureBarriers)
 {
-    ContextVk *contextVk = vk::GetImpl(context);
-    RendererVk *renderer = contextVk->getRenderer();
+    ContextVk *contextVk   = vk::GetImpl(context);
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     uint32_t rendererQueueFamilyIndex = renderer->getQueueFamilyIndex();
 
@@ -210,7 +210,7 @@ angle::Result SemaphoreVk::signal(gl::Context *context,
 
 angle::Result SemaphoreVk::importOpaqueFd(ContextVk *contextVk, GLint fd)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     if (!mSemaphore.valid())
     {
@@ -233,7 +233,7 @@ angle::Result SemaphoreVk::importOpaqueFd(ContextVk *contextVk, GLint fd)
 
 angle::Result SemaphoreVk::importZirconEvent(ContextVk *contextVk, GLuint handle)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     if (!mSemaphore.valid())
     {

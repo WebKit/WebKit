@@ -151,6 +151,10 @@ bool SVGPathBlender::blendMoveToSegment(float progress)
     m_consumer->moveTo(blendAnimatedFloatPoint(from.targetPoint, to.targetPoint, progress), false, m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
     m_fromCurrentPoint = m_fromMode == AbsoluteCoordinates ? from.targetPoint : m_fromCurrentPoint + from.targetPoint;
     m_toCurrentPoint = m_toMode == AbsoluteCoordinates ? to.targetPoint : m_toCurrentPoint + to.targetPoint;
+
+    m_fromSubpathPoint = m_fromCurrentPoint;
+    m_toSubpathPoint = m_toCurrentPoint;
+
     return true;
 }
 
@@ -486,6 +490,8 @@ bool SVGPathBlender::blendAnimatedPath(float progress)
             break;
         case SVGPathSegType::ClosePath:
             m_consumer->closePath();
+            m_fromCurrentPoint = m_fromSubpathPoint;
+            m_toCurrentPoint = m_toSubpathPoint;
             break;
         case SVGPathSegType::CurveToCubicRel:
         case SVGPathSegType::CurveToCubicAbs:

@@ -14,11 +14,9 @@ includes: [propertyHelper.js]
 
 var descriptor = Object.getOwnPropertyDescriptor(RegExp.prototype, 'multiline');
 
-assert.sameValue(
-  descriptor.get.name,
-  'get multiline'
-);
-
-verifyNotEnumerable(descriptor.get, 'name');
-verifyNotWritable(descriptor.get, 'name');
-verifyConfigurable(descriptor.get, 'name');
+verifyProperty(descriptor.get, "name", {
+  value: "get multiline",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

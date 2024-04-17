@@ -873,7 +873,7 @@ bool RemoteMediaPlayerProxy::doesHaveAttribute(const AtomString&, AtomString*) c
     return false;
 }
 
-#if ENABLE(AVF_CAPTIONS)
+#if PLATFORM(COCOA)
 Vector<RefPtr<PlatformTextTrack>> RemoteMediaPlayerProxy::outOfBandTrackSources()
 {
     return WTF::map(m_configuration.outOfBandTrackData, [](auto& data) -> RefPtr<PlatformTextTrack> {
@@ -1084,9 +1084,7 @@ void RemoteMediaPlayerProxy::applicationDidBecomeActive()
 
 void RemoteMediaPlayerProxy::notifyTrackModeChanged()
 {
-#if ENABLE(AVF_CAPTIONS)
     m_player->notifyTrackModeChanged();
-#endif
 }
 
 void RemoteMediaPlayerProxy::tracksChanged()
@@ -1231,10 +1229,17 @@ void RemoteMediaPlayerProxy::setShouldCheckHardwareSupport(bool value)
     m_shouldCheckHardwareSupport = value;
 }
 
-void RemoteMediaPlayerProxy::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void RemoteMediaPlayerProxy::setDefaultSpatialTrackingLabel(const String& defaultSpatialTrackingLabel)
 {
-    m_player->setSpatialTrackingLabel(WTFMove(spatialTrackingLabel));
+    m_player->setDefaultSpatialTrackingLabel(defaultSpatialTrackingLabel);
 }
+
+void RemoteMediaPlayerProxy::setSpatialTrackingLabel(const String& spatialTrackingLabel)
+{
+    m_player->setSpatialTrackingLabel(spatialTrackingLabel);
+}
+#endif
 
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& RemoteMediaPlayerProxy::logChannel() const

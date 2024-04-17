@@ -132,6 +132,9 @@ config("clspv_common_config") {
     "$root_gen_dir",
     "$target_gen_dir/../",
   ]
+  if (current_os != "win") {
+    cflags = [ "-Wno-deprecated-declarations" ]
+  }
 }
 
 source_set("clspv_passes") {

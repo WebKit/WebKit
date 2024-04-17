@@ -80,7 +80,7 @@ private:
     bool isWebPaymentCoordinator() const override { return true; }
 
     void getSetupFeatures(const WebCore::ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<WebCore::ApplePaySetupFeature>>&&)>&&) final;
-    void beginApplePaySetup(const WebCore::ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<WebCore::ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&) final;
+    void beginApplePaySetup(const WebCore::ApplePaySetupConfiguration&, const URL&, Vector<Ref<WebCore::ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&) final;
     void endApplePaySetup() final;
 
     // IPC::MessageReceiver.

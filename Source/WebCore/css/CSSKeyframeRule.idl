@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/css-animations/#csskeyframerule
+
 // Introduced in DOM Level ?:
 [
     Exposed=Window
 ] interface CSSKeyframeRule : CSSRule {
-
     attribute DOMString keyText;
+    // FIXME: Add [SameObject] below after https://webkit.org/b/163414
     [PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 
 };

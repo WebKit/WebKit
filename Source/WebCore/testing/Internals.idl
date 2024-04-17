@@ -1177,7 +1177,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [CallWith=CurrentDocument] undefined queueTaskToQueueMicrotask(DOMString source, VoidCallback callback);
     boolean hasSameEventLoopAs(WindowProxy windowProxy);
 
-    DOMString windowLocationHost(LocalDOMWindow window);
+    DOMString windowLocationHost(DOMWindow window);
 
     undefined markContextAsInsecure();
 
@@ -1345,4 +1345,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     sequence<PDFAnnotationRect> pdfAnnotationRectsForTesting(Element element);
     undefined registerPDFTest(VoidCallback callback, Element element);
+
+    readonly attribute DOMString defaultSpatialTrackingLabel;
 };

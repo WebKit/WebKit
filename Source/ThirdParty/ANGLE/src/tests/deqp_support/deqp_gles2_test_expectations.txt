@@ -53,6 +53,9 @@
 // The fragment_ops.depth_stencil.random tests all seem to fail on D3D11.
 3282 D3D11 : dEQP-GLES2.functional.fragment_ops.depth_stencil.random.* = FAIL
 
+// fragment_ops.depth_stencil.stencil_ops.* fail for D3D11.
+8617 D3D11 : dEQP-GLES2.functional.fragment_ops.depth_stencil.stencil_ops.* = FAIL
+
 // Failures related to the depth_range on Windows / NVIDIA and ATI.
 2426 D3D11 : dEQP-GLES2.functional.depth_range.write.reverse = FAIL
 2426 D3D11 : dEQP-GLES2.functional.depth_range.write.half_to_zero = FAIL
@@ -100,6 +103,9 @@
 // Several mipmap sub tests fail on AMD. Mark them all as failing conservatively.
 3296 D3D11 AMD : dEQP-GLES2.functional.texture.mipmap.* = FAIL
 
+// Failures on D3D11 related to attribute_location.bind_aliasing.max_cond.
+8607 D3D11 : dEQP-GLES2.functional.attribute_location.bind_aliasing.max_cond* = FAIL
+
 // Failures on the D3D11 bots that do not reproduce locally
 // TODO(jmadill): Figure out why these fail on the bots, but not locally.
 1108 D3D11 : dEQP-GLES2.functional.shaders.struct.local.dynamic_loop_struct_array_fragment = FAIL
@@ -133,6 +139,7 @@
 1143 MAC OPENGL : dEQP-GLES2.functional.shaders.random.trigonometric.vertex.65 = FAIL
 2631 MAC OPENGL : dEQP-GLES2.functional.shaders.operator.sequence.side_effects.affect_* = FAIL
 3317 MAC OPENGL : dEQP-GLES2.functional.shaders.linkage.varying_4 = FAIL
+8608 MAC OPENGL : dEQP-GLES2.functional.attribute_location.bind_aliasing.max_cond* = FAIL
 
 // MAC OPENGL INTEL specific
 2137 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.complex_rgb = FAIL
@@ -259,6 +266,13 @@
 6534 MAC METAL AMD : dEQP-GLES2.functional.texture.mipmap.2d.projected.nearest_linear_repeat = FAIL
 6534 MAC METAL AMD : dEQP-GLES2.functional.texture.mipmap.2d.projected.nearest_linear_mirror = FAIL
 6534 MAC METAL AMD : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_linear_repeat = FAIL
+8609 MAC METAL AMD : dEQP-GLES2.functional.texture.mipmap.2d.basic.linear_linear_clamp = FAIL
+8609 MAC METAL AMD : dEQP-GLES2.functional.texture.mipmap.2d.basic.linear_linear_clamp_non_square = FAIL
+8609 MAC METAL AMD : dEQP-GLES2.functional.texture.mipmap.2d.basic.linear_linear_mirror = FAIL
+8609 MAC METAL AMD : dEQP-GLES2.functional.texture.mipmap.2d.basic.linear_linear_mirror_non_square = FAIL
+8609 MAC METAL AMD : dEQP-GLES2.functional.texture.mipmap.2d.bias.linear_linear = FAIL
+8609 MAC METAL AMD : dEQP-GLES2.functional.texture.mipmap.2d.bias.nearest_linear = FAIL
+8609 MAC METAL AMD : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_linear_mirror = FAIL
 6534 MAC METAL AMD : dEQP-GLES2.functional.texture.mipmap.cube.basic.linear_nearest = FAIL
 6534 MAC METAL AMD : dEQP-GLES2.functional.texture.mipmap.cube.basic.linear_linear = FAIL
 6534 MAC METAL AMD : dEQP-GLES2.functional.texture.mipmap.cube.projected.linear_nearest = FAIL
@@ -303,10 +317,12 @@
 5990 PIXEL4ORXL VULKAN : dEQP-GLES2.functional.fragment_ops.random.52* = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES2.functional.fragment_ops.random.77* = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES2.functional.fragment_ops.random.82* = SKIP
+8606 PIXEL4ORXL VULKAN : dEQP-GLES2.functional.texture.mipmap.cube.projected.nearest_linear = SKIP
 
 6528 PIXEL4ORXL GLES : dEQP-GLES2.functional.shaders.struct.uniform.sampler_in_array_function_arg_vertex = FAIL
 6528 PIXEL4ORXL GLES : dEQP-GLES2.functional.shaders.struct.uniform.sampler_in_function_arg_vertex = FAIL
 7838 PIXEL4ORXL GLES : dEQP-GLES2.functional.shaders.function.global_variable_aliasing_* = FAIL
+8606 PIXEL4ORXL GLES : dEQP-GLES2.functional.texture.mipmap.cube.projected.nearest_linear = FAIL
 
 6709 LINUX NVIDIA GTX1660 VULKAN : dEQP-GLES2.functional.shaders.random.all_features.fragment.13 = FAIL
 6709 LINUX NVIDIA GTX1660 VULKAN : dEQP-GLES2.functional.shaders.random.all_features.fragment.26 = FAIL
@@ -345,8 +361,7 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.scalar_conve
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.swizzle.* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.texture.* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.trigonometric.fragment.* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.texture_functions.*cube* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.texture*cube* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.random.* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.initial.render.basic.samplerCube* = SKIP
+

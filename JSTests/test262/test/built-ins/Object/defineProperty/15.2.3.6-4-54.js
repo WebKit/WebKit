@@ -26,5 +26,7 @@ assert.sameValue(obj.property, "property");
 var desc = Object.getOwnPropertyDescriptor(obj, "property");
 assert.sameValue(typeof desc.set, "undefined");
 
-verifyNotEnumerable(obj, "property");
-verifyNotConfigurable(obj, "property");
+verifyProperty(obj, "property", {
+  enumerable: false,
+  configurable: false,
+});

@@ -683,19 +683,20 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
         }
     }
 
-    CheckedPtr<const WebPreferencesStore> preferencesStore;
-    if (workerType == RemoteWorkerType::ServiceWorker) {
-        if (RefPtr preferences = websiteDataStore->serviceWorkerOverridePreferences())
-            preferencesStore = &preferences->store();
-    }
+    struct WebPreferencesStoreRef {
+        RefPtr<WebPreferences> webPreferences;
+        RefPtr<WebProcessPool> processPool;
+        RefPtr<WebPageGroup> webPageGroup;
+        const WebPreferencesStore& store;
+    } preferencesStore = [&] {
+        if (workerType == RemoteWorkerType::ServiceWorker && websiteDataStore->serviceWorkerOverridePreferences())
+            return WebPreferencesStoreRef { websiteDataStore->serviceWorkerOverridePreferences(), nullptr, nullptr, websiteDataStore->serviceWorkerOverridePreferences()->store() };
 
-    if (!preferencesStore && processPool->m_remoteWorkerPreferences)
-        preferencesStore = &processPool->m_remoteWorkerPreferences.value();
+        if (processPool->m_remoteWorkerPreferences)
+            return WebPreferencesStoreRef { nullptr, processPool.copyRef(), nullptr, *processPool->m_remoteWorkerPreferences };
 
-    if (!preferencesStore)
-        preferencesStore = &processPool->m_defaultPageGroup->preferences().store();
-
-    ASSERT(preferencesStore);
+        return WebPreferencesStoreRef { nullptr, nullptr, processPool->m_defaultPageGroup.copyRef(), processPool->m_defaultPageGroup->preferences().store() };
+    }();
 
     if (!remoteWorkerProcessProxy) {
         Ref newProcessProxy = WebProcessProxy::createForRemoteWorkers(workerType, processPool, RegistrableDomain  { registrableDomain }, *websiteDataStore, lockdownMode);
@@ -705,17 +706,16 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
 
         processPool->initializeNewWebProcess(newProcessProxy, websiteDataStore.get());
         processPool->m_processes.append(WTFMove(newProcessProxy));
-        remoteWorkerProcessProxy->initializePreferencesForNetworkProcess(*preferencesStore);
+        remoteWorkerProcessProxy->initializePreferencesForNetworkProcess(preferencesStore.store);
     }
 
-    remoteWorkerProcessProxy->addAllowedFirstPartyForCookies(registrableDomain);
     auto aggregator = CallbackAggregator::create([completionHandler = WTFMove(completionHandler), remoteProcessIdentifier = remoteWorkerProcessProxy->coreProcessIdentifier()]() mutable {
         completionHandler(remoteProcessIdentifier);
     });
 
     websiteDataStore->networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(remoteWorkerProcessProxy->coreProcessIdentifier(), registrableDomain, LoadedWebArchive::No), [aggregator] { });
 
-    remoteWorkerProcessProxy->establishRemoteWorkerContext(workerType, *preferencesStore, registrableDomain, serviceWorkerPageIdentifier, [aggregator] { });
+    remoteWorkerProcessProxy->establishRemoteWorkerContext(workerType, preferencesStore.store, registrableDomain, serviceWorkerPageIdentifier, [aggregator] { });
 
     if (!processPool->m_remoteWorkerUserAgent.isNull())
         remoteWorkerProcessProxy->setRemoteWorkerUserAgent(processPool->m_remoteWorkerUserAgent);
@@ -1974,7 +1974,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
 {
     RegistrableDomain registrableDomain { navigation.currentRequest().url() };
     if (page.preferences().siteIsolationEnabled() && !registrableDomain.isEmpty()) {
-        RegistrableDomain mainFrameDomain(URL(page.pageLoadState().activeURL()));
+        auto mainFrameDomain = frameInfo.isMainFrame ? registrableDomain : RegistrableDomain(URL(page.pageLoadState().activeURL()));
         if (!frame.isMainFrame() && registrableDomain == mainFrameDomain) {
             Ref mainFrameProcess = page.mainFrame()->protectedProcess();
             if (!mainFrameProcess->isInProcessCache())
@@ -2011,8 +2011,6 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         LOG(ProcessSwapping, "(ProcessSwapping) Navigating from %s to %s, keeping around old process. Now holding on to old processes for %u origins.", sourceURL.string().utf8().data(), navigation.currentRequest().url().string().utf8().data(), m_swappedProcessesPerRegistrableDomain.size());
     }
 
-    process->addAllowedFirstPartyForCookies(registrableDomain);
-
     if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled())
         return completionHandler(WTFMove(process), suspendedPage, reason);
 
@@ -2029,7 +2027,6 @@ void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process,
         if (process->state() == AuxiliaryProcessProxy::State::Terminated && previousAttemptsCount < maximumNumberOfAttempts) {
             // The destination process crashed during the IPC to the network process, use a new process.
             Ref fallbackProcess = processForRegistrableDomain(dataStore, registrableDomain, lockdownMode, page->protectedConfiguration());
-            fallbackProcess->addAllowedFirstPartyForCookies(registrableDomain);
             prepareProcessForNavigation(WTFMove(fallbackProcess), page, nullptr, reason, registrableDomain, navigation, lockdownMode, WTFMove(dataStore), WTFMove(completionHandler), previousAttemptsCount + 1);
             return;
         }

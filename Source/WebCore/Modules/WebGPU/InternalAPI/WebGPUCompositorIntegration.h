@@ -25,11 +25,14 @@
 
 #pragma once
 
+#include "AlphaPremultiplication.h"
+
 #include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
@@ -38,18 +41,21 @@
 #endif
 
 namespace WebCore {
+class DestinationColorSpace;
 class ImageBuffer;
 class NativeImage;
 }
 
 namespace WebCore::WebGPU {
 
-class CompositorIntegration : public RefCounted<CompositorIntegration> {
+class Device;
+
+class CompositorIntegration : public RefCounted<CompositorIntegration>, public CanMakeWeakPtr<CompositorIntegration> {
 public:
     virtual ~CompositorIntegration() = default;
 
 #if PLATFORM(COCOA)
-    virtual Vector<MachSendRight> recreateRenderBuffers(int width, int height) = 0;
+    virtual Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, Device&) = 0;
 #endif
 
     virtual void prepareForDisplay(CompletionHandler<void()>&&) = 0;

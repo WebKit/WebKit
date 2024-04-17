@@ -33,6 +33,7 @@
 #include "TextSpacing.h"
 #include <optional>
 #include <wtf/CheckedRef.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/CharacterProperties.h>
@@ -107,7 +108,9 @@ public:
     void operator()(TextLayout*) const;
 };
 
-class FontCascade : public CanMakeWeakPtr<FontCascade>, public CanMakeCheckedPtr {
+class FontCascade final : public CanMakeWeakPtr<FontCascade>, public CanMakeCheckedPtr<FontCascade> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FontCascade);
 public:
     WEBCORE_EXPORT FontCascade();
     WEBCORE_EXPORT FontCascade(FontCascadeDescription&&);
@@ -283,9 +286,17 @@ public:
     static bool treatAsSpace(char32_t c) { return c == space || c == tabCharacter || c == newlineCharacter || c == noBreakSpace; }
     static bool isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(char32_t character)
     {
-        // https://drafts.csswg.org/css-text-3/#white-space-processing
+        // https://www.w3.org/TR/css-text-3/#white-space-processing
+        // "Control characters (Unicode category Cc)—other than tabs (U+0009), line feeds (U+000A), carriage returns (U+000D) and sequences that form a segment break—must be rendered as a visible glyph"
+        if (character == tabCharacter || character == newlineCharacter || character == carriageReturn)
+            return true;
+        // Also, we're omitting Null (U+0000) from this set because Chrome and Firefox do so and it's needed for compat. See https://github.com/w3c/csswg-drafts/pull/6983.
+        if (character == nullCharacter)
+            return true;
+        if (isControlCharacter(character))
+            return false;
         // "Unsupported Default_ignorable characters must be ignored for text rendering."
-        return isControlCharacter(character) || isDefaultIgnorableCodePoint(character) || isInvisibleReplacementObjectCharacter(character);
+        return isDefaultIgnorableCodePoint(character) || isInvisibleReplacementObjectCharacter(character);
     }
     // FIXME: Callers of treatAsZeroWidthSpace() and treatAsZeroWidthSpaceInComplexScript() should probably be calling isCharacterWhoseGlyphsShouldBeDeletedForTextRendering() instead.
     static bool treatAsZeroWidthSpace(char32_t c) { return treatAsZeroWidthSpaceInComplexScript(c) || c == zeroWidthNonJoiner || c == zeroWidthJoiner; }
@@ -303,8 +314,8 @@ public:
         return character;
     }
 
-    static String normalizeSpaces(const LChar*, unsigned length);
-    static String normalizeSpaces(const UChar*, unsigned length);
+    static String normalizeSpaces(std::span<const LChar>);
+    static String normalizeSpaces(std::span<const UChar>);
     static String normalizeSpaces(StringView);
 
     bool useBackslashAsYenSymbol() const { return m_useBackslashAsYenSymbol; }
@@ -408,7 +419,7 @@ inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, flo
 
 inline float FontCascade::widthForTextUsingSimplifiedMeasuring(StringView text, TextDirection textDirection) const
 {
-    if (text.isNull() || text.isEmpty())
+    if (text.isEmpty())
         return 0;
     ASSERT(codePath(TextRun(text)) != CodePath::Complex);
     float* cacheEntry = protectedFonts()->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());

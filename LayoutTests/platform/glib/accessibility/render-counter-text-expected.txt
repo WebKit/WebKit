@@ -1,7 +1,7 @@
 This tests that the text for RenderCounter is exposed correctly.
 
-PASS: line1.stringValue === 'AXValue: 1 : line1'
-PASS: line2.stringValue === 'AXValue: 2 : line2'
+PASS: line1.stringValue === 'AXValue: 1:line1'
+PASS: line2.stringValue === 'AXValue: 2:line2'
 
 PASS successfullyParsed is true
 

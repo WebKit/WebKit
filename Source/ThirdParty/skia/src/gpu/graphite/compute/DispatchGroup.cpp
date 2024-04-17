@@ -18,6 +18,7 @@
 #include "src/gpu/graphite/ResourceProvider.h"
 #include "src/gpu/graphite/Texture.h"
 #include "src/gpu/graphite/UniformManager.h"
+#include "src/gpu/graphite/task/ClearBuffersTask.h"
 
 namespace skgpu::graphite {
 
@@ -46,8 +47,7 @@ bool DispatchGroup::prepareResources(ResourceProvider* resourceProvider) {
     }
 
     for (const SamplerDesc& desc : fSamplerDescs) {
-        sk_sp<Sampler> sampler = resourceProvider->findOrCreateCompatibleSampler(
-                desc.samplingOptions(), desc.tileModeX(), desc.tileModeY());
+        sk_sp<Sampler> sampler = resourceProvider->findOrCreateCompatibleSampler(desc);
         if (!sampler) {
             SKGPU_LOG_W("Failed to create sampler. Dropping dispatch group!");
             return false;
@@ -70,6 +70,13 @@ void DispatchGroup::addResourceRefs(CommandBuffer* commandBuffer) const {
     for (int i = 0; i < fTextures.size(); ++i) {
         commandBuffer->trackCommandBufferResource(fTextures[i]->refTexture());
     }
+}
+
+sk_sp<Task> DispatchGroup::snapChildTask() {
+    if (fClearList.empty()) {
+        return nullptr;
+    }
+    return ClearBuffersTask::Make(std::move(fClearList));
 }
 
 const Texture* DispatchGroup::getTexture(size_t index) const {
@@ -233,12 +240,15 @@ bool Builder::appendStepInternal(
     return true;
 }
 
-void Builder::assignSharedBuffer(BufferView buffer, unsigned int slot) {
+void Builder::assignSharedBuffer(BufferView buffer, unsigned int slot, ClearBuffer cleared) {
     SkASSERT(fObj);
     SkASSERT(buffer.fInfo);
     SkASSERT(buffer.fSize);
 
     fOutputTable.fSharedSlots[slot] = buffer;
+    if (cleared == ClearBuffer::kYes) {
+        fObj->fClearList.push_back({buffer.fInfo.fBuffer, buffer.fInfo.fOffset, buffer.fSize});
+    }
 }
 
 void Builder::assignSharedTexture(sk_sp<TextureProxy> texture, unsigned int slot) {
@@ -254,6 +264,13 @@ std::unique_ptr<DispatchGroup> Builder::finalize() {
     fOutputTable.reset();
     return obj;
 }
+
+#if defined(GRAPHITE_TEST_UTILS)
+void Builder::reset() {
+    fOutputTable.reset();
+    fObj.reset(new DispatchGroup);
+}
+#endif
 
 BindBufferInfo Builder::getSharedBufferResource(unsigned int slot) const {
     SkASSERT(fObj);
@@ -281,6 +298,7 @@ DispatchResourceOptional Builder::allocateResource(const ComputeStep* step,
                                                    const ComputeStep::ResourceDesc& resource,
                                                    int resourceIdx) {
     SkASSERT(step);
+    SkASSERT(fObj);
     using Type = ComputeStep::ResourceType;
     using ResourcePolicy = ComputeStep::ResourcePolicy;
 

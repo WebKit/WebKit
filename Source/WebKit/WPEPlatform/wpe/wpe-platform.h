@@ -31,7 +31,7 @@
 #include <wpe/WPEEvent.h>
 #include <wpe/WPEBuffer.h>
 #include <wpe/WPEBufferDMABuf.h>
-#include <wpe/WPEBufferDMABufFormat.h>
+#include <wpe/WPEBufferDMABufFormats.h>
 #include <wpe/WPEBufferSHM.h>
 #include <wpe/WPEConfig.h>
 #include <wpe/WPEDefines.h>

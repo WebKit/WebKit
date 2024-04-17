@@ -1873,8 +1873,9 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     if (manager && manager->isImageElement()) {
         if (enter) {
             inWindowAlpha = 0;
-            manager->prepareQuickLookImageURL([strongSelf = retainPtr(self), self] (URL&& url) mutable {
-                _previewWindowController = adoptNS([WebKit::allocWKSPreviewWindowControllerInstance() initWithURL:url]);
+            manager->prepareQuickLookImageURL([strongSelf = retainPtr(self), self, inWindow = retainPtr(inWindow)] (URL&& url) mutable {
+                UIWindowScene *scene = [inWindow windowScene];
+                _previewWindowController = adoptNS([WebKit::allocWKSPreviewWindowControllerInstance() initWithURL:url sceneID:scene._sceneIdentifier]);
                 [_previewWindowController setDelegate:self];
                 [_previewWindowController presentWindow];
             });

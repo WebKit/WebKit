@@ -35,7 +35,7 @@ class Expectations
     }
 
     static stringToStateId(string) {
-        return Expectations.stateToIdMap[string];
+        return string in Expectations.stateToIdMap ? Expectations.stateToIdMap[string] : string;
     }
     static typeForId(string) {
         const id = Expectations.stringToStateId(string);

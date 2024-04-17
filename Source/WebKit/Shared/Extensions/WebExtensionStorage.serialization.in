@@ -29,7 +29,7 @@ enum class WebKit::WebExtensionStorageAccessLevel : uint8_t {
     TrustedAndUntrustedContexts,
 }
 
-[OptionSet] enum class WebKit::WebExtensionDataType : uint8_t {
+enum class WebKit::WebExtensionDataType : uint8_t {
     Local,
     Session,
     Sync,

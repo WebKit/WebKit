@@ -277,7 +277,7 @@ TEST_P(ShaderStorageBufferTest31, ShaderStorageBufferReadWrite)
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     constexpr unsigned int kElementCount = 2;
     // The array stride are rounded up to the base alignment of a vec4 for std140 layout.
@@ -330,7 +330,7 @@ TEST_P(ShaderStorageBufferTest31, ShaderStorageBufferReadWriteAndBufferSubData)
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     int bufferAlignOffset;
     glGetIntegerv(GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT, &bufferAlignOffset);
@@ -1529,7 +1529,7 @@ void main()
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     constexpr unsigned int kElementCount = 2;
     // The array stride are rounded up to the base alignment of a vec4 for std140 layout.
@@ -1601,8 +1601,8 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     unsigned int outVarIndex1 =
-        glGetProgramResourceIndex(program1.get(), GL_BUFFER_VARIABLE, "Output.result1");
-    glGetProgramResourceiv(program1.get(), GL_BUFFER_VARIABLE, outVarIndex1, 1, props, 1, 0,
+        glGetProgramResourceIndex(program1, GL_BUFFER_VARIABLE, "Output.result1");
+    glGetProgramResourceiv(program1, GL_BUFFER_VARIABLE, outVarIndex1, 1, props, 1, 0,
                            &arrayStride1);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer1);
     glBufferData(GL_SHADER_STORAGE_BUFFER, numInvocations * arrayStride1, nullptr, GL_STREAM_READ);
@@ -1610,18 +1610,18 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     unsigned int outVarIndex2 =
-        glGetProgramResourceIndex(program2.get(), GL_BUFFER_VARIABLE, "Output.result2");
-    glGetProgramResourceiv(program2.get(), GL_BUFFER_VARIABLE, outVarIndex2, 1, props, 1, 0,
+        glGetProgramResourceIndex(program2, GL_BUFFER_VARIABLE, "Output.result2");
+    glGetProgramResourceiv(program2, GL_BUFFER_VARIABLE, outVarIndex2, 1, props, 1, 0,
                            &arrayStride2);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer2);
     glBufferData(GL_SHADER_STORAGE_BUFFER, numInvocations * arrayStride2, nullptr, GL_STREAM_READ);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, shaderStorageBuffer2);
     EXPECT_GL_NO_ERROR();
 
-    glUseProgram(program1.get());
+    glUseProgram(program1);
     glDispatchCompute(1, 1, 1);
     EXPECT_GL_NO_ERROR();
-    glUseProgram(program2.get());
+    glUseProgram(program2);
     glDispatchCompute(1, 1, 1);
     EXPECT_GL_NO_ERROR();
 

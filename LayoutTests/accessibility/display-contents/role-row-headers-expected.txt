@@ -32,6 +32,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 6}
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {0, 1}
 AXColumnHeaderUIElements: <array of size 0>
@@ -75,6 +76,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 4}
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {1, 1}
 AXColumnHeaderUIElements: <array of size 0>

@@ -28,6 +28,7 @@
 #pragma once
 
 #include "BasicShapeFunctions.h"
+#include "CSSBasicShapes.h"
 #include "CSSCalcValue.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSCounterStyleRegistry.h"
@@ -120,6 +121,7 @@ public:
     static OptionSet<TextEmphasisPosition> convertTextEmphasisPosition(BuilderState&, const CSSValue&);
     static TextAlignMode convertTextAlign(BuilderState&, const CSSValue&);
     static TextAlignLast convertTextAlignLast(BuilderState&, const CSSValue&);
+    static RefPtr<BasicShapePath> convertSVGPath(BuilderState&, const CSSValue&);
     static RefPtr<PathOperation> convertPathOperation(BuilderState&, const CSSValue&);
     static RefPtr<PathOperation> convertRayPathOperation(BuilderState&, const CSSValue&);
     static Resize convertResize(BuilderState&, const CSSValue&);
@@ -742,6 +744,16 @@ inline RefPtr<PathOperation> BuilderConverter::convertRayPathOperation(BuilderSt
         return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining(), convertPosition(builderState, *position));
 
     return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining());
+}
+
+inline RefPtr<BasicShapePath> BuilderConverter::convertSVGPath(BuilderState& builderState, const CSSValue& value)
+{
+    if (auto* pathValue = dynamicDowncast<CSSPathValue>(value))
+        return basicShapePathForValue(*pathValue, builderState.style().usedZoom());
+
+    ASSERT(is<CSSPrimitiveValue>(value));
+    ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
+    return nullptr;
 }
 
 inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState& builderState, const CSSValue& value)

@@ -683,7 +683,8 @@ void TextureMapper::drawSolidColor(const FloatRect& rect, const TransformationMa
 
     if (clipStack().isRoundedRectClipEnabled()) {
         options.add(TextureMapperShaderProgram::RoundedRectClip);
-        flags.add(TextureMapperFlags::ShouldBlend);
+        if (isBlendingAllowed)
+            flags.add(TextureMapperFlags::ShouldBlend);
     }
 
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);

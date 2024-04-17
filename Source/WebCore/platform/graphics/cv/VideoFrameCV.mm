@@ -500,7 +500,7 @@ RefPtr<VideoFrame> VideoFrame::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuf
     auto width = size.width();
     auto height = size.height();
 
-    auto dataBaseAddress = pixelBuffer->bytes();
+    auto dataBaseAddress = pixelBuffer->bytes().data();
     auto leakedBuffer = &pixelBuffer.leakRef();
     
     auto derefBuffer = [] (void* context, const void*) {

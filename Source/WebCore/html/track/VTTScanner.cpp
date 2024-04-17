@@ -55,18 +55,18 @@ bool VTTScanner::scan(char c)
     return true;
 }
 
-bool VTTScanner::scan(const LChar* characters, size_t charactersCount)
+bool VTTScanner::scan(std::span<const LChar> characters)
 {
     unsigned matchLength = m_is8Bit ? m_end.characters8 - m_data.characters8 : m_end.characters16 - m_data.characters16;
-    if (matchLength < charactersCount)
+    if (matchLength < characters.size())
         return false;
     bool matched;
     if (m_is8Bit)
-        matched = equal(m_data.characters8, characters, charactersCount);
+        matched = equal(m_data.characters8, characters);
     else
-        matched = equal(m_data.characters16, characters, charactersCount);
+        matched = equal(m_data.characters16, characters);
     if (matched)
-        advance(charactersCount);
+        advance(characters.size());
     return matched;
 }
 
@@ -81,9 +81,9 @@ bool VTTScanner::scanRun(const Run& run, const String& toMatch)
         return false;
     bool matched;
     if (m_is8Bit)
-        matched = equal(toMatch.impl(), m_data.characters8, matchLength);
+        matched = equal(toMatch.impl(), { m_data.characters8, matchLength });
     else
-        matched = equal(toMatch.impl(), m_data.characters16, matchLength);
+        matched = equal(toMatch.impl(), { m_data.characters16, matchLength });
     if (matched)
         seekTo(run.end());
     return matched;
@@ -163,9 +163,9 @@ bool VTTScanner::scanFloat(float& number, bool* isNegative)
     size_t lengthOfFloat = Run(integerRun.start(), position(), m_is8Bit).length();
     bool validNumber;
     if (m_is8Bit)
-        number = charactersToFloat(integerRun.start(), lengthOfFloat, &validNumber);
+        number = charactersToFloat({ integerRun.start(), lengthOfFloat }, &validNumber);
     else
-        number = charactersToFloat(reinterpret_cast<const UChar*>(integerRun.start()), lengthOfFloat, &validNumber);
+        number = charactersToFloat({ reinterpret_cast<const UChar*>(integerRun.start()), lengthOfFloat }, &validNumber);
 
     if (!validNumber)
         number = std::numeric_limits<float>::max();

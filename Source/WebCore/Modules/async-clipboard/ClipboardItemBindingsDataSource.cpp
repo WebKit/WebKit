@@ -276,7 +276,7 @@ String ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::dataAsString() 
 {
     if (std::holds_alternative<Ref<SharedBuffer>>(m_data)) {
         auto& buffer = std::get<Ref<SharedBuffer>>(m_data);
-        return String::fromUTF8(buffer->data(), buffer->size());
+        return String::fromUTF8(buffer->span());
     }
 
     if (std::holds_alternative<String>(m_data))

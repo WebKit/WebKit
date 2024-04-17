@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
 enum class IDBTransactionMode : uint8_t {

@@ -105,7 +105,7 @@ inline void setEventHandlerAttribute(EventTarget& eventTarget, const AtomString&
 }
 
 // Like the functions above, but for attributes that forward event handlers to the window object rather than setting them on the target.
-inline JSC::JSValue windowEventHandlerAttribute(LocalDOMWindow& window, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
+inline JSC::JSValue windowEventHandlerAttribute(DOMWindow& window, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
 {
     return eventHandlerAttribute(window, eventType, isolatedWorld);
 }
@@ -118,7 +118,7 @@ inline JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const Atom
 }
 
 template<typename JSMaybeErrorEventListener>
-inline void setWindowEventHandlerAttribute(LocalDOMWindow& window, const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
+inline void setWindowEventHandlerAttribute(DOMWindow& window, const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
 {
     window.setAttributeEventListener<JSMaybeErrorEventListener>(eventType, listener, *jsEventTarget.globalObject());
 }

@@ -33,6 +33,7 @@
 #import "APIWebArchiveResource.h"
 #import <WebCore/LegacyWebArchive.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cf/VectorCF.h>
 
 namespace API {
 using namespace WebCore;
@@ -126,7 +127,7 @@ API::Array* WebArchive::subframeArchives()
     return m_cachedSubframeArchives.get();
 }
 
-static void releaseWebArchiveData(unsigned char*, const void* data)
+static void releaseWebArchiveData(uint8_t*, const void* data)
 {
     // Balanced by CFRetain in WebArchive::data().
     CFRelease(data);
@@ -139,7 +140,7 @@ Ref<API::Data> WebArchive::data()
     // Balanced by CFRelease in releaseWebArchiveData.
     CFRetain(rawDataRepresentation.get());
 
-    return API::Data::createWithoutCopying(CFDataGetBytePtr(rawDataRepresentation.get()), CFDataGetLength(rawDataRepresentation.get()), releaseWebArchiveData, rawDataRepresentation.get());
+    return API::Data::createWithoutCopying(span(rawDataRepresentation.get()), releaseWebArchiveData, rawDataRepresentation.get());
 }
 
 LegacyWebArchive* WebArchive::coreLegacyWebArchive()

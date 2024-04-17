@@ -712,18 +712,18 @@ Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderPar
     return createVideoInfoFromVPCodecConfigurationRecord(record, parser.width(), parser.height());
 }
 
-std::optional<VP8FrameHeader> parseVP8FrameHeader(const uint8_t* frameData, size_t frameSize)
+std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t> frameData)
 {
     // VP8 frame headers are defined in RFC 6386: <https://tools.ietf.org/html/rfc6386>.
 
     // Bail if the header is below a minimum size
-    if (frameSize < 11)
+    if (frameData.size() < 11)
         return std::nullopt;
 
     VP8FrameHeader header;
     size_t headerSize = 11;
 
-    auto view = JSC::DataView::create(ArrayBuffer::create(frameData, headerSize), 0, headerSize);
+    auto view = JSC::DataView::create(ArrayBuffer::create(frameData.data(), headerSize), 0, headerSize);
     bool status = true;
 
     auto uncompressedChunk = view->get<uint32_t>(0, true, &status);

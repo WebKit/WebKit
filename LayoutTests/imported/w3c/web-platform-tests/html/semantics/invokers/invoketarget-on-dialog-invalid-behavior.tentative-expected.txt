@@ -1,0 +1,37 @@
+
+
+PASS invoking (as foo) on dialog does nothing
+PASS invoking (as foo) on open dialog does nothing
+PASS invoking (as foo) on open modal dialog does nothing
+PASS invoking (as foo) on open modal while changing the attributer does nothing
+PASS invoking (as foo-bar) on dialog does nothing
+PASS invoking (as foo-bar) on open dialog does nothing
+PASS invoking (as foo-bar) on open modal dialog does nothing
+PASS invoking (as foo-bar) on open modal while changing the attributer does nothing
+PASS invoking (as auto) on dialog does nothing
+PASS invoking (as auto) on open dialog does nothing
+PASS invoking (as auto) on open modal dialog does nothing
+PASS invoking (as auto) on open modal while changing the attributer does nothing
+PASS invoking (as showpopover) on dialog does nothing
+PASS invoking (as showpopover) on open dialog does nothing
+PASS invoking (as showpopover) on open modal dialog does nothing
+PASS invoking (as showpopover) on open modal while changing the attributer does nothing
+PASS invoking (as hidepopover) on dialog does nothing
+PASS invoking (as hidepopover) on open dialog does nothing
+PASS invoking (as hidepopover) on open modal dialog does nothing
+PASS invoking (as hidepopover) on open modal while changing the attributer does nothing
+PASS invoking (as togglepopover) on dialog does nothing
+PASS invoking (as togglepopover) on open dialog does nothing
+PASS invoking (as togglepopover) on open modal dialog does nothing
+PASS invoking (as togglepopover) on open modal while changing the attributer does nothing
+PASS invoking (as showpicker) on dialog does nothing
+PASS invoking (as showpicker) on open dialog does nothing
+PASS invoking (as showpicker) on open modal dialog does nothing
+PASS invoking (as showpicker) on open modal while changing the attributer does nothing
+PASS invoking (as showmodal) dialog as open popover=manual is noop
+PASS invoking (as showmodal) dialog as open popover=auto is noop
+PASS invoking (as close) dialog as open popover=manual is noop
+PASS invoking (as close) dialog as open popover=auto is noop
+PASS invoking (as explicit empty) dialog as open popover=manual is noop
+PASS invoking (as explicit empty) dialog as open popover=auto is noop
+

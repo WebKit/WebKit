@@ -40,7 +40,9 @@ try {
   assert(arrObj[1] === getFunc());
 
   assert(desc.hasOwnProperty("set") && typeof desc.set === "undefined");
-
-  verifyNotEnumerable(arrObj, "1");
-  verifyNotConfigurable(arrObj, "1");
 }
+
+verifyProperty(arrObj, "1", {
+  enumerable: false,
+  configurable: false,
+});

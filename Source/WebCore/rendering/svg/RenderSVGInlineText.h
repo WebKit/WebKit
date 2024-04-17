@@ -32,8 +32,10 @@ class SVGInlineTextBox;
 
 class RenderSVGInlineText final : public RenderText {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGInlineText);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInlineText);
 public:
     RenderSVGInlineText(Text&, const String&);
+    virtual ~RenderSVGInlineText();
 
     Text& textNode() const { return downcast<Text>(nodeForNonAnonymous()); }
 
@@ -48,7 +50,7 @@ public:
     float scalingFactor() const { return m_scalingFactor; }
     const FontCascade& scaledFont() const { return m_scaledFont; }
     void updateScaledFont();
-    static void computeNewScaledFontForStyle(const RenderObject&, const RenderStyle&, float& scalingFactor, FontCascade& scaledFont);
+    static bool computeNewScaledFontForStyle(const RenderObject&, const RenderStyle&, float& scalingFactor, FontCascade& scaledFont);
 
     // Preserves floating point precision for the use in DRT. It knows how to round and does a better job than enclosingIntRect.
     FloatRect floatLinesBoundingBox() const;

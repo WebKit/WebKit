@@ -40,6 +40,7 @@
 #include <WebCore/HTMLConverter.h>
 #include <WebCore/RenderedDocumentMarker.h>
 #include <WebCore/SimpleRange.h>
+#include <WebCore/TextIndicator.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/VisiblePosition.h>
 #include <WebCore/WebContentReader.h>
@@ -229,11 +230,13 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
     ASSERT(m_contextRanges.contains(uuid));
 
     RefPtr liveRange = m_contextRanges.get(uuid);
-    auto sessionRange = makeSimpleRange(liveRange);
+    auto sessionRange = WebCore::makeSimpleRange(liveRange);
     if (!sessionRange) {
         ASSERT_NOT_REACHED();
         return;
     }
+
+    m_webPage->removeTextIndicatorStyleForID(uuid);
 
     frame->selection().clear();
 
@@ -415,6 +418,8 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         ASSERT_NOT_REACHED();
         return;
     }
+
+    m_webPage->removeTextIndicatorStyleForID(uuid);
 
     frame->selection().clear();
 

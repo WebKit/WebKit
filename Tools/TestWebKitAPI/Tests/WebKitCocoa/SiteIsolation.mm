@@ -376,7 +376,7 @@ struct WebViewAndDelegates {
     RetainPtr<TestUIDelegate> uiDelegate;
 };
 
-static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(const HTTPServer& server, NSString *url = @"https://example.com/example")
+static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(const HTTPServer& server, NSString *url = @"https://example.com/example", bool waitForOpenedNavigation = true)
 {
     __block WebViewAndDelegates opener;
     __block WebViewAndDelegates opened;
@@ -402,7 +402,8 @@ static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(
     [opener.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
     while (!opened.webView)
         Util::spinRunLoop();
-    [opened.navigationDelegate waitForDidFinishNavigation];
+    if (waitForOpenedNavigation)
+        [opened.navigationDelegate waitForDidFinishNavigation];
     return { WTFMove(opener), WTFMove(opened) };
 }
 
@@ -427,6 +428,40 @@ TEST(SiteIsolation, NavigationAfterWindowOpen)
 
     while (processStillRunning(webKitPid))
         Util::spinRunLoop();
+}
+
+TEST(SiteIsolation, PreferencesUpdatesToAllProcesses)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://apple.com/apple'></iframe>"_s } },
+        { "/apple"_s, { "hi"_s } },
+        { "/opened"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = NO;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    __block RetainPtr<WKFrameInfo> childFrame;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrame = mainFrame.childFrames[0].info;
+    }];
+    while (!childFrame)
+        Util::spinRunLoop();
+
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    __block bool opened { false };
+    uiDelegate.get().createWebViewWithConfiguration = ^WKWebView *(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures)
+    {
+        opened = true;
+        return nil;
+    };
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView _evaluateJavaScript:@"window.open('https://example.com/opened')" withSourceURL:nil inFrame:childFrame.get() inContentWorld:WKContentWorld.pageWorld withUserGesture:NO completionHandler:nil];
+    Util::run(&opened);
 }
 
 TEST(SiteIsolation, ParentOpener)
@@ -2403,6 +2438,20 @@ TEST(SiteIsolation, NavigateOpener)
     checkFrameTreesInProcesses(opened.webView.get(), { { "https://webkit.org"_s } });
 }
 
+TEST(SiteIsolation, OpenThenClose)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr<WKWebView> retainOpener;
+    @autoreleasepool {
+        auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/example", false);
+        retainOpener = opener.webView;
+    }
+}
+
 TEST(SiteIsolation, CustomUserAgent)
 {
     HTTPServer server({
@@ -2450,7 +2499,7 @@ TEST(SiteIsolation, ApplicationNameForUserAgent)
                 continue;
             }
             if (path == "/request_from_subframe"_s) {
-                auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n"_s);
+                auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
                 auto userAgentIndex = headers.findIf([](auto& header) {
                     return header.startsWith("User-Agent:"_s);
                 });
@@ -2506,7 +2555,7 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgent)
                 continue;
             }
             if (path == "/request_from_subframe"_s) {
-                auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n"_s);
+                auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
                 auto userAgentIndex = headers.findIf([](auto& header) {
                     return header.startsWith("User-Agent:"_s);
                 });
@@ -2595,7 +2644,7 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringCrossSiteProvisionalNavi
                 continue;
             }
             if (path == "/request_from_subframe"_s) {
-                auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n"_s);
+                auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
                 auto userAgentIndex = headers.findIf([](auto& header) {
                     return header.startsWith("User-Agent:"_s);
                 });
@@ -2681,7 +2730,7 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringSameSiteProvisionalNavig
                 continue;
             }
             if (path == "/request_from_subframe"_s) {
-                auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n"_s);
+                auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
                 auto userAgentIndex = headers.findIf([](auto& header) {
                     return header.startsWith("User-Agent:"_s);
                 });
@@ -2751,6 +2800,38 @@ TEST(SiteIsolation, ProvisionalLoadFailureOnCrossSiteRedirect)
     [webView evaluateJavaScript:@"location.href = 'https://webkit.org/redirect'" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
     Util::run(&done);
 }
+
+#if PLATFORM(MAC)
+TEST(SiteIsolation, SelectAll)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='iframe' src='https://webkit.org/frame'></iframe>"_s } },
+        { "/frame"_s, { "test"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:^(id, NSError *) {
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    __block RetainPtr<_WKFrameTreeNode> childFrameNode;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrameNode = mainFrame.childFrames[0];
+        done = true;
+    }];
+    Util::run(&done);
+
+    [webView selectAll:nil];
+    while (![webView selectionRangeHasStartOffset:0 endOffset:4 inFrame:childFrameNode.get().info])
+        Util::spinRunLoop();
+}
+#endif
 
 // FIXME: <rdar://121240941> Add tests covering provisional navigation failures in cases like SiteIsolation.NavigateOpener.
 

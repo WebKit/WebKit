@@ -1279,16 +1279,16 @@ static Ref<CSSValue> willChangePropertyValue(const WillChangeData* willChangeDat
     for (size_t i = 0; i < willChangeData->numFeatures(); ++i) {
         WillChangeData::FeaturePropertyPair feature = willChangeData->featureAt(i);
         switch (feature.first) {
-        case WillChangeData::ScrollPosition:
+        case WillChangeData::Feature::ScrollPosition:
             list.append(CSSPrimitiveValue::create(CSSValueScrollPosition));
             break;
-        case WillChangeData::Contents:
+        case WillChangeData::Feature::Contents:
             list.append(CSSPrimitiveValue::create(CSSValueContents));
             break;
-        case WillChangeData::Property:
+        case WillChangeData::Feature::Property:
             list.append(CSSPrimitiveValue::create(feature.second));
             break;
-        case WillChangeData::Invalid:
+        case WillChangeData::Feature::Invalid:
             ASSERT_NOT_REACHED();
             break;
         }
@@ -1840,6 +1840,13 @@ static CSSValueID valueIDForRaySize(RayPathOperation::Size size)
 
     ASSERT_NOT_REACHED();
     return CSSValueInvalid;
+}
+
+static Ref<CSSValue> valueForSVGPath(const BasicShapePath* path)
+{
+    if (!path)
+        return CSSPrimitiveValue::create(CSSValueNone);
+    return valueForSVGPath(*path, SVGPathConversion::ForceAbsolute);
 }
 
 static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathOperation* operation, SVGPathConversion conversion = SVGPathConversion::None)
@@ -3186,7 +3193,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     auto forcedLayout = ForcedLayout::No;
 
     if (updateLayout == UpdateLayout::Yes) {
-        Document& document = m_element->document();
+        Ref document = m_element->document();
 
         updateStyleIfNeededForProperty(*styledElement, propertyID);
         if (propertyID == CSSPropertyDisplay && !styledRenderer()) {
@@ -3204,23 +3211,23 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             // FIXME: Why?
             if (styledElement->isInShadowTree())
                 return ForcedLayout::Yes;
-            if (!document.ownerElement())
+            if (!document->ownerElement())
                 return ForcedLayout::No;
-            if (!document.styleScope().resolverIfExists())
+            if (!document->styleScope().resolverIfExists())
                 return ForcedLayout::No;
-            if (auto& ruleSets = document.styleScope().resolverIfExists()->ruleSets(); ruleSets.hasViewportDependentMediaQueries() || ruleSets.hasContainerQueries())
+            if (auto& ruleSets = document->styleScope().resolverIfExists()->ruleSets(); ruleSets.hasViewportDependentMediaQueries() || ruleSets.hasContainerQueries())
                 return ForcedLayout::Yes;
             // FIXME: Can we limit this to properties whose computed length value derived from a viewport unit?
-            if (document.hasStyleWithViewportUnits())
+            if (document->hasStyleWithViewportUnits())
                 return ForcedLayout::ParentDocument;
             return ForcedLayout::No;
         }();
 
         if (forcedLayout == ForcedLayout::Yes)
-            document.updateLayoutIgnorePendingStylesheets(LayoutOptions::ContentVisibilityForceLayout, m_element.get());
+            document->updateLayoutIgnorePendingStylesheets(LayoutOptions::ContentVisibilityForceLayout, m_element.get());
         else if (forcedLayout == ForcedLayout::ParentDocument) {
-            if (RefPtr owner = document.ownerElement())
-                owner->document().updateLayout();
+            if (RefPtr owner = document->ownerElement())
+                owner->protectedDocument()->updateLayout();
             else
                 forcedLayout = ForcedLayout::No;
         }
@@ -4598,6 +4605,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return zoomAdjustedPixelValueForLength(style.svgStyle().y(), style);
     case CSSPropertyWebkitTextZoom:
         return createConvertingToCSSValueID(style.textZoom());
+
+    case CSSPropertyD:
+        return valueForSVGPath(style.d());
 
     case CSSPropertyPaintOrder:
         return paintOrder(style.paintOrder());

@@ -29,8 +29,8 @@ ImageVk::~ImageVk() {}
 
 void ImageVk::onDestroy(const egl::Display *display)
 {
-    DisplayVk *displayVk = vk::GetImpl(display);
-    RendererVk *renderer = displayVk->getRenderer();
+    DisplayVk *displayVk   = vk::GetImpl(display);
+    vk::Renderer *renderer = displayVk->getRenderer();
 
     if (mImage != nullptr && mOwnsImage)
     {

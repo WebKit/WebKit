@@ -281,6 +281,7 @@ ExceptionOr<Ref<GPUSampler>> GPUDevice::createSampler(const std::optional<GPUSam
     return GPUSampler::create(sampler.releaseNonNull());
 }
 
+#if ENABLE(VIDEO)
 GPUExternalTexture* GPUDevice::externalTextureForDescriptor(const GPUExternalTextureDescriptor& descriptor)
 {
     m_videoElementToExternalTextureMap.removeNullReferences();
@@ -333,9 +334,11 @@ private:
     WeakPtr<HTMLVideoElement> m_videoElement;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_gpuDevice;
 };
+#endif
 
 ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUExternalTextureDescriptor& externalTextureDescriptor)
 {
+#if ENABLE(VIDEO)
     if (RefPtr externalTexture = externalTextureForDescriptor(externalTextureDescriptor)) {
         externalTexture->undestroy();
 #if ENABLE(WEB_CODECS)
@@ -346,6 +349,7 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUE
         m_videoElementToExternalTextureMap.remove(*videoElement.get());
         return externalTexture.releaseNonNull();
     }
+#endif
     RefPtr texture = m_backing->importExternalTexture(externalTextureDescriptor.convertToBacking());
     if (!texture)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.importExternalTexture: Unable to import texture."_s };
@@ -464,11 +468,11 @@ void GPUDevice::createComputePipelineAsync(const GPUComputePipelineDescriptor& c
         promise.rejectType<IDLInterface<GPUPipelineError>>(GPUPipelineError::create(""_s, { GPUPipelineErrorReason::Internal }));
         return;
     }
-    m_backing->createComputePipelineAsync(computePipelineDescriptor.convertToBacking(*m_autoPipelineLayout), [promise = WTFMove(promise)](RefPtr<WebGPU::ComputePipeline>&& computePipeline) mutable {
+    m_backing->createComputePipelineAsync(computePipelineDescriptor.convertToBacking(*m_autoPipelineLayout), [promise = WTFMove(promise)](RefPtr<WebGPU::ComputePipeline>&& computePipeline, String&& error) mutable {
         if (computePipeline)
             promise.resolve(GPUComputePipeline::create(computePipeline.releaseNonNull()));
         else
-            promise.rejectType<IDLInterface<GPUPipelineError>>(GPUPipelineError::create(""_s, { GPUPipelineErrorReason::Validation }));
+            promise.rejectType<IDLInterface<GPUPipelineError>>(GPUPipelineError::create(WTFMove(error), { GPUPipelineErrorReason::Validation }));
     });
 }
 
@@ -490,11 +494,11 @@ ExceptionOr<void> GPUDevice::createRenderPipelineAsync(const GPURenderPipelineDe
     if (!m_autoPipelineLayout)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createRenderBundleEncoder: Unable to make encoder."_s };
 
-    m_backing->createRenderPipelineAsync(renderPipelineDescriptor.convertToBacking(*m_autoPipelineLayout), [promise = WTFMove(promise)](RefPtr<WebGPU::RenderPipeline>&& renderPipeline) mutable {
+    m_backing->createRenderPipelineAsync(renderPipelineDescriptor.convertToBacking(*m_autoPipelineLayout), [promise = WTFMove(promise)](RefPtr<WebGPU::RenderPipeline>&& renderPipeline, String&& error) mutable {
         if (renderPipeline.get())
             promise.resolve(GPURenderPipeline::create(renderPipeline.releaseNonNull()));
         else
-            promise.rejectType<IDLInterface<GPUPipelineError>>(GPUPipelineError::create(""_s, { GPUPipelineErrorReason::Validation }));
+            promise.rejectType<IDLInterface<GPUPipelineError>>(GPUPipelineError::create(WTFMove(error), { GPUPipelineErrorReason::Validation }));
     });
     return { };
 }

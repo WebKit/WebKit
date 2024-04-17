@@ -31,7 +31,6 @@
 #include "GraphicsLayerClient.h"
 #include "PlatformCAFilters.h"
 #include "TransformationMatrix.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>

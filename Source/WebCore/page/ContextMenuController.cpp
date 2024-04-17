@@ -1515,14 +1515,14 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldEnable = frame->selection().isRange();
             break;
         case ContextMenuItemTagPaste:
-            shouldEnable = frame->editor().canDHTMLPaste() || frame->editor().canPaste();
+            shouldEnable = frame->editor().canDHTMLPaste() || frame->editor().canEdit();
             break;
         case ContextMenuItemTagCopyLinkToHighlight:
             shouldEnable = shouldEnableCopyLinkToHighlight();
             break;
 #if PLATFORM(GTK)
         case ContextMenuItemTagPasteAsPlainText:
-            shouldEnable = frame->editor().canDHTMLPaste() || frame->editor().canPaste();
+            shouldEnable = frame->editor().canDHTMLPaste() || frame->editor().canEdit();
             break;
         case ContextMenuItemTagDelete:
             shouldEnable = frame->editor().canDelete();

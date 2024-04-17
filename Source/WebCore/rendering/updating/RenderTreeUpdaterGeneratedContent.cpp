@@ -27,6 +27,7 @@
 #include "RenderTreeUpdaterGeneratedContent.h"
 
 #include "ContentData.h"
+#include "Editor.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffectStack.h"
 #include "PseudoElement.h"
@@ -39,6 +40,7 @@
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "StyleTreeResolver.h"
+#include "WritingSuggestionData.h"
 
 namespace WebCore {
 
@@ -261,6 +263,99 @@ void RenderTreeUpdater::GeneratedContent::removeAfterPseudoElement(Element& elem
         return;
     tearDownRenderers(*pseudoElement, TeardownType::Full, builder);
     element.clearAfterPseudoElement();
+}
+
+void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(RenderElement& renderer)
+{
+    auto destroyWritingSuggestionsIfNeeded = [&renderer, this]() {
+        if (!renderer.element())
+            return;
+
+        auto& editor = renderer.element()->document().editor();
+
+        if (WeakPtr writingSuggestionsRenderer = editor.writingSuggestionRenderer())
+            m_updater.m_builder.destroy(*writingSuggestionsRenderer);
+    };
+
+    if (!renderer.canHaveChildren())
+        return;
+
+    if (!renderer.element())
+        return;
+
+    auto& editor = renderer.element()->document().editor();
+
+    auto isWritingSuggestionElement = renderer.element() == editor.writingSuggestionsContainerElement();
+    if (!isWritingSuggestionElement)
+        return;
+
+    auto* writingSuggestionData = editor.writingSuggestionData();
+    if (!writingSuggestionData) {
+        destroyWritingSuggestionsIfNeeded();
+        return;
+    }
+
+    auto style = renderer.getCachedPseudoStyle({ PseudoId::InternalWritingSuggestions }, &renderer.style());
+    if (!style || style->display() == DisplayType::None) {
+        destroyWritingSuggestionsIfNeeded();
+        return;
+    }
+
+    auto* firstChildText = dynamicDowncast<RenderText>(renderer.firstChild());
+    if (!firstChildText) {
+        destroyWritingSuggestionsIfNeeded();
+        return;
+    }
+
+    auto textWithoutSuggestion = firstChildText->text();
+
+    auto offset = writingSuggestionData->offset();
+    auto prefix = textWithoutSuggestion.substring(0, offset);
+    auto suffix = textWithoutSuggestion.substring(offset);
+
+    firstChildText->setText(prefix);
+
+    auto newStyle = RenderStyle::clone(*style);
+    if (auto writingSuggestionsRenderer = editor.writingSuggestionRenderer()) {
+        writingSuggestionsRenderer->setStyle(WTFMove(newStyle));
+
+        auto* writingSuggestionsText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->firstChild());
+        if (!writingSuggestionsText) {
+            ASSERT_NOT_REACHED();
+            destroyWritingSuggestionsIfNeeded();
+            return;
+        }
+
+        writingSuggestionsText->setText(writingSuggestionData->content());
+
+        auto* suffixText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->nextSibling());
+        if (!suffixText) {
+            ASSERT_NOT_REACHED();
+            destroyWritingSuggestionsIfNeeded();
+            return;
+        }
+
+        suffixText->setText(suffix);
+    } else {
+        auto newWritingSuggestionsRenderer = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, renderer.document(), WTFMove(newStyle));
+        newWritingSuggestionsRenderer->initializeStyle();
+
+        auto writingSuggestionsText = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, renderer.document(), writingSuggestionData->content());
+        m_updater.m_builder.attach(*newWritingSuggestionsRenderer, WTFMove(writingSuggestionsText));
+
+        editor.setWritingSuggestionRenderer(*newWritingSuggestionsRenderer.get());
+        m_updater.m_builder.attach(renderer, WTFMove(newWritingSuggestionsRenderer));
+
+        auto* prefixNode = firstChildText->textNode();
+        if (!prefixNode) {
+            ASSERT_NOT_REACHED();
+            destroyWritingSuggestionsIfNeeded();
+            return;
+        }
+
+        auto suffixRenderer = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, *prefixNode, suffix);
+        m_updater.m_builder.attach(renderer, WTFMove(suffixRenderer));
+    }
 }
 
 }

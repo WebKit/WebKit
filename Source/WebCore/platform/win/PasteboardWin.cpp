@@ -1156,7 +1156,7 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
 
         if (customData.hasSameOriginCustomData() || !customData.origin().isEmpty()) {
             auto sharedBuffer = customData.createSharedBuffer();
-            HGLOBAL cbData = createGlobalData(reinterpret_cast<const uint8_t*>(sharedBuffer->data()), sharedBuffer->size());
+            HGLOBAL cbData = createGlobalData(sharedBuffer->span());
             if (cbData && !::SetClipboardData(CustomDataClipboardFormat, cbData))
                 ::GlobalFree(cbData);
         }

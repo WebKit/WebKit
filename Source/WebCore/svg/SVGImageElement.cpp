@@ -140,11 +140,13 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
             ASSERT(attrName == SVGNames::preserveAspectRatioAttr);
             updateSVGRendererForElementChange();
         }
+        invalidateResourceImageBuffersIfNeeded();
         return;
     }
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
         m_imageLoader.updateFromElementIgnoringPreviousError();
+        invalidateResourceImageBuffersIfNeeded();
         return;
     }
 

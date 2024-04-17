@@ -18,5 +18,8 @@ Object.defineProperty(obj, "foo", {
 
 Object.freeze(obj);
 
-verifyNotConfigurable(obj, "foo");
+verifyProperty(obj, "foo", {
+  configurable: false,
+});
+
 assert.sameValue(obj.foo, 10);

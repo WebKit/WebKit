@@ -2143,10 +2143,11 @@ bool LinkValidateBuiltInVaryings(const std::vector<sh::ShaderVariable> &outputVa
         {
             if (sizeClipDistance != varying.getOutermostArraySize())
             {
-                infoLog << "If either shader redeclares the built-in arrays gl_ClipDistance[] the "
-                           "array must have the same size in both shaders. "
-                        << "Output size " << sizeClipDistance << ", input size "
-                        << varying.getOutermostArraySize() << ".";
+                infoLog
+                    << "If a fragment shader statically uses the gl_ClipDistance built-in array, "
+                       "the array must have the same size as in the previous shader stage. "
+                    << "Output size " << sizeClipDistance << ", input size "
+                    << varying.getOutermostArraySize() << ".";
                 return false;
             }
         }
@@ -2154,10 +2155,11 @@ bool LinkValidateBuiltInVaryings(const std::vector<sh::ShaderVariable> &outputVa
         {
             if (sizeCullDistance != varying.getOutermostArraySize())
             {
-                infoLog << "If either shader redeclares the built-in arrays gl_CullDistance[] the "
-                           "array must have the same size in both shaders. "
-                        << "Output size " << sizeCullDistance << ", input size "
-                        << varying.getOutermostArraySize() << ".";
+                infoLog
+                    << "If a fragment shader statically uses the gl_ClipDistance built-in array, "
+                       "the array must have the same size as in the previous shader stage. "
+                    << "Output size " << sizeCullDistance << ", input size "
+                    << varying.getOutermostArraySize() << ".";
 
                 return false;
             }

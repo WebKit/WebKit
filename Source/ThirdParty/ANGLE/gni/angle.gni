@@ -20,6 +20,9 @@ declare_args() {
   # Enables OpenCL support, off by default.
   angle_enable_cl = false
 
+  # Enables OpenCL testing support, off by default.
+  angle_enable_cl_testing = false
+
   angle_restricted_traces = []
 
   # Don't build dEQP by default.
@@ -205,10 +208,11 @@ declare_args() {
   angle_enable_cl_passthrough = angle_enable_cl
 
   # Disable WGPU backend.
+  # Currently disabled on Android, Fuschia, WinUWP, and Win MSVC.
   # anglebug.com/8541
   angle_enable_wgpu =
-      !is_official_build && !(is_android || is_fuchsia || is_win) &&
-      defined(angle_dawn_dir)
+      !is_official_build && !(is_android || is_fuchsia || angle_is_winuwp) &&
+      (!is_win || is_clang) && defined(angle_dawn_dir)
 }
 
 declare_args() {

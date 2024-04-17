@@ -60,7 +60,7 @@ static UInt128 generateCryptographicallyRandomUUIDVersion4()
 {
     UInt128 buffer { };
     static_assert(sizeof(buffer) == 16);
-    cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(&buffer), 16);
+    cryptographicallyRandomValues({ reinterpret_cast<uint8_t*>(&buffer), sizeof(buffer) });
     return convertRandomUInt128ToUUIDVersion4(buffer);
 }
 

@@ -34,6 +34,7 @@
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/PlatformMediaSession.h>
 #include <WebCore/PlaybackSessionModelMediaElement.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -57,7 +58,10 @@ class PlaybackSessionManager;
 
 class PlaybackSessionInterfaceContext final
     : public RefCounted<PlaybackSessionInterfaceContext>
-    , public WebCore::PlaybackSessionModelClient {
+    , public WebCore::PlaybackSessionModelClient
+    , public CanMakeCheckedPtr<PlaybackSessionInterfaceContext> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceContext);
 public:
     static Ref<PlaybackSessionInterfaceContext> create(PlaybackSessionManager& manager, PlaybackSessionContextIdentifier contextId)
     {
@@ -69,6 +73,18 @@ public:
 
 private:
     friend class VideoPresentationInterfaceContext;
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+#if CHECKED_POINTER_DEBUG
+    void registerCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::registerCheckedPtr(pointer); };
+    void copyCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::copyCheckedPtr(source, destination); }
+    void moveCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::moveCheckedPtr(source, destination); }
+    void unregisterCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::unregisterCheckedPtr(pointer); }
+#endif // CHECKED_POINTER_DEBUG
 
     // PlaybackSessionModelClient
     void durationChanged(double) final;
@@ -165,15 +181,19 @@ private:
     void selectAudioMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void handleControlledElementIDRequest(PlaybackSessionContextIdentifier);
-    void toggleFullscreen(PlaybackSessionContextIdentifier);
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
     void enterFullscreen(PlaybackSessionContextIdentifier);
+    void exitFullscreen(PlaybackSessionContextIdentifier);
     void toggleInWindow(PlaybackSessionContextIdentifier);
     void toggleMuted(PlaybackSessionContextIdentifier);
     void setMuted(PlaybackSessionContextIdentifier, bool muted);
     void setVolume(PlaybackSessionContextIdentifier, double volume);
     void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool value);
     void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    void setSpatialTrackingLabel(PlaybackSessionContextIdentifier, const String&);
+#endif
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }

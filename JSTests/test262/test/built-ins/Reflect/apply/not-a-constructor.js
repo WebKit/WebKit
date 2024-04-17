@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Reflect.apply), false, 'isConstructor(Reflect.app
 
 assert.throws(TypeError, () => {
   new Reflect.apply(() => {}, undefined, []);
-}, '`new Reflect.apply(() => {}, undefined, [])` throws TypeError');
+});
 

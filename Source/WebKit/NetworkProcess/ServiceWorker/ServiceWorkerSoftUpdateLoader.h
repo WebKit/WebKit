@@ -46,8 +46,9 @@ namespace WebKit {
 class NetworkLoad;
 class NetworkSession;
 
-class ServiceWorkerSoftUpdateLoader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerSoftUpdateLoader>, public CanMakeCheckedPtr {
+class ServiceWorkerSoftUpdateLoader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerSoftUpdateLoader>, public CanMakeCheckedPtr<ServiceWorkerSoftUpdateLoader> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ServiceWorkerSoftUpdateLoader);
 public:
     using Handler = CompletionHandler<void(WebCore::WorkerFetchResult&&)>;
     ServiceWorkerSoftUpdateLoader(NetworkSession&, WebCore::ServiceWorkerJobData&&, bool shouldRefreshCache, WebCore::ResourceRequest&&, Handler&&);

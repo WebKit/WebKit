@@ -56,13 +56,13 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, Structure*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::Callee& jsEntrypoint, Wasm::Callee* wasmCallee, WasmToWasmImportableFunction::LoadLocation, Wasm::TypeIndex, RefPtr<const Wasm::RTT>);
+    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, Structure*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::JSEntrypointCallee& jsEntrypoint, Wasm::Callee* wasmCallee, WasmToWasmImportableFunction::LoadLocation, Wasm::TypeIndex, RefPtr<const Wasm::RTT>);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     CodePtr<WasmEntryPtrTag> jsEntrypoint(ArityCheckMode arity)
     {
         ASSERT_UNUSED(arity, arity == ArityCheckNotRequired || arity == MustCheckArity);
-        return m_jsEntrypoint;
+        return m_jsEntrypoint.entrypoint();
     }
 
     CodePtr<JSEntryPtrTag> jsCallEntrypoint()
@@ -78,7 +78,7 @@ public:
 
 private:
     DECLARE_VISIT_CHILDREN;
-    WebAssemblyFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, Wasm::Callee& jsEntrypoint, Wasm::Callee* wasmCallee, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, Wasm::TypeIndex, RefPtr<const Wasm::RTT>);
+    WebAssemblyFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, Wasm::JSEntrypointCallee& jsEntrypoint, Wasm::Callee* wasmCallee, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, Wasm::TypeIndex, RefPtr<const Wasm::RTT>);
 
 #if ENABLE(JIT)
     CodePtr<JSEntryPtrTag> jsCallEntrypointSlow();
@@ -88,12 +88,15 @@ private:
 
     RegisterSet calleeSaves() const;
 
-    // It's safe to just hold the raw jsEntrypoint because we have a reference
+    // It's safe to just hold the raw callee because we have a reference
     // to our Instance, which points to the Module that exported us, which
     // ensures that the actual Signature/code doesn't get deallocated.
-    CodePtr<WasmEntryPtrTag> m_jsEntrypoint;
+    Wasm::JSEntrypointCallee& m_jsEntrypoint;
     // This is the callee needed by LLInt/IPInt
     uintptr_t m_boxedWasmCallee;
+    // This let's the JS->Wasm interpreter find its metadata
+    RefPtr<Wasm::JSEntrypointInterpreterCallee> m_jsToWasmInterpreterCallee;
+    void* m_jsToWasmBoxedInterpreterCallee;
 #if ENABLE(JIT)
     RefPtr<Wasm::JSToWasmICCallee> m_jsToWasmICCallee;
 #endif

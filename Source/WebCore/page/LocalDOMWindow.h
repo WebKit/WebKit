@@ -30,11 +30,9 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DOMWindow.h"
 #include "ExceptionOr.h"
-#include "ImageBitmap.h"
 #include "LocalFrame.h"
 #include "ReducedResolutionSeconds.h"
 #include "ScrollToOptions.h"
-#include "ScrollTypes.h"
 #include "Supplementable.h"
 #include "WindowOrWorkerGlobalScope.h"
 #include "WindowPostMessageOptions.h"
@@ -53,52 +51,6 @@ class JSValue;
 }
 
 namespace WebCore {
-
-class BarProp;
-class CSSRuleList;
-class CSSStyleDeclaration;
-class CookieStore;
-class Crypto;
-class CustomElementRegistry;
-class DOMApplicationCache;
-class DOMSelection;
-class DOMWrapperWorld;
-class Document;
-class Element;
-class EventListener;
-class FloatRect;
-class History;
-class IdleRequestCallback;
-class LocalDOMWindowProperty;
-class Location;
-class MediaQueryList;
-class Navigation;
-class Navigator;
-class Node;
-class NodeList;
-class Page;
-class Performance;
-class RequestAnimationFrameCallback;
-class RequestIdleCallback;
-class ScheduledAction;
-class Screen;
-class Storage;
-class StyleMedia;
-class VisualViewport;
-class WebCoreOpaqueRoot;
-class WebKitNamespace;
-class WebKitPoint;
-class WindowProxy;
-
-#if ENABLE(DEVICE_ORIENTATION)
-class DeviceMotionController;
-class DeviceOrientationController;
-#endif
-
-struct IdleRequestOptions;
-struct ImageBitmapOptions;
-struct MessageWithMessagePorts;
-struct WindowFeatures;
 
 enum class IncludeTargetOrigin : bool { No, Yes };
 
@@ -200,7 +152,7 @@ public:
 
     void prewarmLocalStorageIfNecessary();
 
-    void alert(const String& message = emptyString());
+    void alert(const String& message);
     bool confirmForBindings(const String& message);
     String prompt(const String& message, const String& defaultValue);
 
@@ -258,10 +210,6 @@ public:
     String crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin);
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
-    ExceptionOr<void> postMessage(JSC::JSGlobalObject& globalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
-    {
-        return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { WTFMove(targetOrigin), WTFMove(transfer) });
-    }
     WEBCORE_EXPORT void postMessageFromRemoteFrame(JSC::JSGlobalObject&, RefPtr<WindowProxy>&& source, const String& sourceOrigin, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts&);
 
     void languagesChanged();
@@ -414,8 +362,6 @@ private:
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    bool isLocalDOMWindow() const final { return true; }
-    bool isRemoteDOMWindow() const final { return false; }
     void closePage() final;
     void eventListenersDidChange() final;
     void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking) final;
@@ -511,5 +457,5 @@ inline String LocalDOMWindow::status() const
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LocalDOMWindow)
     static bool isType(const WebCore::DOMWindow& window) { return window.isLocalDOMWindow(); }
-    static bool isType(const WebCore::EventTarget& target) { return target.eventTargetInterface() == WebCore::EventTargetInterfaceType::LocalDOMWindow; }
+    static bool isType(const WebCore::EventTarget& target) { return target.eventTargetInterface() == WebCore::EventTargetInterfaceType::DOMWindow; }
 SPECIALIZE_TYPE_TRAITS_END()

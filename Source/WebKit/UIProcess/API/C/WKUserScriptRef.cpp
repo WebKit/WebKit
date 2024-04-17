@@ -49,7 +49,7 @@ WKUserScriptRef WKUserScriptCreate(WKStringRef sourceRef, WKURLRef url, WKArrayR
 
 WKUserScriptRef WKUserScriptCreateWithSource(WKStringRef sourceRef, _WKUserScriptInjectionTime injectionTime, bool forMainFrameOnly)
 {
-    return toAPI(&API::UserScript::create(WebCore::UserScript { toWTFString(sourceRef), API::UserScript::generateUniqueURL(), { }, { }, toUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, API::ContentWorld::pageContentWorld()).leakRef());
+    return toAPI(&API::UserScript::create(WebCore::UserScript { toWTFString(sourceRef), { }, { }, { }, toUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, API::ContentWorld::pageContentWorld()).leakRef());
 }
 
 WKStringRef WKUserScriptCopySource(WKUserScriptRef userScriptRef)

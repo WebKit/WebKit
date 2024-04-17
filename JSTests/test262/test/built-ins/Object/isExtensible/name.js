@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Object.isExtensible.name, "isExtensible");
-
-verifyNotEnumerable(Object.isExtensible, "name");
-verifyNotWritable(Object.isExtensible, "name");
-verifyConfigurable(Object.isExtensible, "name");
+verifyProperty(Object.isExtensible, "name", {
+  value: "isExtensible",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

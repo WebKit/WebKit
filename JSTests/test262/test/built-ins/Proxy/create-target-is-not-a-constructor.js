@@ -28,4 +28,4 @@ proxy(); // the Proxy object is callable
 assert.sameValue(isConstructor(proxy), false, 'isConstructor(proxy) must return false');
 assert.throws(TypeError, () => {
   new proxy();
-}, '`new proxy()` throws TypeError');
+});

@@ -34,6 +34,7 @@
 #include "Scrollbar.h"
 #include "ScrollbarColor.h"
 #include <wtf/CheckedPtr.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
@@ -70,8 +71,15 @@ inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orient
     return 0;
 }
 
-class ScrollableArea : public CanMakeWeakPtr<ScrollableArea>, public CanMakeCheckedPtr {
+class ScrollableArea : public CanMakeWeakPtr<ScrollableArea> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    // CheckedPtr interface
+    virtual uint32_t ptrCount() const = 0;
+    virtual uint32_t ptrCountWithoutThreadCheck() const = 0;
+    virtual void incrementPtrCount() const = 0;
+    virtual void decrementPtrCount() const = 0;
+
     virtual bool isScrollView() const { return false; }
     virtual bool isRenderLayer() const { return false; }
     virtual bool isListBox() const { return false; }
@@ -183,7 +191,7 @@ public:
     // Force the contents to recompute their size (i.e. do layout).
     virtual void updateContentsSize() { }
 
-    enum class AvailableSizeChangeReason {
+    enum class AvailableSizeChangeReason : bool {
         ScrollbarsChanged,
         AreaSizeChanged
     };
@@ -305,7 +313,7 @@ public:
     bool scrollShouldClearLatchedState() const { return m_scrollShouldClearLatchedState; }
     void setScrollShouldClearLatchedState(bool shouldClear) { m_scrollShouldClearLatchedState = shouldClear; }
 
-    enum VisibleContentRectIncludesScrollbars { ExcludeScrollbars, IncludeScrollbars };
+    enum class VisibleContentRectIncludesScrollbars : bool { No, Yes };
     enum VisibleContentRectBehavior {
         ContentsVisibleRect,
 #if PLATFORM(IOS_FAMILY)

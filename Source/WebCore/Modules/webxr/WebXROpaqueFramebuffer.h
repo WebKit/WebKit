@@ -44,7 +44,7 @@ struct XRWebGLLayerInit;
 
 struct WebXRExternalRenderbuffer {
     GCGLOwnedRenderbuffer renderBufferObject;
-    GCEGLOwnedImage image;
+    GCGLOwnedExternalImage image;
 
     void destroyImage(GraphicsContextGL&);
     void release(GraphicsContextGL&);
@@ -94,6 +94,7 @@ public:
 
     void startFrame(const PlatformXR::FrameData::LayerData&);
     void endFrame();
+    bool usesLayeredMode() const;
 
 private:
     WebXROpaqueFramebuffer(PlatformXR::LayerHandle, Ref<WebGLFramebuffer>&&, WebGLRenderingContextBase&, Attributes&&, IntSize);

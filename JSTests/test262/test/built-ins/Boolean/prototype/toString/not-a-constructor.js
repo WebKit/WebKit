@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Boolean.prototype.toString();
-}, '`new Boolean.prototype.toString()` throws TypeError');
+});
 

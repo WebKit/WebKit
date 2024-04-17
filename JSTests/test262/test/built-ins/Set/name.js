@@ -10,8 +10,9 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Set.name, "Set", "The value of `Set.name` is `'Set'`");
-
-verifyNotEnumerable(Set, "name");
-verifyNotWritable(Set, "name");
-verifyConfigurable(Set, "name");
+verifyProperty(Set, "name", {
+  value: "Set",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -11,7 +11,7 @@ fn testVariableInialization() {
 }
 
 @vertex
-fn testConcretizationOfArguments() {
+fn testConcretizationOfArguments() -> @builtin(position) vec4f {
   // CHECK-L: vec<unsigned, 2>(0, 0);
   let x1 = 0u + vec2(0, 0);
 
@@ -20,10 +20,12 @@ fn testConcretizationOfArguments() {
 
   // CHECK-L: vec<float, 2>(0, 0);
   let x3 = 0f + vec2(0, 0);
+
+  return vec4f();
 }
 
 @vertex
-fn testArrayConcretization() {
+fn testArrayConcretization() -> @builtin(position) vec4f  {
   // CHECK-L: vec<int, 2>(0, 0),
   let x1 = array<vec2<i32>, 1>(vec2(0, 0));
 
@@ -37,15 +39,19 @@ fn testArrayConcretization() {
   // CHECK-L: vec<unsigned, 2>(0, 0),
   // CHECK-L: vec<unsigned, 2>(0, 0),
   let x4 = array(vec2(0, 0), vec2(0u, 0u));
+
+  return vec4f();
 }
 
 @vertex
-fn testInitializerConcretization() {
+fn testInitializerConcretization() -> @builtin(position) vec4f  {
   // CHECK-L: vec<int, 2>(0, 0)
   let x1 = vec2(0, 0);
 
   // CHECK-L: vec<unsigned, 2>(0, 0)
   let x2 : vec2<u32> = vec2(0, 0);
+
+  return vec4f();
 }
 
 @group(0) @binding(0) var<storage, read_write> a: array<atomic<i32>>;

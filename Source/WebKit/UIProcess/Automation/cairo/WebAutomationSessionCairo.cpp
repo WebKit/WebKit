@@ -29,6 +29,7 @@
 #if USE(CAIRO)
 
 #include "ViewSnapshotStore.h"
+#include <WebCore/NotImplemented.h>
 #include <WebCore/RefPtrCairo.h>
 #include <cairo.h>
 #include <wtf/text/Base64.h>
@@ -64,14 +65,13 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(Shar
     return base64EncodedPNGData(surface.get());
 }
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
+#if !PLATFORM(GTK)
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot&)
 {
-#if PLATFORM(GTK) && !USE(GTK4)
-    return base64EncodedPNGData(snapshot.surface());
-#else
+    notImplemented();
     return std::nullopt;
-#endif
 }
+#endif
 
 } // namespace WebKit
 

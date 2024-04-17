@@ -51,6 +51,7 @@
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/queryconversions.h"
 #include "libANGLE/queryutils.h"
+#include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/validationEGL.h"
 #include "third_party/ceval/ceval.h"
 
@@ -2464,6 +2465,18 @@ bool IsTextureUpdate(CallCapture &call)
         case EntryPoint::GLCopyImageSubData:
         case EntryPoint::GLCopyImageSubDataEXT:
         case EntryPoint::GLCopyImageSubDataOES:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool IsImageUpdate(CallCapture &call)
+{
+    switch (call.entryPoint)
+    {
+        case EntryPoint::GLDispatchCompute:
+        case EntryPoint::GLDispatchComputeIndirect:
             return true;
         default:
             return false;
@@ -6804,11 +6817,17 @@ void FrameCaptureShared::determineMemoryProtectionSupport(gl::Context *context)
     angle::GetSystemInfo(&info);
     bool isDeviceDenyListed = false;
 
-    if (denyList.find(info.machineManufacturer) != denyList.end())
+    if (rx::GetAndroidSDKVersion() < 34)
     {
-        const std::vector<std::string> &models = denyList[info.machineManufacturer];
-        isDeviceDenyListed =
-            std::find(models.begin(), models.end(), info.machineModelName) != models.end();
+        // Before Android 14, there was a bug in Mali based Pixel preventing mprotect
+        // on Vulkan surfaces. (https://b.corp.google.com/issues/269535398)
+        // Check the denylist in this case.
+        if (denyList.find(info.machineManufacturer) != denyList.end())
+        {
+            const std::vector<std::string> &models = denyList[info.machineManufacturer];
+            isDeviceDenyListed =
+                std::find(models.begin(), models.end(), info.machineModelName) != models.end();
+        }
     }
 
     if (isDeviceDenyListed)
@@ -6946,6 +6965,26 @@ void FrameCaptureShared::trackTextureUpdate(const gl::Context *context, const Ca
     // Mark it as modified
     mResourceTracker.getTrackedResource(context->id(), ResourceIDType::Texture)
         .setModifiedResource(id);
+}
+
+// Identify and mark writeable shader image textures as modified
+void FrameCaptureShared::trackImageUpdate(const gl::Context *context, const CallCapture &call)
+{
+    const gl::ProgramExecutable *executable = context->getState().getProgramExecutable();
+    for (const gl::ImageBinding &imageBinding : executable->getImageBindings())
+    {
+        for (GLuint binding : imageBinding.boundImageUnits)
+        {
+            const gl::ImageUnit &imageUnit = context->getState().getImageUnit(binding);
+            if (imageUnit.access != GL_READ_ONLY)
+            {
+                // Get image binding texture id and mark it as modified
+                GLuint id = imageUnit.texture.id().value;
+                mResourceTracker.getTrackedResource(context->id(), ResourceIDType::Texture)
+                    .setModifiedResource(id);
+            }
+        }
+    }
 }
 
 void FrameCaptureShared::trackDefaultUniformUpdate(const gl::Context *context,
@@ -8087,6 +8126,12 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
     {
         // If this call modified texture contents, track it for possible reset
         trackTextureUpdate(context, call);
+    }
+
+    if (IsImageUpdate(call))
+    {
+        // If this call modified shader image contents, track it for possible reset
+        trackImageUpdate(context, call);
     }
 
     if (isCaptureActive() && GetDefaultUniformType(call) != DefaultUniformType::None)

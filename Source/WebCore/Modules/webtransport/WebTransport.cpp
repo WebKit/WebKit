@@ -210,16 +210,16 @@ DOMPromise& WebTransport::draining()
 static CString trimToValidUTF8Length1024(CString&& string)
 {
     if (string.length() > 1024)
-        string = CString(string.data(), 1024);
+        string = string.span().first(1024);
     else
         return WTFMove(string);
 
     while (true) {
         if (!string.length())
             return WTFMove(string);
-        auto decoded = String::fromUTF8(string.data(), string.length());
+        auto decoded = String::fromUTF8(string.span());
         if (!decoded)
-            string = CString(string.data(), string.length() - 1);
+            string = string.span().first(string.length() - 1);
         else
             return WTFMove(string);
     }

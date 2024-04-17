@@ -47,7 +47,10 @@ class ImmutableString
     char operator[](size_t index) const { return data()[index]; }
 
     constexpr bool empty() const { return mLength == 0; }
-    bool beginsWith(const char *prefix) const { return angle::BeginsWith(data(), prefix); }
+    constexpr bool beginsWith(const char *prefix) const
+    {
+        return beginsWith(ImmutableString(prefix));
+    }
     constexpr bool beginsWith(const ImmutableString &prefix) const
     {
         return mLength >= prefix.length() && memcmp(data(), prefix.data(), prefix.length()) == 0;

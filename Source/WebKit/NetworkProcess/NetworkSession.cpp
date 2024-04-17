@@ -115,7 +115,7 @@ static Ref<NetworkStorageManager> createNetworkStorageManager(NetworkProcess& ne
     String serviceWorkerStorageDirectory;
     serviceWorkerStorageDirectory = parameters.serviceWorkerRegistrationDirectory;
     SandboxExtension::consumePermanently(parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
-    return NetworkStorageManager::create(networkProcess, parameters.sessionID, parameters.dataStoreIdentifier, connectionID, parameters.generalStorageDirectory, parameters.localStorageDirectory, parameters.indexedDBDirectory, parameters.cacheStorageDirectory, serviceWorkerStorageDirectory, parameters.perOriginStorageQuota, parameters.originQuotaRatio, parameters.totalQuotaRatio, parameters.standardVolumeCapacity, parameters.volumeCapacityOverride, parameters.unifiedOriginStorageLevel);
+    return NetworkStorageManager::create(networkProcess, parameters.sessionID, parameters.dataStoreIdentifier, connectionID, parameters.generalStorageDirectory, parameters.localStorageDirectory, parameters.indexedDBDirectory, parameters.cacheStorageDirectory, serviceWorkerStorageDirectory, parameters.perOriginStorageQuota, parameters.originQuotaRatio, parameters.totalQuotaRatio, parameters.standardVolumeCapacity, parameters.volumeCapacityOverride, parameters.unifiedOriginStorageLevel, parameters.storageSiteValidationEnabled);
 }
 
 NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
@@ -726,9 +726,6 @@ void NetworkSession::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier w
         ASSERT_NOT_REACHED();
         return;
     }
-
-    if (auto* connection = m_networkProcess->webProcessConnection(webProcessIdentifier))
-        connection->addAllowedFirstPartyForCookies(firstPartyForCookies);
 
     m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTFMove(firstPartyForCookies), LoadedWebArchive::No, [] { });
 }

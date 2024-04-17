@@ -33,13 +33,12 @@
 #include "JSAudioWorkletGlobalScope.h"
 #include "JSDOMBinding.h"
 #include "JSDOMBuiltinConstructorBase.h"
+#include "JSDOMWindow.h"
 #include "JSDOMWindowProperties.h"
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSIDBSerializationGlobalObject.h"
-#include "JSLocalDOMWindow.h"
 #include "JSObservableArray.h"
 #include "JSPaintWorkletGlobalScope.h"
-#include "JSRemoteDOMWindow.h"
 #include "JSServiceWorkerGlobalScope.h"
 #include "JSShadowRealmGlobalScope.h"
 #include "JSSharedWorkerGlobalScope.h"
@@ -69,17 +68,14 @@ JSHeapData::JSHeapData(Heap& heap)
     , m_observableArrayHeapCellType(JSC::IsoHeapCellType::Args<JSObservableArray>())
     , m_runtimeObjectHeapCellType(JSC::IsoHeapCellType::Args<JSC::Bindings::RuntimeObject>())
     , m_windowProxyHeapCellType(JSC::IsoHeapCellType::Args<JSWindowProxy>())
-    , m_heapCellTypeForJSLocalDOMWindow(JSC::IsoHeapCellType::Args<JSLocalDOMWindow>())
+    , m_heapCellTypeForJSDOMWindow(JSC::IsoHeapCellType::Args<JSDOMWindow>())
     , m_heapCellTypeForJSDedicatedWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSDedicatedWorkerGlobalScope>())
-    , m_heapCellTypeForJSRemoteDOMWindow(JSC::IsoHeapCellType::Args<JSRemoteDOMWindow>())
     , m_heapCellTypeForJSWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSWorkerGlobalScope>())
     , m_heapCellTypeForJSSharedWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSSharedWorkerGlobalScope>())
     , m_heapCellTypeForJSShadowRealmGlobalScope(JSC::IsoHeapCellType::Args<JSShadowRealmGlobalScope>())
     , m_heapCellTypeForJSServiceWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSServiceWorkerGlobalScope>())
     , m_heapCellTypeForJSWorkletGlobalScope(JSC::IsoHeapCellType::Args<JSWorkletGlobalScope>())
-#if ENABLE(CSS_PAINTING_API)
     , m_heapCellTypeForJSPaintWorkletGlobalScope(JSC::IsoHeapCellType::Args<JSPaintWorkletGlobalScope>())
-#endif
 #if ENABLE(WEB_AUDIO)
     , m_heapCellTypeForJSAudioWorkletGlobalScope(JSC::IsoHeapCellType::Args<JSAudioWorkletGlobalScope>())
 #endif
@@ -205,7 +201,7 @@ String JSVMClientData::overrideSourceURL(const JSC::StackFrame& frame, const Str
     if (!globalObject->inherits<JSDOMWindowBase>())
         return nullString();
 
-    auto* document = jsCast<const JSDOMWindowBase*>(globalObject)->wrapped().document();
+    auto* document = jsCast<const JSDOMWindowBase*>(globalObject)->wrapped().documentIfLocal();
     if (!document)
         return nullString();
 

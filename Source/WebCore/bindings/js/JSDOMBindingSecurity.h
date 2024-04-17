@@ -53,6 +53,8 @@ bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, LocalDOMWindow&, Securit
 bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, LocalDOMWindow&, String& message);
 bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, LocalDOMWindow*, SecurityReportingOption = LogSecurityError);
 bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, LocalDOMWindow*, String& message);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, DOMWindow&, SecurityReportingOption = LogSecurityError);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, DOMWindow&, String& message);
 bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, DOMWindow*, SecurityReportingOption = LogSecurityError);
 bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, DOMWindow*, String& message);
 bool shouldAllowAccessToFrame(JSC::JSGlobalObject*, LocalFrame*, SecurityReportingOption = LogSecurityError);

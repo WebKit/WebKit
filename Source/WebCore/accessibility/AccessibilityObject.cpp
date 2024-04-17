@@ -489,11 +489,11 @@ AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
 AccessibilityObject* AccessibilityObject::displayContentsParent() const
 {
     auto* parentNode = node() ? node()->parentNode() : nullptr;
-    if (RefPtr element = dynamicDowncast<Element>(parentNode); !element || !element->hasDisplayContents())
+    if (RefPtr parentElement = dynamicDowncast<Element>(parentNode); !parentElement || !parentElement->hasDisplayContents())
         return nullptr;
 
     auto* cache = axObjectCache();
-    return cache ? cache->getOrCreate(parentNode) : nullptr;
+    return cache ? cache->getOrCreate(*parentNode) : nullptr;
 }
 
 AccessibilityObject* AccessibilityObject::previousSiblingUnignored(int limit) const
@@ -606,8 +606,8 @@ static void appendAccessibilityObject(RefPtr<AXCoreObject> object, Accessibility
         auto* document = frameView->frame().document();
         if (!document || !document->hasLivingRenderTree())
             return;
-        
-        object = object->axObjectCache()->getOrCreate(document);
+
+        object = object->axObjectCache()->getOrCreate(*document);
     }
 
     if (object)
@@ -1703,7 +1703,7 @@ bool AccessibilityObject::replacedNodeNeedsCharacter(Node* replacedNode)
 
     // create an AX object, but skip it if it is not supposed to be seen
     if (auto* cache = replacedNode->renderer()->document().axObjectCache()) {
-        if (auto* axObject = cache->getOrCreate(replacedNode))
+        if (auto* axObject = cache->getOrCreate(*replacedNode))
             return !axObject->accessibilityIsIgnored();
     }
 
@@ -2202,8 +2202,8 @@ AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)
     RenderObject* obj = node->renderer();
     if (!obj)
         return nullptr;
-    
-    RefPtr<AccessibilityObject> axObj = obj->document().axObjectCache()->getOrCreate(obj);
+
+    RefPtr<AccessibilityObject> axObj = obj->document().axObjectCache()->getOrCreate(*obj);
     Element* anchor = axObj->anchorElement();
     if (!anchor)
         return nullptr;
@@ -2212,7 +2212,7 @@ AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)
     if (!anchorRenderer)
         return nullptr;
     
-    return anchorRenderer->document().axObjectCache()->getOrCreate(anchorRenderer);
+    return anchorRenderer->document().axObjectCache()->getOrCreate(*anchorRenderer);
 }
 
 AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
@@ -2224,7 +2224,7 @@ AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
     if (!renderObject)
         return nullptr;
 
-    AccessibilityObject* axObject = renderObject->document().axObjectCache()->getOrCreate(renderObject);
+    AccessibilityObject* axObject = renderObject->document().axObjectCache()->getOrCreate(*renderObject);
 
     return Accessibility::findAncestor<AccessibilityObject>(*axObject, true, [] (const AccessibilityObject& object) {
         return object.roleValue() == AccessibilityRole::Heading;
@@ -2536,14 +2536,8 @@ bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
 
 const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
 {
-    if (RefPtr element = this->element()) {
-        auto& value = element->attributeWithoutSynchronization(attribute);
-        if (!value.isNull())
-            return value;
-        if (auto* defaultARIA = element->customElementDefaultARIAIfExists())
-            return defaultARIA->valueForAttribute(*element, attribute);
-    }
-    return nullAtom();
+    RefPtr element = this->element();
+    return element ? element->attributeWithDefaultARIA(attribute) : nullAtom();
 }
 
 String AccessibilityObject::nameAttribute() const
@@ -2969,7 +2963,7 @@ bool AccessibilityObject::supportsPressAction() const
     if (!cache)
         return true;
 
-    auto* axObject = actionElement != element() ? cache->getOrCreate(actionElement.get()) : nullptr;
+    auto* axObject = actionElement != element() ? cache->getOrCreate(*actionElement) : nullptr;
     if (!axObject)
         return true;
 
@@ -3210,7 +3204,7 @@ AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntP
         // Normalize the point for the widget's bounds.
         if (widget && widget->isLocalFrameView()) {
             if (AXObjectCache* cache = axObjectCache())
-                return cache->getOrCreate(widget)->accessibilityHitTest(IntPoint(point - widget->frameRect().location()));
+                return cache->getOrCreate(*widget)->accessibilityHitTest(IntPoint(point - widget->frameRect().location()));
         }
     }
     
@@ -3447,6 +3441,9 @@ bool AccessibilityObject::supportsExpanded() const
 {
     // If this object can toggle an HTML popover, it supports the reporting of its expanded state (which is based on the expanded / collapsed state of that popover).
     if (popoverTargetElement())
+        return true;
+
+    if (is<HTMLDetailsElement>(node()))
         return true;
 
     switch (roleValue()) {
@@ -3986,7 +3983,16 @@ bool AccessibilityObject::accessibilityIsIgnoredByDefault() const
 
 bool AccessibilityObject::isARIAHidden() const
 {
-    return equalLettersIgnoringASCIICase(getAttribute(aria_hiddenAttr), "true"_s) && !isFocused();
+    if (isFocused())
+        return false;
+
+    auto* node = this->node();
+    if (auto* assignedSlot = node ? node->assignedSlot() : nullptr) {
+        if (equalLettersIgnoringASCIICase(assignedSlot->attributeWithDefaultARIA(aria_hiddenAttr), "true"_s))
+            return true;
+    }
+
+    return equalLettersIgnoringASCIICase(getAttribute(aria_hiddenAttr), "true"_s);
 }
 
 // ARIA component of hidden definition.
@@ -4001,13 +4007,9 @@ bool AccessibilityObject::isAXHidden() const
     }) != nullptr;
 }
 
-// DOM component of hidden definition.
-// https://www.w3.org/TR/wai-aria/#dfn-hidden
 bool AccessibilityObject::isDOMHidden() const
 {
-    if (auto* style = this->style())
-        return style->display() == DisplayType::None || style->usedVisibility() != Visibility::Visible;
-    return true;
+    return WebCore::isDOMHidden(style());
 }
 
 bool AccessibilityObject::isShowingValidationMessage() const
@@ -4124,18 +4126,14 @@ Vector<Ref<Element>> AccessibilityObject::elementsFromAttribute(const QualifiedN
         }
     } else if (Element::isElementsArrayReflectionAttribute(attribute)) {
         if (auto reflectedElements = element->getElementsArrayAttribute(attribute)) {
-            return WTF::map(reflectedElements.value(), [](RefPtr<Element> element) -> Ref<Element> {
-                return *element;
-            });
+            return reflectedElements.value();
         }
     }
 
     auto& idsString = getAttribute(attribute);
     if (idsString.isEmpty()) {
         if (auto* defaultARIA = element->customElementDefaultARIAIfExists()) {
-            return WTF::map(defaultARIA->elementsForAttribute(*element, attribute), [](RefPtr<Element> element) -> Ref<Element> {
-                return *element;
-            });
+            return defaultARIA->elementsForAttribute(*element, attribute);
         }
         return { };
     }
@@ -4288,46 +4286,70 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ariaListboxSelect
     return result;
 }
 
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::selectedChildren()
+bool AccessibilityObject::canHaveSelectedChildren() const
+{
+    switch (roleValue()) {
+    // These roles are containers whose children support aria-selected:
+    case AccessibilityRole::Grid:
+    case AccessibilityRole::ListBox:
+    case AccessibilityRole::TabList:
+    case AccessibilityRole::Tree:
+    case AccessibilityRole::TreeGrid:
+    case AccessibilityRole::List:
+    // These roles are containers whose children are treated as selected by assistive
+    // technologies. We can get the "selected" item via aria-activedescendant or the
+    // focused element.
+    case AccessibilityRole::Menu:
+    case AccessibilityRole::MenuBar:
+    case AccessibilityRole::ComboBox:
+#if USE(ATSPI)
+    case AccessibilityRole::MenuListPopup:
+#endif
+        return true;
+    default:
+        return false;
+    }
+}
+
+std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityObject::selectedChildren()
 {
     if (!canHaveSelectedChildren())
-        return { };
+        return std::nullopt;
 
-    AccessibilityChildrenVector result;
     switch (roleValue()) {
     case AccessibilityRole::ComboBox:
         if (auto* descendant = activeDescendant())
-            result = { descendant };
+            return { { descendant } };
         break;
     case AccessibilityRole::ListBox:
         // native list boxes would be AccessibilityListBoxes, so only check for aria list boxes
-        result = ariaListboxSelectedChildren();
+        return ariaListboxSelectedChildren();
         break;
     case AccessibilityRole::Grid:
     case AccessibilityRole::Tree:
     case AccessibilityRole::TreeGrid:
-        result = ariaSelectedRows();
+        return ariaSelectedRows();
         break;
     case AccessibilityRole::TabList:
         if (auto* selectedTab = selectedTabItem())
-            result = { selectedTab };
+            return { { selectedTab } };
         break;
     case AccessibilityRole::List:
-        if (auto* selectedListItemChild = selectedListItem())
-            result = { selectedListItemChild };
+        if (auto* selectedListItem = this->selectedListItem())
+            return { { selectedListItem } };
         break;
     case AccessibilityRole::Menu:
     case AccessibilityRole::MenuBar:
         if (auto* descendant = activeDescendant())
-            result = { descendant };
+            return { { descendant } };
         else if (auto* focusedElement = focusedUIElement())
-            result = { focusedElement };
+            return { { focusedElement } };
         break;
     default:
         ASSERT_NOT_REACHED();
         break;
     }
-    return result;
+    return std::nullopt;
 }
 
 AccessibilityObject* AccessibilityObject::selectedListItem()

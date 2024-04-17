@@ -91,6 +91,7 @@ void main()
     CoordType srcImageCoords = CoordType(destSubImageCoords);
 #if !IsResolve
     srcImageCoords *= params.stretch;
+    srcImageCoords += vec2(0.5);
 #endif
     srcImageCoords -= params.offset;
 

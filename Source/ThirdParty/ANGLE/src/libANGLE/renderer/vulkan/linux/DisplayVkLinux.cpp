@@ -10,9 +10,9 @@
 #include "libANGLE/renderer/vulkan/linux/DisplayVkLinux.h"
 
 #include "common/linux/dma_buf_utils.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/linux/DeviceVkLinux.h"
 #include "libANGLE/renderer/vulkan/linux/DmaBufImageSiblingVkLinux.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
@@ -49,7 +49,7 @@ std::vector<VkDrmFormatModifierPropertiesEXT> DisplayVkLinux::GetDrmModifiers(
     const DisplayVk *displayVk,
     VkFormat vkFormat)
 {
-    RendererVk *renderer = displayVk->getRenderer();
+    vk::Renderer *renderer = displayVk->getRenderer();
 
     // Query list of drm format modifiers compatible with VkFormat.
     VkDrmFormatModifierPropertiesListEXT formatModifierPropertiesList = {};
@@ -92,16 +92,16 @@ bool DisplayVkLinux::SupportsDrmModifiers(VkPhysicalDevice device, VkFormat vkFo
 }
 
 // Returns a list of VkFormats supporting at least one DRM format modifier
-std::vector<VkFormat> DisplayVkLinux::GetVkFormatsWithDrmModifiers(const RendererVk *rendererVk)
+std::vector<VkFormat> DisplayVkLinux::GetVkFormatsWithDrmModifiers(const vk::Renderer *renderer)
 {
     std::vector<VkFormat> vkFormats;
     for (size_t formatIndex = 1; formatIndex < angle::kNumANGLEFormats; ++formatIndex)
     {
-        const vk::Format &format = rendererVk->getFormat(angle::FormatID(formatIndex));
+        const vk::Format &format = renderer->getFormat(angle::FormatID(formatIndex));
         VkFormat vkFormat        = format.getActualImageVkFormat(rx::vk::ImageAccess::Renderable);
 
         if (vkFormat != VK_FORMAT_UNDEFINED &&
-            SupportsDrmModifiers(rendererVk->getPhysicalDevice(), vkFormat))
+            SupportsDrmModifiers(renderer->getPhysicalDevice(), vkFormat))
         {
             vkFormats.push_back(vkFormat);
         }
@@ -111,10 +111,10 @@ std::vector<VkFormat> DisplayVkLinux::GetVkFormatsWithDrmModifiers(const Rendere
 }
 
 // Returns a list of supported DRM formats
-std::vector<EGLint> DisplayVkLinux::GetDrmFormats(const RendererVk *rendererVk)
+std::vector<EGLint> DisplayVkLinux::GetDrmFormats(const vk::Renderer *renderer)
 {
     std::unordered_set<EGLint> drmFormatsSet;
-    for (VkFormat vkFormat : GetVkFormatsWithDrmModifiers(rendererVk))
+    for (VkFormat vkFormat : GetVkFormatsWithDrmModifiers(renderer))
     {
         std::vector<EGLint> drmFormats = angle::VkFormatToDrmFourCCFormat(vkFormat);
         for (EGLint drmFormat : drmFormats)

@@ -92,14 +92,16 @@ public:
     id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();
     void finalizeBlitCommandEncoder();
 
-    void runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, float depthClearValue = 0, uint32_t stencilClearValue = 0, id<MTLRenderCommandEncoder> = nil);
-    static void clearTexture(const WGPUImageCopyTexture&, NSUInteger, id<MTLDevice>, id<MTLBlitCommandEncoder>);
+    void runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, float depthClearValue = 0, uint32_t stencilClearValue = 0, id<MTLRenderCommandEncoder> existingEncoder = nil);
+    static void clearTextureIfNeeded(const WGPUImageCopyTexture&, NSUInteger, id<MTLDevice>, id<MTLBlitCommandEncoder>);
+    static void clearTextureIfNeeded(Texture&, NSUInteger, NSUInteger, id<MTLDevice>, id<MTLBlitCommandEncoder>);
     void makeInvalid(NSString* = nil);
     void makeSubmitInvalid(NSString* = nil);
     void incrementBufferMapCount();
     void decrementBufferMapCount();
     void endEncoding(id<MTLCommandEncoder>);
     void setLastError(NSString*);
+    void waitForCommandBufferCompletion();
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
@@ -107,12 +109,12 @@ private:
 
     NSString* errorValidatingCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);
     bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
-    bool validateFinish() const;
+    NSString* validateFinishError() const;
     bool validatePopDebugGroup() const;
     NSString* errorValidatingComputePassDescriptor(const WGPUComputePassDescriptor&) const;
     NSString* errorValidatingRenderPassDescriptor(const WGPURenderPassDescriptor&) const;
 
-    void clearTexture(const WGPUImageCopyTexture&, NSUInteger);
+    void clearTextureIfNeeded(const WGPUImageCopyTexture&, NSUInteger);
     void setExistingEncoder(id<MTLCommandEncoder>);
     NSString* errorValidatingImageCopyBuffer(const WGPUImageCopyBuffer&) const;
     NSString* errorValidatingCopyBufferToTexture(const WGPUImageCopyBuffer&, const WGPUImageCopyTexture&, const WGPUExtent3D&) const;

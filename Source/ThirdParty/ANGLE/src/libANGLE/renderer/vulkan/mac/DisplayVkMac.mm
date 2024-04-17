@@ -11,10 +11,10 @@
 
 #include <vulkan/vulkan.h>
 
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/mac/IOSurfaceSurfaceVkMac.h"
 #include "libANGLE/renderer/vulkan/mac/WindowSurfaceVkMac.h"
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 #import <Cocoa/Cocoa.h>
 

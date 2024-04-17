@@ -26,12 +26,12 @@
 #pragma once
 
 #include "JSDOMBindingSecurity.h"
-#include "JSLocalDOMWindow.h"
+#include "JSDOMWindow.h"
 
 namespace WebCore {
 namespace BindingSecurity {
 
-inline bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject* lexicalGlobalObject, JSLocalDOMWindow& target, SecurityReportingOption reportingOption = LogSecurityError)
+inline bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMWindow& target, SecurityReportingOption reportingOption = LogSecurityError)
 {
     if (LIKELY(lexicalGlobalObject == &target))
         return true;

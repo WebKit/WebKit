@@ -107,7 +107,7 @@ private:
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
     RetainPtr<ASAuthorizationController> constructASController(const WebAuthenticationRequestData&);
-    RetainPtr<NSArray> requestsForRegisteration(const WebCore::PublicKeyCredentialCreationOptions&, const WebCore::SecurityOriginData& callerOrigin);
+    RetainPtr<NSArray> requestsForRegistration(const WebCore::PublicKeyCredentialCreationOptions&, const WebCore::SecurityOriginData& callerOrigin);
     RetainPtr<NSArray> requestsForAssertion(const WebCore::PublicKeyCredentialRequestOptions&, const WebCore::SecurityOriginData& callerOrigin, const std::optional<WebCore::SecurityOriginData>& parentOrigin);
 #endif
 

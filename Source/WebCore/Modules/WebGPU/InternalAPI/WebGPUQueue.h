@@ -64,8 +64,7 @@ public:
     virtual void writeBuffer(
         const Buffer&,
         Size64 bufferOffset,
-        const void* source,
-        size_t byteLength,
+        std::span<const uint8_t> source,
         Size64 dataOffset = 0,
         std::optional<Size64> = std::nullopt) = 0;
 
@@ -76,11 +75,10 @@ public:
         const ImageDataLayout&,
         const Extent3D& size) = 0;
 
-    virtual void writeBuffer(
+    virtual void writeBufferNoCopy(
         const Buffer&,
         Size64 bufferOffset,
-        void* source,
-        size_t byteLength,
+        std::span<uint8_t> source,
         Size64 dataOffset = 0,
         std::optional<Size64> = std::nullopt) = 0;
 

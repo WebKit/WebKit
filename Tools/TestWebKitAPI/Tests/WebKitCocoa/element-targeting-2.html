@@ -18,12 +18,15 @@ body, html {
     width: 200px;
     height: 200px;
     position: fixed;
-    top: 0;
-    left: 0;
     background: tomato;
     color: white;
     text-align: center;
     opacity: 0.75;
+}
+
+.container {
+    top: 0;
+    left: 0;
 }
 
 .absolute {
@@ -49,9 +52,17 @@ body, html {
     top: 10px;
     left: 110px;
 }
+
+.box {
+    border: 1px solid black;
+    width: 250px;
+    height: 250px;
+    box-sizing: border-box;
+}
 </style>
 </head>
 <body>
+    <div class="box"></div>
     <div class="fixed container"></div>
     <div class="absolute bottom-right"></div>
     <div class="absolute bottom-left"></div>

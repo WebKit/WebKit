@@ -164,8 +164,7 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
     if (regExp->isValid())
         return generator.emitNewRegExp(generator.finalDestination(dst), regExp);
 
-    const char* messageCharacters = regExp->errorMessage();
-    const Identifier& message = generator.parserArena().identifierArena().makeIdentifier(generator.vm(), bitwise_cast<const LChar*>(messageCharacters), strlen(messageCharacters));
+    auto& message = generator.parserArena().identifierArena().makeIdentifier(generator.vm(), span8(regExp->errorMessage()));
     generator.emitThrowStaticError(ErrorTypeWithExtension::SyntaxError, message);
     return generator.emitLoad(generator.finalDestination(dst), jsUndefined());
 }
@@ -550,6 +549,16 @@ RegisterID* ObjectLiteralNode::emitBytecode(BytecodeGenerator& generator, Regist
             return nullptr;
         return generator.emitNewObject(generator.finalDestination(dst));
     }
+
+    // Only one element and it is spread.
+    if (!m_list->m_next && m_list->m_node->m_type & PropertyNode::Spread) {
+        RefPtr<RegisterID> function = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::cloneObject);
+        RefPtr<RegisterID> src = generator.emitNode(static_cast<ObjectSpreadExpressionNode*>(m_list->m_node->m_assign)->expression());
+        CallArguments args(generator, nullptr, 0);
+        generator.move(args.thisRegister(), src.get());
+        return generator.emitCall(generator.finalDestination(dst, function.get()), function.get(), NoExpectedFunction, args, position(), position(), position(), DebuggableCall::No);
+    }
+
     RefPtr<RegisterID> newObj = generator.emitNewObject(generator.tempDestination(dst));
     generator.emitNode(newObj.get(), m_list);
     return generator.move(dst, newObj.get());
@@ -1723,7 +1732,7 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_arrayPush(BytecodeGenerator& g
 
     ASSERT(!node->m_next);
 
-    RefPtr<RegisterID> length = generator.emitDirectGetById(generator.newTemporary(), base.get(), generator.propertyNames().length);
+    RefPtr<RegisterID> length = generator.emitGetLength(generator.newTemporary(), base.get());
     return generator.move(dst, generator.emitDirectPutByVal(base.get(), length.get(), value.get()));
 }
 

@@ -235,7 +235,7 @@ static String parseClause(const char* keyword, size_t keywordLength, FILE* file,
             if (p[strlen(terminator)] != '\n')
                 FAIL_WITH_ERROR(SYNTAX_ERROR, ("Unexpected characters after '", keyword, "' clause end delimiter '", delimiter, "':\n", line, "\n"));
 
-            builder.appendCharacters(line, p - line + 1);
+            builder.append(std::span { line, p + 1 });
             return builder.toString();
         }
         builder.append(line);

@@ -367,6 +367,14 @@
    },
    {
       "emails" : [
+         "aleksei@apple.com",
+         "titan.vl@gmail.com"
+      ],
+      "github" : "amarchenko",
+      "name" : "Aleksei Marchenko"
+   },
+   {
+      "emails" : [
          "alexandera_22@apple.com"
       ],
       "expertise" : "Python, Services, Kubernetes",
@@ -3072,7 +3080,8 @@
       "name" : "Georges Basile Stavracas Neto",
       "nicks" : [
          "feaneron"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -3770,6 +3779,16 @@
       "name" : "Jan Alonzo",
       "nicks" : [
          "janm"
+      ]
+   },
+   {
+      "emails" : [
+         "jani@igalia.com"
+      ],
+      "github" : "zhani",
+      "name" : "Jani Hautakangas",
+      "nicks" : [
+         "zhani"
       ]
    },
    {
@@ -6031,6 +6050,18 @@
       ],
       "github" : "nishajain61",
       "name" : "Nisha Jain"
+   },
+   {
+      "emails" : [
+         "nitinmahendru@apple.com",
+         "nitin.mahendru88@gmail.com"
+      ],
+      "expertise" : "Applied Cryptography",
+      "github" : "nmahendru",
+      "name" : "Nitin Mahendru",
+      "nicks" : [
+         "Nitin"
+      ]
    },
    {
       "emails" : [

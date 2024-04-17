@@ -26,7 +26,6 @@
 #pragma once
 
 #include <limits.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 

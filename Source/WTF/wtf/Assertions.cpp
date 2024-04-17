@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc.  All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2011 University of Szeged. All rights reserved.
  *
@@ -347,6 +347,9 @@ void WTFCrash()
     WTFReportBacktrace();
 #if ASAN_ENABLED
     __builtin_trap();
+#elif OS(DARWIN) && CPU(ARM64)
+    WTFBreakpointTrap();
+    __builtin_trap(); // Suppress NO_RETURN_DUE_TO_CRASH warning.
 #else
     *(int *)(uintptr_t)0xbbadbeef = 0;
     // More reliable, but doesn't say BBADBEEF.

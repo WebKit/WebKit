@@ -55,13 +55,6 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/2970"
     };
 
-    FeatureInfo supportsDepthClipEnable = {
-        "supportsDepthClipEnable",
-        FeatureCategory::VulkanFeatures,
-        "VkDevice supports the VK_EXT_depth_clip_enable extension.",
-        &members, "http://anglebug.com/3970"
-    };
-
     FeatureInfo supportsDepthClampZeroOne = {
         "supportsDepthClampZeroOne",
         FeatureCategory::VulkanFeatures,
@@ -254,9 +247,16 @@ struct FeaturesVk : FeatureSetBase
     FeatureInfo supportsDepthStencilResolve = {
         "supportsDepthStencilResolve",
         FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_depth_stencil_resolve extension",
+        &members, "http://anglebug.com/4836"
+    };
+
+    FeatureInfo supportsDepthStencilIndependentResolveNone = {
+        "supportsDepthStencilIndependentResolveNone",
+        FeatureCategory::VulkanFeatures,
         "VkDevice supports the VK_KHR_depth_stencil_resolve "
         "extension with the independentResolveNone feature",
-        &members, "http://anglebug.com/4836"
+        &members, "http://anglebug.com/7551"
     };
 
     FeatureInfo supportsMultisampledRenderToSingleSampledGOOGLEX = {
@@ -271,6 +271,13 @@ struct FeaturesVk : FeatureSetBase
         FeatureCategory::VulkanFeatures,
         "VkDevice supports the VK_EXT_multisampled_render_to_single_sampled extension",
         &members, "http://anglebug.com/4836"
+    };
+
+    FeatureInfo preferMSRTSSFlagByDefault = {
+        "preferMSRTSSFlagByDefault",
+        FeatureCategory::VulkanFeatures,
+        "Enable MSRTSS for each image initialization if available",
+        &members, "http://anglebug.com/8622"
     };
 
     FeatureInfo supportsMultiview = {
@@ -652,13 +659,6 @@ struct FeaturesVk : FeatureSetBase
         FeatureCategory::VulkanFeatures,
         "VkDevice supports VK_EXT_host_query_reset extension",
         &members, "http://anglebug.com/6692"
-    };
-
-    FeatureInfo supportsPipelineCreationCacheControl = {
-        "supportsPipelineCreationCacheControl",
-        FeatureCategory::VulkanFeatures,
-        "VkDevice supports VK_EXT_pipeline_creation_cache_control extension",
-        &members, "http://anglebug.com/5881"
     };
 
     FeatureInfo supportsPipelineCreationFeedback = {
@@ -1336,11 +1336,41 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/8503"
     };
 
+    FeatureInfo disableDepthStencilResolveThroughAttachment = {
+        "disableDepthStencilResolveThroughAttachment",
+        FeatureCategory::VulkanWorkarounds,
+        "On some drivers, using a depth/stencil resolve attachment results in errors",
+        &members, "http://anglebug.com/8658"
+    };
+
     FeatureInfo clDumpVkSpirv = {
         "clDumpVkSpirv",
         FeatureCategory::VulkanFeatures,
         "Enable SPIR-V dumping at runtime for OpenCL programs compiled with clspv",
         &members,
+    };
+
+    FeatureInfo enableAdditionalBlendFactorsForDithering = {
+        "enableAdditionalBlendFactorsForDithering",
+        FeatureCategory::VulkanAppWorkarounds,
+        "Dithering darkens or brightens pixels depending on coordinates and when repeated "
+        "sufficient numbers of times this effect becomes visible to users. Conditionally "
+        "enable additional blend factors for dithering",
+        &members, "https://issuetracker.google.com/328837151"
+    };
+
+    FeatureInfo enableMergeClientAttribBuffer = {
+        "enableMergeClientAttribBuffer",
+        FeatureCategory::VulkanFeatures,
+        "Enable merge for client attrib buffer if possible",
+        &members, "https://issuetracker.google.com/328301788"
+    };
+
+    FeatureInfo supportsShaderNonSemanticInfo = {
+        "supportsShaderNonSemanticInfo",
+        FeatureCategory::VulkanFeatures,
+        "Enable non-semantic info inside shader module via VK_KHR_shader_non_semantic_info extension",
+        &members, "http://anglebug.com/8549"
     };
 
 };

@@ -51,6 +51,19 @@
            }, 0);
         }
 
+        function setMediaSessionMetadata() {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: "bar",
+                artwork: [
+                    {
+                        src: "400x400-green.png",
+                        sizes: "400x400",
+                        type: "image/png",
+                    },
+                ],
+            });
+        }
+
     </script>
 </head>
 <body>

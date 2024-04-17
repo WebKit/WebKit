@@ -9,7 +9,6 @@ import {
   Type,
   kFloatScalarsAndVectors,
   kConcreteSignedIntegerScalarsAndVectors,
-  kConcreteUnsignedIntegerScalarsAndVectors,
   scalarTypeOf } from
 '../../../../../util/conversion.js';
 import { ShaderValidationTest } from '../../../shader_validation_test.js';
@@ -58,25 +57,36 @@ fn((t) => {
   );
 });
 
-const kUnsignedIntegerArgumentTypes = objectsToRecord([
-Type.f32,
-...kConcreteUnsignedIntegerScalarsAndVectors]
-);
+const kArgCases = {
+  good: '(1.0)',
+  bad_no_parens: '',
+  // Bad number of args
+  bad_0args: '()',
+  bad_2arg: '(1.0, 1.0)',
+  // Bad value for arg 0
+  bad_0bool: '(false)',
+  bad_0array: '(array(1.1,2.2))',
+  bad_0struct: '(modf(2.2))',
+  bad_0uint: '(1u)',
+  bad_0vec2u: '(vec2u(1))',
+  bad_0vec3u: '(vec3u(1))',
+  bad_0vec4u: '(vec4u(1))'
+};
 
-g.test('unsigned_integer_argument').
-desc(
-  `
-Validates that scalar and vector integer arguments are rejected by ${builtin}()
-`
-).
-params((u) => u.combine('type', keysOf(kUnsignedIntegerArgumentTypes))).
+g.test('args').
+desc(`Test compilation failure of ${builtin} with variously shaped and typed arguments`).
+params((u) => u.combine('arg', keysOf(kArgCases))).
 fn((t) => {
-  const type = kUnsignedIntegerArgumentTypes[t.params.type];
-  validateConstOrOverrideBuiltinEval(
-    t,
-    builtin,
-    /* expectedResult */type === Type.f32,
-    [type.create(1)],
-    'constant'
+  t.expectCompileResult(
+    t.params.arg === 'good',
+    `const c = ${builtin}${kArgCases[t.params.arg]};`
   );
+});
+
+g.test('must_use').
+desc(`Result of ${builtin} must be used`).
+params((u) => u.combine('use', [true, false])).
+fn((t) => {
+  const use_it = t.params.use ? '_ = ' : '';
+  t.expectCompileResult(t.params.use, `fn f() { ${use_it}${builtin}${kArgCases['good']}; }`);
 });

@@ -15,7 +15,7 @@ PASS insertLineBreak at middle of a listitem
 PASS insertLineBreak at end of a listitem
 PASS delete at start of second paragraph
 PASS forwarddelete at end of first paragraph
-FAIL delete at start of second paragraph starting with an emoji promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'this.editingHost.ownerDocument')"
+PASS delete at start of second paragraph starting with an emoji
 PASS forwarddelete at end of first paragraph ending with an emoji
 FAIL insertParagraph at start of a paragraph - first undo assert_equals: insertParagraph at start of a paragraph - first undo: should restore the initial innerHTML value expected "<p>abcdef</p>" but got "<p><br></p><p>abcdef</p>"
 FAIL insertParagraph at start of a paragraph - first redo assert_true: insertParagraph at start of a paragraph - first redo: execCommand("redo") should return true expected true got false
@@ -59,6 +59,9 @@ PASS delete at start of second paragraph - second redo
 FAIL forwarddelete at end of first paragraph - first undo assert_equals: forwarddelete at end of first paragraph - first undo: should restore the initial innerHTML value expected "<p>abc</p><p>def</p>" but got "<p>abcdef</p>"
 FAIL forwarddelete at end of first paragraph - first redo assert_true: forwarddelete at end of first paragraph - first redo: execCommand("redo") should return true expected true got false
 PASS forwarddelete at end of first paragraph - second redo
+FAIL delete at start of second paragraph starting with an emoji - first undo assert_equals: delete at start of second paragraph starting with an emoji - first undo: should restore the initial innerHTML value expected "<p>abc👉</p><p>👈def</p>" but got "<p>abc👉👈def</p>"
+FAIL delete at start of second paragraph starting with an emoji - first redo assert_true: delete at start of second paragraph starting with an emoji - first redo: execCommand("redo") should return true expected true got false
+PASS delete at start of second paragraph starting with an emoji - second redo
 FAIL forwarddelete at end of first paragraph ending with an emoji - first undo assert_equals: forwarddelete at end of first paragraph ending with an emoji - first undo: should restore the initial innerHTML value expected "<p>abc👉</p><p>👈def</p>" but got "<p>abc👉👈def</p>"
 FAIL forwarddelete at end of first paragraph ending with an emoji - first redo assert_true: forwarddelete at end of first paragraph ending with an emoji - first redo: execCommand("redo") should return true expected true got false
 PASS forwarddelete at end of first paragraph ending with an emoji - second redo

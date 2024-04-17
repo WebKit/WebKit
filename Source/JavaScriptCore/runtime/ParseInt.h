@@ -49,12 +49,12 @@ ALWAYS_INLINE static int parseDigit(unsigned short c, int radix)
     return digit;
 }
 
-static double parseIntOverflow(const LChar* s, unsigned length, int radix)
+static double parseIntOverflow(std::span<const LChar> s, int radix)
 {
     double number = 0.0;
     double radixMultiplier = 1.0;
 
-    for (const LChar* p = s + length - 1; p >= s; p--) {
+    for (const LChar* p = s.data() + s.size() - 1; p >= s.data(); p--) {
         if (radixMultiplier == std::numeric_limits<double>::infinity()) {
             if (*p != '0') {
                 number = std::numeric_limits<double>::infinity();
@@ -71,12 +71,12 @@ static double parseIntOverflow(const LChar* s, unsigned length, int radix)
     return number;
 }
 
-static double parseIntOverflow(const UChar* s, unsigned length, int radix)
+static double parseIntOverflow(std::span<const UChar> s, int radix)
 {
     double number = 0.0;
     double radixMultiplier = 1.0;
 
-    for (const UChar* p = s + length - 1; p >= s; p--) {
+    for (const UChar* p = s.data() + s.size() - 1; p >= s.data(); p--) {
         if (radixMultiplier == std::numeric_limits<double>::infinity()) {
             if (*p != '0') {
                 number = std::numeric_limits<double>::infinity();
@@ -96,8 +96,8 @@ static double parseIntOverflow(const UChar* s, unsigned length, int radix)
 static double parseIntOverflow(StringView string, int radix)
 {
     if (string.is8Bit())
-        return parseIntOverflow(string.characters8(), string.length(), radix);
-    return parseIntOverflow(string.characters16(), string.length(), radix);
+        return parseIntOverflow(string.span8(), radix);
+    return parseIntOverflow(string.span16(), radix);
 }
 
 ALWAYS_INLINE static bool isStrWhiteSpace(UChar c)

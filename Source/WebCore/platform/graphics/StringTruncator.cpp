@@ -193,9 +193,9 @@ static unsigned leftTruncateToBuffer(const String& string, unsigned length, unsi
     return length - adjustedStartIndex;
 }
 
-static float stringWidth(const FontCascade& renderer, const UChar* characters, unsigned length)
+static float stringWidth(const FontCascade& renderer, std::span<const UChar> characters)
 {
-    TextRun run(StringView { std::span { characters, length } });
+    TextRun run(StringView { characters });
     return renderer.width(run);
 }
 
@@ -209,7 +209,7 @@ static String truncateString(const String& string, float maxWidth, const FontCas
 
     ASSERT(maxWidth >= 0);
 
-    float currentEllipsisWidth = shouldInsertEllipsis ? stringWidth(font, &horizontalEllipsis, 1) : customTruncationElementWidth;
+    float currentEllipsisWidth = shouldInsertEllipsis ? stringWidth(font, span(horizontalEllipsis)) : customTruncationElementWidth;
 
     UChar stringBuffer[STRING_BUFFER_SIZE];
     unsigned truncatedLength;
@@ -228,7 +228,7 @@ static String truncateString(const String& string, float maxWidth, const FontCas
         truncatedLength = length;
     }
 
-    float width = stringWidth(font, stringBuffer, truncatedLength);
+    float width = stringWidth(font, { stringBuffer, truncatedLength });
     if (!shouldInsertEllipsis && alwaysTruncate)
         width += customTruncationElementWidth;
     if ((width - maxWidth) < 0.0001) { // Ignore rounding errors.
@@ -268,7 +268,7 @@ static String truncateString(const String& string, float maxWidth, const FontCas
 
         truncatedLength = truncateToBuffer(string, length, keepCount, stringBuffer, shouldInsertEllipsis);
 
-        width = stringWidth(font, stringBuffer, truncatedLength);
+        width = stringWidth(font, { stringBuffer, truncatedLength });
         if (!shouldInsertEllipsis)
             width += customTruncationElementWidth;
         if (width <= maxWidth) {
@@ -306,7 +306,7 @@ String StringTruncator::rightTruncate(const String& string, float maxWidth, cons
 
 float StringTruncator::width(const String& string, const FontCascade& font)
 {
-    return stringWidth(font, StringView(string).upconvertedCharacters(), string.length());
+    return stringWidth(font, StringView(string).upconvertedCharacters());
 }
 
 String StringTruncator::centerTruncate(const String& string, float maxWidth, const FontCascade& font, float& resultWidth, bool shouldInsertEllipsis, float customTruncationElementWidth)

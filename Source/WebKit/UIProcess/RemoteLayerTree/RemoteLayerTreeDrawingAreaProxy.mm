@@ -288,6 +288,19 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
                 m_remoteLayerTreeHost->detachRootLayer();
         }
 
+        // TODO: rdar://126001790 properly handle commits from a web process with multiple root frames.
+        // Currently we get commits for each frame if a web process has multiple root frames. This
+        // currently results in sending across the same scrolling tree multiple times, which can result
+        // in a cycle when a web process has a granparent and grandchild frame, with another process having
+        // the intermediate frame. For now only do scrolling tree commits for the first root frame we see
+        // from a process.
+        auto it = m_commitsForFrameID.find(layerTreeTransaction.processIdentifier());
+        if (it != m_commitsForFrameID.end()) {
+            if (it->value != scrollingTreeTransaction.rootFrameIdentifier())
+                return;
+        } else
+            m_commitsForFrameID.set(layerTreeTransaction.processIdentifier(), scrollingTreeTransaction.rootFrameIdentifier());
+
 #if ENABLE(ASYNC_SCROLLING)
 #if PLATFORM(IOS_FAMILY)
         if (!layerTreeTransaction.isMainFrameProcessTransaction()) {
@@ -590,9 +603,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()
 {
-    // FIXME(rdar://122365213): Rethink whether this needs to use an async reply handler or start a background activity.
-    auto activity = m_webProcessProxy->throttler().backgroundActivity("hideContentUntilPendingUpdate"_s);
-    m_replyForUnhidingContent = m_webProcessProxy->sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [timedActivity = makeUnique<ProcessThrottlerTimedActivity>(1_s, WTFMove(activity))] () mutable { }, messageSenderDestinationID(), { }, WebProcessProxy::ShouldStartProcessThrottlerActivity::No);
+    m_replyForUnhidingContent = m_webProcessProxy->sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [] () { }, messageSenderDestinationID(), { }, WebProcessProxy::ShouldStartProcessThrottlerActivity::No);
     m_remoteLayerTreeHost->detachRootLayer();
 }
 

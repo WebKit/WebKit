@@ -42,7 +42,7 @@ static constexpr size_t sharedAuthSecretLength = 16;
 ClientKeys ClientKeys::generate()
 {
     std::array<uint8_t, sharedAuthSecretLength> sharedAuthSecret;
-    cryptographicallyRandomValues(sharedAuthSecret.data(), sharedAuthSecret.size());
+    cryptographicallyRandomValues(sharedAuthSecret);
 
     return ClientKeys {
         P256DHKeyPair::generate(),

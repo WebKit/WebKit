@@ -27,8 +27,11 @@ namespace WebCore {
 
 class RenderDetailsMarker final : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderDetailsMarker);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderDetailsMarker);
 public:
     RenderDetailsMarker(DetailsMarkerControl&, RenderStyle&&);
+    virtual ~RenderDetailsMarker();
+
     DetailsMarkerControl& element() const { return static_cast<DetailsMarkerControl&>(nodeForNonAnonymous()); }
 
     enum Orientation { Up, Down, Left, Right };

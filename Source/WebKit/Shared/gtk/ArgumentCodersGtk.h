@@ -47,9 +47,4 @@ template<> struct ArgumentCoder<GRefPtr<GtkPageSetup>> {
     static std::optional<GRefPtr<GtkPageSetup>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::SelectionData> {
-    static void encode(Encoder&, const WebCore::SelectionData&);
-    static std::optional<WebCore::SelectionData> decode(Decoder&);
-};
-
 } // namespace IPC

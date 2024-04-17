@@ -35,9 +35,9 @@
 namespace WebCore {
 
 Vector<uint8_t> quotedPrintableEncode(const Vector<uint8_t>&);
-Vector<uint8_t> quotedPrintableEncode(const uint8_t*, size_t);
+Vector<uint8_t> quotedPrintableEncode(std::span<const uint8_t>);
 
 Vector<uint8_t> quotedPrintableDecode(const Vector<uint8_t>&);
-Vector<uint8_t> quotedPrintableDecode(const uint8_t*, size_t);
+Vector<uint8_t> quotedPrintableDecode(std::span<const uint8_t>);
 
 } // namespace WebCore

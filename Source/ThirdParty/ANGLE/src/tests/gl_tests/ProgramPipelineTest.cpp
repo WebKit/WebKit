@@ -256,7 +256,7 @@ GLuint createShaderProgram(GLenum type,
                            const char *const *varyings)
 {
     GLShader shader(type);
-    if (!shader.get())
+    if (!shader)
     {
         return 0;
     }
@@ -1191,7 +1191,7 @@ void main()
     bindProgramPipeline(vertString, fragStringBad);
 
     ANGLE_GL_PROGRAM(program, vertString, fragString);
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
     // Draw with the PPO, which should generate an error due to the link failure.

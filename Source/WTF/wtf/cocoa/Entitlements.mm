@@ -29,12 +29,11 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
-#import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/WTFString.h>
 
 namespace WTF {
 
-static bool hasEntitlement(SecTaskRef task, ASCIILiteral entitlement)
+bool hasEntitlement(SecTaskRef task, ASCIILiteral entitlement)
 {
     if (!task)
         return false;
@@ -68,11 +67,36 @@ bool hasEntitlementValue(audit_token_t token, ASCIILiteral entitlement, ASCIILit
 {
     auto secTaskForToken = adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, token));
     if (!secTaskForToken)
-        return { };
+        return false;
 
     auto string = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, entitlement.characters(), kCFStringEncodingASCII, kCFAllocatorNull));
     String entitlementValue = dynamic_cf_cast<CFStringRef>(adoptCF(SecTaskCopyValueForEntitlement(secTaskForToken.get(), string.get(), nullptr)).get());
     return entitlementValue == value;
+}
+
+bool hasEntitlementValueInArray(audit_token_t token, ASCIILiteral entitlement, ASCIILiteral value)
+{
+    auto secTaskForToken = adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, token));
+    if (!secTaskForToken)
+        return false;
+
+    auto string = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, entitlement.characters(), kCFStringEncodingASCII, kCFAllocatorNull));
+    auto entitlementValue = adoptCF(SecTaskCopyValueForEntitlement(secTaskForToken.get(), string.get(), nullptr)).get();
+    if (!entitlementValue || CFGetTypeID(entitlementValue) != CFArrayGetTypeID())
+        return false;
+
+    RetainPtr<CFArrayRef> array = static_cast<CFArrayRef>(entitlementValue);
+
+    for (CFIndex i = 0; i < CFArrayGetCount(array.get()); ++i) {
+        auto element = CFArrayGetValueAtIndex(array.get(), i);
+        if (CFGetTypeID(element) != CFStringGetTypeID())
+            continue;
+        CFStringRef stringElement = static_cast<CFStringRef>(element);
+        if (value == stringElement)
+            return true;
+    }
+
+    return false;
 }
 
 } // namespace WTF

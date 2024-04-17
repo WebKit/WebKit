@@ -67,6 +67,7 @@ String retrieveErrorMessageWithoutName(JSC::JSGlobalObject&, JSC::VM&, JSC::JSVa
 String retrieveErrorMessage(JSC::JSGlobalObject&, JSC::VM&, JSC::JSValue exception, JSC::CatchScope&);
 WEBCORE_EXPORT void reportException(JSC::JSGlobalObject*, JSC::JSValue exception, CachedScript* = nullptr, bool = false);
 WEBCORE_EXPORT void reportException(JSC::JSGlobalObject*, JSC::Exception*, CachedScript* = nullptr, bool = false, ExceptionDetails* = nullptr);
+WEBCORE_EXPORT void reportExceptionIfJSDOMWindow(JSC::JSGlobalObject*, JSC::JSValue exception);
 void reportCurrentException(JSC::JSGlobalObject*);
 
 JSC::JSValue createDOMException(JSC::JSGlobalObject&, Exception&&);

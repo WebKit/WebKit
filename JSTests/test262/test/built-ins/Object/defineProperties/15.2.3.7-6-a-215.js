@@ -22,10 +22,10 @@ Object.defineProperties(arr, {
     value: 101
   }
 });
-verifyEqualTo(arr, "0", 101);
 
-verifyNotWritable(arr, "0");
-
-verifyNotEnumerable(arr, "0");
-
-verifyNotConfigurable(arr, "0");
+verifyProperty(arr, "0", {
+  value: 101,
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

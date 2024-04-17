@@ -662,15 +662,13 @@ elseif (USE_ANGLE_EGL)
         ANGLE::EGL
     )
 else ()
-    if (USE_EGL)
-        list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-            ${EGL_INCLUDE_DIRS}
-        )
-        list(APPEND WebKit_PRIVATE_LIBRARIES
-            ${EGL_LIBRARIES}
-        )
-        add_definitions(${EGL_DEFINITIONS})
-    endif ()
+    list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
+        ${EGL_INCLUDE_DIRS}
+    )
+    list(APPEND WebKit_PRIVATE_LIBRARIES
+        ${EGL_LIBRARIES}
+    )
+    add_definitions(${EGL_DEFINITIONS})
 endif ()
 
 if (USE_LIBWEBRTC)

@@ -503,7 +503,7 @@ bool GraphicsContextGL::extractPixelBuffer(const PixelBuffer& pixelBuffer, DataF
         return false;
     data.resize(packSizes->imageBytes);
 
-    if (!packPixels(pixelBuffer.bytes(), sourceDataFormat, width, height, sourceImageSubRectangle, depth, 0, unpackImageHeight, format, type, premultiplyAlpha ? AlphaOp::DoPremultiply : AlphaOp::DoNothing, data.data(), flipY))
+    if (!packPixels(pixelBuffer.bytes().data(), sourceDataFormat, width, height, sourceImageSubRectangle, depth, 0, unpackImageHeight, format, type, premultiplyAlpha ? AlphaOp::DoPremultiply : AlphaOp::DoNothing, data.data(), flipY))
         return false;
 
     return true;

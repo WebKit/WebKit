@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@ class Element;
 class LocalFrame;
 class Node;
 class Range;
+class ShadowRoot;
 
 typedef HashMap<AtomString, AtomStringImpl*> Namespaces;
 
@@ -66,7 +67,7 @@ constexpr auto EntityMaskInHTMLAttributeValue = { EntityMask::Amp, EntityMask::Q
 class MarkupAccumulator {
     WTF_MAKE_NONCOPYABLE(MarkupAccumulator);
 public:
-    MarkupAccumulator(Vector<Ref<Node>>*, ResolveURLs, SerializationSyntax, HashMap<String, String>&& replacementURLStrings = { }, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet = { }, ShouldIncludeShadowDOM = ShouldIncludeShadowDOM::No, const Vector<MarkupExclusionRule>& exclusionRules = { });
+    MarkupAccumulator(Vector<Ref<Node>>*, ResolveURLs, SerializationSyntax, HashMap<String, String>&& replacementURLStrings = { }, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet = { }, SerializeShadowRoots = SerializeShadowRoots::Explicit, Vector<Ref<ShadowRoot>>&& explicitShadowRoots = { }, const Vector<MarkupExclusionRule>& exclusionRules = { });
     virtual ~MarkupAccumulator();
 
     String serializeNodes(Node& targetNode, SerializedNodes);
@@ -106,6 +107,8 @@ private:
     void appendNamespace(StringBuilder&, const AtomString& prefix, const AtomString& namespaceURI, Namespaces&, bool allowEmptyDefaultNS = false);
     enum class IsCreatedByURLReplacement : bool { No, Yes };
     std::pair<String, IsCreatedByURLReplacement> resolveURLIfNeeded(const Element&, const String&) const;
+    bool shouldIncludeShadowRoots() const;
+    bool includeShadowRoot(const ShadowRoot&) const;
     void serializeNodesWithNamespaces(Node& targetNode, SerializedNodes, const Namespaces*);
     bool inXMLFragmentSerialization() const { return m_serializationSyntax == SerializationSyntax::XML; }
     void generateUniquePrefix(QualifiedName&, const Namespaces&);
@@ -113,7 +116,7 @@ private:
     LocalFrame* frameForAttributeReplacement(const Element&) const;
     Attribute replaceAttributeIfNecessary(const Element&, const Attribute&);
     bool appendURLAttributeForReplacementIfNecessary(StringBuilder&, const Element&, Namespaces*);
-    RefPtr<Element> replacementElement(const Node&);
+    const ShadowRoot* suitableShadowRoot(const Node&);
     bool shouldExcludeElement(const Element&);
 
     StringBuilder m_markup;
@@ -122,7 +125,8 @@ private:
     unsigned m_prefixLevel { 0 };
     HashMap<String, String> m_replacementURLStrings;
     HashMap<RefPtr<CSSStyleSheet>, String> m_replacementURLStringsForCSSStyleSheet;
-    bool m_shouldIncludeShadowDOM { false };
+    SerializeShadowRoots m_serializeShadowRoots;
+    Vector<Ref<ShadowRoot>> m_explicitShadowRoots;
     Vector<MarkupExclusionRule> m_exclusionRules;
 };
 
@@ -130,8 +134,8 @@ inline void MarkupAccumulator::endAppendingNode(const Node& node)
 {
     if (RefPtr element = dynamicDowncast<Element>(node))
         appendEndTag(m_markup, *element);
-    else if (RefPtr element = replacementElement(node))
-        appendEndTag(m_markup, *element);
+    else if (suitableShadowRoot(node))
+        m_markup.append("</template>"_s);
 }
 
 } // namespace WebCore

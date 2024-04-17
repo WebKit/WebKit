@@ -39,6 +39,35 @@ namespace WebCore {
 namespace Detail {
 
 template<typename IDLType>
+struct GenericSequenceInnerConverter {
+    using SequenceReturnType = Vector<typename IDLType::SequenceStorageType>;
+
+    static void convert(JSC::ThrowScope& scope, JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, SequenceReturnType& result)
+    {
+        auto convertedValue = Converter<IDLType>::convert(lexicalGlobalObject, value);
+        if (UNLIKELY(scope.exception()))
+            return;
+
+        result.append(WTFMove(convertedValue));
+    }
+};
+
+template<typename T>
+struct GenericSequenceInnerConverter<IDLInterface<T>> {
+    using IDLType = IDLInterface<T>;
+    using SequenceReturnType = Vector<typename IDLType::SequenceStorageType>;
+
+    static void convert(JSC::ThrowScope& scope, JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, SequenceReturnType& result)
+    {
+        RefPtr convertedValue = Converter<IDLType>::convert(lexicalGlobalObject, value);
+        if (UNLIKELY(scope.exception()))
+            return;
+
+        result.append(convertedValue.releaseNonNull());
+    }
+};
+
+template<typename IDLType>
 struct GenericSequenceConverter {
     using ReturnType = Vector<typename IDLType::SequenceStorageType>;
 
@@ -52,10 +81,7 @@ struct GenericSequenceConverter {
         forEachInIterable(&lexicalGlobalObject, object, [&result](JSC::VM& vm, JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSValue nextValue) {
             auto scope = DECLARE_THROW_SCOPE(vm);
 
-            auto convertedValue = Converter<IDLType>::convert(*lexicalGlobalObject, nextValue);
-            if (UNLIKELY(scope.exception()))
-                return;
-            result.append(WTFMove(convertedValue));
+            GenericSequenceInnerConverter<IDLType>::convert(scope, *lexicalGlobalObject, nextValue, result);
         });
         return WTFMove(result);
     }
@@ -70,10 +96,7 @@ struct GenericSequenceConverter {
         forEachInIterable(lexicalGlobalObject, object, method, [&result](JSC::VM& vm, JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue nextValue) {
             auto scope = DECLARE_THROW_SCOPE(vm);
 
-            auto convertedValue = Converter<IDLType>::convert(lexicalGlobalObject, nextValue);
-            if (UNLIKELY(scope.exception()))
-                return;
-            result.append(WTFMove(convertedValue));
+            GenericSequenceInnerConverter<IDLType>::convert(scope, lexicalGlobalObject, nextValue, result);
         });
         return WTFMove(result);
     }
@@ -217,10 +240,8 @@ struct SequenceConverter {
                 if (!indexValue)
                     indexValue = JSC::jsUndefined();
 
-                auto convertedValue = Converter<IDLType>::convert(lexicalGlobalObject, indexValue);
+                GenericSequenceInnerConverter<IDLType>::convert(scope, lexicalGlobalObject, indexValue, result);
                 RETURN_IF_EXCEPTION(scope, { });
-
-                result.append(convertedValue);
             }
             return result;
         }
@@ -232,10 +253,8 @@ struct SequenceConverter {
             if (!indexValue)
                 indexValue = JSC::jsUndefined();
 
-            auto convertedValue = Converter<IDLType>::convert(lexicalGlobalObject, indexValue);
+            GenericSequenceInnerConverter<IDLType>::convert(scope, lexicalGlobalObject, indexValue, result);
             RETURN_IF_EXCEPTION(scope, { });
-            
-            result.append(convertedValue);
         }
         return result;
     }

@@ -32,8 +32,11 @@
 
 namespace WebCore {
 
+class Document;
 class Exception;
+class Node;
 class ScriptExecutionContext;
+class Text;
 
 enum class TrustedType : int8_t {
     TrustedHTML,
@@ -49,5 +52,7 @@ WEBCORE_EXPORT std::variant<std::monostate, Exception, Ref<TrustedHTML>, Ref<Tru
 WEBCORE_EXPORT ExceptionOr<String> trustedTypeCompliantString(TrustedType, ScriptExecutionContext&, const String& input, const String& sink);
 
 WEBCORE_EXPORT ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecutionContext&, const String& urlString);
+
+ExceptionOr<RefPtr<Text>> processNodeOrStringAsTrustedType(Ref<Document>, RefPtr<Node> parent, std::variant<RefPtr<Node>, String, RefPtr<TrustedScript>>);
 
 } // namespace WebCore

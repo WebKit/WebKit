@@ -43,7 +43,7 @@ TEST(WTF, StringImplCreationFromLiteral)
 
     // Constructor taking the size explicitly.
     const char* programmaticStringData = "Explicit Size Literal";
-    auto programmaticString = StringImpl::createWithoutCopying(programmaticStringData, strlen(programmaticStringData));
+    auto programmaticString = StringImpl::createWithoutCopying(span(programmaticStringData));
     ASSERT_EQ(strlen(programmaticStringData), programmaticString->length());
     ASSERT_TRUE(equal(programmaticString.get(), StringView::fromLatin1(programmaticStringData)));
     ASSERT_EQ(programmaticStringData, reinterpret_cast<const char*>(programmaticString->characters8()));
@@ -64,41 +64,41 @@ TEST(WTF, StringImplReplaceWithLiteral)
     ASSERT_TRUE(testStringImpl->is8Bit());
 
     // Cases for 8Bit source.
-    testStringImpl = testStringImpl->replace('2', ""_s, 0);
+    testStringImpl = testStringImpl->replace('2', ""_span);
     ASSERT_TRUE(equal(testStringImpl.get(), "14"_s));
 
     testStringImpl = StringImpl::create("1224"_s);
     ASSERT_TRUE(testStringImpl->is8Bit());
 
-    testStringImpl = testStringImpl->replace('3', "NotFound"_s, 8);
+    testStringImpl = testStringImpl->replace('3', "NotFound"_span);
     ASSERT_TRUE(equal(testStringImpl.get(), "1224"_s));
 
-    testStringImpl = testStringImpl->replace('2', "3"_s, 1);
+    testStringImpl = testStringImpl->replace('2', "3"_span);
     ASSERT_TRUE(equal(testStringImpl.get(), "1334"_s));
 
     testStringImpl = StringImpl::create("1224"_s);
     ASSERT_TRUE(testStringImpl->is8Bit());
-    testStringImpl = testStringImpl->replace('2', "555"_s, 3);
+    testStringImpl = testStringImpl->replace('2', "555"_span);
     ASSERT_TRUE(equal(testStringImpl.get(), "15555554"_s));
 
     // Cases for 16Bit source.
     String testString = String::fromUTF8("résumé");
     ASSERT_FALSE(testString.impl()->is8Bit());
 
-    testStringImpl = testString.impl()->replace('2', "NotFound"_s, 8);
+    testStringImpl = testString.impl()->replace('2', "NotFound"_span);
     ASSERT_TRUE(equal(testStringImpl.get(), String::fromUTF8("résumé").impl()));
 
-    testStringImpl = testString.impl()->replace(UChar(0x00E9 /*U+00E9 is 'é'*/), "e"_s, 1);
+    testStringImpl = testString.impl()->replace(UChar(0x00E9 /*U+00E9 is 'é'*/), "e"_span);
     ASSERT_TRUE(equal(testStringImpl.get(), "resume"_s));
 
     testString = String::fromUTF8("résumé");
     ASSERT_FALSE(testString.impl()->is8Bit());
-    testStringImpl = testString.impl()->replace(UChar(0x00E9 /*U+00E9 is 'é'*/), ""_s, 0);
+    testStringImpl = testString.impl()->replace(UChar(0x00E9 /*U+00E9 is 'é'*/), ""_span);
     ASSERT_TRUE(equal(testStringImpl.get(), "rsum"_s));
 
     testString = String::fromUTF8("résumé");
     ASSERT_FALSE(testString.impl()->is8Bit());
-    testStringImpl = testString.impl()->replace(UChar(0x00E9 /*U+00E9 is 'é'*/), "555"_s, 3);
+    testStringImpl = testString.impl()->replace(UChar(0x00E9 /*U+00E9 is 'é'*/), "555"_span);
     ASSERT_TRUE(equal(testStringImpl.get(), "r555sum555"_s));
 }
 
@@ -733,10 +733,10 @@ TEST(WTF, StaticStringImpl)
 TEST(WTF, DynamicStaticStringImpl)
 {
     // Construct using MAKE_STATIC_STRING_IMPL.
-    String hello = StringImpl::createStaticStringImpl("hello", 5);
-    String world = StringImpl::createStaticStringImpl("world", 5);
-    String longer = StringImpl::createStaticStringImpl("longer", 6);
-    String hello2 = StringImpl::createStaticStringImpl("hello", 5);
+    String hello = StringImpl::createStaticStringImpl("hello"_span);
+    String world = StringImpl::createStaticStringImpl("world"_span);
+    String longer = StringImpl::createStaticStringImpl("longer"_span);
+    String hello2 = StringImpl::createStaticStringImpl("hello"_span);
 
     doStaticStringImplTests(StaticStringImplTestSet::DynamicallyAllocatedImpl, hello, world, longer, hello2);
 }
@@ -765,7 +765,7 @@ TEST(WTF, ExternalStringImplCreate8bit)
     bool freeFunctionCalled = false;
 
     {
-        auto external = ExternalStringImpl::create(buffer, bufferStringLength, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
             freeFunctionCalled = true;
         });
 
@@ -787,7 +787,7 @@ TEST(WTF, ExternalStringImplCreate16bit)
     bool freeFunctionCalled = false;
 
     {
-        auto external = ExternalStringImpl::create(buffer, bufferStringLength, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
             freeFunctionCalled = true;
         });
 
@@ -816,7 +816,7 @@ TEST(WTF, ExternalStringAtom)
     bool freeFunctionCalled = false;
 
     {
-        auto external = ExternalStringImpl::create(buffer, bufferStringLength, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
             freeFunctionCalled = true;
         });    
 
@@ -853,9 +853,9 @@ TEST(WTF, ExternalStringToSymbol)
     bool freeFunctionCalled = false;
 
     {
-        auto external = ExternalStringImpl::create(buffer, bufferStringLength, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
             freeFunctionCalled = true;
-        });    
+        });
 
         ASSERT_TRUE(external->isExternal());
         ASSERT_FALSE(external->isSymbol());

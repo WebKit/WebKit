@@ -31,6 +31,7 @@
 #endif
 
 #include <glib-object.h>
+#include <wpe/WPEBufferDMABufFormats.h>
 #include <wpe/WPEDefines.h>
 #include <wpe/WPEKeymap.h>
 #include <wpe/WPEMonitor.h>
@@ -47,19 +48,19 @@ struct _WPEDisplayClass
 {
     GObjectClass parent_class;
 
-    gboolean     (* connect)                       (WPEDisplay *display,
-                                                    GError    **error);
-    WPEView     *(* create_view)                   (WPEDisplay *display);
-    gpointer     (* get_egl_display)               (WPEDisplay *display,
-                                                    GError    **error);
-    WPEKeymap   *(* get_keymap)                    (WPEDisplay *display,
-                                                    GError    **error);
-    GList       *(* get_preferred_dma_buf_formats) (WPEDisplay *display);
-    guint        (* get_n_monitors)                (WPEDisplay *display);
-    WPEMonitor  *(* get_monitor)                   (WPEDisplay *display,
-                                                    guint       index);
-    const char  *(* get_drm_device)                (WPEDisplay *display);
-    const char  *(* get_drm_render_node)           (WPEDisplay *display);
+    gboolean                (* connect)                       (WPEDisplay *display,
+                                                               GError    **error);
+    WPEView                *(* create_view)                   (WPEDisplay *display);
+    gpointer                (* get_egl_display)               (WPEDisplay *display,
+                                                               GError    **error);
+    WPEKeymap              *(* get_keymap)                    (WPEDisplay *display,
+                                                               GError    **error);
+    WPEBufferDMABufFormats *(* get_preferred_dma_buf_formats) (WPEDisplay *display);
+    guint                   (* get_n_monitors)                (WPEDisplay *display);
+    WPEMonitor             *(* get_monitor)                   (WPEDisplay *display,
+                                                               guint       index);
+    const char             *(* get_drm_device)                (WPEDisplay *display);
+    const char             *(* get_drm_render_node)           (WPEDisplay *display);
 
     gpointer padding[32];
 };
@@ -78,26 +79,26 @@ typedef enum {
     WPE_DISPLAY_ERROR_CONNECTION_FAILED
 } WPEDisplayError;
 
-WPE_API GQuark       wpe_display_error_quark                   (void);
-WPE_API WPEDisplay  *wpe_display_get_default                   (void);
-WPE_API WPEDisplay  *wpe_display_get_primary                   (void);
-WPE_API void         wpe_display_set_primary                   (WPEDisplay *display);
-WPE_API gboolean     wpe_display_connect                       (WPEDisplay *display,
-                                                                GError    **error);
-WPE_API gpointer     wpe_display_get_egl_display               (WPEDisplay *display,
-                                                                GError    **error);
-WPE_API WPEKeymap   *wpe_display_get_keymap                    (WPEDisplay *display,
-                                                                GError    **error);
-WPE_API GList       *wpe_display_get_preferred_dma_buf_formats (WPEDisplay *display);
-WPE_API guint        wpe_display_get_n_monitors                (WPEDisplay *display);
-WPE_API WPEMonitor  *wpe_display_get_monitor                   (WPEDisplay *display,
-                                                                guint       index);
-WPE_API void         wpe_display_monitor_added                 (WPEDisplay *display,
-                                                                WPEMonitor *monitor);
-WPE_API void         wpe_display_monitor_removed               (WPEDisplay *display,
-                                                                WPEMonitor *monitor);
-WPE_API const char  *wpe_display_get_drm_device                (WPEDisplay *display);
-WPE_API const char  *wpe_display_get_drm_render_node           (WPEDisplay *display);
+WPE_API GQuark                  wpe_display_error_quark                   (void);
+WPE_API WPEDisplay             *wpe_display_get_default                   (void);
+WPE_API WPEDisplay             *wpe_display_get_primary                   (void);
+WPE_API void                    wpe_display_set_primary                   (WPEDisplay *display);
+WPE_API gboolean                wpe_display_connect                       (WPEDisplay *display,
+                                                                           GError    **error);
+WPE_API gpointer                wpe_display_get_egl_display               (WPEDisplay *display,
+                                                                           GError    **error);
+WPE_API WPEKeymap              *wpe_display_get_keymap                    (WPEDisplay *display,
+                                                                           GError    **error);
+WPE_API WPEBufferDMABufFormats *wpe_display_get_preferred_dma_buf_formats (WPEDisplay *display);
+WPE_API guint                   wpe_display_get_n_monitors                (WPEDisplay *display);
+WPE_API WPEMonitor             *wpe_display_get_monitor                   (WPEDisplay *display,
+                                                                           guint       index);
+WPE_API void                    wpe_display_monitor_added                 (WPEDisplay *display,
+                                                                           WPEMonitor *monitor);
+WPE_API void                    wpe_display_monitor_removed               (WPEDisplay *display,
+                                                                           WPEMonitor *monitor);
+WPE_API const char             *wpe_display_get_drm_device                (WPEDisplay *display);
+WPE_API const char             *wpe_display_get_drm_render_node           (WPEDisplay *display);
 
 G_END_DECLS
 

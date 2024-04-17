@@ -300,7 +300,7 @@ TEST_P(StateChangeTest, AlphaToCoverageEnable)
     glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
 
     glUseProgram(greenProgram);
-    drawQuad(greenProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
@@ -650,9 +650,8 @@ TEST_P(StateChangeTestES3, IncompleteRenderbufferAttachmentInvalidateSync)
 
     GLRenderbuffer renderbuf;
 
-    glBindRenderbuffer(GL_RENDERBUFFER, renderbuf.get());
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-                              renderbuf.get());
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuf);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuf);
     ASSERT_GL_NO_ERROR();
 
     // invalidate the framebuffer when the attachment is incomplete: no storage allocated to the
@@ -1416,7 +1415,7 @@ TEST_P(StateChangeTestWebGL2, InvalidateThenDrawFBO)
     // Draw green.
     // Important to use a vertex buffer because WebGL doesn't support client-side arrays.
     constexpr bool useVertexBuffer = true;
-    drawQuad(drawGreen.get(), essl3_shaders::PositionAttrib(), 0.5f, 1.0f, useVertexBuffer);
+    drawQuad(drawGreen, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, useVertexBuffer);
     EXPECT_GL_NO_ERROR();
 
     // Bind original framebuffer.
@@ -3776,7 +3775,7 @@ TEST_P(SimpleStateChangeTest, EnableAndDisableCullFace)
 
     glCullFace(GL_FRONT);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
 
@@ -3785,7 +3784,7 @@ TEST_P(SimpleStateChangeTest, EnableAndDisableCullFace)
     // Disable cull face and redraw, then make sure we have the quad drawn.
     glDisable(GL_CULL_FACE);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
 
@@ -3808,7 +3807,7 @@ TEST_P(SimpleStateChangeTest, ScissorTest)
               getWindowHeight() / 2);
 
     // Fill the whole screen with a quad.
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
 
@@ -3822,7 +3821,7 @@ TEST_P(SimpleStateChangeTest, ScissorTest)
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_SCISSOR_TEST);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
 
@@ -3839,7 +3838,7 @@ TEST_P(SimpleStateChangeTest, ScissorTest)
     // Clear everything and start over with the test enabled.
     glClear(GL_COLOR_BUFFER_BIT);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
 
@@ -3876,12 +3875,12 @@ void main()
     // draw a red quad to the left side.
     glUniform2f(posUniformLocation, -0.5, 0.0);
     glUniform4f(colorUniformLocation, 1.0, 0.0, 0.0, 1.0);
-    drawQuad(program.get(), "position", 0.0f, 0.5f, true);
+    drawQuad(program, "position", 0.0f, 0.5f, true);
 
     // draw a green quad to the right side.
     glUniform2f(posUniformLocation, 0.5, 0.0);
     glUniform4f(colorUniformLocation, 0.0, 1.0, 0.0, 1.0);
-    drawQuad(program.get(), "position", 0.0f, 0.5f, true);
+    drawQuad(program, "position", 0.0f, 0.5f, true);
 
     ASSERT_GL_NO_ERROR();
 
@@ -6044,6 +6043,123 @@ void main()
     ASSERT_GL_NO_ERROR() << "Draw to int texture with correct mask";
 }
 
+// Tests that switching the program properly syncs the framebuffer implementation
+TEST_P(WebGL2ValidationStateChangeTest, IncompatibleDrawFramebufferProgramSwitch)
+{
+    constexpr char kFS0[] = R"(#version 300 es
+precision mediump float;
+in vec2 texCoord;
+out ivec4 color;
+void main()
+{
+    color = ivec4(1, 0, 1, 1);
+})";
+    ANGLE_GL_PROGRAM(programInt, essl3_shaders::vs::Simple(), kFS0);
+
+    constexpr char kFS1[] = R"(#version 300 es
+precision mediump float;
+in vec2 texCoord;
+out vec4 color;
+void main()
+{
+    color = vec4(0, 1, 0, 1);
+})";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS1);
+
+    constexpr size_t kSize = 2;
+
+    GLFramebuffer fb;
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+    GLRenderbuffer rb;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Incompatible masked-out draw call
+    // Implementations may internally disable render targets to avoid runtime failures
+    glColorMask(false, false, false, false);
+    drawQuad(programInt, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear must not be affected
+    glColorMask(true, true, true, true);
+    glClearColor(1.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+
+    // Compatible draw call
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
+}
+
+// Tests that updating the render target storage properly syncs the framebuffer implementation
+TEST_P(WebGL2ValidationStateChangeTest, MultiAttachmentIncompatibleDrawFramebufferStorageUpdate)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+in vec2 texCoord;
+layout(location = 0) out ivec4 colorInt;
+layout(location = 1) out vec4 colorFloat;
+void main()
+{
+    colorInt = ivec4(1, 0, 1, 1);
+    colorFloat = vec4(0, 1, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+
+    // Explicitly set the program here so that
+    // drawQuad helpers do not switch it
+    glUseProgram(program);
+
+    constexpr size_t kSize = 2;
+
+    GLFramebuffer fb;
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+    GLRenderbuffer rb0;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb0);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb0);
+
+    GLRenderbuffer rb1;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb1);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8I, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_RENDERBUFFER, rb1);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    constexpr GLenum bufs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, bufs);
+
+    // Incompatible masked-out draw call
+    // Implementations may internally disable render targets to avoid runtime failures
+    glColorMask(false, false, false, false);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    // Redefine storage, swapping numeric types
+    glBindRenderbuffer(GL_RENDERBUFFER, rb0);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8I, kSize, kSize);
+    glBindRenderbuffer(GL_RENDERBUFFER, rb1);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+
+    // The same draw call should be valid now
+    glColorMask(true, true, true, true);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    EXPECT_PIXEL_RECT32I_EQ(0, 0, kSize, kSize, GLColor32I(1, 0, 1, 1));
+
+    glReadBuffer(GL_COLOR_ATTACHMENT1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
+}
+
 // Tests negative API state change cases with Transform Feedback bindings.
 TEST_P(WebGL2ValidationStateChangeTest, TransformFeedbackNegativeAPI)
 {
@@ -6569,7 +6685,7 @@ void SimpleStateChangeTest::drawToFboWithCulling(const GLenum frontFace, bool ea
     }
 
     glUseProgram(greenProgram);
-    drawQuad(greenProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
@@ -6586,7 +6702,7 @@ void SimpleStateChangeTest::drawToFboWithCulling(const GLenum frontFace, bool ea
     }
 
     glUseProgram(textureProgram);
-    drawQuad(textureProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(textureProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
 
     if (frontFace == GL_CCW)
@@ -6788,21 +6904,21 @@ TEST_P(SimpleStateChangeTestES3, RasterizerDiscardState)
     // The drawQuad() should have no effect with GL_RASTERIZER_DISCARD enabled
     glEnable(GL_RASTERIZER_DISCARD);
     glUseProgram(greenProgram);
-    drawQuad(greenProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
     // The drawQuad() should draw something with GL_RASTERIZER_DISCARD disabled
     glDisable(GL_RASTERIZER_DISCARD);
     glUseProgram(greenProgram);
-    drawQuad(greenProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
     // The drawQuad() should have no effect with GL_RASTERIZER_DISCARD enabled
     glEnable(GL_RASTERIZER_DISCARD);
     glUseProgram(blueProgram);
-    drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
@@ -7170,7 +7286,7 @@ TEST_P(ImageRespecificationTest, ImageTarget2DOESSwitch)
     };
     EGLImageKHR firstEGLImage = eglCreateImageKHR(
         window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
-        reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(firstTexture.get())), attribs);
+        reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(firstTexture)), attribs);
     ASSERT_EGL_SUCCESS();
 
     // Create the target texture and attach it to the framebuffer
@@ -7213,7 +7329,7 @@ TEST_P(ImageRespecificationTest, ImageTarget2DOESSwitch)
 
     EGLImageKHR secondEGLImage = eglCreateImageKHR(
         window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
-        reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(secondTexture.get())), attribs);
+        reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(secondTexture)), attribs);
     ASSERT_EGL_SUCCESS();
 
     glBindTexture(GL_TEXTURE_2D, mTargetTexture);

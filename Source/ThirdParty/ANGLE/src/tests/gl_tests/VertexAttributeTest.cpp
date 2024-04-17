@@ -1256,6 +1256,19 @@ class VertexAttributeOORTest : public VertexAttributeTest
     }
 };
 
+class RobustVertexAttributeTest : public VertexAttributeTest
+{
+  public:
+    RobustVertexAttributeTest()
+    {
+        // mac GL and metal do not support robustness.
+        if (!IsMac() && !IsIOS())
+        {
+            setRobustAccess(true);
+        }
+    }
+};
+
 // Verify that drawing with a large out-of-range offset generates INVALID_OPERATION.
 // Requires WebGL compatibility with robust access behaviour disabled.
 TEST_P(VertexAttributeOORTest, ANGLEDrawArraysBufferTooSmall)
@@ -1314,6 +1327,48 @@ TEST_P(VertexAttributeOORTest, ANGLEDrawArraysOutOfBoundsCases)
 
     drawIndexedQuad(mProgram, "position", 0.5f, 1.0f, true);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Test that enabling a buffer in an unused attribute doesn't crash.  There should be an active
+// attribute after that.
+TEST_P(RobustVertexAttributeTest, BoundButUnusedBuffer)
+{
+    constexpr char kVS[] = R"(attribute vec2 offset;
+void main()
+{
+    gl_Position = vec4(offset.xy, 0, 1);
+    gl_PointSize = 1.0;
+})";
+
+    constexpr char kFS[] = R"(precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(1.0, 0, 0, 1.0);
+})";
+
+    const GLuint vs = CompileShader(GL_VERTEX_SHADER, kVS);
+    const GLuint fs = CompileShader(GL_FRAGMENT_SHADER, kFS);
+
+    GLuint program = glCreateProgram();
+    glBindAttribLocation(program, 1, "offset");
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+    glLinkProgram(program);
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, 100, nullptr, GL_STATIC_DRAW);
+
+    // Enable an unused attribute that is within the range of active attributes (not beyond it)
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, 0);
+
+    glUseProgram(program);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Destroy the buffer.  Regression test for a tracking bug where the buffer was used by
+    // SwiftShader (even though location 1 is inactive), but not marked as used by ANGLE.
+    buffer.reset();
 }
 
 // Verify that using a different start vertex doesn't mess up the draw.
@@ -1724,7 +1779,7 @@ TEST_P(VertexAttributeTest, DrawArraysWithDisabledAttribute)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, testVertexShaderSource2, testFragmentShaderSource);
-    GLuint mProgram2 = program.get();
+    GLuint mProgram2 = program;
 
     ASSERT_EQ(positionLocation, glGetAttribLocation(mProgram2, "position"));
     ASSERT_EQ(mTestAttrib, glGetAttribLocation(mProgram2, "test"));
@@ -2459,7 +2514,7 @@ void main() {
 
     for (int i = 0; i < 3; i++)
     {
-        glUseProgram(renderProgram.get());
+        glUseProgram(renderProgram);
         glBindVertexArray(vao[0]);
         glDrawArraysInstanced(GL_TRIANGLES, 0, 6, kInstanceCount);
 
@@ -2470,10 +2525,10 @@ void main() {
         EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, 0, GLColor::yellow) << i;
 
         glBindVertexArray(vao[1]);
-        glUseProgram(computeProgram.get());
+        glUseProgram(computeProgram);
         glDispatchCompute(1, 1, 1);
 
-        glUseProgram(renderProgram1.get());
+        glUseProgram(renderProgram1);
         glBindVertexArray(vao[1]);
         glDrawArraysInstanced(GL_TRIANGLES, 0, 6, kInstanceCount);
 
@@ -5154,6 +5209,8 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
     ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass),
     ES3_METAL().disable(Feature::HasExplicitMemBarrier).enable(Feature::HasCheapRenderPass));
+
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(RobustVertexAttributeTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexAttributeTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(

@@ -10,31 +10,39 @@ info: |
   3. Assert: calendar.[[Identifier]] is "iso8601".
   4. If Type(fields) is not Object, throw a TypeError exception.
   5. Set options to ? GetOptionsObject(options).
-  6. Let result be ? ISOMonthDayFromFields(fields, options).
-  7. Return ? CreateTemporalMonthDay(result.[[Month]], result.[[Day]], calendar, result.[[ReferenceISOYear]]).
+  6. Set fields to ? PrepareTemporalFields(fields, « "day", "month", "monthCode", "year" », « "day" »).
+  7. Let overflow be ? ToTemporalOverflow(options).
+  8. Perform ? ISOResolveMonth(fields).
+  9. Let result be ? ISOMonthDayFromFields(fields, overflow).
+  10. Return ? CreateTemporalMonthDay(result.[[Month]], result.[[Day]], "iso8601", result.[[ReferenceISOYear]]).
 includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
 const cal = new Temporal.Calendar("iso8601");
 
-let result = cal.monthDayFromFields({ year: 2021, month: 7, day: 3 });
-TemporalHelpers.assertPlainMonthDay(result, "M07", 3, "month 7, day 3, with year");
-result = cal.monthDayFromFields({ year: 2021, month: 12, day: 31 });
-TemporalHelpers.assertPlainMonthDay(result, "M12", 31, "month 12, day 31, with year");
-result = cal.monthDayFromFields({ monthCode: "M07", day: 3 });
-TemporalHelpers.assertPlainMonthDay(result, "M07", 3, "monthCode M07, day 3");
-result = cal.monthDayFromFields({ monthCode: "M12", day: 31 });
-TemporalHelpers.assertPlainMonthDay(result, "M12", 31, "monthCode M12, day 31");
-
-["constrain", "reject"].forEach(function (overflow) {
-  const opt = { overflow };
+const options = [
+  { overflow: "constrain" },
+  { overflow: "reject" },
+  {},
+  undefined,
+];
+options.forEach((opt) => {
+  const optionsDesc = opt && JSON.stringify(opt);
   result = cal.monthDayFromFields({ year: 2021, month: 7, day: 3 }, opt);
-  TemporalHelpers.assertPlainMonthDay(result, "M07", 3, "month 7, day 3, with year");
+  TemporalHelpers.assertPlainMonthDay(result, "M07", 3, `month 7, day 3, with year, options = ${optionsDesc}`);
   result = cal.monthDayFromFields({ year: 2021, month: 12, day: 31 }, opt);
-  TemporalHelpers.assertPlainMonthDay(result, "M12", 31, "month 12, day 31, with year");
+  TemporalHelpers.assertPlainMonthDay(result, "M12", 31, `month 12, day 31, with year, options = ${optionsDesc}`);
   result = cal.monthDayFromFields({ monthCode: "M07", day: 3 }, opt);
-  TemporalHelpers.assertPlainMonthDay(result, "M07", 3, "monthCode M07, day 3");
+  TemporalHelpers.assertPlainMonthDay(result, "M07", 3, `monthCode M07, day 3, options = ${optionsDesc}`);
   result = cal.monthDayFromFields({ monthCode: "M12", day: 31 }, opt);
-  TemporalHelpers.assertPlainMonthDay(result, "M12", 31, "monthCode M12, day 31");
+  TemporalHelpers.assertPlainMonthDay(result, "M12", 31, `monthCode M12, day 31, options = ${optionsDesc}`);
+});
+
+TemporalHelpers.ISOMonths.forEach(({ month, monthCode, daysInMonth }) => {
+  result = cal.monthDayFromFields({ month, day: daysInMonth });
+  TemporalHelpers.assertPlainMonthDay(result, monthCode, daysInMonth, `month ${month}, day ${daysInMonth}`);
+
+  result = cal.monthDayFromFields({ monthCode, day: daysInMonth });
+  TemporalHelpers.assertPlainMonthDay(result, monthCode, daysInMonth, `monthCode ${monthCode}, day ${daysInMonth}`);
 });

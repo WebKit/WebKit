@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Math.log10), false, 'isConstructor(Math.log10) mu
 
 assert.throws(TypeError, () => {
   new Math.log10();
-}, '`new Math.log10()` throws TypeError');
+});
 

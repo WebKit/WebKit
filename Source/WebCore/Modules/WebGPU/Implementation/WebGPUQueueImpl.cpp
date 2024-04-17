@@ -72,8 +72,7 @@ void QueueImpl::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 void QueueImpl::writeBuffer(
     const Buffer&,
     Size64,
-    const void*,
-    size_t,
+    std::span<const uint8_t>,
     Size64,
     std::optional<Size64>)
 {
@@ -90,16 +89,15 @@ void QueueImpl::writeTexture(
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void QueueImpl::writeBuffer(
+void QueueImpl::writeBufferNoCopy(
     const Buffer& buffer,
     Size64 bufferOffset,
-    void* source,
-    size_t byteLength,
+    std::span<uint8_t> source,
     Size64 dataOffset,
     std::optional<Size64> size)
 {
     // FIXME: Use checked arithmetic and check the cast
-    wgpuQueueWriteBuffer(m_backing.get(), m_convertToBackingContext->convertToBacking(buffer), bufferOffset, static_cast<uint8_t*>(source) + dataOffset, static_cast<size_t>(size.value_or(byteLength - dataOffset)));
+    wgpuQueueWriteBuffer(m_backing.get(), m_convertToBackingContext->convertToBacking(buffer), bufferOffset, static_cast<uint8_t*>(source.data()) + dataOffset, static_cast<size_t>(size.value_or(source.size() - dataOffset)));
 }
 
 void QueueImpl::writeTexture(

@@ -15,10 +15,10 @@
 
 #include "common/angle_version_info.h"
 #include "libANGLE/renderer/driver_utils.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/android/HardwareBufferImageSiblingVkAndroid.h"
 #include "libANGLE/renderer/vulkan/android/WindowSurfaceVkAndroid.h"
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
@@ -106,12 +106,14 @@ void DisplayVkAndroid::enableRecordableIfSupported(egl::Config *config)
 
     const bool isRGBA8888Config = (config->redSize == 8 && config->greenSize == 8 &&
                                    config->blueSize == 8 && config->alphaSize == 8);
+    const bool isRGB888Config   = (config->redSize == 8 && config->greenSize == 8 &&
+                                 config->blueSize == 8 && config->alphaSize == 0);
     const bool isRGB10A2Config  = (config->redSize == 10 && config->greenSize == 10 &&
                                   config->blueSize == 10 && config->alphaSize == 2);
 
-    // enabled recordable only for RGBA8888 and RGB10_A2 configs
+    // enabled recordable only for RGBA8888, RGB888 and RGB10_A2 configs
     const EGLBoolean enableRecordableBit =
-        (isRGBA8888Config || isRGB10A2Config) ? EGL_TRUE : EGL_FALSE;
+        (isRGBA8888Config || isRGB888Config || isRGB10A2Config) ? EGL_TRUE : EGL_FALSE;
 
     config->recordable = enableRecordableBit;
 }

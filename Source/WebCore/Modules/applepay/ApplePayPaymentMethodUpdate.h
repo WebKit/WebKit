@@ -38,7 +38,7 @@ namespace WebCore {
 
 struct ApplePayPaymentMethodUpdate final : public ApplePayDetailsUpdateBase {
 #if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
-    Vector<RefPtr<ApplePayError>> errors;
+    Vector<Ref<ApplePayError>> errors;
 
     Vector<ApplePayShippingMethod> newShippingMethods;
 #endif

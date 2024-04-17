@@ -62,4 +62,14 @@ bool SVGTextElement::childShouldCreateRenderer(const Node& child) const
     return false;
 }
 
+void SVGTextElement::childrenChanged(const ChildChange& change)
+{
+    SVGTextPositioningElement::childrenChanged(change);
+
+    if (change.source == ChildChange::Source::Parser)
+        return;
+
+    invalidateResourceImageBuffersIfNeeded();
+}
+
 }

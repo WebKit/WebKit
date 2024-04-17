@@ -58,7 +58,8 @@ public:
     ~PDFDocumentLayout();
 
     void setPDFDocument(PDFDocument *document) { m_pdfDocument = document; }
-    bool havePDFDocument() const { return !!m_pdfDocument; }
+    bool hasPDFDocument() const { return !!m_pdfDocument; }
+    bool hasLaidOutPDFDocument() const { return !m_pageGeometry.isEmpty(); }
 
     size_t pageCount() const;
 
@@ -72,6 +73,10 @@ public:
     RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
     std::optional<unsigned> indexForPage(RetainPtr<PDFPage>) const;
     PDFDocumentLayout::PageIndex nearestPageIndexForDocumentPoint(WebCore::FloatPoint) const;
+    // For the given Y offset, return a page index and page point for the page at this offset. Returns the leftmost
+    // page if two-up and both pages intersect that offset, otherwise the right page if only it intersects the offset.
+    // The point is centered horizontally in the given page.
+    std::pair<PDFDocumentLayout::PageIndex, WebCore::FloatPoint> pageIndexAndPagePointForDocumentYOffset(float) const;
 
     // This is not scaled by scale().
     WebCore::FloatRect layoutBoundsForPageAtIndex(PageIndex) const;

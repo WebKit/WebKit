@@ -31,6 +31,7 @@
 #import "AppKitSPI.h"
 #import "WKSafeBrowsingWarning.h"
 #import "WKTextFinderClient.h"
+#import "WKTextIndicatorStyleType.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 #import "WebBackForwardList.h"
 #import "WebFrameProxy.h"
@@ -47,6 +48,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/UnifiedTextReplacementAdditions.h>
+#import <WebKitAdditions/WebMultiRepresentationHEICAttachmentAdditions.h>
 #endif
 
 _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)

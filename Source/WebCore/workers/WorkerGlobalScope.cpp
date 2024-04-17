@@ -43,6 +43,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSDOMExceptionHandling.h"
 #include "NotImplemented.h"
+#include "PageConsoleClient.h"
 #include "Performance.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include "ReportingScope.h"
@@ -56,6 +57,7 @@
 #include "SocketProvider.h"
 #include "URLKeepingBlobAlive.h"
 #include "ViolationReportType.h"
+#include "WindowOrWorkerGlobalScopeTrustedTypes.h"
 #include "WorkerCacheStorageConnection.h"
 #include "WorkerClient.h"
 #include "WorkerFileSystemStorageConnection.h"
@@ -157,6 +159,8 @@ String WorkerGlobalScope::origin() const
 void WorkerGlobalScope::prepareForDestruction()
 {
     WorkerOrWorkletGlobalScope::prepareForDestruction();
+
+    removeSupplement(WindowOrWorkerGlobalScopeTrustedTypes::workerGlobalSupplementName());
 
     if (settingsValues().serviceWorkersEnabled)
         swClientConnection().unregisterServiceWorkerClient(identifier());
@@ -446,6 +450,10 @@ void WorkerGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMess
         postTask(AddConsoleMessageTask(message->source(), message->level(), message->message()));
         return;
     }
+
+    auto sessionID = this->sessionID();
+    if (UNLIKELY(settingsValues().logsPageMessagesToSystemConsoleEnabled && sessionID && !sessionID->isEphemeral()))
+        PageConsoleClient::logMessageToSystemConsole(*message);
 
     InspectorInstrumentation::addMessageToConsole(*this, WTFMove(message));
 }

@@ -32,8 +32,7 @@ public:
     const char* identifier() final { return "AmLogic"; }
 
     GstElement* createWebAudioSink() final;
-    bool configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) final;
-
+    void configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) final;
 };
 
 } // namespace WebCore

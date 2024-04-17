@@ -27,6 +27,8 @@
 #if ENABLE(MEDIA_RECORDER)
 
 #include "MediaRecorderPrivate.h"
+#include <wtf/CheckedRef.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
 #include <wtf/text/StringBuilder.h>
@@ -37,6 +39,8 @@ class MediaStreamTrackPrivate;
 
 class WEBCORE_EXPORT MediaRecorderPrivateMock final
     : public MediaRecorderPrivate {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaRecorderPrivateMock);
 public:
     explicit MediaRecorderPrivateMock(MediaStreamPrivate&);
     ~MediaRecorderPrivateMock();

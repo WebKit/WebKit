@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.indexOf.name, "indexOf");
-
-verifyNotEnumerable(String.prototype.indexOf, "name");
-verifyNotWritable(String.prototype.indexOf, "name");
-verifyConfigurable(String.prototype.indexOf, "name");
+verifyProperty(String.prototype.indexOf, "name", {
+  value: "indexOf",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

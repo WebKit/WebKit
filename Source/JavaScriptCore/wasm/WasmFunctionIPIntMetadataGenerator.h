@@ -69,7 +69,7 @@ class FunctionIPIntMetadataGenerator {
     friend class IPIntCallee;
 
 public:
-    FunctionIPIntMetadataGenerator(uint32_t functionIndex, const uint8_t* bytecode, const uint32_t)
+    FunctionIPIntMetadataGenerator(uint32_t functionIndex, std::span<const uint8_t> bytecode)
         : m_functionIndex(functionIndex)
         , m_bytecode(bytecode)
     {
@@ -79,7 +79,7 @@ public:
     const BitVector& tailCallSuccessors() const { return m_tailCallSuccessors; }
     bool tailCallClobbersInstance() const { return m_tailCallClobbersInstance ; }
 
-    const uint8_t* getBytecode() const { return m_bytecode; }
+    const uint8_t* getBytecode() const { return m_bytecode.data(); }
     const uint8_t* getMetadata() const { return m_metadata.data(); }
 
     HashMap<IPIntPC, IPIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
@@ -101,8 +101,7 @@ private:
     bool m_tailCallClobbersInstance { false };
     BitVector m_tailCallSuccessors;
 
-    const uint8_t* m_bytecode;
-    uint32_t m_bytecodeLength { 0 };
+    std::span<const uint8_t> m_bytecode;
     Vector<uint8_t> m_metadata { };
     uint32_t m_returnMetadata { 0 };
 

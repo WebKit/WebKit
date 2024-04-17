@@ -71,7 +71,7 @@ static RefPtr<API::Data> createData(std::span<const uint8_t> data)
 {
     if (data.empty())
         return nullptr;
-    return API::Data::create(data.data(), data.size());
+    return API::Data::create(data);
 }
 
 void DownloadProxy::cancel(CompletionHandler<void(API::Data*)>&& completionHandler)
@@ -154,6 +154,8 @@ void DownloadProxy::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWri
 
 void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse& response, String&& suggestedFilename, CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite)>&& completionHandler)
 {
+    RELEASE_LOG_INFO_IF(!response.expectedContentLength(), Network, "DownloadProxy::decideDestinationWithSuggestedFilename expectedContentLength is null");
+
     // As per https://html.spec.whatwg.org/#as-a-download (step 2), the filename from the Content-Disposition header
     // should override the suggested filename from the download attribute.
     if (response.isAttachmentWithFilename() || (suggestedFilename.isEmpty() && m_suggestedFilename.isEmpty()))

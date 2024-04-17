@@ -431,6 +431,7 @@ class GitTest(SCMTest):
         run_command(['git', 'init', self.untracking_checkout_path])
 
         os.chdir(self.untracking_checkout_path)
+        run_command(['git', 'config', 'commit.gpgsign', 'false'])
         run_command(['git', 'config', 'user.name', 'scm_unittest'])
         run_command(['git', 'config', 'user.email', 'scm_unittest@example.com'])
         write_into_file_at_path('foo_file', 'foo')
@@ -443,6 +444,7 @@ class GitTest(SCMTest):
         self.tracking_git_checkout_path = tempfile.mkdtemp(suffix="git_test_checkout")
         run_command(['git', 'clone', '--quiet', self.untracking_checkout_path, self.tracking_git_checkout_path])
         os.chdir(self.tracking_git_checkout_path)
+        run_command(['git', 'config', 'commit.gpgsign', 'false'])
         run_command(['git', 'config', 'user.name', 'scm_unittest'])
         run_command(['git', 'config', 'user.email', 'scm_unittest@example.com'])
         self.tracking_scm = detect_scm_system(self.tracking_git_checkout_path)

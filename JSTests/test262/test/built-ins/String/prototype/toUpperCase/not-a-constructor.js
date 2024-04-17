@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.toUpperCase();
-}, '`new String.prototype.toUpperCase()` throws TypeError');
+});
 

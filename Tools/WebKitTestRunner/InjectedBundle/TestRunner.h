@@ -93,7 +93,7 @@ public:
     unsigned renderTreeDumpOptions() const { return m_renderTreeDumpOptions; }
 
     // Other dumping.
-    void dumpBackForwardList() { m_shouldDumpBackForwardListsForAllWindows = true; }
+    void dumpBackForwardList();
     void dumpChildFrameScrollPositions() { m_shouldDumpAllFrameScrollPositions = true; }
     void dumpEditingCallbacks() { m_dumpEditingCallbacks = true; }
     void dumpSelectionRect() { m_dumpSelectionRect = true; }
@@ -294,7 +294,6 @@ public:
     void setAlwaysAcceptCookies(bool);
     void setOnlyAcceptFirstPartyCookies(bool);
     void removeAllCookies(JSValueRef callback);
-    void callRemoveAllCookiesCallback();
 
     // Custom full screen behavior.
     void setHasCustomFullScreenBehavior(bool value) { m_customFullScreenBehavior = value; }
@@ -497,7 +496,6 @@ public:
 
     // Storage Access API
     void getAllStorageAccessEntries(JSValueRef callback);
-    void callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& domains);
     void setRequestStorageAccessThrowsExceptionUntilReload(bool enabled);
 
     // Open panel
@@ -581,13 +579,13 @@ public:
     void setIsMediaKeySystemPermissionGranted(bool);
 
     void takeViewPortSnapshot(JSValueRef callback);
-    void viewPortSnapshotTaken(WKStringRef);
+
+    void flushConsoleLogs(JSValueRef callback);
 
     // Reporting API
     void generateTestReport(JSStringRef message, JSStringRef group);
 
     void getAndClearReportedWindowProxyAccessDomains(JSValueRef);
-    void didGetAndClearReportedWindowProxyAccessDomains(WKArrayRef);
 
 private:
     TestRunner();
@@ -652,7 +650,6 @@ private:
     bool m_hasSetDowngradeReferrerCallback { false };
     bool m_hasSetBlockThirdPartyCookiesCallback { false };
     bool m_hasSetFirstPartyWebsiteDataRemovalModeCallback { false };
-    bool m_takeViewPortSnapshot { false };
 };
 
 } // namespace WTR

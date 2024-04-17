@@ -154,7 +154,7 @@ class VertexArrayVk : public VertexArrayImpl
 
   private:
     gl::AttributesMask mergeClientAttribsRange(
-        RendererVk *renderer,
+        vk::Renderer *renderer,
         const gl::AttributesMask activeStreamedAttribs,
         size_t startVertex,
         size_t endVertex,

@@ -17,8 +17,9 @@ features: [Proxy]
 
 var revocationFunction = Proxy.revocable({}, {}).revoke;
 
-assert.sameValue(revocationFunction.length, 0);
-
-verifyNotEnumerable(revocationFunction, "length");
-verifyNotWritable(revocationFunction, "length");
-verifyConfigurable(revocationFunction, "length");
+verifyProperty(revocationFunction, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -50,6 +50,7 @@
 #import "WKProcessPoolPrivate.h"
 #import "WKSafeBrowsingWarning.h"
 #import "WKScrollView.h"
+#import "WKTextIndicatorStyleType.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProvider.h"
@@ -61,6 +62,7 @@
 #import "WebPage.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
+#import "WebProcessPool.h"
 #import "WebTextReplacementData.h"
 #import "WebUnifiedTextReplacementContextData.h"
 #import "_WKActivatedElementInfoInternal.h"
@@ -77,7 +79,11 @@
 #import <wtf/Box.h>
 #import <wtf/EnumTraits.h>
 #import <wtf/FixedVector.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RefCounted.h>
 #import <wtf/SystemTracing.h>
+#import <wtf/cf/TypeCastsCF.h>
+#import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -875,6 +881,14 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 
         if (auto *findSession = dynamic_objc_cast<UITextSearchingFindSession>([_findInteraction activeFindSession]))
             findSession.searchableObject = [self _searchableObject];
+    }
+#endif
+
+#if ENABLE(PAGE_LOAD_OBSERVER)
+    URL url { _page->currentURL() };
+    if (url.isValid() && url.protocolIsInHTTPFamily()) {
+        _pendingPageLoadObserverHost = static_cast<NSString *>(url.hostAndPort());
+        [self _updatePageLoadObserverState];
     }
 #endif
 }
@@ -2449,6 +2463,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     [_customContentView web_setMinimumSize:bounds.size];
     [self _scheduleVisibleContentRectUpdate];
+
+#if ENABLE(PAGE_LOAD_OBSERVER)
+    [self _updatePageLoadObserverState];
+#endif
 }
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -3713,6 +3731,11 @@ static bool isLockdownModeWarningNeeded()
 {
     _overriddenZoomScaleParameters = std::nullopt;
 }
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKWebViewIOSInternalAdditionsAfter.mm>)
+#import <WebKitAdditions/WKWebViewIOSInternalAdditionsAfter.mm>
+#endif
+
 @end
 
 @implementation WKWebView (WKPrivateIOS)
@@ -4516,8 +4539,7 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 - (UIView *)_fullScreenPlaceholderView
 {
 #if ENABLE(FULLSCREEN_API)
-    if ([_fullScreenWindowController isFullScreen])
-        return [_fullScreenWindowController webViewPlaceholder];
+    return [_fullScreenWindowController webViewPlaceholder];
 #endif // ENABLE(FULLSCREEN_API)
     return nil;
 }
@@ -4752,6 +4774,21 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 #endif // PLATFORM(VISION)
 
 @end
+
+
+#if PLATFORM(VISION)
+@implementation WKWebView(WKPrivateVision)
+- (NSString *)_defaultSTSLabel
+{
+    return nsStringNilIfNull(_page->defaultSpatialTrackingLabel());
+}
+
+- (void)_setDefaultSTSLabel:(NSString *)defaultSTSLabel
+{
+    _page->setDefaultSpatialTrackingLabel(defaultSTSLabel);
+}
+@end
+#endif
 
 #endif // ENABLE(FULLSCREEN_API)
 

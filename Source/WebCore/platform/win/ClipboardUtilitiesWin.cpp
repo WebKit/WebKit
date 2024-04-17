@@ -185,14 +185,14 @@ HGLOBAL createGlobalData(const Vector<char>& vector)
     return vm;
 }
 
-HGLOBAL createGlobalData(const uint8_t* data, size_t length)
+HGLOBAL createGlobalData(std::span<const uint8_t> data)
 {
-    HGLOBAL vm = ::GlobalAlloc(GPTR, length + 1);
+    HGLOBAL vm = ::GlobalAlloc(GPTR, data.size() + 1);
     if (!vm)
         return 0;
     uint8_t* buffer = static_cast<uint8_t*>(GlobalLock(vm));
-    memcpy(buffer, data, length);
-    buffer[length] = 0;
+    memcpy(buffer, data.data(), data.size());
+    buffer[data.size()] = 0;
     GlobalUnlock(vm);
     return vm;
 }

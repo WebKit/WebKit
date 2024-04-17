@@ -692,6 +692,7 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_varInjectionWatchpointSet(WatchpointSet::create(IsWatched))
     , m_varReadOnlyWatchpointSet(WatchpointSet::create(IsWatched))
     , m_regExpRecompiledWatchpointSet(WatchpointSet::create(IsWatched))
+    , m_arrayBufferDetachWatchpointSet(WatchpointSet::create(IsWatched))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : cryptographicallyRandomNumber<uint32_t>())
     , m_runtimeFlags()
     , m_stackTraceLimit(Options::defaultErrorStackTraceLimit())
@@ -1536,6 +1537,9 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::copyDataProperties)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "copyDataProperties"_s, globalFuncCopyDataProperties, ImplementationVisibility::Private));
         });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::cloneObject)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "cloneObject"_s, globalFuncCloneObject, ImplementationVisibility::Private));
+        });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::enqueueJob)].initLater([] (const Initializer<JSCell>& init) {
             // enqueueJob is public for async stack trace.
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "enqueueJob"_s, enqueueJob, ImplementationVisibility::Public));
@@ -2000,6 +2004,11 @@ void JSGlobalObject::setGlobalScopeExtension(JSScope* scope)
 void JSGlobalObject::clearGlobalScopeExtension()
 {
     m_globalScopeExtension.clear();
+}
+
+void JSGlobalObject::notifyArrayBufferDetachingSlow()
+{
+    m_arrayBufferDetachWatchpointSet->fireAll(vm(), "ArrayBuffer detached");
 }
 
 static inline JSObject* lastInPrototypeChain(JSObject* object)

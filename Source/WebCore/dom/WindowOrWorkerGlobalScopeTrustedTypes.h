@@ -28,14 +28,15 @@
 namespace WebCore {
 
 class TrustedTypePolicyFactory;
-class LocalDOMWindow;
+class DOMWindow;
 class WorkerGlobalScope;
 
 template<typename> class ExceptionOr;
 
 class WindowOrWorkerGlobalScopeTrustedTypes {
 public:
-    static TrustedTypePolicyFactory* trustedTypes(LocalDOMWindow&);
+    static ASCIILiteral workerGlobalSupplementName();
+    static TrustedTypePolicyFactory* trustedTypes(DOMWindow&);
     static TrustedTypePolicyFactory* trustedTypes(WorkerGlobalScope&);
 };
 

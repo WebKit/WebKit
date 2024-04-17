@@ -66,7 +66,7 @@ CString currentExecutablePath()
     ssize_t result = readlink("/proc/self/exe", readLinkBuffer, PATH_MAX);
     if (result == -1)
         return { };
-    return CString(readLinkBuffer, result);
+    return CString({ readLinkBuffer, static_cast<size_t>(result) });
 }
 #elif OS(HURD)
 CString currentExecutablePath()

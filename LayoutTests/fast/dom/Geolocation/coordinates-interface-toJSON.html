@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <script src="../../../resources/js-test-pre.js"></script>
+  </head>
+  <body>
+    <script>
+      description("Test GeolocationCoordinates toJSON() method");
+
+      testRunner.setGeolocationPermission(true);
+
+      window.jsTestIsAsync = true;
+
+      const baseExpected = {
+        altitude: null,
+        altitudeAccuracy: null,
+        heading: null,
+        speed: null,
+        floorLevel: null,
+      };
+
+      const testData = [
+        [
+          { latitude: 1, longitude: 2, accuracy: 3 },
+          { ...baseExpected, latitude: 1, longitude: 2, accuracy: 3 },
+        ],
+        [
+          { latitude: 2, longitude: 3, accuracy: 4, speed: 5 },
+          { ...baseExpected, latitude: 2, longitude: 3, accuracy: 4, speed: 5 },
+        ],
+        [
+          {
+            latitude: 3,
+            longitude: 4,
+            accuracy: 5,
+            altitudeAccuracy: 6,
+            speed: 7,
+          },
+          {
+            ...baseExpected,
+            latitude: 3,
+            longitude: 4,
+            accuracy: 5,
+            altitudeAccuracy: 6,
+            speed: 7,
+          },
+        ],
+        [
+          {
+            latitude: 4,
+            longitude: 5,
+            accuracy: 6,
+            altitudeAccuracy: 7,
+            heading: 8,
+            speed: 9,
+          },
+          {
+            ...baseExpected,
+            latitude: 4,
+            longitude: 5,
+            accuracy: 6,
+            altitudeAccuracy: 7,
+            heading: 8,
+            speed: 9,
+          },
+        ],
+        [
+          {
+            latitude: 5,
+            longitude: 6,
+            accuracy: 7,
+            altitude: 8,
+            altitudeAccuracy: 9,
+            heading: 10,
+            speed: 11,
+          },
+          {
+            ...baseExpected,
+            latitude: 5,
+            longitude: 6,
+            accuracy: 7,
+            altitude: 8,
+            altitudeAccuracy: 9,
+            heading: 10,
+            speed: 11,
+          },
+        ],
+      ];
+
+      async function runNextTest() {
+        for (const [actual, expected] of testData) {
+          window.expected = expected;
+          const {
+            latitude,
+            longitude,
+            accuracy,
+            altitude,
+            altitudeAccuracy,
+            heading,
+            speed,
+            floorLevel,
+          } = actual;
+
+          testRunner.setMockGeolocationPosition(
+            latitude,
+            longitude,
+            accuracy,
+            altitude,
+            altitudeAccuracy,
+            heading,
+            speed,
+            floorLevel
+          );
+
+          const position = await new Promise((resolve, reject) =>
+            navigator.geolocation.getCurrentPosition(resolve, reject)
+          );
+
+          window.actual = position.coords.toJSON();
+
+          shouldBeTrue(`typeof window.actual === 'object'`);
+
+          // We use "actual" for future proofing on purpose, in case more properties get added to the interface.
+          for (const key in window.actual) {
+            shouldBe(`window.actual.${key}`, `window.expected.${key}`);
+          }
+        }
+      }
+
+      runNextTest().finally(finishJSTest);
+    </script>
+    <script src="../../../resources/js-test-post.js"></script>
+  </body>
+</html>

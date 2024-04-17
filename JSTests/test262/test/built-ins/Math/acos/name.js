@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.acos.name, "acos");
-
-verifyNotEnumerable(Math.acos, "name");
-verifyNotWritable(Math.acos, "name");
-verifyConfigurable(Math.acos, "name");
+verifyProperty(Math.acos, "name", {
+  value: "acos",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

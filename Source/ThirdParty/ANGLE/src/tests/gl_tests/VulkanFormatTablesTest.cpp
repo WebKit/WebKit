@@ -12,7 +12,7 @@
 #include "libANGLE/angletypes.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/angle_test_instantiate.h"
 #include "util/EGLWindow.h"
@@ -42,9 +42,9 @@ TEST_P(VulkanFormatTablesTest, TestFormatSupport)
     egl::Display *display   = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
     gl::ContextID contextID = {
         static_cast<GLuint>(reinterpret_cast<uintptr_t>(getEGLWindow()->getContext()))};
-    gl::Context *context     = display->getContext(contextID);
-    auto *contextVk          = rx::GetImplAs<rx::ContextVk>(context);
-    rx::RendererVk *renderer = contextVk->getRenderer();
+    gl::Context *context       = display->getContext(contextID);
+    auto *contextVk            = rx::GetImplAs<rx::ContextVk>(context);
+    rx::vk::Renderer *renderer = contextVk->getRenderer();
 
     // We need to test normal 2D images as well as Cube images.
     const std::vector<ParametersToTest> parametersToTest = {

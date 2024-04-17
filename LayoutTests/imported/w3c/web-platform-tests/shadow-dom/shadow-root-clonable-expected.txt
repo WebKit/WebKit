@@ -1,5 +1,5 @@
 
-FAIL attachShadow with clonable: true null is not an object (evaluating 'shallowClonedRoot.clonable')
+PASS attachShadow with clonable: true
 PASS attachShadow with clonable: false
 PASS attachShadow with clonable: undefined
 PASS declarative shadow roots do *not* get clonable: true automatically

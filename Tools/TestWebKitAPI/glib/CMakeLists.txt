@@ -123,17 +123,10 @@ if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebKitGLibAPITestsCore -Wno-unused-parameter)
 endif ()
 
-add_custom_command(
-    OUTPUT ${TEST_RESOURCES_DIR}/webkitglib-tests-resources.gresource ${TEST_RESOURCES_DIR}/webkitglib-tests-resources.deps
-    DEPENDS ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/resources/webkitglib-tests.gresource.xml
-            ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/resources/link-title.js
-    DEPFILE ${TEST_RESOURCES_DIR}/webkitglib-tests-resources.deps
-    COMMAND glib-compile-resources
-            --target=${TEST_RESOURCES_DIR}/webkitglib-tests-resources.gresource
-            --sourcedir=${CMAKE_SOURCE_DIR}
-            --dependency-file=${TEST_RESOURCES_DIR}/webkitglib-tests-resources.deps
-            ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/resources/webkitglib-tests.gresource.xml
-    VERBATIM
+GLIB_COMPILE_RESOURCES(
+    OUTPUT        ${TEST_RESOURCES_DIR}/webkitglib-tests-resources.gresource
+    RESOURCE_DIRS ${CMAKE_SOURCE_DIR}
+    SOURCE_XML    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/resources/webkitglib-tests.gresource.xml
 )
 
 add_custom_target(test-gresource-bundle
@@ -183,7 +176,6 @@ macro(ADD_WPE_QT_TEST test_name)
     set_target_properties(${test_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/WPEQt
         AUTOMOC ON
-        CXX_STANDARD 17
     )
     target_include_directories(${test_name} SYSTEM PRIVATE ${WPEQtAPITests_INCLUDE_DIRECTORIES})
     target_include_directories(${test_name} PRIVATE

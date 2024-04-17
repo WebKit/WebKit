@@ -30,7 +30,6 @@
 
 #include "SecurityOriginData.h"
 #include <wtf/ArgumentCoder.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/Hasher.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -51,6 +50,7 @@ public:
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const URL&);
     WEBCORE_EXPORT static Ref<SecurityOrigin> createForBlobURL(const URL&);
     WEBCORE_EXPORT static Ref<SecurityOrigin> createOpaque();
+    static SecurityOrigin& opaqueOrigin();
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(const String&);
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, std::optional<uint16_t> port);

@@ -28,7 +28,6 @@
 #include "Color.h"
 #include "LayoutSize.h"
 #include "LengthBox.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>

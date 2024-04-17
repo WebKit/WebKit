@@ -27,7 +27,7 @@ import {
 '../../../../../util/conversion.js';
 import { ShaderValidationTest } from '../../../shader_validation_test.js';
 
-import { kEntryPointsToValidateFragmentOnlyBuiltins } from './shader_stage_utils.js';
+import { kEntryPointsToValidateFragmentOnlyBuiltins } from './shader_builtin_utils.js';
 
 
 

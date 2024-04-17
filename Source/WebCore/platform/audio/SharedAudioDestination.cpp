@@ -61,7 +61,6 @@ private:
     void isPlayingDidChange() final { }
 
     void configureRenderThread(CompletionHandler<void(bool)>&&);
-    void callAllConfigurationHandlers(bool);
 
     Ref<AudioDestination> protectedDestination() { return m_destination; }
     Ref<AudioBus> protectedWorkBus() { return m_workBus; }
@@ -81,8 +80,6 @@ private:
 
     bool m_needsConfiguration WTF_GUARDED_BY_LOCK(m_renderLock) { true };
     RenderVector m_newRenderers WTF_GUARDED_BY_LOCK(m_renderLock);
-    using ConfigurationHandlerVector = Vector<CompletionHandler<void(bool)>>;
-    ConfigurationHandlerVector m_configurationCompletionHandlers WTF_GUARDED_BY_LOCK(m_renderLock);
 
     // Only accessed on the audio thread:
     RenderVector m_configuredRenderers;
@@ -122,7 +119,6 @@ SharedAudioDestinationAdapter::~SharedAudioDestinationAdapter()
     auto key = std::make_tuple(m_numberOfOutputChannels, m_sampleRate);
     sharedMap().remove(key);
     protectedDestination()->clearCallback();
-    callAllConfigurationHandlers(false);
 }
 
 void SharedAudioDestinationAdapter::addRenderer(SharedAudioDestination& renderer, CompletionHandler<void(bool)>&& completionHandler)
@@ -155,31 +151,24 @@ void SharedAudioDestinationAdapter::configureRenderThread(CompletionHandler<void
         m_newRenderers = m_renderers;
         m_needsConfiguration = true;
         if (onlyNeedsConfiguration) {
-            // The destination is already running, but needs configuration. Move the
-            // completionHandler into a vector of outstanding handlers, to be called
-            // after the render thread finishes configuring the renderers.
-            m_configurationCompletionHandlers.append(WTFMove(completionHandler));
+            // The destination is already running, but needs configuration. Assume
+            // the configuration will succeed and call the completionHandler early.
+            callOnMainThread([completionHandler = WTFMove(completionHandler)] () mutable {
+                completionHandler(true);
+            });
             return;
         }
     }
 
     if (shouldStart) {
         m_started = true;
-        protectedDestination()->start(nullptr, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (bool success) mutable {
-            // Ensure any outstanding configuration handlers are called and cleared.
-            callAllConfigurationHandlers(success);
-            completionHandler(success);
-        });
+        protectedDestination()->start(nullptr, WTFMove(completionHandler));
         return;
     }
 
     if (shouldStop) {
         m_started = false;
-        protectedDestination()->stop([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (bool success) mutable {
-            // Ensure any outstanding configuration handlers are called and cleared.
-            callAllConfigurationHandlers(success);
-            completionHandler(success);
-        });
+        protectedDestination()->stop(WTFMove(completionHandler));
         return;
     }
 
@@ -194,17 +183,6 @@ void SharedAudioDestinationAdapter::configureRenderThread(CompletionHandler<void
     }
 }
 
-void SharedAudioDestinationAdapter::callAllConfigurationHandlers(bool success)
-{
-    ConfigurationHandlerVector handlers;
-    {
-        Locker locker { m_renderLock };
-        std::swap(handlers, m_configurationCompletionHandlers);
-    }
-
-    for (auto& handler : handlers)
-        handler(success);
-}
 
 void SharedAudioDestinationAdapter::render(AudioBus* sourceBus, AudioBus* destinationBus, size_t numberOfFrames, const AudioIOPosition& outputPosition)
 {
@@ -217,9 +195,7 @@ void SharedAudioDestinationAdapter::render(AudioBus* sourceBus, AudioBus* destin
             // will be destroyed on the main thread.
             RenderVector oldRenderers = std::exchange(m_configuredRenderers, WTFMove(m_newRenderers));
             m_needsConfiguration = false;
-            callOnMainThread([this, protectedThis = Ref { *this }, oldRenderers = WTFMove(oldRenderers)] () mutable {
-                callAllConfigurationHandlers(true);
-            });
+            callOnMainThread([oldRenderers = WTFMove(oldRenderers)] () { });
         }
     }
 

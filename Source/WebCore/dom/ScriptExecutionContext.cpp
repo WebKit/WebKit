@@ -41,7 +41,6 @@
 #include "FrameDestructionObserverInlines.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMPromiseDeferred.h"
-#include "JSLocalDOMWindow.h"
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
 #include "LegacySchemeRegistry.h"

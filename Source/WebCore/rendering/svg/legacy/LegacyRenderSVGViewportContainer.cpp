@@ -42,6 +42,8 @@ LegacyRenderSVGViewportContainer::LegacyRenderSVGViewportContainer(SVGSVGElement
     ASSERT(isLegacyRenderSVGViewportContainer());
 }
 
+LegacyRenderSVGViewportContainer::~LegacyRenderSVGViewportContainer() = default;
+
 SVGSVGElement& LegacyRenderSVGViewportContainer::svgSVGElement() const
 {
     return downcast<SVGSVGElement>(LegacyRenderSVGContainer::element());

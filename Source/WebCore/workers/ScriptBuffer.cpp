@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ScriptBuffer.h"
 
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -71,7 +72,7 @@ String ScriptBuffer::toString() const
 
     StringBuilder builder;
     m_buffer.get()->forEachSegment([&](auto segment) {
-        builder.append(FromUTF8({ reinterpret_cast<const char*>(segment.data()), segment.size() }));
+        builder.append(spanReinterpretCast<const char8_t>(segment));
     });
     return builder.toString();
 }

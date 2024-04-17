@@ -684,6 +684,15 @@ static inline GridTrackList blendFunc(const GridTrackList& from, const GridTrack
     return result;
 }
 
+static inline RefPtr<BasicShapePath> blendFunc(BasicShapePath* from, BasicShapePath* to, const CSSPropertyBlendingContext& context)
+{
+    if (context.isDiscrete)
+        return context.progress < 0.5 ? from : to;
+    ASSERT(from && to);
+    auto blendedValue = to->blend(*from, context);
+    return &downcast<BasicShapePath>(blendedValue.leakRef());
+}
+
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AnimationPropertyWrapperBase);
 class AnimationPropertyWrapperBase {
     WTF_MAKE_NONCOPYABLE(AnimationPropertyWrapperBase);
@@ -3546,6 +3555,25 @@ private:
     void (SVGRenderStyle::*m_setter)(T);
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DWrapper);
+class DWrapper final : public RefCountedPropertyWrapper<BasicShapePath> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    DWrapper()
+        : RefCountedPropertyWrapper(CSSPropertyD, &RenderStyle::d, &RenderStyle::setD)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
+    {
+        auto* fromValue = value(from);
+        auto* toValue = value(to);
+        return fromValue && toValue && fromValue->canBlend(*toValue);
+    }
+};
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DWrapper);
+
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSPropertyAnimationWrapperMap);
 class CSSPropertyAnimationWrapperMap final {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSPropertyAnimationWrapperMap);
@@ -3769,6 +3797,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthPropertyWrapper(CSSPropertyStrokeWidth, &RenderStyle::strokeWidth, &RenderStyle::setStrokeWidth),
         new LengthPropertyWrapper(CSSPropertyX, &RenderStyle::x, &RenderStyle::setX),
         new LengthPropertyWrapper(CSSPropertyY, &RenderStyle::y, &RenderStyle::setY),
+
+        new DWrapper,
 
         new PropertyWrapper<float>(CSSPropertyFloodOpacity, &RenderStyle::floodOpacity, &RenderStyle::setFloodOpacity),
         new PropertyWrapperStyleColor(CSSPropertyFloodColor, &RenderStyle::floodColor, &RenderStyle::setFloodColor),

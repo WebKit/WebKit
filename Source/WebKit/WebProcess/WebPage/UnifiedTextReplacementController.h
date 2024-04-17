@@ -37,6 +37,11 @@
 #include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+struct TextIndicatorData;
+enum class TextIndicatorOption : uint16_t;
+}
+
 namespace WebKit {
 
 enum class WebUnifiedTextReplacementType : uint8_t;
@@ -67,6 +72,8 @@ public:
     void textReplacementSessionDidReceiveEditAction(const WTF::UUID&, WebKit::WebTextReplacementData::EditAction);
 
     void updateStateForSelectedReplacementIfNeeded();
+
+    RefPtr<WebCore::Range> rangeForUUID(const WTF::UUID uuid) { return m_contextRanges.get(uuid); }
 
 private:
     void textReplacementSessionPerformEditActionForPlainText(WebCore::Document&, const WTF::UUID&, WebKit::WebTextReplacementData::EditAction);

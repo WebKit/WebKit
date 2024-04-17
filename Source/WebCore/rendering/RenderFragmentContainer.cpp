@@ -66,6 +66,8 @@ RenderFragmentContainer::RenderFragmentContainer(Type type, Document& document, 
 {
 }
 
+RenderFragmentContainer::~RenderFragmentContainer() = default;
+
 LayoutPoint RenderFragmentContainer::mapFragmentPointIntoFragmentedFlowCoordinates(const LayoutPoint& point)
 {
     // Assuming the point is relative to the fragment block, 3 cases will be considered:
@@ -358,16 +360,16 @@ LayoutUnit RenderFragmentContainer::logicalBottomOfFragmentedFlowContentRect(con
     return fragmentedFlow()->isHorizontalWritingMode() ? rect.maxY() : rect.maxX();
 }
 
-void RenderFragmentContainer::insertedIntoTree(IsInternalMove isInternalMove)
+void RenderFragmentContainer::insertedIntoTree()
 {
     attachFragment();
     if (isValid())
-        RenderBlockFlow::insertedIntoTree(isInternalMove);
+        RenderBlockFlow::insertedIntoTree();
 }
 
-void RenderFragmentContainer::willBeRemovedFromTree(IsInternalMove isInternalMove)
+void RenderFragmentContainer::willBeRemovedFromTree()
 {
-    RenderBlockFlow::willBeRemovedFromTree(isInternalMove);
+    RenderBlockFlow::willBeRemovedFromTree();
 
     detachFragment();
 }

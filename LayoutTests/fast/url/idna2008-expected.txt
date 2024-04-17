@@ -17,8 +17,8 @@ FAIL canonicalize('http://Ↄ.com/') should be http://�.com/. Was http://Ↄ.c
 PASS canonicalize('http://look͏out.net/') is 'http://lookout.net/'
 PASS canonicalize('http://gOoGle.com/') is 'http://google.com/'
 FAIL canonicalize('http://ড়.com/') should be http://ড়.com/. Was http://xn--15b8c.com/.
-PASS canonicalize('http://ẞ.com/') is 'http://ss.com/'
-PASS canonicalize('http://ẞ.foo.com/') is 'http://ss.foo.com/'
+PASS canonicalize('http://ẞ.com/') is 'http://xn--zca.com/'
+PASS canonicalize('http://ẞ.foo.com/') is 'http://xn--zca.foo.com/'
 FAIL canonicalize('http://-foo.bar.com/') should be http:///. Was http://-foo.bar.com/.
 FAIL canonicalize('http://foo-.bar.com/') should be http:///. Was http://foo-.bar.com/.
 FAIL canonicalize('http://ab--cd.com/') should be http:///. Was http://ab--cd.com/.

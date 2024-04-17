@@ -46,6 +46,7 @@
 #include <WebCore/ServiceWorkerTypes.h>
 #include <pal/SessionID.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 
@@ -89,13 +90,15 @@ class ServiceWorkerStorageManager;
 class StorageAreaBase;
 class StorageAreaRegistry;
 
-class NetworkStorageManager final : public IPC::WorkQueueMessageReceiver, public CanMakeCheckedPtr {
+class NetworkStorageManager final : public IPC::WorkQueueMessageReceiver, public CanMakeCheckedPtr<NetworkStorageManager> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkStorageManager);
 public:
-    static Ref<NetworkStorageManager> create(NetworkProcess&, PAL::SessionID, Markable<WTF::UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> standardVolumeCapacity, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
+    static Ref<NetworkStorageManager> create(NetworkProcess&, PAL::SessionID, Markable<WTF::UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> standardVolumeCapacity, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel, bool storageSiteValidationEnabled);
     static bool canHandleTypes(OptionSet<WebsiteDataType>);
     static OptionSet<WebsiteDataType> allManagedTypes();
 
-    void startReceivingMessageFromConnection(IPC::Connection&);
+    void startReceivingMessageFromConnection(IPC::Connection&, const Vector<WebCore::RegistrableDomain>&);
     void stopReceivingMessageFromConnection(IPC::Connection&);
 
     PAL::SessionID sessionID() const { return m_sessionID; }
@@ -124,6 +127,8 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void setBackupExclusionPeriodForTesting(Seconds, CompletionHandler<void()>&&);
 #endif
+    void setStorageSiteValidationEnabled(bool);
+    void addAllowedSitesForConnection(IPC::Connection::UniqueID, const Vector<WebCore::RegistrableDomain>&);
 
     void dispatchTaskToBackgroundFetchManager(const WebCore::ClientOrigin&, Function<void(BackgroundFetchStoreManager*)>&&);
     void notifyBackgroundFetchChange(const String&, BackgroundFetchChange);
@@ -133,7 +138,7 @@ public:
     void updateServiceWorkerRegistrations(Vector<WebCore::ServiceWorkerContextData>&&, Vector<WebCore::ServiceWorkerRegistrationKey>&&, CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerScripts>>)>&&);
 
 private:
-    NetworkStorageManager(NetworkProcess&, PAL::SessionID, Markable<WTF::UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> standardVolumeCapacity, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
+    NetworkStorageManager(NetworkProcess&, PAL::SessionID, Markable<WTF::UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> standardVolumeCapacity, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel, bool storageSiteValidationEnabled);
     ~NetworkStorageManager();
     void writeOriginToFileIfNecessary(const WebCore::ClientOrigin&, StorageAreaBase* = nullptr);
     enum class ShouldWriteOriginFile : bool { No, Yes };
@@ -246,9 +251,12 @@ private:
         Vector<WebCore::SecurityOriginData> clientOrigins;
     };
     void performEviction(HashMap<WebCore::SecurityOriginData, AccessRecord>&&);
-    SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
+    const SuspendableWorkQueue& workQueue() const WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
     OriginQuotaManager::Parameters originQuotaManagerParameters(const WebCore::ClientOrigin&);
     WebCore::IDBServer::UniqueIDBDatabaseTransaction* idbTransaction(const WebCore::IDBRequestData&);
+    void setStorageSiteValidationEnabledInternal(bool);
+    void addAllowedSitesForConnectionInternal(IPC::Connection::UniqueID, const Vector<WebCore::RegistrableDomain>&);
+    bool isSiteAllowedForConnection(IPC::Connection::UniqueID, const WebCore::RegistrableDomain&) const;
 
     WeakPtr<NetworkProcess> m_process;
     PAL::SessionID m_sessionID;
@@ -287,6 +295,8 @@ private:
 #endif
     std::unique_ptr<ServiceWorkerStorageManager> m_sharedServiceWorkerStorageManager WTF_GUARDED_BY_CAPABILITY(workQueue());
     HashMap<WebCore::ClientOrigin, WallTime> m_lastModificationTimes WTF_GUARDED_BY_CAPABILITY(workQueue());
+    using ConnectionSitesMap = HashMap<IPC::Connection::UniqueID, HashSet<WebCore::RegistrableDomain>>;
+    std::optional<ConnectionSitesMap> m_allowedSitesForConnections WTF_GUARDED_BY_CAPABILITY(workQueue());
 };
 
 } // namespace WebKit

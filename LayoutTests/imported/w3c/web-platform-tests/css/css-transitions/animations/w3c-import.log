@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/animations/animate-with-color-mix.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/animations/change-duration-during-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/animations/color-transition-premultiplied.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/animations/move-after-transition.html

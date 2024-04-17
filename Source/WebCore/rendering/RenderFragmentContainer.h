@@ -44,6 +44,7 @@ class RenderFragmentedFlow;
 
 class RenderFragmentContainer : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderFragmentContainer);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFragmentContainer);
 public:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
@@ -122,6 +123,7 @@ public:
 protected:
     RenderFragmentContainer(Type, Element&, RenderStyle&&, RenderFragmentedFlow*);
     RenderFragmentContainer(Type, Document&, RenderStyle&&, RenderFragmentedFlow*);
+    virtual ~RenderFragmentContainer();
 
     void ensureOverflowForBox(const RenderBox&, RefPtr<RenderOverflow>&, bool) const;
 
@@ -136,8 +138,8 @@ protected:
 private:
     ASCIILiteral renderName() const override { return "RenderFragmentContainer"_s; }
 
-    void insertedIntoTree(IsInternalMove) override;
-    void willBeRemovedFromTree(IsInternalMove) override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
 
     virtual void installFragmentedFlow();
 

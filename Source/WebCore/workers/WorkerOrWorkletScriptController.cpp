@@ -597,12 +597,10 @@ void WorkerOrWorkletScriptController::initScript()
         return;
     }
 
-#if ENABLE(CSS_PAINTING_API)
     if (is<PaintWorkletGlobalScope>(m_globalScope)) {
         initScriptWithSubclass<JSPaintWorkletGlobalScopePrototype, JSPaintWorkletGlobalScope, PaintWorkletGlobalScope>();
         return;
     }
-#endif
 
 #if ENABLE(WEB_AUDIO)
     if (is<AudioWorkletGlobalScope>(m_globalScope)) {

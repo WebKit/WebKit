@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Math.tan), false, 'isConstructor(Math.tan) must r
 
 assert.throws(TypeError, () => {
   new Math.tan();
-}, '`new Math.tan()` throws TypeError');
+});
 

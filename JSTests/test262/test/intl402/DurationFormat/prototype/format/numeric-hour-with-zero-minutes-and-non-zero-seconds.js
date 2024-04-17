@@ -4,8 +4,8 @@
 /*---
 esid: sec-Intl.DurationFormat.prototype.format
 description: >
-  The correct separator is used for numeric hours with zero minutes and non-zero seconds.
-locale: [en-US]
+  Minutes with numeric or 2-digit style are included in the output when between displayed hours and seconds, even when the minutes value is zero.
+locale: [en]
 features: [Intl.DurationFormat]
 ---*/
 
@@ -14,28 +14,16 @@ const df = new Intl.DurationFormat("en", {
   hours: "numeric",
 });
 
-const lf = new Intl.ListFormat("en", {
-  type: "unit",
-  style: "short",
-});
-
 const duration = {
   hours: 1,
-
-  // Minutes is omitted from the output when its value is zero.
   minutes: 0,
-
-  // Either seconds or sub-seconds must be non-zero.
   seconds: 3,
 };
 
-const expected = lf.format([
-  new Intl.NumberFormat("en", {minimumIntegerDigits: 1}).format(duration.hours),
-  new Intl.NumberFormat("en", {minimumIntegerDigits: 2}).format(duration.seconds),
-]);
+const expected = "1:00:03"
 
 assert.sameValue(
   df.format(duration),
   expected,
-  `No time separator is used when minutes is zero`
+  `Minutes always displayed when between displayed hours and seconds, even if minutes is 0`
 );

@@ -459,4 +459,5 @@ interface TestRunner {
     undefined generateTestReport(DOMString message, DOMString group);
 
     undefined getAndClearReportedWindowProxyAccessDomains(object callback);
+    undefined flushConsoleLogs(object callback);
 };

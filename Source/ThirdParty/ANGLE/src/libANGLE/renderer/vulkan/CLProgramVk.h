@@ -8,6 +8,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLPROGRAMVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLPROGRAMVK_H_
 
+#include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLKernelVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
@@ -23,12 +24,15 @@
 
 #include "spirv-tools/libspirv.h"
 
+#include "spirv/unified1/NonSemanticClspvReflection.h"
+
 namespace rx
 {
 
 class CLProgramVk : public CLProgramImpl
 {
   public:
+    using Ptr = std::unique_ptr<CLProgramVk>;
     struct SpvReflectionData
     {
         angle::HashMap<uint32_t, uint32_t> spvIntLookup;
@@ -38,17 +42,18 @@ class CLProgramVk : public CLProgramImpl
         angle::HashMap<std::string, std::string> kernelAttributes;
         angle::HashMap<std::string, std::array<uint32_t, 3>> kernelCompileWGS;
         angle::HashMap<uint32_t, VkPushConstantRange> pushConstants;
-        std::array<uint32_t, 3> specConstantWGS{0, 0, 0};
+        std::array<uint32_t, 3> specConstantWorkgroupSizeIDs{0, 0, 0};
         CLKernelArgsMap kernelArgsMap;
     };
 
     // Output binary structure (for CL_PROGRAM_BINARIES query)
+    static constexpr uint32_t kBinaryVersion = 2;
     struct ProgramBinaryOutputHeader
     {
-        uint32_t headerVersion{1};
+        uint32_t headerVersion{kBinaryVersion};
         cl_program_binary_type binaryType{CL_PROGRAM_BINARY_TYPE_NONE};
+        cl_build_status buildStatus{CL_BUILD_NONE};
     };
-    static constexpr uint32_t LatestSupportedBinaryVersion = 1;
 
     struct ScopedClspvContext : angle::NonCopyable
     {
@@ -131,12 +136,15 @@ class CLProgramVk : public CLProgramImpl
             return kargsCopy;
         }
 
-        cl::CompiledWorkgroupSize getCompiledWGS(const std::string &kernelName) const
+        cl::WorkgroupSize getCompiledWGS(const std::string &kernelName) const
         {
-            cl::CompiledWorkgroupSize compiledWGS{0, 0, 0};
+            cl::WorkgroupSize compiledWGS{0, 0, 0};
             if (reflectionData.kernelCompileWGS.contains(kernelName))
             {
-                compiledWGS = reflectionData.kernelCompileWGS.at(kernelName);
+                for (size_t i = 0; i < compiledWGS.size(); ++i)
+                {
+                    compiledWGS[i] = reflectionData.kernelCompileWGS.at(kernelName)[i];
+                }
             }
             return compiledWGS;
         }
@@ -149,9 +157,33 @@ class CLProgramVk : public CLProgramImpl
             }
             return std::string{};
         }
+
+        const VkPushConstantRange *getPushConstantRangeFromClspvReflectionType(
+            NonSemanticClspvReflectionInstructions type) const
+        {
+            const VkPushConstantRange *pushConstantRangePtr = nullptr;
+            if (reflectionData.pushConstants.contains(type))
+            {
+                pushConstantRangePtr = &reflectionData.pushConstants.at(type);
+            }
+            return pushConstantRangePtr;
+        }
+
+        inline const VkPushConstantRange *getGlobalOffsetRange() const
+        {
+            return getPushConstantRangeFromClspvReflectionType(
+                NonSemanticClspvReflectionPushConstantGlobalOffset);
+        }
+
+        inline const VkPushConstantRange *getGlobalSizeRange() const
+        {
+            return getPushConstantRangeFromClspvReflectionType(
+                NonSemanticClspvReflectionPushConstantGlobalSize);
+        }
     };
-    using DevicePrograms     = angle::HashMap<const _cl_device_id *, DeviceProgramData>;
-    using DeviceProgramDatas = std::vector<const DeviceProgramData *>;
+    using DevicePrograms   = angle::HashMap<const _cl_device_id *, DeviceProgramData>;
+    using LinkPrograms     = std::vector<const DeviceProgramData *>;
+    using LinkProgramsList = std::vector<LinkPrograms>;
 
     CLProgramVk(const cl::Program &program);
 
@@ -191,24 +223,61 @@ class CLProgramVk : public CLProgramImpl
 
     const DeviceProgramData *getDeviceProgramData(const char *kernelName) const;
     const DeviceProgramData *getDeviceProgramData(const _cl_device_id *device) const;
+    CLPlatformVk *getPlatform() { return mContext->getPlatform(); }
+    vk::RefCounted<vk::ShaderModule> *getShaderModule() { return &mShader; }
 
     bool buildInternal(const cl::DevicePtrs &devices,
                        std::string options,
                        std::string internalOptions,
                        BuildType buildType,
-                       const DeviceProgramDatas &inputProgramDatas);
+                       const LinkProgramsList &LinkProgramsList);
     angle::spirv::Blob stripReflection(const DeviceProgramData *deviceProgramData);
+
+    angle::Result allocateDescriptorSet(const vk::DescriptorSetLayout &descriptorSetLayout,
+                                        VkDescriptorSet *descriptorSetOut);
 
   private:
     CLContextVk *mContext;
     std::string mProgramOpts;
+    vk::RefCounted<vk::ShaderModule> mShader;
     DevicePrograms mAssociatedDevicePrograms;
     PipelineLayoutCache mPipelineLayoutCache;
     vk::MetaDescriptorPool mMetaDescriptorPool;
     DescriptorSetLayoutCache mDescSetLayoutCache;
-    vk::DescriptorSetLayoutPointerArray mDescriptorSetLayouts;
     vk::DescriptorSetArray<vk::DescriptorPoolPointer> mDescriptorPools;
+    vk::RefCountedDescriptorPoolBinding mPoolBinding;
     std::mutex mProgramMutex;
+};
+
+class CLAsyncBuildTask : public angle::Closure
+{
+  public:
+    CLAsyncBuildTask(CLProgramVk *programVk,
+                     const cl::DevicePtrs &devices,
+                     std::string options,
+                     std::string internalOptions,
+                     CLProgramVk::BuildType buildType,
+                     const CLProgramVk::LinkProgramsList &LinkProgramsList,
+                     cl::Program *notify)
+        : mProgramVk(programVk),
+          mDevices(devices),
+          mOptions(options),
+          mInternalOptions(internalOptions),
+          mBuildType(buildType),
+          mLinkProgramsList(LinkProgramsList),
+          mNotify(notify)
+    {}
+
+    void operator()() override;
+
+  private:
+    CLProgramVk *mProgramVk;
+    const cl::DevicePtrs mDevices;
+    std::string mOptions;
+    std::string mInternalOptions;
+    CLProgramVk::BuildType mBuildType;
+    const CLProgramVk::LinkProgramsList mLinkProgramsList;
+    cl::Program *mNotify;
 };
 
 }  // namespace rx

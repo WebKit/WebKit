@@ -40,15 +40,15 @@ layer at (0,0) size 800x303
                           RenderInline {span} at (0,0) size 248x15 [color=#881280]
                             RenderText {#text} at (0,0) size 56x15
                               text run at (0,0) width 56: "<script"
-                            RenderInline {span} at (0,0) size 184x15
+                            RenderInline {span} at (56,0) size 184x15
                               RenderText {#text} at (56,0) size 8x15
                                 text run at (56,0) width 8: " "
-                              RenderInline {span} at (0,0) size 32x15 [color=#994500]
+                              RenderInline {span} at (64,0) size 32x15 [color=#994500]
                                 RenderText {#text} at (64,0) size 32x15
                                   text run at (64,0) width 32: "type"
                               RenderText {#text} at (96,0) size 16x15
                                 text run at (96,0) width 16: "=\""
-                              RenderInline {span} at (0,0) size 120x15 [color=#1A1AA6]
+                              RenderInline {span} at (112,0) size 120x15 [color=#1A1AA6]
                                 RenderText {#text} at (112,0) size 120x15
                                   text run at (112,0) width 120: "text/javascript"
                               RenderText {#text} at (232,0) size 8x15
@@ -99,15 +99,15 @@ layer at (0,0) size 800x303
                     RenderInline {span} at (0,0) size 232x15 [color=#881280]
                       RenderText {#text} at (0,0) size 40x15
                         text run at (0,0) width 40: "<body"
-                      RenderInline {span} at (0,0) size 184x15
+                      RenderInline {span} at (40,0) size 184x15
                         RenderText {#text} at (40,0) size 8x15
                           text run at (40,0) width 8: " "
-                        RenderInline {span} at (0,0) size 40x15 [color=#994500]
+                        RenderInline {span} at (48,0) size 40x15 [color=#994500]
                           RenderText {#text} at (48,0) size 40x15
                             text run at (48,0) width 40: "style"
                         RenderText {#text} at (88,0) size 16x15
                           text run at (88,0) width 16: "=\""
-                        RenderInline {span} at (0,0) size 112x15 [color=#1A1AA6]
+                        RenderInline {span} at (104,0) size 112x15 [color=#1A1AA6]
                           RenderText {#text} at (104,0) size 112x15
                             text run at (104,0) width 112: "direction: rtl"
                         RenderText {#text} at (216,0) size 8x15
@@ -124,15 +124,15 @@ layer at (0,0) size 800x303
                           RenderInline {span} at (0,0) size 688x15 [color=#881280]
                             RenderText {#text} at (0,0) size 32x15
                               text run at (0,0) width 32: "<div"
-                            RenderInline {span} at (0,0) size 648x15
+                            RenderInline {span} at (32,0) size 648x15
                               RenderText {#text} at (32,0) size 8x15
                                 text run at (32,0) width 8: " "
-                              RenderInline {span} at (0,0) size 40x15 [color=#994500]
+                              RenderInline {span} at (40,0) size 40x15 [color=#994500]
                                 RenderText {#text} at (40,0) size 40x15
                                   text run at (40,0) width 40: "style"
                               RenderText {#text} at (80,0) size 16x15
                                 text run at (80,0) width 16: "=\""
-                              RenderInline {span} at (0,0) size 576x15 [color=#1A1AA6]
+                              RenderInline {span} at (96,0) size 576x15 [color=#1A1AA6]
                                 RenderText {#text} at (96,0) size 576x15
                                   text run at (96,0) width 576: "whitespace:nowrap; width: 1000px; height: 4000px; border: 1px solid red;"
                               RenderText {#text} at (672,0) size 8x15

@@ -92,10 +92,10 @@ bool StringView::endsWithIgnoringASCIICase(StringView suffix) const
 Expected<CString, UTF8ConversionError> StringView::tryGetUTF8(ConversionMode mode) const
 {
     if (isNull())
-        return CString("", 0);
+        return CString { ""_span };
     if (is8Bit())
-        return StringImpl::utf8ForCharacters(characters8(), length());
-    return StringImpl::utf8ForCharacters(characters16(), length(), mode);
+        return StringImpl::utf8ForCharacters(span8());
+    return StringImpl::utf8ForCharacters(span16(), mode);
 }
 
 CString StringView::utf8(ConversionMode mode) const
@@ -147,20 +147,19 @@ size_t StringView::find(std::span<const LChar> match, unsigned start) const
         return notFound;
 
     if (is8Bit())
-        return findInner(characters8() + start, match.data(), start, searchLength, match.size());
-    return findInner(characters16() + start, match.data(), start, searchLength, match.size());
+        return findInner(span8().subspan(start), match, start);
+    return findInner(span16().subspan(start), match, start);
 }
 
 size_t StringView::reverseFind(std::span<const LChar> match, unsigned start) const
 {
     ASSERT(!match.empty());
-    auto length = this->length();
-    if (match.size() > length)
+    if (match.size() > length())
         return notFound;
 
     if (is8Bit())
-        return reverseFindInner(characters8(), match.data(), start, length, match.size());
-    return reverseFindInner(characters16(), match.data(), start, length, match.size());
+        return reverseFindInner(span8(), match, start);
+    return reverseFindInner(span16(), match, start);
 }
 
 void StringView::SplitResult::Iterator::findNextSubstring()
@@ -302,7 +301,7 @@ static AtomString convertASCIILowercaseAtom(const CharacterType* input, unsigned
             return makeAtomString(asASCIILowercase(std::span { input, length }));
     }
     // Fast path when the StringView is already all lowercase.
-    return AtomString(input, length);
+    return std::span { input, length };
 }
 
 AtomString StringView::convertToASCIILowercaseAtom() const
@@ -393,24 +392,22 @@ size_t StringView::reverseFind(StringView matchString, unsigned start) const
     if (isNull())
         return notFound;
 
-    unsigned matchLength = matchString.length();
-    unsigned ourLength = length();
-    if (!matchLength)
-        return std::min(start, ourLength);
+    if (matchString.length())
+        return std::min(start, length());
 
     // Check start & matchLength are in range.
-    if (matchLength > ourLength)
+    if (matchString.length() > length())
         return notFound;
 
     if (is8Bit()) {
         if (matchString.is8Bit())
-            return reverseFindInner(characters8(), matchString.characters8(), start, ourLength, matchLength);
-        return reverseFindInner(characters8(), matchString.characters16(), start, ourLength, matchLength);
+            return reverseFindInner(span8(), matchString.span8(), start);
+        return reverseFindInner(span8(), matchString.span16(), start);
     }
 
     if (matchString.is8Bit())
-        return reverseFindInner(characters16(), matchString.characters8(), start, ourLength, matchLength);
-    return reverseFindInner(characters16(), matchString.characters16(), start, ourLength, matchLength);
+        return reverseFindInner(span16(), matchString.span8(), start);
+    return reverseFindInner(span16(), matchString.span16(), start);
 }
 
 String makeStringByReplacingAll(StringView string, UChar target, UChar replacement)
@@ -430,7 +427,7 @@ String makeStringByReplacingAll(StringView string, UChar target, UChar replaceme
         }
         if (i == length)
             return string.toString();
-        return StringImpl::createByReplacingInCharacters(characters, length, target, replacement, i);
+        return StringImpl::createByReplacingInCharacters({ characters, length }, target, replacement, i);
     }
 
     auto* characters = string.characters16();
@@ -442,7 +439,7 @@ String makeStringByReplacingAll(StringView string, UChar target, UChar replaceme
     }
     if (i == length)
         return string.toString();
-    return StringImpl::createByReplacingInCharacters(characters, length, target, replacement, i);
+    return StringImpl::createByReplacingInCharacters({ characters, length }, target, replacement, i);
 }
 
 int codePointCompare(StringView lhs, StringView rhs)
@@ -451,12 +448,12 @@ int codePointCompare(StringView lhs, StringView rhs)
     bool rhsIs8Bit = rhs.is8Bit();
     if (lhsIs8Bit) {
         if (rhsIs8Bit)
-            return codePointCompare(lhs.characters8(), lhs.length(), rhs.characters8(), rhs.length());
-        return codePointCompare(lhs.characters8(), lhs.length(), rhs.characters16(), rhs.length());
+            return codePointCompare(lhs.span8(), rhs.span8());
+        return codePointCompare(lhs.span8(), rhs.span16());
     }
     if (rhsIs8Bit)
-        return codePointCompare(lhs.characters16(), lhs.length(), rhs.characters8(), rhs.length());
-    return codePointCompare(lhs.characters16(), lhs.length(), rhs.characters16(), rhs.length());
+        return codePointCompare(lhs.span16(), rhs.span8());
+    return codePointCompare(lhs.span16(), rhs.span16());
 }
 
 template<typename CharacterType> static String makeStringBySimplifyingNewLinesSlowCase(const String& string, unsigned firstCarriageReturn)
@@ -592,6 +589,13 @@ void StringView::setUnderlyingStringImpl(const StringView&)
 }
 
 #endif // not CHECK_STRINGVIEW_LIFETIME
+
+#ifndef NDEBUG
+void StringView::show() const
+{
+    toStringWithoutCopying().show();
+}
+#endif
 
 #if !defined(NDEBUG)
 namespace Detail {

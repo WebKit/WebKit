@@ -390,12 +390,11 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
     String str = string->string();
-    unsigned length = str.length();
-    if (!length || str.is8Bit()) {
-        LiteralParser<LChar> parser(globalObject, str.characters8(), length, StrictJSON);
+    if (str.is8Bit()) {
+        LiteralParser parser(globalObject, str.span8(), StrictJSON);
         return toRef(globalObject, parser.tryLiteralParse());
     }
-    LiteralParser<UChar> parser(globalObject, str.characters16(), length, StrictJSON);
+    LiteralParser parser(globalObject, str.span16(), StrictJSON);
     return toRef(globalObject, parser.tryLiteralParse());
 }
 

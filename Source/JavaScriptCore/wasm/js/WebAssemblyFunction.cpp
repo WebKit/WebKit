@@ -75,6 +75,7 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
     if (Options::useTracePoints())
         traceScope.emplace(WebAssemblyExecuteStart, WebAssemblyExecuteEnd);
 
+    MarkedArgumentBuffer keepAliveArgs;
     Vector<EncodedJSValue, MarkedArgumentBuffer::inlineCapacity> boxedArgs;
     JSWebAssemblyInstance* jsInstance = wasmFunction->instance();
     Wasm::Instance* wasmInstance = &jsInstance->instance();
@@ -83,7 +84,11 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
         return throwVMTypeError(globalObject, scope, Wasm::errorMessageForExceptionType(Wasm::ExceptionType::TypeErrorInvalidV128Use));
 
     for (unsigned argIndex = 0; argIndex < signature.argumentCount(); ++argIndex) {
-        uint64_t value = fromJSValue(globalObject, signature.argumentType(argIndex), callFrame->argument(argIndex));
+        auto argType = signature.argumentType(argIndex);
+        uint64_t value = fromJSValue(globalObject, argType, callFrame->argument(argIndex));
+        if (UNLIKELY(argType.isRef()))
+            keepAliveArgs.append(callFrame->argument(argIndex));
+
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         boxedArgs.append(value);
     }
@@ -447,7 +452,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 }
 #endif // ENABLE(JIT)
 
-WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, unsigned length, const String& name, JSWebAssemblyInstance* instance, Wasm::Callee& jsEntrypoint, Wasm::Callee* wasmCallee, Wasm::WasmToWasmImportableFunction::LoadLocation wasmToWasmEntrypointLoadLocation, Wasm::TypeIndex typeIndex, RefPtr<const Wasm::RTT> rtt)
+WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, unsigned length, const String& name, JSWebAssemblyInstance* instance, Wasm::JSEntrypointCallee& jsEntrypoint, Wasm::Callee* wasmCallee, Wasm::WasmToWasmImportableFunction::LoadLocation wasmToWasmEntrypointLoadLocation, Wasm::TypeIndex typeIndex, RefPtr<const Wasm::RTT> rtt)
 {
     NativeExecutable* base = vm.getHostFunction(callWebAssemblyFunction, ImplementationVisibility::Public, WasmFunctionIntrinsic, callHostFunctionAsConstructor, nullptr, String());
     // Since ClosureCall uses this executable as an identity for Wasm CallIC thunk, we need to make it diversified.
@@ -463,10 +468,12 @@ Structure* WebAssemblyFunction::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
 }
 
-WebAssemblyFunction::WebAssemblyFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, Wasm::Callee& jsEntrypoint, Wasm::Callee* wasmCallee, Wasm::WasmToWasmImportableFunction::LoadLocation wasmToWasmEntrypointLoadLocation, Wasm::TypeIndex typeIndex, RefPtr<const Wasm::RTT> rtt)
+WebAssemblyFunction::WebAssemblyFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, Wasm::JSEntrypointCallee& jsEntrypoint, Wasm::Callee* wasmCallee, Wasm::WasmToWasmImportableFunction::LoadLocation wasmToWasmEntrypointLoadLocation, Wasm::TypeIndex typeIndex, RefPtr<const Wasm::RTT> rtt)
     : Base { vm, executable, globalObject, structure, instance, Wasm::WasmToWasmImportableFunction { typeIndex, wasmToWasmEntrypointLoadLocation, &m_boxedWasmCallee, rtt.get() } }
-    , m_jsEntrypoint { jsEntrypoint.entrypoint() }
+    , m_jsEntrypoint { jsEntrypoint }
     , m_boxedWasmCallee(reinterpret_cast<uint64_t>(CalleeBits::boxNativeCalleeIfExists(wasmCallee)))
+    , m_jsToWasmInterpreterCallee(jsEntrypoint.compilationMode() == Wasm::CompilationMode::JSEntrypointInterpreterMode ? static_cast<Wasm::JSEntrypointInterpreterCallee*>(&jsEntrypoint) : nullptr)
+    , m_jsToWasmBoxedInterpreterCallee(CalleeBits::boxNativeCalleeIfExists(m_jsToWasmInterpreterCallee.get()))
 { }
 
 template<typename Visitor>

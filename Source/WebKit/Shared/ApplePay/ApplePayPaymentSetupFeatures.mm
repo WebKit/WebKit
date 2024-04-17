@@ -37,17 +37,16 @@
 
 namespace WebKit {
 
-static NSArray<PKPaymentSetupFeature *> *toPlatformFeatures(Vector<RefPtr<WebCore::ApplePaySetupFeature>>&& features)
+static NSArray<PKPaymentSetupFeature *> *toPlatformFeatures(Vector<Ref<WebCore::ApplePaySetupFeature>>&& features)
 {
     NSMutableArray *platformFeatures = [NSMutableArray arrayWithCapacity:features.size()];
     for (auto& feature : features) {
-        if (feature)
-            [platformFeatures addObject:feature->platformFeature()];
+        [platformFeatures addObject:feature->platformFeature()];
     }
     return platformFeatures;
 }
 
-PaymentSetupFeatures::PaymentSetupFeatures(Vector<RefPtr<WebCore::ApplePaySetupFeature>>&& features)
+PaymentSetupFeatures::PaymentSetupFeatures(Vector<Ref<WebCore::ApplePaySetupFeature>>&& features)
     : m_platformFeatures { toPlatformFeatures(WTFMove(features)) }
 {
 }

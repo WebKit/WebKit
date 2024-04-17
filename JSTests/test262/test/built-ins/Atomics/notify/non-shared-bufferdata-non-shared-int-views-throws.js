@@ -18,24 +18,24 @@ const poisoned = {
 
 assert.throws(TypeError, function() {
   Atomics.notify(new Int16Array(nonsab), poisoned, poisoned);
-}, '`Atomics.notify(new Int16Array(nonsab), poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.notify(new Int8Array(nonsab), poisoned, poisoned);
-}, '`Atomics.notify(new Int8Array(nonsab), poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.notify(new Uint32Array(nonsab), poisoned, poisoned);
-}, '`Atomics.notify(new Uint32Array(nonsab), poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.notify(new Uint16Array(nonsab), poisoned, poisoned);
-}, '`Atomics.notify(new Uint16Array(nonsab), poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.notify(new Uint8Array(nonsab), poisoned, poisoned);
-}, '`Atomics.notify(new Uint8Array(nonsab), poisoned, poisoned)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.notify(new Uint8ClampedArray(nonsab), poisoned, poisoned);
-}, '`Atomics.notify(new Uint8ClampedArray(nonsab), poisoned, poisoned)` throws TypeError');
+});

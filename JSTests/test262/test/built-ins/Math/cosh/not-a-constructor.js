@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Math.cosh), false, 'isConstructor(Math.cosh) must
 
 assert.throws(TypeError, () => {
   new Math.cosh();
-}, '`new Math.cosh()` throws TypeError');
+});
 

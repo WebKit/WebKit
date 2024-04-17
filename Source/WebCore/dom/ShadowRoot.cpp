@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,6 +32,7 @@
 #include "ChildListMutationScope.h"
 #include "ElementInlines.h"
 #include "ElementTraversal.h"
+#include "GetHTMLOptions.h"
 #include "HTMLSlotElement.h"
 #if ENABLE(PICTURE_IN_PICTURE_API)
 #include "NotImplemented.h"
@@ -63,11 +64,12 @@ static_assert(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), "shadowroot sh
 static_assert(sizeof(WeakPtr<Element, WeakPtrImplWithEventTargetData>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
 
-ShadowRoot::ShadowRoot(Document& document, ShadowRootMode mode, SlotAssignmentMode assignmentMode, DelegatesFocus delegatesFocus, Clonable clonable, AvailableToElementInternals availableToElementInternals)
+ShadowRoot::ShadowRoot(Document& document, ShadowRootMode mode, SlotAssignmentMode assignmentMode, DelegatesFocus delegatesFocus, Clonable clonable, Serializable serializable, AvailableToElementInternals availableToElementInternals)
     : DocumentFragment(document, TypeFlag::IsShadowRoot)
     , TreeScope(*this, document)
     , m_delegatesFocus(delegatesFocus == DelegatesFocus::Yes)
     , m_isClonable(clonable == Clonable::Yes)
+    , m_serializable(serializable == Serializable::Yes)
     , m_availableToElementInternals(availableToElementInternals == AvailableToElementInternals::Yes)
     , m_mode(mode)
     , m_slotAssignmentMode(assignmentMode)
@@ -209,6 +211,11 @@ ExceptionOr<void> ShadowRoot::setHTMLUnsafe(const String& html)
     return replaceChildrenWithMarkup(html, { ParserContentPolicy::AllowDeclarativeShadowRoots, ParserContentPolicy::AlwaysParseAsHTML });
 }
 
+String ShadowRoot::getHTML(GetHTMLOptions&& options) const
+{
+    return serializeFragment(*this, SerializedNodes::SubtreesOfChildren, nullptr, ResolveURLs::NoExcludingURLsForPrivacy, SerializationSyntax::HTML, { }, { }, options.serializableShadowRoots ? SerializeShadowRoots::Serializable : SerializeShadowRoots::Explicit, WTFMove(options.shadowRoots));
+}
+
 String ShadowRoot::innerHTML() const
 {
     return serializeFragment(*this, SerializedNodes::SubtreesOfChildren, nullptr, ResolveURLs::NoExcludingURLsForPrivacy);
@@ -236,10 +243,14 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
 Ref<Node> ShadowRoot::cloneNodeInternal(Document& targetDocument, CloningOperation type)
 {
     RELEASE_ASSERT(m_mode != ShadowRootMode::UserAgent);
+    ASSERT(m_isClonable);
     switch (type) {
     case CloningOperation::SelfWithTemplateContent:
-        return create(targetDocument, m_mode, m_slotAssignmentMode, m_delegatesFocus ? DelegatesFocus::Yes : DelegatesFocus::No,
-            m_isClonable ? Clonable::Yes : Clonable::No, m_availableToElementInternals ? AvailableToElementInternals::Yes : AvailableToElementInternals::No);
+        return create(targetDocument, m_mode, m_slotAssignmentMode,
+            m_delegatesFocus ? DelegatesFocus::Yes : DelegatesFocus::No,
+            Clonable::Yes,
+            m_serializable ? Serializable::Yes : Serializable::No,
+            m_availableToElementInternals ? AvailableToElementInternals::Yes : AvailableToElementInternals::No);
     case CloningOperation::OnlySelf:
     case CloningOperation::Everything:
         break;

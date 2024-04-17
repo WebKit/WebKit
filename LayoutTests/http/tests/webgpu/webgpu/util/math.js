@@ -414,6 +414,25 @@ export function oneULPF32(target, mode = 'flush') {
 }
 
 /**
+ * @returns an integer value between 0..0xffffffff using a simple non-cryptographic hash function
+ * @param values integers to generate hash from.
+ */
+export function hashU32(...values) {
+  let n = 0x3504_f333;
+  for (const v of values) {
+    n = v + (n << 7) + (n >>> 1);
+    n = n * 0x29493 & 0xffff_ffff;
+  }
+  n ^= n >>> 8;
+  n += n << 15;
+  n = n & 0xffff_ffff;
+  if (n < 0) {
+    n = ~n * 2 + 1;
+  }
+  return n;
+}
+
+/**
  * @returns ulp(x), the unit of least precision for a specific number as a 32-bit float
  *
  * ulp(x) is the distance between the two floating point numbers nearest x.

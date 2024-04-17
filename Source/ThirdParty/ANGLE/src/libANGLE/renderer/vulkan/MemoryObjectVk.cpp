@@ -11,7 +11,7 @@
 #include "common/vulkan/vk_headers.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 #include "vulkan/vulkan_fuchsia_ext.h"
 
 #if !defined(ANGLE_PLATFORM_WINDOWS)
@@ -176,7 +176,7 @@ angle::Result MemoryObjectVk::createImage(ContextVk *contextVk,
                                           GLbitfield usageFlags,
                                           const void *imageCreateInfoPNext)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     const vk::Format &vkFormat     = renderer->getFormat(internalFormat);
     angle::FormatID actualFormatID = vkFormat.getActualRenderableImageFormatID();

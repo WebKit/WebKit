@@ -717,27 +717,28 @@ void DirectCallLinkInfo::setMaxArgumentCountIncludingThis(unsigned value)
     m_maxArgumentCountIncludingThis = value;
 }
 
-std::tuple<CodeBlock*, CodePtr<JSEntryPtrTag>> DirectCallLinkInfo::retrieveCallInfo(FunctionExecutable* functionExecutable)
+CodeBlock* DirectCallLinkInfo::retrieveCodeBlock(FunctionExecutable* functionExecutable)
 {
     CodeSpecializationKind kind = specializationKind();
     CodeBlock* codeBlock = functionExecutable->codeBlockFor(kind);
     if (!codeBlock)
-        return { };
+        return nullptr;
 
     CodeBlock* ownerCodeBlock = jsDynamicCast<CodeBlock*>(owner());
     if (!ownerCodeBlock)
-        return { };
+        return nullptr;
 
     if (ownerCodeBlock->alternative() == codeBlock)
-        return { };
+        return nullptr;
 
+    return codeBlock;
+}
+
+CodePtr<JSEntryPtrTag> DirectCallLinkInfo::retrieveCodePtr(const ConcurrentJSLocker& locker, CodeBlock* codeBlock)
+{
     unsigned argumentStackSlots = maxArgumentCountIncludingThis();
     ArityCheckMode arityCheckMode = (argumentStackSlots < static_cast<size_t>(codeBlock->numParameters())) ? MustCheckArity : ArityCheckNotRequired;
-    CodePtr<JSEntryPtrTag> codePtr = codeBlock->addressForCallConcurrently(arityCheckMode);
-    if (!codePtr)
-        return { };
-
-    return std::tuple { codeBlock, codePtr };
+    return codeBlock->addressForCallConcurrently(locker, arityCheckMode);
 }
 
 void DirectCallLinkInfo::repatchSpeculatively()
@@ -762,13 +763,16 @@ void DirectCallLinkInfo::repatchSpeculatively()
         return;
     }
 
-    auto [codeBlock, codePtr] = retrieveCallInfo(functionExecutable);
-    if (codeBlock && codePtr) {
-        m_codeBlock = codeBlock;
-        m_target = codePtr;
-        // Do not chain |this| to the calle codeBlock concurrently. It will be done in the main thread if the speculatively repatched one is still valid.
-        setCallTarget(codeBlock, CodeLocationLabel { codePtr });
-        return;
+    auto* codeBlock = retrieveCodeBlock(functionExecutable);
+    if (codeBlock) {
+        auto codePtr = retrieveCodePtr(ConcurrentJSLocker { codeBlock->m_lock }, codeBlock);
+        if (codePtr) {
+            m_codeBlock = codeBlock;
+            m_target = codePtr;
+            // Do not chain |this| to the calle codeBlock concurrently. It will be done in the main thread if the speculatively repatched one is still valid.
+            setCallTarget(codeBlock, CodeLocationLabel { codePtr });
+            return;
+        }
     }
 
     initialize();
@@ -781,9 +785,12 @@ void DirectCallLinkInfo::validateSpeculativeRepatchOnMainThread(VM&)
     if (!functionExecutable)
         return;
 
-    auto [codeBlock, codePtr] = retrieveCallInfo(functionExecutable);
+    auto* codeBlock = retrieveCodeBlock(functionExecutable);
+    CodePtr<JSEntryPtrTag> codePtr = nullptr;
+    if (codeBlock)
+        codePtr = retrieveCodePtr(ConcurrentJSLocker { NoLockingNecessary }, codeBlock);
+
     if (m_codeBlock != codeBlock || m_target != codePtr) {
-        dataLogLnIf(verbose, "Speculative repatching failed ", RawPointer(m_codeBlock), " ", m_target, " => ", RawPointer(codeBlock), " ", codePtr);
         if (codeBlock && codePtr)
             setCallTarget(codeBlock, CodeLocationLabel { codePtr });
         else

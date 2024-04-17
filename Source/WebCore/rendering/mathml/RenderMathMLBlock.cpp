@@ -176,6 +176,8 @@ LayoutUnit toUserUnits(const MathMLElement::Length& length, const RenderStyle& s
     }
 }
 
+RenderMathMLTable::~RenderMathMLTable() = default;
+
 std::optional<LayoutUnit> RenderMathMLTable::firstLineBaseline() const
 {
     // By default the vertical center of <mtable> is aligned on the math axis.

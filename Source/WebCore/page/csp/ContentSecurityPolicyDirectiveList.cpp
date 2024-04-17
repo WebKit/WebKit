@@ -473,7 +473,7 @@ void ContentSecurityPolicyDirectiveList::parse(const String& policy, ContentSecu
             auto directiveBegin = buffer.position();
             skipUntil(buffer, ';');
 
-            if (auto directive = parseDirective(StringParsingBuffer { directiveBegin, buffer.position() })) {
+            if (auto directive = parseDirective(std::span { directiveBegin, buffer.position() })) {
                 ASSERT(!directive->name.isEmpty());
                 if (policyFrom == ContentSecurityPolicy::PolicyFrom::Inherited) {
                     if (equalIgnoringASCIICase(directive->name, ContentSecurityPolicyDirectiveNames::upgradeInsecureRequests))
@@ -504,8 +504,9 @@ void ContentSecurityPolicyDirectiveList::parse(const String& policy, ContentSecu
 // directive-name    = 1*( ALPHA / DIGIT / "-" )
 // directive-value   = *( WSP / <VCHAR except ";"> )
 //
-template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseDirective(StringParsingBuffer<CharacterType> buffer) -> std::optional<ParsedDirective>
+template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseDirective(std::span<const CharacterType> span) -> std::optional<ParsedDirective>
 {
+    StringParsingBuffer buffer { span };
     skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
 
     // Empty directive (e.g. ";;;"). Exit early.

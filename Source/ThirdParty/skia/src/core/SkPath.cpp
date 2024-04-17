@@ -173,9 +173,6 @@ void SkPath::resetFields() {
     fFillType = SkToU8(SkPathFillType::kWinding);
     this->setConvexity(SkPathConvexity::kUnknown);
     this->setFirstDirection(SkPathFirstDirection::kUnknown);
-
-    // We don't touch Android's fSourcePath.  It's used to track texture garbage collection, so we
-    // don't want to muck with it if it's been set to something non-nullptr.
 }
 
 SkPath::SkPath(const SkPath& that)
@@ -664,10 +661,12 @@ SkPath& SkPath::dirtyAfterEdit() {
     return *this;
 }
 
-void SkPath::incReserve(int inc) {
+void SkPath::incReserve(int extraPtCount, int extraVerbCount, int extraConicCount) {
     SkDEBUGCODE(this->validate();)
-    if (inc > 0) {
-        SkPathRef::Editor(&fPathRef, inc, inc);
+    if (extraPtCount > 0) {
+        // For compat with when this function only took a single argument, use
+        // extraPtCount if extraVerbCount is 0 (default value).
+        SkPathRef::Editor(&fPathRef, extraVerbCount == 0 ? extraPtCount : extraVerbCount, extraPtCount, extraConicCount);
     }
     SkDEBUGCODE(this->validate();)
 }
@@ -858,15 +857,17 @@ SkPath& SkPath::addRect(const SkRect &rect, SkPathDirection dir, unsigned startI
     SkDEBUGCODE(int initialVerbCount = this->countVerbs());
 
     const int kVerbs = 5; // moveTo + 3x lineTo + close
-    this->incReserve(kVerbs);
+    SkPathRef::Editor ed(&fPathRef, kVerbs, /* points */ 4);
 
     SkPath_RectPointIterator iter(rect, dir, startIndex);
+    fLastMoveToIndex = fPathRef->countPoints();
 
-    this->moveTo(iter.current());
-    this->lineTo(iter.next());
-    this->lineTo(iter.next());
-    this->lineTo(iter.next());
+    *ed.growForVerb(kMove_Verb) = iter.current();
+    *ed.growForVerb(kLine_Verb) = iter.next();
+    *ed.growForVerb(kLine_Verb) = iter.next();
+    *ed.growForVerb(kLine_Verb) = iter.next();
     this->close();
+    (void)this->dirtyAfterEdit();
 
     SkASSERT(this->countVerbs() == initialVerbCount + kVerbs);
     return *this;
@@ -1201,7 +1202,8 @@ SkPath& SkPath::arcTo(const SkRect& oval, SkScalar startAngle, SkScalar sweepAng
     SkConic conics[SkConic::kMaxConicsForArc];
     int count = build_arc_conics(oval, startV, stopV, dir, conics, &singlePt);
     if (count) {
-        this->incReserve(count * 2 + 1);
+        // Conics take two points. Add one to the verb in case there is a moveto.
+        this->incReserve(count * 2 + 1, count + 1, count);
         const SkPoint& pt = conics[0].fPts[0];
         addPt(pt);
         for (int i = 0; i < count; ++i) {
@@ -2272,15 +2274,13 @@ private:
 };
 
 SkPathConvexity SkPath::computeConvexity() const {
-    auto setComputedConvexity = [=](SkPathConvexity convexity){
+    auto setComputedConvexity = [&](SkPathConvexity convexity) {
         SkASSERT(SkPathConvexity::kUnknown != convexity);
         this->setConvexity(convexity);
         return convexity;
     };
 
-    auto setFail = [=](){
-        return setComputedConvexity(SkPathConvexity::kConcave);
-    };
+    auto setFail = [&]() { return setComputedConvexity(SkPathConvexity::kConcave); };
 
     if (!this->isFinite()) {
         return setFail();
@@ -3144,7 +3144,7 @@ void SkPath::shrinkToFit() {
     // any existing iterators.
     if (!fPathRef->unique()) {
         SkPathRef* pr = new SkPathRef;
-        pr->copy(*fPathRef, 0, 0);
+        pr->copy(*fPathRef, 0, 0, 0);
         fPathRef.reset(pr);
     }
     fPathRef->fPoints.shrink_to_fit();

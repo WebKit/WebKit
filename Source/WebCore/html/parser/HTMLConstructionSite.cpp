@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -553,8 +553,9 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
 {
     if (m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowRoots)) {
         std::optional<ShadowRootMode> mode;
-        bool clonable = false;
-        bool delegatesFocus = false;
+        auto delegatesFocus = ShadowRootDelegatesFocus::No;
+        auto clonable = ShadowRootClonable::No;
+        auto serializable = ShadowRootSerializable::No;
         for (auto& attribute : token.attributes()) {
             if (attribute.name() == HTMLNames::shadowrootmodeAttr) {
                 if (equalLettersIgnoringASCIICase(attribute.value(), "closed"_s))
@@ -562,12 +563,14 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
                 else if (equalLettersIgnoringASCIICase(attribute.value(), "open"_s))
                     mode = ShadowRootMode::Open;
             } else if (attribute.name() == HTMLNames::shadowrootdelegatesfocusAttr)
-                delegatesFocus = true;
+                delegatesFocus = ShadowRootDelegatesFocus::Yes;
             else if (attribute.name() == HTMLNames::shadowrootclonableAttr)
-                clonable = true;
+                clonable = ShadowRootClonable::Yes;
+            else if (attribute.name() == HTMLNames::shadowrootserializableAttr)
+                serializable = ShadowRootSerializable::Yes;
         }
         if (mode && is<Element>(currentNode())) {
-            auto exceptionOrShadowRoot = currentElement().attachDeclarativeShadow(*mode, delegatesFocus, clonable);
+            auto exceptionOrShadowRoot = currentElement().attachDeclarativeShadow(*mode, delegatesFocus, clonable, serializable);
             if (!exceptionOrShadowRoot.hasException()) {
                 Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
                 auto element = createHTMLElement(token);

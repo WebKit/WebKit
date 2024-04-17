@@ -156,6 +156,10 @@ class WebProcessPool final
 #endif
 {
 public:
+    using IPC::MessageReceiver::weakPtrFactory;
+    using IPC::MessageReceiver::WeakValueType;
+    using IPC::MessageReceiver::WeakPtrImplType;
+
     static Ref<WebProcessPool> create(API::ProcessPoolConfiguration&);
 
     explicit WebProcessPool(API::ProcessPoolConfiguration&);        
@@ -725,7 +729,7 @@ private:
     bool m_memorySamplerEnabled { false };
     double m_memorySamplerInterval { 1400.0 };
 
-    using WebContextSupplementMap = HashMap<ASCIILiteral, RefPtr<WebContextSupplement>, ASCIILiteralPtrHash>;
+    using WebContextSupplementMap = HashMap<ASCIILiteral, RefPtr<WebContextSupplement>>;
     WebContextSupplementMap m_supplements;
 
 #if USE(SOUP)

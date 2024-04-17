@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
+
 from .tracker import Tracker
 from .user import User
 from datetime import datetime
@@ -77,6 +79,8 @@ class Issue(object):
         self._milestone = None
         self._keywords = None
         self._classification = None
+
+        self._source_changes = None
 
         self.tracker.populate(self, None)
 
@@ -236,6 +240,23 @@ class Issue(object):
         if self._classification is None:
             self.tracker.populate(self, 'classification')
         return self._classification
+
+    @property
+    def source_changes(self):
+        if self._source_changes is None:
+            self.tracker.populate(self, 'source_changes')
+        return self._source_changes
+
+    def add_source_change(self, line):
+        parts = line.split(', ')
+        parts[-1] = parts[-1][:12]
+        search_for = ', '.join(parts) if parts[-1] else line
+
+        for change in self.source_changes:
+            if change.startswith(search_for):
+                sys.stderr.write("'{}' is already a registered source change\n".format(line))
+                return None
+        return self.tracker.set(self, source_changes=self.source_changes + [line])
 
     @property
     def _redaction_match(self):

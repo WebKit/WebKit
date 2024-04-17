@@ -183,6 +183,15 @@ void NetworkDataTaskCocoa::updateFirstPartyInfoForSession(const URL& requestURL)
         session->setFirstPartyHostIPAddress(requestURL.host().toString(), ipAddress);
 }
 
+static void adjustNetworkServiceTypeIfNecessary(WebCore::ResourceRequestRequester requester, NSMutableURLRequest *mutableRequest)
+{
+    if (requester == WebCore::ResourceRequestRequester::Media) {
+        if (mutableRequest.networkServiceType == NSURLNetworkServiceTypeDefault || mutableRequest.networkServiceType == NSURLNetworkServiceTypeBackground)
+            mutableRequest.networkServiceType = NSURLNetworkServiceTypeVideo;
+    } else if (requester == WebCore::ResourceRequestRequester::Beacon)
+        mutableRequest.networkServiceType = NSURLNetworkServiceTypeBackground;
+}
+
 NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters)
     : NetworkDataTask(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.isMainFrameNavigation)
     , NetworkTaskCocoa(session, parameters.shouldRelaxThirdPartyCookieBlocking)
@@ -225,6 +234,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     RetainPtr<NSURLRequest> nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
     ASSERT(nsRequest);
     RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
+
+    adjustNetworkServiceTypeIfNecessary(request.requester(), mutableRequest.get());
 
     if (parameters.isMainFrameNavigation
         || parameters.hadMainFrameMainResourcePrivateRelayed

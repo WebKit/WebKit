@@ -274,6 +274,7 @@ void GraphicsContextSkia::drawNativeImageInternal(NativeImage& nativeImage, cons
     }
 
     SkPaint paint = createFillPaint();
+    paint.setAlphaf(alpha());
     paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     m_canvas.drawImageRect(image, normalizedSrcRect, normalizedDestRect, toSkSamplingOptions(m_state.imageInterpolationQuality()), &paint, { });
@@ -418,7 +419,7 @@ sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowS
             // Fast path: identity CTM doesn't need the transform compensation
             AffineTransform ctm = getCTM(GraphicsContext::IncludeDeviceScale::PossiblyIncludeDeviceScale);
             if (ctm.isIdentity())
-                return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, shadowColor.colorWithAlphaMultipliedBy(state.alpha()), nullptr);
+                return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, shadowColor, nullptr);
 
             // Ignoring the CTM is practically equal as applying the inverse of
             // the CTM when post-processing the drop shadow.
@@ -426,16 +427,16 @@ sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowS
                 SkPoint3 p = SkPoint3::Make(offset.width(), offset.height(), 0);
                 inverse->mapHomogeneousPoints(&p, &p, 1);
                 sigma = inverse->mapRadius(sigma);
-                return SkImageFilters::DropShadow(p.x(), p.y(), sigma, sigma, shadowColor.colorWithAlphaMultipliedBy(state.alpha()), nullptr);
+                return SkImageFilters::DropShadow(p.x(), p.y(), sigma, sigma, shadowColor, nullptr);
             }
 
             return nullptr;
         }
 
-        return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, shadowColor.colorWithAlphaMultipliedBy(state.alpha()), nullptr);
+        return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, shadowColor, nullptr);
     case ShadowStyle::Inset: {
         auto dropShadow = SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, SK_ColorBLACK, nullptr);
-        return SkImageFilters::ColorFilter(SkColorFilters::Blend(shadowColor.colorWithAlphaMultipliedBy(state.alpha()), SkBlendMode::kSrcIn), dropShadow);
+        return SkImageFilters::ColorFilter(SkColorFilters::Blend(shadowColor, SkBlendMode::kSrcIn), dropShadow);
     }
     }
 
@@ -454,9 +455,10 @@ SkPaint GraphicsContextSkia::createFillPaint() const
 
 void GraphicsContextSkia::setupFillSource(SkPaint& paint) const
 {
-    if (auto fillPattern = fillBrush().pattern())
+    if (auto fillPattern = fillBrush().pattern()) {
         paint.setShader(fillPattern->createPlatformPattern({ }, toSkSamplingOptions(imageInterpolationQuality())));
-    else if (auto fillGradient = fillBrush().gradient())
+        paint.setAlphaf(alpha());
+    } else if (auto fillGradient = fillBrush().gradient())
         paint.setShader(fillGradient->shader(alpha(), fillBrush().gradientSpaceTransform()));
     else
         paint.setColor(SkColor(fillColor().colorWithAlphaMultipliedBy(alpha())));
@@ -789,7 +791,13 @@ void GraphicsContextSkia::setLineDash(const DashArray& dashArray, float dashOffs
         return;
     }
 
-    m_skiaState.m_stroke.dash = SkDashPathEffect::Make(dashArray.data(), dashArray.size(), dashOffset);
+    if (dashArray.size() % 2 == 1) {
+        // Repeat the array to ensure even number of dash array elements, see e.g. 'stroke-dasharray' spec.
+        DashArray repeatedDashArray(dashArray);
+        repeatedDashArray.appendVector(dashArray);
+        m_skiaState.m_stroke.dash = SkDashPathEffect::Make(repeatedDashArray.data(), repeatedDashArray.size(), dashOffset);
+    } else
+        m_skiaState.m_stroke.dash = SkDashPathEffect::Make(dashArray.data(), dashArray.size(), dashOffset);
 }
 
 void GraphicsContextSkia::setLineJoin(LineJoin lineJoin)
@@ -875,35 +883,26 @@ void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect&
     if (!makeGLContextCurrentIfNeeded())
         return;
 
-    FloatRect rect(tileRect);
-    rect.moveBy(phase);
+    FloatPoint phaseOffset(tileRect.location());
+    phaseOffset.scale(patternTransform.a(), patternTransform.d());
+    phaseOffset.moveBy(phase);
     SkMatrix phaseMatrix;
-    phaseMatrix.setTranslate(rect.x(), rect.y());
+    phaseMatrix.setTranslate(phaseOffset.x(), phaseOffset.y());
     SkMatrix shaderMatrix = SkMatrix::Concat(phaseMatrix, patternTransform);
     auto samplingOptions = toSkSamplingOptions(m_state.imageInterpolationQuality());
-    bool needsClip = tileRect.size() != nativeImage.size();
-
-    auto tileMode = [](float dstPoint, float dstMax, float tilePoint, float tileMax) -> SkTileMode {
-        return dstPoint >= tilePoint && dstMax <= tileMax ? SkTileMode::kClamp : SkTileMode::kRepeat;
-    };
-    auto tileModeX = tileMode(destRect.x(), destRect.maxX(), rect.x(), rect.maxX());
-    auto tileModeY = tileMode(destRect.y(), destRect.maxY(), rect.y(), rect.maxY());
 
     SkPaint paint = createFillPaint();
     paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
 
-    if (spacing.isZero() && !needsClip)
-        paint.setShader(image->makeShader(tileModeX, tileModeY, samplingOptions, &shaderMatrix));
+    if (spacing.isZero() && tileRect.size() == nativeImage.size())
+        paint.setShader(image->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, samplingOptions, &shaderMatrix));
     else {
-        if (needsClip) {
-            // FIXME: handle the case where the tile rect has a different size than the image.
-            notImplemented();
-        }
         SkPictureRecorder recorder;
         auto* recordCanvas = recorder.beginRecording(SkRect::MakeWH(tileRect.width() + spacing.width() / patternTransform.a(), tileRect.height() + spacing.height() / patternTransform.d()));
+        // The below call effectively extracts a tile from the image thus performing a clipping.
         recordCanvas->drawImageRect(image, tileRect, SkRect::MakeWH(tileRect.width(), tileRect.height()), samplingOptions, nullptr, SkCanvas::kStrict_SrcRectConstraint);
         auto picture = recorder.finishRecordingAsPicture();
-        paint.setShader(picture->makeShader(tileModeX, tileModeY, samplingOptions.filter, &shaderMatrix, nullptr));
+        paint.setShader(picture->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, samplingOptions.filter, &shaderMatrix, nullptr));
     }
 
     m_canvas.drawRect(destRect, paint);

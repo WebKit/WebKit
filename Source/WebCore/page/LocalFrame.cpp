@@ -67,6 +67,7 @@
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMWindow.h"
 #include "JSNode.h"
 #include "JSServiceWorkerGlobalScope.h"
 #include "JSWindowProxy.h"
@@ -303,11 +304,6 @@ void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
         if (RefPtr page = this->page())
             page->didChangeMainDocument();
         checkedLoader()->client().dispatchDidChangeMainDocument();
-
-        // We want to generate the same unique names whenever a page is loaded to avoid making layout tests
-        // flaky and for things like form state restoration to work. To achieve this, we reset our frame
-        // identifier generator every time the page is navigated.
-        tree().resetFrameIdentifiers();
     }
 
     if (RefPtr previousDocument = m_doc) {
@@ -993,6 +989,14 @@ FrameLoaderClient& LocalFrame::loaderClient()
     return loader().client();
 }
 
+void LocalFrame::documentURLForConsoleLog(CompletionHandler<void(const URL&)>&& completionHandler)
+{
+    RefPtr document = this->document();
+    if (!document)
+        return completionHandler({ });
+    completionHandler(document->url());
+}
+
 String LocalFrame::trackedRepaintRectsAsText() const
 {
     if (!m_view)
@@ -1213,8 +1217,8 @@ void LocalFrame::resetScript()
 LocalFrame* LocalFrame::fromJSContext(JSContextRef context)
 {
     JSC::JSGlobalObject* globalObjectObj = toJS(context);
-    if (auto* window = JSC::jsDynamicCast<JSLocalDOMWindow*>(globalObjectObj))
-        return window->wrapped().frame();
+    if (auto* window = JSC::jsDynamicCast<JSDOMWindow*>(globalObjectObj))
+        return dynamicDowncast<LocalFrame>(window->wrapped().frame());
     if (auto* serviceWorkerGlobalScope = JSC::jsDynamicCast<JSServiceWorkerGlobalScope*>(globalObjectObj))
         return serviceWorkerGlobalScope->wrapped().serviceWorkerPage() ? dynamicDowncast<LocalFrame>(serviceWorkerGlobalScope->wrapped().serviceWorkerPage()->mainFrame()) : nullptr;
     return nullptr;
@@ -1229,8 +1233,8 @@ LocalFrame* LocalFrame::contentFrameFromWindowOrFrameElement(JSContextRef contex
     JSC::JSValue value = toJS(globalObject, valueRef);
     JSC::VM& vm = globalObject->vm();
 
-    if (auto* window = JSLocalDOMWindow::toWrapped(vm, value))
-        return window->frame();
+    if (auto* window = JSDOMWindow::toWrapped(vm, value))
+        return dynamicDowncast<LocalFrame>(window->frame());
 
     auto* jsNode = JSC::jsDynamicCast<JSNode*>(value);
     if (!jsNode)

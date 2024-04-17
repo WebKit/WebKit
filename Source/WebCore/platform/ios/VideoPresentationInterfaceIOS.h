@@ -44,6 +44,7 @@
 #include <wtf/ThreadSafeWeakPtr.h>
 
 OBJC_CLASS AVPlayerViewController;
+OBJC_CLASS LMPlayableViewController;
 OBJC_CLASS UIViewController;
 OBJC_CLASS UIWindow;
 OBJC_CLASS UIView;
@@ -61,9 +62,25 @@ class VideoPresentationInterfaceIOS
     : public VideoPresentationModelClient
     , public PlaybackSessionModelClient
     , public VideoFullscreenCaptions
-    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoPresentationInterfaceIOS, WTF::DestructionThread::MainRunLoop> {
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoPresentationInterfaceIOS, WTF::DestructionThread::MainRunLoop>
+    , public CanMakeCheckedPtr<VideoPresentationInterfaceIOS> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceIOS);
 public:
     WEBCORE_EXPORT ~VideoPresentationInterfaceIOS();
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+#if CHECKED_POINTER_DEBUG
+    void registerCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::registerCheckedPtr(pointer); };
+    void copyCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::copyCheckedPtr(source, destination); }
+    void moveCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::moveCheckedPtr(source, destination); }
+    void unregisterCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::unregisterCheckedPtr(pointer); }
+#endif // CHECKED_POINTER_DEBUG
+
     WEBCORE_EXPORT void setVideoPresentationModel(VideoPresentationModel*);
     PlaybackSessionInterfaceIOS& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
@@ -148,6 +165,10 @@ public:
     WEBCORE_EXPORT virtual bool pictureInPictureWasStartedWhenEnteringBackground() const = 0;
 
     WEBCORE_EXPORT std::optional<MediaPlayerIdentifier> playerIdentifier() const;
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    virtual LMPlayableViewController *playableViewController() { return nil; }
+#endif
 
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const;

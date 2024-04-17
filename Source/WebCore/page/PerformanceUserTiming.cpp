@@ -227,7 +227,7 @@ ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(JSC::JSGloba
     if (detail.isUndefined())
         detail = JSC::jsNull();
 
-    Vector<RefPtr<MessagePort>> ignoredMessagePorts;
+    Vector<Ref<MessagePort>> ignoredMessagePorts;
     auto serializedDetail = SerializedScriptValue::create(globalObject, detail, { }, ignoredMessagePorts);
     if (serializedDetail.hasException())
         return serializedDetail.releaseException();

@@ -40,8 +40,9 @@ class Font;
 
 struct GlyphData;
 
-class TextRun : public CanMakeCheckedPtr {
+class TextRun final : public CanMakeCheckedPtr<TextRun> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextRun);
     friend void add(Hasher&, const TextRun&);
 public:
     explicit TextRun(const String& text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = ExpansionBehavior::defaultBehavior(), TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
@@ -189,7 +190,12 @@ inline void TextRun::setTabSize(bool allow, const TabSize& size)
 inline TextRun TextRun::isolatedCopy() const
 {
     TextRun clone = *this;
-    clone.m_text = clone.m_text.isolatedCopy();
+    // We need to ensure a deep copy here, calling `clone.m_text.isolatedCopy()`
+    // is insufficient (rdar://125823370).
+    if (clone.m_text.is8Bit())
+        clone.m_text = clone.m_text.span8();
+    else
+        clone.m_text = clone.m_text.span16();
     return clone;
 }
 

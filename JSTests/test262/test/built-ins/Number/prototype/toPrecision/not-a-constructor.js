@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Number.prototype.toPrecision();
-}, '`new Number.prototype.toPrecision()` throws TypeError');
+});
 

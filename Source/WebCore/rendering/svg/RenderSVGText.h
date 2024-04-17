@@ -34,6 +34,7 @@ class RenderSVGInlineText;
 
 class RenderSVGText final : public RenderSVGBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGText);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGText);
 public:
     RenderSVGText(SVGTextElement&, RenderStyle&&);
     virtual ~RenderSVGText();
@@ -58,7 +59,6 @@ public:
     void subtreeChildWasAdded(RenderObject*);
     void subtreeChildWillBeRemoved(RenderObject*, Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes);
     void subtreeChildWasRemoved(const Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes);
-    void willLayout();
     void subtreeTextDidChange(RenderSVGInlineText*);
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }

@@ -35,7 +35,6 @@
 #include <WebCore/DataTransfer.h>
 #include <WebCore/DragData.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/SelectionData.h>
 #include <WebCore/ShareableBitmap.h>
@@ -65,16 +64,38 @@ static RefPtr<ShareableBitmap> convertCairoSurfaceToShareableBitmap(cairo_surfac
 }
 #endif
 
+#if USE(SKIA)
+static RefPtr<ShareableBitmap> convertSkiaImageToShareableBitmap(SkImage* image)
+{
+    if (!image)
+        return nullptr;
+
+    IntSize imageSize(image->width(), image->height());
+    RefPtr bitmap = ShareableBitmap::create({ imageSize });
+    auto graphicsContext = bitmap->createGraphicsContext();
+
+    ASSERT(graphicsContext->hasPlatformContext());
+    graphicsContext->platformContext()->drawImage(image, 0, 0);
+
+    return bitmap;
+}
+#endif
+
 void WebDragClient::didConcludeEditDrag()
 {
 }
 
 void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame&)
 {
-#if USE(CAIRO)
-    auto& dragImage = dragItem.image;
-    auto bitmap = convertCairoSurfaceToShareableBitmap(dragImage.get().get());
     std::optional<ShareableBitmap::Handle> handle;
+    auto* dragSurface = dragItem.image.get().get();
+    RefPtr<ShareableBitmap> bitmap;
+
+#if USE(CAIRO)
+    bitmap = convertCairoSurfaceToShareableBitmap(dragSurface);
+#elif USE(SKIA)
+    bitmap = convertSkiaImageToShareableBitmap(dragSurface);
+#endif
 
     if (bitmap) {
         handle = bitmap->createHandle();
@@ -83,10 +104,6 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Fra
         if (!handle)
             return;
     }
-#elif USE(SKIA)
-    std::optional<ShareableBitmap::Handle> handle;
-    notImplemented();
-#endif
 
     m_page->willStartDrag();
     m_page->send(Messages::WebPageProxy::StartDrag(dataTransfer.pasteboard().selectionData(), dataTransfer.sourceOperationMask(), WTFMove(handle), dataTransfer.dragLocation()));

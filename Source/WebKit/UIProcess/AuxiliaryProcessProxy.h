@@ -66,9 +66,10 @@ class AuxiliaryProcessProxy
     , public ResponsivenessTimer::Client
     , private ProcessLauncher::Client
     , public IPC::Connection::Client
-    , public CanMakeThreadSafeCheckedPtr {
+    , public CanMakeThreadSafeCheckedPtr<AuxiliaryProcessProxy> {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
-
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AuxiliaryProcessProxy);
 protected:
     AuxiliaryProcessProxy(ShouldTakeUIBackgroundAssertion, AlwaysRunsAtBackgroundPriority = AlwaysRunsAtBackgroundPriority::No, Seconds responsivenessTimeout = ResponsivenessTimer::defaultResponsivenessTimeout);
 
@@ -216,10 +217,14 @@ public:
     std::optional<TaskInfo> taskInfo() const;
 #endif
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
+#endif
+
     enum ResumeReason : bool { ForegroundActivity, BackgroundActivity };
     virtual void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) = 0;
     virtual void sendProcessDidResume(ResumeReason) = 0;
-    virtual void didChangeThrottleState(ProcessThrottleState) { };
+    virtual void didChangeThrottleState(ProcessThrottleState);
     virtual ASCIILiteral clientName() const = 0;
     virtual String environmentIdentifier() const { return emptyString(); }
     virtual void prepareToDropLastAssertion(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
@@ -275,6 +280,7 @@ private:
     IPC::MessageReceiverMap m_messageReceiverMap;
     bool m_alwaysRunsAtBackgroundPriority { false };
     bool m_didBeginResponsivenessChecks { false };
+    bool m_isSuspended { false };
     const WebCore::ProcessIdentifier m_processIdentifier { WebCore::ProcessIdentifier::generate() };
     std::optional<UseLazyStop> m_delayedResponsivenessCheck;
     MonotonicTime m_processStart;
@@ -288,6 +294,10 @@ private:
 #endif
 #if ENABLE(EXTENSION_CAPABILITIES)
     ExtensionCapabilityGrantMap m_extensionCapabilityGrants;
+#endif
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    HashMap<String, std::optional<String>> m_domainlessPreferencesUpdatedWhileSuspended;
+    HashMap<std::pair<String /* domain */, String /* key */>, std::optional<String>> m_preferencesUpdatedWhileSuspended;
 #endif
 };
 

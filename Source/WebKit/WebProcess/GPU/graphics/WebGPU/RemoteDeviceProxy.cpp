@@ -252,45 +252,45 @@ RefPtr<WebCore::WebGPU::RenderPipeline> RemoteDeviceProxy::createRenderPipeline(
     return result;
 }
 
-void RemoteDeviceProxy::createComputePipelineAsync(const WebCore::WebGPU::ComputePipelineDescriptor& descriptor, CompletionHandler<void(RefPtr<WebCore::WebGPU::ComputePipeline>&&)>&& callback)
+void RemoteDeviceProxy::createComputePipelineAsync(const WebCore::WebGPU::ComputePipelineDescriptor& descriptor, CompletionHandler<void(RefPtr<WebCore::WebGPU::ComputePipeline>&&, String&&)>&& callback)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
-        callback(nullptr);
+        callback(nullptr, "GPUDevice.createComputePipelineAsync() descriptor is invalid"_s);
         return;
     }
 
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTFMove(callback), protectedThis = Ref { *this }, label = WTFMove(convertedDescriptor->label)](auto result) mutable {
+    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTFMove(callback), protectedThis = Ref { *this }, label = WTFMove(convertedDescriptor->label)](auto result, String&& error) mutable {
         if (!result) {
-            callback(nullptr);
+            callback(nullptr, WTFMove(error));
             return;
         }
 
         auto computePipelineResult = RemoteComputePipelineProxy::create(protectedThis, protectedThis->m_convertToBackingContext, identifier);
         computePipelineResult->setLabel(WTFMove(label));
-        callback(WTFMove(computePipelineResult));
+        callback(WTFMove(computePipelineResult), ""_s);
     });
     UNUSED_PARAM(sendResult);
 }
 
-void RemoteDeviceProxy::createRenderPipelineAsync(const WebCore::WebGPU::RenderPipelineDescriptor& descriptor, CompletionHandler<void(RefPtr<WebCore::WebGPU::RenderPipeline>&&)>&& callback)
+void RemoteDeviceProxy::createRenderPipelineAsync(const WebCore::WebGPU::RenderPipelineDescriptor& descriptor, CompletionHandler<void(RefPtr<WebCore::WebGPU::RenderPipeline>&&, String&&)>&& callback)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     if (!convertedDescriptor)
-        return callback(nullptr);
+        return callback(nullptr, "GPUDevice.createRenderPipelineAsync() descriptor is invalid"_s);
 
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTFMove(callback), protectedThis = Ref { *this }, label = WTFMove(convertedDescriptor->label)](auto result) mutable {
+    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTFMove(callback), protectedThis = Ref { *this }, label = WTFMove(convertedDescriptor->label)](auto result, String&& error) mutable {
         if (!result) {
-            callback(nullptr);
+            callback(nullptr, WTFMove(error));
             return;
         }
 
         auto renderPipelineResult = RemoteRenderPipelineProxy::create(protectedThis, protectedThis->m_convertToBackingContext, identifier);
         renderPipelineResult->setLabel(WTFMove(label));
-        callback(WTFMove(renderPipelineResult));
+        callback(WTFMove(renderPipelineResult), ""_s);
     });
     UNUSED_PARAM(sendResult);
 }

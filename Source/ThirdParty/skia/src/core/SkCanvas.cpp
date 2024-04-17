@@ -1311,11 +1311,15 @@ void SkCanvas::internalSaveLayer(const SaveLayerRec& rec,
         return;
     } else {
 #if !defined(SK_RESOLVE_FILTERS_BEFORE_RESTORE) && !defined(SK_DONT_PAD_LAYER_IMAGES)
-        // Add a buffer of padding so that image filtering can avoid accessing unitialized data and
-        // switch from shader-decal'ing to clamping. We could skip padding the layer when there's
-        // no image filter and no device-filling effects, but always padding simplifies the rest of
-        // the layer prep logic and the restore logic.
-        layerBounds.outset(skif::LayerSpace<SkISize>({1, 1}));
+        // TODO(b/329700315): Once dithers can be anchored more flexibly, we can return to
+        // universally adding padding even for layers w/o filters. This change would simplify layer
+        // prep and restore logic and allow us to flexibly switch the sampling to linear if NN has
+        // issues on certain hardware.
+        if (!filters.empty()) {
+            // Add a buffer of padding so that image filtering can avoid accessing unitialized data
+            // and switch from shader-decal'ing to clamping.
+            layerBounds.outset(skif::LayerSpace<SkISize>({1, 1}));
+        }
 #endif
     }
 
@@ -1358,8 +1362,10 @@ void SkCanvas::internalSaveLayer(const SaveLayerRec& rec,
 #if !defined(SK_RESOLVE_FILTERS_BEFORE_RESTORE) && !defined(SK_DONT_PAD_LAYER_IMAGES)
     // Clip while the device coordinate space is the identity so it's easy to define the rect that
     // excludes the added padding pixels. This ensures they remain cleared to transparent black.
-    newDevice->clipRect(SkRect::Make(newDevice->devClipBounds().makeInset(1, 1)),
-                        SkClipOp::kIntersect, /*aa=*/false);
+    if (!filters.empty()) {
+        newDevice->clipRect(SkRect::Make(newDevice->devClipBounds().makeInset(1, 1)),
+                            SkClipOp::kIntersect, /*aa=*/false);
+    }
 #endif
 
     // Configure device to match determined mapping for any image filters.

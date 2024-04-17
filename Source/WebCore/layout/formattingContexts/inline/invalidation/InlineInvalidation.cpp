@@ -42,12 +42,13 @@ InlineInvalidation::InlineInvalidation(InlineDamage& inlineDamage, const InlineI
 {
 }
 
-void InlineInvalidation::styleChanged(const Box& layoutBox, const RenderStyle& oldStyle)
+bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle& newStyle)
 {
     UNUSED_PARAM(layoutBox);
-    UNUSED_PARAM(oldStyle);
+    UNUSED_PARAM(newStyle);
 
     m_inlineDamage.setDamageReason(InlineDamage::Reason::StyleChange);
+    return true;
 }
 
 struct DamagedContent {
@@ -488,16 +489,16 @@ bool InlineInvalidation::inlineLevelBoxWillBeRemoved(const Box& layoutBox)
     return false;
 }
 
-void InlineInvalidation::restartForPagination(size_t lineIndex, LayoutUnit pageTopAdjustment)
+bool InlineInvalidation::restartForPagination(size_t lineIndex, LayoutUnit pageTopAdjustment)
 {
     auto leadingContentDisplayBoxOnDamagedLine = leadingContentDisplayForLineIndex(lineIndex, displayBoxes());
     if (!leadingContentDisplayBoxOnDamagedLine)
-        return;
+        return false;
     auto inlineItemPositionForLeadingDisplayBox = inlineItemPositionForDisplayBox(*leadingContentDisplayBoxOnDamagedLine, m_inlineItemList);
-    if (!leadingContentDisplayBoxOnDamagedLine)
-        return;
+    if (!inlineItemPositionForLeadingDisplayBox || !*inlineItemPositionForLeadingDisplayBox)
+        return false;
 
-    updateInlineDamage({ lineIndex, *inlineItemPositionForLeadingDisplayBox }, InlineDamage::Reason::Pagination, ShouldApplyRangeLayout::Yes, pageTopAdjustment);
+    return updateInlineDamage({ lineIndex, *inlineItemPositionForLeadingDisplayBox }, InlineDamage::Reason::Pagination, ShouldApplyRangeLayout::Yes, pageTopAdjustment);
 }
 
 }

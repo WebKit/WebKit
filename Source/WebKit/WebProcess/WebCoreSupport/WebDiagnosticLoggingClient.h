@@ -33,6 +33,8 @@ namespace WebKit {
 class WebPage;
 
 class WebDiagnosticLoggingClient : public WebCore::DiagnosticLoggingClient {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebDiagnosticLoggingClient);
 public:
     WebDiagnosticLoggingClient(WebPage&);
     virtual ~WebDiagnosticLoggingClient();

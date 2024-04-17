@@ -28,12 +28,12 @@
 #include "Attachment.h"
 #include "MessageNames.h"
 #include "ReceiverMatcher.h"
-#include <wtf/Algorithms.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
@@ -52,8 +52,10 @@ enum class MessageFlags : uint8_t;
 enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t;
 
 template<typename, typename> struct ArgumentCoder;
+#if !HAVE(ONLY_MODERN_SERIALIZATION)
 template<typename, typename, typename> struct HasLegacyDecoder;
 template<typename, typename, typename> struct HasModernDecoder;
+#endif
 
 #ifdef __OBJC__
 template<typename T> using IsObjCObject = std::enable_if_t<std::is_convertible<T *, id>::value, T *>;
@@ -121,6 +123,7 @@ public:
     template<typename T>
     WARN_UNUSED_RETURN std::optional<T> decodeObject();
 
+#if !HAVE(ONLY_MODERN_SERIALIZATION)
     template<typename T>
     WARN_UNUSED_RETURN bool decode(T& t)
     {
@@ -140,6 +143,7 @@ public:
         }
         return true;
     }
+#endif
 
     template<typename T>
     Decoder& operator>>(std::optional<T>& t)
@@ -154,11 +158,14 @@ public:
     std::optional<T> decode()
     {
         using Impl = ArgumentCoder<std::remove_cvref_t<T>, void>;
+#if !HAVE(ONLY_MODERN_SERIALIZATION)
         if constexpr(HasModernDecoder<T, Impl>::value) {
+#endif
             std::optional<T> t { Impl::decode(*this) };
             if (UNLIKELY(!t))
                 markInvalid();
             return t;
+#if !HAVE(ONLY_MODERN_SERIALIZATION)
         } else {
             std::optional<T> t { T { } };
             if (LIKELY(Impl::decode(*this, *t)))
@@ -166,6 +173,7 @@ public:
             markInvalid();
             return std::nullopt;
         }
+#endif
     }
 
 #ifdef __OBJC__

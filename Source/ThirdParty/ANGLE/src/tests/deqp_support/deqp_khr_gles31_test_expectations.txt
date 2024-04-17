@@ -336,27 +336,12 @@ b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.vertex_attrib_binding.basic-input
 // Snapdragon 8 Gen3 Mobile Reference Device
 b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.blend_equation_advanced.blend* = SKIP
 b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.blend_equation_advanced.test_coherency.mixedSequence = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.compute_shader.resource-texture = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.draw_buffers_indexed.* = SKIP
 b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.framebuffer_no_attachments.render = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.geometry_shader.blitting.* = SKIP
 b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.geometry_shader.layered* = SKIP
 b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.geometry_shader.limits.max_input_components = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.layout_binding.sampler3D* = SKIP
 b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.pixelstoragemodes.* = SKIP
 b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.shader_bitfield_operation.unpack* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.shader_image_load_store.basic-allTargets-* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.shader_image_size.* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_border_clamp* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_buffer.texture_buffer* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_cube_map_array.sampling = SKIP
 b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_cube_map_array* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_gather*cube* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_storage_multisample.APIGLGetTexLevelParameterifv.functional_test = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.viewport_array.* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.shaders.aggressive_optimizations.* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.shaders.layout_location.* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES31.shaders.negative.* = SKIP
 
 // Mali G710
 8212 MALIG710 VULKAN : KHR-GLES31.core.texture_border_clamp.Texture2DDC32FLinear = FAIL

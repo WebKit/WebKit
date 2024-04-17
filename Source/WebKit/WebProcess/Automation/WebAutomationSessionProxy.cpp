@@ -266,7 +266,7 @@ JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
         return scriptObject;
 
     JSValueRef exception = nullptr;
-    String script = StringImpl::createWithoutCopying(WebAutomationSessionProxyScriptSource, sizeof(WebAutomationSessionProxyScriptSource));
+    String script = StringImpl::createWithoutCopying(WebAutomationSessionProxyScriptSource);
     JSObjectRef scriptObjectFunction = const_cast<JSObjectRef>(JSEvaluateScript(context, OpaqueJSString::tryCreate(script).get(), nullptr, nullptr, 0, &exception));
     ASSERT(JSValueIsObject(context, scriptObjectFunction));
 

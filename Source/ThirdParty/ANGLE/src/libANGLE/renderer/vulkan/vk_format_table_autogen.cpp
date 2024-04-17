@@ -19,7 +19,7 @@ namespace rx
 namespace vk
 {
 
-void Format::initialize(RendererVk *renderer, const angle::Format &angleFormat)
+void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
 {
     switch (angleFormat.id)
     {

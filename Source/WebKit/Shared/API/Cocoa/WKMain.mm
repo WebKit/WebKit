@@ -37,7 +37,7 @@ int WKXPCServiceMain(int argc, const char** argv, const char**, const char** dar
 {
     TZoneInit(darwinEnvp);
     WebKit::registerTZoneTypes();
-    TZoneRegisterationDone();
+    TZoneRegistrationDone();
 
     return WebKit::XPCServiceMain(argc, argv);
 }

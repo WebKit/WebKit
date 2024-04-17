@@ -15,7 +15,7 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
     let testElement = document.getElementById("test");
     testElement.addEventListener("focus", () => testRunner.notifyDone(), { once: true });
-    UIHelper.keyDown("\t", ["altKey"]);
+    test.focus();
 }
 </script>
 </body>

@@ -119,9 +119,12 @@ class RemoteWCLayerTreeHost;
 
 #if ENABLE(VIDEO)
 class RemoteMediaPlayerManagerProxy;
-class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
 class RemoteVideoFrameObjectHeap;
+#endif
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
+class RemoteMediaRecorderManager;
 #endif
 
 #if ENABLE(WEBGL)
@@ -138,6 +141,7 @@ public:
 
     bool isWebGPUEnabled() const { return m_preferences.isWebGPUEnabled; }
     bool isWebGLEnabled() const { return m_preferences.isWebGLEnabled; }
+    bool isWebXREnabled() const { return m_preferences.isWebXREnabled; }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     bool isDynamicContentScalingEnabled() const { return m_preferences.isDynamicContentScalingEnabled; }
@@ -160,6 +164,8 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
 
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
+    bool isLockdownSafeFontParserEnabled() const { return m_preferences.isLockdownSafeFontParserEnabled; }
+
     bool allowTestOnlyIPC() const { return m_preferences.allowTestOnlyIPC; }
 
     Logger& logger();
@@ -264,7 +270,7 @@ private:
     UserMediaCaptureManagerProxy& userMediaCaptureManagerProxy();
     RemoteAudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager();
 #endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
     RemoteMediaRecorderManager& mediaRecorderManager();
 #endif
 
@@ -357,7 +363,9 @@ private:
     bool m_isLastToCaptureAudio { false };
 
     Ref<RemoteSampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
+#endif
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
     std::unique_ptr<RemoteMediaRecorderManager> m_remoteMediaRecorderManager;
 #endif
 #if ENABLE(MEDIA_STREAM)

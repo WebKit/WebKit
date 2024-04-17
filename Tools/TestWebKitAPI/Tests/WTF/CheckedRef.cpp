@@ -27,6 +27,7 @@
 
 #include "Utilities.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -34,8 +35,10 @@ namespace TestWebKitAPI {
 
 namespace {
 
-class CheckedObject : public CanMakeCheckedPtr {
+class CheckedObject : public CanMakeCheckedPtr<CheckedObject> {
     WTF_MAKE_NONCOPYABLE(CheckedObject);
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CheckedObject);
 public:
     CheckedObject(int value = -7)
         : m_value(value)
@@ -50,6 +53,8 @@ private:
 };
 
 class DerivedCheckedObject : public CheckedObject {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DerivedCheckedObject);
 public:
     DerivedCheckedObject(int value = -11)
         : CheckedObject(value)

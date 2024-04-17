@@ -51,6 +51,7 @@ public:
 
     RemoteAdapterProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    WebGPUIdentifier backing() const { return m_backing; }
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -62,8 +63,6 @@ private:
     RemoteDeviceProxy& operator=(const RemoteDeviceProxy&) = delete;
     RemoteDeviceProxy& operator=(RemoteDeviceProxy&&) = delete;
 
-    WebGPUIdentifier backing() const { return m_backing; }
-    
     static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
@@ -97,8 +96,8 @@ private:
     RefPtr<WebCore::WebGPU::ShaderModule> createShaderModule(const WebCore::WebGPU::ShaderModuleDescriptor&) final;
     RefPtr<WebCore::WebGPU::ComputePipeline> createComputePipeline(const WebCore::WebGPU::ComputePipelineDescriptor&) final;
     RefPtr<WebCore::WebGPU::RenderPipeline> createRenderPipeline(const WebCore::WebGPU::RenderPipelineDescriptor&) final;
-    void createComputePipelineAsync(const WebCore::WebGPU::ComputePipelineDescriptor&, CompletionHandler<void(RefPtr<WebCore::WebGPU::ComputePipeline>&&)>&&) final;
-    void createRenderPipelineAsync(const WebCore::WebGPU::RenderPipelineDescriptor&, CompletionHandler<void(RefPtr<WebCore::WebGPU::RenderPipeline>&&)>&&) final;
+    void createComputePipelineAsync(const WebCore::WebGPU::ComputePipelineDescriptor&, CompletionHandler<void(RefPtr<WebCore::WebGPU::ComputePipeline>&&, String&&)>&&) final;
+    void createRenderPipelineAsync(const WebCore::WebGPU::RenderPipelineDescriptor&, CompletionHandler<void(RefPtr<WebCore::WebGPU::RenderPipeline>&&, String&&)>&&) final;
 
     RefPtr<WebCore::WebGPU::CommandEncoder> createCommandEncoder(const std::optional<WebCore::WebGPU::CommandEncoderDescriptor>&) final;
     RefPtr<WebCore::WebGPU::RenderBundleEncoder> createRenderBundleEncoder(const WebCore::WebGPU::RenderBundleEncoderDescriptor&) final;

@@ -34,11 +34,11 @@ namespace WebCore {
 
 class Document;
 
-enum ViewportErrorCode {
-    UnrecognizedViewportArgumentKeyError,
-    UnrecognizedViewportArgumentValueError,
-    TruncatedViewportArgumentValueError,
-    MaximumScaleTooLargeError
+enum class ViewportErrorCode : uint8_t {
+    UnrecognizedViewportArgumentKey,
+    UnrecognizedViewportArgumentValue,
+    TruncatedViewportArgumentValue,
+    MaximumScaleTooLarge,
 };
 
 enum class ViewportFit : uint8_t {
@@ -70,8 +70,8 @@ struct ViewportArguments {
         PluginDocument,
         ImageDocument,
 #endif
+        CSSDeviceAdaptation,
         ViewportMeta,
-        CSSDeviceAdaptation
     } type;
 
     static constexpr int ValueAuto = -1;

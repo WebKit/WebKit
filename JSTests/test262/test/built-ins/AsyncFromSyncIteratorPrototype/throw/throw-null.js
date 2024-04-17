@@ -10,11 +10,12 @@ info: |
   %AsyncFromSyncIteratorPrototype%.throw ( value )
 
   [...]
-  5. Let throw be GetMethod(syncIterator, "throw").
+  6. Let throw be GetMethod(syncIterator, "throw").
   [...]
-  7. If throw is undefined, then
-    a. Perform ! Call(promiseCapability.[[Reject]], undefined, « value »).
-    b. Return promiseCapability.[[Promise]].
+  8. If throw is undefined, then
+    ...
+    g. Perform ! Call(promiseCapability.[[Reject]], undefined, « a newly created TypeError object »).
+    h. Return promiseCapability.[[Promise]].
 
   GetMethod ( V, P )
 
@@ -23,6 +24,7 @@ info: |
   3. If func is either undefined or null, return undefined.
 flags: [async]
 features: [async-iteration]
+includes: [asyncHelpers.js]
 ---*/
 
 var throwGets = 0;
@@ -46,14 +48,12 @@ async function* asyncGenerator() {
 var asyncIterator = asyncGenerator();
 var thrownError = { name: "err" };
 
-asyncIterator.next().then(function() {
-  return asyncIterator.throw(thrownError);
-}).then(function(result) {
-  throw new Test262Error("Promise should be rejected, got: " + result.value);
-}, function(err) {
-  assert.sameValue(err, thrownError);
-  return asyncIterator.next().then(function(result) {
-    assert.sameValue(result.value, undefined);
-    assert.sameValue(result.done, true);
-  });
-}).then($DONE, $DONE);
+asyncTest(async function () {
+  await assert.throwsAsync(TypeError, async () => {
+    await asyncIterator.next();
+    return asyncIterator.throw(thrownError);
+  }, "Promise should be rejected");
+  const result = await asyncIterator.next();
+  assert(result.done, "the iterator is completed");
+  assert.sameValue(result.value, undefined, "value is undefined");
+})

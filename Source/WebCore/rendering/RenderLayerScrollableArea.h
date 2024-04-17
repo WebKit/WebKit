@@ -51,11 +51,18 @@ namespace WebCore {
 
 class RenderMarquee;
 
-class RenderLayerScrollableArea final : public ScrollableArea {
+class RenderLayerScrollableArea final : public ScrollableArea, public CanMakeCheckedPtr<RenderLayerScrollableArea> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderLayerScrollableArea);
 public:
     explicit RenderLayerScrollableArea(RenderLayer&);
     virtual ~RenderLayerScrollableArea();
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
     RenderLayer& layer() { return m_layer; }
 
@@ -258,6 +265,8 @@ public:
     void invalidateScrollAnchoringElement() final;
     ScrollAnchoringController* scrollAnchoringController() { return m_scrollAnchoringController.get(); }
 
+    void createScrollbarsController() final;
+
 private:
     bool hasHorizontalOverflow() const;
     bool hasVerticalOverflow() const;
@@ -286,8 +295,6 @@ private:
     void registerScrollableAreaForAnimatedScroll();
 
     float deviceScaleFactor() const final;
-
-    void createScrollbarsController() final;
 
 private:
     bool m_scrollDimensionsDirty { true };

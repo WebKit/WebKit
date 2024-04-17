@@ -42,6 +42,8 @@ LegacyRenderSVGTransformableContainer::LegacyRenderSVGTransformableContainer(SVG
     ASSERT(isLegacyRenderSVGTransformableContainer());
 }
 
+LegacyRenderSVGTransformableContainer::~LegacyRenderSVGTransformableContainer() = default;
+
 bool LegacyRenderSVGTransformableContainer::calculateLocalTransform()
 {
     Ref element = graphicsElement();

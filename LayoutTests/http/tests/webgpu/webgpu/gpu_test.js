@@ -1194,11 +1194,17 @@ export class GPUTest extends GPUTestBase {
     this.mismatchedProvider = await this.sharedState.acquireMismatchedProvider();
   }
 
+  /** GPUAdapter that the device was created from. */
+  get adapter() {
+    assert(this.provider !== undefined, 'internal error: DeviceProvider missing');
+    return this.provider.adapter;
+  }
+
   /**
    * GPUDevice for the test to use.
    */
   get device() {
-    assert(this.provider !== undefined, 'internal error: GPUDevice missing?');
+    assert(this.provider !== undefined, 'internal error: DeviceProvider missing');
     return this.provider.device;
   }
 

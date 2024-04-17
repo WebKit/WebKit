@@ -41,6 +41,8 @@ fast/forms/ios/drag-range-thumb.html [ Pass Timeout Timeout ]
 fast/forms/ios/inputmode-change-update-keyboard.html [ Pass Timeout ]
 
 fast/css/appearance-apple-pay-button.html [ Pass ]
+fast/css/appearance-apple-pay-button-div.html [ Pass ]
+fast/css/appearance-apple-pay-button-input-type-button.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius-longhands.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-width.html [ Pass ]
@@ -124,7 +126,7 @@ fast/repaint/background-attachment-local-scroll.html [ Pass ]
 # fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass ] # TODO: commented to avoid duplicate below, uncomment when resolved
 
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
-fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
+fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html [ Pass ]
 
 http/tests/media/modern-media-controls/overflow-support [ Pass ]
 # TODO: commented these for the time being to remove duplicate conflict
@@ -149,15 +151,6 @@ webkit.org/b/212975 http/tests/ssl/applepay/PaymentRequest.https.html [ Pass Tim
 http/tests/paymentrequest/ApplePayModifier-disbursementPaymentRequest.https.html [ Skip ]
 http/tests/paymentrequest [ Pass ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-cross-origin-bc-containers.https.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/no-attribute-cross-origin-bc-containers.https.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/removing-allowpaymentrequest.https.sub.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest-timing.https.sub.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest.https.sub.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment/allowpaymentrequest-attribute-cross-origin-bc-containers.https.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment/no-attribute-cross-origin-bc-containers.https.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment/removing-allowpaymentrequest.https.sub.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment/setting-allowpaymentrequest.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/payment-request/show-method-optional-promise-rejects.https.html [ DumpJSConsoleLogInStdErr ]
 
@@ -306,13 +299,13 @@ editing/spelling/text-replacement-first-word-second-line.html [ Skip ]
 # UIKit draws selection on iOS
 fast/selectors/input-with-selection-pseudo-element.html [ WontFix ]
 fast/selectors/selection-window-inactive.html [ WontFix ]
-fast/selectors/selection-window-inactive-stroke-color.html  [ WontFix ]
-fast/selectors/selection-window-inactive-text-shadow.html  [ WontFix ]
-fast/selectors/text-field-selection-stroke-color.html  [ WontFix ]
-fast/selectors/text-field-selection-text-shadow.html  [ WontFix ]
-fast/selectors/text-field-selection-window-inactive-stroke-color.html  [ WontFix ]
-fast/selectors/text-field-selection-window-inactive-text-shadow.html  [ WontFix ]
-fast/text/selection-with-text-decorations.html  [ WontFix ]
+fast/selectors/selection-window-inactive-stroke-color.html [ WontFix ]
+fast/selectors/selection-window-inactive-text-shadow.html [ WontFix ]
+fast/selectors/text-field-selection-stroke-color.html [ WontFix ]
+fast/selectors/text-field-selection-text-shadow.html [ WontFix ]
+fast/selectors/text-field-selection-window-inactive-stroke-color.html [ WontFix ]
+fast/selectors/text-field-selection-window-inactive-text-shadow.html [ WontFix ]
+fast/text/selection-with-text-decorations.html [ WontFix ]
 
 # Plugins are not supported on iOS
 plugins
@@ -394,7 +387,7 @@ media/media-sources-selection.html [ ImageOnlyFailure ] # Sources selection on i
 
 # Codecs not supported
 media/media-can-play-ogg.html [ WontFix ]
-media/media-can-play-flac-audio.html  [ WontFix ]
+media/media-can-play-flac-audio.html [ WontFix ]
 media/track/in-band [ WontFix ]
 media/track/audio [ WontFix ]
 media/track/video [ WontFix ]
@@ -559,7 +552,7 @@ editing/selection/click-after-nested-block.html [ Skip ]
 editing/selection/click-before-and-after-table.html [ Skip ]
 editing/selection/click-below-rtl-text.html [ Skip ]
 editing/selection/click-in-focusable-link-should-not-clear-selection.html [ Skip ]
-editing/selection/click-left-of-rtl-wrapping-text.html [ Skip ]
+editing/selection/mouse/click-left-of-rtl-wrapping-text.html [ Skip ]
 editing/selection/click-on-block-image.html [ Skip ]
 editing/selection/click-on-body-margin.html [ Skip ]
 editing/selection/click-on-head-margin.html [ Skip ]
@@ -1368,6 +1361,9 @@ http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
 
 # Depend on iOS 11 API.
 fast/css/variables/env/ios [ Pass ]
+
+# Tests use resizable popups which are not a thing on iOS.
+imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
 
 ###
 # Known failures
@@ -2329,6 +2325,8 @@ accessibility/editable-webpage-focused-ui-element.html [ Pass ]
 accessibility/element-haspopup.html [ Pass ]
 accessibility/empty-text-under-element-cached.html [ Pass ]
 accessibility/heading-level.html [ Pass ]
+accessibility/hidden-label.html [ Pass ]
+accessibility/hidden-slot.html [ Pass ]
 accessibility/html5-required-attribute.html [ Pass ]
 accessibility/iframe-tree-update-with-dirty-layout.html [ Pass ]
 accessibility/iframe-with-role.html [ Pass ]
@@ -2352,6 +2350,7 @@ accessibility/out-of-bounds-rowspan-orphan-rows.html [ Pass ]
 accessibility/page-reload-deadlock.html [ Pass ]
 accessibility/placeholder.html [ Pass ]
 accessibility/progress-indeterminate-value.html [ Pass ]
+accessibility/range-input-increment-decrement-fires-input-event.html [ Pass ]
 accessibility/shadow-dom-hit-test.html [ Pass ]
 accessibility/slider-with-lost-renderer.html [ Pass ]
 accessibility/slot-default-contents-accname.html [ Pass ]
@@ -2892,7 +2891,7 @@ fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
 fast/text/text-indent-inside-float.html [ ImageOnlyFailure ]
 
 # <rdar://problem/28835343> REGRESSION: LayoutTest http/tests/multipart/load-last-non-html-frame.php failing
-http/tests/multipart/load-last-non-html-frame.py [ Failure  ]
+http/tests/multipart/load-last-non-html-frame.py [ Failure ]
 
 webkit.org/b/177366 http/tests/security/frameNavigation/sandbox-ALLOWED-top-navigation-with-user-gesture-1.html [ Pass Timeout ]
 
@@ -2919,7 +2918,7 @@ webkit.org/b/177401 webrtc/captureCanvas-webrtc.html [ Pass Timeout Failure ]
 webkit.org/b/210173 webrtc/h265.html [ Skip ]
 webrtc/video-rotation-black.html [ Slow ]
 
-webkit.org/b/209878  [ Debug ] webrtc/datachannel/multiple-connections.html [ Slow ]
+webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Slow ]
 
 webkit.org/b/177323 imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html [ Pass Failure ]
 
@@ -3409,7 +3408,7 @@ webkit.org/b/261703 fast/forms/datalist/datalist-show-picker.html [ Skip ]
 # <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Failure ]
 
-# <rdar://problem/63448168> [ macOS iOS  Debug ] media/video-source-moved.html is a super flkay timeout
+# <rdar://problem/63448168> [ macOS iOS Debug ] media/video-source-moved.html is a super flkay timeout
 media/video-source-moved.html [ Pass Timeout ]
 
 # <rdar://problem/64273358> REGRESSION: [ iOS ] imported/w3c/web-platform-tests/dom/ranges/Range-surroundContents.html is flaky timing out.
@@ -3458,11 +3457,8 @@ fast/text/system-font-width-7.html [ Pass ]
 fast/text/system-font-width-8.html [ Pass ]
 fast/text/system-font-width-9.html [ Pass ]
 
-# rdar://80384054 ([ iOS15 ] css3/filters/filter-repaint-shadow-layer-child.html is flaky failure)
-css3/filters/filter-repaint-shadow-layer-child.html [ Pass ImageOnlyFailure ]
-
 # rdar://80393008 ([ iOS15 ] http/tests/security/contentSecurityPolicy/connect-src-websocket-allowed.html is a flaky crash)
-http/tests/security/contentSecurityPolicy/connect-src-websocket-allowed.html  [ Pass Crash ]
+http/tests/security/contentSecurityPolicy/connect-src-websocket-allowed.html [ Pass Crash ]
 
 # rdar://80396123 ([ iOS15 ] http/tests/websocket/tests/hybi/workers/worker-reload.html is flaky crashing)
 http/tests/websocket/tests/hybi/workers/worker-reload.html [ Pass Crash ]
@@ -3477,7 +3473,7 @@ http/wpt/mediarecorder/mute-tracks.html [ Pass Failure ]
 http/wpt/mediarecorder/pause-recording.html [ Pass Crash ]
 
 # rdar://80383672 ([ iOS15 ] accessibility/misspelling-range.html is failing)
-webkit.org/b/231261 accessibility/misspelling-range.html  [ Failure ]
+webkit.org/b/231261 accessibility/misspelling-range.html [ Failure ]
 
 # Behavior of navigator-language-ru changed in iOS 15.
 fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ]
@@ -3580,7 +3576,7 @@ webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-r
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-rect-vrl-008.xht [ ImageOnlyFailure ]
 
 # These three tests will be fixed by rdar://80384564.
-editing/selection/ios/change-selection-by-tapping-with-existing-selection.html  [ Pass Failure ]
+editing/selection/ios/change-selection-by-tapping-with-existing-selection.html [ Pass Failure ]
 
 webkit.org/b/238211 fast/text/text-shadow-ink-overflow-missing.html [ Pass ImageOnlyFailure ]
 
@@ -3595,11 +3591,7 @@ webkit.org/b/237220 imported/w3c/web-platform-tests/svg/coordinate-systems/abspo
 
 webkit.org/b/237218 fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping.html [ Pass Failure ]
 
-webkit.org/b/229832 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-redirect.https.window.html [ Pass Failure ]
-
-# rdar://83207621 ([ BigSur wk2 Release ] 2 fast/canvas/ tests are flaky failing (230366))
-[ Release ] fast/canvas/canvas-composite-text-alpha.html [ Pass Timeout Failure ]
-fast/canvas/canvas-blending-text.html [ Pass Failure ]
+webkit.org/b/229832 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-redirect.https.window.html [ Pass Failure ] 
 
 # webkit.org/b/201982 These are flaky failures on iOS
 fast/images/image-orientation-dynamic-from-image.html [ Pass Failure ]
@@ -3762,12 +3754,12 @@ webkit.org/b/231266 fast/events/ios/rotation/layout-viewport-during-safari-type-
 
 webkit.org/b/227845 [ Debug ] webaudio/audioworket-out-of-memory.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/240918 [ Debug ]  fast/loader/create-frame-in-DOMContentLoaded.html [ Pass Failure ]
-webkit.org/b/240918 [ Debug ]  fast/loader/user-style-sheet-resource-load-callbacks.html [ Pass Failure ]
+webkit.org/b/240918 [ Debug ] fast/loader/create-frame-in-DOMContentLoaded.html [ Pass Failure ]
+webkit.org/b/240918 [ Debug ] fast/loader/user-style-sheet-resource-load-callbacks.html [ Pass Failure ]
 
-webkit.org/b/240927 [ Debug ]  storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
+webkit.org/b/240927 [ Debug ] storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
 
-webkit.org/b/240929 [ Debug ]  resize-observer/resize-observer-with-zoom.html [ Pass Timeout ]
+webkit.org/b/240929 [ Debug ] resize-observer/resize-observer-with-zoom.html [ Pass Timeout ]
 
 webkit.org/b/241253 fast/text/bulgarian-system-language-shaping.html [ Pass ]
 
@@ -4078,6 +4070,7 @@ webkit.org/b/251306 http/tests/in-app-browser-privacy/sub-frame-redirect-to-non-
 
 webkit.org/b/254714 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-calc-x-rendering-2.html [ ImageOnlyFailure ]
 
+fast/webgpu [ Skip ]
 http/tests/webgpu/webgpu/idl/constants/flags.html [ Skip ]
 http/tests/webgpu/webgpu/idl/exposed.https.html [ Skip ]
 http/tests/webgpu/webgpu/idl/exposed.http.html [ Skip ]
@@ -4377,78 +4370,78 @@ http/tests/webgpu/webgpu/shader/validation/shader_io/invariant.html [ Skip ]
 http/tests/webgpu/webgpu/shader/validation/shader_io/interpolate.html [ Skip ]
 http/tests/webgpu/webgpu/shader/validation/shader_io/entry_point.html [ Skip ]
 http/tests/webgpu/webgpu/shader/validation/shader_io/locations.html [ Skip ]
-http/tests/webgpu/cts-chunked2sec.https.html  [ Skip ]
-http/tests/webgpu/webgpu/api/operation/labels.html  [ Skip ]
-http/tests/webgpu/webgpu/api/validation/gpu_external_texture_expiration.html  [ Skip ]
-http/tests/webgpu/webgpu/api/validation/queue/destroyed/buffer.html  [ Skip ]
-http/tests/webgpu/webgpu/api/validation/queue/destroyed/texture.html  [ Skip ]
-http/tests/webgpu/webgpu/api/validation/texture/bgra8unorm_storage.html  [ Skip ]
-http/tests/webgpu/webgpu/api/validation/texture/float32_filterable.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/af_addition.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/af_comparison.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/af_division.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/af_matrix_addition.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/af_matrix_subtraction.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/af_multiplication.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/af_subtraction.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/bitwise_shift.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_addition.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_comparison.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_division.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_matrix_addition.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_matrix_matrix_multiplication.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_matrix_scalar_multiplication.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_matrix_subtraction.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_matrix_vector_multiplication.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_multiplication.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_remainder.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_subtraction.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_addition.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_comparison.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_division.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_addition.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_matrix_multiplication.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_scalar_multiplication.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_subtraction.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_vector_multiplication.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_multiplication.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_remainder.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_subtraction.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/i32_comparison.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/binary/u32_comparison.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/bitcast.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/unary/af_arithmetic.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/unary/af_assignment.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/unary/bool_conversion.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/unary/f16_arithmetic.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/unary/f16_conversion.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/unary/f32_conversion.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/unary/i32_complement.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/unary/i32_conversion.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/unary/u32_complement.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/expression/unary/u32_conversion.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/float_parse.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/memory_model/adjacent.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/execution/shadow.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/parse/attribute.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/parse/binary_ops.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/parse/break.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/parse/const.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/parse/const_assert.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/parse/diagnostic.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/parse/discard.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/parse/enable.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/parse/must_use.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/parse/pipeline_stage.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/parse/unary_ops.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/shader_io/binding.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/shader_io/group.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/shader_io/group_and_binding.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/shader_io/id.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/shader_io/size.html  [ Skip ]
-http/tests/webgpu/webgpu/shader/validation/shader_io/workgroup_size.html  [ Skip ]
-http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageData.html  [ Skip ]
-http/tests/webgpu/webgpu/web_platform/copyToTexture/image.html  [ Skip ]
+http/tests/webgpu/cts-chunked2sec.https.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/labels.html [ Skip ]
+http/tests/webgpu/webgpu/api/validation/gpu_external_texture_expiration.html [ Skip ]
+http/tests/webgpu/webgpu/api/validation/queue/destroyed/buffer.html [ Skip ]
+http/tests/webgpu/webgpu/api/validation/queue/destroyed/texture.html [ Skip ]
+http/tests/webgpu/webgpu/api/validation/texture/bgra8unorm_storage.html [ Skip ]
+http/tests/webgpu/webgpu/api/validation/texture/float32_filterable.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/af_addition.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/af_comparison.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/af_division.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/af_matrix_addition.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/af_matrix_subtraction.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/af_multiplication.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/af_subtraction.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/bitwise_shift.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_addition.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_comparison.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_division.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_matrix_addition.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_matrix_matrix_multiplication.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_matrix_scalar_multiplication.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_matrix_subtraction.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_matrix_vector_multiplication.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_multiplication.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_remainder.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_subtraction.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_addition.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_comparison.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_division.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_addition.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_matrix_multiplication.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_scalar_multiplication.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_subtraction.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_vector_multiplication.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_multiplication.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_remainder.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_subtraction.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/i32_comparison.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/binary/u32_comparison.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/bitcast.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/unary/af_arithmetic.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/unary/af_assignment.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/unary/bool_conversion.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/unary/f16_arithmetic.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/unary/f16_conversion.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/unary/f32_conversion.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/unary/i32_complement.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/unary/i32_conversion.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/unary/u32_complement.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/expression/unary/u32_conversion.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/float_parse.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/memory_model/adjacent.html [ Skip ]
+http/tests/webgpu/webgpu/shader/execution/shadow.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/parse/attribute.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/parse/binary_ops.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/parse/break.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/parse/const.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/parse/const_assert.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/parse/diagnostic.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/parse/discard.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/parse/enable.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/parse/must_use.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/parse/pipeline_stage.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/parse/unary_ops.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/shader_io/binding.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/shader_io/group.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/shader_io/group_and_binding.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/shader_io/id.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/shader_io/size.html [ Skip ]
+http/tests/webgpu/webgpu/shader/validation/shader_io/workgroup_size.html [ Skip ]
+http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageData.html [ Skip ]
+http/tests/webgpu/webgpu/web_platform/copyToTexture/image.html [ Skip ]
 
 http/tests/webgpu/cts.https.html [ Pass ]
 
@@ -4473,6 +4466,7 @@ http/tests/misc/heic-accept-header.html [ Pass ]
 
 webkit.org/b/254044 webxr [ Skip ]
 webkit.org/b/254044 imported/w3c/web-platform-tests/webxr [ Skip ]
+webkit.org/b/254044 http/tests/webxr [ Skip ]
 webkit.org/b/254044 http/wpt/webxr [ Skip ]
 webkit.org/b/254044 imported/w3c/web-platform-tests/feature-policy/reporting/xr-reporting.https.html [ Skip ]
 
@@ -4578,7 +4572,7 @@ fast/events/ios/before-input-events-prevent-candidate-insertion.html [ Skip ]
 fast/events/ios/click-selectionchange-once.html [ Skip ]
 fast/events/ios/input-events-fired-when-typing-in-contenteditable.html [ Skip ]
 
-# rdar://105392730 (REGRESSION ( iOS17 ): [ iOS17 ]  AQ::API::V2Impl::CreateClientProcessingTap :: API Misuse)
+# rdar://105392730 (REGRESSION ( iOS17 ): [ iOS17 ] AQ::API::V2Impl::CreateClientProcessingTap :: API Misuse)
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Skip ]
@@ -5199,7 +5193,6 @@ editing/inserting/insert-tab-001.html [ Failure ]
 editing/inserting/insert-tab-002.html [ Failure ]
 editing/inserting/insert-tab-004.html [ Failure ]
 editing/inserting/paragraph-outside-nested-divs.html [ Failure ]
-editing/inserting/typing-001.html [ Failure ]
 editing/inserting/typing-around-br-001.html [ Failure ]
 editing/secure-input/password-input-changed-type.html [ Failure ]
 editing/secure-input/password-input-focusing.html [ Failure ]
@@ -5455,7 +5448,7 @@ fast/forms/validation-message-on-range.html [ Skip ]
 fast/forms/validation-message-clone.html [ Skip ]
 fast/forms/validation-message-in-relative-body.html [ Skip ]
 fast/forms/validation-message-appearance.html [ Skip ]
-fast/forms/validation-message-on-textarea.html  [ Skip ]
+fast/forms/validation-message-on-textarea.html [ Skip ]
 
 # iOS doesn’t support mouse events simulation using the eventSender.
 editing/selection/select-out-of-floated-non-editable-01.html [ Skip ]
@@ -6687,7 +6680,7 @@ media/video-canvas-drawing-output.html [ Failure ]
 media/video-orientation-canvas.html [ Failure ]
 
 # Changed JS cookie behavior in iOS16
-http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html  [ Skip ]
+http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html [ Skip ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Skip ]
 
 # Trusted Types aren't implemented yet
@@ -6767,7 +6760,7 @@ webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-stream
 [ Release ] http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html [ Skip ]
 [ Release ] http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Skip ]
 
-# webkit.org/b/243681  Newly imported tests that fail on iOS16
+# webkit.org/b/243681 Newly imported tests that fail on iOS16
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
 
@@ -6952,11 +6945,11 @@ imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break
 imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-loose.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-loose.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cpm-loose.html  [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-loose.html  [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cpm-loose.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-loose.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-normal.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-iteration-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-po-loose.html  [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-po-loose.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-loose.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-normal.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-loose.html [ Pass Failure ]
@@ -6970,8 +6963,6 @@ webkit.org/b/271018 imported/w3c/web-platform-tests/svg/painting/reftests/marker
 webkit.org/b/271063 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Pass Failure Timeout ]
 
 webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
-
-webkit.org/b/271388 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
 
 # rdar://124417777 (REGRESSION (iOS 17.4): 5 editing / paste-related layout tests are constantly failing.)
 editing/async-clipboard/clipboard-write-basic.html [ Pass Failure ]
@@ -7024,17 +7015,10 @@ webkit.org/b/271682 imported/w3c/web-platform-tests/css/css-content/quotes-007.h
 
 webkit.org/b/271712 [ Debug ] fast/forms/datalist/datalist-textinput-dynamically-add-options-on-keydown.html [ Timeout ]
 
-webkit.org/b/266010 fast/scrolling/ios/scroll-anchoring-momentum-scroll.html [ Pass Failure ]
-
 # webkit.org/b/271772 REGRESSION (276683@main): [ iOS ] 3X imported/w3c/web-platform-tests/svg/import/animate tests are consistent failures
 imported/w3c/web-platform-tests/svg/import/animate-elem-30-t-manual.svg [ Failure ]
 imported/w3c/web-platform-tests/svg/import/animate-elem-85-t-manual.svg [ Failure ]
 imported/w3c/web-platform-tests/svg/import/animate-pservers-grad-01-b-manual.svg [ Failure ]
-
-webkit.org/b/271770 imported/w3c/web-platform-tests/xhr/setrequestheader-case-insensitive.htm [ Pass Failure ]
-
-webkit.org/b/271784 fast/viewport/viewport-legacy-xhtmlmp.html [ Failure ]
-webkit.org/b/271784 fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ Failure ]
 
 webkit.org/b/271785 media/modern-media-controls/overflow-support/chapters.html [ Timeout ]
 webkit.org/b/271785 media/modern-media-controls/overflow-support/playback-speed.html [ Timeout ]
@@ -7304,11 +7288,6 @@ webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-pushsubscri
 
 webkit.org/b/217759 media/now-playing-status-without-media.html [ Pass Failure ]
 
-# rdar://125585822 ([ iOS ] 3x editing/spelling/* (layout-tests) are constant failures (271864))
-editing/spelling/document-markers-remain-after-removing-text.html [ Failure ]
-editing/spelling/grammar-and-spelling-error-styling.html [ ImageOnlyFailure ]
-editing/spelling/spellcheck-attribute-toggle.html [ ImageOnlyFailure ]
-
 # webkit.org/b/209139 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Failure ]
 
 webkit.org/b/224121 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
@@ -7323,9 +7302,9 @@ webkit.org/b/225169 imported/w3c/web-platform-tests/workers/interfaces/Dedicated
 
 webkit.org/b/225668 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Slow ]
 
-webkit.org/b/225830 imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-huge-offset-scrolled.html  [ Pass ImageOnlyFailure ]
+webkit.org/b/225830 imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-huge-offset-scrolled.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/227755 fast/dom/Window/post-message-large-array-buffer-should-not-crash.html  [ Pass Failure ]
+webkit.org/b/227755 fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Pass Failure ]
 
 webkit.org/b/226600 imported/w3c/web-platform-tests/navigation-timing/test_navigate_within_document.html [ Pass Failure ]
 
@@ -7343,10 +7322,15 @@ webkit.org/b/254872 webrtc/video-rotation.html [ Pass Timeout ]
 fast/overflow/infiniteRecursion.html [ Failure Pass ]
 tables/mozilla/bugs/bug2479-2.html [ Failure Pass ]
 
-# webkit.org/b/271792 [ MacOS iOS ] 2x fast/url/* (layout-tests) are constant text failures
-fast/url/idna2008.html [ Failure ]
-fast/url/url-hostname-encoding.html [ Failure ]
-
 webkit.org/b/271764 fast/scrolling/ios/video-atop-overflow-scroll.html [ Pass Failure ]
 
 webkit.org/b/271931 [ Debug ] imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-105.html [ Crash ]
+
+webkit.org/b/271994 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-001.html [ Failure ]
+
+# webkit.org/b/271850 [iOS] 10 fast/forms/switch/click-animation*.html layout tests are passing.
+fast/forms/switch/click-animation-redundant-checked.html [ ImageOnlyFailure ]
+fast/forms/switch/click-animation-redundant-disabled.html [ ImageOnlyFailure ]
+fast/forms/switch/click-animation.html [ ImageOnlyFailure ]
+
+webkit.org/b/271969 accessibility/ios-simulator/inline-prediction-attributed-string.html [ Failure ]

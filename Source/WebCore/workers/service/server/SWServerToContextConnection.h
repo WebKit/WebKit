@@ -51,8 +51,9 @@ struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
 enum class WorkerThreadMode : bool;
 
-class SWServerToContextConnection: public CanMakeWeakPtr<SWServerToContextConnection>, public CanMakeCheckedPtr, public Identified<SWServerToContextConnectionIdentifier> {
+class SWServerToContextConnection: public CanMakeWeakPtr<SWServerToContextConnection>, public CanMakeCheckedPtr<SWServerToContextConnection>, public Identified<SWServerToContextConnectionIdentifier> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SWServerToContextConnection);
 public:
     WEBCORE_EXPORT virtual ~SWServerToContextConnection();
 

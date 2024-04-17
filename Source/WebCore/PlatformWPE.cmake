@@ -52,7 +52,10 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/glib/ApplicationGLib.h
 
+    platform/graphics/egl/PlatformDisplaySurfaceless.h
+
     platform/graphics/gbm/GBMVersioning.h
+    platform/graphics/gbm/PlatformDisplayGBM.h
 
     platform/graphics/libwpe/PlatformDisplayLibWPE.h
 
@@ -151,3 +154,11 @@ if (ENABLE_SPEECH_SYNTHESIS)
         ${Flite_LIBRARIES}
     )
 endif ()
+
+# This sets the maximum amount of memory that BitmapTexturePool can hold before being more
+# aggressive trying to release the unused textures.
+# Use a big value as the default size limit (80MB, enough for ten 1920x1080 layers).
+# Embedded users will want to set this limit depending on the capabilities of their platform.
+list(APPEND WebCore_PRIVATE_DEFINITIONS
+     BITMAP_TEXTURE_POOL_MAX_SIZE_IN_MB=80
+)

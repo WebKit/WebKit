@@ -177,7 +177,7 @@ static void attributeStringSetLanguage(NSMutableAttributedString *attrString, Re
     if (!renderer)
         return;
 
-    RefPtr object = renderer->document().axObjectCache()->getOrCreate(renderer);
+    RefPtr object = renderer->document().axObjectCache()->getOrCreate(*renderer);
     NSString *language = object->language();
     if (language.length)
         [attrString addAttribute:AccessibilityTokenLanguage value:language range:range];
@@ -224,7 +224,7 @@ static void attributeStringSetStyle(NSMutableAttributedString *attrString, Rende
         attributedStringSetNumber(attrString, AccessibilityTokenUnderline, @YES, range);
 
     // Add code context if this node is within a <code> block.
-    RefPtr object = renderer->document().axObjectCache()->getOrCreate(renderer);
+    RefPtr object = renderer->document().axObjectCache()->getOrCreate(*renderer);
     auto matchFunc = [] (const auto& axObject) {
         return axObject.isCode();
     };
@@ -239,7 +239,7 @@ static void attributedStringSetCompositionAttributes(NSMutableAttributedString *
     if (!renderer)
         return;
 
-    RefPtr object = renderer->document().axObjectCache()->getOrCreate(renderer);
+    RefPtr object = renderer->document().axObjectCache()->getOrCreate(*renderer);
 
     if (!object)
         return;

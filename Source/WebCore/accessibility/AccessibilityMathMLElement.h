@@ -41,15 +41,15 @@ namespace WebCore {
 class AccessibilityMathMLElement : public AccessibilityRenderObject {
 
 public:
-    static Ref<AccessibilityMathMLElement> create(RenderObject*, bool isAnonymousOperator);
+    static Ref<AccessibilityMathMLElement> create(RenderObject&, bool isAnonymousOperator);
     virtual ~AccessibilityMathMLElement();
 
 protected:
-    explicit AccessibilityMathMLElement(RenderObject*, bool isAnonymousOperator);
+    explicit AccessibilityMathMLElement(RenderObject&, bool isAnonymousOperator);
 
 private:
     AccessibilityRole determineAccessibilityRole() final;
-    String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const override;
+    String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const final;
     String stringValue() const override;
     bool isIgnoredElementWithinMathTree() const final;
 

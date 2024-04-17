@@ -16,6 +16,8 @@
 
 #include <atomic>
 #include <functional>
+#include <string>
+#include <string_view>
 
 class SkMutex;
 class SkTraceMemoryDump;
@@ -189,6 +191,10 @@ protected:
 
     // Overridden to call any release callbacks, if necessary
     virtual void invokeReleaseProc() {}
+
+    // Overridden to add extra information to the memory dump.
+    virtual void onDumpMemoryStatistics(SkTraceMemoryDump* traceMemoryDump,
+                                        const char* dumpName) const {}
 
 #ifdef SK_DEBUG
     bool debugHasCommandBufferRef() const {

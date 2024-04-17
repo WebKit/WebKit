@@ -32,6 +32,7 @@
 #include "ImageAnalysisUtilities.h"
 #include "PDFPluginIdentifier.h"
 #include "WKLayoutMode.h"
+#include "WKTextIndicatorStyleType.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/ScrollTypes.h>
@@ -70,6 +71,7 @@ OBJC_CLASS WKMouseTrackingObserver;
 OBJC_CLASS WKRevealItemPresenter;
 OBJC_CLASS WKSafeBrowsingWarning;
 OBJC_CLASS WKShareSheet;
+OBJC_CLASS WKTextIndicatorStyleManager;
 OBJC_CLASS WKViewLayoutStrategy;
 OBJC_CLASS WKWebView;
 OBJC_CLASS WKWindowVisibilityObserver;
@@ -182,9 +184,10 @@ typedef id <NSValidatedUserInterfaceItem> ValidationItem;
 typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
 typedef HashMap<String, ValidationVector> ValidationMap;
 
-class WebViewImpl : public CanMakeWeakPtr<WebViewImpl>, public CanMakeCheckedPtr {
-    WTF_MAKE_FAST_ALLOCATED;
+class WebViewImpl final : public CanMakeWeakPtr<WebViewImpl>, public CanMakeCheckedPtr<WebViewImpl> {
     WTF_MAKE_NONCOPYABLE(WebViewImpl);
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebViewImpl);
 public:
     WebViewImpl(NSView <WebViewImplDelegate> *, WKWebView *outerWebView, WebProcessPool&, Ref<API::PageConfiguration>&&);
 
@@ -594,7 +597,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     bool isContentRichlyEditable() const;
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    void insertMultiRepresentationHEIC(NSData *);
+    void insertMultiRepresentationHEIC(NSData *, NSString *);
 #endif
 
     void mouseMoved(NSEvent *);
@@ -732,6 +735,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebUnifiedTextReplacementContextData&);
 
     void textReplacementSessionDidReceiveEditAction(const WTF::UUID&, WebTextReplacementDataEditAction);
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+    void addTextIndicatorStyleForID(WTF::UUID, WKTextIndicatorStyleType);
+    void removeTextIndicatorStyleForID(WTF::UUID);
 #endif
 
 private:
@@ -956,6 +964,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     
 #if ENABLE(DRAG_SUPPORT)
     NSInteger m_initialNumberOfValidItemsForDrop { 0 };
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+    RetainPtr<WKTextIndicatorStyleManager> m_textIndicatorStyleManager;
 #endif
 
 #if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)

@@ -35,12 +35,12 @@ try {
 } catch (e) {
   verifyWritable(arg, "genericProperty", "genericPropertyString");
 
-  verifyEnumerable(arg, "genericProperty");
-
-  verifyNotConfigurable(arg, "genericProperty");
-
   if (!(e instanceof TypeError)) {
     throw new Test262Error("Expected TypeError, got " + e);
   }
-
 }
+
+verifyProperty(arg, "genericProperty", {
+  enumerable: true,
+  configurable: false,
+});

@@ -405,8 +405,10 @@ fast/canvas/offscreen-clipped.html [ Skip ]
 fast/canvas/offscreen-enabled.html [ Skip ]
 fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Skip ]
 fast/canvas/offscreen-giant.html [ Skip ]
+fast/canvas/offscreen-nested-worker-serialization.html [ Skip ]
 fast/canvas/offscreen-scaling.html [ Skip ]
 fast/canvas/offscreen-toggle-display.html [ Skip ]
+fast/images/protected-image-queue.html [ Skip ]
 webgl/offscreen-webgl-errors-to-console.html [ Skip ]
 webgl/webgl-worker.html [ Skip ]
 
@@ -912,6 +914,8 @@ http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-ws-redirect.html [ Failure ]
 http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party.html [ Failure ]
 
+http/tests/webxr [ Skip ]
+
 # Needs curl download support
 http/tests/workers/service/service-worker-download-async-delegates.https.html [ Failure ]
 http/tests/workers/service/service-worker-download.https.html [ Failure ]
@@ -1183,7 +1187,6 @@ editing/selection/caret-at-bidi-boundary.html [ Skip ]
 editing/selection/character-granularity-rect.html [ Skip ]
 editing/selection/character-granularity-select-text-with-click-handler.html [ Skip ]
 editing/selection/character-granularity-selected-range-after-dismissing-selection.html [ Skip ]
-editing/selection/click-left-of-rtl-wrapping-text.html [ Skip ]
 editing/selection/extend-by-character-007.html [ Skip ]
 editing/selection/regional-indicators.html [ Skip ]
 [ Debug ] editing/selection/doubleclick-beside-cr-span.html [ Skip ]
@@ -2227,8 +2230,6 @@ editing/inserting/paragraph-separator-in-table-2.html [ Skip ]
 editing/inserting/return-key-with-selection-001.html [ Skip ]
 editing/inserting/return-key-with-selection-002.html [ Skip ]
 editing/inserting/return-key-with-selection-003.html [ Skip ]
-editing/inserting/typing-001.html [ Skip ]
-editing/inserting/typing-002.html [ Skip ]
 editing/inserting/typing-around-br-001.html [ Skip ]
 editing/selection/14971.html [ Skip ]
 editing/selection/3690703-2.html [ Skip ]
@@ -2249,7 +2250,6 @@ editing/selection/5354455-2.html [ Skip ]
 editing/selection/6476.html [ Skip ]
 editing/selection/7152-1.html [ Skip ]
 editing/selection/7152-2.html [ Skip ]
-editing/selection/after-line-wrap.html [ Skip ]
 editing/selection/caret-before-select.html [ Skip ]
 editing/selection/caret-in-div-containing-empty-block.html [ Skip ]
 editing/selection/click-start-of-line.html [ Skip ]
@@ -3184,9 +3184,6 @@ webkit.org/b/173726 animations/play-state-suspend.html [ Pass Failure ]
 
 webkit.org/b/263926 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Skip ] # Makes a subsequent test timeout
 
-webkit.org/b/263953 fast/url/idna2008.html [ Failure ]
-webkit.org/b/263953 fast/url/url-hostname-encoding.html [ Failure ]
-
 webkit.org/b/261308 imported/w3c/web-platform-tests/cookies/path/default.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/wasm/serialization/module/nested-worker-success.any.worker.html [ Skip ] # Failure
@@ -3298,3 +3295,24 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/same-url-replace-s
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-from-initial-about-blank-gc.html [ Failure Pass ]
 
 webkit.org/b/271408 [ Debug ] fast/images/decode-render-animated-image.html [ Skip ] # Crash
+
+# Makes a subsequent test crash
+webkit.org/b/272127 fast/text/remove-renderer-and-select-crash.html [ Skip ]
+
+http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
+
+# Pass on Buildbot, Failure on my PC
+webkit.org/b/272445 http/tests/inspector/network/resource-sizes-network.html [ Failure Pass ]
+webkit.org/b/272445 http/tests/xmlhttprequest/onabort-response-getters.html [ Failure Pass ]
+webkit.org/b/272445 http/tests/xmlhttprequest/onload-progressevent-attributes.html [ Failure Pass ]
+webkit.org/b/272445 http/tests/xmlhttprequest/xmlhttprequest-LSProgressEvent-ProgressEvent-should-match.html [ Failure Pass ]
+
+fast/forms/form-submission-crash-4.html [ Timeout Failure Pass ]
+
+css3/filters/backdrop-filter-page-scale.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/trusted-types/trusted-types-navigation.html [ Failure Pass ]
+js/dom/encode-URI-test.html [ Pass Failure ]
+
+# eventSender.leapForward should be reimplemented without Sleep.
+editing/selection/mouse/click-left-of-rtl-wrapping-text.html [ Skip ] # Timeout

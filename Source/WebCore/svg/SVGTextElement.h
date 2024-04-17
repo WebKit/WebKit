@@ -34,6 +34,8 @@ private:
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const override;
+
+    void childrenChanged(const ChildChange&) final;
 };
 
 } // namespace WebCore

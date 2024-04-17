@@ -36,6 +36,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/spi/cocoa/SecuritySPI.h>
 
 OBJC_CLASS NSArray;
 OBJC_CLASS NSBundle;
@@ -51,10 +52,6 @@ OBJC_CLASS UTType;
 OBJC_CLASS _WKWebExtension;
 OBJC_CLASS _WKWebExtensionLocalization;
 OBJC_CLASS _WKWebExtensionMatchPattern;
-
-#if PLATFORM(MAC)
-#include <Security/CSCommon.h>
-#endif
 
 #ifdef __OBJC__
 #include "_WKWebExtensionPermission.h"
@@ -116,6 +113,11 @@ public:
         DocumentIdle,
         DocumentStart,
         DocumentEnd,
+    };
+
+    enum class Environment : bool {
+        Document,
+        ServiceWorker,
     };
 
     using PermissionsSet = HashSet<String>;
@@ -197,8 +199,10 @@ public:
 
     Ref<API::Data> serializeLocalization();
 
+    SecStaticCodeRef bundleStaticCode() const;
+    NSData *bundleHash() const;
+
 #if PLATFORM(MAC)
-    SecStaticCodeRef bundleStaticCode();
     bool validateResourceData(NSURL *, NSData *, NSError **);
 #endif
 
@@ -328,11 +332,8 @@ private:
 
     MatchPatternSet m_externallyConnectableMatchPatterns;
 
-#if PLATFORM(MAC)
-    RetainPtr<SecStaticCodeRef> m_bundleStaticCode;
-#endif
-
     RetainPtr<NSBundle> m_bundle;
+    mutable RetainPtr<SecStaticCodeRef> m_bundleStaticCode;
     RetainPtr<NSURL> m_resourceBaseURL;
     RetainPtr<NSDictionary> m_manifest;
     RetainPtr<NSMutableDictionary> m_resources;
@@ -361,6 +362,7 @@ private:
     RetainPtr<NSString> m_backgroundPagePath;
     RetainPtr<NSString> m_backgroundServiceWorkerPath;
     RetainPtr<NSString> m_generatedBackgroundContent;
+    Environment m_backgroundContentEnvironment { Environment::Document };
 
     RetainPtr<NSString> m_inspectorBackgroundPagePath;
 
@@ -368,7 +370,7 @@ private:
     RetainPtr<NSString> m_overrideNewTabPagePath;
 
     bool m_backgroundContentIsPersistent : 1 { false };
-    bool m_backgroundPageUsesModules : 1 { false };
+    bool m_backgroundContentUsesModules : 1 { false };
     bool m_parsedManifest : 1 { false };
     bool m_parsedManifestDisplayStrings : 1 { false };
     bool m_parsedManifestContentSecurityPolicyStrings : 1 { false };

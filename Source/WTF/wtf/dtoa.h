@@ -51,8 +51,8 @@ WTF_EXPORT_PRIVATE const char* numberToCSSString(double, NumberToCSSStringBuffer
 inline double parseDouble(StringView string, size_t& parsedLength)
 {
     if (string.is8Bit())
-        return parseDouble(string.characters8(), string.length(), parsedLength);
-    return parseDouble(string.characters16(), string.length(), parsedLength);
+        return parseDouble(string.span8(), parsedLength);
+    return parseDouble(string.span16(), parsedLength);
 }
 
 } // namespace WTF

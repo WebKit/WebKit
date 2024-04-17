@@ -49,6 +49,7 @@ struct TargetedElementInfo {
     String renderedText;
     Vector<String> selectors;
     FloatRect boundsInRootView;
+    FloatRect boundsInClientCoordinates;
     PositionType positionType { PositionType::Static };
     Vector<FrameIdentifier> childFrameIdentifiers;
     bool isUnderPoint { true };

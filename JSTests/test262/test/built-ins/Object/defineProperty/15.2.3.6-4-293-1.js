@@ -20,11 +20,11 @@ includes: [propertyHelper.js]
   Object.defineProperty(arguments, "0", {
     value: 20
   });
-  verifyEqualTo(arguments, "0", 20);
 
-  verifyNotWritable(arguments, "0");
-
-  verifyEnumerable(arguments, "0");
-
-  verifyConfigurable(arguments, "0");
+  verifyProperty(arguments, "0", {
+    value: 20,
+    writable: false,
+    enumerable: true,
+    configurable: true,
+  });
 }(0, 1, 2));

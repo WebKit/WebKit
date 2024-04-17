@@ -23,8 +23,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(DataView.prototype.setUint32.length, 2);
-
-verifyNotEnumerable(DataView.prototype.setUint32, "length");
-verifyNotWritable(DataView.prototype.setUint32, "length");
-verifyConfigurable(DataView.prototype.setUint32, "length");
+verifyProperty(DataView.prototype.setUint32, "length", {
+  value: 2,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

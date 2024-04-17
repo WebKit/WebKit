@@ -187,7 +187,7 @@ auto StreamingParser::parseFunctionPayload(Vector<uint8_t>&& data) -> State
 
 auto StreamingParser::parseSectionPayload(Vector<uint8_t>&& data) -> State
 {
-    SectionParser parser(data.data(), data.size(), m_offset, m_info.get());
+    SectionParser parser(data, m_offset, m_info.get());
     switch (m_section) {
 #define WASM_SECTION_PARSE(NAME, ID, ORDERING, DESCRIPTION) \
     case Section::NAME: { \
@@ -208,7 +208,7 @@ auto StreamingParser::parseSectionPayload(Vector<uint8_t>&& data) -> State
     }
     }
 
-    WASM_PARSER_FAIL_IF(parser.length() != parser.offset(), "parsing ended before the end of ", m_section, " section");
+    WASM_PARSER_FAIL_IF(parser.source().size() != parser.offset(), "parsing ended before the end of ", m_section, " section");
 
     if (!m_client.didReceiveSectionData(m_section))
         return State::FatalError;
@@ -269,7 +269,7 @@ auto StreamingParser::consumeVarUInt32(std::span<const uint8_t> bytes, size_t& o
 
     size_t offset = 0;
     uint32_t result = 0;
-    if (!WTF::LEBDecoder::decodeUInt32(m_remaining.data(), m_remaining.size(), offset, result))
+    if (!WTF::LEBDecoder::decodeUInt32(m_remaining, offset, result))
         return makeUnexpected(State::FatalError);
     size_t consumedSize = offset;
     m_remaining.remove(0, consumedSize);

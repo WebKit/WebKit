@@ -28,6 +28,6 @@
 [
     EnabledBySetting=CookieStoreAPIEnabled,
     SecureContext
-] partial interface LocalDOMWindow {
+] partial interface DOMWindow {
     [SameObject] readonly attribute CookieStore cookieStore;
 };

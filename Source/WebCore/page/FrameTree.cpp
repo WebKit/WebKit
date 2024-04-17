@@ -51,18 +51,11 @@ FrameTree::~FrameTree()
 void FrameTree::setSpecifiedName(const AtomString& specifiedName)
 {
     m_specifiedName = specifiedName;
-    if (!parent()) {
-        m_uniqueName = specifiedName;
-        return;
-    }
-    m_uniqueName = nullAtom(); // Remove our old frame name so it's not considered in uniqueChildName.
-    m_uniqueName = parent()->tree().uniqueChildName(specifiedName);
 }
 
 void FrameTree::clearName()
 {
     m_specifiedName = nullAtom();
-    m_uniqueName = nullAtom();
 }
 
 Frame* FrameTree::parent() const
@@ -98,26 +91,6 @@ void FrameTree::removeChild(Frame& child)
     newLocationForNext = WTFMove(child.tree().m_nextSibling);
 
     m_scopedChildCount = invalidCount;
-}
-
-AtomString FrameTree::uniqueChildName(const AtomString& requestedName) const
-{
-    // If the requested name (the frame's "name" attribute) is unique, just use that.
-    if (!requestedName.isEmpty() && !childByUniqueName(requestedName) && !isBlankTargetFrameName(requestedName))
-        return requestedName;
-
-    // The "name" attribute was not unique or absent. Generate a name based on a counter on the main frame that gets reset
-    // on navigation. The name uses HTML comment syntax to avoid collisions with author names.
-    return generateUniqueName();
-}
-
-AtomString FrameTree::generateUniqueName() const
-{
-    auto& top = this->top();
-    if (&top.tree() != this)
-        return top.tree().generateUniqueName();
-
-    return makeAtomString("<!--frame", ++m_frameIDGenerator, "-->");
 }
 
 Ref<Frame> FrameTree::protectedThisFrame() const
@@ -250,6 +223,15 @@ Frame* FrameTree::childByUniqueName(const AtomString& name) const
     return nullptr;
 }
 
+Frame* FrameTree::childBySpecifiedName(const AtomString& name) const
+{
+    for (auto* child = firstChild(); child; child = child->tree().nextSibling()) {
+        if (child->tree().specifiedName() == name)
+            return child;
+    }
+    return nullptr;
+}
+
 // FrameTree::find() only returns frames in pages that are related to the active
 // page by an opener <-> openee relationship.
 static bool isFrameFamiliarWith(Frame& frameA, Frame& frameB)
@@ -264,7 +246,8 @@ static bool isFrameFamiliarWith(Frame& frameA, Frame& frameB)
         || (frameAOpener && frameBOpener && frameAOpener->page() == frameBOpener->page());
 }
 
-inline Frame* FrameTree::find(const AtomString& name, const Function<const AtomString&(const FrameTree&)>& nameGetter, Frame& activeFrame) const
+template<typename F>
+inline Frame* FrameTree::find(const AtomString& name, F&& nameGetter, Frame& activeFrame) const
 {
     if (isSelfTargetFrameName(name))
         return m_thisFrame.ptr();
@@ -312,7 +295,7 @@ inline Frame* FrameTree::find(const AtomString& name, const Function<const AtomS
 
 Frame* FrameTree::findByUniqueName(const AtomString& uniqueName, Frame& activeFrame) const
 {
-    return find(uniqueName, [&](auto& frameTree) -> const AtomString& {
+    return find(uniqueName, [&](auto& frameTree) -> AtomString {
         return frameTree.uniqueName();
     }, activeFrame);
 }
@@ -535,6 +518,26 @@ unsigned FrameTree::depth() const
     for (auto* parent = m_thisFrame.ptr(); parent; parent = parent->tree().parent())
         depth++;
     return depth;
+}
+
+AtomString FrameTree::uniqueName() const
+{
+    if (!parent())
+        return m_specifiedName;
+
+    auto frameIndex { 0u };
+    for (RefPtr frame = top().tree().firstChild(); frame; frame = frame->tree().traverseNext()) {
+        bool frameMatch = frame->frameID() == m_thisFrame->frameID();
+        auto frameName = frame->tree().specifiedName();
+        if (frameName.isEmpty() || isBlankTargetFrameName(frameName) || frame->tree().childBySpecifiedName(frameName)) {
+            frameIndex++;
+            if (frameMatch)
+                return makeAtomString("<!--frame"_s, frameIndex, "-->"_s);
+        }
+        if (frameMatch)
+            return frameName;
+    }
+    return nullAtom();
 }
 
 ASCIILiteral blankTargetFrameName()

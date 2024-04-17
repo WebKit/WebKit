@@ -281,6 +281,7 @@ bytecode/ReduceWhitespace.cpp
 bytecode/Repatch.cpp
 bytecode/SetPrivateBrandStatus.cpp
 bytecode/SetPrivateBrandVariant.cpp
+bytecode/SharedJITStubSet.cpp
 bytecode/SpeculatedType.cpp
 bytecode/StructureSet.cpp
 bytecode/StructureStubClearingWatchpoint.cpp
@@ -779,6 +780,7 @@ runtime/CacheUpdate.cpp
 runtime/CacheableIdentifier.cpp
 runtime/CachedBytecode.cpp
 runtime/CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp
+runtime/CachedTypes.cpp
 runtime/CatchScope.cpp
 runtime/ClassInfo.cpp
 runtime/ClonedArguments.cpp
@@ -899,6 +901,7 @@ runtime/JSAsyncGeneratorFunction.cpp
 runtime/JSArrayIterator.cpp
 runtime/JSBigInt.cpp
 runtime/JSBoundFunction.cpp
+runtime/JSCBytecodeCacheVersion.cpp
 runtime/JSCConfig.cpp
 runtime/JSCJSValue.cpp
 runtime/JSCPtrTag.cpp

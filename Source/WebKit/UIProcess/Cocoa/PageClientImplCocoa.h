@@ -96,6 +96,10 @@ public:
     void storeAppHighlight(const WebCore::AppHighlight&) final;
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    void removeTextIndicatorStyleForID(const WTF::UUID&) final;
+#endif
+
     void microphoneCaptureWillChange() final;
     void cameraCaptureWillChange() final;
     void displayCaptureWillChange() final;

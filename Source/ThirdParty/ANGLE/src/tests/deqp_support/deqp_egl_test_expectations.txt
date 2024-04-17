@@ -115,6 +115,10 @@
 
 // Pixel 6 Vulkan
 6899 PIXEL6 VULKAN : dEQP-EGL.functional.query_context.*.rgb888_window = FAIL
+// New failures after UQ1A.240105.002 upgrade
+8598 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.local_array.compute = FAIL
+8598 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.shader_storage_block.compute = FAIL
+8598 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.uniform_block.compute = FAIL
 
 // ES 1 tests
 2306 WIN : dEQP-EGL.functional.color_clears.single_context.gles1* = FAIL
@@ -145,12 +149,6 @@
 b/286921997 SWIFTSHADER : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.local_array.compute = SKIP
 b/286921997 SWIFTSHADER : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.shader_storage_block.compute = SKIP
 b/286921997 SWIFTSHADER : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.uniform_block.compute = SKIP
-b/289544394 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.local_array.fragment = SKIP
-b/289544394 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.local_array.vertex_and_fragment = SKIP
-b/289544394 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.shader_storage_block.fragment = SKIP
-b/289544394 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.uniform_block.fragment = SKIP
-b/289544394 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.uniform_block.vertex_and_fragment = SKIP
-b/289544394 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.uniform_block.vertex = SKIP
 
 // Samsung Galaxy S22 (Xclipse)
 b/267953710 GALAXYS22 VULKAN : dEQP-EGL.functional.wide_color.window_*_colorspace_srgb = SKIP
@@ -158,11 +156,8 @@ b/267953710 GALAXYS22 VULKAN : dEQP-EGL.functional.wide_color.window_*_colorspac
 // Snapdragon 8 Gen3 Mobile Reference Device
 b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.*_pbuffer = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.*.other = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.api.create_image_gles2_cubemap_* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.create.gles2_cubemap_* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.create.gles2_renderbuffer_stencil_stencil_buffer = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.modify.renderbuffer_stencil_renderbuffer_clear_stencil = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.render_multiple_contexts.gles2_cubemap_* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.render_multiple_contexts.gles2_renderbuffer_stencil_stencil_buffer = SKIP
 
 //// Metal

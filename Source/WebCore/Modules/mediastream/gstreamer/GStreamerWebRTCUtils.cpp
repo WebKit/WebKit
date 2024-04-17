@@ -435,7 +435,7 @@ std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&& ori
     // Set a random 8 byte base64 string as issuer/subject.
     X509_NAME* name = X509_NAME_new();
     Vector<uint8_t> buffer(8);
-    WTF::cryptographicallyRandomValues(buffer.data(), buffer.size());
+    WTF::cryptographicallyRandomValues(buffer.mutableSpan());
     auto commonName = base64EncodeToString(buffer);
     X509_NAME_add_entry_by_NID(name, NID_commonName, MBSTRING_ASC, (const guchar*)commonName.ascii().data(), -1, -1, 0);
     X509_set_subject_name(x509.get(), name);
@@ -510,7 +510,7 @@ GRefPtr<GstCaps> capsFromRtpCapabilities(RefPtr<UniqueSSRCGenerator> ssrcGenerat
     for (unsigned index = 0; auto& codec : capabilities.codecs) {
         auto components = codec.mimeType.split('/');
         auto* codecStructure = gst_structure_new("application/x-rtp", "media", G_TYPE_STRING, components[0].ascii().data(),
-            "encoding-name", G_TYPE_STRING, components[1].ascii().data(), "clock-rate", G_TYPE_INT, codec.clockRate, nullptr);
+            "encoding-name", G_TYPE_STRING, components[1].convertToASCIIUppercase().ascii().data() , "clock-rate", G_TYPE_INT, codec.clockRate, nullptr);
 
         auto ssrc = ssrcGenerator->generateSSRC();
         if (ssrc != std::numeric_limits<uint32_t>::max())
@@ -597,6 +597,11 @@ GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia* media)
             // webrtcbin confusions such as duplicated RTP direction attributes for instance.
             gst_structure_remove_fields(structure, "a-setup", "a-ice-ufrag", "a-ice-pwd", "a-sendrecv", "a-inactive",
                 "a-sendonly", "a-recvonly", "a-end-of-candidates", nullptr);
+
+            if (const char* name = gst_structure_get_string(structure, "encoding-name")) {
+                auto encodingName = makeString(name).convertToASCIIUppercase();
+                gst_structure_set(structure, "encoding-name", G_TYPE_STRING, encodingName.ascii().data(), nullptr);
+            }
 
             // Remove ssrc- attributes that end up being accumulated in fmtp SDP media parameters.
             gst_structure_filter_and_map_in_place(structure, reinterpret_cast<GstStructureFilterMapFunc>(+[](GQuark quark, GValue*, gpointer) -> gboolean {

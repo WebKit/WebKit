@@ -7,10 +7,14 @@
 
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
+#include "libANGLE/renderer/vulkan/CLDeviceVk.h"
 
 #include "libANGLE/CLContext.h"
+#include "libANGLE/CLKernel.h"
 #include "libANGLE/CLProgram.h"
 #include "libANGLE/cl_utils.h"
+
+#include "common/system_utils.h"
 
 #include "clspv/Compiler.h"
 
@@ -147,6 +151,7 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                     kernelArgs.at(kernelArg.ordinal) = std::move(kernelArg);
                     break;
                 }
+                case NonSemanticClspvReflectionPushConstantGlobalSize:
                 case NonSemanticClspvReflectionPushConstantGlobalOffset:
                 case NonSemanticClspvReflectionPushConstantRegionOffset:
                 {
@@ -158,7 +163,7 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                 }
                 case NonSemanticClspvReflectionSpecConstantWorkgroupSize:
                 {
-                    reflectionData.specConstantWGS = {
+                    reflectionData.specConstantWorkgroupSizeIDs = {
                         reflectionData.spvIntLookup[spvInstr.words[5]],
                         reflectionData.spvIntLookup[spvInstr.words[6]],
                         reflectionData.spvIntLookup[spvInstr.words[7]]};
@@ -196,47 +201,6 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
     return SPV_SUCCESS;
 }
 
-class CLAsyncBuildTask : public angle::Closure
-{
-  public:
-    CLAsyncBuildTask(CLProgramVk *programVk,
-                     const cl::DevicePtrs &devices,
-                     std::string options,
-                     std::string internalOptions,
-                     CLProgramVk::BuildType buildType,
-                     const CLProgramVk::DeviceProgramDatas &inputProgramDatas,
-                     cl::Program *notify)
-        : mProgramVk(programVk),
-          mDevices(devices),
-          mOptions(options),
-          mInternalOptions(internalOptions),
-          mBuildType(buildType),
-          mDeviceProgramDatas(inputProgramDatas),
-          mNotify(notify)
-    {}
-
-    void operator()() override
-    {
-        ANGLE_TRACE_EVENT0("gpu.angle", "CLProgramVk::buildInternal (async)");
-        CLProgramVk::ScopedProgramCallback spc(mNotify);
-        if (!mProgramVk->buildInternal(mDevices, mOptions, mInternalOptions, mBuildType,
-                                       mDeviceProgramDatas))
-        {
-            ERR() << "Async build failed for program (" << mProgramVk
-                  << ")! Check the build status or build log for details.";
-        }
-    }
-
-  private:
-    CLProgramVk *mProgramVk;
-    const cl::DevicePtrs mDevices;
-    std::string mOptions;
-    std::string mInternalOptions;
-    CLProgramVk::BuildType mBuildType;
-    const CLProgramVk::DeviceProgramDatas mDeviceProgramDatas;
-    cl::Program *mNotify;
-};
-
 std::string ProcessBuildOptions(const std::vector<std::string> &optionTokens,
                                 CLProgramVk::BuildType buildType)
 {
@@ -272,6 +236,18 @@ std::string ProcessBuildOptions(const std::vector<std::string> &optionTokens,
 }
 
 }  // namespace
+
+void CLAsyncBuildTask::operator()()
+{
+    ANGLE_TRACE_EVENT0("gpu.angle", "CLProgramVk::buildInternal (async)");
+    CLProgramVk::ScopedProgramCallback spc(mNotify);
+    if (!mProgramVk->buildInternal(mDevices, mOptions, mInternalOptions, mBuildType,
+                                   mLinkProgramsList))
+    {
+        ERR() << "Async build failed for program (" << mProgramVk
+              << ")! Check the build status or build log for details.";
+    }
+}
 
 CLProgramVk::CLProgramVk(const cl::Program &program)
     : CLProgramImpl(program), mContext(&program.getContext().getImpl<CLContextVk>())
@@ -325,7 +301,7 @@ angle::Result CLProgramVk::init(const size_t *lengths,
             }
             ANGLE_CL_RETURN_ERROR(CL_INVALID_BINARY);
         }
-        else if (binaryHeader->headerVersion < LatestSupportedBinaryVersion)
+        else if (binaryHeader->headerVersion < kBinaryVersion)
         {
             ERR() << "Binary version not compatible with runtime!";
             if (binaryStatus)
@@ -356,7 +332,8 @@ angle::Result CLProgramVk::init(const size_t *lengths,
 
         // Add device binary to program
         DeviceProgramData deviceBinary;
-        deviceBinary.binaryType = binaryHeader->binaryType;
+        deviceBinary.binaryType  = binaryHeader->binaryType;
+        deviceBinary.buildStatus = binaryHeader->buildStatus;
         switch (deviceBinary.binaryType)
         {
             case CL_PROGRAM_BINARY_TYPE_EXECUTABLE:
@@ -389,15 +366,12 @@ angle::Result CLProgramVk::init(const size_t *lengths,
 
 CLProgramVk::~CLProgramVk()
 {
-    for (vk::BindingPointer<vk::DescriptorSetLayout, vk::AtomicRefCounted<vk::DescriptorSetLayout>>
-             &dsLayouts : mDescriptorSetLayouts)
-    {
-        dsLayouts.reset();
-    }
     for (vk::BindingPointer<rx::vk::DynamicDescriptorPool> &pool : mDescriptorPools)
     {
         pool.reset();
     }
+    mPoolBinding.reset();
+    mShader.get().destroy(mContext->getDevice());
     mMetaDescriptorPool.destroy(mContext->getRenderer());
     mDescSetLayoutCache.destroy(mContext->getRenderer());
     mPipelineLayoutCache.destroy(mContext->getRenderer());
@@ -413,16 +387,15 @@ angle::Result CLProgramVk::build(const cl::DevicePtrs &devices,
     if (notify)
     {
         std::shared_ptr<angle::WaitableEvent> asyncEvent =
-            mProgram.getContext().getPlatform().getMultiThreadPool()->postWorkerTask(
-                std::make_shared<CLAsyncBuildTask>(this, devicePtrs,
-                                                   std::string(options ? options : ""), "",
-                                                   buildType, DeviceProgramDatas{}, notify));
+            getPlatform()->postMultiThreadWorkerTask(std::make_shared<CLAsyncBuildTask>(
+                this, devicePtrs, std::string(options ? options : ""), "", buildType,
+                LinkProgramsList{}, notify));
         ASSERT(asyncEvent != nullptr);
     }
     else
     {
         if (!buildInternal(devicePtrs, std::string(options ? options : ""), "", buildType,
-                           DeviceProgramDatas{}))
+                           LinkProgramsList{}))
         {
             ANGLE_CL_RETURN_ERROR(CL_BUILD_PROGRAM_FAILURE);
         }
@@ -436,8 +409,58 @@ angle::Result CLProgramVk::compile(const cl::DevicePtrs &devices,
                                    const char **headerIncludeNames,
                                    cl::Program *notify)
 {
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+    const cl::DevicePtrs &devicePtrs = !devices.empty() ? devices : mProgram.getDevices();
+
+    // Ensure OS temp dir is available
+    std::string internalCompileOpts;
+    Optional<std::string> tmpDir = angle::GetTempDirectory();
+    if (!tmpDir.valid())
+    {
+        ERR() << "Failed to open OS temp dir";
+        ANGLE_CL_RETURN_ERROR(CL_INVALID_OPERATION);
+    }
+    internalCompileOpts += inputHeaders.empty() ? "" : " -I" + tmpDir.value();
+
+    // Dump input headers to OS temp directory
+    for (size_t i = 0; i < inputHeaders.size(); ++i)
+    {
+        const std::string &inputHeaderSrc =
+            inputHeaders.at(i)->getImpl<CLProgramVk>().mProgram.getSource();
+        std::string headerFilePath(angle::ConcatenatePath(tmpDir.value(), headerIncludeNames[i]));
+
+        // Sanitize path so we can use "/" as universal path separator
+        angle::MakeForwardSlashThePathSeparator(headerFilePath);
+        size_t baseDirPos = headerFilePath.find_last_of("/");
+
+        // Ensure parent dir(s) exists
+        if (!angle::CreateDirectories(headerFilePath.substr(0, baseDirPos)))
+        {
+            ERR() << "Failed to create output path(s) for header(s)!";
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_OPERATION);
+        }
+        writeFile(headerFilePath.c_str(), inputHeaderSrc.data(), inputHeaderSrc.size());
+    }
+
+    // Perform compile
+    if (notify)
+    {
+        std::shared_ptr<angle::WaitableEvent> asyncEvent =
+            mProgram.getContext().getPlatform().getMultiThreadPool()->postWorkerTask(
+                std::make_shared<CLAsyncBuildTask>(
+                    this, devicePtrs, std::string(options ? options : ""), internalCompileOpts,
+                    BuildType::COMPILE, LinkProgramsList{}, notify));
+        ASSERT(asyncEvent != nullptr);
+    }
+    else
+    {
+        if (!buildInternal(devicePtrs, std::string(options ? options : ""), internalCompileOpts,
+                           BuildType::COMPILE, LinkProgramsList{}))
+        {
+            ANGLE_CL_RETURN_ERROR(CL_COMPILE_PROGRAM_FAILURE);
+        }
+    }
+
+    return angle::Result::Continue;
 }
 
 angle::Result CLProgramVk::getInfo(cl::ProgramInfo name,
@@ -489,8 +512,9 @@ angle::Result CLProgramVk::getInfo(cl::ProgramInfo name,
                     deviceProgram.second.binaryType == CL_PROGRAM_BINARY_TYPE_EXECUTABLE
                         ? deviceProgram.second.binary.size() * sizeof(uint32_t)
                         : deviceProgram.second.IR.size();
-                ProgramBinaryOutputHeader header{.headerVersion = LatestSupportedBinaryVersion,
-                                                 .binaryType    = deviceProgram.second.binaryType};
+                ProgramBinaryOutputHeader header{.headerVersion = kBinaryVersion,
+                                                 .binaryType    = deviceProgram.second.binaryType,
+                                                 .buildStatus   = deviceProgram.second.buildStatus};
 
                 if (outputBins != nullptr)
                 {
@@ -594,16 +618,111 @@ angle::Result CLProgramVk::createKernel(const cl::Kernel &kernel,
                                         const char *name,
                                         CLKernelImpl::Ptr *kernelOut)
 {
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+    std::scoped_lock<std::mutex> sl(mProgramMutex);
+
+    const auto devProgram = getDeviceProgramData(name);
+    ASSERT(devProgram != nullptr);
+
+    // Create kernel
+    CLKernelArguments kernelArgs = devProgram->getKernelArguments(name);
+    std::string kernelAttributes = devProgram->getKernelAttributes(name);
+    std::string kernelName       = std::string(name ? name : "");
+    CLKernelVk::Ptr kernelImpl   = CLKernelVk::Ptr(
+        new (std::nothrow) CLKernelVk(kernel, kernelName, kernelAttributes, kernelArgs));
+    if (kernelImpl == nullptr)
+    {
+        ERR() << "Could not create kernel obj!";
+        ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
+    }
+
+    // Update push contant range and add layout bindings for arguments
+    vk::DescriptorSetLayoutDesc descriptorSetLayoutDesc;
+    VkPushConstantRange pcRange = devProgram->pushConstRange;
+    for (const auto &arg : kernelImpl->getArgs())
+    {
+        VkDescriptorType descType = VK_DESCRIPTOR_TYPE_MAX_ENUM;
+        switch (arg.type)
+        {
+            case NonSemanticClspvReflectionArgumentStorageBuffer:
+            case NonSemanticClspvReflectionArgumentPodStorageBuffer:
+                descType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+                break;
+            case NonSemanticClspvReflectionArgumentUniform:
+            case NonSemanticClspvReflectionArgumentPodUniform:
+            case NonSemanticClspvReflectionArgumentPointerUniform:
+                descType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                break;
+            case NonSemanticClspvReflectionArgumentPodPushConstant:
+                // Get existing push constant range and see if we need to update
+                if (arg.pushConstOffset + arg.pushConstantSize > pcRange.offset + pcRange.size)
+                {
+                    pcRange.size = arg.pushConstOffset + arg.pushConstantSize - pcRange.offset;
+                }
+                continue;
+            default:
+                continue;
+        }
+        descriptorSetLayoutDesc.update(arg.descriptorBinding, descType, 1,
+                                       VK_SHADER_STAGE_COMPUTE_BIT, nullptr);
+    }
+
+    // Get descriptor set layout from cache (creates if missed)
+    ANGLE_CL_IMPL_TRY_ERROR(
+        mDescSetLayoutCache.getDescriptorSetLayout(
+            mContext, descriptorSetLayoutDesc,
+            &kernelImpl->getDescriptorSetLayouts()[DescriptorSetIndex::ShaderResource]),
+        CL_INVALID_OPERATION);
+
+    // Get pipeline layout from cache (creates if missed)
+    vk::PipelineLayoutDesc pipelineLayoutDesc;
+    pipelineLayoutDesc.updateDescriptorSetLayout(DescriptorSetIndex::ShaderResource,
+                                                 descriptorSetLayoutDesc);
+    pipelineLayoutDesc.updatePushConstantRange(pcRange.stageFlags, pcRange.offset, pcRange.size);
+    ANGLE_CL_IMPL_TRY_ERROR(mPipelineLayoutCache.getPipelineLayout(
+                                mContext, pipelineLayoutDesc, kernelImpl->getDescriptorSetLayouts(),
+                                &kernelImpl->getPipelineLayout()),
+                            CL_INVALID_OPERATION);
+
+    // Setup descriptor pool
+    ANGLE_CL_IMPL_TRY_ERROR(mMetaDescriptorPool.bindCachedDescriptorPool(
+                                mContext, descriptorSetLayoutDesc, 1, &mDescSetLayoutCache,
+                                &mDescriptorPools[DescriptorSetIndex::ShaderResource]),
+                            CL_INVALID_OPERATION);
+
+    *kernelOut = std::move(kernelImpl);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CLProgramVk::createKernels(cl_uint numKernels,
                                          CLKernelImpl::CreateFuncs &createFuncs,
                                          cl_uint *numKernelsRet)
 {
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+    size_t numDevKernels = 0;
+    for (const auto &dev : mAssociatedDevicePrograms)
+    {
+        numDevKernels += dev.second.numKernels();
+    }
+    if (numKernelsRet != nullptr)
+    {
+        *numKernelsRet = static_cast<cl_uint>(numDevKernels);
+    }
+
+    if (numKernels != 0)
+    {
+        for (const auto &dev : mAssociatedDevicePrograms)
+        {
+            for (const auto &kernArgMap : dev.second.getKernelArgsMap())
+            {
+                createFuncs.emplace_back([this, &kernArgMap](const cl::Kernel &kern) {
+                    CLKernelImpl::Ptr implPtr = nullptr;
+                    ANGLE_CL_IMPL_TRY(this->createKernel(kern, kernArgMap.first.c_str(), &implPtr));
+                    return CLKernelImpl::Ptr(std::move(implPtr));
+                });
+            }
+        }
+    }
+    return angle::Result::Continue;
 }
 
 const CLProgramVk::DeviceProgramData *CLProgramVk::getDeviceProgramData(
@@ -636,7 +755,7 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
                                 std::string options,
                                 std::string internalOptions,
                                 BuildType buildType,
-                                const DeviceProgramDatas &inputProgramDatas)
+                                const LinkProgramsList &LinkProgramsList)
 {
     std::scoped_lock<std::mutex> sl(mProgramMutex);
 
@@ -651,10 +770,11 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
     std::string processedOptions = ProcessBuildOptions(optionTokens, buildType);
 
     // Build for each associated device
-    for (const cl::RefPointer<cl::Device> &device : devices)
+    for (size_t i = 0; i < devices.size(); ++i)
     {
-        DeviceProgramData &deviceProgramData = mAssociatedDevicePrograms[device->getNative()];
-        deviceProgramData.buildStatus        = CL_BUILD_IN_PROGRESS;
+        const cl::RefPointer<cl::Device> &device = devices.at(i);
+        DeviceProgramData &deviceProgramData     = mAssociatedDevicePrograms[device->getNative()];
+        deviceProgramData.buildStatus            = CL_BUILD_IN_PROGRESS;
 
         if (buildType != BuildType::BINARY)
         {
@@ -700,15 +820,15 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
                     ScopedClspvContext clspvCtx;
                     std::vector<size_t> vSizes;
                     std::vector<const char *> vBins;
-                    for (const CLProgramVk::DeviceProgramData *inputProgramData : inputProgramDatas)
+                    const LinkPrograms &linkPrograms = LinkProgramsList.at(i);
+                    for (const CLProgramVk::DeviceProgramData *linkProgramData : linkPrograms)
                     {
-                        vSizes.push_back(inputProgramData->IR.size());
-                        vBins.push_back(inputProgramData->IR.data());
+                        vSizes.push_back(linkProgramData->IR.size());
+                        vBins.push_back(linkProgramData->IR.data());
                     }
                     ClspvError clspvRet = clspvCompileFromSourcesString(
-                        inputProgramDatas.size(), vSizes.data(), vBins.data(),
-                        processedOptions.c_str(), &clspvCtx.mOutputBin, &clspvCtx.mOutputBinSize,
-                        &clspvCtx.mOutputBuildLog);
+                        linkPrograms.size(), vSizes.data(), vBins.data(), processedOptions.c_str(),
+                        &clspvCtx.mOutputBin, &clspvCtx.mOutputBinSize, &clspvCtx.mOutputBuildLog);
                     deviceProgramData.buildLog =
                         clspvCtx.mOutputBuildLog != nullptr ? clspvCtx.mOutputBuildLog : "";
                     if (clspvRet != CLSPV_SUCCESS)
@@ -718,16 +838,20 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
                         return false;
                     }
 
-                    deviceProgramData.IR.assign(clspvCtx.mOutputBinSize, 0);
-                    std::memcpy(deviceProgramData.IR.data(), clspvCtx.mOutputBin,
-                                clspvCtx.mOutputBinSize);
-
                     if (createLibrary)
                     {
+                        deviceProgramData.IR.assign(clspvCtx.mOutputBinSize, 0);
+                        std::memcpy(deviceProgramData.IR.data(), clspvCtx.mOutputBin,
+                                    clspvCtx.mOutputBinSize);
                         deviceProgramData.binaryType = CL_PROGRAM_BINARY_TYPE_LIBRARY;
                     }
                     else
                     {
+                        deviceProgramData.binary.assign(clspvCtx.mOutputBinSize / sizeof(uint32_t),
+                                                        0);
+                        std::memcpy(deviceProgramData.binary.data(),
+                                    reinterpret_cast<char *>(clspvCtx.mOutputBin),
+                                    clspvCtx.mOutputBinSize);
                         deviceProgramData.binaryType = CL_PROGRAM_BINARY_TYPE_EXECUTABLE;
                     }
                     break;
@@ -738,7 +862,8 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
             }
         }
 
-        // Extract reflection info from spv binary and populate reflection data
+        // Extract reflection info from spv binary and populate reflection data, as well as create
+        // the shader module
         if (deviceProgramData.binaryType == CL_PROGRAM_BINARY_TYPE_EXECUTABLE)
         {
             spvtools::SpirvTools spvTool(SPV_ENV_UNIVERSAL_1_5);
@@ -753,6 +878,26 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
             if (!parseRet)
             {
                 ERR() << "Failed to parse reflection info from SPIR-V!";
+                deviceProgramData.buildStatus = CL_BUILD_ERROR;
+                return false;
+            }
+
+            if (mShader.get().valid())
+            {
+                // User is recompiling program, we need to recreate the shader module
+                mShader.get().destroy(mContext->getDevice());
+            }
+            // Strip SPIR-V binary if Vk implementation does not support non-semantic info
+            angle::spirv::Blob spvBlob =
+                !mContext->getRenderer()->getFeatures().supportsShaderNonSemanticInfo.enabled
+                    ? stripReflection(&deviceProgramData)
+                    : deviceProgramData.binary;
+            ASSERT(!spvBlob.empty());
+            if (IsError(vk::InitShaderModule(mContext, &mShader.get(), spvBlob.data(),
+                                             spvBlob.size() * sizeof(uint32_t))))
+            {
+                ERR() << "Failed to init Vulkan Shader Module!";
+                deviceProgramData.buildStatus = CL_BUILD_ERROR;
                 return false;
             }
 
@@ -801,6 +946,19 @@ angle::spirv::Blob CLProgramVk::stripReflection(const DeviceProgramData *deviceP
         ERR() << "Could not strip reflection data from binary!";
     }
     return binaryStripped;
+}
+
+angle::Result CLProgramVk::allocateDescriptorSet(const vk::DescriptorSetLayout &descriptorSetLayout,
+                                                 VkDescriptorSet *descriptorSetOut)
+{
+    if (mDescriptorPools[DescriptorSetIndex::ShaderResource].get().valid())
+    {
+        ANGLE_CL_IMPL_TRY_ERROR(
+            mDescriptorPools[DescriptorSetIndex::ShaderResource].get().allocateDescriptorSet(
+                mContext, descriptorSetLayout, &mPoolBinding, descriptorSetOut),
+            CL_INVALID_OPERATION);
+    }
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

@@ -1,4 +1,6 @@
-//@ crashOK!
+//@ mustCrash!
+//@ skip if $buildType != "debug" # crash relies on a Debug ASSERT
+//@ $skipModes << :lockdown # because signal handler not supported.
 //@ runDefault("--useLLInt=1")
 
 function shouldBe(actual, expected) {

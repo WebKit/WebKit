@@ -43,8 +43,10 @@ class ResourceResponse;
 class ResourceTiming;
 class SharedBuffer;
 
-class ThreadableLoaderClient : public CanMakeWeakPtr<ThreadableLoaderClient>, public CanMakeThreadSafeCheckedPtr {
-    WTF_MAKE_NONCOPYABLE(ThreadableLoaderClient); WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+class ThreadableLoaderClient : public CanMakeWeakPtr<ThreadableLoaderClient>, public CanMakeThreadSafeCheckedPtr<ThreadableLoaderClient> {
+    WTF_MAKE_NONCOPYABLE(ThreadableLoaderClient);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ThreadableLoaderClient);
 public:
     virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 

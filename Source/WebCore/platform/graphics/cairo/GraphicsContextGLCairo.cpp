@@ -111,8 +111,8 @@ RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const Gr
 
     // Convert RGBA to BGRA. BGRA is CAIRO_FORMAT_ARGB32 on little-endian architectures.
     Ref protectedPixelBuffer = pixelBuffer;
-    size_t totalBytes = pixelBuffer->sizeInBytes();
-    uint8_t* pixels = pixelBuffer->bytes();
+    size_t totalBytes = pixelBuffer->bytes().size();
+    uint8_t* pixels = pixelBuffer->bytes().data();
     for (size_t i = 0; i < totalBytes; i += 4)
         std::swap(pixels[i], pixels[i + 2]);
 
@@ -126,7 +126,7 @@ RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const Gr
 
     auto imageSize = pixelBuffer->size();
     RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
-        pixelBuffer->bytes(), CAIRO_FORMAT_ARGB32, imageSize.width(), imageSize.height(), imageSize.width() * 4));
+        pixels, CAIRO_FORMAT_ARGB32, imageSize.width(), imageSize.height(), imageSize.width() * 4));
     static cairo_user_data_key_t dataKey;
     cairo_surface_set_user_data(imageSurface.get(), &dataKey, &protectedPixelBuffer.leakRef(), [](void* buffer) {
         static_cast<PixelBuffer*>(buffer)->deref();

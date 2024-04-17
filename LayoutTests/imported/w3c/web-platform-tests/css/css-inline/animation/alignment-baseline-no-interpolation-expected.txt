@@ -1,4 +1,18 @@
 
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <alignment-baseline> from [initial] to [central] at (-0.3) should be [initial] assert_equals: expected "baseline " but got "central "
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <alignment-baseline> from [initial] to [central] at (0) should be [initial] assert_equals: expected "baseline " but got "central "
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <alignment-baseline> from [initial] to [central] at (0.3) should be [initial] assert_equals: expected "baseline " but got "central "
+PASS CSS Transitions with transition-behavior:allow-discrete: property <alignment-baseline> from [initial] to [central] at (0.5) should be [central]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <alignment-baseline> from [initial] to [central] at (0.6) should be [central]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <alignment-baseline> from [initial] to [central] at (1) should be [central]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <alignment-baseline> from [initial] to [central] at (1.5) should be [central]
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <alignment-baseline> from [initial] to [central] at (-0.3) should be [initial] assert_equals: expected "baseline " but got "central "
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <alignment-baseline> from [initial] to [central] at (0) should be [initial] assert_equals: expected "baseline " but got "central "
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <alignment-baseline> from [initial] to [central] at (0.3) should be [initial] assert_equals: expected "baseline " but got "central "
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <alignment-baseline> from [initial] to [central] at (0.5) should be [central]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <alignment-baseline> from [initial] to [central] at (0.6) should be [central]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <alignment-baseline> from [initial] to [central] at (1) should be [central]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <alignment-baseline> from [initial] to [central] at (1.5) should be [central]
 PASS CSS Transitions: property <alignment-baseline> from [initial] to [central] at (-0.3) should be [central]
 PASS CSS Transitions: property <alignment-baseline> from [initial] to [central] at (0) should be [central]
 PASS CSS Transitions: property <alignment-baseline> from [initial] to [central] at (0.3) should be [central]

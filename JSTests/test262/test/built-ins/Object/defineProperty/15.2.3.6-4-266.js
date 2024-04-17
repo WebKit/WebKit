@@ -26,6 +26,8 @@ Object.defineProperty(arrObj, "0", {
 Object.defineProperty(arrObj, "0", {
   get: undefined
 });
-verifyNotEnumerable(arrObj, "0");
 
-verifyConfigurable(arrObj, "0");
+verifyProperty(arrObj, "0", {
+  enumerable: false,
+  configurable: true,
+});

@@ -25,10 +25,10 @@
 messages -> IPCTester NotRefCounted {
     StartMessageTesting(String driverName)
     StopMessageTesting() -> () Synchronous
-    CreateStreamTester(WebKit::IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle serverConnection)
+    CreateStreamTester(WebKit::IPCStreamTesterIdentifier identifier, IPC::StreamServerConnectionHandle serverConnection)
     ReleaseStreamTester(WebKit::IPCStreamTesterIdentifier identifier) -> () Synchronous
-    CreateConnectionTester(WebKit::IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle connection)
-    CreateConnectionTesterAndSendAsyncMessages(WebKit::IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle connection, uint32_t messageCount)
+    CreateConnectionTester(WebKit::IPCConnectionTesterIdentifier identifier, IPC::ConnectionHandle connection)
+    CreateConnectionTesterAndSendAsyncMessages(WebKit::IPCConnectionTesterIdentifier identifier, IPC::ConnectionHandle connection, uint32_t messageCount)
     ReleaseConnectionTester(WebKit::IPCConnectionTesterIdentifier identifier) -> () Synchronous
 
     SendSameSemaphoreBack(IPC::Semaphore semaphore)

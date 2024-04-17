@@ -29,6 +29,7 @@
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 
 #import "FullscreenTouchSecheuristic.h"
+#import "LinearMediaKitExtras.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "UIKitUtilities.h"
 #import "VideoPresentationManagerProxy.h"
@@ -42,6 +43,8 @@
 #import <WebCore/PlaybackSessionInterfaceAVKit.h>
 #import <WebCore/VideoPresentationInterfaceAVKit.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
+#import <wtf/CheckedRef.h>
+#import <wtf/FastMalloc.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
@@ -53,11 +56,16 @@
 static const NSTimeInterval showHideAnimationDuration = 0.1;
 static const NSTimeInterval pipHideAnimationDuration = 0.2;
 static const NSTimeInterval autoHideDelay = 4.0;
+
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
 static const Seconds bannerMinimumHideDelay = 1_s;
+#endif
 
 @class WKFullscreenStackView;
 
-class WKFullScreenViewControllerPlaybackSessionModelClient : WebCore::PlaybackSessionModelClient {
+class WKFullScreenViewControllerPlaybackSessionModelClient final : WebCore::PlaybackSessionModelClient, public CanMakeCheckedPtr<WKFullScreenViewControllerPlaybackSessionModelClient> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WKFullScreenViewControllerPlaybackSessionModelClient);
 public:
     void setParent(WKFullScreenViewController *parent) { m_parent = parent; }
 
@@ -90,6 +98,18 @@ public:
     }
 
 private:
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+#if CHECKED_POINTER_DEBUG
+    void registerCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::registerCheckedPtr(pointer); };
+    void copyCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::copyCheckedPtr(source, destination); }
+    void moveCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::moveCheckedPtr(source, destination); }
+    void unregisterCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::unregisterCheckedPtr(pointer); }
+#endif // CHECKED_POINTER_DEBUG
+
     WeakObjCPtr<WKFullScreenViewController> m_parent;
     RefPtr<WebCore::PlaybackSessionInterfaceIOS> m_interface;
 };
@@ -148,9 +168,11 @@ private:
     BOOL _isShowingMenu;
 #if PLATFORM(VISION)
     RetainPtr<WKExtrinsicButton> _moreActionsButton;
-    RetainPtr<WKExtrinsicButton> _enterVideoFullscreenButton;
     BOOL _shouldHideCustomControls;
     BOOL _isInteractingWithSystemChrome;
+#endif
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    RetainPtr<UIView> _environmentPickerButtonView;
 #endif
 }
 
@@ -368,7 +390,35 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     isPiPEnabled = !_shouldHideCustomControls && isPiPEnabled;
 #endif
     [_pipButton setHidden:!isPiPEnabled || !isPiPSupported];
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (videoPresentationInterface)
+        [self _configureEnvironmentPickerButtonViewWithPlayableViewController:videoPresentationInterface->playableViewController()];
+#endif
 }
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+- (void)_configureEnvironmentPickerButtonViewWithPlayableViewController:(LMPlayableViewController *)playableViewController
+{
+    if (!self._webView._page->preferences().linearMediaPlayerEnabled())
+        return;
+
+    playableViewController.wks_automaticallyDockOnFullScreenPresentation = YES;
+    playableViewController.wks_dismissFullScreenOnExitingDocking = YES;
+
+    if (_environmentPickerButtonView)
+        return;
+
+    UIViewController *environmentPickerButtonViewController = playableViewController.wks_environmentPickerButtonViewController;
+    if (!environmentPickerButtonViewController)
+        return;
+
+    _environmentPickerButtonView = environmentPickerButtonViewController.view;
+    [self addChildViewController:environmentPickerButtonViewController];
+    [_stackView insertArrangedSubview:_environmentPickerButtonView.get() atIndex:1];
+    [environmentPickerButtonViewController didMoveToParentViewController:self];
+}
+#endif // ENABLE(LINEAR_MEDIA_PLAYER)
 
 - (void)setAnimatingViewAlpha:(CGFloat)alpha
 {
@@ -566,22 +616,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_moreActionsButton setMenu:self._webView.fullScreenWindowSceneDimmingAction];
         [_moreActionsButton setShowsMenuAsPrimaryAction:YES];
         [_moreActionsButton setImage:[[UIImage systemImageNamed:@"ellipsis"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-
-        _enterVideoFullscreenButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
-        [_enterVideoFullscreenButton setConfiguration:cancelButtonConfiguration];
-        [_enterVideoFullscreenButton setImage:[[UIImage systemImageNamed:@"video"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-        [_enterVideoFullscreenButton sizeToFit];
-        [_enterVideoFullscreenButton addTarget:self action:@selector(_enterVideoFullscreenAction:) forControlEvents:UIControlEventTouchUpInside];
 #endif
 
         _stackView = adoptNS([[UIStackView alloc] init]);
         [_stackView addArrangedSubview:_cancelButton.get()];
         [_stackView addArrangedSubview:_pipButton.get()];
 #if PLATFORM(VISION)
-#if ENABLE(LINEAR_MEDIA_PLAYER)
-        if (self._webView._page->preferences().linearMediaPlayerEnabled())
-            [_stackView addArrangedSubview:_enterVideoFullscreenButton.get()];
-#endif
         [_stackView addArrangedSubview:_moreActionsButton.get()];
 #endif
         [_stackView setSpacing:24.0];
@@ -788,28 +828,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     playbackSessionModel->togglePictureInPicture();
-}
-
-- (void)_enterVideoFullscreenAction:(id)sender
-{
-    ASSERT(_valid);
-    RefPtr page = [self._webView _page].get();
-    if (!page)
-        return;
-
-    RefPtr playbackSessionManager = page->playbackSessionManager();
-    if (!playbackSessionManager)
-        return;
-
-    RefPtr playbackSessionInterface = playbackSessionManager->controlsManagerInterface();
-    if (!playbackSessionInterface)
-        return;
-
-    auto playbackSessionModel = playbackSessionInterface->playbackSessionModel();
-    if (!playbackSessionModel)
-        return;
-
-    playbackSessionModel->enterFullscreen();
 }
 
 - (void)_touchDetected:(id)sender

@@ -42,8 +42,8 @@ static const Seconds releaseUnusedBuffersTimerInterval = { 500_ms };
 
 namespace WebCore {
 
-TextureMapperPlatformLayerProxyGL::TextureMapperPlatformLayerProxyGL(bool disableBufferInvalidation)
-    : m_disableBufferInvalidation(disableBufferInvalidation)
+TextureMapperPlatformLayerProxyGL::TextureMapperPlatformLayerProxyGL(ContentType contentType)
+    : TextureMapperPlatformLayerProxy(contentType)
 {
 }
 
@@ -104,7 +104,7 @@ void TextureMapperPlatformLayerProxyGL::invalidate()
             m_targetLayer = nullptr;
         }
 
-        if (!m_disableBufferInvalidation) {
+        if (contentType() != ContentType::HolePunch) {
             m_currentBuffer = nullptr;
             m_pendingBuffer = nullptr;
             m_releaseUnusedBuffersTimer = nullptr;
@@ -132,6 +132,13 @@ void TextureMapperPlatformLayerProxyGL::pushNextBuffer(std::unique_ptr<TextureMa
 #endif
     m_pendingBuffer = WTFMove(newBuffer);
     m_wasBufferDropped = false;
+
+#if HAVE(DISPLAY_LINK)
+    // WebGL changes will cause a composition request during layerFlush. We cannot request
+    // a new compostion here as well or we may trigger two compositions instead of one.
+    if (contentType() == ContentType::WebGL)
+        return;
+#endif
 
     if (m_compositor)
         m_compositor->onNewBufferAvailable();

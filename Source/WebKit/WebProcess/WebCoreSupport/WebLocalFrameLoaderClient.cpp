@@ -1589,6 +1589,8 @@ void WebLocalFrameLoaderClient::transitionToCommittedForNewPage()
     if (webPage->scrollPinningBehavior() != ScrollPinningBehavior::DoNotPin)
         view->setScrollPinningBehavior(webPage->scrollPinningBehavior());
 
+    webPage->scheduleFullEditorStateUpdate();
+
 #if USE(COORDINATED_GRAPHICS)
     if (shouldUseFixedLayout) {
         view->setDelegatedScrollingMode(shouldUseFixedLayout ? DelegatedScrollingMode::DelegatedToNativeScrollView : DelegatedScrollingMode::NotDelegated);

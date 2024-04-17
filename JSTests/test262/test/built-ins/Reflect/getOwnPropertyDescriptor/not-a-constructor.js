@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Reflect.getOwnPropertyDescriptor({}, '');
-}, '`new Reflect.getOwnPropertyDescriptor({}, \'\')` throws TypeError');
+});
 

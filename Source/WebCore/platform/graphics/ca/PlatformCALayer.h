@@ -27,7 +27,6 @@
 
 #include "FloatRoundedRect.h"
 #include "GraphicsLayer.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>

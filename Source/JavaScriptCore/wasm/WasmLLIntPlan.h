@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmCallee.h"
 #include "WasmEntryPlan.h"
 #include "WasmFunctionCodeBlockGenerator.h"
 
@@ -91,6 +92,8 @@ private:
 
     void addTailCallEdge(uint32_t, uint32_t);
     void computeTransitiveTailCalls() const;
+
+    bool makeInterpretedJSToWasmCallee(unsigned functionIndex);
 
     Vector<std::unique_ptr<FunctionCodeBlockGenerator>> m_wasmInternalFunctions;
     const Ref<LLIntCallee>* m_callees { nullptr };

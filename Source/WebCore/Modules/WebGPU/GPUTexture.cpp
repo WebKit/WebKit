@@ -112,7 +112,13 @@ ExceptionOr<Ref<GPUTextureView>> GPUTexture::createView(const std::optional<GPUT
 
 void GPUTexture::destroy()
 {
+    m_isDestroyed = true;
     m_backing->destroy();
+}
+
+bool GPUTexture::isDestroyed() const
+{
+    return m_isDestroyed;
 }
 
 GPUIntegerCoordinateOut GPUTexture::width() const

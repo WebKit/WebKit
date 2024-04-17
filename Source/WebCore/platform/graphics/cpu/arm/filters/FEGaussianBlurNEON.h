@@ -37,8 +37,8 @@ namespace WebCore {
 inline void boxBlurNEON(const PixelBuffer& srcPixelBuffer, PixelBuffer& dstPixelBuffer,
                         unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight)
 {
-    const uint32_t* sourcePixel = reinterpret_cast<uint32_t*>(srcPixelBuffer.bytes());
-    uint32_t* destinationPixel = reinterpret_cast<uint32_t*>(dstPixelBuffer.bytes());
+    const uint32_t* sourcePixel = reinterpret_cast<uint32_t*>(srcPixelBuffer.bytes().data());
+    uint32_t* destinationPixel = reinterpret_cast<uint32_t*>(dstPixelBuffer.bytes().data());
 
     float32x4_t deltaX = vdupq_n_f32(1.0 / dx);
     int pixelLine = strideLine / 4;

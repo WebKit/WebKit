@@ -111,6 +111,10 @@ public:
     const TextIteratorCopyableText& copyableText() const { ASSERT(!atEnd()); return m_copyableText; }
     void appendTextToStringBuilder(StringBuilder& builder) const { copyableText().appendToStringBuilder(builder); }
 
+#if ENABLE(TREE_DEBUGGING)
+    void showTreeForThis() const;
+#endif
+
 private:
     void init();
     void exitNode(Node*);
@@ -323,3 +327,9 @@ inline BoundaryPoint resolveCharacterLocation(const SimpleRange& scope, uint64_t
 }
 
 } // namespace WebCore
+
+#if ENABLE(TREE_DEBUGGING)
+// Outside the WebCore namespace for ease of invocation from the debugger.
+void showTree(const WebCore::TextIterator&);
+void showTree(const WebCore::TextIterator*);
+#endif

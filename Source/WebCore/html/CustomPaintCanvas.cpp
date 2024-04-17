@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CustomPaintCanvas.h"
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "BitmapImage.h"
 #include "CanvasRenderingContext.h"
 #include "DisplayListDrawingContext.h"
@@ -133,5 +131,4 @@ void CustomPaintCanvas::replayDisplayListImpl(GraphicsContext& target) const
     }
 }
 
-}
-#endif
+} // namespace WebCore

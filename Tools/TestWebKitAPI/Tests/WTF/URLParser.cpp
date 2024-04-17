@@ -505,7 +505,7 @@ TEST_F(WTF_URLParser, Credentials)
     testUserPassword("%25"_s, "%"_s, "%25"_s);
     testUserPassword("%2525"_s, "%25"_s, "%2525"_s);
     testUserPassword("%FX"_s, "%FX"_s);
-    testUserPassword("%00"_s, String::fromUTF8("\0"_s, 1), "%00"_s);
+    testUserPassword("%00"_s, String::fromUTF8({ "\0", 1 }), "%00"_s);
     testUserPassword("%F%25"_s, "%F%"_s, "%F%25"_s);
     testUserPassword("%X%25"_s, "%X%"_s, "%X%25"_s);
     testUserPassword("%%25"_s, "%%"_s, "%%25"_s);

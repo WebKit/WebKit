@@ -284,7 +284,7 @@ InlineLayoutUnit InlineFormattingUtils::horizontalAlignmentOffset(const RenderSt
     return { };
 }
 
-InlineItemPosition InlineFormattingUtils::leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineContentEnd, bool lineHasIntrusiveFloat, InlineItemPosition layoutRangeEnd)
+InlineItemPosition InlineFormattingUtils::leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineContentEnd, bool lineHasIntrusiveOrNewlyPlacedFloat, InlineItemPosition layoutRangeEnd)
 {
     if (!previousLineContentEnd)
         return lineContentEnd;
@@ -292,7 +292,7 @@ InlineItemPosition InlineFormattingUtils::leadingInlineItemPositionForNextLine(I
         // Either full or partial advancing.
         return lineContentEnd;
     }
-    if (lineContentEnd == *previousLineContentEnd && lineHasIntrusiveFloat) {
+    if (lineContentEnd == *previousLineContentEnd && lineHasIntrusiveOrNewlyPlacedFloat) {
         // Couldn't manage to put any content on line due to floats.
         return lineContentEnd;
     }

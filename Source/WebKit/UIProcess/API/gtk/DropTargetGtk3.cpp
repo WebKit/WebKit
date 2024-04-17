@@ -183,7 +183,7 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
             if (length >= 2 && reinterpret_cast<const UChar*>(markupData)[0] == 0xFEFF)
                 m_selectionData->setMarkup(String({ reinterpret_cast<const UChar*>(markupData) + 1, static_cast<size_t>((length / 2) - 1) }));
             else
-                m_selectionData->setMarkup(String::fromUTF8(markupData, length));
+                m_selectionData->setMarkup(String::fromUTF8(std::span(markupData, length)));
         }
         break;
     }
@@ -191,14 +191,14 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
         gint length;
         const auto* uriListData = gtk_selection_data_get_data_with_length(data, &length);
         if (length > 0)
-            m_selectionData->setURIList(String::fromUTF8(uriListData, length));
+            m_selectionData->setURIList(String::fromUTF8(std::span(uriListData, length)));
         break;
     }
     case DropTargetType::NetscapeURL: {
         gint length;
         const auto* urlData = gtk_selection_data_get_data_with_length(data, &length);
         if (length > 0) {
-            Vector<String> tokens = String::fromUTF8(urlData, length).split('\n');
+            Vector<String> tokens = String::fromUTF8(std::span(urlData, length)).split('\n');
             URL url({ }, tokens[0]);
             if (url.isValid())
                 m_selectionData->setURL(url, tokens.size() > 1 ? tokens[1] : String());

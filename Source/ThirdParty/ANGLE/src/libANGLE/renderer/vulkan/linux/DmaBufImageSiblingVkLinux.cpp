@@ -11,7 +11,7 @@
 #include "common/linux/dma_buf_utils.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 #include <fcntl.h>
 
@@ -43,10 +43,11 @@ constexpr PerPlane<EGLenum> kModifiersHi = {
 
 constexpr VkImageUsageFlags kTransferUsage =
     VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-constexpr VkImageUsageFlags kTextureUsage =
-    VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+constexpr VkImageUsageFlags kTextureUsage = VK_IMAGE_USAGE_SAMPLED_BIT;
 constexpr VkImageUsageFlags kRenderUsage =
     VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+constexpr VkImageUsageFlags kRenderAndInputUsage =
+    kRenderUsage | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
 
 struct AllocateInfo
 {
@@ -108,7 +109,7 @@ bool GetFormatModifierProperties(DisplayVk *displayVk,
                                  uint64_t drmModifier,
                                  VkDrmFormatModifierPropertiesEXT *modifierPropertiesOut)
 {
-    RendererVk *renderer = displayVk->getRenderer();
+    vk::Renderer *renderer = displayVk->getRenderer();
 
     // Query list of drm format modifiers compatible with VkFormat.
     VkDrmFormatModifierPropertiesListEXT formatModifierPropertiesList = {};
@@ -152,7 +153,7 @@ bool GetFormatModifierProperties(DisplayVk *displayVk,
     return true;
 }
 
-VkImageUsageFlags GetUsageFlags(RendererVk *renderer,
+VkImageUsageFlags GetUsageFlags(vk::Renderer *renderer,
                                 const angle::Format &format,
                                 const VkDrmFormatModifierPropertiesEXT &properties,
                                 bool *texturableOut,
@@ -183,11 +184,15 @@ VkImageUsageFlags GetUsageFlags(RendererVk *renderer,
         usage |= isDepthStencilFormat ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT
                                       : VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     }
+    if (*texturableOut && *renderableOut)
+    {
+        usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+    }
 
     return usage;
 }
 
-bool IsFormatSupported(RendererVk *renderer,
+bool IsFormatSupported(vk::Renderer *renderer,
                        VkFormat vkFormat,
                        uint64_t drmModifier,
                        VkImageUsageFlags usageFlags,
@@ -350,7 +355,7 @@ egl::Error DmaBufImageSiblingVkLinux::initialize(const egl::Display *display)
 }
 
 VkImageUsageFlags FindSupportedUsageFlagsForFormat(
-    RendererVk *renderer,
+    vk::Renderer *renderer,
     VkFormat format,
     uint64_t drmModifier,
     VkImageFormatListCreateInfo imageFormatListCreateInfo,
@@ -361,7 +366,7 @@ VkImageUsageFlags FindSupportedUsageFlagsForFormat(
     if (!IsFormatSupported(renderer, format, drmModifier, usageFlags, createFlags,
                            imageFormatListCreateInfo, outImageFormatProperties))
     {
-        usageFlags &= ~kRenderUsage;
+        usageFlags &= ~kRenderAndInputUsage;
         if (!IsFormatSupported(renderer, format, drmModifier, usageFlags, createFlags,
                                imageFormatListCreateInfo, outImageFormatProperties))
         {
@@ -378,7 +383,7 @@ VkImageUsageFlags FindSupportedUsageFlagsForFormat(
     return usageFlags;
 }
 
-bool FindSupportedFlagsForFormat(RendererVk *renderer,
+bool FindSupportedFlagsForFormat(vk::Renderer *renderer,
                                  VkFormat format,
                                  uint64_t drmModifier,
                                  VkImageFormatListCreateInfo imageFormatListCreateInfo,
@@ -398,8 +403,8 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
                                                         MutableFormat mutableFormat,
                                                         InitResult *initResultOut)
 {
-    *initResultOut       = InitResult::Success;
-    RendererVk *renderer = displayVk->getRenderer();
+    *initResultOut         = InitResult::Success;
+    vk::Renderer *renderer = displayVk->getRenderer();
 
     const angle::FormatID intendedFormatID    = vk::GetFormatIDFromVkFormat(vulkanFormat);
     const angle::FormatID actualImageFormatID = vk::GetFormatIDFromVkFormat(vulkanFormat);
@@ -570,7 +575,7 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
 
 angle::Result DmaBufImageSiblingVkLinux::initImpl(DisplayVk *displayVk)
 {
-    RendererVk *renderer = displayVk->getRenderer();
+    vk::Renderer *renderer = displayVk->getRenderer();
 
     const vk::Format &vkFormat  = renderer->getFormat(mFormat.info->sizedInternalFormat);
     const angle::Format &format = vkFormat.getActualImageFormat(rx::vk::ImageAccess::SampleOnly);
@@ -648,7 +653,7 @@ vk::ImageHelper *DmaBufImageSiblingVkLinux::getImage() const
     return mImage;
 }
 
-void DmaBufImageSiblingVkLinux::release(RendererVk *renderer)
+void DmaBufImageSiblingVkLinux::release(vk::Renderer *renderer)
 {
     if (mImage != nullptr)
     {

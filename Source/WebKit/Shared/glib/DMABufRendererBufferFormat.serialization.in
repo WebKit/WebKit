@@ -22,18 +22,19 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-#if USE(GBM)
-
 struct WebKit::DMABufRendererBufferFormat {
     WebKit::DMABufRendererBufferFormat::Usage usage;
-    uint32_t fourcc;
-    Vector<uint64_t, 1> modifiers;
-};
+    CString drmDevice;
+    Vector<WebKit::DMABufRendererBufferFormat::Format> formats;
+}
 
-[Nested] enum class WebKit::DMABufRendererBufferFormatUsage : uint8_t {
+enum class WebKit::DMABufRendererBufferFormatUsage : uint8_t {
     Rendering,
     Mapping,
     Scanout
-};
+}
 
-#endif
+[Nested] struct WebKit::DMABufRendererBufferFormat::Format {
+    uint32_t fourcc;
+    Vector<uint64_t, 1> modifiers;
+}

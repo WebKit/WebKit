@@ -177,7 +177,11 @@ void TestInvocation::invoke()
 
     if (m_options.runInCrossOriginFrame()) {
         WKRetainPtr<WKURLRef> baseURL = adoptWK(WKURLCreateWithUTF8CString("http://localhost:8000"));
-        WKRetainPtr<WKStringRef> htmlString = toWK(makeString("<iframe src=\"", m_urlString.utf8().data(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"));
+        WKRetainPtr<WKStringRef> htmlString = toWK(makeString(
+            "<script>"
+            "    testRunner.dumpChildFramesAsText()"
+            "</script>"
+            "<iframe src=\"", m_urlString.utf8().data(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"));
         WKPageLoadHTMLString(TestController::singleton().mainWebView()->page(), htmlString.get(), baseURL.get());
     } else
         WKPageLoadURLWithShouldOpenExternalURLsPolicy(TestController::singleton().mainWebView()->page(), m_url.get(), shouldOpenExternalURLs);
@@ -774,11 +778,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllCookies")) {
-        TestController::singleton().removeAllCookies();
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearInMemoryAndPersistentStore")) {
         TestController::singleton().statisticsClearInMemoryAndPersistentStore();
         return;
@@ -801,12 +800,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsFirstPartyWebsiteDataRemovalMode")) {
         TestController::singleton().setStatisticsFirstPartyWebsiteDataRemovalMode(booleanValue(messageBody));
-        return;
-    }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "TakeViewPortSnapshot")) {
-        auto value = TestController::singleton().takeViewPortSnapshot();
-        postPageMessage("ViewPortSnapshotTaken", value.get());
         return;
     }
 
@@ -832,11 +825,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         if (m_shouldDumpResourceLoadStatistics)
             m_savedResourceLoadStatistics = TestController::singleton().dumpResourceLoadStatistics();
         TestController::singleton().statisticsResetToConsistentState();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "GetAllStorageAccessEntries")) {
-        TestController::singleton().getAllStorageAccessEntries();
         return;
     }
 
@@ -887,12 +875,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "GetAndClearReportedWindowProxyAccessDomains")) {
-        auto value = TestController::singleton().getAndClearReportedWindowProxyAccessDomains();
-        postPageMessage("DidGetAndClearReportedWindowProxyAccessDomains", value.get());
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "FindStringMatches")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto string = stringValue(messageBodyDictionary, "String");
@@ -900,6 +882,9 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKPageFindStringMatches(TestController::singleton().mainWebView()->page(), string, findOptions, 0);
         return;
     }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "DumpBackForwardList"))
+        return postPageMessage("DumpBackForwardList");
 
     ASSERT_NOT_REACHED();
 }
@@ -1763,19 +1748,6 @@ void TestInvocation::didSetVeryPrevalentResource()
 void TestInvocation::didSetHasHadUserInteraction()
 {
     postPageMessage("CallDidSetHasHadUserInteraction");
-}
-
-void TestInvocation::didRemoveAllCookies()
-{
-    postPageMessage("CallDidRemoveAllCookies");
-}
-
-void TestInvocation::didReceiveAllStorageAccessEntries(Vector<String>&& domains)
-{
-    auto messageBody = adoptWK(WKMutableArrayCreate());
-    for (auto& domain : domains)
-        WKArrayAppendItem(messageBody.get(), toWK(domain).get());
-    postPageMessage("CallDidReceiveAllStorageAccessEntries", messageBody);
 }
 
 void TestInvocation::didReceiveLoadedSubresourceDomains(Vector<String>&& domains)

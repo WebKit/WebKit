@@ -28,8 +28,10 @@ class SVGGraphicsElement;
 
 class LegacyRenderSVGTransformableContainer final : public LegacyRenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGTransformableContainer);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGTransformableContainer);
 public:
     LegacyRenderSVGTransformableContainer(SVGGraphicsElement&, RenderStyle&&);
+    virtual ~LegacyRenderSVGTransformableContainer();
 
     const AffineTransform& localToParentTransform() const override { return m_localTransform; }
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }

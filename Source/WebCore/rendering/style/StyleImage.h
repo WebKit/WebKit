@@ -100,11 +100,7 @@ public:
     ALWAYS_INLINE bool isCrossfadeImage() const { return m_type == Type::CrossfadeImage; }
     ALWAYS_INLINE bool isGradientImage() const { return m_type == Type::GradientImage; }
     ALWAYS_INLINE bool isNamedImage() const { return m_type == Type::NamedImage; }
-#if ENABLE(CSS_PAINTING_API)
     ALWAYS_INLINE bool isPaintImage() const { return m_type == Type::PaintImage; }
-#else
-    ALWAYS_INLINE bool isPaintImage() const { return false; }
-#endif
     ALWAYS_INLINE bool isInvalidImage() const { return m_type == Type::InvalidImage; }
 
     bool hasCachedImage() const { return m_type == Type::CachedImage || selectedImage()->isCachedImage(); }
@@ -120,9 +116,7 @@ protected:
         GradientImage,
         NamedImage,
         InvalidImage,
-#if ENABLE(CSS_PAINTING_API)
         PaintImage,
-#endif
     };
 
     StyleImage(Type type)

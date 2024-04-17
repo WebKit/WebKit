@@ -240,7 +240,7 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
         while (o) {
             RenderObject* no = o;
             o = no->nextSibling();
-            auto childToMove = m_builder.detachFromRenderElement(*block, *no);
+            auto childToMove = m_builder.detachFromRenderElement(*block, *no, WillBeDestroyed::No);
             m_builder.attachToRenderElementInternal(*pre, WTFMove(childToMove));
             no->setNeedsLayoutAndPrefWidthsRecalc();
         }
@@ -267,7 +267,7 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
 
 void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock, RenderObject* beforeChild, RenderBoxModelObject* oldCont)
 {
-    auto internalMoveScope = SetForScope { m_builder.m_internalMovesType, RenderObject::IsInternalMove::Yes };
+    auto internalMoveScope = SetForScope { m_builder.m_internalMovesType, IsInternalMove::Yes };
     // Create a clone of this inline.
     RenderPtr<RenderInline> cloneInline = cloneAsContinuation(parent);
 
@@ -390,7 +390,7 @@ void RenderTreeBuilder::Inline::childBecameNonInline(RenderInline& parent, Rende
         oldContinuation->removeFromContinuationChain();
     newBox->insertIntoContinuationChainAfter(parent);
     auto* beforeChild = child.nextSibling();
-    auto removedChild = m_builder.detachFromRenderElement(parent, child);
+    auto removedChild = m_builder.detachFromRenderElement(parent, child, WillBeDestroyed::No);
     splitFlow(parent, beforeChild, WTFMove(newBox), WTFMove(removedChild), oldContinuation);
 }
 

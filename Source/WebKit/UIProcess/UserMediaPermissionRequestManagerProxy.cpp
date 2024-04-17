@@ -48,6 +48,7 @@
 #include <WebCore/UserMediaRequest.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Scope.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/WeakHashSet.h>
 
 #if ENABLE(GPU_PROCESS)
@@ -562,8 +563,8 @@ String UserMediaPermissionRequestManagerProxy::ephemeralDeviceHashSaltForFrame(W
     static constexpr unsigned hashSaltSize { 48 };
     static constexpr unsigned randomDataSize { hashSaltSize / 16 };
 
-    uint64_t randomData[randomDataSize];
-    cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(randomData), sizeof(randomData));
+    std::array<uint64_t, randomDataSize> randomData;
+    cryptographicallyRandomValues(asWritableBytes(std::span<uint64_t> { randomData }));
 
     StringBuilder builder;
     builder.reserveCapacity(hashSaltSize);

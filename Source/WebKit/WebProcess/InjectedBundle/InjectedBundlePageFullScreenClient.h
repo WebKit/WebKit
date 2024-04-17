@@ -32,6 +32,7 @@
 #include "FullScreenMediaDetails.h"
 #include "WKBundlePageFullScreenClient.h"
 #include <WebCore/HTMLMediaElement.h>
+#include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/MediaPlayerEnums.h>
 #include <wtf/Forward.h>
 

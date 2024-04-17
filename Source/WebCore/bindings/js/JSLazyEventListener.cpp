@@ -24,6 +24,8 @@
 #include "ContentSecurityPolicy.h"
 #include "DocumentInlines.h"
 #include "Element.h"
+#include "JSDOMWindow.h"
+#include "JSDOMWindowBase.h"
 #include "JSNode.h"
 #include "LocalFrame.h"
 #include "QualifiedName.h"
@@ -144,7 +146,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     if (UNLIKELY(!isolatedWorld))
         return nullptr;
 
-    auto* globalObject = toJSLocalDOMWindow(*executionContextDocument->protectedFrame(), *isolatedWorld);
+    auto* globalObject = toJSDOMWindow(*executionContextDocument->protectedFrame(), *isolatedWorld);
     if (!globalObject)
         return nullptr;
 
@@ -223,7 +225,7 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(LocalDOMWindow& window, 
     ASSERT(window.document());
     auto& document = *window.document();
     ASSERT(document.frame());
-    return create({ attributeName, attributeValue, document, nullptr, toJSLocalDOMWindow(document.frame(), mainThreadNormalWorld()), document.isSVGDocument() });
+    return create({ attributeName, attributeValue, document, nullptr, toJSDOMWindow(document.frame(), mainThreadNormalWorld()), document.isSVGDocument() });
 }
 
 } // namespace WebCore

@@ -43,6 +43,8 @@ class ScriptExecutionContext;
 class FragmentedSharedBuffer;
 
 class WEBCORE_EXPORT FetchLoader final : public ThreadableLoaderClient {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FetchLoader);
 public:
     FetchLoader(FetchLoaderClient&, FetchBodyConsumer*);
     ~FetchLoader() = default;

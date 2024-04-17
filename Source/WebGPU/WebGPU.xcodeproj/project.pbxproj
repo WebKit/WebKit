@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D212A652BC26336001160BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D212A642BC26336001160BF /* CoreGraphics.framework */; };
 		0D30F93729F1F94A0055D9F1 /* ExternalTexture.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D30F93629F1F94A0055D9F1 /* ExternalTexture.mm */; };
 		0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D30F93829F1FAC50055D9F1 /* ExternalTexture.h */; };
 		0D30F93B29F1FBE40055D9F1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D30F93A29F1FBE40055D9F1 /* CoreVideo.framework */; };
@@ -130,6 +131,9 @@
 		97099AC72AC49AAB003B41F8 /* WGSLEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099AC52AC49AAB003B41F8 /* WGSLEnums.h */; };
 		97099ACA2ACB2213003B41F8 /* PointerRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099AC82ACB2213003B41F8 /* PointerRewriter.h */; };
 		97099ACB2ACB2213003B41F8 /* PointerRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97099AC92ACB2213003B41F8 /* PointerRewriter.cpp */; };
+		9728B36E2BB5B31E00A8DA23 /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CEBD8302716CB3800A5254D /* libicucore.tbd */; };
+		9728B36F2BB5B32500A8DA23 /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CEBD8302716CB3800A5254D /* libicucore.tbd */; };
+		9728B3702BB5B53D00A8DA23 /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CEBD8302716CB3800A5254D /* libicucore.tbd */; };
 		97296766299C09BC001C8BD4 /* TypeDeclarations.rb in Sources */ = {isa = PBXBuildFile; fileRef = 97296765299C09B0001C8BD4 /* TypeDeclarations.rb */; };
 		973F784729C8A78200166C66 /* Pipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 973F784529C8A78200166C66 /* Pipeline.h */; };
 		973F784829C8A78200166C66 /* Pipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 973F784629C8A78200166C66 /* Pipeline.mm */; };
@@ -257,6 +261,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0D212A642BC26336001160BF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		0D30F93629F1F94A0055D9F1 /* ExternalTexture.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ExternalTexture.mm; sourceTree = "<group>"; };
 		0D30F93829F1FAC50055D9F1 /* ExternalTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalTexture.h; sourceTree = "<group>"; };
 		0D30F93A29F1FBE40055D9F1 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
@@ -491,6 +496,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1CA5B4FF2A6F2A5800E5F297 /* JavaScriptCore.framework in Frameworks */,
+				9728B36E2BB5B31E00A8DA23 /* libicucore.tbd in Frameworks */,
 				1CA5B5002A6F2A5E00E5F297 /* libwgsl.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -499,9 +505,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D212A652BC26336001160BF /* CoreGraphics.framework in Frameworks */,
 				0D30F93B29F1FBE40055D9F1 /* CoreVideo.framework in Frameworks */,
 				664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */,
 				1CBAB0922718CCA0006080BB /* JavaScriptCore.framework in Frameworks */,
+				9728B3702BB5B53D00A8DA23 /* libicucore.tbd in Frameworks */,
 				1CEBD8262716CACC00A5254D /* libwgsl.a in Frameworks */,
 				1C2CEDEE271E8A7300EDC16F /* Metal.framework in Frameworks */,
 			);
@@ -519,6 +527,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				97BCD6AE29D7422B00A82577 /* JavaScriptCore.framework in Frameworks */,
+				9728B36F2BB5B32500A8DA23 /* libicucore.tbd in Frameworks */,
 				97FA1AA729C0DA890052D650 /* libwgsl.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -703,6 +712,7 @@
 			isa = PBXGroup;
 			children = (
 				1CEBD82B2716CAFB00A5254D /* CoreFoundation.framework */,
+				0D212A642BC26336001160BF /* CoreGraphics.framework */,
 				0D30F93A29F1FBE40055D9F1 /* CoreVideo.framework */,
 				1CEBD82D2716CB1600A5254D /* Foundation.framework */,
 				664C92FC286A66090008D143 /* IOSurface.framework */,

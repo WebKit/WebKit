@@ -288,6 +288,27 @@ void WebPageProxy::startDrag(const DragItem& dragItem, ShareableBitmap::Handle&&
 
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
+void WebPageProxy::getTextIndicatorForID(WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+{
+    if (!hasRunningProcess())
+        return;
+
+    sendWithAsyncReply(Messages::WebPage::GetTextIndicatorForID(uuid), WTFMove(completionHandler));
+}
+
+void WebPageProxy::updateTextIndicatorStyleVisibilityForID(WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
+{
+    if (!hasRunningProcess())
+        return;
+
+    sendWithAsyncReply(Messages::WebPage::UpdateTextIndicatorStyleVisibilityForID(uuid, visible), WTFMove(completionHandler));
+}
+
+#endif // UNIFIED_TEXT_REPLACEMENT
+
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, const String& preferredFileName, const IPC::SharedBufferReference& bufferCopy)
@@ -905,7 +926,8 @@ void WebPageProxy::disableURLSchemeCheckInDataDetectors() const
 
 void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
 {
-    process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(process().fontdMachExtensionHandles(SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)), 0);
+    if (auto handles = process().fontdMachExtensionHandles())
+        process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(WTFMove(*handles)), 0);
 }
 
 NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceItem)
@@ -951,10 +973,9 @@ bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
-void WebPageProxy::insertMultiRepresentationHEIC(NSData *data)
+void WebPageProxy::insertMultiRepresentationHEIC(NSData *data, NSString *altText)
 {
-    send(Messages::WebPage::InsertMultiRepresentationHEIC(span(data)));
-
+    send(Messages::WebPage::InsertMultiRepresentationHEIC(span(data), altText));
 }
 
 #endif
@@ -1180,6 +1201,22 @@ void WebPageProxy::textReplacementSessionShowInformationForReplacementWithUUIDRe
 void WebPageProxy::textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementData::State state, const WTF::UUID& replacementUUID)
 {
     protectedPageClient()->textReplacementSessionUpdateStateForReplacementWithUUID(sessionUUID, state, replacementUUID);
+}
+
+void WebPageProxy::enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::EnableTextIndicatorStyleAfterElementWithID(elementID, uuid));
+}
+
+void WebPageProxy::enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID& uuid)
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::EnableTextIndicatorStyleForElementWithID(elementID, uuid));
 }
 
 #endif

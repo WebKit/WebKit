@@ -263,7 +263,7 @@ JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double value) cons
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
 
-    return jsString(vm, String(result.data(), length));
+    return jsString(vm, String({ result.data(), static_cast<size_t>(length) }));
 #endif
 }
 

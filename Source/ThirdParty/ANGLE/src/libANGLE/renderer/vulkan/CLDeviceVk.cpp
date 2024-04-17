@@ -7,7 +7,7 @@
 
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
 #include "libANGLE/renderer/vulkan/CLPlatformVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 #include "libANGLE/Display.h"
 #include "libANGLE/cl_utils.h"
@@ -15,7 +15,7 @@
 namespace rx
 {
 
-CLDeviceVk::CLDeviceVk(const cl::Device &device, RendererVk *renderer)
+CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
     : CLDeviceImpl(device), mRenderer(renderer)
 {
     const VkPhysicalDeviceProperties &props = mRenderer->getPhysicalDeviceProperties();
@@ -244,6 +244,38 @@ angle::Result CLDeviceVk::createSubDevices(const cl_device_partition_property *p
 {
     UNIMPLEMENTED();
     ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+}
+
+cl::WorkgroupSize CLDeviceVk::selectWorkGroupSize(const cl::NDRange &ndrange) const
+{
+    // Limit total work-group size to the Vulkan device's limit
+    const VkPhysicalDeviceProperties &props = mRenderer->getPhysicalDeviceProperties();
+    uint32_t maxSize = static_cast<uint32_t>(mInfoSizeT.at(cl::DeviceInfo::MaxWorkGroupSize));
+    maxSize          = std::min(maxSize, 64u);
+
+    bool keepIncreasing         = false;
+    cl::WorkgroupSize localSize = {1, 1, 1};
+    do
+    {
+        keepIncreasing = false;
+        for (cl_uint i = 0; i < ndrange.workDimensions; i++)
+        {
+            cl::WorkgroupSize newLocalSize = localSize;
+            newLocalSize[i] *= 2;
+
+            // TODO: Add support for non-uniform WGS
+            // http://anglebug.com/8631
+            if (ndrange.globalWorkSize[i] % newLocalSize[i] == 0 &&
+                newLocalSize[i] <= props.limits.maxComputeWorkGroupCount[i] &&
+                newLocalSize[0] * newLocalSize[1] * newLocalSize[2] <= maxSize)
+            {
+                localSize      = newLocalSize;
+                keepIncreasing = true;
+            }
+        }
+    } while (keepIncreasing);
+
+    return localSize;
 }
 
 }  // namespace rx

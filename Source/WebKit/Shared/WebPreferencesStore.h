@@ -35,7 +35,9 @@
 
 namespace WebKit {
 
-struct WebPreferencesStore : public CanMakeCheckedPtr {
+// FIXME: WebPreferencesStore should be RefCounted. See usage in WebProcessPool.cpp.
+
+struct WebPreferencesStore {
     using Value = std::variant<String, bool, uint32_t, double>;
     using ValueMap = MemoryCompactRobinHoodHashMap<String, Value>;
 
@@ -67,8 +69,8 @@ struct WebPreferencesStore : public CanMakeCheckedPtr {
     ValueMap m_values { };
     ValueMap m_overriddenDefaults { };
 
-    WebPreferencesStore isolatedCopy() const & { return { CanMakeCheckedPtr { }, crossThreadCopy(m_values), crossThreadCopy(m_overriddenDefaults) }; }
-    WebPreferencesStore isolatedCopy() && { return { CanMakeCheckedPtr { }, crossThreadCopy(WTFMove(m_values)), crossThreadCopy(WTFMove(m_overriddenDefaults)) }; }
+    WebPreferencesStore isolatedCopy() const & { return { crossThreadCopy(m_values), crossThreadCopy(m_overriddenDefaults) }; }
+    WebPreferencesStore isolatedCopy() && { return { crossThreadCopy(WTFMove(m_values)), crossThreadCopy(WTFMove(m_overriddenDefaults)) }; }
 
     static ValueMap& defaults();
 };

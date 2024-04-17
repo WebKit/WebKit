@@ -1,0 +1,20 @@
+<style>
+.flex-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-container {
+  display: grid;
+}
+
+.content {
+  height: 100%;
+  width: 50px;
+  background-color: red;
+}
+</style>
+<!-- height: 100% should not stretch parent grid --> 
+<div class=flex-container><div class=grid-container><div class=content></div></div></div>
+<div class=flex-container><div class=grid-container><div class=content style="padding: 50px; background-color: green;"></div></div></div>
+<div class=flex-container><div class=grid-container><div class=content style="border: 50px solid green; background-color: green;"></div></div></div>

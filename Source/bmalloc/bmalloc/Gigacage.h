@@ -66,7 +66,7 @@ constexpr bool hasCapacityToUseLargeGigacage = BOS_EFFECTIVE_ADDRESS_WIDTH > 36;
 
 #if GIGACAGE_ENABLED
 
-constexpr size_t primitiveGigacageSize = (hasCapacityToUseLargeGigacage ? 32 : 4) * bmalloc::Sizes::GB;
+constexpr size_t primitiveGigacageSize = (hasCapacityToUseLargeGigacage ? 64 : 16) * bmalloc::Sizes::GB;
 constexpr size_t maximumCageSizeReductionForSlide = hasCapacityToUseLargeGigacage ? 4 * bmalloc::Sizes::GB : bmalloc::Sizes::GB / 4;
 
 
@@ -132,7 +132,7 @@ BINLINE void* addressOfBasePtr(Kind kind)
     return &g_gigacageConfig.basePtrs[kind];
 }
 
-BINLINE size_t maxSize(Kind kind)
+BINLINE constexpr size_t maxSize(Kind kind)
 {
     switch (kind) {
     case Primitive:
@@ -149,7 +149,7 @@ BINLINE size_t alignment(Kind kind)
     return maxSize(kind);
 }
 
-BINLINE size_t mask(Kind kind)
+BINLINE constexpr size_t mask(Kind kind)
 {
     return gigacageSizeToMask(maxSize(kind));
 }

@@ -22,7 +22,7 @@
       'android-arm64-exp-pixel6': {  # android-arm64-pixel6 below for android-arm64-test
         'os_type': 'android',
         'mixins': [
-          'android_t',
+          'android_u',
           'oriole',
           'gpu-swarming-pool',
           'limited_capacity_bot',
@@ -238,6 +238,7 @@
           'mac_retina_amd_gpu_experimental',
         ],
         'test_suites': {
+          'gtest_tests': 'mac_amd_and_intel_gtests',
         },
       },
       'mac-exp-intel': {
@@ -246,6 +247,7 @@
           'mac_mini_intel_gpu_experimental',
         ],
         'test_suites': {
+          'gtest_tests': 'mac_amd_and_intel_gtests',
         },
       },
       'mac-exp-nvidia': {
@@ -281,6 +283,8 @@
           'win10_intel_uhd_630_experimental',
         ],
         'test_suites': {
+          'gtest_tests': 'win10_intel_gtests',
+          'isolated_scripts': 'isolated_scripts_group_common',
         },
       },
       'win10-x64-intel': {

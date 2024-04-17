@@ -24,75 +24,65 @@
 
     if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
     onload = async () => {
-        try {
-            let adapter0 = await navigator.gpu.requestAdapter(
-            {
-            }
-            );
+        let adapter0 = await navigator.gpu.requestAdapter(
+        {
+        }
+        );
 
-            let device0 = await adapter0.requestDevice(
-            {
-            requiredFeatures: [
-            'depth-clip-control',
-            'depth32float-stencil8',
-            'texture-compression-etc2',
-            'texture-compression-astc',
-            'shader-f16',
-            'rg11b10ufloat-renderable',
-            'bgra8unorm-storage'
-            ],
-            }
-            );
-            
-            let img0 = await imageWithData(2, 245, '#b84778');
+        let device0 = await adapter0.requestDevice(
+        {
+        requiredFeatures: [
+        'depth-clip-control',
+        'depth32float-stencil8',
+        'shader-f16',
+        'rg11b10ufloat-renderable',
+        'bgra8unorm-storage'
+        ],
+        }
+        );
+        
+        let img0 = await imageWithData(2, 245, '#b84778');
 
-            let texture3 = device0.createTexture(
-            {
-            size: {
-            width: 5209,
-            height: 5392,
-            depthOrArrayLayers: 1,
-            },
-            mipLevelCount: 7,
-            sampleCount: 1,
-            dimension: '3d',
-            format: 'astc-10x6-unorm',
-            usage: GPUTextureUsage.COPY_SRC,
-            viewFormats: [
-            'eac-r11snorm',
-            'rg8unorm',
-            'rg32float',
-            'eac-rg11snorm',
-            'rg16sint',
-            'rg32sint',
-            'etc2-rgba8unorm'
-            ],
-            }
-            );
-            
-            device0.queue.copyExternalImageToTexture(
-            {
-            source: img0,
-            origin: [
+        let texture3 = device0.createTexture(
+        {
+        size: {
+        width: 5209,
+        height: 5392,
+        depthOrArrayLayers: 1,
+        },
+        mipLevelCount: 7,
+        sampleCount: 1,
+        dimension: '3d',
+        format: 'rgba16float',
+        usage: GPUTextureUsage.COPY_SRC,
+        viewFormats: [
+        'rgb9e5ufloat'
+        ],
+        }
+        );
+        
+        device0.queue.copyExternalImageToTexture(
+        {
+        source: img0,
+        origin: [
 
-            ],
-            },
-            {
-            texture: texture3,
-            mipLevel: 6208,
-            origin: [
-            2518,
-            3374
-            ],
-            aspect: 'depth-only',
-            colorSpace: 'srgb',
-            premultipliedAlpha: true,
-            },
-            [
+        ],
+        },
+        {
+        texture: texture3,
+        mipLevel: 6208,
+        origin: [
+        2518,
+        3374
+        ],
+        aspect: 'depth-only',
+        colorSpace: 'srgb',
+        premultipliedAlpha: true,
+        },
+        [
 
-            ]
-            );
-        } catch {}
+        ]
+        );
         if (window.testRunner) { testRunner.notifyDone() }
     };
 </script>

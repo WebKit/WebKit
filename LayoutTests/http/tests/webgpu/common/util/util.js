@@ -1,7 +1,6 @@
 /**
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
 **/import { Float16Array } from '../../external/petamoriken/float16/float16.js';import { SkipTestCase } from '../framework/fixture.js';import { globalTestConfig } from '../framework/test_config.js';
-import { Logger } from '../internal/logging/logger.js';
 
 import { keysOf } from './data_tables.js';
 import { timeout } from './timeout.js';
@@ -24,7 +23,7 @@ export class ErrorWithExtra extends Error {
     super(message);
 
     const oldExtras = baseOrMessage instanceof ErrorWithExtra ? baseOrMessage.extra : {};
-    this.extra = Logger.globalDebugMode ?
+    this.extra = globalTestConfig.enableDebugLogs ?
     { ...oldExtras, ...newExtra() } :
     { omitted: 'pass ?debug=1' };
   }

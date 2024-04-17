@@ -41,7 +41,7 @@ BrowsingContextGroup::~BrowsingContextGroup() = default;
 
 Ref<FrameProcess> BrowsingContextGroup::ensureProcessForDomain(const WebCore::RegistrableDomain& domain, WebProcessProxy& process, const WebPreferences& preferences)
 {
-    if (preferences.siteIsolationEnabled() || preferences.processSwapOnCrossSiteWindowOpenEnabled()) {
+    if (!domain.isEmpty() && (preferences.siteIsolationEnabled() || preferences.processSwapOnCrossSiteWindowOpenEnabled())) {
         if (auto* existingProcess = processForDomain(domain)) {
             ASSERT(existingProcess->process().coreProcessIdentifier() == process.coreProcessIdentifier());
             return *existingProcess;
@@ -56,7 +56,7 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForConnection(IPC::Connecti
         for (auto& process : m_processMap.values()) {
             if (!process)
                 continue;
-            if (process->process().connection() == &connection)
+            if (process->process().hasConnection(connection))
                 return *process;
         }
     }
@@ -76,7 +76,7 @@ FrameProcess* BrowsingContextGroup::processForDomain(const WebCore::RegistrableD
 void BrowsingContextGroup::addFrameProcess(FrameProcess& process)
 {
     auto& domain = process.domain();
-    ASSERT(!m_processMap.get(domain) || m_processMap.get(domain)->process().state() == WebProcessProxy::State::Terminated || m_processMap.get(domain) == &process);
+    ASSERT(domain.isEmpty() || !m_processMap.get(domain) || m_processMap.get(domain)->process().state() == WebProcessProxy::State::Terminated || m_processMap.get(domain) == &process);
     m_processMap.set(domain, process);
     for (auto& page : m_pages) {
         if (domain == WebCore::RegistrableDomain(URL(page.currentURL())))
@@ -142,7 +142,6 @@ void BrowsingContextGroup::addPage(WebPageProxy& page)
 
 void BrowsingContextGroup::removePage(WebPageProxy& page)
 {
-    ASSERT(m_pages.contains(page));
     m_pages.remove(page);
 
     m_remotePages.take(page);
@@ -203,6 +202,12 @@ void BrowsingContextGroup::transitionPageToRemotePage(WebPageProxy& page, const 
     }
 #endif
     set.add(WTFMove(newRemotePage));
+}
+
+bool BrowsingContextGroup::hasRemotePages(const WebPageProxy& page)
+{
+    auto it = m_remotePages.find(page);
+    return it != m_remotePages.end() && !it->value.isEmpty();
 }
 
 } // namespace WebKit

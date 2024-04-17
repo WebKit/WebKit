@@ -209,10 +209,12 @@ const double* findDoubleAlignedImpl(const double* pointer, double target, size_t
 }
 
 SUPPRESS_ASAN
-const LChar* find8NonASCIIAlignedImpl(const LChar* pointer, size_t length)
+const LChar* find8NonASCIIAlignedImpl(std::span<const LChar> data)
 {
     constexpr uint8x16_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
+    auto* pointer = data.data();
+    auto length = data.size();
     ASSERT(length);
     ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
     ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
@@ -237,8 +239,10 @@ const LChar* find8NonASCIIAlignedImpl(const LChar* pointer, size_t length)
 }
 
 SUPPRESS_ASAN
-const UChar* find16NonASCIIAlignedImpl(const UChar* pointer, size_t length)
+const UChar* find16NonASCIIAlignedImpl(std::span<const UChar> data)
 {
+    auto* pointer = data.data();
+    auto length = data.size();
     ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0x1));
 
     constexpr uint16x8_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7 };

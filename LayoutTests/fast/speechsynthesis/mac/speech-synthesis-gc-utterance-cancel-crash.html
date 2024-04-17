@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<div id="console"></div>
+
+<script>
+
+    description("This tests that there isn't a crash if the utterance object is garbage-collected before speaking finishes and speaking is subsequently canceled");
+
+    window.jsTestIsAsync = true;
+
+    speechSynthesis.speak(new SpeechSynthesisUtterance("test"));
+    gc();
+
+    window.setInterval(function() {
+        speechSynthesis.cancel()
+		speechSynthesis.cancel()
+        if (!speechSynthesis.speaking)
+            finishJSTest();
+    }, 10);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

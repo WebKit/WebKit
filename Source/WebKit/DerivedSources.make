@@ -577,6 +577,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/CoreIPCCFCharacterSet.serialization.in \
 	Shared/Cocoa/DataDetectionResult.serialization.in \
 	Shared/Cocoa/InsertTextOptions.serialization.in \
+	Shared/Cocoa/RemoteObjectInvocation.serialization.in \
 	Shared/Cocoa/RevealItem.serialization.in \
 	Shared/Cocoa/SharedCARingBuffer.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
@@ -896,6 +897,7 @@ all : module.private.modulemap
 ifeq ($(USE_INTERNAL_SDK),YES)
 WEBKIT_ADDITIONS_SWIFT_FILES = \
 	WKWebView+TextExtraction.swift \
+	TextStyleManager.swift \
 #
 
 $(WEBKIT_ADDITIONS_SWIFT_FILES): %.swift : %.swift.in

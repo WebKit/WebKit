@@ -32,7 +32,7 @@
 
 namespace WTF {
 
-void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length)
+void cryptographicallyRandomValuesFromOS(std::span<uint8_t> buffer)
 {
     static LazyNeverDestroyed<RandomDevice> device;
     static std::once_flag onceFlag;
@@ -41,7 +41,7 @@ void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length)
         [] {
             device.construct();
         });
-    device.get().cryptographicallyRandomValues(buffer, length);
+    device.get().cryptographicallyRandomValues(buffer);
 }
 
 }

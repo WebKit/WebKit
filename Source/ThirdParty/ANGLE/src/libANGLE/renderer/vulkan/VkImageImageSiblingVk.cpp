@@ -10,7 +10,7 @@
 
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
@@ -43,7 +43,7 @@ egl::Error VkImageImageSiblingVk::initialize(const egl::Display *display)
 
 angle::Result VkImageImageSiblingVk::initImpl(DisplayVk *displayVk)
 {
-    RendererVk *renderer = displayVk->getRenderer();
+    vk::Renderer *renderer = displayVk->getRenderer();
 
     const angle::FormatID formatID = vk::GetFormatIDFromVkFormat(mVkImageInfo.format);
     ANGLE_VK_CHECK(displayVk, formatID != angle::FormatID::NONE, VK_ERROR_FORMAT_NOT_SUPPORTED);
@@ -73,7 +73,8 @@ angle::Result VkImageImageSiblingVk::initImpl(DisplayVk *displayVk)
     constexpr bool kIsRobustInitEnabled = false;
     mImage                              = new vk::ImageHelper();
     mImage->init2DWeakReference(displayVk, mVkImage.release(), getSize(), false, intendedFormatID,
-                                actualImageFormatID, mVkImageInfo.usage, 1, kIsRobustInitEnabled);
+                                actualImageFormatID, mVkImageInfo.flags, mVkImageInfo.usage, 1,
+                                kIsRobustInitEnabled);
 
     return angle::Result::Continue;
 }
@@ -125,7 +126,7 @@ vk::ImageHelper *VkImageImageSiblingVk::getImage() const
     return mImage;
 }
 
-void VkImageImageSiblingVk::release(RendererVk *renderer)
+void VkImageImageSiblingVk::release(vk::Renderer *renderer)
 {
     if (mImage != nullptr)
     {

@@ -42,6 +42,8 @@ class GCGLANGLELayer;
 
 namespace WebCore {
 
+class GLFence;
+
 class GraphicsContextGLGBM : public GraphicsContextGLANGLE {
 public:
     static RefPtr<GraphicsContextGLGBM> create(WebCore::GraphicsContextGLAttributes&&);
@@ -67,7 +69,7 @@ public:
     bool platformInitializeExtensions() override;
 
     bool reshapeDrawingBuffer() override;
-    bool createFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) override;
+    bool addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) override;
     void enableFoveation(GCGLuint) override;
     void disableFoveation() override;
 
@@ -106,6 +108,7 @@ private:
 
     EGLExtensions m_eglExtensions;
     Swapchain m_swapchain;
+    std::unique_ptr<GLFence> m_frameFence;
 
 #if USE(NICOSIA)
     friend class Nicosia::GCGLANGLELayer;

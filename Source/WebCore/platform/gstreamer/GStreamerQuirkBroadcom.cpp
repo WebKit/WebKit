@@ -37,7 +37,7 @@ GStreamerQuirkBroadcom::GStreamerQuirkBroadcom()
     m_disallowedWebAudioDecoders = { "brcmaudfilter"_s };
 }
 
-bool GStreamerQuirkBroadcom::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
+void GStreamerQuirkBroadcom::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
 {
     if (g_str_has_prefix(GST_ELEMENT_NAME(element), "brcmaudiosink"))
         g_object_set(G_OBJECT(element), "async", TRUE, nullptr);
@@ -48,14 +48,12 @@ bool GStreamerQuirkBroadcom::configureElement(GstElement* element, const OptionS
     }
 
     if (!characteristics.contains(ElementRuntimeCharacteristics::IsMediaStream))
-        return true;
+        return;
 
     if (!g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstBrcmPCMSink") && gstObjectHasProperty(element, "low_latency")) {
         GST_DEBUG("Set 'low_latency' in brcmpcmsink");
         g_object_set(element, "low_latency", TRUE, "low_latency_max_queued_ms", 60, nullptr);
     }
-
-    return true;
 }
 
 std::optional<bool> GStreamerQuirkBroadcom::isHardwareAccelerated(GstElementFactory* factory)

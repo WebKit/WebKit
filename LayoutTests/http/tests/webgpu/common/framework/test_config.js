@@ -28,11 +28,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 export const globalTestConfig = {
+  enableDebugLogs: false,
   maxSubcasesInFlight: 500,
   testHeartbeatCallback: () => {},
   noRaceWithRejectOnTimeout: false,
   unrollConstEvalLoops: false,
   compatibility: false,
-  forceFallbackAdapter: false
+  forceFallbackAdapter: false,
+  logToWebSocket: false
 };

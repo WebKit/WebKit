@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include "CompilationResult.h"
+#include "WasmCallee.h"
 #include "WasmEntryPlan.h"
 #include "WasmModuleInformation.h"
 #include "WasmTierUpCount.h"

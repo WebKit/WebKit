@@ -192,7 +192,7 @@ public: \
     \
     exportMacro static void freeAfterDestruction(void*); \
     \
-    using webkitFastMalloced = int; \
+    using WTFIsFastAllocated = int; \
 private: \
     using __makeBisoMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
@@ -218,7 +218,7 @@ public: \
     \
     exportMacro static void freeAfterDestruction(void*); \
     \
-    using webkitFastMalloced = int; \
+    using WTFIsFastAllocated = int; \
 private: \
     using __makeBisoMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 

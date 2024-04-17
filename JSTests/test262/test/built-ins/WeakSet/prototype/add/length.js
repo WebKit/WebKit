@@ -11,11 +11,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  WeakSet.prototype.add.length, 1,
-  'The value of `WeakSet.prototype.add.length` is `1`'
-);
-
-verifyNotEnumerable(WeakSet.prototype.add, 'length');
-verifyNotWritable(WeakSet.prototype.add, 'length');
-verifyConfigurable(WeakSet.prototype.add, 'length');
+verifyProperty(WeakSet.prototype.add, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

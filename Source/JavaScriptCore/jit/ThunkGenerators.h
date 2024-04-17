@@ -95,5 +95,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> toIntegerOrInfinityThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> toLengthThunkGenerator(VM&);
 
+#if USE(JSVALUE64)
+MacroAssemblerCodeRef<JITThunkPtrTag> objectIsThunkGenerator(VM&);
+#endif
+
 } // namespace JSC
 #endif // ENABLE(JIT)

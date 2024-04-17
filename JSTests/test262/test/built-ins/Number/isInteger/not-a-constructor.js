@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Number.isInteger), false, 'isConstructor(Number.i
 
 assert.throws(TypeError, () => {
   new Number.isInteger();
-}, '`new Number.isInteger()` throws TypeError');
+});
 

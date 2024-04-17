@@ -77,6 +77,7 @@ using BorderEdges = RectEdges<BorderEdge>;
 
 class RenderBoxModelObject : public RenderLayerModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderBoxModelObject);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBoxModelObject);
 public:
     virtual ~RenderBoxModelObject();
     

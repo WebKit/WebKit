@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.toLocaleUpperCase.name, "toLocaleUpperCase");
-
-verifyNotEnumerable(String.prototype.toLocaleUpperCase, "name");
-verifyNotWritable(String.prototype.toLocaleUpperCase, "name");
-verifyConfigurable(String.prototype.toLocaleUpperCase, "name");
+verifyProperty(String.prototype.toLocaleUpperCase, "name", {
+  value: "toLocaleUpperCase",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

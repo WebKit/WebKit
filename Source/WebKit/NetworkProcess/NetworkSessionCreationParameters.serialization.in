@@ -98,6 +98,7 @@ enum class WebKit::AllowsCellularAccess : bool;
     WebKit::SandboxExtensionHandle serviceWorkerRegistrationDirectoryExtensionHandle;
     bool serviceWorkerProcessTerminationDelayEnabled;
     bool inspectionForServiceWorkersAllowed;
+    bool storageSiteValidationEnabled;
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     bool isDeclarativeWebPushEnabled;
 #endif

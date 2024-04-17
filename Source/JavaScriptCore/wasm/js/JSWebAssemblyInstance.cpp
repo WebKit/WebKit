@@ -192,8 +192,8 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* 
     {
         IdentifierSet specifiers;
         for (auto& import : moduleInformation.imports) {
-            Identifier moduleName = Identifier::fromString(vm, String::fromUTF8(import.module));
-            Identifier fieldName = Identifier::fromString(vm, String::fromUTF8(import.field));
+            auto moduleName = Identifier::fromString(vm, makeAtomString(import.module));
+            auto fieldName = Identifier::fromString(vm, makeAtomString(import.field));
             auto result = specifiers.add(moduleName.impl());
             if (result.isNewEntry)
                 moduleRecord->appendRequestedModule(moduleName, nullptr);

@@ -463,7 +463,7 @@ static CString convertWebViewMainResourceDataToCString(WebViewTest* test)
 {
     size_t mainResourceDataSize = 0;
     const char* mainResourceData = test->mainResourceData(mainResourceDataSize);
-    return CString(mainResourceData, mainResourceDataSize);
+    return std::span { mainResourceData, mainResourceDataSize };
 }
 
 static void assertThatUserAgentIsSentInHeaders(WebViewTest* test, const CString& userAgent)

@@ -26,7 +26,7 @@
 #include "DOMException.h"
 #include "JSDOMException.h"
 #include "JSDOMPromiseDeferred.h"
-#include "JSLocalDOMWindow.h"
+#include "JSDOMWindow.h"
 #include "LocalDOMWindow.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/ErrorHandlingScope.h>
@@ -50,6 +50,15 @@ void reportException(JSGlobalObject* lexicalGlobalObject, JSValue exceptionValue
     }
 
     reportException(lexicalGlobalObject, exception, cachedScript, fromModule);
+}
+
+void reportExceptionIfJSDOMWindow(JSC::JSGlobalObject* globalObject, JSC::JSValue exception)
+{
+    // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a Page.
+    if (!globalObject->inherits<JSDOMWindow>())
+        return;
+
+    reportException(globalObject, exception);
 }
 
 String retrieveErrorMessageWithoutName(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue exception, CatchScope& catchScope)
@@ -107,8 +116,9 @@ void reportException(JSGlobalObject* lexicalGlobalObject, JSC::Exception* except
     vm.clearLastException();
 
     auto* globalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
-    if (auto* window = jsDynamicCast<JSLocalDOMWindow*>(globalObject)) {
-        if (!window->wrapped().isCurrentlyDisplayedInFrame())
+    if (auto* window = jsDynamicCast<JSDOMWindow*>(globalObject)) {
+        RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(window->wrapped());
+        if (!localDOMWindow || !localDOMWindow->isCurrentlyDisplayedInFrame())
             return;
     }
 

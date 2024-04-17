@@ -460,7 +460,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
             currentItemIndex = needsLayoutRange.startIndex() + placedInlineItemCount;
         }
         // Looks like we've run out of content.
-        ASSERT_UNUSED(resumedFloatCount, placedInlineItemCount || resumedFloatCount);
+        ASSERT(placedInlineItemCount || resumedFloatCount);
     };
     layoutInlineAndFloatContent();
 
@@ -470,7 +470,10 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
         if (!placedInlineItemCount)
             return;
 
-        if (placedInlineItemCount == m_placedFloats.size() || !lineContent.partialTrailingContentLength) {
+        // Layout range already includes "suspended" floats from previous line(s). See layoutPreviouslySuspendedFloats above for details.
+        ASSERT(m_placedFloats.size() >= resumedFloatCount);
+        auto onlyFloatContentPlaced = placedInlineItemCount == m_placedFloats.size() - resumedFloatCount;
+        if (onlyFloatContentPlaced || !lineContent.partialTrailingContentLength) {
             lineContent.range.end = { needsLayoutRange.startIndex() + placedInlineItemCount, { } };
             return;
         }

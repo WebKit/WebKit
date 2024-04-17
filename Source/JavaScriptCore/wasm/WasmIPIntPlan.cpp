@@ -85,7 +85,7 @@ void IPIntPlan::compileFunction(uint32_t functionIndex)
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
 
     m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
-    Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileResult = parseAndCompileMetadata(function.data.data(), function.data.size(), signature, m_moduleInformation.get(), functionIndex);
+    auto parseAndCompileResult = parseAndCompileMetadata(function.data, signature, m_moduleInformation.get(), functionIndex);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
@@ -165,7 +165,7 @@ void IPIntPlan::didCompleteCompilation()
             CCallHelpers jit;
             // The LLInt always bounds checks
             MemoryMode mode = MemoryMode::BoundsChecking;
-            Ref<JSEntrypointCallee> callee = JSEntrypointCallee::create();
+            auto callee = JSEntrypointJITCallee::create();
             std::unique_ptr<InternalFunction> function = createJSToWasmWrapper(jit, callee.get(), m_callees[functionIndex].ptr(), signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), mode, functionIndex);
 
             LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);

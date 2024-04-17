@@ -2259,6 +2259,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 || node->isBinaryUseKind(StringIdentUse)
                 || node->isBinaryUseKind(SymbolUse)
                 || node->isBinaryUseKind(ObjectUse)
+                || node->isBinaryUseKind(OtherUse)
+                || node->isBinaryUseKind(OtherUse, UntypedUse)
+                || node->isBinaryUseKind(UntypedUse, OtherUse)
+                || node->isBinaryUseKind(MiscUse)
                 || node->isBinaryUseKind(MiscUse, UntypedUse)
                 || node->isBinaryUseKind(UntypedUse, MiscUse)
                 || node->isBinaryUseKind(StringIdentUse, NotStringVarUse)
@@ -2339,6 +2343,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case AtomicsStore:
     case AtomicsSub:
     case AtomicsXor: {
+        ArrayMode arrayMode = node->arrayMode();
         if (node->op() == GetByVal || node->op() == GetByValMegamorphic) {
             auto foldGetByValOnConstantProperty = [&] (Edge& arrayEdge, Edge& indexEdge) {
                 // FIXME: We can expand this for non x86 environments.
@@ -2374,7 +2379,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 if (structureIDEarly.isNuked())
                     return false;
 
-                if (node->arrayMode().arrayClass() == Array::OriginalCopyOnWriteArray) {
+                if (arrayMode.arrayClass() == Array::OriginalCopyOnWriteArray) {
 
                     WTF::loadLoadFence();
                     Butterfly* butterfly = array->butterfly();
@@ -2386,11 +2391,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                         return false;
 
                     Structure* structure = structureIDLate.decode();
-                    switch (node->arrayMode().type()) {
+                    switch (arrayMode.type()) {
                     case Array::Int32:
                     case Array::Contiguous:
                     case Array::Double:
-                        if (structure->indexingMode() != (toIndexingShape(node->arrayMode().type()) | CopyOnWrite | IsArray))
+                        if (structure->indexingMode() != (toIndexingShape(arrayMode.type()) | CopyOnWrite | IsArray))
                             return false;
                         break;
                     default:
@@ -2409,9 +2414,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                         return true;
                     }
 
-                    if (node->arrayMode().isOutOfBounds()) {
+                    if (arrayMode.isOutOfBounds()) {
                         if (m_graph.isWatchingArrayPrototypeChainIsSaneWatchpoint(node)) {
-                            if (node->arrayMode().type() == Array::Double && node->arrayMode().isOutOfBoundsSaneChain() && !(node->flags() & NodeBytecodeUsesAsOther))
+                            if (arrayMode.type() == Array::Double && arrayMode.isOutOfBoundsSaneChain() && !(node->flags() & NodeBytecodeUsesAsOther))
                                 setConstant(node, jsNumber(PNaN));
                             else
                                 setConstant(node, jsUndefined());
@@ -2421,7 +2426,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     return false;
                 }
 
-                if (node->arrayMode().type() == Array::ArrayStorage || node->arrayMode().type() == Array::SlowPutArrayStorage) {
+                if (arrayMode.type() == Array::ArrayStorage || arrayMode.type() == Array::SlowPutArrayStorage) {
                     JSValue value;
                     {
                         // ArrayStorage's Butterfly can be half-broken state.
@@ -2470,7 +2475,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             };
 
             bool didFold = false;
-            switch (node->arrayMode().type()) {
+            switch (arrayMode.type()) {
             case Array::Generic:
             case Array::Int32:
             case Array::Double:
@@ -2478,7 +2483,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             case Array::ArrayStorage:
             case Array::SlowPutArrayStorage:
                 if (foldGetByValOnConstantProperty(m_graph.child(node, 0), m_graph.child(node, 1))) {
-                    if (node->arrayMode().isEffectfulOutOfBounds())
+                    if (arrayMode.isEffectfulOutOfBounds())
                         didFoldClobberWorld();
                     didFold = true;
                 }
@@ -2490,7 +2495,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (didFold)
                 break;
 
-            if (m_graph.child(node, 0).useKind() == ObjectUse && node->arrayMode().type() == Array::Generic) {
+            if (m_graph.child(node, 0).useKind() == ObjectUse && arrayMode.type() == Array::Generic) {
                 AbstractValue& property = forNode(m_graph.child(node, 1));
                 if (JSValue constant = property.value()) {
                     if (constant.isString()) {
@@ -2521,7 +2526,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // the returned values rely on the typed array types. On the other hand, Atomics.store's
             // returned value is input value. This means that Atomics.store + Uint8Array can return doubles
             // while the typed array is Uint8Array (the above one is the example).
-            switch (node->arrayMode().type()) {
+            switch (arrayMode.type()) {
             case Array::Generic:
                 clobberWorld();
                 makeHeapTopForNode(node);
@@ -2548,7 +2553,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
-        switch (node->arrayMode().type()) {
+        switch (arrayMode.type()) {
         case Array::SelectUsingPredictions:
         case Array::Unprofiled:
         case Array::SelectUsingArguments:
@@ -2571,7 +2576,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             makeHeapTopForNode(node);
             break;
         case Array::String:
-            if (node->arrayMode().isOutOfBounds()) {
+            if (arrayMode.isOutOfBounds()) {
                 // If the watchpoint was still valid we could totally set this to be
                 // SpecString | SpecOther. Except that we'd have to be careful. If we
                 // tested the watchpoint state here then it could change by the time
@@ -2589,26 +2594,26 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         case Array::DirectArguments:
         case Array::ScopedArguments:
-            if (node->arrayMode().isOutOfBounds())
+            if (arrayMode.isOutOfBounds())
                 clobberWorld();
             makeHeapTopForNode(node);
             break;
         case Array::Int32:
-            if (node->arrayMode().isEffectfulOutOfBounds()) {
+            if (arrayMode.isEffectfulOutOfBounds()) {
                 clobberWorld();
                 makeHeapTopForNode(node);
-            } else if (node->arrayMode().isOutOfBoundsSaneChain())
+            } else if (arrayMode.isOutOfBoundsSaneChain())
                 setNonCellTypeForNode(node, SpecInt32Only | SpecOther);
             else
                 setNonCellTypeForNode(node, SpecInt32Only);
             break;
         case Array::Double:
-            if (node->arrayMode().isEffectfulOutOfBounds()) {
+            if (arrayMode.isEffectfulOutOfBounds()) {
                 clobberWorld();
                 makeHeapTopForNode(node);
-            } else if (node->arrayMode().isInBoundsSaneChain())
+            } else if (arrayMode.isInBoundsSaneChain())
                 setNonCellTypeForNode(node, SpecBytecodeDouble);
-            else if (node->arrayMode().isOutOfBoundsSaneChain()) {
+            else if (arrayMode.isOutOfBoundsSaneChain()) {
                 if (!!(node->flags() & NodeBytecodeUsesAsOther))
                     setNonCellTypeForNode(node, SpecBytecodeDouble | SpecOther);
                 else
@@ -2619,41 +2624,73 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Array::Contiguous:
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
-            if (node->arrayMode().isEffectfulOutOfBounds())
+            if (arrayMode.isEffectfulOutOfBounds())
                 clobberWorld();
             makeHeapTopForNode(node);
             break;
         case Array::Int8Array:
-            setNonCellTypeForNode(node, SpecInt32Only);
+            if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                setNonCellTypeForNode(node, SpecInt32Only | SpecOther);
+            else
+                setNonCellTypeForNode(node, SpecInt32Only);
             break;
         case Array::Int16Array:
-            setNonCellTypeForNode(node, SpecInt32Only);
+            if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                setNonCellTypeForNode(node, SpecInt32Only | SpecOther);
+            else
+                setNonCellTypeForNode(node, SpecInt32Only);
             break;
         case Array::Int32Array:
-            setNonCellTypeForNode(node, SpecInt32Only);
+            if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                setNonCellTypeForNode(node, SpecInt32Only | SpecOther);
+            else
+                setNonCellTypeForNode(node, SpecInt32Only);
             break;
         case Array::Uint8Array:
-            setNonCellTypeForNode(node, SpecInt32Only);
+            if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                setNonCellTypeForNode(node, SpecInt32Only | SpecOther);
+            else
+                setNonCellTypeForNode(node, SpecInt32Only);
             break;
         case Array::Uint8ClampedArray:
-            setNonCellTypeForNode(node, SpecInt32Only);
+            if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                setNonCellTypeForNode(node, SpecInt32Only | SpecOther);
+            else
+                setNonCellTypeForNode(node, SpecInt32Only);
             break;
         case Array::Uint16Array:
-            setNonCellTypeForNode(node, SpecInt32Only);
-            break;
-        case Array::Uint32Array:
-            if (node->shouldSpeculateInt32())
-                setNonCellTypeForNode(node, SpecInt32Only);
-            else if (node->shouldSpeculateInt52())
-                setNonCellTypeForNode(node, SpecInt52Any);
+            if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                setNonCellTypeForNode(node, SpecInt32Only | SpecOther);
             else
-                setNonCellTypeForNode(node, SpecAnyIntAsDouble);
+                setNonCellTypeForNode(node, SpecInt32Only);
             break;
+        case Array::Uint32Array: {
+            if (node->shouldSpeculateInt32()) {
+                if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                    setNonCellTypeForNode(node, SpecInt32Only | SpecOther);
+                else
+                    setNonCellTypeForNode(node, SpecInt32Only);
+            } else if (!(node->op() == GetByVal && arrayMode.isOutOfBounds()) && node->shouldSpeculateInt52())
+                setNonCellTypeForNode(node, SpecInt52Any);
+            else {
+                if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                    setNonCellTypeForNode(node, SpecAnyIntAsDouble | SpecOther);
+                else
+                    setNonCellTypeForNode(node, SpecAnyIntAsDouble);
+            }
+            break;
+        }
         case Array::Float32Array:
-            setNonCellTypeForNode(node, SpecFullDouble);
+            if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                setNonCellTypeForNode(node, SpecBytecodeDouble | SpecOther);
+            else
+                setNonCellTypeForNode(node, SpecFullDouble);
             break;
         case Array::Float64Array:
-            setNonCellTypeForNode(node, SpecFullDouble);
+            if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                setNonCellTypeForNode(node, SpecBytecodeDouble | SpecOther);
+            else
+                setNonCellTypeForNode(node, SpecFullDouble);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -3591,7 +3628,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetCallee:
         if (FunctionExecutable* executable = jsDynamicCast<FunctionExecutable*>(m_codeBlock->ownerExecutable())) {
             if (JSFunction* function = executable->singleton().inferredValue()) {
-                m_graph.watchpoints().addLazily(executable);
+                m_graph.watchpoints().addLazily(m_graph, executable);
                 setConstant(node, *m_graph.freeze(function));
                 break;
             }
@@ -3843,9 +3880,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         makeHeapTopForNode(node);
         break;
             
-    case GetArrayLength: {
-        if (JSValue constant = forNode(node->child1()).m_value) {
-            JSArrayBufferView* view = m_graph.tryGetFoldableView(constant, node->arrayMode());
+    case GetArrayLength:
+    case GetUndetachedTypeArrayLength: {
+        ArrayMode arrayMode = node->arrayMode();
+        AbstractValue& abstractValue = forNode(node->child1());
+        if (JSValue constant = abstractValue.m_value) {
+            JSArrayBufferView* view = m_graph.tryGetFoldableView(constant, arrayMode);
             if (view && !view->isResizableOrGrowableShared() && isInBounds<int32_t>(view->length())) {
                 setConstant(node, jsNumber(view->length()));
                 break;
@@ -3856,6 +3896,32 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
         }
+
+        if (node->op() == GetArrayLength) {
+            if (arrayMode.type() != Array::AnyTypedArray && arrayMode.isSomeTypedArrayView() && !arrayMode.mayBeResizableOrGrowableSharedTypedArray()) {
+                if ((abstractValue.m_type && !(abstractValue.m_type & ~SpecObject)) && abstractValue.m_structure.isFinite()) {
+                    bool canFold = !abstractValue.m_structure.isClear();
+                    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                    abstractValue.m_structure.forEach([&](RegisteredStructure structure) {
+                        if (!arrayMode.structureWouldPassArrayModeFiltering(structure.get())) {
+                            canFold = false;
+                            return;
+                        }
+
+                        if (structure->globalObject() != globalObject) {
+                            canFold = false;
+                            return;
+                        }
+                    });
+
+                    if (canFold) {
+                        if (m_graph.isWatchingArrayBufferDetachWatchpoint(node))
+                            m_state.setShouldTryConstantFolding(true);
+                    }
+                }
+            }
+        }
+
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
     }

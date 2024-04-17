@@ -44,7 +44,7 @@ class InlineInvalidation {
 public:
     InlineInvalidation(InlineDamage&, const InlineItemList&, const InlineDisplay::Content&);
 
-    void styleChanged(const Box&, const RenderStyle& oldStyle);
+    bool styleWillChange(const Box&, const RenderStyle& newStyle);
 
     bool textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset = { });
     bool textWillBeRemoved(const InlineTextBox&, std::optional<size_t> offset = { });
@@ -52,7 +52,7 @@ public:
     bool inlineLevelBoxInserted(const Box&);
     bool inlineLevelBoxWillBeRemoved(const Box&);
 
-    void restartForPagination(size_t lineIndex, LayoutUnit pageTopAdjustment);
+    bool restartForPagination(size_t lineIndex, LayoutUnit pageTopAdjustment);
 
 private:
     enum class ShouldApplyRangeLayout : bool { No, Yes };

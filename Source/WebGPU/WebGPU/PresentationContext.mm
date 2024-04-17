@@ -128,3 +128,8 @@ void wgpuSwapChainPresent(WGPUSwapChain swapChain)
 {
     WebGPU::fromAPI(swapChain).present();
 }
+
+RetainPtr<CGImageRef> wgpuSwapChainGetTextureAsNativeImage(WGPUSwapChain swapChain, uint32_t bufferIndex)
+{
+    return WebGPU::fromAPI(swapChain).getTextureAsNativeImage(bufferIndex);
+}

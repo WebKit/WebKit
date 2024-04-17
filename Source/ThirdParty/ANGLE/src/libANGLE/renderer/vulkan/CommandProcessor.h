@@ -23,7 +23,6 @@
 
 namespace rx
 {
-class RendererVk;
 class CommandProcessor;
 
 namespace vk
@@ -150,7 +149,8 @@ class CommandProcessorTask
     void initRenderPassProcessCommands(ProtectionType protectionType,
                                        egl::ContextPriority priority,
                                        RenderPassCommandBufferHelper *commandBuffer,
-                                       const RenderPass *renderPass);
+                                       const RenderPass *renderPass,
+                                       VkFramebuffer framebufferOverride);
 
     void initPresent(egl::ContextPriority priority,
                      const VkPresentInfoKHR &presentInfo,
@@ -196,6 +196,7 @@ class CommandProcessorTask
     const VkPresentInfoKHR &getPresentInfo() const { return mPresentInfo; }
     SwapchainStatus *getSwapchainStatus() const { return mSwapchainStatus; }
     const RenderPass &getRenderPass() const { return mRenderPass; }
+    VkFramebuffer getFramebufferOverride() const { return mFramebufferOverride; }
     OutsideRenderPassCommandBufferHelper *getOutsideRenderPassCommandBuffer() const
     {
         return mOutsideRenderPassCommandBuffer;
@@ -218,6 +219,7 @@ class CommandProcessorTask
     OutsideRenderPassCommandBufferHelper *mOutsideRenderPassCommandBuffer;
     RenderPassCommandBufferHelper *mRenderPassCommandBuffer;
     RenderPass mRenderPass;
+    VkFramebuffer mFramebufferOverride;
 
     // Flush data
     VkSemaphore mSemaphore;
@@ -358,7 +360,7 @@ class CommandQueue : angle::NonCopyable
     angle::Result init(Context *context, const DeviceQueueMap &queueMap);
     void destroy(Context *context);
 
-    void handleDeviceLost(RendererVk *renderer);
+    void handleDeviceLost(Renderer *renderer);
 
     // These public APIs are inherently thread safe. Thread unsafe methods must be protected methods
     // that are only accessed via ThreadSafeCommandQueue API.
@@ -401,7 +403,7 @@ class CommandQueue : angle::NonCopyable
                                                             const ResourceUse &use,
                                                             uint64_t timeout,
                                                             VkResult *result);
-    bool isBusy(RendererVk *renderer) const;
+    bool isBusy(Renderer *renderer) const;
 
     angle::Result submitCommands(Context *context,
                                  ProtectionType protectionType,
@@ -456,6 +458,7 @@ class CommandQueue : angle::NonCopyable
                                           ProtectionType protectionType,
                                           egl::ContextPriority priority,
                                           const RenderPass &renderPass,
+                                          VkFramebuffer framebufferOverride,
                                           RenderPassCommandBufferHelper **renderPassCommands);
 
     const angle::VulkanPerfCounters getPerfCounters() const;
@@ -549,7 +552,7 @@ class CommandQueue : angle::NonCopyable
 class CommandProcessor : public Context
 {
   public:
-    CommandProcessor(RendererVk *renderer, CommandQueue *commandQueue);
+    CommandProcessor(Renderer *renderer, CommandQueue *commandQueue);
     ~CommandProcessor() override;
 
     // Context
@@ -562,7 +565,7 @@ class CommandProcessor : public Context
 
     void destroy(Context *context);
 
-    void handleDeviceLost(RendererVk *renderer);
+    void handleDeviceLost(Renderer *renderer);
 
     angle::Result enqueueSubmitCommands(Context *context,
                                         ProtectionType protectionType,
@@ -600,6 +603,7 @@ class CommandProcessor : public Context
         ProtectionType protectionType,
         egl::ContextPriority priority,
         const RenderPass &renderPass,
+        VkFramebuffer framebufferOverride,
         RenderPassCommandBufferHelper **renderPassCommands);
 
     // Wait until the desired serial has been submitted.
@@ -615,7 +619,7 @@ class CommandProcessor : public Context
     // Wait for enqueued present to be submitted.
     angle::Result waitForPresentToBeSubmitted(SwapchainStatus *swapchainStatus);
 
-    bool isBusy(RendererVk *renderer) const
+    bool isBusy(Renderer *renderer) const
     {
         std::lock_guard<std::mutex> enqueueLock(mTaskEnqueueMutex);
         return !mTaskQueue.empty() || mCommandQueue->isBusy(renderer);
@@ -640,7 +644,7 @@ class CommandProcessor : public Context
     angle::Result checkAndPopPendingError(Context *errorHandlingContext);
 
     // Entry point for command processor thread, calls processTasksImpl to do the
-    // work. called by RendererVk::initializeDevice on main thread
+    // work. called by Renderer::initializeDevice on main thread
     void processTasks();
 
     // Called asynchronously from main thread to queue work that is then processed by the worker

@@ -64,7 +64,7 @@ static HashSet<GCGLDisplay>& usedDisplays()
 }
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
-static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pixels)
+static void wipeAlphaChannelFromPixels(int width, int height, uint8_t* pixels)
 {
     // We can assume this doesn't overflow because the calling functions
     // use checked arithmetic.
@@ -244,14 +244,14 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
         return nullptr;
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
     setPackParameters(1, 0);
-    GL_ReadnPixelsRobustANGLE(0, 0, pixelBuffer->size().width(), pixelBuffer->size().height(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->sizeInBytes(), nullptr, nullptr, nullptr, pixelBuffer->bytes());
+    GL_ReadnPixelsRobustANGLE(0, 0, pixelBuffer->size().width(), pixelBuffer->size().height(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->bytes().size(), nullptr, nullptr, nullptr, pixelBuffer->bytes().data());
     // FIXME: Rendering to GL_RGB textures with a IOSurface bound to the texture image leaves
     // the alpha in the IOSurface in incorrect state. Also ANGLE GL_ReadPixels will in some
     // cases expose the non-255 values.
     // https://bugs.webkit.org/show_bug.cgi?id=215804
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     if (!contextAttributes().alpha)
-        wipeAlphaChannelFromPixels(pixelBuffer->size().width(), pixelBuffer->size().height(), pixelBuffer->bytes());
+        wipeAlphaChannelFromPixels(pixelBuffer->size().width(), pixelBuffer->size().height(), pixelBuffer->bytes().data());
 #endif
     return pixelBuffer;
 }
@@ -570,7 +570,7 @@ std::optional<IntSize> GraphicsContextGLANGLE::readPixelsImpl(IntRect rect, GCGL
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     if (!readingToPixelBufferObject && !attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (type == GraphicsContextGL::UNSIGNED_BYTE) && (m_state.boundReadFBO == m_fbo || (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO)))
-        wipeAlphaChannelFromPixels(rect.width(), rect.height(), static_cast<unsigned char*>(data));
+        wipeAlphaChannelFromPixels(rect.width(), rect.height(), data);
 #else
     UNUSED_PARAM(readingToPixelBufferObject);
 #endif
@@ -2398,14 +2398,6 @@ void GraphicsContextGLANGLE::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLi
     GL_BlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
-void GraphicsContextGLANGLE::blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter)
-{
-    if (!makeContextCurrent())
-        return;
-
-    GL_BlitFramebufferANGLE(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
-}
-
 void GraphicsContextGLANGLE::framebufferTextureLayer(GCGLenum target, GCGLenum attachment, PlatformGLObject texture, GCGLint level, GCGLint layer)
 {
     if (!makeContextCurrent())
@@ -2859,33 +2851,51 @@ void GraphicsContextGLANGLE::getActiveUniformBlockiv(PlatformGLObject program, G
     GL_GetActiveUniformBlockivRobustANGLE(program, uniformBlockIndex, pname, params.size(), nullptr, params.data());
 }
 
-GCEGLImage GraphicsContextGLANGLE::createAndBindEGLImage(GCGLenum, GCGLenum, EGLImageSource, GCGLint)
+GCGLExternalImage GraphicsContextGLANGLE::createExternalImage(ExternalImageSource&&, GCGLenum, GCGLint)
 {
     notImplemented();
-    return nullptr;
+    return { };
 }
 
-void GraphicsContextGLANGLE::destroyEGLImage(GCEGLImage handle)
-{
-    EGL_DestroyImageKHR(platformDisplay(), handle);
-}
-
-GCEGLSync GraphicsContextGLANGLE::createEGLSync(ExternalEGLSyncEvent)
+void GraphicsContextGLANGLE::bindExternalImage(GCGLenum, GCGLExternalImage)
 {
     notImplemented();
-    return nullptr;
 }
 
-void GraphicsContextGLANGLE::destroyEGLSync(GCEGLSync sync)
+void GraphicsContextGLANGLE::deleteExternalImage(GCGLExternalImage image)
 {
-    bool result = EGL_DestroySync(platformDisplay(), sync);
-    ASSERT_UNUSED(result, !!result);
+    if (UNLIKELY(!image))
+        return;
+    auto eglImage = m_eglImages.take(image);
+    if (UNLIKELY(!eglImage)) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
+    bool result = EGL_DestroyImageKHR(platformDisplay(), eglImage);
+    ASSERT(result);
+    if (UNLIKELY(!result))
+        addError(GCGLErrorCode::InvalidOperation);
 }
 
-void GraphicsContextGLANGLE::clientWaitEGLSyncWithFlush(GCEGLSync sync, uint64_t timeout)
+GCGLExternalSync GraphicsContextGLANGLE::createExternalSync(ExternalSyncSource&&)
 {
-    auto ret = EGL_ClientWaitSync(platformDisplay(), sync, EGL_SYNC_FLUSH_COMMANDS_BIT, timeout);
-    ASSERT_UNUSED(ret, ret == EGL_CONDITION_SATISFIED);
+    notImplemented();
+    return { };
+}
+
+void GraphicsContextGLANGLE::deleteExternalSync(GCGLExternalSync sync)
+{
+    if (UNLIKELY(!sync))
+        return;
+    EGLSync eglSync = m_eglSyncs.take(sync);
+    if (UNLIKELY(!eglSync)) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
+    bool result = EGL_DestroySync(platformDisplay(), eglSync);
+    ASSERT(result);
+    if (UNLIKELY(!result))
+        addError(GCGLErrorCode::InvalidOperation);
 }
 
 void GraphicsContextGLANGLE::multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts)
@@ -3249,7 +3259,7 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::drawingBufferToPixelBuffer(FlipY fli
         // FIXME: Make PixelBufferConversions support negative rowBytes and in-place conversions.
         const auto size = results->size();
         const size_t rowStride = size.width() * 4;
-        uint8_t* top = results->bytes();
+        uint8_t* top = results->bytes().data();
         uint8_t* bottom = top + (size.height() - 1) * rowStride;
         std::unique_ptr<uint8_t[]> temp(new uint8_t[rowStride]);
         for (; top < bottom; top += rowStride, bottom -= rowStride) {

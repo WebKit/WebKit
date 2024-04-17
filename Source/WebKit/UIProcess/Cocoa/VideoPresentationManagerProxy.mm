@@ -40,6 +40,7 @@
 #import "VideoPresentationManagerMessages.h"
 #import "VideoPresentationManagerProxyMessages.h"
 #import "WKVideoView.h"
+#import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
@@ -1009,6 +1010,22 @@ void VideoPresentationManagerProxy::exitFullscreenWithoutAnimationToMode(Playbac
     hasVideoInPictureInPictureDidChange(targetMode & MediaPlayerEnums::VideoFullscreenModePictureInPicture);
 }
 
+void VideoPresentationManagerProxy::setVideoFullscreenMode(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
+{
+    MESSAGE_CHECK((mode | HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask) == HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask);
+
+    ensureInterface(contextId).setMode(mode, false);
+}
+
+void VideoPresentationManagerProxy::clearVideoFullscreenMode(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
+{
+    MESSAGE_CHECK((mode | HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask) == HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask);
+
+#if PLATFORM(MAC)
+    ensureInterface(contextId).clearMode(mode);
+#endif
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 void VideoPresentationManagerProxy::setInlineRect(PlaybackSessionContextIdentifier contextId, const WebCore::FloatRect& inlineRect, bool visible)
@@ -1252,8 +1269,10 @@ void VideoPresentationManagerProxy::didCleanupFullscreen(PlaybackSessionContextI
 
     m_page->send(Messages::VideoPresentationManager::DidCleanupFullscreen(contextId));
 
-    interface->setMode(HTMLMediaElementEnums::VideoFullscreenModeNone, false);
-    removeClientForContext(contextId);
+    if (!hasMode(HTMLMediaElementEnums::VideoFullscreenModeInWindow)) {
+        interface->setMode(HTMLMediaElementEnums::VideoFullscreenModeNone, false);
+        removeClientForContext(contextId);
+    }
 }
 
 void VideoPresentationManagerProxy::setVideoLayerFrame(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect frame)
@@ -1316,6 +1335,15 @@ AVPlayerViewController *VideoPresentationManagerProxy::playerViewController(Play
 }
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+LMPlayableViewController *VideoPresentationManagerProxy::playableViewController(PlaybackSessionContextIdentifier identifier) const
+{
+    if (auto* interface = findInterface(identifier))
+        return interface->playableViewController();
+    return nil;
+}
+#endif
 
 #if !RELEASE_LOG_DISABLED
 const Logger& VideoPresentationManagerProxy::logger() const

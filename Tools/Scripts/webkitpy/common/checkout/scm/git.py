@@ -40,7 +40,6 @@ from webkitpy.common.system.executive import Executive, ScriptError
 
 from webkitpy.common.checkout.scm.commitmessage import CommitMessage
 from webkitpy.common.checkout.scm.scm import AuthenticationError, SCM, commit_error_handler
-from webkitpy.common.checkout.scm.svn import SVNRepository
 
 _log = logging.getLogger(__name__)
 
@@ -53,7 +52,7 @@ class AmbiguousCommitError(Exception):
         self.has_working_directory_changes = has_working_directory_changes
 
 
-class Git(SCM, SVNRepository):
+class Git(SCM):
 
     # Git doesn't appear to document error codes, but seems to return
     # 1 or 128, mostly.

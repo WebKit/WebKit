@@ -267,6 +267,7 @@ StyleLayoutData::StyleLayoutData()
     , ry(RenderStyle::initialRadius())
     , x(RenderStyle::zeroLength())
     , y(RenderStyle::zeroLength())
+    , d(nullptr)
 {
 }
 
@@ -279,6 +280,7 @@ inline StyleLayoutData::StyleLayoutData(const StyleLayoutData& other)
     , ry(other.ry)
     , x(other.x)
     , y(other.y)
+    , d(other.d)
 {
 }
 
@@ -295,7 +297,8 @@ bool StyleLayoutData::operator==(const StyleLayoutData& other) const
         && rx == other.rx
         && ry == other.ry
         && x == other.x
-        && y == other.y;
+        && y == other.y
+        && d == other.d;
 }
 
 

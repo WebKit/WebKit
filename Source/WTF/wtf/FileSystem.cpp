@@ -497,7 +497,7 @@ MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(con
 static Salt makeSalt()
 {
     Salt salt;
-    cryptographicallyRandomValues(&salt, sizeof(Salt));
+    cryptographicallyRandomValues(salt);
     return salt;
 }
 

@@ -40,7 +40,7 @@ using namespace WebCore;
 
 static std::span<const uint8_t> span(const ASCIILiteral& data)
 {
-    return { reinterpret_cast<const uint8_t*>(data.characters()), data.length() };
+    return data.span8();
 }
 
 static CurlResponse createCurlResponse(std::optional<String> contentType = "multipart/x-mixed-replace"_s, std::optional<String> boundary = "boundary"_s)
@@ -59,7 +59,9 @@ static CurlResponse createCurlResponse(std::optional<String> contentType = "mult
     return response;
 }
 
-class MultipartHandleClient : public CurlMultipartHandleClient {
+class MultipartHandleClient final : public CurlMultipartHandleClient, public CanMakeCheckedPtr<MultipartHandleClient> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MultipartHandleClient);
 public:
     void setMultipartHandle();
 
@@ -91,6 +93,12 @@ public:
     bool complete() { return m_didComplete; }
 
 private:
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+
     Vector<String> m_headers;
     Vector<uint8_t> m_data;
     bool m_didComplete { false };

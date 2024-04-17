@@ -540,10 +540,7 @@ angle::Result CommandQueue::enqueueMigrateMemObjects(cl_uint numMemObjects,
 }
 
 angle::Result CommandQueue::enqueueNDRangeKernel(cl_kernel kernel,
-                                                 cl_uint workDim,
-                                                 const size_t *globalWorkOffset,
-                                                 const size_t *globalWorkSize,
-                                                 const size_t *localWorkSize,
+                                                 const NDRange &ndrange,
                                                  cl_uint numEventsInWaitList,
                                                  const cl_event *eventWaitList,
                                                  cl_event *event)
@@ -554,8 +551,7 @@ angle::Result CommandQueue::enqueueNDRangeKernel(cl_kernel kernel,
     rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
         event != nullptr ? &eventCreateFunc : nullptr;
 
-    ANGLE_TRY(mImpl->enqueueNDRangeKernel(krnl, workDim, globalWorkOffset, globalWorkSize,
-                                          localWorkSize, waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(mImpl->enqueueNDRangeKernel(krnl, ndrange, waitEvents, eventCreateFuncPtr));
 
     CheckCreateEvent(*this, CL_COMMAND_NDRANGE_KERNEL, eventCreateFunc, event);
     return angle::Result::Continue;

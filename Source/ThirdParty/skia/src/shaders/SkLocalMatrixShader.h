@@ -55,6 +55,9 @@ public:
     SkLocalMatrixShader(sk_sp<SkShader> wrapped, const SkMatrix& localMatrix)
             : fLocalMatrix(localMatrix), fWrappedShader(std::move(wrapped)) {}
 
+    bool isOpaque() const override { return as_SB(fWrappedShader)->isOpaque(); }
+
+    bool isConstant() const override;
     GradientType asGradient(GradientInfo* info, SkMatrix* localMatrix) const override;
     ShaderType type() const override { return ShaderType::kLocalMatrix; }
 
@@ -95,6 +98,9 @@ class SkCTMShader final : public SkShaderBase {
 public:
     SkCTMShader(sk_sp<SkShader> proxy, const SkMatrix& ctm);
 
+    bool isOpaque() const override { return fProxyShader->isOpaque(); }
+
+    bool isConstant() const override;
     GradientType asGradient(GradientInfo* info, SkMatrix* localMatrix) const override;
 
     ShaderType type() const override { return ShaderType::kCTM; }

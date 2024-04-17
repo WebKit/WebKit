@@ -10,7 +10,9 @@ includes: [propertyHelper.js]
 ---*/
 
 var AsyncFunction = async function foo() {}.constructor;
-assert.sameValue(AsyncFunction.name, "AsyncFunction");
-verifyNotWritable(AsyncFunction, "name");
-verifyNotEnumerable(AsyncFunction, "name");
-verifyConfigurable(AsyncFunction, "name");
+verifyProperty(AsyncFunction, "name", {
+  value: "AsyncFunction",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

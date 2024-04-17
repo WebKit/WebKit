@@ -187,7 +187,7 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
         if (buffer.binary)
             m_bufferedMessages.append(SharedBuffer::create(std::span { data, buffer.size() }));
         else
-            m_bufferedMessages.append(String::fromUTF8(data, buffer.size()));
+            m_bufferedMessages.append(String::fromUTF8({ data, buffer.size() }));
         return;
     }
 

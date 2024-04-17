@@ -1830,6 +1830,27 @@ MacroAssemblerCodeRef<JITThunkPtrTag> toLengthThunkGenerator(VM& vm)
     return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "toLength");
 }
 
+#if USE(JSVALUE64)
+MacroAssemblerCodeRef<JITThunkPtrTag> objectIsThunkGenerator(VM& vm)
+{
+    SpecializedThunkJIT jit(vm, 2);
+    jit.loadJSArgument(0, JSRInfo::jsRegT32);
+    jit.loadJSArgument(1, JSRInfo::jsRegT54);
+
+    jit.moveTrustedValue(jsBoolean(true), JSRInfo::jsRegT10);
+
+    auto trueCase = jit.branch64(CCallHelpers::Equal, JSRInfo::jsRegT32.payloadGPR(), JSRInfo::jsRegT54.payloadGPR());
+    jit.appendFailure(jit.branchIfNotCell(JSRInfo::jsRegT32.payloadGPR()));
+    jit.appendFailure(jit.branchIfNotObject(JSRInfo::jsRegT32.payloadGPR()));
+    jit.moveTrustedValue(jsBoolean(false), JSRInfo::jsRegT10);
+
+    trueCase.link(&jit);
+    jit.returnJSValue(JSRInfo::jsRegT10);
+
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "is");
+}
+#endif
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

@@ -169,10 +169,9 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
             gst_caps_set_simple(m_inputCaps.get(), "codec_data", GST_TYPE_BUFFER, codecData.get(), nullptr);
         if (!gst_element_factory_can_sink_all_caps(factory, m_inputCaps.get()))
             parser = "h264parse";
-    } else if (codecName.startsWith("av01"_s)) {
+    } else if (codecName.startsWith("av01"_s))
         m_inputCaps = adoptGRef(gst_caps_new_simple("video/x-av1", "stream-format", G_TYPE_STRING, "obu-stream", "alignment", G_TYPE_STRING, "frame", nullptr));
-        parser = "av1parse";
-    } else if (codecName.startsWith("vp8"_s))
+    else if (codecName.startsWith("vp8"_s))
         m_inputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp8"));
     else if (codecName.startsWith("vp09"_s)) {
         m_inputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));

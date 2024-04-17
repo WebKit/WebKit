@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x111
-  RenderBlock {HTML} at (0,0) size 800x111
-    RenderBody {BODY} at (8,16) size 784x87
+  RenderBlock {HTML} at (0,0) size 800x112
+    RenderBody {BODY} at (8,16) size 784x88
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 261x17
           text run at (0,0) width 261: "Test passes if horizontal operators stretch."
-      RenderBlock (anonymous) at (0,34) size 784x53
+      RenderBlock (anonymous) at (0,34) size 784x54
         RenderMathMLMath {math} at (0,12) size 60x37
           RenderMathMLUnderOver {mover} at (0,0) size 60x37
             RenderMathMLSpace {mspace} at (0,6) size 60x31 [bgcolor=#008000]

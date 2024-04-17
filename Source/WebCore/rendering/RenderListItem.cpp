@@ -88,22 +88,6 @@ RenderStyle RenderListItem::computeMarkerStyle() const
     return markerStyle;
 }
 
-void RenderListItem::insertedIntoTree(IsInternalMove isInternalMove)
-{
-    RenderBlockFlow::insertedIntoTree(isInternalMove);
-
-    if (isInternalMove == IsInternalMove::No)
-        updateListMarkerNumbers();
-}
-
-void RenderListItem::willBeRemovedFromTree(IsInternalMove isInternalMove)
-{
-    RenderBlockFlow::willBeRemovedFromTree(isInternalMove);
-
-    if (isInternalMove == IsInternalMove::No)
-        updateListMarkerNumbers();
-}
-
 bool isHTMLListElement(const Node& node)
 {
     return is<HTMLUListElement>(node) || is<HTMLOListElement>(node);

@@ -66,6 +66,7 @@
 #import "SerializedPlatformDataCueMac.h"
 #import "SharedBuffer.h"
 #import "SourceBufferParserWebM.h"
+#import "TextTrack.h"
 #import "TextTrackRepresentation.h"
 #import "UTIUtilities.h"
 #import "VideoFrameCV.h"
@@ -112,10 +113,6 @@
 #import <wtf/text/CString.h>
 #import <wtf/threads/BinarySemaphore.h>
 
-#if ENABLE(AVF_CAPTIONS)
-#import "TextTrack.h"
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #import "MediaPlaybackTarget.h"
 #endif
@@ -143,14 +140,12 @@ template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionA
 };
 }
 
-#if ENABLE(AVF_CAPTIONS)
 // Note: This must be defined before our SOFT_LINK macros:
 @class AVMediaSelectionOption;
 @interface AVMediaSelectionOption (OutOfBandExtensions)
 @property (nonatomic, readonly) NSString* outOfBandSource;
 @property (nonatomic, readonly) NSString* outOfBandIdentifier;
 @end
-#endif
 
 @interface AVURLAsset (WebKitExtensions)
 @property (nonatomic, readonly) NSURL *resolvedURL;
@@ -448,6 +443,10 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_muted = player->muted();
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    m_defaultSpatialTrackingLabel = player->defaultSpatialTrackingLabel();
+    m_spatialTrackingLabel = player->spatialTrackingLabel();
+#endif
 }
 
 MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
@@ -710,8 +709,6 @@ bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
     return m_videoFrameHasDrawn;
 }
 
-#if ENABLE(AVF_CAPTIONS)
-
 static const NSArray *mediaDescriptionForKind(PlatformTextTrackData::TrackKind kind)
 {
     static bool manualSelectionMode = MTEnableCaption2015BehaviorPtr() && MTEnableCaption2015BehaviorPtr()();
@@ -778,8 +775,6 @@ void MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState()
         }
     }
 }
-
-#endif
 
 static NSURL *canonicalURL(const URL& url)
 {
@@ -950,7 +945,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
             [options setObject:(NSString *)type forKey:AVURLAssetOutOfBandMIMETypeKey];
     }
 
-#if ENABLE(AVF_CAPTIONS)
     auto outOfBandTrackSources = player->outOfBandTrackSources();
     if (!outOfBandTrackSources.isEmpty()) {
         auto outOfBandTracks = createNSArray(outOfBandTrackSources, [] (auto& trackSource) {
@@ -966,7 +960,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
 
         [options setObject:outOfBandTracks.get() forKey:AVURLAssetOutOfBandAlternateTracksKey];
     }
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     String networkInterfaceName = player->mediaPlayerNetworkInterfaceName();
@@ -1168,6 +1161,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
         else
             m_avPlayer.get().audioOutputDeviceUniqueID = audioOutputDeviceId;
     }
+#endif
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateSpatialTrackingLabel();
 #endif
 
     ASSERT(!m_currentTimeObserver);
@@ -1435,6 +1432,10 @@ void MediaPlayerPrivateAVFoundationObjC::didEnd()
 void MediaPlayerPrivateAVFoundationObjC::platformSetVisible(bool isVisible)
 {
     assertIsMainThread();
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateSpatialTrackingLabel();
+#endif
 
     if (!m_videoLayer)
         return;
@@ -3142,13 +3143,10 @@ END_BLOCK_OBJC_EXCEPTIONS
                 continue;
 
             RetainPtr<AVMediaSelectionOption> currentOption;
-#if ENABLE(AVF_CAPTIONS)
             if (removedTextTracks[i - 1]->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand) {
                 RefPtr<OutOfBandTextTrackPrivateAVF> track = static_cast<OutOfBandTextTrackPrivateAVF*>(removedTextTracks[i - 1].get());
                 currentOption = track->mediaSelectionOption();
-            } else
-#endif
-            {
+            } else {
                 RefPtr<InbandTextTrackPrivateAVFObjC> track = static_cast<InbandTextTrackPrivateAVFObjC*>(removedTextTracks[i - 1].get());
                 currentOption = track->mediaSelectionOption();
             }
@@ -3162,13 +3160,11 @@ END_BLOCK_OBJC_EXCEPTIONS
         if (!newTrack)
             continue;
 
-#if ENABLE(AVF_CAPTIONS)
         if ([option outOfBandSource]) {
             m_textTracks.append(OutOfBandTextTrackPrivateAVF::create(this, option, m_currentTextTrackID++));
             m_textTracks.last()->setHasBeenReported(true); // Ignore out-of-band tracks that we passed to AVFoundation so we do not double-count them
             continue;
         }
-#endif
 
         m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, legibleGroup, option, m_currentTextTrackID++, InbandTextTrackPrivate::CueFormat::Generic));
     }
@@ -3223,12 +3219,10 @@ void MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack(InbandTextTrackPriv
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             [m_avPlayer setClosedCaptionDisplayEnabled:YES];
 ALLOW_DEPRECATED_DECLARATIONS_END
-#if ENABLE(AVF_CAPTIONS)
         else if (track->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand) {
 BEGIN_BLOCK_OBJC_EXCEPTIONS
             [m_avPlayerItem selectMediaOption:static_cast<OutOfBandTextTrackPrivateAVF*>(track)->mediaSelectionOption() inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
 END_BLOCK_OBJC_EXCEPTIONS
-#endif
         } else {
 BEGIN_BLOCK_OBJC_EXCEPTIONS
             [m_avPlayerItem selectMediaOption:static_cast<InbandTextTrackPrivateAVFObjC*>(track)->mediaSelectionOption() inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
@@ -4025,18 +4019,59 @@ void MediaPlayerPrivateAVFoundationObjC::audioOutputDeviceChanged()
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
+const String& MediaPlayerPrivateAVFoundationObjC::defaultSpatialTrackingLabel() const
+{
+    return m_defaultSpatialTrackingLabel;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setDefaultSpatialTrackingLabel(const String& defaultSpatialTrackingLabel)
+{
+    if (m_defaultSpatialTrackingLabel == defaultSpatialTrackingLabel)
+        return;
+    m_defaultSpatialTrackingLabel = WTFMove(defaultSpatialTrackingLabel);
+    updateSpatialTrackingLabel();
+}
+
 const String& MediaPlayerPrivateAVFoundationObjC::spatialTrackingLabel() const
 {
     return m_spatialTrackingLabel;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+void MediaPlayerPrivateAVFoundationObjC::setSpatialTrackingLabel(const String& spatialTrackingLabel)
 {
     if (m_spatialTrackingLabel == spatialTrackingLabel)
         return;
     m_spatialTrackingLabel = WTFMove(spatialTrackingLabel);
-    if (m_avPlayer)
-        [m_avPlayer _setSTSLabel:nsStringNilIfNull(m_spatialTrackingLabel)];
+    updateSpatialTrackingLabel();
+}
+
+void MediaPlayerPrivateAVFoundationObjC::updateSpatialTrackingLabel()
+{
+    assertIsMainThread();
+
+    if (!m_avPlayer)
+        return;
+
+    if (!m_spatialTrackingLabel.isNull()) {
+        [m_avPlayer _setSTSLabel:m_spatialTrackingLabel];
+        return;
+    }
+
+    if (m_videoLayer) {
+        // Let AVPlayer manage setting the spatial tracking label in its AVPlayerLayer itself;
+        [m_avPlayer _setSTSLabel:nil];
+        return;
+    }
+
+    if (!m_defaultSpatialTrackingLabel.isNull()) {
+        // If a default spatial tracking label was explicitly set, use it.
+        [m_avPlayer _setSTSLabel:m_defaultSpatialTrackingLabel];
+        return;
+    }
+
+    // If there is no AVPlayerLayer, and no default spatial tracking label is available, use the session's spatial tracking label.
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
+    [m_avPlayer _setSTSLabel:session.spatialTrackingLabel];
 }
 #endif
 

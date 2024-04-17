@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+</head>
+<body>
+    
+    <header>
+        <h1 class="logo">Rex Bench</h1>
+    </header>
+
+    <main class="about">
+    
+        <h2>About the Tests</h2>
+        
+        <p>Rex Bench measures the execution time of JavaScript code with heavy use of Regular-Expressions.  In an attempt to use real world examples, the general processing of strings and other JavaScript code execution plays a part in the execution time of the benchmark.  A benchmark consisting of only regular expressions and text processed by those regular expressions would likely be easier to optimize for with those optimizations providing little benefit to real world code.</p>
+
+        <p>Regex DNA is a regular-expression-based solution to DNA manipulation from The Great Computer Language Shootout, contributed by Jesse Millikan. This benchmark was previously published in <a href="https://webkit.org/perf/sunspider/sunspider.html">SunSpider</a>. Source code: regex-dna.js.</p>
+
+        <p>Octane RegExp is the regular-expression benchmark test from <a href="https://developers.google.com/octane/">Octane</a>.  It is a collection of regular-expressions taken from the 50 most popular web pages when Octane was written.</p>
+
+        <p>Offline Assembler is the lexer, parser and AST layer of the offline assembler for JavaScriptCore.  It has been ported to JavaScript from the original Ruby.</p>
+
+        <p>UniPoker is a 5 card stud poker simulation using the Unicode playing cards code points, U+1F0A1..U+1F0DE, as the card representation in the code.  Scoring of hands is done with three regular expressions, one to check for a flush, one to check for straights, and one to check for pairs, three of a kind and four of a kind.  The last regular expression is used twice as needed to find hands with 2 pairs or a full house.
+
+        <p>Flight Planner is a newly written benchmark taken from a flight management web application.  Flight Planner parses aircraft flight plans and computes distance, course and elapsed times for legs of flight plans as well as total time.  It uses FAA data for airports, navigation aids and airways.  The flight management app was originally written to help compete in a flying proficiency event.  See <a href="http://www.hwdairrally.org/index.shtml">Hayward Air Rally</a>.
+        </p>
+
+        <p>Flight Planner Unicode is an adaptation of Flight Planner replacing the English keywords like takeoff and climb with Russian equivalents.  It also uses the <i>/u</i> Unicode flag for most of the Regular Expressions.  All of the text processed in this benchmark is made of characters from the <a href="https://en.wikipedia.org/wiki/Plane_(Unicode)#Basic_Multilingual_Plane">Basic Multilingual Plane (BMP)</a>.
+        </p>
+
+        <p>More tests are in the works...
+        </p>
+  
+        <p>Rex Bench is a mixture of older regular expression test along with newer benchmarks.  
+        </p>
+        
+        <p><a href="index.html" class="button return">Return to Testing</a></p>
+
+    </main>
+            
+</body>
+</html>

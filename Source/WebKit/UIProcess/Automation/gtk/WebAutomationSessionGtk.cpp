@@ -26,12 +26,14 @@
 #include "config.h"
 #include "WebAutomationSession.h"
 
+#include "ViewSnapshotStore.h"
 #include "WebAutomationSessionMacros.h"
 #include "WebKitWebViewBaseInternal.h"
 #include "WebPageProxy.h"
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
 #include <WebCore/Scrollbar.h>
+#include <wtf/text/Base64.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -335,5 +337,46 @@ void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, 
     webkitWebViewBaseSynthesizeWheelEvent(viewWidget, -scrollDelta.width(), -scrollDelta.height(), locationInViewport.x(), locationInViewport.y(), WheelEventPhase::NoPhase, WheelEventPhase::NoPhase, false);
 }
 #endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+
+#if USE(GTK4)
+static std::optional<String> base64EncodedPNGData(GdkTexture* texture)
+{
+    if (!texture)
+        return std::nullopt;
+
+    GRefPtr<GBytes> pngBytes = adoptGRef(gdk_texture_save_to_png_bytes(texture));
+    size_t pngSize;
+    auto* pngData = static_cast<const uint8_t*>(g_bytes_get_data(pngBytes.get(), &pngSize));
+
+    return base64EncodeToString(std::span<const uint8_t>(pngData, pngSize));
+}
+#else
+static std::optional<String> base64EncodedPNGData(cairo_surface_t* surface)
+{
+    if (!surface)
+        return std::nullopt;
+
+    Vector<unsigned char> pngData;
+    cairo_surface_write_to_png_stream(surface, [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
+        auto* pngData = static_cast<Vector<unsigned char>*>(userData);
+        pngData->append(std::span { data, length });
+        return CAIRO_STATUS_SUCCESS;
+    }, &pngData);
+
+    if (pngData.isEmpty())
+        return std::nullopt;
+
+    return base64EncodeToString(pngData);
+}
+#endif // USE(GTK4)
+
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
+{
+#if USE(GTK4)
+    return base64EncodedPNGData(snapshot.texture());
+#else
+    return base64EncodedPNGData(snapshot.surface());
+#endif
+}
 
 } // namespace WebKit

@@ -105,12 +105,9 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
 
     if (contextVk->getFeatures().warmUpPipelineCacheAtLink.enabled)
     {
-        vk::RenderPass temporaryCompatibleRenderPass;
-        result = executableVk->warmUpPipelineCache(contextVk, contextVk->pipelineRobustness(),
-                                                   contextVk->pipelineProtectedAccess(),
-                                                   &temporaryCompatibleRenderPass);
-
-        temporaryCompatibleRenderPass.destroy(contextVk->getDevice());
+        ANGLE_TRY(executableVk->warmUpPipelineCache(
+            contextVk->getRenderer(), contextVk->pipelineRobustness(),
+            contextVk->pipelineProtectedAccess(), vk::GraphicsPipelineSubset::Complete, nullptr));
     }
 
     return result;

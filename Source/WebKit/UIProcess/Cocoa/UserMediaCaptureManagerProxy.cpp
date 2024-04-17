@@ -41,11 +41,13 @@
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/ImageRotationSessionVT.h>
 #include <WebCore/MediaConstraints.h>
+#include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/VideoFrameCV.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/NativePromise.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/cocoa/Entitlements.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &m_connectionProxy->connection())
@@ -53,11 +55,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-class UserMediaCaptureManagerProxy::SourceProxy
+class UserMediaCaptureManagerProxy::SourceProxy final
     : public RealtimeMediaSource::Observer
     , private RealtimeMediaSource::AudioSampleObserver
-    , private RealtimeMediaSource::VideoFrameObserver {
+    , private RealtimeMediaSource::VideoFrameObserver
+    , public CanMakeCheckedPtr<UserMediaCaptureManagerProxy::SourceProxy> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SourceProxy);
 public:
     SourceProxy(RealtimeMediaSourceIdentifier id, Ref<IPC::Connection>&& connection, ProcessIdentity&& resourceOwner, Ref<RealtimeMediaSource>&& source, RefPtr<RemoteVideoFrameObjectHeap>&& videoFrameObjectHeap)
         : m_id(id)
@@ -271,6 +275,19 @@ public:
     }
 
 private:
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+#if CHECKED_POINTER_DEBUG
+    void registerCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::registerCheckedPtr(pointer); };
+    void copyCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::copyCheckedPtr(source, destination); }
+    void moveCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::moveCheckedPtr(source, destination); }
+    void unregisterCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::unregisterCheckedPtr(pointer); }
+#endif // CHECKED_POINTER_DEBUG
+
     void sourceStopped() final {
         m_connection->send(Messages::UserMediaCaptureManager::SourceStopped(m_id, m_source->captureDidFail()), 0);
     }
@@ -573,7 +590,8 @@ void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentif
 #endif
 #if ENABLE(EXTENSION_CAPABILITIES)
     bool hasValidMediaEnvironmentOrIdentity = m_connectionProxy->setCurrentMediaEnvironment(pageIdentifier) || RealtimeMediaSourceCenter::singleton().hasIdentity();
-    if (!hasValidMediaEnvironmentOrIdentity && proxy->source().deviceType() == CaptureDevice::DeviceType::Camera && WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s)) {
+    if (PlatformMediaSessionManager::mediaCapabilityGrantsEnabled() && !hasValidMediaEnvironmentOrIdentity && proxy->source().deviceType() == CaptureDevice::DeviceType::Camera
+        && WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s)) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to set media environment, failing capture.");
         proxy->source().captureFailed();
         return;

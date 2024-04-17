@@ -112,6 +112,9 @@ if (angle_build_all) {
     if (angle_enable_cl) {
       deps += [ "$angle_root/src/libOpenCL:angle_cl" ]
     }
+    if (angle_enable_cl_testing) {
+      deps += [ "$angle_root/third_party/OpenCL-CTS/:opencl_cts" ]
+    }
     if (angle_enable_cl && angle_enable_vulkan) {
       # OpenCL through Vulkan in ANGLE requires clspv for online compiler
       deps += [ "$angle_clspv_dir:clspv" ]
@@ -1227,8 +1230,15 @@ group("angle_abseil") {
   if (angle_enable_abseil) {
     # When build_with_chromium=true we need to include "//third_party/abseil-cpp:absl" while
     # we can be more specific when building standalone ANGLE.
-    if (build_with_chromium || is_component_build) {
+    if (build_with_chromium) {
       public_deps = [ "$angle_abseil_cpp_dir:absl" ]
+    } else if (angle_enable_wgpu) {
+      # Use Dawn's abseil build files when Dawn will also be built. Multiple build targets
+      # with the same files causes link issues in component builds.
+      public_deps = [
+        "$angle_dawn_dir/third_party/gn/abseil-cpp:flat_hash_map",
+        "$angle_dawn_dir/third_party/gn/abseil-cpp:flat_hash_set",
+      ]
     } else {
       public_deps = [
         "$angle_abseil_cpp_dir/absl/container:flat_hash_map",

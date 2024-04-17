@@ -463,7 +463,7 @@ auto SectionParser::parseExport() -> PartialResult
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(fieldLen), "can't get ", exportNumber, "th Export's field name length");
         WASM_PARSER_FAIL_IF(!consumeUTF8String(fieldString, fieldLen), "can't get ", exportNumber, "th Export's field name of length ", fieldLen);
-        String fieldName = String::fromUTF8(fieldString);
+        String fieldName = WTF::makeString(fieldString);
         WASM_PARSER_FAIL_IF(exportNames.contains(fieldName), "duplicate export: '", fieldString, "'");
         exportNames.add(fieldName);
 
@@ -807,7 +807,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
     uint8_t endOpcode;
     // Don't consume the opcode byte unless it's an End so that the extended
     // parsing mode below can consume it if needed.
-    WASM_PARSER_FAIL_IF(offset() >= length(), "can't get init_expr's end opcode");
+    WASM_PARSER_FAIL_IF(offset() >= source().size(), "can't get init_expr's end opcode");
     endOpcode = source()[offset()];
 
     if (endOpcode == OpType::End && opcode != OpType::ExtGC) {
@@ -820,9 +820,9 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
     // If an End doesn't appear, we have to assume it's an extended constant expression
     // and use the full Wasm expression parser to validate.
     size_t initExprOffset;
-    WASM_FAIL_IF_HELPER_FAILS(parseExtendedConstExpr(source() + initialOffset, length() - initialOffset, initialOffset + m_offsetInSource, initExprOffset, m_info, expectedType));
+    WASM_FAIL_IF_HELPER_FAILS(parseExtendedConstExpr(source().subspan(initialOffset), initialOffset + m_offsetInSource, initExprOffset, m_info, expectedType));
     m_offset += (initExprOffset - (m_offset - initialOffset));
-    WASM_PARSER_FAIL_IF(!m_info->constantExpressions.tryConstructAndAppend(sourceSpan().subspan(initialOffset, initExprOffset)), "could not allocate memory for init expr");
+    WASM_PARSER_FAIL_IF(!m_info->constantExpressions.tryConstructAndAppend(source().subspan(initialOffset, initExprOffset)), "could not allocate memory for init expr");
     bitsOrImportNumber = m_info->constantExpressions.size() - 1;
     isExtendedConstantExpression = true;
     resultType = expectedType;
@@ -1393,7 +1393,7 @@ auto SectionParser::parseCustom() -> PartialResult
     WASM_PARSER_FAIL_IF(!parseVarUInt32(nameLen), "can't get ", customSectionNumber, "th custom section's name length");
     WASM_PARSER_FAIL_IF(!consumeUTF8String(section.name, nameLen), "nameLen get ", customSectionNumber, "th custom section's name of length ", nameLen);
 
-    uint32_t payloadBytes = length() - m_offset;
+    uint32_t payloadBytes = source().size() - m_offset;
     WASM_PARSER_FAIL_IF(!section.payload.tryReserveInitialCapacity(payloadBytes), "can't allocate enough memory for ", customSectionNumber, "th custom section's ", payloadBytes, " bytes");
     section.payload.resize(payloadBytes);
     for (uint32_t byteNumber = 0; byteNumber < payloadBytes; ++byteNumber) {
@@ -1405,14 +1405,14 @@ auto SectionParser::parseCustom() -> PartialResult
     Name nameName = { 'n', 'a', 'm', 'e' };
     Name branchHintsName = { 'm', 'e', 't', 'a', 'd', 'a', 't', 'a', '.', 'c', 'o', 'd', 'e', '.', 'b', 'r', 'a', 'n', 'c', 'h', '_', 'h', 'i', 'n', 't' };
     if (section.name == nameName) {
-        NameSectionParser nameSectionParser(section.payload.begin(), section.payload.size(), m_info);
+        NameSectionParser nameSectionParser(section.payload, m_info);
         auto nameSection = nameSectionParser.parse();
         if (nameSection)
             m_info->nameSection = WTFMove(*nameSection);
         else
             dataLogLnIf(Options::dumpWasmWarnings(), "Could not parse name section: ", nameSection.error());
     } else if (section.name == branchHintsName) {
-        BranchHintsSectionParser branchHintsSectionParser(section.payload.begin(), section.payload.size(), m_info);
+        BranchHintsSectionParser branchHintsSectionParser(section.payload, m_info);
         branchHintsSectionParser.parse();
     }
 

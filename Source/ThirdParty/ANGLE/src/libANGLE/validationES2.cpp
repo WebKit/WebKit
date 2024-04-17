@@ -2619,18 +2619,10 @@ bool ValidateClear(const Context *context, angle::EntryPoint entryPoint, GLbitfi
 
     if (extensions.webglCompatibilityANGLE && (mask & GL_COLOR_BUFFER_BIT) != 0)
     {
-        constexpr GLenum validComponentTypes[] = {GL_FLOAT, GL_UNSIGNED_NORMALIZED,
-                                                  GL_SIGNED_NORMALIZED};
-
-        for (GLuint drawBufferIdx = 0; drawBufferIdx < fbo->getDrawbufferStateCount();
-             drawBufferIdx++)
+        if (GetIntOrUnsignedIntDrawBufferMask(fbo->getDrawBufferTypeMask()).any())
         {
-            if (!ValidateWebGLFramebufferAttachmentClearType(context, entryPoint, drawBufferIdx,
-                                                             validComponentTypes,
-                                                             ArraySize(validComponentTypes)))
-            {
-                return false;
-            }
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kNoDefinedClearConversion);
+            return false;
         }
     }
 

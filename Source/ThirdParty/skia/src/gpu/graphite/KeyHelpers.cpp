@@ -34,6 +34,7 @@
 #include "src/gpu/DitherUtils.h"
 #include "src/gpu/Swizzle.h"
 #include "src/gpu/graphite/Caps.h"
+#include "src/gpu/graphite/DrawContext.h"
 #include "src/gpu/graphite/Image_Graphite.h"
 #include "src/gpu/graphite/Image_YUVA_Graphite.h"
 #include "src/gpu/graphite/KeyContext.h"
@@ -616,18 +617,18 @@ void add_yuv_image_uniform_data(const ShaderCodeDictionary* dict,
     VALIDATE_UNIFORMS(gatherer, dict, BuiltInCodeSnippetID::kYUVImageShader)
 
     gatherer->write(SkSize::Make(1.f/imgData.fImgSize.width(), 1.f/imgData.fImgSize.height()));
+    gatherer->write(SkSize::Make(1.f/imgData.fImgSizeUV.width(), 1.f/imgData.fImgSizeUV.height()));
     gatherer->write(imgData.fSubset);
     gatherer->write(SkTo<int>(imgData.fTileModes[0]));
     gatherer->write(SkTo<int>(imgData.fTileModes[1]));
     gatherer->write(SkTo<int>(imgData.fSampling.filter));
+    gatherer->write(SkTo<int>(imgData.fSamplingUV.filter));
 
     for (int i = 0; i < 4; ++i) {
         gatherer->writeHalf(imgData.fChannelSelect[i]);
     }
     gatherer->writeHalf(imgData.fYUVtoRGBMatrix);
     gatherer->write(imgData.fYUVtoRGBTranslate);
-
-    add_color_space_uniforms(imgData.fSteps, ReadSwizzle::kRGBA, gatherer);
 }
 
 void add_cubic_yuv_image_uniform_data(const ShaderCodeDictionary* dict,
@@ -636,6 +637,7 @@ void add_cubic_yuv_image_uniform_data(const ShaderCodeDictionary* dict,
     VALIDATE_UNIFORMS(gatherer, dict, BuiltInCodeSnippetID::kCubicYUVImageShader)
 
     gatherer->write(SkSize::Make(1.f/imgData.fImgSize.width(), 1.f/imgData.fImgSize.height()));
+    gatherer->write(SkSize::Make(1.f/imgData.fImgSizeUV.width(), 1.f/imgData.fImgSizeUV.height()));
     gatherer->write(imgData.fSubset);
     gatherer->write(SkTo<int>(imgData.fTileModes[0]));
     gatherer->write(SkTo<int>(imgData.fTileModes[1]));
@@ -647,8 +649,6 @@ void add_cubic_yuv_image_uniform_data(const ShaderCodeDictionary* dict,
     }
     gatherer->writeHalf(imgData.fYUVtoRGBMatrix);
     gatherer->write(imgData.fYUVtoRGBTranslate);
-
-    add_color_space_uniforms(imgData.fSteps, ReadSwizzle::kRGBA, gatherer);
 }
 
 } // anonymous namespace
@@ -659,10 +659,11 @@ YUVImageShaderBlock::ImageData::ImageData(const SkSamplingOptions& sampling,
                                           SkISize imgSize,
                                           SkRect subset)
         : fSampling(sampling)
+        , fSamplingUV(sampling)
         , fTileModes{tileModeX, tileModeY}
         , fImgSize(imgSize)
+        , fImgSizeUV(imgSize)
         , fSubset(subset) {
-    SkASSERT(fSteps.flags.mask() == 0);   // By default, the colorspace should have no effect
 }
 
 void YUVImageShaderBlock::AddBlock(const KeyContext& keyContext,
@@ -676,9 +677,10 @@ void YUVImageShaderBlock::AddBlock(const KeyContext& keyContext,
         return;
     }
 
-    for (int i = 0; i < 4; ++i) {
-        gatherer->add(imgData.fSampling, imgData.fTileModes, imgData.fTextureProxies[i]);
-    }
+    gatherer->add(imgData.fSampling, imgData.fTileModes, imgData.fTextureProxies[0]);
+    gatherer->add(imgData.fSamplingUV, imgData.fTileModes, imgData.fTextureProxies[1]);
+    gatherer->add(imgData.fSamplingUV, imgData.fTileModes, imgData.fTextureProxies[2]);
+    gatherer->add(imgData.fSampling, imgData.fTileModes, imgData.fTextureProxies[3]);
 
     if (imgData.fSampling.useCubic) {
         add_cubic_yuv_image_uniform_data(keyContext.dict(), imgData, gatherer);
@@ -948,13 +950,20 @@ bool RuntimeEffectBlock::ShaderData::operator==(const ShaderData& rhs) const {
     return fEffect == rhs.fEffect && skdata_matches(fUniforms.get(), rhs.fUniforms.get());
 }
 
-static void gather_runtime_effect_uniforms(SkSpan<const SkRuntimeEffect::Uniform> rtsUniforms,
+static void gather_runtime_effect_uniforms(const KeyContext& keyContext,
+                                           const SkRuntimeEffect* effect,
                                            SkSpan<const Uniform> graphiteUniforms,
                                            const SkData* uniformData,
                                            PipelineDataGatherer* gatherer) {
-    if (!rtsUniforms.empty() && uniformData) {
-        SkDEBUGCODE(UniformExpectationsValidator uev(gatherer, graphiteUniforms);)
+    if (!uniformData) {
+        return;  // precompiling
+    }
 
+    SkDEBUGCODE(UniformExpectationsValidator uev(gatherer, graphiteUniforms);)
+
+    SkSpan<const SkRuntimeEffect::Uniform> rtsUniforms = effect->uniforms();
+
+    if (!rtsUniforms.empty() && uniformData) {
         // Collect all the other uniforms from the provided SkData.
         const uint8_t* uniformBase = uniformData->bytes();
         for (size_t index = 0; index < rtsUniforms.size(); ++index) {
@@ -964,6 +973,27 @@ static void gather_runtime_effect_uniforms(SkSpan<const SkRuntimeEffect::Uniform
             // Pass the uniform data to the gatherer.
             gatherer->write(uniform, uniformPtr);
         }
+    }
+
+    if (SkRuntimeEffectPriv::UsesColorTransform(effect)) {
+        SkColorSpace* dstCS = keyContext.dstColorInfo().colorSpace();
+        if (!dstCS) {
+            dstCS = sk_srgb_linear_singleton(); // turn colorspace conversion into a noop
+        }
+
+        // TODO(b/332565302): If the runtime shader only uses one of these
+        // transforms, we could upload only one set of uniforms.
+        ColorSpaceTransformBlock::ColorSpaceTransformData dstToLinear(dstCS,
+                                                                      kUnpremul_SkAlphaType,
+                                                                      sk_srgb_linear_singleton(),
+                                                                      kUnpremul_SkAlphaType);
+        ColorSpaceTransformBlock::ColorSpaceTransformData linearToDst(sk_srgb_linear_singleton(),
+                                                                      kUnpremul_SkAlphaType,
+                                                                      dstCS,
+                                                                      kUnpremul_SkAlphaType);
+
+        add_color_space_uniforms(dstToLinear.fSteps, ReadSwizzle::kRGBA, gatherer);
+        add_color_space_uniforms(linearToDst.fSteps, ReadSwizzle::kRGBA, gatherer);
     }
 }
 
@@ -981,7 +1011,8 @@ void RuntimeEffectBlock::BeginBlock(const KeyContext& keyContext,
     const ShaderSnippet* entry = dict->getEntry(codeSnippetID);
     SkASSERT(entry);
 
-    gather_runtime_effect_uniforms(shaderData.fEffect->uniforms(),
+    gather_runtime_effect_uniforms(keyContext,
+                                   shaderData.fEffect.get(),
                                    entry->fUniforms,
                                    shaderData.fUniforms.get(),
                                    gatherer);
@@ -1068,6 +1099,26 @@ void add_to_key(const KeyContext& keyContext,
     builder->endBlock();
 }
 
+void notify_in_use(Recorder* recorder,
+                   DrawContext* drawContext,
+                   SkSpan<const SkRuntimeEffect::ChildPtr> children) {
+    for (const auto& child : children) {
+        if (child.type().has_value()) {
+            switch (*child.type()) {
+                case SkRuntimeEffect::ChildType::kShader:
+                    NotifyImagesInUse(recorder, drawContext, child.shader());
+                    break;
+                case SkRuntimeEffect::ChildType::kColorFilter:
+                    NotifyImagesInUse(recorder, drawContext, child.colorFilter());
+                    break;
+                case SkRuntimeEffect::ChildType::kBlender:
+                    NotifyImagesInUse(recorder, drawContext, child.blender());
+                    break;
+            }
+        } // else a null child is a no-op, so cannot sample an image
+    }
+}
+
 } // anonymous namespace
 
 void AddToKey(const KeyContext& keyContext,
@@ -1078,17 +1129,27 @@ void AddToKey(const KeyContext& keyContext,
         return;
     }
     switch (as_BB(blender)->type()) {
-#define M(type)                                                    \
-    case SkBlenderBase::BlenderType::k##type:                      \
-        add_to_key(keyContext,                                     \
-                   builder,                                        \
-                   gatherer,                                       \
+#define M(type)                                                     \
+    case SkBlenderBase::BlenderType::k##type:                       \
+        add_to_key(keyContext,                                      \
+                   builder,                                         \
+                   gatherer,                                        \
                    static_cast<const Sk##type##Blender*>(blender)); \
         return;
         SK_ALL_BLENDERS(M)
 #undef M
     }
     SkUNREACHABLE;
+}
+
+void NotifyImagesInUse(Recorder* recorder, DrawContext* drawContext, const SkBlender* blender) {
+    if (!blender) {
+        return;
+    }
+    if (as_BB(blender)->type() == SkBlenderBase::BlenderType::kRuntime) {
+        const auto* rbb = static_cast<const SkRuntimeBlender*>(blender);
+        notify_in_use(recorder, drawContext, rbb->children());
+    } // else blend mode doesn't reference images
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1265,6 +1326,26 @@ void AddToKey(const KeyContext& keyContext,
     SkUNREACHABLE;
 }
 
+void NotifyImagesInUse(Recorder* recorder, DrawContext* drawContext, const SkColorFilter* filter) {
+    if (!filter) {
+        return;
+    }
+    if (as_CFB(filter)->type() == SkColorFilterBase::Type::kCompose) {
+        // Recurse to two children
+        const auto* cf = static_cast<const SkComposeColorFilter*>(filter);
+        NotifyImagesInUse(recorder, drawContext, cf->inner().get());
+        NotifyImagesInUse(recorder, drawContext, cf->outer().get());
+    } else if (as_CFB(filter)->type() == SkColorFilterBase::Type::kWorkingFormat) {
+        // Recurse to one child
+        const auto* wfcf = static_cast<const SkWorkingFormatColorFilter*>(filter);
+        NotifyImagesInUse(recorder, drawContext, wfcf->child().get());
+    } else if (as_CFB(filter)->type() == SkColorFilterBase::Type::kRuntime) {
+        // Recurse to all children
+        const auto* rcf = static_cast<const SkRuntimeColorFilter*>(filter);
+        notify_in_use(recorder, drawContext, rcf->children());
+    } // else other color filters do not rely on SkImages
+}
+
 // ==================================================================
 
 static void add_to_key(const KeyContext& keyContext,
@@ -1284,6 +1365,13 @@ static void add_to_key(const KeyContext& keyContext,
                 AddToKey(keyContext, builder, gatherer, shader->dst().get());
             });
 }
+static void notify_in_use(Recorder* recorder,
+                          DrawContext* drawContext,
+                          const SkBlendShader* shader) {
+    // SkBlendShader uses a fixed blend mode, so there's no blender to recurse through
+    NotifyImagesInUse(recorder, drawContext, shader->src().get());
+    NotifyImagesInUse(recorder, drawContext, shader->dst().get());
+}
 
 static void add_to_key(const KeyContext& keyContext,
                        PaintParamsKeyBuilder* builder,
@@ -1301,6 +1389,9 @@ static void add_to_key(const KeyContext& keyContext,
 
     builder->endBlock();
 }
+static void notify_in_use(Recorder* recorder, DrawContext* drawContext, const SkCTMShader* shader) {
+    NotifyImagesInUse(recorder, drawContext, shader->proxyShader().get());
+}
 
 static void add_to_key(const KeyContext& keyContext,
                        PaintParamsKeyBuilder* builder,
@@ -1310,6 +1401,9 @@ static void add_to_key(const KeyContext& keyContext,
 
     SolidColorShaderBlock::AddBlock(keyContext, builder, gatherer,
                                     SkColor4f::FromColor(shader->color()).premul());
+}
+static void notify_in_use(Recorder*, DrawContext*, const SkColorShader*) {
+    // No-op
 }
 
 static void add_to_key(const KeyContext& keyContext,
@@ -1322,6 +1416,9 @@ static void add_to_key(const KeyContext& keyContext,
                                   keyContext.dstColorInfo().colorSpace());
 
     SolidColorShaderBlock::AddBlock(keyContext, builder, gatherer, color);
+}
+static void notify_in_use(Recorder*, DrawContext*, const SkColor4Shader*) {
+    // No-op
 }
 
 static void add_to_key(const KeyContext& keyContext,
@@ -1338,6 +1435,12 @@ static void add_to_key(const KeyContext& keyContext,
                 AddToKey(keyContext, builder, gatherer, shader->filter().get());
             });
 }
+static void notify_in_use(Recorder* recorder,
+                          DrawContext* drawContext,
+                          const SkColorFilterShader* shader) {
+    NotifyImagesInUse(recorder, drawContext, shader->shader().get());
+    NotifyImagesInUse(recorder, drawContext, shader->filter().get());
+}
 
 static void add_to_key(const KeyContext& keyContext,
                        PaintParamsKeyBuilder* builder,
@@ -1351,12 +1454,20 @@ static void add_to_key(const KeyContext& keyContext,
         AddToKey(keyContext, builder, gatherer, shader->shader().get());
     builder->endBlock();
 }
+static void notify_in_use(Recorder* recorder,
+                          DrawContext* drawContext,
+                          const SkCoordClampShader* shader) {
+    NotifyImagesInUse(recorder, drawContext, shader->shader().get());
+}
 
 static void add_to_key(const KeyContext& keyContext,
                        PaintParamsKeyBuilder* builder,
                        PipelineDataGatherer* gatherer,
                        const SkEmptyShader*) {
     builder->addBlock(BuiltInCodeSnippetID::kPriorOutput);
+}
+static void notify_in_use(Recorder*, DrawContext*, const SkEmptyShader*) {
+    // No-op
 }
 
 static void add_yuv_image_to_key(const KeyContext& keyContext,
@@ -1370,7 +1481,9 @@ static void add_yuv_image_to_key(const KeyContext& keyContext,
     const YUVATextureProxies& yuvaProxies =
             static_cast<const Image_YUVA*>(imageToDraw.get())->yuvaProxies();
     const SkYUVAInfo& yuvaInfo = yuvaProxies.yuvaInfo();
-
+    // We would want to add a translation to the local matrix to handle other sitings.
+    SkASSERT(yuvaInfo.sitingX() == SkYUVAInfo::Siting::kCentered);
+    SkASSERT(yuvaInfo.sitingY() == SkYUVAInfo::Siting::kCentered);
     YUVImageShaderBlock::ImageData imgData(sampling,
                                            origShader->tileModeX(),
                                            origShader->tileModeY(),
@@ -1381,6 +1494,11 @@ static void add_yuv_image_to_key(const KeyContext& keyContext,
     }
     int textureCount = 0;
     SkYUVAInfo::YUVALocations yuvaLocations = yuvaProxies.yuvaLocations();
+    // We assume the U and V planes are the same size and have the same subsampling
+    SkASSERT(yuvaProxies.proxy(yuvaLocations[SkYUVAInfo::kU].fPlane)->dimensions() ==
+             yuvaProxies.proxy(yuvaLocations[SkYUVAInfo::kV].fPlane)->dimensions());
+    SkASSERT(yuvaInfo.planeSubsamplingFactors(yuvaLocations[SkYUVAInfo::kU].fPlane) ==
+             yuvaInfo.planeSubsamplingFactors(yuvaLocations[SkYUVAInfo::kV].fPlane));
     for (int locIndex = 0; locIndex < SkYUVAInfo::kYUVAChannelCount; ++locIndex) {
         auto [yuvPlane, yuvChannel] = yuvaLocations[locIndex];
         if (yuvPlane >= 0) {
@@ -1389,12 +1507,32 @@ static void add_yuv_image_to_key(const KeyContext& keyContext,
             imgData.fTextureProxies[locIndex] = view.refProxy();
             imgData.fChannelSelect[locIndex][static_cast<int>(yuvChannel)] = 1.0f;
             ++textureCount;
+            // V will share this size and filter data
+            if (locIndex == SkYUVAInfo::kU) {
+                auto [ssx, ssy] = yuvaInfo.planeSubsamplingFactors(yuvPlane);
+                if (ssx > 1 || ssy > 1) {
+                    // We need to adjust the image size we use for sampling to reflect the
+                    // actual image size of the UV planes. However, since our coordinates
+                    // are in Y's texel space we need to scale accordingly.
+                    imgData.fImgSizeUV = {view.dimensions().width()*ssx,
+                                          view.dimensions().height()*ssy};
+                    if (imgData.fSampling.filter == SkFilterMode::kNearest) {
+                        imgData.fSamplingUV = SkSamplingOptions(SkFilterMode::kLinear,
+                                                                imgData.fSampling.mipmap);
+                    }
+                }
+
+            }
         }
     }
     SkASSERT(textureCount == 3 || textureCount == 4);
     // If the format has no alpha, we still need to set the proxy to something
     if (textureCount == 3) {
         imgData.fTextureProxies[3] = imgData.fTextureProxies[0];
+        // All ones will be a signal that there is no alpha.
+        for (int i = 0; i < 4; ++i) {
+            imgData.fChannelSelect[SkYUVAInfo::kA][i] = 1.0f;
+        }
     }
     float yuvM[20];
     SkColorMatrix_YUV2RGB(yuvaInfo.yuvColorSpace(), yuvM);
@@ -1411,13 +1549,6 @@ static void add_yuv_image_to_key(const KeyContext& keyContext,
     );
     imgData.fYUVtoRGBTranslate = {yuvM[4], yuvM[9], yuvM[14]};
 
-    if (!origShader->isRaw()) {
-        imgData.fSteps = SkColorSpaceXformSteps(imageToDraw->colorSpace(),
-                                                imageToDraw->alphaType(),
-                                                keyContext.dstColorInfo().colorSpace(),
-                                                keyContext.dstColorInfo().alphaType());
-    }
-
     // The YUV formats can encode their own origin including reflection and rotation,
     // so we need to wrap our block in an additional local matrix transform.
     SkMatrix originMatrix = yuvaInfo.originMatrix();
@@ -1425,11 +1556,25 @@ static void add_yuv_image_to_key(const KeyContext& keyContext,
 
     KeyContextWithLocalMatrix newContext(keyContext, originMatrix);
 
-    LocalMatrixShaderBlock::BeginBlock(newContext, builder, gatherer, lmShaderData);
+    SkColorSpaceXformSteps steps;
+    SkASSERT(steps.flags.mask() == 0);   // By default, the colorspace should have no effect
+    if (!origShader->isRaw()) {
+        steps = SkColorSpaceXformSteps(imageToDraw->colorSpace(),
+                                       imageToDraw->alphaType(),
+                                       keyContext.dstColorInfo().colorSpace(),
+                                       keyContext.dstColorInfo().alphaType());
+    }
+    ColorSpaceTransformBlock::ColorSpaceTransformData data(steps);
 
-        YUVImageShaderBlock::AddBlock(newContext, builder, gatherer, imgData);
-
-    builder->endBlock();
+    Compose(keyContext, builder, gatherer,
+            /* addInnerToKey= */ [&]() -> void {
+                LocalMatrixShaderBlock::BeginBlock(newContext, builder, gatherer, lmShaderData);
+                    YUVImageShaderBlock::AddBlock(newContext, builder, gatherer, imgData);
+                builder->endBlock();
+            },
+            /* addOuterToKey= */ [&]() -> void {
+                ColorSpaceTransformBlock::AddBlock(keyContext, builder, gatherer, data);
+            });
 }
 
 static skgpu::graphite::ReadSwizzle swizzle_class_to_read_enum(const skgpu::Swizzle& swizzle) {
@@ -1473,10 +1618,8 @@ static void add_to_key(const KeyContext& keyContext,
                                       newSampling);
     }
 
-    skgpu::Mipmapped mipmapped = (newSampling.mipmap != SkMipmapMode::kNone)
-                                     ? skgpu::Mipmapped::kYes : skgpu::Mipmapped::kNo;
-
-    auto [view, _] = AsView(keyContext.recorder(), imageToDraw.get(), mipmapped);
+    auto view = AsView(imageToDraw.get());
+    SkASSERT(newSampling.mipmap == SkMipmapMode::kNone || view.mipmapped() == Mipmapped::kYes);
 
     ImageShaderBlock::ImageData imgData(shader->sampling(),
                                         shader->tileModeX(),
@@ -1515,6 +1658,19 @@ static void add_to_key(const KeyContext& keyContext,
     }
 
     ImageShaderBlock::AddBlock(keyContext, builder, gatherer, imgData);
+}
+static void notify_in_use(Recorder* recorder,
+                          DrawContext*,
+                          const SkImageShader* shader) {
+    auto image = as_IB(shader->image());
+    if (!image->isGraphiteBacked()) {
+        // If it's not graphite-backed, there's no pending graphite work.
+        return;
+    }
+
+    // TODO(b/323887207): Once scratch devices are linked to special images and their use needs to
+    // be linked to specific draw contexts, that will be passed in here.
+    static_cast<Image_Base*>(image)->notifyInUse(recorder);
 }
 
 static void add_to_key(const KeyContext& keyContext,
@@ -1560,6 +1716,11 @@ static void add_to_key(const KeyContext& keyContext,
         AddToKey(keyContext, builder, gatherer, wrappedShader);
     }
 }
+static void notify_in_use(Recorder* recorder,
+                          DrawContext* drawContext,
+                          const SkLocalMatrixShader* shader) {
+    NotifyImagesInUse(recorder, drawContext, shader->wrappedShader().get());
+}
 
 // If either of these change then the corresponding change must also be made in the SkSL
 // perlin_noise_shader function.
@@ -1600,6 +1761,9 @@ static void add_to_key(const KeyContext& keyContext,
 
     PerlinNoiseShaderBlock::AddBlock(keyContext, builder, gatherer, perlinData);
 }
+static void notify_in_use(Recorder*, DrawContext*, const SkPerlinNoiseShader*) {
+    // No-op, perlin noise has no children.
+}
 
 static void add_to_key(const KeyContext& keyContext,
                        PaintParamsKeyBuilder* builder,
@@ -1611,8 +1775,7 @@ static void add_to_key(const KeyContext& keyContext,
     const Caps* caps = recorder->priv().caps();
 
     // TODO: We'll need additional plumbing to get the correct props from our callers. In
-    // particular we'll need to expand the keyContext to have the surfaceProps, the dstColorType
-    // and dstColorSpace.
+    // particular we'll need to expand the keyContext to have the surfaceProps.
     SkSurfaceProps props{};
 
     SkMatrix totalM = keyContext.local2Dev().asM33();
@@ -1621,8 +1784,8 @@ static void add_to_key(const KeyContext& keyContext,
     }
     auto info = SkPictureShader::CachedImageInfo::Make(shader->tile(),
                                                        totalM,
-                                                       /* dstColorType= */ kRGBA_8888_SkColorType,
-                                                       /* dstColorSpace= */ nullptr,
+                                                       keyContext.dstColorInfo().colorType(),
+                                                       keyContext.dstColorInfo().colorSpace(),
                                                        caps->maxTextureSize(),
                                                        props);
     if (!info.success) {
@@ -1654,6 +1817,10 @@ static void add_to_key(const KeyContext& keyContext,
 
     AddToKey(keyContext, builder, gatherer, imgShader.get());
 }
+static void notify_in_use(Recorder*, DrawContext*, const SkPictureShader*) {
+    // While the SkPicture the shader points to, may have Graphite-backed shaders that need to be
+    // notified, that will happen when the picture is rendered into an image in add_to_key
+}
 
 static void add_to_key(const KeyContext& keyContext,
                        PaintParamsKeyBuilder* builder,
@@ -1674,7 +1841,11 @@ static void add_to_key(const KeyContext& keyContext,
                         shader->children(), effect->children());
 
     builder->endBlock();
-
+}
+static void notify_in_use(Recorder* recorder,
+                          DrawContext* drawContext,
+                          const SkRuntimeShader* shader) {
+    notify_in_use(recorder, drawContext, shader->children());
 }
 
 static void add_to_key(const KeyContext& keyContext,
@@ -1684,6 +1855,9 @@ static void add_to_key(const KeyContext& keyContext,
     SKGPU_LOG_W("Raster-only SkShader (SkTransformShader) encountered");
     builder->addBlock(BuiltInCodeSnippetID::kError);
 }
+static void notify_in_use(Recorder*, DrawContext*, const SkTransformShader*) {
+    // no-op
+}
 
 static void add_to_key(const KeyContext& keyContext,
                        PaintParamsKeyBuilder* builder,
@@ -1691,6 +1865,9 @@ static void add_to_key(const KeyContext& keyContext,
                        const SkTriColorShader* shader) {
     SKGPU_LOG_W("Raster-only SkShader (SkTriColorShader) encountered");
     builder->addBlock(BuiltInCodeSnippetID::kError);
+}
+static void notify_in_use(Recorder*, DrawContext*, const SkTriColorShader*) {
+    // no-op
 }
 
 static void add_to_key(const KeyContext& keyContext,
@@ -1720,6 +1897,11 @@ static void add_to_key(const KeyContext& keyContext,
                     workingCS.get(), dstAT, dstCS.get(), dstAT);
             ColorSpaceTransformBlock::AddBlock(keyContext, builder, gatherer, data);
         });
+}
+static void notify_in_use(Recorder* recorder,
+                          DrawContext* drawContext,
+                          const SkWorkingColorSpaceShader* shader) {
+    NotifyImagesInUse(recorder, drawContext, shader->shader().get());
 }
 
 static SkBitmap create_color_and_offset_bitmap(int numStops,
@@ -1958,7 +2140,9 @@ static void add_to_key(const KeyContext& keyContext,
     }
     SkUNREACHABLE;
 }
-
+static void notify_in_use(Recorder*, DrawContext*, const SkGradientBaseShader*) {
+    // Gradients do not have children, so no images to notify
+}
 
 void AddToKey(const KeyContext& keyContext,
               PaintParamsKeyBuilder* builder,
@@ -1969,11 +2153,30 @@ void AddToKey(const KeyContext& keyContext,
     }
     switch (as_SB(shader)->type()) {
 #define M(type)                                                        \
-    case SkShaderBase::ShaderType::k##type:                             \
+    case SkShaderBase::ShaderType::k##type:                            \
         add_to_key(keyContext,                                         \
                    builder,                                            \
                    gatherer,                                           \
                    static_cast<const Sk##type##Shader*>(shader)); \
+        return;
+        SK_ALL_SHADERS(M)
+#undef M
+    }
+    SkUNREACHABLE;
+}
+
+void NotifyImagesInUse(Recorder* recorder,
+                       DrawContext* drawContext,
+                       const SkShader* shader) {
+    if (!shader) {
+        return;
+    }
+    switch (as_SB(shader)->type()) {
+#define M(type)                                                      \
+    case SkShaderBase::ShaderType::k##type:                          \
+        notify_in_use(recorder,                                      \
+                      drawContext,                                   \
+                      static_cast<const Sk##type##Shader*>(shader)); \
         return;
         SK_ALL_SHADERS(M)
 #undef M

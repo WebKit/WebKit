@@ -92,7 +92,7 @@ public:
     DesiredIdentifiers& identifiers() { return m_identifiers; }
     DesiredWeakReferences& weakReferences() { return m_weakReferences; }
     DesiredTransitions& transitions() { return m_transitions; }
-    RecordedStatuses& recordedStatuses() { return m_recordedStatuses; }
+    RecordedStatuses& recordedStatuses() { return *m_recordedStatuses.get(); }
 
     bool willTryToTierUp() const { return m_willTryToTierUp; }
     void setWillTryToTierUp(bool willTryToTierUp) { m_willTryToTierUp = willTryToTierUp; }
@@ -107,10 +107,10 @@ public:
 
 private:
     CompilationPath compileInThreadImpl() override;
+    void finalizeInThread(Ref<JSC::JITCode>);
     
-    bool isStillValidOnMainThread();
-    bool isStillValid();
-    void reallyAdd(CommonData*);
+    bool isStillValidCodeBlock();
+    bool reallyAdd(CommonData*);
 
     // These can be raw pointers because we visit them during every GC in checkLivenessAndVisitChildren.
     CodeBlock* m_profiledDFGCodeBlock;
@@ -132,7 +132,7 @@ private:
     DesiredIdentifiers m_identifiers;
     DesiredWeakReferences m_weakReferences;
     DesiredTransitions m_transitions;
-    RecordedStatuses m_recordedStatuses;
+    std::unique_ptr<RecordedStatuses> m_recordedStatuses;
 
     HashMap<BytecodeIndex, FixedVector<BytecodeIndex>> m_tierUpInLoopHierarchy;
     Vector<BytecodeIndex> m_tierUpAndOSREnterBytecodes;

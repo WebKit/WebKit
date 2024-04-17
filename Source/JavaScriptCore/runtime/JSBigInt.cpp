@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -496,12 +496,12 @@ public:
         ASSERT_UNUSED(i, i < length());
 #if CPU(REGISTER64)
         if (sign())
-            return static_cast<JSBigInt::Digit>(WTF::negate(m_value));
+            return static_cast<JSBigInt::Digit>(WTF::negate(static_cast<int64_t>(m_value)));
         return m_value;
 #else
         static_assert(sizeof(JSBigInt::Digit) == 4);
         if (sign())
-            return static_cast<JSBigInt::Digit>(WTF::negate(m_value) >> (32 * i));
+            return static_cast<JSBigInt::Digit>(WTF::negate(static_cast<int64_t>(m_value)) >> (32 * i));
         return static_cast<JSBigInt::Digit>(m_value >> (32 * i));
 #endif
     }

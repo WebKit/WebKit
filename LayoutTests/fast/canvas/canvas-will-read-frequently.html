@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+description("Test checks the behavior of willReadFrequently canvas 2D context setting");
+
+var context;
+function runTest(canvasSettings) {
+    let canvas = document.createElement('canvas');
+    canvas.height = 300;
+    canvas.width = 300;
+    context = canvas.getContext("2d", canvasSettings);
+    context.fillStyle = "red";
+    context.rect(0, 0, 300, 300);
+    context.fill();
+    if (canvasSettings === undefined || canvasSettings.willReadFrequently === false)
+        shouldBe("context.getEffectiveRenderingModeForTesting()", "'Accelerated'");
+    else
+        shouldBe("context.getEffectiveRenderingModeForTesting()", "'Unaccelerated'")
+}
+
+debug("Testing default value");
+runTest(undefined)
+
+debug("Testing willReadFrequently enabled");
+runTest({ willReadFrequently: true })
+
+debug("Testing willReadFrequently disabled");
+runTest({ willReadFrequently: false })
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

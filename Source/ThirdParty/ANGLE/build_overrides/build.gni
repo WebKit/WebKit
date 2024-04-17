@@ -11,6 +11,9 @@ declare_args() {
   # If true, it assumes that //third_party/abseil-cpp is an available
   # dependency for googletest.
   gtest_enable_absl_printers = false
+
+  # Set to default here so that it can be set via gn args
+  use_cxx17 = false
 }
 
 if (host_os == "mac" && use_system_xcode == "") {

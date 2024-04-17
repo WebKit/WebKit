@@ -7,7 +7,8 @@ Added canvas.
 PASS: Canvas context should be "2D".
 {
   "colorSpace": "srgb",
-  "desynchronized": false
+  "desynchronized": false,
+  "willReadFrequently": false
 }
 
 -- Running test case: CreateBitmapRendererCanvasContext

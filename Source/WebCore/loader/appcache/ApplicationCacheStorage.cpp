@@ -1054,15 +1054,15 @@ bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup& group)
 }
 
 template<typename CharacterType>
-static inline void parseHeader(const CharacterType* header, unsigned headerLength, ResourceResponse& response)
+static inline void parseHeader(std::span<const CharacterType> header, ResourceResponse& response)
 {
-    ASSERT(WTF::find(header, headerLength, ':') != notFound);
-    unsigned colonPosition = WTF::find(header, headerLength, ':');
+    auto colonPosition = WTF::find(header, ':');
+    ASSERT(colonPosition != notFound);
 
     // Save memory by putting the header names into atom strings so each is stored only once,
     // even though the setHTTPHeaderField function does not require an atom string.
-    AtomString headerName { header, colonPosition };
-    String headerValue({ header + colonPosition + 1, headerLength - colonPosition - 1 });
+    AtomString headerName { header.first(colonPosition) };
+    String headerValue(header.subspan(colonPosition + 1));
 
     response.setHTTPHeaderField(headerName, headerValue);
 }
@@ -1075,18 +1075,18 @@ static inline void parseHeaders(const String& headers, ResourceResponse& respons
         ASSERT(startPos != endPos);
 
         if (headers.is8Bit())
-            parseHeader(headers.characters8() + startPos, endPos - startPos, response);
+            parseHeader(headers.span8().subspan(startPos, endPos - startPos), response);
         else
-            parseHeader(headers.characters16() + startPos, endPos - startPos, response);
+            parseHeader(headers.span16().subspan(startPos, endPos - startPos), response);
         
         startPos = endPos + 1;
     }
     
     if (startPos != headers.length()) {
         if (headers.is8Bit())
-            parseHeader(headers.characters8(), headers.length(), response);
+            parseHeader(headers.span8(), response);
         else
-            parseHeader(headers.characters16(), headers.length(), response);
+            parseHeader(headers.span16(), response);
     }
 }
     

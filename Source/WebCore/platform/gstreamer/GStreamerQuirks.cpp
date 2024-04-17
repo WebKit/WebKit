@@ -174,10 +174,8 @@ bool GStreamerQuirksManager::sinksRequireClockSynchronization() const
 void GStreamerQuirksManager::configureElement(GstElement* element, OptionSet<ElementRuntimeCharacteristics>&& characteristics)
 {
     GST_DEBUG("Configuring element %" GST_PTR_FORMAT, element);
-    for (const auto& quirk : m_quirks) {
-        if (quirk->configureElement(element, characteristics))
-            return;
-    }
+    for (const auto& quirk : m_quirks)
+        quirk->configureElement(element, characteristics);
 }
 
 std::optional<bool> GStreamerQuirksManager::isHardwareAccelerated(GstElementFactory* factory) const
@@ -240,6 +238,15 @@ unsigned GStreamerQuirksManager::getAdditionalPlaybinFlags() const
     }
     GST_DEBUG("Quirks didn't request any specific playbin flags.");
     return getGstPlayFlag("text") | getGstPlayFlag("soft-colorbalance");
+}
+
+bool GStreamerQuirksManager::shouldParseIncomingLibWebRTCBitStream() const
+{
+    for (auto& quirk : m_quirks) {
+        if (!quirk->shouldParseIncomingLibWebRTCBitStream())
+            return false;
+    }
+    return true;
 }
 
 #undef GST_CAT_DEFAULT

@@ -317,15 +317,15 @@ void MediaSessionManagerGLib::updateNowPlayingInfo()
     m_haveEverRegisteredAsNowPlayingApplication = true;
 
     if (m_nowPlayingManager->setNowPlayingInfo(*nowPlayingInfo))
-        ALWAYS_LOG(LOGIDENTIFIER, "title = \"", nowPlayingInfo->title, "\", isPlaying = ", nowPlayingInfo->isPlaying, ", duration = ", nowPlayingInfo->duration, ", now = ", nowPlayingInfo->currentTime, ", id = ", nowPlayingInfo->uniqueIdentifier.toUInt64(), ", registered = ", m_registeredAsNowPlayingApplication, ", src = \"", nowPlayingInfo->artwork ? nowPlayingInfo->artwork->src : String(), "\"");
+        ALWAYS_LOG(LOGIDENTIFIER, "title = \"", nowPlayingInfo->metadata.title, "\", isPlaying = ", nowPlayingInfo->isPlaying, ", duration = ", nowPlayingInfo->duration, ", now = ", nowPlayingInfo->currentTime, ", id = ", nowPlayingInfo->uniqueIdentifier.toUInt64(), ", registered = ", m_registeredAsNowPlayingApplication, ", src = \"", nowPlayingInfo->metadata.artwork ? nowPlayingInfo->metadata.artwork->src : String(), "\"");
 
     if (!m_registeredAsNowPlayingApplication) {
         m_registeredAsNowPlayingApplication = true;
         providePresentingApplicationPIDIfNecessary();
     }
 
-    if (!nowPlayingInfo->title.isEmpty())
-        m_lastUpdatedNowPlayingTitle = nowPlayingInfo->title;
+    if (!nowPlayingInfo->metadata.title.isEmpty())
+        m_lastUpdatedNowPlayingTitle = nowPlayingInfo->metadata.title;
 
     double duration = nowPlayingInfo->duration;
     if (std::isfinite(duration) && duration != MediaPlayer::invalidTime())

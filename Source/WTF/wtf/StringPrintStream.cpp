@@ -86,7 +86,7 @@ void StringPrintStream::vprintf(const char* format, va_list argList)
 CString StringPrintStream::toCString()
 {
     ASSERT(m_next == strlen(m_buffer));
-    return CString(m_buffer, m_next);
+    return CString({ m_buffer, m_next });
 }
 
 void StringPrintStream::reset()
@@ -100,19 +100,19 @@ Expected<String, UTF8ConversionError> StringPrintStream::tryToString()
     ASSERT(m_next == strlen(m_buffer));
     if (m_next > String::MaxLength)
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
-    return String::fromUTF8(m_buffer, m_next);
+    return String::fromUTF8({ m_buffer, m_next });
 }
 
 String StringPrintStream::toString()
 {
     ASSERT(m_next == strlen(m_buffer));
-    return String::fromUTF8(m_buffer, m_next);
+    return String::fromUTF8({ m_buffer, m_next });
 }
 
 String StringPrintStream::toStringWithLatin1Fallback()
 {
     ASSERT(m_next == strlen(m_buffer));
-    return String::fromUTF8WithLatin1Fallback(m_buffer, m_next);
+    return String::fromUTF8WithLatin1Fallback({ m_buffer, m_next });
 }
 
 void StringPrintStream::increaseSize(size_t newSize)

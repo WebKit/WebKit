@@ -19,8 +19,8 @@ TemporalHelpers.assertDuration(feb20.until(feb21, { largestUnit: "years" }), /* 
 TemporalHelpers.assertDuration(feb20.until(feb21, { largestUnit: "months" }), 0, /* months = */ 12, 0, 0, 0, 0, 0, 0, 0, 0, "start of February, months");
 TemporalHelpers.assertDuration(feb20.until(feb21, { largestUnit: "weeks" }), 0, 0, /* weeks = */ 52, /* days = */ 2, 0, 0, 0, 0, 0, 0, "start of February, weeks");
 
-const lastFeb20 = Temporal.PlainDate.from("2020-02-29");
-const lastFeb21 = Temporal.PlainDate.from("2021-02-28");
-TemporalHelpers.assertDuration(lastFeb20.until(lastFeb21, { largestUnit: "years" }), /* years = */ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, "end of February, years");
-TemporalHelpers.assertDuration(lastFeb20.until(lastFeb21, { largestUnit: "months" }), 0, /* months = */ 12, 0, 0, 0, 0, 0, 0, 0, 0, "end of February, months");
-TemporalHelpers.assertDuration(lastFeb20.until(lastFeb21, { largestUnit: "weeks" }), 0, 0, /* weeks = */ 52, /* days = */ 1, 0, 0, 0, 0, 0, 0, "end of February, weeks");
+const lastFeb21 = new Temporal.PlainDate(2021, 2, 28);
+const lastFeb22 = new Temporal.PlainDate(2022, 2, 28);
+TemporalHelpers.assertDuration(lastFeb21.until(lastFeb22, { largestUnit: "years" }), /* years = */ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, "end of February, years");
+TemporalHelpers.assertDuration(lastFeb21.until(lastFeb22, { largestUnit: "months" }), 0, /* months = */ 12, 0, 0, 0, 0, 0, 0, 0, 0, "end of February, months");
+TemporalHelpers.assertDuration(lastFeb21.until(lastFeb22, { largestUnit: "weeks" }), 0, 0, /* weeks = */ 52, /* days = */ 1, 0, 0, 0, 0, 0, 0, "end of February, weeks");

@@ -12,11 +12,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  String.raw.name, 'raw',
-  'The value of `String.raw.name` is `"raw"`'
-);
-
-verifyNotEnumerable(String.raw, 'name');
-verifyNotWritable(String.raw, 'name');
-verifyConfigurable(String.raw, 'name');
+verifyProperty(String.raw, "name", {
+  value: "raw",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

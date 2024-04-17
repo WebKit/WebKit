@@ -22,8 +22,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Number.isFinite.length, 1);
-
-verifyNotEnumerable(Number.isFinite, "length");
-verifyNotWritable(Number.isFinite, "length");
-verifyConfigurable(Number.isFinite, "length");
+verifyProperty(Number.isFinite, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

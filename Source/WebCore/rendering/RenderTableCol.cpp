@@ -61,6 +61,8 @@ RenderTableCol::RenderTableCol(Document& document, RenderStyle&& style)
     ASSERT(isRenderTableCol());
 }
 
+RenderTableCol::~RenderTableCol() = default;
+
 void RenderTableCol::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBox::styleDidChange(diff, oldStyle);
@@ -104,15 +106,15 @@ void RenderTableCol::updateFromElement()
         setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-void RenderTableCol::insertedIntoTree(IsInternalMove isInternalMove)
+void RenderTableCol::insertedIntoTree()
 {
-    RenderBox::insertedIntoTree(isInternalMove);
+    RenderBox::insertedIntoTree();
     table()->addColumn(this);
 }
 
-void RenderTableCol::willBeRemovedFromTree(IsInternalMove isInternalMove)
+void RenderTableCol::willBeRemovedFromTree()
 {
-    RenderBox::willBeRemovedFromTree(isInternalMove);
+    RenderBox::willBeRemovedFromTree();
     if (auto* table = this->table()) {
         // We only need to invalidate the column cache when only individual columns are being removed (as opposed to when the entire table is being collapsed).
         table->invalidateColumns();
@@ -155,6 +157,8 @@ auto RenderTableCol::rectsForRepaintingAfterLayout(const RenderLayerModelObject*
 void RenderTableCol::imageChanged(WrappedImagePtr, const IntRect*)
 {
     // FIXME: Repaint only the rect the image paints in.
+    if (!parent())
+        return;
     repaint();
 }
 

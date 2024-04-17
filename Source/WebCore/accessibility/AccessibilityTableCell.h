@@ -37,7 +37,7 @@ class AccessibilityTableRow;
 
 class AccessibilityTableCell : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilityTableCell> create(RenderObject*);
+    static Ref<AccessibilityTableCell> create(RenderObject&);
     static Ref<AccessibilityTableCell> create(Node&);
     virtual ~AccessibilityTableCell();
     bool isTableCell() const final { return true; }
@@ -76,7 +76,7 @@ public:
 #endif
 
 protected:
-    explicit AccessibilityTableCell(RenderObject*);
+    explicit AccessibilityTableCell(RenderObject&);
     explicit AccessibilityTableCell(Node&);
 
     AccessibilityTableRow* parentRow() const;

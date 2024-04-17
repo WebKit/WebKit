@@ -11,7 +11,7 @@ import { GPUTest } from '../../../../../gpu_test.js';
 import { Type } from '../../../../../util/conversion.js';
 import { allInputSources, onlyConstInputSource, run } from '../../expression.js';
 
-import { abstractIntBuiltin, builtin } from './builtin.js';
+import { abstractFloatBuiltin, abstractIntBuiltin, builtin } from './builtin.js';
 import { d } from './dot.cache.js';
 
 export const g = makeTestGroup(GPUTest);
@@ -118,11 +118,53 @@ fn(async (t) => {
   await run(t, builtin('dot'), [Type.vec4u, Type.vec4u], Type.u32, t.params, cases);
 });
 
-g.test('abstract_float').
+g.test('abstract_float_vec2').
 specURL('https://www.w3.org/TR/WGSL/#vector-builtin-functions').
-desc(`abstract float test`).
-params((u) => u.combine('inputSource', allInputSources)).
-unimplemented();
+desc(`abstract float tests using vec2s`).
+params((u) => u.combine('inputSource', onlyConstInputSource)).
+fn(async (t) => {
+  const cases = await d.get('abstract_float_vec2_const');
+  await run(
+    t,
+    abstractFloatBuiltin('dot'),
+    [Type.vec(2, Type.abstractFloat), Type.vec(2, Type.abstractFloat)],
+    Type.abstractFloat,
+    t.params,
+    cases
+  );
+});
+
+g.test('abstract_float_vec3').
+specURL('https://www.w3.org/TR/WGSL/#vector-builtin-functions').
+desc(`abstract float tests using vec3s`).
+params((u) => u.combine('inputSource', onlyConstInputSource)).
+fn(async (t) => {
+  const cases = await d.get('abstract_float_vec3_const');
+  await run(
+    t,
+    abstractFloatBuiltin('dot'),
+    [Type.vec(3, Type.abstractFloat), Type.vec(3, Type.abstractFloat)],
+    Type.abstractFloat,
+    t.params,
+    cases
+  );
+});
+
+g.test('abstract_float_vec4').
+specURL('https://www.w3.org/TR/WGSL/#vector-builtin-functions').
+desc(`abstract float tests using vec4s`).
+params((u) => u.combine('inputSource', onlyConstInputSource)).
+fn(async (t) => {
+  const cases = await d.get('abstract_float_vec4_const');
+  await run(
+    t,
+    abstractFloatBuiltin('dot'),
+    [Type.vec(4, Type.abstractFloat), Type.vec(4, Type.abstractFloat)],
+    Type.abstractFloat,
+    t.params,
+    cases
+  );
+});
 
 g.test('f32_vec2').
 specURL('https://www.w3.org/TR/WGSL/#vector-builtin-functions').

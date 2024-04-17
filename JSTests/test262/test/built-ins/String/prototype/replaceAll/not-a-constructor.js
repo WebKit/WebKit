@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.replaceAll();
-}, '`new String.prototype.replaceAll()` throws TypeError');
+});
 

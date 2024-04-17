@@ -65,9 +65,21 @@ class DownloadManager {
     WTF_MAKE_NONCOPYABLE(DownloadManager);
 
 public:
-    class Client : public CanMakeCheckedPtr {
+    class Client {
     public:
         virtual ~Client() { }
+
+        // CheckedPtr interface
+        virtual uint32_t ptrCount() const = 0;
+        virtual uint32_t ptrCountWithoutThreadCheck() const = 0;
+        virtual void incrementPtrCount() const = 0;
+        virtual void decrementPtrCount() const = 0;
+#if CHECKED_POINTER_DEBUG
+        virtual void registerCheckedPtr(const void* pointer) const = 0;
+        virtual void copyCheckedPtr(const void* source, const void* destination) const = 0;
+        virtual void moveCheckedPtr(const void* source, const void* destination) const = 0;
+        virtual void unregisterCheckedPtr(const void* pointer) const = 0;
+#endif // CHECKED_POINTER_DEBUG
 
         virtual void didCreateDownload() = 0;
         virtual void didDestroyDownload() = 0;
@@ -75,6 +87,8 @@ public:
         virtual IPC::Connection* parentProcessConnectionForDownloads() = 0;
         virtual AuthenticationManager& downloadsAuthenticationManager() = 0;
         virtual NetworkSession* networkSession(PAL::SessionID) const = 0;
+
+        // RefPtr interface
         virtual void ref() const = 0;
         virtual void deref() const = 0;
     };

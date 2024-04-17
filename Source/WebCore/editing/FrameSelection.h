@@ -112,9 +112,10 @@ private:
     VisiblePosition m_position;
 };
 
-class FrameSelection final : private CaretBase, public CaretAnimationClient, public CanMakeCheckedPtr {
+class FrameSelection final : private CaretBase, public CaretAnimationClient, public CanMakeCheckedPtr<FrameSelection> {
     WTF_MAKE_NONCOPYABLE(FrameSelection);
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameSelection);
 public:
     enum class Alteration : bool { Move, Extend };
     enum class CursorAlignOnScroll : bool { IfNeeded, Always };
@@ -133,6 +134,7 @@ public:
         RevealSelectionBounds = 1 << 11,
         ForceCenterScroll = 1 << 12,
         ForBindings = 1 << 13,
+        DoNotNotifyEditorClients = 1 << 14,
     };
     static constexpr OptionSet<SetSelectionOption> defaultSetSelectionOptions(UserTriggered = UserTriggered::No);
 

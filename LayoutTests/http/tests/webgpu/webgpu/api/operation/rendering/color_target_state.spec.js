@@ -165,6 +165,7 @@ u //
 .combine('component', ['color', 'alpha']).
 combine('srcFactor', kBlendFactors).
 combine('dstFactor', kBlendFactors).
+beginSubcases().
 combine('operation', kBlendOperations).
 filter((t) => {
   if (t.operation === 'min' || t.operation === 'max') {
@@ -172,7 +173,6 @@ filter((t) => {
   }
   return true;
 }).
-beginSubcases().
 combine('srcColor', [{ r: 0.11, g: 0.61, b: 0.81, a: 0.44 }]).
 combine('dstColor', [
 { r: 0.51, g: 0.22, b: 0.71, a: 0.33 },

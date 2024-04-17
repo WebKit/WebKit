@@ -80,7 +80,7 @@ public:
 
     // These two callee getters are only valid once the callees have been populated.
 
-    Callee& jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    JSEntrypointCallee& jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         ASSERT(runnable());
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());

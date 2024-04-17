@@ -460,7 +460,7 @@ void testDitherDisabledProperlyOnRGB565(GLColor gradientColor,
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB565, kFramebufferWidth, kFramebufferHeight);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
     constexpr char kVS[] = {
@@ -487,7 +487,7 @@ void testDitherDisabledProperlyOnRGB565(GLColor gradientColor,
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     // setup quad data
     // black ----> gradientColor
@@ -516,30 +516,30 @@ void testDitherDisabledProperlyOnRGB565(GLColor gradientColor,
                                        gradientColor.A * 1.0f / 255.0f};
 
     GLBuffer vertexBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(positions[0]) * positions.size(), positions.data(),
                  GL_STATIC_DRAW);
 
     GLBuffer colorBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(color0[0]) * color0.size(), color0.data(), GL_STATIC_DRAW);
 
     GLint vertexPosLocation = glGetAttribLocation(program, "a_position");
     ASSERT_NE(vertexPosLocation, -1);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glEnableVertexAttribArray(vertexPosLocation);
     glVertexAttribPointer(vertexPosLocation, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
     GLint vertexColorLocation = glGetAttribLocation(program, "a_color");
     ASSERT_NE(vertexColorLocation, -1);
-    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
     glEnableVertexAttribArray(vertexColorLocation);
     glVertexAttribPointer(vertexColorLocation, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
     const std::vector<uint8_t> indices = {0, 2, 1, 1, 2, 3};
 
     GLBuffer indexBuffer;
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(),
                  GL_STATIC_DRAW);
     ASSERT_GL_NO_ERROR();
@@ -1042,7 +1042,7 @@ TEST_P(FramebufferTest_ES3, TextureAttachmentMipLevelsReadBackWithDraw)
 
     // This draw triggers the use of the framebuffer
     glUseProgram(greenProgram);
-    drawQuad(greenProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
@@ -1054,16 +1054,16 @@ TEST_P(FramebufferTest_ES3, TextureAttachmentMipLevelsReadBackWithDraw)
 TEST_P(FramebufferTest_ES3, ColorAttachmentIndexOutOfBounds)
 {
     GLFramebuffer framebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
     GLint maxColorAttachments = 0;
     glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
     GLenum attachment = static_cast<GLenum>(maxColorAttachments + GL_COLOR_ATTACHMENT0);
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture.get());
+    glBindTexture(GL_TEXTURE_2D, texture);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, 1, 1);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture, 0);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
@@ -1277,7 +1277,7 @@ TEST_P(FramebufferTest_ES3, ResizeColorAttachmentSmallToLarge)
 
     // Draw to FBO backed by the small texture
     glUseProgram(greenProgram);
-    drawQuad(greenProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
     EXPECT_PIXEL_COLOR_EQ((getWindowWidth() / 2) - 1, (getWindowHeight() / 2) - 1, GLColor::green);
@@ -1293,7 +1293,7 @@ TEST_P(FramebufferTest_ES3, ResizeColorAttachmentSmallToLarge)
 
     // Draw to FBO backed by the large texture
     glUseProgram(blueProgram);
-    drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::blue);
@@ -1322,7 +1322,7 @@ TEST_P(FramebufferTest_ES3, ResizeColorAttachmentLargeToSmall)
 
     // Draw to FBO backed by the large texture
     glUseProgram(blueProgram);
-    drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::blue);
@@ -1338,7 +1338,7 @@ TEST_P(FramebufferTest_ES3, ResizeColorAttachmentLargeToSmall)
 
     // Draw to FBO backed by the small texture
     glUseProgram(greenProgram);
-    drawQuad(greenProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
     EXPECT_PIXEL_COLOR_EQ((getWindowWidth() / 2) - 1, (getWindowHeight() / 2) - 1, GLColor::green);
@@ -1366,7 +1366,7 @@ TEST_P(FramebufferTest_ES3, ResizeTextureLargeToSmall)
 
     // Draw to FBO backed by the large texture
     glUseProgram(blueProgram);
-    drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::blue);
@@ -1382,7 +1382,7 @@ TEST_P(FramebufferTest_ES3, ResizeTextureLargeToSmall)
 
     // Draw to FBO backed by the small texture
     glUseProgram(greenProgram);
-    drawQuad(greenProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
     EXPECT_PIXEL_COLOR_EQ((getWindowWidth() / 2) - 1, (getWindowHeight() / 2) - 1, GLColor::green);
@@ -1410,7 +1410,7 @@ TEST_P(FramebufferTest_ES3, ResizeTextureSmallToLarge)
 
     // Draw to FBO backed by the large texture
     glUseProgram(blueProgram);
-    drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
     EXPECT_PIXEL_COLOR_EQ((getWindowWidth() / 2) - 1, (getWindowHeight() / 2) - 1, GLColor::blue);
@@ -1426,7 +1426,7 @@ TEST_P(FramebufferTest_ES3, ResizeTextureSmallToLarge)
 
     // Draw to FBO backed by the small texture
     glUseProgram(greenProgram);
-    drawQuad(greenProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::green);
@@ -2456,6 +2456,150 @@ class FramebufferTest_ES31 : public ANGLETest<>
         EXPECT_EQ(static_cast<GLint>(passedCount), 0);
     }
 
+    void verifyDepth(GLuint framebuffer, int width, int height, float depthValue)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+        GLint colorAttachment = GL_NONE;
+        glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                              GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE,
+                                              &colorAttachment);
+
+        // If no color attachment add a temp one for verification.
+        GLTexture tempColor;
+        if (colorAttachment == GL_NONE)
+        {
+            glBindTexture(GL_TEXTURE_2D, tempColor);
+            glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, width, height);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tempColor,
+                                   0);
+        }
+
+        // Use a small shader to verify depth.
+        ANGLE_GL_PROGRAM(depthTestProgram, essl1_shaders::vs::Passthrough(),
+                         essl1_shaders::fs::Blue());
+        ANGLE_GL_PROGRAM(depthTestProgramFail, essl1_shaders::vs::Passthrough(),
+                         essl1_shaders::fs::Red());
+
+        GLboolean hasDepthTest   = GL_FALSE;
+        GLboolean hasDepthWrite  = GL_TRUE;
+        GLint prevDepthFunc      = GL_ALWAYS;
+        GLboolean hasStencilTest = GL_FALSE;
+
+        glGetBooleanv(GL_DEPTH_TEST, &hasDepthTest);
+        glGetBooleanv(GL_DEPTH_WRITEMASK, &hasDepthWrite);
+        glGetIntegerv(GL_DEPTH_FUNC, &prevDepthFunc);
+        glGetBooleanv(GL_STENCIL_TEST, &hasStencilTest);
+
+        if (!hasDepthTest)
+        {
+            glEnable(GL_DEPTH_TEST);
+        }
+        if (hasDepthWrite)
+        {
+            glDepthMask(GL_FALSE);
+        }
+        if (hasStencilTest)
+        {
+            glDisable(GL_STENCIL_TEST);
+        }
+        glDepthFunc(GL_LESS);
+        drawQuad(depthTestProgram, essl1_shaders::PositionAttrib(), depthValue - 0.01f);
+        drawQuad(depthTestProgramFail, essl1_shaders::PositionAttrib(), depthValue + 0.01f);
+        if (!hasDepthTest)
+        {
+            glDisable(GL_DEPTH_TEST);
+        }
+        if (hasDepthWrite)
+        {
+            glDepthMask(GL_TRUE);
+        }
+        glDepthFunc(prevDepthFunc);
+        if (hasStencilTest)
+        {
+            glEnable(GL_STENCIL_TEST);
+        }
+        ASSERT_GL_NO_ERROR();
+
+        EXPECT_PIXEL_RECT_EQ(0, 0, width, height, GLColor::blue);
+
+        if (colorAttachment == GL_NONE)
+        {
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+        }
+    }
+
+    void verifyStencil(GLuint framebuffer, int width, int height, uint32_t stencilValue)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+        GLint colorAttachment = GL_NONE;
+        glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                              GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE,
+                                              &colorAttachment);
+
+        // If no color attachment add a temp one for verification.
+        GLTexture tempColor;
+        if (colorAttachment == GL_NONE)
+        {
+            glBindTexture(GL_TEXTURE_2D, tempColor);
+            glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, width, height);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tempColor,
+                                   0);
+        }
+
+        // Use another small shader to verify stencil.
+        ANGLE_GL_PROGRAM(stencilTestProgram, essl1_shaders::vs::Passthrough(),
+                         essl1_shaders::fs::Green());
+        GLboolean hasStencilTest   = GL_FALSE;
+        GLint prevStencilFunc      = GL_ALWAYS;
+        GLint prevStencilValue     = 0xFF;
+        GLint prevStencilRef       = 0xFF;
+        GLint prevStencilFail      = GL_KEEP;
+        GLint prevStencilDepthFail = GL_KEEP;
+        GLint prevStencilDepthPass = GL_KEEP;
+        GLboolean hasDepthTest     = GL_FALSE;
+
+        glGetBooleanv(GL_STENCIL_TEST, &hasStencilTest);
+        glGetIntegerv(GL_STENCIL_FUNC, &prevStencilFunc);
+        glGetIntegerv(GL_STENCIL_VALUE_MASK, &prevStencilValue);
+        glGetIntegerv(GL_STENCIL_REF, &prevStencilRef);
+        glGetIntegerv(GL_STENCIL_FAIL, &prevStencilFail);
+        glGetIntegerv(GL_STENCIL_PASS_DEPTH_FAIL, &prevStencilDepthFail);
+        glGetIntegerv(GL_STENCIL_PASS_DEPTH_PASS, &prevStencilDepthPass);
+        glGetBooleanv(GL_DEPTH_TEST, &hasDepthTest);
+
+        if (!hasStencilTest)
+        {
+            glEnable(GL_STENCIL_TEST);
+        }
+        glStencilFunc(GL_EQUAL, stencilValue, 0xFF);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+        if (hasDepthTest)
+        {
+            glDisable(GL_DEPTH_TEST);
+        }
+        drawQuad(stencilTestProgram, essl1_shaders::PositionAttrib(), 0.0f);
+        if (!hasStencilTest)
+        {
+            glDisable(GL_STENCIL_TEST);
+        }
+        glStencilFunc(prevStencilFunc, prevStencilValue, prevStencilRef);
+        glStencilOp(prevStencilFail, prevStencilDepthFail, prevStencilDepthPass);
+        if (hasDepthTest)
+        {
+            glEnable(GL_DEPTH_TEST);
+        }
+        ASSERT_GL_NO_ERROR();
+
+        EXPECT_PIXEL_RECT_EQ(0, 0, width, height, GLColor::green);
+
+        if (colorAttachment == GL_NONE)
+        {
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+        }
+    }
+
     static constexpr char kFSWriteRedGreen[] = R"(#extension GL_EXT_draw_buffers : enable
 precision highp float;
 void main()
@@ -2470,7 +2614,7 @@ void main()
 TEST_P(FramebufferTest_ES31, IncompleteMissingAttachmentDefaultParam)
 {
     GLFramebuffer mFramebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
 
     glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, 1);
     glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, 1);
@@ -2498,7 +2642,7 @@ TEST_P(FramebufferTest_ES31, IncompleteMissingAttachmentDefaultParam)
 TEST_P(FramebufferTest_ES31, IncompleteMultisampleSampleCountMix)
 {
     GLFramebuffer mFramebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
 
     // Lookup the supported number of sample counts (rely on fact that ANGLE uses the same set of
     // sample counts for textures and renderbuffers)
@@ -2514,16 +2658,15 @@ TEST_P(FramebufferTest_ES31, IncompleteMultisampleSampleCountMix)
                           sampleCounts.data());
 
     GLTexture mTexture;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTexture.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTexture);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, sampleCounts[0], GL_RGBA8, 1, 1, true);
 
     GLRenderbuffer mRenderbuffer;
-    glBindRenderbuffer(GL_RENDERBUFFER, mRenderbuffer.get());
+    glBindRenderbuffer(GL_RENDERBUFFER, mRenderbuffer);
     glRenderbufferStorageMultisample(GL_RENDERBUFFER, sampleCounts[1], GL_RGBA8, 1, 1);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           mTexture.get(), 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_RENDERBUFFER,
-                              mRenderbuffer.get());
+                           mTexture, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_RENDERBUFFER, mRenderbuffer);
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE,
                      glCheckFramebufferStatus(GL_FRAMEBUFFER));
 
@@ -2534,7 +2677,7 @@ TEST_P(FramebufferTest_ES31, IncompleteMultisampleSampleCountMix)
 TEST_P(FramebufferTest_ES31, IncompleteMultisampleSampleCountTex)
 {
     GLFramebuffer mFramebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
 
     // Lookup the supported number of sample counts
     GLint numSampleCounts = 0;
@@ -2549,14 +2692,14 @@ TEST_P(FramebufferTest_ES31, IncompleteMultisampleSampleCountTex)
                           sampleCounts.data());
 
     GLTexture mTextures[2];
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTextures[0].get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTextures[0]);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, sampleCounts[0], GL_RGBA8, 1, 1, true);
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTextures[1].get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTextures[1]);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, sampleCounts[1], GL_RGBA8, 1, 1, true);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           mTextures[0].get(), 0);
+                           mTextures[0], 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE,
-                           mTextures[1].get(), 0);
+                           mTextures[1], 0);
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE,
                      glCheckFramebufferStatus(GL_FRAMEBUFFER));
 
@@ -2568,19 +2711,18 @@ TEST_P(FramebufferTest_ES31, IncompleteMultisampleSampleCountTex)
 TEST_P(FramebufferTest_ES31, IncompleteMultisampleFixedSampleLocationsMix)
 {
     GLFramebuffer mFramebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
 
     GLTexture mTexture;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTexture.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTexture);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 1, GL_RGBA8, 1, 1, false);
 
     GLRenderbuffer mRenderbuffer;
-    glBindRenderbuffer(GL_RENDERBUFFER, mRenderbuffer.get());
+    glBindRenderbuffer(GL_RENDERBUFFER, mRenderbuffer);
     glRenderbufferStorageMultisample(GL_RENDERBUFFER, 1, GL_RGBA8, 1, 1);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           mTexture.get(), 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_RENDERBUFFER,
-                              mRenderbuffer.get());
+                           mTexture, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_RENDERBUFFER, mRenderbuffer);
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE,
                      glCheckFramebufferStatus(GL_FRAMEBUFFER));
 
@@ -2591,17 +2733,17 @@ TEST_P(FramebufferTest_ES31, IncompleteMultisampleFixedSampleLocationsMix)
 TEST_P(FramebufferTest_ES31, IncompleteMultisampleFixedSampleLocationsTex)
 {
     GLFramebuffer mFramebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
 
     GLTexture mTextures[2];
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTextures[0].get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTextures[0]);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 1, GL_RGBA8, 1, 1, false);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           mTextures[0].get(), 0);
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTextures[1].get());
+                           mTextures[0], 0);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTextures[1]);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 1, GL_RGB8, 1, 1, true);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE,
-                           mTextures[1].get(), 0);
+                           mTextures[1], 0);
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE,
                      glCheckFramebufferStatus(GL_FRAMEBUFFER));
 
@@ -2617,15 +2759,15 @@ TEST_P(FramebufferTest_ES31, BasicDrawToYFlippedFBO)
     glViewport(0, 0, kSize, kSize);
 
     GLFramebuffer fbo;
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
     glFramebufferParameteriMESA(GL_FRAMEBUFFER, GL_FRAMEBUFFER_FLIP_Y_MESA, 1);
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture.get());
+    glBindTexture(GL_TEXTURE_2D, texture);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
     ASSERT_GL_NO_ERROR();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
@@ -2652,14 +2794,14 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlit)
     glViewport(0, 0, kSize, kSize);
 
     GLFramebuffer msaaFBO;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           texture.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture,
+                           0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
@@ -2699,14 +2841,14 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitDifferentFormats)
     glViewport(0, 0, kSize, kSize);
 
     GLFramebuffer msaaFBO;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           texture.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture,
+                           0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
@@ -2766,14 +2908,14 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitMultipleFBOs)
     glViewport(0, 0, kSize, kSize);
 
     GLFramebuffer msaaFBORed;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBORed.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBORed);
 
     GLTexture textureRed;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureRed.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureRed);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           textureRed.get(), 0);
+                           textureRed, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     ANGLE_GL_PROGRAM(redProgram, essl31_shaders::vs::Simple(), essl31_shaders::fs::Red());
@@ -2781,14 +2923,14 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitMultipleFBOs)
     ASSERT_GL_NO_ERROR();
 
     GLFramebuffer msaaFBOGreen;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBOGreen.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBOGreen);
 
     GLTexture textureGreen;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureGreen.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureGreen);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           textureGreen.get(), 0);
+                           textureGreen, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     ANGLE_GL_PROGRAM(greenProgram, essl31_shaders::vs::Simple(), essl31_shaders::fs::Green());
@@ -2827,14 +2969,14 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitMultipleResolves)
     glViewport(0, 0, kSize, kSize);
 
     GLFramebuffer msaaFBORed;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBORed.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBORed);
 
     GLTexture textureRed;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureRed.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureRed);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           textureRed.get(), 0);
+                           textureRed, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     ANGLE_GL_PROGRAM(redProgram, essl31_shaders::vs::Simple(), essl31_shaders::fs::Red());
@@ -2884,14 +3026,14 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitDifferentReadDrawBuffers)
     glViewport(0, 0, kSize, kSize);
 
     GLFramebuffer msaaFBO;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           texture.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture,
+                           0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
@@ -2955,7 +3097,7 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveIntoMipMapWithBlit)
     // between the drawQuad() and glBlitFramebuffer(), so we can test the resolve with subpass path
     // in the Vulkan back end.
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
 
@@ -2966,9 +3108,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveIntoMipMapWithBlit)
     ASSERT_GL_NO_ERROR();
 
     GLFramebuffer msaaFBO;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO.get());
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           texture.get(), 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture,
+                           0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
@@ -3011,22 +3153,22 @@ TEST_P(FramebufferTest_ES31, MultipleTextureMultisampleResolveWithBlitMultipleRe
     glViewport(0, 0, kSize, kSize);
 
     GLFramebuffer msaaFBO;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
 
     GLTexture msaaTextureRed;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTextureRed.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTextureRed);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           msaaTextureRed.get(), 0);
+                           msaaTextureRed, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     GLTexture msaaTextureGreen;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTextureGreen.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTextureGreen);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE,
-                           msaaTextureGreen.get(), 0);
+                           msaaTextureGreen, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     // Setup program to render red into attachment 0 and green into attachment 1.
@@ -3092,22 +3234,22 @@ TEST_P(FramebufferTest_ES31,
     glViewport(0, 0, kSize, kSize);
 
     GLFramebuffer msaaFBO;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
 
     GLTexture msaaTextureRed;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTextureRed.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTextureRed);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           msaaTextureRed.get(), 0);
+                           msaaTextureRed, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     GLTexture msaaTextureGreen;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTextureGreen.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTextureGreen);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE,
-                           msaaTextureGreen.get(), 0);
+                           msaaTextureGreen, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     // Setup program to render red into attachment 0 and green into attachment 1.
@@ -3164,14 +3306,14 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitThenDraw)
     glViewport(0, 0, kSize, kSize);
 
     GLFramebuffer msaaFBO;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           texture.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture,
+                           0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
@@ -3224,22 +3366,22 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitThenDrawAttachment1)
     glViewport(0, 0, kSize, kSize);
 
     GLFramebuffer msaaFBO;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
 
     GLTexture msaaTextureRed;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTextureRed.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTextureRed);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           msaaTextureRed.get(), 0);
+                           msaaTextureRed, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     GLTexture msaaTextureGreen;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTextureGreen.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTextureGreen);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE,
-                           msaaTextureGreen.get(), 0);
+                           msaaTextureGreen, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     // Setup program to render red into attachment 0 and green into attachment 1.
@@ -3292,14 +3434,14 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitThenDrawThenResolveAgain)
     glViewport(0, 0, kSize, kSize);
 
     GLFramebuffer msaaFBO;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           texture.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture,
+                           0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
@@ -3355,14 +3497,14 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitThenDrawThenResolveAgainT
     glViewport(0, 0, kSize, kSize);
 
     GLFramebuffer msaaFBO;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           texture.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture,
+                           0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
@@ -3560,13 +3702,12 @@ void main()
     GLTexture mTexture;
     GLuint width  = 2;
     GLuint height = 2;
-    glBindTexture(GL_TEXTURE_2D, mTexture.get());
+    glBindTexture(GL_TEXTURE_2D, mTexture);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, width, height);
 
     const GLenum bufs[] = {GL_NONE, GL_NONE, GL_NONE, GL_COLOR_ATTACHMENT3};
 
-    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, mTexture.get(),
-                           0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, mTexture, 0);
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
     glDrawBuffers(4, bufs);
 
@@ -3774,12 +3915,11 @@ void main()
     validateSamplePass(query, defaultWidth, defaultHeight);
 
     GLTexture mTexture;
-    glBindTexture(GL_TEXTURE_2D, mTexture.get());
+    glBindTexture(GL_TEXTURE_2D, mTexture);
     GLuint attachmentWidth  = 2;
     GLuint attachmentHeight = 2;
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, attachmentWidth, attachmentHeight);
-    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexture.get(),
-                           0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexture, 0);
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
     validateSamplePass(query, attachmentWidth, attachmentWidth);
 
@@ -3808,8 +3948,7 @@ void main()
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
     validateSamplePass(query, defaultWidth, defaultHeight);
 
-    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexture.get(),
-                           0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexture, 0);
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
     validateSamplePass(query, attachmentWidth, attachmentHeight);
 
@@ -4326,7 +4465,7 @@ TEST_P(FramebufferTest_ES31, ValidateFramebufferFlipYMesaExtension)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
 
     GLFramebuffer mFramebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
 
     glFramebufferParameteriMESA(GL_FRAMEBUFFER, GL_FRAMEBUFFER_FLIP_Y_MESA, 1);
     ASSERT_GL_NO_ERROR();
@@ -5075,7 +5214,7 @@ TEST_P(FramebufferTest_ES3, ValidateFramebufferFlipYMesaExtension)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
 
     GLFramebuffer mFramebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
 
     glFramebufferParameteriMESA(GL_FRAMEBUFFER, GL_FRAMEBUFFER_FLIP_Y_MESA, 1);
     ASSERT_GL_NO_ERROR();
@@ -5107,7 +5246,7 @@ TEST_P(FramebufferTest_ES3, FramebufferFlipYMesaExtensionIncorrectPname)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
 
     GLFramebuffer mFramebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
 
     glFramebufferParameteriMESA(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, 1);
     ASSERT_GL_ERROR(GL_INVALID_ENUM);
@@ -5158,14 +5297,14 @@ void main() {
 
     ANGLE_GL_PROGRAM(textureProgram, kTextureVS, kTextureFS);
 
-    glUseProgram(textureProgram.get());
-    GLint uniformLoc = glGetUniformLocation(textureProgram.get(), "u_texture");
+    glUseProgram(textureProgram);
+    GLint uniformLoc = glGetUniformLocation(textureProgram, "u_texture");
     ASSERT_NE(-1, uniformLoc);
     glUniform1i(uniformLoc, 0);
 
     GLTexture texture;
-    FillTexture2D(texture.get(), 1, 1, GLColor::red, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
-    glBindTexture(GL_TEXTURE_2D, texture.get());
+    FillTexture2D(texture, 1, 1, GLColor::red, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    glBindTexture(GL_TEXTURE_2D, texture);
     // Note that _texture_ is still bound to GL_TEXTURE_2D in this context at this point.
 
     EGLWindow *window          = getEGLWindow();
@@ -5198,15 +5337,15 @@ void main() {
 })";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     ASSERT_GL_NO_ERROR();
 
     // Render to the texture in context2.
     GLFramebuffer framebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     // Texture is still a valid name in context2.
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     // There is no rendering feedback loop at this point.
 
@@ -5215,7 +5354,7 @@ void main() {
     ASSERT_GL_NO_ERROR();
 
     // If draw is no-op'ed, texture will not be filled appropriately.
-    drawQuad(program.get(), "a_position", 0.5f, 1.0f, true);
+    drawQuad(program, "a_position", 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
@@ -5223,7 +5362,7 @@ void main() {
     eglMakeCurrent(display, surface, surface, context1);
 
     // Render texture to screen.
-    drawQuad(textureProgram.get(), "a_position", 0.5f, 1.0f, true);
+    drawQuad(textureProgram, "a_position", 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
@@ -5286,7 +5425,7 @@ TEST_P(FramebufferTest, BindAndDrawDifferentSizedFBOs)
 
     // 2. Draw red into FBO 1 (note, FramebufferVk::syncState is called)
     glUseProgram(redProgram);
-    drawQuad(redProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(redProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
 
     // 3. Create FBO 2 with dimensions 8x8
@@ -5301,7 +5440,7 @@ TEST_P(FramebufferTest, BindAndDrawDifferentSizedFBOs)
 
     // 4. Draw green into FBO 2 (note, FramebufferVk::syncState is called)
     glUseProgram(greenProgram);
-    drawQuad(greenProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
 
     // 5. Bind FBO 1 (note, it's not dirty)
@@ -5309,7 +5448,7 @@ TEST_P(FramebufferTest, BindAndDrawDifferentSizedFBOs)
 
     // 6. Draw blue into FBO 1
     glUseProgram(blueProgram);
-    drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
 
     // 7. Verify FBO 1 is entirely blue
@@ -5345,7 +5484,7 @@ TEST_P(FramebufferTest_ES3, TwoFramebuffersWithSameAttachments)
     // fbos[1] should still work, not crash.
     GLuint data;
     glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &data);
-    drawQuad(redProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(redProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
 }
 
@@ -6262,29 +6401,29 @@ void main()
     // Create Vertex data
     const std::vector<float> positions = {-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f};
     GLBuffer vertexBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(positions[0]) * positions.size(), positions.data(),
                  GL_STATIC_DRAW);
     GLint vertexPosLocation = glGetAttribLocation(program, "a_position");
     ASSERT_NE(vertexPosLocation, -1);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glEnableVertexAttribArray(vertexPosLocation);
     glVertexAttribPointer(vertexPosLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
     const std::vector<float> texcoords = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f};
     GLBuffer texcoordBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, texcoordBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, texcoordBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords[0]) * texcoords.size(), texcoords.data(),
                  GL_STATIC_DRAW);
     GLint texCoordLocation = glGetAttribLocation(program, "a_texcoord");
     ASSERT_NE(texCoordLocation, -1);
-    glBindBuffer(GL_ARRAY_BUFFER, texcoordBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, texcoordBuffer);
     glEnableVertexAttribArray(texCoordLocation);
     glVertexAttribPointer(texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
     const std::vector<uint16_t> quadIndices = {0, 1, 2, 2, 1, 3};
     GLBuffer indexBuffer;
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices[0]) * quadIndices.size(),
                  quadIndices.data(), GL_STATIC_DRAW);
     ASSERT_GL_NO_ERROR();
@@ -6349,6 +6488,1384 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Test resolving the same framebuffer into two different ones
+TEST_P(FramebufferTest_ES31, MultisampleResolveMultipleTimes)
+{
+    constexpr int kWidth  = 16;
+    constexpr int kHeight = 20;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+    ASSERT_GL_NO_ERROR();
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture,
+                           0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Create two resolve FBOs and textures. Use different texture levels and layers.
+    GLTexture resolveTexture1;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture1);
+    glTexStorage2D(GL_TEXTURE_2D, 3, GL_RGBA8, kWidth * 2, kHeight * 2);
+
+    GLFramebuffer resolveFBO1;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture1, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLTexture resolveTexture2;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, resolveTexture2);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 4, GL_RGBA8, kWidth * 4, kHeight * 4, 5);
+
+    GLFramebuffer resolveFBO2;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO2);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, resolveTexture2, 2, 3);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
+                     essl31_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO1);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO2);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    auto verify = [](GLuint fbo) {
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+        constexpr uint8_t kWidthHalfPixelGradient  = 256 / kWidth / 2;
+        constexpr uint8_t kHeightHalfPixelGradient = 256 / kHeight / 2;
+        EXPECT_PIXEL_NEAR(0, 0, kWidthHalfPixelGradient, kHeightHalfPixelGradient, 0, 255, 1.0);
+        EXPECT_PIXEL_NEAR(kWidth - 1, 0, 255 - kWidthHalfPixelGradient, kHeightHalfPixelGradient, 0,
+                          255, 1.0);
+        EXPECT_PIXEL_NEAR(0, kHeight - 1, kWidthHalfPixelGradient, 255 - kHeightHalfPixelGradient,
+                          0, 255, 1.0);
+        EXPECT_PIXEL_NEAR(kWidth - 1, kHeight - 1, 255 - kWidthHalfPixelGradient,
+                          255 - kHeightHalfPixelGradient, 0, 255, 1.0);
+    };
+
+    verify(resolveFBO1);
+    verify(resolveFBO2);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test resolving the same depth/stencil attachment into two different framebuffers
+TEST_P(FramebufferTest_ES31, MultisampleDepthStencilResolveMultipleTimes)
+{
+    enum class DepthStencilResolve
+    {
+        Simultaneous,
+        SeparateAspectsButSameFramebuffer,
+        SeparateAspectsDifferentFramebuffers,
+    };
+
+    constexpr int kWidth  = 24;
+    constexpr int kHeight = 12;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Create two resolve FBOs and textures. Use different texture levels and layers.
+    GLTexture resolveTexture1;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture1);
+    glTexStorage2D(GL_TEXTURE_2D, 4, GL_DEPTH24_STENCIL8, kWidth * 4, kHeight * 4);
+
+    GLFramebuffer resolveFBO1;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           resolveTexture1, 2);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLTexture resolveTexture2;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture2);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_DEPTH24_STENCIL8, kWidth * 2, kHeight * 2);
+
+    GLFramebuffer resolveFBO2;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO2);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           resolveTexture2, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(red, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Red());
+
+    auto runTest = [&](float depth, int stencil, DepthStencilResolve resolve) {
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_ALWAYS);
+        glDepthMask(GL_TRUE);
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_ALWAYS, stencil, 0xFF);
+        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+        glStencilMask(0xFF);
+
+        // Initialize the depth/stencil image
+        glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+        drawQuad(red, essl1_shaders::PositionAttrib(), depth);
+        ASSERT_GL_NO_ERROR();
+
+        // Resolve depth and stencil, then verify the results
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO1);
+        switch (resolve)
+        {
+            case DepthStencilResolve::Simultaneous:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+            case DepthStencilResolve::SeparateAspectsButSameFramebuffer:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_DEPTH_BUFFER_BIT,
+                                  GL_NEAREST);
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+            case DepthStencilResolve::SeparateAspectsDifferentFramebuffers:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_DEPTH_BUFFER_BIT,
+                                  GL_NEAREST);
+                break;
+        }
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO2);
+        switch (resolve)
+        {
+            case DepthStencilResolve::Simultaneous:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+            case DepthStencilResolve::SeparateAspectsButSameFramebuffer:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_DEPTH_BUFFER_BIT,
+                                  GL_NEAREST);
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+            case DepthStencilResolve::SeparateAspectsDifferentFramebuffers:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+        }
+        ASSERT_GL_NO_ERROR();
+
+        verifyDepth(resolveFBO1, kWidth, kHeight, depth);
+        if (resolve != DepthStencilResolve::SeparateAspectsDifferentFramebuffers)
+        {
+            verifyStencil(resolveFBO1, kWidth, kHeight, stencil);
+            verifyDepth(resolveFBO2, kWidth, kHeight, depth);
+        }
+        verifyStencil(resolveFBO2, kWidth, kHeight, stencil);
+    };
+
+    runTest(0.8f, 0x55, DepthStencilResolve::Simultaneous);
+    runTest(0.2f, 0x3A, DepthStencilResolve::SeparateAspectsButSameFramebuffer);
+    runTest(0.5f, 0x98, DepthStencilResolve::SeparateAspectsDifferentFramebuffers);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test resolving the same framebuffer into two different ones with a draw in between
+TEST_P(FramebufferTest_ES31, MultisampleResolveMultipleTimesWithDrawInBetween)
+{
+    constexpr int kWidth  = 16;
+    constexpr int kHeight = 20;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+    ASSERT_GL_NO_ERROR();
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture,
+                           0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Create two resolve FBOs and textures. Use different texture levels and layers.
+    GLTexture resolveTexture1;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture1);
+    glTexStorage2D(GL_TEXTURE_2D, 3, GL_RGBA8, kWidth * 2, kHeight * 2);
+
+    GLFramebuffer resolveFBO1;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture1, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLTexture resolveTexture2;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, resolveTexture2);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 4, GL_RGBA8, kWidth * 4, kHeight * 4, 5);
+
+    GLFramebuffer resolveFBO2;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO2);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, resolveTexture2, 2, 3);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
+                     essl31_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO1);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, msaaFBO);
+    ANGLE_GL_PROGRAM(redProgram, essl31_shaders::vs::Passthrough(), essl31_shaders::fs::Red());
+    drawQuad(redProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO2);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO1);
+    constexpr uint8_t kWidthHalfPixelGradient  = 256 / kWidth / 2;
+    constexpr uint8_t kHeightHalfPixelGradient = 256 / kHeight / 2;
+    EXPECT_PIXEL_NEAR(0, 0, kWidthHalfPixelGradient, kHeightHalfPixelGradient, 0, 255, 1.0);
+    EXPECT_PIXEL_NEAR(kWidth - 1, 0, 255 - kWidthHalfPixelGradient, kHeightHalfPixelGradient, 0,
+                      255, 1.0);
+    EXPECT_PIXEL_NEAR(0, kHeight - 1, kWidthHalfPixelGradient, 255 - kHeightHalfPixelGradient, 0,
+                      255, 1.0);
+    EXPECT_PIXEL_NEAR(kWidth - 1, kHeight - 1, 255 - kWidthHalfPixelGradient,
+                      255 - kHeightHalfPixelGradient, 0, 255, 1.0);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO2);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test resolving the same depth/stencil framebuffer into two different ones with a draw in between
+TEST_P(FramebufferTest_ES31, MultisampleDepthStencilResolveMultipleTimesWithDrawInBetween)
+{
+    enum class DepthStencilResolve
+    {
+        Simultaneous,
+        SeparateAspectsButSameFramebuffer,
+        SeparateAspectsDifferentFramebuffers,
+    };
+
+    constexpr int kWidth  = 16;
+    constexpr int kHeight = 20;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Create two resolve FBOs and textures. Use different texture levels and layers.
+    GLTexture resolveTexture1;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture1);
+    glTexStorage2D(GL_TEXTURE_2D, 4, GL_DEPTH24_STENCIL8, kWidth * 4, kHeight * 4);
+
+    GLFramebuffer resolveFBO1;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           resolveTexture1, 2);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLTexture resolveTexture2;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture2);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_DEPTH24_STENCIL8, kWidth * 2, kHeight * 2);
+
+    GLFramebuffer resolveFBO2;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO2);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           resolveTexture2, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(red, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Red());
+
+    auto runTest = [&](float depth1, int stencil1, float depth2, int stencil2,
+                       DepthStencilResolve resolve) {
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_ALWAYS);
+        glDepthMask(GL_TRUE);
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_ALWAYS, stencil1, 0xFF);
+        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+        glStencilMask(0xFF);
+
+        // Initialize the depth/stencil image
+        glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+        drawQuad(red, essl1_shaders::PositionAttrib(), depth1);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO1);
+        switch (resolve)
+        {
+            case DepthStencilResolve::Simultaneous:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+            case DepthStencilResolve::SeparateAspectsButSameFramebuffer:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_DEPTH_BUFFER_BIT,
+                                  GL_NEAREST);
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+            case DepthStencilResolve::SeparateAspectsDifferentFramebuffers:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_DEPTH_BUFFER_BIT,
+                                  GL_NEAREST);
+                break;
+        }
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, msaaFBO);
+        glStencilFunc(GL_ALWAYS, stencil2, 0xFF);
+        drawQuad(red, essl1_shaders::PositionAttrib(), depth2);
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO2);
+        switch (resolve)
+        {
+            case DepthStencilResolve::Simultaneous:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+            case DepthStencilResolve::SeparateAspectsButSameFramebuffer:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_DEPTH_BUFFER_BIT,
+                                  GL_NEAREST);
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+            case DepthStencilResolve::SeparateAspectsDifferentFramebuffers:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+        }
+        ASSERT_GL_NO_ERROR();
+
+        verifyDepth(resolveFBO1, kWidth, kHeight, depth1);
+        if (resolve != DepthStencilResolve::SeparateAspectsDifferentFramebuffers)
+        {
+            verifyStencil(resolveFBO1, kWidth, kHeight, stencil1);
+            verifyDepth(resolveFBO2, kWidth, kHeight, depth2);
+        }
+        verifyStencil(resolveFBO2, kWidth, kHeight, stencil2);
+    };
+
+    runTest(0.4f, 0x3F, 0.1f, 0xA2, DepthStencilResolve::Simultaneous);
+    runTest(0.9f, 0x2B, 0.3f, 0xDD, DepthStencilResolve::SeparateAspectsButSameFramebuffer);
+    runTest(0.5f, 0x6C, 0.6f, 0x7E, DepthStencilResolve::SeparateAspectsDifferentFramebuffers);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test resolving different attachments of an FBO to separate FBOs
+TEST_P(FramebufferTest_ES31, MultisampleResolveBothAttachments)
+{
+    enum class Invalidate
+    {
+        None,
+        AfterEachResolve,
+        AllAtEnd,
+    };
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+
+uniform vec4 value0;
+uniform vec4 value2;
+
+layout(location = 0) out vec4 color0;
+layout(location = 2) out vec4 color2;
+
+void main()
+{
+    color0 = value0;
+    color2 = value2;
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+    const GLint color0Loc = glGetUniformLocation(program, "value0");
+    const GLint color1Loc = glGetUniformLocation(program, "value2");
+
+    constexpr int kWidth  = 16;
+    constexpr int kHeight = 20;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLTexture msaa0, msaa1;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaa0);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaa1);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, msaa0,
+                           0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D_MULTISAMPLE, msaa1,
+                           0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLenum bufs[3] = {GL_COLOR_ATTACHMENT0, GL_NONE, GL_COLOR_ATTACHMENT2};
+    glDrawBuffers(3, bufs);
+
+    // Create two resolve FBOs and textures. Use different texture levels and layers.
+    GLTexture resolveTexture1;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture1);
+    glTexStorage2D(GL_TEXTURE_2D, 3, GL_RGBA8, kWidth * 2, kHeight * 2);
+
+    GLFramebuffer resolveFBO1;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture1, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLTexture resolveTexture2;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, resolveTexture2);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 4, GL_RGBA8, kWidth * 4, kHeight * 4, 5);
+
+    GLFramebuffer resolveFBO2;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO2);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, resolveTexture2, 2, 3);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    auto test = [&](GLColor color0, GLColor color1, Invalidate invalidate) {
+        const GLenum discards[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT2};
+
+        glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+        glUniform4fv(color0Loc, 1, color0.toNormalizedVector().data());
+        glUniform4fv(color1Loc, 1, color1.toNormalizedVector().data());
+        drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_NO_ERROR();
+
+        // Resolve the first attachment
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO1);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                          GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        if (invalidate == Invalidate::AfterEachResolve)
+        {
+            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, discards);
+        }
+
+        // Resolve the second attachment
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO2);
+        glReadBuffer(GL_COLOR_ATTACHMENT2);
+        glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                          GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        if (invalidate == Invalidate::AfterEachResolve)
+        {
+            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, discards + 1);
+        }
+        else if (invalidate == Invalidate::AllAtEnd)
+        {
+            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 2, discards);
+        }
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO1);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, color0);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO2);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, color1);
+        ASSERT_GL_NO_ERROR();
+    };
+
+    test(GLColor::red, GLColor::green, Invalidate::None);
+    test(GLColor::blue, GLColor::yellow, Invalidate::AfterEachResolve);
+    test(GLColor::cyan, GLColor::magenta, Invalidate::AllAtEnd);
+}
+
+// Test resolving a framebuffer once, then drawing to it again without a resolve.  Makes sure there
+// is no caching bug that would make the second render pass resolve into the old resolve target
+// again.
+TEST_P(FramebufferTest_ES31, ResolveThenDrawWithoutResolve)
+{
+    enum class Invalidate
+    {
+        None,
+        AfterFirstResolve,
+        AfterEachResolve,
+        AtEnd,
+    };
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorLoc = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorLoc, -1);
+
+    constexpr int kWidth  = 16;
+    constexpr int kHeight = 20;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLTexture msaa;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaa);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, msaa,
+                           0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Create the resolve FBO and texture.
+    GLTexture resolveTexture;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_RGBA8, kWidth * 2 + 1, kHeight * 2 + 1);
+
+    GLFramebuffer resolveFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    auto test = [&](GLColor color1, GLColor color2, Invalidate invalidate) {
+        const GLenum discards[] = {GL_COLOR_ATTACHMENT0};
+
+        glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+        glUniform4fv(colorLoc, 1, color1.toNormalizedVector().data());
+        drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_NO_ERROR();
+
+        // Resolve
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+        glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                          GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        if (invalidate == Invalidate::AfterEachResolve ||
+            invalidate == Invalidate::AfterFirstResolve)
+        {
+            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, discards);
+        }
+
+        // Draw again, but don't resolve.
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, msaaFBO);
+        glUniform4fv(colorLoc, 1, color2.toNormalizedVector().data());
+        drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+
+        const bool invalidateAtEnd =
+            invalidate == Invalidate::AfterEachResolve || invalidate == Invalidate::AtEnd;
+        if (invalidateAtEnd)
+        {
+            glInvalidateFramebuffer(GL_DRAW_FRAMEBUFFER, 1, discards);
+        }
+
+        // Make sure the render pass is flushed so if there's a caching bug and the old render pass
+        // with resolve is used for the second render pass, the contents of the resolve attachment
+        // is wrong.  Can't rely on glReadPixels doing that because of potential use of
+        // VK_EXT_host_image_copy.
+        glFinish();
+
+        // Verify the contents of the resolve attachment
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, color1);
+
+        if (!invalidateAtEnd)
+        {
+            // For completeness, make sure the second draw succeeded.
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, msaaFBO);
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+            glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                              GL_NEAREST);
+            ASSERT_GL_NO_ERROR();
+
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO);
+            EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, color2);
+        }
+        ASSERT_GL_NO_ERROR();
+    };
+
+    test(GLColor::red, GLColor::green, Invalidate::None);
+    test(GLColor::blue, GLColor::yellow, Invalidate::AfterFirstResolve);
+    test(GLColor::cyan, GLColor::magenta, Invalidate::AfterEachResolve);
+    test(GLColor::white, GLColor::red, Invalidate::AtEnd);
+}
+
+// Test resolving a depth/stencil framebuffer once, then drawing to it again without a resolve.
+// Makes sure there is no caching bug that would make the second render pass resolve into the old
+// resolve target again.
+TEST_P(FramebufferTest_ES31, DepthStencilResolveThenDrawWithoutResolve)
+{
+    enum class Invalidate
+    {
+        None,
+        AfterFirstResolve,
+        AfterEachResolve,
+        AtEnd,
+    };
+    enum class DepthStencilResolve
+    {
+        Simultaneous,
+        SeparateAspects,
+    };
+
+    ANGLE_GL_PROGRAM(red, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Red());
+
+    constexpr int kWidth  = 16;
+    constexpr int kHeight = 20;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Create the resolve FBO and texture. Use different texture levels and layers.
+    GLTexture resolveTexture;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 4, GL_DEPTH24_STENCIL8, kWidth * 4, kHeight * 4);
+
+    GLFramebuffer resolveFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           resolveTexture, 2);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    auto test = [&](float depth1, int stencil1, float depth2, int stencil2,
+                    DepthStencilResolve resolve, Invalidate invalidate) {
+        const GLenum discards[] = {GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT,
+                                   GL_DEPTH_STENCIL_ATTACHMENT};
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_ALWAYS);
+        glDepthMask(GL_TRUE);
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_ALWAYS, stencil1, 0xFF);
+        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+        glStencilMask(0xFF);
+
+        // First draw
+        glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+        drawQuad(red, essl1_shaders::PositionAttrib(), depth1);
+        ASSERT_GL_NO_ERROR();
+
+        // Resolve
+        const bool invalidateAfterFirstResolve = invalidate == Invalidate::AfterEachResolve ||
+                                                 invalidate == Invalidate::AfterFirstResolve;
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+        switch (resolve)
+        {
+            case DepthStencilResolve::Simultaneous:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                if (invalidateAfterFirstResolve)
+                {
+                    glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, &discards[2]);
+                }
+                break;
+            case DepthStencilResolve::SeparateAspects:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_DEPTH_BUFFER_BIT,
+                                  GL_NEAREST);
+                if (invalidateAfterFirstResolve)
+                {
+                    glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, &discards[0]);
+                }
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                if (invalidateAfterFirstResolve)
+                {
+                    glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, &discards[1]);
+                }
+                break;
+        }
+        ASSERT_GL_NO_ERROR();
+
+        // Draw again, but don't resolve.
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, msaaFBO);
+        glStencilFunc(GL_ALWAYS, stencil2, 0xFF);
+        drawQuad(red, essl1_shaders::PositionAttrib(), depth2);
+
+        const bool invalidateAtEnd =
+            invalidate == Invalidate::AfterEachResolve || invalidate == Invalidate::AtEnd;
+        if (invalidateAtEnd)
+        {
+            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, &discards[2]);
+        }
+
+        // Make sure the render pass is flushed so if there's a caching bug and the old render pass
+        // with resolve is used for the second render pass, the contents of the resolve attachment
+        // is wrong.  Can't rely on glReadPixels doing that because of potential use of
+        // VK_EXT_host_image_copy.
+        glFinish();
+
+        // Verify the contents of the resolve attachment
+        verifyDepth(resolveFBO, kWidth, kHeight, depth1);
+        verifyStencil(resolveFBO, kWidth, kHeight, stencil1);
+
+        if (!invalidateAtEnd)
+        {
+            // For completeness, make sure the second draw succeeded.
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, msaaFBO);
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+            glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                              GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+            ASSERT_GL_NO_ERROR();
+
+            verifyDepth(resolveFBO, kWidth, kHeight, depth2);
+            verifyStencil(resolveFBO, kWidth, kHeight, stencil2);
+        }
+        ASSERT_GL_NO_ERROR();
+    };
+
+    test(0.4f, 0x3F, 0.1f, 0xA2, DepthStencilResolve::Simultaneous, Invalidate::None);
+    test(0.9f, 0x2B, 0.3f, 0xDD, DepthStencilResolve::Simultaneous, Invalidate::AfterFirstResolve);
+    test(0.5f, 0x6C, 0.6f, 0x7E, DepthStencilResolve::Simultaneous, Invalidate::AfterEachResolve);
+    test(0.1f, 0x78, 0.4f, 0x34, DepthStencilResolve::Simultaneous, Invalidate::AtEnd);
+    test(0.6f, 0x7E, 0.5f, 0x6C, DepthStencilResolve::SeparateAspects, Invalidate::None);
+    test(0.1f, 0xA2, 0.9f, 0x2B, DepthStencilResolve::SeparateAspects,
+         Invalidate::AfterFirstResolve);
+    test(0.4f, 0x3F, 0.3f, 0xDD, DepthStencilResolve::SeparateAspects,
+         Invalidate::AfterEachResolve);
+    test(0.9f, 0xF0, 0.7f, 0x8A, DepthStencilResolve::SeparateAspects, Invalidate::AtEnd);
+}
+
+// Test resolving a framebuffer once, then drawing to it again without a complete resolve, and then
+// drawing again with a resolve to same or another framebuffer.
+TEST_P(FramebufferTest_ES31, ResolveThenDrawWithoutResolveThenDrawWithResolve)
+{
+    enum class SecondResolve
+    {
+        SameFramebuffer,
+        AnotherFramebuffer,
+    };
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorLoc = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorLoc, -1);
+
+    constexpr int kWidth  = 36;
+    constexpr int kHeight = 12;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLTexture msaa;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaa);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, msaa,
+                           0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Create two resolve FBOs and textures. Use different texture levels and layers.
+    GLTexture resolveTexture1;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture1);
+    glTexStorage2D(GL_TEXTURE_2D, 3, GL_RGBA8, kWidth * 4, kHeight * 4);
+
+    GLFramebuffer resolveFBO1;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture1, 2);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLTexture resolveTexture2;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, resolveTexture2);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, kWidth, kHeight, 5);
+
+    GLFramebuffer resolveFBO2;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO2);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, resolveTexture2, 0, 4);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    auto test = [&](GLColor color1, GLColor color2, GLColor color3, SecondResolve secondResolve) {
+        glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+        glUniform4fv(colorLoc, 1, color1.toNormalizedVector().data());
+        drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_NO_ERROR();
+
+        // Resolve
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO1);
+        glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                          GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        // Draw again, but don't resolve.
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, msaaFBO);
+        glUniform4fv(colorLoc, 1, color2.toNormalizedVector().data());
+        drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+
+        // Make sure the render pass is flushed.
+        glFinish();
+
+        // Verify the contents of the resolve attachment
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO1);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, color1);
+
+        // Draw and resolve again
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        glUniform4fv(colorLoc, 1, color3.toNormalizedVector().data());
+        drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        glDisable(GL_BLEND);
+
+        GLint fboToResolve =
+            secondResolve == SecondResolve::SameFramebuffer ? resolveFBO1 : resolveFBO2;
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboToResolve);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, msaaFBO);
+        glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                          GL_NEAREST);
+
+        const GLColor blendedColor = GLColor(
+            std::clamp(color2.R + color3.R, 0, 255), std::clamp(color2.G + color3.G, 0, 255),
+            std::clamp(color2.B + color3.B, 0, 255), std::clamp(color2.A + color3.A, 0, 255));
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fboToResolve);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, blendedColor);
+    };
+
+    test(GLColor::red, GLColor::green, GLColor::blue, SecondResolve::SameFramebuffer);
+    test(GLColor::cyan, GLColor(180, 0, 0, 190), GLColor(100, 255, 0, 80),
+         SecondResolve::AnotherFramebuffer);
+}
+
+// Test resolving a depth/stencil framebuffer once, then drawing to it again without a complete
+// resolve, and then drawing again with a resolve to same or another framebuffer.
+TEST_P(FramebufferTest_ES31, DepthStencilResolveThenDrawWithoutResolveThenDrawWithResolve)
+{
+    enum class SecondResolve
+    {
+        SameFramebuffer,
+        AnotherFramebuffer,
+    };
+    enum class DepthStencilResolve
+    {
+        Simultaneous,
+        SeparateAspectsButSameFramebuffer,
+        SeparateAspectsDifferentFramebuffers,
+    };
+
+    constexpr int kWidth  = 24;
+    constexpr int kHeight = 12;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Create two resolve FBOs and textures. Use different texture levels and layers.
+    GLTexture resolveTexture1;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture1);
+    glTexStorage2D(GL_TEXTURE_2D, 4, GL_DEPTH24_STENCIL8, kWidth * 4, kHeight * 4);
+
+    GLFramebuffer resolveFBO1;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           resolveTexture1, 2);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLTexture resolveTexture2;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture2);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_DEPTH24_STENCIL8, kWidth * 2, kHeight * 2);
+
+    GLFramebuffer resolveFBO2;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO2);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           resolveTexture2, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(red, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Red());
+
+    auto runTest = [&](float depth1, int stencil1, float depth2, int stencil2,
+                       DepthStencilResolve resolve, SecondResolve secondResolve) {
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_ALWAYS);
+        glDepthMask(GL_TRUE);
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_ALWAYS, stencil1, 0xFF);
+        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+        glStencilMask(0xFF);
+
+        // Initialize the depth/stencil image
+        glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+        drawQuad(red, essl1_shaders::PositionAttrib(), depth1);
+        ASSERT_GL_NO_ERROR();
+
+        // Resolve depth and stencil, then verify the results
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO1);
+        switch (resolve)
+        {
+            case DepthStencilResolve::Simultaneous:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+            case DepthStencilResolve::SeparateAspectsButSameFramebuffer:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_DEPTH_BUFFER_BIT,
+                                  GL_NEAREST);
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+            case DepthStencilResolve::SeparateAspectsDifferentFramebuffers:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_DEPTH_BUFFER_BIT,
+                                  GL_NEAREST);
+                break;
+        }
+
+        // Draw again, but don't resolve.
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, msaaFBO);
+        drawQuad(red, essl31_shaders::PositionAttrib(), 0);
+
+        // Make sure the render pass is flushed.
+        glFinish();
+
+        // Draw and resolve again
+        glStencilFunc(GL_ALWAYS, stencil2, 0xFF);
+        drawQuad(red, essl31_shaders::PositionAttrib(), depth2);
+
+        GLint fboToResolve =
+            secondResolve == SecondResolve::SameFramebuffer ? resolveFBO1 : resolveFBO2;
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboToResolve);
+        switch (resolve)
+        {
+            case DepthStencilResolve::Simultaneous:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+            case DepthStencilResolve::SeparateAspectsButSameFramebuffer:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_DEPTH_BUFFER_BIT,
+                                  GL_NEAREST);
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+            case DepthStencilResolve::SeparateAspectsDifferentFramebuffers:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+        }
+        ASSERT_GL_NO_ERROR();
+
+        if (secondResolve == SecondResolve::SameFramebuffer)
+        {
+            verifyDepth(resolveFBO1, kWidth, kHeight,
+                        resolve == DepthStencilResolve::SeparateAspectsDifferentFramebuffers
+                            ? depth1
+                            : depth2);
+            verifyStencil(resolveFBO1, kWidth, kHeight, stencil2);
+        }
+        else
+        {
+            verifyDepth(resolveFBO1, kWidth, kHeight, depth1);
+            if (resolve != DepthStencilResolve::SeparateAspectsDifferentFramebuffers)
+            {
+                verifyStencil(resolveFBO1, kWidth, kHeight, stencil1);
+                verifyDepth(resolveFBO2, kWidth, kHeight, depth2);
+            }
+            verifyStencil(resolveFBO2, kWidth, kHeight, stencil2);
+        }
+    };
+
+    runTest(0.4f, 0x3F, 0.1f, 0xA2, DepthStencilResolve::Simultaneous,
+            SecondResolve::SameFramebuffer);
+    runTest(0.9f, 0x2B, 0.3f, 0xDD, DepthStencilResolve::Simultaneous,
+            SecondResolve::AnotherFramebuffer);
+    runTest(0.6f, 0x7E, 0.6f, 0x7E, DepthStencilResolve::SeparateAspectsButSameFramebuffer,
+            SecondResolve::SameFramebuffer);
+    runTest(0.1f, 0xA2, 0.4f, 0x34, DepthStencilResolve::SeparateAspectsButSameFramebuffer,
+            SecondResolve::AnotherFramebuffer);
+    runTest(0.4f, 0x3F, 0.5f, 0x6C, DepthStencilResolve::SeparateAspectsDifferentFramebuffers,
+            SecondResolve::SameFramebuffer);
+    runTest(0.9f, 0xF0, 0.9f, 0x2B, DepthStencilResolve::SeparateAspectsDifferentFramebuffers,
+            SecondResolve::AnotherFramebuffer);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test resolving a framebuffer once, then changing its attachment (with the same format) and
+// draw+resolving again.  Makes sure the wrong framebuffer or render pass is not picked from a
+// cache.
+TEST_P(FramebufferTest_ES31, ResolveThenChangeAttachmentThenResolveAgain)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorLoc = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorLoc, -1);
+
+    constexpr int kWidth  = 36;
+    constexpr int kHeight = 20;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLTexture msaa0, msaa1;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaa0);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaa1);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, msaa0,
+                           0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Create the resolve FBO and texture.
+    GLTexture resolveTexture;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_RGBA8, kWidth * 2 + 1, kHeight * 2 + 1);
+
+    GLFramebuffer resolveFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw and resolve once
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glUniform4fv(colorLoc, 1, GLColor::green.toNormalizedVector().data());
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Change the framebuffer attachment to another texture
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, msaa1,
+                           0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw and resolve again
+    glUniform4fv(colorLoc, 1, GLColor::blue.toNormalizedVector().data());
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify results
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test resolving a depth/stencil framebuffer once, then changing its attachment (with the same
+// format) and draw+resolving again.  Makes sure the wrong framebuffer or render pass is not picked
+// from a cache.
+TEST_P(FramebufferTest_ES31, DepthStencilResolveThenChangeAttachmentThenResolveAgain)
+{
+    enum class DepthStencilResolve
+    {
+        Simultaneous,
+        SeparateAspects,
+    };
+
+    constexpr int kWidth  = 24;
+    constexpr int kHeight = 12;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    GLRenderbuffer depthStencil, depth, stencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, depth);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT16, kWidth, kHeight);
+    glBindRenderbuffer(GL_RENDERBUFFER, stencil);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_STENCIL_INDEX8, kWidth, kHeight);
+
+    // Create two resolve FBOs and textures. Use different texture levels and layers.
+    GLTexture resolveTexture1;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture1);
+    glTexStorage2D(GL_TEXTURE_2D, 4, GL_DEPTH24_STENCIL8, kWidth * 4, kHeight * 4);
+
+    GLFramebuffer resolveFBO1;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           resolveTexture1, 2);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLTexture resolveTexture2;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture2);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_DEPTH_COMPONENT16, kWidth * 2, kHeight * 2);
+
+    GLFramebuffer resolveFBO2;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO2);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, resolveTexture2, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLTexture resolveTexture3;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture3);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_STENCIL_INDEX8, kWidth * 2, kHeight * 2);
+
+    GLFramebuffer resolveFBO3;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO3);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, resolveTexture3,
+                           1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(red, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Red());
+
+    auto runTest = [&](float depth1, int stencil1, float depth2, int stencil2,
+                       DepthStencilResolve resolve) {
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_ALWAYS);
+        glDepthMask(GL_TRUE);
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_ALWAYS, stencil1, 0xFF);
+        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+        glStencilMask(0xFF);
+
+        // Initialize the depth/stencil image
+        glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                                  depthStencil);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        drawQuad(red, essl1_shaders::PositionAttrib(), depth1);
+        ASSERT_GL_NO_ERROR();
+
+        // Resolve depth and stencil
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO1);
+        switch (resolve)
+        {
+            case DepthStencilResolve::Simultaneous:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+            case DepthStencilResolve::SeparateAspects:
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_DEPTH_BUFFER_BIT,
+                                  GL_NEAREST);
+                glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                                  GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+                break;
+        }
+
+        // Change the framebuffer and draw/resolve again
+        glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth);
+        drawQuad(red, essl1_shaders::PositionAttrib(), depth2);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO2);
+        glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_DEPTH_BUFFER_BIT,
+                          GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, stencil);
+        glStencilFunc(GL_ALWAYS, stencil2, 0xFF);
+        drawQuad(red, essl1_shaders::PositionAttrib(), 0);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO3);
+        glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_STENCIL_BUFFER_BIT,
+                          GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        verifyDepth(resolveFBO1, kWidth, kHeight, depth1);
+        verifyStencil(resolveFBO1, kWidth, kHeight, stencil1);
+        verifyDepth(resolveFBO2, kWidth, kHeight, depth2);
+        verifyStencil(resolveFBO3, kWidth, kHeight, stencil2);
+    };
+
+    runTest(0.1f, 0x78, 0.4f, 0x34, DepthStencilResolve::Simultaneous);
+    runTest(0.6f, 0x7E, 0.5f, 0x6C, DepthStencilResolve::SeparateAspects);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Similar to ResolveThenChangeAttachmentThenResolveAgain, but the attachment format is also changed
+TEST_P(FramebufferTest_ES31, ResolveThenChangeAttachmentFormatThenResolveAgain)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorLoc = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorLoc, -1);
+
+    constexpr int kWidth  = 32;
+    constexpr int kHeight = 24;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLTexture msaa0, msaa1;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaa0);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaa1);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB565, kWidth, kHeight, false);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, msaa0,
+                           0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Create two resolve FBOs and textures. Use different texture levels and layers.
+    GLTexture resolveTexture1;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture1);
+    glTexStorage2D(GL_TEXTURE_2D, 3, GL_RGBA8, kWidth * 4, kHeight * 4);
+
+    GLFramebuffer resolveFBO1;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture1, 2);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLTexture resolveTexture2;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture2);
+    glTexStorage2D(GL_TEXTURE_2D, 3, GL_RGB565, kWidth * 4, kHeight * 4);
+
+    GLFramebuffer resolveFBO2;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO2);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture2, 2);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw and resolve once
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glUniform4fv(colorLoc, 1, GLColor::blue.toNormalizedVector().data());
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO1);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Change the framebuffer attachment to another texture with a different format
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, msaa1,
+                           0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw and resolve again
+    glUniform4fv(colorLoc, 1, GLColor::yellow.toNormalizedVector().data());
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO2);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify results
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO2);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::yellow);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Draw and resolve once, use the resolve attachment as a storage image, then draw and resolve
+// again.  The storage image usage may recreate the image internally, and this test makes sure the
+// wrong framebuffer or render pass is not picked from a cache.
+TEST_P(FramebufferTest_ES31, ResolveThenUseAsStorageImageThenResolveAgain)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorLoc = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorLoc, -1);
+
+    constexpr int kWidth  = 36;
+    constexpr int kHeight = 20;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLTexture msaa0, msaa1;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaa0);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaa1);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, msaa0,
+                           0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Create the resolve FBO and texture.
+    GLTexture resolveTexture;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_RGBA8, kWidth * 2, kHeight * 2);
+
+    GLFramebuffer resolveFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw and resolve once
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glUniform4fv(colorLoc, 1, GLColor::green.toNormalizedVector().data());
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Use the resolve attachment as a storage image.  A different level is used to be able to
+    // verify the compute shader results.
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+layout(rgba8, binding = 0) writeonly uniform highp image2D image;
+void main()
+{
+    imageStore(image, ivec2(gl_GlobalInvocationID.xy), vec4(1, 1, 0, 1));
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(csProgram, kCS);
+    glUseProgram(csProgram);
+    glBindImageTexture(0, resolveTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+    glDispatchCompute(kWidth * 2, kHeight * 2, 1);
+
+    // Draw and resolve again
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glUseProgram(program);
+    glUniform4fv(colorLoc, 1, GLColor::blue.toNormalizedVector().data());
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify resolve results
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::cyan);
+
+    // For completeness, verify compute shader write results
+    glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
+
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture,
+                           0);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth * 2, kHeight * 2, GLColor::yellow);
+    ASSERT_GL_NO_ERROR();
+}
 ANGLE_INSTANTIATE_TEST_ES2_AND(AddMockTextureNoRenderTargetTest,
                                ES2_D3D9().enable(Feature::AddMockTextureNoRenderTarget),
                                ES2_D3D11().enable(Feature::AddMockTextureNoRenderTarget));

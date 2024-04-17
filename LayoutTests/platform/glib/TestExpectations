@@ -1182,7 +1182,6 @@ media/media-hevc-video-as-img.html [ ImageOnlyFailure ]
 
 # Temporal scalability support
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?h264 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp8 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp9 [ Failure ]
 
 # HEVC support
@@ -1197,13 +1196,7 @@ imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.
 
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
 
-# Likely bugs related with dav1ddec.
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?av1 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?av1 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?av1 [ Pass Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?av1 [ Pass Failure ]
-
-# Our MP3 decoder is not yet spec-compliant.
+# Our MP3 decoder is not yet spec-compliant (reverse decoding, mostly).
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp3 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp3 [ Failure ]
 
@@ -2635,6 +2628,10 @@ webgl/webgl-fail-after-context-creation-no-crash.html [ Skip ]
 # Payment Request
 imported/w3c/web-platform-tests/payment-request [ Skip ]
 imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy-attribute-redirect-on-load.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy-attribute.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/permissions-policy/payment-default-permissions-policy.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/permissions-policy/payment-disabled-by-permissions-policy.https.sub.html [ Skip ]
 
 # WebArchive
 webarchive [ WontFix ]
@@ -3544,6 +3541,7 @@ webkit.org/b/237108 http/tests/websocket/tests/hybi/simple-wss.html [ Failure ]
 webkit.org/b/236298 fast/text/combining-character-sequence-vertical.html [ ImageOnlyFailure ]
 webkit.org/b/236298 fast/text/strikethrough-int.html [ ImageOnlyFailure ]
 
+fast/webgpu [ Skip ]
 http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
 
 # NetworkStorageSession::deleteCookies() doesn't obey partitioning for glib ports.
@@ -3903,6 +3901,15 @@ imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mis
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-partial.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-wildcard.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-old-with-class-new-without.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-on-top-of-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/new-content-changes-overflow-left.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change.html [ ImageOnlyFailure ]
+
+# Cairo doesn't support hardware acceleration, this test will pass once we switch to Skia.
+fast/canvas/canvas-will-read-frequently.html [ Failure ]
 
 # End: Common failures between GTK and WPE.
 

@@ -12,7 +12,6 @@ function videoWithData() {
   });
 }
 onload = async () => {
-  try {
     let adapter0 = await navigator.gpu.requestAdapter(
     {
     }
@@ -23,7 +22,6 @@ onload = async () => {
     requiredFeatures: [
     'depth-clip-control',
     'depth32float-stencil8',
-    'texture-compression-astc',
     'indirect-first-instance',
     'shader-f16',
     'rg11b10ufloat-renderable'
@@ -32,12 +30,12 @@ onload = async () => {
     maxColorAttachmentBytesPerSample: 34,
     maxVertexBufferArrayStride: 8035,
     maxStorageTexturesPerShaderStage: 9,
-    maxBindingsPerBindGroup: 6910,
+    maxBindingsPerBindGroup: 910,
     maxTextureArrayLayers: 980,
     maxTextureDimension1D: 8875,
     maxTextureDimension2D: 14193,
-    minStorageBufferOffsetAlignment: 32,
-    minUniformBufferOffsetAlignment: 128,
+    minStorageBufferOffsetAlignment: 256,
+    minUniformBufferOffsetAlignment: 256,
     },
     }
     );
@@ -60,8 +58,7 @@ onload = async () => {
     device1.destroy();
     let texture10 = gpuCanvasContext1.getCurrentTexture();
     let video3 = await videoWithData();
-  } catch { }
-  if (window.testRunner) { testRunner.notifyDone() }
+    if (window.testRunner) { testRunner.notifyDone() }
 };
 </script>
 This test passes if it does not crash.

@@ -44,7 +44,8 @@ includes: [propertyHelper.js]
 
   verifyWritable(arguments, "genericProperty", "testgetFunction");
 
-  verifyNotEnumerable(arguments, "genericProperty");
-
-  verifyNotConfigurable(arguments, "genericProperty");
+  verifyProperty(arguments, "genericProperty", {
+    enumerable: false,
+    configurable: false,
+  });
 }(1, 2, 3));

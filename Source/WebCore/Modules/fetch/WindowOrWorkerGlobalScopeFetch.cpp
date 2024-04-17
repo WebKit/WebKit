@@ -72,9 +72,14 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
     }, cachedResourceRequestInitiatorTypes().fetch);
 }
 
-void WindowOrWorkerGlobalScopeFetch::fetch(LocalDOMWindow& window, FetchRequest::Info&& input, FetchRequest::Init&& init, Ref<DeferredPromise>&& promise)
+void WindowOrWorkerGlobalScopeFetch::fetch(DOMWindow& window, FetchRequest::Info&& input, FetchRequest::Init&& init, Ref<DeferredPromise>&& promise)
 {
-    RefPtr document = window.document();
+    RefPtr localWindow = dynamicDowncast<LocalDOMWindow>(window);
+    if (!localWindow) {
+        promise->reject(ExceptionCode::InvalidStateError);
+        return;
+    }
+    RefPtr document = localWindow->document();
     if (!document) {
         promise->reject(ExceptionCode::InvalidStateError);
         return;

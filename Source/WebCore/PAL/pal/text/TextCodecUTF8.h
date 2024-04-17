@@ -44,8 +44,8 @@ private:
     String decode(std::span<const uint8_t>, bool flush, bool stopOnError, bool& sawError) final;
     Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 
-    bool handlePartialSequence(LChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush);
-    void handlePartialSequence(UChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush, bool stopOnError, bool& sawError);
+    bool handlePartialSequence(LChar*& destination, std::span<const uint8_t>& source, bool flush);
+    void handlePartialSequence(UChar*& destination, std::span<const uint8_t>& source, bool flush, bool stopOnError, bool& sawError);
     void consumePartialSequenceByte();
 
     int m_partialSequenceSize { 0 };

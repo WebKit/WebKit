@@ -68,17 +68,14 @@ private:
     JSC::IsoHeapCellType m_runtimeObjectHeapCellType;
     JSC::IsoHeapCellType m_windowProxyHeapCellType;
 public:
-    JSC::IsoHeapCellType m_heapCellTypeForJSLocalDOMWindow;
+    JSC::IsoHeapCellType m_heapCellTypeForJSDOMWindow;
     JSC::IsoHeapCellType m_heapCellTypeForJSDedicatedWorkerGlobalScope;
-    JSC::IsoHeapCellType m_heapCellTypeForJSRemoteDOMWindow;
     JSC::IsoHeapCellType m_heapCellTypeForJSWorkerGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSSharedWorkerGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSShadowRealmGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSServiceWorkerGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSWorkletGlobalScope;
-#if ENABLE(CSS_PAINTING_API)
     JSC::IsoHeapCellType m_heapCellTypeForJSPaintWorkletGlobalScope;
-#endif
 #if ENABLE(WEB_AUDIO)
     JSC::IsoHeapCellType m_heapCellTypeForJSAudioWorkletGlobalScope;
 #endif

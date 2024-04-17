@@ -42,7 +42,7 @@ WKArrayRef WKProtectionSpaceCopyCertificateChain(WKProtectionSpaceRef protection
 {
     auto& certificateChain = WebKit::toImpl(protectionSpace)->protectionSpace().certificateInfo().certificateChain();
     auto certs = WTF::map(certificateChain, [](auto&& certificate) -> RefPtr<API::Object> {
-        return API::Data::create(reinterpret_cast<const unsigned char*>(certificate.data()), certificate.size());
+        return API::Data::create(certificate.span());
     });
     return WebKit::toAPI(API::Array::create(WTFMove(certs)).leakRef());
 }

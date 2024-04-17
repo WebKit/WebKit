@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Object.defineProperties({}, {});
-}, '`new Object.defineProperties({}, {})` throws TypeError');
+});
 

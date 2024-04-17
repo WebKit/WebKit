@@ -19,6 +19,7 @@ function foo() {
 
 let s = [0.1].toLocaleString().padEnd(2 ** 31 - 1, 'ab');
 
-shouldThrow(() => {
+// Do not crash
+try {
     foo(s);
-}, `RangeError: Out of memory`);
+} catch { }

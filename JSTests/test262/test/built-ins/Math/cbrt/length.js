@@ -21,8 +21,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.cbrt.length, 1);
-
-verifyNotEnumerable(Math.cbrt, "length");
-verifyNotWritable(Math.cbrt, "length");
-verifyConfigurable(Math.cbrt, "length");
+verifyProperty(Math.cbrt, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -48,7 +48,7 @@ std::optional<NotificationOptionsPayload> NotificationOptionsPayload::fromDictio
         return std::nullopt;
 
     auto dirValue = [dir unsignedCharValue];
-    if (!isValidEnum<NotificationDirection>(dirValue))
+    if (!isValidNotificationDirection(dirValue))
         return std::nullopt;
     auto rawDir = (NotificationDirection)dirValue;
 

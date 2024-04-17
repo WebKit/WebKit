@@ -35,8 +35,7 @@ found in the LICENSE.txt file.
       let canvas = new OffscreenCanvas(128, 128);
       let gl = canvas.getContext("webgl2");
       let sync = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
-      gl.clearColor(0.0, 1.0, 0.0, 1.0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.flush();
       tick(function() {
           const status = gl.getSyncParameter(sync, gl.SYNC_STATUS);
           if (status == gl.SIGNALED) {

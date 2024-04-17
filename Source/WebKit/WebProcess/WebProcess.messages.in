@@ -180,9 +180,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #if PLATFORM(COCOA)
     DisableURLSchemeCheckInDataDetectors()
     UnblockServicesRequiredByAccessibility(Vector<WebKit::SandboxExtensionHandle> handleArray)
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)
-#endif
     PowerSourceDidChange(bool hasAC)
 #endif
 
@@ -213,7 +210,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    SetMediaAccessibilityPreferences(WebCore::CaptionUserPreferences::CaptionDisplayMode displayMode, Vector<String> languages)
+    SetMediaAccessibilityPreferences(enum:uint8_t WebCore::CaptionUserPreferencesDisplayMode displayMode, Vector<String> languages)
 #endif
 
 #if PLATFORM(MAC)
@@ -221,8 +218,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
     ReleaseMemory() -> ()
-
-    AddAllowedFirstPartyForCookies(WebCore::RegistrableDomain firstPartyDomain)
 
 #if ENABLE(NOTIFY_BLOCKING)
     PostNotification(String message, std::optional<uint64_t> state)

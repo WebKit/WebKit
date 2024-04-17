@@ -317,12 +317,11 @@ static std::optional<std::pair<RTCSdpType, String>> fetchDescription(GstElement*
         const auto attribute = gst_sdp_message_get_attribute(description->sdp, i);
         if (!g_strcmp0(attribute->key, "end-of-candidates")) {
             gst_sdp_message_remove_attribute(description->sdp, i);
-            break;
+            i--;
         }
     }
 
     GUniquePtr<char> sdpString(gst_sdp_message_as_text(description->sdp));
-    GST_TRACE_OBJECT(webrtcBin, "%s-description SDP: %s", name, sdpString.get());
     return { { fromSessionDescriptionType(*description.get()), String::fromLatin1(sdpString.get()) } };
 }
 
@@ -574,7 +573,8 @@ void GStreamerMediaEndpoint::setDescription(const RTCSessionDescription* descrip
             failureCallback(nullptr);
             return;
         }
-        if (gst_sdp_message_new_from_text(reinterpret_cast<const char*>(description->sdp().characters8()), &message.outPtr()) != GST_SDP_OK) {
+        auto sdp = makeStringByReplacingAll(description->sdp(), "opus"_s, "OPUS"_s);
+        if (gst_sdp_message_new_from_text(reinterpret_cast<const char*>(sdp.characters8()), &message.outPtr()) != GST_SDP_OK) {
             failureCallback(nullptr);
             return;
         }
@@ -957,7 +957,7 @@ String GStreamerMediaEndpoint::trackIdFromSDPMedia(const GstSDPMedia& media)
     if (components.size() < 2)
         return emptyString();
 
-    return String::fromUTF8(components[1].utf8());
+    return String::fromUTF8(components[1].utf8().span());
 }
 
 void GStreamerMediaEndpoint::connectIncomingTrack(WebRTCTrackData& data)

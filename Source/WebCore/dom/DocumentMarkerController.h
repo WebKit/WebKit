@@ -46,8 +46,10 @@ struct SimpleRange;
 enum class RemovePartiallyOverlappingMarker : bool { No, Yes };
 enum class FilterMarkerResult : bool { Keep, Remove };
 
-class DocumentMarkerController : public CanMakeCheckedPtr {
-    WTF_MAKE_NONCOPYABLE(DocumentMarkerController); WTF_MAKE_FAST_ALLOCATED;
+class DocumentMarkerController final : public CanMakeCheckedPtr<DocumentMarkerController> {
+    WTF_MAKE_NONCOPYABLE(DocumentMarkerController);
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DocumentMarkerController);
 public:
     DocumentMarkerController(Document&);
     ~DocumentMarkerController();

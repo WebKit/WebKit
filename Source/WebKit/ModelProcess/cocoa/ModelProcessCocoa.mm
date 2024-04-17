@@ -37,11 +37,6 @@ namespace WebKit {
 using namespace WebCore;
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-void ModelProcess::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
-{
-    preferenceDidUpdate(domain, key, encodedValue);
-}
-
 void ModelProcess::dispatchSimulatedNotificationsForPreferenceChange(const String& key)
 {
 }

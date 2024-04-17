@@ -750,6 +750,15 @@ def SetCWDToAngleFolder():
     return cwd
 
 
+def CleanupAfterReplay(replay_build_dir, tests):
+    # Remove files that have test labels in the file name, .e.g:
+    # ClearTest_ClearIsClamped_ES2_Vulkan_SwiftShader.dll.pdb
+    test_labels = [test.GetLabel() for test in tests]
+    for build_file in os.listdir(replay_build_dir):
+        if any(label in build_file for label in test_labels):
+            os.unlink(os.path.join(replay_build_dir, build_file))
+
+
 def RunTests(args, worker_id, job_queue, result_list, message_queue, logger, ninja_lock):
     replay_build_dir = os.path.join(args.out_dir, 'Replay%d' % worker_id)
     replay_exec_path = os.path.join(replay_build_dir, REPLAY_BINARY)
@@ -787,6 +796,8 @@ def RunTests(args, worker_id, job_queue, result_list, message_queue, logger, nin
             test_batch.RunReplay(args, replay_build_dir, replay_exec_path, child_processes_manager,
                                  continued_tests)
             result_list.append(test_batch.GetResults())
+            if not args.keep_temp_files:
+                CleanupAfterReplay(replay_build_dir, continued_tests)
             logger.info('Finished RunReplay: %s', str(test_batch.GetResults()))
         except KeyboardInterrupt:
             child_processes_manager.KillAll()

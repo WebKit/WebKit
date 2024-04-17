@@ -26,11 +26,8 @@ Object.defineProperty(obj, "prop", {
 
 assert(obj.hasOwnProperty("prop"));
 
-var desc = Object.getOwnPropertyDescriptor(obj, "prop");
-
 verifyNotWritable(obj, "prop");
-verifyNotConfigurable(obj, "prop");
 
-assert.sameValue(desc.configurable, false);
-
-assert(obj.hasOwnProperty("prop"));
+verifyProperty(obj, "prop", {
+  configurable: false,
+});

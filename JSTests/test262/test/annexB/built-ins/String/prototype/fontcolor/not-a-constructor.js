@@ -28,5 +28,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.fontcolor();
-}, '`new String.prototype.fontcolor()` throws TypeError');
+});
 

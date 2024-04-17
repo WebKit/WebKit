@@ -77,9 +77,9 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
     earlier.until(later, { largestUnit, roundingIncrement: 2, roundingMode: 'ceil' });
   },
   {
-    years: ["year", "year"],
-    months: ["month", "month"],
-    weeks: ["week", "week"],
+    years: ["year", "year", "year"],
+    months: ["month", "month", "month"],
+    weeks: ["week", "week", "week"],
     days: [],
     hours: [],
     minutes: [],
@@ -100,9 +100,9 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
     earlier.until(later, { smallestUnit });
   },
   {
-    years: ["year", "year"],
-    months: ["month"],
-    weeks: ["week"],
+    years: ["year", "year", "year"],
+    months: ["month", "month", "month"],
+    weeks: ["week", "week", "week"],
     days: [],
     hours: [],
     minutes: [],

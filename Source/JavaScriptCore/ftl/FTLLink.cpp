@@ -71,7 +71,7 @@ void link(State& state)
     }
 
     state.finalizer->m_codeSize = state.b3CodeLinkBuffer->size();
-    state.finalizer->jitCode = state.jitCode;
+    state.finalizer->m_jitCode = state.jitCode;
 }
 
 } } // namespace JSC::FTL

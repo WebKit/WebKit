@@ -44,6 +44,7 @@
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "LayoutElementBox.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LengthFunctions.h"
 #include "LocalFrame.h"
 #include "Logging.h"
@@ -788,7 +789,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (!elementChild->isAnonymous() || elementChild->style().pseudoElementType() != PseudoId::None)
             continue;
 
-        if (propagationType == PropagateToBlockChildrenOnly && !is<RenderBlock>(elementChild.get()))
+        if (propagationType == StylePropagationType::BlockChildrenOnly && !is<RenderBlock>(elementChild.get()))
             continue;
 
         // RenderFragmentedFlows are updated through the RenderView::styleDidChange function.
@@ -847,6 +848,14 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
     };
 
     if (oldStyle) {
+        if (diff >= StyleDifference::Repaint && layoutBox()) {
+            // FIXME: It is highly unlikely that a style mutation has effect on both the formatting context the box lives in
+            // and the one it establishes but calling only one would require to come up with a list of properties that only affects one or the other.
+            if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*this); inlineFormattingContextRoot && inlineFormattingContextRoot->modernLineLayout())
+                inlineFormattingContextRoot->modernLineLayout()->styleWillChange(*this, newStyle);
+            if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+                lineLayout->styleWillChange(*this, newStyle);
+        }
         // If our z-index changes value or our visibility changes,
         // we need to dirty our stacking context's z-order list.
         bool visibilityChanged = m_style.usedVisibility() != newStyle.usedVisibility()
@@ -1011,7 +1020,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         // directly affect the containing block of this object is a change to
         // the position style.
         if (needsLayout() && oldStyle && oldStyle->position() != m_style.position())
-            markContainingBlocksForLayout();
+            scheduleLayout(markContainingBlocksForLayout());
 
         if (diff == StyleDifference::Layout)
             setNeedsLayoutAndPrefWidthsRecalc();
@@ -1045,9 +1054,12 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         if (controller && (!shouldCheckIfInAncestorChain || (shouldCheckIfInAncestorChain && controller->isInScrollAnchoringAncestorChain(*this))))
             controller->notifyChildHadSuppressingStyleChange();
     }
+
+    if (diff >= StyleDifference::Repaint && layoutBox())
+        LayoutIntegration::LineLayout::updateStyle(*this);
 }
 
-void RenderElement::insertedIntoTree(IsInternalMove isInternalMove)
+void RenderElement::insertedIntoTree()
 {
     // Keep our layer hierarchy updated. Optimize for the common case where we don't have any children
     // and don't have a layer attached to ourselves.
@@ -1063,10 +1075,10 @@ void RenderElement::insertedIntoTree(IsInternalMove isInternalMove)
             parentLayer->dirtyVisibleContentStatus();
     }
 
-    RenderObject::insertedIntoTree(isInternalMove);
+    RenderObject::insertedIntoTree();
 }
 
-void RenderElement::willBeRemovedFromTree(IsInternalMove isInternalMove)
+void RenderElement::willBeRemovedFromTree()
 {
     // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.
     if (parent()->style().usedVisibility() != Visibility::Visible && style().usedVisibility() == Visibility::Visible && !hasLayer()) {
@@ -1081,7 +1093,7 @@ void RenderElement::willBeRemovedFromTree(IsInternalMove isInternalMove)
     if (isOutOfFlowPositioned() && parent()->childrenInline())
         checkedParent()->dirtyLinesFromChangedChild(*this);
 
-    RenderObject::willBeRemovedFromTree(isInternalMove);
+    RenderObject::willBeRemovedFromTree();
 }
 
 inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const
@@ -1159,7 +1171,7 @@ void RenderElement::setNeedsPositionedMovementLayout(const RenderStyle* oldStyle
     if (needsPositionedMovementLayout())
         return;
     setNeedsPositionedMovementLayoutBit(true);
-    markContainingBlocksForLayout();
+    scheduleLayout(markContainingBlocksForLayout());
     if (hasLayer()) {
         if (oldStyle && style().diffRequiresLayerRepaint(*oldStyle, downcast<RenderLayerModelObject>(*this).layer()->isComposited()))
             setLayerNeedsFullRepaint();
@@ -1182,7 +1194,7 @@ void RenderElement::setNeedsSimplifiedNormalFlowLayout()
     if (needsSimplifiedNormalFlowLayout())
         return;
     setNeedsSimplifiedNormalFlowLayoutBit(true);
-    markContainingBlocksForLayout();
+    scheduleLayout(markContainingBlocksForLayout());
     if (hasLayer())
         setLayerNeedsFullRepaint();
 }
@@ -2473,7 +2485,7 @@ bool RenderElement::hasEligibleContainmentForSizeQuery() const
 
 void RenderElement::clearNeedsLayoutForSkippedContent()
 {
-    for (CheckedRef descendant : descendantsOfType<RenderObject>(*this))
+    for (CheckedRef descendant : descendantsOfTypePostOrder<RenderObject>(*this))
         descendant->clearNeedsLayout(EverHadSkippedContentLayout::No);
     clearNeedsLayout(EverHadSkippedContentLayout::No);
 }

@@ -49,6 +49,7 @@ enum class StretchingMode { Any, Explicit };
 
 class RenderBox : public RenderBoxModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderBox);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBox);
 public:
     virtual ~RenderBox();
 
@@ -585,7 +586,6 @@ public:
     virtual bool hasRelativeDimensions() const;
     virtual bool hasRelativeLogicalHeight() const;
     virtual bool hasRelativeLogicalWidth() const;
-    void willBeRemovedFromTree(IsInternalMove) override;
 
     bool hasHorizontalLayoutOverflow() const
     {

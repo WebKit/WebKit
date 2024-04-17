@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_RECORDER)
 
 #include "MediaRecorderIdentifier.h"
 #include "SharedCARingBuffer.h"
@@ -54,6 +54,7 @@ class MediaRecorderPrivate final
     , public CanMakeWeakPtr<MediaRecorderPrivate>
     , private Identified<MediaRecorderIdentifier> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaRecorderPrivate);
 public:
     MediaRecorderPrivate(WebCore::MediaStreamPrivate&, const WebCore::MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivate();
@@ -90,4 +91,4 @@ private:
 
 }
 
-#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_RECORDER)

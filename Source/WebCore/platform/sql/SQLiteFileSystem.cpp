@@ -162,7 +162,7 @@ String SQLiteFileSystem::computeHashForFileName(StringView fileName)
         snprintf(buffer, 3, "%02X", digest.at(i));
         buffer += 2;
     }
-    return String::fromUTF8(result);
+    return String::fromUTF8(result.span());
 }
 
 } // namespace WebCore

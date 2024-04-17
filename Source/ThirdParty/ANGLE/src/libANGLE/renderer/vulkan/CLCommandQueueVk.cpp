@@ -8,7 +8,7 @@
 #include "libANGLE/renderer/vulkan/CLCommandQueueVk.h"
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 #include "libANGLE/CLCommandQueue.h"
 #include "libANGLE/CLContext.h"
@@ -22,6 +22,18 @@ CLCommandQueueVk::CLCommandQueueVk(const cl::CommandQueue &commandQueue)
       mContext(&commandQueue.getContext().getImpl<CLContextVk>()),
       mDevice(&commandQueue.getDevice().getImpl<CLDeviceVk>()),
       mComputePassCommands(nullptr)
+{}
+
+CLCommandQueueVk::~CLCommandQueueVk()
+{
+    VkDevice vkDevice = mContext->getDevice();
+
+    // Recycle the current command buffers
+    mContext->getRenderer()->recycleOutsideRenderPassCommandBufferHelper(&mComputePassCommands);
+    mCommandPool.outsideRenderPassPool.destroy(vkDevice);
+}
+
+angle::Result CLCommandQueueVk::init()
 {
     ANGLE_CL_IMPL_TRY_ERROR(
         vk::OutsideRenderPassCommandBuffer::InitializeCommandPool(
@@ -33,15 +45,8 @@ CLCommandQueueVk::CLCommandQueueVk(const cl::CommandQueue &commandQueue)
                                 mContext, &mCommandPool.outsideRenderPassPool,
                                 &mOutsideRenderPassCommandsAllocator, &mComputePassCommands),
                             CL_OUT_OF_RESOURCES);
-}
 
-CLCommandQueueVk::~CLCommandQueueVk()
-{
-    VkDevice vkDevice = mContext->getDevice();
-
-    // Recycle the current command buffers
-    mContext->getRenderer()->recycleOutsideRenderPassCommandBufferHelper(&mComputePassCommands);
-    mCommandPool.outsideRenderPassPool.destroy(vkDevice);
+    return angle::Result::Continue;
 }
 
 angle::Result CLCommandQueueVk::setProperty(cl::CommandQueueProperties properties, cl_bool enable)
@@ -271,10 +276,7 @@ angle::Result CLCommandQueueVk::enqueueMigrateMemObjects(const cl::MemoryPtrs &m
 }
 
 angle::Result CLCommandQueueVk::enqueueNDRangeKernel(const cl::Kernel &kernel,
-                                                     cl_uint workDim,
-                                                     const size_t *globalWorkOffset,
-                                                     const size_t *globalWorkSize,
-                                                     const size_t *localWorkSize,
+                                                     const cl::NDRange &ndrange,
                                                      const cl::EventPtrs &waitEvents,
                                                      CLEventImpl::CreateFunc *eventCreateFunc)
 {

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script src=/resources/testharness.js></script>
+    <script src=/resources/testharnessreport.js></script>
+    <script src="resources/webxr_util.js"></script>
+    <script src="resources/webxr_test_constants_single_view.js"></script>
+    <script>
+        xr_promise_test(
+          "Tests isSessionSupported with immersive device connected",
+          async (t) => {
+            await navigator.xr.test.simulateDeviceConnection(TRACKED_IMMERSIVE_DEVICE);
+            try {
+              const supported = await navigator.xr.isSessionSupported('immersive-vr');
+              top.postMessage({'isSessionSupported': supported}, '*');
+            } catch (e) {
+              top.postMessage({'isSessionSupported': e.name}, '*');
+            }
+          }
+        );
+    </script>
+</body>
+</html>

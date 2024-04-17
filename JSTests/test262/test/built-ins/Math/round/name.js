@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Math.round.name, "round");
-
-verifyNotEnumerable(Math.round, "name");
-verifyNotWritable(Math.round, "name");
-verifyConfigurable(Math.round, "name");
+verifyProperty(Math.round, "name", {
+  value: "round",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -31,6 +31,8 @@
 #include "IntRect.h"
 #include "Region.h"
 #include "ScriptExecutionContextIdentifier.h"
+#include "Timer.h"
+#include <wtf/ApproximateTime.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
@@ -43,8 +45,9 @@ namespace WebCore {
 class Document;
 class Page;
 
-class ElementTargetingController : public CanMakeCheckedPtr {
+class ElementTargetingController final : public CanMakeCheckedPtr<ElementTargetingController> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ElementTargetingController);
 public:
     ElementTargetingController(Page&);
 
@@ -53,14 +56,20 @@ public:
     WEBCORE_EXPORT bool adjustVisibility(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>&);
     void adjustVisibilityInRepeatedlyTargetedRegions(Document&);
 
-    void resetAdjustmentRegions();
+    void reset();
 
     WEBCORE_EXPORT uint64_t numberOfVisibilityAdjustmentRects() const;
     WEBCORE_EXPORT bool resetVisibilityAdjustments(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>&);
 
 private:
+    void cleanUpAdjustmentClientRects();
+    void applyVisibilityAdjustmentFromSelectors(Document&);
+
     SingleThreadWeakPtr<Page> m_page;
-    HashMap<ElementIdentifier, IntRect> m_pendingAdjustmentClientRects;
+    DeferrableOneShotTimer m_recentAdjustmentClientRectsCleanUpTimer;
+    HashMap<ElementIdentifier, IntRect> m_recentAdjustmentClientRects;
+    std::optional<HashSet<String>> m_remainingVisibilityAdjustmentSelectors;
+    ApproximateTime m_startTimeForSelectorBasedVisibilityAdjustment;
     Region m_adjustmentClientRegion;
     Region m_repeatedAdjustmentClientRegion;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_adjustedElements;

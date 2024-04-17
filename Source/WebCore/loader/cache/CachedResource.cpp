@@ -737,10 +737,7 @@ void CachedResource::didAccessDecodedData(MonotonicTime timeStamp)
     
     if (allowsCaching() && inCache()) {
         auto& memoryCache = MemoryCache::singleton();
-        if (memoryCache.inLiveDecodedResourcesList(*this)) {
-            memoryCache.removeFromLiveDecodedResourcesList(*this);
-            memoryCache.insertInLiveDecodedResourcesList(*this);
-        }
+        memoryCache.moveToEndOfLiveDecodedResourcesListIfPresent(*this);
         memoryCache.pruneSoon();
     }
 }

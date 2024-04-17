@@ -103,6 +103,7 @@ const noCalendarExpected = [
   "call fields.seconds.valueOf",
   "get fields.weeks",
   "get fields.years",
+  "get this.calendar.dateAdd",
   // AddDate
   "get options.overflow",
   "get options.overflow.toString",

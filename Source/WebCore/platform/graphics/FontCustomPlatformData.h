@@ -91,7 +91,7 @@ public:
 
 #if USE(CORE_TEXT)
     WEBCORE_EXPORT FontCustomPlatformSerializedData serializedData() const;
-    WEBCORE_EXPORT static std::optional<Ref<FontCustomPlatformData>> tryMakeFromSerializationData(FontCustomPlatformSerializedData&&);
+    WEBCORE_EXPORT static std::optional<Ref<FontCustomPlatformData>> tryMakeFromSerializationData(FontCustomPlatformSerializedData&&, bool);
 #endif
     static bool supportsFormat(const String&);
     static bool supportsTechnology(const FontTechnology&);

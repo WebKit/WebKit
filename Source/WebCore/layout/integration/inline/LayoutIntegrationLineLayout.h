@@ -61,8 +61,9 @@ struct LineAdjustment;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
 
-class LineLayout : public CanMakeCheckedPtr {
+class LineLayout final : public CanMakeCheckedPtr<LineLayout> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LineLayout);
 public:
     LineLayout(RenderBlockFlow&);
     ~LineLayout();
@@ -78,13 +79,14 @@ public:
 
     void updateInlineContentConstraints();
     void updateInlineContentDimensions();
-    void updateStyle(const RenderBoxModelObject&, const RenderStyle& oldStyle);
     void updateOverflow();
+    static void updateStyle(const RenderObject&);
 
     // Partial invalidation.
     bool insertedIntoTree(const RenderElement& parent, RenderObject& child);
     bool removedFromTree(const RenderElement& parent, RenderObject& child);
     bool updateTextContent(const RenderText&, size_t offset, int delta);
+    bool styleWillChange(const RenderElement&, const RenderStyle& newStyle);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
 
@@ -119,6 +121,7 @@ public:
     InlineIterator::LineBoxIterator lastLineBox() const;
 
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
+    bool hasRendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& flow() const { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
     RenderBlockFlow& flow() { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
 

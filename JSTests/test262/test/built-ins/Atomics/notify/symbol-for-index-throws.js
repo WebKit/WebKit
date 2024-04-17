@@ -46,16 +46,16 @@ const poisonedToPrimitive = {
 
 assert.throws(Test262Error, function() {
   Atomics.notify(i32a, poisonedValueOf, poisonedValueOf);
-}, '`Atomics.notify(i32a, poisonedValueOf, poisonedValueOf)` throws Test262Error');
+});
 
 assert.throws(Test262Error, function() {
   Atomics.notify(i32a, poisonedToPrimitive, poisonedToPrimitive);
-}, '`Atomics.notify(i32a, poisonedToPrimitive, poisonedToPrimitive)` throws Test262Error');
+});
 
 assert.throws(TypeError, function() {
   Atomics.notify(i32a, Symbol("foo"), poisonedValueOf);
-}, '`Atomics.notify(i32a, Symbol("foo"), poisonedValueOf)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.notify(i32a, Symbol("foo"), poisonedToPrimitive);
-}, '`Atomics.notify(i32a, Symbol("foo"), poisonedToPrimitive)` throws TypeError');
+});

@@ -28,5 +28,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   let date = new Date(Date.now()); new date.setYear();
-}, '`let date = new Date(Date.now()); new date.setYear()` throws TypeError');
+});
 

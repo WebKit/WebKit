@@ -620,6 +620,10 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
                 m_private->setShouldContinueAfterKeyNeeded(m_shouldContinueAfterKeyNeeded);
 #endif
             m_private->prepareForPlayback(m_inPrivateBrowsingMode, m_preload, m_preservesPitch, m_shouldPrepareToPlay, m_shouldPrepareToRender);
+#if HAVE(SPATIAL_TRACKING_LABEL)
+            m_private->setDefaultSpatialTrackingLabel(m_defaultSpatialTrackingLabel);
+            m_private->setSpatialTrackingLabel(m_spatialTrackingLabel);
+#endif
         }
     }
 
@@ -1938,15 +1942,33 @@ void MediaPlayer::setShouldCheckHardwareSupport(bool value)
     m_private->setShouldCheckHardwareSupport(value);
 }
 
-const String& MediaPlayer::spatialTrackingLabel() const
+#if HAVE(SPATIAL_TRACKING_LABEL)
+const String& MediaPlayer::defaultSpatialTrackingLabel() const
 {
-    return m_private->spatialTrackingLabel();
+    return m_defaultSpatialTrackingLabel;
 }
 
-void MediaPlayer::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+void MediaPlayer::setDefaultSpatialTrackingLabel(const String& defaultSpatialTrackingLabel)
 {
-    m_private->setSpatialTrackingLabel(WTFMove(spatialTrackingLabel));
+    if (m_defaultSpatialTrackingLabel == defaultSpatialTrackingLabel)
+        return;
+    m_defaultSpatialTrackingLabel = defaultSpatialTrackingLabel;
+    m_private->setDefaultSpatialTrackingLabel(defaultSpatialTrackingLabel);
 }
+
+const String& MediaPlayer::spatialTrackingLabel() const
+{
+    return m_spatialTrackingLabel;
+}
+
+void MediaPlayer::setSpatialTrackingLabel(const String& spatialTrackingLabel)
+{
+    if (m_spatialTrackingLabel == spatialTrackingLabel)
+        return;
+    m_spatialTrackingLabel = spatialTrackingLabel;
+    m_private->setSpatialTrackingLabel(spatialTrackingLabel);
+}
+#endif
 
 #if !RELEASE_LOG_DISABLED
 const Logger& MediaPlayer::mediaPlayerLogger()

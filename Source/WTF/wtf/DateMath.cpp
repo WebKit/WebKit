@@ -957,7 +957,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& isLoc
                 // Since the passed-in length is used for both strings, the following checks that
                 // dateString has the time zone name as a prefix, not that it is equal.
                 auto length = strlen(knownZone.tzName);
-                if (equalLettersIgnoringASCIICase(dateString, knownZone.tzName, length)) {
+                if (equalLettersIgnoringASCIICase(dateString, { knownZone.tzName, length })) {
                     offset = knownZone.tzOffset;
                     dateString += length;
                     isLocalTime = false;

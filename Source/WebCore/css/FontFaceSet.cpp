@@ -45,7 +45,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FontFaceSet);
 
-Ref<FontFaceSet> FontFaceSet::create(ScriptExecutionContext& context, const Vector<RefPtr<FontFace>>& initialFaces)
+Ref<FontFaceSet> FontFaceSet::create(ScriptExecutionContext& context, const Vector<Ref<FontFace>>& initialFaces)
 {
     Ref<FontFaceSet> result = adoptRef(*new FontFaceSet(context, initialFaces));
     result->suspendIfNeeded();
@@ -59,14 +59,14 @@ Ref<FontFaceSet> FontFaceSet::create(ScriptExecutionContext& context, CSSFontFac
     return result;
 }
 
-FontFaceSet::FontFaceSet(ScriptExecutionContext& context, const Vector<RefPtr<FontFace>>& initialFaces)
+FontFaceSet::FontFaceSet(ScriptExecutionContext& context, const Vector<Ref<FontFace>>& initialFaces)
     : ActiveDOMObject(&context)
     , m_backing(CSSFontFaceSet::create())
     , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &FontFaceSet::readyPromiseResolve))
 {
     m_backing->addFontEventClient(*this);
     for (auto& face : initialFaces)
-        add(*face);
+        add(face);
 }
 
 FontFaceSet::FontFaceSet(ScriptExecutionContext& context, CSSFontFaceSet& backing)

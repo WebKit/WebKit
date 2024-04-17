@@ -1038,10 +1038,10 @@ size_t FindFieldIndex(const TFieldList &fieldList, const char *fieldName)
     return 0;
 }
 
-Declaration ViewDeclaration(TIntermDeclaration &declNode)
+Declaration ViewDeclaration(TIntermDeclaration &declNode, uint32_t index)
 {
-    ASSERT(declNode.getChildCount() == 1);
-    TIntermNode *childNode = declNode.getChildNode(0);
+    ASSERT(declNode.getChildCount() > index);
+    TIntermNode *childNode = declNode.getChildNode(index);
     ASSERT(childNode);
     TIntermSymbol *symbolNode;
     if ((symbolNode = childNode->getAsSymbolNode()))

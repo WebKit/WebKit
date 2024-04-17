@@ -177,8 +177,8 @@ TEST(PasteHTML, PreservesMSOList)
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
     [webView paste:nil];
 
-    EXPECT_WK_STREQ("[\"text/html\"]", [webView stringByEvaluatingJavaScript:@"JSON.stringify(clipboardData.types)"]);
-    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[0]"];
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.types.includes('text/html')"].boolValue);
+    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[clipboardData.types.indexOf('text/html')]"];
     [webView stringByEvaluatingJavaScript:@"window.pastedHTML = editor.innerHTML"];
 
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.startsWith('<html xmlns:o=\"urn:schemas-microsoft-com:office:office\"')"].boolValue);
@@ -229,8 +229,8 @@ TEST(PasteHTML, PreservesMSOListInCompatibilityMode)
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
     [webView paste:nil];
 
-    EXPECT_WK_STREQ("[\"text/html\"]", [webView stringByEvaluatingJavaScript:@"JSON.stringify(clipboardData.types)"]);
-    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[0]"];
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.types.includes('text/html')"].boolValue);
+    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[clipboardData.types.indexOf('text/html')]"];
     [webView stringByEvaluatingJavaScript:@"window.pastedHTML = editor.innerHTML"];
 
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.startsWith('<html xmlns:o=\"urn:schemas-microsoft-com:office:office\"')"].boolValue);
@@ -265,8 +265,8 @@ TEST(PasteHTML, PreservesMSOListOnH4)
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
     [webView paste:nil];
 
-    EXPECT_WK_STREQ("[\"text/html\"]", [webView stringByEvaluatingJavaScript:@"JSON.stringify(clipboardData.types)"]);
-    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[0]"];
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.types.includes('text/html')"].boolValue);
+    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[clipboardData.types.indexOf('text/html')]"];
     [webView stringByEvaluatingJavaScript:@"window.pastedHTML = editor.innerHTML"];
 
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.startsWith('<html xmlns:o=\"urn:schemas-microsoft-com:office:office\"')"].boolValue);
@@ -302,8 +302,8 @@ TEST(PasteHTML, StripsMSOListWhenMissingMSOHTMLElement)
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
     [webView paste:nil];
 
-    EXPECT_WK_STREQ("[\"text/html\"]", [webView stringByEvaluatingJavaScript:@"JSON.stringify(clipboardData.types)"]);
-    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[0]"];
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.types.includes('text/html')"].boolValue);
+    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[clipboardData.types.indexOf('text/html')]"];
     [webView stringByEvaluatingJavaScript:@"window.pastedHTML = editor.innerHTML"];
 
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.startsWith('<html xmlns:o=\"urn:schemas-microsoft-com:office:office\"')"].boolValue);
@@ -347,8 +347,8 @@ TEST(PasteHTML, StripsSystemFontNames)
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
     [webView paste:nil];
 
-    EXPECT_WK_STREQ("[\"text/html\"]", [webView stringByEvaluatingJavaScript:@"JSON.stringify(clipboardData.types)"]);
-    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[0]"];
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.types.includes('text/html')"].boolValue);
+    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[clipboardData.types.indexOf('text/html')]"];
     [webView stringByEvaluatingJavaScript:@"window.pastedHTML = editor.innerHTML"];
 
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('Hello Cocoa')"].boolValue);
@@ -378,8 +378,8 @@ TEST(PasteHTML, DoesNotAddStandardFontFamily)
     [webView stringByEvaluatingJavaScript:@"document.body.style.fontFamily = 'Arial'"];
     [webView paste:nil];
 
-    EXPECT_WK_STREQ("[\"text/html\"]", [webView stringByEvaluatingJavaScript:@"JSON.stringify(clipboardData.types)"]);
-    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[0]"];
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.types.includes('text/html')"].boolValue);
+    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[clipboardData.types.indexOf('text/html')]"];
     [webView stringByEvaluatingJavaScript:@"window.pastedHTML = editor.innerHTML"];
 
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('Hello')"].boolValue);

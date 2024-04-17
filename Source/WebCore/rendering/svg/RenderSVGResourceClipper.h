@@ -31,6 +31,7 @@ class SVGGraphicsElement;
 
 class RenderSVGResourceClipper final : public RenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceClipper);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceClipper);
 public:
     RenderSVGResourceClipper(SVGClipPathElement&, RenderStyle&&);
     virtual ~RenderSVGResourceClipper();

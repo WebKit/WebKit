@@ -29,5 +29,7 @@ var desc = Object.getOwnPropertyDescriptor(arrObj, "1");
 assert(desc.hasOwnProperty("get") && typeof desc.get === "undefined");
 assert(desc.hasOwnProperty("set") && typeof desc.set === "undefined");
 
-verifyNotEnumerable(arrObj, "1");
-verifyNotConfigurable(arrObj, "1");
+verifyProperty(arrObj, "1", {
+  enumerable: false,
+  configurable: false,
+});

@@ -1,7 +1,7 @@
-partial interface LocalDOMWindow {
+partial interface DOMWindow {
+    attribute DOMWindowConstructor DOMWindow;
     attribute ExposedStarConstructor ExposedStar;
     attribute ExposedToWorkerAndWindowConstructor ExposedToWorkerAndWindow;
-    attribute LocalDOMWindowConstructor LocalDOMWindow;
     attribute TestConditionalIncludesConstructor TestConditionalIncludes;
     attribute TestConditionallyReadWriteConstructor TestConditionallyReadWrite;
     attribute TestDefaultToJSONConstructor TestDefaultToJSON;

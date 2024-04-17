@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   let ab = new ArrayBuffer(); new ab.slice();
-}, '`let ab = new ArrayBuffer(); new ab.slice()` throws TypeError');
+});
 

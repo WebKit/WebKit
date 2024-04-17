@@ -86,9 +86,9 @@ TEST_P(VulkanFramebufferTest, TextureAttachmentMipIncomplete)
 // R8G8B8A8.
 TEST_P(VulkanFramebufferTest, R4G4B4A4TextureSampleOnlyActuallyUses444Format)
 {
-    rx::ContextVk *contextVk = hackANGLE();
-    rx::RendererVk *renderer = contextVk->getRenderer();
-    angle::FormatID formatID = angle::FormatID::R4G4B4A4_UNORM;
+    rx::ContextVk *contextVk   = hackANGLE();
+    rx::vk::Renderer *renderer = contextVk->getRenderer();
+    angle::FormatID formatID   = angle::FormatID::R4G4B4A4_UNORM;
 
     // Check if R4G4B4A4_UNORM is supported format.
     bool isTexturable = renderer->hasImageFormatFeatureBits(

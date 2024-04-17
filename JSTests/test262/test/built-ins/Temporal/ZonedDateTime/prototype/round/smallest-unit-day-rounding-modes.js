@@ -40,21 +40,22 @@ class TimeZone extends Temporal.TimeZone {
   #count = 0;
   #nanoseconds;
 
-  constructor(nanoseconds) {
+  constructor(todayEpochNanoseconds, tomorrowEpochNanoseconds) {
     super("UTC");
-    this.#nanoseconds = nanoseconds;
+    this.#nanoseconds = [todayEpochNanoseconds, tomorrowEpochNanoseconds];
   }
   getPossibleInstantsFor(dateTime) {
-    if (++this.#count === 2) {
-      return [new Temporal.Instant(this.#nanoseconds)];
+    const nanoseconds = this.#nanoseconds[this.#count++];
+    if (nanoseconds === undefined) {
+      return super.getPossibleInstantsFor(dateTime);
     }
-    return super.getPossibleInstantsFor(dateTime);
+    return [new Temporal.Instant(nanoseconds)];
   }
 }
 
-function test(epochNanoseconds, tomorrowEpochNanoseconds, testCases) {
+function test(epochNanoseconds, todayEpochNanoseconds, tomorrowEpochNanoseconds, testCases) {
   for (let [roundingMode, expected] of Object.entries(testCases)) {
-    let timeZone = new TimeZone(tomorrowEpochNanoseconds);
+    let timeZone = new TimeZone(todayEpochNanoseconds, tomorrowEpochNanoseconds);
     let zoned = new Temporal.ZonedDateTime(epochNanoseconds, timeZone);
     let result = zoned.round({ smallestUnit: "days", roundingMode });
     assert.sameValue(result.epochNanoseconds, expected);
@@ -63,31 +64,35 @@ function test(epochNanoseconds, tomorrowEpochNanoseconds, testCases) {
 
 const oneDay = 24n * 60n * 60n * 1000n * 1000n * 1000n;
 
-// Test positive divisor (dayLengthNs).
-test(3n, 10n, {
-  ceil: oneDay,
+test(3n, undefined, 10n, {
+  ceil: 10n, // end-of-day according to TimeZone protocol
   floor: 0n,
   trunc: 0n,
   halfExpand: 0n,
 });
 
-test(-3n, 10n, {
-  ceil: 0n,
+test(-3n, undefined, 10n, {
+  ceil: 10n, // end-of-day according to TimeZone protocol
   floor: -oneDay,
   trunc: -oneDay,
-  halfExpand: 0n,
+  halfExpand: 10n, // end-of-day according to TimeZone protocol
 });
 
-test(-3n, -10n, {
-  ceil: oneDay,
-  floor: 0n,
-  trunc: 0n,
-  halfExpand: 0n,
-});
+assert.throws(RangeError, () => {
+  test(-3n, 0n, 10n, { ceil: undefined });
+}, "instant is before TimeZone protocol's start-of-day");
+
+assert.throws(RangeError, () => {
+  test(-3n, undefined, -10n, { ceil: undefined });
+}, "instant is after TimeZone protocol's end-of-day");
+
+assert.throws(RangeError, () => {
+  test(0n, 0n, 0n, { ceil: undefined });
+}, "instant is within zero-duration day");
 
 // Test values at int64 boundaries.
-test(3n, /*INT64_MAX=*/ 9223372036854775807n, {
-  ceil: oneDay,
+test(3n, undefined, /*INT64_MAX=*/ 9223372036854775807n, {
+  ceil: /*INT64_MAX=*/ 9223372036854775807n, // end-of-day according to TimeZone protocol
   floor: 0n,
   trunc: 0n,
   halfExpand: 0n,

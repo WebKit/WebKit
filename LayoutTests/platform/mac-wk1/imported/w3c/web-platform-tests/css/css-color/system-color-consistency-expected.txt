@@ -54,5 +54,5 @@ FAIL Property color value 'Field' resolves to the same color as the background-c
 FAIL Property color value 'FieldText' resolves to the same color as text on a text area (dark) assert_equals: expected "rgb(255, 255, 255)" but got "rgba(255, 255, 255, 0.847)"
 PASS Property color value 'Mark' has the same color as the background-color of a mark element (dark)
 PASS Property color value 'MarkText' has the same color as the color of a mark element (dark)
-FAIL Property color value 'LinkText' has the same color as the color of an anchor element (dark) assert_equals: expected "rgb(158, 158, 255)" but got "rgb(0, 0, 238)"
+PASS Property color value 'LinkText' has the same color as the color of an anchor element (dark)
 

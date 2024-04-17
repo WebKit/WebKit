@@ -167,7 +167,7 @@ static String generateTemporaryPath(const Function<bool(const String&)>& action)
     do {
         wchar_t tempFile[] = L"XXXXXXXX.tmp"; // Use 8.3 style name (more characters aren't helpful due to 8.3 short file names)
         const int randomPartLength = 8;
-        cryptographicallyRandomValues(tempFile, randomPartLength * sizeof(wchar_t));
+        cryptographicallyRandomValues({ reinterpret_cast<uint8_t*>(tempFile), randomPartLength * sizeof(wchar_t) });
 
         // Limit to valid filesystem characters, also excluding others that could be problematic, like punctuation.
         // don't include both upper and lowercase since Windows file systems are typically not case sensitive.

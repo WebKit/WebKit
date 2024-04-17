@@ -42,6 +42,7 @@
 #import <QuartzCore/CoreAnimation.h>
 #import <UIKit/UIView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/CheckedRef.h>
 #import <wtf/CrossThreadCopier.h>
 #import <wtf/WorkQueue.h>
 
@@ -100,8 +101,10 @@ class VideoFullscreenControllerContext final
     : public VideoPresentationModel
     , private VideoPresentationModelClient
     , private PlaybackSessionModel
-    , private PlaybackSessionModelClient {
-
+    , private PlaybackSessionModelClient
+    , public CanMakeCheckedPtr<VideoFullscreenControllerContext> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoFullscreenControllerContext);
 public:
     static Ref<VideoFullscreenControllerContext> create()
     {
@@ -112,12 +115,24 @@ public:
 
     void setController(WebVideoFullscreenController* controller) { m_controller = controller; }
     void setUpFullscreen(HTMLVideoElement&, UIView *, HTMLMediaElementEnums::VideoFullscreenMode);
-    void exitFullscreen();
+    void exitFullscreen() final;
     void requestHideAndExitFullscreen();
     void invalidate();
 
 private:
     VideoFullscreenControllerContext() { }
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+#if CHECKED_POINTER_DEBUG
+    void registerCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::registerCheckedPtr(pointer); };
+    void copyCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::copyCheckedPtr(source, destination); }
+    void moveCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::moveCheckedPtr(source, destination); }
+    void unregisterCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::unregisterCheckedPtr(pointer); }
+#endif // CHECKED_POINTER_DEBUG
 
     // VideoPresentationModelClient
     void hasVideoChanged(bool) override;
@@ -161,7 +176,6 @@ private:
     ExternalPlaybackTargetType externalPlaybackTargetType() const override;
     String externalPlaybackLocalizedDeviceName() const override;
     bool wirelessVideoPlaybackDisabled() const override;
-    void toggleFullscreen() override { }
     void togglePictureInPicture() override { }
     void toggleInWindowFullscreen() override { }
     void enterFullscreen() override { }

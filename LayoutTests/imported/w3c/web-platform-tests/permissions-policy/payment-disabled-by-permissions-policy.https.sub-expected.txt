@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Feature policy 'Payment' check failed for element with origin 'https://127.0.0.1:9443' and allow attribute ''.
+
+
+FAIL permissions policy header "payment=()" disallows Payment Request API in top-level document. assert_throws_dom: function "() => {
+        new PaymentRequest(supportedInstruments, details);
+      }" did not throw
+FAIL permissions policy header "payment=()" disallows Payment Request API in same-origin iframes. assert_false: PaymentRequest() expected false got true
+PASS permissions policy header "payment=()" disallows Payment Request API in cross-origin iframes.
+

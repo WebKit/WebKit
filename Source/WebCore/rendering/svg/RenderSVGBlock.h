@@ -28,11 +28,15 @@ class SVGGraphicsElement;
 
 class RenderSVGBlock : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGBlock);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGBlock);
 public:
     inline SVGGraphicsElement& graphicsElement() const;
+    inline Ref<SVGGraphicsElement> protectedGraphicsElement() const;
 
 protected:
     RenderSVGBlock(Type, SVGGraphicsElement&, RenderStyle&&);
+    virtual ~RenderSVGBlock();
+
     void willBeDestroyed() override;
 
     void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false) override;

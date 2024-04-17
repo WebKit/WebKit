@@ -1093,6 +1093,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/FocusOptions.idl
     dom/FormDataEvent.idl
     dom/FullscreenOptions.idl
+    dom/GetHTMLOptions.idl
     dom/GlobalEventHandlers+PointerEvents.idl
     dom/GlobalEventHandlers+Selection.idl
     dom/GlobalEventHandlers.idl
@@ -1370,7 +1371,6 @@ set(WebCore_NON_SVG_IDL_FILES
     page/LocalDOMWindow+RequestIdleCallback.idl
     page/LocalDOMWindow+Selection.idl
     page/LocalDOMWindow+VisualViewport.idl
-    page/LocalDOMWindow.idl
     page/Location.idl
     page/NavigateEvent.idl
     page/Navigation.idl
@@ -1409,7 +1409,6 @@ set(WebCore_NON_SVG_IDL_FILES
     page/PerformanceResourceTiming.idl
     page/PerformanceServerTiming.idl
     page/PerformanceTiming.idl
-    page/RemoteDOMWindow.idl
     page/ResizeObserver.idl
     page/ResizeObserverBoxOptions.idl
     page/ResizeObserverCallback.idl
@@ -1956,15 +1955,13 @@ elseif (USE_LIBEPOXY)
 else ()
     list(APPEND WebCore_LIBRARIES OpenGL::GLES)
 
-    if (USE_EGL)
-        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-            ${EGL_INCLUDE_DIRS}
-        )
-        list(APPEND WebCore_LIBRARIES
-            ${EGL_LIBRARIES}
-        )
-        add_definitions(${EGL_DEFINITIONS})
-    endif ()
+    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+        ${EGL_INCLUDE_DIRS}
+    )
+    list(APPEND WebCore_LIBRARIES
+        ${EGL_LIBRARIES}
+    )
+    add_definitions(${EGL_DEFINITIONS})
 endif ()
 
 set(WebCoreTestSupport_FRAMEWORKS ${WebCore_FRAMEWORKS})
@@ -2841,8 +2838,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/MDNSRegisterError.serialization.in
 
     platform/network/ProtectionSpaceBase.serialization.in
-
-    platform/network/soup/SoupNetworkProxySettings.serialization.in
 )
 
 WEBKIT_COPY_FILES(WebCore_CopyPrivateHeaders

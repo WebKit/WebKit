@@ -43,7 +43,6 @@
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSExecState.h"
-#include "JSLocalDOMWindow.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "PageDebugger.h"

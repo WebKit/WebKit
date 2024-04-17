@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
 #include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {

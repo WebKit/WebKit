@@ -546,7 +546,7 @@ bool RenderLayerScrollableArea::handleWheelEventForScrolling(const PlatformWheel
 IntRect RenderLayerScrollableArea::visibleContentRectInternal(VisibleContentRectIncludesScrollbars scrollbarInclusion, VisibleContentRectBehavior) const
 {
     IntSize scrollbarSpace;
-    if (showsOverflowControls() && scrollbarInclusion == IncludeScrollbars)
+    if (showsOverflowControls() && scrollbarInclusion == VisibleContentRectIncludesScrollbars::Yes)
         scrollbarSpace = scrollbarIntrusion();
 
     auto visibleSize = this->visibleSize();
@@ -649,7 +649,6 @@ IntSize RenderLayerScrollableArea::reachableTotalContentsSize() const
 
 void RenderLayerScrollableArea::availableContentSizeChanged(AvailableSizeChangeReason reason)
 {
-    ALWAYS_LOG_WITH_STREAM(stream << " RenderLayerScrollableArea::availableContentSizeChanged " << scrollingNodeID());
     ScrollableArea::availableContentSizeChanged(reason);
 
     auto& renderer = m_layer.renderer();
@@ -658,7 +657,6 @@ void RenderLayerScrollableArea::availableContentSizeChanged(AvailableSizeChangeR
             renderBlock->setShouldForceRelayoutChildren(true);
         renderer.setNeedsLayout();
     }
-    ALWAYS_LOG_WITH_STREAM(stream << " RenderLayerScrollableArea::availableContentSizeChanged " << m_layer.renderer().needsLayout());
 }
 
 bool RenderLayerScrollableArea::shouldSuspendScrollAnimations() const
@@ -849,9 +847,11 @@ bool RenderLayerScrollableArea::canShowNonOverlayScrollbars() const
 
 void RenderLayerScrollableArea::createScrollbarsController()
 {
-    if (auto scrollbarController = m_layer.page().chrome().client().createScrollbarsController(m_layer.page(), *this)) {
-        setScrollbarsController(WTFMove(scrollbarController));
-        return;
+    if (usesAsyncScrolling()) {
+        if (auto scrollbarController = m_layer.page().chrome().client().createScrollbarsController(m_layer.page(), *this)) {
+            setScrollbarsController(WTFMove(scrollbarController));
+            return;
+        }
     }
 
     ScrollableArea::createScrollbarsController();

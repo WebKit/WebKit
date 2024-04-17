@@ -37,7 +37,7 @@
 #import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/SourceProvider.h>
 #import <JavaScriptCore/StrongInlines.h>
-#import <WebCore/JSLocalDOMWindow.h>
+#import <WebCore/JSDOMWindow.h>
 #import <WebCore/LocalDOMWindow.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/ScriptController.h>
@@ -57,8 +57,8 @@ static NSString *toNSString(JSC::SourceProvider* sourceProvider)
 
 static WebFrame *toWebFrame(JSC::JSGlobalObject* globalObject)
 {
-    auto* window = static_cast<WebCore::JSLocalDOMWindow*>(globalObject);
-    return kit(window->wrapped().frame());
+    auto* window = static_cast<WebCore::JSDOMWindow*>(globalObject);
+    return kit(dynamicDowncast<WebCore::LocalFrame>(window->wrapped().frame()));
 }
 
 WebScriptDebugger::WebScriptDebugger(JSC::JSGlobalObject* globalObject)

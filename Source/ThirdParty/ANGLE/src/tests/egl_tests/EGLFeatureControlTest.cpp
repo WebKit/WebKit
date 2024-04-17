@@ -302,6 +302,7 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesDependent)
 
         // Features that must become disabled as a result of the above
         GetFeatureName(Feature::SupportsDepthStencilResolve),
+        GetFeatureName(Feature::SupportsDepthStencilIndependentResolveNone),
         GetFeatureName(Feature::SupportsSampler2dViewOf3d),
         GetFeatureName(Feature::SupportsFragmentShadingRate),
     };

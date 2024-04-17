@@ -863,28 +863,28 @@ inline void Lexer<T>::record8(int c)
 }
 
 template <typename T>
-inline void Lexer<T>::append8(const T* p, size_t length)
+inline void Lexer<T>::append8(std::span<const T> span)
 {
     size_t currentSize = m_buffer8.size();
-    m_buffer8.grow(currentSize + length);
+    m_buffer8.grow(currentSize + span.size());
     LChar* rawBuffer = m_buffer8.data() + currentSize;
 
-    for (size_t i = 0; i < length; i++) {
-        T c = p[i];
+    for (size_t i = 0; i < span.size(); i++) {
+        T c = span[i];
         ASSERT(isLatin1(c));
         rawBuffer[i] = c;
     }
 }
 
 template <typename T>
-inline void Lexer<T>::append16(const LChar* p, size_t length)
+inline void Lexer<T>::append16(std::span<const LChar> span)
 {
     size_t currentSize = m_buffer16.size();
-    m_buffer16.grow(currentSize + length);
+    m_buffer16.grow(currentSize + span.size());
     UChar* rawBuffer = m_buffer16.data() + currentSize;
 
-    for (size_t i = 0; i < length; i++)
-        rawBuffer[i] = p[i];
+    for (size_t i = 0; i < span.size(); i++)
+        rawBuffer[i] = span[i];
 }
 
 template <typename T>
@@ -908,7 +908,7 @@ template<typename CharacterType> inline void Lexer<CharacterType>::recordUnicode
         record16(static_cast<UChar>(codePoint));
     else {
         UChar codeUnits[2] = { U16_LEAD(codePoint), U16_TRAIL(codePoint) };
-        append16(codeUnits, 2);
+        append16(codeUnits);
     }
 }
 
@@ -1047,11 +1047,10 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
     const Identifier* ident = nullptr;
     
     if (shouldCreateIdentifier) {
-        int identifierLength = currentSourcePtr() - identifierStart;
         if (isAll8Bit)
-            ident = makeIdentifierLCharFromUChar(identifierStart, identifierLength);
+            ident = makeIdentifierLCharFromUChar(std::span { identifierStart, currentSourcePtr() });
         else
-            ident = makeIdentifier(identifierStart, identifierLength);
+            ident = makeIdentifier(std::span { identifierStart, currentSourcePtr() });
         tokenData->ident = ident;
     } else
         tokenData->ident = nullptr;
@@ -1122,7 +1121,7 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
             return INVALID_UNICODE_ENCODING_ERRORTOK;
         if (UNLIKELY(isStart ? !isNonLatin1IdentStart(codePoint) : !isNonLatin1IdentPart(codePoint)))
             return INVALID_IDENTIFIER_UNICODE_ERRORTOK;
-        append16(m_code, 2);
+        append16({ m_code, 2 });
         shift();
         shift();
         identifierStart = currentSourcePtr();
@@ -1150,7 +1149,7 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
     if (shouldCreateIdentifier) {
         if (identifierStart != currentSourcePtr())
             m_buffer16.append(std::span(identifierStart, currentSourcePtr() - identifierStart));
-        ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
+        ident = makeIdentifier(m_buffer16.span());
 
         tokenData->ident = ident;
     } else
@@ -1195,7 +1194,7 @@ template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseR
     while (m_current != stringQuoteCharacter) {
         if (UNLIKELY(m_current == '\\')) {
             if (stringStart != currentSourcePtr() && shouldBuildStrings)
-                append8(stringStart, currentSourcePtr() - stringStart);
+                append8({ stringStart, currentSourcePtr() });
             shift();
 
             LChar escape = singleEscape(m_current);
@@ -1239,9 +1238,9 @@ template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseR
     }
 
     if (currentSourcePtr() != stringStart && shouldBuildStrings)
-        append8(stringStart, currentSourcePtr() - stringStart);
+        append8({ stringStart, currentSourcePtr() });
     if (shouldBuildStrings) {
-        tokenData->ident = makeIdentifier(m_buffer8.data(), m_buffer8.size());
+        tokenData->ident = makeIdentifier(m_buffer8.span());
         m_buffer8.shrink(0);
     } else
         tokenData->ident = nullptr;
@@ -1359,7 +1358,7 @@ template <bool shouldBuildStrings> auto Lexer<T>::parseStringSlowCase(JSTokenDat
     while (m_current != stringQuoteCharacter) {
         if (UNLIKELY(m_current == '\\')) {
             if (stringStart != currentSourcePtr() && shouldBuildStrings)
-                append16(stringStart, currentSourcePtr() - stringStart);
+                append16({ stringStart, currentSourcePtr() });
             shift();
 
             LChar escape = singleEscape(m_current);
@@ -1395,9 +1394,9 @@ template <bool shouldBuildStrings> auto Lexer<T>::parseStringSlowCase(JSTokenDat
     }
 
     if (currentSourcePtr() != stringStart && shouldBuildStrings)
-        append16(stringStart, currentSourcePtr() - stringStart);
+        append16({ stringStart, currentSourcePtr() });
     if (shouldBuildStrings)
-        tokenData->ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
+        tokenData->ident = makeIdentifier(m_buffer16.span());
     else
         tokenData->ident = nullptr;
 
@@ -1415,7 +1414,7 @@ typename Lexer<T>::StringParseResult Lexer<T>::parseTemplateLiteral(JSTokenData*
     while (m_current != '`') {
         if (UNLIKELY(m_current == '\\')) {
             if (stringStart != currentSourcePtr())
-                append16(stringStart, currentSourcePtr() - stringStart);
+                append16({ stringStart, currentSourcePtr() });
             shift();
 
             LChar escape = singleEscape(m_current);
@@ -1471,7 +1470,7 @@ typename Lexer<T>::StringParseResult Lexer<T>::parseTemplateLiteral(JSTokenData*
                 if (m_current == '\r') {
                     // Normalize <CR>, <CR><LF> to <LF>.
                     if (stringStart != currentSourcePtr())
-                        append16(stringStart, currentSourcePtr() - stringStart);
+                        append16({ stringStart, currentSourcePtr() });
                     if (rawStringStart != currentSourcePtr() && rawStringsBuildMode == RawStringsBuildMode::BuildRawStrings)
                         m_bufferForRawTemplateString16.append(std::span(rawStringStart, currentSourcePtr() - rawStringStart));
 
@@ -1494,18 +1493,18 @@ typename Lexer<T>::StringParseResult Lexer<T>::parseTemplateLiteral(JSTokenData*
     bool isTail = m_current == '`';
 
     if (currentSourcePtr() != stringStart)
-        append16(stringStart, currentSourcePtr() - stringStart);
+        append16({ stringStart, currentSourcePtr() });
     if (rawStringStart != currentSourcePtr() && rawStringsBuildMode == RawStringsBuildMode::BuildRawStrings)
-        m_bufferForRawTemplateString16.append(std::span(rawStringStart, currentSourcePtr() - rawStringStart));
+        m_bufferForRawTemplateString16.append(std::span { rawStringStart, currentSourcePtr() });
 
     if (!parseCookedFailed)
-        tokenData->cooked = makeIdentifier(m_buffer16.data(), m_buffer16.size());
+        tokenData->cooked = makeIdentifier(m_buffer16.span());
     else
         tokenData->cooked = nullptr;
 
     // Line terminator normalization (e.g. <CR> => <LF>) should be applied to both the raw and cooked representations.
     if (rawStringsBuildMode == RawStringsBuildMode::BuildRawStrings)
-        tokenData->raw = makeIdentifier(m_bufferForRawTemplateString16.data(), m_bufferForRawTemplateString16.size());
+        tokenData->raw = makeIdentifier(m_bufferForRawTemplateString16.span());
     else
         tokenData->raw = nullptr;
 
@@ -1575,9 +1574,9 @@ ALWAYS_INLINE auto Lexer<T>::parseHex() -> std::optional<NumberParseResult>
     }
 
     if (UNLIKELY(m_current == 'n'))
-        return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
+        return NumberParseResult { makeIdentifier(m_buffer8.span()) };
     
-    return NumberParseResult { parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 16) };
+    return NumberParseResult { parseIntOverflow(m_buffer8.span(), 16) };
 }
 
 template <typename T>
@@ -1626,12 +1625,12 @@ ALWAYS_INLINE auto Lexer<T>::parseBinary() -> std::optional<NumberParseResult>
     }
 
     if (UNLIKELY(m_current == 'n'))
-        return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
+        return NumberParseResult { makeIdentifier(m_buffer8.span()) };
 
     if (isASCIIDigit(m_current))
         return std::nullopt;
 
-    return NumberParseResult { parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 2) };
+    return NumberParseResult { parseIntOverflow(m_buffer8.span(), 2) };
 }
 
 template <typename T>
@@ -1682,12 +1681,12 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> std::optional<NumberParseResult>
     }
 
     if (UNLIKELY(m_current == 'n') && !isLegacyLiteral)
-        return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
+        return NumberParseResult { makeIdentifier(m_buffer8.span()) };
 
     if (isASCIIDigit(m_current))
         return std::nullopt;
 
-    return NumberParseResult { parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 8) };
+    return NumberParseResult { parseIntOverflow(m_buffer8.span(), 8) };
 }
 
 template <typename T>
@@ -1742,7 +1741,7 @@ ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> std::optional<NumberParseResult>
     }
     
     if (UNLIKELY(m_current == 'n' && !isLegacyLiteral))
-        return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
+        return NumberParseResult { makeIdentifier(m_buffer8.span()) };
 
     return std::nullopt;
 }
@@ -1848,7 +1847,7 @@ template<typename CharacterType> ALWAYS_INLINE String Lexer<CharacterType>::pars
             mergedCharacterBits |= m_current;
         shift();
     }
-    unsigned length = currentSourcePtr() - stringStart;
+    std::span commentDirective { stringStart, currentSourcePtr() };
 
     skipWhitespace();
     if (!isLineTerminator(m_current) && !atEnd())
@@ -1856,9 +1855,9 @@ template<typename CharacterType> ALWAYS_INLINE String Lexer<CharacterType>::pars
 
     if constexpr (std::is_same_v<CharacterType, UChar>) {
         if (isLatin1(mergedCharacterBits))
-            return String::make8Bit(stringStart, length);
+            return String::make8Bit(commentDirective);
     }
-    return std::span { stringStart, length };
+    return commentDirective;
 }
 IGNORE_WARNINGS_END
 
@@ -2263,7 +2262,7 @@ start:
             goto returnError;
         }
         size_t parsedLength;
-        tokenData->doubleValue = parseDouble(m_buffer8.data(), m_buffer8.size(), parsedLength);
+        tokenData->doubleValue = parseDouble(m_buffer8, parsedLength);
         if (token == INTEGER)
             token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
 
@@ -2450,7 +2449,7 @@ start:
                     goto returnError;
                 }
                 size_t parsedLength;
-                tokenData->doubleValue = parseDouble(m_buffer8.data(), m_buffer8.size(), parsedLength);
+                tokenData->doubleValue = parseDouble(m_buffer8, parsedLength);
                 if (token == INTEGER)
                     token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
             }
@@ -2670,7 +2669,7 @@ JSTokenType Lexer<T>::scanRegExp(JSToken* tokenRecord, UChar patternPrefix)
         }
     }
 
-    tokenData->pattern = makeRightSizedIdentifier(m_buffer16.data(), m_buffer16.size(), charactersOredTogether);
+    tokenData->pattern = makeRightSizedIdentifier(m_buffer16, charactersOredTogether);
     m_buffer16.shrink(0);
 
     ASSERT(m_buffer8.isEmpty());
@@ -2692,7 +2691,7 @@ JSTokenType Lexer<T>::scanRegExp(JSToken* tokenRecord, UChar patternPrefix)
         return token;
     }
 
-    tokenData->flags = makeIdentifier(m_buffer8.data(), m_buffer8.size());
+    tokenData->flags = makeIdentifier(m_buffer8.span());
     m_buffer8.shrink(0);
 
     // Since RegExp always ends with / or flags (IdentifierPart), m_atLineStart always becomes false.

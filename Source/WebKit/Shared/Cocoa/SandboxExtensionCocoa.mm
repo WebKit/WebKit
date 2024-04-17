@@ -86,7 +86,7 @@ std::span<const uint8_t> SandboxExtensionImpl::getSerializedFormat()
 {
     ASSERT(m_token);
     ASSERT(strlen(m_token));
-    return { reinterpret_cast<const uint8_t*>(m_token), strlen(m_token) };
+    return span8(m_token);
 }
 
 char* SandboxExtensionImpl::sandboxExtensionForType(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)

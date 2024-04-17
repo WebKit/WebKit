@@ -31,41 +31,12 @@
 
 namespace WebCore {
 
-static constexpr ASCIILiteral serializationForCSS(ColorInterpolationColorSpace interpolationColorSpace)
-{
-    switch (interpolationColorSpace) {
-    case ColorInterpolationColorSpace::HSL:
-        return "hsl"_s;
-    case ColorInterpolationColorSpace::HWB:
-        return "hwb"_s;
-    case ColorInterpolationColorSpace::LCH:
-        return "lch"_s;
-    case ColorInterpolationColorSpace::Lab:
-        return "lab"_s;
-    case ColorInterpolationColorSpace::OKLCH:
-        return "oklch"_s;
-    case ColorInterpolationColorSpace::OKLab:
-        return "oklab"_s;
-    case ColorInterpolationColorSpace::SRGB:
-        return "srgb"_s;
-    case ColorInterpolationColorSpace::SRGBLinear:
-        return "srgb-linear"_s;
-    case ColorInterpolationColorSpace::XYZD50:
-        return "xyz-d50"_s;
-    case ColorInterpolationColorSpace::XYZD65:
-        return "xyz-d65"_s;
-    }
-
-    ASSERT_NOT_REACHED();
-    return ""_s;
-}
-
-static void serializationForCSS(StringBuilder& builder, ColorInterpolationColorSpace interpolationColorSpace)
+void serializationForCSS(StringBuilder& builder, ColorInterpolationColorSpace interpolationColorSpace)
 {
     builder.append(serializationForCSS(interpolationColorSpace));
 }
 
-static void serializationForCSS(StringBuilder& builder, HueInterpolationMethod hueInterpolationMethod)
+void serializationForCSS(StringBuilder& builder, HueInterpolationMethod hueInterpolationMethod)
 {
     switch (hueInterpolationMethod) {
     case HueInterpolationMethod::Shorter:
@@ -126,6 +97,18 @@ TextStream& operator<<(TextStream& ts, ColorInterpolationColorSpace interpolatio
         break;
     case ColorInterpolationColorSpace::SRGBLinear:
         ts << "sRGB linear";
+        break;
+    case ColorInterpolationColorSpace::DisplayP3:
+        ts << "Display P3";
+        break;
+    case ColorInterpolationColorSpace::A98RGB:
+        ts << "A98 RGB";
+        break;
+    case ColorInterpolationColorSpace::ProPhotoRGB:
+        ts << "ProPhoto RGB";
+        break;
+    case ColorInterpolationColorSpace::Rec2020:
+        ts << "Rec2020";
         break;
     case ColorInterpolationColorSpace::XYZD50:
         ts << "XYZ D50";

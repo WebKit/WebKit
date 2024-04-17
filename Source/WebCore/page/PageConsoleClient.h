@@ -48,8 +48,9 @@ namespace WebCore {
 class Document;
 class Page;
 
-class WEBCORE_EXPORT PageConsoleClient final : public JSC::ConsoleClient, public CanMakeCheckedPtr {
+class WEBCORE_EXPORT PageConsoleClient final : public JSC::ConsoleClient, public CanMakeCheckedPtr<PageConsoleClient> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageConsoleClient);
 public:
     explicit PageConsoleClient(Page&);
     virtual ~PageConsoleClient();
@@ -67,6 +68,8 @@ public:
     void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& = nullptr, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0);
     void addMessage(MessageSource, MessageLevel, const String& message, Ref<Inspector::ScriptCallStack>&&);
     void addMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0, Document* = nullptr);
+
+    static void logMessageToSystemConsole(const Inspector::ConsoleMessage&);
 
 private:
     void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;

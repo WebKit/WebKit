@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009, 2010, 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011 Igalia S.L.
  * Copyright (C) 2011 Motorola Mobility. All rights reserved.
@@ -1207,11 +1207,11 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
     return fragment;
 }
 
-String serializeFragment(const Node& node, SerializedNodes root, Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, std::optional<SerializationSyntax> serializationSyntax, HashMap<String, String>&& replacementURLStrings, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet, ShouldIncludeShadowDOM shouldIncludeShadowDOM, const Vector<MarkupExclusionRule>& exclusionRules)
+String serializeFragment(const Node& node, SerializedNodes root, Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, std::optional<SerializationSyntax> serializationSyntax, HashMap<String, String>&& replacementURLStrings, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet, SerializeShadowRoots serializeShadowRoots, Vector<Ref<ShadowRoot>>&& explicitShadowRoots, const Vector<MarkupExclusionRule>& exclusionRules)
 {
     if (!serializationSyntax)
         serializationSyntax = node.document().isHTMLDocument() ? SerializationSyntax::HTML : SerializationSyntax::XML;
-    MarkupAccumulator accumulator(nodes, resolveURLs, *serializationSyntax, WTFMove(replacementURLStrings), WTFMove(replacementURLStringsForCSSStyleSheet), shouldIncludeShadowDOM, exclusionRules);
+    MarkupAccumulator accumulator(nodes, resolveURLs, *serializationSyntax, WTFMove(replacementURLStrings), WTFMove(replacementURLStringsForCSSStyleSheet), serializeShadowRoots, WTFMove(explicitShadowRoots), exclusionRules);
     return accumulator.serializeNodes(const_cast<Node&>(node), root);
 }
 

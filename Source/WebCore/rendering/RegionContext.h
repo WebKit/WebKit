@@ -34,7 +34,9 @@ namespace WebCore {
 
 class Path;
 
-class RegionContext : public CanMakeCheckedPtr {
+class RegionContext : public CanMakeCheckedPtr<RegionContext> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RegionContext);
 public:
     virtual ~RegionContext() = default;
 

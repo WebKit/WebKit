@@ -286,7 +286,7 @@ IntRect ScrollView::unobscuredContentRectInternal(VisibleContentRectIncludesScro
 IntSize ScrollView::sizeForVisibleContent(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
 {
     if (platformWidget())
-        return platformVisibleContentSizeIncludingObscuredArea(scrollbarInclusion == IncludeScrollbars);
+        return platformVisibleContentSizeIncludingObscuredArea(scrollbarInclusion == VisibleContentRectIncludesScrollbars::Yes);
 
 #if USE(COORDINATED_GRAPHICS)
     if (m_useFixedLayout && !m_fixedVisibleContentRect.isEmpty())
@@ -294,7 +294,7 @@ IntSize ScrollView::sizeForVisibleContent(VisibleContentRectIncludesScrollbars s
 #endif
 
     IntSize scrollbarSpace;
-    if (scrollbarInclusion == ExcludeScrollbars)
+    if (scrollbarInclusion == VisibleContentRectIncludesScrollbars::No)
         scrollbarSpace = scrollbarIntrusion();
 
     return IntSize(width() - scrollbarSpace.width(), height() - scrollbarSpace.height()).expandedTo(IntSize());
@@ -303,7 +303,7 @@ IntSize ScrollView::sizeForVisibleContent(VisibleContentRectIncludesScrollbars s
 IntSize ScrollView::sizeForUnobscuredContent(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
 {
     if (platformWidget())
-        return platformVisibleContentSize(scrollbarInclusion == IncludeScrollbars);
+        return platformVisibleContentSize(scrollbarInclusion == VisibleContentRectIncludesScrollbars::Yes);
 
     IntSize visibleContentSize = sizeForVisibleContent(scrollbarInclusion);
 
@@ -321,7 +321,7 @@ IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollb
 #if PLATFORM(IOS_FAMILY)
     if (visibleContentRectBehavior == LegacyIOSDocumentViewRect) {
         if (platformWidget())
-            return platformVisibleContentRect(scrollbarInclusion == IncludeScrollbars);
+            return platformVisibleContentRect(scrollbarInclusion == VisibleContentRectIncludesScrollbars::Yes);
     }
     
     if (platformWidget())
@@ -331,7 +331,7 @@ IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollb
 #endif
 
     if (platformWidget())
-        return platformVisibleContentRect(scrollbarInclusion == IncludeScrollbars);
+        return platformVisibleContentRect(scrollbarInclusion == VisibleContentRectIncludesScrollbars::Yes);
 
 #if USE(COORDINATED_GRAPHICS)
     if (m_useFixedLayout && !m_fixedVisibleContentRect.isEmpty())

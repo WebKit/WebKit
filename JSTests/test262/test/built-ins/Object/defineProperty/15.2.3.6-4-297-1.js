@@ -38,13 +38,13 @@ includes: [propertyHelper.js]
 
     verifyEqualTo(arguments, "0", getFunc1());
 
-    verifyNotEnumerable(arguments, "0");
-
-    verifyNotConfigurable(arguments, "0");
-
     if (!(e instanceof TypeError)) {
       throw new Test262Error("Expected TypeError, got " + e);
     }
-
   }
+
+  verifyProperty(arguments, "0", {
+    enumerable: false,
+    configurable: false,
+  });
 }(0, 1, 2));

@@ -44,6 +44,7 @@ verifyEqualTo(obj, "foo", get_func2());
 
 verifyWritable(obj, "foo", "setVerifyHelpProp");
 
-verifyNotEnumerable(obj, "foo");
-
-verifyNotConfigurable(obj, "foo");
+verifyProperty(obj, "foo", {
+  enumerable: false,
+  configurable: false,
+});

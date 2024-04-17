@@ -68,15 +68,12 @@ private:
         if (string.empty())
             return emptyAtom();
 
-        auto length = string.size();
-        if (length > maxStringLengthForCache)
-            return AtomString(string.data(), length);
+        if (string.size() > maxStringLengthForCache)
+            return AtomString(string);
 
-        auto firstCharacter = string[0];
-        auto lastCharacter = string[length - 1];
-        auto& slot = atomStringCacheSlot(firstCharacter, lastCharacter, length);
-        if (!equal(slot.impl(), string.data(), length)) {
-            AtomString result(string.data(), length);
+        auto& slot = atomStringCacheSlot(string.front(), string.back(), string.size());
+        if (!equal(slot.impl(), string)) {
+            AtomString result { string };
             slot = result;
             return result;
         }
@@ -90,15 +87,12 @@ private:
         if (string.empty())
             return nullQName();
 
-        auto length = string.size();
-        if (length > maxStringLengthForCache)
-            return QualifiedName(nullAtom(), AtomString(string.data(), length), nullAtom());
+        if (string.size() > maxStringLengthForCache)
+            return QualifiedName(nullAtom(), AtomString(string), nullAtom());
 
-        auto firstCharacter = string[0];
-        auto lastCharacter = string[length - 1];
-        auto& slot = qualifiedNameCacheSlot(firstCharacter, lastCharacter, length);
-        if (!slot || !equal(slot->m_localName.impl(), string.data(), length)) {
-            QualifiedName result(nullAtom(), AtomString(string.data(), length), nullAtom());
+        auto& slot = qualifiedNameCacheSlot(string.front(), string.back(), string.size());
+        if (!slot || !equal(slot->m_localName.impl(), string)) {
+            QualifiedName result(nullAtom(), AtomString(string), nullAtom());
             slot = result.impl();
             return result;
         }

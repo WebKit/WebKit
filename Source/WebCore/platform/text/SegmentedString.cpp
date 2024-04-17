@@ -28,9 +28,9 @@ namespace WebCore {
 inline void SegmentedString::Substring::appendTo(StringBuilder& builder) const
 {
     if (is8Bit)
-        builder.appendCharacters(currentCharacter8, length);
+        builder.append(std::span { currentCharacter8, length });
     else
-        builder.appendCharacters(currentCharacter16, length);
+        builder.append(std::span { currentCharacter16, length });
 }
 
 SegmentedString& SegmentedString::operator=(SegmentedString&& other)

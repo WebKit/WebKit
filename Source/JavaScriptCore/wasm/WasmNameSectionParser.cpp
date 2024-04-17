@@ -38,12 +38,12 @@ auto NameSectionParser::parse() -> Result
     WASM_PARSER_FAIL_IF(!nameSection->functionNames.tryReserveCapacity(m_info.functionIndexSpaceSize()), "can't allocate enough memory for function names");
     nameSection->functionNames.resize(m_info.functionIndexSpaceSize());
 
-    for (size_t payloadNumber = 0; m_offset < length(); ++payloadNumber) {
+    for (size_t payloadNumber = 0; m_offset < source().size(); ++payloadNumber) {
         uint8_t nameType;
         uint32_t payloadLength;
         WASM_PARSER_FAIL_IF(!parseUInt7(nameType), "can't get name type for payload ", payloadNumber);
         WASM_PARSER_FAIL_IF(!parseVarUInt32(payloadLength), "can't get payload length for payload ", payloadNumber);
-        WASM_PARSER_FAIL_IF(payloadLength > length() - m_offset, "payload length is too big for payload ", payloadNumber);
+        WASM_PARSER_FAIL_IF(payloadLength > source().size() - m_offset, "payload length is too big for payload ", payloadNumber);
         const auto payloadStart = m_offset;
 
         if (!isValidNameType(nameType)) {

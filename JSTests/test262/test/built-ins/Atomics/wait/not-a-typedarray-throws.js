@@ -22,8 +22,8 @@ var poisoned = {
 
 assert.throws(TypeError, function() {
   Atomics.wait({}, 0, 0, 0);
-}, '`Atomics.wait({}, 0, 0, 0)` throws TypeError');
+});
 
 assert.throws(TypeError, function() {
   Atomics.wait({}, poisoned, poisoned, poisoned);
-}, '`Atomics.wait({}, poisoned, poisoned, poisoned)` throws TypeError');
+});

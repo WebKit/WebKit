@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Object.seal.name, "seal");
-
-verifyNotEnumerable(Object.seal, "name");
-verifyNotWritable(Object.seal, "name");
-verifyConfigurable(Object.seal, "name");
+verifyProperty(Object.seal, "name", {
+  value: "seal",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

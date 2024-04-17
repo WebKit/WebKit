@@ -44,6 +44,9 @@
 #import "UIKitSPI.h"
 #import "WKBrowserEngineDefinitions.h"
 #import "WKMouseInteraction.h"
+#import "WKSTextStyleManager.h"
+#import "WKSTextStyleSourceDelegate.h"
+#import "WKTextIndicatorStyleType.h"
 #import <WebKit/WKActionSheetAssistant.h>
 #import <WebKit/WKAirPlayRoutePicker.h>
 #import <WebKit/WKContactPicker.h>
@@ -134,6 +137,8 @@ class WebPageProxy;
 @class WKTextInteractionWrapper;
 @class WKTextRange;
 @class _WKTextInputContext;
+
+@class WKSTextStyleManager;
 
 #if !PLATFORM(WATCHOS)
 @class WKDateTimeInputControl;
@@ -431,6 +436,10 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<UITargetedPreview> _contextMenuInteractionTargetedPreview;
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    RetainPtr<WKSTextStyleManager> _textStyleManager;
+#endif
+
     std::unique_ptr<WebKit::SmartMagnificationController> _smartMagnificationController;
 
     WeakObjCPtr<id <UITextInputDelegate>> _inputDelegate;
@@ -634,6 +643,9 @@ struct ImageAnalysisContextMenuActionData {
 #elif ENABLE(DRAG_SUPPORT)
     , UIDragInteractionDelegate
 #endif
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    , WKSTextStyleSourceDelegate
+#endif
 >
 
 @property (nonatomic, readonly) CGPoint lastInteractionLocation;
@@ -832,6 +844,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)setUpTextIndicator:(Ref<WebCore::TextIndicator>)textIndicator;
 - (void)setTextIndicatorAnimationProgress:(float)NSAnimationProgress;
 - (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation;
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType;
+- (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
+#endif
 
 @property (nonatomic, readonly) BOOL _shouldUseContextMenus;
 @property (nonatomic, readonly) BOOL _shouldUseContextMenusForFormControls;

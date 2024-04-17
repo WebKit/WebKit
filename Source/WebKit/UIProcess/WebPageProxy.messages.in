@@ -213,7 +213,7 @@ messages -> WebPageProxy {
     LogDiagnosticMessageWithResultFromWebProcess(String message, String description, uint32_t result, enum:bool WebCore::ShouldSample shouldSample)
     LogDiagnosticMessageWithValueFromWebProcess(String message, String description, double value, unsigned significantFigures, enum:bool WebCore::ShouldSample shouldSample)
     LogDiagnosticMessageWithEnhancedPrivacyFromWebProcess(String message, String description, enum:bool WebCore::ShouldSample shouldSample)
-    LogDiagnosticMessageWithValueDictionaryFromWebProcess(String message, String description, WebCore::DiagnosticLoggingClient::ValueDictionary value, enum:bool WebCore::ShouldSample shouldSample)
+    LogDiagnosticMessageWithValueDictionaryFromWebProcess(String message, String description, struct WebCore::DiagnosticLoggingDictionary value, enum:bool WebCore::ShouldSample shouldSample)
     LogDiagnosticMessageWithDomainFromWebProcess(String message, WebCore::DiagnosticLoggingDomain domain)
 
     # Performance logging
@@ -259,7 +259,7 @@ messages -> WebPageProxy {
     DidGetImageForFindMatch(struct WebCore::ImageBufferParameters parameters, WebCore::ShareableBitmapHandle contentImageHandle, uint32_t matchIndex)
 
     # PopupMenu messages
-    ShowPopupMenu(WebCore::IntRect rect, uint64_t textDirection, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, struct WebKit::PlatformPopupMenuData data)
+    ShowPopupMenuFromFrame(WebCore::FrameIdentifier frameID, WebCore::IntRect rect, uint64_t textDirection, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, struct WebKit::PlatformPopupMenuData data)
     HidePopupMenu()
 
 #if ENABLE(CONTEXT_MENUS)
@@ -446,6 +446,7 @@ messages -> WebPageProxy {
     DidPerformImmediateActionHitTest(struct WebKit::WebHitTestResultData result, bool contentPreventsDefault, WebKit::UserData userData) CanDispatchOutOfOrder
 #endif
     HandleMessage(String messageName, WebKit::UserData messageBody)
+    HandleMessageWithAsyncReply(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData reply)
     HandleSynchronousMessage(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData returnData) Synchronous
 
     HandleAutoFillButtonClick(WebKit::UserData userData)
@@ -520,6 +521,10 @@ messages -> WebPageProxy {
 
 #if ENABLE(APP_HIGHLIGHTS)
     StoreAppHighlight(struct WebCore::AppHighlight info)
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    RemoveTextIndicatorStyleForID(WTF::UUID uuid)
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
@@ -633,4 +638,9 @@ messages -> WebPageProxy {
     FrameTextForTesting(WebCore::FrameIdentifier frameID) -> (String text) Synchronous
     BindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, std::span<const uint8_t> dataToken) -> (std::span<const uint8_t> token, int processIdentifier) Synchronous
     UpdateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
+    DocumentURLForConsoleLog(WebCore::FrameIdentifier frameID) -> (URL url)
+
+    NowPlayingMetadataChanged(struct WebCore::NowPlayingMetadata metadata)
+
+    DidAdjustVisibilityWithSelectors(Vector<String> selectors)
 }

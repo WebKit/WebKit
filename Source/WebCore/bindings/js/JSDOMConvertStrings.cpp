@@ -154,6 +154,7 @@ String trustedTypeCompliantString(TrustedType expectedType, JSGlobalObject& glob
     auto stringValue = expectedType == TrustedType::TrustedScriptURL
         ? Converter<IDLUSVString>::convert(global, input)
         : Converter<IDLDOMString>::convert(global, input);
+    RETURN_IF_EXCEPTION(throwScope, { });
 
     if (input.isNull() && shouldConvertNullToEmptyString == ShouldConvertNullToEmptyString::Yes)
         stringValue = emptyString();

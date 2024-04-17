@@ -5,6 +5,26 @@
 esid: sec-temporal-intl
 description: Non-ISO Calendars
 features: [Temporal, Array.prototype.includes]
+locale:
+  - en-US-u-ca-iso8601
+  - en-US-u-ca-buddhist
+  - en-US-u-ca-chinese
+  - en-US-u-ca-coptic
+  - en-US-u-ca-dangi
+  - en-US-u-ca-ethioaa
+  - en-US-u-ca-ethiopic
+  - en-US-u-ca-gregory
+  - en-US-u-ca-hebrew
+  - en-US-u-ca-indian
+  - en-US-u-ca-islamic
+  - en-US-u-ca-islamic-umalqura
+  - en-US-u-ca-islamic-tbla
+  - en-US-u-ca-islamic-civil
+  - en-US-u-ca-islamic-rgsa
+  - en-US-u-ca-islamicc
+  - en-US-u-ca-japanese
+  - en-US-u-ca-persian
+  - en-US-u-ca-roc
 ---*/
 
 var testChineseData = new Date("2001-02-01T00:00Z").toLocaleString("en-US-u-ca-chinese", {
@@ -17,69 +37,256 @@ var testChineseData = new Date("2001-02-01T00:00Z").toLocaleString("en-US-u-ca-c
 var hasOutdatedChineseIcuData = !testChineseData.endsWith("2001");
 
 // verify that Intl.DateTimeFormat.formatToParts output matches snapshot data
-var getLocalizedDates = isoString => {
-  var calendars = [
-    "iso8601",
-    "buddhist",
-    "chinese",
-    "coptic",
-    "dangi",
-    "ethioaa",
-    "ethiopic",
-    "gregory",
-    "hebrew",
-    "indian",
-    "islamic",
-    "islamic-umalqura",
-    "islamic-tbla",
-    "islamic-civil",
-    "islamic-rgsa",
-    "islamicc",
-    "japanese",
-    "persian",
-    "roc"
-  ];
-  var date = new Date(isoString);
-  return calendars.map(id => `${ id }: ${ date.toLocaleDateString(`en-US-u-ca-${ id }`, { timeZone: "UTC" }) }`).join("\n");
-};
-var year2000Content = getLocalizedDates("2000-01-01T00:00Z");
-var year1Content = getLocalizedDates("0001-01-01T00:00Z");
-var year2000Snapshot = "iso8601: 1/1/2000\n" + "buddhist: 1/1/2543 BE\n" + "chinese: 11/25/1999\n" + "coptic: 4/22/1716 ERA1\n" + "dangi: 11/25/1999\n" + "ethioaa: 4/22/7492 ERA0\n" + "ethiopic: 4/22/1992 ERA1\n" + "gregory: 1/1/2000\n" + "hebrew: 23 Tevet 5760\n" + "indian: 10/11/1921 Saka\n" + "islamic: 9/25/1420 AH\n" + "islamic-umalqura: 9/24/1420 AH\n" + "islamic-tbla: 9/25/1420 AH\n" + "islamic-civil: 9/24/1420 AH\n" + "islamic-rgsa: 9/25/1420 AH\n" + "islamicc: 9/24/1420 AH\n" + "japanese: 1/1/12 H\n" + "persian: 10/11/1378 AP\n" + "roc: 1/1/89 Minguo";
-assert.sameValue(year2000Content, year2000Snapshot);
+function compareFormatToPartsSnapshot(isoString, expected) {
+  const date = new Date(isoString);
+  Object.entries(expected).forEach(([calendar, expectedComponents]) => {
+    const formatter = new Intl.DateTimeFormat(`en-US-u-ca-${calendar}`, { timeZone: "UTC" });
+    const actualComponents = formatter.formatToParts(date);
+    Object.entries(expectedComponents).forEach(([expectedType, expectedValue]) => {
+      const part = actualComponents.find(({type}) => type === expectedType);
+      const contextMessage = `${expectedType} component of ${isoString} formatted in ${calendar}`;
+      assert.notSameValue(part, undefined, contextMessage);
+      assert.sameValue(part.value, `${expectedValue}`, contextMessage);
+    });
+  });
+}
+
+compareFormatToPartsSnapshot("2000-01-01T00:00Z", {
+  iso8601: {
+    year: 2000,
+    month: 1,
+    day: 1,
+  },
+  buddhist: {
+    year: 2543,
+    era: "BE",
+    month: 1,
+    day: 1,
+  },
+  chinese: {
+    relatedYear: 1999,
+    month: 11,
+    day: 25,
+  },
+  coptic: {
+    year: 1716,
+    era: "ERA1",
+    month: 4,
+    day: 22,
+  },
+  dangi: {
+    relatedYear: 1999,
+    month: 11,
+    day: 25,
+  },
+  ethioaa: {
+    year: 7492,
+    era: "ERA0",
+    month: 4,
+    day: 22,
+  },
+  ethiopic: {
+    year: 1992,
+    era: "ERA1",
+    month: 4,
+    day: 22,
+  },
+  gregory: {
+    year: 2000,
+    month: 1,
+    day: 1,
+  },
+  hebrew: {
+    year: 5760,
+    month: "Tevet",
+    day: 23,
+  },
+  indian: {
+    year: 1921,
+    era: "Saka",
+    month: 10,
+    day: 11,
+  },
+  islamic: {
+    year: 1420,
+    era: "AH",
+    month: 9,
+    day: 25,
+  },
+  "islamic-umalqura": {
+    year: 1420,
+    era: "AH",
+    month: 9,
+    day: 24,
+  },
+  "islamic-tbla": {
+    year: 1420,
+    era: "AH",
+    month: 9,
+    day: 25,
+  },
+  "islamic-civil": {
+    year: 1420,
+    era: "AH",
+    month: 9,
+    day: 24,
+  },
+  "islamic-rgsa": {
+    year: 1420,
+    era: "AH",
+    month: 9,
+    day: 25,
+  },
+  islamicc: {
+    year: 1420,
+    era: "AH",
+    month: 9,
+    day: 24,
+  },
+  japanese: {
+    year: 12,
+    era: "H",
+    month: 1,
+    day: 1,
+  },
+  persian: {
+    year: 1378,
+    era: "AP",
+    month: 10,
+    day: 11,
+  },
+  roc: {
+    year: 89,
+    era: "Minguo",
+    month: 1,
+    day: 1,
+  },
+});
 
 // Several calendars based on the Gregorian calendar use Julian dates (not
 // proleptic Gregorian dates) before the Gregorian switchover in Oct 1582. See
 // https://bugs.chromium.org/p/chromium/issues/detail?id=1173158. The code below
 // allows these tests to pass regardless of the bug, while still remaining
 // sensitive to other bugs that may crop up.
-const yearOneMonthDay = new Map(
+const yearOneDay = new Map(
   ["iso8601", "gregory", "roc", "buddhist", "japanese"].map(calendar => {
     hasGregorianSwitchoverBug = new Date("+001001-01-01T00:00Z")
       .toLocaleDateString(`en-US-u-ca-${calendar}`, { timeZone: "UTC" })
       .startsWith("12");
-    return [calendar, hasGregorianSwitchoverBug ? "1/3" : "1/1"]
+    return [calendar, hasGregorianSwitchoverBug ? 3 : 1]
   }));
-var year1Snapshot = 
-  `iso8601: ${yearOneMonthDay.get("iso8601")}/1\n` + 
-  `buddhist: ${yearOneMonthDay.get("buddhist")}/544 BE\n` +
-  "chinese: 11/21/0\n" +
-  "coptic: 5/8/284 ERA0\n" +
-  "dangi: 11/21/0\n" +
-  "ethioaa: 5/8/5493 ERA0\n" +
-  "ethiopic: 5/8/5493 ERA0\n" +
-  `gregory: ${yearOneMonthDay.get("gregory")}/1\n` +
-  "hebrew: 18 Tevet 3761\n" +
-  "indian: 10/11/-78 Saka\n" +
-  "islamic: 5/20/-640 AH\n" +
-  "islamic-umalqura: 5/18/-640 AH\n" +
-  "islamic-tbla: 5/19/-640 AH\n" +
-  "islamic-civil: 5/18/-640 AH\n" +
-  "islamic-rgsa: 5/20/-640 AH\n" +
-  "islamicc: 5/18/-640 AH\n" +
-  `japanese: ${yearOneMonthDay.get("japanese")}/-643 Taika (645\u2013650)\n` +
-  "persian: 10/11/-621 AP\n" +
-  `roc: ${yearOneMonthDay.get("roc")}/1911 B.R.O.C.`;
-assert.sameValue(year1Content, year1Snapshot);
+compareFormatToPartsSnapshot("0001-01-01T00:00Z", {
+  iso8601: {
+    year: 1,
+    month: 1,
+    day: yearOneDay.get("iso8601"),
+  },
+  buddhist: {
+    year: 544,
+    era: "BE",
+    month: 1,
+    day: yearOneDay.get("buddhist"),
+  },
+  chinese: {
+    relatedYear: 0,
+    month: 11,
+    day: 21,
+  },
+  coptic: {
+    year: 284,
+    era: "ERA0",
+    month: 5,
+    day: 8,
+  },
+  dangi: {
+    relatedYear: 0,
+    month: 11,
+    day: 21,
+  },
+  ethioaa: {
+    year: 5493,
+    era: "ERA0",
+    month: 5,
+    day: 8,
+  },
+  ethiopic: {
+    year: 5493,
+    era: "ERA0",
+    month: 5,
+    day: 8,
+  },
+  gregory: {
+    year: 1,
+    month: 1,
+    day: yearOneDay.get("gregory"),
+  },
+  hebrew: {
+    year: 3761,
+    month: "Tevet",
+    day: 18,
+  },
+  indian: {
+    year: -78,
+    era: "Saka",
+    month: 10,
+    day: 11,
+  },
+  islamic: {
+    year: -640,
+    era: "AH",
+    month: 5,
+    day: 20,
+  },
+  "islamic-umalqura": {
+    year: -640,
+    era: "AH",
+    month: 5,
+    day: 18,
+  },
+  "islamic-tbla": {
+    year: -640,
+    era: "AH",
+    month: 5,
+    day: 19,
+  },
+  "islamic-civil": {
+    year: -640,
+    era: "AH",
+    month: 5,
+    day: 18,
+  },
+  "islamic-rgsa": {
+    year: -640,
+    era: "AH",
+    month: 5,
+    day: 20,
+  },
+  islamicc: {
+    year: -640,
+    era: "AH",
+    month: 5,
+    day: 18,
+  },
+  japanese: {
+    year: -643,
+    era: "Taika (645\u2013650)",
+    month: 1,
+    day: yearOneDay.get("japanese"),
+  },
+  persian: {
+    year: -621,
+    era: "AP",
+    month: 10,
+    day: 11,
+  },
+  roc: {
+    year: 1911,
+    era: "B.R.O.C.",
+    month: 1,
+    day: yearOneDay.get("roc"),
+  },
+});
+
 var fromWithCases = {
   iso8601: {
     year2000: {
@@ -330,8 +537,6 @@ var fromWithCases = {
     year1: RangeError
   }
 };
-var logPerf = false;
-var totalNow = 0;
 for (var [id, tests] of Object.entries(fromWithCases)) {
   var dates = {
     year2000: Temporal.PlainDate.from("2000-01-01"),
@@ -341,7 +546,6 @@ for (var [id, tests] of Object.entries(fromWithCases)) {
     var values = tests[name];
     var errorExpected = values === RangeError;
     if ((id === "chinese" || id === "dangi") && hasOutdatedChineseIcuData ) {
-      var now = globalThis.performance ? globalThis.performance.now() : Date.now();
       if (errorExpected) {
         assert.throws(RangeError, () => {
           var inCal = date.withCalendar(id);
@@ -410,13 +614,8 @@ for (var [id, tests] of Object.entries(fromWithCases)) {
         monthCode: values.monthCode,
         year: values.year
       }));
-      var ms = (globalThis.performance ? globalThis.performance.now() : Date.now()) - now;
-      totalNow += ms;
-      if (logPerf)
-        console.log(`from: ${ id } ${ name }: ${ ms.toFixed(2) }ms, total: ${ totalNow.toFixed(2) }ms`);
     };
     if ((id === "chinese" || id === "dangi") && hasOutdatedChineseIcuData ) {
-      var now = globalThis.performance ? globalThis.performance.now() : Date.now();
       var inCal = date.withCalendar(id);
       if (errorExpected) {
         assert.throws(RangeError, () => inCal.with({ day: 1 }).year);
@@ -436,10 +635,6 @@ for (var [id, tests] of Object.entries(fromWithCases)) {
       assert.sameValue(`${ t } year: ${ afterWithYear.year }`, `${ t } year: 2220`);
       assert.sameValue(`${ t } month: ${ afterWithYear.month }`, `${ t } month: 1`);
       assert.sameValue(`${ t } day: ${ afterWithYear.day }`, `${ t } day: 1`);
-      var ms = (globalThis.performance ? globalThis.performance.now() : Date.now()) - now;
-      totalNow += ms;
-      if (logPerf)
-        console.log(`with: ${ id } ${ name }: ${ ms.toFixed(2) }ms, total: ${ totalNow.toFixed(2) }ms`);
     };
   }
 }
@@ -659,13 +854,11 @@ var tests = {
     }
   }
 };
-var calendars = Object.keys(addMonthsCases);
-for (var id of calendars) {
+for (var id of Object.keys(addMonthsCases)) {
   for (var [unit, {duration, results, startDate}] of Object.entries(tests)) {
     var values = results[id];
     duration = Temporal.Duration.from(duration);
     if ((id === "chinese" || id === "dangi") && hasOutdatedChineseIcuData ) {
-      var now = globalThis.performance ? globalThis.performance.now() : Date.now();
       if (values === RangeError) {
         assert.throws(RangeError, () => Temporal.PlainDate.from({
           ...startDate,
@@ -721,10 +914,6 @@ for (var id of calendars) {
         assert.sameValue(`subtract from end-of-month ${ unit } ${ id } month: ${ startReverseNextDay.month }`, `subtract from end-of-month ${ unit } ${ id } month: ${ start.month }`);
         assert.sameValue(`subtract from end-of-month ${ unit } ${ id } monthCode: ${ startReverseNextDay.monthCode }`, `subtract from end-of-month ${ unit } ${ id } monthCode: ${ start.monthCode }`);
       }
-      var ms = (globalThis.performance ? globalThis.performance.now() : Date.now()) - now;
-      totalNow += ms;
-      if (logPerf)
-        console.log(`${ id } add ${ duration }: ${ ms.toFixed(2) }ms, total: ${ totalNow.toFixed(2) }ms`);
     };
   }
 }
@@ -1079,7 +1268,7 @@ var daysInMonthCases = {
   }
 };
 totalNow = 0;
-for (var id of calendars) {
+for (var id of Object.keys(daysInMonthCases)) {
   var {year, leap, days} = daysInMonthCases[id];
   var date = hasOutdatedChineseIcuData && (id === "chinese" || id === "dangi") ? undefined : Temporal.PlainDate.from({
     year,
@@ -1097,7 +1286,6 @@ for (var id of calendars) {
     }
   };
   if ((id === "chinese" || id === "dangi") && hasOutdatedChineseIcuData ) {
-    var now = globalThis.performance ? globalThis.performance.now() : Date.now();
     var {monthsInYear} = date;
     assert.sameValue(monthsInYear, days.length);
     for (var i = monthsInYear, leapMonthIndex = undefined, monthStart = undefined; i >= 1; i--) {
@@ -1141,10 +1329,6 @@ for (var id of calendars) {
       var oneDayPastMonthEnd = monthStart.with({ day: daysInMonth + 1 });
       assert.sameValue(oneDayPastMonthEnd.day, daysInMonth);
     }
-    var ms = (globalThis.performance ? globalThis.performance.now() : Date.now()) - now;
-    totalNow += ms;
-    if (logPerf)
-      console.log(`${ id } months check ${ id }: ${ ms.toFixed(2) }ms, total: ${ totalNow.toFixed(2) }ms`);
   };
 }
 var monthDayCases = [

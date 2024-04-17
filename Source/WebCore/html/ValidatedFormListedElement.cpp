@@ -139,7 +139,7 @@ bool ValidatedFormListedElement::reportValidity()
 
     // Needs to update layout now because we'd like to call isFocusable(),
     // which has !renderer()->needsLayout() assertion.
-    asHTMLElement().document().updateLayoutIgnorePendingStylesheets();
+    asHTMLElement().protectedDocument()->updateLayoutIgnorePendingStylesheets();
     if (auto validationAnchor = focusableValidationAnchorElement())
         focusAndShowValidationMessage(validationAnchor.releaseNonNull());
     else
@@ -168,9 +168,8 @@ void ValidatedFormListedElement::focusAndShowValidationMessage(Ref<HTMLElement> 
     // focus() will scroll the element into view and this scroll may happen asynchronously.
     // Because scrolling the view hides the validation message, we need to show the validation
     // message asynchronously as well.
-    callOnMainThread([this, protectedThis, validationAnchor] {
-        updateVisibleValidationMessage(validationAnchor);
-    });
+    if (RefPtr page = validationAnchor->document().page())
+        page->scheduleValidationMessageUpdate(*this, validationAnchor);
 }
 
 void ValidatedFormListedElement::reportNonFocusableControlError()

@@ -104,6 +104,7 @@
 #include "SamplingProfiler.h"
 #include "ScopedArguments.h"
 #include "ShadowChicken.h"
+#include "SharedJITStubSet.h"
 #include "SideDataRepository.h"
 #include "SimpleTypedArrayController.h"
 #include "SourceProviderCache.h"
@@ -681,6 +682,10 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return imulThunkGenerator;
     case RandomIntrinsic:
         return randomThunkGenerator;
+#if USE(JSVALUE64)
+    case ObjectIsIntrinsic:
+        return objectIsThunkGenerator;
+#endif
 #if !OS(WINDOWS)
     case BoundFunctionCallIntrinsic:
         return boundFunctionCallGenerator;

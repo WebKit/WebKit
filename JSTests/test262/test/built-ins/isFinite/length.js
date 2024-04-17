@@ -8,8 +8,9 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(isFinite.length, 1, "The value of `isFinite.length` is `1`");
-
-verifyNotEnumerable(isFinite, "length");
-verifyNotWritable(isFinite, "length");
-verifyConfigurable(isFinite, "length");
+verifyProperty(isFinite, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -1274,7 +1274,11 @@ static BOOL allowESIMAutoFillForWebKit(id, SEL, NSString *host, NSError **)
 TEST(KeyboardInputTests, DeviceEIDAndIMEIAutoFill)
 {
     InstanceMethodSwizzler swizzler {
+#if HAVE(DELAY_INIT_LINKING)
+        CoreTelephonyClient.class,
+#else
         PAL::getCoreTelephonyClientClass(),
+#endif
         @selector(isAutofilleSIMIdAllowedForDomain:error:),
         reinterpret_cast<IMP>(allowESIMAutoFillForWebKit)
     };

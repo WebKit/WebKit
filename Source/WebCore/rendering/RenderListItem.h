@@ -31,6 +31,7 @@ class HTMLOListElement;
 
 class RenderListItem final : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderListItem);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListItem);
 public:
     RenderListItem(Element&, RenderStyle&&);
     virtual ~RenderListItem();
@@ -61,9 +62,6 @@ public:
 private:
     ASCIILiteral renderName() const final { return "RenderListItem"_s; }
     
-    void insertedIntoTree(IsInternalMove) final;
-    void willBeRemovedFromTree(IsInternalMove) final;
-
     void paint(PaintInfo&, const LayoutPoint&) final;
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;

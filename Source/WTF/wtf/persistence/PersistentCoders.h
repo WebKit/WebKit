@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>
@@ -158,7 +159,7 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCa
     static void encodeForPersistence(Encoder& encoder, const Vector<T, inlineCapacity>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
-        encoder.encodeFixedLengthData({ reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T) });
+        encoder.encodeFixedLengthData(asBytes(vector.span()));
     }
     
     template<typename Decoder>

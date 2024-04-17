@@ -4,7 +4,7 @@
 // found in the LICENSE file.
 //
 // RenderTargetCache:
-// The RenderTargetCache pattern is used in the D3D9, D3D11 and Vulkan back-ends. It is a
+// The RenderTargetCache pattern is used in the D3D9, D3D11, Vulkan, and WebGPU back-ends. It is a
 // cache of the various back-end objects (RenderTargets) associated with each Framebuffer
 // attachment, be they Textures, Renderbuffers, or Surfaces. The cache is updated in Framebuffer's
 // syncState method.

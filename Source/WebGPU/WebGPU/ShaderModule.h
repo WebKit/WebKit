@@ -71,7 +71,7 @@ public:
     bool isValid() const { return std::holds_alternative<WGSL::SuccessfulCheck>(m_checkResult); }
 
     static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);
-    static id<MTLLibrary> createLibrary(id<MTLDevice>, const String& msl, String&& label);
+    static id<MTLLibrary> createLibrary(id<MTLDevice>, const String& msl, String&& label, NSError **);
 
     WGSL::ShaderModule* ast() const;
 

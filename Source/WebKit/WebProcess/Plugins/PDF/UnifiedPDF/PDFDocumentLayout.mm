@@ -76,6 +76,8 @@ std::optional<unsigned> PDFDocumentLayout::indexForPage(RetainPtr<PDFPage> page)
 PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint(FloatPoint documentSpacePoint) const
 {
     auto pageCount = this->pageCount();
+    ASSERT(pageCount);
+
     switch (displayMode()) {
     case PDFDocumentLayout::DisplayMode::TwoUpDiscrete:
     case PDFDocumentLayout::DisplayMode::TwoUpContinuous: {
@@ -162,6 +164,62 @@ PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint
     }
     ASSERT_NOT_REACHED();
     return pageCount - 1;
+}
+
+std::pair<PDFDocumentLayout::PageIndex, WebCore::FloatPoint> PDFDocumentLayout::pageIndexAndPagePointForDocumentYOffset(float documentYOffset) const
+{
+    auto pageCount = this->pageCount();
+
+    auto resultWithPageHorizontalCenterPoint = [&](PDFDocumentLayout::PageIndex pageIndex, float documentYOffset) {
+        auto pageBounds = layoutBoundsForPageAtIndex(pageIndex);
+        auto pagePoint = documentToPDFPage(FloatPoint { pageBounds.center().x(), documentYOffset }, pageIndex);
+        return std::make_pair(pageIndex, pagePoint);
+    };
+
+    switch (displayMode()) {
+    case PDFDocumentLayout::DisplayMode::TwoUpDiscrete:
+    case PDFDocumentLayout::DisplayMode::TwoUpContinuous:
+        for (PDFDocumentLayout::PageIndex index = 0; index < pageCount; ++index) {
+            if (index == pageCount - 1)
+                return resultWithPageHorizontalCenterPoint(index, documentYOffset);
+
+            if (isRightPageIndex(index))
+                continue;
+
+            // Handle side by side pages with different sizes.
+            std::optional<PDFDocumentLayout::PageIndex> targetPageIndex = [&](PDFDocumentLayout::PageIndex index) -> std::optional<PDFDocumentLayout::PageIndex> {
+                auto leftPageBounds = layoutBoundsForPageAtIndex(index);
+                if (documentYOffset >= leftPageBounds.y() && documentYOffset < leftPageBounds.maxY())
+                    return index;
+
+                auto rightPageIndex = index + 1;
+                if (rightPageIndex == pageCount)
+                    return { };
+
+                auto rightPageBounds = layoutBoundsForPageAtIndex(rightPageIndex);
+                if (documentYOffset >= rightPageBounds.y() && documentYOffset < rightPageBounds.maxY())
+                    return rightPageIndex;
+
+                return { };
+            }(index);
+
+            if (!targetPageIndex)
+                continue;
+
+            return resultWithPageHorizontalCenterPoint(*targetPageIndex, documentYOffset);
+        }
+        break;
+    case PDFDocumentLayout::DisplayMode::SinglePageDiscrete:
+    case PDFDocumentLayout::DisplayMode::SinglePageContinuous: {
+        for (PDFDocumentLayout::PageIndex index = 0; index < pageCount; ++index) {
+            auto pageBounds = layoutBoundsForPageAtIndex(index);
+            if (documentYOffset <= pageBounds.maxY() || index == pageCount - 1)
+                return resultWithPageHorizontalCenterPoint(index, documentYOffset);
+        }
+    }
+    }
+    ASSERT_NOT_REACHED();
+    return { pageCount - 1, { } };
 }
 
 void PDFDocumentLayout::updateLayout(IntSize pluginSize, ShouldUpdateAutoSizeScale shouldUpdateScale)

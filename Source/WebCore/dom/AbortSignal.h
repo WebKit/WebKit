@@ -48,7 +48,7 @@ public:
 
     static Ref<AbortSignal> abort(JSDOMGlobalObject&, ScriptExecutionContext&, JSC::JSValue reason);
     static Ref<AbortSignal> timeout(ScriptExecutionContext&, uint64_t milliseconds);
-    static Ref<AbortSignal> any(ScriptExecutionContext&, const Vector<RefPtr<AbortSignal>>&);
+    static Ref<AbortSignal> any(ScriptExecutionContext&, const Vector<Ref<AbortSignal>>&);
 
     static uint32_t addAbortAlgorithmToSignal(AbortSignal&, Ref<AbortAlgorithm>&&);
     static void removeAbortAlgorithmFromSignal(AbortSignal&, uint32_t algorithmIdentifier);

@@ -472,6 +472,8 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
 
                         // Win ES emulation is currently only supported on NVIDIA.
                         return IsNVIDIA(vendorID);
+                    case EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE:
+                        return true;
                     default:
                         return false;
                 }

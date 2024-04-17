@@ -521,12 +521,6 @@ void PlaybackSessionManager::handleControlledElementIDRequest(PlaybackSessionCon
         m_page->send(Messages::PlaybackSessionManagerProxy::HandleControlledElementIDResponse(contextId, element->getIdAttribute()));
 }
 
-void PlaybackSessionManager::toggleFullscreen(PlaybackSessionContextIdentifier contextId)
-{
-    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).toggleFullscreen();
-}
-
 void PlaybackSessionManager::togglePictureInPicture(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
@@ -537,6 +531,12 @@ void PlaybackSessionManager::enterFullscreen(PlaybackSessionContextIdentifier co
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).enterFullscreen();
+}
+
+void PlaybackSessionManager::exitFullscreen(PlaybackSessionContextIdentifier contextId)
+{
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
+    ensureModel(contextId).exitFullscreen();
 }
 
 void PlaybackSessionManager::toggleInWindow(PlaybackSessionContextIdentifier contextId)
@@ -573,6 +573,13 @@ void PlaybackSessionManager::sendRemoteCommand(PlaybackSessionContextIdentifier 
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).sendRemoteCommand(command, argument);
 }
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void PlaybackSessionManager::setSpatialTrackingLabel(PlaybackSessionContextIdentifier contextId, const String& label)
+{
+    ensureModel(contextId).setSpatialTrackingLabel(label);
+}
+#endif
 
 #if !RELEASE_LOG_DISABLED
 void PlaybackSessionManager::sendLogIdentifierForMediaElement(HTMLMediaElement& mediaElement)

@@ -372,6 +372,6 @@ class CheckoutTest(unittest.TestCase):
         with OutputCapture(level=logging.INFO) as captured:
             checkout.apply_patch(mock_patch)
         self.assertEqual(
-            captured.root.log.getvalue(),
-            "MOCK run_command: ['svn-apply', '--force'], cwd=/mock-checkout, input=foo\n",
+            captured.root.log.getvalue().splitlines()[0],
+            "MOCK run_command: ['git', 'am', '--keep-non-patch'], cwd=/mock-checkout, input=foo",
         )

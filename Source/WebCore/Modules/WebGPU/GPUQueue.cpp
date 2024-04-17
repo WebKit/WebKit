@@ -60,12 +60,10 @@ void GPUQueue::setLabel(String&& label)
     m_backing->setLabel(WTFMove(label));
 }
 
-void GPUQueue::submit(Vector<RefPtr<GPUCommandBuffer>>&& commandBuffers)
+void GPUQueue::submit(Vector<Ref<GPUCommandBuffer>>&& commandBuffers)
 {
-    auto result = WTF::compactMap(commandBuffers, [](auto& commandBuffer) -> std::optional<std::reference_wrapper<WebGPU::CommandBuffer>> {
-        if (commandBuffer)
-            return commandBuffer->backing();
-        return std::nullopt;
+    auto result = WTF::map(commandBuffers, [](auto& commandBuffer) -> std::reference_wrapper<WebGPU::CommandBuffer> {
+        return commandBuffer->backing();
     });
     m_backing->submit(WTFMove(result));
 }
@@ -103,7 +101,7 @@ ExceptionOr<void> GPUQueue::writeBuffer(
     if (dataOffset > dataSize || dataOffset + contentSize > dataSize || (contentSize % 4))
         return Exception { ExceptionCode::OperationError };
 
-    m_backing->writeBuffer(buffer.backing(), bufferOffset, data.data(), dataSize, dataOffset, contentSize);
+    m_backing->writeBuffer(buffer.backing(), bufferOffset, data.span(), dataOffset, contentSize);
     return { };
 }
 
@@ -224,38 +222,38 @@ static PixelFormat toPixelFormat(GPUTextureFormat textureFormat)
     return PixelFormat::RGBA8;
 }
 
-using ImageDataCallback = Function<void(const uint8_t*, size_t, size_t)>;
+using ImageDataCallback = Function<void(std::span<const uint8_t>, size_t)>;
 static void getImageBytesFromImageBuffer(ImageBuffer* imageBuffer, const auto& destination, ImageDataCallback&& callback)
 {
     if (!imageBuffer)
-        return callback(nullptr, 0, 0);
+        return callback({ }, 0);
 
     auto size = imageBuffer->truncatedLogicalSize();
     if (!size.width() || !size.height())
-        return callback(nullptr, 0, 0);
+        return callback({ }, 0);
 
     auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, toPixelFormat(destination.texture->format()), DestinationColorSpace::SRGB() }, { { }, size });
     if (!pixelBuffer)
-        return callback(nullptr, 0, 0);
+        return callback({ }, 0);
 
-    callback(pixelBuffer->bytes(), pixelBuffer->sizeInBytes(), size.height());
+    callback(pixelBuffer->bytes(), size.height());
 }
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)
 static void getImageBytesFromVideoFrame(const RefPtr<VideoFrame>& videoFrame, ImageDataCallback&& callback)
 {
     if (!videoFrame.get() || !videoFrame->pixelBuffer())
-        return callback(nullptr, 0, 0);
+        return callback({ }, 0);
 
     auto pixelBuffer = videoFrame->pixelBuffer();
     if (!pixelBuffer)
-        return callback(nullptr, 0, 0);
+        return callback({ }, 0);
 
     auto rows = CVPixelBufferGetHeight(pixelBuffer);
     auto sizeInBytes = rows * CVPixelBufferGetBytesPerRow(pixelBuffer);
 
     CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
-    callback(reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddress(pixelBuffer)), sizeInBytes, rows);
+    callback({ reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddress(pixelBuffer)), sizeInBytes }, rows);
     CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
 }
 #endif
@@ -267,40 +265,37 @@ static void imageBytesForSource(const auto& source, const auto& destination, Ima
         return getImageBytesFromImageBuffer(imageBitmap->buffer(), destination, WTFMove(callback));
 #if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
     }, [&](const RefPtr<ImageData> imageData) -> ResultType {
-        auto rows = imageData->height();
-        auto pixelBuffer = imageData->pixelBuffer();
-        auto sizeInBytes = pixelBuffer->data().byteLength();
-        callback(pixelBuffer->data().data(), sizeInBytes, rows);
+        callback(imageData->pixelBuffer()->bytes(), imageData->height());
     }, [&](const RefPtr<HTMLImageElement> imageElement) -> ResultType {
 #if PLATFORM(COCOA)
         if (!imageElement)
-            return callback(nullptr, 0, 0);
+            return callback({ }, 0);
         auto* cachedImage = imageElement->cachedImage();
         if (!cachedImage)
-            return callback(nullptr, 0, 0);
+            return callback({ }, 0);
         RefPtr image = cachedImage->image();
         if (!image || !image->isBitmapImage())
-            return callback(nullptr, 0, 0);
+            return callback({ }, 0);
         RefPtr nativeImage = static_cast<BitmapImage*>(image.get())->nativeImage();
         if (!nativeImage)
-            return callback(nullptr, 0, 0);
+            return callback({ }, 0);
         RetainPtr platformImage = nativeImage->platformImage();
         if (!platformImage)
-            return callback(nullptr, 0, 0);
+            return callback({ }, 0);
         RetainPtr pixelDataCfData = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(platformImage.get())));
         if (!pixelDataCfData)
-            return callback(nullptr, 0, 0);
+            return callback({ }, 0);
 
         auto width = CGImageGetWidth(platformImage.get());
         auto height = CGImageGetHeight(platformImage.get());
         if (!width || !height)
-            return callback(nullptr, 0, 0);
+            return callback({ }, 0);
 
         auto sizeInBytes = height * CGImageGetBytesPerRow(platformImage.get());
         auto bytePointer = reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(pixelDataCfData.get()));
         auto requiredSize = width * height * 4;
         if (sizeInBytes == requiredSize)
-            return callback(bytePointer, sizeInBytes, height);
+            return callback({ bytePointer, sizeInBytes }, height);
 
         auto bytesPerRow = CGImageGetBytesPerRow(platformImage.get());
         Vector<uint8_t> tempBuffer(requiredSize, 255);
@@ -314,10 +309,10 @@ static void imageBytesForSource(const auto& source, const auto& destination, Ima
                 }
             }
         }
-        callback(&tempBuffer[0], tempBuffer.size(), height);
+        callback(tempBuffer.span(), height);
 #else
         UNUSED_PARAM(imageElement);
-        return callback(nullptr, 0, 0);
+        return callback({ }, 0);
 #endif
     }, [&](const RefPtr<HTMLVideoElement> videoElement) -> ResultType {
 #if PLATFORM(COCOA)
@@ -326,13 +321,13 @@ static void imageBytesForSource(const auto& source, const auto& destination, Ima
 #else
         UNUSED_PARAM(videoElement);
 #endif
-        return callback(nullptr, 0, 0);
+        return callback({ }, 0);
     }, [&](const RefPtr<WebCodecsVideoFrame> webCodecsFrame) -> ResultType {
 #if PLATFORM(COCOA)
         return getImageBytesFromVideoFrame(webCodecsFrame->internalFrame(), WTFMove(callback));
 #else
         UNUSED_PARAM(webCodecsFrame);
-        return callback(nullptr, 0, 0);
+        return callback({ }, 0);
 #endif
 #endif
     }, [&](const RefPtr<HTMLCanvasElement>& canvasElement) -> ResultType {
@@ -721,14 +716,15 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
         return Exception { ExceptionCode::SecurityError, "GPUQueue.copyExternalImageToTexture: Cross origin external images are not allowed in WebGPU"_s };
 
     bool callbackScopeIsSafe { true };
-    imageBytesForSource(source.source, destination, [&](const uint8_t* imageBytes, size_t sizeInBytes, size_t rows) {
+    imageBytesForSource(source.source, destination, [&](std::span<const uint8_t> imageBytes, size_t rows) {
         RELEASE_ASSERT(callbackScopeIsSafe);
         auto destinationTexture = destination.texture;
-        if (!imageBytes || !sizeInBytes || !destinationTexture)
+        auto sizeInBytes = imageBytes.size();
+        if (!imageBytes.data() || !sizeInBytes || !destinationTexture)
             return;
 
         bool supportedFormat;
-        auto* newImageBytes = copyToDestinationFormat(imageBytes, destination.texture->format(), sizeInBytes, supportedFormat);
+        auto newImageBytes = copyToDestinationFormat(imageBytes.data(), destination.texture->format(), sizeInBytes, supportedFormat);
         GPUImageDataLayout dataLayout { 0, sizeInBytes / rows, rows };
         auto copyDestination = destination.convertToBacking();
 
@@ -737,9 +733,8 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
         if (!supportedFormat || !(destinationTexture->usage() & GPUTextureUsage::RENDER_ATTACHMENT))
             copyDestination.mipLevel = INT_MAX;
 
-        m_backing->writeTexture(copyDestination, newImageBytes ? newImageBytes : imageBytes, sizeInBytes, dataLayout.convertToBacking(), convertToBacking(copySize));
-        if (newImageBytes)
-            free(newImageBytes);
+        m_backing->writeTexture(copyDestination, newImageBytes ? newImageBytes : imageBytes.data(), sizeInBytes, dataLayout.convertToBacking(), convertToBacking(copySize));
+        free(newImageBytes);
     });
     callbackScopeIsSafe = false;
 

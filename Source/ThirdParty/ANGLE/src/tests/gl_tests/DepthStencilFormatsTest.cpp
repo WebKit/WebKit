@@ -103,7 +103,7 @@ class DepthStencilFormatsTestBase : public ANGLETest<>
 
         // Pass Depth Test and draw red
         float depthValue = 1.0f;
-        drawQuad(programRed.get(), essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
+        drawQuad(programRed, essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
         ASSERT_GL_NO_ERROR();
@@ -112,7 +112,7 @@ class DepthStencilFormatsTestBase : public ANGLETest<>
 
         // Fail Depth Test and color buffer is unchanged
         depthValue = 0.98f;
-        drawQuad(programGreen.get(), essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
+        drawQuad(programGreen, essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
         ASSERT_GL_NO_ERROR();
@@ -123,7 +123,7 @@ class DepthStencilFormatsTestBase : public ANGLETest<>
 
         // Pass Depth Test and draw blue
         depthValue = 0.01f;
-        drawQuad(programBlue.get(), essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
+        drawQuad(programBlue, essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
 
         glDisable(GL_DEPTH_TEST);
@@ -937,7 +937,7 @@ TEST_P(DepthStencilFormatsTestES3, DrawWithLargeViewport)
         glViewport(0, 0, static_cast<GLsizei>(viewport[0]), static_cast<GLsizei>(viewport[1]));
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fb);
 
-        drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.0f);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
         ASSERT_GL_NO_ERROR();
 
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fb);
@@ -1019,7 +1019,7 @@ TEST_P(DepthStencilFormatsTest, VerifyDepthStencilUploadData)
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 1.0f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 1.0f);
     ASSERT_GL_NO_ERROR();
 
     glBindFramebuffer(GL_FRAMEBUFFER, fb);
@@ -1033,14 +1033,14 @@ TEST_P(DepthStencilFormatsTest, VerifyDepthStencilUploadData)
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), -0.1f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), -0.1f);
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::red);
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.1f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.1f);
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::black);
@@ -1080,12 +1080,12 @@ TEST_P(DepthStencilFormatsTest, VerifyDepth32UploadData)
 
     // Fail Depth Test and color buffer is unchanged
     float depthValue = 0.98f;
-    drawQuad(programRed.get(), essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
+    drawQuad(programRed, essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
     // Pass Depth Test and draw red
     depthValue = 1.0f;
-    drawQuad(programRed.get(), essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
+    drawQuad(programRed, essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
     ASSERT_GL_NO_ERROR();
@@ -1101,7 +1101,7 @@ TEST_P(DepthStencilFormatsTest, VerifyDepth32UploadData)
 
     // Fail Depth Test and color buffer is unchanged
     depthValue = 0.48f;
-    drawQuad(programGreen.get(), essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
+    drawQuad(programGreen, essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
     ASSERT_GL_NO_ERROR();
@@ -1112,7 +1112,7 @@ TEST_P(DepthStencilFormatsTest, VerifyDepth32UploadData)
 
     // Pass Depth Test and draw blue
     depthValue = 0.01f;
-    drawQuad(programBlue.get(), essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
+    drawQuad(programBlue, essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
 
     glDisable(GL_DEPTH_TEST);
@@ -1153,12 +1153,12 @@ TEST_P(DepthStencilFormatsTest, VerifyDepth16UploadData)
 
     // Fail Depth Test and color buffer is unchanged
     float depthValue = 0.98f;
-    drawQuad(programRed.get(), essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
+    drawQuad(programRed, essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
     // Pass Depth Test and draw red
     depthValue = 1.0f;
-    drawQuad(programRed.get(), essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
+    drawQuad(programRed, essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
     ASSERT_GL_NO_ERROR();
@@ -1174,7 +1174,7 @@ TEST_P(DepthStencilFormatsTest, VerifyDepth16UploadData)
 
     // Fail Depth Test and color buffer is unchanged
     depthValue = 0.48f;
-    drawQuad(programGreen.get(), essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
+    drawQuad(programGreen, essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
     ASSERT_GL_NO_ERROR();
@@ -1185,7 +1185,7 @@ TEST_P(DepthStencilFormatsTest, VerifyDepth16UploadData)
 
     // Pass Depth Test and draw blue
     depthValue = 0.01f;
-    drawQuad(programBlue.get(), essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
+    drawQuad(programBlue, essl1_shaders::PositionAttrib(), depthValue * 2 - 1);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
 
     glDisable(GL_DEPTH_TEST);
@@ -1355,11 +1355,11 @@ TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
 
     ANGLE_GL_PROGRAM(blitProgram, kBlitVS, kBlitFS);
 
-    GLint blitTextureLocation = glGetUniformLocation(blitProgram.get(), "texture");
+    GLint blitTextureLocation = glGetUniformLocation(blitProgram, "texture");
     ASSERT_NE(-1, blitTextureLocation);
 
     GLTexture colorTex;
-    glBindTexture(GL_TEXTURE_2D, colorTex.get());
+    glBindTexture(GL_TEXTURE_2D, colorTex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -1369,7 +1369,7 @@ TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
     glBindTexture(GL_TEXTURE_2D, 0);
 
     GLTexture depthTex;
-    glBindTexture(GL_TEXTURE_2D, depthTex.get());
+    glBindTexture(GL_TEXTURE_2D, depthTex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -1388,10 +1388,10 @@ TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
     ASSERT_GL_NO_ERROR();
 
     GLFramebuffer framebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTex.get(), 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTex.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTex, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTex, 0);
 
     ASSERT_GL_NO_ERROR();
 
@@ -1403,24 +1403,24 @@ TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
     for (unsigned int frame = 0; frame < 3; ++frame)
     {
         // draw into FBO
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         glEnable(GL_DEPTH_TEST);
 
         float depth = ((frame % 2 == 0) ? 0.0f : 1.0f);
-        drawQuad(drawProgram.get(), "vertex", depth);
+        drawQuad(drawProgram, "vertex", depth);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // blit FBO
         glDisable(GL_DEPTH_TEST);
 
-        glUseProgram(blitProgram.get());
+        glUseProgram(blitProgram);
         glUniform1i(blitTextureLocation, 0);
-        glBindTexture(GL_TEXTURE_2D, depthTex.get());
+        glBindTexture(GL_TEXTURE_2D, depthTex);
 
-        drawQuad(blitProgram.get(), "vertex", 0.5f);
+        drawQuad(blitProgram, "vertex", 0.5f);
 
         Vector4 depthVec(depth, depth, depth, 1);
         GLColor depthColor(depthVec);

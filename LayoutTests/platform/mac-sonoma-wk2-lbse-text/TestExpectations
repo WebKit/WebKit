@@ -358,7 +358,6 @@ svg/as-image/img-preserveAspectRatio-support-1.html                       [ Imag
 # Pattern problems
 svg/W3C-SVG-1.1/pservers-grad-06-b.svg                                      [ Failure ]
 svg/custom/js-late-pattern-creation.svg                                     [ Failure ]
-svg/custom/nested-pattern-boundingBoxModeContent.svg                        [ Failure ]
 svg/custom/pattern-content-inheritance-cycle.svg                            [ ImageOnlyFailure ]
 svg/custom/stroked-pattern.svg                                              [ Failure ]
 svg/transforms/text-with-pattern-inside-transformed-html.xhtml              [ Failure ]
@@ -507,9 +506,6 @@ webkit.org/b/222952 svg/dom/replaceChild-document-crash.html [ Pass Crash ]
 # 2) RenderLayerFilters doesn't yet protect us from negative 'deviations' values in the effect stack
 svg/filters/feDropShadow-negative-deviation.svg   [ ImageOnlyFailure Crash ]
 svg/filters/feGaussianBlur-negative-deviation.svg [ ImageOnlyFailure Crash ]
-
-# 3) Deep nesting invalidating via repaintAllClients() has expontential complexity in LBSE, fix that.
-svg/custom/pattern-nested-reference.html [ Timeout ]
 
 ###############
 #  OVERRIDES  #

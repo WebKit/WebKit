@@ -87,9 +87,10 @@ using ByteRangeRequestIdentifier = ObjectIdentifier<ByteRangeRequestIdentifierTy
 
 enum class CheckValidRanges : bool { No, Yes };
 
-class PDFPluginBase : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFPluginBase>, public WebCore::ScrollableArea, public PDFScriptEvaluator::Client, public Identified<PDFPluginIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+class PDFPluginBase : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFPluginBase>, public CanMakeThreadSafeCheckedPtr<PDFPluginBase>, public WebCore::ScrollableArea, public PDFScriptEvaluator::Client, public Identified<PDFPluginIdentifier> {
     WTF_MAKE_NONCOPYABLE(PDFPluginBase);
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFPluginBase);
     friend class PDFIncrementalLoader;
     friend class PDFPluginChoiceAnnotation;
     friend class PDFPluginTextAnnotation;
@@ -97,6 +98,12 @@ public:
     static WebCore::PluginInfo pluginInfo();
 
     virtual ~PDFPluginBase();
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeThreadSafeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeThreadSafeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeThreadSafeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeThreadSafeCheckedPtr::decrementPtrCount(); }
 
     using WebKit::PDFScriptEvaluator::Client::weakPtrFactory;
     using WebKit::PDFScriptEvaluator::Client::WeakValueType;
@@ -191,8 +198,6 @@ public:
     WebCore::IntPoint convertFromPluginToRootView(const WebCore::IntPoint&) const;
     WebCore::IntRect convertFromPluginToRootView(const WebCore::IntRect&) const;
     WebCore::IntRect boundsOnScreen() const;
-
-    WebCore::IntPoint mousePositionInView(const WebMouseEvent&) const;
 
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
     WebCore::AXObjectCache* axObjectCache() const;

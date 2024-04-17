@@ -40,6 +40,12 @@
 #include "CSSParserImpl.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserConsumer+Angle.h"
+#include "CSSPropertyParserConsumer+Color.h"
+#include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserConsumer+Integer.h"
+#include "CSSPropertyParserConsumer+List.h"
+#include "CSSPropertyParserConsumer+Percent.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSTokenizer.h"
 #include "CSSUnicodeRangeValue.h"
@@ -229,7 +235,7 @@ namespace CSSPropertyParserHelpersWorkerSafe {
 static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     StringView parsedURL = CSSPropertyParserHelpers::consumeURLRaw(range);
-    String urlString = !parsedURL.is8Bit() && parsedURL.containsOnlyASCII() ? String::make8Bit(parsedURL.characters16(), parsedURL.length()) : parsedURL.toString();
+    String urlString = !parsedURL.is8Bit() && parsedURL.containsOnlyASCII() ? String::make8Bit(parsedURL.span16()) : parsedURL.toString();
     auto location = context.completeURL(urlString);
     if (location.resolvedURL.isNull())
         return nullptr;

@@ -33,9 +33,11 @@ static const unsigned maxRowIndex = 0x7FFFFFFE; // 2,147,483,646
 
 class RenderTableRow final : public RenderBox {
     WTF_MAKE_ISO_ALLOCATED(RenderTableRow);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableRow);
 public:
     RenderTableRow(Element&, RenderStyle&&);
     RenderTableRow(Document&, RenderStyle&&);
+    virtual ~RenderTableRow();
 
     RenderTableRow* nextRow() const;
     RenderTableRow* previousRow() const;
@@ -70,7 +72,7 @@ private:
 
     ASCIILiteral renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableRow (anonymous)"_s : "RenderTableRow"_s; }
     bool canHaveChildren() const override { return true; }
-    void willBeRemovedFromTree(IsInternalMove) override;
+    void willBeRemovedFromTree() override;
     void layout() override;
 
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;

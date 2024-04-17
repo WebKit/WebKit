@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Object.prototype.propertyIsEnumerable('');
-}, '`new Object.prototype.propertyIsEnumerable(\'\')` throws TypeError');
+});
 

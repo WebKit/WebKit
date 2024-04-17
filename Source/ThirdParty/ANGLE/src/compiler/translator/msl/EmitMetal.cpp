@@ -10,6 +10,7 @@
 #include "common/system_utils.h"
 #include "compiler/translator/BaseTypes.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
+#include "compiler/translator/OutputTree.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/msl/AstHelpers.h"
 #include "compiler/translator/msl/DebugSink.h"

@@ -24,6 +24,6 @@
  */
 
 // https://w3c.github.io/selection-api/#extensions-to-window-interface
-partial interface LocalDOMWindow {
+partial interface DOMWindow {
     DOMSelection? getSelection();
 };

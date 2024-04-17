@@ -41,8 +41,11 @@ public:
 
 class LegacyRenderSVGResourcePattern final : public LegacyRenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourcePattern);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourcePattern);
 public:
     LegacyRenderSVGResourcePattern(SVGPatternElement&, RenderStyle&&);
+    virtual ~LegacyRenderSVGResourcePattern();
+
     SVGPatternElement& patternElement() const;
     Ref<SVGPatternElement> protectedPatternElement() const;
 

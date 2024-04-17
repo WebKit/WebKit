@@ -320,7 +320,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SetBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPage)
 
-    SetPaginationMode(WebCore::Pagination::Mode mode)
+    SetPaginationMode(enum:uint8_t WebCore::PaginationMode mode)
     SetPaginationBehavesLikeColumns(bool behavesLikeColumns)
     SetPageLength(double pageLength)
     SetGapBetweenPages(double gap)
@@ -373,6 +373,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     RequestAdditionalItemsForDragSession(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask)
     InsertDroppedImagePlaceholders(Vector<WebCore::IntSize> imageSize) -> (Vector<WebCore::IntRect> dropPreviewRects, std::optional<WebCore::TextIndicatorData> textIndicator)
     DidConcludeDrop()
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    GetTextIndicatorForID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
+    UpdateTextIndicatorStyleVisibilityForID(WTF::UUID uuid, bool visible) -> ()
 #endif
 
     # Popup menu.
@@ -501,7 +506,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ReplaceSelectionWithPasteboardData(Vector<String> types, std::span<const uint8_t> data)
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    InsertMultiRepresentationHEIC(std::span<const uint8_t> data)
+    InsertMultiRepresentationHEIC(std::span<const uint8_t> data, String altText)
 #endif
 
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Synchronous
@@ -519,7 +524,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GetSelectedRangeAsync() -> (struct WebKit::EditingRange range)
     CharacterIndexForPointAsync(WebCore::IntPoint point) -> (uint64_t location)
     FirstRectForCharacterRangeAsync(struct WebKit::EditingRange range) -> (WebCore::IntRect rect, struct WebKit::EditingRange actualRange)
-    SetCompositionAsync(String text, Vector<WebCore::CompositionUnderline> underlines, Vector<WebCore::CompositionHighlight> highlights, HashMap<String, Vector<WebCore::CharacterRange>> annotations, struct WebKit::EditingRange selectionRange, struct WebKit::EditingRange replacementRange)
+    SetCompositionAsync(String text, Vector<WebCore::CompositionUnderline> underlines, Vector<WebCore::CompositionHighlight> highlights, struct WebKit::EditingRange selectionRange, struct WebKit::EditingRange replacementRange)
+    SetWritingSuggestion(String text, struct WebKit::EditingRange selectionRange)
     ConfirmCompositionAsync()
 #endif
 #if PLATFORM(MAC)
@@ -655,7 +661,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     OpenPDFWithPreview(WebKit::PDFPluginIdentifier identifier) -> (String filename, struct WebKit::FrameInfoData frameInfo, std::span<const uint8_t> data, String uuid)
 #endif
 
-    UpdateCurrentModifierState(OptionSet<WebCore::PlatformEvent::Modifier> modifiers)
+    UpdateCurrentModifierState(OptionSet<WebCore::PlatformEventModifier> modifiers)
     SimulateDeviceOrientationChange(double alpha, double beta, double gamma)
 
 #if ENABLE(SPEECH_SYNTHESIS)
@@ -683,8 +689,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     PreferredBufferFormatsDidChange(Vector<WebKit::DMABufRendererBufferFormat> preferredBufferFormats)
 #endif
 
-    StartTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule> exclusionRules, bool includeSubframes) -> ()
-    CompleteTextManipulation(Vector<WebCore::TextManipulationItem> items) -> (bool allFailed, Vector<WebCore::TextManipulationController::ManipulationFailure> failures)
+    StartTextManipulations(Vector<WebCore::TextManipulationControllerExclusionRule> exclusionRules, bool includeSubframes) -> ()
+    CompleteTextManipulation(Vector<WebCore::TextManipulationItem> items) -> (bool allFailed, Vector<WebCore::TextManipulationControllerManipulationFailure> failures)
 
     SetOverriddenMediaType(String mediaType)
     GetProcessDisplayName() -> (String displayName)
@@ -782,6 +788,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     TextReplacementSessionDidReceiveTextWithReplacementRange(WTF::UUID uuid, struct WebCore::AttributedString attributedText, struct WebCore::CharacterRange range, struct WebKit::WebUnifiedTextReplacementContextData context);
 
     TextReplacementSessionDidReceiveEditAction(WTF::UUID uuid, enum:uint8_t WebKit::WebTextReplacementData::EditAction action);
+    
+    EnableTextIndicatorStyleAfterElementWithID(String elementID, WTF::UUID uuid);
+    
+    EnableTextIndicatorStyleForElementWithID(String elementID, WTF::UUID uuid);
 #endif
 
     ResetVisibilityAdjustmentsForTargetedElements(Vector<std::pair<WebCore::ElementIdentifier, WebCore::ScriptExecutionContextIdentifier>> identifiers) -> (bool success)
@@ -790,4 +800,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     RemoteViewRectToRootView(WebCore::FrameIdentifier frameID, WebCore::FloatRect rect) -> (WebCore::FloatRect rect)
     RemoteViewPointToRootView(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point) -> (WebCore::FloatPoint point)
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    SetDefaultSpatialTrackingLabel(String label)
+#endif
+
+    StartObservingNowPlayingMetadata()
+    StopObservingNowPlayingMetadata()
 }

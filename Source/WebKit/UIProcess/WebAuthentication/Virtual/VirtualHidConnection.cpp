@@ -140,7 +140,7 @@ void VirtualHidConnection::parseRequest()
         payload.appendVector(m_nonce);
         size_t writePosition = payload.size();
         payload.grow(kHidInitResponseSize);
-        cryptographicallyRandomValues(payload.data() + writePosition, CtapChannelIdSize);
+        cryptographicallyRandomValues(payload.mutableSpan().subspan(writePosition, CtapChannelIdSize));
         auto channel = kHidBroadcastChannel;
         FidoHidInitPacket initPacket(channel, FidoHidDeviceCommand::kInit, WTFMove(payload), payload.size());
         receiveReport(initPacket.getSerializedData());

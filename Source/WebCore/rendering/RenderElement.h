@@ -48,6 +48,7 @@ class ElementBox;
 
 class RenderElement : public RenderObject {
     WTF_MAKE_ISO_ALLOCATED(RenderElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderElement);
 public:
     virtual ~RenderElement();
 
@@ -300,7 +301,10 @@ protected:
 
     bool layerCreationAllowedForSubtree() const;
 
-    enum StylePropagationType { PropagateToAllChildren, PropagateToBlockChildrenOnly };
+    enum class StylePropagationType {
+        AllChildren,
+        BlockChildrenOnly
+    };
     void propagateStyleToAnonymousChildren(StylePropagationType);
 
     bool repaintBeforeStyleChange(StyleDifference, const RenderStyle& oldStyle, const RenderStyle& newStyle);
@@ -308,8 +312,8 @@ protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle& newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    void insertedIntoTree(IsInternalMove) override;
-    void willBeRemovedFromTree(IsInternalMove) override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
     void willBeDestroyed() override;
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
 
@@ -428,9 +432,8 @@ inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
         return;
     setNormalChildNeedsLayoutBit(true);
     if (markParents == MarkContainingBlockChain)
-        markContainingBlocksForLayout();
+        scheduleLayout(markContainingBlocksForLayout());
 }
-
 
 inline Element* RenderElement::generatingElement() const
 {

@@ -24,5 +24,6 @@
 */
 
 [
-    RethrowException
+    RethrowException,
+    IsWeakCallback
 ] callback CreateScriptCallback = DOMString? (DOMString input, any... arguments);

@@ -172,10 +172,10 @@ inline void CSSPreloadScanner::tokenize(UChar c)
     }
 }
 
-static String parseCSSStringOrURL(const UChar* characters, size_t length) // FIXME: This should take in a span.
+static String parseCSSStringOrURL(std::span<const UChar> characters)
 {
     size_t offset = 0;
-    size_t reducedLength = length;
+    size_t reducedLength = characters.size();
 
     // Remove whitespace from the rule start
     while (reducedLength && isASCIIWhitespace(characters[offset])) {
@@ -213,7 +213,7 @@ static String parseCSSStringOrURL(const UChar* characters, size_t length) // FIX
             reducedLength -= 2;            
         }
 
-    return String({ characters + offset, reducedLength });
+    return String(characters.subspan(offset, reducedLength));
 }
 
 static bool hasValidImportConditions(StringView conditions)
@@ -238,7 +238,7 @@ void CSSPreloadScanner::emitRule()
 {
     StringView rule(m_rule.span());
     if (equalLettersIgnoringASCIICase(rule, "import"_s)) {
-        String url = parseCSSStringOrURL(m_ruleValue.data(), m_ruleValue.size());
+        String url = parseCSSStringOrURL(m_ruleValue.span());
         StringView conditions(m_ruleConditions.span());
         if (!url.isEmpty() && hasValidImportConditions(conditions)) {
             URL baseElementURL; // FIXME: This should be passed in from the HTMLPreloadScanner via scan(): without it we will get relative URLs wrong.

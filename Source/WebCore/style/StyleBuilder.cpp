@@ -365,7 +365,6 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     if (valueType == ApplyValueType::Inherit && !isInheritedProperty())
         style.setHasExplicitlyInheritedProperties();
 
-#if ENABLE(CSS_PAINTING_API)
     if (auto* paintImageValue = dynamicDowncast<CSSPaintImageValue>(valueToApply.get())) {
         auto& name = paintImageValue->name();
         if (auto* paintWorklet = const_cast<Document&>(m_state.document()).paintWorkletGlobalScopeForName(name)) {
@@ -376,7 +375,6 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
             }
         }
     }
-#endif
 
     if (customPropertyValue) {
         ASSERT(id == CSSPropertyCustom);

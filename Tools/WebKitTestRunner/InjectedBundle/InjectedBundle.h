@@ -35,6 +35,7 @@
 #include <WebKit/WKRetainPtr.h>
 #include <sstream>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -275,5 +276,7 @@ template<typename T> void postSynchronousPageMessage(const char* name, const WKR
         WKBundlePagePostSynchronousMessageForTesting(page, toWK(name).get(), value.get(), nullptr);
     }
 }
+
+void postMessageWithAsyncReply(const char* messageName, JSValueRef callback);
 
 } // namespace WTR

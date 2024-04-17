@@ -108,7 +108,7 @@ static void cleanSlashDotDotSlashes(Vector<CharacterType, 512>& path, size_t fir
 {
     size_t slash = firstSlash;
     do {
-        size_t previousSlash = slash ? reverseFind(path.data(), path.size(), '/', slash - 1) : notFound;
+        size_t previousSlash = slash ? reverseFind(path.span(), '/', slash - 1) : notFound;
         // Don't remove the host, i.e. http://foo.org/../foo.html
         if (previousSlash == notFound || (previousSlash > 3 && path[previousSlash - 2] == ':' && path[previousSlash - 1] == '/')) {
             path[slash] = 0;
@@ -126,7 +126,7 @@ static void cleanSlashDotDotSlashes(Vector<CharacterType, 512>& path, size_t fir
 template <typename CharacterType>
 static void mergeDoubleSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
 {
-    size_t refPos = find(path.data(), path.size(), '#');
+    size_t refPos = find(path.span(), '#');
     if (!refPos || refPos == notFound)
         refPos = path.size();
 
@@ -285,8 +285,7 @@ SharedStringHash computeVisitedLinkHash(const URL& base, const AtomString& attri
         return computeSharedStringHashInline(base, attributeURL.span8());
 
     auto upconvertedCharacters = StringView(attributeURL.string()).upconvertedCharacters();
-    const UChar* characters = upconvertedCharacters;
-    return computeSharedStringHashInline(base, std::span { characters, attributeURL.length() });
+    return computeSharedStringHashInline(base, upconvertedCharacters.span());
 }
 
 } // namespace WebCore

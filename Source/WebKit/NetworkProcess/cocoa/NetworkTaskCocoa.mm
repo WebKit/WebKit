@@ -135,15 +135,23 @@ void NetworkTaskCocoa::applyCookiePolicyForThirdPartyCloaking(const WebCore::Res
         return;
     }
 
-    // Cap expiry of incoming cookies in response if it is a same-site
-    // subresource but it resolves to a different CNAME than the top
-    // site request, a.k.a. third-party CNAME cloaking.
+    // Cap expiry of incoming cookies in response if it is a same-site subresource but
+    // it resolves to a different CNAME or IP address range than the top site request,
+    // i.e. third-party CNAME or IP address cloaking.
     auto firstPartyURL = request.firstPartyForCookies();
     auto firstPartyHostName = firstPartyURL.host().toString();
-    auto firstPartyHostCNAME = m_networkSession->firstPartyHostCNAMEDomain(firstPartyHostName);
-    auto firstPartyAddress = m_networkSession->firstPartyHostIPAddress(firstPartyHostName);
 
-    task()._cookieTransformCallback = makeBlockPtr([requestURL = crossThreadCopy(request.url()), firstPartyURL = crossThreadCopy(firstPartyURL), firstPartyHostCNAME = crossThreadCopy(firstPartyHostCNAME), firstPartyAddress = crossThreadCopy(firstPartyAddress), thirdPartyCNAMEDomainForTesting = crossThreadCopy(m_networkSession->thirdPartyCNAMEDomainForTesting()), ageCapForCNAMECloakedCookies = crossThreadCopy(m_ageCapForCNAMECloakedCookies), weakTask = WeakObjCPtr<NSURLSessionTask>(task()), debugLoggingEnabled = m_networkSession->networkStorageSession()->trackingPreventionDebugLoggingEnabled()] (NSArray<NSHTTPCookie*> *cookiesSetInResponse) -> NSArray<NSHTTPCookie*> * {
+    task()._cookieTransformCallback = makeBlockPtr([
+        requestURL = crossThreadCopy(request.url())
+        , firstPartyURL = crossThreadCopy(firstPartyURL)
+        , firstPartyHostCNAME = crossThreadCopy(m_networkSession->firstPartyHostCNAMEDomain(firstPartyHostName))
+        , firstPartyAddress = crossThreadCopy(m_networkSession->firstPartyHostIPAddress(firstPartyHostName))
+        , thirdPartyCNAMEDomainForTesting = crossThreadCopy(m_networkSession->thirdPartyCNAMEDomainForTesting())
+        , ageCapForCNAMECloakedCookies = crossThreadCopy(m_ageCapForCNAMECloakedCookies)
+        , weakTask = WeakObjCPtr<NSURLSessionTask>(task())
+        , firstPartyRegistrableDomainName = crossThreadCopy(RegistrableDomain { firstPartyURL }.string())
+        , debugLoggingEnabled = m_networkSession->networkStorageSession()->trackingPreventionDebugLoggingEnabled()]
+        (NSArray<NSHTTPCookie*> *cookiesSetInResponse) -> NSArray<NSHTTPCookie*> * {
         auto task = weakTask.get();
         if (!task || ![cookiesSetInResponse count])
             return cookiesSetInResponse;
@@ -164,14 +172,19 @@ void NetworkTaskCocoa::applyCookiePolicyForThirdPartyCloaking(const WebCore::Res
             if (!remoteAddress)
                 return cookiesSetInResponse;
 
-            auto needsThirdPartyIPAddressQuirk = [] (const URL& requestURL) {
-                // We only apply this quirk if we're already on google.com; otherwise, we would've
-                // already bailed at the top of this method, due to the request being third party.
-                // Note that this only applies to "accounts.google.com" (excluding subdomains).
-                return requestURL.host() == "accounts.google.com"_s;
+            auto needsThirdPartyIPAddressQuirk = [] (const URL& requestURL, const String& firstPartyRegistrableDomainName) {
+                // We only apply this quirk if we're already on Google or youtube.com;
+                // otherwise, we would've already bailed at the top of this method, due to
+                // the request being third party.
+                auto hostName = requestURL.host();
+                if (hostName == "accounts.google.com"_s)
+                    return true;
+
+                return (firstPartyRegistrableDomainName.startsWith("google."_s) || firstPartyRegistrableDomainName == "youtube.com"_s)
+                    && hostName == makeString("consent."_s, firstPartyRegistrableDomainName);
             };
 
-            if (shouldCapCookieExpiryForThirdPartyIPAddress(*remoteAddress, *firstPartyAddress) && !needsThirdPartyIPAddressQuirk(requestURL)) {
+            if (shouldCapCookieExpiryForThirdPartyIPAddress(*remoteAddress, *firstPartyAddress) && !needsThirdPartyIPAddressQuirk(requestURL, firstPartyRegistrableDomainName)) {
                 cookiesSetInResponse = cookiesByCappingExpiry(cookiesSetInResponse, ageCapForCNAMECloakedCookies);
                 if (debugLoggingEnabled) {
                     for (NSHTTPCookie *cookie in cookiesSetInResponse)

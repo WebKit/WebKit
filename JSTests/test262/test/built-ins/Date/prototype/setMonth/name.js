@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Date.prototype.setMonth.name, "setMonth");
-
-verifyNotEnumerable(Date.prototype.setMonth, "name");
-verifyNotWritable(Date.prototype.setMonth, "name");
-verifyConfigurable(Date.prototype.setMonth, "name");
+verifyProperty(Date.prototype.setMonth, "name", {
+  value: "setMonth",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

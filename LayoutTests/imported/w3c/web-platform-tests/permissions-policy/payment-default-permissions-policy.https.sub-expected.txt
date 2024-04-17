@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Feature policy 'Payment' check failed for element with origin 'https://127.0.0.1:9443' and allow attribute ''.
+
+PASS Payment Request API is enabled by default the top-level document.
+PASS Payment Request API is enabled by default in same-origin iframes.
+PASS Payment Request API is disabled by default in cross-origin iframes.
+

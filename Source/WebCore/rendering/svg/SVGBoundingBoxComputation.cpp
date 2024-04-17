@@ -20,7 +20,7 @@
 #include "config.h"
 #include "SVGBoundingBoxComputation.h"
 
-
+#include "NestingLevelIncrementer.h"
 #include "ReferencedSVGResources.h"
 #include "RenderChildIterator.h"
 #include "RenderObjectInlines.h"
@@ -111,7 +111,7 @@ FloatRect SVGBoundingBoxComputation::handleShapeOrTextOrInline(const SVGBounding
     //   - Otherwise, set box to be the union of box and the result of invoking the algorithm to compute a bounding box with child as
     //     the element, space as the target coordinate space, true for fill, stroke and markers, and clipped for clipped.
     if (options.contains(DecorationOption::IncludeMarkers)) {
-        if (auto* svgPath = dynamicDowncast<RenderSVGPath>(m_renderer)) {
+        if (CheckedPtr svgPath = dynamicDowncast<RenderSVGPath>(m_renderer)) {
             DecorationOptions optionsForMarker = { DecorationOption::IncludeFillShape, DecorationOption::IncludeStrokeShape, DecorationOption::IncludeMarkers };
             if (options.contains(DecorationOption::IncludeClippers))
                 optionsForMarker.add(DecorationOption::IncludeClippers);
@@ -210,9 +210,9 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
         ASSERT(is<RenderSVGViewportContainer>(m_renderer) || is<RenderSVGResourceMarker>(m_renderer) || is<RenderSVGRoot>(m_renderer));
 
         LayoutRect overflowClipRect;
-        if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(m_renderer))
+        if (CheckedPtr svgModelObject = dynamicDowncast<RenderSVGModelObject>(m_renderer))
             overflowClipRect = svgModelObject->overflowClipRect(svgModelObject->currentSVGLayoutLocation());
-        else if (auto* box = dynamicDowncast<RenderBox>(m_renderer))
+        else if (CheckedPtr box = dynamicDowncast<RenderBox>(m_renderer))
             overflowClipRect = box->overflowClipRect(box->location());
         else {
             ASSERT_NOT_REACHED();
@@ -260,16 +260,21 @@ void SVGBoundingBoxComputation::adjustBoxForClippingAndEffects(const SVGBounding
     UNUSED_PARAM(includeFilter);
 
     if (options.contains(DecorationOption::IncludeClippers)) {
-        if (auto* referencedClipperRenderer = m_renderer.svgClipperResourceFromStyle()) {
+        if (CheckedPtr referencedClipperRenderer = m_renderer.svgClipperResourceFromStyle()) {
             auto repaintRectCalculation = options.contains(DecorationOption::CalculateFastRepaintRect) ? RepaintRectCalculation::Fast : RepaintRectCalculation::Accurate;
             box.intersect(referencedClipperRenderer->resourceBoundingBox(m_renderer, repaintRectCalculation));
         }
     }
 
     if (options.contains(DecorationOption::IncludeMaskers)) {
-        if (auto* referencedMaskerRenderer = m_renderer.svgMaskerResourceFromStyle()) {
-            auto repaintRectCalculation = options.contains(DecorationOption::CalculateFastRepaintRect) ? RepaintRectCalculation::Fast : RepaintRectCalculation::Accurate;
-            box.intersect(referencedMaskerRenderer->resourceBoundingBox(m_renderer, repaintRectCalculation));
+        if (CheckedPtr referencedMaskerRenderer = m_renderer.svgMaskerResourceFromStyle()) {
+            // When masks are nested, the inner masks do not affect the outer mask dimension, so skip the computation for inner masks.
+            static unsigned s_maskBoundingBoxNestingLevel = 0;
+            NestingLevelIncrementer incrementer { s_maskBoundingBoxNestingLevel };
+            if (s_maskBoundingBoxNestingLevel < 2) {
+                auto repaintRectCalculation = options.contains(DecorationOption::CalculateFastRepaintRect) ? RepaintRectCalculation::Fast : RepaintRectCalculation::Accurate;
+                box.intersect(referencedMaskerRenderer->resourceBoundingBox(m_renderer, repaintRectCalculation));
+            }
         }
     }
 

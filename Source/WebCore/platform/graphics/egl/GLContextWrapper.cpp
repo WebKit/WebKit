@@ -20,7 +20,6 @@
 #include "config.h"
 #include "GLContextWrapper.h"
 
-#if USE(EGL)
 #include "GLContext.h"
 #include "GraphicsContextGLTextureMapperANGLE.h"
 
@@ -55,5 +54,3 @@ void GLContextWrapper::didUnmakeContextCurrent()
 }
 
 } // namespace WebCore
-
-#endif // USE(EGL)

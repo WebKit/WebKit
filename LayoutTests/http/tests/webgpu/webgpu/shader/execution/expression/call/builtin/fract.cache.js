@@ -26,16 +26,21 @@ const kTraitSpecificValues = {
   -10.0078125, // -10.0078125 -> 0.9921875
   658.5, // 658.5 -> 0.5
   0x8000 // https://github.com/gpuweb/cts/issues/2766
+  ],
+  abstract: [
+  10.0001, // ~10.0001 -> ~0.0001
+  -10.0001, // -10.0001 -> ~0.9999
+  0x8000_0000 // https://github.com/gpuweb/cts/issues/2766
   ]
 };
 
-// Cases: [f32|f16]
-const cases = ['f32', 'f16'].
+// Cases: [f32|f16|abstract]
+const cases = ['f32', 'f16', 'abstract'].
 map((trait) => ({
   [`${trait}`]: () => {
     return FP[trait].generateScalarToIntervalCases(
       [...kCommonValues, ...kTraitSpecificValues[trait], ...FP[trait].scalarRange()],
-      'unfiltered',
+      trait === 'abstract' ? 'finite' : 'unfiltered',
       FP[trait].fractInterval
     );
   }

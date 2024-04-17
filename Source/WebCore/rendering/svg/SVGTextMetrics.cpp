@@ -25,20 +25,6 @@
 
 namespace WebCore {
 
-SVGTextMetrics::SVGTextMetrics()
-    : m_width(0)
-    , m_height(0)
-    , m_length(0)
-{
-}
-
-SVGTextMetrics::SVGTextMetrics(SVGTextMetrics::MetricsType)
-    : m_width(0)
-    , m_height(0)
-    , m_length(1)
-{
-}
-
 SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& textRenderer, const TextRun& run)
 {
     float scalingFactor = textRenderer.scalingFactor();
@@ -54,7 +40,6 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& textRenderer, const TextRun&
     m_glyph.unicodeString = run.text().toString();
     m_glyph.isValid = true;
 
-    ASSERT(run.length() >= 0);
     m_length = static_cast<unsigned>(run.length());
 }
 

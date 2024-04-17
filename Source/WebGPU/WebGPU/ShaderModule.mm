@@ -72,19 +72,18 @@ static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WG
     return { { *wgsl, hints } };
 }
 
-id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label)
+id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label, NSError** error)
 {
     auto options = [MTLCompileOptions new];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     options.fastMathEnabled = YES;
 ALLOW_DEPRECATED_DECLARATIONS_END
-    NSError *error = nil;
     // FIXME(PERFORMANCE): Run the asynchronous version of this
-    id<MTLLibrary> library = [device newLibraryWithSource:msl options:options error:&error];
-    if (error) {
+    id<MTLLibrary> library = [device newLibraryWithSource:msl options:options error:error];
+    if (error && *error) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
-        WTFLogAlways("MSL compilation error: %@", error);
-        WGPU_FUZZER_ASSERT_NOT_REACHED("Failed metal compilation");
+        WTFLogAlways("MSL compilation error: %@", *error);
+        return nil;
     }
     library.label = label;
     return library;
@@ -114,7 +113,8 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
     auto& result = std::get<WGSL::PrepareResult>(prepareResult);
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
     auto msl = WGSL::generate(shaderModule, result, wgslConstantValues);
-    auto library = ShaderModule::createLibrary(device.device(), msl, WTFMove(label));
+    NSError *error = nil;
+    auto library = ShaderModule::createLibrary(device.device(), msl, WTFMove(label), &error);
     if (!library)
         return nullptr;
     return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(result.entryPoints), library, nil, { }, device);
@@ -210,56 +210,6 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
         .maxBuffersForComputeStage = maxBuffersForComputeStage(),
         .supportedFeatures = WTFMove(supportedFeatures)
     });
-
-    // FIXME: Remove when https://bugs.webkit.org/show_bug.cgi?id=266774 is completed
-    if (!std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
-        NSString *nsWgsl = [NSString stringWithUTF8String:shaderModuleParameters->wgsl.code];
-        NSMutableSet<NSString *> *overrideNames = [NSMutableSet set];
-        NSRange currentRange = NSMakeRange(0, nsWgsl.length);
-        for (;;) {
-            NSRange newRange = [nsWgsl rangeOfString:@"override " options:NSLiteralSearch range:currentRange];
-            if (newRange.location == NSNotFound)
-                break;
-            NSRange endRange = [nsWgsl rangeOfString:@":" options:NSLiteralSearch range:NSMakeRange(newRange.location, nsWgsl.length - newRange.location)];
-            if (endRange.location == NSNotFound)
-                break;
-            auto startIndex = newRange.location + newRange.length;
-            NSString* overrideName = [nsWgsl substringWithRange:NSMakeRange(startIndex, endRange.location - startIndex)];
-            [overrideNames addObject:overrideName];
-            currentRange = NSMakeRange(endRange.location + 1, nsWgsl.length - endRange.location - 1);
-        }
-
-        NSString* stageNames[] = { @"@vertex ", @"@fragment ", @"@compute " };
-        for (NSString* moduleName : stageNames) {
-            currentRange = NSMakeRange(0, nsWgsl.length);
-            for (;;) {
-                NSRange newRange = [nsWgsl rangeOfString:moduleName options:NSLiteralSearch range:currentRange];
-                if (newRange.location == NSNotFound)
-                    break;
-
-                newRange = [nsWgsl rangeOfString:@" fn " options:NSLiteralSearch range:NSMakeRange(newRange.location, nsWgsl.length - newRange.location - 1)];
-                if (newRange.location == NSNotFound)
-                    break;
-
-                NSRange endRange = [nsWgsl rangeOfString:@"(" options:NSLiteralSearch range:NSMakeRange(newRange.location, nsWgsl.length - newRange.location)];
-                if (endRange.location == NSNotFound)
-                    break;
-                auto startIndex = newRange.location + newRange.length;
-                NSString* functionName = [nsWgsl substringWithRange:NSMakeRange(startIndex, endRange.location - startIndex)];
-                currentRange = NSMakeRange(endRange.location + 1, nsWgsl.length - endRange.location - 1);
-                NSString *transformedName = [functionName stringByApplyingTransform:NSStringTransformToLatin reverse:NO];
-                transformedName = [transformedName stringByFoldingWithOptions:NSDiacriticInsensitiveSearch locale:NSLocale.currentLocale];
-                functionNames.set(functionName, transformedName);
-            }
-        }
-
-        nsWgsl = [nsWgsl stringByApplyingTransform:NSStringTransformToLatin reverse:NO];
-        nsWgsl = [nsWgsl stringByFoldingWithOptions:NSDiacriticInsensitiveSearch locale:NSLocale.currentLocale];
-        auto checkResult = WGSL::staticCheck(nsWgsl, std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage(), maxBuffersForFragmentStage(), maxBuffersForComputeStage() });
-        dataLogLn(fromAPI(shaderModuleParameters->wgsl.code));
-        dataLogLn(String(nsWgsl));
-        return handleShaderSuccessOrFailure(*this, checkResult, descriptor, shaderModuleParameters, overrideNames, WTFMove(functionNames));
-    }
 
     return handleShaderSuccessOrFailure(*this, checkResult, descriptor, shaderModuleParameters, nil, WTFMove(functionNames));
 }
@@ -516,11 +466,14 @@ static ShaderModule::VertexOutputs parseVertexReturnType(const WGSL::Type& type)
     return vertexOutputs;
 }
 
-static void populateStageInMap(const WGSL::Type& type, ShaderModule::VertexStageIn& vertexStageIn)
+static void populateStageInMap(const WGSL::Type& type, ShaderModule::VertexStageIn& vertexStageIn, const std::optional<unsigned>& optionalLocation)
 {
     auto* inputStruct = std::get_if<WGSL::Types::Struct>(&type);
-    if (!inputStruct)
+    if (!inputStruct) {
+        if (optionalLocation)
+            vertexStageIn.add(*optionalLocation, vertexFormatTypeForStructMember(&type));
         return;
+    }
 
     for (auto& member : inputStruct->structure.members()) {
         if (!member.location())
@@ -639,7 +592,7 @@ static ShaderModule::VertexStageIn parseStageIn(const WGSL::AST::Function& funct
             continue;
 
         if (auto* inferredType = parameter.typeName().inferredType())
-            populateStageInMap(*inferredType, result);
+            populateStageInMap(*inferredType, result, parameter.location());
     }
 
     return result;
@@ -767,6 +720,9 @@ bool ShaderModule::hasOverride(const String& name) const
 
 const ShaderModule::VertexStageIn* ShaderModule::stageInTypesForEntryPoint(const String& entryPoint) const
 {
+    if (!entryPoint.length())
+        return nullptr;
+
     if (auto it = m_stageInTypesForEntryPoint.find(entryPoint); it != m_stageInTypesForEntryPoint.end())
         return &it->value;
 
@@ -1041,9 +997,11 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
 {
     Vector<WGSL::BindGroupLayout> bindGroupLayouts;
 
+    uint32_t maxVertexOffset = 0, maxFragmentOffset = 0, maxComputeOffset = 0;
     for (size_t i = 0; i < pipelineLayout.numberOfBindGroupLayouts(); ++i) {
         auto& bindGroupLayout = pipelineLayout.bindGroupLayout(i);
         WGSL::BindGroupLayout wgslBindGroupLayout;
+        auto vertexOffset = maxVertexOffset, fragmentOffset = maxFragmentOffset, computeOffset = maxComputeOffset;
         for (auto& entry : bindGroupLayout.entries()) {
             WGSL::BindGroupLayoutEntry wgslEntry;
             wgslEntry.binding = entry.value.binding;
@@ -1053,19 +1011,22 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
             wgslEntry.vertexArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::ShaderStage::Vertex];
             if (entry.value.vertexDynamicOffset) {
                 RELEASE_ASSERT(!(entry.value.vertexDynamicOffset.value() % sizeof(uint32_t)));
-                wgslEntry.vertexBufferDynamicOffset = *entry.value.vertexDynamicOffset / sizeof(uint32_t);
+                wgslEntry.vertexBufferDynamicOffset = (vertexOffset + *entry.value.vertexDynamicOffset) / sizeof(uint32_t);
+                maxVertexOffset = std::max<size_t>(maxVertexOffset, *entry.value.vertexDynamicOffset + sizeof(uint32_t));
             }
             wgslEntry.fragmentArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::ShaderStage::Fragment];
             wgslEntry.fragmentArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::ShaderStage::Fragment];
             if (entry.value.fragmentDynamicOffset) {
                 RELEASE_ASSERT(!(entry.value.fragmentDynamicOffset.value() % sizeof(uint32_t)));
-                wgslEntry.fragmentBufferDynamicOffset = *entry.value.fragmentDynamicOffset / sizeof(uint32_t) + RenderBundleEncoder::startIndexForFragmentDynamicOffsets;
+                wgslEntry.fragmentBufferDynamicOffset = (fragmentOffset + *entry.value.fragmentDynamicOffset) / sizeof(uint32_t) + RenderBundleEncoder::startIndexForFragmentDynamicOffsets;
+                maxFragmentOffset = std::max<size_t>(maxFragmentOffset, *entry.value.fragmentDynamicOffset + sizeof(uint32_t));
             }
             wgslEntry.computeArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::ShaderStage::Compute];
             wgslEntry.computeArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::ShaderStage::Compute];
             if (entry.value.computeDynamicOffset) {
                 RELEASE_ASSERT(!(entry.value.computeDynamicOffset.value() % sizeof(uint32_t)));
-                wgslEntry.computeBufferDynamicOffset = *entry.value.computeDynamicOffset / sizeof(uint32_t);
+                wgslEntry.computeBufferDynamicOffset = (computeOffset + *entry.value.computeDynamicOffset) / sizeof(uint32_t);
+                maxComputeOffset = std::max<size_t>(maxComputeOffset, *entry.value.computeDynamicOffset + sizeof(uint32_t));
             }
             wgslBindGroupLayout.entries.append(wgslEntry);
         }

@@ -68,7 +68,7 @@ bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, const FilterI
     if (!inputPixelBuffer || !displacementPixelBuffer)
         return false;
 
-    ASSERT(inputPixelBuffer->sizeInBytes() == displacementPixelBuffer->sizeInBytes());
+    ASSERT(inputPixelBuffer->bytes().size() == displacementPixelBuffer->bytes().size());
 
     auto paintSize = result.absoluteImageRect().size();
     auto scale = filter.resolvedSize({ m_effect.scale(), m_effect.scale() });
@@ -93,13 +93,13 @@ bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, const FilterI
             int srcX = x + static_cast<int>(scaleForColorX * displacementPixelBuffer->item(destinationIndex + displacementChannelX) + scaledOffsetX);
             int srcY = y + static_cast<int>(scaleForColorY * displacementPixelBuffer->item(destinationIndex + displacementChannelY) + scaledOffsetY);
 
-            unsigned* destinationPixelPtr = reinterpret_cast<unsigned*>(destinationPixelBuffer->bytes() + destinationIndex);
+            unsigned* destinationPixelPtr = reinterpret_cast<unsigned*>(destinationPixelBuffer->bytes().data() + destinationIndex);
             if (srcX < 0 || srcX >= paintSize.width() || srcY < 0 || srcY >= paintSize.height()) {
                 *destinationPixelPtr = 0;
                 continue;
             }
 
-            *destinationPixelPtr = *reinterpret_cast<unsigned*>(inputPixelBuffer->bytes() + byteOffsetOfPixel(srcX, srcY, rowBytes));
+            *destinationPixelPtr = *reinterpret_cast<unsigned*>(inputPixelBuffer->bytes().data() + byteOffsetOfPixel(srcX, srcY, rowBytes));
         }
     }
 

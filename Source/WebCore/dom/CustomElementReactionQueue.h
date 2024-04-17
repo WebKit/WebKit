@@ -116,8 +116,9 @@ private:
     bool m_invoking { false };
 };
 
-class CustomElementReactionQueue : public CanMakeCheckedPtr {
+class CustomElementReactionQueue final : public CanMakeCheckedPtr<CustomElementReactionQueue> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CustomElementReactionQueue);
     WTF_MAKE_NONCOPYABLE(CustomElementReactionQueue);
 public:
     CustomElementReactionQueue(JSCustomElementInterface&);

@@ -37,6 +37,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLPlugInElement.h"
+#include "HTMLSrcsetParser.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LazyLoadImageObserver.h"
@@ -675,6 +676,29 @@ VisibleInViewportState ImageLoader::imageVisibleInViewport(const Document& docum
 
     CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(element().renderer());
     return renderReplaced && renderReplaced->isContentLikelyVisibleInViewport() ? VisibleInViewportState::Yes : VisibleInViewportState::No;
+}
+
+bool ImageLoader::shouldIgnoreCandidateWhenLoadingFromArchive(const ImageCandidate& candidate) const
+{
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+    if (candidate.originAttribute == ImageCandidate::SrcOrigin)
+        return false;
+
+    Ref document = element().document();
+    RefPtr loader = document->loader();
+    if (!loader || !loader->hasArchiveResourceCollection())
+        return false;
+
+    auto candidateURL = URL { element().resolveURLStringIfNeeded(candidate.string.toString()) };
+    if (loader->archiveResourceForURL(candidateURL))
+        return false;
+
+    RefPtr page = document->protectedPage();
+    return !page || !page->allowsLoadFromURL(candidateURL, MainFrameMainResource::No);
+#else
+    UNUSED_PARAM(candidate);
+    return false;
+#endif
 }
 
 } // namespace WebCore

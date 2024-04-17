@@ -160,12 +160,12 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     if (!eval) {
         if (!ecmaMode.isStrict()) {
             if (programSource.is8Bit()) {
-                LiteralParser<LChar> preparser(globalObject, programSource.characters8(), programSource.length(), SloppyJSON, callerBaselineCodeBlock);
+                LiteralParser preparser(globalObject, programSource.span8(), SloppyJSON, callerBaselineCodeBlock);
                 if (JSValue parsedObject = preparser.tryLiteralParse())
                     RELEASE_AND_RETURN(scope, parsedObject);
 
             } else {
-                LiteralParser<UChar> preparser(globalObject, programSource.characters16(), programSource.length(), SloppyJSON, callerBaselineCodeBlock);
+                LiteralParser preparser(globalObject, programSource.span16(), SloppyJSON, callerBaselineCodeBlock);
                 if (JSValue parsedObject = preparser.tryLiteralParse())
                     RELEASE_AND_RETURN(scope, parsedObject);
 
@@ -962,10 +962,10 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
     if (programSource.isNull())
         return jsUndefined();
     if (programSource.is8Bit()) {
-        LiteralParser<LChar> literalParser(globalObject, programSource.characters8(), programSource.length(), JSONP);
+        LiteralParser literalParser(globalObject, programSource.span8(), JSONP);
         parseResult = literalParser.tryJSONPParse(JSONPData, globalObject->globalObjectMethodTable()->supportsRichSourceInfo(globalObject));
     } else {
-        LiteralParser<UChar> literalParser(globalObject, programSource.characters16(), programSource.length(), JSONP);
+        LiteralParser literalParser(globalObject, programSource.span16(), JSONP);
         parseResult = literalParser.tryJSONPParse(JSONPData, globalObject->globalObjectMethodTable()->supportsRichSourceInfo(globalObject));
     }
 

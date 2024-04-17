@@ -46,7 +46,7 @@ class AudioFileReader : public CanMakeWeakPtr<AudioFileReader> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AudioFileReader);
 public:
-    AudioFileReader(const void* data, size_t dataSize);
+    explicit AudioFileReader(std::span<const uint8_t>);
     ~AudioFileReader();
 
     RefPtr<AudioBus> createBus(float sampleRate, bool mixToMono);
@@ -64,8 +64,7 @@ private:
     GstFlowReturn handleSample(GstAppSink*);
 
     RunLoop& m_runLoop;
-    const void* m_data { nullptr };
-    size_t m_dataSize { 0 };
+    std::span<const uint8_t> m_data;
     float m_sampleRate { 0 };
     int m_channels { 0 };
     HashMap<int, GRefPtr<GstBufferList>> m_buffers;
@@ -130,10 +129,9 @@ void AudioFileReader::decodebinPadAddedCallback(AudioFileReader* reader, GstPad*
     reader->plugDeinterleave(pad);
 }
 
-AudioFileReader::AudioFileReader(const void* data, size_t dataSize)
+AudioFileReader::AudioFileReader(std::span<const uint8_t> data)
     : m_runLoop(RunLoop::current())
     , m_data(data)
-    , m_dataSize(dataSize)
 {
 }
 
@@ -401,10 +399,9 @@ void AudioFileReader::decodeAudioForBusCreation()
         return GST_BUS_DROP;
     }, this, nullptr);
 
-    ASSERT(m_data);
-    ASSERT(m_dataSize);
+    ASSERT(!m_data.empty());
     auto* source = makeGStreamerElement("giostreamsrc", nullptr);
-    auto memoryStream = adoptGRef(g_memory_input_stream_new_from_data(m_data, m_dataSize, nullptr));
+    auto memoryStream = adoptGRef(g_memory_input_stream_new_from_data(m_data.data(), m_data.size(), nullptr));
     g_object_set(source, "stream", memoryStream.get(), nullptr);
 
     m_decodebin = makeGStreamerElement("decodebin", "decodebin");
@@ -456,7 +453,7 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
     return audioBus;
 }
 
-RefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate)
+RefPtr<AudioBus> createBusFromInMemoryAudioFile(std::span<const uint8_t> data, bool mixToMono, float sampleRate)
 {
     ensureGStreamerInitialized();
     static std::once_flag onceFlag;
@@ -464,10 +461,10 @@ RefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSiz
         GST_DEBUG_CATEGORY_INIT(webkit_audio_file_reader_debug, "webkitaudiofilereader", 0, "WebKit WebAudio FileReader");
     });
 
-    GST_DEBUG("Creating bus from in-memory audio data (%zu bytes)", dataSize);
+    GST_DEBUG("Creating bus from in-memory audio data (%zu bytes)", data.size());
     RefPtr<AudioBus> bus;
-    auto thread = Thread::create("AudioFileReader", [&bus, data, dataSize, mixToMono, sampleRate] {
-        bus = AudioFileReader(data, dataSize).createBus(sampleRate, mixToMono);
+    auto thread = Thread::create("AudioFileReader", [&bus, data, mixToMono, sampleRate] {
+        bus = AudioFileReader(data).createBus(sampleRate, mixToMono);
     });
     thread->waitForCompletion();
     return bus;

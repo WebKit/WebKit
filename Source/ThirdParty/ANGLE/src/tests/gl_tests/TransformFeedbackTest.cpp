@@ -4300,7 +4300,7 @@ TEST_P(TransformFeedbackTest, DeletingTransformFeedback)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     GLTransformFeedback tf;
-    (void)tf.get();
+    (void)tf;
 
     GLBuffer buf;
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buf);
@@ -4342,7 +4342,7 @@ TEST_P(TransformFeedbackTest, BindAndUnbindTransformFeedback)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     GLTransformFeedback tf;
-    (void)tf.get();
+    (void)tf;
 
     GLBuffer buf;
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buf);

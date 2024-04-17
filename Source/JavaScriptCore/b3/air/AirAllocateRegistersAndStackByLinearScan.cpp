@@ -49,14 +49,6 @@ namespace JSC { namespace B3 { namespace Air {
 
 namespace {
 
-#undef RELEASE_ASSERT
-#define RELEASE_ASSERT(assertion) do { \
-    if (!(assertion)) { \
-        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
-        CRASH(); \
-    } \
-} while (0)
-
 bool verbose() { return Options::airLinearScanVerbose(); }
 
 // Phase constants we use for the PhaseInsertionSet.

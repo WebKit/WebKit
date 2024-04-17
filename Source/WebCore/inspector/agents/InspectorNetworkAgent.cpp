@@ -51,8 +51,8 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
+#include "JSDOMWindowCustom.h"
 #include "JSExecState.h"
-#include "JSLocalDOMWindowCustom.h"
 #include "JSWebSocket.h"
 #include "LoaderStrategy.h"
 #include "LocalFrame.h"
@@ -103,6 +103,8 @@ namespace {
 
 class InspectorThreadableLoaderClient final : public ThreadableLoaderClient {
     WTF_MAKE_NONCOPYABLE(InspectorThreadableLoaderClient);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorThreadableLoaderClient);
 public:
     InspectorThreadableLoaderClient(RefPtr<LoadResourceCallback>&& callback)
         : m_callback(WTFMove(callback))
@@ -338,7 +340,7 @@ static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(
 
     if (request.httpBody() && !request.httpBody()->isEmpty()) {
         auto bytes = request.httpBody()->flatten();
-        requestObject->setPostData(String::fromUTF8WithLatin1Fallback(bytes.data(), bytes.size()));
+        requestObject->setPostData(String::fromUTF8WithLatin1Fallback(bytes.span()));
     }
 
     if (resourceLoader) {

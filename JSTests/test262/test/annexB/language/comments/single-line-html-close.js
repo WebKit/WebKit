@@ -12,7 +12,7 @@ info: |
       SingleLineDelimitedComment
 
     SingleLineHTMLCloseComment ::
-      LineTerminatorSequenceHTMLCloseComment
+      LineTerminatorSequence HTMLCloseComment
 
     HTMLCloseComment ::
       WhiteSpaceSequence[opt] SingleLineDelimitedCommentSequence[opt] --> SingleLineCommentChars[opt]

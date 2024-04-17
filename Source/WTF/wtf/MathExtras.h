@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -782,9 +782,10 @@ template<typename T> constexpr T fabsConstExpr(T value)
 }
 
 // For use in places where we could negate std::numeric_limits<T>::min and would like to avoid UB.
-template<typename T> constexpr typename std::enable_if_t<std::is_integral_v<T>, T> negate(T v)
+template<typename T> constexpr typename std::enable_if_t<std::is_integral_v<T> && std::is_signed_v<T>, std::make_unsigned_t<T>> negate(T v)
 {
-    return ~static_cast<std::make_unsigned_t<T>>(v) + 1;
+    ASSERT(v <= 0);
+    return ~static_cast<std::make_unsigned_t<T>>(v) + 1U;
 }
 
 } // namespace WTF

@@ -44,7 +44,7 @@ namespace WebKit {
 
 class PaymentSetupFeatures {
 public:
-    PaymentSetupFeatures(Vector<RefPtr<WebCore::ApplePaySetupFeature>>&&);
+    PaymentSetupFeatures(Vector<Ref<WebCore::ApplePaySetupFeature>>&&);
     PaymentSetupFeatures(RetainPtr<NSArray>&& = nullptr);
 
     NSArray *platformFeatures() const { return m_platformFeatures.get(); }

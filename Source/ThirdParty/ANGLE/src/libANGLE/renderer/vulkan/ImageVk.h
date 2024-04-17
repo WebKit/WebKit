@@ -24,7 +24,7 @@ class ExternalImageSiblingVk : public ExternalImageSiblingImpl
 
     virtual vk::ImageHelper *getImage() const = 0;
 
-    virtual void release(RendererVk *renderer) = 0;
+    virtual void release(vk::Renderer *renderer) = 0;
 };
 
 class ImageVk : public ImageImpl

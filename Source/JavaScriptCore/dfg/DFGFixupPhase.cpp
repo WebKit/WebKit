@@ -444,9 +444,7 @@ private:
             
         case UInt32ToNumber: {
             fixIntConvertingEdge(node->child1());
-            if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
-                node->convertToIdentity();
-            else if (node->canSpeculateInt32(FixupPass))
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags()) || node->canSpeculateInt32(FixupPass))
                 node->setArithMode(Arith::CheckOverflow);
             else {
                 node->setArithMode(Arith::DoOverflow);
@@ -1190,7 +1188,7 @@ private:
                 break;
             }
             
-            arrayMode = node->arrayMode();
+            arrayMode = node->arrayMode(); // Reload
             switch (arrayMode.type()) {
             case Array::SelectUsingPredictions:
             case Array::Unprofiled:
@@ -1253,16 +1251,19 @@ private:
                 
             case Array::Float32Array:
             case Array::Float64Array:
-                node->setResult(NodeResultDouble);
+                if (!(node->op() == GetByVal && arrayMode.isOutOfBounds()))
+                    node->setResult(NodeResultDouble);
                 break;
                 
             case Array::Uint32Array:
                 if (node->shouldSpeculateInt32())
                     break;
-                if (node->shouldSpeculateInt52())
+                if (!(node->op() == GetByVal && arrayMode.isOutOfBounds()) && node->shouldSpeculateInt52())
                     node->setResult(NodeResultInt52);
-                else
-                    node->setResult(NodeResultDouble);
+                else {
+                    if (!(node->op() == GetByVal && arrayMode.isOutOfBounds()))
+                        node->setResult(NodeResultDouble);
+                }
                 break;
                 
             default:
@@ -2489,6 +2490,7 @@ private:
         case RecordRegExpCachedResult:
         case RegExpExecNonGlobalOrSticky:
         case RegExpMatchFastGlobal:
+        case GetUndetachedTypeArrayLength:
             // These are just nodes that we don't currently expect to see during fixup.
             // If we ever wanted to insert them prior to fixup, then we just have to create
             // fixup rules for them.
@@ -4058,25 +4060,25 @@ private:
         } else {
             // Note that we only need to be using a structure check if we opt for InBoundsSaneChain, since
             // that needs to protect against JSArray's __proto__ being changed.
-            Structure* structure = arrayMode.originalArrayStructure(m_graph, origin.semantic);
+            auto structures = arrayMode.originalArrayStructures(m_graph, origin.semantic);
         
             Edge indexEdge = index ? Edge(index, Int32Use) : Edge();
             
             if (arrayMode.doesConversion()) {
-                if (structure) {
+                if (!structures.isEmpty() && structures.size() == 1) {
                     m_insertionSet.insertNode(
                         m_indexInBlock, SpecNone, ArrayifyToStructure, origin,
-                        OpInfo(m_graph.registerStructure(structure)), OpInfo(arrayMode.asWord()), Edge(array, CellUse), indexEdge);
+                        OpInfo(m_graph.registerStructure(structures.onlyStructure())), OpInfo(arrayMode.asWord()), Edge(array, CellUse), indexEdge);
                 } else {
                     m_insertionSet.insertNode(
                         m_indexInBlock, SpecNone, Arrayify, origin,
                         OpInfo(arrayMode.asWord()), Edge(array, CellUse), indexEdge);
                 }
             } else {
-                if (structure) {
+                if (!structures.isEmpty()) {
                     m_insertionSet.insertNode(
                         m_indexInBlock, SpecNone, CheckStructure, origin,
-                        OpInfo(m_graph.addStructureSet(structure)), Edge(array, CellUse));
+                        OpInfo(m_graph.addStructureSet(structures)), Edge(array, CellUse));
                 } else {
                     m_insertionSet.insertNode(
                         m_indexInBlock, SpecNone, CheckArray, origin,
@@ -4831,6 +4833,12 @@ private:
             return;
         }
 
+        if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject()) {
+            fixEdge<ObjectUse>(node->child1());
+            fixEdge<ObjectUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
         if (node->child1()->shouldSpeculateObject()) {
             fixEdge<ObjectUse>(node->child1());
             node->setOpAndDefaultFlags(CompareStrictEq);
@@ -4838,6 +4846,13 @@ private:
         }
         if (node->child2()->shouldSpeculateObject()) {
             fixEdge<ObjectUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+
+        if (node->child1()->shouldSpeculateSymbol() && node->child2()->shouldSpeculateSymbol()) {
+            fixEdge<SymbolUse>(node->child1());
+            fixEdge<SymbolUse>(node->child2());
             node->setOpAndDefaultFlags(CompareStrictEq);
             return;
         }
@@ -4851,6 +4866,31 @@ private:
             node->setOpAndDefaultFlags(CompareStrictEq);
             return;
         }
+
+        if (node->child1()->shouldSpeculateOther() && node->child2()->shouldSpeculateOther()) {
+            fixEdge<OtherUse>(node->child1());
+            fixEdge<OtherUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child1()->shouldSpeculateOther()) {
+            fixEdge<OtherUse>(node->child1());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child2()->shouldSpeculateOther()) {
+            fixEdge<OtherUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+
+
+        if (node->child1()->shouldSpeculateMisc() && node->child2()->shouldSpeculateMisc()) {
+            fixEdge<MiscUse>(node->child1());
+            fixEdge<MiscUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
         if (node->child1()->shouldSpeculateMisc()) {
             fixEdge<MiscUse>(node->child1());
             node->setOpAndDefaultFlags(CompareStrictEq);
@@ -4861,6 +4901,7 @@ private:
             node->setOpAndDefaultFlags(CompareStrictEq);
             return;
         }
+
         if (node->child1()->shouldSpeculateStringIdent()
             && node->child2()->shouldSpeculateNotStringVar()) {
             fixEdge<StringIdentUse>(node->child1());

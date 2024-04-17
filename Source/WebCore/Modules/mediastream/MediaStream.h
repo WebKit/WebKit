@@ -59,7 +59,7 @@ class MediaStream final
 public:
     static Ref<MediaStream> create(Document&);
     static Ref<MediaStream> create(Document&, MediaStream&);
-    static Ref<MediaStream> create(Document&, const Vector<RefPtr<MediaStreamTrack>>&);
+    static Ref<MediaStream> create(Document&, const Vector<Ref<MediaStreamTrack>>&);
     static Ref<MediaStream> create(Document&, Ref<MediaStreamPrivate>&&);
     WEBCORE_EXPORT virtual ~MediaStream();
 

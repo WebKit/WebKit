@@ -55,7 +55,8 @@ private:
     PresentationContextIOSurface(const WGPUSurfaceDescriptor&, const Instance&);
 
     void renderBuffersWereRecreated(NSArray<IOSurface *> *renderBuffers);
-    void onSubmittedWorkScheduled(CompletionHandler<void()>&&);
+    void onSubmittedWorkScheduled(Function<void()>&&);
+    RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t bufferIndex) final;
 
     NSArray<IOSurface *> *m_ioSurfaces { nil };
     struct RenderBuffer {
@@ -71,6 +72,8 @@ private:
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
     std::optional<const MachSendRight> m_webProcessID;
 #endif
+    WGPUColorSpace m_colorSpace { WGPUColorSpace::SRGB };
+    WGPUCompositeAlphaMode m_alphaMode { WGPUCompositeAlphaMode_Premultiplied };
 };
 
 } // namespace WebGPU

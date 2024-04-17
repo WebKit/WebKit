@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new String.prototype.endsWith();
-}, '`new String.prototype.endsWith()` throws TypeError');
+});
 

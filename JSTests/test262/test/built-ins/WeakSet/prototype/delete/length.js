@@ -12,11 +12,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(
-  WeakSet.prototype.delete.length, 1,
-  'The value of WeakSet.prototype.delete.length is 1'
-);
-
-verifyNotEnumerable(WeakSet.prototype.delete, 'length');
-verifyNotWritable(WeakSet.prototype.delete, 'length');
-verifyConfigurable(WeakSet.prototype.delete, 'length');
+verifyProperty(WeakSet.prototype.delete, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

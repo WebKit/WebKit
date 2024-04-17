@@ -996,7 +996,7 @@ TEST(WTF, StringViewUpconvert)
     for (auto literal : data) {
         StringView string(literal);
         auto upconverted = string.upconvertedCharacters();
-        const UChar* characters = upconverted.get();
+        auto characters = upconverted.span();
         for (unsigned index = 1; index < string.length(); ++index)
             EXPECT_EQ(characters[index], string[index]) << index << " " << literal.characters();
     }

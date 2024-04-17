@@ -23,7 +23,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-repeats-2.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-repeats.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-with-disabled-shadow.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/gethtml.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/gethtml-ordering.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/gethtml.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/getinnerhtml.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/innerhtml-before-closing-tag.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/innerhtml-on-ordinary-template.html

@@ -29,5 +29,6 @@ Object.defineProperty(child, "writable", {
 
 Object.defineProperty(obj, "property", child);
 
-assert(obj.hasOwnProperty("property"));
-verifyNotWritable(obj, "property");
+verifyProperty(obj, "property", {
+  writable: false,
+});

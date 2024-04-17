@@ -1,0 +1,270 @@
+# Copyright 2017, the V8 project authors. All rights reserved.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+# 
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+#       copyright notice, this list of conditions and the following
+#       disclaimer in the documentation and/or other materials provided
+#       with the distribution.
+#     * Neither the name of Google Inc. nor the names of its
+#       contributors may be used to endorse or promote products derived
+#       from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
+# Below this line is (mostly) a CSV file describing the licenses used in
+# the sub-libraries of Web Tooling Benchmark that are included as part
+# of JetStream 2.
+
+# The CSV is formatted as:
+OSS Project Name,  OSS Project URL,  Version,  License Name,  OSS License URL
+
+babel/code-frame,  https://github.com/babel/babel/tree/master/packages/babel-code-frame,  7.0.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel/core,  https://github.com/babel/babel/tree/master/packages/babel-core,  7.0.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel/generator,  https://github.com/babel/babel/tree/master/packages/babel-generator,  7.0.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel/helper-function-name,  https://github.com/babel/babel/tree/master/packages/babel-helper-function-name,  7.0.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel/helper-get-function-arity,  https://github.com/babel/babel/tree/master/packages/babel-helper-get-function-arity,  7.0.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel/helper-split-export-declaration,  https://github.com/babel/babel/tree/master/packages/babel-helper-split-export-declaration,  7.0.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel/helpers,  https://github.com/babel/babel/tree/master/packages/babel-helpers,  7.0.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel/highlight,  https://github.com/babel/babel/tree/master/packages/babel-highlight,  7.0.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel/parser,  https://github.com/babel/babel/tree/master/packages/babel-parser,  7.0.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel/template,  https://github.com/babel/babel/tree/master/packages/babel-template,  7.0.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel/traverse,  https://github.com/babel/babel/tree/master/packages/babel-traverse,  7.0.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel/types,  https://github.com/babel/babel/tree/master/packages/babel-types,  7.0.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+acorn-jsx,  https://github.com/RReverser/acorn-jsx,  3.0.1,  MIT,  https://github.com/RReverser/acorn-jsx/blob/master/LICENSE
+acorn,  https://github.com/ternjs/acorn,  3.3.0,  MIT,  https://github.com/ternjs/acorn/blob/master/LICENSE
+acorn,  https://github.com/acornjs/acorn,  5.7.2,  MIT,  https://github.com/acornjs/acorn/blob/master/README.md
+ansi-regex,  https://github.com/chalk/ansi-regex,  2.1.1,  MIT,  https://github.com/chalk/ansi-regex/blob/master/license
+ansi-styles,  https://github.com/chalk/ansi-styles,  2.2.1,  MIT,  https://github.com/chalk/ansi-styles/blob/master/license
+ansi-styles,  https://github.com/chalk/ansi-styles,  3.2.1,  MIT,  https://github.com/chalk/ansi-styles/blob/master/license
+assertion-error,  https://github.com/chaijs/assertion-error,  1.1.0,  MIT,  https://github.com/chaijs/assertion-error/blob/master/README.md
+ast-types,  https://github.com/benjamn/ast-types,  0.10.1,  MIT,  https://github.com/benjamn/ast-types/blob/master/LICENSE
+babel-code-frame,  https://github.com/babel/babel/tree/master/packages/babel-code-frame,  6.26.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-core,  https://github.com/babel/babel/tree/master/packages/babel-core,  6.26.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-generator,  https://github.com/babel/babel/tree/master/packages/babel-generator,  6.26.1,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-helper-builder-react-jsx,  https://github.com/babel/babel/tree/master/packages/babel-helper-builder-react-jsx,  6.26.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-helper-evaluate-path,  https://github.com/babel/minify/tree/master/packages/babel-helper-evaluate-path,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-helper-flip-expressions,  https://github.com/babel/minify/tree/master/packages/babel-helper-flip-expressions,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-helper-is-nodes-equiv,  https://github.com/babel/babili/tree/master/packages/babel-helper-is-nodes-equiv,  0.0.1,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-helper-is-void-0,  https://github.com/babel/minify/tree/master/packages/babel-helper-is-void-0,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-helper-mark-eval-scopes,  https://github.com/babel/minify/tree/master/packages/babel-helper-mark-eval-scopes,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-helper-remove-or-void,  https://github.com/babel/minify/tree/master/packages/babel-helper-remove-or-void,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-helper-to-multiple-sequence-expressions,  https://github.com/babel/minify/tree/master/packages/babel-helper-to-multiple-sequence-expressions,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-helpers,  https://github.com/babel/babel/tree/master/packages/babel-helpers,  6.24.1,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-messages,  https://github.com/babel/babel/tree/master/packages/babel-messages,  6.23.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-minify,  https://github.com/babel/minify/tree/master/packages/babel-minify,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-minify-builtins,  https://github.com/babel/minify/tree/master/packages/babel-plugin-minify-builtins,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-minify-constant-folding,  https://github.com/babel/minify/tree/master/packages/babel-plugin-minify-constant-folding,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-minify-dead-code-elimination,  https://github.com/babel/minify/tree/master/packages/babel-plugin-minify-dead-code-elimination,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-minify-flip-comparisons,  https://github.com/babel/minify/tree/master/packages/babel-plugin-minify-flip-comparisons,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-minify-guarded-expressions,  https://github.com/babel/minify/tree/master/packages/babel-plugin-minify-guarded-expressions,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-minify-infinity,  https://github.com/babel/minify/tree/master/packages/babel-plugin-minify-infinity,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-minify-mangle-names,  https://github.com/babel/minify/tree/master/packages/babel-plugin-minify-mangle-names,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-minify-numeric-literals,  https://github.com/babel/minify/tree/master/packages/babel-plugin-minify-numeric-literals,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-minify-replace,  https://github.com/babel/minify/tree/master/packages/babel-plugin-minify-replace,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-minify-simplify,  https://github.com/babel/minify/tree/master/packages/babel-plugin-minify-simplify,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-minify-type-constructors,  https://github.com/babel/minify/tree/master/packages/babel-plugin-minify-type-constructors,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-syntax-jsx,  https://github.com/babel/babel/tree/master/packages/babel-plugin-syntax-jsx,  6.18.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-transform-inline-consecutive-adds,  https://github.com/babel/minify/tree/master/packages/babel-plugin-transform-inline-consecutive-adds,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-transform-member-expression-literals,  https://github.com/babel/minify/tree/master/packages/babel-plugin-transform-member-expression-literals,  6.9.4,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-transform-merge-sibling-variables,  https://github.com/babel/minify/tree/master/packages/babel-plugin-transform-merge-sibling-variables,  6.9.4,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-transform-minify-booleans,  https://github.com/babel/minify/tree/master/packages/babel-plugin-transform-minify-booleans,  6.9.4,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-transform-property-literals,  https://github.com/babel/minify/tree/master/packages/babel-plugin-transform-property-literals,  6.9.4,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-transform-react-jsx,  https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx,  6.24.1,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-transform-regexp-constructors,  https://github.com/babel/minify/tree/master/packages/babel-plugin-transform-regexp-constructors,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-transform-remove-console,  https://github.com/babel/minify/tree/master/packages/babel-plugin-transform-remove-console,  6.9.4,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-transform-remove-debugger,  https://github.com/babel/minify/tree/master/packages/babel-plugin-transform-remove-debugger,  6.9.4,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-transform-remove-undefined,  https://github.com/babel/minify/tree/master/packages/babel-plugin-transform-remove-undefined,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-transform-simplify-comparison-operators,  https://github.com/babel/minify/tree/master/packages/babel-plugin-transform-simplify-comparison-operators,  6.9.4,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-plugin-transform-undefined-to-void,  https://github.com/babel/minify/tree/master/packages/babel-plugin-transform-undefined-to-void,  6.9.4,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-preset-minify,  https://github.com/babel/minify/tree/master/packages/babel-preset-minify,  0.4.3,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-register,  https://github.com/babel/babel/tree/master/packages/babel-register,  6.26.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-runtime,  https://github.com/babel/babel/tree/master/packages/babel-runtime,  6.26.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-template,  https://github.com/babel/babel/tree/master/packages/babel-template,  6.26.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-traverse,  https://github.com/babel/babel/tree/master/packages/babel-traverse,  6.26.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babel-types,  https://github.com/babel/babel/tree/master/packages/babel-types,  6.26.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babylon,  https://github.com/babel/babylon,  6.18.0,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+babylon,  https://github.com/babel/babel/tree/master/packages/babylon,  7.0.0-beta.32,  MIT,  https://github.com/babel/minify/blob/master/LICENSE
+balanced-match,  https://github.com/juliangruber/balanced-match,  1.0.0,  MIT,  https://github.com/juliangruber/balanced-match/blob/master/LICENSE.md
+benchmark,  https://github.com/bestiejs/benchmark.js,  2.1.4,  MIT,  https://github.com/bestiejs/benchmark.js/blob/master/LICENSE
+brace-expansion,  https://github.com/juliangruber/brace-expansion,  1.1.11,  MIT,  https://github.com/juliangruber/brace-expansion/blob/master/LICENSE
+camelcase,  https://github.com/sindresorhus/camelcase,  4.1.0,  MIT,  https://github.com/sindresorhus/camelcase/blob/master/license
+chai,  https://github.com/chaijs/chai,  4.1.2,  MIT,  https://github.com/chaijs/chai/blob/master/LICENSE
+chalk,  https://github.com/chalk/chalk,  1.1.3,  MIT,  https://github.com/chalk/chalk/blob/master/license
+chalk,  https://github.com/chalk/chalk,  2.4.1,  MIT,  https://github.com/chalk/chalk/blob/master/license
+check-error,  https://github.com/chaijs/check-error,  1.0.2,  MIT,  https://github.com/chaijs/check-error/blob/master/LICENSE
+cli,  https://github.com/node-js-libs/cli,  1.0.1,  MIT,  https://github.com/node-js-libs/cli/blob/master/README.md
+coffeescript,  https://github.com/jashkenas/coffeescript,  2.2.3,  MIT,  https://github.com/jashkenas/coffeescript/blob/master/LICENSE
+color-convert,  https://github.com/Qix-/color-convert,  1.9.3,  MIT,  https://github.com/Qix-/color-convert/blob/master/LICENSE
+color-name,  https://github.com/dfcreative/color-name,  1.1.3,  MIT,  https://github.com/dfcreative/color-name/blob/master/LICENSE
+commander,  https://github.com/tj/commander.js,  2.13.0,  MIT,  https://github.com/tj/commander.js/blob/master/LICENSE
+commander,  https://github.com/tj/commander.js,  2.15.1,  MIT,  https://github.com/tj/commander.js/blob/master/LICENSE
+commander,  https://github.com/tj/commander.js,  2.17.1,  MIT,  https://github.com/tj/commander.js/blob/master/LICENSE
+compute-gmean,  https://github.com/compute-io/gmean,  1.1.0,  MIT,  https://github.com/compute-io/gmean/blob/master/LICENSE
+concat-map,  https://github.com/substack/node-concat-map,  0.0.1,  MIT,  https://github.com/substack/node-concat-map/blob/master/LICENSE
+console-browserify,  https://github.com/Raynos/console-browserify,  1.1.0,  MIT,  https://github.com/Raynos/console-browserify/blob/master/LICENCE
+convert-source-map,  https://github.com/thlorenz/convert-source-map,  1.6.0,  MIT,  https://github.com/thlorenz/convert-source-map/blob/master/LICENSE
+core-js,  https://github.com/zloirock/core-js,  2.5.7,  MIT,  https://github.com/zloirock/core-js/blob/master/LICENSE
+core-util-is,  https://github.com/isaacs/core-util-is,  1.0.2,  MIT,  https://github.com/isaacs/core-util-is/blob/master/LICENSE
+d,  https://github.com/medikoo/d,  1.0.0,  MIT,  https://github.com/medikoo/d/blob/master/LICENSE
+date-now,  https://github.com/Colingo/date-now,  0.1.4,  MIT,  https://github.com/Colingo/date-now/blob/master/LICENCE
+dbly-linked-list,  https://github.com/jasonsjones/doubly-linked-list,  0.2.0,  MIT,  https://github.com/jasonsjones/doubly-linked-list/blob/master/LICENSE-MIT
+debug,  https://github.com/visionmedia/debug,  2.6.9,  MIT,  https://github.com/visionmedia/debug/blob/master/LICENSE
+debug,  https://github.com/visionmedia/debug,  3.1.0,  MIT,  https://github.com/visionmedia/debug/blob/master/LICENSE
+deep-eql,  https://github.com/chaijs/deep-eql,  3.0.1,  MIT,  https://github.com/chaijs/deep-eql/blob/master/LICENSE
+define-properties,  https://github.com/ljharb/define-properties,  1.1.3,  MIT,  https://github.com/ljharb/define-properties/blob/master/LICENSE
+detect-indent,  https://github.com/sindresorhus/detect-indent,  4.0.0,  MIT,  https://github.com/sindresorhus/detect-indent/blob/master/license
+dom-serializer,  https://github.com/cheeriojs/dom-renderer,  0.1.0,  MIT,  https://github.com/cheeriojs/dom-renderer/blob/master/LICENSE
+dom-walk,  https://github.com/Raynos/dom-walk,  0.1.1,  MIT,  https://github.com/Raynos/dom-walk/blob/master/LICENCE
+errno,  https://github.com/rvagg/node-errno,  0.1.7,  MIT,  https://github.com/rvagg/node-errno/blob/master/README.md
+es-abstract,  https://github.com/ljharb/es-abstract,  1.12.0,  MIT,  https://github.com/ljharb/es-abstract/blob/master/LICENSE
+es-to-primitive,  https://github.com/ljharb/es-to-primitive,  1.1.1,  MIT,  https://github.com/ljharb/es-to-primitive/blob/master/LICENSE
+es6-iterator,  https://github.com/medikoo/es6-iterator,  2.0.3,  MIT,  https://github.com/medikoo/es6-iterator/blob/master/LICENSE
+es6-map,  https://github.com/medikoo/es6-map,  0.1.5,  MIT,  https://github.com/medikoo/es6-map/blob/master/LICENSE
+es6-set,  https://github.com/medikoo/es6-set,  0.1.5,  MIT,  https://github.com/medikoo/es6-set/blob/master/LICENSE
+es6-symbol,  https://github.com/medikoo/es6-symbol,  3.1.1,  MIT,  https://github.com/medikoo/es6-symbol/blob/master/LICENSE
+es6-weak-map,  https://github.com/medikoo/es6-weak-map,  2.0.2,  MIT,  https://github.com/medikoo/es6-weak-map/blob/master/LICENSE
+escape-string-regexp,  https://github.com/sindresorhus/escape-string-regexp,  1.0.5,  MIT,  https://github.com/sindresorhus/escape-string-regexp/blob/master/license
+event-emitter,  https://github.com/medikoo/event-emitter,  0.3.5,  MIT,  https://github.com/medikoo/event-emitter/blob/master/LICENSE
+exit,  https://github.com/cowboy/node-exit,  0.1.2,  MIT,  https://github.com/cowboy/node-exit/blob/master/LICENSE-MIT
+fs-readdir-recursive,  https://github.com/fs-utils/fs-readdir-recursive,  1.1.0,  MIT,  https://github.com/fs-utils/fs-readdir-recursive/blob/master/LICENSE
+function-bind,  https://github.com/Raynos/function-bind,  1.1.1,  MIT,  https://github.com/Raynos/function-bind/blob/master/LICENSE
+get-func-name,  https://github.com/chaijs/get-func-name,  2.0.0,  MIT,  https://github.com/chaijs/get-func-name/blob/master/LICENSE
+get-random-values,  https://github.com/KenanY/get-random-values,  1.2.0,  MIT,  https://github.com/KenanY/get-random-values/blob/master/LICENSE.txt
+global,  https://github.com/Raynos/global,  4.3.2,  MIT,  https://github.com/Raynos/global/blob/master/LICENSE
+globals,  https://github.com/sindresorhus/globals,  11.7.0,  MIT,  https://github.com/sindresorhus/globals/blob/master/license
+globals,  https://github.com/sindresorhus/globals,  9.18.0,  MIT,  https://github.com/sindresorhus/globals/blob/master/license
+has-ansi,  https://github.com/sindresorhus/has-ansi,  2.0.0,  MIT,  https://github.com/sindresorhus/has-ansi/blob/master/license
+has-flag,  https://github.com/sindresorhus/has-flag,  3.0.0,  MIT,  https://github.com/sindresorhus/has-flag/blob/master/license
+has,  https://github.com/tarruda/has,  1.0.3,  MIT,  https://github.com/tarruda/has/blob/master/LICENSE-MIT
+home-or-tmp,  https://github.com/sindresorhus/home-or-tmp,  2.0.0,  MIT,  https://github.com/sindresorhus/home-or-tmp/blob/master/license
+htmlparser2,  https://github.com/fb55/htmlparser2,  3.8.3,  MIT,  https://github.com/fb55/htmlparser2/blob/master/LICENSE
+invariant,  https://github.com/zertosh/invariant,  2.2.4,  MIT,  https://github.com/zertosh/invariant/blob/master/LICENSE
+is-callable,  https://github.com/ljharb/is-callable,  1.1.4,  MIT,  https://github.com/ljharb/is-callable/blob/master/LICENSE
+is-date-object,  https://github.com/ljharb/is-date-object,  1.0.1,  MIT,  https://github.com/ljharb/is-date-object/blob/master/LICENSE
+is-finite,  https://github.com/sindresorhus/is-finite,  1.0.2,  MIT,  https://github.com/sindresorhus/is-finite/blob/master/license
+is-regex,  https://github.com/ljharb/is-regex,  1.0.4,  MIT,  https://github.com/ljharb/is-regex/blob/master/LICENSE
+is-symbol,  https://github.com/ljharb/is-symbol,  1.0.1,  MIT,  https://github.com/ljharb/is-symbol/blob/master/LICENSE
+isarray,  https://github.com/juliangruber/isarray,  0.0.1,  MIT,  https://github.com/juliangruber/isarray/blob/master/README.md
+isarray,  https://github.com/juliangruber/isarray,  1.0.0,  MIT,  https://github.com/juliangruber/isarray/blob/master/README.md
+js-tokens,  https://github.com/lydell/js-tokens,  3.0.2,  MIT,  https://github.com/lydell/js-tokens/blob/master/LICENSE
+js-tokens,  https://github.com/lydell/js-tokens,  4.0.0,  MIT,  https://github.com/lydell/js-tokens/blob/master/LICENSE
+jsesc,  https://github.com/mathiasbynens/jsesc,  1.3.0,  MIT,  https://github.com/mathiasbynens/jsesc/blob/master/LICENSE-MIT.txt
+jsesc,  https://github.com/mathiasbynens/jsesc,  2.5.1,  MIT,  https://github.com/mathiasbynens/jsesc/blob/master/LICENSE-MIT.txt
+json5,  https://github.com/aseemk/json5,  0.5.1,  MIT,  https://github.com/aseemk/json5/blob/master/LICENSE.md
+lebab,  https://github.com/mohebifar/lebab,  2.7.7,  MIT,  https://github.com/mohebifar/lebab/blob/master/LICENSE
+lodash.isequal,  https://github.com/lodash/lodash,  4.5.0,  MIT,  https://github.com/lodash/lodash/blob/master/LICENSE
+lodash.isplainobject,  https://github.com/lodash/lodash,  4.0.6,  MIT,  https://github.com/lodash/lodash/blob/master/LICENSE
+lodash.some,  https://github.com/lodash/lodash,  4.6.0,  MIT,  https://github.com/lodash/lodash/blob/master/LICENSE
+lodash,  https://github.com/lodash/lodash,  3.7.0,  MIT,  https://github.com/lodash/lodash/blob/master/LICENSE
+lodash,  https://github.com/lodash/lodash,  4.17.10,  MIT,  https://github.com/lodash/lodash/blob/master/LICENSE
+loose-envify,  https://github.com/zertosh/loose-envify,  1.4.0,  MIT,  https://github.com/zertosh/loose-envify/blob/master/LICENSE
+min-document,  https://github.com/Raynos/min-document,  2.19.0,  MIT,  https://github.com/Raynos/min-document/blob/master/LICENCE
+minimist,  https://github.com/substack/minimist,  0.0.8,  MIT,  https://github.com/substack/minimist/blob/master/LICENSE
+mkdirp,  https://github.com/substack/node-mkdirp,  0.5.1,  MIT,  https://github.com/substack/node-mkdirp/blob/master/LICENSE
+ms,  https://github.com/zeit/ms,  2.0.0,  MIT,  https://github.com/zeit/ms/blob/master/license.md
+next-tick,  https://github.com/medikoo/next-tick,  1.0.0,  MIT,  https://github.com/medikoo/next-tick/blob/master/LICENSE
+node-zip,  https://github.com/daraosn/node-zip,  1.1.1,  MIT,  https://github.com/daraosn/node-zip/blob/master/README.md
+number-is-nan,  https://github.com/sindresorhus/number-is-nan,  1.0.1,  MIT,  https://github.com/sindresorhus/number-is-nan/blob/master/license
+object-keys,  https://github.com/ljharb/object-keys,  1.0.12,  MIT,  https://github.com/ljharb/object-keys/blob/master/LICENSE
+object.getownpropertydescriptors,  https://github.com/ljharb/object.getownpropertydescriptors,  2.0.3,  MIT,  https://github.com/ljharb/object.getownpropertydescriptors/blob/master/LICENSE
+os-homedir,  https://github.com/sindresorhus/os-homedir,  1.0.2,  MIT,  https://github.com/sindresorhus/os-homedir/blob/master/license
+os-tmpdir,  https://github.com/sindresorhus/os-tmpdir,  1.0.2,  MIT,  https://github.com/sindresorhus/os-tmpdir/blob/master/license
+pako,  https://github.com/nodeca/pako,  0.2.9,  MIT,  https://github.com/nodeca/pako/blob/master/LICENSE
+path-is-absolute,  https://github.com/sindresorhus/path-is-absolute,  1.0.1,  MIT,  https://github.com/sindresorhus/path-is-absolute/blob/master/license
+path-parse,  https://github.com/jbgutierrez/path-parse,  1.0.6,  MIT,  https://github.com/jbgutierrez/path-parse/blob/master/LICENSE
+pathval,  https://github.com/chaijs/pathval,  1.1.0,  MIT,  https://github.com/chaijs/pathval/blob/master/LICENSE
+platform,  https://github.com/bestiejs/platform.js,  1.3.5,  MIT,  https://github.com/bestiejs/platform.js/blob/master/LICENSE
+private,  https://github.com/benjamn/private,  0.1.8,  MIT,  https://github.com/benjamn/private/blob/master/LICENSE
+process-nextick-args,  https://github.com/calvinmetcalf/process-nextick-args,  2.0.0,  MIT,  https://github.com/calvinmetcalf/process-nextick-args/blob/master/license.md
+process,  https://github.com/shtylman/node-process,  0.5.2,  MIT,  https://github.com/shtylman/node-process/blob/master/LICENSE
+prr,  https://github.com/rvagg/prr,  1.0.1,  MIT,  https://github.com/rvagg/prr/blob/master/LICENSE.md
+queue-fifo,  https://github.com/jasonsjones/queue-fifo,  0.2.5,  MIT,  https://github.com/jasonsjones/queue-fifo/blob/master/LICENSE-MIT
+readable-stream,  https://github.com/isaacs/readable-stream,  1.1.14,  MIT,  https://github.com/isaacs/readable-stream/blob/master/LICENSE
+readable-stream,  https://github.com/nodejs/readable-stream,  2.3.6,  MIT,  https://github.com/nodejs/readable-stream/blob/master/LICENSE
+recast,  https://github.com/benjamn/recast,  0.12.9,  MIT,  https://github.com/benjamn/recast/blob/master/LICENSE
+regenerator-runtime,  https://github.com/facebook/regenerator/tree/master/packages/regenerator-runtime,  0.11.1,  MIT,  https://github.com/facebook/regenerator/blob/master/packages/regenerator-runtime/package.json
+repeat-string,  https://github.com/jonschlinkert/repeat-string,  0.2.2,  MIT,  https://github.com/jonschlinkert/repeat-string/blob/master/LICENSE
+repeating,  https://github.com/sindresorhus/repeating,  2.0.1,  MIT,  https://github.com/sindresorhus/repeating/blob/master/license
+resolve,  https://github.com/browserify/resolve,  1.8.1,  MIT,  https://github.com/browserify/resolve/blob/master/LICENSE
+safe-buffer,  https://github.com/feross/safe-buffer,  5.1.2,  MIT,  https://github.com/feross/safe-buffer/blob/master/LICENSE
+secure-random-bytes,  https://github.com/KenanY/secure-random-bytes,  1.0.1,  MIT,  https://github.com/KenanY/secure-random-bytes/blob/master/LICENSE.txt
+secure-random-octet,  https://github.com/KenanY/secure-random-octet,  1.0.2,  MIT,  https://github.com/KenanY/secure-random-octet/blob/master/LICENSE.txt
+seedrandom,  https://github.com/davidbau/seedrandom,  2.4.4,  MIT,  https://github.com/davidbau/seedrandom/blob/master/README.md
+slash,  https://github.com/sindresorhus/slash,  1.0.0,  MIT,  https://github.com/sindresorhus/slash/blob/master/license
+source-map-support,  https://github.com/evanw/node-source-map-support,  0.4.18,  MIT,  https://github.com/evanw/node-source-map-support/blob/master/LICENSE.md
+string-align,  https://github.com/eush77/string-align,  0.2.0,  MIT,  https://github.com/eush77/string-align/blob/master/LICENSE
+string_decoder,  https://github.com/nodejs/string_decoder,  0.10.31,  MIT,  https://github.com/rvagg/string_decoder/blob/master/LICENSE
+string_decoder,  https://github.com/nodejs/string_decoder,  1.1.1,  MIT,  https://github.com/nodejs/string_decoder/blob/master/LICENSE
+strip-ansi,  https://github.com/chalk/strip-ansi,  3.0.1,  MIT,  https://github.com/chalk/strip-ansi/blob/master/license
+strip-json-comments,  https://github.com/sindresorhus/strip-json-comments,  1.0.4,  MIT,  https://github.com/sindresorhus/strip-json-comments/blob/master/license
+supports-color,  https://github.com/chalk/supports-color,  2.0.0,  MIT,  https://github.com/chalk/supports-color/blob/master/license
+supports-color,  https://github.com/chalk/supports-color,  5.5.0,  MIT,  https://github.com/chalk/supports-color/blob/master/license
+to-fast-properties,  https://github.com/sindresorhus/to-fast-properties,  1.0.3,  MIT,  https://github.com/sindresorhus/to-fast-properties/blob/master/license
+to-fast-properties,  https://github.com/sindresorhus/to-fast-properties,  2.0.0,  MIT,  https://github.com/sindresorhus/to-fast-properties/blob/master/license
+trim-right,  https://github.com/sindresorhus/trim-right,  1.0.1,  MIT,  https://github.com/sindresorhus/trim-right/blob/master/license
+type-detect,  https://github.com/chaijs/type-detect,  4.0.8,  MIT,  https://github.com/chaijs/type-detect/blob/master/LICENSE
+util-deprecate,  https://github.com/TooTallNate/util-deprecate,  1.0.2,  MIT,  https://github.com/TooTallNate/util-deprecate/blob/master/LICENSE
+util.promisify,  https://github.com/ljharb/util.promisify,  1.0.0,  MIT,  https://github.com/ljharb/util.promisify/blob/master/LICENSE
+validate.io-array,  https://github.com/validate-io/array,  1.0.6,  MIT,  https://github.com/validate-io/array/blob/master/LICENSE
+validate.io-function,  https://github.com/validate-io/function,  1.0.2,  MIT,  https://github.com/validate-io/function/blob/master/LICENSE
+vscode-debugadapter,  https://github.com/Microsoft/vscode-debugadapter-node,  1.31.0,  MIT,  https://github.com/Microsoft/vscode-debugadapter-node/blob/master/License.txt
+vscode-debugprotocol,  https://github.com/Microsoft/vscode-debugadapter-node,  1.31.0,  MIT,  https://github.com/Microsoft/vscode-debugadapter-node/blob/master/License.txt
+es5-ext,  https://github.com/medikoo/es5-ext,  0.10.46,  ISC,  https://github.com/medikoo/es5-ext/blob/master/LICENSE
+fs.realpath,  https://github.com/isaacs/fs.realpath,  1.0.0,  ISC,  https://github.com/isaacs/fs.realpath/blob/master/LICENSE
+glob,  https://github.com/isaacs/node-glob,  7.1.3,  ISC,  https://github.com/isaacs/node-glob/blob/master/LICENSE
+inflight,  https://github.com/npm/inflight,  1.0.6,  ISC,  https://github.com/npm/inflight/blob/master/LICENSE
+inherits,  https://github.com/isaacs/inherits,  2.0.3,  ISC,  https://github.com/isaacs/inherits/blob/master/LICENSE
+minimatch,  https://github.com/isaacs/minimatch,  3.0.4,  ISC,  https://github.com/isaacs/minimatch/blob/master/LICENSE
+once,  https://github.com/isaacs/once,  1.4.0,  ISC,  https://github.com/isaacs/once/blob/master/LICENSE
+semver,  https://github.com/npm/node-semver,  5.5.1,  ISC,  https://github.com/npm/node-semver/blob/master/LICENSE
+wrappy,  https://github.com/npm/wrappy,  1.0.2,  ISC,  https://github.com/npm/wrappy/blob/master/LICENSE
+yargs-parser,  https://github.com/yargs/yargs-parser,  10.1.0,  ISC,  https://github.com/yargs/yargs-parser/blob/master/LICENSE.txt
+esutils,  https://github.com/estools/esutils,  2.0.2,  BSD-2-Clause,  https://github.com/estools/esutils/blob/master/LICENSE.BSD
+domelementtype,  https://github.com/FB55/domelementtype,  1.1.3,  BSD-2-Clause,  https://github.com/FB55/domelementtype/blob/master/LICENSE
+domelementtype,  https://github.com/FB55/domelementtype,  1.3.0,  BSD-2-Clause,  https://github.com/FB55/domelementtype/blob/master/LICENSE
+domhandler,  https://github.com/fb55/DomHandler,  2.3.0,  BSD-2-Clause,  https://github.com/fb55/DomHandler/blob/master/LICENSE
+domutils,  https://github.com/FB55/domutils,  1.5.1,  BSD-2-Clause,  https://github.com/FB55/domutils/blob/master/LICENSE
+entities,  https://github.com/fb55/node-entities,  1.0.0,  BSD-2-Clause,  https://github.com/fb55/node-entities/blob/master/LICENSE
+entities,  https://github.com/fb55/node-entities,  1.1.1,  BSD-2-Clause,  https://github.com/fb55/node-entities/blob/master/LICENSE
+escope,  https://github.com/estools/escope,  3.6.0,  BSD-2-Clause,  https://github.com/estools/escope/blob/master/LICENSE.BSD
+espree,  https://github.com/eslint/espree,  3.5.4,  BSD-2-Clause,  https://github.com/eslint/espree/blob/master/LICENSE
+esprima,  https://github.com/jquery/esprima,  4.0.1,  BSD-2-Clause,  https://github.com/jquery/esprima/blob/master/LICENSE.BSD
+esrecurse,  https://github.com/estools/esrecurse,  4.2.1,  BSD-2-Clause,  https://github.com/estools/esrecurse/blob/master/README.md
+estraverse,  https://github.com/estools/estraverse,  4.2.0,  BSD-2-Clause,  https://github.com/estools/estraverse/blob/master/LICENSE.BSD
+uglify-es,  https://github.com/mishoo/UglifyJS2.git#harmony,  3.3.9,  BSD-2-Clause,  https://github.com/mishoo/UglifyJS2.git#harmony/blob/master/LICENSE
+uglify-js,  https://github.com/mishoo/UglifyJS2,  3.3.16,  BSD-2-Clause,  https://github.com/mishoo/UglifyJS2/blob/master/LICENSE
+prepack,  https://github.com/facebook/prepack,  0.2.25,  BSD-3-Clause,  https://github.com/facebook/prepack/blob/master/LICENSE
+shelljs,  https://github.com/arturadib/shelljs,  0.3.0,  BSD-3-Clause,  https://github.com/arturadib/shelljs/blob/master/LICENSE
+source-map,  https://github.com/mozilla/source-map,  0.5.7,  BSD-3-Clause,  https://github.com/mozilla/source-map/blob/master/LICENSE
+source-map,  https://github.com/mozilla/source-map,  0.6.1,  BSD-3-Clause,  https://github.com/mozilla/source-map/blob/master/LICENSE
+web-tooling-benchmark,  https://github.com/v8/web-tooling-benchmark,  0.5.1,  BSD-3-Clause,  https://github.com/v8/web-tooling-benchmark/blob/master/LICENSE
+permaproxy,  https://github.com/MatrixAI/js-permaproxy,  0.0.2,  Apache-2.0,  https://github.com/MatrixAI/js-permaproxy/blob/master/LICENSE
+resource-counter,  https://github.com/MatrixAI/js-resource-counter,  1.2.4,  Apache-2.0,  https://github.com/MatrixAI/js-resource-counter/blob/master/LICENSE
+virtualfs,  https://github.com/MatrixAI/js-virtualfs,  2.2.0,  Apache-2.0,  https://github.com/MatrixAI/js-virtualfs/blob/master/LICENSE
+glur,  https://github.com/nodeca/glur,  1.1.2,  MIT,  https://github.com/nodeca/glur/blob/master/LICENSE
+
+# Apple note:  This software (bitset) is dual licensed.  Apple chooses to distribute the software under the terms of the MIT license.
+bitset,  https://github.com/infusion/bitset.js,  5.0.3,  MIT,  https://github.com/infusion/bitset.js/blob/master/LICENSE
+
+# Apple note:  This software (jshint) is dual licensed.  Apple chooses to distribute the software under the terms of the MIT license.
+jshint,  https://github.com/jshint/jshint,  2.9.5,  MIT,  https://github.com/jshint/jshint/blob/master/LICENSE
+
+# Apple note:  This software (jszip) is dual licensed.  Apple chooses to distribute the software under the terms of the MIT license.
+jszip,  https://github.com/Stuk/jszip,  2.5.0,  MIT,  https://github.com/Stuk/jszip/blob/master/LICENSE.markdown
+

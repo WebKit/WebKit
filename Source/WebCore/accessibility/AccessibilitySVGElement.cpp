@@ -44,17 +44,16 @@
 
 namespace WebCore {
 
-AccessibilitySVGElement::AccessibilitySVGElement(RenderObject* renderer, AXObjectCache* cache)
+AccessibilitySVGElement::AccessibilitySVGElement(RenderObject& renderer, AXObjectCache* cache)
     : AccessibilityRenderObject(renderer)
     , m_axObjectCache(cache)
 {
-    ASSERT(renderer);
     ASSERT(cache);
 }
 
 AccessibilitySVGElement::~AccessibilitySVGElement() = default;
 
-Ref<AccessibilitySVGElement> AccessibilitySVGElement::create(RenderObject* renderer, AXObjectCache* cache)
+Ref<AccessibilitySVGElement> AccessibilitySVGElement::create(RenderObject& renderer, AXObjectCache* cache)
 {
     return adoptRef(*new AccessibilitySVGElement(renderer, cache));
 }
@@ -74,7 +73,7 @@ AccessibilityObject* AccessibilitySVGElement::targetForUseElement() const
         return nullptr;
 
     if (auto* cache = axObjectCache())
-        return cache->getOrCreate(target.element.get());
+        return cache->getOrCreate(*target.element);
     return nullptr;
 }
 

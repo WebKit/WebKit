@@ -215,9 +215,9 @@ class Port(object):
         """Return the absolute path to the default (version-independent) platform-specific results."""
         return self._filesystem.join(self.layout_tests_dir(), 'platform', self.port_name)
 
-    def baseline_version_dir(self):
+    def baseline_version_dir(self, device_type=None):
         """Return the absolute path to the platform-and-version-specific results."""
-        baseline_search_paths = self.baseline_search_path()
+        baseline_search_paths = self.baseline_search_path(device_type=device_type)
         return baseline_search_paths[0]
 
     def baseline_search_path(self, device_type=None):
@@ -620,17 +620,6 @@ class Port(object):
         """Prints the DRT command line that will be used."""
         driver = self.create_driver(0)
         return driver.cmd_line(self.get_option('pixel_tests'), [])
-
-    def update_baseline(self, baseline_path, data):
-        """Updates the baseline for a test.
-
-        Args:
-            baseline_path: the actual path to use for baseline, not the path to
-              the test. This function is used to update either generic or
-              platform-specific baselines, but we can't infer which here.
-            data: contents of the baseline.
-        """
-        self._filesystem.write_binary_file(baseline_path, data)
 
     # FIXME: update callers to create a finder and call it instead of these next five routines (which should be protected).
     def webkit_base(self):

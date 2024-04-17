@@ -82,7 +82,7 @@ void ApplePaySetup::getSetupFeatures(Document& document, SetupFeaturesPromise&& 
     });
 }
 
-void ApplePaySetup::begin(Document& document, Vector<RefPtr<ApplePaySetupFeature>>&& features, BeginPromise&& promise)
+void ApplePaySetup::begin(Document& document, Vector<Ref<ApplePaySetupFeature>>&& features, BeginPromise&& promise)
 {
     auto canCall = PaymentSession::canCreateSession(document);
     if (canCall.hasException()) {

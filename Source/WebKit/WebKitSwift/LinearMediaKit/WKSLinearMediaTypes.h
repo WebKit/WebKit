@@ -44,12 +44,11 @@ typedef NS_ENUM(NSInteger, WKSLinearMediaContentType) {
     WKSLinearMediaContentTypeAudioOnly
 };
 
-typedef NS_ENUM(NSInteger, WKSLinearMediaPresentationMode) {
-    WKSLinearMediaPresentationModeNone = 0,
-    WKSLinearMediaPresentationModeInline,
-    WKSLinearMediaPresentationModeFullscreen,
-    WKSLinearMediaPresentationModeFullscreenFromInline,
-    WKSLinearMediaPresentationModePip
+typedef NS_ENUM(NSInteger, WKSLinearMediaPresentationState) {
+    WKSLinearMediaPresentationStateInline = 0,
+    WKSLinearMediaPresentationStateEnteringFullscreen,
+    WKSLinearMediaPresentationStateFullscreen,
+    WKSLinearMediaPresentationStateExitingFullscreen
 };
 
 typedef NS_ENUM(NSInteger, WKSLinearMediaViewingMode) {
@@ -59,6 +58,15 @@ typedef NS_ENUM(NSInteger, WKSLinearMediaViewingMode) {
     WKSLinearMediaViewingModeImmersive,
     WKSLinearMediaViewingModeSpatial
 };
+
+API_AVAILABLE(visionos(1.0))
+@interface WKSLinearMediaContentMetadata : NSObject
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithTitle:(nullable NSString *)title subtitle:(nullable NSString *)subtitle NS_DESIGNATED_INITIALIZER;
+@property (nonatomic, readonly, copy, nullable) NSString *title;
+@property (nonatomic, readonly, copy, nullable) NSString *subtitle;
+@end
 
 API_AVAILABLE(visionos(1.0))
 @interface WKSLinearMediaTimeRange : NSObject

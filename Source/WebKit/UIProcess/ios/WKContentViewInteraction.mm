@@ -114,6 +114,7 @@
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FontAttributeChanges.h>
+#import <WebCore/FrameIdentifier.h>
 #import <WebCore/InputMode.h>
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/KeyboardScroll.h>
@@ -195,6 +196,11 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#import "WKSTextStyleManager.h"
+#import "WebKitSwiftSoftLink.h"
+#endif
+
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/cocoa/TranslationUIServicesSoftLink.h>
 #import <pal/ios/ManagedConfigurationSoftLink.h>
@@ -206,10 +212,6 @@
 #endif
 
 #if USE(BROWSERENGINEKIT)
-
-// FIXME: Replace this with linker flags in WebKit.xcconfig once BrowserEngineKit
-// is available everywhere we require it.
-asm(".linker_option \"-framework\", \"BrowserEngineKit\"");
 
 @interface WKUITextSelectionRect : UITextSelectionRect
 + (instancetype)selectionRectWithCGRect:(CGRect)rect;
@@ -548,7 +550,7 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @property (nonatomic) NSUInteger location;
 @property (nonatomic) NSUInteger length;
-@property (nonatomic, copy) NSString *frameIdentifier;
+@property (nonatomic) WebCore::FrameIdentifier frameIdentifier;
 @property (nonatomic) NSUInteger order;
 
 + (WKFoundTextRange *)foundTextRangeWithWebFoundTextRange:(WebKit::WebFoundTextRange)range;
@@ -6318,7 +6320,7 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
     _autocorrectionContextNeedsUpdate = YES;
     _candidateViewNeedsUpdate = !self.hasMarkedText && _isDeferringKeyEventsToInputMethod;
     _markedText = markedText;
-    _page->setCompositionAsync(markedText, underlines, highlights, { }, selectedRange, { });
+    _page->setCompositionAsync(markedText, underlines, highlights, selectedRange, { });
 }
 
 - (void)unmarkText
@@ -6899,11 +6901,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if (_focusedElementInformation.hasEverBeenPasswordField) {
         if ([privateTraits respondsToSelector:@selector(setLearnsCorrections:)])
             privateTraits.learnsCorrections = NO;
-#if USE(BROWSERENGINEKIT)
         extendedTraits.typingAdaptationEnabled = NO;
-#else
-        extendedTraits.typingAdaptationDisabled = YES;
-#endif
     }
 
     if ([privateTraits respondsToSelector:@selector(setShortcutConversionType:)])
@@ -11722,6 +11720,30 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     }];
 }
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType
+{
+    if (!_page->preferences().textIndicatorStylingEnabled())
+        return;
+
+    if (!_textStyleManager)
+        _textStyleManager = adoptNS([WebKit::allocWKSTextStyleManagerInstance() initWithDelegate:self]);
+
+    [_textStyleManager addTextIndicatorStyleForID:uuid withStyleType:styleType];
+}
+
+- (void)removeTextIndicatorStyleForID:(NSUUID *)uuid
+{
+    if (!_page->preferences().textIndicatorStylingEnabled())
+        return;
+
+    if (!_textStyleManager)
+        return;
+
+    [_textStyleManager removeTextIndicatorStyleForID:uuid];
+}
+#endif
+
 #if HAVE(UIFINDINTERACTION)
 
 - (void)find:(id)sender
@@ -13018,7 +13040,10 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     if (!_extendedTextInputTraits)
         _extendedTextInputTraits = adoptNS([WKExtendedTextInputTraits new]);
 
-    if (!_isBlurringFocusedElement)
+    if (!self._hasFocusedElement && !_isFocusingElementWithKeyboard) {
+        [_extendedTextInputTraits restoreDefaultValues];
+        [_extendedTextInputTraits setSelectionColorsToMatchTintColor:[self _cascadeInteractionTintColor]];
+    } else if (!_isBlurringFocusedElement)
         [self _updateTextInputTraits:_extendedTextInputTraits.get()];
 
     return _extendedTextInputTraits.get();
@@ -13060,6 +13085,54 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 {
     return !!_suppressSelectionAssistantReasons;
 }
+
+#pragma mark - WKSTextStyleSourceDelegate
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+- (void)targetedPreviewForID:(NSUUID *)uuid completionHandler:(void (^)(UITargetedPreview *))completionHandler
+{
+    auto textUUID = WTF::UUID::fromNSUUID(uuid);
+    _page->getTextIndicatorForID(*textUUID, [protectedSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] (std::optional<WebCore::TextIndicatorData> indicatorData) {
+
+        if (!indicatorData) {
+            completionHandler(nil);
+            return;
+        }
+
+        auto snapshot = indicatorData->contentImage;
+        if (!snapshot) {
+            completionHandler(nil);
+            return;
+        }
+
+        auto snapshotImage = snapshot->nativeImage();
+        if (!snapshotImage) {
+            completionHandler(nil);
+            return;
+        }
+
+        RetainPtr image = adoptNS([[UIImage alloc] initWithCGImage:snapshotImage->platformImage().get() scale:protectedSelf->_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
+
+        RetainPtr targetedPreview = createTargetedPreview(image.get(), protectedSelf.get(), [protectedSelf containerForContextMenuHintPreviews], indicatorData->textBoundingRectInRootViewCoordinates, indicatorData->textRectsInBoundingRectCoordinates, nil);
+
+        completionHandler(targetedPreview.get());
+    });
+}
+
+- (void)updateTextIndicatorStyleVisibilityForID:(NSUUID *)uuid visible:(BOOL)visible completionHandler:(void (^)(void))completionHandler
+{
+    auto textUUID = WTF::UUID::fromNSUUID(uuid);
+    _page->updateTextIndicatorStyleVisibilityForID(*textUUID, visible, [completionHandler = makeBlockPtr(completionHandler)] () {
+        completionHandler();
+    });
+}
+
+- (UIView *)containingViewForTextIndicatorStyle
+{
+    return self;
+}
+
+#endif
 
 #pragma mark - BETextInteractionDelegate
 
@@ -14586,7 +14659,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)dealloc
 {
-    [_frameIdentifier release];
     [super dealloc];
 }
 

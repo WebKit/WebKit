@@ -27,6 +27,7 @@
 #include "ExceptionOr.h"
 #include "MediaRecorderPrivateOptions.h"
 #include "RealtimeMediaSource.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 
@@ -49,9 +50,18 @@ struct MediaRecorderPrivateOptions;
 
 class MediaRecorderPrivate
     : public RealtimeMediaSource::AudioSampleObserver
-    , public RealtimeMediaSource::VideoFrameObserver {
+    , public RealtimeMediaSource::VideoFrameObserver
+    , public CanMakeCheckedPtr<MediaRecorderPrivate> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaRecorderPrivate);
 public:
     ~MediaRecorderPrivate();
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
     struct AudioVideoSelectedTracks {
         MediaStreamTrackPrivate* audioTrack { nullptr };
@@ -89,6 +99,13 @@ protected:
     bool shouldMuteVideo() const { return m_shouldMuteVideo; }
 
 private:
+#if CHECKED_POINTER_DEBUG
+    void registerCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::registerCheckedPtr(pointer); };
+    void copyCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::copyCheckedPtr(source, destination); }
+    void moveCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::moveCheckedPtr(source, destination); }
+    void unregisterCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::unregisterCheckedPtr(pointer); }
+#endif // CHECKED_POINTER_DEBUG
+
     virtual void stopRecording(CompletionHandler<void()>&&) = 0;
     virtual void pauseRecording(CompletionHandler<void()>&&) = 0;
     virtual void resumeRecording(CompletionHandler<void()>&&) = 0;

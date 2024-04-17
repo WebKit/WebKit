@@ -34,6 +34,7 @@
 #include "WebMouseEvent.h"
 #include <WebCore/DataDetectorElementInfo.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/IntPoint.h>
@@ -116,10 +117,13 @@ RetainPtr<DDHighlightRef> PDFDataDetectorOverlayController::createPlatformDataDe
     if (!plugin)
         return { };
 
-    auto selectionBoundsInPluginSpace = plugin->rectForSelectionInPluginSpace(dataDetectorItem.selection().get());
-    auto visibleContentRectInPluginSpace = plugin->visibleContentRect();
+    RefPtr mainFrameView = plugin->mainFrameView();
+    if (!mainFrameView)
+        return { };
 
-    return ::WebKit::createPlatformDataDetectorHighlight(Vector<FloatRect>::from(WTFMove(selectionBoundsInPluginSpace)), WTFMove(visibleContentRectInPluginSpace));
+    auto rectForSelectionInMainFrameContentsSpace = plugin->rectForSelectionInMainFrameContentsSpace(dataDetectorItem.selection().get());
+
+    return ::WebKit::createPlatformDataDetectorHighlight(Vector<FloatRect>::from(WTFMove(rectForSelectionInMainFrameContentsSpace)), mainFrameView->visibleContentRect());
 }
 
 bool PDFDataDetectorOverlayController::handleMouseEvent(const WebMouseEvent& event, PDFDocumentLayout::PageIndex pageIndex)
@@ -128,12 +132,17 @@ bool PDFDataDetectorOverlayController::handleMouseEvent(const WebMouseEvent& eve
     if (!plugin)
         return false;
 
+    RefPtr mainFrameView = plugin->mainFrameView();
+    if (!mainFrameView)
+        return false;
+
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return false;
 
     updateDataDetectorHighlightsIfNeeded(pageIndex);
 
-    auto mousePositionInPluginSpace = plugin->mousePositionInView(event);
+    auto mousePositionInWindowSpace = event.position();
+    auto mousePositionInMainFrameContentsSpace = mainFrameView->windowToContents(mousePositionInWindowSpace);
     bool mouseIsOverActiveHighlightButton = false;
     m_staleDataDetectorItemWithHighlight = std::exchange(m_activeDataDetectorItemWithHighlight, { { }, { } });
     RefPtr<PDFDataDetectorItem> dataDetectorItemForActiveHighlight;
@@ -141,7 +150,7 @@ bool PDFDataDetectorOverlayController::handleMouseEvent(const WebMouseEvent& eve
     if (auto iterator = m_pdfDataDetectorItemsWithHighlightsMap.find(pageIndex); iterator != m_pdfDataDetectorItemsWithHighlightsMap.end()) {
         for (auto& [dataDetectorItem, coreHighlight] : iterator->value) {
             Boolean isOverButton = NO;
-            if (!PAL::softLink_DataDetectors_DDHighlightPointIsOnHighlight(coreHighlight->highlight(), mousePositionInPluginSpace, &isOverButton))
+            if (!PAL::softLink_DataDetectors_DDHighlightPointIsOnHighlight(coreHighlight->highlight(), mousePositionInMainFrameContentsSpace, &isOverButton))
                 continue;
 
             mouseIsOverActiveHighlightButton = isOverButton;
@@ -167,24 +176,26 @@ bool PDFDataDetectorOverlayController::handleMouseEvent(const WebMouseEvent& eve
     }
 
     if (event.type() == WebEventType::MouseDown && mouseIsOverActiveHighlightButton)
-        return handleDataDetectorAction(mousePositionInPluginSpace, *m_activeDataDetectorItemWithHighlight.first);
+        return handleDataDetectorAction(mousePositionInWindowSpace, *m_activeDataDetectorItemWithHighlight.first);
 
     return false;
 }
 
-bool PDFDataDetectorOverlayController::handleDataDetectorAction(const IntPoint& mousePositionInPluginSpace, PDFDataDetectorItem& dataDetectorItem)
+bool PDFDataDetectorOverlayController::handleDataDetectorAction(const IntPoint& mousePositionInWindowSpace, PDFDataDetectorItem& dataDetectorItem)
 {
     RefPtr plugin = protectedPlugin();
-
     if (!plugin)
         return false;
 
-    auto rectForSelectionInPluginSpace = roundedIntRect(plugin->rectForSelectionInPluginSpace(dataDetectorItem.selection().get()));
+    RefPtr mainFrameView = plugin->mainFrameView();
+    if (!mainFrameView)
+        return false;
 
-    plugin->handleClickForDataDetectionResult({ dataDetectorItem.scannerResult(), rectForSelectionInPluginSpace }, mousePositionInPluginSpace);
+    auto rectForSelectionInMainFrameContentsSpace = roundedIntRect(plugin->rectForSelectionInMainFrameContentsSpace(dataDetectorItem.selection().get()));
+
+    plugin->handleClickForDataDetectionResult({ dataDetectorItem.scannerResult(), mainFrameView->contentsToWindow(rectForSelectionInMainFrameContentsSpace) }, mousePositionInWindowSpace);
     return true;
 }
-
 
 void PDFDataDetectorOverlayController::updateDataDetectorHighlightsIfNeeded(PDFDocumentLayout::PageIndex pageIndex)
 {
@@ -268,16 +279,16 @@ void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(std::o
     if (!plugin)
         return;
 
-    Vector<IntRect> dirtyRectsInContentSpace;
+    Vector<IntRect> dirtyRectsInMainFrameContentsSpace;
 
     if (activeHighlight)
-        dirtyRectsInContentSpace.appendVector(plugin->boundsForSelection(activeDataDetectorItem->selection().get(), UnifiedPDFPlugin::CoordinateSpace::Contents));
+        dirtyRectsInMainFrameContentsSpace.append(plugin->rectForSelectionInMainFrameContentsSpace(activeDataDetectorItem->selection().get()));
 
     if (previousActiveHighlight)
-        dirtyRectsInContentSpace.appendVector(plugin->boundsForSelection(previousDataDetectorItem->selection().get(), UnifiedPDFPlugin::CoordinateSpace::Contents));
+        dirtyRectsInMainFrameContentsSpace.append(plugin->rectForSelectionInMainFrameContentsSpace(previousDataDetectorItem->selection().get()));
 
-    WTF::forEach(dirtyRectsInContentSpace, [&](const auto& dirtyRectInContentSpace) {
-        installOverlayIfNeeded().setNeedsDisplay(dirtyRectInContentSpace);
+    WTF::forEach(dirtyRectsInMainFrameContentsSpace, [&](const auto& dirtyRectInMainFrameContentsSpace) {
+        installOverlayIfNeeded().setNeedsDisplay(dirtyRectInMainFrameContentsSpace);
     });
 }
 

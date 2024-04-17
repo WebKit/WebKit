@@ -670,8 +670,13 @@ public:
 
     LayoutRect contentBoxRect() const { return mediaPlayerContentBoxRect(); }
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    void updateSpatialTrackingLabel();
+    void defaultSpatialTrackingLabelChanged(const String&);
+
     const String& spatialTrackingLabel() const;
-    void setSpatialTrackingLabel(String&&);
+    void setSpatialTrackingLabel(const String&);
+#endif
 
     void mediaSourceWasDetached();
 
@@ -1246,7 +1251,8 @@ private:
     bool m_shouldVideoPlaybackRequireUserGesture : 1;
     bool m_volumeLocked : 1;
 
-    enum class ControlsState : uint8_t { None, Initializing, Ready };
+    enum class ControlsState : uint8_t { None, Initializing, Ready, PartiallyDeinitialized };
+    friend String convertEnumerationToString(HTMLMediaElement::ControlsState enumerationValue);
     ControlsState m_controlsState { ControlsState::None };
 
     AutoplayEventPlaybackState m_autoplayEventPlaybackState { AutoplayEventPlaybackState::None };
@@ -1358,6 +1364,12 @@ private:
     RefPtr<MediaResourceSniffer> m_sniffer;
     bool m_networkErrorOccured { false };
     std::optional<ContentType> m_lastContentTypeUsed;
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    using DefaultSpatialTrackingLabelChangedObserver = WTF::Observer<void(String&&)>;
+    DefaultSpatialTrackingLabelChangedObserver m_defaultSpatialTrackingLabelChangedObserver;
+    String m_spatialTrackingLabel;
+#endif
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<Logger> m_logger;

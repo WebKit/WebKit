@@ -254,6 +254,7 @@ public:
     RefPtr<Archive> popArchiveForSubframe(const String& frameName, const URL&);
     WEBCORE_EXPORT SharedBuffer* parsedArchiveData() const;
 
+    bool hasArchiveResourceCollection() const { return !!m_archiveResourceCollection; }
     WEBCORE_EXPORT bool scheduleArchiveLoad(ResourceLoader&, const ResourceRequest&);
 #endif
 
@@ -330,6 +331,9 @@ public:
 
     bool allowsActiveContentRuleListActionsForURL(const String& contentRuleListIdentifier, const URL&) const;
     WEBCORE_EXPORT void setActiveContentRuleListActionPatterns(const HashMap<String, Vector<String>>&);
+
+    const HashSet<String>& visibilityAdjustmentSelectors() const { return m_visibilityAdjustmentSelectors; }
+    void setVisibilityAdjustmentSelectors(HashSet<String>&& selectors) { m_visibilityAdjustmentSelectors = WTFMove(selectors); }
 
 #if ENABLE(DEVICE_ORIENTATION)
     DeviceOrientationOrMotionPermissionState deviceOrientationAndMotionAccessState() const { return m_deviceOrientationAndMotionAccessState; }
@@ -695,6 +699,8 @@ private:
     String m_customNavigatorPlatform;
     MemoryCompactRobinHoodHashMap<String, Vector<UserContentURLPattern>> m_activeContentRuleListActionPatterns;
     ContentExtensionEnablement m_contentExtensionEnablement { ContentExtensionDefaultEnablement::Enabled, { } };
+
+    HashSet<String> m_visibilityAdjustmentSelectors;
 
     ScriptExecutionContextIdentifier m_resultingClientId;
 

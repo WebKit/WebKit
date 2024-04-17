@@ -765,7 +765,7 @@ sub GetCustomIsReachable
 sub IsDOMGlobalObject
 {
     my $interface = shift;
-    return $interface->type->name eq "LocalDOMWindow" || $interface->type->name eq "RemoteDOMWindow" || $codeGenerator->InheritsInterface($interface, "WorkerGlobalScope") || $codeGenerator->InheritsInterface($interface, "WorkletGlobalScope") || $interface->type->name eq "ShadowRealmGlobalScope" || $interface->type->name eq "TestGlobalObject";
+    return $interface->type->name eq "DOMWindow" || $codeGenerator->InheritsInterface($interface, "WorkerGlobalScope") || $codeGenerator->InheritsInterface($interface, "WorkletGlobalScope") || $interface->type->name eq "ShadowRealmGlobalScope" || $interface->type->name eq "TestGlobalObject";
 }
 
 sub ShouldUseGlobalObjectPrototype
@@ -3024,8 +3024,7 @@ sub GenerateHeader
         }
     }
 
-#    push(@headerContent, "class JSWindowProxy;\n\n") if $interfaceName eq "LocalDOMWindow" or $interfaceName eq "RemoteDOMWindow";
-    $headerIncludes{"JSWindowProxy.h"} = 1 if $interfaceName eq "LocalDOMWindow" or $interfaceName eq "RemoteDOMWindow";
+    $headerIncludes{"JSWindowProxy.h"} = 1 if $interfaceName eq "DOMWindow";
 
     my $exportMacro = GetExportMacroForJSClass($interface);
 
@@ -3041,7 +3040,7 @@ sub GenerateHeader
     push(@headerContent, "    using Base = $parentClassName;\n");
     push(@headerContent, "    using DOMWrapped = $implType;\n") if $hasParent;
 
-    if ($interfaceName eq "LocalDOMWindow" || $interfaceName eq "RemoteDOMWindow") {
+    if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    static $className* create(JSC::VM& vm, JSC::Structure* structure, Ref<$implType>&& impl, JSWindowProxy* proxy)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(vm)) ${className}(vm, structure, WTFMove(impl), proxy);\n");
@@ -3090,7 +3089,7 @@ sub GenerateHeader
     $structureFlags{"JSC::NewImpurePropertyFiresWatchpoints"} = 1 if $interface->extendedAttributes->{NewImpurePropertyFiresWatchpoints};
     $structureFlags{"JSC::IsImmutablePrototypeExoticObject"} = 1 if $interface->extendedAttributes->{IsImmutablePrototypeExoticObject};
     $structureFlags{"JSC::MasqueradesAsUndefined"} = 1 if $interface->extendedAttributes->{MasqueradesAsUndefined};
-    $structureFlags{"JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance"} = 1 if $interfaceName eq "LocalDOMWindow";
+    $structureFlags{"JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance"} = 1 if $interfaceName eq "DOMWindow";
         
     # Prototype
     unless (ShouldUseGlobalObjectPrototype($interface) || ShouldUseOrdinaryObjectPrototype($interface)) {
@@ -3362,7 +3361,7 @@ sub GenerateHeader
     push(@headerContent, "protected:\n");
 
     # Constructor
-    if ($interfaceName eq "LocalDOMWindow" || $interfaceName eq "RemoteDOMWindow") {
+    if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    $className(JSC::VM&, JSC::Structure*, Ref<$implType>&&, JSWindowProxy*);\n");
     } elsif (ShouldCreateWithJSGlobalProxy($codeGenerator, $interface)) {
         push(@headerContent, "    $className(JSC::VM&, JSC::Structure*, Ref<$implType>&&);\n");
@@ -3374,7 +3373,7 @@ sub GenerateHeader
 
     if ($hasNonTrivialFinishCreation || $hasNonDefaultFinishCreation) {
         push(@headerContent, "#if ASSERT_ENABLED\n") if !$hasNonTrivialFinishCreation;
-        if ($interfaceName eq "LocalDOMWindow" || $interfaceName eq "RemoteDOMWindow") {
+        if ($interfaceName eq "DOMWindow") {
             push(@headerContent, "    void finishCreation(JSC::VM&, JSWindowProxy*);\n");
         } elsif (ShouldCreateWithJSGlobalProxy($codeGenerator, $interface)) {
             push(@headerContent, "    void finishCreation(JSC::VM&, JSC::JSGlobalProxy*);\n");
@@ -3907,12 +3906,9 @@ sub GenerateOverloadDispatcher
                 my @subtypes = $type->isUnion ? GetFlattenedMemberTypes($type) : ( $type );
                 for my $subtype (@subtypes) {
                     if ($codeGenerator->IsWrapperType($subtype) || $codeGenerator->IsBufferSourceType($subtype)) {
-                        if ($subtype->name eq "LocalDOMWindow") {
+                        if ($subtype->name eq "DOMWindow") {
                             AddToImplIncludes("JSWindowProxy.h");
                             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits<JSWindowProxy>() || asObject(distinguishingArg)->inherits<JSDOMWindow>())");
-                        } elsif ($subtype->name eq "RemoteDOMWindow") {
-                            AddToImplIncludes("JSWindowProxy.h");
-                            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits<JSWindowProxy>() || asObject(distinguishingArg)->inherits<JSRemoteDOMWindow>())");
                         } else {
                             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JS" . $subtype->name . ">()");
                         }
@@ -4212,7 +4208,11 @@ sub GenerateRuntimeEnableConditionalString
             push(@conjuncts, "(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isSecureContext()"
                 . "|| jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->allowsMediaDevices())");
         } else {
-            push(@conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()");
+            if ($interface->type->name eq "DOMWindow") {
+                push(@conjuncts, "(scriptExecutionContext && scriptExecutionContext->isSecureContext())");
+            } else {
+                push(@conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()");
+            }
         }
     }
 
@@ -4238,7 +4238,10 @@ sub GenerateRuntimeEnableConditionalString
             my @orflags = split(/\|/, $flag);
             my @orconjuncts;
             foreach my $orflag (@orflags) {
-                if ($exposedToWindowOnly) {
+                if ($interface->type->name eq "DOMWindow") {
+                    push(@orconjuncts, "(scriptExecutionContext && scriptExecutionContext->settingsValues()." . ToMethodName($orflag) . ')');
+                } elsif ($exposedToWindowOnly) {
+                    # FIXME: This downcast<Document> doesn't seem necessary.
                     push(@orconjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settingsValues()." . ToMethodName($orflag));
                 } else {
                     push(@orconjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->settingsValues()." . ToMethodName($orflag));
@@ -4281,7 +4284,11 @@ sub GenerateRuntimeEnableConditionalString
 
         my @flags = split(/&/, $context->extendedAttributes->{EnabledByQuirk});
         foreach my $flag (@flags) {
-            push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->quirks()." . ToMethodName($flag) . "Quirk()");
+            if ($interface->type->name eq "DOMWindow") {
+                push(@conjuncts, "(scriptExecutionContext && downcast<Document>(scriptExecutionContext)->quirks()." . ToMethodName($flag) . "Quirk())");
+            } else {
+                push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->quirks()." . ToMethodName($flag) . "Quirk()");
+            }
         }
     }
 
@@ -4296,7 +4303,11 @@ sub GenerateRuntimeEnableConditionalString
 
         my @flags = split(/&/, $context->extendedAttributes->{DisabledByQuirk});
         foreach my $flag (@flags) {
-            push(@conjuncts, "!downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->quirks()." . ToMethodName($flag) . "Quirk()");
+            if ($interface->type->name eq "DOMWindow") {
+                push(@conjuncts, "(!scriptExecutionContext || !downcast<Document>(scriptExecutionContext)->quirks()." . ToMethodName($flag) . "Quirk())");
+            } else {
+                push(@conjuncts, "!downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->quirks()." . ToMethodName($flag) . "Quirk()");
+            }
         }
     }
 
@@ -4869,8 +4880,9 @@ sub GenerateImplementation
     push(@implContent, ", CREATE_METHOD_TABLE($className) };\n\n");
 
     # Constructor
-    if ($interfaceName eq "LocalDOMWindow" || $interfaceName eq "RemoteDOMWindow") {
+    if ($interfaceName eq "DOMWindow") {
         AddIncludesForImplementationTypeInImpl("JSWindowProxy");
+        AddIncludesForImplementationTypeInImpl("HTMLFrameOwnerElement");
         push(@implContent, "${className}::$className(VM& vm, Structure* structure, Ref<$implType>&& impl, JSWindowProxy* proxy)\n");
         push(@implContent, "    : $parentClassName(vm, structure, WTFMove(impl), proxy)\n");
         push(@implContent, "{\n");
@@ -4903,10 +4915,11 @@ sub GenerateImplementation
     $hasNonTrivialFinishCreation = 0;
     $hasNonDefaultFinishCreation = 0;
 
-    if ($interfaceName eq "LocalDOMWindow" || $interfaceName eq "RemoteDOMWindow") {
+    if ($interfaceName eq "DOMWindow") {
         push(@finishCreation, "void ${className}::finishCreation(VM& vm, JSWindowProxy* proxy)\n");
         push(@finishCreation, "{\n");
         push(@finishCreation, "    Base::finishCreation(vm, proxy);\n\n");
+        push(@finishCreation, "    auto* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext();\n\n");
         $hasNonDefaultFinishCreation = 1;
     } elsif (ShouldCreateWithJSGlobalProxy($codeGenerator, $interface)) {
         push(@finishCreation, "void ${className}::finishCreation(VM& vm, JSGlobalProxy* proxy)\n");
@@ -5492,7 +5505,7 @@ sub GenerateAttributeGetterBodyDefinition
     }
 
     if ($needSecurityCheck) {
-        if ($interface->type->name eq "LocalDOMWindow") {
+        if ($interface->type->name eq "DOMWindow") {
             AddToImplIncludes("JSDOMBindingSecurityInlines.h", $conditional);
             push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject, ThrowSecurityError);\n");
         } else {
@@ -5659,7 +5672,7 @@ sub GenerateAttributeSetterBodyDefinition
     GenerateCustomElementReactionsStackIfNeeded($outputArray, $attribute, "lexicalGlobalObject");
 
     if ($needSecurityCheck) {
-        if ($interface->type->name eq "LocalDOMWindow") {
+        if ($interface->type->name eq "DOMWindow") {
             AddToImplIncludes("JSDOMBindingSecurityInlines.h", $conditional);
             push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject, ThrowSecurityError);\n");
         } else {
@@ -5891,7 +5904,7 @@ sub GenerateOperationBodyDefinition
         if ($interface->extendedAttributes->{CheckSecurity} and !$operation->extendedAttributes->{DoNotCheckSecurity}) {
             assert("Security checks are not supported for static operations.") if $operation->isStatic;
             
-            if ($interface->type->name eq "LocalDOMWindow") {
+            if ($interface->type->name eq "DOMWindow") {
                 AddToImplIncludes("JSDOMBindingSecurityInlines.h", $conditional);
                 push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, *castedThis, ThrowSecurityError);\n");
             } else {
@@ -7351,7 +7364,10 @@ sub GetBaseIDLType
     return "IDLSequence<" . GetIDLType($interface, @{$type->subtypes}[0]) . ">" if $codeGenerator->IsSequenceType($type);
     return "IDLFrozenArray<" . GetIDLType($interface, @{$type->subtypes}[0]) . ">" if $codeGenerator->IsFrozenArrayType($type);
     return "IDLRecord<" . GetIDLType($interface, @{$type->subtypes}[0]) . ", " . GetIDLType($interface, @{$type->subtypes}[1]) . ">" if $codeGenerator->IsRecordType($type);
-    return "IDLPromise<" . GetIDLType($interface, @{$type->subtypes}[0]) . ">" if $codeGenerator->IsPromiseType($type);
+    if ($codeGenerator->IsPromiseType($type)) {
+        my $promiseType = $type->extendedAttributes->{BypassDocumentFullyActiveCheck} ? "IDLPromiseIgnoringSuspension" : "IDLPromise";
+        return "${promiseType}<" . GetIDLType($interface, @{$type->subtypes}[0]) . ">";
+    }
     return "IDLUnion<" . join(", ", GetIDLUnionMemberTypes($interface, $type)) . ">" if $type->isUnion;
     return "IDLCallbackFunction<" . GetCallbackClassName($type->name) . ">" if $codeGenerator->IsCallbackFunction($type);
     return "IDLCallbackInterface<" . GetCallbackClassName($type->name) . ">" if $codeGenerator->IsCallbackInterface($type);
@@ -7441,8 +7457,8 @@ sub JSValueToNative
     push(@conversionArguments, $thisObjectReference) if JSValueToNativeDOMConvertNeedsThisObject($type);
     push(@conversionArguments, $globalObjectReference) if JSValueToNativeDOMConvertNeedsGlobalObject($type);
     push(@conversionArguments, $exceptionThrower) if $exceptionThrower;
-    if ($type->extendedAttributes->{StringContext}) {
-        my $interfaceName = $interface->type->name;
+    if ($type->extendedAttributes->{StringContext} || $type->name eq "ScheduledAction") {
+        my $interfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
         if ($functionName) {
             push(@conversionArguments, "\"$interfaceName $functionName\"_s");
         } else {

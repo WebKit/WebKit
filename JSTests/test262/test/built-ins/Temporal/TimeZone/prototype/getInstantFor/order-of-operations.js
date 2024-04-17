@@ -32,8 +32,10 @@ const expected = [
   "has fields.calendar.year",
   "has fields.calendar.yearMonthFromFields",
   "has fields.calendar.yearOfWeek",
-  // CalendarFields
+  // lookup
+  "get fields.calendar.dateFromFields",
   "get fields.calendar.fields",
+  // CalendarFields
   "call fields.calendar.fields",
   // PrepareTemporalFields
   "get fields.day",
@@ -67,7 +69,6 @@ const expected = [
   "get fields.year.valueOf",
   "call fields.year.valueOf",
   // InterpretTemporalDateTimeFields
-  "get fields.calendar.dateFromFields",
   "call fields.calendar.dateFromFields",
   // ToTemporalDisambiguation
   "get options.disambiguation",

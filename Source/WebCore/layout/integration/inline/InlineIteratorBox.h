@@ -113,6 +113,9 @@ protected:
     friend class TextBoxIterator;
 
     PathVariant m_pathVariant;
+
+private:
+    bool hasRenderer() const;
 };
 
 class BoxIterator {
@@ -225,6 +228,13 @@ inline const RenderObject& Box::renderer() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) -> const RenderObject& {
         return path.renderer();
+    });
+}
+
+inline bool Box::hasRenderer() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> bool {
+        return path.hasRenderer();
     });
 }
 

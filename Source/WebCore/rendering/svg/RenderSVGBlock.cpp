@@ -41,6 +41,8 @@ RenderSVGBlock::RenderSVGBlock(Type type, SVGGraphicsElement& element, RenderSty
 {
 }
 
+RenderSVGBlock::~RenderSVGBlock() = default;
+
 void RenderSVGBlock::updateFromStyle()
 {
     RenderBlockFlow::updateFromStyle();
@@ -67,7 +69,7 @@ void RenderSVGBlock::updateFromStyle()
 
 bool RenderSVGBlock::needsHasSVGTransformFlags() const
 {
-    return graphicsElement().hasTransformRelatedAttributes();
+    return protectedGraphicsElement()->hasTransformRelatedAttributes();
 }
 
 void RenderSVGBlock::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const

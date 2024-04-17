@@ -76,6 +76,8 @@ RenderInline::RenderInline(Type type, Document& document, RenderStyle&& style)
     ASSERT(isRenderInline());
 }
 
+RenderInline::~RenderInline() = default;
+
 void RenderInline::willBeDestroyed()
 {
 #if ASSERT_ENABLED
@@ -194,16 +196,12 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
             updateStyleOfAnonymousBlockContinuations(*containingBlock(), &newStyle, oldStyle);
     }
 
-    if (diff >= StyleDifference::Repaint) {
-        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
-            if (selfNeedsLayout())
-                lineLayout->flow().invalidateLineLayoutPath();
-            else
-                lineLayout->updateStyle(*this, *oldStyle);
-        }
+    if (diff >= StyleDifference::Repaint && selfNeedsLayout()) {
+        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+            lineLayout->flow().invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::StyleChange);
     }
 
-    propagateStyleToAnonymousChildren(PropagateToAllChildren);
+    propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
 }
 
 bool RenderInline::mayAffectLayout() const
