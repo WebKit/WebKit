@@ -235,7 +235,7 @@ private:
     GlyphBuffer layoutSimpleText(const TextRun&, unsigned from, unsigned to, ForTextEmphasisOrNot = NotForTextEmphasis) const;
     void drawGlyphBuffer(GraphicsContext&, const GlyphBuffer&, FloatPoint&, CustomFontNotReadyAction) const;
     void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, const AtomString&, const FloatPoint&) const;
-    float widthForTextUsingWidthIterator(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
+    float widthForSimpleText(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
     WEBCORE_EXPORT float widthForSimpleTextSlow(StringView text, TextDirection, float*) const;
@@ -247,7 +247,7 @@ private:
     static bool canExpandAroundIdeographsInComplexText();
 
     GlyphBuffer layoutComplexText(const TextRun&, unsigned from, unsigned to, ForTextEmphasisOrNot = NotForTextEmphasis) const;
-    float widthForTextUsingComplexTextController(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
+    float widthForComplexText(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
 
