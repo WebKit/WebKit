@@ -2839,3 +2839,5 @@ webkit.org/b/272657 fast/canvas/offscreen-nested-worker-serialization.html [ Ski
 # webkit.org/b/272718 NEW TEST (277048@main): [ Sonoma WK1 ]2X imported/w3c/web-platform-tests/web-animations/animation-model/side-effects-of-animations are consistent failures
 [ Sonoma+ ] imported/w3c/web-platform-tests/web-animations/animation-model/side-effects-of-animations-current.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/web-animations/animation-model/side-effects-of-animations-in-effect.html [ ImageOnlyFailure ]
+
+webkit.org/b/272792 fast/css/viewport-height-border.html [ Pass Crash ]
