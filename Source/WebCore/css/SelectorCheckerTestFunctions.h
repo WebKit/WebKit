@@ -429,7 +429,7 @@ ALWAYS_INLINE bool matchesFullscreenDocumentPseudoClass(const Element& element)
 }
 
 #if ENABLE(VIDEO)
-ALWAYS_INLINE bool matchesInWindowFullScreenPseudoClass(const Element& element)
+ALWAYS_INLINE bool matchesInWindowFullscreenPseudoClass(const Element& element)
 {
     if (&element != element.document().fullscreenManager().currentFullscreenElement())
         return false;
