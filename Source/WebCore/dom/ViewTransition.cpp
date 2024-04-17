@@ -366,9 +366,6 @@ ExceptionOr<void> ViewTransition::captureOldState()
     for (auto& element : captureElements) {
         CapturedElement capture;
 
-        CheckedPtr renderBox = dynamicDowncast<RenderBoxModelObject>(element->renderer());
-        if (renderBox)
-            capture.oldSize = renderBox->borderBoundingBox().size();
         capture.oldProperties = copyElementBaseProperties(element, capture.oldSize);
         if (m_document->frame())
             capture.oldImage = snapshotNodeVisualOverflowClippedToViewport(*m_document->frame(), element.get(), capture.oldOverflowRect);
@@ -609,7 +606,7 @@ void ViewTransition::clearViewTransition()
         documentElement->invalidateStyleInternal();
 }
 
-Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& element, const LayoutSize& size)
+Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& element, LayoutSize& size)
 {
     ComputedStyleExtractor styleExtractor(&element);
 
@@ -622,8 +619,6 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& e
 #if ENABLE(DARK_MODE_CSS)
         CSSPropertyColorScheme,
 #endif
-        CSSPropertyWidth,
-        CSSPropertyHeight,
     };
 
     Ref<MutableStyleProperties> props = styleExtractor.copyProperties(transitionProperties);
@@ -631,12 +626,13 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& e
 
     if (renderer && renderer->isDocumentElementRenderer()) {
         auto& frameView = renderer->view().frameView();
-        props->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(frameView.contentsWidth(), CSSUnitType::CSS_PX));
-        props->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(frameView.contentsHeight(), CSSUnitType::CSS_PX));
-    } else {
-        props->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(size.width(), CSSUnitType::CSS_PX));
-        props->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(size.height(), CSSUnitType::CSS_PX));
-    }
+        size.setWidth(frameView.frameRect().width());
+        size.setHeight(frameView.frameRect().height());
+    } else if (CheckedPtr renderBox = dynamicDowncast<RenderBoxModelObject>(element.renderer()))
+        size = renderBox->borderBoundingBox().size();
+
+    props->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(size.width(), CSSUnitType::CSS_PX));
+    props->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(size.height(), CSSUnitType::CSS_PX));
 
     TransformationMatrix transform;
 
@@ -685,9 +681,9 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
             if (!renderBox)
                 continue;
 
-            LayoutSize boxSize = renderBox->borderBoundingBox().size();
-            LayoutRect overflowRect;
+            LayoutSize boxSize;
             properties = copyElementBaseProperties(*newElement, boxSize);
+            LayoutRect overflowRect;
             if (renderBox->hasLayer())
                 overflowRect = renderBox->layer()->localBoundingBox(RenderLayer::IncludeRootBackgroundPaintingArea);
 
@@ -697,7 +693,6 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
                 if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer.get()))
                     viewTransitionCapture->setSize(boxSize, overflowRect);
             }
-
         } else
             properties = capturedElement->oldProperties;
 

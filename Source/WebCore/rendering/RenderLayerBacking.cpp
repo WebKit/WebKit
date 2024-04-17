@@ -74,6 +74,7 @@
 #include "RenderSVGModelObject.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
+#include "RenderViewTransitionCapture.h"
 #include "SVGGraphicsElement.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
@@ -655,15 +656,13 @@ void RenderLayerBacking::updateOpacity(const RenderStyle& style)
 
 void RenderLayerBacking::updateTransform(const RenderStyle& style)
 {
-    if (renderer().capturedInViewTransition()) {
-        if (m_contentsContainmentLayer)
-            m_contentsContainmentLayer->setTransform({ });
-        m_graphicsLayer->setTransform({ });
-        return;
-    }
-
     TransformationMatrix t;
-    if (m_owningLayer.isTransformed())
+    if (renderer().capturedInViewTransition()) {
+        Styleable styleable(*renderer().document().documentElement(), Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, style.viewTransitionName()->name });
+        CheckedPtr renderer = styleable.renderer();
+        if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer.get()))
+            t.scaleNonUniform(viewTransitionCapture->scale().width(), viewTransitionCapture->scale().height());
+    } else if (m_owningLayer.isTransformed())
         m_owningLayer.updateTransformFromStyle(t, style, RenderStyle::individualTransformOperations());
     
     if (m_contentsContainmentLayer) {
@@ -677,7 +676,7 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
 {
     auto defaultAnchorPoint = FloatPoint3D { 0.5, 0.5, 0 };
 
-    if (m_owningLayer.isRenderViewLayer())
+    if (m_owningLayer.isRenderViewLayer() || renderer().capturedInViewTransition())
         defaultAnchorPoint = { };
 
     if (!renderer().hasTransformRelatedProperty()) {

@@ -77,7 +77,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement& d
     if (viewTransitionRoot)
         viewTransitionRoot->setStyle(WTFMove(newRootStyle));
     else {
-        auto newViewTransitionRoot = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, documentElementRenderer.document(), WTFMove(newRootStyle));
+        auto newViewTransitionRoot = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, documentElementRenderer.document(), WTFMove(newRootStyle), RenderObject::BlockFlowFlag::IsViewTransitionContainer);
         newViewTransitionRoot->initializeStyle();
         documentElementRenderer.view().setViewTransitionRoot(*newViewTransitionRoot.get());
         viewTransitionRoot = newViewTransitionRoot.get();
@@ -136,7 +136,7 @@ static RenderPtr<RenderBox> createRendererIfNeeded(RenderElement& documentElemen
         rendererViewTransition->setSize(capturedElement->oldSize, capturedElement->oldOverflowRect);
         renderer = WTFMove(rendererViewTransition);
     } else
-        renderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, RenderStyle::clone(*style));
+        renderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, RenderStyle::clone(*style), RenderObject::BlockFlowFlag::IsViewTransitionContainer);
 
     renderer->initializeStyle();
     return renderer;

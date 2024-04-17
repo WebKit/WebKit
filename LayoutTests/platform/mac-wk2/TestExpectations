@@ -1895,6 +1895,7 @@ webkit.org/b/269581 http/tests/site-isolation/mouse-events/context-menu-event-tw
 [ Monterey+ ] http/tests/navigation/ping-attribute/area-cross-origin-from-https-UpgradeMixedContent.html [ Pass Failure ]
 
 webkit.org/b/269996 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/offscreen-element-modified-before-coming-onscreen.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/inline-element-size.html [ ImageOnlyFailure ]
 
 # webkit.org/b/270092  (REGRESSION (275274@main): [ Sonoma+ wk2 ] Multiple compositing/plugins/pdf/pdf are constant failures)
 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed.html [ Failure ]

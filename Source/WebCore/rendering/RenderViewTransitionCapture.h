@@ -43,11 +43,15 @@ public:
 
     void layout() override;
 
+    FloatSize scale() const { return m_scale; }
+
 private:
     ASCIILiteral renderName() const override { return style().pseudoElementType() == PseudoId::ViewTransitionNew ? "RenderViewTransitionNew"_s : "RenderViewTransitionOld"_s; }
 
     RefPtr<ImageBuffer> m_oldImage;
     LayoutRect m_overflowRect;
+    FloatSize m_scale;
+    LayoutRect m_localOverflowRect;
 };
 
 } // namespace WebCore

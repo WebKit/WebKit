@@ -140,6 +140,15 @@ void RenderObjectDeleter::operator() (RenderObject* renderer) const
     renderer->destroy();
 }
 
+static bool shouldBeAnonymous(Node& node, RenderObject::TypeSpecificFlags typeSpecificFlags)
+{
+    if (!node.isDocumentNode())
+        return false;
+    if (typeSpecificFlags.kind() != RenderObject::TypeSpecificFlags::Kind::BlockFlow)
+        return true;
+    return typeSpecificFlags.blockFlowFlags() != RenderObject::BlockFlowFlag::IsViewTransitionContainer;
+}
+
 RenderObject::RenderObject(Type type, Node& node, OptionSet<TypeFlag> typeFlags, TypeSpecificFlags typeSpecificFlags)
     : CachedImageClient()
 #if ASSERT_ENABLED
@@ -147,7 +156,7 @@ RenderObject::RenderObject(Type type, Node& node, OptionSet<TypeFlag> typeFlags,
     , m_setNeedsLayoutForbidden(false)
 #endif
     , m_node(node)
-    , m_typeFlags(node.isDocumentNode() ? (typeFlags | TypeFlag::IsAnonymous) : typeFlags)
+    , m_typeFlags(shouldBeAnonymous(node, typeSpecificFlags) ? (typeFlags | TypeFlag::IsAnonymous) : typeFlags)
     , m_type(type)
     , m_typeSpecificFlags(typeSpecificFlags)
 {
