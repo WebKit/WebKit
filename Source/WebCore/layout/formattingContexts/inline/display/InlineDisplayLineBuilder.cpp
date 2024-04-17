@@ -433,7 +433,7 @@ void InlineDisplayLineBuilder::addLineClampTrailingLinkBoxIfApplicable(const Inl
         return { };
     }();
 
-    if (!insertionPosition) {
+    if (!insertionPosition || !*insertionPosition) {
         ASSERT_NOT_REACHED();
         return;
     }
