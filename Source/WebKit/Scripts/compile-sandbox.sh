@@ -7,7 +7,7 @@ SANDBOX_NAME=$2;
 SDK_NAME=$3
 SANDBOX_IMPORT_DIR=$4
 
-if ! xcrun --sdk $SDK_NAME -f sbutil 2> /dev/null; then
+if [ -z "$(xcrun --sdk $SDK_NAME -f sbutil 2> /dev/null)" ]; then
     exit 0;
 fi;
 
