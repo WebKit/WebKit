@@ -62,15 +62,15 @@ RetainPtr<id> CoreIPCCNPostalAddress::toID() const
 {
     RetainPtr<CNMutablePostalAddress> address = adoptNS([[PAL::getCNMutablePostalAddressClass() alloc] init]);
 
-    address.get().street = (NSString *)m_street;
-    address.get().subLocality = (NSString *)m_subLocality;
-    address.get().city = (NSString *)m_city;
-    address.get().subAdministrativeArea = (NSString *)m_subAdministrativeArea;
-    address.get().state = (NSString *)m_state;
-    address.get().postalCode = (NSString *)m_postalCode;
-    address.get().country = (NSString *)m_country;
-    address.get().ISOCountryCode = (NSString *)m_isoCountryCode;
-    address.get().formattedAddress = (NSString *)m_formattedAddress;
+    address.get().street = nsStringNilIfNull(m_street);
+    address.get().subLocality = nsStringNilIfNull(m_subLocality);
+    address.get().city = nsStringNilIfNull(m_city);
+    address.get().subAdministrativeArea = nsStringNilIfNull(m_subAdministrativeArea);
+    address.get().state = nsStringNilIfNull(m_state);
+    address.get().postalCode = nsStringNilIfNull(m_postalCode);
+    address.get().country = nsStringNilIfNull(m_country);
+    address.get().ISOCountryCode = nsStringNilIfNull(m_isoCountryCode);
+    address.get().formattedAddress = nsStringNilIfNull(m_formattedAddress);
 
     return address;
 }
