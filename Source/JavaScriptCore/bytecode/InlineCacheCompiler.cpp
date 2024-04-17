@@ -3916,14 +3916,28 @@ static void commit(const GCSafeConcurrentJSLocker&, VM& vm, std::unique_ptr<Watc
     }
 }
 
-static inline bool canUseMegamorphicPutFastPath(Structure* structure)
+enum class MegamorphicPutFastPathGiveUpReason : uint8_t {
+    HasReadOnlyOrGetterSetterPropertiesExcludingProto,
+    OverridesGetPrototype,
+    OverridesPut,
+    HasPolyProto,
+};
+
+static inline Expected<void, MegamorphicPutFastPathGiveUpReason> canUseMegamorphicPutFastPath(VM& vm, Structure* structure, UniquedStringImpl* uid)
 {
     while (true) {
-        if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || structure->typeInfo().overridesGetPrototype() || structure->typeInfo().overridesPut() || structure->hasPolyProto())
-            return false;
+        if (mayHaveNonDefaultHandlingForPut(vm, structure, uid)) {
+            if (structure->typeInfo().overridesGetPrototype())
+                return makeUnexpected(MegamorphicPutFastPathGiveUpReason::OverridesGetPrototype);
+            if (structure->typeInfo().overridesPut())
+                return makeUnexpected(MegamorphicPutFastPathGiveUpReason::OverridesPut);
+            if (structure->hasPolyProto())
+                return makeUnexpected(MegamorphicPutFastPathGiveUpReason::HasPolyProto);
+            return makeUnexpected(MegamorphicPutFastPathGiveUpReason::HasReadOnlyOrGetterSetterPropertiesExcludingProto);
+        }
         JSValue prototype = structure->storedPrototype();
         if (prototype.isNull())
-            return true;
+            return { };
         structure = asObject(prototype)->structure();
     }
 }
@@ -4007,6 +4021,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     // If the resulting set of cases is so big that we would stop caching and this is InstanceOf,
     // then we want to generate the generic InstanceOf and then stop.
     if (cases.size() >= Options::maxAccessVariantListSize() || m_stubInfo->canBeMegamorphic) {
+        static constexpr bool megamorphicVerbose = false;
         switch (m_stubInfo->accessType) {
         case AccessType::InstanceOf: {
             while (!cases.isEmpty())
@@ -4021,22 +4036,27 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             bool allAreSimpleLoadOrMiss = true;
             for (auto& accessCase : cases) {
                 if (accessCase->type() != AccessCase::Load && accessCase->type() != AccessCase::Miss) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__, " ", accessCase->type());
                     allAreSimpleLoadOrMiss = false;
                     break;
                 }
                 if (accessCase->usesPolyProto()) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                     allAreSimpleLoadOrMiss = false;
                     break;
                 }
                 if (accessCase->viaGlobalProxy()) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                     allAreSimpleLoadOrMiss = false;
                     break;
                 }
             }
 
             // Currently, we do not apply megamorphic cache for "length" property since Array#length and String#length are too common.
-            if (!canUseMegamorphicGetById(vm(), identifier.uid()))
+            if (!canUseMegamorphicGetById(vm(), identifier.uid())) {
+                dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__, " ", identifier.uid());
                 allAreSimpleLoadOrMiss = false;
+            }
 
 #if USE(JSVALUE32_64)
             allAreSimpleLoadOrMiss = false;
@@ -4055,14 +4075,17 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             bool allAreSimpleLoadOrMiss = true;
             for (auto& accessCase : cases) {
                 if (accessCase->type() != AccessCase::Load && accessCase->type() != AccessCase::Miss) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__, " ", accessCase->type());
                     allAreSimpleLoadOrMiss = false;
                     break;
                 }
                 if (accessCase->usesPolyProto()) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                     allAreSimpleLoadOrMiss = false;
                     break;
                 }
                 if (accessCase->viaGlobalProxy()) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                     allAreSimpleLoadOrMiss = false;
                     break;
                 }
@@ -4088,26 +4111,32 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             bool allAreSimpleReplaceOrTransition = true;
             for (auto& accessCase : cases) {
                 if (accessCase->type() != AccessCase::Replace && accessCase->type() != AccessCase::Transition) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__, " ", accessCase->type());
                     allAreSimpleReplaceOrTransition = false;
                     break;
                 }
                 if (accessCase->usesPolyProto()) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                     allAreSimpleReplaceOrTransition = false;
                     break;
                 }
                 if (accessCase->viaGlobalProxy()) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                     allAreSimpleReplaceOrTransition = false;
                     break;
                 }
-                if (!canUseMegamorphicPutFastPath(accessCase->structure())) {
+                if (auto result = canUseMegamorphicPutFastPath(vm(), accessCase->structure(), accessCase->identifier().uid()); !result) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__, " ", static_cast<unsigned>(result.error()), " ", JSValue(accessCase->structure()));
                     allAreSimpleReplaceOrTransition = false;
                     break;
                 }
             }
 
             // Currently, we do not apply megamorphic cache for "length" property since Array#length and String#length are too common.
-            if (!canUseMegamorphicPutById(vm(), identifier.uid()))
+            if (!canUseMegamorphicPutById(vm(), identifier.uid())) {
+                dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                 allAreSimpleReplaceOrTransition = false;
+            }
 
 #if USE(JSVALUE32_64)
             allAreSimpleReplaceOrTransition = false;
@@ -4126,18 +4155,22 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             bool allAreSimpleReplaceOrTransition = true;
             for (auto& accessCase : cases) {
                 if (accessCase->type() != AccessCase::Replace && accessCase->type() != AccessCase::Transition) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__, " ", accessCase->type());
                     allAreSimpleReplaceOrTransition = false;
                     break;
                 }
                 if (accessCase->usesPolyProto()) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                     allAreSimpleReplaceOrTransition = false;
                     break;
                 }
                 if (accessCase->viaGlobalProxy()) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                     allAreSimpleReplaceOrTransition = false;
                     break;
                 }
-                if (!canUseMegamorphicPutFastPath(accessCase->structure())) {
+                if (auto result = canUseMegamorphicPutFastPath(vm(), accessCase->structure(), accessCase->identifier().uid()); !result) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__, " ", static_cast<unsigned>(result.error()), " ", JSValue(accessCase->structure()));
                     allAreSimpleReplaceOrTransition = false;
                     break;
                 }
@@ -4160,22 +4193,27 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             bool allAreSimpleHitOrMiss = true;
             for (auto& accessCase : cases) {
                 if (accessCase->type() != AccessCase::InHit && accessCase->type() != AccessCase::InMiss) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__, " ", accessCase->type());
                     allAreSimpleHitOrMiss = false;
                     break;
                 }
                 if (accessCase->usesPolyProto()) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                     allAreSimpleHitOrMiss = false;
                     break;
                 }
                 if (accessCase->viaGlobalProxy()) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                     allAreSimpleHitOrMiss = false;
                     break;
                 }
             }
 
             // Currently, we do not apply megamorphic cache for "length" property since Array#length and String#length are too common.
-            if (!canUseMegamorphicInById(vm(), identifier.uid()))
+            if (!canUseMegamorphicInById(vm(), identifier.uid())) {
+                dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                 allAreSimpleHitOrMiss = false;
+            }
 
 #if USE(JSVALUE32_64)
             allAreSimpleHitOrMiss = false;
@@ -4193,14 +4231,17 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             bool allAreSimpleHitOrMiss = true;
             for (auto& accessCase : cases) {
                 if (accessCase->type() != AccessCase::InHit && accessCase->type() != AccessCase::InMiss) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__, " ", accessCase->type());
                     allAreSimpleHitOrMiss = false;
                     break;
                 }
                 if (accessCase->usesPolyProto()) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                     allAreSimpleHitOrMiss = false;
                     break;
                 }
                 if (accessCase->viaGlobalProxy()) {
+                    dataLogLnIf(megamorphicVerbose, "GiveUp Megamorphic ", __LINE__);
                     allAreSimpleHitOrMiss = false;
                     break;
                 }

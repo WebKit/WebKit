@@ -220,6 +220,34 @@ inline bool canUseMegamorphicPutById(VM& vm, UniquedStringImpl* uid)
     return !parseIndex(*uid) && uid != vm.propertyNames->underscoreProto;
 }
 
+ALWAYS_INLINE bool mayHaveNonDefaultHandlingForPut(VM& vm, Structure* structure, UniquedStringImpl* uid)
+{
+    if (structure->typeInfo().overridesGetPrototype() || structure->typeInfo().overridesPut() || structure->hasPolyProto())
+        return true;
+
+    if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto()) {
+        if (structure->seenProperties().ruleOut(CompactPtr<UniquedStringImpl>::encode(uid)))
+            return false;
+        unsigned attributes = 0;
+        PropertyOffset offset = structure->get(vm, uid, attributes);
+        if (isValidOffset(offset)) {
+            if (attributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue)
+                return true;
+        } else {
+            if (structure->typeInfo().hasStaticPropertyTable()) {
+                for (auto* info = structure->classInfoForCells(); info; info = info->parentClass) {
+                    if (auto* table = info->staticPropHashTable) {
+                        if (table->entry(uid))
+                            return true;
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
 inline AccessGenerationResult::AccessGenerationResult(Kind kind, Ref<InlineCacheHandler>&& handler)
     : m_kind(kind)
     , m_handler(WTFMove(handler))
