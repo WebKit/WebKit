@@ -361,6 +361,8 @@ for this property.
 @property (nonatomic, setter=_setMediaCaptureEnabled:) BOOL _mediaCaptureEnabled WK_API_AVAILABLE(macos(10.13), ios(11.0));
 - (void)_stopMediaCapture WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
+@property (nonatomic, readonly) BOOL _isSuspended;
+
 @property (nonatomic, readonly) BOOL _canTogglePictureInPicture;
 @property (nonatomic, readonly) BOOL _canToggleInWindow;
 @property (nonatomic, readonly) BOOL _isPictureInPictureActive;

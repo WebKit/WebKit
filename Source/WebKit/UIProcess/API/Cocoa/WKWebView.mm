@@ -2558,6 +2558,11 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #endif
 }
 
+- (BOOL)_isSuspended
+{
+    return _page->process().throttler().isSuspended();
+}
+
 - (BOOL)_canTogglePictureInPicture
 {
 #if HAVE(TOUCH_BAR)
