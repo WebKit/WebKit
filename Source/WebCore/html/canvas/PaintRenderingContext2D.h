@@ -27,8 +27,6 @@
 
 #include "CanvasRenderingContext2DBase.h"
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "CustomPaintCanvas.h"
 
 namespace WebCore {
@@ -50,4 +48,3 @@ private:
 
 } // namespace WebCore
 SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::PaintRenderingContext2D, isPaint())
-#endif

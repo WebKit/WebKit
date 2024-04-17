@@ -3238,11 +3238,9 @@ void Document::willBeRemovedFromFrame()
         editor->clear();
     detachFromFrame();
 
-#if ENABLE(CSS_PAINTING_API)
     for (auto& scope : m_paintWorkletGlobalScopes.values())
         scope->prepareForDestruction();
     m_paintWorkletGlobalScopes.clear();
-#endif
 
     m_hasPreparedForDestruction = true;
 
@@ -10097,7 +10095,6 @@ DeviceOrientationAndMotionAccessController& Document::deviceOrientationAndMotion
 
 #endif
 
-#if ENABLE(CSS_PAINTING_API)
 PaintWorklet& Document::ensurePaintWorklet()
 {
     if (!m_paintWorklet)
@@ -10115,7 +10112,6 @@ void Document::setPaintWorkletGlobalScopeForName(const String& name, Ref<PaintWo
     auto addResult = m_paintWorkletGlobalScopes.add(name, WTFMove(scope));
     ASSERT_UNUSED(addResult, addResult);
 }
-#endif
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 

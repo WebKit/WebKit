@@ -46,10 +46,9 @@ MainThreadStylePropertyMapReadOnly::MainThreadStylePropertyMapReadOnly() = defau
 Document* MainThreadStylePropertyMapReadOnly::documentFromContext(ScriptExecutionContext& context)
 {
     ASSERT(isMainThread());
-#if ENABLE(CSS_PAINTING_API)
+
     if (auto* paintWorklet = dynamicDowncast<PaintWorkletGlobalScope>(context))
         return paintWorklet->responsibleDocument();
-#endif
     return &downcast<Document>(context);
 }
 

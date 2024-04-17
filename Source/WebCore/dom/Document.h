@@ -1807,11 +1807,9 @@ public:
 
     const FixedVector<CSSPropertyID>& exposedComputedCSSPropertyIDs();
 
-#if ENABLE(CSS_PAINTING_API)
     PaintWorklet& ensurePaintWorklet();
     PaintWorkletGlobalScope* paintWorkletGlobalScopeForName(const String& name);
     void setPaintWorkletGlobalScopeForName(const String& name, Ref<PaintWorkletGlobalScope>&&);
-#endif
 
     WEBCORE_EXPORT bool isRunningUserScripts() const;
     WEBCORE_EXPORT void setAsRunningUserScripts();
@@ -2359,10 +2357,8 @@ private:
     
     std::optional<FixedVector<CSSPropertyID>> m_exposedComputedCSSPropertyIDs;
 
-#if ENABLE(CSS_PAINTING_API)
     RefPtr<PaintWorklet> m_paintWorklet;
     HashMap<String, Ref<PaintWorkletGlobalScope>> m_paintWorkletGlobalScopes;
-#endif
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
     std::unique_ptr<ContentChangeObserver> m_contentChangeObserver;

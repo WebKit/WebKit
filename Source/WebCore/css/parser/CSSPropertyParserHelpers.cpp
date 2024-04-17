@@ -4408,7 +4408,6 @@ static RefPtr<CSSValue> consumeFilterImage(CSSParserTokenRange& args, const CSSP
     return CSSFilterImageValue::create(imageValueOrNone.releaseNonNull(), filterValue.releaseNonNull());
 }
 
-#if ENABLE(CSS_PAINTING_API)
 static RefPtr<CSSValue> consumeCustomPaint(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     if (!context.cssPaintingAPIEnabled)
@@ -4425,7 +4424,6 @@ static RefPtr<CSSValue> consumeCustomPaint(CSSParserTokenRange& args, const CSSP
     auto argumentList = CSSVariableData::create(args.consumeAll());
     return CSSPaintImageValue::create(name, WTFMove(argumentList));
 }
-#endif
 
 static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, const CSSParserContext& context)
 {
@@ -4463,10 +4461,9 @@ static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, const 
         result = consumeWebkitNamedImage(args);
     else if (id == CSSValueWebkitFilter || id == CSSValueFilter)
         result = consumeFilterImage(args, context);
-#if ENABLE(CSS_PAINTING_API)
     else if (id == CSSValuePaint)
         result = consumeCustomPaint(args, context);
-#endif
+
     if (!result || !args.atEnd())
         return nullptr;
     range = rangeCopy;
@@ -4548,9 +4545,7 @@ static bool isGeneratedImage(CSSValueID id)
         || id == CSSValueCrossFade
         || id == CSSValueWebkitNamedImage
         || id == CSSValueWebkitFilter
-#if ENABLE(CSS_PAINTING_API)
         || id == CSSValuePaint
-#endif
         || id == CSSValueFilter;
 }
 

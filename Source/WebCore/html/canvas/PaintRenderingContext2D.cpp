@@ -28,8 +28,6 @@
 
 #include <wtf/IsoMallocInlines.h>
 
-#if ENABLE(CSS_PAINTING_API)
-
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PaintRenderingContext2D);
@@ -47,4 +45,3 @@ PaintRenderingContext2D::PaintRenderingContext2D(CanvasBase& canvas)
 PaintRenderingContext2D::~PaintRenderingContext2D() = default;
 
 } // namespace WebCore
-#endif

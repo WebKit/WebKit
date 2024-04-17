@@ -75,9 +75,7 @@ public:
     JSC::IsoHeapCellType m_heapCellTypeForJSShadowRealmGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSServiceWorkerGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSWorkletGlobalScope;
-#if ENABLE(CSS_PAINTING_API)
     JSC::IsoHeapCellType m_heapCellTypeForJSPaintWorkletGlobalScope;
-#endif
 #if ENABLE(WEB_AUDIO)
     JSC::IsoHeapCellType m_heapCellTypeForJSAudioWorkletGlobalScope;
 #endif

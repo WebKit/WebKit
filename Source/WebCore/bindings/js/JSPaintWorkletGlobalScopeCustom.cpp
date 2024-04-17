@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSPaintWorkletGlobalScope.h"
 
-#if ENABLE(CSS_PAINTING_API)
-
 namespace WebCore {
 using namespace JSC;
 
@@ -44,5 +42,3 @@ void JSPaintWorkletGlobalScope::visitAdditionalChildren(Visitor& visitor)
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSPaintWorkletGlobalScope);
 
 } // namespace WebCore
-
-#endif

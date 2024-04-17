@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSPaintRenderingContext2D.h"
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -58,5 +56,3 @@ void JSPaintRenderingContext2D::visitAdditionalChildren(Visitor& visitor)
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSPaintRenderingContext2D);
 
 } // namespace WebCore
-#endif
-

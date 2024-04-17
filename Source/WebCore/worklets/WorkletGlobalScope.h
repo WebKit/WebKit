@@ -56,9 +56,7 @@ class WorkletGlobalScope : public WorkerOrWorkletGlobalScope {
 public:
     virtual ~WorkletGlobalScope();
 
-#if ENABLE(CSS_PAINTING_API)
     virtual bool isPaintWorkletGlobalScope() const { return false; }
-#endif
 #if ENABLE(WEB_AUDIO)
     virtual bool isAudioWorkletGlobalScope() const { return false; }
 #endif

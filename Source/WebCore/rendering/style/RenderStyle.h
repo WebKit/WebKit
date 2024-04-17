@@ -1608,9 +1608,7 @@ public:
     inline void setApplePayButtonType(ApplePayButtonType);
 #endif
 
-#if ENABLE(CSS_PAINTING_API)
     void addCustomPaintWatchProperty(const AtomString&);
-#endif
 
     // Support for paint-order, stroke-linecap, stroke-linejoin, and stroke-miterlimit from https://drafts.fxtf.org/paint/.
     inline void setPaintOrder(PaintOrder);

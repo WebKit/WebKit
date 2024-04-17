@@ -1078,7 +1078,6 @@ CSSPaintingAPIEnabled:
   category: css
   humanReadableName: "CSS Painting API"
   humanReadableDescription: "Enable the CSS Painting API"
-  condition: ENABLE(CSS_PAINTING_API)
   defaultValue:
     WebKitLegacy:
       default: false
