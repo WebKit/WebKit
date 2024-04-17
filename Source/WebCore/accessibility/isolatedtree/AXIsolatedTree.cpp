@@ -568,6 +568,12 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
             propertyMap.set(AXPropertyName::AccessibilityText, axTextValue);
             break;
         }
+        case AXPropertyName::ARIATreeRows: {
+            AXCoreObject::AccessibilityChildrenVector ariaTreeRows;
+            axObject.ariaTreeRows(ariaTreeRows);
+            propertyMap.set(AXPropertyName::ARIATreeRows, axIDs(ariaTreeRows));
+            break;
+        }
         case AXPropertyName::ARIATreeRows:
             propertyMap.set(AXPropertyName::ARIATreeRows, axIDs(axObject.ariaTreeRows()));
             break;
