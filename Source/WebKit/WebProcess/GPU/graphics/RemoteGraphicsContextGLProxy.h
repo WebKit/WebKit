@@ -364,17 +364,21 @@ public:
     void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, std::span<GCGLint> params) final;
     void setDrawingBufferColorSpace(const WebCore::DestinationColorSpace&) final;
     RefPtr<WebCore::PixelBuffer> drawingBufferToPixelBuffer(WebCore::GraphicsContextGLFlipY) final;
-    GCGLExternalImage createExternalImage(WebCore::GraphicsContextGL::ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) final;
-    void deleteExternalImage(GCGLExternalImage handle) final;
-    void bindExternalImage(GCGLenum target, GCGLExternalImage) final;
-    GCGLExternalSync createExternalSync(WebCore::GraphicsContextGL::ExternalSyncSource&&) final;
-    void deleteExternalSync(GCGLExternalSync) final;
 
+#if ENABLE(WEBXR)
+    GCGLExternalImage createExternalImage(WebCore::GraphicsContextGL::ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
+    void deleteExternalImage(GCGLExternalImage handle) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
+    void bindExternalImage(GCGLenum target, GCGLExternalImage) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
+    GCGLExternalSync createExternalSync(WebCore::GraphicsContextGL::ExternalSyncSource&&) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
+#endif
+    void deleteExternalSync(GCGLExternalSync) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
+
+#if ENABLE(WEBXR)
     bool enableRequiredWebXRExtensions() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
     bool addFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
     void enableFoveation(GCGLuint) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
     void disableFoveation() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
-
+#endif
     // End of list used by generate-gpup-webgl script.
 
     static bool handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);

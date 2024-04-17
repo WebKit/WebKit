@@ -293,16 +293,20 @@ void GraphicsContextGLGBM::allocateDrawBufferObject()
     GL_EGLImageTargetTexture2DOES(textureTarget, result.iterator->value);
 }
 
+#if ENABLE(WEBXR)
 bool GraphicsContextGLGBM::addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>)
 {
     return false;
 }
+
 void GraphicsContextGLGBM::enableFoveation(GCGLuint)
 {
 }
+
 void GraphicsContextGLGBM::disableFoveation()
 {
 }
+#endif
 
 GraphicsContextGLGBM::Swapchain::Swapchain(GCGLDisplay platformDisplay)
     : platformDisplay(platformDisplay)

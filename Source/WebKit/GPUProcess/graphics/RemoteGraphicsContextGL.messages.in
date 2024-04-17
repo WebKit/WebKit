@@ -322,15 +322,19 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize) -> (std::span<const int32_t> params) Synchronous
     void SetDrawingBufferColorSpace(WebCore::DestinationColorSpace arg0)
     void DrawingBufferToPixelBuffer(enum:bool WebCore::GraphicsContextGLFlipY arg0) -> (RefPtr<WebCore::PixelBuffer> returnValue) Synchronous
-    void CreateExternalImage(uint32_t externalImage, WebCore::GraphicsContextGL::ExternalImageSource arg0, uint32_t internalFormat, int32_t layer) NotStreamEncodable
-    void DeleteExternalImage(uint32_t handle)
-    void BindExternalImage(uint32_t target, uint32_t arg1)
-    void CreateExternalSync(uint32_t externalSync, WebCore::GraphicsContextGL::ExternalSyncSource arg0) NotStreamEncodable
-    void DeleteExternalSync(uint32_t arg0)
+#if ENABLE(WEBXR)
+    [EnabledIf='webXREnabled()'] void CreateExternalImage(uint32_t externalImage, WebCore::GraphicsContextGL::ExternalImageSource arg0, uint32_t internalFormat, int32_t layer) NotStreamEncodable
+    [EnabledIf='webXREnabled()'] void DeleteExternalImage(uint32_t handle)
+    [EnabledIf='webXREnabled()'] void BindExternalImage(uint32_t target, uint32_t arg1)
+    [EnabledIf='webXREnabled()'] void CreateExternalSync(uint32_t externalSync, WebCore::GraphicsContextGL::ExternalSyncSource arg0) NotStreamEncodable
+#endif
+    [EnabledIf='webXREnabled()'] void DeleteExternalSync(uint32_t arg0)
+#if ENABLE(WEBXR)
     [EnabledIf='webXREnabled()'] void EnableRequiredWebXRExtensions() -> (bool returnValue) Synchronous
     [EnabledIf='webXREnabled()'] void AddFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const float> horizontalSamplesLeft, std::span<const float> verticalSamples, std::span<const float> horizontalSamplesRight) -> (bool returnValue) Synchronous
     [EnabledIf='webXREnabled()'] void EnableFoveation(uint32_t arg0)
     [EnabledIf='webXREnabled()'] void DisableFoveation()
+#endif
 }
 
 #endif

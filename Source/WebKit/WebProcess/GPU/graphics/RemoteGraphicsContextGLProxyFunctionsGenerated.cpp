@@ -3073,6 +3073,7 @@ RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::drawingBufferToPixelB
     return returnValue;
 }
 
+#if ENABLE(WEBXR)
 GCGLExternalImage RemoteGraphicsContextGLProxy::createExternalImage(WebCore::GraphicsContextGL::ExternalImageSource&& arg0, GCGLenum internalFormat, GCGLint layer)
 {
     if (isContextLost())
@@ -3120,6 +3121,7 @@ GCGLExternalSync RemoteGraphicsContextGLProxy::createExternalSync(WebCore::Graph
     }
     return name;
 }
+#endif
 
 void RemoteGraphicsContextGLProxy::deleteExternalSync(GCGLExternalSync arg0)
 {
@@ -3132,6 +3134,7 @@ void RemoteGraphicsContextGLProxy::deleteExternalSync(GCGLExternalSync arg0)
     }
 }
 
+#if ENABLE(WEBXR)
 bool RemoteGraphicsContextGLProxy::enableRequiredWebXRExtensions()
 {
     if (isContextLost())
@@ -3179,6 +3182,7 @@ void RemoteGraphicsContextGLProxy::disableFoveation()
         return;
     }
 }
+#endif
 
 }
 

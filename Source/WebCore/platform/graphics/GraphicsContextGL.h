@@ -1519,17 +1519,23 @@ public:
     using EGLImageSourceIOSurfaceHandle = GraphicsContextGLExternalImageSourceIOSurfaceHandle;
     using EGLImageSourceMTLSharedTextureHandle = GraphicsContextGLExternalImageSourceMTLSharedTextureHandle;
 #endif
+#if ENABLE(WEBXR)
     virtual bool addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) = 0;
     virtual void enableFoveation(GCGLuint) = 0;
     virtual void disableFoveation() = 0;
+#endif
 
     using ExternalImageSource = GraphicsContextGLExternalImageSource;
+#if ENABLE(WEBXR)
     virtual GCGLExternalImage createExternalImage(ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) = 0;
     virtual void deleteExternalImage(GCGLExternalImage) = 0;
     virtual void bindExternalImage(GCGLenum target, GCGLExternalImage) = 0;
+#endif
 
     using ExternalSyncSource = GraphicsContextGLExternalSyncSource;
+#if ENABLE(WEBXR)
     virtual GCGLExternalSync createExternalSync(ExternalSyncSource&&) = 0;
+#endif
     virtual void deleteExternalSync(GCGLExternalSync) = 0;
 
     // ========== Extension related entry points.
@@ -1550,7 +1556,9 @@ public:
     // Has no other side-effects.
     virtual bool isExtensionEnabled(const String&) = 0;
 
+#if ENABLE(WEBXR)
     virtual bool enableRequiredWebXRExtensions() { return false; }
+#endif
 
     // GL_ANGLE_translated_shader_source
     virtual String getTranslatedShaderSourceANGLE(PlatformGLObject) = 0;
@@ -1744,7 +1752,9 @@ private:
 using GCGLOwnedFramebuffer = GCGLOwned<PlatformGLObject, &GraphicsContextGL::deleteFramebuffer>;
 using GCGLOwnedRenderbuffer = GCGLOwned<PlatformGLObject, &GraphicsContextGL::deleteRenderbuffer>;
 using GCGLOwnedTexture = GCGLOwned<PlatformGLObject, &GraphicsContextGL::deleteTexture>;
+#if ENABLE(WEBXR)
 using GCGLOwnedExternalImage = GCGLOwned<GCGLExternalImage, &GraphicsContextGL::deleteExternalImage>;
+#endif
 
 } // namespace WebCore
 

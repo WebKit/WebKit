@@ -2851,6 +2851,7 @@ void GraphicsContextGLANGLE::getActiveUniformBlockiv(PlatformGLObject program, G
     GL_GetActiveUniformBlockivRobustANGLE(program, uniformBlockIndex, pname, params.size(), nullptr, params.data());
 }
 
+#if ENABLE(WEBXR)
 GCGLExternalImage GraphicsContextGLANGLE::createExternalImage(ExternalImageSource&&, GCGLenum, GCGLint)
 {
     notImplemented();
@@ -2882,6 +2883,7 @@ GCGLExternalSync GraphicsContextGLANGLE::createExternalSync(ExternalSyncSource&&
     notImplemented();
     return { };
 }
+#endif
 
 void GraphicsContextGLANGLE::deleteExternalSync(GCGLExternalSync sync)
 {

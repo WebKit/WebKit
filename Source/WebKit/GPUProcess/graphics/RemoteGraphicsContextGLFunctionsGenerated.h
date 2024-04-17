@@ -1652,6 +1652,7 @@
         returnValue = m_context->drawingBufferToPixelBuffer(arg0);
         completionHandler(WTFMove(returnValue));
     }
+#if ENABLE(WEBXR)
     void createExternalImage(uint32_t name, WebCore::GraphicsContextGL::ExternalImageSource&& arg0, uint32_t internalFormat, int32_t layer)
     {
         assertIsCurrent(workQueue());
@@ -1681,6 +1682,7 @@
         if (result)
             m_objectNames.add(name, result);
     }
+#endif
     void deleteExternalSync(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
@@ -1689,6 +1691,7 @@
         arg0 = m_objectNames.take(arg0);
         m_context->deleteExternalSync(arg0);
     }
+#if ENABLE(WEBXR)
     void enableRequiredWebXRExtensions(CompletionHandler<void(bool)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
@@ -1713,4 +1716,5 @@
         assertIsCurrent(workQueue());
         m_context->disableFoveation();
     }
+#endif
 
