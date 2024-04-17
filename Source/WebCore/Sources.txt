@@ -964,6 +964,7 @@ css/color/CSSUnresolvedColor.cpp
 css/color/CSSUnresolvedColorMix.cpp
 css/color/CSSUnresolvedLightDark.cpp
 css/parser/CSSAtRuleID.cpp
+css/parser/CSSCalcParser.cpp
 css/parser/CSSCustomPropertySyntax.cpp
 css/parser/CSSParser.cpp
 css/parser/CSSParserContext.cpp
@@ -974,6 +975,17 @@ css/parser/CSSParserObserverWrapper.cpp
 css/parser/CSSParserToken.cpp
 css/parser/CSSParserTokenRange.cpp
 css/parser/CSSPropertyParser.cpp
+css/parser/CSSPropertyParserConsumer+Angle.cpp
+css/parser/CSSPropertyParserConsumer+Color.cpp
+css/parser/CSSPropertyParserConsumer+Ident.cpp
+css/parser/CSSPropertyParserConsumer+Integer.cpp
+css/parser/CSSPropertyParserConsumer+Length.cpp
+css/parser/CSSPropertyParserConsumer+None.cpp
+css/parser/CSSPropertyParserConsumer+Number.cpp
+css/parser/CSSPropertyParserConsumer+Percent.cpp
+css/parser/CSSPropertyParserConsumer+Primitives.cpp
+css/parser/CSSPropertyParserConsumer+Resolution.cpp
+css/parser/CSSPropertyParserConsumer+Time.cpp
 css/parser/CSSPropertyParserHelpers.cpp
 css/parser/CSSPropertyParserWorkerSafe.cpp
 css/parser/CSSSelectorParser.cpp

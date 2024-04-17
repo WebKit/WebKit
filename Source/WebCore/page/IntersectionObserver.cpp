@@ -25,11 +25,10 @@
  */
 
 #include "config.h"
-
 #include "IntersectionObserver.h"
 
 #include "CSSParserTokenRange.h"
-#include "CSSPropertyParserHelpers.h"
+#include "CSSPropertyParserConsumer+Length.h"
 #include "CSSTokenizer.h"
 #include "Element.h"
 #include "FrameDestructionObserverInlines.h"
