@@ -348,7 +348,7 @@ public:
     void invalidateLineLayoutPath(InvalidationReason);
     void computeAndSetLineLayoutPath();
 
-    enum LineLayoutPath { UndeterminedPath = 0, ModernPath, LegacyPath, ForcedLegacyPath };
+    enum LineLayoutPath { UndeterminedPath = 0, ModernPath, LegacyPath };
     LineLayoutPath lineLayoutPath() const { return static_cast<LineLayoutPath>(renderBlockFlowLineLayoutPath()); }
     void setLineLayoutPath(LineLayoutPath path) { setRenderBlockFlowLineLayoutPath(path); }
 

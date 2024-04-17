@@ -976,14 +976,7 @@ void RenderBlockFlow::computeAndSetLineLayoutPath()
 {
     if (lineLayoutPath() != UndeterminedPath)
         return;
-
-    auto compute = [&] {
-        if (LayoutIntegration::LineLayout::canUseFor(*this))
-            return ModernPath;
-        return LegacyPath;
-    };
-
-    setLineLayoutPath(compute());
+    setLineLayoutPath(LayoutIntegration::LineLayout::canUseFor(*this) ? ModernPath : LegacyPath);
 }
 
 void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
@@ -3844,7 +3837,6 @@ void RenderBlockFlow::invalidateLineLayoutPath(InvalidationReason invalidationRe
 {
     switch (lineLayoutPath()) {
     case UndeterminedPath:
-    case ForcedLegacyPath:
         return;
     case LegacyPath:
         setLineLayoutPath(UndeterminedPath);
@@ -3869,9 +3861,9 @@ void RenderBlockFlow::invalidateLineLayoutPath(InvalidationReason invalidationRe
                 repaintAndSetNeedsLayoutIncludingOutOfFlowBoxes();
             }
         }
-        auto path = UndeterminedPath;
         m_lineLayout = std::monostate();
-        setLineLayoutPath(path);
+        if (invalidationReason == InvalidationReason::InsertionOrRemoval)
+            setLineLayoutPath(UndeterminedPath);
         if (selfNeedsLayout() || normalChildNeedsLayout())
             return;
         // FIXME: We should just kick off a subtree layout here (if needed at all) see webkit.org/b/172947.
