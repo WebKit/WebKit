@@ -414,7 +414,9 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(displayObject, "Depth"_s, String::number(screenDepth(nullptr)));
     addTableRow(displayObject, "Bits per color component"_s, String::number(screenDepthPerComponent(nullptr)));
     addTableRow(displayObject, "Font Scaling DPI"_s, String::number(fontDPI()));
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     addTableRow(displayObject, "Screen DPI"_s, String::number(screenDPI(displayID.value_or(primaryScreenDisplayID()))));
+#endif
 
     if (displayID) {
         if (auto* displayLink = page.process().processPool().displayLinks().existingDisplayLinkForDisplay(*displayID)) {
