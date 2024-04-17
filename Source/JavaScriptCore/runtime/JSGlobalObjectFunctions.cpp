@@ -39,7 +39,7 @@
 #include "JSSet.h"
 #include "Lexer.h"
 #include "LiteralParser.h"
-#include "ObjectConstructor.h"
+#include "ObjectConstructorInlines.h"
 #include "ParseInt.h"
 #include <stdio.h>
 #include <wtf/ASCIICType.h>
