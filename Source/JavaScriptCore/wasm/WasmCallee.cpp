@@ -391,44 +391,19 @@ const StackMap& OptimizingJITCallee::stackmap(CallSiteIndex callSiteIndex) const
 }
 #endif
 
-JSEntrypointInterpreterCallee::JSEntrypointInterpreterCallee(Vector<JSEntrypointInterpreterCalleeMetadata>&& metadata, LLIntCallee* callee)
+JSEntrypointInterpreterCallee::JSEntrypointInterpreterCallee()
     : JSEntrypointCallee(Wasm::CompilationMode::JSEntrypointInterpreterMode)
-    , TrailingArray<JSEntrypointInterpreterCallee, JSEntrypointInterpreterCalleeMetadata>(metadata.size(), metadata.begin(), metadata.end())
-    , wasmCallee(reinterpret_cast<intptr_t>(CalleeBits::boxNativeCalleeIfExists(callee)))
 {
-    if (Options::useJIT())
-        wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<LLintToWasmEntryPtrTag>();
-    else
-        wasmFunctionPrologue = LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline);
-
 }
 
 CodePtr<WasmEntryPtrTag> JSEntrypointInterpreterCallee::entrypointImpl() const
 {
-    if (m_replacementCallee)
-        return m_replacementCallee->entrypoint();
-    return LLInt::getCodeFunctionPtr<CFunctionPtrTag>(js_to_wasm_wrapper_entry);
+    return { };
 }
 
 RegisterAtOffsetList* JSEntrypointInterpreterCallee::calleeSaveRegistersImpl()
 {
-    // This must be the same to JSToWasm's callee save registers.
-    // The reason is that we may use m_replacementCallee which can be set at any time.
-    // So, we must store the same callee save registers at the same location to the JIT version.
-    static LazyNeverDestroyed<RegisterAtOffsetList> calleeSaveRegisters;
-    static std::once_flag initializeFlag;
-    std::call_once(initializeFlag, [] {
-        RegisterSet registers = RegisterSetBuilder::wasmPinnedRegisters();
-#if CPU(X86_64)
-#elif CPU(ARM64) || CPU(RISCV64)
-        ASSERT(registers.numberOfSetRegisters() == 4);
-#elif CPU(ARM)
-#else
-#error Unsupported architecture.
-#endif
-        calleeSaveRegisters.construct(WTFMove(registers));
-    });
-    return &calleeSaveRegisters.get();
+    return { };
 }
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)

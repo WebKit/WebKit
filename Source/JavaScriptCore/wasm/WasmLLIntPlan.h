@@ -93,8 +93,6 @@ private:
     void addTailCallEdge(uint32_t, uint32_t);
     void computeTransitiveTailCalls() const;
 
-    bool makeInterpretedJSToWasmCallee(unsigned functionIndex);
-
     Vector<std::unique_ptr<FunctionCodeBlockGenerator>> m_wasmInternalFunctions;
     const Ref<LLIntCallee>* m_callees { nullptr };
     Vector<Ref<LLIntCallee>> m_calleesVector;

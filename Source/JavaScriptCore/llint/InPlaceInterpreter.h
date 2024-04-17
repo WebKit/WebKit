@@ -37,9 +37,6 @@ extern "C" void ipint_catch_all_entry();
 #define IPINT_VALIDATE_DEFINE_FUNCTION(opcode, name) \
     extern "C" void ipint_ ## name ## _validate() REFERENCED_FROM_ASM WTF_INTERNAL NO_REORDER;
 
-#define JS_TO_WASM_WRAPPER_ENTRY_VALIDATE_DEFINE_FUNCTION(opcode, name) \
-    extern "C" void js_to_wasm_wrapper_entry_interp_ ## name ## _validate() REFERENCED_FROM_ASM WTF_INTERNAL NO_REORDER;
-
 #define FOR_EACH_IPINT_OPCODE(m) \
     m(0x00, unreachable) \
     m(0x01, nop) \
@@ -567,11 +564,6 @@ FOR_EACH_IPINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 FOR_EACH_IPINT_0xFC_TRUNC_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 FOR_EACH_IPINT_SIMD_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 FOR_EACH_IPINT_ATOMIC_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
-FOR_EACH_JS_TO_WASM_WRAPPER_METADATA_OPCODE(JS_TO_WASM_WRAPPER_ENTRY_VALIDATE_DEFINE_FUNCTION);
-// Label after last defined opcode
-JS_TO_WASM_WRAPPER_ENTRY_VALIDATE_DEFINE_FUNCTION(_, invalidop);
-// This is the label representing the furthest possible dispatch jump
-JS_TO_WASM_WRAPPER_ENTRY_VALIDATE_DEFINE_FUNCTION(_, afterops);
 #endif
 
 namespace JSC { namespace IPInt {
