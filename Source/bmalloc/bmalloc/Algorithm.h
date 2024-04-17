@@ -151,7 +151,7 @@ template<typename T> constexpr size_t sizeOf()
 
 template<typename T> constexpr size_t bitCount()
 {
-    return sizeof(T) * 8;
+    return sizeof(T) * CHAR_BIT;
 }
 
 #if BOS(WINDOWS)
@@ -174,14 +174,12 @@ __forceinline constexpr unsigned long __builtin_clzl(unsigned long value)
 template <typename T>
 constexpr unsigned clzConstexpr(T value)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
-
     using UT = typename std::make_unsigned<T>::type;
     UT uValue = value;
 
     unsigned zeroCount = 0;
-    for (int i = bitSize - 1; i >= 0; i--) {
-        if (uValue >> i)
+    for (unsigned i = bitCount<T>(); i--;) {
+        if (uValue & (static_cast<UT>(1) << i))
             break;
         zeroCount++;
     }
@@ -198,18 +196,15 @@ constexpr unsigned long log2(unsigned long value)
 template <typename T>
 constexpr unsigned ctzConstexpr(T value)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+    constexpr unsigned bitSize = bitCount<T>();
 
     using UT = typename std::make_unsigned<T>::type;
     UT uValue = value;
 
     unsigned zeroCount = 0;
-    for (unsigned i = 0; i < bitSize; i++) {
-        if (uValue & 1)
+    for (; zeroCount < bitSize; zeroCount++) {
+        if (uValue & (static_cast<UT>(1) << zeroCount))
             break;
-
-        zeroCount++;
-        uValue >>= 1;
     }
     return zeroCount;
 }
@@ -217,23 +212,46 @@ constexpr unsigned ctzConstexpr(T value)
 template<typename T>
 inline unsigned ctz(T value)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+#if BCOMPILER(GCC_COMPATIBLE)
+    constexpr unsigned bitSize = bitCount<T>();
+
+    if (!value)
+        return bitSize;
 
     using UT = typename std::make_unsigned<T>::type;
     UT uValue = value;
 
-#if BCOMPILER(GCC_COMPATIBLE)
-    if (uValue)
-        return __builtin_ctzll(uValue);
-    return bitSize;
-#elif BCOMPILER(MSVC) && !BCPU(X86)
+    // unsigned int and below
+    if constexpr (bitSize <= bitCount<unsigned>())
+        return __builtin_ctz(uValue);
+
+    // unsigned long
+    if constexpr (bitSize == bitCount<unsigned long>())
+        return __builtin_ctzl(uValue);
+
+    // unsigned long long
+    return __builtin_ctzll(uValue);
+#elif BCOMPILER(MSVC)
+    constexpr unsigned bitSize = bitCount<T>();
+
+    using UT = typename std::make_unsigned<T>::type;
+    UT uValue = value;
+
     unsigned long ret = 0;
+    if constexpr (bitSize <= 32) {
+        if (_BitScanForward(&ret, uValue))
+            return ret;
+        return bitSize;
+    }
+
+#if (BCPU(X86_64) || BCPU(ARM64))
     if (_BitScanForward64(&ret, uValue))
         return ret;
     return bitSize;
 #else
-    UNUSED_PARAM(bitSize);
-    UNUSED_PARAM(uValue);
+    return ctzConstexpr(value);
+#endif
+#else
     return ctzConstexpr(value);
 #endif
 }

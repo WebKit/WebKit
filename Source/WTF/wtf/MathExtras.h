@@ -621,14 +621,12 @@ void shuffleVector(VectorType& vector, const RandomFunc& randomFunc)
 template <typename T>
 constexpr unsigned clzConstexpr(T value)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
-
     using UT = typename std::make_unsigned<T>::type;
     UT uValue = value;
 
     unsigned zeroCount = 0;
-    for (int i = bitSize - 1; i >= 0; i--) {
-        if (uValue >> i)
+    for (unsigned i = countOfBits<T>; i--;) {
+        if (uValue & (static_cast<UT>(1) << i))
             break;
         zeroCount++;
     }
@@ -638,27 +636,49 @@ constexpr unsigned clzConstexpr(T value)
 template<typename T>
 inline unsigned clz(T value)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+#if COMPILER(GCC_COMPATIBLE)
+    constexpr unsigned bitSize = countOfBits<T>;
+
+    if (!value)
+        return bitSize;
 
     using UT = typename std::make_unsigned<T>::type;
     UT uValue = value;
 
-#if COMPILER(GCC_COMPATIBLE)
-    constexpr unsigned bitSize64 = sizeof(uint64_t) * CHAR_BIT;
-    if (uValue)
-        return __builtin_clzll(uValue) - (bitSize64 - bitSize);
-    return bitSize;
-#elif COMPILER(MSVC) && !CPU(X86)
+    // unsigned int and below
+    if constexpr (bitSize <= countOfBits<unsigned>)
+        return __builtin_clz(uValue) - (countOfBits<unsigned> - bitSize);
+
+    // unsigned long
+    if constexpr (bitSize == countOfBits<unsigned long>)
+        return __builtin_clzl(uValue);
+
+    // unsigned long long
+    return __builtin_clzll(uValue);
+#elif COMPILER(MSVC)
+    constexpr unsigned bitSize = countOfBits<T>;
+
+    using UT = typename std::make_unsigned<T>::type;
+    UT uValue = value;
+
     // Visual Studio 2008 or upper have __lzcnt, but we can't detect Intel AVX at compile time.
     // So we use bit-scan-reverse operation to calculate clz.
-    // _BitScanReverse64 is defined in X86_64 and ARM in MSVC supported environments.
     unsigned long ret = 0;
-    if (_BitScanReverse64(&ret, uValue))
-        return bitSize - 1 - ret;
-    return bitSize;
+    if constexpr (bitSize <= 32) {
+        if (_BitScanReverse(&ret, uValue))
+            return bitSize - 1 - ret;
+        return bitSize;
+    }
+
+#if CPU(X86_64) || CPU(ARM64)
+    if constexpr (bitSize == 64) {
+        if (_BitScanReverse64(&ret, uValue))
+            return ret ^ 63;
+        return 64;
+    }
+#endif
+    return clzConstexpr(value);
 #else
-    UNUSED_PARAM(bitSize);
-    UNUSED_PARAM(uValue);
     return clzConstexpr(value);
 #endif
 }
@@ -666,18 +686,15 @@ inline unsigned clz(T value)
 template <typename T>
 constexpr unsigned ctzConstexpr(T value)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+    constexpr unsigned bitSize = countOfBits<T>;
 
     using UT = typename std::make_unsigned<T>::type;
     UT uValue = value;
 
     unsigned zeroCount = 0;
-    for (unsigned i = 0; i < bitSize; i++) {
-        if (uValue & 1)
+    for (; zeroCount < bitSize; zeroCount++) {
+        if (uValue & (static_cast<UT>(1) << zeroCount))
             break;
-
-        zeroCount++;
-        uValue >>= 1;
     }
     return zeroCount;
 }
@@ -685,23 +702,46 @@ constexpr unsigned ctzConstexpr(T value)
 template<typename T>
 inline unsigned ctz(T value)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+#if COMPILER(GCC_COMPATIBLE)
+    constexpr unsigned bitSize = countOfBits<T>;
+
+    if (!value)
+        return bitSize;
 
     using UT = typename std::make_unsigned<T>::type;
     UT uValue = value;
 
-#if COMPILER(GCC_COMPATIBLE)
-    if (uValue)
-        return __builtin_ctzll(uValue);
-    return bitSize;
-#elif COMPILER(MSVC) && !CPU(X86)
+    // unsigned int and below
+    if constexpr (bitSize <= countOfBits<unsigned>)
+        return __builtin_ctz(uValue);
+
+    // unsigned long
+    if constexpr (bitSize == countOfBits<unsigned long>)
+        return __builtin_ctzl(uValue);
+
+    // unsigned long long
+    return __builtin_ctzll(uValue);
+#elif COMPILER(MSVC)
+    constexpr unsigned bitSize = countOfBits<T>;
+
+    using UT = typename std::make_unsigned<T>::type;
+    UT uValue = value;
+
     unsigned long ret = 0;
+    if constexpr (bitSize <= 32) {
+        if (_BitScanForward(&ret, uValue))
+            return ret;
+        return bitSize;
+    }
+
+#if CPU(X86_64) || CPU(ARM64)
     if (_BitScanForward64(&ret, uValue))
         return ret;
     return bitSize;
 #else
-    UNUSED_PARAM(bitSize);
-    UNUSED_PARAM(uValue);
+    return ctzConstexpr(value);
+#endif
+#else
     return ctzConstexpr(value);
 #endif
 }
@@ -723,7 +763,7 @@ constexpr unsigned getLSBSetConstexpr(T t)
 template<typename T>
 inline unsigned getMSBSet(T t)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+    constexpr unsigned bitSize = countOfBits<T>;
     ASSERT(t);
     return bitSize - 1 - clz(t);
 }
@@ -731,7 +771,7 @@ inline unsigned getMSBSet(T t)
 template<typename T>
 constexpr unsigned getMSBSetConstexpr(T t)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+    constexpr unsigned bitSize = countOfBits<T>;
     ASSERT_UNDER_CONSTEXPR_CONTEXT(t);
     return bitSize - 1 - clzConstexpr(t);
 }

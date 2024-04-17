@@ -102,7 +102,7 @@ ALWAYS_INLINE bool equal(const LChar* aLChar, std::span<const LChar> bLChar)
         return *aLChar == bLChar.front();
 
 #if COMPILER(GCC_COMPATIBLE)
-    switch (sizeof(unsigned) * CHAR_BIT - clz(length - 1)) { // Works as really fast log2, since length != 0.
+    switch (sizeof(unsigned) * CHAR_BIT - __builtin_clz(length - 1)) { // Works as really fast log2, since length > 1.
 #else
     switch (fastLog2(length)) {
 #endif
@@ -157,7 +157,7 @@ ALWAYS_INLINE bool equal(const UChar* aUChar, std::span<const UChar> bUChar)
         return *aUChar == bUChar.front();
 
 #if COMPILER(GCC_COMPATIBLE)
-    switch (sizeof(unsigned) * CHAR_BIT - clz(length - 1)) { // Works as really fast log2, since length != 0.
+    switch (sizeof(unsigned) * CHAR_BIT - __builtin_clz(length - 1)) { // Works as really fast log2, since length > 1.
 #else
     switch (fastLog2(length)) {
 #endif
