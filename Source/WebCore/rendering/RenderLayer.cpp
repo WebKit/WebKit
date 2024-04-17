@@ -4084,18 +4084,20 @@ Ref<HitTestingTransformState> RenderLayer::createLocalTransformState(RenderLayer
     return transformState.releaseNonNull();
 }
 
-static bool parentLayerIsDOMParent(const RenderLayer& layer)
+bool RenderLayer::ancestorLayerIsDOMParent(const RenderLayer* ancestor) const
 {
-    if (!layer.parent())
+    if (!ancestor)
         return false;
-    if (!layer.renderer().element() || !layer.renderer().element()->parentElementInComposedTree())
-        return false;
-    return layer.parent()->renderer().element() == layer.renderer().element()->parentElementInComposedTree();
+    if (renderer().element() && ancestor->renderer().element() == renderer().element()->parentElementInComposedTree())
+        return true;
+
+    std::optional<PseudoId> parentPseudoId = parentPseudoElement(renderer().style().pseudoElementType());
+    return parentPseudoId && *parentPseudoId == ancestor->renderer().style().pseudoElementType();
 }
 
 bool RenderLayer::participatesInPreserve3D() const
 {
-    return parentLayerIsDOMParent(*this) && parent()->preserves3D() && (transform() || renderer().style().backfaceVisibility() == BackfaceVisibility::Hidden || preserves3D());
+    return ancestorLayerIsDOMParent(parent()) && parent()->preserves3D() && (transform() || renderer().style().backfaceVisibility() == BackfaceVisibility::Hidden || preserves3D());
 }
 
 // hitTestLocation and hitTestRect are relative to rootLayer.

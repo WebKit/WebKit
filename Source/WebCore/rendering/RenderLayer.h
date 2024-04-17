@@ -884,6 +884,8 @@ public:
 
     void paintSVGResourceLayer(GraphicsContext&, const AffineTransform& contentTransform);
 
+    bool ancestorLayerIsDOMParent(const RenderLayer* ancestor) const;
+
 private:
 
     void setNextSibling(RenderLayer* next) { m_next = next; }

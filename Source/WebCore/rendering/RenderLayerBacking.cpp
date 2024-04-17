@@ -2381,15 +2381,6 @@ void RenderLayerBacking::positionOverflowControlsLayers()
     }
 }
 
-static bool ancestorLayerIsDOMParent(RenderLayer& layer, const RenderLayer* compositingAncestor)
-{
-    if (!compositingAncestor)
-        return false;
-    if (!layer.renderer().element() || !layer.renderer().element()->parentElementInComposedTree())
-        return false;
-    return compositingAncestor->renderer().element() == layer.renderer().element()->parentElementInComposedTree();
-}
-
 static bool ancestorLayerWillCombineTransform(const RenderLayer* compositingAncestor)
 {
     if (!compositingAncestor)
@@ -2401,7 +2392,7 @@ bool RenderLayerBacking::updateTransformFlatteningLayer(const RenderLayer* compo
 {
     bool needsFlatteningLayer = false;
     // If our parent layer has preserve-3d or perspective, and it's not our DOM parent, then we need a flattening layer to block that from being applied in 3d.
-    if (ancestorLayerWillCombineTransform(compositingAncestor) && !ancestorLayerIsDOMParent(m_owningLayer, compositingAncestor))
+    if (ancestorLayerWillCombineTransform(compositingAncestor) && !m_owningLayer.ancestorLayerIsDOMParent(compositingAncestor))
         needsFlatteningLayer = true;
 
     bool layerChanged = false;

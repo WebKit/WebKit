@@ -118,6 +118,18 @@ enum class PseudoId : uint32_t {
     PublicPseudoIdMask = ((1 << FirstInternalPseudoId) - 1) & ~((1 << FirstPublicPseudoId) - 1)
 };
 
+inline std::optional<PseudoId> parentPseudoElement(PseudoId pseudoId)
+{
+    switch (pseudoId) {
+    case PseudoId::FirstLetter: return PseudoId::FirstLine;
+    case PseudoId::ViewTransitionGroup: return PseudoId::ViewTransition;
+    case PseudoId::ViewTransitionImagePair: return PseudoId::ViewTransitionGroup;
+    case PseudoId::ViewTransitionNew: return PseudoId::ViewTransitionImagePair;
+    case PseudoId::ViewTransitionOld: return PseudoId::ViewTransitionImagePair;
+    default: return std::nullopt;
+    }
+}
+
 class PseudoIdSet {
 public:
     PseudoIdSet()
