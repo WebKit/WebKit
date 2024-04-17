@@ -24,7 +24,7 @@
 #pragma once
 
 #include "DOMWrapperWorld.h"
-#include "JSDOMGlobalObject.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapper.h"
 #include "ScriptWrappableInlines.h"
 #include "WebCoreTypedArrayController.h"
@@ -35,10 +35,6 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT JSC::Structure* getCachedDOMStructure(const JSDOMGlobalObject&, const JSC::ClassInfo*);
-WEBCORE_EXPORT JSC::Structure* cacheDOMStructure(JSDOMGlobalObject&, JSC::Structure*, const JSC::ClassInfo*);
-
-template<typename WrapperClass> JSC::Structure* getDOMStructure(JSC::VM&, JSDOMGlobalObject&);
 template<typename WrapperClass> JSC::Structure* deprecatedGetDOMStructure(JSC::JSGlobalObject*);
 template<typename WrapperClass> JSC::JSObject* getDOMPrototype(JSC::VM&, JSC::JSGlobalObject*);
 
@@ -56,8 +52,6 @@ bool setInlineCachedWrapper(DOMWrapperWorld&, JSC::ArrayBuffer*, JSC::JSArrayBuf
 bool clearInlineCachedWrapper(DOMWrapperWorld&, void*, JSDOMObject*);
 bool clearInlineCachedWrapper(DOMWrapperWorld&, ScriptWrappable*, JSDOMObject* wrapper);
 bool clearInlineCachedWrapper(DOMWrapperWorld&, JSC::ArrayBuffer*, JSC::JSArrayBuffer* wrapper);
-
-template<typename DOMClass> JSC::JSObject* getOrCreateWrapper(DOMWrapperWorld&, DOMClass&);
 
 template<typename DOMClass> JSC::JSObject* getCachedWrapper(DOMWrapperWorld&, DOMClass&);
 template<typename DOMClass> inline JSC::JSObject* getCachedWrapper(DOMWrapperWorld& world, Ref<DOMClass>& object) { return getCachedWrapper(world, object.get()); }
@@ -77,13 +71,6 @@ inline JSDOMGlobalObject* deprecatedGlobalObjectForPrototype(JSC::JSGlobalObject
     // from which the object is being created, instead of assuming the lexical one.
     // e.g. subframe.document.body should use the subframe's global object, not the lexical one.
     return JSC::jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
-}
-
-template<typename WrapperClass> inline JSC::Structure* getDOMStructure(JSC::VM& vm, JSDOMGlobalObject& globalObject)
-{
-    if (JSC::Structure* structure = getCachedDOMStructure(globalObject, WrapperClass::info()))
-        return structure;
-    return cacheDOMStructure(globalObject, WrapperClass::createStructure(vm, &globalObject, WrapperClass::createPrototype(vm, globalObject)), WrapperClass::info());
 }
 
 template<typename WrapperClass> inline JSC::Structure* deprecatedGetDOMStructure(JSC::JSGlobalObject* lexicalGlobalObject)

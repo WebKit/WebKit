@@ -46,6 +46,7 @@ public:
     using Base = JSArray;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | OverridesPut | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
     static constexpr bool needsDestruction = true;
+    static constexpr WebCore::DOMStructureID structureIndex = WebCore::DOMStructureID::JSObservableArray;
 
     template<typename CellType, JSC::SubspaceAccess>
     static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)

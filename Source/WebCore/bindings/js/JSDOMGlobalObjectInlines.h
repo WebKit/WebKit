@@ -27,6 +27,7 @@
 #pragma once
 
 #include "DOMConstructors.h"
+#include "DOMStructures.h"
 #include "JSDOMGlobalObject.h"
 #include <JavaScriptCore/JSObjectInlines.h>
 
@@ -35,12 +36,6 @@ namespace WebCore {
 inline JSC::Structure* JSDOMGlobalObject::createStructure(JSC::VM& vm, JSC::JSValue prototype)
 {
     return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
-}
-
-inline JSDOMStructureMap& JSDOMGlobalObject::structures(NoLockingNecessaryTag)
-{
-    ASSERT(!vm().heap.mutatorShouldBeFenced());
-    return m_structures;
 }
 
 inline DOMGuardedObjectSet& JSDOMGlobalObject::guardedObjects(NoLockingNecessaryTag)
@@ -60,6 +55,15 @@ inline JSC::JSObject* getDOMConstructor(JSC::VM& vm, const JSDOMGlobalObject& gl
     JSDOMGlobalObject& mutableGlobalObject = const_cast<JSDOMGlobalObject&>(globalObject);
     mutableGlobalObject.constructors().array()[static_cast<unsigned>(constructorID)].set(vm, &globalObject, constructor);
     return constructor;
+}
+
+template<typename WrapperClass> inline JSC::Structure* getDOMStructure(JSC::VM& vm, JSDOMGlobalObject& globalObject)
+{
+    if (auto* structure = globalObject.structures().get<WrapperClass>())
+        return structure;
+    auto* structure = WrapperClass::createStructure(vm, &globalObject, WrapperClass::createPrototype(vm, globalObject));
+    globalObject.structures().set<WrapperClass>(vm, &globalObject, structure);
+    return structure;
 }
 
 template<class JSClass>

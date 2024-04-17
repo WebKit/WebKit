@@ -27,6 +27,7 @@
 #define KJS_RUNTIME_OBJECT_H
 
 #include "BridgeJSC.h"
+#include "DOMStructures.h"
 #include <JavaScriptCore/JSGlobalObject.h>
 
 namespace JSC {
@@ -39,6 +40,7 @@ public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | OverridesGetCallData | OverridesPut | GetOwnPropertySlotMayBeWrongAboutDontEnum;
     static constexpr bool needsDestruction = true;
+    static constexpr WebCore::DOMStructureID structureIndex = WebCore::DOMStructureID::RuntimeObject;
 
     template<typename CellType, JSC::SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
