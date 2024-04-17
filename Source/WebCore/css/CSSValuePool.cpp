@@ -84,15 +84,11 @@ Ref<CSSPrimitiveValue> CSSValuePool::createColorValue(const Color& color)
     if (color == Color::black)
         return staticCSSValuePool->m_blackColor.get();
 
-    // Remove one entry at random if the cache grows too large.
-    // FIXME: Use TinyLRUCache instead?
-    const int maximumColorCacheSize = 512;
-    if (m_colorValueCache.size() >= maximumColorCacheSize)
-        m_colorValueCache.remove(m_colorValueCache.random());
+    unsigned hash = ColorCache::HashFunctions::hash(color);
+    if (auto found = m_colorValueCache.get(color, hash))
+        return *found;
 
-    return m_colorValueCache.ensure(color, [&color] {
-        return adoptRef(*new CSSPrimitiveValue(color));
-    }).iterator->value;
+    return *m_colorValueCache.insert(color, adoptRef(new CSSPrimitiveValue(color)), hash);
 }
 
 Ref<CSSPrimitiveValue> CSSValuePool::createFontFamilyValue(const AtomString& familyName)

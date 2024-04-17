@@ -134,6 +134,7 @@ template<typename Value, typename = DefaultHash<Value>, typename = HashTraits<Va
 template<typename KeyArg, typename MappedArg, typename = DefaultHash<KeyArg>, typename = HashTraits<KeyArg>, typename = HashTraits<MappedArg>, typename = HashTableTraits> class HashMap;
 template<typename ValueArg, typename = DefaultHash<ValueArg>, typename = HashTraits<ValueArg>, typename = HashTableTraits> class HashSet;
 template<typename ResolveValueT, typename RejectValueT, unsigned options = 0> class NativePromise;
+template<typename Key, typename Value, unsigned, typename = DefaultHash<Key>, typename = HashTraits<Key>, typename = HashTraits<Value>> class FixedSizeCache;
 using GenericPromise = NativePromise<void, void>;
 using GenericNonExclusivePromise = NativePromise<void, void, 1>;
 class NativePromiseRequest;

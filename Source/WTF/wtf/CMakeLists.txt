@@ -83,6 +83,7 @@ set(WTF_PUBLIC_HEADERS
     FilePrintStream.h
     FileSystem.h
     FixedBitVector.h
+    FixedSizeCache.h
     FixedVector.h
     FixedWidthDouble.h
     FlipBytes.h
