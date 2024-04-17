@@ -26,7 +26,12 @@
 #include "config.h"
 #include "XPCUtilities.h"
 
+#include <wtf/WTFProcess.h>
+
 namespace WebKit {
+
+static constexpr auto messageNameKey = "message-name"_s;
+static constexpr auto exitProcessMessage = "exit"_s;
 
 void terminateWithReason(xpc_connection_t connection, ReasonCode, const char*)
 {
@@ -34,9 +39,26 @@ void terminateWithReason(xpc_connection_t connection, ReasonCode, const char*)
     // See https://bugs.webkit.org/show_bug.cgi?id=224499 rdar://76396241
     if (!connection)
         return;
+
+    // Give the process a chance to exit cleanly by sending a XPC message to request termination, then try xpc_connection_kill.
+    auto exitMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_dictionary_set_string(exitMessage.get(), messageNameKey, exitProcessMessage.characters());
+    xpc_connection_send_message(connection, exitMessage.get());
+
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     xpc_connection_kill(connection, SIGKILL);
 ALLOW_DEPRECATED_DECLARATIONS_END
+}
+
+void handleXPCExitMessage(xpc_object_t event)
+{
+    if (xpc_get_type(event) == XPC_TYPE_DICTIONARY) {
+        auto* messageName = xpc_dictionary_get_string(event, messageNameKey);
+        if (exitProcessMessage == messageName) {
+            RELEASE_LOG_ERROR(IPC, "Received exit message, exiting now.");
+            terminateProcess(EXIT_FAILURE);
+        }
+    }
 }
 
 }
