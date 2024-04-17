@@ -41,6 +41,14 @@
     { "name": "igalia18-wpe-ews", "platform": "wpe" },
     { "name": "igalia19-wpe-ews", "platform": "wpe" },
     { "name": "aperez-wpe-ews", "platform": "wpe" },
+    { "name": "win-tests-ews-001", "platform": "wincairo" },
+    { "name": "win-tests-ews-002", "platform": "wincairo" },
+    { "name": "win-tests-ews-003", "platform": "wincairo" },
+    { "name": "win-tests-ews-004", "platform": "wincairo" },
+    { "name": "win-tests-ews-005", "platform": "wincairo" },
+    { "name": "win-tests-ews-006", "platform": "wincairo" },
+    { "name": "win-tests-ews-007", "platform": "wincairo" },
+    { "name": "win-tests-ews-008", "platform": "wincairo" },
     { "name": "wincairo-ews-001", "platform": "wincairo" },
     { "name": "wincairo-ews-002", "platform": "wincairo" },
     { "name": "wincairo-ews-003", "platform": "wincairo" },
@@ -303,10 +311,17 @@
       "workernames": ["ews168", "ews170"]
     },
     {
-      "name": "WinCairo-EWS", "shortname": "wincairo", "icon": "buildOnly",
-      "factory": "WinCairoFactory", "configuration": "release",
+      "name": "Win-Build-EWS", "shortname": "wincairo", "icon": "buildOnly",
+      "factory": "WinBuildFactory", "configuration": "release",
       "architectures": ["x86_64"], "platform": "wincairo",
+      "triggers": ["win-tests-ews"],
       "workernames": ["wincairo-ews-001", "wincairo-ews-002", "wincairo-ews-003", "wincairo-ews-004"]
+    },
+    {
+      "name": "Win-Tests-EWS", "shortname": "wincairo-tests", "icon": "testOnly",
+      "factory": "WinTestsFactory", "configuration": "release",
+      "architectures": ["x86_64"], "platform": "wincairo",
+      "workernames": ["win-tests-ews-001", "win-tests-ews-002", "win-tests-ews-003", "win-tests-ews-004", "win-tests-ews-005", "win-tests-ews-006", "win-tests-ews-007", "win-tests-ews-008"]
     },
     {
       "name": "WPE-Build-EWS", "shortname": "wpe", "icon": "buildOnly",
@@ -443,7 +458,7 @@
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS", "JSC-Tests-Ventura-arm64-EWS",
             "macOS-AppleSilicon-Sonoma-Debug-Build-EWS", "macOS-Monterey-Release-Build-EWS", "macOS-Ventura-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "watchOS-10-Build-EWS",
-            "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS",
+            "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
             "WPE-Skia-Build-EWS"
       ]
     },
@@ -458,7 +473,7 @@
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS", "JSC-Tests-Ventura-arm64-EWS",
             "macOS-AppleSilicon-Sonoma-Debug-Build-EWS", "macOS-Monterey-Release-Build-EWS", "macOS-Ventura-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "watchOS-10-Build-EWS",
-            "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS",
+            "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
             "WPE-Skia-Build-EWS"
       ]
     },
@@ -549,6 +564,10 @@
     {
       "type": "Triggerable", "name": "gtk-wk2-tests-ews",
       "builderNames": ["GTK-WK2-Tests-EWS"]
+    },
+    {
+      "type": "Triggerable", "name": "win-tests-ews",
+      "builderNames": ["Win-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "wpe-build-ews",

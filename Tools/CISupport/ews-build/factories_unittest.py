@@ -437,7 +437,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'WinCairo-EWS': [
+        'Win-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -451,6 +451,25 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'validate-change',
             'compile-webkit'
+        ],
+        'Win-Tests-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'win-deps',
+            'download-built-product',
+            'extract-built-product',
+            'kill-old-processes',
+            'run-layout-tests-in-stress-mode',
+            'layout-tests',
+            'set-build-summary'
         ],
         'WPE-Build-EWS': [
             'configure-build',

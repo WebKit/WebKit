@@ -25,16 +25,16 @@ from buildbot.process import factory
 from buildbot.steps import trigger
 
 from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize,
-                   CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
-                   CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, DetermineLabelOwner,
-                   DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub,
-                   InstallGtkDependencies, InstallHooks, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
-                   MapBranchAlias, RemoveAndAddLabels, RetrievePRDataFromLabel, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
-                   RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
-                   RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
-                   SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory, UpdatePullRequest,
-                   ValidateCommitMessage, ValidateChange, ValidateCommitterAndReviewer, WaitForCrashCollection,
-                   InstallBuiltProduct, ValidateRemote, ValidateSquashed, GITHUB_PROJECTS)
+                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
+                    CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, DetermineLabelOwner,
+                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub,
+                    InstallGtkDependencies, InstallHooks, InstallWpeDependencies, InstallWinDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
+                    MapBranchAlias, RemoveAndAddLabels, RetrievePRDataFromLabel, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
+                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
+                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
+                    SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory, UpdatePullRequest,
+                    ValidateCommitMessage, ValidateChange, ValidateCommitterAndReviewer, WaitForCrashCollection,
+                    InstallBuiltProduct, ValidateRemote, ValidateSquashed, GITHUB_PROJECTS)
 
 class Factory(factory.BuildFactory):
     findModifiedLayoutTests = False
@@ -152,6 +152,8 @@ class TestFactory(Factory):
             self.addStep(InstallGtkDependencies())
         elif platform == 'wpe':
             self.addStep(InstallWpeDependencies())
+        elif platform == 'wincairo':
+            self.addStep(InstallWinDependencies())
         self.getProduct()
         if self.willTriggerCrashLogSubmission:
             self.addStep(WaitForCrashCollection())
@@ -259,14 +261,12 @@ class macOSWK2Factory(TestFactory):
     willTriggerCrashLogSubmission = True
 
 
-class WinCairoFactory(Factory):
+class WinBuildFactory(BuildFactory):
     branches = [r'main']
 
-    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=True, triggers=triggers, additionalArguments=additionalArguments)
-        self.addStep(KillOldProcesses())
-        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
-        self.addStep(CompileWebKit(skipUpload=True))
+
+class WinTestsFactory(TestFactory):
+    LayoutTestClass = RunWebKitTests
 
 
 class GTKBuildFactory(BuildFactory):
