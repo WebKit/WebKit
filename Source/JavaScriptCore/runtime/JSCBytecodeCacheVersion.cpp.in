@@ -1,7 +1,0 @@
-
-#include "JSCBytecodeCacheVersion.h"
-
-#include "config.h"
-#include <wtf/text/SuperFastHash.h>
-
-const uint32_t JSCBytecodeCacheVersion = SuperFastHash::computeHash(CACHED_TYPES_CKSUM);
