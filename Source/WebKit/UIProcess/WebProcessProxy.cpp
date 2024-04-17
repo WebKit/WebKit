@@ -130,6 +130,10 @@
 #include "AudioSessionRoutingArbitratorProxy.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#import <pal/system/ios/Device.h>
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection(), completion)
@@ -1467,7 +1471,7 @@ bool WebProcessProxy::canBeAddedToWebProcessCache() const
 #if PLATFORM(IOS_FAMILY)
     // Don't add the Web process to the cache if there are still assertions being held, preventing it from suspending.
     // This is a fix for a regression in page load speed we see on http://www.youtube.com when adding it to the cache.
-    if (throttler().shouldBeRunnable()) {
+    if (PAL::deviceClassIsSmallScreen() && throttler().shouldBeRunnable()) {
         WEBPROCESSPROXY_RELEASE_LOG(Process, "canBeAddedToWebProcessCache: Not adding to process cache because the process is runnable");
         return false;
     }
