@@ -67,6 +67,9 @@ if (window.accessibilityController) {
         document.getElementById("textarea").firstChild.nodeValue = "Changed textarea text";
         output += await expectAsync("accessibilityController.accessibleElementById('textarea').stringValue.includes('Changed textarea text')", "true");
 
+        document.getElementById("button").firstChild.nodeValue = "Final button text";
+        await waitFor(() => textAlternatives("button").includes("Final button text"));
+
         debug(output);
         finishJSTest();
     }, 0);
