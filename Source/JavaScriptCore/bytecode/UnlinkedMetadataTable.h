@@ -56,7 +56,7 @@ struct MetadataStatistics {
 #endif
 
 
-class UnlinkedMetadataTable : public RefCounted<UnlinkedMetadataTable> {
+class UnlinkedMetadataTable : public ThreadSafeRefCounted<UnlinkedMetadataTable> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(UnlinkedMetadataTable);
     friend class LLIntOffsetsExtractor;
     friend class MetadataTable;
@@ -69,7 +69,7 @@ public:
 
     struct LinkingData {
         Ref<UnlinkedMetadataTable> unlinkedMetadata;
-        unsigned refCount;
+        std::atomic<unsigned> refCount;
     };
 
     ~UnlinkedMetadataTable();
