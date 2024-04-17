@@ -282,14 +282,14 @@ void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decod
     using ValidationType = MethodSignatureValidation<MF>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
-    Connection::SyncRequestID syncRequestID;
-    if (UNLIKELY(!decoder.decode(syncRequestID)))
+    auto syncRequestID = decoder.decode<Connection::SyncRequestID>();
+    if (UNLIKELY(!syncRequestID))
         return;
 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
     if (UNLIKELY(!arguments)) {
 #if ENABLE(IPC_TESTING_API)
-        connection.sendDeserializationErrorSyncReply(syncRequestID);
+        connection.sendDeserializationErrorSyncReply(*syncRequestID);
 #endif
         return;
     }
@@ -301,7 +301,7 @@ void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decod
     callMemberFunction(object, function, WTFMove(*arguments),
         CompletionHandlerType([syncRequestID, connection = Ref { connection }] (auto&&... args) mutable {
             logReply(connection->protectedConnection(), MessageType::name(), args...);
-            connection->sendSyncReply<MessageType>(syncRequestID, std::forward<decltype(args)>(args)...);
+            connection->sendSyncReply<MessageType>(*syncRequestID, std::forward<decltype(args)>(args)...);
         }));
 }
 

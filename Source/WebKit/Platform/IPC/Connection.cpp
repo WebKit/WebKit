@@ -423,14 +423,14 @@ void Connection::dispatchMessageReceiverMessage(MessageReceiver& messageReceiver
         return;
     }
 
-    SyncRequestID syncRequestID;
-    if (UNLIKELY(!decoder->decode(syncRequestID))) {
+    auto syncRequestID = decoder->decode<SyncRequestID>();
+    if (UNLIKELY(!syncRequestID)) {
         // We received an invalid sync message.
         // FIXME: Handle this.
         return;
     }
 
-    auto replyEncoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID.toUInt64());
+    auto replyEncoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID->toUInt64());
 
     // Hand off both the decoder and encoder to the work queue message receiver.
     bool wasHandled = messageReceiver.didReceiveSyncMessage(*this, *decoder, replyEncoder);
@@ -1169,8 +1169,8 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
     assertIsCurrent(dispatcher());
     ASSERT(decoder.isSyncMessage());
 
-    SyncRequestID syncRequestID;
-    if (UNLIKELY(!decoder.decode(syncRequestID))) {
+    auto syncRequestID = decoder.decode<SyncRequestID>();
+    if (UNLIKELY(!syncRequestID)) {
         // We received an invalid sync message.
         return;
     }
@@ -1181,7 +1181,7 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
         --m_inDispatchSyncMessageCount;
     });
 
-    auto replyEncoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID.toUInt64());
+    auto replyEncoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID->toUInt64());
 
     bool wasHandled = false;
     if (decoder.messageName() == MessageName::WrappedAsyncMessageForTesting) {

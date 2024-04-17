@@ -190,13 +190,13 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
 
 bool StreamServerConnection::processSetStreamDestinationID(Decoder&& decoder, RefPtr<StreamMessageReceiver>& currentReceiver)
 {
-    uint64_t destinationID = 0;
-    if (!decoder.decode(destinationID)) {
+    auto destinationID = decoder.decode<uint64_t>();
+    if (!destinationID) {
         protectedConnection()->dispatchDidReceiveInvalidMessage(decoder.messageName());
         return false;
     }
-    if (m_currentDestinationID != destinationID) {
-        m_currentDestinationID = destinationID;
+    if (m_currentDestinationID != *destinationID) {
+        m_currentDestinationID = *destinationID;
         currentReceiver = nullptr;
     }
     auto result = m_buffer.release(decoder.currentBufferOffset());
