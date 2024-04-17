@@ -244,4 +244,6 @@ RenderTextControlInnerContainer::RenderTextControlInnerContainer(Element& elemen
 
 }
 
+RenderTextControlInnerContainer::~RenderTextControlInnerContainer() = default;
+
 } // namespace WebCore

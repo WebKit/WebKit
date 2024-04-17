@@ -39,6 +39,7 @@ using namespace WebCore;
 
 class WCTiledBacking final : public TiledBacking {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WCTiledBacking);
 public:
     WCTiledBacking(GraphicsLayerWC& owner)
         : m_owner(owner) { }

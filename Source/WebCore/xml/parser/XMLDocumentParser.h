@@ -63,6 +63,7 @@ private:
 
 class XMLDocumentParser final : public ScriptableDocumentParser, public PendingScriptClient, public CanMakeCheckedPtr<XMLDocumentParser> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(XMLDocumentParser);
 public:
     static Ref<XMLDocumentParser> create(Document& document, LocalFrameView* view, OptionSet<ParserContentPolicy> policy = DefaultParserContentPolicy)
     {
@@ -94,6 +95,7 @@ private:
 
     // CheckedPtr interface
     uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
     void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
     void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 #if CHECKED_POINTER_DEBUG

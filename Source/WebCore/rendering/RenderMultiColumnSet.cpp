@@ -52,6 +52,8 @@ RenderMultiColumnSet::RenderMultiColumnSet(RenderFragmentedFlow& fragmentedFlow,
     ASSERT(isRenderMultiColumnSet());
 }
 
+RenderMultiColumnSet::~RenderMultiColumnSet() = default;
+
 RenderMultiColumnSet* RenderMultiColumnSet::nextSiblingMultiColumnSet() const
 {
     for (RenderObject* sibling = nextSibling(); sibling; sibling = sibling->nextSibling()) {

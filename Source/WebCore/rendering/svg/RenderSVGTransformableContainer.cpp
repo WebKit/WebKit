@@ -41,6 +41,8 @@ RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGGraphicsElem
     ASSERT(isRenderSVGTransformableContainer());
 }
 
+RenderSVGTransformableContainer::~RenderSVGTransformableContainer() = default;
+
 SVGGraphicsElement& RenderSVGTransformableContainer::graphicsElement() const
 {
     return downcast<SVGGraphicsElement>(RenderSVGContainer::element());

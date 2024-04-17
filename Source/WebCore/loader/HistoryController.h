@@ -43,9 +43,10 @@ enum class ShouldTreatAsContinuingLoad : uint8_t;
 
 struct StringWithDirection;
 
-class HistoryController : public CanMakeCheckedPtr<HistoryController> {
+class HistoryController final : public CanMakeCheckedPtr<HistoryController> {
     WTF_MAKE_NONCOPYABLE(HistoryController);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HistoryController);
 public:
     enum HistoryUpdateType { UpdateAll, UpdateAllExceptBackForwardList };
 

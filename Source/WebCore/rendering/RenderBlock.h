@@ -54,6 +54,7 @@ typedef unsigned TextRunFlags;
 
 class RenderBlock : public RenderBox {
     WTF_MAKE_ISO_ALLOCATED(RenderBlock);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBlock);
 public:
     friend class LineLayoutState;
     virtual ~RenderBlock();

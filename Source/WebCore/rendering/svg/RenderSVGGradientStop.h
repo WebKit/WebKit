@@ -31,6 +31,7 @@ class SVGStopElement;
 // This class exists mostly so we can hear about gradient stop style changes
 class RenderSVGGradientStop final : public RenderElement {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGGradientStop);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGGradientStop);
 public:
     RenderSVGGradientStop(SVGStopElement&, RenderStyle&&);
     virtual ~RenderSVGGradientStop();

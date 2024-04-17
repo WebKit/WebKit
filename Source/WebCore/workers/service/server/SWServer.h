@@ -85,6 +85,7 @@ class SWServer : public RefCounted<SWServer>, public CanMakeWeakPtr<SWServer> {
 public:
     class Connection : public CanMakeWeakPtr<Connection>, public CanMakeCheckedPtr<Connection> {
         WTF_MAKE_FAST_ALLOCATED;
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Connection);
         friend class SWServer;
     public:
         WEBCORE_EXPORT virtual ~Connection();

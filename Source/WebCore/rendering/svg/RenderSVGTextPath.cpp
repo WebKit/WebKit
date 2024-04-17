@@ -46,6 +46,8 @@ RenderSVGTextPath::RenderSVGTextPath(SVGTextPathElement& element, RenderStyle&& 
     ASSERT(isRenderSVGTextPath());
 }
 
+RenderSVGTextPath::~RenderSVGTextPath() = default;
+
 SVGTextPathElement& RenderSVGTextPath::textPathElement() const
 {
     return downcast<SVGTextPathElement>(RenderSVGInline::graphicsElement());

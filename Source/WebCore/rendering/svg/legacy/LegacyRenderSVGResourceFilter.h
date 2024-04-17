@@ -55,6 +55,7 @@ public:
 
 class LegacyRenderSVGResourceFilter final : public LegacyRenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceFilter);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFilter);
 public:
     LegacyRenderSVGResourceFilter(SVGFilterElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGResourceFilter();

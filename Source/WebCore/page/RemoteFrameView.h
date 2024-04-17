@@ -33,6 +33,8 @@ namespace WebCore {
 class RemoteFrame;
 
 class RemoteFrameView final : public FrameView {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteFrameView);
 public:
     static Ref<RemoteFrameView> create(RemoteFrame& frame) { return adoptRef(*new RemoteFrameView(frame)); }
 

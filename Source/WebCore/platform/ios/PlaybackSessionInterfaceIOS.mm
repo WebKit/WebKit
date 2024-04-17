@@ -134,6 +134,11 @@ uint32_t PlaybackSessionInterfaceIOS::ptrCount() const
     return CanMakeCheckedPtr::ptrCount();
 }
 
+uint32_t PlaybackSessionInterfaceIOS::ptrCountWithoutThreadCheck() const
+{
+    return CanMakeCheckedPtr::ptrCountWithoutThreadCheck();
+}
+
 void PlaybackSessionInterfaceIOS::incrementPtrCount() const
 {
     CanMakeCheckedPtr::incrementPtrCount();

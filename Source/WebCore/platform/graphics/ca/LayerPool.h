@@ -39,8 +39,9 @@
 
 namespace WebCore {
     
-class LayerPool : public CanMakeCheckedPtr<LayerPool> {
+class LayerPool final : public CanMakeCheckedPtr<LayerPool> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LayerPool);
     WTF_MAKE_NONCOPYABLE(LayerPool);
 public:
     WEBCORE_EXPORT LayerPool();

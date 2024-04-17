@@ -40,6 +40,7 @@ class Page;
 
 class DeviceController : public Supplement<Page>, public CanMakeCheckedPtr<DeviceController> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceController);
 public:
     explicit DeviceController(DeviceClient&);
     virtual ~DeviceController() = default;

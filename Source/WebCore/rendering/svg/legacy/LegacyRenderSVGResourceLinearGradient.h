@@ -29,6 +29,7 @@ class SVGLinearGradientElement;
 
 class LegacyRenderSVGResourceLinearGradient final : public LegacyRenderSVGResourceGradient {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceLinearGradient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceLinearGradient);
 public:
     LegacyRenderSVGResourceLinearGradient(SVGLinearGradientElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGResourceLinearGradient();

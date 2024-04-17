@@ -54,6 +54,7 @@ namespace WebKit {
 
 class _WKRemoteWebInspectorUIProxyClient final : public RemoteWebInspectorUIProxyClient {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(_WKRemoteWebInspectorUIProxyClient);
 public:
     _WKRemoteWebInspectorUIProxyClient(_WKRemoteWebInspectorViewController *controller)
         : m_controller(controller)

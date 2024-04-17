@@ -54,12 +54,13 @@ namespace WebKit {
 
 using namespace WebCore;
 
-class SpeechRecognitionRealtimeMediaSourceManager::Source
+class SpeechRecognitionRealtimeMediaSourceManager::Source final
     : private RealtimeMediaSource::Observer
     , private RealtimeMediaSource::AudioSampleObserver
     , public CanMakeCheckedPtr<SpeechRecognitionRealtimeMediaSourceManager::Source>
 {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Source);
 public:
     Source(RealtimeMediaSourceIdentifier identifier, Ref<RealtimeMediaSource>&& source, Ref<IPC::Connection>&& connection)
         : m_identifier(identifier)
@@ -89,6 +90,7 @@ public:
 private:
     // CheckedPtr interface
     uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
     void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
     void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 #if CHECKED_POINTER_DEBUG

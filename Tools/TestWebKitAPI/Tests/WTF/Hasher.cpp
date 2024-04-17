@@ -233,8 +233,9 @@ TEST(WTF, Hasher_RefPtr)
 
 namespace {
 
-struct CheckedObject : public CanMakeCheckedPtr<CheckedObject> {
+struct CheckedObject final : public CanMakeCheckedPtr<CheckedObject> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(CheckedObject);
     CheckedObject() = default;
 };
 

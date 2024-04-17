@@ -46,11 +46,12 @@ class PlatformAudioData;
 class SpeechRecognitionUpdate;
 enum class SpeechRecognitionUpdateType : uint8_t;
 
-class SpeechRecognitionCaptureSourceImpl
+class SpeechRecognitionCaptureSourceImpl final
     : public RealtimeMediaSource::Observer
     , public RealtimeMediaSource::AudioSampleObserver
     , public CanMakeCheckedPtr<SpeechRecognitionCaptureSourceImpl> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SpeechRecognitionCaptureSourceImpl);
 public:
     using DataCallback = Function<void(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)>;
     using StateUpdateCallback = Function<void(const SpeechRecognitionUpdate&)>;
@@ -61,6 +62,7 @@ public:
 private:
     // CheckedPtr interface
     uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
     void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
     void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 #if CHECKED_POINTER_DEBUG

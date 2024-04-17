@@ -80,6 +80,8 @@ RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
     ASSERT(isRenderSVGInlineText());
 }
 
+RenderSVGInlineText::~RenderSVGInlineText() = default;
+
 String RenderSVGInlineText::originalText() const
 {
     return textNode().data();

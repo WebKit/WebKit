@@ -40,6 +40,8 @@ RenderFrame::RenderFrame(HTMLFrameElement& frame, RenderStyle&& style)
     ASSERT(isRenderFrame());
 }
 
+RenderFrame::~RenderFrame() = default;
+
 HTMLFrameElement& RenderFrame::frameElement() const
 {
     return downcast<HTMLFrameElement>(RenderFrameBase::frameOwnerElement());

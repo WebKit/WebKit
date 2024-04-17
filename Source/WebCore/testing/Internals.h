@@ -181,14 +181,20 @@ template<typename IDLType> class DOMPromiseDeferred;
 
 struct MockWebAuthenticationConfiguration;
 
-class Internals final : public RefCounted<Internals>, private ContextDestructionObserver
+class Internals final
+    : public RefCounted<Internals>
+    , private ContextDestructionObserver
 #if ENABLE(MEDIA_STREAM)
+    , public CanMakeCheckedPtr<Internals>
     , public RealtimeMediaSource::Observer
     , private RealtimeMediaSource::AudioSampleObserver
     , private RealtimeMediaSource::VideoFrameObserver
-    , public CanMakeCheckedPtr<Internals>
 #endif
     {
+    WTF_MAKE_FAST_ALLOCATED;
+#if ENABLE(MEDIA_STREAM)
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Internals);
+#endif
 public:
     static Ref<Internals> create(Document&);
     virtual ~Internals();
@@ -1467,6 +1473,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     // CheckedPtr interface
     uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
     void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
     void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 #if CHECKED_POINTER_DEBUG
@@ -1475,7 +1482,7 @@ private:
     void moveCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::moveCheckedPtr(source, destination); }
     void unregisterCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::unregisterCheckedPtr(pointer); }
 #endif // CHECKED_POINTER_DEBUG
-#endif
+#endif // ENABLE(MEDIA_STREAM)
 
     Document* contextDocument() const;
     LocalFrame* frame() const;

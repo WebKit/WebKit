@@ -43,6 +43,7 @@ class SVGGraphicsElement;
 
 class RenderSVGShape : public RenderSVGModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGShape);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGShape);
 public:
     friend FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderElement&);
 

@@ -51,6 +51,7 @@ class DisplayLink {
 public:
     class Client : public CanMakeThreadSafeCheckedPtr<Client> {
         WTF_MAKE_FAST_ALLOCATED;
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Client);
     friend class DisplayLink;
     public:
         virtual ~Client() = default;

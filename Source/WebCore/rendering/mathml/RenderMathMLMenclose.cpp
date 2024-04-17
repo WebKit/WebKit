@@ -54,6 +54,8 @@ RenderMathMLMenclose::RenderMathMLMenclose(MathMLMencloseElement& element, Rende
     ASSERT(isRenderMathMLMenclose());
 }
 
+RenderMathMLMenclose::~RenderMathMLMenclose() = default;
+
 // This arbitrary thickness value is used for the parameter \xi_8 from the MathML in HTML5 implementation note.
 // For now, we take:
 // - OverbarVerticalGap = UnderbarVerticalGap = 3\xi_8

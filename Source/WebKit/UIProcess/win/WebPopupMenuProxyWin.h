@@ -37,14 +37,21 @@ namespace WebKit {
 
 class WebView;
 
-class WebPopupMenuProxyWin : public WebPopupMenuProxy, private WebCore::ScrollableArea {
+class WebPopupMenuProxyWin final : public CanMakeCheckedPtr<WebPopupMenuProxyWin>, public WebPopupMenuProxy, private WebCore::ScrollableArea {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebPopupMenuProxyWin);
 public:
     static Ref<WebPopupMenuProxyWin> create(WebView* webView, WebPopupMenuProxy::Client& client)
     {
         return adoptRef(*new WebPopupMenuProxyWin(webView, client));
     }
     ~WebPopupMenuProxyWin();
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
     void showPopupMenu(const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex) override;
     void hidePopupMenu() override;

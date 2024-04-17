@@ -38,9 +38,11 @@ enum IncludeBorderColorOrNot { DoNotIncludeBorderColor, IncludeBorderColor };
 
 class RenderTableCell final : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderTableCell);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableCell);
 public:
     RenderTableCell(Element&, RenderStyle&&);
     RenderTableCell(Document&, RenderStyle&&);
+    virtual ~RenderTableCell();
     
     unsigned colSpan() const;
     unsigned rowSpan() const;

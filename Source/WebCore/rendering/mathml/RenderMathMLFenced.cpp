@@ -56,6 +56,8 @@ RenderMathMLFenced::RenderMathMLFenced(MathMLRowElement& element, RenderStyle&& 
     ASSERT(isRenderMathMLFenced());
 }
 
+RenderMathMLFenced::~RenderMathMLFenced() = default;
+
 void RenderMathMLFenced::updateFromElement()
 {
     const auto& fenced = element();

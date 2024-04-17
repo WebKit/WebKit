@@ -30,6 +30,7 @@ class SVGElement;
 
 class LegacyRenderSVGContainer : public LegacyRenderSVGModelObject {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGContainer);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGContainer);
 public:
     virtual ~LegacyRenderSVGContainer();
 

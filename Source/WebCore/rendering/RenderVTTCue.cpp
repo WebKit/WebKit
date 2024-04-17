@@ -52,6 +52,8 @@ RenderVTTCue::RenderVTTCue(VTTCueBox& element, RenderStyle&& style)
     ASSERT(isRenderVTTCue());
 }
 
+RenderVTTCue::~RenderVTTCue() = default;
+
 void RenderVTTCue::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
