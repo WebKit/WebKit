@@ -578,7 +578,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto alternateFullScreenControlDesignEnabled = self._webView._page->preferences().alternateFullScreenControlDesignEnabled();
     
     if (alternateFullScreenControlDesignEnabled) {
-        buttonSize = CGSizeMake(48.0, 48.0);
+        buttonSize = CGSizeMake(44.0, 44.0);
         doneImage = [UIImage systemImageNamed:@"arrow.down.right.and.arrow.up.left"];
         startPiPImage = nil;
         stopPiPImage = nil;
@@ -605,8 +605,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (alternateFullScreenControlDesignEnabled) {
         UIButtonConfiguration *cancelButtonConfiguration = [UIButtonConfiguration filledButtonConfiguration];
-        // FIXME: this color specification should not be necessary.
-        cancelButtonConfiguration.baseBackgroundColor = [UIColor colorWithWhite:1.0 alpha:0.15];
         [_cancelButton setConfiguration:cancelButtonConfiguration];
 
 #if PLATFORM(VISION)
