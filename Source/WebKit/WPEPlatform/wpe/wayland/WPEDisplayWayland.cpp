@@ -247,6 +247,7 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
     // main_device
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*, struct wl_array* device)
     {
+#if HAVE(DRM_GET_DEVICE_FROM_DEV_ID)
         dev_t deviceID;
         memcpy(&deviceID, device->data, sizeof(dev_t));
 
@@ -260,6 +261,7 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
         if (drmDevice->available_nodes & (1 << DRM_NODE_RENDER))
             priv->drmRenderNode = drmDevice->nodes[DRM_NODE_RENDER];
         drmFreeDevice(&drmDevice);
+#endif
     },
     // tranche_done
     [](void*, struct zwp_linux_dmabuf_feedback_v1*)

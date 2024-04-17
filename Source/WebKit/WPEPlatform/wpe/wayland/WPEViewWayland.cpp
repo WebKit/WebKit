@@ -129,6 +129,7 @@ struct DMABufFeedback {
 #if USE(LIBDRM)
     static CString drmDeviceForUsage(const dev_t* device, bool isScanout)
     {
+#if HAVE(DRM_GET_DEVICE_FROM_DEV_ID)
         drmDevicePtr drmDevice;
         if (drmGetDeviceFromDevId(*device, 0, &drmDevice))
             return { };
@@ -147,6 +148,9 @@ struct DMABufFeedback {
         drmFreeDevice(&drmDevice);
 
         return returnValue;
+#else
+        return { };
+#endif
     }
 #endif
 
