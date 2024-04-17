@@ -183,8 +183,9 @@ bool HTMLLabelElement::willRespondToMouseClickEventsWithEditability(Editability 
 void HTMLLabelElement::focus(const FocusOptions& options)
 {
     Ref<HTMLLabelElement> protectedThis(*this);
-    if (document().haveStylesheetsLoaded()) {
-        document().updateLayout();
+    auto document = protectedDocument();
+    if (document->haveStylesheetsLoaded()) {
+        document->updateLayout();
         if (isFocusable()) {
             // The value of restorationMode is not used for label elements as it doesn't override updateFocusAppearance.
             Element::focus(options);

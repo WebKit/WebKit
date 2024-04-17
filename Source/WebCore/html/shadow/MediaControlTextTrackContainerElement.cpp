@@ -421,7 +421,7 @@ RefPtr<NativeImage> MediaControlTextTrackContainerElement::createTextTrackRepres
     if (!frame)
         return nullptr;
 
-    document().updateLayout();
+    protectedDocument()->updateLayout();
 
     auto* renderer = this->renderer();
     if (!renderer)
