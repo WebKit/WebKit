@@ -49,6 +49,7 @@
 #include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
+#include "RemoteSharedResourceCache.h"
 #include "RemoteTextDetector.h"
 #include "RemoteTextDetectorMessages.h"
 #include "ShapeDetectionObjectHeap.h"
@@ -111,6 +112,7 @@ RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuCon
     : m_workQueue(IPC::StreamConnectionWorkQueue::create("RemoteRenderingBackend work queue"))
     , m_streamConnection(WTFMove(streamConnection))
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
+    , m_sharedResourceCache(gpuConnectionToWebProcess.sharedResourceCache())
     , m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
     , m_renderingBackendIdentifier(creationParameters.identifier)
 #if HAVE(IOSURFACE)
@@ -211,30 +213,30 @@ void RemoteRenderingBackend::didCreateImageBuffer(Ref<ImageBuffer> imageBuffer)
     send(Messages::RemoteImageBufferProxy::DidCreateBackend(WTFMove(*handle)), imageBufferIdentifier);
 }
 
-void RemoteRenderingBackend::moveToSerializedBuffer(RenderingResourceIdentifier imageBufferIdentifier)
+void RemoteRenderingBackend::moveToSerializedBuffer(RenderingResourceIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     // Destroy the DisplayListRecorder which plays back to this image buffer.
-    m_remoteDisplayLists.take(imageBufferIdentifier);
+    m_remoteDisplayLists.take(identifier);
     // This transfers ownership of the RemoteImageBuffer contents to the transfer heap.
-    auto imageBuffer = takeImageBuffer(imageBufferIdentifier);
+    auto imageBuffer = takeImageBuffer(identifier);
     if (!imageBuffer) {
         ASSERT_IS_TESTING_IPC();
         return;
     }
-    m_gpuConnectionToWebProcess->serializedImageBufferHeap().add({ imageBufferIdentifier, 0 }, WTFMove(imageBuffer));
+    m_sharedResourceCache->addSerializedImageBuffer(identifier, imageBuffer.releaseNonNull());
 }
 
-void RemoteRenderingBackend::moveToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier)
+void RemoteRenderingBackend::moveToImageBuffer(RenderingResourceIdentifier identifier)
 {
     assertIsCurrent(workQueue());
-    auto imageBuffer = m_gpuConnectionToWebProcess->serializedImageBufferHeap().take({ { imageBufferIdentifier, 0 }, 0 }, IPC::Timeout::infinity());
+    auto imageBuffer = m_sharedResourceCache->takeSerializedImageBuffer(identifier);
     if (!imageBuffer) {
         ASSERT_IS_TESTING_IPC();
         return;
     }
 
-    ASSERT(imageBufferIdentifier == imageBuffer->renderingResourceIdentifier());
+    ASSERT(identifier == imageBuffer->renderingResourceIdentifier());
 
     ImageBufferCreationContext creationContext;
 #if HAVE(IOSURFACE)

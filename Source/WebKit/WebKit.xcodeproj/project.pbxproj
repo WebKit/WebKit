@@ -6530,6 +6530,11 @@
 		7BE726572574F67200E85D98 /* RemoteGraphicsContextGLProxyFunctionsGenerated.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLProxyFunctionsGenerated.cpp; sourceTree = "<group>"; };
 		7BE72668257680EF00E85D98 /* RemoteGraphicsContextGLCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLCocoa.cpp; sourceTree = "<group>"; };
 		7BE9326227F5C75A00D5FEFB /* ReceiverMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReceiverMatcher.h; sourceTree = "<group>"; };
+		7BF128B62B7CF631001D1B14 /* RemoteSharedResourceCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSharedResourceCache.h; sourceTree = "<group>"; };
+		7BF128B72B7CF631001D1B14 /* RemoteSharedResourceCache.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteSharedResourceCache.messages.in; sourceTree = "<group>"; };
+		7BF128B82B7CF631001D1B14 /* RemoteSharedResourceCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSharedResourceCache.cpp; sourceTree = "<group>"; };
+		7BF128BD2B7E0757001D1B14 /* RemoteSharedResourceCacheProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSharedResourceCacheProxy.h; sourceTree = "<group>"; };
+		7BF128BE2B7E0757001D1B14 /* RemoteSharedResourceCacheProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSharedResourceCacheProxy.cpp; sourceTree = "<group>"; };
 		7BF19B5F290FC5B400EF322A /* IPCTesterReceiver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCTesterReceiver.h; sourceTree = "<group>"; };
 		7BF19B60290FC5B400EF322A /* IPCTesterReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPCTesterReceiver.cpp; sourceTree = "<group>"; };
 		7BFCCD2528B4D180009FC707 /* XPCConnectionTerminationWatchdog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XPCConnectionTerminationWatchdog.h; sourceTree = "<group>"; };
@@ -10840,6 +10845,8 @@
 				2D7E43C223752CD900EA5CA0 /* GPUProcessConnection.messages.in */,
 				2D7E43C123752CD900EA5CA0 /* GPUProcessConnectionInfo.h */,
 				541A3D0B2B5F3948009CE0D6 /* GPUProcessConnectionInfo.serialization.in */,
+				7BF128BE2B7E0757001D1B14 /* RemoteSharedResourceCacheProxy.cpp */,
+				7BF128BD2B7E0757001D1B14 /* RemoteSharedResourceCacheProxy.h */,
 			);
 			path = GPU;
 			sourceTree = "<group>";
@@ -10868,6 +10875,9 @@
 				46F5DD862AFD7DF100F3B26F /* GPUProcessPreferences.serialization.in */,
 				4150A5A023E06C910051264A /* GPUProcessSessionParameters.h */,
 				5C046A17290B268500FF7820 /* GPUProcessSessionParameters.serialization.in */,
+				7BF128B82B7CF631001D1B14 /* RemoteSharedResourceCache.cpp */,
+				7BF128B62B7CF631001D1B14 /* RemoteSharedResourceCache.h */,
+				7BF128B72B7CF631001D1B14 /* RemoteSharedResourceCache.messages.in */,
 			);
 			path = GPUProcess;
 			sourceTree = "<group>";

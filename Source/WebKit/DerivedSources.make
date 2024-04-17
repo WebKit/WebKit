@@ -267,6 +267,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/WebPage/ViewUpdateDispatcher \
 	WebProcess/XR/PlatformXRSystemProxy \
 	GPUProcess/GPUConnectionToWebProcess \
+	GPUProcess/RemoteSharedResourceCache \
 	GPUProcess/ShapeDetection/RemoteBarcodeDetector \
 	GPUProcess/ShapeDetection/RemoteFaceDetector \
 	GPUProcess/ShapeDetection/RemoteTextDetector \

@@ -70,6 +70,7 @@ namespace WebKit {
 class WebPage;
 class RemoteImageBufferProxy;
 class RemoteSerializedImageBufferProxy;
+class RemoteSharedResourceCacheProxy;
 class RemoteLayerBackingStore;
 
 class RemoteImageBufferProxyFlushState;
@@ -194,6 +195,7 @@ private:
     bool isCurrent() const final { return m_dispatcher.isCurrent(); }
     RefPtr<IPC::Connection> m_connection;
     RefPtr<IPC::StreamClientConnection> m_streamConnection;
+    RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
     RemoteRenderingBackendCreationParameters m_parameters;
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     RefPtr<WebCore::SharedMemory> m_getPixelBufferSharedMemory;

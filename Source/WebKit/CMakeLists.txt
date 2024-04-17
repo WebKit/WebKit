@@ -132,6 +132,7 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 set(WebKit_MESSAGES_IN_FILES
     GPUProcess/GPUConnectionToWebProcess
     GPUProcess/GPUProcess
+    GPUProcess/RemoteSharedResourceCache
 
     GPUProcess/ShapeDetection/RemoteBarcodeDetector
     GPUProcess/ShapeDetection/RemoteFaceDetector

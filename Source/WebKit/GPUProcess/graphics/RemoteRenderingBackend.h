@@ -79,6 +79,7 @@ class GPUConnectionToWebProcess;
 class RemoteDisplayListRecorder;
 class RemoteImageBuffer;
 class RemoteImageBufferSet;
+class RemoteSharedResourceCache;
 struct BufferIdentifierSet;
 struct ImageBufferSetPrepareBufferForDisplayInputData;
 struct ImageBufferSetPrepareBufferForDisplayOutputData;
@@ -190,8 +191,9 @@ private:
 
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     Ref<IPC::StreamServerConnection> m_streamConnection;
-    RemoteResourceCache m_remoteResourceCache;
     Ref<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    Ref<RemoteSharedResourceCache> m_sharedResourceCache;
+    RemoteResourceCache m_remoteResourceCache;
     WebCore::ProcessIdentity m_resourceOwner;
     RenderingBackendIdentifier m_renderingBackendIdentifier;
     RefPtr<WebCore::SharedMemory> m_getPixelBufferSharedMemory;

@@ -35,6 +35,7 @@
 #include "RemoteImageBufferMessages.h"
 #include "RemoteImageBufferProxyMessages.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "RemoteSharedResourceCacheMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebWorkerClient.h"
@@ -379,7 +380,7 @@ RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::u
 RemoteSerializedImageBufferProxy::~RemoteSerializedImageBufferProxy()
 {
     if (m_connection)
-        m_connection->send(Messages::GPUConnectionToWebProcess::ReleaseSerializedImageBuffer(m_renderingResourceIdentifier), 0);
+        m_connection->send(Messages::RemoteSharedResourceCache::ReleaseSerializedImageBuffer(m_renderingResourceIdentifier), 0);
 }
 
 } // namespace WebKit

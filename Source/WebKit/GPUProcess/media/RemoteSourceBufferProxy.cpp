@@ -30,6 +30,7 @@
 
 #include "Connection.h"
 #include "InitializationSegmentInfo.h"
+#include "Logging.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteSourceBufferProxyMessages.h"
 #include "SharedBufferReference.h"
@@ -363,6 +364,8 @@ void RemoteSourceBufferProxy::shutdown()
         disconnect();
     }, m_identifier);
 }
+
+#undef MESSAGE_CHECK
 
 } // namespace WebKit
 
