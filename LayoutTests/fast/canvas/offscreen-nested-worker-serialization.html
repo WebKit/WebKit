@@ -1,19 +1,21 @@
-<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForWebGLEnabled=true OffscreenCanvasEnabled=true ] -->
+<!DOCTYPE html><!-- webkit-test-runner [ OffscreenCanvasEnabled=true ] -->
 <body style="margin:0">
 <canvas id="c" style="background: red;"></canvas>
 <script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
 let worker = new Worker('resources/offscreen-worker.js');
 const offscreen = c.transferControlToOffscreen();
 worker.postMessage({canvas: offscreen},[offscreen]);
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    worker.onmessage = () => {
+worker.onmessage = () => {
+    requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
+            if (window.testRunner)
                 testRunner.notifyDone();
-            });
+            else
+                console.log("done");
         });
-    };
-}
+    });
+};
 </script>
 </body>

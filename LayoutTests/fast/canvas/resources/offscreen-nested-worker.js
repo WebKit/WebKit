@@ -1,15 +1,14 @@
 onmessage = function(event) {
-    console.log(event)
-    console.log(event.data)
-    console.log(event.data.canvas)
-    let gl = event.data.canvas.getContext('webgl');
-    gl.enable(gl.SCISSOR_TEST);
-    gl.scissor(0, 0, 150, 75);
-    gl.clearColor(0, 1, 0, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.scissor(150, 75, 150, 75);
-    gl.clearColor(1, 1, 0, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    if (typeof window == "undefined")
-        self.postMessage("done");
+    let ctx = event.data.canvas.getContext('2d');
+    ctx.fillStyle = "lime";
+    ctx.fillRect(0, 75, 150, 150);
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(150, 0, 300, 75);
+    // Ensure that offscreen canvas has submitted the frame to the placeholder by ensuring
+    // "update rendering" phase of Worker lifecycle has executed few times.
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            self.postMessage("done");
+        });
+    });
 };

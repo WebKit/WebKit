@@ -1,16 +1,5 @@
-<!DOCTYPE html>
 <body style="margin:0">
-<canvas id="c" style="background: red;"></canvas>
-<script src="resources/offscreen-nested-worker.js"></script>
-<script>
-onmessage({data: {canvas: c}});
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            testRunner.notifyDone();
-        });
-    });
-}
-</script>
+<div style="width: 300px; height: 150px; background-color: red"></div>
+<div style="position: absolute; top: 75px; left: 0px; width: 150px; height: 75px; background-color: lime"></div>
+<div style="position: absolute; top: 0px; left: 150px; width: 150px; height: 75px; background-color: yellow"></div>
 </body>
