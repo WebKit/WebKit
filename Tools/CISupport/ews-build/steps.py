@@ -2583,7 +2583,10 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
 
         for queue in queues_for_safe_merge:
             queue_data = response.json().get(queue, None)
-            if queue_data:
+            # jsc-arm7-tests will not set its status if skipped, so we condition on jsc-armv7
+            if queue == 'jsc-armv7-tests' and response.json().get('jsc-armv7', None).get('state', None) == 3:
+                yield self._addToLog('stdio', f'{queue}: Skipped\n')
+            elif queue_data:
                 status = queue_data.get('state', None)
                 if status == 0:  # success
                     yield self._addToLog('stdio', f'{queue}: Success\n')
