@@ -3883,6 +3883,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
     ENABLE_GUARD_MALLOC = False
     ENABLE_ADDITIONAL_ARGUMENTS = True
     EXIT_AFTER_FAILURES = '60'
+    STRESS_MODE = False
     command = ['python3', 'Tools/Scripts/run-webkit-tests',
                '--no-build',
                '--no-show-results',
@@ -3920,7 +3921,8 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
         else:
             if self.EXIT_AFTER_FAILURES is not None:
                 self.setCommand(self.command + ['--exit-after-n-failures', '{}'.format(self.EXIT_AFTER_FAILURES)])
-            self.setCommand(self.command + ['--skip-failing-tests'])
+            if not self.STRESS_MODE:
+                self.setCommand(self.command + ['--skip-failing-tests'])
 
         if platform in ['gtk', 'wpe']:
             self.setCommand(self.command + ['--enable-core-dumps-nolimit'])
@@ -4136,6 +4138,7 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
     suffix = 'stress-mode'
     EXIT_AFTER_FAILURES = '10'
     ENABLE_ADDITIONAL_ARGUMENTS = False
+    STRESS_MODE = True
     FAILURE_MSG_IN_STRESS_MODE = 'Found test failures in stress mode'
 
     def __init__(self, num_iterations=100, layout_test_class=RunWebKitTests):

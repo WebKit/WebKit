@@ -2295,7 +2295,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--exit-after-n-failures', '10',
                                  '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
@@ -2318,7 +2318,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--dump-render-tree', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--exit-after-n-failures', '10',
                                  '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
@@ -2339,7 +2339,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--exit-after-n-failures', '10',
                                  '--iterations', 100, 'test'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
@@ -2363,7 +2363,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--exit-after-n-failures', '10',
                                  '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
@@ -2385,7 +2385,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--exit-after-n-failures', '10',
                                  '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
@@ -2421,7 +2421,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests', '--guard-malloc',
+                                 '--exit-after-n-failures', '10', '--guard-malloc',
                                  '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
@@ -2442,7 +2442,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests', '--guard-malloc',
+                                 '--exit-after-n-failures', '10', '--guard-malloc',
                                  '--iterations', 100, 'test'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
