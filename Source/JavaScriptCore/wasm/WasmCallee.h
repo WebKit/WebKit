@@ -252,88 +252,83 @@ enum class MetadataReadMode {
 
 constexpr inline JSEntrypointInterpreterCalleeMetadata jsEntrypointMetadataForGPR(GPRReg g, MetadataReadMode mode)
 {
-    using enum JSEntrypointInterpreterCalleeMetadata;
-    using enum MetadataReadMode;
-    if (mode == Write) {
+    if (mode == MetadataReadMode::Write) {
         for (unsigned i = 0; i < GPRInfo::numberOfArgumentRegisters; ++i) {
             if (g == GPRInfo::toArgumentRegister(i)) {
                 return static_cast<JSEntrypointInterpreterCalleeMetadata>(
-                    static_cast<int8_t>(WA0) + i);
+                    static_cast<int8_t>(JSEntrypointInterpreterCalleeMetadata::WA0) + i);
             }
         }
 
         if (g == GPRInfo::returnValueGPR)
-            return WR0;
+            return JSEntrypointInterpreterCalleeMetadata::WR0;
         if (g == GPRInfo::returnValueGPR2)
-            return WR1;
+            return JSEntrypointInterpreterCalleeMetadata::WR1;
 
         RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(false);
-        return InvalidRegister;
+        return JSEntrypointInterpreterCalleeMetadata::InvalidRegister;
     }
 
     if (g == GPRInfo::argumentGPR0)
-        return WA0_READ;
+        return JSEntrypointInterpreterCalleeMetadata::WA0_READ;
 
     RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(false);
-    return InvalidRegister;
+    return JSEntrypointInterpreterCalleeMetadata::InvalidRegister;
 }
 
 constexpr inline JSEntrypointInterpreterCalleeMetadata jsEntrypointMetadataForFPR(FPRReg f, MetadataReadMode mode)
 {
-    using enum JSEntrypointInterpreterCalleeMetadata;
-    using enum MetadataReadMode;
-    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(mode == Write);
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(mode == MetadataReadMode::Write);
 
     for (unsigned i = 0; i < GPRInfo::numberOfArgumentRegisters; ++i) {
         if (f == FPRInfo::toArgumentRegister(i)) {
             return static_cast<JSEntrypointInterpreterCalleeMetadata>(
-                static_cast<int8_t>(WAF0) + i);
+                static_cast<int8_t>(JSEntrypointInterpreterCalleeMetadata::WAF0) + i);
         }
     }
     RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(false);
-    return InvalidRegister;
+    return JSEntrypointInterpreterCalleeMetadata::InvalidRegister;
 }
 
 inline void dumpJSEntrypointInterpreterCalleeMetadata(const Vector<JSEntrypointInterpreterCalleeMetadata>& data)
 {
-    using enum JSEntrypointInterpreterCalleeMetadata;
     constexpr auto printOp = [](JSEntrypointInterpreterCalleeMetadata o) {
         switch (o) {
-        case Memory: dataLog("Memory"); break;
-        case Done: dataLog("Done"); break;
-        case FrameSize: dataLog("FrameSize"); break;
-        case LoadI32: dataLog("LoadI32"); break;
-        case LoadF32: dataLog("LoadF32"); break;
-        case LoadF64: dataLog("LoadF64"); break;
-        case StoreI32: dataLog("StoreI32"); break;
-        case StoreF32: dataLog("StoreF32"); break;
-        case StoreF64: dataLog("StoreF64"); break;
-        case LoadI64: dataLog("LoadI64"); break;
-        case StoreI64: dataLog("StoreI64"); break;
-        case BoxInt32: dataLog("BoxInt32"); break;
-        case BoxFloat32: dataLog("BoxFloat32"); break;
-        case BoxFloat64: dataLog("BoxFloat64"); break;
-        case UnBoxInt32: dataLog("UnBoxInt32"); break;
-        case UnBoxFloat32: dataLog("UnBoxFloat32"); break;
-        case UnBoxFloat64: dataLog("UnBoxFloat64"); break;
-        case Zero: dataLog("Zero"); break;
-        case Undefined: dataLog("Undefined"); break;
-        case BoxInt64: dataLog("BoxInt64"); break;
-        case UnBoxInt64: dataLog("UnBoxInt64"); break;
-        case Call: dataLog("Call"); break;
-        case WA0_READ: dataLog("WA0_READ"); break;
+        case JSEntrypointInterpreterCalleeMetadata::Memory: dataLog("Memory"); break;
+        case JSEntrypointInterpreterCalleeMetadata::Done: dataLog("Done"); break;
+        case JSEntrypointInterpreterCalleeMetadata::FrameSize: dataLog("FrameSize"); break;
+        case JSEntrypointInterpreterCalleeMetadata::LoadI32: dataLog("LoadI32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::LoadF32: dataLog("LoadF32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::LoadF64: dataLog("LoadF64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::StoreI32: dataLog("StoreI32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::StoreF32: dataLog("StoreF32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::StoreF64: dataLog("StoreF64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::LoadI64: dataLog("LoadI64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::StoreI64: dataLog("StoreI64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::BoxInt32: dataLog("BoxInt32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::BoxFloat32: dataLog("BoxFloat32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::BoxFloat64: dataLog("BoxFloat64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::UnBoxInt32: dataLog("UnBoxInt32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::UnBoxFloat32: dataLog("UnBoxFloat32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::UnBoxFloat64: dataLog("UnBoxFloat64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::Zero: dataLog("Zero"); break;
+        case JSEntrypointInterpreterCalleeMetadata::Undefined: dataLog("Undefined"); break;
+        case JSEntrypointInterpreterCalleeMetadata::BoxInt64: dataLog("BoxInt64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::UnBoxInt64: dataLog("UnBoxInt64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::Call: dataLog("Call"); break;
+        case JSEntrypointInterpreterCalleeMetadata::WA0_READ: dataLog("WA0_READ"); break;
         default: {
-            RELEASE_ASSERT(o >= WA0);
-            RELEASE_ASSERT(o < InvalidRegister);
-            if (o < WR0) {
+            RELEASE_ASSERT(o >= JSEntrypointInterpreterCalleeMetadata::WA0);
+            RELEASE_ASSERT(o < JSEntrypointInterpreterCalleeMetadata::InvalidRegister);
+            if (o < JSEntrypointInterpreterCalleeMetadata::WR0) {
                 dataLog("WA");
-                dataLog(static_cast<int8_t>(o) - static_cast<int8_t>(WA0));
-            } else if (o < WAF0) {
+                dataLog(static_cast<int8_t>(o) - static_cast<int8_t>(JSEntrypointInterpreterCalleeMetadata::WA0));
+            } else if (o < JSEntrypointInterpreterCalleeMetadata::WAF0) {
                 dataLog("R");
-                dataLog(static_cast<int8_t>(o) - static_cast<int8_t>(WR0));
+                dataLog(static_cast<int8_t>(o) - static_cast<int8_t>(JSEntrypointInterpreterCalleeMetadata::WR0));
             } else {
                 dataLog("FA");
-                dataLog(static_cast<int8_t>(o) - static_cast<int8_t>(WAF0));
+                dataLog(static_cast<int8_t>(o) - static_cast<int8_t>(JSEntrypointInterpreterCalleeMetadata::WAF0));
             }
         }
         }
@@ -345,18 +340,18 @@ inline void dumpJSEntrypointInterpreterCalleeMetadata(const Vector<JSEntrypointI
     };
     for (unsigned pc = 0; pc < data.size();) {
         switch (data[pc]) {
-        case FrameSize:
+        case JSEntrypointInterpreterCalleeMetadata::FrameSize:
             printOp(data[pc++]);
             dataLog(static_cast<int>(data[pc++]));
             break;
-        case LoadI32:
-        case LoadF32:
-        case LoadF64:
-        case StoreI32:
-        case StoreF32:
-        case StoreF64:
-        case LoadI64:
-        case StoreI64:
+        case JSEntrypointInterpreterCalleeMetadata::LoadI32:
+        case JSEntrypointInterpreterCalleeMetadata::LoadF32:
+        case JSEntrypointInterpreterCalleeMetadata::LoadF64:
+        case JSEntrypointInterpreterCalleeMetadata::StoreI32:
+        case JSEntrypointInterpreterCalleeMetadata::StoreF32:
+        case JSEntrypointInterpreterCalleeMetadata::StoreF64:
+        case JSEntrypointInterpreterCalleeMetadata::LoadI64:
+        case JSEntrypointInterpreterCalleeMetadata::StoreI64:
             printOp(data[pc++]);
             printOffset(data[pc++]);
             break;

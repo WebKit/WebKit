@@ -143,13 +143,11 @@ bool LLIntPlan::makeInterpretedJSToWasmCallee(unsigned functionIndex)
     totalFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalFrameSize);
 
     Vector<JSEntrypointInterpreterCalleeMetadata> metadata;
-    using enum JSEntrypointInterpreterCalleeMetadata;
-    using enum MetadataReadMode;
-    metadata.append(FrameSize);
+    metadata.append(JSEntrypointInterpreterCalleeMetadata::FrameSize);
     metadata.append(static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t>((totalFrameSize - JSEntrypointInterpreterCalleeSaveSpaceStackAligned) / 8)));
 
     if (m_moduleInformation->memoryCount())
-        metadata.append(Memory);
+        metadata.append(JSEntrypointInterpreterCalleeMetadata::Memory);
 
     CallInformation jsFrameConvention = jsCallingConvention().callInformationFor(signature, CallRole::Callee);
     // This offset converts a caller-perspective SP-relative offset to a caller-perspective FP-relative offset.
@@ -171,45 +169,45 @@ bool LLIntPlan::makeInterpretedJSToWasmCallee(unsigned functionIndex)
                 (spToFP + wasmFrameConvention.params[i].location.offsetFromSP() + static_cast<int>(PayloadOffset)) / 8));
             auto wasmParamTag = static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t>(
                 (spToFP + wasmFrameConvention.params[i].location.offsetFromSP() + static_cast<int>(TagOffset)) / 8));
-            auto loadType = (type.width() == Width32) ? LoadI32 : LoadI64;
-            auto storeType = (type.width() == Width32) ? StoreI32 : StoreI64;
+            auto loadType = (type.width() == Width32) ? JSEntrypointInterpreterCalleeMetadata::LoadI32 : JSEntrypointInterpreterCalleeMetadata::LoadI64;
+            auto storeType = (type.width() == Width32) ? JSEntrypointInterpreterCalleeMetadata::StoreI32 : JSEntrypointInterpreterCalleeMetadata::StoreI64;
             metadata.append(loadType);
             metadata.append(jsParam);
             metadata.append(storeType);
             metadata.append(wasmParam);
 
-            if (!is64Bit() && loadType == LoadI32) {
-                metadata.append(Zero);
-                metadata.append(StoreI32);
+            if (!is64Bit() && loadType == JSEntrypointInterpreterCalleeMetadata::LoadI32) {
+                metadata.append(JSEntrypointInterpreterCalleeMetadata::Zero);
+                metadata.append(JSEntrypointInterpreterCalleeMetadata::StoreI32);
                 metadata.append(wasmParamTag);
             }
         } else {
             if (type.isF32() || type.isF64()) {
-                metadata.append(type.isF64() ? LoadF64 : LoadF32);
+                metadata.append(type.isF64() ? JSEntrypointInterpreterCalleeMetadata::LoadF64 : JSEntrypointInterpreterCalleeMetadata::LoadF32);
                 metadata.append(jsParam);
-                metadata.append(jsEntrypointMetadataForFPR(wasmFrameConvention.params[i].location.fpr(), Write));
+                metadata.append(jsEntrypointMetadataForFPR(wasmFrameConvention.params[i].location.fpr(), MetadataReadMode::Write));
             } else if (type.isI32() || type.isI64()) {
-                metadata.append(type.isI64() ? LoadI64 : LoadI32);
+                metadata.append(type.isI64() ? JSEntrypointInterpreterCalleeMetadata::LoadI64 : JSEntrypointInterpreterCalleeMetadata::LoadI32);
                 metadata.append(jsParam);
-                metadata.append(jsEntrypointMetadataForGPR(wasmFrameConvention.params[i].location.jsr().payloadGPR(), Write));
+                metadata.append(jsEntrypointMetadataForGPR(wasmFrameConvention.params[i].location.jsr().payloadGPR(), MetadataReadMode::Write));
 
                 if (!is64Bit() && type.isI32()) {
-                    metadata.append(Zero);
-                    metadata.append(jsEntrypointMetadataForGPR(wasmFrameConvention.params[i].location.jsr().tagGPR(), Write));
+                    metadata.append(JSEntrypointInterpreterCalleeMetadata::Zero);
+                    metadata.append(jsEntrypointMetadataForGPR(wasmFrameConvention.params[i].location.jsr().tagGPR(), MetadataReadMode::Write));
                 }
             } else
                 return false;
         }
     }
 
-    metadata.append(Call);
+    metadata.append(JSEntrypointInterpreterCalleeMetadata::Call);
 
     if (functionSignature.returnsVoid()) {
-        metadata.append(Undefined);
-        metadata.append(jsEntrypointMetadataForGPR(JSRInfo::returnValueJSR.payloadGPR(), Write));
+        metadata.append(JSEntrypointInterpreterCalleeMetadata::Undefined);
+        metadata.append(jsEntrypointMetadataForGPR(JSRInfo::returnValueJSR.payloadGPR(), MetadataReadMode::Write));
         if constexpr (!is64Bit()) {
-            metadata.append(ShiftTag);
-            metadata.append(jsEntrypointMetadataForGPR(JSRInfo::returnValueJSR.tagGPR(), Write));
+            metadata.append(JSEntrypointInterpreterCalleeMetadata::ShiftTag);
+            metadata.append(jsEntrypointMetadataForGPR(JSRInfo::returnValueJSR.tagGPR(), MetadataReadMode::Write));
         }
     } else if (functionSignature.returnCount() == 1) {
         if (!functionSignature.returnType(0).isI32())
@@ -217,21 +215,21 @@ bool LLIntPlan::makeInterpretedJSToWasmCallee(unsigned functionIndex)
 
         JSValueRegs inputJSR = wasmFrameConvention.results[0].location.jsr();
         JSValueRegs outputJSR = jsFrameConvention.results[0].location.jsr();
-        metadata.append(jsEntrypointMetadataForGPR(inputJSR.payloadGPR(), Read));
+        metadata.append(jsEntrypointMetadataForGPR(inputJSR.payloadGPR(), MetadataReadMode::Read));
         if (functionSignature.returnType(0).isI64())
-            metadata.append(BoxInt64);
+            metadata.append(JSEntrypointInterpreterCalleeMetadata::BoxInt64);
         else if (functionSignature.returnType(0).isI32())
-            metadata.append(BoxInt32);
+            metadata.append(JSEntrypointInterpreterCalleeMetadata::BoxInt32);
         else
             return false; // TODO
-        metadata.append(jsEntrypointMetadataForGPR(outputJSR.payloadGPR(), Write));
+        metadata.append(jsEntrypointMetadataForGPR(outputJSR.payloadGPR(), MetadataReadMode::Write));
         if (!is64Bit()) {
-            metadata.append(ShiftTag);
-            metadata.append(jsEntrypointMetadataForGPR(outputJSR.tagGPR(), Write));
+            metadata.append(JSEntrypointInterpreterCalleeMetadata::ShiftTag);
+            metadata.append(jsEntrypointMetadataForGPR(outputJSR.tagGPR(), MetadataReadMode::Write));
         }
     } else
         return false;
-    metadata.append(Done);
+    metadata.append(JSEntrypointInterpreterCalleeMetadata::Done);
 
     if ((false))
         dumpJSEntrypointInterpreterCalleeMetadata(metadata);
