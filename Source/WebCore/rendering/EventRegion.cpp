@@ -148,7 +148,8 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
             return;
         }
 
-        if (shouldConsolidateInteractionRegion(renderer, rectForTracking))
+        bool defaultContentHint = interactionRegion->contentHint == InteractionRegion::ContentHint::Default;
+        if (defaultContentHint && shouldConsolidateInteractionRegion(renderer, rectForTracking, interactionRegion->elementIdentifier))
             return;
 
         m_interactionRectsAndContentHints.add(rectForTracking, interactionRegion->contentHint);
@@ -176,7 +177,7 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
     }
 }
 
-bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& renderer, const IntRect& bounds)
+bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& renderer, const IntRect& bounds, const ElementIdentifier& elementIdentifier)
 {
     for (auto& ancestor : ancestorsOfType<RenderElement>(renderer)) {
         if (!ancestor.element())
@@ -213,14 +214,10 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& render
             && marginTop <= maxMargin
             && marginBottom <= maxMargin;
 
-        constexpr auto offCenterThreshold = 2;
-        bool centered = std::abs(bounds.center().x() - ancestorBounds.center().x()) < offCenterThreshold
-            || std::abs(bounds.center().y() - ancestorBounds.center().y()) < offCenterThreshold;
-
         bool hasNoVisualBorders = !renderer.hasVisibleBoxDecorations();
 
         bool canConsolidate = hasNoVisualBorders
-            && (majorOverlap || (centered && elementMatchesHoverRules(*ancestor.element())));
+            && (majorOverlap || elementIdentifier == ancestorElementIdentifier);
 
         // We're consolidating the region based on this ancestor, it shouldn't be removed or candidate for removal.
         if (canConsolidate) {

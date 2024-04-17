@@ -79,7 +79,6 @@ inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
 }
 
 WEBCORE_EXPORT std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject&, const FloatRect&);
-WEBCORE_EXPORT bool elementMatchesHoverRules(Element&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const InteractionRegion&);
 

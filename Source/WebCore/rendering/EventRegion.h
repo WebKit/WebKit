@@ -60,7 +60,7 @@ public:
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     void uniteInteractionRegions(RenderObject&, const FloatRect&);
-    bool shouldConsolidateInteractionRegion(RenderObject&, const IntRect&);
+    bool shouldConsolidateInteractionRegion(RenderObject&, const IntRect&, const ElementIdentifier&);
     void removeSuperfluousInteractionRegions();
     void shrinkWrapInteractionRegions();
     void copyInteractionRegionsToEventRegion();
