@@ -32,7 +32,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/MemoryStatistics.h>
 #include <WebCore/CommonVM.h>
-#include <WebCore/JSLocalDOMWindow.h>
+#include <WebCore/JSDOMWindow.h>
 #include <WebCore/NotImplemented.h>
 #include <string.h>
 #include <sys/sysinfo.h>
