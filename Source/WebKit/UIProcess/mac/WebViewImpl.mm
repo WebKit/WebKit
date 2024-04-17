@@ -3199,8 +3199,13 @@ NSTextCheckingTypes WebViewImpl::getTextCheckingTypes() const
 {
     NSTextCheckingTypes types = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
 #if HAVE(INLINE_PREDICTIONS)
-    if (allowsInlinePredictions())
+    if (allowsInlinePredictions()) {
         types |= (NSTextCheckingType)_NSTextCheckingTypeSingleCompletion;
+
+#if HAVE(TEXT_CHECKING_TYPE_GRAMMAR)
+        types |= (NSTextCheckingType)_NSTextCheckingTypeGrammar;
+#endif
+    }
 #endif
 
     return types;
