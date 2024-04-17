@@ -52,9 +52,7 @@ class ScriptExecutionContext;
 class TextResourceDecoder;
 class ThreadableLoader;
 
-class FileReaderLoader final : public ThreadableLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FileReaderLoader);
+class FileReaderLoader : public ThreadableLoaderClient {
 public:
     enum ReadType {
         ReadAsArrayBuffer,

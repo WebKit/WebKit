@@ -43,7 +43,6 @@ using namespace HTMLNames;
 
 class FormAttributeTargetObserver final : private IdTargetObserver {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FormAttributeTargetObserver);
 public:
     FormAttributeTargetObserver(const AtomString& id, FormListedElement&);
 

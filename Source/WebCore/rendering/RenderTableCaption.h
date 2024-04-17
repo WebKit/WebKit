@@ -27,7 +27,6 @@ class RenderTable;
 
 class RenderTableCaption final : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderTableCaption);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableCaption);
 public:
     RenderTableCaption(Element&, RenderStyle&&);
     virtual ~RenderTableCaption();

@@ -44,7 +44,6 @@ enum class TableIntrinsics : uint8_t { ForLayout, ForKeyword };
 
 class RenderTable : public RenderBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderTable);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTable);
 public:
     RenderTable(Type, Element&, RenderStyle&&);
     RenderTable(Type, Document&, RenderStyle&&);

@@ -39,12 +39,10 @@ class CachedImage;
 class RenderElement;
 
 class RenderImageResource : public CanMakeCheckedPtr<RenderImageResource> {
-    WTF_MAKE_NONCOPYABLE(RenderImageResource);
-    WTF_MAKE_ISO_ALLOCATED(RenderImageResource);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderImageResource);
+    WTF_MAKE_NONCOPYABLE(RenderImageResource); WTF_MAKE_ISO_ALLOCATED(RenderImageResource);
 public:
     RenderImageResource();
-    virtual ~RenderImageResource();
+    virtual ~RenderImageResource() = default;
 
     virtual void initialize(RenderElement& renderer) { initialize(renderer, nullptr); }
     virtual void shutdown();

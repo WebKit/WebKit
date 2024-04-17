@@ -99,7 +99,6 @@ using namespace HTMLNames;
 #if ENABLE(DATALIST_ELEMENT)
 class ListAttributeTargetObserver final : public IdTargetObserver {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ListAttributeTargetObserver);
 public:
     ListAttributeTargetObserver(const AtomString& id, HTMLInputElement&);
 

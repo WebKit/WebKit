@@ -38,14 +38,11 @@ namespace TestWebKitAPI {
 
 class CheckedObject : public CanMakeCheckedPtr<CheckedObject> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CheckedObject);
 public:
     int someFunction() const { return -7; }
 };
 
 class DerivedCheckedObject : public CheckedObject {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DerivedCheckedObject);
 };
 
 TEST(WTF_CheckedPtr, Basic)
@@ -353,9 +350,8 @@ TEST(WTF_CheckedPtr, ReferenceCountLimit)
     EXPECT_EQ(object.ptrCount(), count);
 }
 
-class ThreadSafeCheckedPtrObject final : public CanMakeThreadSafeCheckedPtr<ThreadSafeCheckedPtrObject> {
+class ThreadSafeCheckedPtrObject : public CanMakeThreadSafeCheckedPtr<ThreadSafeCheckedPtrObject> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ThreadSafeCheckedPtrObject);
 public:
     std::atomic<unsigned> value { 0 };
 };

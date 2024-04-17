@@ -81,8 +81,4 @@ void IdTargetObserverRegistry::notifyObserversInternal(const AtomString& id)
         m_registry.remove(id);
 }
 
-IdTargetObserverRegistry::ObserverSet::ObserverSet() = default;
-
-IdTargetObserverRegistry::ObserverSet::~ObserverSet() = default;
-
 } // namespace WebCore

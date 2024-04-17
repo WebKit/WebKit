@@ -57,8 +57,6 @@ class ServiceWorkerDownloadTask;
 class WebSWServerConnection;
 
 class WebSWServerToContextConnection final: public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebSWServerToContextConnection);
 public:
     using WebCore::SWServerToContextConnection::weakPtrFactory;
     using WebCore::SWServerToContextConnection::WeakValueType;

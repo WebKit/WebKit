@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-struct SameSizeAsScrollableArea final : public CanMakeWeakPtr<SameSizeAsScrollableArea> {
+struct SameSizeAsScrollableArea : public CanMakeWeakPtr<SameSizeAsScrollableArea>, public CanMakeCheckedPtr<SameSizeAsScrollableArea> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     ~SameSizeAsScrollableArea() { }

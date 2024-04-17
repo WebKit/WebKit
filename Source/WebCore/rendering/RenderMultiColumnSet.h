@@ -44,10 +44,8 @@ namespace WebCore {
 // come before and after the span.
 class RenderMultiColumnSet final : public RenderFragmentContainerSet {
     WTF_MAKE_ISO_ALLOCATED(RenderMultiColumnSet);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMultiColumnSet);
 public:
     RenderMultiColumnSet(RenderFragmentedFlow&, RenderStyle&&);
-    virtual ~RenderMultiColumnSet();
 
     RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }
     RenderMultiColumnFlow* multiColumnFlow() const { return static_cast<RenderMultiColumnFlow*>(fragmentedFlow()); }

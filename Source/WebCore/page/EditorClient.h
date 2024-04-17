@@ -64,7 +64,6 @@ struct SimpleRange;
 
 class EditorClient : public CanMakeWeakPtr<EditorClient>, public CanMakeCheckedPtr<EditorClient> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EditorClient);
 public:
     virtual ~EditorClient() = default;
 

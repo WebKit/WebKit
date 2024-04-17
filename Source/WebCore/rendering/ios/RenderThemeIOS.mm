@@ -112,8 +112,6 @@ const float ControlBaseFontSize = 11;
 
 RenderThemeIOS::RenderThemeIOS() = default;
 
-RenderThemeIOS::~RenderThemeIOS() = default;
-
 RenderTheme& RenderTheme::singleton()
 {
     static NeverDestroyed<RenderThemeIOS> theme;

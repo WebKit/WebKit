@@ -102,9 +102,8 @@ WEBCORE_EXPORT bool isReload(FrameLoadType);
 using ContentPolicyDecisionFunction = CompletionHandler<void(PolicyAction)>;
 
 class FrameLoader final : public CanMakeCheckedPtr<FrameLoader> {
-    WTF_MAKE_NONCOPYABLE(FrameLoader);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameLoader);
+    WTF_MAKE_NONCOPYABLE(FrameLoader);
 public:
     FrameLoader(LocalFrame&, UniqueRef<LocalFrameLoaderClient>&&);
     ~FrameLoader();

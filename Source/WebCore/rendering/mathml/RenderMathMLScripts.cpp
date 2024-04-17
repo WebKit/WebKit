@@ -50,8 +50,6 @@ RenderMathMLScripts::RenderMathMLScripts(Type type, MathMLScriptsElement& elemen
 {
 }
 
-RenderMathMLScripts::~RenderMathMLScripts() = default;
-
 MathMLScriptsElement& RenderMathMLScripts::element() const
 {
     return static_cast<MathMLScriptsElement&>(nodeForNonAnonymous());

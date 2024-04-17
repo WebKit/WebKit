@@ -63,8 +63,6 @@ RenderTableRow::RenderTableRow(Document& document, RenderStyle&& style)
     ASSERT(isRenderTableRow());
 }
 
-RenderTableRow::~RenderTableRow() = default;
-
 void RenderTableRow::willBeRemovedFromTree()
 {
     RenderBox::willBeRemovedFromTree();

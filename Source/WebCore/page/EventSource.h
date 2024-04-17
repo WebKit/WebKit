@@ -48,7 +48,6 @@ class ThreadableLoader;
 
 class EventSource final : public RefCounted<EventSource>, public EventTarget, private ThreadableLoaderClient, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(EventSource);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventSource);
 public:
     struct Init {
         bool withCredentials;

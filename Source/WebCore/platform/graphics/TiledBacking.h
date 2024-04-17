@@ -78,7 +78,6 @@ public:
 
 class TiledBacking : public CanMakeCheckedPtr<TiledBacking> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TiledBacking);
 public:
     virtual ~TiledBacking() = default;
 

@@ -36,9 +36,8 @@ class Document;
 class DocumentLoader;
 class Page;
 
-class CachedPage final : public CanMakeCheckedPtr<CachedPage> {
+class CachedPage : public CanMakeCheckedPtr<CachedPage> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CachedPage);
 public:
     explicit CachedPage(Page&);
     WEBCORE_EXPORT ~CachedPage();

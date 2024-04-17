@@ -54,9 +54,8 @@ struct TextUpdate {
     std::optional<std::unique_ptr<RenderStyle>> inheritedDisplayContentsStyle;
 };
 
-class Update final : public CanMakeCheckedPtr<Update> {
+class Update : public CanMakeCheckedPtr<Update> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Update);
 public:
     Update(Document&);
     ~Update();

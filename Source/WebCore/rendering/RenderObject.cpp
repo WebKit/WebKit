@@ -110,9 +110,8 @@ RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope()
 
 #endif
 
-struct SameSizeAsRenderObject final : public CachedImageClient, public CanMakeCheckedPtr<SameSizeAsRenderObject> {
+struct SameSizeAsRenderObject : public CachedImageClient, public CanMakeCheckedPtr<SameSizeAsRenderObject> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(SameSizeAsRenderObject);
 
     virtual ~SameSizeAsRenderObject() = default; // Allocate vtable pointer.
 #if ASSERT_ENABLED

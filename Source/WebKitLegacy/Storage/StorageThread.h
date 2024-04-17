@@ -37,10 +37,8 @@ namespace WebCore {
 class StorageAreaSync;
 class StorageTask;
 
-class StorageThread final : public CanMakeCheckedPtr<StorageThread> {
-    WTF_MAKE_NONCOPYABLE(StorageThread);
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StorageThread);
+class StorageThread : public CanMakeCheckedPtr<StorageThread> {
+    WTF_MAKE_NONCOPYABLE(StorageThread); WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type { LocalStorage, IndexedDB };
     StorageThread(Type = Type::LocalStorage);

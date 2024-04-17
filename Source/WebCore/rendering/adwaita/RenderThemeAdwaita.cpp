@@ -118,8 +118,6 @@ RenderTheme& RenderTheme::singleton()
     return theme;
 }
 
-RenderThemeAdwaita::~RenderThemeAdwaita() = default;
-
 bool RenderThemeAdwaita::supportsFocusRing(const RenderStyle& style) const
 {
     switch (style.usedAppearance()) {

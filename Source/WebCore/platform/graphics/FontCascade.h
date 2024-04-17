@@ -108,9 +108,8 @@ public:
     void operator()(TextLayout*) const;
 };
 
-class FontCascade final : public CanMakeWeakPtr<FontCascade>, public CanMakeCheckedPtr<FontCascade> {
+class FontCascade : public CanMakeWeakPtr<FontCascade>, public CanMakeCheckedPtr<FontCascade> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FontCascade);
 public:
     WEBCORE_EXPORT FontCascade();
     WEBCORE_EXPORT FontCascade(FontCascadeDescription&&);

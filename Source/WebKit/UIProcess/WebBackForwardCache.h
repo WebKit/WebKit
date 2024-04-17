@@ -40,9 +40,8 @@ class WebPageProxy;
 class WebProcessPool;
 class WebProcessProxy;
 
-class WebBackForwardCache final : public CanMakeCheckedPtr<WebBackForwardCache> {
+class WebBackForwardCache : public CanMakeCheckedPtr<WebBackForwardCache> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebBackForwardCache);
 public:
     explicit WebBackForwardCache(WebProcessPool&);
     ~WebBackForwardCache();

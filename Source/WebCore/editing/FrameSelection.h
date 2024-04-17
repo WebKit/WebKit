@@ -115,7 +115,6 @@ private:
 class FrameSelection final : private CaretBase, public CaretAnimationClient, public CanMakeCheckedPtr<FrameSelection> {
     WTF_MAKE_NONCOPYABLE(FrameSelection);
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameSelection);
 public:
     enum class Alteration : bool { Move, Extend };
     enum class CursorAlignOnScroll : bool { IfNeeded, Always };

@@ -93,7 +93,6 @@ private:
 
 class MediaRecorderPrivateGStreamer final : public MediaRecorderPrivate {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaRecorderPrivateGStreamer);
 public:
     static std::unique_ptr<MediaRecorderPrivateGStreamer> create(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
     explicit MediaRecorderPrivateGStreamer(Ref<MediaRecorderPrivateBackend>&&);

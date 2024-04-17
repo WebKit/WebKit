@@ -55,8 +55,6 @@ RenderAttachment::RenderAttachment(HTMLAttachmentElement& element, RenderStyle&&
 #endif
 }
 
-RenderAttachment::~RenderAttachment() = default;
-
 HTMLAttachmentElement& RenderAttachment::attachmentElement() const
 {
     return downcast<HTMLAttachmentElement>(nodeForNonAnonymous());

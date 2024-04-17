@@ -67,7 +67,6 @@ class WebInspectorUIExtensionControllerProxy;
 
 class RemoteWebInspectorUIProxyClient : public CanMakeWeakPtr<RemoteWebInspectorUIProxyClient>, public CanMakeCheckedPtr<RemoteWebInspectorUIProxyClient> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteWebInspectorUIProxyClient);
 public:
     virtual ~RemoteWebInspectorUIProxyClient() { }
     virtual void sendMessageToBackend(const String& message) = 0;

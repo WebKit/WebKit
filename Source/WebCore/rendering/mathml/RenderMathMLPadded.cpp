@@ -42,8 +42,6 @@ RenderMathMLPadded::RenderMathMLPadded(MathMLPaddedElement& element, RenderStyle
     ASSERT(isRenderMathMLPadded());
 }
 
-RenderMathMLPadded::~RenderMathMLPadded() = default;
-
 LayoutUnit RenderMathMLPadded::voffset() const
 {
     return toUserUnits(element().voffset(), style(), 0);

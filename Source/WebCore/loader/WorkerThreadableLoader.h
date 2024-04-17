@@ -90,14 +90,10 @@ private:
     //    go through it. All tasks posted from the worker object's thread to the worker context's
     //    thread contain the RefPtr<ThreadableLoaderClientWrapper> object, so the
     //    ThreadableLoaderClientWrapper instance is there until all tasks are executed.
-    class MainThreadBridge final : public ThreadableLoaderClient {
-        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
-        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MainThreadBridge);
+    class MainThreadBridge : public ThreadableLoaderClient {
     public:
         // All executed on the worker context's thread.
         MainThreadBridge(ThreadableLoaderClientWrapper&, WorkerLoaderProxy*, ScriptExecutionContextIdentifier, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, const String& outgoingReferrer, WorkerOrWorkletGlobalScope&);
-        virtual ~MainThreadBridge();
-
         void cancel();
         void destroy();
         void computeIsDone();

@@ -43,8 +43,6 @@ RenderDetailsMarker::RenderDetailsMarker(DetailsMarkerControl& element, RenderSt
     ASSERT(isRenderDetailsMarker());
 }
 
-RenderDetailsMarker::~RenderDetailsMarker() = default;
-
 static Path createPath(const FloatPoint* path)
 {
     Path result;

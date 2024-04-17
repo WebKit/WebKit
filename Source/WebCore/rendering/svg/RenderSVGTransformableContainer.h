@@ -29,10 +29,8 @@ class SVGGraphicsElement;
 
 class RenderSVGTransformableContainer final : public RenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGTransformableContainer);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGTransformableContainer);
 public:
     RenderSVGTransformableContainer(SVGGraphicsElement&, RenderStyle&&);
-    virtual ~RenderSVGTransformableContainer();
 
 private:
     ASCIILiteral renderName() const final { return "RenderSVGTransformableContainer"_s; }

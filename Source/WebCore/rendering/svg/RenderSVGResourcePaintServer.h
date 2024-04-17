@@ -30,7 +30,6 @@ class RenderSVGShape;
 
 class RenderSVGResourcePaintServer : public RenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourcePaintServer);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourcePaintServer);
 public:
     virtual ~RenderSVGResourcePaintServer();
 

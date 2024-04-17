@@ -71,15 +71,9 @@ inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orient
     return 0;
 }
 
-class ScrollableArea : public CanMakeWeakPtr<ScrollableArea> {
+class ScrollableArea : public CanMakeWeakPtr<ScrollableArea>, public CanMakeCheckedPtr<ScrollableArea> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    // CheckedPtr interface
-    virtual uint32_t ptrCount() const = 0;
-    virtual uint32_t ptrCountWithoutThreadCheck() const = 0;
-    virtual void incrementPtrCount() const = 0;
-    virtual void decrementPtrCount() const = 0;
-
     virtual bool isScrollView() const { return false; }
     virtual bool isRenderLayer() const { return false; }
     virtual bool isListBox() const { return false; }

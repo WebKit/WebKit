@@ -86,9 +86,8 @@ enum class AllowTrustedTypePolicy : uint8_t {
     DisallowedDuplicateName,
 };
 
-class ContentSecurityPolicy final : public CanMakeThreadSafeCheckedPtr<ContentSecurityPolicy> {
+class ContentSecurityPolicy : public CanMakeThreadSafeCheckedPtr<ContentSecurityPolicy> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ContentSecurityPolicy);
 public:
     explicit ContentSecurityPolicy(URL&&, ScriptExecutionContext&);
     WEBCORE_EXPORT explicit ContentSecurityPolicy(URL&&, ContentSecurityPolicyClient*, ReportingClient*);

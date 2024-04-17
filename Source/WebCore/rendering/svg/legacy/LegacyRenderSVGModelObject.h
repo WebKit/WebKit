@@ -45,10 +45,7 @@ class SVGElement;
 
 class LegacyRenderSVGModelObject : public RenderElement {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGModelObject);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGModelObject);
 public:
-    virtual ~LegacyRenderSVGModelObject();
-
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
     RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const override;
 

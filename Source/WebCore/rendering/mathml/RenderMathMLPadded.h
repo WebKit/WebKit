@@ -34,10 +34,8 @@ namespace WebCore {
 
 class RenderMathMLPadded final : public RenderMathMLRow {
     WTF_MAKE_ISO_ALLOCATED(RenderMathMLPadded);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLPadded);
 public:
     RenderMathMLPadded(MathMLPaddedElement&, RenderStyle&&);
-    virtual ~RenderMathMLPadded();
 
 private:
     ASCIILiteral renderName() const final { return "RenderMathMLPadded"_s; }

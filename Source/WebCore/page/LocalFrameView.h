@@ -90,7 +90,6 @@ enum class LayoutViewportConstraint : bool { Unconstrained, ConstrainedToDocumen
 
 class LocalFrameView final : public FrameView {
     WTF_MAKE_ISO_ALLOCATED(LocalFrameView);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LocalFrameView);
 public:
     friend class Internals;
     friend class LocalFrameViewLayoutContext;

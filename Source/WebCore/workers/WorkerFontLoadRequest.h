@@ -41,9 +41,8 @@ class WorkerGlobalScope;
 
 struct FontCustomPlatformData;
 
-class WorkerFontLoadRequest final : public FontLoadRequest, public ThreadableLoaderClient {
+class WorkerFontLoadRequest : public FontLoadRequest, public ThreadableLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerFontLoadRequest);
 public:
     WorkerFontLoadRequest(URL&&, LoadedFromOpaqueSource);
     ~WorkerFontLoadRequest() = default;

@@ -53,15 +53,8 @@ class MediaRecorderPrivate
     , public RealtimeMediaSource::VideoFrameObserver
     , public CanMakeCheckedPtr<MediaRecorderPrivate> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaRecorderPrivate);
 public:
     ~MediaRecorderPrivate();
-
-    // CheckedPtr interface
-    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
-    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
     struct AudioVideoSelectedTracks {
         MediaStreamTrackPrivate* audioTrack { nullptr };
@@ -99,6 +92,10 @@ protected:
     bool shouldMuteVideo() const { return m_shouldMuteVideo; }
 
 private:
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 #if CHECKED_POINTER_DEBUG
     void registerCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::registerCheckedPtr(pointer); };
     void copyCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::copyCheckedPtr(source, destination); }

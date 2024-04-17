@@ -29,7 +29,6 @@ class SVGMarkerElement;
 
 class LegacyRenderSVGResourceMarker final : public LegacyRenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceMarker);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceMarker);
 public:
     LegacyRenderSVGResourceMarker(SVGMarkerElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGResourceMarker();

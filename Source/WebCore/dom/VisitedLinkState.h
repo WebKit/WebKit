@@ -39,9 +39,8 @@ namespace WebCore {
 
 class Document;
 
-class VisitedLinkState final : public CanMakeCheckedPtr<VisitedLinkState> {
+class VisitedLinkState : public CanMakeCheckedPtr<VisitedLinkState> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VisitedLinkState);
 public:
     explicit VisitedLinkState(Document&);
 

@@ -172,8 +172,6 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     });
 }
 
-WorkerThreadableLoader::MainThreadBridge::~MainThreadBridge() = default;
-
 void WorkerThreadableLoader::MainThreadBridge::destroy()
 {
     // Ensure that no more client callbacks are done in the worker context's thread.

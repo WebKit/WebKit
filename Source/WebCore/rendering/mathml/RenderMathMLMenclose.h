@@ -35,10 +35,8 @@ namespace WebCore {
 
 class RenderMathMLMenclose final : public RenderMathMLRow {
     WTF_MAKE_ISO_ALLOCATED(RenderMathMLMenclose);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLMenclose);
 public:
     RenderMathMLMenclose(MathMLMencloseElement&, RenderStyle&&);
-    virtual ~RenderMathMLMenclose();
 
 private:
     ASCIILiteral renderName() const final { return "RenderMathMLMenclose"_s; }

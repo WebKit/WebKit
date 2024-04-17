@@ -562,8 +562,6 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
         [getPDFLayerControllerClass() setUseIOSurfaceForTiles:false];
 }
 
-PDFPlugin::~PDFPlugin() = default;
-
 void PDFPlugin::updateScrollbars()
 {
     PDFPluginBase::updateScrollbars();

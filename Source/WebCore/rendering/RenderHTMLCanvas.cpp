@@ -55,8 +55,6 @@ RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, RenderStyle&& sty
     ASSERT(isRenderHTMLCanvas());
 }
 
-RenderHTMLCanvas::~RenderHTMLCanvas() = default;
-
 HTMLCanvasElement& RenderHTMLCanvas::canvasElement() const
 {
     return downcast<HTMLCanvasElement>(nodeForNonAnonymous());

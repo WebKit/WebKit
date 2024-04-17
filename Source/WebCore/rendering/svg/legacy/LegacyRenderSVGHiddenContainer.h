@@ -29,7 +29,6 @@ class SVGElement;
 // <defs>, <linearGradient>, <radialGradient> are all good examples
 class LegacyRenderSVGHiddenContainer : public LegacyRenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGHiddenContainer);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGHiddenContainer);
 public:
     LegacyRenderSVGHiddenContainer(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
 

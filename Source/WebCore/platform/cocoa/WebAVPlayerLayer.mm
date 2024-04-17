@@ -57,9 +57,8 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 #endif
 
 namespace WebCore {
-class WebAVPlayerLayerPresentationModelClient final : public VideoPresentationModelClient, public CanMakeCheckedPtr<WebAVPlayerLayerPresentationModelClient> {
+class WebAVPlayerLayerPresentationModelClient : public VideoPresentationModelClient, public CanMakeCheckedPtr<WebAVPlayerLayerPresentationModelClient> {
     WTF_MAKE_FAST_ALLOCATED(WebAVPlayerLayerPresentationModelClient);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebAVPlayerLayerPresentationModelClient);
 public:
     WebAVPlayerLayerPresentationModelClient(WebAVPlayerLayer* playerLayer)
         : m_playerLayer(playerLayer)
@@ -68,7 +67,6 @@ public:
 private:
     // CheckedPtr interface
     uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
     void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
     void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 #if CHECKED_POINTER_DEBUG

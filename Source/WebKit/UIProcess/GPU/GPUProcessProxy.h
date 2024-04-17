@@ -69,7 +69,6 @@ struct GPUProcessPreferencesForWebProcess;
 class GPUProcessProxy final : public AuxiliaryProcessProxy {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(GPUProcessProxy);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GPUProcessProxy);
     friend LazyNeverDestroyed<GPUProcessProxy>;
 public:
     static void keepProcessAliveTemporarily();

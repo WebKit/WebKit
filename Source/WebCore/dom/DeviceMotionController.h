@@ -34,10 +34,8 @@ namespace WebCore {
 class DeviceMotionClient;
 class DeviceMotionData;
 
-class DeviceMotionController : public DeviceController {
+class DeviceMotionController final : public DeviceController {
     WTF_MAKE_NONCOPYABLE(DeviceMotionController);
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceMotionController);
 public:
     explicit DeviceMotionController(DeviceMotionClient&);
     virtual ~DeviceMotionController() = default;

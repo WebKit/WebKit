@@ -58,10 +58,7 @@ struct GradientData {
 
 class LegacyRenderSVGResourceGradient : public LegacyRenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceGradient);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceGradient);
 public:
-    virtual ~LegacyRenderSVGResourceGradient();
-
     SVGGradientElement& gradientElement() const { return static_cast<SVGGradientElement&>(LegacyRenderSVGResourceContainer::element()); }
 
     void removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers) final;

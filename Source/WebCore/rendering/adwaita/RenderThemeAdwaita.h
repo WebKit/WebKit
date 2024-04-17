@@ -34,7 +34,7 @@ namespace WebCore {
 
 class RenderThemeAdwaita : public RenderTheme {
 public:
-    virtual ~RenderThemeAdwaita();
+    virtual ~RenderThemeAdwaita() = default;
 
     void setAccentColor(const Color&);
 

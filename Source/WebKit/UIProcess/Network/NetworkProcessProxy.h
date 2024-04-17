@@ -110,7 +110,6 @@ struct WebsiteDataStoreParameters;
 
 class NetworkProcessProxy final : public AuxiliaryProcessProxy {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkProcessProxy);
 public:
     using RegistrableDomain = WebCore::RegistrableDomain;
     using TopFrameDomain = WebCore::RegistrableDomain;

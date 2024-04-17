@@ -37,11 +37,8 @@ namespace WebCore {
 // Render a base with scripts.
 class RenderMathMLScripts : public RenderMathMLBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderMathMLScripts);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLScripts);
 public:
     RenderMathMLScripts(Type, MathMLScriptsElement&, RenderStyle&&);
-    virtual ~RenderMathMLScripts();
-
     RenderMathMLOperator* unembellishedOperator() const final;
 
 protected:

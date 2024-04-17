@@ -76,8 +76,6 @@ RenderInline::RenderInline(Type type, Document& document, RenderStyle&& style)
     ASSERT(isRenderInline());
 }
 
-RenderInline::~RenderInline() = default;
-
 void RenderInline::willBeDestroyed()
 {
 #if ASSERT_ENABLED

@@ -98,8 +98,6 @@ RenderTableCell::RenderTableCell(Document& document, RenderStyle&& style)
     ASSERT(isRenderTableCell());
 }
 
-RenderTableCell::~RenderTableCell() = default;
-
 void RenderTableCell::willBeRemovedFromTree()
 {
     RenderBlockFlow::willBeRemovedFromTree();

@@ -43,8 +43,6 @@ RenderSVGInline::RenderSVGInline(Type type, SVGGraphicsElement& element, RenderS
     ASSERT(isRenderSVGInline());
 }
 
-RenderSVGInline::~RenderSVGInline() = default;
-
 std::unique_ptr<LegacyInlineFlowBox> RenderSVGInline::createInlineFlowBox()
 {
     auto box = makeUnique<SVGInlineFlowBox>(*this);

@@ -295,9 +295,8 @@ struct PseudoStyleCache {
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyle);
-class RenderStyle final : public CanMakeCheckedPtr<RenderStyle> {
+class RenderStyle : public CanMakeCheckedPtr<RenderStyle> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RenderStyle);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderStyle);
 private:
     enum CloneTag { Clone };
     enum CreateDefaultStyleTag { CreateDefaultStyle };

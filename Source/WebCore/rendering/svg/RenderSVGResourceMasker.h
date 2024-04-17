@@ -32,7 +32,6 @@ class SVGMaskElement;
 
 class RenderSVGResourceMasker final : public RenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceMasker);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceMasker);
 public:
     RenderSVGResourceMasker(SVGMaskElement&, RenderStyle&&);
     virtual ~RenderSVGResourceMasker();

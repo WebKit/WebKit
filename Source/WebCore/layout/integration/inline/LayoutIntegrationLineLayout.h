@@ -61,9 +61,8 @@ struct LineAdjustment;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
 
-class LineLayout final : public CanMakeCheckedPtr<LineLayout> {
+class LineLayout : public CanMakeCheckedPtr<LineLayout> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LineLayout);
 public:
     LineLayout(RenderBlockFlow&);
     ~LineLayout();

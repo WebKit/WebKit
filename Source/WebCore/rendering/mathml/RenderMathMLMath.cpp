@@ -47,8 +47,6 @@ RenderMathMLMath::RenderMathMLMath(MathMLRowElement& element, RenderStyle&& styl
     ASSERT(isRenderMathMLMath());
 }
 
-RenderMathMLMath::~RenderMathMLMath() = default;
-
 void RenderMathMLMath::centerChildren(LayoutUnit contentWidth)
 {
     auto centerBlockOffset = (logicalWidth() - contentWidth) / 2;

@@ -45,7 +45,6 @@ class TreeBuilder;
 
 class Box : public CanMakeCheckedPtr<Box> {
     WTF_MAKE_ISO_ALLOCATED(Box);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Box);
 public:
     enum class NodeType : uint8_t {
         Text,

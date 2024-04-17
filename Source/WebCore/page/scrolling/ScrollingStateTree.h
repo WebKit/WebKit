@@ -41,9 +41,8 @@ class ScrollingStateFrameScrollingNode;
 // will be informed and will schedule a timer that will clone the new state tree and send it over to
 // the scrolling thread, avoiding locking. 
 
-class ScrollingStateTree final : public CanMakeCheckedPtr<ScrollingStateTree> {
+class ScrollingStateTree : public CanMakeCheckedPtr<ScrollingStateTree> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollingStateTree);
     friend class ScrollingStateNode;
 public:
     WEBCORE_EXPORT static std::optional<ScrollingStateTree> createAfterReconstruction(bool, bool, RefPtr<ScrollingStateFrameScrollingNode>&&);

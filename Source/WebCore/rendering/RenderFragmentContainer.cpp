@@ -66,8 +66,6 @@ RenderFragmentContainer::RenderFragmentContainer(Type type, Document& document, 
 {
 }
 
-RenderFragmentContainer::~RenderFragmentContainer() = default;
-
 LayoutPoint RenderFragmentContainer::mapFragmentPointIntoFragmentedFlowCoordinates(const LayoutPoint& point)
 {
     // Assuming the point is relative to the fragment block, 3 cases will be considered:

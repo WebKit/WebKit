@@ -47,8 +47,6 @@ RenderMathMLUnderOver::RenderMathMLUnderOver(MathMLUnderOverElement& element, Re
     ASSERT(isRenderMathMLUnderOver());
 }
 
-RenderMathMLUnderOver::~RenderMathMLUnderOver() = default;
-
 MathMLUnderOverElement& RenderMathMLUnderOver::element() const
 {
     return static_cast<MathMLUnderOverElement&>(nodeForNonAnonymous());

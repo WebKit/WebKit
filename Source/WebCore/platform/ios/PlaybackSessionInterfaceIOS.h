@@ -56,7 +56,6 @@ class WEBCORE_EXPORT PlaybackSessionInterfaceIOS
     , public RefCounted<PlaybackSessionInterfaceIOS>
     , public CanMakeCheckedPtr<PlaybackSessionInterfaceIOS> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceIOS);
 public:
     void initialize();
     virtual void invalidate();
@@ -100,9 +99,9 @@ protected:
     PlaybackSessionInterfaceIOS(PlaybackSessionModel&);
     PlaybackSessionModel* m_playbackSessionModel { nullptr };
 
+private:
     // CheckedPtr interface
     uint32_t ptrCount() const final;
-    uint32_t ptrCountWithoutThreadCheck() const final;
     void incrementPtrCount() const final;
     void decrementPtrCount() const final;
 #if CHECKED_POINTER_DEBUG
@@ -112,7 +111,6 @@ protected:
     void unregisterCheckedPtr(const void* pointer) const final;
 #endif // CHECKED_POINTER_DEBUG
 
-private:
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_spatialTrackingLabel;

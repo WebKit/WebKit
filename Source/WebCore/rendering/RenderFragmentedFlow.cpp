@@ -65,8 +65,6 @@ RenderFragmentedFlow::RenderFragmentedFlow(Type type, Document& document, Render
     ASSERT(isRenderFragmentedFlow());
 }
 
-RenderFragmentedFlow::~RenderFragmentedFlow() = default;
-
 void RenderFragmentedFlow::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);

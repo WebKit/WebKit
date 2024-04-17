@@ -40,7 +40,6 @@ struct DisplayUpdate;
 
 class DisplayRefreshMonitorClient : public CanMakeCheckedPtr<DisplayRefreshMonitorClient> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DisplayRefreshMonitorClient);
 public:
     DisplayRefreshMonitorClient();
     virtual ~DisplayRefreshMonitorClient();

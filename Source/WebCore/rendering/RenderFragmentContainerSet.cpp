@@ -41,8 +41,6 @@ RenderFragmentContainerSet::RenderFragmentContainerSet(Type type, Document& docu
     ASSERT(is<RenderFragmentContainerSet>(*this));
 }
 
-RenderFragmentContainerSet::~RenderFragmentContainerSet() = default;
-
 void RenderFragmentContainerSet::installFragmentedFlow()
 {
     // We don't have to do anything, since we were able to connect the flow thread

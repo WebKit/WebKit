@@ -174,9 +174,8 @@ private:
     TemporarySelectionChange m_selectionChange;
 };
 
-class Editor final : public CanMakeCheckedPtr<Editor> {
+class Editor : public CanMakeCheckedPtr<Editor> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Editor);
 public:
     explicit Editor(Document&);
     ~Editor();

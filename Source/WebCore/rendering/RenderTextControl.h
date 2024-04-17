@@ -31,7 +31,6 @@ class HTMLTextFormControlElement;
 
 class RenderTextControl : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderTextControl);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextControl);
 public:
     virtual ~RenderTextControl();
 
@@ -85,10 +84,9 @@ private:
 // anymore.
 class RenderTextControlInnerContainer final : public RenderFlexibleBox {
     WTF_MAKE_ISO_ALLOCATED(RenderTextControlInnerContainer);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextControlInnerContainer);
 public:
     RenderTextControlInnerContainer(Element&, RenderStyle&&);
-    virtual ~RenderTextControlInnerContainer();
+    virtual ~RenderTextControlInnerContainer() = default;
 
     LayoutUnit baselinePosition(FontBaseline baseline, bool firstLine, LineDirectionMode direction, LinePositionMode position) const override
     {

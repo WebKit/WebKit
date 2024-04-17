@@ -49,11 +49,9 @@ class DatabaseAuthorizer;
 class SQLiteStatement;
 class SQLiteTransaction;
 
-class SQLiteDatabase final : public CanMakeThreadSafeCheckedPtr<SQLiteDatabase> {
+class SQLiteDatabase : public CanMakeThreadSafeCheckedPtr<SQLiteDatabase> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(SQLiteDatabase);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SQLiteDatabase);
-
     friend class SQLiteTransaction;
 public:
     WEBCORE_EXPORT SQLiteDatabase();

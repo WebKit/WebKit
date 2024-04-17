@@ -42,7 +42,6 @@ class LineLayout;
 
 class RenderText : public RenderObject {
     WTF_MAKE_ISO_ALLOCATED(RenderText);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderText);
 public:
     RenderText(Type, Text&, const String&);
     RenderText(Type, Document&, const String&);

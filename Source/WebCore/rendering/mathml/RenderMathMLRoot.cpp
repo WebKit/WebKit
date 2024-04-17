@@ -54,8 +54,6 @@ RenderMathMLRoot::RenderMathMLRoot(MathMLRootElement& element, RenderStyle&& sty
     ASSERT(isRenderMathMLRoot());
 }
 
-RenderMathMLRoot::~RenderMathMLRoot() = default;
-
 MathMLRootElement& RenderMathMLRoot::element() const
 {
     return static_cast<MathMLRootElement&>(nodeForNonAnonymous());

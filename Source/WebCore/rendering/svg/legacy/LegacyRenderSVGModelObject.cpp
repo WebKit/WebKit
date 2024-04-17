@@ -53,8 +53,6 @@ LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(Type type, SVGElement& el
     ASSERT(!isRenderSVGModelObject());
 }
 
-LegacyRenderSVGModelObject::~LegacyRenderSVGModelObject() = default;
-
 LayoutRect LegacyRenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, context);

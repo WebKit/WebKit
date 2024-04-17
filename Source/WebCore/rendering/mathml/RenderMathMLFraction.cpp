@@ -47,8 +47,6 @@ RenderMathMLFraction::RenderMathMLFraction(MathMLFractionElement& element, Rende
     ASSERT(isRenderMathMLFraction());
 }
 
-RenderMathMLFraction::~RenderMathMLFraction() = default;
-
 bool RenderMathMLFraction::isValid() const
 {
     // Verify whether the list of children is valid:

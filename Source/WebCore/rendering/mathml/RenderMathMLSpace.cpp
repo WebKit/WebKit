@@ -43,8 +43,6 @@ RenderMathMLSpace::RenderMathMLSpace(MathMLSpaceElement& element, RenderStyle&& 
     ASSERT(isRenderMathMLSpace());
 }
 
-RenderMathMLSpace::~RenderMathMLSpace() = default;
-
 void RenderMathMLSpace::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());

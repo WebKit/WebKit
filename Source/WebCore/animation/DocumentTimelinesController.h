@@ -42,9 +42,8 @@ class DocumentTimeline;
 class WebAnimation;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentTimelinesController);
-class DocumentTimelinesController final : public CanMakeCheckedPtr<DocumentTimelinesController> {
+class DocumentTimelinesController : public CanMakeCheckedPtr<DocumentTimelinesController> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentTimelinesController);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DocumentTimelinesController);
 public:
     explicit DocumentTimelinesController(Document&);
     ~DocumentTimelinesController();

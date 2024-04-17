@@ -39,7 +39,6 @@ enum ImageSizeChangeType {
 
 class RenderImage : public RenderReplaced {
     WTF_MAKE_ISO_ALLOCATED(RenderImage);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderImage);
 public:
     RenderImage(Type, Element&, RenderStyle&&, StyleImage* = nullptr, const float imageDevicePixelRatio = 1.0f);
     RenderImage(Type, Document&, RenderStyle&&, StyleImage* = nullptr);

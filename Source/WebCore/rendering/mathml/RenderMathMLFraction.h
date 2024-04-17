@@ -38,10 +38,8 @@ class MathMLFractionElement;
 
 class RenderMathMLFraction final : public RenderMathMLBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderMathMLFraction);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLFraction);
 public:
     RenderMathMLFraction(MathMLFractionElement&, RenderStyle&&);
-    virtual ~RenderMathMLFraction();
 
     LayoutUnit defaultLineThickness() const;
     LayoutUnit lineThickness() const;

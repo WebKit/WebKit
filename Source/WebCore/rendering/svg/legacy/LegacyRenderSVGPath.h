@@ -31,7 +31,6 @@ namespace WebCore {
 
 class LegacyRenderSVGPath final : public LegacyRenderSVGShape {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGPath);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGPath);
 public:
     LegacyRenderSVGPath(SVGGraphicsElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGPath();

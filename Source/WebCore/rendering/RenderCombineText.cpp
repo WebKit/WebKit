@@ -41,8 +41,6 @@ RenderCombineText::RenderCombineText(Text& textNode, const String& string)
     ASSERT(isRenderCombineText());
 }
 
-RenderCombineText::~RenderCombineText() = default;
-
 void RenderCombineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     // FIXME: This is pretty hackish.

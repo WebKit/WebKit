@@ -37,9 +37,8 @@ namespace WebCore {
 
 class IdTargetObserver;
 
-class IdTargetObserverRegistry final : public CanMakeCheckedPtr<IdTargetObserverRegistry> {
+class IdTargetObserverRegistry : public CanMakeCheckedPtr<IdTargetObserverRegistry> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IdTargetObserverRegistry);
     friend class IdTargetObserver;
 public:
     IdTargetObserverRegistry();
@@ -52,12 +51,8 @@ private:
     void removeObserver(const AtomString& id, IdTargetObserver&);
     void notifyObserversInternal(const AtomString& id);
 
-    struct ObserverSet final : public CanMakeCheckedPtr<ObserverSet> {
+    struct ObserverSet : public CanMakeCheckedPtr<ObserverSet> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(ObserverSet);
-
-        ObserverSet();
-        ~ObserverSet();
         HashSet<CheckedRef<IdTargetObserver>> observers;
     };
 

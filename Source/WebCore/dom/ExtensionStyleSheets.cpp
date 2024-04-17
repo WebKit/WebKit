@@ -57,8 +57,6 @@ ExtensionStyleSheets::ExtensionStyleSheets(Document& document)
 {
 }
 
-ExtensionStyleSheets::~ExtensionStyleSheets() = default;
-
 Ref<Document> ExtensionStyleSheets::protectedDocument() const
 {
     return const_cast<Document&>(m_document.get());

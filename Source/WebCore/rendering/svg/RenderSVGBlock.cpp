@@ -41,8 +41,6 @@ RenderSVGBlock::RenderSVGBlock(Type type, SVGGraphicsElement& element, RenderSty
 {
 }
 
-RenderSVGBlock::~RenderSVGBlock() = default;
-
 void RenderSVGBlock::updateFromStyle()
 {
     RenderBlockFlow::updateFromStyle();

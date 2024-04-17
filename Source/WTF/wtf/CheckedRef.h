@@ -126,21 +126,8 @@ public:
     const T* ptrAllowingHashTableEmptyValue() const { ASSERT(m_ptr || isHashTableEmptyValue()); return PtrTraits::unwrap(m_ptr); }
     T* ptrAllowingHashTableEmptyValue() { ASSERT(m_ptr || isHashTableEmptyValue()); return PtrTraits::unwrap(m_ptr); }
 
-    ALWAYS_INLINE T* ptr() const
-    {
-        // In normal execution, a CheckedPtr always points to an object with a non-zero ptrCount().
-        // When it detects a dangling pointer, WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR scribbles an object with zeroes and then leaks it.
-        // When we check ptrCountWithoutThreadCheck() here, we're checking for a scribbled object.
-        ASSERT(PtrTraits::unwrap(m_ptr)->ptrCountWithoutThreadCheck());
-        return PtrTraits::unwrap(m_ptr);
-    }
-
-    ALWAYS_INLINE T& get() const
-    {
-        ASSERT(ptr());
-        return *ptr();
-    }
-
+    ALWAYS_INLINE T* ptr() const { return PtrTraits::unwrap(m_ptr); }
+    ALWAYS_INLINE T& get() const { ASSERT(ptr()); return *ptr(); }
     ALWAYS_INLINE T* operator->() const { return ptr(); }
 
     ALWAYS_INLINE operator T&() const { return get(); }
@@ -336,26 +323,14 @@ public:
                 WTFLogAlways("%s", stackTrace->toString().utf8().data());
         }
 #endif
+        // If you hit this assertion, you can turn on CHECKED_POINTER_DEBUG to help identify
+        // which CheckedPtr / CheckedRef outlived the object.
+        RELEASE_ASSERT(!m_count);
     }
 
     PtrCounterType ptrCount() const { return m_count; }
     void incrementPtrCount() const { ++m_count; }
-    void decrementPtrCount() const
-    {
-        // In normal execution, a CheckedPtr always points to an object with a non-zero ptrCount().
-        // When it detects a dangling pointer, WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR scribbles an object with zeroes and then leaks it.
-        // When we check ptrCountWithoutThreadCheck() here, we're checking for a scribbled object.
-        RELEASE_ASSERT(ptrCountWithoutThreadCheck());
-        --m_count;
-    }
-
-    ALWAYS_INLINE PtrCounterType ptrCountWithoutThreadCheck() const
-    {
-        if constexpr (std::is_same_v<StorageType, std::atomic<uint32_t>>)
-            return m_count;
-        else
-            return m_count.valueWithoutThreadCheck();
-    }
+    void decrementPtrCount() const { ASSERT(m_count); --m_count; }
 
     friend bool operator==(const CanMakeCheckedPtrBase&, const CanMakeCheckedPtrBase&) { return true; }
 
@@ -447,7 +422,6 @@ public:
     ~CanMakeCheckedPtr()
     {
         static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "Objects that use CanMakeCheckedPtr must use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
-        static_assert(std::is_same<typename T::WTFDidOverrideDeleteForCheckedPtr, int>::value, "Objects that use CanMakeCheckedPtr must use WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR");
     }
 };
 
@@ -456,7 +430,6 @@ public:
     ~CanMakeThreadSafeCheckedPtr()
     {
         static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "Objects that use CanMakeCheckedPtr must use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
-        static_assert(std::is_same<typename T::WTFDidOverrideDeleteForCheckedPtr, int>::value, "Objects that use CanMakeCheckedPtr must use WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR");
     }
 };
 

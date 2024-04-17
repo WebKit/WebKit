@@ -499,6 +499,4 @@ RenderTextControlInnerBlock::RenderTextControlInnerBlock(Element& element, Rende
     ASSERT(isRenderTextControlInnerBlock());
 }
 
-RenderTextControlInnerBlock::~RenderTextControlInnerBlock() = default;
-
 }

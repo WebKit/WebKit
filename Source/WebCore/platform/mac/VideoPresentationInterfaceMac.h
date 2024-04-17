@@ -49,14 +49,13 @@ class IntRect;
 class FloatSize;
 class PlaybackSessionInterfaceMac;
 
-class VideoPresentationInterfaceMac final
+class VideoPresentationInterfaceMac
     : public VideoPresentationModelClient
     , private PlaybackSessionModelClient
     , public VideoFullscreenCaptions
     , public RefCounted<VideoPresentationInterfaceMac>
     , public CanMakeCheckedPtr<VideoPresentationInterfaceMac> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceMac);
 public:
     static Ref<VideoPresentationInterfaceMac> create(PlaybackSessionInterfaceMac& playbackSessionInterface)
     {
@@ -117,7 +116,6 @@ private:
 
     // CheckedPtr interface
     uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
     void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
     void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 #if CHECKED_POINTER_DEBUG

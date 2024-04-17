@@ -35,7 +35,6 @@ class SVGFilterPrimitiveStandardAttributes;
 
 class LegacyRenderSVGResourceFilterPrimitive final : public LegacyRenderSVGHiddenContainer {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceFilterPrimitive);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFilterPrimitive);
 public:
     LegacyRenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, RenderStyle&&);
     SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement() const;

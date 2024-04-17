@@ -95,13 +95,9 @@ enum class AnnotationSearchDirection : bool {
 };
 
 class UnifiedPDFPlugin final : public PDFPluginBase, public WebCore::GraphicsLayerClient {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(UnifiedPDFPlugin);
-
     friend class AsyncPDFRenderer;
 public:
     static Ref<UnifiedPDFPlugin> create(WebCore::HTMLPlugInElement&);
-    virtual ~UnifiedPDFPlugin();
 
     enum class PDFElementType : uint16_t {
         Page       = 1 << 0,

@@ -55,13 +55,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-class UserMediaCaptureManagerProxy::SourceProxy final
+class UserMediaCaptureManagerProxy::SourceProxy
     : public RealtimeMediaSource::Observer
     , private RealtimeMediaSource::AudioSampleObserver
     , private RealtimeMediaSource::VideoFrameObserver
     , public CanMakeCheckedPtr<UserMediaCaptureManagerProxy::SourceProxy> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SourceProxy);
 public:
     SourceProxy(RealtimeMediaSourceIdentifier id, Ref<IPC::Connection>&& connection, ProcessIdentity&& resourceOwner, Ref<RealtimeMediaSource>&& source, RefPtr<RemoteVideoFrameObjectHeap>&& videoFrameObjectHeap)
         : m_id(id)
@@ -278,7 +277,6 @@ private:
 
     // CheckedPtr interface
     uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
     void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
     void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 #if CHECKED_POINTER_DEBUG

@@ -38,10 +38,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderViewTransitionCapture);
 
 RenderViewTransitionCapture::RenderViewTransitionCapture(Type type, Document& document, RenderStyle&& style)
     : RenderReplaced(type, document, WTFMove(style), { }, ReplacedFlag::IsViewTransitionCapture)
-{
-}
-
-RenderViewTransitionCapture::~RenderViewTransitionCapture() = default;
+{ }
 
 void RenderViewTransitionCapture::setImage(RefPtr<ImageBuffer> oldImage)
 {

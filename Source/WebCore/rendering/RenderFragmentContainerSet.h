@@ -44,13 +44,11 @@ class RenderFragmentedFlow;
 
 class RenderFragmentContainerSet : public RenderFragmentContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderFragmentContainerSet);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFragmentContainerSet);
 public:
     void expandToEncompassFragmentedFlowContentsIfNeeded();
 
 protected:
     RenderFragmentContainerSet(Type, Document&, RenderStyle&&, RenderFragmentedFlow&);
-    virtual ~RenderFragmentContainerSet();
 
 private:
     void installFragmentedFlow() final;

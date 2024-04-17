@@ -49,9 +49,8 @@ class TreeScope;
 
 struct FocusCandidate;
 
-class FocusController final : public CanMakeCheckedPtr<FocusController> {
+class FocusController : public CanMakeCheckedPtr<FocusController> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FocusController);
 public:
     explicit FocusController(Page&, OptionSet<ActivityState>);
 

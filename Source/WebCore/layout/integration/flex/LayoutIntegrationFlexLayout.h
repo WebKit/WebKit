@@ -42,9 +42,8 @@ struct PaintInfo;
 
 namespace LayoutIntegration {
 
-class FlexLayout final : public CanMakeCheckedPtr<FlexLayout> {
+class FlexLayout : public CanMakeCheckedPtr<FlexLayout> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FlexLayout);
 public:
     FlexLayout(RenderFlexibleBox&);
     ~FlexLayout();

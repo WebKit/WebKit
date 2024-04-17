@@ -49,8 +49,6 @@ RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, R
     ASSERT(isRenderSVGViewportContainer());
 }
 
-RenderSVGViewportContainer::~RenderSVGViewportContainer() = default;
-
 SVGSVGElement& RenderSVGViewportContainer::svgSVGElement() const
 {
     if (isOutermostSVGViewportContainer()) {

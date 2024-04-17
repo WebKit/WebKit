@@ -34,7 +34,6 @@ class SVGSVGElement;
 
 class RenderSVGRoot final : public RenderReplaced {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGRoot);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGRoot);
 public:
     RenderSVGRoot(SVGSVGElement&, RenderStyle&&);
     virtual ~RenderSVGRoot();

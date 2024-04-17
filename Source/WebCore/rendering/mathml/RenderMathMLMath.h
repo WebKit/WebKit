@@ -35,10 +35,8 @@ class MathMLRowElement;
 
 class RenderMathMLMath final : public RenderMathMLRow {
     WTF_MAKE_ISO_ALLOCATED(RenderMathMLMath);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLMath);
 public:
     RenderMathMLMath(MathMLRowElement&, RenderStyle&&);
-    virtual ~RenderMathMLMath();
 
 private:
     ASCIILiteral renderName() const final { return "RenderMathMLMath"_s; }

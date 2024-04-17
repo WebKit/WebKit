@@ -47,10 +47,7 @@ class SVGElement;
 
 class RenderSVGModelObject : public RenderLayerModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGModelObject);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGModelObject);
 public:
-    virtual ~RenderSVGModelObject();
-
     bool requiresLayer() const override { return true; }
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;

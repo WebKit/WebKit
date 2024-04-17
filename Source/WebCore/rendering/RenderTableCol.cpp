@@ -61,8 +61,6 @@ RenderTableCol::RenderTableCol(Document& document, RenderStyle&& style)
     ASSERT(isRenderTableCol());
 }
 
-RenderTableCol::~RenderTableCol() = default;
-
 void RenderTableCol::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBox::styleDidChange(diff, oldStyle);

@@ -38,10 +38,8 @@ class SVGSVGElement;
 class SVGUseElement;
 class WeakPtrImplWithEventTargetData;
 
-class SVGDocumentExtensions final : public CanMakeCheckedPtr<SVGDocumentExtensions> {
-    WTF_MAKE_NONCOPYABLE(SVGDocumentExtensions);
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGDocumentExtensions);
+class SVGDocumentExtensions : public CanMakeCheckedPtr<SVGDocumentExtensions> {
+    WTF_MAKE_NONCOPYABLE(SVGDocumentExtensions); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SVGDocumentExtensions(Document&);
     ~SVGDocumentExtensions();

@@ -39,7 +39,6 @@ struct MaskerData {
 
 class LegacyRenderSVGResourceMasker final : public LegacyRenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceMasker);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceMasker);
 public:
     LegacyRenderSVGResourceMasker(SVGMaskElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGResourceMasker();

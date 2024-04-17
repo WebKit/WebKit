@@ -50,8 +50,6 @@ RenderMathMLFencedOperator::RenderMathMLFencedOperator(Document& document, Rende
     ASSERT(isRenderMathMLFencedOperator());
 }
 
-RenderMathMLFencedOperator::~RenderMathMLFencedOperator() = default;
-
 void RenderMathMLFencedOperator::updateOperatorContent(const String& operatorString)
 {
     m_operatorChar = MathMLOperatorElement::parseOperatorChar(operatorString);
