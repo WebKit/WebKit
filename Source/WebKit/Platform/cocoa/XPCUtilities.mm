@@ -26,11 +26,6 @@
 #include "config.h"
 #include "XPCUtilities.h"
 
-#include "Logging.h"
-#include <wtf/OSObjectPtr.h>
-#include <wtf/WTFProcess.h>
-#include <wtf/text/ASCIILiteral.h>
-
 namespace WebKit {
 
 void terminateWithReason(xpc_connection_t connection, ReasonCode, const char*)
