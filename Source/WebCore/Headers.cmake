@@ -2638,7 +2638,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/JSHTMLCollection.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSHTMLElement.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSHTMLOptionsCollection.h
-    ${WebCore_DERIVED_SOURCES_DIR}/JSLocalDOMWindow.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSMediaList.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSNamedNodeMap.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSNode.h
