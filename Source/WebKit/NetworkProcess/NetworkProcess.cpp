@@ -404,8 +404,15 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
         connection->connection().setIgnoreInvalidMessageForTesting();
 #endif
 
-    if (auto* session = networkSession(sessionID))
-        session->protectedStorageManager()->startReceivingMessageFromConnection(Ref { connection->connection() });
+    if (auto* session = networkSession(sessionID)) {
+        Vector<WebCore::RegistrableDomain> allowedSites;
+        auto iter = m_allowedFirstPartiesForCookies.find(identifier);
+        if (iter != m_allowedFirstPartiesForCookies.end()) {
+            for (auto& site : iter->value.second)
+                allowedSites.append(site);
+        }
+        session->protectedStorageManager()->startReceivingMessageFromConnection(connection->protectedConnection(), allowedSites);
+    }
 }
 
 void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
@@ -417,7 +424,15 @@ void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier p
         return std::make_pair(LoadedWebArchive::No, HashSet<RegistrableDomain> { });
     }).iterator->value;
 
-    pair.second.add(WTFMove(firstPartyForCookies));
+    auto addResult = pair.second.add(WTFMove(firstPartyForCookies));
+    if (addResult.isNewEntry) {
+        auto iter = m_webProcessConnections.find(processIdentifier);
+        if (iter != m_webProcessConnections.end()) {
+            forEachNetworkSession([connection = iter->value->connection().uniqueID(), site = Vector<WebCore::RegistrableDomain> { *addResult.iterator }](auto& session) {
+                session.protectedStorageManager()->addAllowedSitesForConnection(connection, site);
+            });
+        }
+    }
 
     if (loadedWebArchive == LoadedWebArchive::Yes)
         pair.first = LoadedWebArchive::Yes;

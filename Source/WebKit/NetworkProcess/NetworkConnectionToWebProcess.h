@@ -141,6 +141,7 @@ public:
     NetworkSession* networkSession();
 
     IPC::Connection& connection() { return m_connection.get(); }
+    Ref<IPC::Connection> protectedConnection() { return m_connection; }
     NetworkProcess& networkProcess() { return m_networkProcess.get(); }
 
     bool isWebTransportEnabled() const { return m_preferencesForWebProcess.isWebTransportEnabled; }
@@ -433,7 +434,6 @@ private:
     void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName) final;
     void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;
 #endif
-    Ref<IPC::Connection> protectedConnection() { return m_connection; }
 
     Ref<IPC::Connection> m_connection;
     Ref<NetworkProcess> m_networkProcess;

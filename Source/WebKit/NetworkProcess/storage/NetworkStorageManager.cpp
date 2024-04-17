@@ -60,6 +60,9 @@
 #include <wtf/SuspendableWorkQueue.h>
 #include <wtf/text/Base64.h>
 
+#define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
+#define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
+
 namespace WebKit {
 
 #if PLATFORM(IOS_FAMILY)
@@ -187,7 +190,7 @@ NetworkStorageManager::NetworkStorageManager(NetworkProcess& process, PAL::Sessi
 #if PLATFORM(IOS_FAMILY)
         m_backupExclusionPeriod = defaultBackupExclusionPeriod;
 #endif
-        m_storageSiteValidationEnabled = storageSiteValidationEnabled;
+        setStorageSiteValidationEnabledInternal(storageSiteValidationEnabled);
         m_fileSystemStorageHandleRegistry = makeUnique<FileSystemStorageHandleRegistry>();
         m_storageAreaRegistry = makeUnique<StorageAreaRegistry>();
         m_idbStorageRegistry = makeUnique<IDBStorageRegistry>();
@@ -267,12 +270,13 @@ void NetworkStorageManager::close(CompletionHandler<void()>&& completionHandler)
     });
 }
 
-void NetworkStorageManager::startReceivingMessageFromConnection(IPC::Connection& connection)
+void NetworkStorageManager::startReceivingMessageFromConnection(IPC::Connection& connection, const Vector<WebCore::RegistrableDomain>& allowedSites)
 {
     ASSERT(RunLoop::isMain());
 
     connection.addWorkQueueMessageReceiver(Messages::NetworkStorageManager::messageReceiverName(), m_queue.get(), *this);
     m_connections.add(connection);
+    addAllowedSitesForConnection(connection.uniqueID(), allowedSites);
 }
 
 void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& connection)
@@ -297,6 +301,8 @@ void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& 
             return shouldRemove;
         });
         m_temporaryBlobPathsByConnection.remove(connection);
+        if (m_allowedSitesForConnections)
+            m_allowedSitesForConnections->remove(connection);
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
@@ -1294,9 +1300,15 @@ void NetworkStorageManager::setStorageSiteValidationEnabledInternal(bool enabled
 {
     assertIsCurrent(workQueue());
 
-    m_storageSiteValidationEnabled = enabled;
-}
+    auto currentEnabled = !!m_allowedSitesForConnections;
+    if (currentEnabled == enabled)
+        return;
 
+    if (enabled)
+        m_allowedSitesForConnections = ConnectionSitesMap { };
+    else
+        m_allowedSitesForConnections = std::nullopt;
+}
 
 void NetworkStorageManager::setStorageSiteValidationEnabled(bool enabled)
 {
@@ -1309,9 +1321,50 @@ void NetworkStorageManager::setStorageSiteValidationEnabled(bool enabled)
     });
 }
 
+void NetworkStorageManager::addAllowedSitesForConnectionInternal(IPC::Connection::UniqueID connection, const Vector<WebCore::RegistrableDomain>& sites)
+{
+    assertIsCurrent(workQueue());
+
+    if (!m_allowedSitesForConnections)
+        return;
+
+    auto& allowedSites = m_allowedSitesForConnections->add(connection,  HashSet<WebCore::RegistrableDomain> { }).iterator->value;
+    for (auto& site : sites)
+        allowedSites.add(site);
+}
+
+void NetworkStorageManager::addAllowedSitesForConnection(IPC::Connection::UniqueID connection, const Vector<WebCore::RegistrableDomain>& sites)
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
+
+    if (sites.isEmpty())
+        return;
+
+    m_queue->dispatch([weakThis = ThreadSafeWeakPtr { *this }, connection, sites = crossThreadCopy(sites)]() mutable {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->addAllowedSitesForConnectionInternal(connection, sites);
+    });
+}
+
+bool NetworkStorageManager::isSiteAllowedForConnection(IPC::Connection::UniqueID connection, const WebCore::RegistrableDomain& site) const
+{
+    assertIsCurrent(workQueue());
+
+    if (!m_allowedSitesForConnections)
+        return true;
+
+    auto iter = m_allowedSitesForConnections->find(connection);
+    if (iter == m_allowedSitesForConnections->end())
+        return false;
+
+    return iter->value.contains(site);
+}
+
 void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, const WebCore::ClientOrigin& origin, CompletionHandler<void(StorageAreaIdentifier, HashMap<String, String>, uint64_t)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
+    MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), &connection, completionHandler({ }, { }, StorageAreaBase::nextMessageIdentifier()));
 
     auto connectionIdentifier = connection.uniqueID();
     // StorageArea may be connected due to LocalStorage prewarming, so do not write origin file eagerly.
@@ -1347,6 +1400,7 @@ void NetworkStorageManager::connectToStorageAreaSync(IPC::Connection& connection
 void NetworkStorageManager::cancelConnectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, const WebCore::ClientOrigin& origin)
 {
     assertIsCurrent(workQueue());
+    MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), &connection);
 
     auto iterator = m_originStorageManagers.find(origin);
     if (iterator == m_originStorageManagers.end())
@@ -1379,6 +1433,8 @@ void NetworkStorageManager::disconnectFromStorageArea(IPC::Connection& connectio
     if (!storageArea)
         return;
 
+    MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { storageArea->origin().topOrigin }), &connection);
+
     if (storageArea->storageType() == StorageAreaBase::StorageType::Local)
         originStorageManager(storageArea->origin()).localStorageManager(*m_storageAreaRegistry).disconnectFromStorageArea(connection.uniqueID(), identifier);
     else
@@ -1405,6 +1461,10 @@ void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIden
     if (!storageArea)
         return completionHandler(hasError, WTFMove(allItems));
 
+    MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { storageArea->origin().topOrigin }), &connection, completionHandler(hasError, WTFMove(allItems)));
+
+    MESSAGE_CHECK_BASE(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { storageArea->origin().topOrigin }), &connection);
+
     auto result = storageArea->setItem(connection.uniqueID(), implIdentifier, WTFMove(key), WTFMove(value), WTFMove(urlString));
     hasError = !result;
     if (hasError)
@@ -1423,7 +1483,9 @@ void NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaI
     auto storageArea = m_storageAreaRegistry->getStorageArea(identifier);
     if (!storageArea)
         return completionHandler(hasError, WTFMove(allItems));
-    
+
+    MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { storageArea->origin().topOrigin }), &connection, completionHandler(hasError, WTFMove(allItems)));
+
     auto result = storageArea->removeItem(connection.uniqueID(), implIdentifier, WTFMove(key), WTFMove(urlString));
     hasError = !result;
     if (hasError)
@@ -1440,6 +1502,8 @@ void NetworkStorageManager::clear(IPC::Connection& connection, StorageAreaIdenti
     auto storageArea = m_storageAreaRegistry->getStorageArea(identifier);
     if (!storageArea)
         return completionHandler();
+
+    MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { storageArea->origin().topOrigin }), &connection, completionHandler());
 
     storageArea->clear(connection.uniqueID(), implIdentifier, WTFMove(urlString));
     completionHandler();
