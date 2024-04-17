@@ -36,13 +36,8 @@ endif()
 # as ${gmock_SOURCE_DIR} and to the root binary directory as
 # ${gmock_BINARY_DIR}.
 # Language "C" is required for find_package(Threads).
-if (CMAKE_VERSION VERSION_LESS 3.0)
-  project(gmock CXX C)
-else()
-  cmake_policy(SET CMP0048 NEW)
-  project(gmock VERSION ${GOOGLETEST_VERSION} LANGUAGES CXX C)
-endif()
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.13)
+project(gmock VERSION ${GOOGLETEST_VERSION} LANGUAGES CXX C)
 
 if (COMMAND set_up_hermetic_build)
   set_up_hermetic_build()
@@ -105,17 +100,14 @@ else()
   target_link_libraries(gmock_main PUBLIC gmock)
   set_target_properties(gmock_main PROPERTIES VERSION ${GOOGLETEST_VERSION})
 endif()
-# If the CMake version supports it, attach header directory information
-# to the targets for when we are part of a parent build (ie being pulled
-# in via add_subdirectory() rather than being a standalone build).
-if (DEFINED CMAKE_VERSION AND NOT "${CMAKE_VERSION}" VERSION_LESS "2.8.11")
-  target_include_directories(gmock SYSTEM INTERFACE
-    "$<BUILD_INTERFACE:${gmock_build_include_dirs}>"
-    "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
-  target_include_directories(gmock_main SYSTEM INTERFACE
-    "$<BUILD_INTERFACE:${gmock_build_include_dirs}>"
-    "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
-endif()
+
+string(REPLACE ";" "$<SEMICOLON>" dirs "${gmock_build_include_dirs}")
+target_include_directories(gmock SYSTEM INTERFACE
+  "$<BUILD_INTERFACE:${dirs}>"
+  "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
+target_include_directories(gmock_main SYSTEM INTERFACE
+  "$<BUILD_INTERFACE:${dirs}>"
+  "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
 
 ########################################################################
 #
@@ -139,11 +131,7 @@ if (gmock_build_tests)
   enable_testing()
 
   if (MINGW OR CYGWIN)
-    if (CMAKE_VERSION VERSION_LESS "2.8.12")
-      add_compile_options("-Wa,-mbig-obj")
-    else()
-      add_definitions("-Wa,-mbig-obj")
-    endif()
+    add_compile_options("-Wa,-mbig-obj")
   endif()
 
   ############################################################
@@ -154,7 +142,10 @@ if (gmock_build_tests)
   cxx_test(gmock_ex_test gmock_main)
   cxx_test(gmock-function-mocker_test gmock_main)
   cxx_test(gmock-internal-utils_test gmock_main)
-  cxx_test(gmock-matchers_test gmock_main)
+  cxx_test(gmock-matchers-arithmetic_test gmock_main)
+  cxx_test(gmock-matchers-comparisons_test gmock_main)
+  cxx_test(gmock-matchers-containers_test gmock_main)
+  cxx_test(gmock-matchers-misc_test gmock_main)
   cxx_test(gmock-more-actions_test gmock_main)
   cxx_test(gmock-nice-strict_test gmock_main)
   cxx_test(gmock-port_test gmock_main)

@@ -30,7 +30,6 @@
 #
 # Bazel BUILD for The Google C++ Testing Framework (Google Test)
 
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_test")
 load("@rules_python//python:defs.bzl", "py_library", "py_test")
 
 licenses(["notice"])
@@ -65,6 +64,7 @@ cc_test(
             "googletest-global-environment-unittest_.cc",
             "googletest-break-on-failure-unittest_.cc",
             "googletest-listener-test.cc",
+            "googletest-message-test.cc",
             "googletest-output-test_.cc",
             "googletest-list-tests-unittest_.cc",
             "googletest-shuffle-test_.cc",
@@ -95,6 +95,7 @@ cc_test(
         "googletest/test",
     ],
     linkopts = select({
+        "//:qnx": [],
         "//:windows": [],
         "//conditions:default": ["-pthread"],
     }),
@@ -150,7 +151,6 @@ cc_test(
     name = "gtest_unittest",
     size = "small",
     srcs = ["gtest_unittest.cc"],
-    args = ["--heap_check=strict"],
     shard_count = 2,
     deps = ["//:gtest_main"],
 )
@@ -175,6 +175,10 @@ py_test(
     name = "gtest_help_test",
     size = "small",
     srcs = ["gtest_help_test.py"],
+    args = select({
+        "//:has_absl": ["--has_absl_flags"],
+        "//conditions:default": [],
+    }),
     data = [":gtest_help_test_"],
     deps = [":gtest_test_utils"],
 )

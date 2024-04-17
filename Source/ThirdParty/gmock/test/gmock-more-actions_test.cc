@@ -31,21 +31,22 @@
 //
 // This file tests the built-in actions in gmock-actions.h.
 
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4577)
-#endif
-
 #include "gmock/gmock-more-actions.h"
 
+#include <algorithm>
 #include <functional>
+#include <iterator>
 #include <memory>
 #include <sstream>
 #include <string>
+#include <tuple>
+#include <vector>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest-spi.h"
 #include "gtest/gtest.h"
+
+GTEST_DISABLE_MSC_WARNINGS_PUSH_(4577)
 
 namespace testing {
 namespace gmock_more_actions_test {
@@ -145,7 +146,7 @@ class Foo {
 
   std::string Binary(const std::string& str, char c) const { return str + c; }
 
-  int Ternary(int x, bool y, char z) { return value_ + x + y*z; }
+  int Ternary(int x, bool y, char z) { return value_ + x + y * z; }
 
   int SumOf4(int a, int b, int c, int d) const {
     return a + b + c + d + value_;
@@ -291,8 +292,7 @@ TEST(InvokeTest, FunctionWithUnusedParameters) {
       std::make_tuple(10, 2, 5.6, std::string("hi"));
   EXPECT_EQ(12, a1.Perform(dummy));
 
-  Action<int(int, int, bool, int*)> a2 =
-      Invoke(SumOfFirst2);
+  Action<int(int, int, bool, int*)> a2 = Invoke(SumOfFirst2);
   EXPECT_EQ(
       23, a2.Perform(std::make_tuple(20, 3, true, static_cast<int*>(nullptr))));
 }
@@ -303,8 +303,7 @@ TEST(InvokeTest, MethodWithUnusedParameters) {
   Action<int(std::string, bool, int, int)> a1 = Invoke(&foo, &Foo::SumOfLast2);
   EXPECT_EQ(12, a1.Perform(std::make_tuple(CharPtr("hi"), true, 10, 2)));
 
-  Action<int(char, double, int, int)> a2 =
-      Invoke(&foo, &Foo::SumOfLast2);
+  Action<int(char, double, int, int)> a2 = Invoke(&foo, &Foo::SumOfLast2);
   EXPECT_EQ(23, a2.Perform(std::make_tuple('a', 2.5, 20, 3)));
 }
 
@@ -362,7 +361,8 @@ TEST(InvokeMethodTest, MethodThatTakes4Arguments) {
 // Tests using Invoke() with a 5-argument method.
 TEST(InvokeMethodTest, MethodThatTakes5Arguments) {
   Foo foo;
-  Action<int(int, int, int, int, int)> a = Invoke(&foo, &Foo::SumOf5);  // NOLINT
+  Action<int(int, int, int, int, int)> a =
+      Invoke(&foo, &Foo::SumOf5);  // NOLINT
   EXPECT_EQ(12345, a.Perform(std::make_tuple(10000, 2000, 300, 40, 5)));
 }
 
@@ -462,6 +462,12 @@ TEST(ReturnArgActionTest, WorksForMultiArgStringArg2) {
   EXPECT_EQ("seven", a.Perform(std::make_tuple(5, 6, std::string("seven"), 8)));
 }
 
+TEST(ReturnArgActionTest, WorksForNonConstRefArg0) {
+  const Action<std::string&(std::string&)> a = ReturnArg<0>();
+  std::string s = "12345";
+  EXPECT_EQ(&s, &a.Perform(std::forward_as_tuple(s)));
+}
+
 TEST(SaveArgActionTest, WorksForSameType) {
   int result = 0;
   const Action<void(int n)> a1 = SaveArg<0>(&result);
@@ -517,15 +523,12 @@ TEST(SetArgRefereeActionTest, WorksWithExtraArguments) {
 // the bool provided to the constructor to true when destroyed.
 class DeletionTester {
  public:
-  explicit DeletionTester(bool* is_deleted)
-    : is_deleted_(is_deleted) {
+  explicit DeletionTester(bool* is_deleted) : is_deleted_(is_deleted) {
     // Make sure the bit is set to false.
     *is_deleted_ = false;
   }
 
-  ~DeletionTester() {
-    *is_deleted_ = true;
-  }
+  ~DeletionTester() { *is_deleted_ = true; }
 
  private:
   bool* is_deleted_;
@@ -534,7 +537,7 @@ class DeletionTester {
 TEST(DeleteArgActionTest, OneArg) {
   bool is_deleted = false;
   DeletionTester* t = new DeletionTester(&is_deleted);
-  const Action<void(DeletionTester*)> a1 = DeleteArg<0>();      // NOLINT
+  const Action<void(DeletionTester*)> a1 = DeleteArg<0>();  // NOLINT
   EXPECT_FALSE(is_deleted);
   a1.Perform(std::make_tuple(t));
   EXPECT_TRUE(is_deleted);
@@ -543,8 +546,9 @@ TEST(DeleteArgActionTest, OneArg) {
 TEST(DeleteArgActionTest, TenArgs) {
   bool is_deleted = false;
   DeletionTester* t = new DeletionTester(&is_deleted);
-  const Action<void(bool, int, int, const char*, bool,
-                    int, int, int, int, DeletionTester*)> a1 = DeleteArg<9>();
+  const Action<void(bool, int, int, const char*, bool, int, int, int, int,
+                    DeletionTester*)>
+      a1 = DeleteArg<9>();
   EXPECT_FALSE(is_deleted);
   a1.Perform(std::make_tuple(true, 5, 6, CharPtr("hi"), false, 7, 8, 9, 10, t));
   EXPECT_TRUE(is_deleted);
@@ -602,7 +606,7 @@ TEST(ThrowActionTest, Times0) {
 // pointed to by the N-th (0-based) argument to values in range [first, last).
 TEST(SetArrayArgumentTest, SetsTheNthArray) {
   using MyFunction = void(bool, int*, char*);
-  int numbers[] = { 1, 2, 3 };
+  int numbers[] = {1, 2, 3};
   Action<MyFunction> a = SetArrayArgument<1>(numbers, numbers + 3);
 
   int n[4] = {};
@@ -638,7 +642,7 @@ TEST(SetArrayArgumentTest, SetsTheNthArray) {
 // Tests SetArrayArgument<N>(first, last) where first == last.
 TEST(SetArrayArgumentTest, SetsTheNthArrayWithEmptyRange) {
   using MyFunction = void(bool, int*);
-  int numbers[] = { 1, 2, 3 };
+  int numbers[] = {1, 2, 3};
   Action<MyFunction> a = SetArrayArgument<1>(numbers, numbers);
 
   int n[4] = {};
@@ -654,10 +658,10 @@ TEST(SetArrayArgumentTest, SetsTheNthArrayWithEmptyRange) {
 // (but not equal) to the argument type.
 TEST(SetArrayArgumentTest, SetsTheNthArrayWithConvertibleType) {
   using MyFunction = void(bool, int*);
-  char chars[] = { 97, 98, 99 };
+  char chars[] = {97, 98, 99};
   Action<MyFunction> a = SetArrayArgument<1>(chars, chars + 3);
 
-  int codes[4] = { 111, 222, 333, 444 };
+  int codes[4] = {111, 222, 333, 444};
   int* pcodes = codes;
   a.Perform(std::make_tuple(true, pcodes));
   EXPECT_EQ(97, codes[0]);
@@ -673,7 +677,7 @@ TEST(SetArrayArgumentTest, SetsTheNthArrayWithIteratorArgument) {
   Action<MyFunction> a = SetArrayArgument<1>(letters.begin(), letters.end());
 
   std::string s;
-  a.Perform(std::make_tuple(true, back_inserter(s)));
+  a.Perform(std::make_tuple(true, std::back_inserter(s)));
   EXPECT_EQ(letters, s);
 }
 
@@ -979,11 +983,7 @@ TEST(DoAllTest, ImplicitlyConvertsActionArguments) {
 // is expanded and macro expansion cannot contain #pragma.  Therefore
 // we suppress them here.
 // Also suppress C4503 decorated name length exceeded, name was truncated
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4100)
-#pragma warning(disable : 4503)
-#endif
+GTEST_DISABLE_MSC_WARNINGS_PUSH_(4100 4503)
 // Tests the ACTION*() macro family.
 
 // Tests that ACTION() can define an action that doesn't reference the
@@ -1545,3 +1545,6 @@ TEST(ActionTemplateTest, CanBeOverloadedOnNumberOfValueParameters) {
 
 }  // namespace gmock_more_actions_test
 }  // namespace testing
+
+GTEST_DISABLE_MSC_WARNINGS_POP_()  // 4100 4503
+GTEST_DISABLE_MSC_WARNINGS_POP_()  // 4577

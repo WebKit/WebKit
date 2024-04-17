@@ -464,7 +464,3 @@ check_symbol_exists(memmem string.h HAVE_MEMMEM)
 if (HAVE_MEMMEM)
     add_definitions(-DHAVE_MEMMEM=1)
 endif ()
-
-# FIXME: gtest assumes that you will have u8string if __cpp_char8_t
-# (feature test macro) is defined.
-add_compile_options(-U__cpp_char8_t)
