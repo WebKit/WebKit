@@ -26,36 +26,19 @@
 
 #import "config.h"
 
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS_FAMILY)
-#import <MobileCoreServices/MobileCoreServices.h>
-#endif
-
-#if USE(APPKIT)
 using PlatformColor = NSColor;
-#else
-using PlatformColor = UIColor;
-#endif
 
-#if USE(APPKIT)
 static NSData *readRTFDataFromPasteboard()
 {
     return [[NSPasteboard generalPasteboard] dataForType:NSPasteboardTypeRTF];
 }
-#else
-static NSData *readRTFDataFromPasteboard()
-{
-    id value = [[UIPasteboard generalPasteboard] valueForPasteboardType:(__bridge NSString *)kUTTypeRTF];
-    ASSERT([value isKindOfClass:[NSData class]]);
-    return value;
-}
-#endif
 
 static RetainPtr<NSAttributedString> copyAttributedStringFromHTML(NSString *htmlString, bool forceDarkMode)
 {
@@ -182,4 +165,4 @@ TEST(CopyRTF, StripsUserSelectNoneQuirks)
     EXPECT_WK_STREQ([attributedString string].UTF8String, "hello world WebKit\nsome\nuser-select-none\ncontent\nfoo bar");
 }
 
-#endif // PLATFORM(COCOA)
+#endif // PLATFORM(MAC)
