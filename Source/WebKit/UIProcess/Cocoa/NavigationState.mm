@@ -553,6 +553,9 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 listener->ignore();
                 return;
             }
+
+            if (RefPtr extensionController = webPage->webExtensionController())
+                extensionController->updateWebsitePoliciesForNavigation(*defaultWebsitePolicies, navigationAction);
 #endif
 
             if (!navigationAction->targetFrame()) {
@@ -623,6 +626,9 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 localListener->ignore();
                 return;
             }
+
+            if (RefPtr extensionController = webPageProxy->webExtensionController())
+                extensionController->updateWebsitePoliciesForNavigation(*apiWebsitePolicies, navigationAction);
 #endif
 
             switch (actionPolicy) {

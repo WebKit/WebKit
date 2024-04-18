@@ -617,6 +617,476 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, DynamicRules)
     Util::run(&receivedActionNotification);
 }
 
+// FIXME: rdar://116459903 (Web Process is crashing when using declarativeNetRequest to redirect a page)
+TEST(WKWebExtensionAPIDeclarativeNetRequest, DISABLED_RedirectRule)
+{
+    auto *pageScript = Util::constructScript(@[
+        @"<script>",
+        @"  browser.test.assertTrue(location.href.startsWith('http://127.0.0.1'), 'Final load should be via IP address')",
+
+        @"  browser.test.notifyPass()",
+        @"</script>"
+    ]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, pageScript } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *redirectURL = server.request().URL.absoluteString;
+
+    auto *rules = @[ @{
+        @"id": @1,
+        @"priority": @1,
+
+        @"action": @{
+            @"type": @"redirect",
+            @"redirect": @{
+                @"url": redirectURL
+            }
+        },
+
+        @"condition": @{
+            @"urlFilter": @"localhost",
+            @"resourceTypes": @[ @"main_frame" ]
+        }
+    } ];
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1",
+
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+
+        @"permissions": @[ @"declarativeNetRequestWithHostAccess" ],
+        @"host_permissions": @[ @"*://localhost/*" ],
+
+        @"declarative_net_request": @{
+            @"rule_resources": @[ @{
+                @"id": @"redirectRule",
+                @"enabled": @YES,
+                @"path": @"rules.json"
+            } ]
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"rules.json": rules
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutHostAccessPermission)
+{
+    auto *pageScript = Util::constructScript(@[
+        @"<script>",
+        @"  browser.test.assertTrue(location.href.startsWith('http://localhost'), 'Final load should be via localhost')",
+
+        @"  browser.test.notifyPass()",
+        @"</script>"
+    ]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, pageScript } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *redirectURL = server.request().URL.absoluteString;
+
+    auto *rules = @[ @{
+        @"id": @1,
+        @"priority": @1,
+
+        @"action": @{
+            @"type": @"redirect",
+            @"redirect": @{
+                @"url": redirectURL
+            }
+        },
+
+        @"condition": @{
+            @"urlFilter": @"localhost",
+            @"resourceTypes": @[ @"main_frame" ]
+        }
+    } ];
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1",
+
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+
+        @"permissions": @[ @"declarativeNetRequestWithHostAccess" ],
+        @"host_permissions": @[ @"*://localhost/*" ],
+
+        @"declarative_net_request": @{
+            @"rule_resources": @[ @{
+                @"id": @"redirectRule",
+                @"enabled": @YES,
+                @"path": @"rules.json"
+            } ]
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"rules.json": rules
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:_WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutHostPermission)
+{
+    auto *pageScript = Util::constructScript(@[
+        @"<script>",
+        @"  browser.test.assertTrue(location.href.startsWith('http://localhost'), 'Final load should be via localhost')",
+
+        @"  browser.test.notifyPass()",
+        @"</script>"
+    ]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, pageScript } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *redirectURL = server.request().URL.absoluteString;
+
+    auto *rules = @[ @{
+        @"id": @1,
+        @"priority": @1,
+
+        @"action": @{
+            @"type": @"redirect",
+            @"redirect": @{
+                @"url": redirectURL
+            }
+        },
+
+        @"condition": @{
+            @"urlFilter": @"localhost",
+            @"resourceTypes": @[ @"main_frame" ]
+        }
+    } ];
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1",
+
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+
+        @"permissions": @[ @"declarativeNetRequestWithHostAccess" ],
+        @"host_permissions": @[ @"*://localhost/*" ],
+
+        @"declarative_net_request": @{
+            @"rule_resources": @[ @{
+                @"id": @"redirectRule",
+                @"enabled": @YES,
+                @"path": @"rules.json"
+            } ]
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"rules.json": rules
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRule)
+{
+    auto *pageScript = Util::constructScript(@[
+        @"<script>",
+        @"  browser.test.assertEq(document.referrer, 'https://example.com/')",
+
+        @"  browser.test.notifyPass()",
+        @"</script>"
+    ]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, pageScript } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *rules = @[@{
+        @"id": @1,
+        @"priority": @1,
+
+        @"action": @{
+            @"type": @"modifyHeaders",
+            @"requestHeaders": @[ @{
+                @"header": @"Referer",
+                @"operation": @"set",
+                @"value": @"https://example.com/"
+            } ]
+        },
+
+        @"condition": @{
+            @"urlFilter": @"localhost",
+            @"resourceTypes": @[ @"main_frame" ]
+        }
+    }];
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1",
+
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+
+        @"permissions": @[ @"declarativeNetRequestWithHostAccess" ],
+        @"host_permissions": @[ @"*://localhost/*" ],
+
+        @"declarative_net_request": @{
+            @"rule_resources": @[ @{
+                @"id": @"modifyHeadersRule",
+                @"enabled": @YES,
+                @"path": @"rules.json"
+            } ]
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"rules.json": rules
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRuleWithoutHostAccessPermission)
+{
+    auto *pageScript = Util::constructScript(@[
+        @"<script>",
+        @"  browser.test.assertEq(document.referrer, '')",
+
+        @"  browser.test.notifyPass()",
+        @"</script>"
+    ]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, pageScript } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *rules = @[@{
+        @"id": @1,
+        @"priority": @1,
+
+        @"action": @{
+            @"type": @"modifyHeaders",
+            @"requestHeaders": @[ @{
+                @"header": @"Referer",
+                @"operation": @"set",
+                @"value": @"https://example.com/"
+            } ]
+        },
+
+        @"condition": @{
+            @"urlFilter": @"localhost",
+            @"resourceTypes": @[ @"main_frame" ]
+        }
+    }];
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1",
+
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+
+        @"permissions": @[ @"declarativeNetRequestWithHostAccess" ],
+        @"host_permissions": @[ @"*://localhost/*" ],
+
+        @"declarative_net_request": @{
+            @"rule_resources": @[ @{
+                @"id": @"modifyHeadersRule",
+                @"enabled": @YES,
+                @"path": @"rules.json"
+            } ]
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"rules.json": rules
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:_WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRuleWithoutHostPermission)
+{
+    auto *pageScript = Util::constructScript(@[
+        @"<script>",
+        @"  browser.test.assertEq(document.referrer, '')",
+
+        @"  browser.test.notifyPass()",
+        @"</script>"
+    ]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, pageScript } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *rules = @[@{
+        @"id": @1,
+        @"priority": @1,
+
+        @"action": @{
+            @"type": @"modifyHeaders",
+            @"requestHeaders": @[ @{
+                @"header": @"Referer",
+                @"operation": @"set",
+                @"value": @"https://example.com/"
+            } ]
+        },
+
+        @"condition": @{
+            @"urlFilter": @"localhost",
+            @"resourceTypes": @[ @"main_frame" ]
+        }
+    }];
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1",
+
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+
+        @"permissions": @[ @"declarativeNetRequestWithHostAccess" ],
+        @"host_permissions": @[ @"*://localhost/*" ],
+
+        @"declarative_net_request": @{
+            @"rule_resources": @[ @{
+                @"id": @"modifyHeadersRule",
+                @"enabled": @YES,
+                @"path": @"rules.json"
+            } ]
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"rules.json": rules
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 // MARK: Rule translation tests
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RequiredAndOptionalKeys)

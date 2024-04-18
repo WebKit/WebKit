@@ -57,6 +57,11 @@ OBJC_PROTOCOL(_WKWebExtensionControllerDelegatePrivate);
 #import "_WKWebExtensionController.h"
 #endif
 
+namespace API {
+class NavigationAction;
+class WebsitePolicies;
+}
+
 namespace WebKit {
 
 class ContextMenuContextData;
@@ -159,6 +164,8 @@ public:
     void inspectorWillOpen(WebInspectorUIProxy&, WebPageProxy&);
     void inspectorWillClose(WebInspectorUIProxy&, WebPageProxy&);
 #endif
+
+    void updateWebsitePoliciesForNavigation(API::WebsitePolicies&, API::NavigationAction&);
 
     void resourceLoadDidSendRequest(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceRequest&);
     void resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&);
