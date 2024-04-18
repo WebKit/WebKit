@@ -26,6 +26,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <optional>
 
 namespace WTF {
 class TextStream;
