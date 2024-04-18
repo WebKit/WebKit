@@ -120,6 +120,7 @@ enum class SDKAlignedBehavior {
     ScrollViewSubclassImplementsAddGestureRecognizer,
     ThrowIfCanDeclareGlobalFunctionFails,
     ThrowOnKVCInstanceVariableAccess,
+    BlockOptionallyBlockableMixedContent,
 
     NumberOfBehaviors
 };

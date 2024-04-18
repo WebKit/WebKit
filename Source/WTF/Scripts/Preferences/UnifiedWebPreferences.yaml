@@ -2911,12 +2911,12 @@ ICECandidateFilteringEnabled:
     WebCore:
       default: true
 
-IPAddressMixedContentUpgradeTestingEnabled:
+IPAddressAndLocalhostMixedContentUpgradeTestingEnabled:
   type: bool
   status: testable
   category: security
-  humanReadableName: "Upgrade IP address in mixed content"
-  humanReadableDescription: "Enable Upgrade IP address in mixed content"
+  humanReadableName: "Upgrade IP addresses and localhost in mixed content"
+  humanReadableDescription: "Enable Upgrading IP addresses and localhost in mixed content"
   defaultValue:
     WebKitLegacy:
       default: false

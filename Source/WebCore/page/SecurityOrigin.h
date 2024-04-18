@@ -201,6 +201,7 @@ public:
     void setIsPotentiallyTrustworthy(bool value) { m_isPotentiallyTrustworthy = value; }
 
     WEBCORE_EXPORT static bool isLocalHostOrLoopbackIPAddress(StringView);
+    WEBCORE_EXPORT static bool isLocalhostAddress(StringView);
 
     const SecurityOriginData& data() const { return m_data; }
 
