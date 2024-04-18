@@ -500,9 +500,6 @@ void initialize()
 #endif
         initializeDates();
         Thread::initializePlatformThreading();
-#if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
-        SignalHandlers::initialize();
-#endif
 #if PLATFORM(COCOA)
         initializeLibraryPathDiagnostics();
 #endif
