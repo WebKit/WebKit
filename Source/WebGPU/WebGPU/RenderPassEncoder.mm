@@ -261,7 +261,7 @@ void RenderPassEncoder::addResourceToActiveResources(const void* resourceAddress
     }
 
     if (!BindGroup::allowedUsage(resourceUsage)) {
-        makeInvalid([NSString stringWithFormat:@"Bind group has incompatible usage list: %@ for %p", BindGroup::usageName(resourceUsage), resourceAddress]);
+        makeInvalid([NSString stringWithFormat:@"Bind group has incompatible usage list: %@", BindGroup::usageName(resourceUsage)]);
         return;
     }
     if (!entryMap) {
