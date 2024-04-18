@@ -3706,8 +3706,6 @@ webkit.org/b/236930 accessibility/ios-simulator/aria-details.html [ Crash Pass ]
 
 webkit.org/b/238284 editing/spelling/spellcheck-async-remove-frame.html [ Pass Crash ]
 
-webkit.org/b/238771 media/video-played-ranges-1.html [ Pass Failure ]
-
 webkit.org/b/237108 http/tests/websocket/tests/hybi/extensions.html [ Pass ]
 
 webkit.org/b/238824 http/tests/workers/service/openwindow-from-notification-click.html [ Pass Failure ]

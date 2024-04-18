@@ -13,6 +13,7 @@
                 JumpBackAndPlayToNewRange,
                 JumpAndExtendRangeStart,
                 JumpAndExtendRangeEnd,
+                PlayToEnd,
             ];
     
             // NOTE: Detailed results are not printed for this test because time values are different from machine
@@ -85,6 +86,16 @@
                 willPauseInExistingRange = false;
                 willExtendAnExistingRange = true;
                 playForMillisecs(30);
+            }
+
+            function PlayToEnd()
+            {
+                consoleWrite("<br><b><em>Test playing to end, should extend range end</em></b>");
+        
+                var newTime = (video.duration - 0.05).toFixed(2);
+                runSilently("video.currentTime = " + newTime);
+    
+                playUntilEnded();
             }
 
         </script>

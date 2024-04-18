@@ -59,5 +59,13 @@ Test 27 OK
 Test 28 OK
 Test 29 OK
 Test 30 OK
+
+Test playing to end, should extend range end
+RUN(handlePromise(video.play()))
+EVENT(pause)
+EVENT(ended)
+Test 31 OK
+Test 32 OK
+Test 33 OK
 END OF TEST
 

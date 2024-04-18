@@ -52,6 +52,8 @@ function nextTest()
 
 function pause(evt)
 {
+    if (video.ended)
+        return;
     currentTime = video.currentTime.toFixed(2);
     
     if (!willExtendAnExistingRange)
@@ -66,6 +68,15 @@ function pause(evt)
 function canplay(event) 
 {
     testRanges();
+    nextTest();
+}
+
+function ended(evt)
+{
+    testExpected('video.currentTime == video.duration', true);
+    testExpected('video.played.length >= 1', true);
+    testExpected('video.played.end(video.played.length -1) == video.duration', true);
+
     nextTest();
 }
 
@@ -143,6 +154,13 @@ function playForMillisecs(milliseconds)
     setTimeout(callPauseIfTimeIsReached, milliseconds + 100);
 }
 
+async function playUntilEnded()
+{
+    run("handlePromise(video.play())");
+
+    await waitFor(video, 'ended');
+}
+
 function videoPlayedMain()
 {
     findMediaElement();
@@ -155,6 +173,7 @@ function videoPlayedMain()
     waitForEvent("loadedmetadata");
     waitForEvent("canplay", canplay); // Will trigger nextTest() which launches the tests.
     waitForEvent("pause", pause);
+    waitForEvent("ended", ended);
     
     video.load();
 }
