@@ -35,6 +35,9 @@
 #include "ScrollTypes.h"
 #include "ShadowRootMode.h"
 #include "SimulatedClickOptions.h"
+#include "TrustedHTML.h"
+#include "TrustedScript.h"
+#include "TrustedScriptURL.h"
 #include "WebAnimationTypes.h"
 #include <JavaScriptCore/Forward.h>
 
@@ -119,6 +122,7 @@ struct ShadowRootInit;
 
 using ElementName = NodeName;
 using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
+using TrustedTypeOrString = std::variant<RefPtr<TrustedHTML>, RefPtr<TrustedScript>, RefPtr<TrustedScriptURL>, AtomString>;
 
 // https://drafts.csswg.org/css-contain/#relevant-to-the-user
 enum class ContentRelevancy : uint8_t {
@@ -190,9 +194,9 @@ public:
     AtomString getAttributeForBindings(const AtomString& qualifiedName, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
     inline AtomString getAttributeNSForBindings(const AtomString& namespaceURI, const AtomString& localName, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
 
-    WEBCORE_EXPORT ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const AtomString& value);
+    WEBCORE_EXPORT ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const TrustedTypeOrString& value);
     static ExceptionOr<QualifiedName> parseAttributeName(const AtomString& namespaceURI, const AtomString& qualifiedName);
-    WEBCORE_EXPORT ExceptionOr<void> setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const AtomString& value);
+    WEBCORE_EXPORT ExceptionOr<void> setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const TrustedTypeOrString& value);
 
     ExceptionOr<bool> toggleAttribute(const AtomString& qualifiedName, std::optional<bool> force);
 

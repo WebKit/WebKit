@@ -145,6 +145,7 @@
 #include "StyleTreeResolver.h"
 #include "TextIterator.h"
 #include "TouchAction.h"
+#include "TrustedType.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibilityAdjustment.h"
 #include "VoidCallback.h"
@@ -2000,7 +2001,31 @@ ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std:
     return true;
 }
 
-ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const AtomString& value)
+static ExceptionOr<String> getTrustedTypesCompliantAttributeValue(const String& attributeType, const TrustedTypeOrString& value, Element* element, String sink)
+{
+    auto stringValueHolder = WTF::switchOn(value,
+        [&](const String& str) -> ExceptionOr<String> {
+            if (attributeType.isNull())
+                return String(str);
+            return trustedTypeCompliantString(stringToTrustedType(attributeType), *(element->document().scriptExecutionContext()), str, sink);
+        },
+        [](const RefPtr<TrustedHTML>& trustedHTML) -> ExceptionOr<String> {
+            return trustedHTML->toString();
+        },
+        [](const RefPtr<TrustedScript>& trustedScript) -> ExceptionOr<String> {
+            return trustedScript->toString();
+        },
+        [](const RefPtr<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<String> {
+            return trustedScriptURL->toString();
+        }
+    );
+    if (stringValueHolder.hasException())
+        return stringValueHolder.releaseException();
+
+    return stringValueHolder.releaseReturnValue();
+}
+
+ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const TrustedTypeOrString& value)
 {
     if (!Document::isValidName(qualifiedName))
         return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name: '", qualifiedName, "'") };
@@ -2009,8 +2034,18 @@ ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const A
     auto caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false) : ElementData::attributeNotFound;
     auto name = index != ElementData::attributeNotFound ? attributeAt(index).name() : QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() };
-    setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute::No);
+    if (!document().scriptExecutionContext()->settingsValues().trustedTypesEnabled)
+        setAttributeInternal(index, name, std::get<AtomString>(value), InSynchronizationOfLazyAttribute::No);
+    else {
+        auto sink = nullString();
+        String attributeType = getTrustedTypeForAttribute(name.localName(), getAttribute(name), ""_s, ""_s);
+        auto attributeValue = getTrustedTypesCompliantAttributeValue(attributeType, value, this, "Element setAttribute"_s);
 
+        if (attributeValue.hasException())
+            return attributeValue.releaseException();
+
+        setAttributeInternal(index, name,  AtomString(attributeValue.releaseReturnValue()), InSynchronizationOfLazyAttribute::No);
+    }
     return { };
 }
 
@@ -2314,7 +2349,7 @@ void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std:
 
     auto newElements = copyToVectorOf<WeakPtr<Element, WeakPtrImplWithEventTargetData>>(*elements);
     explicitlySetAttrElementsMap().set(attributeName, WTFMove(newElements));
-    
+
     if (CheckedPtr cache = document().existingAXObjectCache()) {
         for (auto element : elements.value()) {
             // FIXME: Should this pass `element` instead of `*this`?
@@ -3227,7 +3262,7 @@ static void appendAttributes(StringBuilder& builder, const Element& element)
             classNamesToDump = maxNumClassNames;
             addEllipsis = true;
         }
-        
+
         for (size_t i = 0; i < classNamesToDump; ++i) {
             if (i > 0)
                 builder.append(' ');
@@ -3395,12 +3430,23 @@ ExceptionOr<QualifiedName> Element::parseAttributeName(const AtomString& namespa
     return parsedAttributeName;
 }
 
-ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const AtomString& value)
+ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const TrustedTypeOrString& value)
 {
     auto result = parseAttributeName(namespaceURI, qualifiedName);
     if (result.hasException())
         return result.releaseException();
-    setAttribute(result.releaseReturnValue(), value);
+    if (!document().scriptExecutionContext()->settingsValues().trustedTypesEnabled)
+        setAttribute(result.releaseReturnValue(), std::get<AtomString>(value));
+    else {
+        String attributeType = getTrustedTypeForAttribute(qualifiedName, getAttribute(qualifiedName), ""_s, namespaceURI);
+        auto attributeValue = getTrustedTypesCompliantAttributeValue(attributeType, value, this, "Element setAttributeNS"_s);
+
+        if (attributeValue.hasException())
+            return attributeValue.releaseException();
+
+        setAttribute(result.releaseReturnValue(), AtomString(attributeValue.releaseReturnValue()));
+    }
+
     return { };
 }
 

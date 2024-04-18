@@ -37,6 +37,7 @@
 #include "TrustedTypePolicyFactory.h"
 #include "WindowOrWorkerGlobalScopeTrustedTypes.h"
 #include "WorkerGlobalScope.h"
+#include "XLinkNames.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -79,6 +80,19 @@ ASCIILiteral trustedTypeToString(TrustedType trustedType)
     case TrustedType::TrustedScriptURL:
         return "TrustedScriptURL"_s;
     }
+
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+TrustedType stringToTrustedType(String str)
+{
+    if (str == "TrustedHTML"_s)
+        return TrustedType::TrustedHTML;
+    if (str == "TrustedScript"_s)
+        return TrustedType::TrustedScript;
+    if (str == "TrustedScriptURL"_s)
+        return TrustedType::TrustedScriptURL;
 
     ASSERT_NOT_REACHED();
     return { };
@@ -171,6 +185,30 @@ ExceptionOr<String> trustedTypeCompliantString(TrustedType expectedType, ScriptE
     }
 
     return stringValue;
+}
+
+String getTrustedTypeForAttribute(const String& tagName, const String& attributeParameter, const String& elementNamespace, const String& attributeNamespace)
+{
+    auto localName = tagName.convertToASCIILowercase();
+    auto attributeName = attributeParameter.convertToASCIILowercase();
+
+    if (attributeName.startsWith("on"_s))
+        return trustedTypeToString(TrustedType::TrustedScript);
+
+    AtomString elementNS = elementNamespace.isEmpty() ? HTMLNames::xhtmlNamespaceURI : AtomString(elementNamespace);
+    AtomString attributeNS = attributeNamespace.isEmpty() ? nullAtom() : AtomString(attributeNamespace);
+
+    QualifiedName element(nullAtom(), AtomString(localName), elementNS);
+    QualifiedName attribute(nullAtom(), AtomString(attributeName), attributeNS);
+
+    if (element.matches(HTMLNames::iframeTag) && attribute.matches(HTMLNames::srcdocAttr))
+        return trustedTypeToString(TrustedType::TrustedHTML);
+    if (element.matches(HTMLNames::scriptTag) && attribute.matches(HTMLNames::srcAttr))
+        return trustedTypeToString(TrustedType::TrustedScriptURL);
+    if (element.matches(SVGNames::scriptTag) && (attribute.matches(SVGNames::hrefAttr) || attribute.matches(XLinkNames::hrefAttr)))
+        return trustedTypeToString(TrustedType::TrustedScriptURL);
+
+    return nullString();
 }
 
 // https://w3c.github.io/trusted-types/dist/spec/#require-trusted-types-for-pre-navigation-check
