@@ -8061,6 +8061,13 @@ void WebPageProxy::dataTaskWithRequest(WebCore::ResourceRequest&& request, const
     websiteDataStore().protectedNetworkProcess()->dataTaskWithRequest(*this, sessionID(), WTFMove(request), topOrigin, shouldRunAtForegroundPriority, WTFMove(completionHandler));
 }
 
+void WebPageProxy::loadAndDecodeImage(WebCore::ResourceRequest&& request, std::optional<WebCore::FloatSize> sizeConstraint, CompletionHandler<void(std::variant<WebCore::ResourceError, Ref<WebCore::ShareableBitmap>>&&)>&& completionHandler)
+{
+    if (!hasRunningProcess())
+        launchProcess({ }, ProcessLaunchReason::InitialProcess);
+    sendWithAsyncReply(Messages::WebPage::LoadAndDecodeImage(request, sizeConstraint), WTFMove(completionHandler));
+}
+
 void WebPageProxy::didChangeContentSize(const IntSize& size)
 {
     protectedPageClient()->didChangeContentSize(size);

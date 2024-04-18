@@ -111,8 +111,11 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(NativeImage& image)
 
 RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(NativeImage& image, const DestinationColorSpace& colorSpace)
 {
-    auto imageSize = image.size();
+    return createFromImageDraw(image, colorSpace, image.size());
+}
 
+RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(NativeImage& image, const DestinationColorSpace& colorSpace, const IntSize& imageSize)
+{
     auto bitmap = ShareableBitmap::create({ imageSize, colorSpace });
     if (!bitmap)
         return nullptr;

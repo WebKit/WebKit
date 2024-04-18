@@ -158,6 +158,7 @@ Tests/WebKitCocoa/InteractionDeadlockAfterCrash.mm
 Tests/WebKitCocoa/JITEnabled.mm
 Tests/WebKitCocoa/JavaScriptDuringNavigation.mm
 Tests/WebKitCocoa/LoadAlternateHTMLString.mm
+Tests/WebKitCocoa/LoadAndDecodeImage.mm
 Tests/WebKitCocoa/LoadDataWithNilMIMEType.mm
 Tests/WebKitCocoa/LoadFileThenReload.mm
 Tests/WebKitCocoa/LoadFileURL.mm

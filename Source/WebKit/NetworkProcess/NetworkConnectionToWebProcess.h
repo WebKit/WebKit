@@ -413,6 +413,8 @@ private:
 
     void hasUploadStateChanged(bool);
 
+    void loadImageForDecoding(WebCore::ResourceRequest&&, WebPageProxyIdentifier, CompletionHandler<void(std::variant<WebCore::ResourceError, Ref<WebCore::SharedBuffer>>&&)>&&);
+
     void setResourceLoadSchedulingMode(WebCore::PageIdentifier, WebCore::LoadSchedulingMode);
     void prioritizeResourceLoads(const Vector<WebCore::ResourceLoaderIdentifier>&);
 

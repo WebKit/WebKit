@@ -137,4 +137,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     [EnabledIf='isWebTransportEnabled()'] DestroyWebTransportSession(WebKit::WebTransportSessionIdentifier identifier)
 
     ClearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
+
+    LoadImageForDecoding(WebCore::ResourceRequest request, WebKit::WebPageProxyIdentifier pageID) -> (std::variant<WebCore::ResourceError, Ref<WebCore::SharedBuffer>> result)
 }

@@ -27,7 +27,9 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
