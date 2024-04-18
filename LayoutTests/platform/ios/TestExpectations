@@ -7339,4 +7339,4 @@ fast/forms/switch/click-animation.html [ ImageOnlyFailure ]
 
 webkit.org/b/271969 accessibility/ios-simulator/inline-prediction-attributed-string.html [ Failure ]
 
-webkit.org/b/272910 fast/scrolling/ios/video-atop-overflow-scroll.html [ Timeout ]
+webkit.org/b/272910 fast/scrolling/ios/video-atop-overflow-scroll.html [ Skip ]
