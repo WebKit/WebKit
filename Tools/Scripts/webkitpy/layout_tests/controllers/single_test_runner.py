@@ -30,15 +30,15 @@
 import logging
 import os
 import re
+from collections import deque
 
 from webkitcorepy import string_utils
-from webkitpy.layout_tests.controllers import test_result_writer
-from webkitpy.port.driver import DriverInput, DriverOutput
-from webkitpy.layout_tests.models import test_expectations
-from webkitpy.layout_tests.models import test_failures
-from webkitpy.layout_tests.models.test_results import TestResult
-from webkitpy.w3c.test_parser import TestParser
 
+from webkitpy.layout_tests.controllers import test_result_writer
+from webkitpy.layout_tests.models import test_expectations, test_failures
+from webkitpy.layout_tests.models.test_results import TestResult
+from webkitpy.port.driver import DriverInput, DriverOutput
+from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup as Parser
 
 _log = logging.getLogger(__name__)
 
@@ -414,6 +414,70 @@ class SingleTestRunner(object):
         test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, driver_output, expected_driver_output, test_result.failures)
         return test_result
 
+    def _fuzzy_metadata_for_file(self, filename):
+        test_doc = Parser(self._filesystem.read_binary_file(filename))
+        fuzzy_nodes = test_doc.findAll('meta', attrs={"name": "fuzzy"})
+        if not fuzzy_nodes:
+            return None
+
+        args = [u"maxDifference", u"totalPixels"]
+        result = {}
+
+        # Taken from wpt/tools/manifest/sourcefile.py, and copied to avoid having webkitpy depend on wpt.
+        for node in fuzzy_nodes:
+            content = node['content']
+            key = None
+            # from parse_ref_keyed_meta; splits out the optional reference prefix.
+            parts = content.rsplit(u":", 1)
+            if len(parts) == 1:
+                fuzzy_data = parts[0]
+            else:
+                ref_file = parts[0]
+                key = ref_file
+                fuzzy_data = parts[1]
+
+            ranges = fuzzy_data.split(u";")
+            if len(ranges) != 2:
+                raise ValueError("Malformed fuzzy value \"%s\"" % fuzzy_data)
+
+            arg_values = {}  # type: Dict[Text, List[int]]
+            positional_args = deque()  # type: Deque[List[int]]
+
+            for range_str_value in ranges:  # type: Text
+                name = None  # type: Optional[Text]
+                if u"=" in range_str_value:
+                    name, range_str_value = [part.strip() for part in range_str_value.split(u"=", 1)]
+                    if name not in args:
+                        raise ValueError("%s is not a valid fuzzy property" % name)
+                    if arg_values.get(name):
+                        raise ValueError("Got multiple values for argument %s" % name)
+
+                if u"-" in range_str_value:
+                    range_min, range_max = range_str_value.split(u"-")
+                else:
+                    range_min = range_str_value
+                    range_max = range_str_value
+                try:
+                    range_value = [int(x.strip()) for x in (range_min, range_max)]
+                except ValueError:
+                    raise ValueError("Fuzzy value %s must be a range of integers" % range_str_value)
+
+                if name is None:
+                    positional_args.append(range_value)
+                else:
+                    arg_values[name] = range_value
+
+            result[key] = []
+            for arg_name in args:
+                if arg_values.get(arg_name):
+                    arg_value = arg_values.pop(arg_name)
+                else:
+                    arg_value = positional_args.popleft()
+                result[key].append(arg_value)
+            assert len(arg_values) == 0 and len(positional_args) == 0
+
+        return result
+
     @staticmethod
     def _relative_reference_path(test_full_path, reference_full_path):
         test_dir = os.path.split(test_full_path)[0]
@@ -426,8 +490,7 @@ class SingleTestRunner(object):
 
     def _fuzzy_tolerance_for_reference(self, reference_full_path):
         test_full_path = self._port.abspath_for_test(self._test_name)
-        test_parser = TestParser({'all': True}, filename=test_full_path, host=self._port.host)
-        fuzzy = test_parser.fuzzy_metadata()
+        fuzzy = self._fuzzy_metadata_for_file(test_full_path)
         if not fuzzy:
             return None
 
