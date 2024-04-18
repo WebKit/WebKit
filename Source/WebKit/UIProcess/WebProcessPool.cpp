@@ -1441,20 +1441,16 @@ void WebProcessPool::registerURLSchemeAsSecure(const String& urlScheme)
 {
     LegacyGlobalSettings::singleton().registerURLSchemeAsSecure(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsSecure(urlScheme));
-    WebsiteDataStore::forEachWebsiteDataStore([urlScheme] (WebsiteDataStore& dataStore) {
-        if (RefPtr networkProcess = dataStore.networkProcessIfExists())
-            networkProcess->send(Messages::NetworkProcess::RegisterURLSchemeAsSecure(urlScheme), 0);
-    });
+    for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
+        networkProcess->send(Messages::NetworkProcess::RegisterURLSchemeAsSecure(urlScheme), 0);
 }
 
 void WebProcessPool::registerURLSchemeAsBypassingContentSecurityPolicy(const String& urlScheme)
 {
     LegacyGlobalSettings::singleton().registerURLSchemeAsBypassingContentSecurityPolicy(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsBypassingContentSecurityPolicy(urlScheme));
-    WebsiteDataStore::forEachWebsiteDataStore([urlScheme] (WebsiteDataStore& dataStore) {
-        if (RefPtr networkProcess = dataStore.networkProcessIfExists())
-            networkProcess->send(Messages::NetworkProcess::RegisterURLSchemeAsBypassingContentSecurityPolicy(urlScheme), 0);
-    });
+    for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
+        networkProcess->send(Messages::NetworkProcess::RegisterURLSchemeAsBypassingContentSecurityPolicy(urlScheme), 0);
 }
 
 void WebProcessPool::setDomainRelaxationForbiddenForURLScheme(const String& urlScheme)
@@ -1467,18 +1463,16 @@ void WebProcessPool::registerURLSchemeAsLocal(const String& urlScheme)
 {
     LegacyGlobalSettings::singleton().registerURLSchemeAsLocal(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsLocal(urlScheme));
-    WebsiteDataStore::forEachWebsiteDataStore([urlScheme] (WebsiteDataStore& dataStore) {
-        dataStore.protectedNetworkProcess()->send(Messages::NetworkProcess::RegisterURLSchemeAsLocal(urlScheme), 0);
-    });
+    for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
+        networkProcess->send(Messages::NetworkProcess::RegisterURLSchemeAsLocal(urlScheme), 0);
 }
 
 void WebProcessPool::registerURLSchemeAsNoAccess(const String& urlScheme)
 {
     LegacyGlobalSettings::singleton().registerURLSchemeAsNoAccess(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsNoAccess(urlScheme));
-    WebsiteDataStore::forEachWebsiteDataStore([urlScheme] (WebsiteDataStore& dataStore) {
-        dataStore.protectedNetworkProcess()->send(Messages::NetworkProcess::RegisterURLSchemeAsNoAccess(urlScheme), 0);
-    });
+    for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
+        networkProcess->send(Messages::NetworkProcess::RegisterURLSchemeAsNoAccess(urlScheme), 0);
 }
 
 void WebProcessPool::registerURLSchemeAsDisplayIsolated(const String& urlScheme)
@@ -1546,18 +1540,16 @@ void WebProcessPool::setCacheModel(CacheModel cacheModel)
 
     sendToAllProcesses(Messages::WebProcess::SetCacheModel(cacheModel));
 
-    WebsiteDataStore::forEachWebsiteDataStore([cacheModel] (WebsiteDataStore& dataStore) {
-        dataStore.protectedNetworkProcess()->send(Messages::NetworkProcess::SetCacheModel(cacheModel), 0);
-    });
+    for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
+        networkProcess->send(Messages::NetworkProcess::SetCacheModel(cacheModel), 0);
 }
 
 void WebProcessPool::setCacheModelSynchronouslyForTesting(CacheModel cacheModel)
 {
     updateBackForwardCacheCapacity();
 
-    WebsiteDataStore::forEachWebsiteDataStore([cacheModel] (WebsiteDataStore& dataStore) {
-        dataStore.protectedNetworkProcess()->sendSync(Messages::NetworkProcess::SetCacheModelSynchronouslyForTesting(cacheModel), 0);
-    });
+    for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
+        networkProcess->sendSync(Messages::NetworkProcess::SetCacheModelSynchronouslyForTesting(cacheModel), 0);
 }
 
 void WebProcessPool::setDefaultRequestTimeoutInterval(double timeoutInterval)
