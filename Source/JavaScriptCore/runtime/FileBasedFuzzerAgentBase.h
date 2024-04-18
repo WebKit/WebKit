@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExpressionInfo.h"
 #include "FuzzerAgent.h"
 #include "LineColumn.h"
 #include "Opcode.h"
