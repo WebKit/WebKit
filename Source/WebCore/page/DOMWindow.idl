@@ -126,7 +126,6 @@
 
 DOMWindow includes AnimationFrameProvider;
 DOMWindow includes GlobalEventHandlers;
-DOMWindow includes DOMWindow;
 DOMWindow includes WindowEventHandlers;
 DOMWindow includes WindowOrWorkerGlobalScope;
 DOMWindow includes WindowLocalStorage;

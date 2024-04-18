@@ -428,9 +428,9 @@ $(PROJECT_DIR)/Modules/cookie-store/CookieStore.idl
 $(PROJECT_DIR)/Modules/cookie-store/CookieStoreDeleteOptions.idl
 $(PROJECT_DIR)/Modules/cookie-store/CookieStoreGetOptions.idl
 $(PROJECT_DIR)/Modules/cookie-store/CookieStoreManager.idl
+$(PROJECT_DIR)/Modules/cookie-store/DOMWindow+CookieStore.idl
 $(PROJECT_DIR)/Modules/cookie-store/ExtendableCookieChangeEvent.idl
 $(PROJECT_DIR)/Modules/cookie-store/ExtendableCookieChangeEventInit.idl
-$(PROJECT_DIR)/Modules/cookie-store/LocalDOMWindow+CookieStore.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/BasicCredential.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialCreationOptions.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialMediationRequirement.idl
@@ -839,7 +839,6 @@ $(PROJECT_DIR)/Modules/screen-wake-lock/WakeLock.idl
 $(PROJECT_DIR)/Modules/screen-wake-lock/WakeLockSentinel.idl
 $(PROJECT_DIR)/Modules/screen-wake-lock/WakeLockType.idl
 $(PROJECT_DIR)/Modules/speech/DOMWindow+SpeechSynthesis.idl
-$(PROJECT_DIR)/Modules/speech/LocalDOMWindow+SpeechSynthesis.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognition.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognitionAlternative.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognitionErrorCode.idl
@@ -1040,7 +1039,6 @@ $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoFrameOutputCallback.idl
 $(PROJECT_DIR)/Modules/webdatabase/DOMWindow+WebDatabase.idl
 $(PROJECT_DIR)/Modules/webdatabase/Database.idl
 $(PROJECT_DIR)/Modules/webdatabase/DatabaseCallback.idl
-$(PROJECT_DIR)/Modules/webdatabase/LocalDOMWindow+WebDatabase.idl
 $(PROJECT_DIR)/Modules/webdatabase/SQLError.idl
 $(PROJECT_DIR)/Modules/webdatabase/SQLResultSet.idl
 $(PROJECT_DIR)/Modules/webdatabase/SQLResultSetRowList.idl
@@ -1758,6 +1756,7 @@ $(PROJECT_DIR)/mathml/mathtags.in
 $(PROJECT_DIR)/page/BarProp.idl
 $(PROJECT_DIR)/page/Crypto.idl
 $(PROJECT_DIR)/page/DOMSelection.idl
+$(PROJECT_DIR)/page/DOMWindow.idl
 $(PROJECT_DIR)/page/DOMWindow+CSSOM.idl
 $(PROJECT_DIR)/page/DOMWindow+CSSOMView.idl
 $(PROJECT_DIR)/page/DOMWindow+Compat.idl
@@ -1766,20 +1765,11 @@ $(PROJECT_DIR)/page/DOMWindow+DeviceOrientation.idl
 $(PROJECT_DIR)/page/DOMWindow+RequestIdleCallback.idl
 $(PROJECT_DIR)/page/DOMWindow+Selection.idl
 $(PROJECT_DIR)/page/DOMWindow+VisualViewport.idl
-$(PROJECT_DIR)/page/DOMWindow.idl
 $(PROJECT_DIR)/page/EventSource.idl
 $(PROJECT_DIR)/page/History.idl
 $(PROJECT_DIR)/page/IntersectionObserver.idl
 $(PROJECT_DIR)/page/IntersectionObserverCallback.idl
 $(PROJECT_DIR)/page/IntersectionObserverEntry.idl
-$(PROJECT_DIR)/page/LocalDOMWindow+CSSOM.idl
-$(PROJECT_DIR)/page/LocalDOMWindow+CSSOMView.idl
-$(PROJECT_DIR)/page/LocalDOMWindow+Compat.idl
-$(PROJECT_DIR)/page/LocalDOMWindow+DeviceMotion.idl
-$(PROJECT_DIR)/page/LocalDOMWindow+DeviceOrientation.idl
-$(PROJECT_DIR)/page/LocalDOMWindow+RequestIdleCallback.idl
-$(PROJECT_DIR)/page/LocalDOMWindow+Selection.idl
-$(PROJECT_DIR)/page/LocalDOMWindow+VisualViewport.idl
 $(PROJECT_DIR)/page/Location.idl
 $(PROJECT_DIR)/page/NavigateEvent.idl
 $(PROJECT_DIR)/page/Navigation.idl
