@@ -31,6 +31,8 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKPreferencesRefPrivate.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -60,6 +62,9 @@ static NSData *readRTFDataFromPasteboard()
 static RetainPtr<NSAttributedString> copyAttributedStringFromHTML(NSString *htmlString, bool forceDarkMode)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+
+    auto preferences = (__bridge WKPreferencesRef)[[webView configuration] preferences];
+    WKPreferencesSetWriteRichTextDataWhenCopyingOrDragging(preferences, true);
 
     if (forceDarkMode)
         [webView forceDarkMode];

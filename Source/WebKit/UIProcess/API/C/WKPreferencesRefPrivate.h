@@ -388,6 +388,9 @@ WK_EXPORT bool WKPreferencesGetDataTransferItemsEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetCustomPasteboardDataEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetCustomPasteboardDataEnabled(WKPreferencesRef);
 
+WK_EXPORT void WKPreferencesSetWriteRichTextDataWhenCopyingOrDragging(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetWriteRichTextDataWhenCopyingOrDragging(WKPreferencesRef);
+
 // Defaults to false, true for iOS
 WK_EXPORT void WKPreferencesSetWebShareEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetWebShareEnabled(WKPreferencesRef);
