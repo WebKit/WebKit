@@ -130,7 +130,7 @@ public:
         return m_asyncContentsIdentifier;
     }
 
-    void setAsyncContentsIdentifier(const WebCore::RenderingResourceIdentifier& identifier)
+    void setAsyncContentsIdentifier(std::optional<WebCore::RenderingResourceIdentifier> identifier)
     {
         m_asyncContentsIdentifier = identifier;
     }

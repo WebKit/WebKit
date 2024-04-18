@@ -1327,7 +1327,6 @@ http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits.ht
 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/size.large.html [ Skip ]
-webkit.org/b/272327 fast/canvas/offscreen-nested-worker-serialization.html [ Failure Pass ]
 
 # MSE in worker is only supported on platform with the GPU process active and where MSE is enabled by default
 # (this excludes iPhone (no MediaSource) and Linux/Windows (no GPUP))
