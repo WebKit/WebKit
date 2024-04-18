@@ -29,6 +29,7 @@
 #import "Logging.h"
 #import "WKCrashReporter.h"
 #import "XPCServiceEntryPoint.h"
+#import "XPCUtilities.h"
 #import <CoreFoundation/CoreFoundation.h>
 #import <mach/mach.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
@@ -137,6 +138,8 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             }
             return;
         }
+
+        handleXPCExitMessage(event);
 
         auto* messageName = xpc_dictionary_get_string(event, "message-name");
         if (!messageName) {
