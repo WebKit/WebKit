@@ -474,6 +474,8 @@ Packing RewriteGlobalVariables::getPacking(AST::CallExpression& call)
                     auto* type = base.inferredType();
                     if (auto* reference = std::get_if<Types::Reference>(type))
                         type = reference->element;
+                    if (auto* pointer = std::get_if<Types::Pointer>(type))
+                        type = pointer->element;
                     auto& structure = std::get<Types::Struct>(*type).structure;
                     auto& lastMember = structure.members().last();
                     RELEASE_ASSERT(lastMember.name().id() == fieldAccess->fieldName().id());

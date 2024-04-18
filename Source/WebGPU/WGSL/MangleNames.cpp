@@ -163,6 +163,8 @@ void NameManglerVisitor::visit(AST::FieldAccessExpression& access)
     auto* baseType = access.base().inferredType();
     if (auto* reference = std::get_if<Types::Reference>(baseType))
         baseType = reference->element;
+    if (auto* pointer = std::get_if<Types::Pointer>(baseType))
+        baseType = pointer->element;
     auto* structType = std::get_if<Types::Struct>(baseType);
     if (!structType)
         return;
