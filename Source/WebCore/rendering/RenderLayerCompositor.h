@@ -302,8 +302,13 @@ public:
     static bool isCompositedPlugin(const RenderObject&);
 
     static RenderLayerCompositor* frameContentsCompositor(RenderWidget&);
-    // Returns true the widget contents layer was parented.
-    bool attachWidgetContentLayers(RenderWidget&);
+
+    struct WidgetLayerAttachment {
+        bool widgetLayersAttachedAsChildren { false };
+        bool layerHierarchyChanged { false };
+    };
+    WidgetLayerAttachment attachWidgetContentLayersIfNecessary(RenderWidget&);
+
     void collectViewTransitionNewContentLayers(RenderLayer&, Vector<Ref<GraphicsLayer>>&);
 
     // Update the geometry of the layers used for clipping and scrolling in frames.

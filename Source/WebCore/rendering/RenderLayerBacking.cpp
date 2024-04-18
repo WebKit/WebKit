@@ -1211,9 +1211,11 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     }
 #endif // ENABLE(MODEL_ELEMENT)
     // FIXME: Why do we do this twice?
-    if (CheckedPtr widget = dynamicDowncast<RenderWidget>(renderer()); widget && compositor.attachWidgetContentLayers(*widget)) {
-        m_owningLayer.setNeedsCompositingGeometryUpdate();
-        layerConfigChanged = true;
+    if (CheckedPtr widget = dynamicDowncast<RenderWidget>(renderer())) {
+        if (compositor.attachWidgetContentLayersIfNecessary(*widget).layerHierarchyChanged) {
+            m_owningLayer.setNeedsCompositingGeometryUpdate();
+            layerConfigChanged = true;
+        }
     }
 
     if (RenderLayerCompositor::hasCompositedWidgetContents(renderer())) {
