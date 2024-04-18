@@ -782,4 +782,32 @@ template<> struct ArgumentCoder<std::nullptr_t> {
     static std::optional<std::nullptr_t> decode(Decoder&) { return nullptr; }
 };
 
+template<typename T, typename Traits> struct ArgumentCoder<WTF::Markable<T, Traits>> {
+    template<typename Encoder, typename U>
+    static void encode(Encoder& encoder, U&& markable)
+    {
+        bool isEmpty = !markable;
+        encoder << isEmpty;
+        if (!isEmpty)
+            encoder << *markable;
+    }
+
+    template<typename Decoder>
+    static std::optional<WTF::Markable<T>> decode(Decoder& decoder)
+    {
+        auto isEmpty = decoder.template decode<bool>();
+        if (UNLIKELY(!isEmpty))
+            return std::nullopt;
+
+        if (*isEmpty)
+            return WTF::Markable<T, Traits> { };
+
+        auto value = decoder.template decode<T>();
+        if (UNLIKELY(!value))
+            return std::nullopt;
+
+        return WTF::Markable<T, Traits>(WTFMove(*value));
+    }
+};
+
 } // namespace IPC
