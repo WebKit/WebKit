@@ -836,7 +836,7 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
     }
 
     if (CheckedPtr cache = element->document().existingAXObjectCache())
-        cache->valueChanged(element.get());
+        cache->valueChanged(*element);
 }
 
 String InputType::localizeValue(const String& proposedValue) const
@@ -1043,7 +1043,7 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
         return result;
 
     if (auto* cache = element()->document().existingAXObjectCache())
-        cache->valueChanged(element());
+        cache->valueChanged(*element());
 
     return result;
 }

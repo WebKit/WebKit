@@ -162,7 +162,7 @@ private:
     bool isAllowedChildOfTree() const;
     CharacterRange documentBasedSelectedTextRange() const;
     RefPtr<Element> rootEditableElementForPosition(const Position&) const;
-    bool nodeIsTextControl(const Node*) const;
+    bool nodeIsTextControl(const Node&) const;
     Path elementPath() const override;
     
     AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement&, const IntPoint&) const;

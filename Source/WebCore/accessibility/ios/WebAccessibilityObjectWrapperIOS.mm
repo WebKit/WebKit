@@ -240,7 +240,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
 @implementation WebAccessibilityObjectWrapper
 
-- (id)initWithAccessibilityObject:(AccessibilityObject*)axObject
+- (id)initWithAccessibilityObject:(AccessibilityObject&)axObject
 {
     self = [super initWithAccessibilityObject:axObject];
     if (!self)

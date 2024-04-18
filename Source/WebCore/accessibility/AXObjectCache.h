@@ -320,8 +320,8 @@ public:
 #endif
 private:
     using DOMObjectVariant = std::variant<std::nullptr_t, RenderObject*, Node*, Widget*>;
-    void cacheAndInitializeWrapper(AccessibilityObject*, DOMObjectVariant = nullptr);
-    void attachWrapper(AccessibilityObject*);
+    void cacheAndInitializeWrapper(AccessibilityObject&, DOMObjectVariant = nullptr);
+    void attachWrapper(AccessibilityObject&);
 
 public:
     void onPageActivityStateChange(OptionSet<ActivityState>);
@@ -334,15 +334,15 @@ public:
     void onFocusChange(Element* oldElement, Element* newElement);
     void onPopoverToggle(const HTMLElement&);
     void onScrollbarFrameRectChange(const Scrollbar&);
-    void onSelectedChanged(Node*);
+    void onSelectedChanged(Node&);
     void onTextSecurityChanged(HTMLInputElement&);
     void onTitleChange(Document&);
     void onValidityChange(Element&);
     void onTextCompositionChange(Node&, CompositionState, bool, const String&, size_t, bool);
-    void onWidgetVisibilityChanged(RenderWidget*);
-    void valueChanged(Element*);
-    void checkedStateChanged(Node*);
-    void autofillTypeChanged(Node*);
+    void onWidgetVisibilityChanged(RenderWidget&);
+    void valueChanged(Element&);
+    void checkedStateChanged(Node&);
+    void autofillTypeChanged(Node&);
     void handleRoleChanged(AccessibilityObject&);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -374,7 +374,7 @@ public:
     using DeferredCollection = std::variant<HashMap<Element*, String>
         , HashSet<AXID>
         , ListHashSet<Node*>
-        , ListHashSet<RefPtr<AccessibilityObject>>
+        , ListHashSet<Ref<AccessibilityObject>>
         , Vector<AttributeChange>
         , Vector<std::pair<Node*, Node*>>
         , WeakHashSet<Element, WeakPtrImplWithEventTargetData>
@@ -384,17 +384,17 @@ public:
         , WeakListHashSet<Node, WeakPtrImplWithEventTargetData>
         , WeakHashMap<Element, String, WeakPtrImplWithEventTargetData>>;
     void deferFocusedUIElementChangeIfNeeded(Node* oldFocusedNode, Node* newFocusedNode);
-    void deferModalChange(Element*);
+    void deferModalChange(Element&);
     void deferMenuListValueChange(Element*);
     void deferNodeAddedOrRemoved(Node*);
     void handleScrolledToAnchor(const Node* anchorNode);
-    void onScrollbarUpdate(ScrollView*);
+    void onScrollbarUpdate(ScrollView&);
     void onRemoteFrameInitialized(AXRemoteFrame&);
 
     bool isRetrievingCurrentModalNode() { return m_isRetrievingCurrentModalNode; }
     Node* modalNode();
 
-    void deferAttributeChangeIfNeeded(Element*, const QualifiedName&, const AtomString&, const AtomString&);
+    void deferAttributeChangeIfNeeded(Element&, const QualifiedName&, const AtomString&, const AtomString&);
     void recomputeIsIgnored(RenderObject*);
     void recomputeIsIgnored(Node*);
 
@@ -426,7 +426,7 @@ public:
 #endif
 
     const Element* rootAXEditableElement(const Node*);
-    bool nodeIsTextControl(const Node*);
+    bool nodeIsTextControl(const Node&);
 
     AccessibilityObject* objectForID(const AXID id) const { return m_objects.get(id); }
     template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&) const;
@@ -517,7 +517,7 @@ public:
     void postTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, const String& deletedText, const String& insertedText);
     void postTextStateChangeNotification(Node*, const AXTextStateChangeIntent&, const VisibleSelection&);
     void postTextStateChangeNotification(const Position&, const AXTextStateChangeIntent&, const VisibleSelection&);
-    void postLiveRegionChangeNotification(AccessibilityObject*);
+    void postLiveRegionChangeNotification(AccessibilityObject&);
 
     enum AXLoadingEvent {
         AXLoadingStarted,
@@ -585,7 +585,7 @@ private:
     void buildIsolatedTree();
     void updateIsolatedTree(AccessibilityObject&, AXNotification);
     void updateIsolatedTree(AccessibilityObject*, AXNotification);
-    void updateIsolatedTree(const Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>>&);
+    void updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityObject>, AXNotification>>&);
     void updateIsolatedTree(AccessibilityObject*, AXPropertyName) const;
     void updateIsolatedTree(AccessibilityObject&, AXPropertyName) const;
     void startUpdateTreeSnapshotTimer();
@@ -617,10 +617,10 @@ protected:
     void handleLabelChanged(AccessibilityObject*);
 
     // This is a weak reference cache for knowing if Nodes used by TextMarkers are valid.
-    void setNodeInUse(Node& n) { m_textMarkerNodes.add(n); }
-    void removeNodeForUse(Node& n) { m_textMarkerNodes.remove(n); }
-    bool isNodeInUse(Node& n) { return m_textMarkerNodes.contains(n); }
-    
+    void setNodeInUse(Node& node) { m_textMarkerNodes.add(node); }
+    void removeNodeForUse(Node& node) { m_textMarkerNodes.remove(node); }
+    bool isNodeInUse(Node& node) { return m_textMarkerNodes.contains(node); }
+
     // CharacterOffset functions.
     enum TraverseOption { TraverseOptionDefault = 1 << 0, TraverseOptionToNodeEnd = 1 << 1, TraverseOptionIncludeStart = 1 << 2, TraverseOptionValidateOffset = 1 << 3, TraverseOptionDoNotEnterTextControls = 1 << 4 };
     Node* nextNode(Node*) const;
@@ -651,9 +651,9 @@ private:
 
     // The AX focus is more finegrained than the notion of focused Node. This method handles those cases where the focused AX object is a descendant or a sub-part of the focused Node.
     AccessibilityObject* focusedObjectForNode(Node*);
-    static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
+    static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement&);
 
-    AXID getAXID(AccessibilityObject*);
+    AXID getAXID(AccessibilityObject&);
     AXID generateNewObjectID() const;
 
     void notificationPostTimerFired();
@@ -666,7 +666,7 @@ private:
 
     void postTextStateChangeNotification(AccessibilityObject*, const AXTextStateChangeIntent&, const VisibleSelection&);
 
-    bool enqueuePasswordValueChangeNotification(AccessibilityObject*);
+    bool enqueuePasswordValueChangeNotification(AccessibilityObject&);
     void passwordNotificationPostTimerFired();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -679,10 +679,10 @@ private:
     void deferRowspanChange(AccessibilityObject*);
     void handleChildrenChanged(AccessibilityObject&);
     void handleAllDeferredChildrenChanged();
-    void handleRoleChanged(Element*, const AtomString&, const AtomString&);
-    void handleRoleDescriptionChanged(Element*);
-    void handleMenuOpened(Node*);
-    void handleLiveRegionCreated(Node*);
+    void handleRoleChanged(Element&, const AtomString&, const AtomString&);
+    void handleRoleDescriptionChanged(Element&);
+    void handleMenuOpened(Node&);
+    void handleLiveRegionCreated(Node&);
     void handleMenuItemSelected(Node*);
     void handleTabPanelSelected(Node*, Node*);
     void handleRowCountChanged(AccessibilityObject*, Document*);
@@ -692,7 +692,7 @@ private:
     void selectedChildrenChanged(RenderObject*);
     void handleScrollbarUpdate(ScrollView&);
     void handleActiveDescendantChange(Element&, const AtomString&, const AtomString&);
-    void handleAriaExpandedChange(Node*);
+    void handleAriaExpandedChange(Node&);
     enum class UpdateModal : bool { No, Yes };
     void handleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode, UpdateModal = UpdateModal::Yes);
     void handleMenuListValueChanged(Element&);
@@ -742,7 +742,7 @@ private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.
     OptionSet<ActivityState> m_pageActivityState;
-    HashMap<AXID, RefPtr<AccessibilityObject>> m_objects;
+    HashMap<AXID, Ref<AccessibilityObject>> m_objects;
 
     // The pointers in these mapping HashMaps should never be dereferenced.
     HashMap<SingleThreadWeakRef<RenderObject>, AXID> m_renderObjectMapping;
@@ -768,14 +768,14 @@ private:
     HashSet<AXID> m_idsInUse;
 
     Timer m_notificationPostTimer;
-    Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>> m_notificationsToPost;
+    Vector<std::pair<Ref<AccessibilityObject>, AXNotification>> m_notificationsToPost;
 
     Timer m_passwordNotificationPostTimer;
 
-    ListHashSet<RefPtr<AccessibilityObject>> m_passwordNotificationsToPost;
+    ListHashSet<Ref<AccessibilityObject>> m_passwordNotificationsToPost;
     
     Timer m_liveRegionChangedPostTimer;
-    ListHashSet<RefPtr<AccessibilityObject>> m_liveRegionObjectsSet;
+    ListHashSet<Ref<AccessibilityObject>> m_liveRegionObjects;
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_currentModalElement;
     // Multiple aria-modals behavior is undefined by spec. We keep them sorted based on DOM order here.
@@ -795,7 +795,7 @@ private:
     WeakHashSet<AccessibilityTableCell> m_deferredRowspanChanges;
     WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_deferredTextChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredSelectedChildredChangedList;
-    ListHashSet<RefPtr<AccessibilityObject>> m_deferredChildrenChangedList;
+    ListHashSet<Ref<AccessibilityObject>> m_deferredChildrenChangedList;
     WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_deferredNodeAddedOrRemovedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredModalChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredMenuListChange;

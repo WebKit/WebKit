@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-void AXObjectCache::attachWrapper(AccessibilityObject* axObject)
+void AXObjectCache::attachWrapper(AccessibilityObject& axObject)
 {
-    auto wrapper = AccessibilityObjectAtspi::create(axObject, document().page()->accessibilityRootObject());
-    axObject->setWrapper(wrapper.ptr());
+    auto wrapper = AccessibilityObjectAtspi::create(&axObject, document().page()->accessibilityRootObject());
+    axObject.setWrapper(wrapper.ptr());
 
-    m_deferredParentChangedList.add(axObject);
+    m_deferredParentChangedList.add(&axObject);
     m_performCacheUpdateTimer.startOneShot(0_s);
 }
 

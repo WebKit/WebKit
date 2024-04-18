@@ -140,7 +140,7 @@ void HTMLProgressElement::didElementStateChange()
         renderer->updateFromElement();
 
     if (auto* cache = document().existingAXObjectCache())
-        cache->valueChanged(this);
+        cache->valueChanged(*this);
 }
 
 void HTMLProgressElement::didAddUserAgentShadowRoot(ShadowRoot& root)

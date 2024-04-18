@@ -2118,7 +2118,7 @@ void Element::notifyAttributeChanged(const QualifiedName& name, const AtomString
         invalidateNodeListAndCollectionCachesInAncestorsForAttribute(name);
 
         if (CheckedPtr cache = document().existingAXObjectCache())
-            cache->deferAttributeChangeIfNeeded(this, name, oldValue, newValue);
+            cache->deferAttributeChangeIfNeeded(*this, name, oldValue, newValue);
     }
 }
 

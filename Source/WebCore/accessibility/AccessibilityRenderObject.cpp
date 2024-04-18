@@ -1733,30 +1733,20 @@ RefPtr<Element> AccessibilityRenderObject::rootEditableElementForPosition(const 
     RefPtr<Element> result;
     RefPtr rootEditableElement = position.rootEditableElement();
 
-    for (RefPtr e = position.anchorElementAncestor(); e && e != rootEditableElement; e = e->parentElement()) {
-        if (nodeIsTextControl(e.get()))
-            result = e;
-        if (e->hasTagName(bodyTag))
+    for (RefPtr ancestor = position.anchorElementAncestor(); ancestor && ancestor != rootEditableElement; ancestor = ancestor->parentElement()) {
+        if (nodeIsTextControl(*ancestor))
+            result = ancestor;
+        if (ancestor->hasTagName(bodyTag))
             break;
     }
-
-    if (result)
-        return result;
-
-    return rootEditableElement;
+    return result ? result : rootEditableElement;
 }
 
-bool AccessibilityRenderObject::nodeIsTextControl(const Node* node) const
+bool AccessibilityRenderObject::nodeIsTextControl(const Node& node) const
 {
-    if (!node)
-        return false;
-
-    if (AXObjectCache* cache = axObjectCache()) {
-        if (AccessibilityObject* axObjectForNode = cache->getOrCreate(const_cast<Node&>(*node)))
-            return axObjectForNode->isTextControl();
-    }
-
-    return false;
+    auto* cache = axObjectCache();
+    auto* axObject = cache ? cache->getOrCreate(const_cast<Node&>(node)) : nullptr;
+    return axObject && axObject->isTextControl();
 }
 
 bool AccessibilityRenderObject::isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange& range) const

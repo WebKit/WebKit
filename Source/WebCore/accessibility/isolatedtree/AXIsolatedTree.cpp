@@ -941,7 +941,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
         queueRemovals(WTFMove(oldChildrenIDs));
 }
 
-void AXIsolatedTree::updateChildrenForObjects(const ListHashSet<RefPtr<AccessibilityObject>>& axObjects)
+void AXIsolatedTree::updateChildrenForObjects(const ListHashSet<Ref<AccessibilityObject>>& axObjects)
 {
     AXTRACE("AXIsolatedTree::updateChildrenForObjects"_s);
 
@@ -950,7 +950,7 @@ void AXIsolatedTree::updateChildrenForObjects(const ListHashSet<RefPtr<Accessibi
 
     AXAttributeCacheEnabler enableCache(axObjectCache());
     for (auto& axObject : axObjects)
-        updateChildren(*axObject, ResolveNodeChanges::No);
+        updateChildren(axObject.get(), ResolveNodeChanges::No);
 
     queueRemovalsAndUnresolvedChanges({ });
 }

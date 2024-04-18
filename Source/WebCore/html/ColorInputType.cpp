@@ -177,7 +177,7 @@ void ColorInputType::attributeChanged(const QualifiedName& name)
         updateColorSwatch();
 
         if (auto* cache = element()->document().existingAXObjectCache())
-            cache->valueChanged(element());
+            cache->valueChanged(*element());
     }
 
     InputType::attributeChanged(name);
@@ -254,7 +254,7 @@ void ColorInputType::didChooseColor(const Color& color)
     element()->dispatchFormControlChangeEvent();
 
     if (auto* cache = element()->document().existingAXObjectCache())
-        cache->valueChanged(element());
+        cache->valueChanged(*element());
 }
 
 void ColorInputType::didEndChooser()

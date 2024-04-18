@@ -68,7 +68,7 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node*, StringView, const Si
     WebCore::AXID _identifier;
 }
 
-- (id)initWithAccessibilityObject:(WebCore::AccessibilityObject*)axObject;
+- (id)initWithAccessibilityObject:(WebCore::AccessibilityObject&)axObject;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 - (void)attachIsolatedObject:(WebCore::AXIsolatedObject*)isolatedObject;
 - (BOOL)hasIsolatedObject;

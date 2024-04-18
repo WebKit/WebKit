@@ -397,7 +397,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
     setTextAsOfLastFormControlChangeEvent(normalizedValue);
 
     if (auto* cache = document().existingAXObjectCache())
-        cache->valueChanged(this);
+        cache->valueChanged(*this);
 }
 
 String HTMLTextAreaElement::defaultValue() const

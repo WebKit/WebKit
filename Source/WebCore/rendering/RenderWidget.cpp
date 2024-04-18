@@ -202,7 +202,7 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
                 repaint();
             }
             if (auto* cache = document().existingAXObjectCache())
-                cache->onWidgetVisibilityChanged(this);
+                cache->onWidgetVisibilityChanged(*this);
         }
         moveWidgetToParentSoon(*m_widget, &view().frameView());
     }
@@ -229,7 +229,7 @@ void RenderWidget::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
             m_widget->show();
 
         if (auto* cache = document().existingAXObjectCache())
-            cache->onWidgetVisibilityChanged(this);
+            cache->onWidgetVisibilityChanged(*this);
     }
 }
 

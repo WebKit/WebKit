@@ -83,22 +83,22 @@ bool AccessibilityTree::isTreeValid() const
     if (!node)
         return false;
     
-    Deque<RefPtr<Node>> queue;
+    Deque<Ref<Node>> queue;
     for (RefPtr child = node->firstChild(); child; child = queue.last()->nextSibling())
-        queue.append(WTFMove(child));
+        queue.append(child.releaseNonNull());
 
     while (!queue.isEmpty()) {
-        auto child = queue.takeFirst();
+        Ref child = queue.takeFirst();
 
-        if (!is<Element>(*child))
+        if (!is<Element>(child.get()))
             continue;
-        if (nodeHasRole(child.get(), "treeitem"_s))
+        if (nodeHasRole(child.ptr(), "treeitem"_s))
             continue;
-        if (!nodeHasRole(child.get(), "group"_s) && !nodeHasRole(child.get(), "presentation"_s))
+        if (!nodeHasRole(child.ptr(), "group"_s) && !nodeHasRole(child.ptr(), "presentation"_s))
             return false;
 
         for (RefPtr groupChild = child->firstChild(); groupChild; groupChild = queue.last()->nextSibling())
-            queue.append(WTFMove(groupChild));
+            queue.append(groupChild.releaseNonNull());
     }
     return true;
 }

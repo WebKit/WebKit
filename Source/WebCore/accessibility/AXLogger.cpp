@@ -145,6 +145,16 @@ void AXLogger::log(const Vector<RefPtr<AXCoreObject>>& objects)
     }
 }
 
+void AXLogger::log(const std::pair<Ref<AccessibilityObject>, AXObjectCache::AXNotification>& notification)
+{
+    if (shouldLog()) {
+        TextStream stream(TextStream::LineMode::MultipleLine);
+        stream << "Notification " << notification.second << " for object ";
+        stream << notification.first.get();
+        LOG(Accessibility, "%s", stream.release().utf8().data());
+    }
+}
+
 void AXLogger::log(const std::pair<RefPtr<AXCoreObject>, AXObjectCache::AXNotification>& notification)
 {
     if (shouldLog()) {
@@ -215,7 +225,7 @@ void AXLogger::log(const String& collectionName, const AXObjectCache::DeferredCo
         [&size] (const HashMap<Element*, String>& typedCollection) { size = typedCollection.size(); },
         [&size] (const HashSet<AXID>& typedCollection) { size = typedCollection.size(); },
         [&size] (const ListHashSet<Node*>& typedCollection) { size = typedCollection.size(); },
-        [&size] (const ListHashSet<RefPtr<AccessibilityObject>>& typedCollection) { size = typedCollection.size(); },
+        [&size] (const ListHashSet<Ref<AccessibilityObject>>& typedCollection) { size = typedCollection.size(); },
         [&size] (const Vector<AXObjectCache::AttributeChange>& typedCollection) { size = typedCollection.size(); },
         [&size] (const Vector<std::pair<Node*, Node*>>& typedCollection) { size = typedCollection.size(); },
         [&size] (const WeakHashSet<Element, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSize(); },
