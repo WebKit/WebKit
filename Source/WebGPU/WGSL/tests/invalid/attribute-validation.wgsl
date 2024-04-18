@@ -20,9 +20,11 @@ struct S {
 // CHECK-L: @binding value must be non-negative
 @group(-1) @binding(-1) var<private> x: i32;
 
-// CHECK-L: @id attribute must only be applied to override variables of scalar type
-// CHECK-L: @id value must be non-negative
+// CHECK-L: @id attribute must only be applied to override variables
 @id(-1) var<private> y: i32;
+
+// CHECK-L: @id value must be non-negative
+@id(-1) override z: i32;
 
 // CHECK-L: @must_use can only be applied to functions that return a value
 @must_use

@@ -198,7 +198,7 @@ fn testF32Compound()
 
 fn testDivisorOverflow()
 {
-    // CHECK-L: value 8144182087775404032 cannot be represented as 'i32'
+    // CHECK-L: value 8144182087775404419 cannot be represented as 'i32'
     let x = 1;
     _ = x / 8144182087775404419;
 }
