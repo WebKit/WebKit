@@ -17146,22 +17146,28 @@ void SpeculativeJIT::compileMakeRope(Node* node)
     orPtr(TrustedImmPtr(JSString::isRopeInPointer), scratchGPR);
     storePtr(scratchGPR, Address(resultGPR, JSRopeString::offsetOfFiber0()));
 
-    move(opGPRs[1], scratchGPR);
-    lshiftPtr(TrustedImm32(32), scratchGPR);
+#if CPU(ARM64)
+    orLeftShift64(allocatorGPR, opGPRs[1], TrustedImm32(32), scratchGPR);
+#else
+    lshiftPtr(opGPRs[1], TrustedImm32(32), scratchGPR);
     orPtr(allocatorGPR, scratchGPR);
-    storePtr(scratchGPR, Address(resultGPR, JSRopeString::offsetOfFiber1()));
+#endif
 
     if (numOpGPRs == 2) {
-        move(opGPRs[1], scratchGPR);
-        rshiftPtr(TrustedImm32(32), scratchGPR);
-        storePtr(scratchGPR, Address(resultGPR, JSRopeString::offsetOfFiber2()));
+        rshiftPtr(opGPRs[1], TrustedImm32(32), scratch2GPR);
+        storePairPtr(scratchGPR, scratch2GPR, Address(resultGPR, JSRopeString::offsetOfFiber1()));
     } else {
-        move(opGPRs[1], scratchGPR);
-        rshiftPtr(TrustedImm32(32), scratchGPR);
-        move(opGPRs[2], scratch2GPR);
-        lshiftPtr(TrustedImm32(16), scratch2GPR);
+#if CPU(ARM64)
+        rshiftPtr(opGPRs[1], TrustedImm32(32), scratch2GPR);
+        orLeftShift64(scratch2GPR, opGPRs[2], TrustedImm32(16), scratch2GPR);
+        storePairPtr(scratchGPR, scratch2GPR, Address(resultGPR, JSRopeString::offsetOfFiber1()));
+#else
+        storePtr(scratchGPR, Address(resultGPR, JSRopeString::offsetOfFiber1()));
+        rshiftPtr(opGPRs[1], TrustedImm32(32), scratchGPR);
+        lshiftPtr(opGPRs[2], TrustedImm32(16), scratch2GPR);
         orPtr(scratch2GPR, scratchGPR);
         storePtr(scratchGPR, Address(resultGPR, JSRopeString::offsetOfFiber2()));
+#endif
     }
 
     auto isNonEmptyString = branchTest32(NonZero, allocatorGPR);
