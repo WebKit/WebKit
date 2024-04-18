@@ -389,19 +389,20 @@ void registerWebKitGStreamerElements()
         // We don't want autoaudiosink to autoplug our sink.
         gst_element_register(0, "webkitaudiosink", GST_RANK_NONE, WEBKIT_TYPE_AUDIO_SINK);
 
-        // If the FDK-AAC decoder is available, promote it and downrank the
-        // libav AAC decoders, due to their broken LC support, as reported in:
-        // https://ffmpeg.org/pipermail/ffmpeg-devel/2019-July/247063.html
+        // If the FDK-AAC decoder is available, promote it.
         GRefPtr<GstElementFactory> elementFactory = adoptGRef(gst_element_factory_find("fdkaacdec"));
-        if (elementFactory) {
+        if (elementFactory)
             gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(elementFactory.get()), GST_RANK_PRIMARY);
+        else
+            g_warning("The GStreamer FDK AAC plugin is missing, AAC playback is unlikely to work.");
 
-            const char* const elementNames[] = {"avdec_aac", "avdec_aac_fixed", "avdec_aac_latm"};
-            for (unsigned i = 0; i < G_N_ELEMENTS(elementNames); i++) {
-                GRefPtr<GstElementFactory> avAACDecoderFactory = adoptGRef(gst_element_factory_find(elementNames[i]));
-                if (avAACDecoderFactory)
-                    gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(avAACDecoderFactory.get()), GST_RANK_MARGINAL);
-            }
+        // Downrank the libav AAC decoders, due to their broken LC support, as reported in:
+        // https://ffmpeg.org/pipermail/ffmpeg-devel/2019-July/247063.html
+        const char* const elementNames[] = { "avdec_aac", "avdec_aac_fixed", "avdec_aac_latm" };
+        for (unsigned i = 0; i < G_N_ELEMENTS(elementNames); i++) {
+            GRefPtr<GstElementFactory> avAACDecoderFactory = adoptGRef(gst_element_factory_find(elementNames[i]));
+            if (avAACDecoderFactory)
+                gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(avAACDecoderFactory.get()), GST_RANK_MARGINAL);
         }
 
         // Prevent decodebin(3) from auto-plugging hlsdemux if it was disabled. UAs should be able
