@@ -659,8 +659,7 @@ void RenderLayerBacking::updateTransform(const RenderStyle& style)
     TransformationMatrix t;
     if (renderer().capturedInViewTransition()) {
         Styleable styleable(*renderer().document().documentElement(), Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, style.viewTransitionName()->name });
-        CheckedPtr renderer = styleable.renderer();
-        if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer.get()))
+        if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(styleable.renderer()))
             t.scaleNonUniform(viewTransitionCapture->scale().width(), viewTransitionCapture->scale().height());
     } else if (m_owningLayer.isTransformed())
         m_owningLayer.updateTransformFromStyle(t, style, RenderStyle::individualTransformOperations());
@@ -1419,9 +1418,11 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     // ::view-transition-new element. Move the parent graphics layer rect to our
     // position so that layer positions are computed relative to our origin.
     if (renderer().capturedInViewTransition()) {
-        auto bounds = m_owningLayer.localBoundingBox({ RenderLayer::DontConstrainForMask , RenderLayer::IncludeRootBackgroundPaintingArea });
-        ComputedOffsets computedOffsets(m_owningLayer, compositedAncestor, bounds, { }, { });
-        parentGraphicsLayerRect.move(computedOffsets.fromParentGraphicsLayer());
+        Styleable styleable(*renderer().document().documentElement(), Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, style.viewTransitionName()->name });
+        if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(styleable.renderer())) {
+            ComputedOffsets computedOffsets(m_owningLayer, compositedAncestor, viewTransitionCapture->captureOverflowRect(), { }, { });
+            parentGraphicsLayerRect.move(computedOffsets.fromParentGraphicsLayer());
+        }
     }
 
     if (m_ancestorClippingStack)

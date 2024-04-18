@@ -692,6 +692,7 @@ public:
         UseFragmentBoxesExcludingCompositing    = 1 << 7,
         UseFragmentBoxesIncludingCompositing    = 1 << 8,
         IncludeRootBackgroundPaintingArea       = 1 << 9,
+        PreserveAncestorFlags                   = 1 << 10,
     };
     static constexpr OptionSet<CalculateLayerBoundsFlag> defaultCalculateLayerBoundsFlags() { return { IncludeSelfTransform, UseLocalClipRectIfPossible, IncludePaintedFilterOutsets, UseFragmentBoxesExcludingCompositing }; }
 

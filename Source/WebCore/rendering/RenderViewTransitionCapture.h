@@ -44,6 +44,7 @@ public:
     void layout() override;
 
     FloatSize scale() const { return m_scale; }
+    LayoutRect captureOverflowRect() const { return m_overflowRect; }
 
 private:
     ASCIILiteral renderName() const override { return style().pseudoElementType() == PseudoId::ViewTransitionNew ? "RenderViewTransitionNew"_s : "RenderViewTransitionOld"_s; }
