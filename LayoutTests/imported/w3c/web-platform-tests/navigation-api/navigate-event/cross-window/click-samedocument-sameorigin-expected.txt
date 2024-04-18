@@ -1,4 +1,4 @@
 Click me
 
-FAIL clicking on an <a> element that navigates same-document targeting a same-origin window assert_true: destination.sameDocument expected true got false
+PASS clicking on an <a> element that navigates same-document targeting a same-origin window
 
