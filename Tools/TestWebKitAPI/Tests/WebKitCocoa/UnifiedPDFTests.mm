@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(UNIFIED_PDF)
+#if ENABLE(UNIFIED_PDF_BY_DEFAULT)
 
 #import "CGImagePixelReader.h"
 #import "PlatformUtilities.h"
@@ -95,4 +95,4 @@ TEST(UnifiedPDF, KeyboardScrollingInSinglePageMode)
 
 } // namespace TestWebKitAPI
 
-#endif // ENABLE(UNIFIED_PDF)
+#endif // ENABLE(UNIFIED_PDF_BY_DEFAULT)
