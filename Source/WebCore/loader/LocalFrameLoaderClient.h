@@ -298,7 +298,6 @@ public:
     virtual std::optional<double> dataDetectionReferenceDate() { return std::nullopt; }
 #endif
 
-    virtual bool shouldAlwaysUsePluginDocument(const String& /*mimeType*/) const { return false; }
     virtual bool shouldLoadMediaElementURL(const URL&) const { return true; }
 
     virtual void didChangeScrollOffset() { }

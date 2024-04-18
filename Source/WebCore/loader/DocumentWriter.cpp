@@ -118,8 +118,6 @@ Ref<Document> DocumentWriter::createDocument(const URL& url, ScriptExecutionCont
 {
     Ref frame = *m_frame;
     CheckedRef frameLoader = frame->loader();
-    if (!frameLoader->stateMachine().isDisplayingInitialEmptyDocument() && frameLoader->client().shouldAlwaysUsePluginDocument(m_mimeType))
-        return PluginDocument::create(frame, url);
 
     auto useSinkDocument = [&]() {
 #if ENABLE(PDF_PLUGIN)
