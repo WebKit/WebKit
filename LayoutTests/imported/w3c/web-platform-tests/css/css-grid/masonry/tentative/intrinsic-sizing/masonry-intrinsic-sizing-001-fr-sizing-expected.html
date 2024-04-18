@@ -5,10 +5,8 @@
 -->
 <html><head>
   <meta charset="utf-8">
-  <title>CSS Grid Test: Masonry layout intrinsic sizing</title>
+  <title>Reference: Masonry layout intrinsic sizing</title>
   <link rel="author" title="Mats Palmgren" href="mailto:mats@mozilla.com">
-  <link rel="help" href="https://drafts.csswg.org/css-grid-2">
-  <link rel="match" href="masonry-intrinsic-sizing-001-ref.html">
   <link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
   <style>
 html,body {
@@ -18,8 +16,8 @@ html,body {
 grid {
   display: inline-grid;
   gap: 1px 2px;
-  grid-template-columns: repeat(4,auto);
-  grid-template-rows: masonry;
+  grid-template-columns: 1fr 2fr 1fr 1fr;
+  grid-auto-rows: 1em;
   border: 1px solid;
   padding: 0 1px 0 2px;
   vertical-align: top;
@@ -33,7 +31,7 @@ item {
 </head>
 <body>
 
-<!--1-->
+<!--10-->
 <grid>
   <item style="width:2ch">1</item>
   <item>2</item>
@@ -42,55 +40,54 @@ item {
   <item>5</item>
 </grid>
 
-<!--2-->
-<grid>
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
+<!--11-->
+<grid style="grid-template-columns: 1fr 2fr 1fr 1fr">
+  <item style="width:2ch">1</item>
+  <item style="width:4ch">2</item>
+  <item style="width:2ch">3</item>
+  <item style="width:2ch">4</item>
   <item style="width:2ch">5</item>
 </grid>
 
-<!--3-->
+<!--12-->
 <grid>
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
+  <item style="width: 1ch">1</item>
   <item style="width:2ch; grid-column:2">5</item>
+  <item style="width: 1ch">2</item>
+  <item style="width: 1ch">3</item>
+  <item style="width: 1ch">4</item>
 </grid>
 
-<!--4-->
+<!--13-->
 <grid>
   <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
   <item style="width:4ch; grid-column:2/span 2">5</item>
-</grid>
-
-<!--5-->
-<grid style="gap: 0px 0px">
-  <item>1</item>
   <item>2</item>
   <item>3</item>
   <item>4</item>
-  <item style="grid-column:2/span 2">5</item>
-  <item style="width:5ch; grid-column:1/span 3">6</item>
 </grid>
 
-<!----- Bug ----->
-<!--6-->
-<grid style="gap: 0px 0px">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="width:3ch; grid-column:2/span 2">5</item>
-  <item style="width:5ch; grid-column:1/span 3">6</item>
-</grid>
+<!--14-->
+<!--<grid>-->
+<!--  <item>1</item>-->
+<!--  <item>2</item>-->
+<!--  <item>3</item>-->
+<!--  <item>4</item>-->
+<!--  <item style="grid-column:2/span 2">5</item>-->
+<!--  <item style="width:5ch; grid-column:1/span 3">6</item>-->
+<!--</grid>-->
 
-<!--7-->
+<!--15-->
+<!--<grid>-->
+<!--  <item>1</item>-->
+<!--  <item>2</item>-->
+<!--  <item>3</item>-->
+<!--  <item>4</item>-->
+<!--  <item style="width:3ch; grid-column:2/span 2">5</item>-->
+<!--  <item style="width:5ch; grid-column:1/span 3">6</item>-->
+<!--</grid>-->
+
+<!--16-->
 <grid>
   <item>1</item>
   <item>2</item>
@@ -99,7 +96,7 @@ item {
   <item style="grid-column:span 4">5</item>
 </grid>
 
-<!--8-->
+<!--17-->
 <grid>
   <item>1</item>
   <item>2</item>
@@ -108,7 +105,7 @@ item {
   <item style="width:6ch; grid-column:span 4">5</item>
 </grid>
 
-<!--9-->
+<!--18-->
 <grid>
   <item>1</item>
   <item>2</item>

@@ -22,12 +22,6 @@ grid {
   padding: 0 1px 0 2px;
   vertical-align: top;
 }
-.fr {
-  grid-template-columns: 1fr 2fr 1fr 1fr;
-}
-.mixed {
-  grid-template-columns: 1fr 2fr min-content max-content;
-}
 
 item {
   background-color: #444;
@@ -37,57 +31,64 @@ item {
 </head>
 <body>
 
+<!--1-->
 <grid>
   <item style="width:2ch">1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item>5</item>
-</grid>
-
-<grid style="grid-template-columns: 1ch repeat(3,auto)">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
+  <item style="width:2ch">2</item>
+  <item style="width:2ch">3</item>
+  <item style="width:2ch">4</item>
   <item style="width:2ch">5</item>
 </grid>
 
+<!--2-->
+<grid>
+  <item style="width:2ch">1</item>
+  <item style="width:2ch">2</item>
+  <item style="width:2ch">3</item>
+  <item style="width:2ch">4</item>
+  <item style="width:2ch">5</item>
+</grid>
+
+<!--3-->
 <grid>
   <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
   <item style="width:2ch; grid-column:2">5</item>
-</grid>
-
-<grid>
-  <item>1</item>
   <item>2</item>
   <item>3</item>
   <item>4</item>
+</grid>
+
+<!--4-->
+<grid>
+  <item>1</item>
   <item style="width:4ch; grid-column:2/span 2">5</item>
-</grid>
-
-<grid>
-  <item>1</item>
   <item>2</item>
   <item>3</item>
-  <item>4</item>
+  <item style="width:calc(2ch - 1px);">4</item>
+</grid>
+
+<!--5-->
+<grid style="grid-template-columns: calc(5ch / 3) calc(5ch / 3) calc(5ch / 3) 1ch; gap: 0px 0px;">
   <item style="grid-column:2/span 2">5</item>
-  <item style="width:5ch; grid-column:1/span 3">6</item>
-</grid>
-
-
-<grid>
   <item>1</item>
+  <item style="grid-column:1/span 3">6</item>
   <item>2</item>
   <item>3</item>
   <item>4</item>
-  <item style="width:3ch; grid-column:2/span 2">5</item>
-  <item style="width:5ch; grid-column:1/span 3">6</item>
 </grid>
 
+<!----- Bug ----->
+<!--6-->
+<grid style="grid-template-columns: calc(5ch / 3) calc(3ch / 2) calc(3ch / 2) 1ch; gap: 0px 0px;">
+  <item style="width:5ch; grid-column:1/span 3">6</item>
+  <item>1</item>
+  <item style="width:3ch; grid-column:2/span 2">5</item>
+  <item>2</item>
+  <item>3</item>
+  <item>4</item>
+</grid>
+
+<!--7-->
 <grid>
   <item>1</item>
   <item>2</item>
@@ -96,6 +97,7 @@ item {
   <item style="grid-column:span 4">5</item>
 </grid>
 
+<!--8-->
 <grid>
   <item>1</item>
   <item>2</item>
@@ -104,166 +106,12 @@ item {
   <item style="width:6ch; grid-column:span 4">5</item>
 </grid>
 
-<grid style="grid-template-columns: repeat(4,1ch)">
+<!--9-->
+<grid>
   <item>1</item>
   <item>2</item>
   <item>3</item>
-  <item>4</item>
-  <item style="width:6ch; grid-column:span 3">5</item>
-</grid>
-
-<!-- ditto with 'fr' sizing -->
-
-<grid class="fr">
-  <item style="width:2ch">1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item>5</item>
-</grid>
-
-<grid class="fr" style="grid-template-columns: 1ch 2fr 1fr 1fr">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="width:2ch">5</item>
-</grid>
-
-<grid class="fr">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="width:2ch; grid-column:2">5</item>
-</grid>
-
-<grid class="fr">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="width:4ch; grid-column:2/span 2">5</item>
-</grid>
-
-<grid class="fr">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="grid-column:2/span 2">5</item>
-  <item style="width:5ch; grid-column:1/span 3">6</item>
-</grid>
-
-
-<grid class="fr">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="width:3ch; grid-column:2/span 2">5</item>
-  <item style="width:5ch; grid-column:1/span 3">6</item>
-</grid>
-
-<grid class="fr">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="grid-column:span 4">5</item>
-</grid>
-
-<grid class="fr">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="width:6ch; grid-column:span 4">5</item>
-</grid>
-
-<grid class="fr" style="grid-template-columns: 1ch 2ch 1ch 1ch">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="width:6ch; grid-column:span 3">5</item>
-</grid>
-
-
-<!-- ditto with mixed sizing -->
-
-<grid class="mixed" style="grid-template-columns: 2ch 4ch 1ch 1ch">
-  <item style="width:2ch">1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item>5</item>
-</grid>
-
-<grid class="mixed" style="grid-template-columns: 1ch 2ch 1ch 1ch">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="width:2ch">5</item>
-</grid>
-
-<grid class="mixed">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="width:2ch; grid-column:2">5</item>
-</grid>
-
-<grid class="mixed">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="width:4ch; grid-column:2/span 2">5</item>
-</grid>
-
-<grid class="mixed">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="grid-column:2/span 2">5</item>
-  <item style="width:5ch; grid-column:1/span 3">6</item>
-</grid>
-
-
-<grid class="mixed">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="width:3ch; grid-column:2/span 2">5</item>
-  <item style="width:5ch; grid-column:1/span 3">6</item>
-</grid>
-
-<grid class="mixed">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="grid-column:span 4">5</item>
-</grid>
-
-<grid class="mixed">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
-  <item style="width:6ch; grid-column:span 4">5</item>
-</grid>
-
-<grid class="mixed" style="grid-template-columns: 1ch 2ch 1ch 1ch">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
+  <item style="width:calc((6ch - 4px) / 3)">4</item>
   <item style="width:6ch; grid-column:span 3">5</item>
 </grid>
 
