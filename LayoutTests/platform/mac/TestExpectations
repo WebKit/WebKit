@@ -2602,3 +2602,5 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.htm
 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
 
 [ Monterey Ventura ] imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]
+
+webkit.org/b/272923 accessibility/focusable-inside-hidden.html [ Timeout ]
