@@ -44,13 +44,13 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
 {
     JSC::initialize();
     if (string) {
-        size_t length = strlen(string);
-        Vector<UChar, 1024> buffer(length);
+        auto stringSpan = span8(string);
+        Vector<UChar, 1024> buffer(stringSpan.size());
         UChar* p = buffer.data();
         bool sourceContainsOnlyASCII;
-        if (convertUTF8ToUTF16(std::span { reinterpret_cast<const char8_t*>(string), length }, &p, p + length, &sourceContainsOnlyASCII)) {
+        if (convertUTF8ToUTF16(spanReinterpretCast<const char8_t>(stringSpan), &p, p + buffer.size(), &sourceContainsOnlyASCII)) {
             if (sourceContainsOnlyASCII)
-                return &OpaqueJSString::create({ reinterpret_cast<const LChar*>(string), length }).leakRef();
+                return &OpaqueJSString::create(stringSpan).leakRef();
             return &OpaqueJSString::create({ buffer.data(), p }).leakRef();
         }
     }

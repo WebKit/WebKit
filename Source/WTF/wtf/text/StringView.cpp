@@ -267,48 +267,48 @@ bool StringView::GraphemeClusters::Iterator::operator==(const Iterator& other) c
 enum class ASCIICase { Lower, Upper };
 
 template<ASCIICase type, typename CharacterType>
-String convertASCIICase(const CharacterType* input, unsigned length)
+String convertASCIICase(std::span<const CharacterType> input)
 {
     if (!input)
         return { };
 
     CharacterType* characters;
-    auto result = String::createUninitialized(length, characters);
-    for (unsigned i = 0; i < length; ++i)
-        characters[i] = type == ASCIICase::Lower ? toASCIILower(input[i]) : toASCIIUpper(input[i]);
+    auto result = String::createUninitialized(input.size(), characters);
+    for (auto character : input)
+        *characters++ = type == ASCIICase::Lower ? toASCIILower(character) : toASCIIUpper(character);
     return result;
 }
 
 String StringView::convertToASCIILowercase() const
 {
     if (m_is8Bit)
-        return convertASCIICase<ASCIICase::Lower>(static_cast<const LChar*>(m_characters), m_length);
-    return convertASCIICase<ASCIICase::Lower>(static_cast<const UChar*>(m_characters), m_length);
+        return convertASCIICase<ASCIICase::Lower>(span8());
+    return convertASCIICase<ASCIICase::Lower>(span16());
 }
 
 String StringView::convertToASCIIUppercase() const
 {
     if (m_is8Bit)
-        return convertASCIICase<ASCIICase::Upper>(static_cast<const LChar*>(m_characters), m_length);
-    return convertASCIICase<ASCIICase::Upper>(static_cast<const UChar*>(m_characters), m_length);
+        return convertASCIICase<ASCIICase::Upper>(span8());
+    return convertASCIICase<ASCIICase::Upper>(span16());
 }
 
 template<typename CharacterType>
-static AtomString convertASCIILowercaseAtom(const CharacterType* input, unsigned length)
+static AtomString convertASCIILowercaseAtom(std::span<const CharacterType> input)
 {
-    for (unsigned i = 0; i < length; ++i) {
-        if (UNLIKELY(isASCIIUpper(input[i])))
-            return makeAtomString(asASCIILowercase(std::span { input, length }));
+    for (auto character : input) {
+        if (UNLIKELY(isASCIIUpper(character)))
+            return makeAtomString(asASCIILowercase(input));
     }
     // Fast path when the StringView is already all lowercase.
-    return std::span { input, length };
+    return input;
 }
 
 AtomString StringView::convertToASCIILowercaseAtom() const
 {
     if (m_is8Bit)
-        return convertASCIILowercaseAtom(characters8(), m_length);
-    return convertASCIILowercaseAtom(characters16(), m_length);
+        return convertASCIILowercaseAtom(span8());
+    return convertASCIILowercaseAtom(span16());
 }
 
 template<typename DestinationCharacterType, typename SourceCharacterType>

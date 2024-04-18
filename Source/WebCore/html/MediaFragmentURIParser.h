@@ -47,8 +47,8 @@ private:
     
     enum TimeFormat { None, Invalid, NormalPlayTime, SMPTETimeCode, WallClockTimeCode };
     void parseTimeFragment();
-    bool parseNPTFragment(const LChar*, unsigned length, MediaTime& startTime, MediaTime& endTime);
-    bool parseNPTTime(const LChar*, unsigned length, unsigned& offset, MediaTime&);
+    bool parseNPTFragment(std::span<const LChar>, MediaTime& startTime, MediaTime& endTime);
+    bool parseNPTTime(std::span<const LChar>, unsigned& offset, MediaTime&);
 
     URL m_url;
     TimeFormat m_timeFormat;
