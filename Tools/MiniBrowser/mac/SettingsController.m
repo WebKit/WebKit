@@ -70,6 +70,8 @@ static NSString * const UseMockCaptureDevicesPreferenceKey = @"UseMockCaptureDev
 static NSString * const AttachmentElementEnabledPreferenceKey = @"AttachmentElementEnabled";
 static NSString * const AdvancedPrivacyProtectionsPreferenceKey = @"AdvancedPrivacyProtectionsEnabled";
 
+static NSString * const SiteIsolationOverlayPreferenceKey = @"SiteIsolationOverlayEnabled";
+
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
 static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
 
@@ -82,6 +84,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     InteractionRegionOverlayTag,
     ExperimentalFeatureTag,
     InternalDebugFeatureTag,
+    SiteIsolationRegionOverlayTag,
 };
 
 typedef NS_ENUM(NSInteger, AttachmentElementEnabledMenuItemTag) {
@@ -214,6 +217,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItemToMenu(debugOverlaysMenu, @"Wheel Event Handler Region", @selector(toggleDebugOverlay:), NO, WheelEventHandlerRegionOverlayTag);
     addItemToMenu(debugOverlaysMenu, @"Interaction Region", @selector(toggleDebugOverlay:), NO, InteractionRegionOverlayTag);
     addItemToMenu(debugOverlaysMenu, @"Resource Usage", @selector(toggleShowResourceUsageOverlay:), NO, 0);
+    addItemToMenu(debugOverlaysMenu, @"Site Isolation", @selector(toggleSiteIsolationOverlay:), NO, SiteIsolationRegionOverlayTag);
 
     NSMenu *experimentalFeaturesMenu = addSubmenu(@"Experimental Features");
     for (_WKExperimentalFeature *feature in WKPreferences._experimentalFeatures) {
@@ -399,6 +403,8 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self perWindowWebProcessesDisabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleDebugOverlay:))
         [menuItem setState:[self debugOverlayVisible:menuItem] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleSiteIsolationOverlay:))
+        [menuItem setState:[self siteIsolationOverlayVisible:menuItem] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(changeCustomUserAgent:)) {
 
         NSString *savedUAIdentifier = [[NSUserDefaults standardUserDefaults] stringForKey:CustomUserAgentPreferenceKey];
@@ -737,6 +743,9 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 
     case InteractionRegionOverlayTag:
         return InteractionRegionOverlayVisiblePreferenceKey;
+
+    case SiteIsolationRegionOverlayTag:
+        return SiteIsolationOverlayPreferenceKey;
     }
     return nil;
 }
@@ -799,6 +808,21 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         return [[NSUserDefaults standardUserDefaults] boolForKey:preferenceKey];
 
     return NO;
+}
+
+- (void)toggleSiteIsolationOverlay:(id)sender
+{
+    [self _toggleBooleanDefault:SiteIsolationOverlayPreferenceKey];
+}
+
+- (BOOL)siteIsolationOverlayEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:SiteIsolationOverlayPreferenceKey];
+}
+
+- (BOOL)siteIsolationOverlayVisible:(NSMenuItem *)menuItem
+{
+    return [self siteIsolationOverlayEnabled];
 }
 
 - (NSString *)customUserAgent

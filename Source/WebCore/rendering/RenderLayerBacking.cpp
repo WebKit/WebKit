@@ -3806,7 +3806,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         paintIntoLayer(graphicsLayer, context, dirtyRect, behavior);
 
         auto visibleDebugOverlayRegions = OptionSet<DebugOverlayRegions>::fromRaw(renderer().settings().visibleDebugOverlayRegions());
-        if (visibleDebugOverlayRegions.containsAny({ DebugOverlayRegions::TouchActionRegion, DebugOverlayRegions::EditableElementRegion, DebugOverlayRegions::WheelEventHandlerRegion, DebugOverlayRegions::InteractionRegion }))
+        if (visibleDebugOverlayRegions.containsAny({ DebugOverlayRegions::TouchActionRegion, DebugOverlayRegions::EditableElementRegion, DebugOverlayRegions::WheelEventHandlerRegion, DebugOverlayRegions::InteractionRegion, DebugOverlayRegions::SiteIsolationRegion }))
             paintDebugOverlays(graphicsLayer, context);
 
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {
