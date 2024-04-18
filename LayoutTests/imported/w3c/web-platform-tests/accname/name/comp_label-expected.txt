@@ -234,7 +234,7 @@ PASS label valid on nav element
 PASS label valid on list (ordered) element
 PASS label valid on section element
 PASS label valid on select element
-FAIL label valid on option element assert_equals: <option aria-label="label" value="foo" data-expectedlabel="label" data-testname="label valid on option element" class="ex">x</option> expected "label" but got ""
+PASS label valid on option element
 PASS label valid on table element
 PASS label valid on thead element
 PASS label valid on th element with the scope of col
