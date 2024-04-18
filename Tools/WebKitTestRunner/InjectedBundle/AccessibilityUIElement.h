@@ -199,9 +199,11 @@ public:
     void setSelectedChildAtIndex(unsigned) const;
     void removeSelectionAtIndex(unsigned) const;
     void clearSelectedChildren() const;
+    RefPtr<AccessibilityUIElement> activeElement() const;
+    JSValueRef selectedChildren() const;
     unsigned selectedChildrenCount() const;
     RefPtr<AccessibilityUIElement> selectedChildAtIndex(unsigned) const;
-    
+
     bool isValid() const;
     bool isExpanded() const;
     bool supportsExpanded() const;

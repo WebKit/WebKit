@@ -32,6 +32,8 @@ interface AccessibilityUIElement {
     AccessibilityUIElement childAtIndex(unsigned long index);
     unsigned long indexOfChild(AccessibilityUIElement child);
     AccessibilityUIElement linkedUIElementAtIndex(unsigned long index);
+    readonly attribute AccessibilityUIElement activeElement;
+    object selectedChildren();
     AccessibilityUIElement selectedChildAtIndex(unsigned long index);
     undefined setSelectedChild(AccessibilityUIElement element);
     undefined setSelectedChildAtIndex(unsigned long index);
@@ -39,7 +41,7 @@ interface AccessibilityUIElement {
     undefined clearSelectedChildren();
     AccessibilityUIElement titleUIElement();
     AccessibilityUIElement parentElement();
-    
+
     readonly attribute DOMString role;
     readonly attribute DOMString subrole;
     readonly attribute DOMString roleDescription;

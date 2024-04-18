@@ -275,7 +275,6 @@ public:
     float maxValueForRange() const override { return 0.0f; }
     float minValueForRange() const override { return 0.0f; }
     virtual float stepValueForRange() const { return 0.0f; }
-    AccessibilityObject* selectedListItem();
     int layoutCount() const override { return 0; }
     double loadingProgress() const final;
     WEBCORE_EXPORT static bool isARIAControl(AccessibilityRole);
@@ -833,6 +832,7 @@ private:
     void ariaTreeRows(AccessibilityChildrenVector& rows, AccessibilityChildrenVector& ancestors);
     AccessibilityChildrenVector ariaListboxSelectedChildren();
     AccessibilityChildrenVector ariaSelectedRows();
+    AccessibilityChildrenVector selectedListItems();
 
     // Special handling of click point for links.
     IntPoint linkClickPoint();

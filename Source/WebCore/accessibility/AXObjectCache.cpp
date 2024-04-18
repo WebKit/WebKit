@@ -2310,6 +2310,8 @@ void AXObjectCache::handleAriaExpandedChange(Node* node)
 
 void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomString& oldValue, const AtomString& newValue)
 {
+    AXTRACE("AXObjectCache::handleActiveDescendantChange"_s);
+
     // Use the element's document instead of the cache's document in case we're inside a frame that's managing focus.
     if (!element.document().frame()->selection().isFocusedAndActive())
         return;
@@ -2358,7 +2360,9 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
         else
             target = object;
 #endif
-    } else {
+    } else if (object->supportsActiveDescendant())
+        target = object;
+    else {
         // Check to see if the active descendant is a child of the controlled object. Then we have to use that
         // controlled object as the target we use in notifications.
         auto controlledObjects = object->relatedObjects(AXRelationType::ControllerFor);
@@ -2369,26 +2373,32 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
         }
     }
 
-    if (target) {
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        if (target != object)
-            updateIsolatedTree(target.get(), AXNotification::AXActiveDescendantChanged);
-        else if (target->isComboBox() && activeDescendant->isListItem()) {
-            // The combobox does not own or control the list to which activeDescendant belongs.
-            // We still need to update the selected children of that list.
-            RefPtr list = Accessibility::findAncestor(*activeDescendant, false, [] (const auto& ancestor) {
-                return ancestor.isList() || ancestor.isListBox();
+    if (!target)
+        return;
+
+    if (target == object) {
+#if PLATFORM(COCOA)
+        if (target->isComboBox()) {
+            // The combobox does not own or control the element to which activeDescendant belongs.
+            // Establish this implicit relationship.
+            RefPtr controlled = Accessibility::findAncestor(*activeDescendant, false, [] (const auto& ancestor) {
+                return ancestor.canBeControlledBy(AccessibilityRole::ComboBox);
             });
-            updateIsolatedTree(list.get(), AXNotification::AXSelectedChildrenChanged);
+            if (controlled)
+                addRelation(target.get(), controlled.get(), AXRelationType::ControllerFor);
         }
+#endif // PLATFORM(COCOA)
+    } else {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        updateIsolatedTree(target.get(), AXNotification::AXActiveDescendantChanged);
 #endif
-
-        postPlatformNotification(target.get(), AXNotification::AXActiveDescendantChanged);
-
-        // Table cell active descendant changes should trigger selected cell changes.
-        if (target->isTable() && activeDescendant->isExposedTableCell())
-            postPlatformNotification(target.get(), AXSelectedCellsChanged);
     }
+
+    postPlatformNotification(target.get(), AXNotification::AXActiveDescendantChanged);
+
+    // Table cell active descendant changes should trigger selected cell changes.
+    if (target->isTable() && activeDescendant->isExposedTableCell())
+        postPlatformNotification(target.get(), AXSelectedCellsChanged);
 }
 
 static bool isTableOrRowRole(const AtomString& attrValue)

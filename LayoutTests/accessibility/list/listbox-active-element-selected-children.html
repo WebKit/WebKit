@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+
+<div id="list" role="listbox" tabindex=0 aria-multiselectable="true">
+    <div id="item1" role="option">1</div>
+    <div id="item2" role="option">2</div>
+    <div id="item3" role="option">3</div>
+</div>
+
+</div>
+
+<script>
+let output = "Tests that active element and selected children are retrieved correctly for listboxes.\n\n";
+window.jsTestIsAsync = true;
+
+if (window.accessibilityController) {
+    var axList = accessibilityController.accessibleElementById("list");
+    output += expect("axList.activeElement", "null");
+    output += expect("axList.selectedChildren().length", "0");
+
+    var activeElementChangeCount = 0;
+    var selectedChildrenChangeCount = 0;
+    axList.addNotificationListener((notification) => {
+        if (notification == "AXActiveElementChanged" || notification == "AXSelectedChildrenChanged") {
+            output += `notification: ${notification}\n`;
+            logActiveElementAndSelectedChildren(axList);
+            notification == "AXActiveElementChanged" ? ++activeElementChangeCount : ++selectedChildrenChangeCount;
+        }
+    });
+
+    setTimeout(async () => {
+        output += "Setting activedescendant to 1 and selected to 2:\n";
+        var list = document.getElementById("list");
+        list.focus();
+        list.setAttribute("aria-activedescendant", "item1");
+        document.getElementById("item2").setAttribute("aria-selected", "true");
+        await waitFor(() => {
+            return activeElementChangeCount == 1 && selectedChildrenChangeCount == 1;
+        });
+
+        output += "Setting activedescendant to 2:\n";
+        list.setAttribute("aria-activedescendant", "item2");
+        await waitFor(() => {
+            return activeElementChangeCount == 2;
+        });
+
+        output += "Setting activedescendant to 3:\n";
+        list.setAttribute("aria-activedescendant", "item3");
+       await waitFor(() => {
+            return activeElementChangeCount == 3;
+        });
+
+        output += "Selecting 3:\n";
+        document.getElementById("item3").setAttribute("aria-selected", "true");
+        await waitFor(() => {
+            return selectedChildrenChangeCount == 2;
+        });
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

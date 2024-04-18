@@ -1,0 +1,28 @@
+Tests that active element and selected children are retrieved correctly for lists.
+
+PASS: axList.activeElement === null
+PASS: axList.selectedChildren().length === 0
+Setting activedescendant to 1 and selected to 2:
+notification: AXActiveElementChanged
+    activeElement: item1
+    selectedChildren: [ item2 ]
+notification: AXSelectedChildrenChanged
+    activeElement: item1
+    selectedChildren: [ item2 ]
+Setting activedescendant to 2:
+notification: AXActiveElementChanged
+    activeElement: item2
+    selectedChildren: [ item2 ]
+Setting activedescendant to 3:
+notification: AXActiveElementChanged
+    activeElement: item3
+    selectedChildren: [ item2 ]
+Selecting 3:
+notification: AXSelectedChildrenChanged
+    activeElement: item3
+    selectedChildren: [ item2, item3 ]
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

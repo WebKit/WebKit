@@ -80,6 +80,7 @@ String AXIsolatedObject::dbg() const
 
 void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axObject)
 {
+    AXTRACE("AXIsolatedObject::initializeProperties"_s);
     auto& object = axObject.get();
 
     if (object.ancestorFlagsAreInitialized())

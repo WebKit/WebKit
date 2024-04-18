@@ -934,6 +934,7 @@ public:
     bool isRadioGroup() const { return roleValue() == AccessibilityRole::RadioGroup; }
     bool isComboBox() const { return roleValue() == AccessibilityRole::ComboBox; }
     bool isDateTime() const { return roleValue() == AccessibilityRole::DateTime; }
+    bool isGrid() const { return roleValue() == AccessibilityRole::Grid; }
     bool isTree() const { return roleValue() == AccessibilityRole::Tree; }
     bool isTreeGrid() const { return roleValue() == AccessibilityRole::TreeGrid; }
     bool isTreeItem() const { return roleValue() == AccessibilityRole::TreeItem; }
@@ -1040,6 +1041,7 @@ public:
     virtual std::optional<AccessibilityChildrenVector> imageOverlayElements() = 0;
     virtual String extendedDescription() const = 0;
 
+    bool supportsActiveDescendant() const;
     virtual bool supportsARIAOwns() const = 0;
 
     // Retrieval of related objects.
@@ -1060,6 +1062,7 @@ public:
     AccessibilityChildrenVector ownedObjects() const { return relatedObjects(AXRelationType::OwnerFor); }
     AccessibilityChildrenVector owners() const { return relatedObjects(AXRelationType::OwnedBy); }
     virtual AccessibilityChildrenVector relatedObjects(AXRelationType) const = 0;
+    bool canBeControlledBy(AccessibilityRole) const;
 
     virtual AXCoreObject* internalLinkElement() const = 0;
     void appendRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;

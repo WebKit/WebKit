@@ -4268,20 +4268,15 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ariaSelectedRows(
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ariaListboxSelectedChildren()
 {
-    bool isMulti = isMultiSelectable();
-
     AccessibilityChildrenVector result;
+    bool isMulti = isMultiSelectable();
     for (const auto& child : children()) {
-        auto* axChild = dynamicDowncast<AccessibilityObject>(child.get());
-        // Every child should have aria-role option, and if so, check for selected attribute/state.
-        if (!axChild || axChild->ariaRoleAttribute() != AccessibilityRole::ListBoxOption)
+        if (!child->isListBoxOption() || !child->isSelected())
             continue;
 
-        if (axChild->isSelected() || axChild->isActiveDescendantOfFocusedContainer()) {
-            result.append(axChild);
-            if (!isMulti)
-                return result;
-        }
+        result.append(child);
+        if (!isMulti)
+            return result;
     }
     return result;
 }
@@ -4322,7 +4317,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityObject::se
             return { { descendant } };
         break;
     case AccessibilityRole::ListBox:
-        // native list boxes would be AccessibilityListBoxes, so only check for aria list boxes
+        // Native list boxes would be AccessibilityListBoxes, so only check for aria list boxes.
         return ariaListboxSelectedChildren();
         break;
     case AccessibilityRole::Grid:
@@ -4334,10 +4329,12 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityObject::se
         if (auto* selectedTab = selectedTabItem())
             return { { selectedTab } };
         break;
-    case AccessibilityRole::List:
-        if (auto* selectedListItem = this->selectedListItem())
-            return { { selectedListItem } };
+    case AccessibilityRole::List: {
+        auto selectedListItems = this->selectedListItems();
+        if (!selectedListItems.isEmpty())
+            return selectedListItems;
         break;
+    }
     case AccessibilityRole::Menu:
     case AccessibilityRole::MenuBar:
         if (auto* descendant = activeDescendant())
@@ -4352,21 +4349,14 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityObject::se
     return std::nullopt;
 }
 
-AccessibilityObject* AccessibilityObject::selectedListItem()
+AXCoreObject::AccessibilityChildrenVector AccessibilityObject::selectedListItems()
 {
+    AccessibilityChildrenVector selectedListItems;
     for (const auto& child : children()) {
-        if (!child->isListItem())
-            continue;
-
-        auto* axObject = dynamicDowncast<AccessibilityObject>(child.get());
-        if (!axObject)
-            continue;
-
-        if (axObject->isSelected() || axObject->isActiveDescendantOfFocusedContainer())
-            return axObject;
+        if (child->isListItem() && child->isSelected())
+            selectedListItems.append(child);
     }
-    
-    return nullptr;
+    return selectedListItems;
 }
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityObject::relatedObjects(AXRelationType relationType) const

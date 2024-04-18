@@ -86,6 +86,10 @@ using namespace WebCore;
 
 static id attributeValueForTesting(const RefPtr<AXCoreObject>&, NSString *);
 
+#ifndef NSAccessibilityActiveElementAttribute
+#define NSAccessibilityActiveElementAttribute @"AXActiveElement"
+#endif
+
 // Cell Tables
 #ifndef NSAccessibilitySelectedCellsAttribute
 #define NSAccessibilitySelectedCellsAttribute @"AXSelectedCells"
@@ -806,9 +810,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return actions;
 }
 
-- (NSArray*)_additionalAccessibilityAttributeNames:(const RefPtr<AXCoreObject>&)backingObject
+- (NSArray *)_additionalAccessibilityAttributeNames:(const RefPtr<AXCoreObject>&)backingObject
 {
     NSMutableArray *additional = [NSMutableArray array];
+    if (backingObject->supportsActiveDescendant())
+        [additional addObject:NSAccessibilityActiveElementAttribute];
+
     if (backingObject->supportsARIAOwns())
         [additional addObject:NSAccessibilityOwnsAttribute];
 
@@ -1028,6 +1035,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }();
     static NeverDestroyed listAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
+        [tempArray addObject:NSAccessibilityActiveElementAttribute];
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
@@ -1655,6 +1663,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilitySelectedChildrenAttribute]) {
         auto selectedChildren = backingObject->selectedChildren();
         return selectedChildren ? makeNSArray(*selectedChildren) : nil;
+    }
+
+    if ([attributeName isEqualToString:NSAccessibilityActiveElementAttribute]) {
+        RefPtr activeDescendant = backingObject->activeDescendant();
+        return activeDescendant ? activeDescendant->wrapper() : nil;
     }
 
     if ([attributeName isEqualToString: NSAccessibilityVisibleChildrenAttribute]) {
