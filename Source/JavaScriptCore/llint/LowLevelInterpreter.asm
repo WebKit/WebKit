@@ -1694,6 +1694,76 @@ else
 end
     doVMEntry(makeJavaScriptCall)
 
+if (ARM64E or ARM64) and ADDRESS64
+    macro vmEntryToJavaScriptSetup()
+        functionPrologue()
+        pushCalleeSaves()
+        vmEntryRecord(cfr, sp)
+        storep a1, VMEntryRecord::m_vm[sp]
+        loadpairq VM::topCallFrame[a1], t8, t9 # topCallFrame and topEntryFrame
+        storepairq t8, t9, VMEntryRecord::m_prevTopCallFrame[sp]
+    end
+
+    # EncodedJSValue vmEntryToJavaScriptWith0Arguments(void*, VM*, CodeBlock*, JSObject*, JSValue, JSValue)
+    # entry, vm, codeBlock, callee, thisValue
+    global _vmEntryToJavaScriptWith0Arguments
+    _vmEntryToJavaScriptWith0Arguments:
+        # entry must be a0
+        vmEntryToJavaScriptSetup()
+        move 1, t8 # argumentCountIncludingThis
+        subp ((CallFrameHeaderSize + 1 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask), sp
+        storepairq a2, a3, CodeBlock + (SlotSize * 0)[sp]
+        storepairq t8, a4, CodeBlock + (SlotSize * 2)[sp]
+        move sp, t8
+        storepairq t8, cfr, VM::topCallFrame[a1] # topCallFrame and topEntryFrame
+        jmp _llint_call_javascript
+
+    # EncodedJSValue vmEntryToJavaScriptWith1Arguments(void*, VM*, CodeBlock*, JSObject*, JSValue, JSValue, JSValue)
+    # entry, vm, codeBlock, callee, thisValue, arg0
+    global _vmEntryToJavaScriptWith1Arguments
+    _vmEntryToJavaScriptWith1Arguments:
+        # entry must be a0
+        vmEntryToJavaScriptSetup()
+        move 2, t8 # argumentCountIncludingThis
+        subp ((CallFrameHeaderSize + 2 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask), sp
+        storepairq a2, a3, CodeBlock + (SlotSize * 0)[sp]
+        storepairq t8, a4, CodeBlock + (SlotSize * 2)[sp]
+        storepairq a5, a5, CodeBlock + (SlotSize * 4)[sp]
+        move sp, t8
+        storepairq t8, cfr, VM::topCallFrame[a1] # topCallFrame and topEntryFrame
+        jmp _llint_call_javascript
+
+    # EncodedJSValue vmEntryToJavaScriptWith2Arguments(void*, VM*, CodeBlock*, JSObject*, JSValue, JSValue, JSValue)
+    # entry, vm, codeBlock, callee, thisValue, arg0, arg1
+    global _vmEntryToJavaScriptWith2Arguments
+    _vmEntryToJavaScriptWith2Arguments:
+        # entry must be a0
+        vmEntryToJavaScriptSetup()
+        move 3, t8 # argumentCountIncludingThis
+        subp ((CallFrameHeaderSize + 3 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask), sp
+        storepairq a2, a3, CodeBlock + (SlotSize * 0)[sp]
+        storepairq t8, a4, CodeBlock + (SlotSize * 2)[sp]
+        storepairq a5, a6, CodeBlock + (SlotSize * 4)[sp]
+        move sp, t8
+        storepairq t8, cfr, VM::topCallFrame[a1] # topCallFrame and topEntryFrame
+        jmp _llint_call_javascript
+
+    # EncodedJSValue vmEntryToJavaScriptWith3Arguments(void*, VM*, CodeBlock*, JSObject*, JSValue, JSValue, JSValue, JSValue)
+    # entry, vm, codeBlock, callee, thisValue, arg0, arg1, arg2
+    global _vmEntryToJavaScriptWith3Arguments
+    _vmEntryToJavaScriptWith3Arguments:
+        # entry must be a0
+        vmEntryToJavaScriptSetup()
+        move 4, t8 # argumentCountIncludingThis
+        subp ((CallFrameHeaderSize + 4 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask), sp
+        storepairq a2, a3, CodeBlock + (SlotSize * 0)[sp]
+        storepairq t8, a4, CodeBlock + (SlotSize * 2)[sp]
+        storepairq a5, a6, CodeBlock + (SlotSize * 4)[sp]
+        storepairq a7, a7, CodeBlock + (SlotSize * 6)[sp]
+        move sp, t8
+        storepairq t8, cfr, VM::topCallFrame[a1] # topCallFrame and topEntryFrame
+        jmp _llint_call_javascript
+end
 
 if C_LOOP or C_LOOP_WIN
     _llint_vm_entry_to_native:

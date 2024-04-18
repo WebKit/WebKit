@@ -818,23 +818,14 @@ static ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSortImpl(VM& v
         result = typedArrayMergeSort(vm, src, dst, [&](auto left, auto right) -> bool {
             auto scope = DECLARE_THROW_SCOPE(vm);
 
-            cachedCall.clearArguments();
-
             JSValue leftValue = ViewClass::Adaptor::toJSValue(globalObject, left);
             RETURN_IF_EXCEPTION(scope, { });
             JSValue rightValue = ViewClass::Adaptor::toJSValue(globalObject, right);
             RETURN_IF_EXCEPTION(scope, { });
 
-            cachedCall.appendArgument(leftValue);
-            cachedCall.appendArgument(rightValue);
-            cachedCall.setThis(jsUndefined());
-            if (UNLIKELY(cachedCall.hasOverflowedArguments())) {
-                throwOutOfMemoryError(globalObject, scope);
-                return { };
-            }
-
-            JSValue jsResult = cachedCall.call();
+            JSValue jsResult = cachedCall.callWithArguments(globalObject, jsUndefined(), leftValue, rightValue);
             RETURN_IF_EXCEPTION(scope, { });
+
             bool result = coerceComparatorResultToBoolean(globalObject, scope, jsResult);
             RETURN_IF_EXCEPTION(scope, { });
             return result;
