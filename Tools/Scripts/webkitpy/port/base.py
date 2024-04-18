@@ -1411,8 +1411,10 @@ class Port(object):
         dirs_to_skip = []
         for entry in entries:
             if self._filesystem.isdir(entry) and entry not in self.test_search_path(device_type=device_type):
-                basename = self._filesystem.basename(entry)
-                dirs_to_skip.append('platform/%s' % basename)
+                if entry.startswith(self._filesystem.join(self.layout_tests_dir(), "")):
+                    dirs_to_skip.append(self._filesystem.relpath(entry, self.layout_tests_dir()))
+                else:
+                    dirs_to_skip.append(entry)
         return dirs_to_skip
 
     def _wk2_port_name(self):
