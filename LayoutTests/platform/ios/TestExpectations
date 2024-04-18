@@ -1365,6 +1365,9 @@ fast/css/variables/env/ios [ Pass ]
 # Tests use resizable popups which are not a thing on iOS.
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
 
+# Needs special fuzziness on iOS.
+imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edge.html [ ImageOnlyFailure ]
+
 ###
 # Known failures
 ##
