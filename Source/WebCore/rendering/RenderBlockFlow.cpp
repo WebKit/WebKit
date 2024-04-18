@@ -2344,14 +2344,9 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         parentBlock->markSiblingsWithFloatsForLayout();
     }
 
-    if (diff >= StyleDifference::Repaint) {
-        auto shouldInvalidateLineLayoutPath = [&] {
-            if (selfNeedsLayout() || legacyLineLayout())
-                return true;
-            return false;
-        };
-        if (shouldInvalidateLineLayoutPath())
-            invalidateLineLayoutPath(InvalidationReason::StyleChange);
+    if (diff == StyleDifference::Layout && selfNeedsLayout()) {
+        for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance())
+            walker.current()->setPreferredLogicalWidthsDirty(true);
     }
 
     if (multiColumnFlow())

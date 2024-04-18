@@ -1055,7 +1055,15 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
             controller->notifyChildHadSuppressingStyleChange();
     }
 
-    if (diff >= StyleDifference::Repaint && layoutBox())
+    auto needsLayoutBoxStyleUpdate = [&] {
+        if (!layoutBox())
+            return false;
+        if (diff >= StyleDifference::Repaint)
+            return true;
+        // FIXME: First line change on the block comes in as equal on inline boxes.
+        return is<RenderInline>(*this) && &style() != &firstLineStyle();
+    };
+    if (needsLayoutBoxStyleUpdate())
         LayoutIntegration::LineLayout::updateStyle(*this);
 }
 
