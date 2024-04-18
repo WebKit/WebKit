@@ -1,5 +1,6 @@
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/harfbuzz"
+    "${WEBCORE_DIR}/platform/graphics/filters/skia"
     "${WEBCORE_DIR}/platform/graphics/skia"
 )
 
