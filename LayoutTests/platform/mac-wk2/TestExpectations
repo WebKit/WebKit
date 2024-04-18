@@ -1888,8 +1888,6 @@ webkit.org/b/269639 http/tests/site-isolation/window-properties.html [ Skip ]
 
 webkit.org/b/268398 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-iframe-scrolling-tree-after-back.html [ Pass Failure ]
 
-webkit.org/b/269581 http/tests/site-isolation/mouse-events/context-menu-event-twice.html [ Skip ]
-
 # webkit.org/b/269798 REGRESSION (274409@main): [ macOS wk2 ] 2 tests in http/tests/navigation/ping-attribute are flaky
 [ Monterey+ ] http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Pass Failure ]
 [ Monterey+ ] http/tests/navigation/ping-attribute/area-cross-origin-from-https-UpgradeMixedContent.html [ Pass Failure ]
