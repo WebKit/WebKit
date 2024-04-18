@@ -72,20 +72,22 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
             if (child.isAnonymous()) {
                 ASSERT(is<RenderSVGViewportContainer>(child));
                 needsLayout = true;
-            } else if (auto* element = dynamicDowncast<SVGElement>(*child.node()); element && element->hasRelativeLengths()) {
-                // When containerNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths
+            } else if (RefPtr element = dynamicDowncast<SVGElement>(child.node())) {
+                if (element->hasRelativeLengths()) {
+                    // When containerNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths
 
-                // When the layout size changed and when using relative values tell the RenderSVGShape to update its shape object
-                if (CheckedPtr shape = dynamicDowncast<RenderSVGShape>(child)) {
-                    shape->setNeedsShapeUpdate();
-                    needsLayout = true;
-                } else if (CheckedPtr svgText = dynamicDowncast<RenderSVGText>(child)) {
-                    svgText->setNeedsTextMetricsUpdate();
-                    svgText->setNeedsPositioningValuesUpdate();
-                    needsLayout = true;
-                } else if (CheckedPtr resource = dynamicDowncast<RenderSVGResourceGradient>(child))
-                    resource->invalidateGradient();
-                // FIXME: [LBSE] Add pattern support.
+                    // When the layout size changed and when using relative values tell the RenderSVGShape to update its shape object
+                    if (CheckedPtr shape = dynamicDowncast<RenderSVGShape>(child)) {
+                        shape->setNeedsShapeUpdate();
+                        needsLayout = true;
+                    } else if (CheckedPtr svgText = dynamicDowncast<RenderSVGText>(child)) {
+                        svgText->setNeedsTextMetricsUpdate();
+                        svgText->setNeedsPositioningValuesUpdate();
+                        needsLayout = true;
+                    } else if (CheckedPtr resource = dynamicDowncast<RenderSVGResourceGradient>(child))
+                        resource->invalidateGradient();
+                    // FIXME: [LBSE] Add pattern support.
+                }
             }
         }
 
@@ -131,7 +133,7 @@ void SVGContainerLayout::positionChildrenRelativeToContainer()
         // only meaningful for the children of the RenderSVGRoot. RenderSVGRoot itself is positioned according to
         // the CSS box model object, where we need to respect border & padding, encoded in the contentBoxLocation().
         // -> Position all RenderSVGRoot children relative to the contentBoxLocation() to avoid intruding border/padding area.
-        if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(m_container))
+        if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(m_container))
             return -svgRoot->contentBoxLocation();
 
         // For (inner) RenderSVGViewportContainer nominalSVGLayoutLocation() returns the viewport boundaries,

@@ -56,7 +56,7 @@ static inline LegacyInlineFlowBox* flowBoxForRenderer(RenderObject* renderer)
     if (!renderer)
         return nullptr;
 
-    if (auto* renderBlock = dynamicDowncast<RenderBlockFlow>(*renderer)) {
+    if (CheckedPtr renderBlock = dynamicDowncast<RenderBlockFlow>(*renderer)) {
         // If we're given a block element, it has to be a RenderSVGText.
         ASSERT(is<RenderSVGText>(*renderBlock));
 
@@ -66,7 +66,7 @@ static inline LegacyInlineFlowBox* flowBoxForRenderer(RenderObject* renderer)
         return flowBox;
     }
 
-    if (auto* renderInline = dynamicDowncast<RenderInline>(*renderer)) {
+    if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(*renderer)) {
         // We're given a RenderSVGInline or objects that derive from it (RenderSVGTSpan / RenderSVGTextPath)
         // RenderSVGInline only ever contains a single line box.
         auto* flowBox = renderInline->firstLineBox();

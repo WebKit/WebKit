@@ -221,7 +221,7 @@ void SVGTextMetricsBuilder::walkTree(RenderElement& start, RenderSVGInlineText* 
 {
     unsigned valueListPosition = 0;
     UChar lastCharacter = 0;
-    auto* child = start.firstChild();
+    CheckedPtr child = start.firstChild();
     while (child) {
         if (auto* text = dynamicDowncast<RenderSVGInlineText>(*child)) {
             data.processRenderer = !stopAtLeaf || stopAtLeaf == text;

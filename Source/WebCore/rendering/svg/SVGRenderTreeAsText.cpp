@@ -240,8 +240,7 @@ void writeSVGPaintingFeatures(TextStream& ts, const RenderElement& renderer, Opt
             writeSVGFillPaintingResource(ts, renderer, *fillPaintingResource);
 
         writeIfNotDefault(ts, "clip rule", svgStyle->clipRule(), WindRule::NonZero);
-    }
-    else if (auto* shape = dynamicDowncast<RenderSVGShape>(renderer)) {
+    } else if (auto* shape = dynamicDowncast<RenderSVGShape>(renderer)) {
         Color fallbackColor;
         if (auto* strokePaintingResource = LegacyRenderSVGResource::strokePaintingResource(const_cast<RenderSVGShape&>(*shape), shape->style(), fallbackColor))
             writeSVGStrokePaintingResource(ts, renderer, *strokePaintingResource, shape->protectedGraphicsElement());
@@ -605,7 +604,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
         AtomString id = resourceClipPath->fragment();
         if (LegacyRenderSVGResourceClipper* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(renderer.treeScopeForSVGReferences(), id)) {
             ts << indent << " ";
-            writeNameAndQuotedValue(ts, "clipPath", resourceClipPath->fragment());
+            writeNameAndQuotedValue(ts, "clipPath", id);
             ts << " ";
             writeStandardPrefix(ts, *clipper, behavior, WriteIndentOrNot::No);
             ts << " " << clipper->resourceBoundingBox(renderer, RepaintRectCalculation::Accurate) << "\n";

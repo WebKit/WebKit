@@ -98,7 +98,7 @@ bool SVGFEComponentTransferElement::setFilterEffectAttributeFromChild(FilterEffe
 {
     ASSERT(isRelevantTransferFunctionElement(childElement));
 
-    auto* child = dynamicDowncast<SVGComponentTransferFunctionElement>(childElement);
+    RefPtr child = dynamicDowncast<SVGComponentTransferFunctionElement>(childElement);
     ASSERT(child);
     if (!child)
         return false;
