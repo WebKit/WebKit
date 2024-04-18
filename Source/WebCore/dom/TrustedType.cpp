@@ -192,14 +192,17 @@ String getTrustedTypeForAttribute(const String& tagName, const String& attribute
     auto localName = tagName.convertToASCIILowercase();
     auto attributeName = attributeParameter.convertToASCIILowercase();
 
-    if (attributeName.startsWith("on"_s))
-        return trustedTypeToString(TrustedType::TrustedScript);
-
     AtomString elementNS = elementNamespace.isEmpty() ? HTMLNames::xhtmlNamespaceURI : AtomString(elementNamespace);
     AtomString attributeNS = attributeNamespace.isEmpty() ? nullAtom() : AtomString(attributeNamespace);
 
     QualifiedName element(nullAtom(), AtomString(localName), elementNS);
     QualifiedName attribute(nullAtom(), AtomString(attributeName), attributeNS);
+
+    if (attributeNamespace.isNull() && !attributeName.isNull()) {
+        auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(attribute);
+        if (!eventName.isNull())
+            return trustedTypeToString(TrustedType::TrustedScript);
+    }
 
     if (element.matches(HTMLNames::iframeTag) && attribute.matches(HTMLNames::srcdocAttr))
         return trustedTypeToString(TrustedType::TrustedHTML);

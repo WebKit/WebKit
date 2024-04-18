@@ -1,9 +1,9 @@
 
 PASS sanity check trustedTypes.getPropertyType for the HTML script element.
-PASS sanity check trustedTypes.getAttributeType.
+FAIL sanity check trustedTypes.getAttributeType. assert_equals: expected (string) "TrustedScript" but got (object) null
 FAIL sanity check trustedTypes.getTypeMapping trustedTypes.getTypeMapping is not a function. (In 'trustedTypes.getTypeMapping()', 'trustedTypes.getTypeMapping' is undefined)
 PASS getPropertyType tests adapted from w3c/trusted-types polyfill
-PASS getAttributeType tests adapted from w3c/trusted-types polyfill
+FAIL getAttributeType tests adapted from w3c/trusted-types polyfill assert_equals: expected (string) "TrustedScript" but got (object) null
 FAIL getTypeMapping tests adapted from w3c/trusted-types polyfill trustedTypes.getTypeMapping is not a function. (In 'trustedTypes.getTypeMapping()', 'trustedTypes.getTypeMapping' is undefined)
 PASS iframe[srcDoc] is defined
 PASS iframe.srcDoc is maybe defined
@@ -23,5 +23,5 @@ PASS IFRAME[srcdoc] is defined
 PASS IFRAME.srcdoc is maybe defined
 PASS iFrAmE[srcdoc] is defined
 PASS iFrAmE.srcdoc is maybe defined
-PASS getPropertyType vs getAttributeType for event handler.
+FAIL getPropertyType vs getAttributeType for event handler. assert_equals: expected (string) "TrustedScript" but got (object) null
 
