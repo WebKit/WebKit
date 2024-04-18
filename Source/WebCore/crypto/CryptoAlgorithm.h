@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CryptoAlgorithmIdentifier.h"
+#include "CryptoKey.h"
 #include "CryptoKeyFormat.h"
 #include "CryptoKeyPair.h"
 #include "CryptoKeyUsage.h"
@@ -41,7 +42,6 @@
 namespace WebCore {
 
 class CryptoAlgorithmParameters;
-class CryptoKey;
 class ScriptExecutionContext;
 
 using KeyData = std::variant<Vector<uint8_t>, JsonWebKey>;
@@ -70,10 +70,10 @@ public:
     virtual void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, ExceptionCallback&&, ScriptExecutionContext&);
     virtual void deriveBits(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, size_t length, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&);
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=169262
-    virtual void importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&);
-    virtual void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&);
-    virtual void wrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, bool);
-    virtual void unwrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, bool);
+    virtual void importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&, UseCryptoKit);
+    virtual void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&, UseCryptoKit);
+    virtual void wrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, UseCryptoKit);
+    virtual void unwrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, UseCryptoKit);
     virtual ExceptionOr<size_t> getKeyLength(const CryptoAlgorithmParameters&);
 
     static void dispatchOperationInWorkQueue(WorkQueue&, ScriptExecutionContext&, VectorCallback&&, ExceptionCallback&&, Function<ExceptionOr<Vector<uint8_t>>()>&&);

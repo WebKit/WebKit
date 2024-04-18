@@ -35,7 +35,7 @@ enum UnsafeErrors: Error {
     case emptySpan
 }
 
-extension HashFunction {
+extension CryptoKit.HashFunction {
     mutating func update(data: SpanConstUInt8) {
         if data.empty() {
             self.update(data: Data.empty())
@@ -123,4 +123,105 @@ extension AES.KeyWrap {
         ).copyToVectorUInt8()
     }
 }
+
+extension P256.Signing.ECDSASignature {
+    init(span: SpanConstUInt8) throws {
+        if span.empty() {
+            throw UnsafeErrors.emptySpan
+        }
+        try self.init(rawRepresentation: Data.temporaryDataFromSpan(spanNoCopy: span))
+    }
+}
+extension P384.Signing.ECDSASignature {
+    init(span: SpanConstUInt8) throws {
+        if span.empty() {
+            throw UnsafeErrors.emptySpan
+        }
+        try self.init(rawRepresentation: Data.temporaryDataFromSpan(spanNoCopy: span))
+    }
+}
+extension P521.Signing.ECDSASignature {
+    init(span: SpanConstUInt8) throws {
+        if span.empty() {
+            throw UnsafeErrors.emptySpan
+        }
+        try self.init(rawRepresentation: Data.temporaryDataFromSpan(spanNoCopy: span))
+    }
+}
+
+extension P256.Signing.PublicKey {
+    init(span: SpanConstUInt8) throws {
+        if span.empty() {
+            throw UnsafeErrors.emptySpan
+        }
+        try self.init(x963Representation: Data.temporaryDataFromSpan(spanNoCopy: span))
+    }
+    init(spanCompressed: SpanConstUInt8) throws {
+        if spanCompressed.empty() {
+            throw UnsafeErrors.emptySpan
+        }
+        try self.init(
+            compressedRepresentation: Data.temporaryDataFromSpan(spanNoCopy: spanCompressed))
+    }
+}
+
+extension P384.Signing.PublicKey {
+    init(span: SpanConstUInt8) throws {
+        if span.empty() {
+            throw UnsafeErrors.emptySpan
+        }
+        try self.init(x963Representation: Data.temporaryDataFromSpan(spanNoCopy: span))
+    }
+    init(spanCompressed: SpanConstUInt8) throws {
+        if spanCompressed.empty() {
+            throw UnsafeErrors.emptySpan
+        }
+        try self.init(
+            compressedRepresentation: Data.temporaryDataFromSpan(spanNoCopy: spanCompressed))
+    }
+}
+
+extension P521.Signing.PublicKey {
+    init(span: SpanConstUInt8) throws {
+        if span.empty() {
+            throw UnsafeErrors.emptySpan
+        }
+        try self.init(x963Representation: Data.temporaryDataFromSpan(spanNoCopy: span))
+    }
+    init(spanCompressed: SpanConstUInt8) throws {
+        if spanCompressed.empty() {
+            throw UnsafeErrors.emptySpan
+        }
+        try self.init(
+            compressedRepresentation: Data.temporaryDataFromSpan(spanNoCopy: spanCompressed))
+    }
+}
+
+extension P256.Signing.PrivateKey {
+    init(span: SpanConstUInt8) throws {
+        if span.empty() {
+            throw UnsafeErrors.emptySpan
+        }
+        try self.init(x963Representation: Data.temporaryDataFromSpan(spanNoCopy: span))
+    }
+}
+
+extension P384.Signing.PrivateKey {
+    init(span: SpanConstUInt8) throws {
+        if span.empty() {
+            throw UnsafeErrors.emptySpan
+        }
+        try self.init(x963Representation: Data.temporaryDataFromSpan(spanNoCopy: span))
+    }
+}
+
+extension P521.Signing.PrivateKey {
+    init(span: SpanConstUInt8) throws {
+        if span.empty() {
+            throw UnsafeErrors.emptySpan
+        }
+        try self.init(x963Representation: Data.temporaryDataFromSpan(spanNoCopy: span))
+    }
+}
+
 #endif

@@ -74,7 +74,8 @@ TEST(CtapPinTest, TestValidateAndConvertToUTF8)
 TEST(CtapPinTest, TestSetPinRequest)
 {
     // Generate an EC key pair as the peer key.
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits, WebCore::UseCryptoKit::No);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -126,11 +127,13 @@ TEST(CtapPinTest, TestSetPinRequest)
     EXPECT_NE(xIt, coseKey.end());
     const auto& yIt = coseKey.find(CBORValue(COSE::y));
     EXPECT_NE(yIt, coseKey.end());
-    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits);
+    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
+    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits, WebCore::UseCryptoKit::No);
     EXPECT_TRUE(cosePublicKey);
 
     // Check the encrypted Pin.
-    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey);
+    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
+    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey, WebCore::UseCryptoKit::No);
     EXPECT_TRUE(sharedKeyResult);
 
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
@@ -249,7 +252,8 @@ TEST(CtapPinTest, TestKeyAgreementResponse)
     // Success cases
     result = KeyAgreementResponse::parse(convertBytesToVector(TestData::kCtapClientPinKeyAgreementResponse, sizeof(TestData::kCtapClientPinKeyAgreementResponse)));
     EXPECT_TRUE(result);
-    auto exportedRawKey = result->peerKey->exportRaw();
+    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
+    auto exportedRawKey = result->peerKey->exportRaw(WebCore::UseCryptoKit::No);
     EXPECT_FALSE(exportedRawKey.hasException());
     Vector<uint8_t> expectedRawKey;
     expectedRawKey.reserveCapacity(65);
@@ -262,7 +266,8 @@ TEST(CtapPinTest, TestKeyAgreementResponse)
 TEST(CtapPinTest, TestTokenRequest)
 {
     // Generate an EC key pair as the peer key.
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits, WebCore::UseCryptoKit::No);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -314,11 +319,13 @@ TEST(CtapPinTest, TestTokenRequest)
     EXPECT_NE(xIt, coseKey.end());
     const auto& yIt = coseKey.find(CBORValue(COSE::y));
     EXPECT_NE(yIt, coseKey.end());
-    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits);
+    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
+    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits, WebCore::UseCryptoKit::No);
     EXPECT_TRUE(cosePublicKey);
 
     // Check the encrypted Pin.
-    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey);
+    // FIXME: enable cryptoKit when it's enabled in SubtleCryptoAPI rdar://126352502
+    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey, WebCore::UseCryptoKit::No);
     EXPECT_TRUE(sharedKeyResult);
 
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);

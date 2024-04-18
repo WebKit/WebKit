@@ -34,7 +34,6 @@
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
-
 static const char* curveName(CryptoKeyEC::NamedCurve curve)
 {
     switch (curve) {
@@ -112,7 +111,7 @@ bool CryptoKeyEC::platformSupportedCurve(NamedCurve curve)
     return curve == NamedCurve::P256 || curve == NamedCurve::P384 || curve == NamedCurve::P521;
 }
 
-std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
+std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit)
 {
     PAL::GCrypt::Handle<gcry_sexp_t> genkeySexp;
     gcry_error_t error = gcry_sexp_build(&genkeySexp, nullptr, "(genkey(ecc(curve %s)))", curveName(curve));
@@ -138,7 +137,7 @@ std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmId
     return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit)
 {
     if (keyData.size() != curveUncompressedPointSize(curve))
         return nullptr;
@@ -154,7 +153,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier ide
     return create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(platformKey.release()), extractable, usages);
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit)
 {
     unsigned uncompressedFieldElementSize = curveUncompressedFieldElementSize(curve);
     if (x.size() != uncompressedFieldElementSize || y.size() != uncompressedFieldElementSize)
@@ -178,7 +177,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifi
     return create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(platformKey.release()), extractable, usages);
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, Vector<uint8_t>&& d, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, Vector<uint8_t>&& d, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit)
 {
     unsigned uncompressedFieldElementSize = curveUncompressedFieldElementSize(curve);
     if (x.size() != uncompressedFieldElementSize || y.size() != uncompressedFieldElementSize || d.size() != uncompressedFieldElementSize)
@@ -243,7 +242,7 @@ static std::optional<CryptoKeyEC::NamedCurve> curveForIdentifier(const Vector<ui
     return std::nullopt;
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit)
 {
     // Decode the `SubjectPublicKeyInfo` structure using the provided key data.
     PAL::TASN1::Structure spki;
@@ -339,7 +338,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
     return create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(platformKey.release()), extractable, usages);
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit)
 {
     // Decode the `PrivateKeyInfo` structure using the provided key data.
     PAL::TASN1::Structure pkcs8;
@@ -484,10 +483,10 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
     return create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(platformKey.release()), extractable, usages);
 }
 
-Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
+Vector<uint8_t> CryptoKeyEC::platformExportRaw(UseCryptoKit) const
 {
     PAL::GCrypt::Handle<gcry_ctx_t> context;
-    gcry_error_t error = gcry_mpi_ec_new(&context, m_platformKey.get(), nullptr);
+    gcry_error_t error = gcry_mpi_ec_new(&context, platformKey().get(), nullptr);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return { };
@@ -504,10 +503,10 @@ Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
     return WTFMove(q.value());
 }
 
-bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
+bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk, UseCryptoKit) const
 {
     PAL::GCrypt::Handle<gcry_ctx_t> context;
-    gcry_error_t error = gcry_mpi_ec_new(&context, m_platformKey.get(), nullptr);
+    gcry_error_t error = gcry_mpi_ec_new(&context, platformKey().get(), nullptr);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return false;
@@ -544,7 +543,7 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
     return true;
 }
 
-Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
+Vector<uint8_t> CryptoKeyEC::platformExportSpki(UseCryptoKit) const
 {
     PAL::TASN1::Structure ecParameters;
     {
@@ -581,7 +580,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
         }
 
         // Retrieve the `q` s-expression, which should contain the public key data.
-        PAL::GCrypt::Handle<gcry_sexp_t> qSexp(gcry_sexp_find_token(m_platformKey.get(), "q", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> qSexp(gcry_sexp_find_token(platformKey().get(), "q", 0));
         if (!qSexp)
             return { };
 
@@ -606,7 +605,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
     return WTFMove(result.value());
 }
 
-Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
+Vector<uint8_t> CryptoKeyEC::platformExportPkcs8(UseCryptoKit) const
 {
     PAL::TASN1::Structure ecParameters;
     {
@@ -635,7 +634,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
 
         // Construct the EC context that we'll use to retrieve private and public key data.
         PAL::GCrypt::Handle<gcry_ctx_t> context;
-        gcry_error_t error = gcry_mpi_ec_new(&context, m_platformKey.get(), nullptr);
+        gcry_error_t error = gcry_mpi_ec_new(&context, platformKey().get(), nullptr);
         if (error != GPG_ERR_NO_ERROR)
             return { };
 

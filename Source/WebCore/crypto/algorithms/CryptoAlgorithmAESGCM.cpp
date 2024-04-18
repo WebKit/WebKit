@@ -96,7 +96,7 @@ void CryptoAlgorithmAESGCM::encrypt(const CryptoAlgorithmParameters& parameters,
         return;
     }
 
-    bool useCryptoKit = context.settingsValues().cryptoKitEnabled;
+    UseCryptoKit useCryptoKit = context.settingsValues().cryptoKitEnabled ? UseCryptoKit::Yes : UseCryptoKit::No;
     dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [parameters = crossThreadCopy(aesParameters), key = WTFMove(key), plainText = WTFMove(plainText), useCryptoKit] {
             return platformEncrypt(parameters, downcast<CryptoKeyAES>(key.get()), plainText, useCryptoKit);
@@ -154,7 +154,7 @@ void CryptoAlgorithmAESGCM::generateKey(const CryptoAlgorithmParameters& paramet
     callback(WTFMove(result));
 }
 
-void CryptoAlgorithmAESGCM::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESGCM::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit)
 {
     using namespace CryptoAlgorithmAESGCMInternal;
 
@@ -195,7 +195,7 @@ void CryptoAlgorithmAESGCM::importKey(CryptoKeyFormat format, KeyData&& data, co
     callback(*result);
 }
 
-void CryptoAlgorithmAESGCM::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESGCM::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit)
 {
     using namespace CryptoAlgorithmAESGCMInternal;
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());

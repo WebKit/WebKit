@@ -143,7 +143,7 @@ Vector<uint8_t> CryptoDigest::computeHash()
     return m_context->computeHash();
 }
 
-std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, const Vector<uint8_t>& data, bool)
+std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, const Vector<uint8_t>& data, UseCryptoKit)
 {
     std::unique_ptr<CryptoDigest> digest = WTF::makeUnique<CryptoDigest>();
     if (!digest)

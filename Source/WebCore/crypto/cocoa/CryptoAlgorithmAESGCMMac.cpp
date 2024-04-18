@@ -81,10 +81,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return WTFMove(plainText);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESGCM::platformEncrypt(const CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText, bool useCryptoKit)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESGCM::platformEncrypt(const CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText, UseCryptoKit useCryptoKit)
 {
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit)
+    if (useCryptoKit == UseCryptoKit::Yes)
         return encryptCryptoKitAESGCM(parameters.ivVector(), key.key(), plainText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
 #else
     UNUSED_PARAM(useCryptoKit);
