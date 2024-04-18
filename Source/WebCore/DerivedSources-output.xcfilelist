@@ -777,6 +777,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+CSSOMView.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+CSSOMView.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+Compat.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+Compat.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+CookieStore.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+CookieStore.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+DeviceMotion.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+DeviceMotion.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+DeviceOrientation.cpp
