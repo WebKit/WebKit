@@ -105,12 +105,6 @@ protected:
     uint32_t ptrCountWithoutThreadCheck() const final;
     void incrementPtrCount() const final;
     void decrementPtrCount() const final;
-#if CHECKED_POINTER_DEBUG
-    void registerCheckedPtr(const void* pointer) const final;
-    void copyCheckedPtr(const void* source, const void* destination) const final;
-    void moveCheckedPtr(const void* source, const void* destination) const final;
-    void unregisterCheckedPtr(const void* pointer) const final;
-#endif // CHECKED_POINTER_DEBUG
 
 private:
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;

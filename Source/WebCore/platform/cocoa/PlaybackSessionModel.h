@@ -139,12 +139,6 @@ public:
     virtual uint32_t ptrCountWithoutThreadCheck() const = 0;
     virtual void incrementPtrCount() const = 0;
     virtual void decrementPtrCount() const = 0;
-#if CHECKED_POINTER_DEBUG
-    virtual void registerCheckedPtr(const void* pointer) const = 0;
-    virtual void copyCheckedPtr(const void* source, const void* destination) const = 0;
-    virtual void moveCheckedPtr(const void* source, const void* destination) const = 0;
-    virtual void unregisterCheckedPtr(const void* pointer) const = 0;
-#endif // CHECKED_POINTER_DEBUG
 
     virtual void durationChanged(double) { }
     virtual void currentTimeChanged(double /* currentTime */, double /* anchorTime */) { }

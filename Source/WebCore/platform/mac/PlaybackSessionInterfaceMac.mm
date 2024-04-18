@@ -314,28 +314,6 @@ void PlaybackSessionInterfaceMac::decrementPtrCount() const
     CanMakeCheckedPtr::decrementPtrCount();
 }
 
-#if CHECKED_POINTER_DEBUG
-void PlaybackSessionInterfaceMac::registerCheckedPtr(const void* pointer) const
-{
-    CanMakeCheckedPtr::registerCheckedPtr(pointer);
-}
-
-void PlaybackSessionInterfaceMac::copyCheckedPtr(const void* source, const void* destination) const
-{
-    CanMakeCheckedPtr::copyCheckedPtr(source, destination);
-}
-
-void PlaybackSessionInterfaceMac::moveCheckedPtr(const void* source, const void* destination) const
-{
-    CanMakeCheckedPtr::moveCheckedPtr(source, destination);
-}
-
-void PlaybackSessionInterfaceMac::unregisterCheckedPtr(const void* pointer) const
-{
-    CanMakeCheckedPtr::unregisterCheckedPtr(pointer);
-}
-#endif // CHECKED_POINTER_DEBUG
-
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 #if !RELEASE_LOG_DISABLED

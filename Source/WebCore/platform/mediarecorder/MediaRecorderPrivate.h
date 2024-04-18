@@ -99,12 +99,6 @@ protected:
     bool shouldMuteVideo() const { return m_shouldMuteVideo; }
 
 private:
-#if CHECKED_POINTER_DEBUG
-    void registerCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::registerCheckedPtr(pointer); };
-    void copyCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::copyCheckedPtr(source, destination); }
-    void moveCheckedPtr(const void* source, const void* destination) const final { CanMakeCheckedPtr::moveCheckedPtr(source, destination); }
-    void unregisterCheckedPtr(const void* pointer) const final { CanMakeCheckedPtr::unregisterCheckedPtr(pointer); }
-#endif // CHECKED_POINTER_DEBUG
 
     virtual void stopRecording(CompletionHandler<void()>&&) = 0;
     virtual void pauseRecording(CompletionHandler<void()>&&) = 0;
