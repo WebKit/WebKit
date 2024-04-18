@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2022 Metrological Group B.V.
- * Copyright (C) 2022, 2024 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,73 +24,32 @@
  */
 
 #include "config.h"
-#include "GBMDevice.h"
+#include "DRMDeviceManager.h"
 
-#if USE(GBM)
-
-#include <fcntl.h>
-#include <gbm.h>
-#include <mutex>
-#include <unistd.h>
-#include <wtf/SafeStrerror.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/text/WTFString.h>
+#if USE(LIBDRM)
+#include "DRMDeviceNode.h"
 #include <xf86drm.h>
 
 namespace WebCore {
 
-GBMDevice::Device::~Device()
+DRMDeviceManager& DRMDeviceManager::singleton()
 {
-    if (m_gbmDevice.has_value() && m_gbmDevice.value())
-        gbm_device_destroy(m_gbmDevice.value());
-}
-
-struct gbm_device* GBMDevice::Device::device() const
-{
-    RELEASE_ASSERT(m_filename.has_value());
-    if (m_filename->isNull())
-        return nullptr;
-
-    if (m_gbmDevice)
-        return m_gbmDevice.value();
-
-    m_fd = UnixFileDescriptor { open(m_filename->data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
-    if (m_fd) {
-        m_gbmDevice = gbm_create_device(m_fd.value());
-        if (m_gbmDevice.value())
-            return m_gbmDevice.value();
-
-        WTFLogAlways("Failed to create GBM device for render device: %s: %s", m_filename->data(), safeStrerror(errno).data());
-        m_fd = { };
-    } else {
-        WTFLogAlways("Failed to open DRM render device %s: %s", m_filename->data(), safeStrerror(errno).data());
-        m_gbmDevice = nullptr;
-    }
-
-    return m_gbmDevice.value();
-}
-
-GBMDevice& GBMDevice::singleton()
-{
-    static std::unique_ptr<GBMDevice> s_device;
+    static std::unique_ptr<DRMDeviceManager> s_manager;
     static std::once_flag s_onceFlag;
     std::call_once(s_onceFlag, [] {
-        s_device = makeUnique<GBMDevice>();
+        s_manager = makeUnique<DRMDeviceManager>();
     });
-    return *s_device;
+    return *s_manager;
 }
 
-GBMDevice::~GBMDevice()
-{
-}
+DRMDeviceManager::~DRMDeviceManager() = default;
 
-void GBMDevice::initialize(const String& deviceFile)
+void DRMDeviceManager::initializeMainDevice(const String& deviceFile)
 {
-    RELEASE_ASSERT(!m_renderDevice.hasFilename());
-    if (deviceFile.isEmpty()) {
-        m_renderDevice.setFilename(nullptr);
+    RELEASE_ASSERT(!m_mainDevice.isInitialized);
+    m_mainDevice.isInitialized = true;
+    if (deviceFile.isEmpty())
         return;
-    }
 
     drmDevicePtr devices[64];
     memset(devices, 0, sizeof(devices));
@@ -99,7 +57,6 @@ void GBMDevice::initialize(const String& deviceFile)
     int numDevices = drmGetDevices2(0, devices, std::size(devices));
     if (numDevices <= 0) {
         WTFLogAlways("No DRM devices found");
-        m_renderDevice.setFilename(nullptr);
         return;
     }
 
@@ -118,28 +75,47 @@ void GBMDevice::initialize(const String& deviceFile)
         RELEASE_ASSERT(device->available_nodes & (1 << DRM_NODE_PRIMARY));
 
         if (device->available_nodes & (1 << DRM_NODE_RENDER)) {
-            m_renderDevice.setFilename(device->nodes[DRM_NODE_RENDER]);
-            m_displayDevice.setFilename(device->nodes[DRM_NODE_PRIMARY]);
+            m_mainDevice.primaryNode = DRMDeviceNode::create(CString { device->nodes[DRM_NODE_PRIMARY] });
+            m_mainDevice.renderNode = DRMDeviceNode::create(CString { device->nodes[DRM_NODE_RENDER] });
         } else
-            m_renderDevice.setFilename(device->nodes[DRM_NODE_PRIMARY]);
-    } else {
+            m_mainDevice.primaryNode = DRMDeviceNode::create(CString { device->nodes[DRM_NODE_PRIMARY] });
+    } else
         WTFLogAlways("Failed to find DRM device for %s", deviceFile.utf8().data());
-        m_renderDevice.setFilename(nullptr);
-    }
 
     drmFreeDevices(devices, numDevices);
 }
 
-struct gbm_device* GBMDevice::device(GBMDevice::Type type) const
+RefPtr<DRMDeviceNode> DRMDeviceManager::mainDeviceNode(DRMDeviceManager::NodeType nodeType) const
 {
-    RELEASE_ASSERT(m_renderDevice.hasFilename());
+    RELEASE_ASSERT(m_mainDevice.isInitialized);
 
-    if (type == Type::Render)
-        return m_renderDevice.device();
+    return nodeType == NodeType::Primary ? m_mainDevice.primaryNode : m_mainDevice.renderNode;
+}
 
-    return m_displayDevice.hasFilename() ? m_displayDevice.device() : m_renderDevice.device();
+#if USE(GBM)
+struct gbm_device* DRMDeviceManager::mainGBMDeviceNode(NodeType nodeType) const
+{
+    auto node = mainDeviceNode(nodeType);
+    return node ? node->gbmDevice() : nullptr;
+}
+#endif
+
+RefPtr<DRMDeviceNode> DRMDeviceManager::deviceNode(const CString& filename)
+{
+    RELEASE_ASSERT(m_mainDevice.isInitialized);
+
+    if (filename.isNull())
+        return nullptr;
+
+    if (m_mainDevice.primaryNode && m_mainDevice.primaryNode->filename() == filename)
+        return m_mainDevice.primaryNode;
+
+    if (m_mainDevice.renderNode && m_mainDevice.renderNode->filename() == filename)
+        return m_mainDevice.renderNode;
+
+    return DRMDeviceNode::create(CString { filename.data() });
 }
 
 } // namespace WebCore
 
-#endif // USE(GBM)
+#endif // USE(LIBDRM)

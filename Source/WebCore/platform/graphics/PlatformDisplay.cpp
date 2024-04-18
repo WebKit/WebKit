@@ -91,7 +91,7 @@
 #endif
 
 #if USE(GBM)
-#include "GBMDevice.h"
+#include "DRMDeviceManager.h"
 #include <drm_fourcc.h>
 #endif
 
@@ -157,8 +157,8 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
 #if PLATFORM(WPE)
     if (s_useDMABufForRendering) {
 #if USE(GBM)
-        if (GBMDevice::singleton().isInitialized()) {
-            if (auto* device = GBMDevice::singleton().device(GBMDevice::Type::Render))
+        if (DRMDeviceManager::singleton().isInitialized()) {
+            if (auto* device = DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render))
                 return PlatformDisplayGBM::create(device);
         }
 #endif
@@ -527,11 +527,11 @@ const String& PlatformDisplay::drmRenderNodeFile()
 #if USE(GBM)
 struct gbm_device* PlatformDisplay::gbmDevice()
 {
-    auto& device = GBMDevice::singleton();
-    if (!device.isInitialized())
-        device.initialize(drmRenderNodeFile());
+    auto& manager = DRMDeviceManager::singleton();
+    if (!manager.isInitialized())
+        manager.initializeMainDevice(drmRenderNodeFile());
 
-    return device.device(GBMDevice::Type::Render);
+    return manager.mainGBMDeviceNode(DRMDeviceManager::NodeType::Render);
 }
 
 const Vector<PlatformDisplay::DMABufFormat>& PlatformDisplay::dmabufFormats()

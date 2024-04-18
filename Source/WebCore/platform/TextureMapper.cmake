@@ -165,8 +165,9 @@ if (USE_GBM)
         platform/graphics/gbm/DMABufFormat.h
         platform/graphics/gbm/DMABufObject.h
         platform/graphics/gbm/DMABufReleaseFlag.h
+        platform/graphics/gbm/DRMDeviceManager.h
+        platform/graphics/gbm/DRMDeviceNode.h
         platform/graphics/gbm/GBMBufferSwapchain.h
-        platform/graphics/gbm/GBMDevice.h
         platform/graphics/gbm/GraphicsContextGLGBM.h
     )
 endif ()

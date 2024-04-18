@@ -31,7 +31,7 @@
 
 #include "ANGLEHeaders.h"
 #include "DMABufEGLUtilities.h"
-#include "GBMDevice.h"
+#include "DRMDeviceManager.h"
 #include "GLFence.h"
 #include "Logging.h"
 #include "PixelBuffer.h"
@@ -113,7 +113,7 @@ void GraphicsContextGLGBM::prepareForDisplay()
 
 bool GraphicsContextGLGBM::platformInitializeContext()
 {
-    auto* device = GBMDevice::singleton().device(GBMDevice::Type::Render);
+    auto* device = DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render);
     if (!device) {
         LOG(WebGL, "Warning: Unable to access the GBM device, we fallback to common GL images, they require a copy, that causes a performance penalty.");
         return false;

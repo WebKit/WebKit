@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2022 Metrological Group B.V.
- * Copyright (C) 2022 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,55 +25,51 @@
 
 #pragma once
 
-#if USE(GBM)
+#if USE(LIBDRM)
 
-#include <optional>
 #include <wtf/Noncopyable.h>
-#include <wtf/text/CString.h>
-#include <wtf/unix/UnixFileDescriptor.h>
 
+#if USE(GBM)
 struct gbm_device;
+#endif
 
 namespace WTF {
+class CString;
 class String;
 }
 
 namespace WebCore {
 
-class GBMDevice {
-    WTF_MAKE_NONCOPYABLE(GBMDevice);
+class DRMDeviceNode;
+
+class DRMDeviceManager {
+    WTF_MAKE_NONCOPYABLE(DRMDeviceManager);
     WTF_MAKE_FAST_ALLOCATED();
 public:
-    static GBMDevice& singleton();
+    static DRMDeviceManager& singleton();
 
-    GBMDevice() = default;
-    ~GBMDevice();
+    DRMDeviceManager() = default;
+    ~DRMDeviceManager();
 
-    bool isInitialized() const { return m_renderDevice.hasFilename(); }
-    void initialize(const WTF::String&);
-    enum class Type : bool { Render, Scanout };
-    struct gbm_device* device(Type) const;
+    void initializeMainDevice(const WTF::String&);
+    bool isInitialized() const { return m_mainDevice.isInitialized; }
+
+    enum class NodeType : bool { Primary, Render };
+    RefPtr<DRMDeviceNode> mainDeviceNode(NodeType) const;
+    RefPtr<DRMDeviceNode> deviceNode(const WTF::CString&);
+
+#if USE(GBM)
+    struct gbm_device* mainGBMDeviceNode(NodeType) const;
+#endif
 
 private:
-    class Device {
-    public:
-        Device() = default;
-        ~Device();
-
-        void setFilename(const char* filename) { m_filename = filename; }
-        bool hasFilename() const { return m_filename.has_value(); }
-        struct gbm_device* device() const;
-
-    private:
-        std::optional<CString> m_filename;
-        mutable WTF::UnixFileDescriptor m_fd;
-        mutable std::optional<struct gbm_device*> m_gbmDevice;
-    };
-
-    Device m_renderDevice;
-    Device m_displayDevice;
+    struct {
+        bool isInitialized { false };
+        RefPtr<DRMDeviceNode> primaryNode;
+        RefPtr<DRMDeviceNode> renderNode;
+    } m_mainDevice;
 };
 
 } // namespace WebCore
 
-#endif // USE(GBM)
+#endif // USE(LIBDRM)

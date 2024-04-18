@@ -64,8 +64,9 @@ platform/graphics/egl/GLContextWrapper.cpp @no-unify
 platform/graphics/egl/GLFence.cpp @no-unify
 platform/graphics/egl/PlatformDisplaySurfaceless.cpp @no-unify
 
+platform/graphics/gbm/DRMDeviceManager.cpp
+platform/graphics/gbm/DRMDeviceNode.cpp
 platform/graphics/gbm/GBMBufferSwapchain.cpp
-platform/graphics/gbm/GBMDevice.cpp
 platform/graphics/gbm/GraphicsContextGLGBM.cpp @no-unify
 platform/graphics/gbm/PlatformDisplayGBM.cpp @no-unify
 

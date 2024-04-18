@@ -82,7 +82,7 @@
 #endif
 
 #if USE(GBM)
-#include <WebCore/GBMDevice.h>
+#include <WebCore/DRMDeviceManager.h>
 #endif
 
 namespace WebKit {
@@ -274,7 +274,7 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #endif
 
 #if USE(GBM)
-    WebCore::GBMDevice::singleton().initialize(parameters.renderDeviceFile);
+    WebCore::DRMDeviceManager::singleton().initializeMainDevice(parameters.renderDeviceFile);
 #endif
 
     m_applicationVisibleName = WTFMove(parameters.applicationVisibleName);
