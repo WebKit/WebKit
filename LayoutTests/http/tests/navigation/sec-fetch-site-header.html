@@ -1,0 +1,8 @@
+<script>
+if (window.testRunner) {
+    testRunner.clearBackForwardList();
+    testRunner.dumpBackForwardList();
+    testRunner.dumpAsText();
+    testRunner.queueLoad("https://localhost:8443/referrer-policy/resources/check-sec-fetch-site.py?expected=none");
+}
+</script>

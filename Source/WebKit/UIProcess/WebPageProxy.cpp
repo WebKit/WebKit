@@ -1776,6 +1776,10 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, Sho
 
     Ref navigation = m_navigationState->createLoadRequestNavigation(process().coreProcessIdentifier(), ResourceRequest(request), m_backForwardList->protectedCurrentItem());
 
+    auto navigationData = navigation->lastNavigationAction();
+    navigationData.isRequestFromClientOrUserInput = true;
+    navigation->setLastNavigationAction(WTFMove(navigationData));
+
     if (shouldForceForegroundPriorityForClientNavigation())
         navigation->setClientNavigationActivity(process().throttler().foregroundActivity("Client navigation"_s));
 
@@ -1819,7 +1823,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     loadParameters.existingNetworkResourceLoadIdentifierToResume = existingNetworkResourceLoadIdentifierToResume;
     loadParameters.advancedPrivacyProtections = navigation.originatorAdvancedPrivacyProtections();
-    loadParameters.isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput() || shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No;
+    loadParameters.isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput();
     maybeInitializeSandboxExtensionHandle(process, url, internals().pageLoadState.resourceDirectoryURL(), loadParameters.sandboxExtensionHandle);
 
     prepareToLoadWebPage(process, loadParameters);
@@ -1874,6 +1878,10 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     }
 
     Ref navigation = m_navigationState->createLoadRequestNavigation(process().coreProcessIdentifier(), ResourceRequest(fileURL), m_backForwardList->protectedCurrentItem());
+
+    auto navigationData = navigation->lastNavigationAction();
+    navigationData.isRequestFromClientOrUserInput = true;
+    navigation->setLastNavigationAction(WTFMove(navigationData));
 
     if (shouldForceForegroundPriorityForClientNavigation())
         navigation->setClientNavigationActivity(process().throttler().foregroundActivity("Client navigation"_s));

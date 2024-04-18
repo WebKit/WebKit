@@ -34,6 +34,19 @@ Sources:
       });
   }
 
+  function induceNoReferrerRequest(url, test) {
+    const iframe = document.createElement('iframe');
+    iframe.referrerPolicy = 'no-referrer';
+    iframe.setAttribute('src', url);
+
+    document.body.appendChild(iframe);
+    test.add_cleanup(() => iframe.remove());
+
+    return new Promise((resolve) => {
+      iframe.onload = iframe.onerror = resolve;
+    });
+  }
+
   promise_test((t) => {
     const key = '{{uuid()}}';
 
@@ -245,6 +258,34 @@ Sources:
           assert_array_equals(headers['sec-fetch-site'], ['cross-site']);
         });
   }, 'sec-fetch-site - HTTPS downgrade-upgrade');
+
+  promise_test((t) => {
+    const key = '{{uuid()}}';
+
+    return induceNoReferrerRequest(
+        makeRequestURL(key, ['httpsOrigin'], {mime: 'text/html'}),
+        t
+      )
+      .then(() => retrieve(key))
+      .then((headers) => {
+          assert_own_property(headers, 'sec-fetch-site');
+          assert_array_equals(headers['sec-fetch-site'], ['cross-site']);
+        });
+  }, 'sec-fetch-site - no referrer');
+
+  promise_test((t) => {
+    const key = '{{uuid()}}';
+
+    return induceNoReferrerRequest(
+        makeRequestURL(key, ['httpsOrigin', 'httpOrigin'], {mime: 'text/html'}),
+        t
+      )
+      .then(() => retrieve(key))
+      .then((headers) => {
+          assert_own_property(headers, 'sec-fetch-site');
+          assert_array_equals(headers['sec-fetch-site'], ['cross-site']);
+        });
+  }, 'sec-fetch-site - no referrer - redirection');
   </script>
   </body>
 </html>

@@ -127,7 +127,7 @@ SubresourceLoader::SubresourceLoader(LocalFrame& frame, CachedResource& resource
     m_resourceType = ContentExtensions::toResourceType(resource.type(), resource.resourceRequest().requester());
 #endif
     m_canCrossOriginRequestsAskUserForCredentials = resource.type() == CachedResource::Type::MainResource;
-    m_site = CachedResourceLoader::computeFetchMetadataSite(resource.resourceRequest(), resource.type(), options.mode, frame.document()->securityOrigin());
+    m_site = CachedResourceLoader::computeFetchMetadataSite(resource.resourceRequest(), resource.type(), options.mode, frame.document()->securityOrigin(), FetchMetadataSite::SameOrigin, frame.isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput());
 }
 
 SubresourceLoader::~SubresourceLoader()
@@ -300,7 +300,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
         RefPtr documentLoader = this->documentLoader();
         Ref originalOrigin = SecurityOrigin::create(redirectResponse.url());
         Ref cachedResourceLoader = documentLoader->cachedResourceLoader();
-        m_site = cachedResourceLoader->computeFetchMetadataSite(newRequest, m_resource->type(), options().mode, originalOrigin, m_site);
+        m_site = CachedResourceLoader::computeFetchMetadataSite(newRequest, m_resource->type(), options().mode, originalOrigin, m_site, m_frame && m_frame->isMainFrame() && documentLoader->isRequestFromClientOrUserInput());
 
         if (!cachedResourceLoader->updateRequestAfterRedirection(resource->type(), newRequest, options(), m_site, originalRequest().url())) {
             SUBRESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because CachedResourceLoader::updateRequestAfterRedirection (really CachedResourceLoader::canRequestAfterRedirection) said no");
