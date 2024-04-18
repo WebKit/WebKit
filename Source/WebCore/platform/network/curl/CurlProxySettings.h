@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/ArgumentCoder.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,6 +40,15 @@ public:
         Default,
         NoProxy,
         Custom
+    };
+
+    struct DefaultData {
+    };
+    struct NoProxyData {
+    };
+    struct CustomData {
+        URL url;
+        String ignoreHosts;
     };
 
     CurlProxySettings() = default;
@@ -63,6 +73,11 @@ public:
     long authMethod() const { return m_authMethod; }
 
 private:
+    friend struct IPC::ArgumentCoder<CurlProxySettings, void>;
+    using IPCData = std::variant<DefaultData, NoProxyData, CustomData>;
+    WEBCORE_EXPORT IPCData toIPCData() const;
+    WEBCORE_EXPORT static CurlProxySettings fromIPCData(IPCData&&);
+
     Mode m_mode { Mode::Default };
     URL m_url;
     String m_ignoreHosts;
