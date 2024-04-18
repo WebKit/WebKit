@@ -16,8 +16,10 @@ addEventListener("message", (event) => {
         openedWindow.postMessage('initial reply', '*');
         return;
     }
-    testPassed("received message from opened window: " + event.data);
-    finishJSTest();
+    if (event.data.startsWith("opened window received: ")) {
+        testPassed("received message from opened window: " + event.data);
+        finishJSTest();
+    }
 });
 
 </script>
