@@ -338,7 +338,6 @@ private:
     std::optional<AccessibilityChildrenVector> selectedChildren() final;
     void setSelectedChildren(const AccessibilityChildrenVector&) final;
     AccessibilityChildrenVector visibleChildren() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::VisibleChildren)); }
-    AtomString tagName() const final;
     void setChildrenIDs(Vector<AXID>&&);
     void updateChildrenIfNecessary() final;
     bool isDetachedFromParent() final;

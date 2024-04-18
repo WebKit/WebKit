@@ -1383,12 +1383,6 @@ void AXIsolatedObject::decrement()
     });
 }
 
-AtomString AXIsolatedObject::tagName() const
-{
-    ASSERT_NOT_REACHED();
-    return AtomString();
-}
-
 bool AXIsolatedObject::isAccessibilityRenderObject() const
 {
     ASSERT_NOT_REACHED();

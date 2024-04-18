@@ -3985,12 +3985,19 @@ bool AccessibilityObject::isARIAHidden() const
         return false;
 
     auto* node = this->node();
+    auto* element = dynamicDowncast<Element>(node);
+    AtomString tag = element ? element->localName() : nullAtom();
+    // https://github.com/w3c/aria/pull/1880
+    // To prevent authors from hiding all content from assistive technology users, do not respect
+    // aria-hidden on html, body, or document-root svg elements.
+    if (tag == bodyTag || tag == htmlTag || (tag == SVGNames::svgTag && !element->parentNode()))
+        return false;
+
     if (auto* assignedSlot = node ? node->assignedSlot() : nullptr) {
         if (equalLettersIgnoringASCIICase(assignedSlot->attributeWithDefaultARIA(aria_hiddenAttr), "true"_s))
             return true;
     }
-
-    return equalLettersIgnoringASCIICase(getAttribute(aria_hiddenAttr), "true"_s);
+    return element && equalLettersIgnoringASCIICase(element->attributeWithDefaultARIA(aria_hiddenAttr), "true"_s);
 }
 
 // ARIA component of hidden definition.
@@ -4172,10 +4179,8 @@ AccessibilityObject* AccessibilityObject::radioGroupAncestor() const
 
 AtomString AccessibilityObject::tagName() const
 {
-    if (Element* element = this->element())
-        return element->localName();
-
-    return nullAtom();
+    auto* element = this->element();
+    return element ? element->localName() : nullAtom();
 }
 
 bool AccessibilityObject::isStyleFormatGroup() const
@@ -4429,7 +4434,7 @@ void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject
 
     AccessibilityIsIgnoredFromParentData result = AccessibilityIsIgnoredFromParentData(this);
     if (!m_isIgnoredFromParentData.isNull()) {
-        result.isAXHidden = (m_isIgnoredFromParentData.isAXHidden || equalLettersIgnoringASCIICase(child->getAttribute(aria_hiddenAttr), "true"_s)) && !child->isFocused();
+        result.isAXHidden = (m_isIgnoredFromParentData.isAXHidden || child->isARIAHidden());
         result.isPresentationalChildOfAriaRole = m_isIgnoredFromParentData.isPresentationalChildOfAriaRole || ariaRoleHasPresentationalChildren();
         result.isDescendantOfBarrenParent = m_isIgnoredFromParentData.isDescendantOfBarrenParent || !canHaveChildren();
     } else {

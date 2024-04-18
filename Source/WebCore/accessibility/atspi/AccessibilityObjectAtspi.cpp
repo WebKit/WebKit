@@ -864,7 +864,7 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
 
     RefPtr liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
 
-    String tagName = m_coreObject->tagName();
+    String tagName = liveObject->tagName();
     if (!tagName.isEmpty())
         map.add("tag"_s, tagName);
 

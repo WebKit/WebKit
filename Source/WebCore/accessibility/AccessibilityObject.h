@@ -543,7 +543,7 @@ public:
     String nameAttribute() const final;
     int getIntegralAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const;
-    AtomString tagName() const override;
+    AtomString tagName() const;
     bool hasDisplayContents() const;
 
     std::optional<SimpleRange> simpleRange() const override;

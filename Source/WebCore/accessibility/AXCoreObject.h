@@ -1275,7 +1275,6 @@ public:
     bool isAncestorOfObject(const AXCoreObject*) const;
 
     virtual String nameAttribute() const = 0;
-    virtual AtomString tagName() const = 0;
 
     virtual std::optional<SimpleRange> simpleRange() const = 0;
     virtual VisiblePositionRange visiblePositionRange() const = 0;
