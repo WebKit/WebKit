@@ -38,10 +38,11 @@ class HTTPHeaderMap {
 public:
     struct CommonHeader {
         HTTPHeaderName key;
+        String customKey;
         String value;
 
-        CommonHeader isolatedCopy() const & { return { key , value.isolatedCopy() }; }
-        CommonHeader isolatedCopy() && { return { key , WTFMove(value).isolatedCopy() }; }
+        CommonHeader isolatedCopy() const & { return { key, customKey.isolatedCopy(), value.isolatedCopy() }; }
+        CommonHeader isolatedCopy() && { return { key, customKey.isolatedCopy(), WTFMove(value).isolatedCopy() }; }
 
         friend bool operator==(const CommonHeader&, const CommonHeader&) = default;
     };
@@ -56,8 +57,8 @@ public:
         friend bool operator==(const UncommonHeader&, const UncommonHeader&) = default;
     };
 
-    typedef Vector<CommonHeader, 0, CrashOnOverflow, 6> CommonHeadersVector;
-    typedef Vector<UncommonHeader, 0, CrashOnOverflow, 0> UncommonHeadersVector;
+    using CommonHeadersVector = Vector<CommonHeader, 0, CrashOnOverflow, 6>;
+    using UncommonHeadersVector = Vector<UncommonHeader, 0, CrashOnOverflow, 0>;
 
     class HTTPHeaderMapConstIterator {
     public:
@@ -111,7 +112,7 @@ public:
         {
             if (it == m_table.commonHeaders().end())
                 return false;
-            m_keyValue.key = httpHeaderNameString(it->key);
+            m_keyValue.key = it->customKey.isEmpty() ? httpHeaderNameString(it->key) : it->customKey;
             m_keyValue.keyAsHTTPHeaderName = it->key;
             m_keyValue.value = it->value;
             return true;
@@ -173,7 +174,9 @@ public:
 
     WEBCORE_EXPORT String get(HTTPHeaderName) const;
     void set(HTTPHeaderName, const String& value);
+    void set(HTTPHeaderName, const String& customKey, const String& value);
     void add(HTTPHeaderName, const String& value);
+    void add(HTTPHeaderName, const String& customKey, const String& value);
     bool addIfNotPresent(HTTPHeaderName, const String&);
     WEBCORE_EXPORT bool contains(HTTPHeaderName) const;
     WEBCORE_EXPORT bool remove(HTTPHeaderName);

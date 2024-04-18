@@ -1915,6 +1915,7 @@ struct WebCore::ViewportArguments {
 header: <WebCore/HTTPHeaderMap.h>
 [Nested, CustomHeader] struct WebCore::HTTPHeaderMap::CommonHeader {
     WebCore::HTTPHeaderName key;
+    String customKey;
     String value;
 };
 
