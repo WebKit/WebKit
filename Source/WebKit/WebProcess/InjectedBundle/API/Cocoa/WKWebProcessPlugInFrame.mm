@@ -117,6 +117,8 @@
 
 - (WKWebProcessPlugInBrowserContextController *)_browserContextController
 {
+    if (!_frame->page())
+        return nil;
     return WebKit::wrapper(*_frame->page());
 }
 
