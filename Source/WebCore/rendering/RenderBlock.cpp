@@ -745,10 +745,11 @@ void RenderBlock::addOverflowFromPositionedObjects()
     if (!positionedDescendants)
         return;
 
+    auto clientBoxRect = this->flippedClientBoxRect();
     for (auto& positionedObject : *positionedDescendants) {
         // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
         if (positionedObject.style().position() != PositionType::Fixed)
-            addOverflowFromChild(positionedObject, { positionedObject.x(), positionedObject.y() });
+            addOverflowFromChild(positionedObject, { positionedObject.x(), positionedObject.y() }, clientBoxRect);
     }
 }
 
@@ -3376,6 +3377,19 @@ void RenderBlock::setIntrinsicBorderForFieldset(LayoutUnit padding)
         rareData = &ensureBlockRareData(*this);
     }
     rareData->m_intrinsicBorderForFieldset = padding;
+}
+
+RectEdges<LayoutUnit> RenderBlock::borderWidths() const
+{
+    if (!intrinsicBorderForFieldset())
+        return RenderBox::borderWidths();
+
+    return {
+        borderTop(),
+        borderRight(),
+        borderBottom(),
+        borderLeft()
+    };
 }
 
 LayoutUnit RenderBlock::borderTop() const

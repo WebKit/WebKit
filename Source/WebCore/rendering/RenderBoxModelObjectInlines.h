@@ -78,6 +78,16 @@ inline LayoutSize RenderBoxModelObject::stickyPositionLogicalOffset() const { re
 inline LayoutUnit RenderBoxModelObject::verticalBorderAndPaddingExtent() const { return borderTop() + borderBottom() + paddingTop() + paddingBottom(); }
 inline LayoutUnit RenderBoxModelObject::verticalBorderExtent() const { return borderTop() + borderBottom(); }
 
+inline RectEdges<LayoutUnit> RenderBoxModelObject::borderWidths() const
+{
+    return {
+        LayoutUnit(style().borderTopWidth()),
+        LayoutUnit(style().borderRightWidth()),
+        LayoutUnit(style().borderBottomWidth()),
+        LayoutUnit(style().borderLeftWidth())
+    };
+}
+
 inline LayoutUnit RenderBoxModelObject::computedCSSPadding(const Length& padding) const
 {
     LayoutUnit containerWidth;

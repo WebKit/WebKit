@@ -57,15 +57,16 @@ public:
     
     bool collapseBorders() const { return style().borderCollapse() == BorderCollapse::Collapse; }
 
-    LayoutUnit borderStart() const override { return m_borderStart; }
-    LayoutUnit borderEnd() const override { return m_borderEnd; }
-    LayoutUnit borderBefore() const override;
-    LayoutUnit borderAfter() const override;
+    LayoutUnit borderStart() const final { return m_borderStart; }
+    LayoutUnit borderEnd() const final { return m_borderEnd; }
+    LayoutUnit borderBefore() const final;
+    LayoutUnit borderAfter() const final;
 
-    inline LayoutUnit borderLeft() const override;
-    inline LayoutUnit borderRight() const override;
-    inline LayoutUnit borderTop() const override;
-    inline LayoutUnit borderBottom() const override;
+    RectEdges<LayoutUnit> borderWidths() const final;
+    inline LayoutUnit borderLeft() const final;
+    inline LayoutUnit borderRight() const final;
+    inline LayoutUnit borderTop() const final;
+    inline LayoutUnit borderBottom() const final;
 
     Color bgColor() const { return style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor); }
 

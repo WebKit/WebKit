@@ -203,10 +203,13 @@ public:
     // (flexbox, block, etc.)
     LayoutUnit intrinsicBorderForFieldset() const;
     void setIntrinsicBorderForFieldset(LayoutUnit);
+
+    RectEdges<LayoutUnit> borderWidths() const override;
     LayoutUnit borderTop() const override;
     LayoutUnit borderBottom() const override;
     LayoutUnit borderLeft() const override;
     LayoutUnit borderRight() const override;
+
     LayoutUnit borderBefore() const override;
     LayoutUnit adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const override;
     LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const override;

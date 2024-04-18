@@ -169,8 +169,10 @@ public:
 
     void addVisualEffectOverflow();
     LayoutRect applyVisualEffectOverflow(const LayoutRect&) const;
+
     void addOverflowFromChild(const RenderBox& child) { addOverflowFromChild(child, child.locationOffset()); }
     void addOverflowFromChild(const RenderBox& child, const LayoutSize& delta);
+    void addOverflowFromChild(const RenderBox&, const LayoutSize& delta, const LayoutRect& flippedClientRect);
 
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const override;
 
@@ -772,6 +774,8 @@ private:
     LayoutPoint topLeftLocationWithFlipping() const;
 
     void clipContentForBorderRadius(GraphicsContext&, const LayoutPoint&, float);
+
+    void addLayoutOverflow(const LayoutRect&, const LayoutRect& flippedClientRect);
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).

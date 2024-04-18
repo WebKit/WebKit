@@ -65,6 +65,7 @@ public:
 
     void setCellLogicalWidth(LayoutUnit constrainedLogicalWidth);
 
+    RectEdges<LayoutUnit> borderWidths() const override;
     LayoutUnit borderLeft() const override;
     LayoutUnit borderRight() const override;
     LayoutUnit borderTop() const override;
