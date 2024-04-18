@@ -532,9 +532,6 @@ void GraphicsContextSkia::clip(const FloatRect& rect)
 
 void GraphicsContextSkia::clipPath(const Path& path, WindRule clipRule)
 {
-    if (path.isEmpty())
-        return;
-
     auto fillRule = toSkiaFillType(clipRule);
     auto& skiaPath = *path.platformPath();
     if (skiaPath.getFillType() == fillRule) {
