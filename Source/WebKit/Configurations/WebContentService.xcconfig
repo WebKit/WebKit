@@ -30,14 +30,14 @@ PRODUCT_NAME_Development = com.apple.WebKit.WebContent.Development;
 PRODUCT_NAME_CaptivePortal = com.apple.WebKit.WebContent.CaptivePortal;
 
 PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_NAME);
-PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator*] = $(PRODUCT_NAME).Service;
-PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator17.0*] = $(PRODUCT_NAME);
-PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator17.1*] = $(PRODUCT_NAME);
-PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator17.2*] = $(PRODUCT_NAME);
-PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator17.3*] = $(PRODUCT_NAME);
-PRODUCT_BUNDLE_IDENTIFIER[sdk=watchsimulator*] = $(PRODUCT_NAME);
-PRODUCT_BUNDLE_IDENTIFIER[sdk=appletvsimulator*] = $(PRODUCT_NAME);
-PRODUCT_BUNDLE_IDENTIFIER[sdk=xrsimulator*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=iphone*] = $(PRODUCT_NAME).Service;
+PRODUCT_BUNDLE_IDENTIFIER[sdk=iphone*17.0*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=iphone*17.1*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=iphone*17.2*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=iphone*17.3*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=watch*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=appletv*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=xr*] = $(PRODUCT_NAME);
 
 INFOPLIST_FILE[sdk=embedded*] = WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist;
 INFOPLIST_FILE[sdk=macosx*] = WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-OSX.plist;
