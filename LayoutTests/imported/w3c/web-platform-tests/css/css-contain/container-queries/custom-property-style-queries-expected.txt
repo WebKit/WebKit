@@ -59,6 +59,10 @@ PASS Style query 'initial' matching
 PASS Style query matching negated value-less query against initial value
 PASS Style query 'initial' not matching
 PASS Style query matching value-less query against non-initial value
+PASS Style query 'initial' matching (with explicit 'initial' value)
+PASS Style query matching negated value-less query against initial value (with explicit 'initial' value)
+PASS Style query 'space' matching
+PASS Style query 'space' not matching
 PASS Style query 'inherit' matching
 PASS Style query 'inherit' not matching
 PASS Style query 'unset' matching
