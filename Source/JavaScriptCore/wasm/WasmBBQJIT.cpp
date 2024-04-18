@@ -1698,8 +1698,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI32Sub(Value lhs, Value rhs, Value& 
         BLOCK(
             if (rhs.isConst()) {
                 // Add a negative if rhs is a constant.
-                m_jit.move(lhsLocation.asGPR(), resultLocation.asGPR());
-                m_jit.add32(Imm32(-rhs.asI32()), resultLocation.asGPR());
+                m_jit.add32(Imm32(rhs.asI32() == INT32_MIN ? rhs.asI32() : -rhs.asI32()), resultLocation.asGPR());
             } else {
                 emitMoveConst(lhs, Location::fromGPR(wasmScratchGPR));
                 m_jit.sub32(wasmScratchGPR, rhsLocation.asGPR(), resultLocation.asGPR());
@@ -2285,7 +2284,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI32Rotl(Value lhs, Value rhs, Value&
         ),
         BLOCK(
             if (rhs.isConst())
-                m_jit.rotateRight32(lhsLocation.asGPR(), m_jit.trustedImm32ForShift(Imm32(-rhs.asI32())), resultLocation.asGPR());
+                m_jit.rotateRight32(lhsLocation.asGPR(), m_jit.trustedImm32ForShift(Imm32(rhs.asI32() == INT32_MIN ? rhs.asI32() : -rhs.asI32())), resultLocation.asGPR());
             else {
                 moveShiftAmountIfNecessary(rhsLocation);
                 m_jit.neg32(rhsLocation.asGPR(), wasmScratchGPR);
