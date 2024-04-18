@@ -76,8 +76,8 @@ public:
     
     AccessibilityObject* firstChild() const override;
     AccessibilityObject* lastChild() const override;
-    AccessibilityObject* previousSibling() const override;
-    AccessibilityObject* nextSibling() const override;
+    AccessibilityObject* previousSibling() const final;
+    AccessibilityObject* nextSibling() const final;
     AccessibilityObject* parentObject() const override;
     AccessibilityObject* parentObjectIfExists() const override;
     AccessibilityObject* observableObject() const override;

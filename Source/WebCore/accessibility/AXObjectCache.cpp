@@ -2227,16 +2227,13 @@ void AXObjectCache::liveRegionChangedNotificationPostTimerFired()
     m_liveRegionObjectsSet.clear();
 }
 
-static AccessibilityObject* firstFocusableChild(AccessibilityObject* obj)
+static AccessibilityObject* firstFocusableChild(AccessibilityObject& object)
 {
-    if (!obj)
-        return nullptr;
-    
-    for (auto* child = obj->firstChild(); child; child = child->nextSibling()) {
-        if (child->canSetFocusAttribute())
-            return child;
-        if (AccessibilityObject* focusable = firstFocusableChild(child))
-            return focusable;
+    for (auto& child : AXChildIterator(object)) {
+        if (child.canSetFocusAttribute())
+            return &child;
+        if (auto* focusableDescendant = firstFocusableChild(child))
+            return focusableDescendant;
     }
     return nullptr;
 }
@@ -2259,8 +2256,8 @@ void AXObjectCache::focusCurrentModal()
     if (m_currentModalElement->contains(document->focusedElement()))
         return;
 
-    if (AccessibilityObject* currentModalNodeObject = getOrCreate(*m_currentModalElement)) {
-        if (AccessibilityObject* focusable = firstFocusableChild(currentModalNodeObject))
+    if (auto* currentModalNodeObject = getOrCreate(*m_currentModalElement)) {
+        if (auto* focusable = firstFocusableChild(*currentModalNodeObject))
             focusable->setFocused(true);
     }
 }

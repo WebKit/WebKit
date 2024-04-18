@@ -32,7 +32,10 @@
 #include "AXIsolatedTree.h"
 #include "AXLogger.h"
 #include "AXTextRun.h"
+#include "AccessibilityNodeObject.h"
 #include "DateComponents.h"
+#include "HTMLNames.h"
+#include "RenderObject.h"
 
 #if PLATFORM(MAC)
 #import <pal/spi/mac/HIServicesSPI.h>
@@ -43,6 +46,8 @@
 #endif
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 AXIsolatedObject::AXIsolatedObject(const Ref<AccessibilityObject>& axObject, AXIsolatedTree* tree)
     : AXCoreObject(axObject->objectID())

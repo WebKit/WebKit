@@ -2194,7 +2194,7 @@ void AccessibilityNodeObject::setIsExpanded(bool expand)
 
 // When building the textUnderElement for an object, determine whether or not
 // we should include the inner text of this given descendant object or skip it.
-static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, TextUnderElementMode mode)
+static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject& object, TextUnderElementMode mode)
 {
     // Do not use any heuristic if we are explicitly asking to include all the children.
     if (mode.childrenInclusion == TextUnderElementMode::Children::IncludeAllChildren)
@@ -2219,33 +2219,33 @@ static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, Text
 
     // ARIA states that certain elements are not allowed to expose their children content for name calculation.
     if (mode.childrenInclusion == TextUnderElementMode::Children::IncludeNameFromContentsChildren
-        && !obj->accessibleNameDerivesFromContent())
+        && !object.accessibleNameDerivesFromContent())
         return false;
 
-    if (equalLettersIgnoringASCIICase(obj->getAttribute(aria_hiddenAttr), "true"_s))
+    if (equalLettersIgnoringASCIICase(object.getAttribute(aria_hiddenAttr), "true"_s))
         return false;
 
     // If something doesn't expose any children, then we can always take the inner text content.
     // This is what we want when someone puts an <a> inside a <button> for example.
-    if (obj->isDescendantOfBarrenParent())
+    if (object.isDescendantOfBarrenParent())
         return true;
 
     // Skip focusable children, so we don't include the text of links and controls.
-    if (obj->canSetFocusAttribute() && !mode.includeFocusableContent)
+    if (object.canSetFocusAttribute() && !mode.includeFocusableContent)
         return false;
 
     // Skip big container elements like lists, tables, etc.
-    if (is<AccessibilityList>(*obj))
+    if (is<AccessibilityList>(object))
         return false;
 
-    if (auto* table = dynamicDowncast<AccessibilityTable>(*obj); table && table->isExposable())
+    if (auto* table = dynamicDowncast<AccessibilityTable>(object); table && table->isExposable())
         return false;
 
-    if (obj->isTree() || obj->isCanvas())
+    if (object.isTree() || object.isCanvas())
         return false;
 
 #if ENABLE(MODEL_ELEMENT)
-    if (obj->isModel())
+    if (object.isModel())
         return false;
 #endif
 
@@ -2354,7 +2354,8 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
         }
     };
 
-    for (RefPtr child = firstChild(); child; previous = child, child = child->nextSibling()) {
+    auto childIterator = AXChildIterator(*this);
+    for (auto child = childIterator.begin(); child != childIterator.end(); previous = child.ptr(), ++child) {
         if (mode.ignoredChildNode && child->node() == mode.ignoredChildNode)
             continue;
 
@@ -2375,7 +2376,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
             continue;
         }
 
-        if (!shouldUseAccessibilityObjectInnerText(child.get(), mode))
+        if (!shouldUseAccessibilityObjectInnerText(*child, mode))
             continue;
 
         if (auto* accessibilityNodeObject = dynamicDowncast<AccessibilityNodeObject>(*child)) {
