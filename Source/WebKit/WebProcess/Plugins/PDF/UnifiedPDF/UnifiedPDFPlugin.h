@@ -43,6 +43,7 @@ OBJC_CLASS WKPDFFormMutationObserver;
 
 namespace WebCore {
 class FrameView;
+class KeyboardScrollingAnimator;
 class PageOverlay;
 
 enum class DelegatedScrollingMode : uint8_t;
@@ -187,6 +188,8 @@ public:
 
     RetainPtr<PDFPage> pageAtIndex(PDFDocumentLayout::PageIndex) const;
 
+    void setPDFDisplayModeForTesting(const String&) final;
+
 private:
     explicit UnifiedPDFPlugin(WebCore::HTMLPlugInElement&);
     bool isUnifiedPDFPlugin() const override { return true; }
@@ -286,6 +289,16 @@ private:
     void selectAll();
     [[maybe_unused]] bool performCopyEditingOperation() const;
     void performCopyLinkOperation(const WebCore::IntPoint& contextMenuEventRootViewPoint) const;
+
+#if PLATFORM(MAC)
+    bool handleKeyboardCommand(const WebKeyboardEvent&);
+    bool handleKeyboardEventForDiscreteDisplayMode(const WebKeyboardEvent&);
+    CheckedPtr<WebCore::KeyboardScrollingAnimator> checkedKeyboardScrollingAnimator() const;
+#endif
+
+    void animatedScrollDidEnd() final;
+
+    void setDisplayModeAndUpdateLayout(PDFDocumentLayout::DisplayMode);
 
     // Context Menu
 #if ENABLE(CONTEXT_MENUS)
@@ -446,7 +459,6 @@ private:
     bool requestStopKeyboardScrollAnimation(bool immediate) override;
     void updateSnapOffsets() override;
 
-    bool shouldUseScrollSnapping() const;
     bool shouldDisplayPage(PDFDocumentLayout::PageIndex);
     void populateScrollSnapIdentifiers();
     PDFDocumentLayout::PageIndex pageForScrollSnapIdentifier(WebCore::ElementIdentifier) const;
@@ -513,7 +525,14 @@ private:
 
 #if PLATFORM(MAC)
     void createPasswordEntryForm();
+
+    bool snapToNearbyPageExtentForKeyboardScrolling(WebCore::ScrollDirection);
 #endif
+
+    bool isInDiscreteDisplayMode() const;
+    bool isShowingTwoPages() const;
+
+    WebCore::FloatRect pageBoundsInContentsSpace(PDFDocumentLayout::PageIndex) const;
 
     Ref<AsyncPDFRenderer> asyncRenderer();
     RefPtr<AsyncPDFRenderer> asyncRendererIfExists() const;
@@ -571,6 +590,9 @@ private:
 #if PLATFORM(MAC)
     RefPtr<PDFPluginPasswordField> m_passwordField;
     RefPtr<PDFPluginPasswordForm> m_passwordForm;
+
+    bool m_isScrollingWithAnimationToPageExtent { false };
+    std::optional<WebCore::ScrollDirection> m_animatedKeyboardScrollingDirection;
 #endif
 
     Vector<WebCore::ElementIdentifier> m_scrollSnapIdentifiers;

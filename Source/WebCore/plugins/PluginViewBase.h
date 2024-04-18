@@ -74,7 +74,7 @@ public:
 #if PLATFORM(COCOA)
     virtual id accessibilityAssociatedPluginParentForElement(Element*) const { return nullptr; }
 #endif
-    
+    virtual void setPDFDisplayModeForTesting(const String&) { };
     virtual Vector<FloatRect> pdfAnnotationRectsForTesting() const { return { }; }
 
 protected:

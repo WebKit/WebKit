@@ -1306,13 +1306,30 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     [self typeCharacter:character modifiers:0];
 }
 
+- (void)sendKey:(NSString *)characters code:(unsigned short)keyCode isDown:(BOOL)isDown modifiers:(NSEventModifierFlags)modifiers
+{
+    NSEvent *event = [NSEvent keyEventWithType:isDown ? NSEventTypeKeyDown : NSEventTypeKeyUp
+        location:NSZeroPoint
+        modifierFlags:modifiers
+        timestamp:self.eventTimestamp
+        windowNumber:[_hostWindow windowNumber]
+        context:nil
+        characters:characters
+        charactersIgnoringModifiers:characters
+        isARepeat:NO
+        keyCode:keyCode];
+
+    if (isDown)
+        [self keyDown:event];
+    else
+        [self keyUp:event];
+}
+
 - (void)typeCharacter:(char)character modifiers:(NSEventModifierFlags)modifiers
 {
-    NSString *characterAsString = [NSString stringWithFormat:@"%c" , character];
-    NSEventType keyDownEventType = NSEventTypeKeyDown;
-    NSEventType keyUpEventType = NSEventTypeKeyUp;
-    [self keyDown:[NSEvent keyEventWithType:keyDownEventType location:NSZeroPoint modifierFlags:modifiers timestamp:self.eventTimestamp windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
-    [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:modifiers timestamp:self.eventTimestamp windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
+    NSString *characters = [NSString stringWithFormat:@"%c", character];
+    for (auto isDown : std::array { YES, NO })
+        [self sendKey:characters code:character isDown:isDown modifiers:modifiers];
 }
 
 // Note: this testing strategy makes a couple of assumptions:

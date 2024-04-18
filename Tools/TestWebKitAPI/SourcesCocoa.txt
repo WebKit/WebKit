@@ -258,6 +258,7 @@ Tests/WebKitCocoa/TextWidth.mm
 Tests/WebKitCocoa/TimeZoneOverride.mm
 Tests/WebKitCocoa/TopContentInset.mm
 Tests/WebKitCocoa/UIDelegate.mm
+Tests/WebKitCocoa/UnifiedPDFTests.mm
 Tests/WebKitCocoa/UploadDirectory.mm
 Tests/WebKitCocoa/UseSelectionAsFindString.mm
 Tests/WebKitCocoa/UserContentController.mm

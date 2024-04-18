@@ -1027,6 +1027,11 @@ void PluginView::didSameDocumentNavigationForFrame(WebFrame& frame)
     return protectedPlugin()->didSameDocumentNavigationForFrame(frame);
 }
 
+void PluginView::setPDFDisplayModeForTesting(const String& mode)
+{
+    protectedPlugin()->setPDFDisplayModeForTesting(mode);
+}
+
 Vector<WebCore::FloatRect> PluginView::pdfAnnotationRectsForTesting() const
 {
     return protectedPlugin()->annotationRectsForTesting();

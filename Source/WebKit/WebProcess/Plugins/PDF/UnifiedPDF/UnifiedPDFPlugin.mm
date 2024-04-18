@@ -1404,7 +1404,10 @@ void UnifiedPDFPlugin::didChangeScrollOffset()
 #if PLATFORM(MAC)
     if (m_activeAnnotation)
         m_activeAnnotation->updateGeometry();
-#endif
+
+    if (m_animatedKeyboardScrollingDirection && !m_isScrollingWithAnimationToPageExtent)
+        snapToNearbyPageExtentForKeyboardScrolling(*m_animatedKeyboardScrollingDirection);
+#endif // PLATFORM(MAC)
 
     determineCurrentlySnappedPage();
 
@@ -1678,9 +1681,22 @@ PDFDocumentLayout::PageIndex UnifiedPDFPlugin::pageForScrollSnapIdentifier(Eleme
     return index;
 }
 
-bool UnifiedPDFPlugin::shouldUseScrollSnapping() const
+bool UnifiedPDFPlugin::isInDiscreteDisplayMode() const
 {
     return m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::SinglePageDiscrete || m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::TwoUpDiscrete;
+}
+
+bool UnifiedPDFPlugin::isShowingTwoPages() const
+{
+    return m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::TwoUpContinuous || m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::TwoUpDiscrete;
+}
+
+FloatRect UnifiedPDFPlugin::pageBoundsInContentsSpace(PDFDocumentLayout::PageIndex index) const
+{
+    auto bounds = m_documentLayout.layoutBoundsForPageAtIndex(index);
+    bounds.inflate(PDFDocumentLayout::pageMargin);
+    bounds.scale(contentScaleFactor());
+    return bounds;
 }
 
 void UnifiedPDFPlugin::updateSnapOffsets()
@@ -1688,7 +1704,7 @@ void UnifiedPDFPlugin::updateSnapOffsets()
     if (m_scrollSnapIdentifiers.isEmpty())
         populateScrollSnapIdentifiers();
 
-    if (!shouldUseScrollSnapping()) {
+    if (!isInDiscreteDisplayMode()) {
         clearSnapOffsets();
         return;
     }
@@ -1698,27 +1714,25 @@ void UnifiedPDFPlugin::updateSnapOffsets()
 
     for (PDFDocumentLayout::PageIndex i = 0; i < m_documentLayout.pageCount(); ++i) {
         // FIXME: Factor out documentToContents from pageToContents?
-        auto destinationRect = m_documentLayout.layoutBoundsForPageAtIndex(i);
-        destinationRect.inflate(PDFDocumentLayout::pageMargin);
-        destinationRect.scale(contentScaleFactor());
+        auto destinationRect = pageBoundsInContentsSpace(i);
         snapAreas.append(LayoutRect { destinationRect });
 
-        bool isLargerThanViewport = destinationRect.height() > m_size.height();
+        bool isTallerThanViewport = destinationRect.height() > m_size.height();
 
         verticalSnapOffsets.append(SnapOffset<LayoutUnit> {
             LayoutUnit { destinationRect.y() },
             ScrollSnapStop::Always,
-            isLargerThanViewport,
+            isTallerThanViewport,
             m_scrollSnapIdentifiers[i],
             false,
             { i },
         });
 
-        if (isLargerThanViewport) {
+        if (isTallerThanViewport) {
             verticalSnapOffsets.append(SnapOffset<LayoutUnit> {
                 LayoutUnit { destinationRect.maxY() - m_size.height() },
                 ScrollSnapStop::Always,
-                isLargerThanViewport,
+                isTallerThanViewport,
                 m_scrollSnapIdentifiers[i],
                 false,
                 { i },
@@ -1741,14 +1755,18 @@ void UnifiedPDFPlugin::determineCurrentlySnappedPage()
 {
     std::optional<PDFDocumentLayout::PageIndex> newSnappedPage;
 
-    if (shouldUseScrollSnapping() && snapOffsetsInfo() && snapOffsetsInfo()->verticalSnapOffsets.size()) {
+    if (isInDiscreteDisplayMode() && snapOffsetsInfo() && snapOffsetsInfo()->verticalSnapOffsets.size()) {
         std::optional<ElementIdentifier> newSnapIdentifier = snapOffsetsInfo()->verticalSnapOffsets[0].snapTargetID;
 
+        float scrollPositionY = scrollPosition().y();
+        auto closestDistanceToSnapOffset = std::numeric_limits<float>::max();
         for (const auto& offsetInfo : snapOffsetsInfo()->verticalSnapOffsets) {
             // FIXME: Can this padding be derived from something?
-            if (offsetInfo.offset > scrollPosition().y() + 10)
-                break;
-            newSnapIdentifier = offsetInfo.snapTargetID;
+            auto distance = std::abs(scrollPositionY + 10 - offsetInfo.offset);
+            if (distance < closestDistanceToSnapOffset) {
+                closestDistanceToSnapOffset = distance;
+                newSnapIdentifier = offsetInfo.snapTargetID;
+            }
         }
 
         if (newSnapIdentifier)
@@ -1764,7 +1782,7 @@ void UnifiedPDFPlugin::determineCurrentlySnappedPage()
 
 bool UnifiedPDFPlugin::shouldDisplayPage(PDFDocumentLayout::PageIndex pageIndex)
 {
-    if (!shouldUseScrollSnapping())
+    if (!isInDiscreteDisplayMode())
         return true;
 
     if (!m_currentlySnappedPage)
@@ -2212,19 +2230,143 @@ bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 #endif // ENABLE(CONTEXT_MENUS)
 }
 
-bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
-{
 #if PLATFORM(MAC)
+
+CheckedPtr<KeyboardScrollingAnimator> UnifiedPDFPlugin::checkedKeyboardScrollingAnimator() const
+{
+    return scrollAnimator().keyboardScrollingAnimator();
+}
+
+bool UnifiedPDFPlugin::handleKeyboardCommand(const WebKeyboardEvent& event)
+{
     auto& commands = event.commands();
     if (commands.size() != 1)
         return false;
-    auto commandName = commands[0].commandName;
 
-    CheckedPtr keyboardAnimator = scrollAnimator().keyboardScrollingAnimator();
+    auto commandName = commands[0].commandName;
     if (commandName == "scrollToBeginningOfDocument:"_s)
-        return keyboardAnimator->beginKeyboardScrollGesture(ScrollDirection::ScrollUp, ScrollGranularity::Document, false);
+        return checkedKeyboardScrollingAnimator()->beginKeyboardScrollGesture(ScrollDirection::ScrollUp, ScrollGranularity::Document, false);
+
     if (commandName == "scrollToEndOfDocument:"_s)
-        return keyboardAnimator->beginKeyboardScrollGesture(ScrollDirection::ScrollDown, ScrollGranularity::Document, false);
+        return checkedKeyboardScrollingAnimator()->beginKeyboardScrollGesture(ScrollDirection::ScrollDown, ScrollGranularity::Document, false);
+
+    return false;
+}
+
+bool UnifiedPDFPlugin::handleKeyboardEventForDiscreteDisplayMode(const WebKeyboardEvent& event)
+{
+    if (!m_currentlySnappedPage || !isInDiscreteDisplayMode())
+        return false;
+
+    if (event.type() == WebEventType::KeyUp) {
+        checkedKeyboardScrollingAnimator()->handleKeyUpEvent();
+        return false;
+    }
+
+    if (event.type() != WebEventType::KeyDown || m_isScrollingWithAnimationToPageExtent)
+        return false;
+
+    auto key = event.key();
+    if (key == "ArrowLeft"_s) {
+        if (checkedKeyboardScrollingAnimator()->beginKeyboardScrollGesture(ScrollDirection::ScrollLeft, ScrollGranularity::Line, false)) {
+            m_animatedKeyboardScrollingDirection = ScrollDirection::ScrollLeft;
+            return true;
+        }
+        return false;
+    }
+
+    if (key == "ArrowRight"_s) {
+        if (checkedKeyboardScrollingAnimator()->beginKeyboardScrollGesture(ScrollDirection::ScrollRight, ScrollGranularity::Line, false)) {
+            m_animatedKeyboardScrollingDirection = ScrollDirection::ScrollRight;
+            return true;
+        }
+        return false;
+    }
+
+    auto currentPage = *m_currentlySnappedPage;
+    auto currentPageContentRect = pageBoundsInContentsSpace(currentPage);
+    bool isTallerThanViewport = currentPageContentRect.height() > m_size.height();
+    if (isTallerThanViewport) {
+        if (key == "ArrowUp"_s) {
+            if (snapToNearbyPageExtentForKeyboardScrolling(ScrollDirection::ScrollUp))
+                return true;
+
+            if (checkedKeyboardScrollingAnimator()->beginKeyboardScrollGesture(ScrollDirection::ScrollUp, ScrollGranularity::Line, false)) {
+                m_animatedKeyboardScrollingDirection = ScrollDirection::ScrollUp;
+                return true;
+            }
+        }
+
+        if (key == "ArrowDown"_s) {
+            if (snapToNearbyPageExtentForKeyboardScrolling(ScrollDirection::ScrollDown))
+                return true;
+
+            if (checkedKeyboardScrollingAnimator()->beginKeyboardScrollGesture(ScrollDirection::ScrollDown, ScrollGranularity::Line, false)) {
+                m_animatedKeyboardScrollingDirection = ScrollDirection::ScrollDown;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    if (key == "ArrowUp"_s && currentPage) {
+        auto previousPageContentRect = pageBoundsInContentsSpace(currentPage - 1);
+        return scrollAnimator().scrollToPositionWithoutAnimation({ static_cast<float>(m_scrollOffset.width()), previousPageContentRect.y() });
+    }
+
+    auto pagesToSkip = isShowingTwoPages() ? 2 : 1;
+    if (key == "ArrowDown"_s && currentPage < m_documentLayout.pageCount() - pagesToSkip) {
+        auto nextPageContentRect = pageBoundsInContentsSpace(currentPage + pagesToSkip);
+        return scrollAnimator().scrollToPositionWithoutAnimation({ static_cast<float>(m_scrollOffset.width()), nextPageContentRect.y() });
+    }
+
+    return false;
+}
+
+bool UnifiedPDFPlugin::snapToNearbyPageExtentForKeyboardScrolling(ScrollDirection direction)
+{
+    if (!m_currentlySnappedPage)
+        return false;
+
+    auto currentPage = *m_currentlySnappedPage;
+    auto currentPageContentRect = pageBoundsInContentsSpace(currentPage);
+    static constexpr auto distanceBeforeSnappingToPageExtents = 100;
+    if (direction == ScrollDirection::ScrollUp && currentPage && m_scrollOffset.height() < currentPageContentRect.y() + distanceBeforeSnappingToPageExtents) {
+        checkedKeyboardScrollingAnimator()->stopScrollingImmediately();
+        m_isScrollingWithAnimationToPageExtent |= scrollAnimator().scrollToPositionWithAnimation({ static_cast<float>(m_scrollOffset.width()), currentPageContentRect.y() });
+        return true;
+    }
+
+    float scrollExtentForCurrentPage = currentPageContentRect.maxY() - m_size.height();
+    auto pagesToSkip = isShowingTwoPages() ? 2 : 1;
+    if (direction == ScrollDirection::ScrollDown && currentPage < m_documentLayout.pageCount() - pagesToSkip && m_scrollOffset.height() > scrollExtentForCurrentPage - distanceBeforeSnappingToPageExtents) {
+        checkedKeyboardScrollingAnimator()->stopScrollingImmediately();
+        m_isScrollingWithAnimationToPageExtent |= scrollAnimator().scrollToPositionWithAnimation({ static_cast<float>(m_scrollOffset.width()), scrollExtentForCurrentPage });
+        return true;
+    }
+
+    return false;
+}
+
+#endif // PLATFORM(MAC)
+
+void UnifiedPDFPlugin::animatedScrollDidEnd()
+{
+#if PLATFORM(MAC)
+    m_isScrollingWithAnimationToPageExtent = false;
+    m_animatedKeyboardScrollingDirection = std::nullopt;
+#endif
+}
+
+bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
+{
+#if PLATFORM(MAC)
+    if (handleKeyboardCommand(event))
+        return true;
+
+    if (handleKeyboardEventForDiscreteDisplayMode(event))
+        return true;
 #endif
 
     return false;
@@ -2652,10 +2794,8 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag, const In
     case ContextMenuItemTag::TwoPagesContinuous:
     case ContextMenuItemTag::TwoPages:
         if (tag != contextMenuItemTagFromDisplayMode(m_documentLayout.displayMode())) {
-            m_documentLayout.setDisplayMode(displayModeFromContextMenuItemTag(tag));
             // FIXME: Scroll to the first page that was visible after the layout.
-            updateLayout(AdjustScaleAfterLayout::Yes);
-            resnapAfterLayout();
+            setDisplayModeAndUpdateLayout(displayModeFromContextMenuItemTag(tag));
         }
         break;
     case ContextMenuItemTag::NextPage: {
@@ -3788,6 +3928,33 @@ Vector<WebCore::FloatRect> UnifiedPDFPlugin::annotationRectsForTesting() const
     }
 
     return annotationRects;
+}
+
+void UnifiedPDFPlugin::setPDFDisplayModeForTesting(const String& mode)
+{
+    setDisplayModeAndUpdateLayout([mode] {
+        if (mode == "SinglePageDiscrete"_s)
+            return PDFDocumentLayout::DisplayMode::SinglePageDiscrete;
+
+        if (mode == "SinglePageContinuous"_s)
+            return PDFDocumentLayout::DisplayMode::SinglePageContinuous;
+
+        if (mode == "TwoUpDiscrete"_s)
+            return PDFDocumentLayout::DisplayMode::TwoUpDiscrete;
+
+        if (mode == "TwoUpContinuous"_s)
+            return PDFDocumentLayout::DisplayMode::TwoUpContinuous;
+
+        ASSERT_NOT_REACHED();
+        return PDFDocumentLayout::DisplayMode::SinglePageContinuous;
+    }());
+}
+
+void UnifiedPDFPlugin::setDisplayModeAndUpdateLayout(PDFDocumentLayout::DisplayMode mode)
+{
+    m_documentLayout.setDisplayMode(mode);
+    updateLayout(AdjustScaleAfterLayout::Yes);
+    resnapAfterLayout();
 }
 
 } // namespace WebKit

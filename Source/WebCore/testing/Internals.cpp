@@ -7395,6 +7395,19 @@ void Internals::setHistoryTotalStateObjectPayloadLimitOverride(uint32_t limit)
     window->history().setTotalStateObjectPayloadLimitOverride(limit);
 }
 
+void Internals::setPDFDisplayModeForTesting(Element& element, const String& displayMode) const
+{
+    RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
+    if (!pluginElement)
+        return;
+
+    RefPtr pluginViewBase = pluginElement->pluginWidget();
+    if (!pluginViewBase)
+        return;
+
+    pluginViewBase->setPDFDisplayModeForTesting(displayMode);
+}
+
 Vector<Internals::PDFAnnotationRect> Internals::pdfAnnotationRectsForTesting(Element& element) const
 {
     Vector<PDFAnnotationRect> annotationRects;

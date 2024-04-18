@@ -1264,6 +1264,7 @@
 		F4D0A6382A2D520800D47257 /* canvas-fingerprinting.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D0A6362A2D51F900D47257 /* canvas-fingerprinting.html */; };
 		F4D0A6392A2D521100D47257 /* fingerprint-audio-worklet.js in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D0A6342A2D51F800D47257 /* fingerprint-audio-worklet.js */; };
 		F4D0A63A2A2D521100D47257 /* webgl-support.js in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D0A6352A2D51F900D47257 /* webgl-support.js */; };
+		F4D2C66C2BCF9DED00DADC86 /* multiple-pages.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D2C66B2BCF9DE400DADC86 /* multiple-pages.pdf */; };
 		F4D4F3B61E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */; };
 		F4D4F3B91E4E36E400BB2767 /* DragAndDropTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */; };
 		F4D5C55827C6FF4800ED1C23 /* TestUIMenuBuilder.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D5C55727C6EBDC00ED1C23 /* TestUIMenuBuilder.mm */; };
@@ -1824,6 +1825,7 @@
 				9BCD411A206DBCA3001D71BE /* mso-list-on-h4.html in Copy Resources */,
 				9BF356CD202D458500F71160 /* mso-list.html in Copy Resources */,
 				F42F081227449892007E0D90 /* multiple-images.html in Copy Resources */,
+				F4D2C66C2BCF9DED00DADC86 /* multiple-pages.pdf in Copy Resources */,
 				5797FE331EB15AB100B2F4A0 /* navigation-client-default-crypto.html in Copy Resources */,
 				F455DB952BAE45B600732E1B /* nested-frames.html in Copy Resources */,
 				2E4838472169DF30002F4531 /* nested-lists.html in Copy Resources */,
@@ -3668,6 +3670,8 @@
 		F4D0A6352A2D51F900D47257 /* webgl-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "webgl-support.js"; sourceTree = "<group>"; };
 		F4D0A6362A2D51F900D47257 /* canvas-fingerprinting.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "canvas-fingerprinting.html"; sourceTree = "<group>"; };
 		F4D2986D20FEE7370092D636 /* RunScriptAfterDocumentLoad.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RunScriptAfterDocumentLoad.mm; sourceTree = "<group>"; };
+		F4D2C66A2BCF9D8400DADC86 /* UnifiedPDFTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UnifiedPDFTests.mm; sourceTree = "<group>"; };
+		F4D2C66B2BCF9DE400DADC86 /* multiple-pages.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "multiple-pages.pdf"; sourceTree = "<group>"; };
 		F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropSimulatorIOS.mm; sourceTree = "<group>"; };
 		F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropTestsIOS.mm; sourceTree = "<group>"; };
 		F4D5C55627C6EBDC00ED1C23 /* TestUIMenuBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestUIMenuBuilder.h; sourceTree = "<group>"; };
@@ -4272,6 +4276,7 @@
 				5C73A81A2323059800DEA85A /* TLSDeprecation.mm */,
 				CDE195B31CFE0ADE0053D256 /* TopContentInset.mm */,
 				5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */,
+				F4D2C66A2BCF9D8400DADC86 /* UnifiedPDFTests.mm */,
 				074AD7092B604E7600FFA67B /* UnifiedTextReplacement.mm */,
 				5C3A77A922F20B8A003827FF /* UploadDirectory.mm */,
 				7CC3E1FA197E234100BE6252 /* UserContentController.mm */,
@@ -4974,6 +4979,7 @@
 				9BCD4119206D5ED7001D71BE /* mso-list-on-h4.html */,
 				9BF356CC202D44F200F71160 /* mso-list.html */,
 				F42F0811274497C8007E0D90 /* multiple-images.html */,
+				F4D2C66B2BCF9DE400DADC86 /* multiple-pages.pdf */,
 				F455DB8C2BAE37C100732E1B /* nested-frames.html */,
 				2E4838462169DD42002F4531 /* nested-lists.html */,
 				466C3842210637CE006A88DE /* notify-resourceLoadObserver.html */,

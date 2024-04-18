@@ -234,7 +234,8 @@ public:
     virtual void focusNextAnnotation() = 0;
     virtual void focusPreviousAnnotation() = 0;
 
-    virtual Vector<WebCore::FloatRect> annotationRectsForTesting() const { return { }; };
+    virtual Vector<WebCore::FloatRect> annotationRectsForTesting() const { return { }; }
+    virtual void setPDFDisplayModeForTesting(const String&) { }
     void registerPDFTest(RefPtr<WebCore::VoidCallback>&&);
 
     void navigateToURL(const URL&);

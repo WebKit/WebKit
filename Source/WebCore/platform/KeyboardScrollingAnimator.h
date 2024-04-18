@@ -59,7 +59,7 @@ public:
     KeyboardScrollingAnimator(ScrollableArea&);
 
     WEBCORE_EXPORT bool beginKeyboardScrollGesture(ScrollDirection, ScrollGranularity, bool isKeyRepeat);
-    void handleKeyUpEvent();
+    WEBCORE_EXPORT void handleKeyUpEvent();
     WEBCORE_EXPORT void stopScrollingImmediately();
 
 private:
