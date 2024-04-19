@@ -38,6 +38,7 @@ class BitBucket(Scm):
     class PRGenerator(Scm.PRGenerator):
         TITLE_CHAR_LIMIT = 254
         BODY_CHAR_LIMIT = 32766
+        MAX_DEPTH = 8
 
         def PullRequest(self, data):
             if not data:
@@ -254,19 +255,46 @@ class BitBucket(Scm):
             pull_request._approvers = got._approvers if got else []
             return pull_request
 
-        def comment(self, pull_request, content):
+        def comment(self, pull_request, content, parent=None):
+            data = dict(text=content)
+            if parent:
+                data['parent'] = dict(id=parent)
+
             response = requests.post(
                 'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests/{id}/comments'.format(
                     domain=self.repository.domain,
                     project=self.repository.project,
                     name=self.repository.name,
                     id=pull_request.number,
-                ), json=dict(text=content),
+                ), json=data,
             )
             if response.status_code // 100 != 2:
                 sys.stderr.write("Failed to add comment to '{}'\n".format(pull_request))
                 return None
             return pull_request
+
+        @classmethod
+        def _children_for_comment(cls, comment, depth=0):
+            if depth > cls.MAX_DEPTH - 1:
+                depth = cls.MAX_DEPTH - 1
+            result = []
+            for comment in comment.get('comments') or []:
+                user = comment.get('author', {})
+                comment_id = comment.get('id')
+                if not user or not comment_id:
+                    continue
+
+                result.append(dict(
+                    text=comment.get('text', ''),
+                    user=user,
+                    id=comment_id,
+                    timestamp=comment.get('updatedDate', comment.get('createdDate')) // 1000,
+                    depth=depth + 1,
+                ))
+
+                result += cls._children_for_comment(comment, depth=depth + 1)
+
+            return result
 
         def comments(self, pull_request):
             for action in reversed(self.repository.request('pull-requests/{}/activities'.format(pull_request.number)) or []):
@@ -275,15 +303,23 @@ class BitBucket(Scm):
                 if not comment or not user or not comment.get('text'):
                     continue
 
-                author = self.repository.contributors.create(
-                    user['displayName'], user['emailAddress'],
-                    bitbucket=user.get('name', None),
-                )
-                yield PullRequest.Comment(
-                    author=author,
+                comments = [dict(
+                    text=comment.get('text', ''),
+                    user=user,
                     timestamp=comment.get('updatedDate', comment.get('createdDate')) // 1000,
-                    content=comment.get('text'),
-                )
+                    depth=0,
+                )] + self._children_for_comment(comment)
+
+                for comment in comments:
+                    author = self.repository.contributors.create(
+                        comment['user']['displayName'], comment['user']['emailAddress'],
+                        bitbucket=comment['user'].get('name', None),
+                    )
+                    yield PullRequest.Comment(
+                        author=author,
+                        timestamp=comment.get('timestamp'),
+                        content=comment.get('text'),
+                    )
 
         def review(self, pull_request, comment=None, approve=None):
             failed = False

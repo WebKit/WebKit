@@ -2237,6 +2237,21 @@ Reviewed by NOBODY (OOPS!).
             pr.comment('Commenting!')
             self.assertEqual([c.content for c in pr.comments], ['Commenting!'])
 
+    def test_comment_replies(self):
+        with self.webserver() as webserver:
+            repo = remote.BitBucket(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertEqual(pr.comments, [])
+            a_id = webserver.current_id
+            pr.comment('Comment A')
+            repo.pull_requests.comment(pr, 'Comment B')
+            repo.pull_requests.comment(pr, 'Comment C', parent=a_id)
+
+            self.assertEqual(
+                [c.content for c in pr.comments],
+                ['Comment B', 'Comment A', 'Comment C'],
+            )
+
     def test_open_close(self):
         with self.webserver():
             repo = remote.BitBucket(self.remote)
