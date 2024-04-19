@@ -131,10 +131,10 @@ Profiler::CompilationKind profilerCompilationKindForMode(JITCompilationMode mode
 
 Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     JITCompilationMode mode, BytecodeIndex osrEntryBytecodeIndex,
-    const Operands<std::optional<JSValue>>& mustHandleValues)
+    Operands<std::optional<JSValue>>&& mustHandleValues)
         : Base(mode, passedCodeBlock)
         , m_profiledDFGCodeBlock(profiledDFGCodeBlock)
-        , m_mustHandleValues(mustHandleValues)
+        , m_mustHandleValues(WTFMove(mustHandleValues))
         , m_osrEntryBytecodeIndex(osrEntryBytecodeIndex)
         , m_compilation(UNLIKELY(m_vm->m_perBytecodeProfiler) ? adoptRef(new Profiler::Compilation(m_vm->m_perBytecodeProfiler->ensureBytecodesFor(m_codeBlock), profilerCompilationKindForMode(mode))) : nullptr)
         , m_inlineCallFrames(adoptRef(new InlineCallFrameSet()))
