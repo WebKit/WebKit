@@ -187,7 +187,9 @@ private:
     void createDisplayListRecorder(RefPtr<WebCore::ImageBuffer>, WebCore::RenderingResourceIdentifier);
     void releaseDisplayListRecorder(WebCore::RenderingResourceIdentifier);
 
+#if PLATFORM(COCOA)
     bool shouldUseLockdownFontParser() const;
+#endif
 
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     Ref<IPC::StreamServerConnection> m_streamConnection;

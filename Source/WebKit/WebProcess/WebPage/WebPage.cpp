@@ -340,6 +340,7 @@
 #include "WKStringCF.h"
 #include "WebRemoteObjectRegistry.h"
 #include <WebCore/LegacyWebArchive.h>
+#include <pal/cf/CoreTextSoftLink.h>
 #include <pal/spi/cg/ImageIOSPI.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
@@ -4605,12 +4606,14 @@ void WebPage::adjustSettingsForLockdownMode(Settings& settings, const WebPrefere
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled(false);
 #endif
+#if PLATFORM(COCOA)
     if (settings.downloadableBinaryFontTrustedTypes() != DownloadableBinaryFontTrustedTypes::None) {
         settings.setDownloadableBinaryFontTrustedTypes(
-            settings.lockdownFontParserEnabled()
+            (settings.lockdownFontParserEnabled() && PAL::canLoad_CoreText_CTFontManagerCreateMemorySafeFontDescriptorFromData())
                 ? DownloadableBinaryFontTrustedTypes::FallbackParser
                 : DownloadableBinaryFontTrustedTypes::Restricted);
     }
+#endif
 #if ENABLE(WEB_CODECS)
     settings.setWebCodecsVideoEnabled(false);
     settings.setWebCodecsAV1Enabled(false);

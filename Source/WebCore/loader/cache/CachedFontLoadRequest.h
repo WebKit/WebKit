@@ -64,9 +64,9 @@ private:
     bool ensureCustomFontData() final
     {
         bool result = m_font->ensureCustomFontData();
-        if (!result && m_font->didRefuseToParseCustomFont()) {
+        if (!result && m_font->didRefuseToParseCustomFontWithSafeFontParser()) {
             if (RefPtr context = m_context.get()) {
-                auto message = makeString("[Lockdown Mode] This font has been blocked: ", m_font->url().string());
+                auto message = makeString("[Lockdown Mode] This font wasn't parsed: ", m_font->url().string());
                 context->addConsoleMessage(MessageSource::Security, MessageLevel::Info, message);
             }
         }

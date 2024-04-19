@@ -61,7 +61,7 @@ public:
 
     virtual RefPtr<Font> createFont(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontCreationContext&);
 
-    bool didRefuseToParseCustomFont() const { return m_didRefuseToParseCustomFont; }
+    bool didRefuseToParseCustomFontWithSafeFontParser() const { return m_didRefuseToParseCustomFont; }
 
 protected:
     FontPlatformData platformDataFromCustomData(const FontDescription&, bool bold, bool italic, const FontCreationContext&);

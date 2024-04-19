@@ -56,6 +56,9 @@
 #include "SwapBuffersDisplayRequirement.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageProxy.h"
+#if PLATFORM(COCOA)
+#include <pal/cf/CoreTextSoftLink.h>
+#endif
 #include <WebCore/HTMLCanvasElement.h>
 #include <WebCore/NullImageBufferBackend.h>
 #include <WebCore/RenderingResourceIdentifier.h>
@@ -371,9 +374,7 @@ void RemoteRenderingBackend::cacheFontCustomPlatformData(WebCore::FontCustomPlat
 {
     ASSERT(!RunLoop::isMain());
 
-    // FIXME: (rdar://124235570) use this->shoulUsedLockdownFontParser instead of hard-coded 'false' at tryMakeFromSerializationData after we deprecate lockdown mode fonts allowed (trusted) list.
-    constexpr bool shouldUseLockdownFontParser { false };
-    auto customPlatformData = FontCustomPlatformData::tryMakeFromSerializationData(WTFMove(fontCustomPlatformSerializedData), shouldUseLockdownFontParser);
+    auto customPlatformData = FontCustomPlatformData::tryMakeFromSerializationData(WTFMove(fontCustomPlatformSerializedData), shouldUseLockdownFontParser());
     MESSAGE_CHECK(customPlatformData.has_value(), "cacheFontCustomPlatformData couldn't deserialize FontCustomPlatformData"_s);
 
     m_remoteResourceCache.cacheFontCustomPlatformData(WTFMove(customPlatformData.value()));
@@ -614,10 +615,12 @@ void RemoteRenderingBackend::terminateWebProcess(ASCIILiteral message)
     }
 }
 
+#if PLATFORM(COCOA)
 bool RemoteRenderingBackend::shouldUseLockdownFontParser() const
 {
-    return m_gpuConnectionToWebProcess->isLockdownSafeFontParserEnabled() && m_gpuConnectionToWebProcess->isLockdownModeEnabled();
+    return m_gpuConnectionToWebProcess->isLockdownSafeFontParserEnabled() && m_gpuConnectionToWebProcess->isLockdownModeEnabled() && PAL::canLoad_CoreText_CTFontManagerCreateMemorySafeFontDescriptorFromData();
 }
+#endif
 
 } // namespace WebKit
 
