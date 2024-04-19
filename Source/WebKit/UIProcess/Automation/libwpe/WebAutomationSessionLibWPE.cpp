@@ -81,6 +81,13 @@ static unsigned stateModifierForWPEButton(unsigned button)
     return state;
 }
 
+static WebCore::IntPoint deviceScaleLocationInView(WebPageProxy& page, const WebCore::IntPoint& locationInView)
+{
+    WebCore::IntPoint deviceScaleLocationInView(locationInView);
+    deviceScaleLocationInView.scale(page.deviceScaleFactor());
+    return deviceScaleLocationInView;
+}
+
 static void doMouseEvent(struct wpe_view_backend* viewBackend, const WebCore::IntPoint& location, unsigned button, unsigned state, uint32_t modifiers)
 {
     struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, 0, location.x(), location.y(), button, static_cast<uint32_t>(state ? 1 : 0), modifiers };
@@ -100,28 +107,29 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     unsigned wpeButton = mouseButtonToWPEButton(button);
     auto modifier = stateModifierForWPEButton(wpeButton);
     uint32_t state = modifiersToEventState(keyModifiers) | m_currentModifiers;
+    auto location = deviceScaleLocationInView(page, locationInView);
 
     switch (interaction) {
     case MouseInteraction::Move:
-        doMotionEvent(page.viewBackend(), locationInView, state);
+        doMotionEvent(page.viewBackend(), location, state);
         break;
     case MouseInteraction::Down:
         m_currentModifiers |= modifier;
-        doMouseEvent(page.viewBackend(), locationInView, wpeButton, 1, state | modifier);
+        doMouseEvent(page.viewBackend(), location, wpeButton, 1, state | modifier);
         break;
     case MouseInteraction::Up:
         m_currentModifiers &= ~modifier;
-        doMouseEvent(page.viewBackend(), locationInView, wpeButton, 0, state & ~modifier);
+        doMouseEvent(page.viewBackend(), location, wpeButton, 0, state & ~modifier);
         break;
     case MouseInteraction::SingleClick:
-        doMouseEvent(page.viewBackend(), locationInView, wpeButton, 1, state | modifier);
-        doMouseEvent(page.viewBackend(), locationInView, wpeButton, 0, state);
+        doMouseEvent(page.viewBackend(), location, wpeButton, 1, state | modifier);
+        doMouseEvent(page.viewBackend(), location, wpeButton, 0, state);
         break;
     case MouseInteraction::DoubleClick:
-        doMouseEvent(page.viewBackend(), locationInView, wpeButton, 1, state | modifier);
-        doMouseEvent(page.viewBackend(), locationInView, wpeButton, 0, state);
-        doMouseEvent(page.viewBackend(), locationInView, wpeButton, 1, state | modifier);
-        doMouseEvent(page.viewBackend(), locationInView, wpeButton, 0, state);
+        doMouseEvent(page.viewBackend(), location, wpeButton, 1, state | modifier);
+        doMouseEvent(page.viewBackend(), location, wpeButton, 0, state);
+        doMouseEvent(page.viewBackend(), location, wpeButton, 1, state | modifier);
+        doMouseEvent(page.viewBackend(), location, wpeButton, 0, state);
         break;
     }
 }
@@ -373,22 +381,24 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, const WebCore::IntPoint& locationInView, const WebCore::IntSize& delta)
 {
+    auto location = deviceScaleLocationInView(page, locationInView);
+
 #if WPE_CHECK_VERSION(1, 5, 0)
     struct wpe_input_axis_2d_event event;
     memset(&event, 0, sizeof(event));
     event.base.type = static_cast<wpe_input_axis_event_type>(wpe_input_axis_event_type_mask_2d | wpe_input_axis_event_type_motion_smooth);
-    event.base.x = locationInView.x();
-    event.base.y = locationInView.y();
+    event.base.x = location.x();
+    event.base.y = location.y();
     event.x_axis = -delta.width();
     event.y_axis = -delta.height();
     wpe_view_backend_dispatch_axis_event(page.viewBackend(), &event.base);
 #else
     if (auto deltaX = delta.width()) {
-        struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion, 0, locationInView.x(), locationInView.y(), 1, -deltaX, 0 };
+        struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion, 0, location.x(), location.y(), 1, -deltaX, 0 };
         wpe_view_backend_dispatch_axis_event(page.viewBackend(), &event);
     }
     if (auto deltaY = delta.height()) {
-        struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion, 0, locationInView.x(), locationInView.y(), 0, -deltaY, 0 };
+        struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion, 0, location.x(), location.y(), 0, -deltaY, 0 };
         wpe_view_backend_dispatch_axis_event(page.viewBackend(), &event);
     }
 #endif
