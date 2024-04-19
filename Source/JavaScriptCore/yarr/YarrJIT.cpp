@@ -31,7 +31,7 @@
 #include "LinkBuffer.h"
 #include "Options.h"
 #if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
-#include "ThunkGenerator.h"
+#include "JITThunks.h"
 #endif
 #include "VM.h"
 #include "Yarr.h"
@@ -1485,7 +1485,7 @@ class YarrGenerator final : public YarrJITInfo {
             int32_t canonicalMode = static_cast<int32_t>(m_decodeSurrogatePairs ? CanonicalMode::Unicode : CanonicalMode::UCS2);
             m_jit.move(MacroAssembler::TrustedImm32(canonicalMode), areCanonicallyEquivalentCanonicalModeArgReg);
 
-            m_jit.nearCallThunk(CodeLocationLabel { m_vm->getCTIStub(areCanonicallyEquivalentThunkGenerator).retaggedCode<NoPtrTag>() });
+            m_jit.nearCallThunk(CodeLocationLabel { m_vm->getCTIStub(CommonJITThunkID::AreCanonicallyEquivalent).retaggedCode<NoPtrTag>() });
 
             // Match return as a bool in character reg.
             characterMatchFails.append(m_jit.branch32(MacroAssembler::Equal, character, MacroAssembler::Imm32(0)));
@@ -4577,85 +4577,6 @@ class YarrGenerator final : public YarrJITInfo {
         m_jit.load32(MacroAssembler::Address(endIndex, sizeof(unsigned)), endIndex);
     }
 
-#if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
-    static MacroAssemblerCodeRef<JITThunkPtrTag> areCanonicallyEquivalentThunkGenerator(VM&)
-    {
-        CCallHelpers jit(nullptr);
-
-        unsigned pushCount = 0;
-
-#if CPU(ARM64)
-        constexpr unsigned registersToSave = 16;
-
-        auto pushCallerSavePair = [&]() {
-            jit.pushPair(GPRInfo::toRegister(pushCount), GPRInfo::toRegister(pushCount + 1));
-            pushCount += 2;
-        };
-
-        auto popCallerSavePair = [&]() {
-            pushCount -= 2;
-            jit.popPair(GPRInfo::toRegister(pushCount), GPRInfo::toRegister(pushCount + 1));
-        };
-#elif CPU(X86_64) && !OS(WINDOWS)
-        constexpr unsigned registersToSave = 7;
-
-        constexpr GPRReg callerSaves[registersToSave] = {
-            // We don't save RAX since the return value ends up there.
-            X86Registers::ecx,
-            X86Registers::edx,
-            X86Registers::esi,
-            X86Registers::edi,
-            X86Registers::r8,
-            X86Registers::r9,
-            X86Registers::r10
-        };
-
-        auto pushCallerSave = [&]() {
-            jit.push(callerSaves[pushCount]);
-            pushCount++;
-        };
-
-        auto popCallerSave = [&]() {
-            pushCount--;
-            jit.pop(callerSaves[pushCount]);
-        };
-#endif
-
-        jit.emitFunctionPrologue();
-
-#if CPU(ARM64)
-        while (pushCount < registersToSave)
-            pushCallerSavePair();
-#elif CPU(X86_64) && !OS(WINDOWS)
-        while (pushCount < registersToSave)
-            pushCallerSave();
-#endif
-
-        jit.setupArguments<decltype(operationAreCanonicallyEquivalent)>(areCanonicallyEquivalentCharArgReg, areCanonicallyEquivalentPattCharArgReg, areCanonicallyEquivalentCanonicalModeArgReg);
-        jit.callOperation<OperationPtrTag>(operationAreCanonicallyEquivalent);
-
-#if CPU(ARM64)
-        jit.move(GPRInfo::returnValueGPR, ARM64Registers::ip0);
-        while (pushCount)
-            popCallerSavePair();
-
-        jit.move(ARM64Registers::ip0, areCanonicallyEquivalentCharArgReg);
-#elif CPU(X86_64) && !OS(WINDOWS)
-        while (pushCount)
-            popCallerSave();
-#endif
-
-        ASSERT(!pushCount);
-
-        jit.emitFunctionEpilogue();
-        jit.ret();
-
-        LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::YarrJIT);
-
-        return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, nullptr, "YARR areCanonicallyEquivalent call thunk");
-    }
-#endif
-
 public:
     YarrGenerator(CCallHelpers& jit, VM* vm, YarrCodeBlock* codeBlock, const YarrJITRegs& regs, YarrPattern& pattern, StringView patternString, CharSize charSize, JITCompileMode compileMode, std::optional<StringView> sampleString)
         : m_jit(jit)
@@ -5301,6 +5222,83 @@ private:
 };
 
 #if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
+MacroAssemblerCodeRef<JITThunkPtrTag> areCanonicallyEquivalentThunkGenerator(VM&)
+{
+    CCallHelpers jit(nullptr);
+
+    unsigned pushCount = 0;
+
+#if CPU(ARM64)
+    constexpr unsigned registersToSave = 16;
+
+    auto pushCallerSavePair = [&]() {
+        jit.pushPair(GPRInfo::toRegister(pushCount), GPRInfo::toRegister(pushCount + 1));
+        pushCount += 2;
+    };
+
+    auto popCallerSavePair = [&]() {
+        pushCount -= 2;
+        jit.popPair(GPRInfo::toRegister(pushCount), GPRInfo::toRegister(pushCount + 1));
+    };
+#elif CPU(X86_64) && !OS(WINDOWS)
+    constexpr unsigned registersToSave = 7;
+
+    constexpr GPRReg callerSaves[registersToSave] = {
+        // We don't save RAX since the return value ends up there.
+        X86Registers::ecx,
+        X86Registers::edx,
+        X86Registers::esi,
+        X86Registers::edi,
+        X86Registers::r8,
+        X86Registers::r9,
+        X86Registers::r10
+    };
+
+    auto pushCallerSave = [&]() {
+        jit.push(callerSaves[pushCount]);
+        pushCount++;
+    };
+
+    auto popCallerSave = [&]() {
+        pushCount--;
+        jit.pop(callerSaves[pushCount]);
+    };
+#endif
+
+    jit.emitFunctionPrologue();
+
+#if CPU(ARM64)
+    while (pushCount < registersToSave)
+        pushCallerSavePair();
+#elif CPU(X86_64) && !OS(WINDOWS)
+    while (pushCount < registersToSave)
+        pushCallerSave();
+#endif
+
+    jit.setupArguments<decltype(operationAreCanonicallyEquivalent)>(areCanonicallyEquivalentCharArgReg, areCanonicallyEquivalentPattCharArgReg, areCanonicallyEquivalentCanonicalModeArgReg);
+    jit.callOperation<OperationPtrTag>(operationAreCanonicallyEquivalent);
+
+#if CPU(ARM64)
+    jit.move(GPRInfo::returnValueGPR, ARM64Registers::ip0);
+    while (pushCount)
+        popCallerSavePair();
+
+    jit.move(ARM64Registers::ip0, areCanonicallyEquivalentCharArgReg);
+#elif CPU(X86_64) && !OS(WINDOWS)
+    while (pushCount)
+        popCallerSave();
+#endif
+
+    ASSERT(!pushCount);
+
+    jit.emitFunctionEpilogue();
+    jit.ret();
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::YarrJIT);
+
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, nullptr, "YARR areCanonicallyEquivalent call");
+}
+
 JSC_DEFINE_JIT_OPERATION(operationAreCanonicallyEquivalent, bool, (unsigned a, unsigned b, CanonicalMode canonicalMode))
 {
     return areCanonicallyEquivalent(static_cast<char32_t>(a), static_cast<char32_t>(b), canonicalMode);
