@@ -37,7 +37,7 @@ namespace JSC { namespace DFG {
 bool ArrayBufferViewWatchpointAdaptor::add(CodeBlock* codeBlock, JSArrayBufferView* view, WatchpointCollector& collector)
 {
     return collector.addWatchpoint([&](CodeBlockJettisoningWatchpoint& watchpoint) {
-        if (hasBeenInvalidated(view))
+        if (hasBeenInvalidated(view, collector.concurrency()))
             return false;
 
         // view is already frozen. If it is deallocated, jettisoning happens.
@@ -58,7 +58,7 @@ bool ArrayBufferViewWatchpointAdaptor::add(CodeBlock* codeBlock, JSArrayBufferVi
 bool SymbolTableAdaptor::add(CodeBlock* codeBlock, SymbolTable* symbolTable, WatchpointCollector& collector)
 {
     return collector.addWatchpoint([&](CodeBlockJettisoningWatchpoint& watchpoint) {
-        if (hasBeenInvalidated(symbolTable))
+        if (hasBeenInvalidated(symbolTable, collector.concurrency()))
             return false;
 
         // symbolTable is already frozen strongly.
@@ -71,7 +71,7 @@ bool SymbolTableAdaptor::add(CodeBlock* codeBlock, SymbolTable* symbolTable, Wat
 bool FunctionExecutableAdaptor::add(CodeBlock* codeBlock, FunctionExecutable* executable, WatchpointCollector& collector)
 {
     return collector.addWatchpoint([&](CodeBlockJettisoningWatchpoint& watchpoint) {
-        if (hasBeenInvalidated(executable))
+        if (hasBeenInvalidated(executable, collector.concurrency()))
             return false;
 
         // executable is already frozen strongly.
@@ -88,7 +88,7 @@ bool AdaptiveStructureWatchpointAdaptor::add(CodeBlock* codeBlock, const ObjectP
     switch (key.kind()) {
     case PropertyCondition::Equivalence: {
         return collector.addAdaptiveInferredPropertyValueWatchpoint([&](AdaptiveInferredPropertyValueWatchpoint& watchpoint) {
-            if (hasBeenInvalidated(key))
+            if (hasBeenInvalidated(key, collector.concurrency()))
                 return false;
 
             watchpoint.initialize(key, codeBlock);
@@ -98,7 +98,7 @@ bool AdaptiveStructureWatchpointAdaptor::add(CodeBlock* codeBlock, const ObjectP
     }
     default: {
         return collector.addAdaptiveStructureWatchpoint([&](AdaptiveStructureWatchpoint& watchpoint) {
-            if (hasBeenInvalidated(key))
+            if (hasBeenInvalidated(key, collector.concurrency()))
                 return false;
 
             watchpoint.initialize(key, codeBlock);

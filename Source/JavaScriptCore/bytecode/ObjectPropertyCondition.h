@@ -265,11 +265,9 @@ public:
 
     // This means that it's still valid and we could enforce validity by setting a transition
     // watchpoint on the structure, and a value change watchpoint if we're Equivalence.
-    bool isWatchable(
-        Structure*,
-        PropertyCondition::WatchabilityEffort) const;
-    bool isWatchable(
-        PropertyCondition::WatchabilityEffort) const;
+    bool isWatchable(Structure*, PropertyCondition::WatchabilityEffort) const;
+    bool isWatchable(PropertyCondition::WatchabilityEffort) const;
+    bool isWatchable(PropertyCondition::WatchabilityEffort, Concurrency) const;
     
     bool watchingRequiresStructureTransitionWatchpoint() const
     {
