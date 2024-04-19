@@ -372,4 +372,21 @@ TEST(ElementTargeting, TargetInFlowElements)
     [webView expectSingleTargetedSelector:@".bottom-text" at:center];
 }
 
+TEST(ElementTargeting, ReplacedRendererSizeIgnoresPageScaleAndZoom)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-7"];
+    RetainPtr targetBeforeScaling = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];
+#if PLATFORM(MAC)
+    // Additionally test page zoom (i.e. ⌘+) on macOS.
+    [webView _setPageZoomFactor:2];
+    [webView _setPageScale:1.5 withOrigin:CGPointZero];
+#else
+    [[webView scrollView] setZoomScale:3 animated:NO];
+#endif
+    [webView waitForNextPresentationUpdate];
+    RetainPtr targetAfterScaling = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];
+    EXPECT_WK_STREQ([targetBeforeScaling renderedText], [targetAfterScaling renderedText]);
+}
+
 } // namespace TestWebKitAPI
