@@ -100,9 +100,6 @@ FAIL html: select encapsulation assert_equals: <select data-expectedlabel="selec
   </select> expected "select label" but got "select label foo"
 PASS html: img[alt] (non-empty)
 PASS html: picture > img[alt] (non-empty)
-FAIL html: fieldset > legend assert_equals: <fieldset data-expectedlabel="fieldset legend label" data-testname="html: fieldset > legend" class="ex">
-  <legend>fieldset legend label</legend>
-  <input type="text"><br>
-</fieldset> expected "fieldset legend label" but got ""
+PASS html: fieldset > legend
 PASS html: table > caption
 

@@ -1839,9 +1839,6 @@ void AccessibilityNodeObject::labelText(Vector<AccessibilityText>& textOrder) co
         textOrder.append({ ariaLabel.string(), AccessibilityTextSource::LabelByElement });
         return;
     }
-
-    if (titleUIElement())
-        textOrder.append(AccessibilityText(String(), AccessibilityTextSource::LabelByElement));
 }
 
 bool AccessibilityNodeObject::hasTextAlternative() const
