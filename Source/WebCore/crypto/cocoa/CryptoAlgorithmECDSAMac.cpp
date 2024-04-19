@@ -51,19 +51,20 @@ static PAL::HashFunction toCKHashFunction(CryptoAlgorithmIdentifier hash)
         return PAL::HashFunction::sha1();
         break;
     default:
-        ASSERT_NOT_REACHED();
-        return PAL::HashFunction::sha512();
+        break;
     }
+    ASSERT_NOT_REACHED();
+    return PAL::HashFunction::sha512();
 }
 
 static bool isValidHashParameter(CryptoAlgorithmIdentifier hash)
 {
-    return hash == CryptoAlgorithmIdentifier::SHA_1 || hash == CryptoAlgorithmIdentifier::SHA_256 || hash == CryptoAlgorithmIdentifier::SHA_384 || hash == CryptoAlgorithmIdentifier::SHA_512;
+    return hash == CryptoAlgorithmIdentifier::SHA_256 || hash == CryptoAlgorithmIdentifier::SHA_512 || hash == CryptoAlgorithmIdentifier::SHA_384 || hash == CryptoAlgorithmIdentifier::SHA_1;
 }
 
 static ExceptionOr<Vector<uint8_t>> signECDSACryptoKit(CryptoAlgorithmIdentifier hash, const PlatformECKeyContainer& key, const Vector<uint8_t>& data)
 {
-    const CKPlatformECKeyContainer* priv = std::get_if<CKPlatformECKeyContainer>(&key);
+    const auto* priv = std::get_if<CKPlatformECKeyContainer>(&key);
     if (!priv)
         return Exception { ExceptionCode::OperationError };
     if (!isValidHashParameter(hash))
@@ -76,10 +77,10 @@ static ExceptionOr<Vector<uint8_t>> signECDSACryptoKit(CryptoAlgorithmIdentifier
 
 static ExceptionOr<bool> verifyECDSACryptoKit(CryptoAlgorithmIdentifier hash, const PlatformECKeyContainer& key, const Vector<uint8_t>& signature, const Vector<uint8_t> data)
 {
-    const CKPlatformECKeyContainer* pub = std::get_if<CKPlatformECKeyContainer>(&key);
-    if (!isValidHashParameter(hash))
-        return Exception { ExceptionCode::OperationError };
+    const auto* pub = std::get_if<CKPlatformECKeyContainer>(&key);
     if (!pub)
+        return Exception { ExceptionCode::OperationError };
+    if (!isValidHashParameter(hash))
         return Exception { ExceptionCode::OperationError };
     return (*pub)->verify(data.span(), signature.span(), toCKHashFunction(hash)).getErrCode().isSuccess();
 }
@@ -105,7 +106,7 @@ static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, co
     Vector<uint8_t> signature(8 + keyLengthInBytes * 2);
     size_t signatureSize = signature.size();
 #if HAVE(SWIFT_CPP_INTEROP)
-    const CCPlatformECKeyContainer* priv = std::get_if<CCPlatformECKeyContainer>(&key);
+    const auto* priv = std::get_if<CCPlatformECKeyContainer>(&key);
     if (!priv)
         return Exception { ExceptionCode::OperationError };
     CCCryptorStatus status = CCECCryptorSignHash((*priv).get(), digestData.data(), digestData.size(), signature.data(), &signatureSize);

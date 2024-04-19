@@ -143,12 +143,12 @@ static ExceptionOr<bool> verifyEd25519(const Vector<uint8_t>& key, size_t keyLen
     return { error == GPG_ERR_NO_ERROR };
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmEd25519::platformSign(const CryptoKeyOKP& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmEd25519::platformSign(const CryptoKeyOKP& key, const Vector<uint8_t>& data, UseCryptoKit)
 {
     return signEd25519(key.platformKey(), key.keySizeInBytes(), data);
 }
 
-ExceptionOr<bool> CryptoAlgorithmEd25519::platformVerify(const CryptoKeyOKP& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
+ExceptionOr<bool> CryptoAlgorithmEd25519::platformVerify(const CryptoKeyOKP& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data, UseCryptoKit)
 {
     return verifyEd25519(key.platformKey(), key.keySizeInBytes(), signature, data);
 }

@@ -21,24 +21,51 @@
 #include "CryptoAlgorithmX25519.h"
 
 #include "CryptoKeyOKP.h"
+#if HAVE(SWIFT_CPP_INTEROP)
+#include <pal/PALSwift.h>
+#endif
 #include <pal/spi/cocoa/CoreCryptoSPI.h>
 
 namespace WebCore {
 
-std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const CryptoKeyOKP& baseKey, const CryptoKeyOKP& publicKey)
+#if HAVE(SWIFT_CPP_INTEROP)
+static std::optional<Vector<uint8_t>> deriveBitsCryptoKit(const Vector<uint8_t>& baseKey, const Vector<uint8_t>& publicKey)
 {
-    if (baseKey.platformKey().size() != 32 || publicKey.platformKey().size() != 32)
+    if (baseKey.size() != ed25519KeySize || publicKey.size() != ed25519KeySize)
+        return std::nullopt;
+    auto rv = PAL::EdKey::deriveBits(PAL::EdKeyAgreementAlgorithm::x25519(), baseKey.span(), publicKey.span());
+    if (!rv.getErrCode().isSuccess())
+        return std::nullopt;
+    if (!rv.getKeyBytes())
+        return std::nullopt;
+    return *rv.getKeyBytes();
+}
+#endif
+static std::optional<Vector<uint8_t>> deriveBitsCoreCrypto(const Vector<uint8_t>& baseKey, const Vector<uint8_t>& publicKey)
+{
+    if (baseKey.size() != ed25519KeySize || publicKey.size() != ed25519KeySize)
         return std::nullopt;
 
     ccec25519pubkey derivedKey;
-    static_assert(sizeof(derivedKey) == 32);
+    static_assert(sizeof(derivedKey) == ed25519KeySize);
 #if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
-    if (cccurve25519(derivedKey, baseKey.platformKey().data(), publicKey.platformKey().data()))
+    if (cccurve25519(derivedKey, baseKey.data(), publicKey.data()))
         return std::nullopt;
 #else
-    cccurve25519(derivedKey, baseKey.platformKey().data(), publicKey.platformKey().data());
+    cccurve25519(derivedKey, baseKey.data(), publicKey.data());
 #endif
-    return Vector<uint8_t>(std::span { derivedKey, 32 });
+    return Vector<uint8_t>(std::span { derivedKey, ed25519KeySize });
 }
 
+std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const CryptoKeyOKP& baseKey, const CryptoKeyOKP& publicKey, UseCryptoKit useCryptoKit)
+{
+#if HAVE(SWIFT_CPP_INTEROP)
+    if (useCryptoKit == UseCryptoKit::Yes)
+        return deriveBitsCryptoKit(baseKey.platformKey(), publicKey.platformKey());
+#else
+    UNUSED_PARAM(useCryptoKit);
+#endif
+    return deriveBitsCoreCrypto(baseKey.platformKey(), publicKey.platformKey());
+
+}
 } // namespace WebCore

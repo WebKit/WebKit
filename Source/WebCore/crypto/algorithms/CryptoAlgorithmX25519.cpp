@@ -57,7 +57,7 @@ void CryptoAlgorithmX25519::generateKey(const CryptoAlgorithmParameters&, bool e
 }
 
 #if !PLATFORM(COCOA) && !USE(GCRYPT)
-std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const CryptoKeyOKP&, const CryptoKeyOKP&)
+std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const CryptoKeyOKP&, const CryptoKeyOKP&, UseCryptoKit)
 {
     return std::nullopt;
 }
@@ -103,12 +103,12 @@ void CryptoAlgorithmX25519::deriveBits(const CryptoAlgorithmParameters& paramete
         (*derivedKey).shrink(lengthInBytes);
         callback(WTFMove(*derivedKey));
     };
-
+    UseCryptoKit useCryptoKit = context.settingsValues().cryptoKitEnabled ? UseCryptoKit::Yes : UseCryptoKit::No;
     // This is a special case that can't use dispatchOperation() because it bundles
     // the result validation and callback dispatch into unifiedCallback.
     workQueue.dispatch(
-        [baseKey = WTFMove(baseKey), publicKey = ecParameters.publicKey, length, unifiedCallback = WTFMove(unifiedCallback), contextIdentifier = context.identifier()]() mutable {
-            auto derivedKey = platformDeriveBits(downcast<CryptoKeyOKP>(baseKey.get()), downcast<CryptoKeyOKP>(*publicKey));
+        [baseKey = WTFMove(baseKey), publicKey = ecParameters.publicKey, length, unifiedCallback = WTFMove(unifiedCallback), contextIdentifier = context.identifier(), useCryptoKit]() mutable {
+            auto derivedKey = platformDeriveBits(downcast<CryptoKeyOKP>(baseKey.get()), downcast<CryptoKeyOKP>(*publicKey), useCryptoKit);
             ScriptExecutionContext::postTaskTo(contextIdentifier, [derivedKey = WTFMove(derivedKey), length, unifiedCallback = WTFMove(unifiedCallback)](auto&) mutable {
                 unifiedCallback(WTFMove(derivedKey), length);
             });

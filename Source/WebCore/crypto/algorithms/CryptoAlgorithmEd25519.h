@@ -28,6 +28,9 @@
 
 namespace WebCore {
 
+constexpr auto ed25519KeySize = 32;
+constexpr auto ed25519SignatureSize = ed25519KeySize * 2;
+
 class CryptoKeyOKP;
 
 class CryptoAlgorithmEd25519 final : public CryptoAlgorithm {
@@ -46,8 +49,8 @@ private:
     void importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&, UseCryptoKit) final;
     void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&, UseCryptoKit) final;
 
-    static ExceptionOr<Vector<uint8_t>> platformSign(const CryptoKeyOKP&, const Vector<uint8_t>&);
-    static ExceptionOr<bool> platformVerify(const CryptoKeyOKP&, const Vector<uint8_t>&, const Vector<uint8_t>&);
+    static ExceptionOr<Vector<uint8_t>> platformSign(const CryptoKeyOKP&, const Vector<uint8_t>&, UseCryptoKit);
+    static ExceptionOr<bool> platformVerify(const CryptoKeyOKP&, const Vector<uint8_t>&, const Vector<uint8_t>&, UseCryptoKit);
 };
 
 inline CryptoAlgorithmIdentifier CryptoAlgorithmEd25519::identifier() const

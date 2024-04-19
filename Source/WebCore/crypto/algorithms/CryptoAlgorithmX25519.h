@@ -40,7 +40,7 @@ private:
     void importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&, UseCryptoKit) final;
     void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&, UseCryptoKit) final;
 
-    static std::optional<Vector<uint8_t>> platformDeriveBits(const CryptoKeyOKP&, const CryptoKeyOKP&);
+    static std::optional<Vector<uint8_t>> platformDeriveBits(const CryptoKeyOKP&, const CryptoKeyOKP&, UseCryptoKit);
 };
 
 } // namespace WebCore

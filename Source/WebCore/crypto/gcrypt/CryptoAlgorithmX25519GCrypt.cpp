@@ -32,7 +32,7 @@ static std::optional<Vector<uint8_t>> gcryptDerive(const Vector<uint8_t>& baseKe
     return GCrypt::RFC7748::X25519(baseKey, publicKey);
 }
 
-std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const CryptoKeyOKP& baseKey, const CryptoKeyOKP& publicKey)
+std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const CryptoKeyOKP& baseKey, const CryptoKeyOKP& publicKey, UseCryptoKit)
 {
     return gcryptDerive(baseKey.platformKey(), publicKey.platformKey());
 }

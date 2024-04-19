@@ -55,6 +55,7 @@ public enum ErrorCodes: Int {
     case failedToDerive = 13
     case failedToExport = 14
     case defaultValue = 15
+    case unsupportedAlgorithm = 16
 }
 
 private class Utils {
@@ -132,10 +133,10 @@ public class AesKw {
 }  // AesKw
 
 public enum HashFunction {
+    case sha1
     case sha256
     case sha384
     case sha512
-    case sha1
 }
 
 public class Digest {
@@ -166,7 +167,7 @@ public class Digest {
     }
 
     fileprivate static func digest(_ data: SpanConstUInt8, hashFunction: HashFunction)
-    -> any CryptoKit.Digest
+        -> any CryptoKit.Digest
     {
         switch hashFunction {
         case .sha256:
@@ -453,4 +454,70 @@ public struct ECKey {
     }
 }
 
+public enum EdSigningAlgorithm {
+    case ed25519
+    case ed448
+}
+
+public enum EdKeyAgreementAlgorithm {
+    case x25519
+    case x448
+}
+
+public struct EdRv {
+    public var errCode: ErrorCodes = .defaultValue
+    public var signature: OptionalVectorUInt8 = OptionalVectorUInt8()
+    public var keyBytes: OptionalVectorUInt8 = OptionalVectorUInt8()
+}
+
+public class EdKey {
+    public static func sign(algo: EdSigningAlgorithm, key: SpanConstUInt8, data: SpanConstUInt8) -> EdRv {
+        var rv = EdRv()
+        do {
+            switch algo {
+            case .ed25519:
+                let priv = try Curve25519.Signing.PrivateKey(span: key)
+                rv.signature = Cpp.makeOptional(try priv.signature(span: data))
+                rv.errCode = .success
+            case .ed448:
+                rv.errCode = .unsupportedAlgorithm
+            }
+        } catch {
+            rv.errCode = .failedToSign
+        }
+        return rv
+    }
+    public static func verify(algo: EdSigningAlgorithm, key: SpanConstUInt8, signature: SpanConstUInt8, data: SpanConstUInt8) -> EdRv {
+        var rv = EdRv()
+        do {
+            switch algo {
+            case .ed25519:
+                let pub = try Curve25519.Signing.PublicKey(span: key)
+                rv.errCode = pub.isValidSignature(signature: signature, data: data) ? .success : .failedToVerify
+            case .ed448:
+                rv.errCode = .unsupportedAlgorithm
+            }
+        } catch {
+            rv.errCode = .failedToSign
+        }
+        return rv       
+    }
+    
+    public static func deriveBits(algo: EdKeyAgreementAlgorithm, priv: SpanConstUInt8, pub: SpanConstUInt8) -> EdRv {
+        var rv = EdRv()
+        do {
+            switch algo {
+            case .x25519:
+                let priv = try Curve25519.KeyAgreement.PrivateKey(span: priv)
+                rv.keyBytes = Cpp.makeOptional(try priv.sharedSecretFromKeyAgreement(pubSpan: pub))
+            case .x448:
+                rv.errCode = .unsupportedAlgorithm
+            }
+        } catch {
+            rv.errCode = .failedToDerive
+        }
+        return rv
+        
+    }
+}
 #endif
