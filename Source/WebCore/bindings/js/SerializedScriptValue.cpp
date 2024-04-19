@@ -106,6 +106,7 @@
 #include <wtf/DataLog.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/StackCheck.h>
 #include <wtf/Vector.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -934,6 +935,10 @@ protected:
 #else
     ALWAYS_INLINE void appendObjectPoolTag(SerializationTag) { }
 #endif
+    bool isSafeToRecurse()
+    {
+        return m_stackCheck.isSafeToRecurse();
+    }
 
     JSGlobalObject* const m_lexicalGlobalObject;
     bool m_failed;
@@ -942,6 +947,7 @@ protected:
 #if ASSERT_ENABLED
     Vector<SerializationTag> m_objectPoolTags;
 #endif
+    StackCheck m_stackCheck;
 };
 
 static bool wrapCryptoKey(JSGlobalObject* lexicalGlobalObject, const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
@@ -3629,6 +3635,8 @@ private:
     template <typename LengthType>
     bool readArrayBufferViewImpl(VM& vm, JSValue& arrayBufferView)
     {
+        if (!isSafeToRecurse())
+            return false;
         ArrayBufferViewSubtag arrayBufferViewSubtag;
         if (!readArrayBufferViewSubtag(arrayBufferViewSubtag))
             return false;
@@ -3708,6 +3716,8 @@ private:
 
     bool readArrayBufferView(VM& vm, JSValue& arrayBufferView)
     {
+        if (!isSafeToRecurse())
+            return false;
         if (m_majorVersion < 10)
             return readArrayBufferViewImpl<uint32_t>(vm, arrayBufferView);
         return readArrayBufferViewImpl<uint64_t>(vm, arrayBufferView);
@@ -4730,6 +4740,8 @@ private:
 
     JSValue readTerminal()
     {
+        if (!isSafeToRecurse())
+            return JSValue();
         SerializationTag tag = readTag();
         if (!isTypeExposedToGlobalObject(*m_globalObject, tag)) {
             SERIALIZE_TRACE("FAIL deserialize");
