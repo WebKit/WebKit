@@ -12,12 +12,14 @@ body {
     line-height: 150%;
 }
 
-input {
+div.editor {
     border: 1px solid tomato;
     box-sizing: border-box;
     outline: none;
     font-size: 18px;
     width: 300px;
+    height: 300px;
+    line-height: 150%;
 }
 </style>
 <script>
@@ -26,8 +28,7 @@ jsTestIsAsync = true;
 addEventListener("load", async () => {
     description("This test verifies that selecting backwards after typing with inline predictions does not cause a crash. This test requires WebKitTestRunner.");
 
-    input = document.querySelector("input");
-    await UIHelper.activateElementAndWaitForInputSession(input);
+    await UIHelper.activateElementAndWaitForInputSession(document.getElementById("target"));
 
     for (let character of [..."i want to c"]) {
         await UIHelper.callFunctionAndWaitForEvent(async () => {
@@ -39,10 +40,12 @@ addEventListener("load", async () => {
     await UIHelper.setInlinePrediction("elebrate");
     await UIHelper.ensurePresentationUpdate();
 
-    await UIHelper.keyDown("leftArrow", ["shiftKey"]);
-    await UIHelper.ensurePresentationUpdate();
+    for (const arrowKey of ["leftArrow", "rightArrow", "rightArrow", "upArrow", "downArrow", "downArrow"]) {
+        await UIHelper.keyDown(arrowKey, ["shiftKey"]);
+        await UIHelper.ensurePresentationUpdate();
+    }
 
-    input.blur();
+    document.activeElement.blur();
     await UIHelper.waitForKeyboardToHide();
 
     testPassed("Did not crash");
@@ -51,6 +54,10 @@ addEventListener("load", async () => {
 </script>
 </head>
 <body>
-    <input />
+<div class="editor" contenteditable>
+    Hello
+    <div id="target"><br></div>
+    <div>World</div>
+</div>
 </body>
 </html>
