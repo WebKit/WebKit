@@ -31,6 +31,8 @@
 
 @implementation WKContentWorld
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 + (WKContentWorld *)pageWorld
 {
     return wrapper(API::ContentWorld::pageContentWorld());

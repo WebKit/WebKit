@@ -348,6 +348,8 @@ private:
     RetainPtr<NSArray> _proxyConfigurations;
 }
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 + (WKWebsiteDataStore *)defaultDataStore
 {
     return wrapper(WebKit::WebsiteDataStore::defaultDataStore()).autorelease();

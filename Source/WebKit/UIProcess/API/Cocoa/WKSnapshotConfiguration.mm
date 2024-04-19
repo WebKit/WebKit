@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKSnapshotConfigurationPrivate.h"
 
+#import "WKObject.h"
+
 @implementation WKSnapshotConfiguration {
 #if PLATFORM(MAC)
     BOOL _includesSelectionHighlighting;
@@ -33,6 +35,8 @@
 #endif
     BOOL _usesTransparentBackground;
 }
+
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (instancetype)init
 {

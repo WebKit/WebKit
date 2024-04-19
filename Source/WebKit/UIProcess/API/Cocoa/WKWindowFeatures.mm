@@ -32,6 +32,8 @@
 
 @implementation WKWindowFeatures
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWindowFeatures.class, self))

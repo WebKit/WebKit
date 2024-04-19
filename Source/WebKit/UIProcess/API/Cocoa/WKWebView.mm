@@ -256,6 +256,8 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& 
 
 @implementation WKWebView
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     return [self initWithFrame:frame configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get()];

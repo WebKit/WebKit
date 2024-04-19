@@ -23,12 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
+#import "Logging.h"
 #import "WKFoundation.h"
 
 #import <type_traits>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/spi/cocoa/objcSPI.h>
 
 namespace API {
@@ -159,3 +162,18 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #endif // HAVE(OBJC_CUSTOM_DEALLOC)
+
+#define WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS \
++ (BOOL)accessInstanceVariablesDirectly \
+{ \
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ThrowOnKVCInstanceVariableAccess)) { \
+        static bool didLogFault; \
+        if (!didLogFault) { \
+            didLogFault = true; \
+            RELEASE_LOG_FAULT(API, "Do not access private instance variables of %{public}s via key-value coding. This will raise an exception when linking against newer SDKs.", class_getName(self)); \
+        } \
+        return YES; \
+    } \
+    return NO; \
+} \
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int

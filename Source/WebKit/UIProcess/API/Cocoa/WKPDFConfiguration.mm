@@ -26,7 +26,11 @@
 #import "config.h"
 #import "WKPDFConfiguration.h"
 
+#import "WKObject.h"
+
 @implementation WKPDFConfiguration
+
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (instancetype)init
 {

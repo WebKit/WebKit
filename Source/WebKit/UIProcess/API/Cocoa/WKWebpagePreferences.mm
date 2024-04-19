@@ -132,6 +132,8 @@ static WebCore::ModalContainerObservationPolicy coreModalContainerObservationPol
 
 @implementation WKWebpagePreferences
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 + (instancetype)defaultPreferences
 {
     return adoptNS([[self alloc] init]).autorelease();

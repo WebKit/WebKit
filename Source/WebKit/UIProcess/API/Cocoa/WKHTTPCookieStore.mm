@@ -66,6 +66,8 @@ private:
     HashMap<CFTypeRef, std::unique_ptr<WKHTTPCookieStoreObserver>> _observers;
 }
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKHTTPCookieStore.class, self))

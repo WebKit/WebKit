@@ -182,6 +182,8 @@ private:
 
 @implementation WKDownload
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 - (void)cancel:(void (^)(NSData *resumeData))completionHandler
 {
     _download->cancel([completionHandler = makeBlockPtr(completionHandler)] (auto* data) {
