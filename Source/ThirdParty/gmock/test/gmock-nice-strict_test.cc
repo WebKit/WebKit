@@ -31,6 +31,7 @@
 
 #include <string>
 #include <utility>
+
 #include "gmock/gmock.h"
 #include "gtest/gtest-spi.h"
 #include "gtest/gtest.h"
@@ -39,18 +40,18 @@
 // clash with ::testing::Mock.
 class Mock {
  public:
-  Mock() {}
+  Mock() = default;
 
   MOCK_METHOD0(DoThis, void());
 
  private:
-  GTEST_DISALLOW_COPY_AND_ASSIGN_(Mock);
+  Mock(const Mock&) = delete;
+  Mock& operator=(const Mock&) = delete;
 };
 
 namespace testing {
 namespace gmock_nice_strict_test {
 
-using testing::GMOCK_FLAG(verbose);
 using testing::HasSubstr;
 using testing::NaggyMock;
 using testing::NiceMock;
@@ -77,7 +78,7 @@ class CallsMockMethodInDestructor {
 
 class Foo {
  public:
-  virtual ~Foo() {}
+  virtual ~Foo() = default;
 
   virtual void DoThis() = 0;
   virtual int DoThat(bool flag) = 0;
@@ -85,7 +86,7 @@ class Foo {
 
 class MockFoo : public Foo {
  public:
-  MockFoo() {}
+  MockFoo() = default;
   void Delete() { delete this; }
 
   MOCK_METHOD0(DoThis, void());
@@ -93,7 +94,8 @@ class MockFoo : public Foo {
   MOCK_METHOD0(ReturnNonDefaultConstructible, NotDefaultConstructible());
 
  private:
-  GTEST_DISALLOW_COPY_AND_ASSIGN_(MockFoo);
+  MockFoo(const MockFoo&) = delete;
+  MockFoo& operator=(const MockFoo&) = delete;
 };
 
 class MockBar {
@@ -103,10 +105,11 @@ class MockBar {
   MockBar(char a1, char a2, std::string a3, std::string a4, int a5, int a6,
           const std::string& a7, const std::string& a8, bool a9, bool a10) {
     str_ = std::string() + a1 + a2 + a3 + a4 + static_cast<char>(a5) +
-        static_cast<char>(a6) + a7 + a8 + (a9 ? 'T' : 'F') + (a10 ? 'T' : 'F');
+           static_cast<char>(a6) + a7 + a8 + (a9 ? 'T' : 'F') +
+           (a10 ? 'T' : 'F');
   }
 
-  virtual ~MockBar() {}
+  virtual ~MockBar() = default;
 
   const std::string& str() const { return str_; }
 
@@ -116,9 +119,9 @@ class MockBar {
  private:
   std::string str_;
 
-  GTEST_DISALLOW_COPY_AND_ASSIGN_(MockBar);
+  MockBar(const MockBar&) = delete;
+  MockBar& operator=(const MockBar&) = delete;
 };
-
 
 class MockBaz {
  public:
@@ -140,8 +143,8 @@ class MockBaz {
 
 // Tests that a raw mock generates warnings for uninteresting calls.
 TEST(RawMockTest, WarningForUninterestingCall) {
-  const std::string saved_flag = GMOCK_FLAG(verbose);
-  GMOCK_FLAG(verbose) = "warning";
+  const std::string saved_flag = GMOCK_FLAG_GET(verbose);
+  GMOCK_FLAG_SET(verbose, "warning");
 
   MockFoo raw_foo;
 
@@ -151,26 +154,25 @@ TEST(RawMockTest, WarningForUninterestingCall) {
   EXPECT_THAT(GetCapturedStdout(),
               HasSubstr("Uninteresting mock function call"));
 
-  GMOCK_FLAG(verbose) = saved_flag;
+  GMOCK_FLAG_SET(verbose, saved_flag);
 }
 
 // Tests that a raw mock generates warnings for uninteresting calls
 // that delete the mock object.
 TEST(RawMockTest, WarningForUninterestingCallAfterDeath) {
-  const std::string saved_flag = GMOCK_FLAG(verbose);
-  GMOCK_FLAG(verbose) = "warning";
+  const std::string saved_flag = GMOCK_FLAG_GET(verbose);
+  GMOCK_FLAG_SET(verbose, "warning");
 
   MockFoo* const raw_foo = new MockFoo;
 
-  ON_CALL(*raw_foo, DoThis())
-      .WillByDefault(Invoke(raw_foo, &MockFoo::Delete));
+  ON_CALL(*raw_foo, DoThis()).WillByDefault(Invoke(raw_foo, &MockFoo::Delete));
 
   CaptureStdout();
   raw_foo->DoThis();
   EXPECT_THAT(GetCapturedStdout(),
               HasSubstr("Uninteresting mock function call"));
 
-  GMOCK_FLAG(verbose) = saved_flag;
+  GMOCK_FLAG_SET(verbose, saved_flag);
 }
 
 // Tests that a raw mock generates informational logs for
@@ -178,14 +180,14 @@ TEST(RawMockTest, WarningForUninterestingCallAfterDeath) {
 TEST(RawMockTest, InfoForUninterestingCall) {
   MockFoo raw_foo;
 
-  const std::string saved_flag = GMOCK_FLAG(verbose);
-  GMOCK_FLAG(verbose) = "info";
+  const std::string saved_flag = GMOCK_FLAG_GET(verbose);
+  GMOCK_FLAG_SET(verbose, "info");
   CaptureStdout();
   raw_foo.DoThis();
   EXPECT_THAT(GetCapturedStdout(),
               HasSubstr("Uninteresting mock function call"));
 
-  GMOCK_FLAG(verbose) = saved_flag;
+  GMOCK_FLAG_SET(verbose, saved_flag);
 }
 
 TEST(RawMockTest, IsNaggy_IsNice_IsStrict) {
@@ -223,14 +225,14 @@ TEST(NiceMockTest, NoWarningForUninterestingCallAfterDeath) {
 TEST(NiceMockTest, InfoForUninterestingCall) {
   NiceMock<MockFoo> nice_foo;
 
-  const std::string saved_flag = GMOCK_FLAG(verbose);
-  GMOCK_FLAG(verbose) = "info";
+  const std::string saved_flag = GMOCK_FLAG_GET(verbose);
+  GMOCK_FLAG_SET(verbose, "info");
   CaptureStdout();
   nice_foo.DoThis();
   EXPECT_THAT(GetCapturedStdout(),
               HasSubstr("Uninteresting mock function call"));
 
-  GMOCK_FLAG(verbose) = saved_flag;
+  GMOCK_FLAG_SET(verbose, saved_flag);
 }
 
 #endif  // GTEST_HAS_STREAM_REDIRECTION
@@ -281,8 +283,8 @@ TEST(NiceMockTest, NonDefaultConstructor) {
 // Tests that NiceMock works with a mock class that has a 10-ary
 // non-default constructor.
 TEST(NiceMockTest, NonDefaultConstructor10) {
-  NiceMock<MockBar> nice_bar('a', 'b', "c", "d", 'e', 'f',
-                             "g", "h", true, false);
+  NiceMock<MockBar> nice_bar('a', 'b', "c", "d", 'e', 'f', "g", "h", true,
+                             false);
   EXPECT_EQ("abcdefghTF", nice_bar.str());
 
   nice_bar.This();
@@ -326,8 +328,8 @@ TEST(NiceMockTest, IsNaggy_IsNice_IsStrict) {
 
 // Tests that a naggy mock generates warnings for uninteresting calls.
 TEST(NaggyMockTest, WarningForUninterestingCall) {
-  const std::string saved_flag = GMOCK_FLAG(verbose);
-  GMOCK_FLAG(verbose) = "warning";
+  const std::string saved_flag = GMOCK_FLAG_GET(verbose);
+  GMOCK_FLAG_SET(verbose, "warning");
 
   NaggyMock<MockFoo> naggy_foo;
 
@@ -337,14 +339,14 @@ TEST(NaggyMockTest, WarningForUninterestingCall) {
   EXPECT_THAT(GetCapturedStdout(),
               HasSubstr("Uninteresting mock function call"));
 
-  GMOCK_FLAG(verbose) = saved_flag;
+  GMOCK_FLAG_SET(verbose, saved_flag);
 }
 
 // Tests that a naggy mock generates a warning for an uninteresting call
 // that deletes the mock object.
 TEST(NaggyMockTest, WarningForUninterestingCallAfterDeath) {
-  const std::string saved_flag = GMOCK_FLAG(verbose);
-  GMOCK_FLAG(verbose) = "warning";
+  const std::string saved_flag = GMOCK_FLAG_GET(verbose);
+  GMOCK_FLAG_SET(verbose, "warning");
 
   NaggyMock<MockFoo>* const naggy_foo = new NaggyMock<MockFoo>;
 
@@ -356,7 +358,7 @@ TEST(NaggyMockTest, WarningForUninterestingCallAfterDeath) {
   EXPECT_THAT(GetCapturedStdout(),
               HasSubstr("Uninteresting mock function call"));
 
-  GMOCK_FLAG(verbose) = saved_flag;
+  GMOCK_FLAG_SET(verbose, saved_flag);
 }
 
 #endif  // GTEST_HAS_STREAM_REDIRECTION
@@ -391,8 +393,8 @@ TEST(NaggyMockTest, NonDefaultConstructor) {
 // Tests that NaggyMock works with a mock class that has a 10-ary
 // non-default constructor.
 TEST(NaggyMockTest, NonDefaultConstructor10) {
-  NaggyMock<MockBar> naggy_bar('0', '1', "2", "3", '4', '5',
-                               "6", "7", true, false);
+  NaggyMock<MockBar> naggy_bar('0', '1', "2", "3", '4', '5', "6", "7", true,
+                               false);
   EXPECT_EQ("01234567TF", naggy_bar.str());
 
   naggy_bar.This();
@@ -419,8 +421,8 @@ TEST(NaggyMockTest, AcceptsClassNamedMock) {
 }
 
 TEST(NaggyMockTest, IsNaggyInDestructor) {
-  const std::string saved_flag = GMOCK_FLAG(verbose);
-  GMOCK_FLAG(verbose) = "warning";
+  const std::string saved_flag = GMOCK_FLAG_GET(verbose);
+  GMOCK_FLAG_SET(verbose, "warning");
   CaptureStdout();
 
   {
@@ -431,7 +433,7 @@ TEST(NaggyMockTest, IsNaggyInDestructor) {
   EXPECT_THAT(GetCapturedStdout(),
               HasSubstr("Uninteresting mock function call"));
 
-  GMOCK_FLAG(verbose) = saved_flag;
+  GMOCK_FLAG_SET(verbose, saved_flag);
 }
 
 TEST(NaggyMockTest, IsNaggy_IsNice_IsStrict) {
@@ -491,8 +493,8 @@ TEST(StrictMockTest, NonDefaultConstructor) {
 // Tests that StrictMock works with a mock class that has a 10-ary
 // non-default constructor.
 TEST(StrictMockTest, NonDefaultConstructor10) {
-  StrictMock<MockBar> strict_bar('a', 'b', "c", "d", 'e', 'f',
-                                 "g", "h", true, false);
+  StrictMock<MockBar> strict_bar('a', 'b', "c", "d", 'e', 'f', "g", "h", true,
+                                 false);
   EXPECT_EQ("abcdefghTF", strict_bar.str());
 
   EXPECT_NONFATAL_FAILURE(strict_bar.That(5, true),
