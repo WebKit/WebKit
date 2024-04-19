@@ -380,13 +380,17 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         if (Options::createPreHeaders())
             RUN_PHASE(performLoopPreHeaderCreation);
 
+        RUN_PHASE(performCPSRethreading);
+
         if (Options::useFTLLoopUnrolling()) {
-            RUN_PHASE(performCPSRethreading);
             RUN_PHASE(performDFGLoopUnrolling);
+            RUN_PHASE(performCleanUp);
             RUN_PHASE(performCriticalEdgeBreaking);
+            if (Options::createPreHeaders())
+                RUN_PHASE(performLoopPreHeaderCreation);
+            RUN_PHASE(performCPSRethreading);
         }
 
-        RUN_PHASE(performCPSRethreading);
         RUN_PHASE(performSSAConversion);
         RUN_PHASE(performSSALowering);
 

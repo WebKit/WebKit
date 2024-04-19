@@ -409,10 +409,8 @@ class UnrollingPhase : public Phase {
         BasicBlock* b = n->owner;
         switch (n->op()) {
         case Phi: {
-            auto* val = m_graph.addNode(n->prediction(), n->op(), n->origin, OpInfo(n->variableAccessData()));
-            dataLogLnIf(verbose && val->child1(), " Phi node ", n, " has a child?"); // TODO
-            into->phis.append(val);
-            return val;
+            ASSERT_NOT_REACHED(); // Should already be in the map
+            return nullptr;
         }
         case ExitOK:
         case LoopHint:
@@ -859,6 +857,13 @@ public:
                 bool updateWasCommited = false;
                 bool updateWouldHaveBeenCommited = false;
 
+                for (size_t i = 0; i < b->phis.size(); ++i) {
+                    auto* n = b->phis[i];
+                    auto* val = m_graph.addNode(n->prediction(), n->op(), n->origin, OpInfo(n->variableAccessData()));
+                    ASSERT(!val->child1()); // TODO
+                    bp->phis[i] = val;
+                }
+
                 for (unsigned i = 0; i < b->size(); ++i) {
                     auto* const n = b->at(i);
                     // We will handle this guy below
@@ -977,6 +982,7 @@ public:
             // FIXME: We don't want to introduce irreducible control flow here
             // but we totally do: core_sha1_loop_unrolling.js
             auto newContinueOriginalLoop = BranchTarget(blockMap.get(continueOriginalLoop.block));
+            exitLoop.block->predecessors.append(newContinueOriginalLoop.block);
             
             replaceSuccessorsWithFunctor(newContinueOriginalLoop.block, [&] (BasicBlock* s) -> BasicBlock* {
                 for (BasicBlock* originalSuccessor : continueOriginalLoop.block->successors()) {
@@ -1061,7 +1067,13 @@ public:
             dataLogLn("goToOriginalLoop: ", *goToOriginalLoop);
         }
 
-        m_graph.m_form = LoadStore;
+        m_graph.dethread();
+        m_graph.invalidateCFG();
+        m_graph.invalidateNodeLiveness();
+        m_graph.resetReachability();
+        m_graph.killUnreachableBlocks();
+
+        ASSERT(m_graph.m_form == LoadStore);
 
         return true;
     }
