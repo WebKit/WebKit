@@ -139,7 +139,7 @@ extension WKSLinearMediaPresentationState: CustomStringConvertible {
     }
 }
 
-extension WKSLinearMediaViewingMode {
+extension WKSLinearMediaViewingMode: CustomStringConvertible {
     init(_ viewingMode: ViewingMode?) {
         switch viewingMode {
         case .mono?:
@@ -169,6 +169,23 @@ extension WKSLinearMediaViewingMode {
             .immersive
         case .spatial:
             .spatial
+        @unknown default:
+            fatalError()
+        }
+    }
+
+    public var description: String {
+        switch self {
+        case .none:
+            return "none"
+        case .mono:
+            return "mono"
+        case .stereo:
+            return "stereo"
+        case .immersive:
+            return "immersive"
+        case .spatial:
+            return "spatial"
         @unknown default:
             fatalError()
         }

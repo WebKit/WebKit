@@ -151,6 +151,8 @@ enum LinearMediaPlayerErrors: Error {
     }
 
     func makeViewController() -> PlayableViewController {
+        Logger.linearMediaPlayer.log("\(#function)")
+
         let viewController = PlayableViewController()
 #if canImport(LinearMediaKit, _version: 205)
         viewController.playable = self
@@ -478,78 +480,98 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func play() {
+        Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayerPlay?(self)
     }
 
     public func pause() {
+        Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayerPause?(self)
     }
 
     public func togglePlayback() {
+        Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayerTogglePlayback?(self)
     }
 
     public func setPlaybackRate(_ rate: Double) {
+        Logger.linearMediaPlayer.log("\(#function) \(rate)")
         delegate?.linearMediaPlayer?(self, setPlaybackRate: rate)
     }
 
     public func seek(to time: TimeInterval) {
+        Logger.linearMediaPlayer.log("\(#function) \(time)")
         delegate?.linearMediaPlayer?(self, seekToTime: time)
     }
 
     public func seek(delta: TimeInterval) {
+        Logger.linearMediaPlayer.log("\(#function) \(delta)")
         delegate?.linearMediaPlayer?(self, seekByDelta: delta)
     }
 
     public func seek(to destination: TimeInterval, from source: TimeInterval, metadata: SeekMetadata) -> TimeInterval {
-        delegate?.linearMediaPlayer?(self, seekToDestination: destination, fromSource: source) ?? TimeInterval.zero
+        Logger.linearMediaPlayer.log("\(#function) destination=\(destination) source=\(source)")
+        return delegate?.linearMediaPlayer?(self, seekToDestination: destination, fromSource: source) ?? TimeInterval.zero
     }
 
     public func completeTrimming(commitChanges: Bool) {
+        Logger.linearMediaPlayer.log("\(#function) \(commitChanges)")
         delegate?.linearMediaPlayer?(self, completeTrimming: commitChanges)
     }
 
     public func updateStartTime(_ time: TimeInterval) {
+        Logger.linearMediaPlayer.log("\(#function) \(time)")
         delegate?.linearMediaPlayer?(self, updateStartTime: time)
     }
 
     public func updateEndTime(_ time: TimeInterval) {
+        Logger.linearMediaPlayer.log("\(#function) \(time)")
         delegate?.linearMediaPlayer?(self, updateEndTime: time)
     }
 
     public func beginEditingVolume() {
+        Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayerBeginEditingVolume?(self)
     }
 
     public func endEditingVolume() {
+        Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayerEndEditingVolume?(self)
     }
 
     public func setAudioTrack(_ newTrack: Track?) {
+        Logger.linearMediaPlayer.log("\(#function) \(newTrack?.localizedDisplayName ?? "nil")")
         delegate?.linearMediaPlayer?(self, setAudioTrack: newTrack as? WKSLinearMediaTrack)
     }
 
     public func setLegibleTrack(_ newTrack: Track?) {
+        Logger.linearMediaPlayer.log("\(#function) \(newTrack?.localizedDisplayName ?? "nil")")
         delegate?.linearMediaPlayer?(self, setLegibleTrack: newTrack as? WKSLinearMediaTrack)
     }
 
     public func skipActiveInterstitial() {
+        Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayerSkipActiveInterstitial?(self)
     }
 
     public func setCaptionContentInsets(_ insets: UIEdgeInsets) {
+        Logger.linearMediaPlayer.log("\(#function) \(NSCoder.string(for: insets))")
         delegate?.linearMediaPlayer?(self, setCaptionContentInsets: insets)
     }
 
     public func updateVideoBounds(_ bounds: CGRect) {
+        Logger.linearMediaPlayer.log("\(#function) \(NSCoder.string(for: bounds))")
         delegate?.linearMediaPlayer?(self, updateVideoBounds: bounds)
     }
 
     public func updateViewingMode(_ mode: ViewingMode?) {
-        delegate?.linearMediaPlayer?(self, update: .init(mode))
+        let viewingMode = WKSLinearMediaViewingMode(mode)
+        Logger.linearMediaPlayer.log("\(#function) \(viewingMode)")
+        delegate?.linearMediaPlayer?(self, update: viewingMode)
     }
 
     public func togglePip() {
+        Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayerTogglePip?(self)
     }
 
@@ -634,56 +656,67 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func setTimeResolverInterval(_ interval: TimeInterval) {
+        Logger.linearMediaPlayer.log("\(#function) \(interval)")
         delegate?.linearMediaPlayer?(self, setTimeResolverInterval: interval)
     }
 
     public func setTimeResolverResolution(_ resolution: TimeInterval) {
+        Logger.linearMediaPlayer.log("\(#function) \(resolution)")
         delegate?.linearMediaPlayer?(self, setTimeResolverResolution: resolution)
     }
 
     public func setThumbnailSize(_ size: CGSize) {
+        Logger.linearMediaPlayer.log("\(#function) \(NSCoder.string(for: size))")
         delegate?.linearMediaPlayer?(self, setThumbnailSize: size)
     }
 
     public func seekThumbnail(to time: TimeInterval) {
+        Logger.linearMediaPlayer.log("\(#function) \(time)")
         delegate?.linearMediaPlayer?(self, seekThumbnailToTime: time)
     }
 
     public func beginScrubbing() {
+        Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayerBeginScrubbing?(self)
     }
 
     public func endScrubbing() {
+        Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayerEndScrubbing?(self)
     }
 
     public func beginScanningForward() {
+        Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayerBeginScanningForward?(self)
     }
 
     public func endScanningForward() {
+        Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayerEndScanningForward?(self)
     }
 
     public func beginScanningBackward() {
+        Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayerBeginScanningBackward?(self)
     }
 
     public func endScanningBackward() {
+        Logger.linearMediaPlayer.log("\(#function)")
         delegate?.linearMediaPlayerEndScanningBackward?(self)
     }
 
     public func setVolume(_ volume: Double) {
+        Logger.linearMediaPlayer.log("\(#function) \(volume)")
         delegate?.linearMediaPlayer?(self, setVolume: volume)
     }
 
     public func setIsMuted(_ value: Bool) {
+        Logger.linearMediaPlayer.log("\(#function) \(value)")
         delegate?.linearMediaPlayer?(self, setMuted: value)
     }
 
     public func setVideoReceiverEndpoint(_ endpoint: xpc_object_t) {
         Logger.linearMediaPlayer.log("\(#function)")
-
         delegate?.linearMediaPlayer?(self, setVideoReceiverEndpoint: endpoint)
     }
 }
