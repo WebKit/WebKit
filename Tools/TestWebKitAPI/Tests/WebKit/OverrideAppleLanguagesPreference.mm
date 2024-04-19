@@ -25,14 +25,14 @@
 
 #import "config.h"
 
-#if WK_HAVE_C_SPI
-
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/PreferenceObserver.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringBuilder.h>
+
+#if WK_HAVE_C_SPI
 
 TEST(WebKit, OverrideAppleLanguagesPreference)
 {
@@ -55,6 +55,19 @@ TEST(WebKit, OverrideAppleLanguagesPreference)
 }
 
 #endif // WK_HAVE_C_SPI
+
+TEST(WebKit, OverrideAppleLanguagesPreferenceAffectsNavigatorLanguage)
+{
+    NSDictionary *dict = @{
+        @"AppleLanguages": @[ @"en-GB" ],
+    };
+    [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    EXPECT_WK_STREQ("en-GB", [webView stringByEvaluatingJavaScript:@"window.navigator.language"]);
+}
 
 // On older macOSes, CFPREFS_DIRECT_MODE is disabled and the WebProcess does not see the updated AppleLanguages
 // after the AppleLanguagePreferencesChangedNotification notification.

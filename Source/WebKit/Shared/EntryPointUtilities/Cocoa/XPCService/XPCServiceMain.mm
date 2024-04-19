@@ -51,25 +51,24 @@
 
 namespace WebKit {
 
+static Vector<String>& overrideLanguagesFromBootstrap()
+{
+    static NeverDestroyed<Vector<String>> languages;
+    return languages;
+}
+
+static void stageOverrideLanguagesForMainThread(Vector<String>&& languages)
+{
+    RELEASE_ASSERT(overrideLanguagesFromBootstrap().isEmpty());
+    overrideLanguagesFromBootstrap().swap(languages);
+}
+
 static void setAppleLanguagesPreference()
 {
-    auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
-    if (!bootstrap)
+    if (overrideLanguagesFromBootstrap().isEmpty())
         return;
-
-    if (xpc_object_t languages = xpc_dictionary_get_value(bootstrap.get(), "OverrideLanguages")) {
-        @autoreleasepool {
-            Vector<String> newLanguages;
-            xpc_array_apply(languages, makeBlockPtr([&newLanguages](size_t index, xpc_object_t value) {
-                newLanguages.append(String::fromUTF8(xpc_string_get_string_ptr(value)));
-                return true;
-            }).get());
-
-            LOG_WITH_STREAM(Language, stream << "Bootstrap message contains OverrideLanguages: " << newLanguages);
-            overrideUserPreferredLanguages(newLanguages);
-        }
-    } else
-        LOG(Language, "Bootstrap message does not contain OverrideLanguages");
+    LOG_WITH_STREAM(Language, stream << "Overriding user prefered language: " << overrideLanguagesFromBootstrap());
+    overrideUserPreferredLanguages(overrideLanguagesFromBootstrap());
 }
 
 static void initializeCFPrefs()
@@ -191,6 +190,19 @@ void XPCServiceEventHandler(xpc_connection_t peer)
 
             bool disableLogging = xpc_dictionary_get_bool(event, "disable-logging");
             initializeLogd(disableLogging);
+
+            if (xpc_object_t languages = xpc_dictionary_get_value(event, "OverrideLanguages")) {
+                Vector<String> newLanguages;
+                @autoreleasepool {
+                    xpc_array_apply(languages, makeBlockPtr([&newLanguages](size_t index, xpc_object_t value) {
+                        newLanguages.append(String::fromUTF8(xpc_string_get_string_ptr(value)));
+                        return true;
+                    }).get());
+                }
+                LOG_WITH_STREAM(Language, stream << "Bootstrap message contains OverrideLanguages: " << newLanguages);
+                stageOverrideLanguagesForMainThread(WTFMove(newLanguages));
+            } else
+                LOG(Language, "Bootstrap message does not contain OverrideLanguages");
 
 #if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>) && PLATFORM(IOS)
             register_for_dlsym_callbacks();
