@@ -163,6 +163,9 @@ class Port(object):
     def target_host(self, worker_number=None):
         return self.host
 
+    def is_simulator(self):
+        return False
+
     def architecture(self):
         return self.get_option('architecture') or self.DEFAULT_ARCHITECTURE
 

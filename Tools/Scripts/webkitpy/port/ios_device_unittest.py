@@ -22,6 +22,8 @@
 
 import time
 
+from mock import Mock
+
 from webkitcorepy import Version
 
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
@@ -38,6 +40,11 @@ class IOSDeviceTest(ios_testcase.IOSTest):
     os_version = None
     port_name = 'ios-device'
     port_maker = IOSDevicePort
+
+    def make_port(self, *args, **kwargs):
+        port = super(IOSDeviceTest, self).make_port(*args, **kwargs)
+        port.DEVICE_MANAGER = Mock(INITIALIZED_DEVICES=None)
+        return port
 
     def test_operating_system(self):
         self.assertEqual('ios-device', self.make_port().operating_system())
