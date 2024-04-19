@@ -43,14 +43,12 @@ public:
     ~InlineDamage();
 
     enum class Reason : uint8_t {
-        Append                 = 1 << 0,
-        Insert                 = 1 << 1,
-        Remove                 = 1 << 2,
-        ContentChange          = 1 << 3,
-        StyleChange            = 1 << 4,
-        BreakingContextChanged = 1 << 5,
-        InlineItemTypeChanged  = 1 << 6,
-        Pagination             = 1 << 7
+        Append        = 1 << 0,
+        Insert        = 1 << 1,
+        Remove        = 1 << 2,
+        ContentChange = 1 << 3,
+        StyleChange   = 1 << 4,
+        Pagination    = 1 << 5
     };
     OptionSet<Reason> reasons() const { return m_damageReasons; }
 

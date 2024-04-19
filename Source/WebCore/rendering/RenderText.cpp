@@ -371,7 +371,7 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     if (needsResetText || oldTransform != newStyle.textTransform() || oldSecurity != newStyle.textSecurity())
         RenderText::setText(originalText(), true);
 
-    if ((diff >= StyleDifference::Repaint || &style() != &firstLineStyle()) && layoutBox())
+    if (diff >= StyleDifference::Repaint && layoutBox())
         LayoutIntegration::LineLayout::updateStyle(*this);
 }
 

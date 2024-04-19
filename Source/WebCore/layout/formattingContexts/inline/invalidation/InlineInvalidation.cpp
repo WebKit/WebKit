@@ -29,7 +29,6 @@
 #include "InlineDamage.h"
 #include "InlineSoftLineBreakItem.h"
 #include "LayoutUnit.h"
-#include "TextBreakingPositionContext.h"
 #include "TextDirection.h"
 #include <wtf/Range.h>
 
@@ -45,39 +44,8 @@ InlineInvalidation::InlineInvalidation(InlineDamage& inlineDamage, const InlineI
 
 bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle& newStyle)
 {
-    auto& oldStyle = layoutBox.style();
-    auto contentMayNeedNewBreakingPositionsAndMeasuring = [&] {
-        // FIXME: We should only check for properties affecting measuring.
-        if (TextBreakingPositionContext { oldStyle } != TextBreakingPositionContext { newStyle })
-            return true;
-        if (oldStyle.fontCascade() != newStyle.fontCascade())
-            return true;
-        auto* newFirstLineStyle = newStyle.getCachedPseudoStyle({ PseudoId::FirstLine });
-        auto* oldFirstLineStyle = oldStyle.getCachedPseudoStyle({ PseudoId::FirstLine });
-        if (newFirstLineStyle && oldFirstLineStyle && oldFirstLineStyle->fontCascade() != newFirstLineStyle->fontCascade())
-            return true;
-        if ((newFirstLineStyle && newFirstLineStyle->fontCascade() != oldStyle.fontCascade()) || (oldFirstLineStyle && oldFirstLineStyle->fontCascade() != newStyle.fontCascade()))
-            return true;
-        return false;
-    };
-    if (contentMayNeedNewBreakingPositionsAndMeasuring()) {
-        m_inlineDamage.setDamageReason(InlineDamage::Reason::BreakingContextChanged);
-        return true;
-    }
-
-    auto hasInlineItemTypeChanged = [&] {
-        return oldStyle.hasOutOfFlowPosition() != newStyle.hasOutOfFlowPosition()
-            || oldStyle.isFloating() != newStyle.isFloating()
-            || oldStyle.display() != newStyle.display()
-            || oldStyle.unicodeBidi() != newStyle.unicodeBidi()
-            || oldStyle.direction() != newStyle.direction()
-            || oldStyle.tabSize() != newStyle.tabSize()
-            || oldStyle.textSecurity() != newStyle.textSecurity();
-    };
-    if (hasInlineItemTypeChanged()) {
-        m_inlineDamage.setDamageReason(InlineDamage::Reason::InlineItemTypeChanged);
-        return true;
-    }
+    UNUSED_PARAM(layoutBox);
+    UNUSED_PARAM(newStyle);
 
     m_inlineDamage.setDamageReason(InlineDamage::Reason::StyleChange);
     return true;
