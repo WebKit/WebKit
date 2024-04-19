@@ -163,6 +163,8 @@ private:
     Vector<WGPURenderPassColorAttachment> m_descriptorColorAttachments;
     WGPURenderPassDepthStencilAttachment m_descriptorDepthStencilAttachment;
     WGPURenderPassTimestampWrites m_descriptorTimestampWrites;
+    Vector<WeakPtr<TextureView>> m_colorAttachmentViews;
+    WeakPtr<TextureView> m_depthStencilView;
     struct BufferAndOffset {
         id<MTLBuffer> buffer { nil };
         uint64_t offset { 0 };

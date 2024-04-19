@@ -40,6 +40,7 @@ namespace WebGPU {
 class BindGroupLayout;
 class Device;
 class PipelineLayout;
+class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderpipeline
 class RenderPipeline : public WGPURenderPipelineImpl, public RefCounted<RenderPipeline>, public CanMakeWeakPtr<RenderPipeline> {
@@ -84,7 +85,7 @@ public:
 
     Device& device() const { return m_device; }
     PipelineLayout& pipelineLayout() const;
-    bool colorDepthStencilTargetsMatch(const WGPURenderPassDescriptor&) const;
+    bool colorDepthStencilTargetsMatch(const WGPURenderPassDescriptor&, const Vector<WeakPtr<TextureView>>&, const WeakPtr<TextureView>&) const;
     bool validateRenderBundle(const WGPURenderBundleEncoderDescriptor&) const;
     bool writesDepth() const;
     bool writesStencil() const;

@@ -72,6 +72,10 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         m_descriptor.depthStencilAttachment = &m_descriptorDepthStencilAttachment;
     if (descriptor.timestampWrites)
         m_descriptor.timestampWrites = &m_descriptorTimestampWrites;
+    for (size_t i = 0; i < descriptor.colorAttachmentCount; ++i)
+        m_colorAttachmentViews.append(WeakPtr { static_cast<TextureView*>(descriptor.colorAttachments[i].view) });
+    if (descriptor.depthStencilAttachment)
+        m_depthStencilView = WeakPtr { static_cast<TextureView*>(descriptor.depthStencilAttachment->view) };
 
     m_parentEncoder->lock(true);
 
@@ -741,7 +745,7 @@ CommandEncoder& RenderPassEncoder::parentEncoder()
 
 bool RenderPassEncoder::colorDepthStencilTargetsMatch(const RenderPipeline& pipeline) const
 {
-    return pipeline.colorDepthStencilTargetsMatch(m_descriptor);
+    return pipeline.colorDepthStencilTargetsMatch(m_descriptor, m_colorAttachmentViews, m_depthStencilView);
 }
 
 id<MTLRenderCommandEncoder> RenderPassEncoder::renderCommandEncoder() const
