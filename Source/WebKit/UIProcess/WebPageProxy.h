@@ -2276,7 +2276,7 @@ public:
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
 
-    WebProcessProxy* processForRegistrableDomain(const WebCore::RegistrableDomain&);
+    WebProcessProxy* processForRegistrableDomain(const WebCore::RegistrableDomain&, const WebsiteDataStore&);
 
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&, const String& frameName);
     void broadcastMainFrameURLChangeToOtherProcesses(IPC::Connection&, const URL&);

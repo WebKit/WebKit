@@ -13513,10 +13513,14 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
     send(Messages::WebPage::GenerateTestReport(message, group));
 }
 
-WebProcessProxy* WebPageProxy::processForRegistrableDomain(const WebCore::RegistrableDomain& domain)
+WebProcessProxy* WebPageProxy::processForRegistrableDomain(const WebCore::RegistrableDomain& domain, const WebsiteDataStore& websiteDataStore)
 {
     auto* process = m_browsingContextGroup->processForDomain(domain);
-    return process ? &process->process() : nullptr;
+    if (!process)
+        return nullptr;
+
+    auto* processWebsiteDataStore = process->process().websiteDataStore();
+    return processWebsiteDataStore == &websiteDataStore ? &process->process() : nullptr;
 }
 
 WebPageProxy* WebPageProxy::openerPage() const
