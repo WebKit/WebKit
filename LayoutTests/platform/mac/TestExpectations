@@ -2603,6 +2603,4 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.htm
 
 [ Monterey Ventura ] imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]
 
-webkit.org/b/272923 accessibility/focusable-inside-hidden.html [ Timeout ]
-
 webkit.org/b/272944 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-form-controls-crash.html [ Skip ]
