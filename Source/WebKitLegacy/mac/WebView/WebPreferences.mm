@@ -872,11 +872,12 @@ public:
 
 - (BOOL)arePlugInsEnabled
 {
-    return NO;
+    return [self _boolValueForKey: WebKitLegacyPluginQuirkForMailSignaturesEnabledPreferenceKey];
 }
 
 - (void)setPlugInsEnabled:(BOOL)flag
 {
+    [self _setBoolValue: flag forKey: WebKitLegacyPluginQuirkForMailSignaturesEnabledPreferenceKey];
 }
 
 - (BOOL)allowsAnimatedImages

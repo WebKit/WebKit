@@ -3666,6 +3666,19 @@ LegacyOverflowScrollingTouchEnabled:
     WebCore:
       default: true
 
+LegacyPluginQuirkForMailSignaturesEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Quirk to get Mail to load signatures correctly with WebKitLegacy"
+  humanReadableDescription: "Quirk to get Mail to load signatures correctly with WebKitLegacy"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 LinearMediaPlayerEnabled:
   type: bool
   status: internal
