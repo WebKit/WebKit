@@ -1332,29 +1332,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return objectAttributes;
 }
 
-- (NSArray *)renderWidgetChildren
-{
-    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
-    if (!backingObject || !backingObject->isWidget())
-        return nil;
-
-    id child = Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
-        auto* backingObject = protectedSelf.get().axBackingObject;
-        if (!backingObject)
-            return nil;
-
-        auto* widget = backingObject->widget();
-        return widget ? widget->accessibilityObject() : nil;
-    });
-
-    if (child)
-        return @[child];
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return [backingObject->platformWidget() accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
-ALLOW_DEPRECATED_DECLARATIONS_END
-}
-
 - (id)remoteAccessibilityParentObject
 {
     RefPtr<AXCoreObject> backingObject = self.axBackingObject;
@@ -1448,91 +1425,35 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
     return [self bezierPathFromPath:transformedPath];
 }
 
-- (NSString*)role
+static NSString *roleString(AXCoreObject& backingObject)
 {
-    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
-    if (!backingObject)
-        return nil;
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (backingObject->isAttachment())
-        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleAttribute];
-    if (backingObject->isRemoteFrame())
-        return [backingObject->remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleAttribute];
-ALLOW_DEPRECATED_DECLARATIONS_END
-
-    NSString *string = backingObject->rolePlatformString();
-    if (string.length)
-        return string;
+    String roleString = backingObject.rolePlatformString();
+    if (!roleString.isEmpty())
+        return roleString;
     return NSAccessibilityUnknownRole;
 }
 
-- (BOOL)_isEmptyGroup:(const RefPtr<AXCoreObject>&)object
+static NSString *subroleString(AXCoreObject& backingObject)
 {
-#if ENABLE(MODEL_ELEMENT)
-    if (object->isModel())
-        return false;
-#endif
-
-    if (object->isRemoteFrame())
-        return false;
-
-    return [[self role] isEqual:NSAccessibilityGroupRole]
-        && object->children().isEmpty()
-        && ![[self renderWidgetChildren] count];
-}
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-- (NSString*)subrole
-{
-    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
-    if (!backingObject)
-        return nil;
-
-    if ([self _isEmptyGroup:backingObject])
-        return @"AXEmptyGroup";
-
-    auto subrole = backingObject->subrolePlatformString();
+    String subrole = backingObject.subrolePlatformString();
     if (!subrole.isEmpty())
         return subrole;
-
     return nil;
 }
-ALLOW_DEPRECATED_DECLARATIONS_END
 
-- (NSString*)roleDescription
+static NSString *roleDescription(AXCoreObject& backingObject)
 {
-    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
-    if (!backingObject)
-        return nil;
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // attachments have the AXImage role, but a different subrole
-    if (backingObject->isAttachment())
-        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
-    if (backingObject->isRemoteFrame())
-        return [backingObject->remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
-ALLOW_DEPRECATED_DECLARATIONS_END
-
-    String roleDescription = backingObject->roleDescription();
+    String roleDescription = backingObject.roleDescription();
     if (!roleDescription.isEmpty())
         return roleDescription;
 
-    NSString *axRole = backingObject->rolePlatformString();
-    NSString *subrole = self.subrole;
-    // Fallback to the system default role description.
+    NSString *axRole = roleString(backingObject);
+    NSString *subrole = subroleString(backingObject);
+    // Fallback to the system role description.
     // If we get the same string back, then as a last resort, return unknown.
-    NSString *defaultRoleDescription = NSAccessibilityRoleDescription(axRole, subrole);
-
-    // On earlier Mac versions (Lion), using a non-standard subrole would result in a role description
-    // being returned that looked like AXRole:AXSubrole. To make all platforms have the same role descriptions
-    // we should fallback on a role description ignoring the subrole in these cases.
-    if ([defaultRoleDescription isEqualToString:[NSString stringWithFormat:@"%@:%@", axRole, subrole]])
-        defaultRoleDescription = NSAccessibilityRoleDescription(axRole, nil);
-
-    if (![defaultRoleDescription isEqualToString:axRole])
-        return defaultRoleDescription;
-
+    NSString *systemRoleDescription = NSAccessibilityRoleDescription(axRole, subrole);
+    if (![systemRoleDescription isEqualToString:axRole])
+        return systemRoleDescription;
     return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
 }
 
@@ -1579,7 +1500,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     const auto& children = backingObject->children();
     if (!children.size()) {
-        if (NSArray *children = [self renderWidgetChildren])
+        if (NSArray *children = renderWidgetChildren(*backingObject))
             return children;
     }
 
@@ -1607,14 +1528,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return nil;
     }
 
-    if ([attributeName isEqualToString: NSAccessibilityRoleAttribute])
-        return [self role];
+    if ([attributeName isEqualToString:NSAccessibilityRoleAttribute])
+        return roleString(*backingObject);
 
     if ([attributeName isEqualToString: NSAccessibilitySubroleAttribute])
-        return [self subrole];
+        return subroleString(*backingObject);
 
-    if ([attributeName isEqualToString: NSAccessibilityRoleDescriptionAttribute])
-        return [self roleDescription];
+    if ([attributeName isEqualToString:NSAccessibilityRoleDescriptionAttribute])
+        return roleDescription(*backingObject);
 
     if ([attributeName isEqualToString: NSAccessibilityParentAttribute]) {
         // This will return the parent of the AXWebArea, if this is a web area.
@@ -3308,7 +3229,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if (isMatchingPlugin(*backingObject, criteria)) {
             // FIXME: We should also be searching the tree(s) resulting from `renderWidgetChildren` for matches.
             // This is tracked by https://bugs.webkit.org/show_bug.cgi?id=230167.
-            if (auto* children = [self renderWidgetChildren]) {
+            if (NSArray *children = renderWidgetChildren(*backingObject)) {
                 NSUInteger includedChildrenCount = std::min([children count], NSUInteger(criteria.resultsLimit));
                 widgetChildren = [children subarrayWithRange:NSMakeRange(0, includedChildrenCount)];
                 if ([widgetChildren count] >= criteria.resultsLimit)
@@ -3868,8 +3789,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     const auto& children = backingObject->children();
     if (!children.size()) {
-        if (auto *renderWidgetChildren = [self renderWidgetChildren])
-            return [renderWidgetChildren indexOfObject:targetChild];
+        if (NSArray *widgetChildren = renderWidgetChildren(*backingObject))
+            return [widgetChildren indexOfObject:targetChild];
 #if ENABLE(MODEL_ELEMENT)
         if (backingObject->isModel())
             return backingObject->modelElementChildren().find(targetChild);
@@ -3911,8 +3832,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (backingObject->isModel())
                 return backingObject->modelElementChildren().size();
 #endif
-            if (NSArray *renderWidgetChildren = [self renderWidgetChildren])
-                return [renderWidgetChildren count];
+            if (NSArray *widgetChildren = renderWidgetChildren(*backingObject))
+                return [widgetChildren count];
         }
         return childrenSize;
     }

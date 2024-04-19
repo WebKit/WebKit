@@ -2905,8 +2905,7 @@ String AccessibilityObject::embeddedImageDescription() const
 // ARIA spec: User agents must not expose the aria-roledescription property if the element to which aria-roledescription is applied does not have a valid WAI-ARIA role or does not have an implicit WAI-ARIA role semantic.
 bool AccessibilityObject::supportsARIARoleDescription() const
 {
-    auto role = this->roleValue();
-    switch (role) {
+    switch (roleValue()) {
     case AccessibilityRole::Generic:
     case AccessibilityRole::Unknown:
         return false;
@@ -2930,11 +2929,11 @@ String AccessibilityObject::roleDescription() const
 
     if (roleValue() == AccessibilityRole::Figure)
         return AXFigureText();
-    
+
     if (roleValue() == AccessibilityRole::Suggestion)
         return AXSuggestionRoleDescriptionText();
 
-    return roleDescription;
+    return { };
 }
 
 bool nodeHasPresentationRole(Node* node)

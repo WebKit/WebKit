@@ -178,4 +178,6 @@ AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache*, const std::optional
 AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache*, const std::optional<SimpleRange>&);
 std::optional<SimpleRange> rangeForTextMarkerRange(AXObjectCache*, AXTextMarkerRangeRef);
 
+NSArray *renderWidgetChildren(const AXCoreObject&);
+
 } // namespace WebCore
