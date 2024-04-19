@@ -46,7 +46,7 @@ struct WordTrailingSpace {
             return m_width;
 
         auto& font = m_style.fontCascade();
-        m_width = font.width(RenderBlock::constructTextRun(&space, 1, m_style), &fallbackFonts) + font.wordSpacing();
+        m_width = font.width(RenderBlock::constructTextRun(span(space), m_style), &fallbackFonts) + font.wordSpacing();
         m_state = WordTrailingSpaceState::Initialized;
         return m_width;
     }
