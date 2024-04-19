@@ -108,6 +108,84 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
+test/built-ins/RegExp/property-escapes/generated/Alphabetic.js:
+  default: 'Test262Error: `\p{Alphabetic}` should match U+02EBF0 (`𮯰`)'
+  strict mode: 'Test262Error: `\p{Alphabetic}` should match U+02EBF0 (`𮯰`)'
+test/built-ins/RegExp/property-escapes/generated/Assigned.js:
+  default: 'Test262Error: `\p{Assigned}` should match U+002FFC (`⿼`)'
+  strict mode: 'Test262Error: `\p{Assigned}` should match U+002FFC (`⿼`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Letter.js:
+  default: 'Test262Error: `\p{General_Category=Letter}` should match U+02EBF0 (`𮯰`)'
+  strict mode: 'Test262Error: `\p{General_Category=Letter}` should match U+02EBF0 (`𮯰`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other.js:
+  default: 'Test262Error: `\P{General_Category=Other}` should match U+002FFC (`⿼`)'
+  strict mode: 'Test262Error: `\P{General_Category=Other}` should match U+002FFC (`⿼`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Letter.js:
+  default: 'Test262Error: `\p{General_Category=Other_Letter}` should match U+02EBF0 (`𮯰`)'
+  strict mode: 'Test262Error: `\p{General_Category=Other_Letter}` should match U+02EBF0 (`𮯰`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Symbol.js:
+  default: 'Test262Error: `\p{General_Category=Other_Symbol}` should match U+0031EF (`㇯`)'
+  strict mode: 'Test262Error: `\p{General_Category=Other_Symbol}` should match U+0031EF (`㇯`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Symbol.js:
+  default: 'Test262Error: `\p{General_Category=Symbol}` should match U+0031EF (`㇯`)'
+  strict mode: 'Test262Error: `\p{General_Category=Symbol}` should match U+0031EF (`㇯`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Unassigned.js:
+  default: 'Test262Error: `\P{General_Category=Unassigned}` should match U+002FFC (`⿼`)'
+  strict mode: 'Test262Error: `\P{General_Category=Unassigned}` should match U+002FFC (`⿼`)'
+test/built-ins/RegExp/property-escapes/generated/Grapheme_Base.js:
+  default: 'Test262Error: `\p{Grapheme_Base}` should match U+002FFC (`⿼`)'
+  strict mode: 'Test262Error: `\p{Grapheme_Base}` should match U+002FFC (`⿼`)'
+test/built-ins/RegExp/property-escapes/generated/IDS_Binary_Operator.js:
+  default: 'Test262Error: `\p{IDS_Binary_Operator}` should match U+0031EF (`㇯`)'
+  strict mode: 'Test262Error: `\p{IDS_Binary_Operator}` should match U+0031EF (`㇯`)'
+test/built-ins/RegExp/property-escapes/generated/ID_Continue.js:
+  default: 'Test262Error: `\p{ID_Continue}` should match U+00200C (`‌`)'
+  strict mode: 'Test262Error: `\p{ID_Continue}` should match U+00200C (`‌`)'
+test/built-ins/RegExp/property-escapes/generated/ID_Start.js:
+  default: 'Test262Error: `\p{ID_Start}` should match U+02EBF0 (`𮯰`)'
+  strict mode: 'Test262Error: `\p{ID_Start}` should match U+02EBF0 (`𮯰`)'
+test/built-ins/RegExp/property-escapes/generated/Ideographic.js:
+  default: 'Test262Error: `\p{Ideographic}` should match U+02EBF0 (`𮯰`)'
+  strict mode: 'Test262Error: `\p{Ideographic}` should match U+02EBF0 (`𮯰`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Common.js:
+  default: 'Test262Error: `\p{Script=Common}` should match U+0031EF (`㇯`)'
+  strict mode: 'Test262Error: `\p{Script=Common}` should match U+0031EF (`㇯`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Han.js:
+  default: 'Test262Error: `\p{Script=Han}` should match U+02EBF0 (`𮯰`)'
+  strict mode: 'Test262Error: `\p{Script=Han}` should match U+02EBF0 (`𮯰`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Common.js:
+  default: 'Test262Error: `\p{Script_Extensions=Common}` should match U+0031EF (`㇯`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Common}` should match U+0031EF (`㇯`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Han.js:
+  default: 'Test262Error: `\p{Script_Extensions=Han}` should match U+02EBF0 (`𮯰`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Han}` should match U+02EBF0 (`𮯰`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Malayalam.js:
+  default: 'Test262Error: `\p{Script_Extensions=Malayalam}` should match U+001CF2 (`ᳲ`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Malayalam}` should match U+001CF2 (`ᳲ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Sharada.js:
+  default: 'Test262Error: `\p{Script_Extensions=Sharada}` should match U+00A838 (`꠸`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Sharada}` should match U+00A838 (`꠸`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Sinhala.js:
+  default: 'Test262Error: `\p{Script_Extensions=Sinhala}` should match U+001CF2 (`ᳲ`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Sinhala}` should match U+001CF2 (`ᳲ`)'
+test/built-ins/RegExp/property-escapes/generated/Sentence_Terminal.js:
+  default: 'Test262Error: `\p{Sentence_Terminal}` should match U+0017D4 (`។`)'
+  strict mode: 'Test262Error: `\p{Sentence_Terminal}` should match U+0017D4 (`។`)'
+test/built-ins/RegExp/property-escapes/generated/Unified_Ideograph.js:
+  default: 'Test262Error: `\p{Unified_Ideograph}` should match U+02EBF0 (`𮯰`)'
+  strict mode: 'Test262Error: `\p{Unified_Ideograph}` should match U+02EBF0 (`𮯰`)'
+test/built-ins/RegExp/property-escapes/generated/XID_Continue.js:
+  default: 'Test262Error: `\p{XID_Continue}` should match U+00200C (`‌`)'
+  strict mode: 'Test262Error: `\p{XID_Continue}` should match U+00200C (`‌`)'
+test/built-ins/RegExp/property-escapes/generated/XID_Start.js:
+  default: 'Test262Error: `\p{XID_Start}` should match U+02EBF0 (`𮯰`)'
+  strict mode: 'Test262Error: `\p{XID_Start}` should match U+02EBF0 (`𮯰`)'
+test/built-ins/RegExp/property-escapes/generated/strings/RGI_Emoji.js:
+  default: 'Test262Error: `\p{RGI_Emoji}` should match ⛓️‍💥 (U+0026D3 U+00FE0F U+00200D U+01F4A5)'
+  strict mode: 'Test262Error: `\p{RGI_Emoji}` should match ⛓️‍💥 (U+0026D3 U+00FE0F U+00200D U+01F4A5)'
+test/built-ins/RegExp/property-escapes/generated/strings/RGI_Emoji_ZWJ_Sequence.js:
+  default: 'Test262Error: `\p{RGI_Emoji_ZWJ_Sequence}` should match 🧑‍🧑‍🧒 (U+01F9D1 U+00200D U+01F9D1 U+00200D U+01F9D2)'
+  strict mode: 'Test262Error: `\p{RGI_Emoji_ZWJ_Sequence}` should match 🧑‍🧑‍🧒 (U+01F9D1 U+00200D U+01F9D1 U+00200D U+01F9D2)'
 test/built-ins/RegExp/prototype/Symbol.match/flags-tostring-error.js:
   default: 'Test262Error: Expected a CustomError but got a Test262Error'
   strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
@@ -996,6 +1074,9 @@ test/built-ins/TypedArrayConstructors/ctors/object-arg/iterated-array-with-modif
 test/harness/temporalHelpers-sample-time-zones.js:
   default: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"
   strict mode: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"
+test/intl402/Collator/ignore-invalid-unicode-ext-values.js:
+  default: 'Test262Error: Locale ja is affected by key co; value standard. Expected SameValue(«ja», «ja-JP») to be true'
+  strict mode: 'Test262Error: Locale ja is affected by key co; value standard. Expected SameValue(«ja», «ja-JP») to be true'
 test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
@@ -1008,6 +1089,9 @@ test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-
 test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+test/intl402/DateTimeFormat/prototype/resolvedOptions/order-dayPeriod.js:
+  default: 'Test262Error: "hour12" precedes "dayPeriod"'
+  strict mode: 'Test262Error: "hour12" precedes "dayPeriod"'
 test/intl402/DateTimeFormat/timezone-case-insensitive.js:
   default: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«America/Buenos_Aires», «America/Argentina/Buenos_Aires») to be true'
   strict mode: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«America/Buenos_Aires», «America/Argentina/Buenos_Aires») to be true'
@@ -1047,6 +1131,9 @@ test/intl402/DurationFormat/prototype/formatToParts/formatToParts-style-digital-
 test/intl402/DurationFormat/prototype/formatToParts/negative-duration-formatToParts-style-digital-en.js:
   default: 'Test262Error: Using style : digital: length Expected SameValue(«28», «30») to be true'
   strict mode: 'Test262Error: Using style : digital: length Expected SameValue(«28», «30») to be true'
+test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
+  default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
+  strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
 test/intl402/Locale/constructor-options-firstDayOfWeek-invalid.js:
   default: 'Test262Error: new Intl.Locale("en", {firstDayOfWeek: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: new Intl.Locale("en", {firstDayOfWeek: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
@@ -1068,9 +1155,15 @@ test/intl402/Locale/prototype/firstDayOfWeek/valid-id.js:
 test/intl402/Locale/prototype/firstDayOfWeek/valid-options.js:
   default: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).firstDayOfWeek returns "1" Expected SameValue(«undefined», «1») to be true'
   strict mode: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).firstDayOfWeek returns "1" Expected SameValue(«undefined», «1») to be true'
+test/intl402/Locale/prototype/getWeekInfo/firstDay-by-id.js:
+  default: 'Test262Error: new Intl.Locale(en-u-fw-mon).getWeekInfo().firstDay returns "1" Expected SameValue(«7», «1») to be true'
+  strict mode: 'Test262Error: new Intl.Locale(en-u-fw-mon).getWeekInfo().firstDay returns "1" Expected SameValue(«7», «1») to be true'
 test/intl402/Locale/prototype/getWeekInfo/firstDay-by-option.js:
   default: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).getWeekInfo().firstDay returns "1" Expected SameValue(«7», «1») to be true'
   strict mode: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).getWeekInfo().firstDay returns "1" Expected SameValue(«7», «1») to be true'
+test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
+  default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
+  strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
 test/intl402/NumberFormat/prototype/format/useGrouping-extended-en-IN.js:
   default: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'
   strict mode: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'
@@ -1105,9 +1198,6 @@ test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-p
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
 test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-present-arrow-func-declare-arguments-assign.js:
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
-test/language/expressions/assignment/S11.13.1_A7_T3.js:
-  default: 'Test262Error: Expected a DummyError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a DummyError but got a Test262Error'
 test/language/expressions/assignment/destructuring/iterator-destructuring-property-reference-target-evaluation-order.js:
   default: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, target-key-tostring, iterator-step, iterator-done, set] to have the same contents. '
   strict mode: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, target-key-tostring, iterator-step, iterator-done, set] to have the same contents. '
