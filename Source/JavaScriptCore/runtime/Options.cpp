@@ -709,6 +709,7 @@ void Options::notifyOptionsChanged()
     Options::useConcurrentGC() = false;
     Options::forceUnlinkedDFG() = false;
     Options::useWebAssemblySIMD() = false;
+    Options::useIPIntWrappers() = false;
 #if !CPU(ARM_THUMB2)
     Options::useBBQJIT() = false;
 #endif
