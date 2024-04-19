@@ -2844,3 +2844,5 @@ webkit.org/b/272792 fast/css/viewport-height-border.html [ Pass Crash ]
 [ Ventura ] imported/w3c/web-platform-tests/worklets/layout-worklet-credentials.https.html [ Pass Failure ]
 [ Ventura ] imported/w3c/web-platform-tests/worklets/paint-worklet-credentials.https.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-referrer.html [ Pass Failure ]
+
+webkit.org/b/272939 [ Ventura+ ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-strict-policies.sub.html [ Pass Failure ]
