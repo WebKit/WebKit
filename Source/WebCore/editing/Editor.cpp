@@ -2095,21 +2095,30 @@ void Editor::selectComposition()
     document().selection().setSelection(selection, { });
 }
 
-Element* Editor::writingSuggestionsContainerElement()
+Node* Editor::nodeBeforeWritingSuggestions() const
 {
     Ref document = protectedDocument();
-
     if (!document->selection().isCaret())
         return nullptr;
 
-    RefPtr node = document->selection().selection().end().protectedContainerNode();
+    auto position = document->selection().selection().end();
+    RefPtr container = position.containerNode();
+    if (!container)
+        return nullptr;
+
+    if (RefPtr text = dynamicDowncast<Text>(container))
+        return text.get();
+
+    return position.computeNodeBeforePosition();
+}
+
+Element* Editor::writingSuggestionsContainerElement() const
+{
+    RefPtr node = nodeBeforeWritingSuggestions();
     if (!node)
         return nullptr;
 
-    if (RefPtr element = dynamicDowncast<Element>(node.get()))
-        return element.get();
-
-    return node->protectedParentElement().get();
+    return node->parentElement();
 }
 
 void Editor::removeWritingSuggestionIfNeeded()
@@ -2120,7 +2129,7 @@ void Editor::removeWritingSuggestionIfNeeded()
     m_customCompositionAnnotations = { };
     m_isHandlingAcceptedCandidate = false;
 
-    RefPtr selectedElement = this->writingSuggestionsContainerElement();
+    RefPtr selectedElement = writingSuggestionsContainerElement();
     if (!selectedElement)
         return;
 
@@ -2264,7 +2273,7 @@ void Editor::setWritingSuggestion(const String& fullTextWithPrediction, const Ch
     Ref document = protectedDocument();
     document->updateStyleIfNeeded();
 
-    RefPtr selectedElement = this->writingSuggestionsContainerElement();
+    RefPtr selectedElement = writingSuggestionsContainerElement();
     if (!selectedElement)
         return;
 

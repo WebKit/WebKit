@@ -414,7 +414,7 @@ interface UIScriptController {
     readonly attribute unsigned long long currentImageAnalysisRequestID;
     undefined installFakeMachineReadableCodeResultsForImageAnalysis();
 
-    undefined setInlinePrediction(DOMString completion);
+    undefined setInlinePrediction(DOMString text, unsigned long startIndex);
     undefined acceptInlinePrediction();
 
     undefined requestTextExtraction(object callback, TextExtractionOptions options);

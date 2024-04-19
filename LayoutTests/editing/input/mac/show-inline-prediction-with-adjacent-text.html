@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+pre[contenteditable] {
+    font-size: 16px;
+    width: 300px;
+    height: 100px;
+    caret-color: transparent;
+}
+</style>
+</head>
+<body>
+<pre contenteditable></pre>
+<script>
+addEventListener("load", async () => {
+    const editor = document.querySelector("pre[contenteditable]");
+    ["Foo", "\n", "Foo"].map(text => editor.appendChild(document.createTextNode(text)));
+    getSelection().setPosition(editor.childNodes[0], 3);
+
+    testRunner.waitUntilDone();
+
+    await UIHelper.setInlinePrediction("Football", 3);
+    await UIHelper.ensurePresentationUpdate();
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

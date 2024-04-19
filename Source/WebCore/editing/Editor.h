@@ -611,7 +611,8 @@ public:
     bool isPastingFromMenuOrKeyBinding() const { return m_pastingFromMenuOrKeyBinding; }
     bool isCopyingFromMenuOrKeyBinding() const { return m_copyingFromMenuOrKeyBinding; }
 
-    Element* writingSuggestionsContainerElement();
+    Node* nodeBeforeWritingSuggestions() const;
+    Element* writingSuggestionsContainerElement() const;
     WritingSuggestionData* writingSuggestionData() const { return m_writingSuggestionData.get(); }
     bool isInsertingTextForWritingSuggestion() const { return m_isInsertingTextForWritingSuggestion; }
 
