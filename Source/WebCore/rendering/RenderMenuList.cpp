@@ -36,6 +36,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLSelectElement.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "NodeRenderStyle.h"
@@ -173,6 +174,14 @@ void RenderMenuList::adjustInnerStyle()
         innerStyle.setUnicodeBidi(m_optionStyle->unicodeBidi());
     }
 #endif // !PLATFORM(IOS_FAMILY)
+
+    if (m_innerBlock && m_innerBlock->layoutBox()) {
+        if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_innerBlock); inlineFormattingContextRoot && inlineFormattingContextRoot->modernLineLayout())
+            inlineFormattingContextRoot->modernLineLayout()->styleWillChange(*m_innerBlock, innerStyle);
+        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_innerBlock))
+            lineLayout->styleWillChange(*m_innerBlock, innerStyle);
+        LayoutIntegration::LineLayout::updateStyle(*m_innerBlock);
+    }
 }
 
 HTMLSelectElement& RenderMenuList::selectElement() const

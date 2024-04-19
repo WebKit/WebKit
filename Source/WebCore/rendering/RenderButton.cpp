@@ -26,6 +26,7 @@
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
@@ -73,8 +74,16 @@ void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
     ASSERT(!m_inner.get());
     m_inner = innerRenderer;
     updateAnonymousChildStyle(m_inner->mutableStyle());
+
+    if (m_inner && m_inner->layoutBox()) {
+        if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_inner); inlineFormattingContextRoot && inlineFormattingContextRoot->modernLineLayout())
+            inlineFormattingContextRoot->modernLineLayout()->styleWillChange(*m_inner, m_inner->style());
+        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_inner))
+            lineLayout->styleWillChange(*m_inner, m_inner->style());
+        LayoutIntegration::LineLayout::updateStyle(*m_inner);
+    }
 }
-    
+
 void RenderButton::updateAnonymousChildStyle(RenderStyle& childStyle) const
 {
     childStyle.setFlexGrow(1.0f);
