@@ -154,6 +154,10 @@
 #include "DataDetectionResultsStorage.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #include "DocumentType.h"
 #include "ResourceLoader.h"
@@ -3375,6 +3379,15 @@ void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, con
         request.setIsSameSite(true);
         return;
     }
+#if PLATFORM(COCOA)
+    bool isFullBrowser { true };
+    if (auto frame = initiator->frame())
+        isFullBrowser = frame->loader().client().isParentProcessAFullWebBrowser();
+    if (initiator->url().protocolIsFile() && !isFullBrowser && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::LaxCookieSameSiteAttribute)) {
+        request.setIsSameSite(true);
+        return;
+    }
+#endif
 
     request.setIsSameSite(initiator->isSameSiteForCookies(request.url()));
 }
