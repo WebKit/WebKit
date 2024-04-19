@@ -691,9 +691,12 @@ std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent *
     return std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> { reinterpret_cast<uint8_t*>(span.data()), span.size_bytes() };
 }
 
-template<typename T, std::size_t Extent1, std::size_t Extent2>
-bool equalSpans(std::span<T, Extent1> a, std::span<T, Extent2> b)
+template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
+bool equalSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
 {
+    static_assert(sizeof(T) == sizeof(U));
+    static_assert(std::has_unique_object_representations_v<T>);
+    static_assert(std::has_unique_object_representations_v<U>);
     if (a.size() != b.size())
         return false;
     return !memcmp(a.data(), b.data(), a.size_bytes());
