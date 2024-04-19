@@ -1279,6 +1279,9 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         checkedWebProcessCache()->updateCapacity(*this);
 
 #if ENABLE(GPU_PROCESS)
+    if (page->preferences().useGPUProcessForDOMRenderingEnabled())
+        ensureGPUProcess();
+
     if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated()) {
         gpuProcess->updatePreferences(*process);
         gpuProcess->updateScreenPropertiesIfNeeded();
