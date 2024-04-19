@@ -474,7 +474,7 @@ static void webkitPrintOperationSendPagesToPrintPortal(WebKitPrintOperation* pri
         return;
     }
 
-    GRefPtr<GtkPrintSettings> modifiedPrintSettings(gtk_print_settings_copy(printSettings));
+    GRefPtr<GtkPrintSettings> modifiedPrintSettings = adoptGRef(gtk_print_settings_copy(printSettings));
     gtk_print_settings_set(modifiedPrintSettings.get(), GTK_PRINT_SETTINGS_OUTPUT_URI, uri.get());
 
     priv->printJob = adoptGRef(gtk_print_job_new(jobName.get(), filePrinter.get(), modifiedPrintSettings.get(), pageSetup));
@@ -614,7 +614,7 @@ static void webkitPrintOperationPreparePrint(WebKitPrintOperation* printOperatio
 
     const char* title = _("Print Web Page");
     GRefPtr<GtkPageSetup> pageSetup = priv->pageSetup ? priv->pageSetup : adoptGRef(gtk_page_setup_new());
-    GRefPtr<GtkPrintSettings> printSettings(priv->printSettings ? gtk_print_settings_copy(priv->printSettings.get()) : gtk_print_settings_new());
+    GRefPtr<GtkPrintSettings> printSettings = adoptGRef(priv->printSettings ? gtk_print_settings_copy(priv->printSettings.get()) : gtk_print_settings_new());
 
     GRefPtr<GVariant> arguments(g_variant_new("(ss@a{sv}@a{sv}a{sv})", "", title, gtk_print_settings_to_gvariant(printSettings.get()), gtk_page_setup_to_gvariant(pageSetup.get()), &options));
 
