@@ -1,3 +1,4 @@
 
 FAIL 400px minus 100px padding based on #child height assert_equals: expected 300 but got 400
-PASS 200px minus 100px padding based on #child height
+FAIL 200px minus 100px padding based on #child height assert_equals: expected 100 but got 400
+
