@@ -26,6 +26,7 @@ import re
 import sys
 import time
 
+from collections import defaultdict
 from datetime import datetime
 from webkitbugspy import User
 from webkitbugspy.github import Tracker
@@ -306,10 +307,55 @@ class GitHub(Scm):
                     content=comment.content,
                 )
 
-        def review(self, pull_request, comment=None, approve=None):
-            if not comment and approve is None:
+        def _diff_comments(self, pull_request, ids=False):
+            comment_lines = defaultdict(lambda: defaultdict(list))
+            for comment in self.repository.request('pulls/{}/comments'.format(pull_request.number)):
+                id = comment.get('id', None)
+                path = comment.get('path', None)
+                position = comment.get('position', None)
+                if comment.get('commit_id') != comment.get('original_commit_id') and position is None:
+                    continue
+                if not id or not path:
+                    continue
+                position = int(position) if position else None
+                if comment.get('subject_type') == 'file':
+                    position = None
+                if ids:
+                    comment_lines[path][position].append(id)
+                else:
+                    username = (comment.get('user') or {}).get('login') or None
+                    body = comment.get('body', '')
+                    if username:
+                        body = '{}: {}'.format(self._contributor(username), body)
+                    comment_lines[path][position].append(body)
+
+            return comment_lines
+
+        def _make_comment(self, pull_request, kwargs):
+            url = '{api_url}/repos/{owner}/{name}/pulls/{number}/comments'.format(
+                api_url=self.repository.api_url,
+                owner=self.repository.owner,
+                name=self.repository.name,
+                number=pull_request.number,
+            )
+            response = self.repository.session.post(
+                url, auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
+                headers=dict(Accept=self.repository.ACCEPT_HEADER),
+                json=kwargs,
+            )
+            if response.status_code // 100 != 2:
+                sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
+                sys.stderr.write(self.repository.tracker.parse_error(response.json()))
+                if response.status_code != 422:
+                    sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
+                return False
+            return True
+
+        def review(self, pull_request, comment=None, approve=None, diff_comments=None):
+            if not comment and approve is None and not diff_comments:
                 raise self.repository.Exception('No review comment or approval provided')
 
+            is_successful = True
             body = dict(
                 event={
                     True: 'APPROVE',
@@ -318,6 +364,41 @@ class GitHub(Scm):
             )
             if comment:
                 body['body'] = comment
+
+            if diff_comments:
+                # Assume that every comment made on the same line as an existing comment
+                # is intended as a reply to the existing comment
+                existing_comment_ids = self._diff_comments(pull_request, ids=True)
+                body['comments'] = []
+                for file, line_comments in diff_comments.items():
+                    for position, comments in line_comments.items():
+                        existing_ids = existing_comment_ids.get(file, {}).get(position, [])
+                        if existing_ids:
+                            # FIXME: We should allow replies to specific comments
+                            is_successful &= self._make_comment(pull_request, dict(
+                                in_reply_to=existing_ids[-1],
+                                body='\n'.join(comments),
+                            ))
+                        elif position:
+                            body['comments'].append(dict(
+                                path=file,
+                                body='\n'.join(comments),
+                                position=position,
+                            ))
+                        else:
+                            is_successful &= self._make_comment(pull_request, dict(
+                                path=file,
+                                commit_id=pull_request.hash,
+                                body='\n'.join(comments),
+                                subject_type='file',
+                            ))
+
+                # If all our review feedback is responding to exisitng comments,
+                # we won't have anything to post
+                if not body['comments']:
+                    del body['comments']
+                    if body['event'] == 'COMMENT' and not body.get('comment'):
+                        return pull_request
 
             url = '{api_url}/repos/{owner}/{name}/pulls/{number}/reviews'.format(
                 api_url=self.repository.api_url,
@@ -356,7 +437,8 @@ class GitHub(Scm):
                     content=comment,
                 ))
 
-            return pull_request
+            if is_successful:
+                return pull_request
 
         def statuses(self, pull_request):
             statuses = self.repository.request(
@@ -371,6 +453,22 @@ class GitHub(Scm):
                     status=status.get('state', 'error'),
                     description=status.get('description'),
                 )
+
+        def diff(self, pull_request, comments=False):
+            def generator(repository=self.repository, pull_request=pull_request):
+                response = repository.request('pulls/{}'.format(pull_request.number), headers=dict(Accept=repository.DIFF_HEADER))
+                if response.status_code // 100 != 2:
+                    sys.stderr.write('Failed to retrieve diff of {} with status code {}\n'.format(commit, response.status_code))
+                    return
+                for line in response.text.splitlines():
+                    yield line
+
+            comment_lines = defaultdict(lambda: defaultdict(list))
+            if comments:
+                comment_lines = self._diff_comments(pull_request)
+
+            for line in self.repository.insert_diff_comments(generator, comments=comment_lines):
+                yield line
 
 
     @classmethod

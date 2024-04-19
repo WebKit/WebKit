@@ -321,7 +321,7 @@ class BitBucket(Scm):
                         content=comment.get('text'),
                     )
 
-        def review(self, pull_request, comment=None, approve=None):
+        def review(self, pull_request, comment=None, approve=None, diff_comments=None):
             failed = False
             if comment and not self.comment(pull_request, comment):
                 failed = True
