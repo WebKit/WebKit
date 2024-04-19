@@ -36,6 +36,8 @@ WaylandCursor::WaylandCursor(WPEDisplayWayland* display)
     , m_surface(wl_compositor_create_surface(wpe_display_wayland_get_wl_compositor(m_display)))
     , m_theme(WaylandCursorTheme::create(wpe_display_wayland_get_wl_shm(m_display)))
 {
+    if (!m_theme)
+        g_warning("Could not load cursor theme, disabling named cursors support");
 }
 
 WaylandCursor::~WaylandCursor()
@@ -54,6 +56,7 @@ void WaylandCursor::setFromName(const char* name, double scale)
 
     m_name.reset(g_strdup(name));
     if (!g_strcmp0(m_name.get(), "none")) {
+        m_cursorChanged = true;
         update();
         wl_surface_attach(m_surface, nullptr, 0, 0);
         wl_surface_commit(m_surface);
@@ -69,6 +72,7 @@ void WaylandCursor::setFromName(const char* name, double scale)
 
     m_hotspot.x = cursor[0].hotspotX;
     m_hotspot.y = cursor[0].hotspotY;
+    m_cursorChanged = true;
     update();
 
     wl_surface_attach(m_surface, cursor[0].buffer, 0, 0);
@@ -83,6 +87,7 @@ void WaylandCursor::setFromBuffer(struct wl_buffer* buffer, uint32_t width, uint
     m_name = nullptr;
     m_hotspot.x = hotspotX;
     m_hotspot.y = hotspotY;
+    m_cursorChanged = true;
     update();
 
     wl_surface_attach(m_surface, buffer, 0, 0);
@@ -92,8 +97,11 @@ void WaylandCursor::setFromBuffer(struct wl_buffer* buffer, uint32_t width, uint
 
 void WaylandCursor::update() const
 {
+    if (!m_cursorChanged)
+        return;
     if (auto* seat = wpeDisplayWaylandGetSeat(m_display))
         seat->setCursor(m_surface, m_hotspot.x, m_hotspot.y);
+    m_cursorChanged = false;
 }
 
 } // namespace WPE
