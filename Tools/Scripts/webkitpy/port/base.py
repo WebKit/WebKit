@@ -62,7 +62,6 @@ from collections import OrderedDict
 from webkitcorepy import string_utils, decorators
 from webkitscmpy import local
 
-from webkitpy.common import read_checksum_from_png
 from webkitpy.common.memoized import memoized
 from webkitpy.common.prettypatch import PrettyPatch
 from webkitpy.common.system import path, pemfile
@@ -480,71 +479,11 @@ class Port(object):
             return self._filesystem.join(platform_dir or self.layout_tests_dir(), baseline_filename)
         return None
 
-    def expected_checksum(self, test_name, device_type=None):
-        """Returns the checksum of the image we expect the test to produce, or None if it is a text-only test."""
-        png_path = self.expected_filename(test_name, '.png', device_type=device_type)
-
-        if self._filesystem.exists(png_path):
-            with self._filesystem.open_binary_file_for_reading(png_path) as filehandle:
-                return read_checksum_from_png.read_checksum(filehandle)
-
-        return None
-
-    def expected_image(self, test_name, device_type=None):
-        """Returns the image we expect the test to produce."""
-        baseline_path = self.expected_filename(test_name, '.png', device_type=device_type)
-        if not self._filesystem.exists(baseline_path):
-            return None
-        return self._filesystem.read_binary_file(baseline_path)
-
-    def expected_audio(self, test_name, device_type=None):
-        baseline_path = self.expected_filename(test_name, '.wav', device_type=device_type)
-        if not self._filesystem.exists(baseline_path):
-            return None
-        return self._filesystem.read_binary_file(baseline_path)
-
     def is_unexpected_crash(self, test_name):
         from webkitpy.layout_tests.models.test_expectations import TestExpectations, CRASH
         expectations = TestExpectations(self, [test_name, ])
         expectations.parse_all_expectations()
         return CRASH not in expectations.filtered_expectations_for_test(test_name, False, False)
-
-    def expected_text(self, test_name, device_type=None):
-        """Returns the text output we expect the test to produce, or None
-        if we don't expect there to be any text output.
-        End-of-line characters are normalized to '\n'."""
-        # FIXME: DRT output is actually utf-8, but since we don't decode the
-        # output from DRT (instead treating it as a binary string), we read the
-        # baselines as a binary string, too.
-        baseline_path = self.expected_filename(test_name, '.txt', device_type=device_type)
-        if not self._filesystem.exists(baseline_path):
-            baseline_path = self.expected_filename(test_name, '.webarchive', device_type=device_type)
-            if not self._filesystem.exists(baseline_path):
-                return None
-        text = string_utils.decode(self._filesystem.read_binary_file(baseline_path), target_type=str)
-        return text.replace("\r\n", "\n")
-
-    _supported_reference_extensions = ('.html', '.xml', '.xhtml', '.htm', '.svg', '.xht')
-
-    def reference_files(self, test_name, device_type=None):
-        """Return a list of expectation (== or !=) and filename pairs"""
-
-        if self.get_option('treat_ref_tests_as_pixel_tests'):
-            return []
-
-        result = []
-        suffixes = []
-        for part1 in ['', '-mismatch']:
-            for part2 in self._supported_reference_extensions:
-                suffixes.append(part1 + part2)
-        for platform_dir, baseline_filename in self._expected_baselines_for_suffixes(test_name, suffixes, device_type=device_type):
-            if not platform_dir:
-                continue
-            result.append((
-                '!=' if '-mismatch.' in baseline_filename else '==',
-                self._filesystem.join(platform_dir, baseline_filename),
-            ))
-        return result
 
     def test_key(self, test_name):
         """Turns a test name into a list with two sublists, the natural key of the

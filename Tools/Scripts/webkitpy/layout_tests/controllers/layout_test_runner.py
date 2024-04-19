@@ -546,7 +546,6 @@ class TestShard(object):
             is_slow=test_input.is_slow,
             needs_servers=test_input.needs_servers,
             should_dump_jsconsolelog_in_stderr=test_input.should_dump_jsconsolelog_in_stderr,
-            reference_files=test_input.reference_files,
             should_run_pixel_test=test_input.should_run_pixel_test,
         )
 

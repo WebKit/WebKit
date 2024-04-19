@@ -46,7 +46,6 @@ class TestInput(object):
     is_slow = attr.ib(default=None)  # type: Optional[bool]
     needs_servers = attr.ib(default=None)  # type: Optional[bool]
     should_dump_jsconsolelog_in_stderr = attr.ib(default=None)  # type: Optional[bool]
-    reference_files = attr.ib(default=None)  # type: Optional[List[Tuple[str str]]]
     should_run_pixel_test = attr.ib(default=None)  # type: Optional[bool]
 
     @property

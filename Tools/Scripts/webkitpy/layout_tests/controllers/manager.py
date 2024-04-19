@@ -237,9 +237,6 @@ class Manager(object):
 
     def _test_input_for_file(self, test_file, device_type):
         test_is_slow = self._test_is_slow(test_file.test_path, device_type=device_type)
-        reference_files = self._port.reference_files(
-            test_file.test_path, device_type=device_type
-        )
         timeout = (
             self._options.slow_time_out_ms
             if test_is_slow
@@ -251,7 +248,7 @@ class Manager(object):
             )
         )
 
-        if reference_files:
+        if test_file.reference_files:
             should_run_pixel_test = True
         elif not self._options.pixel_tests:
             should_run_pixel_test = False
@@ -269,7 +266,6 @@ class Manager(object):
             is_slow=test_is_slow,
             needs_servers=test_file.needs_any_server,
             should_dump_jsconsolelog_in_stderr=should_dump_jsconsolelog_in_stderr,
-            reference_files=reference_files,
             should_run_pixel_test=should_run_pixel_test,
         )
 
