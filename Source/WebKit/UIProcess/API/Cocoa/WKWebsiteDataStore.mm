@@ -775,28 +775,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     webPageProxy->clearLoadedSubresourceDomains();
 }
 
-
-- (void)_getAllStorageAccessEntriesFor:(WKWebView *)webView completionHandler:(void (^)(NSArray<NSString *> *domains))completionHandler
-{
-    if (!webView) {
-        completionHandler({ });
-        return;
-    }
-
-    auto webPageProxy = [webView _page];
-    if (!webPageProxy) {
-        completionHandler({ });
-        return;
-    }
-
-    _websiteDataStore->getAllStorageAccessEntries(webPageProxy->identifier(), [completionHandler = makeBlockPtr(completionHandler)](auto domains) {
-        auto apiDomains = WTF::map(domains, [](auto& domain) -> RefPtr<API::Object> {
-            return API::String::create(domain);
-        });
-        completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))).get());
-    });
-}
-
 - (void)_scheduleCookieBlockingUpdate:(void (^)(void))completionHandler
 {
     _websiteDataStore->scheduleCookieBlockingUpdate([completionHandler = makeBlockPtr(completionHandler)]() {
