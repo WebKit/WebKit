@@ -1391,24 +1391,25 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
 
     stream << " renderer (" << this << ")";
     stream << " layout box (" << layoutBox() << ")";
-    if (node()) {
-        stream << " node (" << node() << ")";
-        if (node()->isTextNode()) {
-            ASSERT(is<RenderText>(*this));
-            auto value = downcast<RenderText>(*this).text();
-            stream << " length->(" << value.length() << ")";
 
-            value = makeStringByReplacingAll(value, '\\', "\\\\"_s);
-            value = makeStringByReplacingAll(value, '\n', "\\n"_s);
-            
-            const int maxPrintedLength = 80;
-            if (value.length() > maxPrintedLength) {
-                auto substring = StringView(value).left(maxPrintedLength);
-                stream << " \"" << substring.utf8().data() << "\"...";
-            } else
-                stream << " \"" << value.utf8().data() << "\"";
-        }
+    if (node())
+        stream << " node (" << node() << ")";
+
+    if (auto* renderText = dynamicDowncast<RenderText>(*this)) {
+        auto value = renderText->text();
+        stream << " length->(" << value.length() << ")";
+
+        value = makeStringByReplacingAll(value, '\\', "\\\\"_s);
+        value = makeStringByReplacingAll(value, '\n', "\\n"_s);
+
+        const int maxPrintedLength = 80;
+        if (value.length() > maxPrintedLength) {
+            auto substring = StringView(value).left(maxPrintedLength);
+            stream << " \"" << substring.utf8().data() << "\"...";
+        } else
+            stream << " \"" << value.utf8().data() << "\"";
     }
+
     if (auto* renderer = dynamicDowncast<RenderBoxModelObject>(*this)) {
         if (renderer->continuation())
             stream << " continuation->(" << renderer->continuation() << ")";
