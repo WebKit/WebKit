@@ -228,9 +228,9 @@ public:
     {
     }
 
-    const char* name() const final
+    ASCIILiteral name() const final
     {
-        return "JSC Heap Collector Thread";
+        return "JSC Heap Collector Thread"_s;
     }
     
 private:

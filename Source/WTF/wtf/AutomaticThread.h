@@ -126,7 +126,7 @@ public:
 
     void join();
 
-    virtual const char* name() const { return "WTF::AutomaticThread"; }
+    virtual ASCIILiteral name() const { return "WTF::AutomaticThread"_s; }
 
 protected:
     // This logically creates the thread, but in reality the thread won't be created until someone

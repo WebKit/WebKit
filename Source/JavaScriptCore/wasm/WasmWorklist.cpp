@@ -130,9 +130,9 @@ private:
         return complete(Locker { *worklist.m_lock });
     }
 
-    const char* name() const final
+    ASCIILiteral name() const final
     {
-        return "Wasm Worklist Helper Thread";
+        return "Wasm Worklist Helper Thread"_s;
     }
 
 public:

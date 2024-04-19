@@ -62,12 +62,13 @@ JITWorklistThread::JITWorklistThread(const AbstractLocker& locker, JITWorklist& 
     , m_worklist(worklist)
 {
 }
-const char* JITWorklistThread::name() const
+
+ASCIILiteral JITWorklistThread::name() const
 {
 #if OS(LINUX)
-    return "JITWorker";
+    return "JITWorker"_s;
 #else
-    return "JIT Worklist Helper Thread";
+    return "JIT Worklist Helper Thread"_s;
 #endif
 }
 
