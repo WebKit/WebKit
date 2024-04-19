@@ -93,6 +93,9 @@ static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndi
     Vector<BindGroupEntryUsageData> stageResourceUsages[maxStageValue][maxResourceUsageValue];
 
     for (id<MTLResource> r : resources) {
+        if (!r)
+            continue;
+
         ResourceUsageAndRenderStage *usageAndStage = [resources objectForKey:r];
         stageResources[usageAndStage.renderStages - 1][usageAndStage.usage - 1].append(r);
         stageResourceUsages[usageAndStage.renderStages - 1][usageAndStage.usage - 1].append(BindGroupEntryUsageData { .usage = usageAndStage.entryUsage, .binding = usageAndStage.binding, .resource = usageAndStage.resource });
