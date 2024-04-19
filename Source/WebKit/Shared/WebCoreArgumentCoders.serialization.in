@@ -5890,6 +5890,9 @@ struct WebCore::InteractionRegion {
     OptionSet<WebCore::InteractionRegion::CornerMask> maskedCorners;
     WebCore::InteractionRegion::ContentHint contentHint;
     std::optional<WebCore::Path> clipPath;
+#if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
+    String text;
+#endif
 };
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Region::Span {

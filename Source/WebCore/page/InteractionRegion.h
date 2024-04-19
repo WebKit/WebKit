@@ -62,6 +62,9 @@ struct InteractionRegion {
     OptionSet<CornerMask> maskedCorners { };
     ContentHint contentHint { ContentHint::Default };
     std::optional<Path> clipPath { std::nullopt };
+#if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
+    String text { };
+#endif
 
     WEBCORE_EXPORT ~InteractionRegion();
 };
@@ -75,6 +78,9 @@ inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
         && a.cornerRadius == b.cornerRadius
         && a.maskedCorners == b.maskedCorners
         && a.clipPath.has_value() == b.clipPath.has_value()
+#if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
+        && a.text == b.text
+#endif
         && (!a.clipPath || &a.clipPath.value() == &b.clipPath.value());
 }
 

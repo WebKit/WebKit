@@ -572,6 +572,20 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
             context.setFillGradient(makeGradient(gradientData(defaultRadius)));
             context.fillRect(dirtyRect);
         }
+
+#if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
+        FontCascadeDescription fontDescription;
+        fontDescription.setOneFamily("Helvetica"_s);
+        fontDescription.setSpecifiedSize(10);
+        fontDescription.setComputedSize(10);
+        fontDescription.setWeight(FontSelectionValue(500));
+        FontCascade font(WTFMove(fontDescription));
+        font.update(nullptr);
+
+        TextRun textRun = TextRun(region->text);
+        context.setFillColor(Color::black);
+        context.drawText(font, textRun, region->rectInLayerCoordinates.location());
+#endif
     }
 
     stateSaver.restore();
