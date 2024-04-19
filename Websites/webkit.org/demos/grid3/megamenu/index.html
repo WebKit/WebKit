@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>Newspaper demo</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../universal.css">
+  <link rel="stylesheet" href="styles.css">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#eee" media="(prefers-color-scheme: light)"/>
+  <meta name="theme-color" content="#444" media="(prefers-color-scheme: dark)">
+</head>
+<body>
+
+<aside class="interface">
+  <nav>Demos: <a href="../photos/">Photos</a> | <a href="../newspaper/">Newspaper</a> | <a href="../museum/">Museum</a></nav>
+  <section class="layout-switcher">
+    <label for="layout-select">Switch layouts:</label>
+    <select name="layouts" id="layout-select">
+      <option value="one">Multicolumn layout</option>
+      <option value="two">CSS Grid Level 1</option>
+      <option value="three">Classic masonry / waterfall layout</option>
+      <option selected value="four">Max-content sized columns</option>
+    </select>
+  </section>
+  <section class="number-toggle">
+    <label for="toggle">Number items:</label>
+    <input type="checkbox" switch id="toggle">
+  </section>
+  <button class="hide-controls">Hide controls</button>
+  <section class="show-code">
+<pre class="one"><code>nav { 
+  display: block;
+  columns: 30ch; 
+  column-gap: 4ch;
+}</code></pre>    
+<pre class="two"><code>nav { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(24ch, 1fr));
+  column-gap: 1rem;
+  justify-content: center; 
+}</code></pre>
+<pre class="three"><code>nav { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(24ch, 1fr));
+  grid-template-rows: masonry;
+  column-gap: 2lh;
+  justify-content: center; 
+}</code></pre>
+<pre class="four"><code>nav { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(max-content, 30ch));
+  grid-template-rows: masonry;
+  column-gap: 4lh;
+  justify-content: center; 
+}</code></pre>
+</section>
+</aside>
+<footer class="warning"><p>View these demos in <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a>, Firefox (after you turn on <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features#masonry_grid_layout">the feature flag</a>), or another browser that 
+<a href="https://caniuse.com/mdn-css_properties_grid-template-rows_masonry">supports Grid Level 3</a>.</p></footer> 
+<main>
+  <nav aria-label="WebKit navigation">
+    <section>
+      <h3>WebKit</h3>
+      <ul>
+        <li><a href="https://webkit.org/">Home</a></li>
+        <li><a href="https://webkit.org/tracking-prevention/">Tracking prevention</a></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Articles</h3>
+      <ul>
+        <li><a href="https://webkit.org/blog/category/news/">News</a></li>
+        <li><a href="https://webkit.org/blog/category/css/">CSS</a></li>
+        <li><a href="https://webkit.org/blog/category/contributing/">Contributing</a></li>
+        <li><a href="https://webkit.org/blog/category/privacy/">Privacy</a></li>
+        <li><a href="https://webkit.org/blog/category/performance/">Performance</a></li>
+        <li><a href="https://webkit.org/blog/category/javascript/">Javascript</a></li>
+        <li><a href="https://webkit.org/blog/category/standards/">Web standards</a></li>
+        <li><a href="https://webkit.org/blog/category/web-inspector/">Web Inspector</a></li>
+        <li><a href="https://webkit.org/blog/category/safari-technology-preview/">Safari Technology Preview</a></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Feature status</h3>
+      <ul>
+        <li><a href="https://webkit.org/css-status/">CSS status</a></li>
+        <li><a href="https://webkit.org/standards-positions/">Standards positions</a></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Downloads</h3>
+      <ul>
+        <li><a href="https://developer.apple.com/safari/download/">Safari Technology Preview</a></li>
+        <li><a href="http://wpewebkit.org/download">WPE</a></li>
+        <li><a href="https://webkitgtk.org/epiphany-tech-preview">Epiphany Technology Preview</a></li>
+        <li><a href="http://webkitgtk.org/download">WebKitGTK</a></li>
+        <li><a href="https://webkit.org/build-archives/">WebKit Build Archives</a></li>
+      </ul>
+    </section>
+    <section>
+    <h3>Web Inspector Interface</h3>
+      <ul>
+        <li><a href="https://webkit.org/web-inspector/web-inspector-interface/">Interface</a></li>
+        <li><a href="https://webkit.org/web-inspector/page-overlay/">Page Overlay</a></li>
+        <li><a href="https://webkit.org/web-inspector/audit-tab/">Audit Tab</a></li>
+        <li><a href="https://webkit.org/web-inspector/elements-tab/">Elements Tab</a></li>
+        <li><a href="https://webkit.org/web-inspector/layers-tab/">Layers Tab</a></li>
+        <li><a href="https://webkit.org/web-inspector/network-tab/">Network Tab</a></li>
+        <li><a href="https://webkit.org/web-inspector/sources-tab/">Sources Tab</a></li>
+        <li><a href="https://webkit.org/web-inspector/timelines-tab/">Timelines Tab</a></li>
+        <li><a href="https://webkit.org/web-inspector/keyboard-shortcuts/">Keyboard Shortcuts</a></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Web Inspector Settings</h3>
+      <ul>
+        <li><a href="https://webkit.org/web-inspector/enabling-web-inspector/">Enabling Web Inspector</a></li>
+        <li><a href="https://webkit.org/web-inspector/device-settings/">Device Settings</a></li>
+        <li><a href="https://webkit.org/web-inspector/web-inspector-settings/">Web Inspector Settings</a></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Web Inspector Breakpoints</h3>
+      <ul>
+        <li><a href="https://webkit.org/web-inspector/dom-breakpoints/">DOM Breakpoints</a></li>
+        <li><a href="https://webkit.org/web-inspector/event-breakpoints/">Event Breakpoints</a></li>
+        <li><a href="https://webkit.org/web-inspector/javascript-breakpoints/">JavaScript Breakpoints</a></li>
+        <li><a href="https://webkit.org/web-inspector/symbolic-breakpoints/">Symbolic Breakpoints</a></li>
+        <li><a href="https://webkit.org/web-inspector/url-breakpoints/">URL Breakpoints</a></li>
+      </ul>
+    </section>
+    <section>
+      <h3>More Web Inspector</h3>
+      <ul>
+        <li><a href="https://webkit.org/web-inspector/console-command-line-api/">Console Command Line API</a></li>
+        <li><a href="https://webkit.org/web-inspector/console-object-api/">Console Object API</a></li>
+        <li><a href="https://webkit.org/web-inspector/console-snippets/">Console Snippets</a></li>
+        <li><a href="https://webkit.org/web-inspector/inspector-bootstrap-script/">Inspector Bootstrap Script</a></li>
+        <li><a href="https://webkit.org/web-inspector/local-overrides/">Local Overrides</a></li>
+        <li><a href="https://webkit.org/web-inspector/script-blackboxing/">Script Blackboxing</a></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Safari Documentation</h3>
+      <ul>
+        <li><a href="https://developer.apple.com/documentation/safari-release-notes">Safari Release Notes</a></li>
+        <li><a href="https://developer.apple.com/documentation/safari-technology-preview-release-notes">Safari Technology Preview</a></li>
+        <li><a href="https://developer.apple.com/documentation/webkit">WebKit Framework</a></li>
+      </ul>
+    </section>
+    <section>
+      <h3><a href="https://developer.apple.com/documentation/safari-developer-tools">Safari Developer Features</a></h3>
+      <ul>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/enabling-developer-features">Enabling developer features</a></li>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/develop-menu">Develop Menu</a></li>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/web-inspector">Web Inspector</a></li>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/responsive-design-mode">Responsive Design Mode</a></li>
+    </section>
+    <section>
+      <h3>Use Safari Developer Features</a></h3>
+      <ul>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/inspecting-safari-macos">Inspect Safari on macOS</a></li>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/inspecting-ios">Inspect iOS and iPadOS</a></li>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/inspecting-visionos">Inspect visionOS</a></li>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/inspecting-tvos">Inspect tvOS</a></li>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/enabling-inspecting-content-in-your-apps">Inspect  your app content</a></li>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/installing-xcode-and-simulators">Install Xcode and Simulators</a></li>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/adding-additional-simulators">Add additional simulators</a></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Safari Settings</h3>
+      <ul>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/developer-settings">Changing Developer settings</a></li>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/feature-flag-settings">Changing Feature Flag settings</a></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Web Driver</h3>
+      <ul>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/macos-enabling-webdriver">Enable on macOS</a></li>
+        <li><a href="https://developer.apple.com/documentation/safari-developer-tools/ios-enabling-webdriver">Enable on iOS and iPadOS</a></li>
+      </ul>
+    </section>
+    <section>
+      <h3><a href="https://webkit.org/reporting-bugs/">Reporting Bugs</a></h3>
+      <ul>
+        <li><a href="https://webkit.org/bug-life-cycle/">Bug Life Cycle</a></li>
+        <li><a href="https://webkit.org/bug-report-guidelines/">Bug Report Guidelines</a></li>
+        <li><a href="https://webkit.org/bug-prioritization/">Bug Prioritization</a></li>
+        <li><a href="https://webkit.org/bugzilla-bits/">Bugzilla Bits</a></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Contributing to WebKit</h3>
+      <ul class="sub-menu">
+        <li><a href="https://webkit.org/getting-started/">Getting Started</a></li>
+        <li><a href="https://webkit.org/testing-contributions/">Testing Contributions</a></li>
+        <li><a href="https://webkit.org/policy-and-guidelines/">Policy and Guidelines</a></li>
+        <li><a href="https://webkit.org/asking-questions/">Asking Questions</a></li>
+        <li><a href="https://webkit.org/tracking-prevention-policy/">Tracking Prevention Policy</a></li>
+      </ul>
+    </section>
+  </nav>
+</main>
+<script src="../universal.js"></script>
+</body>
+</html>

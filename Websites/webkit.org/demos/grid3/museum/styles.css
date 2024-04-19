@@ -1,0 +1,447 @@
+/* --------------------------------------------
+   Reset
+----------------------------------------------- */
+* {
+   box-sizing: border-box;
+}
+:root {
+  background: white;
+}
+img {
+   display: block;
+   width: 100%;
+}
+
+/* --------------------------------------------
+   Base styles
+----------------------------------------------- */
+
+body { 
+   font-family: Avenir, 'Avenir Next LT Pro', Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
+   font-size: 1.2rem;
+   margin: 0;
+   background: color(display-p3 0.016 0.166 0.29);
+}
+a {
+   color: color(display-p3 0.196 0.485 0.955);
+   text-decoration: none;
+}
+a:hover {
+   text-decoration: underline;
+}
+/* --------------------------------------------
+   Warning if Grid 3 is not supported controls
+----------------------------------------------- */
+
+@supports (grid-template-rows: masonry) {
+  .warning {
+    display: none;
+  }
+}
+.warning {
+  padding: 0.5lh 1lh;
+  background: color(display-p3 0.68 0.111 0.061);
+  p {
+    color: #eee;
+    margin: 0;
+    text-align: center;
+    font-size: 1.0rem;
+  }
+  a {
+    color: #eee;
+    text-decoration: underline;
+  }
+}
+
+
+/* --------------------------------------------
+   Overall page for demo
+----------------------------------------------- */
+
+main {
+   padding-block: calc(2vw + 1rem);
+   padding-inline: calc(2vw + 1rem);
+   box-shadow: 0 -12px 12px  rgba(0, 0, 0, .05);
+}
+/* --------------------------------------------
+   Demo controls
+----------------------------------------------- */
+
+aside.interface:has(button.hidden) {
+  display: none;
+}
+
+aside.interface {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  background: color(display-p3 0.106 0.361 0.575);
+  box-shadow:inset 0 -12px 12px  light-dark(rgba(0, 0, 0, .05), rgba(0, 0, 0, .08));
+  color: white;
+  padding: 2rem calc(2vw + 1rem);
+  font-family: -apple-system, system-ui;
+  font-size: 70%;
+  gap: 1lh 2rem;
+  a {
+     color: color(display-p3 0.455 0.747 0.99);
+  }
+  section.show-code {
+     background: color(display-p3 0.818 0.906 0.98)
+  }
+  pre {
+    display: none;
+    margin: 0;
+    color: #444;
+    text-wrap-mode: wrap;
+    width: max-content;
+  }
+}
+nav {
+ grid-area: 1 / 1;
+ margin-block-start: 0.4lh;
+}
+section.layout-switcher {
+  grid-area: 2 / 1;
+}
+section.number-toggle {
+  grid-area: 3 / 1 ;
+  p {
+    margin: 0.25lh;
+  }
+}
+section.show-code {
+  grid-area: 1 / 2 ;
+  grid-row: span 5;
+  padding: 0.5rem 2rem;
+  background: #fbfbfb;
+  border-radius: 1ch;
+  overflow: scroll;
+}
+button.hide-controls {
+  grid-area: 4 / 1;
+  place-self: start;
+}
+label {
+  display: inline-block;
+}
+input[type="checkbox"][switch] {
+  vertical-align: text-top;
+}
+
+body:has(option[value="one"]:checked) .interface pre.one,
+body:has(option[value="two"]:checked) .interface pre.two,
+body:has(option[value="three"]:checked) .interface pre.three,
+body:has(option[value="four"]:checked) .interface pre.four,
+body:has(option[value="five"]:checked) .interface pre.five,
+body:has(option[value="six"]:checked) .interface pre.six,
+body:has(option[value="seven"]:checked) .interface pre.seven {
+  display: block;
+}
+aside pre.code {
+  color: #aaa;
+  margin-block-start: 0.5lh;
+}
+
+/* --------------------------------------------
+  Demo styles
+----------------------------------------------- */
+
+main {
+  display: grid;
+  gap: 3ch;
+  font-family: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif;
+  font-weight: 200;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  min-height: 100vh;
+  a:hover {
+    text-decoration: none;
+  }
+}
+section {
+  padding: var(--spacing);
+}
+
+/* --------------------------------------------
+   Variations on the layout
+----------------------------------------------- */
+
+/* ---- CSS Grid level 1 (without Masonry) ---- */
+body:has(option[value="one"]:checked) main {
+  grid-template-columns: repeat(auto-fill, minmax(24ch, 1fr));
+  grid-template-rows: auto;
+}
+
+/* ---- Symmetrical columnar layout ---- */
+body:has(option[value="two"]:checked) main { /* before applying masonry */
+  grid-template-columns: repeat(auto-fill, minmax(24ch, 1fr));
+  grid-template-rows: masonry;
+}
+
+/* ---- With subgrid and item placement ---- */
+body:has(option[value="three"]:checked) main {
+  grid-template-columns: 
+    repeat(auto-fill, minmax(16ch, 1fr) 8ch);
+  grid-template-rows: masonry;
+  grid-auto-flow: dense; /* only applies in browsers with no support for Masonry */
+      /* here to make the fallback a bit better */
+  header, article {
+    grid-column: span 2;
+  }
+  header {
+    grid-column: -3 / -1;
+  }
+  article {
+    display: grid;
+    grid-template-columns: subgrid;
+    .image,      
+    section, 
+    footer {
+       grid-column: span 2;
+    }
+    section {
+       padding: var(--spacing);
+       .title-of-art {
+       }
+    }
+    footer {
+       display: grid;
+       grid-template-columns: subgrid;
+       .date {
+          grid-area: 1 / 3;
+       }
+       .medium {
+          grid-row: 1;
+       }
+       .number {
+          grid-column: 2;
+          grid-row: 2;
+       }
+       .location {
+          grid-column: 1 / 2;
+          grid-row: 2;
+       }
+    }
+  }
+}
+
+/* ---- Landscape images span 2 columns ---- */
+body:has(option[value="four"]:checked) main {
+   grid-template-columns: 
+      repeat(auto-fill, minmax(16ch, 1fr) 8ch);
+   grid-template-rows: masonry;
+   grid-auto-flow: dense; /* only applies in browsers with no support for Masonry */
+        /* here to make the fallback a bit better */
+   header, article {
+      grid-column: span 2;
+   }
+   header {
+      grid-column: -3 / -1;
+   }
+   article {
+      display: grid;
+      grid-template-columns: subgrid;
+      .image,      
+      section, 
+      footer {
+         grid-column: span 2;
+      }
+      section {
+         padding: var(--spacing);
+         .title-of-art {
+         }
+      }
+      footer {
+         display: grid;
+         grid-template-columns: subgrid;
+         .date {
+            grid-area: 1 / 3;
+         }
+         .medium {
+            grid-row: 1;
+         }
+         .number {
+            grid-column: 2;
+            grid-row: 2;
+         }
+         .location {
+            grid-column: 1 / 2;
+            grid-row: 2;
+         }
+      }
+   }
+   article.wide {
+       display: grid;
+       grid-template-columns: subgrid;
+       grid-column: span 4;
+       .image,      
+       section, 
+       footer {
+          grid-column: span 4;
+       }
+       section {
+          padding: var(--spacing);
+          .title-of-art {
+          }
+       }
+       footer {
+          display: grid;
+          grid-template-columns: subgrid;
+          .date {
+             grid-area: 1 / 5;
+          }
+          .medium {
+             grid-row: 1;
+          }
+          .number {
+             grid-column: 4;
+             grid-row: 4;
+          }
+          .location {
+             grid-column: 1 / 4;
+             grid-row: 4;
+          }
+       }
+    }
+}
+
+/* --------------------------------------------
+  Styling of the page
+----------------------------------------------- */
+
+main {
+   --spacing: 0.5lh;
+}
+header, 
+article {
+    border-radius: 4px;
+}
+header {
+    background: black;
+    color: white;
+    display: grid;
+    img {
+        grid-row: 1;
+    }
+}
+article {
+    background: color(display-p3 1 1 1);
+    box-shadow: 1px 1px 6px rgba(0,0,0,0.3);
+    align-self: start;
+}
+img {
+    border-radius: 4px 4px 0 0;
+}
+footer {
+    background: color(display-p3 0.223 0.254 0.28);
+    box-shadow: inset 0 2px 1rem rgba(0,0,0,0.5);
+    padding: var(--spacing);
+}
+h1, h2, h3, h4 {
+    font-family: Optima, Candara, 'Noto Sans', source-sans-pro, sans-serif;
+    font-weight: normal;
+}
+h2 {
+    font-size: 0.9rem;
+    margin: 0;
+    text-wrap: balance;
+}
+h2 a {
+    color: black;
+}
+h3, h4 {
+   font-size: 0.75rem;
+   margin: 0;
+}
+.artist {
+   margin-block-start: 0.1lh;
+}
+p, div {
+   font-size: 0.75rem;
+   margin: 0;
+   color: color(display-p3 0.679 0.764 0.86);
+}
+header {
+    line-height: 1.1;
+    h1 {
+        font-size: 2rem;
+        padding-inline: 1rem; /* fallback measurement for browsers that don't support rch */
+        padding-inline: 2rch;
+    }
+    h1 span {
+        font-weight: 800;
+        font-size: 2.2rem;
+    }
+    a {
+        color: white;
+    }
+    p {
+        font-size: 0.95rem;
+        font-weight: 300;
+        color: #777;
+        padding-inline: 1rem;
+        padding-inline: 2rch;
+        margin-block-end: 1rem; 
+        margin-block-end: 2rch; 
+    }
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    li {
+        border-block-start: 1px solid color(display-p3 0.3 0.3 0.3);
+    }
+    li a {
+        display: block;
+        padding-inline: 1rem;
+        padding-inline: 2rch;
+        padding-block: 0.5rem;
+        padding-block: 1rch;
+    }
+    li a:hover {
+        background: rgba(255,255,255,0.1);
+    }
+}
+
+/* --------------------------------------------
+   Counters marking items (when enabled)
+----------------------------------------------- */
+
+body {
+  counter-reset: item-counter 0;
+}
+header, article {
+  position: relative;
+  counter-increment: item-counter;
+}
+body:has(input[type="checkbox"]:checked) {
+  header::before,
+  header::after,
+  article::before,
+  article::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0 0.5em;
+    width: calc(100% - 1.6ch);
+    height: calc(100%);
+    align-content: center;
+    text-align: center;
+  }
+  header::after,
+  article::after {
+    content: counter(item-counter); 
+    background: rgba(9, 10, 14, 0.5);
+    border-radius: 4px;
+    color: white;
+    font-size: 4em;
+    font-weight: bold;
+    opacity: 0.9;
+  }
+  article {
+    background: #aaa;
+    a, section, footer {
+      opacity: 0.6;
+    }	
+  }
+}

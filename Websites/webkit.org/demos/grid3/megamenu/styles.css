@@ -1,0 +1,124 @@
+/* --------------------------------------------
+   Overall styles for Mega Menu layout
+----------------------------------------------- */
+main {
+	font-family: system-ui, sans-serif;
+	font-size: 12px;
+	line-height: 1.333;
+	nav {
+		border-block: 1px solid #bbb;
+		margin: 0;
+		padding-block-start: 12px;
+		padding-block-end: 24px;
+	}
+}
+h3 {
+	font-weight: 600;
+	font-size: 12px;
+	line-height: 1.3333733333;
+	letter-spacing: -0.01em;
+	margin: 0;
+	margin-bottom: .8em;
+	a {
+		color: light-dark(black, white);
+	}
+}
+ul {
+	padding: 0;
+	margin: 0
+}
+li {
+	display: block;
+	pointer-events: auto;
+	margin-bottom: .8em;
+	a {
+		color: light-dark(rgba(0,0,0,.72), rgba(255, 255, 255, 0.72));
+	}
+}
+nav section {
+	padding-top: 24px;
+}
+
+/* --------------------------------------------
+   Basic layout for Mega Menu
+----------------------------------------------- */
+
+main {
+	padding-inline: calc(10vw + 1rem);
+}
+
+/* --------------------------------------------
+   Variations on the layout
+----------------------------------------------- */
+
+/* ---- Multicolumn layout ---- */
+body:has(option[value="one"]:checked) main nav {
+	display: block;
+	columns: 30ch;
+	column-gap: 4ch;
+}
+
+/* ---- CSS Grid level 1 (without Masonry) ---- */
+body:has(option[value="two"]:checked) main nav {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(24ch, 1fr));
+	grid-template-rows: none; /* default value */
+	column-gap: 1rem;
+	justify-content: center; 
+}
+
+/* ---- Classic Masonry layout ---- */
+body:has(option[value="three"]:checked) main nav {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(24ch, 1fr));
+	grid-template-rows: masonry;
+	column-gap: 2lh;
+	justify-content: center; 
+}
+
+/* ---- Max-content sized columns ---- */
+body:has(option[value="four"]:checked) main nav {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(max-content, 24ch));
+	grid-template-rows: masonry;
+	column-gap: 4lh;
+	justify-content: center; 
+}
+
+/* --------------------------------------------
+   Counters marking items (when enabled)
+----------------------------------------------- */
+
+body {
+	counter-reset: item-counter 0;
+}
+nav section {
+	position: relative;
+	counter-increment: item-counter;
+}
+body:has(input[type="checkbox"]:checked) {
+	nav section::before,
+	nav section::after {
+		position: absolute;
+		top: 0;
+		left: 0;
+		margin-top: 8px;
+		width: 100%;
+		height: calc(100% - 8px);
+		align-content: center;
+		text-align: center; 
+	}
+	nav section::after {
+		content: counter(item-counter); 
+		background: light-dark(rgba(42, 46, 59, 0.3), rgba(159, 161, 166, 0.3));
+		color: white;
+		font-size: 4em;
+		font-weight: bold;
+		opacity: 0.9;
+	}
+	nav section {
+		h3, li {
+			opacity: 0.5;
+		}	
+	}
+}

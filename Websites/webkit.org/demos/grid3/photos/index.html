@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>Photo demo</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../universal.css">
+  <link rel="stylesheet" href="styles.css">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#eee" media="(prefers-color-scheme: light)"/>
+  <meta name="theme-color" content="#444" media="(prefers-color-scheme: dark)">
+</head>
+<body>
+
+<aside class="interface">
+  <nav>Demos: <a href="../megamenu/">Mega menu</a> | <a href="../newspaper/">Newspaper</a> | <a href="../museum/">Museum</a></nav>
+  <section class="layout-switcher">
+    <label for="layout-select">Switch layouts:</label>
+    <select name="layouts" id="layout-select">
+      <option value="one">Multicolumn layout</option>
+      <option value="two">CSS Grid Level 1</option>
+      <option value="three">Classic masonry / waterfall layout</option>
+      <option value="four">First & last columns fixed size</option>
+      <option selected value="five">Alternating narrow & wide columns</option>
+      <option value="six">Every 5th item is wider</option>
+      <option value="seven">Wide images are wider</option>
+      <option value="eight">Combined with View Transitions</option>
+      <option value="ten">Fibonacci sequence</option>
+      <!-- <option value="nine">Horizontal Masonry</option> -->
+    </select>
+  </section>
+  <section class="number-toggle">
+    <label for="toggle">Number items:</label>
+    <input type="checkbox" switch id="toggle">
+  </section>
+  <button class="hide-controls">Hide controls</button>
+  <section class="show-code">
+<pre class="one"><code>main { 
+  display: block;
+  columns: 12rem; 
+  column-gap: 1rem;
+}</code></pre>    
+<pre class="two"><code>main { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  grid-template-rows: auto; 
+  gap: 1rem;
+}</code></pre>
+<pre class="three"><code>main { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  grid-template-rows: masonry;
+  gap: 1rem;
+}</code></pre>
+<pre class="four"><code>main { 
+  display: grid;
+  grid-template-columns: 14ch repeat(auto-fill, minmax(28ch, 1fr)) 14ch;
+  grid-template-rows: masonry; 
+  gap: 1rem;
+}</code></pre>
+<pre class="five"><code>main { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr) minmax(14rem, 2fr)) minmax(8rem, 1fr);
+  grid-template-rows: masonry; 
+  gap: 1rem;
+}</code></pre>
+<pre class="six"><code>main { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16ch, 1fr));
+  grid-template-rows: masonry; 
+  gap: 1rem;
+}
+.card:nth-child(5n) { grid-column: span 2; }</code></pre>
+<pre class="seven"><code>main { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18ch, 1fr));
+  grid-template-rows: masonry;
+}
+figure:has(.wide) { grid-column: span 2; }</code></pre>
+<pre class="eight"><code>main { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  grid-template-rows: masonry;
+}
+.expanded {  grid-column: span 4; }</code></pre>
+<pre class="eight code"><code>/* plus code for View Transitions, requires Safari Technology Preview 192+ */</code></pre>
+<pre class="ten"><code>main { 
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr 3fr 5fr 8fr;
+  grid-template-rows: masonry; 
+  gap: 1rem;
+}
+  </section>
+</aside>
+<footer class="warning"><p>View these demos in <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a>, Firefox (after you turn on <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features#masonry_grid_layout">the feature flag</a>), or another browser that 
+<a href="https://caniuse.com/mdn-css_properties_grid-template-rows_masonry">supports Grid Level 3</a>.</p></footer>
+
+<main class="grid">
+  <figure class="card"><img src="images/Bee.jpeg"                                   class=""></figure>
+  <figure class="card"><img src="images/Bridge_CitySkyline.jpeg"                    class=""></figure>
+  <figure class="card"><img src="images/Bridge_Forest.jpeg"                         class=""></figure>
+  <figure class="card"><img src="images/SnowcapMountains_Pano.jpeg"                 class="wide"></figure>
+  <figure class="card"><img src="images/Birds.jpeg"                                 class="wide"></figure>
+  <figure class="card"><img src="images/Circle_Shapes.jpeg"                         class=""></figure>
+  <figure class="card"><img src="images/Flower_Meadow.jpeg"                         class=""></figure>
+  <figure class="card"><img src="images/New York_GeometricShapes.jpeg"              class=""></figure>
+  <figure class="card"><img src="images/Taiwan_Building_3.jpeg"                     class=""></figure>
+  <figure class="card"><img src="images/Canary_Wharf_from_Limehouse_London_June_2016_HDR.jpg" class=""></figure>
+  <figure class="card"><img src="images/Schloss_Sigmaringen_2022.jpg" class=""></figure>
+  <figure class="card"><img src="images/Daslook._Allium_ursinum,_zwellende_bloemknop._18-04-2022_(actm.)_04.jpg" class=""></figure>
+  <figure class="card"><img src="images/Yellowstone_National_Park_(WY,_USA),_Lower_Geyser_Basin_--_2022_--_2401.jpg" class=""></figure>
+  <figure class="card"><img src="images/Palacio_de_Schonbrunn,_Viena,_Austria,_2020-02-02,_DD_10.jpg" class=""></figure>
+  <figure class="card"><img src="images/Crow.jpeg"                                  class=""></figure>
+  <figure class="card"><img src="images/Deer_Meadow.jpeg"                           class="wide"></figure>    
+  <figure class="card"><img src="images/New York_ CentralPark.jpeg"                 class="wide"></figure>
+  <figure class="card"><img src="images/Mountains_AerialShot.jpeg"                  class=""></figure>
+  <figure class="card"><img src="images/Ocean_Mountains.jpeg"                       class=""></figure>
+  <figure class="card"><img src="images/RedwoodNationalParkPlant.jpeg"              class=""></figure>
+  <figure class="card"><img src="images/StackedBooks.jpeg"                          class=""></figure>
+  <figure class="card"><img src="images/ScrubjaywithAcorn.jpeg"                     class=""></figure>
+  <figure class="card"><img src="images/Sidewalk_Tunnel.jpeg"                       class=""></figure>
+  <figure class="card"><img src="images/Wren.jpeg"                                  class=""></figure>
+  <figure class="card"><img src="images/Faucet.jpeg"                                class="wide"></figure>
+  <figure class="card"><img src="images/StreetAlley_Lights.jpeg"                    class=""></figure>
+  <figure class="card"><img src="images/Taiwan_Building_1.jpeg"                     class=""></figure>
+  <figure class="card"><img src="images/Bow_Bridge_panorama_Central_Park_(86746p).jpg" class="wide"></figure> 
+  <figure class="card"><img src="images/Window_View.jpeg"                           class=""></figure>
+  <figure class="card"><img src="images/Caterpillar.jpeg"                           class=""></figure>
+  <figure class="card"><img src="images/Woods_Foggy.jpeg"                           class=""></figure>
+  <figure class="card"><img src="images/Architecture_ApplePark.jpeg"                class=""></figure>
+  <figure class="card"><img src="images/Dawn_in_Puerto_Encantado.jpg" class="wide"></figure>
+  <figure class="card"><img src="images/Brandslange.jpg" class=""></figure>
+  <figure class="card"><img src="images/Raindrops_on_white_cedar.jpg" class=""></figure>
+  <figure class="card"><img src="images/Beskid_Wyspowy_-_panorama_z_Jaworzynki.JPG" class="wide"></figure>
+  <figure class="card"><img src="images/USA-2016-Puerto_Rico-San_Juan-Castillo_San_Felipe_del_Morro_10.jpg" class="wide"></figure>
+  <figure class="card"><img src="images/Boat_passing_under_Elgin_Bridge_during_blue_hour_(2023)-L1003785.jpg" class=""></figure>
+  <figure class="card"><img src="images/Yellowstone_National_Park_(WY,_USA),_Grand_Prismatic_Spring_--_2022_--_2514.jpg" class=""></figure>
+  <figure class="card"><img src="images/Nevelzwam_(Clitocybe_nebularis)_24-11-2020._(actm.)_01.jpg" class=""></figure>
+  <figure class="card"><img src="images/Heilbronn_-_Bockingen_-_Friedhof_-_Blick_von_der_Kapelle_zum_Haupteingang_(1).jpg" class=""></figure>
+  <figure class="card"><img src="images/Keylong_West_Lahaul_Himachal_Oct22_A7C_03375_panorama.jpg" class="wide"></figure>
+  <figure class="card"><img src="images/Mow_Cop_Castle,_Sep_2023.jpg" class=""></figure>
+  <figure class="card"><img src="images/Sunset_at_Noronhas'_beach.jpg" class=""></figure>
+  <figure class="card"><img src="images/Mekong_bank_with_stilt_dwellings_and_clouds_at_golden_hour_in_Don_Det_Laos.jpg" class=""></figure>
+  <figure class="card"><img src="images/MarinaBayAppleStore_Singapore_Texture.jpeg" class=""></figure>
+  <figure class="card"><img src="images/Lama_glama_Laguna_Colorada_2.jpg" class=""></figure>
+  <figure class="card"><img src="images/Parque_Eagle_River,_Anchorage,_Alaska,_Estados_Unidos,_2017-09-01,_DD_02.jpg" class=""></figure>
+  <figure class="card"><img src="images/Olympic_Stadium_Munich_-_Rows_of_Seats,_April_2019_-04.jpg" class=""></figure>
+  <figure class="card"><img src="images/Gonepteryx_rhamni_-_Citron-1.jpg" class=""></figure>
+  <figure class="card"><img src="images/1552px-Dendrobates_azureus_(Dendrobates_tinctorius)_Edit.jpg" class=""></figure> 
+</main>
+<script src="script.js"></script>
+<script src="../universal.js"></script>
+</body>
+</html>

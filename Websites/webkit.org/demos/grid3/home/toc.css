@@ -1,0 +1,45 @@
+/* --------------------------------------------
+   Table of Contents page
+----------------------------------------------- */
+
+.toc {
+	margin: 4rem;
+	text-align: center;
+	img {
+		max-width: 400px;
+	}
+	h1 {
+		text-wrap: balance;
+		font-weight: 400;
+	}
+	h2 {
+
+		margin: 0;
+		font-weight: 400;
+
+	}
+	ul {
+		margin-block: 2rlh;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(250px, 400px) minmax(250px, 400px));
+		gap: 2rem;
+		justify-content: center;
+	}
+	@media (max-width: 700px) {
+		ul {
+			grid-template-columns: minmax(250px, 400px);
+		}
+	}
+	li {
+		display: block;
+	}
+	li a {
+		color: light-dark(#333, #eee);
+	}
+	p {
+		font-size: 1rem;
+		margin-block-start: 2rlh;
+	}
+
+}
