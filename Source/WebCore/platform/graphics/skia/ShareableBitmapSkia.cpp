@@ -30,7 +30,10 @@
 #include "FontRenderOptions.h"
 #include "GraphicsContextSkia.h"
 #include "NotImplemented.h"
+
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkSurface.h>
+IGNORE_CLANG_WARNINGS_END
 
 namespace WebCore {
 
