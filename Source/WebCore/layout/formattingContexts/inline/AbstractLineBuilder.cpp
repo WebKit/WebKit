@@ -44,7 +44,7 @@ AbstractLineBuilder::AbstractLineBuilder(InlineFormattingContext& inlineFormatti
 
 void AbstractLineBuilder::reset()
 {
-    m_wrapOpportunityList = { };
+    m_wrapOpportunityList.shrink(0);
     m_partialLeadingTextItem = { };
     m_previousLine = { };
 }
