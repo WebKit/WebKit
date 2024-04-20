@@ -597,7 +597,7 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(std::span<const uint8_t> da
     if (isRemoved() || m_updating)
         return Exception { ExceptionCode::InvalidStateError };
 
-    ALWAYS_LOG(LOGIDENTIFIER, "size = ", data.size(), "maximumBufferSize = ", maximumBufferSize(), "buffered = ", m_buffered->ranges(), " streaming = ", m_source->streaming());
+    ALWAYS_LOG(LOGIDENTIFIER, "size = ", data.size(), " maximumBufferSize = ", maximumBufferSize(), " buffered = ", m_buffered->ranges(), " streaming = ", m_source->streaming());
 
     // 3. If the readyState attribute of the parent media source is in the "ended" state then run the following steps:
     // 3.1. Set the readyState attribute of the parent media source to "open"
