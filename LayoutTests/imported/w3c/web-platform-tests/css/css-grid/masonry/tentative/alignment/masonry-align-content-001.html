@@ -5,10 +5,14 @@
 -->
 <html><head>
   <meta charset="utf-8">
-  <title>CSS Grid Test: Masonry item placement</title>
+  <title>CSS Grid Test: Masonry layout with `align-content` in masonry axis (horizontal writing mode)</title>
+  <meta name="assert"
+        content="Test passes if align-content shifts content
+                 in the masonry axis of a masonry grid container
+                 and the grid container's baseline is also shifted accordingly.">
   <link rel="author" title="Mats Palmgren" href="mailto:mats@mozilla.com">
-  <link rel="help" href="https://drafts.csswg.org/css-grid-3">
-  <link rel="match" href="masonry-item-placement-006-ref.html">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#alignment">
+  <link rel="match" href="masonry-align-content-001-ref.html">
   <style>
 html,body {
   color:black; background-color:white; font:15px/1 monospace; padding:0; margin:0;
@@ -22,20 +26,19 @@ grid {
   color: #444;
   border: 1px solid;
   padding: 2px;
+  height: 100px;
 }
 
 item {
   background-color: #444;
   color: #fff;
 }
-.next > grid {
-  masonry-auto-flow: next;
-}
+
 </style>
 </head>
 <body>
 
-<grid>
+<grid style="align-content:start">
   <item style="padding-top:30px">1</item>
   <item>2</item>
   <item>3</item>
@@ -44,7 +47,7 @@ item {
   <item>6</item>
 </grid>
 
-<grid>
+<grid style="align-content:start">
   <item>1</item>
   <item style="padding-top:30px">2</item>
   <item>3</item>
@@ -53,44 +56,7 @@ item {
   <item>6</item>
 </grid>
 
-<grid>
-  <item style="padding-top:30px">1</item>
-  <item style="padding-top:30px">2</item>
-  <item style="padding-top:10px">3</item>
-  <item>4</item>
-  <item>5</item>
-  <item>6</item>
-</grid>
-
-<grid>
-  <item>1</item>
-  <item style="padding-top:30px">2</item>
-  <item style="padding-top:10px">3</item>
-  <item style="grid-column:span 2">4</item>
-  <item>5</item>
-  <item>6</item>
-</grid>
-
-<grid>
-  <item>1</item>
-  <item style="padding-top:30px">2</item>
-  <item style="padding-top:10px">3</item>
-  <item style="grid-column:span 3">4</item>
-  <item>5</item>
-  <item>6</item>
-</grid>
-
-<grid>
-  <item>1</item>
-  <item style="padding-top:30px">2</item>
-  <item style="padding-top:10px">3</item>
-  <item style="grid-column:span 4">4</item>
-  <item>5</item>
-  <item>6</item>
-</grid>
-
-<span class="next">
-<grid>
+<grid style="align-content:end">
   <item style="padding-top:30px">1</item>
   <item>2</item>
   <item>3</item>
@@ -99,7 +65,7 @@ item {
   <item>6</item>
 </grid>
 
-<grid>
+<grid style="align-content:end">
   <item>1</item>
   <item style="padding-top:30px">2</item>
   <item>3</item>
@@ -108,42 +74,56 @@ item {
   <item>6</item>
 </grid>
 
-<grid>
+<grid style="align-content:center">
   <item style="padding-top:30px">1</item>
-  <item style="padding-top:30px">2</item>
-  <item style="padding-top:10px">3</item>
+  <item>2</item>
+  <item>3</item>
   <item>4</item>
   <item>5</item>
   <item>6</item>
 </grid>
 
-<grid>
+<grid style="align-content:center">
   <item>1</item>
   <item style="padding-top:30px">2</item>
-  <item style="padding-top:10px">3</item>
-  <item style="grid-column:span 2">4</item>
+  <item>3</item>
+  <item>4</item>
   <item>5</item>
   <item>6</item>
 </grid>
 
-<grid>
-  <item>1</item>
-  <item style="padding-top:30px">2</item>
-  <item style="padding-top:10px">3</item>
-  <item style="grid-column:span 3">4</item>
+<grid style="align-content:stretch">
+  <item style="padding-top:30px">1</item>
+  <item>2</item>
+  <item>3</item>
+  <item>4</item>
   <item>5</item>
   <item>6</item>
 </grid>
 
-<grid>
-  <item>1</item>
-  <item style="padding-top:30px">2</item>
-  <item style="padding-top:10px">3</item>
-  <item style="grid-column:span 4">4</item>
+<grid style="align-content:space-between">
+  <item style="padding-top:30px">1</item>
+  <item>2</item>
+  <item>3</item>
+  <item>4</item>
   <item>5</item>
   <item>6</item>
 </grid>
-</span>
 
-</body>
-</html>
+<grid style="align-content:space-around">
+  <item style="padding-top:30px">1</item>
+  <item>2</item>
+  <item>3</item>
+  <item>4</item>
+  <item>5</item>
+  <item>6</item>
+</grid>
+
+<grid style="align-content:space-evenly">
+  <item style="padding-top:30px">1</item>
+  <item>2</item>
+  <item>3</item>
+  <item>4</item>
+  <item>5</item>
+  <item>6</item>
+</grid>

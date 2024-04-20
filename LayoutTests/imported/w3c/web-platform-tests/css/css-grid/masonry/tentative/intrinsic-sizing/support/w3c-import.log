@@ -14,7 +14,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/order/masonry-order-001-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/order/masonry-order-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/order/masonry-order-002-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/order/masonry-order-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/support/masonry-intrinsic-sizing-visual.css
