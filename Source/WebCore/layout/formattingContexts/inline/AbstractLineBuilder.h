@@ -73,7 +73,7 @@ protected:
 protected:
     Line m_line;
     InlineRect m_lineLogicalRect;
-    const InlineItemList& m_inlineItemList;
+    std::span<const InlineItem> m_inlineItemList;
     Vector<const InlineItem*, 32> m_wrapOpportunityList;
     std::optional<InlineTextItem> m_partialLeadingTextItem;
     std::optional<PreviousLine> m_previousLine { };

@@ -35,7 +35,7 @@ class InlineContentBreaker;
 struct CandidateTextContent;
 struct TextOnlyLineBreakResult;
 
-class TextOnlySimpleLineBuilder : public AbstractLineBuilder {
+class TextOnlySimpleLineBuilder final : public AbstractLineBuilder {
 public:
     TextOnlySimpleLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
