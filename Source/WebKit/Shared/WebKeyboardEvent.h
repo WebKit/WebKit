@@ -113,3 +113,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebKeyboardEvent)
+static bool isType(const WebKit::WebEvent& event) { return WebKit::WebKeyboardEvent::isKeyboardEventType(event.type()); }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -289,6 +289,8 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 #endif
 
     MonotonicTime didFinishDocumentLoadForMainFrameTimestamp;
+    MonotonicTime lastActivationTimestamp;
+    MonotonicTime didCommitLoadForMainFrameTimestamp;
 
 #if ENABLE(UI_SIDE_COMPOSITING)
     VisibleContentRectUpdateInfo lastVisibleContentRectUpdate;
