@@ -782,6 +782,7 @@ RetainPtr<NSDictionary> WebProcess::additionalStateForDiagnosticReport() const
 #endif // USE(OS_STATE)
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#if PLATFORM(IOS_FAMILY)
 static void prewarmLogs()
 {
     // This call will create container manager log objects.
@@ -803,6 +804,7 @@ static void prewarmLogs()
         UNUSED_PARAM(enabled);
     }
 }
+#endif // PLATFORM(IOS_FAMILY)
 
 static Ref<WorkQueue> logQueue()
 {
@@ -890,7 +892,9 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     WebCore::PublicSuffixStore::singleton().enablePublicSuffixCache();
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#if PLATFORM(IOS_FAMILY)
     prewarmLogs();
+#endif
     registerLogHook();
 #endif
 
