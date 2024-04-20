@@ -966,7 +966,7 @@ public:
     template<typename T>
     bool isRepresentableAs() const
     {
-        return B3::isRepresentableAs<T>(value());
+        return WTF::isRepresentableAs<T>(value());
     }
     
     static bool isRepresentableAs(Width width, Signedness signedness, int64_t value)
@@ -975,13 +975,13 @@ public:
         case Signed:
             switch (width) {
             case Width8:
-                return B3::isRepresentableAs<int8_t>(value);
+                return WTF::isRepresentableAs<int8_t>(value);
             case Width16:
-                return B3::isRepresentableAs<int16_t>(value);
+                return WTF::isRepresentableAs<int16_t>(value);
             case Width32:
-                return B3::isRepresentableAs<int32_t>(value);
+                return WTF::isRepresentableAs<int32_t>(value);
             case Width64:
-                return B3::isRepresentableAs<int64_t>(value);
+                return WTF::isRepresentableAs<int64_t>(value);
             case Width128:
                 break;
             }
@@ -989,13 +989,13 @@ public:
         case Unsigned:
             switch (width) {
             case Width8:
-                return B3::isRepresentableAs<uint8_t>(value);
+                return WTF::isRepresentableAs<uint8_t>(value);
             case Width16:
-                return B3::isRepresentableAs<uint16_t>(value);
+                return WTF::isRepresentableAs<uint16_t>(value);
             case Width32:
-                return B3::isRepresentableAs<uint32_t>(value);
+                return WTF::isRepresentableAs<uint32_t>(value);
             case Width64:
-                return B3::isRepresentableAs<uint64_t>(value);
+                return WTF::isRepresentableAs<uint64_t>(value);
             case Width128:
                 break;
             }
@@ -1268,7 +1268,7 @@ public:
     static bool isValidImmForm(int64_t value)
     {
         if (isX86())
-            return B3::isRepresentableAs<int32_t>(value);
+            return WTF::isRepresentableAs<int32_t>(value);
         if (isARM64()) {
             if (isUInt12(value) || isUInt12(toTwosComplement(value)))
                 return true;
@@ -1285,7 +1285,7 @@ public:
     static bool isValidBitImmForm(int64_t value)
     {
         if (isX86())
-            return B3::isRepresentableAs<int32_t>(value);
+            return WTF::isRepresentableAs<int32_t>(value);
         if (isARM64())
             return ARM64LogicalImmediate::create32(value).isValid();
         if (isARM_THUMB2())
@@ -1296,7 +1296,7 @@ public:
     static bool isValidBitImm64Form(int64_t value)
     {
         if (isX86())
-            return B3::isRepresentableAs<int32_t>(value);
+            return WTF::isRepresentableAs<int32_t>(value);
         if (isARM64())
             return ARM64LogicalImmediate::create64(value).isValid();
         return false;

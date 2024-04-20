@@ -788,6 +788,71 @@ template<typename T> constexpr typename std::enable_if_t<std::is_integral_v<T> &
     return ~static_cast<std::make_unsigned_t<T>>(v) + 1U;
 }
 
+template<typename BitsType, typename InputType>
+inline bool isIdentical(InputType left, InputType right)
+{
+    BitsType leftBits = bitwise_cast<BitsType>(left);
+    BitsType rightBits = bitwise_cast<BitsType>(right);
+    return leftBits == rightBits;
+}
+
+inline bool isIdentical(int32_t left, int32_t right)
+{
+    return isIdentical<int32_t>(left, right);
+}
+
+inline bool isIdentical(int64_t left, int64_t right)
+{
+    return isIdentical<int64_t>(left, right);
+}
+
+inline bool isIdentical(double left, double right)
+{
+    return isIdentical<int64_t>(left, right);
+}
+
+inline bool isIdentical(float left, float right)
+{
+    return isIdentical<int32_t>(left, right);
+}
+
+template<typename ResultType, typename InputType, typename BitsType>
+inline bool isRepresentableAsImpl(InputType originalValue)
+{
+    // Convert the original value to the desired result type.
+    ResultType result = static_cast<ResultType>(originalValue);
+
+    // Convert the converted value back to the original type. The original value is representable
+    // using the new type if such round-tripping doesn't lose bits.
+    InputType newValue = static_cast<InputType>(result);
+
+    return isIdentical<BitsType>(originalValue, newValue);
+}
+
+template<typename ResultType>
+inline bool isRepresentableAs(int32_t value)
+{
+    return isRepresentableAsImpl<ResultType, int32_t, int32_t>(value);
+}
+
+template<typename ResultType>
+inline bool isRepresentableAs(int64_t value)
+{
+    return isRepresentableAsImpl<ResultType, int64_t, int64_t>(value);
+}
+
+template<typename ResultType>
+inline bool isRepresentableAs(size_t value)
+{
+    return isRepresentableAsImpl<ResultType, size_t, size_t>(value);
+}
+
+template<typename ResultType>
+inline bool isRepresentableAs(double value)
+{
+    return isRepresentableAsImpl<ResultType, double, int64_t>(value);
+}
+
 } // namespace WTF
 
 using WTF::shuffleVector;
@@ -798,3 +863,5 @@ using WTF::getMSBSet;
 using WTF::isNaNConstExpr;
 using WTF::fabsConstExpr;
 using WTF::reverseBits32;
+using WTF::isIdentical;
+using WTF::isRepresentableAs;
