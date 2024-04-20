@@ -5211,7 +5211,7 @@ void OMGIRGenerator::dump(const ControlStack& controlStack, const Stack* express
     ASSERT(controlStack.size());
     for (size_t i = controlStack.size(); i--;) {
         dataLog("  ", controlStack[i].controlData, ": ");
-        CommaPrinter comma(", ", "");
+        CommaPrinter comma(", "_s, ""_s);
         dumpExpressionStack(comma, *expressionStack);
         expressionStack = &controlStack[i].enclosedExpressionStack;
         dataLogLn();

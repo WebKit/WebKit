@@ -279,50 +279,50 @@ public:
     {
         switch (m_kind) {
         case Kind::Escaped:
-            out.print("Escaped");
+            out.print("Escaped"_s);
             break;
 
         case Kind::Object:
-            out.print("Object");
+            out.print("Object"_s);
             break;
 
         case Kind::Function:
-            out.print("Function");
+            out.print("Function"_s);
             break;
 
         case Kind::GeneratorFunction:
-            out.print("GeneratorFunction");
+            out.print("GeneratorFunction"_s);
             break;
 
         case Kind::AsyncFunction:
-            out.print("AsyncFunction");
+            out.print("AsyncFunction"_s);
             break;
 
         case Kind::InternalFieldObject:
-            out.print("InternalFieldObject");
+            out.print("InternalFieldObject"_s);
             break;
 
         case Kind::AsyncGeneratorFunction:
-            out.print("AsyncGeneratorFunction");
+            out.print("AsyncGeneratorFunction"_s);
             break;
 
         case Kind::Activation:
-            out.print("Activation");
+            out.print("Activation"_s);
             break;
 
         case Kind::RegExpObject:
-            out.print("RegExpObject");
+            out.print("RegExpObject"_s);
             break;
         }
-        out.print("Allocation(");
+        out.print("Allocation("_s);
         if (!m_structuresForMaterialization.isEmpty())
             out.print(inContext(m_structuresForMaterialization.toStructureSet(), context));
         if (!m_fields.isEmpty()) {
             if (!m_structuresForMaterialization.isEmpty())
                 out.print(", ");
-            out.print(mapDump(m_fields, " => #", ", "));
+            out.print(mapDump(m_fields, " => #"_s, ", "_s));
         }
-        out.print(")");
+        out.print(")"_s);
     }
 
 private:

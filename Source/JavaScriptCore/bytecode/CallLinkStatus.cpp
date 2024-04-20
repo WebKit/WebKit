@@ -427,26 +427,26 @@ void CallLinkStatus::filter(JSValue value)
 void CallLinkStatus::dump(PrintStream& out) const
 {
     if (!isSet()) {
-        out.print("Not Set");
+        out.print("Not Set"_s);
         return;
     }
     
     CommaPrinter comma;
     
     if (m_isProved)
-        out.print(comma, "Statically Proved");
+        out.print(comma, "Statically Proved"_s);
     
     if (m_couldTakeSlowPath)
-        out.print(comma, "Could Take Slow Path");
+        out.print(comma, "Could Take Slow Path"_s);
     
     if (m_isBasedOnStub)
-        out.print(comma, "Based On Stub");
+        out.print(comma, "Based On Stub"_s);
     
     if (!m_variants.isEmpty())
         out.print(comma, listDump(m_variants));
     
     if (m_maxArgumentCountIncludingThisForVarargs)
-        out.print(comma, "maxArgumentCountIncludingThisForVarargs = ", m_maxArgumentCountIncludingThisForVarargs);
+        out.print(comma, "maxArgumentCountIncludingThisForVarargs = "_s, m_maxArgumentCountIncludingThisForVarargs);
 }
 
 } // namespace JSC

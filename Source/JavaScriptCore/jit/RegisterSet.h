@@ -150,7 +150,7 @@ public:
     void dump(PrintStream& out) const
     {
         CommaPrinter comma;
-        out.print("[");
+        out.print("["_s);
         for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
             if (!m_bits.get(reg.index()) && !m_upperBits.get(reg.index()))
                 continue;
@@ -163,7 +163,7 @@ public:
             else
                 out.print("↑");
         }
-        out.print("]");
+        out.print("]"_s);
     }
 
     friend constexpr bool operator==(const RegisterSetBuilder&, const RegisterSetBuilder&) = default;
@@ -401,7 +401,7 @@ public:
     void dump(PrintStream& out) const
     {
         CommaPrinter comma;
-        out.print("[");
+        out.print("["_s);
         for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
             if (!m_bits.get(reg.index()) && !m_upperBits.get(reg.index()))
                 continue;
@@ -414,7 +414,7 @@ public:
             else
                 out.print("↑");
         }
-        out.print("]");
+        out.print("]"_s);
     }
 
     friend constexpr bool operator==(const RegisterSet&, const RegisterSet&) = default;

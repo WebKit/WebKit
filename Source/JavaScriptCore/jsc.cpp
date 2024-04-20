@@ -3513,7 +3513,7 @@ int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
 
     if (getenv("JSCTEST_CrashReportArgV")) {
         StringPrintStream out;
-        CommaPrinter space(" ");
+        CommaPrinter space(" "_s);
         for (int i = 0; i < argc; ++i)
             out.print(space, argv[i]);
         WTF::setCrashLogMessage(out.toCString().data());

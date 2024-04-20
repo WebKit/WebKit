@@ -2294,7 +2294,7 @@ void LLIntGenerator::dump(const ControlStack& controlStack, const Stack* stack)
     dataLogLn("Control stack: stackSize:(", m_stackSize.value(), ")");
     for (size_t i = controlStack.size(); i--;) {
         dataLog("  ", controlStack[i].controlData, ": ");
-        CommaPrinter comma(", ", "");
+        CommaPrinter comma(", "_s, ""_s);
         dumpExpressionStack(comma, *stack);
         stack = &controlStack[i].enclosedExpressionStack;
         dataLogLn();

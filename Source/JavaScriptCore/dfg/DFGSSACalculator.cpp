@@ -43,11 +43,11 @@ void SSACalculator::Variable::dumpVerbose(PrintStream& out) const
 {
     dump(out);
     if (!m_blocksWithDefs.isEmpty()) {
-        out.print("(defs: ");
+        out.print("(defs: "_s);
         CommaPrinter comma;
         for (BasicBlock* block : m_blocksWithDefs)
             out.print(comma, *block);
-        out.print(")");
+        out.print(")"_s);
     }
 }
 
@@ -109,39 +109,39 @@ SSACalculator::Def* SSACalculator::reachingDefAtTail(BasicBlock* block, Variable
 
 void SSACalculator::dump(PrintStream& out) const
 {
-    out.print("<Variables: [");
+    out.print("<Variables: ["_s);
     CommaPrinter comma;
     for (unsigned i = 0; i < m_variables.size(); ++i) {
         out.print(comma);
         m_variables[i].dumpVerbose(out);
     }
-    out.print("], \nDefs: [");
+    out.print("], \nDefs: ["_s);
     comma = CommaPrinter();
     for (Def* def : const_cast<SSACalculator*>(this)->m_defs)
         out.print(comma, *def);
-    out.print("], \nPhis: [");
+    out.print("], \nPhis: ["_s);
     comma = CommaPrinter();
     for (Def* def : const_cast<SSACalculator*>(this)->m_phis)
         out.print(comma, *def);
-    out.print("], \nBlock data: [");
-    comma = CommaPrinter(",\n");
+    out.print("], \nBlock data: ["_s);
+    comma = CommaPrinter(",\n"_s);
     for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
         BasicBlock* block = m_graph.block(blockIndex);
         if (!block)
             continue;
         
-        out.print(comma, *block, "=>(");
+        out.print(comma, *block, "=>("_s);
         out.print("Defs: {");
         CommaPrinter innerComma;
         for (auto entry : m_data[block].m_defs)
-            out.print(innerComma, *entry.key, "->", *entry.value);
-        out.print("}, Phis: {");
+            out.print(innerComma, *entry.key, "->"_s, *entry.value);
+        out.print("}, Phis: {"_s);
         innerComma = CommaPrinter();
         for (Def* def : m_data[block].m_phis)
             out.print(innerComma, *def);
-        out.print("})");
+        out.print("})"_s);
     }
-    out.print("]>");
+    out.print("]>"_s);
 }
 
 } } // namespace JSC::DFG

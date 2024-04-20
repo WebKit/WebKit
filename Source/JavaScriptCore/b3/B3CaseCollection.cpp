@@ -39,7 +39,7 @@ void CaseCollection::dump(PrintStream& out) const
     CommaPrinter comma;
     for (SwitchCase switchCase : *this)
         out.print(comma, switchCase);
-    out.print(comma, "default->", fallThrough());
+    out.print(comma, "default->"_s, fallThrough());
 }
 
 } } // namespace JSC::B3

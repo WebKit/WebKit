@@ -342,11 +342,11 @@ public:
 
     void dump(PrintStream& out) const
     {
-        out.print("NaturalLoops:{");
+        out.print("NaturalLoops:{"_s);
         CommaPrinter comma;
         for (unsigned i = 0; i < m_loops.size(); ++i)
             out.print(comma, m_loops[i]);
-        out.print("}");
+        out.print("}"_s);
     }
     
 private:

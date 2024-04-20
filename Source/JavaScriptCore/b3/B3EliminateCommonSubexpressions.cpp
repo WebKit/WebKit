@@ -121,11 +121,11 @@ public:
 
     void dump(PrintStream& out) const
     {
-        out.print("{");
+        out.print("{"_s);
         CommaPrinter comma;
         for (auto& entry : m_map)
-            out.print(comma, pointerDump(entry.key), "=>", pointerListDump(entry.value));
-        out.print("}");
+            out.print(comma, pointerDump(entry.key), "=>"_s, pointerListDump(entry.value));
+        out.print("}"_s);
     }
     
 private:

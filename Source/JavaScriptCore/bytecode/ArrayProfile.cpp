@@ -53,71 +53,71 @@ const ArrayModes typedArrayModes[NumberOfTypedArrayTypesExcludingDataView] = {
 void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
 {
     if (!arrayModes) {
-        out.print("<empty>");
+        out.print("<empty>"_s);
         return;
     }
     
     if (arrayModes == ALL_ARRAY_MODES) {
-        out.print("TOP");
+        out.print("TOP"_s);
         return;
     }
     
-    CommaPrinter comma("|");
+    CommaPrinter comma("|"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(NonArray))
-        out.print(comma, "NonArray");
+        out.print(comma, "NonArray"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithInt32))
-        out.print(comma, "NonArrayWithInt32");
+        out.print(comma, "NonArrayWithInt32"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithDouble))
-        out.print(comma, "NonArrayWithDouble");
+        out.print(comma, "NonArrayWithDouble"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithContiguous))
-        out.print(comma, "NonArrayWithContiguous");
+        out.print(comma, "NonArrayWithContiguous"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithArrayStorage))
-        out.print(comma, "NonArrayWithArrayStorage");
+        out.print(comma, "NonArrayWithArrayStorage"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithSlowPutArrayStorage))
-        out.print(comma, "NonArrayWithSlowPutArrayStorage");
+        out.print(comma, "NonArrayWithSlowPutArrayStorage"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayClass))
-        out.print(comma, "ArrayClass");
+        out.print(comma, "ArrayClass"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayWithUndecided))
-        out.print(comma, "ArrayWithUndecided");
+        out.print(comma, "ArrayWithUndecided"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayWithInt32))
-        out.print(comma, "ArrayWithInt32");
+        out.print(comma, "ArrayWithInt32"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayWithDouble))
-        out.print(comma, "ArrayWithDouble");
+        out.print(comma, "ArrayWithDouble"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayWithContiguous))
-        out.print(comma, "ArrayWithContiguous");
+        out.print(comma, "ArrayWithContiguous"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayWithArrayStorage))
-        out.print(comma, "ArrayWithArrayStorage");
+        out.print(comma, "ArrayWithArrayStorage"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayWithSlowPutArrayStorage))
-        out.print(comma, "ArrayWithSlowPutArrayStorage");
+        out.print(comma, "ArrayWithSlowPutArrayStorage"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(CopyOnWriteArrayWithInt32))
-        out.print(comma, "CopyOnWriteArrayWithInt32");
+        out.print(comma, "CopyOnWriteArrayWithInt32"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(CopyOnWriteArrayWithDouble))
-        out.print(comma, "CopyOnWriteArrayWithDouble");
+        out.print(comma, "CopyOnWriteArrayWithDouble"_s);
     if (arrayModes & asArrayModesIgnoringTypedArrays(CopyOnWriteArrayWithContiguous))
-        out.print(comma, "CopyOnWriteArrayWithContiguous");
+        out.print(comma, "CopyOnWriteArrayWithContiguous"_s);
 
     if (arrayModes & Int8ArrayMode)
-        out.print(comma, "Int8ArrayMode");
+        out.print(comma, "Int8ArrayMode"_s);
     if (arrayModes & Int16ArrayMode)
-        out.print(comma, "Int16ArrayMode");
+        out.print(comma, "Int16ArrayMode"_s);
     if (arrayModes & Int32ArrayMode)
-        out.print(comma, "Int32ArrayMode");
+        out.print(comma, "Int32ArrayMode"_s);
     if (arrayModes & Uint8ArrayMode)
-        out.print(comma, "Uint8ArrayMode");
+        out.print(comma, "Uint8ArrayMode"_s);
     if (arrayModes & Uint8ClampedArrayMode)
-        out.print(comma, "Uint8ClampedArrayMode");
+        out.print(comma, "Uint8ClampedArrayMode"_s);
     if (arrayModes & Uint16ArrayMode)
-        out.print(comma, "Uint16ArrayMode");
+        out.print(comma, "Uint16ArrayMode"_s);
     if (arrayModes & Uint32ArrayMode)
-        out.print(comma, "Uint32ArrayMode");
+        out.print(comma, "Uint32ArrayMode"_s);
     if (arrayModes & Float32ArrayMode)
-        out.print(comma, "Float32ArrayMode");
+        out.print(comma, "Float32ArrayMode"_s);
     if (arrayModes & Float64ArrayMode)
-        out.print(comma, "Float64ArrayMode");
+        out.print(comma, "Float64ArrayMode"_s);
     if (arrayModes & BigInt64ArrayMode)
-        out.print(comma, "BigInt64ArrayMode");
+        out.print(comma, "BigInt64ArrayMode"_s);
     if (arrayModes & BigUint64ArrayMode)
-        out.print(comma, "BigUint64ArrayMode");
+        out.print(comma, "BigUint64ArrayMode"_s);
 }
 
 void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock)
@@ -183,15 +183,15 @@ CString ArrayProfile::briefDescriptionWithoutUpdating()
     if (m_observedArrayModes)
         out.print(comma, ArrayModesDump(m_observedArrayModes));
     if (m_arrayProfileFlags.contains(ArrayProfileFlag::MayStoreHole))
-        out.print(comma, "Hole");
+        out.print(comma, "Hole"_s);
     if (m_arrayProfileFlags.contains(ArrayProfileFlag::OutOfBounds))
-        out.print(comma, "OutOfBounds");
+        out.print(comma, "OutOfBounds"_s);
     if (m_arrayProfileFlags.contains(ArrayProfileFlag::MayInterceptIndexedAccesses))
-        out.print(comma, "Intercept");
+        out.print(comma, "Intercept"_s);
     if (!m_arrayProfileFlags.contains(ArrayProfileFlag::UsesNonOriginalArrayStructures))
-        out.print(comma, "Original");
+        out.print(comma, "Original"_s);
     if (!m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeResizableOrGrowableSharedTypedArray))
-        out.print(comma, "Resizable");
+        out.print(comma, "Resizable"_s);
 
     return out.toCString();
 }

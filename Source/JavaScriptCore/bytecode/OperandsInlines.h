@@ -41,42 +41,42 @@ inline void Operand::dump(PrintStream& out) const
 template<typename T, typename U>
 void Operands<T, U>::dumpInContext(PrintStream& out, DumpContext* context) const
 {
-    CommaPrinter comma(" ");
+    CommaPrinter comma(" "_s);
     for (size_t argumentIndex = numberOfArguments(); argumentIndex--;) {
         if (!argument(argumentIndex))
             continue;
-        out.print(comma, "arg", argumentIndex, ":", inContext(argument(argumentIndex), context));
+        out.print(comma, "arg"_s, argumentIndex, ":"_s, inContext(argument(argumentIndex), context));
     }
     for (size_t localIndex = 0; localIndex < numberOfLocals(); ++localIndex) {
         if (!local(localIndex))
             continue;
-        out.print(comma, "loc", localIndex, ":", inContext(local(localIndex), context));
+        out.print(comma, "loc"_s, localIndex, ":"_s, inContext(local(localIndex), context));
     }
     for (size_t tmpIndex = 0; tmpIndex < numberOfTmps(); ++tmpIndex) {
         if (!tmp(tmpIndex))
             continue;
-        out.print(comma, "tmp", tmpIndex, ":", inContext(tmp(tmpIndex), context));
+        out.print(comma, "tmp"_s, tmpIndex, ":"_s, inContext(tmp(tmpIndex), context));
     }
 }
 
 template<typename T, typename U>
 void Operands<T, U>::dump(PrintStream& out) const
 {
-    CommaPrinter comma(" ");
+    CommaPrinter comma(" "_s);
     for (size_t argumentIndex = numberOfArguments(); argumentIndex--;) {
         if (!argument(argumentIndex))
             continue;
-        out.print(comma, "arg", argumentIndex, ":", argument(argumentIndex));
+        out.print(comma, "arg"_s, argumentIndex, ":"_s, argument(argumentIndex));
     }
     for (size_t localIndex = 0; localIndex < numberOfLocals(); ++localIndex) {
         if (!local(localIndex))
             continue;
-        out.print(comma, "loc", localIndex, ":", local(localIndex));
+        out.print(comma, "loc"_s, localIndex, ":"_s, local(localIndex));
     }
     for (size_t tmpIndex = 0; tmpIndex < numberOfTmps(); ++tmpIndex) {
         if (!tmp(tmpIndex))
             continue;
-        out.print(comma, "tmp", tmpIndex, ":", tmp(tmpIndex));
+        out.print(comma, "tmp"_s, tmpIndex, ":"_s, tmp(tmpIndex));
     }
 }
 

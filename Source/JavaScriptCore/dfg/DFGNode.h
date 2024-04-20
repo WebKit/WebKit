@@ -3775,7 +3775,7 @@ CString nodeMapDump(const T& nodeMap, DumpContext* context = nullptr)
     StringPrintStream out;
     CommaPrinter comma;
     for(unsigned i = 0; i < keys.size(); ++i)
-        out.print(comma, keys[i], "=>", inContext(nodeMap.get(keys[i]), context));
+        out.print(comma, keys[i], "=>"_s, inContext(nodeMap.get(keys[i]), context));
     return out.toCString();
 }
 
@@ -3791,7 +3791,7 @@ CString nodeValuePairListDump(const T& nodeValuePairList, DumpContext* context =
     StringPrintStream out;
     CommaPrinter comma;
     for (const auto& pair : sortedList)
-        out.print(comma, pair.node, "=>", inContext(pair.value, context));
+        out.print(comma, pair.node, "=>"_s, inContext(pair.value, context));
     return out.toCString();
 }
 

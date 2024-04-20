@@ -385,7 +385,7 @@ void MarkedBlock::Handle::dumpState(PrintStream& out)
     directory()->forEachBitVectorWithName(
         Locker { directory()->bitvectorLock() },
         [&](auto vectorRef, const char* name) {
-            out.print(comma, name, ":", vectorRef[index()] ? "YES" : "no");
+            out.print(comma, name, ":"_s, vectorRef[index()] ? "YES"_s : "no"_s);
         });
 }
 

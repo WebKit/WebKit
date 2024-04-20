@@ -610,25 +610,25 @@ void Value::dump(PrintStream& out) const
     }
     case Type::Object: {
         auto& object = *static_cast<const ObjectBase*>(this);
-        CommaPrinter comma(",");
-        out.print("{");
+        CommaPrinter comma(","_s);
+        out.print("{"_s);
         for (const auto& key : object.m_order) {
             auto findResult = object.m_map.find(key);
             ASSERT(findResult != object.m_map.end());
             StringBuilder builder;
             builder.appendQuotedJSONString(findResult->key);
-            out.print(comma, builder.toString(), ":", findResult->value.get());
+            out.print(comma, builder.toString(), ":"_s, findResult->value.get());
         }
-        out.print("}");
+        out.print("}"_s);
         break;
     }
     case Type::Array: {
         auto& array = *static_cast<const ArrayBase*>(this);
-        CommaPrinter comma(",");
-        out.print("[");
+        CommaPrinter comma(","_s);
+        out.print("["_s);
         for (auto& value : array.m_map)
             out.print(comma, value.get());
-        out.print("]");
+        out.print("]"_s);
         break;
     }
     default:

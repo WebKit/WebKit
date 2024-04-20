@@ -78,19 +78,19 @@ String FunctionSignature::toString() const
 void FunctionSignature::dump(PrintStream& out) const
 {
     {
-        out.print("(");
+        out.print("("_s);
         CommaPrinter comma;
         for (FunctionArgCount arg = 0; arg < argumentCount(); ++arg)
             out.print(comma, makeString(argumentType(arg).kind));
-        out.print(")");
+        out.print(")"_s);
     }
 
     {
         CommaPrinter comma;
-        out.print(" -> [");
+        out.print(" -> ["_s);
         for (FunctionArgCount ret = 0; ret < returnCount(); ++ret)
             out.print(comma, makeString(returnType(ret).kind));
-        out.print("]");
+        out.print("]"_s);
     }
 }
 
@@ -101,13 +101,13 @@ String StructType::toString() const
 
 void StructType::dump(PrintStream& out) const
 {
-    out.print("(");
+    out.print("("_s);
     CommaPrinter comma;
     for (StructFieldCount fieldIndex = 0; fieldIndex < fieldCount(); ++fieldIndex) {
         out.print(comma, makeString(field(fieldIndex).type));
-        out.print(comma, field(fieldIndex).mutability ? "immutable" : "mutable");
+        out.print(comma, field(fieldIndex).mutability ? "immutable"_s : "mutable"_s);
     }
-    out.print(")");
+    out.print(")"_s);
 }
 
 StructType::StructType(FieldType* payload, StructFieldCount fieldCount, const FieldType* fieldTypes)
@@ -140,11 +140,11 @@ String ArrayType::toString() const
 
 void ArrayType::dump(PrintStream& out) const
 {
-    out.print("(");
+    out.print("("_s);
     CommaPrinter comma;
     out.print(comma, makeString(elementType().type));
-    out.print(comma, elementType().mutability ? "immutable" : "mutable");
-    out.print(")");
+    out.print(comma, elementType().mutability ? "immutable"_s : "mutable"_s);
+    out.print(")"_s);
 }
 
 String RecursionGroup::toString() const
@@ -154,13 +154,13 @@ String RecursionGroup::toString() const
 
 void RecursionGroup::dump(PrintStream& out) const
 {
-    out.print("(");
+    out.print("("_s);
     CommaPrinter comma;
     for (RecursionGroupCount typeIndex = 0; typeIndex < typeCount(); ++typeIndex) {
         out.print(comma);
         TypeInformation::get(type(typeIndex)).dump(out);
     }
-    out.print(")");
+    out.print(")"_s);
 }
 
 String Projection::toString() const
@@ -170,14 +170,14 @@ String Projection::toString() const
 
 void Projection::dump(PrintStream& out) const
 {
-    out.print("(");
+    out.print("("_s);
     CommaPrinter comma;
     if (isPlaceholder())
-        out.print("<current-rec-group>");
+        out.print("<current-rec-group>"_s);
     else
         TypeInformation::get(recursionGroup()).dump(out);
-    out.print(".", index());
-    out.print(")");
+    out.print("."_s, index());
+    out.print(")"_s);
 }
 
 String Subtype::toString() const
@@ -187,14 +187,14 @@ String Subtype::toString() const
 
 void Subtype::dump(PrintStream& out) const
 {
-    out.print("(");
+    out.print("("_s);
     CommaPrinter comma;
     if (supertypeCount() > 0) {
         TypeInformation::get(firstSuperType()).dump(out);
         out.print(comma);
     }
     TypeInformation::get(underlyingType()).dump(out);
-    out.print(")");
+    out.print(")"_s);
 }
 
 void StorageType::dump(PrintStream& out) const

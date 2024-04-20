@@ -5417,7 +5417,7 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out) const
 template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
 {
-    CommaPrinter comma(" ");
+    CommaPrinter comma(" "_s);
     HashSet<NodeFlowProjection> seen;
     if (m_graph.m_form == SSA) {
         for (NodeFlowProjection node : m_state.block()->ssa->liveAtHead) {
@@ -5425,7 +5425,7 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
             AbstractValue& value = forNode(node);
             if (value.isClear())
                 continue;
-            out.print(comma, node, ":", value);
+            out.print(comma, node, ":"_s, value);
         }
     }
     for (size_t i = 0; i < m_state.block()->size(); ++i) {
@@ -5435,7 +5435,7 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
                 AbstractValue& value = forNode(nodeProjection);
                 if (value.isClear())
                     return;
-                out.print(comma, nodeProjection, ":", value);
+                out.print(comma, nodeProjection, ":"_s, value);
             });
     }
     if (m_graph.m_form == SSA) {
@@ -5445,7 +5445,7 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
             AbstractValue& value = forNode(node);
             if (value.isClear())
                 continue;
-            out.print(comma, node, ":", value);
+            out.print(comma, node, ":"_s, value);
         }
     }
 }

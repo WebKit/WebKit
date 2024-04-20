@@ -53,9 +53,9 @@ bool StructureSet::isStillAlive(VM& vm) const
 void StructureSet::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     CommaPrinter comma;
-    out.print("[");
+    out.print("["_s);
     forEach([&] (Structure* structure) { out.print(comma, inContext(*structure, context)); });
-    out.print("]");
+    out.print("]"_s);
 }
 
 void StructureSet::dump(PrintStream& out) const

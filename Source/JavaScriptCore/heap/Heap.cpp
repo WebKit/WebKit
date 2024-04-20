@@ -1508,7 +1508,7 @@ NEVER_INLINE bool Heap::runFixpointPhase(GCConductor conn)
             [] (const char* a, const char* b) -> bool {
                 return strcmp(a, b) < 0;
             },
-            ":", " ");
+            ":"_s, " "_s);
         
         dataLog("v=", bytesVisited() / 1024, "kb (", perVisitorDump, ") o=", m_opaqueRoots.size(), " b=", m_barriersExecuted, " ");
     }
