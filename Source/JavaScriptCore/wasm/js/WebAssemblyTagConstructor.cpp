@@ -72,9 +72,9 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTag, (JSGlobalObject* globalObjec
         else if (valueString == "f64"_s)
             type = Wasm::Types::F64;
         else if (valueString == "funcref"_s || valueString == "anyfunc"_s)
-            type = Wasm::Types::Funcref;
+            type = Wasm::funcrefType();
         else if (valueString == "externref"_s)
-            type = Wasm::Types::Externref;
+            type = Wasm::externrefType();
         else {
             throwTypeError(globalObject, scope, "WebAssembly.Tag constructor expects the 'parameters' field of the first argument to be a sequence of WebAssembly value types."_s);
             return;

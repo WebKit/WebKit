@@ -372,7 +372,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
               .RefNull("funcref")
               .TableGet(0)
             .End()
-          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table.get index to type Funcref expected I32, in function at index 0 (evaluating 'new WebAssembly.Module")
+            .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table.get index to type (ref null func) expected I32, in function at index 0 (evaluating 'new WebAssembly.Module")
 
 
 assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())
@@ -388,7 +388,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
               .RefNull("funcref")
               .TableSet(0)
             .End()
-          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table.set index to type Funcref expected I32, in function at index 0 (evaluating 'new WebAssembly.Module")
+            .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table.set index to type (ref null func) expected I32, in function at index 0 (evaluating 'new WebAssembly.Module")
 
 assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())
           .Type().End()
@@ -403,7 +403,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
               .GetLocal(0)
               .TableSet(1)
             .End()
-          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table.set value to type Externref expected Funcref, in function at index 0 (evaluating 'new WebAssembly.Module")
+            .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table.set value to type (ref null extern) expected (ref null func), in function at index 0 (evaluating 'new WebAssembly.Module")
 
 if (!$vm.isMemoryLimited()) {
     function tableInsanity(num, b) {
