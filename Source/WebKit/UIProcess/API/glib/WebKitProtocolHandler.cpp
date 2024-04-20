@@ -521,7 +521,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
                 addEGLInfo(hardwareAccelerationObject);
             } else {
                 // Create the context in a different thread to ensure it doesn't affect any current context in the main thread.
-                WorkQueue::create("GPU handler EGL context")->dispatchSync([&] {
+                WorkQueue::create("GPU handler EGL context"_s)->dispatchSync([&] {
                     auto glContext = GLContext::createOffscreen(platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay());
                     glContext->makeContextCurrent();
                     addEGLInfo(hardwareAccelerationObject);

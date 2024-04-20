@@ -39,7 +39,7 @@
 namespace WebKit {
 
 ViewUpdateDispatcher::ViewUpdateDispatcher()
-    : m_queue(WorkQueue::create("com.apple.WebKit.ViewUpdateDispatcher"))
+    : m_queue(WorkQueue::create("com.apple.WebKit.ViewUpdateDispatcher"_s))
 {
 }
 

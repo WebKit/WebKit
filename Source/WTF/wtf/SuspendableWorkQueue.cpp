@@ -30,12 +30,12 @@
 
 namespace WTF {
 
-Ref<SuspendableWorkQueue> SuspendableWorkQueue::create(const char* name, WorkQueue::QOS qos, ShouldLog shouldLog)
+Ref<SuspendableWorkQueue> SuspendableWorkQueue::create(ASCIILiteral name, WorkQueue::QOS qos, ShouldLog shouldLog)
 {
     return adoptRef(*new SuspendableWorkQueue(name, qos, shouldLog));
 }
 
-SuspendableWorkQueue::SuspendableWorkQueue(const char* name, QOS qos, ShouldLog shouldLog)
+SuspendableWorkQueue::SuspendableWorkQueue(ASCIILiteral name, QOS qos, ShouldLog shouldLog)
     : WorkQueue(name, qos)
     , m_shouldLog(shouldLog == ShouldLog::Yes)
 {

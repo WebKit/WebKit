@@ -78,7 +78,7 @@ Ref<MockRealtimeVideoSource> MockRealtimeVideoSourceMac::createForMockDisplayCap
 
 MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
     : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), pageIdentifier)
-    , m_workQueue(WorkQueue::create("MockRealtimeVideoSource Render Queue", WorkQueue::QOS::UserInteractive))
+    , m_workQueue(WorkQueue::create("MockRealtimeVideoSource Render Queue"_s, WorkQueue::QOS::UserInteractive))
 {
 }
 

@@ -34,7 +34,7 @@
 namespace WebKit {
 
 RTCDataChannelRemoteManagerProxy::RTCDataChannelRemoteManagerProxy()
-    : m_queue(WorkQueue::create("RTCDataChannelRemoteManagerProxy"))
+    : m_queue(WorkQueue::create("RTCDataChannelRemoteManagerProxy"_s))
 {
 }
 

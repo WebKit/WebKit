@@ -71,7 +71,7 @@ struct Benchmark {
         for (unsigned threadIndex = numThreads; threadIndex--;) {
             counts[threadIndex] = 0;
             threads[threadIndex] = Thread::create(
-                "Benchmark Thread",
+                "Benchmark Thread"_s,
                 [&, threadIndex] () {
                     if (!microsecondsInCriticalSection) {
                         while (keepGoing) {

@@ -811,7 +811,7 @@ static Ref<WorkQueue> logQueue()
     static LazyNeverDestroyed<Ref<WorkQueue>> queue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, [&] {
-        queue.construct(WorkQueue::create("Log Queue", WorkQueue::QOS::Background));
+        queue.construct(WorkQueue::create("Log Queue"_s, WorkQueue::QOS::Background));
     });
     return queue.get();
 }

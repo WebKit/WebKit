@@ -268,7 +268,7 @@ private:
 
 void foldPathConstants(Procedure& proc)
 {
-    PhaseScope phaseScope(proc, "foldPathConstants");
+    PhaseScope phaseScope(proc, "foldPathConstants"_s);
     FoldPathConstants foldPathConstants(proc);
     foldPathConstants.run();
 }

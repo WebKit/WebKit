@@ -38,7 +38,7 @@ namespace JSC { namespace DFG {
 class StaticExecutionCountEstimationPhase : public Phase {
 public:
     StaticExecutionCountEstimationPhase(Graph& graph)
-        : Phase(graph, "static execution count estimation")
+        : Phase(graph, "static execution count estimation"_s)
     {
     }
     

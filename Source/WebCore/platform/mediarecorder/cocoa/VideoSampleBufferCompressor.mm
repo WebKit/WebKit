@@ -60,7 +60,7 @@ std::unique_ptr<VideoSampleBufferCompressor> VideoSampleBufferCompressor::create
 }
 
 VideoSampleBufferCompressor::VideoSampleBufferCompressor(CMVideoCodecType outputCodecType, Profile profile)
-    : m_serialDispatchQueue { WorkQueue::create("com.apple.VideoSampleBufferCompressor") }
+    : m_serialDispatchQueue { WorkQueue::create("com.apple.VideoSampleBufferCompressor"_s) }
     , m_outputCodecType { outputCodecType }
     , m_profile { profile }
 {

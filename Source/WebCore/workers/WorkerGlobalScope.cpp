@@ -93,7 +93,7 @@ static HashSet<ScriptExecutionContextIdentifier>& allWorkerGlobalScopeIdentifier
 
 static WorkQueue& sharedFileSystemStorageQueue()
 {
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Shared File System Storage Queue",  WorkQueue::QOS::Default));
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Shared File System Storage Queue"_s,  WorkQueue::QOS::Default));
     return queue.get();
 }
 

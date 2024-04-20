@@ -55,7 +55,7 @@ static constexpr bool verbose = false;
 class ArgumentsEliminationPhase : public Phase {
 public:
     ArgumentsEliminationPhase(Graph& graph)
-        : Phase(graph, "arguments elimination")
+        : Phase(graph, "arguments elimination"_s)
     {
     }
     

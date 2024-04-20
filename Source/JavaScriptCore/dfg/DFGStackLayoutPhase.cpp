@@ -40,7 +40,7 @@ class StackLayoutPhase : public Phase {
     
 public:
     StackLayoutPhase(Graph& graph)
-        : Phase(graph, "stack layout")
+        : Phase(graph, "stack layout"_s)
     {
     }
     

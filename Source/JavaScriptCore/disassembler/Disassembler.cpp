@@ -94,7 +94,7 @@ class AsynchronousDisassembler {
 public:
     AsynchronousDisassembler()
     {
-        Thread::create("Asynchronous Disassembler", [&] () { run(); });
+        Thread::create("Asynchronous Disassembler"_s, [&] () { run(); });
     }
     
     void enqueue(std::unique_ptr<DisassemblyTask> task)

@@ -312,7 +312,7 @@ private:
 class LocalCSEPhase : public Phase {
 public:
     LocalCSEPhase(Graph& graph)
-        : Phase(graph, "local common subexpression elimination")
+        : Phase(graph, "local common subexpression elimination"_s)
         , m_smallBlock(graph)
         , m_largeBlock(graph)
         , m_hugeBlock(graph)
@@ -672,7 +672,7 @@ private:
 class GlobalCSEPhase : public Phase {
 public:
     GlobalCSEPhase(Graph& graph)
-        : Phase(graph, "global common subexpression elimination")
+        : Phase(graph, "global common subexpression elimination"_s)
         , m_impureDataMap(graph)
         , m_insertionSet(graph)
     {

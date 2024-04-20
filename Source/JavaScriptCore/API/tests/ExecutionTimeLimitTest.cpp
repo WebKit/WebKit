@@ -194,7 +194,7 @@ int testExecutionTimeLimit()
             exception = nullptr;
             JSValueRef* exn = &exception;
             shouldTerminateCallbackWasCalled = false;
-            auto thread = Thread::create("Rogue thread", [=] {
+            auto thread = Thread::create("Rogue thread"_s, [=] {
                 JSEvaluateScript(context, script, nullptr, nullptr, 1, exn);
             });
 

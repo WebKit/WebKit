@@ -781,7 +781,7 @@ private:
 class ObjectAllocationSinkingPhase : public Phase {
 public:
     ObjectAllocationSinkingPhase(Graph& graph)
-        : Phase(graph, "object allocation elimination")
+        : Phase(graph, "object allocation elimination"_s)
         , m_pointerSSA(graph)
         , m_allocationSSA(graph)
         , m_insertionSet(graph)

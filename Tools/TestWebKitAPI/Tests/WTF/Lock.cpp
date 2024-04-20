@@ -52,7 +52,7 @@ void runLockTest(unsigned numThreadGroups, unsigned numThreadsPerGroup, unsigned
 
         for (unsigned threadIndex = numThreadsPerGroup; threadIndex--;) {
             threads[threadGroupIndex * numThreadsPerGroup + threadIndex] = Thread::create(
-                "Lock test thread",
+                "Lock test thread"_s,
                 [threadGroupIndex, &locks, &words, numIterations, workPerCriticalSection] () {
                     for (unsigned i = numIterations; i--;) {
                         locks[threadGroupIndex].lock();

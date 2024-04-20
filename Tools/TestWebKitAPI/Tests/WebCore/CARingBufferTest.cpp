@@ -238,7 +238,7 @@ TEST_F(CARingBufferTest, FetchTimeBoundsConsistent)
     setListDataBuffer(reinterpret_cast<uint8_t*>(sourceBuffer), capacity);
 
     std::atomic<bool> done = false;
-    auto thread = Thread::create("FetchTimeBoundsConsistent test", [&] {
+    auto thread = Thread::create("FetchTimeBoundsConsistent test"_s, [&] {
         uint64_t i = 0;
         while (!done) {
             ringBuffer().store(&bufferList(), 1, i);

@@ -64,7 +64,7 @@ void AudioSessionCocoa::setEligibleForSmartRoutingInternal(bool eligible)
 }
 
 AudioSessionCocoa::AudioSessionCocoa()
-    : m_workQueue(WorkQueue::create("AudioSession Activation Queue"))
+    : m_workQueue(WorkQueue::create("AudioSession Activation Queue"_s))
 {
 }
 

@@ -70,7 +70,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
 {
 #if USE(GLIB_EVENT_LOOP)
     m_layerFlushTimer.setPriority(RunLoopSourcePriority::LayerFlushTimer);
-    m_layerFlushTimer.setName("[WebKit] LayerTreeHost");
+    m_layerFlushTimer.setName("[WebKit] LayerTreeHost"_s);
 #endif
     scheduleLayerFlush();
 

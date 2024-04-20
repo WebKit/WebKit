@@ -6437,7 +6437,7 @@ void WebViewImpl::didFinishPresentation(WKRevealItemPresenter *presenter)
 CocoaImageAnalyzer *WebViewImpl::ensureImageAnalyzer()
 {
     if (!m_imageAnalyzer) {
-        m_imageAnalyzerQueue = WorkQueue::create("WebKit image analyzer queue");
+        m_imageAnalyzerQueue = WorkQueue::create("WebKit image analyzer queue"_s);
         m_imageAnalyzer = createImageAnalyzer();
         [m_imageAnalyzer setCallbackQueue:m_imageAnalyzerQueue->dispatchQueue()];
     }

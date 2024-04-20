@@ -89,7 +89,7 @@ public:
     WTF_EXPORT_PRIVATE static RunLoop& web();
     WTF_EXPORT_PRIVATE static RunLoop* webIfExists();
 #endif
-    WTF_EXPORT_PRIVATE static Ref<RunLoop> create(const char* threadName, ThreadType = ThreadType::Unknown, Thread::QOS = Thread::QOS::UserInitiated);
+    WTF_EXPORT_PRIVATE static Ref<RunLoop> create(ASCIILiteral threadName, ThreadType = ThreadType::Unknown, Thread::QOS = Thread::QOS::UserInitiated);
 
     static bool isMain() { return main().isCurrent(); }
     void ref() const final { ThreadSafeRefCounted::ref(); }
@@ -144,7 +144,7 @@ public:
         virtual void fired() = 0;
 
 #if USE(GLIB_EVENT_LOOP)
-        WTF_EXPORT_PRIVATE void setName(const char*);
+        WTF_EXPORT_PRIVATE void setName(ASCIILiteral);
         WTF_EXPORT_PRIVATE void setPriority(int);
 #endif
 

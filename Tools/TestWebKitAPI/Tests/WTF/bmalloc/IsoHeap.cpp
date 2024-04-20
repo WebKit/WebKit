@@ -449,7 +449,7 @@ TEST(bmalloc, IsoHeapMultipleThreads)
 
     WTF::Vector<Ref<Thread>> threads;
     for (unsigned i = 0; i < 10; ++i) {
-        threads.append(Thread::create("IsoHeapStress", [&] {
+        threads.append(Thread::create("IsoHeapStress"_s, [&] {
             void* ptr0 = heap82.allocate();
             void* ptr1 = heap96.allocate();
             void* ptr2 = heap13.allocate();
@@ -2477,7 +2477,7 @@ TEST(bmalloc, IsoHeapIsoTLSLeak)
     allocateAndDeallocate();
     auto before = pagesPerVMTag();
     for (unsigned i = 0; i < 1000; ++i) {
-        auto thread = Thread::create("IsoHeapStress", allocateAndDeallocate);
+        auto thread = Thread::create("IsoHeapStress"_s, allocateAndDeallocate);
         thread->waitForCompletion();
     }
     auto after = pagesPerVMTag();
@@ -2627,7 +2627,7 @@ TEST(bmalloc, IsoHeapMultipleThreadsWhileIterating)
 
     WTF::Vector<Ref<Thread>> threads;
     for (unsigned i = 0; i < 10; ++i) {
-        threads.append(Thread::create("IsoHeapStress", [&] {
+        threads.append(Thread::create("IsoHeapStress"_s, [&] {
             void* ptr0 = heap82.allocate();
             void* ptr1 = heap96.allocate();
             void* ptr2 = heap13.allocate();

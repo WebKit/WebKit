@@ -2516,7 +2516,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
     }
     
     Thread::create(
-        "JSC Agent",
+        "JSC Agent"_s,
         [sourceCode = WTFMove(sourceCode).isolatedCopy(), workerPath = WTFMove(workerPath).isolatedCopy(), &didStartLock, &didStartCondition, &didStart] () {
             CommandLine commandLine(CommandLine::CommandLineForWorkers);
             commandLine.m_interactive = false;
@@ -3379,7 +3379,7 @@ static void startMemoryMonitoringThreadIfNeeded()
     if (!memoryLimit)
         return;
 
-    Thread::create("jsc Memory Monitor", [=] {
+    Thread::create("jsc Memory Monitor"_s, [=] {
         while (true) {
             sleep(Seconds::fromMilliseconds(5));
             crashIfExceedingMemoryLimit();
@@ -3396,7 +3396,7 @@ static VM* s_vm;
 
 static void startTimeoutTimer(Seconds duration)
 {
-    Thread::create("jsc Timeout Thread", [=] () {
+    Thread::create("jsc Timeout Thread"_s, [=] () {
         sleep(duration);
         VMInspector::forEachVM([&] (VM& vm) -> IterationStatus {
             if (&vm != s_vm)

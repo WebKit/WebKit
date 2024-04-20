@@ -226,7 +226,7 @@ void AXThread::createThreadIfNeeded()
     Locker lock { m_initializeRunLoopMutex };
 
     if (!m_thread) {
-        m_thread = Thread::create("WKTR: AccessibilityController", [this] {
+        m_thread = Thread::create("WKTR: AccessibilityController"_s, [this] {
             WTF::Thread::setCurrentThreadIsUserInteractive();
             initializeRunLoop();
         });

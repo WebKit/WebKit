@@ -43,7 +43,7 @@ namespace JSC { namespace DFG {
 class FixupPhase : public Phase {
 public:
     FixupPhase(Graph& graph)
-        : Phase(graph, "fixup")
+        : Phase(graph, "fixup"_s)
         , m_insertionSet(graph)
     {
     }

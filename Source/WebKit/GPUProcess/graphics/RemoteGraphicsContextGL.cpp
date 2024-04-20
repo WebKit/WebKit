@@ -61,7 +61,7 @@ IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue()
     static LazyNeverDestroyed<IPC::StreamConnectionWorkQueue> instance;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        instance.construct("RemoteGraphicsContextGL work queue"); // LazyNeverDestroyed owns the initial ref.
+        instance.construct("RemoteGraphicsContextGL work queue"_s); // LazyNeverDestroyed owns the initial ref.
     });
     return instance.get();
 }

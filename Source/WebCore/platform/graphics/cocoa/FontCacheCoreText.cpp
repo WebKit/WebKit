@@ -940,7 +940,7 @@ void FontCache::prewarm(PrewarmInformation&& prewarmInformation)
         return;
 
     if (!m_prewarmQueue)
-        m_prewarmQueue = WorkQueue::create("WebKit font prewarm queue");
+        m_prewarmQueue = WorkQueue::create("WebKit font prewarm queue"_s);
 
     m_prewarmQueue->dispatch([&database = m_databaseDisallowingUserInstalledFonts, prewarmInformation = WTFMove(prewarmInformation).isolatedCopy()] {
         for (auto& family : prewarmInformation.seenFamilies)

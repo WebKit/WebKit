@@ -44,7 +44,7 @@ public:
         , m_framesToSkip(framesToSkip)
         , m_stacksToReport(stacksToReport)
     {
-        Thread::create("StackShotProfiler", [this] () { run(); });
+        Thread::create("StackShotProfiler"_s, [this] () { run(); });
     }
 
     // NEVER_INLINE so that framesToSkip is predictable.

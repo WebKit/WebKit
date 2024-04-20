@@ -36,7 +36,7 @@ FormDataConsumer::FormDataConsumer(const FormData& formData, ScriptExecutionCont
     : m_formData(formData.copy())
     , m_context(&context)
     , m_callback(WTFMove(callback))
-    , m_fileQueue(WorkQueue::create("FormDataConsumer file queue"))
+    , m_fileQueue(WorkQueue::create("FormDataConsumer file queue"_s))
 {
     read();
 }

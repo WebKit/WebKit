@@ -38,12 +38,12 @@ namespace IPC {
 
 class WTF_CAPABILITY("is current") StreamConnectionWorkQueue final : public SerialFunctionDispatcher, public ThreadSafeRefCounted<StreamConnectionWorkQueue> {
 public:
-    static Ref<StreamConnectionWorkQueue> create(const char* name)
+    static Ref<StreamConnectionWorkQueue> create(ASCIILiteral name)
     {
         return adoptRef(*new StreamConnectionWorkQueue(name));
     }
 
-    StreamConnectionWorkQueue(const char*);
+    StreamConnectionWorkQueue(ASCIILiteral);
     ~StreamConnectionWorkQueue();
     void addStreamConnection(StreamServerConnection&);
     void removeStreamConnection(StreamServerConnection&);
@@ -59,7 +59,7 @@ private:
     void startProcessingThread() WTF_REQUIRES_LOCK(m_lock);
     void processStreams();
 
-    const char* const m_name;
+    ASCIILiteral m_name;
 
     Semaphore m_wakeUpSemaphore;
     std::atomic<bool> m_shouldQuit { false };

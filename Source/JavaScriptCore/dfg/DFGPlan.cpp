@@ -191,7 +191,7 @@ void Plan::cancel()
 Plan::CompilationPath Plan::compileInThreadImpl()
 {
     {
-        CompilerTimingScope timingScope("DFG", "initialize");
+        CompilerTimingScope timingScope("DFG"_s, "initialize"_s);
         m_recordedStatuses = makeUnique<RecordedStatuses>();
         cleanMustHandleValuesIfNecessary();
     }
@@ -205,7 +205,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
     Graph dfg(*m_vm, *this);
 
     {
-        CompilerTimingScope timingScope("DFG", "bytecode parser");
+        CompilerTimingScope timingScope("DFG"_s, "bytecode parser"_s);
         if (!parse(dfg))
             return CancelPath;
     }
@@ -349,7 +349,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         dumpAndVerifyGraph(dfg, "Graph after optimization:");
         
         {
-            CompilerTimingScope timingScope("DFG", "machine code generation");
+            CompilerTimingScope timingScope("DFG"_s, "machine code generation"_s);
 
             SpeculativeJIT speculativeJIT(dfg);
             if (m_codeBlock->codeType() == FunctionCode)

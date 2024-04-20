@@ -179,7 +179,7 @@ SimpleStats& timingStats(const char* name, CollectionScope scope)
 
 class TimingScope {
 public:
-    TimingScope(std::optional<CollectionScope> scope, const char* name)
+    TimingScope(std::optional<CollectionScope> scope, ASCIILiteral name)
         : m_scope(scope)
         , m_name(name)
     {
@@ -187,7 +187,7 @@ public:
             m_before = MonotonicTime::now();
     }
     
-    TimingScope(JSC::Heap& heap, const char* name)
+    TimingScope(JSC::Heap& heap, ASCIILiteral name)
         : TimingScope(heap.collectionScope(), name)
     {
     }
@@ -215,7 +215,7 @@ public:
 private:
     std::optional<CollectionScope> m_scope;
     MonotonicTime m_before;
-    const char* m_name;
+    ASCIILiteral m_name;
 };
 
 } // anonymous namespace
@@ -859,7 +859,7 @@ void Heap::gatherScratchBufferRoots(ConservativeRoots& roots)
 
 void Heap::beginMarking()
 {
-    TimingScope timingScope(*this, "Heap::beginMarking");
+    TimingScope timingScope(*this, "Heap::beginMarking"_s);
     m_jitStubRoutines->clearMarks();
     m_objectSpace.beginMarking();
     vm().beginMarking();
@@ -2365,7 +2365,7 @@ void Heap::sweepArrayBuffers()
 
 void Heap::snapshotUnswept()
 {
-    TimingScope timingScope(*this, "Heap::snapshotUnswept");
+    TimingScope timingScope(*this, "Heap::snapshotUnswept"_s);
     m_objectSpace.snapshotUnswept();
 }
 
@@ -2865,7 +2865,7 @@ void Heap::addCoreConstraints()
             if (shouldNotProduceWork || m_isMarkingForGCVerifier)
                 return;
             
-            TimingScope preConvergenceTimingScope(*this, "Constraint: conservative scan");
+            TimingScope preConvergenceTimingScope(*this, "Constraint: conservative scan"_s);
             m_objectSpace.prepareForConservativeScan();
             m_jitStubRoutines->prepareForConservativeScan();
 
@@ -3083,7 +3083,7 @@ void Heap::notifyIsSafeToCollect()
     
     if (Options::collectContinuously()) {
         m_collectContinuouslyThread = Thread::create(
-            "JSC DEBUG Continuous GC",
+            "JSC DEBUG Continuous GC"_s,
             [this] () {
                 MonotonicTime initialTime = MonotonicTime::now();
                 Seconds period = Seconds::fromMilliseconds(Options::collectContinuouslyPeriodMS());

@@ -35,7 +35,7 @@ namespace JSC { namespace B3 {
 VariableLiveness::VariableLiveness(Procedure& proc)
     : WTF::Liveness<VariableLivenessAdapter>(proc.cfg(), proc)
 {
-    CompilerTimingScope timingScope("B3", "VariableLiveness");
+    CompilerTimingScope timingScope("B3"_s, "VariableLiveness"_s);
     compute();
 }
 

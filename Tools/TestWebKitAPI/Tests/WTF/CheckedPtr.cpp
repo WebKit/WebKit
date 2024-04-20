@@ -371,7 +371,7 @@ TEST(WTF_CheckedPtr, CanMakeThreadSafeCheckedPtr)
 
     threads.reserveInitialCapacity(threadCount);
     for (unsigned i = 0; i < threadCount; ++i) {
-        threads.append(Thread::create("CheckedPtr testing thread", [&]() mutable {
+        threads.append(Thread::create("CheckedPtr testing thread"_s, [&]() mutable {
             CheckedPtr ptr = &object;
             do {
                 for (unsigned i = 0; i < 1000; ++i) {

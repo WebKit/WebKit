@@ -56,12 +56,12 @@ void StorageThread::start()
     ASSERT(isMainThread());
     if (!m_thread) {
         if (m_type == Type::LocalStorage) {
-            m_thread = Thread::create("LocalStorage", [this] {
+            m_thread = Thread::create("LocalStorage"_s, [this] {
                 threadEntryPoint();
             });
         } else {
             ASSERT(m_type == Type::IndexedDB);
-            m_thread = Thread::create("IndexedDB", [this] {
+            m_thread = Thread::create("IndexedDB"_s, [this] {
                 threadEntryPoint();
             });
         }

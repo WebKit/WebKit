@@ -4680,7 +4680,7 @@ Location BBQJIT::allocateStack(Value value)
 
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext& compilationContext, BBQCallee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount* tierUp)
 {
-    CompilerTimingScope totalTime("BBQ", "Total BBQ");
+    CompilerTimingScope totalTime("BBQ"_s, "Total BBQ"_s);
 
     Thunks::singleton().stub(catchInWasmThunkGenerator);
 

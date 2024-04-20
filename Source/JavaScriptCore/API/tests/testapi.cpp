@@ -798,7 +798,7 @@ int testCAPIViaCpp(const char* filter)
     Vector<Ref<Thread>> threads;
     for (unsigned i = filter ? 1 : WTF::numberOfProcessorCores(); i--;) {
         threads.append(Thread::create(
-            "Testapi via C++ thread",
+            "Testapi via C++ thread"_s,
             [&] () {
                 TestAPI tester;
                 for (;;) {

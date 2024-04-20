@@ -137,7 +137,7 @@ void ARKitCoordinator::startSession(WebPageProxy& page, WeakPtr<SessionEventClie
                 .sessionEventClient = WTFMove(sessionEventClient),
                 .pageIdentifier = page.webPageID(),
                 .renderState = renderState,
-                .renderThread = Thread::create("ARKitCoordinator session renderer", [this, renderState] { renderLoop(renderState); }),
+                .renderThread = Thread::create("ARKitCoordinator session renderer"_s, [this, renderState] { renderLoop(renderState); }),
             };
         },
         [&](Active&) {

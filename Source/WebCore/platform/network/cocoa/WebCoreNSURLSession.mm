@@ -303,7 +303,7 @@ NS_ASSUME_NONNULL_END
     _targetQueue = _loader->targetQueue();
     self.delegate = inDelegate;
     _queue = inQueue ? inQueue : [NSOperationQueue mainQueue];
-    _internalQueue = WorkQueue::create("WebCoreNSURLSession _internalQueue");
+    _internalQueue = WorkQueue::create("WebCoreNSURLSession _internalQueue"_s);
     _targetQueue->dispatch([strongSelf = retainPtr(self)] {
         strongSelf->_rangeResponseGenerator = RangeResponseGenerator::create(*strongSelf->_targetQueue);
     });

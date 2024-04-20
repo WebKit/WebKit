@@ -270,7 +270,7 @@ static void crashAfter10Seconds(IPC::Connection*)
 {
     // If the connection has been closed and we haven't responded in the main thread for 10 seconds the process will exit forcibly.
     static const auto watchdogDelay = 10_s;
-    WorkQueue::create("WebKit.WebProcess.WatchDogQueue")->dispatchAfter(watchdogDelay, [] {
+    WorkQueue::create("WebKit.WebProcess.WatchDogQueue"_s)->dispatchAfter(watchdogDelay, [] {
         // We use g_error() here to cause a crash and allow debugging this unexpected late exit.
         g_error("WebProcess didn't exit as expected after the UI process connection was closed");
     });

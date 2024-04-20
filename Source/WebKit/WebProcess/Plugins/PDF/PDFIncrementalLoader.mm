@@ -281,7 +281,7 @@ PDFIncrementalLoader::PDFIncrementalLoader(PDFPluginBase& plugin)
     , m_streamLoaderClient(adoptRef(*new PDFPluginStreamLoaderClient(*this)))
     , m_requestData(makeUnique<RequestData>())
 {
-    m_pdfThread = Thread::create("PDF document thread", [protectedThis = Ref { *this }, this] () mutable {
+    m_pdfThread = Thread::create("PDF document thread"_s, [protectedThis = Ref { *this }, this] () mutable {
         threadEntry(WTFMove(protectedThis));
     });
 }
@@ -789,7 +789,7 @@ void PDFIncrementalLoader::threadEntry(Ref<PDFIncrementalLoader>&& protectedLoad
     }
 
     BinarySemaphore firstPageSemaphore;
-    auto firstPageQueue = WorkQueue::create("PDF first page work queue");
+    auto firstPageQueue = WorkQueue::create("PDF first page work queue"_s);
 
     [m_backgroundThreadDocument preloadDataOfPagesInRange:NSMakeRange(0, 1) onQueue:firstPageQueue->dispatchQueue() completion:[&firstPageSemaphore, protectedThis = Ref { *this }] (NSIndexSet *) mutable {
         callOnMainRunLoop([protectedThis] {

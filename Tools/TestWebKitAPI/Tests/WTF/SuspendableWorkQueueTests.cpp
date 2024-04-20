@@ -45,7 +45,7 @@ TEST(WTF_SuspendableWorkQueue, Suspend)
     bool suspendCompletionHandlerCalled = false;
     bool allTasksAreCompleted = false;
 
-    auto queue = SuspendableWorkQueue::create("com.apple.WebKit.Test.simple");
+    auto queue = SuspendableWorkQueue::create("com.apple.WebKit.Test.simple"_s);
     // Schedule first batch of tasks.
     for (; scheduledTaskCount < taskCount / 2; ++scheduledTaskCount) {
         queue->dispatch([&]() mutable {
@@ -104,7 +104,7 @@ TEST(WTF_SuspendableWorkQueue, SuspendTwice)
     Lock lock;
     bool suspendCompletionHandlerCalled = false;
     int suspendCount = 0;
-    auto queue = SuspendableWorkQueue::create("com.apple.WebKit.Test.simple");
+    auto queue = SuspendableWorkQueue::create("com.apple.WebKit.Test.simple"_s);
     queue->suspend([&]() {
         Locker locker { lock };
         ++suspendCount;

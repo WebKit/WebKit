@@ -46,7 +46,7 @@ namespace WebKit {
 
 static WorkQueue& granterQueue()
 {
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("ExtensionCapabilityGranter Queue", WorkQueue::QOS::UserInitiated));
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("ExtensionCapabilityGranter Queue"_s, WorkQueue::QOS::UserInitiated));
     return queue.get();
 }
 

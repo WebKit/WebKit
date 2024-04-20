@@ -38,7 +38,7 @@ namespace JSC { namespace B3 {
 
 Compilation compile(Procedure& proc)
 {
-    CompilerTimingScope timingScope("Total B3+Air", "compile");
+    CompilerTimingScope timingScope("Total B3+Air"_s, "compile"_s);
     
     prepareForGeneration(proc);
     

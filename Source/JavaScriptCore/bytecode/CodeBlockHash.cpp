@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-CodeBlockHash::CodeBlockHash(const char* string)
+CodeBlockHash::CodeBlockHash(std::span<const char, 6> string)
     : m_hash(sixCharacterHashStringToInteger(string))
 {
 }
@@ -85,14 +85,14 @@ CodeBlockHash::CodeBlockHash(const SourceCode& sourceCode, CodeSpecializationKin
 
 void CodeBlockHash::dump(PrintStream& out) const
 {
-    std::array<char, 7> buffer = integerToSixCharacterHashString(m_hash);
+    auto buffer = integerToSixCharacterHashString(m_hash);
     
 #if ASSERT_ENABLED
-    CodeBlockHash recompute(buffer.data());
+    CodeBlockHash recompute(buffer);
     ASSERT(recompute == *this);
 #endif // ASSERT_ENABLED
     
-    out.print(buffer.data());
+    out.print(std::span<const char> { buffer });
 }
 
 } // namespace JSC

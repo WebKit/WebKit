@@ -151,7 +151,7 @@ public:
     };
 
     IntegerCheckCombiningPhase(Graph& graph)
-        : Phase(graph, "integer check combining")
+        : Phase(graph, "integer check combining"_s)
         , m_insertionSet(graph)
     {
     }

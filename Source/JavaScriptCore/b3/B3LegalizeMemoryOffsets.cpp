@@ -82,7 +82,7 @@ public:
 
 void legalizeMemoryOffsets(Procedure& proc)
 {
-    PhaseScope phaseScope(proc, "legalizeMemoryOffsets");
+    PhaseScope phaseScope(proc, "legalizeMemoryOffsets"_s);
     LegalizeMemoryOffsets legalizeMemoryOffsets(proc);
     legalizeMemoryOffsets.run();
 }

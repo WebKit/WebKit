@@ -59,8 +59,8 @@ namespace WebCore {
 
 WebCoreDecompressionSession::WebCoreDecompressionSession(Mode mode)
     : m_mode(mode)
-    , m_decompressionQueue(WorkQueue::create("WebCoreDecompressionSession Decompression Queue"))
-    , m_enqueingQueue(WorkQueue::create("WebCoreDecompressionSession Enqueueing Queue"))
+    , m_decompressionQueue(WorkQueue::create("WebCoreDecompressionSession Decompression Queue"_s))
+    , m_enqueingQueue(WorkQueue::create("WebCoreDecompressionSession Enqueueing Queue"_s))
 {
 }
 

@@ -54,7 +54,7 @@ namespace JSC { namespace B3 {
 
 void prepareForGeneration(Procedure& procedure)
 {
-    CompilerTimingScope timingScope("Total B3+Air", "prepareForGeneration");
+    CompilerTimingScope timingScope("Total B3+Air"_s, "prepareForGeneration"_s);
 
     generateToAir(procedure);
     Air::prepareForGeneration(procedure.code());
@@ -67,7 +67,7 @@ void generate(Procedure& procedure, CCallHelpers& jit)
 
 void generateToAir(Procedure& procedure)
 {
-    CompilerTimingScope timingScope("Total B3", "generateToAir");
+    CompilerTimingScope timingScope("Total B3"_s, "generateToAir"_s);
     
     if ((shouldDumpIR(procedure, B3Mode) || Options::dumpGraphAfterParsing()) && !shouldDumpIRAtEachPhase(B3Mode)) {
         dataLog(tierName, "Initial B3:\n");

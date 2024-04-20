@@ -55,7 +55,7 @@ using TestPromiseExcl = NativePromise<int, double>;
 
 class WorkQueueWithShutdown : public WorkQueue {
 public:
-    static Ref<WorkQueueWithShutdown> create(const char* name) { return adoptRef(*new WorkQueueWithShutdown(name)); }
+    static Ref<WorkQueueWithShutdown> create(ASCIILiteral name) { return adoptRef(*new WorkQueueWithShutdown(name)); }
     void beginShutdown()
     {
         dispatch([this, strong = Ref { *this }] {
@@ -70,7 +70,7 @@ public:
     }
 
 private:
-    WorkQueueWithShutdown(const char* name)
+    WorkQueueWithShutdown(ASCIILiteral name)
         : WorkQueue(name, QOS::Default)
     {
     }
@@ -81,7 +81,7 @@ private:
 class AutoWorkQueue {
 public:
     AutoWorkQueue()
-        : m_workQueue(WorkQueueWithShutdown::create("com.apple.WebKit.Test.simple"))
+        : m_workQueue(WorkQueueWithShutdown::create("com.apple.WebKit.Test.simple"_s))
     {
     }
 
@@ -1842,7 +1842,7 @@ public:
     }
 private:
     explicit PhotoProducer(const PhotoSettings& settings)
-        : m_generatePhotoQueue(WorkQueue::create("takePhoto queue"))
+        : m_generatePhotoQueue(WorkQueue::create("takePhoto queue"_s))
     {
     }
 

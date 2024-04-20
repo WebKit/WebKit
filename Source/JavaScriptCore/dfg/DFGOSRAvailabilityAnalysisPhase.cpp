@@ -41,7 +41,7 @@ class OSRAvailabilityAnalysisPhase : public Phase {
     static constexpr bool verbose = false;
 public:
     OSRAvailabilityAnalysisPhase(Graph& graph, HeadFunctor& availabilityAtHead, TailFunctor& availabilityAtTail)
-        : Phase(graph, "OSR availability analysis")
+        : Phase(graph, "OSR availability analysis"_s)
         , availabilityAtHead(availabilityAtHead)
         , availabilityAtTail(availabilityAtTail)
     {

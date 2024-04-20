@@ -186,7 +186,7 @@ void PDFScriptEvaluator::runScripts(CGPDFDocumentRef document, Client& client)
     };
 
 #if HAVE(INCREMENTAL_PDF_APIS)
-    auto scriptUtilityQueue = WorkQueue::create("PDF script utility");
+    auto scriptUtilityQueue = WorkQueue::create("PDF script utility"_s);
     auto& rawQueue = scriptUtilityQueue.get();
     rawQueue.dispatch([scriptUtilityQueue = WTFMove(scriptUtilityQueue), completionHandler = WTFMove(completionHandler), document = WTFMove(document)] () mutable {
         ASSERT(!isMainRunLoop());

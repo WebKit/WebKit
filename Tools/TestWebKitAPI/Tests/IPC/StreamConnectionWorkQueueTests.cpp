@@ -41,7 +41,7 @@ public:
 
 TEST_F(StreamConnectionWorkQueueTest, IsCurrentAtStopNoCrash)
 {
-    auto queue = IPC::StreamConnectionWorkQueue::create("StreamConnectionWorkQueueTest work queue");
+    auto queue = IPC::StreamConnectionWorkQueue::create("StreamConnectionWorkQueueTest work queue"_s);
     for (int i = 0; i < 10000; ++i) {
         queue->dispatch([&] {
             assertIsCurrent(queue);

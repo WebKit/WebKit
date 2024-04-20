@@ -123,7 +123,7 @@ TEST_F(FileMonitorTest, DetectChange)
 
     WTF::initializeMainThread();
 
-    auto testQueue = WorkQueue::create("Test Work Queue");
+    auto testQueue = WorkQueue::create("Test Work Queue"_s);
 
     auto monitor = makeUnique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
@@ -165,7 +165,7 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
 
     WTF::initializeMainThread();
 
-    auto testQueue = WorkQueue::create("Test Work Queue");
+    auto testQueue = WorkQueue::create("Test Work Queue"_s);
 
     auto monitor = makeUnique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
@@ -225,7 +225,7 @@ TEST_F(FileMonitorTest, DetectDeletion)
 
     WTF::initializeMainThread();
 
-    auto testQueue = WorkQueue::create("Test Work Queue");
+    auto testQueue = WorkQueue::create("Test Work Queue"_s);
 
     auto monitor = makeUnique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
@@ -260,7 +260,7 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
 
     WTF::initializeMainThread();
 
-    auto testQueue = WorkQueue::create("Test Work Queue");
+    auto testQueue = WorkQueue::create("Test Work Queue"_s);
 
     auto monitor = makeUnique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
@@ -313,7 +313,7 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
 
     WTF::initializeMainThread();
 
-    auto testQueue = WorkQueue::create("Test Work Queue");
+    auto testQueue = WorkQueue::create("Test Work Queue"_s);
 
     auto monitor = makeUnique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());

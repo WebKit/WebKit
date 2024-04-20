@@ -414,7 +414,7 @@ public:
         EXPECT_EQ(m_runLoops.size(), 0u);
     }
 
-    Ref<RunLoop> createRunLoop(const char* name)
+    Ref<RunLoop> createRunLoop(ASCIILiteral name)
     {
         auto runLoop = RunLoop::create(name, ThreadType::Unknown);
         m_runLoops.append(runLoop);
@@ -449,7 +449,7 @@ protected:
 };
 
 #define LOCAL_STRINGIFY(x) #x
-#define RUN_LOOP_NAME "RunLoop at ConnectionTests.cpp:" LOCAL_STRINGIFY(__LINE__)
+#define RUN_LOOP_NAME "RunLoop at ConnectionTests.cpp:" LOCAL_STRINGIFY(__LINE__) ""_s
 
 TEST_P(ConnectionRunLoopTest, RunLoopOpen)
 {
@@ -546,7 +546,7 @@ class AutoWorkQueue {
 public:
     class WorkQueueWithShutdown : public WorkQueue {
     public:
-        static Ref<WorkQueueWithShutdown> create(const char* name) { return adoptRef(*new WorkQueueWithShutdown(name)); }
+        static Ref<WorkQueueWithShutdown> create(ASCIILiteral name) { return adoptRef(*new WorkQueueWithShutdown(name)); }
         void beginShutdown()
         {
             dispatch([this, strong = Ref { *this }] {
@@ -561,7 +561,7 @@ public:
         }
 
     private:
-        WorkQueueWithShutdown(const char* name)
+        WorkQueueWithShutdown(ASCIILiteral name)
             : WorkQueue(name, QOS::Default)
         {
         }
@@ -570,7 +570,7 @@ public:
     };
 
     AutoWorkQueue()
-        : m_workQueue(WorkQueueWithShutdown::create("com.apple.WebKit.Test.simple"))
+        : m_workQueue(WorkQueueWithShutdown::create("com.apple.WebKit.Test.simple"_s))
     {
     }
 

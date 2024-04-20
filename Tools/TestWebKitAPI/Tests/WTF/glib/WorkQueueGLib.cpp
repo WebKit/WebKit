@@ -44,7 +44,7 @@ TEST(WTF_WorkQueue, AsyncIO)
         GMainContext* m_mainContext;
     } context;
 
-    auto queue = WorkQueue::create("com.apple.WebKit.Test.AsyncIO");
+    auto queue = WorkQueue::create("com.apple.WebKit.Test.AsyncIO"_s);
     context.m_mainContext = g_main_context_default();
     EXPECT_FALSE(g_main_context_get_thread_default());
 

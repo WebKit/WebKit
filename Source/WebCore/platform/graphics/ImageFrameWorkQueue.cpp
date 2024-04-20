@@ -62,7 +62,7 @@ void ImageFrameWorkQueue::start()
     if (!decoder)
         return;
 
-    m_workQueue = WorkQueue::create("org.webkit.ImageDecoder", WorkQueue::QOS::Default);
+    m_workQueue = WorkQueue::create("org.webkit.ImageDecoder"_s, WorkQueue::QOS::Default);
 
     m_workQueue->dispatch([protectedThis = Ref { *this }, protectedWorkQueue = Ref { *m_workQueue }, protectedSource = this->protectedSource(), protectedDecoder = Ref { *decoder }, protectedRequestQueue = Ref { requestQueue() }] () mutable {
         Request request;

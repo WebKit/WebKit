@@ -37,7 +37,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 void lowerStackArgs(Code& code)
 {
-    PhaseScope phaseScope(code, "lowerStackArgs");
+    PhaseScope phaseScope(code, "lowerStackArgs"_s);
     
     // Now we need to deduce how much argument area we need.
     for (BasicBlock* block : code) {

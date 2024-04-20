@@ -66,7 +66,7 @@ SecItemShimProxy& SecItemShimProxy::singleton()
 }
 
 SecItemShimProxy::SecItemShimProxy()
-    : m_queue(WorkQueue::create("com.apple.WebKit.SecItemShimProxy"))
+    : m_queue(WorkQueue::create("com.apple.WebKit.SecItemShimProxy"_s))
 {
 }
 

@@ -831,7 +831,7 @@ private:
 
 bool eliminateCommonSubexpressions(Procedure& proc)
 {
-    PhaseScope phaseScope(proc, "eliminateCommonSubexpressions");
+    PhaseScope phaseScope(proc, "eliminateCommonSubexpressions"_s);
 
     CSE cse(proc);
     return cse.run();

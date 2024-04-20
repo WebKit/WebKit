@@ -57,7 +57,7 @@ TEST(Signals, SignalsWorkOnExit)
     WTF::Config::finalize();
 
     Atomic<bool> receiverShouldKeepRunning(true);
-    Ref<Thread> receiverThread = (Thread::create("ThreadMessage receiver",
+    Ref<Thread> receiverThread = (Thread::create("ThreadMessage receiver"_s,
         [&receiverShouldKeepRunning] () {
             while (receiverShouldKeepRunning.load()) { }
     }));

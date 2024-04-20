@@ -109,7 +109,7 @@ bool eliminateDeadCodeImpl(Procedure& proc)
 
 bool eliminateDeadCode(Procedure& proc)
 {
-    PhaseScope phaseScope(proc, "eliminateDeadCode");
+    PhaseScope phaseScope(proc, "eliminateDeadCode"_s);
     return eliminateDeadCodeImpl(proc);
 }
 

@@ -36,7 +36,7 @@
 namespace WebCore {
 
 AsyncAudioDecoder::AsyncAudioDecoder()
-    : m_runLoop(RunLoop::create("Audio Decoder", ThreadType::Audio))
+    : m_runLoop(RunLoop::create("Audio Decoder"_s, ThreadType::Audio))
 {
 }
 

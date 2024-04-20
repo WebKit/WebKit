@@ -42,7 +42,7 @@ using namespace WebCore;
 
 static WorkQueue& sharedServiceWorkerDownloadTaskQueue()
 {
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Shared ServiceWorkerDownloadTask Queue"));
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Shared ServiceWorkerDownloadTask Queue"_s));
     return queue.get();
 }
 

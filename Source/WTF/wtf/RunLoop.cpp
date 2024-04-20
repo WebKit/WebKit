@@ -104,7 +104,7 @@ RunLoop* RunLoop::webIfExists()
 }
 #endif
 
-Ref<RunLoop> RunLoop::create(const char* threadName, ThreadType threadType, Thread::QOS qos)
+Ref<RunLoop> RunLoop::create(ASCIILiteral threadName, ThreadType threadType, Thread::QOS qos)
 {
     RunLoop* runLoop = nullptr;
     BinarySemaphore semaphore;

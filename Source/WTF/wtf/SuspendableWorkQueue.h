@@ -37,7 +37,7 @@ class WTF_EXPORT_PRIVATE SuspendableWorkQueue final : public WorkQueue {
 public:
     using QOS = WorkQueue::QOS;
     enum class ShouldLog : bool { No, Yes };
-    static Ref<SuspendableWorkQueue> create(const char* name, QOS = QOS::Default, ShouldLog = ShouldLog::No);
+    static Ref<SuspendableWorkQueue> create(ASCIILiteral name, QOS = QOS::Default, ShouldLog = ShouldLog::No);
     void suspend(Function<void()>&& suspendFunction, CompletionHandler<void()>&& suspensionCompletionHandler);
     void resume();
     void dispatch(Function<void()>&&) final;
@@ -45,7 +45,7 @@ public:
     void dispatchSync(Function<void()>&&) final;
 
 private:
-    SuspendableWorkQueue(const char* name, QOS, ShouldLog);
+    SuspendableWorkQueue(ASCIILiteral name, QOS, ShouldLog);
     void invokeAllSuspensionCompletionHandlers() WTF_REQUIRES_LOCK(m_suspensionLock);
     void suspendIfNeeded();
 #if USE(COCOA_EVENT_LOOP)

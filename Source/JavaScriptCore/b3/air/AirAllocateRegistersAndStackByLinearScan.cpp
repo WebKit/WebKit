@@ -221,7 +221,7 @@ private:
 
     void buildIntervals()
     {
-        CompilerTimingScope timingScope("Air", "LinearScan::buildIntervals");
+        CompilerTimingScope timingScope("Air"_s, "LinearScan::buildIntervals"_s);
         UnifiedTmpLiveness liveness(m_code);
 
         for (BasicBlock* block : m_code) {
@@ -682,7 +682,7 @@ private:
 void allocateRegistersAndStackByLinearScan(Code& code)
 {
     RELEASE_ASSERT(!code.usesSIMD());
-    PhaseScope phaseScope(code, "allocateRegistersAndStackByLinearScan");
+    PhaseScope phaseScope(code, "allocateRegistersAndStackByLinearScan"_s);
     if (verbose())
         dataLog("Air before linear scan:\n", code);
     LinearScan linearScan(code);

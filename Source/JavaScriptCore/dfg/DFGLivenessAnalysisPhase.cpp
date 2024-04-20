@@ -51,7 +51,7 @@ typedef IndexSparseSet<unsigned, DefaultIndexSparseSetTraits<unsigned>, UnsafeVe
 class LivenessAnalysisPhase : public Phase {
 public:
     LivenessAnalysisPhase(Graph& graph)
-        : Phase(graph, "liveness analysis")
+        : Phase(graph, "liveness analysis"_s)
         , m_dirtyBlocks(m_graph.numBlocks())
         , m_indexing(*m_graph.m_indexingCache)
         , m_liveAtHead(m_graph)

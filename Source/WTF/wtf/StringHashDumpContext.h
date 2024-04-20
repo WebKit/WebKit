@@ -45,7 +45,7 @@ public:
             return iter->value;
         
         for (unsigned hashValue = toCString(*value).hash(); ; hashValue++) {
-            CString fullHash = integerToSixCharacterHashString(hashValue).data();
+            CString fullHash = std::span<const char> { integerToSixCharacterHashString(hashValue) };
             
             for (unsigned length = 2; length < 6; ++length) {
                 CString shortHash { fullHash.span().first(length) };

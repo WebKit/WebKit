@@ -463,7 +463,7 @@ RefPtr<AudioBus> createBusFromInMemoryAudioFile(std::span<const uint8_t> data, b
 
     GST_DEBUG("Creating bus from in-memory audio data (%zu bytes)", data.size());
     RefPtr<AudioBus> bus;
-    auto thread = Thread::create("AudioFileReader", [&bus, data, mixToMono, sampleRate] {
+    auto thread = Thread::create("AudioFileReader"_s, [&bus, data, mixToMono, sampleRate] {
         bus = AudioFileReader(data).createBus(sampleRate, mixToMono);
     });
     thread->waitForCompletion();

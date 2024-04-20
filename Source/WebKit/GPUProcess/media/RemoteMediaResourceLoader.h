@@ -48,7 +48,7 @@ public:
         static std::once_flag onceKey;
         static LazyNeverDestroyed<Ref<WorkQueue>> messageQueue;
         std::call_once(onceKey, [] {
-            messageQueue.construct(WorkQueue::create("PlatformMediaResourceLoader"));
+            messageQueue.construct(WorkQueue::create("PlatformMediaResourceLoader"_s));
         });
         return messageQueue.get();
     }

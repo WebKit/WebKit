@@ -3939,7 +3939,7 @@ auto MediaPlayerPrivateAVFoundationObjC::asyncVideoPlaybackQualityMetrics() -> R
     static std::once_flag onceKey;
     static LazyNeverDestroyed<Ref<WorkQueue>> metricsWorkQueue;
     std::call_once(onceKey, [] {
-        metricsWorkQueue.construct(WorkQueue::create("VideoPlaybackQualityMetrics", WorkQueue::QOS::Background));
+        metricsWorkQueue.construct(WorkQueue::create("VideoPlaybackQualityMetrics"_s, WorkQueue::QOS::Background));
     });
 
     if (!m_videoLayer)
@@ -4181,7 +4181,7 @@ NSArray* playerKVOProperties()
     if (!self)
         return nil;
     m_player = WTFMove(player);
-    m_backgroundQueue = WorkQueue::create("WebCoreAVFMovieObserver Background Queue");
+    m_backgroundQueue = WorkQueue::create("WebCoreAVFMovieObserver Background Queue"_s);
     return self;
 }
 

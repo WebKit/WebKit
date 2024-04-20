@@ -54,7 +54,7 @@ static constexpr bool verbose = false;
 
 void lowerAfterRegAlloc(Code& code)
 {
-    PhaseScope phaseScope(code, "lowerAfterRegAlloc");
+    PhaseScope phaseScope(code, "lowerAfterRegAlloc"_s);
 
     if (AirLowerAfterRegAllocInternal::verbose)
         dataLog("Code before lowerAfterRegAlloc:\n", code);

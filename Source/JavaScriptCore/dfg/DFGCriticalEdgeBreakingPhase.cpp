@@ -39,7 +39,7 @@ namespace JSC { namespace DFG {
 class CriticalEdgeBreakingPhase : public Phase {
 public:
     CriticalEdgeBreakingPhase(Graph& graph)
-        : Phase(graph, "critical edge breaking")
+        : Phase(graph, "critical edge breaking"_s)
         , m_insertionSet(graph)
     {
     }

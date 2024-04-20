@@ -147,7 +147,7 @@ DOMFileSystem::DOMFileSystem(Ref<File>&& file)
     : m_name(createVersion4UUIDString())
     , m_file(WTFMove(file))
     , m_rootPath(FileSystem::parentPath(m_file->path()))
-    , m_workQueue(WorkQueue::create("DOMFileSystem work queue"))
+    , m_workQueue(WorkQueue::create("DOMFileSystem work queue"_s))
 {
     ASSERT(!m_rootPath.endsWith('/'));
 }

@@ -2236,7 +2236,7 @@ private:
 
 void allocateRegistersByGraphColoring(Code& code)
 {
-    PhaseScope phaseScope(code, "allocateRegistersByGraphColoring");
+    PhaseScope phaseScope(code, "allocateRegistersByGraphColoring"_s);
 
     if (traceDebug)
         dataLog("Code before graph coloring:\n", code);

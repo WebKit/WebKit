@@ -81,7 +81,7 @@ void IOChannel::read(size_t offset, size_t size, WTF::WorkQueueBase& queue, Func
         return;
     }
 
-    Thread::create("IOChannel::read", [this, protectedThis = WTFMove(protectedThis), offset, size, queue = Ref { queue }, completionHandler = WTFMove(completionHandler)]() mutable {
+    Thread::create("IOChannel::read"_s, [this, protectedThis = WTFMove(protectedThis), offset, size, queue = Ref { queue }, completionHandler = WTFMove(completionHandler)]() mutable {
         GRefPtr<GFileInfo> info = adoptGRef(g_file_input_stream_query_info(G_FILE_INPUT_STREAM(m_inputStream.get()), G_FILE_ATTRIBUTE_STANDARD_SIZE, nullptr, nullptr));
         if (info) {
             auto fileSize = g_file_info_get_size(info.get());
@@ -121,7 +121,7 @@ void IOChannel::write(size_t offset, const Data& data, WTF::WorkQueueBase& queue
     }
 
     GRefPtr<GBytes> buffer = offset ? adoptGRef(g_bytes_new_from_bytes(data.bytes(), offset, data.size() - offset)) : data.bytes();
-    Thread::create("IOChannel::write", [this, protectedThis = WTFMove(protectedThis), buffer = WTFMove(buffer), queue = Ref { queue }, completionHandler = WTFMove(completionHandler)]() mutable {
+    Thread::create("IOChannel::write"_s, [this, protectedThis = WTFMove(protectedThis), buffer = WTFMove(buffer), queue = Ref { queue }, completionHandler = WTFMove(completionHandler)]() mutable {
         gsize buffersize;
         const auto* bufferData = g_bytes_get_data(buffer.get(), &buffersize);
         auto success = g_output_stream_write_all(m_outputStream.get(), bufferData, buffersize, nullptr, nullptr, nullptr);

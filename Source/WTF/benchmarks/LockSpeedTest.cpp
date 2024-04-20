@@ -90,7 +90,7 @@ struct Benchmark {
 
             for (unsigned threadIndex = numThreadsPerGroup; threadIndex--;) {
                 threads[threadGroupIndex * numThreadsPerGroup + threadIndex] = Thread::create(
-                    "Benchmark thread",
+                    "Benchmark thread"_s,
                     [threadGroupIndex, &locks, &words, &keepGoing, &numIterationsLock, &numIterations] () {
                         double localWord = 0;
                         double value = 1;

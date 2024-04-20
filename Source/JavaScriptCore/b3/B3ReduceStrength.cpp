@@ -3652,7 +3652,7 @@ private:
 
 bool reduceStrength(Procedure& proc)
 {
-    PhaseScope phaseScope(proc, "reduceStrength");
+    PhaseScope phaseScope(proc, "reduceStrength"_s);
     ReduceStrength reduceStrength(proc);
     return reduceStrength.run();
 }

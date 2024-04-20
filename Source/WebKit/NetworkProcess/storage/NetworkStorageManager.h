@@ -260,7 +260,6 @@ private:
 
     WeakPtr<NetworkProcess> m_process;
     PAL::SessionID m_sessionID;
-    String m_queueName;
     Ref<SuspendableWorkQueue> m_queue;
     String m_path;
     FileSystem::Salt m_salt;

@@ -47,7 +47,7 @@ using namespace WebCore;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
 static WorkQueue& sharedQuickLookFileQueue()
 {
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("com.apple.WebKit.QuickLookFileQueue"));
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("com.apple.WebKit.QuickLookFileQueue"_s));
     return queue.get();
 }
 #endif

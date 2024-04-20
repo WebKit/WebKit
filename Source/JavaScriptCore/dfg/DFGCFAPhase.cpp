@@ -44,7 +44,7 @@ namespace JSC { namespace DFG {
 class CFAPhase : public Phase {
 public:
     CFAPhase(Graph& graph)
-        : Phase(graph, "control flow analysis")
+        : Phase(graph, "control flow analysis"_s)
         , m_state(graph)
         , m_interpreter(graph, m_state)
         , m_verbose(Options::verboseCFA())

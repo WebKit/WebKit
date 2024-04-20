@@ -47,7 +47,7 @@ private:
 };
 
 Instance::Impl::Impl()
-    : m_workQueue(WorkQueue::create("OpenXR queue"))
+    : m_workQueue(WorkQueue::create("OpenXR queue"_s))
 {
     m_workQueue->dispatch([this]() {
         LOG(XR, "OpenXR: initializing\n");

@@ -146,7 +146,7 @@ uint32_t ThreadLike::currentSequence()
 
 struct Thread::NewThreadContext : public ThreadSafeRefCounted<NewThreadContext> {
 public:
-    NewThreadContext(const char* name, Function<void()>&& entryPoint, Ref<Thread>&& thread)
+    NewThreadContext(ASCIILiteral name, Function<void()>&& entryPoint, Ref<Thread>&& thread)
         : name(name)
         , entryPoint(WTFMove(entryPoint))
         , thread(WTFMove(thread))
@@ -155,7 +155,7 @@ public:
 
     enum class Stage { Start, EstablishedHandle, Initialized };
     Stage stage { Stage::Start };
-    const char* name;
+    ASCIILiteral name;
     Function<void()> entryPoint;
     Ref<Thread> thread;
     Mutex mutex;
@@ -258,7 +258,7 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
     function();
 }
 
-Ref<Thread> Thread::create(const char* name, Function<void()>&& entryPoint, ThreadType threadType, QOS qos, SchedulingPolicy schedulingPolicy)
+Ref<Thread> Thread::create(ASCIILiteral name, Function<void()>&& entryPoint, ThreadType threadType, QOS qos, SchedulingPolicy schedulingPolicy)
 {
     WTF::initialize();
     Ref<Thread> thread = adoptRef(*new Thread());

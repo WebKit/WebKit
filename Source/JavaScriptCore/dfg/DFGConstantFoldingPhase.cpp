@@ -46,7 +46,7 @@ namespace JSC { namespace DFG {
 class ConstantFoldingPhase : public Phase {
 public:
     ConstantFoldingPhase(Graph& graph)
-        : Phase(graph, "constant folding")
+        : Phase(graph, "constant folding"_s)
         , m_state(graph)
         , m_interpreter(graph, m_state)
         , m_insertionSet(graph)

@@ -40,7 +40,7 @@ namespace JSC { namespace DFG {
 class OSREntrypointCreationPhase : public Phase {
 public:
     OSREntrypointCreationPhase(Graph& graph)
-        : Phase(graph, "OSR entrypoint creation")
+        : Phase(graph, "OSR entrypoint creation"_s)
     {
     }
     

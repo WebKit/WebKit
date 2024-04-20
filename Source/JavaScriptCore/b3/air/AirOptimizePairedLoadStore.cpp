@@ -263,7 +263,7 @@ bool optimizePairedLoadStore(Code& code)
 {
     constexpr bool verbose = false;
 
-    PhaseScope phaseScope(code, "optimizePairedLoadStore");
+    PhaseScope phaseScope(code, "optimizePairedLoadStore"_s);
 
     if (verbose) {
         dataLog("Air before an iteration of optimizePairedLoadStore:\n");

@@ -35,7 +35,7 @@
 namespace WebKit {
 
 WebInspectorInterruptDispatcher::WebInspectorInterruptDispatcher()
-    : m_queue(WorkQueue::create("com.apple.WebKit.WebInspectorInterruptDispatcher"))
+    : m_queue(WorkQueue::create("com.apple.WebKit.WebInspectorInterruptDispatcher"_s))
 {
 }
 

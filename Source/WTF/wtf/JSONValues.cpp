@@ -59,9 +59,9 @@ enum class Token {
     Invalid,
 };
 
-const char* const nullToken = "null";
-const char* const trueToken = "true";
-const char* const falseToken = "false";
+constexpr auto nullToken = "null"_s;
+constexpr auto trueToken = "true"_s;
+constexpr auto falseToken = "false"_s;
 
 template<typename CodeUnit>
 bool parseConstToken(const CodeUnit* start, const CodeUnit* end, const CodeUnit** tokenEnd, const char* token)

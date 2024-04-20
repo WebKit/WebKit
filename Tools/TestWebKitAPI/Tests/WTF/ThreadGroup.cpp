@@ -46,7 +46,7 @@ static void testThreadGroup(Mode mode)
     {
         Locker locker { lock };
         for (unsigned i = 0; i < numberOfThreads; ++i) {
-            Ref<Thread> thread = Thread::create("ThreadGroupWorker", [&] {
+            Ref<Thread> thread = Thread::create("ThreadGroupWorker"_s, [&] {
                 Locker locker { lock };
                 if (mode == Mode::AddCurrentThread)
                     threadGroup->addCurrentThread();
@@ -102,7 +102,7 @@ TEST(WTF, ThreadGroupAddCurrentThread)
 TEST(WTF, ThreadGroupDoNotAddDeadThread)
 {
     auto threadGroup = ThreadGroup::create();
-    Ref<Thread> thread = Thread::create("ThreadGroupWorker", [&] { });
+    Ref<Thread> thread = Thread::create("ThreadGroupWorker"_s, [&] { });
     thread->waitForCompletion();
     EXPECT_TRUE(threadGroup->add(thread.get()) == ThreadGroupAddResult::NotAdded);
 
@@ -116,7 +116,7 @@ TEST(WTF, ThreadGroupAddDuplicateThreads)
     Lock lock;
     Condition restartCondition;
     auto threadGroup = ThreadGroup::create();
-    Ref<Thread> thread = Thread::create("ThreadGroupWorker", [&] {
+    Ref<Thread> thread = Thread::create("ThreadGroupWorker"_s, [&] {
         Locker locker { lock };
         restartCondition.wait(lock, [&] {
             return restarting;
@@ -165,7 +165,7 @@ TEST(WTF, ThreadGroupRemove)
 
     auto threadGroup = ThreadGroup::create();
     for (unsigned i = 0; i < NumberOfThreads; i++) {
-        auto thread = Thread::create("ThreadGroupWorker", [&]() {
+        auto thread = Thread::create("ThreadGroupWorker"_s, [&]() {
             Locker locker { lock };
             ++waitingThreads;
             condition.notifyOne();

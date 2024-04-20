@@ -74,7 +74,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&&
 
 MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
     : RealtimeMediaSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Microphone, WTFMove(name) }, WTFMove(hashSalts), pageIdentifier)
-    , m_workQueue(WorkQueue::create("MockRealtimeAudioSource Render Queue"))
+    , m_workQueue(WorkQueue::create("MockRealtimeAudioSource Render Queue"_s))
     , m_timer(RunLoop::current(), this, &MockRealtimeAudioSource::tick)
 {
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID());

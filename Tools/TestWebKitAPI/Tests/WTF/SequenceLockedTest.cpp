@@ -55,7 +55,7 @@ TEST_F(SequenceLockedTest, Works)
     SequenceLocked<Tester> tester;
     static_assert(sizeof(tester) - sizeof(uint64_t) == sizeof(Tester));
     std::atomic<bool> done = false;
-    auto thread = Thread::create("SequenceLocked test", [&] {
+    auto thread = Thread::create("SequenceLocked test"_s, [&] {
         unsigned i = 0;
         while (!done) {
             tester.store({ i, i, i, i });
@@ -81,7 +81,7 @@ TEST_F(SequenceLockedTest, DISABLED_WithoutSequenceLockedFails)
 {
     Tester tester;
     std::atomic<bool> done = false;
-    auto thread = Thread::create("SequenceLocked test", [&] {
+    auto thread = Thread::create("SequenceLocked test"_s, [&] {
         unsigned i = 0;
         while (!done) {
             tester = { i, i, i, i };

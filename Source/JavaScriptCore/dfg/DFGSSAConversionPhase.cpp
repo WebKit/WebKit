@@ -45,7 +45,7 @@ class SSAConversionPhase : public Phase {
     
 public:
     SSAConversionPhase(Graph& graph)
-        : Phase(graph, "SSA conversion")
+        : Phase(graph, "SSA conversion"_s)
         , m_insertionSet(graph)
     {
     }

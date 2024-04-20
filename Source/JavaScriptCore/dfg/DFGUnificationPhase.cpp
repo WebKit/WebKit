@@ -37,7 +37,7 @@ namespace JSC { namespace DFG {
 class UnificationPhase : public Phase {
 public:
     UnificationPhase(Graph& graph)
-        : Phase(graph, "unification")
+        : Phase(graph, "unification"_s)
     {
     }
     

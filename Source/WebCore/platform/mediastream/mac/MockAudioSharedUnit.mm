@@ -199,7 +199,7 @@ MockAudioSharedInternalUnit::MockAudioSharedInternalUnit(bool enableEchoCancella
     : m_internalState(MockAudioSharedInternalUnitState::create())
     , m_enableEchoCancellation(enableEchoCancellation)
     , m_timer(RunLoop::current(), [this] { this->start(); })
-    , m_workQueue(WorkQueue::create("MockAudioSharedInternalUnit Capture Queue", WorkQueue::QOS::UserInteractive))
+    , m_workQueue(WorkQueue::create("MockAudioSharedInternalUnit Capture Queue"_s, WorkQueue::QOS::UserInteractive))
 {
     m_streamFormat = m_outputStreamFormat = createAudioFormat(44100, 2);
 }

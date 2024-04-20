@@ -682,7 +682,7 @@ void Cache::dumpContentsToFile()
 
 void Cache::deleteDumpFile()
 {
-    WorkQueue::create("com.apple.WebKit.Cache.delete")->dispatch([path = dumpFilePath().isolatedCopy()] {
+    WorkQueue::create("com.apple.WebKit.Cache.delete"_s)->dispatch([path = dumpFilePath().isolatedCopy()] {
         deleteFile(path);
     });
 }

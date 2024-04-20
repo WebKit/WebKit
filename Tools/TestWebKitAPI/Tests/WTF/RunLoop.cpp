@@ -86,7 +86,7 @@ TEST(WTF_RunLoop, DispatchCrossThreadWhileNested)
     bool done = false;
 
     RunLoop::main().dispatch([&done] {
-        Thread::create("DispatchCrossThread", [&done] {
+        Thread::create("DispatchCrossThread"_s, [&done] {
             RunLoop::main().dispatch([&done] {
                 done = true;
             });
@@ -106,7 +106,7 @@ TEST(WTF_RunLoop, CallOnMainCrossThreadWhileNested)
     bool done = false;
 
     callOnMainThread([&done] {
-        Thread::create("CallOnMainCrossThread", [&done] {
+        Thread::create("CallOnMainCrossThread"_s, [&done] {
             callOnMainThread([&done] {
                 done = true;
             });
@@ -208,7 +208,7 @@ TEST(WTF_RunLoop, ManyTimes)
         unsigned m_count { 0 };
     };
 
-    Thread::create("RunLoopManyTimes", [] {
+    Thread::create("RunLoopManyTimes"_s, [] {
         Counter counter;
         RunLoop::current().dispatch([&counter] {
             counter.run();
@@ -221,7 +221,7 @@ TEST(WTF_RunLoop, ThreadTerminationSelfReferenceCleanup)
 {
     RefPtr<RunLoop> runLoop;
 
-    Thread::create("RunLoopThreadTerminationSelfReferenceCleanup", [&] {
+    Thread::create("RunLoopThreadTerminationSelfReferenceCleanup"_s, [&] {
         runLoop = &RunLoop::current();
 
         // This stores a RunLoop reference in the dispatch queue that will not be released
@@ -250,7 +250,7 @@ TEST(WTF_RunLoopDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(CapabilityIsCurrentFa
     ::testing::FLAGS_gtest_death_test_style = "threadsafe";
     ASSERT_DEATH_IF_SUPPORTED({
         WTF::initializeMainThread();
-        Thread::create("CapabilityIsCurrentNegative thread", [&] {
+        Thread::create("CapabilityIsCurrentNegative thread"_s, [&] {
             assertIsCurrent(RunLoop::main()); // This should assert.
         })->waitForCompletion();
     }, "ASSERTION FAILED: runLoop.isCurrent\\(\\)");

@@ -38,7 +38,7 @@ const int kRenderBufferSize = 128;
 
 MockAudioDestinationCocoa::MockAudioDestinationCocoa(AudioIOCallback& callback, float sampleRate)
     : AudioDestinationCocoa(callback, 2, sampleRate)
-    , m_workQueue(WorkQueue::create("MockAudioDestinationCocoa Render Queue"))
+    , m_workQueue(WorkQueue::create("MockAudioDestinationCocoa Render Queue"_s))
     , m_timer(RunLoop::current(), this, &MockAudioDestinationCocoa::tick)
 {
 }

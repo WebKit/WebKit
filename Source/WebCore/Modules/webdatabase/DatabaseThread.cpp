@@ -63,7 +63,7 @@ void DatabaseThread::start()
     if (m_thread)
         return;
 
-    m_thread = Thread::create("WebCore: Database", [this] {
+    m_thread = Thread::create("WebCore: Database"_s, [this] {
         databaseThread();
     });
 }

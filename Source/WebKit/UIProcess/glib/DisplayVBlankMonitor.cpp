@@ -71,7 +71,7 @@ bool DisplayVBlankMonitor::startThreadIfNeeded()
     if (m_thread)
         return false;
 
-    m_thread = Thread::create("VBlankMonitor", [this] {
+    m_thread = Thread::create("VBlankMonitor"_s, [this] {
         while (true) {
             {
                 Locker locker { m_lock };

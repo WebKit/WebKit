@@ -40,7 +40,7 @@ class ValidateUnlinked final : public Phase {
 
 public:
     ValidateUnlinked(Graph& graph)
-        : Phase(graph, "uDFG validation")
+        : Phase(graph, "uDFG validation"_s)
     {
     }
 

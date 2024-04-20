@@ -268,7 +268,7 @@ AVCaptureDeviceManager::AVCaptureDeviceManager()
 #if HAVE(AVCAPTUREDEVICE)
     , m_avCaptureDeviceTypes(AVVideoCaptureSource::cameraCaptureDeviceTypes())
 #endif
-    , m_dispatchQueue(WorkQueue::create("com.apple.WebKit.AVCaptureDeviceManager"))
+    , m_dispatchQueue(WorkQueue::create("com.apple.WebKit.AVCaptureDeviceManager"_s))
 {
 }
 

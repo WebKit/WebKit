@@ -56,7 +56,7 @@ TEST(WTF, ThreadingThreadIdentity)
 
     // Now create another thread using WTF. On OSX, it may have the same pthread handle
     // but should get a different RefPtr<Thread> if the previous RefPtr<Thread> is held.
-    Thread::create("DumpRenderTree: test", [] {
+    Thread::create("DumpRenderTree: test"_s, [] {
         EXPECT_TRUE(thread1 != &Thread::current());
         EXPECT_TRUE(thread2 != &Thread::current());
         EXPECT_TRUE(thread1 != thread2);
@@ -77,7 +77,7 @@ struct AssertionTestHolder {
         BinarySemaphore memberInitialized;
         BinarySemaphore threadInitialized;
 
-        thread = Thread::create("com.apple.WebKit.Test.ThreadThreadSafetyAnalysisAssertIsCurrentWorks", [&] {
+        thread = Thread::create("com.apple.WebKit.Test.ThreadThreadSafetyAnalysisAssertIsCurrentWorks"_s, [&] {
             memberInitialized.wait(); // Wait for `AssertionTestHolder::thread` assignment to complete.
             threadInitialized.signal();
 // Enable to see "writing variable 'counter' requires holding mutex 'thread' exclusively".

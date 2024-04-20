@@ -660,7 +660,7 @@ private:
 
 void fixObviousSpills(Code& code)
 {
-    PhaseScope phaseScope(code, "fixObviousSpills");
+    PhaseScope phaseScope(code, "fixObviousSpills"_s);
 
     FixObviousSpills fixObviousSpills(code);
     fixObviousSpills.run();

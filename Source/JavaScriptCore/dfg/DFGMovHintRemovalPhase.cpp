@@ -48,7 +48,7 @@ static constexpr bool verbose = false;
 class MovHintRemovalPhase : public Phase {
 public:
     MovHintRemovalPhase(Graph& graph)
-        : Phase(graph, "MovHint removal")
+        : Phase(graph, "MovHint removal"_s)
         , m_insertionSet(graph)
         , m_state(OperandsLike, graph.block(0)->variablesAtHead)
         , m_changed(false)

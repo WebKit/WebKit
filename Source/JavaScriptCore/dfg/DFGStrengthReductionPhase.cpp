@@ -53,7 +53,7 @@ class StrengthReductionPhase : public Phase {
     
 public:
     StrengthReductionPhase(Graph& graph)
-        : Phase(graph, "strength reduction")
+        : Phase(graph, "strength reduction"_s)
         , m_insertionSet(graph)
     {
     }
