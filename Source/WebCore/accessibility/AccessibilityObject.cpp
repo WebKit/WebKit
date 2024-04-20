@@ -2538,6 +2538,15 @@ const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribu
     return element ? element->attributeWithDefaultARIA(attribute) : nullAtom();
 }
 
+String AccessibilityObject::getAttributeTrimmed(const QualifiedName& attribute) const
+{
+    const auto& rawValue = getAttribute(attribute);
+    if (rawValue.isEmpty())
+        return { };
+    auto value = rawValue.string();
+    return value.trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
+}
+
 String AccessibilityObject::nameAttribute() const
 {
     return getAttribute(nameAttr);

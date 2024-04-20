@@ -781,8 +781,8 @@ String AccessibilityRenderObject::stringValue() const
         const auto& listItems = selectElement.listItems();
         if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
             if (RefPtr selectedItem = listItems[selectedIndex].get()) {
-                const AtomString& overriddenDescription = selectedItem->attributeWithoutSynchronization(aria_labelAttr);
-                if (!overriddenDescription.isNull())
+                auto overriddenDescription = selectedItem->attributeTrimmedWithDefaultARIA(aria_labelAttr);
+                if (!overriddenDescription.isEmpty())
                     return overriddenDescription;
             }
         }

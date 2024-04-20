@@ -53,7 +53,6 @@ private:
     void addChildren() override;
     
     bool canSetValueAttribute() const override { return true; }
-    const AtomString& getAttribute(const QualifiedName&) const override;
     
     bool setValue(const String&) override;
     float valueForRange() const override;

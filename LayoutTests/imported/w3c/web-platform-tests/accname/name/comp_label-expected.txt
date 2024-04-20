@@ -274,8 +274,7 @@ PASS button with leading form feed control character in aria-label is valid
 PASS nav with trailing nbsp char aria-label is valid (nbsp is preserved in name)
 PASS button with leading nbsp char in aria-label is valid (and uses aria-label)
 PASS button with empty aria-label does not use aria-label as name
-FAIL textarea with tab character as aria-label does not use aria-label as name assert_equals: <textarea aria-label="  " title="title" data-testname="textarea with tab character as aria-label does not use aria-label as name" data-expectedlabel="title" class="ex">textarea contents</textarea> expected "title" but got ""
-FAIL button with carriage return as aria-label does not use aria-label as name assert_equals: <button aria-label="
-" data-testname="button with carriage return as aria-label does not use aria-label as name" data-expectedlabel="my button" class="ex">my button</button> expected "my button" but got ""
-FAIL button with space characters as aria-label does not use aria-label as name assert_equals: <button aria-label="      " data-testname="button with space characters as aria-label does not use aria-label as name" data-expectedlabel="my button" class="ex">my button</button> expected "my button" but got ""
+PASS textarea with tab character as aria-label does not use aria-label as name
+PASS button with carriage return as aria-label does not use aria-label as name
+PASS button with space characters as aria-label does not use aria-label as name
 

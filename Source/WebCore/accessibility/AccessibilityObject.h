@@ -538,8 +538,11 @@ public:
     bool shouldFocusActiveDescendant() const;
 
     WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);
-    virtual bool hasAttribute(const QualifiedName&) const;
-    virtual const AtomString& getAttribute(const QualifiedName&) const;
+    bool hasAttribute(const QualifiedName&) const;
+    const AtomString& getAttribute(const QualifiedName&) const;
+    String getAttributeTrimmed(const QualifiedName&) const;
+    bool hasValidARIALabel() const { return !getAttributeTrimmed(HTMLNames::aria_labelAttr).isEmpty(); }
+
     String nameAttribute() const final;
     int getIntegralAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const;

@@ -171,6 +171,7 @@ public:
     inline bool hasAttributeWithoutSynchronization(const QualifiedName&) const;
     inline const AtomString& attributeWithoutSynchronization(const QualifiedName&) const;
     inline const AtomString& attributeWithDefaultARIA(const QualifiedName&) const;
+    inline String attributeTrimmedWithDefaultARIA(const QualifiedName&) const;
 
 #if DUMP_NODE_STATISTICS
     bool hasNamedNodeMap() const;

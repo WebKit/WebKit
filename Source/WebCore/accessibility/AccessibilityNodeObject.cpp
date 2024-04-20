@@ -436,7 +436,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         // https://w3c.github.io/html-aam/#el-aside
         if (isDescendantOfElementType({ asideTag, articleTag, sectionTag, navTag })) {
             // Return LandmarkComplementary if the aside element has an accessible name.
-            if (hasAttribute(aria_labelAttr) || hasAttribute(aria_labelledbyAttr) || hasAttribute(aria_descriptionAttr) || hasAttribute(aria_describedbyAttr))
+            if (hasValidARIALabel() || hasAttribute(aria_labelledbyAttr) || hasAttribute(aria_descriptionAttr) || hasAttribute(aria_describedbyAttr))
                 return AccessibilityRole::LandmarkComplementary;
             return AccessibilityRole::Generic;
         }
@@ -450,7 +450,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     // The HTML AAM spec says it is "strongly recommended" that ATs only convey and provide navigation
     // for section elements which have names.
     if (element->hasTagName(sectionTag))
-        return hasAttribute(aria_labelAttr) || hasAttribute(aria_labelledbyAttr) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
+        return hasValidARIALabel() || hasAttribute(aria_labelledbyAttr) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
     if (element->hasTagName(addressTag))
         return AccessibilityRole::ApplicationGroup;
     if (element->hasTagName(blockquoteTag))
@@ -1614,7 +1614,7 @@ String AccessibilityNodeObject::ariaAccessibilityDescription() const
     if (!ariaLabeledBy.isEmpty())
         return ariaLabeledBy;
 
-    const AtomString& ariaLabel = getAttribute(aria_labelAttr);
+    auto ariaLabel = getAttributeTrimmed(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
 
@@ -1713,7 +1713,7 @@ bool AccessibilityNodeObject::isLabelable() const
 
 String AccessibilityNodeObject::textAsLabelFor(const AccessibilityObject& labeledObject) const
 {
-    auto labelAttribute = getAttribute(aria_labelAttr);
+    auto labelAttribute = getAttributeTrimmed(aria_labelAttr);
     if (!labelAttribute.isEmpty())
         return labelAttribute;
 
@@ -1834,9 +1834,9 @@ void AccessibilityNodeObject::labelText(Vector<AccessibilityText>& textOrder) co
         return;
     }
 
-    auto& ariaLabel = getAttribute(aria_labelAttr);
+    auto ariaLabel = getAttributeTrimmed(aria_labelAttr);
     if (!ariaLabel.isEmpty()) {
-        textOrder.append({ ariaLabel.string(), AccessibilityTextSource::LabelByElement });
+        textOrder.append({ WTFMove(ariaLabel), AccessibilityTextSource::LabelByElement });
         return;
     }
 }
@@ -1859,7 +1859,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
 
     ariaLabeledByText(textOrder);
 
-    const AtomString& ariaLabel = getAttribute(aria_labelAttr);
+    auto ariaLabel = getAttributeTrimmed(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         textOrder.append(AccessibilityText(ariaLabel, AccessibilityTextSource::Alternative));
 
@@ -2513,8 +2513,8 @@ String AccessibilityNodeObject::stringValue() const
         auto& listItems = selectElement->listItems();
         if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
             if (RefPtr selectedItem = listItems[selectedIndex].get()) {
-                const AtomString& overriddenDescription = selectedItem->attributeWithoutSynchronization(aria_labelAttr);
-                if (!overriddenDescription.isNull())
+                auto overriddenDescription = selectedItem->attributeTrimmedWithDefaultARIA(aria_labelAttr);
+                if (!overriddenDescription.isEmpty())
                     return overriddenDescription;
             }
         }
@@ -2583,7 +2583,8 @@ SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
 static String accessibleNameForNode(Node& node, Node* labelledbyNode)
 {
     auto* element = dynamicDowncast<Element>(node);
-    const AtomString& ariaLabel = element ? element->attributeWithoutSynchronization(aria_labelAttr) : nullAtom();
+
+    auto ariaLabel = element ? element->attributeTrimmedWithDefaultARIA(aria_labelAttr) : nullAtom();
     if (!ariaLabel.isEmpty())
         return ariaLabel;
 
@@ -2730,7 +2731,7 @@ bool AccessibilityNodeObject::hasAttributesRequiredForInclusion() const
 
     // Avoid calculating the actual description here, which is expensive.
     // This means there might be more accessible elements in the tree if the labelledBy points to invalid elements, but that shouldn't cause any real problems.
-    if (getAttribute(aria_labelledbyAttr).length() || getAttribute(aria_labeledbyAttr).length() || getAttribute(aria_labelAttr).length())
+    if (getAttribute(aria_labelledbyAttr).length() || getAttribute(aria_labeledbyAttr).length() || getAttributeTrimmed(aria_labelAttr).length())
         return true;
 
     return false;
@@ -2898,7 +2899,7 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
     // In situations where an author has not specified names for the form and
     // region landmarks, it is considered an authoring error. The user agent
     // MUST treat such element as if no role had been provided.
-    if ((role == AccessibilityRole::LandmarkRegion || role == AccessibilityRole::Form) && getAttribute(aria_labelAttr).isEmpty() && getAttribute(aria_labelledbyAttr).isEmpty() && getAttribute(aria_labeledbyAttr).isEmpty())
+    if ((role == AccessibilityRole::LandmarkRegion || role == AccessibilityRole::Form) && getAttributeTrimmed(aria_labelAttr).isEmpty() && getAttribute(aria_labelledbyAttr).isEmpty() && getAttribute(aria_labeledbyAttr).isEmpty())
         role = AccessibilityRole::Unknown;
 
     if (enumToUnderlyingType(role))
