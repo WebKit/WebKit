@@ -43,6 +43,8 @@ namespace CSSPropertyParserHelpers {
 
 // MARK: Percent (raw)
 
+std::optional<PercentRaw> validatedPercentRaw(double, ValueRange);
+
 struct PercentRawKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
     static std::optional<PercentRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);

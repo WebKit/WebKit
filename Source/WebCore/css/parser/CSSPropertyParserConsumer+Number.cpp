@@ -32,7 +32,7 @@ namespace CSSPropertyParserHelpers {
 
 // MARK: Number (Raw)
 
-static std::optional<NumberRaw> validatedNumberRaw(double value, ValueRange valueRange)
+std::optional<NumberRaw> validatedNumberRaw(double value, ValueRange valueRange)
 {
     if (valueRange == ValueRange::NonNegative && value < 0)
         return std::nullopt;

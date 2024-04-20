@@ -32,7 +32,7 @@ namespace CSSPropertyParserHelpers {
 
 // MARK: Percent (raw)
 
-static std::optional<PercentRaw> validatedPercentRaw(double value, ValueRange valueRange)
+std::optional<PercentRaw> validatedPercentRaw(double value, ValueRange valueRange)
 {
     if (valueRange == ValueRange::NonNegative && value < 0)
         return std::nullopt;

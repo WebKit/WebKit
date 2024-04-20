@@ -41,6 +41,8 @@ namespace CSSPropertyParserHelpers {
 
 // MARK: Number (Raw)
 
+std::optional<NumberRaw> validatedNumberRaw(double, ValueRange);
+
 struct NumberRawKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
     static std::optional<NumberRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);

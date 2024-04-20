@@ -27,6 +27,7 @@
 #include "CustomPaintCanvas.h"
 
 #include "BitmapImage.h"
+#include "CSSParserContext.h"
 #include "CanvasRenderingContext.h"
 #include "DisplayListDrawingContext.h"
 #include "DisplayListRecorder.h"
@@ -129,6 +130,14 @@ void CustomPaintCanvas::replayDisplayListImpl(GraphicsContext& target) const
         replayer.replay(FloatRect { { }, size() });
         displayList.clear();
     }
+}
+
+const CSSParserContext& CustomPaintCanvas::cssParserContext() const
+{
+    // FIXME: Rather than using a default CSSParserContext, there should be one exposed via ScriptExecutionContext.
+    if (!m_cssParserContext)
+        m_cssParserContext = WTF::makeUnique<CSSParserContext>(HTMLStandardMode);
+    return *m_cssParserContext;
 }
 
 } // namespace WebCore

@@ -31,6 +31,7 @@
 #include "BitmapImage.h"
 #include "Blob.h"
 #include "BlobCallback.h"
+#include "CSSParserContext.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
@@ -1012,6 +1013,13 @@ void HTMLCanvasElement::queueTaskKeepingObjectAlive(TaskSource source, Function<
 void HTMLCanvasElement::dispatchEvent(Event& event)
 {
     Node::dispatchEvent(event);
+}
+
+const CSSParserContext& HTMLCanvasElement::cssParserContext() const
+{
+    if (!m_cssParserContext)
+        m_cssParserContext = WTF::makeUnique<CSSParserContext>(document());
+    return *m_cssParserContext;
 }
 
 WebCoreOpaqueRoot root(HTMLCanvasElement* canvas)

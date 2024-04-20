@@ -41,7 +41,6 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserConsumer+Angle.h"
-#include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+List.h"
@@ -76,18 +75,6 @@ std::optional<CSSPropertyParserHelpers::FontRaw> CSSPropertyParserWorkerSafe::pa
     range.consumeWhitespace();
 
     return CSSPropertyParserHelpers::consumeFontRaw(range, mode);
-}
-
-Color CSSPropertyParserWorkerSafe::parseColor(const String& string)
-{
-    if (auto color = CSSParserFastPaths::parseSimpleColor(string))
-        return *color;
-
-    CSSTokenizer tokenizer(string);
-    CSSParserTokenRange range(tokenizer.tokenRange());
-    range.consumeWhitespace();
-
-    return CSSPropertyParserHelpers::consumeColorWorkerSafe(range, CSSParserContext(HTMLStandardMode));
 }
 
 static CSSParserMode parserMode(ScriptExecutionContext& context)

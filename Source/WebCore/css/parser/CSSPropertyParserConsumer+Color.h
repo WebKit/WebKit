@@ -25,6 +25,7 @@
 #pragma once
 
 #include "StyleColor.h"
+#include <optional>
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 
@@ -39,14 +40,23 @@ struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 
-// MARK: <color>
-Color consumeColorWorkerSafe(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, const CSSParserContext&, bool acceptQuirkyColors = false, OptionSet<StyleColor::CSSColorType> = { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System });
+// Options to augment color parsing.
+struct CSSColorParsingOptions {
+    bool acceptQuirkyColors = false;
+    OptionSet<StyleColor::CSSColorType> allowedColorTypes = { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System };
+};
 
-
-// MARK: <color-interpolation-method>
+// MARK: <color-interpolation-method> (raw)
 std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParserTokenRange&);
 
-}
-}
+// MARK: <color> (raw)
+Color consumeColorRaw(CSSParserTokenRange&, const CSSParserContext&, const CSSColorParsingOptions&);
+Color parseColorRawWorkerSafe(const String&, const CSSParserContext&, const CSSColorParsingOptions&);
+Color parseColorRaw(const String&, const CSSParserContext&, const CSSColorParsingOptions&);
 
+// MARK: <color> (CSSPrimitiveValue)
+RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, const CSSParserContext&, const CSSColorParsingOptions&);
+RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, const CSSParserContext&, bool acceptQuirkyColors = false, OptionSet<StyleColor::CSSColorType> = { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System });
+
+}
+}

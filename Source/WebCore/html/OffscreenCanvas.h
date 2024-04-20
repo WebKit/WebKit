@@ -135,6 +135,8 @@ public:
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
 
+    const CSSParserContext& cssParserContext() const final;
+
     ExceptionOr<std::optional<OffscreenRenderingContext>> getContext(JSC::JSGlobalObject&, RenderingContextType, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
     ExceptionOr<RefPtr<ImageBitmap>> transferToImageBitmap();
     void convertToBlob(ImageEncodeOptions&&, Ref<DeferredPromise>&&);
@@ -191,6 +193,8 @@ private:
     mutable bool m_hasCreatedImageBuffer { false };
     bool m_detached { false };
     bool m_hasScheduledCommit { false };
+
+    mutable std::unique_ptr<CSSParserContext> m_cssParserContext;
 };
 
 }
