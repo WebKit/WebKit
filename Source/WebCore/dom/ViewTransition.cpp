@@ -357,8 +357,12 @@ ExceptionOr<void> ViewTransition::captureOldState()
     ListHashSet<AtomString> usedTransitionNames;
     Vector<Ref<Element>> captureElements;
     Ref document = *m_document;
+    // Ensure style & render tree are up-to-date.
+    document->updateStyleIfNeeded();
+
     if (CheckedPtr view = document->renderView()) {
         m_initialLargeViewportSize = view->sizeForCSSLargeViewportUnits();
+
         auto result = forEachElementInPaintOrder([&](Element& element) -> ExceptionOr<void> {
             if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
@@ -508,6 +512,9 @@ void ViewTransition::activateViewTransition()
 {
     if (m_phase == ViewTransitionPhase::Done)
         return;
+
+    // Ensure style & render tree are up-to-date.
+    protectedDocument()->updateStyleIfNeeded();
 
     // FIXME: Set rendering suppression for view transitions to false.
     if (!protectedDocument()->renderView() || protectedDocument()->renderView()->sizeForCSSLargeViewportUnits() != m_initialLargeViewportSize) {
