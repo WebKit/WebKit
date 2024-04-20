@@ -32,6 +32,8 @@ namespace WTF {
 
 template<typename IntegerType> IntegerType cryptographicallyRandomNumber() = delete;
 
+template<> WTF_EXPORT_PRIVATE uint8_t cryptographicallyRandomNumber<uint8_t>();
+
 // Returns a cryptographically secure pseudo-random number in the range [0, UINT_MAX].
 template<> WTF_EXPORT_PRIVATE unsigned cryptographicallyRandomNumber<unsigned>();
 

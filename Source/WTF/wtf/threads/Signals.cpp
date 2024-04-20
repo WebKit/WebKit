@@ -558,7 +558,12 @@ void SignalHandlers::initialize()
 
 #if CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)
     // Set up our secret key which we use as random diversifier when signing our return PC in the handler callbacks.
-    secretSigningKey = WTF::cryptographicallyRandomNumber<uint32_t>() & __DARWIN_ARM_THREAD_STATE64_USER_DIVERSIFIER_MASK;
+    // According to the ARM64 ABI ptrauth_blend_discriminator can't take zero as the first argument.
+    static_assert(__DARWIN_ARM_THREAD_STATE64_USER_DIVERSIFIER_MASK == 0xff000000);
+    do {
+        secretSigningKey = static_cast<uint32_t>(WTF::cryptographicallyRandomNumber<uint8_t>()) << 24;
+    } while (!secretSigningKey);
+    ASSERT(secretSigningKey == (secretSigningKey & __DARWIN_ARM_THREAD_STATE64_USER_DIVERSIFIER_MASK));
 #endif
 }
 
