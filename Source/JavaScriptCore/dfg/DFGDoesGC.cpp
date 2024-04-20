@@ -513,30 +513,30 @@ bool doesGC(Graph& graph, Node* node)
             if (node->isBinaryUseKind(BooleanUse)
                 || node->isBinaryUseKind(SymbolUse)
                 || node->isBinaryUseKind(ObjectUse)
-                || node->isBinaryUseKind(ObjectUse, ObjectOrOtherUse) || node->isBinaryUseKind(ObjectOrOtherUse, ObjectUse))
+                || node->isReflexiveBinaryUseKind(ObjectUse, ObjectOrOtherUse))
                 return false;
         }
         return true;
 
     case CompareStrictEq:
         if (node->isBinaryUseKind(BooleanUse)
+            || node->isReflexiveBinaryUseKind(BooleanUse, UntypedUse)
             || node->isBinaryUseKind(Int32Use)
 #if USE(JSVALUE64)
             || node->isBinaryUseKind(Int52RepUse)
 #endif
             || node->isBinaryUseKind(DoubleRepUse)
             || node->isBinaryUseKind(SymbolUse)
-            || node->isBinaryUseKind(SymbolUse, UntypedUse)
-            || node->isBinaryUseKind(UntypedUse, SymbolUse)
+            || node->isReflexiveBinaryUseKind(SymbolUse, UntypedUse)
             || node->isBinaryUseKind(StringIdentUse)
-            || node->isBinaryUseKind(ObjectUse, UntypedUse) || node->isBinaryUseKind(UntypedUse, ObjectUse)
+            || node->isReflexiveBinaryUseKind(ObjectUse, UntypedUse)
             || node->isBinaryUseKind(ObjectUse)
             || node->isBinaryUseKind(OtherUse)
-            || node->isBinaryUseKind(OtherUse, UntypedUse) || node->isBinaryUseKind(UntypedUse, OtherUse)
+            || node->isReflexiveBinaryUseKind(OtherUse, UntypedUse)
             || node->isBinaryUseKind(MiscUse)
-            || node->isBinaryUseKind(MiscUse, UntypedUse) || node->isBinaryUseKind(UntypedUse, MiscUse)
-            || node->isBinaryUseKind(StringIdentUse, NotStringVarUse) || node->isBinaryUseKind(NotStringVarUse, StringIdentUse)
-            || node->isBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse) || node->isBinaryUseKind(NeitherDoubleNorHeapBigIntNorStringUse, NotDoubleUse))
+            || node->isReflexiveBinaryUseKind(MiscUse, UntypedUse)
+            || node->isReflexiveBinaryUseKind(StringIdentUse, NotStringVarUse)
+            || node->isReflexiveBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse))
             return false;
         return true;
 

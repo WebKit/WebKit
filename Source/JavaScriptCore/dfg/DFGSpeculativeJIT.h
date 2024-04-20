@@ -1261,8 +1261,7 @@ public:
     void compileStringIdentEquality(Node*);
     void compileStringToUntypedEquality(Node*, Edge stringEdge, Edge untypedEdge);
     void compileStringIdentToNotStringVarEquality(Node*, Edge stringEdge, Edge notStringVarEdge);
-    void compileOtherStrictEq(Node*);
-    void compileMiscStrictEq(Node*);
+    void compileBitwiseStrictEq(Node*);
 
     void compileSymbolEquality(Node*);
     void compileHeapBigIntEquality(Node*);

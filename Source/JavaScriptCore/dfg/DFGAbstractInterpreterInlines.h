@@ -2177,8 +2177,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 node->isBinaryUseKind(SymbolUse) ||
                 node->isBinaryUseKind(StringIdentUse) ||
                 node->isBinaryUseKind(ObjectUse) ||
-                node->isBinaryUseKind(ObjectUse, ObjectOrOtherUse) ||
-                node->isBinaryUseKind(ObjectOrOtherUse, ObjectUse)) {
+                node->isReflexiveBinaryUseKind(ObjectUse, ObjectOrOtherUse)) {
                 switch (node->op()) {
                 case CompareLess:
                 case CompareGreater:
@@ -2253,6 +2252,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // FIXME: Is there any case not involving NaN where x === x is not guaranteed to return true?
             // If not I might slightly simplify that check.
             if (node->isBinaryUseKind(BooleanUse)
+                || node->isReflexiveBinaryUseKind(BooleanUse, UntypedUse)
                 || node->isBinaryUseKind(Int32Use)
                 || node->isBinaryUseKind(Int52RepUse)
                 || node->isBinaryUseKind(StringUse)
@@ -2260,15 +2260,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 || node->isBinaryUseKind(SymbolUse)
                 || node->isBinaryUseKind(ObjectUse)
                 || node->isBinaryUseKind(OtherUse)
-                || node->isBinaryUseKind(OtherUse, UntypedUse)
-                || node->isBinaryUseKind(UntypedUse, OtherUse)
+                || node->isReflexiveBinaryUseKind(OtherUse, UntypedUse)
                 || node->isBinaryUseKind(MiscUse)
-                || node->isBinaryUseKind(MiscUse, UntypedUse)
-                || node->isBinaryUseKind(UntypedUse, MiscUse)
-                || node->isBinaryUseKind(StringIdentUse, NotStringVarUse)
-                || node->isBinaryUseKind(NotStringVarUse, StringIdentUse)
-                || node->isBinaryUseKind(StringUse, UntypedUse)
-                || node->isBinaryUseKind(UntypedUse, StringUse)
+                || node->isReflexiveBinaryUseKind(MiscUse, UntypedUse)
+                || node->isReflexiveBinaryUseKind(StringIdentUse, NotStringVarUse)
+                || node->isReflexiveBinaryUseKind(StringUse, UntypedUse)
                 || node->isBinaryUseKind(BigInt32Use)
                 || node->isBinaryUseKind(HeapBigIntUse)
                 || node->isBinaryUseKind(AnyBigIntUse)) {

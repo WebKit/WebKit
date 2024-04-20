@@ -4769,6 +4769,34 @@ private:
             m_graph.convertToConstant(node, jsBoolean(true));
             return;
         }
+
+        auto tryFoldWithConstant = [&](Edge&, Edge& constantEdge) {
+            JSValue constant = constantEdge->asJSValue();
+            if (constant.isBoolean()) {
+                fixEdge<BooleanUse>(constantEdge);
+                node->setOpAndDefaultFlags(CompareStrictEq);
+                return true;
+            }
+
+            if (constant.isUndefinedOrNull()) {
+                fixEdge<OtherUse>(constantEdge);
+                node->setOpAndDefaultFlags(CompareStrictEq);
+                return true;
+            }
+
+            return false;
+        };
+
+        if (node->child1()->isConstant()) {
+            if (tryFoldWithConstant(node->child2(), node->child1()))
+                return;
+        }
+        if (node->child2()->isConstant()) {
+            if (tryFoldWithConstant(node->child1(), node->child2()))
+                return;
+        }
+
+
         if (Node::shouldSpeculateBoolean(node->child1().node(), node->child2().node())) {
             fixEdge<BooleanUse>(node->child1());
             fixEdge<BooleanUse>(node->child2());

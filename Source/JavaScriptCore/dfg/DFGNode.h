@@ -2793,7 +2793,12 @@ public:
     {
         return isBinaryUseKind(useKind, useKind);
     }
-    
+
+    bool isReflexiveBinaryUseKind(UseKind left, UseKind right)
+    {
+        return isBinaryUseKind(left, right) || isBinaryUseKind(right, left);
+    }
+
     Edge childFor(UseKind useKind)
     {
         if (child1().useKind() == useKind)
