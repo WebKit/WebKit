@@ -1,6 +1,6 @@
-# PropertyAliases-15.0.0.txt
-# Date: 2022-02-02, 23:35:44 GMT
-# © 2022 Unicode®, Inc.
+# PropertyAliases-15.1.0.txt
+# Date: 2023-08-07, 15:21:34 GMT
+# © 2023 Unicode®, Inc.
 # Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
 # For terms of use, see https://www.unicode.org/terms_of_use.html
 #
@@ -64,12 +64,16 @@ nv                       ; Numeric_Value
 # ================================================
 # String Properties
 # ================================================
+bmg                      ; Bidi_Mirroring_Glyph
+bpb                      ; Bidi_Paired_Bracket
 cf                       ; Case_Folding
 cjkCompatibilityVariant  ; kCompatibilityVariant
 dm                       ; Decomposition_Mapping
+EqUIdeo                  ; Equivalent_Unified_Ideograph
 FC_NFKC                  ; FC_NFKC_Closure
 lc                       ; Lowercase_Mapping
 NFKC_CF                  ; NFKC_Casefold
+NFKC_SCF                 ; NFKC_Simple_Casefold
 scf                      ; Simple_Case_Folding         ; sfc
 slc                      ; Simple_Lowercase_Mapping
 stc                      ; Simple_Titlecase_Mapping
@@ -80,8 +84,6 @@ uc                       ; Uppercase_Mapping
 # ================================================
 # Miscellaneous Properties
 # ================================================
-bmg                      ; Bidi_Mirroring_Glyph
-bpb                      ; Bidi_Paired_Bracket
 cjkIICore                ; kIICore
 cjkIRG_GSource           ; kIRG_GSource
 cjkIRG_HSource           ; kIRG_HSource
@@ -95,7 +97,6 @@ cjkIRG_UKSource          ; kIRG_UKSource
 cjkIRG_USource           ; kIRG_USource
 cjkIRG_VSource           ; kIRG_VSource
 cjkRSUnicode             ; kRSUnicode                  ; Unicode_Radical_Stroke; URS
-EqUIdeo                  ; Equivalent_Unified_Ideograph
 isc                      ; ISO_Comment
 JSN                      ; Jamo_Short_Name
 na                       ; Name
@@ -121,6 +122,7 @@ ea                       ; East_Asian_Width
 gc                       ; General_Category
 GCB                      ; Grapheme_Cluster_Break
 hst                      ; Hangul_Syllable_Type
+InCB                     ; Indic_Conjunct_Break
 InPC                     ; Indic_Positional_Category
 InSC                     ; Indic_Syllabic_Category
 jg                       ; Joining_Group
@@ -168,11 +170,14 @@ Gr_Ext                   ; Grapheme_Extend
 Gr_Link                  ; Grapheme_Link
 Hex                      ; Hex_Digit
 Hyphen                   ; Hyphen
+ID_Compat_Math_Continue  ; ID_Compat_Math_Continue
+ID_Compat_Math_Start     ; ID_Compat_Math_Start
 IDC                      ; ID_Continue
 Ideo                     ; Ideographic
 IDS                      ; ID_Start
 IDSB                     ; IDS_Binary_Operator
 IDST                     ; IDS_Trinary_Operator
+IDSU                     ; IDS_Unary_Operator
 Join_C                   ; Join_Control
 LOE                      ; Logical_Order_Exception
 Lower                    ; Lowercase
@@ -207,6 +212,6 @@ XO_NFKC                  ; Expands_On_NFKC
 XO_NFKD                  ; Expands_On_NFKD
 
 # ================================================
-# Total:    129
+# Total:    134
 
 # EOF
