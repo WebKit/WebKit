@@ -149,10 +149,10 @@ void WebGLMultiDraw::multiDrawElementsInstancedWEBGL(GCGLenum mode, Int32List&& 
         return;
     auto& context = this->context();
 
-    if (!validateDrawcount(context, "multiDrawElementsWEBGL", drawcount)
-        || !validateOffset(context, "multiDrawElementsWEBGL", "countsOffset out of bounds", countsList.length(), countsOffset, drawcount)
-        || !validateOffset(context, "multiDrawElementsWEBGL", "offsetsOffset out of bounds", offsetsList.length(), offsetsOffset, drawcount)
-        || !validateOffset(context, "multiDrawElementsWEBGL", "instanceCountsOffset out of bounds", instanceCountsList.length(), instanceCountsOffset, drawcount)) {
+    if (!validateDrawcount(context, "multiDrawElementsInstancedWEBGL", drawcount)
+        || !validateOffset(context, "multiDrawElementsInstancedWEBGL", "countsOffset out of bounds", countsList.length(), countsOffset, drawcount)
+        || !validateOffset(context, "multiDrawElementsInstancedWEBGL", "offsetsOffset out of bounds", offsetsList.length(), offsetsOffset, drawcount)
+        || !validateOffset(context, "multiDrawElementsInstancedWEBGL", "instanceCountsOffset out of bounds", instanceCountsList.length(), instanceCountsOffset, drawcount)) {
         return;
     }
 
