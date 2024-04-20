@@ -106,8 +106,8 @@ void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Eleme
 
 void CanvasRenderingContext2D::setFont(const String& newFont)
 {
-    Document& document = canvas().document();
-    document.updateStyleIfNeeded();
+    Ref document = canvas().document();
+    document->updateStyleIfNeeded();
 
     setFontWithoutUpdatingStyle(newFont);
 }

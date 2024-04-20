@@ -826,12 +826,11 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
     {
         LOG_WITH_STREAM(ContentObservation, stream << "handleSyntheticClick: node(" << &nodeRespondingToClick << ") " << location);
         ContentChangeObserver::MouseMovedScope observingScope(respondingDocument);
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
         if (!localMainFrame)
             return;
-        auto& mainFrame = *localMainFrame;
-        dispatchSyntheticMouseMove(mainFrame, location, modifiers, pointerId);
-        mainFrame.document()->updateStyleIfNeeded();
+        dispatchSyntheticMouseMove(*localMainFrame, location, modifiers, pointerId);
+        localMainFrame->protectedDocument()->updateStyleIfNeeded();
         if (m_isClosed)
             return;
     }
