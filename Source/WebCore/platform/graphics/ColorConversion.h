@@ -84,11 +84,11 @@ template<> struct ChromaticAdapation<WhitePoint::D50, WhitePoint::D65> {
 };
 
 // MARK: HSLA
-template<> struct ColorConversion<SRGBA<float>, HSLA<float>> {
-    WEBCORE_EXPORT static SRGBA<float> convert(const HSLA<float>&);
+template<> struct ColorConversion<ExtendedSRGBA<float>, HSLA<float>> {
+    WEBCORE_EXPORT static ExtendedSRGBA<float> convert(const HSLA<float>&);
 };
-template<> struct ColorConversion<HSLA<float>, SRGBA<float>> {
-    WEBCORE_EXPORT static HSLA<float> convert(const SRGBA<float>&);
+template<> struct ColorConversion<HSLA<float>, ExtendedSRGBA<float>> {
+    WEBCORE_EXPORT static HSLA<float> convert(const ExtendedSRGBA<float>&);
 };
 
 // MARK: HWBA

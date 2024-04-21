@@ -17,24 +17,12 @@ PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 25%, hsl(3
 PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 30%, hsl(30deg 30% 40% / .8) 90%)'
 PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 12.5%, hsl(30deg 30% 40% / .8) 37.5%)'
 PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 0%, hsl(30deg 30% 40% / .8))'
-FAIL Property color value 'color-mix(in hsl, transparent, hsl(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.521569 0.341176 0.278431 / 0.501961)
-Expected: color(srgb 0.52 0.4 0.28 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.4 +/- 0.01, expected 0.4 but got 0.341176
-FAIL Property color value 'color-mix(in hsl, transparent 10%, hsl(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.521569 0.388235 0.278431 / 0.901961)
-Expected: color(srgb 0.52 0.4 0.28 / 0.9).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.4 +/- 0.01, expected 0.4 but got 0.388235
+PASS Property color value 'color-mix(in hsl, transparent, hsl(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hsl, transparent 10%, hsl(30deg 30% 40%))'
 PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / 0), hsl(30deg 30% 40%))'
 PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / 0) 10%, hsl(30deg 30% 40%))'
-FAIL Property color value 'color-mix(in hsl, white, blue)' Colors do not match.
-Actual:   color(srgb 0.87451 0.623529 0.87451)
-Expected: color(srgb 0.625 0.625 0.875).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.625 +/- 0.01, expected 0.625 but got 0.87451
-FAIL Property color value 'color-mix(in hsl, white 10%, blue)' Colors do not match.
-Actual:   color(srgb 0.305882 0.145098 0.956863)
-Expected: color(srgb 0.145 0.145 0.955).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.145 +/- 0.01, expected 0.145 but got 0.305882
+PASS Property color value 'color-mix(in hsl, white, blue)'
+PASS Property color value 'color-mix(in hsl, white 10%, blue)'
 PASS Property color value 'color-mix(in hsl, hsl(40deg 50% 50%), hsl(60deg 50% 50%))'
 PASS Property color value 'color-mix(in hsl, hsl(60deg 50% 50%), hsl(40deg 50% 50%))'
 PASS Property color value 'color-mix(in hsl, hsl(50deg 50% 50%), hsl(330deg 50% 50%))'

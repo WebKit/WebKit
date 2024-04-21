@@ -91,67 +91,65 @@ static HSLHueCalculationResult calculateHSLHue(float r, float g, float b)
     return { hue, min, max, chroma };
 }
 
-HSLA<float> ColorConversion<HSLA<float>, SRGBA<float>>::convert(const SRGBA<float>& color)
+HSLA<float> ColorConversion<HSLA<float>, ExtendedSRGBA<float>>::convert(const ExtendedSRGBA<float>& color)
 {
     // https://drafts.csswg.org/css-color-4/#hsl-to-rgb
-    auto [r, g, b, alpha] = color.resolved();
-    auto [hue, min, max, chroma] = calculateHSLHue(r, g, b);
 
-    float lightness = (0.5f * (max + min)) * 100.0f;
+    auto [red, green, blue, alpha] = color.resolved();
+
+    auto [min, max] = std::minmax({ red, green, blue });
+    auto d = max - min;
+
+    float hue = std::numeric_limits<float>::quiet_NaN();
+    float lightness = (min + max) / 2.0f;
     float saturation;
-    if (!chroma)
-        saturation = 0;
-    else if (lightness <= 50.0f)
-        saturation = (chroma / (max + min)) * 100.0f;
-    else
-        saturation = (chroma / (2.0f - (max + min))) * 100.0f;
 
-    return { hue, saturation, lightness, alpha };
+    if (d != 0.0f) {
+        if (lightness == 0.0f || lightness == 1.0f)
+            saturation = 0.0f;
+        else
+            saturation = (max - lightness) / std::min(lightness, 1.0f - lightness);
+
+        if (max == red)
+            hue = ((green - blue) / d) + (green < blue ? 6.0f : 0.0f);
+        else if (max == green)
+            hue = ((blue - red) / d) + 2.0f;
+        else if (max == blue)
+            hue = ((red - green) / d) + 4.0f;
+
+        hue *= 60.0f;
+
+        if (saturation < 0.0f) {
+            hue += 180.0f;
+            saturation = std::abs(saturation);
+        }
+    } else
+        saturation = 0.0f;
+
+    if (hue >= 360.0f)
+        hue -= 360.0f;
+
+    return { hue, saturation * 100.0f, lightness * 100.0f, alpha };
 }
 
-SRGBA<float> ColorConversion<SRGBA<float>, HSLA<float>>::convert(const HSLA<float>& color)
+ExtendedSRGBA<float> ColorConversion<ExtendedSRGBA<float>, HSLA<float>>::convert(const HSLA<float>& color)
 {
     // https://drafts.csswg.org/css-color-4/#hsl-to-rgb
+
     auto [hue, saturation, lightness, alpha] = color.resolved();
 
-    if (!saturation) {
-        auto grey = lightness / 100.0f;
-        return { grey, grey, grey, alpha };
-    }
+    float scaledHue = hue / 30.0f;
+    float scaledSaturation = saturation * (1.0f / 100.0f);
+    float scaledLightness = lightness * (1.0f / 100.0f);
 
-    // hueToRGB() wants hue in the 0-6 range.
-    auto scaledHue = (normalizeHue(hue) / 360.0f) * 6.0f;
-    auto scaledLightness = lightness / 100.0f;
-    auto scaledSaturation = saturation / 100.0f;
+    auto a = scaledSaturation * std::min(scaledLightness, 1.0f - scaledLightness);
 
-    auto hueForRed = scaledHue + 2.0f;
-    auto hueForGreen = scaledHue;
-    auto hueForBlue = scaledHue - 2.0f;
-    if (hueForRed > 6.0f)
-        hueForRed -= 6.0f;
-    else if (hueForBlue < 0.0f)
-        hueForBlue += 6.0f;
-
-    float temp2 = scaledLightness <= 0.5f ? scaledLightness * (1.0f + scaledSaturation) : scaledLightness + scaledSaturation - scaledLightness * scaledSaturation;
-    float temp1 = 2.0f * scaledLightness - temp2;
-    
-    // Hue is in the range 0-6, other args in 0-1.
-    auto hueToRGB = [](float temp1, float temp2, float hue) {
-        if (hue < 1.0f)
-            return temp1 + (temp2 - temp1) * hue;
-        if (hue < 3.0f)
-            return temp2;
-        if (hue < 4.0f)
-            return temp1 + (temp2 - temp1) * (4.0f - hue);
-        return temp1;
+    auto hueToRGB = [&](float n) {
+        auto k = std::fmod(n + scaledHue, 12.0f);
+        return scaledLightness - (a * std::max(-1.0f, std::min({ k - 3.0f, 9.0f - k, 1.0f })));
     };
 
-    return {
-        hueToRGB(temp1, temp2, hueForRed),
-        hueToRGB(temp1, temp2, hueForGreen),
-        hueToRGB(temp1, temp2, hueForBlue),
-        alpha
-    };
+    return { hueToRGB(0.0f), hueToRGB(8.0f), hueToRGB(4.0f), alpha };
 }
 
 // MARK: HWB conversions.

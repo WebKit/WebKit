@@ -105,6 +105,12 @@ template<typename ColorType> struct UnresolvedColorType : ExposedColorType<Color
     // just return ourselves.
     constexpr auto unresolved() const { return *this; }
 
+    constexpr bool anyComponentIsNone() const
+    {
+        auto [c1, c2, c3, alpha] = *this;
+        return std::isnan(c1) || std::isnan(c2) || std::isnan(c3) || std::isnan(alpha);
+    }
+
 private:
     template<typename C> friend constexpr UnresolvedColorType<C> unresolvedColor(C);
 
@@ -144,15 +150,15 @@ template<typename T> struct ColorComponentInfo {
     ColorComponentType type;
 };
 
-// MARK: - Color Model Definititions
+// MARK: - Color Model Definitions
 
 // MARK: HSLModel
 
 template<> struct HSLModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Angle },
-        { 0, 100, ColorComponentType::Percentage },
-        { 0, 100, ColorComponentType::Percentage }
+        { 0, 360, ColorComponentType::Angle },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Percentage },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Percentage }
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;

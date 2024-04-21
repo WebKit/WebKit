@@ -4701,6 +4701,10 @@ webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/lch-010.html [
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-009.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-010.html [ ImageOnlyFailure ]
 
+# Tests assume hsl() gets clipped, which is no longer true.
+webkit.org/b/272940 imported/w3c/web-platform-tests/css/css-color/t424-hsl-clip-outside-gamut-b.xht [ ImageOnlyFailure ]
+webkit.org/b/272940 imported/w3c/web-platform-tests/css/css-color/t425-hsla-clip-outside-device-gamut-b.xht [ ImageOnlyFailure ]
+
 # currentColor support in relative color syntax.
 webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-a98rgb-01.html [ ImageOnlyFailure ]
 webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-displayp3-01.html [ ImageOnlyFailure ]
