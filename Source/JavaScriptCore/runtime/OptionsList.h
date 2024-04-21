@@ -592,6 +592,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useIntlDurationFormat, true, Normal, "Expose the Intl DurationFormat.") \
     v(Bool, usePromiseWithResolversMethod, true, Normal, "Expose the Promise.withResolvers() method.") \
     v(Bool, usePromiseTryMethod, false, Normal, "Expose the Promise.try() method.") \
+    v(Bool, useRegExpEscape, false, Normal, "Expose RegExp.escape feature.") \
     v(Bool, useResizableArrayBuffer, true, Normal, "Expose ResizableArrayBuffer feature.") \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useShadowRealm, false, Normal, "Expose the ShadowRealm object.") \
