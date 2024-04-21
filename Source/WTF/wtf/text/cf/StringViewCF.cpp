@@ -35,18 +35,22 @@ namespace WTF {
 
 RetainPtr<CFStringRef> StringView::createCFString() const
 {
-    if (is8Bit())
-        return adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, characters8(), length(), kCFStringEncodingISOLatin1, false));
-    
-    return adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters16()), length()));
+    if (is8Bit()) {
+        auto characters = span8();
+        return adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, characters.data(), characters.size(), kCFStringEncodingISOLatin1, false));
+    }
+    auto characters = span16();
+    return adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters.data()), characters.size()));
 }
 
 RetainPtr<CFStringRef> StringView::createCFStringWithoutCopying() const
 {
-    if (is8Bit())
-        return adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, characters8(), length(), kCFStringEncodingISOLatin1, false, kCFAllocatorNull));
-
-    return adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters16()), length(), kCFAllocatorNull));
+    if (is8Bit()) {
+        auto characters = span8();
+        return adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, characters.data(), characters.size(), kCFStringEncodingISOLatin1, false, kCFAllocatorNull));
+    }
+    auto characters = span16();
+    return adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters.data()), characters.size(), kCFAllocatorNull));
 }
 
 }

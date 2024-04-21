@@ -44,13 +44,14 @@ inline UTextProviderContext uTextProviderContext(const UText* text, int64_t nati
     return UTextProviderContext::PriorContext;
 }
 
-inline void initializeContextAwareUTextProvider(UText* text, const UTextFuncs* funcs, const void* string, unsigned length, std::span<const UChar> priorContext)
+template<typename CharacterType>
+inline void initializeContextAwareUTextProvider(UText* text, const UTextFuncs* funcs, std::span<const CharacterType> string, std::span<const UChar> priorContext)
 {
     text->pFuncs = funcs;
     text->providerProperties = 1 << UTEXT_PROVIDER_STABLE_CHUNKS;
-    text->context = string;
-    text->p = string;
-    text->a = length;
+    text->context = string.data();
+    text->p = string.data();
+    text->a = string.size();
     text->q = priorContext.data();
     text->b = priorContext.size();
 }

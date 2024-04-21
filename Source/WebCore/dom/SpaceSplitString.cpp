@@ -129,7 +129,7 @@ private:
 template <typename ValueCharacterType>
 static bool spaceSplitStringContainsValueInternal(StringView spaceSplitString, StringView value)
 {
-    TokenIsEqualToCharactersTokenProcessor<ValueCharacterType> tokenProcessor(value.characters<ValueCharacterType>(), value.length());
+    TokenIsEqualToCharactersTokenProcessor<ValueCharacterType> tokenProcessor(value.span<ValueCharacterType>().data(), value.length());
     tokenizeSpaceSplitString(tokenProcessor, spaceSplitString);
     return tokenProcessor.referenceStringWasFound();
 }

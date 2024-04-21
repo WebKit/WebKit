@@ -107,6 +107,7 @@ public:
 
     // Return characters8() or characters16() depending on CharacterType.
     template<typename CharacterType> const CharacterType* characters() const;
+    template<typename CharacterType> std::span<const CharacterType> span() const;
 
     bool is8Bit() const { return !m_impl || m_impl->is8Bit(); }
 
@@ -439,6 +440,16 @@ template<> inline const LChar* String::characters<LChar>() const
 template<> inline const UChar* String::characters<UChar>() const
 {
     return characters16();
+}
+
+template<> inline std::span<const LChar> String::span<LChar>() const
+{
+    return span8();
+}
+
+template<> inline std::span<const UChar> String::span<UChar>() const
+{
+    return span16();
 }
 
 inline UChar String::characterAt(unsigned index) const

@@ -102,7 +102,8 @@ static UBreakIterator* setTextForIterator(UBreakIterator& iterator, StringView s
         utext_close(text);
     } else {
         UErrorCode setTextStatus = U_ZERO_ERROR;
-        ubrk_setText(&iterator, string.characters16(), string.length(), &setTextStatus);
+        auto characters = string.span16();
+        ubrk_setText(&iterator, characters.data(), characters.size(), &setTextStatus);
         if (U_FAILURE(setTextStatus))
             return nullptr;
     }
@@ -184,7 +185,7 @@ unsigned numGraphemeClusters(StringView string)
 
     // The only Latin-1 Extended Grapheme Cluster is CRLF.
     if (string.is8Bit()) {
-        auto* characters = string.characters8();
+        auto characters = string.span8();
         unsigned numCRLF = 0;
         for (unsigned i = 1; i < stringLength; ++i)
             numCRLF += characters[i - 1] == '\r' && characters[i] == '\n';
@@ -212,7 +213,7 @@ unsigned numCodeUnitsInGraphemeClusters(StringView string, unsigned numGraphemeC
 
     // The only Latin-1 Extended Grapheme Cluster is CRLF.
     if (string.is8Bit()) {
-        auto* characters = string.characters8();
+        auto characters = string.span8();
         unsigned i, j;
         for (i = 0, j = 0; i < numGraphemeClusters && j + 1 < stringLength; ++i, ++j)
             j += characters[j] == '\r' && characters[j + 1] == '\n';

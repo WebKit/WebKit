@@ -373,11 +373,11 @@ static void uTextLatin1ContextAwareClose(UText* text)
     text->context = nullptr;
 }
 
-UText* openLatin1ContextAwareUTextProvider(UTextWithBuffer* utWithBuffer, const LChar* string, unsigned length, std::span<const UChar> priorContext, UErrorCode* status)
+UText* openLatin1ContextAwareUTextProvider(UTextWithBuffer* utWithBuffer, std::span<const LChar> string, std::span<const UChar> priorContext, UErrorCode* status)
 {
     if (U_FAILURE(*status))
         return nullptr;
-    if (!string || length > static_cast<unsigned>(std::numeric_limits<int32_t>::max())) {
+    if (!string.data() || string.size() > static_cast<unsigned>(std::numeric_limits<int32_t>::max())) {
         *status = U_ILLEGAL_ARGUMENT_ERROR;
         return nullptr;
     }
@@ -387,7 +387,7 @@ UText* openLatin1ContextAwareUTextProvider(UTextWithBuffer* utWithBuffer, const 
         return nullptr;
     }
 
-    initializeContextAwareUTextProvider(text, &textLatin1ContextAwareFuncs, string, length, priorContext);
+    initializeContextAwareUTextProvider(text, &textLatin1ContextAwareFuncs, string, priorContext);
     return text;
 }
 
