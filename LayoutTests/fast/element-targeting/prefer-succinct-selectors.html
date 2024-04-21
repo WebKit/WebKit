@@ -46,7 +46,7 @@ addEventListener("load", async () => {
     firstTarget = await UIHelper.adjustVisibilityForFrontmostTarget(150, 75);
     shouldBeEqualToString("firstTarget", "#overlay");
     secondTarget = await UIHelper.adjustVisibilityForFrontmostTarget(150, 75);
-    shouldBeEqualToString("secondTarget", ".fixed");
+    shouldBeEqualToString("secondTarget", "DIV.fixed");
     finishJSTest();
 });
 </script>
