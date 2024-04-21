@@ -343,12 +343,7 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer() const
     auto* context = renderingContext();
     auto colorSpace = context ? context->colorSpace() : DestinationColorSpace::SRGB();
     auto pixelFormat = context ? context->pixelFormat() : PixelFormat::BGRA8;
-#if PLATFORM(COCOA)
-    // Cocoa ports don't handle willReadFrequently yet.
-    bool willReadFrequently = false;
-#else
     bool willReadFrequently = context ? context->willReadFrequently() : false;
-#endif
 
     OptionSet<ImageBufferOptions> bufferOptions;
     if (!willReadFrequently && shouldAccelerate(area))

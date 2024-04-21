@@ -7,29 +7,23 @@ if (window.testRunner)
     testRunner.dumpAsText();
 description("Test checks the behavior of willReadFrequently canvas 2D context setting");
 
-var context;
-function runTest(canvasSettings) {
+var result;
+function runTest(contextAttributes) {
     let canvas = document.createElement('canvas');
-    canvas.height = 300;
-    canvas.width = 300;
-    context = canvas.getContext("2d", canvasSettings);
-    context.fillStyle = "red";
+    let context = canvas.getContext("2d", contextAttributes);
+    context.fillStyle = "lime";
     context.rect(0, 0, 300, 300);
     context.fill();
-    if (canvasSettings === undefined || canvasSettings.willReadFrequently === false)
-        shouldBe("context.getEffectiveRenderingModeForTesting()", "'Accelerated'");
-    else
-        shouldBe("context.getEffectiveRenderingModeForTesting()", "'Unaccelerated'")
+    result = context.getImageData(0, 0, 1, 1);
+    shouldBe("result.data[0]", "0");
+    shouldBe("result.data[1]", "255");
+    shouldBe("result.data[2]", "0");
+    shouldBe("result.data[3]", "255");
+    debug(`willReadFrequently: ${contextAttributes.willReadFrequently}, effective rendering mode:${context.getEffectiveRenderingModeForTesting()}`);
 }
-
-debug("Testing default value");
-runTest(undefined)
-
-debug("Testing willReadFrequently enabled");
-runTest({ willReadFrequently: true })
-
-debug("Testing willReadFrequently disabled");
-runTest({ willReadFrequently: false })
+runTest({});
+runTest({ willReadFrequently: true });
+runTest({ willReadFrequently: false });
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

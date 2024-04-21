@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+// cd PerformanceTests && python3 -m http.server
+// open http://localhost:8000/Canvas/getImageDataFromImageGPU.html
+var counter = 0;
+var canvas2D = document.createElement("canvas");
+var ctx2D = canvas2D.getContext("2d");
+let img = new Image();
+img.onload = () => {
+    canvas2D.width = img.width;
+    canvas2D.height = img.height;
+    console.log(`${img.width}x${img.height}`);
+    PerfTestRunner.measureRunsPerSecond({run: function() {
+        counter = (counter + 1) % 25;
+        ctx2D.drawImage(img, counter, counter);
+        ctx2D.getImageData(0, 0, canvas2D.width, canvas2D.height);
+    }});
+};
+img.src = "../MotionMark/tests/bouncing-particles/resources/image4.jpg";
+</script>
+</body>
+</html>
