@@ -40,8 +40,10 @@
 namespace JSC {
 
 namespace JSCBytecodeCacheVersionInternal {
+#if __has_include(<wtf/spi/darwin/dyldSPI.h>)
 static constexpr bool verbose = false;
 }
+#endif
 
 uint32_t computeJSCBytecodeCacheVersion()
 {
