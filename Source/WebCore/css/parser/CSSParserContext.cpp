@@ -89,9 +89,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
 #endif
     , masonryEnabled { document.settings().masonryEnabled() }
     , cssNestingEnabled { document.settings().cssNestingEnabled() }
-#if ENABLE(CSS_PAINTING_API)
     , cssPaintingAPIEnabled { document.settings().cssPaintingAPIEnabled() }
-#endif
     , cssScopeAtRuleEnabled { document.settings().cssScopeAtRuleEnabled() }
     , cssStartingStyleAtRuleEnabled { document.settings().cssStartingStyleAtRuleEnabled() }
     , cssStyleQueriesEnabled { document.settings().cssStyleQueriesEnabled() }

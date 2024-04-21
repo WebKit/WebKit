@@ -18,4 +18,6 @@ PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination
 FAIL sec-fetch-site - HTTPS downgrade (header not sent) assert_not_own_property: unexpected property "sec-fetch-site" is found on object
 PASS sec-fetch-site - HTTPS upgrade
 PASS sec-fetch-site - HTTPS downgrade-upgrade
+PASS sec-fetch-site - no referrer
+PASS sec-fetch-site - no referrer - redirection
 

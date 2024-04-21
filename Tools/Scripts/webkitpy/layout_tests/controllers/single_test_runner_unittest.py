@@ -113,3 +113,86 @@ class SingleTestRunnerTest(unittest.TestCase):
         self.assertFalse(SingleTestRunner._test_passes_fuzzy_matching({'max_difference': [5, 7], 'total_pixels': [10, 12]}, {'max_difference': 3, 'total_pixels': 11}))
         self.assertFalse(SingleTestRunner._test_passes_fuzzy_matching({'max_difference': [5, 7], 'total_pixels': [10, 12]}, {'max_difference': 9, 'total_pixels': 11}))
         self.assertFalse(SingleTestRunner._test_passes_fuzzy_matching({'max_difference': [5, 7], 'total_pixels': [10, 12]}, {'max_difference': 6, 'total_pixels': 13}))
+
+    def _fuzzy_metadata_from_test_with_contents(self, test_contents):
+        test_path = '/test.checkout/LayoutTests/fuzzy-test.html'
+        runner = self._make_test_runner(test_path)
+        self._add_file(runner._port, test_path, test_contents)
+        return runner._fuzzy_metadata_for_file(test_path)
+
+    def test_simple_fuzzy_data(self):
+        """ Tests basic form of fuzzy_metadata()"""
+
+        test_html = b"""<html><head>
+<link rel="match" href="green-box-ref.xht" />
+<meta name=fuzzy content="maxDifference = 15 ; totalPixels = 300">
+</head>
+<body>CONTENT OF TEST</body></html>
+"""
+        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
+
+        expected_fuzzy = {None: [[15, 15], [300, 300]]}
+        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
+
+    def test_nameless_fuzzy_data(self):
+        """ Tests fuzzy_metadata() in short form"""
+
+        test_html = b"""<html><head>
+<link rel="match" href="green-box-ref.xht" />
+<meta name=fuzzy content=" 15 ; 300 ">
+</head>
+<body>CONTENT OF TEST</body></html>
+"""
+        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
+        expected_fuzzy = {None: [[15, 15], [300, 300]]}
+        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
+
+    def test_range_fuzzy_data(self):
+        """ Tests fuzzy_metadata() in range form"""
+
+        test_html = b"""<html><head>
+<link rel="match" href="green-box-ref.xht" />
+<meta name=fuzzy content="maxDifference=5-15;totalPixels =  200 - 300 ">
+</head>
+<body>CONTENT OF TEST</body></html>
+"""
+        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
+
+        expected_fuzzy = {None: [[5, 15], [200, 300]]}
+        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
+
+    def test_nameless_range_fuzzy_data(self):
+        """ Tests fuzzy_metadata() in short range form"""
+
+        test_html = b"""<html><head>
+<link rel="match" href="green-box-ref.xht" />
+<meta name=fuzzy content="5-15;  200 - 300 ">
+</head>
+<body>CONTENT OF TEST</body></html>
+"""
+        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
+
+        expected_fuzzy = {None: [[5, 15], [200, 300]]}
+        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
+
+    def test_per_ref_fuzzy_data(self):
+        """ Tests fuzzy_metadata() with values for difference reference files"""
+
+        test_html = b"""<html><head>
+<link rel="match" href="green-box-ref.xht" />
+<link rel="match" href="close-match-ref.html" />
+<link rel="match" href="worse-match-ref.html" />
+<meta name=fuzzy content="5-15;200-300 ">
+<meta name=fuzzy content="close-match-ref.html:5;20">
+<meta name=fuzzy content="worse-match-ref.html: 15;30">
+</head>
+<body>CONTENT OF TEST</body></html>
+"""
+        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
+
+        expected_fuzzy = {
+            None: [[5, 15], [200, 300]],
+            'close-match-ref.html': [[5, 5], [20, 20]],
+            'worse-match-ref.html': [[15, 15], [30, 30]]
+        }
+        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')

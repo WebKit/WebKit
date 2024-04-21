@@ -107,7 +107,7 @@ void runJavaScriptThread()
         Thread& thread = Thread::current();
         thread.detach();
         javaScriptThreads().remove(&thread);
-        javaScriptThreads().add(Thread::create("JavaScript Thread", &runJavaScriptThread));
+        javaScriptThreads().add(Thread::create("JavaScript Thread"_s, &runJavaScriptThread));
         break;
     }
 
@@ -124,7 +124,7 @@ void startJavaScriptThreads()
     Locker locker { javaScriptThreadsLock };
 
     for (size_t i = 0; i < javaScriptThreadsCount; ++i)
-        javaScriptThreads().add(Thread::create("JavaScript Thread", &runJavaScriptThread));
+        javaScriptThreads().add(Thread::create("JavaScript Thread"_s, &runJavaScriptThread));
 }
 
 void stopJavaScriptThreads()

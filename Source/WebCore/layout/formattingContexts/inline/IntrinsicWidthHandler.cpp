@@ -275,7 +275,11 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMaximumWidth(MayCacheLayoutRes
     auto& inlineTextItem = downcast<InlineTextItem>(inlineItemList()[0]);
     auto& style = inlineTextItem.firstLineStyle();
 
-    auto contentLogicalWidth = TextUtil::width(inlineTextItem, style.fontCascade(), { });
+    auto contentLogicalWidth = [&] {
+        if (auto width = inlineTextItem.width())
+            return *width;
+        return TextUtil::width(inlineTextItem, style.fontCascade(), { });
+    }();
     if (mayCacheLayoutResult == MayCacheLayoutResult::No)
         return contentLogicalWidth;
 

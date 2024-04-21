@@ -60,7 +60,7 @@ public:
     Plan(
         CodeBlock* codeBlockToCompile, CodeBlock* profiledDFGCodeBlock,
         JITCompilationMode, BytecodeIndex osrEntryBytecodeIndex,
-        const Operands<std::optional<JSValue>>& mustHandleValues);
+        Operands<std::optional<JSValue>>&& mustHandleValues);
     ~Plan();
 
     size_t codeSize() const final;

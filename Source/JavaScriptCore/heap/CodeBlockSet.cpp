@@ -69,14 +69,14 @@ bool CodeBlockSet::isCurrentlyExecuting(CodeBlock* codeBlock)
 void CodeBlockSet::dump(PrintStream& out) const
 {
     CommaPrinter comma;
-    out.print("{codeBlocks = [");
+    out.print("{codeBlocks = ["_s);
     for (CodeBlock* codeBlock : m_codeBlocks)
         out.print(comma, pointerDump(codeBlock));
-    out.print("], currentlyExecuting = [");
+    out.print("], currentlyExecuting = ["_s);
     comma = CommaPrinter();
     for (CodeBlock* codeBlock : m_currentlyExecuting)
         out.print(comma, pointerDump(codeBlock));
-    out.print("]}");
+    out.print("]}"_s);
 }
 
 void CodeBlockSet::add(CodeBlock* codeBlock)

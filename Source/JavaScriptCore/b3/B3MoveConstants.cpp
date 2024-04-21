@@ -402,7 +402,7 @@ private:
 
 void moveConstants(Procedure& proc)
 {
-    PhaseScope phaseScope(proc, "moveConstants");
+    PhaseScope phaseScope(proc, "moveConstants"_s);
     MoveConstants moveConstants(proc);
     moveConstants.run();
 }

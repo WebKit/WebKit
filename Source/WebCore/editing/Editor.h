@@ -174,8 +174,9 @@ private:
     TemporarySelectionChange m_selectionChange;
 };
 
-class Editor : public CanMakeCheckedPtr<Editor> {
+class Editor final : public CanMakeCheckedPtr<Editor> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Editor);
 public:
     explicit Editor(Document&);
     ~Editor();
@@ -610,7 +611,8 @@ public:
     bool isPastingFromMenuOrKeyBinding() const { return m_pastingFromMenuOrKeyBinding; }
     bool isCopyingFromMenuOrKeyBinding() const { return m_copyingFromMenuOrKeyBinding; }
 
-    Element* writingSuggestionsContainerElement();
+    Node* nodeBeforeWritingSuggestions() const;
+    Element* writingSuggestionsContainerElement() const;
     WritingSuggestionData* writingSuggestionData() const { return m_writingSuggestionData.get(); }
     bool isInsertingTextForWritingSuggestion() const { return m_isInsertingTextForWritingSuggestion; }
 

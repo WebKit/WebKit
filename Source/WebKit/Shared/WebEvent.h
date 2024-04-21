@@ -64,6 +64,7 @@ public:
 
     WallTime timestamp() const { return m_timestamp; }
 
+    bool isActivationTriggeringEvent() const;
     WTF::UUID authorizationToken() const { return m_authorizationToken; }
 
 private:

@@ -699,7 +699,7 @@ bool CoreAudioSharedUnit::migrateToNewDefaultDevice(const CaptureDevice& capture
 void CoreAudioSharedUnit::prewarmAudioUnitCreation(CompletionHandler<void()>&& callback)
 {
     if (!m_audioUnitCreationWarmupPromise) {
-        m_audioUnitCreationWarmupPromise = invokeAsync(WorkQueue::create("CoreAudioSharedUnit AudioUnit creation").get(), [] {
+        m_audioUnitCreationWarmupPromise = invokeAsync(WorkQueue::create("CoreAudioSharedUnit AudioUnit creation"_s).get(), [] {
             return createAudioUnit(true);
         })->whenSettled(RunLoop::main(), [weakThis = WeakPtr { *this }] (auto&& vpioUnitOrError) {
             if (weakThis && vpioUnitOrError.has_value())

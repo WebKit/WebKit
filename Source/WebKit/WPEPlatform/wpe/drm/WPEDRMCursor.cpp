@@ -69,11 +69,10 @@ void Cursor::updateBuffer(const uint8_t* pixels, uint32_t width, uint32_t height
     RELEASE_ASSERT(width <= m_deviceWidth);
     RELEASE_ASSERT(height <= m_deviceHeight);
 
-    uint32_t deviceBuffer[m_deviceWidth * m_deviceHeight];
-    memset(deviceBuffer, 0, sizeof(deviceBuffer));
+    Vector<uint32_t> deviceBuffer(m_deviceWidth * m_deviceHeight);
     for (uint32_t i = 0; i < height; ++i)
-        memcpy(deviceBuffer + i * m_deviceWidth, pixels + i * stride, stride);
-    gbm_bo_write(m_buffer->bufferObject(), deviceBuffer, sizeof(deviceBuffer));
+        memcpy(&deviceBuffer[i * m_deviceWidth], pixels + i * stride, stride);
+    gbm_bo_write(m_buffer->bufferObject(), deviceBuffer.data(), deviceBuffer.sizeInBytes());
 }
 
 void Cursor::setFromName(const char* name, double scale)

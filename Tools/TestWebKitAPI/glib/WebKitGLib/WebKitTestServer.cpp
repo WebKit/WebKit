@@ -29,7 +29,7 @@ WebKitTestServer::WebKitTestServer(ServerOptionsBitSet options)
 {
     if (options[ServerRunInThread]) {
         WTF::initialize();
-        m_queue = WorkQueue::create("WebKitTestServer");
+        m_queue = WorkQueue::create("WebKitTestServer"_s);
     }
 
     GRefPtr<GTlsCertificate> certificate;

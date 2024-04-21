@@ -35,6 +35,7 @@ class RenderTextFragment;
 // to date as the button changes.
 class RenderButton final : public RenderFlexibleBox {
     WTF_MAKE_ISO_ALLOCATED(RenderButton);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderButton);
 public:
     RenderButton(HTMLFormControlElement&, RenderStyle&&);
     virtual ~RenderButton();

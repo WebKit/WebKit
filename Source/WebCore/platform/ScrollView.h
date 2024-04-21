@@ -69,10 +69,17 @@ enum class DelegatedScrollingMode : uint8_t {
     DelegatedToWebKit,
 };
 
-class ScrollView : public Widget, public ScrollableArea {
+class ScrollView : public Widget, public ScrollableArea, public CanMakeCheckedPtr<ScrollView> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollView);
 public:
     virtual ~ScrollView();
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
     using Widget::weakPtrFactory;
     using Widget::WeakValueType;

@@ -195,10 +195,10 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     desc.width = 1;
     desc.height = 1;
     desc.mipmapLevelCount = 1;
-    desc.pixelFormat = MTLPixelFormatR8Unorm;
+    desc.pixelFormat = MTLPixelFormatBGRA8Unorm;
     desc.textureType = MTLTextureType2D;
     desc.storageMode = MTLStorageModeShared;
-    desc.usage = MTLTextureUsageShaderRead;
+    desc.usage = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
     m_placeholderTexture = [m_device newTextureWithDescriptor:desc];
 }
 

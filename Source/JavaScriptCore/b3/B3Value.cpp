@@ -258,9 +258,9 @@ void Value::dumpChildren(CommaPrinter& comma, PrintStream& out) const
 
 void Value::deepDump(const Procedure* proc, PrintStream& out) const
 {
-    out.print(m_type, " ", dumpPrefix, m_index, " = ", m_kind);
+    out.print(m_type, " "_s, dumpPrefix, m_index, " = "_s, m_kind);
 
-    out.print("(");
+    out.print("("_s);
     CommaPrinter comma;
     dumpChildren(comma, out);
 
@@ -282,7 +282,7 @@ void Value::deepDump(const Procedure* proc, PrintStream& out) const
     }
 #endif
 
-    out.print(")");
+    out.print(")"_s);
 }
 
 void Value::dumpSuccessors(const BasicBlock* block, PrintStream& out) const

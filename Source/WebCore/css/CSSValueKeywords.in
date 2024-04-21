@@ -1320,7 +1320,7 @@ repeating-conic-gradient
 -webkit-named-image
 filter
 -webkit-filter
-paint enable-if=ENABLE_CSS_PAINTING_API
+paint
 
 // image-set's MIME type
 type
@@ -1707,7 +1707,6 @@ z
 // content
 size
 layout
-paint enable-if=!ENABLE_CSS_PAINTING_API
 
 // container-type
 // normal

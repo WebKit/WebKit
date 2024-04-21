@@ -127,7 +127,9 @@ struct KeyAgreementResponse {
     WEBCORE_EXPORT static std::optional<KeyAgreementResponse> parseFromCOSE(const cbor::CBORValue::MapValue&);
 
     Ref<WebCore::CryptoKeyEC> peerKey;
-
+    WEBCORE_EXPORT ~KeyAgreementResponse();
+    WEBCORE_EXPORT KeyAgreementResponse(KeyAgreementResponse&&);
+    WEBCORE_EXPORT KeyAgreementResponse& operator=(KeyAgreementResponse&&);
 private:
     explicit KeyAgreementResponse(Ref<WebCore::CryptoKeyEC>&&);
 };

@@ -1554,9 +1554,9 @@ bool UIScriptControllerIOS::isWebContentFirstResponder() const
     return [webView() _contentViewIsFirstResponder];
 }
 
-void UIScriptControllerIOS::setInlinePrediction(JSStringRef text)
+void UIScriptControllerIOS::setInlinePrediction(JSStringRef text, unsigned startIndex)
 {
-    NSString *plainText = text->string();
+    NSString *plainText = text->string().substring(startIndex);
     auto attributedText = adoptNS([[NSAttributedString alloc] initWithString:plainText attributes:@{
         NSBackgroundColorAttributeName : UIColor.clearColor,
         NSForegroundColorAttributeName : UIColor.grayColor,

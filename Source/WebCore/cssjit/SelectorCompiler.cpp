@@ -111,7 +111,7 @@ using PseudoClassesSet = HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::
     v(operationMatchesFullscreenPseudoClass) \
     v(operationMatchesFullscreenDocumentPseudoClass) \
     v(operationMatchesAnimatingFullscreenTransitionPseudoClass) \
-    v(operationMatchesInWindowFullScreenPseudoClass) \
+    v(operationMatchesInWindowFullscreenPseudoClass) \
     v(operationMatchesPictureInPicturePseudoClass) \
     v(operationMatchesFutureCuePseudoClass) \
     v(operationMatchesPastCuePseudoClass) \
@@ -258,7 +258,7 @@ static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullscreen
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullscreenDocumentPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesAnimatingFullscreenTransitionPseudoClass, bool, (const Element&));
 #if ENABLE(VIDEO)
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesInWindowFullScreenPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesInWindowFullscreenPseudoClass, bool, (const Element&));
 #endif
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -913,10 +913,10 @@ JSC_DEFINE_JIT_OPERATION(operationMatchesAnimatingFullscreenTransitionPseudoClas
 }
 
 #if ENABLE(VIDEO)
-JSC_DEFINE_JIT_OPERATION(operationMatchesInWindowFullScreenPseudoClass, bool, (const Element& element))
+JSC_DEFINE_JIT_OPERATION(operationMatchesInWindowFullscreenPseudoClass, bool, (const Element& element))
 {
-    COUNT_SELECTOR_OPERATION(operationMatchesInWindowFullScreenPseudoClass);
-    return matchesInWindowFullScreenPseudoClass(element);
+    COUNT_SELECTOR_OPERATION(operationMatchesInWindowFullscreenPseudoClass);
+    return matchesInWindowFullscreenPseudoClass(element);
 }
 #endif
 
@@ -1119,8 +1119,8 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesAnimatingFullscreenTransitionPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #if ENABLE(VIDEO)
-    case CSSSelector::PseudoClass::InternalInWindowFullScreen:
-        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesInWindowFullScreenPseudoClass));
+    case CSSSelector::PseudoClass::InternalInWindowFullscreen:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesInWindowFullscreenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #endif
 #endif

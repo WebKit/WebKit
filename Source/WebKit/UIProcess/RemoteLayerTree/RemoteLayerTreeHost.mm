@@ -220,8 +220,14 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
 
     // Drop the contents of any layers which were unparented; the Web process will re-send
     // the backing store in the commit that reparents them.
-    for (auto& newlyUnreachableLayerID : transaction.layerIDsWithNewlyUnreachableBackingStore())
-        layerForID(newlyUnreachableLayerID).contents = nullptr;
+    for (auto& newlyUnreachableLayerID : transaction.layerIDsWithNewlyUnreachableBackingStore()) {
+        auto* node = nodeForID(newlyUnreachableLayerID);
+        ASSERT(node);
+        if (node) {
+            node->layer().contents = nullptr;
+            node->setAsyncContentsIdentifier(std::nullopt);
+        }
+    }
 
 #if PLATFORM(MAC)
     if (updateBannerLayers(transaction))

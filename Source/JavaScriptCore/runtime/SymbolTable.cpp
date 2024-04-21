@@ -334,10 +334,10 @@ void SymbolTable::dump(PrintStream& out) const
     Base::dump(out);
 
     CommaPrinter comma;
-    out.print(" <");
+    out.print(" <"_s);
     for (auto& iter : m_map)
-        out.print(comma, *iter.key, ": ", iter.value.varOffset());
-    out.println(">");
+        out.print(comma, *iter.key, ": "_s, iter.value.varOffset());
+    out.println(">"_s);
 }
 
 } // namespace JSC

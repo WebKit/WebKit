@@ -72,7 +72,7 @@ void useMockRTCPeerConnectionFactory(LibWebRTCProvider* provider, const String& 
 MockLibWebRTCPeerConnection::~MockLibWebRTCPeerConnection()
 {
     // Free senders and receivers in a different thread like an actual peer connection would probably do.
-    Thread::create("MockLibWebRTCPeerConnection thread", [transceivers = WTFMove(m_transceivers)] { });
+    Thread::create("MockLibWebRTCPeerConnection thread"_s, [transceivers = WTFMove(m_transceivers)] { });
 }
 
 std::vector<rtc::scoped_refptr<webrtc::RtpTransceiverInterface>> MockLibWebRTCPeerConnection::GetTransceivers() const

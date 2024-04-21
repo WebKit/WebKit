@@ -294,7 +294,7 @@ bool OptimizeAssociativeExpressionTrees::run()
 
 bool optimizeAssociativeExpressionTrees(Procedure& proc)
 {
-    PhaseScope phaseScope(proc, "optimizeAssociativeExpressionTrees");
+    PhaseScope phaseScope(proc, "optimizeAssociativeExpressionTrees"_s);
     OptimizeAssociativeExpressionTrees optimizeAssociativeExpressionTrees(proc);
     return optimizeAssociativeExpressionTrees.run();
 }

@@ -457,6 +457,15 @@ struct StringsAndBlockOffset {
     int offset { 0 };
 };
 
+static IntSize reducePrecision(FloatSize size)
+{
+    static constexpr auto resolution = 10;
+    return {
+        static_cast<int>(std::round(size.width() / resolution)) * resolution,
+        static_cast<int>(std::round(size.height() / resolution)) * resolution
+    };
+}
+
 static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets, ContainerNode& node, BlockFlowDirection direction)
 {
     CheckedPtr renderer = node.renderer();
@@ -502,14 +511,15 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
     }
 
     auto frameView = renderer->view().protectedFrameView();
-    auto appendReplacedRenderer = [&](RenderObject& renderer) {
-        ASSERT(renderer.isRenderReplaced());
-        auto bounds = frameView->contentsToRootView(renderer.absoluteBoundingBoxRect());
-        appendStrings({ makeString('{', bounds.width(), ',', bounds.height(), '}') }, bounds);
+    auto appendReplacedRenderer = [&](RenderReplaced& renderReplaced) {
+        auto rectIgnoringZoom = renderReplaced.replacedContentRect();
+        rectIgnoringZoom.scale(1 / frameView->protectedFrame()->pageZoomFactor());
+        auto roundedSizeIgnoringZoom = reducePrecision(rectIgnoringZoom.size());
+        appendStrings({ makeString('{', roundedSizeIgnoringZoom.width(), ',', roundedSizeIgnoringZoom.height(), '}') }, frameView->contentsToRootView(renderReplaced.absoluteBoundingBoxRect()));
     };
 
-    if (renderer->isRenderReplaced()) {
-        appendReplacedRenderer(*renderer);
+    if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(*renderer)) {
+        appendReplacedRenderer(*renderReplaced);
         return;
     }
 
@@ -539,8 +549,8 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
             continue;
         }
 
-        if (descendant.isRenderReplaced()) {
-            appendReplacedRenderer(descendant);
+        if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(descendant)) {
+            appendReplacedRenderer(*renderReplaced);
             continue;
         }
     }

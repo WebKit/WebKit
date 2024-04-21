@@ -4279,6 +4279,10 @@ OptionSet<FilterRenderingMode> Page::preferredFilterRenderingModes() const
     if (settings().acceleratedFiltersEnabled())
         modes.add(FilterRenderingMode::Accelerated);
 #endif
+#if USE(SKIA)
+    if (settings().acceleratedCompositingEnabled())
+        modes.add(FilterRenderingMode::Accelerated);
+#endif
 #if USE(GRAPHICS_CONTEXT_FILTERS)
     if (settings().graphicsContextFiltersEnabled())
         modes.add(FilterRenderingMode::GraphicsContext);

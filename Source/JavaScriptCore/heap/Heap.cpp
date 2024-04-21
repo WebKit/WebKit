@@ -180,7 +180,7 @@ SimpleStats& timingStats(const char* name, CollectionScope scope)
 
 class TimingScope {
 public:
-    TimingScope(std::optional<CollectionScope> scope, const char* name)
+    TimingScope(std::optional<CollectionScope> scope, ASCIILiteral name)
         : m_scope(scope)
         , m_name(name)
     {
@@ -188,7 +188,7 @@ public:
             m_before = MonotonicTime::now();
     }
     
-    TimingScope(JSC::Heap& heap, const char* name)
+    TimingScope(JSC::Heap& heap, ASCIILiteral name)
         : TimingScope(heap.collectionScope(), name)
     {
     }
@@ -216,7 +216,7 @@ public:
 private:
     std::optional<CollectionScope> m_scope;
     MonotonicTime m_before;
-    const char* m_name;
+    ASCIILiteral m_name;
 };
 
 } // anonymous namespace
@@ -229,9 +229,9 @@ public:
     {
     }
 
-    const char* name() const final
+    ASCIILiteral name() const final
     {
-        return "JSC Heap Collector Thread";
+        return "JSC Heap Collector Thread"_s;
     }
     
 private:
@@ -860,7 +860,7 @@ void Heap::gatherScratchBufferRoots(ConservativeRoots& roots)
 
 void Heap::beginMarking()
 {
-    TimingScope timingScope(*this, "Heap::beginMarking");
+    TimingScope timingScope(*this, "Heap::beginMarking"_s);
     m_jitStubRoutines->clearMarks();
     m_objectSpace.beginMarking();
     vm().beginMarking();
@@ -1509,7 +1509,7 @@ NEVER_INLINE bool Heap::runFixpointPhase(GCConductor conn)
             [] (const char* a, const char* b) -> bool {
                 return strcmp(a, b) < 0;
             },
-            ":", " ");
+            ":"_s, " "_s);
         
         dataLog("v=", bytesVisited() / 1024, "kb (", perVisitorDump, ") o=", m_opaqueRoots.size(), " b=", m_barriersExecuted, " ");
     }
@@ -2366,7 +2366,7 @@ void Heap::sweepArrayBuffers()
 
 void Heap::snapshotUnswept()
 {
-    TimingScope timingScope(*this, "Heap::snapshotUnswept");
+    TimingScope timingScope(*this, "Heap::snapshotUnswept"_s);
     m_objectSpace.snapshotUnswept();
 }
 
@@ -2866,7 +2866,7 @@ void Heap::addCoreConstraints()
             if (shouldNotProduceWork || m_isMarkingForGCVerifier)
                 return;
             
-            TimingScope preConvergenceTimingScope(*this, "Constraint: conservative scan");
+            TimingScope preConvergenceTimingScope(*this, "Constraint: conservative scan"_s);
             m_objectSpace.prepareForConservativeScan();
             m_jitStubRoutines->prepareForConservativeScan();
 
@@ -3084,7 +3084,7 @@ void Heap::notifyIsSafeToCollect()
     
     if (Options::collectContinuously()) {
         m_collectContinuouslyThread = Thread::create(
-            "JSC DEBUG Continuous GC",
+            "JSC DEBUG Continuous GC"_s,
             [this] () {
                 MonotonicTime initialTime = MonotonicTime::now();
                 Seconds period = Seconds::fromMilliseconds(Options::collectContinuouslyPeriodMS());

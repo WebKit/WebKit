@@ -71,13 +71,13 @@ void RenderListMarker::willBeDestroyed()
 
 void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderBox::styleDidChange(diff, oldStyle);
-    if (oldStyle) {
-        if (style().listStylePosition() != oldStyle->listStylePosition() || style().listStyleType() != oldStyle->listStyleType())
-            setNeedsLayoutAndPrefWidthsRecalc();
-        if (oldStyle->isDisplayInlineType() && !style().isDisplayInlineType())
-            setNeedsLayoutAndPrefWidthsRecalc();
+    if (oldStyle && diff < StyleDifference::Layout) {
+        auto& style = this->style();
+        // FIXME: Preferably we do this at RenderStyle::changeRequiresLayout but checking against pseudo(::marker) is not sufficient.
+        auto needsLayout = style.listStylePosition() != oldStyle->listStylePosition() || style.listStyleType() != oldStyle->listStyleType() || style.isDisplayInlineType() != oldStyle->isDisplayInlineType();
+        diff = needsLayout ? StyleDifference::Layout : diff;
     }
+    RenderBox::styleDidChange(diff, oldStyle);
 
     if (m_image != style().listStyleImage()) {
         if (m_image)

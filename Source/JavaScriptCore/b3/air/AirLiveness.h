@@ -43,7 +43,7 @@ public:
         : WTF::Liveness<Adapter>(code.cfg(), code)
     {
         SuperSamplerScope samplingScope(false);
-        CompilerTimingScope timingScope("Air", "Liveness");
+        CompilerTimingScope timingScope("Air"_s, "Liveness"_s);
         WTF::Liveness<Adapter>::compute();
     }
 };

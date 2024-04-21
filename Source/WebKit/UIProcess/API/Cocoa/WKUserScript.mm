@@ -33,6 +33,8 @@
 
 @implementation WKUserScript
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 - (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly
 {
     return [self initWithSource:source injectionTime:injectionTime forMainFrameOnly:forMainFrameOnly inContentWorld:WKContentWorld.pageWorld];

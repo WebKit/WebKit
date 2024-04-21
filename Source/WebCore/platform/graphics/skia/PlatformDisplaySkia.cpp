@@ -40,12 +40,10 @@ IGNORE_CLANG_WARNINGS_END
 #include <skia/gpu/gl/GrGLTypes.h>
 #include <wtf/NeverDestroyed.h>
 
-#if USE(EGL)
 #if USE(LIBEPOXY)
 #include <skia/gpu/gl/epoxy/GrGLMakeEpoxyEGLInterface.h>
 #else
 #include <skia/gpu/gl/egl/GrGLMakeEGLInterface.h>
-#endif
 #endif
 
 namespace WebCore {
@@ -53,14 +51,10 @@ namespace WebCore {
 static sk_sp<const GrGLInterface> skiaGLInterface()
 {
     static NeverDestroyed<sk_sp<const GrGLInterface>> interface {
-#if USE(EGL)
 #if USE(LIBEPOXY)
         GrGLInterfaces::MakeEpoxyEGL()
 #else
         GrGLInterfaces::MakeEGL()
-#endif
-#else
-# error No implementation available for getSkiaGLInterface()
 #endif
     };
 

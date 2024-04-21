@@ -80,7 +80,7 @@ struct CheckData {
 class TypeCheckHoistingPhase : public Phase {
 public:
     TypeCheckHoistingPhase(Graph& graph)
-        : Phase(graph, "structure check hoisting")
+        : Phase(graph, "structure check hoisting"_s)
     {
     }
     

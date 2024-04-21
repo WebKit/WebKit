@@ -892,10 +892,20 @@ public:
         sub32(right, dest);
     }
 
-    void sub32(RegisterID left, TrustedImm32 right, RegisterID dest)
+    void sub32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        move(left, dest);
-        sub32(right, dest);
+        if (!imm.m_value) {
+            zeroExtend32ToWord(src, dest);
+            return;
+        }
+
+        if (src == dest) {
+            sub32(imm, dest);
+            return;
+        }
+
+        // Add a negative using lea
+        m_assembler.leal_mr(WTF::negate(imm.m_value), src, dest);
     }
 
     void sub32(TrustedImm32 imm, RegisterID dest)

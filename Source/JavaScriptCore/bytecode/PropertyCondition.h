@@ -331,8 +331,8 @@ public:
     
     // This means that it's still valid and we could enforce validity by setting a transition
     // watchpoint on the structure.
-    bool isWatchable(
-        Structure*, JSObject*, WatchabilityEffort) const;
+    bool isWatchable(Structure*, JSObject*, WatchabilityEffort) const;
+    bool isWatchable(Structure*, JSObject*, WatchabilityEffort, Concurrency) const;
     
     bool watchingRequiresStructureTransitionWatchpoint() const
     {
@@ -364,7 +364,7 @@ public:
     PropertyCondition attemptToMakeReplacementWithoutBarrier(JSObject* base) const;
 
 private:
-    bool isWatchableWhenValid(Structure*, WatchabilityEffort) const;
+    bool isWatchableWhenValid(Structure*, WatchabilityEffort, Concurrency) const;
 
     Header m_header;
     union {

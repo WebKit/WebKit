@@ -59,6 +59,7 @@ private:
 
     OptionSet<FilterRenderingMode> supportedFilterRenderingModes() const override;
 
+    std::unique_ptr<FilterEffectApplier> createAcceleratedApplier() const override;
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
     std::optional<GraphicsStyle> createGraphicsStyle(const Filter&) const override;
 

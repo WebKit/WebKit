@@ -92,6 +92,8 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 #endif // PLATFORM(IOS_FAMILY)
 }
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 - (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration
 {
     if (!(self = [super init]))

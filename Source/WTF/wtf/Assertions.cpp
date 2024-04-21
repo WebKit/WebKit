@@ -104,8 +104,7 @@ ALLOW_NONLITERAL_FORMAT_BEGIN
     }
 
     Vector<char, 256> buffer;
-    unsigned length = result;
-    buffer.grow(length + 1);
+    buffer.grow(result + 1);
 
     // Now do the formatting again, guaranteed to fit.
     vsnprintf(buffer.data(), buffer.size(), format, argsCopy);
@@ -113,7 +112,7 @@ ALLOW_NONLITERAL_FORMAT_BEGIN
 
 ALLOW_NONLITERAL_FORMAT_END
 
-    return StringImpl::create(std::span { reinterpret_cast<const LChar*>(buffer.data()), length });
+    return StringImpl::create(buffer.subspan(0, buffer.size() - 1));
 }
 
 #if PLATFORM(COCOA)

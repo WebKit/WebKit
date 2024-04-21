@@ -56,7 +56,7 @@ TEST(AbortableTaskQueue, AsyncTasks)
         });
     };
     RunLoop::current().dispatch([backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
-        WTF::Thread::create("atq-background", WTFMove(backgroundThreadFunction))->detach();
+        WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
     });
 
     Util::run(&testFinished);
@@ -124,7 +124,7 @@ TEST(AbortableTaskQueue, SyncTasks)
         });
     };
     RunLoop::current().dispatch([backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
-        WTF::Thread::create("atq-background", WTFMove(backgroundThreadFunction))->detach();
+        WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
     });
 
     Util::run(&testFinished);
@@ -221,7 +221,7 @@ TEST(AbortableTaskQueue, Abort)
     RunLoop::current().dispatch([&, backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
         EXPECT_TRUE(isMainThread());
         DeterministicScheduler<TestThread>::ThreadContext mainThreadContext(scheduler, TestThread::Main);
-        WTF::Thread::create("atq-background", WTFMove(backgroundThreadFunction))->detach();
+        WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
 
         mainThreadContext.waitMyTurn();
 
@@ -260,7 +260,7 @@ TEST(AbortableTaskQueue, AbortBeforeSyncTaskRun)
     };
     RunLoop::current().dispatch([&, backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
         EXPECT_TRUE(isMainThread());
-        WTF::Thread::create("atq-background", WTFMove(backgroundThreadFunction))->detach();
+        WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
 
         // Give the background thread a bit of time to get blocked waiting for a response.
         WTF::sleep(100_ms);
@@ -307,7 +307,7 @@ TEST(AbortableTaskQueue, AbortedBySyncTaskHandler)
     };
     RunLoop::current().dispatch([&, backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
         EXPECT_TRUE(isMainThread());
-        WTF::Thread::create("atq-background", WTFMove(backgroundThreadFunction))->detach();
+        WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
     });
 
     Util::run(&testFinished);

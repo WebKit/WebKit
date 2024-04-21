@@ -93,7 +93,7 @@ static Ref<FileList> toFileList(Document* document, const Vector<FileInformation
 }
 
 DirectoryFileListCreator::DirectoryFileListCreator(CompletionHandler&& completionHandler)
-    : m_workQueue(WorkQueue::create("DirectoryFileListCreator Work Queue"))
+    : m_workQueue(WorkQueue::create("DirectoryFileListCreator Work Queue"_s))
     , m_completionHandler(WTFMove(completionHandler))
 {
 }

@@ -51,6 +51,8 @@
 
 @implementation WKUserContentController
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 - (instancetype)init
 {
     if (!(self = [super init]))

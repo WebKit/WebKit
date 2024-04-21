@@ -417,7 +417,7 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /^warning: no umbrella header found for target '.*', module map will not be generated$/;
     return 1 if $line =~ /^warning\: detected internal install, passing entitlements to simulator anyway\./;
     return 1 if $line =~ /may not function in the Simulator because Ad Hoc/;
-    return 1 if $line =~ /\/usr\/bin\/clang .*? \> \S+.sb/;
+    return 1 if $line =~ /^.*\/usr\/bin\/clang .*?/;
     return 1 if $line =~ / xcodebuild\[[0-9]+:[0-9a-f]+\]\s+DVTAssertions: Warning in .*/;
     return 1 if $line =~ /^(Details|Object|Method|Function|Thread):/;
     return 1 if $line =~ /^Please file a bug at /;

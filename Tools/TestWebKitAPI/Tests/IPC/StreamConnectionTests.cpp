@@ -180,7 +180,7 @@ public:
     void setupBase()
     {
         WTF::initializeMainThread();
-        m_serverQueue = IPC::StreamConnectionWorkQueue::create("StreamConnectionTestBase work queue");
+        m_serverQueue = IPC::StreamConnectionWorkQueue::create("StreamConnectionTestBase work queue"_s);
     }
 
     void teardownBase()

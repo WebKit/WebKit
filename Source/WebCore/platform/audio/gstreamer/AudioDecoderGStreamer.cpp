@@ -37,7 +37,7 @@ GST_DEBUG_CATEGORY(webkit_audio_decoder_debug);
 
 static WorkQueue& gstDecoderWorkQueue()
 {
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("GStreamer AudioDecoder Queue"));
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("GStreamer AudioDecoder Queue"_s));
     return queue.get();
 }
 

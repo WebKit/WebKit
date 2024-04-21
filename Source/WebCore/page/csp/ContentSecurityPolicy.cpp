@@ -1109,11 +1109,16 @@ void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureReq
 
     bool upgradeRequest = m_insecureNavigationRequestsToUpgrade.contains(SecurityOriginData::fromURL(url));
     bool isUpgradeMixedContentEnabled = m_scriptExecutionContext ? m_scriptExecutionContext->settingsValues().upgradeMixedContentEnabled : false;
+    bool shouldUpgradeLocalhost = isUpgradeMixedContentEnabled && m_scriptExecutionContext ? m_scriptExecutionContext->settingsValues().iPAddressAndLocalhostMixedContentUpgradeTestingEnabled : false;
 
     if (requestType == InsecureRequestType::Load || requestType == InsecureRequestType::FormSubmission)
         upgradeRequest |= m_upgradeInsecureRequests;
 
     if (!upgradeRequest && (alwaysUpgradeRequest == AlwaysUpgradeRequest::No || !isUpgradeMixedContentEnabled))
+        return;
+
+    // Do not automatically upgrade locahost connections.
+    if (!upgradeRequest && SecurityOrigin::isLocalhostAddress(url.host()) && !shouldUpgradeLocalhost && alwaysUpgradeRequest == AlwaysUpgradeRequest::Yes)
         return;
 
     if (url.protocolIs("http"_s))

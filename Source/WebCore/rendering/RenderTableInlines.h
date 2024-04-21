@@ -52,6 +52,16 @@ inline LayoutUnit RenderTable::borderTop() const
     return style().isLeftToRightDirection() ? borderStart() : borderEnd();
 }
 
+inline RectEdges<LayoutUnit> RenderTable::borderWidths() const
+{
+    return {
+        borderTop(),
+        borderRight(),
+        borderBottom(),
+        borderLeft()
+    };
+}
+
 inline LayoutUnit RenderTable::bordersPaddingAndSpacingInRowDirection() const
 {
     // 'border-spacing' only applies to separate borders (see 17.6.1 The separated borders model).

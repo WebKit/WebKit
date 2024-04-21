@@ -109,11 +109,11 @@ public:
 
     void dump(PrintStream& out) const
     {
-        CommaPrinter comma(", ");
+        CommaPrinter comma(", "_s);
         for (unsigned i = 0; i < m_gpNumWarmUsesAndDefs.size(); ++i)
-            out.print(comma, AbsoluteTmpMapper<GP>::tmpFromAbsoluteIndex(i), "=> {numWarmUsesAndDefs=", m_gpNumWarmUsesAndDefs[i], ", isConstDef=", m_gpConstDefs.quickGet(i), "}");
+            out.print(comma, AbsoluteTmpMapper<GP>::tmpFromAbsoluteIndex(i), "=> {numWarmUsesAndDefs="_s, m_gpNumWarmUsesAndDefs[i], ", isConstDef="_s, m_gpConstDefs.quickGet(i), "}"_s);
         for (unsigned i = 0; i < m_fpNumWarmUsesAndDefs.size(); ++i)
-            out.print(comma, AbsoluteTmpMapper<FP>::tmpFromAbsoluteIndex(i), "=> {numWarmUsesAndDefs=", m_fpNumWarmUsesAndDefs[i], ", isConstDef=", m_fpConstDefs.quickGet(i), "}");
+            out.print(comma, AbsoluteTmpMapper<FP>::tmpFromAbsoluteIndex(i), "=> {numWarmUsesAndDefs="_s, m_fpNumWarmUsesAndDefs[i], ", isConstDef="_s, m_fpConstDefs.quickGet(i), "}"_s);
     }
 
 private:

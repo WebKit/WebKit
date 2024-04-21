@@ -2177,8 +2177,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 node->isBinaryUseKind(SymbolUse) ||
                 node->isBinaryUseKind(StringIdentUse) ||
                 node->isBinaryUseKind(ObjectUse) ||
-                node->isBinaryUseKind(ObjectUse, ObjectOrOtherUse) ||
-                node->isBinaryUseKind(ObjectOrOtherUse, ObjectUse)) {
+                node->isReflexiveBinaryUseKind(ObjectUse, ObjectOrOtherUse)) {
                 switch (node->op()) {
                 case CompareLess:
                 case CompareGreater:
@@ -2253,6 +2252,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // FIXME: Is there any case not involving NaN where x === x is not guaranteed to return true?
             // If not I might slightly simplify that check.
             if (node->isBinaryUseKind(BooleanUse)
+                || node->isReflexiveBinaryUseKind(BooleanUse, UntypedUse)
                 || node->isBinaryUseKind(Int32Use)
                 || node->isBinaryUseKind(Int52RepUse)
                 || node->isBinaryUseKind(StringUse)
@@ -2260,15 +2260,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 || node->isBinaryUseKind(SymbolUse)
                 || node->isBinaryUseKind(ObjectUse)
                 || node->isBinaryUseKind(OtherUse)
-                || node->isBinaryUseKind(OtherUse, UntypedUse)
-                || node->isBinaryUseKind(UntypedUse, OtherUse)
+                || node->isReflexiveBinaryUseKind(OtherUse, UntypedUse)
                 || node->isBinaryUseKind(MiscUse)
-                || node->isBinaryUseKind(MiscUse, UntypedUse)
-                || node->isBinaryUseKind(UntypedUse, MiscUse)
-                || node->isBinaryUseKind(StringIdentUse, NotStringVarUse)
-                || node->isBinaryUseKind(NotStringVarUse, StringIdentUse)
-                || node->isBinaryUseKind(StringUse, UntypedUse)
-                || node->isBinaryUseKind(UntypedUse, StringUse)
+                || node->isReflexiveBinaryUseKind(MiscUse, UntypedUse)
+                || node->isReflexiveBinaryUseKind(StringIdentUse, NotStringVarUse)
+                || node->isReflexiveBinaryUseKind(StringUse, UntypedUse)
                 || node->isBinaryUseKind(BigInt32Use)
                 || node->isBinaryUseKind(HeapBigIntUse)
                 || node->isBinaryUseKind(AnyBigIntUse)) {
@@ -5421,7 +5417,7 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out) const
 template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
 {
-    CommaPrinter comma(" ");
+    CommaPrinter comma(" "_s);
     HashSet<NodeFlowProjection> seen;
     if (m_graph.m_form == SSA) {
         for (NodeFlowProjection node : m_state.block()->ssa->liveAtHead) {
@@ -5429,7 +5425,7 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
             AbstractValue& value = forNode(node);
             if (value.isClear())
                 continue;
-            out.print(comma, node, ":", value);
+            out.print(comma, node, ":"_s, value);
         }
     }
     for (size_t i = 0; i < m_state.block()->size(); ++i) {
@@ -5439,7 +5435,7 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
                 AbstractValue& value = forNode(nodeProjection);
                 if (value.isClear())
                     return;
-                out.print(comma, nodeProjection, ":", value);
+                out.print(comma, nodeProjection, ":"_s, value);
             });
     }
     if (m_graph.m_form == SSA) {
@@ -5449,7 +5445,7 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
             AbstractValue& value = forNode(node);
             if (value.isClear())
                 continue;
-            out.print(comma, node, ":", value);
+            out.print(comma, node, ":"_s, value);
         }
     }
 }

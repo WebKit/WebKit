@@ -44,6 +44,8 @@ RenderFrameBase::RenderFrameBase(Type type, HTMLFrameElementBase& element, Rende
 {
 }
 
+RenderFrameBase::~RenderFrameBase() = default;
+
 inline bool shouldExpandFrame(LayoutUnit width, LayoutUnit height, bool hasFixedWidth, bool hasFixedHeight)
 {
     // If the size computed to zero never expand.

@@ -54,6 +54,7 @@ class MediaRecorderPrivate final
     , public CanMakeWeakPtr<MediaRecorderPrivate>
     , private Identified<MediaRecorderIdentifier> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaRecorderPrivate);
 public:
     MediaRecorderPrivate(WebCore::MediaStreamPrivate&, const WebCore::MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivate();

@@ -28,6 +28,7 @@
 
 #include "ContentData.h"
 #include "Editor.h"
+#include "ElementInlines.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffectStack.h"
 #include "PseudoElement.h"
@@ -284,9 +285,11 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         return;
 
     auto& editor = renderer.element()->document().editor();
+    RefPtr nodeBeforeWritingSuggestions = editor.nodeBeforeWritingSuggestions();
+    if (!nodeBeforeWritingSuggestions)
+        return;
 
-    auto isWritingSuggestionElement = renderer.element() == editor.writingSuggestionsContainerElement();
-    if (!isWritingSuggestionElement)
+    if (renderer.element() != nodeBeforeWritingSuggestions->parentElement())
         return;
 
     auto* writingSuggestionData = editor.writingSuggestionData();
@@ -328,23 +331,37 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
 
         writingSuggestionsText->setText(writingSuggestionData->content());
 
-        auto* suffixText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->nextSibling());
-        if (!suffixText) {
-            ASSERT_NOT_REACHED();
-            destroyWritingSuggestionsIfNeeded();
-            return;
-        }
+        if (!suffix.isEmpty()) {
+            auto* suffixText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->nextSibling());
+            if (!suffixText) {
+                ASSERT_NOT_REACHED();
+                destroyWritingSuggestionsIfNeeded();
+                return;
+            }
 
-        suffixText->setText(suffix);
+            suffixText->setText(suffix);
+        }
     } else {
         auto newWritingSuggestionsRenderer = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, renderer.document(), WTFMove(newStyle));
         newWritingSuggestionsRenderer->initializeStyle();
+
+        auto rendererAfterWritingSuggestions = [&]() -> CheckedPtr<RenderObject> {
+            CheckedPtr rendererBefore = nodeBeforeWritingSuggestions->renderer();
+            if (!rendererBefore || rendererBefore->parent() != &renderer)
+                return nullptr;
+
+            CheckedPtr rendererAfter = rendererBefore->nextSibling();
+            if (!rendererAfter || rendererAfter->parent() != &renderer)
+                return nullptr;
+
+            return rendererAfter;
+        }();
 
         auto writingSuggestionsText = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, renderer.document(), writingSuggestionData->content());
         m_updater.m_builder.attach(*newWritingSuggestionsRenderer, WTFMove(writingSuggestionsText));
 
         editor.setWritingSuggestionRenderer(*newWritingSuggestionsRenderer.get());
-        m_updater.m_builder.attach(renderer, WTFMove(newWritingSuggestionsRenderer));
+        m_updater.m_builder.attach(renderer, WTFMove(newWritingSuggestionsRenderer), rendererAfterWritingSuggestions.get());
 
         auto* prefixNode = firstChildText->textNode();
         if (!prefixNode) {
@@ -353,8 +370,10 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
             return;
         }
 
-        auto suffixRenderer = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, *prefixNode, suffix);
-        m_updater.m_builder.attach(renderer, WTFMove(suffixRenderer));
+        if (!suffix.isEmpty()) {
+            auto suffixRenderer = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, *prefixNode, suffix);
+            m_updater.m_builder.attach(renderer, WTFMove(suffixRenderer), rendererAfterWritingSuggestions.get());
+        }
     }
 }
 

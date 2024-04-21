@@ -32,8 +32,10 @@ class SVGInlineTextBox;
 
 class RenderSVGInlineText final : public RenderText {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGInlineText);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInlineText);
 public:
     RenderSVGInlineText(Text&, const String&);
+    virtual ~RenderSVGInlineText();
 
     Text& textNode() const { return downcast<Text>(nodeForNonAnonymous()); }
 

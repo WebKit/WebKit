@@ -54,6 +54,7 @@ typedef unsigned TextRunFlags;
 
 class RenderBlock : public RenderBox {
     WTF_MAKE_ISO_ALLOCATED(RenderBlock);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBlock);
 public:
     friend class LineLayoutState;
     virtual ~RenderBlock();
@@ -184,9 +185,9 @@ public:
         ExpansionBehavior = ExpansionBehavior::defaultBehavior());
     static TextRun constructTextRun(const RenderText&, unsigned offset, unsigned length, const RenderStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior());
-    static TextRun constructTextRun(const LChar* characters, unsigned length, const RenderStyle&,
+    static TextRun constructTextRun(std::span<const LChar> characters, const RenderStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior());
-    static TextRun constructTextRun(const UChar* characters, unsigned length, const RenderStyle&,
+    static TextRun constructTextRun(std::span<const UChar> characters, const RenderStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior());
 
     LayoutUnit paginationStrut() const;
@@ -202,10 +203,13 @@ public:
     // (flexbox, block, etc.)
     LayoutUnit intrinsicBorderForFieldset() const;
     void setIntrinsicBorderForFieldset(LayoutUnit);
+
+    RectEdges<LayoutUnit> borderWidths() const override;
     LayoutUnit borderTop() const override;
     LayoutUnit borderBottom() const override;
     LayoutUnit borderLeft() const override;
     LayoutUnit borderRight() const override;
+
     LayoutUnit borderBefore() const override;
     LayoutUnit adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const override;
     LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const override;

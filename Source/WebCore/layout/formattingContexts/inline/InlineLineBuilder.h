@@ -34,7 +34,7 @@ namespace Layout {
 struct LineContent;
 struct LineCandidate;
 
-class LineBuilder : public AbstractLineBuilder {
+class LineBuilder final : public AbstractLineBuilder {
 public:
     LineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     virtual ~LineBuilder() { };

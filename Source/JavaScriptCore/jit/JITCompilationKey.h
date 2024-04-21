@@ -51,10 +51,10 @@ public:
         , m_mode(mode)
     {
     }
-    
-    bool operator!() const
+
+    explicit operator bool() const
     {
-        return !m_codeBlock && m_mode == JITCompilationMode::InvalidCompilation;
+        return m_codeBlock || m_mode != JITCompilationMode::InvalidCompilation;
     }
     
     bool isHashTableDeletedValue() const

@@ -40,7 +40,7 @@ namespace {
 class ConstantHoistingPhase : public Phase {
 public:
     ConstantHoistingPhase(Graph& graph)
-        : Phase(graph, "constant hoisting")
+        : Phase(graph, "constant hoisting"_s)
     {
     }
     

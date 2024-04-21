@@ -58,7 +58,7 @@ public:
     static std::unique_ptr<RemoteLayerTreeNode> createWithPlainLayer(WebCore::PlatformLayerIdentifier);
 
     CALayer *layer() const { return m_layer.get(); }
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     struct VisibleRectMarkableTraits {
         static bool isEmptyValue(const WebCore::FloatRect& value)
         {
@@ -130,7 +130,7 @@ public:
         return m_asyncContentsIdentifier;
     }
 
-    void setAsyncContentsIdentifier(const WebCore::RenderingResourceIdentifier& identifier)
+    void setAsyncContentsIdentifier(std::optional<WebCore::RenderingResourceIdentifier> identifier)
     {
         m_asyncContentsIdentifier = identifier;
     }
@@ -149,7 +149,7 @@ private:
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
 
     RetainPtr<CALayer> m_layer;
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     Markable<WebCore::FloatRect, VisibleRectMarkableTraits> m_visibleRect;
 
     void repositionInteractionRegionsContainerIfNeeded();

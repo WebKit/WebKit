@@ -107,20 +107,60 @@ ALWAYS_INLINE JSValue Interpreter::executeCachedCall(CachedCall& cachedCall)
         vm.didEnterVM = true;
     });
 
-    if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
-        if (vm.hasExceptionsAfterHandlingTraps())
-            return throwScope.exception();
-    }
+    // We don't handle `NonDebuggerAsyncEvents` explicitly here. This is a JS function (since this is CachedCall),
+    // so the called JS function always handles it.
 
-    if (UNLIKELY(!cachedCall.m_addressForCall)) {
+    auto* entry = cachedCall.m_addressForCall;
+    if (UNLIKELY(!entry)) {
         DeferTraps deferTraps(vm); // We can't jettison this code if we're about to run it.
         cachedCall.relink();
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+        entry = cachedCall.m_addressForCall;
     }
 
     // Execute the code:
     throwScope.release();
-    return JSValue::decode(vmEntryToJavaScript(cachedCall.m_addressForCall, &vm, &cachedCall.m_protoCallFrame));
+    return JSValue::decode(vmEntryToJavaScript(entry, &vm, &cachedCall.m_protoCallFrame));
 }
+
+#if CPU(ARM64) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
+template<typename... Args>
+ALWAYS_INLINE JSValue Interpreter::tryCallWithArguments(CachedCall& cachedCall, JSValue thisValue, Args... args)
+{
+    VM& vm = this->vm();
+    static_assert(sizeof...(args) <= 3);
+
+    ASSERT(!vm.isCollectorBusyOnCurrentThread());
+    ASSERT(vm.currentThreadIsHoldingAPILock());
+
+    StackStats::CheckPoint stackCheckPoint;
+
+    auto clobberizeValidator = makeScopeExit([&] {
+        vm.didEnterVM = true;
+    });
+
+    // We don't handle `NonDebuggerAsyncEvents` explicitly here. This is a JS function (since this is CachedCall),
+    // so the called JS function always handles it.
+
+    auto* entry = cachedCall.m_addressForCall;
+    if (UNLIKELY(!entry))
+        return { };
+
+    // Execute the code:
+    auto* codeBlock = cachedCall.m_protoCallFrame.codeBlock();
+    auto* callee = cachedCall.m_protoCallFrame.callee();
+
+    if constexpr (!sizeof...(args))
+        return JSValue::decode(vmEntryToJavaScriptWith0Arguments(entry, &vm, codeBlock, callee, thisValue, args...));
+    else if constexpr (sizeof...(args) == 1)
+        return JSValue::decode(vmEntryToJavaScriptWith1Arguments(entry, &vm, codeBlock, callee, thisValue, args...));
+    else if constexpr (sizeof...(args) == 2)
+        return JSValue::decode(vmEntryToJavaScriptWith2Arguments(entry, &vm, codeBlock, callee, thisValue, args...));
+    else if constexpr (sizeof...(args) == 3)
+        return JSValue::decode(vmEntryToJavaScriptWith3Arguments(entry, &vm, codeBlock, callee, thisValue, args...));
+    else
+        return { };
+}
+#endif
 
 } // namespace JSC

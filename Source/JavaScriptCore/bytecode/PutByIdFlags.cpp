@@ -34,11 +34,11 @@ namespace WTF {
 using namespace JSC;
 
 void printInternal(PrintStream& out, PutByIdFlags flags) {
-    CommaPrinter comma("|");
+    CommaPrinter comma("|"_s);
     if (flags.isDirect())
-        out.print(comma, "IsDirect");
+        out.print(comma, "IsDirect"_s);
     if (flags.ecmaMode().isStrict())
-        out.print(comma, "Strict");
+        out.print(comma, "Strict"_s);
 }
 
 } // namespace WTF

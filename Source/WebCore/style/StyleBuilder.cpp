@@ -365,7 +365,6 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     if (valueType == ApplyValueType::Inherit && !isInheritedProperty())
         style.setHasExplicitlyInheritedProperties();
 
-#if ENABLE(CSS_PAINTING_API)
     if (auto* paintImageValue = dynamicDowncast<CSSPaintImageValue>(valueToApply.get())) {
         auto& name = paintImageValue->name();
         if (auto* paintWorklet = const_cast<Document&>(m_state.document()).paintWorkletGlobalScopeForName(name)) {
@@ -376,7 +375,6 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
             }
         }
     }
-#endif
 
     if (customPropertyValue) {
         ASSERT(id == CSSPropertyCustom);
@@ -462,7 +460,7 @@ RefPtr<const CSSCustomPropertyValue> Builder::resolveCustomPropertyForContainerQ
         auto initial = [&]() -> RefPtr<const CSSCustomPropertyValue> {
             if (registered)
                 return registered->initialValue;
-            return nullptr;
+            return CSSCustomPropertyValue::createWithID(name, CSSValueInvalid);
         };
 
         auto inherit = [&]() -> RefPtr<const CSSCustomPropertyValue> {
@@ -485,13 +483,22 @@ RefPtr<const CSSCustomPropertyValue> Builder::resolveCustomPropertyForContainerQ
             return isInherited ? inherit() : initial();
         case CSSValueRevert:
         case CSSValueRevertLayer:
+            // https://drafts.csswg.org/css-contain-3/#style-container
+            // "Cascade-dependent keywords, such as revert and revert-layer, are invalid as values in a style feature,
+            // and cause the container style query to be false."
             return nullptr;
         default:
-            ASSERT_NOT_REACHED();
-            return nullptr;
+            break;
         }
+        ASSERT_NOT_REACHED();
+        return nullptr;
     }
-    return resolveCustomPropertyValue(const_cast<CSSCustomPropertyValue&>(value));
+
+    auto resolvedValue = resolveCustomPropertyValue(const_cast<CSSCustomPropertyValue&>(value));
+    if (!resolvedValue)
+        return CSSCustomPropertyValue::createWithID(value.name(), CSSValueInvalid);
+
+    return resolvedValue;
 }
 
 RefPtr<CSSCustomPropertyValue> Builder::resolveCustomPropertyValue(CSSCustomPropertyValue& value)

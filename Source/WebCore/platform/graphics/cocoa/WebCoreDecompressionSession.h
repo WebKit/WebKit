@@ -114,6 +114,7 @@ private:
     void resetAutomaticDequeueTimer();
     void automaticDequeue();
     bool shouldDecodeSample(CMSampleBufferRef, bool displaying);
+    void assignResourceOwner(CVImageBufferRef);
 
     static CMTime getDecodeTime(CMBufferRef, void* refcon);
     static CMTime getPresentationTime(CMBufferRef, void* refcon);

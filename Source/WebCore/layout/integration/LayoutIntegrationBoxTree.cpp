@@ -274,23 +274,63 @@ void BoxTree::insertChild(UniqueRef<Layout::Box> childBox, RenderObject& childRe
     parentBox.insertChild(WTFMove(childBox), beforeChildBox);
 }
 
+static void updateContentCharacteristic(const RenderText& rendererText, Layout::InlineTextBox& inlineTextBox)
+{
+    auto& rendererStyle = rendererText.style();
+    auto shouldUpdateContentCharacteristic = rendererStyle.fontCascade() != inlineTextBox.style().fontCascade();
+    if (!shouldUpdateContentCharacteristic)
+        return;
+
+    auto contentCharacteristic = OptionSet<Layout::InlineTextBox::ContentCharacteristic> { };
+    // These may only change when content changes.
+    if (inlineTextBox.canUseSimpleFontCodePath())
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpledFontCodepath);
+    if (inlineTextBox.hasPositionDependentContentWidth())
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
+
+    if (inlineTextBox.canUseSimpleFontCodePath() && Layout::TextUtil::canUseSimplifiedTextMeasuring(inlineTextBox.content(), rendererStyle.fontCascade(), rendererStyle.collapseWhiteSpace(), &rendererText.firstLineStyle()))
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimplifiedContentMeasuring);
+
+    inlineTextBox.setContentCharacteristic(contentCharacteristic);
+}
+
+static void updateListMarkerAttributes(const RenderListMarker& listMarkerRenderer, Layout::ElementBox& layoutBox)
+{
+    auto listMarkerAttributes = OptionSet<Layout::ElementBox::ListMarkerAttribute> { };
+    if (listMarkerRenderer.isImage())
+        listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Image);
+    if (!listMarkerRenderer.isInside())
+        listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Outside);
+    if (listMarkerRenderer.listItem() && !listMarkerRenderer.listItem()->notInList())
+        listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::HasListElementAncestor);
+
+    layoutBox.setListMarkerAttributes(listMarkerAttributes);
+}
+
 void BoxTree::updateStyle(const RenderObject& renderer)
 {
+    auto& rendererStyle = renderer.style();
     auto* layoutBox = const_cast<Layout::Box*>(renderer.layoutBox());
     if (!layoutBox) {
         ASSERT_NOT_REACHED();
         return;
     }
-    if (layoutBox->isInlineTextBox()) {
-        ASSERT(is<RenderText>(renderer));
-        layoutBox->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(renderer.style(), DisplayType::Inline), firstLineStyleFor(renderer));
-        return;
+
+    if (auto* renderText = dynamicDowncast<RenderText>(renderer)) {
+        if (auto* inlineTextBox = dynamicDowncast<Layout::InlineTextBox>(*layoutBox)) {
+            updateContentCharacteristic(*renderText, *inlineTextBox);
+            inlineTextBox->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(rendererStyle, DisplayType::Inline), firstLineStyleFor(*renderText));
+            return;
+        }
+        ASSERT_NOT_REACHED();
     }
 
     auto firstLineNewStyle = firstLineStyleFor(renderer);
-    auto newStyle = RenderStyle::clone(renderer.style());
+    auto newStyle = RenderStyle::clone(rendererStyle);
     adjustStyleIfNeeded(downcast<RenderElement>(renderer), newStyle, firstLineNewStyle.get());
     layoutBox->updateStyle(WTFMove(newStyle), WTFMove(firstLineNewStyle));
+    if (auto* listMarkerRenderer = dynamicDowncast<RenderListMarker>(renderer); listMarkerRenderer && is<Layout::ElementBox>(*layoutBox))
+        updateListMarkerAttributes(*listMarkerRenderer, downcast<Layout::ElementBox>(*layoutBox));
 }
 
 void BoxTree::updateContent(const RenderText& textRenderer)
@@ -310,7 +350,7 @@ void BoxTree::updateContent(const RenderText& textRenderer)
     if (Layout::TextUtil::hasPositionDependentContentWidth(text))
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
 
-    inlineTextBox.updateContent(text, contentCharacteristic);
+    inlineTextBox.setContent(text, contentCharacteristic);
 }
 
 const Layout::Box& BoxTree::insert(const RenderElement& parent, RenderObject& child, const RenderObject* beforeChild)

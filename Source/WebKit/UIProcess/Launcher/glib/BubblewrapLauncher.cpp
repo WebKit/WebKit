@@ -883,6 +883,9 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         }));
     }
 
+    bindIfExists(sandboxArgs, "/run/systemd/journal/socket");
+    bindIfExists(sandboxArgs, "/run/systemd/journal/stdout");
+
     createBwrapInfo(launcher, sandboxArgs, instanceID.get());
 
     if (launchOptions.processType == ProcessLauncher::ProcessType::Web) {

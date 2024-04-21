@@ -47,7 +47,7 @@ struct SingleLatchTest {
         for (unsigned i = numThreads; i--;) {
             threads.append(
                 Thread::create(
-                    "Parking Test Thread",
+                    "Parking Test Thread"_s,
                     [&] () {
                         down();
 

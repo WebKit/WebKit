@@ -46,7 +46,7 @@
 namespace WebKit {
 
 static NSString *const WKRemoteLayerTreeNodePropertyKey = @"WKRemoteLayerTreeNode";
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
 static NSString *const WKInteractionRegionContainerKey = @"WKInteractionRegionContainer";
 #endif
 
@@ -77,7 +77,7 @@ RemoteLayerTreeNode::~RemoteLayerTreeNode()
         m_effectStack->clear(layer());
 #endif
     [layer() setValue:nil forKey:WKRemoteLayerTreeNodePropertyKey];
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     removeInteractionRegionsContainer();
 #endif
 }
@@ -90,7 +90,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeNode::createWithPlainLayer(W
 
 void RemoteLayerTreeNode::detachFromParent()
 {
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     removeInteractionRegionsContainer();
 #endif
 #if PLATFORM(IOS_FAMILY)
@@ -110,13 +110,13 @@ void RemoteLayerTreeNode::setEventRegion(const WebCore::EventRegion& eventRegion
 void RemoteLayerTreeNode::initializeLayer()
 {
     [layer() setValue:[NSValue valueWithPointer:this] forKey:WKRemoteLayerTreeNodePropertyKey];
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     if (![layer() isKindOfClass:[CATransformLayer class]])
         [layer() setHitTestsContentsAlphaChannel:YES];
 #endif
 }
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
 CALayer* RemoteLayerTreeNode::ensureInteractionRegionsContainer()
 {
     if (m_interactionRegionsContainer)

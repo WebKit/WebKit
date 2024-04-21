@@ -39,7 +39,7 @@
 namespace WebCore {
 
 LibWebRTCAudioModule::LibWebRTCAudioModule()
-    : m_queue(WorkQueue::create("WebKitWebRTCAudioModule", WorkQueue::QOS::UserInteractive))
+    : m_queue(WorkQueue::create("WebKitWebRTCAudioModule"_s, WorkQueue::QOS::UserInteractive))
     , m_logTimer(makeUnique<Timer>(*this, &LibWebRTCAudioModule::logTimerFired))
 {
     ASSERT(isMainThread());

@@ -119,7 +119,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/element-with-overflow-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/element-with-overflow-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/element-with-overflow.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/event-pseudo-name-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/event-pseudo-name.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/exit-transition-with-anonymous-layout-object-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/exit-transition-with-anonymous-layout-object-ref.html
@@ -273,6 +272,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-spans-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-spans.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-changes-overflow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-changes-overflow-left-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-changes-overflow-left-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-changes-overflow-left.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-changes-overflow-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-changes-overflow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-container-writing-modes-expected.html
@@ -333,6 +335,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-root-capture-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-root-capture-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-root-capture.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-white-flash-before-activation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-white-flash-before-activation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-white-flash-before-activation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nothing-captured-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nothing-captured-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nothing-captured.html
@@ -421,6 +426,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-wildard-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-wildard.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-wildcard-no-star-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-wildcard-no-star.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-ident-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-ident.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-partial-expected.html
@@ -513,9 +520,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-empty-iframe-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-empty-iframe-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-empty-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-hidden-page.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-skipped-after-animation-started.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-skipped-from-invalid-callback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/unset-and-initial-view-transition-name.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/update-callback-timeout.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-is-backdrop-filter-root-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-is-backdrop-filter-root-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-is-backdrop-filter-root.html
@@ -531,6 +540,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-removed-mid-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/web-animation-pseudo-incorrect-name.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api-parse-pseudo-argument-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api-parse-pseudo-argument.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html

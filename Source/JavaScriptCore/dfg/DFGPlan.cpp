@@ -131,10 +131,10 @@ Profiler::CompilationKind profilerCompilationKindForMode(JITCompilationMode mode
 
 Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     JITCompilationMode mode, BytecodeIndex osrEntryBytecodeIndex,
-    const Operands<std::optional<JSValue>>& mustHandleValues)
+    Operands<std::optional<JSValue>>&& mustHandleValues)
         : Base(mode, passedCodeBlock)
         , m_profiledDFGCodeBlock(profiledDFGCodeBlock)
-        , m_mustHandleValues(mustHandleValues)
+        , m_mustHandleValues(WTFMove(mustHandleValues))
         , m_osrEntryBytecodeIndex(osrEntryBytecodeIndex)
         , m_compilation(UNLIKELY(m_vm->m_perBytecodeProfiler) ? adoptRef(new Profiler::Compilation(m_vm->m_perBytecodeProfiler->ensureBytecodesFor(m_codeBlock), profilerCompilationKindForMode(mode))) : nullptr)
         , m_inlineCallFrames(adoptRef(new InlineCallFrameSet()))
@@ -191,7 +191,7 @@ void Plan::cancel()
 Plan::CompilationPath Plan::compileInThreadImpl()
 {
     {
-        CompilerTimingScope timingScope("DFG", "initialize");
+        CompilerTimingScope timingScope("DFG"_s, "initialize"_s);
         m_recordedStatuses = makeUnique<RecordedStatuses>();
         cleanMustHandleValuesIfNecessary();
     }
@@ -205,7 +205,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
     Graph dfg(*m_vm, *this);
 
     {
-        CompilerTimingScope timingScope("DFG", "bytecode parser");
+        CompilerTimingScope timingScope("DFG"_s, "bytecode parser"_s);
         if (!parse(dfg))
             return CancelPath;
     }
@@ -349,7 +349,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         dumpAndVerifyGraph(dfg, "Graph after optimization:");
         
         {
-            CompilerTimingScope timingScope("DFG", "machine code generation");
+            CompilerTimingScope timingScope("DFG"_s, "machine code generation"_s);
 
             SpeculativeJIT speculativeJIT(dfg);
             if (m_codeBlock->codeType() == FunctionCode)

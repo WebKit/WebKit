@@ -31,6 +31,8 @@
 
 @implementation WKNavigationResponse
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNavigationResponse.class, self))

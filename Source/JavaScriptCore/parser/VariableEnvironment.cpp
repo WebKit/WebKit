@@ -208,9 +208,9 @@ bool VariableEnvironment::declarePrivateMethod(const RefPtr<UniquedStringImpl>& 
 
 void VariableEnvironment::dump(PrintStream& out) const
 {
-    CommaPrinter comma(", ");
+    CommaPrinter comma(", "_s);
     for (auto& pair : m_map)
-        out.print(comma, pair.key, " => ", pair.value);
+        out.print(comma, pair.key, " => "_s, pair.value);
 }
 
 void CompactTDZEnvironment::sortCompact(Compact& compact)

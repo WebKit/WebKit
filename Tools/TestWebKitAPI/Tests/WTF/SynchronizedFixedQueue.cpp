@@ -64,14 +64,14 @@ public:
     WorkQueue* produceQueue()
     {
         if (!m_produceQueue)
-            m_produceQueue = WorkQueue::create("org.webkit.Produce");
+            m_produceQueue = WorkQueue::create("org.webkit.Produce"_s);
         return m_produceQueue.get();
     }
 
     WorkQueue* consumeQueue()
     {
         if (!m_consumeQueue)
-            m_consumeQueue = WorkQueue::create("org.webkit.Consume");
+            m_consumeQueue = WorkQueue::create("org.webkit.Consume"_s);
         return m_consumeQueue.get();
     }
 

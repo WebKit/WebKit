@@ -258,7 +258,7 @@ void PushDatabase::create(const String& path, CreationHandler&& completionHandle
 {
     ASSERT(RunLoop::isMain());
 
-    auto queue = WorkQueue::create("PushDatabase I/O Thread");
+    auto queue = WorkQueue::create("PushDatabase I/O Thread"_s);
     queue->dispatch([queue, path = crossThreadCopy(path), completionHandler = WTFMove(completionHandler)]() mutable {
         auto database = openAndMigrateDatabase(path);
         WorkQueue::main().dispatch([queue = WTFMove(queue), database = WTFMove(database), completionHandler = WTFMove(completionHandler)]() mutable {

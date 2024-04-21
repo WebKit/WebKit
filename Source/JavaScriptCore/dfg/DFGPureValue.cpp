@@ -35,7 +35,7 @@ namespace JSC { namespace DFG {
 void PureValue::dump(PrintStream& out) const
 {
     out.print(Graph::opName(op()));
-    out.print("(");
+    out.print("("_s);
     CommaPrinter comma;
     if (isVarargs()) {
         for (unsigned i = 0; i < m_children.numChildren(); ++i)
@@ -48,7 +48,7 @@ void PureValue::dump(PrintStream& out) const
     }
     if (m_info)
         out.print(comma, m_info);
-    out.print(")");
+    out.print(")"_s);
 }
 
 } } // namespace JSC::DFG

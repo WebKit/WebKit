@@ -132,13 +132,13 @@ void printInternal(PrintStream& out, const JSC::DFG::FlowMap<T>& map)
     for (unsigned i = 0; i < map.graph().maxNodeCount(); ++i) {
         if (JSC::DFG::Node* node = map.graph().nodeAt(i)) {
             if (const T& value = map.at(node))
-                out.print(comma, node, "=>", value);
+                out.print(comma, node, "=>"_s, value);
         }
     }
     for (unsigned i = 0; i < map.graph().maxNodeCount(); ++i) {
         if (JSC::DFG::Node* node = map.graph().nodeAt(i)) {
             if (const T& value = map.atShadow(node))
-                out.print(comma, "shadow(", node, ")=>", value);
+                out.print(comma, "shadow("_s, node, ")=>"_s, value);
         }
     }
 }

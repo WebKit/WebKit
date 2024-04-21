@@ -27,6 +27,7 @@
 #include "DOMWindow.h"
 
 #include "BackForwardController.h"
+#include "CSSRuleList.h"
 #include "CSSStyleDeclaration.h"
 #include "Document.h"
 #include "Frame.h"

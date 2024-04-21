@@ -1,5 +1,5 @@
 PASS firstTarget is "#overlay"
-PASS secondTarget is ".fixed"
+PASS secondTarget is "DIV.fixed"
 PASS successfullyParsed is true
 
 TEST COMPLETE

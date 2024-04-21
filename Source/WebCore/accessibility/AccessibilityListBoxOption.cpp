@@ -132,8 +132,8 @@ String AccessibilityListBoxOption::stringValue() const
     if (!m_node)
         return { };
 
-    const auto& ariaLabel = getAttribute(aria_labelAttr);
-    if (!ariaLabel.isNull())
+    auto ariaLabel = getAttributeTrimmed(aria_labelAttr);
+    if (!ariaLabel.isEmpty())
         return ariaLabel;
 
     if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*m_node))

@@ -295,8 +295,9 @@ struct PseudoStyleCache {
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyle);
-class RenderStyle : public CanMakeCheckedPtr<RenderStyle> {
+class RenderStyle final : public CanMakeCheckedPtr<RenderStyle> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RenderStyle);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderStyle);
 private:
     enum CloneTag { Clone };
     enum CreateDefaultStyleTag { CreateDefaultStyle };
@@ -1608,9 +1609,7 @@ public:
     inline void setApplePayButtonType(ApplePayButtonType);
 #endif
 
-#if ENABLE(CSS_PAINTING_API)
     void addCustomPaintWatchProperty(const AtomString&);
-#endif
 
     // Support for paint-order, stroke-linecap, stroke-linejoin, and stroke-miterlimit from https://drafts.fxtf.org/paint/.
     inline void setPaintOrder(PaintOrder);

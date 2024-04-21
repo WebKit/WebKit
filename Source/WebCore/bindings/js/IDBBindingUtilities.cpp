@@ -578,7 +578,7 @@ void callOnIDBSerializationThreadAndWait(Function<void(JSC::JSGlobalObject&)>&& 
     static std::once_flag createThread;
 
     std::call_once(createThread, [] {
-        Thread::create("IndexedDB Serialization", [] {
+        Thread::create("IndexedDB Serialization"_s, [] {
             IDBSerializationContext serializationContext;
             while (auto function = queue->waitForMessage()) {
                 AutodrainedPool pool;

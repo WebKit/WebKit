@@ -150,7 +150,7 @@ void fixSSAGlobally(Procedure& proc)
 
     // Decide where Phis are to be inserted. This creates them but does not insert them.
     {
-        CompilerTimingScope timingScope("B3", "fixSSA: computePhis");
+        CompilerTimingScope timingScope("B3"_s, "fixSSA: computePhis"_s);
         ssa.computePhis(
             [&] (SSACalculator::Variable* calcVar, BasicBlock* block) -> Value* {
                 Variable* variable = calcVarToVariable[calcVar->index()];
@@ -168,7 +168,7 @@ void fixSSAGlobally(Procedure& proc)
     }
 
     // Now perform the conversion.
-    CompilerTimingScope timingScope("B3", "fixSSA: convert");
+    CompilerTimingScope timingScope("B3"_s, "fixSSA: convert"_s);
     InsertionSet insertionSet(proc);
     IndexSparseSet<KeyValuePair<unsigned, Value*>> mapping(proc.variables().size());
     IndexSet<Value*> valuesToDelete;
@@ -349,7 +349,7 @@ void demoteValues(Procedure& proc, const IndexSet<Value*>& values)
 
 bool fixSSA(Procedure& proc)
 {
-    PhaseScope phaseScope(proc, "fixSSA");
+    PhaseScope phaseScope(proc, "fixSSA"_s);
 
     if (proc.variables().isEmpty())
         return false;

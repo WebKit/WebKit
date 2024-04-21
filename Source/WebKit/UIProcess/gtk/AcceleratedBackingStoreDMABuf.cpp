@@ -26,8 +26,6 @@
 #include "config.h"
 #include "AcceleratedBackingStoreDMABuf.h"
 
-#if USE(EGL)
-
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "DMABufRendererBufferMode.h"
@@ -662,5 +660,3 @@ RendererBufferFormat AcceleratedBackingStoreDMABuf::bufferFormat() const
 }
 
 } // namespace WebKit
-
-#endif // USE(EGL)

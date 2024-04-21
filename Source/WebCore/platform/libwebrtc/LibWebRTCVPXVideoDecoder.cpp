@@ -56,7 +56,7 @@ namespace WebCore {
 
 static WorkQueue& vpxDecoderQueue()
 {
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("VPx VideoDecoder Queue"));
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("VPx VideoDecoder Queue"_s));
     return queue.get();
 }
 

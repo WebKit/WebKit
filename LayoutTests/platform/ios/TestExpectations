@@ -1365,6 +1365,9 @@ fast/css/variables/env/ios [ Pass ]
 # Tests use resizable popups which are not a thing on iOS.
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
 
+# Needs special fuzziness on iOS.
+imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edge.html [ ImageOnlyFailure ]
+
 ###
 # Known failures
 ##
@@ -2303,6 +2306,7 @@ accessibility/aria-braillelabel.html [ Pass ]
 accessibility/aria-brailleroledescription.html [ Pass ]
 accessibility/aria-checked-mixed-value.html [ Pass ]
 accessibility/aria-describedby-on-input.html [ Pass ]
+accessibility/body-element-aria-hidden.html [ Pass ]
 accessibility/display-contents/aria-hidden.html [ Pass ]
 accessibility/aria-multiline.html [ Pass ]
 accessibility/aria-readonly-updates-after-dynamic-change.html [ Pass ]
@@ -2328,6 +2332,7 @@ accessibility/empty-text-under-element-cached.html [ Pass ]
 accessibility/heading-level.html [ Pass ]
 accessibility/hidden-label.html [ Pass ]
 accessibility/hidden-slot.html [ Pass ]
+accessibility/html-element-aria-hidden.html [ Pass ]
 accessibility/html5-required-attribute.html [ Pass ]
 accessibility/iframe-tree-update-with-dirty-layout.html [ Pass ]
 accessibility/iframe-with-role.html [ Pass ]
@@ -3701,8 +3706,6 @@ webkit.org/b/236930 accessibility/ios-simulator/aria-details.html [ Crash Pass ]
 
 webkit.org/b/238284 editing/spelling/spellcheck-async-remove-frame.html [ Pass Crash ]
 
-webkit.org/b/238771 media/video-played-ranges-1.html [ Pass Failure ]
-
 webkit.org/b/237108 http/tests/websocket/tests/hybi/extensions.html [ Pass ]
 
 webkit.org/b/238824 http/tests/workers/service/openwindow-from-notification-click.html [ Pass Failure ]
@@ -4640,6 +4643,7 @@ imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-match
 
 http/tests/site-isolation/mouse-events/ [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/draw-after-navigation.html [ Skip ]
+webkit.org/b/257904 http/tests/site-isolation/draw-with-size-after-same-origin-navigation.html [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/selection-focus.html [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/basic-iframe-render-output.html [ Failure Timeout Pass ]
 
@@ -4739,6 +4743,7 @@ imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.ht
 # webkit.org/b/266660 [GARDENING] NEW-TEST(270986@main):[ iOS17 ] 2X imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen are constant ImageOnlyFailures
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-new.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-on-top-of-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
 
 # webkit.org/b/266661 RE-IMPORT(271918@main) 3X imported/w3c/web-platform-tests/css/selectors (layout-tests) are constant text failures
 imported/w3c/web-platform-tests/css/selectors/invalidation/user-valid-user-invalid.html [ Failure ]
@@ -7323,8 +7328,6 @@ webkit.org/b/254872 webrtc/video-rotation.html [ Pass Timeout ]
 fast/overflow/infiniteRecursion.html [ Failure Pass ]
 tables/mozilla/bugs/bug2479-2.html [ Failure Pass ]
 
-webkit.org/b/271764 fast/scrolling/ios/video-atop-overflow-scroll.html [ Pass Failure ]
-
 webkit.org/b/271931 [ Debug ] imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-105.html [ Crash ]
 
 webkit.org/b/271994 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-001.html [ Failure ]
@@ -7335,3 +7338,7 @@ fast/forms/switch/click-animation-redundant-disabled.html [ ImageOnlyFailure ]
 fast/forms/switch/click-animation.html [ ImageOnlyFailure ]
 
 webkit.org/b/271969 accessibility/ios-simulator/inline-prediction-attributed-string.html [ Failure ]
+
+webkit.org/b/272910 fast/scrolling/ios/video-atop-overflow-scroll.html [ Skip ]
+
+webkit.org/b/272944 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-form-controls-crash.html [ Skip ]

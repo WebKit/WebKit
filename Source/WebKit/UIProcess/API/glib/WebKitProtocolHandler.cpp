@@ -53,9 +53,7 @@
 #endif
 
 #if PLATFORM(GTK)
-#if USE(EGL)
 #include "AcceleratedBackingStoreDMABuf.h"
-#endif
 #include <gtk/gtk.h>
 
 #if PLATFORM(X11)
@@ -76,7 +74,7 @@
 #include <xf86drm.h>
 #endif
 
-#if USE(EGL)
+#if USE(LIBEPOXY)
 #include <epoxy/egl.h>
 #endif
 
@@ -153,14 +151,10 @@ static bool webGLEnabled(WebKitURISchemeRequest* request)
 
 static bool uiProcessContextIsEGL()
 {
-#if USE(EGL)
 #if PLATFORM(GTK)
     return !!PlatformDisplay::sharedDisplay().gtkEGLDisplay();
 #else
     return true;
-#endif
-#else
-    return false;
 #endif
 }
 
@@ -314,7 +308,6 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         tablesBuilder.append("</table>"_s);
     };
 
-#if USE(EGL)
     auto addEGLInfo = [&](auto& jsonObject) {
         addTableRow(jsonObject, "GL_RENDERER"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_RENDERER))));
         addTableRow(jsonObject, "GL_VENDOR"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VENDOR))));
@@ -344,7 +337,6 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         addTableRow(jsonObject, "EGL_VENDOR"_s, String::fromUTF8(eglQueryString(eglDisplay, EGL_VENDOR)));
         addTableRow(jsonObject, "EGL_EXTENSIONS"_s, makeString(eglQueryString(nullptr, EGL_EXTENSIONS), ' ', eglQueryString(eglDisplay, EGL_EXTENSIONS)));
     };
-#endif
 
     auto jsonObject = JSON::Object::create();
 
@@ -373,11 +365,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #if PLATFORM(GTK)
     addTableRow(versionObject, "GTK version"_s, makeString(GTK_MAJOR_VERSION, '.', GTK_MINOR_VERSION, '.', GTK_MICRO_VERSION, " (build) "_s, gtk_get_major_version(), '.', gtk_get_minor_version(), '.', gtk_get_micro_version(), " (runtime)"_s));
 
-#if USE(EGL)
     bool usingDMABufRenderer = AcceleratedBackingStoreDMABuf::checkRequirements();
-#else
-    bool usingDMABufRenderer = false;
-#endif
 #endif
 
 #if PLATFORM(WPE)
@@ -426,7 +414,9 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(displayObject, "Depth"_s, String::number(screenDepth(nullptr)));
     addTableRow(displayObject, "Bits per color component"_s, String::number(screenDepthPerComponent(nullptr)));
     addTableRow(displayObject, "Font Scaling DPI"_s, String::number(fontDPI()));
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     addTableRow(displayObject, "Screen DPI"_s, String::number(screenDPI(displayID.value_or(primaryScreenDisplayID()))));
+#endif
 
     if (displayID) {
         if (auto* displayLink = page.process().processPool().displayLinks().existingDisplayLinkForDisplay(*displayID)) {
@@ -487,16 +477,14 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #endif
         addTableRow(hardwareAccelerationObject, "Native interface"_s, uiProcessContextIsEGL() ? "EGL"_s : "None"_s);
 
-#if USE(EGL)
         if (uiProcessContextIsEGL() && eglGetCurrentContext() != EGL_NO_CONTEXT)
             addEGLInfo(hardwareAccelerationObject);
-#endif // USE(EGL)
     }
 
     stopTable();
     jsonObject->setObject("Hardware Acceleration Information"_s, WTFMove(hardwareAccelerationObject));
 
-#if USE(EGL) && PLATFORM(GTK)
+#if PLATFORM(GTK)
     if (strcmp(policy, "never")) {
         std::unique_ptr<PlatformDisplay> platformDisplay;
         if (usingDMABufRenderer) {
@@ -533,7 +521,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
                 addEGLInfo(hardwareAccelerationObject);
             } else {
                 // Create the context in a different thread to ensure it doesn't affect any current context in the main thread.
-                WorkQueue::create("GPU handler EGL context")->dispatchSync([&] {
+                WorkQueue::create("GPU handler EGL context"_s)->dispatchSync([&] {
                     auto glContext = GLContext::createOffscreen(platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay());
                     glContext->makeContextCurrent();
                     addEGLInfo(hardwareAccelerationObject);

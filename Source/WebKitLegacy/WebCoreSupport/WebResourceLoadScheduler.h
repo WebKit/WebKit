@@ -83,8 +83,10 @@ private:
     bool isSuspendingPendingRequests() const { return !!m_suspendPendingRequestsCount; }
     void isResourceLoadFinished(WebCore::CachedResource&, CompletionHandler<void(bool)>&&) final;
 
-    class HostInformation : public CanMakeWeakPtr<HostInformation>, public CanMakeCheckedPtr<HostInformation> {
-        WTF_MAKE_NONCOPYABLE(HostInformation); WTF_MAKE_FAST_ALLOCATED;
+    class HostInformation final : public CanMakeWeakPtr<HostInformation>, public CanMakeCheckedPtr<HostInformation> {
+        WTF_MAKE_NONCOPYABLE(HostInformation);
+        WTF_MAKE_FAST_ALLOCATED;
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HostInformation);
     public:
         HostInformation(const String&, unsigned);
         ~HostInformation();

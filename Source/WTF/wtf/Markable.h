@@ -167,9 +167,6 @@ public:
         return std::optional<T>(*this);
     }
 
-    template<typename Encoder> void encode(Encoder&) const;
-    template<typename Decoder> static std::optional<Markable> decode(Decoder&);
-
 private:
     T m_value;
 };
@@ -190,35 +187,6 @@ template <typename T, typename Traits> constexpr bool operator==(const Markable<
 template <typename T, typename Traits> constexpr bool operator==(const Markable<T, Traits>& x, const T& v) { return bool(x) && x.value() == v; }
 template <typename T, typename Traits> constexpr bool operator==(const T& v, const Markable<T, Traits>& x) { return bool(x) && v == x.value(); }
 
-template <typename T, typename Traits>
-template<typename Encoder>
-void Markable<T, Traits>::encode(Encoder& encoder) const
-{
-    bool isEmpty = Traits::isEmptyValue(m_value);
-    encoder << isEmpty;
-    if (!isEmpty)
-        encoder << m_value;
-}
-
-template <typename T, typename Traits>
-template<typename Decoder>
-std::optional<Markable<T, Traits>> Markable<T, Traits>::decode(Decoder& decoder)
-{
-    std::optional<bool> isEmpty;
-    decoder >> isEmpty;
-    if (!isEmpty)
-        return std::nullopt;
-
-    if (*isEmpty)
-        return Markable { };
-
-    std::optional<T> value;
-    decoder >> value;
-    if (!value)
-        return std::nullopt;
-
-    return Markable { WTFMove(*value) };
-}
 
 } // namespace WTF
 

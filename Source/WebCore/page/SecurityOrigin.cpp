@@ -619,13 +619,18 @@ bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin& other) const
     return true;
 }
 
+bool SecurityOrigin::isLocalhostAddress(StringView host)
+{
+    // FIXME: Ensure that localhost resolves to the loopback address.
+    return equalLettersIgnoringASCIICase(host, "localhost"_s) || host.endsWithIgnoringASCIICase(".localhost"_s);
+}
+
 bool SecurityOrigin::isLocalHostOrLoopbackIPAddress(StringView host)
 {
     if (isLoopbackIPAddress(host))
         return true;
 
-    // FIXME: Ensure that localhost resolves to the loopback address.
-    if (equalLettersIgnoringASCIICase(host, "localhost"_s) || host.endsWithIgnoringASCIICase(".localhost"_s))
+    if (isLocalhostAddress(host))
         return true;
 
     return false;

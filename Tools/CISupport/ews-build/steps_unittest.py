@@ -2295,7 +2295,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--exit-after-n-failures', '10',
                                  '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
@@ -2318,7 +2318,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--dump-render-tree', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--exit-after-n-failures', '10',
                                  '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
@@ -2339,7 +2339,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--exit-after-n-failures', '10',
                                  '--iterations', 100, 'test'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
@@ -2363,7 +2363,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--exit-after-n-failures', '10',
                                  '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
@@ -2385,7 +2385,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--exit-after-n-failures', '10',
                                  '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
@@ -2421,7 +2421,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests', '--guard-malloc',
+                                 '--exit-after-n-failures', '10', '--guard-malloc',
                                  '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
@@ -2442,7 +2442,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests', '--guard-malloc',
+                                 '--exit-after-n-failures', '10', '--guard-malloc',
                                  '--iterations', 100, 'test'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
@@ -3850,6 +3850,53 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Applied patch')
         return self.runStep()
 
+    def test_success_wincairo(self):
+        self.setupStep(ApplyPatch())
+        self.setProperty('patch_id', '1234')
+        self.setProperty('platform', 'wincairo')
+        self.assertEqual(ApplyPatch.flunkOnFailure, True)
+        self.assertEqual(ApplyPatch.haltOnFailure, True)
+        buf = []
+        self.expectRemoteCommands(
+            Expect('downloadFile', dict(
+                workerdest='.buildbot-diff', workdir='wkdir',
+                blocksize=1024 * 32, maxsize=None, mode=None,
+                reader=ExpectRemoteRef(remotetransfer.FileReader),
+            ))
+            + Expect.behavior(self.downloadFileRecordingContents(self.READ_LIMIT, buf.append))
+            + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['curl', '-L', 'https://bugs.webkit.org/attachment.cgi?id=1234', '-o', '.buildbot-diff'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'config', 'user.name', 'EWS'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'config', 'user.email', 'ews@webkit.org'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'am', '--keep-non-patch', '.buildbot-diff'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Applied patch')
+        return self.runStep()
+
     def test_failure(self):
         self.setupStep(ApplyPatch())
         self.setProperty('patch_id', '1234')
@@ -4330,7 +4377,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         queues = ['Commit-Queue', 'Style-EWS', 'Apply-WatchList-EWS', 'GTK-Build-EWS', 'GTK-WK2-Tests-EWS',
                   'iOS-13-Build-EWS', 'iOS-13-Simulator-Build-EWS', 'iOS-13-Simulator-WK2-Tests-EWS',
                   'macOS-Catalina-Release-Build-EWS', 'macOS-Catalina-Release-WK2-Tests-EWS', 'macOS-Catalina-Debug-Build-EWS',
-                  'WinCairo-EWS', 'WPE-Build-EWS', 'WebKitPerl-Tests-EWS', 'WPE-Skia-Build-EWS']
+                  'Win-Build-EWS', 'WPE-Build-EWS', 'WebKitPerl-Tests-EWS', 'WPE-Skia-Build-EWS']
         for queue in queues:
             self.setupStep(CheckChangeRelevance())
             self.setProperty('buildername', queue)
@@ -5837,7 +5884,7 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success_wincairo(self):
         self.setupStep(CleanGitRepo())
-        self.setProperty('buildername', 'WinCairo-EWS')
+        self.setProperty('buildername', 'Win-Build-EWS')
         self.setProperty('platform', 'wincairo')
 
         self.expectRemoteCommands(

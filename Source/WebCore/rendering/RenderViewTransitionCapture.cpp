@@ -38,7 +38,10 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderViewTransitionCapture);
 
 RenderViewTransitionCapture::RenderViewTransitionCapture(Type type, Document& document, RenderStyle&& style)
     : RenderReplaced(type, document, WTFMove(style), { }, ReplacedFlag::IsViewTransitionCapture)
-{ }
+{
+}
+
+RenderViewTransitionCapture::~RenderViewTransitionCapture() = default;
 
 void RenderViewTransitionCapture::setImage(RefPtr<ImageBuffer> oldImage)
 {
@@ -60,19 +63,21 @@ void RenderViewTransitionCapture::paintReplaced(PaintInfo& paintInfo, const Layo
     LayoutRect replacedContentRect = this->replacedContentRect();
     replacedContentRect.moveBy(paintOffset);
 
-    IntPoint position = snappedIntRect(replacedContentRect).location();
-    position.moveBy(roundedIntPoint(m_overflowRect.location()));
+    FloatRect paintRect = m_localOverflowRect;
+    paintRect.moveBy(replacedContentRect.location());
 
     InterpolationQualityMaintainer interpolationMaintainer(context, ImageQualityController::interpolationQualityFromStyle(style()));
     if (m_oldImage)
-        context.drawImageBuffer(*m_oldImage, position, { context.compositeOperation() });
-
+        context.drawImageBuffer(*m_oldImage, paintRect, { context.compositeOperation() });
 }
 
 void RenderViewTransitionCapture::layout()
 {
     RenderReplaced::layout();
-    addVisualOverflow(m_overflowRect);
+    m_localOverflowRect = m_overflowRect;
+    m_scale = { replacedContentRect().width().toFloat() / intrinsicSize().width().toFloat() , replacedContentRect().height().toFloat() / intrinsicSize().height().toFloat()  };
+    m_localOverflowRect.scale(m_scale.width(), m_scale.height());
+    addVisualOverflow(m_localOverflowRect);
 }
 
 } // namespace WebCore

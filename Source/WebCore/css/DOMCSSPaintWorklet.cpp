@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DOMCSSPaintWorklet.h"
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "DOMCSSNamespace.h"
 #include "Document.h"
 #include "JSDOMPromiseDeferred.h"
@@ -91,5 +89,4 @@ Vector<Ref<WorkletGlobalScopeProxy>> PaintWorklet::createGlobalScopes()
     return { };
 }
 
-}
-#endif
+} // namespace WebCore

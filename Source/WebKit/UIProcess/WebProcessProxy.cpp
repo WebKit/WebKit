@@ -130,6 +130,10 @@
 #include "AudioSessionRoutingArbitratorProxy.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#import <pal/system/ios/Device.h>
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection(), completion)
@@ -589,14 +593,14 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
         if (!decoder)
             return false;
 
-        LoadParameters loadParameters;
-        URL resourceDirectoryURL;
-        WebPageProxyIdentifier pageID;
-        bool checkAssumedReadAccessToResourceURL;
-        if (decoder->decode(loadParameters) && decoder->decode(resourceDirectoryURL) && decoder->decode(pageID) && decoder->decode(checkAssumedReadAccessToResourceURL)) {
-            if (RefPtr page = WebProcessProxy::webPage(pageID)) {
-                page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), loadParameters.request.url(), resourceDirectoryURL, loadParameters.sandboxExtensionHandle, checkAssumedReadAccessToResourceURL);
-                send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)), decoder->destinationID());
+        auto loadParameters = decoder->decode<LoadParameters>();
+        auto resourceDirectoryURL = decoder->decode<URL>();
+        auto pageID = decoder->decode<WebPageProxyIdentifier>();
+        auto checkAssumedReadAccessToResourceURL = decoder->decode<bool>();
+        if (loadParameters && resourceDirectoryURL && pageID && checkAssumedReadAccessToResourceURL) {
+            if (RefPtr page = WebProcessProxy::webPage(*pageID)) {
+                page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), loadParameters->request.url(), *resourceDirectoryURL, loadParameters->sandboxExtensionHandle, *checkAssumedReadAccessToResourceURL);
+                send(Messages::WebPage::LoadRequest(WTFMove(*loadParameters)), decoder->destinationID());
             }
         } else
             ASSERT_NOT_REACHED();
@@ -609,15 +613,14 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
         if (!decoder)
             return false;
 
-        std::optional<GoToBackForwardItemParameters> parameters;
-        *decoder >> parameters;
+        auto parameters = decoder->decode<GoToBackForwardItemParameters>();
         if (!parameters)
             return false;
-        WebPageProxyIdentifier pageID;
-        if (!decoder->decode(pageID))
+        auto pageID = decoder->decode<WebPageProxyIdentifier>();
+        if (!pageID)
             return false;
 
-        if (RefPtr page = WebProcessProxy::webPage(pageID)) {
+        if (RefPtr page = WebProcessProxy::webPage(*pageID)) {
             if (RefPtr item = WebBackForwardListItem::itemForID(parameters->backForwardItemID))
                 page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), URL { item->url() }, item->resourceDirectoryURL(), parameters->sandboxExtensionHandle);
         }
@@ -1467,7 +1470,7 @@ bool WebProcessProxy::canBeAddedToWebProcessCache() const
 #if PLATFORM(IOS_FAMILY)
     // Don't add the Web process to the cache if there are still assertions being held, preventing it from suspending.
     // This is a fix for a regression in page load speed we see on http://www.youtube.com when adding it to the cache.
-    if (throttler().shouldBeRunnable()) {
+    if (PAL::deviceClassIsSmallScreen() && throttler().shouldBeRunnable()) {
         WEBPROCESSPROXY_RELEASE_LOG(Process, "canBeAddedToWebProcessCache: Not adding to process cache because the process is runnable");
         return false;
     }

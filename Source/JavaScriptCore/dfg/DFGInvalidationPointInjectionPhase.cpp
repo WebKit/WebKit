@@ -41,7 +41,7 @@ class InvalidationPointInjectionPhase : public Phase {
     
 public:
     InvalidationPointInjectionPhase(Graph& graph)
-        : Phase(graph, "invalidation point injection")
+        : Phase(graph, "invalidation point injection"_s)
         , m_insertionSet(graph)
     {
     }

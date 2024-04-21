@@ -532,7 +532,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 {
     m_jit = &jit;
 
-    CompilerTimingScope timingScope("Air", "GenerateAndAllocateRegisters::generate");
+    CompilerTimingScope timingScope("Air"_s, "GenerateAndAllocateRegisters::generate"_s);
 
     DisallowMacroScratchRegisterUsage disallowScratch(*m_jit);
 

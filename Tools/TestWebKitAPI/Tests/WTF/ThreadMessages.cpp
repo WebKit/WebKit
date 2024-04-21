@@ -33,7 +33,7 @@
 static void runThreadMessageTest(unsigned numSenders, unsigned numMessages)
 {
     Atomic<bool> receiverShouldKeepRunning(true);
-    RefPtr<Thread> receiverThread = Thread::create("ThreadMessage receiver", [&receiverShouldKeepRunning] () {
+    RefPtr<Thread> receiverThread = Thread::create("ThreadMessage receiver"_s, [&receiverShouldKeepRunning] () {
         while (receiverShouldKeepRunning.load()) { }
     });
     ASSERT_TRUE(receiverThread);
@@ -45,7 +45,7 @@ static void runThreadMessageTest(unsigned numSenders, unsigned numMessages)
     handlersRun.fill(0);
 
     for (unsigned senderID = 0; senderID < numSenders; ++senderID) {
-        senderThreads[senderID] = Thread::create("ThreadMessage sender", [senderID, numMessages, receiverThread, &messagesRun, &handlersRun] () {
+        senderThreads[senderID] = Thread::create("ThreadMessage sender"_s, [senderID, numMessages, receiverThread, &messagesRun, &handlersRun] () {
             for (unsigned i = 0; i < numMessages; ++i) {
                 WTF::MessageStatus status;
                 {

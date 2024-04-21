@@ -46,7 +46,7 @@
             "conditional": "ENABLE(FULLSCREEN_API)"
         },
         "-internal-html-document": {},
-        "-internal-in-window-full-screen": {
+        "-internal-in-window-fullscreen": {
             "conditional": "ENABLE(FULLSCREEN_API)"
         },
         "-internal-media-document": {},

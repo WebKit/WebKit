@@ -807,4 +807,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     StartObservingNowPlayingMetadata()
     StopObservingNowPlayingMetadata()
+
+    LoadAndDecodeImage(WebCore::ResourceRequest request, std::optional<WebCore::FloatSize> sizeConstraint) -> (std::variant<WebCore::ResourceError, Ref<WebCore::ShareableBitmap>> result)
 }

@@ -41,7 +41,7 @@ namespace JSC { namespace B3 {
 
 bool hoistLoopInvariantValues(Procedure& proc)
 {
-    PhaseScope phaseScope(proc, "hoistLoopInvariantValues");
+    PhaseScope phaseScope(proc, "hoistLoopInvariantValues"_s);
     
     ensureLoopPreHeaders(proc);
     

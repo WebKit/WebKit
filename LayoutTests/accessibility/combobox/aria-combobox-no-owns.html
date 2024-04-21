@@ -8,8 +8,7 @@
 
 <input type="text" role="combobox" id="combobox" aria-label="Combobox">
 <div role="list" id="list" aria-label="List1">
-  <div role="listitem" id="item1">item1</div>
-  <div role="listitem" id="item2">item2</div>
+    <div role="listitem" id="item1">item1</div>
 </div>
 
 <script>
@@ -18,21 +17,24 @@ var output = "A combobox should still support aria-activedescendant even if it d
 if (window.accessibilityController) {
     window.jsTestIsAsync = true;
 
-    window.accessibilityController.addNotificationListener(function (target, notification) {
-        if (notification == "AXSelectedChildrenChanged") {
+    var activeElementChangeCount = 0;
+    accessibilityController.addNotificationListener((target, notification) => {
+        if (notification == "AXActiveElementChanged") {
             var targetString = platformValueForW3CName(target);
             output += `Received ${notification} for ${targetString}\n`;
+            ++activeElementChangeCount;
         }
     });
 
     document.getElementById("combobox").focus();
     var list = accessibilityController.accessibleElementById("list");
-    output += expect("list.selectedChildrenCount", "0");
     document.getElementById("combobox").setAttribute("aria-activedescendant", "item1");
     var listitem1 = accessibilityController.accessibleElementById("item1");
     setTimeout(async function() {
-        output += await expectAsync("list.selectedChildrenCount", "1");
-        output += expect("list.selectedChildAtIndex(0).isEqual(listitem1)", "true");
+        await waitFor(() => {
+            return activeElementChangeCount;
+        });
+        output += expect("list.activeElement.isEqual(listitem1)", "true");
 
         debug(output);
         accessibilityController.removeNotificationListener();

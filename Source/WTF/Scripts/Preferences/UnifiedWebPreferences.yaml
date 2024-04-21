@@ -1078,7 +1078,6 @@ CSSPaintingAPIEnabled:
   category: css
   humanReadableName: "CSS Painting API"
   humanReadableDescription: "Enable the CSS Painting API"
-  condition: ENABLE(CSS_PAINTING_API)
   defaultValue:
     WebKitLegacy:
       default: false
@@ -2912,12 +2911,12 @@ ICECandidateFilteringEnabled:
     WebCore:
       default: true
 
-IPAddressMixedContentUpgradeTestingEnabled:
+IPAddressAndLocalhostMixedContentUpgradeTestingEnabled:
   type: bool
   status: testable
   category: security
-  humanReadableName: "Upgrade IP address in mixed content"
-  humanReadableDescription: "Enable Upgrade IP address in mixed content"
+  humanReadableName: "Upgrade IP addresses and localhost in mixed content"
+  humanReadableDescription: "Enable Upgrading IP addresses and localhost in mixed content"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -3666,6 +3665,19 @@ LegacyOverflowScrollingTouchEnabled:
       default: true
     WebCore:
       default: true
+
+LegacyPluginQuirkForMailSignaturesEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Quirk to get Mail to load signatures correctly with WebKitLegacy"
+  humanReadableDescription: "Quirk to get Mail to load signatures correctly with WebKitLegacy"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 LinearMediaPlayerEnabled:
   type: bool
@@ -7382,7 +7394,7 @@ WebCodecsVideoEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA)": true
+      "USE(LIBWEBRTC) && PLATFORM(COCOA)": WebKit::defaultPeerConnectionEnabledAvailable()
       "USE(GSTREAMER)": true
       default: false
     WebCore:
@@ -7603,7 +7615,7 @@ WebRTCEncodedTransformEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "USE(LIBWEBRTC)": true
+      "USE(LIBWEBRTC) && PLATFORM(COCOA)": WebKit::defaultPeerConnectionEnabledAvailable()
       default: false
     WebCore:
       "USE(LIBWEBRTC)": true

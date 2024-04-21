@@ -213,7 +213,7 @@ namespace WTF {
  *    }
  * private:
  *    explicit PhotoProducer(const PhotoSettings& settings)
- *        : m_generatePhotoQueue(WorkQueue::create("takePhoto queue"))
+ *        : m_generatePhotoQueue(WorkQueue::create("takePhoto queue"_s))
  *    {
  *    }
  *

@@ -820,7 +820,9 @@ fast/speechrecognition/start-recognition-after-gum.html [ Skip ]
 fast/speechrecognition/start-recognition-after-denied-gum.html [ Skip ]
 fast/speechrecognition/start-recognition-without-devices.html [ Skip ]
 
+accessibility/combobox [ WontFix ]
 accessibility/datetime [ WontFix ]
+accessibility/list [ WontFix ]
 accessibility/announcement-notification.html [ WontFix ]
 accessibility/menuitem-is-selected.html [ WontFix ]
 accessibility/relationships.html [ WontFix ]
@@ -1206,7 +1208,9 @@ imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html
 
 webkit.org/b/187230 editing/mac/pasteboard/can-copy-url-without-title.html [ Skip ]
 
-webkit.org/b/270055 imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-back-forward-cross-doc.html [ Skip ]
+# webkit.org/b/270055
+imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-back-forward-cross-doc.html [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/same-document-away-and-back-location-api.html [ Skip ]
 
 ### END OF (1) Failures with bug reports
 ########################################
@@ -2285,15 +2289,6 @@ webkit.org/b/228801 [ Release ] media/video-page-visibility-restriction.html [ P
 
 webkit.org/b/230071 media/video-preload.html [ Pass Failure ]
 
-
-
-
-
-
-
-webkit.org/b/244499 [ Debug ]  imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-referrer.html [ Pass Crash ]
-
-
 webkit.org/b/232276 imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/spin-by-blocking-style-sheet.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-arabic-002.html [ ImageOnlyFailure ]
@@ -2827,15 +2822,27 @@ imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties
 [ Sonoma+ ] imported/w3c/web-platform-tests/worklets/paint-worklet-credentials.https.html [ Pass Failure ]
 
 # webkit.org/b/272115 REGRESSION (274826@main): [ Sonoma WK1 ] 2X imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades tests are flaky failures
-[ Sonoma+ ] imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/image-upgrade.https.sub.html [ Pass Failure ]
-[ Sonoma+ ] imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/audio-upgrade.https.sub.html [ Pass Failure ]
+[ Ventura+ ] imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/image-upgrade.https.sub.html [ Pass Failure ]
+[ Ventura+ ] imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/audio-upgrade.https.sub.html [ Pass Failure ]
 
 # webkit.org/b/272081 [web-animations] update WPT import for web-animations
 [ Sonoma ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-drop-shadow.html [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/infinite-duration-animation.html [ ImageOnlyFailure ]
 
-webkit.org/b/272657 fast/canvas/offscreen-nested-worker-serialization.html [ Skip ]
-
 # webkit.org/b/272718 NEW TEST (277048@main): [ Sonoma WK1 ]2X imported/w3c/web-platform-tests/web-animations/animation-model/side-effects-of-animations are consistent failures
 [ Sonoma+ ] imported/w3c/web-platform-tests/web-animations/animation-model/side-effects-of-animations-current.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/web-animations/animation-model/side-effects-of-animations-in-effect.html [ ImageOnlyFailure ]
+
+webkit.org/b/272792 fast/css/view-transitions-update-pseudo-element-crash.html [ Skip ]
+
+# webkit.org/b/272926 [ Ventura wk1 ] 8 tests in imported/w3c/web-platform-tests/workers are flaky failures
+[ Ventura ] imported/w3c/web-platform-tests/worklets/animation-worklet-credentials.https.html [ Pass Failure ]
+[ Ventura ] imported/w3c/web-platform-tests/worklets/audio-worklet-credentials.https.html [ Pass Failure ]
+[ Ventura ] imported/w3c/web-platform-tests/worklets/audio-worklet-csp.https.html [ Pass Failure ] 
+[ Ventura ] imported/w3c/web-platform-tests/worklets/audio-worklet-import.https.html [ Pass Failure ]
+[ Ventura ] imported/w3c/web-platform-tests/worklets/audio-worklet-referrer.https.html [ Pass Failure ] 
+[ Ventura ] imported/w3c/web-platform-tests/worklets/layout-worklet-credentials.https.html [ Pass Failure ]
+[ Ventura ] imported/w3c/web-platform-tests/worklets/paint-worklet-credentials.https.html [ Pass Failure ]
+[ Ventura+ ] imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-referrer.html [ Pass Failure ]
+
+webkit.org/b/272939 [ Ventura+ ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-strict-policies.sub.html [ Pass Failure ]

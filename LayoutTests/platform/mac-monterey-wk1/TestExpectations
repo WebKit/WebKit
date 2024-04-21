@@ -19,3 +19,5 @@ imported/w3c/web-platform-tests/svg/animations/animate-elem-16-t-drt.html [ Pass
 imported/w3c/web-platform-tests/xhr/request-content-length.any.worker.html [ Pass Failure ]
 
 webkit.org/b/267710 imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
+
+webkit.org/b/273015 imported/w3c/web-platform-tests/svg/path/distance/pathlength-path.svg [ Failure ]

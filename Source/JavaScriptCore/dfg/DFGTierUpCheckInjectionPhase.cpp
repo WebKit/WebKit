@@ -55,7 +55,7 @@ using NaturalLoop = CPSNaturalLoop;
 class TierUpCheckInjectionPhase : public Phase {
 public:
     TierUpCheckInjectionPhase(Graph& graph)
-        : Phase(graph, "tier-up check injection")
+        : Phase(graph, "tier-up check injection"_s)
     {
     }
     

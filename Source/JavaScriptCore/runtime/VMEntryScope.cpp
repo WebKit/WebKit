@@ -48,8 +48,7 @@ void VMEntryScope::setUpSlow()
         if (Wasm::isSupported())
             Wasm::startTrackingCurrentThread();
 #if HAVE(MACH_EXCEPTIONS)
-        if (g_wtfConfig.signalHandlers.initState == WTF::SignalHandlers::InitState::AddedHandlers)
-            registerThreadForMachExceptionHandling(thread);
+        registerThreadForMachExceptionHandling(thread);
 #endif
     }
 

@@ -69,7 +69,7 @@ void CryptoAlgorithmAESKW::generateKey(const CryptoAlgorithmParameters& paramete
     callback(WTFMove(result));
 }
 
-void CryptoAlgorithmAESKW::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESKW::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit)
 {
     using namespace CryptoAlgorithmAESKWInternal;
 
@@ -109,7 +109,7 @@ void CryptoAlgorithmAESKW::importKey(CryptoKeyFormat format, KeyData&& data, con
     callback(*result);
 }
 
-void CryptoAlgorithmAESKW::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESKW::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit)
 {
     using namespace CryptoAlgorithmAESKWInternal;
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());
@@ -150,7 +150,7 @@ void CryptoAlgorithmAESKW::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& ke
     callback(format, WTFMove(result));
 }
 
-void CryptoAlgorithmAESKW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, bool useCryptoKit)
+void CryptoAlgorithmAESKW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit useCryptoKit)
 {
     if (data.size() % 8) {
         exceptionCallback(ExceptionCode::OperationError);
@@ -165,7 +165,7 @@ void CryptoAlgorithmAESKW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data,
     callback(result.releaseReturnValue());
 }
 
-void CryptoAlgorithmAESKW::unwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, bool useCryptoKit)
+void CryptoAlgorithmAESKW::unwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit useCryptoKit)
 {
     auto result = platformUnwrapKey(downcast<CryptoKeyAES>(key.get()), WTFMove(data), useCryptoKit);
     if (result.hasException()) {

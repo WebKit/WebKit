@@ -41,6 +41,8 @@ RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGGraphicsElem
     ASSERT(isRenderSVGTransformableContainer());
 }
 
+RenderSVGTransformableContainer::~RenderSVGTransformableContainer() = default;
+
 SVGGraphicsElement& RenderSVGTransformableContainer::graphicsElement() const
 {
     return downcast<SVGGraphicsElement>(RenderSVGContainer::element());
@@ -70,7 +72,7 @@ inline SVGUseElement* associatedUseElement(SVGGraphicsElement& element)
 FloatSize RenderSVGTransformableContainer::additionalContainerTranslation() const
 {
     Ref graphicsElement = this->graphicsElement();
-    if (auto* useElement = associatedUseElement(graphicsElement)) {
+    if (RefPtr useElement = associatedUseElement(graphicsElement)) {
         SVGLengthContext lengthContext(graphicsElement.ptr());
         return { useElement->x().value(lengthContext), useElement->y().value(lengthContext) };
     }

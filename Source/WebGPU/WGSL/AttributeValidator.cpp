@@ -236,8 +236,9 @@ void AttributeValidator::visit(AST::Variable& variable)
         if (auto* idAttribute = dynamicDowncast<AST::IdAttribute>(attribute)) {
             auto& idExpression = idAttribute->value();
             if (variable.flavor() != AST::VariableFlavor::Override)
-                error(attribute.span(), "@id attribute must only be applied to override variables of scalar type");
-            RELEASE_ASSERT(satisfies(variable.storeType(), Constraints::Scalar));
+                error(attribute.span(), "@id attribute must only be applied to override variables");
+            else
+                RELEASE_ASSERT(satisfies(variable.storeType(), Constraints::Scalar));
 
             // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;attribute=%22binding%22
             auto& constantValue = idExpression.constantValue();

@@ -227,4 +227,9 @@ fn testStructAccessExpression()
     var s: S;
     let x: i32 = s.x;
     s.x = 0;
+
+    {
+      let s = &s;
+      s.x = 0;
+    }
 }

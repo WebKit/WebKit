@@ -33,7 +33,7 @@ namespace Layout {
 
 class InlineContentBreaker;
 
-class RangeBasedLineBuilder : public AbstractLineBuilder {
+class RangeBasedLineBuilder final : public AbstractLineBuilder {
 public:
     RangeBasedLineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;

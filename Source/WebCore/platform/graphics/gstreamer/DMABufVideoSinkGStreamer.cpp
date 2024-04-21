@@ -28,7 +28,7 @@
 #include <wtf/glib/WTFGType.h>
 
 #if USE(GBM)
-#include "GBMDevice.h"
+#include "DRMDeviceManager.h"
 #endif
 
 using namespace WebCore;
@@ -181,7 +181,7 @@ bool webKitDMABufVideoSinkIsEnabled()
     std::call_once(s_flag, [&] {
         const char* value = g_getenv("WEBKIT_GST_DMABUF_SINK_DISABLED");
         s_disabled = value && (equalLettersIgnoringASCIICase(value, "true"_s) || equalLettersIgnoringASCIICase(value, "1"_s));
-        if (!s_disabled && !GBMDevice::singleton().device(GBMDevice::Type::Render)) {
+        if (!s_disabled && !DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render)) {
             WTFLogAlways("Unable to access the GBM device, disabling DMABuf video sink.");
             s_disabled = true;
         }

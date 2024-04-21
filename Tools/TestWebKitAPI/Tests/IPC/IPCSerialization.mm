@@ -60,8 +60,8 @@
 // 2 - Run a test exercising that type
 
 @interface NSURLProtectionSpace (WebKitNSURLProtectionSpace)
-- (void)_setServerTrust:(nullable SecTrustRef)serverTrust;
-- (void)_setDistinguishedNames:(nullable NSArray<NSData *> *)distinguishedNames;
+- (void)_setServerTrust:(SecTrustRef)serverTrust;
+- (void)_setDistinguishedNames:(NSArray<NSData *> *)distinguishedNames;
 @end
 
 class SerializationTestSender final : public IPC::MessageSender {
@@ -533,6 +533,21 @@ static bool wkNSURLProtectionSpace_isEqual(NSURLProtectionSpace *a, SEL, NSURLPr
     return true;
 }
 
+#if USE(PASSKIT) && !PLATFORM(WATCHOS)
+static bool CNPostalAddressTesting_isEqual(CNPostalAddress *a, CNPostalAddress *b)
+{
+    // CNPostalAddress treats a nil formattedAddress and empty formattedAddress the same for equality.
+    // But, there's other behavior with CNPostalAddress where nil-vs-empty makes a critical difference.
+    // To regression test our IPC of the object, we explicitly make sure that "nil goes in, nil comes out"
+    if (a.formattedAddress && !b.formattedAddress)
+        return false;
+    if (!a.formattedAddress && b.formattedAddress)
+        return false;
+
+    return [a isEqual:b];
+}
+#endif
+
 static bool NSURLCredentialTesting_isEqual(NSURLCredential *a, NSURLCredential *b)
 {
     if (a.persistence != b.persistence)
@@ -595,6 +610,11 @@ inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting
 
     EXPECT_TRUE(aObject != nil);
     EXPECT_TRUE(bObject != nil);
+
+#if USE(PASSKIT) && !PLATFORM(WATCHOS)
+    if ([aObject isKindOfClass:PAL::getCNPostalAddressClass()])
+        return CNPostalAddressTesting_isEqual(aObject, bObject);
+#endif
 
     if ([aObject isKindOfClass:NSURLCredential.class])
         return NSURLCredentialTesting_isEqual(aObject, bObject);
@@ -1053,6 +1073,8 @@ TEST(IPCSerialization, Basic)
     // CNPostalAddress
     RetainPtr<CNMutablePostalAddress> address = postalAddressForTesting();
     runTestNS({ address.get() });
+    address.get().formattedAddress = nil;
+    runTestNS({ address.get() });
 
     // PKContact
     runTestNS({ pkContactForTesting().get() });
@@ -1281,8 +1303,8 @@ static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
                                displayName:(NSString *)displayName
                          initiativeContext:(NSString *)initiativeContext
                                 initiative:(NSString *)initiative
-                      ampEnrollmentPinning:(nullable NSData *)ampEnrollmentPinning
-            operationalAnalyticsIdentifier:(nullable NSString *)operationalAnalyticsIdentifier
+                      ampEnrollmentPinning:(NSData *)ampEnrollmentPinning
+            operationalAnalyticsIdentifier:(NSString *)operationalAnalyticsIdentifier
                               signedFields:(NSArray<NSString *> *)signedFields
                                  signature:(NSData *)signature;
 
@@ -1293,7 +1315,7 @@ static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
                                  expiresAt:(NSUInteger)expiresAt
                                     domain:(NSString *)domainName
                                displayName:(NSString *)displayName
-            operationalAnalyticsIdentifier:(nullable NSString *)operationalAnalyticsIdentifier
+            operationalAnalyticsIdentifier:(NSString *)operationalAnalyticsIdentifier
                                  signature:(NSData *)signature;
 @end
 

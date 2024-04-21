@@ -19,8 +19,6 @@
 
 #pragma once
 
-#if USE(EGL)
-
 namespace WebCore {
 
 class GLContextWrapper {
@@ -41,5 +39,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // USE(EGL)

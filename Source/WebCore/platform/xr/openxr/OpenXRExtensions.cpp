@@ -57,9 +57,7 @@ OpenXRExtensions::OpenXRExtensions(Vector<XrExtensionProperties>&& extensions)
 
 void OpenXRExtensions::loadMethods(XrInstance instance)
 {
-#if USE(EGL)
     m_methods.getProcAddressFunc = eglGetProcAddress;
-#endif
     xrGetInstanceProcAddr(instance, "xrGetOpenGLGraphicsRequirementsKHR", reinterpret_cast<PFN_xrVoidFunction*>(&m_methods.xrGetOpenGLGraphicsRequirementsKHR));
 }
 

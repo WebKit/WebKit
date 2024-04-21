@@ -782,6 +782,7 @@ RetainPtr<NSDictionary> WebProcess::additionalStateForDiagnosticReport() const
 #endif // USE(OS_STATE)
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#if PLATFORM(IOS_FAMILY)
 static void prewarmLogs()
 {
     // This call will create container manager log objects.
@@ -803,13 +804,14 @@ static void prewarmLogs()
         UNUSED_PARAM(enabled);
     }
 }
+#endif // PLATFORM(IOS_FAMILY)
 
 static Ref<WorkQueue> logQueue()
 {
     static LazyNeverDestroyed<Ref<WorkQueue>> queue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, [&] {
-        queue.construct(WorkQueue::create("Log Queue", WorkQueue::QOS::Background));
+        queue.construct(WorkQueue::create("Log Queue"_s, WorkQueue::QOS::Background));
     });
     return queue.get();
 }
@@ -821,16 +823,27 @@ static void registerLogHook()
 
     static os_log_hook_t prevHook = nullptr;
 
-    prevHook = os_log_set_hook(OS_LOG_TYPE_DEFAULT, ^(os_log_type_t type, os_log_message_t msg) {
+#ifdef NDEBUG
+    // OS_LOG_TYPE_DEFAULT implies default, fault, and error.
+    constexpr auto minimumType = OS_LOG_TYPE_DEFAULT;
+#else
+    // OS_LOG_TYPE_DEBUG implies debug, info, default, fault, and error.
+    constexpr auto minimumType = OS_LOG_TYPE_DEBUG;
+#endif
+
+    prevHook = os_log_set_hook(minimumType, ^(os_log_type_t type, os_log_message_t msg) {
         if (prevHook)
             prevHook(type, msg);
 
         if (msg->buffer_sz > 1024)
             return;
 
-        // Skip debug logs in non-internal builds.
-        if (type == OS_LOG_TYPE_DEBUG)
+#ifdef NDEBUG
+        // Don't send messages with types we don't want to log in release. Even though OS_LOG_TYPE_DEFAULT is the minimum,
+        // the hook will be called for other subsystems with debug and info types.
+        if (type & (OS_LOG_TYPE_DEBUG | OS_LOG_TYPE_INFO))
             return;
+#endif
 
         CString logFormat(msg->format);
         CString logChannel(msg->subsystem);
@@ -879,7 +892,9 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     WebCore::PublicSuffixStore::singleton().enablePublicSuffixCache();
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#if PLATFORM(IOS_FAMILY)
     prewarmLogs();
+#endif
     registerLogHook();
 #endif
 

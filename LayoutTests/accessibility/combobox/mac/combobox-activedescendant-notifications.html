@@ -28,7 +28,7 @@
         var axList = accessibilityController.accessibleElementById("list");
         axList.addNotificationListener(function(notification) {
             output += `Received notification: ${notification}\n`;
-            if (notification == "AXSelectedChildrenChanged") {
+            if (notification == "AXActiveElementChanged") {
                 output += "The ComboBox should still be the focused element even after the aria-activedescendant was changed.\n";
                 output += expect("axCombo.isEqual(accessibilityController.focusedElement)", "true");
 

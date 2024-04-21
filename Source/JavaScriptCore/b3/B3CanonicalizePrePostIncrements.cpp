@@ -46,7 +46,7 @@ bool canonicalizePrePostIncrements(Procedure& proc)
 {
     if (!isARM64())
         return false;
-    PhaseScope phaseScope(proc, "canonicalizePrePostIncrements");
+    PhaseScope phaseScope(proc, "canonicalizePrePostIncrements"_s);
     using Arg = Air::Arg;
 
     unsigned index { 0 };

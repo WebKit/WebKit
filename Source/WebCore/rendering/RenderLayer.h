@@ -151,8 +151,9 @@ struct ScrollRectToVisibleOptions {
 
 using ScrollingScope = uint64_t;
 
-class RenderLayer : public CanMakeSingleThreadWeakPtr<RenderLayer>, public CanMakeCheckedPtr<RenderLayer> {
+class RenderLayer final : public CanMakeSingleThreadWeakPtr<RenderLayer>, public CanMakeCheckedPtr<RenderLayer> {
     WTF_MAKE_ISO_ALLOCATED(RenderLayer);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderLayer);
 public:
     friend class RenderReplica;
     friend class RenderLayerFilters;
@@ -691,6 +692,7 @@ public:
         UseFragmentBoxesExcludingCompositing    = 1 << 7,
         UseFragmentBoxesIncludingCompositing    = 1 << 8,
         IncludeRootBackgroundPaintingArea       = 1 << 9,
+        PreserveAncestorFlags                   = 1 << 10,
     };
     static constexpr OptionSet<CalculateLayerBoundsFlag> defaultCalculateLayerBoundsFlags() { return { IncludeSelfTransform, UseLocalClipRectIfPossible, IncludePaintedFilterOutsets, UseFragmentBoxesExcludingCompositing }; }
 
@@ -882,6 +884,8 @@ public:
     void setIsHiddenByOverflowTruncation(bool);
 
     void paintSVGResourceLayer(GraphicsContext&, const AffineTransform& contentTransform);
+
+    bool ancestorLayerIsDOMParent(const RenderLayer* ancestor) const;
 
 private:
 

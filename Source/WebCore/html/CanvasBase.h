@@ -51,6 +51,8 @@ class ScriptExecutionContext;
 class SecurityOrigin;
 class WebCoreOpaqueRoot;
 
+struct CSSParserContext;
+
 enum class ShouldApplyPostProcessingToDirtyRect : bool { No, Yes };
 
 class CanvasDisplayBufferObserver : public CanMakeWeakPtr<CanvasDisplayBufferObserver> {
@@ -96,6 +98,8 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const { return canvasBaseScriptExecutionContext();  }
 
     virtual CanvasRenderingContext* renderingContext() const = 0;
+
+    virtual const CSSParserContext& cssParserContext() const = 0;
 
     void addObserver(CanvasObserver&);
     void removeObserver(CanvasObserver&);

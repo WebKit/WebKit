@@ -12,6 +12,7 @@ addEventListener("message", (event) => {
     testPassed("iframe received context menu event.");
     messageCount++;
     if (messageCount == 1) {
+        eventSender.mouseUp(2);
         eventSender.mouseDown(2);
         eventSender.mouseUp(2);
     } else if (messageCount == 2)
@@ -24,7 +25,6 @@ function onLoad() {
     let y = frame.offsetParent.offsetTop + frame.offsetTop + frame.offsetHeight / 2;
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown(2);
-    eventSender.mouseUp(2);
 }
 </script>
 <iframe onload="onLoad()" id="frame" src="http://localhost:8000/site-isolation/mouse-events/resources/context-menu-event-listener.html"></iframe>

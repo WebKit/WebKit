@@ -71,7 +71,7 @@ template<PhaseMode mode>
 class StoreBarrierInsertionPhase : public Phase {
 public:
     StoreBarrierInsertionPhase(Graph& graph)
-        : Phase(graph, mode == PhaseMode::Fast ? "fast store barrier insertion" : "global store barrier insertion")
+        : Phase(graph, mode == PhaseMode::Fast ? "fast store barrier insertion"_s : "global store barrier insertion"_s)
         , m_insertionSet(graph)
     {
     }

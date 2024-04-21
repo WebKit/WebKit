@@ -224,6 +224,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         return;
     }
 
+    textureDescriptor.usage |= MTLTextureUsageRenderTarget;
     for (IOSurface *iosurface in m_ioSurfaces) {
         RefPtr<Texture> parentLuminanceClampTexture;
         if (textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float) {

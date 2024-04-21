@@ -285,11 +285,11 @@ public:
             if (m_data[blockIndex].preNumber == UINT_MAX)
                 continue;
             
-            out.print("    Block #", blockIndex, ": idom = ", m_graph.dump(m_data[blockIndex].idomParent), ", idomKids = [");
+            out.print("    Block #"_s, blockIndex, ": idom = "_s, m_graph.dump(m_data[blockIndex].idomParent), ", idomKids = ["_s);
             CommaPrinter comma;
             for (unsigned i = 0; i < m_data[blockIndex].idomKids.size(); ++i)
                 out.print(comma, m_graph.dump(m_data[blockIndex].idomKids[i]));
-            out.print("], pre/post = ", m_data[blockIndex].preNumber, "/", m_data[blockIndex].postNumber, "\n");
+            out.print("], pre/post = "_s, m_data[blockIndex].preNumber, "/"_s, m_data[blockIndex].postNumber, "\n"_s);
         }
     }
     

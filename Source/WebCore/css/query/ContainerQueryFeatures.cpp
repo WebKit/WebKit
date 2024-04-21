@@ -177,12 +177,11 @@ struct StyleFeatureSchema : public FeatureSchema {
 
         auto* customPropertyValue = style.customPropertyValue(feature.name);
         if (!feature.rightComparison)
-            return toEvaluationResult(!!customPropertyValue);
+            return toEvaluationResult(customPropertyValue && !customPropertyValue->isInvalid());
 
         auto resolvedFeatureValue = [&]() -> RefPtr<const CSSCustomPropertyValue> {
             auto featureValue = dynamicDowncast<CSSCustomPropertyValue>(feature.rightComparison->value);
-            if (!featureValue)
-                return nullptr;
+            ASSERT(featureValue);
 
             // Resolve the queried custom property value for var() references, css-wide keywords and registered properties.
             auto builderContext = Style::BuilderContext {
@@ -199,7 +198,11 @@ struct StyleFeatureSchema : public FeatureSchema {
         }();
 
         if (!resolvedFeatureValue)
-            return toEvaluationResult(!customPropertyValue);
+            return EvaluationResult::False;
+
+        // Guaranteed-invalid values match guaranteed-invalid values.
+        if (resolvedFeatureValue->isInvalid())
+            return toEvaluationResult(!customPropertyValue || customPropertyValue->isInvalid());
 
         ASSERT(feature.rightComparison->op == ComparisonOperator::Equal);
         return toEvaluationResult(customPropertyValue && *customPropertyValue == *resolvedFeatureValue);

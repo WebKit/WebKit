@@ -36,7 +36,9 @@ class RenderBoxModelObject;
 class RenderText;
 class RenderView;
 
-class AccessibilityRegionContext : public RegionContext {
+class AccessibilityRegionContext final : public RegionContext {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AccessibilityRegionContext);
 public:
     AccessibilityRegionContext() = default;
     virtual ~AccessibilityRegionContext();

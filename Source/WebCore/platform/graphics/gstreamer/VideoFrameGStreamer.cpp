@@ -327,8 +327,9 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
     int frameRateNumerator, frameRateDenominator;
     gst_util_double_to_fraction(frameRate, &frameRateNumerator, &frameRateDenominator);
 
-    auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName, "width", G_TYPE_INT, width,
-        "height", G_TYPE_INT, height, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr));
+    auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName, "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr));
+    if (frameRate)
+        gst_caps_set_simple(caps.get(), "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr);
 
     GRefPtr<GstSample> sample;
 
@@ -343,7 +344,9 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
         height = destinationSize.height();
         GST_TRACE("Resizing frame from %dx%d to %dx%d", size.width(), size.height(), width, height);
         auto outputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName, "width", G_TYPE_INT, width,
-            "height", G_TYPE_INT, height, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr));
+            "height", G_TYPE_INT, height, nullptr));
+        if (frameRate)
+            gst_caps_set_simple(outputCaps.get(), "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr);
 
         auto inputSample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
         GUniqueOutPtr<GError> error;
@@ -395,6 +398,32 @@ VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const
     , m_presentationSize(presentationSize)
 {
     ensureVideoFrameDebugCategoryInitialized();
+}
+
+void VideoFrameGStreamer::setFrameRate(double frameRate)
+{
+    auto caps = gst_sample_get_caps(m_sample.get());
+    int frameRateNumerator, frameRateDenominator;
+    gst_util_double_to_fraction(frameRate, &frameRateNumerator, &frameRateDenominator);
+    gst_caps_set_simple(caps, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr);
+
+    auto buffer = gst_sample_get_buffer(m_sample.get());
+    GST_BUFFER_DURATION(buffer) = toGstClockTime(1_s / frameRate);
+}
+
+void VideoFrameGStreamer::setMaxFrameRate(double maxFrameRate)
+{
+    auto caps = gst_sample_get_caps(m_sample.get());
+    int frameRateNumerator, frameRateDenominator;
+    gst_util_double_to_fraction(maxFrameRate, &frameRateNumerator, &frameRateDenominator);
+    gst_caps_set_simple(caps, "framerate", GST_TYPE_FRACTION, 0, 1, "max-framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr);
+}
+
+void VideoFrameGStreamer::setPresentationTime(const MediaTime& presentationTime)
+{
+    updateTimestamp(presentationTime, VideoFrame::ShouldCloneWithDifferentTimestamp::No);
+    auto buffer = gst_sample_get_buffer(m_sample.get());
+    GST_BUFFER_PTS(buffer) = GST_BUFFER_DTS(buffer) = toGstClockTime(1_s / presentationTime.toDouble());
 }
 
 static void copyPlane(uint8_t* destination, const uint8_t* source, uint64_t sourceStride, const ComputedPlaneLayout& spanPlaneLayout)

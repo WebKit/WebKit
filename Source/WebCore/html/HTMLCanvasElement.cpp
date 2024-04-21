@@ -31,6 +31,7 @@
 #include "BitmapImage.h"
 #include "Blob.h"
 #include "BlobCallback.h"
+#include "CSSParserContext.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
@@ -833,8 +834,7 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
 #if PLATFORM(COCOA)
     return VideoFrame::createFromPixelBuffer(pixelBuffer.releaseNonNull());
 #elif USE(GSTREAMER)
-    // FIXME: Hardcoding 30fps here is not great. Ideally we should get this from the compositor refresh rate, somehow.
-    return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), VideoFrameGStreamer::CanvasContentType::Canvas2D, VideoFrameGStreamer::Rotation::None, MediaTime::invalidTime(), { }, 30, false, { });
+    return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), VideoFrameGStreamer::CanvasContentType::Canvas2D);
 #endif
 #else
     return nullptr;
@@ -1013,6 +1013,13 @@ void HTMLCanvasElement::queueTaskKeepingObjectAlive(TaskSource source, Function<
 void HTMLCanvasElement::dispatchEvent(Event& event)
 {
     Node::dispatchEvent(event);
+}
+
+const CSSParserContext& HTMLCanvasElement::cssParserContext() const
+{
+    if (!m_cssParserContext)
+        m_cssParserContext = WTF::makeUnique<CSSParserContext>(document());
+    return *m_cssParserContext;
 }
 
 WebCoreOpaqueRoot root(HTMLCanvasElement* canvas)

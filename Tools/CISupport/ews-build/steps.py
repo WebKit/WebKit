@@ -1106,8 +1106,10 @@ for l in lines[1:]:
             ['git', 'config', 'user.name', 'EWS'],
             ['git', 'config', 'user.email', FROM_EMAIL],
             ['git', 'am', '--keep-non-patch', '.buildbot-diff'],
-            ['git', 'filter-branch', '-f', '--msg-filter', 'python3 -c "{}"'.format(self.FILTER_BRANCH_PROGRAM), 'HEAD...HEAD~1'],
         ]
+        if not self.has_windows_shell():
+            commands.append(['git', 'filter-branch', '-f', '--msg-filter', 'python3 -c "{}"'.format(self.FILTER_BRANCH_PROGRAM), 'HEAD...HEAD~1'])
+
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
 
@@ -2581,7 +2583,10 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
 
         for queue in queues_for_safe_merge:
             queue_data = response.json().get(queue, None)
-            if queue_data:
+            # jsc-arm7-tests will not set its status if skipped, so we condition on jsc-armv7
+            if queue == 'jsc-armv7-tests' and response.json().get('jsc-armv7', None).get('state', None) == 3:
+                yield self._addToLog('stdio', f'{queue}: Skipped\n')
+            elif queue_data:
                 status = queue_data.get('state', None)
                 if status == 0:  # success
                     yield self._addToLog('stdio', f'{queue}: Success\n')
@@ -3107,6 +3112,17 @@ class InstallWpeDependencies(shell.ShellCommandNewStyle):
     description = ['updating wpe dependencies']
     descriptionDone = ['Updated wpe dependencies']
     command = ['perl', 'Tools/Scripts/update-webkitwpe-libs', WithProperties('--%(configuration)s')]
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, **kwargs)
+
+
+class InstallWinDependencies(shell.ShellCommandNewStyle):
+    name = 'win-deps'
+    description = ['Updating Win dependencies']
+    descriptionDone = ['Updated Win dependencies']
+    command = ['python3', 'Tools/Scripts/update-webkit-wincairo-libs.py']
     haltOnFailure = True
 
     def __init__(self, **kwargs):
@@ -3878,6 +3894,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
     ENABLE_GUARD_MALLOC = False
     ENABLE_ADDITIONAL_ARGUMENTS = True
     EXIT_AFTER_FAILURES = '60'
+    STRESS_MODE = False
     command = ['python3', 'Tools/Scripts/run-webkit-tests',
                '--no-build',
                '--no-show-results',
@@ -3915,7 +3932,8 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
         else:
             if self.EXIT_AFTER_FAILURES is not None:
                 self.setCommand(self.command + ['--exit-after-n-failures', '{}'.format(self.EXIT_AFTER_FAILURES)])
-            self.setCommand(self.command + ['--skip-failing-tests'])
+            if not self.STRESS_MODE:
+                self.setCommand(self.command + ['--skip-failing-tests'])
 
         if platform in ['gtk', 'wpe']:
             self.setCommand(self.command + ['--enable-core-dumps-nolimit'])
@@ -4131,6 +4149,7 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
     suffix = 'stress-mode'
     EXIT_AFTER_FAILURES = '10'
     ENABLE_ADDITIONAL_ARGUMENTS = False
+    STRESS_MODE = True
     FAILURE_MSG_IN_STRESS_MODE = 'Found test failures in stress mode'
 
     def __init__(self, num_iterations=100, layout_test_class=RunWebKitTests):

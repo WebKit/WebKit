@@ -2,7 +2,7 @@ This test makes sure that an ARIA active descendant change does not change focus
 
 The ComboBox should start out as the focused element.
 PASS: axCombo.isEqual(accessibilityController.focusedElement) === true
-Received notification: AXSelectedChildrenChanged
+Received notification: AXActiveElementChanged
 The ComboBox should still be the focused element even after the aria-activedescendant was changed.
 PASS: axCombo.isEqual(accessibilityController.focusedElement) === true
 

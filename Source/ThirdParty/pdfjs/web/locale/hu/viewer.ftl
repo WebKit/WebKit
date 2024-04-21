@@ -301,8 +301,11 @@ pdfjs-editor-ink-button-label = Rajzolás
 pdfjs-editor-stamp-button =
     .title = Képek hozzáadása vagy szerkesztése
 pdfjs-editor-stamp-button-label = Képek hozzáadása vagy szerkesztése
-pdfjs-editor-remove-button =
-    .title = Eltávolítás
+pdfjs-editor-highlight-button =
+    .title = Kiemelés
+pdfjs-editor-highlight-button-label = Kiemelés
+pdfjs-highlight-floating-button =
+    .title = Kiemelés
 
 ## Remove button for the various kind of editor.
 
@@ -326,6 +329,10 @@ pdfjs-editor-ink-opacity-input = Átlátszatlanság
 pdfjs-editor-stamp-add-image-button =
     .title = Kép hozzáadása
 pdfjs-editor-stamp-add-image-button-label = Kép hozzáadása
+# This refers to the thickness of the line used for free highlighting (not bound to text)
+pdfjs-editor-free-highlight-thickness-input = Vastagság
+pdfjs-editor-free-highlight-thickness-title =
+    .title = Vastagság módosítása, ha nem szöveges elemeket emel ki
 pdfjs-free-text =
     .aria-label = Szövegszerkesztő
 pdfjs-free-text-default-content = Kezdjen el gépelni…
@@ -382,3 +389,10 @@ pdfjs-editor-colorpicker-pink =
     .title = Rózsaszín
 pdfjs-editor-colorpicker-red =
     .title = Vörös
+
+## Show all highlights
+## This is a toggle button to show/hide all the highlights.
+
+pdfjs-editor-highlight-show-all-button-label = Összes megjelenítése
+pdfjs-editor-highlight-show-all-button =
+    .title = Összes megjelenítése

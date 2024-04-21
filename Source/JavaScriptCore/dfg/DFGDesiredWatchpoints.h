@@ -100,6 +100,7 @@ public:
     }
 
     WatchpointRegistrationMode mode() const { return m_mode; }
+    Concurrency concurrency() const { return m_mode == WatchpointRegistrationMode::Add ? Concurrency::MainThread : Concurrency::ConcurrentThread; }
 
 private:
     DesiredWatchpointCounts m_counts;
@@ -118,7 +119,7 @@ struct SetPointerAdaptor {
     static bool add(CodeBlock* codeBlock, T set, WatchpointCollector& collector)
     {
         return collector.addWatchpoint([&](CodeBlockJettisoningWatchpoint& watchpoint) {
-            if (hasBeenInvalidated(set))
+            if (hasBeenInvalidated(set, collector.concurrency()))
                 return false;
 
             {
@@ -129,7 +130,7 @@ struct SetPointerAdaptor {
             return true;
         });
     }
-    static bool hasBeenInvalidated(T set)
+    static bool hasBeenInvalidated(T set, Concurrency)
     {
         return set->hasBeenInvalidated();
     }
@@ -141,7 +142,7 @@ struct SetPointerAdaptor {
 
 struct SymbolTableAdaptor {
     static bool add(CodeBlock*, SymbolTable*, WatchpointCollector&);
-    static bool hasBeenInvalidated(SymbolTable* symbolTable)
+    static bool hasBeenInvalidated(SymbolTable* symbolTable, Concurrency)
     {
         return symbolTable->singleton().hasBeenInvalidated();
     }
@@ -153,7 +154,7 @@ struct SymbolTableAdaptor {
 
 struct FunctionExecutableAdaptor {
     static bool add(CodeBlock*, FunctionExecutable*, WatchpointCollector&);
-    static bool hasBeenInvalidated(FunctionExecutable* executable)
+    static bool hasBeenInvalidated(FunctionExecutable* executable, Concurrency)
     {
         return executable->singleton().hasBeenInvalidated();
     }
@@ -165,7 +166,7 @@ struct FunctionExecutableAdaptor {
 
 struct ArrayBufferViewWatchpointAdaptor {
     static bool add(CodeBlock*, JSArrayBufferView*, WatchpointCollector&);
-    static bool hasBeenInvalidated(JSArrayBufferView* view)
+    static bool hasBeenInvalidated(JSArrayBufferView* view, Concurrency)
     {
         return !view->length();
     }
@@ -177,9 +178,9 @@ struct ArrayBufferViewWatchpointAdaptor {
 
 struct AdaptiveStructureWatchpointAdaptor {
     static bool add(CodeBlock*, const ObjectPropertyCondition&, WatchpointCollector&);
-    static bool hasBeenInvalidated(const ObjectPropertyCondition& key)
+    static bool hasBeenInvalidated(const ObjectPropertyCondition& key, Concurrency concurrency)
     {
-        return !key.isWatchable(PropertyCondition::MakeNoChanges);
+        return !key.isWatchable(PropertyCondition::MakeNoChanges, concurrency);
     }
     static void dumpInContext(
         PrintStream& out, const ObjectPropertyCondition& key, DumpContext* context)

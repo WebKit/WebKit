@@ -1,10 +1,10 @@
 diff --git a/Source/ThirdParty/gmock/include/gmock/gmock-cardinalities.h b/Source/ThirdParty/gmock/include/gmock/gmock-cardinalities.h
-index fc7f803a7a65..241897d0efdd 100644
+index 533e604f326c..137327cbd10d 100644
 --- a/Source/ThirdParty/gmock/include/gmock/gmock-cardinalities.h
 +++ b/Source/ThirdParty/gmock/include/gmock/gmock-cardinalities.h
-@@ -43,7 +43,7 @@
- #include <memory>
+@@ -45,7 +45,7 @@
  #include <ostream>  // NOLINT
+ 
  #include "gmock/internal/gmock-port.h"
 -#include "gtest/gtest.h"
 +#include <gtest/gtest.h>
@@ -12,10 +12,10 @@ index fc7f803a7a65..241897d0efdd 100644
  GTEST_DISABLE_MSC_WARNINGS_PUSH_(4251 \
  /* class A needs to have dll-interface to be used by clients of class B */)
 diff --git a/Source/ThirdParty/gmock/include/gmock/gmock-matchers.h b/Source/ThirdParty/gmock/include/gmock/gmock-matchers.h
-index eec5044f96e0..27461360fac8 100644
+index 0f67713776a6..383250c41370 100644
 --- a/Source/ThirdParty/gmock/include/gmock/gmock-matchers.h
 +++ b/Source/ThirdParty/gmock/include/gmock/gmock-matchers.h
-@@ -271,7 +271,7 @@
+@@ -274,7 +274,7 @@
  #include "gmock/internal/gmock-internal-utils.h"
  #include "gmock/internal/gmock-port.h"
  #include "gmock/internal/gmock-pp.h"
@@ -25,10 +25,10 @@ index eec5044f96e0..27461360fac8 100644
  // MSVC warning C5046 is new as of VS2017 version 15.8.
  #if defined(_MSC_VER) && _MSC_VER >= 1915
 diff --git a/Source/ThirdParty/gmock/include/gmock/gmock-spec-builders.h b/Source/ThirdParty/gmock/include/gmock/gmock-spec-builders.h
-index f1bd79cf3dd5..57ddb299f56c 100644
+index 78ca15d05e0f..5732ca41efae 100644
 --- a/Source/ThirdParty/gmock/include/gmock/gmock-spec-builders.h
 +++ b/Source/ThirdParty/gmock/include/gmock/gmock-spec-builders.h
-@@ -75,7 +75,7 @@
+@@ -78,7 +78,7 @@
  #include "gmock/gmock-matchers.h"
  #include "gmock/internal/gmock-internal-utils.h"
  #include "gmock/internal/gmock-port.h"
@@ -36,14 +36,14 @@ index f1bd79cf3dd5..57ddb299f56c 100644
 +#include <gtest/gtest.h>
  
  #if GTEST_HAS_EXCEPTIONS
- # include <stdexcept>  // NOLINT
+ #include <stdexcept>  // NOLINT
 diff --git a/Source/ThirdParty/gmock/include/gmock/internal/gmock-internal-utils.h b/Source/ThirdParty/gmock/include/gmock/internal/gmock-internal-utils.h
-index 317544a7daf5..1ab3d6ee69fd 100644
+index ead6d7c805e9..8cb9d1373375 100644
 --- a/Source/ThirdParty/gmock/include/gmock/internal/gmock-internal-utils.h
 +++ b/Source/ThirdParty/gmock/include/gmock/internal/gmock-internal-utils.h
-@@ -44,7 +44,7 @@
- #include <string>
- #include <type_traits>
+@@ -47,7 +47,7 @@
+ #include <vector>
+ 
  #include "gmock/internal/gmock-port.h"
 -#include "gtest/gtest.h"
 +#include <gtest/gtest.h>
@@ -51,25 +51,25 @@ index 317544a7daf5..1ab3d6ee69fd 100644
  namespace testing {
  
 diff --git a/Source/ThirdParty/gmock/include/gmock/internal/gmock-port.h b/Source/ThirdParty/gmock/include/gmock/internal/gmock-port.h
-index 367a44d366a7..2556f5ce124b 100644
+index 55ddfb6c6a3b..93fb7b65051b 100644
 --- a/Source/ThirdParty/gmock/include/gmock/internal/gmock-port.h
 +++ b/Source/ThirdParty/gmock/include/gmock/internal/gmock-port.h
-@@ -53,7 +53,7 @@
- // here, as Google Mock depends on Google Test.  Only add a utility
+@@ -54,7 +54,7 @@
  // here if it's truly specific to Google Mock.
  
+ #include "gmock/internal/custom/gmock-port.h"
 -#include "gtest/internal/gtest-port.h"
 +#include <gtest/internal/gtest-port.h>
- #include "gmock/internal/custom/gmock-port.h"
  
- // For MS Visual C++, check the compiler version. At least VS 2015 is
+ #ifdef GTEST_HAS_ABSL
+ #include "absl/flags/declare.h"
 diff --git a/Source/ThirdParty/gmock/src/gmock-cardinalities.cc b/Source/ThirdParty/gmock/src/gmock-cardinalities.cc
-index 7463f4383233..650228e64f49 100644
+index 92cde3484abf..680f2f09c29f 100644
 --- a/Source/ThirdParty/gmock/src/gmock-cardinalities.cc
 +++ b/Source/ThirdParty/gmock/src/gmock-cardinalities.cc
-@@ -39,7 +39,7 @@
- #include <sstream>
+@@ -40,7 +40,7 @@
  #include <string>
+ 
  #include "gmock/internal/gmock-internal-utils.h"
 -#include "gtest/gtest.h"
 +#include <gtest/gtest.h>
@@ -77,11 +77,11 @@ index 7463f4383233..650228e64f49 100644
  namespace testing {
  
 diff --git a/Source/ThirdParty/gmock/src/gmock-internal-utils.cc b/Source/ThirdParty/gmock/src/gmock-internal-utils.cc
-index e5b547981d14..fd4a049d10fb 100644
+index 5c2ce0d57eb6..7df5eb69771e 100644
 --- a/Source/ThirdParty/gmock/src/gmock-internal-utils.cc
 +++ b/Source/ThirdParty/gmock/src/gmock-internal-utils.cc
-@@ -41,7 +41,7 @@
- #include <string>
+@@ -48,7 +48,7 @@
+ 
  #include "gmock/gmock.h"
  #include "gmock/internal/gmock-port.h"
 -#include "gtest/gtest.h"
@@ -90,10 +90,10 @@ index e5b547981d14..fd4a049d10fb 100644
  namespace testing {
  namespace internal {
 diff --git a/Source/ThirdParty/gmock/src/gmock-spec-builders.cc b/Source/ThirdParty/gmock/src/gmock-spec-builders.cc
-index c7266a3704b0..2c3444972b77 100644
+index de8947163586..f5b75dd5925e 100644
 --- a/Source/ThirdParty/gmock/src/gmock-spec-builders.cc
 +++ b/Source/ThirdParty/gmock/src/gmock-spec-builders.cc
-@@ -45,8 +45,8 @@
+@@ -46,8 +46,8 @@
  #include <vector>
  
  #include "gmock/gmock.h"
@@ -102,18 +102,18 @@ index c7266a3704b0..2c3444972b77 100644
 +#include <gtest/gtest.h>
 +#include <gtest/internal/gtest-port.h>
  
- #if GTEST_OS_CYGWIN || GTEST_OS_LINUX || GTEST_OS_MAC
- # include <unistd.h>  // NOLINT
+ #if defined(GTEST_OS_CYGWIN) || defined(GTEST_OS_LINUX) || defined(GTEST_OS_MAC)
+ #include <unistd.h>  // NOLINT
 diff --git a/Source/ThirdParty/gmock/src/gmock_main.cc b/Source/ThirdParty/gmock/src/gmock_main.cc
-index 18c500f6639d..845284d85f17 100644
+index 6b5541271bfe..cb51cf89d732 100644
 --- a/Source/ThirdParty/gmock/src/gmock_main.cc
 +++ b/Source/ThirdParty/gmock/src/gmock_main.cc
 @@ -30,7 +30,7 @@
- 
  #include <iostream>
+ 
  #include "gmock/gmock.h"
 -#include "gtest/gtest.h"
 +#include <gtest/gtest.h>
  
- #if GTEST_OS_ESP8266 || GTEST_OS_ESP32
- #if GTEST_OS_ESP8266
+ #if defined(GTEST_OS_ESP8266) || defined(GTEST_OS_ESP32) || \
+     (defined(GTEST_OS_NRF52) && defined(ARDUINO))

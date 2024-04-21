@@ -301,9 +301,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/cookie-store/CookieStoreGetOptions.idl \
     $(WebCore)/Modules/cookie-store/CookieStoreDeleteOptions.idl \
     $(WebCore)/Modules/cookie-store/CookieStoreManager.idl \
+    $(WebCore)/Modules/cookie-store/DOMWindow+CookieStore.idl \
     $(WebCore)/Modules/cookie-store/ExtendableCookieChangeEvent.idl \
     $(WebCore)/Modules/cookie-store/ExtendableCookieChangeEventInit.idl \
-    $(WebCore)/Modules/cookie-store/LocalDOMWindow+CookieStore.idl \
     $(WebCore)/Modules/credentialmanagement/BasicCredential.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialCreationOptions.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialMediationRequirement.idl \
@@ -607,7 +607,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/screen-wake-lock/WakeLock.idl \
     $(WebCore)/Modules/screen-wake-lock/WakeLockSentinel.idl \
     $(WebCore)/Modules/screen-wake-lock/WakeLockType.idl \
-    $(WebCore)/Modules/speech/LocalDOMWindow+SpeechSynthesis.idl \
+    $(WebCore)/Modules/speech/DOMWindow+SpeechSynthesis.idl \
     $(WebCore)/Modules/speech/SpeechSynthesis.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisErrorCode.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisErrorEvent.idl \
@@ -782,9 +782,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoEncoderSupport.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoFrame.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoFrameOutputCallback.idl \
+    $(WebCore)/Modules/webdatabase/DOMWindow+WebDatabase.idl \
     $(WebCore)/Modules/webdatabase/Database.idl \
     $(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
-    $(WebCore)/Modules/webdatabase/LocalDOMWindow+WebDatabase.idl \
     $(WebCore)/Modules/webdatabase/SQLError.idl \
     $(WebCore)/Modules/webdatabase/SQLResultSet.idl \
     $(WebCore)/Modules/webdatabase/SQLResultSetRowList.idl \
@@ -1430,19 +1430,19 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/Crypto.idl \
     $(WebCore)/page/DOMSelection.idl \
     $(WebCore)/page/DOMWindow.idl \
+    $(WebCore)/page/DOMWindow+CSSOM.idl \
+    $(WebCore)/page/DOMWindow+CSSOMView.idl \
+    $(WebCore)/page/DOMWindow+Compat.idl \
+    $(WebCore)/page/DOMWindow+DeviceMotion.idl \
+    $(WebCore)/page/DOMWindow+DeviceOrientation.idl \
+    $(WebCore)/page/DOMWindow+RequestIdleCallback.idl \
+    $(WebCore)/page/DOMWindow+Selection.idl \
+    $(WebCore)/page/DOMWindow+VisualViewport.idl \
     $(WebCore)/page/EventSource.idl \
     $(WebCore)/page/History.idl \
     $(WebCore)/page/IntersectionObserver.idl \
     $(WebCore)/page/IntersectionObserverCallback.idl \
     $(WebCore)/page/IntersectionObserverEntry.idl \
-    $(WebCore)/page/LocalDOMWindow+CSSOM.idl \
-    $(WebCore)/page/LocalDOMWindow+CSSOMView.idl \
-    $(WebCore)/page/LocalDOMWindow+Compat.idl \
-    $(WebCore)/page/LocalDOMWindow+DeviceMotion.idl \
-    $(WebCore)/page/LocalDOMWindow+DeviceOrientation.idl \
-    $(WebCore)/page/LocalDOMWindow+RequestIdleCallback.idl \
-    $(WebCore)/page/LocalDOMWindow+Selection.idl \
-    $(WebCore)/page/LocalDOMWindow+VisualViewport.idl \
     $(WebCore)/page/Location.idl \
     $(WebCore)/page/NavigateEvent.idl \
     $(WebCore)/page/Navigation.idl \
@@ -2418,7 +2418,7 @@ SUPPLEMENTAL_MAKEFILE_DEPS = SupplementalDependencies.dep
 ISO_SUBSPACES_HEADER_FILE = DOMIsoSubspaces.h
 CLIENT_ISO_SUBSPACES_HEADER_FILE = DOMClientIsoSubspaces.h
 CONSTRUCTORS_HEADER_FILE = DOMConstructors.h
-WINDOW_CONSTRUCTORS_FILE = LocalDOMWindowConstructors.idl
+WINDOW_CONSTRUCTORS_FILE = DOMWindowConstructors.idl
 WORKERGLOBALSCOPE_CONSTRUCTORS_FILE = WorkerGlobalScopeConstructors.idl
 SHADOWREALMGLOBALSCOPE_CONSTRUCTORS_FILE = ShadowRealmGlobalScopeConstructors.idl
 DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE = DedicatedWorkerGlobalScopeConstructors.idl

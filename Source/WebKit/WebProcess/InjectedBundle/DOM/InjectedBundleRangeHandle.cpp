@@ -175,7 +175,7 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
 String InjectedBundleRangeHandle::text() const
 {
     auto range = makeSimpleRange(m_range);
-    range.start.document().updateLayout();
+    range.start.protectedDocument()->updateLayout();
     return plainText(range);
 }
 

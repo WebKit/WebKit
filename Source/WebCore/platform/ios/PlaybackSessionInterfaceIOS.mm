@@ -134,6 +134,11 @@ uint32_t PlaybackSessionInterfaceIOS::ptrCount() const
     return CanMakeCheckedPtr::ptrCount();
 }
 
+uint32_t PlaybackSessionInterfaceIOS::ptrCountWithoutThreadCheck() const
+{
+    return CanMakeCheckedPtr::ptrCountWithoutThreadCheck();
+}
+
 void PlaybackSessionInterfaceIOS::incrementPtrCount() const
 {
     CanMakeCheckedPtr::incrementPtrCount();
@@ -143,28 +148,6 @@ void PlaybackSessionInterfaceIOS::decrementPtrCount() const
 {
     CanMakeCheckedPtr::decrementPtrCount();
 }
-
-#if CHECKED_POINTER_DEBUG
-void PlaybackSessionInterfaceIOS::registerCheckedPtr(const void* pointer) const
-{
-    CanMakeCheckedPtr::registerCheckedPtr(pointer);
-}
-
-void PlaybackSessionInterfaceIOS::copyCheckedPtr(const void* source, const void* destination) const
-{
-    CanMakeCheckedPtr::copyCheckedPtr(source, destination);
-}
-
-void PlaybackSessionInterfaceIOS::moveCheckedPtr(const void* source, const void* destination) const
-{
-    CanMakeCheckedPtr::moveCheckedPtr(source, destination);
-}
-
-void PlaybackSessionInterfaceIOS::unregisterCheckedPtr(const void* pointer) const
-{
-    CanMakeCheckedPtr::unregisterCheckedPtr(pointer);
-}
-#endif // CHECKED_POINTER_DEBUG
 
 #endif
 

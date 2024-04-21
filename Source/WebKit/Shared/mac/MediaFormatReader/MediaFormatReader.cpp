@@ -120,7 +120,7 @@ MediaTime MediaFormatReader::duration() const
 
 static ConcurrentWorkQueue& readerQueue()
 {
-    static NeverDestroyed<Ref<ConcurrentWorkQueue>> queue = ConcurrentWorkQueue::create("WebKit::MediaFormatReader Queue");
+    static NeverDestroyed<Ref<ConcurrentWorkQueue>> queue = ConcurrentWorkQueue::create("WebKit::MediaFormatReader Queue"_s);
     return queue.get();
 }
 

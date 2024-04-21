@@ -56,6 +56,8 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
 @implementation WKContentRuleListStore
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKContentRuleListStore.class, self))

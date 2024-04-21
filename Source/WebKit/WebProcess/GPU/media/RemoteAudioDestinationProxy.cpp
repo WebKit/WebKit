@@ -104,7 +104,7 @@ void RemoteAudioDestinationProxy::startRenderingThread()
     }
     auto schedulingPolicy = shouldCreateRealtimeThread ? Thread::SchedulingPolicy::Realtime : Thread::SchedulingPolicy::Other;
 
-    m_renderThread = Thread::create("RemoteAudioDestinationProxy render thread", WTFMove(offThreadRendering), ThreadType::Audio, Thread::QOS::UserInteractive, schedulingPolicy);
+    m_renderThread = Thread::create("RemoteAudioDestinationProxy render thread"_s, WTFMove(offThreadRendering), ThreadType::Audio, Thread::QOS::UserInteractive, schedulingPolicy);
 
 #if HAVE(THREAD_TIME_CONSTRAINTS)
     if (shouldCreateRealtimeThread) {

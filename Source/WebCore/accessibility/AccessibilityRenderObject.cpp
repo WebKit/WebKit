@@ -421,30 +421,23 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     if (!nextSibling)
         return nullptr;
 
-    auto* objectCache = axObjectCache();
-    if (!objectCache)
+    CheckedPtr cache = axObjectCache();
+    if (!cache)
         return nullptr;
 
     // After case 4, there are chances that nextSibling has the same node as the current renderer,
     // which might lead to adding the same child repeatedly.
     if (nextSibling->node() && nextSibling->node() == m_renderer->node()) {
-        if (auto* nextObject = objectCache->getOrCreate(*nextSibling))
+        if (auto* nextObject = cache->getOrCreate(*nextSibling))
             return nextObject->nextSibling();
     }
 
-    auto* nextObject = objectCache->getOrCreate(*nextSibling);
-    auto* nextObjectParent = nextObject ? nextObject->parentObject() : nullptr;
-    auto* thisParent = parentObject();
-    // Make sure next sibling has the same parent.
-    if (nextObjectParent && nextObjectParent != thisParent) {
-        // Unless either object has a parent with display: contents, as display: contents can cause parent differences
-        // that we properly account for elsewhere.
-        if (nextObjectParent->hasDisplayContents() || (thisParent && thisParent->hasDisplayContents())
-            || thisParent->ownedObjects().contains(this) || nextObjectParent->ownedObjects().contains(nextObject))
-            return nextObject;
-        return nullptr;
-    }
-    return nextObject;
+    auto* nextObject = cache->getOrCreate(*nextSibling);
+    auto* nextAXRenderObject = dynamicDowncast<AccessibilityRenderObject>(nextObject);
+    auto* nextRenderParent = nextAXRenderObject ? cache->getOrCreate(nextAXRenderObject->renderParentObject()) : nullptr;
+
+    // Make sure the next sibling has the same render parent.
+    return !nextRenderParent || nextRenderParent == cache->getOrCreate(renderParentObject()) ? nextObject : nullptr;
 }
 
 static RenderBoxModelObject* nextContinuation(RenderObject& renderer)
@@ -788,8 +781,8 @@ String AccessibilityRenderObject::stringValue() const
         const auto& listItems = selectElement.listItems();
         if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
             if (RefPtr selectedItem = listItems[selectedIndex].get()) {
-                const AtomString& overriddenDescription = selectedItem->attributeWithoutSynchronization(aria_labelAttr);
-                if (!overriddenDescription.isNull())
+                auto overriddenDescription = selectedItem->attributeTrimmedWithDefaultARIA(aria_labelAttr);
+                if (!overriddenDescription.isEmpty())
                     return overriddenDescription;
             }
         }
@@ -1740,30 +1733,20 @@ RefPtr<Element> AccessibilityRenderObject::rootEditableElementForPosition(const 
     RefPtr<Element> result;
     RefPtr rootEditableElement = position.rootEditableElement();
 
-    for (RefPtr e = position.anchorElementAncestor(); e && e != rootEditableElement; e = e->parentElement()) {
-        if (nodeIsTextControl(e.get()))
-            result = e;
-        if (e->hasTagName(bodyTag))
+    for (RefPtr ancestor = position.anchorElementAncestor(); ancestor && ancestor != rootEditableElement; ancestor = ancestor->parentElement()) {
+        if (nodeIsTextControl(*ancestor))
+            result = ancestor;
+        if (ancestor->hasTagName(bodyTag))
             break;
     }
-
-    if (result)
-        return result;
-
-    return rootEditableElement;
+    return result ? result : rootEditableElement;
 }
 
-bool AccessibilityRenderObject::nodeIsTextControl(const Node* node) const
+bool AccessibilityRenderObject::nodeIsTextControl(const Node& node) const
 {
-    if (!node)
-        return false;
-
-    if (AXObjectCache* cache = axObjectCache()) {
-        if (AccessibilityObject* axObjectForNode = cache->getOrCreate(const_cast<Node&>(*node)))
-            return axObjectForNode->isTextControl();
-    }
-
-    return false;
+    auto* cache = axObjectCache();
+    auto* axObject = cache ? cache->getOrCreate(const_cast<Node&>(node)) : nullptr;
+    return axObject && axObject->isTextControl();
 }
 
 bool AccessibilityRenderObject::isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange& range) const
@@ -2554,8 +2537,8 @@ void AccessibilityRenderObject::addChildren()
         addChild(&object);
     };
 
-    for (RefPtr<AccessibilityObject> object = firstChild(); object; object = object->nextSibling())
-        addChildIfNeeded(*object);
+    for (auto& object : AXChildIterator(*this))
+        addChildIfNeeded(object);
 
     addNodeOnlyChildren();
     addAttachmentChildren();

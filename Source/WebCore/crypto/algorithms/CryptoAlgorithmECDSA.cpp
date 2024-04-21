@@ -59,10 +59,10 @@ void CryptoAlgorithmECDSA::sign(const CryptoAlgorithmParameters& parameters, Ref
         exceptionCallback(ExceptionCode::InvalidAccessError);
         return;
     }
-
+    UseCryptoKit useCryptoKit = context.settingsValues().cryptoKitEnabled ? UseCryptoKit::Yes : UseCryptoKit::No;
     dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = crossThreadCopy(downcast<CryptoAlgorithmEcdsaParams>(parameters)), key = WTFMove(key), data = WTFMove(data)] {
-            return platformSign(parameters, downcast<CryptoKeyEC>(key.get()), data);
+        [parameters = crossThreadCopy(downcast<CryptoAlgorithmEcdsaParams>(parameters)), key = WTFMove(key), data = WTFMove(data), useCryptoKit] {
+            return platformSign(parameters, downcast<CryptoKeyEC>(key.get()), data, useCryptoKit);
         });
 }
 
@@ -73,13 +73,14 @@ void CryptoAlgorithmECDSA::verify(const CryptoAlgorithmParameters& parameters, R
         return;
     }
 
+    UseCryptoKit useCryptoKit = context.settingsValues().cryptoKitEnabled ? UseCryptoKit::Yes : UseCryptoKit::No;
     dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = crossThreadCopy(downcast<CryptoAlgorithmEcdsaParams>(parameters)), key = WTFMove(key), signature = WTFMove(signature), data = WTFMove(data)] {
-            return platformVerify(parameters, downcast<CryptoKeyEC>(key.get()), signature, data);
+        [parameters = crossThreadCopy(downcast<CryptoAlgorithmEcdsaParams>(parameters)), key = WTFMove(key), signature = WTFMove(signature), data = WTFMove(data), useCryptoKit] {
+            return platformVerify(parameters, downcast<CryptoKeyEC>(key.get()), signature, data, useCryptoKit);
         });
 }
 
-void CryptoAlgorithmECDSA::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
+void CryptoAlgorithmECDSA::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context)
 {
     const auto& ecParameters = downcast<CryptoAlgorithmEcKeyParams>(parameters);
 
@@ -87,8 +88,8 @@ void CryptoAlgorithmECDSA::generateKey(const CryptoAlgorithmParameters& paramete
         exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
-
-    auto result = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDSA, ecParameters.namedCurve, extractable, usages);
+    UseCryptoKit useCryptoKit = context.settingsValues().cryptoKitEnabled ? UseCryptoKit::Yes : UseCryptoKit::No;
+    auto result = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDSA, ecParameters.namedCurve, extractable, usages, useCryptoKit);
     if (result.hasException()) {
         exceptionCallback(result.releaseException().code());
         return;
@@ -100,7 +101,7 @@ void CryptoAlgorithmECDSA::generateKey(const CryptoAlgorithmParameters& paramete
     callback(WTFMove(pair));
 }
 
-void CryptoAlgorithmECDSA::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmECDSA::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit useCryptoKit)
 {
     using namespace CryptoAlgorithmECDSAInternal;
     const auto& ecParameters = downcast<CryptoAlgorithmEcKeyParams>(parameters);
@@ -131,7 +132,7 @@ void CryptoAlgorithmECDSA::importKey(CryptoKeyFormat format, KeyData&& data, con
             return;
         }
 
-        result = CryptoKeyEC::importJwk(ecParameters.identifier, ecParameters.namedCurve, WTFMove(key), extractable, usages);
+        result = CryptoKeyEC::importJwk(ecParameters.identifier, ecParameters.namedCurve, WTFMove(key), extractable, usages, useCryptoKit);
         break;
     }
     case CryptoKeyFormat::Raw:
@@ -139,21 +140,21 @@ void CryptoAlgorithmECDSA::importKey(CryptoKeyFormat format, KeyData&& data, con
             exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
-        result = CryptoKeyEC::importRaw(ecParameters.identifier, ecParameters.namedCurve, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
+        result = CryptoKeyEC::importRaw(ecParameters.identifier, ecParameters.namedCurve, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages, useCryptoKit);
         break;
     case CryptoKeyFormat::Spki:
         if (usages && (usages ^ CryptoKeyUsageVerify)) {
             exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
-        result = CryptoKeyEC::importSpki(ecParameters.identifier, ecParameters.namedCurve, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
+        result = CryptoKeyEC::importSpki(ecParameters.identifier, ecParameters.namedCurve, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages, useCryptoKit);
         break;
     case CryptoKeyFormat::Pkcs8:
         if (usages && (usages ^ CryptoKeyUsageSign)) {
             exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
-        result = CryptoKeyEC::importPkcs8(ecParameters.identifier, ecParameters.namedCurve, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
+        result = CryptoKeyEC::importPkcs8(ecParameters.identifier, ecParameters.namedCurve, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages, useCryptoKit);
         break;
     }
     if (!result) {
@@ -164,10 +165,9 @@ void CryptoAlgorithmECDSA::importKey(CryptoKeyFormat format, KeyData&& data, con
     callback(*result);
 }
 
-void CryptoAlgorithmECDSA::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmECDSA::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit useCryptoKit)
 {
     const auto& ecKey = downcast<CryptoKeyEC>(key.get());
-
     if (!ecKey.keySizeInBits()) {
         exceptionCallback(ExceptionCode::OperationError);
         return;
@@ -176,7 +176,7 @@ void CryptoAlgorithmECDSA::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& ke
     KeyData result;
     switch (format) {
     case CryptoKeyFormat::Jwk: {
-        auto jwk = ecKey.exportJwk();
+        auto jwk = ecKey.exportJwk(useCryptoKit);
         if (jwk.hasException()) {
             exceptionCallback(jwk.releaseException().code());
             return;
@@ -185,7 +185,7 @@ void CryptoAlgorithmECDSA::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& ke
         break;
     }
     case CryptoKeyFormat::Raw: {
-        auto raw = ecKey.exportRaw();
+        auto raw = ecKey.exportRaw(useCryptoKit);
         if (raw.hasException()) {
             exceptionCallback(raw.releaseException().code());
             return;
@@ -194,7 +194,7 @@ void CryptoAlgorithmECDSA::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& ke
         break;
     }
     case CryptoKeyFormat::Spki: {
-        auto spki = ecKey.exportSpki();
+        auto spki = ecKey.exportSpki(useCryptoKit);
         if (spki.hasException()) {
             exceptionCallback(spki.releaseException().code());
             return;
@@ -203,7 +203,7 @@ void CryptoAlgorithmECDSA::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& ke
         break;
     }
     case CryptoKeyFormat::Pkcs8: {
-        auto pkcs8 = ecKey.exportPkcs8();
+        auto pkcs8 = ecKey.exportPkcs8(useCryptoKit);
         if (pkcs8.hasException()) {
             exceptionCallback(pkcs8.releaseException().code());
             return;

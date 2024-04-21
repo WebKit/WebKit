@@ -189,11 +189,11 @@ void ObjCObjectGraph::encode(IPC::Encoder& encoder, id object)
 
 bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
 {
-    ObjCType type;
-    if (!decoder.decode(type))
+    auto type = decoder.decode<ObjCType>();
+    if (!type)
         return false;
 
-    switch (type) {
+    switch (*type) {
     case ObjCType::Null: {
         result = nil;
         return true;
@@ -245,7 +245,7 @@ bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
     }
 
     case ObjCType::NSString: {
-        std::optional<RetainPtr<NSString>> string = decoder.decode<RetainPtr<NSString>>();
+        auto string = decoder.decode<RetainPtr<NSString>>();
         if (!string)
             return false;
 

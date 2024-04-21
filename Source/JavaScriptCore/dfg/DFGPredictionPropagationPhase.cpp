@@ -41,7 +41,7 @@ static constexpr bool verboseFixPointLoops = false;
 class PredictionPropagationPhase : public Phase {
 public:
     PredictionPropagationPhase(Graph& graph)
-        : Phase(graph, "prediction propagation")
+        : Phase(graph, "prediction propagation"_s)
         , m_tupleSpeculations(graph.m_tupleData.size())
     {
         m_tupleSpeculations.fill(SpecNone);

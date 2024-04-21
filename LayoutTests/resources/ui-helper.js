@@ -612,12 +612,12 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static async setInlinePrediction(text)
+    static async setInlinePrediction(text, startIndex = 0)
     {
         if (!this.isWebKit2())
             return Promise.resolve();
 
-        return new Promise(resolve => testRunner.runUIScript(`uiController.setInlinePrediction(\`${text}\`)`, resolve));
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setInlinePrediction(\`${text}\`, ${startIndex})`, resolve));
     }
 
     static async acceptInlinePrediction()

@@ -58,7 +58,7 @@ namespace JSC {
 struct PrettyPrinter {
     PrettyPrinter(PrintStream& out)
         : out(out)
-        , separator("|")
+        , separator("|"_s)
     { }
     
     template<typename T>

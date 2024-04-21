@@ -179,7 +179,15 @@ void AccessibilityObject::setCaretBrowsingEnabled(bool on)
 
 String AccessibilityObject::rolePlatformString() const
 {
-    AccessibilityRole role = roleValue();
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (isAttachment())
+        return [[wrapper() attachmentView] accessibilityAttributeValue:NSAccessibilityRoleAttribute];
+
+    if (isRemoteFrame())
+        return [remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleAttribute];
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+    auto role = roleValue();
 
     // If it is a label with just static text or an anonymous math operator, remap role to StaticText.
     // The mfenced element creates anonymous RenderMathMLOperators with no RenderText
@@ -194,8 +202,43 @@ String AccessibilityObject::rolePlatformString() const
     return Accessibility::roleToPlatformString(role);
 }
 
+static bool isEmptyGroup(AccessibilityObject& object)
+{
+#if ENABLE(MODEL_ELEMENT)
+    if (object.isModel())
+        return false;
+#endif
+
+    if (object.isRemoteFrame())
+        return false;
+
+    return [object.rolePlatformString() isEqual:NSAccessibilityGroupRole]
+        && object.children().isEmpty()
+        && ![renderWidgetChildren(object) count];
+}
+
+NSArray *renderWidgetChildren(const AXCoreObject& object)
+{
+    if (!object.isWidget())
+        return nil;
+
+    id child = Accessibility::retrieveAutoreleasedValueFromMainThread<id>([object = Ref { object }] () -> RetainPtr<id> {
+        auto* widget = object->widget();
+        return widget ? widget->accessibilityObject() : nil;
+    });
+
+    if (child)
+        return @[child];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    return [object.platformWidget() accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
+ALLOW_DEPRECATED_DECLARATIONS_END
+}
+
 String AccessibilityObject::subrolePlatformString() const
 {
+    if (isEmptyGroup(*const_cast<AccessibilityObject*>(this)))
+        return @"AXEmptyGroup";
+
     if (isSecureField())
         return NSAccessibilitySecureTextFieldSubrole;
     if (isSearchField())
@@ -411,7 +454,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 String AccessibilityObject::rolePlatformDescription() const
 {
-    AccessibilityRole role = roleValue();
+    // Attachments have the AXImage role, but may have different subroles.
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (isAttachment())
+        return [[wrapper() attachmentView] accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
+
+    if (isRemoteFrame())
+        return [remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
+ALLOW_DEPRECATED_DECLARATIONS_END
+
     NSString *axRole = rolePlatformString();
 
     if ([axRole isEqualToString:NSAccessibilityGroupRole]) {
@@ -422,7 +473,7 @@ String AccessibilityObject::rolePlatformDescription() const
         if (!ariaLandmarkRoleDescription.isEmpty())
             return ariaLandmarkRoleDescription;
 
-        switch (role) {
+        switch (roleValue()) {
         case AccessibilityRole::Audio:
             return localizedMediaControlElementString("AudioElement"_s);
         case AccessibilityRole::Definition:
@@ -445,7 +496,7 @@ String AccessibilityObject::rolePlatformDescription() const
         case AccessibilityRole::GraphicsDocument:
             return AXARIAContentGroupText("ARIADocument"_s);
         default:
-            return String();
+            return { };
         }
     }
 
@@ -499,7 +550,7 @@ String AccessibilityObject::rolePlatformDescription() const
     if (isDescriptionList())
         return AXDescriptionListText();
 
-    if (role == AccessibilityRole::HorizontalRule)
+    if (roleValue() == AccessibilityRole::HorizontalRule)
         return AXHorizontalRuleDescriptionText();
 
     // AppKit also returns AXTab for the role description for a tab item.
@@ -509,7 +560,7 @@ String AccessibilityObject::rolePlatformDescription() const
     if (isSummary())
         return AXSummaryText();
 
-    return String();
+    return { };
 }
 
 // NSAttributedString support.

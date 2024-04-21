@@ -31,7 +31,7 @@
 
 #include "ANGLEHeaders.h"
 #include "DMABufEGLUtilities.h"
-#include "GBMDevice.h"
+#include "DRMDeviceManager.h"
 #include "GLFence.h"
 #include "Logging.h"
 #include "PixelBuffer.h"
@@ -113,7 +113,7 @@ void GraphicsContextGLGBM::prepareForDisplay()
 
 bool GraphicsContextGLGBM::platformInitializeContext()
 {
-    auto* device = GBMDevice::singleton().device(GBMDevice::Type::Render);
+    auto* device = DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render);
     if (!device) {
         LOG(WebGL, "Warning: Unable to access the GBM device, we fallback to common GL images, they require a copy, that causes a performance penalty.");
         return false;
@@ -293,16 +293,20 @@ void GraphicsContextGLGBM::allocateDrawBufferObject()
     GL_EGLImageTargetTexture2DOES(textureTarget, result.iterator->value);
 }
 
+#if ENABLE(WEBXR)
 bool GraphicsContextGLGBM::addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>)
 {
     return false;
 }
+
 void GraphicsContextGLGBM::enableFoveation(GCGLuint)
 {
 }
+
 void GraphicsContextGLGBM::disableFoveation()
 {
 }
+#endif
 
 GraphicsContextGLGBM::Swapchain::Swapchain(GCGLDisplay platformDisplay)
     : platformDisplay(platformDisplay)

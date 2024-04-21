@@ -76,6 +76,7 @@ public:
     void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
     void destroyPbufferAndDetachIOSurface(void* handle);
 
+#if ENABLE(WEBXR)
     GCGLExternalImage createExternalImage(ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) final;
     void bindExternalImage(GCGLenum target, GCGLExternalImage) final;
 
@@ -85,10 +86,12 @@ public:
 
     RetainPtr<id> newSharedEventWithMachPort(mach_port_t);
     GCGLExternalSync createExternalSync(ExternalSyncSource&&) final;
-    // Short term support for in-process WebGL.
+#endif
     GCGLExternalSync createExternalSync(id, uint64_t);
 
+#if ENABLE(WEBXR)
     bool enableRequiredWebXRExtensions() final;
+#endif
 
     void waitUntilWorkScheduled();
 

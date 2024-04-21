@@ -75,7 +75,7 @@ TEST_F(CompletionHandlerTest, SimpleWorks)
     EXPECT_TRUE(didCall);
 
     didCall = false;
-    Thread::create(__FUNCTION__, [&] {
+    Thread::create("SimpleWorks"_s, [&] {
         CompletionHandler<void()> ch6 { makeCallable(), CompletionHandlerCallThread::ConstructionThread };
         ch6();
     })->waitForCompletion();
@@ -92,7 +92,7 @@ TEST_F(CompletionHandlerTest, SimpleWorks)
 
     didCall = false;
     CompletionHandler<void()> ch5 { makeCallable(),  CompletionHandlerCallThread::AnyThread };
-    Thread::create(__FUNCTION__, [&] {
+    Thread::create("SimpleWorks"_s, [&] {
         ch5();
     })->waitForCompletion();
     EXPECT_TRUE(didCall);
@@ -111,7 +111,7 @@ TEST_F(CompletionHandlerTest, CalledHandlerCanBeDestroyedOffThread)
     EXPECT_TRUE(didCall);
 
     bool didDestroy = false;
-    Thread::create(__FUNCTION__, [&] {
+    Thread::create("CalledHandlerCanBeDestroyedOffThread"_s, [&] {
         auto ch = WTFMove(ch3);
         didDestroy = true;
     })->waitForCompletion();
@@ -122,7 +122,7 @@ TEST_F(CompletionHandlerTest, ConstructWithSpecificThreadLikeAssertion)
 {
     CompletionHandler<void()> ch;
     BinarySemaphore s;
-    auto t = Thread::create(__FUNCTION__, [&] {
+    auto t = Thread::create("ConstructWithSpecificThreadLikeAssertion"_s, [&] {
         s.wait();
         ch();
     });
@@ -152,7 +152,7 @@ TEST(CompletionHandlerDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(DefaultHandlerO
     ASSERT_DEATH_IF_SUPPORTED({
         WTF::initializeMainThread();
         CompletionHandler<void()> ch1 { [] { } };
-        Thread::create(__FUNCTION__, [&] {
+        Thread::create("DefaultHandlerOnThreadAsserts"_s, [&] {
             ch1(); // This should assert.
         })->waitForCompletion();
     }, "ASSERTION FAILED: threadLikeAssertion.isCurrent\\(\\)");
@@ -164,14 +164,14 @@ TEST(CompletionHandlerDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(MainThreadHandl
     ASSERT_DEATH_IF_SUPPORTED({
         WTF::initializeMainThread();
         CompletionHandler<void()> ch1([] { }, CompletionHandlerCallThread::MainThread);
-        Thread::create(__FUNCTION__, [&] {
+        Thread::create("MainThreadHandlerOnThreadAsserts"_s, [&] {
             ch1(); // This should assert.
         })->waitForCompletion();
     }, "ASSERTION FAILED: threadLikeAssertion.isCurrent\\(\\)");
 
     ASSERT_DEATH_IF_SUPPORTED({
         WTF::initializeMainThread();
-        Thread::create(__FUNCTION__, [&] {
+        Thread::create("MainThreadHandlerOnThreadAsserts"_s, [&] {
             CompletionHandler<void()> ch1([] { }, CompletionHandlerCallThread::MainThread);
             ch1(); // This should assert
         })->waitForCompletion();
@@ -184,7 +184,7 @@ TEST(CompletionHandlerDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(ConstructionThr
     ASSERT_DEATH_IF_SUPPORTED({
         WTF::initializeMainThread();
         CompletionHandler<void()> ch1([] { }, CompletionHandlerCallThread::ConstructionThread);
-        Thread::create(__FUNCTION__, [&] {
+        Thread::create("ConstructionThreadHandlerOnThreadAsserts"_s, [&] {
             ch1(); // This should assert.
         })->waitForCompletion();
     }, "ASSERTION FAILED: threadLikeAssertion.isCurrent\\(\\)");
@@ -193,13 +193,13 @@ TEST(CompletionHandlerDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(ConstructionThr
         WTF::initializeMainThread();
         CompletionHandler<void()> ch1;
         BinarySemaphore s;
-        auto t1 = Thread::create(__FUNCTION__, [&] {
+        auto t1 = Thread::create("ConstructionThreadHandlerOnThreadAsserts"_s, [&] {
             ch1 = CompletionHandler<void()>([] { }, CompletionHandlerCallThread::ConstructionThread);
             s.signal();
             while (true) { }
         });
         s.wait();
-        Thread::create(__FUNCTION__, [&] {
+        Thread::create("ConstructionThreadHandlerOnThreadAsserts"_s, [&] {
             ch1(); // This should assert.
         })->waitForCompletion();
     }, "ASSERTION FAILED: threadLikeAssertion.isCurrent\\(\\)");

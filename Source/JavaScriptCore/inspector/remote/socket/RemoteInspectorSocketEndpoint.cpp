@@ -54,7 +54,7 @@ RemoteInspectorSocketEndpoint::RemoteInspectorSocketEndpoint()
         m_wakeupReceiveSocket = sockets->at(1);
     }
 
-    m_workerThread = Thread::create("SocketEndpoint", [this] {
+    m_workerThread = Thread::create("SocketEndpoint"_s, [this] {
         workerThread();
     });
 }

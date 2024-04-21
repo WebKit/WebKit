@@ -69,4 +69,12 @@ iframe:fullscreen {
     background: black;
 }
 
+*|*:not(:root):-internal-in-window-fullscreen {
+    padding: 5% 0%;
+}
+
+*|*:not(:root):-internal-in-window-fullscreen::backdrop {
+    background: rgba(0,0,0,0.85);
+}
+
 #endif

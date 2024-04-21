@@ -364,11 +364,11 @@ String PrintContext::pageProperty(LocalFrame* frame, const char* propertyName, i
 
     Ref protectedFrame { *frame };
 
-    auto& document = *frame->document();
+    RefPtr document = frame->document();
     PrintContext printContext(frame);
     printContext.begin(800); // Any width is OK here.
-    document.updateLayout();
-    auto style = document.styleScope().resolver().styleForPage(pageNumber);
+    document->updateLayout();
+    auto style = document->styleScope().resolver().styleForPage(pageNumber);
 
     // Implement formatters for properties we care about.
     if (!strcmp(propertyName, "margin-left")) {

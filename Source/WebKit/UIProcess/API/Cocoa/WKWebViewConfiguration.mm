@@ -95,6 +95,8 @@ WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay delay)
 
 @implementation WKWebViewConfiguration
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 - (instancetype)init
 {
     if (!(self = [super init]))

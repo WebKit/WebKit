@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "CSSPaintCallback.h"
 #include "WorkletGlobalScope.h"
 #include <JavaScriptCore/JSObject.h>
@@ -113,5 +111,3 @@ static bool isType(const WebCore::ScriptExecutionContext& context)
 }
 static bool isType(const WebCore::WorkletGlobalScope& context) { return context.isPaintWorkletGlobalScope(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(CSS_PAINTING_API)

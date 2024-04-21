@@ -636,7 +636,7 @@ struct MainThreadSafeRefCountedObject : ThreadSafeRefCounted<MainThreadSafeRefCo
 TEST(WTF_RefPtr, ReleaseInNonMainThread)
 {
     done = false;
-    Thread::create("", [object = ThreadSafeRefCountedObject::create()] { });
+    Thread::create(""_s, [object = ThreadSafeRefCountedObject::create()] { });
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_FALSE(isDestroyedInMainThread);
@@ -646,7 +646,7 @@ TEST(WTF_RefPtr, ReleaseInNonMainThreadDestroyInMainThread)
 {
     WTF::initializeMainThread();
     done = false;
-    Thread::create("", [object = MainThreadSafeRefCountedObject::create()] { });
+    Thread::create(""_s, [object = MainThreadSafeRefCountedObject::create()] { });
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_TRUE(isDestroyedInMainThread);

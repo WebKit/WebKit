@@ -1534,13 +1534,13 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
 
     if (layerBacking) {
         if (requireDescendantTraversal || requiresChildRebuild) {
-            bool attachedWidgetContents = false;
+            WidgetLayerAttachment widgetLayerAttachment;
             if (auto* renderWidget = dynamicDowncast<RenderWidget>(layer.renderer()))
-                attachedWidgetContents = attachWidgetContentLayers(*renderWidget);
+                widgetLayerAttachment = attachWidgetContentLayersIfNecessary(*renderWidget);
 
             collectViewTransitionNewContentLayers(layer, childList);
 
-            if (!attachedWidgetContents) {
+            if (!widgetLayerAttachment.widgetLayersAttachedAsChildren) {
                 // If the layer has a clipping layer the overflow controls layers will be siblings of the clipping layer.
                 // Otherwise, the overflow control layers are normal children.
                 if (!layerBacking->hasClippingLayer() && !layerBacking->hasScrollingLayer()) {
@@ -2655,66 +2655,83 @@ RenderLayerCompositor* RenderLayerCompositor::frameContentsCompositor(RenderWidg
     return nullptr;
 }
 
-bool RenderLayerCompositor::attachWidgetContentLayers(RenderWidget& renderer)
+auto RenderLayerCompositor::attachWidgetContentLayersIfNecessary(RenderWidget& renderer) -> WidgetLayerAttachment
 {
     auto* layer = renderer.layer();
     if (!layer->isComposited())
-        return false;
+        return { false, false };
 
     auto* backing = layer->backing();
     RefPtr hostingLayer = backing->parentForSublayers();
 
-    auto addContentsLayerChildIfNecessary = [&](GraphicsLayer& contentsLayer) {
-        if (hostingLayer->children().size() == 1 && hostingLayer->children()[0].ptr() == &contentsLayer)
-            return;
+    bool isVisible = renderer.style().usedVisibility() == Visibility::Visible;
+
+    auto addContentsLayerChildIfNecessary = [&](GraphicsLayer& contentsLayer, bool isVisible) -> bool {
+        if (isVisible && hostingLayer->children().size() == 1 && hostingLayer->children()[0].ptr() == &contentsLayer)
+            return false;
+
+        if (!isVisible && hostingLayer->children().isEmpty())
+            return false;
 
         hostingLayer->removeAllChildren();
-        hostingLayer->addChild(contentsLayer);
+        if (isVisible)
+            hostingLayer->addChild(contentsLayer);
+        return true;
     };
 
+    WidgetLayerAttachment result;
     if (isCompositedPlugin(renderer)) {
         if (auto* contentsLayer = backing->layerForContents()) {
-            addContentsLayerChildIfNecessary(*contentsLayer);
-
+            result.widgetLayersAttachedAsChildren = isVisible;
+            result.layerHierarchyChanged = addContentsLayerChildIfNecessary(*contentsLayer, isVisible);
             if (!isLayerForPluginWithScrollCoordinatedContents(*layer))
-                return true;
+                return result;
 
             auto* scrollingCoordinator = this->scrollingCoordinator();
             if (!scrollingCoordinator)
-                return true;
+                return result;
 
             auto pluginHostingNodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::PluginHosting);
             if (!pluginHostingNodeID)
-                return true;
+                return result;
 
             CheckedPtr renderEmbeddedObject = dynamicDowncast<RenderEmbeddedObject>(renderer);
             renderEmbeddedObject->willAttachScrollingNode();
 
             if (auto pluginScrollingNodeID = renderEmbeddedObject->scrollingNodeID()) {
-                scrollingCoordinator->insertNode(ScrollingNodeType::PluginScrolling, pluginScrollingNodeID, pluginHostingNodeID, 0);
-                renderEmbeddedObject->didAttachScrollingNode();
+                if (isVisible) {
+                    scrollingCoordinator->insertNode(ScrollingNodeType::PluginScrolling, pluginScrollingNodeID, pluginHostingNodeID, 0);
+                    renderEmbeddedObject->didAttachScrollingNode();
+                } else
+                    scrollingCoordinator->unparentNode(pluginScrollingNodeID);
             }
-
-            return true;
+            return result;
         }
     }
 
     auto* innerCompositor = frameContentsCompositor(renderer);
     if (!innerCompositor || !innerCompositor->usesCompositing() || innerCompositor->rootLayerAttachment() != RootLayerAttachedViaEnclosingFrame)
-        return false;
+        return result;
 
+    result.widgetLayersAttachedAsChildren = isVisible;
     if (auto* iframeRootLayer = innerCompositor->rootGraphicsLayer())
-        addContentsLayerChildIfNecessary(*iframeRootLayer);
+        result.layerHierarchyChanged = addContentsLayerChildIfNecessary(*iframeRootLayer, isVisible);
 
     if (auto frameHostingNodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::FrameHosting)) {
+        auto* scrollingCoordinator = this->scrollingCoordinator();
+        if (!scrollingCoordinator)
+            return result;
+
         auto* contentsRenderView = frameContentsRenderView(renderer);
         if (auto frameRootScrollingNodeID = contentsRenderView->frameView().scrollingNodeID()) {
-            if (auto* scrollingCoordinator = this->scrollingCoordinator())
+            if (isVisible)
                 scrollingCoordinator->insertNode(ScrollingNodeType::Subframe, frameRootScrollingNodeID, frameHostingNodeID, 0);
+            else
+                scrollingCoordinator->unparentNode(frameRootScrollingNodeID);
         }
     }
 
-    return true;
+    return result;
 }
 
 void RenderLayerCompositor::repaintCompositedLayers()

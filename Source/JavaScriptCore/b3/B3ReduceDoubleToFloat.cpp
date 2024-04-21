@@ -501,7 +501,7 @@ void printGraphIfConverting(Procedure& procedure)
 
 void reduceDoubleToFloat(Procedure& procedure)
 {
-    PhaseScope phaseScope(procedure, "reduceDoubleToFloat");
+    PhaseScope phaseScope(procedure, "reduceDoubleToFloat"_s);
 
     if (B3ReduceDoubleToFloatInternal::verbose)
         dataLog("Before DoubleToFloatReduction:\n", procedure, "\n");

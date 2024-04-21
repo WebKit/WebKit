@@ -318,9 +318,9 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
 
     float result;
     if (codePathToUse == CodePath::Complex)
-        result = widthForTextUsingComplexTextController(run, fallbackFonts, glyphOverflow);
+        result = widthForComplexText(run, fallbackFonts, glyphOverflow);
     else
-        result = widthForTextUsingWidthIterator(run, fallbackFonts, glyphOverflow);
+        result = widthForSimpleText(run, fallbackFonts, glyphOverflow);
 
     if (cacheEntry && fallbackFonts->isEmptyIgnoringNullReferences())
         *cacheEntry = result;
@@ -1085,7 +1085,7 @@ bool FontCascade::isCJKIdeographOrSymbol(char32_t c)
     return isCJKIdeograph(c);
 }
 
-std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const LChar* characters, unsigned length, TextDirection direction, ExpansionBehavior expansionBehavior)
+std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(std::span<const LChar> characters, TextDirection direction, ExpansionBehavior expansionBehavior)
 {
     unsigned count = 0;
     bool isAfterExpansion = expansionBehavior.left == ExpansionBehavior::Behavior::Forbid;
@@ -1094,17 +1094,17 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const L
         isAfterExpansion = true;
     }
     if (direction == TextDirection::LTR) {
-        for (unsigned i = 0; i < length; ++i) {
-            if (treatAsSpace(characters[i])) {
-                count++;
+        for (auto character : characters) {
+            if (treatAsSpace(character)) {
+                ++count;
                 isAfterExpansion = true;
             } else
                 isAfterExpansion = false;
         }
     } else {
-        for (unsigned i = length; i > 0; --i) {
-            if (treatAsSpace(characters[i - 1])) {
-                count++;
+        for (auto character : makeReversedRange(characters)) {
+            if (treatAsSpace(character)) {
+                ++count;
                 isAfterExpansion = true;
             } else
                 isAfterExpansion = false;
@@ -1121,7 +1121,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const L
     return std::make_pair(count, isAfterExpansion);
 }
 
-std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const UChar* characters, unsigned length, TextDirection direction, ExpansionBehavior expansionBehavior)
+std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(std::span<const UChar> characters, TextDirection direction, ExpansionBehavior expansionBehavior)
 {
     unsigned count = 0;
     bool isAfterExpansion = expansionBehavior.left == ExpansionBehavior::Behavior::Forbid;
@@ -1130,42 +1130,42 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
         isAfterExpansion = true;
     }
     if (direction == TextDirection::LTR) {
-        for (unsigned i = 0; i < length; ++i) {
+        for (size_t i = 0; i < characters.size(); ++i) {
             char32_t character = characters[i];
             if (treatAsSpace(character)) {
-                count++;
+                ++count;
                 isAfterExpansion = true;
                 continue;
             }
-            if (U16_IS_LEAD(character) && i + 1 < length && U16_IS_TRAIL(characters[i + 1])) {
+            if (U16_IS_LEAD(character) && i + 1 < characters.size() && U16_IS_TRAIL(characters[i + 1])) {
                 character = U16_GET_SUPPLEMENTARY(character, characters[i + 1]);
-                i++;
+                ++i;
             }
             if (canExpandAroundIdeographsInComplexText() && isCJKIdeographOrSymbol(character)) {
                 if (!isAfterExpansion)
-                    count++;
-                count++;
+                    ++count;
+                ++count;
                 isAfterExpansion = true;
                 continue;
             }
             isAfterExpansion = false;
         }
     } else {
-        for (unsigned i = length; i > 0; --i) {
+        for (size_t i = characters.size(); i > 0; --i) {
             char32_t character = characters[i - 1];
             if (treatAsSpace(character)) {
-                count++;
+                ++count;
                 isAfterExpansion = true;
                 continue;
             }
             if (U16_IS_TRAIL(character) && i > 1 && U16_IS_LEAD(characters[i - 2])) {
                 character = U16_GET_SUPPLEMENTARY(characters[i - 2], character);
-                i--;
+                --i;
             }
             if (canExpandAroundIdeographsInComplexText() && isCJKIdeographOrSymbol(character)) {
                 if (!isAfterExpansion)
-                    count++;
-                count++;
+                    ++count;
+                ++count;
                 isAfterExpansion = true;
                 continue;
             }
@@ -1190,8 +1190,8 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCount(StringView stri
     //   If it is an ideograph, insert one opportunity before it and one opportunity after it
     // Do this such a way so that there are not two opportunities next to each other.
     if (stringView.is8Bit())
-        return expansionOpportunityCountInternal(stringView.characters8(), stringView.length(), direction, expansionBehavior);
-    return expansionOpportunityCountInternal(stringView.characters16(), stringView.length(), direction, expansionBehavior);
+        return expansionOpportunityCountInternal(stringView.span8(), direction, expansionBehavior);
+    return expansionOpportunityCountInternal(stringView.span16(), direction, expansionBehavior);
 }
 
 bool FontCascade::leftExpansionOpportunity(StringView stringView, TextDirection direction)
@@ -1317,7 +1317,8 @@ std::optional<GlyphData> FontCascade::getEmphasisMarkGlyphData(const AtomString&
     char32_t character;
     if (!mark.is8Bit()) {
         size_t i = 0;
-        U16_NEXT(mark.characters16(), i, mark.length(), character);
+        auto span = mark.span16();
+        U16_NEXT(span, i, span.size(), character);
         ASSERT(U16_IS_SINGLE(character)); // The CSS parser replaces unpaired surrogates with the object replacement character.
     } else
         character = mark[0];
@@ -1541,7 +1542,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     drawGlyphBuffer(context, markBuffer, startPoint, CustomFontNotReadyAction::DoNotPaintIfFontNotReady);
 }
 
-float FontCascade::widthForTextUsingWidthIterator(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::widthForSimpleText(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     WidthIterator it(*this, run, fallbackFonts, glyphOverflow);
     GlyphBuffer glyphBuffer;
@@ -1558,7 +1559,7 @@ float FontCascade::widthForTextUsingWidthIterator(const TextRun& run, SingleThre
     return it.runWidthSoFar();
 }
 
-float FontCascade::widthForTextUsingComplexTextController(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::widthForComplexText(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ComplexTextController controller(*this, run, true, fallbackFonts);
     if (glyphOverflow) {
@@ -1614,7 +1615,7 @@ int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, boo
     GlyphBuffer localGlyphBuffer;
     unsigned offset;
     if (run.rtl()) {
-        delta -= widthForTextUsingWidthIterator(run);
+        delta -= widthForSimpleText(run);
         while (1) {
             offset = it.currentCharacterIndex();
             float w;

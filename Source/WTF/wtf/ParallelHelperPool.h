@@ -66,7 +66,7 @@ class ParallelHelperClient;
 
 class ParallelHelperPool : public ThreadSafeRefCounted<ParallelHelperPool> {
 public:
-    WTF_EXPORT_PRIVATE ParallelHelperPool(CString&& threadName);
+    WTF_EXPORT_PRIVATE ParallelHelperPool(ASCIILiteral threadName);
     WTF_EXPORT_PRIVATE ~ParallelHelperPool();
 
     WTF_EXPORT_PRIVATE void ensureThreads(unsigned numThreads);
@@ -93,7 +93,7 @@ private:
     
     Vector<ParallelHelperClient*> m_clients WTF_GUARDED_BY_LOCK(*m_lock);
     Vector<RefPtr<AutomaticThread>> m_threads;
-    CString m_threadName;
+    ASCIILiteral m_threadName;
     unsigned m_numThreads { 0 }; // This can be larger than m_threads.size() because we start threads only once there is work.
     bool m_isDying { false };
 };

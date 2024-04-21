@@ -25,13 +25,11 @@
 
 #pragma once
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
 
 #include "RemoteLayerTreeNode.h"
 #include "RemoteLayerTreeTransaction.h"
 #include <wtf/HashMap.h>
-
-OBJC_CLASS NSMutableArray;
 
 namespace WebKit {
 

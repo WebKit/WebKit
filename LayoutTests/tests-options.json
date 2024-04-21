@@ -2219,6 +2219,9 @@
     "imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-different-size.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/new-content-changes-overflow-left.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-view-transitions/new-content-changes-overflow.html": [
         "slow"
     ],
@@ -2244,6 +2247,12 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/css-view-transitions/old-content-with-object-view-box.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-hidden-page.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/update-callback-timeout.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/cssom-view/idlharness.html": [

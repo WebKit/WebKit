@@ -131,6 +131,8 @@ JSValueRef AccessibilityUIElement::mathRootRadicand() const { return { }; }
 unsigned AccessibilityUIElement::numberOfCharacters() const { return 0; }
 JSValueRef AccessibilityUIElement::columns() { return { }; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::dateValue() { return nullptr; }
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::activeElement() const { return nullptr; }
+JSValueRef AccessibilityUIElement::selectedChildren() const { return { }; }
 #endif // !PLATFORM(MAC))
 
 #if !PLATFORM(COCOA)

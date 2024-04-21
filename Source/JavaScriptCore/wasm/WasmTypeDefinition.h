@@ -701,7 +701,7 @@ public:
 
     static ptrdiff_t offsetOfKind() { return OBJECT_OFFSETOF(RTT, m_kind); }
     static ptrdiff_t offsetOfDisplaySize() { return OBJECT_OFFSETOF(RTT, m_displaySize); }
-    static ptrdiff_t offsetOfPayload() { return offsetOfDisplaySize() + sizeof(DisplayCount); }
+    static ptrdiff_t offsetOfPayload() { return sizeof(RTT); }
 
 private:
     // Payload starts past end of this object.

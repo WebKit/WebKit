@@ -196,9 +196,6 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Local
         return FTPDirectoryDocument::create(frame, settings, url);
 #endif
 
-    if (frame && frame->loader().client().shouldAlwaysUsePluginDocument(contentType))
-        return PluginDocument::create(*frame, url);
-
     // The following is the relatively costly lookup that requires initializing the plug-in database.
     if (frame && frame->page()) {
         if (frame->page()->pluginData().supportsWebVisibleMimeType(contentType, PluginData::OnlyApplicationPlugins))

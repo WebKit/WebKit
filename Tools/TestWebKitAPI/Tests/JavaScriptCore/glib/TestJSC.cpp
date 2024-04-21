@@ -4249,7 +4249,7 @@ static void testsJSCVirtualMachine()
         checker.watch(context.get());
         ExceptionHandler exceptionHandler(context.get());
 
-        auto thread = Thread::create("JSCVirtualMachineTest", [&] {
+        auto thread = Thread::create("JSCVirtualMachineTest"_s, [&] {
             JSCClass* jscClass = jsc_context_register_class(context.get(), "Foo", nullptr, nullptr, reinterpret_cast<GDestroyNotify>(fooFreeAndLog));
             checker.watch(jscClass);
             g_assert_false(jsc_class_get_parent(jscClass));
@@ -4278,7 +4278,7 @@ static void testsJSCVirtualMachine()
         Vector<Ref<Thread>, 5> threads;
         bool ok = true;
         for (unsigned i = 0; i < 5; ++i) {
-            threads.append(Thread::create("JSCVirtualMachineTest", [&ok] {
+            threads.append(Thread::create("JSCVirtualMachineTest"_s, [&ok] {
                 GRefPtr<JSCVirtualMachine> vm = adoptGRef(jsc_virtual_machine_new());
                 GRefPtr<JSCContext> context = adoptGRef(jsc_context_new_with_virtual_machine(vm.get()));
                 GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(context.get(),

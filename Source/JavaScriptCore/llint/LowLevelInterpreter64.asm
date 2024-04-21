@@ -390,7 +390,8 @@ _llint_throw_stack_overflow_error_from_vm_entry:
 
 # a0, a2, t3, t4
 macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
-    addp 16, sp
+_llint_call_javascript:
+    addp CallerFrameAndPCSize, sp
     if C_LOOP or C_LOOP_WIN
         cloopCallJSFunction entry
     elsif ARM64E
@@ -407,7 +408,7 @@ macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
         global _vmEntryToJavaScriptGateAfter
         _vmEntryToJavaScriptGateAfter:
     end
-    subp 16, sp
+    subp CallerFrameAndPCSize, sp
 end
 
 # a0, a2, t3, t4

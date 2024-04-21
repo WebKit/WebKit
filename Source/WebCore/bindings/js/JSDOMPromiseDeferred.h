@@ -395,7 +395,7 @@ inline JSC::EncodedJSValue callPromisePairFunction(JSC::JSGlobalObject& lexicalG
     auto* promise2 = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise2);
 
-    auto result = functor(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promise), DeferredPromise::create(globalObject, *promise2));
+    auto result = functor(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promise, DeferredPromise::Mode::RetainPromiseOnResolve), DeferredPromise::create(globalObject, *promise2, DeferredPromise::Mode::RetainPromiseOnResolve));
 
     rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise, catchScope);
     rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise2, catchScope);

@@ -108,8 +108,8 @@ static inline bool findPreviousAndNextAttributes(RenderElement& start, RenderSVG
 {
     ASSERT(locateElement);
     // FIXME: Make this iterative.
-    for (auto& child : childrenOfType<RenderObject>(start)) {
-        if (auto* text = dynamicDowncast<RenderSVGInlineText>(child)) {
+    for (CheckedRef child : childrenOfType<RenderObject>(start)) {
+        if (auto* text = dynamicDowncast<RenderSVGInlineText>(child.get())) {
             if (locateElement != text) {
                 if (stopAfterNext) {
                     next = text->layoutAttributes();
@@ -124,7 +124,7 @@ static inline bool findPreviousAndNextAttributes(RenderElement& start, RenderSVG
             continue;
         }
 
-        auto* childSVGInline = dynamicDowncast<RenderSVGInline>(child);
+        auto* childSVGInline = dynamicDowncast<RenderSVGInline>(child.get());
         if (!childSVGInline)
             continue;
 

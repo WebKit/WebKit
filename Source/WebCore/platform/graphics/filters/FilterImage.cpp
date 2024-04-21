@@ -103,6 +103,9 @@ size_t FilterImage::memoryCost() const
 #if USE(CORE_IMAGE)
     if (m_ciImage)
         memoryCost += memoryCostOfCIImage();
+#elif USE(SKIA)
+    if (m_skPicture)
+        memoryCost += memoryCostOfSkPicture();
 #endif
 
     return memoryCost;
@@ -113,6 +116,9 @@ ImageBuffer* FilterImage::imageBuffer()
 #if USE(CORE_IMAGE)
     if (m_ciImage)
         return imageBufferFromCIImage();
+#elif USE(SKIA)
+    if (m_skPicture)
+        return imageBufferFromSkPicture();
 #endif
     return imageBufferFromPixelBuffer();
 }

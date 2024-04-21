@@ -94,7 +94,7 @@ Vector<uint8_t> CryptoDigest::computeHash()
     return result;
 }
 
-std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, const Vector<uint8_t>& input, bool)
+std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, const Vector<uint8_t>& input, UseCryptoKit)
 {
     std::unique_ptr<CryptoDigest> digest = WTF::makeUnique<CryptoDigest>();
     auto gcryptAlgorithm = getGcryptAlgorithm(algo);

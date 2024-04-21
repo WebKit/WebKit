@@ -254,7 +254,6 @@ inline JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, 
         } else if (callData.type == CallData::Type::JS) {
             cachedCall.emplace(globalObject, jsCast<JSFunction*>(replaceValue), 3);
             RETURN_IF_EXCEPTION(scope, nullptr);
-            cachedCall->setThis(jsUndefined());
         }
     }
 
@@ -277,12 +276,8 @@ inline JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, 
             if (cachedCall) {
                 auto* substring = jsSubstring(vm, globalObject, jsString, matchStart, searchStringLength);
                 RETURN_IF_EXCEPTION(scope, nullptr);
-                cachedCall->clearArguments();
-                cachedCall->appendArgument(substring);
-                cachedCall->appendArgument(jsNumber(matchStart));
-                cachedCall->appendArgument(jsString);
-                ASSERT(!cachedCall->hasOverflowedArguments());
-                replacement = cachedCall->call();
+                replacement = cachedCall->callWithArguments(globalObject, jsUndefined(), substring, jsNumber(matchStart), jsString);
+                RETURN_IF_EXCEPTION(scope, nullptr);
             } else {
                 MarkedArgumentBuffer args;
                 auto* substring = jsSubstring(vm, globalObject, jsString, matchStart, searchString.impl()->length());
@@ -292,8 +287,8 @@ inline JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, 
                 args.append(jsString);
                 ASSERT(!args.hasOverflowed());
                 replacement = call(globalObject, replaceValue, callData, jsUndefined(), args);
+                RETURN_IF_EXCEPTION(scope, nullptr);
             }
-            RETURN_IF_EXCEPTION(scope, nullptr);
             replaceString = replacement.toWTFString(globalObject);
             RETURN_IF_EXCEPTION(scope, nullptr);
         }

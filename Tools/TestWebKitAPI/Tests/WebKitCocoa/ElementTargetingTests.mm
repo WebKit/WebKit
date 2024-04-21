@@ -144,7 +144,7 @@ TEST(ElementTargeting, BasicElementTargeting)
     {
         auto element = [elements objectAtIndex:0];
         EXPECT_EQ(element.positionType, _WKTargetedElementPositionFixed);
-        EXPECT_WK_STREQ(".fixed.container", element.selectors.firstObject);
+        EXPECT_WK_STREQ("DIV.fixed.container", element.selectors.firstObject);
         EXPECT_TRUE([element.renderedText containsString:@"The round pegs"]);
         EXPECT_EQ(element.renderedText.length, 70U);
         EXPECT_EQ(element.offsetEdges, _WKRectEdgeLeft | _WKRectEdgeTop);
@@ -198,16 +198,16 @@ TEST(ElementTargeting, NearbyOutOfFlowElements)
     EXPECT_FALSE([elements objectAtIndex:3].underPoint);
     EXPECT_FALSE([elements objectAtIndex:4].underPoint);
     // The two elements that are directly hit-tested should take precedence over nearby elements.
-    EXPECT_WK_STREQ(".fixed.container", [elements firstObject].selectors.firstObject);
-    EXPECT_WK_STREQ(".box", [elements objectAtIndex:1].selectors.firstObject);
+    EXPECT_WK_STREQ("DIV.fixed.container", [elements firstObject].selectors.firstObject);
+    EXPECT_WK_STREQ("DIV.box", [elements objectAtIndex:1].selectors.firstObject);
     __auto_type nextThreeSelectors = [NSSet setWithArray:@[
         [elements objectAtIndex:2].selectors.firstObject,
         [elements objectAtIndex:3].selectors.firstObject,
         [elements objectAtIndex:4].selectors.firstObject,
     ]];
-    EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.top-right"]);
-    EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.bottom-left"]);
-    EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.bottom-right"]);
+    EXPECT_TRUE([nextThreeSelectors containsObject:@"DIV.absolute.top-right"]);
+    EXPECT_TRUE([nextThreeSelectors containsObject:@"DIV.absolute.bottom-left"]);
+    EXPECT_TRUE([nextThreeSelectors containsObject:@"DIV.absolute.bottom-right"]);
 
     [webView adjustVisibilityForTargets:elements.get()];
     EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 1U);
@@ -369,7 +369,24 @@ TEST(ElementTargeting, TargetInFlowElements)
 
     [webView stringByEvaluatingJavaScript:@"scrollBy(0, 400)"];
     [webView waitForNextPresentationUpdate];
-    [webView expectSingleTargetedSelector:@".bottom-text" at:center];
+    [webView expectSingleTargetedSelector:@"P.bottom-text" at:center];
+}
+
+TEST(ElementTargeting, ReplacedRendererSizeIgnoresPageScaleAndZoom)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-7"];
+    RetainPtr targetBeforeScaling = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];
+#if PLATFORM(MAC)
+    // Additionally test page zoom (i.e. ⌘+) on macOS.
+    [webView _setPageZoomFactor:2];
+    [webView _setPageScale:1.5 withOrigin:CGPointZero];
+#else
+    [[webView scrollView] setZoomScale:3 animated:NO];
+#endif
+    [webView waitForNextPresentationUpdate];
+    RetainPtr targetAfterScaling = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];
+    EXPECT_WK_STREQ([targetBeforeScaling renderedText], [targetAfterScaling renderedText]);
 }
 
 } // namespace TestWebKitAPI

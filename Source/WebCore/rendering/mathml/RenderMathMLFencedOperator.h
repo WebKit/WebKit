@@ -35,8 +35,11 @@ namespace WebCore {
 
 class RenderMathMLFencedOperator final : public RenderMathMLOperator {
     WTF_MAKE_ISO_ALLOCATED(RenderMathMLFencedOperator);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLFencedOperator);
 public:
     RenderMathMLFencedOperator(Document&, RenderStyle&&, const String& operatorString, MathMLOperatorDictionary::Form, unsigned short flags = 0);
+    virtual ~RenderMathMLFencedOperator();
+
     void updateOperatorContent(const String&);
 
 private:

@@ -155,29 +155,12 @@ auto JITWorklist::completeAllReadyPlansForVM(VM& vm, JITCompilationKey requested
     DeferGC deferGC(vm);
 
     Vector<RefPtr<JITPlan>, 8> myReadyPlans;
-    removeAllReadyPlansForVM(vm, myReadyPlans);
-
-    State resultingState = NotKnown;
-    while (!myReadyPlans.isEmpty()) {
-        RefPtr<JITPlan> plan = myReadyPlans.takeLast();
-        JITCompilationKey currentKey = plan->key();
-
-        dataLogLnIf(Options::verboseCompilationQueue(), *this, ": Completing ", currentKey);
-
+    State resultingState = removeAllReadyPlansForVM(vm, myReadyPlans, requestedKey);
+    for (auto& plan : myReadyPlans) {
+        dataLogLnIf(Options::verboseCompilationQueue(), *this, ": Completing ", plan->key());
         RELEASE_ASSERT(plan->stage() == JITPlanStage::Ready);
-
         plan->finalize();
-
-        if (currentKey == requestedKey)
-            resultingState = Compiled;
     }
-
-    if (!!requestedKey && resultingState == NotKnown) {
-        Locker locker { *m_lock };
-        if (m_plans.contains(requestedKey))
-            resultingState = Compiling;
-    }
-
     return resultingState;
 }
 
@@ -241,7 +224,7 @@ void JITWorklist::cancelAllPlansForVM(VM& vm)
     waitUntilAllPlansForVMAreReady(vm);
 
     Vector<RefPtr<JITPlan>, 8> myReadyPlans;
-    removeAllReadyPlansForVM(vm, myReadyPlans);
+    removeAllReadyPlansForVM(vm, myReadyPlans, { });
 }
 
 void JITWorklist::removeDeadPlans(VM& vm)
@@ -319,21 +302,32 @@ void JITWorklist::dump(const AbstractLocker& locker, PrintStream& out) const
         ", Num Active Threads = ", m_numberOfActiveThreads, "/", m_threads.size(), "]");
 }
 
-void JITWorklist::removeAllReadyPlansForVM(VM& vm, Vector<RefPtr<JITPlan>, 8>& myReadyPlans)
+JITWorklist::State JITWorklist::removeAllReadyPlansForVM(VM& vm, Vector<RefPtr<JITPlan>, 8>& myReadyPlans, JITCompilationKey requestedKey)
 {
     DeferGC deferGC(vm);
     Locker locker { *m_lock };
-    for (size_t i = 0; i < m_readyPlans.size(); ++i) {
-        RefPtr<JITPlan> plan = m_readyPlans[i];
+
+    bool isCompiled = false;
+    m_readyPlans.removeAllMatching([&](RefPtr<JITPlan> plan) {
         if (plan->vm() != &vm)
-            continue;
+            return false;
         if (plan->stage() != JITPlanStage::Ready)
-            continue;
-        myReadyPlans.append(plan);
-        m_readyPlans[i--] = m_readyPlans.last();
-        m_readyPlans.removeLast();
+            return false;
+        if (plan->key() == requestedKey)
+            isCompiled = true;
         m_plans.remove(plan->key());
+        myReadyPlans.append(WTFMove(plan));
+        return true;
+    });
+
+    if (requestedKey) {
+        if (isCompiled)
+            return Compiled;
+
+        if (m_plans.contains(requestedKey))
+            return Compiling;
     }
+    return NotKnown;
 }
 
 template<typename MatchFunction>

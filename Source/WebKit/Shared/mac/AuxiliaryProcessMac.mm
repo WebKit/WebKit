@@ -65,6 +65,10 @@
 #import <rootless.h>
 #endif
 
+#if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>)
+#import <WebKitAdditions/DyldCallbackAdditions.h>
+#endif
+
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_info)
 SOFT_LINK_OPTIONAL(libsystem_info, mbr_close_connections, int, (), ());
 SOFT_LINK_OPTIONAL(libsystem_info, lookup_close_connections, int, (), ());
@@ -747,6 +751,10 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
             exitProcess(EX_NOPERM);
         }
     }
+
+#if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>)
+    register_for_dlsym_callbacks();
+#endif
 }
 
 void AuxiliaryProcess::applySandboxProfileForDaemon(const String& profilePath, const String& userDirectorySuffix)

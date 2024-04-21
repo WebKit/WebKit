@@ -52,12 +52,10 @@ private:
 
     Type type() const final { return PlatformDisplay::Type::Wayland; }
 
-#if USE(EGL)
 #if PLATFORM(GTK)
     EGLDisplay gtkEGLDisplay() override;
 #endif
     void initializeEGLDisplay() override;
-#endif
 
     struct wl_display* m_display { nullptr };
 };

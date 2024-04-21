@@ -5672,6 +5672,8 @@ void HTMLMediaElement::mediaPlayerTimeChanged()
                 if (!wasSeeking)
                     addBehaviorRestrictionsOnEndIfNecessary();
                 setAutoplayEventPlaybackState(AutoplayEventPlaybackState::None);
+                if (now > m_lastSeekTime)
+                    addPlayedRange(m_lastSeekTime, now);
             }
             setPlaying(false);
             // If the media element has a current media controller, then report the controller state

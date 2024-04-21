@@ -40,8 +40,9 @@ class ProcessThrottlerActivity;
 class WebProcessPool;
 class WebsiteDataStore;
 
-class WebProcessCache : public CanMakeCheckedPtr<WebProcessCache> {
+class WebProcessCache final : public CanMakeCheckedPtr<WebProcessCache> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebProcessCache);
 public:
     explicit WebProcessCache(WebProcessPool&);
 

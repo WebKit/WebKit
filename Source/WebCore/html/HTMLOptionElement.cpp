@@ -249,7 +249,7 @@ void HTMLOptionElement::setSelectedState(bool selected, AllowStyleInvalidation a
     m_isSelected = selected;
 
     if (auto* cache = document().existingAXObjectCache())
-        cache->onSelectedChanged(this);
+        cache->onSelectedChanged(*this);
 }
 
 void HTMLOptionElement::childrenChanged(const ChildChange& change)

@@ -61,7 +61,7 @@ protected:
         Serial,
         Concurrent
     };
-    WorkQueueBase(const char* name, Type, QOS);
+    WorkQueueBase(ASCIILiteral name, Type, QOS);
 #if USE(COCOA_EVENT_LOOP)
     explicit WorkQueueBase(OSObjectPtr<dispatch_queue_t>&&);
 #else
@@ -75,7 +75,7 @@ protected:
 #endif
     uint32_t m_threadID { 0 };
 private:
-    void platformInitialize(const char* name, Type, QOS);
+    void platformInitialize(ASCIILiteral name, Type, QOS);
     void platformInvalidate();
 };
 
@@ -89,7 +89,7 @@ private:
 class WTF_CAPABILITY("is current") WTF_EXPORT_PRIVATE WorkQueue : public WorkQueueBase, public RefCountedSerialFunctionDispatcher {
 public:
     static WorkQueue& main();
-    static Ref<WorkQueue> create(const char* name, QOS = QOS::Default);
+    static Ref<WorkQueue> create(ASCIILiteral name, QOS = QOS::Default);
     void dispatch(Function<void()>&&) override;
     bool isCurrent() const override;
     void ref() const override;
@@ -100,7 +100,7 @@ public:
 #endif
 
 protected:
-    WorkQueue(const char* name, QOS);
+    WorkQueue(ASCIILiteral name, QOS);
 private:
     enum MainTag : bool {
         CreateMain
@@ -114,11 +114,11 @@ private:
  */
 class WTF_EXPORT_PRIVATE ConcurrentWorkQueue final : public WorkQueueBase, public FunctionDispatcher {
 public:
-    static Ref<ConcurrentWorkQueue> create(const char* name, QOS = QOS::Default);
+    static Ref<ConcurrentWorkQueue> create(ASCIILiteral name, QOS = QOS::Default);
     static void apply(size_t iterations, WTF::Function<void(size_t index)>&&);
     void dispatch(Function<void()>&&) override;
 private:
-    ConcurrentWorkQueue(const char*, QOS);
+    ConcurrentWorkQueue(ASCIILiteral, QOS);
 };
 
 }

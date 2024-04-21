@@ -556,7 +556,7 @@ Vector<size_t> InlineContentBalancer::computeBreakOpportunities(InlineItemRange 
     Vector<size_t> breakOpportunities;
     size_t currentIndex = range.startIndex();
     while (currentIndex < range.endIndex()) {
-        currentIndex = m_inlineFormattingContext.formattingUtils().nextWrapOpportunity(currentIndex, range, m_inlineItemList);
+        currentIndex = m_inlineFormattingContext.formattingUtils().nextWrapOpportunity(currentIndex, range, m_inlineItemList.span());
         breakOpportunities.append(currentIndex);
     }
     return breakOpportunities;

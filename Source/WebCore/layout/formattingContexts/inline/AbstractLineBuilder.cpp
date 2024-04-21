@@ -35,7 +35,7 @@ namespace Layout {
 
 AbstractLineBuilder::AbstractLineBuilder(InlineFormattingContext& inlineFormattingContext, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList)
     : m_line(inlineFormattingContext)
-    , m_inlineItemList(inlineItemList)
+    , m_inlineItemList(inlineItemList.span())
     , m_inlineFormattingContext(inlineFormattingContext)
     , m_rootBox(rootBox)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
@@ -44,7 +44,7 @@ AbstractLineBuilder::AbstractLineBuilder(InlineFormattingContext& inlineFormatti
 
 void AbstractLineBuilder::reset()
 {
-    m_wrapOpportunityList = { };
+    m_wrapOpportunityList.shrink(0);
     m_partialLeadingTextItem = { };
     m_previousLine = { };
 }

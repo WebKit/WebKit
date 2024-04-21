@@ -1,0 +1,32 @@
+Test passes if there is no crash.
+<script>
+function onload() {
+    var canvas = document.createElement("canvas");
+    canvas.toBlob(callback, "foo");
+    if (window.testRunner)
+        testRunner.dumpAsText();
+}
+function callback() {
+    var obj = {};
+    var rootStyle = document.querySelector("html").style;
+    rootStyle.setProperty("hyphenate-limit-lines", "1");
+    rootStyle.setProperty("-webkit-text-combine", "horizontal");
+}
+</script>
+<body onload=onload()>
+    <iframe id="htmlvar00017" srcdoc="Ga ?o]Y" onload="document.startViewTransition();"></iframe>
+    <a id="htmlvar00018">
+        <audio id="htmlvar00019"></audio>
+    </a>
+    <shadow>
+        <dl id="htmlvar00021">
+            <dt>
+                <dir id="htmlvar00028">
+                    <li id="htmlvar00029" contenteditable="plaintext-only">
+                        <iframe id="htmlvar00030"></iframe>
+                    </li>
+                </dir>
+            </dt>
+        </dl>
+    </shadow>
+</body>

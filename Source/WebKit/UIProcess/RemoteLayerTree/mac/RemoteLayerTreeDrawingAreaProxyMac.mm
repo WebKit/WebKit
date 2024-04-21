@@ -56,6 +56,7 @@ static NSString * const transientZoomScrollPositionOverrideAnimationKey = @"wkSc
 class RemoteLayerTreeDisplayLinkClient final : public DisplayLink::Client {
 public:
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerTreeDisplayLinkClient);
 public:
     explicit RemoteLayerTreeDisplayLinkClient(WebPageProxyIdentifier pageID)
         : m_pageIdentifier(pageID)

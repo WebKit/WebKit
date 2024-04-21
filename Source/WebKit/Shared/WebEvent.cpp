@@ -29,6 +29,8 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebKeyboardEvent.h"
+#include <WebCore/WindowsKeyboardCodes.h>
 
 namespace WebKit {
 
@@ -46,6 +48,23 @@ WebEvent::WebEvent(WebEventType type, OptionSet<WebEventModifier> modifiers, Wal
     , m_timestamp(timestamp)
     , m_authorizationToken(WTF::UUID::createVersion4())
 {
+}
+
+// https://html.spec.whatwg.org/multipage/interaction.html#activation-triggering-input-event
+bool WebEvent::isActivationTriggeringEvent() const
+{
+    switch (type()) {
+    case WebEventType::MouseDown:
+#if ENABLE(TOUCH_EVENTS)
+    case WebEventType::TouchEnd:
+#endif
+        return true;
+    case WebEventType::KeyDown:
+        return downcast<WebKeyboardEvent>(*this).windowsVirtualKeyCode() != VK_ESCAPE;
+    default:
+        break;
+    }
+    return false;
 }
 
 TextStream& operator<<(TextStream& ts, WebEventType eventType)

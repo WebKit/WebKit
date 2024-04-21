@@ -273,3 +273,22 @@ function evalAndReturn(expression) {
     eval(expression);
     return `${expression}\n`;
 }
+
+function logActiveElementAndSelectedChildren(axElement) {
+    output += `    activeElement: ${axElement.activeElement.domIdentifier}\n`;
+    var children = axElement.selectedChildren();
+    output += "    selectedChildren: [ ";
+    for (let i = 0; i < children.length; ++i) {
+        if (i > 0)
+            output += ", ";
+        output += children[i].domIdentifier;
+    }
+    output += " ]\n";
+}
+
+function resetActiveElementAndSelectedChildren(id) {
+    Array.from(document.getElementById(id).children).forEach((child) => {
+        child.removeAttribute("aria-activedescendant");
+        child.removeAttribute("aria-selected");
+    });
+}

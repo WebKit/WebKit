@@ -40,6 +40,10 @@
 #include "LocalFrameLoaderClient.h"
 #include "SecurityOrigin.h"
 
+#if PLATFORM(IOS_FAMILY)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 
 static bool isMixedContent(const Document& document, const URL& url)
@@ -85,16 +89,34 @@ static void logConsoleWarning(const LocalFrame& frame, bool allowed, ASCIILitera
     frame.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
 }
 
-static void logConsoleWarningForUpgrade(const LocalFrame& frame, bool blocked, const URL& target)
+static void logConsoleWarningForUpgrade(const LocalFrame& frame, bool blocked, const URL& target, bool isUpgradingIPAddressAndLocalhostEnabled)
 {
-    const char* errorString = !blocked ? "automatically upgraded and should" : "blocked and must";
-    auto message = makeString((!blocked ? "" : "[blocked] "), "The page at ", frame.document()->url().stringCenterEllipsizedToLength(), " requested insecure content from ", target.stringCenterEllipsizedToLength(), ". This content was ", errorString, " be served over HTTPS.\n");
+    auto isUpgradingLocalhostDisabled = !isUpgradingIPAddressAndLocalhostEnabled && SecurityOrigin::isLocalhostAddress(target.host());
+    const char* errorString;
+    if (blocked)
+        errorString = "blocked and must";
+    else if (isUpgradingLocalhostDisabled)
+        errorString = "not upgraded to HTTPS and must be served from the local host.";
+    else
+        errorString = "automatically upgraded and should";
+
+    auto message = makeString((!blocked ? "" : "[blocked] "), "The page at ", frame.document()->url().stringCenterEllipsizedToLength(), " requested insecure content from ", target.stringCenterEllipsizedToLength(), ". This content was ", errorString, !isUpgradingLocalhostDisabled ? " be served over HTTPS.\n" : "\n"_s);
     frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
+}
+
+static bool isUpgradeMixedContentEnabled(Document& document)
+{
+#if PLATFORM(IOS_FAMILY)
+    static bool shouldBlockOptionallyBlockableMixedContent = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::BlockOptionallyBlockableMixedContent);
+    return shouldBlockOptionallyBlockableMixedContent && document.settings().upgradeMixedContentEnabled();
+#else
+    return document.settings().upgradeMixedContentEnabled();
+#endif
 }
 
 static bool frameAndAncestorsCanDisplayInsecureContent(LocalFrame& frame, MixedContentChecker::ContentType type, const URL& url)
 {
-    if (!frame.document() || frame.document()->settings().upgradeMixedContentEnabled())
+    if (!frame.document() || isUpgradeMixedContentEnabled(*frame.document()))
         return true;
 
     if (!foundMixedContentInFrameTree(frame, url))
@@ -117,7 +139,7 @@ static bool frameAndAncestorsCanDisplayInsecureContent(LocalFrame& frame, MixedC
 
 bool MixedContentChecker::frameAndAncestorsCanRunInsecureContent(LocalFrame& frame, SecurityOrigin& securityOrigin, const URL& url, ShouldLogWarning shouldLogWarning)
 {
-    if (!frame.document() || frame.document()->settings().upgradeMixedContentEnabled())
+    if (!frame.document() || isUpgradeMixedContentEnabled(*frame.document()))
         return true;
 
     if (!foundMixedContentInFrameTree(frame, url))
@@ -142,7 +164,7 @@ bool MixedContentChecker::frameAndAncestorsCanRunInsecureContent(LocalFrame& fra
 bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgradable isUpgradable, const URL& url, FetchOptions::Mode mode, FetchOptions::Destination destination, Initiator initiator)
 {
     RefPtr document = frame.document();
-    if (!document || !document->settings().upgradeMixedContentEnabled() || isUpgradable != IsUpgradable::Yes)
+    if (!document || !isUpgradeMixedContentEnabled(*document) || isUpgradable != IsUpgradable::Yes)
         return false;
 
     // https://www.w3.org/TR/mixed-content/#upgrade-algorithm
@@ -154,13 +176,13 @@ bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgr
     if (!foundMixedContentInFrameTree(frame, url))
         return false;
 
-    auto shouldUpgradeIPAddressForTesting = document->settings().iPAddressMixedContentUpgradeTestingEnabled();
+    auto shouldUpgradeIPAddressAndLocalhostForTesting = document->settings().iPAddressAndLocalhostMixedContentUpgradeTestingEnabled();
 
     // The request's URL is not upgraded in the following cases.
     // 4.1.1 request’s URL is a potentially trustworthy URL.
     if (url.protocolIs("https"_s)
         // 4.1.2 request’s URL’s host is an IP address.
-        || (!shouldUpgradeIPAddressForTesting && URL::hostIsIPAddress(url.host()))
+        || (!shouldUpgradeIPAddressAndLocalhostForTesting && URL::hostIsIPAddress(url.host()))
         // 4.1.4 request’s destination is not "image", "audio", or "video".
         || (destination != FetchOptions::Destination::Audio && destination != FetchOptions::Destination::Image && destination != FetchOptions::Destination::Video)
         // 4.1.5 request’s destination is "image" and request’s initiator is "imageset".
@@ -168,20 +190,20 @@ bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgr
         // and CORS is excluded
         || mode == FetchOptions::Mode::Cors)
         return false;
-    logConsoleWarningForUpgrade(frame, /* blocked */ false, url);
+    logConsoleWarningForUpgrade(frame, /* blocked */ false, url, shouldUpgradeIPAddressAndLocalhostForTesting);
     return true;
 }
 
 static bool shouldBlockInsecureContent(LocalFrame& frame, const URL& url, MixedContentChecker::IsUpgradable isUpgradable)
 {
     RefPtr document = frame.document();
-    if (!document || !document->settings().upgradeMixedContentEnabled())
+    if (!document || !isUpgradeMixedContentEnabled(*document))
         return false;
     if (!foundMixedContentInFrameTree(frame, url))
         return false;
-    if (LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()) && isUpgradable == MixedContentChecker::IsUpgradable::Yes)
+    if ((LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()) || SecurityOrigin::isLocalhostAddress(url.host())) && isUpgradable == MixedContentChecker::IsUpgradable::Yes)
         return false;
-    logConsoleWarningForUpgrade(frame, /* blocked */ true, url);
+    logConsoleWarningForUpgrade(frame, /* blocked */ true, url, document->settings().iPAddressAndLocalhostMixedContentUpgradeTestingEnabled());
     return true;
 }
 

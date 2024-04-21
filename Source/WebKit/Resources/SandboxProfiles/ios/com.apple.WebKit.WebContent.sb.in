@@ -953,10 +953,10 @@
         SYS_getpid
         SYS_kdebug_trace_string
         SYS_objc_bp_assist_cfg_np
+        SYS_persona
         SYS_shared_region_check_np
         SYS_sigaction
-        SYS_workq_open
-        SYS_writev))
+        SYS_workq_open))
 
 (define (syscall-unix-in-use-after-launch)
     (syscall-number
@@ -1027,7 +1027,8 @@
         SYS_ulock_wait2 ;; <rdar://problem/58743778>
         SYS_ulock_wake
         SYS_workq_kernreturn
-        SYS_write_nocancel))
+        SYS_write_nocancel
+        SYS_writev)) ;; used in CFLog, can possibly be blocked.
 
 (define (syscall-unix-in-use-after-launch-blocked-in-lockdown-mode) (syscall-number
     SYS_abort_with_payload ;; <rdar://problem/50967271>
@@ -1328,6 +1329,7 @@
         host_info
         io_server_version
         (when (defined? 'mach_vm_range_create) mach_vm_range_create) ;; <rdar://105161083>
+        mach_voucher_attr_command
         task_restartable_ranges_register
         task_set_special_port))
 
@@ -1390,10 +1392,10 @@
         thread_policy
         thread_policy_set))
 
-; This rule is only temporary and should be removed shortly
-; See: rdar://125256111.
-(mobile-preferences-read "com.apple.webkit-new-sandbox-test")
-    
+(define (kernel-mig-routines-iokit-service) (kernel-mig-routine
+    io_service_get_matching_service_bin
+    io_service_get_matching_services_bin))
+
 (allow mach-kernel-endpoint
     (apply-message-filter
         (deny mach-message-send (with telemetry))
@@ -1423,36 +1425,23 @@
                 (with telemetry)
                 (with message "kernel mig routine used after launch")
                 (kernel-mig-routine-only-in-use-during-launch)))
-#if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
+#if ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
+        (deny mach-message-send (with no-report) (kernel-mig-routines-iokit-service))
+#else
         (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
-            (allow mach-message-send (kernel-mig-routine
-                io_service_get_matching_service_bin
-                io_service_get_matching_services_bin)))
+            (allow mach-message-send (kernel-mig-routines-iokit-service)))
 #endif
 #endif
 
 #if HAVE(HARDENED_MACH_EXCEPTIONS)
         (with-filter (require-not (lockdown-mode))
             (allow mach-message-send (kernel-mig-routine thread_adopt_exception_handler))
-#if ENABLE(BLOCK_SET_EXCEPTION_PORTS)
             (with-filter (require-not (webcontent-process-launched))
-                (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler)))
-#else
-            (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler))
-#endif ;; ENABLE(BLOCK_SET_EXCEPTION_PORTS)
-        )
+                (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler))))
 #else
         (with-filter (require-not (lockdown-mode))
-#if ENABLE(BLOCK_SET_EXCEPTION_PORTS)
-            (with-filter (require-not (webcontent-process-launched))
-                (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
-#else
-            (allow mach-message-send (kernel-mig-routine thread_set_exception_ports))
-#endif ;; ENABLE(BLOCK_SET_EXCEPTION_PORTS)
-        )
+            (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
 #endif ;; HAVE(HARDENED_MACH_EXCEPTIONS)
-
-
 
         (with-filter (lockdown-mode)
             (deny mach-message-send (with telemetry) (with message "Lockdown mode")

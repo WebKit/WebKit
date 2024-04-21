@@ -3227,7 +3227,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             document->updateLayoutIgnorePendingStylesheets(LayoutOptions::ContentVisibilityForceLayout, m_element.get());
         else if (forcedLayout == ForcedLayout::ParentDocument) {
             if (RefPtr owner = document->ownerElement())
-                owner->document().updateLayout();
+                owner->protectedDocument()->updateLayout();
             else
                 forcedLayout = ForcedLayout::No;
         }

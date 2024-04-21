@@ -187,7 +187,7 @@ RunLoop::TimerBase::~TimerBase()
     g_source_destroy(m_source.get());
 }
 
-void RunLoop::TimerBase::setName(const char* name)
+void RunLoop::TimerBase::setName(ASCIILiteral name)
 {
     g_source_set_name(m_source.get(), name);
 }

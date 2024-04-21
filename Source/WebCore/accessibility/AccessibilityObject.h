@@ -36,6 +36,7 @@
 #include "LayoutRect.h"
 #include "Path.h"
 #include "RuntimeApplicationChecks.h"
+#include <iterator>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
@@ -275,7 +276,6 @@ public:
     float maxValueForRange() const override { return 0.0f; }
     float minValueForRange() const override { return 0.0f; }
     virtual float stepValueForRange() const { return 0.0f; }
-    AccessibilityObject* selectedListItem();
     int layoutCount() const override { return 0; }
     double loadingProgress() const final;
     WEBCORE_EXPORT static bool isARIAControl(AccessibilityRole);
@@ -334,8 +334,8 @@ public:
     virtual AccessibilityObject* lastChild() const { return nullptr; }
     virtual AccessibilityObject* previousSibling() const { return nullptr; }
     virtual AccessibilityObject* nextSibling() const { return nullptr; }
-    virtual AccessibilityObject* nextSiblingUnignored(int limit) const;
-    virtual AccessibilityObject* previousSiblingUnignored(int limit) const;
+    AccessibilityObject* nextSiblingUnignored(unsigned limit = std::numeric_limits<unsigned>::max()) const;
+    AccessibilityObject* previousSiblingUnignored(unsigned limit = std::numeric_limits<unsigned>::max()) const;
     AccessibilityObject* parentObject() const override { return nullptr; }
     AccessibilityObject* displayContentsParent() const;
     AccessibilityObject* parentObjectUnignored() const override;
@@ -538,12 +538,15 @@ public:
     bool shouldFocusActiveDescendant() const;
 
     WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);
-    virtual bool hasAttribute(const QualifiedName&) const;
-    virtual const AtomString& getAttribute(const QualifiedName&) const;
+    bool hasAttribute(const QualifiedName&) const;
+    const AtomString& getAttribute(const QualifiedName&) const;
+    String getAttributeTrimmed(const QualifiedName&) const;
+    bool hasValidARIALabel() const { return !getAttributeTrimmed(HTMLNames::aria_labelAttr).isEmpty(); }
+
     String nameAttribute() const final;
     int getIntegralAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const;
-    AtomString tagName() const override;
+    AtomString tagName() const;
     bool hasDisplayContents() const;
 
     std::optional<SimpleRange> simpleRange() const override;
@@ -783,6 +786,81 @@ public:
     virtual FloatRect frameRect() const { return { }; }
     virtual bool isNonLayerSVGObject() const { return false; }
 
+    // When using the previousSibling and nextSibling methods, we can alternate between walking the DOM and the
+    // the render tree. There are complications with this, especially introduced by display:contents, which
+    // removes the renderer for the given object, and moves its render tree children up one level higher than they
+    // otherwise would've been on. This iterator abstracts over this complexity, ensuring each object is actually a
+    // sibling of the last.
+    class iterator {
+    public:
+        using iterator_category = std::bidirectional_iterator_tag;
+        using difference_type = std::ptrdiff_t;
+        using element_type = AccessibilityObject;
+        using pointer = AccessibilityObject*;
+        using reference = AccessibilityObject&;
+
+        iterator() = default;
+        iterator(const AccessibilityObject* object, const AccessibilityObject* displayContentsParent)
+            : m_current(object)
+            , m_displayContentsParent(displayContentsParent)
+        { }
+        iterator(const AccessibilityObject* object)
+            : iterator(object, object ? object->displayContentsParent() : nullptr)
+        { }
+        iterator(const AccessibilityObject* object, const AccessibilityObject& parent)
+            : iterator(object, parent.hasDisplayContents() ? &parent : nullptr)
+        { }
+
+        explicit operator bool() const { return m_current; }
+        AccessibilityObject& operator*() const { return const_cast<AccessibilityObject&>(*m_current); }
+        AccessibilityObject* operator->() const { return const_cast<AccessibilityObject*>(m_current.get()); }
+        AccessibilityObject* ptr() const { return const_cast<AccessibilityObject*>(m_current.get()); }
+        bool operator==(const iterator& other) const { return other.m_current == m_current; }
+
+        // Prefix increment operator (++iterator).
+        iterator& operator++()
+        {
+            m_current = m_current->nextSibling();
+            ensureContentsParentValidity();
+            return *this;
+        }
+
+        // Postfix increment operator (iterator++).
+        iterator operator++(int)
+        {
+            auto copy = *this;
+            ++(*this);
+            return copy;
+        }
+
+        // --iterator
+        iterator& operator--()
+        {
+            m_current = m_current->previousSibling();
+            ensureContentsParentValidity();
+            return *this;
+        }
+
+        // iterator--
+        iterator operator--(int)
+        {
+            auto copy = *this;
+            --(*this);
+            return copy;
+        }
+    private:
+        void ensureContentsParentValidity()
+        {
+            auto* contentsParent = m_current ? m_current->displayContentsParent() : nullptr;
+            if (contentsParent && m_displayContentsParent && contentsParent != m_displayContentsParent.get())
+                m_current = nullptr;
+        }
+
+        RefPtr<const AccessibilityObject> m_current;
+        // If the original object had a display:contents parent, it is stored here. This is nullptr otherwise.
+        RefPtr<const AccessibilityObject> m_displayContentsParent { nullptr };
+    }; // class iterator
+
 protected:
     AccessibilityObject() = default;
 
@@ -833,6 +911,7 @@ private:
     void ariaTreeRows(AccessibilityChildrenVector& rows, AccessibilityChildrenVector& ancestors);
     AccessibilityChildrenVector ariaListboxSelectedChildren();
     AccessibilityChildrenVector ariaSelectedRows();
+    AccessibilityChildrenVector selectedListItems();
 
     // Special handling of click point for links.
     IntPoint linkClickPoint();
@@ -912,6 +991,24 @@ PlatformRoleMap createPlatformRoleMap();
 String roleToPlatformString(AccessibilityRole);
 
 } // namespace Accessibility
+
+class AXChildIterator {
+public:
+    AXChildIterator(const AccessibilityObject& parent)
+        : m_parent(parent)
+    { }
+
+    AccessibilityObject::iterator begin()
+    {
+        return AccessibilityObject::iterator { m_parent->firstChild(), m_parent.get() };
+    }
+    AccessibilityObject::iterator end()
+    {
+        return AccessibilityObject::iterator { };
+    }
+private:
+    Ref<const AccessibilityObject> m_parent;
+}; // class AXChildIterator
 
 } // namespace WebCore
 

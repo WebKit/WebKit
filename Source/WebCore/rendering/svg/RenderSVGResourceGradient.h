@@ -28,6 +28,7 @@ class Gradient;
 
 class RenderSVGResourceGradient : public RenderSVGResourcePaintServer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceGradient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceGradient);
 public:
     virtual ~RenderSVGResourceGradient();
 

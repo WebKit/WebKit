@@ -2080,7 +2080,12 @@ void FunctionDefinitionWriter::visit(AST::IdentifierExpression& identifier)
 void FunctionDefinitionWriter::visit(AST::FieldAccessExpression& access)
 {
     visit(access.base());
-    m_stringBuilder.append(".", access.fieldName());
+    auto* baseType = access.base().inferredType();
+    if (baseType && std::holds_alternative<Types::Pointer>(*baseType))
+        m_stringBuilder.append("->");
+    else
+        m_stringBuilder.append(".");
+    m_stringBuilder.append(access.fieldName());
 }
 
 void FunctionDefinitionWriter::visit(AST::BoolLiteral& literal)

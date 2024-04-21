@@ -99,6 +99,7 @@ using namespace HTMLNames;
 #if ENABLE(DATALIST_ELEMENT)
 class ListAttributeTargetObserver final : public IdTargetObserver {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ListAttributeTargetObserver);
 public:
     ListAttributeTargetObserver(const AtomString& id, HTMLInputElement&);
 
@@ -1089,7 +1090,7 @@ void HTMLInputElement::setChecked(bool isChecked, WasSetByJavaScript wasCheckedB
     // because of the way the code is structured.
     if (auto* renderer = this->renderer()) {
         if (auto* cache = renderer->document().existingAXObjectCache())
-            cache->checkedStateChanged(this);
+            cache->checkedStateChanged(*this);
     }
 }
 
@@ -1105,7 +1106,7 @@ void HTMLInputElement::setIndeterminate(bool newValue)
         renderer->repaint();
 
     if (auto* cache = document().existingAXObjectCache())
-        cache->valueChanged(this);
+        cache->valueChanged(*this);
 }
 
 bool HTMLInputElement::sizeShouldIncludeDecoration(int& preferredSize) const
@@ -1553,7 +1554,7 @@ void HTMLInputElement::setShowAutoFillButton(AutoFillButtonType autoFillButtonTy
     invalidateStyleForSubtree();
 
     if (auto* cache = document().existingAXObjectCache())
-        cache->autofillTypeChanged(this);
+        cache->autofillTypeChanged(*this);
 }
 
 FileList* HTMLInputElement::files()

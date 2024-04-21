@@ -626,6 +626,7 @@ void GraphicsContextGLCocoa::destroyPbufferAndDetachIOSurface(void* handle)
     WebCore::destroyPbufferAndDetachIOSurface(m_displayObj, handle);
 }
 
+#if ENABLE(WEBXR)
 GCGLExternalImage GraphicsContextGLCocoa::createExternalImage(ExternalImageSource&& source, GCGLenum internalFormat, GCGLint layer)
 {
     EGLDeviceEXT eglDevice = EGL_NO_DEVICE_EXT;
@@ -719,23 +720,13 @@ void GraphicsContextGLCocoa::bindExternalImage(GCGLenum target, GCGLExternalImag
 
 bool GraphicsContextGLCocoa::addFoveation(IntSize physicalSizeLeft, IntSize physicalSizeRight, IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamplesLeft, std::span<const GCGLfloat> horizontalSamplesRight)
 {
-#if ENABLE(WEBXR)
     m_rasterizationRateMap[PlatformXR::Layout::Shared] = newRasterizationRateMap(m_displayObj, physicalSizeLeft, physicalSizeRight, screenSize, horizontalSamplesLeft, verticalSamplesLeft, horizontalSamplesRight);
     return m_rasterizationRateMap[PlatformXR::Layout::Shared];
-#else
-    UNUSED_PARAM(physicalSizeLeft);
-    UNUSED_PARAM(physicalSizeRight);
-    UNUSED_PARAM(screenSize);
-    UNUSED_PARAM(horizontalSamplesLeft);
-    UNUSED_PARAM(verticalSamplesLeft);
-    UNUSED_PARAM(horizontalSamplesRight);
-    return false;
-#endif
 }
 
 void GraphicsContextGLCocoa::enableFoveation(GCGLuint fbo)
 {
-#if ENABLE(WEBXR) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
     GL_BindMetalRasterizationRateMapANGLE(fbo, m_rasterizationRateMap[PlatformXR::Layout::Shared].get());
     GL_Enable(GL::VARIABLE_RASTERIZATION_RATE_ANGLE);
 #else
@@ -745,7 +736,7 @@ void GraphicsContextGLCocoa::enableFoveation(GCGLuint fbo)
 
 void GraphicsContextGLCocoa::disableFoveation()
 {
-#if ENABLE(WEBXR) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
     GL_Disable(GL::VARIABLE_RASTERIZATION_RATE_ANGLE);
     GL_BindMetalRasterizationRateMapANGLE(0, nullptr);
 #endif
@@ -770,16 +761,13 @@ GCGLExternalSync GraphicsContextGLCocoa::createExternalSync(ExternalSyncSource&&
 
 bool GraphicsContextGLCocoa::enableRequiredWebXRExtensions()
 {
-#if ENABLE(WEBXR)
     if (!makeContextCurrent())
         return false;
     if (enableRequiredWebXRExtensionsImpl())
         return true;
-#endif
     return false;
 }
 
-#if ENABLE(WEBXR)
 bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
 {
     return enableExtension("GL_ANGLE_framebuffer_multisample"_s)

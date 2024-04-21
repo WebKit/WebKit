@@ -5283,7 +5283,7 @@ private:
 
 void lowerToAir(Procedure& procedure)
 {
-    PhaseScope phaseScope(procedure, "lowerToAir");
+    PhaseScope phaseScope(procedure, "lowerToAir"_s);
     LowerToAir lowerToAir(procedure);
     lowerToAir.run();
 }

@@ -53,6 +53,7 @@ namespace WebKit {
 
 class RemoteAudioSourceProviderManager;
 class RemoteMediaPlayerManager;
+class RemoteSharedResourceCacheProxy;
 class SampleBufferDisplayLayerManager;
 class WebPage;
 struct GPUProcessConnectionInfo;
@@ -75,6 +76,7 @@ public:
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> auditToken();
 #endif
+    Ref<RemoteSharedResourceCacheProxy> sharedResourceCache();
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     SampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();
     void resetAudioMediaStreamTrackRendererInternalUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier);
@@ -141,6 +143,7 @@ private:
     Ref<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
     bool m_hasInitialized { false };
+    RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> m_auditToken;
 #endif

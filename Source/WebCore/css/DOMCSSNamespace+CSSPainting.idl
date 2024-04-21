@@ -26,7 +26,6 @@
 // https://drafts.css-houdini.org/css-paint-api-1/#paint-worklet
 [
     EnabledBySetting=CSSPaintingAPIEnabled,
-    Conditional=CSS_PAINTING_API,
     ImplementedBy=DOMCSSPaintWorklet
 ] partial namespace DOMCSSNamespace {
     [ImplementedAs=ensurePaintWorklet, CallWith=CurrentDocument] readonly attribute Worklet paintWorklet;

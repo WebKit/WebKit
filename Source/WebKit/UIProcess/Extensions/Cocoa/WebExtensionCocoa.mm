@@ -536,14 +536,23 @@ NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResul
     if ([path hasPrefix:@"/"])
         path = [path substringFromIndex:1];
 
-    if (NSData *cachedData = objectForKey<NSData>(m_resources, path))
-        return cachedData;
+    if (id cachedObject = [m_resources objectForKey:path]) {
+        if (auto *cachedData = dynamic_objc_cast<NSData>(cachedObject))
+            return cachedData;
 
-    if (NSString *cachedString = objectForKey<NSString>(m_resources, path))
-        return [cachedString dataUsingEncoding:NSUTF8StringEncoding];
+        if (auto *cachedString = dynamic_objc_cast<NSString>(cachedObject))
+            return [cachedString dataUsingEncoding:NSUTF8StringEncoding];
 
-    if (NSDictionary *cachedDictionary = objectForKey<NSDictionary>(m_resources, path))
-        return encodeJSONData(cachedDictionary);
+        ASSERT(isValidJSONObject(cachedObject, JSONOptions::FragmentsAllowed));
+
+        auto *result = encodeJSONData(cachedObject, JSONOptions::FragmentsAllowed);
+        RELEASE_ASSERT(result);
+
+        // Cache the JSON data, so it can be fetched quicker next time.
+        [m_resources setObject:result forKey:path];
+
+        return result;
+    }
 
     bool isServiceWorker = backgroundContentIsServiceWorker();
     if (!isServiceWorker && [path isEqualToString:generatedBackgroundPageFilename])

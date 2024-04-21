@@ -248,7 +248,7 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::startThread()
             m_writeOffset += m_frameChunkSize;
         } while (!m_shouldStopThread);
     };
-    m_thread = Thread::create("AudioMediaStreamTrackRendererInternalUnit thread", WTFMove(threadLoop), ThreadType::Audio, Thread::QOS::UserInteractive);
+    m_thread = Thread::create("AudioMediaStreamTrackRendererInternalUnit thread"_s, WTFMove(threadLoop), ThreadType::Audio, Thread::QOS::UserInteractive);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::reset(IsClosed isClosed)

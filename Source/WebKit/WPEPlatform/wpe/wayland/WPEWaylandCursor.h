@@ -53,6 +53,7 @@ private:
         int32_t x { 0 };
         int32_t y { 0 };
     } m_hotspot;
+    mutable bool m_cursorChanged { false };
 };
 
 } // namespace WPE

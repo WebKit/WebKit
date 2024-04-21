@@ -59,7 +59,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 void prepareForGeneration(Code& code)
 {
-    CompilerTimingScope timingScope("Total Air", "prepareForGeneration");
+    CompilerTimingScope timingScope("Total Air"_s, "prepareForGeneration"_s);
     
     // If we're doing super verbose dumping, the phase scope of any phase will already do a dump.
     if (shouldDumpIR(code.proc(), AirMode) && !shouldDumpIRAtEachPhase(AirMode)) {
@@ -200,7 +200,7 @@ void prepareForGeneration(Code& code)
 
 static void generateWithAlreadyAllocatedRegisters(Code& code, CCallHelpers& jit)
 {
-    CompilerTimingScope timingScope("Air", "generateWithAlreadyAllocatedRegisters");
+    CompilerTimingScope timingScope("Air"_s, "generateWithAlreadyAllocatedRegisters"_s);
 
 #if !CPU(ARM)
     DisallowMacroScratchRegisterUsage disallowScratch(jit);

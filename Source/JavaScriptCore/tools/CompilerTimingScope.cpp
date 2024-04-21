@@ -82,7 +82,7 @@ CompilerTimingScopeState& compilerTimingScopeState()
 
 } // anonymous namespace
 
-CompilerTimingScope::CompilerTimingScope(const char* compilerName, const char* name)
+CompilerTimingScope::CompilerTimingScope(ASCIILiteral compilerName, ASCIILiteral name)
     : m_compilerName(compilerName)
     , m_name(name)
 {

@@ -89,6 +89,33 @@ bool protocolIsInSocksFamily(const URL& url)
     return url.protocolIs("socks4"_s) || url.protocolIs("socks4a"_s) || url.protocolIs("socks5"_s) || url.protocolIs("socks5h"_s);
 }
 
+CurlProxySettings::IPCData CurlProxySettings::toIPCData() const
+{
+    switch (m_mode) {
+    case Mode::Default:
+        return DefaultData { };
+    case Mode::NoProxy:
+        return NoProxyData { };
+    case Mode::Custom:
+        return CustomData { m_url, m_ignoreHosts };
+    }
+}
+
+CurlProxySettings CurlProxySettings::fromIPCData(CurlProxySettings::IPCData&& ipcData)
+{
+    return WTF::switchOn(WTFMove(ipcData),
+        [&] (DefaultData&&) {
+            return CurlProxySettings { Mode::Default };
+        },
+        [&] (NoProxyData&&) {
+            return CurlProxySettings { Mode::NoProxy };
+        },
+        [&] (CustomData&& customData) {
+            return CurlProxySettings { WTFMove(customData.url), WTFMove(customData.ignoreHosts) };
+        }
+    );
+}
+
 static std::optional<uint16_t> getProxyPort(const URL& url)
 {
     auto port = url.port();

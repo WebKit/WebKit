@@ -107,7 +107,7 @@ CacheStorageDiskStore::CacheStorageDiskStore(const String& cacheName, const Stri
     , m_path(path)
     , m_salt(valueOrDefault(FileSystem::readOrMakeSalt(saltFilePath())))
     , m_callbackQueue(WTFMove(queue))
-    , m_ioQueue(WorkQueue::create("com.apple.WebKit.CacheStorageCache"))
+    , m_ioQueue(WorkQueue::create("com.apple.WebKit.CacheStorageCache"_s))
 {
     ASSERT(!m_cacheName.isEmpty());
     ASSERT(!m_path.isEmpty());

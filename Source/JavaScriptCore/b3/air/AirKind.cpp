@@ -36,11 +36,11 @@ void Kind::dump(PrintStream& out) const
 {
     out.print(opcode);
     
-    CommaPrinter comma(", ", "<");
+    CommaPrinter comma(", "_s, "<"_s);
     if (effects)
         out.print(comma, "Effects");
     if (comma.didPrint())
-        out.print(">");
+        out.print(">"_s);
 }
 
 } } } // namespace JSC::B3::Air

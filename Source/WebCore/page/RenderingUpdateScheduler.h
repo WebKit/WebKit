@@ -36,6 +36,7 @@ class Timer;
 
 class RenderingUpdateScheduler final : public DisplayRefreshMonitorClient {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderingUpdateScheduler);
 public:
     static std::unique_ptr<RenderingUpdateScheduler> create(Page& page)
     {

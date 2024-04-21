@@ -35,10 +35,10 @@
 
 namespace WebCore {
 
-void AXObjectCache::attachWrapper(AccessibilityObject* obj)
+void AXObjectCache::attachWrapper(AccessibilityObject& object)
 {
     auto wrapper = adoptRef(*new AccessibilityObjectWrapper());
-    obj->setWrapper(wrapper.ptr());
+    object.setWrapper(wrapper.ptr());
 }
 
 void AXObjectCache::detachWrapper(AXCoreObject*, AccessibilityDetachmentType)

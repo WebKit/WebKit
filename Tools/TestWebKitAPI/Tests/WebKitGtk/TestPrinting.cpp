@@ -141,7 +141,9 @@ static void testPrintOperationPrint(PrintTest* test, gconstpointer)
     gtk_print_settings_set(printSettings.get(), GTK_PRINT_SETTINGS_OUTPUT_URI, outputURI.get());
 
     webkit_print_operation_set_print_settings(test->m_printOperation.get(), printSettings.get());
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webkit_print_operation_print(test->m_printOperation.get());
+    ALLOW_DEPRECATED_DECLARATIONS_END
     test->waitUntilPrintFinished();
 
     GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(outputFile.get(),
@@ -171,14 +173,18 @@ static void testPrintOperationErrors(PrintTest* test, gconstpointer)
     gtk_print_settings_set_printer(printSettings.get(), gtk_printer_get_name(printer.get()));
     gtk_print_settings_set(printSettings.get(), GTK_PRINT_SETTINGS_OUTPUT_URI, "file:///foo/bar");
     webkit_print_operation_set_print_settings(test->m_printOperation.get(), printSettings.get());
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webkit_print_operation_print(test->m_printOperation.get());
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (test->m_expectedError == WEBKIT_PRINT_ERROR_GENERAL)
         test->waitUntilPrintFinished();
 
     // Printer not found error.
     test->m_expectedError = WEBKIT_PRINT_ERROR_PRINTER_NOT_FOUND;
     gtk_print_settings_set_printer(printSettings.get(), "The fake WebKit printer");
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webkit_print_operation_print(test->m_printOperation.get());
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (test->m_expectedError == WEBKIT_PRINT_ERROR_PRINTER_NOT_FOUND)
         test->waitUntilPrintFinished();
 
@@ -186,7 +192,9 @@ static void testPrintOperationErrors(PrintTest* test, gconstpointer)
     test->m_expectedError = WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE;
     gtk_print_settings_set_printer(printSettings.get(), gtk_printer_get_name(printer.get()));
     gtk_print_settings_set_page_set(printSettings.get(), GTK_PAGE_SET_EVEN);
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webkit_print_operation_print(test->m_printOperation.get());
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (test->m_expectedError == WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE)
         test->waitUntilPrintFinished();
 }
@@ -253,7 +261,9 @@ public:
 
         m_printOperation = printOperation;
         g_signal_connect(m_printOperation.get(), "finished", G_CALLBACK(printOperationFinished), this);
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         webkit_print_operation_print(m_printOperation.get());
+        ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     void printFinished()

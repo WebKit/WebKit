@@ -14,6 +14,7 @@
         right: 0;
         border-radius: 5px;
         background: blue;
+        color: white;
     }
     .tappable-container {
         position: relative;
@@ -41,19 +42,17 @@
         height: 120px;
         border: 1px blue dotted;
     }
-    .tap-and-hover {
+    button {
         position: relative;
-        cursor: pointer;
-        width: 200px;
-        height: 60px;
-        padding: 20px;
+        width: 240px;
+        height: 100px;
         background: lightblue;
-    }
-    .tap-and-hover:hover {
-        background: blue;
-    }
-    .tap-and-hover span {
-        line-height: 60px;
+        border: none;
+        border-radius: 0;
+        padding: 20px;
+        text-align: left;
+        font: inherit;
+        appearance: none;
     }
 </style>
 <body>
@@ -95,12 +94,13 @@
         </div>
     </div>
 </div>
-<div class="tap-and-hover">
+<button class="tap-and-hover">
     <span>labels</span>
     <span>y</span>
     <span>aligned</span>
     <a href="#" class="secondary">Secondary</a>
-</div>
+    <a href="#">sub-link</a>
+</button>
 
 <pre id="results"></pre>
 <script>

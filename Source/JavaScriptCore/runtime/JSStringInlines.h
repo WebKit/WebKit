@@ -476,14 +476,15 @@ inline JSString* jsSubstringOfResolved(VM& vm, GCDeferralContext* deferralContex
     ASSERT(!s->isRope());
     if (!length)
         return vm.smallStrings.emptyString();
-    if (!offset && length == s->length())
+
+    auto& base = s->valueInternal();
+    if (!offset && length == base.length())
         return s;
+
     if (length == 1) {
-        auto& base = s->valueInternal();
         if (auto c = base.characterAt(offset); c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     } else if (length == 2) {
-        auto& base = s->valueInternal();
         UChar first = base.characterAt(offset);
         UChar second = base.characterAt(offset + 1);
         if ((first | second) < 0x80) {
@@ -496,7 +497,7 @@ inline JSString* jsSubstringOfResolved(VM& vm, GCDeferralContext* deferralContex
             return vm.keyAtomStringCache.make(vm, buffer, createFromSubstring);
         }
     }
-    return JSRopeString::createSubstringOfResolved(vm, deferralContext, s, offset, length);
+    return JSRopeString::createSubstringOfResolved(vm, deferralContext, s, offset, length, base.is8Bit());
 }
 
 } // namespace JSC

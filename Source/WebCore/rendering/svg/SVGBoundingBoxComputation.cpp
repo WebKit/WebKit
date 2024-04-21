@@ -169,10 +169,10 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
     //    - If child is not rendered then continue to the next descendant graphics element.
     //    - Otherwise, set box to be the union of box and the result of invoking the algorithm to compute a bounding box with child
     //      as the element and the same values for space, fill, stroke, markers and clipped as the corresponding algorithm input values.
-    for (auto& child : childrenOfType<RenderLayerModelObject>(m_renderer)) {
+    for (CheckedRef child : childrenOfType<RenderLayerModelObject>(m_renderer)) {
         if (is<RenderSVGHiddenContainer>(child))
             continue;
-        if (auto* shape = dynamicDowncast<RenderSVGShape>(child); shape && shape->isRenderingDisabled())
+        if (auto* shape = dynamicDowncast<RenderSVGShape>(child.get()); shape && shape->isRenderingDisabled())
             continue;
 
         SVGBoundingBoxComputation childBoundingBoxComputation(child);

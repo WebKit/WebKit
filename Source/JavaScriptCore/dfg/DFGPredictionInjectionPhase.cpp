@@ -37,7 +37,7 @@ namespace JSC { namespace DFG {
 class PredictionInjectionPhase : public Phase {
 public:
     PredictionInjectionPhase(Graph& graph)
-        : Phase(graph, "prediction injection")
+        : Phase(graph, "prediction injection"_s)
     {
     }
     

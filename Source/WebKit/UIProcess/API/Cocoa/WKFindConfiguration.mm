@@ -26,7 +26,11 @@
 #import "config.h"
 #import "WKFindConfiguration.h"
 
+#import "WKObject.h"
+
 @implementation WKFindConfiguration
+
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (instancetype)init
 {

@@ -432,7 +432,7 @@ RetainPtr<CGContextRef> IOSurface::createCompatibleBitmap(unsigned width, unsign
 {
     auto configuration = bitmapConfiguration();
     auto bitsPerPixel = configuration.bitsPerComponent * 4;
-    auto bytesPerRow = width * bitsPerPixel;
+    auto bytesPerRow = roundUpToMultipleOfNonPowerOfTwo(bytesPerRowAlignment(), width * (bitsPerPixel / 8));
 
     ensureColorSpace();
     return adoptCF(CGBitmapContextCreate(NULL, width, height, configuration.bitsPerComponent, bytesPerRow, m_colorSpace->platformColorSpace(), configuration.bitmapInfo));

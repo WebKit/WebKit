@@ -1398,6 +1398,16 @@ bool WKPreferencesGetCustomPasteboardDataEnabled(WKPreferencesRef preferencesRef
     return toImpl(preferencesRef)->customPasteboardDataEnabled();
 }
 
+void WKPreferencesSetWriteRichTextDataWhenCopyingOrDragging(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setWriteRichTextDataWhenCopyingOrDragging(flag);
+}
+
+bool WKPreferencesGetWriteRichTextDataWhenCopyingOrDragging(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->writeRichTextDataWhenCopyingOrDragging();
+}
+
 void WKPreferencesSetWebShareEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setWebShareEnabled(flag);

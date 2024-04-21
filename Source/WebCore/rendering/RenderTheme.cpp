@@ -97,6 +97,8 @@ RenderTheme::RenderTheme()
 {
 }
 
+RenderTheme::~RenderTheme() = default;
+
 StyleAppearance RenderTheme::adjustAppearanceForElement(RenderStyle& style, const Element* element, StyleAppearance autoAppearance) const
 {
     if (!element) {

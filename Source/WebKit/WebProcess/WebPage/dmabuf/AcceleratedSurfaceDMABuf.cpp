@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AcceleratedSurfaceDMABuf.h"
 
-#if (PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))) && USE(EGL)
+#if (PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM)))
 
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
@@ -41,7 +41,7 @@
 #include <wtf/SafeStrerror.h>
 
 #if USE(GBM)
-#include <WebCore/GBMDevice.h>
+#include <WebCore/DRMDeviceManager.h>
 #include <WebCore/GBMVersioning.h>
 #include <drm_fourcc.h>
 #endif
@@ -134,7 +134,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
         return nullptr;
     }
 
-    auto* device = WebCore::GBMDevice::singleton().device(dmabufFormat.usage == DMABufRendererBufferFormat::Usage::Scanout ? WebCore::GBMDevice::Type::Scanout : WebCore::GBMDevice::Type::Render);
+    auto* device = WebCore::DRMDeviceManager::singleton().mainGBMDeviceNode(dmabufFormat.usage == DMABufRendererBufferFormat::Usage::Scanout ? WebCore::DRMDeviceManager::NodeType::Primary : WebCore::DRMDeviceManager::NodeType::Render);
     if (!device) {
         WTFLogAlways("Failed to create GBM buffer of size %dx%d: no GBM device found", size.width(), size.height());
         return nullptr;
@@ -614,4 +614,4 @@ void AcceleratedSurfaceDMABuf::frameDone()
 
 } // namespace WebKit
 
-#endif // (PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))) && USE(EGL)
+#endif // (PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM)))

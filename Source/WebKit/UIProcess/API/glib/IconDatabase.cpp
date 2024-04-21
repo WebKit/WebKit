@@ -46,7 +46,7 @@ static const Seconds notUsedIconExpirationTime { 60 * 60 * 24 * 30 };
 static const Seconds loadedIconExpirationTime { 30_s };
 
 IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseWrite)
-    : m_workQueue(WorkQueue::create("org.webkit.IconDatabase"))
+    : m_workQueue(WorkQueue::create("org.webkit.IconDatabase"_s))
     , m_allowDatabaseWrite(allowDatabaseWrite)
     , m_clearLoadedIconsTimer(RunLoop::main(), this, &IconDatabase::clearLoadedIconsTimerFired)
 {

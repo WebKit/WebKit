@@ -45,7 +45,7 @@ namespace JSC { namespace DFG {
 class BackwardsPropagationPhase : public Phase {
 public:
     BackwardsPropagationPhase(Graph& graph)
-        : Phase(graph, "backwards propagation", !graph.afterFixup())
+        : Phase(graph, "backwards propagation"_s, !graph.afterFixup())
         , m_flagsAtHead(graph)
     {
     }

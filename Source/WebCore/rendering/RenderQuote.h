@@ -28,6 +28,7 @@ namespace WebCore {
 
 class RenderQuote final : public RenderInline {
     WTF_MAKE_ISO_ALLOCATED(RenderQuote);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderQuote);
 public:
     RenderQuote(Document&, RenderStyle&&, QuoteType);
     virtual ~RenderQuote();

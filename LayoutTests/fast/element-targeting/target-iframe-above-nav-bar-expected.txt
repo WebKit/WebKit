@@ -2,7 +2,7 @@
 Navigation Bar
 This test requires WebKitTestRunner.
 
-PASS targetSelector is ".frame-wrapper"
+PASS targetSelector is "DIV.frame-wrapper"
 PASS successfullyParsed is true
 
 TEST COMPLETE

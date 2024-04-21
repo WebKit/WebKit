@@ -587,7 +587,7 @@ static void webKitMediaSrcLoop(void* userData)
             GST_ERROR_OBJECT(pad, "Pushing buffer returned %s", gst_flow_get_name(result));
             dumpPipeline("pushing-buffer-failed", stream);
             gst_pad_pause_task(pad);
-        } else {
+        } else if (pushingFirstBuffer) {
             GST_DEBUG_OBJECT(pad, "First buffer on this pad was pushed (ret = %s).", gst_flow_get_name(result));
             dumpPipeline("first-frame-after", stream);
         }

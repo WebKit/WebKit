@@ -173,7 +173,7 @@ public:
 
     Vector<CachedResourceHandle<CachedResource>> visibleResourcesToPrioritize();
 
-    static FetchMetadataSite computeFetchMetadataSite(const ResourceRequest&, CachedResource::Type, FetchOptions::Mode, const SecurityOrigin& originalOrigin, FetchMetadataSite originalSite = FetchMetadataSite::SameOrigin);
+    static FetchMetadataSite computeFetchMetadataSite(const ResourceRequest&, CachedResource::Type, FetchOptions::Mode, const SecurityOrigin& originalOrigin, FetchMetadataSite originalSite, bool isDirectlyUserInitiatedRequest);
 
 private:
     explicit CachedResourceLoader(DocumentLoader*);

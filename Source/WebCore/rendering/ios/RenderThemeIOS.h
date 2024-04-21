@@ -184,7 +184,7 @@ private:
 
 private:
     RenderThemeIOS();
-    virtual ~RenderThemeIOS() = default;
+    virtual ~RenderThemeIOS();
 
 #if PLATFORM(WATCHOS)
     String extraDefaultStyleSheet() final;

@@ -745,10 +745,11 @@ void RenderBlock::addOverflowFromPositionedObjects()
     if (!positionedDescendants)
         return;
 
+    auto clientBoxRect = this->flippedClientBoxRect();
     for (auto& positionedObject : *positionedDescendants) {
         // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
         if (positionedObject.style().position() != PositionType::Fixed)
-            addOverflowFromChild(positionedObject, { positionedObject.x(), positionedObject.y() });
+            addOverflowFromChild(positionedObject, { positionedObject.x(), positionedObject.y() }, clientBoxRect);
     }
 }
 
@@ -3148,14 +3149,14 @@ TextRun RenderBlock::constructTextRun(const RenderText& text, unsigned offset, u
     return constructTextRun(text.stringView(offset, stop), style, expansion);
 }
 
-TextRun RenderBlock::constructTextRun(const LChar* characters, unsigned length, const RenderStyle& style, ExpansionBehavior expansion)
+TextRun RenderBlock::constructTextRun(std::span<const LChar> characters, const RenderStyle& style, ExpansionBehavior expansion)
 {
-    return constructTextRun(StringView { std::span { characters, length } }, style, expansion);
+    return constructTextRun(StringView { characters }, style, expansion);
 }
 
-TextRun RenderBlock::constructTextRun(const UChar* characters, unsigned length, const RenderStyle& style, ExpansionBehavior expansion)
+TextRun RenderBlock::constructTextRun(std::span<const UChar> characters, const RenderStyle& style, ExpansionBehavior expansion)
 {
-    return constructTextRun(StringView { std::span { characters, length } }, style, expansion);
+    return constructTextRun(StringView { characters }, style, expansion);
 }
 
 #if ASSERT_ENABLED
@@ -3376,6 +3377,19 @@ void RenderBlock::setIntrinsicBorderForFieldset(LayoutUnit padding)
         rareData = &ensureBlockRareData(*this);
     }
     rareData->m_intrinsicBorderForFieldset = padding;
+}
+
+RectEdges<LayoutUnit> RenderBlock::borderWidths() const
+{
+    if (!intrinsicBorderForFieldset())
+        return RenderBox::borderWidths();
+
+    return {
+        borderTop(),
+        borderRight(),
+        borderBottom(),
+        borderLeft()
+    };
 }
 
 LayoutUnit RenderBlock::borderTop() const

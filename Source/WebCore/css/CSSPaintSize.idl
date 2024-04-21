@@ -25,7 +25,6 @@
 
 [
     EnabledBySetting=CSSPaintingAPIEnabled,
-    Conditional=CSS_PAINTING_API,
     Exposed=PaintWorklet,
 ] interface CSSPaintSize {
     readonly attribute double width;

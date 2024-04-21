@@ -28,6 +28,9 @@
 
 #include "CryptoAlgorithmRegistry.h"
 #include "JsonWebKey.h"
+#if HAVE(SWIFT_CPP_INTEROP)
+#include <pal/PALSwift.h>
+#endif
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
@@ -35,6 +38,18 @@ namespace WebCore {
 static const ASCIILiteral P256 { "P-256"_s };
 static const ASCIILiteral P384 { "P-384"_s };
 static const ASCIILiteral P521 { "P-521"_s };
+
+#if HAVE(SWIFT_CPP_INTEROP)
+PlatformECKeyContainer CryptoKeyEC::toCCPlatformECKeyContainer(CCECCryptorRef ref)
+{
+    return std::unique_ptr<typename std::remove_pointer<CCECCryptorRef>::type, WebCore::CCECCryptorRefDeleter>(ref);
+}
+
+PlatformECKeyContainer CryptoKeyEC::toCKPlatformECKeyContainer(PAL::ECKey key)
+{
+    return makeUniqueRefWithoutFastMallocCheck<PAL::ECKey>(key);
+}
+#endif
 
 static std::optional<CryptoKeyEC::NamedCurve> toNamedCurve(const String& curve)
 {
@@ -57,29 +72,29 @@ CryptoKeyEC::CryptoKeyEC(CryptoAlgorithmIdentifier identifier, NamedCurve curve,
     ASSERT(platformSupportedCurve(curve));
 }
 
-ExceptionOr<CryptoKeyPair> CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier identifier, const String& curve, bool extractable, CryptoKeyUsageBitmap usages)
+ExceptionOr<CryptoKeyPair> CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier identifier, const String& curve, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit useCryptoKit)
 {
     auto namedCurve = toNamedCurve(curve);
     if (!namedCurve || !platformSupportedCurve(*namedCurve))
         return Exception { ExceptionCode::NotSupportedError };
 
-    auto result = platformGeneratePair(identifier, *namedCurve, extractable, usages);
+    auto result = platformGeneratePair(identifier, *namedCurve, extractable, usages, useCryptoKit);
     if (!result)
         return Exception { ExceptionCode::OperationError };
 
     return WTFMove(*result);
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier identifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier identifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit useCryptoKit)
 {
     auto namedCurve = toNamedCurve(curve);
     if (!namedCurve || !platformSupportedCurve(*namedCurve))
         return nullptr;
 
-    return platformImportRaw(identifier, *namedCurve, WTFMove(keyData), extractable, usages);
+    return platformImportRaw(identifier, *namedCurve, WTFMove(keyData), extractable, usages, useCryptoKit);
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::importJwk(CryptoAlgorithmIdentifier identifier, const String& curve, JsonWebKey&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::importJwk(CryptoAlgorithmIdentifier identifier, const String& curve, JsonWebKey&& keyData, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit useCryptoKit)
 {
     if (keyData.kty != "EC"_s)
         return nullptr;
@@ -104,46 +119,46 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::importJwk(CryptoAlgorithmIdentifier identifier,
         return nullptr;
     if (keyData.d.isNull()) {
         // import public key
-        return platformImportJWKPublic(identifier, *namedCurve, WTFMove(*x), WTFMove(*y), extractable, usages);
+        return platformImportJWKPublic(identifier, *namedCurve, WTFMove(*x), WTFMove(*y), extractable, usages, useCryptoKit);
     }
 
     auto d = base64URLDecode(keyData.d);
     if (!d)
         return nullptr;
     // import private key
-    return platformImportJWKPrivate(identifier, *namedCurve, WTFMove(*x), WTFMove(*y), WTFMove(*d), extractable, usages);
+    return platformImportJWKPrivate(identifier, *namedCurve, WTFMove(*x), WTFMove(*y), WTFMove(*d), extractable, usages, useCryptoKit);
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::importSpki(CryptoAlgorithmIdentifier identifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::importSpki(CryptoAlgorithmIdentifier identifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit useCryptoKit)
 {
     auto namedCurve = toNamedCurve(curve);
     if (!namedCurve || !platformSupportedCurve(*namedCurve))
         return nullptr;
 
-    return platformImportSpki(identifier, *namedCurve, WTFMove(keyData), extractable, usages);
+    return platformImportSpki(identifier, *namedCurve, WTFMove(keyData), extractable, usages, useCryptoKit);
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::importPkcs8(CryptoAlgorithmIdentifier identifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::importPkcs8(CryptoAlgorithmIdentifier identifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit useCryptoKit)
 {
     auto namedCurve = toNamedCurve(curve);
     if (!namedCurve || !platformSupportedCurve(*namedCurve))
         return nullptr;
 
-    return platformImportPkcs8(identifier, *namedCurve, WTFMove(keyData), extractable, usages);
+    return platformImportPkcs8(identifier, *namedCurve, WTFMove(keyData), extractable, usages, useCryptoKit);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportRaw() const
+ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportRaw(UseCryptoKit useCryptoKit) const
 {
     if (type() != CryptoKey::Type::Public)
         return Exception { ExceptionCode::InvalidAccessError };
 
-    auto&& result = platformExportRaw();
+    auto&& result = platformExportRaw(useCryptoKit);
     if (result.isEmpty())
         return Exception { ExceptionCode::OperationError };
     return WTFMove(result);
 }
 
-ExceptionOr<JsonWebKey> CryptoKeyEC::exportJwk() const
+ExceptionOr<JsonWebKey> CryptoKeyEC::exportJwk(UseCryptoKit useCryptoKit) const
 {
     JsonWebKey result;
     result.kty = "EC"_s;
@@ -160,28 +175,28 @@ ExceptionOr<JsonWebKey> CryptoKeyEC::exportJwk() const
     }
     result.key_ops = usages();
     result.ext = extractable();
-    if (!platformAddFieldElements(result))
+    if (!platformAddFieldElements(result, useCryptoKit))
         return Exception { ExceptionCode::OperationError };
     return result;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportSpki() const
+ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportSpki(UseCryptoKit useCryptoKit) const
 {
     if (type() != CryptoKey::Type::Public)
         return Exception { ExceptionCode::InvalidAccessError };
 
-    auto&& result = platformExportSpki();
+    auto&& result = platformExportSpki(useCryptoKit);
     if (result.isEmpty())
         return Exception { ExceptionCode::OperationError };
     return WTFMove(result);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportPkcs8() const
+ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportPkcs8(UseCryptoKit useCryptoKit) const
 {
     if (type() != CryptoKey::Type::Private)
         return Exception { ExceptionCode::InvalidAccessError };
 
-    auto&& result = platformExportPkcs8();
+    auto&& result = platformExportPkcs8(useCryptoKit);
     if (result.isEmpty())
         return Exception { ExceptionCode::OperationError };
     return WTFMove(result);

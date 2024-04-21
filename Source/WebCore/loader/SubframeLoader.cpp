@@ -180,7 +180,7 @@ bool FrameLoader::SubframeLoader::requestPlugin(HTMLPlugInImageElement& ownerEle
     // Application plug-ins are plug-ins implemented by the user agent, for example Qt plug-ins,
     // as opposed to third-party code such as Flash. The user agent decides whether or not they are
     // permitted, rather than WebKit.
-    if (!MIMETypeRegistry::isApplicationPluginMIMEType(mimeType))
+    if (!(m_frame->settings().legacyPluginQuirkForMailSignaturesEnabled() || MIMETypeRegistry::isApplicationPluginMIMEType(mimeType)))
         return false;
 
     if (!pluginIsLoadable(url))
@@ -373,10 +373,6 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
 bool FrameLoader::SubframeLoader::shouldUsePlugin(const URL& url, const String& mimeType, bool hasFallback, bool& useFallback)
 {
     Ref frame = m_frame.get();
-    if (frame->checkedLoader()->client().shouldAlwaysUsePluginDocument(mimeType)) {
-        useFallback = false;
-        return true;
-    }
 
     ObjectContentType objectType = frame->checkedLoader()->client().objectContentType(url, mimeType);
     // If an object's content can't be handled and it has no fallback, let

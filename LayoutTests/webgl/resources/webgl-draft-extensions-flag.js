@@ -6,9 +6,6 @@ let currentDraftExtensions = {
     "webgl": [
     ],
     "webgl2" : [
-        "EXT_render_snorm",
-        "OES_sample_variables",
-        "OES_shader_multisample_interpolation",
         "WEBGL_draw_instanced_base_vertex_base_instance",
         "WEBGL_multi_draw_instanced_base_vertex_base_instance",
     ]

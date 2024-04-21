@@ -37,7 +37,7 @@ namespace JSC { namespace DFG {
 class CleanUpPhase : public Phase {
 public:
     CleanUpPhase(Graph& graph)
-        : Phase(graph, "clean up")
+        : Phase(graph, "clean up"_s)
     {
     }
     

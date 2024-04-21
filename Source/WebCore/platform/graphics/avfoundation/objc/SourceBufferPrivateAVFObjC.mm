@@ -125,7 +125,7 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
     : SourceBufferPrivate(parent)
     , m_parser(WTFMove(parser))
     , m_listener(WebAVSampleBufferListener::create(*this))
-    , m_appendQueue(WorkQueue::create("SourceBufferPrivateAVFObjC data parser queue"))
+    , m_appendQueue(WorkQueue::create("SourceBufferPrivateAVFObjC data parser queue"_s))
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     , m_keyStatusesChangedObserver(makeUniqueRef<Observer<void()>>([this] { tryToEnqueueBlockedSamples(); }))
     , m_streamDataParser([&] {

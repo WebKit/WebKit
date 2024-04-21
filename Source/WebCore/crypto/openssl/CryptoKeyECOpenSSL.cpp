@@ -98,7 +98,7 @@ bool CryptoKeyEC::platformSupportedCurve(NamedCurve curve)
     return curve == NamedCurve::P256 || curve == NamedCurve::P384 || curve == NamedCurve::P521;
 }
 
-std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
+std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit)
 {
     // To generate a key pair, we generate a private key and extract the public key from the private key.
     auto privateECKey = createECKey(curve);
@@ -132,7 +132,7 @@ std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmId
     return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit)
 {
     auto key = createECKey(curve);
     if (!key)
@@ -157,7 +157,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier ide
     return create(identifier, curve, CryptoKeyType::Public, WTFMove(pkey), extractable, usages);
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit)
 {
     auto key = createECKey(curve);
     if (!key)
@@ -183,7 +183,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifi
     return create(identifier, curve, CryptoKeyType::Public, WTFMove(pkey), extractable, usages);
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, Vector<uint8_t>&& d, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, Vector<uint8_t>&& d, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit)
 {
     auto key = createECKey(curve);
     if (!key)
@@ -245,7 +245,7 @@ static bool supportedAlgorithmIdentifier(CryptoAlgorithmIdentifier identifier, c
     }
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit)
 {
     // In this function we extract the subjectPublicKey after verifying that the algorithm in the SPKI data
     // match the given identifier and curve. Then construct an EC key with the named curve and set the public key.
@@ -342,7 +342,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
     return adoptRef(new CryptoKeyEC(identifier, curve, CryptoKeyType::Public, WTFMove(pkey), extractable, usages));
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit)
 {
     // We need a local pointer variable to pass to d2i (DER to internal) functions().
     const uint8_t* ptr = keyData.data();
@@ -373,9 +373,9 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
     return adoptRef(new CryptoKeyEC(identifier, curve, CryptoKeyType::Private, WTFMove(pkey), extractable, usages));
 }
 
-Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
+Vector<uint8_t> CryptoKeyEC::platformExportRaw(UseCryptoKit) const
 {
-    EC_KEY* key = EVP_PKEY_get0_EC_KEY(platformKey());
+    EC_KEY* key = EVP_PKEY_get0_EC_KEY(platformKey().get());
     if (!key)
         return { };
     
@@ -392,11 +392,11 @@ Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
     return keyData;
 }
 
-bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
+bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk, UseCryptoKit) const
 {
     size_t keySizeInBytes = (keySizeInBits() + 7) / 8;
 
-    EC_KEY* key = EVP_PKEY_get0_EC_KEY(platformKey());
+    EC_KEY* key = EVP_PKEY_get0_EC_KEY(platformKey().get());
     if (!key)
         return false;
 
@@ -419,29 +419,29 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
     return true;
 }
 
-Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
+Vector<uint8_t> CryptoKeyEC::platformExportSpki(UseCryptoKit) const
 {
     if (type() != CryptoKeyType::Public)
         return { };
 
-    int len = i2d_PUBKEY(platformKey(), nullptr);
+    int len = i2d_PUBKEY(platformKey().get(), nullptr);
     if (len < 0)
         return { };
 
     Vector<uint8_t> keyData(len);
     auto ptr = keyData.data();
-    if (i2d_PUBKEY(platformKey(), &ptr) < 0)
+    if (i2d_PUBKEY(platformKey().get(), &ptr) < 0)
         return { };
 
     return keyData;
 }
 
-Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
+Vector<uint8_t> CryptoKeyEC::platformExportPkcs8(UseCryptoKit) const
 {
     if (type() != CryptoKeyType::Private)
         return { };
 
-    auto p8inf = PKCS8PrivKeyInfoPtr(EVP_PKEY2PKCS8(platformKey()));
+    auto p8inf = PKCS8PrivKeyInfoPtr(EVP_PKEY2PKCS8(platformKey().get()));
     if (!p8inf)
         return { };
 

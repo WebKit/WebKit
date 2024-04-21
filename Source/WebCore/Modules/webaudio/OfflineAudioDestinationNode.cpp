@@ -147,7 +147,7 @@ void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(std::opt
     }
 
     // FIXME: We should probably limit the number of threads we create for offline audio.
-    m_renderThread = Thread::create("offline renderer", WTFMove(offThreadRendering), ThreadType::Audio, Thread::QOS::Default);
+    m_renderThread = Thread::create("offline renderer"_s, WTFMove(offThreadRendering), ThreadType::Audio, Thread::QOS::Default);
     completionHandler(std::nullopt);
 }
 

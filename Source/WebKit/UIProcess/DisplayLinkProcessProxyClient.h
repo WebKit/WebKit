@@ -38,6 +38,7 @@ class WebProcessProxy;
 class DisplayLinkProcessProxyClient final : public DisplayLink::Client {
 public:
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DisplayLinkProcessProxyClient);
 public:
     DisplayLinkProcessProxyClient() = default;
     ~DisplayLinkProcessProxyClient() = default;

@@ -50,7 +50,7 @@ class JITWorklistThread final : public AutomaticThread {
 public:
     JITWorklistThread(const AbstractLocker&, JITWorklist&);
 
-    const char* name() const final;
+    ASCIILiteral name() const final;
 
     State state() const { return m_state; }
 

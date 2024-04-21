@@ -221,12 +221,10 @@ void SVGGraphicsElement::invalidateResourceImageBuffersIfNeeded()
     if (!document().settings().layerBasedSVGEngineEnabled())
         return;
     if (CheckedPtr svgRenderer = dynamicDowncast<RenderLayerModelObject>(renderer())) {
-        if (auto* container = svgRenderer->enclosingLayer()->enclosingSVGHiddenOrResourceContainer()) {
-            if (auto* maskRenderer = dynamicDowncast<RenderSVGResourceMasker>(container))
+        if (CheckedPtr container = svgRenderer->enclosingLayer()->enclosingSVGHiddenOrResourceContainer()) {
+            if (auto* maskRenderer = dynamicDowncast<RenderSVGResourceMasker>(container.get()))
                 maskRenderer->invalidateMask();
-        }
-        if (auto* container = svgRenderer->enclosingLayer()->enclosingSVGHiddenOrResourceContainer()) {
-            if (auto* patternRenderer = dynamicDowncast<RenderSVGResourcePattern>(container))
+            if (auto* patternRenderer = dynamicDowncast<RenderSVGResourcePattern>(container.get()))
                 patternRenderer->invalidatePattern(RenderSVGResourcePattern::SuppressRepaint::Yes);
         }
     }

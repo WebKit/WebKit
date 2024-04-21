@@ -82,7 +82,7 @@
 #endif
 
 #if USE(GBM)
-#include <WebCore/GBMDevice.h>
+#include <WebCore/DRMDeviceManager.h>
 #endif
 
 namespace WebKit {
@@ -274,7 +274,7 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #endif
 
 #if USE(GBM)
-    WebCore::GBMDevice::singleton().initialize(parameters.renderDeviceFile);
+    WebCore::DRMDeviceManager::singleton().initializeMainDevice(parameters.renderDeviceFile);
 #endif
 
     m_applicationVisibleName = WTFMove(parameters.applicationVisibleName);
@@ -584,7 +584,7 @@ RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager() const
 WorkQueue& GPUProcess::videoMediaStreamTrackRendererQueue()
 {
     if (!m_videoMediaStreamTrackRendererQueue)
-        m_videoMediaStreamTrackRendererQueue = WorkQueue::create("RemoteVideoMediaStreamTrackRenderer", WorkQueue::QOS::UserInitiated);
+        m_videoMediaStreamTrackRendererQueue = WorkQueue::create("RemoteVideoMediaStreamTrackRenderer"_s, WorkQueue::QOS::UserInitiated);
     return *m_videoMediaStreamTrackRendererQueue;
 }
 #endif
@@ -593,7 +593,7 @@ WorkQueue& GPUProcess::videoMediaStreamTrackRendererQueue()
 WorkQueue& GPUProcess::libWebRTCCodecsQueue()
 {
     if (!m_libWebRTCCodecsQueue)
-        m_libWebRTCCodecsQueue = WorkQueue::create("LibWebRTCCodecsQueue", WorkQueue::QOS::UserInitiated);
+        m_libWebRTCCodecsQueue = WorkQueue::create("LibWebRTCCodecsQueue"_s, WorkQueue::QOS::UserInitiated);
     return *m_libWebRTCCodecsQueue;
 }
 #endif

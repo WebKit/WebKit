@@ -115,7 +115,7 @@ constexpr Seconds kDidProvideContentKeyRequestTimeout { 5_s };
 CDMSessionAVContentKeySession::CDMSessionAVContentKeySession(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC& cdm, LegacyCDMSessionClient& client)
     : CDMSessionMediaSourceAVFObjC(cdm, client)
     , m_contentKeySessionDelegate(adoptNS([[WebCDMSessionAVContentKeySessionDelegate alloc] initWithParent:this]))
-    , m_delegateQueue(WorkQueue::create("CDMSessionAVContentKeySession delegate queue"))
+    , m_delegateQueue(WorkQueue::create("CDMSessionAVContentKeySession delegate queue"_s))
     , m_hasKeyRequestSemaphore(0)
     , m_protocolVersions(WTFMove(protocolVersions))
     , m_cdmVersion(cdmVersion)

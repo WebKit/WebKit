@@ -272,7 +272,10 @@ Actual:   rgba(51, 102, 153, 0)
 Expected: color(srgb 0.2 0.4 0.6 / 0).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
 FAIL e.style['color'] = "rgb(from currentColor r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgb(from color-mix(in srgb, red, red) r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['color'] = "rgb(from color-mix(in srgb, red, red) r g b / alpha)" should set the property value Colors do not match.
+Actual:   rgb(255, 0, 0)
+Expected: color(srgb 1 0 0).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1 +/- 0.01, expected 1 but got 255
 FAIL e.style['color'] = "rgba(from rebeccapurple r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['color'] = "rgba(from rebeccapurple r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
@@ -556,7 +559,10 @@ Actual:   rgba(153, 102, 102, 0.5)
 Expected: color(srgb 0.6 0.4 0.4 / 0.5).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.6 +/- 0.01, expected 0.6 but got 153
 FAIL e.style['color'] = "hsl(from currentColor h s l)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "hsl(from color-mix(in srgb, red, red) h s l / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['color'] = "hsl(from color-mix(in srgb, red, red) h s l / alpha)" should set the property value Colors do not match.
+Actual:   rgb(255, 0, 0)
+Expected: color(srgb 1 0 0).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1 +/- 0.01, expected 1 but got 255
 FAIL e.style['color'] = "hsla(from rebeccapurple h s l)" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['color'] = "hsla(from rebeccapurple h s l / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['color'] = "hsla(from rgb(20%, 40%, 60%, 80%) h s l / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
@@ -825,7 +831,10 @@ Actual:   rgba(128, 51, 51, 0.5)
 Expected: color(srgb 0.5 0.2 0.2 / 0.5).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.5 +/- 0.01, expected 0.5 but got 128
 FAIL e.style['color'] = "hwb(from currentColor h w b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "hwb(from color-mix(in srgb, red, red) h w b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['color'] = "hwb(from color-mix(in srgb, red, red) h w b / alpha)" should set the property value Colors do not match.
+Actual:   rgb(255, 0, 0)
+Expected: color(srgb 1 0 0).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1 +/- 0.01, expected 1 but got 255
 PASS e.style['color'] = "lab(from lab(25 20 50) l a b)" should set the property value
 PASS e.style['color'] = "lab(from lab(25 20 50) l a b / alpha)" should set the property value
 PASS e.style['color'] = "lab(from lab(25 20 50 / 40%) l a b / alpha)" should set the property value
@@ -876,7 +885,7 @@ PASS e.style['color'] = "lab(from lab(none none none / none) l a b / alpha)" sho
 PASS e.style['color'] = "lab(from lab(25 none 50) l a b)" should set the property value
 PASS e.style['color'] = "lab(from lab(25 20 50 / none) l a b / alpha)" should set the property value
 FAIL e.style['color'] = "lab(from currentColor l a b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "lab(from color-mix(in lab, lab(25 20 50), lab(25 20 50)) l a b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "lab(from color-mix(in lab, lab(25 20 50), lab(25 20 50)) l a b / alpha)" should set the property value
 PASS e.style['color'] = "oklab(from oklab(0.25 0.2 0.5) l a b)" should set the property value
 PASS e.style['color'] = "oklab(from oklab(0.25 0.2 0.5) l a b / alpha)" should set the property value
 PASS e.style['color'] = "oklab(from oklab(0.25 0.2 0.5 / 40%) l a b / alpha)" should set the property value
@@ -927,7 +936,7 @@ PASS e.style['color'] = "oklab(from oklab(none none none / none) l a b / alpha)"
 PASS e.style['color'] = "oklab(from oklab(0.25 none 0.5) l a b)" should set the property value
 PASS e.style['color'] = "oklab(from oklab(0.25 0.2 0.5 / none) l a b / alpha)" should set the property value
 FAIL e.style['color'] = "oklab(from currentColor l a b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "oklab(from color-mix(in oklab, oklab(0.25 0.2 0.5), oklab(0.25 0.2 0.5)) l a b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "oklab(from color-mix(in oklab, oklab(0.25 0.2 0.5), oklab(0.25 0.2 0.5)) l a b / alpha)" should set the property value
 PASS e.style['color'] = "lch(from lch(0.7 45 30) l c h)" should set the property value
 PASS e.style['color'] = "lch(from lch(0.7 45 30) l c h / alpha)" should set the property value
 PASS e.style['color'] = "lch(from lch(0.7 45 30 / 40%) l c h / alpha)" should set the property value
@@ -983,7 +992,7 @@ PASS e.style['color'] = "lch(from lch(none none none / none) l c h / alpha)" sho
 PASS e.style['color'] = "lch(from lch(0.7 none 30) l c h)" should set the property value
 PASS e.style['color'] = "lch(from lch(0.7 45 30 / none) l c h / alpha)" should set the property value
 FAIL e.style['color'] = "lch(from currentColor) l c h)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "lch(from color-mix(in lch, lch(70 45 30), lch(70 45 30)) l c h / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "lch(from color-mix(in lch, lch(70 45 30), lch(70 45 30)) l c h / alpha)" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.45 30) l c h)" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.45 30) l c h / alpha)" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.45 30 / 40%) l c h / alpha)" should set the property value
@@ -1038,7 +1047,7 @@ PASS e.style['color'] = "oklch(from oklch(none none none) l c h)" should set the
 PASS e.style['color'] = "oklch(from oklch(none none none / none) l c h / alpha)" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 none 30) l c h)" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.45 30 / none) l c h / alpha)" should set the property value
-FAIL e.style['color'] = "oklch(from color-mix(in oklch, oklch(0.7 0.45 30), oklch(0.7 0.45 30)) l c h / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "oklch(from color-mix(in oklch, oklch(0.7 0.45 30), oklch(0.7 0.45 30)) l c h / alpha)" should set the property value
 FAIL e.style['color'] = "oklch(from currentColor l c h)" should set the property value assert_not_equals: property should be set got disallowed value ""
 PASS e.style['color'] = "color(from color(srgb 0.7 0.5 0.3) srgb r g b)" should set the property value
 PASS e.style['color'] = "color(from color(srgb 0.7 0.5 0.3) srgb r g b / alpha)" should set the property value
@@ -1118,7 +1127,7 @@ PASS e.style['color'] = "color(from color(srgb none none none / none) srgb r g b
 PASS e.style['color'] = "color(from color(srgb 0.7 none 0.3) srgb r g b)" should set the property value
 PASS e.style['color'] = "color(from color(srgb 0.7 0.5 0.3 / none) srgb r g b / alpha)" should set the property value
 FAIL e.style['color'] = "color(from currentColor srgb r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "color(from color-mix(in xyz, color(srgb 0.7 0.5 0.3), color(srgb 0.7 0.5 0.3)) srgb r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "color(from color-mix(in xyz, color(srgb 0.7 0.5 0.3), color(srgb 0.7 0.5 0.3)) srgb r g b / alpha)" should set the property value
 PASS e.style['color'] = "color(from color(srgb-linear 0.7 0.5 0.3) srgb-linear r g b)" should set the property value
 PASS e.style['color'] = "color(from color(srgb-linear 0.7 0.5 0.3) srgb-linear r g b / alpha)" should set the property value
 FAIL e.style['color'] = "color(from color(srgb-linear 0.7 0.5 0.3 / 40%) srgb-linear r g b)" should set the property value Colors do not match.
@@ -1197,7 +1206,7 @@ PASS e.style['color'] = "color(from color(srgb-linear none none none / none) srg
 PASS e.style['color'] = "color(from color(srgb-linear 0.7 none 0.3) srgb-linear r g b)" should set the property value
 PASS e.style['color'] = "color(from color(srgb-linear 0.7 0.5 0.3 / none) srgb-linear r g b / alpha)" should set the property value
 FAIL e.style['color'] = "color(from currentColor srgb-linear r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "color(from color-mix(in xyz, color(srgb-linear 0.7 0.5 0.3), color(srgb-linear 0.7 0.5 0.3)) srgb-linear r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "color(from color-mix(in xyz, color(srgb-linear 0.7 0.5 0.3), color(srgb-linear 0.7 0.5 0.3)) srgb-linear r g b / alpha)" should set the property value
 PASS e.style['color'] = "color(from color(a98-rgb 0.7 0.5 0.3) a98-rgb r g b)" should set the property value
 PASS e.style['color'] = "color(from color(a98-rgb 0.7 0.5 0.3) a98-rgb r g b / alpha)" should set the property value
 FAIL e.style['color'] = "color(from color(a98-rgb 0.7 0.5 0.3 / 40%) a98-rgb r g b)" should set the property value Colors do not match.
@@ -1276,7 +1285,10 @@ PASS e.style['color'] = "color(from color(a98-rgb none none none / none) a98-rgb
 PASS e.style['color'] = "color(from color(a98-rgb 0.7 none 0.3) a98-rgb r g b)" should set the property value
 PASS e.style['color'] = "color(from color(a98-rgb 0.7 0.5 0.3 / none) a98-rgb r g b / alpha)" should set the property value
 FAIL e.style['color'] = "color(from currentColor a98-rgb r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "color(from color-mix(in xyz, color(a98-rgb 0.7 0.5 0.3), color(a98-rgb 0.7 0.5 0.3)) a98-rgb r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['color'] = "color(from color-mix(in xyz, color(a98-rgb 0.7 0.5 0.3), color(a98-rgb 0.7 0.5 0.3)) a98-rgb r g b / alpha)" should set the property value Colors do not match.
+Actual:   color(a98-rgb 0.724466 0.511409 0.324083)
+Expected: color(a98-rgb 0.7 0.5 0.3).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.7 +/- 0.01, expected 0.7 but got 0.724466
 PASS e.style['color'] = "color(from color(rec2020 0.7 0.5 0.3) rec2020 r g b)" should set the property value
 PASS e.style['color'] = "color(from color(rec2020 0.7 0.5 0.3) rec2020 r g b / alpha)" should set the property value
 FAIL e.style['color'] = "color(from color(rec2020 0.7 0.5 0.3 / 40%) rec2020 r g b)" should set the property value Colors do not match.
@@ -1355,7 +1367,7 @@ PASS e.style['color'] = "color(from color(rec2020 none none none / none) rec2020
 PASS e.style['color'] = "color(from color(rec2020 0.7 none 0.3) rec2020 r g b)" should set the property value
 PASS e.style['color'] = "color(from color(rec2020 0.7 0.5 0.3 / none) rec2020 r g b / alpha)" should set the property value
 FAIL e.style['color'] = "color(from currentColor rec2020 r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "color(from color-mix(in xyz, color(rec2020 0.7 0.5 0.3), color(rec2020 0.7 0.5 0.3)) rec2020 r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "color(from color-mix(in xyz, color(rec2020 0.7 0.5 0.3), color(rec2020 0.7 0.5 0.3)) rec2020 r g b / alpha)" should set the property value
 PASS e.style['color'] = "color(from color(prophoto-rgb 0.7 0.5 0.3) prophoto-rgb r g b)" should set the property value
 PASS e.style['color'] = "color(from color(prophoto-rgb 0.7 0.5 0.3) prophoto-rgb r g b / alpha)" should set the property value
 FAIL e.style['color'] = "color(from color(prophoto-rgb 0.7 0.5 0.3 / 40%) prophoto-rgb r g b)" should set the property value Colors do not match.
@@ -1434,7 +1446,7 @@ PASS e.style['color'] = "color(from color(prophoto-rgb none none none / none) pr
 PASS e.style['color'] = "color(from color(prophoto-rgb 0.7 none 0.3) prophoto-rgb r g b)" should set the property value
 PASS e.style['color'] = "color(from color(prophoto-rgb 0.7 0.5 0.3 / none) prophoto-rgb r g b / alpha)" should set the property value
 FAIL e.style['color'] = "color(from currentColor prophoto-rgb r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "color(from color-mix(in xyz, color(prophoto-rgb 0.7 0.5 0.3), color(prophoto-rgb 0.7 0.5 0.3)) prophoto-rgb r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "color(from color-mix(in xyz, color(prophoto-rgb 0.7 0.5 0.3), color(prophoto-rgb 0.7 0.5 0.3)) prophoto-rgb r g b / alpha)" should set the property value
 PASS e.style['color'] = "color(from color(display-p3 0.7 0.5 0.3) display-p3 r g b)" should set the property value
 PASS e.style['color'] = "color(from color(display-p3 0.7 0.5 0.3) display-p3 r g b / alpha)" should set the property value
 FAIL e.style['color'] = "color(from color(display-p3 0.7 0.5 0.3 / 40%) display-p3 r g b)" should set the property value Colors do not match.
@@ -1513,7 +1525,7 @@ PASS e.style['color'] = "color(from color(display-p3 none none none / none) disp
 PASS e.style['color'] = "color(from color(display-p3 0.7 none 0.3) display-p3 r g b)" should set the property value
 PASS e.style['color'] = "color(from color(display-p3 0.7 0.5 0.3 / none) display-p3 r g b / alpha)" should set the property value
 FAIL e.style['color'] = "color(from currentColor display-p3 r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "color(from color-mix(in xyz, color(display-p3 0.7 0.5 0.3), color(display-p3 0.7 0.5 0.3)) display-p3 r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "color(from color-mix(in xyz, color(display-p3 0.7 0.5 0.3), color(display-p3 0.7 0.5 0.3)) display-p3 r g b / alpha)" should set the property value
 PASS e.style['color'] = "color(from color(xyz 7 -20.5 100) xyz x y z)" should set the property value
 PASS e.style['color'] = "color(from color(xyz 7 -20.5 100) xyz x y z / alpha)" should set the property value
 FAIL e.style['color'] = "color(from color(xyz 7 -20.5 100 / 40%) xyz x y z)" should set the property value Colors do not match.
@@ -1562,7 +1574,7 @@ PASS e.style['color'] = "color(from color(xyz none none none / none) xyz x y z /
 PASS e.style['color'] = "color(from color(xyz 7 none 100) xyz x y z)" should set the property value
 PASS e.style['color'] = "color(from color(xyz 7 -20.5 100 / none) xyz x y z / alpha)" should set the property value
 FAIL e.style['color'] = "color(from currentColor xyz x y z)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "color(from color-mix(in xyz, color(xyz 0.7 0.5 0.3), color(xyz 0.7 0.5 0.3)) xyz x y z / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "color(from color-mix(in xyz, color(xyz 0.7 0.5 0.3), color(xyz 0.7 0.5 0.3)) xyz x y z / alpha)" should set the property value
 PASS e.style['color'] = "color(from color(xyz-d50 7 -20.5 100) xyz-d50 x y z)" should set the property value
 PASS e.style['color'] = "color(from color(xyz-d50 7 -20.5 100) xyz-d50 x y z / alpha)" should set the property value
 FAIL e.style['color'] = "color(from color(xyz-d50 7 -20.5 100 / 40%) xyz-d50 x y z)" should set the property value Colors do not match.
@@ -1611,7 +1623,7 @@ PASS e.style['color'] = "color(from color(xyz-d50 none none none / none) xyz-d50
 PASS e.style['color'] = "color(from color(xyz-d50 7 none 100) xyz-d50 x y z)" should set the property value
 PASS e.style['color'] = "color(from color(xyz-d50 7 -20.5 100 / none) xyz-d50 x y z / alpha)" should set the property value
 FAIL e.style['color'] = "color(from currentColor xyz-d50 x y z)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "color(from color-mix(in xyz, color(xyz-d50 0.7 0.5 0.3), color(xyz-d50 0.7 0.5 0.3)) xyz-d50 x y z / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "color(from color-mix(in xyz, color(xyz-d50 0.7 0.5 0.3), color(xyz-d50 0.7 0.5 0.3)) xyz-d50 x y z / alpha)" should set the property value
 PASS e.style['color'] = "color(from color(xyz-d65 7 -20.5 100) xyz-d65 x y z)" should set the property value
 PASS e.style['color'] = "color(from color(xyz-d65 7 -20.5 100) xyz-d65 x y z / alpha)" should set the property value
 FAIL e.style['color'] = "color(from color(xyz-d65 7 -20.5 100 / 40%) xyz-d65 x y z)" should set the property value Colors do not match.
@@ -1660,7 +1672,7 @@ PASS e.style['color'] = "color(from color(xyz-d65 none none none / none) xyz-d65
 PASS e.style['color'] = "color(from color(xyz-d65 7 none 100) xyz-d65 x y z)" should set the property value
 PASS e.style['color'] = "color(from color(xyz-d65 7 -20.5 100 / none) xyz-d65 x y z / alpha)" should set the property value
 FAIL e.style['color'] = "color(from currentColor xyz-d65 x y z)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "color(from color-mix(in xyz, color(xyz-d65 0.7 0.5 0.3), color(xyz-d65 0.7 0.5 0.3)) xyz-d65 x y z / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "color(from color-mix(in xyz, color(xyz-d65 0.7 0.5 0.3), color(xyz-d65 0.7 0.5 0.3)) xyz-d65 x y z / alpha)" should set the property value
 PASS e.style['color'] = "rgb(from var(--bg-color) r g b / 80%)" should set the property value
 PASS e.style['color'] = "lch(from var(--color) calc(l / 2) c h)" should set the property value
 PASS e.style['color'] = "rgb(from var(--color) calc(r * .3 + g * .59 + b * .11) calc(r * .3 + g * .59 + b * .11) calc(r * .3 + g * .59 + b * .11))" should set the property value

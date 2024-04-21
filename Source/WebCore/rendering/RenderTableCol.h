@@ -34,9 +34,11 @@ class RenderTableCell;
 
 class RenderTableCol final : public RenderBox {
     WTF_MAKE_ISO_ALLOCATED(RenderTableCol);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableCol);
 public:
     RenderTableCol(Element&, RenderStyle&&);
     RenderTableCol(Document&, RenderStyle&&);
+    virtual ~RenderTableCol();
 
     void clearPreferredLogicalWidthsDirtyBits();
 

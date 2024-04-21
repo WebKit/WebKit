@@ -295,17 +295,6 @@ void ProcessLauncher::finishLaunchingProcess(const char* name)
     auto initializationMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     _CFBundleSetupXPCBootstrap(initializationMessage.get());
 
-    auto languagesIterator = m_launchOptions.extraInitializationData.find<HashTranslatorASCIILiteral>("OverrideLanguages"_s);
-    if (languagesIterator != m_launchOptions.extraInitializationData.end()) {
-        LOG_WITH_STREAM(Language, stream << "Process Launcher is copying OverrideLanguages into initialization message: " << languagesIterator->value);
-        auto languages = adoptOSObject(xpc_array_create(nullptr, 0));
-        for (auto language : StringView(languagesIterator->value).split(','))
-            xpc_array_set_string(languages.get(), XPC_ARRAY_APPEND, language.utf8().data());
-        xpc_dictionary_set_value(initializationMessage.get(), "OverrideLanguages", languages.get());
-    }
-
-    xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());
-
     // Create the listening port.
     mach_port_t listeningPort = MACH_PORT_NULL;
     auto kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
@@ -339,6 +328,15 @@ void ProcessLauncher::finishLaunchingProcess(const char* name)
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     xpc_dictionary_set_string(bootstrapMessage.get(), "WebKitBundleVersion", WEBKIT_BUNDLE_VERSION);
 #endif
+
+    auto languagesIterator = m_launchOptions.extraInitializationData.find<HashTranslatorASCIILiteral>("OverrideLanguages"_s);
+    if (languagesIterator != m_launchOptions.extraInitializationData.end()) {
+        LOG_WITH_STREAM(Language, stream << "Process Launcher is copying OverrideLanguages into initialization message: " << languagesIterator->value);
+        auto languages = adoptOSObject(xpc_array_create(nullptr, 0));
+        for (auto language : StringView(languagesIterator->value).split(','))
+            xpc_array_set_string(languages.get(), XPC_ARRAY_APPEND, language.utf8().data());
+        xpc_dictionary_set_value(bootstrapMessage.get(), "OverrideLanguages", languages.get());
+    }
 
 #if PLATFORM(IOS_FAMILY)
     // Clients that set these environment variables explicitly do not have the values automatically forwarded by libxpc.

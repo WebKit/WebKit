@@ -125,7 +125,7 @@ BasicBlock* createPreHeader(Graph& graph, BlockInsertionSet& insertionSet, Basic
 class LoopPreHeaderCreationPhase : public Phase {
 public:
     LoopPreHeaderCreationPhase(Graph& graph)
-        : Phase(graph, "loop pre-header creation")
+        : Phase(graph, "loop pre-header creation"_s)
         , m_insertionSet(graph)
     {
     }

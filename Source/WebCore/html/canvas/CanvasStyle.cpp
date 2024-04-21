@@ -31,6 +31,7 @@
 
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParserConsumer+Color.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "ColorConversion.h"
@@ -40,7 +41,6 @@
 #include "StyleProperties.h"
 
 #if ENABLE(OFFSCREEN_CANVAS)
-#include "CSSPropertyParserWorkerSafe.h"
 #include "OffscreenCanvas.h"
 #endif
 
@@ -55,15 +55,10 @@ Color parseColor(const String& colorString, CanvasBase& canvasBase)
 {
 #if ENABLE(OFFSCREEN_CANVAS)
     if (is<OffscreenCanvas>(canvasBase))
-        return CSSPropertyParserWorkerSafe::parseColor(colorString);
+        return CSSPropertyParserHelpers::parseColorRawWorkerSafe(colorString, canvasBase.cssParserContext(), { });
 #endif
 
-    Color color;
-    if (auto* canvas = dynamicDowncast<HTMLCanvasElement>(canvasBase))
-        color = CSSParser::parseColor(colorString, canvas->cssParserContext());
-    else
-        color = CSSParser::parseColorWithoutContext(colorString);
-
+    auto color = CSSPropertyParserHelpers::parseColorRaw(colorString, canvasBase.cssParserContext(), { });
     if (color.isValid())
         return color;
     return CSSParser::parseSystemColor(colorString);
@@ -71,7 +66,8 @@ Color parseColor(const String& colorString, CanvasBase& canvasBase)
 
 Color parseColor(const String& colorString)
 {
-    Color color = CSSParser::parseColorWithoutContext(colorString);
+    auto color = CSSPropertyParserHelpers::parseColorRaw(colorString, CSSParserContext(HTMLStandardMode), { });
+
     if (color.isValid())
         return color;
     return CSSParser::parseSystemColor(colorString);
@@ -85,7 +81,8 @@ Color currentColor(CanvasBase& canvasBase)
 
     if (!canvas->isConnected() || !canvas->inlineStyle())
         return Color::black;
-    Color color = CSSParser::parseColorWithoutContext(canvas->inlineStyle()->getPropertyValue(CSSPropertyColor));
+
+    auto color = CSSPropertyParserHelpers::parseColorRaw(canvas->inlineStyle()->getPropertyValue(CSSPropertyColor), canvasBase.cssParserContext(), { });
     if (!color.isValid())
         return Color::black;
     return color;

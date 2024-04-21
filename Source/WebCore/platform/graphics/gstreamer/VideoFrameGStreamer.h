@@ -48,6 +48,11 @@ public:
 
     static RefPtr<VideoFrameGStreamer> createFromPixelBuffer(Ref<PixelBuffer>&&, CanvasContentType canvasContentType, Rotation videoRotation = VideoFrame::Rotation::None, const MediaTime& presentationTime = MediaTime::invalidTime(), const IntSize& destinationSize = { }, double frameRate = 1, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt, PlatformVideoColorSpace&& = { });
 
+    void setFrameRate(double);
+    void setMaxFrameRate(double);
+
+    void setPresentationTime(const MediaTime&);
+
     RefPtr<VideoFrameGStreamer> resizeTo(const IntSize&);
 
     GRefPtr<GstSample> resizedSample(const IntSize&);

@@ -37,7 +37,7 @@ namespace WebKit::PCM {
 
 static Ref<SuspendableWorkQueue> sharedWorkQueue()
 {
-    static NeverDestroyed<Ref<SuspendableWorkQueue>> queue(SuspendableWorkQueue::create("PrivateClickMeasurement Process Data Queue",  WorkQueue::QOS::Utility));
+    static NeverDestroyed<Ref<SuspendableWorkQueue>> queue(SuspendableWorkQueue::create("PrivateClickMeasurement Process Data Queue"_s,  WorkQueue::QOS::Utility));
     return queue.get().copyRef();
 }
 

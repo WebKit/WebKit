@@ -202,7 +202,7 @@ class BindingsTests:
 
         supplemental_dependency_filename = 'SupplementalDependencies.txt'
         supplemental_makefile_dependency_filename = 'SupplementalDependencies.dep'
-        dom_window_constructors_filename = 'LocalDOMWindowConstructors.idl'
+        dom_window_constructors_filename = 'DOMWindowConstructors.idl'
         workerglobalscope_constructors_filename = 'WorkerGlobalScopeConstructors.idl'
         shadowrealmglobalscope_constructors_filename = 'ShadowRealmGlobalScopeConstructors.idl'
         dedicatedworkerglobalscope_constructors_filename = 'DedicatedWorkerGlobalScopeConstructors.idl'

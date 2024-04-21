@@ -27,6 +27,9 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "HTTPServer.h"
+#import "PlatformUtilities.h"
+#import "WebExtensionUtilities.h"
 #import <WebKit/_WKWebExtensionWebRequestFilter.h>
 
 namespace TestWebKitAPI {

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "Supplementable.h"
 #include "Worklet.h"
 
@@ -72,4 +70,3 @@ private:
 };
 
 } // namespace WebCore
-#endif

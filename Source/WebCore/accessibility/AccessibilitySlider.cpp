@@ -105,13 +105,6 @@ void AccessibilitySlider::addChildren()
         addChild(thumb.ptr());
 }
 
-const AtomString& AccessibilitySlider::getAttribute(const QualifiedName& attribute) const
-{
-    if (auto* input = inputElement())
-        return input->getAttribute(attribute);
-    return nullAtom();
-}
-    
 AccessibilityObject* AccessibilitySlider::elementAccessibilityHitTest(const IntPoint& point) const
 {
     if (m_children.size()) {

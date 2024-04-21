@@ -222,10 +222,9 @@ static std::optional<bool>& cachedLockdownModeEnabledGlobally()
 
 void WebProcessPool::updateProcessSuppressionState()
 {
-    WebsiteDataStore::forEachWebsiteDataStore([enabled = processSuppressionEnabled()] (WebsiteDataStore& dataStore) {
-        if (auto* networkProcess = dataStore.networkProcessIfExists())
-            networkProcess->setProcessSuppressionEnabled(enabled);
-    });
+    bool enabled = processSuppressionEnabled();
+    for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
+        networkProcess->setProcessSuppressionEnabled(enabled);
 }
 
 NSMutableDictionary *WebProcessPool::ensureBundleParameters()

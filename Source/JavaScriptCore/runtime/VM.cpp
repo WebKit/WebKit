@@ -434,8 +434,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
         jitSizeStatistics = makeUnique<JITSizeStatistics>();
 #endif
 
-    if (!g_jscConfig.disabledFreezingForTesting)
-        Config::permanentlyFreeze();
+    Config::finalize();
 
     // We must set this at the end only after the VM is fully initialized.
     WTF::storeStoreFence();

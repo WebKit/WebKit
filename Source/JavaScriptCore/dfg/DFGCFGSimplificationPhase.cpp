@@ -38,7 +38,7 @@ namespace JSC { namespace DFG {
 class CFGSimplificationPhase : public Phase {
 public:
     CFGSimplificationPhase(Graph& graph)
-        : Phase(graph, "CFG simplification")
+        : Phase(graph, "CFG simplification"_s)
     {
     }
 

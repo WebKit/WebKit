@@ -27,6 +27,7 @@
 #include "ElementTargetingController.h"
 
 #include "AccessibilityObject.h"
+#include "Attr.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMTokenList.h"
@@ -44,6 +45,7 @@
 #include "HitTestResult.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "NamedNodeMap.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "PseudoElement.h"
@@ -122,10 +124,12 @@ static inline bool elementAndAncestorsAreOnlyRenderedChildren(const Element& ele
     return true;
 }
 
-static inline bool querySelectorMatchesOneElement(Document& document, const String& selector)
+static inline bool querySelectorMatchesOneElement(Element& element, const String& selector)
 {
-    auto result = document.querySelectorAll(selector);
-    return !result.hasException() && result.returnValue()->length() == 1;
+    auto result = element.document().querySelectorAll(selector);
+    if (result.hasException())
+        return false;
+    return result.returnValue()->length() == 1 && result.returnValue()->item(0) == &element;
 }
 
 struct ChildElementPosition {
@@ -165,18 +169,88 @@ static inline String computeIDSelector(Element& element)
     return emptyString();
 }
 
-static inline String computeClassSelector(Element& element)
+static inline String computeTagAndAttributeSelector(Element& element)
 {
-    if (element.hasClass()) {
-        auto& classList = element.classList();
-        Vector<String> classes;
-        classes.reserveInitialCapacity(classList.length());
-        for (unsigned i = 0; i < std::min<unsigned>(maximumNumberOfClasses, classList.length()); ++i)
-            classes.append(classList.item(i));
-        auto selector = makeString('.', makeStringByJoining(classes, "."_s));
-        if (querySelectorMatchesOneElement(element.document(), selector))
+    if (!element.hasAttributes())
+        return emptyString();
+
+    static NeverDestroyed attributesToExclude = [] {
+        MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> names;
+        names.add(HTMLNames::classAttr);
+        names.add(HTMLNames::idAttr);
+        names.add(HTMLNames::styleAttr);
+        names.add(HTMLNames::widthAttr);
+        names.add(HTMLNames::heightAttr);
+        names.add(HTMLNames::forAttr);
+        names.add(HTMLNames::aria_labeledbyAttr);
+        names.add(HTMLNames::aria_labelledbyAttr);
+        names.add(HTMLNames::aria_describedbyAttr);
+        return names;
+    }();
+
+    static constexpr auto maximumNameLength = 16;
+    static constexpr auto maximumValueLength = 100;
+    static constexpr auto maximumValueLengthForExactMatch = 40;
+
+    Vector<std::pair<String, String>> attributesToCheck;
+    auto& attributes = element.attributes();
+    attributesToCheck.reserveInitialCapacity(attributes.length());
+    for (unsigned i = 0; i < attributes.length(); ++i) {
+        RefPtr attribute = attributes.item(i);
+        auto qualifiedName = attribute->qualifiedName();
+        if (attributesToExclude->contains(qualifiedName))
+            continue;
+
+        auto name = qualifiedName.toString();
+        if (name.length() > maximumNameLength)
+            continue;
+
+        if (name.startsWith("on"_s))
+            continue;
+
+        auto value = attribute->value();
+        if (value.length() > maximumValueLength)
+            continue;
+
+        attributesToCheck.append({ WTFMove(name), value.string() });
+    }
+
+    if (attributesToCheck.isEmpty())
+        return emptyString();
+
+    auto tagName = element.tagName();
+    for (auto [name, value] : attributesToCheck) {
+        String selector;
+        if (value.length() > maximumValueLengthForExactMatch) {
+            value = value.left(maximumValueLengthForExactMatch);
+            selector = makeString(tagName, '[', name, "^='"_s, value, "']"_s);
+        } else if (value.isEmpty())
+            selector = makeString(tagName, '[', name, ']');
+        else
+            selector = makeString(tagName, '[', name, "='"_s, value, "']"_s);
+
+        if (querySelectorMatchesOneElement(element, selector))
             return selector;
     }
+
+    return emptyString();
+}
+
+static inline String computeTagAndClassSelector(Element& element)
+{
+    if (!element.hasClass())
+        return emptyString();
+
+    auto& classList = element.classList();
+    Vector<String> classes;
+    classes.reserveInitialCapacity(classList.length());
+    for (unsigned i = 0; i < std::min<unsigned>(maximumNumberOfClasses, classList.length()); ++i)
+        classes.append(classList.item(i));
+
+    auto selector = makeString(element.tagName(), '.', makeStringByJoining(classes, "."_s));
+    if (querySelectorMatchesOneElement(element, selector))
+        return selector;
+
     return emptyString();
 }
 
@@ -207,11 +281,13 @@ static String selectorForElementRecursive(Element& element, ElementSelectorCache
     if (auto selector = computeIDSelector(element); !selector.isEmpty())
         selectors.append(WTFMove(selector));
 
-    if (auto selector = computeClassSelector(element); !selector.isEmpty())
+    if (querySelectorMatchesOneElement(element, element.tagName()))
+        selectors.append(element.tagName());
+    else if (auto selector = computeTagAndClassSelector(element); !selector.isEmpty())
         selectors.append(WTFMove(selector));
 
-    if (querySelectorMatchesOneElement(element.document(), element.tagName()))
-        selectors.append(element.tagName());
+    if (auto selector = computeTagAndAttributeSelector(element); !selector.isEmpty())
+        selectors.append(WTFMove(selector));
 
     if (auto selector = shortestSelector(selectors); !selector.isEmpty()) {
         cache.add(element, selector);
@@ -304,33 +380,31 @@ static Vector<String> selectorsForTarget(Element& element, ElementSelectorCache&
     }
 
     Vector<String> selectors;
-    selectors.reserveInitialCapacity(5);
+    selectors.reserveInitialCapacity(3);
     if (auto selector = computeIDSelector(element); !selector.isEmpty())
         selectors.append(WTFMove(selector));
 
-    if (auto selector = computeClassSelector(element); !selector.isEmpty())
-        selectors.append(WTFMove(selector));
-
-    if (querySelectorMatchesOneElement(element.document(), element.tagName()))
+    if (querySelectorMatchesOneElement(element, element.tagName()))
         selectors.append(element.tagName());
+    else {
+        if (auto selector = computeTagAndClassSelector(element); !selector.isEmpty())
+            selectors.append(WTFMove(selector));
+
+        if (auto selector = computeTagAndAttributeSelector(element); !selector.isEmpty())
+            selectors.append(WTFMove(selector));
+    }
+
+    if (selectors.isEmpty()) {
+        if (auto selector = parentRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+            selectors.append(WTFMove(selector));
+
+        if (auto selector = siblingRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+            selectors.append(WTFMove(selector));
+    }
 
     std::sort(selectors.begin(), selectors.end(), [](auto& first, auto& second) {
         return first.length() < second.length();
     });
-
-    Vector<String> relativeSelectors;
-    relativeSelectors.reserveInitialCapacity(2);
-    if (auto selector = parentRelativeSelectorRecursive(element, cache); !selector.isEmpty())
-        relativeSelectors.append(WTFMove(selector));
-
-    if (auto selector = siblingRelativeSelectorRecursive(element, cache); !selector.isEmpty())
-        relativeSelectors.append(WTFMove(selector));
-
-    std::sort(relativeSelectors.begin(), relativeSelectors.end(), [](auto& first, auto& second) {
-        return first.length() < second.length();
-    });
-
-    selectors.appendVector(WTFMove(relativeSelectors));
 
     if (!selectors.isEmpty())
         cache.add(element, selectors.first());

@@ -42,6 +42,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderImageResource);
 
 RenderImageResource::RenderImageResource() = default;
 
+RenderImageResource::~RenderImageResource() = default;
+
 void RenderImageResource::initialize(RenderElement& renderer, CachedImage* styleCachedImage)
 {
     ASSERT(!m_renderer);

@@ -305,7 +305,6 @@ if (ENABLE_WEBCORE)
     endif ()
 
     # Rendering options
-    SET_AND_EXPOSE_TO_BUILD(USE_EGL ON)
     SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER ON)
     SET_AND_EXPOSE_TO_BUILD(USE_WPE_RENDERER ${USE_WPE_BACKEND_PLAYSTATION})
 
@@ -465,7 +464,3 @@ check_symbol_exists(memmem string.h HAVE_MEMMEM)
 if (HAVE_MEMMEM)
     add_definitions(-DHAVE_MEMMEM=1)
 endif ()
-
-# FIXME: gtest assumes that you will have u8string if __cpp_char8_t
-# (feature test macro) is defined.
-add_compile_options(-U__cpp_char8_t)

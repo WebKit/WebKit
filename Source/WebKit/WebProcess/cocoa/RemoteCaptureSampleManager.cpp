@@ -43,7 +43,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteCaptureSampleManager::RemoteCaptureSampleManager()
-    : m_queue(WorkQueue::create("RemoteCaptureSampleManager", WorkQueue::QOS::UserInteractive))
+    : m_queue(WorkQueue::create("RemoteCaptureSampleManager"_s, WorkQueue::QOS::UserInteractive))
 {
 }
 
@@ -212,7 +212,7 @@ void RemoteCaptureSampleManager::RemoteAudio::startThread()
             m_source->remoteAudioSamplesAvailable(currentTime, *m_buffer, *m_description, m_frameChunkSize);
         } while (!m_shouldStopThread);
     };
-    m_thread = Thread::create("RemoteCaptureSampleManager::RemoteAudio thread", WTFMove(threadLoop), ThreadType::Audio, Thread::QOS::UserInteractive);
+    m_thread = Thread::create("RemoteCaptureSampleManager::RemoteAudio thread"_s, WTFMove(threadLoop), ThreadType::Audio, Thread::QOS::UserInteractive);
 }
 
 void RemoteCaptureSampleManager::RemoteAudio::setStorage(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, IPC::Semaphore&& semaphore, const MediaTime& mediaTime, size_t frameChunkSize)

@@ -27,6 +27,7 @@
 
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
 
@@ -38,12 +39,12 @@ namespace JSC {
 class CompilerTimingScope {
     WTF_MAKE_NONCOPYABLE(CompilerTimingScope);
 public:
-    CompilerTimingScope(const char* compilerName, const char* name);
+    CompilerTimingScope(ASCIILiteral compilerName, ASCIILiteral name);
     ~CompilerTimingScope();
 
 private:
-    const char* m_compilerName;
-    const char* m_name;
+    ASCIILiteral m_compilerName;
+    ASCIILiteral m_name;
     MonotonicTime m_before;
 };
 

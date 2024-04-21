@@ -46,6 +46,10 @@ namespace JSC {
 
 JSC_ANNOTATE_JIT_OPERATION_RETURN(jitCagePtrGateAfter);
 JSC_ANNOTATE_JIT_OPERATION(vmEntryToJavaScript);
+JSC_ANNOTATE_JIT_OPERATION(vmEntryToJavaScriptWith0Arguments);
+JSC_ANNOTATE_JIT_OPERATION(vmEntryToJavaScriptWith1Arguments);
+JSC_ANNOTATE_JIT_OPERATION(vmEntryToJavaScriptWith2Arguments);
+JSC_ANNOTATE_JIT_OPERATION(vmEntryToJavaScriptWith3Arguments);
 JSC_ANNOTATE_JIT_OPERATION(vmEntryToNative);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(vmEntryToJavaScriptGateAfter);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(llint_function_for_call_arity_checkUntagGateAfter);

@@ -874,16 +874,15 @@ FontParsingPolicy fontBinaryParsingPolicy(std::span<const uint8_t> data, Downloa
         return FontParsingPolicy::LoadWithSystemFontParser;
     case DownloadableBinaryFontTrustedTypes::None:
         return FontParsingPolicy::Deny;
-    case DownloadableBinaryFontTrustedTypes::Restricted:
-    case DownloadableBinaryFontTrustedTypes::FallbackParser: {
+    case DownloadableBinaryFontTrustedTypes::Restricted: {
         auto sha = hashForFontData(data);
         if (trustedFontHashesInLockdownMode().contains(sha))
             return FontParsingPolicy::LoadWithSystemFontParser;
-        if (trustedType == DownloadableBinaryFontTrustedTypes::FallbackParser)
-            return FontParsingPolicy::LoadWithSafeFontParser;
-        RELEASE_LOG(Fonts, "[Lockdown Mode] A font with a forbidden type has been blocked.");
+        RELEASE_LOG(Fonts, "[Lockdown Mode] A font with a forbidden type has been blocked from being parsed by system font parser.");
         return FontParsingPolicy::Deny;
     }
+    case DownloadableBinaryFontTrustedTypes::FallbackParser:
+        return FontParsingPolicy::LoadWithSafeFontParser;
     }
     ASSERT_NOT_REACHED();
     return FontParsingPolicy::Deny;

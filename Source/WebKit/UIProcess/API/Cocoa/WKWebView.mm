@@ -256,6 +256,8 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& 
 
 @implementation WKWebView
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     return [self initWithFrame:frame configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get()];
@@ -2558,6 +2560,11 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #endif
 }
 
+- (BOOL)_isSuspended
+{
+    return _page->process().throttler().isSuspended();
+}
+
 - (BOOL)_canTogglePictureInPicture
 {
 #if HAVE(TOUCH_BAR)
@@ -2898,6 +2905,26 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
         break;
     }
     return wrapper(_page->loadRequest(request, policy)).autorelease();
+}
+
+- (void)_loadAndDecodeImage:(NSURLRequest *)request constrainedToSize:(CGSize)maxSize completionHandler:(void (^)(CocoaImage *, NSError *))completionHandler
+{
+    auto sizeConstraint = (maxSize.height || maxSize.width) ? std::optional(WebCore::FloatSize(maxSize)) : std::nullopt;
+    WebCore::ResourceRequest resourceRequest(request);
+    auto url = resourceRequest.url();
+    _page->loadAndDecodeImage(request, sizeConstraint, [completionHandler = makeBlockPtr(completionHandler), url](std::variant<WebCore::ResourceError, Ref<WebCore::ShareableBitmap>>&& result) mutable {
+        WTF::switchOn(result, [&] (const WebCore::ResourceError& error) {
+            if (error.isNull())
+                return completionHandler(nil, WebCore::internalError(url)); // This can happen if IPC fails.
+            completionHandler(nil, error.nsError());
+        }, [&] (const Ref<WebCore::ShareableBitmap>& bitmap) {
+#if PLATFORM(MAC)
+            completionHandler(adoptNS([[NSImage alloc] initWithCGImage:bitmap->makeCGImageCopy().get() size:bitmap->size()]).get(), nil);
+#else
+            completionHandler(adoptNS([[UIImage alloc] initWithCGImage:bitmap->makeCGImageCopy().get()]).get(), nil);
+#endif
+        });
+    });
 }
 
 - (void)_loadServiceWorker:(NSURL *)url usingModules:(BOOL)usingModules completionHandler:(void (^)(BOOL success))completionHandler

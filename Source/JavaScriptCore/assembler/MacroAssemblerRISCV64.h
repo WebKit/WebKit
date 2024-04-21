@@ -2166,6 +2166,13 @@ public:
         compareFinalize(cond, lhs, temp.data(), dest);
     }
 
+    void compare64(RelationalCondition cond, RegisterID lhs, TrustedImm64 imm, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        loadImmediate(imm, temp.data());
+        compareFinalize(cond, lhs, temp.data(), dest);
+    }
+
     void test8(ResultCondition cond, Address address, TrustedImm32 imm, RegisterID dest)
     {
         auto temp = temps<Data, Memory>();

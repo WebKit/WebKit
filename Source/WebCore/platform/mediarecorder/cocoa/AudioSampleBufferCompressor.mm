@@ -51,7 +51,7 @@ std::unique_ptr<AudioSampleBufferCompressor> AudioSampleBufferCompressor::create
 }
 
 AudioSampleBufferCompressor::AudioSampleBufferCompressor()
-    : m_serialDispatchQueue(WorkQueue::create("com.apple.AudioSampleBufferCompressor"))
+    : m_serialDispatchQueue(WorkQueue::create("com.apple.AudioSampleBufferCompressor"_s))
     , m_lowWaterTime(PAL::CMTimeMakeWithSeconds(LOW_WATER_TIME_IN_SECONDS, 1000))
     , m_currentNativePresentationTimeStamp(PAL::kCMTimeInvalid)
     , m_currentOutputPresentationTimeStamp(PAL::kCMTimeInvalid)

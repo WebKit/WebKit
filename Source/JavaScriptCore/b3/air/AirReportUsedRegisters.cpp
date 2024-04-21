@@ -38,7 +38,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 void reportUsedRegisters(Code& code)
 {
-    PhaseScope phaseScope(code, "reportUsedRegisters");
+    PhaseScope phaseScope(code, "reportUsedRegisters"_s);
     
     static constexpr bool verbose = false;
 

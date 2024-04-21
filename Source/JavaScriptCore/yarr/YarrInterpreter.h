@@ -536,7 +536,7 @@ private:
 
 JS_EXPORT_PRIVATE std::unique_ptr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*, ErrorCode&, ConcurrentJSLock* = nullptr);
 JS_EXPORT_PRIVATE unsigned interpret(BytecodePattern*, StringView input, unsigned start, unsigned* output);
-unsigned interpret(BytecodePattern*, const LChar* input, unsigned length, unsigned start, unsigned* output);
-unsigned interpret(BytecodePattern*, const UChar* input, unsigned length, unsigned start, unsigned* output);
+unsigned interpret(BytecodePattern*, std::span<const LChar> input, unsigned start, unsigned* output);
+unsigned interpret(BytecodePattern*, std::span<const UChar> input, unsigned start, unsigned* output);
 
 } } // namespace JSC::Yarr

@@ -2516,7 +2516,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
     }
     
     Thread::create(
-        "JSC Agent",
+        "JSC Agent"_s,
         [sourceCode = WTFMove(sourceCode).isolatedCopy(), workerPath = WTFMove(workerPath).isolatedCopy(), &didStartLock, &didStartCondition, &didStart] () {
             CommandLine commandLine(CommandLine::CommandLineForWorkers);
             commandLine.m_interactive = false;
@@ -3379,7 +3379,7 @@ static void startMemoryMonitoringThreadIfNeeded()
     if (!memoryLimit)
         return;
 
-    Thread::create("jsc Memory Monitor", [=] {
+    Thread::create("jsc Memory Monitor"_s, [=] {
         while (true) {
             sleep(Seconds::fromMilliseconds(5));
             crashIfExceedingMemoryLimit();
@@ -3396,7 +3396,7 @@ static VM* s_vm;
 
 static void startTimeoutTimer(Seconds duration)
 {
-    Thread::create("jsc Timeout Thread", [=] () {
+    Thread::create("jsc Timeout Thread"_s, [=] () {
         sleep(duration);
         VMInspector::forEachVM([&] (VM& vm) -> IterationStatus {
             if (&vm != s_vm)
@@ -3513,7 +3513,7 @@ int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
 
     if (getenv("JSCTEST_CrashReportArgV")) {
         StringPrintStream out;
-        CommaPrinter space(" ");
+        CommaPrinter space(" "_s);
         for (int i = 0; i < argc; ++i)
             out.print(space, argv[i]);
         WTF::setCrashLogMessage(out.toCString().data());
@@ -3522,9 +3522,6 @@ int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
 
 #if OS(UNIX)
     if (getenv("JS_SHELL_WAIT_FOR_SIGUSR2_TO_EXIT")) {
-        uint32_t key = 0;
-        int mask = 0;
-        initializeSignalHandling(key, mask);
         addSignalHandler(Signal::Usr, SignalHandler([&] (Signal, SigInfo&, PlatformRegisters&) {
             dataLogLn("Signal handler hit, we can exit now.");
             waitToExit.signal();
@@ -3998,20 +3995,6 @@ void CommandLine::parseArguments(int argc, char** argv)
         }
         if (!strcmp(arg, "-s")) {
 #if OS(UNIX)
-            uint32_t key = 0;
-            int mask = 0;
-#if HAVE(MACH_EXCEPTIONS)
-            mask |= toMachMask(Signal::IllegalInstruction);
-            mask |= toMachMask(Signal::AccessFault);
-            mask |= toMachMask(Signal::FloatingPoint);
-            mask |= toMachMask(Signal::Breakpoint);
-#if !OS(DARWIN)
-            mask |= toMachMask(Signal::Abort);
-#endif // !OS(DARWIN)
-#endif // HAVE(MACH_EXCEPTIONS)
-
-            initializeSignalHandling(key, mask);
-
             SignalAction (*exit)(Signal, SigInfo&, PlatformRegisters&) = [] (Signal, SigInfo&, PlatformRegisters&) {
                 dataLogLn("Signal handler hit. Exiting with status 0");
                 // Deliberate exit with a SIGKILL code greater than 130.
@@ -4034,7 +4017,6 @@ void CommandLine::parseArguments(int argc, char** argv)
             addSignalHandler(Signal::Abort, SignalHandler(exit));
             activateSignalHandlersFor(Signal::Abort);
 #endif
-            finalizeSignalHandlers();
 #endif
             continue;
         }

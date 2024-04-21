@@ -116,17 +116,17 @@ bool LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
     // as well as NonZero can cause self-clipping of the elements.
     // See also http://www.w3.org/TR/SVG/painting.html#FillRuleProperty
     for (Node* childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
-        auto* graphicsElement = dynamicDowncast<SVGGraphicsElement>(*childNode);
+        RefPtr graphicsElement = dynamicDowncast<SVGGraphicsElement>(*childNode);
         if (!graphicsElement)
             continue;
-        auto* renderer = graphicsElement->renderer();
+        CheckedPtr renderer = graphicsElement->renderer();
         if (!renderer)
             continue;
         if (rendererRequiresMaskClipping(*renderer))
             return false;
 
         // For <use> elements, delegate the decision whether to use mask clipping or not to the referenced element.
-        if (auto* useElement = dynamicDowncast<SVGUseElement>(graphicsElement)) {
+        if (auto* useElement = dynamicDowncast<SVGUseElement>(graphicsElement.get())) {
             auto* clipChildRenderer = useElement->rendererClipChild();
             if (clipChildRenderer && rendererRequiresMaskClipping(*clipChildRenderer))
                 return false;

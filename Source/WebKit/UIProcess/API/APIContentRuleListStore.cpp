@@ -73,9 +73,9 @@ ContentRuleListStore::ContentRuleListStore()
 
 ContentRuleListStore::ContentRuleListStore(const WTF::String& storePath)
     : m_storePath(storePath)
-    , m_compileQueue(ConcurrentWorkQueue::create("ContentRuleListStore Compile Queue"))
-    , m_readQueue(WorkQueue::create("ContentRuleListStore Read Queue"))
-    , m_removeQueue(WorkQueue::create("ContentRuleListStore Remove Queue"))
+    , m_compileQueue(ConcurrentWorkQueue::create("ContentRuleListStore Compile Queue"_s))
+    , m_readQueue(WorkQueue::create("ContentRuleListStore Read Queue"_s))
+    , m_removeQueue(WorkQueue::create("ContentRuleListStore Remove Queue"_s))
 {
     makeAllDirectories(storePath);
 }

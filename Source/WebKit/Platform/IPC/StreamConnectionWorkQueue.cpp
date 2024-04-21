@@ -32,7 +32,7 @@
 
 namespace IPC {
 
-StreamConnectionWorkQueue::StreamConnectionWorkQueue(const char* name)
+StreamConnectionWorkQueue::StreamConnectionWorkQueue(ASCIILiteral name)
     : m_name(name)
 {
 }

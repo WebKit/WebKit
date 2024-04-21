@@ -1661,7 +1661,7 @@ PipelineLayout& RenderPipeline::pipelineLayout() const
     return m_pipelineLayout;
 }
 
-bool RenderPipeline::colorDepthStencilTargetsMatch(const WGPURenderPassDescriptor& descriptor) const
+bool RenderPipeline::colorDepthStencilTargetsMatch(const WGPURenderPassDescriptor& descriptor, const Vector<WeakPtr<TextureView>>& colorAttachmentViews, const WeakPtr<TextureView>& depthStencilView) const
 {
     if (!m_descriptor.fragment) {
         if (descriptor.colorAttachmentCount)
@@ -1672,13 +1672,13 @@ bool RenderPipeline::colorDepthStencilTargetsMatch(const WGPURenderPassDescripto
             return false;
 
         for (size_t i = 0; i < fragment.targetCount; ++i) {
-            const auto& attachment = descriptor.colorAttachments[i];
-            if (!attachment.view) {
+            auto* attachmentView = colorAttachmentViews[i].get();
+            if (!attachmentView) {
                 if (m_descriptorTargets[i].format == WGPUTextureFormat_Undefined)
                     continue;
                 return false;
             }
-            auto& texture = fromAPI(attachment.view);
+            auto& texture = *attachmentView;
             if (m_descriptorTargets[i].format != texture.format())
                 return false;
             if (texture.sampleCount() != m_descriptor.multisample.count)
@@ -1694,9 +1694,9 @@ bool RenderPipeline::colorDepthStencilTargetsMatch(const WGPURenderPassDescripto
     }
 
     if (auto* depthStencil = descriptor.depthStencilAttachment) {
-        auto& texture = fromAPI(depthStencil->view);
-        if (!depthStencil->view)
+        if (!depthStencilView)
             return false;
+        auto& texture = *depthStencilView.get();
         if (texture.format() != m_descriptor.depthStencil->format)
             return false;
         if (texture.sampleCount() != m_descriptor.multisample.count)

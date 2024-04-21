@@ -27,6 +27,7 @@
 #include "WPECursorTheme.h"
 
 #include <stdio.h>
+#include <wtf/FileSystem.h>
 
 namespace WPE {
 
@@ -44,10 +45,15 @@ static GUniquePtr<char> cursorsPath(const char* basePath, Vector<GUniquePtr<char
         return GUniquePtr<char*>(g_key_file_get_string_list(keyFile.get(), "Icon Theme", "Inherits", nullptr, nullptr));
     };
 
-    GUniquePtr<char> baseCursorsPath(g_build_filename(basePath, "cursors", nullptr));
+    String pathOfIndex = FileSystem::pathByAppendingComponent(String::fromUTF8(basePath), "index.theme"_s);
+    String canonicalPathOfIndex = FileSystem::realPath(pathOfIndex);
+    GUniquePtr<char> canonicalDirectoryOfIndex(g_path_get_dirname(canonicalPathOfIndex.utf8().data()));
+    const char* actualBasePath = g_file_test(canonicalDirectoryOfIndex.get(), G_FILE_TEST_IS_DIR) ? canonicalDirectoryOfIndex.get() : basePath;
+    GUniquePtr<char> baseCursorsPath(g_build_filename(actualBasePath, "cursors", nullptr));
+
     if (auto inherits = inheritedThemes()) {
         for (unsigned i = 0; inherits.get()[i]; ++i) {
-            GUniquePtr<char> parentPath(g_path_get_dirname(basePath));
+            GUniquePtr<char> parentPath(g_path_get_dirname(actualBasePath));
             GUniquePtr<char> inheritedBasePath(g_build_filename(parentPath.get(), inherits.get()[i], nullptr));
             auto path = cursorsPath(inheritedBasePath.get(), inherited);
             auto exists = path && inherited.containsIf([&](const auto& item) {
@@ -96,7 +102,9 @@ std::unique_ptr<CursorTheme> CursorTheme::create(const char* name, uint32_t size
 
             return makeUnique<CursorTheme>(WTFMove(path), size, WTFMove(inheritedThemes));
         }
-    }
+        g_warning("Could not find any cursors (search started from '%s')", basePath.get());
+    } else
+        g_warning("Could not find any base paths for cursors search");
 
     return nullptr;
 }

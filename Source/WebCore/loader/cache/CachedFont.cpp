@@ -34,6 +34,7 @@
 #include "FontCustomPlatformData.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
+#include "Logging.h"
 #include "MemoryCache.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
@@ -84,7 +85,7 @@ void CachedFont::finishLoading(const FragmentedSharedBuffer* data, const Network
         Ref dataContiguous = data->makeContiguous();
         m_fontParsingPolicy = policyForCustomFont(dataContiguous);
         if (m_fontParsingPolicy == FontParsingPolicy::Deny) {
-            // fonts are blocked, we set a flag to signal it in CachedFontLoadRequest.h
+            // SafeFontParser failed to parse font, we set a flag to signal it in CachedFontLoadRequest.h
             m_didRefuseToParseCustomFont = true;
             setErrorAndDeleteData();
             return;
@@ -144,13 +145,20 @@ bool CachedFont::ensureCustomFontData(SharedBuffer* data)
             setErrorAndDeleteData();
             return false;
 
-        case FontParsingPolicy::LoadWithSystemFontParser:
+        case FontParsingPolicy::LoadWithSystemFontParser: {
             m_fontCustomPlatformData = createCustomFontData(*data, calculateItemInCollection(), wrapping);
+            if (!m_fontCustomPlatformData)
+                RELEASE_LOG(Fonts, "[Font Parser] A font could not be parsed by system font parser.");
             break;
-
-        case FontParsingPolicy::LoadWithSafeFontParser:
+        }
+        case FontParsingPolicy::LoadWithSafeFontParser: {
             m_fontCustomPlatformData = createCustomFontDataExperimentalParser(*data, calculateItemInCollection(), wrapping);
+            if (!m_fontCustomPlatformData) {
+                m_didRefuseToParseCustomFont = true;
+                RELEASE_LOG(Fonts, "[Font Parser] A font could not be parsed by safe font parser.");
+            }
             break;
+        }
         }
 
         m_hasCreatedFontDataWrappingResource = m_fontCustomPlatformData && wrapping;

@@ -201,7 +201,6 @@ public:
         , m_vm(vm)
     {
         activateSignalHandlersFor(Signal::AccessFault);
-        finalizeSignalHandlers();
     }
 
     static void initializeSignals()
@@ -257,9 +256,9 @@ public:
         });
     }
 
-    const char* name() const final
+    ASCIILiteral name() const final
     {
-        return "JSC VMTraps Signal Sender Thread";
+        return "JSC VMTraps Signal Sender Thread"_s;
     }
 
     VMTraps& traps() { return m_vm.traps(); }

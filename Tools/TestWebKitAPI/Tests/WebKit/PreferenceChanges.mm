@@ -33,6 +33,7 @@
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/PreferenceObserver.h>
+#import <WebKit/WKWebViewPrivate.h>
 
 #import <wtf/ObjCRuntimeExtras.h>
 
@@ -154,6 +155,46 @@ TEST(WebKit, PreferenceChanges)
     CLEAR_DEFAULTS();
 }
 
+TEST(WebKit, PreferenceChangesWithSuspendedProcess)
+{
+    CLEAR_DEFAULTS();
+
+    CFPreferencesSetAppValue(TEST_KEY(), CFSTR("0"), testDomain);
+
+    auto observer = adoptNS([[WKTestPreferenceObserver alloc] init]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    [configuration setProcessPool:(WKProcessPool *)context.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:NO]);
+    [webView2 synchronouslyLoadTestPageNamed:@"simple"];
+
+    unsigned attempts = 0;
+    while (![webView2 _isSuspended] && ++attempts < 5)
+        TestWebKitAPI::Util::runFor(1_s);
+
+    receivedPreferenceNotification = false;
+
+    CFPreferencesSetAppValue(TEST_KEY(), CFSTR("1"), testDomain);
+
+    EXPECT_EQ(1, CFPreferencesGetAppIntegerValue(TEST_KEY(), testDomain, nullptr));
+
+    TestWebKitAPI::Util::run(&receivedPreferenceNotification);
+
+    auto preferenceValue = [&] {
+        waitForPreferenceSynchronization();
+        NSString *js = [NSString stringWithFormat:@"window.internals.readPreferenceInteger(\"%@\",\"%@\")", (NSString *)testDomain, (NSString *)TEST_KEY()];
+        return [webView stringByEvaluatingJavaScript:js].intValue;
+    };
+
+    EXPECT_EQ(preferenceValue(), 1);
+
+    CLEAR_DEFAULTS();
+}
+
 TEST(WebKit, GlobalPreferenceChangesUsingDefaultsWrite)
 {
     CLEAR_DEFAULTS();
@@ -167,6 +208,59 @@ TEST(WebKit, GlobalPreferenceChangesUsingDefaultsWrite)
     [configuration setProcessPool:(WKProcessPool *)context.get()];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
     [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    receivedPreferenceNotification = false;
+
+    system([NSString stringWithFormat:@"defaults write %@ %@ 1", (__bridge id)globalDomain, (__bridge id)TEST_KEY()].UTF8String);
+
+    EXPECT_EQ(1, CFPreferencesGetAppIntegerValue(TEST_KEY(), globalDomain, nullptr));
+
+    TestWebKitAPI::Util::run(&receivedPreferenceNotification);
+
+    auto preferenceValue = [&] {
+        waitForPreferenceSynchronization();
+        NSString *js = [NSString stringWithFormat:@"window.internals.readPreferenceInteger(\"%@\",\"%@\")", (NSString *)globalDomain, (NSString *)TEST_KEY()];
+        return [webView stringByEvaluatingJavaScript:js].intValue;
+    };
+
+    preferenceValue();
+
+    receivedPreferenceNotification = false;
+
+    system([NSString stringWithFormat:@"defaults write %@ %@ 2", (__bridge id)globalDomain, (__bridge id)TEST_KEY()].UTF8String);
+
+    TestWebKitAPI::Util::run(&receivedPreferenceNotification);
+
+    for (unsigned i = 0; i < preferenceQueryMaxCount && preferenceValue() != 2; i++) {
+        TestWebKitAPI::Util::spinRunLoop();
+        TestWebKitAPI::Util::runFor(preferenceQuerySleepTime);
+    }
+
+    EXPECT_EQ(preferenceValue(), 2);
+
+    CLEAR_DEFAULTS();
+}
+
+
+TEST(WebKit, GlobalPreferenceChangesUsingDefaultsWriteWithSuspendedProcess)
+{
+    CLEAR_DEFAULTS();
+
+    system([NSString stringWithFormat:@"defaults write %@ %@ 0", (__bridge id)globalDomain, (__bridge id)TEST_KEY()].UTF8String);
+
+    auto observer = adoptNS([[WKTestPreferenceObserver alloc] init]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    [configuration setProcessPool:(WKProcessPool *)context.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:NO]);
+    [webView2 synchronouslyLoadTestPageNamed:@"simple"];
+    unsigned attempts = 0;
+    while (![webView2 _isSuspended] && ++attempts < 5)
+        TestWebKitAPI::Util::runFor(1_s);
 
     receivedPreferenceNotification = false;
 

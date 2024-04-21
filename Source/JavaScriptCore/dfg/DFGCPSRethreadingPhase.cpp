@@ -38,7 +38,7 @@ class CPSRethreadingPhase : public Phase {
     static constexpr bool verbose = false;
 public:
     CPSRethreadingPhase(Graph& graph)
-        : Phase(graph, "CPS rethreading")
+        : Phase(graph, "CPS rethreading"_s)
     {
     }
     

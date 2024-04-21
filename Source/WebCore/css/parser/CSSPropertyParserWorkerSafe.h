@@ -37,12 +37,10 @@ class CSSPrimitiveValue;
 class CSSValue;
 class CSSValueList;
 class CSSValuePool;
-class Color;
 class ScriptExecutionContext;
 
 class CSSPropertyParserWorkerSafe {
 public:
-    static Color parseColor(const String&);
     static std::optional<CSSPropertyParserHelpers::FontRaw> parseFont(const String&, CSSParserMode = HTMLStandardMode);
 
     static RefPtr<CSSValueList> parseFontFaceSrc(const String&, const CSSParserContext&);

@@ -68,7 +68,7 @@ Atomic<ICStats*> ICStats::s_instance;
 ICStats::ICStats()
 {
     m_thread = Thread::create(
-        "JSC ICStats",
+        "JSC ICStats"_s,
         [this] () {
             Locker locker { m_lock };
             for (;;) {

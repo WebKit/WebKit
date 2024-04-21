@@ -718,6 +718,10 @@ void Options::notifyOptionsChanged()
 #endif
 #endif
 
+#if ENABLE(C_LOOP) || !CPU(ADDRESS64) || !(CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
+    Options::useIPIntWrappers() = false;
+#endif
+
 #if !CPU(ARM64)
     Options::useRandomizingExecutableIslandAllocation() = false;
 #endif

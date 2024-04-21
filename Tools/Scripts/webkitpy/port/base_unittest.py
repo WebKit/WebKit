@@ -225,12 +225,6 @@ class PortTest(unittest.TestCase):
         port._filesystem = MockFileSystem({'/mock-checkout/LayoutTests/platform/foo/TestExpectations': ''})
         self.assertTrue(port.uses_test_expectations_file())
 
-    def test_reference_files(self):
-        port = self.make_port(with_tests=True)
-        self.assertEqual(port.reference_files('passes/svgreftest.svg'), [('==', port.layout_tests_dir() + '/passes/svgreftest-expected.svg')])
-        self.assertEqual(port.reference_files('passes/xhtreftest.svg'), [('==', port.layout_tests_dir() + '/passes/xhtreftest-expected.html')])
-        self.assertEqual(port.reference_files('passes/phpreftest.php'), [('!=', port.layout_tests_dir() + '/passes/phpreftest-expected-mismatch.svg')])
-
     def test_operating_system(self):
         self.assertEqual('mac', self.make_port().operating_system())
 
@@ -298,23 +292,6 @@ class PortTest(unittest.TestCase):
         port._filesystem.maybe_make_directory(jhbuild_path)
         self.assertTrue(port._filesystem.isdir(jhbuild_path))
         self.assertTrue(port._should_use_jhbuild())
-
-    def test_ref_tests_platform_directory(self):
-        port = self.make_port(port_name='foo')
-        port.default_baseline_search_path = lambda **kwargs: ['/mock-checkout/LayoutTests/platform/foo']
-        port._filesystem.write_text_file('/mock-checkout/LayoutTests/fast/ref-expected.html', 'foo')
-
-        # No platform directory
-        self.assertEqual(
-            [('==', '/mock-checkout/LayoutTests/fast/ref-expected.html')],
-            port.reference_files('fast/ref.html'),
-        )
-
-        port._filesystem.write_text_file('/mock-checkout/LayoutTests/platform/foo/fast/ref-expected-mismatch.html', 'foo-plat')
-        self.assertEqual(
-            [('!=', '/mock-checkout/LayoutTests/platform/foo/fast/ref-expected-mismatch.html')],
-            port.reference_files('fast/ref.html'),
-        )
 
     def test_commits_for_upload(self):
         with mocks.local.Svn(path='/'), mocks.local.Git():

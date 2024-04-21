@@ -77,14 +77,20 @@ Decoder::Decoder(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeal
         return;
     }
 
-    if (UNLIKELY(!decode(m_messageFlags)))
+    auto messageFlags = decode<OptionSet<MessageFlags>>();
+    if (UNLIKELY(!messageFlags))
         return;
+    m_messageFlags = WTFMove(*messageFlags);
 
-    if (UNLIKELY(!decode(m_messageName)))
+    auto messageName = decode<MessageName>();
+    if (UNLIKELY(!messageName))
         return;
+    m_messageName = WTFMove(*messageName);
 
-    if (UNLIKELY(!decode(m_destinationID)))
+    auto destinationID = decode<uint64_t>();
+    if (UNLIKELY(!destinationID))
         return;
+    m_destinationID = WTFMove(*destinationID);
 }
 
 Decoder::Decoder(std::span<const uint8_t> stream, uint64_t destinationID)
@@ -93,8 +99,10 @@ Decoder::Decoder(std::span<const uint8_t> stream, uint64_t destinationID)
     , m_bufferDeallocator { nullptr }
     , m_destinationID { destinationID }
 {
-    if (UNLIKELY(!decode(m_messageName)))
+    auto messageName = decode<MessageName>();
+    if (UNLIKELY(!messageName))
         return;
+    m_messageName = WTFMove(*messageName);
 }
 
 Decoder::~Decoder()
@@ -143,11 +151,11 @@ std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
 
     auto attachments = std::exchange(decoder.m_attachments, { });
 
-    std::span<const uint8_t> wrappedMessage;
-    if (!decoder.decode(wrappedMessage))
+    auto wrappedMessage = decoder.decode<std::span<const uint8_t>>();
+    if (!wrappedMessage)
         return nullptr;
 
-    auto wrappedDecoder = Decoder::create(wrappedMessage, WTFMove(attachments));
+    auto wrappedDecoder = Decoder::create(*wrappedMessage, WTFMove(attachments));
     wrappedDecoder->setIsAllowedWhenWaitingForSyncReplyOverride(true);
     return wrappedDecoder;
 }

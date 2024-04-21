@@ -68,7 +68,7 @@ RefPtr<MediaTrackReader> MediaTrackReader::create(Allocator&& allocator, const M
 
 WorkQueue& MediaTrackReader::storageQueue()
 {
-    static NeverDestroyed<Ref<WorkQueue>> queue = WorkQueue::create("WebKit::MediaFormatReader Queue");
+    static NeverDestroyed<Ref<WorkQueue>> queue = WorkQueue::create("WebKit::MediaFormatReader Queue"_s);
     return queue.get();
 }
 

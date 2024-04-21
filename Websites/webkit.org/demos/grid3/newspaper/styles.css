@@ -1,0 +1,238 @@
+/* --------------------------------------------
+   Overall styles for Newspaper layout
+----------------------------------------------- */
+main {
+	font-family: system-ui, sans-serif;
+	/* font-family: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif; */
+	font-size: 1rem;
+	line-height: 1.4;
+}
+h3 {
+	font-weight: 600;
+	font-size: 1.6rem;
+	line-height: 1.2;
+	margin: 0;
+	text-wrap: balance;
+	a { color: light-dark(black, #ccc); }
+	a:hover { color: #2f8dda; text-decoration: none; }
+}
+h3 a:focus-visible {
+	color: light-dark(color(display-p3 0.403 0.535 0.84), color(display-p3 0.344 0.608 0.86));
+}
+p {
+	margin-block: 0.8lh;
+	color: light-dark(#666, #888);
+}
+article {
+	padding:  1lh 0.5lh;
+	border-block-start: 1px solid light-dark(#ccc, #555);
+	margin-trim: block;
+}
+main footer {
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	color: rgb(163, 163, 163);
+	div { /* don't display category data */
+		display: none;
+	}
+}
+figure {
+	margin: 0;
+	border-radius: 1rem;
+	position: relative;
+	counter-increment: item-counter;
+}
+
+/* --------------------------------------------
+   Basic layout for Newspaper
+----------------------------------------------- */
+
+main {
+	padding-inline: calc(4vw + 1rem);
+}
+.interface {
+	padding-inline: calc(4vw + 1rem);
+}
+
+/* --------------------------------------------
+   Variations on the layout
+----------------------------------------------- */
+
+/* ---- Multicolumn layout ---- */
+body:has(option[value="one"]:checked) main {
+	display: block;
+	columns: 30ch;
+	column-gap: 4ch;
+	figure {
+		margin-block-end: 1rem;
+	}
+}
+
+/* ---- CSS Grid level 1 (without Masonry) ---- */
+body:has(option[value="two"]:checked) main { /* before applying masonry */
+	display: grid;
+	column-gap: 4ch;
+	grid-template-columns: repeat(auto-fill, minmax(30ch, 1fr));
+	grid-template-rows: 1fr;
+	article:nth-child(1) {
+		grid-column: 1 / -2;
+		h3 { 
+			font-size: 3.2rem; 
+			line-height: 1.2;
+		}
+		p { 
+			font-size: 1.6rem; 
+			font-weight: 300;
+			line-height: 1.4;
+		}
+	}
+	h3 { 
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2; overflow: hidden;
+	}
+	p:nth-of-type(1) { 
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3; overflow: hidden;
+	}
+	p:nth-of-type(2),
+	p:nth-of-type(3) {
+		display: none;
+	}
+}
+
+/* ---- Classic Masonry layout ---- */
+body:has(option[value="three"]:checked) main {
+	display: grid;
+	column-gap: 2lh;
+	grid-template-columns: repeat(auto-fill, minmax(30ch, 1fr));
+	grid-template-rows: masonry;
+}
+
+/* ---- Various sizes of content ---- */
+body:has(option[value="four"]:checked) main {
+	display: grid;
+	column-gap: 2lh;
+	grid-template-columns: repeat(auto-fill, minmax(20ch, 1fr));
+	grid-template-rows: masonry; 
+	article { 
+		grid-column: span 1; 
+		p {
+			display: none;
+		}
+		p:nth-of-type(1) { 
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 8; 
+			overflow: hidden;
+		}
+		h3 {
+			font-size: 1.4rem;
+		}
+	}
+	@media (500px < width < 1002px) {
+		article:nth-child(1) { 
+			grid-column: span 2; 
+			h3 { 
+				font-size: 2.1rem; 
+				line-height: 1.2;
+			} 
+			p { 
+				display: block;
+			}
+		}	
+	}
+	@media (1001px < width < 1253px) {
+		article:nth-child(1) { 
+			grid-column: span 3;
+			h3 { 
+				font-size: 2.1rem; 
+				line-height: 1.2;
+			}  
+			p { 
+				display: block;
+			}
+		}	
+	}
+	@media (1252px < width) {
+		article {
+			h3 {
+				font-size: 1rem; 
+				font-weight: 600;
+			}
+			p {
+				font-size: 0.75rem;
+			}
+		}
+		article:nth-child(1) { 
+			grid-column: span 4; 			
+			h3 { 
+				font-size: 3.2rem; 
+				line-height: 1.2;
+			}
+			p { 
+				font-size: 1.6rem; 
+				display: block;
+				font-weight: 300;
+				line-height: 1.4;
+			}
+		}
+		article:nth-child(2),
+		article:nth-child(3),
+		article:nth-child(4),
+		article:nth-child(5),
+		article:nth-child(6),
+		article:nth-child(7),
+		article:nth-child(8) { 
+			grid-column: span 2; 
+			h3 {
+				font-weight: 600;
+				font-size: 1.6rem;
+				line-height: 1.2;
+			}
+			p { 
+				font-size: 1rem;
+				display: block;
+			}
+		}
+	}
+}
+
+/* --------------------------------------------
+   Counters marking items (when enabled)
+----------------------------------------------- */
+
+body {
+	counter-reset: item-counter 0;
+}
+article {
+	position: relative;
+	counter-increment: item-counter;
+}
+body:has(input[type="checkbox"]:checked) {
+	article::before,
+	article::after {
+		position: absolute;
+		top: 0;
+		left: 0;
+		padding: 0 0.5em;
+		width: calc(100% - 1.5ch);
+		height: calc(100% - 4px);
+		align-content: center;
+		text-align: center;
+	}
+	article::after {
+		content: counter(item-counter); 
+		background: light-dark(rgba(42, 46, 59, 0.3), rgba(159, 161, 166, 0.3));
+		color: white;
+		font-size: 4em;
+		font-weight: bold;
+		opacity: 0.9;
+	}
+	article {
+		h3, p {
+			opacity: 0.3;
+		}	
+	}
+}

@@ -127,7 +127,7 @@ Vector<BasicBlock*> blocksInOptimizedOrder(Code& code)
 
 void optimizeBlockOrder(Code& code)
 {
-    PhaseScope phaseScope(code, "optimizeBlockOrder");
+    PhaseScope phaseScope(code, "optimizeBlockOrder"_s);
 
     Vector<BasicBlock*> blocksInOrder = blocksInOptimizedOrder(code);
     

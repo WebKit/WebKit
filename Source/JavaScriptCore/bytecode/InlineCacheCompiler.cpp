@@ -4780,11 +4780,11 @@ DEFINE_VISIT_AGGREGATE(PolymorphicAccess);
 
 void PolymorphicAccess::dump(PrintStream& out) const
 {
-    out.print(RawPointer(this), ":[");
+    out.print(RawPointer(this), ":["_s);
     CommaPrinter comma;
     for (auto& entry : m_list)
         out.print(comma, *entry);
-    out.print("]");
+    out.print("]"_s);
 }
 
 void InlineCacheHandler::aboutToDie()

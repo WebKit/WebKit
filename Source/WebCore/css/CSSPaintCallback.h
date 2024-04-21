@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "ActiveDOMCallback.h"
 #include "CSSPaintSize.h"
 #include "CallbackResult.h"
@@ -53,4 +51,3 @@ public:
 };
 
 } // namespace WebCore
-#endif

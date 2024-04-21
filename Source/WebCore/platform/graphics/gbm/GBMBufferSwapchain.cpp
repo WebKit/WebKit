@@ -30,7 +30,7 @@
 #if USE(GBM)
 
 #include "DMABufColorSpace.h"
-#include "GBMDevice.h"
+#include "DRMDeviceManager.h"
 #include <gbm.h>
 #include <wtf/SafeStrerror.h>
 
@@ -79,7 +79,7 @@ static inline bool isBufferFormatSupported(const DMABufFormat& format)
 
 RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDescription& description)
 {
-    auto* device = GBMDevice::singleton().device(GBMDevice::Type::Render);
+    auto* device = DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render);
     if (!device) {
         WTFLogAlways("Failed to get GBM buffer from swap chain: no GBM device found");
         return nullptr;

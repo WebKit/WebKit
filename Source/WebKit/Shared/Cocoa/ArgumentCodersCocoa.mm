@@ -574,11 +574,11 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
     auto& allowedClasses = decoder.allowedClasses();
     RELEASE_ASSERT(allowedClasses.size());
 
-    RetainPtr<CFDataRef> data;
-    if (!decoder.decode(data))
+    auto data = decoder.decode<RetainPtr<CFDataRef>>();
+    if (!data)
         return std::nullopt;
 
-    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:bridge_cast(data.get()) error:nullptr]);
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:bridge_cast(data->get()) error:nullptr]);
     unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
 
     auto delegate = adoptNS([[WKSecureCodingArchivingDelegate alloc] init]);

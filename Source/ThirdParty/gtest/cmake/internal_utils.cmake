@@ -12,17 +12,14 @@
 #   Test and Google Mock's option() definitions, and thus must be
 #   called *after* the options have been defined.
 
-if (POLICY CMP0054)
-  cmake_policy(SET CMP0054 NEW)
-endif (POLICY CMP0054)
-
 # Tweaks CMake's default compiler/linker settings to suit Google Test's needs.
 #
 # This must be a macro(), as inside a function string() can only
 # update variables in the function scope.
 macro(fix_default_compiler_settings_)
-  if (MSVC)
-    # For MSVC, CMake sets certain flags to defaults we want to override.
+  if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC|Clang")
+    # For MSVC and Clang, CMake sets certain flags to defaults we want to
+    # override.
     # This replacement code is taken from sample in the CMake Wiki at
     # https://gitlab.kitware.com/cmake/community/wikis/FAQ#dynamic-replace.
     foreach (flag_var
@@ -39,6 +36,10 @@ macro(fix_default_compiler_settings_)
         # on CRT DLLs being available. CMake always defaults to using shared
         # CRT libraries, so we override that default here.
         string(REPLACE "/MD" "-MT" ${flag_var} "${${flag_var}}")
+
+        # When using Ninja with Clang, static builds pass -D_DLL on Windows.
+        # This is incorrect and should not happen, so we fix that here.
+        string(REPLACE "-D_DLL" "" ${flag_var} "${${flag_var}}")
       endif()
 
       # We prefer more strict warning checking for building Google Test.
@@ -82,15 +83,27 @@ macro(config_compiler_and_linker)
     # http://stackoverflow.com/questions/3232669 explains the issue.
     set(cxx_base_flags "${cxx_base_flags} -wd4702")
     # Ensure MSVC treats source files as UTF-8 encoded.
-    set(cxx_base_flags "${cxx_base_flags} -utf-8")
-  elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    set(cxx_base_flags "-Wall -Wshadow -Werror -Wconversion")
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+      set(cxx_base_flags "${cxx_base_flags} -utf-8")
+    endif()
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+      set(cxx_base_flags "${cxx_base_flags} /fp:precise -Wno-inconsistent-missing-override -Wno-microsoft-exception-spec -Wno-unused-function -Wno-unused-but-set-variable")
+    endif()
+  elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
+      CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+    set(cxx_base_flags "-Wall -Wshadow -Wconversion -Wundef")
     set(cxx_exception_flags "-fexceptions")
     set(cxx_no_exception_flags "-fno-exceptions")
-    set(cxx_strict_flags "-W -Wpointer-arith -Wreturn-type -Wcast-qual -Wwrite-strings -Wswitch -Wunused-parameter -Wcast-align -Wchar-subscripts -Winline -Wredundant-decls")
+    set(cxx_strict_flags "-W -Wpointer-arith -Wreturn-type -Wcast-qual -Wwrite-strings -Wswitch -Wunused-parameter -Wcast-align -Winline -Wredundant-decls")
     set(cxx_no_rtti_flags "-fno-rtti")
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+      set(cxx_strict_flags "${cxx_strict_flags} -Wchar-subscripts")
+    endif()
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+      set(cxx_base_flags "${cxx_base_flags} -Wno-implicit-float-size-conversion -ffp-model=precise")
+    endif()
   elseif (CMAKE_COMPILER_IS_GNUCXX)
-    set(cxx_base_flags "-Wall -Wshadow -Werror")
+    set(cxx_base_flags "-Wall -Wshadow -Wundef")
     if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 7.0.0)
       set(cxx_base_flags "${cxx_base_flags} -Wno-error=dangling-else")
     endif()
@@ -150,20 +163,18 @@ function(cxx_library_with_type name type cxx_flags)
   # type can be either STATIC or SHARED to denote a static or shared library.
   # ARGN refers to additional arguments after 'cxx_flags'.
   add_library(${name} ${type} ${ARGN})
+  add_library(${cmake_package_name}::${name} ALIAS ${name})
   set_target_properties(${name}
     PROPERTIES
     COMPILE_FLAGS "${cxx_flags}")
-  # Generate debug library name with a postfix.
-  set_target_properties(${name}
-    PROPERTIES
-    DEBUG_POSTFIX "d")
   # Set the output directory for build artifacts
   set_target_properties(${name}
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+    PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    COMPILE_PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
   # make PDBs match library name
   get_target_property(pdb_debug_postfix ${name} DEBUG_POSTFIX)
   set_target_properties(${name}
@@ -177,23 +188,14 @@ function(cxx_library_with_type name type cxx_flags)
     set_target_properties(${name}
       PROPERTIES
       COMPILE_DEFINITIONS "GTEST_CREATE_SHARED_LIBRARY=1")
-    if (NOT "${CMAKE_VERSION}" VERSION_LESS "2.8.11")
-      target_compile_definitions(${name} INTERFACE
-        $<INSTALL_INTERFACE:GTEST_LINKED_AS_SHARED_LIBRARY=1>)
-    endif()
+    target_compile_definitions(${name} INTERFACE
+      $<INSTALL_INTERFACE:GTEST_LINKED_AS_SHARED_LIBRARY=1>)
   endif()
   if (DEFINED GTEST_HAS_PTHREAD)
-    if ("${CMAKE_VERSION}" VERSION_LESS "3.1.0")
-      set(threads_spec ${CMAKE_THREAD_LIBS_INIT})
-    else()
-      set(threads_spec Threads::Threads)
-    endif()
-    target_link_libraries(${name} PUBLIC ${threads_spec})
+    target_link_libraries(${name} PUBLIC Threads::Threads)
   endif()
 
-  if (NOT "${CMAKE_VERSION}" VERSION_LESS "3.8")
-    target_compile_features(${name} PUBLIC cxx_std_11)
-  endif()
+  target_compile_features(${name} PUBLIC cxx_std_14)
 endfunction()
 
 ########################################################################
@@ -245,14 +247,7 @@ function(cxx_executable name dir libs)
     ${name} "${cxx_default}" "${libs}" "${dir}/${name}.cc" ${ARGN})
 endfunction()
 
-# Sets PYTHONINTERP_FOUND and PYTHON_EXECUTABLE.
-if ("${CMAKE_VERSION}" VERSION_LESS "3.12.0")
-  find_package(PythonInterp)
-else()
-  find_package(Python COMPONENTS Interpreter)
-  set(PYTHONINTERP_FOUND ${Python_Interpreter_FOUND})
-  set(PYTHON_EXECUTABLE ${Python_EXECUTABLE})
-endif()
+find_package(Python3)
 
 # cxx_test_with_flags(name cxx_flags libs srcs...)
 #
@@ -278,32 +273,22 @@ endfunction()
 # creates a Python test with the given name whose main module is in
 # test/name.py.  It does nothing if Python is not installed.
 function(py_test name)
-  if (PYTHONINTERP_FOUND)
-    if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 3.1)
-      if (CMAKE_CONFIGURATION_TYPES)
-        # Multi-configuration build generators as for Visual Studio save
-        # output in a subdirectory of CMAKE_CURRENT_BINARY_DIR (Debug,
-        # Release etc.), so we have to provide it here.
-        add_test(NAME ${name}
-          COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/${name}.py
-              --build_dir=${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG> ${ARGN})
-      else (CMAKE_CONFIGURATION_TYPES)
-        # Single-configuration build generators like Makefile generators
-        # don't have subdirs below CMAKE_CURRENT_BINARY_DIR.
-        add_test(NAME ${name}
-          COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/${name}.py
-            --build_dir=${CMAKE_CURRENT_BINARY_DIR} ${ARGN})
-      endif (CMAKE_CONFIGURATION_TYPES)
-    else()
-      # ${CMAKE_CURRENT_BINARY_DIR} is known at configuration time, so we can
-      # directly bind it from cmake. ${CTEST_CONFIGURATION_TYPE} is known
-      # only at ctest runtime (by calling ctest -c <Configuration>), so
-      # we have to escape $ to delay variable substitution here.
-      add_test(NAME ${name}
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/${name}.py
-          --build_dir=${CMAKE_CURRENT_BINARY_DIR}/\${CTEST_CONFIGURATION_TYPE} ${ARGN})
-    endif()
-  endif(PYTHONINTERP_FOUND)
+  if (NOT Python3_Interpreter_FOUND)
+    return()
+  endif()
+
+  get_cmake_property(is_multi "GENERATOR_IS_MULTI_CONFIG")
+  set(build_dir "${CMAKE_CURRENT_BINARY_DIR}")
+  if (is_multi)
+    set(build_dir "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>")
+  endif()
+
+  add_test(NAME ${name}
+      COMMAND Python3::Interpreter ${CMAKE_CURRENT_SOURCE_DIR}/test/${name}.py
+          --build_dir=${build_dir} ${ARGN})
+
+  # Make the Python import path consistent between Bazel and CMake.
+  set_tests_properties(${name} PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_SOURCE_DIR})
 endfunction()
 
 # install_project(targets...)
@@ -312,10 +297,12 @@ endfunction()
 function(install_project)
   if(INSTALL_GTEST)
     install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/"
+      COMPONENT "${PROJECT_NAME}"
       DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
     # Install the project targets.
     install(TARGETS ${ARGN}
       EXPORT ${targets_export_name}
+      COMPONENT "${PROJECT_NAME}"
       RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
       ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
@@ -327,6 +314,7 @@ function(install_project)
         get_target_property(t_pdb_output_directory ${t} PDB_OUTPUT_DIRECTORY)
         install(FILES
           "${t_pdb_output_directory}/\${CMAKE_INSTALL_CONFIG_NAME}/$<$<CONFIG:Debug>:${t_pdb_name_debug}>$<$<NOT:$<CONFIG:Debug>>:${t_pdb_name}>.pdb"
+          COMPONENT "${PROJECT_NAME}"
           DESTINATION ${CMAKE_INSTALL_LIBDIR}
           OPTIONAL)
       endforeach()
@@ -337,6 +325,7 @@ function(install_project)
       configure_file("${PROJECT_SOURCE_DIR}/cmake/${t}.pc.in"
         "${configured_pc}" @ONLY)
       install(FILES "${configured_pc}"
+        COMPONENT "${PROJECT_NAME}"
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
     endforeach()
   endif()

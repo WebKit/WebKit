@@ -37,7 +37,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 void lowerEntrySwitch(Code& code)
 {
-    PhaseScope phaseScope(code, "lowerEntrySwitch");
+    PhaseScope phaseScope(code, "lowerEntrySwitch"_s);
     
     // Figure out the set of blocks that should be duplicated.
     BlockWorklist worklist;

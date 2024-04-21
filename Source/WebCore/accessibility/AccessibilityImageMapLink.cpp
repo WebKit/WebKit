@@ -119,7 +119,7 @@ void AccessibilityImageMapLink::accessibilityText(Vector<AccessibilityText>& tex
 
 String AccessibilityImageMapLink::description() const
 {
-    const auto& ariaLabel = getAttribute(aria_labelAttr);
+    auto ariaLabel = getAttributeTrimmed(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
 

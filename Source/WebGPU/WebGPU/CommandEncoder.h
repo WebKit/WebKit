@@ -102,6 +102,7 @@ public:
     void endEncoding(id<MTLCommandEncoder>);
     void setLastError(NSString*);
     void waitForCommandBufferCompletion();
+    bool encoderIsCurrent(id<MTLCommandEncoder>) const;
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);

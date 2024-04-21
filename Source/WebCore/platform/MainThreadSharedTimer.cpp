@@ -51,7 +51,7 @@ MainThreadSharedTimer::MainThreadSharedTimer()
 {
 #if USE(GLIB)
     m_timer.setPriority(RunLoopSourcePriority::MainThreadSharedTimer);
-    m_timer.setName("[WebKit] MainThreadSharedTimer");
+    m_timer.setName("[WebKit] MainThreadSharedTimer"_s);
 #endif
 }
 

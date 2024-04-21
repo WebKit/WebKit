@@ -126,8 +126,17 @@ CommandEncoder::~CommandEncoder()
 
 id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
 {
-    if (m_blitCommandEncoder && m_pendingTimestampWrites.isEmpty())
-        return m_blitCommandEncoder;
+    if (m_commandBuffer.status >= MTLCommandBufferStatusEnqueued) {
+        m_blitCommandEncoder = nil;
+        return nil;
+    }
+
+    if (m_blitCommandEncoder && m_pendingTimestampWrites.isEmpty()) {
+        if (encoderIsCurrent(m_blitCommandEncoder))
+            return m_blitCommandEncoder;
+
+        finalizeBlitCommandEncoder();
+    }
 
     auto pendingTimestampWrites = std::exchange(m_pendingTimestampWrites, { });
     if (m_blitCommandEncoder && !pendingTimestampWrites.isEmpty())
@@ -148,6 +157,9 @@ id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
 
 void CommandEncoder::finalizeBlitCommandEncoder()
 {
+    if (!encoderIsCurrent(m_blitCommandEncoder))
+        return;
+
     endEncoding(m_blitCommandEncoder);
     m_blitCommandEncoder = nil;
     setExistingEncoder(nil);
@@ -205,6 +217,9 @@ Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDe
 
     if (NSString* error = errorValidatingComputePassDescriptor(descriptor))
         return ComputePassEncoder::createInvalid(*this, m_device, error);
+
+    if (m_commandBuffer.status >= MTLCommandBufferStatusEnqueued)
+        return ComputePassEncoder::createInvalid(*this, m_device, @"command buffer has already been committed");
 
     finalizeBlitCommandEncoder();
 
@@ -446,6 +461,9 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     if (NSString* error = errorValidatingRenderPassDescriptor(descriptor))
         return RenderPassEncoder::createInvalid(*this, m_device, error);
 
+    if (m_commandBuffer.status >= MTLCommandBufferStatusEnqueued)
+        return RenderPassEncoder::createInvalid(*this, m_device, @"command buffer has already been committed");
+
     MTLRenderPassDescriptor* mtlDescriptor = [MTLRenderPassDescriptor new];
 
     if (descriptor.colorAttachmentCount > 8)
@@ -573,8 +591,9 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         if (!isValidToUseWith(textureView, *this))
             return RenderPassEncoder::createInvalid(*this, m_device, @"depth stencil texture device mismatch");
         id<MTLTexture> metalDepthStencilTexture = textureView.texture();
-        hasStencilComponent = Texture::stencilOnlyAspectMetalFormat(textureView.descriptor().format).has_value();
-        bool hasDepthComponent = !Device::isStencilOnlyFormat(metalDepthStencilTexture.pixelFormat);
+        auto textureFormat = textureView.format();
+        hasStencilComponent = Texture::containsStencilAspect(textureFormat);
+        bool hasDepthComponent = Texture::containsDepthAspect(textureFormat);
         bool isDestroyed = textureView.isDestroyed();
         if (!isDestroyed) {
             if (textureWidth && (textureView.width() != textureWidth || textureView.height() != textureHeight || sampleCount != textureView.sampleCount()))
@@ -642,7 +661,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
         textureView.setCommandEncoder(*this);
 
-        if (mtlAttachment.loadAction == MTLLoadActionLoad && mtlAttachment.storeAction == MTLStoreActionDontCare && !textureView.previouslyCleared()) {
+        if (hasStencilComponent && mtlAttachment.loadAction == MTLLoadActionLoad && mtlAttachment.storeAction == MTLStoreActionDontCare && !textureView.previouslyCleared()) {
             depthStencilAttachmentToClear = mtlAttachment.texture;
             stencilAttachmentToClear = !!mtlAttachment.texture;
         }
@@ -1167,6 +1186,12 @@ void CommandEncoder::waitForCommandBufferCompletion()
         m_cachedCommandBuffer.get()->waitForCompletion();
 }
 
+bool CommandEncoder::encoderIsCurrent(id<MTLCommandEncoder> commandEncoder) const
+{
+    id<MTLCommandEncoder> existingEncoder = m_device->getQueue().encoderForBuffer(m_commandBuffer);
+    return existingEncoder == commandEncoder;
+}
+
 void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel, NSUInteger slice, id<MTLDevice> device, id<MTLBlitCommandEncoder> blitCommandEncoder)
 {
     if (!blitCommandEncoder || texture.previouslyCleared(mipLevel, slice))
@@ -1344,6 +1369,7 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         break;
     }
 
+    destinationBytesPerRow = roundUpToMultipleOfNonPowerOfTwo(blockSize, destinationBytesPerRow);
     if (textureDimension == WGPUTextureDimension_3D && copySize.depthOrArrayLayers <= 1 && copySize.height <= 1)
         destinationBytesPerRow = 0;
 
@@ -1588,17 +1614,19 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
 
     auto destinationTextureDimension = destinationTexture.dimension();
     uint32_t sliceCount = destinationTextureDimension == WGPUTextureDimension_3D ? 1 : copySize.depthOrArrayLayers;
+    auto destinationLogicalSize = destinationTexture.logicalMiplevelSpecificTextureExtent(destination.mipLevel);
     for (uint32_t layer = 0; layer < sliceCount; ++layer) {
         NSUInteger sourceSlice = sourceTexture.dimension() == WGPUTextureDimension_3D ? 0 : (source.origin.z + layer);
         clearTextureIfNeeded(source, sourceSlice);
 
         NSUInteger destinationSlice = destinationTexture.dimension() == WGPUTextureDimension_3D ? 0 : (destination.origin.z + layer);
-        auto logicalSize = destinationTexture.logicalMiplevelSpecificTextureExtent(destination.mipLevel);
-        if (Queue::writeWillCompletelyClear(destinationTextureDimension, copySize.width, logicalSize.width, copySize.height, logicalSize.height, copySize.depthOrArrayLayers, logicalSize.depthOrArrayLayers))
+        if (Queue::writeWillCompletelyClear(destinationTextureDimension, copySize.width, destinationLogicalSize.width, copySize.height, destinationLogicalSize.height, copySize.depthOrArrayLayers, destinationLogicalSize.depthOrArrayLayers))
             destinationTexture.setPreviouslyCleared(destination.mipLevel, destinationSlice);
         else
             clearTextureIfNeeded(destination, destinationSlice);
     }
+
+    id<MTLTexture> mtlDestinationTexture = destinationTexture.texture();
 
     // FIXME(PERFORMANCE): Is it actually faster to use the -[MTLBlitCommandEncoder copyFromTexture:...toTexture:...levelCount:]
     // variant, where possible, rather than calling the other variant in a loop?
@@ -1622,7 +1650,7 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
                 sourceLevel:source.mipLevel
                 sourceOrigin:sourceOrigin
                 sourceSize:sourceSize
-                toTexture:destinationTexture.texture()
+                toTexture:mtlDestinationTexture
                 destinationSlice:destinationSlice
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin];
@@ -1648,7 +1676,7 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
                 sourceLevel:source.mipLevel
                 sourceOrigin:sourceOrigin
                 sourceSize:sourceSize
-                toTexture:destinationTexture.texture()
+                toTexture:mtlDestinationTexture
                 destinationSlice:destinationSlice
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin];
@@ -1660,6 +1688,11 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
         if (!sourceSize.width || !sourceSize.height || !sourceSize.depth)
             return;
 
+        if (destination.origin.z + sourceSize.depth > std::min<uint32_t>(destinationLogicalSize.depthOrArrayLayers, mtlDestinationTexture.depth)) {
+            makeInvalid(@"GPUCommandEncoder.copyTextureToTexture: destination.origin.z + sourceSize.depth > destinationLogicalSize.depthOrArrayLayers");
+            return;
+        }
+
         auto sourceOrigin = MTLOriginMake(source.origin.x, source.origin.y, source.origin.z);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, destination.origin.z);
 
@@ -1669,7 +1702,7 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
             sourceLevel:source.mipLevel
             sourceOrigin:sourceOrigin
             sourceSize:sourceSize
-            toTexture:destinationTexture.texture()
+            toTexture:mtlDestinationTexture
             destinationSlice:0
             destinationLevel:destination.mipLevel
             destinationOrigin:destinationOrigin];
@@ -1746,7 +1779,7 @@ NSString* CommandEncoder::validateFinishError() const
         return @"GPUCommandEncoder.finish: encoder is not valid";
 
     if (m_state != EncoderState::Open)
-        return [NSString stringWithFormat:@"GPUCommandEncoder.finish: encoder state is '%@', expeted 'Open'", encoderStateName()];
+        return [NSString stringWithFormat:@"GPUCommandEncoder.finish: encoder state is '%@', expected 'Open'", encoderStateName()];
 
     if (m_debugGroupStackSize)
         return [NSString stringWithFormat:@"GPUCommandEncoder.finish: encoder stack size '%llu'", m_debugGroupStackSize];
@@ -1890,7 +1923,7 @@ void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQue
     querySet.setCommandEncoder(*this);
     destination.setCommandEncoder(*this);
 
-    if (querySet.isDestroyed() || destination.isDestroyed())
+    if (querySet.isDestroyed() || destination.isDestroyed() || !queryCount)
         return;
 
     ensureBlitCommandEncoder();

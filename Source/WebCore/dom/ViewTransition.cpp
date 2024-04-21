@@ -271,17 +271,29 @@ static ExceptionOr<void> checkDuplicateViewTransitionName(const AtomString& name
     return { };
 }
 
-static RefPtr<ImageBuffer> snapshotNodeVisualOverflowClippedToViewport(LocalFrame& frame, Node& node, LayoutRect& oldOverflowRect)
+static LayoutRect captureOverflowRect(Element& element)
 {
-    if (!node.renderer())
+    CheckedPtr renderer = dynamicDowncast<RenderLayerModelObject>(element.renderer());
+    if (!renderer || !renderer->hasLayer())
+        return { };
+
+    if (renderer->isDocumentElementRenderer()) {
+        auto& frameView = renderer->view().frameView();
+        return { { }, LayoutSize { frameView.frameRect().width(), frameView.frameRect().height() } };
+    }
+
+    return renderer->layer()->calculateLayerBounds(renderer->layer(), LayoutSize(), { RenderLayer::IncludeFilterOutsets, RenderLayer::ExcludeHiddenDescendants, RenderLayer::IncludeCompositedDescendants, RenderLayer::PreserveAncestorFlags });
+}
+
+static RefPtr<ImageBuffer> snapshotElementVisualOverflowClippedToViewport(LocalFrame& frame, Element& element, const LayoutRect& snapshotRect)
+{
+    if (!element.renderer())
         return nullptr;
 
-    ASSERT(node.renderer()->hasLayer());
-    CheckedPtr layerRenderer = downcast<RenderLayerModelObject>(node.renderer());
+    ASSERT(element.renderer()->hasLayer());
+    CheckedPtr layerRenderer = downcast<RenderLayerModelObject>(element.renderer());
 
-    oldOverflowRect = layerRenderer->layer()->localBoundingBox(RenderLayer::IncludeRootBackgroundPaintingArea);
-
-    IntRect paintRect = snappedIntRect(oldOverflowRect);
+    IntRect paintRect = snappedIntRect(snapshotRect);
 
     ASSERT(frame.page());
     float scaleFactor = frame.page()->deviceScaleFactor();
@@ -345,8 +357,12 @@ ExceptionOr<void> ViewTransition::captureOldState()
     ListHashSet<AtomString> usedTransitionNames;
     Vector<Ref<Element>> captureElements;
     Ref document = *m_document;
+    // Ensure style & render tree are up-to-date.
+    document->updateStyleIfNeeded();
+
     if (CheckedPtr view = document->renderView()) {
         m_initialLargeViewportSize = view->sizeForCSSLargeViewportUnits();
+
         auto result = forEachElementInPaintOrder([&](Element& element) -> ExceptionOr<void> {
             if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
@@ -366,12 +382,10 @@ ExceptionOr<void> ViewTransition::captureOldState()
     for (auto& element : captureElements) {
         CapturedElement capture;
 
-        CheckedPtr renderBox = dynamicDowncast<RenderBoxModelObject>(element->renderer());
-        if (renderBox)
-            capture.oldSize = renderBox->borderBoundingBox().size();
         capture.oldProperties = copyElementBaseProperties(element, capture.oldSize);
+        capture.oldOverflowRect = captureOverflowRect(element);
         if (m_document->frame())
-            capture.oldImage = snapshotNodeVisualOverflowClippedToViewport(*m_document->frame(), element.get(), capture.oldOverflowRect);
+            capture.oldImage = snapshotElementVisualOverflowClippedToViewport(*m_document->frame(), element, capture.oldOverflowRect);
 
         auto transitionName = element->computedStyle()->viewTransitionName();
         m_namedElements.add(transitionName->name, capture);
@@ -499,6 +513,9 @@ void ViewTransition::activateViewTransition()
     if (m_phase == ViewTransitionPhase::Done)
         return;
 
+    // Ensure style & render tree are up-to-date.
+    protectedDocument()->updateStyleIfNeeded();
+
     // FIXME: Set rendering suppression for view transitions to false.
     if (!protectedDocument()->renderView() || protectedDocument()->renderView()->sizeForCSSLargeViewportUnits() != m_initialLargeViewportSize) {
         skipViewTransition(Exception { ExceptionCode::InvalidStateError, "Skipping view transition because viewport size changed."_s });
@@ -609,7 +626,7 @@ void ViewTransition::clearViewTransition()
         documentElement->invalidateStyleInternal();
 }
 
-Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& element, const LayoutSize& size)
+Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& element, LayoutSize& size)
 {
     ComputedStyleExtractor styleExtractor(&element);
 
@@ -622,8 +639,6 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& e
 #if ENABLE(DARK_MODE_CSS)
         CSSPropertyColorScheme,
 #endif
-        CSSPropertyWidth,
-        CSSPropertyHeight,
     };
 
     Ref<MutableStyleProperties> props = styleExtractor.copyProperties(transitionProperties);
@@ -631,12 +646,13 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& e
 
     if (renderer && renderer->isDocumentElementRenderer()) {
         auto& frameView = renderer->view().frameView();
-        props->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(frameView.contentsWidth(), CSSUnitType::CSS_PX));
-        props->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(frameView.contentsHeight(), CSSUnitType::CSS_PX));
-    } else {
-        props->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(size.width(), CSSUnitType::CSS_PX));
-        props->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(size.height(), CSSUnitType::CSS_PX));
-    }
+        size.setWidth(frameView.frameRect().width());
+        size.setHeight(frameView.frameRect().height());
+    } else if (CheckedPtr renderBox = dynamicDowncast<RenderBoxModelObject>(element.renderer()))
+        size = renderBox->borderBoundingBox().size();
+
+    props->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(size.width(), CSSUnitType::CSS_PX));
+    props->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(size.height(), CSSUnitType::CSS_PX));
 
     TransformationMatrix transform;
 
@@ -685,11 +701,9 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
             if (!renderBox)
                 continue;
 
-            LayoutSize boxSize = renderBox->borderBoundingBox().size();
-            LayoutRect overflowRect;
+            LayoutSize boxSize;
             properties = copyElementBaseProperties(*newElement, boxSize);
-            if (renderBox->hasLayer())
-                overflowRect = renderBox->layer()->localBoundingBox(RenderLayer::IncludeRootBackgroundPaintingArea);
+            LayoutRect overflowRect = captureOverflowRect(*newElement);
 
             if (RefPtr documentElement = m_document->documentElement()) {
                 Styleable styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name });
@@ -697,7 +711,6 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
                 if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer.get()))
                     viewTransitionCapture->setSize(boxSize, overflowRect);
             }
-
         } else
             properties = capturedElement->oldProperties;
 

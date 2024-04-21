@@ -68,6 +68,8 @@ RenderSVGModelObject::RenderSVGModelObject(Type type, SVGElement& element, Rende
     ASSERT(isRenderSVGModelObject());
 }
 
+RenderSVGModelObject::~RenderSVGModelObject() = default;
+
 void RenderSVGModelObject::updateFromStyle()
 {
     RenderLayerModelObject::updateFromStyle();

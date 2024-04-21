@@ -109,6 +109,16 @@ inline const AtomString& Element::attributeWithDefaultARIA(const QualifiedName& 
     return defaultARIA ? defaultARIA->valueForAttribute(*this, name) : nullAtom();
 }
 
+inline String Element::attributeTrimmedWithDefaultARIA(const QualifiedName& name) const
+{
+    const auto& originalValue = attributeWithDefaultARIA(name);
+    if (originalValue.isEmpty())
+        return { };
+
+    auto value = originalValue.string();
+    return value.trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
+}
+
 inline URL Element::getURLAttributeForBindings(const QualifiedName& name) const
 {
     return protectedDocument()->maskedURLForBindingsIfNeeded(getURLAttribute(name));

@@ -1,11 +1,11 @@
 # emoji-sequences.txt
-# Date: 2022-08-15, 23:13:41 GMT
-# © 2022 Unicode®, Inc.
+# Date: 2023-06-05, 21:39:54 GMT
+# © 2023 Unicode®, Inc.
 # Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
 # For terms of use, see https://www.unicode.org/terms_of_use.html
 #
 # Emoji Sequence Data for UTS #51
-# Version: 15.0
+# Version: 15.1
 #
 # For documentation and usage, see https://www.unicode.org/reports/tr51
 #
@@ -37,7 +37,6 @@
 # ================================================
 
 # Basic_Emoji
-
 
 231A..231B    ; Basic_Emoji                  ; watch..hourglass done                                          # E0.6   [2] (⌚..⌛)
 23E9..23EC    ; Basic_Emoji                  ; fast-forward button..fast down button                          # E0.6   [4] (⏩..⏬)
@@ -534,7 +533,6 @@
 
 # Emoji_Keycap_Sequence
 
-
 0023 FE0F 20E3; Emoji_Keycap_Sequence        ; keycap: \x{23}                                                 # E0.6   [1] (#️⃣)
 002A FE0F 20E3; Emoji_Keycap_Sequence        ; keycap: *                                                      # E2.0   [1] (*️⃣)
 0030 FE0F 20E3; Emoji_Keycap_Sequence        ; keycap: 0                                                      # E0.6   [1] (0️⃣)
@@ -553,8 +551,7 @@
 # ================================================
 
 # RGI_Emoji_Flag_Sequence: This list does not include deprecated or macroregion flags, except for UN and EU.
-# See Annex B of TR51 for more information.
-
+# See Annex B of UTS #51 for more information.
 
 1F1E6 1F1E8   ; RGI_Emoji_Flag_Sequence      ; flag: Ascension Island                                         # E2.0   [1] (🇦🇨)
 1F1E6 1F1E9   ; RGI_Emoji_Flag_Sequence      ; flag: Andorra                                                  # E2.0   [1] (🇦🇩)
@@ -787,7 +784,7 @@
 1F1F9 1F1F2   ; RGI_Emoji_Flag_Sequence      ; flag: Turkmenistan                                             # E2.0   [1] (🇹🇲)
 1F1F9 1F1F3   ; RGI_Emoji_Flag_Sequence      ; flag: Tunisia                                                  # E2.0   [1] (🇹🇳)
 1F1F9 1F1F4   ; RGI_Emoji_Flag_Sequence      ; flag: Tonga                                                    # E2.0   [1] (🇹🇴)
-1F1F9 1F1F7   ; RGI_Emoji_Flag_Sequence      ; flag: Turkey                                                   # E2.0   [1] (🇹🇷)
+1F1F9 1F1F7   ; RGI_Emoji_Flag_Sequence      ; flag: Türkiye                                                  # E2.0   [1] (🇹🇷)
 1F1F9 1F1F9   ; RGI_Emoji_Flag_Sequence      ; flag: Trinidad & Tobago                                        # E2.0   [1] (🇹🇹)
 1F1F9 1F1FB   ; RGI_Emoji_Flag_Sequence      ; flag: Tuvalu                                                   # E2.0   [1] (🇹🇻)
 1F1F9 1F1FC   ; RGI_Emoji_Flag_Sequence      ; flag: Taiwan                                                   # E2.0   [1] (🇹🇼)
@@ -819,8 +816,7 @@
 
 # ================================================
 
-# RGI_Emoji_Tag_Sequence: See Annex C of TR51 for more information.
-
+# RGI_Emoji_Tag_Sequence: See Annex C of UTS #51 for more information.
 
 1F3F4 E0067 E0062 E0065 E006E E0067 E007F; RGI_Emoji_Tag_Sequence; flag: England                              # E5.0   [1] (🏴󠁧󠁢󠁥󠁮󠁧󠁿)
 1F3F4 E0067 E0062 E0073 E0063 E0074 E007F; RGI_Emoji_Tag_Sequence; flag: Scotland                             # E5.0   [1] (🏴󠁧󠁢󠁳󠁣󠁴󠁿)
@@ -831,7 +827,6 @@
 # ================================================
 
 # RGI_Emoji_Modifier_Sequence
-
 
 261D 1F3FB    ; RGI_Emoji_Modifier_Sequence  ; index pointing up: light skin tone                             # E1.0   [1] (☝🏻)
 261D 1F3FC    ; RGI_Emoji_Modifier_Sequence  ; index pointing up: medium-light skin tone                      # E1.0   [1] (☝🏼)

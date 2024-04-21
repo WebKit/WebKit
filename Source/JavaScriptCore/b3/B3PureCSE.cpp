@@ -103,7 +103,7 @@ bool PureCSE::process(Value* value, Dominators& dominators)
 
 bool pureCSE(Procedure& proc)
 {
-    PhaseScope phaseScope(proc, "pureCSE");
+    PhaseScope phaseScope(proc, "pureCSE"_s);
     
     Dominators& dominators = proc.dominators();
     PureCSE pureCSE;

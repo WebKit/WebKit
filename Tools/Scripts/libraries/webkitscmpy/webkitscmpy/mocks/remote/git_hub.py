@@ -46,6 +46,7 @@ class GitHub(bmocks.GitHub):
         self.remote = remote
         self.forks = []
         self.private = private
+        self._comment_id = 1234
 
         super(GitHub, self).__init__(remote, environment=environment, issues=issues, projects=projects, labels=labels)
 
@@ -476,9 +477,15 @@ class GitHub(bmocks.GitHub):
                             return mocks.Response.fromJson(dict(users=candidate.get('requested_reviews', [])))
                         if stripped_url.split('/')[6] == 'reviews':
                             return mocks.Response.fromJson(candidate.get('reviews', []))
+                        if stripped_url.split('/')[6] == 'comments':
+                            return mocks.Response.fromJson(candidate.get('diff_comments', []))
                         return mocks.Response.create404(url)
+
+                    if (headers or {}).get('Accept') == 'application/vnd.github.diff':
+                        return self._diff_response(url=url, ref=candidate['head']['sha'])
+
                     return mocks.Response.fromJson({
-                        key: value for key, value in candidate.items() if key not in ('requested_reviews', 'reviews')
+                        key: value for key, value in candidate.items() if key not in ('diff_comments', 'requested_reviews', 'reviews')
                     }, url=url)
 
             return mocks.Response.fromJson(
@@ -499,6 +506,22 @@ class GitHub(bmocks.GitHub):
                     self.issues[candidate['number']]['comments'].append(
                         Issue.Comment(user=self.users.get(auth.username), timestamp=int(time.time()), content=json['body']),
                     )
+                if 'comments' in json:
+                    if 'diff_comments' not in candidate:
+                        candidate['diff_comments'] = []
+                    for comment in json['comments']:
+                        candidate['diff_comments'].append(dict(
+                            user=dict(login=auth.username),
+                            id=self._comment_id,
+                            commit_id=candidate['head']['sha'],
+                            original_commit_id=candidate['head']['sha'],
+                            path=comment.get('path', '?'),
+                            body=comment.get('body', '?'),
+                            position=comment.get('position', None),
+                            subject_type=comment.get('subject_type', 'line'),
+                        ))
+                        self._comment_id += 1
+
                 return mocks.Response.fromJson(candidate['reviews'])
 
             return mocks.Response.fromJson(
@@ -510,6 +533,45 @@ class GitHub(bmocks.GitHub):
         # Create/update pull-request
         pr = dict()
         if method == 'POST' and auth and stripped_url.startswith(pr_base):
+            # Create PR comment
+            if len(stripped_url.split('/')) == 7 and stripped_url.split('/')[6] == 'comments':
+                for candidate in self.pull_requests:
+                    if stripped_url.split('/')[5] == str(candidate['number']):
+                        if 'diff_comments' not in candidate:
+                            candidate['diff_comments'] = []
+                        if 'in_reply_to' in json:
+                            for existing in candidate['diff_comments']:
+                                if existing['id'] == json['in_reply_to']:
+                                    json['commit_id'] = existing['commit_id']
+                                    json['path'] = existing['path']
+                                    json['subject_type'] = existing['subject_type']
+                                    json['position'] = existing['position']
+                                    break
+                            else:
+                                return mocks.Response.fromJson(
+                                    dict(message='Not found'),
+                                    url=url,
+                                    status_code=404,
+                                )
+
+                        candidate['diff_comments'].append(dict(
+                            user=dict(login=auth.username),
+                            id=self._comment_id,
+                            commit_id=json.get('commit_id', candidate['head']['sha']),
+                            original_commit_id=candidate['head']['sha'],
+                            path=json.get('path', '?'),
+                            body=json.get('body', '?'),
+                            position=json.get('position', None),
+                            subject_type=json.get('subject_type', 'line'),
+                        ))
+                        self._comment_id += 1
+                        return mocks.Response.fromJson(candidate, url=url)
+                return mocks.Response.fromJson(
+                    dict(message='Not found'),
+                    url=url,
+                    status_code=404,
+                )
+
             if json.get('title'):
                 pr['title'] = json['title']
             if json.get('body'):

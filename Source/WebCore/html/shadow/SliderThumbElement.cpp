@@ -88,6 +88,7 @@ inline static bool hasVerticalAppearance(HTMLInputElement& input)
 // http://webkit.org/b/62535
 class RenderSliderContainer final : public RenderFlexibleBox {
     WTF_MAKE_ISO_ALLOCATED_INLINE(RenderSliderContainer);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSliderContainer);
 public:
     RenderSliderContainer(SliderContainerElement& element, RenderStyle&& style)
         : RenderFlexibleBox(Type::SliderContainer, element, WTFMove(style))

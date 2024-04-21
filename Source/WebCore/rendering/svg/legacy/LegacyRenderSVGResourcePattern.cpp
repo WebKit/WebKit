@@ -43,6 +43,8 @@ LegacyRenderSVGResourcePattern::LegacyRenderSVGResourcePattern(SVGPatternElement
 {
 }
 
+LegacyRenderSVGResourcePattern::~LegacyRenderSVGResourcePattern() = default;
+
 SVGPatternElement& LegacyRenderSVGResourcePattern::patternElement() const
 {
     return downcast<SVGPatternElement>(LegacyRenderSVGResourceContainer::element());

@@ -34,6 +34,8 @@
     API::ObjectStorage<WebKit::WebBackForwardList> _list;
 }
 
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKBackForwardList.class, self))

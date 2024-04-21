@@ -385,6 +385,7 @@ bool GraphicsContextGLTextureMapperANGLE::unmakeCurrentImpl()
     return !!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 }
 
+#if ENABLE(WEBXR)
 bool GraphicsContextGLTextureMapperANGLE::addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>)
 {
     return false;
@@ -397,6 +398,7 @@ void GraphicsContextGLTextureMapperANGLE::enableFoveation(GCGLuint)
 void GraphicsContextGLTextureMapperANGLE::disableFoveation()
 {
 }
+#endif
 
 } // namespace WebCore
 

@@ -43,7 +43,7 @@ namespace WebCore {
 
 IncomingAudioMediaStreamTrackRendererUnit::IncomingAudioMediaStreamTrackRendererUnit(LibWebRTCAudioModule& audioModule)
     : m_audioModule(audioModule)
-    , m_queue(WorkQueue::create("IncomingAudioMediaStreamTrackRendererUnit", WorkQueue::QOS::UserInitiated))
+    , m_queue(WorkQueue::create("IncomingAudioMediaStreamTrackRendererUnit"_s, WorkQueue::QOS::UserInitiated))
 #if !RELEASE_LOG_DISABLED
     , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
 #endif

@@ -51,7 +51,7 @@ iframe {
 jsTestIsAsync = true;
 addEventListener("load", async () => {
     targetSelector = await UIHelper.adjustVisibilityForFrontmostTarget(50, 100);
-    shouldBeEqualToString("targetSelector", ".frame-wrapper");
+    shouldBeEqualToString("targetSelector", "DIV.frame-wrapper");
     finishJSTest();
 });
 </script>

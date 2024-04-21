@@ -197,7 +197,7 @@ private:
     void becomeFirstResponder() override;
     void resignFirstResponder() override;
 
-    void setInlinePrediction(JSStringRef) final;
+    void setInlinePrediction(JSStringRef text, unsigned startIndex) final;
     void acceptInlinePrediction() final;
 
     void simulateRotation(DeviceOrientation, JSValueRef callback);

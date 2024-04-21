@@ -1220,7 +1220,6 @@ static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData&
     ;
 }
 
-#if ENABLE(CSS_PAINTING_API)
 void RenderStyle::addCustomPaintWatchProperty(const AtomString& name)
 {
     auto& data = m_nonInheritedData.access().rareData.access();
@@ -1265,7 +1264,6 @@ inline static bool changedCustomPaintWatchedProperty(const RenderStyle& a, const
 
     return false;
 }
-#endif
 
 bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
@@ -1312,10 +1310,8 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
         && rareInheritedDataChangeRequiresRepaint(*m_rareInheritedData, *other.m_rareInheritedData))
         return true;
 
-#if ENABLE(CSS_PAINTING_API)
     if (changedCustomPaintWatchedProperty(*this, *m_nonInheritedData->rareData, other, *other.m_nonInheritedData->rareData))
         return true;
-#endif
 
     return false;
 }

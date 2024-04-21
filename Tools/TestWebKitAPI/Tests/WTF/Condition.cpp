@@ -95,7 +95,7 @@ void runTest(
     
     for (unsigned i = numConsumers; i--;) {
         consumerThreads.append(Thread::create(
-            "Consumer thread",
+            "Consumer thread"_s,
             [&] () {
                 for (;;) {
                     unsigned result;
@@ -129,7 +129,7 @@ void runTest(
 
     for (unsigned i = numProducers; i--;) {
         producerThreads.append(Thread::create(
-            "Producer Thread",
+            "Producer Thread"_s,
             [&] () {
                 for (unsigned i = 0; i < numMessagesPerProducer; ++i) {
                     bool shouldNotify = false;

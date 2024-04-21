@@ -911,7 +911,7 @@ void run(const TestConfig* config)
     for (unsigned i = config->workerThreadCount; i--;) {
         threads.append(
             Thread::create(
-                "testb3 thread",
+                "testb3 thread"_s,
                 [&] () {
                     for (;;) {
                         RefPtr<SharedTask<void()>> task;

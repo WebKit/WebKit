@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>Newspaper demo</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../universal.css">
+  <link rel="stylesheet" href="styles.css">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#eee" media="(prefers-color-scheme: light)"/>
+  <meta name="theme-color" content="#444" media="(prefers-color-scheme: dark)">
+</head>
+<body>
+
+<aside class="interface">
+  <nav>Demos: <a href="../photos/">Photos</a> | <a href="../megamenu/">Mega menu</a> | <a href="../museum/">Museum</a></nav>
+  <section class="layout-switcher">
+    <label for="layout-select">Switch layouts:</label>
+    <select name="layouts" id="layout-select">
+      <option value="one">Multicolumn layout</option>
+      <option value="two">CSS Grid Level 1</option>
+      <option value="three">Classic masonry / waterfall layout</option>
+      <option selected value="four">Various sizes of content</option>
+    </select>
+  </section>
+  <section class="number-toggle">
+    <label for="toggle">Number items:</label>
+    <input type="checkbox" switch id="toggle">
+  </section>
+  <button class="hide-controls">Hide controls</button>
+  <section class="show-code">
+<pre class="one"><code>main { 
+  display: block;
+  columns: 30ch; 
+  column-gap: 4ch;
+}</code></pre>    
+<pre class="two"><code>main { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(30ch, 1fr));
+  grid-template-rows: 1fr; 
+  column-gap: 4ch;
+}
+article:nth-child(1) {
+  grid-column: 1 / -2;
+}</code></pre>
+<pre class="three"><code>main { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(30ch, 1fr));
+  grid-template-rows: off;
+  column-gap: 2lh;
+}</code></pre>
+<pre class="four"><code>main { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20ch, 1fr));
+  grid-template-rows: off;
+  column-gap: 2lh;
+}
+/* Lots of additional CSS to style and span items, changing at different breakpoints */</code></pre>
+  </section>
+</aside>
+<footer class="warning"><p>View these demos in <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a>, Firefox (after you turn on <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features#masonry_grid_layout">the feature flag</a>), or another browser that 
+<a href="https://caniuse.com/mdn-css_properties_grid-template-rows_masonry">supports Grid Level 3</a>.</p></footer> 
+<main>
+  <article>
+      <h3><a href="https://webkit.org/blog/15249/optimizing-webkit-safari-for-speedometer-3-0/">Optimizing WebKit & Safari for Speedometer 3.0</a></h3>
+      <p>The introduction of Speedometer 3.0 is a major step forward in making the web faster for all, and allowing Web developers to make websites and web apps that were not previously possible. In this article, we explore ways the WebKit team made performance optimizations in WebKit and Safari based on the Speedometer 3.0 benchmark.</p>
+      <p>In order to make these improvements, we made an extensive use of our performance testing infrastructure. It’s integrated with our continuous integration, and provides the capability to schedule A/B tests. This allows engineers to quickly test out performance optimizations and catch new performance regressions.</p>
+      <footer>
+        <time datetime="2024-04-10">April 10, 2024</time>
+        <div class="category performance">Performance</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/15162/introducing-natural-input-for-webxr-in-apple-vision-pro/">Introducing Natural Input for WebXR in Apple Vision Pro</a></h3>
+      <p>Apple Vision Pro is here, and with it, a lot of excitement about the possibilities for WebXR in visionOS. Support is in progress, where you can test it today. WebXR now includes a more natural and privacy-preserving method for interaction — the new <code>transient-pointer</code> input mode — available for Safari 17.4 in visionOS 1.1. Let’s explore how natural input for WebXR works, and how to leverage it when developing a WebXR experience for Apple Vision Pro.</p>
+      <footer>
+        <time datetime="2024-03-19">Mar 19, 2024</time>
+        <div class="category html">HTML</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/15190/implementing-vertical-form-controls/">Implementing Vertical Form Controls</a></h3>
+      <p>Setting written text vertically is commonly observed in East Asian languages. For example, Chinese, Japanese, and Korean (CJK) may be written vertically and read top-to-bottom, flowing in lines from right to left. Similarly, Traditional Mongolian is a vertical script that flows in lines from left to right.</p> 
+      <p>Support for vertical text has been available in browsers for several years using the CSS writing-mode property. However, until recently, support for the vertical-lr and vertical-rl values for form controls was inconsistent among all browsers. Consequently, as part of Interop 2023, the industry committed to working towards vertical writing mode support in form controls. We are excited to see cross-browser support improve considerably. And we are proud that Safari 17.4 brings support for vertical writing modes to form controls everywhere you find Safari.</p>
+      <footer>
+        <time datetime="2024-03-18">Mar 18, 2024</time>
+        <div class="category html">HTML</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/15131/speedometer-3-0-the-best-way-yet-to-measure-browser-performance/">Speedometer 3.0: The Best Way Yet to Measure Browser Performance</a></h3>
+      <p>As announced on browserbench.org today, in collaboration with other browser engine developers, Apple’s WebKit team is excited to introduce Speedometer 3.0, a major update that better reflects the Web of today. It’s built together by the developers of all major browser engines: Blink, Gecko, and WebKit with hundreds of contributions from companies like Apple, Google, Intel, Microsoft, and Mozilla.</p>
+      <footer>
+        <time datetime="2024-03-11">Mar 11, 2024</time>
+        <div class="category performance">Performance</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/15063/webkit-features-in-safari-17-4/">WebKit Features in Safari 17.4</a></h3>
+      <p>Just like Safari 15.4 and Safari 16.4, this March’s release of Safari 17.4 is a significant one for web developers. We’re proud to announce another 46 features and 146 bug fixes.</p>
+      <footer>
+        <time datetime="2024-03-05">Mar 5, 2024</time>
+        <div class="category release">Release</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/15054/an-html-switch-control/">An HTML Switch Control</a></h3>
+      <p>Switches are a popular control on mobile platforms as well as in a large variety of UI frameworks, but until now they were not built into the web platform. Seeing the widespread need for this control we decided to change that.</p>
+      <footer>
+        <time datetime="2024-02-28">Feb 28, 2024</time>
+        <div class="category html">HTML</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/15036/how-to-use-media-source-extensions-with-airplay/">How to use Media Source Extensions with AirPlay</a></h3>
+      <p>Media Source Extensions (MSE) is a popular way to provide streaming video on the web. It gives JavaScript control of the way bytes are sent to the browser for playback. At the 2023 Worldwide Developer conference, Apple announced a new Managed Media Source API that improves on MSE with efficient video streaming and longer battery life for iOS and other devices.</p>        
+      <p>However, MMS and MSE, by nature, are not compatible with AirPlay, which requires a unique playback URL. AirPlay allows you to start playback of your favorite videos on your phone, move them to your TV and then switch off that phone. An AirPlay-compatible URL can be of any format such as an mp4, mpeg-ts, or HTTP Live Streaming (HLS).</p>        
+      <p>This post will guide you through providing both sources and, in the process, build out a demo example.</p>
+     <footer>
+        <time datetime="2024-02-16">Feb 16, 2024</time>
+       <div class="category media">Media</div>
+     </footer>
+ </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/14955/the-web-just-gets-better-with-interop/">The web just gets better with Interop 2024</a></h3>
+      <p>The web is amazing. It makes collaborating, learning, and connecting easy for billions of people, because it’s intentionally designed to run on radically different devices.</p>
+      <p>It’s your job as a web developer to ensure your project works in every browser and for every user — and that can be hard to do. It’s a far easier undertaking when browsers have identical implementations of the web technology you use.</p>        
+      <p>Identical implementations are accomplished through the web standards process, where people collaborate together to write extremely detailed technical documents that define each new web technology — right down to how website bugs should work.</p>
+      <footer>
+        <time datetime="2024-02-01">Feb 1, 2024</time>
+        <div class="category news">News</div>
+      </footer>
+  </article>
+    <article>
+      <h3><a href="https://webkit.org/blog/14933/bringing-back-horizontal-rules-in-select-elements/">Bringing Back Horizontal Rules in Select Elements</a></h3>
+      <p>In September 2023, Safari 17.0 on macOS shipped a small but interesting change to the select element. You can now put an &lt;hr&gt; element, known as a horizontal rule, inside a &lt;select&gt; element, which will draw a horizontal line again.</p>
+      <footer>
+        <time datetime="2024-01-25">Jan 25, 2024</time>
+        <div class="category html">HTML</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/14919/webkit-features-in-safari-17-3/">WebKit Features in Safari 17.3</a></h3>
+      <p>Last month, Safari 17.2 brought our biggest December release of web technology ever — with 39 new features and 169 bug fixes. Now, in January, Safari 17.3 brings bits of polish to that release.</p>
+    <footer>
+        <time datetime="2024-01-23">Jan 23, 2024</time>
+      <div class="category release">Release</div>
+    </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/14908/motionmark-1-3/">Announcing MotionMark 1.3</a></h3>
+      <p>We are glad to announce an update to MotionMark, Apple’s graphics benchmark for web browsers, taking it to version 1.3. This is a minor update, intended to improve the behavior of the benchmark on a wider variety of hardware devices and to improve the reliability of the scores.</p>
+      <footer>
+        <time datetime="2024-01-10">Jan 10, 2024</time>
+        <div class="category performance">Performance</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/14879/webgpu-now-available-for-testing-in-safari-technology-preview/">WebGPU now available for testing in Safari Technology Preview</a></h3>
+      <p>WebGPU is a new standards-compliant API that enables high-performance 3D graphics and general-purpose computations on the Web. WebGPU programs are written in JavaScript but expose GPU functionality, allowing GPU computing to be used in Web content for the first time. Starting in Safari Technology Preview 185, WebGPU can be enabled for early testing and development.</p>
+      <footer>
+        <time datetime="2023-12-23">Dec 23, 2023</time>
+        <div class="category webgpu">WebGPU</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/14787/webkit-features-in-safari-17-2/">WebKit Features in Safari 17.2</a></h3>
+      <p>A new version of Safari shipped 17 times in the last 28 months — version 15.0, 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 16.0, 16.1, 16.2, 16.3, 16.4, 16.5, 16.6, 17.0, 17.1, and now, today’s Safari 17.2. This makes it possible to spread out the arrival of new web technology more widely across the year, and get it into the hands of your users that much sooner.</p>        
+      <p>With 39 features and 169 fixes, today’s release is Safari’s biggest December release of web technology ever. Let’s take a look at what’s inside.</p>
+      <footer>
+        <time datetime="2023-12-11">Dec 11, 2023</time>
+        <div class="category release">Release</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/14735/webkit-features-in-safari-17-1/">WebKit Features in Safari 17.1</a></h3>
+      <p>Today we are pleased to share what new in WebKit for Safari 17.1. It’s now available for iOS 17, iPadOS 17, macOS Sonoma, macOS Ventura and macOS Monterey.</p>        
+      <footer>
+        <time datetime="2023-10-25">Oct 25, 2023</time>
+        <div class="category release">Release</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/14571/css-nesting-and-the-cascade/">CSS Nesting and the Cascade</a></h3>
+      <p>You might have noticed that Safari Technology Preview 179 includes an update to CSS Nesting that adds support for the new “relaxed parsing behavior”.</p>  <p>What does this mean? It means you no longer have to worry about whether or not each nested selector starts with a symbol. It means that now nested CSS like this will work just fine…</p>        
+      <footer>
+        <time datetime="2023-09-28">Sept 28, 2023</time>
+        <div class="category css">CSS</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/14445/webkit-features-in-safari-17-0/">WebKit Features in Safari 17.0</a></h3>
+      <p>Today’s the day for Safari 17.0. It’s now available for iOS 17 and iPadOS 17.</p>        
+      <footer>
+        <time datetime="2023-09-18">Sept 18, 2023</time>
+        <div class="category release">Releases</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/14423/building-profiles-with-new-webkit-api/">Building Profiles with new WebKit API</a></h3>
+      <p>Profiles are useful. They allow users to organize their data into categories and manage them separately. Users can create different profiles for different purposes and delete any profile without worrying about messing with data from another profile. Profiles also make it easier to access different online identities. Users with multiple accounts on the same site can simultaneously log into them within different profiles. They don’t need to keep logging in and out to switch between accounts because cookies are separate between profiles.</p>        
+      <footer>
+        <time datetime="2023-08-30">Aug 30, 2023</time>
+        <div class="category webapi">Web API</div>
+      </footer>
+  </article>
+  <article>
+      <h3><a href="https://webkit.org/blog/14403/updates-to-storage-policy/">Updates to Storage Policy</a></h3>
+      <p>A website can store data on a user’s device using various storage APIs: localStorage, IndexedDB, File System, etc. It’s an important capability allowing websites to be functional offline with good performance by serving local resources. However, the storage capacity is not unlimited. In fact, it is usually much smaller than a device’s disk size. Bad things could happen when the capacity is full like failed storage operations or data eviction. As a web developer, understanding storage policy helps to avoid these unexpected results. This post will discuss the latest storage policy in WebKit apps including Safari.</p>
+      <footer>
+        <time datetime="2023-08-10">Aug 10, 2023</time>
+        <div class="category webapi">Web API</div>
+      </footer>
+  </article>
+</main>
+<script src="../universal.js"></script>
+</body>
+</html>

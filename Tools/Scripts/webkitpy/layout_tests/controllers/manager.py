@@ -237,9 +237,6 @@ class Manager(object):
 
     def _test_input_for_file(self, test_file, device_type):
         test_is_slow = self._test_is_slow(test_file.test_path, device_type=device_type)
-        reference_files = self._port.reference_files(
-            test_file.test_path, device_type=device_type
-        )
         timeout = (
             self._options.slow_time_out_ms
             if test_is_slow
@@ -251,7 +248,7 @@ class Manager(object):
             )
         )
 
-        if reference_files:
+        if test_file.reference_files:
             should_run_pixel_test = True
         elif not self._options.pixel_tests:
             should_run_pixel_test = False
@@ -269,7 +266,6 @@ class Manager(object):
             is_slow=test_is_slow,
             needs_servers=test_file.needs_any_server,
             should_dump_jsconsolelog_in_stderr=should_dump_jsconsolelog_in_stderr,
-            reference_files=reference_files,
             should_run_pixel_test=should_run_pixel_test,
         )
 
@@ -388,18 +384,47 @@ class Manager(object):
         enabled_pixel_tests_in_retry = False
 
         max_child_processes_for_run = 1
-        child_processes_option_value = self._options.child_processes
+        child_processes_option_value = int(self._options.child_processes or 0)
         uploads = []
 
+        for i, device_type in enumerate(device_type_list):
+            specified_child_processes = (
+                child_processes_option_value
+                or self._port.default_child_processes(device_type=device_type)
+            )
 
-        for device_type in device_type_list:
-            self._options.child_processes = min(self._port.max_child_processes(device_type=device_type), int(child_processes_option_value or self._port.default_child_processes(device_type=device_type)))
-        # Adding an option to only boot 1 child process/simulator instance upon retry or follow-up test runs after the preceeding test run completes.
-            child_processes_option_value = 1
+            max_child_processes = self._port.max_child_processes(
+                device_type=device_type
+            )
+
+            if i > 0 and self._port.is_simulator():
+                # Limit the number of simulators we end up booting by only using one for
+                # all devices after the first, assuming we run the vast majority of
+                # tests on the first device.
+                max_child_processes = min(1, max_child_processes)
+
+            self._options.child_processes = min(
+                max_child_processes, specified_child_processes
+            )
 
             _log.info('')
             if not self._options.child_processes:
-                _log.info('Skipping {} because {} is not available'.format(pluralize(len(tests_to_run_by_device[device_type]), 'test'), str(device_type)))
+                skipped_by_default = (
+                    specified_child_processes == 0 and max_child_processes > 0
+                )
+
+                if skipped_by_default:
+                    skip_reason = 'skipped by default'
+                else:
+                    skip_reason = 'not available'
+
+                _log.info(
+                    'Skipping {} because {} is {}'.format(
+                        pluralize(len(tests_to_run_by_device[device_type]), 'test'),
+                        str(device_type),
+                        skip_reason,
+                    )
+                )
                 _log.info('')
                 continue
 

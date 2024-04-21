@@ -32,6 +32,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "APIWebsitePolicies.h"
 #import "CocoaHelpers.h"
 #import "ContextMenuContextData.h"
 #import "Logging.h"
@@ -636,7 +637,23 @@ void WebExtensionController::purgeOldMatchedRules()
         m_purgeOldMatchedRulesTimer = nullptr;
 }
 
-// MARK: webRequest
+void WebExtensionController::updateWebsitePoliciesForNavigation(API::WebsitePolicies& websitePolicies, API::NavigationAction&)
+{
+    auto actionPatterns = websitePolicies.activeContentRuleListActionPatterns();
+
+    for (Ref context : m_extensionContexts) {
+        if (!context->hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess))
+            continue;
+
+        Vector<String> patterns;
+        for (Ref pattern : context->currentPermissionMatchPatterns())
+            patterns.appendVector(makeVector<String>(pattern->expandedStrings()));
+
+        actionPatterns.set(context->uniqueIdentifier(), WTFMove(patterns));
+    }
+
+    websitePolicies.setActiveContentRuleListActionPatterns(WTFMove(actionPatterns));
+}
 
 void WebExtensionController::resourceLoadDidSendRequest(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceRequest& request)
 {

@@ -32,7 +32,7 @@ namespace WTF {
 class CommaPrinter final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CommaPrinter(const char* comma = ", ", const char* start = "")
+    CommaPrinter(ASCIILiteral comma = ", "_s, ASCIILiteral start = ""_s)
         : m_comma(comma)
         , m_start(start)
         , m_didPrint(false)
@@ -53,8 +53,8 @@ public:
     bool didPrint() const { return m_didPrint; }
     
 private:
-    const char* m_comma;
-    const char* m_start;
+    ASCIILiteral m_comma;
+    ASCIILiteral m_start;
     mutable bool m_didPrint;
 };
 

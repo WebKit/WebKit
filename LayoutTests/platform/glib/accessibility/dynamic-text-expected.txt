@@ -26,4 +26,4 @@ PASS: accessibilityController.accessibleElementById('textarea').stringValue.incl
 PASS successfullyParsed is true
 
 TEST COMPLETE
-Changed static textChanged button text Changed label text
+Changed static textFinal button text Changed label text

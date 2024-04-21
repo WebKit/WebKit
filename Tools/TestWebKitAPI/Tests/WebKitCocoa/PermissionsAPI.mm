@@ -29,6 +29,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKSecurityOriginRef.h>
 #import <WebKit/WKString.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/text/StringBuilder.h>
 

@@ -12,14 +12,16 @@ list(APPEND WebKit_SOURCES
 
     Shared/API/c/curl/WKCertificateInfoCurl.cpp
 
-    Shared/curl/WebCoreArgumentCodersCurl.cpp
-
     UIProcess/API/C/curl/WKProtectionSpaceCurl.cpp
     UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.cpp
 
     UIProcess/WebsiteData/curl/WebsiteDataStoreCurl.cpp
 
     WebProcess/WebCoreSupport/curl/WebFrameNetworkingContext.cpp
+)
+
+list(APPEND WebKit_SERIALIZATION_IN_FILES
+    Shared/curl/WebCoreArgumentCodersCurl.serialization.in
 )
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES

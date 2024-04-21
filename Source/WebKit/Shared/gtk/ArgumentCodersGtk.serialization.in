@@ -30,3 +30,18 @@ class WebCore::SelectionData {
     RefPtr<WebCore::SharedBuffer> customData()
     bool canSmartReplace()
 }
+
+struct WebKit::GtkSettingsState {
+    std::optional<String> themeName;
+    std::optional<String> fontName;
+    std::optional<int> xftAntialias;
+    std::optional<int> xftHinting;
+    std::optional<String> xftHintStyle;
+    std::optional<String> xftRGBA;
+    std::optional<int> xftDPI;
+    std::optional<bool> cursorBlink;
+    std::optional<int> cursorBlinkTime;
+    std::optional<bool> primaryButtonWarpsSlider;
+    std::optional<bool> overlayScrolling;
+    std::optional<bool> enableAnimations;
+}

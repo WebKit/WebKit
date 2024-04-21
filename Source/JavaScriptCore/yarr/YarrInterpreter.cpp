@@ -247,10 +247,10 @@ public:
 
     class InputStream {
     public:
-        InputStream(const CharType* input, unsigned start, unsigned length, bool decodeSurrogatePairs)
-            : input(input)
+        InputStream(std::span<const CharType> input, unsigned start, bool decodeSurrogatePairs)
+            : input(input.data())
             , pos(start)
-            , length(length)
+            , length(input.size())
             , decodeSurrogatePairs(decodeSurrogatePairs)
         {
         }
@@ -2166,11 +2166,11 @@ public:
         return output[0];
     }
 
-    Interpreter(BytecodePattern* pattern, unsigned* output, const CharType* input, unsigned length, unsigned start)
+    Interpreter(BytecodePattern* pattern, unsigned* output, std::span<const CharType> input, unsigned start)
         : pattern(pattern)
         , compileMode(pattern->compileMode())
         , output(output)
-        , input(input, start, length, pattern->eitherUnicode())
+        , input(input, start, pattern->eitherUnicode())
         , startOffset(start)
         , remainingMatchCount(matchLimit)
     {
@@ -3107,20 +3107,20 @@ unsigned interpret(BytecodePattern* bytecode, StringView input, unsigned start, 
 {
     SuperSamplerScope superSamplerScope(false);
     if (input.is8Bit())
-        return Interpreter<LChar>(bytecode, output, input.characters8(), input.length(), start).interpret();
-    return Interpreter<UChar>(bytecode, output, input.characters16(), input.length(), start).interpret();
+        return Interpreter<LChar>(bytecode, output, input.span8(), start).interpret();
+    return Interpreter<UChar>(bytecode, output, input.span16(), start).interpret();
 }
 
-unsigned interpret(BytecodePattern* bytecode, const LChar* input, unsigned length, unsigned start, unsigned* output)
+unsigned interpret(BytecodePattern* bytecode, std::span<const LChar> input, unsigned start, unsigned* output)
 {
     SuperSamplerScope superSamplerScope(false);
-    return Interpreter<LChar>(bytecode, output, input, length, start).interpret();
+    return Interpreter<LChar>(bytecode, output, input, start).interpret();
 }
 
-unsigned interpret(BytecodePattern* bytecode, const UChar* input, unsigned length, unsigned start, unsigned* output)
+unsigned interpret(BytecodePattern* bytecode, std::span<const UChar> input, unsigned start, unsigned* output)
 {
     SuperSamplerScope superSamplerScope(false);
-    return Interpreter<UChar>(bytecode, output, input, length, start).interpret();
+    return Interpreter<UChar>(bytecode, output, input, start).interpret();
 }
 
 // These should be the same for both UChar & LChar.

@@ -59,8 +59,9 @@ static CurlResponse createCurlResponse(std::optional<String> contentType = "mult
     return response;
 }
 
-class MultipartHandleClient : public CurlMultipartHandleClient, public CanMakeCheckedPtr<MultipartHandleClient> {
+class MultipartHandleClient final : public CurlMultipartHandleClient, public CanMakeCheckedPtr<MultipartHandleClient> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MultipartHandleClient);
 public:
     void setMultipartHandle();
 
@@ -93,9 +94,10 @@ public:
 
 private:
     // CheckedPtr interface
-    uint32_t ptrCount() const final { return CanMakeCheckedPtr<MultipartHandleClient>::ptrCount(); }
-    void incrementPtrCount() const final { CanMakeCheckedPtr<MultipartHandleClient>::incrementPtrCount(); }
-    void decrementPtrCount() const final { CanMakeCheckedPtr<MultipartHandleClient>::decrementPtrCount(); }
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
     Vector<String> m_headers;
     Vector<uint8_t> m_data;

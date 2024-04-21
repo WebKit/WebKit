@@ -421,13 +421,13 @@ inline bool Value::isRepresentableAs() const
 {
     switch (opcode()) {
     case Const32:
-        return B3::isRepresentableAs<T>(asInt32());
+        return WTF::isRepresentableAs<T>(asInt32());
     case Const64:
-        return B3::isRepresentableAs<T>(asInt64());
+        return WTF::isRepresentableAs<T>(asInt64());
     case ConstDouble:
-        return B3::isRepresentableAs<T>(asDouble());
+        return WTF::isRepresentableAs<T>(asDouble());
     case ConstFloat:
-        return B3::isRepresentableAs<T>(asFloat());
+        return WTF::isRepresentableAs<T>(asFloat());
     default:
         return false;
     }

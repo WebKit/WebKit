@@ -119,7 +119,7 @@ IPCTester::~IPCTester()
 void IPCTester::startMessageTesting(IPC::Connection& connection, String&& driverName)
 {
     if (!m_testQueue)
-        m_testQueue = WorkQueue::create("IPC testing work queue");
+        m_testQueue = WorkQueue::create("IPC testing work queue"_s);
     m_testQueue->dispatch([connection = Ref { connection }, &shouldStop = m_shouldStop, driverName = WTFMove(driverName)]() mutable {
         IPC::startTestingIPC();
         runMessageTesting(connection, shouldStop, WTFMove(driverName));

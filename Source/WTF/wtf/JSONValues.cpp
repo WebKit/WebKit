@@ -59,9 +59,9 @@ enum class Token {
     Invalid,
 };
 
-const char* const nullToken = "null";
-const char* const trueToken = "true";
-const char* const falseToken = "false";
+constexpr auto nullToken = "null"_s;
+constexpr auto trueToken = "true"_s;
+constexpr auto falseToken = "false"_s;
 
 template<typename CodeUnit>
 bool parseConstToken(const CodeUnit* start, const CodeUnit* end, const CodeUnit** tokenEnd, const char* token)
@@ -610,25 +610,25 @@ void Value::dump(PrintStream& out) const
     }
     case Type::Object: {
         auto& object = *static_cast<const ObjectBase*>(this);
-        CommaPrinter comma(",");
-        out.print("{");
+        CommaPrinter comma(","_s);
+        out.print("{"_s);
         for (const auto& key : object.m_order) {
             auto findResult = object.m_map.find(key);
             ASSERT(findResult != object.m_map.end());
             StringBuilder builder;
             builder.appendQuotedJSONString(findResult->key);
-            out.print(comma, builder.toString(), ":", findResult->value.get());
+            out.print(comma, builder.toString(), ":"_s, findResult->value.get());
         }
-        out.print("}");
+        out.print("}"_s);
         break;
     }
     case Type::Array: {
         auto& array = *static_cast<const ArrayBase*>(this);
-        CommaPrinter comma(",");
-        out.print("[");
+        CommaPrinter comma(","_s);
+        out.print("["_s);
         for (auto& value : array.m_map)
             out.print(comma, value.get());
-        out.print("]");
+        out.print("]"_s);
         break;
     }
     default:

@@ -1,0 +1,14 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<meta name="fuzzy" content="maxDifference=2; totalPixels=177504" />
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+onmessage = (event) => {
+    if (window.testRunner && event.data == "onload")
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<iframe onload="done()" src="http://localhost:8000/site-isolation/resources/navigate-to-text.html" height="100%" width="50%" frameborder=0></iframe>

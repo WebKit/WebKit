@@ -976,14 +976,7 @@ void RenderBlockFlow::computeAndSetLineLayoutPath()
 {
     if (lineLayoutPath() != UndeterminedPath)
         return;
-
-    auto compute = [&] {
-        if (LayoutIntegration::LineLayout::canUseFor(*this))
-            return ModernPath;
-        return LegacyPath;
-    };
-
-    setLineLayoutPath(compute());
+    setLineLayoutPath(LayoutIntegration::LineLayout::canUseFor(*this) ? ModernPath : LegacyPath);
 }
 
 void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
@@ -3844,7 +3837,6 @@ void RenderBlockFlow::invalidateLineLayoutPath(InvalidationReason invalidationRe
 {
     switch (lineLayoutPath()) {
     case UndeterminedPath:
-    case ForcedLegacyPath:
         return;
     case LegacyPath:
         setLineLayoutPath(UndeterminedPath);
@@ -3869,9 +3861,9 @@ void RenderBlockFlow::invalidateLineLayoutPath(InvalidationReason invalidationRe
                 repaintAndSetNeedsLayoutIncludingOutOfFlowBoxes();
             }
         }
-        auto path = UndeterminedPath;
         m_lineLayout = std::monostate();
-        setLineLayoutPath(path);
+        if (invalidationReason == InvalidationReason::InsertionOrRemoval)
+            setLineLayoutPath(UndeterminedPath);
         if (selfNeedsLayout() || normalChildNeedsLayout())
             return;
         // FIXME: We should just kick off a subtree layout here (if needed at all) see webkit.org/b/172947.
@@ -4490,7 +4482,7 @@ static inline void stripTrailingSpace(float& inlineMax, float& inlineMin, Render
         // Collapse away the trailing space at the end of a block.
         const UChar space = ' ';
         const FontCascade& font = renderText->style().fontCascade(); // FIXME: This ignores first-line.
-        float spaceWidth = font.width(RenderBlock::constructTextRun(&space, 1, renderText->style()));
+        float spaceWidth = font.width(RenderBlock::constructTextRun(span(space), renderText->style()));
         inlineMax -= spaceWidth + font.wordSpacing();
         if (inlineMin > inlineMax)
             inlineMin = inlineMax;

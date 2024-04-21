@@ -43,10 +43,14 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForDomain(const WebCore::Re
 {
     if (!domain.isEmpty() && (preferences.siteIsolationEnabled() || preferences.processSwapOnCrossSiteWindowOpenEnabled())) {
         if (auto* existingProcess = processForDomain(domain)) {
-            ASSERT(existingProcess->process().coreProcessIdentifier() == process.coreProcessIdentifier());
-            return *existingProcess;
+            if (existingProcess->process().coreProcessIdentifier() == process.coreProcessIdentifier())
+                return *existingProcess;
+
+            // In the case of WebsiteDataStore swap during navigation, the process may be different from existing process.
+            ASSERT(existingProcess->process().websiteDataStore() != process.websiteDataStore());
         }
     }
+
     return FrameProcess::create(process, *this, domain, preferences);
 }
 

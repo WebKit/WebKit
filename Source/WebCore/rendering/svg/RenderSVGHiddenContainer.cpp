@@ -35,6 +35,8 @@ RenderSVGHiddenContainer::RenderSVGHiddenContainer(Type type, SVGElement& elemen
     ASSERT(isRenderSVGHiddenContainer());
 }
 
+RenderSVGHiddenContainer::~RenderSVGHiddenContainer() = default;
+
 void RenderSVGHiddenContainer::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;

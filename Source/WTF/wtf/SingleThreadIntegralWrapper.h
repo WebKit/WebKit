@@ -40,6 +40,8 @@ public:
     SingleThreadIntegralWrapper& operator++();
     SingleThreadIntegralWrapper& operator--();
 
+    IntegralType valueWithoutThreadCheck() const { return m_value; }
+
 private:
 #if ASSERT_ENABLED && !USE(WEB_THREAD)
     void assertThread() const { ASSERT(m_thread.ptr() == &Thread::current()); }

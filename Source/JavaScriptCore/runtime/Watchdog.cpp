@@ -42,7 +42,7 @@ Watchdog::Watchdog(VM* vm)
     , m_callback(nullptr)
     , m_callbackData1(nullptr)
     , m_callbackData2(nullptr)
-    , m_timerQueue(WorkQueue::create("jsc.watchdog.queue", WorkQueue::QOS::Utility))
+    , m_timerQueue(WorkQueue::create("jsc.watchdog.queue"_s, WorkQueue::QOS::Utility))
 {
 }
 

@@ -5124,6 +5124,11 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) con
 
 void RenderBox::addOverflowFromChild(const RenderBox& child, const LayoutSize& delta)
 {
+    addOverflowFromChild(child, delta, flippedClientBoxRect());
+}
+
+void RenderBox::addOverflowFromChild(const RenderBox& child, const LayoutSize& delta, const LayoutRect& flippedClientRect)
+{
     // Never allow flow threads to propagate overflow up to a parent.
     if (child.isRenderFragmentedFlow())
         return;
@@ -5137,7 +5142,7 @@ void RenderBox::addOverflowFromChild(const RenderBox& child, const LayoutSize& d
     // and just propagates the border box rect instead.
     LayoutRect childLayoutOverflowRect = child.layoutOverflowRectForPropagation(&style());
     childLayoutOverflowRect.move(delta);
-    addLayoutOverflow(childLayoutOverflowRect);
+    addLayoutOverflow(childLayoutOverflowRect, flippedClientRect);
 
     if (paintContainmentApplies())
         return;
@@ -5195,7 +5200,11 @@ LayoutOptionalOutsets RenderBox::allowedLayoutOverflow() const
 
 void RenderBox::addLayoutOverflow(const LayoutRect& rect)
 {
-    LayoutRect clientBox = flippedClientBoxRect();
+    addLayoutOverflow(rect, flippedClientBoxRect());
+}
+
+void RenderBox::addLayoutOverflow(const LayoutRect& rect, const LayoutRect& clientBox)
+{
     if (clientBox.contains(rect) || rect.isEmpty())
         return;
 
@@ -5356,17 +5365,19 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(const RenderStyle* parent
         rect.setWidth(rect.width() + std::max(0_lu, marginEnd()));
     }
     if (!shouldApplyLayoutContainment()) {
-        if (style().overflowX() == Overflow::Clip && style().overflowY() == Overflow::Visible) {
-            LayoutRect clippedOverflowRect = layoutOverflowRect();
-            clippedOverflowRect.setX(rect.x());
-            clippedOverflowRect.setWidth(rect.width());
-            rect.unite(clippedOverflowRect);
-        } else if (style().overflowY() == Overflow::Clip && style().overflowX() == Overflow::Visible) {
-            LayoutRect clippedOverflowRect = layoutOverflowRect();
-            clippedOverflowRect.setY(rect.y());
-            clippedOverflowRect.setHeight(rect.height());
-            rect.unite(clippedOverflowRect);
-        } else if (!hasNonVisibleOverflow())
+        if (hasNonVisibleOverflow()) {
+            if (style().overflowX() == Overflow::Clip && style().overflowY() == Overflow::Visible) {
+                LayoutRect clippedOverflowRect = layoutOverflowRect();
+                clippedOverflowRect.setX(rect.x());
+                clippedOverflowRect.setWidth(rect.width());
+                rect.unite(clippedOverflowRect);
+            } else if (style().overflowY() == Overflow::Clip && style().overflowX() == Overflow::Visible) {
+                LayoutRect clippedOverflowRect = layoutOverflowRect();
+                clippedOverflowRect.setY(rect.y());
+                clippedOverflowRect.setHeight(rect.height());
+                rect.unite(clippedOverflowRect);
+            }
+        } else
             rect.unite(layoutOverflowRect());
     }
 
@@ -5412,19 +5423,18 @@ LayoutRect RenderBox::flippedClientBoxRect() const
     // quite physical), we need to flip the block progression coordinate in vertical-rl and
     // horizontal-bt writing modes. Apart from that, this method does the same as clientBoxRect().
 
-    LayoutUnit left = borderLeft();
-    LayoutUnit top = borderTop();
-    LayoutUnit right = borderRight();
-    LayoutUnit bottom = borderBottom();
+    auto borderWidths = this->borderWidths();
     // Calculate physical padding box.
-    LayoutRect rect(left, top, width() - left - right, height() - top - bottom);
+    LayoutRect rect(borderWidths.left(), borderWidths.top(), width() - borderWidths.left() - borderWidths.right(), height() - borderWidths.top() - borderWidths.bottom());
     // Flip block progression axis if writing mode is vertical-rl or horizontal-bt.
     flipForWritingMode(rect);
-    // Subtract space occupied by scrollbars. They are at their physical edge in this coordinate
-    // system, so order is important here: first flip, then subtract scrollbars.
-    if (shouldPlaceVerticalScrollbarOnLeft() && isHorizontalWritingMode())
-        rect.move(verticalScrollbarWidth(), 0);
-    rect.contract(verticalScrollbarWidth(), horizontalScrollbarHeight());
+    if (hasNonVisibleOverflow()) {
+        // Subtract space occupied by scrollbars. They are at their physical edge in this coordinate
+        // system, so order is important here: first flip, then subtract scrollbars.
+        if (shouldPlaceVerticalScrollbarOnLeft() && isHorizontalWritingMode())
+            rect.move(verticalScrollbarWidth(), 0);
+        rect.contract(verticalScrollbarWidth(), horizontalScrollbarHeight());
+    }
     return rect;
 }
 

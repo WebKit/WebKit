@@ -282,7 +282,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 
 @synthesize identifier = _identifier;
 
-- (id)initWithAccessibilityObject:(AccessibilityObject*)axObject
+- (id)initWithAccessibilityObject:(AccessibilityObject&)axObject
 {
     ASSERT(isMainThread());
 
@@ -292,9 +292,9 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
     return self;
 }
 
-- (void)attachAXObject:(AccessibilityObject*)axObject
+- (void)attachAXObject:(AccessibilityObject&)axObject
 {
-    ASSERT(axObject && (!_identifier.isValid() || _identifier == axObject->objectID()));
+    ASSERT(!_identifier.isValid() || _identifier == axObject.objectID());
     m_axObject = axObject;
     if (!_identifier.isValid())
         _identifier = m_axObject->objectID();

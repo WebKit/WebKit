@@ -29,10 +29,12 @@
 
 namespace WebCore {
 
-class RenderViewTransitionCapture : public RenderReplaced {
+class RenderViewTransitionCapture final : public RenderReplaced {
     WTF_MAKE_ISO_ALLOCATED(RenderViewTransitionCapture);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderViewTransitionCapture);
 public:
     RenderViewTransitionCapture(Type, Document&, RenderStyle&&);
+    virtual ~RenderViewTransitionCapture();
 
     void setImage(RefPtr<ImageBuffer>);
     void setSize(const LayoutSize&, const LayoutRect& overflowRect);
@@ -41,11 +43,16 @@ public:
 
     void layout() override;
 
+    FloatSize scale() const { return m_scale; }
+    LayoutRect captureOverflowRect() const { return m_overflowRect; }
+
 private:
     ASCIILiteral renderName() const override { return style().pseudoElementType() == PseudoId::ViewTransitionNew ? "RenderViewTransitionNew"_s : "RenderViewTransitionOld"_s; }
 
     RefPtr<ImageBuffer> m_oldImage;
     LayoutRect m_overflowRect;
+    FloatSize m_scale;
+    LayoutRect m_localOverflowRect;
 };
 
 } // namespace WebCore

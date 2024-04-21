@@ -77,6 +77,7 @@ using BorderEdges = RectEdges<BorderEdge>;
 
 class RenderBoxModelObject : public RenderLayerModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderBoxModelObject);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBoxModelObject);
 public:
     virtual ~RenderBoxModelObject();
     
@@ -126,12 +127,15 @@ public:
     virtual inline LayoutUnit paddingStart() const;
     virtual inline LayoutUnit paddingEnd() const;
 
+    virtual inline RectEdges<LayoutUnit> borderWidths() const;
     virtual inline LayoutUnit borderTop() const;
     virtual inline LayoutUnit borderBottom() const;
     virtual inline LayoutUnit borderLeft() const;
     virtual inline LayoutUnit borderRight() const;
+
     virtual inline LayoutUnit horizontalBorderExtent() const;
     virtual inline LayoutUnit verticalBorderExtent() const;
+
     virtual inline LayoutUnit borderBefore() const;
     virtual inline LayoutUnit borderAfter() const;
     virtual inline LayoutUnit borderStart() const;

@@ -51,14 +51,15 @@ const std::optional<KeyboardScrollingKey> keyboardScrollingKeyForKeyboardEvent(c
 const std::optional<ScrollDirection> scrollDirectionForKeyboardEvent(const KeyboardEvent&);
 const std::optional<ScrollGranularity> scrollGranularityForKeyboardEvent(const KeyboardEvent&);
 
-class KeyboardScrollingAnimator : public CanMakeWeakPtr<KeyboardScrollingAnimator>, public CanMakeCheckedPtr<KeyboardScrollingAnimator> {
+class KeyboardScrollingAnimator final : public CanMakeWeakPtr<KeyboardScrollingAnimator>, public CanMakeCheckedPtr<KeyboardScrollingAnimator> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(KeyboardScrollingAnimator);
     WTF_MAKE_NONCOPYABLE(KeyboardScrollingAnimator);
 public:
     KeyboardScrollingAnimator(ScrollableArea&);
 
     WEBCORE_EXPORT bool beginKeyboardScrollGesture(ScrollDirection, ScrollGranularity, bool isKeyRepeat);
-    void handleKeyUpEvent();
+    WEBCORE_EXPORT void handleKeyUpEvent();
     WEBCORE_EXPORT void stopScrollingImmediately();
 
 private:

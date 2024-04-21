@@ -91,6 +91,9 @@ private:
         std::optional<RealtimeMediaSourceSettings> m_currentSettings;
         HTMLCanvasElement* m_canvas;
         RefPtr<Image> m_currentImage;
+#if USE(GSTREAMER)
+        MediaTime m_presentationTimeStamp { MediaTime::zeroTime() };
+#endif
     };
 
     CanvasCaptureMediaStreamTrack(Document&, Ref<HTMLCanvasElement>&&, Ref<Source>&&);

@@ -129,12 +129,6 @@ test/built-ins/RegExp/prototype/Symbol.replace/get-unicode-error.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-test/built-ins/RegExp/unicodeSets/generated/rgi-emoji-15.1.js:
-  default: 'Test262Error: `\p{RGI_Emoji}` should match ⛓️‍💥 (U+0026D3 U+00FE0F U+00200D U+01F4A5)'
-  strict mode: 'Test262Error: `\p{RGI_Emoji}` should match ⛓️‍💥 (U+0026D3 U+00FE0F U+00200D U+01F4A5)'
-test/built-ins/RegExp/unicode_full_case_folding.js:
-  default: 'Test262Error: \u0390 does not match \u1fd3'
-  strict mode: 'Test262Error: \u0390 does not match \u1fd3'
 test/built-ins/SharedArrayBuffer/options-maxbytelength-compared-before-object-creation.js:
   default: 'Test262Error: Expected a RangeError but got a Test262Error'
   strict mode: 'Test262Error: Expected a RangeError but got a Test262Error'
@@ -996,6 +990,9 @@ test/built-ins/TypedArrayConstructors/ctors/object-arg/iterated-array-with-modif
 test/harness/temporalHelpers-sample-time-zones.js:
   default: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"
   strict mode: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"
+test/intl402/Collator/ignore-invalid-unicode-ext-values.js:
+  default: 'Test262Error: Locale ja is affected by key co; value standard. Expected SameValue(«ja», «ja-JP») to be true'
+  strict mode: 'Test262Error: Locale ja is affected by key co; value standard. Expected SameValue(«ja», «ja-JP») to be true'
 test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
@@ -1008,6 +1005,9 @@ test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-
 test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+test/intl402/DateTimeFormat/prototype/resolvedOptions/order-dayPeriod.js:
+  default: 'Test262Error: "hour12" precedes "dayPeriod"'
+  strict mode: 'Test262Error: "hour12" precedes "dayPeriod"'
 test/intl402/DateTimeFormat/timezone-case-insensitive.js:
   default: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«America/Buenos_Aires», «America/Argentina/Buenos_Aires») to be true'
   strict mode: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«America/Buenos_Aires», «America/Argentina/Buenos_Aires») to be true'
@@ -1047,6 +1047,9 @@ test/intl402/DurationFormat/prototype/formatToParts/formatToParts-style-digital-
 test/intl402/DurationFormat/prototype/formatToParts/negative-duration-formatToParts-style-digital-en.js:
   default: 'Test262Error: Using style : digital: length Expected SameValue(«28», «30») to be true'
   strict mode: 'Test262Error: Using style : digital: length Expected SameValue(«28», «30») to be true'
+test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
+  default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
+  strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
 test/intl402/Locale/constructor-options-firstDayOfWeek-invalid.js:
   default: 'Test262Error: new Intl.Locale("en", {firstDayOfWeek: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: new Intl.Locale("en", {firstDayOfWeek: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
@@ -1068,9 +1071,15 @@ test/intl402/Locale/prototype/firstDayOfWeek/valid-id.js:
 test/intl402/Locale/prototype/firstDayOfWeek/valid-options.js:
   default: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).firstDayOfWeek returns "1" Expected SameValue(«undefined», «1») to be true'
   strict mode: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).firstDayOfWeek returns "1" Expected SameValue(«undefined», «1») to be true'
+test/intl402/Locale/prototype/getWeekInfo/firstDay-by-id.js:
+  default: 'Test262Error: new Intl.Locale(en-u-fw-mon).getWeekInfo().firstDay returns "1" Expected SameValue(«7», «1») to be true'
+  strict mode: 'Test262Error: new Intl.Locale(en-u-fw-mon).getWeekInfo().firstDay returns "1" Expected SameValue(«7», «1») to be true'
 test/intl402/Locale/prototype/getWeekInfo/firstDay-by-option.js:
   default: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).getWeekInfo().firstDay returns "1" Expected SameValue(«7», «1») to be true'
   strict mode: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).getWeekInfo().firstDay returns "1" Expected SameValue(«7», «1») to be true'
+test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
+  default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
+  strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
 test/intl402/NumberFormat/prototype/format/useGrouping-extended-en-IN.js:
   default: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'
   strict mode: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'
@@ -1105,9 +1114,6 @@ test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-p
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
 test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-present-arrow-func-declare-arguments-assign.js:
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
-test/language/expressions/assignment/S11.13.1_A7_T3.js:
-  default: 'Test262Error: Expected a DummyError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a DummyError but got a Test262Error'
 test/language/expressions/assignment/destructuring/iterator-destructuring-property-reference-target-evaluation-order.js:
   default: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, target-key-tostring, iterator-step, iterator-done, set] to have the same contents. '
   strict mode: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, target-key-tostring, iterator-step, iterator-done, set] to have the same contents. '

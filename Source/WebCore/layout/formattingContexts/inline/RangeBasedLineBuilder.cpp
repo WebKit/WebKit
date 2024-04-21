@@ -45,13 +45,13 @@ LineLayoutResult RangeBasedLineBuilder::layoutInlineContent(const LineInput& lin
     auto adjustedNeedsLayoutRange = [&] {
         auto needsLayoutRange = lineInput.needsLayoutRange;
         if (isFirstLine) {
-            ASSERT(m_inlineItemList[0].isInlineBoxStart());
+            ASSERT(m_inlineItemList.front().isInlineBoxStart());
             ASSERT(!needsLayoutRange.start.offset);
             // Skip leading InlineItemStart (e.g. <span>)
             ++needsLayoutRange.start.index;
         }
         // SKip trailing InlineItemEnd (e.g. </span>)
-        ASSERT(m_inlineItemList.last().isInlineBoxEnd());
+        ASSERT(m_inlineItemList.back().isInlineBoxEnd());
         ASSERT(!needsLayoutRange.end.offset);
         --needsLayoutRange.end.index;
         return needsLayoutRange;
@@ -62,7 +62,7 @@ LineLayoutResult RangeBasedLineBuilder::layoutInlineContent(const LineInput& lin
     auto lineLayoutResult = m_textOnlySimpleLineBuilder.layoutInlineContent({ needsLayoutRange, lineInput.initialLogicalRect }, previousLine);
 
     auto insertLeadingInlineBoxRun = [&] {
-        auto& leadingInlineItem = m_inlineItemList.first();
+        auto& leadingInlineItem = m_inlineItemList.front();
         ASSERT(leadingInlineItem.isInlineBoxStart());
 
         if (isFirstLine) {
@@ -79,7 +79,7 @@ LineLayoutResult RangeBasedLineBuilder::layoutInlineContent(const LineInput& lin
     auto appendTrailingInlineBoxRunIfNeeded = [&] {
         if (lineLayoutResult.inlineItemRange.end != needsLayoutRange.end)
             return;
-        auto& trailingInlineItem = m_inlineItemList.last();
+        auto& trailingInlineItem = m_inlineItemList.back();
         lineLayoutResult.inlineContent.append({ trailingInlineItem, isFirstLine ? trailingInlineItem.firstLineStyle() : trailingInlineItem.style(), lineLayoutResult.contentGeometry.logicalWidth });
         lineLayoutResult.inlineItemRange.end = lineInput.needsLayoutRange.end;
     };

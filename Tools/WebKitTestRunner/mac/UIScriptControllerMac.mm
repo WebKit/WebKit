@@ -46,6 +46,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <mach/mach_time.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
+#import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/WorkQueue.h>
 
@@ -452,6 +453,22 @@ void UIScriptControllerMac::setAppAccentColor(unsigned short red, unsigned short
 void UIScriptControllerMac::setWebViewAllowsMagnification(bool allowsMagnification)
 {
     webView().allowsMagnification = allowsMagnification;
+}
+
+void UIScriptControllerMac::setInlinePrediction(JSStringRef jsText, unsigned startIndex)
+{
+#if HAVE(INLINE_PREDICTIONS)
+    auto fullText = jsText->string();
+    RetainPtr markedText = adoptNS([[NSMutableAttributedString alloc] initWithString:fullText.left(startIndex)]);
+    [markedText appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:fullText.substring(startIndex) attributes:@{
+        NSForegroundColorAttributeName : NSColor.grayColor,
+        NSTextCompletionAttributeName : @YES
+    }]).get()];
+    [static_cast<id<NSTextInputClient>>(webView()) setMarkedText:markedText.get() selectedRange:NSMakeRange(startIndex, 0) replacementRange:NSMakeRange(NSNotFound, 0)];
+#else
+    UNUSED_PARAM(jsText);
+    UNUSED_PARAM(startIndex);
+#endif
 }
 
 } // namespace WTR
