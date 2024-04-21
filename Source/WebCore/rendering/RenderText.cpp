@@ -1723,8 +1723,10 @@ void RenderText::setTextInternal(const String& text, bool force)
 
 void RenderText::setText(const String& newContent, bool force)
 {
+    auto isDifferent = newContent != text();
     setTextInternal(newContent, force);
-    invalidateLineLayoutPathOnContentChangeIfNeeded(*this, 0, text().length());
+    if (isDifferent || force)
+        invalidateLineLayoutPathOnContentChangeIfNeeded(*this, 0, text().length());
 }
 
 void RenderText::setTextWithOffset(const String& newText, unsigned offset, unsigned, bool force)
