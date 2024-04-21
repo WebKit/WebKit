@@ -43,9 +43,9 @@ class NativeImageBackend;
 class NativeImage final : public RenderingResource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
+    static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate(), const std::optional<IntRect>& subimageRect = std::nullopt);
     // Creates a NativeImage that is intended to be drawn once or only few times. Signals the platform to avoid generating any caches for the image.
-    static WEBCORE_EXPORT RefPtr<NativeImage> createTransient(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
+    static WEBCORE_EXPORT RefPtr<NativeImage> createTransient(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate(), const std::optional<IntRect>& subimageRect = std::nullopt);
 
     WEBCORE_EXPORT const PlatformImagePtr& platformImage() const;
 
@@ -53,6 +53,7 @@ public:
     bool hasAlpha() const;
     std::optional<Color> singlePixelSolidColor() const;
     WEBCORE_EXPORT DestinationColorSpace colorSpace() const;
+    std::optional<IntRect> subimageRect() const { return m_subimageRect; }
 
     void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions);
     void clearSubimages();
@@ -60,12 +61,14 @@ public:
     WEBCORE_EXPORT void replaceBackend(UniqueRef<NativeImageBackend>);
     NativeImageBackend& backend() { return m_backend.get(); }
     const NativeImageBackend& backend() const { return m_backend.get(); }
+
 protected:
-    NativeImage(UniqueRef<NativeImageBackend>, RenderingResourceIdentifier);
+    NativeImage(UniqueRef<NativeImageBackend>, RenderingResourceIdentifier, const std::optional<IntRect>& subimageRect);
 
     bool isNativeImage() const final { return true; }
 
     UniqueRef<NativeImageBackend> m_backend;
+    std::optional<IntRect> m_subimageRect;
 };
 
 class NativeImageBackend {

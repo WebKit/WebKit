@@ -28,16 +28,16 @@
 
 namespace WebCore {
 
-Expected<Ref<NativeImage>, DecodingStatus> ImageSource::primaryNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&)
+Expected<Ref<NativeImage>, DecodingStatus> ImageSource::primaryNativeImageForDrawing(const FloatRect&, SubsamplingLevel, const DecodingOptions&)
 {
     if (auto nativeImage = primaryNativeImage())
         return nativeImage.releaseNonNull();
     return makeUnexpected(DecodingStatus::Invalid);
 }
 
-Expected<Ref<NativeImage>, DecodingStatus> ImageSource::currentNativeImageForDrawing(SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
+Expected<Ref<NativeImage>, DecodingStatus> ImageSource::currentNativeImageForDrawing(const FloatRect& clippedSourceRect, SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
 {
-    return primaryNativeImageForDrawing(subsamplingLevel, options);
+    return primaryNativeImageForDrawing(clippedSourceRect, subsamplingLevel, options);
 }
 
 bool ImageSource::hasSolidColor() const

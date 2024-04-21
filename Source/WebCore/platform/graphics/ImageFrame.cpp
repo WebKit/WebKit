@@ -108,11 +108,6 @@ bool ImageFrame::hasNativeImage(const std::optional<SubsamplingLevel>& subsampli
     return m_nativeImage && (!subsamplingLevel || *subsamplingLevel >= m_subsamplingLevel);
 }
 
-bool ImageFrame::hasFullSizeNativeImage(const std::optional<SubsamplingLevel>& subsamplingLevel) const
-{
-    return hasNativeImage(subsamplingLevel) && m_decodingOptions.hasFullSize();
-}
-
 bool ImageFrame::hasDecodedNativeImageCompatibleWithOptions(const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions) const
 {
     return isComplete() && hasNativeImage(subsamplingLevel) && m_decodingOptions.isCompatibleWith(decodingOptions);

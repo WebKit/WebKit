@@ -50,23 +50,24 @@ PlatformImageNativeImageBackend::PlatformImageNativeImageBackend(PlatformImagePt
 }
 
 #if !USE(CG)
-RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage, RenderingResourceIdentifier identifier)
+RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage, RenderingResourceIdentifier identifier, const std::optional<IntRect>& subimageRect)
 {
     if (!platformImage)
         return nullptr;
     UniqueRef<PlatformImageNativeImageBackend> backend { *new PlatformImageNativeImageBackend(WTFMove(platformImage)) };
-    return adoptRef(*new NativeImage(WTFMove(backend), identifier));
+    return adoptRef(*new NativeImage(WTFMove(backend), identifier, subimageRect));
 }
 
-RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image, RenderingResourceIdentifier identifier)
+RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image, RenderingResourceIdentifier identifier, const std::optional<IntRect>& subimageRect)
 {
-    return create(WTFMove(image), identifier);
+    return create(WTFMove(image), identifier, subimageRect);
 }
 #endif
 
-NativeImage::NativeImage(UniqueRef<NativeImageBackend> backend, RenderingResourceIdentifier renderingResourceIdentifier)
+NativeImage::NativeImage(UniqueRef<NativeImageBackend> backend, RenderingResourceIdentifier renderingResourceIdentifier, const std::optional<IntRect>& subimageRect)
     : RenderingResource(renderingResourceIdentifier)
     , m_backend(WTFMove(backend))
+    , m_subimageRect(subimageRect)
 {
 }
 
