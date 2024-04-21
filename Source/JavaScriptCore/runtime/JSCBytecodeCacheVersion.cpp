@@ -28,7 +28,7 @@
 
 #include <wtf/text/SuperFastHash.h>
 
-#if OS(DARWIN)
+#if __has_include(<wtf/spi/darwin/dyldSPI.h>)
 #include <dlfcn.h>
 #include <mach-o/dyld.h>
 #include <uuid/uuid.h>
@@ -45,7 +45,7 @@ static constexpr bool verbose = false;
 
 uint32_t computeJSCBytecodeCacheVersion()
 {
-#if OS(DARWIN)
+#if __has_include(<wtf/spi/darwin/dyldSPI.h>)
     static LazyNeverDestroyed<uint32_t> cacheVersion;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
