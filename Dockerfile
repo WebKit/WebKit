@@ -4,7 +4,7 @@ ARG CPU=native
 ARG LTO_FLAG="-flto='full'"
 ARG LLVM_VERSION="17"
 
-FROM bitnami/minideb:bullseye as base
+FROM bitnami/minideb:bookworm as base
 
 ARG MARCH_FLAG
 ARG WEBKIT_RELEASE_TYPE
