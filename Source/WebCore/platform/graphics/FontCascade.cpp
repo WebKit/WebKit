@@ -1317,7 +1317,8 @@ std::optional<GlyphData> FontCascade::getEmphasisMarkGlyphData(const AtomString&
     char32_t character;
     if (!mark.is8Bit()) {
         size_t i = 0;
-        U16_NEXT(mark.characters16(), i, mark.length(), character);
+        auto span = mark.span16();
+        U16_NEXT(span, i, span.size(), character);
         ASSERT(U16_IS_SINGLE(character)); // The CSS parser replaces unpaired surrogates with the object replacement character.
     } else
         character = mark[0];
