@@ -408,9 +408,13 @@ fast/canvas/offscreen-giant.html [ Skip ]
 fast/canvas/offscreen-nested-worker-serialization.html [ Skip ]
 fast/canvas/offscreen-scaling.html [ Skip ]
 fast/canvas/offscreen-toggle-display.html [ Skip ]
+fast/canvas/offscreen-visibility-change.html [ Skip ]
 fast/images/protected-image-queue.html [ Skip ]
 webgl/offscreen-webgl-errors-to-console.html [ Skip ]
 webgl/webgl-worker.html [ Skip ]
+
+# Accelerated canvas isn't supported yet
+fast/canvas/canvas-will-read-frequently.html [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # These areas are not implemented well on WinCairo
@@ -1877,6 +1881,7 @@ media/mediacapabilities [ Skip ]
 media/picture-in-picture [ Skip ]
 media/track [ Skip ]
 pageoverlay [ Skip ]
+pdf [ Skip ]
 perf [ Skip ]
 pointerevents [ Skip ]
 printing [ Skip ]
