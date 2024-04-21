@@ -2,18 +2,21 @@ ARG MARCH_FLAG=""
 ARG WEBKIT_RELEASE_TYPE=Release
 ARG CPU=native
 ARG LTO_FLAG="-flto='full'"
+ARG LLVM_VERSION="17"
 
-FROM bitnami/minideb:bullseye as base
+FROM bitnami/minideb:bookworm as base
 
 ARG MARCH_FLAG
 ARG WEBKIT_RELEASE_TYPE
 ARG CPU
 ARG LTO_FLAG
+ARG LLVM_VERSION
+
 RUN install_packages ca-certificates curl wget lsb-release software-properties-common gnupg gnupg1 gnupg2
 
 RUN wget https://apt.llvm.org/llvm.sh && \
     chmod +x llvm.sh && \
-    ./llvm.sh 17
+    ./llvm.sh ${LLVM_VERSION}
 
 RUN install_packages \
     cmake \
@@ -32,10 +35,19 @@ RUN install_packages \
     ruby \
     unzip \
     bash tar gzip \
-    libicu-dev
+    libicu-dev \
+    clang-${LLVM_VERSION} \
+    lld-${LLVM_VERSION} \
+    libc++-${LLVM_VERSION}-dev \
+    libc++abi-${LLVM_VERSION}-dev \
+    lldb-${LLVM_VERSION}
 
-ENV CXX=clang++-17
-ENV CC=clang-17
+RUN for f in /usr/lib/llvm-${LLVM_VERSION}/bin/*; do ln -sf "$f" /usr/bin; done && \
+     ln -sf clang /usr/bin/cc && \
+    ln -sf clang /usr/bin/c89 && \
+    ln -sf clang /usr/bin/c99 && \
+    ln -sf clang++ /usr/bin/c++ && \
+    ln -sf clang++ /usr/bin/g++
 
 
 ENV WEBKIT_OUT_DIR=/webkitbuild
@@ -54,8 +66,8 @@ ENV LTO_FLAG=${LTO_FLAG}
 
 
 RUN --mount=type=tmpfs,target=/webkitbuild \
-    export CFLAGS="$CFLAGS $LTO_FLAG -ffat-lto-objects $MARCH_FLAG -mtune=$CPU" && \
-    export CXXFLAGS="$CXXFLAGS $LTO_FLAG -ffat-lto-objects $MARCH_FLAG -mtune=$CPU" && \
+    export CFLAGS="$CFLAGS $LTO_FLAG" && \
+    export CXXFLAGS="$CXXFLAGS $LTO_FLAG" && \
     cd /webkitbuild && \
     cmake \
     -DPORT="JSCOnly" \
@@ -68,16 +80,16 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
     -DALLOW_LINE_AND_COLUMN_NUMBER_IN_BUILTINS=ON \
     -DENABLE_SINGLE_THREADED_VM_ENTRY_SCOPE=ON \
-    -G Ninja \ 
-    -DCMAKE_CXX_COMPILER=$(which clang++-17) \
-    -DCMAKE_C_COMPILER=$(which clang-17) \
     -DCMAKE_C_FLAGS="$CFLAGS" \
     -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
+    -G Ninja \
     /webkit && \
     cd /webkitbuild && \
-    CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" cmake --build /webkitbuild --config $WEBKIT_RELEASE_TYPE --target "jsc" && \
+    cmake --build /webkitbuild --config $WEBKIT_RELEASE_TYPE --target "jsc" && \
     cp -r $WEBKIT_OUT_DIR/lib/*.a /output/lib && \
     cp $WEBKIT_OUT_DIR/*.h /output/include && \
+    cp -r $WEBKIT_OUT_DIR/bin /output/bin && \
+    cp $WEBKIT_OUT_DIR/*.json /output && \
     find $WEBKIT_OUT_DIR/JavaScriptCore/Headers/JavaScriptCore/ -name "*.h" -exec cp {} /output/include/JavaScriptCore/ \; && \
     find $WEBKIT_OUT_DIR/JavaScriptCore/PrivateHeaders/JavaScriptCore/ -name "*.h" -exec cp {} /output/include/JavaScriptCore/ \; && \
     cp -r $WEBKIT_OUT_DIR/WTF/Headers/wtf/ /output/include && \
