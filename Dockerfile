@@ -4,7 +4,7 @@ ARG CPU=native
 ARG LTO_FLAG="-flto='full'"
 ARG LLVM_VERSION="17"
 
-FROM bitnami/minideb:bookworm as base
+FROM bitnami/minideb:bullseye as base
 
 ARG MARCH_FLAG
 ARG WEBKIT_RELEASE_TYPE
@@ -40,14 +40,20 @@ RUN install_packages \
     lld-${LLVM_VERSION} \
     libc++-${LLVM_VERSION}-dev \
     libc++abi-${LLVM_VERSION}-dev \
-    lldb-${LLVM_VERSION}
-
+    lldb-${LLVM_VERSION} \
+    pkg-config \
+    ruby-dev
+    
 RUN for f in /usr/lib/llvm-${LLVM_VERSION}/bin/*; do ln -sf "$f" /usr/bin; done && \
      ln -sf clang /usr/bin/cc && \
     ln -sf clang /usr/bin/c89 && \
     ln -sf clang /usr/bin/c99 && \
     ln -sf clang++ /usr/bin/c++ && \
-    ln -sf clang++ /usr/bin/g++
+    ln -sf clang++ /usr/bin/g++ && \
+    ln -sf llvm-ar /usr/bin/ar && \ 
+    ln -sf llvm-ranlib /usr/bin/ranlib && \
+    ln -sf ld.lld /usr/bin/ld
+
 
 
 ENV WEBKIT_OUT_DIR=/webkitbuild
@@ -80,6 +86,10 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
     -DALLOW_LINE_AND_COLUMN_NUMBER_IN_BUILTINS=ON \
     -DENABLE_SINGLE_THREADED_VM_ENTRY_SCOPE=ON \
+    -DENABLE_REMOTE_INSPECTOR=ON \
+    -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld" \
+    -DCMAKE_AR=$(which llvm-ar) \
+    -DCMAKE_RANLIB=$(which llvm-ranlib) \
     -DCMAKE_C_FLAGS="$CFLAGS" \
     -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
     -G Ninja \
