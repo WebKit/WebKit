@@ -44,6 +44,7 @@
 #include "PopupMenu.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderScrollbar.h"
 #include "RenderStyleSetters.h"
@@ -181,6 +182,8 @@ void RenderMenuList::adjustInnerStyle()
         if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_innerBlock))
             lineLayout->styleWillChange(*m_innerBlock, innerStyle);
         LayoutIntegration::LineLayout::updateStyle(*m_innerBlock);
+        for (auto& child : childrenOfType<RenderText>(*m_innerBlock))
+            LayoutIntegration::LineLayout::updateStyle(child);
     }
 }
 

@@ -29,6 +29,7 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
@@ -81,6 +82,8 @@ void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
         if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_inner))
             lineLayout->styleWillChange(*m_inner, m_inner->style());
         LayoutIntegration::LineLayout::updateStyle(*m_inner);
+        for (auto& child : childrenOfType<RenderText>(*m_inner))
+            LayoutIntegration::LineLayout::updateStyle(child);
     }
 }
 
