@@ -358,16 +358,6 @@ public:
         m_assembler.leaq_mr(imm.m_value, src, dest);
     }
 
-    void add64(TrustedImm64 imm, RegisterID src, RegisterID dest)
-    {
-        if (WTF::isRepresentableAs<int32_t>(imm.m_value))
-            m_assembler.leaq_mr(imm.m_value, src, dest);
-        else {
-            move(src, dest);
-            add64(imm, dest);
-        }
-    }
-
     void add64(TrustedImm32 imm, Address address)
     {
         if (imm.m_value == 1)
@@ -469,7 +459,8 @@ public:
     void and64(TrustedImm64 imm, RegisterID srcDest)
     {
         int64_t intValue = imm.m_value;
-        if (isRepresentableAs<int32_t>(intValue)) {
+        if (intValue <= std::numeric_limits<int32_t>::max()
+            && intValue >= std::numeric_limits<int32_t>::min()) {
             and64(TrustedImm32(static_cast<int32_t>(intValue)), srcDest);
             return;
         }
@@ -490,12 +481,6 @@ public:
     }
 
     void and64(TrustedImm32 imm, RegisterID src, RegisterID dest)
-    {
-        move(src, dest);
-        and64(imm, dest);
-    }
-
-    void and64(TrustedImm64 imm, RegisterID src, RegisterID dest)
     {
         move(src, dest);
         and64(imm, dest);
@@ -920,7 +905,8 @@ public:
 
     void or64(TrustedImm64 imm, RegisterID srcDest)
     {
-        if (isRepresentableAs<int32_t>(imm.m_value)) {
+        if (imm.m_value <= std::numeric_limits<int32_t>::max()
+            && imm.m_value >= std::numeric_limits<int32_t>::min()) {
             or64(TrustedImm32(static_cast<int32_t>(imm.m_value)), srcDest);
             return;
         }
@@ -946,12 +932,6 @@ public:
     }
 
     void or64(TrustedImm32 imm, RegisterID src, RegisterID dest)
-    {
-        move(src, dest);
-        or64(imm, dest);
-    }
-
-    void or64(TrustedImm64 imm, RegisterID src, RegisterID dest)
     {
         move(src, dest);
         or64(imm, dest);
@@ -984,16 +964,8 @@ public:
 
     void sub64(RegisterID a, TrustedImm32 imm, RegisterID dest)
     {
-        if (a == dest) {
-            sub64(imm, dest);
-            return;
-        }
-
-        if (UNLIKELY(imm.m_value == INT32_MIN)) {
-            move(a, dest);
-            sub64(imm, dest);
-        } else
-            m_assembler.leaq_mr(-imm.m_value, a, dest);
+        move(a, dest);
+        sub64(imm, dest);
     }
 
     void sub64(TrustedImm64 imm, RegisterID dest)
@@ -1003,21 +975,6 @@ public:
         else {
             move(imm, scratchRegister());
             sub64(scratchRegister(), dest);
-        }
-    }
-
-    void sub64(RegisterID src, TrustedImm64 imm, RegisterID dest)
-    {
-        if (src == dest) {
-            sub64(imm, dest);
-            return;
-        }
-
-        if (isRepresentableAs<int32_t>(imm.m_value) && LIKELY(imm.m_value != INT32_MIN))
-            m_assembler.leaq_mr(-imm.m_value, src, dest);
-        else {
-            move(src, dest);
-            sub64(imm, dest);
         }
     }
 
@@ -1111,16 +1068,8 @@ public:
 
     void xor64(TrustedImm64 imm, RegisterID srcDest)
     {
-        if (isRepresentableAs<int32_t>(imm.m_value))
-            return xor64(TrustedImm32(imm.m_value), srcDest);
         move(imm, scratchRegister());
         xor64(scratchRegister(), srcDest);
-    }
-
-    void xor64(TrustedImm64 imm, RegisterID src, RegisterID dest)
-    {
-        move(src, dest);
-        xor64(imm, dest);
     }
 
     void not64(RegisterID srcDest)
@@ -1467,24 +1416,6 @@ public:
         }
 
         m_assembler.cmpq_ir(right.m_value, left);
-        set32(x86Condition(cond), dest);
-    }
-
-    void compare64(RelationalCondition cond, RegisterID left, TrustedImm64 right, RegisterID dest)
-    {
-        if (!right.m_value) {
-            if (auto resultCondition = commuteCompareToZeroIntoTest(cond)) {
-                test64(*resultCondition, left, left, dest);
-                return;
-            }
-        }
-
-        if (isRepresentableAs<int32_t>(right.m_value))
-            m_assembler.cmpq_ir(right.m_value, left);
-        else {
-            move(right, scratchRegister());
-            m_assembler.cmpq_rr(scratchRegister(), left);
-        }
         set32(x86Condition(cond), dest);
     }
     
