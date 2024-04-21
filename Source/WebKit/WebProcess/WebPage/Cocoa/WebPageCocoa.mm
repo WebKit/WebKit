@@ -312,16 +312,13 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 void WebPage::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
-    RefPtr range = m_unifiedTextReplacementController->rangeForUUID(uuid);
-    if (!range)
-        range = m_textIndicatorStyleEnablementRanges.get(uuid);
-    if (!range) {
-        completionHandler(std::nullopt);
-        return;
+    auto sessionRange = m_unifiedTextReplacementController->contextRangeForSessionWithUUID(uuid);
+    if (!sessionRange) {
+        if (RefPtr liveRange = m_textIndicatorStyleEnablementRanges.get(uuid))
+            sessionRange = WebCore::makeSimpleRange(liveRange);
     }
 
-    auto simpleRange = makeSimpleRange(range);
-    if (!simpleRange) {
+    if (!sessionRange) {
         completionHandler(std::nullopt);
         return;
     }
@@ -333,7 +330,7 @@ void WebPage::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<voi
             TextIndicatorOption::ExpandClipBeyondVisibleRect,
             TextIndicatorOption::UseSelectionRectForSizing
         };
-        if (auto textIndicator = TextIndicator::createWithRange(*simpleRange, textIndicatorOptions, TextIndicatorPresentationTransition::None, { }))
+        if (auto textIndicator = TextIndicator::createWithRange(*sessionRange, textIndicatorOptions, TextIndicatorPresentationTransition::None, { }))
             textIndicatorData = textIndicator->data();
         completionHandler(WTFMove(textIndicatorData));
         return;
