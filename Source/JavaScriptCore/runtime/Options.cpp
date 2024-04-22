@@ -50,6 +50,8 @@
 #include <wtf/threads/Signals.h>
 
 #if OS(DARWIN)
+#include <wtf/DuplicatedPrintStream.h>
+#include <wtf/FilePrintStream.h>
 #include <wtf/darwin/OSLogPrintStream.h>
 #endif
 
@@ -63,8 +65,6 @@
 #endif
 
 namespace JSC {
-
-bool useOSLogOptionHasChanged = false;
 
 namespace OptionsHelper {
 
@@ -294,9 +294,17 @@ std::optional<OptionsStorage::OSLogType> parse(const char* string)
         result = OSLogType::Error;
     else if (equalLettersIgnoringASCIICase(string, "fault"_s))
         result = OSLogType::Fault;
+    else if (equalLettersIgnoringASCIICase(string, "dupdefault"_s))
+        result = OSLogType::Default;
+    else if (equalLettersIgnoringASCIICase(string, "dupinfo"_s))
+        result = OSLogType::Info;
+    else if (equalLettersIgnoringASCIICase(string, "dupdebug"_s))
+        result = OSLogType::Debug;
+    else if (equalLettersIgnoringASCIICase(string, "duperror"_s))
+        result = OSLogType::Error;
+    else if (equalLettersIgnoringASCIICase(string, "dupfault"_s))
+        result = OSLogType::Fault;
 
-    if (result && result.value() != Options::useOSLog())
-        useOSLogOptionHasChanged = true;
     return result;
 }
 
@@ -307,14 +315,19 @@ static os_log_type_t asDarwinOSLogType(OSLogType type)
     case OSLogType::None:
         RELEASE_ASSERT_NOT_REACHED();
     case OSLogType::Default:
+    case OSLogType::DupDefault:
         return OS_LOG_TYPE_DEFAULT;
     case OSLogType::Info:
+    case OSLogType::DupInfo:
         return OS_LOG_TYPE_INFO;
     case OSLogType::Debug:
+    case OSLogType::DupDebug:
         return OS_LOG_TYPE_DEBUG;
     case OSLogType::Error:
+    case OSLogType::DupError:
         return OS_LOG_TYPE_ERROR;
     case OSLogType::Fault:
+    case OSLogType::DupFault:
         return OS_LOG_TYPE_FAULT;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -323,12 +336,16 @@ static os_log_type_t asDarwinOSLogType(OSLogType type)
 
 static void initializeDatafileToUseOSLog()
 {
-    static bool alreadyInitialized = false;
-    RELEASE_ASSERT(!alreadyInitialized);
-    WTF::setDataFile(OSLogPrintStream::open("com.apple.JavaScriptCore", "DataLog", asDarwinOSLogType(Options::useOSLog())));
-    alreadyInitialized = true;
-    // Make sure no one jumped here for nefarious reasons...
-    RELEASE_ASSERT(Options::useOSLog() != OSLogType::None);
+    static std::once_flag once;
+    std::call_once(once, [] {
+        std::unique_ptr<PrintStream> out = OSLogPrintStream::open("com.apple.JavaScriptCore", "DataLog", asDarwinOSLogType(Options::useOSLog()));
+
+        if (Options::useOSLog() >= OSLogType::FirstDuplicatedOSLogType)
+            out = DuplicatedPrintStream::open(WTFMove(out), makeUnique<FilePrintStream>(stderr, FilePrintStream::Borrow));
+        WTF::setDataFile(WTFMove(out));
+        // Make sure no one jumped here for nefarious reasons...
+        RELEASE_ASSERT(Options::useOSLog() != OSLogType::None);
+    });
 }
 #endif // OS(DARWIN)
 
@@ -347,6 +364,16 @@ static const char* asString(OSLogType type)
         return "error";
     case OSLogType::Fault:
         return "fault";
+    case OSLogType::DupDefault:
+        return "dupdefault";
+    case OSLogType::DupInfo:
+        return "dupinfo";
+    case OSLogType::DupDebug:
+        return "dupdebug";
+    case OSLogType::DupError:
+        return "duperror";
+    case OSLogType::DupFault:
+        return "dupfault";
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
@@ -883,10 +910,8 @@ void Options::notifyOptionsChanged()
     }
 
 #if OS(DARWIN)
-    if (useOSLogOptionHasChanged) {
+    if (Options::useOSLog() != OSLogType::None)
         initializeDatafileToUseOSLog();
-        useOSLogOptionHasChanged = false;
-    }
 #endif
 
     if (Options::verboseVerifyGC())
