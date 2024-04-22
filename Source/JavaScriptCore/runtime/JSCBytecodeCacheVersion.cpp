@@ -28,7 +28,7 @@
 
 #include <wtf/text/SuperFastHash.h>
 
-#if __has_include(<wtf/spi/darwin/dyldSPI.h>)
+#if OS(DARWIN)
 #include <dlfcn.h>
 #include <mach-o/dyld.h>
 #include <uuid/uuid.h>
@@ -40,14 +40,12 @@
 namespace JSC {
 
 namespace JSCBytecodeCacheVersionInternal {
-#if __has_include(<wtf/spi/darwin/dyldSPI.h>)
 static constexpr bool verbose = false;
-#endif
 }
 
 uint32_t computeJSCBytecodeCacheVersion()
 {
-#if __has_include(<wtf/spi/darwin/dyldSPI.h>)
+#if OS(DARWIN)
     static LazyNeverDestroyed<uint32_t> cacheVersion;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -67,6 +65,7 @@ uint32_t computeJSCBytecodeCacheVersion()
     });
     return cacheVersion.get();
 #else
+    UNUSED_VARIABLE(JSCBytecodeCacheVersionInternal::verbose);
     static constexpr uint32_t precomputedCacheVersion = SuperFastHash::computeHash(__TIMESTAMP__);
     return precomputedCacheVersion;
 #endif
