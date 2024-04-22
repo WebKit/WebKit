@@ -1,351 +1,144 @@
 
-FAIL e.style['color'] = "rgb(from rebeccapurple r g b)" should set the property value Colors do not match.
-Actual:   rgb(102, 51, 153)
-Expected: color(srgb 0.4 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple r g b / alpha)" should set the property value Colors do not match.
-Actual:   rgb(102, 51, 153)
-Expected: color(srgb 0.4 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g b / alpha)" should set the property value Colors do not match.
-Actual:   rgba(51, 102, 153, 0.8)
-Expected: color(srgb 0.2 0.4 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from hsl(120deg 20% 50% / .5) r g b / alpha)" should set the property value Colors do not match.
-Actual:   rgba(102, 153, 102, 0.5)
-Expected: color(srgb 0.4 0.6 0.4 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rgb(from rebeccapurple r g b) r g b)" should set the property value Colors do not match.
-Actual:   rgb(102, 51, 153)
-Expected: color(srgb 0.4 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple 0 0 0)" should set the property value Colors do not match.
-Actual:   rgb(0, 0, 0)
-Expected: color(srgb 0 0 0).
-Error: assert_equals: Color format is correct. expected "color(srgb   )" but got "rgb(, , )"
-FAIL e.style['color'] = "rgb(from rebeccapurple 0 0 0 / 0)" should set the property value Colors do not match.
-Actual:   rgba(0, 0, 0, 0)
-Expected: color(srgb 0 0 0 / 0).
-Error: assert_equals: Color format is correct. expected "color(srgb    / )" but got "rgba(, , , )"
-FAIL e.style['color'] = "rgb(from rebeccapurple 0 g b / alpha)" should set the property value Colors do not match.
-Actual:   rgb(0, 51, 153)
-Expected: color(srgb 0 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rebeccapurple r 0 b / alpha)" should set the property value Colors do not match.
-Actual:   rgb(102, 0, 153)
-Expected: color(srgb 0.4 0 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple r g 0 / alpha)" should set the property value Colors do not match.
-Actual:   rgb(102, 51, 0)
-Expected: color(srgb 0.4 0.2 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple r g b / 0)" should set the property value Colors do not match.
-Actual:   rgba(102, 51, 153, 0)
-Expected: color(srgb 0.4 0.2 0.6 / 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) 0 g b / alpha)" should set the property value Colors do not match.
-Actual:   rgba(0, 102, 153, 0.8)
-Expected: color(srgb 0 0.4 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r 0 b / alpha)" should set the property value Colors do not match.
-Actual:   rgba(51, 0, 153, 0.8)
-Expected: color(srgb 0.2 0 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g 0 / alpha)" should set the property value Colors do not match.
-Actual:   rgba(51, 102, 0, 0.8)
-Expected: color(srgb 0.2 0.4 0 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g b / 0)" should set the property value Colors do not match.
-Actual:   rgba(51, 102, 153, 0)
-Expected: color(srgb 0.2 0.4 0.6 / 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rebeccapurple 25 g b / alpha)" should set the property value Colors do not match.
-Actual:   rgb(25, 51, 153)
-Expected: color(srgb 0.098 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.098 +/- 0.01, expected 0.098 but got 25
-FAIL e.style['color'] = "rgb(from rebeccapurple r 25 b / alpha)" should set the property value Colors do not match.
-Actual:   rgb(102, 25, 153)
-Expected: color(srgb 0.4 0.098 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple r g 25 / alpha)" should set the property value Colors do not match.
-Actual:   rgb(102, 51, 25)
-Expected: color(srgb 0.4 0.2 0.098).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple r g b / .25)" should set the property value Colors do not match.
-Actual:   rgba(102, 51, 153, 0.25)
-Expected: color(srgb 0.4 0.2 0.6 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) 25 g b / alpha)" should set the property value Colors do not match.
-Actual:   rgba(25, 102, 153, 0.8)
-Expected: color(srgb 0.098 0.4 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.098 +/- 0.01, expected 0.098 but got 25
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r 25 b / alpha)" should set the property value Colors do not match.
-Actual:   rgba(51, 25, 153, 0.8)
-Expected: color(srgb 0.2 0.098 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g 25 / alpha)" should set the property value Colors do not match.
-Actual:   rgba(51, 102, 25, 0.8)
-Expected: color(srgb 0.2 0.4 0.098 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g b / .20)" should set the property value Colors do not match.
-Actual:   rgba(51, 102, 153, 0.2)
-Expected: color(srgb 0.2 0.4 0.6 / 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rebeccapurple 20% g b / alpha)" should set the property value Colors do not match.
-Actual:   rgb(51, 51, 153)
-Expected: color(srgb 0.2 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rebeccapurple r 20% b / alpha)" should set the property value Colors do not match.
-Actual:   rgb(102, 51, 153)
-Expected: color(srgb 0.4 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple r g 20% / alpha)" should set the property value Colors do not match.
-Actual:   rgb(102, 51, 51)
-Expected: color(srgb 0.4 0.2 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple r g b / 20%)" should set the property value Colors do not match.
-Actual:   rgba(102, 51, 153, 0.2)
-Expected: color(srgb 0.4 0.2 0.6 / 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) 20% g b / alpha)" should set the property value Colors do not match.
-Actual:   rgba(51, 102, 153, 0.8)
-Expected: color(srgb 0.2 0.4 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r 20% b / alpha)" should set the property value Colors do not match.
-Actual:   rgba(51, 51, 153, 0.8)
-Expected: color(srgb 0.2 0.2 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g 20% / alpha)" should set the property value Colors do not match.
-Actual:   rgba(51, 102, 51, 0.8)
-Expected: color(srgb 0.2 0.4 0.2 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g b / 20%)" should set the property value Colors do not match.
-Actual:   rgba(51, 102, 153, 0.2)
-Expected: color(srgb 0.2 0.4 0.6 / 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rebeccapurple 25 g b / 25%)" should set the property value Colors do not match.
-Actual:   rgba(25, 51, 153, 0.25)
-Expected: color(srgb 0.098 0.2 0.6 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.098 +/- 0.01, expected 0.098 but got 25
-FAIL e.style['color'] = "rgb(from rebeccapurple r 25 b / 25%)" should set the property value Colors do not match.
-Actual:   rgba(102, 25, 153, 0.25)
-Expected: color(srgb 0.4 0.098 0.6 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple r g 25 / 25%)" should set the property value Colors do not match.
-Actual:   rgba(102, 51, 25, 0.25)
-Expected: color(srgb 0.4 0.2 0.098 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) 25 g b / 25%)" should set the property value Colors do not match.
-Actual:   rgba(25, 102, 153, 0.25)
-Expected: color(srgb 0.098 0.4 0.6 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.098 +/- 0.01, expected 0.098 but got 25
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r 25 b / 25%)" should set the property value Colors do not match.
-Actual:   rgba(51, 25, 153, 0.25)
-Expected: color(srgb 0.2 0.098 0.6 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g 25 / 25%)" should set the property value Colors do not match.
-Actual:   rgba(51, 102, 25, 0.25)
-Expected: color(srgb 0.2 0.4 0.098 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rebeccapurple g b r)" should set the property value Colors do not match.
-Actual:   rgb(51, 153, 102)
-Expected: color(srgb 0.2 0.6 0.4).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rebeccapurple b alpha r / g)" should set the property value Colors do not match.
-Actual:   rgba(153, 255, 102, 0.2)
-Expected: color(srgb 0.6 0.004 0.4).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
-FAIL e.style['color'] = "rgb(from rebeccapurple r r r / r)" should set the property value Colors do not match.
-Actual:   rgba(102, 102, 102, 0.4)
-Expected: color(srgb 0.4 0.4 0.4).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
-FAIL e.style['color'] = "rgb(from rebeccapurple alpha alpha alpha / alpha)" should set the property value Colors do not match.
-Actual:   rgb(255, 255, 255)
-Expected: color(srgb 0.004 0.004 0.004).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.004 +/- 0.01, expected 0.004 but got 255
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) g b r)" should set the property value Colors do not match.
-Actual:   rgb(102, 153, 51)
-Expected: color(srgb 0.4 0.6 0.2 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 4 got 3
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) b alpha r / g)" should set the property value Colors do not match.
-Actual:   rgba(153, 204, 51, 0.4)
-Expected: color(srgb 0.6 0.003 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r r r / r)" should set the property value Colors do not match.
-Actual:   rgba(51, 51, 51, 0.2)
-Expected: color(srgb 0.2 0.2 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) alpha alpha alpha / alpha)" should set the property value Colors do not match.
-Actual:   rgba(204, 204, 204, 0.8)
-Expected: color(srgb 0.003 0.003 0.003 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.003 +/- 0.01, expected 0.003 but got 204
-FAIL e.style['color'] = "rgb(from rebeccapurple r 20% 10)" should set the property value Colors do not match.
-Actual:   rgb(102, 51, 10)
-Expected: color(srgb 0.4 0.2 0.0392).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple r 10 20%)" should set the property value Colors do not match.
-Actual:   rgb(102, 10, 51)
-Expected: color(srgb 0.4 0.0392 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple 0% 10 10)" should set the property value Colors do not match.
-Actual:   rgb(0, 10, 10)
-Expected: color(srgb 0 0.0392 0.0392).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.0392 +/- 0.01, expected 0.0392 but got 10
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r 20% 10)" should set the property value Colors do not match.
-Actual:   rgb(51, 51, 10)
-Expected: color(srgb 0.2 0.2 0.0392 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 4 got 3
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r 10 20%)" should set the property value Colors do not match.
-Actual:   rgb(51, 10, 51)
-Expected: color(srgb 0.2 0.0392 0.2 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 4 got 3
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) 0% 10 10)" should set the property value Colors do not match.
-Actual:   rgb(0, 10, 10)
-Expected: color(srgb 0 0.0392 0.0392 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 4 got 3
-FAIL e.style['color'] = "rgb(from rebeccapurple calc(r) calc(g) calc(b))" should set the property value Colors do not match.
-Actual:   rgb(102, 51, 153)
-Expected: color(srgb 0.4 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple r calc(g * 2) 10)" should set the property value Colors do not match.
-Actual:   rgb(102, 102, 10)
-Expected: color(srgb 0.4 0.4 0.0392).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple b calc(r * .5) 10)" should set the property value Colors do not match.
-Actual:   rgb(153, 51, 10)
-Expected: color(srgb 0.6 0.2 0.0392).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.6 +/- 0.01, expected 0.6 but got 153
-FAIL e.style['color'] = "rgb(from rebeccapurple r calc(g * .5 + g * .5) 10)" should set the property value Colors do not match.
-Actual:   rgb(102, 51, 10)
-Expected: color(srgb 0.4 0.2 0.0392).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rebeccapurple r calc(b * .5 - g * .5) 10)" should set the property value Colors do not match.
-Actual:   rgb(102, 51, 10)
-Expected: color(srgb 0.4 0.2 0.0392).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) calc(r) calc(g) calc(b) / calc(alpha))" should set the property value Colors do not match.
-Actual:   rgba(51, 102, 153, 0.8)
-Expected: color(srgb 0.2 0.4 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rebeccapurple none none none)" should set the property value Colors do not match.
-Actual:   rgb(0, 0, 0)
-Expected: color(srgb none none none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 3
-FAIL e.style['color'] = "rgb(from rebeccapurple none none none / none)" should set the property value Colors do not match.
-Actual:   rgba(0, 0, 0, 0)
-Expected: color(srgb none none none / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 4
-FAIL e.style['color'] = "rgb(from rebeccapurple r g none)" should set the property value Colors do not match.
-Actual:   rgb(102, 51, 0)
-Expected: color(srgb 0.4 0.2 none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 2 got 3
-FAIL e.style['color'] = "rgb(from rebeccapurple r g none / alpha)" should set the property value Colors do not match.
-Actual:   rgb(102, 51, 0)
-Expected: color(srgb 0.4 0.2 none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 2 got 3
-FAIL e.style['color'] = "rgb(from rebeccapurple r g b / none)" should set the property value Colors do not match.
-Actual:   rgba(102, 51, 153, 0)
-Expected: color(srgb 0.4 0.2 0.6 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
-FAIL e.style['color'] = "rgb(from rgb(20% 40% 60% / 80%) r g none / alpha)" should set the property value Colors do not match.
-Actual:   rgba(51, 102, 0, 0.8)
-Expected: color(srgb 0.2 0.4 none / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
-FAIL e.style['color'] = "rgb(from rgb(20% 40% 60% / 80%) r g b / none)" should set the property value Colors do not match.
-Actual:   rgba(51, 102, 153, 0)
-Expected: color(srgb 0.2 0.4 0.6 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
-FAIL e.style['color'] = "rgb(from rgb(none none none) r g b)" should set the property value Colors do not match.
-Actual:   rgb(0, 0, 0)
-Expected: color(srgb 0 0 0).
-Error: assert_equals: Color format is correct. expected "color(srgb   )" but got "rgb(, , )"
-FAIL e.style['color'] = "rgb(from rgb(none none none / none) r g b / alpha)" should set the property value Colors do not match.
-Actual:   rgba(0, 0, 0, 0)
-Expected: color(srgb 0 0 0 / 0).
-Error: assert_equals: Color format is correct. expected "color(srgb    / )" but got "rgba(, , , )"
-FAIL e.style['color'] = "rgb(from rgb(20% none 60%) r g b)" should set the property value Colors do not match.
-Actual:   rgb(51, 0, 153)
-Expected: color(srgb 0.2 0 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL e.style['color'] = "rgb(from rgb(20% 40% 60% / none) r g b / alpha)" should set the property value Colors do not match.
-Actual:   rgba(51, 102, 153, 0)
-Expected: color(srgb 0.2 0.4 0.6 / 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
+PASS e.style['color'] = "rgb(from rebeccapurple r g b)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r g b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from hsl(120deg 20% 50% / .5) r g b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(from rebeccapurple r g b) r g b)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple 0 0 0)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple 0 0 0 / 0)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple 0 g b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r 0 b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r g 0 / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r g b / 0)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) 0 g b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r 0 b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g 0 / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g b / 0)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple 25 g b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r 25 b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r g 25 / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r g b / .25)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) 25 g b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r 25 b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g 25 / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g b / .20)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple 20% g b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r 20% b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r g 20% / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r g b / 20%)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) 20% g b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r 20% b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g 20% / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g b / 20%)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple 25 g b / 25%)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r 25 b / 25%)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r g 25 / 25%)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) 25 g b / 25%)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r 25 b / 25%)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r g 25 / 25%)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple g b r)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple b alpha r / g)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r r r / r)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple alpha alpha alpha / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) g b r)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) b alpha r / g)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r r r / r)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) alpha alpha alpha / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r 20% 10)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r 10 20%)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple 0% 10 10)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r 20% 10)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) r 10 20%)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) 0% 10 10)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple calc(r) calc(g) calc(b))" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r calc(g * 2) 10)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple b calc(r * .5) 10)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r calc(g * .5 + g * .5) 10)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r calc(b * .5 - g * .5) 10)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20%, 40%, 60%, 80%) calc(r) calc(g) calc(b) / calc(alpha))" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple none none none)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple none none none / none)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r g none)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r g none / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rebeccapurple r g b / none)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20% 40% 60% / 80%) r g none / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20% 40% 60% / 80%) r g b / none)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(none none none) r g b)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(none none none / none) r g b / alpha)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20% none 60%) r g b)" should set the property value
+PASS e.style['color'] = "rgb(from rgb(20% 40% 60% / none) r g b / alpha)" should set the property value
 FAIL e.style['color'] = "rgb(from currentColor r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgb(from color-mix(in srgb, red, red) r g b / alpha)" should set the property value Colors do not match.
-Actual:   rgb(255, 0, 0)
-Expected: color(srgb 1 0 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1 +/- 0.01, expected 1 but got 255
-FAIL e.style['color'] = "rgba(from rebeccapurple r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from hsl(120deg 20% 50% / .5) r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(from rebeccapurple r g b) r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple 0 0 0)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple 0 0 0 / 0)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple 0 g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r 0 b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r g 0 / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r g b / 0)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) 0 g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r 0 b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g 0 / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g b / 0)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple 25 g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r 25 b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r g 25 / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r g b / .25)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) 25 g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r 25 b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g 25 / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g b / .20)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple 20% g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r 20% b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r g 20% / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r g b / 20%)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) 20% g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r 20% b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g 20% / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g b / 20%)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple 25 g b / 25%)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r 25 b / 25%)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r g 25 / 25%)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) 25 g b / 25%)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r 25 b / 25%)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g 25 / 25%)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple g b r)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple b alpha r / g)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r r r / r)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple alpha alpha alpha / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) g b r)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) b alpha r / g)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r r r / r)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) alpha alpha alpha / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r 20% 10)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r 10 20%)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple 0% 10 10)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r 20% 10)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r 10 20%)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) 0% 10 10)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple calc(r) calc(g) calc(b))" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r calc(g * 2) 10)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple b calc(r * .5) 10)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r calc(g * .5 + g * .5) 10)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r calc(b * .5 - g * .5) 10)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) calc(r) calc(g) calc(b) / calc(alpha))" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple none none none)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple none none none / none)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r g none)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r g none / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rebeccapurple r g b / none)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20% 40% 60% / 80%) r g none / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20% 40% 60% / 80%) r g b / none)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(none none none) r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(none none none / none) r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20% none 60%) r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from rgb(20% 40% 60% / none) r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "rgb(from color-mix(in srgb, red, red) r g b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r g b)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r g b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from hsl(120deg 20% 50% / .5) r g b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(from rebeccapurple r g b) r g b)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple 0 0 0)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple 0 0 0 / 0)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple 0 g b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r 0 b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r g 0 / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r g b / 0)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) 0 g b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r 0 b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g 0 / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g b / 0)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple 25 g b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r 25 b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r g 25 / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r g b / .25)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) 25 g b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r 25 b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g 25 / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g b / .20)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple 20% g b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r 20% b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r g 20% / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r g b / 20%)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) 20% g b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r 20% b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g 20% / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g b / 20%)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple 25 g b / 25%)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r 25 b / 25%)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r g 25 / 25%)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) 25 g b / 25%)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r 25 b / 25%)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r g 25 / 25%)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple g b r)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple b alpha r / g)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r r r / r)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple alpha alpha alpha / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) g b r)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) b alpha r / g)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r r r / r)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) alpha alpha alpha / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r 20% 10)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r 10 20%)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple 0% 10 10)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r 20% 10)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) r 10 20%)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) 0% 10 10)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple calc(r) calc(g) calc(b))" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r calc(g * 2) 10)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple b calc(r * .5) 10)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r calc(g * .5 + g * .5) 10)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r calc(b * .5 - g * .5) 10)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20%, 40%, 60%, 80%) calc(r) calc(g) calc(b) / calc(alpha))" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple none none none)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple none none none / none)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r g none)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r g none / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rebeccapurple r g b / none)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20% 40% 60% / 80%) r g none / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20% 40% 60% / 80%) r g b / none)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(none none none) r g b)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(none none none / none) r g b / alpha)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20% none 60%) r g b)" should set the property value
+PASS e.style['color'] = "rgba(from rgb(20% 40% 60% / none) r g b / alpha)" should set the property value
 FAIL e.style['color'] = "rgba(from currentColor r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "rgba(from color-mix(in srgb, red, red) r g b / alpha)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color'] = "rgba(from color-mix(in srgb, red, red) r g b / alpha)" should set the property value
 PASS e.style['color'] = "hsl(from rebeccapurple h s l)" should set the property value
 PASS e.style['color'] = "hsl(from rebeccapurple h s l / alpha)" should set the property value
 PASS e.style['color'] = "hsl(from rgb(20%, 40%, 60%, 80%) h s l / alpha)" should set the property value
@@ -1527,10 +1320,7 @@ PASS e.style['color'] = "rgb(from var(--bg-color) r g b / 80%)" should set the p
 PASS e.style['color'] = "lch(from var(--color) calc(l / 2) c h)" should set the property value
 PASS e.style['color'] = "rgb(from var(--color) calc(r * .3 + g * .59 + b * .11) calc(r * .3 + g * .59 + b * .11) calc(r * .3 + g * .59 + b * .11))" should set the property value
 PASS e.style['color'] = "lch(from var(--color) l 0 h)" should set the property value
-FAIL e.style['color'] = "rgb(from indianred 255 g b)" should set the property value Colors do not match.
-Actual:   rgb(255, 92, 92)
-Expected: color(srgb 1 0.36 0.36).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1 +/- 0.02, expected 1 but got 255
+PASS e.style['color'] = "rgb(from indianred 255 g b)" should set the property value
 PASS e.style['color'] = "hsl(from var(--accent) calc(h + 180) s l)" should set the property value
 PASS e.style['color'] = "lab(from var(--mycolor) l a b / 100%)" should set the property value
 PASS e.style['color'] = "lab(from var(--mycolor) l a b / calc(alpha * 0.8))" should set the property value

@@ -1,288 +1,93 @@
 
-FAIL Property color value 'rgb(from rebeccapurple r g b)' Colors do not match.
-Actual:   rgb(102, 51, 153)
-Expected: color(srgb 0.4 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple r g b / alpha)' Colors do not match.
-Actual:   rgb(102, 51, 153)
-Expected: color(srgb 0.4 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g b / alpha)' Colors do not match.
-Actual:   rgba(51, 102, 153, 0.8)
-Expected: color(srgb 0.2 0.4 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from hsl(120deg 20% 50% / .5) r g b / alpha)' Colors do not match.
-Actual:   rgba(102, 153, 102, 0.5)
-Expected: color(srgb 0.4 0.6 0.4 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rgb(from rebeccapurple r g b) r g b)' Colors do not match.
-Actual:   rgb(102, 51, 153)
-Expected: color(srgb 0.4 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple 0 0 0)' Colors do not match.
-Actual:   rgb(0, 0, 0)
-Expected: color(srgb 0 0 0).
-Error: assert_equals: Color format is correct. expected "color(srgb   )" but got "rgb(, , )"
-FAIL Property color value 'rgb(from rebeccapurple 0 0 0 / 0)' Colors do not match.
-Actual:   rgba(0, 0, 0, 0)
-Expected: color(srgb 0 0 0 / 0).
-Error: assert_equals: Color format is correct. expected "color(srgb    / )" but got "rgba(, , , )"
-FAIL Property color value 'rgb(from rebeccapurple 0 g b / alpha)' Colors do not match.
-Actual:   rgb(0, 51, 153)
-Expected: color(srgb 0 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rebeccapurple r 0 b / alpha)' Colors do not match.
-Actual:   rgb(102, 0, 153)
-Expected: color(srgb 0.4 0 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple r g 0 / alpha)' Colors do not match.
-Actual:   rgb(102, 51, 0)
-Expected: color(srgb 0.4 0.2 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple r g b / 0)' Colors do not match.
-Actual:   rgba(102, 51, 153, 0)
-Expected: color(srgb 0.4 0.2 0.6 / 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) 0 g b / alpha)' Colors do not match.
-Actual:   rgba(0, 102, 153, 0.8)
-Expected: color(srgb 0 0.4 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r 0 b / alpha)' Colors do not match.
-Actual:   rgba(51, 0, 153, 0.8)
-Expected: color(srgb 0.2 0 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g 0 / alpha)' Colors do not match.
-Actual:   rgba(51, 102, 0, 0.8)
-Expected: color(srgb 0.2 0.4 0 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g b / 0)' Colors do not match.
-Actual:   rgba(51, 102, 153, 0)
-Expected: color(srgb 0.2 0.4 0.6 / 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rebeccapurple 25 g b / alpha)' Colors do not match.
-Actual:   rgb(25, 51, 153)
-Expected: color(srgb 0.098 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.098 +/- 0.01, expected 0.098 but got 25
-FAIL Property color value 'rgb(from rebeccapurple r 25 b / alpha)' Colors do not match.
-Actual:   rgb(102, 25, 153)
-Expected: color(srgb 0.4 0.098 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple r g 25 / alpha)' Colors do not match.
-Actual:   rgb(102, 51, 25)
-Expected: color(srgb 0.4 0.2 0.098).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple r g b / .25)' Colors do not match.
-Actual:   rgba(102, 51, 153, 0.25)
-Expected: color(srgb 0.4 0.2 0.6 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) 25 g b / alpha)' Colors do not match.
-Actual:   rgba(25, 102, 153, 0.8)
-Expected: color(srgb 0.098 0.4 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.098 +/- 0.01, expected 0.098 but got 25
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r 25 b / alpha)' Colors do not match.
-Actual:   rgba(51, 25, 153, 0.8)
-Expected: color(srgb 0.2 0.098 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g 25 / alpha)' Colors do not match.
-Actual:   rgba(51, 102, 25, 0.8)
-Expected: color(srgb 0.2 0.4 0.098 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g b / .20)' Colors do not match.
-Actual:   rgba(51, 102, 153, 0.2)
-Expected: color(srgb 0.2 0.4 0.6 / 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rebeccapurple 20% g b / alpha)' Colors do not match.
-Actual:   rgb(51, 51, 153)
-Expected: color(srgb 0.2 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rebeccapurple r 20% b / alpha)' Colors do not match.
-Actual:   rgb(102, 51, 153)
-Expected: color(srgb 0.4 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple r g 20% / alpha)' Colors do not match.
-Actual:   rgb(102, 51, 51)
-Expected: color(srgb 0.4 0.2 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple r g b / 20%)' Colors do not match.
-Actual:   rgba(102, 51, 153, 0.2)
-Expected: color(srgb 0.4 0.2 0.6 / 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) 20% g b / alpha)' Colors do not match.
-Actual:   rgba(51, 102, 153, 0.8)
-Expected: color(srgb 0.2 0.4 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r 20% b / alpha)' Colors do not match.
-Actual:   rgba(51, 51, 153, 0.8)
-Expected: color(srgb 0.2 0.2 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g 20% / alpha)' Colors do not match.
-Actual:   rgba(51, 102, 51, 0.8)
-Expected: color(srgb 0.2 0.4 0.2 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g b / 20%)' Colors do not match.
-Actual:   rgba(51, 102, 153, 0.2)
-Expected: color(srgb 0.2 0.4 0.6 / 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rebeccapurple 25 g b / 25%)' Colors do not match.
-Actual:   rgba(25, 51, 153, 0.25)
-Expected: color(srgb 0.098 0.2 0.6 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.098 +/- 0.01, expected 0.098 but got 25
-FAIL Property color value 'rgb(from rebeccapurple r 25 b / 25%)' Colors do not match.
-Actual:   rgba(102, 25, 153, 0.25)
-Expected: color(srgb 0.4 0.098 0.6 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple r g 25 / 25%)' Colors do not match.
-Actual:   rgba(102, 51, 25, 0.25)
-Expected: color(srgb 0.4 0.2 0.098 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) 25 g b / 25%)' Colors do not match.
-Actual:   rgba(25, 102, 153, 0.25)
-Expected: color(srgb 0.098 0.4 0.6 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.098 +/- 0.01, expected 0.098 but got 25
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r 25 b / 25%)' Colors do not match.
-Actual:   rgba(51, 25, 153, 0.25)
-Expected: color(srgb 0.2 0.098 0.6 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g 25 / 25%)' Colors do not match.
-Actual:   rgba(51, 102, 25, 0.25)
-Expected: color(srgb 0.2 0.4 0.098 / 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rebeccapurple g b r)' Colors do not match.
-Actual:   rgb(51, 153, 102)
-Expected: color(srgb 0.2 0.6 0.4).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rebeccapurple b alpha r / g)' Colors do not match.
-Actual:   rgba(153, 255, 102, 0.2)
-Expected: color(srgb 0.6 0.00392156862745098 0.4).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
-FAIL Property color value 'rgb(from rebeccapurple r r r / r)' Colors do not match.
-Actual:   rgba(102, 102, 102, 0.4)
-Expected: color(srgb 0.4 0.4 0.4).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
-FAIL Property color value 'rgb(from rebeccapurple alpha alpha alpha / alpha)' Colors do not match.
-Actual:   rgb(255, 255, 255)
-Expected: color(srgb 0.00392156862745098 0.00392156862745098 0.00392156862745098).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.00392156862745098 +/- 0.01, expected 0.00392156862745098 but got 255
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) g b r)' Colors do not match.
-Actual:   rgb(102, 153, 51)
-Expected: color(srgb 0.4 0.6 0.2 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 4 got 3
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) b alpha r / g)' Colors do not match.
-Actual:   rgba(153, 204, 51, 0.4)
-Expected: color(srgb 0.6 0.0031372549019607846 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r r r / r)' Colors do not match.
-Actual:   rgba(51, 51, 51, 0.2)
-Expected: color(srgb 0.2 0.2 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) alpha alpha alpha / alpha)' Colors do not match.
-Actual:   rgba(204, 204, 204, 0.8)
-Expected: color(srgb 0.0031372549019607846 0.0031372549019607846 0.0031372549019607846 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.0031372549019607846 +/- 0.01, expected 0.0031372549019607846 but got 204
-FAIL Property color value 'rgb(from rebeccapurple r 20% 10)' Colors do not match.
-Actual:   rgb(102, 51, 10)
-Expected: color(srgb 0.4 0.2 0.0392).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple r 10 20%)' Colors do not match.
-Actual:   rgb(102, 10, 51)
-Expected: color(srgb 0.4 0.0392 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple 0% 10 10)' Colors do not match.
-Actual:   rgb(0, 10, 10)
-Expected: color(srgb 0 0.0392 0.0392).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.0392 +/- 0.01, expected 0.0392 but got 10
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r 20% 10)' Colors do not match.
-Actual:   rgb(51, 51, 10)
-Expected: color(srgb 0.2 0.2 0.0392 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 4 got 3
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r 10 20%)' Colors do not match.
-Actual:   rgb(51, 10, 51)
-Expected: color(srgb 0.2 0.0392 0.2 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 4 got 3
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) 0% 10 10)' Colors do not match.
-Actual:   rgb(0, 10, 10)
-Expected: color(srgb 0 0.0392 0.0392 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 4 got 3
-FAIL Property color value 'rgb(from rebeccapurple calc(r) calc(g) calc(b))' Colors do not match.
-Actual:   rgb(102, 51, 153)
-Expected: color(srgb 0.4 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple r calc(g * 2) 10)' Colors do not match.
-Actual:   rgb(102, 102, 10)
-Expected: color(srgb 0.4 0.4 0.0392).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple b calc(r * .5) 10)' Colors do not match.
-Actual:   rgb(153, 51, 10)
-Expected: color(srgb 0.6 0.2 0.0392).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.6 +/- 0.01, expected 0.6 but got 153
-FAIL Property color value 'rgb(from rebeccapurple r calc(g * .5 + g * .5) 10)' Colors do not match.
-Actual:   rgb(102, 51, 10)
-Expected: color(srgb 0.4 0.2 0.0392).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple r calc(b * .5 - g * .5) 10)' Colors do not match.
-Actual:   rgb(102, 51, 10)
-Expected: color(srgb 0.4 0.2 0.0392).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) calc(r) calc(g) calc(b) / calc(alpha))' Colors do not match.
-Actual:   rgba(51, 102, 153, 0.8)
-Expected: color(srgb 0.2 0.4 0.6 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rgb(100 110 120 / 0.8) calc(r + 1) calc(g + 1) calc(b + 1) / calc(alpha + 0.01))' assert_true: 'rgb(from rgb(100 110 120 / 0.8) calc(r + 1) calc(g + 1) calc(b + 1) / calc(alpha + 0.01))' is a supported value for color. expected true got false
-FAIL Property color value 'rgb(from rebeccapurple calc((r / 255) * 100%) calc((g / 255) * 100%) calc((b / 255) * 100%) / calc(alpha * 100%))' assert_true: 'rgb(from rebeccapurple calc((r / 255) * 100%) calc((g / 255) * 100%) calc((b / 255) * 100%) / calc(alpha * 100%))' is a supported value for color. expected true got false
-FAIL Property color value 'rgb(from rgb(from rebeccapurple r g b / calc(alpha + 0.5)) r g b / calc(alpha - 0.5))' assert_true: 'rgb(from rgb(from rebeccapurple r g b / calc(alpha + 0.5)) r g b / calc(alpha - 0.5))' is a supported value for color. expected true got false
-FAIL Property color value 'rgb(from rgb(from rebeccapurple r g b / calc(alpha - 1.5)) r g b / calc(alpha + 0.5))' assert_true: 'rgb(from rgb(from rebeccapurple r g b / calc(alpha - 1.5)) r g b / calc(alpha + 0.5))' is a supported value for color. expected true got false
+PASS Property color value 'rgb(from rebeccapurple r g b)'
+PASS Property color value 'rgb(from rebeccapurple r g b / alpha)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g b / alpha)'
+PASS Property color value 'rgb(from hsl(120deg 20% 50% / .5) r g b / alpha)'
+PASS Property color value 'rgb(from rgb(from rebeccapurple r g b) r g b)'
+PASS Property color value 'rgb(from rebeccapurple 0 0 0)'
+PASS Property color value 'rgb(from rebeccapurple 0 0 0 / 0)'
+PASS Property color value 'rgb(from rebeccapurple 0 g b / alpha)'
+PASS Property color value 'rgb(from rebeccapurple r 0 b / alpha)'
+PASS Property color value 'rgb(from rebeccapurple r g 0 / alpha)'
+PASS Property color value 'rgb(from rebeccapurple r g b / 0)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) 0 g b / alpha)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r 0 b / alpha)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g 0 / alpha)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g b / 0)'
+PASS Property color value 'rgb(from rebeccapurple 25 g b / alpha)'
+PASS Property color value 'rgb(from rebeccapurple r 25 b / alpha)'
+PASS Property color value 'rgb(from rebeccapurple r g 25 / alpha)'
+PASS Property color value 'rgb(from rebeccapurple r g b / .25)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) 25 g b / alpha)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r 25 b / alpha)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g 25 / alpha)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g b / .20)'
+PASS Property color value 'rgb(from rebeccapurple 20% g b / alpha)'
+PASS Property color value 'rgb(from rebeccapurple r 20% b / alpha)'
+PASS Property color value 'rgb(from rebeccapurple r g 20% / alpha)'
+PASS Property color value 'rgb(from rebeccapurple r g b / 20%)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) 20% g b / alpha)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r 20% b / alpha)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g 20% / alpha)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g b / 20%)'
+PASS Property color value 'rgb(from rebeccapurple 25 g b / 25%)'
+PASS Property color value 'rgb(from rebeccapurple r 25 b / 25%)'
+PASS Property color value 'rgb(from rebeccapurple r g 25 / 25%)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) 25 g b / 25%)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r 25 b / 25%)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r g 25 / 25%)'
+PASS Property color value 'rgb(from rebeccapurple g b r)'
+PASS Property color value 'rgb(from rebeccapurple b alpha r / g)'
+PASS Property color value 'rgb(from rebeccapurple r r r / r)'
+PASS Property color value 'rgb(from rebeccapurple alpha alpha alpha / alpha)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) g b r)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) b alpha r / g)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r r r / r)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) alpha alpha alpha / alpha)'
+PASS Property color value 'rgb(from rebeccapurple r 20% 10)'
+PASS Property color value 'rgb(from rebeccapurple r 10 20%)'
+PASS Property color value 'rgb(from rebeccapurple 0% 10 10)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r 20% 10)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) r 10 20%)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) 0% 10 10)'
+PASS Property color value 'rgb(from rebeccapurple calc(r) calc(g) calc(b))'
+PASS Property color value 'rgb(from rebeccapurple r calc(g * 2) 10)'
+PASS Property color value 'rgb(from rebeccapurple b calc(r * .5) 10)'
+PASS Property color value 'rgb(from rebeccapurple r calc(g * .5 + g * .5) 10)'
+PASS Property color value 'rgb(from rebeccapurple r calc(b * .5 - g * .5) 10)'
+PASS Property color value 'rgb(from rgb(20%, 40%, 60%, 80%) calc(r) calc(g) calc(b) / calc(alpha))'
+PASS Property color value 'rgb(from rgb(100 110 120 / 0.8) calc(r + 1) calc(g + 1) calc(b + 1) / calc(alpha + 0.01))'
+PASS Property color value 'rgb(from rebeccapurple calc((r / 255) * 100%) calc((g / 255) * 100%) calc((b / 255) * 100%) / calc(alpha * 100%))'
+PASS Property color value 'rgb(from rgb(from rebeccapurple r g b / calc(alpha + 0.5)) r g b / calc(alpha - 0.5))'
+PASS Property color value 'rgb(from rgb(from rebeccapurple r g b / calc(alpha - 1.5)) r g b / calc(alpha + 0.5))'
 FAIL Property color value 'rgb(from rebeccapurple none none none)' Colors do not match.
-Actual:   rgb(0, 0, 0)
+Actual:   color(srgb none none none)
 Expected: color(srgb 0 0 0).
-Error: assert_equals: Color format is correct. expected "color(srgb   )" but got "rgb(, , )"
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 0
 FAIL Property color value 'rgb(from rebeccapurple none none none / none)' Colors do not match.
-Actual:   rgba(0, 0, 0, 0)
+Actual:   color(srgb none none none / none)
 Expected: color(srgb 0 0 0 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 0
 FAIL Property color value 'rgb(from rebeccapurple r g none)' Colors do not match.
-Actual:   rgb(102, 51, 0)
+Actual:   color(srgb 0.4 0.2 none)
 Expected: color(srgb 0.4 0.2 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 2
 FAIL Property color value 'rgb(from rebeccapurple r g none / alpha)' Colors do not match.
-Actual:   rgb(102, 51, 0)
+Actual:   color(srgb 0.4 0.2 none)
 Expected: color(srgb 0.4 0.2 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 102
-FAIL Property color value 'rgb(from rebeccapurple r g b / none)' Colors do not match.
-Actual:   rgba(102, 51, 153, 0)
-Expected: color(srgb 0.4 0.2 0.6 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 2
+PASS Property color value 'rgb(from rebeccapurple r g b / none)'
 FAIL Property color value 'rgb(from rgb(20% 40% 60% / 80%) r g none / alpha)' Colors do not match.
-Actual:   rgba(51, 102, 0, 0.8)
+Actual:   color(srgb 0.2 0.4 none / 0.8)
 Expected: color(srgb 0.2 0.4 0 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rgb(20% 40% 60% / 80%) r g b / none)' Colors do not match.
-Actual:   rgba(51, 102, 153, 0)
-Expected: color(srgb 0.2 0.4 0.6 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
-FAIL Property color value 'rgb(from rgb(none none none) r g b)' Colors do not match.
-Actual:   rgb(0, 0, 0)
-Expected: color(srgb 0 0 0).
-Error: assert_equals: Color format is correct. expected "color(srgb   )" but got "rgb(, , )"
-FAIL Property color value 'rgb(from rgb(none none none / none) r g b / alpha)' Colors do not match.
-Actual:   rgba(0, 0, 0, 0)
-Expected: color(srgb 0 0 0 / 0).
-Error: assert_equals: Color format is correct. expected "color(srgb    / )" but got "rgba(, , , )"
-FAIL Property color value 'rgb(from rgb(20% none 60%) r g b)' Colors do not match.
-Actual:   rgb(51, 0, 153)
-Expected: color(srgb 0.2 0 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'rgb(from rgb(20% 40% 60% / none) r g b / alpha)' Colors do not match.
-Actual:   rgba(51, 102, 153, 0)
-Expected: color(srgb 0.2 0.4 0.6 / 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2 +/- 0.01, expected 0.2 but got 51
-FAIL Property color value 'color-mix(in srgb, rgb(from rebeccapurple none g b), rebeccapurple)' Colors do not match.
-Actual:   color(srgb 0.2 0.2 0.6)
-Expected: color(srgb 0.4 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4 +/- 0.01, expected 0.4 but got 0.2
-FAIL Property color value 'rgb(from color-mix(in srgb, red, red) r g b / alpha)' Colors do not match.
-Actual:   rgb(255, 0, 0)
-Expected: color(srgb 1 0 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1 +/- 0.01, expected 1 but got 255
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 4 got 3
+PASS Property color value 'rgb(from rgb(20% 40% 60% / 80%) r g b / none)'
+PASS Property color value 'rgb(from rgb(none none none) r g b)'
+PASS Property color value 'rgb(from rgb(none none none / none) r g b / alpha)'
+PASS Property color value 'rgb(from rgb(20% none 60%) r g b)'
+PASS Property color value 'rgb(from rgb(20% 40% 60% / none) r g b / alpha)'
+PASS Property color value 'color-mix(in srgb, rgb(from rebeccapurple none g b), rebeccapurple)'
+PASS Property color value 'rgb(from color-mix(in srgb, red, red) r g b / alpha)'
 PASS Property color value 'hsl(from rebeccapurple h s l)'
 PASS Property color value 'hsl(from rebeccapurple h s l / alpha)'
 PASS Property color value 'hsl(from rgb(20%, 40%, 60%, 80%) h s l / alpha)'
@@ -1468,10 +1273,7 @@ PASS Property color value 'lch(from color(srgb 0.25 0.5 0.75) l c h)'
 PASS Property color value 'color(from lch(67.5345% 42.5 258.2) srgb r g b)'
 PASS Property color value 'oklch(from color(srgb 0.25 0.5 0.75) l c h)'
 PASS Property color value 'color(from oklch(72.322% 0.12403 247.996) srgb r g b)'
-FAIL Property color value 'color(from rgb(from color(xyz-d50 0.99 0.88 0.77) r g b) xyz-d50 x y z)' Colors do not match.
-Actual:   color(xyz-d50 0.885951 0.868714 0.758248)
-Expected: color(xyz-d50 0.99 0.88 0.77).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.99 +/- 0.0001, expected 0.99 but got 0.885951
+PASS Property color value 'color(from rgb(from color(xyz-d50 0.99 0.88 0.77) r g b) xyz-d50 x y z)'
 PASS Property color value 'color(from hsl(from color(xyz-d50 0.99 0.88 0.77) h s l) xyz-d50 x y z)'
 FAIL Property color value 'color(from hwb(from color(xyz-d50 0.99 0.88 0.77) h w b) xyz-d50 x y z)' Colors do not match.
 Actual:   color(xyz-d50 0.885951 0.868714 0.758248)
@@ -1493,10 +1295,7 @@ PASS Property color value 'color(from color(from color(xyz-d50 0.99 0.88 0.77) r
 PASS Property color value 'color(from color(from color(xyz-d50 0.99 0.88 0.77) xyz x y z) xyz-d50 x y z)'
 PASS Property color value 'color(from color(from color(xyz-d50 0.99 0.88 0.77) xyz-d50 x y z) xyz-d50 x y z)'
 PASS Property color value 'color(from color(from color(xyz-d50 0.99 0.88 0.77) xyz-d65 x y z) xyz-d50 x y z)'
-FAIL Property color value 'color(from rgb(from color(xyz-d65 0.99 0.88 0.77) r g b) xyz-d65 x y z)' Colors do not match.
-Actual:   color(xyz-d65 0.875352 0.891666 0.934913)
-Expected: color(xyz-d65 0.99 0.88 0.77).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.99 +/- 0.0001, expected 0.99 but got 0.875352
+PASS Property color value 'color(from rgb(from color(xyz-d65 0.99 0.88 0.77) r g b) xyz-d65 x y z)'
 PASS Property color value 'color(from hsl(from color(xyz-d65 0.99 0.88 0.77) h s l) xyz-d65 x y z)'
 FAIL Property color value 'color(from hwb(from color(xyz-d65 0.99 0.88 0.77) h w b) xyz-d65 x y z)' Colors do not match.
 Actual:   color(xyz-d65 0.875352 0.891666 0.934913)
@@ -1518,20 +1317,11 @@ PASS Property color value 'color(from color(from color(xyz-d65 0.99 0.88 0.77) r
 PASS Property color value 'color(from color(from color(xyz-d65 0.99 0.88 0.77) xyz x y z) xyz-d65 x y z)'
 PASS Property color value 'color(from color(from color(xyz-d65 0.99 0.88 0.77) xyz-d50 x y z) xyz-d65 x y z)'
 PASS Property color value 'color(from color(from color(xyz-d65 0.99 0.88 0.77) xyz-d65 x y z) xyz-d65 x y z)'
-FAIL Property color value 'rgb(from var(--bg-color) r g b / 80%)' Colors do not match.
-Actual:   rgba(0, 0, 255, 0.8)
-Expected: color(srgb 0 0 1 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 1 +/- 0.02, expected 1 but got 255
+PASS Property color value 'rgb(from var(--bg-color) r g b / 80%)'
 PASS Property color value 'lch(from var(--color) calc(l / 2) c h)'
-FAIL Property color value 'rgb(from var(--color) calc(r * .3 + g * .59 + b * .11) calc(r * .3 + g * .59 + b * .11) calc(r * .3 + g * .59 + b * .11))' Colors do not match.
-Actual:   rgb(76, 76, 76)
-Expected: color(srgb 0.3 0.3 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3 +/- 0.02, expected 0.3 but got 76
+PASS Property color value 'rgb(from var(--color) calc(r * .3 + g * .59 + b * .11) calc(r * .3 + g * .59 + b * .11) calc(r * .3 + g * .59 + b * .11))'
 PASS Property color value 'lch(from var(--color) l 0 h)'
-FAIL Property color value 'rgb(from indianred 255 g b)' Colors do not match.
-Actual:   rgb(255, 92, 92)
-Expected: color(srgb 1 0.36 0.36).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1 +/- 0.02, expected 1 but got 255
+PASS Property color value 'rgb(from indianred 255 g b)'
 PASS Property color value 'hsl(from var(--accent) calc(h + 180) s l)'
 PASS Property color value 'lab(from var(--mycolor) l a b / 100%)'
 PASS Property color value 'lab(from var(--mycolor) l a b / calc(alpha * 0.8))'
