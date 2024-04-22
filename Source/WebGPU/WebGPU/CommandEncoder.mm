@@ -281,9 +281,8 @@ void CommandEncoder::endEncoding(id<MTLCommandEncoder> encoder)
         return;
     }
 
-    ASSERT(encoder == m_existingCommandEncoder || !m_existingCommandEncoder || !encoder);
-    ASSERT(!m_blitCommandEncoder || m_blitCommandEncoder == encoder);
-    [m_existingCommandEncoder endEncoding];
+    if (encoderIsCurrent(m_existingCommandEncoder))
+        [m_existingCommandEncoder endEncoding];
     setExistingEncoder(nil);
     m_blitCommandEncoder = nil;
 }
@@ -1044,9 +1043,12 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
             return;
 
         auto destinationOrigin = MTLOriginMake(destination.origin.x, 0, 0);
+        sourceBytesPerRow = std::min<NSUInteger>(sourceBytesPerRow, widthForMetal * blockSize);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             auto sourceOffset = static_cast<NSUInteger>(source.layout.offset + layer * sourceBytesPerImage);
             NSUInteger destinationSlice = destination.origin.z + layer;
+            if (sourceOffset + sourceBytesPerRow > sourceBuffer.length)
+                continue;
             [m_blitCommandEncoder
                 copyFromBuffer:sourceBuffer
                 sourceOffset:sourceOffset

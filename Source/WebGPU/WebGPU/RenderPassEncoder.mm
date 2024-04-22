@@ -208,7 +208,10 @@ void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)
         return;
     }
 
+    if (m_queryBufferUtilizedIndices.contains(queryIndex))
+        return;
     [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeCounting offset:queryIndex];
+    m_queryBufferUtilizedIndices.add(queryIndex);
 }
 
 void RenderPassEncoder::endOcclusionQuery()

@@ -979,10 +979,11 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     }
                 }
 
-                if (stage != ShaderStage::Undefined) {
-                    [argumentEncoder[stage] setBuffer:buffer offset:entry.offset atIndex:index];
+                if (stage != ShaderStage::Undefined && buffer.length) {
+                    auto entryOffset = std::min<uint32_t>(entry.offset, buffer.length - 1);
+                    [argumentEncoder[stage] setBuffer:buffer offset:(apiBuffer.isDestroyed() ? 0 : entryOffset) atIndex:index];
                     if (bufferSizeArgumentBufferIndex)
-                        *(uint32_t*)[argumentEncoder[stage] constantDataAtIndex:*bufferSizeArgumentBufferIndex] = entrySize;
+                        *(uint32_t*)[argumentEncoder[stage] constantDataAtIndex:*bufferSizeArgumentBufferIndex] = std::min<uint32_t>(entrySize, buffer.length);
                 }
                 if (buffer)
                     stageResources[metalRenderStage(stage)][resourceUsage - 1].append(buffer);
