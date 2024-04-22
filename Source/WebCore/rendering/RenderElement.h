@@ -194,6 +194,7 @@ public:
     bool capturedInViewTransition() const;
     bool hasViewTransitionName() const;
     bool isViewTransitionPseudo() const;
+    bool requiresRenderingConsolidationForViewTransition() const;
     bool hasOutlineAnnotation() const;
     inline bool hasOutline() const;
     bool hasSelfPaintingLayer() const;

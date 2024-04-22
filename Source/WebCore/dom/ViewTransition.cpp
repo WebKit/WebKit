@@ -728,4 +728,15 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
     return { };
 }
 
+RenderViewTransitionCapture* ViewTransition::viewTransitionNewPseudoForCapturedElement(Element& element)
+{
+    for (auto& [name, capturedElement] : m_namedElements.map()) {
+        if (capturedElement->newElement == &element) {
+            Styleable styleable(*element.document().documentElement(), Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name });
+            return dynamicDowncast<RenderViewTransitionCapture>(styleable.renderer());
+        }
+    }
+    return nullptr;
+}
+
 }

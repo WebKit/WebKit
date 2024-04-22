@@ -40,6 +40,7 @@ namespace WebCore {
 
 class DOMPromise;
 class DeferredPromise;
+class RenderViewTransitionCapture;
 
 enum class ViewTransitionPhase : uint8_t {
     PendingCapture,
@@ -151,6 +152,8 @@ public:
     const OrderedNamedElementsMap& namedElements() const { return m_namedElements; };
 
     RefPtr<Document> protectedDocument() const { return m_document.get(); }
+
+    RenderViewTransitionCapture* viewTransitionNewPseudoForCapturedElement(Element&);
 
 private:
     ViewTransition(Document&, RefPtr<ViewTransitionUpdateCallback>&&);

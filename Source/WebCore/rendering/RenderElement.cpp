@@ -2071,15 +2071,17 @@ bool RenderElement::hasSelfPaintingLayer() const
 
 bool RenderElement::capturedInViewTransition() const
 {
-    if (!hasViewTransitionName())
-        return false;
-
     return element() && element()->capturedInViewTransition();
 }
 
 bool RenderElement::hasViewTransitionName() const
 {
     return !!style().viewTransitionName();
+}
+
+bool RenderElement::requiresRenderingConsolidationForViewTransition() const
+{
+    return hasViewTransitionName() || capturedInViewTransition();
 }
 
 bool RenderElement::isViewTransitionPseudo() const

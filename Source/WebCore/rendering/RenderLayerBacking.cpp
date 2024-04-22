@@ -657,10 +657,11 @@ void RenderLayerBacking::updateOpacity(const RenderStyle& style)
 void RenderLayerBacking::updateTransform(const RenderStyle& style)
 {
     TransformationMatrix t;
-    if (renderer().capturedInViewTransition()) {
-        Styleable styleable(*renderer().document().documentElement(), Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, style.viewTransitionName()->name });
-        if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(styleable.renderer()))
-            t.scaleNonUniform(viewTransitionCapture->scale().width(), viewTransitionCapture->scale().height());
+    if (renderer().capturedInViewTransition() && renderer().element()) {
+        if (RefPtr activeViewTransition = renderer().document().activeViewTransition()) {
+            if (CheckedPtr viewTransitionCapture = activeViewTransition->viewTransitionNewPseudoForCapturedElement(*renderer().element()))
+                t.scaleNonUniform(viewTransitionCapture->scale().width(), viewTransitionCapture->scale().height());
+        }
     } else if (m_owningLayer.isTransformed())
         m_owningLayer.updateTransformFromStyle(t, style, RenderStyle::individualTransformOperations());
     
@@ -1417,11 +1418,12 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     // is handled using a synthesized 'transform' property on the wrapping
     // ::view-transition-new element. Move the parent graphics layer rect to our
     // position so that layer positions are computed relative to our origin.
-    if (renderer().capturedInViewTransition()) {
-        Styleable styleable(*renderer().document().documentElement(), Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, style.viewTransitionName()->name });
-        if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(styleable.renderer())) {
-            ComputedOffsets computedOffsets(m_owningLayer, compositedAncestor, viewTransitionCapture->captureOverflowRect(), { }, { });
-            parentGraphicsLayerRect.move(computedOffsets.fromParentGraphicsLayer());
+    if (renderer().capturedInViewTransition() && renderer().element()) {
+        if (RefPtr activeViewTransition = renderer().document().activeViewTransition()) {
+            if (CheckedPtr viewTransitionCapture = activeViewTransition->viewTransitionNewPseudoForCapturedElement(*renderer().element())) {
+                ComputedOffsets computedOffsets(m_owningLayer, compositedAncestor, viewTransitionCapture->captureOverflowRect(), { }, { });
+                parentGraphicsLayerRect.move(computedOffsets.fromParentGraphicsLayer());
+            }
         }
     }
 
