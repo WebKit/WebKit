@@ -134,7 +134,7 @@ void ModelProcessProxy::modelProcessExited(ProcessTerminationReason reason)
     case ProcessTerminationReason::IdleExit:
     case ProcessTerminationReason::Unresponsive:
     case ProcessTerminationReason::Crash:
-        RELEASE_LOG_ERROR(Process, "%p - ModelProcessProxy::modelProcessExited: reason=%{public}s", this, processTerminationReasonToString(reason).characters());
+        RELEASE_LOG_ERROR(Process, "%p - ModelProcessProxy::modelProcessExited: reason=%{public}s", this, processTerminationReasonToString(reason));
         break;
     case ProcessTerminationReason::ExceededProcessCountLimit:
     case ProcessTerminationReason::NavigationSwap:
