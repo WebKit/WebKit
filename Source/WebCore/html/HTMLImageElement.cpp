@@ -854,12 +854,9 @@ String HTMLImageElement::crossOrigin() const
 
 bool HTMLImageElement::allowsOrientationOverride() const
 {
-    auto* cachedImage = this->cachedImage();
-    if (!cachedImage)
-        return true;
-
-    auto image = cachedImage->image();
-    return !image || image->sourceURL().protocolIsData() || cachedImage->isCORSSameOrigin();
+    if (auto* cachedImage = this->cachedImage())
+        return cachedImage->allowsOrientationOverride();
+    return true;
 }
 
 Image* HTMLImageElement::image() const

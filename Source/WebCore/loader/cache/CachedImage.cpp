@@ -68,6 +68,7 @@ CachedImage::CachedImage(CachedResourceRequest&& request, PAL::SessionID session
     , m_isManuallyCached(false)
     , m_shouldPaintBrokenImage(true)
     , m_forceUpdateImageDataEnabledForTesting(false)
+    , m_allowsOrientationOverride(true)
 {
     setStatus(Unknown);
 }
@@ -79,6 +80,7 @@ CachedImage::CachedImage(Image* image, PAL::SessionID sessionID, const CookieJar
     , m_isManuallyCached(false)
     , m_shouldPaintBrokenImage(true)
     , m_forceUpdateImageDataEnabledForTesting(false)
+    , m_allowsOrientationOverride(true)
 {
 }
 
@@ -95,6 +97,8 @@ CachedImage::CachedImage(const URL& url, Image* image, PAL::SessionID sessionID,
     // Use the incoming URL in the response field. This ensures that code using the response directly,
     // such as origin checks for security, actually see something.
     mutableResponse().setURL(url);
+
+    setAllowsOrientationOverride(isCORSSameOrigin() || m_image->sourceURL().protocolIsData());
 }
 
 CachedImage::~CachedImage()
@@ -500,6 +504,7 @@ inline void CachedImage::clearImage()
     m_image = nullptr;
     m_lastUpdateImageDataTime = { };
     m_updateImageDataCount = 0;
+    m_allowsOrientationOverride = true;
 }
 
 void CachedImage::updateBufferInternal(const FragmentedSharedBuffer& data)
@@ -614,6 +619,8 @@ void CachedImage::finishLoading(const FragmentedSharedBuffer* data, const Networ
     }
 
     setLoading(false);
+    setAllowsOrientationOverride(isCORSSameOrigin() || m_image->sourceURL().protocolIsData());
+
     notifyObservers();
     CachedResource::finishLoading(data, metrics);
 }
