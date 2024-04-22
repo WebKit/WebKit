@@ -1434,6 +1434,8 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset + layer * destinationBytesPerImage);
             NSUInteger sourceSlice = source.origin.z + layer;
+            if (destinationOffset + widthForMetal * blockSize > destinationBuffer.length)
+                continue;
             [m_blitCommandEncoder
                 copyFromTexture:sourceTexture.texture()
                 sourceSlice:sourceSlice
