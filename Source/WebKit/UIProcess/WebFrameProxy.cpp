@@ -55,6 +55,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NavigationScheduler.h>
 #include <stdio.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakRef.h>
@@ -425,13 +426,15 @@ void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& pr
     }
 
     RegistrableDomain navigationDomain(navigation.currentRequest().url());
+    // addAllowedFirstPartyForCookies can be sync, but we need completionHander to be invoked after this function.
+    auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
     if (!m_provisionalFrame || navigation.currentRequestIsCrossSiteRedirect()) {
         RefPtr page = m_page.get();
         // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
         RegistrableDomain mainFrameDomain(page->mainFrame()->url());
 
         m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, group.ensureProcessForDomain(navigationDomain, process, page->preferences()), navigation.currentRequestIsCrossSiteRedirect());
-        page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(process.coreProcessIdentifier(), mainFrameDomain, LoadedWebArchive::No), WTFMove(completionHandler));
+        page->websiteDataStore().protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, [aggregator] { });
     }
 
     if (this->process().processID() != process.processID()) {
@@ -440,9 +443,6 @@ void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& pr
         };
         process.send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, frameID()), page()->webPageIDInProcessForDomain(navigationDomain));
     }
-
-    if (completionHandler)
-        completionHandler();
 }
 
 void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent hasInsecureContent, WebCore::MouseEventPolicy mouseEventPolicy, const UserData& userData)
