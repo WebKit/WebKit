@@ -331,7 +331,7 @@ std::optional<LayoutRect> LineLayout::layout()
         // should retain all the pieces of data required -and then we can destroy damaged content here instead of after
         // layout in constructContent.
         clearInlineContent();
-        if (m_lineDamage && m_lineDamage->reasons().contains(Layout::InlineDamage::Reason::StyleChange))
+        if (m_lineDamage && m_lineDamage->reasons().containsAny({ Layout::InlineDamage::Reason::BreakingContextChanged, Layout::InlineDamage::Reason::InlineItemTypeChanged }))
             releaseCaches();
         m_lineDamage = { };
     };

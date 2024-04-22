@@ -196,11 +196,6 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
             updateStyleOfAnonymousBlockContinuations(*containingBlock(), &newStyle, oldStyle);
     }
 
-    if (diff >= StyleDifference::Repaint && selfNeedsLayout()) {
-        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
-            lineLayout->flow().invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::StyleChange);
-    }
-
     propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
 }
 
