@@ -852,7 +852,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             // FIXME: It is highly unlikely that a style mutation has effect on both the formatting context the box lives in
             // and the one it establishes but calling only one would require to come up with a list of properties that only affects one or the other.
             if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*this); inlineFormattingContextRoot && inlineFormattingContextRoot->modernLineLayout())
-                inlineFormattingContextRoot->modernLineLayout()->styleWillChange(*this, newStyle);
+                inlineFormattingContextRoot->modernLineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, newStyle);
             if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
                 lineLayout->styleWillChange(*this, newStyle);
         }

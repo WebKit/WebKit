@@ -37,6 +37,7 @@ class RenderStyle;
 namespace Layout {
 
 class Box;
+class ElementBox;
 class InlineTextBox;
 struct InvalidatedLine;
 
@@ -44,6 +45,7 @@ class InlineInvalidation {
 public:
     InlineInvalidation(InlineDamage&, const InlineItemList&, const InlineDisplay::Content&);
 
+    bool rootStyleWillChange(const ElementBox& formattingContextRoot, const RenderStyle& newStyle);
     bool styleWillChange(const Box&, const RenderStyle& newStyle);
 
     bool textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset = { });

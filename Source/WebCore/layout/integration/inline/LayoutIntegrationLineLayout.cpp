@@ -234,6 +234,18 @@ void LineLayout::updateStyle(const RenderObject& renderer)
     BoxTree::updateStyle(renderer);
 }
 
+bool LineLayout::rootStyleWillChange(const RenderBlockFlow& root, const RenderStyle& newStyle)
+{
+    if (!root.layoutBox() || !root.layoutBox()->isElementBox()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    if (!m_inlineContent)
+        return false;
+
+    return Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() }.rootStyleWillChange(downcast<Layout::ElementBox>(*root.layoutBox()), newStyle);
+}
+
 bool LineLayout::styleWillChange(const RenderElement& renderer, const RenderStyle& newStyle)
 {
     if (!renderer.layoutBox()) {

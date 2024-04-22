@@ -43,11 +43,12 @@ InlineInvalidation::InlineInvalidation(InlineDamage& inlineDamage, const InlineI
 {
 }
 
-bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle& newStyle)
+bool InlineInvalidation::rootStyleWillChange(const ElementBox& formattingContextRoot, const RenderStyle& newStyle)
 {
-    auto& oldStyle = layoutBox.style();
-    auto contentMayNeedNewBreakingPositionsAndMeasuring = [&] {
-        // FIXME: We should only check for properties affecting measuring.
+    ASSERT(formattingContextRoot.establishesInlineFormattingContext());
+    auto& oldStyle = formattingContextRoot.style();
+
+    auto inlineItemCacheNeedsUpdate = [&] {
         if (TextBreakingPositionContext { oldStyle } != TextBreakingPositionContext { newStyle })
             return true;
         if (oldStyle.fontCascade() != newStyle.fontCascade())
@@ -58,25 +59,47 @@ bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle
             return true;
         if ((newFirstLineStyle && newFirstLineStyle->fontCascade() != oldStyle.fontCascade()) || (oldFirstLineStyle && oldFirstLineStyle->fontCascade() != newStyle.fontCascade()))
             return true;
+        if (oldStyle.direction() != newStyle.direction() || oldStyle.unicodeBidi() != newStyle.unicodeBidi() || oldStyle.tabSize() != newStyle.tabSize() || oldStyle.textSecurity() != newStyle.textSecurity())
+            return true;
         return false;
     };
-    if (contentMayNeedNewBreakingPositionsAndMeasuring()) {
+
+    if (inlineItemCacheNeedsUpdate()) {
         m_inlineDamage.setDamageReason(InlineDamage::Reason::BreakingContextChanged);
         return true;
     }
 
-    auto hasInlineItemTypeChanged = [&] {
-        return oldStyle.hasOutOfFlowPosition() != newStyle.hasOutOfFlowPosition()
-            || oldStyle.isFloating() != newStyle.isFloating()
-            || oldStyle.display() != newStyle.display()
-            || oldStyle.unicodeBidi() != newStyle.unicodeBidi()
-            || oldStyle.direction() != newStyle.direction()
-            || oldStyle.tabSize() != newStyle.tabSize()
-            || oldStyle.textSecurity() != newStyle.textSecurity();
-    };
-    if (hasInlineItemTypeChanged()) {
+    m_inlineDamage.setDamageReason(InlineDamage::Reason::StyleChange);
+    return true;
+}
+
+bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle& newStyle)
+{
+    if (layoutBox.isInlineTextBox()) {
+        // Either the root or parent inline box takes care of this style change.
+        return false;
+    }
+
+    auto& oldStyle = layoutBox.style();
+
+    auto hasInlineItemTypeChanged = oldStyle.hasOutOfFlowPosition() != newStyle.hasOutOfFlowPosition() || oldStyle.isFloating() != newStyle.isFloating() || oldStyle.display() != newStyle.display();
+    if (hasInlineItemTypeChanged) {
         m_inlineDamage.setDamageReason(InlineDamage::Reason::InlineItemTypeChanged);
         return true;
+    }
+
+    if (layoutBox.isInlineBox()) {
+        auto contentMayNeedNewBreakingPositionsAndMeasuring = TextBreakingPositionContext { oldStyle } != TextBreakingPositionContext { newStyle } || oldStyle.fontCascade() != newStyle.fontCascade();
+        if (contentMayNeedNewBreakingPositionsAndMeasuring) {
+            m_inlineDamage.setDamageReason(InlineDamage::Reason::BreakingContextChanged);
+            return true;
+        }
+
+        auto inlineItemCacheNeedsUpdate = oldStyle.unicodeBidi() != newStyle.unicodeBidi() || oldStyle.direction() != newStyle.direction();
+        if (inlineItemCacheNeedsUpdate) {
+            m_inlineDamage.setDamageReason(InlineDamage::Reason::InlineItemTypeChanged);
+            return true;
+        }
     }
 
     m_inlineDamage.setDamageReason(InlineDamage::Reason::StyleChange);
