@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Blocked https://127.0.0.1:9443/resources/testdriver.js from asking for credentials because it is a cross-origin request.
 CONSOLE MESSAGE: Feature policy 'Geolocation' check failed for element with origin 'https://127.0.0.1:9443' and allow attribute ''.
 
 
