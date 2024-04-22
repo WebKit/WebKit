@@ -23,23 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ImageBackingStore.h"
+#pragma once
 
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
-#include <skia/core/SkPixmap.h>
-IGNORE_CLANG_WARNINGS_END
+#if USE(SKIA)
+
+#include <skia/core/SkColorSpace.h>
 
 namespace WebCore {
 
-PlatformImagePtr ImageBackingStore::image() const
-{
-    m_pixels->ref();
-    auto info = SkImageInfo::MakeN32(size().width(), size().height(), m_premultiplyAlpha ? kPremul_SkAlphaType : kUnpremul_SkAlphaType, SkColorSpace::MakeSRGB());
-    SkPixmap pixmap(info, m_pixelsPtr, info.minRowBytes64());
-    return SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
-        static_cast<DataSegment*>(context)->deref();
-    }, m_pixels.get());
-}
+WEBCORE_EXPORT sk_sp<SkColorSpace> sRGBColorSpaceRef();
+WEBCORE_EXPORT sk_sp<SkColorSpace> linearSRGBColorSpaceRef();
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+WEBCORE_EXPORT sk_sp<SkColorSpace> displayP3ColorSpaceRef();
+#endif
 
 } // namespace WebCore
+
+#endif // USE(SKIA)

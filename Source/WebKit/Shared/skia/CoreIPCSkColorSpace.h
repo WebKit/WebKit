@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,37 @@
 
 #pragma once
 
-#include "PlatformColorSpace.h"
-#include <optional>
-#include <wtf/Forward.h>
-
-namespace WebCore {
-
-class DestinationColorSpace {
-public:
-    WEBCORE_EXPORT static const DestinationColorSpace& SRGB();
-    WEBCORE_EXPORT static const DestinationColorSpace& LinearSRGB();
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-    WEBCORE_EXPORT static const DestinationColorSpace& DisplayP3();
-#endif
-
-    WEBCORE_EXPORT explicit DestinationColorSpace(PlatformColorSpace);
-
 #if USE(SKIA)
-    PlatformColorSpaceValue platformColorSpace() const { return m_platformColorSpace; }
-#else
-    PlatformColorSpaceValue platformColorSpace() const { return m_platformColorSpace.get(); }
-#endif
 
-    PlatformColorSpace serializableColorSpace() const { return m_platformColorSpace; }
+#include <skia/core/SkColorSpace.h>
 
-    WEBCORE_EXPORT std::optional<DestinationColorSpace> asRGB() const;
+namespace WebKit {
+
+class CoreIPCSkColorSpace {
+public:
+    CoreIPCSkColorSpace(sk_sp<SkColorSpace> skColorSpace)
+        : m_skColorSpace(WTFMove(skColorSpace))
+    {
+    }
+
+    CoreIPCSkColorSpace(std::span<const uint8_t> data)
+        : m_skColorSpace(SkColorSpace::Deserialize(data.data(), data.size()))
+    {
+    }
+
+    sk_sp<SkColorSpace> skColorSpace() const { return m_skColorSpace; }
+
+    std::span<const uint8_t> dataReference() const
+    {
+        if (auto data = m_skColorSpace->serialize())
+            return { data->bytes(), data->size() };
+        return { };
+    }
 
 private:
-    PlatformColorSpace m_platformColorSpace;
+    sk_sp<SkColorSpace> m_skColorSpace;
 };
 
-WEBCORE_EXPORT bool operator==(const DestinationColorSpace&, const DestinationColorSpace&);
+} // namespace WebKit
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DestinationColorSpace&);
-}
+#endif // USE(SKIA)

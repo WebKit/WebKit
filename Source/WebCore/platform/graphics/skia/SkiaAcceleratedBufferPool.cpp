@@ -79,7 +79,7 @@ RefPtr<Nicosia::Buffer> SkiaAcceleratedBufferPool::createAcceleratedBuffer(const
 {
     auto* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
     RELEASE_ASSERT(grContext);
-    auto imageInfo = SkImageInfo::MakeN32Premul(size.width(), size.height());
+    auto imageInfo = SkImageInfo::MakeN32Premul(size.width(), size.height(), SkColorSpace::MakeSRGB());
     SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
     auto surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kNo, imageInfo, 0, kTopLeft_GrSurfaceOrigin, &properties);
     if (!surface)

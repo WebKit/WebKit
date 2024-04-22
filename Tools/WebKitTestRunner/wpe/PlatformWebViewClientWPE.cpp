@@ -34,6 +34,7 @@
 #include <cairo.h>
 #elif USE(SKIA)
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkColorSpace.h>
 #include <skia/core/SkPixmap.h>
 IGNORE_CLANG_WARNINGS_END
 #endif
@@ -91,7 +92,7 @@ PlatformImage PlatformWebViewClientWPE::snapshot()
 
     return surface;
 #elif USE(SKIA)
-    auto info = SkImageInfo::MakeN32Premul(width, height);
+    auto info = SkImageInfo::MakeN32Premul(width, height, SkColorSpace::MakeSRGB());
     SkPixmap pixmap(info, g_bytes_get_data(bytes, nullptr), info.minRowBytes64());
     return SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
         g_object_unref(WPE_BUFFER(context));

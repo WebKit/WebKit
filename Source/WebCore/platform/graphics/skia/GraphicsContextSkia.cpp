@@ -45,6 +45,7 @@
 #include <skia/core/SkPoint3.h>
 #include <skia/core/SkRRect.h>
 #include <skia/core/SkRegion.h>
+#include <skia/core/SkSurface.h>
 #include <skia/core/SkTileMode.h>
 #include <skia/effects/SkImageFilters.h>
 #include <wtf/MathExtras.h>
@@ -60,6 +61,7 @@ GraphicsContextSkia::GraphicsContextSkia(SkCanvas& canvas, RenderingMode renderi
     , m_renderingMode(renderingMode)
     , m_renderingPurpose(renderingPurpose)
     , m_destroyNotify(WTFMove(destroyNotify))
+    , m_colorSpace(canvas.imageInfo().colorSpace() ? DestinationColorSpace(canvas.imageInfo().refColorSpace()) : DestinationColorSpace::SRGB())
 {
 }
 
@@ -83,6 +85,11 @@ AffineTransform GraphicsContextSkia::getCTM(IncludeDeviceScale includeScale) con
 SkCanvas* GraphicsContextSkia::platformContext() const
 {
     return &m_canvas;
+}
+
+const DestinationColorSpace& GraphicsContextSkia::colorSpace() const
+{
+    return m_colorSpace;
 }
 
 bool GraphicsContextSkia::makeGLContextCurrentIfNeeded() const

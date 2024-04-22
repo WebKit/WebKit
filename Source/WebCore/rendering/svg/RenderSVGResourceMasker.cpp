@@ -112,7 +112,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
 
     Ref svgStyle = style().svgStyle();
     if (svgStyle->colorInterpolation() == ColorInterpolation::LinearRGB) {
-#if USE(CG)
+#if USE(CG) || USE(SKIA)
         maskColorSpace = DestinationColorSpace::LinearSRGB();
 #endif
         drawColorSpace = DestinationColorSpace::LinearSRGB();
@@ -133,7 +133,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     if (missingMaskerData) {
         checkedLayer()->paintSVGResourceLayer(maskImage->context(), contentTransform);
 
-#if !USE(CG)
+#if !USE(CG) && !USE(SKIA)
         maskImage->transformToColorSpace(drawColorSpace);
 #else
         UNUSED_PARAM(drawColorSpace);

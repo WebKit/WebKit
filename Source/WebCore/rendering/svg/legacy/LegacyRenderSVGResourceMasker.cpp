@@ -81,7 +81,7 @@ bool LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
         auto drawColorSpace = DestinationColorSpace::SRGB();
 
         if (style().svgStyle().colorInterpolation() == ColorInterpolation::LinearRGB) {
-#if USE(CG)
+#if USE(CG) || USE(SKIA)
             maskColorSpace = DestinationColorSpace::LinearSRGB();
 #endif
             drawColorSpace = DestinationColorSpace::LinearSRGB();
@@ -110,7 +110,7 @@ bool LegacyRenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerD
     if (!drawContentIntoContext(maskImageContext, objectBoundingBox))
         return false;
 
-#if !USE(CG)
+#if !USE(CG) && !USE(SKIA)
     maskerData->maskImage->transformToColorSpace(colorSpace);
 #else
     UNUSED_PARAM(colorSpace);

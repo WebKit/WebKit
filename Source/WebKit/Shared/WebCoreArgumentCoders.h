@@ -32,6 +32,10 @@
 #include <wtf/ArgumentCoder.h>
 #include <wtf/EnumTraits.h>
 
+#if USE(SKIA)
+#include <skia/core/SkColorSpace.h>
+#endif
+
 #if PLATFORM(GTK)
 #include "ArgumentCodersGtk.h"
 #endif
@@ -63,6 +67,14 @@ template<> struct ArgumentCoder<WebCore::FontPlatformDataAttributes> {
 template<> struct ArgumentCoder<WebCore::FontCustomPlatformData> {
     static void encode(Encoder&, const WebCore::FontCustomPlatformData&);
     static std::optional<Ref<WebCore::FontCustomPlatformData>> decode(Decoder&);
+};
+#endif
+
+#if USE(SKIA)
+template<> struct ArgumentCoder<sk_sp<SkColorSpace>> {
+    static void encode(Encoder&, const sk_sp<SkColorSpace>&);
+    static void encode(StreamConnectionEncoder&, const sk_sp<SkColorSpace>&);
+    static std::optional<sk_sp<SkColorSpace>> decode(Decoder&);
 };
 #endif
 

@@ -43,7 +43,7 @@ std::unique_ptr<ImageBufferSkiaUnacceleratedBackend> ImageBufferSkiaUnaccelerate
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto imageInfo = SkImageInfo::MakeN32Premul(backendSize.width(), backendSize.height());
+    auto imageInfo = SkImageInfo::MakeN32Premul(backendSize.width(), backendSize.height(), parameters.colorSpace.platformColorSpace());
     SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
     auto surface = SkSurfaces::Raster(imageInfo, &properties);
     if (!surface || !surface->getCanvas())

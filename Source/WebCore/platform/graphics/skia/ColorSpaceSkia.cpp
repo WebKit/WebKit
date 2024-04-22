@@ -24,22 +24,31 @@
  */
 
 #include "config.h"
-#include "ImageBackingStore.h"
+#include "ColorSpaceSkia.h"
 
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
-#include <skia/core/SkPixmap.h>
-IGNORE_CLANG_WARNINGS_END
+#include "PlatformColorSpace.h"
+
+#if USE(SKIA)
 
 namespace WebCore {
 
-PlatformImagePtr ImageBackingStore::image() const
+sk_sp<SkColorSpace> sRGBColorSpaceRef()
 {
-    m_pixels->ref();
-    auto info = SkImageInfo::MakeN32(size().width(), size().height(), m_premultiplyAlpha ? kPremul_SkAlphaType : kUnpremul_SkAlphaType, SkColorSpace::MakeSRGB());
-    SkPixmap pixmap(info, m_pixelsPtr, info.minRowBytes64());
-    return SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
-        static_cast<DataSegment*>(context)->deref();
-    }, m_pixels.get());
+    return SkColorSpace::MakeSRGB();
 }
 
+sk_sp<SkColorSpace> linearSRGBColorSpaceRef()
+{
+    return SkColorSpace::MakeSRGBLinear();
+}
+
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+sk_sp<SkColorSpace> displayP3ColorSpaceRef()
+{
+    return SkColorSpace::MakeRGB(SkNamedTransferFn::kSRGB, SkNamedGamut::kDisplayP3);
+}
+#endif
+
 } // namespace WebCore
+
+#endif // USE(SKIA)

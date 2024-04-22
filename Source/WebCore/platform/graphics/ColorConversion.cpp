@@ -429,16 +429,14 @@ ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColor
     return platformConvertColorComponents(inputColorSpace, inputColorComponents, outputColorSpace);
 #else
     return callWithColorType(inputColorComponents, inputColorSpace, [outputColorSpace] (const auto& inputColor) {
-        switch (outputColorSpace.platformColorSpace()) {
-        case PlatformColorSpace::Name::SRGB:
+        if (outputColorSpace == DestinationColorSpace::SRGB())
             return asColorComponents(convertColor<SRGBA<float>>(inputColor).resolved());
-        case PlatformColorSpace::Name::LinearSRGB:
+        if (outputColorSpace == DestinationColorSpace::LinearSRGB())
             return asColorComponents(convertColor<LinearSRGBA<float>>(inputColor).resolved());
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-        case PlatformColorSpace::Name::DisplayP3:
+        if (outputColorSpace == DestinationColorSpace::DisplayP3())
             return asColorComponents(convertColor<DisplayP3<float>>(inputColor).resolved());
 #endif
-        }
 
         ASSERT_NOT_REACHED();
         return asColorComponents(convertColor<SRGBA<float>>(inputColor).resolved());

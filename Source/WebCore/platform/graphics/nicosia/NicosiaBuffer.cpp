@@ -90,7 +90,7 @@ UnacceleratedBuffer::UnacceleratedBuffer(const WebCore::IntSize& size, Flags fla
     }
 
 #if USE(SKIA)
-    auto imageInfo = SkImageInfo::MakeN32Premul(size.width(), size.height());
+    auto imageInfo = SkImageInfo::MakeN32Premul(size.width(), size.height(), SkColorSpace::MakeSRGB());
     // FIXME: ref buffer and unref on release proc?
     SkSurfaceProps properties = { 0, WebCore::FontRenderOptions::singleton().subpixelOrder() };
     m_surface = SkSurfaces::WrapPixels(imageInfo, m_data.get(), imageInfo.minRowBytes64(), &properties);

@@ -28,6 +28,8 @@
 #if USE(CG)
 #include <wtf/RetainPtr.h>
 typedef struct CGColorSpace* CGColorSpaceRef;
+#elif USE(SKIA)
+#include <skia/core/SkColorSpace.h>
 #else
 #include <optional>
 #endif
@@ -38,6 +40,11 @@ namespace WebCore {
 
 using PlatformColorSpace = RetainPtr<CGColorSpaceRef>;
 using PlatformColorSpaceValue = CGColorSpaceRef;
+
+#elif USE(SKIA)
+
+using PlatformColorSpace = sk_sp<SkColorSpace>;
+using PlatformColorSpaceValue = sk_sp<SkColorSpace>;
 
 #else
 

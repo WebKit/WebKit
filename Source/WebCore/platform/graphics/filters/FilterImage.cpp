@@ -231,7 +231,7 @@ static RefPtr<PixelBuffer> getConvertedPixelBuffer(PixelBuffer& sourcePixelBuffe
 
 bool FilterImage::requiresPixelBufferColorSpaceConversion(std::optional<DestinationColorSpace> colorSpace) const
 {
-#if USE(CG)
+#if USE(CG) || USE(SKIA)
     // This function determines whether we need the step of an extra color space conversion
     // We only need extra color conversion when 1) color space is different in the input
     // AND 2) the filter is manipulating raw pixels
@@ -378,8 +378,8 @@ void FilterImage::correctPremultipliedPixelBuffer()
 
 void FilterImage::transformToColorSpace(const DestinationColorSpace& colorSpace)
 {
-#if USE(CG)
-    // CG handles color space adjustments internally.
+#if USE(CG) || USE(SKIA)
+    // CG and SKIA handle color space adjustments internally.
     UNUSED_PARAM(colorSpace);
 #else
     if (colorSpace == m_colorSpace)
