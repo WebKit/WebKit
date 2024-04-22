@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Feature policy 'Fullscreen' check failed for element with origin 'null' and allow attribute ''.
+CONSOLE MESSAGE: Permission policy 'Fullscreen' check failed for element with origin 'null' and allow attribute ''.
 Test entering full screen security restrictions. An iframe without an allow attribute is still permitted to fullscreen if the request comes from the containing document.
 
 To test manually, press any key - the page should enter full screen mode.

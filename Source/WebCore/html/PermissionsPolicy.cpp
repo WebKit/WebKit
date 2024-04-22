@@ -94,7 +94,7 @@ bool isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type ty
     while (ancestorDocument.get() != topDocument.ptr()) {
         if (!ancestorDocument) {
             if (logFailure == LogPermissionsPolicyFailure::Yes && document.domWindow())
-                document.domWindow()->printErrorMessage(makeString("Feature policy '", policyTypeName(type), "' check failed."));
+                document.domWindow()->printErrorMessage(makeString("Permission policy '", policyTypeName(type), "' check failed."));
             return false;
         }
 
@@ -112,7 +112,7 @@ bool isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type ty
                 String allowValue;
                 if (iframe)
                     allowValue = iframe->attributeWithoutSynchronization(HTMLNames::allowAttr);
-                document.domWindow()->printErrorMessage(makeString("Feature policy '", policyTypeName(type), "' check failed for element with origin '", document.securityOrigin().toString(), "' and allow attribute '", allowValue, "'."));
+                document.domWindow()->printErrorMessage(makeString("Permission policy '", policyTypeName(type), "' check failed for element with origin '", document.securityOrigin().toString(), "' and allow attribute '", allowValue, "'."));
             }
             return false;
         }

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Feature policy 'Microphone' check failed for element with origin 'https://localhost:8443' and allow attribute ''.
+CONSOLE MESSAGE: Permission policy 'Microphone' check failed for element with origin 'https://localhost:8443' and allow attribute ''.
 CONSOLE MESSAGE: Not allowed to call getUserMedia.
 Tests that getUserMedia fails when the top level document and iframe do not have the same domain.
 
