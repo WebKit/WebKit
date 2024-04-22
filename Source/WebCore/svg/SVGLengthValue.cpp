@@ -33,34 +33,34 @@
 
 namespace WebCore {
 
-static inline const char* lengthTypeToString(SVGLengthType lengthType)
+static inline ASCIILiteral lengthTypeToString(SVGLengthType lengthType)
 {
     switch (lengthType) {
     case SVGLengthType::Unknown:
     case SVGLengthType::Number:
-        return "";    
+        return ""_s;
     case SVGLengthType::Percentage:
-        return "%";
+        return "%"_s;
     case SVGLengthType::Ems:
-        return "em";
+        return "em"_s;
     case SVGLengthType::Exs:
-        return "ex";
+        return "ex"_s;
     case SVGLengthType::Pixels:
-        return "px";
+        return "px"_s;
     case SVGLengthType::Centimeters:
-        return "cm";
+        return "cm"_s;
     case SVGLengthType::Millimeters:
-        return "mm";
+        return "mm"_s;
     case SVGLengthType::Inches:
-        return "in";
+        return "in"_s;
     case SVGLengthType::Points:
-        return "pt";
+        return "pt"_s;
     case SVGLengthType::Picas:
-        return "pc";
+        return "pc"_s;
     }
 
     ASSERT_NOT_REACHED();
-    return "";
+    return ""_s;
 }
 
 template<typename CharacterType> static inline SVGLengthType parseLengthType(StringParsingBuffer<CharacterType>& buffer)

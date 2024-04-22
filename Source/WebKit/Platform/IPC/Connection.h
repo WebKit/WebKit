@@ -109,7 +109,7 @@ enum class Error : uint8_t {
     StreamConnectionEncodingError,
 };
 
-extern const char* errorAsString(Error);
+extern ASCIILiteral errorAsString(Error);
 
 #define CONNECTION_STRINGIFY(line) #line
 #define CONNECTION_STRINGIFY_MACRO(line) CONNECTION_STRINGIFY(line)

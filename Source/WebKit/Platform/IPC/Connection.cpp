@@ -772,7 +772,7 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
         }
 
         if (UNLIKELY(m_inDispatchSyncMessageCount && !timeout.isInfinity())) {
-            RELEASE_LOG_ERROR(IPC, "Connection::waitForMessage(%" PUBLIC_LOG_STRING "): Exiting immediately, since we're handling a sync message already", description(messageName));
+            RELEASE_LOG_ERROR(IPC, "Connection::waitForMessage(%" PUBLIC_LOG_STRING "): Exiting immediately, since we're handling a sync message already", description(messageName).characters());
             m_waitingForMessage = nullptr;
             return makeUnexpected(Error::AttemptingToWaitInsideSyncMessageHandling);
         }
@@ -917,9 +917,9 @@ auto Connection::waitForSyncReply(SyncRequestID syncRequestID, MessageName messa
     }
 
 #if OS(DARWIN)
-    RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %" PUBLIC_LOG_STRING " from process %d, id=%" PRIu64, description(messageName), remoteProcessID(), syncRequestID.toUInt64());
+    RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %" PUBLIC_LOG_STRING " from process %d, id=%" PRIu64, description(messageName).characters(), remoteProcessID(), syncRequestID.toUInt64());
 #else
-    RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %s, id=%" PRIu64, description(messageName), syncRequestID.toUInt64());
+    RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %s, id=%" PRIu64, description(messageName).characters(), syncRequestID.toUInt64());
 #endif
 
     return makeUnexpected(Error::Timeout);
@@ -1466,7 +1466,7 @@ void Connection::dispatchIncomingMessages()
         messagesToProcess = numberOfMessagesToProcess(m_incomingMessages.size());
         if (messagesToProcess < m_incomingMessages.size()) {
             RELEASE_LOG_ERROR(IPC, "%p - Connection::dispatchIncomingMessages: IPC throttling was triggered (has %zu pending incoming messages, will only process %zu before yielding)", this, m_incomingMessages.size(), messagesToProcess);
-            RELEASE_LOG_ERROR(IPC, "%p - Connection::dispatchIncomingMessages: first IPC message in queue is %" PUBLIC_LOG_STRING, this, description(message->messageName()));
+            RELEASE_LOG_ERROR(IPC, "%p - Connection::dispatchIncomingMessages: first IPC message in queue is %" PUBLIC_LOG_STRING, this, description(message->messageName()).characters());
         }
 
         // Re-schedule ourselves *before* we dispatch the messages because we want to process follow-up messages if the client
@@ -1580,30 +1580,30 @@ std::optional<Connection::ConnectionIdentifierPair> Connection::createConnection
 }
 #endif
 
-const char* errorAsString(Error error)
+ASCIILiteral errorAsString(Error error)
 {
     switch (error) {
-    case Error::NoError: return "NoError";
-    case Error::InvalidConnection: return "InvalidConnection";
-    case Error::NoConnectionForIdentifier: return "NoConnectionForIdentifier";
-    case Error::NoMessageSenderConnection: return "NoMessageSenderConnection";
-    case Error::Timeout: return "Timeout";
-    case Error::Unspecified: return "Unspecified";
-    case Error::MultipleWaitingClients: return "MultipleWaitingClients";
-    case Error::AttemptingToWaitOnClosedConnection: return "AttemptingToWaitOnClosedConnection";
-    case Error::WaitingOnAlreadyDispatchedMessage: return "WaitingOnAlreadyDispatchedMessage";
-    case Error::AttemptingToWaitInsideSyncMessageHandling: return "AttemptingToWaitInsideSyncMessageHandling";
-    case Error::SyncMessageInterruptedWait: return "SyncMessageInterruptedWait";
-    case Error::CantWaitForSyncReplies: return "CantWaitForSyncReplies";
-    case Error::FailedToEncodeMessageArguments: return "FailedToEncodeMessageArguments";
-    case Error::FailedToDecodeReplyArguments: return "FailedToDecodeReplyArguments";
-    case Error::FailedToFindReplyHandler: return "FailedToFindReplyHandler";
-    case Error::FailedToAcquireBufferSpan: return "FailedToAcquireBufferSpan";
-    case Error::FailedToAcquireReplyBufferSpan: return "FailedToAcquireReplyBufferSpan";
-    case Error::StreamConnectionEncodingError: return "StreamConnectionEncodingError";
+    case Error::NoError: return "NoError"_s;
+    case Error::InvalidConnection: return "InvalidConnection"_s;
+    case Error::NoConnectionForIdentifier: return "NoConnectionForIdentifier"_s;
+    case Error::NoMessageSenderConnection: return "NoMessageSenderConnection"_s;
+    case Error::Timeout: return "Timeout"_s;
+    case Error::Unspecified: return "Unspecified"_s;
+    case Error::MultipleWaitingClients: return "MultipleWaitingClients"_s;
+    case Error::AttemptingToWaitOnClosedConnection: return "AttemptingToWaitOnClosedConnection"_s;
+    case Error::WaitingOnAlreadyDispatchedMessage: return "WaitingOnAlreadyDispatchedMessage"_s;
+    case Error::AttemptingToWaitInsideSyncMessageHandling: return "AttemptingToWaitInsideSyncMessageHandling"_s;
+    case Error::SyncMessageInterruptedWait: return "SyncMessageInterruptedWait"_s;
+    case Error::CantWaitForSyncReplies: return "CantWaitForSyncReplies"_s;
+    case Error::FailedToEncodeMessageArguments: return "FailedToEncodeMessageArguments"_s;
+    case Error::FailedToDecodeReplyArguments: return "FailedToDecodeReplyArguments"_s;
+    case Error::FailedToFindReplyHandler: return "FailedToFindReplyHandler"_s;
+    case Error::FailedToAcquireBufferSpan: return "FailedToAcquireBufferSpan"_s;
+    case Error::FailedToAcquireReplyBufferSpan: return "FailedToAcquireReplyBufferSpan"_s;
+    case Error::StreamConnectionEncodingError: return "StreamConnectionEncodingError"_s;
     }
 
-    return "";
+    return ""_s;
 }
 
 } // namespace IPC

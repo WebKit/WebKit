@@ -403,8 +403,8 @@ String Database::privateClickMeasurementToStringForTesting() const
     unsigned unattributedNumber = 0;
     StringBuilder builder;
     while (unattributedScopedStatement->step() == SQLITE_ROW) {
-        const char* prefix = unattributedNumber ? "" : "Unattributed Private Click Measurements:";
-        builder.append(prefix, "\nWebCore::PrivateClickMeasurement ", ++unattributedNumber, '\n',
+        auto prefix = unattributedNumber ? ""_s : "Unattributed Private Click Measurements:"_s;
+        builder.append(prefix, "\nWebCore::PrivateClickMeasurement "_s, ++unattributedNumber, '\n',
             attributionToStringForTesting(buildPrivateClickMeasurementFromDatabase(*unattributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Unattributed)));
     }
 

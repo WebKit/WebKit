@@ -28,32 +28,32 @@
 
 namespace WebKit {
 
-const char* processTerminationReasonToString(ProcessTerminationReason reason)
+ASCIILiteral processTerminationReasonToString(ProcessTerminationReason reason)
 {
     switch (reason) {
     case ProcessTerminationReason::ExceededMemoryLimit:
-        return "ExceededMemoryLimit";
+        return "ExceededMemoryLimit"_s;
     case ProcessTerminationReason::ExceededCPULimit:
-        return "ExceededCPULimit";
+        return "ExceededCPULimit"_s;
     case ProcessTerminationReason::RequestedByClient:
-        return "RequestedByClient";
+        return "RequestedByClient"_s;
     case ProcessTerminationReason::IdleExit:
-        return "IdleExit";
+        return "IdleExit"_s;
     case ProcessTerminationReason::Unresponsive:
-        return "Unresponsive";
+        return "Unresponsive"_s;
     case ProcessTerminationReason::Crash:
-        return "Crash";
+        return "Crash"_s;
     case ProcessTerminationReason::ExceededProcessCountLimit:
-        return "ExceededProcessCountLimit";
+        return "ExceededProcessCountLimit"_s;
     case ProcessTerminationReason::NavigationSwap:
-        return "NavigationSwap";
+        return "NavigationSwap"_s;
     case ProcessTerminationReason::RequestedByNetworkProcess:
-        return "RequestedByNetworkProcess";
+        return "RequestedByNetworkProcess"_s;
     case ProcessTerminationReason::RequestedByGPUProcess:
-        return "RequestedByGPUProcess";
+        return "RequestedByGPUProcess"_s;
     }
 
-    return "";
+    return ""_s;
 }
 
 }

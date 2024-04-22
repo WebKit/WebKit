@@ -790,12 +790,12 @@ static void prewarmLogs()
     // This would be desirable, since the WebContent process is blocking access to the container manager daemon.
     PublicSuffixStore::singleton().topPrivatelyControlledDomain("apple.com"_s);
 
-    static std::array<std::pair<const char*, const char*>, 5> logs { {
-        { "com.apple.CFBundle", "strings" },
-        { "com.apple.network", "" },
-        { "com.apple.CFNetwork", "ATS" },
-        { "com.apple.coremedia", "" },
-        { "com.apple.SafariShared", "Translation" },
+    static std::array<std::pair<ASCIILiteral, ASCIILiteral>, 5> logs { {
+        { "com.apple.CFBundle"_s, "strings"_s },
+        { "com.apple.network"_s, ""_s },
+        { "com.apple.CFNetwork"_s, "ATS"_s },
+        { "com.apple.coremedia"_s, ""_s },
+        { "com.apple.SafariShared"_s, "Translation"_s },
     } };
 
     for (auto& log : logs) {

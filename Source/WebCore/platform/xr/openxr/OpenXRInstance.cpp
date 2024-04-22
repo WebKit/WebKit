@@ -56,7 +56,7 @@ Instance::Impl::Impl()
         if (!m_extensions)
             return;
 
-        static const char* s_applicationName = "WebXR (WebKit)";
+        static constexpr auto s_applicationName = "WebXR (WebKit)"_s;
         static const uint32_t s_applicationVersion = 1;
 
         const char* const enabledExtensions[] = {
@@ -66,7 +66,7 @@ Instance::Impl::Impl()
 
         auto createInfo = createStructure<XrInstanceCreateInfo, XR_TYPE_INSTANCE_CREATE_INFO>();
         createInfo.createFlags = 0;
-        std::memcpy(createInfo.applicationInfo.applicationName, s_applicationName, XR_MAX_APPLICATION_NAME_SIZE);
+        std::memcpy(createInfo.applicationInfo.applicationName, s_applicationName.characters(), XR_MAX_APPLICATION_NAME_SIZE);
         createInfo.applicationInfo.apiVersion = XR_CURRENT_API_VERSION;
         createInfo.applicationInfo.applicationVersion = s_applicationVersion;
         createInfo.enabledApiLayerCount = 0;

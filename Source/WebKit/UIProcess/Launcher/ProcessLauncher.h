@@ -147,7 +147,7 @@ private:
     ProcessLauncher(Client*, LaunchOptions&&);
 
     void launchProcess();
-    void finishLaunchingProcess(const char* name);
+    void finishLaunchingProcess(ASCIILiteral name);
     void didFinishLaunchingProcess(ProcessID, IPC::Connection::Identifier);
 
     void platformInvalidate();

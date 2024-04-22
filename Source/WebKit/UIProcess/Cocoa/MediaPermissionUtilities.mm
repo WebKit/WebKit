@@ -56,7 +56,7 @@ bool checkSandboxRequirementForType(MediaPermissionType type)
     static bool isAudioEntitled = true;
     static bool isVideoEntitled = true;
     
-    auto checkFunction = [](const char* operation, bool* entitled) {
+    auto checkFunction = [](ASCIILiteral operation, bool* entitled) {
         if (!currentProcessIsSandboxed())
             return;
 
@@ -68,10 +68,10 @@ bool checkSandboxRequirementForType(MediaPermissionType type)
 
     switch (type) {
     case MediaPermissionType::Audio:
-        std::call_once(audioFlag, checkFunction, "device-microphone", &isAudioEntitled);
+        std::call_once(audioFlag, checkFunction, "device-microphone"_s, &isAudioEntitled);
         return isAudioEntitled;
     case MediaPermissionType::Video:
-        std::call_once(videoFlag, checkFunction, "device-camera", &isVideoEntitled);
+        std::call_once(videoFlag, checkFunction, "device-camera"_s, &isVideoEntitled);
         return isVideoEntitled;
     }
 #endif

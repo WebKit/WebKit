@@ -38,9 +38,9 @@ enum class MessageType : uint8_t;
 
 struct ConnectionTraits {
     using MessageType = WebKit::PCM::MessageType;
-    static constexpr const char* protocolVersionKey { PCM::protocolVersionKey };
+    static constexpr auto protocolVersionKey { PCM::protocolVersionKey };
     static constexpr uint64_t protocolVersionValue { PCM::protocolVersionValue };
-    static constexpr const char* protocolEncodedMessageKey { PCM::protocolEncodedMessageKey };
+    static constexpr auto protocolEncodedMessageKey { PCM::protocolEncodedMessageKey };
 };
 
 class Connection : public Daemon::ConnectionToMachService<ConnectionTraits> {

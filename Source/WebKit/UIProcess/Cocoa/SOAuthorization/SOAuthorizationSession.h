@@ -94,8 +94,8 @@ protected:
     void start();
     WebPageProxy* page() const { return m_page.get(); }
     State state() const { return m_state; }
-    const char* stateString() const;
-    const char* initiatingActionString() const;
+    ASCIILiteral stateString() const;
+    ASCIILiteral initiatingActionString() const;
     void setState(State state) { m_state = state; }
     const API::NavigationAction* navigationAction() { return m_navigationAction.get(); }
     Ref<API::NavigationAction> releaseNavigationAction();

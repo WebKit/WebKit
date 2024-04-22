@@ -212,18 +212,18 @@ static std::optional<Vector<char>> fileContents(const String& path, bool shouldL
 #if USE(APPLE_INTERNAL_SDK)
 // These strings must match the last segment of the "com.apple.rootless.storage.<this part must match>" entry in each
 // process's restricted entitlements file (ex. Configurations/Networking-OSX-restricted.entitlements).
-constexpr const char* processStorageClass(WebCore::AuxiliaryProcessType type)
+constexpr ASCIILiteral processStorageClass(WebCore::AuxiliaryProcessType type)
 {
     switch (type) {
     case WebCore::AuxiliaryProcessType::WebContent:
-        return "WebKitWebContentSandbox";
+        return "WebKitWebContentSandbox"_s;
     case WebCore::AuxiliaryProcessType::Network:
-        return "WebKitNetworkingSandbox";
+        return "WebKitNetworkingSandbox"_s;
     case WebCore::AuxiliaryProcessType::Plugin:
-        return "WebKitPluginSandbox";
+        return "WebKitPluginSandbox"_s;
 #if ENABLE(GPU_PROCESS)
     case WebCore::AuxiliaryProcessType::GPU:
-        return "WebKitGPUSandbox";
+        return "WebKitGPUSandbox"_s;
 #endif
     }
 }
@@ -314,7 +314,7 @@ static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
     }
 
 #if USE(APPLE_INTERNAL_SDK)
-    const char* storageClass = processStorageClass(info.processType);
+    auto storageClass = processStorageClass(info.processType);
     CString directoryPath = FileSystem::fileSystemRepresentation(info.directoryPath);
     if (directoryPath.isNull())
         return false;

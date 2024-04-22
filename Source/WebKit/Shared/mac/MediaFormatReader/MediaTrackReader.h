@@ -99,7 +99,7 @@ private:
         bool hasAllSamples { false };
     };
 
-    const char* mediaTypeString() const;
+    ASCIILiteral mediaTypeString() const;
     const char* logClassName() const { return "MediaTrackReader"; }
     const void* logIdentifier() const { return m_logIdentifier; }
     WTFLogChannel& logChannel() const;

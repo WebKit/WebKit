@@ -89,7 +89,7 @@ WindowServerConnection::WindowServerConnection()
     struct OcclusionNotificationHandler {
         CGSNotificationType notificationType;
         CGSNotifyConnectionProcPtr handler;
-        const char* name;
+        ASCIILiteral name;
     };
 
     static auto windowModificationsStarted = [](CGSNotificationType, void*, uint32_t, void*, CGSConnectionID) {
@@ -101,14 +101,14 @@ WindowServerConnection::WindowServerConnection()
     };
 
     static const OcclusionNotificationHandler occlusionNotificationHandlers[] = {
-        { kCGSConnectionWindowModificationsStarted, windowModificationsStarted, "Application Window Modifications Started" },
-        { kCGSConnectionWindowModificationsStopped, windowModificationsStopped, "Application Window Modifications Stopped" },
+        { kCGSConnectionWindowModificationsStarted, windowModificationsStarted, "Application Window Modifications Started"_s },
+        { kCGSConnectionWindowModificationsStopped, windowModificationsStopped, "Application Window Modifications Stopped"_s },
     };
 
     for (const auto& occlusionNotificationHandler : occlusionNotificationHandlers) {
         bool result = registerOcclusionNotificationHandler(occlusionNotificationHandler.notificationType, occlusionNotificationHandler.handler);
         UNUSED_PARAM(result);
-        ASSERT_WITH_MESSAGE(result, "Registration of \"%s\" notification handler failed.\n", occlusionNotificationHandler.name);
+        ASSERT_WITH_MESSAGE(result, "Registration of \"%s\" notification handler failed.\n", occlusionNotificationHandler.name.characters());
     }
 #endif
 
@@ -122,18 +122,18 @@ WindowServerConnection::WindowServerConnection()
     struct ConnectionStateNotificationHandler {
         CGSNotificationType notificationType;
         CGSNotifyProcPtr handler;
-        const char* name;
+        ASCIILiteral name;
     };
 
     static const ConnectionStateNotificationHandler connectionStateNotificationHandlers[] = {
-        { kCGSessionConsoleWillDisconnect, consoleWillDisconnect, "Console Disconnected" },
-        { kCGSessionConsoleConnect, consoleWillConnect, "Console Connected" },
+        { kCGSessionConsoleWillDisconnect, consoleWillDisconnect, "Console Disconnected"_s },
+        { kCGSessionConsoleConnect, consoleWillConnect, "Console Connected"_s },
     };
 
     for (const auto& connectionStateNotificationHandler : connectionStateNotificationHandlers) {
         auto error = CGSRegisterNotifyProc(connectionStateNotificationHandler.handler, connectionStateNotificationHandler.notificationType, nullptr);
         UNUSED_PARAM(error);
-        ASSERT_WITH_MESSAGE(!error, "Registration of \"%s\" notification handler failed.\n", connectionStateNotificationHandler.name);
+        ASSERT_WITH_MESSAGE(!error, "Registration of \"%s\" notification handler failed.\n", connectionStateNotificationHandler.name.characters());
     }
 }
 

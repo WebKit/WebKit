@@ -1787,34 +1787,34 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, const char* p
     if (backing->graphicsLayer()->contentsOpaque() || backing->paintsIntoCompositedAncestor() || backing->foregroundLayer() || backing->backgroundLayer()) {
         logString.append('[');
 
-        const char* prefix = "";
+        auto prefix = ""_s;
         if (backing->graphicsLayer()->contentsOpaque()) {
-            logString.append("opaque");
-            prefix = ", ";
+            logString.append("opaque"_s);
+            prefix = ", "_s;
         }
 
         if (backing->paintsIntoCompositedAncestor()) {
-            logString.append(prefix, "paints into ancestor");
-            prefix = ", ";
+            logString.append(prefix, "paints into ancestor"_s);
+            prefix = ", "_s;
         }
 
         if (backing->foregroundLayer() || backing->backgroundLayer()) {
             if (backing->foregroundLayer() && backing->backgroundLayer()) {
-                logString.append(prefix, "+foreground+background");
-                prefix = ", ";
+                logString.append(prefix, "+foreground+background"_s);
+                prefix = ", "_s;
             } else if (backing->foregroundLayer()) {
-                logString.append(prefix, "+foreground");
-                prefix = ", ";
+                logString.append(prefix, "+foreground"_s);
+                prefix = ", "_s;
             } else {
-                logString.append(prefix, "+background");
-                prefix = ", ";
+                logString.append(prefix, "+background"_s);
+                prefix = ", "_s;
             }
         }
 
-        logString.append("] ");
+        logString.append("] "_s);
     }
 
-    logString.append(layer.name(), " - ", phase);
+    logString.append(layer.name(), " - "_s, phase);
 
     LOG(Compositing, "%s", logString.toString().utf8().data());
 }

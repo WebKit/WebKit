@@ -409,14 +409,14 @@ static bool deltaShouldCancelSwipe(FloatSize delta)
     return std::abs(delta.height()) >= std::abs(delta.width()) * minimumScrollEventRatioForSwipe;
 }
 
-const char* ViewGestureController::PendingSwipeTracker::stateToString(State state)
+ASCIILiteral ViewGestureController::PendingSwipeTracker::stateToString(State state)
 {
     switch (state) {
-    case State::None: return "None";
-    case State::WaitingForWebCore: return "WaitingForWebCore";
-    case State::InsufficientMagnitude: return "InsufficientMagnitude";
+    case State::None: return "None"_s;
+    case State::WaitingForWebCore: return "WaitingForWebCore"_s;
+    case State::InsufficientMagnitude: return "InsufficientMagnitude"_s;
     }
-    return "";
+    return ""_s;
 }
 
 ViewGestureController::PendingSwipeTracker::PendingSwipeTracker(WebPageProxy& webPageProxy, ViewGestureController& viewGestureController)
@@ -455,7 +455,7 @@ bool ViewGestureController::PendingSwipeTracker::handleEvent(PlatformScrollEvent
     LOG_WITH_STREAM(ViewGestures, stream << "PendingSwipeTracker::handleEvent - state " << stateToString(m_state));
 
     if (scrollEventCanEndSwipe(event)) {
-        reset("gesture ended");
+        reset("gesture ended"_s);
         return false;
     }
 
@@ -507,7 +507,7 @@ bool ViewGestureController::PendingSwipeTracker::tryToStartSwipe(PlatformScrollE
     LOG_WITH_STREAM(ViewGestures, stream << "PendingSwipeTracker::tryToStartSwipe - consumed event, cumulative delta " << m_cumulativeDelta);
 
     if (deltaShouldCancelSwipe(m_cumulativeDelta)) {
-        reset("cumulative delta became too vertical");
+        reset("cumulative delta became too vertical"_s);
         return false;
     }
 
@@ -519,7 +519,7 @@ bool ViewGestureController::PendingSwipeTracker::tryToStartSwipe(PlatformScrollE
     return true;
 }
 
-void ViewGestureController::PendingSwipeTracker::reset(const char* resetReason)
+void ViewGestureController::PendingSwipeTracker::reset(ASCIILiteral resetReason)
 {
     if (m_state != State::None)
         LOG_WITH_STREAM(ViewGestures, stream << "PendingSwipeTracker::reset - " << resetReason);
@@ -532,7 +532,7 @@ void ViewGestureController::startSwipeGesture(PlatformScrollEvent event, SwipeDi
 {
     ASSERT(m_activeGestureType == ViewGestureType::None);
 
-    m_pendingSwipeTracker.reset("starting to track swipe");
+    m_pendingSwipeTracker.reset("starting to track swipe"_s);
 
     m_webPageProxy.recordAutomaticNavigationSnapshot();
 

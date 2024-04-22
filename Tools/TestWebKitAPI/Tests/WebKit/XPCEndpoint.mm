@@ -34,22 +34,22 @@ static bool clientConnectedToEndpoint = false;
 static bool endpointReceivedMessageFromClient = false;
 static bool clientReceivedMessageFromEndpoint = false;
 
-static constexpr auto testMessageFromEndpoint = "test-message-from-endpoint";
-static constexpr auto testMessageFromClient = "test-message-from-client";
+static constexpr auto testMessageFromEndpoint = "test-message-from-endpoint"_s;
+static constexpr auto testMessageFromClient = "test-message-from-client"_s;
 
 class XPCEndpoint final : public WebKit::XPCEndpoint {
 private:
-    const char* xpcEndpointMessageNameKey() const final
+    ASCIILiteral xpcEndpointMessageNameKey() const final
     {
-        return nullptr;
+        return { };
     }
-    const char* xpcEndpointMessageName() const final
+    ASCIILiteral xpcEndpointMessageName() const final
     {
-        return nullptr;
+        return { };
     }
-    const char* xpcEndpointNameKey() const final
+    ASCIILiteral xpcEndpointNameKey() const final
     {
-        return nullptr;
+        return { };
     }
     void handleEvent(xpc_connection_t connection, xpc_object_t event) final
     {

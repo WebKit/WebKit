@@ -1840,13 +1840,13 @@ void NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(St
         return codePointCompareLessThan(a, b);
     });
     StringBuilder builder;
-    builder.append("{ \"path\": \"", m_customCacheStoragePath, "\", \"origins\": [");
-    const char* divider = "";
+    builder.append("{ \"path\": \""_s, m_customCacheStoragePath, "\", \"origins\": ["_s);
+    ASCIILiteral divider = ""_s;
     for (auto& origin : originStrings) {
         builder.append(divider, origin);
-        divider = ",";
+        divider = ","_s;
     }
-    builder.append("]}");
+    builder.append("]}"_s);
     callback(builder.toString());
 }
 

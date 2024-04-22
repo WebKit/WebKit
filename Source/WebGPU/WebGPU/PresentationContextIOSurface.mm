@@ -192,7 +192,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     }
 
     if (!allowedFormat(descriptor.format)) {
-        generateAValidationError(device, [NSString stringWithFormat:@"Requested texture format %s is not a valid context format", Texture::formatToString(descriptor.format)], reportValidationErrors);
+        generateAValidationError(device, [NSString stringWithFormat:@"Requested texture format %s is not a valid context format", Texture::formatToString(descriptor.format).characters()], reportValidationErrors);
         return;
     }
 

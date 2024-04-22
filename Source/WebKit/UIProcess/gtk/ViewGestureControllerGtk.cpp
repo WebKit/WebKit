@@ -429,7 +429,7 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem*, double, 
 
 void ViewGestureController::cancelSwipe()
 {
-    m_pendingSwipeTracker.reset("cancelling swipe");
+    m_pendingSwipeTracker.reset("cancelling swipe"_s);
 
     if (m_activeGestureType == ViewGestureType::Swipe) {
         m_swipeProgressTracker.reset();

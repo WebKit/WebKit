@@ -31,12 +31,12 @@ namespace WebKit {
 
 namespace ClientCertificateAuthentication {
 
-extern const char* const XPCCertificatesKey;
-extern const char* const XPCChallengeIDKey;
-extern const char* const XPCMessageNameKey;
-extern const char* const XPCMessageNameValue;
-extern const char* const XPCPersistenceKey;
-extern const char* const XPCSecKeyProxyEndpointKey;
+extern const ASCIILiteral XPCCertificatesKey;
+extern const ASCIILiteral XPCChallengeIDKey;
+extern const ASCIILiteral XPCMessageNameKey;
+extern const ASCIILiteral XPCMessageNameValue;
+extern const ASCIILiteral XPCPersistenceKey;
+extern const ASCIILiteral XPCSecKeyProxyEndpointKey;
 
 } // namespace ClientCertificateAuthentication
 

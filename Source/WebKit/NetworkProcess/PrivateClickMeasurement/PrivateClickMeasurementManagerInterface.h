@@ -76,13 +76,13 @@ public:
     virtual void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&) = 0;
 };
 
-constexpr const char* protocolVersionKey { "version" };
+constexpr auto protocolVersionKey { "version"_s };
 constexpr uint64_t protocolVersionValue { 1 };
 
-constexpr const char* protocolDebugMessageLevelKey { "debug message level" };
-constexpr const char* protocolDebugMessageKey { "debug message" };
+constexpr auto protocolDebugMessageLevelKey { "debug message level"_s };
+constexpr auto protocolDebugMessageKey { "debug message"_s };
 
-constexpr const char* protocolMessageTypeKey { "message type" };
+constexpr auto protocolMessageTypeKey { "message type"_s };
 enum class MessageType : uint8_t {
     StoreUnattributed,
     HandleAttribution,
@@ -104,7 +104,7 @@ enum class MessageType : uint8_t {
     AllowTLSCertificateChainForLocalPCMTesting
 };
 
-constexpr const char* protocolEncodedMessageKey { "encoded message" };
+constexpr auto protocolEncodedMessageKey { "encoded message"_s };
 using EncodedMessage = Vector<uint8_t>;
 
 void decodeMessageAndSendToManager(const Daemon::Connection&, MessageType, std::span<const uint8_t> encodedMessage, CompletionHandler<void(Vector<uint8_t>&&)>&&);
