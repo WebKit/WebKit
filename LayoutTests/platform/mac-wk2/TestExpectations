@@ -516,8 +516,6 @@ webkit.org/b/114302 platform/mac-wk2/plugins/mouse-events-scaled-iframe.html [ P
 
 webkit.org/b/114572 platform/mac-wk2/plugins/mouse-events-scaled.html [ Pass Failure ]
 
-webkit.org/b/117962 media/video-played-collapse.html [ Pass Failure ]
-
 webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html  [ ImageOnlyFailure ]
 
 # Reference expectation doesn't end up in compositing code path, leading to antialiasing differences.

@@ -6744,8 +6744,6 @@ webkit.org/b/245600 fast/attachment/attachment-wrapping-action.html [ ImageOnlyF
 
 webkit.org/b/245686 fast/text/system-font-fallback.html [ ImageOnlyFailure ]
 
-webkit.org/b/245710 media/video-played-reset.html [ Pass Failure ]
-
 webkit.org/b/237547 fast/canvas/webgl/gl-teximage-imagebitmap-memory.html [ Pass Timeout ]
 
 webkit.org/b/245745 [ Debug ] svg/compositing/inline-svg-non-integer-position-display-inline-composited.html [ Skip ]

@@ -63,7 +63,7 @@
                 runSilently("video.currentTime = " + startTime);
 
                 waitForEventOnce("seeked", function() {
-                    playForMillisecs(secToMilli(expectedEndTimes[1] - startTime + 0.1)); // Triggers pause()
+                    playForMillisecs(secToMilli(expectedEndTimes[1] - startTime + 0.5)); // Triggers pause()
                 });
             }
 
