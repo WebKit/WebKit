@@ -82,11 +82,11 @@ size_t WKStringGetUTF8CStringImpl(WKStringRef stringRef, char* buffer, size_t bu
     char* p = buffer;
 
     if (stringView.is8Bit()) {
-        const LChar* characters = stringView.characters8();
+        const LChar* characters = stringView.span8().data();
         if (!WTF::Unicode::convertLatin1ToUTF8(&characters, characters + stringView.length(), &p, p + bufferSize - 1))
             return 0;
     } else {
-        const UChar* characters = stringView.characters16();
+        const UChar* characters = stringView.span16().data();
         auto result = WTF::Unicode::convertUTF16ToUTF8(&characters, characters + stringView.length(), &p, p + bufferSize - 1, strict);
         if (result != WTF::Unicode::ConversionResult::Success && result != WTF::Unicode::ConversionResult::TargetExhausted)
             return 0;

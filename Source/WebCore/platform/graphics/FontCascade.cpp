@@ -332,17 +332,17 @@ NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDire
     Ref font = primaryFont();
     ASSERT(!font->syntheticBoldOffset()); // This function should only be called when RenderText::computeCanUseSimplifiedTextMeasuring() returns true, and that function requires no synthetic bold.
 
-    auto addGlyphsFromText = [&](GlyphBuffer& glyphBuffer, const Font& font, const auto* characters, unsigned length) {
-        for (unsigned i = 0; i < length; ++i) {
+    auto addGlyphsFromText = [&](GlyphBuffer& glyphBuffer, const Font& font, auto characters) {
+        for (size_t i = 0; i < characters.size(); ++i) {
             auto glyph = font.glyphForCharacter(characters[i]);
             glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
         }
     };
 
     if (text.is8Bit())
-        addGlyphsFromText(glyphBuffer, font, text.characters8(), text.length());
+        addGlyphsFromText(glyphBuffer, font, text.span8());
     else
-        addGlyphsFromText(glyphBuffer, font, text.characters16(), text.length());
+        addGlyphsFromText(glyphBuffer, font, text.span16());
 
     auto initialAdvance = font->applyTransforms(glyphBuffer, 0, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale(), text, textDirection);
     auto width = 0.f;
@@ -642,10 +642,10 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<un
         return CodePath::Simple;
 
     // Start from 0 since drawing and highlighting also measure the characters before run->from.
-    return characterRangeCodePath(run.characters16(), run.length());
+    return characterRangeCodePath(run.span16());
 }
 
-FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* characters, unsigned len)
+FontCascade::CodePath FontCascade::characterRangeCodePath(std::span<const UChar> characters)
 {
     // FIXME: Should use a UnicodeSet in ports where ICU is used. Note that we 
     // can't simply use UnicodeCharacter Property/class because some characters
@@ -654,8 +654,8 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
     // list of ranges.
     CodePath result = CodePath::Simple;
     bool previousCharacterIsEmojiGroupCandidate = false;
-    for (unsigned i = 0; i < len; i++) {
-        const UChar c = characters[i];
+    for (size_t i = 0; i < characters.size(); ++i) {
+        auto c = characters[i];
         if (c == zeroWidthJoiner && previousCharacterIsEmojiGroupCandidate)
             return CodePath::Complex;
         
@@ -776,7 +776,7 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
         if (c <= 0xDBFF) {
             // High surrogate
 
-            if (i == len - 1)
+            if (i == characters.size() - 1)
                 continue;
 
             UChar next = characters[++i];

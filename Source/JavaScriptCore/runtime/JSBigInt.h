@@ -599,10 +599,10 @@ private:
     }
 
     template <typename CharType>
-    static JSValue parseInt(JSGlobalObject*, CharType*  data, unsigned length, ErrorParseMode);
+    static JSValue parseInt(JSGlobalObject*, std::span<const CharType> data, ErrorParseMode);
 
     template <typename CharType>
-    static JSValue parseInt(JSGlobalObject*, VM&, CharType* data, unsigned length, unsigned startIndex, unsigned radix, ErrorParseMode, ParseIntSign = ParseIntSign::Signed, ParseIntMode = ParseIntMode::AllowEmptyString);
+    static JSValue parseInt(JSGlobalObject*, VM&, std::span<const CharType> data, unsigned startIndex, unsigned radix, ErrorParseMode, ParseIntSign = ParseIntSign::Signed, ParseIntMode = ParseIntMode::AllowEmptyString);
 
     static JSBigInt* allocateFor(JSGlobalObject*, VM&, unsigned radix, unsigned charcount);
 

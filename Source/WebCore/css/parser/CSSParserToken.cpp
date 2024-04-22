@@ -404,13 +404,13 @@ CSSParserToken::CSSParserToken(HashTokenType type, StringView value)
 static StringView mergeIfAdjacent(StringView a, StringView b)
 {
     if (a.is8Bit() && b.is8Bit()) {
-        auto characters = a.characters8();
-        if (characters + a.length() == b.characters8())
-            return std::span { characters, a.length() + b.length() };
+        auto characters = a.span8();
+        if (characters.end() == b.span8().begin())
+            return std::span { characters.data(), a.length() + b.length() };
     } else if (!a.is8Bit() && !b.is8Bit()) {
-        auto characters = a.characters16();
-        if (characters + a.length() == b.characters16())
-            return std::span { characters, a.length() + b.length() };
+        auto characters = a.span16();
+        if (characters.end() == b.span16().begin())
+            return std::span { characters.data(), a.length() + b.length() };
     }
     return { };
 }

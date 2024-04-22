@@ -305,14 +305,14 @@ template <>
 ALWAYS_INLINE void Lexer<LChar>::setCodeStart(StringView sourceString)
 {
     ASSERT(sourceString.is8Bit());
-    m_codeStart = sourceString.characters8();
+    m_codeStart = sourceString.span8().data();
 }
 
 template <>
 ALWAYS_INLINE void Lexer<UChar>::setCodeStart(StringView sourceString)
 {
     ASSERT(!sourceString.is8Bit());
-    m_codeStart = sourceString.characters16();
+    m_codeStart = sourceString.span16().data();
 }
 
 template <typename T>

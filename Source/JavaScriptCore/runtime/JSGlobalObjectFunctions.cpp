@@ -605,24 +605,20 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEscape, (JSGlobalObject* globalObject, CallFr
 
         StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
         if (view.is8Bit()) {
-            const LChar* c = view.characters8();
-            for (unsigned k = 0; k < view.length(); k++, c++) {
-                int u = c[0];
-                if (doNotEscape.get(static_cast<LChar>(u)))
-                    builder.append(*c);
+            for (auto character : view.span8()) {
+                if (doNotEscape.get(character))
+                    builder.append(character);
                 else
-                    builder.append('%', hex(u, 2));
+                    builder.append('%', hex(character, 2));
             }
         } else {
-            const UChar* c = view.characters16();
-            for (unsigned k = 0; k < view.length(); k++, c++) {
-                UChar u = c[0];
-                if (u >= doNotEscape.size())
-                    builder.append("%u", hex(static_cast<uint8_t>(u >> 8), 2), hex(static_cast<uint8_t>(u), 2));
-                else if (doNotEscape.get(static_cast<LChar>(u)))
-                    builder.append(*c);
+            for (auto character : view.span16()) {
+                if (character >= doNotEscape.size())
+                    builder.append("%u"_s, hex(static_cast<uint8_t>(character >> 8), 2), hex(static_cast<uint8_t>(character), 2));
+                else if (doNotEscape.get(static_cast<LChar>(character)))
+                    builder.append(character);
                 else
-                    builder.append('%', hex(u, 2));
+                    builder.append('%', hex(character, 2));
             }
         }
 
@@ -649,10 +645,10 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncUnescape, (JSGlobalObject* globalObject, Call
         builder.reserveCapacity(length);
 
         if (view.is8Bit()) {
-            const LChar* characters = view.characters8();
+            auto characters = view.span8();
             LChar convertedLChar;
             while (k < length) {
-                const LChar* c = characters + k;
+                auto c = characters.subspan(k);
                 if (c[0] == '%' && k <= length - 6 && c[1] == 'u') {
                     if (isASCIIHexDigit(c[2]) && isASCIIHexDigit(c[3]) && isASCIIHexDigit(c[4]) && isASCIIHexDigit(c[5])) {
                         builder.append(Lexer<UChar>::convertUnicode(c[2], c[3], c[4], c[5]));
@@ -661,31 +657,31 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncUnescape, (JSGlobalObject* globalObject, Call
                     }
                 } else if (c[0] == '%' && k <= length - 3 && isASCIIHexDigit(c[1]) && isASCIIHexDigit(c[2])) {
                     convertedLChar = LChar(Lexer<LChar>::convertHex(c[1], c[2]));
-                    c = &convertedLChar;
+                    c = span(convertedLChar);
                     k += 2;
                 }
-                builder.append(*c);
-                k++;
+                builder.append(c.front());
+                ++k;
             }
         } else {
-            const UChar* characters = view.characters16();
+            auto characters = view.span16();
 
             while (k < length) {
-                const UChar* c = characters + k;
+                auto c = characters.subspan(k);
                 UChar convertedUChar;
                 if (c[0] == '%' && k <= length - 6 && c[1] == 'u') {
                     if (isASCIIHexDigit(c[2]) && isASCIIHexDigit(c[3]) && isASCIIHexDigit(c[4]) && isASCIIHexDigit(c[5])) {
                         convertedUChar = Lexer<UChar>::convertUnicode(c[2], c[3], c[4], c[5]);
-                        c = &convertedUChar;
+                        c = span(convertedUChar);
                         k += 5;
                     }
                 } else if (c[0] == '%' && k <= length - 3 && isASCIIHexDigit(c[1]) && isASCIIHexDigit(c[2])) {
                     convertedUChar = UChar(Lexer<UChar>::convertHex(c[1], c[2]));
-                    c = &convertedUChar;
+                    c = span(convertedUChar);
                     k += 2;
                 }
-                k++;
-                builder.append(*c);
+                ++k;
+                builder.append(c.front());
             }
         }
 

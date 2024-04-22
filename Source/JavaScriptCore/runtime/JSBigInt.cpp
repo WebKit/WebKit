@@ -384,15 +384,15 @@ JSValue JSBigInt::toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const
 JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, StringView s, ErrorParseMode parserMode)
 {
     if (s.is8Bit())
-        return parseInt(globalObject, s.characters8(), s.length(), parserMode);
-    return parseInt(globalObject, s.characters16(), s.length(), parserMode);
+        return parseInt(globalObject, s.span8(), parserMode);
+    return parseInt(globalObject, s.span16(), parserMode);
 }
 
 JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, StringView s, uint8_t radix, ErrorParseMode parserMode, ParseIntSign sign)
 {
     if (s.is8Bit())
-        return parseInt(nullOrGlobalObjectForOOM, vm, s.characters8(), s.length(), 0, radix, parserMode, sign, ParseIntMode::DisallowEmptyString);
-    return parseInt(nullOrGlobalObjectForOOM, vm, s.characters16(), s.length(), 0, radix, parserMode, sign, ParseIntMode::DisallowEmptyString);
+        return parseInt(nullOrGlobalObjectForOOM, vm, s.span8(), 0, radix, parserMode, sign, ParseIntMode::DisallowEmptyString);
+    return parseInt(nullOrGlobalObjectForOOM, vm, s.span16(), 0, radix, parserMode, sign, ParseIntMode::DisallowEmptyString);
 }
 
 JSValue JSBigInt::stringToBigInt(JSGlobalObject* globalObject, StringView s)
@@ -2475,28 +2475,28 @@ double JSBigInt::toNumber(JSGlobalObject* globalObject) const
 }
 
 template <typename CharType>
-JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, CharType*  data, unsigned length, ErrorParseMode errorParseMode)
+JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, std::span<const CharType> data, ErrorParseMode errorParseMode)
 {
     VM& vm = globalObject->vm();
 
-    unsigned p = 0;
-    while (p < length && isStrWhiteSpace(data[p]))
+    size_t p = 0;
+    while (p < data.size() && isStrWhiteSpace(data[p]))
         ++p;
 
     // Check Radix from first characters
-    if (static_cast<unsigned>(p) + 1 < static_cast<unsigned>(length) && data[p] == '0') {
+    if (p + 1 < data.size() && data[p] == '0') {
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'b'))
-            return parseInt(globalObject, vm, data, length, p + 2, 2, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
+            return parseInt(globalObject, vm, data, p + 2, 2, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
         
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'x'))
-            return parseInt(globalObject, vm, data, length, p + 2, 16, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
+            return parseInt(globalObject, vm, data, p + 2, 16, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
         
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'o'))
-            return parseInt(globalObject, vm, data, length, p + 2, 8, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
+            return parseInt(globalObject, vm, data, p + 2, 8, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
     }
 
     ParseIntSign sign = ParseIntSign::Unsigned;
-    if (p < length) {
+    if (p < data.size()) {
         if (data[p] == '-') {
             sign = ParseIntSign::Signed;
             ++p;
@@ -2504,15 +2504,15 @@ JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, CharType*  data, unsign
             ++p;
     }
 
-    return parseInt(globalObject, vm, data, length, p, 10, errorParseMode, sign);
+    return parseInt(globalObject, vm, data, p, 10, errorParseMode, sign);
 }
 
 template <typename CharType>
-JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, CharType* data, unsigned length, unsigned startIndex, unsigned radix, ErrorParseMode errorParseMode, ParseIntSign sign, ParseIntMode parseMode)
+JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, std::span<const CharType> data, unsigned startIndex, unsigned radix, ErrorParseMode errorParseMode, ParseIntSign sign, ParseIntMode parseMode)
 {
-    unsigned p = startIndex;
+    size_t p = startIndex;
 
-    if (parseMode != ParseIntMode::AllowEmptyString && startIndex == length) {
+    if (parseMode != ParseIntMode::AllowEmptyString && startIndex == data.size()) {
         ASSERT(nullOrGlobalObjectForOOM);
         if (errorParseMode == ErrorParseMode::ThrowExceptions) {
             auto scope = DECLARE_THROW_SCOPE(vm);
@@ -2522,15 +2522,15 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, Cha
     }
 
     // Skipping leading zeros
-    while (p < length && data[p] == '0')
+    while (p < data.size() && data[p] == '0')
         ++p;
 
-    int endIndex = length - 1;
+    int endIndex = data.size() - 1;
     // Removing trailing spaces
     while (endIndex >= static_cast<int>(p) && isStrWhiteSpace(data[endIndex]))
         --endIndex;
 
-    length = endIndex + 1;
+    size_t length = endIndex + 1;
 
     if (p == length) {
 #if USE(BIGINT32)

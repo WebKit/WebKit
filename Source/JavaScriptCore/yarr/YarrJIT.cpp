@@ -119,11 +119,11 @@ public:
         unsigned half = string.length() > sampleSize ? (string.length() - sampleSize) / 2 : 0;
         unsigned end = std::min(string.length(), half + sampleSize);
         if (string.is8Bit()) {
-            auto* characters8 = string.characters8();
+            auto characters8 = string.span8();
             for (unsigned i = half; i < end; ++i)
                 add(characters8[i]);
         } else {
-            auto* characters16 = string.characters16();
+            auto characters16 = string.span16();
             for (unsigned i = half; i < end; ++i)
                 add(characters16[i]);
         }

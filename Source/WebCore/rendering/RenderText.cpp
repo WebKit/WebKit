@@ -2038,7 +2038,7 @@ bool RenderText::computeCanUseSimpleFontCodePath() const
 {
     if (m_containsOnlyASCII || text().is8Bit())
         return true;
-    return FontCascade::characterRangeCodePath(text().characters16(), length()) == FontCascade::CodePath::Simple;
+    return FontCascade::characterRangeCodePath(text().span16()) == FontCascade::CodePath::Simple;
 }
 
 void RenderText::momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter)

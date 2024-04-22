@@ -206,23 +206,24 @@ ALWAYS_INLINE bool canUseASCIIUCADUCETComparison(LChar character)
     return ducetLevel1Weights[character];
 }
 
-ALWAYS_INLINE bool followedByNonLatinCharacter(const UChar* characters, unsigned length, unsigned index)
+ALWAYS_INLINE bool followedByNonLatinCharacter(std::span<const UChar> characters, size_t index)
 {
-    unsigned nextIndex = index + 1;
-    if (length > nextIndex)
+    size_t nextIndex = index + 1;
+    if (characters.size() > nextIndex)
         return !isLatin1(characters[nextIndex]);
     return false;
 }
 
-ALWAYS_INLINE bool followedByNonLatinCharacter(const LChar*, unsigned, unsigned)
+ALWAYS_INLINE bool followedByNonLatinCharacter(std::span<const LChar>, size_t)
 {
     return false;
 }
 
 template<typename CharacterType1, typename CharacterType2>
-UCollationResult compareASCIIWithUCADUCETLevel3(const CharacterType1* characters1, const CharacterType2* characters2, unsigned length)
+UCollationResult compareASCIIWithUCADUCETLevel3(std::span<const CharacterType1> characters1, std::span<const CharacterType2> characters2)
 {
-    for (unsigned position = 0; position < length; ++position) {
+    ASSERT(characters1.size() == characters2.size());
+    for (size_t position = 0; position < characters1.size(); ++position) {
         auto lhs = characters1[position];
         auto rhs = characters2[position];
         uint8_t leftWeight = ducetLevel3Weights[lhs];
@@ -236,14 +237,14 @@ UCollationResult compareASCIIWithUCADUCETLevel3(const CharacterType1* characters
 
 // FIXME: This should take is std::spans.
 template<typename CharacterType1, typename CharacterType2>
-inline std::optional<UCollationResult> compareASCIIWithUCADUCET(const CharacterType1* characters1, unsigned length1, const CharacterType2* characters2, unsigned length2)
+inline std::optional<UCollationResult> compareASCIIWithUCADUCET(std::span<const CharacterType1> characters1, std::span<const CharacterType2> characters2)
 {
-    if (length1 == length2) {
-        if (equal(characters1, { characters2, length2 }))
+    if (characters1.size() == characters2.size()) {
+        if (equal(characters1.data(), characters2))
             return UCOL_EQUAL;
     }
 
-    unsigned commonLength = std::min(length1, length2);
+    size_t commonLength = std::min(characters1.size(), characters2.size());
     for (unsigned position = 0; position < commonLength; ++position) {
         auto lhs = characters1[position];
         auto rhs = characters2[position];
@@ -257,24 +258,24 @@ inline std::optional<UCollationResult> compareASCIIWithUCADUCET(const CharacterT
             continue;
 
         // If the following character is a non-latin, then it is possible that current and next characters can be combined into different character.
-        if (followedByNonLatinCharacter(characters1, length1, position) || followedByNonLatinCharacter(characters2, length2, position))
+        if (followedByNonLatinCharacter(characters1, position) || followedByNonLatinCharacter(characters2, position))
             return std::nullopt;
 
         return leftWeight > rightWeight ? UCOL_GREATER : UCOL_LESS;
     }
 
-    if (length1 == length2)
-        return compareASCIIWithUCADUCETLevel3(characters1, characters2, length1);
+    if (characters1.size() == characters2.size())
+        return compareASCIIWithUCADUCETLevel3(characters1, characters2);
 
     // If the next character is valid, then we do not need to look into the rest of characters.
-    if (length1 > length2) {
-        auto lhs = characters1[length2];
+    if (characters1.size() > characters2.size()) {
+        auto lhs = characters1[characters2.size()];
         if (!canUseASCIIUCADUCETComparison(lhs))
             return std::nullopt;
         return UCOL_GREATER;
     }
 
-    auto rhs = characters2[length1];
+    auto rhs = characters2[characters1.size()];
     if (!canUseASCIIUCADUCETComparison(rhs))
         return std::nullopt;
     return UCOL_LESS;

@@ -155,9 +155,9 @@ inline SegmentedString::Substring::Substring(StringView passedStringView)
     if (length) {
         is8Bit = passedStringView.is8Bit();
         if (is8Bit)
-            currentCharacter8 = passedStringView.characters8();
+            currentCharacter8 = passedStringView.span8().data();
         else
-            currentCharacter16 = passedStringView.characters16();
+            currentCharacter16 = passedStringView.span16().data();
     }
 }
 

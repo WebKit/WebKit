@@ -595,7 +595,7 @@ String HTMLAttachmentElement::attachmentTitleForDisplay() const
     auto filename = StringView(title).left(indexOfLastDot);
     auto extension = StringView(title).substring(indexOfLastDot);
 
-    if (isWideLayout() && !filename.is8Bit() && ubidi_getBaseDirection(filename.characters16(), filename.length()) == UBIDI_RTL) {
+    if (isWideLayout() && !filename.is8Bit() && ubidi_getBaseDirection(filename.span16().data(), filename.length()) == UBIDI_RTL) {
         // The filename is deemed RTL, it should be exposed as RTL overall, but keeping the extension to the right.
         return makeString(
             rightToLeftMark, // Make this whole text appear as RTL, the element's `dir="auto"` will right-align and put ellipsis on the left (if needed)
