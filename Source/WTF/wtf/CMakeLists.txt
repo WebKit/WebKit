@@ -342,6 +342,7 @@ set(WTF_PUBLIC_HEADERS
     WeakHashMap.h
     WeakHashSet.h
     WeakListHashSet.h
+    WeakObjCPtr.h
     WeakPtr.h
     WeakRandom.h
     WeakRandomNumber.h
@@ -351,6 +352,22 @@ set(WTF_PUBLIC_HEADERS
     WorkQueue.h
     WorkerPool.h
     dtoa.h
+
+    cf/CFURLExtras.h
+    cf/TypeCastsCF.h
+    cf/VectorCF.h
+
+    cocoa/CrashReporter.h
+    cocoa/Entitlements.h
+    cocoa/NSURLExtras.h
+    cocoa/RuntimeApplicationChecksCocoa.h
+    cocoa/SoftLinking.h
+    cocoa/TollFreeBridging.h
+    cocoa/TypeCastsCocoa.h
+    cocoa/VectorCocoa.h
+
+    darwin/OSLogPrintStream.h
+    darwin/WeakLinking.h
 
     dragonbox/dragonbox.h
     dragonbox/dragonbox_to_chars.h
@@ -387,9 +404,49 @@ set(WTF_PUBLIC_HEADERS
     fast_float/parse_number.h
     fast_float/simple_decimal_conversion.h
 
+    glib/ChassisType.h
+    glib/GMutexLocker.h
+    glib/GRefPtr.h
+    glib/GSocketMonitor.h
+    glib/GThreadSafeWeakPtr.h
+    glib/GTypedefs.h
+    glib/GUniquePtr.h
+    glib/GWeakPtr.h
+    glib/RunLoopSourcePriority.h
+    glib/Sandbox.h
+    glib/SocketConnection.h
+    glib/WTFGType.h
+
+    linux/CurrentProcessMemoryStatus.h
+    linux/ProcessMemoryFootprint.h
+    linux/RealTimeThreads.h
+
     persistence/PersistentCoders.h
     persistence/PersistentDecoder.h
     persistence/PersistentEncoder.h
+
+    spi/cf/CFBundleSPI.h
+    spi/cf/CFStringSPI.h
+
+    spi/cocoa/CFXPCBridgeSPI.h
+    spi/cocoa/CrashReporterClientSPI.h
+    spi/cocoa/IOSurfaceSPI.h
+    spi/cocoa/MachVMSPI.h
+    spi/cocoa/NSLocaleSPI.h
+    spi/cocoa/NSObjCRuntimeSPI.h
+    spi/cocoa/SecuritySPI.h
+    spi/cocoa/objcSPI.h
+
+    spi/darwin/AbortWithReasonSPI.h
+    spi/darwin/CodeSignSPI.h
+    spi/darwin/DataVaultSPI.h
+    spi/darwin/OSVariantSPI.h
+    spi/darwin/ProcessMemoryFootprint.h
+    spi/darwin/SandboxSPI.h
+    spi/darwin/XPCSPI.h
+    spi/darwin/dyldSPI.h
+
+    spi/mac/MetadataSPI.h
 
     text/ASCIIFastPath.h
     text/ASCIILiteral.h
@@ -438,10 +495,15 @@ set(WTF_PUBLIC_HEADERS
     text/UniquedStringImpl.h
     text/WTFString.h
 
+    text/cf/StringConcatenateCF.h
+    text/cf/TextBreakIteratorCF.h
+
     text/icu/TextBreakIteratorICU.h
     text/icu/UTextProvider.h
     text/icu/UTextProviderLatin1.h
     text/icu/UTextProviderUTF16.h
+
+    text/win/WCharStringExtras.h
 
     threads/BinarySemaphore.h
     threads/Signals.h
@@ -451,6 +513,14 @@ set(WTF_PUBLIC_HEADERS
     unicode/UTF8Conversion.h
 
     unicode/icu/ICUHelpers.h
+
+    unix/UnixFileDescriptor.h
+
+    win/DbgHelperWin.h
+    win/GDIObject.h
+    win/PathWalker.h
+    win/SoftLinking.h
+    win/Win32Handle.h
 )
 
 set(WTF_SOURCES
@@ -603,9 +673,6 @@ set(WTF_SOURCES
 )
 
 if (APPLE)
-    list(APPEND WTF_PUBLIC_HEADERS
-        darwin/OSLogPrintStream.h
-    )
     list(APPEND WTF_SOURCES
         darwin/OSLogPrintStream.mm
     )
