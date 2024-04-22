@@ -2833,7 +2833,9 @@ imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties
 [ Sonoma+ ] imported/w3c/web-platform-tests/web-animations/animation-model/side-effects-of-animations-current.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/web-animations/animation-model/side-effects-of-animations-in-effect.html [ ImageOnlyFailure ]
 
-webkit.org/b/272792 fast/css/view-transitions-update-pseudo-element-crash.html [ Skip ]
+# webkit.org/b/272792 REGRESSION (277521@main): [ MacOS WK1 ] fast/css/viewport-height-border.html is a flaky crash 
+fast/css/view-transitions-update-pseudo-element-crash.html [ Skip ]
+fast/css/viewport-height-border.html [ Skip ]
 
 # webkit.org/b/272926 [ Ventura wk1 ] 8 tests in imported/w3c/web-platform-tests/workers are flaky failures
 [ Ventura ] imported/w3c/web-platform-tests/worklets/animation-worklet-credentials.https.html [ Pass Failure ]
