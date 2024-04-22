@@ -185,6 +185,7 @@ static gboolean webKitWebSrcGetSize(GstBaseSrc*, guint64* size);
 static gboolean webKitWebSrcIsSeekable(GstBaseSrc*);
 static gboolean webKitWebSrcDoSeek(GstBaseSrc*, GstSegment*);
 static gboolean webKitWebSrcQuery(GstBaseSrc*, GstQuery*);
+static gboolean webKitWebSrcEvent(GstBaseSrc*, GstEvent*);
 static gboolean webKitWebSrcUnLock(GstBaseSrc*);
 static gboolean webKitWebSrcUnLockStop(GstBaseSrc*);
 static void webKitWebSrcSetContext(GstElement*, GstContext*);
@@ -248,6 +249,7 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
     baseSrcClass->is_seekable = GST_DEBUG_FUNCPTR(webKitWebSrcIsSeekable);
     baseSrcClass->do_seek = GST_DEBUG_FUNCPTR(webKitWebSrcDoSeek);
     baseSrcClass->query = GST_DEBUG_FUNCPTR(webKitWebSrcQuery);
+    baseSrcClass->event = GST_DEBUG_FUNCPTR(webKitWebSrcEvent);
 
     GstPushSrcClass* pushSrcClass = GST_PUSH_SRC_CLASS(klass);
     pushSrcClass->create = GST_DEBUG_FUNCPTR(webKitWebSrcCreate);
@@ -804,6 +806,29 @@ static gboolean webKitWebSrcQuery(GstBaseSrc* baseSrc, GstQuery* query)
     }
 
     return result;
+}
+
+static gboolean webKitWebSrcEvent(GstBaseSrc* baseSrc, GstEvent* event)
+{
+    switch (GST_EVENT_TYPE(event)) {
+    case GST_EVENT_SEEK: {
+        GstSeekFlags flags;
+        gst_event_parse_seek(event, nullptr, nullptr, &flags, nullptr, nullptr, nullptr, nullptr);
+
+        if (!(flags & GST_SEEK_FLAG_FLUSH)) {
+            auto src = WEBKIT_WEB_SRC(baseSrc);
+            GST_DEBUG_OBJECT(src, "Non-flushing seek requested, unlocking streaming thread that might be expecting a response.");
+
+            DataMutexLocker members { src->priv->dataMutex };
+            members->isFlushing = true;
+            members->responseCondition.notifyOne();
+        }
+        break;
+    }
+    default:
+        break;
+    };
+    return GST_BASE_SRC_CLASS(parent_class)->event(baseSrc, event);
 }
 
 static gboolean webKitWebSrcUnLock(GstBaseSrc* baseSrc)
