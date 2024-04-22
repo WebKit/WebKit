@@ -878,6 +878,9 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItemLi
 
 void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inlineItemList, const Document& document)
 {
+    if (inlineItemList.size() < TextBreakingPositionCache::minimumRequiredContentBreaks)
+        return;
+
     // Preserve breaking positions across content mutation.
     auto& securityOrigin = document.securityOrigin();
     auto& breakingPositionCache = TextBreakingPositionCache::singleton();
