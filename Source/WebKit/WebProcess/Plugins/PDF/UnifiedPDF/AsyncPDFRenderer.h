@@ -84,11 +84,11 @@ namespace WebKit {
 
 class UnifiedPDFPlugin;
 
-struct PDFConfiguration;
-using PDFConfigurationIdentifier = ObjectIdentifier<PDFConfiguration>;
-
 struct PDFTileRenderType;
 using PDFTileRenderIdentifier = ObjectIdentifier<PDFTileRenderType>;
+
+struct PDFContentsVersionType;
+using PDFContentsVersionIdentifier = ObjectIdentifier<PDFContentsVersionType>;
 
 class AsyncPDFRenderer : public WebCore::TiledBackingClient,
     public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AsyncPDFRenderer> {
@@ -117,8 +117,6 @@ public:
 
     void setShowDebugBorders(bool);
 
-    void layoutConfigurationChanged();
-
 private:
     AsyncPDFRenderer(UnifiedPDFPlugin&);
 
@@ -126,10 +124,17 @@ private:
         WebCore::FloatRect tileRect;
         std::optional<WebCore::FloatRect> clipRect; // If set, represents the portion of the tile that needs repaint (in the same coordinate system as tileRect).
         PDFPageCoverage pageCoverage;
-        PDFConfigurationIdentifier configurationIdentifier;
+        PDFContentsVersionIdentifier contentsVersion;
+
+        bool equivalentForPainting(const TileRenderInfo& other) const
+        {
+            return tileRect == other.tileRect && pageCoverage == other.pageCoverage && contentsVersion == other.contentsVersion;
+        }
     };
 
-    TileRenderInfo renderInfoForTile(const TileForGrid& tileInfo, const WebCore::FloatRect& tileRect, const std::optional<WebCore::FloatRect>& clipRect) const;
+    TileRenderInfo renderInfoForTile(const TileForGrid& tileInfo, const WebCore::FloatRect& tileRect, const std::optional<WebCore::FloatRect>& clipRect = { }) const;
+
+    bool renderInfoIsValidForTile(const TileForGrid&, const TileRenderInfo&) const;
 
     // TiledBackingClient
     void willRepaintTile(WebCore::TileGridIndex, WebCore::TileIndex, const WebCore::FloatRect& tileRect, const WebCore::FloatRect& tileDirtyRect) final;
@@ -165,7 +170,7 @@ private:
     RefPtr<WebCore::GraphicsLayer> m_pdfContentsLayer;
     Ref<ConcurrentWorkQueue> m_paintingWorkQueue;
 
-    PDFConfigurationIdentifier m_currentConfigurationIdentifier;
+    PDFContentsVersionIdentifier m_contentsVersion;
 
     struct TileRenderData {
         PDFTileRenderIdentifier renderIdentifier;

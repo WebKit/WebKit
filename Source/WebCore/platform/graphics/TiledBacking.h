@@ -87,7 +87,7 @@ public:
     virtual void setVisibleRect(const FloatRect&) = 0;
     virtual FloatRect visibleRect() const = 0;
 
-    // Only used to update the tile coverage map. 
+    // Only used to update the tile coverage map.
     virtual void setLayoutViewportRect(std::optional<FloatRect>) = 0;
 
     virtual void setCoverageRect(const FloatRect&) = 0;
@@ -127,6 +127,8 @@ public:
     virtual void didEndLiveResize() = 0;
 
     virtual IntSize tileSize() const = 0;
+    // The returned rect is in the same coordinate space as the tileClip rect argument to willRepaintTile().
+    virtual FloatRect rectForTile(TileIndex) const = 0;
 
     virtual void revalidateTiles() = 0;
 

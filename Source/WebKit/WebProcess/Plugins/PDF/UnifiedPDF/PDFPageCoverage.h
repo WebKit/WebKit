@@ -38,6 +38,8 @@ namespace WebKit {
 struct PerPageInfo {
     PDFDocumentLayout::PageIndex pageIndex { 0 };
     WebCore::FloatRect pageBounds;
+
+    bool operator==(const PerPageInfo&) const = default;
 };
 
 struct PDFPageCoverage {
@@ -45,6 +47,8 @@ struct PDFPageCoverage {
     float deviceScaleFactor { 1 };
     float pdfDocumentScale { 1 };
     float tilingScaleFactor { 1 };
+
+    bool operator==(const PDFPageCoverage&) const = default;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const PerPageInfo&);

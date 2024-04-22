@@ -75,6 +75,11 @@ TileGrid::~TileGrid()
         tile.layer->setOwner(nullptr);
 }
 
+FloatRect TileGrid::rectForTile(TileIndex tileIndex) const
+{
+    return rectForTileIndex(tileIndex);
+}
+
 void TileGrid::setIsZoomedOutTileGrid(bool isZoomedOutGrid)
 {
     if (isZoomedOutGrid)

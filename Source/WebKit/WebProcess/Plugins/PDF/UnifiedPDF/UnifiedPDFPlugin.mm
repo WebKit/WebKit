@@ -667,9 +667,6 @@ void UnifiedPDFPlugin::updateLayerHierarchy()
     m_contentsLayer->setSize(documentSize());
     m_contentsLayer->setNeedsDisplay();
 
-    if (RefPtr asyncRenderer = asyncRendererIfExists())
-        asyncRenderer->layoutConfigurationChanged();
-
     updatePageBackgroundLayers();
     updateSnapOffsets();
 
@@ -1162,9 +1159,6 @@ void UnifiedPDFPlugin::setScaleFactor(double scale, std::optional<WebCore::IntPo
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
     didInvalidateDataDetectorHighlightOverlayRects();
 #endif
-
-    if (RefPtr asyncRenderer = asyncRendererIfExists())
-        asyncRenderer->layoutConfigurationChanged();
 
     auto scrolledContentsPoint = roundedIntPoint(convertUp(CoordinateSpace::Contents, CoordinateSpace::ScrolledContents, FloatPoint { zoomContentsOrigin }));
     auto newScrollPosition = IntPoint { scrolledContentsPoint - originInPluginCoordinates };
