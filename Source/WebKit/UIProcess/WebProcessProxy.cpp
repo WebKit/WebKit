@@ -1118,7 +1118,7 @@ void WebProcessProxy::modelProcessDidFinishLaunching()
 
 void WebProcessProxy::modelProcessExited(ProcessTerminationReason reason)
 {
-    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "modelProcessExited: reason=%{public}s", processTerminationReasonToString(reason).characters());
+    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "modelProcessExited: reason=%{public}s", processTerminationReasonToString(reason));
 
     for (auto& page : m_pageMap.values())
         page->modelProcessExited(reason);
