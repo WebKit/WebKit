@@ -1023,6 +1023,18 @@ class CleanWorkingDirectory(shell.ShellCommandNewStyle):
         return super().run()
 
 
+class CleanDerivedSources(shell.ShellCommandNewStyle):
+    name = 'clean-derived-sources'
+    description = ['clean-derived-sources running']
+    descriptionDone = ['Cleaned derived sources directories']
+    command = ['python3', 'Tools/Scripts/clean-webkit', '--derived-sources-only']
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, **kwargs)
+
+    def run(self):
+        return super().run()
+
 class UpdateWorkingDirectory(steps.ShellSequence, ShellMixin):
     name = 'update-working-directory'
     description = ['update-working-directory running']

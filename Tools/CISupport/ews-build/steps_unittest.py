@@ -44,23 +44,23 @@ from . import send_email
 
 from .layout_test_failures import LayoutTestFailures
 from .steps import (AddReviewerToCommitMessage, AddMergeLabelsToPRs, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
-                   AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
-                   Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStatusOfPR, CheckStyle,
-                   CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
-                   CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, DetermineLabelOwner,
-                   DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
-                   EWS_BUILD_HOSTNAMES, ExtractBuiltProduct, ExtractTestResults,
-                   FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub, GitHubMixin, GenerateS3URL,
-                   InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks,
-                   KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, RemoveAndAddLabels, ReRunAPITests, ReRunWebKitPerlTests, RetrievePRDataFromLabel,
-                   MapBranchAlias, ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
-                   RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
-                   RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
-                   RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
-                   RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree,
-                   RunWebKitTestsRepeatFailuresWithoutChangeRedTree, RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount,
-                   ShowIdentifier, Trigger, TransferToS3, TwistedAdditions, UnApplyPatch, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
-                   UploadFileToS3, UploadTestResults, ValidateCommitMessage, ValidateCommitterAndReviewer, ValidateChange, ValidateRemote, ValidateSquashed)
+                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
+                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStatusOfPR, CheckStyle,
+                    CleanBuild, CleanDerivedSources, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
+                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, DetermineLabelOwner,
+                    DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
+                    EWS_BUILD_HOSTNAMES, ExtractBuiltProduct, ExtractTestResults,
+                    FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub, GitHubMixin, GenerateS3URL,
+                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks,
+                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, RemoveAndAddLabels, ReRunAPITests, ReRunWebKitPerlTests, RetrievePRDataFromLabel,
+                    MapBranchAlias, ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
+                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
+                    RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
+                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
+                    RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree,
+                    RunWebKitTestsRepeatFailuresWithoutChangeRedTree, RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount,
+                    ShowIdentifier, Trigger, TransferToS3, TwistedAdditions, UnApplyPatch, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
+                    UploadFileToS3, UploadTestResults, ValidateCommitMessage, ValidateCommitterAndReviewer, ValidateChange, ValidateRemote, ValidateSquashed)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -1079,6 +1079,30 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Deleted WebKitBuild directory (failure)')
+        return self.runStep()
+
+
+class TestCleanDerivedSources(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CleanDerivedSources())
+        self.setProperty('platform', 'gtk')
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/clean-webkit', '--derived-sources-only'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned derived sources directories')
         return self.runStep()
 
 

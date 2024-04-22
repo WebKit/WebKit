@@ -69,6 +69,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'jhbuild',
             'validate-change',
+            'clean-derived-sources',
             'compile-webkit',
             'install-built-product'
         ],
@@ -485,6 +486,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'jhbuild',
             'validate-change',
+            'clean-derived-sources',
             'compile-webkit'
         ],
         'WPE-Skia-Build-EWS': [
@@ -501,6 +503,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'jhbuild',
             'validate-change',
+            'clean-derived-sources',
             'compile-webkit'
         ],
         'WPE-WK2-Tests-EWS': [

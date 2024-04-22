@@ -26,7 +26,7 @@ from buildbot.steps import trigger
 
 from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize,
                     CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
-                    CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, DetermineLabelOwner,
+                    CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CleanDerivedSources, CompileJSC, CompileWebKit, ConfigureBuild, DetermineLabelOwner,
                     DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub,
                     InstallGtkDependencies, InstallHooks, InstallWpeDependencies, InstallWinDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                     MapBranchAlias, RemoveAndAddLabels, RetrievePRDataFromLabel, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
@@ -131,6 +131,8 @@ class BuildFactory(Factory):
         elif platform == 'wpe':
             self.addStep(InstallWpeDependencies())
         self.addStep(ValidateChange(addURLs=False))
+        if platform in ['gtk', 'wpe']:
+            self.addStep(CleanDerivedSources())
         self.addStep(CompileWebKit(skipUpload=self.skipUpload))
         if platform == 'gtk':
             self.addStep(InstallBuiltProduct())
