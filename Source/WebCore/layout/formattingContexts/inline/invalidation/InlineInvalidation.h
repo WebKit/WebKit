@@ -56,6 +56,8 @@ public:
 
     bool restartForPagination(size_t lineIndex, LayoutUnit pageTopAdjustment);
 
+    static bool mayOnlyNeedPartialLayout(const InlineDamage* inlineDamage) { return inlineDamage && inlineDamage->layoutStartPosition(); }
+
 private:
     enum class ShouldApplyRangeLayout : bool { No, Yes };
     bool updateInlineDamage(const InvalidatedLine&, InlineDamage::Reason, ShouldApplyRangeLayout = ShouldApplyRangeLayout::No, LayoutUnit restartPaginationAdjustment = 0_lu);

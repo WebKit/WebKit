@@ -334,7 +334,7 @@ std::optional<LayoutRect> LineLayout::layout()
 {
     preparePlacedFloats();
 
-    auto isPartialLayout = m_lineDamage && m_lineDamage->layoutStartPosition();
+    auto isPartialLayout = Layout::InlineInvalidation::mayOnlyNeedPartialLayout(m_lineDamage.get());
 
     auto clearInlineContentAndCacheBeforeFullLayoutIfNeeded = [&] {
         if (isPartialLayout)
