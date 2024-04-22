@@ -2832,6 +2832,9 @@ rendering/svg/legacy/LegacyRenderSVGRoot.cpp
 rendering/svg/legacy/LegacyRenderSVGShape.cpp
 rendering/svg/legacy/LegacyRenderSVGTransformableContainer.cpp
 rendering/svg/legacy/LegacyRenderSVGViewportContainer.cpp
+rendering/svg/legacy/SVGResources.cpp
+rendering/svg/legacy/SVGResourcesCache.cpp
+rendering/svg/legacy/SVGResourcesCycleSolver.cpp
 rendering/svg/RenderSVGBlock.cpp
 rendering/svg/RenderSVGContainer.cpp
 rendering/svg/RenderSVGEllipse.cpp
@@ -2868,9 +2871,6 @@ rendering/svg/SVGPathData.cpp
 rendering/svg/SVGRenderSupport.cpp
 rendering/svg/SVGRenderTreeAsText.cpp
 rendering/svg/SVGRenderingContext.cpp
-rendering/svg/SVGResources.cpp
-rendering/svg/SVGResourcesCache.cpp
-rendering/svg/SVGResourcesCycleSolver.cpp
 rendering/svg/SVGRootInlineBox.cpp
 rendering/svg/SVGTextChunk.cpp
 rendering/svg/SVGTextChunkBuilder.cpp

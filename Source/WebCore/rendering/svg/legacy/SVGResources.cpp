@@ -172,7 +172,7 @@ static inline bool isChainableResource(const SVGElement& element, const SVGEleme
 
     if (is<SVGGradientElement>(element))
         return is<SVGGradientElement>(linkedResource);
-    
+
     if (is<SVGFilterElement>(element))
         return is<SVGFilterElement>(linkedResource);
 
@@ -458,7 +458,7 @@ bool SVGResources::resourceDestroyed(LegacyRenderSVGResourceContainer& resource)
         break;
     case ClipperResourceType:
         if (!m_clipperFilterMaskerData)
-            break; 
+            break;
         if (m_clipperFilterMaskerData->clipper == &resource) {
             resource.removeAllClientsFromCache();
             m_clipperFilterMaskerData->clipper = nullptr;
@@ -467,6 +467,7 @@ bool SVGResources::resourceDestroyed(LegacyRenderSVGResourceContainer& resource)
         break;
     case SolidColorResourceType:
         ASSERT_NOT_REACHED();
+        break;
     }
     return foundResources;
 }
@@ -627,9 +628,7 @@ void SVGResources::resetMasker()
 bool SVGResources::setFill(LegacyRenderSVGResourceContainer* fill)
 {
     ASSERT(fill);
-    ASSERT(fill->resourceType() == PatternResourceType
-           || fill->resourceType() == LinearGradientResourceType
-           || fill->resourceType() == RadialGradientResourceType);
+    ASSERT(fill->resourceType() == PatternResourceType || fill->resourceType() == LinearGradientResourceType || fill->resourceType() == RadialGradientResourceType);
 
     if (!m_fillStrokeData)
         m_fillStrokeData = makeUnique<FillStrokeData>();
@@ -648,9 +647,7 @@ void SVGResources::resetFill()
 bool SVGResources::setStroke(LegacyRenderSVGResourceContainer* stroke)
 {
     ASSERT(stroke);
-    ASSERT(stroke->resourceType() == PatternResourceType
-           || stroke->resourceType() == LinearGradientResourceType
-           || stroke->resourceType() == RadialGradientResourceType);
+    ASSERT(stroke->resourceType() == PatternResourceType || stroke->resourceType() == LinearGradientResourceType || stroke->resourceType() == RadialGradientResourceType);
 
     if (!m_fillStrokeData)
         m_fillStrokeData = makeUnique<FillStrokeData>();
