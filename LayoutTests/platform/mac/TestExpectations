@@ -2602,5 +2602,3 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.htm
 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
 
 [ Monterey Ventura ] imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]
-
-webkit.org/b/272944 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-form-controls-crash.html [ Skip ]

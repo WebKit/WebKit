@@ -263,10 +263,9 @@ std::optional<Vector<uint8_t>> base64Decode(std::span<const std::byte> input, Ba
 
 std::optional<Vector<uint8_t>> base64Decode(StringView input, Base64DecodeMode mode)
 {
-    unsigned length = input.length();
-    if (!length || input.is8Bit())
-        return base64DecodeInternal(std::span(input.characters8(), length), mode);
-    return base64DecodeInternal(std::span(input.characters16(), length), mode);
+    if (input.is8Bit())
+        return base64DecodeInternal(input.span8(), mode);
+    return base64DecodeInternal(input.span16(), mode);
 }
 
 String base64DecodeToString(StringView input, Base64DecodeMode mode)\
@@ -277,10 +276,9 @@ String base64DecodeToString(StringView input, Base64DecodeMode mode)\
         return String::adopt(WTFMove(*optionalBuffer));
     };
 
-    unsigned length = input.length();
-    if (!length || input.is8Bit())
-        return toString(base64DecodeInternal<LChar, StringImplMalloc>(std::span(input.characters8(), length), mode));
-    return toString(base64DecodeInternal<UChar, StringImplMalloc>(std::span(input.characters16(), length), mode));
+    if (input.is8Bit())
+        return toString(base64DecodeInternal<LChar, StringImplMalloc>(input.span8(), mode));
+    return toString(base64DecodeInternal<UChar, StringImplMalloc>(input.span16(), mode));
 }
 
 } // namespace WTF

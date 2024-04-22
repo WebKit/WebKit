@@ -126,13 +126,13 @@ size_t StringView::find(AdaptiveStringSearcherTables& tables, StringView matchSt
 
     if (is8Bit()) {
         if (matchString.is8Bit())
-            return searchStringRaw(tables, characters8(), length(), matchString.characters8(), matchString.length(), start);
-        return searchStringRaw(tables, characters8(), length(), matchString.characters16(), matchString.length(), start);
+            return searchString(tables, span8(), matchString.span8(), start);
+        return searchString(tables, span8(), matchString.span16(), start);
     }
 
     if (matchString.is8Bit())
-        return searchStringRaw(tables, characters16(), length(), matchString.characters8(), matchString.length(), start);
-    return searchStringRaw(tables, characters16(), length(), matchString.characters16(), matchString.length(), start);
+        return searchString(tables, span16(), matchString.span8(), start);
+    return searchString(tables, span16(), matchString.span16(), start);
 }
 
 size_t StringView::find(std::span<const LChar> match, unsigned start) const
@@ -312,29 +312,29 @@ AtomString StringView::convertToASCIILowercaseAtom() const
 }
 
 template<typename DestinationCharacterType, typename SourceCharacterType>
-void getCharactersWithASCIICaseInternal(StringView::CaseConvertType type, DestinationCharacterType* destination, const SourceCharacterType* source, unsigned length)
+void getCharactersWithASCIICaseInternal(StringView::CaseConvertType type, DestinationCharacterType* destination, std::span<const SourceCharacterType> source)
 {
     static_assert(std::is_same<SourceCharacterType, LChar>::value || std::is_same<SourceCharacterType, UChar>::value);
     static_assert(std::is_same<DestinationCharacterType, LChar>::value || std::is_same<DestinationCharacterType, UChar>::value);
     static_assert(sizeof(DestinationCharacterType) >= sizeof(SourceCharacterType));
     auto caseConvert = (type == StringView::CaseConvertType::Lower) ? toASCIILower<SourceCharacterType> : toASCIIUpper<SourceCharacterType>;
-    for (unsigned i = 0; i < length; ++i)
-        destination[i] = caseConvert(source[i]);
+    for (auto character : source)
+        *destination++ = caseConvert(character);
 }
 
 void StringView::getCharactersWithASCIICase(CaseConvertType type, LChar* destination) const
 {
     ASSERT(is8Bit());
-    getCharactersWithASCIICaseInternal(type, destination, characters8(), m_length);
+    getCharactersWithASCIICaseInternal(type, destination, span8());
 }
 
 void StringView::getCharactersWithASCIICase(CaseConvertType type, UChar* destination) const
 {
     if (is8Bit()) {
-        getCharactersWithASCIICaseInternal(type, destination, characters8(), m_length);
+        getCharactersWithASCIICaseInternal(type, destination, span8());
         return;
     }
-    getCharactersWithASCIICaseInternal(type, destination, characters16(), m_length);
+    getCharactersWithASCIICaseInternal(type, destination, span16());
 }
 
 StringViewWithUnderlyingString normalizedNFC(StringView string)
@@ -348,18 +348,19 @@ StringViewWithUnderlyingString normalizedNFC(StringView string)
     ASSERT(U_SUCCESS(status));
 
     // No need to normalize if already normalized.
-    UBool checkResult = unorm2_isNormalized(normalizer, string.characters16(), string.length(), &status);
+    auto span = string.span16();
+    UBool checkResult = unorm2_isNormalized(normalizer, span.data(), span.size(), &status);
     if (checkResult)
         return { string, { } };
 
-    unsigned normalizedLength = unorm2_normalize(normalizer, string.characters16(), string.length(), nullptr, 0, &status);
+    unsigned normalizedLength = unorm2_normalize(normalizer, span.data(), span.size(), nullptr, 0, &status);
     ASSERT(needsToGrowToProduceBuffer(status));
 
     UChar* characters;
     String result = String::createUninitialized(normalizedLength, characters);
 
     status = U_ZERO_ERROR;
-    unorm2_normalize(normalizer, string.characters16(), string.length(), characters, normalizedLength, &status);
+    unorm2_normalize(normalizer, span.data(), span.size(), characters, normalizedLength, &status);
     ASSERT(U_SUCCESS(status));
 
     StringView view { result };
@@ -418,28 +419,28 @@ String makeStringByReplacingAll(StringView string, UChar target, UChar replaceme
             return string.toString();
         }
 
-        auto* characters = string.characters8();
-        unsigned i;
+        auto characters = string.span8();
+        size_t i;
         unsigned length = string.length();
-        for (i = 0; i != length; ++i) {
+        for (i = 0; i != characters.size(); ++i) {
             if (characters[i] == target)
                 break;
         }
         if (i == length)
             return string.toString();
-        return StringImpl::createByReplacingInCharacters({ characters, length }, target, replacement, i);
+        return StringImpl::createByReplacingInCharacters(characters, target, replacement, i);
     }
 
-    auto* characters = string.characters16();
-    unsigned i;
+    auto characters = string.span16();
+    size_t i;
     unsigned length = string.length();
-    for (i = 0; i != length; ++i) {
+    for (i = 0; i != characters.size(); ++i) {
         if (characters[i] == target)
             break;
     }
     if (i == length)
         return string.toString();
-    return StringImpl::createByReplacingInCharacters({ characters, length }, target, replacement, i);
+    return StringImpl::createByReplacingInCharacters(characters, target, replacement, i);
 }
 
 int codePointCompare(StringView lhs, StringView rhs)
@@ -460,10 +461,10 @@ template<typename CharacterType> static String makeStringBySimplifyingNewLinesSl
 {
     unsigned length = string.length();
     unsigned resultLength = firstCarriageReturn;
-    auto* characters = string.characters<CharacterType>();
+    auto characters = string.span<CharacterType>();
     CharacterType* resultCharacters;
     auto result = String::createUninitialized(length, resultCharacters);
-    memcpy(resultCharacters, characters, firstCarriageReturn * sizeof(CharacterType));
+    memcpy(resultCharacters, characters.data(), firstCarriageReturn * sizeof(CharacterType));
     for (unsigned i = firstCarriageReturn; i < length; ++i) {
         if (characters[i] != '\r')
             resultCharacters[resultLength++] = characters[i];

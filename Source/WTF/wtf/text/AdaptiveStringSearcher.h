@@ -542,20 +542,8 @@ int searchString(AdaptiveStringSearcherTables& tables, std::span<const SubjectCh
     return search.search(subject, startIndex);
 }
 
-// A wrapper function around SearchString that wraps raw pointers to the subject
-// and pattern as vectors before calling SearchString. Used from the
-// StringIndexOf builtin.
-template <typename SubjectChar, typename PatternChar>
-intptr_t searchStringRaw(AdaptiveStringSearcherTables& tables, const SubjectChar* subjectPtr, int subjectLength, const PatternChar* patternPtr, int patternLength, int startIndex)
-{
-    std::span<const SubjectChar> subject(subjectPtr, subjectLength);
-    std::span<const PatternChar> pattern(patternPtr, patternLength);
-    return searchString(tables, subject, pattern, startIndex);
-}
-
 } // namespace WTF
 
 using WTF::AdaptiveStringSearcher;
 using WTF::AdaptiveStringSearcherTables;
 using WTF::searchString;
-using WTF::searchStringRaw;

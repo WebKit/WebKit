@@ -1,36 +1,5 @@
 set(WTF_OUTPUT_NAME WTFGTK)
 
-list(APPEND WTF_PUBLIC_HEADERS
-    glib/ChassisType.h
-    glib/GMutexLocker.h
-    glib/GRefPtr.h
-    glib/GSocketMonitor.h
-    glib/GThreadSafeWeakPtr.h
-    glib/GTypedefs.h
-    glib/GUniquePtr.h
-    glib/GWeakPtr.h
-    glib/RunLoopSourcePriority.h
-    glib/Sandbox.h
-    glib/SocketConnection.h
-    glib/WTFGType.h
-
-    linux/RealTimeThreads.h
-
-    unix/UnixFileDescriptor.h
-)
-
-if (CMAKE_SYSTEM_NAME MATCHES "Linux")
-    list(APPEND WTF_PUBLIC_HEADERS
-        linux/ProcessMemoryFootprint.h
-        linux/CurrentProcessMemoryStatus.h
-    )
-elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    list(APPEND WTF_PUBLIC_HEADERS
-        spi/darwin/OSVariantSPI.h
-        spi/darwin/ProcessMemoryFootprint.h
-    )
-endif ()
-
 list(APPEND WTF_SOURCES
     generic/MainThreadGeneric.cpp
     generic/WorkQueueGeneric.cpp

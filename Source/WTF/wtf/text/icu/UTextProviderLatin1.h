@@ -39,6 +39,6 @@ struct UTextWithBuffer {
 };
 
 UText* openLatin1UTextProvider(UTextWithBuffer* utWithBuffer, std::span<const LChar> string, UErrorCode* status);
-WTF_EXPORT_PRIVATE UText* openLatin1ContextAwareUTextProvider(UTextWithBuffer* utWithBuffer, const LChar* string, unsigned length, std::span<const UChar> priorContext, UErrorCode* status);
+WTF_EXPORT_PRIVATE UText* openLatin1ContextAwareUTextProvider(UTextWithBuffer* utWithBuffer, std::span<const LChar> string, std::span<const UChar> priorContext, UErrorCode* status);
 
 } // namespace WTF

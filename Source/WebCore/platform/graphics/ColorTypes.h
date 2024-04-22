@@ -74,6 +74,9 @@ template<typename ColorType, unsigned Index> constexpr float clampedComponent(fl
 {
     constexpr auto componentInfo = ColorType::Model::componentInfo[Index];
 
+    if constexpr (componentInfo.type == ColorComponentType::Angle)
+        return std::fmod(std::fmod(c, 360.0) + 360.0, 360.0);
+
     if constexpr (componentInfo.min == -std::numeric_limits<float>::infinity() && componentInfo.max == std::numeric_limits<float>::infinity())
         return c;
 
@@ -605,7 +608,7 @@ template<typename T> struct HSLA : ColorWithAlphaHelper<HSLA<T>> {
     using ComponentType = T;
     using Model = HSLModel<T>;
     static constexpr auto whitePoint = WhitePoint::D65;
-    using Reference = SRGBA<T>;
+    using Reference = ExtendedSRGBA<T>;
 
     constexpr HSLA(T hue, T saturation, T lightness, T alpha = AlphaTraits<T>::opaque)
         : hue { hue }

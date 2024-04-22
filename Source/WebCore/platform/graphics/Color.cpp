@@ -180,12 +180,10 @@ bool Color::anyComponentIsNone() const
     return callOnUnderlyingType([&] (const auto& underlyingColor) {
         using ColorType = std::decay_t<decltype(underlyingColor)>;
 
-        if constexpr (std::is_same_v<ColorType, SRGBA<uint8_t>>) {
+        if constexpr (std::is_same_v<ColorType, SRGBA<uint8_t>>)
             return false;
-        } else {
-            auto [c1, c2, c3, alpha] = underlyingColor.unresolved();
-            return std::isnan(c1) || std::isnan(c2) || std::isnan(c3) || std::isnan(alpha);
-        }
+        else
+            return underlyingColor.unresolved().anyComponentIsNone();
     });
 }
 

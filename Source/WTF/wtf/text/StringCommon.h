@@ -431,14 +431,22 @@ ALWAYS_INLINE bool equalCommon(const StringClassA& a, const StringClassB& b, uns
         return true;
 
     if (a.is8Bit()) {
-        if (b.is8Bit())
-            return *a.characters8() == *b.characters8() && equal(a.characters8() + 1, { b.characters8() + 1, length - 1 });
-        return *a.characters8() == *b.characters16() && equal(a.characters8() + 1, { b.characters16() + 1, length - 1 });
+        auto aSpan = a.span8();
+        if (b.is8Bit()) {
+            auto bSpan = b.span8();
+            return aSpan.front() == bSpan.front() && equal(aSpan.data() + 1, bSpan.subspan(1));
+        }
+        auto bSpan = b.span16();
+        return aSpan.front() == bSpan.front() && equal(aSpan.data() + 1, bSpan.subspan(1));
     }
 
-    if (b.is8Bit())
-        return *a.characters16() == *b.characters8() && equal(a.characters16() + 1, { b.characters8() + 1, length - 1 });
-    return *a.characters16() == *b.characters16() && equal(a.characters16() + 1, { b.characters16() + 1, length - 1 });
+    auto aSpan = a.span16();
+    if (b.is8Bit()) {
+        auto bSpan = b.span8();
+        return aSpan.front() == bSpan.front() && equal(aSpan.data() + 1, bSpan.subspan(1));
+    }
+    auto bSpan = b.span16();
+    return aSpan.front() == bSpan.front() && equal(aSpan.data() + 1, bSpan.subspan(1));
 }
 
 template<typename StringClassA, typename StringClassB>
@@ -467,9 +475,9 @@ template<typename StringClass, unsigned length> bool equal(const StringClass& a,
         return false;
 
     if (a.is8Bit())
-        return equal(a.characters8(), { codeUnits, length });
+        return equal(a.span8().data(), { codeUnits, length });
 
-    return equal(a.characters16(), { codeUnits, length });
+    return equal(a.span16().data(), { codeUnits, length });
 }
 
 template<typename CharacterTypeA, typename CharacterTypeB>
@@ -496,15 +504,15 @@ bool equalIgnoringASCIICaseCommon(const StringClassA& a, const StringClassB& b)
 
     if (a.is8Bit()) {
         if (b.is8Bit())
-            return equalIgnoringASCIICase(a.characters8(), b.span8());
+            return equalIgnoringASCIICase(a.span8().data(), b.span8());
 
-        return equalIgnoringASCIICase(a.characters8(), b.span16());
+        return equalIgnoringASCIICase(a.span8().data(), b.span16());
     }
 
     if (b.is8Bit())
-        return equalIgnoringASCIICase(a.characters16(), b.span8());
+        return equalIgnoringASCIICase(a.span16().data(), b.span8());
 
-    return equalIgnoringASCIICase(a.characters16(), b.span16());
+    return equalIgnoringASCIICase(a.span16().data(), b.span16());
 }
 
 template<typename StringClassA> bool equalIgnoringASCIICaseCommon(const StringClassA& a, const char* b)
@@ -514,9 +522,9 @@ template<typename StringClassA> bool equalIgnoringASCIICaseCommon(const StringCl
         return false;
 
     if (a.is8Bit())
-        return equalIgnoringASCIICase(a.characters8(), bSpan);
+        return equalIgnoringASCIICase(a.span8().data(), bSpan);
 
-    return equalIgnoringASCIICase(a.characters16(), bSpan);
+    return equalIgnoringASCIICase(a.span16().data(), bSpan);
 }
 
 template <typename SearchCharacterType, typename MatchCharacterType>
@@ -920,8 +928,8 @@ template<typename StringClass> bool inline hasPrefixWithLettersIgnoringASCIICase
     ASSERT(string.length() >= lowercaseLetters.size());
 
     if (string.is8Bit())
-        return equalLettersIgnoringASCIICase(string.characters8(), lowercaseLetters);
-    return equalLettersIgnoringASCIICase(string.characters16(), lowercaseLetters);
+        return equalLettersIgnoringASCIICase(string.span8().data(), lowercaseLetters);
+    return equalLettersIgnoringASCIICase(string.span16().data(), lowercaseLetters);
 }
 
 // This is intentionally not marked inline because it's used often and is not speed-critical enough to want it inlined everywhere.
@@ -959,7 +967,7 @@ inline bool equalIgnoringASCIICase(const char* a, const char* b)
 
 inline bool equalLettersIgnoringASCIICase(ASCIILiteral a, ASCIILiteral b)
 {
-    return a.length() == b.length() && equalLettersIgnoringASCIICase(a.characters8(), b.span8());
+    return a.length() == b.length() && equalLettersIgnoringASCIICase(a.span8().data(), b.span8());
 }
 
 inline bool equalLettersIgnoringASCIICase(const char* string, ASCIILiteral literal)

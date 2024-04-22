@@ -94,16 +94,16 @@ public:
     GraphemeClusters graphemeClusters() const;
 
     bool is8Bit() const;
-    const LChar* characters8() const;
-    const UChar* characters16() const;
     const void* rawCharacters() const { return m_characters; }
-    std::span<const LChar> span8() const { return { characters8(), length() }; }
-    std::span<const UChar> span16() const { return { characters16(), length() }; }
+    std::span<const LChar> span8() const;
+    std::span<const UChar> span16() const;
+    template<typename CharacterType> std::span<const CharacterType> span() const;
+
+    // FIXME: Port call sites to span8() / span16() and remove these.
+    const LChar* characters8() const { return span8().data(); }
+    const UChar* characters16() const { return span16().data(); }
 
     unsigned hash() const;
-
-    // Return characters8() or characters16() depending on CharacterType.
-    template<typename CharacterType> const CharacterType* characters() const;
 
     bool containsOnlyASCII() const;
 
@@ -224,7 +224,7 @@ private:
     WTF_EXPORT_PRIVATE size_t reverseFind(std::span<const LChar> match, unsigned start) const;
 
     template<typename CharacterType, typename MatchedCharacterPredicate>
-    StringView trim(const CharacterType*, const MatchedCharacterPredicate&) const;
+    StringView trim(std::span<const CharacterType>, const MatchedCharacterPredicate&) const;
 
     WTF_EXPORT_PRIVATE bool underlyingStringIsValidImpl() const;
     WTF_EXPORT_PRIVATE void setUnderlyingStringImpl(const StringImpl*);
@@ -478,18 +478,18 @@ inline void StringView::clear()
     m_is8Bit = true;
 }
 
-inline const LChar* StringView::characters8() const
+inline std::span<const LChar> StringView::span8() const
 {
     ASSERT(is8Bit());
     ASSERT(underlyingStringIsValid());
-    return static_cast<const LChar*>(m_characters);
+    return { static_cast<const LChar*>(m_characters), m_length };
 }
 
-inline const UChar* StringView::characters16() const
+inline std::span<const UChar> StringView::span16() const
 {
     ASSERT(!is8Bit() || isEmpty());
     ASSERT(underlyingStringIsValid());
-    return static_cast<const UChar*>(m_characters);
+    return { static_cast<const UChar*>(m_characters), m_length };
 }
 
 inline unsigned StringView::hash() const
@@ -499,14 +499,14 @@ inline unsigned StringView::hash() const
     return StringHasher::computeHashAndMaskTop8Bits(span16());
 }
 
-template<> ALWAYS_INLINE const LChar* StringView::characters<LChar>() const
+template<> ALWAYS_INLINE std::span<const LChar> StringView::span<LChar>() const
 {
-    return characters8();
+    return span8();
 }
 
-template<> ALWAYS_INLINE const UChar* StringView::characters<UChar>() const
+template<> ALWAYS_INLINE std::span<const UChar> StringView::span<UChar>() const
 {
-    return characters16();
+    return span16();
 }
 
 inline bool StringView::containsOnlyASCII() const
@@ -586,18 +586,17 @@ inline StringView StringView::substring(unsigned start, unsigned length) const
 
 inline UChar StringView::characterAt(unsigned index) const
 {
-    RELEASE_ASSERT(index < length());
     if (is8Bit())
-        return characters8()[index];
-    return characters16()[index];
+        return span8()[index];
+    return span16()[index];
 }
 
 inline UChar StringView::unsafeCharacterAt(unsigned index) const
 {
     ASSERT(index < length());
     if (is8Bit())
-        return characters8()[index];
-    return characters16()[index];
+        return span8().data()[index];
+    return span16().data()[index];
 }
 
 inline UChar StringView::operator[](unsigned index) const
@@ -786,8 +785,8 @@ inline bool equal(StringView a, const LChar* b)
         return false;
 
     if (a.is8Bit())
-        return equal(a.characters8(), bSpan);
-    return equal(a.characters16(), bSpan);
+        return equal(a.span8().data(), bSpan);
+    return equal(a.span16().data(), bSpan);
 }
 
 ALWAYS_INLINE bool equal(StringView a, ASCIILiteral b)
@@ -988,11 +987,11 @@ inline StringView::CodePoints::Iterator::Iterator(StringView stringView, unsigne
 #endif
 {
     if (m_is8Bit) {
-        const LChar* begin = stringView.characters8();
+        const LChar* begin = stringView.span8().data();
         m_current = begin + index;
         m_end = begin + stringView.length();
     } else {
-        const UChar* begin = stringView.characters16();
+        const UChar* begin = stringView.span16().data();
         m_current = begin + index;
         m_end = begin + stringView.length();
     }
@@ -1143,7 +1142,7 @@ inline bool StringView::SplitResult::Iterator::operator==(const Iterator& other)
 }
 
 template<typename CharacterType, typename MatchedCharacterPredicate>
-inline StringView StringView::trim(const CharacterType* characters, const MatchedCharacterPredicate& predicate) const
+inline StringView StringView::trim(std::span<const CharacterType> characters, const MatchedCharacterPredicate& predicate) const
 {
     if (!m_length)
         return *this;
@@ -1163,7 +1162,7 @@ inline StringView StringView::trim(const CharacterType* characters, const Matche
     if (!start && end == m_length - 1)
         return *this;
 
-    StringView result(std::span<const CharacterType> { characters + start, end + 1 - start });
+    StringView result(characters.subspan(start, end + 1 - start));
     result.setUnderlyingString(*this);
     return result;
 }
@@ -1172,8 +1171,8 @@ template<typename MatchedCharacterPredicate>
 StringView StringView::trim(const MatchedCharacterPredicate& predicate) const
 {
     if (is8Bit())
-        return trim<LChar>(characters8(), predicate);
-    return trim<UChar>(characters16(), predicate);
+        return trim<LChar>(span8(), predicate);
+    return trim<UChar>(span16(), predicate);
 }
 
 inline bool equalLettersIgnoringASCIICase(StringView string, ASCIILiteral literal)
@@ -1271,12 +1270,12 @@ inline bool startsWith(StringView reference, StringView prefix)
 
     if (reference.is8Bit()) {
         if (prefix.is8Bit())
-            return equal(reference.characters8(), prefix.span8());
-        return equal(reference.characters8(), prefix.span16());
+            return equal(reference.span8().data(), prefix.span8());
+        return equal(reference.span8().data(), prefix.span16());
     }
     if (prefix.is8Bit())
-        return equal(reference.characters16(), prefix.span8());
-    return equal(reference.characters16(), prefix.span16());
+        return equal(reference.span16().data(), prefix.span8());
+    return equal(reference.span16().data(), prefix.span16());
 }
 
 inline bool startsWithIgnoringASCIICase(StringView reference, StringView prefix)
@@ -1286,12 +1285,12 @@ inline bool startsWithIgnoringASCIICase(StringView reference, StringView prefix)
 
     if (reference.is8Bit()) {
         if (prefix.is8Bit())
-            return equalIgnoringASCIICase(reference.characters8(), prefix.span8());
-        return equalIgnoringASCIICase(reference.characters8(), prefix.span16());
+            return equalIgnoringASCIICase(reference.span8().data(), prefix.span8());
+        return equalIgnoringASCIICase(reference.span8().data(), prefix.span16());
     }
     if (prefix.is8Bit())
-        return equalIgnoringASCIICase(reference.characters16(), prefix.span8());
-    return equalIgnoringASCIICase(reference.characters16(), prefix.span16());
+        return equalIgnoringASCIICase(reference.span16().data(), prefix.span8());
+    return equalIgnoringASCIICase(reference.span16().data(), prefix.span16());
 }
 
 inline bool endsWith(StringView reference, StringView suffix)
@@ -1305,12 +1304,12 @@ inline bool endsWith(StringView reference, StringView suffix)
 
     if (reference.is8Bit()) {
         if (suffix.is8Bit())
-            return equal(reference.characters8() + startOffset, suffix.span8());
-        return equal(reference.characters8() + startOffset, suffix.span16());
+            return equal(reference.span8().data() + startOffset, suffix.span8());
+        return equal(reference.span8().data() + startOffset, suffix.span16());
     }
     if (suffix.is8Bit())
-        return equal(reference.characters16() + startOffset, suffix.span8());
-    return equal(reference.characters16() + startOffset, suffix.span16());
+        return equal(reference.span16().data() + startOffset, suffix.span8());
+    return equal(reference.span16().data() + startOffset, suffix.span16());
 }
 
 inline bool endsWithIgnoringASCIICase(StringView reference, StringView suffix)
@@ -1324,12 +1323,12 @@ inline bool endsWithIgnoringASCIICase(StringView reference, StringView suffix)
 
     if (reference.is8Bit()) {
         if (suffix.is8Bit())
-            return equalIgnoringASCIICase(reference.characters8() + startOffset, suffix.span8());
-        return equalIgnoringASCIICase(reference.characters8() + startOffset, suffix.span16());
+            return equalIgnoringASCIICase(reference.span8().data() + startOffset, suffix.span8());
+        return equalIgnoringASCIICase(reference.span8().data() + startOffset, suffix.span16());
     }
     if (suffix.is8Bit())
-        return equalIgnoringASCIICase(reference.characters16() + startOffset, suffix.span8());
-    return equalIgnoringASCIICase(reference.characters16() + startOffset, suffix.span16());
+        return equalIgnoringASCIICase(reference.span16().data() + startOffset, suffix.span8());
+    return equalIgnoringASCIICase(reference.span16().data() + startOffset, suffix.span16());
 }
 
 inline size_t String::find(StringView string) const

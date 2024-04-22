@@ -46,6 +46,9 @@
 
 namespace WebCore {
 
+// FIXME: A few WPT tests require the old clamping behavior for hsl()/hsla() colors so we opt into to that while the working group discusses it. See https://webkit.org/b/272940.
+static constexpr CSSPropertyParserHelpers::CSSColorParsingOptions canvasColorParsingOptions = { .clampHSLAtParseTime = true };
+
 bool isCurrentColorString(const String& colorString)
 {
     return equalLettersIgnoringASCIICase(colorString, "currentcolor"_s);
@@ -55,10 +58,10 @@ Color parseColor(const String& colorString, CanvasBase& canvasBase)
 {
 #if ENABLE(OFFSCREEN_CANVAS)
     if (is<OffscreenCanvas>(canvasBase))
-        return CSSPropertyParserHelpers::parseColorRawWorkerSafe(colorString, canvasBase.cssParserContext(), { });
+        return CSSPropertyParserHelpers::parseColorRawWorkerSafe(colorString, canvasBase.cssParserContext(), canvasColorParsingOptions);
 #endif
 
-    auto color = CSSPropertyParserHelpers::parseColorRaw(colorString, canvasBase.cssParserContext(), { });
+    auto color = CSSPropertyParserHelpers::parseColorRaw(colorString, canvasBase.cssParserContext(), canvasColorParsingOptions);
     if (color.isValid())
         return color;
     return CSSParser::parseSystemColor(colorString);
@@ -66,7 +69,7 @@ Color parseColor(const String& colorString, CanvasBase& canvasBase)
 
 Color parseColor(const String& colorString)
 {
-    auto color = CSSPropertyParserHelpers::parseColorRaw(colorString, CSSParserContext(HTMLStandardMode), { });
+    auto color = CSSPropertyParserHelpers::parseColorRaw(colorString, CSSParserContext(HTMLStandardMode), canvasColorParsingOptions);
 
     if (color.isValid())
         return color;
@@ -82,7 +85,7 @@ Color currentColor(CanvasBase& canvasBase)
     if (!canvas->isConnected() || !canvas->inlineStyle())
         return Color::black;
 
-    auto color = CSSPropertyParserHelpers::parseColorRaw(canvas->inlineStyle()->getPropertyValue(CSSPropertyColor), canvasBase.cssParserContext(), { });
+    auto color = CSSPropertyParserHelpers::parseColorRaw(canvas->inlineStyle()->getPropertyValue(CSSPropertyColor), canvasBase.cssParserContext(), canvasColorParsingOptions);
     if (!color.isValid())
         return Color::black;
     return color;

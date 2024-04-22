@@ -33,7 +33,6 @@ editing/undo-manager [ Skip ]
 tiled-drawing [ Skip ]
 fast/attachment/cocoa [ Skip ]
 fast/attachment/mac [ Skip ]
-fast/canvas/canvas-will-read-frequently.html [ Skip ]
 fast/css/ios [ Skip ]
 fast/css/mac [ Skip ]
 fast/css/watchos [ Skip ]
@@ -4701,6 +4700,10 @@ webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/lch-009.html [
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/lch-010.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-009.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-010.html [ ImageOnlyFailure ]
+
+# Tests assume hsl() gets clipped, which is no longer true.
+webkit.org/b/272940 imported/w3c/web-platform-tests/css/css-color/t424-hsl-clip-outside-gamut-b.xht [ ImageOnlyFailure ]
+webkit.org/b/272940 imported/w3c/web-platform-tests/css/css-color/t425-hsla-clip-outside-device-gamut-b.xht [ ImageOnlyFailure ]
 
 # currentColor support in relative color syntax.
 webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-a98rgb-01.html [ ImageOnlyFailure ]

@@ -112,9 +112,4 @@ template<> inline Color makeCanonicalColor<HWBA<float>>(HWBA<float> color, Optio
     return { convertColor<SRGBA<uint8_t>>(color), flags };
 }
 
-template<> inline Color makeCanonicalColor<HSLA<float>>(HSLA<float> color, OptionSet<Color::Flags> flags)
-{
-    return { convertColor<SRGBA<uint8_t>>(color), flags };
-}
-
 }

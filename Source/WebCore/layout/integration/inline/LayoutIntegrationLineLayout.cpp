@@ -1117,8 +1117,9 @@ bool LineLayout::removedFromTree(const RenderElement& parent, RenderObject& chil
 bool LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset, int delta)
 {
     if (!m_inlineContent) {
-        // This should only be called on partial layout.
-        ASSERT_NOT_REACHED();
+        // This is supposed to be only called on partial layout, but
+        // RenderText::setText may be (force) called after min/max size computation and before layout.
+        // We may need to invalidate anyway to clean up inline item list.
         return false;
     }
 

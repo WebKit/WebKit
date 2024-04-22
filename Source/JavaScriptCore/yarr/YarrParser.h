@@ -774,7 +774,7 @@ private:
 
     Parser(Delegate& delegate, StringView pattern, CompileMode compileMode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed)
         : m_delegate(delegate)
-        , m_data(pattern.characters<CharType>())
+        , m_data(pattern.span<CharType>().data())
         , m_size(pattern.length())
         , m_compileMode(compileMode)
         , m_backReferenceLimit(backReferenceLimit)

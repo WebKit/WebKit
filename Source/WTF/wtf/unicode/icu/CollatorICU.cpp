@@ -238,7 +238,8 @@ UCharIterator createIterator(StringView string)
     if (string.is8Bit())
         return createLatin1Iterator(string.span8());
     UCharIterator iterator;
-    uiter_setString(&iterator, string.characters16(), string.length());
+    auto characters = string.span16();
+    uiter_setString(&iterator, characters.data(), characters.size());
     return iterator;
 }
 

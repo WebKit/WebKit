@@ -42,6 +42,7 @@ namespace CSSPropertyParserHelpers {
 
 // Options to augment color parsing.
 struct CSSColorParsingOptions {
+    bool clampHSLAtParseTime = false;
     bool acceptQuirkyColors = false;
     OptionSet<StyleColor::CSSColorType> allowedColorTypes = { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System };
 };

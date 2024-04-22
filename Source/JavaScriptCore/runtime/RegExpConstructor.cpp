@@ -24,12 +24,15 @@
 
 #include "GetterSetter.h"
 #include "JSCInlines.h"
+#include "NumberPrototype.h"
+#include "ParseInt.h"
 #include "RegExpGlobalDataInlines.h"
 #include "RegExpPrototype.h"
 #include "YarrFlags.h"
 
 namespace JSC {
 
+static JSC_DECLARE_HOST_FUNCTION(regExpConstructorEscape);
 static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorInput);
 static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorMultiline);
 static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorLastMatch);
@@ -91,8 +94,85 @@ void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype)
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, regExpPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 
     JSGlobalObject* globalObject = regExpPrototype->globalObject();
+
+    if (Options::useRegExpEscape())
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("escape"_s, regExpConstructorEscape, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+
     GetterSetter* speciesGetterSetter = GetterSetter::create(vm, globalObject, JSFunction::create(vm, globalObject, 0, "get [Symbol.species]"_s, globalFuncSpeciesGetter, ImplementationVisibility::Public, SpeciesGetterIntrinsic), nullptr);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->speciesSymbol, speciesGetterSetter, PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
+}
+
+JSC_DEFINE_HOST_FUNCTION(regExpConstructorEscape, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue value = callFrame->argument(0);
+    if (UNLIKELY(!value.isString()))
+        return throwVMTypeError(globalObject, scope, "RegExp.escape requires a string"_s);
+
+    const String& string = asString(value)->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    StringBuilder builder;
+    builder.reserveCapacity(string.length());
+
+    for (unsigned i = 0; i < string.length();) {
+        char32_t codePoint;
+        if (string.is8Bit())
+            codePoint = string.characters8()[i++];
+        else
+            U16_NEXT(string.characters16(), i, string.length(), codePoint);
+
+        if (builder.isEmpty() && isASCIIAlphanumeric(codePoint)) {
+            builder.append('\\', 'x', toStringWithRadix(codePoint, 16));
+            continue;
+        }
+
+        if (StringView("^$\\.*+?()[]{}|/"_s).contains(codePoint)) {
+            builder.append('\\', codePoint);
+            continue;
+        }
+
+        switch (codePoint) {
+        case '\t':
+            builder.append('\\', 't');
+            continue;
+        case '\n':
+            builder.append('\\', 'n');
+            continue;
+        case '\v':
+            builder.append('\\', 'v');
+            continue;
+        case '\f':
+            builder.append('\\', 'f');
+            continue;
+        case '\r':
+            builder.append('\\', 'r');
+            continue;
+        default:
+            break;
+        }
+
+        if (StringView(",-=<>#&!%:;@~'`\""_s).contains(codePoint) || isStrWhiteSpace(codePoint) || U16_IS_SURROGATE(codePoint)) {
+            if (isLatin1(codePoint))
+                builder.append('\\', 'x', pad('0', 2, toStringWithRadix(codePoint, 16)));
+            else if (U_IS_BMP(codePoint))
+                builder.append('\\', 'u', pad('0', 4, toStringWithRadix(codePoint, 16)));
+            else {
+                builder.append('\\', 'u', pad('0', 4, toStringWithRadix(U16_LEAD(codePoint), 16)));
+                builder.append('\\', 'u', pad('0', 4, toStringWithRadix(U16_TRAIL(codePoint), 16)));
+            }
+            continue;
+        }
+
+        if (U_IS_BMP(codePoint))
+            builder.append(codePoint);
+        else
+            builder.append(U16_LEAD(codePoint), U16_TRAIL(codePoint));
+    }
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, builder.toString())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(regExpConstructorDollar, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))

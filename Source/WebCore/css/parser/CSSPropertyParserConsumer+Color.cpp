@@ -55,6 +55,7 @@ using ColorOrUnresolvedColor = std::variant<Color, CSSUnresolvedColor>;
 struct ColorParserState {
     ColorParserState(const CSSParserContext& context, const CSSColorParsingOptions& options)
         : allowedColorTypes { options.allowedColorTypes }
+        , clampHSLAtParseTime { options.clampHSLAtParseTime }
         , acceptQuirkyColors { options.acceptQuirkyColors }
         , colorContrastEnabled { context.colorContrastEnabled }
         , lightDarkEnabled { context.lightDarkEnabled }
@@ -64,6 +65,7 @@ struct ColorParserState {
 
     OptionSet<StyleColor::CSSColorType> allowedColorTypes;
 
+    bool clampHSLAtParseTime;
     bool acceptQuirkyColors;
     bool colorContrastEnabled;
     bool lightDarkEnabled;
@@ -93,20 +95,162 @@ struct ColorParserStateNester {
 static Color consumeColorRaw(CSSParserTokenRange&, ColorParserState&);
 static RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, ColorParserState&);
 
+// The NormalizePercentage structs are specialized for the color types
+// that have specified rules for normalizing percentages by component.
+// The structs contains static members for the component that describe
+// the normalized value when the percent is 100%. As all treat 0% as
+// normalizing to 0, that is not encoded in the struct.
+template<typename ColorType> struct NormalizePercentage;
+
+template<> struct NormalizePercentage<Lab<float>> {
+    //  for L: 0% = 0.0, 100% = 100.0
+    //  for a and b: -100% = -125, 100% = 125 (NOTE: 0% is 0)
+
+    static constexpr double maximumLightnessNumber = 100.0;
+    static constexpr double lightnessScaleFactor = maximumLightnessNumber / 100.0;
+    static constexpr double abScaleFactor = 125.0 / 100.0;
+};
+
+template<> struct NormalizePercentage<OKLab<float>> {
+    //  for L: 0% = 0.0, 100% = 1.0
+    //  for a and b: -100% = -0.4, 100% = 0.4 (NOTE: 0% is 0)
+
+    static constexpr double maximumLightnessNumber = 1.0;
+    static constexpr double lightnessScaleFactor = maximumLightnessNumber / 100.0;
+    static constexpr double abScaleFactor = 0.4 / 100.0;
+};
+
+template<> struct NormalizePercentage<LCHA<float>> {
+    //  for L: 0% = 0.0, 100% = 100.0
+    //  for C: 0% = 0, 100% = 150
+
+    static constexpr double maximumLightnessNumber = 100.0;
+    static constexpr double lightnessScaleFactor = maximumLightnessNumber / 100.0;
+    static constexpr double chromaScaleFactor = 150.0 / 100.0;
+};
+
+template<> struct NormalizePercentage<OKLCHA<float>> {
+    //  for L: 0% = 0.0, 100% = 1.0
+    //  for C: 0% = 0.0 100% = 0.4
+
+    static constexpr double maximumLightnessNumber = 1.0;
+    static constexpr double lightnessScaleFactor = maximumLightnessNumber / 100.0;
+    static constexpr double chromaScaleFactor = 0.4 / 100.0;
+};
+
+template<> struct NormalizePercentage<XYZA<float, WhitePoint::D50>> {
+    //  for X,Y,Z: 0% = 0.0, 100% = 1.0
+
+    static constexpr double xyzScaleFactor = 1.0 / 100.0;
+};
+
+template<> struct NormalizePercentage<XYZA<float, WhitePoint::D65>> {
+    //  for X,Y,Z: 0% = 0.0, 100% = 1.0
+
+    static constexpr double xyzScaleFactor = 1.0 / 100.0;
+};
+
+template<> struct NormalizePercentage<ExtendedA98RGB<float>> {
+    //  for R,G,B: 0% = 0.0, 100% = 1.0
+
+    static constexpr double rgbScaleFactor = 1.0 / 100.0;
+};
+
+template<> struct NormalizePercentage<ExtendedDisplayP3<float>> {
+    //  for R,G,B: 0% = 0.0, 100% = 1.0
+
+    static constexpr double rgbScaleFactor = 1.0 / 100.0;
+};
+
+template<> struct NormalizePercentage<ExtendedProPhotoRGB<float>> {
+    //  for R,G,B: 0% = 0.0, 100% = 1.0
+
+    static constexpr double rgbScaleFactor = 1.0 / 100.0;
+};
+
+template<> struct NormalizePercentage<ExtendedRec2020<float>> {
+    //  for R,G,B: 0% = 0.0, 100% = 1.0
+
+    static constexpr double rgbScaleFactor = 1.0 / 100.0;
+};
+
+template<> struct NormalizePercentage<ExtendedSRGBA<float>> {
+    //  for R,G,B: 0% = 0.0, 100% = 1.0
+
+    static constexpr double rgbScaleFactor = 1.0 / 100.0;
+};
+
+template<> struct NormalizePercentage<ExtendedLinearSRGBA<float>> {
+    //  for R,G,B: 0% = 0.0, 100% = 1.0
+
+    static constexpr double rgbScaleFactor = 1.0 / 100.0;
+};
+
+template<typename ColorType>
+static double normalizeLightnessPercent(double percent)
+{
+    return NormalizePercentage<ColorType>::lightnessScaleFactor * percent;
+}
+
+template<typename ColorType>
+static double normalizeABPercent(double percent)
+{
+    return NormalizePercentage<ColorType>::abScaleFactor * percent;
+}
+
+template<typename ColorType>
+static double normalizeChromaPercent(double percent)
+{
+    return NormalizePercentage<ColorType>::chromaScaleFactor * percent;
+}
+
+template<typename ColorType>
+static double normalizeXYZPercent(double percent)
+{
+    return NormalizePercentage<ColorType>::xyzScaleFactor * percent;
+}
+
+template<typename ColorType>
+static double normalizeRGBPercent(double percent)
+{
+    return NormalizePercentage<ColorType>::rgbScaleFactor * percent;
+}
+
+static double normalizeAlphaPercent(double percent)
+{
+    static constexpr double alphaScaleFactor = 1.0 / 100.0;
+    return alphaScaleFactor * percent;
+}
+
 static Color consumeOriginColorRaw(CSSParserTokenRange& args, ColorParserState& state)
 {
     return consumeColorRaw(args, state);
 }
 
-static std::optional<double> consumeOptionalAlphaRaw(CSSParserTokenRange& range)
+static std::optional<double> consumeRGBOrHSLLegacyOptionalAlphaRaw(CSSParserTokenRange& args, double defaultValue = 1.0)
+{
+    if (!consumeCommaIncludingWhitespace(args))
+        return defaultValue;
+
+    if (auto alphaParameter = consumeNumberOrPercentRaw(args)) {
+        return WTF::switchOn(*alphaParameter,
+            [] (NumberRaw number) { return std::clamp(number.value, 0.0, 1.0); },
+            [] (PercentRaw percent) { return std::clamp(normalizeAlphaPercent(percent.value), 0.0, 1.0); }
+        );
+    }
+
+    return std::nullopt;
+}
+
+static std::optional<double> consumeOptionalAlphaRaw(CSSParserTokenRange& range, double defaultValue = 1.0)
 {
     if (!consumeSlashIncludingWhitespace(range))
-        return 1.0;
+        return defaultValue;
 
     if (auto alphaParameter = consumeNumberOrPercentOrNoneRaw(range)) {
         return WTF::switchOn(*alphaParameter,
             [] (NumberRaw number) { return std::clamp(number.value, 0.0, 1.0); },
-            [] (PercentRaw percent) { return std::clamp(percent.value / 100.0, 0.0, 1.0); },
+            [] (PercentRaw percent) { return std::clamp(normalizeAlphaPercent(percent.value), 0.0, 1.0); },
             [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
         );
     }
@@ -114,15 +258,15 @@ static std::optional<double> consumeOptionalAlphaRaw(CSSParserTokenRange& range)
     return std::nullopt;
 }
 
-static std::optional<double> consumeOptionalAlphaRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable)
+static std::optional<double> consumeOptionalAlphaRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, double defaultValue = 1.0)
 {
     if (!consumeSlashIncludingWhitespace(range))
-        return 1.0;
+        return defaultValue;
 
     if (auto alphaParameter = consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(range, symbolTable, ValueRange::All)) {
         return WTF::switchOn(*alphaParameter,
             [] (NumberRaw number) { return std::clamp(number.value, 0.0, 1.0); },
-            [] (PercentRaw percent) { return std::clamp(percent.value / 100.0, 0.0, 1.0); },
+            [] (PercentRaw percent) { return std::clamp(normalizeAlphaPercent(percent.value), 0.0, 1.0); },
             [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
         );
     }
@@ -164,7 +308,7 @@ static std::optional<double> consumeRGBOrHSLOptionalAlpha(CSSParserTokenRange& a
     if (auto alphaParameter = consumeNumberOrPercentOrNoneRaw(args)) {
         return WTF::switchOn(*alphaParameter,
             [] (NumberRaw number) { return std::clamp(number.value, 0.0, 1.0); },
-            [] (PercentRaw percent) { return std::clamp(percent.value / 100.0, 0.0, 1.0); },
+            [] (PercentRaw percent) { return std::clamp(normalizeAlphaPercent(percent.value), 0.0, 1.0); },
             [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
         );
     }
@@ -359,46 +503,89 @@ template<RGBFunctionMode Mode> static Color parseRGBParametersRaw(CSSParserToken
     return parseNonRelativeRGBParametersRaw(args);
 }
 
-static Color colorByNormalizingHSLComponents(AngleOrNumberOrNoneRaw hue, PercentOrNoneRaw saturation, PercentOrNoneRaw lightness, double alpha, RGBOrHSLSeparatorSyntax syntax)
+// MARK: - hsl() / hsla()
+
+static HSLA<float> colorByResolvingHSLComponentsModern(ColorParserState& state, AngleOrNumberOrNoneRaw hue, NumberOrPercentOrNoneRaw saturation, NumberOrPercentOrNoneRaw lightness, double alpha)
 {
-    auto normalizedHue = WTF::switchOn(hue,
-        [] (AngleRaw angle) { return CSSPrimitiveValue::computeDegrees(angle.type, angle.value); },
-        [] (NumberRaw number) { return number.value; },
-        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
-    );
-    auto normalizedSaturation = WTF::switchOn(saturation,
-        [] (PercentRaw percent) { return std::clamp(percent.value, 0.0, 100.0); },
-        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
-    );
-    auto normalizedLightness = WTF::switchOn(lightness,
-        [] (PercentRaw percent) { return std::clamp(percent.value, 0.0, 100.0); },
+    auto resolvedHue = WTF::switchOn(hue,
+        [] (AngleRaw angle) { return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)); },
+        [] (NumberRaw number) { return normalizeHue(number.value); },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
 
-    if (std::isnan(normalizedHue) || std::isnan(normalizedSaturation) || std::isnan(normalizedLightness) || std::isnan(alpha)) {
-        // "none" values are only allowed with the WhitespaceSlash syntax.
-        if (syntax != RGBOrHSLSeparatorSyntax::WhitespaceSlash)
-            return { };
+    double resolvedSaturation;
+    double resolvedLightness;
 
-        // If any component uses "none", we store the value as a HSLA<float> to allow for storage of the special value as NaN.
-        return HSLA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedSaturation), static_cast<float>(normalizedLightness), static_cast<float>(alpha) };
+    if (state.clampHSLAtParseTime) {
+        resolvedSaturation = WTF::switchOn(saturation,
+            [] (PercentRaw percent) { return std::clamp(percent.value, 0.0, 100.0); },
+            [] (NumberRaw number) { return std::clamp(number.value, 0.0, 100.0); },
+            [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+        );
+        resolvedLightness = WTF::switchOn(lightness,
+            [] (PercentRaw percent) { return std::clamp(percent.value, 0.0, 100.0); },
+            [] (NumberRaw number) { return std::clamp(number.value, 0.0, 100.0); },
+            [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+        );
+    } else {
+        resolvedSaturation = WTF::switchOn(saturation,
+            [] (PercentRaw percent) { return std::max(0.0, percent.value); },
+            [] (NumberRaw number) { return std::max(0.0, number.value); },
+            [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+        );
+        resolvedLightness = WTF::switchOn(lightness,
+            [] (PercentRaw percent) { return percent.value; },
+            [] (NumberRaw number) { return number.value; },
+            [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+        );
     }
 
-    if (normalizedHue < 0.0 || normalizedHue > 360.0) {
-        // If hue is not in the [0, 360] range, we store the value as a HSLA<float> to allow for correct interpolation
-        // using the "specified" hue interpolation method.
-        return HSLA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedSaturation), static_cast<float>(normalizedLightness), static_cast<float>(alpha) };
+    return HSLA<float> {
+        static_cast<float>(resolvedHue),
+        static_cast<float>(resolvedSaturation),
+        static_cast<float>(resolvedLightness),
+        static_cast<float>(alpha)
+    };
+}
+
+static HSLA<float> colorByResolvingHSLComponentsLegacy(ColorParserState& state, AngleOrNumberRaw hue, PercentRaw saturation, PercentRaw lightness, double alpha)
+{
+    auto resolvedHue = WTF::switchOn(hue,
+        [] (AngleRaw angle) { return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)); },
+        [] (NumberRaw number) { return normalizeHue(number.value); }
+    );
+
+    double resolvedSaturation;
+    double resolvedLightness;
+    if (state.clampHSLAtParseTime) {
+        resolvedSaturation = std::clamp(saturation.value, 0.0, 100.0);
+        resolvedLightness = std::clamp(lightness.value, 0.0, 100.0);
+    } else {
+        resolvedSaturation = std::max(0.0, saturation.value);
+        resolvedLightness = lightness.value;
     }
 
-    // NOTE: The explicit conversion to SRGBA<uint8_t> is an intentional performance optimization that allows storing the
-    // color with no extra allocation for an extended color object. This is permissible due to the historical requirement
-    // that HSLA colors serialize using the legacy color syntax (rgb()/rgba()) and historically have used the 8-bit rgba
-    // internal representation in engines.
-    return convertColor<SRGBA<uint8_t>>(HSLA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedSaturation), static_cast<float>(normalizedLightness), static_cast<float>(alpha) });
+    return HSLA<float> {
+        static_cast<float>(resolvedHue),
+        static_cast<float>(resolvedSaturation),
+        static_cast<float>(resolvedLightness),
+        static_cast<float>(alpha)
+    };
 }
 
 static Color parseRelativeHSLParametersRaw(CSSParserTokenRange& args, ColorParserState& state)
 {
+    // <modern-hsl-syntax> = hsl([from <color>]?
+    //           [<hue> | none]
+    //           [<percentage> | <number> | none]
+    //           [<percentage> | <number> | none]
+    //           [ / [<alpha-value> | none] ]? )
+    // <modern-hsla-syntax> = hsla([from <color>]?
+    //         [<hue> | none]
+    //         [<percentage> | <number> | none]
+    //         [<percentage> | <number> | none]
+    //         [ / [<alpha-value> | none] ]? )
+
     ASSERT(args.peek().id() == CSSValueFrom);
     consumeIdentRaw(args);
 
@@ -406,78 +593,202 @@ static Color parseRelativeHSLParametersRaw(CSSParserTokenRange& args, ColorParse
     if (!originColor.isValid())
         return { };
 
-    auto originColorAsHSL = originColor.toColorTypeLossy<HSLA<float>>().resolved();
+    auto originColorAsHSL = originColor.toColorTypeLossy<HSLA<float>>();
+    auto originColorAsHSLResolved = originColorAsHSL.resolved();
 
     CSSCalcSymbolTable symbolTable {
-        { CSSValueH, CSSUnitType::CSS_DEG, originColorAsHSL.hue },
-        { CSSValueS, CSSUnitType::CSS_PERCENTAGE, originColorAsHSL.saturation },
-        { CSSValueL, CSSUnitType::CSS_PERCENTAGE, originColorAsHSL.lightness },
-        { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsHSL.alpha * 100.0 }
+        { CSSValueH, CSSUnitType::CSS_NUMBER, originColorAsHSLResolved.hue },
+        { CSSValueS, CSSUnitType::CSS_NUMBER, originColorAsHSLResolved.saturation },
+        { CSSValueL, CSSUnitType::CSS_NUMBER, originColorAsHSLResolved.lightness },
+        { CSSValueAlpha, CSSUnitType::CSS_NUMBER, originColorAsHSLResolved.alpha }
     };
 
     auto hue = consumeAngleOrNumberOrNoneRawAllowingSymbolTableIdent(args, symbolTable, state.mode);
     if (!hue)
         return { };
 
-    auto saturation = consumePercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable);
+    auto saturation = consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable);
     if (!saturation)
         return { };
 
-    auto lightness = consumePercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable);
+    auto lightness = consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable);
     if (!lightness)
         return { };
 
-    auto alpha = consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable);
+    // This alpha consumer is a little different than ones for non-relative colors and passes
+    // in the alpha value of the origin color so that we can implement the following rule
+    // from CSS Color 5 (https://drafts.csswg.org/css-color-5/#rcs-intro):
+    //
+    //   § 4.1. Processing Model for Relative Colors
+    //
+    //   "If the alpha value of the relative color is omitted, it defaults to that of the
+    //    origin color (rather than defaulting to 100%, as it does in the absolute syntax)."
+    //
+    auto alpha = consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable, originColorAsHSL.unresolved().alpha);
     if (!alpha)
         return { };
 
     if (!args.atEnd())
         return { };
 
-    return colorByNormalizingHSLComponents(*hue, *saturation, *lightness, *alpha, RGBOrHSLSeparatorSyntax::WhitespaceSlash);
+    // The `UseColorFunctionSerialization` ensures the relative form serializes as `color(srgb ...)`.
+    return { colorByResolvingHSLComponentsModern(state, *hue, *saturation, *lightness, *alpha), Color::Flags::UseColorFunctionSerialization };
+}
+
+static Color parseNonRelativeHSLParametersLegacyRaw(CSSParserTokenRange& args, ColorParserState& state, AngleOrNumberOrNoneRaw hueOrNone)
+{
+    // <legacy-hsl-syntax>   = hsl( <hue>, <percentage>, <percentage>, <alpha-value>? )
+    // <legacy-hsla-syntax> = hsla( <hue>, <percentage>, <percentage>, <alpha-value>? )
+
+    auto hue = WTF::switchOn(hueOrNone,
+        [] (AngleRaw angle) -> std::optional<AngleOrNumberRaw> {
+            return AngleOrNumberRaw { angle };
+        },
+        [] (NumberRaw number) -> std::optional<AngleOrNumberRaw> {
+            return AngleOrNumberRaw { number };
+        },
+        [] (NoneRaw) -> std::optional<AngleOrNumberRaw> {
+            // `none` is invalid for the legacy syntax.
+            return std::nullopt;
+        }
+    );
+    if (!hue)
+        return { };
+
+    auto saturation = consumePercentRaw(args);
+    if (!saturation)
+        return { };
+
+    if (!consumeCommaIncludingWhitespace(args))
+        return { };
+
+    auto lightness = consumePercentRaw(args);
+    if (!lightness)
+        return { };
+
+    auto alpha = consumeRGBOrHSLLegacyOptionalAlphaRaw(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    auto hsla = colorByResolvingHSLComponentsLegacy(state, *hue, *saturation, *lightness, *alpha);
+    auto unresolved = hsla.unresolved();
+
+    if (unresolved.saturation > 100.0 || unresolved.lightness < 0.0 || unresolved.lightness > 100.0) {
+        // If any component is outside the reference range, we store the value as a HSLA<float> to allow for non-SRGB gamut values.
+        return hsla;
+    }
+
+    if (state.nestingLevel > 1) {
+        // If the color is being consumed as part of a composition (relative color, color-mix, light-dark, etc.), we store the value as a HSLA<float> to allow for maximum precision.
+        return hsla;
+    }
+
+    // The explicit conversion to SRGBA<uint8_t> is an intentional performance optimization that allows storing the
+    // color with no extra allocation for an extended color object. This is permissible due to the historical requirement
+    // that HSLA colors serialize using the legacy color syntax (rgb()/rgba()) and historically have used the 8-bit rgba
+    // internal representation in engines.
+    return convertColor<SRGBA<uint8_t>>(hsla);
+}
+
+static Color parseNonRelativeHSLParametersModernRaw(CSSParserTokenRange& args, ColorParserState& state, AngleOrNumberOrNoneRaw hue)
+{
+    // <modern-hsl-syntax> = hsl(
+    //     [<hue> | none]
+    //     [<percentage> | <number> | none]
+    //     [<percentage> | <number> | none]
+    //     [ / [<alpha-value> | none] ]? )
+    // <modern-hsla-syntax> = hsla(
+    //     [<hue> | none]
+    //     [<percentage> | <number> | none]
+    //     [<percentage> | <number> | none]
+    //     [ / [<alpha-value> | none] ]? )
+
+    auto saturation = consumeNumberOrPercentOrNoneRaw(args);
+    if (!saturation)
+        return { };
+
+    auto lightness = consumeNumberOrPercentOrNoneRaw(args);
+    if (!lightness)
+        return { };
+
+    auto alpha = consumeOptionalAlphaRaw(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    auto hsla = colorByResolvingHSLComponentsModern(state, hue, *saturation, *lightness, *alpha);
+    auto unresolved = hsla.unresolved();
+
+    if (unresolved.anyComponentIsNone()) {
+        // If any component uses "none", we store the value as a HSLA<float> to allow for storage of the special value as NaN.
+        return hsla;
+    }
+
+    if (unresolved.saturation > 100.0 || unresolved.lightness < 0.0 || unresolved.lightness > 100.0) {
+        // If any component is outside the reference range, we store the value as a HSLA<float> to allow for non-SRGB gamut values.
+        return hsla;
+    }
+
+    if (state.nestingLevel > 1) {
+        // If the color is being consumed as part of a composition (relative color, color-mix, light-dark, etc.), we store the value as a HSLA<float> to allow for maximum precision.
+        return hsla;
+    }
+
+    // The explicit conversion to SRGBA<uint8_t> is an intentional performance optimization that allows storing the
+    // color with no extra allocation for an extended color object. This is permissible due to the historical requirement
+    // that HSLA colors serialize using the legacy color syntax (rgb()/rgba()) and historically have used the 8-bit rgba
+    // internal representation in engines.
+    return convertColor<SRGBA<uint8_t>>(hsla);
 }
 
 static Color parseNonRelativeHSLParametersRaw(CSSParserTokenRange& args, ColorParserState& state)
 {
+    // hsl() = [ <legacy-hsl-syntax> | <modern-hsl-syntax> ]
+    // hsla() = [ <legacy-hsla-syntax> | <modern-hsla-syntax> ]
+    //
+    // <legacy-hsl-syntax>   = hsl( <hue>, <percentage>, <percentage>, <alpha-value>? )
+    // <legacy-hsla-syntax> = hsla( <hue>, <percentage>, <percentage>, <alpha-value>? )
+    //
+    // <modern-hsl-syntax> = hsl(
+    //     [<hue> | none]
+    //     [<percentage> | <number> | none]
+    //     [<percentage> | <number> | none]
+    //     [ / [<alpha-value> | none] ]? )
+    // <modern-hsla-syntax> = hsla(
+    //     [<hue> | none]
+    //     [<percentage> | <number> | none]
+    //     [<percentage> | <number> | none]
+    //     [ / [<alpha-value> | none] ]? )
+
+    // To determine whether this is going to use the modern or legacy syntax, we need to consume
+    // the first component and the separated after it. If the separator is a `comma`, its using
+    // the legacy syntax, if the separator is a space, it is using the modern syntax.
+
     auto hue = consumeAngleOrNumberOrNoneRaw(args, state.mode);
     if (!hue)
         return { };
 
-    auto syntax = consumeCommaIncludingWhitespace(args) ? RGBOrHSLSeparatorSyntax::Commas : RGBOrHSLSeparatorSyntax::WhitespaceSlash;
-
-    auto saturation = consumePercentOrNoneRaw(args);
-    if (!saturation)
-        return { };
-
-    if (!consumeRGBOrHSLSeparator(args, syntax))
-        return { };
-
-    auto lightness = consumePercentOrNoneRaw(args);
-    if (!lightness)
-        return { };
-
-    auto alpha = consumeRGBOrHSLOptionalAlpha(args, syntax);
-    if (!alpha)
-        return { };
-
-    if (!args.atEnd())
-        return { };
-
-    return colorByNormalizingHSLComponents(*hue, *saturation, *lightness, *alpha, syntax);
+    if (consumeCommaIncludingWhitespace(args)) {
+        // A `comma` getting successfully consumed means this is using the legacy syntax.
+        return parseNonRelativeHSLParametersLegacyRaw(args, state, *hue);
+    } else {
+        // A `comma` NOT getting successfully consumed means this is using the modern syntax.
+        return parseNonRelativeHSLParametersModernRaw(args, state, *hue);
+    }
 }
 
-enum class HSLFunctionMode { HSL, HSLA };
-
-template<HSLFunctionMode Mode> static Color parseHSLParametersRaw(CSSParserTokenRange& range, ColorParserState& state)
+static Color parseHSLParametersRaw(CSSParserTokenRange& range, ColorParserState& state)
 {
-    ASSERT(range.peek().functionId() == (Mode == HSLFunctionMode::HSL ? CSSValueHsl : CSSValueHsla));
+    ASSERT(range.peek().functionId() == CSSValueHsl || range.peek().functionId() == CSSValueHsla);
     auto args = consumeFunction(range);
 
-    if constexpr (Mode == HSLFunctionMode::HSL) {
-        if (args.peek().id() == CSSValueFrom)
-            return parseRelativeHSLParametersRaw(args, state);
-    }
-
+    if (args.peek().id() == CSSValueFrom)
+        return parseRelativeHSLParametersRaw(args, state);
     return parseNonRelativeHSLParametersRaw(args, state);
 }
 
@@ -532,7 +843,7 @@ static Color parseHWBParametersRaw(CSSParserTokenRange& args, ConsumerForHue&& h
         return HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(*alpha) };
     }
 
-    // NOTE: The explicit conversion to SRGBA<uint8_t> is an intentional performance optimization that allows storing the
+    // The explicit conversion to SRGBA<uint8_t> is an intentional performance optimization that allows storing the
     // color with no extra allocation for an extended color object. This is permissible due to the historical requirement
     // that HWBA colors serialize using the legacy color syntax (rgb()/rgba()) and historically have used the 8-bit rgba
     // internal representation in engines.
@@ -582,127 +893,6 @@ static Color parseHWBParametersRaw(CSSParserTokenRange& range, ColorParserState&
     if (args.peek().id() == CSSValueFrom)
         return parseRelativeHWBParametersRaw(args, state);
     return parseNonRelativeHWBParametersRaw(args, state);
-}
-
-// The NormalizePercentage structs are specialized for the color types
-// that have specified rules for normalizing percentages by component.
-// The structs contains static members for the component that describe
-// the normalized value when the percent is 100%. As all treat 0% as
-// normalizing to 0, that is not encoded in the struct.
-template<typename ColorType> struct NormalizePercentage;
-
-template<> struct NormalizePercentage<Lab<float>> {
-    //  for L: 0% = 0.0, 100% = 100.0
-    //  for a and b: -100% = -125, 100% = 125 (NOTE: 0% is 0)
-
-    static constexpr double maximumLightnessNumber = 100.0;
-    static constexpr double lightnessScaleFactor = maximumLightnessNumber / 100.0;
-    static constexpr double abScaleFactor = 125.0 / 100.0;
-};
-
-template<> struct NormalizePercentage<OKLab<float>> {
-    //  for L: 0% = 0.0, 100% = 1.0
-    //  for a and b: -100% = -0.4, 100% = 0.4 (NOTE: 0% is 0)
-
-    static constexpr double maximumLightnessNumber = 1.0;
-    static constexpr double lightnessScaleFactor = maximumLightnessNumber / 100.0;
-    static constexpr double abScaleFactor = 0.4 / 100.0;
-};
-
-template<> struct NormalizePercentage<LCHA<float>> {
-    //  for L: 0% = 0.0, 100% = 100.0
-    //  for C: 0% = 0, 100% = 150
-
-    static constexpr double maximumLightnessNumber = 100.0;
-    static constexpr double lightnessScaleFactor = maximumLightnessNumber / 100.0;
-    static constexpr double chromaScaleFactor = 150.0 / 100.0;
-};
-
-template<> struct NormalizePercentage<OKLCHA<float>> {
-    //  for L: 0% = 0.0, 100% = 1.0
-    //  for C: 0% = 0.0 100% = 0.4
-
-    static constexpr double maximumLightnessNumber = 1.0;
-    static constexpr double lightnessScaleFactor = maximumLightnessNumber / 100.0;
-    static constexpr double chromaScaleFactor = 0.4 / 100.0;
-};
-
-template<> struct NormalizePercentage<XYZA<float, WhitePoint::D50>> {
-    //  for X,Y,Z: 0% = 0.0, 100% = 1.0
-
-    static constexpr double xyzScaleFactor = 1.0 / 100.0;
-};
-
-template<> struct NormalizePercentage<XYZA<float, WhitePoint::D65>> {
-    //  for X,Y,Z: 0% = 0.0, 100% = 1.0
-
-    static constexpr double xyzScaleFactor = 1.0 / 100.0;
-};
-
-template<> struct NormalizePercentage<ExtendedA98RGB<float>> {
-    //  for R,G,B: 0% = 0.0, 100% = 1.0
-
-    static constexpr double rgbScaleFactor = 1.0 / 100.0;
-};
-
-template<> struct NormalizePercentage<ExtendedDisplayP3<float>> {
-    //  for R,G,B: 0% = 0.0, 100% = 1.0
-
-    static constexpr double rgbScaleFactor = 1.0 / 100.0;
-};
-
-template<> struct NormalizePercentage<ExtendedProPhotoRGB<float>> {
-    //  for R,G,B: 0% = 0.0, 100% = 1.0
-
-    static constexpr double rgbScaleFactor = 1.0 / 100.0;
-};
-
-template<> struct NormalizePercentage<ExtendedRec2020<float>> {
-    //  for R,G,B: 0% = 0.0, 100% = 1.0
-
-    static constexpr double rgbScaleFactor = 1.0 / 100.0;
-};
-
-template<> struct NormalizePercentage<ExtendedSRGBA<float>> {
-    //  for R,G,B: 0% = 0.0, 100% = 1.0
-
-    static constexpr double rgbScaleFactor = 1.0 / 100.0;
-};
-
-template<> struct NormalizePercentage<ExtendedLinearSRGBA<float>> {
-    //  for R,G,B: 0% = 0.0, 100% = 1.0
-
-    static constexpr double rgbScaleFactor = 1.0 / 100.0;
-};
-
-template<typename ColorType>
-static double normalizeLightnessPercent(double percent)
-{
-    return NormalizePercentage<ColorType>::lightnessScaleFactor * percent;
-}
-
-template<typename ColorType>
-static double normalizeABPercent(double percent)
-{
-    return NormalizePercentage<ColorType>::abScaleFactor * percent;
-}
-
-template<typename ColorType>
-static double normalizeChromaPercent(double percent)
-{
-    return NormalizePercentage<ColorType>::chromaScaleFactor * percent;
-}
-
-template<typename ColorType>
-static double normalizeXYZPercent(double percent)
-{
-    return NormalizePercentage<ColorType>::xyzScaleFactor * percent;
-}
-
-template<typename ColorType>
-static double normalizeRGBPercent(double percent)
-{
-    return NormalizePercentage<ColorType>::rgbScaleFactor * percent;
 }
 
 template<typename ColorType, typename ConsumerForLightness, typename ConsumerForAB, typename ConsumerForAlpha>
@@ -1512,10 +1702,10 @@ static Color parseColorFunctionRaw(CSSParserTokenRange& range, ColorParserState&
         color = parseRGBParametersRaw<RGBFunctionMode::RGBA>(colorRange, state);
         break;
     case CSSValueHsl:
-        color = parseHSLParametersRaw<HSLFunctionMode::HSL>(colorRange, state);
+        color = parseHSLParametersRaw(colorRange, state);
         break;
     case CSSValueHsla:
-        color = parseHSLParametersRaw<HSLFunctionMode::HSLA>(colorRange, state);
+        color = parseHSLParametersRaw(colorRange, state);
         break;
     case CSSValueHwb:
         color = parseHWBParametersRaw(colorRange, state);
@@ -1571,10 +1761,10 @@ static std::optional<ColorOrUnresolvedColor> parseColorFunction(CSSParserTokenRa
         color = checkColor(parseRGBParametersRaw<RGBFunctionMode::RGBA>(colorRange, state));
         break;
     case CSSValueHsl:
-        color = checkColor(parseHSLParametersRaw<HSLFunctionMode::HSL>(colorRange, state));
+        color = checkColor(parseHSLParametersRaw(colorRange, state));
         break;
     case CSSValueHsla:
-        color = checkColor(parseHSLParametersRaw<HSLFunctionMode::HSLA>(colorRange, state));
+        color = checkColor(parseHSLParametersRaw(colorRange, state));
         break;
     case CSSValueHwb:
         color = checkColor(parseHWBParametersRaw(colorRange, state));
