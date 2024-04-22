@@ -496,6 +496,8 @@ public:
 
     bool isTablePart() const { return isRenderTableCell() || isRenderTableCol() || isRenderTableCaption() || isRenderTableRow() || isRenderTableSection(); }
 
+    bool isViewTransitionPseudo() const { return isRenderViewTransitionCapture() || isRenderViewTransitionContainer(); }
+
     inline bool isBeforeContent() const;
     inline bool isAfterContent() const;
     inline bool isBeforeOrAfterContent() const;
@@ -644,6 +646,7 @@ public:
     virtual bool hasIntrinsicAspectRatio() const { return isReplacedOrInlineBlock() && (isImage() || isRenderVideo() || isRenderHTMLCanvas() || isRenderViewTransitionCapture()); }
     bool isAnonymous() const { return m_typeFlags.contains(TypeFlag::IsAnonymous); }
     bool isAnonymousBlock() const;
+    bool isAnonymousForPercentageResolution() const { return isAnonymous() && !isViewTransitionPseudo(); }
     bool isBlockBox() const;
     inline bool isBlockLevelBox() const;
     bool isBlockContainer() const;
@@ -727,7 +730,7 @@ public:
 
     Node* node() const
     { 
-        if (isAnonymous() || isRenderViewTransitionContainer())
+        if (isAnonymous())
             return nullptr;
         return m_node.ptr();
     }

@@ -3379,7 +3379,7 @@ bool RenderBox::skipContainingBlockForPercentHeightCalculation(const RenderBox& 
     // anonymous inline-blocks, so skip those too. All other types of anonymous
     // objects, such as table-cells and flexboxes, will be treated as if they were
     // non-anonymous.
-    if (containingBlock.isAnonymous())
+    if (containingBlock.isAnonymousForPercentageResolution())
         return containingBlock.style().display() == DisplayType::Block || containingBlock.style().display() == DisplayType::InlineBlock;
     
     // For quirks mode, we skip most auto-height containing blocks when computing
@@ -3634,7 +3634,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
     case LengthType::Percent:
     case LengthType::Calculated: {
         auto* container = isOutOfFlowPositioned() ? this->container() : containingBlock();
-        while (container && container->isAnonymous()) {
+        while (container && container->isAnonymousForPercentageResolution()) {
             // Stop at rendering context root.
             if (is<RenderView>(*container))
                 break;

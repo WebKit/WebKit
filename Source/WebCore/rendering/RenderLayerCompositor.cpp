@@ -3509,7 +3509,7 @@ bool RenderLayerCompositor::requiresCompositingForBackfaceVisibility(RenderLayer
 
 bool RenderLayerCompositor::requiresCompositingForViewTransition(RenderLayerModelObject& renderer) const
 {
-    return renderer.capturedInViewTransition() || renderer.isViewTransitionPseudo();
+    return renderer.capturedInViewTransition() || renderer.isRenderViewTransitionCapture();
 }
 
 bool RenderLayerCompositor::requiresCompositingForVideo(RenderLayerModelObject& renderer) const

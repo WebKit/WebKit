@@ -2086,11 +2086,6 @@ bool RenderElement::requiresRenderingConsolidationForViewTransition() const
     return hasViewTransitionName() || capturedInViewTransition();
 }
 
-bool RenderElement::isViewTransitionPseudo() const
-{
-    return style().pseudoElementType() == PseudoId::ViewTransitionNew || style().pseudoElementType() == PseudoId::ViewTransitionOld;
-}
-
 bool RenderElement::checkForRepaintDuringLayout() const
 {
     return everHadLayout() && !hasSelfPaintingLayer() && !document().view()->layoutContext().needsFullRepaint();
