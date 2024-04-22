@@ -593,7 +593,7 @@ void WebProcessPool::modelProcessDidFinishLaunching(ProcessID)
 
 void WebProcessPool::modelProcessExited(ProcessID identifier, ProcessTerminationReason reason)
 {
-    WEBPROCESSPOOL_RELEASE_LOG(Process, "modelProcessDidExit: PID=%d, reason=%" PUBLIC_LOG_STRING, identifier, processTerminationReasonToString(reason));
+    WEBPROCESSPOOL_RELEASE_LOG(Process, "modelProcessDidExit: PID=%d, reason=%" PUBLIC_LOG_STRING, identifier, processTerminationReasonToString(reason).characters());
     m_modelProcess = nullptr;
 
     // TODO: notify m_client.modelProcessDidCrash for C API if needed here
