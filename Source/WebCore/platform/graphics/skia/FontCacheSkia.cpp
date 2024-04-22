@@ -35,6 +35,10 @@
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/unicode/CharacterNames.h>
 
+#if PLATFORM(GTK)
+#include "GtkUtilities.h"
+#endif
+
 namespace WebCore {
 
 void FontCache::platformInit()
@@ -125,6 +129,11 @@ static String getFamilyNameStringFromFamily(const String& family)
         return "cursive"_s;
     if (family == familyNamesData->at(FamilyNamesIndex::FantasyFamily))
         return "fantasy"_s;
+
+#if PLATFORM(GTK)
+    if (family == familyNamesData->at(FamilyNamesIndex::SystemUiFamily) || family == "-webkit-system-font"_s)
+        return defaultGtkSystemFont();
+#endif
 
     return emptyString();
 }
