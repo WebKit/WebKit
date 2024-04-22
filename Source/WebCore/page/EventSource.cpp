@@ -400,11 +400,6 @@ void EventSource::stop()
     close();
 }
 
-const char* EventSource::activeDOMObjectName() const
-{
-    return "EventSource";
-}
-
 void EventSource::suspend(ReasonForSuspension reason)
 {
     if (reason != ReasonForSuspension::BackForwardCache)

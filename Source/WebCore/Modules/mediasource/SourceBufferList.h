@@ -80,8 +80,6 @@ private:
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
-    const char* activeDOMObjectName() const final;
-
     Vector<RefPtr<SourceBuffer>> m_list;
 };
 

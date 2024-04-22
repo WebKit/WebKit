@@ -82,7 +82,6 @@ private:
     RTCRtpSFrameTransform(ScriptExecutionContext&, Options);
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final { return "RTCRtpSFrameTransform"; }
     bool virtualHasPendingActivity() const final;
 
     // EventTarget

@@ -88,7 +88,6 @@ private:
     void eventListenersDidChange() final;
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final { return "MediaSessionCoordinator"; }
     bool virtualHasPendingActivity() const final;
 
     // MediaSession::Observer

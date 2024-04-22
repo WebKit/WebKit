@@ -54,8 +54,6 @@ public:
 private:
     WorkerAnimationController(WorkerGlobalScope&);
 
-    const char* activeDOMObjectName() const final;
-
     bool virtualHasPendingActivity() const final;
     void stop() final;
     void suspend(ReasonForSuspension) final;

@@ -105,11 +105,6 @@ void PermissionStatus::stateChanged(PermissionState newState)
     queueTaskToDispatchEvent(*this, TaskSource::Permission, Event::create(eventNames().changeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-const char* PermissionStatus::activeDOMObjectName() const
-{
-    return "PermissionStatus";
-}
-
 bool PermissionStatus::virtualHasPendingActivity() const
 {
     if (!m_hasChangeEventListener)

@@ -103,9 +103,6 @@ private:
     void startedLoading() final;
     void completedLoading() final;
 
-    // ActiveDOMObject
-    const char* activeDOMObjectName() const final { return "FontFaceSet"; }
-
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::FontFaceSet; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }

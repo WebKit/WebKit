@@ -141,7 +141,6 @@ private:
     void stopResourcesLoader();
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension);
     void stop() final;
     bool virtualHasPendingActivity() const final;

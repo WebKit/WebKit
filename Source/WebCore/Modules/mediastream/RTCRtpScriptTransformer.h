@@ -78,7 +78,6 @@ private:
     RTCRtpScriptTransformer(ScriptExecutionContext&, Ref<SerializedScriptValue>&&, Vector<Ref<MessagePort>>&&, Ref<ReadableStream>&&, Ref<SimpleReadableStreamSource>&&);
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final { return "RTCRtpScriptTransformer"; }
     void stop() final { stopPendingActivity(); }
 
     void stopPendingActivity() { auto pendingActivity = WTFMove(m_pendingActivity); }

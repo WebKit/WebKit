@@ -64,9 +64,6 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
-    // ActiveDOMObject API.
-    const char* activeDOMObjectName() const final;
-
     Ref<MediaStreamTrack> m_track;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

@@ -145,9 +145,6 @@ protected:
 private:
     void loadBlob(FileReaderLoader::ReadType, CompletionHandler<void(BlobLoader&)>&&);
 
-    // ActiveDOMObject.
-    const char* activeDOMObjectName() const override;
-
     String m_type;
     mutable std::optional<unsigned long long> m_size;
     size_t m_memoryCost { 0 };

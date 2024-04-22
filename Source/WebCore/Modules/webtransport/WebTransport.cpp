@@ -151,11 +151,6 @@ RefPtr<WebTransportSession> WebTransport::session()
     return m_session;
 }
 
-const char* WebTransport::activeDOMObjectName() const
-{
-    return "WebTransport";
-}
-
 bool WebTransport::virtualHasPendingActivity() const
 {
     // https://www.w3.org/TR/webtransport/#web-transport-gc

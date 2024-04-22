@@ -155,11 +155,6 @@ void Worker::terminate()
     m_wasTerminated = true;
 }
 
-const char* Worker::activeDOMObjectName() const
-{
-    return "Worker";
-}
-
 void Worker::stop()
 {
     terminate();

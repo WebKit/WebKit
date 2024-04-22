@@ -63,7 +63,6 @@ private:
 
     // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;
-    const char* activeDOMObjectName() const final;
     void stop() final;
 
     Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;

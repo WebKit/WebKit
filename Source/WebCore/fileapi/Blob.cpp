@@ -399,11 +399,6 @@ URLRegistry& Blob::registry() const
     return BlobURLRegistry::registry();
 }
 
-const char* Blob::activeDOMObjectName() const
-{
-    return "Blob";
-}
-
 URLKeepingBlobAlive Blob::handle() const
 {
     return { m_internalURL };

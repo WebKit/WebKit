@@ -567,11 +567,6 @@ void FetchResponse::stop()
         bodyLoader->stop();
 }
 
-const char* FetchResponse::activeDOMObjectName() const
-{
-    return "Response";
-}
-
 void FetchResponse::loadBody()
 {
     if (m_bodyLoader)

@@ -58,8 +58,6 @@ public:
 
 private:
     AudioTrackList(ScriptExecutionContext*);
-
-    const char* activeDOMObjectName() const final;
 };
 static_assert(sizeof(AudioTrackList) == sizeof(TrackListBase));
 

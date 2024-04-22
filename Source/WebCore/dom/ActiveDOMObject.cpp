@@ -102,8 +102,6 @@ void ActiveDOMObject::suspendIfNeeded()
 
 void ActiveDOMObject::assertSuspendIfNeededWasCalled() const
 {
-    if (!m_suspendIfNeededWasCalled)
-        WTFLogAlways("Failed to call suspendIfNeeded() for %s", activeDOMObjectName());
     ASSERT(m_suspendIfNeededWasCalled);
 }
 

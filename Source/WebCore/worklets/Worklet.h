@@ -60,9 +60,6 @@ protected:
 private:
     virtual Vector<Ref<WorkletGlobalScopeProxy>> createGlobalScopes() = 0;
 
-    // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
-
     String m_identifier;
     Vector<Ref<WorkletGlobalScopeProxy>> m_proxies;
     HashSet<RefPtr<WorkletPendingTasks>> m_pendingTasksSet;

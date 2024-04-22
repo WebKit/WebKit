@@ -97,7 +97,6 @@ private:
 
     // ActiveDOMObject.
     void stop() final;
-    const char* activeDOMObjectName() const final;
 
     RefPtr<WebCore::Node> m_node;
 };

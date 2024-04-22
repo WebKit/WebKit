@@ -367,9 +367,4 @@ bool WebLockManager::virtualHasPendingActivity() const
     return !m_pendingRequests.isEmpty() || !m_releasePromises.isEmpty();
 }
 
-const char* WebLockManager::activeDOMObjectName() const
-{
-    return "WebLockManager";
-}
-
 } // namespace WebCore

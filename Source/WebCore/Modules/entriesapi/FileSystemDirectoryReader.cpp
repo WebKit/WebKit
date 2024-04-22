@@ -56,11 +56,6 @@ FileSystemDirectoryReader::FileSystemDirectoryReader(ScriptExecutionContext& con
 
 FileSystemDirectoryReader::~FileSystemDirectoryReader() = default;
 
-const char* FileSystemDirectoryReader::activeDOMObjectName() const
-{
-    return "FileSystemDirectoryReader";
-}
-
 Document* FileSystemDirectoryReader::document() const
 {
     return downcast<Document>(scriptExecutionContext());

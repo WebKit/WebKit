@@ -109,7 +109,6 @@ private:
     friend class JSMediaDevicesOwner;
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
     void stop() final;
     bool virtualHasPendingActivity() const final;
 

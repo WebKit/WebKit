@@ -137,11 +137,6 @@ ScriptExecutionContext* ServiceWorker::scriptExecutionContext() const
     return ContextDestructionObserver::scriptExecutionContext();
 }
 
-const char* ServiceWorker::activeDOMObjectName() const
-{
-    return "ServiceWorker";
-}
-
 void ServiceWorker::stop()
 {
     m_isStopped = true;

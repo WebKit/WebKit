@@ -383,11 +383,6 @@ bool MediaDevices::virtualHasPendingActivity() const
     return hasEventListeners(m_eventNames.devicechangeEvent);
 }
 
-const char* MediaDevices::activeDOMObjectName() const
-{
-    return "MediaDevices";
-}
-
 void MediaDevices::listenForDeviceChanges()
 {
     RefPtr document = this->document();

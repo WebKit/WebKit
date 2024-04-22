@@ -761,7 +761,6 @@ private:
     void willStopBeingFullscreenElement() override;
 
     // ActiveDOMObject API.
-    const char* activeDOMObjectName() const override;
     void suspend(ReasonForSuspension) override;
     void resume() override;
     void stop() override;

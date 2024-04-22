@@ -525,7 +525,6 @@ protected:
 
     // ActiveDOMObject
     void stop() override;
-    const char* activeDOMObjectName() const override;
     void suspend(ReasonForSuspension) override;
     void resume() override;
 

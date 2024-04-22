@@ -769,7 +769,6 @@ private:
     }
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final { return "PendingImageBitmap"; }
     void stop() final { m_pendingActivity = nullptr; }
 
     // FileReaderLoaderClient

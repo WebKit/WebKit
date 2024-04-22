@@ -100,7 +100,6 @@ private:
     // ActiveDOMObject API.
     void suspend(ReasonForSuspension) final;
     void stop() final;
-    const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
     
     void stopRecordingInternal(CompletionHandler<void()>&& = [] { });

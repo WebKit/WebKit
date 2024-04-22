@@ -67,7 +67,6 @@ public:
 
 private:
     TextTrackList(ScriptExecutionContext*);
-    const char* activeDOMObjectName() const final;
 
     void invalidateTrackIndexesAfterTrack(TextTrack&);
 

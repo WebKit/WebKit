@@ -102,7 +102,6 @@ private:
     ExceptionOr<void> setBody(FetchRequest&);
 
     void stop() final;
-    const char* activeDOMObjectName() const final;
 
     Ref<AbortSignal> protectedSignal() const { return m_signal; }
 

@@ -108,9 +108,6 @@ private:
     static void computeNameAndContentTypeForReplacedFile(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType);
 #endif
 
-    // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
-
     String m_path;
     String m_relativePath;
     String m_name;

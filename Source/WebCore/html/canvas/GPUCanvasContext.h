@@ -63,10 +63,6 @@ public:
     virtual ExceptionOr<RefPtr<ImageBitmap>> getCurrentTextureAsImageBitmap(ImageBuffer&, bool originClean) = 0;
 
     bool isWebGPU() const override { return true; }
-    const char* activeDOMObjectName() const override
-    {
-        return "GPUCanvasElement";
-    }
 
 protected:
     GPUCanvasContext(CanvasBase&);

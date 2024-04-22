@@ -303,12 +303,6 @@ void IDBDatabase::maybeCloseInServer()
     m_connectionProxy->databaseConnectionClosed(*this);
 }
 
-const char* IDBDatabase::activeDOMObjectName() const
-{
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
-    return "IDBDatabase";
-}
-
 void IDBDatabase::stop()
 {
     LOG(IndexedDB, "IDBDatabase::stop - %" PRIu64, m_databaseConnectionIdentifier.toUInt64());

@@ -6502,11 +6502,6 @@ void HTMLMediaElement::clearMediaPlayer()
     updateRenderer();
 }
 
-const char* HTMLMediaElement::activeDOMObjectName() const
-{
-    return "HTMLMediaElement";
-}
-
 void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
 {
     INFO_LOG(LOGIDENTIFIER);

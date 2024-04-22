@@ -57,7 +57,6 @@ private:
     WakeLockSentinel(Document&, WakeLockType);
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
     // EventTarget

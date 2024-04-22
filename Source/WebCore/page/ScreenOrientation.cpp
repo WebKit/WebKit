@@ -241,11 +241,6 @@ void ScreenOrientation::screenOrientationDidChange(ScreenOrientationType)
     queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().changeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-const char* ScreenOrientation::activeDOMObjectName() const
-{
-    return "ScreenOrientation";
-}
-
 void ScreenOrientation::suspend(ReasonForSuspension)
 {
     if (auto* manager = this->manager())

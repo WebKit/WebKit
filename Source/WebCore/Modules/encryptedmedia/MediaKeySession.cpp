@@ -814,11 +814,6 @@ bool MediaKeySession::virtualHasPendingActivity() const
     return !m_closed && m_keys;
 }
 
-const char* MediaKeySession::activeDOMObjectName() const
-{
-    return "MediaKeySession";
-}
-
 void MediaKeySession::stop()
 {
     if (m_closed) {

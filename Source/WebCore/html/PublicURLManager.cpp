@@ -86,9 +86,4 @@ void PublicURLManager::stop()
     }
 }
 
-const char* PublicURLManager::activeDOMObjectName() const
-{
-    return "PublicURLManager";
-}
-
 } // namespace WebCore

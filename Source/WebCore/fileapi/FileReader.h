@@ -82,7 +82,6 @@ private:
     explicit FileReader(ScriptExecutionContext&);
 
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
     void stop() final;
     bool virtualHasPendingActivity() const final;
 

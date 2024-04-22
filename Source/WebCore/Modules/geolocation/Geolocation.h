@@ -87,7 +87,6 @@ private:
     void stop() override;
     void suspend(ReasonForSuspension) override;
     void resume() override;
-    const char* activeDOMObjectName() const override;
 
     bool isDenied() const { return m_allowGeolocation == No; }
 

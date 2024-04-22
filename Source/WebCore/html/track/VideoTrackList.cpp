@@ -114,10 +114,5 @@ enum EventTargetInterfaceType VideoTrackList::eventTargetInterface() const
     return EventTargetInterfaceType::VideoTrackList;
 }
 
-const char* VideoTrackList::activeDOMObjectName() const
-{
-    return "VideoTrackList";
-}
-
 } // namespace WebCore
 #endif

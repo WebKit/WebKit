@@ -60,7 +60,6 @@ private:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
-    const char* activeDOMObjectName() const final { return "HTMLMarqueeElement"; }
 
     RenderMarquee* renderMarquee() const;
 };

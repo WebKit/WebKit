@@ -86,7 +86,6 @@ private:
     void initializeOverHTTP(SocketProvider&, ScriptExecutionContext&, URL&&, bool dedicated, bool http3Only, WebTransportCongestionControl, Vector<WebTransportHash>&&);
     void cleanup(Ref<DOMException>&&, std::optional<WebTransportCloseInfo>&&);
 
-    const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
     void receiveDatagram(std::span<const uint8_t>) final;

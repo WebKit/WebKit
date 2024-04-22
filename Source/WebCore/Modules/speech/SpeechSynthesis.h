@@ -99,7 +99,6 @@ private:
     void voicesChanged() override;
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
     void startSpeakingImmediately(SpeechSynthesisUtterance&);

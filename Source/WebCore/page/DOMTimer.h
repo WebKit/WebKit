@@ -80,7 +80,6 @@ private:
     void fired();
 
     // ActiveDOMObject API.
-    const char* activeDOMObjectName() const final;
     void stop() final;
 
     void makeImminentlyScheduledWorkScopeIfPossible(ScriptExecutionContext&);

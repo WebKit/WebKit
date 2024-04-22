@@ -58,12 +58,6 @@ void IDBDatabaseNameAndVersionRequest::complete(std::optional<Vector<IDBDatabase
         callback(WTFMove(databases));
 }
 
-const char* IDBDatabaseNameAndVersionRequest::activeDOMObjectName() const
-{
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
-    return "IDBDatabaseNameAndVersionRequest";
-}
-
 bool IDBDatabaseNameAndVersionRequest::virtualHasPendingActivity() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()) || Thread::mayBeGCThread());

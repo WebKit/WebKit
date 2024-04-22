@@ -66,7 +66,6 @@ private:
     void eventListenersDidChange() final;
 
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
     RefPtr<MediaQueryMatcher> m_matcher;

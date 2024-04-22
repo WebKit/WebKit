@@ -432,11 +432,6 @@ void WebCodecsAudioEncoder::stop()
     // FIXME: Implement.
 }
 
-const char* WebCodecsAudioEncoder::activeDOMObjectName() const
-{
-    return "AudioEncoder";
-}
-
 bool WebCodecsAudioEncoder::virtualHasPendingActivity() const
 {
     return m_state == WebCodecsCodecState::Configured && (m_encodeQueueSize || m_beingEncodedQueueSize || m_isFlushing);

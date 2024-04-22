@@ -206,7 +206,6 @@ private:
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document& targetDocument) final;
 
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
     void didAttachRenderers() override;

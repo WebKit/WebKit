@@ -114,7 +114,6 @@ private:
     void derefEventTarget() override { deref(); }
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
     void stop() final;
 

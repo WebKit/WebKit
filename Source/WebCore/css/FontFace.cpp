@@ -375,11 +375,6 @@ FontFace& FontFace::loadedPromiseResolve()
     return *this;
 }
 
-const char* FontFace::activeDOMObjectName() const
-{
-    return "FontFace";
-}
-
 bool FontFace::virtualHasPendingActivity() const
 {
     return m_mayLoadedPromiseBeScriptObservable && !m_loadedPromise->isFulfilled();

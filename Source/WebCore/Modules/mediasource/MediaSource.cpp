@@ -1262,11 +1262,6 @@ void MediaSource::stop()
     m_private = nullptr;
 }
 
-const char* MediaSource::activeDOMObjectName() const
-{
-    return "MediaSource";
-}
-
 MediaSource::ReadyState MediaSource::readyState() const
 {
     return (m_openDeferred || !m_private) ? ReadyState::Closed : m_private->readyState();

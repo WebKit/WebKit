@@ -982,11 +982,6 @@ void HTMLImageElement::setLoadManually(bool loadManually)
     m_imageLoader->setLoadManually(loadManually);
 }
 
-const char* HTMLImageElement::activeDOMObjectName() const
-{
-    return "HTMLImageElement";
-}
-
 bool HTMLImageElement::virtualHasPendingActivity() const
 {
     return m_imageLoader->hasPendingActivity();

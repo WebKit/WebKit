@@ -54,9 +54,6 @@ public:
 
 private:
     PictureInPictureWindow(Document&);
-        
-    // ActiveDOMObject
-    const char* activeDOMObjectName() const final { return "PictureInPictureWindow"; }
 
     // EventTarget
     void refEventTarget() final { ref(); }

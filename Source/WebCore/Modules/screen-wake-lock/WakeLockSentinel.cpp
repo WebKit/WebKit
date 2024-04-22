@@ -63,11 +63,6 @@ void WakeLockSentinel::release(WakeLockManager& manager)
         dispatchEvent(Event::create(eventNames().releaseEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-const char* WakeLockSentinel::activeDOMObjectName() const
-{
-    return "WakeLockSentinel";
-}
-
 // https://www.w3.org/TR/screen-wake-lock/#garbage-collection
 bool WakeLockSentinel::virtualHasPendingActivity() const
 {

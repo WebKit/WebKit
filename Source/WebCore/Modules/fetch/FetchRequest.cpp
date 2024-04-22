@@ -364,11 +364,6 @@ void FetchRequest::stop()
     FetchBodyOwner::stop();
 }
 
-const char* FetchRequest::activeDOMObjectName() const
-{
-    return "Request";
-}
-
 WebCoreOpaqueRoot root(FetchRequest* request)
 {
     return WebCoreOpaqueRoot { request };

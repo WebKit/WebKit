@@ -87,11 +87,6 @@ void OfflineAudioContext::uninitialize()
         promise->reject(Exception { ExceptionCode::InvalidStateError, "Context is going away"_s });
 }
 
-const char* OfflineAudioContext::activeDOMObjectName() const
-{
-    return "OfflineAudioContext";
-}
-
 void OfflineAudioContext::startRendering(Ref<DeferredPromise>&& promise)
 {
     if (isStopped()) {

@@ -435,11 +435,6 @@ void RemotePlayback::invalidate()
     m_mediaElement = nullptr;
 }
 
-const char* RemotePlayback::activeDOMObjectName() const
-{
-    return "RemotePlayback";
-}
-
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& RemotePlayback::logChannel() const
 {

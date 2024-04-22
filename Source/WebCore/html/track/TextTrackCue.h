@@ -154,9 +154,6 @@ private:
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::TextTrackCue; }
     ScriptExecutionContext* scriptExecutionContext() const final;
 
-    // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
-
     void rebuildDisplayTree();
 
     AtomString m_id;

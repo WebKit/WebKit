@@ -151,11 +151,6 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&&
     return result;
 }
 
-const char* FileSystemSyncAccessHandle::activeDOMObjectName() const
-{
-    return "FileSystemSyncAccessHandle";
-}
-
 void FileSystemSyncAccessHandle::stop()
 {
     closeInternal(ShouldNotifyBackend::Yes);

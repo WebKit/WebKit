@@ -315,11 +315,6 @@ void WebCodecsAudioDecoder::stop()
     m_internalDecoder = nullptr;
 }
 
-const char* WebCodecsAudioDecoder::activeDOMObjectName() const
-{
-    return "AudioDecoder";
-}
-
 bool WebCodecsAudioDecoder::virtualHasPendingActivity() const
 {
     return m_state == WebCodecsCodecState::Configured && (m_decodeQueueSize || m_beingDecodedQueueSize || m_isFlushing);

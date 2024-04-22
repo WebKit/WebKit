@@ -527,11 +527,6 @@ void WebSocket::stop()
     m_pendingActivity = nullptr;
 }
 
-const char* WebSocket::activeDOMObjectName() const
-{
-    return "WebSocket";
-}
-
 void WebSocket::didConnect()
 {
     LOG(Network, "WebSocket %p didConnect()", this);

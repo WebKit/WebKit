@@ -85,7 +85,6 @@ private:
     void decrementActivityCountForEventDispatch();
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
     // EventTarget

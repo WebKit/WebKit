@@ -139,11 +139,6 @@ void MediaRecorder::suspend(ReasonForSuspension reason)
     queueTaskToDispatchEvent(*this, TaskSource::Networking, MediaRecorderErrorEvent::create(eventNames().errorEvent, Exception { ExceptionCode::UnknownError, "MediaStream recording was interrupted"_s }));
 }
 
-const char* MediaRecorder::activeDOMObjectName() const
-{
-    return "MediaRecorder";
-}
-
 ExceptionOr<void> MediaRecorder::startRecording(std::optional<unsigned> timeSlice)
 {
     if (!m_isActive)

@@ -441,11 +441,6 @@ std::optional<MonotonicTime> ScriptExecutionContext::alignedFireTime(bool hasRea
     return adjustedFireTime - (adjustedFireTime % alignmentInterval) + alignmentInterval + randomizedOffset;
 }
 
-const char* DOMTimer::activeDOMObjectName() const
-{
-    return "DOMTimer";
-}
-
 void DOMTimer::makeImminentlyScheduledWorkScopeIfPossible(ScriptExecutionContext& context)
 {
     if (!m_oneShot || m_currentTimerInterval > 1_ms)

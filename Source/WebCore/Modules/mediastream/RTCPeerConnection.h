@@ -228,7 +228,6 @@ private:
 
     // ActiveDOMObject
     WEBCORE_EXPORT void stop() final;
-    const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
     bool virtualHasPendingActivity() const final;

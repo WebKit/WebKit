@@ -440,11 +440,6 @@ void AudioContext::resume()
     document()->updateIsPlayingMedia();
 }
 
-const char* AudioContext::activeDOMObjectName() const
-{
-    return "AudioContext";
-}
-
 void AudioContext::suspendPlayback()
 {
     if (state() == State::Closed || !isInitialized())

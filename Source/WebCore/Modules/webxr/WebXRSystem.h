@@ -92,7 +92,6 @@ protected:
     void derefEventTarget() override { deref(); }
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const override;
     void stop() override;
 
 private:

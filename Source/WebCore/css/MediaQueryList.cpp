@@ -145,11 +145,6 @@ void MediaQueryList::eventListenersDidChange()
     m_hasChangeEventListener = hasEventListeners(eventNames().changeEvent);
 }
 
-const char* MediaQueryList::activeDOMObjectName() const
-{
-    return "MediaQueryList";
-}
-
 bool MediaQueryList::virtualHasPendingActivity() const
 {
     return m_hasChangeEventListener && m_matcher;

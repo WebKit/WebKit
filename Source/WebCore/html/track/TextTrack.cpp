@@ -595,11 +595,6 @@ bool TextTrack::containsOnlyForcedSubtitles() const
     return m_kind == Kind::Forced;
 }
 
-const char* TextTrack::activeDOMObjectName() const
-{
-    return "TextTrack";
-}
-
 void TextTrack::setLanguage(const AtomString& language)
 {
     // 11.1 language, on setting:

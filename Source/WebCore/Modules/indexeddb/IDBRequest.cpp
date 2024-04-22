@@ -253,13 +253,6 @@ enum EventTargetInterfaceType IDBRequest::eventTargetInterface() const
     return EventTargetInterfaceType::IDBRequest;
 }
 
-const char* IDBRequest::activeDOMObjectName() const
-{
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
-
-    return "IDBRequest";
-}
-
 bool IDBRequest::virtualHasPendingActivity() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()) || Thread::mayBeGCThread());

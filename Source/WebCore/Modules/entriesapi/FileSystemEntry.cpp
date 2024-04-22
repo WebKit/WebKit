@@ -56,11 +56,6 @@ DOMFileSystem& FileSystemEntry::filesystem() const
     return m_filesystem.get();
 }
 
-const char* FileSystemEntry::activeDOMObjectName() const
-{
-    return "FileSystemEntry";
-}
-
 Document* FileSystemEntry::document() const
 {
     return downcast<Document>(scriptExecutionContext());

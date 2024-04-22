@@ -55,9 +55,6 @@ public:
 private:
     MediaKeySystemAccess(Document&, const String& keySystem, MediaKeySystemConfiguration&&, Ref<CDM>&&);
 
-    // ActiveDOMObject
-    const char *activeDOMObjectName() const final { return "MediaKeySystemAccess"; }
-
     String m_keySystem;
     std::unique_ptr<MediaKeySystemConfiguration> m_configuration;
     Ref<CDM> m_implementation;

@@ -538,11 +538,6 @@ void TextTrackCue::rebuildDisplayTree()
     m_displayTreeNeedsUpdate = false;
 }
 
-const char* TextTrackCue::activeDOMObjectName() const
-{
-    return "TextTrackCue";
-}
-
 } // namespace WebCore
 
 #endif

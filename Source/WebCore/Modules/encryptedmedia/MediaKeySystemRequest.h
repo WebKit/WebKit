@@ -63,7 +63,6 @@ private:
     MediaKeySystemRequest(Document&, const String& keySystem, Ref<DeferredPromise>&&);
 
     void stop() final;
-    const char* activeDOMObjectName() const final;
 
     String m_keySystem;
     Ref<DeferredPromise> m_promise;

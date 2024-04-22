@@ -369,11 +369,6 @@ void MediaStream::stop()
     m_isActive = false;
 }
 
-const char* MediaStream::activeDOMObjectName() const
-{
-    return "MediaStream";
-}
-
 bool MediaStream::virtualHasPendingActivity() const
 {
     return m_isActive;

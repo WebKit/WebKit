@@ -50,7 +50,6 @@ public:
 private:
     FileSystemDirectoryReader(ScriptExecutionContext&, FileSystemDirectoryEntry&);
 
-    const char* activeDOMObjectName() const final;
     Document* document() const;
 
     Ref<FileSystemDirectoryEntry> m_directory;

@@ -50,7 +50,6 @@ public:
 private:
     // ActiveDOMObject API.
     void stop() override;
-    const char* activeDOMObjectName() const override;
     
     bool m_isStopped { false };
 };

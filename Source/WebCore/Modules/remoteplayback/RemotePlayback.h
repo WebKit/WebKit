@@ -88,9 +88,6 @@ private:
     void establishConnection();
     void disconnect();
 
-    // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
-
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RemotePlayback; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }

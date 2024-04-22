@@ -261,10 +261,5 @@ enum EventTargetInterfaceType TextTrackList::eventTargetInterface() const
     return EventTargetInterfaceType::TextTrackList;
 }
 
-const char* TextTrackList::activeDOMObjectName() const
-{
-    return "TextTrackList";
-}
-
 } // namespace WebCore
 #endif

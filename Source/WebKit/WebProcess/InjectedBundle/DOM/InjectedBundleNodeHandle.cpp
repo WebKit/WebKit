@@ -466,9 +466,4 @@ void InjectedBundleNodeHandle::stop()
     }
 }
 
-const char* InjectedBundleNodeHandle::activeDOMObjectName() const
-{
-    return "InjectedBundleNodeHandle";
-}
-
 } // namespace WebKit

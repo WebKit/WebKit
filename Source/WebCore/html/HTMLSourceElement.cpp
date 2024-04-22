@@ -155,11 +155,6 @@ bool HTMLSourceElement::attributeContainsURL(const Attribute& attribute) const
         || HTMLElement::attributeContainsURL(attribute);
 }
 
-const char* HTMLSourceElement::activeDOMObjectName() const
-{
-    return "HTMLSourceElement";
-}
-
 void HTMLSourceElement::stop()
 {
     cancelPendingErrorEvent();

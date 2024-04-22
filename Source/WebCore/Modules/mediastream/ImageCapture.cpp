@@ -151,11 +151,6 @@ void ImageCapture::getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSettin
     });
 }
 
-const char* ImageCapture::activeDOMObjectName() const
-{
-    return "ImageCapture";
-}
-
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& ImageCapture::logChannel() const
 {

@@ -159,9 +159,4 @@ bool File::isDirectory() const
     return *m_isDirectory;
 }
 
-const char* File::activeDOMObjectName() const
-{
-    return "File";
-}
-
 } // namespace WebCore

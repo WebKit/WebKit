@@ -74,11 +74,6 @@ Ref<CanvasCaptureMediaStreamTrack::Source> CanvasCaptureMediaStreamTrack::Source
     return source;
 }
 
-const char* CanvasCaptureMediaStreamTrack::activeDOMObjectName() const
-{
-    return "CanvasCaptureMediaStreamTrack";
-}
-
 // FIXME: Give source id and name
 CanvasCaptureMediaStreamTrack::Source::Source(HTMLCanvasElement& canvas, std::optional<double>&& frameRequestRate)
     : RealtimeMediaSource(CaptureDevice { { }, CaptureDevice::DeviceType::Camera, "CanvasCaptureMediaStreamTrack"_s })

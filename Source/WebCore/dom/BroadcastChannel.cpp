@@ -270,11 +270,6 @@ void BroadcastChannel::dispatchMessage(Ref<SerializedScriptValue>&& message)
     });
 }
 
-const char* BroadcastChannel::activeDOMObjectName() const
-{
-    return "BroadcastChannel";
-}
-
 void BroadcastChannel::eventListenersDidChange()
 {
     m_hasRelevantEventListener = hasEventListeners(eventNames().messageEvent);

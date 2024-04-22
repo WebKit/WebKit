@@ -195,7 +195,6 @@ private:
 
     // ActiveDOMObject API.
     void stop() final { stopTrack(); }
-    const char* activeDOMObjectName() const override;
     void suspend(ReasonForSuspension) final;
     bool virtualHasPendingActivity() const final;
 

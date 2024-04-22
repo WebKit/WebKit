@@ -115,11 +115,6 @@ void MediaKeySystemRequest::stop()
         controller->cancelMediaKeySystemRequest(*this);
 }
 
-const char* MediaKeySystemRequest::activeDOMObjectName() const
-{
-    return "MediaKeySystemRequest";
-}
-
 Document* MediaKeySystemRequest::document() const
 {
     return downcast<Document>(scriptExecutionContext());

@@ -65,8 +65,6 @@ public:
     // That happens in step-by-step JS debugging for example - in this case it would be incorrect
     // to stop the object. Exact semantics of suspend is up to the object in cases like that.
 
-    virtual const char* activeDOMObjectName() const = 0;
-
     // These functions must not have a side effect of creating or destroying
     // any ActiveDOMObject. That means they must not result in calls to arbitrary JavaScript.
     virtual void suspend(ReasonForSuspension);

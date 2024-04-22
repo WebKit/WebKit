@@ -138,7 +138,6 @@ private:
     void notifyReadyStateObservers();
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final { return "MediaSession"; }
     void suspend(ReasonForSuspension) final;
     void stop() final;
     bool virtualHasPendingActivity() const final;

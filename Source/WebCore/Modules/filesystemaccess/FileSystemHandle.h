@@ -61,7 +61,6 @@ protected:
 
 private:
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
     void stop() final;
 
     Kind m_kind { Kind::File };

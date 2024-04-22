@@ -133,11 +133,6 @@ void DOMAudioSession::stop()
 {
 }
 
-const char* DOMAudioSession::activeDOMObjectName() const
-{
-    return "AudioSession";
-}
-
 bool DOMAudioSession::virtualHasPendingActivity() const
 {
     return hasEventListeners(eventNames().statechangeEvent);

@@ -269,11 +269,6 @@ void UserMediaRequest::stop()
         controller->cancelUserMediaAccessRequest(*this);
 }
 
-const char* UserMediaRequest::activeDOMObjectName() const
-{
-    return "UserMediaRequest";
-}
-
 Document* UserMediaRequest::document() const
 {
     return downcast<Document>(scriptExecutionContext());

@@ -99,7 +99,6 @@ private:
     explicit FontFace(ScriptExecutionContext*, CSSFontFace&);
 
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
     // Callback for LoadedPromise.

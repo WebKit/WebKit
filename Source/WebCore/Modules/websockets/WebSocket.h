@@ -106,7 +106,6 @@ private:
     void suspend(ReasonForSuspension) final;
     void resume() final;
     void stop() final;
-    const char* activeDOMObjectName() const final;
 
     enum EventTargetInterfaceType eventTargetInterface() const final;
 

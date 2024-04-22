@@ -91,7 +91,6 @@ private:
     void didEnd() final;
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension) final;
     void stop() final;
 

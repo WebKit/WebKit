@@ -105,11 +105,6 @@ void SourceBufferList::scheduleEvent(const AtomString& eventName)
     queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-const char* SourceBufferList::activeDOMObjectName() const
-{
-    return "SourceBufferList";
-}
-
 WebCoreOpaqueRoot root(SourceBufferList* list)
 {
     return WebCoreOpaqueRoot { list };
