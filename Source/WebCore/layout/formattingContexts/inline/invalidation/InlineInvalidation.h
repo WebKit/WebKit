@@ -57,6 +57,8 @@ public:
     bool restartForPagination(size_t lineIndex, LayoutUnit pageTopAdjustment);
 
     static bool mayOnlyNeedPartialLayout(const InlineDamage* inlineDamage) { return inlineDamage && inlineDamage->layoutStartPosition(); }
+    static bool inlineItemCacheNeedsUpdate(const InlineDamage*);
+    static void clearInlineItemCacheInvalidationReasons(InlineDamage&);
 
 private:
     enum class ShouldApplyRangeLayout : bool { No, Yes };

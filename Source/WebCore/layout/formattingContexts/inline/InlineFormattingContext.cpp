@@ -100,13 +100,13 @@ InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockCont
     initializeInlineLayoutState(layoutState);
 }
 
-InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage)
+InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineContent& constraints, InlineDamage* lineDamage)
 {
     rebuildInlineItemListIfNeeded(lineDamage);
 
     if (!root().hasInFlowChild() && !root().hasOutOfFlowChild()) {
         // Float only content does not support partial layout.
-        ASSERT(!lineDamage);
+        ASSERT(!InlineInvalidation::mayOnlyNeedPartialLayout(lineDamage));
         layoutFloatContentOnly(constraints);
         return { { }, InlineLayoutResult::Range::Full };
     }
@@ -160,7 +160,7 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
     return lineLayout(lineBuilder, inlineItemList, needsLayoutRange, previousLine(), constraints, lineDamage);
 }
 
-std::pair<LayoutUnit, LayoutUnit> InlineFormattingContext::minimumMaximumContentSize(const InlineDamage* lineDamage)
+std::pair<LayoutUnit, LayoutUnit> InlineFormattingContext::minimumMaximumContentSize(InlineDamage* lineDamage)
 {
     auto& inlineContentCache = this->inlineContentCache();
     auto minimumContentSize = inlineContentCache.minimumContentSize();
@@ -213,7 +213,7 @@ std::pair<LayoutUnit, LayoutUnit> InlineFormattingContext::minimumMaximumContent
     return { ceiledLayoutUnit(*minimumContentSize), ceiledLayoutUnit(*maximumContentSize) };
 }
 
-LayoutUnit InlineFormattingContext::minimumContentSize(const InlineDamage* lineDamage)
+LayoutUnit InlineFormattingContext::minimumContentSize(InlineDamage* lineDamage)
 {
     auto& inlineContentCache = this->inlineContentCache();
     if (inlineContentCache.minimumContentSize())
@@ -228,7 +228,7 @@ LayoutUnit InlineFormattingContext::minimumContentSize(const InlineDamage* lineD
     return ceiledLayoutUnit(minimumContentSize);
 }
 
-LayoutUnit InlineFormattingContext::maximumContentSize(const InlineDamage* lineDamage)
+LayoutUnit InlineFormattingContext::maximumContentSize(InlineDamage* lineDamage)
 {
     auto& inlineContentCache = this->inlineContentCache();
     if (inlineContentCache.maximumContentSize())
@@ -514,10 +514,10 @@ BoxGeometry& InlineFormattingContext::geometryForBox(const Box& layoutBox, std::
     return m_layoutState.ensureGeometryForBox(layoutBox);
 }
 
-void InlineFormattingContext::rebuildInlineItemListIfNeeded(const InlineDamage* lineDamage)
+void InlineFormattingContext::rebuildInlineItemListIfNeeded(InlineDamage* lineDamage)
 {
     auto& inlineContentCache = this->inlineContentCache();
-    auto inlineItemListNeedsUpdate = inlineContentCache.inlineItems().isEmpty() || lineDamage;
+    auto inlineItemListNeedsUpdate = inlineContentCache.inlineItems().isEmpty() || (lineDamage && lineDamage->isInlineItemListDirty());
     if (!inlineItemListNeedsUpdate)
         return;
 
@@ -537,6 +537,8 @@ void InlineFormattingContext::rebuildInlineItemListIfNeeded(const InlineDamage* 
         return { };
     };
     InlineItemsBuilder { inlineContentCache, root(), m_layoutState.securityOrigin() }.build(startPositionForInlineItemsBuilding());
+    if (lineDamage)
+        lineDamage->setInlineItemListClean();
     inlineContentCache.clearMaximumIntrinsicWidthLineContent();
 }
 

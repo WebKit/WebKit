@@ -57,11 +57,11 @@ class InlineFormattingContext {
 public:
     InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);
 
-    InlineLayoutResult layout(const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
+    InlineLayoutResult layout(const ConstraintsForInlineContent&, InlineDamage* = nullptr);
 
-    std::pair<LayoutUnit, LayoutUnit> minimumMaximumContentSize(const InlineDamage* = nullptr);
-    LayoutUnit minimumContentSize(const InlineDamage* = nullptr);
-    LayoutUnit maximumContentSize(const InlineDamage* = nullptr);
+    std::pair<LayoutUnit, LayoutUnit> minimumMaximumContentSize(InlineDamage* = nullptr);
+    LayoutUnit minimumContentSize(InlineDamage* = nullptr);
+    LayoutUnit maximumContentSize(InlineDamage* = nullptr);
 
     const ElementBox& root() const { return m_rootBlockContainer; }
     const InlineFormattingUtils& formattingUtils() const { return m_inlineFormattingUtils; }
@@ -89,7 +89,7 @@ private:
     bool createDisplayContentForLineFromCachedContent(const ConstraintsForInlineContent&, InlineLayoutResult&);
     void createDisplayContentForEmptyInlineContent(const ConstraintsForInlineContent&, InlineLayoutResult&);
     void initializeInlineLayoutState(const LayoutState&);
-    void rebuildInlineItemListIfNeeded(const InlineDamage*);
+    void rebuildInlineItemListIfNeeded(InlineDamage*);
 
     InlineContentCache& inlineContentCache() { return m_inlineContentCache; }
 

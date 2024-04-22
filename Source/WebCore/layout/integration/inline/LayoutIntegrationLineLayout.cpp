@@ -335,19 +335,10 @@ std::optional<LayoutRect> LineLayout::layout()
     preparePlacedFloats();
 
     auto isPartialLayout = Layout::InlineInvalidation::mayOnlyNeedPartialLayout(m_lineDamage.get());
-
-    auto clearInlineContentAndCacheBeforeFullLayoutIfNeeded = [&] {
-        if (isPartialLayout)
-            return;
-        // FIXME: Partial layout should not rely on inline display content, but instead InlineContentCache
-        // should retain all the pieces of data required -and then we can destroy damaged content here instead of after
-        // layout in constructContent.
+    if (!isPartialLayout) {
+        // FIXME: Partial layout should not rely on previous inline display content.
         clearInlineContent();
-        if (m_lineDamage && m_lineDamage->reasons().containsAny({ Layout::InlineDamage::Reason::BreakingContextChanged, Layout::InlineDamage::Reason::InlineItemTypeChanged }))
-            releaseCaches();
-        m_lineDamage = { };
-    };
-    clearInlineContentAndCacheBeforeFullLayoutIfNeeded();
+    }
 
     ASSERT(m_inlineContentConstraints);
     auto intrusiveInitialLetterBottom = [&]() -> std::optional<LayoutUnit> {
