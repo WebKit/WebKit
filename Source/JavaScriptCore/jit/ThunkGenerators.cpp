@@ -625,9 +625,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
     jit.addPtr(JSInterfaceJIT::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, extraTemp);
     jit.untagPtr(extraTemp, GPRInfo::regT3);
     jit.validateUntaggedPtr(GPRInfo::regT3, extraTemp);
-    PtrTag tempReturnPCTag = static_cast<PtrTag>(random());
-    jit.move(JSInterfaceJIT::TrustedImmPtr(tempReturnPCTag), extraTemp);
-    jit.tagPtr(extraTemp, GPRInfo::regT3);
+    // We don't want to pass a tag register to pacib because it could get hijacked to make a PAC bypass gadget so we use pacizb instead.
+    static_assert(NoPtrTag == static_cast<PtrTag>(0));
+    jit.tagPtr(NoPtrTag, GPRInfo::regT3);
     jit.storePtr(GPRInfo::regT3, JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
 #endif
     jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT3);
@@ -696,18 +696,35 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
 
 #if CPU(ARM64E)
     jit.loadPtr(JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT3);
-    jit.move(JSInterfaceJIT::TrustedImmPtr(tempReturnPCTag), extraTemp);
-    jit.untagPtr(extraTemp, GPRInfo::regT3);
-    jit.validateUntaggedPtr(GPRInfo::regT3, extraTemp);
-    jit.addPtr(JSInterfaceJIT::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, extraTemp);
-    jit.tagPtr(extraTemp, GPRInfo::regT3);
-    jit.storePtr(GPRInfo::regT3, JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
+    if (Options::allowNonSPTagging()) {
+        static_assert(NoPtrTag == static_cast<PtrTag>(0));
+        jit.untagPtr(NoPtrTag, GPRInfo::regT3);
+        jit.validateUntaggedPtr(GPRInfo::regT3, extraTemp);
+        jit.addPtr(JSInterfaceJIT::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, extraTemp);
+        jit.tagPtr(extraTemp, GPRInfo::regT3);
+        jit.storePtr(GPRInfo::regT3, JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
+    } else {
+        jit.move(ARM64Registers::lr, JSInterfaceJIT::argumentGPR0);
+        jit.move(ARM64Registers::sp, JSInterfaceJIT::argumentGPR1);
+        JIT_COMMENT(jit, "lldb dynamic execution / posix signals could trash your stack"); // We don't have to worry about signals because they shouldn't fire in WebContent process in this window.
+        jit.addPtr(JSInterfaceJIT::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, ARM64Registers::sp);
+        jit.move(GPRInfo::regT3, ARM64Registers::lr);
+        static_assert(NoPtrTag == static_cast<PtrTag>(0));
+        jit.untagPtr(NoPtrTag, ARM64Registers::lr);
+        jit.validateUntaggedPtr(ARM64Registers::lr, extraTemp);
+        jit.tagReturnAddress();
+        jit.storePtr(ARM64Registers::lr, JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
+        JIT_COMMENT(jit, "lldb dynamic execution / posix signals are ok again");
+        jit.move(JSInterfaceJIT::argumentGPR1, ARM64Registers::sp);
+        jit.move(JSInterfaceJIT::argumentGPR0, ARM64Registers::lr);
+    }
 #endif
 
 #if CPU(X86_64)
     jit.push(JSInterfaceJIT::regT4);
 #endif
     jit.ret();
+
 #else // USE(JSVALUE64) section above, USE(JSVALUE32_64) section below.
     jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT3);
     jit.load32(JSInterfaceJIT::addressFor(CallFrameSlot::argumentCountIncludingThis), JSInterfaceJIT::argumentGPR2);

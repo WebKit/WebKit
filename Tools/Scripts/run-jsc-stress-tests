@@ -1120,6 +1120,7 @@ BASE_MODES = [
         "misc-ftl-no-cjit",
         [
             "--useDataICInFTL=true",
+            "--allowNonSPTagging=false",
         ] +
         FTL_OPTIONS +
         NO_CJIT_OPTIONS
@@ -1147,6 +1148,7 @@ BASE_MODES = [
             "--airForceIRCAllocator=true",
             "--useDataICInFTL=true",
             "--forceUnlinkedDFG=true",
+            "--allowNonSPTagging=false",
         ] +
         FTL_OPTIONS +
         NO_CJIT_OPTIONS
@@ -1208,6 +1210,7 @@ BASE_MODES = [
             "--useRandomizingExecutableIslandAllocation=true",
             "--forcePolyProto=true",
             "--useDataICInFTL=true",
+            "--allowNonSPTagging=false",
         ] +
         FTL_OPTIONS +
         EAGER_OPTIONS +
@@ -1271,6 +1274,7 @@ BASE_MODES = [
         "ftl-no-cjit-no-access-inlining",
         [
             "--useAccessInlining=false",
+            "--allowNonSPTagging=false",
         ] +
         FTL_OPTIONS +
         NO_CJIT_OPTIONS

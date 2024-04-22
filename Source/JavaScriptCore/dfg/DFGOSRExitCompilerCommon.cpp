@@ -258,6 +258,16 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
     ASSERT(JITCode::isBaselineCode(jit.baselineCodeBlock()->jitType()));
     jit.storePtr(AssemblyHelpers::TrustedImmPtr(jit.baselineCodeBlock()), AssemblyHelpers::addressFor(CallFrameSlot::codeBlock));
 
+    GPRReg returnPCReg = GPRInfo::regT5;
+#if CPU(ARM64E)
+    GPRReg signingTagReg = GPRInfo::regT2;
+    if (!Options::allowNonSPTagging()) {
+        returnPCReg = ARM64Registers::lr;
+        signingTagReg = MacroAssembler::stackPointerRegister;
+        // We could save/restore lr here but we don't need to because the LLInt/Baseline will load it from the stack before returning anyway.
+    }
+#endif
+
     const CodeOrigin* codeOrigin;
     for (codeOrigin = &exit.m_codeOrigin; codeOrigin && codeOrigin->inlineCallFrame(); codeOrigin = codeOrigin->inlineCallFrame()->getCallerSkippingTailCalls()) {
         InlineCallFrame* inlineCallFrame = codeOrigin->inlineCallFrame();
@@ -270,15 +280,25 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
 
         if (!trueCaller) {
             ASSERT(inlineCallFrame->isTail());
-            jit.loadPtr(AssemblyHelpers::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT3);
+            jit.loadPtr(AssemblyHelpers::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), returnPCReg);
 #if CPU(ARM64E)
+            if (!Options::allowNonSPTagging()) {
+                JIT_COMMENT(jit, "lldb dynamic execution / posix signals could trash your stack"); // We don't have to worry about signals because they shouldn't fire in WebContent process in this window.
+                jit.move(MacroAssembler::stackPointerRegister, GPRInfo::regT4);
+            }
+
             jit.addPtr(AssemblyHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, GPRInfo::regT2);
-            jit.untagPtr(GPRInfo::regT2, GPRInfo::regT3);
-            jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->returnPCOffset() + sizeof(void*)), GPRInfo::callFrameRegister, GPRInfo::regT2);
-            jit.validateUntaggedPtr(GPRInfo::regT3, GPRInfo::regT4);
-            jit.tagPtr(GPRInfo::regT2, GPRInfo::regT3);
+            jit.untagPtr(GPRInfo::regT2, returnPCReg);
+            jit.validateUntaggedPtr(returnPCReg, GPRInfo::regT2);
+            jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->returnPCOffset() + sizeof(CPURegister)), GPRInfo::callFrameRegister, signingTagReg);
+            jit.tagPtr(signingTagReg, returnPCReg);
+
+            if (!Options::allowNonSPTagging()) {
+                JIT_COMMENT(jit, "lldb dynamic execution / posix signals are ok again");
+                jit.move(GPRInfo::regT4, MacroAssembler::stackPointerRegister);
+            }
 #endif
-            jit.storePtr(GPRInfo::regT3, AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
+            jit.storePtr(returnPCReg, AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
             jit.loadPtr(AssemblyHelpers::Address(GPRInfo::callFrameRegister, CallFrame::callerFrameOffset()), GPRInfo::regT3);
             callerFrameGPR = GPRInfo::regT3;
         } else {
@@ -295,10 +315,20 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
             }
 
 #if CPU(ARM64E)
-            jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->returnPCOffset() + sizeof(void*)), GPRInfo::callFrameRegister, GPRInfo::regT2);
-            jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget.untaggedPtr()), GPRInfo::regT4);
-            jit.tagPtr(GPRInfo::regT2, GPRInfo::regT4);
-            jit.storePtr(GPRInfo::regT4, AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
+            if (!Options::allowNonSPTagging()) {
+                JIT_COMMENT(jit, "lldb dynamic execution / posix signals could trash your stack"); // We don't have to worry about signals because they shouldn't fire in WebContent process in this window.
+                jit.move(MacroAssembler::stackPointerRegister, GPRInfo::regT4);
+            }
+
+            jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->returnPCOffset() + sizeof(CPURegister)), GPRInfo::callFrameRegister, signingTagReg);
+            jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget.untaggedPtr()), returnPCReg);
+            jit.tagPtr(signingTagReg, returnPCReg);
+            jit.storePtr(returnPCReg, AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
+
+            if (!Options::allowNonSPTagging()) {
+                JIT_COMMENT(jit, "lldb dynamic execution / posix signals are ok again");
+                jit.move(GPRInfo::regT4, MacroAssembler::stackPointerRegister);
+            }
 #else
             jit.storePtr(AssemblyHelpers::TrustedImmPtr(jumpTarget.untaggedPtr()), AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
 #endif
