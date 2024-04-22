@@ -70,7 +70,6 @@ public:
     explicit WebExtensionAction(WebExtensionContext&, WebExtensionTab&);
     explicit WebExtensionAction(WebExtensionContext&, WebExtensionWindow&);
 
-    enum class LoadOnFirstAccess { No, Yes };
     enum class FallbackWhenEmpty { No, Yes };
 
 #if PLATFORM(MAC)
@@ -122,7 +121,12 @@ public:
     void setPopupPopoverAppearance(Appearance);
 #endif
 
-    WKWebView *popupWebView(LoadOnFirstAccess = LoadOnFirstAccess::Yes);
+    WKWebView *popupWebView();
+    bool hasPopupWebView() const { return !!m_popupWebView; }
+
+    bool presentsPopupWhenReady() const { return m_presentsPopupWhenReady; }
+    bool popupPresented() const { return m_popupPresented; }
+
     void presentPopupWhenReady();
     void popupDidFinishDocumentLoad();
     void readyToPresentPopup();
@@ -165,6 +169,7 @@ private:
     ssize_t m_blockedResourceCount { 0 };
     std::optional<bool> m_customEnabled;
     std::optional<bool> m_hasUnreadBadgeText;
+    bool m_presentsPopupWhenReady : 1 { false };
     bool m_popupPresented : 1 { false };
 };
 
