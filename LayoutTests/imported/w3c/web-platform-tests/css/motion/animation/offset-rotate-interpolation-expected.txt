@@ -359,10 +359,6 @@ PASS Web Animations: property <offset-rotate> from [10deg] to [50deg] at (0.3) s
 PASS Web Animations: property <offset-rotate> from [10deg] to [50deg] at (0.6) should be [34deg]
 PASS Web Animations: property <offset-rotate> from [10deg] to [50deg] at (1) should be [50deg]
 PASS Web Animations: property <offset-rotate> from [10deg] to [50deg] at (1.5) should be [70deg]
-FAIL CSS Transitions: property <offset-rotate> from [800deg] to [900deg] at (-3.40282e+38) should be [-3.40282e+38deg] assert_equals: expected "- 340282001837565597733306976381245063168deg " but got "- 340282346638528859811704183484516925440deg "
-FAIL CSS Transitions with transition: all: property <offset-rotate> from [800deg] to [900deg] at (-3.40282e+38) should be [-3.40282e+38deg] assert_equals: expected "- 340282001837565597733306976381245063168deg " but got "- 340282346638528859811704183484516925440deg "
-FAIL CSS Animations: property <offset-rotate> from [800deg] to [900deg] at (-3.40282e+38) should be [-3.40282e+38deg] assert_equals: expected "- 340282001837565597733306976381245063168deg " but got "- 340282346638528859811704183484516925440deg "
-FAIL Web Animations: property <offset-rotate> from [800deg] to [900deg] at (-3.40282e+38) should be [-3.40282e+38deg] assert_equals: expected "- 340282001837565597733306976381245063168deg " but got "- 340282346638528859811704183484516925440deg "
 PASS CSS Transitions: property <offset-rotate> from [auto 10deg] to [auto 50deg] at (-0.3) should be [auto -2deg]
 PASS CSS Transitions: property <offset-rotate> from [auto 10deg] to [auto 50deg] at (0) should be [auto 10deg]
 PASS CSS Transitions: property <offset-rotate> from [auto 10deg] to [auto 50deg] at (0.3) should be [auto 22deg]
