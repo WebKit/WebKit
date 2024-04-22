@@ -232,6 +232,7 @@ function mac_process_webcontent_shared_entitlements()
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" > 140000 ))
         then
+            plistbuddy Add :com.apple.private.disable-log-mach-ports bool YES
             notify_entitlements
         fi
 
