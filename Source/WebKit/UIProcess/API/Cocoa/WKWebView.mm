@@ -444,6 +444,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     _unifiedTextReplacementSessions = [NSMapTable strongToWeakObjectsMapTable];
+    _unifiedTextReplacementSessionReplacements = [NSMapTable strongToWeakObjectsMapTable];
 #endif
 }
 

@@ -58,8 +58,6 @@ struct WebTextReplacementData {
     String replacement;
     String description;
     State state;
-
-    WebCore::AttributedString originalString;
 };
 
 }

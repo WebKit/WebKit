@@ -44,8 +44,6 @@ header: "WebTextReplacementData.h"
     String replacement;
     String description;
     WebKit::WebTextReplacementDataState state;
-
-    WebCore::AttributedString originalString;
 };
 
 header: "WebUnifiedTextReplacementContextData.h"

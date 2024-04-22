@@ -28,7 +28,6 @@
 #include "config.h"
 #include "UnifiedTextReplacementController.h"
 
-#include "Logging.h"
 #include "WebPage.h"
 #include "WebUnifiedTextReplacementContextData.h"
 #include <WebCore/BoundaryPoint.h>
@@ -44,7 +43,6 @@
 #include <WebCore/TextIterator.h>
 #include <WebCore/VisiblePosition.h>
 #include <WebCore/WebContentReader.h>
-#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
@@ -187,7 +185,9 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
         auto newRangeWithOffset = WebCore::CharacterRange { locationWithOffset, replacementData.replacement.length() };
         auto newResolvedRange = resolveCharacterRange(*sessionRange, newRangeWithOffset);
 
-        auto markerData = WebCore::DocumentMarker::UnifiedTextReplacementData { replacementData.originalString.string, replacementData.uuid, uuid, WebCore::DocumentMarker::UnifiedTextReplacementData::State::Pending };
+        auto originalString = [context.attributedText.nsAttributedString() attributedSubstringFromRange:replacementData.originalRange];
+
+        auto markerData = WebCore::DocumentMarker::UnifiedTextReplacementData { originalString.string, replacementData.uuid, uuid, WebCore::DocumentMarker::UnifiedTextReplacementData::State::Pending };
         addMarker(newResolvedRange, WebCore::DocumentMarker::Type::UnifiedTextReplacement, markerData);
 
         additionalOffset += static_cast<int>(replacementData.replacement.length()) - static_cast<int>(replacementData.originalRange.length);
