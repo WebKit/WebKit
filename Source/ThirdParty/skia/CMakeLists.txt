@@ -926,7 +926,9 @@ WEBKIT_ADD_TARGET_CXX_FLAGS(Skia
     -Wno-unused-parameter
 )
 
-add_custom_target(Skia_headers_symlink
+add_custom_command(
+    TARGET Skia
+    POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E create_symlink
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
         "${Skia_FRAMEWORK_HEADERS_DIR}/skia"
@@ -935,7 +937,7 @@ add_custom_target(Skia_headers_symlink
     COMMENT "Link Skia headers"
     VERBATIM
 )
-add_dependencies(Skia Skia_headers_symlink)
+
 target_include_directories(Skia PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
