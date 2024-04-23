@@ -40,11 +40,6 @@ class WatchOSLayoutTraits extends LayoutTraits
         return "watchOS";
     }
 
-    controlsAlwaysAvailable()
-    {
-        return true;
-    }
-
     controlsNeverAvailable()
     {
         return false;

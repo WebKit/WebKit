@@ -3010,7 +3010,6 @@ webkit.org/b/163981 fast/css3-text/css3-text-decoration/text-underline-position/
 media/modern-media-controls/button/button-active-state.html [ Skip ]
 media/modern-media-controls/button/button.html [ Skip ]
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-parent-element.html [ Skip ]
-media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Skip ]
 media/modern-media-controls/css/pointer-events-none.html [ Skip ]
 media/modern-media-controls/css/webkit-cursor-visibility-auto-hide.html [ Skip ]
 media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ Skip ]

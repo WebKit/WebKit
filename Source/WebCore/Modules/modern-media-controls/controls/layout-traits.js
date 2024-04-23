@@ -51,11 +51,6 @@ class LayoutTraits
         throw "Derived class must implement this function.";
     }
 
-    controlsAlwaysAvailable()
-    {
-        throw "Derived class must implement this function.";
-    }
-
     controlsNeverAvailable()
     {
         throw "Derived class must implement this function.";

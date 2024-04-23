@@ -42,11 +42,6 @@ class VisionLayoutTraits extends LayoutTraits
         return "iOS";
     }
 
-    controlsAlwaysAvailable()
-    {
-        return this.isFullscreen;
-    }
-
     controlsNeverAvailable()
     {
         return false;

@@ -40,11 +40,6 @@ class IOSLayoutTraits extends LayoutTraits
         return "iOS";
     }
 
-    controlsAlwaysAvailable()
-    {
-        return false;
-    }
-
     controlsNeverAvailable()
     {
         return this.isFullscreen;

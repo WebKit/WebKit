@@ -413,9 +413,6 @@ class MediaController
 
     _shouldControlsBeAvailable()
     {
-        if (this.layoutTraits.controlsAlwaysAvailable())
-            return true;
-
         if (this.layoutTraits.controlsNeverAvailable())
             return false;
 
