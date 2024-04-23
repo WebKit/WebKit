@@ -1257,6 +1257,9 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
     if (destinationTexture.dimension() == WGPUTextureDimension_3D)
         slice = 0;
 
+    if (slice >= mtlTexture.arrayLength)
+        return;
+
     [blitCommandEncoder
         copyFromBuffer:temporaryBuffer
         sourceOffset:0

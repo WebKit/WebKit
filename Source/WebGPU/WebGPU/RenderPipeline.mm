@@ -1699,6 +1699,8 @@ bool RenderPipeline::colorDepthStencilTargetsMatch(const WGPURenderPassDescripto
         auto& texture = *depthStencilView.get();
         if (texture.format() != m_descriptor.depthStencil->format)
             return false;
+        if (texture.texture().pixelFormat == MTLPixelFormatX32_Stencil8 && m_descriptor.depthStencil->format == WGPUTextureFormat_Stencil8)
+            return false;
         if (texture.sampleCount() != m_descriptor.multisample.count)
             return false;
     } else if (m_descriptor.depthStencil->format != WGPUTextureFormat_Undefined)
