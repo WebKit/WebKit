@@ -1793,8 +1793,8 @@
 #endif
 
 // FIXME: Other platforms should finish migration to *.serialization.in.
-#if PLATFORM(COCOA)
-#define ONLY_MODERN_SERIALIZATION 1
+#if PLATFORM(WIN)
+#define HAVE_ONLY_MODERN_SERIALIZATION 1
 #endif
 
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
