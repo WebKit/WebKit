@@ -478,6 +478,7 @@ namespace JSC {
         void emitNodeInIgnoreResultPosition(StatementNode* n)
         {
             SetForScope tailPositionPoisoner(m_allowTailCallOptimization, false);
+            SetForScope callIgnoreResultPositionPoisoner(m_allowCallIgnoreResultOptimization, m_defaultAllowCallIgnoreResultOptimization); // Revert it to default value.
             return emitNodeInTailPosition(ignoredResult(), n);
         }
 
@@ -536,6 +537,7 @@ namespace JSC {
         RegisterID* emitNodeInIgnoreResultPosition(ExpressionNode* n)
         {
             SetForScope tailPositionPoisoner(m_allowTailCallOptimization, false);
+            SetForScope callIgnoreResultPositionPoisoner(m_allowCallIgnoreResultOptimization, m_defaultAllowCallIgnoreResultOptimization); // Revert it to default value.
             return emitNodeInTailPosition(ignoredResult(), n);
         }
 
@@ -1373,6 +1375,7 @@ namespace JSC {
 
         VM& m_vm;
 
+        bool m_defaultAllowCallIgnoreResultOptimization { false };
         bool m_usesExceptions { false };
         bool m_expressionTooDeep { false };
         bool m_isBuiltinFunction { false };
