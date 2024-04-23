@@ -100,6 +100,7 @@ double screenDPI(PlatformDisplayID screendisplayID)
     auto* data = screenData(screendisplayID);
     return data ? data->dpi : 96.;
 #else
+    UNUSED_PARAM(screendisplayID);
     notImplemented();
     return 96;
 #endif
