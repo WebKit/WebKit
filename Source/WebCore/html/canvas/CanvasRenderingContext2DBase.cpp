@@ -1157,14 +1157,23 @@ void CanvasRenderingContext2DBase::clipInternal(const Path& path, CanvasFillRule
 void CanvasRenderingContext2DBase::beginCompositeLayer()
 {
 #if !USE(CAIRO)
-    drawingContext()->beginTransparencyLayer(1);
+    auto* context = drawingContext();
+    context->beginTransparencyLayer(1);
+#if USE(SKIA)
+    // When on transparency layer, we don't want to blend operations as when layer ends, we blend it as a whole.
+    context->setCompositeOperation(CompositeOperator::SourceOver, BlendMode::Normal);
+#endif
 #endif
 }
 
 void CanvasRenderingContext2DBase::endCompositeLayer()
 {
 #if !USE(CAIRO)
-    drawingContext()->endTransparencyLayer();    
+    auto* context = drawingContext();
+    context->endTransparencyLayer();
+#if USE(SKIA)
+    context->setCompositeOperation(state().globalComposite, state().globalBlend);
+#endif
 #endif
 }
 
