@@ -95,7 +95,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         RELEASE_ASSERT(!connectedSubframeCount() && !hasRareData() && !wrapper());
         bool hadElementChild = false;
-        while (RefPtr child = m_firstChild) {
+        while (RefPtr child = m_firstChild.get()) {
             hadElementChild |= is<Element>(*child);
             removeBetween(nullptr, child->protectedNextSibling().get(), *child);
         }
@@ -137,7 +137,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
 
         RefAllowingPartiallyDestroyed<Document> { document() }->nodeChildrenWillBeRemoved(*this);
 
-        while (RefPtr child = m_firstChild) {
+        while (RefPtr child = m_firstChild.get()) {
             if (is<Element>(*child))
                 hadElementChild = true;
 
@@ -577,14 +577,14 @@ void ContainerNode::insertBeforeCommon(Node& nextChild, Node& newChild)
     ASSERT(!newChild.isShadowRoot());
 
     RefPtr previousSibling = nextChild.previousSibling();
-    ASSERT(m_lastChild != previousSibling);
+    ASSERT(m_lastChild.get() != previousSibling);
     nextChild.setPreviousSibling(&newChild);
     if (previousSibling) {
-        ASSERT(m_firstChild != &nextChild);
+        ASSERT(m_firstChild.get() != &nextChild);
         ASSERT(previousSibling->nextSibling() == &nextChild);
         previousSibling->setNextSibling(&newChild);
     } else {
-        ASSERT(m_firstChild == &nextChild);
+        ASSERT(m_firstChild.get() == &nextChild);
         m_firstChild = &newChild;
     }
     newChild.setParentNode(this);
@@ -747,19 +747,19 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
         nextChild->setPreviousSibling(previousChild);
         oldChild.setNextSibling(nullptr);
     } else {
-        ASSERT(m_lastChild == &oldChild);
+        ASSERT(m_lastChild.get() == &oldChild);
         m_lastChild = previousChild;
     }
     if (previousChild) {
         previousChild->setNextSibling(nextChild);
         oldChild.setPreviousSibling(nullptr);
     } else {
-        ASSERT(m_firstChild == &oldChild);
+        ASSERT(m_firstChild.get() == &oldChild);
         m_firstChild = nextChild;
     }
 
-    ASSERT(m_firstChild != &oldChild);
-    ASSERT(m_lastChild != &oldChild);
+    ASSERT(m_firstChild.get() != &oldChild);
+    ASSERT(m_lastChild.get() != &oldChild);
     ASSERT(!oldChild.previousSibling());
     ASSERT(!oldChild.nextSibling());
     oldChild.setParentNode(nullptr);
