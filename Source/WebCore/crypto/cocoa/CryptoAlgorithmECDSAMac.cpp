@@ -31,36 +31,12 @@
 #include "CryptoAlgorithmEcdsaParams.h"
 #include "CryptoDigestAlgorithm.h"
 #include "CryptoKeyEC.h"
+#if HAVE(SWIFT_CPP_INTEROP)
+#include <pal/PALSwiftUtils.h>
+#endif
 
 namespace WebCore {
 #if HAVE(SWIFT_CPP_INTEROP)
-
-static PAL::HashFunction toCKHashFunction(CryptoAlgorithmIdentifier hash)
-{
-    switch (hash) {
-    case CryptoAlgorithmIdentifier::SHA_256:
-        return PAL::HashFunction::sha256();
-        break;
-    case CryptoAlgorithmIdentifier::SHA_384:
-        return PAL::HashFunction::sha384();
-        break;
-    case CryptoAlgorithmIdentifier::SHA_512:
-        return PAL::HashFunction::sha512();
-        break;
-    case CryptoAlgorithmIdentifier::SHA_1:
-        return PAL::HashFunction::sha1();
-        break;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return PAL::HashFunction::sha512();
-}
-
-static bool isValidHashParameter(CryptoAlgorithmIdentifier hash)
-{
-    return hash == CryptoAlgorithmIdentifier::SHA_256 || hash == CryptoAlgorithmIdentifier::SHA_512 || hash == CryptoAlgorithmIdentifier::SHA_384 || hash == CryptoAlgorithmIdentifier::SHA_1;
-}
 
 static ExceptionOr<Vector<uint8_t>> signECDSACryptoKit(CryptoAlgorithmIdentifier hash, const PlatformECKeyContainer& key, const Vector<uint8_t>& data)
 {
@@ -70,7 +46,7 @@ static ExceptionOr<Vector<uint8_t>> signECDSACryptoKit(CryptoAlgorithmIdentifier
     if (!isValidHashParameter(hash))
         return Exception { ExceptionCode::OperationError };
     auto rv = (*priv)->sign(data.span(), toCKHashFunction(hash));
-    if (!(rv.getErrCode().isSuccess() && rv.getSignature()))
+    if (!(rv.getErrorCode().isSuccess() && rv.getSignature()))
         return Exception { ExceptionCode::OperationError };
     return *rv.getSignature();
 }
@@ -82,7 +58,7 @@ static ExceptionOr<bool> verifyECDSACryptoKit(CryptoAlgorithmIdentifier hash, co
         return Exception { ExceptionCode::OperationError };
     if (!isValidHashParameter(hash))
         return Exception { ExceptionCode::OperationError };
-    return (*pub)->verify(data.span(), signature.span(), toCKHashFunction(hash)).getErrCode().isSuccess();
+    return (*pub)->verify(data.span(), signature.span(), toCKHashFunction(hash)).getErrorCode().isSuccess();
 }
 #endif
 

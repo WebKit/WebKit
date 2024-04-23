@@ -57,7 +57,7 @@ static std::optional<Vector<uint8_t>> calculateSignature(const EVP_MD* algorithm
     return cipherText;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHMAC::platformSign(const CryptoKeyHMAC& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHMAC::platformSign(const CryptoKeyHMAC& key, const Vector<uint8_t>& data, UseCryptoKit)
 {
     auto algorithm = digestAlgorithm(key.hashAlgorithmIdentifier());
     if (!algorithm)
@@ -69,7 +69,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHMAC::platformSign(const CryptoKeyHM
     return WTFMove(*result);
 }
 
-ExceptionOr<bool> CryptoAlgorithmHMAC::platformVerify(const CryptoKeyHMAC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
+ExceptionOr<bool> CryptoAlgorithmHMAC::platformVerify(const CryptoKeyHMAC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data, UseCryptoKit)
 {
     auto algorithm = digestAlgorithm(key.hashAlgorithmIdentifier());
     if (!algorithm)

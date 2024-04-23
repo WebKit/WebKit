@@ -30,10 +30,13 @@
 #include "CryptoAlgorithmHkdfParams.h"
 #include "CryptoKeyRaw.h"
 #include "CryptoUtilitiesCocoa.h"
+#if HAVE(SWIFT_CPP_INTEROP)
+#include <pal/PALSwiftUtils.h>
+#endif
 
 namespace WebCore {
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
+static ExceptionOr<Vector<uint8_t>> platformDeriveBitsCC(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
 {
     CCDigestAlgorithm digestAlgorithm;
     getCommonCryptoDigestAlgorithm(parameters.hashIdentifier, digestAlgorithm);
@@ -41,4 +44,26 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const Crypt
     return deriveHDKFBits(digestAlgorithm, key.key().span(), parameters.saltVector().span(), parameters.infoVector().span(), length);
 }
 
+#if HAVE(SWIFT_CPP_INTEROP)
+static ExceptionOr<Vector<uint8_t>> platformDeriveBitsCryptoKit(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
+{
+    if (!isValidHashParameter(parameters.hashIdentifier))
+        return Exception { ExceptionCode::OperationError };
+    auto rv = PAL::HKDF::deriveBits(key.key().span(), parameters.saltVector().span(), parameters.infoVector().span(), length, toCKHashFunction(parameters.hashIdentifier));
+    if (!rv.getErrorCode().isSuccess() || !rv.getKey())
+        return Exception { ExceptionCode::OperationError };
+    return *rv.getKey();
+}
+#endif
+
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length, UseCryptoKit useCryptoKit)
+{
+#if HAVE(SWIFT_CPP_INTEROP)
+    if (useCryptoKit == UseCryptoKit::Yes)
+        return platformDeriveBitsCryptoKit(parameters, key, length);
+#else
+UNUSED_PARAM(useCryptoKit);
+#endif
+    return platformDeriveBitsCC(parameters, key, length);
+}
 } // namespace WebCore

@@ -25,24 +25,36 @@
 
 #pragma once
 
-#include <cstdint>
-#include <wtf/Vector.h>
+#if HAVE(SWIFT_CPP_INTEROP)
+#include "PALSwift.h"
 
-namespace Cpp {
-
-using VectorUInt8 = WTF::Vector<uint8_t>;
-using SpanConstUInt8 = std::span<const uint8_t>;
-using OptionalVectorUInt8 = std::optional<WTF::Vector<uint8_t>>;
-
-
-// FIXME: remove when swift support is available rdar://118026392
-inline OptionalVectorUInt8 makeOptional(VectorUInt8 val)
+namespace WebCore {
+inline PAL::HashFunction toCKHashFunction(CryptoAlgorithmIdentifier hash)
 {
-    return val;
+    switch (hash) {
+    case CryptoAlgorithmIdentifier::SHA_256:
+        return PAL::HashFunction::sha256();
+        break;
+    case CryptoAlgorithmIdentifier::SHA_384:
+        return PAL::HashFunction::sha384();
+        break;
+    case CryptoAlgorithmIdentifier::SHA_512:
+        return PAL::HashFunction::sha512();
+        break;
+    case CryptoAlgorithmIdentifier::SHA_1:
+        return PAL::HashFunction::sha1();
+        break;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return PAL::HashFunction::sha512();
 }
 
-} // Cpp
+inline bool isValidHashParameter(CryptoAlgorithmIdentifier hash)
+{
+    return hash == CryptoAlgorithmIdentifier::SHA_1 || hash == CryptoAlgorithmIdentifier::SHA_256 || hash == CryptoAlgorithmIdentifier::SHA_512 || hash == CryptoAlgorithmIdentifier::SHA_384;
+}
 
-#ifndef __swift__
-#include "PALSwift-Generated.h"
+} // WebCore
 #endif

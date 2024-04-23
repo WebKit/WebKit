@@ -235,7 +235,8 @@ extension Curve25519.Signing.PrivateKey {
         if span.empty() {
             return try self.signature(for: Data.empty()).copyToVectorUInt8()
         }
-        return try self.signature(for: Data.temporaryDataFromSpan(spanNoCopy: span)).copyToVectorUInt8()
+        return try self.signature(for: Data.temporaryDataFromSpan(spanNoCopy: span))
+            .copyToVectorUInt8()
     }
 }
 
@@ -250,8 +251,11 @@ extension Curve25519.Signing.PublicKey {
         if signature.empty() || data.empty() {
             return false
         }
-        return self.isValidSignature(Data.temporaryDataFromSpan(spanNoCopy: signature), for: Data.temporaryDataFromSpan(spanNoCopy: data))
+        return self.isValidSignature(
+            Data.temporaryDataFromSpan(spanNoCopy: signature),
+            for: Data.temporaryDataFromSpan(spanNoCopy: data))
     }
+
 }
 
 extension Curve25519.KeyAgreement.PrivateKey {
@@ -265,8 +269,44 @@ extension Curve25519.KeyAgreement.PrivateKey {
         if pubSpan.empty() {
             throw UnsafeErrors.emptySpan
         }
-        let pub =  try Curve25519.KeyAgreement.PublicKey(rawRepresentation: Data.temporaryDataFromSpan(spanNoCopy: pubSpan))
+        let pub = try Curve25519.KeyAgreement.PublicKey(
+            rawRepresentation: Data.temporaryDataFromSpan(spanNoCopy: pubSpan))
         return try self.sharedSecretFromKeyAgreement(with: pub).copyToVectorUInt8()
+    }
+}
+
+extension CryptoKit.HMAC {
+    static func authenticationCode(
+        data: SpanConstUInt8,
+        key: SpanConstUInt8
+    ) -> VectorUInt8 {
+        return self.authenticationCode(
+            for: Data.temporaryDataFromSpan(spanNoCopy: data),
+            using: SymmetricKey(data: Data.temporaryDataFromSpan(spanNoCopy: key))
+        ).copyToVectorUInt8()
+    }
+    static func isValidAuthenticationCode(
+        mac: SpanConstUInt8, data: SpanConstUInt8, key: SpanConstUInt8
+    ) -> Bool {
+        return Self.isValidAuthenticationCode(
+            Data.temporaryDataFromSpan(spanNoCopy: mac),
+            authenticating: Data.temporaryDataFromSpan(spanNoCopy: data),
+            using: SymmetricKey(data: Data.temporaryDataFromSpan(spanNoCopy: key)))
+    }
+}
+
+extension CryptoKit.HKDF {
+    static func deriveKey(
+        inputKeyMaterial: SpanConstUInt8, salt: SpanConstUInt8, info: SpanConstUInt8,
+        outputByteCount: Int
+    ) -> VectorUInt8 {
+        return Self.deriveKey(
+            inputKeyMaterial: SymmetricKey(
+                data: Data.temporaryDataFromSpan(spanNoCopy: inputKeyMaterial)),
+            salt: Data.temporaryDataFromSpan(spanNoCopy: salt),
+            info: Data.temporaryDataFromSpan(spanNoCopy: info), outputByteCount: outputByteCount
+        ).copyToVectorUInt8()
+
     }
 }
 

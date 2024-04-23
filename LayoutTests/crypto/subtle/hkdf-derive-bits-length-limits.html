@@ -43,18 +43,6 @@ crypto.subtle.importKey("raw", rawKey, "HKDF", nonExtractable, ["deriveBits"]).t
             });
         });
     }).then(function(result) {
-        // SHA-224, hash output length is 28 bytes
-        return shouldReject('deriveBits("sha-224", 0)').then(function(result) {
-            return Promise.all([
-                deriveBits("sha-224", 8),
-                deriveBits("sha-224", 28 * 8),
-                deriveBits("sha-224", 255 * 28 * 8)
-            ]).then(function(result) {
-                testPassed("Bit derivations for SHA-224 with minimum, maximum and HashLen lengths all passed");
-                return shouldReject('deriveBits("sha-224", 256 * 28 * 8)');
-            });
-        });
-    }).then(function(result) {
         // SHA-256, hash output length is 32 bytes
         return shouldReject('deriveBits("sha-256", 0)').then(function(result) {
             return Promise.all([

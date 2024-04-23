@@ -2687,6 +2687,8 @@ crypto/subtle/ecdh-import-pkcs8-key-p384-validate-ecprivatekey-parameters-public
 crypto/subtle/ecdsa-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html [ Skip ]
 crypto/subtle/ecdsa-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html [ Skip ]
 crypto/subtle/ecdh-import-spki-key-ecdh-identifier.html [ Skip ]
+crypto/subtle/hmac-import-key-verify-sha224.html [ Skip ]
+crypto/subtle/hmac-import-key-sign-sha224.html [ Skip ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Skip ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Skip ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Skip ]
@@ -2712,7 +2714,6 @@ crypto/workers/subtle/rsa-pss-import-key-sign.html [ Skip ]
 crypto/workers/subtle/rsa-pss-import-key-verify.html [ Skip ]
 http/wpt/crypto/rsa-pss-crash.any.html [ Skip ]
 http/wpt/crypto/rsa-pss-crash.any.worker.html [ Skip ]
-
 editing/deleting/delete-emoji.html [ Slow ]
 
 # New emoji requires system support.

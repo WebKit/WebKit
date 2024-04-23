@@ -56,12 +56,12 @@ static std::optional<Vector<uint8_t>> platformDeriveBitsCC(const CryptoKeyEC& ba
 #if HAVE(SWIFT_CPP_INTEROP)
 static std::optional<Vector<uint8_t>> platformDeriveBitsCryptoKit(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)
 {
-    const auto* priv = std::get_if<CKPlatformECKeyContainer>(&baseKey.platformKey());
+    const auto* priv  = std::get_if<CKPlatformECKeyContainer>(&baseKey.platformKey());
     const auto* pub = std::get_if<CKPlatformECKeyContainer>(&publicKey.platformKey());
     if (!priv || !pub)
         return std::nullopt;
     auto rv = (*priv)->deriveBits(*pub);
-    if (!(rv.getErrCode().isSuccess() && rv.getKeyBytes()))
+    if (!(rv.getErrorCode().isSuccess() && rv.getKeyBytes()))
         return std::nullopt;
     return rv.getKeyBytes();
 }
