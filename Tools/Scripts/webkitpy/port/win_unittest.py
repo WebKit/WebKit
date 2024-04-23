@@ -56,9 +56,9 @@ class WinPortTest(port_testcase.PortTestCase):
         self._assert_search_path(['wincairo-vista-wk1', 'wincairo-vista', 'wincairo-7sp0-wk1', 'wincairo-7sp0', 'wincairo-8-wk1', 'wincairo-8', 'wincairo-8.1-wk1', 'wincairo-8.1', 'wincairo-win10-wk1', 'wincairo-win10', 'wincairo-wk1', 'wincairo'], Version.from_name('Vista'))
         self._assert_search_path(['wincairo-7sp0-wk1', 'wincairo-7sp0', 'wincairo-8-wk1', 'wincairo-8', 'wincairo-8.1-wk1', 'wincairo-8.1', 'wincairo-win10-wk1', 'wincairo-win10', 'wincairo-wk1', 'wincairo'], Version.from_name('7sp0'))
 
-        self._assert_search_path(['wincairo-wk2', 'wincairo', 'wk2'], Version.from_name('XP'), use_webkit2=True)
-        self._assert_search_path(['wincairo-wk2', 'wincairo', 'wk2'], Version.from_name('Vista'), use_webkit2=True)
-        self._assert_search_path(['wincairo-wk2', 'wincairo', 'wk2'], Version.from_name('7sp0'), use_webkit2=True)
+        self._assert_search_path(['wincairo-win10-wk2', 'wincairo-win10', 'wincairo-wk2', 'wincairo', 'wk2'], Version.from_name('XP'), use_webkit2=True)
+        self._assert_search_path(['wincairo-win10-wk2', 'wincairo-win10', 'wincairo-wk2', 'wincairo', 'wk2'], Version.from_name('Vista'), use_webkit2=True)
+        self._assert_search_path(['wincairo-win10-wk2', 'wincairo-win10', 'wincairo-wk2', 'wincairo', 'wk2'], Version.from_name('7sp0'), use_webkit2=True)
 
     def _assert_version(self, port_name, expected_version):
         host = MockSystemHost(os_name='win', os_version=expected_version)
