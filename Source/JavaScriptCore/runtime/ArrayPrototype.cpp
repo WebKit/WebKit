@@ -1730,7 +1730,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
         return JSValue::encode(jsNull());
 
     // We need to check the species constructor here since checking it in the JS wrapper is too expensive for the non-optimizing tiers.
-    bool isValid = arraySpeciesWatchpointIsValid(firstArray);
+    bool isValid = arraySpeciesWatchpointIsValid(vm, firstArray);
     RETURN_IF_EXCEPTION(scope, { });
     if (UNLIKELY(!isValid))
         return JSValue::encode(jsNull());
