@@ -26,8 +26,7 @@ header: <pal/system/ios/UserInterfaceIdiom.h>
 enum class PAL::UserInterfaceIdiom : uint8_t {
     Default,
     SmallScreen,
-    Vision,
-    VisionLegacy
+    Vision
 };
 
 #endif

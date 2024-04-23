@@ -103,6 +103,8 @@ typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions) {
 typedef CF_ENUM(uint32_t, CTFontTextStylePlatform)
 {
     kCTFontTextStylePlatformDefault = (CTFontTextStylePlatform)-1,
+    kCTFontTextStylePlatformPhone = (CTFontTextStylePlatform)0,
+    kCTFontTextStylePlatformVision = (CTFontTextStylePlatform)5,
 };
 
 #endif
