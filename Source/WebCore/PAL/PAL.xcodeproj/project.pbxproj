@@ -286,6 +286,7 @@
 		E57B44B529AB45F4006069DE /* VisionSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = E57B44B329AB45F4006069DE /* VisionSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E57B44B729AB462E006069DE /* VisionSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = E57B44B429AB45F4006069DE /* VisionSoftLink.mm */; };
 		EB3FE8E12A5DB94A00A20986 /* SQLite3SPI.h in Headers */ = {isa = PBXBuildFile; fileRef = EB3FE8E02A5DB94A00A20986 /* SQLite3SPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EBC13F3C2BD07DA500310E86 /* MobileKeyBagSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = EBC13F3B2BD07DA500310E86 /* MobileKeyBagSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F410F1552ACA2EBA00A79859 /* LinkPresentationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F410F1542ACA2EBA00A79859 /* LinkPresentationSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F43E89342AEDB71C00097D2D /* CoreTelephonySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F43E89332AEDB71C00097D2D /* CoreTelephonySPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F43E89372AEDB8C800097D2D /* CoreTelephonySoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F43E89362AEDB8C800097D2D /* CoreTelephonySoftLink.mm */; };
@@ -689,6 +690,7 @@
 		E5D45D132106A18700D2B738 /* NSPopoverColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSPopoverColorWellSPI.h; sourceTree = "<group>"; };
 		EB3FE8E02A5DB94A00A20986 /* SQLite3SPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLite3SPI.h; sourceTree = "<group>"; };
 		EB8A8DC12509E87E00D1BF90 /* MediaToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaToolboxSPI.h; sourceTree = "<group>"; };
+		EBC13F3B2BD07DA500310E86 /* MobileKeyBagSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MobileKeyBagSPI.h; sourceTree = "<group>"; };
 		F410F1542ACA2EBA00A79859 /* LinkPresentationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkPresentationSPI.h; sourceTree = "<group>"; };
 		F43E89332AEDB71C00097D2D /* CoreTelephonySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTelephonySPI.h; sourceTree = "<group>"; };
 		F43E89352AEDB8C800097D2D /* CoreTelephonySoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTelephonySoftLink.h; sourceTree = "<group>"; };
@@ -876,6 +878,7 @@
 				5C7C787523AC3E850065F47E /* ManagedConfigurationSPI.h */,
 				0C5AF9131F43A4C7002EAC02 /* MediaPlayerSPI.h */,
 				0C5AF9141F43A4C7002EAC02 /* MobileGestaltSPI.h */,
+				EBC13F3B2BD07DA500310E86 /* MobileKeyBagSPI.h */,
 				0C5AF9151F43A4C7002EAC02 /* OpenGLESSPI.h */,
 				0C5AF9161F43A4C7002EAC02 /* QuickLookSPI.h */,
 				41E9EE2528BCA19E006A2298 /* SBSStatusBarSPI.h */,
@@ -1404,6 +1407,7 @@
 				DD20DDEE27BC90D70093D175 /* MediaToolboxSPI.h in Headers */,
 				DD20DDEF27BC90D70093D175 /* MetalSPI.h in Headers */,
 				DD20DE1627BC90D80093D175 /* MobileGestaltSPI.h in Headers */,
+				EBC13F3C2BD07DA500310E86 /* MobileKeyBagSPI.h in Headers */,
 				DD20DD2027BC90D60093D175 /* NaturalLanguageSoftLink.h in Headers */,
 				DD20DDF027BC90D70093D175 /* NEFilterSourceSPI.h in Headers */,
 				F4EC01B22A85432D00DA295D /* NetworkSPI.h in Headers */,
