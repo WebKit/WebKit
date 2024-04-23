@@ -905,7 +905,7 @@ public:
         }
 
         // Add a negative using lea
-        m_assembler.leal_mr(WTF::negate(imm.m_value), src, dest);
+        m_assembler.leal_mr(-imm.m_value, src, dest);
     }
 
     void sub32(TrustedImm32 imm, RegisterID dest)
