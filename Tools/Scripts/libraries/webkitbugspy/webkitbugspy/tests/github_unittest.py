@@ -451,3 +451,14 @@ Documentation URL: https://docs.github.com/rest/reference/pulls#create-a-pull-re
         with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
             tracker = github.Tracker(self.URL)
             self.assertEqual(tracker.issue(1).classification, '')
+
+    def test_source_changes(self):
+        with OutputCapture() as captured, mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
+            tracker = github.Tracker(self.URL)
+            self.assertEqual(tracker.issue(1).source_changes, [])
+            self.assertIsNone(tracker.issue(1).add_source_change('WebKit, merge, a4daad5b9fbd26d557088037f54dc0935a437182'))
+
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            'GitHub does not support source changes at this time\n',
+        )

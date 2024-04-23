@@ -206,6 +206,7 @@ class Tracker(GenericTracker):
         issue._link = '{}/show_bug.cgi?id={}'.format(self.url, issue.id)
         issue._labels = []
         issue._classification = ''  # Bugzilla doesn't have a concept of "classification"
+        issue._source_changes = []  # We need to parse the bug to find any source changes
 
         if member in ('title', 'timestamp', 'modified', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version', 'keywords', 'related'):
             response = self.session.get(
@@ -350,7 +351,7 @@ class Tracker(GenericTracker):
 
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, original=None, keywords=None, **properties):
+    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, original=None, keywords=None, source_changes=None, **properties):
         update_dict = dict()
 
         if properties:
@@ -439,6 +440,10 @@ class Tracker(GenericTracker):
                 issue._version = version
             if keywords is not None:
                 issue._keywords = keywords
+
+        if source_changes:
+            sys.stderr.write('Bugzilla does not support source changes at this time\n')
+            return None
 
         return issue
 
