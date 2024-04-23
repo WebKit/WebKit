@@ -145,6 +145,9 @@ private:
 
     void enqueueTilePaintIfNecessary(const TileForGrid&, const WebCore::FloatRect& tileRect, const std::optional<WebCore::FloatRect>& clipRect = { });
     void enqueuePaintWithClip(const TileForGrid&, const TileRenderInfo&);
+
+    void serviceRequestQueue();
+
     void paintTileOnWorkQueue(RetainPtr<PDFDocument>&&, const TileForGrid&, const TileRenderInfo&, PDFTileRenderIdentifier);
     void paintPDFIntoBuffer(RetainPtr<PDFDocument>&&, Ref<WebCore::ImageBuffer>, const TileForGrid&, const TileRenderInfo&);
     void transferBufferToMainThread(RefPtr<WebCore::ImageBuffer>&&, const TileForGrid&, const TileRenderInfo&, PDFTileRenderIdentifier);
@@ -177,6 +180,10 @@ private:
         TileRenderInfo renderInfo;
     };
     HashMap<TileForGrid, TileRenderData> m_currentValidTileRenders;
+
+    const int m_maxConcurrentTileRenders { 4 };
+    int m_numConcurrentTileRenders { 0 };
+    ListHashSet<TileForGrid> m_requestWorkQueue;
 
     struct RenderedTile {
         RefPtr<WebCore::ImageBuffer> buffer;

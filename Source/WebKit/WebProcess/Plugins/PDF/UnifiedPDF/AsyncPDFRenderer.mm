@@ -35,6 +35,7 @@
 #include <PDFKit/PDFKit.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
+#include <wtf/NumberOfCores.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
@@ -45,10 +46,13 @@ Ref<AsyncPDFRenderer> AsyncPDFRenderer::create(UnifiedPDFPlugin& plugin)
     return adoptRef(*new AsyncPDFRenderer(plugin));
 }
 
+// m_maxConcurrentTileRenders is a trade-off between rendering multiple tiles concurrently, and getting backed up because
+// in-flight renders can't be canceled when resizing or zooming makes them invalid.
 AsyncPDFRenderer::AsyncPDFRenderer(UnifiedPDFPlugin& plugin)
     : m_plugin(plugin)
     , m_paintingWorkQueue(ConcurrentWorkQueue::create("WebKit: PDF Painting Work Queue"_s, WorkQueue::QOS::UserInteractive)) // Maybe make this concurrent?
     , m_contentsVersion(PDFContentsVersionIdentifier::generate())
+    , m_maxConcurrentTileRenders(std::clamp(WTF::numberOfProcessorCores() - 2, 4, 16))
 {
 }
 
@@ -194,6 +198,7 @@ void AsyncPDFRenderer::willRemoveTile(TileGridIndex gridIndex, TileIndex tileInd
 
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::willRemoveTile " << tileInfo);
 
+    m_requestWorkQueue.remove(tileInfo);
     m_currentValidTileRenders.remove(tileInfo);
     m_rendereredTiles.remove(tileInfo);
 }
@@ -240,6 +245,7 @@ void AsyncPDFRenderer::clearRequestsAndCachedTiles()
 {
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::clearRequestsAndCachedTiles");
 
+    m_requestWorkQueue.clear();
     m_currentValidTileRenders.clear();
     m_rendereredTiles.clear();
 }
@@ -333,11 +339,40 @@ void AsyncPDFRenderer::enqueuePaintWithClip(const TileForGrid& tileInfo, const T
     auto renderIdentifier = PDFTileRenderIdentifier::generate();
     m_currentValidTileRenders.set(tileInfo, TileRenderData { renderIdentifier, renderInfo });
 
-    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::enqueuePaintWithClip for tile " << tileInfo << " " << renderInfo.pageCoverage << " identifier " << renderIdentifier << " (" << m_currentValidTileRenders.size() << " concurrent renders)");
+    m_requestWorkQueue.appendOrMoveToLast(tileInfo);
 
-    m_paintingWorkQueue->dispatch([protectedThis = Ref { *this }, pdfDocument = RetainPtr { plugin->pdfDocument() }, tileInfo, renderInfo, renderIdentifier]() mutable {
-        protectedThis->paintTileOnWorkQueue(WTFMove(pdfDocument), tileInfo, renderInfo, renderIdentifier);
-    });
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::enqueueTileRequest for tile " << tileInfo << " " << renderInfo.pageCoverage << " identifier " << renderIdentifier << " (" << m_requestWorkQueue.size() << " requests in queue)");
+
+    serviceRequestQueue();
+}
+
+void AsyncPDFRenderer::serviceRequestQueue()
+{
+    RefPtr plugin = m_plugin.get();
+    if (!plugin)
+        return;
+
+    while (m_numConcurrentTileRenders < m_maxConcurrentTileRenders) {
+        if (m_requestWorkQueue.isEmpty())
+            break;
+
+        TileForGrid tileInfo = m_requestWorkQueue.takeFirst();
+        auto it = m_currentValidTileRenders.find(tileInfo);
+        if (it == m_currentValidTileRenders.end())
+            continue;
+
+        TileRenderData renderData = it->value;
+
+        LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::serviceRequestQueue - rendering tile " << tileInfo << " identifier " << renderData.renderIdentifier << " (" << m_numConcurrentTileRenders << " concurrent renders)");
+
+        ++m_numConcurrentTileRenders;
+
+        m_paintingWorkQueue->dispatch([protectedThis = Ref { *this }, pdfDocument = RetainPtr { plugin->pdfDocument() }, tileInfo, renderData]() mutable {
+            protectedThis->paintTileOnWorkQueue(WTFMove(pdfDocument), tileInfo, renderData.renderInfo, renderData.renderIdentifier);
+        });
+    }
+
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::serviceRequestQueue() - " << m_numConcurrentTileRenders << " renders in flight, " << m_requestWorkQueue.size() << " in queue");
 }
 
 void AsyncPDFRenderer::paintTileOnWorkQueue(RetainPtr<PDFDocument>&& pdfDocument, const TileForGrid& tileInfo, const TileRenderInfo& renderInfo, PDFTileRenderIdentifier renderIdentifier)
@@ -466,6 +501,10 @@ void AsyncPDFRenderer::didCompleteTileRender(RefPtr<WebCore::ImageBuffer>&& imag
 
         return false;
     }();
+
+    ASSERT(m_numConcurrentTileRenders);
+    --m_numConcurrentTileRenders;
+    serviceRequestQueue();
 
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::didCompleteNewTileRender - got results for tile at " << tileInfo << " clip " << renderInfo.clipRect << " ident " << renderIdentifier
         << " (" << m_rendereredTiles.size() << " tiles in cache). Request revoked " << !requestWasValid);
