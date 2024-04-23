@@ -151,6 +151,17 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     return beginTestMessageBody;
 }
 
+void TestInvocation::loadTestInCrossOriginIframe()
+{
+    WKRetainPtr<WKURLRef> baseURL = adoptWK(WKURLCreateWithUTF8CString("http://localhost:8000"));
+    WKRetainPtr<WKStringRef> htmlString = toWK(makeString(
+        "<script>"
+        "    testRunner.dumpChildFramesAsText()"
+        "</script>"
+        "<iframe src=\"", m_urlString.utf8().data(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"));
+    WKPageLoadHTMLString(TestController::singleton().mainWebView()->page(), htmlString.get(), baseURL.get());
+}
+
 void TestInvocation::invoke()
 {
     TestController::singleton().configureViewForTest(*this);
@@ -175,15 +186,9 @@ void TestInvocation::invoke()
     if (m_error)
         goto end;
 
-    if (m_options.runInCrossOriginFrame()) {
-        WKRetainPtr<WKURLRef> baseURL = adoptWK(WKURLCreateWithUTF8CString("http://localhost:8000"));
-        WKRetainPtr<WKStringRef> htmlString = toWK(makeString(
-            "<script>"
-            "    testRunner.dumpChildFramesAsText()"
-            "</script>"
-            "<iframe src=\"", m_urlString.utf8().data(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"));
-        WKPageLoadHTMLString(TestController::singleton().mainWebView()->page(), htmlString.get(), baseURL.get());
-    } else
+    if (m_options.runInCrossOriginFrame())
+        loadTestInCrossOriginIframe();
+    else
         WKPageLoadURLWithShouldOpenExternalURLsPolicy(TestController::singleton().mainWebView()->page(), m_url.get(), shouldOpenExternalURLs);
 
     TestController::singleton().runUntil(m_gotFinalMessage, TestController::noTimeout);

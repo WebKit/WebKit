@@ -106,6 +106,8 @@ public:
 
     void willCreateNewPage();
 
+    void loadTestInCrossOriginIframe();
+
 private:
     WKRetainPtr<WKMutableDictionaryRef> createTestSettingsDictionary();
 

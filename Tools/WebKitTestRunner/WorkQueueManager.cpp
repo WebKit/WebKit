@@ -29,6 +29,7 @@
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestController.h"
+#include "TestInvocation.h"
 #include <WebKit/WKPage.h>
 #include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKRetainPtr.h>
@@ -198,7 +199,10 @@ void WorkQueueManager::queueReload()
     public:
         WorkQueueItem::Type invoke() const
         {
-            WKPageReload(mainPage());
+            if (auto* currentInvocation = TestController::singleton().currentInvocation(); currentInvocation && currentInvocation->options().runInCrossOriginFrame())
+                currentInvocation->loadTestInCrossOriginIframe();
+            else
+                WKPageReload(mainPage());
             return WorkQueueItem::Loading;
         }
     };
