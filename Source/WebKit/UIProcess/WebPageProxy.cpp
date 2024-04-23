@@ -12537,6 +12537,26 @@ void WebPageProxy::storeAppHighlight(const WebCore::AppHighlight& highlight)
 }
 #endif
 
+#if PLATFORM(COCOA)
+void WebPageProxy::insertTextPlaceholder(const IntSize& size, CompletionHandler<void(const std::optional<ElementContext>&)>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler({ });
+        return;
+    }
+    sendWithAsyncReply(Messages::WebPage::InsertTextPlaceholder { size }, WTFMove(completionHandler));
+}
+
+void WebPageProxy::removeTextPlaceholder(const ElementContext& placeholder, CompletionHandler<void()>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler();
+        return;
+    }
+    sendWithAsyncReply(Messages::WebPage::RemoveTextPlaceholder { placeholder }, WTFMove(completionHandler));
+}
+#endif
+
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 void WebPageProxy::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
 {

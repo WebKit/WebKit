@@ -23,20 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 
+#if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
+#else
+#import <pal/spi/mac/NSTextInputContextSPI.h>
+#endif
 
 namespace WebCore {
-struct ElementContext;
+class SelectionGeometry;
 }
 
-@interface WKTextPlaceholder : UITextPlaceholder
+#if PLATFORM(IOS_FAMILY)
+@interface WKTextSelectionRect : UITextSelectionRect
+#else
+@interface WKTextSelectionRect : NSObject // FIXME: Change to NSTextSelectionRect after rdar://126379463 lands
+#endif
 
-- (instancetype)initWithElementContext:(const WebCore::ElementContext&)context;
+- (instancetype)initWithCGRect:(CGRect)rect;
+- (instancetype)initWithSelectionGeometry:(const WebCore::SelectionGeometry&)selectionGeometry scaleFactor:(CGFloat)scaleFactor;
 
-@property (nonatomic, readonly) const WebCore::ElementContext& elementContext;
+#if PLATFORM(MAC)
+@property (nonatomic, readonly) NSRect rect;
+@property (nonatomic, readonly) NSWritingDirection writingDirection;
+@property (nonatomic, readonly) BOOL isVertical;
+@property (nonatomic, readonly) NSAffineTransform *transform;
+#endif
 
 @end
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(COCOA)

@@ -24,18 +24,23 @@
  */
 
 #if PLATFORM(IOS_FAMILY)
-
 #import <UIKit/UIKit.h>
+#else
+#import <pal/spi/mac/NSTextInputContextSPI.h>
+#endif
 
 namespace WebCore {
-class SelectionGeometry;
+struct ElementContext;
 }
 
-@interface WKTextSelectionRect : UITextSelectionRect
+#if PLATFORM(IOS_FAMILY)
+@interface WKTextPlaceholder : UITextPlaceholder
+#elif PLATFORM(MAC)
+@interface WKTextPlaceholder : NSTextPlaceholder
+#endif
 
-- (instancetype)initWithCGRect:(CGRect)rect;
-- (instancetype)initWithSelectionGeometry:(const WebCore::SelectionGeometry&)selectionGeometry scaleFactor:(CGFloat)scaleFactor;
+- (instancetype)initWithElementContext:(const WebCore::ElementContext&)context;
+
+@property (nonatomic, readonly) const WebCore::ElementContext& elementContext;
 
 @end
-
-#endif // PLATFORM(IOS_FAMILY)

@@ -27,8 +27,8 @@
 #import "WKTextSelectionRect.h"
 
 #if PLATFORM(IOS_FAMILY)
-
 #import "UIKitSPI.h"
+#endif
 #import <WebCore/SelectionGeometry.h>
 
 #if HAVE(UI_TEXT_SELECTION_RECT_CUSTOM_HANDLE_INFO)
@@ -98,6 +98,7 @@
     return self;
 }
 
+#if PLATFORM(IOS_FAMILY)
 - (UIBezierPath *)_path
 {
     if (_selectionGeometry.behavior() == WebCore::SelectionRenderingBehavior::CoalesceBoundingRects)
@@ -118,6 +119,19 @@
     return result;
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+- (UITextWritingDirection)writingDirection
+{
+    return _selectionGeometry.direction() == WebCore::TextDirection::LTR ? UITextWritingDirectionLeftToRight : UITextWritingDirectionRightToLeft;
+}
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+- (UITextRange *)range
+{
+    return nil;
+}
+#endif
+
 #if HAVE(UI_TEXT_SELECTION_RECT_CUSTOM_HANDLE_INFO)
 
 - (WKTextSelectionRectCustomHandleInfo *)_customHandleInfo
@@ -131,24 +145,11 @@
 #endif
     return adoptNS([[WKTextSelectionRectCustomHandleInfo alloc] initWithFloatQuad:scaledQuad isHorizontal:_selectionGeometry.isHorizontal()]).autorelease();
 }
-
 #endif // HAVE(UI_TEXT_SELECTION_RECT_CUSTOM_HANDLE_INFO)
 
 - (CGRect)rect
 {
     return _selectionGeometry.rect();
-}
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-- (UITextWritingDirection)writingDirection
-{
-    return _selectionGeometry.direction() == WebCore::TextDirection::LTR ? UITextWritingDirectionLeftToRight : UITextWritingDirectionRightToLeft;
-}
-ALLOW_DEPRECATED_DECLARATIONS_END
-
-- (UITextRange *)range
-{
-    return nil;
 }
 
 - (BOOL)containsStart
@@ -172,5 +173,3 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 @end
-
-#endif // PLATFORM(IOS_FAMILY)

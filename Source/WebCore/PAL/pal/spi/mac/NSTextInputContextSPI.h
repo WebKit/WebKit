@@ -28,8 +28,40 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSTextInputContext_Private.h>
+#import <AppKit/NSTextPlaceholder_Private.h>
 
-#else
+#if HAVE(NSTEXTPLACEHOLDER_RECTS)
+// Staging for rdar://126696059
+@interface NSTextSelectionRect : NSObject
+@property (nonatomic, readonly) NSRect rect;
+@property (nonatomic, readonly) NSWritingDirection writingDirection;
+@property (nonatomic, readonly) BOOL isVertical;
+@property (nonatomic, readonly) NSAffineTransform *transform;
+@end
+
+@interface NSTextPlaceholder (staging_126696059)
+@property (nonatomic, readonly) NSArray<NSTextSelectionRect *> *rects;
+@end
+
+@protocol NSTextInputClient_Async_staging_126696059
+@optional
+- (void)insertTextPlaceholderWithSize:(CGSize)size completionHandler:(void (^)(NSTextPlaceholder *))completionHandler;
+- (void)removeTextPlaceholder:(NSTextPlaceholder *)placeholder willInsertText:(BOOL)willInsertText completionHandler:(void (^)(void))completionHandler;
+@end
+#endif // HAVE(NSTEXTPLACEHOLDER_RECTS)
+
+#else // !USE(APPLE_INTERNAL_SDK)
+
+@interface NSTextSelectionRect : NSObject
+@property (nonatomic, readonly) NSRect rect;
+@property (nonatomic, readonly) NSWritingDirection writingDirection;
+@property (nonatomic, readonly) BOOL isVertical;
+@property (nonatomic, readonly) NSAffineTransform *transform;
+@end
+
+@interface NSTextPlaceholder : NSObject
+@property (nonatomic, readonly) NSArray<NSTextSelectionRect *> *rects;
+@end
 
 @interface NSTextInputContext ()
 - (void)handleEvent:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
@@ -41,7 +73,7 @@
 #endif
 @end
 
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
 
 APPKIT_EXTERN NSString *NSTextInsertionUndoableAttributeName;
 APPKIT_EXTERN NSString *NSTextInputReplacementRangeAttributeName;
