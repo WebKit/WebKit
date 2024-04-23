@@ -2003,7 +2003,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF64Div(Value lhs, Value rhs, Value& 
     );
 }
 
-template<typename FloatType, MinOrMax IsMinOrMax>
+template<MinOrMax IsMinOrMax, typename FloatType>
 void BBQJIT::emitFloatingPointMinOrMax(FPRReg left, FPRReg right, FPRReg result)
 {
     constexpr bool is32 = sizeof(FloatType) == 4;
@@ -2075,14 +2075,14 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF32Min(Value lhs, Value rhs, Value& 
 {
     EMIT_BINARY(
         "F32Min", TypeKind::F32,
-        BLOCK(Value::fromF32(std::min(lhs.asF32(), rhs.asF32()))),
+        BLOCK(Value::fromF32(computeFloatingPointMinOrMax<MinOrMax::Min>(lhs.asF32(), rhs.asF32()))),
         BLOCK(
-            emitFloatingPointMinOrMax<float, MinOrMax::Min>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
+            emitFloatingPointMinOrMax<MinOrMax::Min, float>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
         ),
         BLOCK(
             ImmHelpers::immLocation(lhsLocation, rhsLocation) = Location::fromFPR(wasmScratchFPR);
             emitMoveConst(ImmHelpers::imm(lhs, rhs), Location::fromFPR(wasmScratchFPR));
-            emitFloatingPointMinOrMax<float, MinOrMax::Min>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
+            emitFloatingPointMinOrMax<MinOrMax::Min, float>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
         )
     );
 }
@@ -2091,14 +2091,14 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF64Min(Value lhs, Value rhs, Value& 
 {
     EMIT_BINARY(
         "F64Min", TypeKind::F64,
-        BLOCK(Value::fromF64(std::min(lhs.asF64(), rhs.asF64()))),
+        BLOCK(Value::fromF64(computeFloatingPointMinOrMax<MinOrMax::Min>(lhs.asF64(), rhs.asF64()))),
         BLOCK(
-            emitFloatingPointMinOrMax<double, MinOrMax::Min>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
+            emitFloatingPointMinOrMax<MinOrMax::Min, double>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
         ),
         BLOCK(
             ImmHelpers::immLocation(lhsLocation, rhsLocation) = Location::fromFPR(wasmScratchFPR);
             emitMoveConst(ImmHelpers::imm(lhs, rhs), Location::fromFPR(wasmScratchFPR));
-            emitFloatingPointMinOrMax<double, MinOrMax::Min>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
+            emitFloatingPointMinOrMax<MinOrMax::Min, double>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
         )
     );
 }
@@ -2107,14 +2107,14 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF32Max(Value lhs, Value rhs, Value& 
 {
     EMIT_BINARY(
         "F32Max", TypeKind::F32,
-        BLOCK(Value::fromF32(std::max(lhs.asF32(), rhs.asF32()))),
+        BLOCK(Value::fromF32(computeFloatingPointMinOrMax<MinOrMax::Max>(lhs.asF32(), rhs.asF32()))),
         BLOCK(
-            emitFloatingPointMinOrMax<float, MinOrMax::Max>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
+            emitFloatingPointMinOrMax<MinOrMax::Max, float>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
         ),
         BLOCK(
             ImmHelpers::immLocation(lhsLocation, rhsLocation) = Location::fromFPR(wasmScratchFPR);
             emitMoveConst(ImmHelpers::imm(lhs, rhs), Location::fromFPR(wasmScratchFPR));
-            emitFloatingPointMinOrMax<float, MinOrMax::Max>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
+            emitFloatingPointMinOrMax<MinOrMax::Max, float>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
         )
     );
 }
@@ -2123,14 +2123,14 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF64Max(Value lhs, Value rhs, Value& 
 {
     EMIT_BINARY(
         "F64Max", TypeKind::F64,
-        BLOCK(Value::fromF64(std::max(lhs.asF64(), rhs.asF64()))),
+        BLOCK(Value::fromF64(computeFloatingPointMinOrMax<MinOrMax::Max>(lhs.asF64(), rhs.asF64()))),
         BLOCK(
-            emitFloatingPointMinOrMax<double, MinOrMax::Max>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
+            emitFloatingPointMinOrMax<MinOrMax::Max, double>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
         ),
         BLOCK(
             ImmHelpers::immLocation(lhsLocation, rhsLocation) = Location::fromFPR(wasmScratchFPR);
             emitMoveConst(ImmHelpers::imm(lhs, rhs), Location::fromFPR(wasmScratchFPR));
-            emitFloatingPointMinOrMax<double, MinOrMax::Max>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
+            emitFloatingPointMinOrMax<MinOrMax::Max, double>(lhsLocation.asFPR(), rhsLocation.asFPR(), resultLocation.asFPR());
         )
     );
 }

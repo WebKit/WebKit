@@ -1404,8 +1404,22 @@ public:
 
     enum class MinOrMax { Min, Max };
 
-    template<typename FloatType, MinOrMax IsMinOrMax>
+    template<MinOrMax IsMinOrMax, typename FloatType>
     void emitFloatingPointMinOrMax(FPRReg left, FPRReg right, FPRReg result);
+
+    template<MinOrMax IsMinOrMax, typename FloatType>
+    constexpr FloatType computeFloatingPointMinOrMax(FloatType left, FloatType right)
+    {
+        if (std::isnan(left))
+            return left;
+        if (std::isnan(right))
+            return right;
+
+        if constexpr (IsMinOrMax == MinOrMax::Min)
+            return std::min<FloatType>(left, right);
+        else
+            return std::max<FloatType>(left, right);
+    }
 
     PartialResult WARN_UNUSED_RETURN addF32Min(Value lhs, Value rhs, Value& result);
 
