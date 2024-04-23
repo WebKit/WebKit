@@ -1410,7 +1410,7 @@ inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8Conversio
         memcpy(buffer, characters.data(), prefixLength);
         buffer += prefixLength;
 
-        auto success = Unicode::convertLatin1ToUTF8(&nonASCII, characters.data() + characters.size(), &buffer, buffer + (bufferVector.size() - prefixLength));
+        auto success = Unicode::convertLatin1ToUTF8(characters.subspan(nonASCII - characters.data()), &buffer, buffer + (bufferVector.size() - prefixLength));
         ASSERT_UNUSED(success, success); // (characters.size() * 2) should be sufficient for any conversion from Latin1
         return function(std::span(bufferVector.data(), buffer));
     }
@@ -1418,8 +1418,7 @@ inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8Conversio
 #else
     Vector<char, 1024> bufferVector(characters.size() * 2);
     char* buffer = bufferVector.data();
-    const LChar* source = characters.data();
-    bool success = Unicode::convertLatin1ToUTF8(&source, source + characters.size(), &buffer, buffer + bufferVector.size());
+    bool success = Unicode::convertLatin1ToUTF8(characters, &buffer, buffer + bufferVector.size());
     ASSERT_UNUSED(success, success); // (characters.size() * 2) should be sufficient for any conversion from Latin1
     return function(std::span(bufferVector.data(), buffer));
 #endif

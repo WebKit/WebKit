@@ -1150,9 +1150,7 @@ static xmlEntityPtr sharedXHTMLEntity()
 static size_t convertUTF16EntityToUTF8(std::span<const UChar> utf16Entity, char* target, size_t targetSize)
 {
     const char* originalTarget = target;
-    auto start = utf16Entity.data();
-    auto end = start + utf16Entity.size();
-    auto conversionResult = WTF::Unicode::convertUTF16ToUTF8(&start, end, &target, target + targetSize);
+    auto conversionResult = WTF::Unicode::convertUTF16ToUTF8(utf16Entity, &target, target + targetSize);
     if (conversionResult != WTF::Unicode::ConversionResult::Success)
         return 0;
 

@@ -60,8 +60,10 @@ CFStringRef JSStringCopyCFString(CFAllocatorRef allocator, JSStringRef string)
     if (!string || !string->length())
         return CFSTR("");
 
-    if (string->is8Bit())
-        return CFStringCreateWithBytes(allocator, reinterpret_cast<const UInt8*>(string->characters8()), string->length(), kCFStringEncodingISOLatin1, false);
-
-    return CFStringCreateWithCharacters(allocator, reinterpret_cast<const UniChar*>(string->characters16()), string->length());
+    if (string->is8Bit()) {
+        auto characters = string->span8();
+        return CFStringCreateWithBytes(allocator, reinterpret_cast<const UInt8*>(characters.data()), characters.size(), kCFStringEncodingISOLatin1, false);
+    }
+    auto characters = string->span16();
+    return CFStringCreateWithCharacters(allocator, reinterpret_cast<const UniChar*>(characters.data()), characters.size());
 }

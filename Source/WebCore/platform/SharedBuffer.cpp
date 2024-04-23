@@ -746,12 +746,11 @@ RefPtr<SharedBuffer> utf8Buffer(const String& string)
     char* p = reinterpret_cast<char*>(buffer.data());
     if (length) {
         if (string.is8Bit()) {
-            const LChar* d = string.characters8();
-            if (!WTF::Unicode::convertLatin1ToUTF8(&d, d + length, &p, p + buffer.size()))
+            if (!WTF::Unicode::convertLatin1ToUTF8(string.span8(), &p, p + buffer.size()))
                 return nullptr;
         } else {
-            const UChar* d = string.characters16();
-            if (WTF::Unicode::convertUTF16ToUTF8(&d, d + length, &p, p + buffer.size()) != WTF::Unicode::ConversionResult::Success)
+            auto span = string.span16();
+            if (WTF::Unicode::convertUTF16ToUTF8(span, &p, p + buffer.size()) != WTF::Unicode::ConversionResult::Success)
                 return nullptr;
         }
     }
