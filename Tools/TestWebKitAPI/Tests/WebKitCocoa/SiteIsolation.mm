@@ -2834,6 +2834,19 @@ TEST(SiteIsolation, SelectAll)
 }
 #endif
 
+TEST(SiteIsolation, PresentationUpdateAfterCrossSiteNavigation)
+{
+    HTTPServer server({
+        { "/source"_s, { "<script> location.href = 'https://webkit.org/destination'; </script>"_s } },
+        { "/destination"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/source"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+}
+
 // FIXME: <rdar://121240941> Add tests covering provisional navigation failures in cases like SiteIsolation.NavigateOpener.
 
 }

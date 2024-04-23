@@ -207,17 +207,15 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
 {
     m_drawingArea = m_page->pageClient().createDrawingAreaProxy(protectedProcess());
 
-    bool sendPageCreationParameters { true };
     bool registerWithInspectorController { true };
     if (websitePolicies)
         m_mainFrameWebsitePoliciesData = makeUnique<WebsitePoliciesData>(websitePolicies->data());
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
 
+    Ref protectedProcess = this->protectedProcess();
     if (page().preferences().processSwapOnCrossSiteWindowOpenEnabled() || page().preferences().siteIsolationEnabled()) {
         RegistrableDomain navigationDomain(m_request.url());
-        RefPtr openerFrame = m_page->openerFrame();
-        RefPtr openerPage = openerFrame ? openerFrame->page() : nullptr;
-        if (openerFrame)
+        if (m_page->openerFrame())
             mainFrameIdentifier = m_page->mainFrame()->frameID();
         if (auto existingRemotePageProxy = m_browsingContextGroup->takeRemotePageInProcessForProvisionalPage(page(), navigationDomain)) {
             m_webPageID = existingRemotePageProxy->pageID();
@@ -227,19 +225,15 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
             LocalFrameCreationParameters localFrameCreationParameters {
                 std::nullopt
             };
-            protectedProcess()->send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, m_page->mainFrame()->frameID()), m_webPageID);
-            sendPageCreationParameters = false;
+            protectedProcess->send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, m_page->mainFrame()->frameID()), m_webPageID);
             m_needsCookieAccessAddedInNetworkProcess = true;
             registerWithInspectorController = false; // FIXME: <rdar://121240770> This is a hack. There seems to be a bug in our interaction with WebPageInspectorController.
         }
         m_needsDidStartProvisionalLoad = false;
     }
 
-    if (sendPageCreationParameters) {
-        Ref protectedProcess = this->protectedProcess();
-        protectedProcess->send(Messages::WebProcess::CreateWebPage(m_webPageID, m_page->creationParametersForProvisionalPage(process(), *m_drawingArea, WTFMove(websitePolicies), WTFMove(mainFrameIdentifier))), 0);
-        protectedProcess->addVisitedLinkStoreUser(m_page->visitedLinkStore(), m_page->identifier());
-    }
+    protectedProcess->send(Messages::WebProcess::CreateWebPage(m_webPageID, m_page->creationParametersForProvisionalPage(process(), *m_drawingArea, WTFMove(websitePolicies), WTFMove(mainFrameIdentifier))), 0);
+    protectedProcess->addVisitedLinkStoreUser(m_page->visitedLinkStore(), m_page->identifier());
 
     if (m_page->isLayerTreeFrozenDueToSwipeAnimation())
         send(Messages::WebPage::SwipeAnimationDidStart());
