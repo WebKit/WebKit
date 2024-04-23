@@ -782,10 +782,11 @@ template<typename T> constexpr T fabsConstExpr(T value)
 }
 
 // For use in places where we could negate std::numeric_limits<T>::min and would like to avoid UB.
-template<typename T> constexpr typename std::enable_if_t<std::is_integral_v<T> && std::is_signed_v<T>, std::make_unsigned_t<T>> negate(T v)
+template<typename T>
+requires std::is_integral_v<T>
+constexpr T negate(T v)
 {
-    ASSERT(v <= 0);
-    return ~static_cast<std::make_unsigned_t<T>>(v) + 1U;
+    return static_cast<T>(~static_cast<std::make_unsigned_t<T>>(v) + 1U);
 }
 
 template<typename BitsType, typename InputType>
