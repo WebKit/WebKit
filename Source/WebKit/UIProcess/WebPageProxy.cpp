@@ -7572,6 +7572,7 @@ void WebPageProxy::fullscreenMayReturnToInline()
 
 void WebPageProxy::didEnterFullscreen(PlaybackSessionContextIdentifier identifier)
 {
+    protectedPageClient()->didEnterFullscreen();
     m_uiClient->didEnterFullscreen(this);
 
     internals().currentFullscreenVideoSessionIdentifier = identifier;
@@ -7583,6 +7584,7 @@ void WebPageProxy::didExitFullscreen(PlaybackSessionContextIdentifier identifier
     if (m_screenOrientationManager)
         m_screenOrientationManager->unlockIfNecessary();
 
+    protectedPageClient()->didExitFullscreen();
     m_uiClient->didExitFullscreen(this);
 
     if (internals().currentFullscreenVideoSessionIdentifier == identifier) {

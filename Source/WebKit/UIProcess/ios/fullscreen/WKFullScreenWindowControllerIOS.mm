@@ -1926,6 +1926,22 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 #endif
 }
 
+- (void)didExitFullscreen
+{
+#if PLATFORM(VISION)
+    if (!self.isFullScreen || !WebKit::useSpatialFullScreenTransition())
+        return;
+
+    // FIXME 126894293: When entering video fullscreen, LinearMediaKit changes the client scene's
+    // windows' transform3D, then fails to restore them to their original values when exiting
+    // fullscreen. As a result, the element fullscreen window may no longer be frontmost when
+    // exiting back to element fullscreen from video fullscreen. Work around this by restoring the
+    // expected transform3D values here.
+    [_lastKnownParentWindow setTransform3D:CATransform3DTranslate([_lastKnownParentWindow transform3D], 0, 0, kOutgoingWindowZOffset)];
+    [_window setTransform3D:[_parentWindowState transform3D]];
+#endif
+}
+
 @end
 
 #if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)

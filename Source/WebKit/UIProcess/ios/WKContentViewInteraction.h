@@ -822,11 +822,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)updateTextSuggestionsForInputDelegate;
 #endif
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-- (void)_didEnterFullscreen;
-- (void)_didExitFullscreen;
-#endif
-
 - (void)_updateRuntimeProtocolConformanceIfNeeded;
 
 - (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void (^)(NSArray<_WKTextInputContext *> *))completionHandler;

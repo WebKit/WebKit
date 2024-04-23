@@ -1093,14 +1093,11 @@ void PageClientImpl::showDataDetectorsUIForPositionInformation(const Interaction
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
-void PageClientImpl::didEnterFullscreen()
-{
-    [contentView() _didEnterFullscreen];
-}
-
 void PageClientImpl::didExitFullscreen()
 {
-    [contentView() _didExitFullscreen];
+#if ENABLE(FULLSCREEN_API)
+    [[webView() fullScreenWindowController] didExitFullscreen];
+#endif
 }
 
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)

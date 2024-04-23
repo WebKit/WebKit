@@ -11551,20 +11551,6 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
 #endif // HAVE(PENCILKIT_TEXT_INPUT)
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-
-- (void)_didEnterFullscreen
-{
-    [self _startSuppressingSelectionAssistantForReason:WebKit::SuppressSelectionAssistantReason::ShowingFullscreenVideo];
-}
-
-- (void)_didExitFullscreen
-{
-    [self _stopSuppressingSelectionAssistantForReason:WebKit::SuppressSelectionAssistantReason::ShowingFullscreenVideo];
-}
-
-#endif // ENABLE(VIDEO_PRESENTATION_MODE)
-
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
