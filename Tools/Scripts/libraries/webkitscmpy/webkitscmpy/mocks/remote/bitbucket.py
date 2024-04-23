@@ -41,6 +41,7 @@ class BitBucket(mocks.Requests):
         self.default_branch = default_branch
         self.remote = remote
         self.project = '/'.join(remote.split('/')[1:])
+        self.current_id = 1
 
         super(BitBucket, self).__init__(self.remote.split('/')[0])
 
@@ -343,12 +344,26 @@ class BitBucket(mocks.Requests):
                     values=self.pull_requests[existing].get('activities', []),
                 ))
             if method == 'POST' and split_url[-1] == 'comments':
-                self.pull_requests[existing]['activities'].append(dict(comment=dict(
+                comment = dict(
                     author=dict(displayName='Tim Committer', emailAddress='committer@webkit.org', name='timcommitter'),
                     createdDate=int(time.time() * 1000),
                     updatedDate=int(time.time() * 1000),
+                    comments=[],
                     text=json.get('text', ''),
-                )))
+                    id=self.current_id,
+                )
+                if json.get('parent'):
+                    parent_id = json.get('parent', {}).get('id', None)
+                    for candidate in self.pull_requests[existing]['activities']:
+                        if not parent_id or parent_id != candidate.get('comment', {}).get('id'):
+                            continue
+                        candidate['comment']['comments'].append(comment)
+                        break
+                    else:
+                        return mocks.Response.create404(url)
+                else:
+                    self.pull_requests[existing]['activities'].append(dict(comment=comment))
+                self.current_id += 1
                 return mocks.Response.fromJson({})
             if method == 'POST' and split_url[-1] == 'decline':
                 self.pull_requests[existing]['open'] = False
