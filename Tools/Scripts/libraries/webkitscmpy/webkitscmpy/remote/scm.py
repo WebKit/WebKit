@@ -62,6 +62,9 @@ class Scm(ScmBase):
         def statuses(self, pull_request):
             raise NotImplementedError()
 
+        def diff(self, pull_request, comments=False, diff_comments=None):
+            raise NotImplementedError()
+
 
     @classmethod
     def from_url(cls, url, contributors=None, classifier=None):
@@ -81,6 +84,25 @@ class Scm(ScmBase):
                 return candidate(url, contributors=contributors, classifier=classifier)
 
         raise OSError("'{}' is not a known SCM server".format(url))
+
+    @classmethod
+    def insert_diff_comments(cls, generator, comments=None):
+        file = None
+        count = 0
+        comments = comments or dict()
+        for line in generator():
+            if line.startswith('+++ b/'):
+                file = line.split('/', 1)[-1]
+                count = -1
+            yield line
+            comments_on = comments.get(file, {}).get(None if count < 0 else count, [])
+            if comments_on:
+                yield '>>>>'
+                for comment in comments_on:
+                    for line in comment.splitlines():
+                        yield line
+                yield '<<<<'
+            count += 1
 
     def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, classifier=None):
         super(Scm, self).__init__(

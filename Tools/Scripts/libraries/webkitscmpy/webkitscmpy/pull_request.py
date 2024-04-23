@@ -243,16 +243,21 @@ class PullRequest(object):
             self._comments = list(self.generator.comments(self))
         return self._comments
 
-    def review(self, comment=None, approve=None):
+    def review(self, comment=None, approve=None, diff_comments=None):
         if not self.generator:
             raise self.Exception('No associated pull-request generator')
-        return self.generator.review(self, comment=comment, approve=approve)
+        return self.generator.review(self, comment=comment, approve=approve, diff_comments=diff_comments)
 
     @property
     def statuses(self):
         if self._statuses is None and self.generator:
             self._statuses = list(self.generator.statuses(self))
         return self._statuses
+
+    def diff(self, comments=False):
+        if not self.generator:
+            raise self.Exception('No associated pull-request generator')
+        return self.generator.diff(self, comments=comments)
 
     def __repr__(self):
         return 'PR {}{}'.format(self.number, ' | {}'.format(self.title) if self.title else '')
