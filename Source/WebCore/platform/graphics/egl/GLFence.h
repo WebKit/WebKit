@@ -30,7 +30,9 @@ class GLFence {
     WTF_MAKE_NONCOPYABLE(GLFence);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static std::unique_ptr<GLFence> create();
+    static bool isSupported();
+    enum class ShouldFlush : bool { No, Yes };
+    WEBCORE_EXPORT static std::unique_ptr<GLFence> create(ShouldFlush = ShouldFlush::Yes);
     explicit GLFence(GLsync);
     ~GLFence();
 
