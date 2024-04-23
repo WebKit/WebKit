@@ -290,7 +290,7 @@ class SimulatedDeviceManager(object):
         assert device_identifier is not None
 
         for device in cls.available_devices(host):
-            if device.platform_device.name == name:
+            if device.platform_device.name == name and device.platform_device.device_type == device_type and device.platform_device.build_version == runtime.build_version:
                 device.platform_device._delete()
                 break
 
@@ -300,7 +300,7 @@ class SimulatedDeviceManager(object):
         # We just added a device, so our list of _available_devices needs to be re-synced.
         cls.populate_available_devices(host)
         for device in cls.available_devices(host):
-            if device.platform_device.name == name:
+            if device.platform_device.name == name and device.platform_device.device_type == device_type and device.platform_device.build_version == runtime.build_version:
                 device.platform_device.managed_by_script = True
                 return device
         return None
