@@ -416,8 +416,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     //
     // Note that we intentionally enable tail call for naked constructors since it does not have special code for "return".
     , m_allowTailCallOptimization(Options::useTailCalls() && !isConstructor() && constructorKind() == ConstructorKind::None && functionNode->isStrictMode())
-    // Currently, we're only conservatively allowing CallIgnoreResult optimization on tail call results that are
-    // not in return statements. We're not attempting to eliminate all unused call results.
     , m_allowCallIgnoreResultOptimization(true)
     , m_needsToUpdateArrowFunctionContext(functionNode->usesArrowFunction() || functionNode->usesEval())
     , m_ecmaMode(ECMAMode::fromBool(functionNode->isStrictMode()))

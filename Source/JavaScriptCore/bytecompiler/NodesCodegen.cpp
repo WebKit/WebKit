@@ -2787,7 +2787,7 @@ RegisterID* DeleteDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 
 RegisterID* DeleteValueNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    generator.emitNode(generator.ignoredResult(), m_expr);
+    generator.emitNodeInIgnoreResultPosition(m_expr);
 
     // delete on a non-location expression ignores the value and returns true
     return generator.emitLoad(generator.finalDestination(dst), true);
@@ -2798,7 +2798,7 @@ RegisterID* DeleteValueNode::emitBytecode(BytecodeGenerator& generator, Register
 RegisterID* VoidNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (dst == generator.ignoredResult()) {
-        generator.emitNode(generator.ignoredResult(), m_expr);
+        generator.emitNodeInIgnoreResultPosition(m_expr);
         return nullptr;
     }
     RefPtr<RegisterID> r0 = generator.emitNode(m_expr);
@@ -2830,7 +2830,7 @@ RegisterID* TypeOfResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
 RegisterID* TypeOfValueNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (dst == generator.ignoredResult()) {
-        generator.emitNode(generator.ignoredResult(), m_expr);
+        generator.emitNodeInIgnoreResultPosition(m_expr);
         return nullptr;
     }
     RefPtr<RegisterID> src = generator.emitNode(m_expr);
@@ -4044,7 +4044,7 @@ RegisterID* CommaNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     CommaNode* node = this;
     for (; node->next(); node = node->next()) {
         generator.emitDebugHook(debugHookType, node->m_expr->position());
-        generator.emitNode(generator.ignoredResult(), node->m_expr);
+        generator.emitNodeInIgnoreResultPosition(node->m_expr);
     }
     generator.emitDebugHook(debugHookType, node->m_expr->position());
     return generator.emitNodeInTailPosition(dst, node->m_expr);
@@ -4290,7 +4290,7 @@ void ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.pushLexicalScope(this, BytecodeGenerator::ScopeType::LetConstScope, BytecodeGenerator::TDZCheckOptimization::Optimize, BytecodeGenerator::NestedScopeType::IsNested, &forLoopSymbolTable);
 
     if (m_expr1) {
-        generator.emitNode(generator.ignoredResult(), m_expr1);
+        generator.emitNodeInIgnoreResultPosition(m_expr1);
         if (m_initializerContainsClosure)
             generator.prepareLexicalScopeForNextForLoopIteration(this, forLoopSymbolTable);
     }
@@ -4308,7 +4308,7 @@ void ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitLabel(*scope->continueTarget());
     generator.prepareLexicalScopeForNextForLoopIteration(this, forLoopSymbolTable);
     if (m_expr3)
-        generator.emitNode(generator.ignoredResult(), m_expr3);
+        generator.emitNodeInIgnoreResultPosition(m_expr3);
 
     if (m_expr2)
         generator.emitNodeInConditionContext(m_expr2, topOfLoop.get(), scope->breakTarget(), FallThroughMeansFalse);
@@ -4438,7 +4438,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.pushLexicalScope(this, BytecodeGenerator::ScopeType::LetConstScope, BytecodeGenerator::TDZCheckOptimization::Optimize, BytecodeGenerator::NestedScopeType::IsNested, &forLoopSymbolTable);
 
     if (m_lexpr->isAssignResolveNode())
-        generator.emitNode(generator.ignoredResult(), m_lexpr);
+        generator.emitNodeInIgnoreResultPosition(m_lexpr);
 
     RefPtr<RegisterID> base = generator.newTemporary();
 

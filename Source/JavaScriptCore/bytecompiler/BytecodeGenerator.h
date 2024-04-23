@@ -475,6 +475,12 @@ namespace JSC {
             return emitNodeInTailPosition(dst, n);
         }
 
+        void emitNodeInIgnoreResultPosition(StatementNode* n)
+        {
+            SetForScope tailPositionPoisoner(m_allowTailCallOptimization, false);
+            return emitNodeInTailPosition(ignoredResult(), n);
+        }
+
         void emitNodeInTailPosition(RegisterID* dst, StatementNode* n)
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
@@ -525,6 +531,12 @@ namespace JSC {
         {
             SetForScope tailPositionPoisoner(m_allowTailCallOptimization, false);
             return emitNodeInTailPosition(dst, n);
+        }
+
+        RegisterID* emitNodeInIgnoreResultPosition(ExpressionNode* n)
+        {
+            SetForScope tailPositionPoisoner(m_allowTailCallOptimization, false);
+            return emitNodeInTailPosition(ignoredResult(), n);
         }
 
         RegisterID* emitNodeInTailPosition(RegisterID* dst, ExpressionNode* n)
