@@ -1634,6 +1634,7 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
     }
 
     id<MTLTexture> mtlDestinationTexture = destinationTexture.texture();
+    id<MTLTexture> mtlSourceTexture = fromAPI(source.texture).texture();
 
     // FIXME(PERFORMANCE): Is it actually faster to use the -[MTLBlitCommandEncoder copyFromTexture:...toTexture:...levelCount:]
     // variant, where possible, rather than calling the other variant in a loop?
@@ -1651,8 +1652,10 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             NSUInteger sourceSlice = source.origin.z + layer;
             NSUInteger destinationSlice = destination.origin.z + layer;
+            if (destinationSlice >= mtlDestinationTexture.arrayLength || sourceSlice >= mtlSourceTexture.arrayLength)
+                continue;
             [m_blitCommandEncoder
-                copyFromTexture:fromAPI(source.texture).texture()
+                copyFromTexture:mtlSourceTexture
                 sourceSlice:sourceSlice
                 sourceLevel:source.mipLevel
                 sourceOrigin:sourceOrigin
@@ -1677,8 +1680,10 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             NSUInteger sourceSlice = source.origin.z + layer;
             NSUInteger destinationSlice = destination.origin.z + layer;
+            if (destinationSlice >= mtlDestinationTexture.arrayLength || sourceSlice >= mtlSourceTexture.arrayLength)
+                continue;
             [m_blitCommandEncoder
-                copyFromTexture:fromAPI(source.texture).texture()
+                copyFromTexture:mtlSourceTexture
                 sourceSlice:sourceSlice
                 sourceLevel:source.mipLevel
                 sourceOrigin:sourceOrigin
@@ -1704,7 +1709,7 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, destination.origin.z);
 
         [m_blitCommandEncoder
-            copyFromTexture:fromAPI(source.texture).texture()
+            copyFromTexture:mtlSourceTexture
             sourceSlice:0
             sourceLevel:source.mipLevel
             sourceOrigin:sourceOrigin
