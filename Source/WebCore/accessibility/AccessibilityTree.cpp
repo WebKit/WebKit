@@ -72,7 +72,7 @@ AccessibilityRole AccessibilityTree::determineAccessibilityRole()
     if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Tree)
         return AccessibilityRenderObject::determineAccessibilityRole();
 
-    return isTreeValid() ? AccessibilityRole::Tree : AccessibilityRole::Group;
+    return isTreeValid() ? AccessibilityRole::Tree : AccessibilityRole::Generic;
 }
 
 bool AccessibilityTree::isTreeValid() const

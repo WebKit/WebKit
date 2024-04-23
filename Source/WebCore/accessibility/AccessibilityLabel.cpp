@@ -67,7 +67,7 @@ static bool childrenContainOnlyStaticText(const AccessibilityObject::Accessibili
     for (const auto& child : children) {
         if (child->roleValue() == AccessibilityRole::StaticText)
             continue;
-        if (child->roleValue() == AccessibilityRole::Group) {
+        if (child->isGroup()) {
             if (!childrenContainOnlyStaticText(child->children()))
                 return false;
         } else

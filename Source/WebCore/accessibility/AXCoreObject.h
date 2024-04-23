@@ -121,11 +121,9 @@ enum class AccessibilityRole {
     ApplicationAlert,
     ApplicationAlertDialog,
     ApplicationDialog,
-    ApplicationGroup,
     ApplicationLog,
     ApplicationMarquee,
     ApplicationStatus,
-    ApplicationTextGroup,
     ApplicationTimer,
     Audio,
     Blockquote,
@@ -274,16 +272,12 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "ApplicationAlertDialog"_s;
     case AccessibilityRole::ApplicationDialog:
         return "ApplicationDialog"_s;
-    case AccessibilityRole::ApplicationGroup:
-        return "ApplicationGroup"_s;
     case AccessibilityRole::ApplicationLog:
         return "ApplicationLog"_s;
     case AccessibilityRole::ApplicationMarquee:
         return "ApplicationMarquee"_s;
     case AccessibilityRole::ApplicationStatus:
         return "ApplicationStatus"_s;
-    case AccessibilityRole::ApplicationTextGroup:
-        return "ApplicationTextGroup"_s;
     case AccessibilityRole::ApplicationTimer:
         return "ApplicationTimer"_s;
     case AccessibilityRole::Audio:

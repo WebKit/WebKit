@@ -312,10 +312,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return "AXApplicationAlertDialog"_s;
     case AccessibilityRole::ApplicationDialog:
         return "AXApplicationDialog"_s;
-    case AccessibilityRole::ApplicationGroup:
-    case AccessibilityRole::ApplicationTextGroup:
     case AccessibilityRole::Feed:
     case AccessibilityRole::Footnote:
+    case AccessibilityRole::Group:
         return "AXApplicationGroup"_s;
     case AccessibilityRole::ApplicationLog:
         return "AXApplicationLog"_s;
@@ -353,6 +352,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     default:
         break;
     }
+
+    // Only return a subrole for explicitly defined (via ARIA) text groups.
+    if (ariaRoleAttribute() == AccessibilityRole::TextGroup)
+        return "AXApplicationGroup"_s;
 
     if (role == AccessibilityRole::MathElement) {
         if (isMathFraction())
@@ -909,8 +912,6 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::ApplicationAlert, NSAccessibilityGroupRole },
         { AccessibilityRole::ApplicationAlertDialog, NSAccessibilityGroupRole },
         { AccessibilityRole::ApplicationDialog, NSAccessibilityGroupRole },
-        { AccessibilityRole::ApplicationGroup, NSAccessibilityGroupRole },
-        { AccessibilityRole::ApplicationTextGroup, NSAccessibilityGroupRole },
         { AccessibilityRole::ApplicationLog, NSAccessibilityGroupRole },
         { AccessibilityRole::ApplicationMarquee, NSAccessibilityGroupRole },
         { AccessibilityRole::ApplicationStatus, NSAccessibilityGroupRole },

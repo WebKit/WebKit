@@ -58,8 +58,7 @@ static inline bool roleIsTextType(AccessibilityRole role)
         || role == AccessibilityRole::Pre
         || role == AccessibilityRole::GridCell
         || role == AccessibilityRole::TextGroup
-        || role == AccessibilityRole::ApplicationTextGroup
-        || role == AccessibilityRole::ApplicationGroup;
+        || role == AccessibilityRole::Group;
 }
 
 OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfacesForObject(AXCoreObject& coreObject)
@@ -235,7 +234,6 @@ static Atspi::Role atspiRole(AccessibilityRole role)
         return Atspi::Role::TreeTable;
     case AccessibilityRole::Application:
         return Atspi::Role::Application;
-    case AccessibilityRole::ApplicationGroup:
     case AccessibilityRole::Feed:
     case AccessibilityRole::Figure:
     case AccessibilityRole::GraphicsObject:
@@ -284,7 +282,6 @@ static Atspi::Role atspiRole(AccessibilityRole role)
         return Atspi::Role::BlockQuote;
     case AccessibilityRole::Footnote:
         return Atspi::Role::Footnote;
-    case AccessibilityRole::ApplicationTextGroup:
     case AccessibilityRole::Code:
     case AccessibilityRole::Generic:
     case AccessibilityRole::Pre:

@@ -283,7 +283,6 @@ bool AccessibilityObject::accessibleNameDerivesFromContent() const
     case AccessibilityRole::ApplicationAlert:
     case AccessibilityRole::ApplicationAlertDialog:
     case AccessibilityRole::ApplicationDialog:
-    case AccessibilityRole::ApplicationGroup:
     case AccessibilityRole::ApplicationLog:
     case AccessibilityRole::ApplicationMarquee:
     case AccessibilityRole::ApplicationStatus:
@@ -2660,7 +2659,7 @@ static void initializeRoleMap()
         { "directory"_s, AccessibilityRole::Directory },
         // The 'doc-*' roles are defined the ARIA DPUB mobile: https://www.w3.org/TR/dpub-aam-1.0
         // Editor's draft is currently at https://w3c.github.io/dpub-aam
-        { "doc-abstract"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-abstract"_s, AccessibilityRole::TextGroup },
         { "doc-acknowledgments"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-afterword"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-appendix"_s, AccessibilityRole::LandmarkDocRegion },
@@ -2669,18 +2668,18 @@ static void initializeRoleMap()
         { "doc-bibliography"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-biblioref"_s, AccessibilityRole::WebCoreLink },
         { "doc-chapter"_s, AccessibilityRole::LandmarkDocRegion },
-        { "doc-colophon"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-colophon"_s, AccessibilityRole::TextGroup },
         { "doc-conclusion"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-cover"_s, AccessibilityRole::Image },
-        { "doc-credit"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-credit"_s, AccessibilityRole::TextGroup },
         { "doc-credits"_s, AccessibilityRole::LandmarkDocRegion },
-        { "doc-dedication"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-dedication"_s, AccessibilityRole::TextGroup },
         { "doc-endnote"_s, AccessibilityRole::ListItem },
         { "doc-endnotes"_s, AccessibilityRole::LandmarkDocRegion },
-        { "doc-epigraph"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-epigraph"_s, AccessibilityRole::TextGroup },
         { "doc-epilogue"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-errata"_s, AccessibilityRole::LandmarkDocRegion },
-        { "doc-example"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-example"_s, AccessibilityRole::TextGroup },
         { "doc-footnote"_s, AccessibilityRole::Footnote },
         { "doc-foreword"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-glossary"_s, AccessibilityRole::LandmarkDocRegion },
@@ -2694,8 +2693,8 @@ static void initializeRoleMap()
         { "doc-part"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-preface"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-prologue"_s, AccessibilityRole::LandmarkDocRegion },
-        { "doc-pullquote"_s, AccessibilityRole::ApplicationTextGroup },
-        { "doc-qna"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-pullquote"_s, AccessibilityRole::TextGroup },
+        { "doc-qna"_s, AccessibilityRole::TextGroup },
         { "doc-subtitle"_s, AccessibilityRole::Heading },
         { "doc-tip"_s, AccessibilityRole::DocumentNote },
         { "doc-toc"_s, AccessibilityRole::LandmarkNavigation },
@@ -2717,7 +2716,7 @@ static void initializeRoleMap()
         { "feed"_s, AccessibilityRole::Feed },
         { "form"_s, AccessibilityRole::Form },
         { "rowheader"_s, AccessibilityRole::RowHeader },
-        { "group"_s, AccessibilityRole::ApplicationGroup },
+        { "group"_s, AccessibilityRole::Group },
         { "heading"_s, AccessibilityRole::Heading },
         // The "image" role is synonymous with the "img" role. https://w3c.github.io/aria/#image
         { "image"_s, AccessibilityRole::Image },
@@ -2831,15 +2830,15 @@ String AccessibilityObject::computedRoleString() const
     if (role == AccessibilityRole::Image && accessibilityIsIgnored())
         return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Presentational));
 
-    // We do not compute a role string for generic block elements with user-agent assigned roles.
-    if (role == AccessibilityRole::Group || role == AccessibilityRole::TextGroup)
-        return emptyString();
-
     // We do compute a role string for block elements with author-provided roles.
-    if (role == AccessibilityRole::ApplicationTextGroup
+    if (ariaRoleAttribute() == AccessibilityRole::TextGroup
         || role == AccessibilityRole::Footnote
         || role == AccessibilityRole::GraphicsObject)
-        return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::ApplicationGroup));
+        return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Group));
+
+    // We do not compute a role string for generic block elements with user-agent assigned roles.
+    if (role == AccessibilityRole::TextGroup)
+        return emptyString();
 
     if (role == AccessibilityRole::GraphicsDocument)
         return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Document));
@@ -4385,7 +4384,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::relatedObjects(AX
 bool AccessibilityObject::shouldFocusActiveDescendant() const
 {
     switch (ariaRoleAttribute()) {
-    case AccessibilityRole::ApplicationGroup:
+    case AccessibilityRole::Group:
     case AccessibilityRole::ListBox:
     case AccessibilityRole::Menu:
     case AccessibilityRole::MenuBar:

@@ -5,8 +5,6 @@ Simple Elements With aria-label to Ensure Tree Inclusion
 
 PASS el-a[href]
 PASS el-a[xlink:href]
-FAIL el-g assert_equals: <g fill="white" stroke="green" stroke-width="2" data-testname="el-g" data-expectedrole="group" aria-label="label" class="ex">
-    <circle cx="40" cy="40" r="25"></circle>
-  </g> expected "group" but got ""
+PASS el-g
 PASS el-image
 

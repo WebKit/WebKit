@@ -1001,11 +1001,9 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::ApplicationAlert:
     case AccessibilityRole::ApplicationAlertDialog:
     case AccessibilityRole::ApplicationDialog:
-    case AccessibilityRole::ApplicationGroup:
     case AccessibilityRole::ApplicationLog:
     case AccessibilityRole::ApplicationMarquee:
     case AccessibilityRole::ApplicationStatus:
-    case AccessibilityRole::ApplicationTextGroup:
     case AccessibilityRole::ApplicationTimer:
     case AccessibilityRole::Audio:
     case AccessibilityRole::Blockquote:
@@ -1762,7 +1760,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     
     for (unsigned i = 0; i < childrenSize; ++i) {
         AccessibilityRole role = children[i]->roleValue();
-        if (role != AccessibilityRole::StaticText && role != AccessibilityRole::Image && role != AccessibilityRole::Group && role != AccessibilityRole::TextGroup)
+        if (role != AccessibilityRole::StaticText && role != AccessibilityRole::Image && !children[i]->isGroup())
             return NO;
     }
     

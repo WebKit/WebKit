@@ -2189,7 +2189,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 #if !PLATFORM(COCOA)
     // This block should be deleted for all platforms, but doing so causes a lot of test failures that need to be sorted out.
     if (m_renderer->isRenderBlockFlow())
-        return m_renderer->isAnonymousBlock() ? AccessibilityRole::TextGroup : AccessibilityRole::Group;
+        return m_renderer->isAnonymousBlock() ? AccessibilityRole::TextGroup : AccessibilityRole::Generic;
 #endif
     
     // InlineRole is the final fallback before assigning AccessibilityRole::Unknown to an object. It makes it
@@ -2496,7 +2496,7 @@ void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
         }
 
         if (!menuItemCount)
-            m_role = AccessibilityRole::Group;
+            m_role = AccessibilityRole::Generic;
     }
     if (role == AccessibilityRole::SVGRoot && !children().size())
         m_role = AccessibilityRole::Image;

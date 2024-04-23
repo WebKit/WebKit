@@ -154,11 +154,7 @@ PASS Role: nav with display: contents is labelled via aria-labelledby
 PASS Role: button with display: contents is labelled via aria-label
 PASS Role: div with role group with display: contents is labelled via aria-label
 PASS Role: button with display: contents is labelled via label for/id association
-FAIL Role: g element with display: contents, as child of svg, is labelled via title element assert_equals: <g style="display: contents;" fill="silver" stroke="blue" data-expectedlabel="group label" data-expectedrole="group" data-testname="g element with display: contents, as child of svg, is labelled via title element" class="ex-role-and-label ex-label-only ex-role-only">
-      <title>group label</title>
-      <circle cx="20" cy="20" r="10"></circle>
-      <circle cx="20" cy="20" r="10"></circle>
-    </g> expected "group" but got ""
+PASS Role: g element with display: contents, as child of svg, is labelled via title element
 PASS Role: link with display: contents is labelled via name from contents
 PASS Role: button with display: contents is labelled via name from contents
 PASS Role: h3 with display: contents is labelled via name from contents

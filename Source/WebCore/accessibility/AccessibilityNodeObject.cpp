@@ -407,7 +407,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::List;
 
     if (element->hasTagName(fieldsetTag))
-        return AccessibilityRole::ApplicationGroup;
+        return AccessibilityRole::Group;
     if (element->hasTagName(figureTag))
         return AccessibilityRole::Figure;
     if (element->hasTagName(pTag))
@@ -452,7 +452,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     if (element->hasTagName(sectionTag))
         return hasValidARIALabel() || hasAttribute(aria_labelledbyAttr) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
     if (element->hasTagName(addressTag))
-        return AccessibilityRole::ApplicationGroup;
+        return AccessibilityRole::Group;
     if (element->hasTagName(blockquoteTag))
         return AccessibilityRole::Blockquote;
     if (element->hasTagName(captionTag) || element->hasTagName(figcaptionTag))
@@ -516,7 +516,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     if (element->hasTagName(emTag))
         return AccessibilityRole::Emphasis;
     if (element->hasTagName(hgroupTag))
-        return AccessibilityRole::ApplicationGroup;
+        return AccessibilityRole::Group;
 
     // If the element does not have role, but it has ARIA attributes, or accepts tab focus, accessibility should fallback to exposing it as a group.
     if (supportsARIAAttributes() || canSetFocusAttribute() || element->isFocusable())
@@ -2172,7 +2172,7 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
     unsigned level = 1;
     for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
         AccessibilityRole parentRole = parent->ariaRoleAttribute();
-        if (parentRole == AccessibilityRole::ApplicationGroup)
+        if (parentRole == AccessibilityRole::Group)
             level++;
         else if (parentRole == AccessibilityRole::Tree)
             break;

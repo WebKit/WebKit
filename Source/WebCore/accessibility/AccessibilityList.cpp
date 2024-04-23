@@ -184,7 +184,7 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
     // <ul>, <ol> lists need to have visible markers.
     if (ariaRoleAttribute() != AccessibilityRole::Unknown) {
         if (!listItemCount)
-            role = AccessibilityRole::ApplicationGroup;
+            role = AccessibilityRole::Group;
     } else if (!hasVisibleMarkers) {
         // http://webkit.org/b/193382 lists inside of navigation hierarchies should still be considered lists.
         if (Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (auto& object) { return object.roleValue() == AccessibilityRole::LandmarkNavigation; }))

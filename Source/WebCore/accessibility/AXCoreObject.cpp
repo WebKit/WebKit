@@ -81,8 +81,6 @@ bool AXCoreObject::isGroup() const
     switch (roleValue()) {
     case AccessibilityRole::Group:
     case AccessibilityRole::TextGroup:
-    case AccessibilityRole::ApplicationGroup:
-    case AccessibilityRole::ApplicationTextGroup:
         return true;
     default:
         return false;

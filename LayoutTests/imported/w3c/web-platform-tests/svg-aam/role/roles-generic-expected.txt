@@ -6,7 +6,7 @@ Simple Elements
 PASS el-circle
 PASS el-ellipse
 PASS el-foreignObject
-PASS el-g
+FAIL el-g assert_false: Computed Role: "group" does not match any of the acceptable role strings in ["generic", "", "none"]: <g data-testname="el-g" class="ex-generic"></g> expected false got true
 PASS el-line
 PASS el-path
 PASS el-polygon
