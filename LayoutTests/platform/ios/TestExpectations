@@ -6963,8 +6963,6 @@ imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-l
 
 webkit.org/b/271018 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-012.svg [ ImageOnlyFailure ]
 
-webkit.org/b/271063 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Pass Failure Timeout ]
-
 webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
 
 # rdar://124417777 (REGRESSION (iOS 17.4): 5 editing / paste-related layout tests are constantly failing.)
