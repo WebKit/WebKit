@@ -114,6 +114,7 @@ public:
 #if ENABLE(TREE_DEBUGGING)
     void showTreeForThis() const;
 #endif
+    String rendererTextForBehavior(RenderText& renderer) const { return m_behaviors.contains(TextIteratorBehavior::EmitsOriginalText) ? renderer.originalText() : renderer.text(); }
 
 private:
     void init();
