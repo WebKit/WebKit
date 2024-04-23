@@ -1076,6 +1076,8 @@ private:
     };
     void applyConfiguration(const RemotePlaybackConfiguration&);
 
+    bool videoUsesElementFullscreen() const;
+
 #if !RELEASE_LOG_DISABLED
     const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }
     const Logger& mediaPlayerLogger() final { return logger(); }
