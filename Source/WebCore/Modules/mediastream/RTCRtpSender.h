@@ -102,7 +102,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
-    const char* logClassName() const final { return "RTCRtpSender"; }
+    ASCIILiteral logClassName() const final { return "RTCRtpSender"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
 

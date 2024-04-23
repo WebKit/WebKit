@@ -81,7 +81,7 @@ private:
     IntSize intrinsicSize() const final;
 
     // LoggerHelper
-    const char* logClassName() const final { return "ScreenCaptureKitCaptureSource"; }
+    ASCIILiteral logClassName() const final { return "ScreenCaptureKitCaptureSource"_s; }
 
     // ScreenCaptureKitSharingSessionManager::Observer
     void sessionFilterDidChange(SCContentFilter*) final;

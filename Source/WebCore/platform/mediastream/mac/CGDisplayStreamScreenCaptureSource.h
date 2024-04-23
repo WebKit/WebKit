@@ -57,7 +57,7 @@ private:
     DisplaySurfaceType surfaceType() const final { return DisplaySurfaceType::Monitor; }
     IntSize intrinsicSize() const final;
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "CGDisplayStreamScreenCaptureSource"; }
+    ASCIILiteral logClassName() const final { return "CGDisplayStreamScreenCaptureSource"_s; }
 #endif
 
     // CGDisplayStreamCaptureSource

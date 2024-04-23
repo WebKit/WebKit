@@ -47,7 +47,7 @@ namespace WebCore {
 
 #if !RELEASE_LOG_DISABLED
 static WTFLogChannel& logChannel() { return LogEME; }
-static const char* logClassName() { return "MediaKeys"; }
+static ASCIILiteral logClassName() { return "MediaKeys"_s; }
 #endif
 
 MediaKeys::MediaKeys(Document& document, bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>& supportedSessionTypes, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)

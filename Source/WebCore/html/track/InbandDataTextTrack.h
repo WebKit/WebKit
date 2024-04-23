@@ -48,7 +48,7 @@ private:
     bool shouldPurgeCuesFromUnbufferedRanges() const final { return true; }
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "DataCue"; }
+    ASCIILiteral logClassName() const final { return "DataCue"_s; }
 #endif
 
 #if ENABLE(DATACUE_VALUE)

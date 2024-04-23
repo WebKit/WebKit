@@ -69,7 +69,7 @@ public:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
-    const char* logClassName() const final { return "HTMLVideoElementPictureInPicture"; }
+    ASCIILiteral logClassName() const final { return "HTMLVideoElementPictureInPicture"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
 

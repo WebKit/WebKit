@@ -74,7 +74,7 @@ private:
     void playbackStateChanged(WebCore::MediaSessionPlaybackState) final;
     void trackIdentifierChanged(const String&) final;
 
-    const char* logClassName() const { return "RemoteMediaSessionCoordinator"; }
+    ASCIILiteral logClassName() const { return "RemoteMediaSessionCoordinator"_s; }
     WTFLogChannel& logChannel() const;
 
     WebPage& m_page;

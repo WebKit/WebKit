@@ -77,7 +77,7 @@ protected:
     RetainPtr<AVContentKeyRequest> contentKeyRequest() const;
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const { return "CDMSessionAVContentKeySession"; }
+    ASCIILiteral logClassName() const { return "CDMSessionAVContentKeySession"_s; }
 #endif
 
     RetainPtr<AVContentKeySession> m_contentKeySession;

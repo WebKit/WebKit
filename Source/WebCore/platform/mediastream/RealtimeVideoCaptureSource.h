@@ -101,7 +101,7 @@ private:
     Ref<TakePhotoNativePromise> takePhoto(PhotoSettings&&) final;
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const override { return "RealtimeVideoCaptureSource"; }
+    ASCIILiteral logClassName() const override { return "RealtimeVideoCaptureSource"_s; }
 #endif
 
     std::optional<VideoPreset> m_currentPreset;

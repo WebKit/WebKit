@@ -377,7 +377,7 @@ private:
     const void* mediaPlayerLogIdentifier() { return reinterpret_cast<const void*>(m_configuration.logIdentifier); }
     const Logger& logger() { return mediaPlayerLogger(); }
     const void* logIdentifier() { return mediaPlayerLogIdentifier(); }
-    const char* logClassName() const { return "RemoteMediaPlayerProxy"; }
+    ASCIILiteral logClassName() const { return "RemoteMediaPlayerProxy"_s; }
     WTFLogChannel& logChannel() const;
 #endif
 

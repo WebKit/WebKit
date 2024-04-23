@@ -589,7 +589,7 @@ public:
     const Logger& logger() const final { return *m_logger.get(); }
     Ref<Logger> protectedLogger() const;
     const void* logIdentifier() const final { return m_logIdentifier; }
-    const char* logClassName() const final { return "HTMLMediaElement"; }
+    ASCIILiteral logClassName() const final { return "HTMLMediaElement"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
 

@@ -104,7 +104,7 @@ private:
     OSStatus getPlayableHorizon(CMTime*) const;
 
     const WTF::Logger& logger() const { return m_logger; }
-    const char* logClassName() const { return "MediaSampleCursor"; }
+    ASCIILiteral logClassName() const { return "MediaSampleCursor"_s; }
     const void* logIdentifier() const { return m_logIdentifier; }
     WTFLogChannel& logChannel() const;
 

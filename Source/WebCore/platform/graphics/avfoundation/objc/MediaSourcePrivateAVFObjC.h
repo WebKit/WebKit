@@ -99,7 +99,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const char* logClassName() const final { return "MediaSourcePrivateAVFObjC"; }
+    ASCIILiteral logClassName() const final { return "MediaSourcePrivateAVFObjC"_s; }
     const void* logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 

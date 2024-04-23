@@ -46,7 +46,7 @@ class VideoPresentationInterfaceLMK final : public VideoPresentationInterfaceIOS
 public:
     static Ref<VideoPresentationInterfaceLMK> create(PlaybackSessionInterfaceIOS&);
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const { return "VideoPresentationInterfaceLMK"; };
+    ASCIILiteral logClassName() const { return "VideoPresentationInterfaceLMK"_s; };
 #endif
     ~VideoPresentationInterfaceLMK();
 

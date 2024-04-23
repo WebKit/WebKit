@@ -88,7 +88,7 @@ private:
     void updateConfigurationFromPrivate();
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "AudioTrack"; }
+    ASCIILiteral logClassName() const final { return "AudioTrack"_s; }
 #endif
 
     WeakPtr<AudioTrackList> m_audioTrackList;

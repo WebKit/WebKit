@@ -265,7 +265,7 @@ public:
     const Logger* loggerPtr() const { return m_logger.get(); }
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
-    const char* logClassName() const override { return "RealtimeMediaSource"; }
+    ASCIILiteral logClassName() const override { return "RealtimeMediaSource"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
 

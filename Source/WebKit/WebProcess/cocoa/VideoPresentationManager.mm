@@ -853,7 +853,7 @@ const void* VideoPresentationManager::logIdentifier() const
     return m_playbackSessionManager->logIdentifier();
 }
 
-const char* VideoPresentationManager::logClassName() const
+ASCIILiteral VideoPresentationManager::logClassName() const
 {
     return m_playbackSessionManager->logClassName();
 }

@@ -88,7 +88,7 @@ public:
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const;
     const Logger* loggerPtr() const;
-    virtual const char* logClassName() const = 0;
+    virtual ASCIILiteral logClassName() const = 0;
     WTFLogChannel& logChannel() const;
 #endif
 

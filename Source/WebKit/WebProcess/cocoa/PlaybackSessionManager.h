@@ -192,7 +192,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
     const void* logIdentifier() const { return m_logIdentifier; }
-    const char* logClassName() const { return "VideoPresentationManager"; }
+    ASCIILiteral logClassName() const { return "VideoPresentationManager"_s; }
     WTFLogChannel& logChannel() const;
 #endif
 

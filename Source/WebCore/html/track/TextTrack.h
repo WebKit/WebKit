@@ -161,7 +161,7 @@ private:
     void derefEventTarget() final { deref(); }
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const override { return "TextTrack"; }
+    ASCIILiteral logClassName() const override { return "TextTrack"_s; }
 #endif
 
     VTTRegionList& ensureVTTRegionList();

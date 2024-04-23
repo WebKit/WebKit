@@ -147,7 +147,7 @@ public:
     void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
     const Logger& logger() const { return m_logger; };
     const void* logIdentifier() const { return m_logIdentifier; }
-    const char* logClassName() const { return "CDMInstanceFairPlayStreamingAVFObjC"; }
+    ASCIILiteral logClassName() const { return "CDMInstanceFairPlayStreamingAVFObjC"_s; }
 #endif
 
 private:
@@ -247,7 +247,7 @@ private:
     void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
     const Logger& logger() const { return m_logger; };
     const void* logIdentifier() const { return m_logIdentifier; }
-    const char* logClassName() const { return "CDMInstanceSessionFairPlayStreamingAVFObjC"; }
+    ASCIILiteral logClassName() const { return "CDMInstanceSessionFairPlayStreamingAVFObjC"_s; }
 #endif
 
     // ContentKeyGroupDataSource

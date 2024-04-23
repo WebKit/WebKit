@@ -278,7 +278,7 @@ public:
         {
         }
 
-        LogSiteIdentifier(const char* className, const char* methodName, const void* objectPtr)
+        LogSiteIdentifier(ASCIILiteral className, const char* methodName, const void* objectPtr)
             : className { className }
             , methodName { methodName }
             , objectPtr { reinterpret_cast<uintptr_t>(objectPtr) }
@@ -287,7 +287,7 @@ public:
 
         WTF_EXPORT_PRIVATE String toString() const;
 
-        const char* className { nullptr };
+        ASCIILiteral className;
         const char* methodName { nullptr };
         const uintptr_t objectPtr { 0 };
     };

@@ -128,7 +128,7 @@ private:
     const void* nextChildIdentifier() const final;
     const Logger* loggerPtr() const final;
 
-    const char* logClassName() const { return "VideoPresentationModelContext"; };
+    ASCIILiteral logClassName() const { return "VideoPresentationModelContext"_s; };
     WTFLogChannel& logChannel() const;
 #endif
 
@@ -262,7 +262,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const;
     const void* logIdentifier() const;
-    const char* logClassName() const;
+    ASCIILiteral logClassName() const;
     WTFLogChannel& logChannel() const;
 #endif
 

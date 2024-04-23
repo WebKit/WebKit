@@ -69,7 +69,7 @@ public:
     bool muted() const { return m_muted; }
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "AudioTrackPrivateMediaStream"; }
+    ASCIILiteral logClassName() const final { return "AudioTrackPrivateMediaStream"_s; }
 #endif
 
 private:

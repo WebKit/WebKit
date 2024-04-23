@@ -143,7 +143,7 @@ private:
     void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) final;
     double observedFrameRate() const final;
 
-    const char* logClassName() const final { return "DisplayCaptureSourceCocoa"; }
+    ASCIILiteral logClassName() const final { return "DisplayCaptureSourceCocoa"_s; }
     void setLogger(const Logger&, const void*) final;
 
     // CapturerObserver

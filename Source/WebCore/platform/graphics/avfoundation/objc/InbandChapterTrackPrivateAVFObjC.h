@@ -58,7 +58,7 @@ private:
     InbandChapterTrackPrivateAVFObjC(RetainPtr<NSLocale>, TrackID);
 
     AtomString inBandMetadataTrackDispatchType() const final { return "com.apple.chapters"_s; }
-    const char* logClassName() const final { return "InbandChapterTrackPrivateAVFObjC"; }
+    ASCIILiteral logClassName() const final { return "InbandChapterTrackPrivateAVFObjC"_s; }
 
     struct ChapterData {
         MediaTime m_startTime;

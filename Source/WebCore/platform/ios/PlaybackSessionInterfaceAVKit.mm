@@ -238,9 +238,9 @@ void PlaybackSessionInterfaceAVKit::volumeChanged(double volume)
 }
 
 #if !RELEASE_LOG_DISABLED
-const char* PlaybackSessionInterfaceAVKit::logClassName() const
+ASCIILiteral PlaybackSessionInterfaceAVKit::logClassName() const
 {
-    return "PlaybackSessionInterfaceAVKit";
+    return "PlaybackSessionInterfaceAVKit"_s;
 }
 #endif
 } // namespace WebCore

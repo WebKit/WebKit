@@ -60,9 +60,9 @@ static WTFLogChannel& logChannel()
     return LogMedia;
 }
 
-static const char* logClassName()
+static ASCIILiteral logClassName()
 {
-    return "MediaSession";
+    return "MediaSession"_s;
 }
 #endif
 

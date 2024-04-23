@@ -105,7 +105,7 @@ private:
     void audioUnitWillStart();
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const override { return "CoreAudioCaptureSource"; }
+    ASCIILiteral logClassName() const override { return "CoreAudioCaptureSource"_s; }
 #endif
 
     uint32_t m_captureDeviceID { 0 };

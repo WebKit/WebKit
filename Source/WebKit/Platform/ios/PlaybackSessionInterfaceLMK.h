@@ -63,7 +63,7 @@ public:
     void startObservingNowPlayingMetadata() final;
     void stopObservingNowPlayingMetadata() final;
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final;
+    ASCIILiteral logClassName() const final;
 #endif
 
     void nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata&);

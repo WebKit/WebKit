@@ -216,7 +216,7 @@ private:
     bool wantsToCaptureAudio() const final;
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "MediaStreamTrack"; }
+    ASCIILiteral logClassName() const final { return "MediaStreamTrack"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
 

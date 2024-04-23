@@ -126,7 +126,7 @@ private:
     void forEachObserver(const Function<void(Observer&)>&);
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "MediaStreamPrivate"; }
+    ASCIILiteral logClassName() const final { return "MediaStreamPrivate"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
 

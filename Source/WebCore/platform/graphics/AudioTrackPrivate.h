@@ -81,7 +81,7 @@ public:
     }
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const override { return "AudioTrackPrivate"; }
+    ASCIILiteral logClassName() const override { return "AudioTrackPrivate"_s; }
 #endif
 
     Type type() const final { return Type::Audio; }

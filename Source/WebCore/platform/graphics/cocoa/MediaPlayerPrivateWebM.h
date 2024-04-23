@@ -250,7 +250,7 @@ private:
     void videoRendererReadyForDisplayChanged(WebSampleBufferVideoRendering *, bool isReadyForDisplay) final;
 
     const Logger& logger() const final { return m_logger.get(); }
-    const char* logClassName() const final { return "MediaPlayerPrivateWebM"; }
+    ASCIILiteral logClassName() const final { return "MediaPlayerPrivateWebM"_s; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
 

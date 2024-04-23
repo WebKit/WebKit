@@ -100,7 +100,7 @@ private:
     };
 
     ASCIILiteral mediaTypeString() const;
-    const char* logClassName() const { return "MediaTrackReader"; }
+    ASCIILiteral logClassName() const { return "MediaTrackReader"_s; }
     const void* logIdentifier() const { return m_logIdentifier; }
     WTFLogChannel& logChannel() const;
 

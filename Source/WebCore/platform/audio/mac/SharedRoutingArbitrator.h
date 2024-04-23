@@ -63,7 +63,7 @@ public:
 
 private:
     const Logger& logger();
-    const char* logClassName() const { return "SharedRoutingArbitrator"; }
+    ASCIILiteral logClassName() const { return "SharedRoutingArbitrator"_s; }
     WTFLogChannel& logChannel() const;
 
     std::optional<AudioSession::CategoryType> m_currentCategory { AudioSession::CategoryType::None };

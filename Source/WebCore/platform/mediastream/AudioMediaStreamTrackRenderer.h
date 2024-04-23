@@ -74,7 +74,7 @@ protected:
     const Logger& logger() const final;
     const void* logIdentifier() const final;
 
-    const char* logClassName() const final;
+    ASCIILiteral logClassName() const final;
     WTFLogChannel& logChannel() const final;
 #endif
 
@@ -119,24 +119,6 @@ inline void AudioMediaStreamTrackRenderer::crashed()
 inline LibWebRTCAudioModule* AudioMediaStreamTrackRenderer::audioModule()
 {
     return m_audioModule.get();
-}
-#endif
-
-#if !RELEASE_LOG_DISABLED
-inline const Logger& AudioMediaStreamTrackRenderer::logger() const
-{
-    return m_logger.get();
-    
-}
-
-inline const void* AudioMediaStreamTrackRenderer::logIdentifier() const
-{
-    return m_logIdentifier;
-}
-
-inline const char* AudioMediaStreamTrackRenderer::logClassName() const
-{
-    return "AudioMediaStreamTrackRenderer";
 }
 #endif
 

@@ -167,7 +167,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const final { return m_logIdentifier; }
-    const char* logClassName() const final { return "MediaElementSession"; }
+    ASCIILiteral logClassName() const final { return "MediaElementSession"_s; }
 #endif
 
 #if ENABLE(MEDIA_SESSION)

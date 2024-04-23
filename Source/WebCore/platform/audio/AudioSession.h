@@ -162,7 +162,7 @@ protected:
     void activeStateChanged();
 
     Logger& logger();
-    const char* logClassName() const { return "AudioSession"; }
+    ASCIILiteral logClassName() const { return "AudioSession"_s; }
     WTFLogChannel& logChannel() const;
     const void* logIdentifier() const { return nullptr; }
 

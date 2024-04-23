@@ -239,7 +239,7 @@ protected:
     virtual void uninitialize();
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "BaseAudioContext"; }
+    ASCIILiteral logClassName() const final { return "BaseAudioContext"_s; }
 #endif
 
     void addReaction(State, DOMPromiseDeferred<void>&&);

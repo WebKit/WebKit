@@ -108,7 +108,7 @@ private:
     const Logger& logger() const { return m_logger; }
     const void* logIdentifier() const { return m_logIdentifier; }
     static WTFLogChannel& logChannel();
-    static const char* logClassName() { return "MediaSessionCoordinator"; }
+    static ASCIILiteral logClassName() { return "MediaSessionCoordinator"_s; }
     bool shouldFireEvents() const;
 
     WeakPtr<MediaSession> m_session;

@@ -69,7 +69,7 @@ public:
 protected:
     Logger& logger();
     const void* logIdentifier() const { return m_logIdentifier; }
-    const char* logClassName() const { return "AudioSessionRoutingArbitrator"; }
+    ASCIILiteral logClassName() const { return "AudioSessionRoutingArbitrator"_s; }
     WTFLogChannel& logChannel() const;
 
 private:

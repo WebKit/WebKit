@@ -373,9 +373,9 @@ void PlaybackSessionInterfaceLMK::nowPlayingMetadataChanged(const WebCore::NowPl
 }
 
 #if !RELEASE_LOG_DISABLED
-const char* PlaybackSessionInterfaceLMK::logClassName() const
+ASCIILiteral PlaybackSessionInterfaceLMK::logClassName() const
 {
-    return "PlaybackSessionInterfaceLMK";
+    return "PlaybackSessionInterfaceLMK"_s;
 }
 #endif
 

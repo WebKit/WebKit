@@ -71,6 +71,22 @@ WTFLogChannel& AudioMediaStreamTrackRenderer::logChannel() const
 {
     return LogMedia;
 }
+
+const Logger& AudioMediaStreamTrackRenderer::logger() const
+{
+    return m_logger.get();
+
+}
+
+const void* AudioMediaStreamTrackRenderer::logIdentifier() const
+{
+    return m_logIdentifier;
+}
+
+ASCIILiteral AudioMediaStreamTrackRenderer::logClassName() const
+{
+    return "AudioMediaStreamTrackRenderer"_s;
+}
 #endif
 
 }

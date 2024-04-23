@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT void hasVideoChanged(bool) final;
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const { return "VideoPresentationInterfaceAVKit"; };
+    ASCIILiteral logClassName() const { return "VideoPresentationInterfaceAVKit"_s; };
 #endif
 
     WEBCORE_EXPORT AVPlayerViewController *avPlayerViewController() const final;

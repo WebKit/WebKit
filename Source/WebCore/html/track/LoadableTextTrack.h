@@ -60,7 +60,7 @@ private:
     void loadTimerFired();
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const override { return "LoadableTextTrack"; }
+    ASCIILiteral logClassName() const override { return "LoadableTextTrack"_s; }
 #endif
 
     HTMLTrackElement* m_trackElement;

@@ -60,7 +60,7 @@ private:
     void leaveRoutingAbritration() final;
 
     Logger& logger();
-    const char* logClassName() const { return "LocalAudioSessionRoutingArbitrator"; }
+    ASCIILiteral logClassName() const { return "LocalAudioSessionRoutingArbitrator"_s; }
     WTFLogChannel& logChannel() const;
     const void* logIdentifier() const final { return m_logIdentifier; }
     bool canLog() const final;

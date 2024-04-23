@@ -167,7 +167,7 @@ public:
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const;
     const Logger* loggerPtr() const;
-    const char* logClassName() const { return "VideoPresentationInterfaceIOS"; };
+    ASCIILiteral logClassName() const { return "VideoPresentationInterfaceIOS"_s; };
     WTFLogChannel& logChannel() const;
 #endif
 

@@ -142,7 +142,7 @@ public:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
-    const char* logClassName() const final { return "MediaSource"; }
+    ASCIILiteral logClassName() const final { return "MediaSource"_s; }
     WTFLogChannel& logChannel() const final;
     void setLogIdentifier(const void*);
 

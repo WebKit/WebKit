@@ -62,7 +62,7 @@ private:
     virtual IntSize intrinsicSize() const { return m_intrinsicSize; }
 
     // LoggerHelper
-    const char* logClassName() const final { return "ReplayKitCaptureSource"; }
+    ASCIILiteral logClassName() const final { return "ReplayKitCaptureSource"_s; }
 
     void screenRecorderDidOutputVideoSample(RetainPtr<CMSampleBufferRef>&&);
     void startCaptureWatchdogTimer();

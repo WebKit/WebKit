@@ -208,7 +208,7 @@ protected:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const;
     const void* logIdentifier() const;
-    const char* logClassName() const;
+    ASCIILiteral logClassName() const;
     WTFLogChannel& logChannel() const;
 #endif
 

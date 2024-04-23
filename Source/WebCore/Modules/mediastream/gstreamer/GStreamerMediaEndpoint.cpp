@@ -1656,11 +1656,11 @@ void GStreamerMediaEndpoint::processStats(const GValue* value)
     if (logger().willLog(logChannel(), WTFLogLevel::Debug)) {
         // Stats are very verbose, let's only display them in inspector console in verbose mode.
         logger().debug(LogWebRTC,
-            Logger::LogSiteIdentifier("GStreamerMediaEndpoint", "onStatsDelivered", logIdentifier()),
+            Logger::LogSiteIdentifier("GStreamerMediaEndpoint"_s, "onStatsDelivered"_s, logIdentifier()),
             RTCStatsLogger { structure });
     } else {
         logger().logAlways(LogWebRTCStats,
-            Logger::LogSiteIdentifier("GStreamerMediaEndpoint", "onStatsDelivered", logIdentifier()),
+            Logger::LogSiteIdentifier("GStreamerMediaEndpoint"_s, "onStatsDelivered"_s, logIdentifier()),
             RTCStatsLogger { structure });
     }
 }

@@ -96,7 +96,7 @@ private:
     const Logger& logger() const { return m_logger.get(); }
     const void* logIdentifier() const { return m_logIdentifier; }
     WTFLogChannel& logChannel() const;
-    const char* logClassName() const { return "RemotePlayback"; }
+    ASCIILiteral logClassName() const { return "RemotePlayback"_s; }
 
     Ref<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };

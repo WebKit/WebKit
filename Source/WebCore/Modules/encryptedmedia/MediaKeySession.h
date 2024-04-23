@@ -123,7 +123,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper
     const Logger& logger() const { return m_logger; }
-    const char* logClassName() const { return "MediaKeySession"; }
+    ASCIILiteral logClassName() const { return "MediaKeySession"_s; }
     WTFLogChannel& logChannel() const;
     const void* logIdentifier() const { return m_logIdentifier; }
 

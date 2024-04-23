@@ -83,7 +83,7 @@ protected:
 
 private:
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const override { return "MediaSessionManagerGLib"; }
+    ASCIILiteral logClassName() const override { return "MediaSessionManagerGLib"_s; }
 #endif
 
     // NowPlayingManager::Client

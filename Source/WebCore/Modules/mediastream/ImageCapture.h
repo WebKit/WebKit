@@ -60,7 +60,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger.get(); }
     const void* logIdentifier() const { return m_logIdentifier; }
-    const char* logClassName() const { return "ImageCapture"; }
+    ASCIILiteral logClassName() const { return "ImageCapture"_s; }
     WTFLogChannel& logChannel() const;
 #endif
 

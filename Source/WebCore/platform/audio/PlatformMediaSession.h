@@ -216,7 +216,7 @@ public:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const override { return m_logIdentifier; }
-    const char* logClassName() const override { return "PlatformMediaSession"; }
+    ASCIILiteral logClassName() const override { return "PlatformMediaSession"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
 

@@ -80,7 +80,7 @@ private:
     bool shouldPurgeCuesFromUnbufferedRanges() const final { return true; }
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "InbandGenericTextTrack"; }
+    ASCIILiteral logClassName() const final { return "InbandGenericTextTrack"_s; }
 #endif
 
     GenericTextTrackCueMap m_cueMap;
