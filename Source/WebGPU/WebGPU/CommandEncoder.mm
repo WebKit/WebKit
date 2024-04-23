@@ -416,7 +416,7 @@ void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndCl
             mtlAttachment.texture = t;
             mtlAttachment.level = 0;
             mtlAttachment.slice = 0;
-            mtlAttachment.depthPlane = 0;
+            mtlAttachment.depthPlane = textureAndClearColor.depthPlane;
         }
         clearRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:clearDescriptor];
     }

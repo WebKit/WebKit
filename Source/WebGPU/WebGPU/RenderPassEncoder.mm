@@ -112,18 +112,16 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         if (!textureToClear)
             continue;
         TextureAndClearColor *textureWithClearColor = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
-        bool storeOpDiscardAndLoadOpLoad = false;
         if (attachment.storeOp != WGPUStoreOp_Discard) {
             auto& c = attachment.clearValue;
             textureWithClearColor.clearColor = MTLClearColorMake(c.r, c.g, c.b, c.a);
         } else if (attachment.loadOp == WGPULoadOp_Load) {
-            storeOpDiscardAndLoadOpLoad = true;
             textureWithClearColor.clearColor = MTLClearColorMake(0, 0, 0, 0);
             [m_attachmentsToClear setObject:textureWithClearColor forKey:@(i)];
         }
 
-        if (attachment.loadOp == WGPULoadOp_Clear || storeOpDiscardAndLoadOpLoad)
-            [m_allColorAttachments setObject:textureWithClearColor forKey:@(i)];
+        textureWithClearColor.depthPlane = attachment.depthSlice.value_or(0);
+        [m_allColorAttachments setObject:textureWithClearColor forKey:@(i)];
     }
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {

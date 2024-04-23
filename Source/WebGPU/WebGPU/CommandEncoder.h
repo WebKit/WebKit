@@ -37,6 +37,7 @@
 - (instancetype)init NS_UNAVAILABLE;
 @property (nonatomic) id<MTLTexture> texture;
 @property (nonatomic) MTLClearColor clearColor;
+@property (nonatomic) NSUInteger depthPlane;
 @end
 
 struct WGPUCommandEncoderImpl {
