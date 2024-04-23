@@ -32,6 +32,7 @@
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/GLFence.h>
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/ShareableBitmap.h>
 #include <array>
@@ -595,7 +596,10 @@ void AcceleratedSurfaceDMABuf::didRenderFrame()
     if (!m_target)
         return;
 
-    glFlush();
+    if (auto fence = WebCore::GLFence::create(WebCore::GLFence::ShouldFlush::No))
+        fence->wait(WebCore::GLFence::FlushCommands::Yes);
+    else
+        glFlush();
 
     m_target->didRenderFrame();
     WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(m_target->id()), m_id);
