@@ -42,6 +42,9 @@
 		143DDE9620C8BC37007F76FA /* Entitlements.mm in Sources */ = {isa = PBXBuildFile; fileRef = 143DDE9520C8BC37007F76FA /* Entitlements.mm */; };
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
 		1469419D16EAB10A0024E146 /* AutodrainedPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */; };
+		1470EAF32BD6F6D900E26254 /* WeakPtrImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1470EAF22BD6F6D900E26254 /* WeakPtrImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1470EAF52BD6F8AF00E26254 /* WeakPtrFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1470EAF42BD6F8AF00E26254 /* WeakPtrFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1470EAF72BD6FB3F00E26254 /* CanMakeWeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1470EAF62BD6FB3F00E26254 /* CanMakeWeakPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A1D8B9E1731879800141DA4 /* FunctionDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D8B9D1731879800141DA4 /* FunctionDispatcher.cpp */; };
 		1C08E3682985D8F300CAE594 /* IOReturnSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C08E3662985D7D300CAE594 /* IOReturnSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C08E3692985D8F800CAE594 /* IOTypesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C08E3672985D7D400CAE594 /* IOTypesSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1080,6 +1083,9 @@
 		1469419416EAAFF80024E146 /* SchedulePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchedulePair.h; sourceTree = "<group>"; };
 		1469419A16EAB10A0024E146 /* AutodrainedPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutodrainedPool.h; sourceTree = "<group>"; };
 		1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutodrainedPool.cpp; sourceTree = "<group>"; };
+		1470EAF22BD6F6D900E26254 /* WeakPtrImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtrImpl.h; sourceTree = "<group>"; };
+		1470EAF42BD6F8AF00E26254 /* WeakPtrFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtrFactory.h; sourceTree = "<group>"; };
+		1470EAF62BD6FB3F00E26254 /* CanMakeWeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanMakeWeakPtr.h; sourceTree = "<group>"; };
 		149EF16216BBFE0D000A4331 /* TriState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriState.h; sourceTree = "<group>"; };
 		14E785E71DFB330100209BD1 /* OrdinalNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrdinalNumber.h; sourceTree = "<group>"; };
 		14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaturatedArithmetic.h; sourceTree = "<group>"; };
@@ -2064,6 +2070,7 @@
 				0F5F3D681F3FEBA600B115A2 /* CagedUniquePtr.h */,
 				413FE8F51F8D2EAB00F6D7D7 /* CallbackAggregator.h */,
 				46209A27266D543A007F8F4A /* CancellableTask.h */,
+				1470EAF62BD6FB3F00E26254 /* CanMakeWeakPtr.h */,
 				A8A4726A151A825A004123FF /* CheckedArithmetic.h */,
 				A8A4726B151A825A004123FF /* CheckedBoolean.h */,
 				9BB91F512648EA4D00A56217 /* CheckedPtr.h */,
@@ -2466,6 +2473,8 @@
 				83ABB3C020B3823200BA3306 /* WeakObjCPtr.h */,
 				0F0C03D7299820EB0064230A /* WeakPtr.cpp */,
 				974CFC8D16A4F327006D5404 /* WeakPtr.h */,
+				1470EAF42BD6F8AF00E26254 /* WeakPtrFactory.h */,
+				1470EAF22BD6F6D900E26254 /* WeakPtrImpl.h */,
 				0F3501631BB258C800F0A2A3 /* WeakRandom.h */,
 				A8A472FB151A825B004123FF /* WeakRandomNumber.cpp */,
 				A8A472FC151A825B004123FF /* WeakRandomNumber.h */,
@@ -3076,6 +3085,7 @@
 				DD3DC95527A4BF8E007E5B61 /* CagedUniquePtr.h in Headers */,
 				DD3DC8E927A4BF8E007E5B61 /* CallbackAggregator.h in Headers */,
 				DD3DC99B27A4BF8E007E5B61 /* CancellableTask.h in Headers */,
+				1470EAF72BD6FB3F00E26254 /* CanMakeWeakPtr.h in Headers */,
 				DDF306DA27C08654006A526F /* CFBundleSPI.h in Headers */,
 				63F9BED42898D96400371416 /* CFPrivSPI.h in Headers */,
 				DDF306D927C08654006A526F /* CFRunLoopSPI.h in Headers */,
@@ -3509,6 +3519,8 @@
 				9BD8464C2980B6C100FAE3BD /* WeakListHashSet.h in Headers */,
 				DD3DC95F27A4BF8E007E5B61 /* WeakObjCPtr.h in Headers */,
 				DD3DC95227A4BF8E007E5B61 /* WeakPtr.h in Headers */,
+				1470EAF52BD6F8AF00E26254 /* WeakPtrFactory.h in Headers */,
+				1470EAF32BD6F6D900E26254 /* WeakPtrImpl.h in Headers */,
 				DD3DC91927A4BF8E007E5B61 /* WeakRandom.h in Headers */,
 				DD3DC88A27A4BF8E007E5B61 /* WeakRandomNumber.h in Headers */,
 				4606FEE72B1E901800D704F1 /* WeakRef.h in Headers */,
