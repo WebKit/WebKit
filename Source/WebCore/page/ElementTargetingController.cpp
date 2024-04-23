@@ -63,6 +63,7 @@ static constexpr auto marginForTrackingAdjustmentRects = 5;
 static constexpr auto minimumDistanceToConsiderEdgesEquidistant = 2;
 static constexpr auto selectorBasedVisibilityAdjustmentTimeLimit = 30_s;
 static constexpr auto adjustmentClientRectCleanUpDelay = 15_s;
+static constexpr auto minimumAreaRatioForElementToCoverViewport = 0.95;
 static constexpr auto minimumAreaForInterpolation = 200000;
 static constexpr auto maximumAreaForInterpolation = 800000;
 
@@ -626,6 +627,23 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
         CheckedPtr targetRenderer = target->renderer();
         auto targetBoundingBox = target->boundingBoxInRootViewCoordinates();
         auto targetAreaRatio = computeViewportAreaRatio(targetBoundingBox);
+
+        bool shouldSkipTargetThatCoversViewport = [&] {
+            if (targetAreaRatio < minimumAreaRatioForElementToCoverViewport)
+                return false;
+
+            auto& style = targetRenderer->style();
+            if (style.specifiedZIndex() < 0)
+                return true;
+
+            return targetRenderer->isOutOfFlowPositioned()
+                && (!style.hasBackground() || !style.opacity())
+                && style.usedPointerEvents() == PointerEvents::None;
+        }();
+
+        if (shouldSkipTargetThatCoversViewport)
+            continue;
+
         bool shouldAddTarget = targetRenderer->isFixedPositioned()
             || targetRenderer->isStickilyPositioned()
             || (targetRenderer->isAbsolutelyPositioned() && targetAreaRatio < maximumAreaRatioForAbsolutelyPositionedContent(viewportArea))

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    line-height: 1.5;
+    font-family: system-ui;
+}
+
+.overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+}
+
+.box {
+    width: 100px;
+    height: 200px;
+    border: 2px black solid;
+    background: tomato;
+    margin-top: 50px;
+    margin-left: 10px;
+    pointer-events: auto;
+}
+
+.dimmed {
+    pointer-events: auto;
+    background-color: rgba(0, 0, 0, 0.25);
+}
+</style>
+<script>
+jsTestIsAsync = true;
+addEventListener("load", async () => {
+    firstSelector = await UIHelper.adjustVisibilityForFrontmostTarget(50, 100);
+    shouldBeEqualToString("firstSelector", "DIV.box");
+
+    document.querySelector(".overlay").classList.add("dimmed");
+    await UIHelper.ensurePresentationUpdate();
+
+    secondSelector = await UIHelper.adjustVisibilityForFrontmostTarget(50, 100);
+    shouldBeEqualToString("secondSelector", "DIV.overlay.dimmed");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div class="overlay">
+    <div class="box"></div>
+</div>
+<main>
+    <p>Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo.</p>
+    <p>You can quote them, disagree with them, glorify or vilify them. About the only thing you can’t do is ignore them.</p>
+    <p>Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</p>
+</main>
+</body>
+</html>
