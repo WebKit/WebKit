@@ -443,6 +443,7 @@ public:
     EntryFrame* topEntryFrame { nullptr };
 private:
     OptionSet<EntryScopeService> m_entryScopeServices;
+    VMTraps m_traps;
 
     VMIdentifier m_identifier;
     RefPtr<JSLock> m_apiLock;
@@ -1117,7 +1118,6 @@ private:
     unsigned m_controlFlowProfilerEnabledCount { 0 };
     MicrotaskQueue m_microtaskQueue;
     MallocPtr<EncodedJSValue, VMMalloc> m_exceptionFuzzBuffer;
-    VMTraps m_traps;
     LazyRef<VM, Watchdog> m_watchdog;
     LazyUniqueRef<VM, HeapProfiler> m_heapProfiler;
     LazyUniqueRef<VM, AdaptiveStringSearcherTables> m_stringSearcherTables;

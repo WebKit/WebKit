@@ -55,6 +55,7 @@ public:
     bool isEmpty() const { return !m_size; }
 
     const EncodedJSValue* data() const { return m_buffer; }
+    EncodedJSValue* data() { return m_buffer; }
 
     void removeLast()
     { 
@@ -83,14 +84,14 @@ protected:
     }
 
     Status expandCapacity();
-    Status expandCapacity(int newCapacity);
+    Status expandCapacity(unsigned newCapacity);
     JS_EXPORT_PRIVATE Status slowEnsureCapacity(size_t requestedCapacity);
 
     void addMarkSet(JSValue);
 
     JS_EXPORT_PRIVATE Status slowAppend(JSValue);
 
-    EncodedJSValue& slotFor(int item) const
+    EncodedJSValue& slotFor(unsigned item) const
     {
         return m_buffer[item];
     }
@@ -114,8 +115,8 @@ protected:
     void setNeedsOverflowCheck() { }
     void clearNeedsOverflowCheck() { }
 #endif // ASSERT_ENABLED
-    int m_size;
-    int m_capacity;
+    unsigned m_size;
+    unsigned m_capacity;
     EncodedJSValue* m_buffer;
     ListSet* m_markSet;
 };
@@ -136,7 +137,7 @@ public:
         }
     }
 
-    auto at(int i) const -> decltype(auto)
+    auto at(unsigned i) const -> decltype(auto)
     {
         if constexpr (std::is_same_v<T, JSValue>) {
             if (i >= m_size)
@@ -147,6 +148,13 @@ public:
                 return static_cast<T>(nullptr);
             return jsCast<T>(JSValue::decode(slotFor(i)).asCell());
         }
+    }
+
+    void set(unsigned i, T value)
+    {
+        if (i >= m_size)
+            return;
+        slotFor(i) = JSValue::encode(value);
     }
 
     void clear()
@@ -276,13 +284,13 @@ public:
     {
     }
 
-    ArgList(EncodedJSValue* args, int count)
+    ArgList(EncodedJSValue* args, unsigned count)
         : m_args(args)
         , m_argCount(count)
     {
     }
 
-    JSValue at(int i) const
+    JSValue at(unsigned i) const
     {
         if (i >= m_argCount)
             return jsUndefined();
@@ -298,7 +306,7 @@ public:
 
 private:
     EncodedJSValue* m_args { nullptr };
-    int m_argCount { 0 };
+    unsigned m_argCount { 0 };
 };
 
 } // namespace JSC
