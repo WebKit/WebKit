@@ -139,7 +139,7 @@ std::optional<AV1CodecConfigurationRecord> parseAV1CodecParameters(StringView co
     configuration.monochrome = *monochrome;
 
     if (++nextElement == codecSplit.end())
-        return std::nullopt;
+        return configuration;
 
     // The chromaSubsampling parameter value, represented by a three-digit decimal,
     // SHALL have its first digit equal to subsampling_x and its second digit equal
@@ -152,7 +152,7 @@ std::optional<AV1CodecConfigurationRecord> parseAV1CodecParameters(StringView co
     configuration.chromaSubsampling = static_cast<uint8_t>(*chromaSubsampling);
 
     if (++nextElement == codecSplit.end())
-        return std::nullopt;
+        return configuration;
 
     // The colorPrimaries, transferCharacteristics, matrixCoefficients, and videoFullRangeFlag
     // parameter values SHALL equal the value of matching fields in the Sequence Header OBU, if
@@ -164,7 +164,7 @@ std::optional<AV1CodecConfigurationRecord> parseAV1CodecParameters(StringView co
     configuration.colorPrimaries = static_cast<uint8_t>(*colorPrimaries);
 
     if (++nextElement == codecSplit.end())
-        return std::nullopt;
+        return configuration;
 
     auto transferCharacteristics = parseEnumFromStringView<AV1ConfigurationTransferCharacteristics>(*nextElement);
     if (!transferCharacteristics)
@@ -172,7 +172,7 @@ std::optional<AV1CodecConfigurationRecord> parseAV1CodecParameters(StringView co
     configuration.transferCharacteristics = static_cast<uint8_t>(*transferCharacteristics);
 
     if (++nextElement == codecSplit.end())
-        return std::nullopt;
+        return configuration;
 
     auto matrixCoefficients = parseEnumFromStringView<AV1ConfigurationMatrixCoefficients>(*nextElement);
     if (!matrixCoefficients)
