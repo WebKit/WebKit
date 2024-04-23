@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            margin: 10px;
+            width: 100px;
+            height: 100px;
+            overflow: auto;
+            border: 5px solid black;
+        }
+        
+        .contents {
+            width: 200%;
+        }
+    </style>
+
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (window.internals)
+                    document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents">&nbsp;</div>
+    </div>
+    <div class="scroller" style="width: 0px">
+        <div class="contents">&nbsp;</div>
+    </div>
+    <div class="scroller" style="width: 0.3px">
+        <div class="contents">&nbsp;</div>
+    </div>
+    <div class="scroller" style="width: 0.5px">
+        <div class="contents">&nbsp;</div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>
