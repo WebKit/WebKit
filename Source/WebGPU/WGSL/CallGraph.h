@@ -43,7 +43,7 @@ class CallGraph {
 public:
     struct Callee {
         AST::Function* target;
-        Vector<AST::CallExpression*> callSites;
+        Vector<std::tuple<AST::Function*, AST::CallExpression*>> callSites;
     };
 
     struct EntryPoint {

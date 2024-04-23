@@ -52,6 +52,7 @@ private:
     CallGraph m_callGraph;
     HashMap<AST::Function*, unsigned> m_calleeBuildingMap;
     Vector<CallGraph::Callee>* m_callees { nullptr };
+    AST::Function* m_currentFunction { nullptr };
     Deque<AST::Function*> m_queue;
 };
 
@@ -93,8 +94,10 @@ void CallGraphBuilder::visit(AST::Function& function)
 
     ASSERT(!m_callees);
     m_callees = &result.iterator->value;
+    m_currentFunction = &function;
     AST::Visitor::visit(function);
     m_calleeBuildingMap.clear();
+    m_currentFunction = nullptr;
     m_callees = nullptr;
 }
 
@@ -114,9 +117,9 @@ void CallGraphBuilder::visit(AST::CallExpression& call)
     m_queue.append(it->value);
     auto result = m_calleeBuildingMap.add(it->value, m_callees->size());
     if (result.isNewEntry)
-        m_callees->append(CallGraph::Callee { it->value, { &call } });
+        m_callees->append(CallGraph::Callee { it->value, { { m_currentFunction, &call } } });
     else
-        m_callees->at(result.iterator->value).callSites.append(&call);
+        m_callees->at(result.iterator->value).callSites.append({ m_currentFunction, &call });
 }
 
 void buildCallGraph(ShaderModule& shaderModule)

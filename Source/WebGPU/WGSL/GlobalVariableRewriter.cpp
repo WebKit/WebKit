@@ -144,6 +144,8 @@ private:
     Packing getPacking(AST::IdentityExpression&);
     Packing packingForType(const Type*);
 
+    AST::IdentifierExpression& getBase(AST::Expression&, unsigned&);
+
     ShaderModule& m_shaderModule;
     HashMap<String, Global> m_globals;
     HashMap<std::tuple<unsigned, unsigned>, AST::Variable*> m_globalsByBinding;
@@ -151,6 +153,7 @@ private:
     IndexMap<const Type*> m_structTypes;
     HashMap<String, AST::Variable*> m_defs;
     ListHashSet<String> m_reads;
+    HashMap<AST::Function*, ListHashSet<String>> m_lengthParameters;
     HashMap<AST::Function*, ListHashSet<String>> m_visitedFunctions;
     Reflection::EntryPointInformation* m_entryPointInformation { nullptr };
     HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_generateLayoutGroupMapping;
@@ -165,6 +168,7 @@ private:
     HashMap<AST::Variable*, AST::Variable*> m_bufferLengthMap;
     AST::Expression* m_bufferLengthType { nullptr };
     AST::Expression* m_bufferLengthReferenceType { nullptr };
+    AST::Function* m_currentFunction { nullptr };
     HashMap<std::pair<unsigned, unsigned>, unsigned> m_globalsUsingDynamicOffset;
 };
 
@@ -214,11 +218,28 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
                 AST::ParameterRole::UserDefined
             ));
         }
+
+        auto it = m_lengthParameters.find(callee.target);
+        if (it != m_lengthParameters.end() && !it->value.isEmpty()) {
+            auto& lengthType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("u32"_s));
+            lengthType.m_inferredType = m_shaderModule.types().u32Type();
+
+            for (auto& length : it->value) {
+                auto lengthName = makeString("__", length, "_ArrayLength");
+                m_shaderModule.append(callee.target->parameters(), m_shaderModule.astBuilder().construct<AST::Parameter>(
+                    SourceSpan::empty(),
+                    AST::Identifier::make(lengthName),
+                    lengthType,
+                    AST::Attribute::List { },
+                    AST::ParameterRole::UserDefined
+                ));
+            }
+        }
     };
 
     const auto& updateCallSites = [&] {
         for (auto& read : m_reads) {
-            for (auto& call : callee.callSites) {
+            for (auto& [_, call] : callee.callSites) {
                 auto it = m_globals.find(read);
                 RELEASE_ASSERT(it != m_globals.end());
                 auto& global = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
@@ -227,6 +248,38 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
                 );
                 global.m_inferredType = it->value.declaration->storeType();
                 m_shaderModule.append(call->arguments(), global);
+            }
+        }
+
+        auto it = m_lengthParameters.find(callee.target);
+        if (it != m_lengthParameters.end() && !it->value.isEmpty()) {
+            auto& lengthType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("u32"_s));
+            lengthType.m_inferredType = m_shaderModule.types().u32Type();
+
+            for (auto& lengthParameter : it->value) {
+                unsigned index = 0;
+                for (auto& parameter : callee.target->parameters()) {
+                    if (parameter.name() == lengthParameter)
+                        break;
+                    ++index;
+                }
+                for (auto& [caller, call] : callee.callSites) {
+                    auto& argument = call->arguments()[index];
+                    unsigned arrayOffset = 0;
+                    auto& base = getBase(argument, arrayOffset);
+                    auto& identifier = base.identifier();
+
+                    auto result = m_lengthParameters.add(caller, ListHashSet<String> { });
+                    result.iterator->value.add(identifier);
+
+                    auto lengthName = makeString("__", identifier, "_ArrayLength");
+                    auto& length = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
+                        SourceSpan::empty(),
+                        AST::Identifier::make(lengthName)
+                    );
+                    length.m_inferredType = m_shaderModule.types().u32Type();
+                    m_shaderModule.append(call->arguments(), length);
+                }
             }
         }
     };
@@ -260,7 +313,9 @@ void RewriteGlobalVariables::visit(AST::Function& function)
     m_defs.clear();
 
     def(function.name(), nullptr);
+    m_currentFunction = &function;
     AST::Visitor::visit(function);
+    m_currentFunction = nullptr;
 }
 
 void RewriteGlobalVariables::visit(AST::Parameter& parameter)
@@ -463,33 +518,14 @@ Packing RewriteGlobalVariables::getPacking(AST::CallExpression& call)
     if (auto target = dynamicDowncast<AST::IdentifierExpression>(call.target())) {
         if (target->identifier() == "arrayLength"_s) {
             ASSERT(call.arguments().size() == 1);
-            auto arrayOffset = 0;
-            const auto& getBase = [&](auto&& getBase, AST::Expression& expression) -> AST::IdentifierExpression& {
-                if (auto* identityExpression = dynamicDowncast<AST::IdentityExpression>(expression))
-                    return getBase(getBase, identityExpression->expression());
-                if (auto* unaryExpression = dynamicDowncast<AST::UnaryExpression>(expression))
-                    return getBase(getBase, unaryExpression->expression());
-                if (auto* fieldAccess = dynamicDowncast<AST::FieldAccessExpression>(expression)) {
-                    auto& base = fieldAccess->base();
-                    auto* type = base.inferredType();
-                    if (auto* reference = std::get_if<Types::Reference>(type))
-                        type = reference->element;
-                    if (auto* pointer = std::get_if<Types::Pointer>(type))
-                        type = pointer->element;
-                    auto& structure = std::get<Types::Struct>(*type).structure;
-                    auto& lastMember = structure.members().last();
-                    RELEASE_ASSERT(lastMember.name().id() == fieldAccess->fieldName().id());
-                    arrayOffset += lastMember.offset();
-                    return getBase(getBase, base);
-                }
-                if (auto* identifierExpression = dynamicDowncast<AST::IdentifierExpression>(expression))
-                    return *identifierExpression;
-                RELEASE_ASSERT_NOT_REACHED();
-            };
             auto& arrayPointer = call.arguments()[0];
-            auto& base = getBase(getBase, arrayPointer);
+            unsigned arrayOffset = 0;
+            auto& base = getBase(arrayPointer, arrayOffset);
             auto& identifier = base.identifier();
-            ASSERT(m_globals.contains(identifier));
+            if (!m_globals.contains(identifier)) {
+                auto result = m_lengthParameters.add(m_currentFunction, ListHashSet<String> { });
+                result.iterator->value.add(identifier);
+            }
             auto lengthName = makeString("__", identifier, "_ArrayLength");
             auto& length = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
                 SourceSpan::empty(),
@@ -552,6 +588,30 @@ Packing RewriteGlobalVariables::getPacking(AST::CallExpression& call)
 Packing RewriteGlobalVariables::packingForType(const Type* type)
 {
     return type->packing();
+}
+
+AST::IdentifierExpression& RewriteGlobalVariables::getBase(AST::Expression& expression, unsigned& arrayOffset)
+{
+    if (auto* identityExpression = dynamicDowncast<AST::IdentityExpression>(expression))
+        return getBase(identityExpression->expression(), arrayOffset);
+    if (auto* unaryExpression = dynamicDowncast<AST::UnaryExpression>(expression))
+        return getBase(unaryExpression->expression(), arrayOffset);
+    if (auto* fieldAccess = dynamicDowncast<AST::FieldAccessExpression>(expression)) {
+        auto& base = fieldAccess->base();
+        auto* type = base.inferredType();
+        if (auto* reference = std::get_if<Types::Reference>(type))
+            type = reference->element;
+        if (auto* pointer = std::get_if<Types::Pointer>(type))
+            type = pointer->element;
+        auto& structure = std::get<Types::Struct>(*type).structure;
+        auto& lastMember = structure.members().last();
+        RELEASE_ASSERT(lastMember.name().id() == fieldAccess->fieldName().id());
+        arrayOffset += lastMember.offset();
+        return getBase(base, arrayOffset);
+    }
+    if (auto* identifierExpression = dynamicDowncast<AST::IdentifierExpression>(expression))
+        return *identifierExpression;
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static unsigned buffersForStage(const Configuration& configuration, ShaderStage stage)
