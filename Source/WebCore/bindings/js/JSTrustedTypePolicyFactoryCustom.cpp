@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSTrustedTypePolicyFactory.h"
 
+#include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/SlotVisitorInlines.h>
 
 namespace WebCore {

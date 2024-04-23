@@ -47,6 +47,8 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParserConsumer+Angle.h"
 #include "CSSPropertyParserConsumer+Color.h"
+#include "CSSPropertyParserConsumer+Integer.h"
+#include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+List.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
 #include "CSSPropertyParserConsumer+Time.h"

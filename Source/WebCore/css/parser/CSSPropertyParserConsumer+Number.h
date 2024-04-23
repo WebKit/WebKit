@@ -24,11 +24,14 @@
 
 #pragma once
 
+#include "CSSParserMode.h"
 #include "CSSParserToken.h"
 #include "CSSPropertyParserConsumer+Meta.h"
 #include "CSSPropertyParserConsumer+None.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "Length.h"
 #include <optional>
+
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

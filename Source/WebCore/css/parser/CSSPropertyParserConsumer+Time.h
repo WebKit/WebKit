@@ -30,8 +30,13 @@
 
 namespace WebCore {
 
+class CSSCalcSymbolTable;
 class CSSPrimitiveValue;
 class CSSParserTokenRange;
+
+enum CSSParserMode : uint8_t;
+
+enum class ValueRange : uint8_t;
 
 namespace CSSPropertyParserHelpers {
 

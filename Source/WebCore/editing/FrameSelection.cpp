@@ -75,6 +75,7 @@
 #include "RenderedPosition.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "SimpleCaretAnimator.h"
 #include "SimpleRange.h"
 #include "SpatialNavigation.h"

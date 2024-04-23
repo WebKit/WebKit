@@ -26,22 +26,11 @@
 #include "CSSPropertyParserConsumer+Length.h"
 
 #include "CSSCalcParser.h"
+#include "CSSCalcSymbolTable.h"
+#include "CSSCalcValue.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
-
-static inline bool shouldAcceptUnitlessValue(double value, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
-{
-    // FIXME: Presentational HTML attributes shouldn't use the CSS parser for lengths.
-
-    if (!value && unitlessZero == UnitlessZeroQuirk::Allow)
-        return true;
-
-    if (isUnitlessValueParsingEnabledForMode(parserMode))
-        return true;
-
-    return parserMode == HTMLQuirksMode && unitless == UnitlessQuirk::Allow;
-}
 
 // MARK: Length (raw)
 

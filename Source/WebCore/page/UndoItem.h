@@ -55,7 +55,7 @@ public:
     void invalidate();
 
     Document* document() const;
-    RefPtr<Document> protectedDocument() const { return document(); }
+    RefPtr<Document> protectedDocument() const;
 
     UndoManager* undoManager() const;
     void setUndoManager(UndoManager*);

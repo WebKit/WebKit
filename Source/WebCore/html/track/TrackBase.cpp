@@ -27,6 +27,7 @@
 #include "TrackBase.h"
 
 #include "ContextDestructionObserverInlines.h"
+#include "Document.h"
 #include "Logging.h"
 #include "TrackListBase.h"
 #include "TrackPrivateBase.h"

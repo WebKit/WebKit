@@ -79,6 +79,7 @@
 #include "JSCJSValueInlines.h"
 #include "OperandsInlines.h"
 #include "ProfilerDatabase.h"
+#include "StructureID.h"
 #include "TrackedReferences.h"
 #include "VMInlines.h"
 

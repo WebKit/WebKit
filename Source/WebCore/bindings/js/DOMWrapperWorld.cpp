@@ -24,6 +24,7 @@
 #include "CommonVM.h"
 #include "WebCoreJSClientData.h"
 #include "WindowProxy.h"
+#include <JavaScriptCore/WeakInlines.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {

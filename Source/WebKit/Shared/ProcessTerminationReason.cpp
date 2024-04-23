@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "ProcessTerminationReason.h"
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebKit {
 

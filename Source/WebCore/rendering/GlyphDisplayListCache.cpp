@@ -29,6 +29,7 @@
 #include "DisplayListItems.h"
 #include "InlineDisplayBox.h"
 #include "LegacyInlineTextBox.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

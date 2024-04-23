@@ -34,6 +34,7 @@
 #include <mutex>
 #include <unistd.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/Seconds.h>

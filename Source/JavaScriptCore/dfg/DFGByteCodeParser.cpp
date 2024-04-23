@@ -85,6 +85,7 @@
 #include "SetPrivateBrandStatus.h"
 #include "StackAlignment.h"
 #include "StringConstructor.h"
+#include "StructureID.h"
 #include "StructureStubInfo.h"
 #include "SymbolConstructor.h"
 #include <wtf/CommaPrinter.h>
