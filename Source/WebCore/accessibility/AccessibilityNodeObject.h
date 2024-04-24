@@ -124,6 +124,7 @@ public:
     Element* mouseButtonListener(MouseButtonListenerResultFilter = ExcludeBodyElement) const;
     Element* anchorElement() const override;
     RefPtr<Element> popoverTargetElement() const final;
+    RefPtr<Element> invokeTargetElement() const final;
     AXCoreObject* internalLinkElement() const final;
     AccessibilityChildrenVector radioButtonGroup() const final;
     AccessibilityObject* menuForMenuButton() const;

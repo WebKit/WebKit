@@ -1162,6 +1162,12 @@ RefPtr<Element> AccessibilityNodeObject::popoverTargetElement() const
     return formControlElement ? formControlElement->popoverTargetElement() : nullptr;
 }
 
+RefPtr<Element> AccessibilityNodeObject::invokeTargetElement() const
+{
+    WeakPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(node());
+    return formControlElement ? formControlElement->invokeTargetElement() : nullptr;
+}
+
 AXCoreObject* AccessibilityNodeObject::internalLinkElement() const
 {
     // We don't currently support ARIA links as internal link elements, so exit early if anchorElement() is not a native HTMLAnchorElement.

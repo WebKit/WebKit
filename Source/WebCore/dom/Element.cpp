@@ -5548,6 +5548,11 @@ bool Element::isPopoverShowing() const
     return popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing;
 }
 
+PopoverState Element::popoverState() const
+{
+    return popoverData() ? popoverData()->popoverState() : PopoverState::None;
+}
+
 // https://drafts.csswg.org/css-contain/#relevant-to-the-user
 bool Element::isRelevantToUser() const
 {

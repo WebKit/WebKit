@@ -49,11 +49,6 @@ enum class PageIsEditable : bool;
 enum class FireEvents : bool { No, Yes };
 enum class FocusPreviousElement : bool { No, Yes };
 enum class PopoverVisibilityState : bool;
-enum class PopoverState : uint8_t {
-    None,
-    Auto,
-    Manual,
-};
 
 #if PLATFORM(IOS_FAMILY)
 enum class SelectionRenderingBehavior : bool;
@@ -155,7 +150,6 @@ public:
     ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents);
     ExceptionOr<bool> togglePopover(std::optional<bool> force);
 
-    PopoverState popoverState() const;
     const AtomString& popover() const;
     void setPopover(const AtomString& value) { setAttributeWithoutSynchronization(HTMLNames::popoverAttr, value); };
     void popoverAttributeChanged(const AtomString& value);

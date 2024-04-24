@@ -2600,7 +2600,9 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     } else if (attrName == colspanAttr) {
         postNotification(element, AXColumnSpanChanged);
         recomputeParentTableProperties(element, TableProperty::CellSlots);
-    } else if (attrName == popovertargetAttr)
+    } else if (attrName == invoketargetAttr)
+        postNotification(element, AXInvokeTargetChanged);
+    else if (attrName == popovertargetAttr)
         postNotification(element, AXPopoverTargetChanged);
     else if (attrName == scopeAttr)
         postNotification(element, AXCellScopeChanged);
@@ -4427,6 +4429,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
         case AXFocusableStateChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::CanSetFocusAttribute });
             break;
+        case AXInvokeTargetChanged:
+            tree->queueNodeUpdate(notification.first->objectID(), { { AXPropertyName::SupportsExpanded, AXPropertyName::IsExpanded } });
+            break;
         case AXMaximumValueChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { { AXPropertyName::MaxValueForRange, AXPropertyName::ValueForRange } });
             break;
@@ -4777,6 +4782,7 @@ Vector<QualifiedName>& AXObjectCache::relationAttributes()
         aria_labeledbyAttr,
         aria_ownsAttr,
         headersAttr,
+        invoketargetAttr,
         popovertargetAttr,
     };
     return relationAttributes;
@@ -4831,7 +4837,7 @@ AXRelationType AXObjectCache::attributeToRelationType(const QualifiedName& attri
 {
     if (attribute == aria_activedescendantAttr)
         return AXRelationType::ActiveDescendant;
-    if (attribute == aria_controlsAttr || attribute == popovertargetAttr)
+    if (attribute == aria_controlsAttr || attribute == popovertargetAttr || attribute == invoketargetAttr)
         return AXRelationType::ControllerFor;
     if (attribute == aria_describedbyAttr)
         return AXRelationType::DescribedBy;
@@ -5158,6 +5164,10 @@ void AXObjectCache::updateRelations(Element& origin, const QualifiedName& attrib
         ASSERT_NOT_REACHED();
         return;
     }
+
+    // `invoketarget` is only valid for input and button elements.
+    if (UNLIKELY(attribute == invoketargetAttr) && !is<HTMLInputElement>(origin) && !is<HTMLButtonElement>(origin))
+        return;
 
     // `popovertarget` is only valid for input and button elements.
     if (UNLIKELY(attribute == popovertargetAttr) && !is<HTMLInputElement>(origin) && !is<HTMLButtonElement>(origin))

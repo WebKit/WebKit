@@ -3364,8 +3364,11 @@ bool AccessibilityObject::supportsPressed() const
 
 bool AccessibilityObject::supportsExpanded() const
 {
-    // If this object can toggle an HTML popover, it supports the reporting of its expanded state (which is based on the expanded / collapsed state of that popover).
-    if (popoverTargetElement())
+    // If this object can toggle an HTML popover, it supports the reporting of its expanded state (which is based on the expanded / collapsed state of that popover or dialog).
+    if (invokeTargetElement()) {
+        if (invokeTargetElement()->popoverState() != PopoverState::None)
+            return true;
+    } else if (popoverTargetElement())
         return true;
 
     if (is<HTMLDetailsElement>(node()))
@@ -3424,6 +3427,8 @@ bool AccessibilityObject::isExpanded() const
     }
 
     if (supportsExpanded()) {
+        if (RefPtr invokeTargetElement = this->invokeTargetElement())
+            return invokeTargetElement->isPopoverShowing();
         if (RefPtr popoverTargetElement = this->popoverTargetElement())
             return popoverTargetElement->isPopoverShowing();
         return equalLettersIgnoringASCIICase(getAttribute(aria_expandedAttr), "true"_s);

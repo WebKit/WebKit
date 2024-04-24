@@ -173,6 +173,7 @@ protected:
     macro(HasPopupChanged) \
     macro(IdAttributeChanged) \
     macro(ImageOverlayChanged) \
+    macro(InvokeTargetChanged) \
     macro(IsAtomicChanged) \
     macro(KeyShortcutsChanged) \
     macro(LabelChanged) \
