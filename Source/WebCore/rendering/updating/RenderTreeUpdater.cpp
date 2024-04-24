@@ -141,9 +141,10 @@ void RenderTreeUpdater::updateRebuildRoots()
         auto* renderingAncestor = findRenderingAncestor(root);
         if (!renderingAncestor)
             return nullptr;
-        if (!RenderTreeBuilder::isRebuildRootForChildren(*renderingAncestor->renderer()))
-            return nullptr;
-        return renderingAncestor;
+        auto isInsideContinuation = root.renderer() && root.renderer()->parent()->isContinuation();
+        if (isInsideContinuation || RenderTreeBuilder::isRebuildRootForChildren(*renderingAncestor->renderer()))
+            return renderingAncestor;
+        return nullptr;
     };
 
     auto addForRebuild = [&](auto& element) {
@@ -160,7 +161,7 @@ void RenderTreeUpdater::updateRebuildRoots()
 
         auto* parent = composedTreeAncestors(element).first();
         m_styleUpdate->addElement(element, parent, Style::ElementUpdate {
-            RenderStyle::clonePtr(element.renderer()->style()),
+            makeUnique<RenderStyle>(RenderStyle::cloneIncludingPseudoElements(element.renderer()->style())),
             Style::Change::Renderer
         });
         return true;
