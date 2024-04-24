@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Feature policy 'Geolocation' check failed for element with origin 'https://not-web-platform.test:9443' and allow attribute ''.
+CONSOLE MESSAGE: Permission policy 'Geolocation' check failed for element with origin 'https://not-web-platform.test:9443' and allow attribute ''.
 
 
 FAIL Permissions-Policy header geolocation=() disallows the top-level document. promise_test: Unhandled rejection with value: object "[object GeolocationPosition]"

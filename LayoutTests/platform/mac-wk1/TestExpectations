@@ -2849,8 +2849,3 @@ fast/css/view-transitions-update-layer-lists-crash.html [ Skip ]
 
 webkit.org/b/272939 [ Ventura+ ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-strict-policies.sub.html [ Pass Failure ]
 
-# webkit.org/b/273083 REGRESSION (277809@main): [ macOS wk1 ] imported/w3c/web-platform-tests/geolocation-API are consistent failure
-imported/w3c/web-platform-tests/geolocation-API/disabled-by-permissions-policy.https.sub.html [ Failure ]
-imported/w3c/web-platform-tests/geolocation-API/enabled-by-permission-policy-attribute-redirect-on-load.https.sub.html [ Failure ]
-imported/w3c/web-platform-tests/geolocation-API/enabled-by-permissions-policy.https.sub.html [ Failure ]
-imported/w3c/web-platform-tests/geolocation-API/enabled-on-self-origin-by-permissions-policy.https.sub.html [ Failure ]

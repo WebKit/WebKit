@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Feature policy 'Geolocation' check failed for element with origin 'https://127.0.0.1:9443' and allow attribute ''.
+CONSOLE MESSAGE: Permission policy 'Geolocation' check failed for element with origin 'https://127.0.0.1:9443' and allow attribute ''.
 
 
 PASS Permissions-Policy header geolocation=* allows the top-level document.
