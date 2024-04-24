@@ -56,9 +56,12 @@ class ScriptError(Exception):
         if not message:
             message = 'Failed to run "%s"' % repr(script_args)
             if exit_code:
-                message += " exit_code: %d" % exit_code
+                message += ", exit_code: %d" % exit_code
             if cwd:
-                message += " cwd: %s" % cwd
+                message += ", cwd: %s" % cwd
+            if output:
+                message += ", output: %s" % output
+        
 
         Exception.__init__(self, message)
         self.script_args = script_args  # 'args' is already used by Exception
