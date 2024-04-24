@@ -362,7 +362,11 @@ class SimulatedDeviceManager(object):
         host = host or SystemHost.get_default()
         _log.debug(u"Booting device '{}'".format(device.udid))
         device.platform_device.booted_by_script = True
-        host.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'boot', device.udid])
+        try:
+            host.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'boot', device.udid])
+        except ScriptError as e:
+            _log.error('Error: ' + e.message_with_output(output_limit=None))
+            raise e
         SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
         # FIXME: Remove this delay once rdar://77234240 is resolved.
         time.sleep(15)
