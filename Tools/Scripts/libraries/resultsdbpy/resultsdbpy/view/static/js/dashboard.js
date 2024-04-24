@@ -319,7 +319,7 @@ class Dashboard {
         }).catch(error => {
             this.title_ref.setState({status: 'crashed'});
             this.content.setState({
-                error: 'Failed to Fetach',
+                error: 'Failed to Fetch',
                 description: `Failed to fetch history of '${this.title}', and cannot construct dashboard`,
             });
         });
