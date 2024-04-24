@@ -871,7 +871,7 @@ FloatSize WebPageProxy::overrideScreenSize()
 FloatSize WebPageProxy::overrideAvailableScreenSize()
 {
 #if PLATFORM(VISION)
-    if (PAL::currentUserInterfaceIdiomIsVisionOrVisionLegacy())
+    if (PAL::currentUserInterfaceIdiomIsVision())
         return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
 #endif
     return WebCore::overrideAvailableScreenSize();
