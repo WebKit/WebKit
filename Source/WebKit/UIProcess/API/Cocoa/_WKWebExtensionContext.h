@@ -44,6 +44,8 @@
 @class NSMenuItem;
 #endif
 
+#define HAVE_UPDATED_WEB_EXTENSION_CONTEXT_INSPECTION_OVERRIDE_NAME 1
+
 NS_ASSUME_NONNULL_BEGIN
 
 /*! @abstract Indicates a @link WKWebExtensionContext @/link error. */
@@ -184,6 +186,12 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  You should set this to `YES` when needed for debugging purposes. The default value is `NO`.
 */
 @property (nonatomic, getter=isInspectable) BOOL inspectable;
+
+/*!
+ @abstract The name shown when inspecting the background web view.
+ @discussion This is the text that will appear when inspecting the background web view.
+ */
+@property (nonatomic, nullable, copy) NSString *inspectionName;
 
 /*!
  @abstract Specifies unsupported APIs for this extension, making them `undefined` in JavaScript.

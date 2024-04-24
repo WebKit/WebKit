@@ -110,6 +110,9 @@ public:
     String popupPath() const;
     void setPopupPath(String);
 
+    NSString *popupWebViewInspectionName();
+    void setPopupWebViewInspectionName(const String&);
+
 #if PLATFORM(IOS_FAMILY)
     UIViewController *popupViewController();
 #endif
@@ -162,6 +165,7 @@ private:
     RetainPtr<_WKWebExtensionActionWebView> m_popupWebView;
     RetainPtr<_WKWebExtensionActionWebViewDelegate> m_popupWebViewDelegate;
     String m_customPopupPath;
+    String m_popupWebViewInspectionName;
 
     RetainPtr<NSDictionary> m_customIcons;
     String m_customLabel;

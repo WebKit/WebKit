@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,6 +102,16 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionAction, WebExtensionAction,
     return _webExtensionAction->setHasUnreadBadgeText(hasUnreadBadgeText);
 }
 
+- (NSString *)inspectionName
+{
+    return _webExtensionAction->popupWebViewInspectionName();
+}
+
+- (void)setInspectionName:(NSString *)name
+{
+    _webExtensionAction->setPopupWebViewInspectionName(name);
+}
+
 - (BOOL)isEnabled
 {
     return _webExtensionAction->isEnabled();
@@ -186,6 +196,15 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionAction, WebExtensionAction,
 }
 
 - (void)setHasUnreadBadgeText:(BOOL)hasUnreadBadgeText
+{
+}
+
+- (NSString *)inspectionName
+{
+    return nil;
+}
+
+- (void)setInspectionName:(NSString *)name
 {
 }
 

@@ -459,6 +459,9 @@ public:
     WKWebView *backgroundWebView() const { return m_backgroundWebView.get(); }
     bool safeToLoadBackgroundContent() const { return m_safeToLoadBackgroundContent; }
 
+    NSString *backgroundWebViewInspectionName();
+    void setBackgroundWebViewInspectionName(const String&);
+
     bool decidePolicyForNavigationAction(WKWebView *, WKNavigationAction *);
     void didFinishDocumentLoad(WKWebView *, WKNavigation *);
     void didFailNavigation(WKWebView *, WKNavigation *, NSError *);
@@ -887,6 +890,8 @@ private:
 
     RetainPtr<WKWebView> m_backgroundWebView;
     RetainPtr<_WKWebExtensionContextDelegate> m_delegate;
+
+    String m_backgroundWebViewInspectionName;
 
     std::unique_ptr<WebCore::Timer> m_unloadBackgroundWebViewTimer;
     MonotonicTime m_lastBackgroundPortActivityTime;

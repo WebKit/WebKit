@@ -43,9 +43,6 @@ WebPageDebuggable::WebPageDebuggable(WebPageProxy& page)
 
 String WebPageDebuggable::name() const
 {
-    if (!m_nameOverride.isNull())
-        return m_nameOverride;
-
     if (!m_page.mainFrame())
         return String();
 

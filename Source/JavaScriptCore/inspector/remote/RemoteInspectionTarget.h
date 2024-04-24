@@ -52,6 +52,7 @@ public:
 
     virtual String name() const { return String(); } // ITML JavaScript Page ServiceWorker WebPage
     virtual String url() const { return String(); } // Page ServiceWorker WebPage
+    virtual const String& nameOverride() const { return nullString(); }
     virtual bool hasLocalDebugger() const = 0;
 
     virtual void setIndicating(bool) { } // Default is to do nothing.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -645,6 +645,20 @@ void WebExtensionAction::setPopupPath(String path)
     propertiesDidChange();
 }
 
+NSString *WebExtensionAction::popupWebViewInspectionName()
+{
+    if (m_popupWebViewInspectionName.isEmpty())
+        m_popupWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Popup Page", "Label for an inspectable Web Extension popup page", (__bridge CFStringRef)extensionContext()->extension().displayShortName());
+
+    return m_popupWebViewInspectionName;
+}
+
+void WebExtensionAction::setPopupWebViewInspectionName(const String& name)
+{
+    m_popupWebViewInspectionName = name;
+    m_popupWebView.get()._remoteInspectionNameOverride = name;
+}
+
 #if PLATFORM(IOS_FAMILY)
 UIViewController *WebExtensionAction::popupViewController()
 {
@@ -772,6 +786,7 @@ WKWebView *WebExtensionAction::popupWebView()
     m_popupWebView.get().UIDelegate = m_popupWebViewDelegate.get();
     m_popupWebView.get().inspectable = extensionContext()->isInspectable();
     m_popupWebView.get().accessibilityLabel = extensionContext()->extension().displayName();
+    m_popupWebView.get()._remoteInspectionNameOverride = popupWebViewInspectionName();
 
 #if PLATFORM(MAC)
     m_popupWebView.get()._sizeToContentAutoSizeMaximumSize = CGSizeMake(maximumPopoverWidth, maximumPopoverHeight);

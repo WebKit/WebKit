@@ -82,6 +82,9 @@
 /* Label for an inspectable Web Extension service worker */
 "%@ — Extension Service Worker" = "%@ — Extension Service Worker";
 
+/* Label for an inspectable Web Extension popup page */
+"%@ — Extension Popup Page" = "%@ — Extension Popup Page";
+
 /* Label to describe the number of files selected in a file upload control that allows multiple files */
 "%d files" = "%d files";
 

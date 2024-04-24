@@ -3176,10 +3176,7 @@ void WebExtensionContext::loadBackgroundWebView()
     if ([delegate respondsToSelector:@selector(_webExtensionController:didCreateBackgroundWebView:forExtensionContext:)])
         [delegate _webExtensionController:m_extensionController->wrapper() didCreateBackgroundWebView:m_backgroundWebView.get() forExtensionContext:wrapper()];
 
-    if (extension().backgroundContentIsServiceWorker())
-        m_backgroundWebView.get()._remoteInspectionNameOverride = WEB_UI_FORMAT_CFSTRING("%@ — Extension Service Worker", "Label for an inspectable Web Extension service worker", (__bridge CFStringRef)extension().displayShortName());
-    else
-        m_backgroundWebView.get()._remoteInspectionNameOverride = WEB_UI_FORMAT_CFSTRING("%@ — Extension Background Page", "Label for an inspectable Web Extension background page", (__bridge CFStringRef)extension().displayShortName());
+    m_backgroundWebView.get()._remoteInspectionNameOverride = backgroundWebViewInspectionName();
 
     extension().removeError(WebExtension::Error::BackgroundContentFailedToLoad);
 
@@ -3210,6 +3207,25 @@ void WebExtensionContext::unloadBackgroundWebView()
 
     [m_backgroundWebView _close];
     m_backgroundWebView = nil;
+}
+
+NSString *WebExtensionContext::backgroundWebViewInspectionName()
+{
+    if (!m_backgroundWebViewInspectionName.isEmpty())
+        return m_backgroundWebViewInspectionName;
+
+    if (extension().backgroundContentIsServiceWorker())
+        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Service Worker", "Label for an inspectable Web Extension service worker", (__bridge CFStringRef)extension().displayShortName());
+    else
+        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Background Page", "Label for an inspectable Web Extension background page", (__bridge CFStringRef)extension().displayShortName());
+
+    return m_backgroundWebViewInspectionName;
+}
+
+void WebExtensionContext::setBackgroundWebViewInspectionName(const String& name)
+{
+    m_backgroundWebViewInspectionName = name;
+    m_backgroundWebView.get()._remoteInspectionNameOverride = name;
 }
 
 static inline bool isNotRunningInTestRunner()

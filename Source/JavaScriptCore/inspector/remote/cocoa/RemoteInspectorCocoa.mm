@@ -473,25 +473,30 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
     switch (target.type()) {
     case RemoteInspectionTarget::Type::ITML:
         [listing setObject:target.name() forKey:WIRTitleKey];
+        [listing setObject:target.nameOverride() forKey:WIROverrideNameKey];
         [listing setObject:WIRTypeITML forKey:WIRTypeKey];
         break;
     case RemoteInspectionTarget::Type::JavaScript:
         [listing setObject:target.name() forKey:WIRTitleKey];
+        [listing setObject:target.nameOverride() forKey:WIROverrideNameKey];
         [listing setObject:WIRTypeJavaScript forKey:WIRTypeKey];
         break;
     case RemoteInspectionTarget::Type::Page:
         [listing setObject:target.url() forKey:WIRURLKey];
         [listing setObject:target.name() forKey:WIRTitleKey];
+        [listing setObject:target.nameOverride() forKey:WIROverrideNameKey];
         [listing setObject:WIRTypePage forKey:WIRTypeKey];
         break;
     case RemoteInspectionTarget::Type::ServiceWorker:
         [listing setObject:target.url() forKey:WIRURLKey];
         [listing setObject:target.name() forKey:WIRTitleKey];
+        [listing setObject:target.nameOverride() forKey:WIROverrideNameKey];
         [listing setObject:WIRTypeServiceWorker forKey:WIRTypeKey];
         break;
     case RemoteInspectionTarget::Type::WebPage:
         [listing setObject:target.url() forKey:WIRURLKey];
         [listing setObject:target.name() forKey:WIRTitleKey];
+        [listing setObject:target.nameOverride() forKey:WIROverrideNameKey];
         [listing setObject:WIRTypeWebPage forKey:WIRTypeKey];
         break;
     default:

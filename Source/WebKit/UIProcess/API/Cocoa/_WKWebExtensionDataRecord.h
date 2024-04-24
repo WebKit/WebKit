@@ -30,8 +30,6 @@
 
 #import <WebKit/_WKWebExtensionDataType.h>
 
-#define HAVE_UPDATED_WEB_EXTENSION_DATA_RECORD_ERROR_PROPERTIES 1
-
 NS_ASSUME_NONNULL_BEGIN
 
 /*! @abstract Indicates a `_WKWebExtensionDataRecord` error. */

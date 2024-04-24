@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -142,6 +142,16 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionContext, WebExtensionContex
 - (void)setInspectable:(BOOL)inspectable
 {
     _webExtensionContext->setInspectable(inspectable);
+}
+
+- (NSString *)inspectionName
+{
+    return _webExtensionContext->backgroundWebViewInspectionName();
+}
+
+- (void)setInspectionName:(NSString *)name
+{
+    _webExtensionContext->setBackgroundWebViewInspectionName(name);
 }
 
 - (NSSet<NSString *> *)unsupportedAPIs
@@ -877,6 +887,15 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 }
 
 - (void)setInspectable:(BOOL)inspectable
+{
+}
+
+- (NSString *)inspectionName
+{
+    return nil;
+}
+
+- (void)setInspectionName:(NSString *)name
 {
 }
 
