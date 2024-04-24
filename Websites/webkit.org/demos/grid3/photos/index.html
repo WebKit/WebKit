@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title>Photo demo</title>
   <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content=" width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../universal.css">
   <link rel="stylesheet" href="styles.css">
   <meta name="color-scheme" content="dark light">
@@ -12,7 +12,6 @@
   <meta name="theme-color" content="#444" media="(prefers-color-scheme: dark)">
 </head>
 <body>
-
 <aside class="interface">
   <nav>Demos: <a href="../megamenu/">Mega menu</a> | <a href="../newspaper/">Newspaper</a> | <a href="../museum/">Museum</a></nav>
   <section class="layout-switcher">
@@ -27,7 +26,8 @@
       <option value="seven">Wide images are wider</option>
       <option value="eight">Combined with View Transitions</option>
       <option value="ten">Fibonacci sequence</option>
-      <!-- <option value="nine">Horizontal Masonry</option> -->
+      <option value="nine">Horizontal Masonry</option>
+      <option value="eleven">Horizontal Flexbox</option>
     </select>
   </section>
   <section class="number-toggle">
@@ -90,64 +90,107 @@ figure:has(.wide) { grid-column: span 2; }</code></pre>
   grid-template-columns: 1fr 1fr 2fr 3fr 5fr 8fr;
   grid-template-rows: masonry; 
   gap: 1rem;
+}</code></pre>
+<pre class="nine"><code>main { 
+  display: grid;
+  grid-template-columns: masonry;
+  grid-template-rows: repeat(7, 150px); 
+  gap: 1rem;
+  overflow: scroll;
+}</code></pre>
+<pre class="eleven"><code>main { 
+  display: flex;
+  flex-flow: row wrap;
+  gap: 1rem;
 }
+figure { flex: auto; }
+img { height: 200px; width: auto; min-width: 100%; object-fit: cover; }
+</code></pre>
   </section>
 </aside>
 <footer class="warning"><p>View these demos in <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a>, Firefox (after you turn on <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features#masonry_grid_layout">the feature flag</a>), or another browser that 
 <a href="https://caniuse.com/mdn-css_properties_grid-template-rows_masonry">supports Grid Level 3</a>.</p></footer>
-
 <main class="grid">
-  <figure class="card"><img src="images/Bee.jpeg"                                   class=""></figure>
-  <figure class="card"><img src="images/Bridge_CitySkyline.jpeg"                    class=""></figure>
-  <figure class="card"><img src="images/Bridge_Forest.jpeg"                         class=""></figure>
-  <figure class="card"><img src="images/SnowcapMountains_Pano.jpeg"                 class="wide"></figure>
-  <figure class="card"><img src="images/Birds.jpeg"                                 class="wide"></figure>
-  <figure class="card"><img src="images/Circle_Shapes.jpeg"                         class=""></figure>
-  <figure class="card"><img src="images/Flower_Meadow.jpeg"                         class=""></figure>
-  <figure class="card"><img src="images/New York_GeometricShapes.jpeg"              class=""></figure>
-  <figure class="card"><img src="images/Taiwan_Building_3.jpeg"                     class=""></figure>
-  <figure class="card"><img src="images/Canary_Wharf_from_Limehouse_London_June_2016_HDR.jpg" class=""></figure>
-  <figure class="card"><img src="images/Schloss_Sigmaringen_2022.jpg" class=""></figure>
-  <figure class="card"><img src="images/Daslook._Allium_ursinum,_zwellende_bloemknop._18-04-2022_(actm.)_04.jpg" class=""></figure>
-  <figure class="card"><img src="images/Yellowstone_National_Park_(WY,_USA),_Lower_Geyser_Basin_--_2022_--_2401.jpg" class=""></figure>
-  <figure class="card"><img src="images/Palacio_de_Schonbrunn,_Viena,_Austria,_2020-02-02,_DD_10.jpg" class=""></figure>
-  <figure class="card"><img src="images/Crow.jpeg"                                  class=""></figure>
-  <figure class="card"><img src="images/Deer_Meadow.jpeg"                           class="wide"></figure>    
-  <figure class="card"><img src="images/New York_ CentralPark.jpeg"                 class="wide"></figure>
-  <figure class="card"><img src="images/Mountains_AerialShot.jpeg"                  class=""></figure>
-  <figure class="card"><img src="images/Ocean_Mountains.jpeg"                       class=""></figure>
-  <figure class="card"><img src="images/RedwoodNationalParkPlant.jpeg"              class=""></figure>
-  <figure class="card"><img src="images/StackedBooks.jpeg"                          class=""></figure>
-  <figure class="card"><img src="images/ScrubjaywithAcorn.jpeg"                     class=""></figure>
-  <figure class="card"><img src="images/Sidewalk_Tunnel.jpeg"                       class=""></figure>
-  <figure class="card"><img src="images/Wren.jpeg"                                  class=""></figure>
-  <figure class="card"><img src="images/Faucet.jpeg"                                class="wide"></figure>
-  <figure class="card"><img src="images/StreetAlley_Lights.jpeg"                    class=""></figure>
-  <figure class="card"><img src="images/Taiwan_Building_1.jpeg"                     class=""></figure>
-  <figure class="card"><img src="images/Bow_Bridge_panorama_Central_Park_(86746p).jpg" class="wide"></figure> 
-  <figure class="card"><img src="images/Window_View.jpeg"                           class=""></figure>
-  <figure class="card"><img src="images/Caterpillar.jpeg"                           class=""></figure>
-  <figure class="card"><img src="images/Woods_Foggy.jpeg"                           class=""></figure>
-  <figure class="card"><img src="images/Architecture_ApplePark.jpeg"                class=""></figure>
-  <figure class="card"><img src="images/Dawn_in_Puerto_Encantado.jpg" class="wide"></figure>
-  <figure class="card"><img src="images/Brandslange.jpg" class=""></figure>
-  <figure class="card"><img src="images/Raindrops_on_white_cedar.jpg" class=""></figure>
-  <figure class="card"><img src="images/Beskid_Wyspowy_-_panorama_z_Jaworzynki.JPG" class="wide"></figure>
-  <figure class="card"><img src="images/USA-2016-Puerto_Rico-San_Juan-Castillo_San_Felipe_del_Morro_10.jpg" class="wide"></figure>
-  <figure class="card"><img src="images/Boat_passing_under_Elgin_Bridge_during_blue_hour_(2023)-L1003785.jpg" class=""></figure>
-  <figure class="card"><img src="images/Yellowstone_National_Park_(WY,_USA),_Grand_Prismatic_Spring_--_2022_--_2514.jpg" class=""></figure>
-  <figure class="card"><img src="images/Nevelzwam_(Clitocybe_nebularis)_24-11-2020._(actm.)_01.jpg" class=""></figure>
-  <figure class="card"><img src="images/Heilbronn_-_Bockingen_-_Friedhof_-_Blick_von_der_Kapelle_zum_Haupteingang_(1).jpg" class=""></figure>
-  <figure class="card"><img src="images/Keylong_West_Lahaul_Himachal_Oct22_A7C_03375_panorama.jpg" class="wide"></figure>
-  <figure class="card"><img src="images/Mow_Cop_Castle,_Sep_2023.jpg" class=""></figure>
-  <figure class="card"><img src="images/Sunset_at_Noronhas'_beach.jpg" class=""></figure>
-  <figure class="card"><img src="images/Mekong_bank_with_stilt_dwellings_and_clouds_at_golden_hour_in_Don_Det_Laos.jpg" class=""></figure>
-  <figure class="card"><img src="images/MarinaBayAppleStore_Singapore_Texture.jpeg" class=""></figure>
-  <figure class="card"><img src="images/Lama_glama_Laguna_Colorada_2.jpg" class=""></figure>
-  <figure class="card"><img src="images/Parque_Eagle_River,_Anchorage,_Alaska,_Estados_Unidos,_2017-09-01,_DD_02.jpg" class=""></figure>
-  <figure class="card"><img src="images/Olympic_Stadium_Munich_-_Rows_of_Seats,_April_2019_-04.jpg" class=""></figure>
-  <figure class="card"><img src="images/Gonepteryx_rhamni_-_Citron-1.jpg" class=""></figure>
-  <figure class="card"><img src="images/1552px-Dendrobates_azureus_(Dendrobates_tinctorius)_Edit.jpg" class=""></figure> 
+  <figure class="card"><img src="photos/jubeo-hernandez-2FxiqXZyB7s-unsplash.jpg" width="640" height="735" class=""></figure>
+  <figure class="card"><img src="photos/micheile-henderson-KUbt9qYUmxw-unsplash.jpg" width="640" height="640" class="square"></figure>
+  <figure class="card"><img src="photos/jorgen-hendriksen-2V1AgzYuOJc-unsplash.jpg" width="640" height="306" class="wide"></figure>
+  <figure class="card"><img src="photos/nik-_gScLDbcg2k-unsplash.jpg" width="640" height="427" class=""></figure>
+  <figure class="card"><img src="photos/sourav-ek-JMmNHe9lvFU-unsplash.jpg" width="640" height="800" class=""></figure>
+  <figure class="card"><img src="photos/eugenivy_now-skXOY314xMQ-unsplash.jpg" width="640" height="263" class="wide"></figure>
+  <figure class="card"><img src="photos/sourav-ek-pm0O5YpXeAo-unsplash.jpg" width="640" height="960" class=""></figure>
+  <figure class="card"><img src="photos/farriou-8jdrapiKD1I-unsplash.jpg" width="640" height="389" class="" alt="wide"></figure>
+  <figure class="card"><img src="photos/adam-bignell-Frt_UFRKMvc-unsplash.jpg" width="640" height="804" class=""></figure>
+  <figure class="card"><img src="photos/agata-ciosek-eppywzUKWzA-unsplash.jpg" width="640" height="764" class=""></figure>
+  <figure class="card"><img src="photos/eugenivy_now-VxoaIWyyaaI-unsplash.jpg" width="640" height="852" class=""></figure>
+  <figure class="card"><img src="photos/oliver-sjostrom-ITRnilDKqGs-unsplash.jpg" width="640" height="778" class=""></figure>
+  <figure class="card"><img src="photos/kyle-vaughn-i3ka9q7EhH8-unsplash.jpg" width="640" height="885" class=""></figure>
+  <figure class="card"><img src="photos/alexandr-istomin-QmuHSij3bzk-unsplash.jpg" width="640" height="960" class=""></figure>
+  <figure class="card"><img src="photos/ciocan-ciprian-armvMS3dYng-unsplash.jpg" width="640" height="642" class="" alt="square"></figure>
+  <figure class="card"><img src="photos/dylan-taylor-O_QJLYPvqa4-unsplash.jpg" width="640" height="319" class="wide"></figure>
+  <figure class="card"><img src="photos/francesca-saraco-fC9ydjoOOHA-unsplash.jpg" width="640" height="865" class=""></figure>
+  <figure class="card"><img src="photos/stacey-knipe-0hznujQ4fMk-unsplash.jpg" width="640" height="600" class=""></figure>
+  <figure class="card"><img src="photos/fujiphilm-Q4c1RTklBhk-unsplash.jpg" width="640" height="793" class=""></figure>
+  <figure class="card"><img src="photos/maria-teneva-Y-0pfJPmjXY-unsplash.jpg" width="640" height="622" class=""></figure>
+  <figure class="card"><img src="photos/philip-oroni-VKIXwWsRwt4-unsplash.jpg" width="640" height="427" class=""></figure>
+  <figure class="card"><img src="photos/ryunosuke-kikuno-odJXXIELx6Q-unsplash.jpg" width="640" height="962" class=""></figure>
+  <figure class="card"><img src="photos/micke-lindstrom-wJIhQLXG5CI-unsplash.jpg" width="640" height="480" class=""></figure>
+  <figure class="card"><img src="photos/soekarno-omar-TkNwKbKQNbg-unsplash.jpg" width="640" height="801" class=""></figure>
+  <figure class="card"><img src="photos/iskra-photography-dZPYgXncUK8-unsplash.jpg" width="640" height="427" class=""></figure>
+  <figure class="card"><img src="photos/nikunj-singh-jCjiVCGc2Ik-unsplash.jpg" width="640" height="818" class=""></figure>
+  <figure class="card"><img src="photos/clement-m-h7vKkZNNThE-unsplash.jpg" width="640" height="191" class="wide"></figure>  
+  <figure class="card"><img src="photos/bundo-kim-VRbd6ss_LJI-unsplash.jpg" width="640" height="762" class=""></figure>
+  <figure class="card"><img src="photos/chalo-gallardo-F01kfMEodyk-unsplash.jpg" width="640" height="310" class="wide"></figure>
+  <figure class="card"><img src="photos/eberhard-grossgasteiger-l6WnmYW0LQY-unsplash.jpg" width="640" height="427" class=""></figure>
+  <figure class="card"><img src="photos/iskra-photography-IH9syVvlgT8-unsplash.jpg" width="640" height="651" class=""></figure>
+  <figure class="card"><img src="photos/kirsten-frank-7LDcvZbEPQs-unsplash.jpg" width="640" height="833" class=""></figure>
+  <figure class="card"><img src="photos/mahdi-mahmoodi-Nis_bQyp2Qc-unsplash.jpg" width="640" height="480" class=""></figure>
+  <figure class="card"><img src="photos/mos-design-ild0babk0Q0-unsplash.jpg" width="640" height="427" class=""></figure>
+  <figure class="card"><img src="photos/pawel-czerwinski-blD64oKLHXU-unsplash.jpg" width="640" height="789" class=""></figure>
+  <figure class="card"><img src="photos/peter-amende-XxteOm21HOw-unsplash.jpg" width="640" height="960" class=""></figure>
+  <figure class="card"><img src="photos/reza-madani-ohdJdcO9-Tc-unsplash.jpg" width="640" height="683" class=""></figure>
+  <figure class="card"><img src="photos/saleh-yQ84oCgUdOo-unsplash.jpg" width="640" height="427" class="wide"></figure>
+  <figure class="card"><img src="photos/yuri-krupenin-qB-MKKLRwBc-unsplash.jpg" width="640" height="480" class=""></figure>
+  <figure class="card"><img src="photos/barthelemy-de-mazenod-rRLZZ8BHZNo-unsplash.jpg" width="640" height="966" class=""></figure>
+  <figure class="card"><img src="photos/benoit-deschasaux-WSsW8EpMaeQ-unsplash.jpg" width="640" height="845" class=""></figure>
+  <figure class="card"><img src="photos/blaire-harmon-HkG8cOpvUkU-unsplash.jpg" width="640" height="727" class=""></figure>
+  <figure class="card"><img src="photos/catia-dombaxe-cPFYcoMAi-I-unsplash.jpg" width="640" height="795" class=""></figure>
+  <figure class="card"><img src="photos/louis-maniquet-Ae64KHAzt1I-unsplash.jpg" width="640" height="427" class=""></figure>
+  <figure class="card"><img src="photos/clement-proust-m3StSUrsi3I-unsplash.jpg" width="640" height="427" class=""></figure>
+  <figure class="card"><img src="photos/hannah-grace-znL3MUoOOtg-unsplash.jpg" width="640" height="341" class="wide"></figure>
+  <figure class="card"><img src="photos/jovan-vasiljevic-D9SD5wciKtU-unsplash.jpg" width="640" height="693" class=""></figure>
+  <figure class="card"><img src="photos/jubeo-hernandez-5ajzXUSb-q4-unsplash.jpg" width="640" height="735" class=""></figure>
+  <figure class="card"><img src="photos/kit-suman-WQwtk_t4oJI-unsplash.jpg" width="640" height="382" class="wide"></figure>
+  <figure class="card"><img src="photos/koushik-chowdavarapu-Zjd6NvWUf5k-unsplash.jpg" width="640" height="427" class=""></figure>
+  <figure class="card"><img src="photos/nicola-richli-6NOHq2HWxRU-unsplash.jpg" width="640" height="762" class=""></figure>
+  <figure class="card"><img src="photos/noam-cohen-_dAXhRuNhDM-unsplash.jpg" width="640" height="750" class=""></figure>
+  <figure class="card"><img src="photos/marcus-lenk-JQAiksStApk-unsplash.jpg" width="640" height="968" class=""></figure>
+  <figure class="card"><img src="photos/ray-hennessy-6-JIDCnZG2E-unsplash.jpg" width="640" height="426" class=""></figure>
+  <figure class="card"><img src="photos/elyssa-fahndrich-MF16lGb95WY-unsplash.jpg" width="640" height="866" class=""></figure>
+  <figure class="card"><img src="photos/ray-hennessy-jN5pk0lbv4E-unsplash.jpg" width="640" height="426" class=""></figure>
+  <figure class="card"><img src="photos/henry-be-IicyiaPYGGI-unsplash.jpg" width="640" height="263" class="wide"></figure>
+  <figure class="card"><img src="photos/robert-nelson-9H3WouBtk0U-unsplash.jpg" width="640" height="427" class=""></figure>
+  <figure class="card"><img src="photos/zhivko-minkov-lAvtYSgNSfY-unsplash.jpg" width="640" height="641" class="square"></figure>
+  <figure class="card"><img src="photos/clay-banks-RRjC0r8GwpI-unsplash.jpg" width="640" height="427" class=""></figure>
+  <figure class="card"><img src="photos/cristina-gottardi-CSpjU6hYo_0-unsplash.jpg" width="640" height="226" class="wide"></figure>
+  <figure class="card"><img src="photos/sebastian-boring-1s66d5yY5gE-unsplash.jpg" width="640" height="640" class="square"></figure>
+  <figure class="card"><img src="photos/cristina-gottardi-KX_214Qr7Ko-unsplash.jpg" width="640" height="960" class=""></figure>
+  <figure class="card"><img src="photos/daniel-lerman-7bZi3hfM_Pc-unsplash.jpg" width="640" height="280" class="wide"></figure>
+  <figure class="card"><img src="photos/meg-BSfxs8o7wkg-unsplash.jpg" width="640" height="861" class=""></figure>
+  <figure class="card"><img src="photos/di-an-yAjzHx986fQ-unsplash.jpg" width="640" height="864" class=""></figure>
+  <figure class="card"><img src="photos/fadhil-abhimantra-OLWz1lhO_54-unsplash.jpg" width="640" height="800" class=""></figure>
+  <figure class="card"><img src="photos/jose-fuentes-1RWd2nKjq04-unsplash.jpg" width="640" height="427" class=""></figure>
+  <figure class="card"><img src="photos/lucas-gallone-lJ5nW8PrfCU-unsplash.jpg" width="640" height="974" class=""></figure>
+  <figure class="card"><img src="photos/andrea-de-santis-KF52HaIDtyM-unsplash.jpg" width="640" height="640" class="square"></figure>
+  <figure class="card"><img src="photos/annie-spratt-VfXZg_-8f6A-unsplash.jpg" width="640" height="370" class=""></figure>
+  <figure class="card"><img src="photos/daniel-j-schwarz-6oKyf2Pip6Y-unsplash.jpg" width="640" height="650" class=""></figure>
+  <figure class="card"><img src="photos/iskra-photography-KH84oeK05xE-unsplash.jpg" width="640" height="376" class=""></figure>
+  <figure class="card"><img src="photos/jacek-kadaj-d5l_C354BHU-unsplash.jpg" width="640" height="370" class="wide"></figure>
+  <figure class="card"><img src="photos/mark-harpur-K2s_YE031CA-unsplash.jpg" width="640" height="427" class=""></figure>
+  <figure class="card"><img src="photos/andrew-keymaster-KiXccYM2eQo-unsplash.jpg" width="640" height="896" class=""></figure>
+  <figure class="card"><img src="photos/vishwasa-navada-k-SMSzt8_xVeM-unsplash.jpg" width="640" height="698" class=""></figure>
+  <figure class="card"><img src="photos/clay-banks-X1vQu69kV48-unsplash.jpg" width="640" height="427" class=""></figure>
+  <figure class="card"><img src="photos/olegs-jonins-c5c2d84cjK8-unsplash.jpg" width="640" height="641" class="square"></figure>
+  <figure class="card"><img src="photos/clark-van-der-beken-IImZQk78xe0-unsplash.jpg" width="640" height="353" class="wide"></figure>
 </main>
 <script src="script.js"></script>
 <script src="../universal.js"></script>

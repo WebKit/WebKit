@@ -56,6 +56,10 @@ body:has(option[value="one"]:checked) main nav {
 	display: block;
 	columns: 30ch;
 	column-gap: 4ch;
+	section {
+		break-inside: avoid;
+		margin-trim: block;
+	}
 }
 
 /* ---- CSS Grid level 1 (without Masonry) ---- */
