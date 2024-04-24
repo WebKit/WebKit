@@ -1262,6 +1262,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         objectAttributes = anchorAttrs.get().get();
     else if (backingObject->isImage())
         objectAttributes = imageAttrs.get().get();
+    else if (backingObject->isTreeGrid() && backingObject->isTable() && backingObject->isExposable())
+        objectAttributes = [tableAttrs.get().get() arrayByAddingObject:NSAccessibilityOrientationAttribute];
+    else if (backingObject->isTree())
+        objectAttributes = outlineAttrs.get().get();
     else if (backingObject->isTable() && backingObject->isExposable())
         objectAttributes = tableAttrs.get().get();
     else if (backingObject->isTableColumn())
@@ -1274,9 +1278,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             objectAttributes = outlineRowAttrs.get().get();
         else
             objectAttributes = tableRowAttrs.get().get();
-    } else if (backingObject->isTree())
-        objectAttributes = outlineAttrs.get().get();
-    else if (backingObject->isTreeItem()) {
+    } else if (backingObject->isTreeItem()) {
         if (backingObject->supportsCheckedState())
             objectAttributes = [outlineRowAttrs.get() arrayByAddingObject:NSAccessibilityValueAttribute];
         else
