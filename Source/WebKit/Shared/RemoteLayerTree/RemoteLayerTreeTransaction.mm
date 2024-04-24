@@ -423,6 +423,14 @@ void ArgumentCoder<WebKit::ChangedLayers>::encode(Encoder& encoder, const WebKit
     }
 }
 
+template<> struct ArgumentCoder<WebKit::RemoteLayerBackingStore> {
+    static void encode(Encoder& encoder, const WebKit::RemoteLayerBackingStore& store)
+    {
+        store.encode(encoder);
+    }
+    // This intentionally has no decode because it is only decoded as a RemoteLayerBackingStoreProperties.
+};
+
 void ArgumentCoder<WebKit::RemoteLayerBackingStoreOrProperties>::encode(Encoder& encoder, const WebKit::RemoteLayerBackingStoreOrProperties& instance)
 {
     // The web content process has a std::unique_ptr<RemoteLayerBackingStore> but we want it to decode

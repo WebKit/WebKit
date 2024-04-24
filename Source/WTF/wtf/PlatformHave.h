@@ -1793,7 +1793,7 @@
 #endif
 
 // FIXME: Other platforms should finish migration to *.serialization.in.
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) || PLATFORM(COCOA)
 #define HAVE_ONLY_MODERN_SERIALIZATION 1
 #endif
 

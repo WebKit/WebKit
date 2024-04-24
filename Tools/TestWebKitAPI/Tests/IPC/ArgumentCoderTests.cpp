@@ -154,6 +154,25 @@ struct EncodingCounter {
     CounterValues& m_counterValues;
 };
 
+} // namespace TestWebKitAPI
+
+namespace IPC {
+
+template<> struct ArgumentCoder<TestWebKitAPI::EncodingCounter> {
+    static void encode(Encoder& encoder, const TestWebKitAPI::EncodingCounter& counter)
+    {
+        counter.encode(encoder);
+    }
+    static void encode(Encoder& encoder, TestWebKitAPI::EncodingCounter&& counter)
+    {
+        WTFMove(counter).encode(encoder);
+    }
+};
+
+} // namespace IPC
+
+namespace TestWebKitAPI {
+
 enum class EncodingCounterTestType {
     LValue,
     RValue,
@@ -349,6 +368,26 @@ struct DecodingMoveCounter {
 
     unsigned moveCounter { 0 };
 };
+
+} // namespace TestWebKitAPI
+
+namespace IPC {
+
+template<> struct ArgumentCoder<TestWebKitAPI::DecodingMoveCounter> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, TestWebKitAPI::DecodingMoveCounter&& counter)
+    {
+        WTFMove(counter).encode(encoder);
+    }
+    static std::optional<TestWebKitAPI::DecodingMoveCounter> decode(Decoder& decoder)
+    {
+        return TestWebKitAPI::DecodingMoveCounter::decode(decoder);
+    }
+};
+
+} // namespace IPC
+
+namespace TestWebKitAPI {
 
 TYPED_TEST_P(ArgumentCoderDecodingMoveCounterTest, DecodeDirectly)
 {
