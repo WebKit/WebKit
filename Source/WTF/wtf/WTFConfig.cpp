@@ -100,7 +100,6 @@ void setPermissionsOfConfigPage()
 
 void Config::initialize()
 {
-    // FIXME: We should do a placement new for Config so we can use default initializers.
     []() -> void {
         uintptr_t onePage = pageSize(); // At least, first one page must be unmapped.
 #if OS(DARWIN)
@@ -125,23 +124,14 @@ void Config::initialize()
         g_wtfConfig.lowestAccessibleAddress = onePage;
     }();
     g_wtfConfig.highestAccessibleAddress = static_cast<uintptr_t>((1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1);
-    SignalHandlers::initialize();
-}
-
-void Config::finalize()
-{
-    static std::once_flag once;
-    std::call_once(once, [] {
-        SignalHandlers::finalize();
-        if (!g_wtfConfig.disabledFreezingForTesting)
-            Config::permanentlyFreeze();
-    });
 }
 
 void Config::permanentlyFreeze()
 {
+    static Lock configLock;
+    Locker locker { configLock };
+
     RELEASE_ASSERT(roundUpToMultipleOf(pageSize(), ConfigSizeToProtect) == ConfigSizeToProtect);
-    ASSERT(!g_wtfConfig.disabledFreezingForTesting);
 
     if (!g_wtfConfig.isPermanentlyFrozen) {
         g_wtfConfig.isPermanentlyFrozen = true;
@@ -175,12 +165,6 @@ void Config::permanentlyFreeze()
 
     RELEASE_ASSERT(!result);
     RELEASE_ASSERT(g_wtfConfig.isPermanentlyFrozen);
-}
-
-void Config::disableFreezingForTesting()
-{
-    RELEASE_ASSERT(!g_wtfConfig.isPermanentlyFrozen);
-    g_wtfConfig.disabledFreezingForTesting = true;
 }
 
 } // namespace WTF

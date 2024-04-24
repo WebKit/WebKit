@@ -66,5 +66,5 @@ void GPU_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t initializ
     WebKit::XPCServiceInitializer<WebKit::GPUProcess, WebKit::GPUServiceInitializerDelegate>(connection, initializerMessage);
 #endif // ENABLE(GPU_PROCESS)
 
-    JSC::Config::finalize();
+    JSC::Config::permanentlyFreeze();
 }
