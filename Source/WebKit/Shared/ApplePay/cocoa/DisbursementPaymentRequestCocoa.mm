@@ -30,6 +30,7 @@
 
 #import "WebPaymentCoordinatorProxyCocoa.h"
 
+#import <WebCore/ApplePayContactField.h>
 #import <WebCore/ApplePayDisbursementPaymentRequest.h>
 #import <WebCore/ApplePaySessionPaymentRequest.h>
 #import <WebCore/PaymentSummaryItems.h>
@@ -43,10 +44,37 @@
 namespace WebKit {
 using namespace WebCore;
 
-RetainPtr<PKDisbursementPaymentRequest> platformDisbursementPaymentRequest(const ApplePaySessionPaymentRequest& request, const URL& originatingURL)
+RetainPtr<PKDisbursementPaymentRequest> platformDisbursementPaymentRequest(const ApplePaySessionPaymentRequest& request, const URL& originatingURL, const std::optional<Vector<ApplePayContactField>>& requiredRecipientContactFields)
 {
     // This merchantID is not actually used for web payments, passing an empty string here is fine
     auto disbursementRequest = adoptNS([PAL::allocPKDisbursementRequestInstance() initWithMerchantIdentifier:@"" currencyCode:request.currencyCode() regionCode:request.countryCode() supportedNetworks:createNSArray(request.supportedNetworks()).get() merchantCapabilities:toPKMerchantCapabilities(request.merchantCapabilities()) summaryItems:WebCore::platformDisbursementSummaryItems(request.lineItems())]);
+
+    // FIXME: we should consolidate the types for various contact fields in the system(WebCore::ApplePayContactField, WebCore::ApplePaySessionPaymentRequest::ContactFields etc.)
+    if (requiredRecipientContactFields) {
+        NSMutableArray<NSString *> *result = [NSMutableArray array];
+        for (auto& contactField : requiredRecipientContactFields.value()) {
+            switch (contactField) {
+            case ApplePayContactField::Email:
+                [result addObject:PKContactFieldEmailAddress];
+                break;
+            case ApplePayContactField::Name:
+                [result addObject:PKContactFieldName];
+                break;
+            case ApplePayContactField::PhoneticName:
+                [result addObject:PKContactFieldPhoneticName];
+                break;
+            case ApplePayContactField::Phone:
+                [result addObject:PKContactFieldPhoneNumber];
+                break;
+            case ApplePayContactField::PostalAddress:
+                [result addObject:PKContactFieldPostalAddress];
+                break;
+            }
+        }
+
+        [disbursementRequest setRequiredRecipientContactFields:[result copy]];
+    }
+
     auto disbursementPaymentRequest = adoptNS([PAL::allocPKDisbursementPaymentRequestInstance() initWithDisbursementRequest:disbursementRequest.get()]);
     [disbursementPaymentRequest setOriginatingURL:originatingURL];
     [disbursementPaymentRequest setAPIType:PKPaymentRequestAPITypeWebPaymentRequest];

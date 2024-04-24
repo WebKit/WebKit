@@ -28,4 +28,5 @@
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
 ] dictionary ApplePayDisbursementPaymentRequest {
+    sequence<ApplePayContactField> requiredRecipientContactFields;
 };

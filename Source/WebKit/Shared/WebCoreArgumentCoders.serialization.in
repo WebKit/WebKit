@@ -40,6 +40,7 @@ header: <WebCore/DOMCacheEngine.h>
 
 #if ENABLE(APPLE_PAY)
 header: <WebCore/ApplePayFeature.h>
+header: <WebCore/ApplePayContactField.h>
 enum class WebCore::ApplePayFeature : uint8_t {
 #if ENABLE(APPLE_PAY_LATER)
     ApplePayLater,
@@ -1046,11 +1047,6 @@ struct WebCore::ApplePayDeferredPaymentRequest {
 };
 #endif
 
-#if ENABLE(APPLE_PAY_DISBURSEMENTS)
-struct WebCore::ApplePayDisbursementPaymentRequest {
-};
-#endif
-
 #if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
 struct WebCore::ApplePayPaymentOrderDetails {
     String orderTypeIdentifier
@@ -1217,6 +1213,14 @@ enum class WebCore::ApplePayErrorContactField : uint8_t {
     CountryCode,
 };
 
+enum class WebCore::ApplePayContactField : uint8_t {
+    Email,
+    Name,
+    PhoneticName,
+    Phone,
+    PostalAddress,
+};
+
 enum class WebCore::ApplePayErrorCode : uint8_t {
     Unknown,
     ShippingContactInvalid,
@@ -1228,6 +1232,12 @@ enum class WebCore::ApplePayErrorCode : uint8_t {
 #endif
 };
 #endif // ENABLE(APPLE_PAY)
+
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+struct WebCore::ApplePayDisbursementPaymentRequest {
+    std::optional<Vector<WebCore::ApplePayContactField>> requiredRecipientContactFields
+};
+#endif
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
 header: <WebCore/ApplePayInstallmentConfigurationWebCore.h>
