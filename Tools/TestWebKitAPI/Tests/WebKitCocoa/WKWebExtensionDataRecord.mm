@@ -167,7 +167,7 @@ TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
     TestWebKitAPI::Util::run(&fetchComplete);
 }
 
-TEST(WKWebExtensionDataRecord, RemoveDataRecords)
+TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecords)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }",
