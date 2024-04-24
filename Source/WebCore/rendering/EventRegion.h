@@ -28,6 +28,7 @@
 #include "AffineTransform.h"
 #include "FloatRoundedRect.h"
 #include "IntRect.h"
+#include "IntRectHash.h"
 #include "InteractionRegion.h"
 #include "Node.h"
 #include "Region.h"
