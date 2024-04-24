@@ -24,6 +24,7 @@
  */
 
 #import <UserNotifications/UNUserNotificationCenter.h>
+#import <WebKit/WebKit.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
 
 @class BrowserWindowController;

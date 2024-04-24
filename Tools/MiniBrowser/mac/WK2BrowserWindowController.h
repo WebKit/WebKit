@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit/WebKit.h>
 #import "BrowserWindowController.h"
 
 @interface WK2BrowserWindowController : BrowserWindowController

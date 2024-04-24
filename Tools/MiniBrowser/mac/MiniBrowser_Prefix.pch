@@ -25,7 +25,6 @@
 
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
-#import <WebKit/WebKit.h>
 #endif
 
 #define ENABLE_LOGGING 0
