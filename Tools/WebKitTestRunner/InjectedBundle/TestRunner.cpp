@@ -616,7 +616,6 @@ enum {
     WillEndSwipeCallbackID,
     DidEndSwipeCallbackID,
     DidRemoveSwipeSnapshotCallbackID,
-    SetStatisticsDebugModeCallbackID,
     SetStatisticsPrevalentResourceForDebugModeCallbackID,
     SetStatisticsLastSeenCallbackID,
     SetStatisticsMergeStatisticCallbackID,
@@ -1281,13 +1280,7 @@ bool TestRunner::isStatisticsEphemeral()
 
 void TestRunner::setStatisticsDebugMode(bool value, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(SetStatisticsDebugModeCallbackID, completionHandler);
-    postMessage("SetStatisticsDebugMode", value);
-}
-
-void TestRunner::statisticsCallDidSetDebugModeCallback()
-{
-    callTestRunnerCallback(SetStatisticsDebugModeCallbackID);
+    postMessageWithAsyncReply("SetStatisticsDebugMode", value, completionHandler);
 }
 
 void TestRunner::setStatisticsPrevalentResourceForDebugMode(JSStringRef hostName, JSValueRef completionHandler)

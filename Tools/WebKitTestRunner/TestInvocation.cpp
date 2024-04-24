@@ -716,11 +716,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsDebugMode")) {
-        TestController::singleton().setStatisticsDebugMode(booleanValue(messageBody));
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsPrevalentResourceForDebugMode")) {
         WKStringRef hostName = stringValue(messageBody);
         TestController::singleton().setStatisticsPrevalentResourceForDebugMode(hostName);
@@ -1713,11 +1708,6 @@ void TestInvocation::didResetStatisticsToConsistentState()
 void TestInvocation::didSetBlockCookiesForHost()
 {
     postPageMessage("CallDidSetBlockCookiesForHost");
-}
-
-void TestInvocation::didSetStatisticsDebugMode()
-{
-    postPageMessage("CallDidSetStatisticsDebugMode");
 }
 
 void TestInvocation::didSetPrevalentResourceForDebugMode()

@@ -82,7 +82,6 @@ public:
     void didSetThirdPartyCNAMEDomain();
     void didResetStatisticsToConsistentState();
     void didSetBlockCookiesForHost();
-    void didSetStatisticsDebugMode();
     void didSetPrevalentResourceForDebugMode();
     void didSetLastSeen();
     void didMergeStatistic();

@@ -1952,7 +1952,7 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     m_currentInvocation->didReceiveMessageFromInjectedBundle(messageName, messageBody);
 }
 
-void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef, WKMessageListenerRef listener)
+void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener)
 {
     auto completionHandler = [listener = retainWK(listener)] (WKTypeRef reply) {
         WKMessageListenerSendReply(listener.get(), reply);
@@ -1972,6 +1972,9 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
 
     if (WKStringIsEqualToUTF8CString(messageName, "TakeViewPortSnapshot"))
         return completionHandler(TestController::singleton().takeViewPortSnapshot().get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsDebugMode"))
+        return TestController::singleton().setStatisticsDebugMode(booleanValue(messageBody), WTFMove(completionHandler));
 
     ASSERT_NOT_REACHED();
 }
@@ -3610,12 +3613,13 @@ bool TestController::isStatisticsEphemeral()
     return context.result;
 }
 
-void TestController::setStatisticsDebugMode(bool value)
+void TestController::setStatisticsDebugMode(bool value, CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
-    ResourceStatisticsCallbackContext context(*this);
-    WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler(websiteDataStore(), value, &context, resourceStatisticsVoidResultCallback);
-    runUntil(context.done, noTimeout);
-    m_currentInvocation->didSetStatisticsDebugMode();
+    auto context = completionHandler.leak();
+    WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler(websiteDataStore(), value, context, [] (void* context) {
+        auto completionHandler = WTF::adopt(static_cast<CompletionHandler<void(WKTypeRef)>::Impl*>(context));
+        completionHandler(nullptr);
+    });
 }
 
 void TestController::setStatisticsPrevalentResourceForDebugMode(WKStringRef hostName)

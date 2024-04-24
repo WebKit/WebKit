@@ -353,11 +353,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         m_testRunner->statisticsCallDidSetBlockCookiesForHostCallback();
         return;
     }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetStatisticsDebugMode")) {
-        m_testRunner->statisticsCallDidSetDebugModeCallback();
-        return;
-    }
     
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetPrevalentResourceForDebugMode")) {
         m_testRunner->statisticsCallDidSetPrevalentResourceForDebugModeCallback();
@@ -1065,7 +1060,7 @@ static JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef strings)
     return array;
 }
 
-void postMessageWithAsyncReply(const char* name, JSValueRef callback)
+static void postMessageWithAsyncReplyImpl(const char* name, WKRetainPtr<WKTypeRef> parameter, JSValueRef callback)
 {
     auto context = firstRootFrameJSContext();
     JSValueProtect(context, callback);
@@ -1092,12 +1087,22 @@ void postMessageWithAsyncReply(const char* name, JSValueRef callback)
     };
 
     if (auto page = InjectedBundle::singleton().pageRef()) {
-        WKBundlePagePostMessageWithAsyncReply(page, toWK(name).get(), nullptr, [] (WKTypeRef result, void* context) {
+        WKBundlePagePostMessageWithAsyncReply(page, toWK(name).get(), parameter.get(), [] (WKTypeRef result, void* context) {
             auto function = WTF::adopt(static_cast<Function<void(WKTypeRef)>::Impl*>(context));
             function(result);
         }, completionHandler.leak());
     } else
         completionHandler(nullptr);
+}
+
+void postMessageWithAsyncReply(const char* name, JSValueRef callback)
+{
+    postMessageWithAsyncReplyImpl(name, nullptr, callback);
+}
+
+void postMessageWithAsyncReply(const char* name, bool value, JSValueRef callback)
+{
+    postMessageWithAsyncReplyImpl(name, adoptWK(WKBooleanCreate(value)), callback);
 }
 
 } // namespace WTR
