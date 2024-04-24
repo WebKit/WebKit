@@ -1396,6 +1396,16 @@ void AXObjectCache::deferNodeAddedOrRemoved(Node* node)
         m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void AXObjectCache::deferAddUnconnectedNode(AccessibilityObject& axObject)
+{
+    m_deferredUnconnectedNodeList.add(axObject);
+
+    if (!m_performCacheUpdateTimer.isActive())
+        m_performCacheUpdateTimer.startOneShot(0_s);
+}
+#endif
+
 void AXObjectCache::childrenChanged(Node* node, Node* changedChild)
 {
     childrenChanged(get(node));
@@ -4121,6 +4131,15 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
     AXLOGDeferredCollection("ChildrenChangedList"_s, m_deferredChildrenChangedList);
     handleAllDeferredChildrenChanged();
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    AXLOGDeferredCollection("UnconnectedNodeList"_s, m_deferredUnconnectedNodeList);
+    if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
+        m_deferredUnconnectedNodeList.forEach([&tree] (auto& object) {
+            tree->addUnconnectedNode(object);
+        });
+    }
+#endif
+
     AXLOGDeferredCollection("RecomputeTableCellSlotsList"_s, m_deferredRecomputeTableCellSlotsList);
     m_deferredRecomputeTableCellSlotsList.forEach([this] (auto& axTable) {
         handleRecomputeCellSlots(axTable);
@@ -4916,6 +4935,15 @@ bool AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
         // If the IDs are still in the m_objects map, the objects should be still alive.
         if (auto symmetric = symmetricRelation(relationType); symmetric != AXRelationType::None)
             addRelation(target, origin, symmetric, AddSymmetricRelation::No);
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
+            if (origin && origin->accessibilityIsIgnored())
+                deferAddUnconnectedNode(*origin);
+            if (target && target->accessibilityIsIgnored())
+                deferAddUnconnectedNode(*target);
+        }
+#endif
     }
 
     return true;

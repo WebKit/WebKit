@@ -43,6 +43,8 @@ if (window.accessibilityController) {
     selectElementContents(containerElement); 
 
     setTimeout(async function() {
+        await sleep(10);
+
         selectionRange = null;
         var startMarker = null;
         var endMarker = null;

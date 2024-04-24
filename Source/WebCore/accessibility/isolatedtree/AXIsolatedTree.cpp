@@ -164,6 +164,12 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
     const auto relations = axObjectCache.relations();
     tree->updateRelations(relations);
 
+    for (auto& relatedObjectID : relations.keys()) {
+        RefPtr axObject = axObjectCache.objectForID(relatedObjectID);
+        if (axObject && axObject->accessibilityIsIgnored())
+            tree->addUnconnectedNode(axObject.releaseNonNull());
+    }
+
     // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
     storeTree(axObjectCache, tree);
     return tree;

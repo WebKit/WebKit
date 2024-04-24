@@ -41,6 +41,8 @@
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 
+OBJC_CLASS NSMutableArray;
+
 namespace WTF {
 class TextStream;
 }
@@ -379,6 +381,7 @@ public:
         , Vector<std::pair<Node*, Node*>>
         , WeakHashSet<Element, WeakPtrImplWithEventTargetData>
         , WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>
+        , WeakHashSet<AccessibilityObject>
         , WeakHashSet<AccessibilityTable>
         , WeakHashSet<AccessibilityTableCell>
         , WeakListHashSet<Node, WeakPtrImplWithEventTargetData>
@@ -607,6 +610,10 @@ protected:
     void nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&);
 #endif
 
+#if PLATFORM(MAC)
+    void postUserInfoForChanges(AccessibilityObject&, AccessibilityObject&, RetainPtr<NSMutableArray>);
+#endif
+
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT void postPlatformAnnouncementNotification(const String&);
 #else
@@ -674,7 +681,12 @@ private:
     Seconds platformSelectedTextRangeDebounceInterval() const;
     void updateTreeSnapshotTimerFired();
     void processQueuedIsolatedNodeUpdates();
+
+    void deferAddUnconnectedNode(AccessibilityObject&);
+#if PLATFORM(MAC)
+    void createIsolatedObjectIfNeeded(AccessibilityObject&);
 #endif
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
     void deferRowspanChange(AccessibilityObject*);
     void handleChildrenChanged(AccessibilityObject&);
@@ -803,6 +815,7 @@ private:
     WeakHashMap<Element, String, WeakPtrImplWithEventTargetData> m_deferredTextFormControlValue;
     Vector<AttributeChange> m_deferredAttributeChange;
     std::optional<std::pair<WeakPtr<Node, WeakPtrImplWithEventTargetData>, WeakPtr<Node, WeakPtrImplWithEventTargetData>>> m_deferredFocusedNodeChange;
+    WeakHashSet<AccessibilityObject> m_deferredUnconnectedNodeList;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     Timer m_buildIsolatedTreeTimer;
