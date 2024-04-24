@@ -1437,6 +1437,14 @@
    },
    {
       "emails" : [
+         "cbraverman@apple.com"
+      ],
+      "expertise" : "Python, Services",
+      "github" : "bravc",
+      "name" : "Cam Braverman"
+   },
+   {
+      "emails" : [
          "heycam@apple.com",
          "cam@mcc.id.au",
          "cam@webkit.org"
