@@ -3692,7 +3692,7 @@ LinearMediaPlayerEnabled:
     WebKit:
       # FIXME: this line can be removed when WebKitSwift is available in Simulators (see rdar://125735304)
       "PLATFORM(IOS_FAMILY_SIMULATOR)": false
-      default: true
+      default: WebKit::defaultLinearMediaPlayerEnabled()
     WebCore:
       default: false
 

@@ -230,6 +230,15 @@ bool defaultShouldTakeNearSuspendedAssertion()
 #endif
 }
 
+bool defaultLinearMediaPlayerEnabled()
+{
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    return PAL::currentUserInterfaceIdiomIsVision();
+#else
+    return false;
+#endif
+}
+
 bool defaultLiveRangeSelectionEnabled()
 {
 #if PLATFORM(IOS_FAMILY)
