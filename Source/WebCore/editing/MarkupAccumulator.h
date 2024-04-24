@@ -67,12 +67,13 @@ constexpr auto EntityMaskInHTMLAttributeValue = { EntityMask::Amp, EntityMask::Q
 class MarkupAccumulator {
     WTF_MAKE_NONCOPYABLE(MarkupAccumulator);
 public:
-    MarkupAccumulator(Vector<Ref<Node>>*, ResolveURLs, SerializationSyntax, HashMap<String, String>&& replacementURLStrings = { }, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet = { }, SerializeShadowRoots = SerializeShadowRoots::Explicit, Vector<Ref<ShadowRoot>>&& explicitShadowRoots = { }, const Vector<MarkupExclusionRule>& exclusionRules = { });
+    MarkupAccumulator(Vector<Ref<Node>>*, ResolveURLs, SerializationSyntax, SerializeShadowRoots = SerializeShadowRoots::Explicit, Vector<Ref<ShadowRoot>>&& explicitShadowRoots = { }, const Vector<MarkupExclusionRule>& exclusionRules = { });
     virtual ~MarkupAccumulator();
 
     String serializeNodes(Node& targetNode, SerializedNodes);
 
     static void appendCharactersReplacingEntities(StringBuilder&, const String&, unsigned, unsigned, OptionSet<EntityMask>);
+    void enableURLReplacement(HashMap<String, String>&& replacementURLStrings, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet);
 
 protected:
     unsigned length() const { return m_markup.length(); }
@@ -118,6 +119,7 @@ private:
     bool appendURLAttributeForReplacementIfNecessary(StringBuilder&, const Element&, Namespaces*);
     const ShadowRoot* suitableShadowRoot(const Node&);
     bool shouldExcludeElement(const Element&);
+    void appendStartTagWithURLReplacement(StringBuilder&, const Element&, Namespaces*);
 
     StringBuilder m_markup;
     const ResolveURLs m_resolveURLs;
@@ -128,6 +130,11 @@ private:
     SerializeShadowRoots m_serializeShadowRoots;
     Vector<Ref<ShadowRoot>> m_explicitShadowRoots;
     Vector<MarkupExclusionRule> m_exclusionRules;
+    struct URLReplacementData {
+        HashMap<String, String> replacementURLStrings;
+        HashMap<RefPtr<CSSStyleSheet>, String> replacementURLStringsForCSSStyleSheet;
+    };
+    std::optional<URLReplacementData> m_urlReplacementData;
 };
 
 inline void MarkupAccumulator::endAppendingNode(const Node& node)
