@@ -104,20 +104,4 @@ void InputMethodState::addHintsForAutocapitalizeType(WebCore::AutocapitalizeType
     }
 }
 
-void InputMethodState::encode(IPC::Encoder& encoder) const
-{
-    encoder << purpose;
-    encoder << hints;
-}
-
-std::optional<InputMethodState> InputMethodState::decode(IPC::Decoder& decoder)
-{
-    InputMethodState state;
-    if (!decoder.decode(state.purpose))
-        return std::nullopt;
-    if (!decoder.decode(state.hints))
-        return std::nullopt;
-    return state;
-}
-
 } // namespace WebKit

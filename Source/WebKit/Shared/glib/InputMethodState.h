@@ -40,36 +40,30 @@ class HTMLInputElement;
 
 namespace WebKit {
 
-enum class InputMethodStatePurpose : uint8_t {
-    FreeForm,
-    Digits,
-    Number,
-    Phone,
-    Url,
-    Email,
-    Password
-};
-
-enum class InputMethodStateHint : uint8_t {
-    None = 0,
-    Spellcheck = 1 << 0,
-    Lowercase = 1 << 1,
-    UppercaseChars = 1 << 2,
-    UppercaseWords = 1 << 3,
-    UppercaseSentences = 1 << 4,
-    InhibitOnScreenKeyboard = 1 << 5
-};
-
 struct InputMethodState {
-    using Purpose = InputMethodStatePurpose;
-    using Hint = InputMethodStateHint;
+    enum class Purpose : uint8_t {
+        FreeForm,
+        Digits,
+        Number,
+        Phone,
+        Url,
+        Email,
+        Password
+    };
+
+    enum class Hint : uint8_t {
+        None = 0,
+        Spellcheck = 1 << 0,
+        Lowercase = 1 << 1,
+        UppercaseChars = 1 << 2,
+        UppercaseWords = 1 << 3,
+        UppercaseSentences = 1 << 4,
+        InhibitOnScreenKeyboard = 1 << 5
+    };
 
     void setPurposeOrHintForInputMode(WebCore::InputMode);
     void setPurposeForInputElement(WebCore::HTMLInputElement&);
     void addHintsForAutocapitalizeType(WebCore::AutocapitalizeType);
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<InputMethodState> decode(IPC::Decoder&);
 
     friend bool operator==(const InputMethodState&, const InputMethodState&) = default;
 
