@@ -52,6 +52,7 @@
 #include "Region.h"
 #include "RenderDescendantIterator.h"
 #include "RenderView.h"
+#include "ShadowRoot.h"
 #include "TextExtraction.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibilityAdjustment.h"
@@ -127,7 +128,13 @@ static inline bool elementAndAncestorsAreOnlyRenderedChildren(const Element& ele
 
 static inline bool querySelectorMatchesOneElement(Element& element, const String& selector)
 {
-    auto result = element.document().querySelectorAll(selector);
+    Ref container = [&]() -> ContainerNode& {
+        if (RefPtr shadowRoot = element.containingShadowRoot())
+            return *shadowRoot;
+        return element.document();
+    }();
+
+    auto result = container->querySelectorAll(selector);
     if (result.hasException())
         return false;
     return result.returnValue()->length() == 1 && result.returnValue()->item(0) == &element;
@@ -164,7 +171,7 @@ static inline String computeIDSelector(Element& element)
 {
     if (element.hasID()) {
         auto elementID = element.getIdAttribute();
-        if (auto* matches = element.document().getAllElementsById(elementID); matches && matches->size() == 1)
+        if (auto* matches = element.treeScope().getAllElementsById(elementID); matches && matches->size() == 1)
             return makeString('#', elementID);
     }
     return emptyString();
@@ -352,11 +359,8 @@ static String parentRelativeSelectorRecursive(Element& element, ElementSelectorC
 }
 
 // Returns multiple CSS selectors that uniquely match the target element.
-static Vector<String> selectorsForTarget(Element& element, ElementSelectorCache& cache)
+static Vector<Vector<String>> selectorsForTarget(Element& element, ElementSelectorCache& cache)
 {
-    if (element.isInShadowTree())
-        return { };
-
     if (RefPtr pseudoElement = dynamicDowncast<PseudoElement>(element)) {
         RefPtr host = pseudoElement->hostElement();
         if (!host)
@@ -375,9 +379,21 @@ static Vector<String> selectorsForTarget(Element& element, ElementSelectorCache&
         if (pseudoSelector.isEmpty())
             return { };
 
-        return selectorsForTarget(*host, cache).map([&](auto hostSelector) {
-            return makeString(hostSelector, pseudoSelector);
-        });
+        auto selectors = selectorsForTarget(*host, cache);
+        if (selectors.isEmpty())
+            return { };
+
+        for (auto& selector : selectors.last())
+            selector = makeString(selector, pseudoSelector);
+
+        return selectors;
+    }
+
+    Vector<Vector<String>> selectorsIncludingShadowHost;
+    if (RefPtr shadowHost = element.shadowHost()) {
+        selectorsIncludingShadowHost = selectorsForTarget(*shadowHost, cache);
+        if (selectorsIncludingShadowHost.isEmpty())
+            return { };
     }
 
     Vector<String> selectors;
@@ -410,7 +426,8 @@ static Vector<String> selectorsForTarget(Element& element, ElementSelectorCache&
     if (!selectors.isEmpty())
         cache.add(element, selectors.first());
 
-    return selectors;
+    selectorsIncludingShadowHost.append(WTFMove(selectors));
+    return selectorsIncludingShadowHost;
 }
 
 static inline RectEdges<bool> computeOffsetEdges(const RenderStyle& style)
@@ -456,6 +473,7 @@ static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint is
         .childFrameIdentifiers = collectChildFrameIdentifiers(element),
         .isUnderPoint = isUnderPoint == IsUnderPoint::Yes,
         .isPseudoElement = element.isPseudoElement(),
+        .isInShadowTree = element.isInShadowTree(),
     };
 }
 
@@ -996,58 +1014,95 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
     auto viewportArea = m_viewportSizeForVisibilityAdjustment.area();
     Region adjustmentRegion;
     Vector<String> matchingSelectors;
-    for (auto& selectorIncludingPseudo : *m_remainingVisibilityAdjustmentSelectors) {
-        auto [selector, adjustment] = resolveSelectorToQuery(selectorIncludingPseudo);
-        if (selector.isEmpty()) {
-            // FIXME: Handle the case where the full selector is `::after|before`.
+    for (auto& selectorsForElementIncludingShadowHosts : *m_remainingVisibilityAdjustmentSelectors) {
+        if (selectorsForElementIncludingShadowHosts.isEmpty())
             continue;
+
+        bool foundLastTarget = false;
+        Ref<ContainerNode> containerToQuery = document;
+        size_t indexOfSelectorToQuery = 0;
+        for (auto& selectorsToQuery : selectorsForElementIncludingShadowHosts) {
+            bool isLastTarget = ++indexOfSelectorToQuery == selectorsForElementIncludingShadowHosts.size();
+            RefPtr<Element> currentTarget;
+            for (auto& selectorIncludingPseudo : selectorsToQuery) {
+                auto [selector, adjustment] = resolveSelectorToQuery(selectorIncludingPseudo);
+                if (selector.isEmpty()) {
+                    // FIXME: Handle the case where the full selector is `::after|before`.
+                    continue;
+                }
+
+                auto queryResult = containerToQuery->querySelector(selector);
+                if (queryResult.hasException())
+                    continue;
+
+                RefPtr element = queryResult.releaseReturnValue();
+                if (!element)
+                    continue;
+
+                CheckedPtr renderer = element->renderer();
+                if (!renderer)
+                    continue;
+
+                if (adjustment == VisibilityAdjustment::AfterPseudo && !element->afterPseudoElement())
+                    continue;
+
+                if (adjustment == VisibilityAdjustment::BeforePseudo && !element->beforePseudoElement())
+                    continue;
+
+                if (isLastTarget) {
+                    if (computeClientRect(*renderer).isEmpty())
+                        continue;
+
+                    auto currentAdjustment = element->visibilityAdjustment();
+                    if (!currentAdjustment.contains(adjustment)) {
+                        element->setVisibilityAdjustment(currentAdjustment | adjustment);
+
+                        if (adjustment == VisibilityAdjustment::Subtree)
+                            element->invalidateStyleAndRenderersForSubtree();
+                        else
+                            element->invalidateStyle();
+
+                        m_adjustedElements.add(*element);
+
+                        if (auto clientRect = inflatedClientRectForAdjustmentRegionTracking(*element, viewportArea))
+                            adjustmentRegion.unite(*clientRect);
+                    }
+                    matchingSelectors.append(selectorIncludingPseudo);
+                }
+
+                currentTarget = WTFMove(element);
+                break;
+            }
+
+            if (!currentTarget) {
+                // We failed to resolve the targeted element, or one of its shadow hosts.
+                break;
+            }
+
+            if (isLastTarget) {
+                // We resolved the final targeted element.
+                foundLastTarget = true;
+                break;
+            }
+
+            RefPtr nextShadowRoot = currentTarget->shadowRoot();
+            if (!nextShadowRoot)
+                break;
+
+            // Continue the search underneath the next shadow root.
+            containerToQuery = nextShadowRoot.releaseNonNull();
         }
 
-        auto queryResult = document.querySelector(selector);
-        if (queryResult.hasException())
-            continue;
-
-        RefPtr element = queryResult.releaseReturnValue();
-        if (!element)
-            continue;
-
-        CheckedPtr renderer = element->renderer();
-        if (!renderer)
-            continue;
-
-        if (computeClientRect(*renderer).isEmpty())
-            continue;
-
-        if (adjustment == VisibilityAdjustment::AfterPseudo && !element->afterPseudoElement())
-            continue;
-
-        if (adjustment == VisibilityAdjustment::BeforePseudo && !element->beforePseudoElement())
-            continue;
-
-        auto currentAdjustment = element->visibilityAdjustment();
-        if (currentAdjustment.contains(adjustment)) {
-            matchingSelectors.append(selectorIncludingPseudo);
-            continue;
-        }
-
-        element->setVisibilityAdjustment(currentAdjustment | adjustment);
-        if (adjustment == VisibilityAdjustment::Subtree)
-            element->invalidateStyleAndRenderersForSubtree();
-        else
-            element->invalidateStyle();
-
-        m_adjustedElements.add(*element);
-        matchingSelectors.append(selectorIncludingPseudo);
-
-        if (auto clientRect = inflatedClientRectForAdjustmentRegionTracking(*element, viewportArea))
-            adjustmentRegion.unite(*clientRect);
+        if (foundLastTarget)
+            selectorsForElementIncludingShadowHosts.clear();
     }
 
     if (!adjustmentRegion.isEmpty())
         m_adjustmentClientRegion.unite(adjustmentRegion);
 
-    for (auto& selector : matchingSelectors)
-        m_remainingVisibilityAdjustmentSelectors->remove(selector);
+    m_remainingVisibilityAdjustmentSelectors->removeAllMatching([](auto& selectors) {
+        return selectors.isEmpty();
+    });
 
     if (!matchingSelectors.isEmpty())
         page->chrome().client().didAdjustVisibilityWithSelectors(WTFMove(matchingSelectors));

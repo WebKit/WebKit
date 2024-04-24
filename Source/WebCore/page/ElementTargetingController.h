@@ -69,8 +69,8 @@ private:
     SingleThreadWeakPtr<Page> m_page;
     DeferrableOneShotTimer m_recentAdjustmentClientRectsCleanUpTimer;
     HashMap<ElementIdentifier, IntRect> m_recentAdjustmentClientRects;
-    std::optional<HashSet<String>> m_remainingVisibilityAdjustmentSelectors;
     ApproximateTime m_startTimeForSelectorBasedVisibilityAdjustment;
+    std::optional<Vector<Vector<HashSet<String>>>> m_remainingVisibilityAdjustmentSelectors;
     Region m_adjustmentClientRegion;
     Region m_repeatedAdjustmentClientRegion;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_adjustedElements;

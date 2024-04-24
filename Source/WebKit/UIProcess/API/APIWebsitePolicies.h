@@ -135,8 +135,8 @@ public:
     bool allowPrivacyProxy() const { return m_data.allowPrivacyProxy; }
     void setAllowPrivacyProxy(bool allow) { m_data.allowPrivacyProxy = allow; }
 
-    const HashSet<WTF::String>& visibilityAdjustmentSelectors() const { return m_data.visibilityAdjustmentSelectors; }
-    void setVisibilityAdjustmentSelectors(HashSet<WTF::String>&& selectors) { m_data.visibilityAdjustmentSelectors = WTFMove(selectors); }
+    const Vector<Vector<HashSet<WTF::String>>>& visibilityAdjustmentSelectors() const { return m_data.visibilityAdjustmentSelectors; }
+    void setVisibilityAdjustmentSelectors(Vector<Vector<HashSet<WTF::String>>>&& selectors) { m_data.visibilityAdjustmentSelectors = WTFMove(selectors); }
 
 private:
     WebKit::WebsitePoliciesData m_data;

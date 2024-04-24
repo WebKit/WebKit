@@ -895,13 +895,14 @@ header: <WebCore/ElementTargetingTypes.h>
     WebCore::ScriptExecutionContextIdentifier documentIdentifier
     WebCore::RectEdges<bool> offsetEdges
     String renderedText
-    Vector<String> selectors
+    Vector<Vector<String>> selectors
     WebCore::FloatRect boundsInRootView
     WebCore::FloatRect boundsInClientCoordinates
     WebCore::PositionType positionType
     Vector<WebCore::FrameIdentifier> childFrameIdentifiers
     bool isUnderPoint
     bool isPseudoElement
+    bool isInShadowTree
 };
 
 header: <WebCore/RenderStyleConstants.h>

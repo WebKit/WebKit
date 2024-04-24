@@ -332,8 +332,8 @@ public:
     bool allowsActiveContentRuleListActionsForURL(const String& contentRuleListIdentifier, const URL&) const;
     WEBCORE_EXPORT void setActiveContentRuleListActionPatterns(const HashMap<String, Vector<String>>&);
 
-    const HashSet<String>& visibilityAdjustmentSelectors() const { return m_visibilityAdjustmentSelectors; }
-    void setVisibilityAdjustmentSelectors(HashSet<String>&& selectors) { m_visibilityAdjustmentSelectors = WTFMove(selectors); }
+    const Vector<Vector<HashSet<String>>>& visibilityAdjustmentSelectors() const { return m_visibilityAdjustmentSelectors; }
+    void setVisibilityAdjustmentSelectors(Vector<Vector<HashSet<String>>>&& selectors) { m_visibilityAdjustmentSelectors = WTFMove(selectors); }
 
 #if ENABLE(DEVICE_ORIENTATION)
     DeviceOrientationOrMotionPermissionState deviceOrientationAndMotionAccessState() const { return m_deviceOrientationAndMotionAccessState; }
@@ -700,7 +700,7 @@ private:
     MemoryCompactRobinHoodHashMap<String, Vector<UserContentURLPattern>> m_activeContentRuleListActionPatterns;
     ContentExtensionEnablement m_contentExtensionEnablement { ContentExtensionDefaultEnablement::Enabled, { } };
 
-    HashSet<String> m_visibilityAdjustmentSelectors;
+    Vector<Vector<HashSet<String>>> m_visibilityAdjustmentSelectors;
 
     ScriptExecutionContextIdentifier m_resultingClientId;
 

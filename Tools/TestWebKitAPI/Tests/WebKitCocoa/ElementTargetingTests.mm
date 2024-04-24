@@ -315,8 +315,7 @@ TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)
 
     auto [webView, window] = setUpWebViewForSnapshotting(webViewFrame);
     RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
-    auto selectors = [NSSet setWithObjects:@"main::before", @"HTML::AFTER", nil];
-    [preferences _setVisibilityAdjustmentSelectors:selectors];
+    [preferences _setVisibilityAdjustmentSelectors:[NSSet setWithObjects:@"main::before", @"HTML::AFTER", nil]];
     RetainPtr delegate = adoptNS([TestUIDelegate new]);
     RetainPtr adjustedSelectors = adoptNS([NSMutableSet new]);
     [delegate setWebViewDidAdjustVisibilityWithSelectors:^(WKWebView *, NSArray<NSString *> *selectors) {
@@ -336,7 +335,53 @@ TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)
     EXPECT_TRUE([adjustedSelectors containsObject:@"HTML::AFTER"]);
 }
 
-TEST(ElementTargeting, ContentInsideShadowRoot)
+TEST(ElementTargeting, AdjustVisibilityForTargetsInShadowRoot)
+{
+    auto webViewFrame = CGRectMake(0, 0, 800, 600);
+    auto [webView, window] = setUpWebViewForSnapshotting(webViewFrame);
+
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    [preferences _setVisibilityAdjustmentSelectorsIncludingShadowHosts:@[
+        @[
+            [NSSet setWithObject:@"MAIN"],
+            [NSSet setWithObject:@"SECTION"],
+            [NSSet setWithObject:@"DIV.green"]
+        ]
+    ]];
+
+    __block bool didAdjustment = false;
+    RetainPtr delegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+    [delegate setWebViewDidAdjustVisibilityWithSelectors:^(WKWebView *, NSArray<NSString *> *selectors) {
+        didAdjustment = true;
+    }];
+
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-8" preferences:preferences.get()];
+    Util::run(&didAdjustment);
+    [webView waitForNextPresentationUpdate];
+
+    {
+        CGImagePixelReader pixelReader { [webView snapshotAfterScreenUpdates] };
+        auto x = static_cast<unsigned>(100 * (pixelReader.width() / CGRectGetWidth(webViewFrame)));
+        auto y = static_cast<unsigned>(300 * (pixelReader.height() / CGRectGetHeight(webViewFrame)));
+        EXPECT_EQ(pixelReader.at(x, y), WebCore::Color::white);
+        EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 1U);
+    }
+
+    RetainPtr elements = [webView targetedElementInfoAt:CGPointMake(100, 100)];
+    EXPECT_EQ([elements count], 1U);
+
+    RetainPtr firstTarget = [elements firstObject];
+    EXPECT_TRUE([firstTarget isInShadowTree]);
+
+    RetainPtr selectors = [firstTarget selectorsIncludingShadowHosts];
+    EXPECT_EQ(3U, [selectors count]);
+    EXPECT_WK_STREQ([selectors objectAtIndex:0][0], @"MAIN");
+    EXPECT_WK_STREQ([selectors objectAtIndex:1][0], @"SECTION");
+    EXPECT_WK_STREQ([selectors objectAtIndex:2][0], @"DIV.red");
+}
+
+TEST(ElementTargeting, TargetContainsShadowRoot)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView synchronouslyLoadTestPageNamed:@"element-targeting-4"];

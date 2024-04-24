@@ -1186,6 +1186,7 @@
 		F44A9AF72649BBDD00E7CB16 /* ImmediateActionTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A9AF62649BBDD00E7CB16 /* ImmediateActionTests.mm */; };
 		F44C7A0020F9EEBF0014478C /* ParserYieldTokenPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44C79FB20F9E50C0014478C /* ParserYieldTokenPlugIn.mm */; };
 		F44C7A0520FAAE3C0014478C /* text-with-deferred-script.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F44C7A0420FAAE320014478C /* text-with-deferred-script.html */; };
+		F44CD9D12BD6ABFD0080A6C7 /* element-targeting-8.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F44CD9C92BD6ABF00080A6C7 /* element-targeting-8.html */; };
 		F44D06451F395C26001A0E29 /* editor-state-test-harness.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F44D06441F395C0D001A0E29 /* editor-state-test-harness.html */; };
 		F45033F5206BEC95009351CE /* TextAutosizingBoost.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45033F4206BEC95009351CE /* TextAutosizingBoost.mm */; };
 		F4512E131F60C44600BB369E /* DataTransferItem-getAsEntry.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4512E121F60C43400BB369E /* DataTransferItem-getAsEntry.html */; };
@@ -1639,6 +1640,7 @@
 				F4FB84A82BC9F1F6000D0B47 /* element-targeting-5.html in Copy Resources */,
 				F41289A92BCC97E700D6E0E7 /* element-targeting-6.html in Copy Resources */,
 				F405F8AD2BD1D4DC0020E6AB /* element-targeting-7.html in Copy Resources */,
+				F44CD9D12BD6ABFD0080A6C7 /* element-targeting-8.html in Copy Resources */,
 				51C8E1A91F27F49600BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist in Copy Resources */,
 				49D902B328209B3300E2C3B8 /* emptyTable.html in Copy Resources */,
 				A14AAB651E78DC5400C1ADC2 /* encrypted.pdf in Copy Resources */,
@@ -3568,6 +3570,7 @@
 		F44C79FD20F9E8710014478C /* ParserYieldTokenTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserYieldTokenTests.h; sourceTree = "<group>"; };
 		F44C79FE20F9E8710014478C /* ParserYieldTokenTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ParserYieldTokenTests.mm; sourceTree = "<group>"; };
 		F44C7A0420FAAE320014478C /* text-with-deferred-script.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "text-with-deferred-script.html"; sourceTree = "<group>"; };
+		F44CD9C92BD6ABF00080A6C7 /* element-targeting-8.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "element-targeting-8.html"; sourceTree = "<group>"; };
 		F44D06441F395C0D001A0E29 /* editor-state-test-harness.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "editor-state-test-harness.html"; sourceTree = "<group>"; };
 		F44D06461F395C4D001A0E29 /* EditorStateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorStateTests.mm; sourceTree = "<group>"; };
 		F44D06481F3962E3001A0E29 /* EditingTestHarness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingTestHarness.h; sourceTree = "<group>"; };
@@ -4865,6 +4868,7 @@
 				F4FB84A02BC9F13A000D0B47 /* element-targeting-5.html */,
 				F41289A12BCC97DA00D6E0E7 /* element-targeting-6.html */,
 				F405F8A42BD1D1B90020E6AB /* element-targeting-7.html */,
+				F44CD9C92BD6ABF00080A6C7 /* element-targeting-8.html */,
 				51C8E1A81F27F47300BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist */,
 				F4C2AB211DD6D94100E06D5B /* enormous-video-with-sound.html */,
 				F407FE381F1D0DE60017CF25 /* enormous.svg */,
