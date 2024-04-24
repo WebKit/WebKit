@@ -64,227 +64,227 @@ public:
 TEST(WTF_CheckedRef, Basic)
 {
     {
-        CheckedObject checkedObject;
-        EXPECT_EQ(checkedObject.ptrCount(), 0u);
+        auto checkedObject = makeUnique<CheckedObject>();
+        EXPECT_EQ(checkedObject->ptrCount(), 0u);
     }
 
     {
-        CheckedObject checkedObject;
-        EXPECT_EQ(checkedObject.ptrCount(), 0u);
+        auto checkedObject = makeUnique<CheckedObject>();
+        EXPECT_EQ(checkedObject->ptrCount(), 0u);
         {
-            CheckedRef ref = checkedObject;
-            EXPECT_EQ(&ref.get(), &checkedObject);
-            EXPECT_EQ(ref.ptr(), &checkedObject);
+            CheckedRef ref = *checkedObject;
+            EXPECT_EQ(&ref.get(), checkedObject.get());
+            EXPECT_EQ(ref.ptr(), checkedObject.get());
             EXPECT_EQ(ref->someFunction(), -7);
             EXPECT_EQ(static_cast<CheckedObject&>(ref).someFunction(), -7);
-            EXPECT_EQ(checkedObject.ptrCount(), 1u);
+            EXPECT_EQ(checkedObject->ptrCount(), 1u);
         }
-        EXPECT_EQ(checkedObject.ptrCount(), 0u);
+        EXPECT_EQ(checkedObject->ptrCount(), 0u);
     }
 
     {
-        CheckedObject checkedObject;
-        CheckedObject anotherObject;
-        EXPECT_EQ(checkedObject.ptrCount(), 0u);
+        auto checkedObject = makeUnique<CheckedObject>();
+        auto anotherObject = makeUnique<CheckedObject>();
+        EXPECT_EQ(checkedObject->ptrCount(), 0u);
 
-        CheckedRef ref = checkedObject;
-        EXPECT_EQ(ref.ptr(), &checkedObject);
+        CheckedRef ref = *checkedObject;
+        EXPECT_EQ(ref.ptr(), checkedObject.get());
         EXPECT_EQ(ref->someFunction(), -7);
         EXPECT_EQ(static_cast<CheckedObject&>(ref).someFunction(), -7);
-        EXPECT_EQ(checkedObject.ptrCount(), 1u);
+        EXPECT_EQ(checkedObject->ptrCount(), 1u);
 
-        ref = anotherObject;
-        EXPECT_EQ(ref.ptr(), &anotherObject);
-        EXPECT_EQ(checkedObject.ptrCount(), 0u);
-        EXPECT_EQ(anotherObject.ptrCount(), 1u);
+        ref = *anotherObject;
+        EXPECT_EQ(ref.ptr(), anotherObject.get());
+        EXPECT_EQ(checkedObject->ptrCount(), 0u);
+        EXPECT_EQ(anotherObject->ptrCount(), 1u);
     }
 
     {
-        CheckedObject checkedObject;
-        CheckedObject anotherObject;
-        EXPECT_EQ(checkedObject.ptrCount(), 0u);
+        auto checkedObject = makeUnique<CheckedObject>();
+        auto anotherObject = makeUnique<CheckedObject>();
+        EXPECT_EQ(checkedObject->ptrCount(), 0u);
 
-        CheckedRef ref1 = checkedObject;
-        EXPECT_EQ(ref1.ptr(), &checkedObject);
+        CheckedRef ref1 = *checkedObject;
+        EXPECT_EQ(ref1.ptr(), checkedObject.get());
         EXPECT_EQ(ref1->someFunction(), -7);
         EXPECT_EQ(static_cast<CheckedObject&>(ref1).someFunction(), -7);
-        EXPECT_EQ(checkedObject.ptrCount(), 1u);
+        EXPECT_EQ(checkedObject->ptrCount(), 1u);
 
-        const CheckedRef ref2 = checkedObject;
-        EXPECT_EQ(ref2.ptr(), &checkedObject);
+        const CheckedRef ref2 = *checkedObject;
+        EXPECT_EQ(ref2.ptr(), checkedObject.get());
         EXPECT_EQ(ref2.get().someFunction(), -7);
         EXPECT_EQ(static_cast<const CheckedObject&>(ref2).someFunction(), -7);
-        EXPECT_EQ(checkedObject.ptrCount(), 2u);
+        EXPECT_EQ(checkedObject->ptrCount(), 2u);
 
         CheckedRef ref3 = ref2;
-        EXPECT_EQ(ref3.ptr(), &checkedObject);
-        EXPECT_EQ(checkedObject.ptrCount(), 3u);
+        EXPECT_EQ(ref3.ptr(), checkedObject.get());
+        EXPECT_EQ(checkedObject->ptrCount(), 3u);
 
-        ref1 = anotherObject;
-        EXPECT_EQ(checkedObject.ptrCount(), 2u);
-        EXPECT_EQ(anotherObject.ptrCount(), 1u);
-        EXPECT_EQ(ref1.ptr(), &anotherObject);
-        EXPECT_EQ(ref2.ptr(), &checkedObject);
-        EXPECT_EQ(ref3.ptr(), &checkedObject);
+        ref1 = *anotherObject;
+        EXPECT_EQ(checkedObject->ptrCount(), 2u);
+        EXPECT_EQ(anotherObject->ptrCount(), 1u);
+        EXPECT_EQ(ref1.ptr(), anotherObject.get());
+        EXPECT_EQ(ref2.ptr(), checkedObject.get());
+        EXPECT_EQ(ref3.ptr(), checkedObject.get());
 
         ref1 = WTFMove(ref3);
-        EXPECT_EQ(checkedObject.ptrCount(), 2u);
-        EXPECT_EQ(anotherObject.ptrCount(), 0u);
-        EXPECT_EQ(ref1.ptr(), &checkedObject);
-        EXPECT_EQ(ref2.ptr(), &checkedObject);
+        EXPECT_EQ(checkedObject->ptrCount(), 2u);
+        EXPECT_EQ(anotherObject->ptrCount(), 0u);
+        EXPECT_EQ(ref1.ptr(), checkedObject.get());
+        EXPECT_EQ(ref2.ptr(), checkedObject.get());
     }
 }
 
 TEST(WTF_CheckedRef, DerivedClass)
 {
     {
-        DerivedCheckedObject checkedObject;
-        EXPECT_EQ(checkedObject.ptrCount(), 0u);
+        auto checkedObject = makeUnique<DerivedCheckedObject>();
+        EXPECT_EQ(checkedObject->ptrCount(), 0u);
         {
-            CheckedRef ref = checkedObject;
-            EXPECT_EQ(&ref.get(), &checkedObject);
-            EXPECT_EQ(ref.ptr(), &checkedObject);
+            CheckedRef ref = *checkedObject;
+            EXPECT_EQ(&ref.get(), checkedObject.get());
+            EXPECT_EQ(ref.ptr(), checkedObject.get());
             EXPECT_EQ(static_cast<DerivedCheckedObject&>(ref).someFunction(), -11);
             EXPECT_EQ(ref->someFunction(), -11);
-            EXPECT_EQ(checkedObject.ptrCount(), 1u);
+            EXPECT_EQ(checkedObject->ptrCount(), 1u);
         }
-        EXPECT_EQ(checkedObject.ptrCount(), 0u);
+        EXPECT_EQ(checkedObject->ptrCount(), 0u);
     }
 
     {
-        DerivedCheckedObject checkedObject;
-        DerivedCheckedObject anotherObject;
-        EXPECT_EQ(checkedObject.ptrCount(), 0u);
-        EXPECT_EQ(anotherObject.ptrCount(), 0u);
+        auto checkedObject = makeUnique<DerivedCheckedObject>();
+        auto anotherObject = makeUnique<DerivedCheckedObject>();
+        EXPECT_EQ(checkedObject->ptrCount(), 0u);
+        EXPECT_EQ(anotherObject->ptrCount(), 0u);
 
-        CheckedRef<CheckedObject> ref = checkedObject;
-        EXPECT_EQ(ref.ptr(), &checkedObject);
+        CheckedRef<CheckedObject> ref = *checkedObject;
+        EXPECT_EQ(ref.ptr(), checkedObject.get());
         EXPECT_EQ(ref->someFunction(), -11);
         EXPECT_EQ(static_cast<CheckedObject&>(ref).someFunction(), -11);
-        EXPECT_EQ(checkedObject.ptrCount(), 1u);
-        EXPECT_EQ(anotherObject.ptrCount(), 0u);
+        EXPECT_EQ(checkedObject->ptrCount(), 1u);
+        EXPECT_EQ(anotherObject->ptrCount(), 0u);
 
-        ref = anotherObject;
-        EXPECT_EQ(ref.ptr(), &anotherObject);
-        EXPECT_EQ(checkedObject.ptrCount(), 0u);
-        EXPECT_EQ(anotherObject.ptrCount(), 1u);
+        ref = *anotherObject;
+        EXPECT_EQ(ref.ptr(), anotherObject.get());
+        EXPECT_EQ(checkedObject->ptrCount(), 0u);
+        EXPECT_EQ(anotherObject->ptrCount(), 1u);
     }
 
     {
-        DerivedCheckedObject checkedObject { 10 };
-        DerivedCheckedObject anotherObject { 20 };
-        EXPECT_EQ(checkedObject.ptrCount(), 0u);
-        EXPECT_EQ(anotherObject.ptrCount(), 0u);
+        auto checkedObject = makeUnique<DerivedCheckedObject>(10);
+        auto anotherObject = makeUnique<DerivedCheckedObject>(20);
+        EXPECT_EQ(checkedObject->ptrCount(), 0u);
+        EXPECT_EQ(anotherObject->ptrCount(), 0u);
 
-        CheckedRef<DerivedCheckedObject> ref1 = checkedObject;
-        EXPECT_EQ(ref1.ptr(), &checkedObject);
+        CheckedRef<DerivedCheckedObject> ref1 = *checkedObject;
+        EXPECT_EQ(ref1.ptr(), checkedObject.get());
         EXPECT_EQ(ref1->someFunction(), 10);
         EXPECT_EQ(static_cast<CheckedObject&>(ref1).someFunction(), 10);
-        EXPECT_EQ(checkedObject.ptrCount(), 1u);
-        EXPECT_EQ(anotherObject.ptrCount(), 0u);
+        EXPECT_EQ(checkedObject->ptrCount(), 1u);
+        EXPECT_EQ(anotherObject->ptrCount(), 0u);
 
         const CheckedRef<CheckedObject> ref2 = ref1;
-        EXPECT_EQ(ref2.ptr(), &checkedObject);
+        EXPECT_EQ(ref2.ptr(), checkedObject.get());
         EXPECT_EQ(ref2->someFunction(), 10);
         EXPECT_EQ(static_cast<const CheckedObject&>(ref2).someFunction(), 10);
-        EXPECT_EQ(checkedObject.ptrCount(), 2u);
-        EXPECT_EQ(anotherObject.ptrCount(), 0u);
+        EXPECT_EQ(checkedObject->ptrCount(), 2u);
+        EXPECT_EQ(anotherObject->ptrCount(), 0u);
 
         CheckedRef<CheckedObject> ref3 = ref1;
-        EXPECT_EQ(ref3.ptr(), &checkedObject);
+        EXPECT_EQ(ref3.ptr(), checkedObject.get());
         EXPECT_EQ(static_cast<CheckedObject&>(ref3).someFunction(), 10);
-        EXPECT_EQ(checkedObject.ptrCount(), 3u);
-        EXPECT_EQ(anotherObject.ptrCount(), 0u);
+        EXPECT_EQ(checkedObject->ptrCount(), 3u);
+        EXPECT_EQ(anotherObject->ptrCount(), 0u);
 
-        ref1 = anotherObject;
-        EXPECT_EQ(checkedObject.ptrCount(), 2u);
-        EXPECT_EQ(anotherObject.ptrCount(), 1u);
-        EXPECT_EQ(ref1.ptr(), &anotherObject);
+        ref1 = *anotherObject;
+        EXPECT_EQ(checkedObject->ptrCount(), 2u);
+        EXPECT_EQ(anotherObject->ptrCount(), 1u);
+        EXPECT_EQ(ref1.ptr(), anotherObject.get());
         EXPECT_EQ(ref1->someFunction(), 20);
         EXPECT_EQ(static_cast<CheckedObject&>(ref1).someFunction(), 20);
-        EXPECT_EQ(ref2.ptr(), &checkedObject);
-        EXPECT_EQ(ref3.ptr(), &checkedObject);
+        EXPECT_EQ(ref2.ptr(), checkedObject.get());
+        EXPECT_EQ(ref3.ptr(), checkedObject.get());
 
         CheckedRef<CheckedObject> ref4 = WTFMove(ref1);
-        EXPECT_EQ(checkedObject.ptrCount(), 2u);
-        EXPECT_EQ(anotherObject.ptrCount(), 1u);
-        EXPECT_EQ(ref2.ptr(), &checkedObject);
-        EXPECT_EQ(ref3.ptr(), &checkedObject);
-        EXPECT_EQ(ref4.ptr(), &anotherObject);
+        EXPECT_EQ(checkedObject->ptrCount(), 2u);
+        EXPECT_EQ(anotherObject->ptrCount(), 1u);
+        EXPECT_EQ(ref2.ptr(), checkedObject.get());
+        EXPECT_EQ(ref3.ptr(), checkedObject.get());
+        EXPECT_EQ(ref4.ptr(), anotherObject.get());
         EXPECT_EQ(static_cast<CheckedObject&>(ref4).someFunction(), 20);
         EXPECT_EQ(ref4->someFunction(), 20);
 
-        ref1 = checkedObject;
-        EXPECT_EQ(checkedObject.ptrCount(), 3u);
-        EXPECT_EQ(anotherObject.ptrCount(), 1u);
-        EXPECT_EQ(ref1.ptr(), &checkedObject);
+        ref1 = *checkedObject;
+        EXPECT_EQ(checkedObject->ptrCount(), 3u);
+        EXPECT_EQ(anotherObject->ptrCount(), 1u);
+        EXPECT_EQ(ref1.ptr(), checkedObject.get());
         EXPECT_EQ(ref1->someFunction(), 10);
-        EXPECT_EQ(ref2.ptr(), &checkedObject);
-        EXPECT_EQ(ref3.ptr(), &checkedObject);
+        EXPECT_EQ(ref2.ptr(), checkedObject.get());
+        EXPECT_EQ(ref3.ptr(), checkedObject.get());
     }
 }
 
 TEST(WTF_CheckedRef, HashSet)
 {
     {
-        CheckedObject checkedObject;
-        EXPECT_EQ(checkedObject.ptrCount(), 0u);
+        auto checkedObject = makeUnique<CheckedObject>();
+        EXPECT_EQ(checkedObject->ptrCount(), 0u);
 
         HashSet<CheckedRef<CheckedObject>> set;
         {
-            CheckedRef ref = checkedObject;
-            EXPECT_EQ(ref.ptr(), &checkedObject);
-            EXPECT_EQ(checkedObject.ptrCount(), 1u);
+            CheckedRef ref = *checkedObject;
+            EXPECT_EQ(ref.ptr(), checkedObject.get());
+            EXPECT_EQ(checkedObject->ptrCount(), 1u);
 
             set.add(ref);
-            EXPECT_EQ(checkedObject.ptrCount(), 2u);
+            EXPECT_EQ(checkedObject->ptrCount(), 2u);
         }
-        EXPECT_EQ(checkedObject.ptrCount(), 1u);
+        EXPECT_EQ(checkedObject->ptrCount(), 1u);
     }
 
     {
-        CheckedObject object1;
-        DerivedCheckedObject object2;
-        EXPECT_EQ(object1.ptrCount(), 0u);
-        EXPECT_EQ(object2.ptrCount(), 0u);
+        auto object1 = makeUnique<CheckedObject>();
+        auto object2 = makeUnique<DerivedCheckedObject>();
+        EXPECT_EQ(object1->ptrCount(), 0u);
+        EXPECT_EQ(object2->ptrCount(), 0u);
 
         HashSet<CheckedRef<CheckedObject>> set;
-        set.add(object1);
-        EXPECT_EQ(object1.ptrCount(), 1u);
-        EXPECT_EQ(object2.ptrCount(), 0u);
-        EXPECT_TRUE(set.contains(object1));
-        EXPECT_FALSE(set.contains(object2));
+        set.add(*object1);
+        EXPECT_EQ(object1->ptrCount(), 1u);
+        EXPECT_EQ(object2->ptrCount(), 0u);
+        EXPECT_TRUE(set.contains(*object1));
+        EXPECT_FALSE(set.contains(*object2));
 
-        set.add(object1);
-        EXPECT_EQ(object1.ptrCount(), 1u);
-        EXPECT_EQ(object2.ptrCount(), 0u);
-        EXPECT_TRUE(set.contains(object1));
-        EXPECT_FALSE(set.contains(object2));
+        set.add(*object1);
+        EXPECT_EQ(object1->ptrCount(), 1u);
+        EXPECT_EQ(object2->ptrCount(), 0u);
+        EXPECT_TRUE(set.contains(*object1));
+        EXPECT_FALSE(set.contains(*object2));
 
         {
-            CheckedRef<DerivedCheckedObject> ref { object2 };
+            CheckedRef<DerivedCheckedObject> ref { *object2 };
             set.add(ref);
-            EXPECT_EQ(object1.ptrCount(), 1u);
-            EXPECT_EQ(object2.ptrCount(), 2u);
-            EXPECT_TRUE(set.contains(object1));
-            EXPECT_TRUE(set.contains(object2));
+            EXPECT_EQ(object1->ptrCount(), 1u);
+            EXPECT_EQ(object2->ptrCount(), 2u);
+            EXPECT_TRUE(set.contains(*object1));
+            EXPECT_TRUE(set.contains(*object2));
         }
 
-        EXPECT_EQ(object1.ptrCount(), 1u);
-        EXPECT_EQ(object2.ptrCount(), 1u);
-        EXPECT_TRUE(set.contains(object1));
-        EXPECT_TRUE(set.contains(object2));
+        EXPECT_EQ(object1->ptrCount(), 1u);
+        EXPECT_EQ(object2->ptrCount(), 1u);
+        EXPECT_TRUE(set.contains(*object1));
+        EXPECT_TRUE(set.contains(*object2));
 
-        set.remove(object1);
-        EXPECT_EQ(object1.ptrCount(), 0u);
-        EXPECT_EQ(object2.ptrCount(), 1u);
-        EXPECT_FALSE(set.contains(object1));
-        EXPECT_TRUE(set.contains(object2));
+        set.remove(*object1);
+        EXPECT_EQ(object1->ptrCount(), 0u);
+        EXPECT_EQ(object2->ptrCount(), 1u);
+        EXPECT_FALSE(set.contains(*object1));
+        EXPECT_TRUE(set.contains(*object2));
     }
 
     {
         Vector<std::unique_ptr<CheckedObject>> objects;
-        objects.append(makeUniqueWithoutFastMallocCheck<CheckedObject>(0));
+        objects.append(makeUnique<CheckedObject>(0));
         EXPECT_EQ(objects[0]->ptrCount(), 0u);
 
         HashSet<CheckedRef<CheckedObject>> set;
@@ -293,9 +293,9 @@ TEST(WTF_CheckedRef, HashSet)
 
         for (unsigned i = 0; set.capacity() == initialCapacity; ++i) {
             if (i % 2)
-                objects.append(makeUniqueWithoutFastMallocCheck<DerivedCheckedObject>(i + 1));
+                objects.append(makeUnique<DerivedCheckedObject>(i + 1));
             else
-                objects.append(makeUniqueWithoutFastMallocCheck<CheckedObject>(i + 1));
+                objects.append(makeUnique<CheckedObject>(i + 1));
             set.add(*objects.last());
         }
 
