@@ -40,12 +40,14 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGGElement.h"
+#include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "SVGSymbolElement.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "XLinkNames.h"
+#include "svg/SVGURIReference.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RobinHoodHashSet.h>
 
@@ -79,6 +81,21 @@ SVGUseElement::~SVGUseElement()
 {
     if (CachedResourceHandle externalDocument = m_externalDocument)
         externalDocument->removeClient(*this);
+}
+
+SVGAnimatedProperty* SVGUseElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::xAttr)
+        return m_x.ptr();
+    if (name == SVGNames::yAttr)
+        return m_y.ptr();
+    if (name == SVGNames::widthAttr)
+        return m_width.ptr();
+    if (name == SVGNames::heightAttr)
+        return m_height.ptr();
+    if (auto* property = SVGGraphicsElement::propertyForAttribute(name))
+        return property;
+    return SVGURIReference::propertyForAttribute(name);
 }
 
 void SVGUseElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

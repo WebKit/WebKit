@@ -231,6 +231,9 @@ public:
 
     void setAnimatedPropertyDirty(const QualifiedName& attributeName, SVGAnimatedProperty& animatedProperty) const override
     {
+        if (auto* property = fastAnimatedPropertyLookup(m_owner, attributeName))
+            return property->setDirty();
+
         lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
             accessor.setDirty(m_owner, animatedProperty);
         });
@@ -245,10 +248,22 @@ public:
         });
     }
 
+    static auto fastAnimatedPropertyLookup(OwnerType& owner, const QualifiedName& attributeName) -> SVGAnimatedProperty*
+    {
+        if constexpr (std::is_base_of<SVGElement, OwnerType>::value)
+            return owner.propertyForAttribute(attributeName);
+        else
+            return nullptr;
+    }
+
+
     // Finds the property whose name is attributeName and returns the synchronize
     // string through the associated SVGMemberAccessor.
     std::optional<String> synchronize(const QualifiedName& attributeName) const override
     {
+        if (auto* property = fastAnimatedPropertyLookup(m_owner, attributeName))
+            return property->synchronize();
+
         std::optional<String> value;
         lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
             value = accessor.synchronize(m_owner);
@@ -271,6 +286,9 @@ public:
 
     bool isAnimatedPropertyAttribute(const QualifiedName& attributeName) const override
     {
+        if (auto* property = fastAnimatedPropertyLookup(m_owner, attributeName))
+            return true;
+
         bool isAnimatedPropertyAttribute = false;
         lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
             isAnimatedPropertyAttribute = accessor.isAnimatedProperty();

@@ -40,9 +40,11 @@ private:
     virtual ~SVGTRefElement();
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTRefElement, SVGTextPositioningElement, SVGURIReference>;
+    friend PropertyRegistry;
 
     Ref<SVGTRefTargetEventListener> protectedTargetListener() const;
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 

@@ -66,6 +66,7 @@ public:
     size_t approximateMemoryCost() const override { return sizeof(*this); }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGraphicsElement, SVGElement, SVGTests>;
+    friend PropertyRegistry;
 
     const SVGTransformList& transform() const { return m_transform->currentValue(); }
     Ref<const SVGTransformList> protectedTransform() const;
@@ -74,6 +75,7 @@ public:
 protected:
     SVGGraphicsElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&, OptionSet<TypeFlag> = { });
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
     void didAttachRenderers() override;

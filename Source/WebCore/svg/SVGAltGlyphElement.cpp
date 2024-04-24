@@ -49,6 +49,13 @@ Ref<SVGAltGlyphElement> SVGAltGlyphElement::create(const QualifiedName& tagName,
     return adoptRef(*new SVGAltGlyphElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGAltGlyphElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (auto* property = SVGTextPositioningElement::propertyForAttribute(name))
+        return property;
+    return SVGURIReference::propertyForAttribute(name);
+}
+
 ExceptionOr<void> SVGAltGlyphElement::setGlyphRef(const AtomString&)
 {
     return Exception { ExceptionCode::NoModificationAllowedError };
@@ -88,7 +95,7 @@ bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const
         glyphNames.append(target.identifier);
         return true;
     }
-    
+
     RefPtr altGlyphDefElement = downcast<SVGAltGlyphDefElement>(target.element.get());
     return altGlyphDefElement && altGlyphDefElement->hasValidGlyphElements(glyphNames);
 }

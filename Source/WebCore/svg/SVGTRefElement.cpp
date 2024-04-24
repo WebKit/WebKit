@@ -179,6 +179,13 @@ void SVGTRefElement::detachTarget()
         treeScopeForSVGReferences().addPendingSVGResource(target.identifier, *this);
 }
 
+SVGAnimatedProperty* SVGTRefElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (auto* property = SVGTextPositioningElement::propertyForAttribute(name))
+        return property;
+    return SVGURIReference::propertyForAttribute(name);
+}
+
 void SVGTRefElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGURIReference::parseAttribute(name, newValue);

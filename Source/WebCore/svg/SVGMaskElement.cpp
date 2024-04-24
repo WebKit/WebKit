@@ -68,6 +68,19 @@ Ref<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGMaskElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGMaskElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::xAttr)
+        return m_x.ptr();
+    if (name == SVGNames::yAttr)
+        return m_y.ptr();
+    if (name == SVGNames::widthAttr)
+        return m_width.ptr();
+    if (name == SVGNames::heightAttr)
+        return m_height.ptr();
+    return SVGElement::propertyForAttribute(name);
+}
+
 void SVGMaskElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;

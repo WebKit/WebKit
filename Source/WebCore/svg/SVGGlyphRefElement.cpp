@@ -61,6 +61,13 @@ static float parseFloat(const AtomString& value)
     return parseNumber(value).value_or(0);
 }
 
+SVGAnimatedProperty* SVGGlyphRefElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (auto* property = SVGURIReference::propertyForAttribute(name))
+        return property;
+    return SVGElement::propertyForAttribute(name);
+}
+
 void SVGGlyphRefElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     // FIXME: Is the error handling in parseFloat correct for these attributes?

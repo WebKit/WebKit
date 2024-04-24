@@ -35,7 +35,7 @@ inline SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Docu
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
 {
     ASSERT(hasTagName(SVGNames::feOffsetTag));
-    
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEOffsetElement::m_in1>();
@@ -49,6 +49,16 @@ Ref<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName,
     return adoptRef(*new SVGFEOffsetElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGFEOffsetElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::inAttr)
+        return m_in1.ptr();
+    if (name == SVGNames::dxAttr)
+        return m_dx.ptr();
+    if (name == SVGNames::dyAttr)
+        return m_dy.ptr();
+    return SVGFilterPrimitiveStandardAttributes::propertyForAttribute(name);
+}
 void SVGFEOffsetElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {

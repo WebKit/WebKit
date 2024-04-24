@@ -34,6 +34,7 @@ private:
     SVGFEMergeElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMergeElement, SVGFilterPrimitiveStandardAttributes>;
+    friend PropertyRegistry;
 
     void childrenChanged(const ChildChange&) override;
 

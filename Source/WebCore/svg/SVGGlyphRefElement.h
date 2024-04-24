@@ -45,7 +45,9 @@ private:
     SVGGlyphRefElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGlyphRefElement, SVGElement, SVGURIReference>;
+    friend PropertyRegistry;
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 

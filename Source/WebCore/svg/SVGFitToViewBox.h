@@ -60,6 +60,7 @@ public:
 protected:
     SVGFitToViewBox(SVGElement* contextElement, SVGPropertyAccess = SVGPropertyAccess::ReadWrite);
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&);
     static bool isKnownAttribute(const QualifiedName& attributeName) { return PropertyRegistry::isKnownAttribute(attributeName); }
 
     void reset();

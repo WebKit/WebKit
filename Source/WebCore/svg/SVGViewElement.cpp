@@ -45,6 +45,14 @@ Ref<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGViewElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGViewElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (auto* property = SVGElement::propertyForAttribute(name))
+        return property;
+    return SVGFitToViewBox::propertyForAttribute(name);
+}
+
+
 void SVGViewElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGFitToViewBox::parseAttribute(name, newValue);

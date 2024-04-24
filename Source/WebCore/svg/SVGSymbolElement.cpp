@@ -44,6 +44,13 @@ Ref<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGSymbolElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGSymbolElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (auto* property = SVGFitToViewBox::propertyForAttribute(name))
+        return property;
+    return SVGGraphicsElement::propertyForAttribute(name);
+}
+
 void SVGSymbolElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGFitToViewBox::parseAttribute(name, newValue);

@@ -36,7 +36,7 @@ inline SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Docume
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
 {
     ASSERT(hasTagName(SVGNames::feBlendTag));
-    
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::modeAttr, BlendMode, &SVGFEBlendElement::m_mode>();
@@ -48,6 +48,17 @@ inline SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Docume
 Ref<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGFEBlendElement(tagName, document));
+}
+
+SVGAnimatedProperty* SVGFEBlendElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::modeAttr)
+        return m_mode.ptr();
+    if (name == SVGNames::inAttr)
+        return m_in1.ptr();
+    if (name == SVGNames::in2Attr)
+        return m_in2.ptr();
+    return SVGFilterPrimitiveStandardAttributes::propertyForAttribute(name);
 }
 
 void SVGFEBlendElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

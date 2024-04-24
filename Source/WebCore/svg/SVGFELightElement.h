@@ -64,7 +64,9 @@ protected:
 
 private:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFELightElement, SVGElement>;
+    friend PropertyRegistry;
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
     void childrenChanged(const ChildChange&) override;

@@ -83,6 +83,9 @@ protected:
     SVGAnimationElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAnimationElement, SVGElement, SVGTests>;
+    friend PropertyRegistry;
+
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
 
     virtual void resetAnimation();
 

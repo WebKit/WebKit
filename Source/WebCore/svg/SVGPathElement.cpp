@@ -107,6 +107,13 @@ Ref<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGPathElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGPathElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::dAttr)
+        return m_pathSegList.ptr();
+    return SVGGeometryElement::propertyForAttribute(name);
+}
+
 void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::dAttr) {

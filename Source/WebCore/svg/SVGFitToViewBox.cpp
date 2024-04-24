@@ -46,6 +46,15 @@ SVGFitToViewBox::SVGFitToViewBox(SVGElement* contextElement, SVGPropertyAccess a
     });
 }
 
+SVGAnimatedProperty* SVGFitToViewBox::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::viewBoxAttr)
+        return m_viewBox.ptr();
+    if (name == SVGNames::preserveAspectRatioAttr)
+        return m_preserveAspectRatio.ptr();
+    return nullptr;
+}
+
 void SVGFitToViewBox::setViewBox(const FloatRect& viewBox)
 {
     Ref { m_viewBox }->setBaseValInternal(viewBox);

@@ -34,6 +34,7 @@ private:
     SVGDefsElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGDefsElement, SVGGraphicsElement>;
+    friend PropertyRegistry;
 
     bool isValid() const final;
     bool supportsFocus() const final { return false; }

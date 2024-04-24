@@ -543,6 +543,15 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& o
 
 void SVGElement::synchronizeAttribute(const QualifiedName& name)
 {
+    /*
+    // Fast known property access, if not found we fallback to the hashmap property registry.
+    if (auto* property = propertyForAttribute(name)) {
+        if (auto value = property->synchronize())
+            setSynchronizedLazyAttribute(name, AtomString { *value });
+        return;
+    }
+    */
+
     // If the value of the property has changed, serialize the new value to the attribute.
     if (auto value = propertyRegistry().synchronize(name))
         setSynchronizedLazyAttribute(name, AtomString { *value });

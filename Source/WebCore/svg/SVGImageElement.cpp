@@ -87,6 +87,23 @@ bool SVGImageElement::renderingTaintsOrigin() const
     return cachedImage->isCORSCrossOrigin();
 }
 
+SVGAnimatedProperty* SVGImageElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::xAttr)
+        return m_x.ptr();
+    if (name == SVGNames::yAttr)
+        return m_y.ptr();
+    if (name == SVGNames::widthAttr)
+        return m_width.ptr();
+    if (name == SVGNames::heightAttr)
+        return m_height.ptr();
+    if (name == SVGNames::preserveAspectRatioAttr)
+        return m_preserveAspectRatio.ptr();
+    if (auto* property = SVGGraphicsElement::propertyForAttribute(name))
+        return property;
+    return SVGURIReference::propertyForAttribute(name);
+}
+
 void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;

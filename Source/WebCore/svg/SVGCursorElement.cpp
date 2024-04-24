@@ -58,6 +58,19 @@ SVGCursorElement::~SVGCursorElement()
         client.cursorElementRemoved(*this);
 }
 
+SVGAnimatedProperty* SVGCursorElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::xAttr)
+        return m_x.ptr();
+    if (name == SVGNames::yAttr)
+        return m_y.ptr();
+    if (auto* property = SVGURIReference::propertyForAttribute(name))
+        return property;
+    if (auto* property = SVGTests::propertyForAttribute(name))
+        return property;
+    return SVGElement::propertyForAttribute(name);
+}
+
 void SVGCursorElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;

@@ -31,7 +31,7 @@
 namespace WebCore {
 
 struct PatternAttributes;
- 
+
 class SVGPatternElement final : public SVGElement, public SVGFitToViewBox, public SVGTests, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGPatternElement);
 public:
@@ -62,7 +62,9 @@ private:
     SVGPatternElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPatternElement, SVGElement, SVGFitToViewBox, SVGTests, SVGURIReference>;
+    friend PropertyRegistry;
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
     void childrenChanged(const ChildChange&) final;

@@ -36,6 +36,7 @@ template<typename OwnerType, typename... BaseTypes>
 class SVGPropertyOwnerRegistry;
 
 class SVGTests;
+class SVGAnimatedProperty;
 
 class SVGConditionalProcessingAttributes {
     WTF_MAKE_NONCOPYABLE(SVGConditionalProcessingAttributes); WTF_MAKE_FAST_ALLOCATED;
@@ -59,7 +60,9 @@ public:
     bool isValid() const;
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTests>;
+    friend PropertyRegistry;
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) { return nullptr; };
     void parseAttribute(const QualifiedName&, const AtomString&);
     void svgAttributeChanged(const QualifiedName&);
 

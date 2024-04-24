@@ -46,6 +46,9 @@ private:
     SVGAElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAElement, SVGGraphicsElement, SVGURIReference>;
+    friend PropertyRegistry;
+
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
@@ -56,7 +59,7 @@ private:
     bool isValid() const final { return SVGTests::isValid(); }
     String title() const final;
     void defaultEventHandler(Event&) final;
-    
+
     bool supportsFocus() const final;
     bool isMouseFocusable() const final;
     bool isKeyboardFocusable(KeyboardEvent*) const final;

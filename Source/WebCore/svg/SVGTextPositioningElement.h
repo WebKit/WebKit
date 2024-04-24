@@ -31,6 +31,7 @@ public:
     static SVGTextPositioningElement* elementFromRenderer(RenderBoxModelObject&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextPositioningElement, SVGTextContentElement>;
+    friend PropertyRegistry;
 
     const SVGLengthList& x() const { return m_x->currentValue(); }
     const SVGLengthList& y() const { return m_y->currentValue(); }
@@ -47,6 +48,7 @@ public:
 protected:
     SVGTextPositioningElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 

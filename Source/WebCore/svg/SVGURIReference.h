@@ -24,10 +24,12 @@
 #include "Document.h"
 #include "QualifiedName.h"
 #include "SVGPropertyOwnerRegistry.h"
+#include "svg/SVGTests.h"
 
 namespace WebCore {
 
 class SVGElement;
+class SVGAnimatedProperty;
 
 class SVGURIReference {
     WTF_MAKE_NONCOPYABLE(SVGURIReference);
@@ -57,6 +59,7 @@ public:
     }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGURIReference>;
+    friend PropertyRegistry;
 
     String href() const { return m_href->currentValue(); }
     SVGAnimatedString& hrefAnimated() { return m_href; }
@@ -64,6 +67,7 @@ public:
 protected:
     SVGURIReference(SVGElement* contextElement);
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&);
     static bool isKnownAttribute(const QualifiedName& attributeName);
 
     virtual bool haveFiredLoadEvent() const { return false; }

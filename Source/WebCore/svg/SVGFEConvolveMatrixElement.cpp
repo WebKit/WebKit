@@ -27,6 +27,7 @@
 #include "NodeName.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "svg/SVGFilterPrimitiveStandardAttributes.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -57,6 +58,29 @@ inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedNam
 Ref<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGFEConvolveMatrixElement(tagName, document));
+}
+
+SVGAnimatedProperty* SVGFEConvolveMatrixElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::inAttr)
+        return m_in1.ptr();
+    // FIXME: handle order
+    if (name == SVGNames::kernelMatrixAttr)
+        return m_kernelMatrix.ptr();
+    if (name == SVGNames::divisorAttr)
+        return m_divisor.ptr();
+    if (name == SVGNames::biasAttr)
+        return m_bias.ptr();
+    if (name == SVGNames::targetXAttr)
+        return m_targetX.ptr();
+    if (name == SVGNames::targetYAttr)
+        return m_targetY.ptr();
+    if (name == SVGNames::edgeModeAttr)
+        return m_edgeMode.ptr();
+    // FIXME: handle kernelUnit
+    if (name == SVGNames::preserveAlphaAttr)
+        return m_preserveAlpha.ptr();
+    return SVGFilterPrimitiveStandardAttributes::propertyForAttribute(name);
 }
 
 void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

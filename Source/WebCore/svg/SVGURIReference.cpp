@@ -42,6 +42,14 @@ SVGURIReference::SVGURIReference(SVGElement* contextElement)
     });
 }
 
+SVGAnimatedProperty* SVGURIReference::propertyForAttribute(const QualifiedName& name)
+{
+    if (name.matches(SVGNames::hrefAttr))
+        return m_href.ptr();
+    // FIXME: fast path for xlink href
+    return nullptr;
+}
+
 bool SVGURIReference::isKnownAttribute(const QualifiedName& attributeName)
 {
     return PropertyRegistry::isKnownAttribute(attributeName);

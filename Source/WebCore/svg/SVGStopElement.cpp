@@ -50,6 +50,13 @@ Ref<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGStopElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGStopElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::offsetAttr)
+        return m_offset.ptr();
+    return SVGElement::propertyForAttribute(name);
+}
+
 void SVGStopElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::offsetAttr) {

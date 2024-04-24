@@ -52,6 +52,21 @@ SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagNam
     });
 }
 
+SVGAnimatedProperty* SVGTextPositioningElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::xAttr)
+        return m_x.ptr();
+    if (name == SVGNames::yAttr)
+        return m_y.ptr();
+    if (name == SVGNames::dxAttr)
+        return m_dx.ptr();
+    if (name == SVGNames::dyAttr)
+        return m_dy.ptr();
+    if (name == SVGNames::rotateAttr)
+        return m_rotate.ptr();
+    return SVGTextContentElement::propertyForAttribute(name);
+}
+
 void SVGTextPositioningElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {

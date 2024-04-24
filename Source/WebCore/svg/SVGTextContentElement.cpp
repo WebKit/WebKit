@@ -43,7 +43,7 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGTextContentElement);
- 
+
 SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
     : SVGGraphicsElement(tagName, document, WTFMove(propertyRegistry))
 {
@@ -52,6 +52,15 @@ SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Docum
         PropertyRegistry::registerProperty<SVGNames::textLengthAttr, &SVGTextContentElement::m_textLength>();
         PropertyRegistry::registerProperty<SVGNames::lengthAdjustAttr, SVGLengthAdjustType, &SVGTextContentElement::m_lengthAdjust>();
     });
+}
+
+SVGAnimatedProperty* SVGTextContentElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::textLengthAttr)
+        return m_textLength.ptr();
+    if (name == SVGNames::lengthAdjustAttr)
+        return m_lengthAdjust.ptr();
+    return SVGGraphicsElement::propertyForAttribute(name);
 }
 
 unsigned SVGTextContentElement::getNumberOfChars()

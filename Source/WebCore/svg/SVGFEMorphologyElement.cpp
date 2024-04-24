@@ -36,7 +36,7 @@ inline SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagNa
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
 {
     ASSERT(hasTagName(SVGNames::feMorphologyTag));
-    
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEMorphologyElement::m_in1>();
@@ -48,6 +48,17 @@ inline SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagNa
 Ref<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGFEMorphologyElement(tagName, document));
+}
+
+SVGAnimatedProperty* SVGFEMorphologyElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::inAttr)
+        return m_in1.ptr();
+    if (name == SVGNames::operatorAttr)
+        return m_svgOperator.ptr();
+    if (name == SVGNames::radiusAttr)
+        return m_radiusY.ptr();
+    return SVGFilterPrimitiveStandardAttributes::propertyForAttribute(name);
 }
 
 void SVGFEMorphologyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

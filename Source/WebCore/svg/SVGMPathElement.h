@@ -25,7 +25,7 @@
 #include "SVGURIReference.h"
 
 namespace WebCore {
-    
+
 class SVGPathElement;
 
 class SVGMPathElement final : public SVGElement, public SVGURIReference {
@@ -43,7 +43,9 @@ private:
     SVGMPathElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMPathElement, SVGElement, SVGURIReference>;
+    friend PropertyRegistry;
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
 

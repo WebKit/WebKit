@@ -52,6 +52,20 @@ Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& 
     return adoptRef(*new SVGFETurbulenceElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGFETurbulenceElement::propertyForAttribute(const QualifiedName& name)
+{
+    // FIXME: implement for base frequency
+    if (name == SVGNames::numOctavesAttr)
+        return m_numOctaves.ptr();
+    if (name == SVGNames::seedAttr)
+        return m_seed.ptr();
+    if (name == SVGNames::stitchTilesAttr)
+        return m_stitchTiles.ptr();
+    if (name == SVGNames::typeAttr)
+        return m_type.ptr();
+    return SVGFilterPrimitiveStandardAttributes::propertyForAttribute(name);
+}
+
 void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {

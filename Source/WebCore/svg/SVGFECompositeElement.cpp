@@ -48,6 +48,25 @@ inline SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName
     });
 }
 
+SVGAnimatedProperty* SVGFECompositeElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::inAttr)
+        return m_in1.ptr();
+    if (name == SVGNames::in2Attr)
+        return m_in2.ptr();
+    if (name == SVGNames::operatorAttr)
+        return m_svgOperator.ptr();
+    if (name == SVGNames::k1Attr)
+        return m_k1.ptr();
+    if (name == SVGNames::k2Attr)
+        return m_k2.ptr();
+    if (name == SVGNames::k3Attr)
+        return m_k3.ptr();
+    if (name == SVGNames::k4Attr)
+        return m_k4.ptr();
+    return SVGFilterPrimitiveStandardAttributes::propertyForAttribute(name);
+}
+
 Ref<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGFECompositeElement(tagName, document));

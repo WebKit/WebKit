@@ -58,6 +58,13 @@ Ref<SVGClipPathElement> SVGClipPathElement::create(const QualifiedName& tagName,
     return adoptRef(*new SVGClipPathElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGClipPathElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::clipPathUnitsAttr)
+        return m_clipPathUnits.ptr();
+    return SVGGraphicsElement::propertyForAttribute(name);
+}
+
 void SVGClipPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::clipPathUnitsAttr) {

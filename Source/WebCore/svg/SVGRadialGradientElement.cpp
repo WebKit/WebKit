@@ -64,6 +64,23 @@ Ref<SVGRadialGradientElement> SVGRadialGradientElement::create(const QualifiedNa
     return adoptRef(*new SVGRadialGradientElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGRadialGradientElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::cxAttr)
+        return m_cx.ptr();
+    if (name == SVGNames::cyAttr)
+        return m_cy.ptr();
+    if (name == SVGNames::rAttr)
+        return m_r.ptr();
+    if (name == SVGNames::fxAttr)
+        return m_fx.ptr();
+    if (name == SVGNames::fyAttr)
+        return m_fy.ptr();
+    if (name == SVGNames::frAttr)
+        return m_fr.ptr();
+    return SVGGradientElement::propertyForAttribute(name);
+}
+
 void SVGRadialGradientElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;

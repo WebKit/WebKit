@@ -46,6 +46,13 @@ Ref<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGFETileElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGFETileElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::inAttr)
+        return m_in1.ptr();
+    return SVGFilterPrimitiveStandardAttributes::propertyForAttribute(name);
+}
+
 void SVGFETileElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::inAttr)

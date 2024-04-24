@@ -44,6 +44,8 @@
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "XLinkNames.h"
+#include "svg/SVGGraphicsElement.h"
+#include "svg/SVGURIReference.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -76,6 +78,15 @@ String SVGAElement::title() const
 
     // Otherwise, use the title of this element.
     return SVGElement::title();
+}
+
+SVGAnimatedProperty* SVGAElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::targetAttr)
+        return m_target.ptr();
+    if (auto* property = SVGGraphicsElement::propertyForAttribute(name))
+        return property;
+    return SVGURIReference::propertyForAttribute(name);
 }
 
 void SVGAElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

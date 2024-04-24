@@ -59,6 +59,17 @@ bool SVGFEColorMatrixElement::isInvalidValuesLength() const
         || (filterType == ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE  && size != 1);
 }
 
+SVGAnimatedProperty* SVGFEColorMatrixElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::inAttr)
+        return m_in1.ptr();
+    if (name == SVGNames::typeAttr)
+        return m_type.ptr();
+    if (name == SVGNames::valuesAttr)
+        return m_values.ptr();
+    return SVGFilterPrimitiveStandardAttributes::propertyForAttribute(name);
+}
+
 void SVGFEColorMatrixElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
