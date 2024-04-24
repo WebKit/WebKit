@@ -1336,6 +1336,11 @@ FloatSize WebChromeClient::overrideScreenSize() const
     return protectedPage()->overrideScreenSize();
 }
 
+FloatSize WebChromeClient::overrideAvailableScreenSize() const
+{
+    return protectedPage()->overrideAvailableScreenSize();
+}
+
 #endif
 
 FloatSize WebChromeClient::screenSizeForFingerprintingProtections(const LocalFrame& frame, FloatSize defaultSize) const

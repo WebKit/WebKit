@@ -194,6 +194,7 @@ struct WebPageCreationParameters {
     WebCore::FloatSize screenSize;
     WebCore::FloatSize availableScreenSize;
     WebCore::FloatSize overrideScreenSize;
+    WebCore::FloatSize overrideAvailableScreenSize;
     float textAutosizingWidth;
     WebCore::IntDegrees deviceOrientation { 0 };
     bool keyboardIsAttached { false };

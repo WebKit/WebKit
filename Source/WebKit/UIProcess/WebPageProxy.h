@@ -964,6 +964,7 @@ public:
     void scrollingNodeScrollDidEndScroll(std::optional<WebCore::ScrollingNodeID>);
 
     WebCore::FloatSize overrideScreenSize();
+    WebCore::FloatSize overrideAvailableScreenSize();
 
     void dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate&);
 

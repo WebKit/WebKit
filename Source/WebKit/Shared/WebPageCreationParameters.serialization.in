@@ -127,6 +127,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     WebCore::FloatSize screenSize;
     WebCore::FloatSize availableScreenSize;
     WebCore::FloatSize overrideScreenSize;
+    WebCore::FloatSize overrideAvailableScreenSize;
     float textAutosizingWidth;
     WebCore::IntDegrees deviceOrientation;
     bool keyboardIsAttached;

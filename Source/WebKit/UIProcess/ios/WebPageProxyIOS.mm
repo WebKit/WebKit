@@ -868,6 +868,15 @@ FloatSize WebPageProxy::overrideScreenSize()
     return WebCore::overrideScreenSize();
 }
 
+FloatSize WebPageProxy::overrideAvailableScreenSize()
+{
+#if PLATFORM(VISION)
+    if (PAL::currentUserInterfaceIdiomIsVisionOrVisionLegacy())
+        return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
+#endif
+    return WebCore::overrideAvailableScreenSize();
+}
+
 float WebPageProxy::textAutosizingWidth()
 {
     return WebCore::screenSize().width();

@@ -527,6 +527,11 @@ FloatSize Chrome::overrideScreenSize() const
     return m_client->overrideScreenSize();
 }
 
+FloatSize Chrome::overrideAvailableScreenSize() const
+{
+    return m_client->overrideAvailableScreenSize();
+}
+
 void Chrome::dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>& disabledAdaptations) const
 {
     m_client->dispatchDisabledAdaptationsDidChange(disabledAdaptations);

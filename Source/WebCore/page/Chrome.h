@@ -132,6 +132,7 @@ public:
     FloatSize screenSize() const override;
     FloatSize availableScreenSize() const override;
     FloatSize overrideScreenSize() const override;
+    FloatSize overrideAvailableScreenSize() const override;
 
     void scrollContainingScrollViewsToRevealRect(const IntRect&) const;
     void scrollMainFrameToRevealRect(const IntRect&) const;

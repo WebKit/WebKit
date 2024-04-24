@@ -452,6 +452,11 @@ FloatSize WebPage::overrideScreenSize() const
     return m_overrideScreenSize;
 }
 
+FloatSize WebPage::overrideAvailableScreenSize() const
+{
+    return m_overrideAvailableScreenSize;
+}
+
 void WebPage::didReceiveMobileDocType(bool isMobileDoctype)
 {
     m_isMobileDoctype = isMobileDoctype;

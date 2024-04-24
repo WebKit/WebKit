@@ -869,6 +869,7 @@ public:
     WebCore::FloatSize screenSize() const;
     WebCore::FloatSize availableScreenSize() const;
     WebCore::FloatSize overrideScreenSize() const;
+    WebCore::FloatSize overrideAvailableScreenSize() const;
     WebCore::IntDegrees deviceOrientation() const { return m_deviceOrientation; }
     void didReceiveMobileDocType(bool);
 
@@ -2597,6 +2598,7 @@ private:
     WebCore::FloatSize m_screenSize;
     WebCore::FloatSize m_availableScreenSize;
     WebCore::FloatSize m_overrideScreenSize;
+    WebCore::FloatSize m_overrideAvailableScreenSize;
 
     std::optional<WebCore::SimpleRange> m_initialSelection;
     WebCore::VisibleSelection m_storedSelectionForAccessibility { WebCore::VisibleSelection() };

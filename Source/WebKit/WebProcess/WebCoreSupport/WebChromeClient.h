@@ -349,6 +349,7 @@ private:
     WebCore::FloatSize screenSize() const final;
     WebCore::FloatSize availableScreenSize() const final;
     WebCore::FloatSize overrideScreenSize() const final;
+    WebCore::FloatSize overrideAvailableScreenSize() const final;
 #endif
 
     void dispatchDisabledAdaptationsDidChange(const OptionSet<WebCore::DisabledAdaptations>&) const final;

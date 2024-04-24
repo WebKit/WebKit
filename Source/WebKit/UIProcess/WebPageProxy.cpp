@@ -10127,6 +10127,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.screenSize = screenSize();
     parameters.availableScreenSize = availableScreenSize();
     parameters.overrideScreenSize = overrideScreenSize();
+    parameters.overrideAvailableScreenSize = overrideAvailableScreenSize();
     parameters.textAutosizingWidth = textAutosizingWidth();
     parameters.mimeTypesWithCustomContentProviders = protectedPageClient()->mimeTypesWithCustomContentProviders();
     parameters.deviceOrientation = m_deviceOrientation;
