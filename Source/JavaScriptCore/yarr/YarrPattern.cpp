@@ -228,8 +228,9 @@ public:
                 for (auto* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
                     addChar(ch);
             } else {
-                addChar(ch);
-                addChar(getCanonicalPair(info, ch));
+                char32_t canonicalChar = getCanonicalPair(info, ch);
+                addChar(std::min(ch, canonicalChar));
+                addChar(std::max(ch, canonicalChar));
             }
         }
 
@@ -777,6 +778,7 @@ private:
                 if (ch > chunkHi)
                     break;
 
+                ASSERT(ch >= chunkLo);
                 lhsChunkBitSet.set(ch - chunkLo);
             }
 
@@ -788,8 +790,10 @@ private:
                 auto begin = std::max(chunkLo, range.begin);
                 auto end = std::min(range.end, chunkHi);
 
-                for (char32_t ch = begin; ch <= end; ch++)
+                for (char32_t ch = begin; ch <= end; ch++) {
+                    ASSERT(ch >= chunkLo);
                     lhsChunkBitSet.set(ch - chunkLo);
+                }
 
                 if (range.end > chunkHi)
                     break;
@@ -800,6 +804,7 @@ private:
                 if (ch > chunkHi)
                     break;
 
+                ASSERT(ch >= chunkLo);
                 rhsChunkBitSet.set(ch - chunkLo);
             }
 
@@ -811,8 +816,10 @@ private:
                 auto begin = std::max(chunkLo, range.begin);
                 auto end = std::min(range.end, chunkHi);
 
-                for (char32_t ch = begin; ch <= end; ch++)
+                for (char32_t ch = begin; ch <= end; ch++) {
+                    ASSERT(ch >= chunkLo);
                     rhsChunkBitSet.set(ch - chunkLo);
+                }
 
                 if (range.end > chunkHi)
                     break;
