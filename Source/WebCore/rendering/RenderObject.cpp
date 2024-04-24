@@ -1779,17 +1779,14 @@ static void invalidateLineLayoutAfterTreeMutationIfNeeded(RenderObject& renderer
     CheckedPtr container = LayoutIntegration::LineLayout::blockContainer(renderer);
     if (!container)
         return;
-    auto shouldInvalidateLineLayoutPath = [&] {
-        auto* modernLineLayout = container->modernLineLayout();
-        if (!modernLineLayout)
-            return true;
-        if (LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(*container, renderer, *modernLineLayout, isRemoval == IsRemoval::Yes))
+    auto shouldInvalidateLineLayoutPath = [&](auto& inlinLayout) {
+        if (LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(*container, renderer, inlinLayout, isRemoval == IsRemoval::Yes))
             return true;
         if (isRemoval == IsRemoval::Yes)
-            return !modernLineLayout->removedFromTree(*renderer.parent(), renderer);
-        return !modernLineLayout->insertedIntoTree(*renderer.parent(), renderer);
+            return !inlinLayout.removedFromTree(*renderer.parent(), renderer);
+        return !inlinLayout.insertedIntoTree(*renderer.parent(), renderer);
     };
-    if (shouldInvalidateLineLayoutPath())
+    if (auto* inlinLayout = container->modernLineLayout(); inlinLayout && shouldInvalidateLineLayoutPath(*inlinLayout))
         container->invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::InsertionOrRemoval);
 }
 
