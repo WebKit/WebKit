@@ -2922,7 +2922,7 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
         return throwVMError(globalObject, throwScope, "Not supported for this platform"_s);
 
 #if ENABLE(ASSEMBLER)
-    if (g_jscConfig.isPermanentlyFrozen() || !g_wtfConfig.disabledFreezingForTesting)
+    if (g_jscConfig.isPermanentlyFrozen() || !g_jscConfig.disabledFreezingForTesting)
         return throwVMError(globalObject, throwScope, "Options are frozen"_s);
 
     if (callFrame->argumentCount() < 2)

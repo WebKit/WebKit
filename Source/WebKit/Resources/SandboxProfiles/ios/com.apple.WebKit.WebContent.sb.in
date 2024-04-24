@@ -1396,6 +1396,10 @@
     io_service_get_matching_service_bin
     io_service_get_matching_services_bin))
 
+; This rule is only temporary and should be removed shortly
+; See: rdar://125256111.
+(mobile-preferences-read "com.apple.webkit-new-sandbox-test")
+    
 (allow mach-kernel-endpoint
     (apply-message-filter
         (deny mach-message-send (with telemetry))
@@ -1436,12 +1440,25 @@
 #if HAVE(HARDENED_MACH_EXCEPTIONS)
         (with-filter (require-not (lockdown-mode))
             (allow mach-message-send (kernel-mig-routine thread_adopt_exception_handler))
+#if ENABLE(BLOCK_SET_EXCEPTION_PORTS)
             (with-filter (require-not (webcontent-process-launched))
-                (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler))))
+                (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler)))
+#else
+            (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler))
+#endif ;; ENABLE(BLOCK_SET_EXCEPTION_PORTS)
+        )
 #else
         (with-filter (require-not (lockdown-mode))
-            (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+#if ENABLE(BLOCK_SET_EXCEPTION_PORTS)
+            (with-filter (require-not (webcontent-process-launched))
+                (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+#else
+            (allow mach-message-send (kernel-mig-routine thread_set_exception_ports))
+#endif ;; ENABLE(BLOCK_SET_EXCEPTION_PORTS)
+        )
 #endif ;; HAVE(HARDENED_MACH_EXCEPTIONS)
+
+
 
         (with-filter (lockdown-mode)
             (deny mach-message-send (with telemetry) (with message "Lockdown mode")

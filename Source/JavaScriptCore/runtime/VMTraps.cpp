@@ -201,6 +201,7 @@ public:
         , m_vm(vm)
     {
         activateSignalHandlersFor(Signal::AccessFault);
+        finalizeSignalHandlers();
     }
 
     static void initializeSignals()

@@ -54,8 +54,8 @@ void* threadStateLRInternal(PlatformRegisters& regs)
 void* threadStatePCInternal(PlatformRegisters& regs)
 {
 #if CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)
-    // If we have modified the PC and set it to a presigned function we want to avoid
-    // authing the value as it is using a custom ptrauth signing scheme.
+    // If userspace has modified the PC and set it to the presignedTrampoline,
+    // we want to avoid authing the value as it is using a custom ptrauth signing scheme.
     _STRUCT_ARM_THREAD_STATE64* ts = &(regs);
     if (!(ts->__opaque_flags & __DARWIN_ARM_THREAD_STATE64_FLAGS_KERNEL_SIGNED_PC))
         return nullptr;

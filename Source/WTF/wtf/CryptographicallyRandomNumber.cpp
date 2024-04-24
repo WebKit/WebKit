@@ -57,15 +57,15 @@ class ARC4RandomNumberGenerator {
 public:
     ARC4RandomNumberGenerator() = default;
 
-    template<typename IntegerType>
-    IntegerType randomNumber();
+    uint32_t randomNumber();
     void randomValues(std::span<uint8_t>);
 
 private:
     inline void addRandomData(std::span<const uint8_t, 128>);
     void stir() WTF_REQUIRES_LOCK(m_lock);
     void stirIfNeeded() WTF_REQUIRES_LOCK(m_lock);
-    inline uint8_t getByte() WTF_REQUIRES_LOCK(m_lock);
+    inline uint8_t getByte();
+    inline uint32_t getWord();
 
     Lock m_lock;
     ARC4Stream m_stream;
@@ -121,25 +121,30 @@ uint8_t ARC4RandomNumberGenerator::getByte()
     return (m_stream.s[(si + sj) & 0xff]);
 }
 
-template<typename IntegerType>
-IntegerType ARC4RandomNumberGenerator::randomNumber()
+uint32_t ARC4RandomNumberGenerator::getWord()
+{
+    uint32_t val;
+    val = getByte() << 24;
+    val |= getByte() << 16;
+    val |= getByte() << 8;
+    val |= getByte();
+    return val;
+}
+
+uint32_t ARC4RandomNumberGenerator::randomNumber()
 {
     Locker locker { m_lock };
 
-    IntegerType val = 0;
-    for (unsigned i = 0; i < sizeof(IntegerType); ++i) {
-        m_count--;
-        stirIfNeeded();
-        val = (val << 8) | getByte();
-    }
-
-    return val;
+    m_count -= 4;
+    stirIfNeeded();
+    return getWord();
 }
 
 void ARC4RandomNumberGenerator::randomValues(std::span<uint8_t> buffer)
 {
     Locker locker { m_lock };
 
+    stirIfNeeded();
     for (auto& byte : WTF::makeReversedRange(buffer)) {
         m_count--;
         stirIfNeeded();
@@ -162,14 +167,9 @@ ARC4RandomNumberGenerator& sharedRandomNumberGenerator()
 
 }
 
-template<> uint8_t cryptographicallyRandomNumber<uint8_t>()
-{
-    return sharedRandomNumberGenerator().randomNumber<uint8_t>();
-}
-
 template<> unsigned cryptographicallyRandomNumber<unsigned>()
 {
-    return sharedRandomNumberGenerator().randomNumber<unsigned>();
+    return sharedRandomNumberGenerator().randomNumber();
 }
 
 void cryptographicallyRandomValues(std::span<uint8_t> buffer)
@@ -179,7 +179,8 @@ void cryptographicallyRandomValues(std::span<uint8_t> buffer)
 
 template<> uint64_t cryptographicallyRandomNumber<uint64_t>()
 {
-    return sharedRandomNumberGenerator().randomNumber<uint64_t>();
+    uint64_t high = cryptographicallyRandomNumber<unsigned>();
+    return (high << 32) | cryptographicallyRandomNumber<unsigned>();
 }
 
 double cryptographicallyRandomUnitInterval()

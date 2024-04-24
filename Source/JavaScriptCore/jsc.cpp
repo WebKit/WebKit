@@ -3522,6 +3522,9 @@ int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
 
 #if OS(UNIX)
     if (getenv("JS_SHELL_WAIT_FOR_SIGUSR2_TO_EXIT")) {
+        uint32_t key = 0;
+        int mask = 0;
+        initializeSignalHandling(key, mask);
         addSignalHandler(Signal::Usr, SignalHandler([&] (Signal, SigInfo&, PlatformRegisters&) {
             dataLogLn("Signal handler hit, we can exit now.");
             waitToExit.signal();
@@ -3995,6 +3998,20 @@ void CommandLine::parseArguments(int argc, char** argv)
         }
         if (!strcmp(arg, "-s")) {
 #if OS(UNIX)
+            uint32_t key = 0;
+            int mask = 0;
+#if HAVE(MACH_EXCEPTIONS)
+            mask |= toMachMask(Signal::IllegalInstruction);
+            mask |= toMachMask(Signal::AccessFault);
+            mask |= toMachMask(Signal::FloatingPoint);
+            mask |= toMachMask(Signal::Breakpoint);
+#if !OS(DARWIN)
+            mask |= toMachMask(Signal::Abort);
+#endif // !OS(DARWIN)
+#endif // HAVE(MACH_EXCEPTIONS)
+
+            initializeSignalHandling(key, mask);
+
             SignalAction (*exit)(Signal, SigInfo&, PlatformRegisters&) = [] (Signal, SigInfo&, PlatformRegisters&) {
                 dataLogLn("Signal handler hit. Exiting with status 0");
                 // Deliberate exit with a SIGKILL code greater than 130.
@@ -4017,6 +4034,7 @@ void CommandLine::parseArguments(int argc, char** argv)
             addSignalHandler(Signal::Abort, SignalHandler(exit));
             activateSignalHandlersFor(Signal::Abort);
 #endif
+            finalizeSignalHandlers();
 #endif
             continue;
         }
