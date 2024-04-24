@@ -1792,6 +1792,29 @@ WGPU_EXPORT void wgpuTextureViewSetLabel(WGPUTextureView textureView, char const
 WGPU_EXPORT void wgpuTextureViewReference(WGPUTextureView textureView) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuTextureViewRelease(WGPUTextureView textureView) WGPU_FUNCTION_ATTRIBUTE;
 
+// isValid checks
+WGPU_EXPORT bool wgpuBufferIsValid(WGPUBuffer buffer) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuAdapterIsValid(WGPUAdapter adapter) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuBindGroupIsValid(WGPUBindGroup bindGroup) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuBindGroupLayoutIsValid(WGPUBindGroupLayout bindGroupLayout) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuCommandBufferIsValid(WGPUCommandBuffer commandBuffer) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuCommandEncoderIsValid(WGPUCommandEncoder commandEncoder) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuComputePassEncoderIsValid(WGPUComputePassEncoder computePassEncoder) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuComputePipelineIsValid(WGPUComputePipeline computePipeline) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuDeviceIsValid(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuPipelineLayoutIsValid(WGPUPipelineLayout pipelineLayout) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuPresentationContextIsValid(WGPUSurface presentationContext) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuQuerySetIsValid(WGPUQuerySet querySet) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuQueueIsValid(WGPUQueue queue) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuRenderBundleEncoderIsValid(WGPURenderBundleEncoder renderBundleEncoder) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuRenderBundleIsValid(WGPURenderBundle renderBundle) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuRenderPassEncoderIsValid(WGPURenderPassEncoder renderPassEncoder) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuRenderPipelineIsValid(WGPURenderPipeline renderPipeline) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuSamplerIsValid(WGPUSampler sampler) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuShaderModuleIsValid(WGPUShaderModule shaderModule) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuTextureIsValid(WGPUTexture texture) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT bool wgpuTextureViewIsValid(WGPUTextureView textureView) WGPU_FUNCTION_ATTRIBUTE;
+
 #endif  // !defined(WGPU_SKIP_DECLARATIONS)
 
 #ifdef __cplusplus

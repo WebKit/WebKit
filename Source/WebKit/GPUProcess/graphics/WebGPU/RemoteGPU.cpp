@@ -46,8 +46,8 @@
 #include <wtf/threads/BinarySemaphore.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
-#import <WebCore/WebGPUCreateImpl.h>
 #include <WebCore/ProcessIdentity.h>
+#include <WebCore/WebGPUCreateImpl.h>
 #endif
 
 #if PLATFORM(COCOA)
@@ -235,6 +235,19 @@ void RemoteGPU::paintNativeImageToImageBuffer(WebCore::NativeImage& nativeImage,
         semaphore.signal();
     });
     semaphore.wait();
+}
+
+void RemoteGPU::isValid(WebGPUIdentifier identifier, CompletionHandler<void(bool, bool)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    auto* gpu = static_cast<WebCore::WebGPU::GPU*>(m_backing.get());
+    if (!gpu) {
+        completionHandler(false, false);
+        return;
+    }
+
+    auto result = m_objectHeap->objectExistsAndValid(*gpu, identifier);
+    completionHandler(result.valid, result.exists);
 }
 
 } // namespace WebKit

@@ -28,8 +28,10 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPU.h"
+#include "WebGPUConvertToBackingContext.h"
 #include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
+#include <WebGPU/WebGPUExt.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
@@ -42,7 +44,30 @@ class NativeImage;
 
 namespace WebCore::WebGPU {
 
+class Adapter;
+class Buffer;
+class BindGroup;
+class BindGroupLayout;
+class CompositorIntegration;
+class CommandBuffer;
+class CommandEncoder;
+class ComputePassEncoder;
+class ComputePipeline;
 class ConvertToBackingContext;
+class Device;
+class ExternalTexture;
+class PipelineLayout;
+class PresentationContext;
+class QuerySet;
+class Queue;
+class RenderBundleEncoder;
+class RenderBundle;
+class RenderPassEncoder;
+class RenderPipeline;
+class Sampler;
+class ShaderModule;
+class Texture;
+class TextureView;
 
 class GPUImpl final : public GPU, public RefCounted<GPUImpl> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -76,6 +101,29 @@ private:
     RefPtr<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) final;
 
     RefPtr<CompositorIntegration> createCompositorIntegration() final;
+    bool isValid(const CompositorIntegration&) const final;
+    bool isValid(const Buffer&) const final;
+    bool isValid(const Adapter&) const final;
+    bool isValid(const BindGroup&) const final;
+    bool isValid(const BindGroupLayout&) const final;
+    bool isValid(const CommandBuffer&) const final;
+    bool isValid(const CommandEncoder&) const final;
+    bool isValid(const ComputePassEncoder&) const final;
+    bool isValid(const ComputePipeline&) const final;
+    bool isValid(const Device&) const final;
+    bool isValid(const ExternalTexture&) const final;
+    bool isValid(const PipelineLayout&) const final;
+    bool isValid(const PresentationContext&) const final;
+    bool isValid(const QuerySet&) const final;
+    bool isValid(const Queue&) const final;
+    bool isValid(const RenderBundleEncoder&) const final;
+    bool isValid(const RenderBundle&) const final;
+    bool isValid(const RenderPassEncoder&) const final;
+    bool isValid(const RenderPipeline&) const final;
+    bool isValid(const Sampler&) const final;
+    bool isValid(const ShaderModule&) const final;
+    bool isValid(const Texture&) const final;
+    bool isValid(const TextureView&) const final;
 
     WebGPUPtr<WGPUInstance> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

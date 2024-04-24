@@ -63,7 +63,6 @@ public:
     RefPtr<GPUCompositorIntegration> createCompositorIntegration();
 
     void paintToCanvas(NativeImage&, const IntSize&, GraphicsContext&);
-
 private:
     GPU(Ref<WebGPU::GPU>&&);
 

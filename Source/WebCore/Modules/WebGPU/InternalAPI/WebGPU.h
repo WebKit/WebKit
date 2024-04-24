@@ -40,10 +40,33 @@ class GraphicsContext;
 namespace WebCore::WebGPU {
 
 class Adapter;
+class BindGroup;
+class BindGroupLayout;
+class Buffer;
+class CommandBuffer;
+class CommandEncoder;
 class CompositorIntegration;
+class ComputePassEncoder;
+class ComputePipeline;
+class Device;
+class ExternalTexture;
+class GPU;
+class GPUImpl;
 class GraphicsContext;
 class NativeImage;
+class PipelineLayout;
 class PresentationContext;
+class QuerySet;
+class Queue;
+class RenderBundleEncoder;
+class RenderBundle;
+class RenderPassEncoder;
+class RenderPipeline;
+class Sampler;
+class ShaderModule;
+class Texture;
+class TextureView;
+
 struct PresentationContextDescriptor;
 
 class GPU {
@@ -58,6 +81,29 @@ public:
 
     virtual RefPtr<CompositorIntegration> createCompositorIntegration() = 0;
     virtual void paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&) = 0;
+    virtual bool isValid(const CompositorIntegration&) const = 0;
+    virtual bool isValid(const Buffer&) const = 0;
+    virtual bool isValid(const Adapter&) const = 0;
+    virtual bool isValid(const BindGroup&) const = 0;
+    virtual bool isValid(const BindGroupLayout&) const = 0;
+    virtual bool isValid(const CommandBuffer&) const = 0;
+    virtual bool isValid(const CommandEncoder&) const = 0;
+    virtual bool isValid(const ComputePassEncoder&) const = 0;
+    virtual bool isValid(const ComputePipeline&) const = 0;
+    virtual bool isValid(const Device&) const = 0;
+    virtual bool isValid(const ExternalTexture&) const = 0;
+    virtual bool isValid(const PipelineLayout&) const = 0;
+    virtual bool isValid(const PresentationContext&) const = 0;
+    virtual bool isValid(const QuerySet&) const = 0;
+    virtual bool isValid(const Queue&) const = 0;
+    virtual bool isValid(const RenderBundleEncoder&) const = 0;
+    virtual bool isValid(const RenderBundle&) const = 0;
+    virtual bool isValid(const RenderPassEncoder&) const = 0;
+    virtual bool isValid(const RenderPipeline&) const = 0;
+    virtual bool isValid(const Sampler&) const = 0;
+    virtual bool isValid(const ShaderModule&) const = 0;
+    virtual bool isValid(const Texture&) const = 0;
+    virtual bool isValid(const TextureView&) const = 0;
 
 protected:
     GPU() = default;
