@@ -109,6 +109,8 @@ public:
     const TextIteratorCopyableText& copyableText() const { ASSERT(!atEnd()); return m_copyableText; }
     void appendTextToStringBuilder(StringBuilder& builder) const { copyableText().appendToStringBuilder(builder); }
 
+    String rendererTextForBehavior(RenderText& renderer) const { return m_behaviors.contains(TextIteratorBehavior::EmitsOriginalText) ? renderer.originalText() : renderer.text(); }
+
 private:
     void init();
     void exitNode(Node*);
