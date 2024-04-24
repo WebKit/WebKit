@@ -30,7 +30,7 @@ Total elements to be tested: 123.
         </ul>
     exists: true
     label:
-    role:
+    role: group
     childNodeIds.length: 1
     parentNodeId: exists
 
