@@ -23,7 +23,7 @@ middlebottom
         )
         (GraphicsLayer
           (position 28.00 250.00)
-          (bounds 185.00 200.00)
+          (bounds 200.00 200.00)
           (children 1
             (GraphicsLayer
               (offsetFromRenderer width=0 height=100)

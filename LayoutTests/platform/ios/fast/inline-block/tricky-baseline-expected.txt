@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (104,429) size 4x19
         text run at (104,429) width 4: " "
       RenderText {#text} at (0,0) size 0x0
-layer at (8,248) size 104x204 clip at (10,250) size 85x200 scrollHeight 520
+layer at (8,248) size 104x204 clip at (10,250) size 100x200 scrollHeight 520
   RenderBlock {DIV} at (0,240) size 104x204 [border: (2px solid #800080)]
     RenderText {#text} at (2,2) size 81x39
       text run at (2,2) width 81: "This is some"

@@ -28,7 +28,7 @@ layer at (8,120) size 100x50
         RenderText at (0,0) size 143x14
           text run at (0,0) width 143: "Lorem ipsum dolor sit amet"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,190) size 100x50 clip at (8,190) size 100x35 scrollWidth 155
+layer at (8,190) size 100x50 scrollWidth 155
   RenderBlock {DIV} at (0,182) size 100x50
     RenderButton {BUTTON} at (0,0) size 80x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
       RenderBlock (anonymous) at (12,3) size 56x14
