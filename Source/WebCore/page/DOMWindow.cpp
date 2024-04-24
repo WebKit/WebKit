@@ -188,7 +188,7 @@ WindowProxy* DOMWindow::parent() const
 
 ExceptionOr<AtomString> DOMWindow::name() const
 {
-    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
+    RefPtr localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
         return Exception { ExceptionCode::SecurityError };
     return localThis->name();
@@ -196,7 +196,7 @@ ExceptionOr<AtomString> DOMWindow::name() const
 
 ExceptionOr<void> DOMWindow::setName(const AtomString& name)
 {
-    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
+    RefPtr localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
         return Exception { ExceptionCode::SecurityError };
     localThis->setName(name);
@@ -205,7 +205,7 @@ ExceptionOr<void> DOMWindow::setName(const AtomString& name)
 
 ExceptionOr<String> DOMWindow::status() const
 {
-    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
+    SUPPRESS_UNCOUNTED_LOCAL auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
         return Exception { ExceptionCode::SecurityError };
     return localThis->status();
@@ -213,7 +213,7 @@ ExceptionOr<String> DOMWindow::status() const
 
 ExceptionOr<void> DOMWindow::setStatus(const String& status)
 {
-    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
+    SUPPRESS_UNCOUNTED_LOCAL auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
         return Exception { ExceptionCode::SecurityError };
     localThis->setStatus(status);
