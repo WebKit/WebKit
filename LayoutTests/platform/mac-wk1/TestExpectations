@@ -2849,3 +2849,4 @@ fast/css/view-transitions-update-layer-lists-crash.html [ Skip ]
 
 webkit.org/b/272939 [ Ventura+ ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-strict-policies.sub.html [ Pass Failure ]
 
+webkit.org/b/273212 fonts [ Skip ]
