@@ -469,30 +469,6 @@ class SimulatedDeviceManager(object):
         return min(max_supported_simulators_locally, max_supported_simulators_for_hardware)
 
     @staticmethod
-    def swap(device, request, host=None, name_base='Managed', timeout=SIMULATOR_BOOT_TIMEOUT):
-        host = host or SystemHost.get_default()
-        if SimulatedDeviceManager.INITIALIZED_DEVICES is None:
-            raise RuntimeError('Cannot swap when there are no initialized devices')
-        if device not in SimulatedDeviceManager.INITIALIZED_DEVICES:
-            raise RuntimeError(u'{} is not initialized, cannot swap it'.format(device))
-
-        index = SimulatedDeviceManager.INITIALIZED_DEVICES.index(device)
-        SimulatedDeviceManager.INITIALIZED_DEVICES[index] = None
-        device.platform_device._tear_down()
-
-        device = SimulatedDeviceManager._create_or_find_device_for_request(request, host, name_base)
-        assert device
-
-        if not device.platform_device.is_booted_or_booting(force_update=True):
-            device.platform_device.booted_by_script = True
-            _log.debug(u"Booting device '{}'".format(device.udid))
-            host.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'boot', device.udid])
-        SimulatedDeviceManager.INITIALIZED_DEVICES[index] = device
-
-        deadline = time.time() + timeout
-        SimulatedDeviceManager._wait_until_device_is_usable(device, max(0, deadline - time.time()))
-
-    @staticmethod
     def tear_down(host=None, timeout=SIMULATOR_BOOT_TIMEOUT):
         host = host or SystemHost.get_default()
         if SimulatedDeviceManager._managing_simulator_app:
