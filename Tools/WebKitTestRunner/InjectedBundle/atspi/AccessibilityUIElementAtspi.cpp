@@ -1508,6 +1508,23 @@ void AccessibilityUIElement::clearSelectedChildren() const
     m_element->clearSelection();
 }
 
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::activeElement() const
+{
+    m_element->updateBackingStore();
+    if (auto* activeDescendant = m_element->activeDescendant())
+        return AccessibilityUIElement::create(activeDescendant);
+    return nullptr;
+}
+
+JSValueRef AccessibilityUIElement::selectedChildren() const
+{
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Selection))
+        makeJSArray({ });
+
+    m_element->updateBackingStore();
+    return makeJSArray(elementsVector(m_element->selectedChildren()));
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
 {
     return JSStringCreateWithCharacters(nullptr, 0);

@@ -364,8 +364,7 @@ AXCoreObject* AXCoreObject::activeDescendant() const
     if (!activeDescendants.isEmpty())
         return activeDescendants[0].get();
 
-#if PLATFORM(COCOA)
-    // In COCOA, when the active descendant changes for a combobox, the target
+    // When the active descendant changes for a combobox, the target
     // of the notification is the owned or controlled element of the combobox
     // if exists, most commonly a list or listbox (seee AXObjectCache::handleActiveDescendantChange).
     // Thus, a client could request the new active descendant from the list or
@@ -384,7 +383,6 @@ AXCoreObject* AXCoreObject::activeDescendant() const
         if (combobox != controllers.end())
             return (*combobox)->activeDescendant();
     }
-#endif
 
     return nullptr;
 }

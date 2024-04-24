@@ -2340,7 +2340,6 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
 #endif
         target = object;
     } else if (object->isComboBox()) {
-#if PLATFORM(COCOA)
         // If the combobox's activeDescendant is inside a descendant owned or controlled by the combobox, that descendant should be the target of the notification and not the combobox itself.
         if (auto* ownedObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::OwnerFor, *activeDescendant))
             target = ownedObject;
@@ -2348,7 +2347,6 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
             target = controlledObject;
         else
             target = object;
-#endif
     } else if (object->supportsActiveDescendant())
         target = object;
     else {
@@ -2366,7 +2364,6 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
         return;
 
     if (target == object) {
-#if PLATFORM(COCOA)
         if (target->isComboBox()) {
             // The combobox does not own or control the element to which activeDescendant belongs.
             // Establish this implicit relationship.
@@ -2376,7 +2373,6 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
             if (controlled)
                 addRelation(target.get(), controlled.get(), AXRelationType::ControllerFor);
         }
-#endif // PLATFORM(COCOA)
     } else {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         updateIsolatedTree(target.get(), AXNotification::AXActiveDescendantChanged);

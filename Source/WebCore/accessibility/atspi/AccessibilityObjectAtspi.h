@@ -74,6 +74,7 @@ public:
     void elementDestroyed();
     void cacheDestroyed();
 
+    int indexInParent() const;
     int indexInParentForChildrenChanged(AccessibilityAtspi::ChildrenChanged);
 
     const String& path();
@@ -141,7 +142,11 @@ public:
     WEBCORE_EXPORT String documentAttribute(const String&) const;
     void loadEvent(const char*);
 
+    WEBCORE_EXPORT AccessibilityObjectAtspi* activeDescendant() const;
+    void activeDescendantChanged();
+
     WEBCORE_EXPORT unsigned selectionCount() const;
+    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> selectedChildren() const;
     WEBCORE_EXPORT AccessibilityObjectAtspi* selectedChild(unsigned) const;
     WEBCORE_EXPORT bool setChildSelected(unsigned, bool) const;
     WEBCORE_EXPORT bool clearSelection() const;
@@ -165,7 +170,6 @@ private:
     AccessibilityObjectAtspi(AXCoreObject*, AccessibilityRootAtspi*);
 
     Vector<RefPtr<AccessibilityObjectAtspi>> wrapperVector(const Vector<RefPtr<AXCoreObject>>&) const;
-    int indexInParent() const;
     void childAdded(AccessibilityObjectAtspi&);
     void childRemoved(AccessibilityObjectAtspi&);
 

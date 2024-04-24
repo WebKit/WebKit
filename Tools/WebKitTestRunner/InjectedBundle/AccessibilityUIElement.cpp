@@ -131,8 +131,6 @@ JSValueRef AccessibilityUIElement::mathRootRadicand() const { return { }; }
 unsigned AccessibilityUIElement::numberOfCharacters() const { return 0; }
 JSValueRef AccessibilityUIElement::columns() { return { }; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::dateValue() { return nullptr; }
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::activeElement() const { return nullptr; }
-JSValueRef AccessibilityUIElement::selectedChildren() const { return { }; }
 #endif // !PLATFORM(MAC))
 
 #if !PLATFORM(COCOA)
@@ -176,6 +174,8 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::flowFromElementAtIndex(un
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaLabelledByElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::labelForElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ownerElementAtIndex(unsigned) { return nullptr; }
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::activeElement() const { return nullptr; }
+JSValueRef AccessibilityUIElement::selectedChildren() const { return { }; }
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(WIN) || PLATFORM(PLAYSTATION)
@@ -192,6 +192,8 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::flowFromElementAtIndex(un
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaLabelledByElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::labelForElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ownerElementAtIndex(unsigned) { return nullptr; }
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::activeElement() const { return nullptr; }
+JSValueRef AccessibilityUIElement::selectedChildren() const { return { }; }
 #endif // PLATFORM(WIN) || PLATFORM(PLAYSTATION)
 
 } // namespace WTR

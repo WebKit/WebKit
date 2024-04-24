@@ -532,6 +532,25 @@ void AccessibilityAtspi::valueChanged(AccessibilityObjectAtspi& atspiObject, dou
         g_variant_new("(siiva{sv})", "accessible-value", 0, 0, g_variant_new_double(value), nullptr), nullptr);
 }
 
+void AccessibilityAtspi::activeDescendantChanged(AccessibilityObjectAtspi& atspiObject)
+{
+#if ENABLE(DEVELOPER_MODE)
+    notifyActiveDescendantChanged(atspiObject);
+#endif
+
+    if (!m_connection)
+        return;
+
+    if (!shouldEmitSignal("Object", "ActiveDescendantChanged"))
+        return;
+
+    auto* activeDescendant = atspiObject.activeDescendant();
+    ASSERT(activeDescendant);
+
+    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "ActiveDescendantChanged",
+        g_variant_new("(siiva{sv})", "", activeDescendant->indexInParent(), 0, g_variant_new("(so)", uniqueName(), activeDescendant->path().utf8().data()), nullptr), nullptr);
+}
+
 void AccessibilityAtspi::selectionChanged(AccessibilityObjectAtspi& atspiObject)
 {
 #if ENABLE(DEVELOPER_MODE)
@@ -867,6 +886,11 @@ void AccessibilityAtspi::notifyStateChanged(AccessibilityObjectAtspi& atspiObjec
         return;
     
     notify(atspiObject, notification, value);
+}
+
+void AccessibilityAtspi::notifyActiveDescendantChanged(AccessibilityObjectAtspi& atspiObject) const
+{
+    notify(atspiObject, "AXActiveElementChanged", nullptr);
 }
 
 void AccessibilityAtspi::notifySelectionChanged(AccessibilityObjectAtspi& atspiObject) const
