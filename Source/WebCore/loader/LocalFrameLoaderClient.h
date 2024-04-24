@@ -269,7 +269,8 @@ public:
 #if PLATFORM(IOS_FAMILY)
     virtual void didRestoreFrameHierarchyForCachedFrame() = 0;
 #endif
-    virtual void transitionToCommittedForNewPage() = 0;
+    enum class InitializingIframe : bool { No, Yes };
+    virtual void transitionToCommittedForNewPage(InitializingIframe) = 0;
 
     virtual void didRestoreFromBackForwardCache() = 0;
 

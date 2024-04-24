@@ -1014,7 +1014,7 @@ void EmptyFrameLoaderClient::didRestoreFrameHierarchyForCachedFrame()
 
 #endif
 
-void EmptyFrameLoaderClient::transitionToCommittedForNewPage()
+void EmptyFrameLoaderClient::transitionToCommittedForNewPage(InitializingIframe)
 {
 }
 

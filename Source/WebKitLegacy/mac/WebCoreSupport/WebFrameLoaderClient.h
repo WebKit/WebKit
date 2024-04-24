@@ -188,7 +188,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     void didRestoreFrameHierarchyForCachedFrame() final;
 #endif
-    void transitionToCommittedForNewPage() final;
+    void transitionToCommittedForNewPage(InitializingIframe) final;
 
     void didRestoreFromBackForwardCache() final;
 

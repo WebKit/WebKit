@@ -432,7 +432,8 @@ void FrameLoader::initForSynthesizedDocument(const URL&)
     m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocument);
     m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
     m_stateMachine.advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
-    m_client->transitionToCommittedForNewPage();
+    m_client->transitionToCommittedForNewPage(m_documentLoader && m_documentLoader->isInFinishedLoadingOfEmptyDocument() ?
+        LocalFrameLoaderClient::InitializingIframe::Yes : LocalFrameLoaderClient::InitializingIframe::No);
 
     m_didCallImplicitClose = true;
     m_isComplete = true;
@@ -2451,7 +2452,8 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
                 cachedPage->protectedDocumentLoader()->attachToFrame(protectedFrame());
                 m_client->transitionToCommittedFromCachedFrame(cachedPage->cachedMainFrame());
             } else
-                m_client->transitionToCommittedForNewPage();
+                m_client->transitionToCommittedForNewPage(m_documentLoader && m_documentLoader->isInFinishedLoadingOfEmptyDocument() ?
+                    LocalFrameLoaderClient::InitializingIframe::Yes : LocalFrameLoaderClient::InitializingIframe::No);
         }
         break;
 
@@ -2461,19 +2463,22 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
     case FrameLoadType::Same:
     case FrameLoadType::Replace:
         checkedHistory()->updateForReload();
-        m_client->transitionToCommittedForNewPage();
+        m_client->transitionToCommittedForNewPage(m_documentLoader && m_documentLoader->isInFinishedLoadingOfEmptyDocument() ?
+            LocalFrameLoaderClient::InitializingIframe::Yes : LocalFrameLoaderClient::InitializingIframe::No);
         break;
 
     case FrameLoadType::Standard:
         checkedHistory()->updateForStandardLoad();
         if (RefPtr view = m_frame->view())
             view->setScrollbarsSuppressed(true);
-        m_client->transitionToCommittedForNewPage();
+        m_client->transitionToCommittedForNewPage(m_documentLoader && m_documentLoader->isInFinishedLoadingOfEmptyDocument() ?
+            LocalFrameLoaderClient::InitializingIframe::Yes : LocalFrameLoaderClient::InitializingIframe::No);
         break;
 
     case FrameLoadType::RedirectWithLockedBackForwardList:
         checkedHistory()->updateForRedirectWithLockedBackForwardList();
-        m_client->transitionToCommittedForNewPage();
+        m_client->transitionToCommittedForNewPage(m_documentLoader && m_documentLoader->isInFinishedLoadingOfEmptyDocument() ?
+            LocalFrameLoaderClient::InitializingIframe::Yes : LocalFrameLoaderClient::InitializingIframe::No);
         break;
     }
 
