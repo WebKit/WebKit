@@ -28,7 +28,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "InternalFunction.h"
-#include "WasmFormat.h"
 #include "WasmOps.h"
 
 namespace JSC {

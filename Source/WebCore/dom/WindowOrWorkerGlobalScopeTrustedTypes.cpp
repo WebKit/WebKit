@@ -32,7 +32,6 @@
 #include "LocalFrame.h"
 #include "Page.h"
 #include "Supplementable.h"
-#include <wtf/text/ASCIILiteral.h>
 #include "TrustedTypePolicyFactory.h"
 #include "WorkerGlobalScope.h"
 
@@ -48,7 +47,7 @@ public:
     TrustedTypePolicyFactory* trustedTypes() const;
 
 private:
-    static WTF::ASCIILiteral supplementName() { return "DOMWindowTrustedTypes"_s; }
+    static ASCIILiteral supplementName() { return "DOMWindowTrustedTypes"_s; }
 
     mutable RefPtr<TrustedTypePolicyFactory> m_trustedTypes;
 };

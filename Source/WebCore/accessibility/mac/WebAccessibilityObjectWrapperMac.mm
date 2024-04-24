@@ -62,7 +62,6 @@
 #import "HTMLImageElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
-#import "IntRect.h"
 #import "LocalFrame.h"
 #import "LocalFrameLoaderClient.h"
 #import "LocalizedStrings.h"

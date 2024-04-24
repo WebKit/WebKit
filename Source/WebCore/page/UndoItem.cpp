@@ -63,9 +63,4 @@ Document* UndoItem::document() const
     return m_document.get();
 }
 
-RefPtr<Document> UndoItem::protectedDocument() const
-{
-    return document();
-}
-
 } // namespace WebCore

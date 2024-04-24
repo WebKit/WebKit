@@ -29,7 +29,6 @@
 #include "CryptoAlgorithmEcKeyParams.h"
 #include "CryptoAlgorithmEcdsaParams.h"
 #include "CryptoKeyEC.h"
-#include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/CrossThreadCopier.h>
 

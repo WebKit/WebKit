@@ -27,7 +27,6 @@
 #include "TextBreakingPositionCache.h"
 
 #include "RenderStyle.h"
-#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Layout {

@@ -28,7 +28,6 @@
 
 #include "InlineDamage.h"
 #include "InlineSoftLineBreakItem.h"
-#include "LayoutElementBox.h"
 #include "LayoutUnit.h"
 #include "TextBreakingPositionContext.h"
 #include "TextDirection.h"

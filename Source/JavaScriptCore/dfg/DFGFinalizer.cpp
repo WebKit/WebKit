@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "DFGFinalizer.h"
-#include "JITCode.h"
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(DFG_JIT)

@@ -31,7 +31,6 @@
 #include "CodeBlock.h"
 #include "DFGCommonData.h"
 #include "JSCJSValueInlines.h"
-#include "WriteBarrier.h"
 
 namespace JSC { namespace DFG {
 

@@ -44,7 +44,6 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
-#include "PermissionsPolicy.h"
 #include "PlatformMediaSessionManager.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "Settings.h"

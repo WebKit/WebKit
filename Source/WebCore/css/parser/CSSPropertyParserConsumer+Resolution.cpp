@@ -25,13 +25,6 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
 
-#include "CSSCalcParser.h"
-#include "CSSCalcSymbolTable.h"
-#include "CSSParserMode.h"
-#include "CSSPropertyParserConsumer+Meta.h"
-
-#include "Length.h"
-
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 

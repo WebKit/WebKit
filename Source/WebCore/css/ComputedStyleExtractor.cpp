@@ -59,8 +59,6 @@
 #include "ContentData.h"
 #include "CursorList.h"
 #include "CustomPropertyRegistry.h"
-#include "Document.h"
-#include "DocumentInlines.h"
 #include "FontCascade.h"
 #include "FontSelectionValueInlines.h"
 #include "GridPositionsResolver.h"

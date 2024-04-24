@@ -42,7 +42,6 @@
 
 namespace WebCore {
 
-class Element;
 class Document;
 class Page;
 

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DRMDeviceManager.h"
 
-#include <wtf/text/WTFString.h>
-
 #if USE(LIBDRM)
 #include "DRMDeviceNode.h"
 #include <xf86drm.h>

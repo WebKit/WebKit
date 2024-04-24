@@ -22,9 +22,7 @@
 #include "WindowProxy.h"
 
 #include "CommonVM.h"
-#include "DOMWrapperWorld.h"
 #include "GCController.h"
-#include "JSDOMWindowBase.h"
 #include "JSWindowProxy.h"
 #include "LocalFrame.h"
 #include "Page.h"

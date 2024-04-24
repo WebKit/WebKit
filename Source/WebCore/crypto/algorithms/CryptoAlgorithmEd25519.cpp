@@ -28,7 +28,6 @@
 
 #include "CryptoKeyOKP.h"
 #include "NotImplemented.h"
-#include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/CrossThreadCopier.h>
 

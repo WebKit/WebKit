@@ -29,7 +29,6 @@
 #pragma once
 
 #include "PlatformWheelEvent.h"
-#include "ScrollingNodeID.h"
 #include <functional>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>

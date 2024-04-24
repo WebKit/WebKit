@@ -31,7 +31,6 @@
 #include "TrustedScriptURL.h"
 #include "TrustedType.h"
 #include "TrustedTypePolicyOptions.h"
-#include "WebCoreOpaqueRoot.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

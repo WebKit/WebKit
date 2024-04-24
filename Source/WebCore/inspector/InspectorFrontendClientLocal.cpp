@@ -54,7 +54,6 @@
 #include "WindowFeatures.h"
 #include <JavaScriptCore/FrameTracers.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
-#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/Deque.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>

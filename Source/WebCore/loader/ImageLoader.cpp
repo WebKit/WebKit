@@ -28,7 +28,6 @@
 #include "CachedResourceRequest.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
-#include "DocumentLoader.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
