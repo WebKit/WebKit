@@ -63,9 +63,7 @@ NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, const Net
         m_networkSession->setHSTSPersistentStorage(parameters.hstsStorageDirectory);
 }
 
-NetworkSessionSoup::~NetworkSessionSoup()
-{
-}
+NetworkSessionSoup::~NetworkSessionSoup() = default;
 
 SoupSession* NetworkSessionSoup::soupSession() const
 {
