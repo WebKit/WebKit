@@ -618,9 +618,9 @@ void RenderLayerCompositor::customPositionForVisibleRectComputation(const Graphi
     position = -scrollPosition;
 }
 
-bool RenderLayerCompositor::shouldDumpPropertyForLayer(const GraphicsLayer* layer, const char* propertyName, OptionSet<LayerTreeAsTextOptions>) const
+bool RenderLayerCompositor::shouldDumpPropertyForLayer(const GraphicsLayer* layer, ASCIILiteral propertyName, OptionSet<LayerTreeAsTextOptions>) const
 {
-    if (!strcmp(propertyName, "anchorPoint"))
+    if (propertyName == "anchorPoint"_s)
         return layer->anchorPoint() != FloatPoint3D(0.5f, 0.5f, 0);
 
     return true;
@@ -1483,7 +1483,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         traversalStateForDescendants.overflowScrollLayers = &compositedOverflowScrollLayers;
 
 #if !LOG_DISABLED
-        logLayerInfo(layer, "updateBackingAndHierarchy", traversalState.depth);
+        logLayerInfo(layer, "updateBackingAndHierarchy"_s, traversalState.depth);
 #endif
     }
 
@@ -1758,7 +1758,7 @@ void RenderLayerCompositor::layerBecameNonComposited(const RenderLayer& layer)
 }
 
 #if !LOG_DISABLED
-void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, const char* phase, int depth)
+void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, ASCIILiteral phase, int depth)
 {
     if (!compositingLogEnabled())
         return;
@@ -1777,12 +1777,12 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, const char* p
     absoluteBounds.move(layer.offsetFromAncestor(m_renderView.layer()));
     
     StringBuilder logString;
-    logString.append(pad(' ', 12 + depth * 2, hex(reinterpret_cast<uintptr_t>(&layer), Lowercase)), " id ", backing->graphicsLayer()->primaryLayerID().object(), " (", absoluteBounds.x().toFloat(), ',', absoluteBounds.y().toFloat(), '-', absoluteBounds.maxX().toFloat(), ',', absoluteBounds.maxY().toFloat(), ") ", FormattedNumber::fixedWidth(backing->backingStoreMemoryEstimate() / 1024, 2), "KB");
+    logString.append(pad(' ', 12 + depth * 2, hex(reinterpret_cast<uintptr_t>(&layer), Lowercase)), " id "_s, backing->graphicsLayer()->primaryLayerID().object(), " ("_s, absoluteBounds.x().toFloat(), ',', absoluteBounds.y().toFloat(), '-', absoluteBounds.maxX().toFloat(), ',', absoluteBounds.maxY().toFloat(), ") "_s, FormattedNumber::fixedWidth(backing->backingStoreMemoryEstimate() / 1024, 2), "KB"_s);
 
     if (!layer.renderer().style().hasAutoUsedZIndex())
-        logString.append(" z-index: ", layer.renderer().style().usedZIndex());
+        logString.append(" z-index: "_s, layer.renderer().style().usedZIndex());
 
-    logString.append(" (", logOneReasonForCompositing(layer), ") ");
+    logString.append(" ("_s, logOneReasonForCompositing(layer), ") "_s);
 
     if (backing->graphicsLayer()->contentsOpaque() || backing->paintsIntoCompositedAncestor() || backing->foregroundLayer() || backing->backgroundLayer()) {
         logString.append('[');
@@ -3124,48 +3124,48 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
     return reasons;
 }
 
-static const char* compositingReasonToString(CompositingReason reason)
+static ASCIILiteral compositingReasonToString(CompositingReason reason)
 {
     switch (reason) {
-    case CompositingReason::Transform3D: return "3D transform";
-    case CompositingReason::Video: return "video";
-    case CompositingReason::Canvas: return "canvas";
-    case CompositingReason::Plugin: return "plugin";
-    case CompositingReason::IFrame: return "iframe";
-    case CompositingReason::BackfaceVisibilityHidden: return "backface-visibility: hidden";
-    case CompositingReason::ClipsCompositingDescendants: return "clips compositing descendants";
-    case CompositingReason::Animation: return "animation";
-    case CompositingReason::Filters: return "filters";
-    case CompositingReason::PositionFixed: return "position: fixed";
-    case CompositingReason::PositionSticky: return "position: sticky";
-    case CompositingReason::OverflowScrolling: return "async overflow scrolling";
-    case CompositingReason::Stacking: return "stacking";
-    case CompositingReason::Overlap: return "overlap";
-    case CompositingReason::OverflowScrollPositioning: return "overflow scroll positioning";
-    case CompositingReason::NegativeZIndexChildren: return "negative z-index children";
-    case CompositingReason::TransformWithCompositedDescendants: return "transform with composited descendants";
-    case CompositingReason::OpacityWithCompositedDescendants: return "opacity with composited descendants";
-    case CompositingReason::MaskWithCompositedDescendants: return "mask with composited descendants";
-    case CompositingReason::ReflectionWithCompositedDescendants: return "reflection with composited descendants";
-    case CompositingReason::FilterWithCompositedDescendants: return "filter with composited descendants";
-    case CompositingReason::BlendingWithCompositedDescendants: return "blending with composited descendants";
-    case CompositingReason::IsolatesCompositedBlendingDescendants: return "isolates composited blending descendants";
-    case CompositingReason::Perspective: return "perspective";
-    case CompositingReason::Preserve3D: return "preserve-3d";
-    case CompositingReason::WillChange: return "will-change";
-    case CompositingReason::Root: return "root";
-    case CompositingReason::Model: return "model";
-    case CompositingReason::BackdropRoot: return "backdrop root";
+    case CompositingReason::Transform3D: return "3D transform"_s;
+    case CompositingReason::Video: return "video"_s;
+    case CompositingReason::Canvas: return "canvas"_s;
+    case CompositingReason::Plugin: return "plugin"_s;
+    case CompositingReason::IFrame: return "iframe"_s;
+    case CompositingReason::BackfaceVisibilityHidden: return "backface-visibility: hidden"_s;
+    case CompositingReason::ClipsCompositingDescendants: return "clips compositing descendants"_s;
+    case CompositingReason::Animation: return "animation"_s;
+    case CompositingReason::Filters: return "filters"_s;
+    case CompositingReason::PositionFixed: return "position: fixed"_s;
+    case CompositingReason::PositionSticky: return "position: sticky"_s;
+    case CompositingReason::OverflowScrolling: return "async overflow scrolling"_s;
+    case CompositingReason::Stacking: return "stacking"_s;
+    case CompositingReason::Overlap: return "overlap"_s;
+    case CompositingReason::OverflowScrollPositioning: return "overflow scroll positioning"_s;
+    case CompositingReason::NegativeZIndexChildren: return "negative z-index children"_s;
+    case CompositingReason::TransformWithCompositedDescendants: return "transform with composited descendants"_s;
+    case CompositingReason::OpacityWithCompositedDescendants: return "opacity with composited descendants"_s;
+    case CompositingReason::MaskWithCompositedDescendants: return "mask with composited descendants"_s;
+    case CompositingReason::ReflectionWithCompositedDescendants: return "reflection with composited descendants"_s;
+    case CompositingReason::FilterWithCompositedDescendants: return "filter with composited descendants"_s;
+    case CompositingReason::BlendingWithCompositedDescendants: return "blending with composited descendants"_s;
+    case CompositingReason::IsolatesCompositedBlendingDescendants: return "isolates composited blending descendants"_s;
+    case CompositingReason::Perspective: return "perspective"_s;
+    case CompositingReason::Preserve3D: return "preserve-3d"_s;
+    case CompositingReason::WillChange: return "will-change"_s;
+    case CompositingReason::Root: return "root"_s;
+    case CompositingReason::Model: return "model"_s;
+    case CompositingReason::BackdropRoot: return "backdrop root"_s;
     }
-    return "";
+    return ""_s;
 }
 
 #if !LOG_DISABLED
-const char* RenderLayerCompositor::logOneReasonForCompositing(const RenderLayer& layer)
+ASCIILiteral RenderLayerCompositor::logOneReasonForCompositing(const RenderLayer& layer)
 {
     for (auto reason : reasonsForCompositing(layer))
         return compositingReasonToString(reason);
-    return "";
+    return ""_s;
 }
 #endif
 

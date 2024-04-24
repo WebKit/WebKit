@@ -50,7 +50,7 @@ public:
 
 #if ENABLE(TREE_DEBUGGING)
     void outputLineTreeAndMark(WTF::TextStream&, const LegacyInlineBox* markedBox, int depth) const override;
-    const char* boxName() const override;
+    ASCIILiteral boxName() const override;
 #endif
 
     RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(LegacyInlineBox::renderer()); }

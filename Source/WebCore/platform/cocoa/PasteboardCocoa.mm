@@ -80,23 +80,23 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 // String literals returned by this function must be defined exactly once
 // since read(PasteboardFileReader&) uses HashMap<const char*> to check uniqueness.
-static const char* imageTypeToMIMEType(ImageType type)
+static ASCIILiteral imageTypeToMIMEType(ImageType type)
 {
     switch (type) {
     case ImageType::Invalid:
-        return nullptr;
+        return { };
     case ImageType::TIFF:
 #if PLATFORM(MAC)
-        return "image/png"; // For Web compatibility, we pretend to have PNG instead.
+        return "image/png"_s; // For Web compatibility, we pretend to have PNG instead.
 #else
         return nullptr; // Don't support pasting TIFF on iOS for now.
 #endif
     case ImageType::PNG:
-        return "image/png";
+        return "image/png"_s;
     case ImageType::JPEG:
-        return "image/jpeg";
+        return "image/jpeg"_s;
     case ImageType::GIF:
-        return "image/gif";
+        return "image/gif"_s;
     }
 }
 
@@ -229,8 +229,8 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t> itemIn
     auto readBufferAtIndex = [&](const PasteboardItemInfo& info, size_t itemIndex) {
         for (auto cocoaType : info.platformTypesByFidelity) {
             auto imageType = cocoaTypeToImageType(cocoaType);
-            auto* mimeType = imageTypeToMIMEType(imageType);
-            if (!mimeType || !reader.shouldReadBuffer(String::fromLatin1(mimeType)))
+            auto mimeType = imageTypeToMIMEType(imageType);
+            if (mimeType.isNull() || !reader.shouldReadBuffer(mimeType))
                 continue;
             auto buffer = readBuffer(itemIndex, cocoaType);
 #if PLATFORM(MAC)
@@ -238,7 +238,7 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t> itemIn
                 buffer = convertTIFFToPNG(buffer.releaseNonNull());
 #endif
             if (buffer) {
-                reader.readBuffer(imageTypeToFakeFilename(imageType), String::fromLatin1(mimeType), buffer.releaseNonNull());
+                reader.readBuffer(imageTypeToFakeFilename(imageType), mimeType, buffer.releaseNonNull());
                 break;
             }
         }

@@ -5916,72 +5916,72 @@ static void outputIdent(TextStream& stream, unsigned depth)
         stream << " ";
 }
 
-static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::RenderLayer& layer, const char* prefix, unsigned depth = 0)
+static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::RenderLayer& layer, ASCIILiteral prefix, unsigned depth = 0)
 {
-    stream << (layer.establishesTopLayer() ? "T" : "-");
-    stream << (layer.isCSSStackingContext() ? "S" : (layer.isForcedStackingContext() ? "F" : (layer.isOpportunisticStackingContext() ? "P" : "-")));
-    stream << (layer.isNormalFlowOnly() ? "N" : "-");
-    stream << (layer.renderer().hasNonVisibleOverflow() ? "O" : "-");
-    stream << (layer.isTransparent() ? "A" : "-");
-    stream << (layer.hasBlendMode() ? "B" : "-");
-    stream << (layer.isolatesBlending() ? "I" : "-");
-    stream << (layer.renderer().hasTransformRelatedProperty() ? "T" : "-");
-    stream << (layer.hasFilter() ? "F" : "-");
-    stream << (layer.renderer().isFixedPositioned() ? "X" : "-");
-    stream << (layer.behavesAsFixed() ? "x" : "-");
-    stream << (layer.isComposited() ? "C" : "-");
+    stream << (layer.establishesTopLayer() ? "T"_s : "-"_s);
+    stream << (layer.isCSSStackingContext() ? "S"_s : (layer.isForcedStackingContext() ? "F"_s : (layer.isOpportunisticStackingContext() ? "P"_s : "-"_s)));
+    stream << (layer.isNormalFlowOnly() ? "N"_s : "-"_s);
+    stream << (layer.renderer().hasNonVisibleOverflow() ? "O"_s : "-"_s);
+    stream << (layer.isTransparent() ? "A"_s : "-"_s);
+    stream << (layer.hasBlendMode() ? "B"_s : "-"_s);
+    stream << (layer.isolatesBlending() ? "I"_s : "-"_s);
+    stream << (layer.renderer().hasTransformRelatedProperty() ? "T"_s : "-"_s);
+    stream << (layer.hasFilter() ? "F"_s : "-"_s);
+    stream << (layer.renderer().isFixedPositioned() ? "X"_s : "-"_s);
+    stream << (layer.behavesAsFixed() ? "x"_s : "-"_s);
+    stream << (layer.isComposited() ? "C"_s : "-"_s);
     
     auto compositedPaintingDestinationString = [&layer]() {
         if (layer.paintsIntoProvidedBacking())
-            return "p";
+            return "p"_s;
 
         if (!layer.isComposited())
-            return "-";
+            return "-"_s;
 
         if (layer.backing()->hasBackingSharingLayers())
-            return "P";
+            return "P"_s;
         
         if (layer.backing()->paintsIntoCompositedAncestor())
-            return "a";
+            return "a"_s;
 
-        return "-";
+        return "-"_s;
     };
 
     stream << compositedPaintingDestinationString();
-    stream << (layer.hasCompositingDescendant() ? "c" : "-");
-    stream << (layer.hasCompositedScrollingAncestor() ? "s" : "-");
-    stream << (layer.hasTransformedAncestor() ? "t" : "-");
+    stream << (layer.hasCompositingDescendant() ? "c"_s : "-"_s);
+    stream << (layer.hasCompositedScrollingAncestor() ? "s"_s : "-"_s);
+    stream << (layer.hasTransformedAncestor() ? "t"_s : "-"_s);
 
-    stream << " ";
+    stream << " "_s;
 
-    stream << (layer.zOrderListsDirty() ? "z" : "-");
-    stream << (layer.normalFlowListDirty() ? "n" : "-");
+    stream << (layer.zOrderListsDirty() ? "z"_s : "-"_s);
+    stream << (layer.normalFlowListDirty() ? "n"_s : "-"_s);
 
-    stream << " ";
+    stream << " "_s;
 
-    stream << (layer.hasDescendantNeedingCompositingRequirementsTraversal() ? "t" : "-");
-    stream << (layer.hasDescendantNeedingUpdateBackingOrHierarchyTraversal() ? "b" : "-");
-    stream << (layer.descendantsNeedCompositingRequirementsTraversal() ? "r" : "-");
-    stream << (layer.subsequentLayersNeedCompositingRequirementsTraversal() ? "s" : "-");
-    stream << (layer.descendantsNeedUpdateBackingAndHierarchyTraversal() ? "h" : "-");
-    stream << (layer.needsCompositingPaintOrderChildrenUpdate() ? "o" : "-");
+    stream << (layer.hasDescendantNeedingCompositingRequirementsTraversal() ? "t"_s : "-"_s);
+    stream << (layer.hasDescendantNeedingUpdateBackingOrHierarchyTraversal() ? "b"_s : "-"_s);
+    stream << (layer.descendantsNeedCompositingRequirementsTraversal() ? "r"_s : "-"_s);
+    stream << (layer.subsequentLayersNeedCompositingRequirementsTraversal() ? "s"_s : "-"_s);
+    stream << (layer.descendantsNeedUpdateBackingAndHierarchyTraversal() ? "h"_s : "-"_s);
+    stream << (layer.needsCompositingPaintOrderChildrenUpdate() ? "o"_s : "-"_s);
 
-    stream << " ";
+    stream << " "_s;
 
-    stream << (layer.needsPostLayoutCompositingUpdate() ? "l" : "-");
-    stream << (layer.needsCompositingGeometryUpdate() ? "g" : "-");
-    stream << (layer.childrenNeedCompositingGeometryUpdate() ? "k" : "-");
-    stream << (layer.needsCompositingConfigurationUpdate() ? "c" : "-");
-    stream << (layer.needsCompositingLayerConnection() ? "x" : "-");
-    stream << (layer.needsScrollingTreeUpdate() ? "s" : "-");
+    stream << (layer.needsPostLayoutCompositingUpdate() ? "l"_s : "-"_s);
+    stream << (layer.needsCompositingGeometryUpdate() ? "g"_s : "-"_s);
+    stream << (layer.childrenNeedCompositingGeometryUpdate() ? "k"_s : "-"_s);
+    stream << (layer.needsCompositingConfigurationUpdate() ? "c"_s : "-"_s);
+    stream << (layer.needsCompositingLayerConnection() ? "x"_s : "-"_s);
+    stream << (layer.needsScrollingTreeUpdate() ? "s"_s : "-"_s);
 
-    stream << " ";
+    stream << " "_s;
 
     stream << layer.boxScrollingScope();
-    stream << " ";
+    stream << " "_s;
     stream << layer.contentsScrollingScope();
 
-    stream << " ";
+    stream << " "_s;
 
     outputIdent(stream, depth);
 
@@ -5989,17 +5989,17 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
 
     auto layerRect = layer.rect();
 
-    stream << &layer << " " << layerRect;
+    stream << &layer << " "_s << layerRect;
 
     if (auto* scrollableArea = layer.scrollableArea())
-        stream << " [SA " << scrollableArea << "]";
+        stream << " [SA "_s << scrollableArea << "]"_s;
 
     if (layer.isComposited()) {
         auto& backing = *layer.backing();
-        stream << " (layerID " << backing.graphicsLayer()->primaryLayerID().object() << ")";
+        stream << " (layerID "_s << backing.graphicsLayer()->primaryLayerID().object() << ")"_s;
         
         if (layer.indirectCompositingReason() != WebCore::IndirectCompositingReason::None)
-            stream << " " << layer.indirectCompositingReason();
+            stream << " "_s << layer.indirectCompositingReason();
 
         auto scrollingNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::Scrolling);
         auto frameHostingNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::FrameHosting);
@@ -6008,56 +6008,56 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
         auto positionedNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::Positioning);
 
         if (scrollingNodeID || frameHostingNodeID || viewportConstrainedNodeID || positionedNodeID) {
-            stream << " {";
+            stream << " {"_s;
             bool first = true;
             if (scrollingNodeID) {
-                stream << "sc " << scrollingNodeID;
+                stream << "sc "_s << scrollingNodeID;
                 first = false;
             }
 
             if (frameHostingNodeID) {
                 if (!first)
-                    stream << ", ";
-                stream << "fh " << frameHostingNodeID;
+                    stream << ", "_s;
+                stream << "fh "_s << frameHostingNodeID;
                 first = false;
             }
 
             if (pluginHostingNodeID) {
                 if (!first)
-                    stream << ", ";
-                stream << "ph " << pluginHostingNodeID;
+                    stream << ", "_s;
+                stream << "ph "_s << pluginHostingNodeID;
                 first = false;
             }
 
             if (viewportConstrainedNodeID) {
                 if (!first)
-                    stream << ", ";
-                stream << "vc " << viewportConstrainedNodeID;
+                    stream << ", "_s;
+                stream << "vc "_s << viewportConstrainedNodeID;
                 first = false;
             }
 
             if (positionedNodeID) {
                 if (!first)
-                    stream << ", ";
-                stream << "pos " << positionedNodeID;
+                    stream << ", "_s;
+                stream << "pos "_s << positionedNodeID;
             }
 
-            stream << "}";
+            stream << "}"_s;
         }
     }
-    stream << " " << layer.name();
+    stream << " "_s << layer.name();
     stream.nextLine();
 
     const_cast<WebCore::RenderLayer&>(layer).updateLayerListsIfNeeded();
 
     for (auto* child : layer.negativeZOrderLayers())
-        outputPaintOrderTreeRecursive(stream, *child, "- ", depth + 1);
+        outputPaintOrderTreeRecursive(stream, *child, "- "_s, depth + 1);
 
     for (auto* child : layer.normalFlowLayers())
-        outputPaintOrderTreeRecursive(stream, *child, "n ", depth + 1);
+        outputPaintOrderTreeRecursive(stream, *child, "n "_s, depth + 1);
 
     for (auto* child : layer.positiveZOrderLayers())
-        outputPaintOrderTreeRecursive(stream, *child, "+ ", depth + 1);
+        outputPaintOrderTreeRecursive(stream, *child, "+ "_s, depth + 1);
 }
 
 void showPaintOrderTree(const WebCore::RenderLayer* layer)
@@ -6065,7 +6065,7 @@ void showPaintOrderTree(const WebCore::RenderLayer* layer)
     TextStream stream;
     outputPaintOrderTreeLegend(stream);
     if (layer)
-        outputPaintOrderTreeRecursive(stream, *layer, "");
+        outputPaintOrderTreeRecursive(stream, *layer, ""_s);
     
     WTFLogAlways("%s", stream.release().utf8().data());
 }

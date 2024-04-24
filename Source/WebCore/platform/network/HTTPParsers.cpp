@@ -73,19 +73,17 @@ static inline bool skipWhiteSpace(const String& str, unsigned& pos)
 // Returns true if the function can match the whole token (case insensitive)
 // incrementing pos on match, otherwise leaving pos unchanged.
 // Note: Might return pos == str.length()
-static inline bool skipToken(const String& str, unsigned& pos, const char* token)
+static inline bool skipToken(const String& str, unsigned& pos, ASCIILiteral token)
 {
-    unsigned len = str.length();
-    unsigned current = pos;
+    if (token.length() > str.length())
+        return false;
 
-    while (current < len && *token) {
-        if (toASCIILower(str[current]) != *token++)
+    unsigned current = pos;
+    for (auto character : token.span8()) {
+        if (toASCIILower(str[current]) != character)
             return false;
         ++current;
     }
-
-    if (*token)
-        return false;
 
     pos = current;
     return true;
@@ -487,7 +485,7 @@ XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& 
             return result;
 
         // At start of next directive.
-        if (skipToken(header, pos, "mode")) {
+        if (skipToken(header, pos, "mode"_s)) {
             if (modeDirectiveSeen) {
                 failureReason = failureReasonDuplicateMode;
                 failurePosition = pos;
@@ -499,13 +497,13 @@ XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& 
                 failurePosition = pos;
                 return XSSProtectionDisposition::Invalid;
             }
-            if (!skipToken(header, pos, "block")) {
+            if (!skipToken(header, pos, "block"_s)) {
                 failureReason = failureReasonInvalidMode;
                 failurePosition = pos;
                 return XSSProtectionDisposition::Invalid;
             }
             result = XSSProtectionDisposition::BlockEnabled;
-        } else if (skipToken(header, pos, "report")) {
+        } else if (skipToken(header, pos, "report"_s)) {
             if (reportDirectiveSeen) {
                 failureReason = failureReasonDuplicateReport;
                 failurePosition = pos;

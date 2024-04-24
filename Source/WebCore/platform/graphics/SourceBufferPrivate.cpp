@@ -362,7 +362,7 @@ void SourceBufferPrivate::reenqueueMediaIfNeeded(const MediaTime& currentTime)
     }
 }
 
-static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMap::MapType& samples, TrackBuffer& trackBuffer, const char* logPrefix)
+static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMap::MapType& samples, TrackBuffer& trackBuffer, ASCIILiteral logPrefix)
 {
     return trackBuffer.removeSamples(samples, logPrefix);
 }
@@ -1143,7 +1143,7 @@ bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, 
             if (samplesWithHigherDecodeTimes.first != samplesWithHigherDecodeTimes.second)
                 dependentSamples.insert(samplesWithHigherDecodeTimes.first, samplesWithHigherDecodeTimes.second);
 
-            PlatformTimeRanges erasedRanges = removeSamplesFromTrackBuffer(dependentSamples, trackBuffer, "didReceiveSample");
+            PlatformTimeRanges erasedRanges = removeSamplesFromTrackBuffer(dependentSamples, trackBuffer, "didReceiveSample"_s);
 
             // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
             // not yet displayed samples.

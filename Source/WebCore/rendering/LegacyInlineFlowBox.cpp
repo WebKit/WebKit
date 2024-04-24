@@ -427,9 +427,9 @@ RenderObject::HighlightState LegacyInlineFlowBox::selectionState() const
 
 #if ENABLE(TREE_DEBUGGING)
 
-const char* LegacyInlineFlowBox::boxName() const
+ASCIILiteral LegacyInlineFlowBox::boxName() const
 {
-    return "InlineFlowBox";
+    return "InlineFlowBox"_s;
 }
 
 void LegacyInlineFlowBox::outputLineTreeAndMark(WTF::TextStream& stream, const LegacyInlineBox* markedBox, int depth) const

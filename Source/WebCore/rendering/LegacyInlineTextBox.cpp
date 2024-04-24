@@ -333,28 +333,28 @@ String LegacyInlineTextBox::text() const
 
 #if ENABLE(TREE_DEBUGGING)
 
-const char* LegacyInlineTextBox::boxName() const
+ASCIILiteral LegacyInlineTextBox::boxName() const
 {
-    return "InlineTextBox";
+    return "InlineTextBox"_s;
 }
 
 void LegacyInlineTextBox::outputLineBox(TextStream& stream, bool mark, int depth) const
 {
-    stream << "-------- " << (isDirty() ? "D" : "-") << "-";
+    stream << "-------- "_s << (isDirty() ? "D"_s : "-"_s) << "-"_s;
 
     int printedCharacters = 0;
     if (mark) {
-        stream << "*";
+        stream << "*"_s;
         ++printedCharacters;
     }
     while (++printedCharacters <= depth * 2)
-        stream << " ";
+        stream << " "_s;
 
     String value = renderer().text();
     value = value.substring(start(), len());
     value = makeStringByReplacingAll(value, '\\', "\\\\"_s);
     value = makeStringByReplacingAll(value, '\n', "\\n"_s);
-    stream << boxName() << " " << FloatRect(x(), y(), width(), height()) << " (" << this << ") renderer->(" << &renderer() << ") run(" << start() << ", " << start() + len() << ") \"" << value.utf8().data() << "\"";
+    stream << boxName() << " "_s << FloatRect(x(), y(), width(), height()) << " ("_s << this << ") renderer->("_s << &renderer() << ") run("_s << start() << ", "_s << start() + len() << ") \""_s << value.utf8().data() << "\""_s;
     stream.nextLine();
 }
 

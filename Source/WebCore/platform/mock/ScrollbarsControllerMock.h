@@ -58,7 +58,7 @@ private:
     void mouseEnteredScrollbar(Scrollbar*) const final;
     void mouseExitedScrollbar(Scrollbar*) const final;
     void mouseIsDownInScrollbar(Scrollbar*, bool) const final;
-    const char* scrollbarPrefix(Scrollbar*) const;
+    ASCIILiteral scrollbarPrefix(Scrollbar*) const;
 
     Function<void(const String&)> m_logger;
     Scrollbar* m_verticalScrollbar { nullptr };

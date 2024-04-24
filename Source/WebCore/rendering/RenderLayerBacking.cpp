@@ -3903,32 +3903,32 @@ bool RenderLayerBacking::shouldSkipLayerInDump(const GraphicsLayer* layer, Optio
     return m_isMainFrameRenderViewLayer && layer && layer == m_childContainmentLayer.get();
 }
 
-bool RenderLayerBacking::shouldDumpPropertyForLayer(const GraphicsLayer* layer, const char* propertyName, OptionSet<LayerTreeAsTextOptions> options) const
+bool RenderLayerBacking::shouldDumpPropertyForLayer(const GraphicsLayer* layer, ASCIILiteral propertyName, OptionSet<LayerTreeAsTextOptions> options) const
 {
     // For backwards compatibility with WebKit1 and other platforms,
     // skip some properties on the root tile cache.
     if (m_isMainFrameRenderViewLayer && layer == m_graphicsLayer.get() && !(options & LayerTreeAsTextOptions::IncludeRootLayerProperties)) {
-        if (!strcmp(propertyName, "drawsContent"))
+        if (propertyName == "drawsContent"_s)
             return false;
 
         // Background color could be of interest to tests or other dumpers if it's non-white.
-        if (!strcmp(propertyName, "backgroundColor") && Color::isWhiteColor(layer->backgroundColor()))
+        if (propertyName == "backgroundColor"_s && Color::isWhiteColor(layer->backgroundColor()))
             return false;
 
         // The root tile cache's repaints will show up at the top with FrameView's,
         // so don't dump them twice.
-        if (!strcmp(propertyName, "repaintRects"))
+        if (propertyName == "repaintRects"_s)
             return false;
     }
 
     if (m_owningLayer.isRenderViewLayer() && (layer == m_graphicsLayer.get() || layer == m_contentsContainmentLayer.get())) {
-        if (!strcmp(propertyName, "anchorPoint"))
+        if (propertyName == "anchorPoint"_s)
             return layer->anchorPoint() != FloatPoint3D { };
 
         return true;
     }
 
-    if (!strcmp(propertyName, "anchorPoint"))
+    if (propertyName == "anchorPoint"_s)
         return layer->anchorPoint() != FloatPoint3D(0.5f, 0.5f, 0);
 
     return true;

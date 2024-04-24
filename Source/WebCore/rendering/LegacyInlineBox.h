@@ -81,7 +81,7 @@ public:
     
     WEBCORE_EXPORT virtual void outputLineTreeAndMark(WTF::TextStream&, const LegacyInlineBox* markedBox, int depth) const;
     WEBCORE_EXPORT virtual void outputLineBox(WTF::TextStream&, bool mark, int depth) const;
-    WEBCORE_EXPORT virtual const char* boxName() const;
+    WEBCORE_EXPORT virtual ASCIILiteral boxName() const;
 #endif
 
     virtual bool isInlineFlowBox() const { return false; }

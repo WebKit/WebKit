@@ -92,9 +92,9 @@ void LegacyInlineBox::removeFromParent()
 
 #if ENABLE(TREE_DEBUGGING)
 
-const char* LegacyInlineBox::boxName() const
+ASCIILiteral LegacyInlineBox::boxName() const
 {
-    return "InlineBox";
+    return "InlineBox"_s;
 }
 
 void LegacyInlineBox::showNodeTreeForThis() const
@@ -114,15 +114,15 @@ void LegacyInlineBox::outputLineTreeAndMark(TextStream& stream, const LegacyInli
 
 void LegacyInlineBox::outputLineBox(TextStream& stream, bool mark, int depth) const
 {
-    stream << "-------- " << (isDirty() ? "D" : "-") << "-";
+    stream << "-------- "_s << (isDirty() ? "D"_s : "-"_s) << "-"_s;
     int printedCharacters = 0;
     if (mark) {
-        stream << "*";
+        stream << "*"_s;
         ++printedCharacters;
     }
     while (++printedCharacters <= depth * 2)
-        stream << " ";
-    stream << boxName() << " " << FloatRect(x(), y(), width(), height()) << " (" << this << ") renderer->(" << &renderer() << ")";
+        stream << " "_s;
+    stream << boxName() << " "_s << FloatRect(x(), y(), width(), height()) << " ("_s << this << ") renderer->("_s << &renderer() << ")"_s;
     stream.nextLine();
 }
 

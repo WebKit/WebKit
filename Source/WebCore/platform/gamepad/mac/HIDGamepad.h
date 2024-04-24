@@ -47,7 +47,7 @@ public:
     const Vector<SharedGamepadValue>& axisValues() const final { return m_axisValues; }
     const Vector<SharedGamepadValue>& buttonValues() const final { return m_buttonValues; }
 
-    const char* source() const final { return "HID"_s; }
+    ASCIILiteral source() const final { return "HID"_s; }
 
 protected:
     HIDGamepad(HIDDevice&&, unsigned index);

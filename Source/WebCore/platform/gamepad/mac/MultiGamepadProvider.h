@@ -84,7 +84,7 @@ private:
         const Vector<SharedGamepadValue>& axisValues() const final { return m_platformGamepad->axisValues(); }
         const Vector<SharedGamepadValue>& buttonValues() const final { return m_platformGamepad->buttonValues(); }
 
-        const char* source() const final { return m_platformGamepad->source(); }
+        ASCIILiteral source() const final { return m_platformGamepad->source(); }
 
     private:
         WeakPtr<PlatformGamepad> m_platformGamepad;

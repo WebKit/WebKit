@@ -408,7 +408,7 @@ private:
     // GraphicsLayerClient implementation
     void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>) override;
     void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const override;
-    bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char* propertyName, OptionSet<LayerTreeAsTextOptions>) const override;
+    bool shouldDumpPropertyForLayer(const GraphicsLayer*, ASCIILiteral propertyName, OptionSet<LayerTreeAsTextOptions>) const override;
     bool isTrackingRepaints() const override { return m_isTrackingRepaints; }
 
     // Copy the accelerated compositing related flags from Settings
@@ -578,8 +578,8 @@ private:
     bool shouldCompositeOverflowControls() const;
 
 #if !LOG_DISABLED
-    const char* logOneReasonForCompositing(const RenderLayer&);
-    void logLayerInfo(const RenderLayer&, const char*, int depth);
+    ASCIILiteral logOneReasonForCompositing(const RenderLayer&);
+    void logLayerInfo(const RenderLayer&, ASCIILiteral, int depth);
 #endif
 
     bool documentUsesTiledBacking() const;
