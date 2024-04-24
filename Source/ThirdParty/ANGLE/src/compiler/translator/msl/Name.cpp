@@ -96,9 +96,13 @@ void Name::emitImpl(T &out) const
             {
                 out << mRawName;
             }
-            else
+            else if (mRawName[0] != '_')
             {
                 out << kAngleInternalPrefix << '_' << mRawName;
+            }
+            else
+            {
+                out << kAngleInternalPrefix << mRawName;
             }
             break;
 
