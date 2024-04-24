@@ -61,6 +61,7 @@ showDefaultopenPopoversOnLoad();
     background: orange;
   }
   [popover] {
+    inset: auto;
     background: lime;
     padding:0;
     border:0;
@@ -94,7 +95,7 @@ showDefaultopenPopoversOnLoad();
     top: anchor(top);
   }
   #popover5 {
-    anchor-default: --anchor1; /* shouldn't be used */
+    position-anchor: --anchor1; /* shouldn't be used */
     left: anchor(implicit right);
     top: anchor(implicit top);
   }
@@ -102,7 +103,7 @@ showDefaultopenPopoversOnLoad();
     anchor-name: --anchor6;
   }
   #popover6 {
-    anchor-default: --anchor6;
+    position-anchor: --anchor6;
     left: anchor(right); /* shouldn't use the implicit anchor */
     top: anchor(top);
   }

@@ -1714,6 +1714,8 @@ imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html [ F
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-harness.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-transition.tentative.tentative.html [ Failure ]
 
+webkit.org/b/273196 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-combinations.html [ Failure ]
+
 compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ ImageOnlyFailure ]
 compositing/geometry/composited-in-columns.html [ Failure ]
 compositing/geometry/limit-layer-bounds-transformed-overflow.html [ Failure ]
