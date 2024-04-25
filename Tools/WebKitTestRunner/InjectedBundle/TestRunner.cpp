@@ -616,25 +616,8 @@ enum {
     WillEndSwipeCallbackID,
     DidEndSwipeCallbackID,
     DidRemoveSwipeSnapshotCallbackID,
-    SetStatisticsPrevalentResourceForDebugModeCallbackID,
-    SetStatisticsLastSeenCallbackID,
-    SetStatisticsMergeStatisticCallbackID,
-    SetStatisticsExpiredStatisticCallbackID,
-    SetStatisticsPrevalentResourceCallbackID,
-    SetStatisticsVeryPrevalentResourceCallbackID,
-    SetStatisticsHasHadUserInteractionCallbackID,
     StatisticsDidModifyDataRecordsCallbackID,
     StatisticsDidScanDataRecordsCallbackID,
-    StatisticsDidClearThroughWebsiteDataRemovalCallbackID,
-    StatisticsDidClearInMemoryAndPersistentStoreCallbackID,
-    StatisticsDidResetToConsistentStateCallbackID,
-    StatisticsDidSetBlockCookiesForHostCallbackID,
-    StatisticsDidSetShouldDowngradeReferrerCallbackID,
-    StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID,
-    StatisticsDidSetFirstPartyWebsiteDataRemovalModeCallbackID,
-    StatisticsDidSetToSameSiteStrictCookiesCallbackID,
-    StatisticsDidSetFirstPartyHostCNAMEDomainCallbackID,
-    StatisticsDidSetThirdPartyCNAMEDomainCallbackID,
     LoadedSubresourceDomainsCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     GetApplicationManifestCallbackID,
@@ -1277,40 +1260,25 @@ bool TestRunner::isStatisticsEphemeral()
 
 void TestRunner::setStatisticsDebugMode(bool value, JSValueRef completionHandler)
 {
-    postMessageWithAsyncReply("SetStatisticsDebugMode", value, completionHandler);
+    postMessageWithAsyncReply("SetStatisticsDebugMode", adoptWK(WKBooleanCreate(value)), completionHandler);
 }
 
 void TestRunner::setStatisticsPrevalentResourceForDebugMode(JSStringRef hostName, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(SetStatisticsPrevalentResourceForDebugModeCallbackID, completionHandler);
-    postMessage("SetStatisticsPrevalentResourceForDebugMode", hostName);
-}
-
-void TestRunner::statisticsCallDidSetPrevalentResourceForDebugModeCallback()
-{
-    callTestRunnerCallback(SetStatisticsPrevalentResourceForDebugModeCallbackID);
+    postMessageWithAsyncReply("SetStatisticsPrevalentResourceForDebugMode", toWK(hostName), completionHandler);
 }
 
 void TestRunner::setStatisticsLastSeen(JSStringRef hostName, double seconds, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(SetStatisticsLastSeenCallbackID, completionHandler);
-
-    postMessage("SetStatisticsLastSeen", createWKDictionary({
+    postMessageWithAsyncReply("SetStatisticsLastSeen", createWKDictionary({
         { "HostName", toWK(hostName) },
         { "Value", toWK(seconds) },
-    }));
-}
-
-void TestRunner::statisticsCallDidSetLastSeenCallback()
-{
-    callTestRunnerCallback(SetStatisticsLastSeenCallbackID);
+    }), completionHandler);
 }
 
 void TestRunner::setStatisticsMergeStatistic(JSStringRef hostName, JSStringRef topFrameDomain1, JSStringRef topFrameDomain2, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(SetStatisticsMergeStatisticCallbackID, completionHandler);
-
-    postMessage("SetStatisticsMergeStatistic", createWKDictionary({
+    postMessageWithAsyncReply("SetStatisticsMergeStatistic", createWKDictionary({
         { "HostName", toWK(hostName) },
         { "TopFrameDomain1", toWK(topFrameDomain1) },
         { "TopFrameDomain2", toWK(topFrameDomain2) },
@@ -1321,60 +1289,34 @@ void TestRunner::setStatisticsMergeStatistic(JSStringRef hostName, JSStringRef t
         { "IsPrevalent", adoptWK(WKBooleanCreate(isPrevalent)) },
         { "IsVeryPrevalent", adoptWK(WKBooleanCreate(isVeryPrevalent)) },
         { "DataRecordsRemoved", adoptWK(WKUInt64Create(dataRecordsRemoved)) },
-    }));
-}
-
-void TestRunner::statisticsCallDidSetMergeStatisticCallback()
-{
-    callTestRunnerCallback(SetStatisticsMergeStatisticCallbackID);
+    }), completionHandler);
 }
 
 void TestRunner::setStatisticsExpiredStatistic(JSStringRef hostName, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(SetStatisticsExpiredStatisticCallbackID, completionHandler);
-
-    postMessage("SetStatisticsExpiredStatistic", createWKDictionary({
+    postMessageWithAsyncReply("SetStatisticsExpiredStatistic", createWKDictionary({
         { "HostName", toWK(hostName) },
         { "NumberOfOperatingDaysPassed", adoptWK(WKUInt64Create(numberOfOperatingDaysPassed)) },
         { "HadUserInteraction", adoptWK(WKBooleanCreate(hadUserInteraction)) },
         { "IsScheduledForAllButCookieDataRemoval", adoptWK(WKBooleanCreate(isScheduledForAllButCookieDataRemoval)) },
         { "IsPrevalent", adoptWK(WKBooleanCreate(isPrevalent)) }
-    }));
-}
-
-void TestRunner::statisticsCallDidSetExpiredStatisticCallback()
-{
-    callTestRunnerCallback(SetStatisticsExpiredStatisticCallbackID);
+    }), completionHandler);
 }
 
 void TestRunner::setStatisticsPrevalentResource(JSStringRef hostName, bool value, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(SetStatisticsPrevalentResourceCallbackID, completionHandler);
-
-    postMessage("SetStatisticsPrevalentResource", createWKDictionary({
+    postMessageWithAsyncReply("SetStatisticsPrevalentResource", createWKDictionary({
         { "HostName", toWK(hostName) },
         { "Value", adoptWK(WKBooleanCreate(value)) },
-    }));
-}
-
-void TestRunner::statisticsCallDidSetPrevalentResourceCallback()
-{
-    callTestRunnerCallback(SetStatisticsPrevalentResourceCallbackID);
+    }), completionHandler);
 }
 
 void TestRunner::setStatisticsVeryPrevalentResource(JSStringRef hostName, bool value, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(SetStatisticsVeryPrevalentResourceCallbackID, completionHandler);
-
-    postMessage("SetStatisticsVeryPrevalentResource", createWKDictionary({
+    postMessageWithAsyncReply("SetStatisticsVeryPrevalentResource", createWKDictionary({
         { "HostName", toWK(hostName) },
         { "Value", adoptWK(WKBooleanCreate(value)) },
-    }));
-}
-
-void TestRunner::statisticsCallDidSetVeryPrevalentResourceCallback()
-{
-    callTestRunnerCallback(SetStatisticsVeryPrevalentResourceCallbackID);
+    }), completionHandler);
 }
     
 void TestRunner::dumpResourceLoadStatistics()
@@ -1424,17 +1366,10 @@ bool TestRunner::isStatisticsRegisteredAsRedirectingTo(JSStringRef hostRedirecte
 
 void TestRunner::setStatisticsHasHadUserInteraction(JSStringRef hostName, bool value, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(SetStatisticsHasHadUserInteractionCallbackID, completionHandler);
-
-    postMessage("SetStatisticsHasHadUserInteraction", createWKDictionary({
+    postMessageWithAsyncReply("SetStatisticsHasHadUserInteraction", createWKDictionary({
         { "HostName", toWK(hostName) },
         { "Value", adoptWK(WKBooleanCreate(value)) },
-    }));
-}
-
-void TestRunner::statisticsCallDidSetHasHadUserInteractionCallback()
-{
-    callTestRunnerCallback(SetStatisticsHasHadUserInteractionCallbackID);
+    }), completionHandler);
 }
 
 bool TestRunner::isStatisticsHasHadUserInteraction(JSStringRef hostName)
@@ -1566,14 +1501,7 @@ void TestRunner::statisticsProcessStatisticsAndDataRecords()
 
 void TestRunner::statisticsUpdateCookieBlocking(JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(StatisticsDidSetBlockCookiesForHostCallbackID, completionHandler);
-
-    postMessage("StatisticsUpdateCookieBlocking");
-}
-
-void TestRunner::statisticsCallDidSetBlockCookiesForHostCallback()
-{
-    callTestRunnerCallback(StatisticsDidSetBlockCookiesForHostCallbackID);
+    postMessageWithAsyncReply("StatisticsUpdateCookieBlocking", completionHandler);
 }
 
 void TestRunner::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
@@ -1615,23 +1543,20 @@ void TestRunner::setStatisticsPruneEntriesDownTo(unsigned entries)
 {
     postSynchronousMessage("SetPruneEntriesDownTo", entries);
 }
-    
-void TestRunner::statisticsClearInMemoryAndPersistentStore(JSValueRef callback)
-{
-    cacheTestRunnerCallback(StatisticsDidClearInMemoryAndPersistentStoreCallbackID, callback);
-    postMessage("StatisticsClearInMemoryAndPersistentStore");
-}
 
 void TestRunner::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours, JSValueRef callback)
 {
-    cacheTestRunnerCallback(StatisticsDidClearInMemoryAndPersistentStoreCallbackID, callback);
-    postMessage("StatisticsClearInMemoryAndPersistentStoreModifiedSinceHours", hours);
+    postMessageWithAsyncReply("StatisticsClearInMemoryAndPersistentStore", adoptWK(WKUInt64Create(hours)), callback);
+}
+
+void TestRunner::statisticsClearInMemoryAndPersistentStore(JSValueRef callback)
+{
+    postMessageWithAsyncReply("StatisticsClearInMemoryAndPersistentStore", callback);
 }
 
 void TestRunner::statisticsClearThroughWebsiteDataRemoval(JSValueRef callback)
 {
-    cacheTestRunnerCallback(StatisticsDidClearThroughWebsiteDataRemovalCallbackID, callback);
-    postMessage("StatisticsClearThroughWebsiteDataRemoval");
+    postMessageWithAsyncReply("StatisticsClearThroughWebsiteDataRemoval", callback);
 }
 
 void TestRunner::statisticsDeleteCookiesForHost(JSStringRef hostName, bool includeHttpOnlyCookies)
@@ -1659,112 +1584,43 @@ bool TestRunner::hasStatisticsIsolatedSession(JSStringRef hostName)
 
 void TestRunner::setStatisticsShouldDowngradeReferrer(bool value, JSValueRef completionHandler)
 {
-    if (m_hasSetDowngradeReferrerCallback)
-        return;
-    
-    cacheTestRunnerCallback(StatisticsDidSetShouldDowngradeReferrerCallbackID, completionHandler);
-    postMessage("SetStatisticsShouldDowngradeReferrer", value);
-    m_hasSetDowngradeReferrerCallback = true;
-}
-
-void TestRunner::statisticsCallDidSetShouldDowngradeReferrerCallback()
-{
-    callTestRunnerCallback(StatisticsDidSetShouldDowngradeReferrerCallbackID);
-    m_hasSetDowngradeReferrerCallback = false;
+    postMessageWithAsyncReply("SetStatisticsShouldDowngradeReferrer", adoptWK(WKBooleanCreate(value)), completionHandler);
 }
 
 void TestRunner::setStatisticsShouldBlockThirdPartyCookies(bool value, JSValueRef completionHandler, bool onlyOnSitesWithoutUserInteraction)
 {
-    if (m_hasSetBlockThirdPartyCookiesCallback)
-        return;
-
-    cacheTestRunnerCallback(StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID, completionHandler);
     auto messageName = "SetStatisticsShouldBlockThirdPartyCookies";
     if (onlyOnSitesWithoutUserInteraction)
         messageName = "SetStatisticsShouldBlockThirdPartyCookiesOnSitesWithoutUserInteraction";
-    postMessage(messageName, value);
-    m_hasSetBlockThirdPartyCookiesCallback = true;
-}
-
-void TestRunner::statisticsCallDidSetShouldBlockThirdPartyCookiesCallback()
-{
-    callTestRunnerCallback(StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID);
-    m_hasSetBlockThirdPartyCookiesCallback = false;
+    postMessageWithAsyncReply(messageName, adoptWK(WKBooleanCreate(value)), completionHandler);
 }
 
 void TestRunner::setStatisticsFirstPartyWebsiteDataRemovalMode(bool value, JSValueRef completionHandler)
 {
-    if (m_hasSetFirstPartyWebsiteDataRemovalModeCallback)
-        return;
-
-    cacheTestRunnerCallback(StatisticsDidSetFirstPartyWebsiteDataRemovalModeCallbackID, completionHandler);
-    postMessage("SetStatisticsFirstPartyWebsiteDataRemovalMode", value);
-    m_hasSetFirstPartyWebsiteDataRemovalModeCallback = true;
-}
-
-void TestRunner::statisticsCallDidSetFirstPartyWebsiteDataRemovalModeCallback()
-{
-    callTestRunnerCallback(StatisticsDidSetFirstPartyWebsiteDataRemovalModeCallbackID);
-    m_hasSetFirstPartyWebsiteDataRemovalModeCallback = false;
-}
-
-void TestRunner::statisticsCallClearInMemoryAndPersistentStoreCallback()
-{
-    callTestRunnerCallback(StatisticsDidClearInMemoryAndPersistentStoreCallbackID);
-}
-
-void TestRunner::statisticsCallClearThroughWebsiteDataRemovalCallback()
-{
-    callTestRunnerCallback(StatisticsDidClearThroughWebsiteDataRemovalCallbackID);
+    postMessageWithAsyncReply("SetStatisticsFirstPartyWebsiteDataRemovalMode", adoptWK(WKBooleanCreate(value)), completionHandler);
 }
 
 void TestRunner::statisticsSetToSameSiteStrictCookies(JSStringRef hostName, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(StatisticsDidSetToSameSiteStrictCookiesCallbackID, completionHandler);
-    postMessage("StatisticsSetToSameSiteStrictCookies", hostName);
+    postMessageWithAsyncReply("StatisticsSetToSameSiteStrictCookies", toWK(hostName), completionHandler);
 }
-
-void TestRunner::statisticsCallDidSetToSameSiteStrictCookiesCallback()
-{
-    callTestRunnerCallback(StatisticsDidSetToSameSiteStrictCookiesCallbackID);
-}
-
 
 void TestRunner::statisticsSetFirstPartyHostCNAMEDomain(JSStringRef firstPartyURLString, JSStringRef cnameURLString, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(StatisticsDidSetFirstPartyHostCNAMEDomainCallbackID, completionHandler);
-    postMessage("StatisticsSetFirstPartyHostCNAMEDomain", createWKDictionary({
+    postMessageWithAsyncReply("StatisticsSetFirstPartyHostCNAMEDomain", createWKDictionary({
         { "FirstPartyURL", toWK(firstPartyURLString) },
         { "CNAME", toWK(cnameURLString) },
-    }));
-}
-
-void TestRunner::statisticsCallDidSetFirstPartyHostCNAMEDomainCallback()
-{
-    callTestRunnerCallback(StatisticsDidSetFirstPartyHostCNAMEDomainCallbackID);
+    }), completionHandler);
 }
 
 void TestRunner::statisticsSetThirdPartyCNAMEDomain(JSStringRef cnameURLString, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(StatisticsDidSetThirdPartyCNAMEDomainCallbackID, completionHandler);
-    postMessage("StatisticsSetThirdPartyCNAMEDomain", toWK(cnameURLString));
-}
-
-void TestRunner::statisticsCallDidSetThirdPartyCNAMEDomainCallback()
-{
-    callTestRunnerCallback(StatisticsDidSetThirdPartyCNAMEDomainCallbackID);
+    postMessageWithAsyncReply("StatisticsSetThirdPartyCNAMEDomain", toWK(cnameURLString), completionHandler);
 }
 
 void TestRunner::statisticsResetToConsistentState(JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(StatisticsDidResetToConsistentStateCallbackID, completionHandler);
-
-    postMessage("StatisticsResetToConsistentState");
-}
-
-void TestRunner::statisticsCallDidResetToConsistentStateCallback()
-{
-    callTestRunnerCallback(StatisticsDidResetToConsistentStateCallbackID);
+    postMessageWithAsyncReply("StatisticsResetToConsistentState", completionHandler);
 }
 
 void TestRunner::installTextDidChangeInTextFieldCallback(JSValueRef callback)

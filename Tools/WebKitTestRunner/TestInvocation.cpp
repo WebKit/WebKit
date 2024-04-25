@@ -264,6 +264,12 @@ void TestInvocation::forceRepaintDoneCallback(WKErrorRef error, void* context)
     TestController::singleton().notifyDone();
 }
 
+void TestInvocation::dumpResourceLoadStatisticsIfNecessary()
+{
+    if (m_shouldDumpResourceLoadStatistics)
+        m_savedResourceLoadStatistics = TestController::singleton().dumpResourceLoadStatistics();
+}
+
 void TestInvocation::dumpResults()
 {
     if (m_shouldDumpResourceLoadStatistics)
@@ -651,16 +657,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldBlockThirdPartyCookiesOnSitesWithoutUserInteraction")) {
-        TestController::singleton().setStatisticsShouldBlockThirdPartyCookies(booleanValue(messageBody), true);
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldBlockThirdPartyCookies")) {
-        TestController::singleton().setStatisticsShouldBlockThirdPartyCookies(booleanValue(messageBody), false);
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "RunUIProcessScript")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto invocationData = new UIScriptInvocationData;
@@ -716,115 +712,8 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsPrevalentResourceForDebugMode")) {
-        WKStringRef hostName = stringValue(messageBody);
-        TestController::singleton().setStatisticsPrevalentResourceForDebugMode(hostName);
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsLastSeen")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto value = doubleValue(messageBodyDictionary, "Value");
-        TestController::singleton().setStatisticsLastSeen(hostName, value);
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsMergeStatistic")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto topFrameDomain1 = stringValue(messageBodyDictionary, "TopFrameDomain1");
-        auto topFrameDomain2 = stringValue(messageBodyDictionary, "TopFrameDomain2");
-        auto lastSeen = doubleValue(messageBodyDictionary, "LastSeen");
-        auto hadUserInteraction = booleanValue(messageBodyDictionary, "HadUserInteraction");
-        auto mostRecentUserInteraction = doubleValue(messageBodyDictionary, "MostRecentUserInteraction");
-        auto isGrandfathered = booleanValue(messageBodyDictionary, "IsGrandfathered");
-        auto isPrevalent = booleanValue(messageBodyDictionary, "IsPrevalent");
-        auto isVeryPrevalent = booleanValue(messageBodyDictionary, "IsVeryPrevalent");
-        auto dataRecordsRemoved = uint64Value(messageBodyDictionary, "DataRecordsRemoved");
-        TestController::singleton().setStatisticsMergeStatistic(hostName, topFrameDomain1, topFrameDomain2, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved);
-        return;
-    }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsExpiredStatistic")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto numberOfOperatingDaysPassed = uint64Value(messageBodyDictionary, "NumberOfOperatingDaysPassed");
-        auto hadUserInteraction = booleanValue(messageBodyDictionary, "HadUserInteraction");
-        auto isScheduledForAllButCookieDataRemoval = booleanValue(messageBodyDictionary, "IsScheduledForAllButCookieDataRemoval");
-        auto isPrevalent = booleanValue(messageBodyDictionary, "IsPrevalent");
-        TestController::singleton().setStatisticsExpiredStatistic(hostName, numberOfOperatingDaysPassed, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent);
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsPrevalentResource")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto value = booleanValue(messageBodyDictionary, "Value");
-        TestController::singleton().setStatisticsPrevalentResource(hostName, value);
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsVeryPrevalentResource")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto value = booleanValue(messageBodyDictionary, "Value");
-        TestController::singleton().setStatisticsVeryPrevalentResource(hostName, value);
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "DumpPolicyDelegateCallbacks")) {
         TestController::singleton().dumpPolicyDelegateCallbacks();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearInMemoryAndPersistentStore")) {
-        TestController::singleton().statisticsClearInMemoryAndPersistentStore();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearThroughWebsiteDataRemoval")) {
-        TestController::singleton().statisticsClearThroughWebsiteDataRemoval();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearInMemoryAndPersistentStoreModifiedSinceHours")) {
-        TestController::singleton().statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(uint64Value(messageBody));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldDowngradeReferrer")) {
-        TestController::singleton().setStatisticsShouldDowngradeReferrer(booleanValue(messageBody));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsFirstPartyWebsiteDataRemovalMode")) {
-        TestController::singleton().setStatisticsFirstPartyWebsiteDataRemovalMode(booleanValue(messageBody));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetToSameSiteStrictCookies")) {
-        TestController::singleton().setStatisticsToSameSiteStrictCookies(stringValue(messageBody));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetFirstPartyHostCNAMEDomain")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto firstPartyURLString = stringValue(messageBodyDictionary, "FirstPartyURL");
-        auto cnameURLString = stringValue(messageBodyDictionary, "CNAME");
-        TestController::singleton().setStatisticsFirstPartyHostCNAMEDomain(firstPartyURLString, cnameURLString);
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetThirdPartyCNAMEDomain")) {
-        TestController::singleton().setStatisticsThirdPartyCNAMEDomain(stringValue(messageBody));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsResetToConsistentState")) {
-        if (m_shouldDumpResourceLoadStatistics)
-            m_savedResourceLoadStatistics = TestController::singleton().dumpResourceLoadStatistics();
-        TestController::singleton().statisticsResetToConsistentState();
         return;
     }
 
@@ -842,19 +731,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         // FIXME: Add API for loading the manifest on non-__BLOCKS__ ports.
         ASSERT_NOT_REACHED();
 #endif
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsHasHadUserInteraction")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto value = booleanValue(messageBodyDictionary, "Value");
-        TestController::singleton().setStatisticsHasHadUserInteraction(hostName, value);
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsUpdateCookieBlocking")) {
-        TestController::singleton().statisticsUpdateCookieBlocking();
         return;
     }
 
@@ -1658,91 +1534,6 @@ void TestInvocation::didRemoveSwipeSnapshot()
 void TestInvocation::notifyDownloadDone()
 {
     postPageMessage("NotifyDownloadDone");
-}
-
-void TestInvocation::didClearStatisticsInMemoryAndPersistentStore()
-{
-    postPageMessage("CallDidClearStatisticsInMemoryAndPersistentStore");
-}
-
-void TestInvocation::didClearStatisticsThroughWebsiteDataRemoval()
-{
-    postPageMessage("CallDidClearStatisticsThroughWebsiteDataRemoval");
-}
-
-void TestInvocation::didSetShouldDowngradeReferrer()
-{
-    postPageMessage("CallDidSetShouldDowngradeReferrer");
-}
-
-void TestInvocation::didSetShouldBlockThirdPartyCookies()
-{
-    postPageMessage("CallDidSetShouldBlockThirdPartyCookies");
-}
-
-void TestInvocation::didSetFirstPartyWebsiteDataRemovalMode()
-{
-    postPageMessage("CallDidSetFirstPartyWebsiteDataRemovalMode");
-}
-
-void TestInvocation::didSetToSameSiteStrictCookies()
-{
-    postPageMessage("CallDidSetToSameSiteStrictCookies");
-}
-
-void TestInvocation::didSetFirstPartyHostCNAMEDomain()
-{
-    postPageMessage("CallDidSetFirstPartyHostCNAMEDomain");
-}
-
-void TestInvocation::didSetThirdPartyCNAMEDomain()
-{
-    postPageMessage("CallDidSetThirdPartyCNAMEDomain");
-}
-
-void TestInvocation::didResetStatisticsToConsistentState()
-{
-    postPageMessage("CallDidResetStatisticsToConsistentState");
-}
-
-void TestInvocation::didSetBlockCookiesForHost()
-{
-    postPageMessage("CallDidSetBlockCookiesForHost");
-}
-
-void TestInvocation::didSetPrevalentResourceForDebugMode()
-{
-    postPageMessage("CallDidSetPrevalentResourceForDebugMode");
-}
-
-void TestInvocation::didSetLastSeen()
-{
-    postPageMessage("CallDidSetLastSeen");
-}
-
-void TestInvocation::didMergeStatistic()
-{
-    postPageMessage("CallDidMergeStatistic");
-}
-
-void TestInvocation::didSetExpiredStatistic()
-{
-    postPageMessage("CallDidSetExpiredStatistic");
-}
-
-void TestInvocation::didSetPrevalentResource()
-{
-    postPageMessage("CallDidSetPrevalentResource");
-}
-
-void TestInvocation::didSetVeryPrevalentResource()
-{
-    postPageMessage("CallDidSetVeryPrevalentResource");
-}
-
-void TestInvocation::didSetHasHadUserInteraction()
-{
-    postPageMessage("CallDidSetHasHadUserInteraction");
 }
 
 void TestInvocation::didReceiveLoadedSubresourceDomains(Vector<String>&& domains)

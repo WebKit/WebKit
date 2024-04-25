@@ -418,27 +418,19 @@ public:
     bool statisticsNotifyObserver();
     void statisticsProcessStatisticsAndDataRecords();
     void statisticsUpdateCookieBlocking(JSValueRef completionHandler);
-    void statisticsCallDidSetBlockCookiesForHostCallback();
     void setStatisticsDebugMode(bool value, JSValueRef completionHandler);
     void setStatisticsPrevalentResourceForDebugMode(JSStringRef hostName, JSValueRef completionHandler);
-    void statisticsCallDidSetPrevalentResourceForDebugModeCallback();
     void setStatisticsLastSeen(JSStringRef hostName, double seconds, JSValueRef completionHandler);
-    void statisticsCallDidSetLastSeenCallback();
     void setStatisticsMergeStatistic(JSStringRef hostName, JSStringRef topFrameDomain1, JSStringRef topFrameDomain2, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, JSValueRef completionHandler);
-    void statisticsCallDidSetMergeStatisticCallback();
     void setStatisticsExpiredStatistic(JSStringRef hostName, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, JSValueRef completionHandler);
-    void statisticsCallDidSetExpiredStatisticCallback();
     void setStatisticsPrevalentResource(JSStringRef hostName, bool value, JSValueRef completionHandler);
-    void statisticsCallDidSetPrevalentResourceCallback();
     void setStatisticsVeryPrevalentResource(JSStringRef hostName, bool value, JSValueRef completionHandler);
-    void statisticsCallDidSetVeryPrevalentResourceCallback();
     bool isStatisticsPrevalentResource(JSStringRef hostName);
     bool isStatisticsVeryPrevalentResource(JSStringRef hostName);
     bool isStatisticsRegisteredAsSubresourceUnder(JSStringRef subresourceHost, JSStringRef topFrameHost);
     bool isStatisticsRegisteredAsSubFrameUnder(JSStringRef subFrameHost, JSStringRef topFrameHost);
     bool isStatisticsRegisteredAsRedirectingTo(JSStringRef hostRedirectedFrom, JSStringRef hostRedirectedTo);
     void setStatisticsHasHadUserInteraction(JSStringRef hostName, bool value, JSValueRef completionHandler);
-    void statisticsCallDidSetHasHadUserInteractionCallback();
     bool isStatisticsHasHadUserInteraction(JSStringRef hostName);
     bool isStatisticsOnlyInDatabaseOnce(JSStringRef subHost, JSStringRef topHost);
     void setStatisticsGrandfathered(JSStringRef hostName, bool value);
@@ -463,25 +455,16 @@ public:
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours, JSValueRef callback);
     void statisticsClearThroughWebsiteDataRemoval(JSValueRef callback);
     void statisticsDeleteCookiesForHost(JSStringRef hostName, bool includeHttpOnlyCookies);
-    void statisticsCallClearInMemoryAndPersistentStoreCallback();
-    void statisticsCallClearThroughWebsiteDataRemovalCallback();
     bool isStatisticsHasLocalStorage(JSStringRef hostName);
     void setStatisticsCacheMaxAgeCap(double seconds);
     bool hasStatisticsIsolatedSession(JSStringRef hostName);
     void setStatisticsShouldDowngradeReferrer(bool, JSValueRef callback);
-    void statisticsCallDidSetShouldDowngradeReferrerCallback();
     void setStatisticsShouldBlockThirdPartyCookies(bool value, JSValueRef callback, bool onlyOnSitesWithoutUserInteraction);
-    void statisticsCallDidSetShouldBlockThirdPartyCookiesCallback();
     void setStatisticsFirstPartyWebsiteDataRemovalMode(bool value, JSValueRef callback);
-    void statisticsCallDidSetFirstPartyWebsiteDataRemovalModeCallback();
     void statisticsSetToSameSiteStrictCookies(JSStringRef hostName, JSValueRef callback);
-    void statisticsCallDidSetToSameSiteStrictCookiesCallback();
     void statisticsSetFirstPartyHostCNAMEDomain(JSStringRef firstPartyURLString, JSStringRef cnameURLString, JSValueRef completionHandler);
-    void statisticsCallDidSetFirstPartyHostCNAMEDomainCallback();
     void statisticsSetThirdPartyCNAMEDomain(JSStringRef cnameURLString, JSValueRef completionHandler);
-    void statisticsCallDidSetThirdPartyCNAMEDomainCallback();
     void statisticsResetToConsistentState(JSValueRef completionHandler);
-    void statisticsCallDidResetToConsistentStateCallback();
     void loadedSubresourceDomains(JSValueRef callback);
     void callDidReceiveLoadedSubresourceDomainsCallback(Vector<String>&& domains);
 
@@ -646,9 +629,6 @@ private:
 
     bool m_userStyleSheetEnabled { false };
     bool m_dumpAllHTTPRedirectedResponseHeaders { false };
-    bool m_hasSetDowngradeReferrerCallback { false };
-    bool m_hasSetBlockThirdPartyCookiesCallback { false };
-    bool m_hasSetFirstPartyWebsiteDataRemovalModeCallback { false };
 };
 
 } // namespace WTR

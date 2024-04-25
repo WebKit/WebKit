@@ -304,91 +304,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidClearStatisticsInMemoryAndPersistentStore")) {
-        m_testRunner->statisticsCallClearInMemoryAndPersistentStoreCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidClearStatisticsThroughWebsiteDataRemoval")) {
-        m_testRunner->statisticsCallClearThroughWebsiteDataRemovalCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetShouldDowngradeReferrer")) {
-        m_testRunner->statisticsCallDidSetShouldDowngradeReferrerCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetShouldBlockThirdPartyCookies")) {
-        m_testRunner->statisticsCallDidSetShouldBlockThirdPartyCookiesCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetFirstPartyWebsiteDataRemovalMode")) {
-        m_testRunner->statisticsCallDidSetFirstPartyWebsiteDataRemovalModeCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetToSameSiteStrictCookies")) {
-        m_testRunner->statisticsCallDidSetToSameSiteStrictCookiesCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetFirstPartyHostCNAMEDomain")) {
-        m_testRunner->statisticsCallDidSetFirstPartyHostCNAMEDomainCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetThirdPartyCNAMEDomain")) {
-        m_testRunner->statisticsCallDidSetThirdPartyCNAMEDomainCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidResetStatisticsToConsistentState")) {
-        m_testRunner->statisticsCallDidResetToConsistentStateCallback();
-        return;
-    }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetBlockCookiesForHost")) {
-        m_testRunner->statisticsCallDidSetBlockCookiesForHostCallback();
-        return;
-    }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetPrevalentResourceForDebugMode")) {
-        m_testRunner->statisticsCallDidSetPrevalentResourceForDebugModeCallback();
-        return;
-    }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetLastSeen")) {
-        m_testRunner->statisticsCallDidSetLastSeenCallback();
-        return;
-    }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidMergeStatistic")) {
-        m_testRunner->statisticsCallDidSetMergeStatisticCallback();
-        return;
-    }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetExpiredStatistic")) {
-        m_testRunner->statisticsCallDidSetExpiredStatisticCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetPrevalentResource")) {
-        m_testRunner->statisticsCallDidSetPrevalentResourceCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetVeryPrevalentResource")) {
-        m_testRunner->statisticsCallDidSetVeryPrevalentResourceCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetHasHadUserInteraction")) {
-        m_testRunner->statisticsCallDidSetHasHadUserInteractionCallback();
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidReceiveLoadedSubresourceDomains")) {
         ASSERT(messageBody);
         ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
@@ -1060,7 +975,7 @@ static JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef strings)
     return array;
 }
 
-static void postMessageWithAsyncReplyImpl(const char* name, WKRetainPtr<WKTypeRef> parameter, JSValueRef callback)
+void postMessageWithAsyncReply(const char* messageName, WKRetainPtr<WKTypeRef> parameter, JSValueRef callback)
 {
     auto context = firstRootFrameJSContext();
     JSValueProtect(context, callback);
@@ -1087,7 +1002,7 @@ static void postMessageWithAsyncReplyImpl(const char* name, WKRetainPtr<WKTypeRe
     };
 
     if (auto page = InjectedBundle::singleton().pageRef()) {
-        WKBundlePagePostMessageWithAsyncReply(page, toWK(name).get(), parameter.get(), [] (WKTypeRef result, void* context) {
+        WKBundlePagePostMessageWithAsyncReply(page, toWK(messageName).get(), parameter.get(), [] (WKTypeRef result, void* context) {
             auto function = WTF::adopt(static_cast<Function<void(WKTypeRef)>::Impl*>(context));
             function(result);
         }, completionHandler.leak());
@@ -1095,14 +1010,9 @@ static void postMessageWithAsyncReplyImpl(const char* name, WKRetainPtr<WKTypeRe
         completionHandler(nullptr);
 }
 
-void postMessageWithAsyncReply(const char* name, JSValueRef callback)
+void postMessageWithAsyncReply(const char* messageName, JSValueRef callback)
 {
-    postMessageWithAsyncReplyImpl(name, nullptr, callback);
-}
-
-void postMessageWithAsyncReply(const char* name, bool value, JSValueRef callback)
-{
-    postMessageWithAsyncReplyImpl(name, adoptWK(WKBooleanCreate(value)), callback);
+    postMessageWithAsyncReply(messageName, nullptr, callback);
 }
 
 } // namespace WTR
