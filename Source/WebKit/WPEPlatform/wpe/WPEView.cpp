@@ -834,21 +834,24 @@ WPEBufferDMABufFormats* wpe_view_get_preferred_dma_buf_formats(WPEView* view)
         auto tokens = String::fromUTF8(formatString).split(':');
         if (!tokens.isEmpty() && tokens[0].length() >= 2 && tokens[0].length() <= 4) {
             guint32 format = fourcc_code(tokens[0][0], tokens[0][1], tokens[0].length() > 2 ? tokens[0][2] : ' ', tokens[0].length() > 3 ? tokens[0][3] : ' ');
-            guint64 modifier = tokens.size() > 1 ? g_ascii_strtoull(tokens[1].ascii().data(), nullptr, 10) : DRM_FORMAT_MOD_INVALID;
-            WPEBufferDMABufFormatUsage usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING;
-            if (tokens.size() > 2) {
-                if (tokens[2] == "rendering"_s)
-                    usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING;
-                else if (tokens[2] == "mapping"_s)
-                    usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_MAPPING;
-                else if (tokens[2] == "scanout"_s)
-                    usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_SCANOUT;
+            char* endptr = nullptr;
+            guint64 modifier = tokens.size() > 1 ? g_ascii_strtoull(tokens[1].ascii().data(), &endptr, 16) : DRM_FORMAT_MOD_INVALID;
+            if (!(modifier == G_MAXUINT64 && errno == ERANGE) && !(!modifier && !endptr)) {
+                WPEBufferDMABufFormatUsage usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING;
+                if (tokens.size() > 2) {
+                    if (tokens[2] == "rendering"_s)
+                        usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING;
+                    else if (tokens[2] == "mapping"_s)
+                        usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_MAPPING;
+                    else if (tokens[2] == "scanout"_s)
+                        usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_SCANOUT;
+                }
+                auto* builder = wpe_buffer_dma_buf_formats_builder_new(wpe_display_get_drm_render_node(wpe_view_get_display(view)));
+                wpe_buffer_dma_buf_formats_builder_append_group(builder, nullptr, usage);
+                wpe_buffer_dma_buf_formats_builder_append_format(builder, format, modifier);
+                view->priv->overridenDMABufFormats = adoptGRef(wpe_buffer_dma_buf_formats_builder_end(builder));
+                return view->priv->overridenDMABufFormats.get();
             }
-            auto* builder = wpe_buffer_dma_buf_formats_builder_new(wpe_display_get_drm_render_node(wpe_view_get_display(view)));
-            wpe_buffer_dma_buf_formats_builder_append_group(builder, nullptr, usage);
-            wpe_buffer_dma_buf_formats_builder_append_format(builder, format, modifier);
-            view->priv->overridenDMABufFormats = adoptGRef(wpe_buffer_dma_buf_formats_builder_end(builder));
-            return view->priv->overridenDMABufFormats.get();
         }
 
         WTFLogAlways("Invalid format %s set in WPE_DMABUF_BUFFER_FORMAT, ignoring...", formatString);
