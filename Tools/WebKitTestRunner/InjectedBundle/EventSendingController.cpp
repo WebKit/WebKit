@@ -454,41 +454,45 @@ JSValueRef EventSendingController::contextClick(JSContextRef context)
 void EventSendingController::textZoomIn()
 {
     auto& injectedBundle = InjectedBundle::singleton();
-    // Ensure page zoom is reset.
-    WKBundlePageSetPageZoomFactor(injectedBundle.page()->page(), 1);
+    double zoomFactor = WKBundlePageGetTextZoomFactor(injectedBundle.page()->page()) * ZoomMultiplierRatio;
 
-    double zoomFactor = WKBundlePageGetTextZoomFactor(injectedBundle.page()->page());
-    WKBundlePageSetTextZoomFactor(injectedBundle.page()->page(), zoomFactor * ZoomMultiplierRatio);
+    auto body = adoptWK(WKMutableDictionaryCreate());
+    setValue(body, "SubMessage", "SetTextZoom");
+    setValue(body, "ZoomFactor", zoomFactor);
+    postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::textZoomOut()
 {
     auto& injectedBundle = InjectedBundle::singleton();
-    // Ensure page zoom is reset.
-    WKBundlePageSetPageZoomFactor(injectedBundle.page()->page(), 1);
+    double zoomFactor = WKBundlePageGetTextZoomFactor(injectedBundle.page()->page()) / ZoomMultiplierRatio;
 
-    double zoomFactor = WKBundlePageGetTextZoomFactor(injectedBundle.page()->page());
-    WKBundlePageSetTextZoomFactor(injectedBundle.page()->page(), zoomFactor / ZoomMultiplierRatio);
+    auto body = adoptWK(WKMutableDictionaryCreate());
+    setValue(body, "SubMessage", "SetTextZoom");
+    setValue(body, "ZoomFactor", zoomFactor);
+    postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::zoomPageIn()
 {
     auto& injectedBundle = InjectedBundle::singleton();
-    // Ensure text zoom is reset.
-    WKBundlePageSetTextZoomFactor(injectedBundle.page()->page(), 1);
+    double zoomFactor = WKBundlePageGetPageZoomFactor(injectedBundle.page()->page()) * ZoomMultiplierRatio;
 
-    double zoomFactor = WKBundlePageGetPageZoomFactor(injectedBundle.page()->page());
-    WKBundlePageSetPageZoomFactor(injectedBundle.page()->page(), zoomFactor * ZoomMultiplierRatio);
+    auto body = adoptWK(WKMutableDictionaryCreate());
+    setValue(body, "SubMessage", "SetPageZoom");
+    setValue(body, "ZoomFactor", zoomFactor);
+    postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::zoomPageOut()
 {
     auto& injectedBundle = InjectedBundle::singleton();
-    // Ensure text zoom is reset.
-    WKBundlePageSetTextZoomFactor(injectedBundle.page()->page(), 1);
+    double zoomFactor = WKBundlePageGetPageZoomFactor(injectedBundle.page()->page()) / ZoomMultiplierRatio;
 
-    double zoomFactor = WKBundlePageGetPageZoomFactor(injectedBundle.page()->page());
-    WKBundlePageSetPageZoomFactor(injectedBundle.page()->page(), zoomFactor / ZoomMultiplierRatio);
+    auto body = adoptWK(WKMutableDictionaryCreate());
+    setValue(body, "SubMessage", "SetPageZoom");
+    setValue(body, "ZoomFactor", zoomFactor);
+    postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::scalePageBy(double scale, double x, double y)

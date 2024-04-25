@@ -176,6 +176,9 @@ void TestInvocation::invoke()
 
     // FIXME: We should clear out visited links here.
 
+    WKPageSetPageZoomFactor(TestController::singleton().mainWebView()->page(), 1);
+    WKPageSetTextZoomFactor(TestController::singleton().mainWebView()->page(), 1);
+
     postPageMessage("BeginTest", createTestSettingsDictionary());
 
     m_startedTesting = true;

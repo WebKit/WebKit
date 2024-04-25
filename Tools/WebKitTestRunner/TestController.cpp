@@ -2304,6 +2304,20 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
         }
 #endif // ENABLE(MAC_GESTURE_EVENTS)
 
+        if (WKStringIsEqualToUTF8CString(subMessageName, "SetPageZoom")) {
+            auto* page = mainWebView()->page();
+            WKPageSetTextZoomFactor(page, 1);
+            WKPageSetPageZoomFactor(page, doubleValue(dictionary, "ZoomFactor"));
+            return completionHandler(nullptr);
+        }
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "SetTextZoom")) {
+            auto* page = mainWebView()->page();
+            WKPageSetPageZoomFactor(page, 1);
+            WKPageSetTextZoomFactor(page, doubleValue(dictionary, "ZoomFactor"));
+            return completionHandler(nullptr);
+        }
+
         ASSERT_NOT_REACHED();
     }
 

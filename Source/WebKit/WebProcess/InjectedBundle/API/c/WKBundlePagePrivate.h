@@ -57,9 +57,7 @@ WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentationForPrintin
 WK_EXPORT void WKBundlePageExecuteEditingCommand(WKBundlePageRef page, WKStringRef commandName, WKStringRef argument);
 
 WK_EXPORT double WKBundlePageGetTextZoomFactor(WKBundlePageRef page);
-WK_EXPORT void WKBundlePageSetTextZoomFactor(WKBundlePageRef page, double zoomFactor);
 WK_EXPORT double WKBundlePageGetPageZoomFactor(WKBundlePageRef page);
-WK_EXPORT void WKBundlePageSetPageZoomFactor(WKBundlePageRef page, double zoomFactor);
 
 WK_EXPORT void WKBundlePageSetScaleAtOrigin(WKBundlePageRef page, double scale, WKPoint origin);
 

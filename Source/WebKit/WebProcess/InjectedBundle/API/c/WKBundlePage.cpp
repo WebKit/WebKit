@@ -398,19 +398,9 @@ double WKBundlePageGetTextZoomFactor(WKBundlePageRef pageRef)
     return WebKit::toImpl(pageRef)->textZoomFactor();
 }
 
-void WKBundlePageSetTextZoomFactor(WKBundlePageRef pageRef, double zoomFactor)
-{
-    WebKit::toImpl(pageRef)->setTextZoomFactor(zoomFactor);
-}
-
 double WKBundlePageGetPageZoomFactor(WKBundlePageRef pageRef)
 {
     return WebKit::toImpl(pageRef)->pageZoomFactor();
-}
-
-void WKBundlePageSetPageZoomFactor(WKBundlePageRef pageRef, double zoomFactor)
-{
-    WebKit::toImpl(pageRef)->setPageZoomFactor(zoomFactor);
 }
 
 void WKBundlePageSetScaleAtOrigin(WKBundlePageRef pageRef, double scale, WKPoint origin)
