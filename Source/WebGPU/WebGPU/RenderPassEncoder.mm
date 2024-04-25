@@ -703,7 +703,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
 
         renderBundle.updateMinMaxDepths(m_minDepth, m_maxDepth);
 
-        if (!renderBundle.validateRenderPass(m_depthReadOnly, m_stencilReadOnly, m_descriptor) || !renderBundle.validatePipeline(m_pipeline.get())) {
+        if (!renderBundle.validateRenderPass(m_depthReadOnly, m_stencilReadOnly, m_descriptor, m_colorAttachmentViews, m_depthStencilView) || !renderBundle.validatePipeline(m_pipeline.get())) {
             makeInvalid(@"executeBundles: validation failed");
             return;
         }

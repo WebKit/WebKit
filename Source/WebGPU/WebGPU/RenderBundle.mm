@@ -101,7 +101,7 @@ uint64_t RenderBundle::drawCount() const
     return m_commandCount;
 }
 
-bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor& descriptor) const
+bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor& descriptor, const Vector<WeakPtr<TextureView>>& colorAttachmentViews, const WeakPtr<TextureView>& depthStencilView) const
 {
     if (depthReadOnly && !m_descriptor.depthReadOnly)
         return false;
@@ -120,24 +120,24 @@ bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, 
                 continue;
             return false;
         }
-        const auto& attachment = descriptor.colorAttachments[i];
-        if (!attachment.view) {
+        auto* attachmentView = colorAttachmentViews[i].get();
+        if (!attachmentView) {
             if (descriptorColorFormat == WGPUTextureFormat_Undefined)
                 continue;
             return false;
         }
-        auto& texture = fromAPI(attachment.view);
+        auto& texture = *attachmentView;
         if (descriptorColorFormat != texture.format())
             return false;
         defaultRasterSampleCount = texture.sampleCount();
     }
 
     if (auto* depthStencil = descriptor.depthStencilAttachment) {
-        if (!depthStencil->view) {
+        if (!depthStencilView) {
             if (m_descriptor.depthStencilFormat != WGPUTextureFormat_Undefined)
                 return false;
         } else {
-            auto& texture = fromAPI(depthStencil->view);
+            auto& texture = *depthStencilView.get();
             if (texture.format() != m_descriptor.depthStencilFormat)
                 return false;
             defaultRasterSampleCount = texture.sampleCount();
