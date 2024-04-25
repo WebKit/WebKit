@@ -139,7 +139,7 @@ static String canonicalizeTimeZoneName(const String& timeZoneName)
     } while (canonical.isNull());
     uenum_close(timeZones);
 
-    // 3. If ianaTimeZone is "Etc/UTC" or "Etc/GMT", then return "UTC".
+    // 3. If ianaTimeZone is "Etc/UTC", "Etc/GMT", or "GMT", then return "UTC".
     if (isUTCEquivalent(canonical))
         return "UTC"_s;
 

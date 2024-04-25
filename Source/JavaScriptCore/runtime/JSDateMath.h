@@ -200,7 +200,7 @@ private:
 
 ALWAYS_INLINE bool isUTCEquivalent(StringView timeZone)
 {
-    return timeZone == "Etc/UTC"_s || timeZone == "Etc/GMT"_s;
+    return timeZone == "Etc/UTC"_s || timeZone == "Etc/GMT"_s || timeZone == "GMT"_s;
 }
 
 } // namespace JSC
