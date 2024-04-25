@@ -1254,7 +1254,7 @@ public:
 
     bool platformPrefersTextLegibilityBasedZoomScaling() const;
 
-    void hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached);
+    void hardwareKeyboardAvailabilityChanged(HardwareKeyboardState);
     bool hardwareKeyboardIsAttached() const { return m_keyboardIsAttached; }
 
     void updateStringForFind(const String&);

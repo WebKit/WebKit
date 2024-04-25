@@ -5,6 +5,7 @@ install-name: /System/Library/PrivateFrameworks/GraphicsServices.framework/Graph
 current-version: 14
 exports:
 -       targets: [x86_64-tvos-simulator, arm64-tvos-simulator]
-        symbols: [_GSCurrentEventTimestamp, _GSEventIsHardwareKeyboardAttached, _GSEventSetHardwareKeyboardAttached, _GSInitialize,
+        symbols: [_GSCurrentEventTimestamp, _GSEventGetHardwareKeyboardCountry, _GSEventGetHardwareKeyboardType, _GSEventIsHardwareKeyboardAttached,
+                _GSEventSetHardwareKeyboardAttached, _GSEventSetHardwareKeyboardAttachedWithCountryCodeAndType, _GSInitialize,
                 _GSKeyboardGetModifierState, _GSSystemRootDirectory, _kGSEventHardwareKeyboardAvailabilityChangedNotification]
 ...

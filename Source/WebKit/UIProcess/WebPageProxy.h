@@ -1042,7 +1042,7 @@ public:
     void storeSelectionForAccessibility(bool);
     void startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow);
     void cancelAutoscroll();
-    void hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached);
+    void hardwareKeyboardAvailabilityChanged();
     bool isScrollingOrZooming() const { return m_isScrollingOrZooming; }
     void requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&&);
     void updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&&);
@@ -2968,10 +2968,6 @@ private:
 
     void didFinishServiceWorkerPageRegistration(bool success);
     void callLoadCompletionHandlersIfNecessary(bool success);
-
-#if PLATFORM(IOS_FAMILY)
-    static bool isInHardwareKeyboardMode();
-#endif
 
     void waitForInitialLinkDecorationFilteringData(WebFramePolicyListenerProxy&);
     void sendCachedLinkDecorationFilteringData();

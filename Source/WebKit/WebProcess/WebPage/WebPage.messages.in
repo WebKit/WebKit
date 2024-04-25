@@ -129,7 +129,7 @@ messages -> WebPage LegacyReceiver {
     StartAutoscrollAtPosition(WebCore::FloatPoint positionInWindow)
     CancelAutoscroll()
     RequestFocusedElementInformation() -> (std::optional<WebKit::FocusedElementInformation> info)
-    HardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
+    HardwareKeyboardAvailabilityChanged(struct WebKit::HardwareKeyboardState state)
     SetIsShowingInputViewForFocusedElement(bool showingInputView)
     UpdateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta) -> ()
     RequestDocumentEditingContext(struct WebKit::DocumentEditingContextRequest request) -> (struct WebKit::DocumentEditingContext response)

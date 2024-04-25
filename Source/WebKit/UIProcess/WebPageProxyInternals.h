@@ -90,6 +90,10 @@
 #include "MediaCapability.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "HardwareKeyboardState.h"
+#endif
+
 namespace WebKit {
 
 class WebPageProxyFrameLoadStateObserver;
@@ -307,6 +311,10 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 
 #if ENABLE(EXTENSION_CAPABILITIES)
     std::optional<MediaCapability> mediaCapability;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    HardwareKeyboardState hardwareKeyboardState;
 #endif
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)

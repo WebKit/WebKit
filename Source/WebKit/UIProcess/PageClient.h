@@ -535,6 +535,8 @@ public:
     virtual void scrollingNodeScrollDidEndScroll(WebCore::ScrollingNodeID) = 0;
     virtual Vector<String> mimeTypesWithCustomContentProviders() = 0;
 
+    virtual void hardwareKeyboardAvailabilityChanged() = 0;
+
     virtual void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&) = 0;
     virtual void hideInspectorHighlight() = 0;
 

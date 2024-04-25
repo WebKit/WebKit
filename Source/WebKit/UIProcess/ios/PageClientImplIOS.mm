@@ -1091,6 +1091,11 @@ void PageClientImpl::showDataDetectorsUIForPositionInformation(const Interaction
     [contentView() _showDataDetectorsUIForPositionInformation:positionInformation];
 }
 
+void PageClientImpl::hardwareKeyboardAvailabilityChanged()
+{
+    [contentView() _hardwareKeyboardAvailabilityChanged];
+}
+
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
 void PageClientImpl::didExitFullscreen()
