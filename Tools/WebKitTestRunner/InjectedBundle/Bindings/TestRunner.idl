@@ -128,11 +128,11 @@ interface TestRunner {
     undefined forceImmediateCompletion();
 
     // Printing
-    [PassContext] boolean isPageBoxVisible(long pageIndex);
+    boolean isPageBoxVisible(long pageIndex);
 
     undefined dumpAllHTTPRedirectedResponseHeaders();
 
-    [PassContext] undefined setValueForUser(object element, DOMString value);
+    undefined setValueForUser(object element, DOMString value);
 
     // UserContent testing.
     undefined addUserScript(DOMString source, boolean runAtStart, boolean allFrames);
@@ -150,10 +150,10 @@ interface TestRunner {
     // Text search testing.
     boolean findString(DOMString target, object optionsArray);
     undefined findStringMatchesInPage(DOMString target, object optionsArray);
-    [PassContext] undefined replaceFindMatchesAtIndices(object matchIndicesArray, DOMString replacementText, boolean selectionOnly);
+    undefined replaceFindMatchesAtIndices(object matchIndicesArray, DOMString replacementText, boolean selectionOnly);
 
     // Evaluating script in a special context.
-    [PassContext] undefined evaluateScriptInIsolatedWorld(unsigned long worldID, DOMString script);
+    undefined evaluateScriptInIsolatedWorld(unsigned long worldID, DOMString script);
 
     // For Web Inspector tests
     undefined showWebInspector();
@@ -163,7 +163,7 @@ interface TestRunner {
 
     undefined setPOSIXLocale(DOMString locale);
 
-    [PassContext] undefined setTextDirection(DOMString direction);
+    undefined setTextDirection(DOMString direction);
 
     undefined setWillSendRequestReturnsNull(boolean flag);
     undefined setWillSendRequestReturnsNullOnRedirect(boolean flag);
@@ -244,9 +244,9 @@ interface TestRunner {
     readonly attribute boolean isDoingMediaCapture;
 
     // Audio testing.
-    [PassContext] undefined setAudioResult(object data);
+    undefined setAudioResult(object data);
 
-    [PassContext] boolean callShouldCloseOnWebView();
+    boolean callShouldCloseOnWebView();
 
     // Work queue.
     undefined queueBackNavigation(unsigned long howFarBackward);
@@ -277,9 +277,9 @@ interface TestRunner {
     undefined setPluginSupportedMode(DOMString mode);
 
     // Hooks to the JSC compiler.
-    [PassContext] object failNextNewCodeBlock();
-    [PassContext] object numberOfDFGCompiles(object function);
-    [PassContext] object neverInlineFunction(object function);
+    object failNextNewCodeBlock();
+    object numberOfDFGCompiles(object function);
+    object neverInlineFunction(object function);
 
     // Swipe gestures
     undefined installDidBeginSwipeCallback(object callback);
@@ -377,8 +377,8 @@ interface TestRunner {
     undefined setRequestStorageAccessThrowsExceptionUntilReload(boolean enabled);
 
     // Open panel
-    [PassContext] undefined setOpenPanelFiles(object filesArray);
-    [PassContext] undefined setOpenPanelFilesMediaIcon(object mediaIcon);
+    undefined setOpenPanelFiles(object filesArray);
+    undefined setOpenPanelFilesMediaIcon(object mediaIcon);
 
     // Modal alerts
     undefined setShouldDismissJavaScriptAlertsAsynchronously(boolean value);
@@ -415,11 +415,11 @@ interface TestRunner {
 
     boolean hasAppBoundSession();
     undefined clearAppBoundSession();
-    [PassContext] undefined setAppBoundDomains(object originsArray, object callback);
+    undefined setAppBoundDomains(object originsArray, object callback);
     boolean didLoadAppInitiatedRequest();
     boolean didLoadNonAppInitiatedRequest();
 
-    [PassContext] undefined setManagedDomains(object originsArray, object callback);
+    undefined setManagedDomains(object originsArray, object callback);
 
     undefined injectUserScript(DOMString string);
     readonly attribute unsigned long userScriptInjectedCount;
@@ -456,7 +456,7 @@ interface TestRunner {
     undefined takeViewPortSnapshot(object callback);
 
     // Reporting API
-    [PassContext] undefined generateTestReport(DOMString message, DOMString group);
+    undefined generateTestReport(DOMString message, DOMString group);
 
     undefined getAndClearReportedWindowProxyAccessDomains(object callback);
     undefined flushConsoleLogs(object callback);

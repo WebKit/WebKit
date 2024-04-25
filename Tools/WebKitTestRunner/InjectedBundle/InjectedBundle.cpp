@@ -225,7 +225,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
             InjectedBundle::page()->stopLoading();
 
             setlocale(LC_ALL, "");
-            TestRunner::removeAllWebNotificationPermissions();
+            InjectedBundle::singleton().testRunner()->removeAllWebNotificationPermissions();
 
             InjectedBundle::page()->resetAfterTest();
         }

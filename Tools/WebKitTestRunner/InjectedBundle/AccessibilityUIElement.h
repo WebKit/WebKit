@@ -424,10 +424,10 @@ private:
     RetainPtr<id> attributeValueForParameter(NSString *, id) const;
     unsigned arrayAttributeCount(NSString *) const;
     RetainPtr<NSString> descriptionOfValue(id valueObject) const;
-    bool boolAttributeValue(NSString *attribute) const;
-    JSRetainPtr<JSStringRef> stringAttributeValue(NSString *attribute) const;
-    double numberAttributeValue(NSString *attribute) const;
-    bool isAttributeSettable(NSString *) const;
+    bool boolAttributeValueNS(NSString *attribute) const;
+    JSRetainPtr<JSStringRef> stringAttributeValueNS(NSString *attribute) const;
+    double numberAttributeValueNS(NSString *attribute) const;
+    bool isAttributeSettableNS(NSString *) const;
 #endif
 
 #if !PLATFORM(COCOA) && !USE(ATSPI)

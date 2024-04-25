@@ -253,6 +253,46 @@ EOF
 
 namespace WTR {
 
+template<typename MessageArgumentTypesTuple, typename MethodArgumentTypesTuple> struct MethodSignatureValidationImpl { };
+
+template<typename... MessageArgumentTypes, typename MethodArgumentType, typename... MethodArgumentTypes>
+struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<MethodArgumentType, MethodArgumentTypes...>>
+    : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes..., MethodArgumentType>, std::tuple<MethodArgumentTypes...>> { };
+
+template<typename... MessageArgumentTypes>
+struct MethodSignatureValidationImpl<std::tuple<JSContextRef, MessageArgumentTypes...>, std::tuple<>>
+    : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
+    static constexpr bool expectsContextArgument = true;
+};
+
+template<typename... MessageArgumentTypes>
+struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
+    static constexpr bool expectsContextArgument = false;
+    using MessageArguments = std::tuple<std::remove_cvref_t<MessageArgumentTypes>...>;
+};
+
+template<typename FunctionType> struct MethodSignatureValidation { 
+    static constexpr bool expectsContextArgument = false;
+};
+
+template<typename R, typename... MethodArgumentTypes>
+struct MethodSignatureValidation<R(MethodArgumentTypes...)>
+    : MethodSignatureValidationImpl<std::tuple<>, std::tuple<MethodArgumentTypes...>> { };
+
+template<typename T, typename U, typename MF, typename... Args>
+decltype(auto) callFunction(JSContextRef context, T* object, MF U::* function, Args... args)
+{
+    if constexpr (MethodSignatureValidation<MF>::expectsContextArgument) {
+        return std::apply([&](auto&&... args) {
+            return (object->*function)(std::forward<decltype(args)>(args)...);
+        }, std::tuple_cat(std::make_tuple(context), std::make_tuple(args...)));
+    } else {
+        return std::apply([&](auto&&... args) {
+            return (object->*function)(std::forward<decltype(args)>(args)...);
+        }, std::make_tuple(args...));
+    }
+}
+
 ${implementationClassName}* to${implementationClassName}(JSContextRef context, JSValueRef value)
 {
     if (!context || !value || !${className}::${classRefGetter}() || !JSValueIsObjectOfClass(context, value, ${className}::${classRefGetter}()))
@@ -327,10 +367,6 @@ EOF
 
                 $self->_includeHeaders(\%contentsIncludes, $operation->type);
 
-                if ($operation->extendedAttributes->{"PassContext"}) {
-                    push(@arguments, "context");
-                }
-
                 foreach my $i (0..$#specifiedArguments) {
                     my $argument = $specifiedArguments[$i];
 
@@ -341,7 +377,7 @@ EOF
                     push(@arguments, $self->_argumentExpression($argument));
                 }
 
-                $functionCall = "impl->" . $operation->name . "(" . join(", ", @arguments) . ")";
+                $functionCall = "callFunction(context, impl, &${implementationClassName}::" . $operation->name . (@arguments ? (", " . join(", ", @arguments)) : "") . ")";
             }
             
             push(@contents, "    ${functionCall};\n\n") if $operation->type->name eq "undefined";

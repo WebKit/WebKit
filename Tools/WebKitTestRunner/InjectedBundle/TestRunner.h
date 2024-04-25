@@ -298,12 +298,12 @@ public:
     void callExitFullscreenForElementCallback();
 
     // Web notifications.
-    static void grantWebNotificationPermission(JSStringRef origin);
-    static void denyWebNotificationPermission(JSStringRef origin);
-    static void denyWebNotificationPermissionOnPrompt(JSStringRef origin);
-    static void removeAllWebNotificationPermissions();
-    static void simulateWebNotificationClick(JSValueRef notification);
-    static void simulateWebNotificationClickForServiceWorkerNotifications();
+    void grantWebNotificationPermission(JSStringRef origin);
+    void denyWebNotificationPermission(JSStringRef origin);
+    void denyWebNotificationPermissionOnPrompt(JSStringRef origin);
+    void removeAllWebNotificationPermissions();
+    void simulateWebNotificationClick(JSValueRef notification);
+    void simulateWebNotificationClickForServiceWorkerNotifications();
 
     JSRetainPtr<JSStringRef> getBackgroundFetchIdentifier();
     void abortBackgroundFetch(JSStringRef);

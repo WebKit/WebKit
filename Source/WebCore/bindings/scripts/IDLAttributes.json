@@ -399,10 +399,6 @@
         "BypassDocumentFullyActiveCheck": {
             "contextsAllowed": ["type"]
         },
-        "PassContext": {
-            "contextsAllowed": ["operation"],
-            "notes" : "Only used by WebKitTestRunner and DumpRenderTree"
-        },
         "Plugin": {
             "contextsAllowed": ["interface"],
             "notes" : "Should only be used by elements that forward to Netscape plug-ins"

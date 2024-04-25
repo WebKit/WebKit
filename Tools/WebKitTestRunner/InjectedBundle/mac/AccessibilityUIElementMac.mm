@@ -397,7 +397,7 @@ unsigned AccessibilityUIElement::arrayAttributeCount(NSString *attributeName) co
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
 {
-    return stringAttributeValue(NSAccessibilityDOMIdentifierAttribute);
+    return stringAttributeValueNS(NSAccessibilityDOMIdentifierAttribute);
 }
 
 void AccessibilityUIElement::getLinkedUIElements(Vector<RefPtr<AccessibilityUIElement>>& elementVector)
@@ -731,10 +731,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringDescriptionOfAttributeVal
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
 {
-    return stringAttributeValue([NSString stringWithJSStringRef:attribute]);
+    return stringAttributeValueNS([NSString stringWithJSStringRef:attribute]);
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(NSString *attribute) const
+JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValueNS(NSString *attribute) const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     auto value = attributeValue(attribute);
@@ -747,10 +747,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(NSString *
 
 double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
 {
-    return numberAttributeValue([NSString stringWithJSStringRef:attribute]);
+    return numberAttributeValueNS([NSString stringWithJSStringRef:attribute]);
 }
 
-double AccessibilityUIElement::numberAttributeValue(NSString *attribute) const
+double AccessibilityUIElement::numberAttributeValueNS(NSString *attribute) const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     auto value = attributeValue(attribute);
@@ -775,7 +775,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(J
     return nullptr;
 }
 
-bool AccessibilityUIElement::boolAttributeValue(NSString *attribute) const
+bool AccessibilityUIElement::boolAttributeValueNS(NSString *attribute) const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     auto value = attributeValue(attribute);
@@ -788,7 +788,7 @@ bool AccessibilityUIElement::boolAttributeValue(NSString *attribute) const
 
 bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 {
-    return boolAttributeValue([NSString stringWithJSStringRef:attribute]);
+    return boolAttributeValueNS([NSString stringWithJSStringRef:attribute]);
 }
 
 void AccessibilityUIElement::attributeValueAsync(JSStringRef attribute, JSValueRef callback)
@@ -826,10 +826,10 @@ void AccessibilityUIElement::setValue(JSStringRef value)
 
 bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
 {
-    return isAttributeSettable([NSString stringWithJSStringRef:attribute]);
+    return isAttributeSettableNS([NSString stringWithJSStringRef:attribute]);
 }
 
-bool AccessibilityUIElement::isAttributeSettable(NSString *attribute) const
+bool AccessibilityUIElement::isAttributeSettableNS(NSString *attribute) const
 {
     bool value = false;
 
@@ -949,12 +949,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::brailleRoleDescription() const
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionStatus() const
 {
-    return stringAttributeValue(@"AXARIALive");
+    return stringAttributeValueNS(@"AXARIALive");
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionRelevant() const
 {
-    return stringAttributeValue(@"AXARIARelevant");
+    return stringAttributeValueNS(@"AXARIARelevant");
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
@@ -1098,17 +1098,17 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::lineRectsAndText() const
 
 double AccessibilityUIElement::intValue() const
 {
-    return numberAttributeValue(NSAccessibilityValueAttribute);
+    return numberAttributeValueNS(NSAccessibilityValueAttribute);
 }
 
 double AccessibilityUIElement::minValue()
 {
-    return numberAttributeValue(NSAccessibilityMinValueAttribute);
+    return numberAttributeValueNS(NSAccessibilityMinValueAttribute);
 }
 
 double AccessibilityUIElement::maxValue()
 {
-    return numberAttributeValue(NSAccessibilityMaxValueAttribute);
+    return numberAttributeValueNS(NSAccessibilityMaxValueAttribute);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::valueDescription()
@@ -1172,22 +1172,22 @@ bool AccessibilityUIElement::isDecrementActionSupported()
 
 bool AccessibilityUIElement::isAtomicLiveRegion() const
 {
-    return boolAttributeValue(@"AXARIAAtomic");
+    return boolAttributeValueNS(@"AXARIAAtomic");
 }
 
 bool AccessibilityUIElement::isBusy() const
 {
-    return boolAttributeValue(@"AXElementBusy");
+    return boolAttributeValueNS(@"AXElementBusy");
 }
 
 bool AccessibilityUIElement::isEnabled()
 {
-    return boolAttributeValue(NSAccessibilityEnabledAttribute);
+    return boolAttributeValueNS(NSAccessibilityEnabledAttribute);
 }
 
 bool AccessibilityUIElement::isRequired() const
 {
-    return boolAttributeValue(@"AXRequired");
+    return boolAttributeValueNS(@"AXRequired");
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const
@@ -1202,7 +1202,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const
 
 bool AccessibilityUIElement::isFocused() const
 {
-    return boolAttributeValue(NSAccessibilityFocusedAttribute);
+    return boolAttributeValueNS(NSAccessibilityFocusedAttribute);
 }
 
 bool AccessibilityUIElement::isSelected() const
@@ -1220,12 +1220,12 @@ bool AccessibilityUIElement::isSelectedOptionActive() const
 
 bool AccessibilityUIElement::isIndeterminate() const
 {
-    return boolAttributeValue(@"AXIsIndeterminate");
+    return boolAttributeValueNS(@"AXIsIndeterminate");
 }
 
 bool AccessibilityUIElement::isExpanded() const
 {
-    return boolAttributeValue(NSAccessibilityExpandedAttribute);
+    return boolAttributeValueNS(NSAccessibilityExpandedAttribute);
 }
 
 bool AccessibilityUIElement::isChecked() const
@@ -1236,12 +1236,12 @@ bool AccessibilityUIElement::isChecked() const
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const
 {
-    return stringAttributeValue(NSAccessibilityARIACurrentAttribute);
+    return stringAttributeValueNS(NSAccessibilityARIACurrentAttribute);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::sortDirection() const
 {
-    return stringAttributeValue(NSAccessibilitySortDirectionAttribute);
+    return stringAttributeValueNS(NSAccessibilitySortDirectionAttribute);
 }
 
 int AccessibilityUIElement::hierarchicalLevel() const
@@ -1289,7 +1289,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()
 
 bool AccessibilityUIElement::ariaIsGrabbed() const
 {
-    return boolAttributeValue(NSAccessibilityGrabbedAttribute);
+    return boolAttributeValueNS(NSAccessibilityGrabbedAttribute);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::ariaDropEffects() const
@@ -1836,12 +1836,12 @@ bool AccessibilityUIElement::removeNotificationListener()
 
 bool AccessibilityUIElement::isFocusable() const
 {
-    return isAttributeSettable(NSAccessibilityFocusedAttribute);
+    return isAttributeSettableNS(NSAccessibilityFocusedAttribute);
 }
 
 bool AccessibilityUIElement::isSelectable() const
 {
-    return isAttributeSettable(NSAccessibilitySelectedAttribute);
+    return isAttributeSettableNS(NSAccessibilitySelectedAttribute);
 }
 
 bool AccessibilityUIElement::isMultiSelectable() const
@@ -1918,12 +1918,12 @@ bool AccessibilityUIElement::isMultiLine() const
 
 bool AccessibilityUIElement::hasPopup() const
 {
-    return boolAttributeValue(@"AXHasPopup");
+    return boolAttributeValueNS(@"AXHasPopup");
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
 {
-    if (auto result = stringAttributeValue(@"AXPopupValue"))
+    if (auto result = stringAttributeValueNS(@"AXPopupValue"))
         return result;
 
     return [@"false" createJSStringRef];
@@ -1931,12 +1931,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
 
 bool AccessibilityUIElement::hasDocumentRoleAncestor() const
 {
-    return boolAttributeValue(@"AXHasDocumentRoleAncestor");
+    return boolAttributeValueNS(@"AXHasDocumentRoleAncestor");
 }
 
 bool AccessibilityUIElement::hasWebApplicationAncestor() const
 {
-    return boolAttributeValue(@"AXHasWebApplicationAncestor");
+    return boolAttributeValueNS(@"AXHasWebApplicationAncestor");
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusableAncestor()
@@ -1971,17 +1971,17 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::highestEditableAncestor()
 
 bool AccessibilityUIElement::isInDescriptionListDetail() const
 {
-    return boolAttributeValue(@"AXIsInDescriptionListDetail");
+    return boolAttributeValueNS(@"AXIsInDescriptionListDetail");
 }
 
 bool AccessibilityUIElement::isInDescriptionListTerm() const
 {
-    return boolAttributeValue(@"AXIsInDescriptionListTerm");
+    return boolAttributeValueNS(@"AXIsInDescriptionListTerm");
 }
 
 bool AccessibilityUIElement::isInCell() const
 {
-    return boolAttributeValue(@"AXIsInCell");
+    return boolAttributeValueNS(@"AXIsInCell");
 }
 
 void AccessibilityUIElement::takeFocus()
