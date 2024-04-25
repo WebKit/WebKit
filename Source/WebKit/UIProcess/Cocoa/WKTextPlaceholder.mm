@@ -26,10 +26,11 @@
 #import "config.h"
 #import "WKTextPlaceholder.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 
 #import "WKTextSelectionRect.h"
 #import <WebCore/ElementContext.h>
+#import <pal/spi/mac/NSTextInputContextSPI.h>
 
 @implementation WKTextPlaceholder {
     WebCore::ElementContext _elementContext;
@@ -48,11 +49,19 @@
     return _elementContext;
 }
 
+#if PLATFORM(IOS_FAMILY)
 - (NSArray<UITextSelectionRect *> *)rects
+#elif PLATFORM(MAC)
+- (NSArray<NSTextSelectionRect *> *)rects
+#endif
 {
+#if PLATFORM(IOS_FAMILY)
     return @[ adoptNS([[WKTextSelectionRect alloc] initWithCGRect:_elementContext.boundingRect]).get() ];
+#else
+    return @[ (NSTextSelectionRect *)adoptNS([[WKTextSelectionRect alloc] initWithCGRect:_elementContext.boundingRect]).get() ];
+#endif
 }
 
 @end
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(COCOA)

@@ -945,9 +945,6 @@ public:
         
     void setScreenIsBeingCaptured(bool);
 
-    void insertTextPlaceholder(const WebCore::IntSize&, CompletionHandler<void(const std::optional<WebCore::ElementContext>&)>&&);
-    void removeTextPlaceholder(const WebCore::ElementContext&, CompletionHandler<void()>&&);
-
     double displayedContentScale() const;
     const WebCore::FloatRect& exposedContentRect() const;
     const WebCore::FloatRect& unobscuredContentRect() const;
@@ -1067,6 +1064,11 @@ public:
     void didConcludeDrop();
 #endif
 #endif // PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(COCOA)
+    void insertTextPlaceholder(const WebCore::IntSize&, CompletionHandler<void(const std::optional<WebCore::ElementContext>&)>&&);
+    void removeTextPlaceholder(const WebCore::ElementContext&, CompletionHandler<void()>&&);
+#endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     void getTextIndicatorForID(WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);

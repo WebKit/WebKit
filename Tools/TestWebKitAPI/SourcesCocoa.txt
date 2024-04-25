@@ -247,6 +247,7 @@ Tests/WebKitCocoa/StorageQuota.mm
 Tests/WebKitCocoa/StoreBlobThenDelete.mm
 Tests/WebKitCocoa/SystemColors.mm
 Tests/WebKitCocoa/SystemPreview.mm
+Tests/WebKitCocoa/TextPlaceholderTests.mm
 Tests/WebKitCocoa/TLSDeprecation.mm
 Tests/WebKitCocoa/TabOutOfWebView.mm
 Tests/WebKitCocoa/TestAwakener.mm

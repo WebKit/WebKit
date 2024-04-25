@@ -135,8 +135,6 @@ messages -> WebPage LegacyReceiver {
     RequestDocumentEditingContext(struct WebKit::DocumentEditingContextRequest request) -> (struct WebKit::DocumentEditingContext response)
 GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType command)
     SetShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCurrentSelectionAfterInsertion)
-    InsertTextPlaceholder(WebCore::IntSize size) -> (std::optional<WebCore::ElementContext> placeholder)
-    RemoveTextPlaceholder(struct WebCore::ElementContext placeholder) -> ()
     TextInputContextsInRect(WebCore::FloatRect rect) -> (Vector<WebCore::ElementContext> contexts)
     FocusTextInputContextAndPlaceCaret(struct WebCore::ElementContext context, WebCore::IntPoint point) -> (bool success)
     ClearServiceWorkerEntitlementOverride() -> ()
@@ -375,6 +373,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidConcludeDrop()
 #endif
 
+#if PLATFORM(COCOA)
+    InsertTextPlaceholder(WebCore::IntSize size) -> (std::optional<WebCore::ElementContext> placeholder)
+    RemoveTextPlaceholder(struct WebCore::ElementContext placeholder) -> ()
+#endif
+    
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     GetTextIndicatorForID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
     UpdateTextIndicatorStyleVisibilityForID(WTF::UUID uuid, bool visible) -> ()
