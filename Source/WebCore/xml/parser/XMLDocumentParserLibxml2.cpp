@@ -474,7 +474,7 @@ static void* openFunc(const char* uri)
     if (!cachedResourceLoader)
         return &globalDescriptor;
 
-    RefPtr document = cachedResourceLoader->protectedDocument();
+    RefPtr document = cachedResourceLoader->document();
     // Same logic as Document::completeURL(). Keep them in sync.
     auto* encoding = (document && document->decoder()) ? document->decoder()->encodingForURLParsing() : nullptr;
     URL url(document ? document->fallbackBaseURL() : URL(), String::fromLatin1(uri), encoding);
