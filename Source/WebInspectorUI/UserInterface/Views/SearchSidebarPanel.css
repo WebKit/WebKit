@@ -76,3 +76,22 @@ body[dir=rtl] .sidebar > .panel.navigation.search .item.source-code-match {
 .sidebar > .panel.navigation.search.changed > :is(.content, .message-text-view) {
     top: calc(var(--navigation-bar-height) + 40px - 1px);
 }
+
+@media (prefers-color-scheme: dark) {
+    .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
+        filter: var(--filter-invert);
+    }
+
+    @media (prefers-contrast: more) {
+        .sidebar > .panel.navigation.search > .search-bar > input[type="search"] {
+            color: hsl(0, 0%, 85%);
+        }
+
+        .sidebar > .panel.navigation.search.changed > .banner {
+            color: hsl(50, 100%, 95%);
+            background-color:  hsl(13, 20%, 15%);
+            border-top: 1px solid hsl(0, 0%, 70%, 0.8);
+            border-bottom: 1px solid hsl(0, 0%, 70%, 0.8);
+        }
+    }
+}
