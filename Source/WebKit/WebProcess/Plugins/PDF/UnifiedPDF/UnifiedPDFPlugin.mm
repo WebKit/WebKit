@@ -931,6 +931,9 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
         context.scale(documentScale);
         context.clip(pageDestinationRect);
 
+        if (!asyncRenderer)
+            context.fillRect(pageDestinationRect, Color::white);
+
         // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
         // from this page's drawing origin.
         context.translate(pageDestinationRect.minXMaxYCorner());
@@ -938,8 +941,6 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
 
         if (!asyncRenderer) {
             LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: painting PDF page " << pageInfo.pageIndex << " into rect " << pageDestinationRect << " with clip " << clipRect);
-
-            context.fillRect(pageDestinationRect, Color::white);
 
             [page drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
         }
