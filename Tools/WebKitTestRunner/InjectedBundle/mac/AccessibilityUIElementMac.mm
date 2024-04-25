@@ -197,7 +197,6 @@ static id attributeValue(id element, NSString *attribute)
         @"AXKeyShortcutsValue",
         @"AXOwns",
         @"AXPopupValue",
-        @"AXRequired",
         @"AXValue",
     ];
 
