@@ -101,15 +101,24 @@ AutoInstall.register(Package('whichcraft', Version(0, 6, 1)))
 AutoInstall.register(Package('cffi', Version(1, 15, 1)))
 
 if sys.version_info > (3, 0):
+    if sys.version_info >= (3, 9):
+        AutoInstall.register(Package('OpenSSL', Version(23, 2, 0), pypi_name='pyOpenSSL'))
+    else:
+        AutoInstall.register(Package('OpenSSL', Version(20, 0, 0), pypi_name='pyOpenSSL'))
+
     # There are no prebuilt binaries for arm-32 of 'cryptography' and building it requires cargo/rust
     # Since this dep is not really needed for the current arm-32 bots we skip it instead of
     # adding the overhead of a cargo/rust toolchain into the yocto-based image the bots run.
     if not (platform.machine().startswith('arm') and platform.architecture()[0] == '32bit'):
-        # This is synced with the logic for installing pyOpenSSL at Tools/Scripts/webkitpy/autoinstalled/twisted.py
         if sys.version_info >= (3, 11):
-            AutoInstall.register(Package('cryptography', Version(40, 0, 2), wheel=True, implicit_deps=['cffi']))
+            AutoInstall.register(Package('cryptography', Version(40, 0, 2), wheel=True, implicit_deps=['cffi', 'OpenSSL']))
+        elif sys.version_info >= (3, 9):
+            AutoInstall.register(Package('cryptography', Version(38, 0, 2), wheel=True, implicit_deps=['cffi', 'OpenSSL']))
         else:
-            AutoInstall.register(Package('cryptography', Version(36, 0, 2), wheel=True, implicit_deps=['cffi']))
+            AutoInstall.register(Package('cryptography', Version(36, 0, 2), wheel=True, implicit_deps=['cffi', 'OpenSSL']))
+
+else:
+    AutoInstall.register(Package('OpenSSL', Version(17, 2, 0), pypi_name='pyOpenSSL'))
 
 if sys.version_info >= (3, 6):
     if sys.platform == 'linux':
