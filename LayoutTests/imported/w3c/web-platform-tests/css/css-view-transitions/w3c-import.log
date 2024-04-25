@@ -410,6 +410,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/paused-animation-at-end.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-computed-style-stays-in-sync-with-new-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-element-animations.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-element-overflow-hidden-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-element-overflow-hidden-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-element-overflow-hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-element-preserve-3d-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-element-preserve-3d-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-element-preserve-3d.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-get-computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-rendering-invalidation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-rendering-invalidation-ref.html
