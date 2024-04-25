@@ -220,7 +220,9 @@ static void* outputObscuredDueToInsufficientExternalProtectionContext = &outputO
 - (void)layerRequiresFlushToResumeDecodingChanged:(NSNotification *)notification
 {
     RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object, PAL::getAVSampleBufferDisplayLayerClass());
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     BOOL requiresFlush = [layer requiresFlushToResumeDecoding];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), requiresFlush] {
         if (!_layers.contains(layer.get()))

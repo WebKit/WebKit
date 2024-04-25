@@ -1724,7 +1724,9 @@ void MediaPlayerPrivateWebM::layerReadyForDisplayChanged(AVSampleBufferDisplayLa
     if (!m_videoLayer || layer != m_videoLayer->displayLayer() || !isReadyForDisplay)
         return;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto currentTime = PAL::CMTimebaseGetTime([layer timebase]);
+    ALLOW_DEPRECATED_DECLARATIONS_END
     ALWAYS_LOG(LOGIDENTIFIER, "m_isSynchronizerSeeking:", m_isSynchronizerSeeking, " layer.basetime:", PAL::toMediaTime(currentTime));
 
     setHasAvailableVideoFrame(true);

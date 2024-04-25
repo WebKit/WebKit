@@ -52,20 +52,26 @@ VideoMediaSampleRenderer::VideoMediaSampleRenderer(AVSampleBufferDisplayLayer* l
 
 VideoMediaSampleRenderer::~VideoMediaSampleRenderer()
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [m_displayLayer flush];
     [m_displayLayer stopRequestingMediaData];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (m_decompressionSession)
         m_decompressionSession->invalidate();
 }
 
 bool VideoMediaSampleRenderer::isReadyForMoreMediaData() const
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return (!m_decompressionSession || m_decompressionSession->isReadyForMoreMediaData()) && [m_displayLayer isReadyForMoreMediaData];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void VideoMediaSampleRenderer::stopRequestingMediaData()
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [m_displayLayer stopRequestingMediaData];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void VideoMediaSampleRenderer::enqueueSample(CMSampleBufferRef sample, bool displaying)
@@ -82,7 +88,9 @@ void VideoMediaSampleRenderer::enqueueSample(CMSampleBufferRef sample, bool disp
 #endif
 
     if (!m_decompressionSession) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [m_displayLayer enqueueSampleBuffer:sample];
+        ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
     m_decompressionSession->enqueueSample(sample, displaying);
@@ -113,6 +121,7 @@ void VideoMediaSampleRenderer::initializeDecompressionSession()
     if (m_decompressionSession)
         m_decompressionSession->invalidate();
     m_decompressionSession = WebCoreDecompressionSession::createOpenGL();
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     m_decompressionSession->setTimebase([m_displayLayer timebase]);
     m_decompressionSession->setResourceOwner(m_resourceOwner);
     m_decompressionSession->decodedFrameWhenAvailable([weakThis = ThreadSafeWeakPtr { *this }](RetainPtr<CMSampleBufferRef>&& sample) {
@@ -127,13 +136,16 @@ void VideoMediaSampleRenderer::initializeDecompressionSession()
             [NSNotificationCenter.defaultCenter postNotificationName:AVSampleBufferDisplayLayerFailedToDecodeNotification object:m_displayLayer.get() userInfo:userInfoDict];
         }
     });
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     resetReadyForMoreSample();
 }
 
 void VideoMediaSampleRenderer::flush()
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [m_displayLayer flush];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (m_decompressionSession)
         m_decompressionSession->flush();
 }
@@ -147,10 +159,12 @@ void VideoMediaSampleRenderer::requestMediaDataWhenReady(Function<void()>&& func
 void VideoMediaSampleRenderer::resetReadyForMoreSample()
 {
     ThreadSafeWeakPtr weakThis { *this };
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
         if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_readyForMoreSampleFunction)
             protectedThis->m_readyForMoreSampleFunction();
     }];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void VideoMediaSampleRenderer::expectMinimumUpcomingSampleBufferPresentationTime(const MediaTime& time)
