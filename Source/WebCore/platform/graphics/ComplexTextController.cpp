@@ -62,11 +62,11 @@ public:
 
     float width(unsigned from, unsigned len, SingleThreadWeakHashSet<const Font>* fallbackFonts)
     {
-        m_controller->advance(from, 0, ByWholeGlyphs, fallbackFonts);
+        m_controller->advance(from, 0, GlyphIterationStyle::ByWholeGlyphs, fallbackFonts);
         float beforeWidth = m_controller->runWidthSoFar();
         if (m_font.wordSpacing() && from && FontCascade::treatAsSpace(m_run[from]))
             beforeWidth += m_font.wordSpacing();
-        m_controller->advance(from + len, 0, ByWholeGlyphs, fallbackFonts);
+        m_controller->advance(from + len, 0, GlyphIterationStyle::ByWholeGlyphs, fallbackFonts);
         float afterWidth = m_controller->runWidthSoFar();
         return afterWidth - beforeWidth;
     }
@@ -494,7 +494,7 @@ float ComplexTextController::runWidthSoFarFraction(unsigned glyphStartOffset, un
         return 1;
     }
 
-    if (iterationStyle == ByWholeGlyphs) {
+    if (iterationStyle == GlyphIterationStyle::ByWholeGlyphs) {
         if (!oldCharacterInCurrentGlyph)
             return 1;
         return 0;

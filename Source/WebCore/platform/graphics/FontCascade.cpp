@@ -263,11 +263,11 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
     auto codePathToUse = codePath(run);
     if (codePathToUse == CodePath::Complex) {
         ComplexTextController complexIterator(*this, run, false, fallbackFonts);
-        complexIterator.advance(from, nullptr, IncludePartialGlyphs, fallbackFonts);
+        complexIterator.advance(from, nullptr, GlyphIterationStyle::IncludePartialGlyphs, fallbackFonts);
         offsetBeforeRange = complexIterator.runWidthSoFar();
-        complexIterator.advance(to, nullptr, IncludePartialGlyphs, fallbackFonts);
+        complexIterator.advance(to, nullptr, GlyphIterationStyle::IncludePartialGlyphs, fallbackFonts);
         offsetAfterRange = complexIterator.runWidthSoFar();
-        complexIterator.advance(run.length(), nullptr, IncludePartialGlyphs, fallbackFonts);
+        complexIterator.advance(run.length(), nullptr, GlyphIterationStyle::IncludePartialGlyphs, fallbackFonts);
         totalWidth = complexIterator.runWidthSoFar();
     } else {
         WidthIterator simpleIterator(*this, run, fallbackFonts);
