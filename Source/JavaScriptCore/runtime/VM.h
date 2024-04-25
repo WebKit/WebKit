@@ -828,7 +828,7 @@ public:
 
     std::unique_ptr<Profiler::Database> m_perBytecodeProfiler;
     RefPtr<TypedArrayController> m_typedArrayController;
-    RegExpCache* m_regExpCache;
+    std::unique_ptr<RegExpCache> m_regExpCache;
     BumpPointerAllocator m_regExpAllocator;
     ConcurrentJSLock m_regExpAllocatorLock;
 
@@ -869,7 +869,7 @@ public:
 
     bool hasTimeZoneChange() { return dateCache.hasTimeZoneChange(); }
 
-    RegExpCache* regExpCache() { return m_regExpCache; }
+    RegExpCache* regExpCache() { return m_regExpCache.get(); }
 
     bool isCollectorBusyOnCurrentThread() { return heap.currentThreadIsDoingGCWork(); }
 

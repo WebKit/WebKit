@@ -227,7 +227,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , emptyList(new ArgList)
     , machineCodeBytesPerBytecodeWordForBaselineJIT(makeUnique<SimpleStats>())
     , symbolImplToSymbolMap(*this)
-    , m_regExpCache(new RegExpCache(this))
+    , m_regExpCache(makeUnique<RegExpCache>())
     , m_compactVariableMap(adoptRef(*new CompactTDZEnvironmentMap))
     , m_codeCache(makeUnique<CodeCache>())
     , m_intlCache(makeUnique<IntlCache>())
@@ -507,7 +507,7 @@ VM::~VM()
         delete m_atomStringTable;
 
     delete clientData;
-    delete m_regExpCache;
+    m_regExpCache.reset();
 
 #if ENABLE(DFG_JIT)
     for (unsigned i = 0; i < m_scratchBuffers.size(); ++i)
@@ -1627,6 +1627,7 @@ void VM::visitAggregateImpl(Visitor& visitor)
     m_microtaskQueue.visitAggregate(visitor);
     numericStrings.visitAggregate(visitor);
     m_builtinExecutables->visitAggregate(visitor);
+    m_regExpCache->visitAggregate(visitor);
 
     visitor.append(structureStructure);
     visitor.append(structureRareDataStructure);
