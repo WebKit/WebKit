@@ -2500,11 +2500,6 @@ webkit.org/b/269852 imported/w3c/web-platform-tests/css/filter-effects/backdrop-
 
 webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html [ Pass Failure ]
 
-# webkit.org/b/269955 (REGRESSION (274945@main): [ MacOS ] Multiple editing/selection tests are constant failures)
-[ Ventura ] editing/selection/3690703.html  [ Failure ]
-[ Ventura ] editing/selection/3690703-2.html  [ Failure ]
-[ Ventura ] editing/selection/3690719.html  [ Failure ]
-
 # webkit.org/b/267869 Multiple queues experiencing sporadic 0.01% ImageOnlyFailures.
 [ Sonoma ] compositing/device-pixel-image-buffer-hidpi.html [ ImageOnlyFailure ] 
 [ Sonoma ] compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
