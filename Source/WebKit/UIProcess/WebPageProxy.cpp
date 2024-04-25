@@ -7483,7 +7483,8 @@ void WebPageProxy::createNewPage(WindowFeatures&& windowFeatures, NavigationActi
         privateClickMeasurement = navigationActionData.privateClickMeasurement,
         openerAppInitiatedState = WTFMove(openerAppInitiatedState),
         openerFrameID = originatingFrameInfoData.frameID,
-        hasOpener = navigationActionData.hasOpener
+        hasOpener = navigationActionData.hasOpener,
+        wantsNoOpener = windowFeatures.wantsNoOpener()
     ] (RefPtr<WebPageProxy> newPage) mutable {
         if (!newPage) {
             reply(std::nullopt, std::nullopt);
@@ -7498,6 +7499,11 @@ void WebPageProxy::createNewPage(WindowFeatures&& windowFeatures, NavigationActi
             newPage->m_openerFrame = openerFrame;
             if (RefPtr page = openerFrame->page())
                 page->addOpenedPage(*newPage);
+        }
+
+        if (RefPtr networkProcess = websiteDataStore().networkProcessIfExists()) {
+            if (!wantsNoOpener)
+                networkProcess->send(Messages::NetworkProcess::CloneSessionStorageForWebPage(sessionID(), identifier(), newPage->identifier()), 0);
         }
 
         reply(newPage->webPageID(), newPage->creationParameters(protectedProcess(), *newPage->drawingArea(), std::nullopt));

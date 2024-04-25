@@ -181,7 +181,6 @@ private:
     void connectToStorageAreaSync(IPC::Connection&, WebCore::StorageType, StorageAreaMapIdentifier, std::optional<StorageNamespaceIdentifier>, const WebCore::ClientOrigin&, CompletionHandler<void(StorageAreaIdentifier, HashMap<String, String>, uint64_t)>&&);
     void cancelConnectToStorageArea(IPC::Connection&, WebCore::StorageType, std::optional<StorageNamespaceIdentifier>, const WebCore::ClientOrigin&);
     void disconnectFromStorageArea(IPC::Connection&, StorageAreaIdentifier);
-    void cloneSessionStorageNamespace(StorageNamespaceIdentifier, StorageNamespaceIdentifier);
     void setItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&&);
     void removeItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& key, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&&);
     void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& urlString, CompletionHandler<void()>&&);
@@ -228,6 +227,7 @@ private:
     void cacheStorageClearMemoryRepresentation(const WebCore::ClientOrigin&, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&&);
     void cacheStorageRepresentation(CompletionHandler<void(String&&)>&&);
 
+    void cloneSessionStorageNamespace(StorageNamespaceIdentifier, StorageNamespaceIdentifier);
     bool shouldManageServiceWorkerRegistrationsByOrigin();
     void migrateServiceWorkerRegistrationsToOrigins();
     Vector<WebCore::ServiceWorkerScripts> updateServiceWorkerRegistrationsByOrigin(Vector<WebCore::ServiceWorkerContextData>&&, Vector<WebCore::ServiceWorkerRegistrationKey>&&);

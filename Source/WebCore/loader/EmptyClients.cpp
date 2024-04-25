@@ -513,8 +513,6 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
 
     Ref<StorageNamespace> createLocalStorageNamespace(unsigned, PAL::SessionID) final;
     Ref<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned, PAL::SessionID) final;
-
-    void copySessionStorageNamespace(Page&, Page&) final { };
     RefPtr<StorageNamespace> sessionStorageNamespace(const SecurityOrigin&, Page&, ShouldCreateNamespace) final;
 };
 

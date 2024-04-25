@@ -777,6 +777,16 @@ void NetworkStorageManager::cloneSessionStorageForWebPage(WebPageProxyIdentifier
     });
 }
 
+void NetworkStorageManager::cloneSessionStorageNamespace(StorageNamespaceIdentifier fromIdentifier, StorageNamespaceIdentifier toIdentifier)
+{
+    assertIsCurrent(workQueue());
+
+    for (auto& manager : m_originStorageManagers.values()) {
+        if (auto* sessionStorageManager = manager->existingSessionStorageManager())
+            sessionStorageManager->cloneStorageArea(fromIdentifier, toIdentifier);
+    }
+}
+
 void NetworkStorageManager::didIncreaseQuota(WebCore::ClientOrigin&& origin, QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)
 {
     ASSERT(RunLoop::isMain());
@@ -1445,16 +1455,6 @@ void NetworkStorageManager::disconnectFromStorageArea(IPC::Connection& connectio
         originStorageManager(storageArea->origin()).localStorageManager(*m_storageAreaRegistry).disconnectFromStorageArea(connection.uniqueID(), identifier);
     else
         originStorageManager(storageArea->origin()).sessionStorageManager(*m_storageAreaRegistry).disconnectFromStorageArea(connection.uniqueID(), identifier);
-}
-
-void NetworkStorageManager::cloneSessionStorageNamespace(StorageNamespaceIdentifier fromIdentifier, StorageNamespaceIdentifier toIdentifier)
-{
-    assertIsCurrent(workQueue());
-
-    for (auto& manager : m_originStorageManagers.values()) {
-        if (auto* sessionStorageManager = manager->existingSessionStorageManager())
-            sessionStorageManager->cloneStorageArea(fromIdentifier, toIdentifier);
-    }
 }
 
 void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&& completionHandler)

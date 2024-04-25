@@ -130,7 +130,7 @@ RefPtr<StorageNamespace> WebStorageNamespaceProvider::sessionStorageNamespace(co
     return sessionStorageNamespaceIt->value;
 }
 
-void WebStorageNamespaceProvider::copySessionStorageNamespace(WebCore::Page& srcPage, WebCore::Page& dstPage)
+void WebStorageNamespaceProvider::cloneSessionStorageNamespaceForPage(WebCore::Page& srcPage, WebCore::Page& dstPage)
 {
     ASSERT(sessionStorageQuota() != WebCore::StorageMap::noQuota);
 

@@ -2080,7 +2080,7 @@ struct WebCore::WindowFeatures {
 
     std::optional<bool> fullscreen;
     std::optional<bool> dialog;
-    [NotSerialized] std::optional<bool> noopener;
+    std::optional<bool> noopener;
     [NotSerialized] std::optional<bool> noreferrer;
 
     [NotSerialized] Vector<String> additionalFeatures;

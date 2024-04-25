@@ -102,6 +102,8 @@
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextRecognitionOptions.h>
 
+#include <WebCore/WindowFeatures.h>
+
 #if HAVE(WEBGPU_IMPLEMENTATION)
 #import <WebCore/WebGPUCreateImpl.h>
 #endif

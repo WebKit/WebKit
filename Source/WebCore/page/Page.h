@@ -863,7 +863,7 @@ public:
     Ref<CookieJar> protectedCookieJar() const;
 
     StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
-    Ref<StorageNamespaceProvider> protectedStorageNamespaceProvider() const;
+    WEBCORE_EXPORT Ref<StorageNamespaceProvider> protectedStorageNamespaceProvider() const;
 
     PluginInfoProvider& pluginInfoProvider();
     Ref<PluginInfoProvider> protectedPluginInfoProvider() const;

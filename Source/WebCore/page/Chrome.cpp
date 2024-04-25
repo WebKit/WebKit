@@ -211,11 +211,6 @@ RefPtr<Page> Chrome::createWindow(LocalFrame& frame, const WindowFeatures& featu
     if (!newPage)
         return nullptr;
 
-    if (!features.wantsNoOpener()) {
-        Ref page = m_page.get();
-        page->protectedStorageNamespaceProvider()->copySessionStorageNamespace(page, *newPage);
-    }
-
     return newPage;
 }
 
