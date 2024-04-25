@@ -1,0 +1,32 @@
+
+
+
+FAIL setAttribute and setAttributeNode respect the element's node document's global's CSP;
+ Element=iframe; Parent=div; Attribute=srcdoc assert_throws_js: function "() => {
+                  sourceElement.setAttributeNode(sourceAttr);
+                }" did not throw
+FAIL setAttribute and setAttributeNode respect the element's node document's global's CSP;
+ Element=embed; Parent=div; Attribute=src assert_throws_js: function "() => {
+                  sourceElement.setAttributeNode(sourceAttr);
+                }" did not throw
+FAIL setAttribute and setAttributeNode respect the element's node document's global's CSP;
+ Element=script; Parent=div; Attribute=src assert_throws_js: function "() => {
+                  sourceElement.setAttributeNode(sourceAttr);
+                }" did not throw
+FAIL setAttribute and setAttributeNode respect the element's node document's global's CSP;
+ Element=object; Parent=div; Attribute=data assert_throws_js: function "() => {
+                  sourceElement.setAttributeNode(sourceAttr);
+                }" did not throw
+FAIL setAttribute and setAttributeNode respect the element's node document's global's CSP;
+ Element=object; Parent=div; Attribute=codebase assert_throws_js: function "() => {
+                  sourceElement.setAttributeNode(sourceAttr);
+                }" did not throw
+FAIL setAttribute and setAttributeNode respect the element's node document's global's CSP;
+ Element=script; Parent=svg; Attribute=href assert_throws_js: function "() => {
+                  sourceElement.setAttributeNode(sourceAttr);
+                }" did not throw
+FAIL setAttribute and setAttributeNode respect the element's node document's global's CSP;
+ Element=script; Parent=svg; Attribute=xlink:href assert_throws_js: function "() => {
+                  sourceElement.setAttributeNode(sourceAttr);
+                }" did not throw
+
