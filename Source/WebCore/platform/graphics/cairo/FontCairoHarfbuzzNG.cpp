@@ -110,7 +110,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
 
     char32_t character;
     unsigned clusterLength = 0;
-    SurrogatePairAwareTextIterator iterator(characters.data(), 0, length, length);
+    SurrogatePairAwareTextIterator iterator(characters, 0, length);
     if (!iterator.consume(character, clusterLength))
         return nullptr;
 

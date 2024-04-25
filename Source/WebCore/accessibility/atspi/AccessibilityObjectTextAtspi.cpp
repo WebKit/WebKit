@@ -238,7 +238,7 @@ static Vector<unsigned, 128> offsetMapping(const String& text)
         return { };
 
     Vector<unsigned, 128> offsets;
-    SurrogatePairAwareTextIterator iterator(text.characters16(), 0, text.length(), text.length());
+    SurrogatePairAwareTextIterator iterator(text.span16(), 0, text.length());
     char32_t character;
     unsigned clusterLength = 0;
     unsigned i;

@@ -297,13 +297,13 @@ void ComplexTextController::collectComplexTextRuns()
 
     // We break up glyph run generation for the string by Font.
 
-    const UChar* baseOfString = [&] {
+    std::span<const UChar> baseOfString = [&] {
         // We need a 16-bit string to pass to Core Text.
         if (!m_run.is8Bit())
-            return m_run.characters16();
+            return m_run.span16();
         String stringConvertedTo16Bit = m_run.textAsString();
         stringConvertedTo16Bit.convertTo16Bit();
-        auto characters = stringConvertedTo16Bit.characters16();
+        auto characters = stringConvertedTo16Bit.span16();
         m_stringsFor8BitRuns.append(WTFMove(stringConvertedTo16Bit));
         return characters;
     }();
@@ -332,7 +332,7 @@ void ComplexTextController::collectComplexTextRuns()
     // We don't perform font fallback on the capitalized characters when small caps is synthesized.
     // We may want to change this code to do so in the future; if we do, then the logic in initiateFontLoadingByAccessingGlyphDataIfApplicable()
     // would need to be updated accordingly too.
-    nextFont = m_font.fontForCombiningCharacterSequence(std::span { baseOfString, currentIndex });
+    nextFont = m_font.fontForCombiningCharacterSequence(baseOfString.first(currentIndex));
 
     bool isSmallCaps = false;
     bool nextIsSmallCaps = false;
@@ -372,7 +372,7 @@ void ComplexTextController::collectComplexTextRuns()
             }
         }
 
-        nextFont = m_font.fontForCombiningCharacterSequence(std::span { baseOfString + previousIndex, currentIndex - previousIndex });
+        nextFont = m_font.fontForCombiningCharacterSequence(baseOfString.subspan(previousIndex, currentIndex - previousIndex));
 
         capitalizedBase = capitalized(baseCharacter);
         if (!synthesizedFont && shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
@@ -390,11 +390,11 @@ void ComplexTextController::collectComplexTextRuns()
                 unsigned itemStart = indexOfFontTransition;
                 if (synthesizedFont) {
                     if (isSmallCaps)
-                        collectComplexTextRunsForCharacters(m_smallCapsBuffer.data() + itemStart, itemLength, itemStart, smallSynthesizedFont);
+                        collectComplexTextRunsForCharacters(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont);
                     else
-                        collectComplexTextRunsForCharacters(baseOfString + itemStart, itemLength, itemStart, synthesizedFont);
+                        collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont);
                 } else
-                    collectComplexTextRunsForCharacters(baseOfString + itemStart, itemLength, itemStart, font);
+                    collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, font);
                 if (nextFont != font) {
                     synthesizedFont = nullptr;
                     smallSynthesizedFont = nullptr;
@@ -411,11 +411,11 @@ void ComplexTextController::collectComplexTextRuns()
         unsigned itemStart = indexOfFontTransition;
         if (synthesizedFont) {
             if (nextIsSmallCaps)
-                collectComplexTextRunsForCharacters(m_smallCapsBuffer.data() + itemStart, itemLength, itemStart, smallSynthesizedFont);
+                collectComplexTextRunsForCharacters(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont);
             else
-                collectComplexTextRunsForCharacters(baseOfString + itemStart, itemLength, itemStart, synthesizedFont);
+                collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont);
         } else
-            collectComplexTextRunsForCharacters(baseOfString + itemStart, itemLength, itemStart, nextFont);
+            collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, nextFont);
     }
 
     if (!m_run.ltr())

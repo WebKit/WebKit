@@ -1268,10 +1268,11 @@ static GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const Gly
         return GlyphUnderlineType::SkipDescenders;
     
     if (textRun.is8Bit())
-        baseCharacter = textRun.characters8()[offsetInString.value()];
-    else
-        U16_GET(textRun.characters16(), 0, static_cast<unsigned>(offsetInString.value()), textRun.length(), baseCharacter);
-    
+        baseCharacter = textRun.span8()[offsetInString.value()];
+    else {
+        auto characters = textRun.span16();
+        U16_GET(characters, 0, static_cast<unsigned>(offsetInString.value()), characters.size(), baseCharacter);
+    }
     // u_getIntPropertyValue with UCHAR_IDEOGRAPHIC doesn't return true for Japanese or Korean codepoints.
     // Instead, we can use the "Unicode allocation block" for the character.
     UBlockCode blockCode = ublock_getCode(baseCharacter);

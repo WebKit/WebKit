@@ -801,13 +801,13 @@ void WidthIterator::advance(unsigned offset, GlyphBuffer& glyphBuffer)
     float startingRunWidth = m_runWidthSoFar;
 
     if (m_run->is8Bit()) {
-        Latin1TextIterator textIterator(m_run->data8(m_currentCharacterIndex), m_currentCharacterIndex, offset, length);
+        Latin1TextIterator textIterator(m_run->subspan8(m_currentCharacterIndex), m_currentCharacterIndex, offset);
         advanceInternal(textIterator, glyphBuffer);
     } else {
 #if USE(CLUSTER_AWARE_WIDTH_ITERATOR)
-        ComposedCharacterClusterTextIterator textIterator(m_run->span16(m_currentCharacterIndex), m_currentCharacterIndex, offset);
+        ComposedCharacterClusterTextIterator textIterator(m_run->subspan16(m_currentCharacterIndex), m_currentCharacterIndex, offset);
 #else
-        SurrogatePairAwareTextIterator textIterator(m_run->data16(m_currentCharacterIndex), m_currentCharacterIndex, offset, length);
+        SurrogatePairAwareTextIterator textIterator(m_run->subspan16(m_currentCharacterIndex), m_currentCharacterIndex, offset);
 #endif
         advanceInternal(textIterator, glyphBuffer);
     }

@@ -154,7 +154,7 @@ private:
 
     void collectComplexTextRuns();
 
-    void collectComplexTextRunsForCharacters(const UChar*, unsigned length, unsigned stringLocation, const Font*);
+    void collectComplexTextRunsForCharacters(std::span<const UChar>, unsigned stringLocation, const Font*);
     void adjustGlyphsAndAdvances();
 
     unsigned indexOfCurrentRun(unsigned& leftmostGlyph);

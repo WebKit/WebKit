@@ -170,11 +170,11 @@ TextUtil::FallbackFontList TextUtil::fallbackFontsForText(StringView textContent
             return;
 
         if (textRun.is8Bit()) {
-            auto textIterator = Latin1TextIterator { textRun.data8(0), 0, textRun.length(), textRun.length() };
+            Latin1TextIterator textIterator { textRun.span8(), 0, textRun.length() };
             fallbackFontsForRunWithIterator(fallbackFonts, style.fontCascade(), textRun, textIterator);
             return;
         }
-        auto textIterator = SurrogatePairAwareTextIterator { textRun.data16(0), 0, textRun.length(), textRun.length() };
+        SurrogatePairAwareTextIterator textIterator { textRun.span16(), 0, textRun.length() };
         fallbackFontsForRunWithIterator(fallbackFonts, style.fontCascade(), textRun, textIterator);
     };
 
@@ -220,10 +220,10 @@ TextUtil::EnclosingAscentDescent TextUtil::enclosingGlyphBoundsForText(StringVie
         return { };
 
     if (textContent.is8Bit()) {
-        auto textIterator = Latin1TextIterator { textContent.span8().data(), 0, textContent.length(), textContent.length() };
+        Latin1TextIterator textIterator { textContent.span8(), 0, textContent.length() };
         return enclosingGlyphBoundsForRunWithIterator(style.fontCascade(), !style.isLeftToRightDirection(), textIterator);
     }
-    auto textIterator = SurrogatePairAwareTextIterator { textContent.span16().data(), 0, textContent.length(), textContent.length() };
+    SurrogatePairAwareTextIterator textIterator { textContent.span16(), 0, textContent.length() };
     return enclosingGlyphBoundsForRunWithIterator(style.fontCascade(), !style.isLeftToRightDirection(), textIterator);
 }
 
