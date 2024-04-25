@@ -143,8 +143,4 @@ void webkitWebViewBaseToplevelWindowMonitorChanged(WebKitWebViewBase*, GdkMonito
 
 void webkitWebViewBaseCallAfterNextPresentationUpdate(WebKitWebViewBase*, CompletionHandler<void()>&&);
 
-#if USE(GTK4)
-void webkitWebViewBaseSetPlugID(WebKitWebViewBase*, const String&);
-#endif
-
 WebKit::RendererBufferFormat webkitWebViewBaseGetRendererBufferFormat(WebKitWebViewBase*);
