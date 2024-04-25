@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +58,10 @@ private:
 
     bool is2d() const final { return true; }
     const FontProxy* fontProxy() final;
+
+    std::optional<FilterOperations> setFilterStringWithoutUpdatingStyle(const String&) override;
+    RefPtr<Filter> createFilter(const Function<FloatRect()>& boundsProvider) const override;
+    IntOutsets calculateFilterOutsets(const FloatRect& bounds) const override;
 
     void setFontWithoutUpdatingStyle(const String&);
 
