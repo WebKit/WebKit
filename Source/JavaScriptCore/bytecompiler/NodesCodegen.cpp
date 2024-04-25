@@ -592,6 +592,13 @@ void PropertyListNode::emitDeclarePrivateFieldNames(BytecodeGenerator& generator
     }
 }
 
+static ALWAYS_INLINE bool needsHomeObject(ExpressionNode* node)
+{
+    if (node->isBaseFuncExprNode())
+        return static_cast<BaseFuncExprNode*>(node)->metadata()->superBinding() == SuperBinding::Needed;
+    return false;
+}
+
 RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dstOrConstructor, RegisterID* prototype, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>* instanceElementDefinitions, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>* staticElementDefinitions)
 {
     auto makeClassElementDefinition = [](const PropertyListNode* p) {
@@ -768,8 +775,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             }
 
             RefPtr<RegisterID> value = generator.emitNode(node->m_assign);
-            bool needsSuperBinding = node->needsSuperBinding();
-            if (needsSuperBinding)
+            if (needsHomeObject(node->m_assign))
                 emitPutHomeObject(generator, value.get(), dst);
 
             unsigned attributes = node->isClassProperty() ? (PropertyAttribute::Accessor | PropertyAttribute::DontEnum) : static_cast<unsigned>(PropertyAttribute::Accessor);
@@ -833,9 +839,10 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                     getterReg = generator.emitLoad(nullptr, jsUndefined());
             }
 
-            ASSERT(!pair.second || needsSuperBinding == pair.second->needsSuperBinding());
-            if (needsSuperBinding && pair.second)
-                emitPutHomeObject(generator, secondReg, dst);
+            if (pair.second) {
+                if (needsHomeObject(pair.second->m_assign))
+                    emitPutHomeObject(generator, secondReg, dst);
+            }
 
             generator.emitPutGetterSetter(dst, *node->name(), attributes, getterReg.get(), setterReg.get());
         }
@@ -867,7 +874,7 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
     }
 
     RefPtr<RegisterID> value = generator.emitNode(node.m_assign);
-    if (node.needsSuperBinding())
+    if (needsHomeObject(node.m_assign))
         emitPutHomeObject(generator, value.get(), newObj);
 
     if (node.isClassProperty()) {

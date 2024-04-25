@@ -1971,23 +1971,6 @@ private:
             || (*m_token.m_data.ident == m_vm.propertyNames->awaitKeyword && canUseIdentifierAwait())
             || (*m_token.m_data.ident == m_vm.propertyNames->yieldKeyword && canUseIdentifierYield());
     }
-    
-    ALWAYS_INLINE SuperBinding adjustSuperBindingForBaseConstructor(ConstructorKind constructorKind, SuperBinding superBinding, ScopeRef functionScope)
-    {
-        return adjustSuperBindingForBaseConstructor(constructorKind, superBinding, functionScope->needsSuperBinding(), functionScope->usesEval(), functionScope->innerArrowFunctionFeatures());
-    }
-    
-    ALWAYS_INLINE SuperBinding adjustSuperBindingForBaseConstructor(ConstructorKind constructorKind, SuperBinding superBinding, bool scopeNeedsSuperBinding, bool currentScopeUsesEval, InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures)
-    {
-        SuperBinding methodSuperBinding = superBinding;
-        
-        if (constructorKind == ConstructorKind::Base) {
-            bool isSuperUsedInInnerArrowFunction = innerArrowFunctionFeatures & SuperPropertyInnerArrowFunctionFeature;
-            methodSuperBinding = (scopeNeedsSuperBinding || isSuperUsedInInnerArrowFunction || currentScopeUsesEval) ? SuperBinding::Needed : SuperBinding::NotNeeded;
-        }
-        
-        return methodSuperBinding;
-    }
 
     const char* disallowedIdentifierLetReason()
     {
