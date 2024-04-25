@@ -32,15 +32,8 @@
 
 #if HAVE(NSTEXTPLACEHOLDER_RECTS)
 // Staging for rdar://126696059
-@interface NSTextSelectionRect : NSObject
-@property (nonatomic, readonly) NSRect rect;
-@property (nonatomic, readonly) NSWritingDirection writingDirection;
-@property (nonatomic, readonly) BOOL isVertical;
-@property (nonatomic, readonly) NSAffineTransform *transform;
-@end
-
 @interface NSTextPlaceholder (staging_126696059)
-@property (nonatomic, readonly) NSArray<NSTextSelectionRect *> *rects;
+@property (nonatomic, readonly) NSArray *rects;
 @end
 
 @protocol NSTextInputClient_Async_staging_126696059

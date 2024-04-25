@@ -59,7 +59,6 @@ OBJC_CLASS NSMenu;
 OBJC_CLASS NSPopover;
 OBJC_CLASS NSTextInputContext;
 OBJC_CLASS NSTextPlaceholder;
-OBJC_CLASS NSTextSelectionRect;
 OBJC_CLASS NSView;
 OBJC_CLASS QLPreviewPanel;
 OBJC_CLASS WKAccessibilitySettingsObserver;
