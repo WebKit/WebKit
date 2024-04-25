@@ -1036,6 +1036,11 @@ static GstPadProbeReturn webkitMediaStreamSrcPadProbeCb(GstPad* pad, GstPadProbe
             return GST_PAD_PROBE_REMOVE;
         }
 
+        if (data->sourceType == RealtimeMediaSource::Type::Video) {
+            GST_DEBUG_OBJECT(self, "Requesting a key-frame");
+            gst_pad_send_event(pad, gst_video_event_new_upstream_force_key_unit(GST_CLOCK_TIME_NONE, TRUE, 1));
+        }
+
         auto* streamStart = gst_event_new_stream_start(data->trackId.get());
         gst_event_set_group_id(streamStart, 1);
         gst_pad_push_event(pad, streamStart);
