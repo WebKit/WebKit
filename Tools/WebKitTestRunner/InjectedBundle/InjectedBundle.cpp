@@ -246,36 +246,8 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "CallAddChromeInputFieldCallback")) {
-        m_testRunner->callAddChromeInputFieldCallback();
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "CallRemoveChromeInputFieldCallback")) {
         m_testRunner->callRemoveChromeInputFieldCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallSetTextInChromeInputFieldCallback")) {
-        m_testRunner->callSetTextInChromeInputFieldCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallSelectChromeInputFieldCallback")) {
-        m_testRunner->callSelectChromeInputFieldCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallGetSelectedTextInChromeInputFieldCallback")) {
-        ASSERT(messageBody);
-        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
-        auto jsString = toJS(static_cast<WKStringRef>(messageBody));
-        m_testRunner->callGetSelectedTextInChromeInputFieldCallback(jsString.get());
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallFocusWebViewCallback")) {
-        m_testRunner->callFocusWebViewCallback();
         return;
     }
 
@@ -301,24 +273,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
 
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidRemoveSwipeSnapshotCallback")) {
         m_testRunner->callDidRemoveSwipeSnapshotCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidReceiveLoadedSubresourceDomains")) {
-        ASSERT(messageBody);
-        ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
-
-        WKArrayRef domainsArray = static_cast<WKArrayRef>(messageBody);
-        auto size = WKArrayGetSize(domainsArray);
-        Vector<String> domains;
-        domains.reserveInitialCapacity(size);
-        for (size_t i = 0; i < size; ++i) {
-            auto item = WKArrayGetItemAtIndex(domainsArray, i);
-            if (item && WKGetTypeID(item) == WKStringGetTypeID())
-                domains.append(toWTFString(static_cast<WKStringRef>(item)));
-        }
-
-        m_testRunner->callDidReceiveLoadedSubresourceDomainsCallback(WTFMove(domains));
         return;
     }
 
@@ -359,11 +313,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
 
     if (WKStringIsEqualToUTF8CString(messageName, "WebsiteDataScanForRegistrableDomainsFinished")) {
         m_testRunner->statisticsDidScanDataRecordsCallback();
-        return;
-    }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "DidGetApplicationManifest")) {
-        m_testRunner->didGetApplicationManifest();
         return;
     }
 
@@ -549,35 +498,9 @@ void InjectedBundle::postNewBeforeUnloadReturnValue(bool value)
     postPageMessage("BeforeUnloadReturnValue", value);
 }
 
-void InjectedBundle::postAddChromeInputField()
-{
-    postPageMessage("AddChromeInputField");
-}
-
 void InjectedBundle::postRemoveChromeInputField()
 {
     postPageMessage("RemoveChromeInputField");
-}
-
-void InjectedBundle::postSetTextInChromeInputField(const String& text)
-{
-    auto wkText = toWK(text);
-    postPageMessage("SetTextInChromeInputField", wkText.get());
-}
-
-void InjectedBundle::postSelectChromeInputField()
-{
-    postPageMessage("SelectChromeInputField");
-}
-
-void InjectedBundle::postGetSelectedTextInChromeInputField()
-{
-    postPageMessage("GetSelectedTextInChromeInputField");
-}
-
-void InjectedBundle::postFocusWebView()
-{
-    postPageMessage("FocusWebView");
 }
 
 void InjectedBundle::postSetBackingScaleFactor(double backingScaleFactor)

@@ -378,7 +378,7 @@ interface TestRunner {
 
     // Open panel
     [PassContext] undefined setOpenPanelFiles(object filesArray);
-    undefined setOpenPanelFilesMediaIcon(object mediaIcon);
+    [PassContext] undefined setOpenPanelFilesMediaIcon(object mediaIcon);
 
     // Modal alerts
     undefined setShouldDismissJavaScriptAlertsAsynchronously(boolean value);

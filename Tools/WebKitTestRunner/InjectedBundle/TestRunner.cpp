@@ -605,12 +605,7 @@ static CallbackMap& callbackMap()
 }
 
 enum {
-    AddChromeInputFieldCallbackID = 1,
-    RemoveChromeInputFieldCallbackID,
-    SetTextInChromeInputFieldCallbackID,
-    SelectChromeInputFieldCallbackID,
-    GetSelectedTextInChromeInputFieldCallbackID,
-    FocusWebViewCallbackID,
+    RemoveChromeInputFieldCallbackID = 1,
     SetBackingScaleFactorCallbackID,
     DidBeginSwipeCallbackID,
     WillEndSwipeCallbackID,
@@ -618,9 +613,7 @@ enum {
     DidRemoveSwipeSnapshotCallbackID,
     StatisticsDidModifyDataRecordsCallbackID,
     StatisticsDidScanDataRecordsCallbackID,
-    LoadedSubresourceDomainsCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
-    GetApplicationManifestCallbackID,
     TextDidChangeInTextFieldCallbackID,
     TextFieldDidBeginEditingCallbackID,
     TextFieldDidEndEditingCallbackID,
@@ -673,8 +666,7 @@ void TestRunner::accummulateLogsForChannel(JSStringRef)
 
 void TestRunner::addChromeInputField(JSValueRef callback)
 {
-    cacheTestRunnerCallback(AddChromeInputFieldCallbackID, callback);
-    InjectedBundle::singleton().postAddChromeInputField();
+    postMessageWithAsyncReply("AddChromeInputField", callback);
 }
 
 void TestRunner::removeChromeInputField(JSValueRef callback)
@@ -685,26 +677,22 @@ void TestRunner::removeChromeInputField(JSValueRef callback)
 
 void TestRunner::setTextInChromeInputField(JSStringRef text, JSValueRef callback)
 {
-    cacheTestRunnerCallback(SetTextInChromeInputFieldCallbackID, callback);
-    InjectedBundle::singleton().postSetTextInChromeInputField(toWTFString(text));
+    postMessageWithAsyncReply("SetTextInChromeInputField", toWK(text), callback);
 }
 
 void TestRunner::selectChromeInputField(JSValueRef callback)
 {
-    cacheTestRunnerCallback(SelectChromeInputFieldCallbackID, callback);
-    InjectedBundle::singleton().postSelectChromeInputField();
+    postMessageWithAsyncReply("SelectChromeInputField", callback);
 }
 
 void TestRunner::getSelectedTextInChromeInputField(JSValueRef callback)
 {
-    cacheTestRunnerCallback(GetSelectedTextInChromeInputFieldCallbackID, callback);
-    InjectedBundle::singleton().postGetSelectedTextInChromeInputField();
+    postMessageWithAsyncReply("GetSelectedTextInChromeInputField", callback);
 }
 
 void TestRunner::focusWebView(JSValueRef callback)
 {
-    cacheTestRunnerCallback(FocusWebViewCallbackID, callback);
-    InjectedBundle::singleton().postFocusWebView();
+    postMessageWithAsyncReply("FocusWebView", callback);
 }
 
 void TestRunner::setBackingScaleFactor(double backingScaleFactor, JSValueRef callback)
@@ -723,35 +711,9 @@ void TestRunner::setViewSize(double width, double height)
     InjectedBundle::singleton().postSetViewSize(width, height);
 }
 
-void TestRunner::callAddChromeInputFieldCallback()
-{
-    callTestRunnerCallback(AddChromeInputFieldCallbackID);
-}
-
 void TestRunner::callRemoveChromeInputFieldCallback()
 {
     callTestRunnerCallback(RemoveChromeInputFieldCallbackID);
-}
-
-void TestRunner::callSetTextInChromeInputFieldCallback()
-{
-    callTestRunnerCallback(SetTextInChromeInputFieldCallbackID);
-}
-
-void TestRunner::callSelectChromeInputFieldCallback()
-{
-    callTestRunnerCallback(SelectChromeInputFieldCallbackID);
-}
-
-void TestRunner::callGetSelectedTextInChromeInputFieldCallback(JSStringRef text)
-{
-    auto textValue = JSValueMakeString(mainFrameJSContext(), text);
-    callTestRunnerCallback(GetSelectedTextInChromeInputFieldCallbackID, 1, &textValue);
-}
-
-void TestRunner::callFocusWebViewCallback()
-{
-    callTestRunnerCallback(FocusWebViewCallbackID);
 }
 
 void TestRunner::callSetBackingScaleFactorCallback()
@@ -1658,19 +1620,6 @@ void TestRunner::getAllStorageAccessEntries(JSValueRef callback)
     postMessageWithAsyncReply("GetAllStorageAccessEntries", callback);
 }
 
-static JSValueRef makeDomainsValue(const Vector<String>& domains)
-{
-    StringBuilder builder;
-    builder.append('[');
-    bool firstDomain = true;
-    for (auto& domain : domains) {
-        builder.append(firstDomain ? "\"" : ", \"", domain, '"');
-        firstDomain = false;
-    }
-    builder.append(']');
-    return JSValueMakeFromJSONString(mainFrameJSContext(), createJSString(builder.toString().utf8().data()).get());
-}
-
 void TestRunner::setRequestStorageAccessThrowsExceptionUntilReload(bool enabled)
 {
     postSynchronousPageMessage("SetRequestStorageAccessThrowsExceptionUntilReload", enabled);
@@ -1678,19 +1627,12 @@ void TestRunner::setRequestStorageAccessThrowsExceptionUntilReload(bool enabled)
 
 void TestRunner::loadedSubresourceDomains(JSValueRef callback)
 {
-    cacheTestRunnerCallback(LoadedSubresourceDomainsCallbackID, callback);
-    postMessage("LoadedSubresourceDomains");
+    postMessageWithAsyncReply("LoadedSubresourceDomains", callback);
 }
 
 void TestRunner::reloadFromOrigin()
 {
     InjectedBundle::singleton().reloadFromOrigin();
-}
-
-void TestRunner::callDidReceiveLoadedSubresourceDomainsCallback(Vector<String>&& domains)
-{
-    auto result = makeDomainsValue(domains);
-    callTestRunnerCallback(LoadedSubresourceDomainsCallbackID, 1, &result);
 }
 
 void TestRunner::addMockMediaDevice(JSStringRef persistentId, JSStringRef label, const char* type, WKDictionaryRef properties)
@@ -1896,13 +1838,14 @@ void TestRunner::setOpenPanelFiles(JSContextRef context, JSValueRef filesValue)
     postPageMessage("SetOpenPanelFileURLs", fileURLs);
 }
 
-void TestRunner::setOpenPanelFilesMediaIcon(JSValueRef data)
+void TestRunner::setOpenPanelFilesMediaIcon(JSContextRef context, JSValueRef data)
 {
 #if PLATFORM(IOS_FAMILY)
     // FIXME (123058): Use a JSC API to get buffer contents once such is exposed.
-    auto iconData = adoptWK(WKBundleCreateWKDataFromUInt8Array(InjectedBundle::singleton().bundle(), mainFrameJSContext(), data));
+    auto iconData = adoptWK(WKBundleCreateWKDataFromUInt8Array(InjectedBundle::singleton().bundle(), context, data));
     postPageMessage("SetOpenPanelFileURLsMediaIcon", iconData);
 #else
+    UNUSED_PARAM(context);
     UNUSED_PARAM(data);
 #endif
 }
@@ -1955,13 +1898,7 @@ void TestRunner::setOriginQuotaRatioEnabled(bool enabled)
 
 void TestRunner::getApplicationManifestThen(JSValueRef callback)
 {
-    cacheTestRunnerCallback(GetApplicationManifestCallbackID, callback);
-    postMessage("GetApplicationManifest");
-}
-
-void TestRunner::didGetApplicationManifest()
-{
-    callTestRunnerCallback(GetApplicationManifestCallbackID);
+    postMessageWithAsyncReply("GetApplicationManifest", callback);
 }
 
 void TestRunner::installFakeHelvetica(JSStringRef configuration)

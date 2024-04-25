@@ -279,14 +279,8 @@ public:
 
     void setViewSize(double width, double height);
 
-    void callAddChromeInputFieldCallback();
     void callRemoveChromeInputFieldCallback();
-    void callFocusWebViewCallback();
     void callSetBackingScaleFactorCallback();
-
-    void callSetTextInChromeInputFieldCallback();
-    void callSelectChromeInputFieldCallback();
-    void callGetSelectedTextInChromeInputFieldCallback(JSStringRef);
 
     static void overridePreference(JSStringRef preference, JSStringRef value);
 
@@ -466,7 +460,6 @@ public:
     void statisticsSetThirdPartyCNAMEDomain(JSStringRef cnameURLString, JSValueRef completionHandler);
     void statisticsResetToConsistentState(JSValueRef completionHandler);
     void loadedSubresourceDomains(JSValueRef callback);
-    void callDidReceiveLoadedSubresourceDomainsCallback(Vector<String>&& domains);
 
     // Injected bundle form client.
     void installTextDidChangeInTextFieldCallback(JSValueRef callback);
@@ -482,7 +475,7 @@ public:
 
     // Open panel
     void setOpenPanelFiles(JSContextRef, JSValueRef);
-    void setOpenPanelFilesMediaIcon(JSValueRef);
+    void setOpenPanelFilesMediaIcon(JSContextRef, JSValueRef);
 
     // Modal alerts
     void setShouldDismissJavaScriptAlertsAsynchronously(bool);
@@ -497,7 +490,6 @@ public:
     void callDidRemoveAllSessionCredentialsCallback();
     
     void getApplicationManifestThen(JSValueRef);
-    void didGetApplicationManifest();
 
     void installFakeHelvetica(JSStringRef configuration);
 

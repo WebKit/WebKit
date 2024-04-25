@@ -1952,9 +1952,15 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     m_currentInvocation->didReceiveMessageFromInjectedBundle(messageName, messageBody);
 }
 
+static void adoptAndCallCompletionHandler(void* context)
+{
+    auto completionHandler = WTF::adopt(static_cast<CompletionHandler<void(WKTypeRef)>::Impl*>(context));
+    completionHandler(nullptr);
+}
+
 void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener)
 {
-    auto completionHandler = [listener = retainWK(listener)] (WKTypeRef reply) {
+    CompletionHandler<void(WKTypeRef)> completionHandler = [listener = retainWK(listener)] (WKTypeRef reply) {
         WKMessageListenerSendReply(listener.get(), reply);
     };
 
@@ -1962,29 +1968,29 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
         return completionHandler(nullptr);
 
     if (WKStringIsEqualToUTF8CString(messageName, "GetAllStorageAccessEntries"))
-        return TestController::singleton().getAllStorageAccessEntries(WTFMove(completionHandler));
+        return getAllStorageAccessEntries(WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "GetAndClearReportedWindowProxyAccessDomains"))
-        return completionHandler(TestController::singleton().getAndClearReportedWindowProxyAccessDomains().get());
+        return completionHandler(getAndClearReportedWindowProxyAccessDomains().get());
 
     if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllCookies"))
-        return TestController::singleton().removeAllCookies(WTFMove(completionHandler));
+        return removeAllCookies(WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "TakeViewPortSnapshot"))
-        return completionHandler(TestController::singleton().takeViewPortSnapshot().get());
+        return completionHandler(takeViewPortSnapshot().get());
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsDebugMode"))
-        return TestController::singleton().setStatisticsDebugMode(booleanValue(messageBody), WTFMove(completionHandler));
+        return setStatisticsDebugMode(booleanValue(messageBody), WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldBlockThirdPartyCookiesOnSitesWithoutUserInteraction"))
-        return TestController::singleton().setStatisticsShouldBlockThirdPartyCookies(booleanValue(messageBody), true, WTFMove(completionHandler));
+        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(messageBody), true, WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldBlockThirdPartyCookies"))
-        return TestController::singleton().setStatisticsShouldBlockThirdPartyCookies(booleanValue(messageBody), false, WTFMove(completionHandler));
+        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(messageBody), false, WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsPrevalentResourceForDebugMode")) {
         WKStringRef hostName = stringValue(messageBody);
-        TestController::singleton().setStatisticsPrevalentResourceForDebugMode(hostName, WTFMove(completionHandler));
+        setStatisticsPrevalentResourceForDebugMode(hostName, WTFMove(completionHandler));
         return;
     }
 
@@ -1992,7 +1998,7 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto hostName = stringValue(messageBodyDictionary, "HostName");
         auto value = doubleValue(messageBodyDictionary, "Value");
-        TestController::singleton().setStatisticsLastSeen(hostName, value, WTFMove(completionHandler));
+        setStatisticsLastSeen(hostName, value, WTFMove(completionHandler));
         return;
     }
 
@@ -2008,7 +2014,7 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
         auto isPrevalent = booleanValue(messageBodyDictionary, "IsPrevalent");
         auto isVeryPrevalent = booleanValue(messageBodyDictionary, "IsVeryPrevalent");
         auto dataRecordsRemoved = uint64Value(messageBodyDictionary, "DataRecordsRemoved");
-        TestController::singleton().setStatisticsMergeStatistic(hostName, topFrameDomain1, topFrameDomain2, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, WTFMove(completionHandler));
+        setStatisticsMergeStatistic(hostName, topFrameDomain1, topFrameDomain2, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, WTFMove(completionHandler));
         return;
     }
 
@@ -2019,7 +2025,7 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
         auto hadUserInteraction = booleanValue(messageBodyDictionary, "HadUserInteraction");
         auto isScheduledForAllButCookieDataRemoval = booleanValue(messageBodyDictionary, "IsScheduledForAllButCookieDataRemoval");
         auto isPrevalent = booleanValue(messageBodyDictionary, "IsPrevalent");
-        TestController::singleton().setStatisticsExpiredStatistic(hostName, numberOfOperatingDaysPassed, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, WTFMove(completionHandler));
+        setStatisticsExpiredStatistic(hostName, numberOfOperatingDaysPassed, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, WTFMove(completionHandler));
         return;
     }
 
@@ -2027,7 +2033,7 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto hostName = stringValue(messageBodyDictionary, "HostName");
         auto value = booleanValue(messageBodyDictionary, "Value");
-        TestController::singleton().setStatisticsPrevalentResource(hostName, value, WTFMove(completionHandler));
+        setStatisticsPrevalentResource(hostName, value, WTFMove(completionHandler));
         return;
     }
 
@@ -2035,54 +2041,87 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto hostName = stringValue(messageBodyDictionary, "HostName");
         auto value = booleanValue(messageBodyDictionary, "Value");
-        TestController::singleton().setStatisticsVeryPrevalentResource(hostName, value, WTFMove(completionHandler));
+        setStatisticsVeryPrevalentResource(hostName, value, WTFMove(completionHandler));
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearInMemoryAndPersistentStore"))
-        return TestController::singleton().statisticsClearInMemoryAndPersistentStore(WTFMove(completionHandler));
+        return statisticsClearInMemoryAndPersistentStore(WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearThroughWebsiteDataRemoval"))
-        return TestController::singleton().statisticsClearThroughWebsiteDataRemoval(WTFMove(completionHandler));
+        return statisticsClearThroughWebsiteDataRemoval(WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearInMemoryAndPersistentStoreModifiedSinceHours"))
-        return TestController::singleton().statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(uint64Value(messageBody), WTFMove(completionHandler));
+        return statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(uint64Value(messageBody), WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldDowngradeReferrer"))
-        return TestController::singleton().setStatisticsShouldDowngradeReferrer(booleanValue(messageBody), WTFMove(completionHandler));
+        return setStatisticsShouldDowngradeReferrer(booleanValue(messageBody), WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsFirstPartyWebsiteDataRemovalMode"))
-        return TestController::singleton().setStatisticsFirstPartyWebsiteDataRemovalMode(booleanValue(messageBody), WTFMove(completionHandler));
+        return setStatisticsFirstPartyWebsiteDataRemovalMode(booleanValue(messageBody), WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetToSameSiteStrictCookies"))
-        return TestController::singleton().setStatisticsToSameSiteStrictCookies(stringValue(messageBody), WTFMove(completionHandler));
+        return setStatisticsToSameSiteStrictCookies(stringValue(messageBody), WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetFirstPartyHostCNAMEDomain")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto firstPartyURLString = stringValue(messageBodyDictionary, "FirstPartyURL");
         auto cnameURLString = stringValue(messageBodyDictionary, "CNAME");
-        TestController::singleton().setStatisticsFirstPartyHostCNAMEDomain(firstPartyURLString, cnameURLString, WTFMove(completionHandler));
+        setStatisticsFirstPartyHostCNAMEDomain(firstPartyURLString, cnameURLString, WTFMove(completionHandler));
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetThirdPartyCNAMEDomain"))
-        return TestController::singleton().setStatisticsThirdPartyCNAMEDomain(stringValue(messageBody), WTFMove(completionHandler));
+        return setStatisticsThirdPartyCNAMEDomain(stringValue(messageBody), WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsHasHadUserInteraction")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto hostName = stringValue(messageBodyDictionary, "HostName");
         auto value = booleanValue(messageBodyDictionary, "Value");
-        TestController::singleton().setStatisticsHasHadUserInteraction(hostName, value, WTFMove(completionHandler));
+        setStatisticsHasHadUserInteraction(hostName, value, WTFMove(completionHandler));
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsUpdateCookieBlocking"))
-        return TestController::singleton().statisticsUpdateCookieBlocking(WTFMove(completionHandler));
+        return statisticsUpdateCookieBlocking(WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsResetToConsistentState")) {
         m_currentInvocation->dumpResourceLoadStatisticsIfNecessary();
         statisticsResetToConsistentState();
         return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AddChromeInputField")) {
+        mainWebView()->addChromeInputField();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetTextInChromeInputField")) {
+        mainWebView()->setTextInChromeInputField(toWTFString(stringValue(messageBody)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SelectChromeInputField")) {
+        mainWebView()->selectChromeInputField();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "GetSelectedTextInChromeInputField")) {
+        auto selectedText = mainWebView()->getSelectedTextInChromeInputField();
+        return completionHandler(toWK(selectedText).get());
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "FocusWebView")) {
+        mainWebView()->makeWebViewFirstResponder();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "LoadedSubresourceDomains"))
+        return loadedSubresourceDomains(WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "GetApplicationManifest")) {
+        WKPageGetApplicationManifest(mainWebView()->page(), completionHandler.leak(), adoptAndCallCompletionHandler);
+        return;
     }
 
     ASSERT_NOT_REACHED();
@@ -3396,48 +3435,18 @@ void TestController::getAllStorageAccessEntries(CompletionHandler<void(WKTypeRef
     });
 }
 
-#if !PLATFORM(COCOA)
-
-struct LoadedSubresourceDomainsCallbackContext {
-    explicit LoadedSubresourceDomainsCallbackContext(TestController& controller)
-        : testController(controller)
-    {
-    }
-
-    TestController& testController;
-    bool done { false };
-    Vector<String> result;
-};
-
-static void loadedSubresourceDomainsCallback(WKArrayRef domains, void* userData)
+void TestController::loadedSubresourceDomains(CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
-    auto* context = static_cast<LoadedSubresourceDomainsCallbackContext*>(userData);
-    context->done = true;
-
-    if (domains) {
-        auto size = WKArrayGetSize(domains);
-        context->result.reserveInitialCapacity(size);
-        for (size_t index = 0; index < size; ++index)
-            context->result.append(toWTFString(static_cast<WKStringRef>(WKArrayGetItemAtIndex(domains, index))));
-    }
-
-    context->testController.notifyDone();
-}
-
-void TestController::loadedSubresourceDomains()
-{
-    LoadedSubresourceDomainsCallbackContext context(*this);
-    WKPageLoadedSubresourceDomains(m_mainWebView->page(), loadedSubresourceDomainsCallback, &context);
-    runUntil(context.done, noTimeout);
-    m_currentInvocation->didReceiveLoadedSubresourceDomains(WTFMove(context.result));
+    WKPageLoadedSubresourceDomains(m_mainWebView->page(), [] (WKArrayRef domains, void* context) {
+        auto completionHandler = WTF::adopt(static_cast<CompletionHandler<void(WKTypeRef)>::Impl*>(context));
+        completionHandler(domains);
+    }, completionHandler.leak());
 }
 
 void TestController::clearLoadedSubresourceDomains()
 {
     WKPageClearLoadedSubresourceDomains(m_mainWebView->page());
 }
-
-#endif // !PLATFORM(COCOA)
 
 void TestController::reloadFromOrigin()
 {
@@ -3669,12 +3678,6 @@ struct ResourceStatisticsCallbackContext {
     bool result { false };
     WKRetainPtr<WKStringRef> resourceLoadStatisticsRepresentation;
 };
-
-static void adoptAndCallCompletionHandler(void* context)
-{
-    auto completionHandler = WTF::adopt(static_cast<CompletionHandler<void(WKTypeRef)>::Impl*>(context));
-    completionHandler(nullptr);
-}
 
 static void resourceStatisticsStringResultCallback(WKStringRef resourceLoadStatisticsRepresentation, void* userData)
 {

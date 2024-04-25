@@ -72,8 +72,6 @@ public:
 
     void notifyDownloadDone();
 
-    void didReceiveLoadedSubresourceDomains(Vector<String>&& domains);
-
     void didRemoveAllSessionCredentials();
 
     void didSetAppBoundDomains();

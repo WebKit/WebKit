@@ -281,7 +281,7 @@ public:
 
     void getAllStorageAccessEntries(CompletionHandler<void(WKTypeRef)>&&);
     void setRequestStorageAccessThrowsExceptionUntilReload(bool enabled);
-    void loadedSubresourceDomains();
+    void loadedSubresourceDomains(CompletionHandler<void(WKTypeRef)>&&);
     void clearLoadedSubresourceDomains();
     void clearAppBoundSession();
     void reinitializeAppBoundDomains();

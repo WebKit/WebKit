@@ -383,40 +383,10 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         TestController::singleton().setBeforeUnloadReturnValue(booleanValue(messageBody));
         return;
     }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "AddChromeInputField")) {
-        TestController::singleton().mainWebView()->addChromeInputField();
-        postPageMessage("CallAddChromeInputFieldCallback");
-        return;
-    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "RemoveChromeInputField")) {
         TestController::singleton().mainWebView()->removeChromeInputField();
         postPageMessage("CallRemoveChromeInputFieldCallback");
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetTextInChromeInputField")) {
-        TestController::singleton().mainWebView()->setTextInChromeInputField(toWTFString(stringValue(messageBody)));
-        postPageMessage("CallSetTextInChromeInputFieldCallback");
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SelectChromeInputField")) {
-        TestController::singleton().mainWebView()->selectChromeInputField();
-        postPageMessage("CallSelectChromeInputFieldCallback");
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "GetSelectedTextInChromeInputField")) {
-        auto selectedText = TestController::singleton().mainWebView()->getSelectedTextInChromeInputField();
-        postPageMessage("CallGetSelectedTextInChromeInputFieldCallback", toWK(selectedText));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "FocusWebView")) {
-        TestController::singleton().mainWebView()->makeWebViewFirstResponder();
-        postPageMessage("CallFocusWebViewCallback");
         return;
     }
 
@@ -701,11 +671,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 #endif
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "LoadedSubresourceDomains")) {
-        TestController::singleton().loadedSubresourceDomains();
-        return;
-    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "ReloadFromOrigin")) {
         TestController::singleton().reloadFromOrigin();
@@ -719,18 +684,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
     if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllSessionCredentials")) {
         TestController::singleton().removeAllSessionCredentials();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "GetApplicationManifest")) {
-#ifdef __BLOCKS__
-        WKPageGetApplicationManifest_b(TestController::singleton().mainWebView()->page(), ^{
-            postPageMessage("DidGetApplicationManifest");
-        });
-#else
-        // FIXME: Add API for loading the manifest on non-__BLOCKS__ ports.
-        ASSERT_NOT_REACHED();
-#endif
         return;
     }
 
@@ -1534,14 +1487,6 @@ void TestInvocation::didRemoveSwipeSnapshot()
 void TestInvocation::notifyDownloadDone()
 {
     postPageMessage("NotifyDownloadDone");
-}
-
-void TestInvocation::didReceiveLoadedSubresourceDomains(Vector<String>&& domains)
-{
-    auto messageBody = adoptWK(WKMutableArrayCreate());
-    for (auto& domain : domains)
-        WKArrayAppendItem(messageBody.get(), toWK(domain).get());
-    postPageMessage("CallDidReceiveLoadedSubresourceDomains", messageBody);
 }
 
 void TestInvocation::didRemoveAllSessionCredentials()

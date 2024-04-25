@@ -512,26 +512,6 @@ void TestController::removeAllSessionCredentials()
     }];
 }
 
-void TestController::loadedSubresourceDomains()
-{
-    auto* parentView = mainWebView();
-    if (!parentView)
-        return;
-    
-    [[globalWebViewConfiguration() websiteDataStore] _loadedSubresourceDomainsFor:parentView->platformView() completionHandler:^(NSArray<NSString *> *domains) {
-        m_currentInvocation->didReceiveLoadedSubresourceDomains(makeVector<String>(domains));
-    }];
-}
-
-void TestController::clearLoadedSubresourceDomains()
-{
-    auto* parentView = mainWebView();
-    if (!parentView)
-        return;
-
-    [[globalWebViewConfiguration() websiteDataStore] _clearLoadedSubresourceDomainsFor:parentView->platformView()];
-}
-
 bool TestController::didLoadAppInitiatedRequest()
 {
     auto* parentView = mainWebView();
