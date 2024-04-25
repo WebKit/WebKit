@@ -358,7 +358,7 @@ void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     repaintOrMarkForLayout(rect);
 
-    if (AXObjectCache* cache = document().existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->deferRecomputeIsIgnoredIfNeeded(protectedImageElement().ptr());
 }
 

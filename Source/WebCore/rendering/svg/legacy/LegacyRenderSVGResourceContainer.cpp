@@ -194,20 +194,20 @@ void LegacyRenderSVGResourceContainer::removeClientRenderLayer(RenderLayer& clie
 
 void LegacyRenderSVGResourceContainer::registerResource()
 {
-    auto& treeScope = this->treeScopeForSVGReferences();
-    if (!treeScope.isIdOfPendingSVGResource(m_id)) {
-        treeScope.addSVGResource(m_id, *this);
+    Ref treeScope = this->treeScopeForSVGReferences();
+    if (!treeScope->isIdOfPendingSVGResource(m_id)) {
+        treeScope->addSVGResource(m_id, *this);
         return;
     }
 
-    auto elements = copyToVectorOf<Ref<SVGElement>>(treeScope.removePendingSVGResource(m_id));
+    auto elements = copyToVectorOf<Ref<SVGElement>>(treeScope->removePendingSVGResource(m_id));
 
-    treeScope.addSVGResource(m_id, *this);
+    treeScope->addSVGResource(m_id, *this);
 
     // Update cached resources of pending clients.
     for (auto& client : elements) {
         ASSERT(client->hasPendingResources());
-        treeScope.clearHasPendingSVGResourcesIfPossible(client);
+        treeScope->clearHasPendingSVGResourcesIfPossible(client);
         auto* renderer = client->renderer();
         if (!renderer)
             continue;

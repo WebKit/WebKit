@@ -91,7 +91,7 @@ ReferencedSVGResources::ReferencedSVGResources(RenderElement& renderer)
 
 ReferencedSVGResources::~ReferencedSVGResources()
 {
-    auto& treeScope = m_renderer.treeScopeForSVGReferences();
+    Ref treeScope = m_renderer.treeScopeForSVGReferences();
     for (auto& targetID : copyToVector(m_elementClients.keys()))
         removeClientForTarget(treeScope, targetID);
 }
@@ -237,7 +237,7 @@ RefPtr<SVGClipPathElement> ReferencedSVGResources::referencedClipPathElement(Tre
 
 RefPtr<SVGMarkerElement> ReferencedSVGResources::referencedMarkerElement(TreeScope& treeScope, const String& markerResource)
 {
-    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerResource, treeScope.documentScope());
+    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerResource, treeScope.protectedDocumentScope());
     if (resourceID.isEmpty())
         return nullptr;
 
@@ -247,11 +247,11 @@ RefPtr<SVGMarkerElement> ReferencedSVGResources::referencedMarkerElement(TreeSco
 
 RefPtr<SVGMaskElement> ReferencedSVGResources::referencedMaskElement(TreeScope& treeScope, const StyleImage& maskImage)
 {
-    auto reresolvedURL = maskImage.reresolvedURL(treeScope.documentScope());
+    auto reresolvedURL = maskImage.reresolvedURL(treeScope.protectedDocumentScope());
     if (reresolvedURL.isEmpty())
         return nullptr;
 
-    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(reresolvedURL.string(), treeScope.documentScope());
+    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(reresolvedURL.string(), treeScope.protectedDocumentScope());
     if (resourceID.isEmpty())
         return nullptr;
 
@@ -261,7 +261,7 @@ RefPtr<SVGMaskElement> ReferencedSVGResources::referencedMaskElement(TreeScope& 
 
 RefPtr<SVGElement> ReferencedSVGResources::referencedPaintServerElement(TreeScope& treeScope, const String& uri)
 {
-    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(uri, treeScope.documentScope());
+    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(uri, treeScope.protectedDocumentScope());
     if (resourceID.isEmpty())
         return nullptr;
 

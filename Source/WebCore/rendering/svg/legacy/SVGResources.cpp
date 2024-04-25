@@ -238,7 +238,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
             const FilterOperations& filterOperations = style.filter();
             if (filterOperations.size() == 1) {
                 if (RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(*filterOperations.at(0))) {
-                    AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation->url(), element->protectedDocument());
+                    AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation->url(), document);
                     if (auto* filter = getRenderSVGResourceById<LegacyRenderSVGResourceFilter>(treeScope, id))
                         ensureResources(foundResources).setFilter(filter);
                     else

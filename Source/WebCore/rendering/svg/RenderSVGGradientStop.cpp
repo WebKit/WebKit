@@ -77,7 +77,7 @@ void RenderSVGGradientStop::layout()
 
 SVGGradientElement* RenderSVGGradientStop::gradientElement()
 {
-    return dynamicDowncast<SVGGradientElement>(element().parentElement());
+    return dynamicDowncast<SVGGradientElement>(element().protectedParentElement().get());
 }
 
 }

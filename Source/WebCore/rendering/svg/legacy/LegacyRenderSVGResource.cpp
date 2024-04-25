@@ -178,7 +178,7 @@ static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bo
             clipper->removeClientFromCache(renderer);
     }
 
-    RefPtr svgElement = dynamicDowncast<SVGElement>(renderer.element());
+    auto svgElement = dynamicDowncast<SVGElement>(renderer.protectedElement());
     if (!svgElement)
         return;
 

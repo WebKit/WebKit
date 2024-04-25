@@ -98,8 +98,8 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
         context.translate(coordinateSystemOriginTranslation);
 
     AffineTransform contentTransform;
-    auto& maskElement = this->maskElement();
-    if (maskElement.maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+    Ref maskElement = this->maskElement();
+    if (maskElement->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         contentTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
         contentTransform.scale(objectBoundingBox.width(), objectBoundingBox.height());
     }
