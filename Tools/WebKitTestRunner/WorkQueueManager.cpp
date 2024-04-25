@@ -128,12 +128,12 @@ bool WorkQueueManager::processWorkQueue()
     return !m_processing;
 }
 
-void WorkQueueManager::queueLoad(const String& url, const String& target, bool shouldOpenExternalURLs)
+void WorkQueueManager::queueLoad(const String& relativeURL, const String& target, bool shouldOpenExternalURLs)
 {
     class LoadItem : public WorkQueueItem {
     public:
-        LoadItem(const String& url, const String& target, bool shouldOpenExternalURLs)
-            : m_url(adoptWK(WKURLCreateWithUTF8CString(url.utf8().data())))
+        LoadItem(WKRetainPtr<WKURLRef>&& url, const String& target, bool shouldOpenExternalURLs)
+            : m_url(WTFMove(url))
             , m_target(target)
             , m_shouldOpenExternalURLs(shouldOpenExternalURLs)
         {
@@ -155,7 +155,9 @@ void WorkQueueManager::queueLoad(const String& url, const String& target, bool s
         bool m_shouldOpenExternalURLs;
     };
 
-    enqueue(new LoadItem(url, target, shouldOpenExternalURLs));
+    auto baseURL = adoptWK(WKFrameCopyURL(WKPageGetMainFrame(mainPage())));
+    auto url = adoptWK(WKURLCreateWithBaseURL(baseURL.get(), relativeURL.utf8().data()));
+    enqueue(new LoadItem(WTFMove(url), target, shouldOpenExternalURLs));
 }
 
 void WorkQueueManager::queueLoadHTMLString(const String& content, const String& baseURL, const String& unreachableURL)

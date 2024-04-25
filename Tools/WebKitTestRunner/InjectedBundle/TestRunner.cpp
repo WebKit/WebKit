@@ -1010,11 +1010,7 @@ void TestRunner::queueForwardNavigation(unsigned howFarForward)
 
 void TestRunner::queueLoad(JSStringRef url, JSStringRef target, bool shouldOpenExternalURLs)
 {
-    auto& injectedBundle = InjectedBundle::singleton();
-    auto baseURLWK = adoptWK(WKBundleFrameCopyURL(mainFrame()));
-    auto urlWK = adoptWK(WKURLCreateWithBaseURL(baseURLWK.get(), toWTFString(url).utf8().data()));
-    auto urlStringWK = adoptWK(WKURLCopyString(urlWK.get()));
-    injectedBundle.queueLoad(urlStringWK.get(), toWK(target).get(), shouldOpenExternalURLs);
+    InjectedBundle::singleton().queueLoad(toWK(url).get(), toWK(target).get(), shouldOpenExternalURLs);
 }
 
 void TestRunner::queueLoadHTMLString(JSStringRef content, JSStringRef baseURL, JSStringRef unreachableURL)
