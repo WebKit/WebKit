@@ -196,6 +196,10 @@ static _WKWebExtensionContextError toAPI(WebExtensionContext::Error error)
         return _WKWebExtensionContextErrorNotLoaded;
     case WebExtensionContext::Error::BaseURLAlreadyInUse:
         return _WKWebExtensionContextErrorBaseURLAlreadyInUse;
+    case WebExtensionContext::Error::NoBackgroundContent:
+        return _WKWebExtensionContextErrorNoBackgroundContent;
+    case WebExtensionContext::Error::BackgroundContentFailedToLoad:
+        return _WKWebExtensionContextErrorBackgroundContentFailedToLoad;
     }
 }
 
@@ -219,6 +223,14 @@ NSError *WebExtensionContext::createError(Error error, NSString *customLocalized
 
     case Error::BaseURLAlreadyInUse:
         localizedDescription = WEB_UI_STRING("Another extension context is loaded with the same base URL.", "WKWebExtensionContextErrorBaseURLAlreadyInUse description");
+        break;
+
+    case Error::NoBackgroundContent:
+        localizedDescription = WEB_UI_STRING("No background content is available to load.", "WKWebExtensionContextErrorNoBackgroundContent description");
+        break;
+
+    case Error::BackgroundContentFailedToLoad:
+        localizedDescription = WEB_UI_STRING("The background content failed to load due to an error.", "WKWebExtensionContextErrorBackgroundContentFailedToLoad description");
         break;
     }
 
@@ -3113,6 +3125,20 @@ URL WebExtensionContext::backgroundContentURL()
     return { m_baseURL, extension().backgroundContentPath() };
 }
 
+void WebExtensionContext::loadBackgroundContent(CompletionHandler<void(NSError *)>&& completionHandler)
+{
+    if (!extension().hasBackgroundContent()) {
+        if (completionHandler)
+            completionHandler(createError(Error::NoBackgroundContent));
+        return;
+    }
+
+    wakeUpBackgroundContentIfNecessary([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (completionHandler)
+            completionHandler(backgroundContentLoadError());
+    });
+}
+
 void WebExtensionContext::loadBackgroundWebViewDuringLoad()
 {
     ASSERT(isLoaded());
@@ -3177,8 +3203,7 @@ void WebExtensionContext::loadBackgroundWebView()
         [delegate _webExtensionController:m_extensionController->wrapper() didCreateBackgroundWebView:m_backgroundWebView.get() forExtensionContext:wrapper()];
 
     m_backgroundWebView.get()._remoteInspectionNameOverride = backgroundWebViewInspectionName();
-
-    extension().removeError(WebExtension::Error::BackgroundContentFailedToLoad);
+    m_backgroundContentLoadError = nil;
 
     if (!extension().backgroundContentIsServiceWorker()) {
         auto backgroundPage = m_backgroundWebView.get()._page;
@@ -3190,7 +3215,7 @@ void WebExtensionContext::loadBackgroundWebView()
 
     [m_backgroundWebView _loadServiceWorker:backgroundContentURL() usingModules:extension().backgroundContentUsesModules() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }](BOOL success) {
         if (!success) {
-            extension().recordError(extension().createError(WebExtension::Error::BackgroundContentFailedToLoad), WebExtension::SuppressNotification::No);
+            m_backgroundContentLoadError = createError(Error::BackgroundContentFailedToLoad);
             return;
         }
 
@@ -3487,7 +3512,7 @@ void WebExtensionContext::didFailNavigation(WKWebView *webView, WKNavigation *, 
     if (webView != m_backgroundWebView)
         return;
 
-    extension().recordError(extension().createError(WebExtension::Error::BackgroundContentFailedToLoad, nil, error), WebExtension::SuppressNotification::No);
+    m_backgroundContentLoadError = createError(Error::BackgroundContentFailedToLoad, nil, error);
 }
 
 void WebExtensionContext::webViewWebContentProcessDidTerminate(WKWebView *webView)

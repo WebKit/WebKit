@@ -641,8 +641,6 @@ static _WKWebExtensionError toAPI(WebExtension::Error error)
         return _WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidBackgroundPersistence:
         return _WKWebExtensionErrorInvalidBackgroundPersistence;
-    case WebExtension::Error::BackgroundContentFailedToLoad:
-        return _WKWebExtensionErrorBackgroundContentFailedToLoad;
     case WebExtension::Error::InvalidResourceCodeSignature:
         return _WKWebExtensionErrorInvalidResourceCodeSignature;
     }
@@ -754,10 +752,6 @@ ALLOW_NONLITERAL_FORMAT_END
 
     case Error::InvalidBackgroundPersistence:
         localizedDescription = WEB_UI_STRING("Invalid `persistent` manifest entry.", "WKWebExtensionErrorInvalidBackgroundPersistence description");
-        break;
-
-    case Error::BackgroundContentFailedToLoad:
-        localizedDescription = WEB_UI_STRING("The background content failed to load due to an error.", "WKWebExtensionErrorBackgroundContentFailedToLoad description");
         break;
 
     case Error::InvalidResourceCodeSignature:

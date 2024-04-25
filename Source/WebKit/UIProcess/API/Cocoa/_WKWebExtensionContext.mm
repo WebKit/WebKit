@@ -42,6 +42,7 @@
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionTab.h"
+#import <wtf/BlockPtr.h>
 #import <wtf/URLParser.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -535,6 +536,11 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 - (BOOL)hasContentModificationRules
 {
     return _webExtensionContext->hasContentModificationRules();
+}
+
+- (void)loadBackgroundContentWithCompletionHandler:(void (^)(NSError *error))completionHandler
+{
+    _webExtensionContext->loadBackgroundContent(makeBlockPtr(completionHandler));
 }
 
 - (_WKWebExtensionAction *)actionForTab:(id<_WKWebExtensionTab>)tab
@@ -1084,6 +1090,10 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 - (BOOL)hasContentModificationRules
 {
     return NO;
+}
+
+- (void)loadBackgroundContentWithCompletionHandler:(void (^)(NSError *error))completionHandler
+{
 }
 
 - (_WKWebExtensionAction *)actionForTab:(id<_WKWebExtensionTab>)tab NS_SWIFT_NAME(action(for:))

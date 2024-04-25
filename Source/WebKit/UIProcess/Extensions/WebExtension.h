@@ -106,7 +106,6 @@ public:
         InvalidURLOverrides,
         InvalidVersion,
         InvalidWebAccessibleResources,
-        BackgroundContentFailedToLoad,
     };
 
     enum class InjectionTime : uint8_t {
