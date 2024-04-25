@@ -642,7 +642,7 @@ template<typename T> struct HWBA : ColorWithAlphaHelper<HWBA<T>> {
     using ComponentType = T;
     using Model = HWBModel<T>;
     static constexpr auto whitePoint = WhitePoint::D65;
-    using Reference = SRGBA<T>;
+    using Reference = ExtendedSRGBA<T>;
 
     constexpr HWBA(T hue, T whiteness, T blackness, T alpha = AlphaTraits<T>::opaque)
         : hue { hue }

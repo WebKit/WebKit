@@ -824,66 +824,71 @@ static Color parseHSLParametersRaw(CSSParserTokenRange& range, ColorParserState&
     return parseNonRelativeHSLParametersRaw(args, state);
 }
 
-template<typename ConsumerForHue, typename ConsumerForWhitenessAndBlackness, typename ConsumerForAlpha>
-static Color parseHWBParametersRaw(CSSParserTokenRange& args, ConsumerForHue&& hueConsumer, ConsumerForWhitenessAndBlackness&& whitenessAndBlacknessConsumer, ConsumerForAlpha&& alphaConsumer)
+// MARK: - hwb()
+
+using ParsedHWBA = std::tuple<AngleOrNumberOrNoneRaw, NumberOrPercentOrNoneRaw, NumberOrPercentOrNoneRaw, double>;
+
+static HWBA<float> normalizeHWBParametersRaw(ParsedHWBA parsedHWBA)
 {
-    auto hue = hueConsumer(args);
-    if (!hue)
-        return { };
+    auto [hue, whiteness, blackness, alpha] = parsedHWBA;
 
-    auto whiteness = whitenessAndBlacknessConsumer(args);
-    if (!whiteness)
-        return { };
-
-    auto blackness = whitenessAndBlacknessConsumer(args);
-    if (!blackness)
-        return { };
-
-    auto alpha = alphaConsumer(args);
-    if (!alpha)
-        return { };
-
-    if (!args.atEnd())
-        return { };
-
-    auto normalizedHue = WTF::switchOn(*hue,
-        [] (AngleRaw angle) { return CSSPrimitiveValue::computeDegrees(angle.type, angle.value); },
+    float normalizedHue = WTF::switchOn(hue,
+        [] (AngleRaw angle) { return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)); },
+        [] (NumberRaw number) { return normalizeHue(number.value); },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
+    float normalizedWhiteness = WTF::switchOn(whiteness,
+        [] (PercentRaw percent) { return percent.value; },
         [] (NumberRaw number) { return number.value; },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
-    auto clampedWhiteness = WTF::switchOn(*whiteness,
-        [] (PercentRaw percent) { return std::clamp(percent.value, 0.0, 100.0); },
-        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
-    );
-    auto clampedBlackness = WTF::switchOn(*blackness,
-        [] (PercentRaw percent) { return std::clamp(percent.value, 0.0, 100.0); },
+    float normalizedBlackness = WTF::switchOn(blackness,
+        [] (PercentRaw percent) { return percent.value; },
+        [] (NumberRaw number) { return number.value; },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
 
-    if (std::isnan(normalizedHue) || std::isnan(clampedWhiteness) || std::isnan(clampedBlackness) || std::isnan(*alpha)) {
-        auto [normalizedWhitness, normalizedBlackness] = normalizeClampedWhitenessBlacknessAllowingNone(clampedWhiteness, clampedBlackness);
+    return  {
+        normalizedHue,
+        normalizedWhiteness,
+        normalizedBlackness,
+        static_cast<float>(alpha)
+    };
+}
 
-        // If any component uses "none", we store the value as a HWBA<float> to allow for storage of the special value as NaN.
-        return HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(*alpha) };
-    }
+template<typename ConsumerForHue, typename ConsumerForWhitenessAndBlackness, typename ConsumerForAlpha>
+static std::optional<ParsedHWBA> parseHWBParametersRaw(CSSParserTokenRange& args, ConsumerForHue&& hueConsumer, ConsumerForWhitenessAndBlackness&& whitenessAndBlacknessConsumer, ConsumerForAlpha&& alphaConsumer)
+{
+    auto hue = hueConsumer(args);
+    if (!hue)
+        return std::nullopt;
 
-    auto [normalizedWhitness, normalizedBlackness] = normalizeClampedWhitenessBlacknessDisallowingNone(clampedWhiteness, clampedBlackness);
+    auto whiteness = whitenessAndBlacknessConsumer(args);
+    if (!whiteness)
+        return std::nullopt;
 
-    if (normalizedHue < 0.0 || normalizedHue > 360.0) {
-        // If 'hue' is not in the [0, 360] range, we store the value as a HWBA<float> to allow for correct interpolation
-        // using the "specified" hue interpolation method.
-        return HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(*alpha) };
-    }
+    auto blackness = whitenessAndBlacknessConsumer(args);
+    if (!blackness)
+        return std::nullopt;
 
-    // The explicit conversion to SRGBA<uint8_t> is an intentional performance optimization that allows storing the
-    // color with no extra allocation for an extended color object. This is permissible due to the historical requirement
-    // that HWBA colors serialize using the legacy color syntax (rgb()/rgba()) and historically have used the 8-bit rgba
-    // internal representation in engines.
-    return convertColor<SRGBA<uint8_t>>(HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(*alpha) });
+    auto alpha = alphaConsumer(args);
+    if (!alpha)
+        return std::nullopt;
+
+    if (!args.atEnd())
+        return std::nullopt;
+
+    return {{ *hue, *whiteness, *blackness, *alpha }};
 }
 
 static Color parseRelativeHWBParametersRaw(CSSParserTokenRange& args, ColorParserState& state)
 {
+    // hwb() = hwb([from <color>]?
+    //         [<hue> | none]
+    //         [<percentage> | <number> | none]
+    //         [<percentage> | <number> | none]
+    //         [ / [<alpha-value> | none] ]? )
+
     ASSERT(args.peek().id() == CSSValueFrom);
     consumeIdentRaw(args);
 
@@ -891,29 +896,62 @@ static Color parseRelativeHWBParametersRaw(CSSParserTokenRange& args, ColorParse
     if (!originColor.isValid())
         return { };
 
-    auto originColorAsHWB = originColor.toColorTypeLossy<HWBA<float>>().resolved();
+    auto originColorAsHWB = originColor.toColorTypeLossy<HWBA<float>>();
+    auto originColorAsHWBResolved = originColorAsHWB.resolved();
 
     CSSCalcSymbolTable symbolTable {
-        { CSSValueH, CSSUnitType::CSS_DEG, originColorAsHWB.hue },
-        { CSSValueW, CSSUnitType::CSS_PERCENTAGE, originColorAsHWB.whiteness },
-        { CSSValueB, CSSUnitType::CSS_PERCENTAGE, originColorAsHWB.blackness },
-        { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsHWB.alpha * 100.0 }
+        { CSSValueH, CSSUnitType::CSS_NUMBER, originColorAsHWBResolved.hue },
+        { CSSValueW, CSSUnitType::CSS_NUMBER, originColorAsHWBResolved.whiteness },
+        { CSSValueB, CSSUnitType::CSS_NUMBER, originColorAsHWBResolved.blackness },
+        { CSSValueAlpha, CSSUnitType::CSS_NUMBER, originColorAsHWBResolved.alpha }
     };
 
     auto hueConsumer = [&symbolTable, &state](auto& args) { return consumeAngleOrNumberOrNoneRawAllowingSymbolTableIdent(args, symbolTable, state.mode); };
-    auto whitenessAndBlacknessConsumer = [&symbolTable](auto& args) { return consumePercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
-    auto alphaConsumer = [&symbolTable](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto whitenessAndBlacknessConsumer = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto alphaConsumer = [&symbolTable, &originColorAsHWB](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable, originColorAsHWB.unresolved().alpha); };
 
-    return parseHWBParametersRaw(args, WTFMove(hueConsumer), WTFMove(whitenessAndBlacknessConsumer), WTFMove(alphaConsumer));
+    auto parsedHWBA = parseHWBParametersRaw(args, WTFMove(hueConsumer), WTFMove(whitenessAndBlacknessConsumer), WTFMove(alphaConsumer));
+    if (!parsedHWBA)
+        return { };
+
+    // The `UseColorFunctionSerialization` ensures the relative form serializes as `color(srgb ...)`.
+    return { normalizeHWBParametersRaw(*parsedHWBA), Color::Flags::UseColorFunctionSerialization };
 }
 
 static Color parseNonRelativeHWBParametersRaw(CSSParserTokenRange& args, ColorParserState& state)
 {
+    // hwb() = hwb(
+    //   [<hue> | none]
+    //   [<percentage> | <number> | none]
+    //   [<percentage> | <number> | none]
+    //   [ / [<alpha-value> | none] ]? )
+
     auto hueConsumer = [&state](auto& args) { return consumeAngleOrNumberOrNoneRaw(args, state.mode); };
-    auto whitenessAndBlacknessConsumer = [](auto& args) { return consumePercentOrNoneRaw(args); };
+    auto whitenessAndBlacknessConsumer = [](auto& args) { return consumeNumberOrPercentOrNoneRaw(args); };
     auto alphaConsumer = [](auto& args) { return consumeOptionalAlphaRaw(args); };
 
-    return parseHWBParametersRaw(args, WTFMove(hueConsumer), WTFMove(whitenessAndBlacknessConsumer), WTFMove(alphaConsumer));
+    auto parsedHWBA = parseHWBParametersRaw(args, WTFMove(hueConsumer), WTFMove(whitenessAndBlacknessConsumer), WTFMove(alphaConsumer));
+    if (!parsedHWBA)
+        return { };
+
+    auto hwba = normalizeHWBParametersRaw(*parsedHWBA);
+
+    if (hwba.unresolved().anyComponentIsNone()) {
+        // If any component uses "none", we store the value as a HWBA<float> to allow for storage of the special value as NaN.
+        return hwba;
+    }
+
+    if (state.nestingLevel > 1) {
+        // If the color is being consumed as part of a composition (relative color, color-mix, light-dark, etc.), we store
+        // the value as a HWBA<float> to allow for maximum precision.
+        return hwba;
+    }
+
+    // The explicit conversion to SRGBA<uint8_t> is an intentional performance optimization that allows storing the
+    // color with no extra allocation for an extended color object. This is permissible due to the historical requirement
+    // that HWBA colors serialize using the legacy color syntax (rgb()/rgba()) and historically have used the 8-bit rgba
+    // internal representation in engines.
+    return convertColor<SRGBA<uint8_t>>(hwba);
 }
 
 static Color parseHWBParametersRaw(CSSParserTokenRange& range, ColorParserState& state)
@@ -926,6 +964,8 @@ static Color parseHWBParametersRaw(CSSParserTokenRange& range, ColorParserState&
         return parseRelativeHWBParametersRaw(args, state);
     return parseNonRelativeHWBParametersRaw(args, state);
 }
+
+// MARK: - lab() / oklab()
 
 template<typename ColorType, typename ConsumerForLightness, typename ConsumerForAB, typename ConsumerForAlpha>
 static Color parseLabParametersRaw(CSSParserTokenRange& args, ConsumerForLightness&& lightnessConsumer, ConsumerForAB&& abConsumer, ConsumerForAlpha&& alphaConsumer)

@@ -86,13 +86,13 @@ std::pair<float, float> fixupHueComponentsPriorToInterpolation(HueInterpolationM
 Color interpolateColors(ColorInterpolationMethod colorInterpolationMethod, Color color1, double color1Multiplier, Color color2, double color2Multiplier)
 {
     return WTF::switchOn(colorInterpolationMethod.colorSpace,
-        [&] (auto& colorSpace) {
+        [&] (auto& colorSpace) -> Color {
             using ColorType = typename std::remove_reference_t<decltype(colorSpace)>::ColorType;
             switch (colorInterpolationMethod.alphaPremultiplication) {
             case AlphaPremultiplication::Premultiplied:
-                return makeCanonicalColor(interpolateColorComponents<AlphaPremultiplication::Premultiplied>(colorSpace, color1.toColorTypeLossy<ColorType>(), color1Multiplier, color2.toColorTypeLossy<ColorType>(), color2Multiplier));
+                return interpolateColorComponents<AlphaPremultiplication::Premultiplied>(colorSpace, color1.toColorTypeLossy<ColorType>(), color1Multiplier, color2.toColorTypeLossy<ColorType>(), color2Multiplier);
             case AlphaPremultiplication::Unpremultiplied:
-                return makeCanonicalColor(interpolateColorComponents<AlphaPremultiplication::Unpremultiplied>(colorSpace, color1.toColorTypeLossy<ColorType>(), color1Multiplier, color2.toColorTypeLossy<ColorType>(), color2Multiplier));
+                return interpolateColorComponents<AlphaPremultiplication::Unpremultiplied>(colorSpace, color1.toColorTypeLossy<ColorType>(), color1Multiplier, color2.toColorTypeLossy<ColorType>(), color2Multiplier);
             }
             RELEASE_ASSERT_NOT_REACHED();
         }

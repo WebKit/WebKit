@@ -378,7 +378,10 @@ String serializationForRenderTreeAsText(const ExtendedSRGBA<float>& color, bool)
 
 String serializationForCSS(const HSLA<float>& color, bool useColorFunctionSerialization)
 {
-    return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), useColorFunctionSerialization);
+    if (useColorFunctionSerialization)
+        return serializationForCSS(convertColor<ExtendedSRGBA<float>>(color), true);
+
+    return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), false);
 }
 
 String serializationForHTML(const HSLA<float>& color, bool useColorFunctionSerialization)
@@ -395,7 +398,10 @@ String serializationForRenderTreeAsText(const HSLA<float>& color, bool useColorF
 
 String serializationForCSS(const HWBA<float>& color, bool useColorFunctionSerialization)
 {
-    return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), useColorFunctionSerialization);
+    if (useColorFunctionSerialization)
+        return serializationForCSS(convertColor<ExtendedSRGBA<float>>(color), true);
+
+    return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), false);
 }
 
 String serializationForHTML(const HWBA<float>& color, bool useColorFunctionSerialization)
@@ -534,7 +540,7 @@ String serializationForCSS(const SRGBA<float>& color, bool useColorFunctionSeria
     if (useColorFunctionSerialization)
         return serializationUsingColorFunction(color);
 
-    return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), useColorFunctionSerialization);
+    return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), false);
 }
 
 String serializationForHTML(const SRGBA<float>& color, bool useColorFunctionSerialization)

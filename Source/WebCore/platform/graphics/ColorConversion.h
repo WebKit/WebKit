@@ -92,11 +92,11 @@ template<> struct ColorConversion<HSLA<float>, ExtendedSRGBA<float>> {
 };
 
 // MARK: HWBA
-template<> struct ColorConversion<SRGBA<float>, HWBA<float>> {
-    WEBCORE_EXPORT static SRGBA<float> convert(const HWBA<float>&);
+template<> struct ColorConversion<ExtendedSRGBA<float>, HWBA<float>> {
+    WEBCORE_EXPORT static ExtendedSRGBA<float> convert(const HWBA<float>&);
 };
-template<> struct ColorConversion<HWBA<float>, SRGBA<float>> {
-    WEBCORE_EXPORT static HWBA<float> convert(const SRGBA<float>&);
+template<> struct ColorConversion<HWBA<float>, ExtendedSRGBA<float>> {
+    WEBCORE_EXPORT static HWBA<float> convert(const ExtendedSRGBA<float>&);
 };
 
 // MARK: LCHA
