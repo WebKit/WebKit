@@ -2,7 +2,7 @@ ARG MARCH_FLAG=""
 ARG WEBKIT_RELEASE_TYPE=Release
 ARG CPU=native
 ARG LTO_FLAG="-flto='full'"
-ARG LLVM_VERSION="17"
+ARG LLVM_VERSION="16"
 
 FROM bitnami/minideb:bookworm as base
 
