@@ -180,7 +180,14 @@ class SimulatedDeviceManager(object):
         return result
 
     @staticmethod
-    def _find_exisiting_device_for_request(request):
+    def _find_existing_uninitialized_device_for_request(request):
+        # type: (DeviceRequest) -> DeviceRequest | None
+        '''Finds an existing, eligible, and uninitialized device that satisfies the passed request.
+
+        Arguments:
+            request (`DeviceRequest`): The details of the device request.
+        '''
+
         if not request.use_existing_simulator:
             return None
         for device in SimulatedDeviceManager.AVAILABLE_DEVICES:
@@ -189,7 +196,7 @@ class SimulatedDeviceManager(object):
                 if isinstance(initialized_device, Device) and device == initialized_device:
                     device = None
                     break
-            if device and request.device_type == device.device_type:
+            if device and request.device_type == device.device_type and not device.platform_device.is_booted_or_booting():
                 return device
         return None
 
@@ -277,7 +284,7 @@ class SimulatedDeviceManager(object):
         assert isinstance(request, DeviceRequest)
         host = host or SystemHost.get_default()
 
-        device = cls._find_exisiting_device_for_request(request)
+        device = cls._find_existing_uninitialized_device_for_request(request)
         if device:
             return device
 
