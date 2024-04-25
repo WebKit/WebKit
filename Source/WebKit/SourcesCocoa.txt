@@ -197,6 +197,7 @@ Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
 
 Shared/ios/AuxiliaryProcessIOS.mm
+Shared/ios/HardwareKeyboardState.cpp
 Shared/ios/InteractionInformationAtPosition.mm
 Shared/ios/InteractionInformationRequest.cpp
 Shared/ios/NativeWebKeyboardEventIOS.mm

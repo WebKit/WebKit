@@ -10131,7 +10131,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.textAutosizingWidth = textAutosizingWidth();
     parameters.mimeTypesWithCustomContentProviders = protectedPageClient()->mimeTypesWithCustomContentProviders();
     parameters.deviceOrientation = m_deviceOrientation;
-    parameters.keyboardIsAttached = isInHardwareKeyboardMode();
+    parameters.hardwareKeyboardState = internals().hardwareKeyboardState;
     parameters.canShowWhileLocked = m_configuration->canShowWhileLocked();
     parameters.insertionPointColor = protectedPageClient()->insertionPointColor();
 #endif

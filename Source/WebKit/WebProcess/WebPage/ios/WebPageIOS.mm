@@ -4861,9 +4861,10 @@ OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailableP
     return result;
 }
 
-void WebPage::hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
+void WebPage::hardwareKeyboardAvailabilityChanged(HardwareKeyboardState state)
 {
-    m_keyboardIsAttached = keyboardIsAttached;
+    m_keyboardIsAttached = state.isAttached;
+    setHardwareKeyboardState(state);
 
     if (RefPtr focusedFrame = m_page->checkedFocusController()->focusedLocalFrame())
         focusedFrame->eventHandler().capsLockStateMayHaveChanged();

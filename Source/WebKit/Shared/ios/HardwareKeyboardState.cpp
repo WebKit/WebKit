@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#import <wtf/Platform.h>
+#include "config.h"
+#include "HardwareKeyboardState.h"
 
 #if PLATFORM(IOS_FAMILY)
 
-#if USE(APPLE_INTERNAL_SDK)
+#import <pal/spi/ios/GraphicsServicesSPI.h>
 
-#import <GraphicsServices/GraphicsServices.h>
+namespace WebKit {
 
-#endif
+HardwareKeyboardState currentHardwareKeyboardState()
+{
+    return {
+        !!GSEventIsHardwareKeyboardAttached(),
+        GSEventGetHardwareKeyboardCountry(),
+        GSEventGetHardwareKeyboardType()
+    };
+}
 
-WTF_EXTERN_C_BEGIN
+void setHardwareKeyboardState(HardwareKeyboardState state)
+{
+    GSEventSetHardwareKeyboardAttachedWithCountryCodeAndType(state.isAttached, state.countryCode, state.keyboardType);
+}
 
-void GSInitialize(void);
-uint64_t GSCurrentEventTimestamp(void);
-CFStringRef GSSystemRootDirectory(void);
-void GSFontInitialize(void);
-void GSFontPurgeFontCache(void);
+} // namespace WebKit
 
-typedef struct __GSKeyboard* GSKeyboardRef;
-uint32_t GSKeyboardGetModifierState(GSKeyboardRef);
-Boolean GSEventIsHardwareKeyboardAttached(void);
-uint8_t GSEventGetHardwareKeyboardCountry(void);
-uint8_t GSEventGetHardwareKeyboardType(void);
-void GSEventSetHardwareKeyboardAttached(Boolean attached, uint8_t country);
-void GSEventSetHardwareKeyboardAttachedWithCountryCodeAndType(Boolean attached, uint8_t country, uint8_t type);
-
-extern const char *kGSEventHardwareKeyboardAvailabilityChangedNotification;
-
-WTF_EXTERN_C_END
-
-#endif
+#endif // PLATFORM(IOS_FAMILY)

@@ -76,6 +76,10 @@
 #include "DMABufRendererBufferFormat.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "HardwareKeyboardState.h"
+#endif
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -197,7 +201,7 @@ struct WebPageCreationParameters {
     WebCore::FloatSize overrideAvailableScreenSize;
     float textAutosizingWidth;
     WebCore::IntDegrees deviceOrientation { 0 };
-    bool keyboardIsAttached { false };
+    HardwareKeyboardState hardwareKeyboardState;
     bool canShowWhileLocked { false };
     bool isCapturingScreen { false };
     WebCore::Color insertionPointColor;

@@ -134,6 +134,7 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
 #endif
 #if PLATFORM(IOS_FAMILY)
     setInsertionPointColor(parameters.insertionPointColor);
+    setHardwareKeyboardState(parameters.hardwareKeyboardState);
 #endif
     WebCore::setAdditionalSupportedImageTypes(parameters.additionalSupportedImageTypes);
     WebCore::setImageSourceAllowableTypes(WebCore::allowableImageTypes());

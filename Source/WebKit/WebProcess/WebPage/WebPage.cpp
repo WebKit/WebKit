@@ -588,7 +588,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_overrideScreenSize(parameters.overrideScreenSize)
     , m_overrideAvailableScreenSize(parameters.overrideAvailableScreenSize)
     , m_deviceOrientation(parameters.deviceOrientation)
-    , m_keyboardIsAttached(parameters.keyboardIsAttached)
+    , m_keyboardIsAttached(parameters.hardwareKeyboardState.isAttached)
     , m_canShowWhileLocked(parameters.canShowWhileLocked)
     , m_updateFocusedElementInformationTimer(*this, &WebPage::updateFocusedElementInformation, updateFocusedElementInformationDebounceInterval)
 #endif
