@@ -1200,33 +1200,25 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
         return;
 
     texture.setPreviouslyCleared(mipLevel, slice);
-    auto logicalSize = texture.logicalMiplevelSpecificTextureExtent(mipLevel);
-    if (!logicalSize.width)
+    auto logicalExtent = texture.logicalMiplevelSpecificTextureExtent(mipLevel);
+    if (!logicalExtent.width)
         return;
-    if (texture.dimension() != WGPUTextureDimension_1D && !logicalSize.height)
+    if (texture.dimension() != WGPUTextureDimension_1D && !logicalExtent.height)
         return;
-    if (texture.dimension() == WGPUTextureDimension_3D && !logicalSize.depthOrArrayLayers)
+    if (texture.dimension() == WGPUTextureDimension_3D && !logicalExtent.depthOrArrayLayers)
         return;
 
-    auto depth = texture.dimension() == WGPUTextureDimension_3D ? logicalSize.depthOrArrayLayers : 1;
     id<MTLTexture> mtlTexture = texture.texture();
     if (!mtlTexture)
         return;
-
-    NSUInteger sourceBytesPerRow = 0;
     auto textureFormat = texture.format();
-    if (mtlTexture.pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || mtlTexture.pixelFormat == MTLPixelFormatX32_Stencil8) {
+    if (mtlTexture.pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || mtlTexture.pixelFormat == MTLPixelFormatX32_Stencil8)
         textureFormat = WGPUTextureFormat_Depth32Float;
-        sourceBytesPerRow = Texture::bytesPerRow(WGPUTextureFormat_Depth32Float, logicalSize.width, texture.sampleCount());
-    } else
-        sourceBytesPerRow = Texture::bytesPerRow(textureFormat, logicalSize.width, texture.sampleCount());
-    auto blockSize = Texture::texelBlockSize(textureFormat);
-    sourceBytesPerRow = std::max<NSUInteger>(blockSize * 12 * (sourceBytesPerRow / logicalSize.width), sourceBytesPerRow);
-    if (Texture::isCompressedFormat(textureFormat))
-        sourceBytesPerRow = roundUpToMultipleOf(blockSize, sourceBytesPerRow);
-
-    NSUInteger sourceBytesPerImage = sourceBytesPerRow * logicalSize.height;
-    NSUInteger bufferLength = sourceBytesPerImage * depth;
+    auto physicalExtent = Texture::physicalTextureExtent(texture.dimension(), textureFormat, logicalExtent);
+    NSUInteger sourceBytesPerRow = Texture::bytesPerRow(textureFormat, physicalExtent.width, texture.sampleCount());
+    NSUInteger depth = texture.dimension() == WGPUTextureDimension_3D ? physicalExtent.depthOrArrayLayers : 1;
+    NSUInteger bytesPerImage = sourceBytesPerRow * physicalExtent.height;
+    NSUInteger bufferLength = bytesPerImage * depth;
     if (!bufferLength)
         return;
     id<MTLBuffer> temporaryBuffer = [device newBufferWithLength:bufferLength options:MTLResourceStorageModeShared];
@@ -1234,17 +1226,19 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
         return;
 
     MTLSize sourceSize;
+    NSUInteger sourceBytesPerImage = 0;
     switch (texture.dimension()) {
     case WGPUTextureDimension_1D:
-        sourceSize = MTLSizeMake(logicalSize.width, 1, 1);
+        sourceSize = MTLSizeMake(logicalExtent.width, 1, 1);
         break;
     case WGPUTextureDimension_2D:
-        sourceSize = MTLSizeMake(logicalSize.width, logicalSize.height, 1);
+        sourceSize = MTLSizeMake(logicalExtent.width, logicalExtent.height, 1);
         break;
     case WGPUTextureDimension_3D:
-        sourceSize = MTLSizeMake(logicalSize.width, logicalSize.height, logicalSize.depthOrArrayLayers);
+        sourceSize = MTLSizeMake(logicalExtent.width, logicalExtent.height, logicalExtent.depthOrArrayLayers);
+        sourceBytesPerImage = bytesPerImage;
+        slice = 0;
         break;
-    default:
     case WGPUTextureDimension_Force32:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -1252,10 +1246,6 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
     MTLBlitOption options = MTLBlitOptionNone;
     if (mtlTexture.pixelFormat == MTLPixelFormatDepth32Float_Stencil8)
         options = MTLBlitOptionDepthFromDepthStencil;
-
-    auto& destinationTexture = texture;
-    if (destinationTexture.dimension() == WGPUTextureDimension_3D)
-        slice = 0;
 
     if (slice >= mtlTexture.arrayLength)
         return;
@@ -1274,7 +1264,7 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
 
     if (options != MTLBlitOptionNone) {
         sourceBytesPerRow /= sizeof(float);
-        sourceBytesPerImage = sourceBytesPerRow * logicalSize.height;
+        sourceBytesPerImage /= sizeof(float);
         [blitCommandEncoder
             copyFromBuffer:temporaryBuffer
             sourceOffset:0

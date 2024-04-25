@@ -33,6 +33,7 @@
 #import <bmalloc/Algorithm.h>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/MathExtras.h>
+#import <wtf/StdLibExtras.h>
 
 namespace WebGPU {
 
@@ -2143,14 +2144,17 @@ MTLPixelFormat Texture::pixelFormat(WGPUTextureFormat textureFormat)
 
 NSUInteger Texture::bytesPerRow(WGPUTextureFormat format, uint32_t textureWidth, uint32_t sampleCount)
 {
-    NSUInteger blockSize = Texture::texelBlockSize(format);
     NSUInteger blockWidth = Texture::texelBlockWidth(format);
-    if (blockWidth > 1 && (blockSize * textureWidth) % blockWidth) {
-        ASSERT_NOT_REACHED("Compressed texture has unexpected texture width");
+    if (!blockWidth) {
+        ASSERT_NOT_REACHED();
         return 0;
     }
-
-    return sampleCount * ((blockSize * textureWidth) / blockWidth);
+    if (textureWidth % blockWidth) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+    NSUInteger blocksInWidth = textureWidth / blockWidth;
+    return Texture::texelBlockSize(format) * blocksInWidth * sampleCount;
 }
 
 uint32_t Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
@@ -3255,28 +3259,26 @@ WGPUExtent3D Texture::logicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
 WGPUExtent3D Texture::physicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-physical-miplevel-specific-texture-extent
+    return physicalTextureExtent(m_dimension, m_format, logicalMiplevelSpecificTextureExtent(mipLevel));
+}
 
-    auto logicalExtent = logicalMiplevelSpecificTextureExtent(mipLevel);
-
-    auto roundUpToMultipleOf = [](size_t a, size_t b) {
-        return static_cast<uint32_t>(bmalloc::roundUpToMultipleOfNonPowerOfTwo(a, b));
-    };
-
-    switch (m_dimension) {
+WGPUExtent3D Texture::physicalTextureExtent(WGPUTextureDimension dimension, WGPUTextureFormat format, WGPUExtent3D logicalExtent)
+{
+    switch (dimension) {
     case WGPUTextureDimension_1D:
         return {
-            .width = roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width),
+            .width = roundUpToMultipleOfNonPowerOfTwo(texelBlockWidth(format), logicalExtent.width),
             .height = 1,
             .depthOrArrayLayers = logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_2D:
         return {
-            .width = roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width),
-            .height = roundUpToMultipleOf(texelBlockHeight(m_format), logicalExtent.height),
+            .width = roundUpToMultipleOfNonPowerOfTwo(texelBlockWidth(format), logicalExtent.width),
+            .height = roundUpToMultipleOfNonPowerOfTwo(texelBlockHeight(format), logicalExtent.height),
             .depthOrArrayLayers = logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_3D:
         return {
-            .width = roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width),
-            .height = roundUpToMultipleOf(texelBlockHeight(m_format), logicalExtent.height),
+            .width = roundUpToMultipleOfNonPowerOfTwo(texelBlockWidth(format), logicalExtent.width),
+            .height = roundUpToMultipleOfNonPowerOfTwo(texelBlockHeight(format), logicalExtent.height),
             .depthOrArrayLayers = logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_Force32:
         ASSERT_NOT_REACHED();
