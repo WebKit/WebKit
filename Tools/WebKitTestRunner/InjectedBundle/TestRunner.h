@@ -159,7 +159,7 @@ public:
     // Text search testing.
     bool findString(JSStringRef, JSValueRef optionsArray);
     void findStringMatchesInPage(JSStringRef, JSValueRef optionsArray);
-    void replaceFindMatchesAtIndices(JSValueRef matchIndices, JSStringRef replacementText, bool selectionOnly);
+    void replaceFindMatchesAtIndices(JSContextRef, JSValueRef matchIndices, JSStringRef replacementText, bool selectionOnly);
 
     // Local storage
     void clearAllDatabases();
@@ -179,7 +179,7 @@ public:
     void forceImmediateCompletion();
 
     // Printing
-    bool isPageBoxVisible(int pageIndex);
+    bool isPageBoxVisible(JSContextRef, int pageIndex);
     bool isPrinting() { return m_isPrinting; }
     void setPrinting() { m_isPrinting = true; }
 
@@ -249,7 +249,7 @@ public:
     void setWillSendRequestAddsHTTPBody(JSStringRef body) { m_willSendRequestHTTPBody = toWTFString(body); }
     String willSendRequestHTTPBody() const { return m_willSendRequestHTTPBody; }
 
-    void setTextDirection(JSStringRef);
+    void setTextDirection(JSContextRef, JSStringRef);
 
     void setShouldStayOnPageAfterHandlingBeforeUnload(bool);
 
@@ -344,7 +344,7 @@ public:
     void setPageVisibility(JSStringRef state);
     void resetPageVisibility();
 
-    bool callShouldCloseOnWebView();
+    bool callShouldCloseOnWebView(JSContextRef);
 
     void setCustomTimeout(WTF::Seconds duration) { m_timeout = duration; }
 
@@ -360,9 +360,9 @@ public:
 
     bool secureEventInputIsEnabled() const;
 
-    JSValueRef failNextNewCodeBlock();
-    JSValueRef numberOfDFGCompiles(JSValueRef function);
-    JSValueRef neverInlineFunction(JSValueRef function);
+    JSValueRef failNextNewCodeBlock(JSContextRef);
+    JSValueRef numberOfDFGCompiles(JSContextRef, JSValueRef function);
+    JSValueRef neverInlineFunction(JSContextRef, JSValueRef function);
 
     bool shouldDecideNavigationPolicyAfterDelay() const { return m_shouldDecideNavigationPolicyAfterDelay; }
     void setShouldDecideNavigationPolicyAfterDelay(bool);
@@ -498,7 +498,7 @@ public:
     void setRequestStorageAccessThrowsExceptionUntilReload(bool enabled);
 
     // Open panel
-    void setOpenPanelFiles(JSValueRef);
+    void setOpenPanelFiles(JSContextRef, JSValueRef);
     void setOpenPanelFilesMediaIcon(JSValueRef);
 
     // Modal alerts
@@ -535,10 +535,10 @@ public:
 
     bool hasAppBoundSession();
     void clearAppBoundSession();
-    void setAppBoundDomains(JSValueRef originArray, JSValueRef callback);
+    void setAppBoundDomains(JSContextRef, JSValueRef originArray, JSValueRef callback);
     void didSetAppBoundDomainsCallback();
 
-    void setManagedDomains(JSValueRef originArray, JSValueRef callback);
+    void setManagedDomains(JSContextRef, JSValueRef originArray, JSValueRef callback);
     void didSetManagedDomainsCallback();
 
     bool didLoadAppInitiatedRequest();
@@ -582,7 +582,7 @@ public:
     void flushConsoleLogs(JSValueRef callback);
 
     // Reporting API
-    void generateTestReport(JSStringRef message, JSStringRef group);
+    void generateTestReport(JSContextRef, JSStringRef message, JSStringRef group);
 
     void getAndClearReportedWindowProxyAccessDomains(JSValueRef);
 

@@ -128,7 +128,7 @@ interface TestRunner {
     undefined forceImmediateCompletion();
 
     // Printing
-    boolean isPageBoxVisible(long pageIndex);
+    [PassContext] boolean isPageBoxVisible(long pageIndex);
 
     undefined dumpAllHTTPRedirectedResponseHeaders();
 
@@ -150,7 +150,7 @@ interface TestRunner {
     // Text search testing.
     boolean findString(DOMString target, object optionsArray);
     undefined findStringMatchesInPage(DOMString target, object optionsArray);
-    undefined replaceFindMatchesAtIndices(object matchIndicesArray, DOMString replacementText, boolean selectionOnly);
+    [PassContext] undefined replaceFindMatchesAtIndices(object matchIndicesArray, DOMString replacementText, boolean selectionOnly);
 
     // Evaluating script in a special context.
     [PassContext] undefined evaluateScriptInIsolatedWorld(unsigned long worldID, DOMString script);
@@ -163,7 +163,7 @@ interface TestRunner {
 
     undefined setPOSIXLocale(DOMString locale);
 
-    undefined setTextDirection(DOMString direction);
+    [PassContext] undefined setTextDirection(DOMString direction);
 
     undefined setWillSendRequestReturnsNull(boolean flag);
     undefined setWillSendRequestReturnsNullOnRedirect(boolean flag);
@@ -246,7 +246,7 @@ interface TestRunner {
     // Audio testing.
     [PassContext] undefined setAudioResult(object data);
 
-    boolean callShouldCloseOnWebView();
+    [PassContext] boolean callShouldCloseOnWebView();
 
     // Work queue.
     undefined queueBackNavigation(unsigned long howFarBackward);
@@ -277,9 +277,9 @@ interface TestRunner {
     undefined setPluginSupportedMode(DOMString mode);
 
     // Hooks to the JSC compiler.
-    object failNextNewCodeBlock();
-    object numberOfDFGCompiles(object function);
-    object neverInlineFunction(object function);
+    [PassContext] object failNextNewCodeBlock();
+    [PassContext] object numberOfDFGCompiles(object function);
+    [PassContext] object neverInlineFunction(object function);
 
     // Swipe gestures
     undefined installDidBeginSwipeCallback(object callback);
@@ -377,7 +377,7 @@ interface TestRunner {
     undefined setRequestStorageAccessThrowsExceptionUntilReload(boolean enabled);
 
     // Open panel
-    undefined setOpenPanelFiles(object filesArray);
+    [PassContext] undefined setOpenPanelFiles(object filesArray);
     undefined setOpenPanelFilesMediaIcon(object mediaIcon);
 
     // Modal alerts
@@ -415,11 +415,11 @@ interface TestRunner {
 
     boolean hasAppBoundSession();
     undefined clearAppBoundSession();
-    undefined setAppBoundDomains(object originsArray, object callback);
+    [PassContext] undefined setAppBoundDomains(object originsArray, object callback);
     boolean didLoadAppInitiatedRequest();
     boolean didLoadNonAppInitiatedRequest();
 
-    undefined setManagedDomains(object originsArray, object callback);
+    [PassContext] undefined setManagedDomains(object originsArray, object callback);
 
     undefined injectUserScript(DOMString string);
     readonly attribute unsigned long userScriptInjectedCount;
@@ -456,7 +456,7 @@ interface TestRunner {
     undefined takeViewPortSnapshot(object callback);
 
     // Reporting API
-    undefined generateTestReport(DOMString message, DOMString group);
+    [PassContext] undefined generateTestReport(DOMString message, DOMString group);
 
     undefined getAndClearReportedWindowProxyAccessDomains(object callback);
     undefined flushConsoleLogs(object callback);

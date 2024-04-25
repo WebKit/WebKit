@@ -364,10 +364,9 @@ void TestRunner::findStringMatchesInPage(JSStringRef target, JSValueRef optionsA
     }
 }
 
-void TestRunner::replaceFindMatchesAtIndices(JSValueRef matchIndicesAsValue, JSStringRef replacementText, bool selectionOnly)
+void TestRunner::replaceFindMatchesAtIndices(JSContextRef context, JSValueRef matchIndicesAsValue, JSStringRef replacementText, bool selectionOnly)
 {
     auto& bundle = InjectedBundle::singleton();
-    auto context = mainFrameJSContext();
     auto matchIndicesObject = JSValueToObject(context, matchIndicesAsValue, 0);
     auto length = arrayLength(context, matchIndicesObject);
 
@@ -468,10 +467,11 @@ void TestRunner::removeOriginAccessAllowListEntry(JSStringRef sourceOrigin, JSSt
     WKBundleRemoveOriginAccessAllowListEntry(InjectedBundle::singleton().bundle(), toWK(sourceOrigin).get(), toWK(destinationProtocol).get(), toWK(destinationHost).get(), allowDestinationSubdomains);
 }
 
-bool TestRunner::isPageBoxVisible(int pageIndex)
+bool TestRunner::isPageBoxVisible(JSContextRef context, int pageIndex)
 {
+    auto frame = WKBundleFrameForJavaScriptContext(context);
     auto& injectedBundle = InjectedBundle::singleton();
-    return WKBundleIsPageBoxVisible(injectedBundle.bundle(), mainFrame(), pageIndex);
+    return WKBundleIsPageBoxVisible(injectedBundle.bundle(), frame, pageIndex);
 }
 
 void TestRunner::setValueForUser(JSContextRef context, JSValueRef element, JSStringRef value)
@@ -552,9 +552,8 @@ void TestRunner::evaluateScriptInIsolatedWorld(JSContextRef context, unsigned wo
         world = worldSlot;
     }
 
-    WKBundleFrameRef frame = WKBundleFrameForJavaScriptContext(context);
-    if (!frame)
-        frame = mainFrame();
+    auto frame = WKBundleFrameForJavaScriptContext(context);
+    ASSERT(frame);
 
     JSGlobalContextRef jsContext = WKBundleFrameGetJavaScriptContextForWorld(frame, world.get());
     JSEvaluateScript(jsContext, script, 0, 0, 0, 0); 
@@ -567,9 +566,10 @@ void TestRunner::setPOSIXLocale(JSStringRef locale)
     setlocale(LC_ALL, localeBuf);
 }
 
-void TestRunner::setTextDirection(JSStringRef direction)
+void TestRunner::setTextDirection(JSContextRef context, JSStringRef direction)
 {
-    return WKBundleFrameSetTextDirection(mainFrame(), toWK(direction).get());
+    auto frame = WKBundleFrameForJavaScriptContext(context);
+    return WKBundleFrameSetTextDirection(frame, toWK(direction).get());
 }
     
 void TestRunner::setShouldStayOnPageAfterHandlingBeforeUnload(bool shouldStayOnPage)
@@ -993,9 +993,10 @@ void TestRunner::resetUserMediaPermissionRequestCountForOrigin(JSStringRef origi
     InjectedBundle::singleton().resetUserMediaPermissionRequestCountForOrigin(toWK(origin).get(), toWK(parentOrigin).get());
 }
 
-bool TestRunner::callShouldCloseOnWebView()
+bool TestRunner::callShouldCloseOnWebView(JSContextRef context)
 {
-    return WKBundleFrameCallShouldCloseOnWebView(mainFrame());
+    auto frame = WKBundleFrameForJavaScriptContext(context);
+    return WKBundleFrameCallShouldCloseOnWebView(frame);
 }
 
 void TestRunner::queueBackNavigation(unsigned howFarBackward)
@@ -1100,19 +1101,19 @@ void TestRunner::setPluginSupportedMode(JSStringRef mode)
     postPageMessage("SetPluginSupportedMode", toWK(mode));
 }
 
-JSValueRef TestRunner::failNextNewCodeBlock()
+JSValueRef TestRunner::failNextNewCodeBlock(JSContextRef context)
 {
-    return JSC::failNextNewCodeBlock(mainFrameJSContext());
+    return JSC::failNextNewCodeBlock(context);
 }
 
-JSValueRef TestRunner::numberOfDFGCompiles(JSValueRef function)
+JSValueRef TestRunner::numberOfDFGCompiles(JSContextRef context, JSValueRef function)
 {
-    return JSC::numberOfDFGCompiles(mainFrameJSContext(), function);
+    return JSC::numberOfDFGCompiles(context, function);
 }
 
-JSValueRef TestRunner::neverInlineFunction(JSValueRef function)
+JSValueRef TestRunner::neverInlineFunction(JSContextRef context, JSValueRef function)
 {
-    return JSC::setNeverInline(mainFrameJSContext(), function);
+    return JSC::setNeverInline(context, function);
 }
 
 void TestRunner::setShouldDecideNavigationPolicyAfterDelay(bool value)
@@ -2009,10 +2010,8 @@ void TestRunner::setMockGamepadButtonValue(unsigned, unsigned, double)
 
 #endif // ENABLE(GAMEPAD)
 
-void TestRunner::setOpenPanelFiles(JSValueRef filesValue)
+void TestRunner::setOpenPanelFiles(JSContextRef context, JSValueRef filesValue)
 {
-    JSContextRef context = mainFrameJSContext();
-
     if (!JSValueIsArray(context, filesValue))
         return;
 
@@ -2267,11 +2266,10 @@ void TestRunner::clearAppBoundSession()
     postSynchronousMessage("ClearAppBoundSession");
 }
 
-void TestRunner::setAppBoundDomains(JSValueRef originArray, JSValueRef completionHandler)
+void TestRunner::setAppBoundDomains(JSContextRef context, JSValueRef originArray, JSValueRef completionHandler)
 {
     cacheTestRunnerCallback(DidSetAppBoundDomainsCallbackID, completionHandler);
 
-    auto context = mainFrameJSContext();
     if (!JSValueIsArray(context, originArray))
         return;
 
@@ -2295,11 +2293,10 @@ void TestRunner::setAppBoundDomains(JSValueRef originArray, JSValueRef completio
     WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), originURLs.get());
 }
 
-void TestRunner::setManagedDomains(JSValueRef originArray, JSValueRef completionHandler)
+void TestRunner::setManagedDomains(JSContextRef context, JSValueRef originArray, JSValueRef completionHandler)
 {
     cacheTestRunnerCallback(DidSetManagedDomainsCallbackID, completionHandler);
 
-    auto context = mainFrameJSContext();
     if (!JSValueIsArray(context, originArray))
         return;
 
@@ -2363,9 +2360,10 @@ void TestRunner::flushConsoleLogs(JSValueRef callback)
     postMessageWithAsyncReply("FlushConsoleLogs", callback);
 }
 
-void TestRunner::generateTestReport(JSStringRef message, JSStringRef group)
+void TestRunner::generateTestReport(JSContextRef context, JSStringRef message, JSStringRef group)
 {
-    _WKBundleFrameGenerateTestReport(mainFrame(), toWK(message).get(), toWK(group).get());
+    auto frame = WKBundleFrameForJavaScriptContext(context);
+    _WKBundleFrameGenerateTestReport(frame, toWK(message).get(), toWK(group).get());
 }
 
 void TestRunner::getAndClearReportedWindowProxyAccessDomains(JSValueRef callback)
