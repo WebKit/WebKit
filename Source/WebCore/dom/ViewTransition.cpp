@@ -710,8 +710,12 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
             if (RefPtr documentElement = document()->documentElement()) {
                 Styleable styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name });
                 CheckedPtr renderer = styleable.renderer();
-                if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer.get()))
+                if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer.get())) {
                     viewTransitionCapture->setSize(boxSize, overflowRect);
+
+                    RefPtr<ImageBuffer> image = viewTransitionCapture->canUseExistingLayers() ? nullptr : snapshotElementVisualOverflowClippedToViewport(*m_document->frame(), *newElement, overflowRect);
+                    viewTransitionCapture->setImage(image);
+                }
             }
         } else
             properties = capturedElement->oldProperties;

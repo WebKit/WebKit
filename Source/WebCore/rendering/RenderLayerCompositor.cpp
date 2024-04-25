@@ -65,6 +65,7 @@
 #include "RenderStyleInlines.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
+#include "RenderViewTransitionCapture.h"
 #include "RotateTransformOperation.h"
 #include "SVGGraphicsElement.h"
 #include "ScaleTransformOperation.h"
@@ -1398,6 +1399,9 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
 void RenderLayerCompositor::collectViewTransitionNewContentLayers(RenderLayer& layer, Vector<Ref<GraphicsLayer>>& childList)
 {
     if (layer.renderer().style().pseudoElementType() != PseudoId::ViewTransitionNew || !layer.hasVisibleContent())
+        return;
+
+    if (!downcast<RenderViewTransitionCapture>(layer.renderer()).canUseExistingLayers())
         return;
 
     RefPtr activeViewTransition = layer.renderer().document().activeViewTransition();

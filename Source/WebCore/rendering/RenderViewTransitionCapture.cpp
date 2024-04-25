@@ -80,6 +80,14 @@ void RenderViewTransitionCapture::layout()
     addVisualOverflow(m_localOverflowRect);
 }
 
+void RenderViewTransitionCapture::updateFromStyle()
+{
+    RenderReplaced::updateFromStyle();
+
+    if (effectiveOverflowX() != Overflow::Visible || effectiveOverflowY() != Overflow::Visible)
+        setHasNonVisibleOverflow();
+}
+
 LayoutPoint RenderViewTransitionCapture::captureContentInset() const
 {
     LayoutPoint location = m_localOverflowRect.location();

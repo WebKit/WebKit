@@ -52,9 +52,13 @@ public:
     // Inset of the scaled capture from the visualOverflowRect()
     LayoutPoint captureContentInset() const;
 
+    bool canUseExistingLayers() const { return !hasNonVisibleOverflow(); }
+
 private:
     ASCIILiteral renderName() const override { return "RenderViewTransitionCapture"_s; }
     String debugDescription() const override;
+
+    void updateFromStyle() override;
 
     RefPtr<ImageBuffer> m_oldImage;
     LayoutRect m_overflowRect;
