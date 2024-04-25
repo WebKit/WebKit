@@ -45,9 +45,7 @@ public:
     WEBCORE_EXPORT ~LocalCurrentTraitCollection();
 
 private:
-#if HAVE(OS_DARK_MODE_SUPPORT)
     RetainPtr<UITraitCollection> m_savedTraitCollection;
-#endif
 };
 
 }

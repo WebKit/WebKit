@@ -1145,23 +1145,12 @@ void PageClientImpl::runModalJavaScriptDialog(CompletionHandler<void()>&& callba
 WebCore::Color PageClientImpl::contentViewBackgroundColor()
 {
     WebCore::Color color;
-    auto computeContentViewBackgroundColor = [&]() {
+    [[webView() traitCollection] performAsCurrentTraitCollection:[&]() {
         color = WebCore::roundAndClampToSRGBALossy([contentView() backgroundColor].CGColor);
         if (color.isValid())
             return;
-
-#if HAVE(OS_DARK_MODE_SUPPORT)
         color = WebCore::roundAndClampToSRGBALossy(UIColor.systemBackgroundColor.CGColor);
-#else
-        color = { };
-#endif
-    };
-
-#if HAVE(OS_DARK_MODE_SUPPORT)
-    [[webView() traitCollection] performAsCurrentTraitCollection:computeContentViewBackgroundColor];
-#else
-    computeContentViewBackgroundColor();
-#endif
+    }];
 
     return color;
 }

@@ -197,7 +197,6 @@ enum class FeatureToAnimate {
     return true;
 }
 
-#if HAVE(OS_DARK_MODE_SUPPORT)
 - (NSAppearance *)effectiveAppearanceForScrollerImp:(NSScrollerImp *)scrollerImp
 {
     UNUSED_PARAM(scrollerImp);
@@ -209,7 +208,6 @@ enum class FeatureToAnimate {
         return appearance;
     return [NSAppearance currentDrawingAppearance];
 }
-#endif
 
 - (void)setUpAlphaAnimation:(RetainPtr<WebScrollbarPartAnimationMac>&)scrollbarPartAnimation featureToAnimate:(FeatureToAnimate)featureToAnimate animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
 {

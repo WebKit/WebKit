@@ -31,7 +31,6 @@
 
 namespace WebCore {
 
-#if HAVE(OS_DARK_MODE_SUPPORT)
 static UITraitCollection *adjustedTraitCollection(UITraitCollection *traitCollection)
 {
 #if PLATFORM(VISION)
@@ -42,11 +41,9 @@ static UITraitCollection *adjustedTraitCollection(UITraitCollection *traitCollec
 #endif
     return traitCollection;
 }
-#endif
 
 LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     m_savedTraitCollection = [PAL::getUITraitCollectionClass() currentTraitCollection];
 
     auto userInterfaceStyleTrait = [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceStyle:useDarkAppearance ? UIUserInterfaceStyleDark : UIUserInterfaceStyleLight];
@@ -59,28 +56,18 @@ LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance,
     auto newTraitCollection = adjustedTraitCollection([PAL::getUITraitCollectionClass() traitCollectionWithTraitsFromCollections:@[ m_savedTraitCollection.get(), userInterfaceStyleTrait, backgroundLevelTrait ]]);
 
     [PAL::getUITraitCollectionClass() setCurrentTraitCollection:newTraitCollection];
-#else
-    UNUSED_PARAM(useDarkAppearance);
-    UNUSED_PARAM(useElevatedUserInterfaceLevel);
-#endif
 }
 
 LocalCurrentTraitCollection::LocalCurrentTraitCollection(UITraitCollection *traitCollection)
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     m_savedTraitCollection = [PAL::getUITraitCollectionClass() currentTraitCollection];
     auto newTraitCollection = adjustedTraitCollection(traitCollection);
     [PAL::getUITraitCollectionClass() setCurrentTraitCollection:newTraitCollection];
-#else
-    UNUSED_PARAM(traitCollection);
-#endif
 }
 
 LocalCurrentTraitCollection::~LocalCurrentTraitCollection()
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     [PAL::getUITraitCollectionClass() setCurrentTraitCollection:m_savedTraitCollection.get()];
-#endif
 }
 
 }
