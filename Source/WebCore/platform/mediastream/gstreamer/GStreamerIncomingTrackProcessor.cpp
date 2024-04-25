@@ -126,6 +126,9 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::incomingTrackProcessor()
     if (m_data.type == RealtimeMediaSource::Type::Audio)
         return createParser();
 
+    GST_DEBUG_OBJECT(m_bin.get(), "Requesting a key-frame");
+    gst_pad_send_event(m_pad.get(), gst_video_event_new_upstream_force_key_unit(GST_CLOCK_TIME_NONE, TRUE, 1));
+
     bool forceEarlyVideoDecoding = !g_strcmp0(g_getenv("WEBKIT_GST_WEBRTC_FORCE_EARLY_VIDEO_DECODING"), "1");
     GST_DEBUG_OBJECT(m_bin.get(), "Configuring for input caps: %" GST_PTR_FORMAT "%s", m_data.caps.get(), forceEarlyVideoDecoding ? " and early decoding" : "");
     if (!forceEarlyVideoDecoding) {
