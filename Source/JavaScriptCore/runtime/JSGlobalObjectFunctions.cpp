@@ -169,10 +169,10 @@ static JSValue decode(JSGlobalObject* globalObject, std::span<const CharType> ch
         CharType c = *p;
         if (c == '%') {
             size_t charLen = 0;
-            if (k <= characters.size() - 3 && isASCIIHexDigit(p[1]) && isASCIIHexDigit(p[2])) {
+            if (k + 3 <= characters.size() && isASCIIHexDigit(p[1]) && isASCIIHexDigit(p[2])) {
                 const char b0 = Lexer<CharType>::convertHex(p[1], p[2]);
                 const int sequenceLen = 1 + U8_COUNT_TRAIL_BYTES(b0);
-                if (k <= characters.size() - sequenceLen * 3) {
+                if ((k + sequenceLen * 3) <= characters.size()) {
                     charLen = sequenceLen * 3;
                     uint8_t sequence[U8_MAX_LENGTH];
                     sequence[0] = b0;
@@ -208,7 +208,7 @@ static JSValue decode(JSGlobalObject* globalObject, std::span<const CharType> ch
                     return throwException(globalObject, scope, createURIError(globalObject, "URI error"_s));
                 // The only case where we don't use "strict" mode is the "unescape" function.
                 // For that, it's good to support the wonky "%u" syntax for compatibility with WinIE.
-                if (k <= characters.size() - 6 && p[1] == 'u'
+                if (k + 6 <= characters.size() && p[1] == 'u'
                         && isASCIIHexDigit(p[2]) && isASCIIHexDigit(p[3])
                         && isASCIIHexDigit(p[4]) && isASCIIHexDigit(p[5])) {
                     charLen = 6;
