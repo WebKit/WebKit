@@ -28,8 +28,8 @@ dictionary MonitorWheelEventsOptions {
 };
 
 interface EventSendingController {
-    undefined mouseDown(long buttonNumber, object modifierArray, optional DOMString pointerType);
-    undefined mouseUp(long buttonNumber, object modifierArray, optional DOMString pointerType);
+    [PassContext] undefined mouseDown(long buttonNumber, object modifierArray, optional DOMString pointerType);
+    [PassContext] undefined mouseUp(long buttonNumber, object modifierArray, optional DOMString pointerType);
     undefined mouseMoveTo(long x, long y, optional DOMString pointerType);
     undefined mouseForceClick();
     undefined startAndCancelMouseForceClick();
@@ -40,16 +40,16 @@ interface EventSendingController {
     undefined mouseScrollByWithWheelAndMomentumPhases(long x, long y, DOMString phase, DOMString momentum);
     undefined setWheelHasPreciseDeltas(boolean hasPreciseDeltas);
     undefined continuousMouseScrollBy(long x, long y, optional boolean paged);
-    object contextClick();
+    [PassContext] object contextClick();
     undefined scheduleAsynchronousClick();
 
     undefined leapForward(long milliseconds);
 
     // keyDown is really keyUpAndDown, and perhaps should be renamed to reflect that.
     // rawKeyDown is just the keyDown, and rawKeyUp is just the keyUp
-    undefined keyDown(DOMString key, object modifierArray, long location);
-    undefined rawKeyDown(DOMString key, object modifierArray, long location);
-    undefined rawKeyUp(DOMString key, object modifierArray, long location);
+    [PassContext] undefined keyDown(DOMString key, object modifierArray, long location);
+    [PassContext] undefined rawKeyDown(DOMString key, object modifierArray, long location);
+    [PassContext] undefined rawKeyUp(DOMString key, object modifierArray, long location);
     undefined scheduleAsynchronousKeyDown(DOMString key);
 
     // Zoom functions.
@@ -60,7 +60,7 @@ interface EventSendingController {
     undefined scalePageBy(double scale, double x, double y);
 
     undefined monitorWheelEvents(optional MonitorWheelEventsOptions options);
-    undefined callAfterScrollingCompletes(object functionCallback);
+    [PassContext] undefined callAfterScrollingCompletes(object functionCallback);
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
     // Touch events.
