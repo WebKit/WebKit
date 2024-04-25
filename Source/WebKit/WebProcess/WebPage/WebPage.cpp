@@ -2442,10 +2442,11 @@ void WebPage::setPageZoomFactor(double zoomFactor)
     }
 #endif
 
-    RefPtr frame = m_mainFrame->coreLocalFrame();
-    if (!frame)
+    if (!m_page)
         return;
-    frame->setPageZoomFactor(static_cast<float>(zoomFactor));
+
+    for (WeakRef frame : m_page->rootFrames())
+        frame->setPageZoomFactor(static_cast<float>(zoomFactor));
 }
 
 static void dumpHistoryItem(HistoryItem& item, size_t indent, bool isCurrentItem, StringBuilder& stringBuilder, const String& directoryName)

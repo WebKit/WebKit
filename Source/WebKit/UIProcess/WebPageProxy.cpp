@@ -4903,7 +4903,9 @@ void WebPageProxy::setPageZoomFactor(double zoomFactor)
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::SetPageZoomFactor(m_pageZoomFactor));
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::SetPageZoomFactor(m_pageZoomFactor), pageID);
+    });
 }
 
 void WebPageProxy::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
