@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,27 +28,33 @@
 
 namespace WebCore {
 
-CachedResourceLoader* XMLDocumentParserScope::currentCachedResourceLoader = nullptr;
-
-XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader)
-    : m_oldCachedResourceLoader(currentCachedResourceLoader)
-#if ENABLE(XSLT)
-    , m_oldGenericErrorFunc(xmlGenericError)
-    , m_oldStructuredErrorFunc(xmlStructuredError)
-    , m_oldErrorContext(xmlGenericErrorContext)
-#endif
+WeakPtr<CachedResourceLoader>& XMLDocumentParserScope::currentCachedResourceLoader()
 {
-    currentCachedResourceLoader = cachedResourceLoader;
+    static NeverDestroyed<WeakPtr<CachedResourceLoader>> currentCachedResourceLoader;
+    return currentCachedResourceLoader;
 }
 
 #if ENABLE(XSLT)
+XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader)
+    : XMLDocumentParserScope(cachedResourceLoader, xmlGenericError, xmlStructuredError, xmlGenericErrorContext)
+{
+}
+#else
+XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader)
+    : m_oldCachedResourceLoader(currentCachedResourceLoader())
+{
+    currentCachedResourceLoader() = cachedResourceLoader;
+}
+#endif // ENABLE(XSLT)
+
+#if ENABLE(XSLT)
 XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader, xmlGenericErrorFunc genericErrorFunc, xmlStructuredErrorFunc structuredErrorFunc, void* errorContext)
-    : m_oldCachedResourceLoader(currentCachedResourceLoader)
+    : m_oldCachedResourceLoader(currentCachedResourceLoader())
     , m_oldGenericErrorFunc(xmlGenericError)
     , m_oldStructuredErrorFunc(xmlStructuredError)
     , m_oldErrorContext(xmlGenericErrorContext)
 {
-    currentCachedResourceLoader = cachedResourceLoader;
+    currentCachedResourceLoader() = cachedResourceLoader;
     if (genericErrorFunc)
         xmlSetGenericErrorFunc(errorContext, genericErrorFunc);
     if (structuredErrorFunc)
@@ -58,7 +64,7 @@ XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResou
 
 XMLDocumentParserScope::~XMLDocumentParserScope()
 {
-    currentCachedResourceLoader = m_oldCachedResourceLoader;
+    currentCachedResourceLoader() = m_oldCachedResourceLoader;
 #if ENABLE(XSLT)
     xmlSetGenericErrorFunc(m_oldErrorContext, m_oldGenericErrorFunc);
     xmlSetStructuredErrorFunc(m_oldErrorContext, m_oldStructuredErrorFunc);
