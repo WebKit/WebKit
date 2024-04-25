@@ -291,7 +291,11 @@ void AccessibilityAtspi::registerRoot(AccessibilityRootAtspi& rootObject, Vector
     ensureCache();
     String path = makeString("/org/a11y/webkit/accessible/", makeStringByReplacingAll(createVersion4UUIDString(), '-', '_'));
     auto registeredObjects = WTF::map<3>(interfaces, [&](auto& interface) -> unsigned {
-        return g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &rootObject, nullptr, nullptr);
+        GUniqueOutPtr<GError> error;
+        if (guint ret = g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &rootObject, nullptr, &error.outPtr()))
+            return ret;
+        g_warning("Failed to register accessibility root object at %s: %s", path.utf8().data(), error->message);
+        return 0;
     });
     m_rootObjects.add(&rootObject, WTFMove(registeredObjects));
     String reference = makeString(uniqueName(), ':', path);
@@ -332,7 +336,11 @@ String AccessibilityAtspi::registerObject(AccessibilityObjectAtspi& atspiObject,
     ensureCache();
     String path = makeString("/org/a11y/atspi/accessible/", makeStringByReplacingAll(createVersion4UUIDString(), '-', '_'));
     auto registeredObjects = WTF::map<7>(interfaces, [&](auto& interface) -> unsigned {
-        return g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &atspiObject, nullptr, nullptr);
+        GUniqueOutPtr<GError> error;
+        if (guint ret = g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &atspiObject, nullptr, &error.outPtr()))
+            return ret;
+        g_warning("Failed to register accessibility object at %s: %s", path.utf8().data(), error->message);
+        return 0;
     });
     m_atspiObjects.add(&atspiObject, WTFMove(registeredObjects));
 
@@ -379,7 +387,11 @@ String AccessibilityAtspi::registerHyperlink(AccessibilityObjectAtspi& atspiObje
 
     String path = makeString("/org/a11y/atspi/accessible/", makeStringByReplacingAll(createVersion4UUIDString(), '-', '_'));
     auto registeredObjects = WTF::map<1>(interfaces, [&](auto& interface) -> unsigned {
-        return g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &atspiObject, nullptr, nullptr);
+        GUniqueOutPtr<GError> error;
+        if (guint ret = g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &atspiObject, nullptr, &error.outPtr()))
+            return ret;
+        g_warning("Failed to register accessibility hyperlink object at %s: %s", path.utf8().data(), error->message);
+        return 0;
     });
     m_atspiHyperlinks.add(&atspiObject, WTFMove(registeredObjects));
 
@@ -769,7 +781,10 @@ void AccessibilityAtspi::ensureCache()
     if (m_cacheID || !m_connection)
         return;
 
-    m_cacheID = g_dbus_connection_register_object(m_connection.get(), "/org/a11y/atspi/cache", const_cast<GDBusInterfaceInfo*>(&webkit_cache_interface), &s_cacheFunctions, this, nullptr, nullptr);
+    GUniqueOutPtr<GError> error;
+    m_cacheID = g_dbus_connection_register_object(m_connection.get(), "/org/a11y/atspi/cache", const_cast<GDBusInterfaceInfo*>(&webkit_cache_interface), &s_cacheFunctions, this, nullptr, &error.outPtr());
+    if (error)
+        g_warning("Failed to register accessibility cache: %s", error->message);
 }
 
 void AccessibilityAtspi::addToCacheIfNeeded(AccessibilityObjectAtspi& atspiObject)
