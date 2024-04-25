@@ -713,7 +713,7 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
                 if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer.get())) {
                     viewTransitionCapture->setSize(boxSize, overflowRect);
 
-                    RefPtr<ImageBuffer> image = viewTransitionCapture->canUseExistingLayers() ? nullptr : snapshotElementVisualOverflowClippedToViewport(*m_document->frame(), *newElement, overflowRect);
+                    RefPtr<ImageBuffer> image = viewTransitionCapture->canUseExistingLayers() ? nullptr : snapshotElementVisualOverflowClippedToViewport(*document()->frame(), *newElement, overflowRect);
                     viewTransitionCapture->setImage(image);
                 }
             }
