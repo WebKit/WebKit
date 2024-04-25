@@ -394,7 +394,7 @@ class SimulatedDeviceManager(object):
         return 0
 
     @classmethod
-    def initialize_devices(cls, requests, host=None, name_base='Managed', simulator_ui=True, timeout=SIMULATOR_BOOT_TIMEOUT, **kwargs):
+    def initialize_devices(cls, requests, host=None, name_base='Managed', simulator_ui=True, timeout=SIMULATOR_BOOT_TIMEOUT, keep_alive=False, **kwargs):
         host = host or SystemHost.get_default()
         if SimulatedDeviceManager.INITIALIZED_DEVICES is not None:
             return SimulatedDeviceManager.INITIALIZED_DEVICES
@@ -403,7 +403,9 @@ class SimulatedDeviceManager(object):
             return None
 
         SimulatedDeviceManager.INITIALIZED_DEVICES = []
-        atexit.register(SimulatedDeviceManager.tear_down)
+
+        if not keep_alive:
+            atexit.register(SimulatedDeviceManager.tear_down)
 
         # Convert to iterable type
         if not hasattr(requests, '__iter__'):
