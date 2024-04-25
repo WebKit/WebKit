@@ -41,7 +41,6 @@
 #include "HTMLTableElement.h"
 #include "HitTestResult.h"
 #include "LayoutBox.h"
-#include "LayoutIntegrationLineLayout.h"
 #include "LegacyRenderSVGModelObject.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
@@ -1773,26 +1772,8 @@ void RenderObject::willBeDestroyed()
     removeRareData();
 }
 
-enum class IsRemoval : bool { No, Yes };
-static void invalidateLineLayoutAfterTreeMutationIfNeeded(RenderObject& renderer, IsRemoval isRemoval)
-{
-    CheckedPtr container = LayoutIntegration::LineLayout::blockContainer(renderer);
-    if (!container)
-        return;
-    auto shouldInvalidateLineLayoutPath = [&](auto& inlinLayout) {
-        if (LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(*container, renderer, inlinLayout, isRemoval == IsRemoval::Yes))
-            return true;
-        if (isRemoval == IsRemoval::Yes)
-            return !inlinLayout.removedFromTree(*renderer.parent(), renderer);
-        return !inlinLayout.insertedIntoTree(*renderer.parent(), renderer);
-    };
-    if (auto* inlinLayout = container->modernLineLayout(); inlinLayout && shouldInvalidateLineLayoutPath(*inlinLayout))
-        container->invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::InsertionOrRemoval);
-}
-
 void RenderObject::insertedIntoTree()
 {
-    invalidateLineLayoutAfterTreeMutationIfNeeded(*this, IsRemoval::No);
     // FIXME: We should ASSERT(isRooted()) here but generated content makes some out-of-order insertion.
     if (!isFloating() && parent()->childrenInline())
         checkedParent()->dirtyLinesFromChangedChild(*this);
@@ -1800,7 +1781,6 @@ void RenderObject::insertedIntoTree()
 
 void RenderObject::willBeRemovedFromTree()
 {
-    invalidateLineLayoutAfterTreeMutationIfNeeded(*this, IsRemoval::Yes);
     // FIXME: We should ASSERT(isRooted()) but we have some out-of-order removals which would need to be fixed first.
     // Update cached boundaries in SVG renderers, if a child is removed.
     checkedParent()->invalidateCachedBoundaries();
