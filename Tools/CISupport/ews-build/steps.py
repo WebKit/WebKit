@@ -1407,7 +1407,7 @@ class FindModifiedLayoutTests(shell.ShellCommandNewStyle, AnalyzeChange):
     name = 'find-modified-layout-tests'
     description = 'find-modified-layout tests running'
     descriptionDone = 'Found modified layout tests'
-    RE_LAYOUT_TEST = br'^(\+\+\+).*(LayoutTests.*\.html)'
+    RE_LAYOUT_TEST = br'^(\+\+\+).*(LayoutTests.*\.html|LayoutTests.*\.svg)'
     DIRECTORIES_TO_IGNORE = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
     SUFFIXES_TO_IGNORE = ['-expected', '-expected-mismatch', '-ref', '-notref']
     command = ['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']
@@ -1423,7 +1423,7 @@ class FindModifiedLayoutTests(shell.ShellCommandNewStyle, AnalyzeChange):
         rc = yield super().run()
         modified_tests = set()
         log_text = self.log_observer.getStdout()
-        match = re.findall(r'\+(.*\.html)', log_text)
+        match = re.findall(r'\+(.*\.html)', log_text) + re.findall(r'\+(.*\.svg)', log_text)
         yield self._addToLog('stdio', '\nLooking for test expectation changes...\n')
         for test in match:
             yield self._addToLog('stdio', f'    LayoutTests/{test}\n')
@@ -1465,7 +1465,7 @@ class FindModifiedLayoutTests(shell.ShellCommandNewStyle, AnalyzeChange):
         for line in patch.splitlines():
             match = re.search(self.RE_LAYOUT_TEST, line, re.IGNORECASE)
             if match:
-                if any((suffix + '.html').encode('utf-8') in line for suffix in self.SUFFIXES_TO_IGNORE):
+                if any(((suffix + '.html').encode('utf-8') or (suffix + '.svg').encode('utf-8')) in line for suffix in self.SUFFIXES_TO_IGNORE):
                     continue
                 test_name = match.group(2).decode('utf-8')
                 if any(directory in test_name.split('/') for directory in self.DIRECTORIES_TO_IGNORE):

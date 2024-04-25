@@ -4494,10 +4494,35 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('modified_tests'), ['LayoutTests/http/tests/events/device-orientation-motion-insecure-context.html'])
         return rc
 
+    def test_success_svg(self):
+        self.setupStep(FindModifiedLayoutTests())
+        self.assertEqual(FindModifiedLayoutTests.haltOnFailure, True)
+        self.assertEqual(FindModifiedLayoutTests.flunkOnFailure, True)
+        FindModifiedLayoutTests._get_patch = lambda x: b'+++ LayoutTests/svg/filters/feConvolveMatrix-clipped.svg'
+        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+        )
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('modified_tests'), ['LayoutTests/svg/filters/feConvolveMatrix-clipped.svg'])
+        return rc
+
     def test_ignore_certain_directories(self):
         self.setupStep(FindModifiedLayoutTests())
         dir_names = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.html'.encode('utf-8')
+        self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+        )
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('modified_tests'), None)
+        return rc
+
+    def test_ignore_certain_directories_svg(self):
+        self.setupStep(FindModifiedLayoutTests())
+        dir_names = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
+        FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.svg'.encode('utf-8')
         self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
