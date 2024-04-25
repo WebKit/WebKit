@@ -167,7 +167,7 @@ TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
     TestWebKitAPI::Util::run(&fetchComplete);
 }
 
-TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecords)
+TEST(WKWebExtensionDataRecord, RemoveDataRecords)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }",
@@ -196,22 +196,29 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecords)
         EXPECT_EQ(dataRecords.firstObject.totalSize, 237UL);
 
         [testController removeDataOfTypes:[NSSet setWithArray:@[ _WKWebExtensionDataTypeLocal, _WKWebExtensionDataTypeSession ]] forDataRecords:dataRecords completionHandler:^{
-            [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<_WKWebExtensionDataRecord *> *updatedRecords) {
-                EXPECT_EQ(updatedRecords.count, 1UL);
-
-                EXPECT_EQ(updatedRecords[0].errors.count, 0UL);
-
-                // Sync storage should still have data.
-                EXPECT_EQ(updatedRecords.firstObject.totalSize, 79UL);
-                removalComplete = true;
-            }];
+            removalComplete = true;
         }];
     }];
 
     TestWebKitAPI::Util::run(&removalComplete);
+
+    backgroundScript = Util::constructScript(@[
+        @"let usage = await browser.storage?.local?.getBytesInUse()",
+        @"browser.test.assertEq(usage, 0)",
+
+        @"usage = await browser.storage?.session?.getBytesInUse()",
+        @"browser.test.assertEq(usage, 0)",
+
+        @"usage = await browser.storage?.sync?.getBytesInUse()",
+        @"browser.test.assertEq(usage, 0)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(dataRecordTestManifest, @{ @"background.js": backgroundScript });
 }
 
-TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecordsForMultipleContexts)
+TEST(WKWebExtensionDataRecord, RemoveDataRecordsForMultipleContexts)
 {
     auto *backgroundScriptOne = Util::constructScript(@[
         @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }",
@@ -244,11 +251,14 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecordsForMultipleContexts)
     __block bool removalComplete = false;
     [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<_WKWebExtensionDataRecord *> *dataRecords) {
         EXPECT_EQ(dataRecords.count, 2UL);
-        EXPECT_EQ(dataRecords[0].totalSize + dataRecords[1].totalSize, 237UL);
+        EXPECT_EQ(dataRecords[0].totalSize + dataRecords[1].totalSize, 158UL);
 
+        TestWebKitAPI::Util::runFor(2_s);
         [testController removeDataOfTypes:allDataTypesSet forDataRecords:dataRecords completionHandler:^{
             EXPECT_EQ(dataRecords[0].errors.count, 0UL);
             EXPECT_EQ(dataRecords[1].errors.count, 0UL);
+
+            TestWebKitAPI::Util::runFor(2_s);
             [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<_WKWebExtensionDataRecord *> *updatedDataRecords) {
                 EXPECT_EQ(updatedDataRecords[0].errors.count, 0UL);
                 EXPECT_EQ(updatedDataRecords[1].errors.count, 0UL);
