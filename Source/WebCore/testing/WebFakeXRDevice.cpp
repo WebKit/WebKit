@@ -216,7 +216,10 @@ Vector<PlatformXR::Device::ViewData> SimulatedXRDevice::views(PlatformXR::Sessio
     return { { .active = true, .eye = PlatformXR::Eye::None } };
 }
 
-WebFakeXRDevice::WebFakeXRDevice() = default;
+WebFakeXRDevice::WebFakeXRDevice()
+    : m_device(adoptRef(*new SimulatedXRDevice()))
+{
+}
 
 void WebFakeXRDevice::setViews(const Vector<FakeXRViewInit>& views)
 {
@@ -237,7 +240,7 @@ void WebFakeXRDevice::setViews(const Vector<FakeXRViewInit>& views)
         }
     }
 
-    m_device.setViews(WTFMove(deviceViews));
+    m_device->setViews(WTFMove(deviceViews));
 }
 
 void WebFakeXRDevice::disconnect(DOMPromiseDeferred<void>&& promise)
@@ -251,13 +254,13 @@ void WebFakeXRDevice::setViewerOrigin(FakeXRRigidTransformInit origin, bool emul
     if (pose.hasException())
         return;
 
-    m_device.setViewerOrigin(pose.releaseReturnValue());
-    m_device.setEmulatedPosition(emulatedPosition);
+    m_device->setViewerOrigin(pose.releaseReturnValue());
+    m_device->setEmulatedPosition(emulatedPosition);
 }
 
 void WebFakeXRDevice::simulateVisibilityChange(XRVisibilityState visibilityState)
 {
-    m_device.setVisibilityState(visibilityState);
+    m_device->setVisibilityState(visibilityState);
 }
 
 void WebFakeXRDevice::setFloorOrigin(FakeXRRigidTransformInit origin)
@@ -266,7 +269,7 @@ void WebFakeXRDevice::setFloorOrigin(FakeXRRigidTransformInit origin)
     if (pose.hasException())
         return;
 
-    m_device.setFloorOrigin(pose.releaseReturnValue());
+    m_device->setFloorOrigin(pose.releaseReturnValue());
 }
 
 void WebFakeXRDevice::simulateResetPose()
@@ -277,7 +280,7 @@ Ref<WebFakeXRInputController> WebFakeXRDevice::simulateInputSourceConnection(con
 {
     auto handle = ++mInputSourceHandleIndex;
     auto input = WebFakeXRInputController::create(handle, init);
-    m_device.addInputConnection(input.copyRef());
+    m_device->addInputConnection(input.copyRef());
     return input;
 }
 
@@ -318,12 +321,12 @@ ExceptionOr<Ref<FakeXRView>> WebFakeXRDevice::parseView(const FakeXRViewInit& in
 
 void WebFakeXRDevice::setSupportsShutdownNotification()
 {
-    m_device.setSupportsShutdownNotification(true);
+    m_device->setSupportsShutdownNotification(true);
 }
 
 void WebFakeXRDevice::simulateShutdown()
 {
-    m_device.simulateShutdownCompleted();
+    m_device->simulateShutdownCompleted();
 }
 
 } // namespace WebCore
