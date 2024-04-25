@@ -251,7 +251,7 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
 #endif
     [m_soAuthorization setAuthorizationOptions:authorizationOptions];
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if PLATFORM(VISION)
     if (![[m_page->cocoaView() UIDelegate] respondsToSelector:@selector(_presentingViewControllerForWebView:)])
         [m_soAuthorization setEnableEmbeddedAuthorizationViewController:NO];
 #endif
@@ -396,6 +396,10 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
     // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
     // We should call PageClientImpl::presentingViewController() instead.
     UIViewController *presentingViewController = m_page->uiClient().presentingViewController();
+#if !PLATFORM(VISION)
+    if (!presentingViewController)
+        presentingViewController = [m_page->cocoaView() window].rootViewController;
+#endif
     if (!presentingViewController) {
         uiCallback(NO, adoptNS([[NSError alloc] initWithDomain:SOErrorDomain code:kSOErrorAuthorizationPresentationFailed userInfo:nil]).get());
         return;

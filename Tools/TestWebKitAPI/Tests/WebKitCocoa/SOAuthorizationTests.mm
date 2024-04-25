@@ -621,12 +621,11 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed1)
     Util::run(&authorizationPerformed);
     checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_FALSE(policyForAppSSOPerformed); // The delegate isn't registered, so this won't be set.
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(IOS)
     EXPECT_TRUE(gAuthorization.enableEmbeddedAuthorizationViewController);
-#elif PLATFORM(IOS) || PLATFORM(VISION)
+#elif PLATFORM(VISION)
     EXPECT_FALSE(gAuthorization.enableEmbeddedAuthorizationViewController);
 #endif
-
     RetainPtr<NSURL> redirectURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : [redirectURL absoluteString] }]);
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
