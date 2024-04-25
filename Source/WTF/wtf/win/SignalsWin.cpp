@@ -47,8 +47,8 @@ namespace WTF {
 void SignalHandlers::add(Signal signal, SignalHandler&& handler)
 {
     Config::AssertNotFrozenScope assertScope;
-    static Lock lock;
-    Locker locker { lock };
+    ASSERT(signal < Signal::Unknown);
+    RELEASE_ASSERT(initState == SignalHandlers::InitState::Initializing);
 
     size_t signalIndex = static_cast<size_t>(signal);
     size_t nextFree = numberOfHandlers[signalIndex];
@@ -56,12 +56,7 @@ void SignalHandlers::add(Signal signal, SignalHandler&& handler)
     SignalHandlerMemory* memory = &handlers[signalIndex][nextFree];
     new (memory) SignalHandler(WTFMove(handler));
 
-    // We deliberately do not want to increment the count until after we've
-    // fully initialized the memory. This way, forEachHandler() won't see a
-    // partially initialized handler.
-    storeStoreFence();
     numberOfHandlers[signalIndex]++;
-    loadLoadFence();
 }
 
 template<typename Func>
@@ -128,30 +123,37 @@ void addSignalHandler(Signal signal, SignalHandler&& handler)
 {
     Config::AssertNotFrozenScope assertScope;
     SignalHandlers& handlers = g_wtfConfig.signalHandlers;
-    ASSERT(signal < Signal::Unknown);
-
-    static std::once_flag initializeOnceFlags[static_cast<size_t>(Signal::NumberOfSignals)];
-    std::call_once(initializeOnceFlags[static_cast<size_t>(signal)], [&] {
-        Config::AssertNotFrozenScope assertScope;
-        AddVectoredExceptionHandler(1, vectoredHandler);
-    });
-
     handlers.add(signal, WTFMove(handler));
 }
 
 void activateSignalHandlersFor(Signal signal)
 {
-    UNUSED_PARAM(signal);
+    const SignalHandlers& handlers = g_wtfConfig.signalHandlers;
+    ASSERT_UNUSED(signal, signal < Signal::Unknown);
+    RELEASE_ASSERT(handlers.initState >= SignalHandlers::InitState::Initializing);
 }
 
 void SignalHandlers::initialize()
 {
-    // noop
+    Config::AssertNotFrozenScope assertScope;
+    SignalHandlers& handlers = g_wtfConfig.signalHandlers;
+    RELEASE_ASSERT(handlers.initState == SignalHandlers::InitState::Uninitialized);
+    handlers.initState = SignalHandlers::InitState::Initializing;
 }
 
-void finalizeSignalHandlers()
+void SignalHandlers::finalize()
 {
-    // noop
+    Config::AssertNotFrozenScope assertScope;
+    SignalHandlers& handlers = g_wtfConfig.signalHandlers;
+    RELEASE_ASSERT(handlers.initState == SignalHandlers::InitState::Initializing);
+    handlers.initState = SignalHandlers::InitState::Finalized;
+
+    for (unsigned i = 0; i < numberOfSignals; ++i) {
+        if (handlers.numberOfHandlers[i]) {
+            AddVectoredExceptionHandler(1, vectoredHandler);
+            break;
+        }
+    }
 }
 
 } // namespace WTF

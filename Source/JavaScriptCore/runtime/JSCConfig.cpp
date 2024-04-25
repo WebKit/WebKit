@@ -42,12 +42,6 @@ Config& Config::singleton()
     return g_jscConfig;
 }
 
-void Config::disableFreezingForTesting()
-{
-    RELEASE_ASSERT(!g_jscConfig.isPermanentlyFrozen());
-    g_jscConfig.disabledFreezingForTesting = true;
-}
-
 void Config::enableRestrictedOptions()
 {
     RELEASE_ASSERT(!g_jscConfig.isPermanentlyFrozen());
