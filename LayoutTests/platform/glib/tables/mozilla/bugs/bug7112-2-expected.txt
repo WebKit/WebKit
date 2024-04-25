@@ -6,9 +6,9 @@ layer at (0,0) size 785x1000
       RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 134x17
           text run at (0,0) width 134: "This is a table with a "
-        RenderInline {CODE} at (134,3) size 120x15
-          RenderText {#text} at (134,3) size 120x15
-            text run at (134,3) width 120: "td align=center"
+        RenderInline {CODE} at (134,4) size 120x14
+          RenderText {#text} at (134,4) size 120x15
+            text run at (134,4) width 120: "td align=center"
         RenderText {#text} at (254,0) size 182x17
           text run at (254,0) width 182: " that has a p, a table, and a p."
       RenderTable {TABLE} at (0,34) size 231x138 [border: (1px outset #808080)]
@@ -30,9 +30,9 @@ layer at (0,0) size 785x1000
       RenderBlock {P} at (0,188) size 769x72
         RenderText {#text} at (0,0) size 181x17
           text run at (0,0) width 181: "This time the inner table has "
-        RenderInline {CODE} at (181,3) size 96x15
-          RenderText {#text} at (181,3) size 96x15
-            text run at (181,3) width 96: "width=\"100%\""
+        RenderInline {CODE} at (181,4) size 96x14
+          RenderText {#text} at (181,4) size 96x15
+            text run at (181,4) width 96: "width=\"100%\""
         RenderText {#text} at (0,0) size 753x71
           text run at (277,0) width 386: ", so you can see that the CSS spec isn't quite being followed. "
           text run at (663,0) width 90: "The CSS spec"
@@ -57,7 +57,7 @@ layer at (0,0) size 785x1000
                 RenderText {#text} at (98,0) size 24x17
                   text run at (98,0) width 24: "text"
       RenderBlock (anonymous) at (0,414) size 769x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (234,432) size 301x28 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 298x26
           RenderTableRow {TR} at (0,2) size 298x22
@@ -65,7 +65,7 @@ layer at (0,0) size 785x1000
               RenderText {#text} at (2,2) size 103x17
                 text run at (2,2) width 103: "Data of Table 1!"
       RenderBlock (anonymous) at (0,460) size 769x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,478) size 300x28 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 298x26
           RenderTableRow {TR} at (0,2) size 298x22
@@ -73,7 +73,7 @@ layer at (0,0) size 785x1000
               RenderText {#text} at (95,2) size 104x17
                 text run at (95,2) width 104: "Data of Table 2!"
       RenderBlock (anonymous) at (0,506) size 769x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock {DIV} at (0,524) size 769x26 [border: (1px solid #000000)]
         RenderTable {TABLE} at (330,1) size 109x24
           RenderTableSection {TBODY} at (0,0) size 109x24
@@ -82,7 +82,7 @@ layer at (0,0) size 785x1000
                 RenderText {#text} at (1,1) size 103x17
                   text run at (1,1) width 103: "Data of Table 3!"
       RenderBlock (anonymous) at (0,550) size 769x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock {DIV} at (0,568) size 769x26 [border: (1px solid #000000)]
         RenderTable {TABLE} at (1,1) size 109x24
           RenderTableSection {TBODY} at (0,0) size 109x24
@@ -91,7 +91,7 @@ layer at (0,0) size 785x1000
                 RenderText {#text} at (1,1) size 103x17
                   text run at (1,1) width 103: "Data of Table 4!"
       RenderBlock (anonymous) at (0,594) size 769x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,612) size 769x48
         RenderTableSection {TBODY} at (0,0) size 769x48
           RenderTableRow {TR} at (0,2) size 769x44
@@ -144,7 +144,7 @@ layer at (0,0) size 785x1000
       RenderBlock {P} at (0,924) size 769x18
         RenderText {#text} at (0,0) size 60x17
           text run at (0,0) width 60: "See also: "
-        RenderInline {A} at (60,0) size 127x17 [color=#0000EE]
+        RenderInline {A} at (60,0) size 127x18 [color=#0000EE]
           RenderText {#text} at (60,0) size 127x17
             text run at (60,0) width 127: "Strict Mode Version"
         RenderText {#text} at (0,0) size 0x0

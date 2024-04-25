@@ -1,5 +1,5 @@
 	X
 (repaint rects
-  (rect 8 9 109 45)
+  (rect 8 10 109 44)
 )
 

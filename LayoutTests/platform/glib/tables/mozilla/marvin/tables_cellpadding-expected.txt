@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
           text run at (364,18) width 379: "padding. Notice the difference. There should be a larger gap"
           text run at (0,36) width 199: "between the cell border and it's "
           text run at (199,36) width 157: "contents in the first table."
-        RenderBR {BR} at (356,36) size 0x17
-        RenderBR {BR} at (0,54) size 0x17
+        RenderBR {BR} at (356,36) size 0x18
+        RenderBR {BR} at (0,54) size 0x18
       RenderTable {TABLE} at (0,72) size 258x82 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 254x78
           RenderTableRow {TR} at (0,2) size 254x36
@@ -36,8 +36,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (9,9) size 59x17
                 text run at (9,9) width 59: "Netcaster"
       RenderBlock (anonymous) at (0,154) size 784x54
-        RenderBR {BR} at (0,0) size 0x17
-        RenderBR {BR} at (0,18) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
         RenderText {#text} at (0,36) size 219x17
           text run at (0,36) width 219: "This table contains no cellpadding."
       RenderTable {TABLE} at (0,208) size 216x54 [border: (2px outset #808080)]

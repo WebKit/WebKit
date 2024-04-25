@@ -8,4 +8,4 @@ layer at (0,0) size 800x600
           RenderBlock (floating) {SPAN} at (0,0) size 10x100
             RenderText {#text} at (0,0) size 4x17
               text run at (0,0) width 4: " "
-          RenderBR {BR} at (10,0) size 0x17
+          RenderBR {BR} at (10,0) size 0x18

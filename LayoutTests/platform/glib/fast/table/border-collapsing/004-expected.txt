@@ -4,43 +4,43 @@ layer at (0,0) size 785x1476
   RenderBlock {HTML} at (0,0) size 785x1476
     RenderBody {BODY} at (8,21) size 769x1439
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 287x36
-          text run at (0,0) width 287: "Table Border Models"
+        RenderText {#text} at (0,1) size 287x36
+          text run at (0,1) width 287: "Table Border Models"
       RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 117x17
           text run at (0,0) width 117: "This tests tests the "
-        RenderInline {A} at (117,0) size 208x17 [color=#0000EE]
+        RenderInline {A} at (117,0) size 208x18 [color=#0000EE]
           RenderText {#text} at (117,0) size 208x17
             text run at (117,0) width 208: "CSS2 spec rules on table borders"
         RenderText {#text} at (325,0) size 180x17
           text run at (325,0) width 8: ". "
           text run at (333,0) width 172: "The styles applied here are:"
       RenderBlock {PRE} at (0,92) size 769x181
-        RenderText {#text} at (0,0) size 688x180
-          text run at (0,0) width 408: "TABLE\x{9}{ margin: 1em; border: medium solid blue; }"
-          text run at (408,0) width 0: " "
-          text run at (0,15) width 408: "TD\x{9}{ border: thin solid green; padding: 5px; }"
-          text run at (408,15) width 0: " "
-          text run at (0,30) width 392: "TH { border: medium solid purple; padding: 5px; }"
-          text run at (392,30) width 0: " "
-          text run at (0,45) width 360: "TABLE.one, TABLE.two { border-spacing: 1em; }"
-          text run at (360,45) width 0: " "
-          text run at (0,60) width 320: "TABLE.one { border-collapse: collapse; }"
-          text run at (320,60) width 0: " "
-          text run at (0,75) width 320: "TABLE.two { border-collapse: separate; }"
-          text run at (320,75) width 0: " "
-          text run at (0,90) width 536: "TABLE.three { border-collapse: separate; border-spacing: 0 0.5em; }"
-          text run at (536,90) width 0: " "
-          text run at (0,105) width 528: "TABLE.four { border-collapse: separate; border-spacing: 0.5em 0; }"
-          text run at (528,105) width 0: " "
-          text run at (0,120) width 328: "TABLE.five { border-collapse: separate; }"
-          text run at (328,120) width 0: " "
-          text run at (0,135) width 464: "TABLE.five, TABLE.five TD, TABLE.five TH { border: none; }"
-          text run at (464,135) width 0: " "
-          text run at (0,150) width 688: "TABLE.five TR, TABLE.five COL, TABLE.five COLGROUP, TABLE.five TBODY, TABLE.five THEAD"
-          text run at (688,150) width 0: " "
-          text run at (0,165) width 296: "\x{9}{ border: medium solid red; }"
-          text run at (296,165) width 0: " "
+        RenderText {#text} at (0,1) size 688x180
+          text run at (0,1) width 408: "TABLE\x{9}{ margin: 1em; border: medium solid blue; }"
+          text run at (408,1) width 0: " "
+          text run at (0,16) width 408: "TD\x{9}{ border: thin solid green; padding: 5px; }"
+          text run at (408,16) width 0: " "
+          text run at (0,31) width 392: "TH { border: medium solid purple; padding: 5px; }"
+          text run at (392,31) width 0: " "
+          text run at (0,46) width 360: "TABLE.one, TABLE.two { border-spacing: 1em; }"
+          text run at (360,46) width 0: " "
+          text run at (0,61) width 320: "TABLE.one { border-collapse: collapse; }"
+          text run at (320,61) width 0: " "
+          text run at (0,76) width 320: "TABLE.two { border-collapse: separate; }"
+          text run at (320,76) width 0: " "
+          text run at (0,91) width 536: "TABLE.three { border-collapse: separate; border-spacing: 0 0.5em; }"
+          text run at (536,91) width 0: " "
+          text run at (0,106) width 528: "TABLE.four { border-collapse: separate; border-spacing: 0.5em 0; }"
+          text run at (528,106) width 0: " "
+          text run at (0,121) width 328: "TABLE.five { border-collapse: separate; }"
+          text run at (328,121) width 0: " "
+          text run at (0,136) width 464: "TABLE.five, TABLE.five TD, TABLE.five TH { border: none; }"
+          text run at (464,136) width 0: " "
+          text run at (0,151) width 688: "TABLE.five TR, TABLE.five COL, TABLE.five COLGROUP, TABLE.five TBODY, TABLE.five THEAD"
+          text run at (688,151) width 0: " "
+          text run at (0,166) width 296: "\x{9}{ border: medium solid red; }"
+          text run at (296,166) width 0: " "
       RenderTable {TABLE} at (16,288) size 737x185 [border: (1px solid #0000FF)]
         RenderTableSection {TBODY} at (1,1) size 734x181
           RenderTableRow {TR} at (0,0) size 734x31
@@ -87,7 +87,7 @@ layer at (0,0) size 785x1476
                 text run at (117,24) width 80: "This margin "
                 text run at (196,24) width 11: "is"
                 text run at (6,42) width 121: "measured from the "
-              RenderInline {EM} at (127,42) size 43x17
+              RenderInline {EM} at (127,42) size 43x18
                 RenderText {#text} at (127,42) size 43x17
                   text run at (127,42) width 43: "middle"
               RenderText {#text} at (6,42) size 199x35
@@ -137,7 +137,7 @@ layer at (0,0) size 785x1476
                 text run at (6,24) width 44: "edges. "
                 text run at (50,24) width 80: "This margin "
                 text run at (129,24) width 136: "is measured from the "
-              RenderInline {EM} at (6,24) size 292x35
+              RenderInline {EM} at (6,24) size 292x36
                 RenderText {#text} at (6,24) size 292x35
                   text run at (264,24) width 34: "outer"
                   text run at (6,42) width 30: "edge"
@@ -190,7 +190,7 @@ layer at (0,0) size 785x1476
                 text run at (117,24) width 80: "This margin "
                 text run at (196,24) width 11: "is"
                 text run at (6,42) width 121: "measured from the "
-              RenderInline {EM} at (127,51) size 67x17
+              RenderInline {EM} at (127,51) size 67x18
                 RenderText {#text} at (127,51) size 67x17
                   text run at (127,42) width 67: "outer edge"
               RenderText {#text} at (6,51) size 223x35
@@ -249,7 +249,7 @@ layer at (0,0) size 785x1476
                 text run at (164,24) width 29: "This"
                 text run at (6,42) width 48: "margin "
                 text run at (53,42) width 132: "is measured from the"
-              RenderInline {EM} at (6,60) size 67x17
+              RenderInline {EM} at (6,60) size 67x18
                 RenderText {#text} at (6,60) size 67x17
                   text run at (6,60) width 67: "outer edge"
               RenderText {#text} at (73,60) size 84x17
@@ -320,7 +320,7 @@ layer at (0,0) size 785x1476
                 text run at (116,23) width 80: "This margin "
                 text run at (195,23) width 75: "is measured"
                 text run at (5,41) width 57: "from the "
-              RenderInline {EM} at (62,41) size 67x17
+              RenderInline {EM} at (62,41) size 67x18
                 RenderText {#text} at (62,41) size 67x17
                   text run at (62,41) width 67: "outer edge"
               RenderText {#text} at (129,41) size 84x17

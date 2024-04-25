@@ -21,14 +21,14 @@ layer at (0,0) size 800x600
                         text run at (0,0) width 110: "Search Froogle"
                   RenderText {#text} at (0,0) size 0x0
                 RenderTableCell {TD} at (634,4) size 151x19 [r=0 c=3 rs=2 cs=1]
-                  RenderInline {LABEL} at (10,10) size 115x12
+                  RenderInline {LABEL} at (10,11) size 115x12
                     RenderText {#text} at (0,0) size 0x0
                     RenderBlock {INPUT} at (12,7) size 12x13
-                    RenderText {#text} at (26,10) size 99x12
-                      text run at (26,6) width 99: " Remember this location"
+                    RenderText {#text} at (26,11) size 99x12
+                      text run at (26,7) width 99: " Remember this location"
                   RenderText {#text} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,43) size 784x18
-          RenderBR {BR} at (392,0) size 0x17
+          RenderBR {BR} at (392,0) size 0x18
 layer at (147,13) size 366x18
   RenderBlock {DIV} at (3,3) size 366x18
 caret: position 0 of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 2 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {FORM} of child 1 {CENTER} of body

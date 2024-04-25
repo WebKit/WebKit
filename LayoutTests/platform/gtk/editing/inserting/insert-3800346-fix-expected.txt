@@ -31,8 +31,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 41x26
               text run at (0,0) width 41: "Test"
           RenderBlock (anonymous) at (0,102) size 756x108
-            RenderBR {BR} at (0,0) size 0x26
-            RenderBR {BR} at (0,27) size 0x26
-            RenderBR {BR} at (0,54) size 0x26
-            RenderBR {BR} at (0,81) size 0x26
+            RenderBR {BR} at (0,0) size 0x27
+            RenderBR {BR} at (0,27) size 0x27
+            RenderBR {BR} at (0,54) size 0x27
+            RenderBR {BR} at (0,81) size 0x27
 caret: position 0 of child 5 {BR} of child 1 {DIV} of child 1 {DIV} of body

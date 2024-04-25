@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 96x17
                 text run at (2,2) width 96: "foo foo foo foo"
       RenderBlock (anonymous) at (0,28) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,46) size 784x82 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x80
           RenderTableRow {TR} at (0,2) size 782x76
@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
                 text run at (2,38) width 21: "foo"
                 text run at (2,56) width 21: "foo"
       RenderBlock (anonymous) at (0,128) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 535x17
           text run at (0,18) width 535: "auto table - % width cell increases table width based on % cell which makes it largest"
       RenderTable {TABLE} at (0,164) size 784x44 [border: (1px outset #808080)]
@@ -61,4 +61,4 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 32x17
                 text run at (2,2) width 32: "20px"
       RenderBlock (anonymous) at (0,208) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18

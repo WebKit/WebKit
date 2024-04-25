@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 106x42 [border: (3px solid #000000)]
           RenderText {#text} at (3,3) size 80x17
             text run at (3,3) width 80: "a. b. "
-          RenderInline {SPAN} at (83,3) size 4x17
+          RenderInline {SPAN} at (83,3) size 4x18
             RenderText {#text} at (83,3) size 4x17
               text run at (83,3) width 4: "i"
           RenderText {#text} at (3,3) size 100x35
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 106x42 [border: (3px solid #000000)]
           RenderText {#text} at (3,3) size 80x17
             text run at (3,3) width 80: "a. b. "
-          RenderInline {SPAN} at (83,3) size 4x17
+          RenderInline {SPAN} at (83,3) size 4x18
             RenderText {#text} at (83,3) size 4x17
               text run at (83,3) width 4: "i"
           RenderText {#text} at (3,3) size 100x35

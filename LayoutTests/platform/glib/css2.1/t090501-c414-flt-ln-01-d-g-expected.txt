@@ -15,7 +15,7 @@ layer at (0,0) size 800x484
       RenderBlock {DIV} at (16,70) size 752x382 [color=#C0C0C0] [border: (5px solid #800080)]
         RenderText {#text} at (133,22) size 474x17
           text run at (133,22) width 474: "dummy text dummy text dummy text dummy text dummy text dummy text "
-        RenderInline {SPAN} at (607,19) size 19x23 [color=#FFFFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
+        RenderInline {SPAN} at (607,19) size 19x24 [color=#FFFFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
           RenderText {#text} at (610,22) size 13x17
             text run at (610,22) width 13: "\x{21E6}"
         RenderText {#text} at (626,22) size 4x17
@@ -24,7 +24,7 @@ layer at (0,0) size 800x484
         RenderText {#text} at (133,22) size 572x37
           text run at (630,22) width 75: "dummy text"
           text run at (133,42) width 395: "dummy text dummy text dummy text dummy text dummy text "
-        RenderInline {SPAN} at (528,39) size 19x23 [color=#FFFFFF] [bgcolor=#800080] [border: (3px solid #FF00FF)]
+        RenderInline {SPAN} at (528,39) size 19x24 [color=#FFFFFF] [bgcolor=#800080] [border: (3px solid #FF00FF)]
           RenderText {#text} at (531,42) size 13x17
             text run at (531,42) width 13: "\x{21E8}"
         RenderText {#text} at (547,42) size 4x17

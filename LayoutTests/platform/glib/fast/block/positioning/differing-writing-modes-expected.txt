@@ -5,32 +5,32 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 352x17
         text run at (0,0) width 352: "All of the boxes below should look identical to this one:"
-      RenderBR {BR} at (352,0) size 0x17
-      RenderBR {BR} at (72,72) size 0x17
+      RenderBR {BR} at (352,0) size 0x18
+      RenderBR {BR} at (72,72) size 0x18
       RenderText {#text} at (0,86) size 95x17
         text run at (0,86) width 95: "The test boxes:"
-      RenderBR {BR} at (95,86) size 0x17
+      RenderBR {BR} at (95,86) size 0x18
       RenderText {#text} at (72,158) size 4x17
         text run at (72,158) width 4: " "
       RenderText {#text} at (148,158) size 4x17
         text run at (148,158) width 4: " "
       RenderText {#text} at (224,158) size 4x17
         text run at (224,158) width 4: " "
-      RenderBR {BR} at (300,158) size 0x17
+      RenderBR {BR} at (300,158) size 0x18
       RenderText {#text} at (72,230) size 4x17
         text run at (72,230) width 4: " "
       RenderText {#text} at (148,230) size 4x17
         text run at (148,230) width 4: " "
       RenderText {#text} at (224,230) size 4x17
         text run at (224,230) width 4: " "
-      RenderBR {BR} at (300,230) size 0x17
+      RenderBR {BR} at (300,230) size 0x18
       RenderText {#text} at (72,302) size 4x17
         text run at (72,302) width 4: " "
       RenderText {#text} at (148,302) size 4x17
         text run at (148,302) width 4: " "
       RenderText {#text} at (224,302) size 4x17
         text run at (224,302) width 4: " "
-      RenderBR {BR} at (300,302) size 0x17
+      RenderBR {BR} at (300,302) size 0x18
       RenderText {#text} at (72,374) size 4x17
         text run at (72,374) width 4: " "
       RenderText {#text} at (148,374) size 4x17

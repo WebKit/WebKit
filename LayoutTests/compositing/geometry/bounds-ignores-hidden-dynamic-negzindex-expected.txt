@@ -44,7 +44,7 @@
         )
         (GraphicsLayer
           (position 8.00 8.00)
-          (bounds 784.00 15.00)
+          (bounds 784.00 16.00)
           (opacity 0.00)
         )
         (GraphicsLayer

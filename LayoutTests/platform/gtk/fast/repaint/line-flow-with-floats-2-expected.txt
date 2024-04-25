@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (57,261) size 355x35
                   text run at (363,261) width 49: "difficult"
                   text run at (57,279) width 85: "game indeed."
-                RenderBR {BR} at (141,279) size 1x17
+                RenderBR {BR} at (141,279) size 1x18
                 RenderText {#text} at (57,297) size 304x17
                   text run at (57,297) width 304: "The players all played at once without waiting"
                 RenderBlock (floating) {SPAN} at (364,300) size 48x81 [bgcolor=#90EE90]
@@ -59,7 +59,7 @@ layer at (0,0) size 800x600
                   text run at (120,315) width 241: "quarrelling all the while, and fighting"
                   text run at (6,333) width 173: "for the hedgehogs; and in "
                   text run at (178,333) width 117: "a very short time "
-                RenderInline {SPAN} at (294,333) size 67x17
+                RenderInline {SPAN} at (294,333) size 67x18
                   RenderText {#text} at (294,333) size 67x17
                     text run at (294,333) width 67: "the Queen"
                 RenderText {#text} at (6,351) size 355x53
@@ -68,7 +68,7 @@ layer at (0,0) size 800x600
                   text run at (6,369) width 290: "shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with "
                   text run at (295,369) width 66: "her head!\x{2019}"
                   text run at (6,387) width 147: "about once in a minute."
-                RenderBR {BR} at (153,387) size 0x17
+                RenderBR {BR} at (153,387) size 0x18
                 RenderText {#text} at (6,405) size 406x89
                   text run at (6,405) width 387: "Alice began to feel very uneasy: to be sure, she had not as "
                   text run at (393,405) width 19: "yet"

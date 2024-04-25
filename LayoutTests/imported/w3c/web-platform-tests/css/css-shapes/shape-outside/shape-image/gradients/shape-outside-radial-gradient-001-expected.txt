@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: diff: 1.984375
+CONSOLE MESSAGE: diff: 3.8125
+CONSOLE MESSAGE: diff: 8
+CONSOLE MESSAGE: diff: 24
 The test passes if you see green boxes following the contour of a circle. There should be no red.
 
 x
@@ -13,5 +17,5 @@ x
 x
 x
 
-PASS CSS Test: Left float with radial gradient
+FAIL CSS Test: Left float with radial gradient assert_true: Lines positioned properly around the shape. expected true got false
 

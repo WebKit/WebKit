@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 800x18
-        RenderInline {BDO} at (0,0) size 80x17
+        RenderInline {BDO} at (0,0) size 80x18
           RenderText {#text} at (0,0) size 80x17
             text run at (0,0) width 80 RTL: "\x{300}muspimeroL"
         RenderText {#text} at (0,0) size 0x0

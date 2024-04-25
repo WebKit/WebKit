@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x30
-        RenderText {#text} at (0,0) size 496x30
-          text run at (0,0) width 304: ".one {list-style: upper-alpha inside;}"
-          text run at (304,0) width 0: " "
-          text run at (0,15) width 496: ".two {list-style: url(../resources/oransqr.gif) disc outside;}"
-          text run at (496,15) width 0: " "
+        RenderText {#text} at (0,1) size 496x30
+          text run at (0,1) width 304: ".one {list-style: upper-alpha inside;}"
+          text run at (304,1) width 0: " "
+          text run at (0,16) width 496: ".two {list-style: url(../resources/oransqr.gif) disc outside;}"
+          text run at (496,16) width 0: " "
       RenderBlock {UL} at (0,95) size 784x36
         RenderListItem {LI} at (40,0) size 744x36
           RenderListMarker at (0,0) size 20x17: "A"
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 782x139
           RenderTableRow {TR} at (0,0) size 782x26
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (4,4) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x113

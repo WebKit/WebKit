@@ -10,15 +10,15 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 127x16
           text run at (0,0) width 127: "WICD Core 1.0 #12"
       RenderBlock {p} at (0,64) size 692x35
-        RenderText {#text} at (0,0) size 648x33
-          text run at (0,0) width 587: "This text is XHTML main layer content, which must overlay a lightblue SVG-background image with "
-          text run at (586,0) width 62: "text ('SVG"
-          text run at (0,17) width 582: "background image'). The SVG background image must cover the complete XHTML-background area."
+        RenderText {#text} at (0,1) size 648x33
+          text run at (0,1) width 587: "This text is XHTML main layer content, which must overlay a lightblue SVG-background image with "
+          text run at (586,1) width 62: "text ('SVG"
+          text run at (0,18) width 582: "background image'). The SVG background image must cover the complete XHTML-background area."
       RenderBlock {p} at (0,103) size 692x35
-        RenderText {#text} at (0,0) size 638x33
-          text run at (0,0) width 638: "This test has failed, if you don't see any graphics on the background. (your user agent does not support SVG as"
-          text run at (0,17) width 113: "background image)."
+        RenderText {#text} at (0,1) size 638x33
+          text run at (0,1) width 638: "This test has failed, if you don't see any graphics on the background. (your user agent does not support SVG as"
+          text run at (0,18) width 113: "background image)."
       RenderBlock {p} at (0,143) size 692x18
-        RenderInline {a} at (0,0) size 29x16 [color=#000066]
-          RenderText {#text} at (0,0) size 29x16
-            text run at (0,0) width 29: "Back"
+        RenderInline {a} at (0,1) size 29x16 [color=#000066]
+          RenderText {#text} at (0,1) size 29x16
+            text run at (0,1) width 29: "Back"

@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 18x17
                 text run at (2,2) width 18: "six"
       RenderBlock (anonymous) at (0,52) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,70) size 103x52 [border: (1px solid #FF0000)]
         RenderTableSection {TBODY} at (1,1) size 101x50
           RenderTableRow {TR} at (0,2) size 101x22
@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 18x17
                 text run at (2,2) width 18: "six"
       RenderBlock (anonymous) at (0,122) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 229x17
           text run at (0,18) width 229: "should be 2px solid red around table"
       RenderTable {TABLE} at (0,158) size 74x30 [border: (2px solid #FF0000)]
@@ -63,7 +63,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 29x17
                 text run at (2,2) width 29: "Two"
       RenderBlock (anonymous) at (0,188) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 256x17
           text run at (0,18) width 256: "should be medium solid red around table"
       RenderTable {TABLE} at (0,224) size 76x32 [border: (3px solid #FF0000)]

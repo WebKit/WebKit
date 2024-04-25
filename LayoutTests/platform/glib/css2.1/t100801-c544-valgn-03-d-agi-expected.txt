@@ -53,7 +53,7 @@ layer at (0,0) size 800x319
         RenderInline {SPAN} at (178,100) size 353x24 [color=#C0C0C0]
           RenderText {#text} at (178,100) size 93x24
             text run at (178,100) width 93: "xxx "
-          RenderInline {SPAN} at (270,73) size 169x57
+          RenderInline {SPAN} at (270,73) size 169x58
             RenderText {#text} at (270,73) size 169x57
               text run at (270,73) width 169: "xxx"
           RenderText {#text} at (438,100) size 93x24

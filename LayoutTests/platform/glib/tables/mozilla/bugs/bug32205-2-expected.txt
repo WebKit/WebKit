@@ -41,16 +41,16 @@ layer at (0,0) size 785x1299
         RenderBlock {P} at (0,0) size 689x54
           RenderText {#text} at (0,0) size 110x17
             text run at (0,0) width 110: "Table height: 200"
-          RenderBR {BR} at (109,0) size 1x17
+          RenderBR {BR} at (109,0) size 1x18
           RenderText {#text} at (0,18) size 129x17
             text run at (0,18) width 129: "First Row : 1 or 1% "
-          RenderInline {I} at (129,18) size 216x17
+          RenderInline {I} at (129,18) size 216x18
             RenderText {#text} at (129,18) size 216x17
               text run at (129,18) width 216: "(i.e. expand to minimum required)"
-          RenderBR {BR} at (344,18) size 1x17
+          RenderBR {BR} at (344,18) size 1x18
           RenderText {#text} at (0,36) size 170x17
             text run at (0,36) width 170: "Second Row : unspecified "
-          RenderInline {I} at (170,36) size 306x17
+          RenderInline {I} at (170,36) size 306x18
             RenderText {#text} at (170,36) size 306x17
               text run at (170,36) width 306: "(i.e. table height - height of other rows+borders)"
           RenderText {#text} at (0,0) size 0x0
@@ -73,10 +73,10 @@ layer at (0,0) size 785x1299
       RenderBlock {P} at (0,614) size 769x54
         RenderText {#text} at (0,0) size 110x17
           text run at (0,0) width 110: "Table height: 200"
-        RenderBR {BR} at (109,0) size 1x17
+        RenderBR {BR} at (109,0) size 1x18
         RenderText {#text} at (0,18) size 83x17
           text run at (0,18) width 83: "First Row : 1"
-        RenderBR {BR} at (83,18) size 0x17
+        RenderBR {BR} at (83,18) size 0x18
         RenderText {#text} at (0,36) size 118x17
           text run at (0,36) width 118: "Second Row : 199"
       RenderTable {TABLE} at (0,684) size 88x229 [border: (1px outset #808080)]

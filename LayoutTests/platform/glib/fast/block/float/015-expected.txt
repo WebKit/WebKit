@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (18,0) size 594x17
                   text run at (18,0) width 594: "This text should be flowing past a tall orange rectangle on the left side of the browser window."
               RenderBlock {DIV} at (4,38) size 649x18 [bgcolor=#008000]
-                RenderBR {BR} at (18,0) size 0x17
+                RenderBR {BR} at (18,0) size 0x18
               RenderImage {IMG} at (4,56) size 15x50 [bgcolor=#FFA500]
               RenderBlock {DIV} at (4,106) size 649x18
                 RenderText {#text} at (0,0) size 649x17

@@ -18,12 +18,12 @@ layer at (0,0) size 800x303
                 text run at (2,56) width 176: "the next cell: they should be"
                 text run at (2,74) width 108: "vertically aligned"
             RenderTableCell {td} at (217,2) size 564x239 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 532x233
-                text run at (2,3) width 358: "Compare the baseline "
-                text run at (360,3) width 166: "of the first"
-                text run at (2,50) width 490: "line of text in this cell with the"
-                text run at (2,97) width 244: "baseline of the "
-                text run at (246,97) width 288: "first line of text in"
-                text run at (2,144) width 520: "the previous cell: they should be"
-                text run at (2,191) width 161: "vertically "
-                text run at (163,191) width 118: "aligned"
+              RenderText {#text} at (2,4) size 532x233
+                text run at (2,4) width 358: "Compare the baseline "
+                text run at (360,4) width 166: "of the first"
+                text run at (2,51) width 490: "line of text in this cell with the"
+                text run at (2,98) width 244: "baseline of the "
+                text run at (246,98) width 288: "first line of text in"
+                text run at (2,145) width 520: "the previous cell: they should be"
+                text run at (2,192) width 161: "vertically "
+                text run at (163,192) width 118: "aligned"

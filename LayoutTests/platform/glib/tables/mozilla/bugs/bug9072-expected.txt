@@ -15,4 +15,4 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 30x17
                 text run at (0,0) width 30: "Blah"
       RenderBlock (anonymous) at (0,28) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18

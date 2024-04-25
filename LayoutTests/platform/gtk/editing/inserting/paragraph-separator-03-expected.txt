@@ -19,17 +19,17 @@ layer at (0,0) size 800x600
           text run at (0,36) width 228: "Only one newline should be added. "
           text run at (228,36) width 269: "And there should be no extraneous spaces."
       RenderBlock {P} at (0,70) size 784x18
-        RenderInline {B} at (0,0) size 152x17
+        RenderInline {B} at (0,0) size 152x18
           RenderText {#text} at (0,0) size 152x17
             text run at (0,0) width 152: "It demonstrates a bug:"
         RenderText {#text} at (152,0) size 583x17
           text run at (152,0) width 583: " too much padding is left between the new line and the end of the paragraph containing 'foo'."
       RenderBlock {DIV} at (0,104) size 784x58
         RenderBlock {PRE} at (0,0) size 784x15
-          RenderText {#text} at (0,0) size 24x15
-            text run at (0,0) width 24: "foo"
+          RenderText {#text} at (0,1) size 24x15
+            text run at (0,1) width 24: "foo"
         RenderBlock {PRE} at (0,28) size 784x30
-          RenderText {#text} at (0,0) size 24x30
-            text run at (0,0) width 0: " "
-            text run at (0,15) width 24: "bar"
+          RenderText {#text} at (0,1) size 24x30
+            text run at (0,1) width 0: " "
+            text run at (0,16) width 24: "bar"
 caret: position 0 of child 0 {#text} of child 1 {PRE} of child 4 {DIV} of body

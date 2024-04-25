@@ -7,12 +7,12 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x45
-        RenderText {#text} at (0,0) size 440x45
-          text run at (0,0) width 440: ".one {list-style-image: url(../resources/oransqr.gif);}"
-          text run at (440,0) width 0: " "
-          text run at (0,15) width 240: ".two {list-style-image: none;}"
-          text run at (240,15) width 0: " "
-          text run at (0,30) width 0: " "
+        RenderText {#text} at (0,1) size 440x45
+          text run at (0,1) width 440: ".one {list-style-image: url(../resources/oransqr.gif);}"
+          text run at (440,1) width 0: " "
+          text run at (0,16) width 240: ".two {list-style-image: none;}"
+          text run at (240,16) width 0: " "
+          text run at (0,31) width 0: " "
       RenderBlock {UL} at (0,110) size 784x57
         RenderListItem {LI} at (40,0) size 744x19
           RenderListMarker at (-22,0) size 15x15
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 291x177
           RenderTableRow {TR} at (0,0) size 291x26
             RenderTableCell {TD} at (0,0) size 291x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (4,4) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 291x151

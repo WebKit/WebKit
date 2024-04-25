@@ -1,6 +1,20 @@
 
-PASS .grid 1
-PASS .grid 2
+FAIL .grid 1 assert_equals:
+<div class="grid fit-content itemsBaseline">
+        <span class="firstRowFirstColumn verticalLR font12 extraTopPadding" data-offset-x="25" data-offset-y="10">A<br>A</span><span class="firstRowSecondColumn horizontalTB font16 extraBottomPadding" data-offset-x="183" data-offset-y="35">A<br>A</span><span class="firstRowThirdColumn verticalLR font24" data-offset-x="371" data-offset-y="10">A<br>A</span><span class="firstRowFourthColumn horizontalTB font32" data-offset-x="505" data-offset-y="10">A<br>A</span>
+        <span class="secondRowFirstColumn horizontalTB font16" data-offset-x="17" data-offset-y="192">A<br>A</span><span class="secondRowSecondColumn verticalLR font24" data-offset-x="186" data-offset-y="175">A<br>A</span><span class="secondRowThirdColumn horizontalTB font12 extraTopPadding" data-offset-x="349" data-offset-y="175">A<br>A</span><span class="secondRowFourthColumn verticalLR font32" data-offset-x="505" data-offset-y="175">A<br>A</span>
+        <span class="thirdRowFirstColumn verticalLR font32" data-offset-x="17" data-offset-y="293">A<br>A</span><span class="thirdRowSecondColumn horizontalTB font12 extraTopPadding" data-offset-x="183" data-offset-y="300">A<br>A</span><span class="thirdRowThirdColumn verticalLR font24 extraLeftPadding" data-offset-x="349" data-offset-y="293">A<br>A</span><span class="thirdRowFourthColumn horizontalTB font16 extraTopPadding" data-offset-x="505" data-offset-y="293">A<br>A</span>
+        <span class="fourthRowFirstColumn horizontalTB font24" data-offset-x="17" data-offset-y="418">A<br>A</span><span class="fourthRowSecondColumn verticalLR font32" data-offset-x="183" data-offset-y="418">A<br>A</span><span class="fourthRowThirdColumn horizontalTB font16" data-offset-x="349" data-offset-y="430">A<br>A</span><span class="fourthRowFourthColumn verticalLR font12" data-offset-x="513" data-offset-y="418">A<br>A</span>
+    </div>
+offsetTop expected 293 but got 294
+FAIL .grid 2 assert_equals:
+<div class="grid fit-content itemsBaseline">
+        <span class="firstRowFirstColumn verticalLR font12 extraLeftPadding" data-offset-x="17" data-offset-y="10">A<br>A</span><span class="firstRowSecondColumn horizontalTB font16 extraBottomPadding" data-offset-x="197" data-offset-y="35">A<br>A</span><span class="firstRowThirdColumn verticalLR font24" data-offset-x="299" data-offset-y="10">A<br>A</span><span class="firstRowFourthColumn horizontalTB font32" data-offset-x="433" data-offset-y="10">A<br>A</span>
+        <span class="secondRowFirstColumn verticalLR font16 extraTopPadding" data-offset-x="38" data-offset-y="175">A<br>A</span><span class="secondRowSecondColumn horizontalTB font24" data-offset-x="197" data-offset-y="188">A<br>A</span><span class="secondRowThirdColumn verticalLR font12 extraTopPadding" data-offset-x="304" data-offset-y="175">A<br>A</span><span class="secondRowFourthColumn horizontalTB font32 extraLeftPadding" data-offset-x="433" data-offset-y="175">A<br>A</span>
+        <span class="thirdRowFirstColumn verticalLR font32" data-offset-x="31" data-offset-y="340">A<br>A</span><span class="thirdRowSecondColumn horizontalTB font12 extraTopPadding" data-offset-x="197" data-offset-y="340">A<br>A</span><span class="thirdRowThirdColumn verticalLR font24" data-offset-x="299" data-offset-y="340">A<br>A</span><span class="thirdRowFourthColumn horizontalTB font16" data-offset-x="433" data-offset-y="357">A<br>A</span>
+        <span class="fourthRowFirstColumn verticalLR font24" data-offset-x="34" data-offset-y="458">A<br>A</span><span class="fourthRowSecondColumn horizontalTB font32" data-offset-x="197" data-offset-y="458">A<br>A</span><span class="fourthRowThirdColumn verticalLR font16 extraBottomPadding" data-offset-x="303" data-offset-y="458">A<br>A</span><span class="fourthRowFourthColumn horizontalTB font12 extraTopPadding" data-offset-x="433" data-offset-y="466">A<br>A</span>
+    </div>
+offsetLeft expected 38 but got 37
 PASS .grid 3
 FAIL .grid 4 assert_equals:
 <div class="grid fit-content itemsBaseline verticalRL">

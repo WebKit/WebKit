@@ -57,12 +57,12 @@ layer at (0,0) size 800x600
             text run at (0,0) width 390: "This should be red, as this is the fourth paragraph in this page."
       RenderBlock {DIV} at (0,314) size 784x18
         RenderBlock {P} at (0,0) size 784x18 [color=#000080]
-          RenderInline {SPAN} at (0,0) size 245x17
-            RenderInline {I} at (0,0) size 245x17
+          RenderInline {SPAN} at (0,0) size 245x18
+            RenderInline {I} at (0,0) size 245x18
               RenderText {#text} at (0,0) size 245x17
                 text run at (0,0) width 245: "This whole paragraph should be italic."
           RenderText {#text} at (245,0) size 4x17
             text run at (245,0) width 4: " "
-          RenderInline {SPAN} at (249,0) size 246x17
+          RenderInline {SPAN} at (249,0) size 246x18
             RenderText {#text} at (249,0) size 246x17
               text run at (249,0) width 246: "But only this sentence should be bold."

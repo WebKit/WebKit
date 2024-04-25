@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 52x17
           text run at (0,0) width 52: "Test for "
-        RenderInline {I} at (51,0) size 703x17
-          RenderInline {A} at (51,0) size 308x17 [color=#0000EE]
+        RenderInline {I} at (51,0) size 703x18
+          RenderInline {A} at (51,0) size 308x18 [color=#0000EE]
             RenderText {#text} at (51,0) size 308x17
               text run at (51,0) width 308: "https://bugs.webkit.org/show_bug.cgi?id=34946"
           RenderText {#text} at (358,0) size 396x17
@@ -20,10 +20,10 @@ layer at (13,42) size 126x126 clip at (16,45) size 105x120 scrollY 36 scrollHeig
     RenderBlock {DIV} at (13,13) size 85x100
     RenderBlock (anonymous) at (13,113) size 85x36
       RenderBlock {DIV} at (0,0) size 94x36
-        RenderInline {SPAN} at (0,0) size 42x35
+        RenderInline {SPAN} at (0,0) size 42x36
           RenderText {#text} at (0,0) size 42x17
             text run at (0,0) width 42: "Lorem"
-          RenderBR {BR} at (42,0) size 0x17
+          RenderBR {BR} at (42,0) size 0x18
           RenderText {#text} at (0,18) size 38x17
             text run at (0,18) width 38: "ipsum"
       RenderText {#text} at (0,0) size 0x0

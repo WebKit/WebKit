@@ -4,7 +4,7 @@ layer at (0,0) size 800x111
   RenderBlock {html} at (0,0) size 800x111
     RenderBody {body} at (8,8) size 784x95
       RenderBlock {div} at (0,0) size 784x18
-        RenderInline {a} at (0,0) size 63x17 [color=#0000EE]
+        RenderInline {a} at (0,0) size 63x18 [color=#0000EE]
           RenderText {#text} at (0,0) size 63x17
             text run at (0,0) width 63: "Bug 6584"
         RenderText {#text} at (63,0) size 374x17

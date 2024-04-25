@@ -9,7 +9,7 @@ layer at (0,0) size 800x224
       RenderBlock (anonymous) at (0,18) size 784x190
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,26) size 111x186 clip at (9,27) size 94x184 scrollY 134 scrollHeight 580
+layer at (8,26) size 111x186 clip at (9,27) size 94x184 scrollY 135 scrollHeight 580
   RenderTextControl {TEXTAREA} at (0,0) size 111x186 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 90x576
       RenderText {#text} at (0,0) size 27x557
@@ -75,5 +75,5 @@ layer at (8,26) size 111x186 clip at (9,27) size 94x184 scrollY 134 scrollHeight
         text run at (18,522) width 0: " "
         text run at (0,540) width 18: "30"
         text run at (18,540) width 0: " "
-      RenderBR {BR} at (0,558) size 0x17
+      RenderBR {BR} at (0,558) size 0x18
 caret: position 37 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {TEXTAREA} of body

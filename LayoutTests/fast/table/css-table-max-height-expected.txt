@@ -15,7 +15,15 @@ PASS
 This sub-test checks that when content height is greater than max-height, content height is applied to the table with auto layout.
 
 FILLER TEXT TO INCREASE CONTENT HEIGHT.
-PASS
+FAIL:
+Expected 192 for height, but got 194.
+
+<div class="container">
+    <div class="child" style="max-height:100px;" data-expected-height="192">
+        This sub-test checks that when content height is greater than max-height, content height is applied to the table with auto layout.
+        <br><br>FILLER TEXT TO INCREASE CONTENT HEIGHT.
+    </div>
+</div>
 This test checks that when height of an auto-table is auto, there is are no asserts. No crash means the test passed.
 PASS
 This sub-test checks that when min-height is lesser than max-height, max-height is applied to a table with fixed layout.
@@ -33,6 +41,14 @@ PASS
 This sub-test checks that when content height is greater than max-height, content height is applied to a table with fixed layout.
 
 FILLER TEXT TO INCREASE CONTENT HEIGHT.
-PASS
+FAIL:
+Expected 192 for height, but got 194.
+
+<div class="container">
+    <div class="child fixed-table" style="max-height:100px;" data-expected-height="192">
+        This sub-test checks that when content height is greater than max-height, content height is applied to a table with fixed layout.
+        <br><br>FILLER TEXT TO INCREASE CONTENT HEIGHT.
+    </div>
+</div>
 This test checks that when height of a fixed table is auto, there is are no asserts. No crash means the test passed.
 PASS

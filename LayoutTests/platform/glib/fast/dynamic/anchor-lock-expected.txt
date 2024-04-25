@@ -4,8 +4,8 @@ layer at (0,0) size 785x2122
   RenderBlock {HTML} at (0,0) size 785x2123
     RenderBody {BODY} at (8,8) size 769x2107
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 180x36
-          text run at (0,0) width 180: "Anchor Lock"
+        RenderText {#text} at (0,1) size 180x36
+          text run at (0,1) width 180: "Anchor Lock"
       RenderBlock {P} at (0,58) size 769x37
         RenderText {#text} at (0,0) size 739x35
           text run at (0,0) width 739: "This tests WebKit's ability to lock to an anchor and maintain focus on it as images are loaded above and below it. The"
@@ -19,7 +19,7 @@ layer at (0,0) size 785x2122
       RenderBlock {P} at (0,758) size 769x201
         RenderImage {IMG} at (0,0) size 200x200
       RenderBlock (anonymous) at (0,974) size 769x19
-        RenderInline {A} at (0,0) size 306x17
+        RenderInline {A} at (0,0) size 306x18
           RenderText {#text} at (0,0) size 306x17
             text run at (0,0) width 306: "Anchor text - this should be the only visible text."
         RenderText {#text} at (0,0) size 0x0

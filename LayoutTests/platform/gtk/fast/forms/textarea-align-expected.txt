@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 624x17
           text run at (0,0) width 624: "The following textarea elements should all be rendered on the left, with their text aligned to the left."
       RenderBlock (anonymous) at (0,34) size 784x168
-        RenderBR {BR} at (471,28) size 0x17
-        RenderBR {BR} at (471,70) size 0x17
+        RenderBR {BR} at (471,28) size 0x18
+        RenderBR {BR} at (471,70) size 0x18
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (471,112) size 0x17
+        RenderBR {BR} at (471,112) size 0x18
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,202) size 784x42

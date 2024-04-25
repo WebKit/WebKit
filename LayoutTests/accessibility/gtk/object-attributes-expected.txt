@@ -128,7 +128,7 @@ AXRole: AXHeading
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition:  { 8.00000, 237.000 }
-AXSize: { 784.000, 13.0000 }
+AXSize: { 784.000, 14.0000 }
 AXTitle: Heading Level 6
 AXDescription:
 AXValue: Heading Level 6

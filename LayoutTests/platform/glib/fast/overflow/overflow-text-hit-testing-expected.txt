@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,59) size 800x54
         RenderText {#text} at (0,0) size 207x17
           text run at (0,0) width 207: "This tests for regressions against "
-        RenderInline {I} at (0,0) size 789x35
+        RenderInline {I} at (0,0) size 789x36
           RenderText {#text} at (0,0) size 789x35
             text run at (207,0) width 448: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5921 Hit-testing text "
             text run at (654,0) width 135: "in overflows does not"

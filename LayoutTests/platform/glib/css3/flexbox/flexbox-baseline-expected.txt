@@ -216,10 +216,10 @@ layer at (471,351) size 174x65 clip at (471,351) size 159x65 scrollY 4 scrollHei
   RenderBlock {DIV} at (0,0) size 174x65
     RenderText {#text} at (0,15) size 154x17
       text run at (0,15) width 154: "The baseline is based on"
-    RenderBR {BR} at (154,15) size 0x17
+    RenderBR {BR} at (154,15) size 0x18
     RenderText {#text} at (0,33) size 159x17
       text run at (0,33) width 159: "the non-scrolled position;"
-    RenderBR {BR} at (159,33) size 0x17
+    RenderBR {BR} at (159,33) size 0x18
     RenderText {#text} at (0,51) size 112x17
       text run at (0,51) width 112: "this won't line up."
 layer at (471,5) size 52x18

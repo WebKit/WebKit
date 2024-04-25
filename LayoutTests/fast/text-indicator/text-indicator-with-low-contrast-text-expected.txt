@@ -1,40 +1,39 @@
 whiteTextWhiteBackground: NOT legible
-    0 0 68 66
+    0 0 68 69
 whiteTextGrayBackground: NOT legible
-    0 0 68 66
-whiteTextBlackBackground: legible
-    0 0 68 18
-    0 48 36 18
+    0 0 68 69
+whiteTextBlackBackground: NOT legible
+    0 0 68 69
 grayTextWhiteBackground: NOT legible
-    0 0 68 66
+    0 0 68 69
 grayTextGrayBackground: NOT legible
-    0 0 68 66
-grayTextBlackBackground: legible
-    0 0 68 18
-    0 48 36 18
+    0 0 68 69
+grayTextBlackBackground: NOT legible
+    0 0 68 69
 lightGrayTextWhiteBackground: NOT legible
-    0 0 68 66
+    0 0 68 69
 lightGrayTextGrayBackground: NOT legible
-    0 0 68 66
-lightGrayTextBlackBackground: legible
-    0 0 68 18
-    0 48 36 18
+    0 0 68 69
+lightGrayTextBlackBackground: NOT legible
+    0 0 68 69
 darkGrayTextWhiteBackground: legible
     0 0 68 18
-    0 48 36 18
-darkGrayTextGrayBackground: NOT legible
-    0 0 68 66
-darkGrayTextBlackBackground: NOT legible
-    0 0 68 66
+    0 50 36 19
+darkGrayTextGrayBackground: legible
+    0 0 68 18
+    0 50 36 19
+darkGrayTextBlackBackground: legible
+    0 0 68 18
+    0 50 36 19
 blackTextWhiteBackground: legible
     0 0 68 18
-    0 48 36 18
+    0 50 36 19
 blackTextGrayBackground: legible
     0 0 68 18
-    0 48 36 18
-blackTextBlackBackground: NOT legible
-    0 0 68 66
-dfTextDfBackground: legible
+    0 50 36 19
+blackTextBlackBackground: legible
     0 0 68 18
-    0 48 36 18
+    0 50 36 19
+dfTextDfBackground: NOT legible
+    0 0 68 69
 

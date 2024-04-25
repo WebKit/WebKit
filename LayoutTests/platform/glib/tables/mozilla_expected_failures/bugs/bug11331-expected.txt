@@ -7,20 +7,20 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x72
           RenderText {#text} at (0,0) size 337x17
             text run at (0,0) width 337: "In the yellow table the \"W\" is clipped on its left edge."
-          RenderBR {BR} at (337,0) size 0x17
+          RenderBR {BR} at (337,0) size 0x18
           RenderText {#text} at (0,18) size 169x17
             text run at (0,18) width 169: "The only difference is that:"
-          RenderBR {BR} at (168,18) size 1x17
+          RenderBR {BR} at (168,18) size 1x18
           RenderText {#text} at (0,36) size 251x17
             text run at (0,36) width 251: "yellow table has CELLPADDING=\"0\""
-          RenderBR {BR} at (250,36) size 1x17
+          RenderBR {BR} at (250,36) size 1x18
           RenderText {#text} at (0,54) size 240x17
             text run at (0,54) width 240: "grey table has CELLPADDING=\"1\"."
         RenderTable {TABLE} at (0,72) size 40x37 [bgcolor=#FFFF00]
           RenderTableSection {TBODY} at (0,0) size 40x37
             RenderTableRow {TR} at (0,2) size 40x33
               RenderTableCell {TD} at (2,2) size 36x33 [r=0 c=0 rs=1 cs=1]
-                RenderInline {FONT} at (0,0) size 30x33
+                RenderInline {FONT} at (0,0) size 30x34
                   RenderText {#text} at (0,0) size 30x33
                     text run at (0,0) width 30: "Online"
                     text run at (0,11) width 24: "Web-"
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 40x39
             RenderTableRow {TR} at (0,2) size 40x35
               RenderTableCell {TD} at (2,2) size 36x35 [r=0 c=0 rs=1 cs=1]
-                RenderInline {FONT} at (1,1) size 30x33
+                RenderInline {FONT} at (1,1) size 30x34
                   RenderText {#text} at (1,1) size 30x33
                     text run at (1,1) width 30: "Online"
                     text run at (1,12) width 24: "Web-"

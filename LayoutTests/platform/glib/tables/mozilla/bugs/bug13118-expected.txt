@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 57x17
                 text run at (2,2) width 57: "TBODY"
       RenderBlock (anonymous) at (0,91) size 784x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,109) size 68x77 [border: (1px outset #808080)]
         RenderTableSection {THEAD} at (1,1) size 66x26
           RenderTableRow {TR} at (0,2) size 66x22
@@ -39,9 +39,9 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x18
           RenderText {#text} at (0,0) size 154x17
             text run at (0,0) width 154: "Same as above but with "
-          RenderInline {CODE} at (154,3) size 128x15
-            RenderText {#text} at (154,3) size 128x15
-              text run at (154,3) width 128: "CELLSPACING=\"10\""
+          RenderInline {CODE} at (154,4) size 128x14
+            RenderText {#text} at (154,4) size 128x15
+              text run at (154,4) width 128: "CELLSPACING=\"10\""
           RenderText {#text} at (282,0) size 4x17
             text run at (282,0) width 4: ":"
         RenderTable {TABLE} at (0,18) size 83x76 [border: (1px outset #808080)]
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 57x17
                   text run at (2,2) width 57: "TBODY"
         RenderBlock (anonymous) at (0,94) size 784x18
-          RenderBR {BR} at (0,0) size 0x17
+          RenderBR {BR} at (0,0) size 0x18
         RenderTable {TABLE} at (0,112) size 84x108 [border: (1px outset #808080)]
           RenderTableSection {THEAD} at (1,1) size 82x42
             RenderTableRow {TR} at (0,10) size 82x22

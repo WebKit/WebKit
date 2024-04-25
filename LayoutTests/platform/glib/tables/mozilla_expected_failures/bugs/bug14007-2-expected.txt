@@ -7,7 +7,7 @@ layer at (0,0) size 785x1323
         RenderBlock (anonymous) at (0,0) size 769x18
           RenderText {#text} at (252,0) size 265x17
             text run at (252,0) width 265: "Build 1999/10/27/08 Win95 - Daily Build"
-          RenderBR {BR} at (516,0) size 1x17
+          RenderBR {BR} at (516,0) size 1x18
         RenderTable {TABLE} at (74,18) size 621x1157 [border: (10px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 620x18
             RenderText {#text} at (267,0) size 86x17
@@ -75,7 +75,7 @@ layer at (0,0) size 785x1323
                                     text run at (0,18) width 51: "doors &"
                                     text run at (0,36) width 27: "hide"
                 RenderBlock (anonymous) at (2,410) size 87x18
-                  RenderBR {BR} at (0,0) size 0x17
+                  RenderBR {BR} at (0,0) size 0x18
             RenderTableRow {TR} at (0,430) size 600x274
               RenderTableCell {TD} at (0,430) size 87x202 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                 RenderTable {TABLE} at (2,2) size 83x180 [color=#000000]
@@ -104,7 +104,7 @@ layer at (0,0) size 785x1323
                                     text run at (0,18) width 45: "reserve"
                                     text run at (0,36) width 29: "food"
                 RenderBlock (anonymous) at (2,182) size 83x18
-                  RenderBR {BR} at (0,0) size 0x17
+                  RenderBR {BR} at (0,0) size 0x18
               RenderTableCell {TD} at (87,430) size 84x80 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderTable {TABLE} at (2,2) size 80x76 [color=#000000]
                   RenderTableSection {TBODY} at (0,0) size 80x76
@@ -298,7 +298,7 @@ layer at (0,0) size 785x1323
                                     text run at (0,18) width 45: "reserve"
                                     text run at (0,36) width 29: "food"
                 RenderBlock (anonymous) at (2,342) size 83x18
-                  RenderBR {BR} at (0,0) size 0x17
+                  RenderBR {BR} at (0,0) size 0x18
               RenderTableCell {TD} at (87,704) size 84x290 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
                 RenderTable {TABLE} at (2,2) size 80x286 [color=#000000]
                   RenderTableSection {TBODY} at (0,0) size 80x286
@@ -501,7 +501,7 @@ layer at (0,0) size 785x1323
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
         RenderBlock (anonymous) at (0,1175) size 769x36
-          RenderBR {BR} at (384,0) size 1x17
+          RenderBR {BR} at (384,0) size 1x18
           RenderText {#text} at (4,18) size 761x17
             text run at (4,18) width 761: "Notice the scrollbars, they are rendered outside of the table columns, and the yellow day numbers are hidden under them."
         RenderBlock {P} at (0,1227) size 769x72

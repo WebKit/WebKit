@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,11) size 58x17
                 text run at (2,2) width 58: "auto auto"
       RenderBlock (anonymous) at (0,64) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock (anonymous) at (0,100) size 784x18
         RenderText {#text} at (0,0) size 314x17
           text run at (0,0) width 314: "table fixed at 600, 1st 2 cells fixed at 100, 2nd not"
@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "foo"
       RenderBlock (anonymous) at (0,146) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 314x17
           text run at (0,18) width 314: "table fixed at 600, 1st 2 cells fixed at 100, 2nd not"
       RenderTable {TABLE} at (0,182) size 600x28 [border: (1px outset #808080)]
@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "foo"
       RenderBlock (anonymous) at (0,210) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 306x17
           text run at (0,18) width 306: "table fixed at 600, 1st 2 cells fixed at 50, 2nd not"
       RenderTable {TABLE} at (0,246) size 600x28 [border: (1px outset #808080)]
@@ -66,7 +66,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "foo"
       RenderBlock (anonymous) at (0,274) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 322x17
           text run at (0,18) width 322: "table fixed at 600, 1st 2 cells fixed at 1000, 2nd not"
       RenderTable {TABLE} at (0,310) size 600x28 [border: (1px outset #808080)]
@@ -82,7 +82,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "foo"
       RenderBlock (anonymous) at (0,338) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 298x17
           text run at (0,18) width 298: "table fixed at 600, 1st 2 cells fixed at 5, 2nd not"
       RenderTable {TABLE} at (0,374) size 600x28 [border: (1px outset #808080)]
@@ -98,6 +98,6 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "foo"
       RenderBlock (anonymous) at (0,402) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
 layer at (8,98) size 102x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,90) size 102x2 [color=#808080] [border: (1px inset #808080)]

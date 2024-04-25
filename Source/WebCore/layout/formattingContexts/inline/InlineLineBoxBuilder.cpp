@@ -102,8 +102,8 @@ static InlineLevelBox::AscentAndDescent primaryFontMetricsForInlineBox(const Inl
 {
     ASSERT(inlineBox.isInlineBox());
     auto& fontMetrics = inlineBox.primarymetricsOfPrimaryFont();
-    InlineLayoutUnit ascent = fontMetrics.intAscent(fontBaseline);
-    InlineLayoutUnit descent = fontMetrics.intDescent(fontBaseline);
+    InlineLayoutUnit ascent = fontMetrics.ascent(fontBaseline);
+    InlineLayoutUnit descent = fontMetrics.descent(fontBaseline);
     return { ascent, descent };
 }
 

@@ -8,8 +8,8 @@ layer at (8,8) size 750x500
 layer at (8,8) size 367x984 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderMultiColumnFlowThread at (0,0) size 367x984
     RenderBlock {H1} at (0,21) size 367x38
-      RenderText {#text} at (0,0) size 166x36
-        text run at (0,0) width 166: "Header One"
+      RenderText {#text} at (0,1) size 166x36
+        text run at (0,1) width 166: "Header One"
     RenderBlock (anonymous) at (0,79) size 367x199
       RenderText {#text} at (0,0) size 362x197
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -24,8 +24,8 @@ layer at (8,8) size 367x984 backgroundClip at (0,0) size 800x600 clip at (0,0) s
         text run at (0,162) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
         text run at (0,180) width 229: "sit amet, consectetuer adipiscing elit."
     RenderBlock {H1} at (0,299) size 367x38
-      RenderText {#text} at (0,0) size 167x36
-        text run at (0,0) width 167: "Header Two"
+      RenderText {#text} at (0,1) size 167x36
+        text run at (0,1) width 167: "Header Two"
     RenderBlock (anonymous) at (0,357) size 367x215
       RenderText {#text} at (0,0) size 362x214
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -40,11 +40,11 @@ layer at (8,8) size 367x984 backgroundClip at (0,0) size 800x600 clip at (0,0) s
         text run at (0,178) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
         text run at (0,196) width 229: "sit amet, consectetuer adipiscing elit."
     RenderBlock {H1} at (0,593) size 367x38
-      RenderText {#text} at (0,0) size 189x36
-        text run at (0,0) width 189: "Header Three"
+      RenderText {#text} at (0,1) size 189x36
+        text run at (0,1) width 189: "Header Three"
     RenderBlock {H1} at (0,889) size 367x38
-      RenderText {#text} at (0,0) size 177x36
-        text run at (0,0) width 177: "Header Four"
+      RenderText {#text} at (0,1) size 177x36
+        text run at (0,1) width 177: "Header Four"
     RenderBlock (anonymous) at (0,947) size 367x37
       RenderText {#text} at (0,0) size 354x35
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."

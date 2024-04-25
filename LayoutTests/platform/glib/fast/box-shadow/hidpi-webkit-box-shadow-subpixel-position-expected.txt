@@ -8,7 +8,7 @@ layer at (0,0) size 800x96
       RenderBlock {DIV} at (96,0) size 340x40
         RenderText {#text} at (0,0) size 159x17
           text run at (0,0) width 159: "inset webkit-box-shadow"
-      RenderBR {BR} at (436,0) size 0x17
+      RenderBR {BR} at (436,0) size 0x18
       RenderText {#text} at (0,40) size 96x17
         text run at (0,40) width 96: "spacingspacing"
       RenderBlock {DIV} at (96,40) size 340x40

@@ -55,7 +55,7 @@ layer at (0,0) size 800x585
         RenderBlock {DIV} at (0,96) size 815x4
           RenderBlock {DIV} at (0,0) size 101x4 [bgcolor=#00000080]
       RenderBlock (anonymous) at (0,100) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
 layer at (8,126) size 292x20
   RenderTable {TABLE} at (0,0) size 292x20
     RenderTableSection {TBODY} at (0,0) size 292x20

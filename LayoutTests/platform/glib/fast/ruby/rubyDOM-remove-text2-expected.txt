@@ -10,17 +10,17 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 436x17
           text run at (0,0) width 436: "Both lines should look identical (the first line is the one manipulated)."
       RenderBlock (anonymous) at (0,68) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
-        RenderBR {BR} at (0,18) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
       RenderBlock {P} at (0,120) size 784x28
         RenderText {#text} at (0,10) size 155x17
           text run at (0,10) width 155: "<ruby> is defined in the "
-        RenderInline {RUBY} at (155,10) size 122x17
-          RenderInline (generated) at (150,10) size 115x17
+        RenderInline {RUBY} at (155,10) size 122x18
+          RenderInline (generated) at (150,10) size 115x18
           RenderBlock {RT} at (150,0) size 115x10
             RenderText {#text} at (0,0) size 114x10
               text run at (0,0) width 114: "Hyper-text Markup Language"
-          RenderInline (generated) at (264,10) size 9x17
+          RenderInline (generated) at (264,10) size 9x18
             RenderText {#text} at (264,10) size 9x17
               text run at (264,10) width 9: "5"
         RenderText {#text} at (272,10) size 37x17
@@ -28,12 +28,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,164) size 784x28
         RenderText {#text} at (0,10) size 155x17
           text run at (0,10) width 155: "<ruby> is defined in the "
-        RenderInline {RUBY} at (155,10) size 122x17
-          RenderInline (generated) at (150,10) size 115x17
+        RenderInline {RUBY} at (155,10) size 122x18
+          RenderInline (generated) at (150,10) size 115x18
           RenderBlock {RT} at (150,0) size 115x10
             RenderText {#text} at (0,0) size 114x10
               text run at (0,0) width 114: "Hyper-text Markup Language"
-          RenderInline (generated) at (264,10) size 9x17
+          RenderInline (generated) at (264,10) size 9x18
             RenderText {#text} at (264,10) size 9x17
               text run at (264,10) width 9: "5"
         RenderText {#text} at (272,10) size 37x17

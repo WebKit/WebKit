@@ -9,12 +9,12 @@ layer at (0,0) size 800x600
           text run at (598,0) width 158: "The selection should end"
           text run at (0,18) width 268: "somewhere inside the word 'World' below."
       RenderBlock {DIV} at (0,52) size 784x18
-        RenderInline {SPAN} at (0,0) size 35x17
+        RenderInline {SPAN} at (0,0) size 35x18
           RenderText {#text} at (0,0) size 35x17
             text run at (0,0) width 35: "Hello"
         RenderText {#text} at (35,0) size 4x17
           text run at (35,0) width 4: " "
-        RenderInline {SPAN} at (39,0) size 39x17
+        RenderInline {SPAN} at (39,0) size 39x18
           RenderText {#text} at (39,0) size 39x17
             text run at (39,0) width 39: "World"
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of body

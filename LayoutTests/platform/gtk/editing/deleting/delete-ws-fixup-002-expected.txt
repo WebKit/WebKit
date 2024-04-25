@@ -48,16 +48,16 @@ layer at (0,0) size 800x600
           text run at (705,0) width 46: "Editing"
           text run at (0,18) width 531: "produces a tree that should result in two spaces, but for some reason it isn't rendered."
       RenderBlock {DIV} at (0,52) size 784x82 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (14,14) size 741x53
+        RenderInline {SPAN} at (14,14) size 741x54
           RenderText {#text} at (14,14) size 97x26
             text run at (14,14) width 97: "in Liberty"
-          RenderInline {I} at (110,14) size 118x26
+          RenderInline {I} at (110,14) size 118x27
             RenderText {#text} at (110,14) size 118x26
               text run at (110,14) width 22: "F "
               text run at (131,14) width 97: "and seven"
           RenderText {#text} at (227,14) size 64x26
             text run at (227,14) width 64: " years "
-          RenderInline {B} at (290,14) size 7x26
+          RenderInline {B} at (290,14) size 7x27
             RenderText {#text} at (290,14) size 7x26
               text run at (290,14) width 7: " "
           RenderText {#text} at (14,14) size 741x53

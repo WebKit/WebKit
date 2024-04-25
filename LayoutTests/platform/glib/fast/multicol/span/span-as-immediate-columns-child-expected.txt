@@ -169,7 +169,7 @@ layer at (13,1235) size 367x693
       text run at (233,180) width 121: "Lorem ipsum dolor"
       text run at (0,198) width 363: "sit amet, consectetuer adipiscing elit. Nulla varius enim ac"
       text run at (0,223) width 24: "mi. "
-    RenderInline {H2} at (0,216) size 345x80 [bgcolor=#EEEEEE]
+    RenderInline {H2} at (0,216) size 345x81 [bgcolor=#EEEEEE]
       RenderText {#text} at (0,216) size 345x80
         text run at (24,216) width 321: "This is a spanning element with"
         text run at (0,243) width 345: "an original display of inline in the"

@@ -4,8 +4,8 @@ layer at (0,0) size 800x274
   RenderBlock {HTML} at (0,0) size 800x274
     RenderBody {BODY} at (8,21) size 784x237
       RenderBlock {H1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 420x36
-          text run at (0,0) width 420: "Shorthand border properties 2"
+        RenderText {#text} at (0,1) size 420x36
+          text run at (0,1) width 420: "Shorthand border properties 2"
       RenderBlock {P} at (0,58) size 784x19
         RenderText {#text} at (0,0) size 500x17
           text run at (0,0) width 402: "This test was written to test a point I mentioned to Tantek \x{C7}elik "

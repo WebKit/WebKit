@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (16,2) size 752x42 [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (770,23) size 12x0 [r=0 c=2 rs=1 cs=1]
       RenderBlock (anonymous) at (0,248) size 784x18
-        RenderInline {FONT} at (0,0) size 29x17 [color=#0000FF]
+        RenderInline {FONT} at (0,0) size 29x18 [color=#0000FF]
           RenderText {#text} at (0,0) size 29x17
             text run at (0,0) width 29: "right"
         RenderText {#text} at (29,0) size 76x17
@@ -52,7 +52,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (18,2) size 748x44 [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (768,23) size 14x2 [r=0 c=2 rs=1 cs=1]
       RenderBlock (anonymous) at (0,314) size 784x18
-        RenderInline {FONT} at (0,0) size 29x17 [color=#0000FF]
+        RenderInline {FONT} at (0,0) size 29x18 [color=#0000FF]
           RenderText {#text} at (0,0) size 29x17
             text run at (0,0) width 29: "right"
         RenderText {#text} at (29,0) size 108x17
@@ -64,7 +64,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (18,2) size 748x44 [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (768,23) size 14x2 [r=0 c=2 rs=1 cs=1]
       RenderBlock (anonymous) at (0,380) size 784x18
-        RenderInline {FONT} at (0,0) size 29x17 [color=#0000FF]
+        RenderInline {FONT} at (0,0) size 29x18 [color=#0000FF]
           RenderText {#text} at (0,0) size 29x17
             text run at (0,0) width 29: "right"
         RenderText {#text} at (29,0) size 289x17
@@ -76,7 +76,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (14,0) size 754x44 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (768,21) size 14x2 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
       RenderBlock (anonymous) at (0,444) size 784x18
-        RenderInline {FONT} at (0,0) size 29x17 [color=#0000FF]
+        RenderInline {FONT} at (0,0) size 29x18 [color=#0000FF]
           RenderText {#text} at (0,0) size 29x17
             text run at (0,0) width 29: "right"
         RenderText {#text} at (29,0) size 181x17
@@ -88,7 +88,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (16,0) size 750x46 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (766,21) size 16x4 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
       RenderBlock (anonymous) at (0,510) size 784x18
-        RenderInline {FONT} at (0,0) size 29x17 [color=#0000FF]
+        RenderInline {FONT} at (0,0) size 29x18 [color=#0000FF]
           RenderText {#text} at (0,0) size 29x17
             text run at (0,0) width 29: "right"
         RenderText {#text} at (29,0) size 76x17

@@ -4,8 +4,8 @@ layer at (0,0) size 785x168
   RenderBlock {HTML} at (0,0) size 785x168
     RenderBody {BODY} at (8,21) size 769x131
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 754x36
-          text run at (0,0) width 754: "Testing the values of 'pointer-events' on HTML content"
+        RenderText {#text} at (0,1) size 754x36
+          text run at (0,1) width 754: "Testing the values of 'pointer-events' on HTML content"
       RenderBlock {P} at (0,58) size 769x73
         RenderText {#text} at (0,0) size 767x71
           text run at (0,0) width 578: "This test is expected to be run from within DumpRenderTree. If running manually, click on "
@@ -159,7 +159,7 @@ layer at (340,440) size 80x80
   RenderBlock (positioned) {DIV} at (0,0) size 80x80
 layer at (340,440) size 80x80
   RenderBlock (positioned) {P} at (0,0) size 80x80 [bgcolor=#808080]
-    RenderInline {SPAN} at (0,0) size 35x17 [bgcolor=#FFFF00]
+    RenderInline {SPAN} at (0,0) size 35x18 [bgcolor=#FFFF00]
       RenderText {#text} at (0,0) size 35x17
         text run at (0,0) width 35: "inline"
     RenderText {#text} at (0,0) size 74x53
@@ -180,7 +180,7 @@ layer at (340,540) size 80x80
   RenderBlock (positioned) {DIV} at (0,0) size 80x80
 layer at (340,540) size 80x80
   RenderBlock (positioned) {P} at (0,0) size 80x80 [bgcolor=#808080]
-    RenderInline {SPAN} at (0,0) size 35x17 [bgcolor=#FFFF00]
+    RenderInline {SPAN} at (0,0) size 35x18 [bgcolor=#FFFF00]
       RenderText {#text} at (0,0) size 35x17
         text run at (0,0) width 35: "inline"
     RenderText {#text} at (0,0) size 78x53

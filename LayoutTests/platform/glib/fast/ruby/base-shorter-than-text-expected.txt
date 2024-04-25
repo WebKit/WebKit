@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x80
+      RenderBlock {P} at (0,0) size 784x79
         RenderInline {RUBY} at (0,26) size 144x53
           RenderInline (generated) at (0,26) size 144x53
             RenderText {#text} at (24,26) size 96x53
@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
           RenderInline (generated) at (144,26) size 0x53
             RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,96) size 784x80
+      RenderBlock {P} at (0,95) size 784x79
         RenderInline {RUBY} at (0,26) size 192x53
           RenderInline (generated) at (0,26) size 192x53
             RenderText {#text} at (24,26) size 144x53
@@ -25,8 +25,8 @@ layer at (0,0) size 800x600
           RenderInline (generated) at (192,26) size 0x53
             RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,192) size 208x292
-        RenderBlock {P} at (16,0) size 80x292
+      RenderBlock {DIV} at (0,190) size 206x292
+        RenderBlock {P} at (16,0) size 79x292
           RenderInline {RUBY} at (26,0) size 53x144
             RenderInline (generated) at (26,0) size 53x144
               RenderText {#text} at (26,24) size 53x96
@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
             RenderInline (generated) at (26,144) size 53x0
               RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (112,0) size 80x292
+        RenderBlock {P} at (111,0) size 79x292
           RenderInline {RUBY} at (26,0) size 53x192
             RenderInline (generated) at (26,0) size 53x192
               RenderText {#text} at (26,24) size 53x144

@@ -9,8 +9,8 @@ layer at (0,0) size 800x36
       RenderText {#text} at (0,0) size 0x0
 layer at (37,12) size 103x12
   RenderBlock {div} at (29,4) size 103x12 [color=#A9A9A9]
-    RenderText {#text} at (0,0) size 88x12
-      text run at (0,0) width 88: "Search for Events"
+    RenderText {#text} at (0,1) size 88x12
+      text run at (0,1) width 88: "Search for Events"
 layer at (37,12) size 103x12
   RenderBlock {div} at (0,0) size 103x12
 layer at (26,13) size 11x11

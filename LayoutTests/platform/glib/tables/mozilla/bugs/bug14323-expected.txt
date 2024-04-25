@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (1,1) size 21x45
               RenderImage {IMG} at (22,1) size 21x45
       RenderBlock (anonymous) at (0,59) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,77) size 468x72 [bgcolor=#F7D68C]
         RenderTableSection {TBODY} at (0,0) size 468x72
           RenderTableRow {TR} at (0,0) size 468x42

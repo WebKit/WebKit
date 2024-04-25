@@ -4,28 +4,28 @@ layer at (0,0) size 785x1030
   RenderBlock {HTML} at (0,0) size 785x1030
     RenderBody {BODY} at (8,8) size 769x1014 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
-        RenderInline (generated) at (0,0) size 10x17 [color=#800000]
+        RenderInline (generated) at (0,0) size 10x18 [color=#800000]
           RenderText at (0,0) size 10x17
             text run at (0,0) width 10: "T"
         RenderText {#text} at (10,0) size 345x17
           text run at (10,0) width 345: "he style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 769x105
-        RenderText {#text} at (0,0) size 368x105
-          text run at (0,0) width 224: "P:first-line {color: green;}"
-          text run at (224,0) width 0: " "
-          text run at (0,15) width 248: "P:first-letter {color: maroon;}"
-          text run at (248,15) width 0: " "
-          text run at (0,30) width 272: ".two:first-line {font-size: 200%;}"
-          text run at (272,30) width 0: " "
-          text run at (0,45) width 288: ".two:first-letter {font-size: 350%;}"
-          text run at (288,45) width 0: " "
-          text run at (0,60) width 312: "P.three:first-letter {font-size: 350%;}"
-          text run at (312,60) width 0: " "
-          text run at (0,75) width 368: "P.three:first-line {font-variant: small-caps;}"
-          text run at (368,75) width 0: " "
-          text run at (0,90) width 0: " "
+        RenderText {#text} at (0,1) size 368x105
+          text run at (0,1) width 224: "P:first-line {color: green;}"
+          text run at (224,1) width 0: " "
+          text run at (0,16) width 248: "P:first-letter {color: maroon;}"
+          text run at (248,16) width 0: " "
+          text run at (0,31) width 272: ".two:first-line {font-size: 200%;}"
+          text run at (272,31) width 0: " "
+          text run at (0,46) width 288: ".two:first-letter {font-size: 350%;}"
+          text run at (288,46) width 0: " "
+          text run at (0,61) width 312: "P.three:first-letter {font-size: 350%;}"
+          text run at (312,61) width 0: " "
+          text run at (0,76) width 368: "P.three:first-line {font-variant: small-caps;}"
+          text run at (368,76) width 0: " "
+          text run at (0,91) width 0: " "
       RenderBlock {P} at (0,170) size 769x54
-        RenderInline (generated) at (0,0) size 10x17 [color=#800000]
+        RenderInline (generated) at (0,0) size 10x18 [color=#800000]
           RenderText at (0,0) size 10x17
             text run at (0,0) width 10: "T"
         RenderText {#text} at (0,0) size 764x53
@@ -35,20 +35,20 @@ layer at (0,0) size 785x1030
           text run at (553,18) width 211: "Remember that in order to ensure"
           text run at (0,36) width 449: "a complete test, the paragraph must be displayed on more than one line."
       RenderBlock {P} at (0,240) size 769x183
-        RenderInline (generated) at (0,2) size 68x124 [color=#800000]
-          RenderText at (0,2) size 68x124
-            text run at (0,2) width 68: "T"
-        RenderText {#text} at (0,73) size 751x109
-          text run at (68,73) width 634: "he first letter of this paragraph, and only that one,"
+        RenderInline (generated) at (0,3) size 68x124 [color=#800000]
+          RenderText at (0,3) size 68x124
+            text run at (0,3) width 68: "T"
+        RenderText {#text} at (0,74) size 751x108
+          text run at (68,74) width 634: "he first letter of this paragraph, and only that one,"
           text run at (0,129) width 736: "should be 350% bigger than the rest of the first line of this paragraph and maroon (dark red), while the entire first line"
           text run at (0,147) width 299: "should be 200% bigger than normal and green. "
           text run at (299,147) width 452: "If this precise combination does not occur, then the user agent has failed"
           text run at (0,165) width 55: "this test. "
           text run at (55,165) width 663: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
       RenderBlock {P} at (0,439) size 769x118
-        RenderInline (generated) at (0,1) size 76x62 [color=#800000]
-          RenderText at (0,1) size 76x62
-            text run at (0,1) width 76: "\"W"
+        RenderInline (generated) at (0,2) size 76x62 [color=#800000]
+          RenderText at (0,2) size 76x62
+            text run at (0,2) width 76: "\"W"
         RenderText {#text} at (0,37) size 765x80
           text run at (76,37) width 333: "e should check for quotation support,\" it was said. "
           text run at (408,37) width 356: "The first two characters in this paragraph-- a double-"
@@ -60,7 +60,7 @@ layer at (0,0) size 785x1030
         RenderTableSection {TBODY} at (1,1) size 767x439
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (4,4) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x413
@@ -69,7 +69,7 @@ layer at (0,0) size 785x1030
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x413 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x54
-                RenderInline (generated) at (0,0) size 10x17 [color=#800000]
+                RenderInline (generated) at (0,0) size 10x18 [color=#800000]
                   RenderText at (0,0) size 10x17
                     text run at (0,0) width 10: "T"
                 RenderText {#text} at (0,0) size 727x53
@@ -79,11 +79,11 @@ layer at (0,0) size 785x1030
                   text run at (553,18) width 166: "Remember that in order to"
                   text run at (0,36) width 494: "ensure a complete test, the paragraph must be displayed on more than one line."
               RenderBlock {P} at (4,74) size 747x201
-                RenderInline (generated) at (0,2) size 68x124 [color=#800000]
-                  RenderText at (0,2) size 68x124
-                    text run at (0,2) width 68: "T"
-                RenderText {#text} at (0,73) size 736x127
-                  text run at (68,73) width 634: "he first letter of this paragraph, and only that one,"
+                RenderInline (generated) at (0,3) size 68x124 [color=#800000]
+                  RenderText at (0,3) size 68x124
+                    text run at (0,3) width 68: "T"
+                RenderText {#text} at (0,74) size 736x126
+                  text run at (68,74) width 634: "he first letter of this paragraph, and only that one,"
                   text run at (0,129) width 736: "should be 350% bigger than the rest of the first line of this paragraph and maroon (dark red), while the entire first line"
                   text run at (0,147) width 299: "should be 200% bigger than normal and green. "
                   text run at (299,147) width 413: "If this precise combination does not occur, then the user agent has"
@@ -91,9 +91,9 @@ layer at (0,0) size 785x1030
                   text run at (94,165) width 632: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one"
                   text run at (0,183) width 27: "line."
               RenderBlock {P} at (4,291) size 747x118
-                RenderInline (generated) at (0,1) size 76x62 [color=#800000]
-                  RenderText at (0,1) size 76x62
-                    text run at (0,1) width 76: "\"W"
+                RenderInline (generated) at (0,2) size 76x62 [color=#800000]
+                  RenderText at (0,2) size 76x62
+                    text run at (0,2) width 76: "\"W"
                 RenderText {#text} at (0,37) size 739x80
                   text run at (76,37) width 333: "e should check for quotation support,\" it was said. "
                   text run at (408,37) width 302: "The first two characters in this paragraph-- a"

@@ -15,6 +15,6 @@ layer at (0,0) size 800x600
           text run at (0,18) width 186: "caret should be in the second."
       RenderBlock {DIV} at (0,52) size 784x36
         RenderBlock {DIV} at (0,0) size 784x36
-          RenderBR {BR} at (0,0) size 0x17
-          RenderBR {BR} at (0,18) size 0x17
+          RenderBR {BR} at (0,0) size 0x18
+          RenderBR {BR} at (0,18) size 0x18
 caret: position 0 of child 2 {BR} of child 0 {DIV} of child 2 {DIV} of body

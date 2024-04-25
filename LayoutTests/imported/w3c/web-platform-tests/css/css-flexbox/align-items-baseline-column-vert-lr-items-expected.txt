@@ -3,5 +3,7 @@ lines
 hello
 
 PASS #target > div 1
-PASS #target > div 2
+FAIL #target > div 2 assert_equals:
+<div data-offset-x="51">hello</div>
+offsetLeft expected 51 but got 52
 

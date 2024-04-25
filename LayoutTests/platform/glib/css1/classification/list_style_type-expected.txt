@@ -7,26 +7,26 @@ layer at (0,0) size 785x1527
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 769x150
-        RenderText {#text} at (0,0) size 304x150
-          text run at (0,0) width 232: ".one {list-style-type: disc;}"
-          text run at (232,0) width 0: " "
-          text run at (0,15) width 248: ".two {list-style-type: circle;}"
-          text run at (248,15) width 0: " "
-          text run at (0,30) width 264: ".three {list-style-type: square;}"
-          text run at (264,30) width 0: " "
-          text run at (0,45) width 296: ".four {list-style-type: lower-roman;}"
-          text run at (296,45) width 0: " "
-          text run at (0,60) width 296: ".five {list-style-type: upper-roman;}"
-          text run at (296,60) width 0: " "
-          text run at (0,75) width 288: ".six {list-style-type: lower-alpha;}"
-          text run at (288,75) width 0: " "
-          text run at (0,90) width 304: ".seven {list-style-type: upper-alpha;}"
-          text run at (304,90) width 0: " "
-          text run at (0,105) width 272: ".eight {list-style-type: decimal;}"
-          text run at (272,105) width 0: " "
-          text run at (0,120) width 240: ".nine {list-style-type: none;}"
-          text run at (240,120) width 0: " "
-          text run at (0,135) width 0: " "
+        RenderText {#text} at (0,1) size 304x150
+          text run at (0,1) width 232: ".one {list-style-type: disc;}"
+          text run at (232,1) width 0: " "
+          text run at (0,16) width 248: ".two {list-style-type: circle;}"
+          text run at (248,16) width 0: " "
+          text run at (0,31) width 264: ".three {list-style-type: square;}"
+          text run at (264,31) width 0: " "
+          text run at (0,46) width 296: ".four {list-style-type: lower-roman;}"
+          text run at (296,46) width 0: " "
+          text run at (0,61) width 296: ".five {list-style-type: upper-roman;}"
+          text run at (296,61) width 0: " "
+          text run at (0,76) width 288: ".six {list-style-type: lower-alpha;}"
+          text run at (288,76) width 0: " "
+          text run at (0,91) width 304: ".seven {list-style-type: upper-alpha;}"
+          text run at (304,91) width 0: " "
+          text run at (0,106) width 272: ".eight {list-style-type: decimal;}"
+          text run at (272,106) width 0: " "
+          text run at (0,121) width 240: ".nine {list-style-type: none;}"
+          text run at (240,121) width 0: " "
+          text run at (0,136) width 0: " "
       RenderBlock {UL} at (0,215) size 769x54
         RenderListItem {LI} at (40,0) size 729x18
           RenderListMarker at (-17,0) size 7x17: bullet
@@ -145,7 +145,7 @@ layer at (0,0) size 785x1527
         RenderTableSection {TBODY} at (1,1) size 336x664
           RenderTableRow {TR} at (0,0) size 336x26
             RenderTableCell {TD} at (0,0) size 336x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (4,4) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 336x638

@@ -39,7 +39,7 @@ layer at (0,0) size 785x929
               RenderText {#text} at (208,12) size 62x18
                 text run at (208,2) width 62: "text links"
       RenderBlock {P} at (0,285) size 769x18
-        RenderInline {B} at (0,0) size 470x17
+        RenderInline {B} at (0,0) size 470x18
           RenderText {#text} at (0,0) size 470x17
             text run at (0,0) width 470: "Now, nuke the IMG (two of which are colspan=3) -- the table lines up."
       RenderTable {TABLE} at (0,319) size 590x179 [border: (1px outset #808080)]
@@ -78,7 +78,7 @@ layer at (0,0) size 785x929
               RenderText {#text} at (205,2) size 62x17
                 text run at (205,2) width 62: "text links"
       RenderBlock {P} at (0,524) size 769x18
-        RenderInline {B} at (0,0) size 502x17
+        RenderInline {B} at (0,0) size 502x18
           RenderText {#text} at (0,0) size 502x17
             text run at (0,0) width 502: "Simpler comparison -- two rows, first is IMG in colspan=3 -- tables not OK"
       RenderTable {TABLE} at (0,558) size 600x175 [border: (1px outset #808080)]
@@ -106,7 +106,7 @@ layer at (0,0) size 785x929
                 RenderText {#text} at (0,0) size 68x17
                   text run at (0,0) width 68: "etc., etc. ..."
       RenderBlock {P} at (0,759) size 769x18
-        RenderInline {B} at (0,0) size 519x17
+        RenderInline {B} at (0,0) size 519x18
           RenderText {#text} at (0,0) size 519x17
             text run at (0,0) width 519: "Simpler comparison -- nuke the IMG (replace with text) -- tables line up now."
       RenderTable {TABLE} at (0,793) size 590x120 [border: (1px outset #808080)]

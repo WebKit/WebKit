@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c12"
       RenderBlock (anonymous) at (0,46) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,64) size 235x28 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -33,4 +33,4 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c12"
       RenderBlock (anonymous) at (0,92) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18

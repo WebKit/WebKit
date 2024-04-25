@@ -29,12 +29,12 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x36
         RenderText {#text} at (0,0) size 96x17
           text run at (0,0) width 96: "Fixes this bug: "
-        RenderInline {A} at (96,0) size 167x17 [color=#0000EE]
+        RenderInline {A} at (96,0) size 167x18 [color=#0000EE]
           RenderText {#text} at (96,0) size 167x17
             text run at (96,0) width 167: "<rdar://problem/3927554>"
         RenderText {#text} at (263,0) size 385x17
           text run at (263,0) width 385: " REGRESSION (Mail): Paste inserts content in wrong place "
-        RenderBR {BR} at (648,0) size 0x17
+        RenderBR {BR} at (648,0) size 0x18
         RenderText {#text} at (0,18) size 378x17
           text run at (0,18) width 378: "***TEST*** line should be second, following the first line."
       RenderBlock {DIV} at (0,36) size 784x12
@@ -43,12 +43,12 @@ layer at (0,0) size 800x600
           RenderBlock {P} at (14,14) size 756x27
             RenderText {#text} at (0,0) size 319x26
               text run at (0,0) width 319: "Should be first line of document."
-            RenderBR {BR} at (318,0) size 1x26
+            RenderBR {BR} at (318,0) size 1x27
           RenderBlock {P} at (14,41) size 756x27
             RenderText {#text} at (0,0) size 130x26
               text run at (0,0) width 130: "***TEST***"
           RenderBlock {DIV} at (14,68) size 756x27
-            RenderBR {BR} at (0,0) size 0x26
+            RenderBR {BR} at (0,0) size 0x27
           RenderBlock {P} at (14,95) size 756x27
             RenderText {#text} at (0,0) size 128x26
               text run at (0,0) width 128: "Another line."
@@ -61,5 +61,5 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 6x26
               text run at (0,0) width 6: " "
           RenderBlock {P} at (14,176) size 756x27
-            RenderBR {BR} at (0,0) size 0x26
+            RenderBR {BR} at (0,0) size 0x27
 caret: position 0 of child 0 {BR} of child 2 {DIV} of child 1 {DIV} of child 7 {DIV} of body

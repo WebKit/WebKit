@@ -28,10 +28,10 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 25x17
                 text run at (2,2) width 25: "L C"
       RenderBlock (anonymous) at (0,88) size 784x18
-        RenderInline {B} at (0,0) size 0x17
+        RenderInline {B} at (0,0) size 0x18
           RenderText {#text} at (0,0) size 0x0
-          RenderBR {BR} at (0,0) size 0x17
-          RenderInline {B} at (0,4) size 0x17
+          RenderBR {BR} at (0,0) size 0x18
+          RenderInline {B} at (0,4) size 0x18
             RenderText {#text} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,106) size 784x115
@@ -63,11 +63,11 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 25x17
                   text run at (2,2) width 25: "L C"
       RenderBlock (anonymous) at (0,221) size 784x18
-        RenderInline {B} at (0,0) size 0x17
-          RenderInline {B} at (0,0) size 0x17
+        RenderInline {B} at (0,0) size 0x18
+          RenderInline {B} at (0,0) size 0x18
             RenderText {#text} at (0,0) size 0x0
-            RenderBR {BR} at (0,0) size 0x17
-            RenderInline {B} at (0,4) size 0x17
+            RenderBR {BR} at (0,0) size 0x18
+            RenderInline {B} at (0,4) size 0x18
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,239) size 784x88
@@ -92,12 +92,12 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 25x17
                   text run at (2,2) width 25: "L C"
       RenderBlock (anonymous) at (0,327) size 784x18
-        RenderInline {B} at (0,0) size 0x17
-          RenderInline {B} at (0,0) size 0x17
-            RenderInline {B} at (0,0) size 0x17
+        RenderInline {B} at (0,0) size 0x18
+          RenderInline {B} at (0,0) size 0x18
+            RenderInline {B} at (0,0) size 0x18
               RenderText {#text} at (0,0) size 0x0
-              RenderBR {BR} at (0,0) size 0x17
-              RenderInline {B} at (0,4) size 0x17
+              RenderBR {BR} at (0,0) size 0x18
+              RenderInline {B} at (0,4) size 0x18
                 RenderText {#text} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,345) size 784x115

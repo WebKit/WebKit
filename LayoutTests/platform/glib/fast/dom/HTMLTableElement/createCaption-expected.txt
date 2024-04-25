@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 267x17
           text run at (0,0) width 267: "Tests: the TABLE.createCaption() method"
-        RenderBR {BR} at (266,0) size 1x17
+        RenderBR {BR} at (266,0) size 1x18
       RenderBlock {P} at (0,34) size 784x54
         RenderText {#text} at (0,0) size 73x17
           text run at (0,0) width 73: "Conditions:"
-        RenderBR {BR} at (73,0) size 0x17
+        RenderBR {BR} at (73,0) size 0x18
         RenderText {#text} at (0,18) size 783x35
           text run at (0,18) width 679: "If no caption exists, the method should create an empty caption, add it to the table, and return a pointer to it. "
           text run at (679,18) width 104: "If a caption does"
@@ -18,12 +18,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,104) size 784x36
         RenderText {#text} at (0,0) size 324x17
           text run at (0,0) width 324: "If successful, the first table should have the caption "
-        RenderInline {B} at (324,0) size 43x17
+        RenderInline {B} at (324,0) size 43x18
           RenderText {#text} at (324,0) size 43x17
             text run at (324,0) width 43: "Fruity"
         RenderText {#text} at (367,0) size 293x17
           text run at (367,0) width 293: ", and the second table should have the caption "
-        RenderInline {B} at (660,0) size 74x17
+        RenderInline {B} at (660,0) size 74x18
           RenderText {#text} at (660,0) size 74x17
             text run at (660,0) width 74: "Vegetabley"
         RenderText {#text} at (0,0) size 778x35
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
           text run at (0,18) width 584: "failure, the first table will have no caption, and the second table will have the caption Things."
       RenderTable {TABLE} at (0,166) size 110x94 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 110x18
-          RenderInline {B} at (33,0) size 44x17
+          RenderInline {B} at (33,0) size 44x18
             RenderText {#text} at (33,0) size 44x17
               text run at (33,0) width 44: "Fruity"
         RenderTableSection {TBODY} at (1,19) size 108x74
@@ -57,10 +57,10 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 41x17
                 text run at (2,2) width 41: "Purple"
       RenderBlock (anonymous) at (0,260) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,278) size 129x94 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 129x18
-          RenderInline {B} at (27,0) size 75x17
+          RenderInline {B} at (27,0) size 75x18
             RenderText {#text} at (27,0) size 75x17
               text run at (27,0) width 75: "Vegetabley"
         RenderTableSection {TBODY} at (1,19) size 127x74

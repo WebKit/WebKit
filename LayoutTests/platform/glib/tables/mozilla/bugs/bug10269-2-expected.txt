@@ -4,14 +4,14 @@ layer at (0,0) size 785x6632
   RenderBlock {HTML} at (0,0) size 785x6632
     RenderBody {BODY} at (8,21) size 769x6595
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 252x36
-          text run at (0,0) width 252: "table-layout: fixed"
+        RenderText {#text} at (0,1) size 252x36
+          text run at (0,1) width 252: "table-layout: fixed"
       RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 562x17
           text run at (0,0) width 562: "The following tables should be laid out in the traditional manner because their widths are "
-        RenderInline {CODE} at (562,3) size 32x15
-          RenderText {#text} at (562,3) size 32x15
-            text run at (562,3) width 32: "auto"
+        RenderInline {CODE} at (562,4) size 32x14
+          RenderText {#text} at (562,4) size 32x15
+            text run at (562,4) width 32: "auto"
         RenderText {#text} at (594,0) size 4x17
           text run at (594,0) width 4: ":"
       RenderTable {TABLE} at (0,92) size 110x51
@@ -836,23 +836,23 @@ layer at (0,0) size 785x6632
       RenderBlock {P} at (0,6542) size 769x19
         RenderText {#text} at (0,0) size 58x17
           text run at (0,0) width 58: "(Back to "
-        RenderInline {A} at (58,0) size 157x17 [color=#0000EE]
+        RenderInline {A} at (58,0) size 157x18 [color=#0000EE]
           RenderText {#text} at (58,0) size 157x17
             text run at (58,0) width 157: "CSS Testing Information"
         RenderText {#text} at (214,0) size 9x17
           text run at (214,0) width 9: ", "
-        RenderInline {A} at (222,0) size 83x17 [color=#0000EE]
+        RenderInline {A} at (222,0) size 83x18 [color=#0000EE]
           RenderText {#text} at (222,0) size 83x17
             text run at (222,0) width 83: "David Baron"
         RenderText {#text} at (304,0) size 6x17
           text run at (304,0) width 6: ")"
       RenderBlock {P} at (0,6576) size 769x19
-        RenderInline {A} at (0,0) size 33x17 [color=#0000EE]
+        RenderInline {A} at (0,0) size 33x18 [color=#0000EE]
           RenderText {#text} at (0,0) size 33x17
             text run at (0,0) width 33: "LDB"
         RenderText {#text} at (33,0) size 8x17
           text run at (33,0) width 8: ", "
-        RenderInline {A} at (41,0) size 156x17 [color=#0000EE]
+        RenderInline {A} at (41,0) size 156x18 [color=#0000EE]
           RenderText {#text} at (41,0) size 156x17
             text run at (41,0) width 156: "dbaron@fas.harvard.edu"
 layer at (8,6546) size 769x2 clip at (0,0) size 0x0

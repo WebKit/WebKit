@@ -14,9 +14,9 @@ layer at (0,0) size 800x401
             text run at (0,0) width 776: "Second sentence: this text should be green according to CSS 1 but it should be red according to CSS 2.1. The markup code"
             text run at (0,18) width 752: "is also invalid according to W3C HTML validator but the CSS code is perfectly valid according to W3C CSS validator."
       RenderBlock {H3} at (0,106) size 784x45 [color=#008000] [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 732x43
-          text run at (0,0) width 732: "Third sentence: this text should be green. The markup code is valid according to W3C HTML"
-          text run at (0,22) width 549: "validator but the CSS code is invalid according to W3C CSS validator."
+        RenderText {#text} at (0,1) size 732x43
+          text run at (0,1) width 732: "Third sentence: this text should be green. The markup code is valid according to W3C HTML"
+          text run at (0,23) width 549: "validator but the CSS code is invalid according to W3C CSS validator."
       RenderBlock {H4} at (0,171) size 784x55 [color=#FF0000] [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 776x53
           text run at (0,0) width 776: "Fourth sentence: this text should be green according to CSS 1 (class name can not start with a dash in CSS 1) but it"
@@ -31,10 +31,10 @@ layer at (0,0) size 800x401
       RenderBlock {P} at (0,351) size 784x19
         RenderText {#text} at (0,0) size 27x17
           text run at (0,0) width 27: "See "
-        RenderInline {A} at (27,0) size 71x17 [color=#0000EE]
+        RenderInline {A} at (27,0) size 71x18 [color=#0000EE]
           RenderText {#text} at (27,0) size 71x17
             text run at (27,0) width 71: "Bug 14373"
-        RenderInline {A} at (98,0) size 4x17
+        RenderInline {A} at (98,0) size 4x18
           RenderText {#text} at (98,0) size 4x17
             text run at (98,0) width 4: "."
       RenderBlock (anonymous) at (0,385) size 784x0

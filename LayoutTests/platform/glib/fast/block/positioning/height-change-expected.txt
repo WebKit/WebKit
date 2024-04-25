@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 212x17
           text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 743x35
-          RenderInline {A} at (212,0) size 348x17 [color=#0000EE]
+        RenderInline {I} at (0,0) size 743x36
+          RenderInline {A} at (212,0) size 348x18 [color=#0000EE]
             RenderText {#text} at (212,0) size 348x17
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6881"
           RenderText {#text} at (0,0) size 743x35
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 550x17
           text run at (0,0) width 550: "The squares below should have blue tops and green bottoms, not the other way around."
       RenderBlock (anonymous) at (0,196) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
 layer at (8,94) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,86) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,104) size 784x100
