@@ -60,7 +60,7 @@ static std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(
 }
 
 ViewTransition::ViewTransition(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback)
-    : m_document(document)
+    : ActiveDOMObject(document)
     , m_updateCallback(WTFMove(updateCallback))
     , m_ready(createPromiseAndWrapper(document))
     , m_updateCallbackDone(createPromiseAndWrapper(document))
@@ -72,7 +72,9 @@ ViewTransition::~ViewTransition() = default;
 
 Ref<ViewTransition> ViewTransition::create(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback)
 {
-    return adoptRef(*new ViewTransition(document, WTFMove(updateCallback)));
+    Ref viewTransition = adoptRef(*new ViewTransition(document, WTFMove(updateCallback)));
+    viewTransition->suspendIfNeeded();
+    return viewTransition;
 }
 
 DOMPromise& ViewTransition::ready()
@@ -93,7 +95,7 @@ DOMPromise& ViewTransition::finished()
 // https://drafts.csswg.org/css-view-transitions/#skip-the-view-transition
 void ViewTransition::skipViewTransition(ExceptionOr<JSC::JSValue>&& reason)
 {
-    if (!m_document)
+    if (!document())
         return;
 
     ASSERT(m_phase != ViewTransitionPhase::Done);
@@ -108,7 +110,7 @@ void ViewTransition::skipViewTransition(ExceptionOr<JSC::JSValue>&& reason)
 
     // FIXME: Set rendering suppression for view transitions to false.
 
-    if (m_document->activeViewTransition() == this)
+    if (document()->activeViewTransition() == this)
         clearViewTransition();
 
     m_phase = ViewTransitionPhase::Done;
@@ -148,21 +150,22 @@ void ViewTransition::skipTransition()
 // https://drafts.csswg.org/css-view-transitions/#call-dom-update-callback-algorithm
 void ViewTransition::callUpdateCallback()
 {
-    if (!m_document)
+    if (!document())
         return;
 
     ASSERT(m_phase < ViewTransitionPhase::UpdateCallbackCalled || m_phase == ViewTransitionPhase::Done);
 
+    Ref document = *this->document();
     RefPtr<DOMPromise> callbackPromise;
     if (!m_updateCallback) {
-        auto promiseAndWrapper = createPromiseAndWrapper(*m_document);
+        auto promiseAndWrapper = createPromiseAndWrapper(document);
         promiseAndWrapper.second->resolve();
         callbackPromise = WTFMove(promiseAndWrapper.first);
     } else {
         auto result = m_updateCallback->handleEvent();
         callbackPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
         if (!callbackPromise || callbackPromise->isSuspended()) {
-            auto promiseAndWrapper = createPromiseAndWrapper(*m_document);
+            auto promiseAndWrapper = createPromiseAndWrapper(document);
             // FIXME: First case should reject with `ExceptionCode::ExistingExceptionError`.
             if (result.type() == CallbackResultType::ExceptionThrown)
                 promiseAndWrapper.second->reject(ExceptionCode::TypeError);
@@ -198,7 +201,7 @@ void ViewTransition::callUpdateCallback()
 // https://drafts.csswg.org/css-view-transitions/#setup-view-transition-algorithm
 void ViewTransition::setupViewTransition()
 {
-    if (!m_document)
+    if (!document())
         return;
 
     ASSERT(m_phase == ViewTransitionPhase::PendingCapture);
@@ -352,15 +355,14 @@ static ExceptionOr<void> forEachElementInPaintOrder(const std::function<Exceptio
 // https://drafts.csswg.org/css-view-transitions/#capture-old-state-algorithm
 ExceptionOr<void> ViewTransition::captureOldState()
 {
-    if (!m_document)
+    if (!document())
         return { };
     ListHashSet<AtomString> usedTransitionNames;
     Vector<Ref<Element>> captureElements;
-    Ref document = *m_document;
     // Ensure style & render tree are up-to-date.
-    document->updateStyleIfNeeded();
+    protectedDocument()->updateStyleIfNeeded();
 
-    if (CheckedPtr view = document->renderView()) {
+    if (CheckedPtr view = document()->renderView()) {
         m_initialLargeViewportSize = view->sizeForCSSLargeViewportUnits();
 
         auto result = forEachElementInPaintOrder([&](Element& element) -> ExceptionOr<void> {
@@ -384,8 +386,8 @@ ExceptionOr<void> ViewTransition::captureOldState()
 
         capture.oldProperties = copyElementBaseProperties(element, capture.oldSize);
         capture.oldOverflowRect = captureOverflowRect(element);
-        if (m_document->frame())
-            capture.oldImage = snapshotElementVisualOverflowClippedToViewport(*m_document->frame(), element, capture.oldOverflowRect);
+        if (RefPtr frame = document()->frame())
+            capture.oldImage = snapshotElementVisualOverflowClippedToViewport(*frame, element, capture.oldOverflowRect);
 
         auto transitionName = element->computedStyle()->viewTransitionName();
         m_namedElements.add(transitionName->name, capture);
@@ -402,11 +404,10 @@ ExceptionOr<void> ViewTransition::captureOldState()
 // https://drafts.csswg.org/css-view-transitions/#capture-new-state-algorithm
 ExceptionOr<void> ViewTransition::captureNewState()
 {
-    if (!m_document)
+    if (!document())
         return { };
     ListHashSet<AtomString> usedTransitionNames;
-    Ref document = *m_document;
-    if (CheckedPtr view = document->renderView()) {
+    if (CheckedPtr view = document()->renderView()) {
         auto result = forEachElementInPaintOrder([&](Element& element) -> ExceptionOr<void> {
             if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
@@ -503,7 +504,7 @@ void ViewTransition::setupTransitionPseudoElements()
     for (auto& [name, capturedElement] : m_namedElements.map())
         setupDynamicStyleSheet(name, capturedElement);
 
-    if (RefPtr documentElement = protectedDocument()->documentElement())
+    if (RefPtr documentElement = document()->documentElement())
         documentElement->invalidateStyleInternal();
 }
 
@@ -547,10 +548,10 @@ void ViewTransition::activateViewTransition()
 // https://drafts.csswg.org/css-view-transitions/#handle-transition-frame-algorithm
 void ViewTransition::handleTransitionFrame()
 {
-    if (!m_document)
+    if (!document())
         return;
 
-    RefPtr documentElement = m_document->documentElement();
+    RefPtr documentElement = document()->documentElement();
     if (!documentElement)
         return;
 
@@ -562,7 +563,7 @@ void ViewTransition::handleTransitionFrame()
             auto playState = animation->playState();
             if (playState == WebAnimation::PlayState::Paused || playState == WebAnimation::PlayState::Running)
                 return true;
-            if (m_document->timeline().hasPendingAnimationEventForAnimation(animation))
+            if (document()->timeline().hasPendingAnimationEventForAnimation(animation))
                 return true;
         }
         return false;
@@ -597,13 +598,14 @@ void ViewTransition::handleTransitionFrame()
 // https://drafts.csswg.org/css-view-transitions/#clear-view-transition-algorithm
 void ViewTransition::clearViewTransition()
 {
-    if (!m_document)
+    if (!document())
         return;
 
-    ASSERT(m_document->activeViewTransition() == this);
+    Ref document = *this->document();
+    ASSERT(document->activeViewTransition() == this);
 
     // End animations on pseudo-elements so they can run again.
-    if (RefPtr documentElement = m_document->documentElement()) {
+    if (RefPtr documentElement = document->documentElement()) {
         Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransition }).cancelStyleOriginatedAnimations();
         for (auto& name : namedElements().keys()) {
             Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionGroup, name }).cancelStyleOriginatedAnimations();
@@ -618,11 +620,11 @@ void ViewTransition::clearViewTransition()
             newElement->setCapturedInViewTransition(false);
     }
 
-    protectedDocument()->setHasViewTransitionPseudoElementTree(false);
-    protectedDocument()->setActiveViewTransition(nullptr);
-    protectedDocument()->styleScope().clearViewTransitionStyles();
+    document->setHasViewTransitionPseudoElementTree(false);
+    document->styleScope().clearViewTransitionStyles();
+    document->setActiveViewTransition(nullptr);
 
-    if (RefPtr documentElement = protectedDocument()->documentElement())
+    if (RefPtr documentElement = document->documentElement())
         documentElement->invalidateStyleInternal();
 }
 
@@ -705,7 +707,7 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
             properties = copyElementBaseProperties(*newElement, boxSize);
             LayoutRect overflowRect = captureOverflowRect(*newElement);
 
-            if (RefPtr documentElement = m_document->documentElement()) {
+            if (RefPtr documentElement = document()->documentElement()) {
                 Styleable styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name });
                 CheckedPtr renderer = styleable.renderer();
                 if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer.get()))
@@ -737,6 +739,17 @@ RenderViewTransitionCapture* ViewTransition::viewTransitionNewPseudoForCapturedE
         }
     }
     return nullptr;
+}
+
+void ViewTransition::stop()
+{
+    if (!document())
+        return;
+
+    if (document()->activeViewTransition() == this)
+        clearViewTransition();
+
+    m_phase = ViewTransitionPhase::Done;
 }
 
 }

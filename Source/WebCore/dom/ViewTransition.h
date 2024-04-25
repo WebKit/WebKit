@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "Document.h"
 #include "Element.h"
 #include "ExceptionOr.h"
@@ -127,7 +128,7 @@ private:
     HashMap<AtomString, UniqueRef<CapturedElement>> m_map;
 };
 
-class ViewTransition : public RefCounted<ViewTransition>, public CanMakeWeakPtr<ViewTransition> {
+class ViewTransition : public RefCounted<ViewTransition>, public CanMakeWeakPtr<ViewTransition>, public ActiveDOMObject {
 public:
     static Ref<ViewTransition> create(Document&, RefPtr<ViewTransitionUpdateCallback>&&);
     ~ViewTransition();
@@ -151,7 +152,8 @@ public:
     ViewTransitionPhase phase() const { return m_phase; }
     const OrderedNamedElementsMap& namedElements() const { return m_namedElements; };
 
-    RefPtr<Document> protectedDocument() const { return m_document.get(); }
+    Document* document() const { return downcast<Document>(scriptExecutionContext()); }
+    RefPtr<Document> protectedDocument() const { return document(); }
 
     RenderViewTransitionCapture* viewTransitionNewPseudoForCapturedElement(Element&);
 
@@ -163,7 +165,7 @@ private:
     ExceptionOr<void> updatePseudoElementStyles();
     void setupDynamicStyleSheet(const AtomString&, const CapturedElement&);
 
-    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
+    void stop() final;
 
     OrderedNamedElementsMap m_namedElements;
     ViewTransitionPhase m_phase { ViewTransitionPhase::PendingCapture };
