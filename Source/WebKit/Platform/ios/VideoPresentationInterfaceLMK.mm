@@ -63,6 +63,14 @@ void VideoPresentationInterfaceLMK::setupFullscreen(UIView& videoView, const Flo
     VideoPresentationInterfaceIOS::setupFullscreen(videoView, initialRect, videoDimensions, parentView, mode, allowsPictureInPicturePlayback, standby, blocksReturnToFullscreenFromPictureInPicture);
 }
 
+void VideoPresentationInterfaceLMK::finalizeSetup()
+{
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this] {
+        if (RefPtr model = videoPresentationModel())
+            model->didSetupFullscreen();
+    });
+}
+
 void VideoPresentationInterfaceLMK::setupPlayerViewController()
 {
     linearMediaPlayer().captionLayer = captionsLayer();

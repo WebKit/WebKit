@@ -1803,6 +1803,11 @@ void MediaPlayerPrivateRemote::setSpatialTrackingLabel(const String& spatialTrac
 }
 #endif
 
+void MediaPlayerPrivateRemote::isInFullscreenOrPictureInPictureChanged(bool isInFullscreenOrPictureInPicture)
+{
+    connection().send(Messages::RemoteMediaPlayerProxy::IsInFullscreenOrPictureInPictureChanged(isInFullscreenOrPictureInPicture), m_id);
+}
+
 void MediaPlayerPrivateRemote::commitAllTransactions(CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();

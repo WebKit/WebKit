@@ -897,6 +897,11 @@ bool VideoPresentationInterfaceAVKit::isExternalPlaybackActive() const
     return [playerController() isExternalPlaybackActive];
 }
 
+bool VideoPresentationInterfaceAVKit::willRenderToLayer() const
+{
+    return true;
+}
+
 static std::optional<bool> isPictureInPictureSupported;
 
 void setSupportsPictureInPicture(bool isSupported)

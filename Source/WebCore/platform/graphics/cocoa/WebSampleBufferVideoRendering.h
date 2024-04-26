@@ -33,6 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable CVPixelBufferRef)copyDisplayedPixelBuffer;
 - (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
 - (nullable AVVideoPerformanceMetrics *)videoPerformanceMetrics;
+@property BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
+@property BOOL preventsDisplaySleepDuringVideoPlayback;
 @property (readonly) BOOL requiresFlushToResumeDecoding;
 @property (readonly) AVQueuedSampleBufferRenderingStatus status;
 @property (readonly, nullable) NSError *error;

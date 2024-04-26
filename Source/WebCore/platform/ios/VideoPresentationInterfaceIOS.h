@@ -209,7 +209,7 @@ protected:
     RetainPtr<UIView> m_videoView;
     RetainPtr<WebAVPlayerLayerView> m_playerLayerView;
 
-    void finalizeSetup();
+    virtual void finalizeSetup();
     virtual void updateRouteSharingPolicy() = 0;
     virtual void setupPlayerViewController() = 0;
     virtual void invalidatePlayerViewController() = 0;
@@ -234,6 +234,7 @@ protected:
     virtual void setContentDimensions(const FloatSize&) = 0;
     virtual void setAllowsPictureInPicturePlayback(bool) = 0;
     virtual bool isExternalPlaybackActive() const = 0;
+    virtual bool willRenderToLayer() const = 0;
 
 #if PLATFORM(WATCHOS)
     bool m_waitingForPreparedToExit { false };

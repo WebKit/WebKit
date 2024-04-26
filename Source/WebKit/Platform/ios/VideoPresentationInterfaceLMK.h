@@ -58,6 +58,7 @@ private:
     bool isPlayingVideoInEnhancedFullscreen() const final { return false; }
     void setupFullscreen(UIView&, const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) final;
     void hasVideoChanged(bool) final { }
+    void finalizeSetup() final;
     void updateRouteSharingPolicy() final { }
     void setupPlayerViewController() final;
     void invalidatePlayerViewController() final;
@@ -70,6 +71,7 @@ private:
     void setContentDimensions(const FloatSize&) final;
     void setAllowsPictureInPicturePlayback(bool) final { }
     bool isExternalPlaybackActive() const final { return false; }
+    bool willRenderToLayer() const final { return false; }
     AVPlayerViewController *avPlayerViewController() const final { return nullptr; }
     void setupCaptionsLayer(CALayer *parent, const FloatSize&) final;
     LMPlayableViewController *playableViewController() final;

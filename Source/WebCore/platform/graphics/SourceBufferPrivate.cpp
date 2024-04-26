@@ -153,7 +153,7 @@ Vector<PlatformTimeRanges> SourceBufferPrivate::trackBuffersRanges() const
     });
 }
 
-void SourceBufferPrivate::reenqueSamples(TrackID trackID)
+void SourceBufferPrivate::reenqueSamples(TrackID trackID, NeedsFlush needsFlush)
 {
     RefPtr client = this->client();
     if (!client)
@@ -163,7 +163,7 @@ void SourceBufferPrivate::reenqueSamples(TrackID trackID)
     if (trackBuffer == m_trackBufferMap.end())
         return;
     trackBuffer->second->setNeedsReenqueueing(true);
-    reenqueueMediaForTime(trackBuffer->second, trackID, currentTime());
+    reenqueueMediaForTime(trackBuffer->second, trackID, currentTime(), needsFlush);
 }
 
 Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivate::computeSeekTime(const SeekTarget& target)
@@ -341,9 +341,10 @@ void SourceBufferPrivate::provideMediaData(TrackBuffer& trackBuffer, TrackID tra
     trySignalAllSamplesInTrackEnqueued(trackBuffer, trackID);
 }
 
-void SourceBufferPrivate::reenqueueMediaForTime(TrackBuffer& trackBuffer, TrackID trackID, const MediaTime& time)
+void SourceBufferPrivate::reenqueueMediaForTime(TrackBuffer& trackBuffer, TrackID trackID, const MediaTime& time, NeedsFlush needsFlush)
 {
-    flush(trackID);
+    if (needsFlush == NeedsFlush::Yes)
+        flush(trackID);
     if (trackBuffer.reenqueueMediaForTime(time, timeFudgeFactor()))
         provideMediaData(trackBuffer, trackID);
 }

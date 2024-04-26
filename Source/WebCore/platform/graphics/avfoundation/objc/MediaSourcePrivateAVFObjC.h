@@ -83,6 +83,7 @@ public:
 
     void hasSelectedVideoChanged(SourceBufferPrivateAVFObjC&);
     void setVideoRenderer(WebSampleBufferVideoRendering *);
+    void stageVideoRenderer(WebSampleBufferVideoRendering *);
     void setDecompressionSession(WebCoreDecompressionSession*);
 
     void flushActiveSourceBuffersIfNeeded();
