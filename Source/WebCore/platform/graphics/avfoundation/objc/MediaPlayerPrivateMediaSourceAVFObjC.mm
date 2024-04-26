@@ -1077,16 +1077,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayerOrVideoRenderer()
         destroyVideoRenderer();
         FALLTHROUGH;
     case AcceleratedVideoMode::StagedLayer:
-        if (m_sampleBufferDisplayLayer)
-            return;
         ensureLayer();
         break;
     case AcceleratedVideoMode::VideoRenderer:
         destroyLayer();
         FALLTHROUGH;
     case AcceleratedVideoMode::StagedVideoRenderer:
-        if (m_sampleBufferVideoRenderer)
-            return;
         ensureVideoRenderer();
         break;
     }
