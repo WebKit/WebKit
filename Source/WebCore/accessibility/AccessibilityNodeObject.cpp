@@ -655,7 +655,7 @@ bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
             return true;
 
         // Whitespace only text elements should be ignored when they have no renderer.
-        if (stringValue().containsOnly<isUnicodeWhitespace>())
+        if (stringValue().containsOnly<isASCIIWhitespace>())
             return true;
     }
 
@@ -1752,7 +1752,7 @@ String AccessibilityNodeObject::textAsLabelFor(const AccessibilityObject& labele
             appendNameToStringBuilder(builder, child->textUnderElement());
         }
         if (builder.length())
-            return builder.toString().trim(isUnicodeWhitespace).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
+            return builder.toString().trim(isASCIIWhitespace).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
     }
 
     String text = this->text();
@@ -2405,7 +2405,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
 
     auto result = builder.toString();
     return mode.trimWhitespace == TrimWhitespace::Yes
-        ? result.trim(isUnicodeWhitespace).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak)
+        ? result.trim(isASCIIWhitespace).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak)
         : result;
 }
 
@@ -2641,7 +2641,7 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
         if (axObject->accessibleNameDerivesFromContent())
             text = axObject->textUnderElement(TextUnderElementMode(TextUnderElementMode::Children::IncludeNameFromContentsChildren, true, labelledbyNode));
     } else
-        text = (element ? element->innerText() : node.textContent()).simplifyWhiteSpace(isUnicodeWhitespace);
+        text = (element ? element->innerText() : node.textContent()).simplifyWhiteSpace(isASCIIWhitespace);
 
     if (!text.isEmpty())
         return text;
