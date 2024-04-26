@@ -55,6 +55,7 @@ my $coverageSupport = 0;
 my $showHelp = 0;
 my $ftlJIT = int(isAppleCocoaWebKit() && !willUseIOSSimulatorSDK() || ((isARM64() || isX86_64()) && (isGtk() || isJSCOnly())));
 my $forceCLoop = 0;
+my $rosetta = 0;
 my $makeArgs = "";
 my @cmakeArgs;
 my $buildDir = "";
@@ -87,7 +88,8 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
   --[no-]ftl-jit                Toggle FTL JIT support (default: $ftlJIT)
   --cloop                       Use C Loop interpreter (default: $forceCLoop)
-  --makeargs=<arguments>        Optional Makefile flags
+  --rosetta                     Build JSC for testing under rosetta (default: $rosetta)
+  --makeargs=<arguments>        Optional Makefile/xcodebuild flags
   --cmakeargs=<arguments>       One or more optional CMake flags (e.g. --cmakeargs="-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local")
   --build-dir=<path>            Build out of tree in directory at <path>
 
@@ -101,6 +103,7 @@ my %options = (
     'help' => \$showHelp,
     'ftl-jit!' => \$ftlJIT,
     'cloop!' => \$forceCLoop,
+    'rosetta!' => \$rosetta,
     'makeargs=s' => \$makeArgs,
     'cmakeargs=s' => \@cmakeArgs,
     'build-dir=s' => \$buildDir,
@@ -233,14 +236,19 @@ sub buildUpToProject
         # (JavaScriptCore, WebGPU) have a scheme which builds that project
         # and its implicit dependencies.
         my $schemeName = "Everything up to $projectName";
+        my @extraCommands;
+        my @compilerFlags;
 
-        my $compilerFlags = 'GCC_PREPROCESSOR_ADDITIONS="';
+        push @compilerFlags, $makeArgs;
         if ($forceCLoop) {
-            $compilerFlags .= "ENABLE_JIT=0 ENABLE_C_LOOP=1";
+            push @compilerFlags, "ENABLE_JIT=0 ENABLE_C_LOOP=1";
         }
-        $compilerFlags .= '"';
 
-        my $extraCommands = "";
+        if ($rosetta) {
+            push @compilerFlags, "HAVE_CPU_TRANSLATION_CAPABILITY=0";
+            push @extraCommands, "SKIP_ROSETTA_BREAKING_ENTITLEMENTS=1 ARCHS=x86_64";
+        }
+
         foreach (@ARGV) {
             # Ensure that if somebody passes in a flag like `ARCHS="i386 x86_64"` we
             # maintain the quotes around "i386 x86_64".
@@ -249,10 +257,10 @@ sub buildUpToProject
                 $arg =~ s/=/="/;
                 $arg = $arg . "\"";
             }
-            $extraCommands .= " " . $arg;
+            push @extraCommands, $arg;
         }
 
-        my $command = "make SCHEME=\"$schemeName\" " . (lc configuration()) . " " . $compilerFlags . " " . $extraCommands;
+        my $command = "make SCHEME=\"$schemeName\" " . (lc configuration()) . " GCC_PREPROCESSOR_ADDITIONS=\"@compilerFlags\" @extraCommands";
 
         print "\n";
         print "building ", $projectName, "\n";
