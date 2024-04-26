@@ -43,7 +43,7 @@ constexpr bool shouldLogGlobalVariableRewriting = false;
 
 class RewriteGlobalVariables : public AST::Visitor {
 public:
-    RewriteGlobalVariables(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, HashMap<String, Reflection::EntryPointInformation>& entryPointInformations)
+    RewriteGlobalVariables(ShaderModule& shaderModule, const HashMap<String, PipelineLayout*>& pipelineLayouts, HashMap<String, Reflection::EntryPointInformation>& entryPointInformations)
         : AST::Visitor()
         , m_shaderModule(shaderModule)
         , m_pipelineLayouts(pipelineLayouts)
@@ -103,7 +103,7 @@ private:
     void collectDynamicOffsetGlobals(const PipelineLayout&);
     void usesOverride(AST::Variable&);
     Vector<unsigned> insertStructs(const UsedResources&);
-    Result<Vector<unsigned>> insertStructs(const PipelineLayout&, const UsedResources&);
+    Result<Vector<unsigned>> insertStructs(PipelineLayout&, const UsedResources&);
     AST::StructureMember& createArgumentBufferEntry(unsigned binding, AST::Variable&);
     AST::StructureMember& createArgumentBufferEntry(unsigned binding, const SourceSpan&, const String& name, AST::Expression& type);
     void finalizeArgumentBufferStruct(unsigned group, Vector<std::pair<unsigned, AST::StructureMember*>>&);
@@ -163,7 +163,7 @@ private:
     Vector<Insertion> m_pendingInsertions;
     HashMap<const Types::Struct*, const Type*> m_packedStructTypes;
     ShaderStage m_stage { ShaderStage::Vertex };
-    const HashMap<String, std::optional<PipelineLayout>>& m_pipelineLayouts;
+    const HashMap<String, PipelineLayout*>& m_pipelineLayouts;
     HashMap<String, Reflection::EntryPointInformation>& m_entryPointInformations;
     HashMap<AST::Variable*, AST::Variable*> m_bufferLengthMap;
     AST::Expression* m_bufferLengthType { nullptr };
@@ -926,7 +926,7 @@ std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::En
     }
 
 
-    if (!it->value.has_value()) {
+    if (!it->value) {
         m_entryPointInformation->defaultLayout = { PipelineLayout { } };
         m_generatedLayout = &*m_entryPointInformation->defaultLayout;
     } else {
@@ -1047,7 +1047,7 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
             return BufferBindingLayout {
                 .type = addressSpace(),
                 .hasDynamicOffset = false,
-                .minBindingSize = 0
+                .minBindingSize = type->size()
             };
         case Types::Primitive::Sampler:
             return SamplerBindingLayout {
@@ -1070,28 +1070,28 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
         return BufferBindingLayout {
             .type = addressSpace(),
             .hasDynamicOffset = false,
-            .minBindingSize = 0
+            .minBindingSize = type->size()
         };
     }, [&](const Matrix& matrix) -> BindGroupLayoutEntry::BindingMember {
         UNUSED_PARAM(matrix);
         return BufferBindingLayout {
             .type = addressSpace(),
             .hasDynamicOffset = false,
-            .minBindingSize = 0
+            .minBindingSize = type->size()
         };
     }, [&](const Array& array) -> BindGroupLayoutEntry::BindingMember {
         UNUSED_PARAM(array);
         return BufferBindingLayout {
             .type = addressSpace(),
             .hasDynamicOffset = false,
-            .minBindingSize = 0
+            .minBindingSize = type->size()
         };
     }, [&](const Struct& structure) -> BindGroupLayoutEntry::BindingMember {
         UNUSED_PARAM(structure);
         return BufferBindingLayout {
             .type = addressSpace(),
             .hasDynamicOffset = false,
-            .minBindingSize = 0
+            .minBindingSize = type->size()
         };
     }, [&](const Texture& texture) -> BindGroupLayoutEntry::BindingMember {
         TextureViewDimension viewDimension;
@@ -1179,7 +1179,7 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
         return BufferBindingLayout {
             .type = addressSpace(),
             .hasDynamicOffset = false,
-            .minBindingSize = 0
+            .minBindingSize = type->size()
         };
     }, [&](const PrimitiveStruct&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
@@ -1606,15 +1606,15 @@ static bool variableAndEntryMatch(const AST::Variable& variable, const BindGroup
     return true;
 }
 
-Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(const PipelineLayout& layout, const UsedResources& usedResources)
+Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(PipelineLayout& layout, const UsedResources& usedResources)
 {
     Vector<unsigned> groups;
     unsigned group = 0;
-    HashMap<AST::Variable*, const BindGroupLayoutEntry*> serializedVariables;
-    for (const auto& bindGroupLayout : layout.bindGroupLayouts) {
+    HashMap<AST::Variable*, BindGroupLayoutEntry*> serializedVariables;
+    for (auto& bindGroupLayout : layout.bindGroupLayouts) {
         Vector<std::pair<unsigned, AST::StructureMember*>> entries;
         Vector<std::pair<unsigned, AST::Variable*>> bufferLengths;
-        for (const auto& entry : bindGroupLayout.entries) {
+        for (auto& entry : bindGroupLayout.entries) {
             if (!entry.visibility.contains(m_stage))
                 continue;
 
@@ -1693,6 +1693,9 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(const PipelineLay
             if (auto entryIt = serializedVariables.find(variable); entryIt != serializedVariables.end() && entryIt->value) {
                 if (!variableAndEntryMatch(*variable, *entryIt->value))
                     return makeUnexpected(Error("Shader is incompatible with layout pipeline"_s, SourceSpan::empty()));
+
+                if (auto* bufferBindingLayout = std::get_if<BufferBindingLayout>(&entryIt->value->bindingMember))
+                    bufferBindingLayout->minBindingSize = variable->storeType()->size();
             }
 
             if (!m_reads.contains(variable->name()))
@@ -2152,7 +2155,7 @@ AST::Identifier RewriteGlobalVariables::dynamicOffsetVariableName()
     return AST::Identifier::make(makeString("__DynamicOffsets"));
 }
 
-std::optional<Error> rewriteGlobalVariables(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, HashMap<String, Reflection::EntryPointInformation>& entryPointInformations)
+std::optional<Error> rewriteGlobalVariables(ShaderModule& shaderModule, const HashMap<String, PipelineLayout*>& pipelineLayouts, HashMap<String, Reflection::EntryPointInformation>& entryPointInformations)
 {
     return RewriteGlobalVariables(shaderModule, pipelineLayouts, entryPointInformations).run();
 }

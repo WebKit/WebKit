@@ -349,7 +349,7 @@ void EntryPointRewriter::appendBuiltins()
     }
 }
 
-void rewriteEntryPoints(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
+void rewriteEntryPoints(ShaderModule& shaderModule, const HashMap<String, PipelineLayout*>& pipelineLayouts)
 {
     for (auto& entryPoint : shaderModule.callGraph().entrypoints()) {
         if (!pipelineLayouts.contains(entryPoint.originalName))

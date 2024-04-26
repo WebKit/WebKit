@@ -92,7 +92,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptor& suppliedHints, String&& label)
 {
     HashMap<String, Ref<PipelineLayout>> hints;
-    HashMap<String, std::optional<WGSL::PipelineLayout>> wgslHints;
+    HashMap<String, WGSL::PipelineLayout*> wgslHints;
+    Vector<WGSL::PipelineLayout> wgslPipelineLayouts;
+    wgslPipelineLayouts.reserveCapacity(suppliedHints.hintCount);
     for (uint32_t i = 0; i < suppliedHints.hintCount; ++i) {
         const auto& hint = suppliedHints.hints[i];
         if (hint.nextInChain)
@@ -100,9 +102,11 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
         auto hintKey = fromAPI(hint.entryPoint);
         auto& layout = WebGPU::fromAPI(hint.layout);
         hints.add(hintKey, layout);
-        std::optional<WGSL::PipelineLayout> convertedPipelineLayout { std::nullopt };
-        if (layout.numberOfBindGroupLayouts())
-            convertedPipelineLayout = ShaderModule::convertPipelineLayout(layout);
+        WGSL::PipelineLayout* convertedPipelineLayout = nullptr;
+        if (layout.numberOfBindGroupLayouts()) {
+            wgslPipelineLayouts.append(ShaderModule::convertPipelineLayout(layout));
+            convertedPipelineLayout = &wgslPipelineLayouts.last();
+        }
         wgslHints.add(hintKey, WTFMove(convertedPipelineLayout));
     }
 

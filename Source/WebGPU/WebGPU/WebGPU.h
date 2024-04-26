@@ -787,6 +787,7 @@ typedef struct WGPUBufferBindingLayout {
     WGPUBufferBindingType type;
     WGPUBool hasDynamicOffset;
     uint64_t minBindingSize;
+    uint64_t bufferSizeForBinding;
 } WGPUBufferBindingLayout WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUBufferDescriptor {

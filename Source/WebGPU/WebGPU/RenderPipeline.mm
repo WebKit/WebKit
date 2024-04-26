@@ -803,14 +803,14 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
                 continue;
             }
             WGPUBindGroupLayoutEntry newEntry = { };
-            uint64_t minBindingSize = 0;
+            uint64_t bufferSizeForBinding = 0;
             WGPUBufferBindingType bufferTypeOverride = WGPUBufferBindingType_Undefined;
             if (auto& entryName = entry.name; entryName.length()) {
                 if (entryName.endsWith("_ArrayLength"_s)) {
                     bufferTypeOverride = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_ArrayLength);
                     auto shortName = entryName.substring(2, entryName.length() - (sizeof("_ArrayLength") + 1));
                     if (auto it = entryMap.find(shortName); it != entryMap.end())
-                        minBindingSize = it->value;
+                        bufferSizeForBinding = it->value;
                 } else
                     entryMap.set(entryName, entry.webBinding);
             }
@@ -823,7 +823,8 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
                     .nextInChain = nullptr,
                     .type = (bufferTypeOverride != WGPUBufferBindingType_Undefined) ? bufferTypeOverride : convertBindingType(bufferBinding.type),
                     .hasDynamicOffset = bufferBinding.hasDynamicOffset,
-                    .minBindingSize = minBindingSize ?: bufferBinding.minBindingSize,
+                    .minBindingSize = bufferBinding.minBindingSize,
+                    .bufferSizeForBinding = bufferSizeForBinding,
                 };
             }, [&](const WGSL::SamplerBindingLayout& sampler) {
                 newEntry.sampler = WGPUSamplerBindingLayout {
@@ -1285,7 +1286,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
     mtlRenderPipelineDescriptor.supportIndirectCommandBuffers = YES;
     auto& deviceLimits = limits();
 
-    const PipelineLayout* pipelineLayout = nullptr;
+    PipelineLayout* pipelineLayout = nullptr;
     Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
     if (descriptor.layout) {
         auto& layout = WebGPU::fromAPI(descriptor.layout);

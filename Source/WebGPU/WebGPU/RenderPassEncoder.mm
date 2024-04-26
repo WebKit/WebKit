@@ -33,6 +33,7 @@
 #import "CommandEncoder.h"
 #import "ExternalTexture.h"
 #import "IsValidToUseWith.h"
+#import "Pipeline.h"
 #import "QuerySet.h"
 #import "RenderBundle.h"
 #import "RenderPipeline.h"
@@ -460,6 +461,10 @@ bool RenderPassEncoder::executePreDrawCommands(const Buffer* indirectBuffer)
             return false;
         }
         auto& group = *weakBindGroup.get();
+        if (!validateBindGroup(group)) {
+            makeInvalid(@"buffer is too small");
+            return false;
+        }
         [m_renderCommandEncoder setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:m_device->vertexBufferIndexForBindGroup(groupIndex)];
         [m_renderCommandEncoder setFragmentBuffer:group.fragmentArgumentBuffer() offset:0 atIndex:groupIndex];
     }

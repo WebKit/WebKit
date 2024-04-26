@@ -196,6 +196,7 @@ RefPtr<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutD
                 entry.buffer ? m_convertToBackingContext->convertToBacking(entry.buffer->type) : WGPUBufferBindingType_Undefined,
                 entry.buffer ? entry.buffer->hasDynamicOffset : false,
                 entry.buffer ? entry.buffer->minBindingSize : 0,
+                0,
             },
             .sampler = {
                 nullptr,

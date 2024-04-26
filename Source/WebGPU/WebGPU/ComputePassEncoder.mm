@@ -33,6 +33,7 @@
 #import "CommandEncoder.h"
 #import "ComputePipeline.h"
 #import "IsValidToUseWith.h"
+#import "Pipeline.h"
 #import "QuerySet.h"
 
 namespace WebGPU {
@@ -183,6 +184,10 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
             return;
         }
         auto& group = *kvp.value.get();
+        if (!validateBindGroup(group)) {
+            makeInvalid(@"buffer is too small");
+            return;
+        }
         [m_computeCommandEncoder setBuffer:group.computeArgumentBuffer() offset:0 atIndex:bindGroupIndex];
     }
 
