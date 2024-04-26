@@ -931,6 +931,7 @@ target_include_directories(Skia
     INTERFACE "${Skia_FRAMEWORK_HEADERS_DIR}"
 )
 
+file(MAKE_DIRECTORY "${Skia_FRAMEWORK_HEADERS_DIR}")
 file(CREATE_LINK
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${Skia_FRAMEWORK_HEADERS_DIR}/skia"
