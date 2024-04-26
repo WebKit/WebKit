@@ -471,6 +471,8 @@ private:
     void setSpatialTrackingLabel(const String&) final;
 #endif
 
+    void isInFullscreenOrPictureInPictureChanged(bool) final;
+
 #if PLATFORM(COCOA)
     void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
 #endif

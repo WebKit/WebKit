@@ -372,6 +372,8 @@ private:
     void setSpatialTrackingLabel(const String&);
 #endif
 
+    void isInFullscreenOrPictureInPictureChanged(bool);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
     const void* mediaPlayerLogIdentifier() { return reinterpret_cast<const void*>(m_configuration.logIdentifier); }

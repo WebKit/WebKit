@@ -748,6 +748,9 @@ public:
     void setSpatialTrackingLabel(const String&);
 #endif
 
+    void setInFullscreenOrPictureInPicture(bool);
+    bool isInFullscreenOrPictureInPicture() const;
+
 private:
     MediaPlayer(MediaPlayerClient&);
     MediaPlayer(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
@@ -800,6 +803,8 @@ private:
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;
 #endif
+
+    bool m_isInFullscreenOrPictureInPicture { false };
 
     String m_lastErrorMessage;
     ProcessIdentity m_processIdentity;

@@ -198,6 +198,12 @@ void MediaSourcePrivateAVFObjC::setVideoRenderer(WebSampleBufferVideoRendering *
         m_sourceBufferWithSelectedVideo->setVideoRenderer(renderer);
 }
 
+void MediaSourcePrivateAVFObjC::stageVideoRenderer(WebSampleBufferVideoRendering *renderer)
+{
+    if (m_sourceBufferWithSelectedVideo)
+        m_sourceBufferWithSelectedVideo->stageVideoRenderer(renderer);
+}
+
 void MediaSourcePrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSession* decompressionSession)
 {
     if (m_sourceBufferWithSelectedVideo)
@@ -262,7 +268,7 @@ void MediaSourcePrivateAVFObjC::setSourceBufferWithSelectedVideo(SourceBufferPri
     m_sourceBufferWithSelectedVideo = sourceBuffer;
 
     if (auto player = platformPlayer(); m_sourceBufferWithSelectedVideo && player) {
-        m_sourceBufferWithSelectedVideo->setVideoRenderer(player->sampleBufferVideoRenderer());
+        m_sourceBufferWithSelectedVideo->setVideoRenderer(player->layerOrVideoRenderer());
         m_sourceBufferWithSelectedVideo->setDecompressionSession(player->decompressionSession());
     }
 }

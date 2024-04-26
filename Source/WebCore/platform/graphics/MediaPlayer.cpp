@@ -1970,6 +1970,20 @@ void MediaPlayer::setSpatialTrackingLabel(const String& spatialTrackingLabel)
 }
 #endif
 
+void MediaPlayer::setInFullscreenOrPictureInPicture(bool isInFullscreenOrPictureInPicture)
+{
+    if (m_isInFullscreenOrPictureInPicture == isInFullscreenOrPictureInPicture)
+        return;
+
+    m_isInFullscreenOrPictureInPicture = isInFullscreenOrPictureInPicture;
+    m_private->isInFullscreenOrPictureInPictureChanged(isInFullscreenOrPictureInPicture);
+}
+
+bool MediaPlayer::isInFullscreenOrPictureInPicture() const
+{
+    return m_isInFullscreenOrPictureInPicture;
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& MediaPlayer::mediaPlayerLogger()
 {

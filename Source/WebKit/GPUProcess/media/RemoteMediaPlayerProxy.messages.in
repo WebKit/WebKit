@@ -149,6 +149,8 @@ messages -> RemoteMediaPlayerProxy {
     SetDefaultSpatialTrackingLabel(String defaultSpatialTrackingLabel);
     SetSpatialTrackingLabel(String spatialTrackingLabel);
 #endif
+
+    IsInFullscreenOrPictureInPictureChanged(bool value)
 }
 
 #endif

@@ -76,6 +76,7 @@ private:
     void setContentDimensions(const FloatSize&) final;
     void setAllowsPictureInPicturePlayback(bool) final;
     bool isExternalPlaybackActive() const final;
+    bool willRenderToLayer() const final;
 
     RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;
     RetainPtr<WebAVPlayerViewController> m_playerViewController;

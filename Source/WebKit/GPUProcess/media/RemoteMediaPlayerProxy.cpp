@@ -1241,6 +1241,11 @@ void RemoteMediaPlayerProxy::setSpatialTrackingLabel(const String& spatialTracki
 }
 #endif
 
+void RemoteMediaPlayerProxy::isInFullscreenOrPictureInPictureChanged(bool isInFullscreenOrPictureInPicture)
+{
+    m_player->setInFullscreenOrPictureInPicture(isInFullscreenOrPictureInPicture);
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& RemoteMediaPlayerProxy::logChannel() const
 {
