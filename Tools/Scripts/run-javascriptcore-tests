@@ -111,6 +111,8 @@ my $forceCollectContinuously = 0;
 my $envVars = "";
 my $gmallocPath = undef;
 my $gmallocDefaultPath = "/usr/lib/libgmalloc.dylib";
+my $dyldLogPath = undef;
+my $dyldLogDefaultPath = "dyld.log";
 
 my $createTarball = 0;
 my $remoteHost = 0;
@@ -305,6 +307,7 @@ Usage: $programName [options] [options to pass to build system]
                                 Each environment variable should be separated by a space.
                                 e.g. \"foo=bar x=y\" (no quotes).
   --gmalloc:                    Run tests with Guard Malloc enabled (if no path is given: $gmallocDefaultPath is used)
+  --dyld-log:                   Dyld log file path (if no path is given: dyld.log is used)
   --verbose:                    Verbose output (specify more than once to increase verbosity).
 
   --report:                     Results database url to report results to.
@@ -377,6 +380,7 @@ GetOptions(
     'help' => \$showHelp,
     'env-vars=s' => \$envVars,
     'gmalloc:s' => \$gmallocPath,
+    'dyld-log:s' => \$dyldLogPath,
     'verbose+' => \$verbose,
     'report=s' => \$report,
     'buildbot-master=s' => \$buildbotMaster,
@@ -596,6 +600,16 @@ if (defined($gmallocPath)) {
     } else {
         $envVars .= " DYLD_INSERT_LIBRARIES=" . $gmallocPath;
     }
+}
+
+if (defined($dyldLogPath)) {
+    if ($gmallocPath eq "") {
+        $envVars .= " DYLD_PRINT_TO_FILE=" . $dyldLogDefaultPath;
+    } else {
+        $envVars .= " DYLD_PRINT_TO_FILE=" . $dyldLogPath;
+    }
+} else {
+    $envVars .= " DYLD_PRINT_TO_FILE=" . $dyldLogDefaultPath;
 }
 
 my $htmlDir;
