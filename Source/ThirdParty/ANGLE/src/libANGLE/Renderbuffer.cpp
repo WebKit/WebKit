@@ -18,7 +18,6 @@
 #include "libANGLE/Texture.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/GLImplFactory.h"
-#include "libANGLE/renderer/d3d/RenderTargetD3D.h"
 
 namespace gl
 {

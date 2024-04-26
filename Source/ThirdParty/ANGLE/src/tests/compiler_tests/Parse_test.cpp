@@ -256,3 +256,39 @@ void main() {
     EXPECT_TRUE(foundInIntermediateTree(
         "cannot convert from 'const void' to 'highp 3-component vector of float'"));
 }
+
+TEST_F(ParseTest, HugeUnsizedMultidimensionalArrayConstructorNoCrash)
+{
+    mCompileOptions.limitExpressionComplexity = true;
+    std::ostringstream shader;
+    shader << R"(#version 310 es
+int E=int)";
+    for (int i = 0; i < 10000; ++i)
+    {
+        shader << "[]";
+    }
+    shader << "()";
+    EXPECT_FALSE(compile(shader.str()));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("array has too many dimensions"));
+}
+
+TEST_F(ParseTest, HugeMultidimensionalArrayConstructorNoCrash)
+{
+    mCompileOptions.limitExpressionComplexity = true;
+    std::ostringstream shader;
+    shader << R"(#version 310 es
+int E=int)";
+    for (int i = 0; i < 10000; ++i)
+    {
+        shader << "[1]";
+    }
+
+    for (int i = 0; i < 10000; ++i)
+    {
+        shader << "(2)";
+    }
+    EXPECT_FALSE(compile(shader.str()));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("array has too many dimensions"));
+}

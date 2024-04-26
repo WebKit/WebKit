@@ -711,6 +711,15 @@ class FrameCaptureShared final : angle::NonCopyable
 
     std::mutex &getFrameCaptureMutex() { return mFrameCaptureMutex; }
 
+    void setDeferredLinkProgram(gl::ShaderProgramID programID)
+    {
+        mDeferredLinkPrograms.emplace(programID);
+    }
+    bool isDeferredLinkProgram(gl::ShaderProgramID programID)
+    {
+        return (mDeferredLinkPrograms.find(programID) != mDeferredLinkPrograms.end());
+    }
+
   private:
     void writeJSON(const gl::Context *context);
     void writeCppReplayIndexFiles(const gl::Context *context, bool writeResetContextCall);
@@ -803,6 +812,9 @@ class FrameCaptureShared final : angle::NonCopyable
     // Cache most recently compiled and linked sources.
     ShaderSourceMap mCachedShaderSource;
     ProgramSourceMap mCachedProgramSources;
+
+    // Set of programs which were created but not linked before capture was started
+    std::set<gl::ShaderProgramID> mDeferredLinkPrograms;
 
     gl::ContextID mWindowSurfaceContextID;
 

@@ -1105,7 +1105,6 @@ angle::Result GLES1Renderer::initializeRendererProgram(Context *context,
         setUniform1i(context, &executable, programState.tex2DSamplerLocs[i], i);
         setUniform1i(context, &executable, programState.texCubeSamplerLocs[i], i + kTexUnitCount);
     }
-    glState->setObjectDirty(GL_PROGRAM);
 
     // We just created a new program, we need to sync everything
     gles1State->setAllDirty();

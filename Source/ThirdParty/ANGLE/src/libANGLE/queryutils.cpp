@@ -1399,6 +1399,9 @@ void QueryProgramiv(Context *context, Program *program, GLenum pname, GLint *par
         case GL_ACTIVE_UNIFORM_MAX_LENGTH:
             *params = program->getExecutable().getActiveUniformMaxLength();
             return;
+        case GL_PROGRAM_BINARY_READY_ANGLE:
+            *params = program->isBinaryReady(context);
+            return;
         case GL_PROGRAM_BINARY_LENGTH_OES:
             *params = context->getCaps().programBinaryFormats.empty()
                           ? 0

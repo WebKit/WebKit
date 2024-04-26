@@ -65,6 +65,9 @@ using GlobalWorkOffset = std::array<size_t, 3>;
 using GlobalWorkSize   = std::array<size_t, 3>;
 using WorkgroupCount   = std::array<uint32_t, 3>;
 
+template <typename T>
+using EventStatusMap = std::array<T, 3>;
+
 struct ImageDescriptor
 {
     MemObjectType type;

@@ -520,7 +520,7 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
         // EXT_blend_func_extended usage, the exact variable may be unknown until the
         // program is linked.
         TVariable *alpha0 =
-            new TVariable(&symbolTable, sh::ImmutableString("_ALPHA0"),
+            new TVariable(&symbolTable, sh::ImmutableString("ALPHA0"),
                           StaticType::Get<EbtFloat, EbpUndefined, EvqSpecConst, 1, 1>(),
                           SymbolType::AngleInternal);
 

@@ -177,8 +177,6 @@ class alignas(4) RenderPassDesc final
     bool isColorAttachmentEnabled(size_t colorIndexGL) const;
     bool hasYUVResolveAttachment() const { return mIsYUVResolve; }
     bool hasDepthStencilAttachment() const;
-    bool hasDepthAttachment() const;
-    bool hasStencilAttachment() const;
     gl::DrawBufferMask getColorResolveAttachmentMask() const { return mColorResolveAttachmentMask; }
     bool hasColorResolveAttachment(size_t colorIndexGL) const
     {
@@ -993,6 +991,11 @@ constexpr uint32_t kMaxDescriptorSetLayoutBindings =
 using DescriptorSetLayoutBindingVector =
     angle::FixedVector<VkDescriptorSetLayoutBinding, kMaxDescriptorSetLayoutBindings>;
 
+// Technically this needs to only be kMaxDescriptorSetLayoutBindings but due to struct padding
+// issues round up size to 64.
+constexpr uint32_t kMaxDescriptorSetLayoutCount = roundUpPow2(kMaxDescriptorSetLayoutBindings, 64u);
+using DescriptorSetLayoutIndexMask              = angle::BitSet<kMaxDescriptorSetLayoutCount>;
+
 // A packed description of a descriptor set layout. Use similarly to RenderPassDesc and
 // GraphicsPipelineDesc. Currently we only need to differentiate layouts based on sampler and ubo
 // usage. In the future we could generalize this.
@@ -1013,10 +1016,9 @@ class DescriptorSetLayoutDesc final
                 VkShaderStageFlags stages,
                 const Sampler *immutableSampler);
 
-    void unpackBindings(DescriptorSetLayoutBindingVector *bindings,
-                        std::vector<VkSampler> *immutableSamplers) const;
+    void unpackBindings(DescriptorSetLayoutBindingVector *bindings) const;
 
-    bool empty() const { return *this == DescriptorSetLayoutDesc(); }
+    bool empty() const { return !mValidDescriptorSetLayoutIndexMask.any(); }
 
   private:
     // There is a small risk of an issue if the sampler cache is evicted but not the descriptor
@@ -1027,16 +1029,17 @@ class DescriptorSetLayoutDesc final
         uint8_t type;    // Stores a packed VkDescriptorType descriptorType.
         uint8_t stages;  // Stores a packed VkShaderStageFlags.
         uint16_t count;  // Stores a packed uint32_t descriptorCount.
-        uint32_t pad;
-        VkSampler immutableSampler;
     };
 
-    // 4x 32bit
-    static_assert(sizeof(PackedDescriptorSetBinding) == 16, "Unexpected size");
+    // 1x 32bit
+    static_assert(sizeof(PackedDescriptorSetBinding) == 4, "Unexpected size");
 
     // This is a compact representation of a descriptor set layout.
     std::array<PackedDescriptorSetBinding, kMaxDescriptorSetLayoutBindings>
         mPackedDescriptorSetLayout;
+    gl::ActiveTextureArray<VkSampler> mImmutableSamplers;
+
+    DescriptorSetLayoutIndexMask mValidDescriptorSetLayoutIndexMask;
 };
 
 // The following are for caching descriptor set layouts. Limited to max three descriptor set
@@ -2478,7 +2481,9 @@ class GraphicsPipelineCache final : public HasCacheStats<VulkanCacheType::Graphi
     void destroy(vk::Context *context);
     void release(vk::Context *context);
 
-    void populate(const vk::GraphicsPipelineDesc &desc, vk::Pipeline &&pipeline);
+    void populate(const vk::GraphicsPipelineDesc &desc,
+                  vk::Pipeline &&pipeline,
+                  vk::PipelineHelper **pipelineHelperOut);
 
     // Get a pipeline from the cache, if it exists
     ANGLE_INLINE bool getPipeline(const vk::GraphicsPipelineDesc &desc,
@@ -2530,7 +2535,6 @@ class GraphicsPipelineCache final : public HasCacheStats<VulkanCacheType::Graphi
                     vk::CacheLookUpFeedback feedback,
                     const vk::GraphicsPipelineDesc **descPtrOut,
                     vk::PipelineHelper **pipelineOut);
-    void update(const vk::GraphicsPipelineDesc &desc, vk::Pipeline &&pipeline);
 
     using KeyEqual = typename GraphicsPipelineCacheTypeHelper<Hash>::KeyEqual;
     std::unordered_map<vk::GraphicsPipelineDesc, vk::PipelineHelper, Hash, KeyEqual> mPayload;

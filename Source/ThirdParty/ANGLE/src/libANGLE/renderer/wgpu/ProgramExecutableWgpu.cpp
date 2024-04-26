@@ -115,4 +115,10 @@ void ProgramExecutableWgpu::getUniformuiv(const gl::Context *context,
 {
     // TODO: Write some values.
 }
+
+TranslatedWGPUShaderModule &ProgramExecutableWgpu::getShaderModule(gl::ShaderType type)
+{
+    return mShaderModules[type];
+}
+
 }  // namespace rx

@@ -849,8 +849,7 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
             {
                 static constexpr ImageFormatInitInfo kInfo[] = {
                     {angle::FormatID::D24_UNORM_S8_UINT, nullptr},
-                    {angle::FormatID::D32_FLOAT_S8X24_UINT, nullptr},
-                    {angle::FormatID::D24_UNORM_S8_UINT, nullptr}};
+                    {angle::FormatID::D32_FLOAT_S8X24_UINT, nullptr}};
                 initImageFallback(renderer, kInfo, ArraySize(kInfo));
             }
             mActualBufferFormatID         = angle::FormatID::D24_UNORM_S8_UINT;
@@ -889,8 +888,7 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
             {
                 static constexpr ImageFormatInitInfo kInfo[] = {
                     {angle::FormatID::D32_FLOAT_S8X24_UINT, nullptr},
-                    {angle::FormatID::D24_UNORM_S8_UINT, nullptr},
-                    {angle::FormatID::D32_FLOAT_S8X24_UINT, nullptr}};
+                    {angle::FormatID::D24_UNORM_S8_UINT, nullptr}};
                 initImageFallback(renderer, kInfo, ArraySize(kInfo));
             }
             mActualBufferFormatID         = angle::FormatID::D32_FLOAT_S8X24_UINT;
@@ -2634,8 +2632,7 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
                 static constexpr ImageFormatInitInfo kInfo[] = {
                     {angle::FormatID::S8_UINT, nullptr},
                     {angle::FormatID::D24_UNORM_S8_UINT, nullptr},
-                    {angle::FormatID::D32_FLOAT_S8X24_UINT, nullptr},
-                    {angle::FormatID::S8_UINT, nullptr}};
+                    {angle::FormatID::D32_FLOAT_S8X24_UINT, nullptr}};
                 initImageFallback(renderer, kInfo, ArraySize(kInfo));
             }
             mActualBufferFormatID         = angle::FormatID::S8_UINT;

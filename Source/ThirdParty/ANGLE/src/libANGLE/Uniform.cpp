@@ -26,7 +26,7 @@ LinkedUniform::LinkedUniform(GLenum typeIn,
     ASSERT(arraySizesIn.size() <= 1);
 
     memset(this, 0, sizeof(*this));
-    SetBitField(pod.type, typeIn);
+    pod.typeIndex = GetUniformTypeIndex(typeIn);
     SetBitField(pod.precision, precisionIn);
     pod.location = locationIn;
     SetBitField(pod.binding, bindingIn);
@@ -54,7 +54,7 @@ LinkedUniform::LinkedUniform(const UsedUniform &usedUniform)
 
     // Note: Ensure every data member is initialized.
     pod.flagBitsAsUByte = 0;
-    SetBitField(pod.type, usedUniform.type);
+    pod.typeIndex       = GetUniformTypeIndex(usedUniform.type);
     SetBitField(pod.precision, usedUniform.precision);
     SetBitField(pod.imageUnitFormat, usedUniform.imageUnitFormat);
     pod.location          = usedUniform.location;

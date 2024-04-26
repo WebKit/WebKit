@@ -15,6 +15,7 @@
 
 #include "libANGLE/CLBuffer.h"
 #include "libANGLE/CLContext.h"
+#include "libANGLE/CLEvent.h"
 #include "libANGLE/CLProgram.h"
 #include "libANGLE/cl_utils.h"
 
@@ -241,7 +242,7 @@ angle::Result CLContextVk::linkProgram(const cl::Program &program,
 
 angle::Result CLContextVk::createUserEvent(const cl::Event &event, CLEventImpl::Ptr *eventOut)
 {
-    *eventOut = CLEventImpl::Ptr(new (std::nothrow) CLEventVk(event, cl::EventPtrs{}));
+    *eventOut = CLEventImpl::Ptr(new (std::nothrow) CLEventVk(event));
     if (*eventOut == nullptr)
     {
         ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
@@ -251,8 +252,23 @@ angle::Result CLContextVk::createUserEvent(const cl::Event &event, CLEventImpl::
 
 angle::Result CLContextVk::waitForEvents(const cl::EventPtrs &events)
 {
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+    for (auto &event : events)
+    {
+        CLEventVk *eventVk = &event.get()->getImpl<CLEventVk>();
+        if (eventVk->isUserEvent())
+        {
+            ANGLE_TRY(eventVk->waitForUserEventStatus());
+        }
+        else
+        {
+            // TODO rework this to instead (flush w/ ResourceUse serial wait) once we move away from
+            // spawning a submit-thread/Task for flush routine
+            // https://anglebug.com/8669
+            ANGLE_TRY(event->getCommandQueue()->finish());
+        }
+    }
+
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

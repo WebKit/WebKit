@@ -230,6 +230,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_ANGLE_multiview_multisample](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_multiview_multisample.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_polygon_mode](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_polygon_mode.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_program_binary](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_program_binary.txt) |  |  |  |  |  |  |  |
+| [GL_ANGLE_program_binary_readiness_query](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_program_binary_readiness_query.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_program_cache_control](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_program_cache_control.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_provoking_vertex](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_provoking_vertex.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_read_only_depth_stencil_feedback_loops](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_read_only_depth_stencil_feedback_loops.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |

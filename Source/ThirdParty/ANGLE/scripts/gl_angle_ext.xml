@@ -1426,6 +1426,11 @@
                 <enum name="GL_PROGRAM_CACHE_ENABLED_ANGLE"/>
             </require>
         </extension>
+        <extension name="GL_ANGLE_program_binary_readiness_query" supported='gles2'>
+            <require>
+                <enum name="GL_PROGRAM_BINARY_READY_ANGLE"/>
+            </require>
+        </extension>
         <extension name="GL_ANGLE_memory_size" supported='gles2'>
             <require>
                 <enum name="GL_MEMORY_SIZE_ANGLE"/>
@@ -1500,6 +1505,7 @@
         <enum value="0x96B0" name="GL_SERIALIZED_CONTEXT_STRING_ANGLE"/>
         <enum value="0x96B9" name="GL_ROBUST_FRAGMENT_SHADER_OUTPUT_ANGLE"/>
         <enum value="0x96BB" name="GL_SHADER_BINARY_ANGLE"/>
+        <enum value="0x96BE" name="GL_PROGRAM_BINARY_READY_ANGLE"/>
     </enums>
 
     <enums namespace="GL" vendor="ANGLE">

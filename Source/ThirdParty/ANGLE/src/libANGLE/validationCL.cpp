@@ -2207,6 +2207,26 @@ cl_int ValidateEnqueueNDRangeKernel(cl_command_queue command_queue,
         return CL_INVALID_GLOBAL_OFFSET;
     }
 
+    // CL_INVALID_WORK_GROUP_SIZE if local_work_size is specified and does not match the required
+    // work-group size for kernel in the program source.
+    size_t compileWorkGroupSize[3] = {0, 0, 0};
+    if (IsError(krnl.getWorkGroupInfo(const_cast<cl_device_id>(device.getNative()),
+                                      KernelWorkGroupInfo::CompileWorkGroupSize,
+                                      sizeof(compileWorkGroupSize), compileWorkGroupSize, nullptr)))
+    {
+        return CL_INVALID_VALUE;
+    }
+    if (local_work_size != nullptr)
+    {
+        for (cl_uint i = 0; i < work_dim; ++i)
+        {
+            if (compileWorkGroupSize[i] != 0 && local_work_size[i] != compileWorkGroupSize[i])
+            {
+                return CL_INVALID_WORK_GROUP_SIZE;
+            }
+        }
+    }
+
     // CL_INVALID_GLOBAL_WORK_SIZE if global_work_size is NULL or if any of the values
     // specified in global_work_size[0] ... global_work_size[work_dim - 1] are 0.
     // Returning this error code under these circumstances is deprecated by version 2.1.

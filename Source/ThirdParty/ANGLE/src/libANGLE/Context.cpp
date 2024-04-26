@@ -65,10 +65,13 @@ namespace gl
 namespace
 {
 constexpr state::DirtyObjects kDrawDirtyObjectsBase{
-    state::DIRTY_OBJECT_ACTIVE_TEXTURES, state::DIRTY_OBJECT_DRAW_FRAMEBUFFER,
-    state::DIRTY_OBJECT_VERTEX_ARRAY,    state::DIRTY_OBJECT_TEXTURES,
-    state::DIRTY_OBJECT_PROGRAM,         state::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT,
-    state::DIRTY_OBJECT_SAMPLERS,        state::DIRTY_OBJECT_IMAGES,
+    state::DIRTY_OBJECT_ACTIVE_TEXTURES,
+    state::DIRTY_OBJECT_DRAW_FRAMEBUFFER,
+    state::DIRTY_OBJECT_VERTEX_ARRAY,
+    state::DIRTY_OBJECT_TEXTURES,
+    state::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT,
+    state::DIRTY_OBJECT_SAMPLERS,
+    state::DIRTY_OBJECT_IMAGES,
 };
 
 // TexImage uses the unpack state
@@ -133,9 +136,11 @@ constexpr state::DirtyBits kComputeDirtyBits{
 };
 constexpr state::ExtendedDirtyBits kComputeExtendedDirtyBits{};
 constexpr state::DirtyObjects kComputeDirtyObjectsBase{
-    state::DIRTY_OBJECT_ACTIVE_TEXTURES, state::DIRTY_OBJECT_TEXTURES,
-    state::DIRTY_OBJECT_PROGRAM,         state::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT,
-    state::DIRTY_OBJECT_IMAGES,          state::DIRTY_OBJECT_SAMPLERS,
+    state::DIRTY_OBJECT_ACTIVE_TEXTURES,
+    state::DIRTY_OBJECT_TEXTURES,
+    state::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT,
+    state::DIRTY_OBJECT_IMAGES,
+    state::DIRTY_OBJECT_SAMPLERS,
 };
 
 constexpr state::DirtyBits kCopyImageDirtyBitsBase{state::DIRTY_BIT_READ_FRAMEBUFFER_BINDING};
@@ -3791,12 +3796,13 @@ Extensions Context::generateSupportedExtensions() const
     }
 
     // Some extensions are always available because they are implemented in the GL layer.
-    supportedExtensions.bindUniformLocationCHROMIUM   = true;
-    supportedExtensions.vertexArrayObjectOES          = true;
-    supportedExtensions.bindGeneratesResourceCHROMIUM = true;
-    supportedExtensions.clientArraysANGLE             = true;
-    supportedExtensions.requestExtensionANGLE         = true;
-    supportedExtensions.multiDrawANGLE                = true;
+    supportedExtensions.bindUniformLocationCHROMIUM      = true;
+    supportedExtensions.vertexArrayObjectOES             = true;
+    supportedExtensions.bindGeneratesResourceCHROMIUM    = true;
+    supportedExtensions.clientArraysANGLE                = true;
+    supportedExtensions.requestExtensionANGLE            = true;
+    supportedExtensions.multiDrawANGLE                   = true;
+    supportedExtensions.programBinaryReadinessQueryANGLE = true;
 
     // Enable the no error extension if the context was created with the flag.
     supportedExtensions.noErrorKHR = skipValidation();

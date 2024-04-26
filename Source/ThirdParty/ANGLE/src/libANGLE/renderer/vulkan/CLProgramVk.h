@@ -40,7 +40,7 @@ class CLProgramVk : public CLProgramImpl
         angle::HashMap<uint32_t, CLKernelVk::ArgInfo> kernelArgInfos;
         angle::HashMap<std::string, uint32_t> kernelFlags;
         angle::HashMap<std::string, std::string> kernelAttributes;
-        angle::HashMap<std::string, std::array<uint32_t, 3>> kernelCompileWGS;
+        angle::HashMap<std::string, std::array<uint32_t, 3>> kernelCompileWorkgroupSize;
         angle::HashMap<uint32_t, VkPushConstantRange> pushConstants;
         std::array<uint32_t, 3> specConstantWorkgroupSizeIDs{0, 0, 0};
         CLKernelArgsMap kernelArgsMap;
@@ -136,17 +136,18 @@ class CLProgramVk : public CLProgramImpl
             return kargsCopy;
         }
 
-        cl::WorkgroupSize getCompiledWGS(const std::string &kernelName) const
+        cl::WorkgroupSize getCompiledWorkgroupSize(const std::string &kernelName) const
         {
-            cl::WorkgroupSize compiledWGS{0, 0, 0};
-            if (reflectionData.kernelCompileWGS.contains(kernelName))
+            cl::WorkgroupSize compiledWorkgroupSize{0, 0, 0};
+            if (reflectionData.kernelCompileWorkgroupSize.contains(kernelName))
             {
-                for (size_t i = 0; i < compiledWGS.size(); ++i)
+                for (size_t i = 0; i < compiledWorkgroupSize.size(); ++i)
                 {
-                    compiledWGS[i] = reflectionData.kernelCompileWGS.at(kernelName)[i];
+                    compiledWorkgroupSize[i] =
+                        reflectionData.kernelCompileWorkgroupSize.at(kernelName)[i];
                 }
             }
-            return compiledWGS;
+            return compiledWorkgroupSize;
         }
 
         std::string getKernelAttributes(const std::string &kernelName) const

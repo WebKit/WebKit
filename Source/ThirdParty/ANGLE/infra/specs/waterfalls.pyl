@@ -283,8 +283,6 @@
           'win10_intel_uhd_630_experimental',
         ],
         'test_suites': {
-          'gtest_tests': 'win10_intel_gtests',
-          'isolated_scripts': 'isolated_scripts_group_common',
         },
       },
       'win10-x64-intel': {

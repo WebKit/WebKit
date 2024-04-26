@@ -1071,6 +1071,8 @@ deqp_khr_gl_sources = [
   "$deqp_path/external/openglcts/modules/gl/gl3cTextureSizePromotion.hpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cTextureSwizzleTests.cpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cTextureSwizzleTests.hpp",
+  "$deqp_path/external/openglcts/modules/gl/gl3cTransformFeedback3Tests.cpp",
+  "$deqp_path/external/openglcts/modules/gl/gl3cTransformFeedback3Tests.hpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cTransformFeedbackOverflowQueryTests.cpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cTransformFeedbackOverflowQueryTests.hpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cTransformFeedbackTests.cpp",

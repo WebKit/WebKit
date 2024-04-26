@@ -731,6 +731,11 @@ GL_APICALL void GL_APIENTRY glLogicOpANGLE (GLenum);
 #endif
 #endif /* GL_ANGLE_logic_op */
 
+#ifndef GL_ANGLE_program_binary_readiness_query
+#define GL_ANGLE_program_binary_readiness_query
+#define GL_PROGRAM_BINARY_READY_ANGLE    0x96BE
+#endif /* GL_ANGLE_program_binary_readiness_query */
+
 #ifndef GL_ANGLE_variable_rasterization_rate_metal
 #define GL_ANGLE_variable_rasterization_rate_metal 1
 

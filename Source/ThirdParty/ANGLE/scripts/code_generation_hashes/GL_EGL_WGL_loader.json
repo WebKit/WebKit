@@ -4,9 +4,9 @@
   "scripts/generate_loader.py":
     "93c78a8d11323fa311fed5118fbcf083",
   "scripts/gl_angle_ext.xml":
-    "bc63e31e455c42923d84b38c98b81605",
+    "197e07a917d5bba6dfa2840fb1b58e7e",
   "scripts/registry_xml.py":
-    "279665a799ba87136c91b01b0296d565",
+    "49c3c48df34c6acb1de031090ac18075",
   "src/libEGL/egl_loader_autogen.cpp":
     "a41c368dc25edc7ceda29b17cb45b854",
   "src/libEGL/egl_loader_autogen.h":

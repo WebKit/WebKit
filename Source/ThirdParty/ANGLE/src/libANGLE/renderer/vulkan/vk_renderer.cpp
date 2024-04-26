@@ -194,6 +194,7 @@ VkResult VerifyExtensionsPresent(const vk::ExtensionNameList &haystack,
 constexpr const char *kSkippedMessages[] = {
     // http://anglebug.com/8401
     "Undefined-Value-ShaderOutputNotConsumed",
+    "Undefined-Value-ShaderInputNotProduced",
     // http://anglebug.com/5304
     "VUID-vkCmdDraw-magFilter-04553",
     "VUID-vkCmdDrawIndexed-magFilter-04553",
@@ -235,10 +236,6 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-vkCmdDrawIndexed-None-07835",
     "VUID-VkGraphicsPipelineCreateInfo-Input-08733",
     "VUID-vkCmdDraw-Input-08734",
-    // http://anglebug.com/8151
-    "VUID-vkCmdDraw-None-07844",
-    "VUID-vkCmdDraw-None-07845",
-    "VUID-vkCmdDraw-None-07848",
     // https://anglebug.com/8128#c3
     "VUID-VkBufferViewCreateInfo-format-08779",
     // https://anglebug.com/8203
@@ -250,8 +247,11 @@ constexpr const char *kSkippedMessages[] = {
     // https://anglebug.com/7291
     "VUID-vkCmdBlitImage-srcImage-00240",
     // https://anglebug.com/8242
+    // VVL bug: https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/7858
     "VUID-vkCmdDraw-None-08608",
     "VUID-vkCmdDrawIndexed-None-08608",
+    // https://anglebug.com/8242
+    // Invalid feedback loop caused by the application
     "VUID-vkCmdDraw-None-09000",
     "VUID-vkCmdDrawIndexed-None-09000",
     "VUID-vkCmdDraw-None-09002",
@@ -279,6 +279,8 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-vkCmdDrawIndexed-format-07753",
     "VUID-vkCmdDraw-format-07753",
     "Undefined-Value-ShaderFragmentOutputMismatch",
+    // https://issuetracker.google.com/336652255
+    "UNASSIGNED-CoreValidation-DrawState-InvalidImageLayout",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -477,13 +479,6 @@ constexpr vk::SkippedSyncvalMessage kSkippedSyncvalMessages[] = {
      "store with storeOp VK_ATTACHMENT_STORE_OP_STORE. Access info (usage: "
      "SYNC_LATE_FRAGMENT_TESTS_DEPTH_STENCIL_ATTACHMENT_WRITE, prior_usage: "
      "SYNC_FRAGMENT_SHADER_SHADER_"},
-    // b/316013423
-    {"SYNC-HAZARD-READ-AFTER-WRITE", "type = VK_OBJECT_TYPE_QUEUE",
-     "vkQueueSubmit():  Hazard READ_AFTER_WRITE for entry 0"},
-    {"SYNC-HAZARD-WRITE-AFTER-READ", "type = VK_OBJECT_TYPE_QUEUE",
-     "vkQueueSubmit():  Hazard WRITE_AFTER_READ for entry 0"},
-    {"SYNC-HAZARD-WRITE-AFTER-WRITE", "type = VK_OBJECT_TYPE_QUEUE",
-     "vkQueueSubmit():  Hazard WRITE_AFTER_WRITE for entry 0"},
 };
 
 // Messages that shouldn't be generated if storeOp=NONE is supported, otherwise they are expected.
@@ -1906,17 +1901,30 @@ angle::Result Renderer::initialize(vk::Context *context,
         instanceInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
     }
 
+    // Fine grain control of validation layer features
+    const char *name                     = "VK_LAYER_KHRONOS_validation";
+    const VkBool32 setting_validate_core = VK_TRUE;
+    const VkBool32 setting_validate_sync = IsAndroid() ? VK_FALSE : VK_TRUE;
+    const VkBool32 setting_thread_safety = VK_TRUE;
     // http://anglebug.com/7050 - Shader validation caching is broken on Android
-    VkValidationFeaturesEXT validationFeatures       = {};
-    VkValidationFeatureDisableEXT disabledFeatures[] = {
-        VK_VALIDATION_FEATURE_DISABLE_SHADER_VALIDATION_CACHE_EXT};
-    if (mEnableValidationLayers && IsAndroid())
+    const VkBool32 setting_check_shaders = IsAndroid() ? VK_FALSE : VK_TRUE;
+    // http://b/316013423 Disable QueueSubmit Synchronization Validation. Lots of failures and some
+    // test timeout due to https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/7285
+    const VkBool32 setting_sync_queue_submit = VK_FALSE;
+    const VkLayerSettingEXT layerSettings[]  = {
+        {name, "validate_core", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &setting_validate_core},
+        {name, "validate_sync", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &setting_validate_sync},
+        {name, "thread_safety", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &setting_thread_safety},
+        {name, "check_shaders", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &setting_check_shaders},
+        {name, "sync_queue_submit", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1,
+          &setting_sync_queue_submit},
+    };
+    VkLayerSettingsCreateInfoEXT layerSettingsCreateInfo = {
+        VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT, nullptr,
+        static_cast<uint32_t>(std::size(layerSettings)), layerSettings};
+    if (mEnableValidationLayers)
     {
-        validationFeatures.sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
-        validationFeatures.disabledValidationFeatureCount = 1;
-        validationFeatures.pDisabledValidationFeatures    = disabledFeatures;
-
-        vk::AddToPNextChain(&instanceInfo, &validationFeatures);
+        vk::AddToPNextChain(&instanceInfo, &layerSettingsCreateInfo);
     }
 
     {
@@ -2109,16 +2117,8 @@ angle::Result Renderer::initializeMemoryAllocator(vk::Context *context)
 
     // Cached coherent staging buffer.  Note coherent is preferred but not required, which means we
     // may get non-coherent memory type.
-    if (getFeatures().requireCachedBitForStagingBuffer.enabled)
-    {
-        requiredFlags  = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
-        preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-    }
-    else
-    {
-        requiredFlags  = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-        preferredFlags = VK_MEMORY_PROPERTY_HOST_CACHED_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-    }
+    requiredFlags  = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+    preferredFlags = VK_MEMORY_PROPERTY_HOST_CACHED_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
     ANGLE_VK_TRY(context,
                  mAllocator.findMemoryTypeIndexForBufferInfo(
                      createInfo, requiredFlags, preferredFlags, persistentlyMapped,
@@ -4668,11 +4668,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         &mFeatures, preferDeviceLocalMemoryHostVisible,
         canPreferDeviceLocalMemoryHostVisible(mPhysicalDeviceProperties.deviceType));
 
-    // For some reason, if we use cached staging buffer for read pixels, a lot of tests fail on ARM,
-    // even though we do have invlaid() call there. Temporary keep the old behavior for ARM until we
-    // can root cause it.
-    ANGLE_FEATURE_CONDITION(&mFeatures, requireCachedBitForStagingBuffer, !isARM);
-
     // Multiple dynamic state issues on ARM have been fixed.
     // http://issuetracker.google.com/285124778
     // http://issuetracker.google.com/285196249
@@ -4680,7 +4675,12 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // http://issuetracker.google.com/287318431
     //
     // On Pixel devices, the issues have been fixed since r44, but on others since r44p1.
-    const bool isArm44OrLess = isARM && armDriverVersion < ARMDriverVersion(44, 1, 0);
+    //
+    // Regressions have been detected using r46 on older architectures though
+    // http://issuetracker.google.com/336411904
+    const bool isExtendedDynamicStateBuggy =
+        (isARM && armDriverVersion < ARMDriverVersion(44, 1, 0)) ||
+        (isMaliJobManagerBasedGPU && armDriverVersion >= ARMDriverVersion(46, 0, 0));
 
     // Vertex input binding stride is buggy for Windows/Intel drivers before 100.9684.
     const bool isVertexInputBindingStrideBuggy =
@@ -4692,9 +4692,9 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
                             mVertexInputDynamicStateFeatures.vertexInputDynamicState == VK_TRUE &&
                                 !(IsWindows() && isIntel));
 
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsExtendedDynamicState,
-        mExtendedDynamicStateFeatures.extendedDynamicState == VK_TRUE && !isArm44OrLess);
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsExtendedDynamicState,
+                            mExtendedDynamicStateFeatures.extendedDynamicState == VK_TRUE &&
+                                !isExtendedDynamicStateBuggy);
 
     // VK_EXT_vertex_input_dynamic_state enables dynamic state for the full vertex input state. As
     // such, when available use supportsVertexInputDynamicState instead of
@@ -4702,15 +4702,17 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, useVertexInputBindingStrideDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled &&
                                 !mFeatures.supportsVertexInputDynamicState.enabled &&
-                                !isArm44OrLess && !isVertexInputBindingStrideBuggy);
-    ANGLE_FEATURE_CONDITION(&mFeatures, useCullModeDynamicState,
-                            mFeatures.supportsExtendedDynamicState.enabled && !isArm44OrLess);
+                                !isExtendedDynamicStateBuggy && !isVertexInputBindingStrideBuggy);
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, useCullModeDynamicState,
+        mFeatures.supportsExtendedDynamicState.enabled && !isExtendedDynamicStateBuggy);
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthCompareOpDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled);
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthTestEnableDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled);
-    ANGLE_FEATURE_CONDITION(&mFeatures, useDepthWriteEnableDynamicState,
-                            mFeatures.supportsExtendedDynamicState.enabled && !isArm44OrLess);
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, useDepthWriteEnableDynamicState,
+        mFeatures.supportsExtendedDynamicState.enabled && !isExtendedDynamicStateBuggy);
     ANGLE_FEATURE_CONDITION(&mFeatures, useFrontFaceDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled);
     ANGLE_FEATURE_CONDITION(&mFeatures, useStencilOpDynamicState,
@@ -4718,12 +4720,13 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, useStencilTestEnableDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled);
 
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsExtendedDynamicState2,
-        mExtendedDynamicState2Features.extendedDynamicState2 == VK_TRUE && !isArm44OrLess);
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsExtendedDynamicState2,
+                            mExtendedDynamicState2Features.extendedDynamicState2 == VK_TRUE &&
+                                !isExtendedDynamicStateBuggy);
 
-    ANGLE_FEATURE_CONDITION(&mFeatures, usePrimitiveRestartEnableDynamicState,
-                            mFeatures.supportsExtendedDynamicState2.enabled && !isArm44OrLess);
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, usePrimitiveRestartEnableDynamicState,
+        mFeatures.supportsExtendedDynamicState2.enabled && !isExtendedDynamicStateBuggy);
     ANGLE_FEATURE_CONDITION(&mFeatures, useRasterizerDiscardEnableDynamicState,
                             mFeatures.supportsExtendedDynamicState2.enabled);
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthBiasEnableDynamicState,

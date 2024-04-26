@@ -256,7 +256,6 @@ enum class Feature
     RegenerateStructNames,
     RemoveDynamicIndexingOfSwizzledVector,
     RemoveInvariantAndCentroidForESSL3,
-    RequireCachedBitForStagingBuffer,
     RequireGpuFamily2,
     RequireMsl21,
     RescopeGlobalVariables,

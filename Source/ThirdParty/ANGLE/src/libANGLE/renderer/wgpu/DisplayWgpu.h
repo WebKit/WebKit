@@ -92,6 +92,7 @@ class DisplayWgpu : public DisplayImpl
 
     wgpu::Device &getDevice() { return mDevice; }
     wgpu::Queue &getQueue() { return mQueue; }
+    wgpu::Instance getInstance() const;
 
   private:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;

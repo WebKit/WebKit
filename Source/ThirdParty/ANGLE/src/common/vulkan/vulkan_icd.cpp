@@ -169,13 +169,6 @@ ScopedVkLoaderEnvironment::ScopedVkLoaderEnvironment(bool enableValidationLayers
             mEnableValidationLayers = false;
         }
 #    endif  // defined(ANGLE_VK_LAYERS_DIR)
-
-        if (!angle::PrependPathToEnvironmentVar(
-                kLayerEnablesEnv, "VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION"))
-        {
-            ERR() << "Error setting synchronization validation environment for Vulkan validation "
-                     "layers init.";
-        }
     }
 #endif  // !defined(ANGLE_PLATFORM_ANDROID)
 

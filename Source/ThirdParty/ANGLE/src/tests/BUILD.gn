@@ -1506,16 +1506,12 @@ if (build_angle_deqp_tests && !is_fuchsia) {
   }
 
   _android_mustpass = "$deqp_path/android/cts/main"
-  _aosp_egl_mustpass =
-      "$deqp_path/external/openglcts/data/mustpass/egl/aosp_mustpass/main"
-  _aosp_gles_mustpass =
-      "$deqp_path/external/openglcts/data/mustpass/gles/aosp_mustpass/main"
-  _khronos_gl_mustpass =
-      "$deqp_path/external/openglcts/data/mustpass/gl/khronos_mustpass/main"
-  _khronos_gles_mustpass =
-      "$deqp_path/external/openglcts/data/mustpass/gles/khronos_mustpass/main"
-  _khronos_gles_noctx_mustpass = "$deqp_path/external/openglcts/data/mustpass/gles/khronos_mustpass_noctx/main"
-  _khronos_gles_single_mustpass = "$deqp_path/external/openglcts/data/mustpass/gles/khronos_mustpass_single/main"
+  _aosp_egl_mustpass = "$deqp_path/external/openglcts/data/gl_cts/data/mustpass/egl/aosp_mustpass/main"
+  _aosp_gles_mustpass = "$deqp_path/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main"
+  _khronos_gl_mustpass = "$deqp_path/external/openglcts/data/gl_cts/data/mustpass/gl/khronos_mustpass/main"
+  _khronos_gles_mustpass = "$deqp_path/external/openglcts/data/gl_cts/data/mustpass/gles/khronos_mustpass/main"
+  _khronos_gles_noctx_mustpass = "$deqp_path/external/openglcts/data/gl_cts/data/mustpass/gles/khronos_mustpass_noctx/main"
+  _khronos_gles_single_mustpass = "$deqp_path/external/openglcts/data/gl_cts/data/mustpass/gles/khronos_mustpass_single/main"
 
   angle_deqp_source_set("angle_deqp_gles2_common") {
     sources = deqp_gles2_sources
@@ -1674,13 +1670,13 @@ if (build_angle_deqp_tests && !is_fuchsia) {
         data = [ "$root_gen_dir/vk_gl_cts_data/data/gles2/shaders/misc.test" ]
         mustpass_dir = _khronos_gles_mustpass
       } else if (api == "gles3") {
-        data = angle_deqp_external_openglcts_data_gles3
+        data = angle_deqp_external_openglcts_data_gl_cts_data_gles3
         mustpass_dir = _khronos_gles_mustpass
       } else if (api == "gles31") {
-        data = angle_deqp_external_openglcts_data_gles31
+        data = angle_deqp_external_openglcts_data_gl_cts_data_gles31
         mustpass_dir = _khronos_gles_mustpass
       } else if (api == "gles32") {
-        data = angle_deqp_external_openglcts_data_gles32
+        data = angle_deqp_external_openglcts_data_gl_cts_data_gles32
         mustpass_dir = _khronos_gles_mustpass
       } else if (api == "gl46") {
         # Use this as a placeholder, the gl46 test suite does not need data
@@ -1732,7 +1728,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
         data = [ "$root_gen_dir/vk_gl_cts_data/data/gles2/shaders/misc.test" ]
         mustpass_dir = _khronos_gles_noctx_mustpass
       } else if (api == "gles32") {
-        data = angle_deqp_external_openglcts_data_gles32
+        data = angle_deqp_external_openglcts_data_gl_cts_data_gles32
         mustpass_dir = _khronos_gles_noctx_mustpass
       } else {
         assert(false)
@@ -1758,7 +1754,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
       deps = [ ":angle_deqp_khr_common" ]
       deps += angle_deqp_data_copy_targets
       if (api == "gles32") {
-        data = angle_deqp_external_openglcts_data_gles32
+        data = angle_deqp_external_openglcts_data_gl_cts_data_gles32
         mustpass_dir = _khronos_gles_single_mustpass
       } else {
         assert(false)

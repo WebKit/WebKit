@@ -997,6 +997,9 @@ array_specifier
         ES3_1_OR_NEWER("[]", @2, "arrays of arrays");
         $$ = $1;
         $$->insert($$->begin(), 0u);
+        if (!context->checkIsValidArrayDimension(@2, $$)) {
+            YYABORT;
+        }
     }
     | array_specifier LEFT_BRACKET constant_expression RIGHT_BRACKET {
         ES3_1_OR_NEWER("[]", @2, "arrays of arrays");
@@ -1005,6 +1008,9 @@ array_specifier
         // Make the type an array even if size check failed.
         // This ensures useless error messages regarding a variable's non-arrayness won't follow.
         $$->insert($$->begin(), size);
+        if (!context->checkIsValidArrayDimension(@2, $$)) {
+            YYABORT;
+        }
     }
     ;
 

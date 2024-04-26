@@ -683,6 +683,9 @@ struct Extensions
     // GL_ANGLE_program_binary
     bool programBinaryANGLE = false;
 
+    // GL_ANGLE_program_binary_readiness_query
+    bool programBinaryReadinessQueryANGLE = false;
+
     // GL_ANGLE_program_cache_control
     bool programCacheControlANGLE = false;
 

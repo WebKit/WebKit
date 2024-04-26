@@ -89,6 +89,17 @@ angle::Result Event::getInfo(EventInfo name,
 angle::Result Event::setCallback(cl_int commandExecCallbackType, EventCB pfnNotify, void *userData)
 {
     auto callbacks = mCallbacks.synchronize();
+
+    // Spec mentions that the callback will be called when the execution status of the event is
+    // equal to past the status specified by commandExecCallbackType
+    cl_int currentStatus;
+    ANGLE_TRY(mImpl->getCommandExecutionStatus(currentStatus));
+    if (currentStatus <= commandExecCallbackType)
+    {
+        pfnNotify(this, commandExecCallbackType, userData);
+        return angle::Result::Continue;
+    }
+
     // Only when required register a single callback with the back end for each callback type.
     if ((*callbacks)[commandExecCallbackType].empty())
     {

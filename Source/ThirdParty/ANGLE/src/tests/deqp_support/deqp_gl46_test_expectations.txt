@@ -75,11 +75,9 @@
 7566 SWIFTSHADER : KHR-GL46.transform_feedback.* = SKIP
 7566 SWIFTSHADER : KHR-GL46.vertex_attrib_binding.* = SKIP
 7566 SWIFTSHADER : KHR-GL46.viewport_array.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.framebuffer_blit.framebuffer_blit_functionality_multisampled_to_singlesampled_blit = FAIL
+7566 SWIFTSHADER : KHR-GL46.texture_lod_bias.texture_lod_bias_all = FAIL
+7566 SWIFTSHADER : KHR-GL46.transform_feedback3.* = SKIP
 
 7566 SWIFTSHADER UBSAN : KHR-GL46.shader_bitfield_operation.bitfieldInsert.int_3 = SKIP
 
-// The newly added cases are failing
-8636 LINUX : KHR-GL46.framebuffer_blit.framebuffer_blit_functionality_multisampled_to_singlesampled_blit = FAIL
-8636 WIN : KHR-GL46.framebuffer_blit.framebuffer_blit_functionality_multisampled_to_singlesampled_blit = FAIL
-b/332383430 LINUX : KHR-GL46.texture_lod_bias.texture_lod_bias_all = FAIL
-b/332383430 WIN : KHR-GL46.texture_lod_bias.texture_lod_bias_all = FAIL

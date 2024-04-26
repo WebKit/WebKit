@@ -827,6 +827,10 @@ bool IsOutputMSL(ShShaderOutput output)
 {
     return output == SH_MSL_METAL_OUTPUT;
 }
+bool IsOutputWGSL(ShShaderOutput output)
+{
+    return output == SH_WGSL_OUTPUT;
+}
 
 bool IsInShaderStorageBlock(TIntermTyped *node)
 {

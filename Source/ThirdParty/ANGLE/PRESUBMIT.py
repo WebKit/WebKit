@@ -188,12 +188,6 @@ def _CheckCommitMessageFormatting(input_api, output_api):
 def _CheckChangeHasBugField(input_api, output_api):
     """Requires that the changelist have a Bug: field from a known project."""
     bugs = input_api.change.BugsFromDescription()
-    if not bugs:
-        return [
-            output_api.PresubmitError('Please ensure that your description contains:\n'
-                                      '"Bug: angleproject:[bug number]"\n'
-                                      'directly above the Change-Id tag.')
-        ]
 
     # The bug must be in the form of "project:number".  None is also accepted, which is used by
     # rollers as well as in very minor changes.
@@ -205,27 +199,35 @@ def _CheckChangeHasBugField(input_api, output_api):
     ]
     bug_regex = re.compile(r"([a-z]+[:/])(\d+)")
     errors = []
-    extra_help = None
+    extra_help = False
+
+    if not bugs:
+        errors.append('Please ensure that your description contains\n'
+                      'Bug: bugtag\n'
+                      'directly above the Change-Id tag (no empty line in-between)')
+        extra_help = True
 
     for bug in bugs:
         if bug == 'None':
-            errors.append(
-                output_api.PresubmitError('Invalid bug tag "None" in presence of other bug tags.'))
+            errors.append('Invalid bug tag "None" in presence of other bug tags.')
             continue
 
         match = re.match(bug_regex, bug)
         if match == None or bug != match.group(0) or match.group(1) not in projects:
-            errors.append(output_api.PresubmitError('Incorrect bug tag "' + bug + '".'))
-            if not extra_help:
-                extra_help = output_api.PresubmitError('Acceptable format is:\n\n'
-                                                       '    Bug: project:bugnumber\n\n'
-                                                       'Acceptable projects are:\n\n    ' +
-                                                       '\n    '.join(projects))
+            errors.append('Incorrect bug tag "' + bug + '".')
+            extra_help = True
 
     if extra_help:
-        errors.append(extra_help)
+        change_ids = re.findall('^Change-Id:', input_api.change.FullDescriptionText(), re.M)
+        if len(change_ids) > 1:
+            errors.append('Note: multiple Change-Id tags found in description')
 
-    return errors
+        errors.append('''Acceptable bugtags:
+    project:bugnumber - where project is one of ({projects})
+    b/bugnumber - for Buganizer/IssueTracker bugs
+'''.format(projects=', '.join(p[:-1] for p in projects if p != 'b/')))
+
+    return [output_api.PresubmitError('\n\n'.join(errors))] if errors else []
 
 
 def _CheckCodeGeneration(input_api, output_api):

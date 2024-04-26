@@ -79,7 +79,7 @@ class LinkEvent : angle::NonCopyable
     //
     // Waits until the linking is actually done. Returns true if the linking
     // succeeded, false otherwise.
-    virtual angle::Result wait(const gl::Context *context) = 0;
+    virtual angle::Result wait(const Context *context) = 0;
     // Peeks whether the linking is still ongoing.
     virtual bool isLinking() = 0;
 };
@@ -89,7 +89,7 @@ class LinkEventDone final : public LinkEvent
 {
   public:
     LinkEventDone(angle::Result result) : mResult(result) {}
-    angle::Result wait(const gl::Context *context) override { return mResult; }
+    angle::Result wait(const Context *context) override { return mResult; }
     bool isLinking() override { return false; }
 
   private:
@@ -570,6 +570,10 @@ class Program::MainLinkLoadTask : public angle::Closure
     void scheduleSubTasks(std::vector<std::shared_ptr<rx::LinkSubTask>> &&linkSubTasks,
                           std::vector<std::shared_ptr<rx::LinkSubTask>> &&postLinkSubTasks)
     {
+        // Only one of linkSubTasks or postLinkSubTasks should have tasks.  This is because
+        // currently, there is no support for ordering them.
+        ASSERT(linkSubTasks.empty() || postLinkSubTasks.empty());
+
         // Schedule link subtasks
         mSubTasks = std::move(linkSubTasks);
         ScheduleSubTasks(mSubTaskWorkerPool, mSubTasks, &mSubTaskWaitableEvents);
@@ -578,6 +582,10 @@ class Program::MainLinkLoadTask : public angle::Closure
         mState.mExecutable->mPostLinkSubTasks = std::move(postLinkSubTasks);
         ScheduleSubTasks(mSubTaskWorkerPool, mState.mExecutable->mPostLinkSubTasks,
                          &mState.mExecutable->mPostLinkSubTaskWaitableEvents);
+
+        // No further use for worker pool.  Release it earlier than the destructor (to avoid
+        // situations such as http://anglebug.com/8661)
+        mSubTaskWorkerPool.reset();
     }
 
     std::shared_ptr<angle::WorkerThreadPool> mSubTaskWorkerPool;
@@ -658,7 +666,7 @@ class Program::MainLinkLoadEvent final : public LinkEvent
     {}
     ~MainLinkLoadEvent() override {}
 
-    angle::Result wait(const gl::Context *context) override
+    angle::Result wait(const Context *context) override
     {
         ANGLE_TRACE_EVENT0("gpu.angle", "Program::MainLinkLoadEvent::wait");
 
@@ -691,9 +699,6 @@ angle::Result Program::MainLinkTask::linkImpl()
     std::vector<std::shared_ptr<rx::LinkSubTask>> postLinkSubTasks;
     mLinkTask->link(*mResources, mergedVaryings, &linkSubTasks, &postLinkSubTasks);
 
-    // Only one of linkSubTasks or postLinkSubTasks should have tasks.
-    ASSERT(linkSubTasks.empty() || postLinkSubTasks.empty());
-
     // Must be after backend's link to avoid misleading the linker about input/output variables.
     mState.updateProgramInterfaceInputs();
     mState.updateProgramInterfaceOutputs();
@@ -710,9 +715,6 @@ angle::Result Program::MainLoadTask::loadImpl()
     std::vector<std::shared_ptr<rx::LinkSubTask>> postLinkSubTasks;
     mLinkTask->load(&linkSubTasks, &postLinkSubTasks);
 
-    // Only one of linkSubTasks or postLinkSubTasks should have tasks.
-    ASSERT(linkSubTasks.empty() || postLinkSubTasks.empty());
-
     // Schedule the subtasks
     scheduleSubTasks(std::move(linkSubTasks), std::move(postLinkSubTasks));
 
@@ -725,6 +727,7 @@ Program::Program(rx::GLImplFactory *factory, ShaderProgramManager *manager, Shad
       mProgram(factory->createProgram(mState)),
       mValidated(false),
       mDeleteStatus(false),
+      mIsBinaryCached(true),
       mLinked(false),
       mProgramHash{0},
       mRefCount(0),
@@ -765,8 +768,11 @@ void Program::onDestroy(const Context *context)
     ASSERT(!mState.hasAnyAttachedShader());
     SafeDelete(mProgram);
 
+    mBinary.clear();
+
     delete this;
 }
+
 ShaderProgramID Program::id() const
 {
     return mHandle;
@@ -881,6 +887,14 @@ void Program::makeNewExecutable(const Context *context)
         std::make_shared<ProgramExecutable>(context->getImplementation(), &mState.mInfoLog),
         &mState.mExecutable);
     onStateChange(angle::SubjectMessage::ProgramUnlinked);
+
+    // If caching is disabled, consider it cached!
+    mIsBinaryCached = context->getFrontendFeatures().disableProgramCaching.enabled;
+
+    // Start with a clean slate every time a new executable is installed.  Note that the executable
+    // binary is not mutable; once linked it remains constant.  When the program changes, a new
+    // executable is installed in this function.
+    mBinary.clear();
 }
 
 void Program::setupExecutableForLink(const Context *context)
@@ -921,8 +935,8 @@ void Program::setupExecutableForLink(const Context *context)
 
     // Make sure the executable state is in sync with the program.
     //
-    // The transform feedback buffer mode is duplicated in the executable as is the only link-input
-    // that is also needed at draw time.
+    // The transform feedback buffer mode is duplicated in the executable as it is the only
+    // link-input that is also needed at draw time.
     //
     // The transform feedback varying names are duplicated because the program pipeline link is not
     // currently able to use the link result of the program directly (and redoes the link, using
@@ -1176,6 +1190,27 @@ bool Program::isLinking() const
     return mLinkingState.get() && mLinkingState->linkEvent && mLinkingState->linkEvent->isLinking();
 }
 
+bool Program::isBinaryReady(const Context *context)
+{
+    if (mState.mExecutable->mPostLinkSubTasks.empty())
+    {
+        return true;
+    }
+
+    const bool allPostLinkTasksComplete =
+        angle::WaitableEvent::AllReady(&mState.mExecutable->getPostLinkSubTaskWaitableEvents());
+
+    // Once the binary is ready, the |glGetProgramBinary| call will result in
+    // |waitForPostLinkTasks| which in turn may internally cache the binary.  However, for the sake
+    // of blob cache tests, call |waitForPostLinkTasks| anyway if tasks are already complete.
+    if (allPostLinkTasksComplete)
+    {
+        waitForPostLinkTasks(context);
+    }
+
+    return allPostLinkTasksComplete;
+}
+
 void Program::resolveLinkImpl(const Context *context)
 {
     ASSERT(mLinkingState.get());
@@ -1234,12 +1269,10 @@ void Program::resolveLinkImpl(const Context *context)
 
 void Program::waitForPostLinkTasks(const Context *context)
 {
-    if (mState.mExecutable->mPostLinkSubTasks.empty())
+    if (!mState.mExecutable->mPostLinkSubTasks.empty())
     {
-        return;
+        mState.mExecutable->waitForPostLinkTasks(context);
     }
-
-    mState.mExecutable->waitForPostLinkTasks(context);
 
     // Now that the subtasks are done, cache the binary (this was deferred in resolveLinkImpl).
     cacheProgramBinary(context);
@@ -1400,6 +1433,9 @@ angle::Result Program::loadBinary(const Context *context,
     mLinkingState->linkingFromBinary = true;
     mLinkingState->linkEvent         = std::move(loadEvent);
 
+    // Don't attempt to cache the binary that's just loaded
+    mIsBinaryCached = true;
+
     *resultOut = egl::CacheGetResult::Success;
 
     return angle::Result::Continue;
@@ -1411,17 +1447,27 @@ angle::Result Program::getBinary(Context *context,
                                  GLsizei bufSize,
                                  GLsizei *length)
 {
+    if (!mState.mBinaryRetrieveableHint)
+    {
+        ANGLE_PERF_WARNING(
+            context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
+            "Saving program binary without GL_PROGRAM_BINARY_RETRIEVABLE_HINT is suboptimal.");
+    }
+
     ASSERT(!mLinkingState);
     if (binaryFormat)
     {
         *binaryFormat = GL_PROGRAM_BINARY_ANGLE;
     }
 
-    angle::MemoryBuffer memoryBuf;
-    ANGLE_TRY(serialize(context, &memoryBuf));
+    // Serialize the program only if not already done.
+    if (mBinary.empty())
+    {
+        ANGLE_TRY(serialize(context));
+    }
 
-    GLsizei streamLength       = static_cast<GLsizei>(memoryBuf.size());
-    const uint8_t *streamState = memoryBuf.data();
+    GLsizei streamLength       = static_cast<GLsizei>(mBinary.size());
+    const uint8_t *streamState = mBinary.data();
 
     if (streamLength > bufSize)
     {
@@ -1444,6 +1490,12 @@ angle::Result Program::getBinary(Context *context,
         ptr += streamLength;
 
         ASSERT(ptr - streamLength == binary);
+
+        // Once the binary is retrieved, assume the application will never need the binary and
+        // release the memory.  Note that implicit caching to blob cache is disabled when the
+        // GL_PROGRAM_BINARY_RETRIEVABLE_HINT is set.  If that hint is not set, serialization is
+        // done twice, which is what the perf warning above is about!
+        mBinary.clear();
     }
 
     if (length)
@@ -2070,21 +2122,18 @@ bool Program::linkAttributes(const Caps &caps,
     return true;
 }
 
-angle::Result Program::syncState(const Context *context)
+angle::Result Program::serialize(const Context *context)
 {
-    ASSERT(!mLinkingState);
-
-    if (!context->getFrontendFeatures().disableProgramCaching.enabled)
+    // In typical applications, the binary should already be empty here.  However, in unusual
+    // situations this may not be true.  In particular, if the application doesn't set
+    // GL_PROGRAM_BINARY_RETRIEVABLE_HINT, gets the program length but doesn't get the binary, the
+    // cached binary remains until the program is destroyed or the program is bound (both causing
+    // |waitForPostLinkTasks()| to cache the program in the blob cache).
+    if (!mBinary.empty())
     {
-        // Blob cache tests rely on an implicit caching of the program
-        waitForPostLinkTasks(context);
+        return angle::Result::Continue;
     }
 
-    return angle::Result::Continue;
-}
-
-angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *binaryOut)
-{
     BinaryOutputStream stream;
 
     stream.writeBytes(
@@ -2156,15 +2205,14 @@ angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *bi
     mProgram->save(context, &stream);
     ASSERT(mState.mExecutable->mPostLinkSubTasks.empty());
 
-    ASSERT(binaryOut);
-    if (!binaryOut->resize(stream.length()))
+    if (!mBinary.resize(stream.length()))
     {
         ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                            "Failed to allocate enough memory to serialize a program. (%zu bytes)",
                            stream.length());
         return angle::Result::Stop;
     }
-    memcpy(binaryOut->data(), stream.data(), stream.length());
+    memcpy(mBinary.data(), stream.data(), stream.length());
     return angle::Result::Continue;
 }
 
@@ -2286,13 +2334,19 @@ void Program::postResolveLink(const Context *context)
     }
 }
 
-void Program::cacheProgramBinary(const gl::Context *context)
+void Program::cacheProgramBinary(const Context *context)
 {
-    if (context->getFrontendFeatures().disableProgramCaching.enabled || !mLinked)
+    // If program caching is disabled, we already consider the binary cached.
+    ASSERT(!context->getFrontendFeatures().disableProgramCaching.enabled || mIsBinaryCached);
+    if (!mLinked || mIsBinaryCached || mState.mBinaryRetrieveableHint)
     {
-        // Program caching is disabled or the program is yet to be linked, nothing to do.
+        // Program caching is disabled, the program is yet to be linked, it's already cached, or the
+        // application has specified that it prefers to cache the program binary itself.
         return;
     }
+
+    // No post-link tasks should be pending.
+    ASSERT(mState.mExecutable->mPostLinkSubTasks.empty());
 
     // Save to the program cache.
     std::lock_guard<std::mutex> cacheLock(context->getProgramCacheMutex());
@@ -2309,7 +2363,13 @@ void Program::cacheProgramBinary(const gl::Context *context)
             ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                                "Failed to save linked program to memory program cache.");
         }
+
+        // Drop the binary; the application didn't specify that it wants to retrieve the binary.  If
+        // it did, we wouldn't be implicitly caching it.
+        mBinary.clear();
     }
+
+    mIsBinaryCached = true;
 }
 
 void Program::dumpProgramInfo(const Context *context) const

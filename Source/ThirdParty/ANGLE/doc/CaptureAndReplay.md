@@ -38,7 +38,8 @@ Some simple environment variables control frame capture:
  * `ANGLE_CAPTURE_COMPRESSION`:
    * Set to `0` to disable capture compression. Default is `1`.
  * `ANGLE_CAPTURE_OUT_DIR=<path>`:
-   * Can specify an alternate replay output directory.
+   * Can specify an alternate replay output directory. This can either be an
+   absolute path, or relative to CWD.
    * Example: `ANGLE_CAPTURE_OUT_DIR=samples/capture_replay`. Default is the CWD.
  * `ANGLE_CAPTURE_FRAME_START=<n>`:
    * Uses mid-execution capture to write "Setup" functions that starts a Context at frame `n`.
@@ -137,6 +138,7 @@ as the GLES driver for your application.
     Then create an output directory that it can write to:
     ```
     $ adb shell mkdir -p /sdcard/Android/data/$PACKAGE_NAME/angle_capture
+    $ adb shell chmod 777 /sdcard/Android/data/$PACKAGE_NAME/angle_capture
     ```
 
 2. Set properties to use for environment variable

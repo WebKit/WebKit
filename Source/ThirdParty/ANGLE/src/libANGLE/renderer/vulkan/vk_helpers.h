@@ -3475,7 +3475,9 @@ class ShaderProgramHelper : angle::NonCopyable
                                              const PipelineLayout &pipelineLayout,
                                              ComputePipelineFlags pipelineFlags,
                                              PipelineSource source,
-                                             PipelineHelper **pipelineOut) const;
+                                             PipelineHelper **pipelineOut,
+                                             const char *shaderName,
+                                             VkSpecializationInfo *specializationInfo) const;
 
   private:
     ShaderModuleMap mShaders;

@@ -2783,7 +2783,7 @@ YY_DECL
             } /* end of action switch */
         }     /* end of scanning one token */
     }         /* end of user's declarations */
-} /* end of yylex */
+}             /* end of yylex */
 
 /* yy_get_next_buffer - try to read in a new buffer
  *

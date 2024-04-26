@@ -90,17 +90,24 @@ void VertexAttribute::updateCachedElementLimit(const VertexBinding &binding)
         return;
     }
 
-    angle::CheckedNumeric<GLint64> bufferSize(buffer->getSize());
     angle::CheckedNumeric<GLint64> bufferOffset(binding.getOffset());
+    angle::CheckedNumeric<GLint64> bufferSize(buffer->getSize());
     angle::CheckedNumeric<GLint64> attribOffset(relativeOffset);
     angle::CheckedNumeric<GLint64> attribSize(ComputeVertexAttributeTypeSize(*this));
+
+    // Disallow referencing data before the start of the buffer with negative offsets
+    angle::CheckedNumeric<GLint64> offset = bufferOffset + attribOffset;
+    if (!offset.IsValid() || offset.ValueOrDie() < 0)
+    {
+        mCachedElementLimit = kIntegerOverflow;
+        return;
+    }
 
     // The element limit is (exclusive) end of the accessible range for the vertex.  For example, if
     // N attributes can be accessed, the following calculates N.
     //
     // (buffer.size - buffer.offset - attrib.relativeOffset - attrib.size) / binding.stride + 1
-    angle::CheckedNumeric<GLint64> elementLimit =
-        (bufferSize - bufferOffset - attribOffset - attribSize);
+    angle::CheckedNumeric<GLint64> elementLimit = (bufferSize - offset - attribSize);
 
     // Use the special integer overflow value if there was a math error.
     if (!elementLimit.IsValid())

@@ -103,7 +103,7 @@
    fill out the [Corporate Contributor License Agreement][Corporate-CLA] and send it to Google as
    described on that page.
 2. Once you've submitted the CLA, please email the following information (as entered on the CLA) to
-   `shannonwoods at chromium dot org` for record keeping purposes:
+   `geofflang at chromium dot org` for record keeping purposes:
    * Full Name:
    * Email:
    * Company (If applicable):

@@ -81,7 +81,7 @@ constexpr std::array<UniformTypeInfo, {total_count}> kInfoTable =
 {uniform_type_info_data}
 }}}};
 
-size_t GetTypeInfoIndex(GLenum uniformType)
+uint16_t GetIndex(GLenum uniformType)
 {{
     switch (uniformType)
     {{
@@ -93,17 +93,27 @@ size_t GetTypeInfoIndex(GLenum uniformType)
 }}
 }}  // anonymous namespace
 
+UniformTypeIndex GetUniformTypeIndex(GLenum uniformType)
+{{
+    return UniformTypeIndex{{GetIndex(uniformType)}};
+}}
+
 const UniformTypeInfo &GetUniformTypeInfo(GLenum uniformType)
 {{
-    ASSERT(kInfoTable[GetTypeInfoIndex(uniformType)].type == uniformType);
-    return kInfoTable[GetTypeInfoIndex(uniformType)];
+    ASSERT(kInfoTable[GetIndex(uniformType)].type == uniformType);
+    return kInfoTable[GetIndex(uniformType)];
+}}
+
+const UniformTypeInfo &GetUniformTypeInfoFromIndex(UniformTypeIndex index)
+{{
+    ASSERT(index.value >= 0 && index.value < {total_count});
+    return kInfoTable[index.value];
 }}
 
 }}  // namespace gl
 """
 
 type_info_data_template = """{{{type}, {component_type}, {texture_type}, {transposed_type}, {bool_type}, {sampler_format}, {rows}, {columns}, {components}, {component_size}, {internal_size}, {external_size}, {is_sampler}, {is_matrix}, {is_image} }}"""
-type_index_case_template = """case {enum_value}: return {index_value};"""
 
 
 def cpp_bool(value):
