@@ -27,6 +27,7 @@
 #import "WebKit2Initialize.h"
 
 #import <JavaScriptCore/InitializeThreading.h>
+#import <JavaScriptCore/Options.h>
 #import <WebCore/CommonAtomStrings.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <mutex>
@@ -45,8 +46,6 @@ extern "C" char __llvm_profile_filename[] = "/private/tmp/WebKitPGO/WebKit_%m_pi
 
 namespace WebKit {
 
-static std::once_flag flag;
-
 enum class WebKitProfileTag { };
 
 static void runInitializationCode(void* = nullptr)
@@ -58,7 +57,10 @@ static void runInitializationCode(void* = nullptr)
     InitWebCoreThreadSystemInterface();
 #endif
 
-    JSC::initialize();
+    JSC::initialize(scopedLambda<void()>([] {
+        JSC::Options::useOSLog() = JSC::OSLogType::DupError;
+        JSC::Options::notifyOptionsChanged();
+    }));
     WTF::initializeMainThread();
 
     WTF::RefCountedBase::enableThreadingChecksGlobally();
@@ -70,6 +72,7 @@ void InitializeWebKit2()
 {
     // Make sure the initialization code is run only once and on the main thread since things like initializeMainThread()
     // are only safe to call on the main thread.
+    static std::once_flag flag;
     std::call_once(flag, [] {
         if ([NSThread isMainThread] || linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::InitializeWebKit2MainThreadAssertion))
             runInitializationCode();

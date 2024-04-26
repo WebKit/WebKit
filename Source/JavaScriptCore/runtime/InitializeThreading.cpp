@@ -66,11 +66,11 @@ static_assert(sizeof(bool) == 1, "LLInt and JIT assume sizeof(bool) is always 1 
 
 enum class JSCProfileTag { };
 
-void initialize()
+void initialize(ScopedLambda<void()> optionsCustomization)
 {
     static std::once_flag onceFlag;
 
-    std::call_once(onceFlag, [] {
+    std::call_once(onceFlag, [&] {
 #if USE(TZONE_MALLOC)
         // This is needed for apps that link with the JavaScriptCore ObjC API
         if (!WTF_TZONE_IS_READY()) {
@@ -81,6 +81,11 @@ void initialize()
 #endif
         WTF::initialize();
         Options::initialize();
+
+        {
+            Options::AllowUnfinalizedAccessScope scope;
+            optionsCustomization();
+        }
 
         initializePtrTagLookup();
 

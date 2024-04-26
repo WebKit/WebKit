@@ -129,7 +129,7 @@ bool hasCapacityToUseLargeGigacage();
     \
     v(Bool, useIterationIntrinsics, true, Normal, nullptr) \
     \
-    v(OSLogType, useOSLog, OSLogType::None, Normal, "Log dataLog()s to os_log instead of stderr") \
+    v(OSLogType, useOSLog, OSLogType::None, Normal, "Log dataLog()s to os_log instead of or in addition to stderr") \
     /* dumpDisassembly implies dumpDFGDisassembly. */ \
     v(Bool, needDisassemblySupport, false, Normal, nullptr) \
     v(Bool, dumpDisassembly, false, Normal, "dumps disassembly of all JIT compiled code upon compilation") \
@@ -696,7 +696,15 @@ enum class OSLogType : uint8_t {
     Info,
     Debug,
     Error,
-    Fault
+    Fault,
+    // These duplicate output to stderr and OS_LOG_TYPE_xxx.
+    DupDefault,
+    DupInfo,
+    DupDebug,
+    DupError,
+    DupFault,
+
+    FirstDuplicatedOSLogType = DupDefault,
 };
 
 struct OptionsStorage {
