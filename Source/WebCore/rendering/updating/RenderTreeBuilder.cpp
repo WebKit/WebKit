@@ -1003,7 +1003,10 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     if (child.everHadLayout())
         resetRendererStateOnDetach(parent, child, willBeDestroyed, m_internalMovesType);
 
-    invalidateLineLayout(child, IsRemoval::Yes);
+    if (m_tearDownType == RenderTreeBuilder::TearDownType::Root || is<RenderInline>(m_subtreeDestroyRoot)) {
+        // In case of partial damage on the inline content (the block root is not going away), we need to initiate inline layout invalidation on leaf renderers too.
+        invalidateLineLayout(child, IsRemoval::Yes);
+    }
 
     // FIXME: Fragment state should not be such a special case.
     if (m_internalMovesType == IsInternalMove::No)
