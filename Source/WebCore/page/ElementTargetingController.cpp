@@ -177,28 +177,26 @@ static inline String computeIDSelector(Element& element)
     return emptyString();
 }
 
-static inline String computeTagAndAttributeSelector(Element& element)
+static inline String computeTagAndAttributeSelector(Element& element, const String& suffix = emptyString())
 {
     if (!element.hasAttributes())
         return emptyString();
 
-    static NeverDestroyed attributesToExclude = [] {
-        MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> names;
-        names.add(HTMLNames::classAttr);
-        names.add(HTMLNames::idAttr);
-        names.add(HTMLNames::styleAttr);
-        names.add(HTMLNames::widthAttr);
-        names.add(HTMLNames::heightAttr);
-        names.add(HTMLNames::forAttr);
-        names.add(HTMLNames::aria_labeledbyAttr);
-        names.add(HTMLNames::aria_labelledbyAttr);
-        names.add(HTMLNames::aria_describedbyAttr);
-        return names;
-    }();
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName>> attributesToExclude { std::initializer_list<QualifiedName> {
+        HTMLNames::classAttr,
+        HTMLNames::idAttr,
+        HTMLNames::styleAttr,
+        HTMLNames::widthAttr,
+        HTMLNames::heightAttr,
+        HTMLNames::forAttr,
+        HTMLNames::aria_labeledbyAttr,
+        HTMLNames::aria_labelledbyAttr,
+        HTMLNames::aria_describedbyAttr
+    } };
 
     static constexpr auto maximumNameLength = 16;
-    static constexpr auto maximumValueLength = 100;
-    static constexpr auto maximumValueLengthForExactMatch = 40;
+    static constexpr auto maximumValueLength = 150;
+    static constexpr auto maximumValueLengthForExactMatch = 60;
 
     Vector<std::pair<String, String>> attributesToCheck;
     auto& attributes = element.attributes();
@@ -231,11 +229,11 @@ static inline String computeTagAndAttributeSelector(Element& element)
         String selector;
         if (value.length() > maximumValueLengthForExactMatch) {
             value = value.left(maximumValueLengthForExactMatch);
-            selector = makeString(tagName, '[', name, "^='"_s, value, "']"_s);
+            selector = makeString(tagName, '[', name, "^='"_s, value, "']"_s, suffix);
         } else if (value.isEmpty())
-            selector = makeString(tagName, '[', name, ']');
+            selector = makeString(tagName, '[', name, ']', suffix);
         else
-            selector = makeString(tagName, '[', name, "='"_s, value, "']"_s);
+            selector = makeString(tagName, '[', name, "='"_s, value, "']"_s, suffix);
 
         if (querySelectorMatchesOneElement(element, selector))
             return selector;
@@ -358,6 +356,55 @@ static String parentRelativeSelectorRecursive(Element& element, ElementSelectorC
     return emptyString();
 }
 
+static String computeHasChildSelector(Element& element)
+{
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName>> tagsToCheckForUniqueAttributes { std::initializer_list<QualifiedName> {
+        HTMLNames::aTag,
+        HTMLNames::imgTag,
+        HTMLNames::timeTag,
+        HTMLNames::pictureTag,
+        HTMLNames::videoTag,
+        HTMLNames::articleTag,
+        HTMLNames::audioTag,
+        HTMLNames::iframeTag,
+        HTMLNames::embedTag,
+        HTMLNames::sourceTag,
+        HTMLNames::formTag,
+        HTMLNames::inputTag,
+        HTMLNames::selectTag,
+        HTMLNames::buttonTag
+    } };
+
+    String selectorSuffix;
+    for (auto& child : descendantsOfType<HTMLElement>(element)) {
+        if (!tagsToCheckForUniqueAttributes->contains(child.tagQName()))
+            continue;
+
+        auto selector = computeTagAndAttributeSelector(child);
+        if (selector.isEmpty())
+            continue;
+
+        selectorSuffix = makeString(":has("_s, WTFMove(selector), ')');
+        break;
+    }
+
+    if (selectorSuffix.isEmpty())
+        return emptyString();
+
+    for (auto& ancestor : lineageOfType<HTMLElement>(element)) {
+        auto selectorWithTag = makeString(ancestor.tagName(), selectorSuffix);
+        if (querySelectorMatchesOneElement(element, selectorWithTag))
+            return selectorWithTag;
+
+        if (auto selector = computeTagAndAttributeSelector(ancestor, selectorSuffix); !selector.isEmpty())
+            return selector;
+
+        selectorSuffix = makeString(" > "_s, WTFMove(selectorWithTag));
+    }
+
+    return emptyString();
+}
+
 // Returns multiple CSS selectors that uniquely match the target element.
 static Vector<Vector<String>> selectorsForTarget(Element& element, ElementSelectorCache& cache)
 {
@@ -397,7 +444,9 @@ static Vector<Vector<String>> selectorsForTarget(Element& element, ElementSelect
     }
 
     Vector<String> selectors;
-    selectors.reserveInitialCapacity(3);
+    selectors.reserveInitialCapacity(5);
+
+    // First, try to compute a selector using only the target element and its attributes.
     if (auto selector = computeIDSelector(element); !selector.isEmpty())
         selectors.append(WTFMove(selector));
 
@@ -412,6 +461,13 @@ static Vector<Vector<String>> selectorsForTarget(Element& element, ElementSelect
     }
 
     if (selectors.isEmpty()) {
+        // Next, fall back to using :has(), with a child that can be uniquely identified.
+        if (auto selector = computeHasChildSelector(element); !selector.isEmpty())
+            selectors.append(WTFMove(selector));
+    }
+
+    if (selectors.isEmpty()) {
+        // Finally, fall back on nth-child or sibling selectors.
         if (auto selector = parentRelativeSelectorRecursive(element, cache); !selector.isEmpty())
             selectors.append(WTFMove(selector));
 
