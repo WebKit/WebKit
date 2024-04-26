@@ -322,6 +322,7 @@ private:
 
     WebCore::Color contentViewBackgroundColor() final;
     WebCore::Color insertionPointColor() final;
+    bool isScreenBeingCaptured() final;
 
     String sceneID() final;
 

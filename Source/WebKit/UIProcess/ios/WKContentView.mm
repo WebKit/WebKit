@@ -231,7 +231,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     _page->setIntrinsicDeviceScaleFactor(WebCore::screenScaleFactor([UIScreen mainScreen]));
     _page->setUseFixedLayout(true);
-    _page->setScreenIsBeingCaptured([[[self window] screen] isCaptured]);
+    _page->setScreenIsBeingCaptured([self screenIsBeingCaptured]);
 
     _page->windowScreenDidChange(_page->generateDisplayIDFromPageID());
 
@@ -533,8 +533,10 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     _cachedHasCustomTintColor = std::nullopt;
 
-    if (self.window)
+    if (self.window) {
         [self setUpInteraction];
+        _page->setScreenIsBeingCaptured([self screenIsBeingCaptured]);
+    }
     else
         [self cleanUpInteractionPreviewContainers];
 }
@@ -712,6 +714,11 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 - (void)didZoomToScale:(CGFloat)scale
 {
     [self _didEndScrollingOrZooming];
+}
+
+- (BOOL)screenIsBeingCaptured
+{
+    return [[[self window] screen] isCaptured];
 }
 
 - (NSUndoManager *)undoManagerForWebView
@@ -1058,7 +1065,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 - (void)_screenCapturedDidChange:(NSNotification *)notification
 {
-    _page->setScreenIsBeingCaptured([[[self window] screen] isCaptured]);
+    _page->setScreenIsBeingCaptured([self screenIsBeingCaptured]);
 }
 
 @end

@@ -1160,6 +1160,11 @@ Color PageClientImpl::insertionPointColor()
     return roundAndClampToSRGBALossy([webView() _insertionPointColor].CGColor);
 }
 
+bool PageClientImpl::isScreenBeingCaptured()
+{
+    return [contentView() screenIsBeingCaptured];
+}
+
 void PageClientImpl::requestScrollToRect(const FloatRect& targetRect, const FloatPoint& origin)
 {
     [contentView() _scrollToRect:targetRect withOrigin:origin minimumScrollDistance:0];

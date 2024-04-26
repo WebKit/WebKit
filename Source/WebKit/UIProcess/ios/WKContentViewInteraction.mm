@@ -1415,7 +1415,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _autocorrectionContextNeedsUpdate = YES;
 
     _page->process().updateTextCheckerState();
-    _page->setScreenIsBeingCaptured([[[self window] screen] isCaptured]);
+    _page->setScreenIsBeingCaptured([self screenIsBeingCaptured]);
 
 #if ENABLE(IMAGE_ANALYSIS)
     [self _setUpImageAnalysis];

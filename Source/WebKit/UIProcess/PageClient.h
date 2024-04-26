@@ -554,6 +554,7 @@ public:
 
     virtual WebCore::Color contentViewBackgroundColor() = 0;
     virtual WebCore::Color insertionPointColor() = 0;
+    virtual bool isScreenBeingCaptured() = 0;
 
     virtual String sceneID() = 0;
 
