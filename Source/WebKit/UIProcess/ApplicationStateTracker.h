@@ -83,10 +83,10 @@ private:
 
     bool m_isInBackground;
 
-    id m_didEnterBackgroundObserver;
-    id m_willEnterForegroundObserver;
-    id m_willBeginSnapshotSequenceObserver;
-    id m_didCompleteSnapshotSequenceObserver;
+    WeakObjCPtr<NSObject> m_didEnterBackgroundObserver;
+    WeakObjCPtr<NSObject> m_willEnterForegroundObserver;
+    WeakObjCPtr<NSObject> m_willBeginSnapshotSequenceObserver;
+    WeakObjCPtr<NSObject> m_didCompleteSnapshotSequenceObserver;
 };
 
 ApplicationType applicationType(UIWindow *);
