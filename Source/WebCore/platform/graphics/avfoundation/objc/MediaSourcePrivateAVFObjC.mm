@@ -173,6 +173,12 @@ void MediaSourcePrivateAVFObjC::willSeek()
         downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->willSeek();
 }
 
+void MediaSourcePrivateAVFObjC::seeked(const MediaTime& time)
+{
+    if (RefPtr client = this->client())
+        client->seeked(time);
+}
+
 FloatSize MediaSourcePrivateAVFObjC::naturalSize() const
 {
     FloatSize result;

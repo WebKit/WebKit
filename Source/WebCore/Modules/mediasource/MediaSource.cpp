@@ -165,6 +165,13 @@ private:
         });
     }
 
+    void seeked(const MediaTime& time)
+    {
+        ensureWeakOnDispatcher([time = time](MediaSource& parent) {
+            parent.seeked(time);
+        });
+    }
+
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(const void* identifier)
     {
@@ -1472,6 +1479,12 @@ void MediaSource::failedToCreateRenderer(RendererType type)
 {
     if (auto context = scriptExecutionContext())
         context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("MediaSource ", type == RendererType::Video ? "video" : "audio", " renderer creation failed."));
+}
+
+void MediaSource::seeked(const MediaTime& time)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, time);
+    monitorSourceBuffers();
 }
 
 void MediaSource::sourceBufferReceivedFirstInitializationSegmentChanged()

@@ -109,6 +109,12 @@ Ref<MediaPromise> MediaSourcePrivate::seekToTime(const MediaTime& time)
     return MediaPromise::createAndReject(PlatformMediaError::ClientDisconnected);
 }
 
+void MediaSourcePrivate::seeked(const MediaTime& time)
+{
+    if (RefPtr client = this->client())
+        return client->seeked(time);
+}
+
 void MediaSourcePrivate::removeSourceBuffer(SourceBufferPrivate& sourceBuffer)
 {
     assertIsCurrent(m_dispatcher);
