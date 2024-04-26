@@ -99,15 +99,15 @@ void MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor(bool use)
 }
 
 #if !RELEASE_LOG_DISABLED
-static const char* toString(MemoryUsagePolicy policy)
+static ASCIILiteral toString(MemoryUsagePolicy policy)
 {
     switch (policy) {
-    case MemoryUsagePolicy::Unrestricted: return "Unrestricted";
-    case MemoryUsagePolicy::Conservative: return "Conservative";
-    case MemoryUsagePolicy::Strict: return "Strict";
+    case MemoryUsagePolicy::Unrestricted: return "Unrestricted"_s;
+    case MemoryUsagePolicy::Conservative: return "Conservative"_s;
+    case MemoryUsagePolicy::Strict: return "Strict"_s;
     }
     ASSERT_NOT_REACHED();
-    return "";
+    return ""_s;
 }
 #endif
 
@@ -211,7 +211,7 @@ void MemoryPressureHandler::setMemoryUsagePolicyBasedOnFootprint(size_t footprin
     if (newPolicy == m_memoryUsagePolicy)
         return;
 
-    RELEASE_LOG(MemoryPressure, "Memory usage policy changed: %s -> %s", toString(m_memoryUsagePolicy), toString(newPolicy));
+    RELEASE_LOG(MemoryPressure, "Memory usage policy changed: %s -> %s", toString(m_memoryUsagePolicy).characters(), toString(newPolicy).characters());
     m_memoryUsagePolicy = newPolicy;
     memoryPressureStatusChanged();
 }

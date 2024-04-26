@@ -49,8 +49,8 @@ bool WebSocketExtensionParser::parsedSuccessfully()
 
 static bool isSeparator(char character)
 {
-    static const char* separatorCharacters = "()<>@,;:\\\"/[]?={} \t";
-    const char* p = strchr(separatorCharacters, character);
+    static constexpr auto separatorCharacters = "()<>@,;:\\\"/[]?={} \t"_s;
+    const char* p = strchr(separatorCharacters.characters(), character);
     return p && *p;
 }
 

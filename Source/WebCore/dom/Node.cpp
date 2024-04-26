@@ -134,65 +134,65 @@ static WeakHashSet<Node>& liveNodeSet()
     return liveNodes;
 }
 
-static const char* stringForRareDataUseType(NodeRareData::UseType useType)
+static ASCIILiteral stringForRareDataUseType(NodeRareData::UseType useType)
 {
     switch (useType) {
     case NodeRareData::UseType::TabIndex:
-        return "TabIndex";
+        return "TabIndex"_s;
     case NodeRareData::UseType::ChildIndex:
-        return "ChildIndex";
+        return "ChildIndex"_s;
     case NodeRareData::UseType::NodeList:
-        return "NodeList";
+        return "NodeList"_s;
     case NodeRareData::UseType::MutationObserver:
-        return "MutationObserver";
+        return "MutationObserver"_s;
     case NodeRareData::UseType::ManuallyAssignedSlot:
-        return "ManuallyAssignedSlot";
+        return "ManuallyAssignedSlot"_s;
     case NodeRareData::UseType::ScrollingPosition:
-        return "ScrollingPosition";
+        return "ScrollingPosition"_s;
     case NodeRareData::UseType::ComputedStyle:
-        return "ComputedStyle";
+        return "ComputedStyle"_s;
     case NodeRareData::UseType::DisplayContentsOrNoneStyle:
-        return "DisplayContentsOrNoneStyle";
+        return "DisplayContentsOrNoneStyle"_s;
     case NodeRareData::UseType::EffectiveLang:
-        return "EffectiveLang";
+        return "EffectiveLang"_s;
     case NodeRareData::UseType::Dataset:
-        return "Dataset";
+        return "Dataset"_s;
     case NodeRareData::UseType::ClassList:
-        return "ClassList";
+        return "ClassList"_s;
     case NodeRareData::UseType::ShadowRoot:
-        return "ShadowRoot";
+        return "ShadowRoot"_s;
     case NodeRareData::UseType::CustomElementReactionQueue:
-        return "CustomElementReactionQueue";
+        return "CustomElementReactionQueue"_s;
     case NodeRareData::UseType::CustomElementDefaultARIA:
-        return "CustomElementDefaultARIA";
+        return "CustomElementDefaultARIA"_s;
     case NodeRareData::UseType::FormAssociatedCustomElement:
-        return "FormAssociatedCustomElement";
+        return "FormAssociatedCustomElement"_s;
     case NodeRareData::UseType::AttributeMap:
-        return "AttributeMap";
+        return "AttributeMap"_s;
     case NodeRareData::UseType::InteractionObserver:
-        return "InteractionObserver";
+        return "InteractionObserver"_s;
     case NodeRareData::UseType::ResizeObserver:
-        return "ResizeObserver";
+        return "ResizeObserver"_s;
     case NodeRareData::UseType::Animations:
-        return "Animations";
+        return "Animations"_s;
     case NodeRareData::UseType::PseudoElements:
-        return "PseudoElements";
+        return "PseudoElements"_s;
     case NodeRareData::UseType::AttributeStyleMap:
-        return "AttributeStyleMap";
+        return "AttributeStyleMap"_s;
     case NodeRareData::UseType::ComputedStyleMap:
-        return "ComputedStyleMap";
+        return "ComputedStyleMap"_s;
     case NodeRareData::UseType::PartList:
-        return "PartList";
+        return "PartList"_s;
     case NodeRareData::UseType::PartNames:
-        return "PartNames";
+        return "PartNames"_s;
     case NodeRareData::UseType::Nonce:
-        return "Nonce";
+        return "Nonce"_s;
     case NodeRareData::UseType::ExplicitlySetAttrElementsMap:
-        return "ExplicitlySetAttrElementsMap";
+        return "ExplicitlySetAttrElementsMap"_s;
     case NodeRareData::UseType::Popover:
-        return "Popover";
+        return "Popover"_s;
     }
-    return nullptr;
+    return { };
 }
 
 #endif
@@ -310,7 +310,7 @@ void Node::dumpStatistics()
     printf("Number of Nodes with RareData: %zu\n", nodesWithRareData);
     printf("  Mixed use: %zu\n", mixedRareDataUseCount);
     for (auto it : rareDataSingleUseTypeCounts)
-        printf("  %s: %zu\n", stringForRareDataUseType(static_cast<NodeRareData::UseType>(it.key)), it.value);
+        printf("  %s: %zu\n", stringForRareDataUseType(static_cast<NodeRareData::UseType>(it.key)).characters(), it.value);
     printf("\n");
 
 
@@ -1988,7 +1988,7 @@ String Node::debugDescription() const
 
 #if ENABLE(TREE_DEBUGGING)
 
-static void appendAttributeDesc(const Node* node, StringBuilder& stringBuilder, const QualifiedName& name, const char* attrDesc)
+static void appendAttributeDesc(const Node* node, StringBuilder& stringBuilder, const QualifiedName& name, ASCIILiteral attrDesc)
 {
     auto* element = dynamicDowncast<Element>(*node);
     if (!element)
@@ -2002,19 +2002,19 @@ static void appendAttributeDesc(const Node* node, StringBuilder& stringBuilder, 
     stringBuilder.append(attr);
 }
 
-void Node::showNode(const char* prefix) const
+void Node::showNode(ASCIILiteral prefix) const
 {
-    if (!prefix)
-        prefix = "";
+    if (prefix.isNull())
+        prefix = ""_s;
     if (isTextNode()) {
         String value = makeStringByReplacingAll(nodeValue(), '\\', "\\\\"_s);
         value = makeStringByReplacingAll(value, '\n', "\\n"_s);
-        fprintf(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().utf8().data(), this, value.utf8().data());
+        fprintf(stderr, "%s%s\t%p \"%s\"\n", prefix.characters(), nodeName().utf8().data(), this, value.utf8().data());
     } else {
         StringBuilder attrs;
-        appendAttributeDesc(this, attrs, classAttr, " CLASS=");
-        appendAttributeDesc(this, attrs, styleAttr, " STYLE=");
-        fprintf(stderr, "%s%s\t%p (renderer %p) %s%s%s\n", prefix, nodeName().utf8().data(), this, renderer(), attrs.toString().utf8().data(), needsStyleRecalc() ? " (needs style recalc)" : "", childNeedsStyleRecalc() ? " (child needs style recalc)" : "");
+        appendAttributeDesc(this, attrs, classAttr, " CLASS="_s);
+        appendAttributeDesc(this, attrs, styleAttr, " STYLE="_s);
+        fprintf(stderr, "%s%s\t%p (renderer %p) %s%s%s\n", prefix.characters(), nodeName().utf8().data(), this, renderer(), attrs.toString().utf8().data(), needsStyleRecalc() ? " (needs style recalc)" : "", childNeedsStyleRecalc() ? " (child needs style recalc)" : "");
     }
 }
 

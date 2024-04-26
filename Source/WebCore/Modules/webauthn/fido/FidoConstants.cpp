@@ -113,7 +113,7 @@ bool isFidoHidDeviceCommand(FidoHidDeviceCommand cmd)
     }
 }
 
-const char* publicKeyCredentialTypeToString(PublicKeyCredentialType type)
+ASCIILiteral publicKeyCredentialTypeToString(PublicKeyCredentialType type)
 {
     switch (type) {
     case PublicKeyCredentialType::PublicKey:

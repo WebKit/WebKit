@@ -117,7 +117,7 @@ private:
     void releaseOriginLockIfNeeded();
 
 #if !LOG_DISABLED
-    static const char* debugStepName(void (SQLTransaction::*)());
+    static ASCIILiteral debugStepName(void (SQLTransaction::*)());
 #endif
 
     Ref<Database> m_database;

@@ -746,9 +746,9 @@ RetainPtr<NSDictionary> WebProcess::additionalStateForDiagnosticReport() const
     auto stateDictionary = adoptNS([[NSMutableDictionary alloc] init]);
     {
         auto memoryUsageStats = adoptNS([[NSMutableDictionary alloc] init]);
-        for (auto& it : PerformanceLogging::memoryUsageStatistics(ShouldIncludeExpensiveComputations::Yes)) {
-            auto keyString = adoptNS([[NSString alloc] initWithUTF8String:it.key]);
-            [memoryUsageStats setObject:@(it.value) forKey:keyString.get()];
+        for (auto& [key, value] : PerformanceLogging::memoryUsageStatistics(ShouldIncludeExpensiveComputations::Yes)) {
+            auto keyString = adoptNS([[NSString alloc] initWithUTF8String:key]);
+            [memoryUsageStats setObject:@(value) forKey:keyString.get()];
         }
         [stateDictionary setObject:memoryUsageStats.get() forKey:@"Memory Usage Stats"];
     }

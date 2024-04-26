@@ -104,7 +104,7 @@ public:
     WEBCORE_EXPORT static std::optional<CBORValue> read(const Bytes&, DecoderError* errorCodeOut = nullptr, int maxNestingLevel = kCBORMaxDepth);
 
     // Translates errors to human-readable error messages.
-    static const char* errorCodeToString(DecoderError errorCode);
+    static ASCIILiteral errorCodeToString(DecoderError errorCode);
 
 private:
     explicit CBORReader(const Bytes&);

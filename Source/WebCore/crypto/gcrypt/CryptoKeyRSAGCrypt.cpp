@@ -54,7 +54,7 @@ static size_t getRSAModulusLength(gcry_sexp_t keySexp)
     return *length * 8;
 }
 
-static Vector<uint8_t> getRSAKeyParameter(gcry_sexp_t keySexp, const char* name)
+static Vector<uint8_t> getRSAKeyParameter(gcry_sexp_t keySexp, ASCIILiteral name)
 {
     // Retrieve the s-expression token for the specified parameter of the given RSA key.
     PAL::GCrypt::Handle<gcry_sexp_t> paramSexp(gcry_sexp_find_token(keySexp, name, 0));
@@ -614,7 +614,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
 auto CryptoKeyRSA::algorithm() const -> KeyAlgorithm
 {
     auto modulusLength = getRSAModulusLength(m_platformKey.get());
-    auto publicExponent = getRSAKeyParameter(m_platformKey.get(), "e");
+    auto publicExponent = getRSAKeyParameter(m_platformKey.get(), "e"_s);
 
     if (m_restrictedToSpecificHash) {
         CryptoRsaHashedKeyAlgorithm result;
@@ -636,21 +636,21 @@ std::unique_ptr<CryptoKeyRSAComponents> CryptoKeyRSA::exportData() const
 {
     switch (type()) {
     case CryptoKeyType::Public:
-        return CryptoKeyRSAComponents::createPublic(getRSAKeyParameter(m_platformKey.get(), "n"), getRSAKeyParameter(m_platformKey.get(), "e"));
+        return CryptoKeyRSAComponents::createPublic(getRSAKeyParameter(m_platformKey.get(), "n"_s), getRSAKeyParameter(m_platformKey.get(), "e"_s));
     case CryptoKeyType::Private: {
         auto parameterMPI =
-            [](gcry_sexp_t sexp, const char* name) -> gcry_mpi_t {
+            [](gcry_sexp_t sexp, ASCIILiteral name) -> gcry_mpi_t {
                 PAL::GCrypt::Handle<gcry_sexp_t> paramSexp(gcry_sexp_find_token(sexp, name, 0));
                 if (!paramSexp)
                     return nullptr;
                 return gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG);
             };
 
-        PAL::GCrypt::Handle<gcry_mpi_t> dMPI(parameterMPI(m_platformKey.get(), "d"));
+        PAL::GCrypt::Handle<gcry_mpi_t> dMPI(parameterMPI(m_platformKey.get(), "d"_s));
         // libgcrypt internally uses p and q such that p < q, while usually it's q < p.
         // Switch the two primes here and continue with assuming the latter.
-        PAL::GCrypt::Handle<gcry_mpi_t> pMPI(parameterMPI(m_platformKey.get(), "q"));
-        PAL::GCrypt::Handle<gcry_mpi_t> qMPI(parameterMPI(m_platformKey.get(), "p"));
+        PAL::GCrypt::Handle<gcry_mpi_t> pMPI(parameterMPI(m_platformKey.get(), "q"_s));
+        PAL::GCrypt::Handle<gcry_mpi_t> qMPI(parameterMPI(m_platformKey.get(), "p"_s));
         if (!dMPI || !pMPI || !qMPI)
             return nullptr;
 
@@ -698,7 +698,7 @@ std::unique_ptr<CryptoKeyRSAComponents> CryptoKeyRSA::exportData() const
             privateExponent = WTFMove(data.value());
 
         return CryptoKeyRSAComponents::createPrivateWithAdditionalData(
-            getRSAKeyParameter(m_platformKey.get(), "n"), getRSAKeyParameter(m_platformKey.get(), "e"), WTFMove(privateExponent),
+            getRSAKeyParameter(m_platformKey.get(), "n"_s), getRSAKeyParameter(m_platformKey.get(), "e"_s), WTFMove(privateExponent),
             WTFMove(firstPrimeInfo), WTFMove(secondPrimeInfo), Vector<CryptoKeyRSAComponents::PrimeInfo> { });
     }
     default:

@@ -48,11 +48,11 @@ public:
     void didReachPointOfInterest(PointOfInterest);
 
     WEBCORE_EXPORT static HashCountedSet<const char*> javaScriptObjectCounts();
-    WEBCORE_EXPORT static HashMap<const char*, size_t> memoryUsageStatistics(ShouldIncludeExpensiveComputations);
+    WEBCORE_EXPORT static Vector<std::pair<ASCIILiteral, size_t>> memoryUsageStatistics(ShouldIncludeExpensiveComputations);
     WEBCORE_EXPORT static std::optional<uint64_t> physicalFootprint();
 
 private:
-    static void getPlatformMemoryUsageStatistics(HashMap<const char*, size_t>&);
+    static void getPlatformMemoryUsageStatistics(Vector<std::pair<ASCIILiteral, size_t>>&);
 
     Page& m_page;
 };

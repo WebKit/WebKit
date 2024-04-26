@@ -120,7 +120,7 @@ static String encodeProtocolString(const String& protocol)
     return builder.toString();
 }
 
-static String joinStrings(const Vector<String>& strings, const char* separator)
+static String joinStrings(const Vector<String>& strings, ASCIILiteral separator)
 {
     StringBuilder builder;
     for (size_t i = 0; i < strings.size(); ++i) {

@@ -2925,9 +2925,7 @@ std::optional<KeyValuePair<String, String>> URLParser::parseQueryNameAndValue(St
 static void serializeURLEncodedForm(const String& input, Vector<LChar>& output)
 {
     auto utf8 = input.utf8(StrictConversion);
-    const char* data = utf8.data();
-    for (size_t i = 0; i < utf8.length(); ++i) {
-        const char byte = data[i];
+    for (char byte : utf8.span()) {
         if (byte == 0x20)
             output.append(0x2B);
         else if (byte == 0x2A

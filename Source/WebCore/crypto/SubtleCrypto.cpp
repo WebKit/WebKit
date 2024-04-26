@@ -80,7 +80,7 @@ enum class Operations : uint8_t {
     GetKeyLength
 };
 
-static const char* const AESCFBDeprecation = "AES-CFB support is deprecated";
+constexpr auto AESCFBDeprecation = "AES-CFB support is deprecated"_s;
 
 static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAlgorithmParameters(JSGlobalObject&, WebCore::SubtleCrypto::AlgorithmIdentifier, Operations);
 
@@ -164,7 +164,7 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         }
         case CryptoAlgorithmIdentifier::AES_CFB:
             if (isAESCFBWebCryptoDeprecated(state))
-                return Exception { ExceptionCode::NotSupportedError, String::fromUTF8(AESCFBDeprecation) };
+                return Exception { ExceptionCode::NotSupportedError, AESCFBDeprecation };
             [[fallthrough]];
         case CryptoAlgorithmIdentifier::AES_CBC: {
             auto params = convertDictionary<CryptoAlgorithmAesCbcCfbParams>(state, value.get());
@@ -253,7 +253,7 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         }
         case CryptoAlgorithmIdentifier::AES_CFB:
             if (isAESCFBWebCryptoDeprecated(state))
-                return Exception { ExceptionCode::NotSupportedError, String::fromUTF8(AESCFBDeprecation) };
+                return Exception { ExceptionCode::NotSupportedError, AESCFBDeprecation };
             [[fallthrough]];
         case CryptoAlgorithmIdentifier::AES_CTR:
         case CryptoAlgorithmIdentifier::AES_CBC:
@@ -366,7 +366,7 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         }
         case CryptoAlgorithmIdentifier::AES_CFB:
             if (isAESCFBWebCryptoDeprecated(state))
-                return Exception { ExceptionCode::NotSupportedError, String::fromUTF8(AESCFBDeprecation) };
+                return Exception { ExceptionCode::NotSupportedError, AESCFBDeprecation };
             [[fallthrough]];
         case CryptoAlgorithmIdentifier::AES_CTR:
         case CryptoAlgorithmIdentifier::AES_CBC:
@@ -423,7 +423,7 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         switch (*identifier) {
         case CryptoAlgorithmIdentifier::AES_CFB:
             if (isAESCFBWebCryptoDeprecated(state))
-                return Exception { ExceptionCode::NotSupportedError, String::fromUTF8(AESCFBDeprecation) };
+                return Exception { ExceptionCode::NotSupportedError, AESCFBDeprecation };
             [[fallthrough]];
         case CryptoAlgorithmIdentifier::AES_CTR:
         case CryptoAlgorithmIdentifier::AES_CBC:

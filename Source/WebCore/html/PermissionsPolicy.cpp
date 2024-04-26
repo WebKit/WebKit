@@ -39,52 +39,52 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const char* policyTypeName(PermissionsPolicy::Type type)
+static ASCIILiteral policyTypeName(PermissionsPolicy::Type type)
 {
     switch (type) {
     case PermissionsPolicy::Type::Camera:
-        return "Camera";
+        return "Camera"_s;
     case PermissionsPolicy::Type::Microphone:
-        return "Microphone";
+        return "Microphone"_s;
     case PermissionsPolicy::Type::SpeakerSelection:
-        return "SpeakerSelection";
+        return "SpeakerSelection"_s;
     case PermissionsPolicy::Type::DisplayCapture:
-        return "DisplayCapture";
+        return "DisplayCapture"_s;
     case PermissionsPolicy::Type::Gamepad:
-        return "Gamepad";
+        return "Gamepad"_s;
     case PermissionsPolicy::Type::Geolocation:
-        return "Geolocation";
+        return "Geolocation"_s;
     case PermissionsPolicy::Type::Payment:
-        return "Payment";
+        return "Payment"_s;
     case PermissionsPolicy::Type::ScreenWakeLock:
-        return "ScreenWakeLock";
+        return "ScreenWakeLock"_s;
     case PermissionsPolicy::Type::SyncXHR:
-        return "SyncXHR";
+        return "SyncXHR"_s;
     case PermissionsPolicy::Type::Fullscreen:
-        return "Fullscreen";
+        return "Fullscreen"_s;
     case PermissionsPolicy::Type::WebShare:
-        return "WebShare";
+        return "WebShare"_s;
 #if ENABLE(DEVICE_ORIENTATION)
     case PermissionsPolicy::Type::Gyroscope:
-        return "Gyroscope";
+        return "Gyroscope"_s;
     case PermissionsPolicy::Type::Accelerometer:
-        return "Accelerometer";
+        return "Accelerometer"_s;
     case PermissionsPolicy::Type::Magnetometer:
-        return "Magnetometer";
+        return "Magnetometer"_s;
 #endif
 #if ENABLE(WEB_AUTHN)
     case PermissionsPolicy::Type::PublickeyCredentialsGetRule:
-        return "PublickeyCredentialsGet";
+        return "PublickeyCredentialsGet"_s;
 #endif
 #if ENABLE(WEBXR)
     case PermissionsPolicy::Type::XRSpatialTracking:
-        return "XRSpatialTracking";
+        return "XRSpatialTracking"_s;
 #endif
     case PermissionsPolicy::Type::PrivateToken:
-        return "PrivateToken";
+        return "PrivateToken"_s;
     }
     ASSERT_NOT_REACHED();
-    return "";
+    return ""_s;
 }
 
 bool isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type type, const Document& document, LogPermissionsPolicyFailure logFailure)

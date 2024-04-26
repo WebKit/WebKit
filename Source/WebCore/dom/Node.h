@@ -496,7 +496,7 @@ public:
     virtual String debugDescription() const;
 
 #if ENABLE(TREE_DEBUGGING)
-    void showNode(const char* prefix = "") const;
+    void showNode(ASCIILiteral prefix = ""_s) const;
     WEBCORE_EXPORT void showTreeForThis() const;
     void showNodePathForThis() const;
     void showTreeAndMark(const Node* markedNode1, const char* markedLabel1, const Node* markedNode2 = nullptr, const char* markedLabel2 = nullptr) const;

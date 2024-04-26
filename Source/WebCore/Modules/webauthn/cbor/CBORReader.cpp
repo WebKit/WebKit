@@ -51,20 +51,20 @@ uint8_t getAdditionalInfo(uint8_t initialDataByte)
 }
 
 // Error messages that correspond to each of the error codes.
-const char kNoError[] = "Successfully deserialized to a CBOR value.";
-const char kUnsupportedMajorType[] = "Unsupported major type.";
-const char kUnknownAdditionalInfo[] = "Unknown additional info format in the first byte.";
-const char kIncompleteCBORData[] = "Prematurely terminated CBOR data byte array.";
-const char kIncorrectMapKeyType[] = "Map keys other than utf-8 encoded strings are not allowed.";
-const char kTooMuchNesting[] = "Too much nesting.";
-const char kInvalidUTF8[] = "String encoding other than utf8 are not allowed.";
-const char kExtraneousData[] = "Trailing data bytes are not allowed.";
-const char kDuplicateKey[] = "Duplicate map keys are not allowed.";
-const char kMapKeyOutOfOrder[] = "Map keys must be sorted by byte length and then by byte-wise lexical order.";
-const char kNonMinimalCBOREncoding[] = "Unsigned integers must be encoded with minimum number of bytes.";
-const char kUnsupportedSimpleValue[] = "Unsupported or unassigned simple value.";
-const char kUnsupportedFloatingPointValue[] = "Floating point numbers are not supported.";
-const char kOutOfRangeIntegerValue[] = "Integer values must be between INT64_MIN and INT64_MAX.";
+constexpr auto kNoError = "Successfully deserialized to a CBOR value."_s;
+constexpr auto kUnsupportedMajorType = "Unsupported major type."_s;
+constexpr auto kUnknownAdditionalInfo = "Unknown additional info format in the first byte."_s;
+constexpr auto kIncompleteCBORData = "Prematurely terminated CBOR data byte array."_s;
+constexpr auto kIncorrectMapKeyType = "Map keys other than utf-8 encoded strings are not allowed."_s;
+constexpr auto kTooMuchNesting = "Too much nesting."_s;
+constexpr auto kInvalidUTF8 = "String encoding other than utf8 are not allowed."_s;
+constexpr auto kExtraneousData = "Trailing data bytes are not allowed."_s;
+constexpr auto kDuplicateKey = "Duplicate map keys are not allowed."_s;
+constexpr auto kMapKeyOutOfOrder = "Map keys must be sorted by byte length and then by byte-wise lexical order."_s;
+constexpr auto kNonMinimalCBOREncoding = "Unsigned integers must be encoded with minimum number of bytes."_s;
+constexpr auto kUnsupportedSimpleValue = "Unsupported or unassigned simple value."_s;
+constexpr auto kUnsupportedFloatingPointValue = "Floating point numbers are not supported."_s;
+constexpr auto kOutOfRangeIntegerValue = "Integer values must be between INT64_MIN and INT64_MAX."_s;
 
 } // namespace
 
@@ -337,7 +337,7 @@ CBORReader::DecoderError CBORReader::getErrorCode()
 }
 
 // static
-const char* CBORReader::errorCodeToString(DecoderError error)
+ASCIILiteral CBORReader::errorCodeToString(DecoderError error)
 {
     switch (error) {
     case DecoderError::CBORNoError:
@@ -370,7 +370,7 @@ const char* CBORReader::errorCodeToString(DecoderError error)
         return kOutOfRangeIntegerValue;
     default:
         ASSERT_NOT_REACHED();
-        return "Unknown error code.";
+        return "Unknown error code."_s;
     }
 }
 

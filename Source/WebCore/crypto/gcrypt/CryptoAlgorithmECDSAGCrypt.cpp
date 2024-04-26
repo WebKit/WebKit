@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static bool extractECDSASignatureInteger(Vector<uint8_t>& signature, gcry_sexp_t signatureSexp, const char* integerName, size_t keySizeInBytes)
+static bool extractECDSASignatureInteger(Vector<uint8_t>& signature, gcry_sexp_t signatureSexp, ASCIILiteral integerName, size_t keySizeInBytes)
 {
     // Retrieve byte data of the specified integer.
     PAL::GCrypt::Handle<gcry_sexp_t> integerSexp(gcry_sexp_find_token(signatureSexp, integerName, 0));
@@ -109,8 +109,8 @@ static std::optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vect
     Vector<uint8_t> signature;
     signature.reserveInitialCapacity(keySizeInBytes * 2);
 
-    if (!extractECDSASignatureInteger(signature, signatureSexp, "r", keySizeInBytes)
-        || !extractECDSASignatureInteger(signature, signatureSexp, "s", keySizeInBytes))
+    if (!extractECDSASignatureInteger(signature, signatureSexp, "r"_s, keySizeInBytes)
+        || !extractECDSASignatureInteger(signature, signatureSexp, "s"_s, keySizeInBytes))
         return std::nullopt;
 
     return signature;

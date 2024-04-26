@@ -152,7 +152,7 @@ public:
     
     void dump(PrintStream& out) const
     {
-        m_codePtr.dumpWithName("CodeRef", out);
+        m_codePtr.dumpWithName("CodeRef"_s, out);
     }
 
     static ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(MacroAssemblerCodeRef, m_codePtr); }

@@ -221,7 +221,7 @@ void logMemoryStatistics(LogMemoryStatisticsReason reason)
     RELEASE_LOG(MemoryPressure, "Websam state: %" PUBLIC_LOG_STRING, MemoryPressureHandler::processStateDescription().characters());
     auto stats = PerformanceLogging::memoryUsageStatistics(ShouldIncludeExpensiveComputations::Yes);
     for (auto& [key, val] : stats)
-        RELEASE_LOG(MemoryPressure, "%" PUBLIC_LOG_STRING ": %zu", key, val);
+        RELEASE_LOG(MemoryPressure, "%" PUBLIC_LOG_STRING ": %zu", key.characters(), val);
 
 #if PLATFORM(COCOA)
     auto pageSize = vmPageSize();

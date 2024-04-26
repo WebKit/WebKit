@@ -1051,12 +1051,12 @@ void ContentSecurityPolicy::reportInvalidPathCharacter(const String& directiveNa
 {
     ASSERT(invalidChar == '#' || invalidChar == '?');
 
-    const char* ignoring;
-    if (invalidChar == '?')
-        ignoring = "The query component, including the '?', will be ignored.";
-    else
-        ignoring = "The fragment identifier, including the '#', will be ignored.";
-    logToConsole(makeString("The source list for Content Security Policy directive '", directiveName, "' contains a source with an invalid path: '", value, "'. ", ignoring));
+    ASCIILiteral ignoring = [&] {
+        if (invalidChar == '?')
+            return "The query component, including the '?', will be ignored."_s;
+        return "The fragment identifier, including the '#', will be ignored."_s;
+    }();
+    logToConsole(makeString("The source list for Content Security Policy directive '"_s, directiveName, "' contains a source with an invalid path: '"_s, value, "'. "_s, ignoring));
 }
 
 void ContentSecurityPolicy::reportInvalidSourceExpression(const String& directiveName, const String& source) const

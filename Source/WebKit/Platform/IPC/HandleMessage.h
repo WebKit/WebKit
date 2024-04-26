@@ -64,10 +64,10 @@ inline TextStream textStreamForLogging(const Connection& connection, MessageName
 
     switch (forReply) {
     case ForReply::No:
-        stream << "-> " << WebCore::processTypeDescription(WebCore::processType()) << ' ' << getCurrentProcessID() << " receiver " << object << "] " << description(messageName);
+        stream << "-> "_s << WebCore::processTypeDescription(WebCore::processType()) << ' ' << getCurrentProcessID() << " receiver "_s << object << "] "_s << description(messageName);
         break;
     case ForReply::Yes:
-        stream << "<- " << WebCore::processTypeDescription(WebCore::processType()) << ' ' << getCurrentProcessID() << "] " << description(messageName) << " Reply";
+        stream << "<- "_s << WebCore::processTypeDescription(WebCore::processType()) << ' ' << getCurrentProcessID() << "] "_s << description(messageName) << " Reply"_s;
         break;
     }
 

@@ -58,7 +58,7 @@ protected:
 };
 
 #if !LOG_DISABLED
-extern const char* nameForSQLTransactionState(SQLTransactionState);
+extern ASCIILiteral nameForSQLTransactionState(SQLTransactionState);
 #endif
 
 template<typename T>

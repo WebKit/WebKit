@@ -266,93 +266,93 @@ enum ArrayBufferViewSubtag {
     BigUint64ArrayTag = 11,
 };
 
-static const char* name(SerializationTag tag)
+static ASCIILiteral name(SerializationTag tag)
 {
     switch (tag) {
-    case ArrayTag: return "ArrayTag";
-    case ObjectTag: return "ObjectTag";
-    case UndefinedTag: return "UndefinedTag";
-    case NullTag: return "NullTag";
-    case IntTag: return "IntTag";
-    case ZeroTag: return "ZeroTag";
-    case OneTag: return "OneTag";
-    case FalseTag: return "FalseTag";
-    case TrueTag: return "TrueTag";
-    case DoubleTag: return "DoubleTag";
-    case DateTag: return "DateTag";
-    case FileTag: return "FileTag";
-    case FileListTag: return "FileListTag";
-    case ImageDataTag: return "ImageDataTag";
-    case BlobTag: return "BlobTag";
-    case StringTag: return "StringTag";
-    case EmptyStringTag: return "EmptyStringTag";
-    case RegExpTag: return "RegExpTag";
-    case ObjectReferenceTag: return "ObjectReferenceTag";
-    case MessagePortReferenceTag: return "MessagePortReferenceTag";
-    case ArrayBufferTag: return "ArrayBufferTag";
-    case ArrayBufferViewTag: return "ArrayBufferViewTag";
-    case ArrayBufferTransferTag: return "ArrayBufferTransferTag";
-    case TrueObjectTag: return "TrueObjectTag";
-    case FalseObjectTag: return "FalseObjectTag";
-    case StringObjectTag: return "StringObjectTag";
-    case EmptyStringObjectTag: return "EmptyStringObjectTag";
-    case NumberObjectTag: return "NumberObjectTag";
-    case SetObjectTag: return "SetObjectTag";
-    case MapObjectTag: return "MapObjectTag";
-    case NonMapPropertiesTag: return "NonMapPropertiesTag";
-    case NonSetPropertiesTag: return "NonSetPropertiesTag";
-    case CryptoKeyTag: return "CryptoKeyTag";
-    case SharedArrayBufferTag: return "SharedArrayBufferTag";
+    case ArrayTag: return "ArrayTag"_s;
+    case ObjectTag: return "ObjectTag"_s;
+    case UndefinedTag: return "UndefinedTag"_s;
+    case NullTag: return "NullTag"_s;
+    case IntTag: return "IntTag"_s;
+    case ZeroTag: return "ZeroTag"_s;
+    case OneTag: return "OneTag"_s;
+    case FalseTag: return "FalseTag"_s;
+    case TrueTag: return "TrueTag"_s;
+    case DoubleTag: return "DoubleTag"_s;
+    case DateTag: return "DateTag"_s;
+    case FileTag: return "FileTag"_s;
+    case FileListTag: return "FileListTag"_s;
+    case ImageDataTag: return "ImageDataTag"_s;
+    case BlobTag: return "BlobTag"_s;
+    case StringTag: return "StringTag"_s;
+    case EmptyStringTag: return "EmptyStringTag"_s;
+    case RegExpTag: return "RegExpTag"_s;
+    case ObjectReferenceTag: return "ObjectReferenceTag"_s;
+    case MessagePortReferenceTag: return "MessagePortReferenceTag"_s;
+    case ArrayBufferTag: return "ArrayBufferTag"_s;
+    case ArrayBufferViewTag: return "ArrayBufferViewTag"_s;
+    case ArrayBufferTransferTag: return "ArrayBufferTransferTag"_s;
+    case TrueObjectTag: return "TrueObjectTag"_s;
+    case FalseObjectTag: return "FalseObjectTag"_s;
+    case StringObjectTag: return "StringObjectTag"_s;
+    case EmptyStringObjectTag: return "EmptyStringObjectTag"_s;
+    case NumberObjectTag: return "NumberObjectTag"_s;
+    case SetObjectTag: return "SetObjectTag"_s;
+    case MapObjectTag: return "MapObjectTag"_s;
+    case NonMapPropertiesTag: return "NonMapPropertiesTag"_s;
+    case NonSetPropertiesTag: return "NonSetPropertiesTag"_s;
+    case CryptoKeyTag: return "CryptoKeyTag"_s;
+    case SharedArrayBufferTag: return "SharedArrayBufferTag"_s;
 #if ENABLE(WEBASSEMBLY)
-    case WasmModuleTag: return "WasmModuleTag";
+    case WasmModuleTag: return "WasmModuleTag"_s;
 #endif
-    case DOMPointReadOnlyTag: return "DOMPointReadOnlyTag";
-    case DOMPointTag: return "DOMPointTag";
-    case DOMRectReadOnlyTag: return "DOMRectReadOnlyTag";
-    case DOMRectTag: return "DOMRectTag";
-    case DOMMatrixReadOnlyTag: return "DOMMatrixReadOnlyTag";
-    case DOMMatrixTag: return "DOMMatrixTag";
-    case DOMQuadTag: return "DOMQuadTag";
-    case ImageBitmapTransferTag: return "ImageBitmapTransferTag";
+    case DOMPointReadOnlyTag: return "DOMPointReadOnlyTag"_s;
+    case DOMPointTag: return "DOMPointTag"_s;
+    case DOMRectReadOnlyTag: return "DOMRectReadOnlyTag"_s;
+    case DOMRectTag: return "DOMRectTag"_s;
+    case DOMMatrixReadOnlyTag: return "DOMMatrixReadOnlyTag"_s;
+    case DOMMatrixTag: return "DOMMatrixTag"_s;
+    case DOMQuadTag: return "DOMQuadTag"_s;
+    case ImageBitmapTransferTag: return "ImageBitmapTransferTag"_s;
 #if ENABLE(WEB_RTC)
-    case RTCCertificateTag: return "RTCCertificateTag";
+    case RTCCertificateTag: return "RTCCertificateTag"_s;
 #endif
-    case ImageBitmapTag: return "ImageBitmapTag";
+    case ImageBitmapTag: return "ImageBitmapTag"_s;
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-    case OffscreenCanvasTransferTag: return "OffscreenCanvasTransferTag";
+    case OffscreenCanvasTransferTag: return "OffscreenCanvasTransferTag"_s;
 #endif
-    case BigIntTag: return "BigIntTag";
-    case BigIntObjectTag: return "BigIntObjectTag";
+    case BigIntTag: return "BigIntTag"_s;
+    case BigIntObjectTag: return "BigIntObjectTag"_s;
 #if ENABLE(WEBASSEMBLY)
-    case WasmMemoryTag: return "WasmMemoryTag";
+    case WasmMemoryTag: return "WasmMemoryTag"_s;
 #endif
 #if ENABLE(WEB_RTC)
-    case RTCDataChannelTransferTag: return "RTCDataChannelTransferTag";
+    case RTCDataChannelTransferTag: return "RTCDataChannelTransferTag"_s;
 #endif
-    case DOMExceptionTag: return "DOMExceptionTag";
+    case DOMExceptionTag: return "DOMExceptionTag"_s;
 #if ENABLE(WEB_CODECS)
-    case WebCodecsEncodedVideoChunkTag: return "WebCodecsEncodedVideoChunkTag";
-    case WebCodecsVideoFrameTag: return "WebCodecsVideoFrameTag";
+    case WebCodecsEncodedVideoChunkTag: return "WebCodecsEncodedVideoChunkTag"_s;
+    case WebCodecsVideoFrameTag: return "WebCodecsVideoFrameTag"_s;
 #endif
-    case ResizableArrayBufferTag: return "ResizableArrayBufferTag";
-    case ErrorInstanceTag: return "ErrorInstanceTag";
+    case ResizableArrayBufferTag: return "ResizableArrayBufferTag"_s;
+    case ErrorInstanceTag: return "ErrorInstanceTag"_s;
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-    case InMemoryOffscreenCanvasTag: return "InMemoryOffscreenCanvasTag";
+    case InMemoryOffscreenCanvasTag: return "InMemoryOffscreenCanvasTag"_s;
 #endif
-    case InMemoryMessagePortTag: return "InMemoryMessagePortTag";
+    case InMemoryMessagePortTag: return "InMemoryMessagePortTag"_s;
 #if ENABLE(WEB_CODECS)
-    case WebCodecsEncodedAudioChunkTag: return "WebCodecsEncodedAudioChunkTag";
-    case WebCodecsAudioDataTag: return "WebCodecsAudioDataTag";
+    case WebCodecsEncodedAudioChunkTag: return "WebCodecsEncodedAudioChunkTag"_s;
+    case WebCodecsAudioDataTag: return "WebCodecsAudioDataTag"_s;
 #endif
 #if ENABLE(MEDIA_STREAM)
-    case MediaStreamTrackTag: return "MediaStreamTrackTag";
+    case MediaStreamTrackTag: return "MediaStreamTrackTag"_s;
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
-    case MediaSourceHandleTransferTag: return "MediaSourceHandleTransferTag";
+    case MediaSourceHandleTransferTag: return "MediaSourceHandleTransferTag"_s;
 #endif
-    case ErrorTag: return "ErrorTag";
+    case ErrorTag: return "ErrorTag"_s;
     }
-    return "<unknown tag>";
+    return "<unknown tag>"_s;
 }
 
 } // namespace WebCore
@@ -363,11 +363,11 @@ void printInternal(PrintStream&, WebCore::SerializationTag);
 
 void printInternal(PrintStream& out, WebCore::SerializationTag tag)
 {
-    const char* tagName = WebCore::name(tag);
+    auto tagName = WebCore::name(tag);
     if (tagName[0] != '<')
         out.print(tagName);
     else
-        out.print("<unknown tag ", static_cast<unsigned>(tag), ">");
+        out.print("<unknown tag "_s, static_cast<unsigned>(tag), ">"_s);
 }
 
 } // namespace WTF
