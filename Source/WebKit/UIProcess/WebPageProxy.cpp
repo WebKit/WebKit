@@ -4623,8 +4623,9 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     }
 
     RegistrableDomain navigationDomain { navigation.currentRequest().url() };
-    Ref frameProcess = m_browsingContextGroup->ensureProcessForDomain(navigationDomain, newProcess, preferences());
-    m_provisionalPage = makeUnique<ProvisionalPageProxy>(*this, WTFMove(frameProcess), m_browsingContextGroup, WTFMove(suspendedPage), navigation, isServerSideRedirect, navigation.currentRequest(), processSwapRequestedByClient, isProcessSwappingOnNavigationResponse, websitePolicies.get(), replacedDataStoreForWebArchiveLoad);
+    Ref browsingContextGroup = newProcess->websiteDataStore() == &websiteDataStore() ? m_browsingContextGroup : BrowsingContextGroup::create();
+    Ref frameProcess = browsingContextGroup->ensureProcessForDomain(navigationDomain, newProcess, preferences());
+    m_provisionalPage = makeUnique<ProvisionalPageProxy>(*this, WTFMove(frameProcess), WTFMove(browsingContextGroup), WTFMove(suspendedPage), navigation, isServerSideRedirect, navigation.currentRequest(), processSwapRequestedByClient, isProcessSwappingOnNavigationResponse, websitePolicies.get(), replacedDataStoreForWebArchiveLoad);
 
     // FIXME: This should be a CompletionHandler, but http/tests/inspector/target/provisional-load-cancels-previous-load.html doesn't call it.
     Function<void()> continuation = [this, protectedThis = Ref { *this }, navigation = Ref { navigation }, shouldTreatAsContinuingLoad, websitePolicies = WTFMove(websitePolicies), existingNetworkResourceLoadIdentifierToResume]() mutable {
@@ -13561,14 +13562,12 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
     send(Messages::WebPage::GenerateTestReport(message, group));
 }
 
-WebProcessProxy* WebPageProxy::processForRegistrableDomain(const WebCore::RegistrableDomain& domain, const WebsiteDataStore& websiteDataStore)
+WebProcessProxy* WebPageProxy::processForRegistrableDomain(const WebCore::RegistrableDomain& domain)
 {
-    auto* process = m_browsingContextGroup->processForDomain(domain);
-    if (!process)
-        return nullptr;
+    if (auto* process = m_browsingContextGroup->processForDomain(domain))
+        return &process->process();
 
-    auto* processWebsiteDataStore = process->process().websiteDataStore();
-    return processWebsiteDataStore == &websiteDataStore ? &process->process() : nullptr;
+    return nullptr;
 }
 
 WebPageProxy* WebPageProxy::openerPage() const

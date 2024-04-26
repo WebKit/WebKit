@@ -1973,7 +1973,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
             if (!mainFrameProcess->isInProcessCache())
                 return completionHandler(mainFrameProcess.copyRef(), nullptr, "Found process for the same registration domain as mainFrame domain"_s);
         }
-        RefPtr process = page.processForRegistrableDomain(registrableDomain, dataStore);
+        RefPtr process = &page.websiteDataStore() == dataStore.ptr() ? page.processForRegistrableDomain(registrableDomain) : nullptr;
         if (process && !process->isInProcessCache()) {
             dataStore->networkProcess().addAllowedFirstPartyForCookies(*process, mainFrameDomain, LoadedWebArchive::No, [completionHandler = WTFMove(completionHandler), process] () mutable {
                 completionHandler(process.releaseNonNull(), nullptr, "Found process for the same registration domain"_s);

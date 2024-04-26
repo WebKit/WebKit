@@ -2279,7 +2279,7 @@ public:
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
 
-    WebProcessProxy* processForRegistrableDomain(const WebCore::RegistrableDomain&, const WebsiteDataStore&);
+    WebProcessProxy* processForRegistrableDomain(const WebCore::RegistrableDomain&);
 
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&, const String& frameName);
     void broadcastMainFrameURLChangeToOtherProcesses(IPC::Connection&, const URL&);
@@ -2446,6 +2446,7 @@ public:
     void nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata&);
 
     void didAdjustVisibilityWithSelectors(Vector<String>&&);
+    BrowsingContextGroup& browsingContextGroup() const { return m_browsingContextGroup; }
 
 private:
     std::optional<Vector<uint8_t>> getWebCryptoMasterKey();
