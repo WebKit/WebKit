@@ -2202,10 +2202,12 @@ void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows, Access
     ancestors.removeLast();
 }
 
-void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows)
+AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ariaTreeRows()
 {
+    AccessibilityChildrenVector rows;
     AccessibilityChildrenVector ancestors;
     ariaTreeRows(rows, ancestors);
+    return rows;
 }
     
 AXCoreObject::AccessibilityChildrenVector AccessibilityObject::disclosedRows()
@@ -2218,7 +2220,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::disclosedRows()
             result.append(obj);
         // If it's not a tree item, then descend into the group to find more tree items.
         else 
-            obj->ariaTreeRows(result);
+            result.appendVector(obj->ariaTreeRows());
     }
 
     return result;
@@ -4183,11 +4185,9 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ariaSelectedRows(
         }
     };
 
-    if (isTree()) {
-        AccessibilityChildrenVector allRows;
-        ariaTreeRows(allRows);
-        rowsIteration(allRows);
-    } else if (auto* axTable = dynamicDowncast<AccessibilityTable>(this)) {
+    if (isTree())
+        rowsIteration(ariaTreeRows());
+    else if (auto* axTable = dynamicDowncast<AccessibilityTable>(this)) {
         if (axTable->supportsSelectedRows() && axTable->isExposable())
             rowsIteration(axTable->rows());
     }

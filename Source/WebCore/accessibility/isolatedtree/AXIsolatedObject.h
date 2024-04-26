@@ -290,7 +290,7 @@ private:
     String computedRoleString() const final;
     bool isValueAutofillAvailable() const final { return boolAttributeValue(AXPropertyName::IsValueAutofillAvailable); }
     AutoFillButtonType valueAutofillButtonType() const final { return static_cast<AutoFillButtonType>(intAttributeValue(AXPropertyName::ValueAutofillButtonType)); }
-    void ariaTreeRows(AccessibilityChildrenVector& children) final { fillChildrenVectorForProperty(AXPropertyName::ARIATreeRows, children); }
+    AccessibilityChildrenVector ariaTreeRows() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::ARIATreeRows)); }
     URL url() const final { return urlAttributeValue(AXPropertyName::URL); }
     String accessKey() const final { return stringAttributeValue(AXPropertyName::AccessKey); }
     String localizedActionVerb() const final { return stringAttributeValue(AXPropertyName::LocalizedActionVerb); }

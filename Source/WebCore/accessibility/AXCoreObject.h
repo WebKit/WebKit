@@ -1320,7 +1320,8 @@ public:
     virtual AutoFillButtonType valueAutofillButtonType() const = 0;
 
     // Used by an ARIA tree to get all its rows.
-    virtual void ariaTreeRows(AccessibilityChildrenVector&) = 0;
+    // FIXME: this should be folded into rows().
+    virtual AccessibilityChildrenVector ariaTreeRows() = 0;
     // Used by an ARIA tree item to get only its content, and not its child tree items and groups.
     AccessibilityChildrenVector ariaTreeItemContent();
 

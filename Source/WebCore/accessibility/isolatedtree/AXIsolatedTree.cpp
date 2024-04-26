@@ -568,12 +568,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
             propertyMap.set(AXPropertyName::AccessibilityText, axTextValue);
             break;
         }
-        case AXPropertyName::ARIATreeRows: {
-            AXCoreObject::AccessibilityChildrenVector ariaTreeRows;
-            axObject.ariaTreeRows(ariaTreeRows);
-            propertyMap.set(AXPropertyName::ARIATreeRows, axIDs(ariaTreeRows));
+        case AXPropertyName::ARIATreeRows:
+            propertyMap.set(AXPropertyName::ARIATreeRows, axIDs(axObject.ariaTreeRows()));
             break;
-        }
         case AXPropertyName::ValueAutofillButtonType:
             propertyMap.set(AXPropertyName::ValueAutofillButtonType, static_cast<int>(axObject.valueAutofillButtonType()));
             propertyMap.set(AXPropertyName::IsValueAutofillAvailable, axObject.isValueAutofillAvailable());

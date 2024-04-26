@@ -1429,6 +1429,46 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
     return [self bezierPathFromPath:transformedPath];
 }
 
+static NSArray *transformSpecialChildrenCases(AXCoreObject& backingObject)
+{
+#if ENABLE(MODEL_ELEMENT)
+    if (backingObject.isModel()) {
+        auto modelChildren = backingObject.modelElementChildren();
+        if (modelChildren.size()) {
+            return createNSArray(WTFMove(modelChildren), [] (auto&& child) -> id {
+                return child.get();
+            }).autorelease();
+        }
+    }
+#endif
+
+    const auto& children = backingObject.children();
+    if (!children.size()) {
+        if (NSArray *widgetChildren = renderWidgetChildren(backingObject))
+            return widgetChildren;
+    }
+
+    return nil;
+}
+
+static NSArray *children(AXCoreObject& backingObject)
+{
+    NSArray *specialChildren = transformSpecialChildrenCases(backingObject);
+    if (specialChildren.count)
+        return specialChildren;
+
+    // The tree's (AXOutline) children are supposed to be its rows and columns.
+    // The ARIA spec doesn't have columns, so we just need rows.
+    if (backingObject.isTree())
+        return makeNSArray(backingObject.ariaTreeRows());
+
+    // A tree item should only expose its content as its children (not its rows)
+    if (backingObject.isTreeItem())
+        return makeNSArray(backingObject.ariaTreeItemContent());
+
+    return makeNSArray(backingObject.children());
+}
+
 static NSString *roleString(AXCoreObject& backingObject)
 {
     String roleString = backingObject.rolePlatformString();
@@ -1489,33 +1529,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return axScrollView ? [axScrollView->platformWidget() window] : nil;
 }
 
-- (NSArray *)_transformSpecialChildrenCases:(RefPtr<AXCoreObject>)backingObject
-{
-#if ENABLE(MODEL_ELEMENT)
-    if (backingObject->isModel()) {
-        auto modelChildren = backingObject->modelElementChildren();
-        if (modelChildren.size()) {
-            return createNSArray(WTFMove(modelChildren), [] (auto&& child) -> id {
-                return child.get();
-            }).autorelease();
-        }
-    }
-#endif
-
-    const auto& children = backingObject->children();
-    if (!children.size()) {
-        if (NSArray *children = renderWidgetChildren(*backingObject))
-            return children;
-    }
-
-    return nil;
-}
-
 // FIXME: split up this function in a better way.
 // suggestions: Use a hash table that maps attribute names to function calls,
 // or maybe pointers to member functions
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (id)accessibilityAttributeValue:(NSString*)attributeName
+- (id)accessibilityAttributeValue:(NSString *)attributeName
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:", String(attributeName)));
@@ -1568,22 +1586,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return parent->wrapper();
     }
 
-    if ([attributeName isEqualToString:NSAccessibilityChildrenAttribute] || [attributeName isEqualToString:NSAccessibilityChildrenInNavigationOrderAttribute]) {
-        NSArray *specialChildren = [self _transformSpecialChildrenCases:backingObject];
-        if (specialChildren.count)
-            return specialChildren;
-
-        // The tree's (AXOutline) children are supposed to be its rows and columns.
-        // The ARIA spec doesn't have columns, so we just need rows.
-        if (backingObject->isTree())
-            return [self accessibilityAttributeValue:NSAccessibilityRowsAttribute];
-
-        // A tree item should only expose its content as its children (not its rows)
-        if (backingObject->isTreeItem())
-            return makeNSArray(backingObject->ariaTreeItemContent());
-
-        return makeNSArray(backingObject->children());
-    }
+    if ([attributeName isEqualToString:NSAccessibilityChildrenAttribute] || [attributeName isEqualToString:NSAccessibilityChildrenInNavigationOrderAttribute])
+        return children(*backingObject);
 
     if ([attributeName isEqualToString:NSAccessibilitySelectedChildrenAttribute]) {
         auto selectedChildren = backingObject->selectedChildren();
@@ -1595,16 +1599,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return activeDescendant ? activeDescendant->wrapper() : nil;
     }
 
-    if ([attributeName isEqualToString: NSAccessibilityVisibleChildrenAttribute]) {
+    if ([attributeName isEqualToString:NSAccessibilityVisibleChildrenAttribute]) {
         if (backingObject->isListBox())
             return makeNSArray(backingObject->visibleChildren());
-
         if (backingObject->isList())
-            return [self accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
-
+            return children(*backingObject);
         return nil;
     }
-
 
     if (backingObject->isWebArea()) {
         if ([attributeName isEqualToString:@"AXLinkUIElements"])
@@ -1893,11 +1894,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return selectedChildren ? makeNSArray(*selectedChildren) : nil;
         }
 
-        if ([attributeName isEqualToString:NSAccessibilityRowsAttribute]) {
-            AccessibilityObject::AccessibilityChildrenVector rowsCopy;
-            backingObject->ariaTreeRows(rowsCopy);
-            return makeNSArray(rowsCopy);
-        }
+        if ([attributeName isEqualToString:NSAccessibilityRowsAttribute])
+            return makeNSArray(backingObject->ariaTreeRows());
 
         // TreeRoles do not support columns, but Mac AX expects to be able to ask about columns at the least.
         if ([attributeName isEqualToString:NSAccessibilityColumnsAttribute])
@@ -1914,8 +1912,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 return nil;
 
             // Find the index of this item by iterating the parents.
-            AccessibilityObject::AccessibilityChildrenVector rowsCopy;
-            parent->ariaTreeRows(rowsCopy);
+            auto rowsCopy = parent->ariaTreeRows();
             size_t count = rowsCopy.size();
             for (size_t k = 0; k < count; ++k)
                 if (rowsCopy[k]->wrapper() == self)
@@ -3243,7 +3240,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         } else if (backingObject->isRemoteFrame()
             && criteria.searchKeys.contains(AccessibilitySearchKey::AnyType)
             && (!criteria.visibleOnly || backingObject->isVisible())) {
-            NSArray *remoteFrameChildren = [self accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
+            NSArray *remoteFrameChildren = children(*backingObject);
             ASSERT(remoteFrameChildren.count == 1);
             if (remoteFrameChildren.count == 1) {
                 NSUInteger includedChildrenCount = std::min([remoteFrameChildren count], NSUInteger(criteria.resultsLimit));
@@ -3828,8 +3825,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         // Tree items object returns a different set of children than those that are in children()
         // because an AXOutline (the mac role is becomes) has some odd stipulations.
         if (backingObject->isTree() || backingObject->isTreeItem() || backingObject->isRemoteFrame())
-            return [[self accessibilityAttributeValue:NSAccessibilityChildrenAttribute] count];
+            return children(*backingObject).count;
 
+        // FIXME: this is duplicating the logic in children(AXCoreObject&) so it should be reworked.
         auto childrenSize = backingObject->children().size();
         if (!childrenSize) {
 #if ENABLE(MODEL_ELEMENT)
@@ -3863,7 +3861,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
         if (backingObject->children().isEmpty()) {
-            NSArray *children = [self _transformSpecialChildrenCases:backingObject];
+            NSArray *children = transformSpecialChildrenCases(*backingObject);
             if (!children)
                 return nil;
 

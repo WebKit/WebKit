@@ -609,7 +609,7 @@ public:
     AutoFillButtonType valueAutofillButtonType() const override;
 
     // Used by an ARIA tree to get all its rows.
-    void ariaTreeRows(AccessibilityChildrenVector&) override;
+    AccessibilityChildrenVector ariaTreeRows() final;
 
     // ARIA live-region features.
     AccessibilityObject* liveRegionAncestor(bool excludeIfOff = true) const final { return Accessibility::liveRegionAncestor(*this, excludeIfOff); }

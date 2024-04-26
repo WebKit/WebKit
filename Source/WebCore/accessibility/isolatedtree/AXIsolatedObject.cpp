@@ -251,10 +251,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 
     if (object.isTree()) {
         setProperty(AXPropertyName::IsTree, true);
-
-        AccessibilityChildrenVector ariaTreeRows;
-        object.ariaTreeRows(ariaTreeRows);
-        setObjectVectorProperty(AXPropertyName::ARIATreeRows, ariaTreeRows);
+        setObjectVectorProperty(AXPropertyName::ARIATreeRows, object.ariaTreeRows());
     }
 
     if (object.isRadioButton()) {
@@ -270,8 +267,8 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     if (object.isImage())
         setProperty(AXPropertyName::EmbeddedImageDescription, object.embeddedImageDescription().isolatedCopy());
 
-    // On macOS, we only advertise support for the visible children attribute for listboxes.
-    if (object.isListBox())
+    // On macOS, we only advertise support for the visible children attribute for lists and listboxes.
+    if (object.isList() || object.isListBox())
         setObjectVectorProperty(AXPropertyName::VisibleChildren, object.visibleChildren());
 
     if (object.isDateTime()) {
