@@ -117,6 +117,7 @@ public:
     WallTime dateTimeValue() const final;
     SRGBA<uint8_t> colorValue() const override;
     String ariaLabeledByAttribute() const override;
+    bool hasAccNameAttribute() const;
     bool hasAttributesRequiredForInclusion() const final;
     void setIsExpanded(bool) override;
 

@@ -900,6 +900,10 @@ bool nodeHasRole(Node*, StringView role);
 bool nodeHasCellRole(Node*);
 bool nodeHasTableRole(Node*);
 
+// Returns true if the element has an attribute that will result in an accname being computed.
+// https://www.w3.org/TR/accname-1.2/
+bool hasAccNameAttribute(Element&);
+
 // This will let you know if aria-hidden was explicitly set to false.
 bool isNodeAriaVisible(Node&);
 bool isNodeAriaVisible(Node*);

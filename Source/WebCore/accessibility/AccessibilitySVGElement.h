@@ -51,6 +51,8 @@ private:
 
     AccessibilityObject* targetForUseElement() const;
 
+    // Returns true if the SVG element associated with this object has a <title> or <desc> child.
+    bool hasTitleOrDescriptionChild() const;
     template <typename ChildrenType>
     Element* childElementWithMatchingLanguage(ChildrenType&) const;
 

@@ -369,7 +369,7 @@ public:
 
     // A programmatic way to set a name on an AccessibleObject.
     void setAccessibleName(const AtomString&) override { }
-    virtual bool hasAttributesRequiredForInclusion() const;
+    virtual bool hasAttributesRequiredForInclusion() const { return false; }
 
     String title() const override { return { }; }
     String description() const override { return { }; }
@@ -541,7 +541,6 @@ public:
     bool hasAttribute(const QualifiedName&) const;
     const AtomString& getAttribute(const QualifiedName&) const;
     String getAttributeTrimmed(const QualifiedName&) const;
-    bool hasValidARIALabel() const { return !getAttributeTrimmed(HTMLNames::aria_labelAttr).isEmpty(); }
 
     String nameAttribute() const final;
     int getIntegralAttribute(const QualifiedName&) const;

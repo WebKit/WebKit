@@ -1080,23 +1080,6 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
     return result;
 }
 
-bool AccessibilityObject::hasAttributesRequiredForInclusion() const
-{
-    // These checks are simplified in the interest of execution speed.
-    if (!getAttribute(aria_helpAttr).isEmpty()
-        || !getAttribute(aria_describedbyAttr).isEmpty()
-        || !getAttribute(altAttr).isEmpty()
-        || !getAttribute(titleAttr).isEmpty())
-        return true;
-
-#if ENABLE(MATHML)
-    if (!getAttribute(MathMLNames::alttextAttr).isEmpty())
-        return true;
-#endif
-
-    return false;
-}
-
 bool AccessibilityObject::isARIAInput(AccessibilityRole ariaRole)
 {
     switch (ariaRole) {
@@ -2345,7 +2328,7 @@ String AccessibilityObject::invalidStatus() const
     String undefinedValue = "undefined"_s;
 
     // aria-invalid can return false (default), grammar, spelling, or true.
-    auto ariaInvalid = getAttribute(aria_invalidAttr).string().trim(isASCIIWhitespace);
+    auto ariaInvalid = getAttributeTrimmed(aria_invalidAttr);
 
     if (ariaInvalid.isEmpty()) {
         auto* htmlElement = dynamicDowncast<HTMLElement>(this->node());
@@ -2378,7 +2361,7 @@ bool AccessibilityObject::supportsCurrent() const
 AccessibilityCurrentState AccessibilityObject::currentState() const
 {
     // aria-current can return false (default), true, page, step, location, date or time.
-    auto currentStateValue = getAttribute(aria_currentAttr).string().trim(isASCIIWhitespace);
+    auto currentStateValue = getAttributeTrimmed(aria_currentAttr);
 
     // If "false", empty, or missing, return false state.
     if (currentStateValue.isEmpty() || currentStateValue == "false"_s)
@@ -2861,7 +2844,7 @@ String AccessibilityObject::roleDescription() const
 {
     // aria-roledescription takes precedence over any other rule.
     if (supportsARIARoleDescription()) {
-        auto roleDescription = getAttribute(aria_roledescriptionAttr).string().trim(isASCIIWhitespace);
+        auto roleDescription = getAttributeTrimmed(aria_roledescriptionAttr);
         if (!roleDescription.isEmpty())
             return roleDescription;
     }

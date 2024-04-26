@@ -596,6 +596,26 @@ bool nodeHasCellRole(Node* node)
     return node && (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s) || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s));
 }
 
+bool hasAccNameAttribute(Element& element)
+{
+    auto trimmed = [&] (const auto& attribute) {
+        const auto& value = element.attributeWithDefaultARIA(attribute);
+        if (value.isEmpty())
+            return emptyString();
+        auto copy = value.string();
+        return copy.trim(isASCIIWhitespace);
+    };
+
+    // Avoid calculating the actual description here (e.g. resolving aria-labelledby), as it's expensive.
+    // The spec is generally permissive in allowing user agents to not ensure complete validity of these attributes.
+    // For example, https://w3c.github.io/svg-aam/#include_elements:
+    // "It has an ‘aria-labelledby’ attribute or ‘aria-describedby’ attribute containing valid IDREF tokens. User agents MAY include elements with these attributes without checking for validity."
+    if (trimmed(aria_labelAttr).length() || trimmed(aria_labelledbyAttr).length() || trimmed(aria_labeledbyAttr).length() || trimmed(aria_descriptionAttr).length() || trimmed(aria_describedbyAttr).length())
+        return true;
+
+    return element.attributeWithoutSynchronization(titleAttr).length();
+}
+
 static RenderImage* toSimpleImage(RenderObject& renderer)
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer);
