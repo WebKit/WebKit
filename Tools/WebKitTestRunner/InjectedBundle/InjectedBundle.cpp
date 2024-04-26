@@ -865,26 +865,6 @@ void postSynchronousPageMessage(const char* name, bool value)
     postSynchronousPageMessage(name, adoptWK(WKBooleanCreate(value)));
 }
 
-static WKBundleFrameRef firstRootFrame(WKBundleFrameRef frame)
-{
-    if (WKBundleFrameGetJavaScriptContext(frame))
-        return frame;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    auto children = adoptWK(WKBundleFrameCopyChildFrames(frame));
-    ALLOW_DEPRECATED_DECLARATIONS_END
-    for (size_t i = 0; i < WKArrayGetSize(children.get()); i++) {
-        if (auto root = firstRootFrame(static_cast<WKBundleFrameRef>(WKArrayGetItemAtIndex(children.get(), i))))
-            return root;
-    }
-    return nullptr;
-}
-
-static JSContextRef firstRootFrameJSContext()
-{
-    auto mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
-    return WKBundleFrameGetJavaScriptContext(firstRootFrame(mainFrame));
-}
-
 static JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef strings)
 {
     ASSERT(WKGetTypeID(strings) == WKArrayGetTypeID());
@@ -898,13 +878,14 @@ static JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef strings)
     return array;
 }
 
-void postMessageWithAsyncReply(const char* messageName, WKRetainPtr<WKTypeRef> parameter, JSValueRef callback)
+void postMessageWithAsyncReply(JSContextRef context, const char* messageName, WKRetainPtr<WKTypeRef> parameter, JSValueRef callback)
 {
-    auto context = firstRootFrameJSContext();
-    JSValueProtect(context, callback);
+    auto globalContext = JSContextGetGlobalContext(context);
+    JSValueProtect(globalContext, callback);
 
-    Function<void(WKTypeRef)> completionHandler = [callback] (WKTypeRef result) mutable {
-        auto context = firstRootFrameJSContext();
+    Function<void(WKTypeRef)> completionHandler = [callback, globalContext = JSRetainPtr { globalContext }] (WKTypeRef result) mutable {
+        JSContextRef context = globalContext.get();
+
         size_t argumentCount { 0 };
         JSValueRef* arguments { nullptr };
         JSValueRef resultJS { nullptr };
@@ -933,9 +914,9 @@ void postMessageWithAsyncReply(const char* messageName, WKRetainPtr<WKTypeRef> p
         completionHandler(nullptr);
 }
 
-void postMessageWithAsyncReply(const char* messageName, JSValueRef callback)
+void postMessageWithAsyncReply(JSContextRef context, const char* messageName, JSValueRef callback)
 {
-    postMessageWithAsyncReply(messageName, nullptr, callback);
+    postMessageWithAsyncReply(context, messageName, nullptr, callback);
 }
 
 } // namespace WTR

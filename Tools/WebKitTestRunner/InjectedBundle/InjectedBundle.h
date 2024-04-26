@@ -272,7 +272,7 @@ template<typename T> void postSynchronousPageMessage(const char* name, const WKR
     }
 }
 
-void postMessageWithAsyncReply(const char* messageName, JSValueRef callback);
-void postMessageWithAsyncReply(const char* messageName, WKRetainPtr<WKTypeRef> value, JSValueRef callback);
+void postMessageWithAsyncReply(JSContextRef, const char* messageName, JSValueRef callback);
+void postMessageWithAsyncReply(JSContextRef, const char* messageName, WKRetainPtr<WKTypeRef> value, JSValueRef callback);
 
 } // namespace WTR
