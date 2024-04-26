@@ -29,6 +29,7 @@
 #import "APIConversions.h"
 #import "Texture.h"
 #import "TextureView.h"
+#import <wtf/FastMalloc.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/IOTypesSPI.h>
 
@@ -124,11 +125,15 @@ RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint
     if (fp16)
         bitmapInfo = static_cast<CGBitmapInfo>(isOpaque ? kCGImageAlphaNoneSkipLast : kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
 
-    Vector<uint8_t> imageBytes(bytesPerRow * height);
-    [mtlTexture getBytes:&imageBytes[0] bytesPerRow:bytesPerRow fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
-
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, &imageBytes[0], imageBytes.size(), nullptr));
-
+    size_t imageBytesSize = bytesPerRow * height;
+    void* imageBytes = FastMalloc::tryMalloc(imageBytesSize);
+    if (!imageBytes)
+        return nullptr;
+    [mtlTexture getBytes:imageBytes bytesPerRow:bytesPerRow fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
+    auto freeImageBytes = [](void* imageBytes, const void*, size_t) {
+        FastMalloc::free(imageBytes);
+    };
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(imageBytes, imageBytes, imageBytesSize, freeImageBytes));
     return adoptCF(CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace.get(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
 }
 
