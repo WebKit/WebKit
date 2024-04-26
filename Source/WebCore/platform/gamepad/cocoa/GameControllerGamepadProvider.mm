@@ -39,6 +39,19 @@
 
 #import "GameControllerSoftLink.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/GameControllerAdditions.mm>
+#else
+namespace WebCore {
+
+static bool shouldExcludeGameController(GCController *)
+{
+    return false;
+}
+
+}
+#endif
+
 namespace WebCore {
 
 #if !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
@@ -108,6 +121,8 @@ void GameControllerGamepadProvider::controllerDidConnect(GCController *controlle
     }
 #endif // HAVE(MULTIGAMEPADPROVIDER_SUPPORT) && !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
 
+    if (shouldExcludeGameController(controller))
+        return;
 
     // When initially starting up the GameController framework machinery,
     // we might get the connection notification for an already-connected controller.
