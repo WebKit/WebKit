@@ -317,7 +317,6 @@ Vector<WatchpointSet*, 2> AccessCase::commit(VM& vm)
     // It's fine to commit something that is already committed. That arises when we switch to using
     // newly allocated watchpoints. When it happens, it's not efficient - but we think that's OK
     // because most AccessCases have no extra watchpoints anyway.
-    RELEASE_ASSERT(m_state == Primordial || m_state == Committed);
 
     Vector<WatchpointSet*, 2> result;
     Structure* structure = this->structure();
