@@ -371,12 +371,15 @@ void LocalFrameViewLayoutContext::scheduleLayout()
     // FIXME: We should assert the page is not in the back/forward cache, but that is causing
     // too many false assertions. See <rdar://problem/7218118>.
     ASSERT(frame().view() == &view());
+    if (!frame().document())
+        return;
 
     if (subtreeLayoutRoot())
         convertSubtreeLayoutToFullLayout();
 
     if (isLayoutPending())
         return;
+
     if (!isLayoutSchedulingEnabled() || !frame().document()->shouldScheduleLayout())
         return;
     if (!needsLayout())
