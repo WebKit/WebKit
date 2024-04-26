@@ -886,7 +886,7 @@ enum class WebCore::ShareDataOriginator : bool
 
 header: <WebCore/ElementTargetingTypes.h>
 [CustomHeader] struct WebCore::TargetedElementRequest {
-    WebCore::FloatPoint pointInRootView
+    std::variant<WebCore::FloatPoint, String> data
     bool canIncludeNearbyElements
 };
 
@@ -896,12 +896,13 @@ header: <WebCore/ElementTargetingTypes.h>
     WebCore::ScriptExecutionContextIdentifier documentIdentifier
     WebCore::RectEdges<bool> offsetEdges
     String renderedText
+    String searchableText
     Vector<Vector<String>> selectors
     WebCore::FloatRect boundsInRootView
     WebCore::FloatRect boundsInClientCoordinates
     WebCore::PositionType positionType
     Vector<WebCore::FrameIdentifier> childFrameIdentifiers
-    bool isUnderPoint
+    bool isNearbyTarget
     bool isPseudoElement
     bool isInShadowTree
 };

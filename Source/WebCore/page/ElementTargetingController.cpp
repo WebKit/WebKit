@@ -40,6 +40,7 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "HTMLBodyElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -53,7 +54,9 @@
 #include "RenderDescendantIterator.h"
 #include "RenderView.h"
 #include "ShadowRoot.h"
+#include "SimpleRange.h"
 #include "TextExtraction.h"
+#include "TextIterator.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibilityAdjustment.h"
 
@@ -62,6 +65,8 @@ namespace WebCore {
 static constexpr auto maximumNumberOfClasses = 5;
 static constexpr auto marginForTrackingAdjustmentRects = 5;
 static constexpr auto minimumDistanceToConsiderEdgesEquidistant = 2;
+static constexpr auto minimumLengthForSearchableText = 25;
+static constexpr auto maximumLengthForSearchableText = 100;
 static constexpr auto selectorBasedVisibilityAdjustmentTimeLimit = 30_s;
 static constexpr auto adjustmentClientRectCleanUpDelay = 15_s;
 static constexpr auto minimumAreaRatioForElementToCoverViewport = 0.95;
@@ -126,7 +131,7 @@ static inline bool elementAndAncestorsAreOnlyRenderedChildren(const Element& ele
     return true;
 }
 
-static inline bool querySelectorMatchesOneElement(Element& element, const String& selector)
+static inline bool querySelectorMatchesOneElement(const Element& element, const String& selector)
 {
     Ref container = [&]() -> ContainerNode& {
         if (RefPtr shadowRoot = element.containingShadowRoot())
@@ -146,11 +151,11 @@ struct ChildElementPosition {
     bool lastOfType { false };
 };
 
-static inline ChildElementPosition findChild(Element& element, Element& parent)
+static inline ChildElementPosition findChild(const Element& element, const Element& parent)
 {
     auto elementTagName = element.tagName();
-    RefPtr<Element> firstOfType;
-    RefPtr<Element> lastOfType;
+    RefPtr<const Element> firstOfType;
+    RefPtr<const Element> lastOfType;
     size_t index = notFound;
     size_t currentChildIndex = 0;
     for (auto& child : childrenOfType<Element>(parent)) {
@@ -167,7 +172,7 @@ static inline ChildElementPosition findChild(Element& element, Element& parent)
     return { index, &element == firstOfType, &element == lastOfType };
 }
 
-static inline String computeIDSelector(Element& element)
+static inline String computeIDSelector(const Element& element)
 {
     if (element.hasID()) {
         auto elementID = element.getIdAttribute();
@@ -177,7 +182,7 @@ static inline String computeIDSelector(Element& element)
     return emptyString();
 }
 
-static inline String computeTagAndAttributeSelector(Element& element, const String& suffix = emptyString())
+static inline String computeTagAndAttributeSelector(const Element& element, const String& suffix = emptyString())
 {
     if (!element.hasAttributes())
         return emptyString();
@@ -496,7 +501,7 @@ static inline RectEdges<bool> computeOffsetEdges(const RenderStyle& style)
     };
 }
 
-static inline Vector<FrameIdentifier> collectChildFrameIdentifiers(Element& element)
+static inline Vector<FrameIdentifier> collectChildFrameIdentifiers(const Element& element)
 {
     Vector<FrameIdentifier> identifiers;
     for (auto& owner : descendantsOfType<HTMLFrameOwnerElement>(element)) {
@@ -513,8 +518,55 @@ static FloatRect computeClientRect(RenderObject& renderer)
     return rect;
 }
 
-enum class IsUnderPoint : bool { No, Yes };
-static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint isUnderPoint, ElementSelectorCache& cache)
+static Vector<Ref<Element>> collectDocumentElementsFromChildFrames(const ContainerNode& container)
+{
+    Vector<Ref<Element>> documentElements;
+    auto appendElement = [&](const HTMLFrameOwnerElement& owner) {
+        if (RefPtr contentDocument = owner.contentDocument()) {
+            if (RefPtr documentElement = contentDocument->documentElement())
+                documentElements.append(documentElement.releaseNonNull());
+        }
+    };
+
+    if (RefPtr containerAsFrameOwner = dynamicDowncast<HTMLFrameOwnerElement>(container))
+        appendElement(*containerAsFrameOwner);
+
+    for (auto& descendant : descendantsOfType<HTMLFrameOwnerElement>(container))
+        appendElement(descendant);
+
+    return documentElements;
+}
+
+static String searchableTextForTarget(Element& target)
+{
+    auto longestText = emptyString();
+    size_t longestLength = 0;
+    TextIterator iterator { makeRangeSelectingNodeContents(target), { TextIteratorBehavior::EmitsTextsWithoutTranscoding } };
+    for (; !iterator.atEnd(); iterator.advance()) {
+        auto text = iterator.copyableText().text().toString().trim(isASCIIWhitespace);
+        if (text.length() <= longestLength)
+            continue;
+
+        longestLength = text.length();
+        longestText = WTFMove(text);
+    }
+
+    auto documentElements = collectDocumentElementsFromChildFrames(target);
+    for (auto& documentElement : documentElements) {
+        if (auto text = searchableTextForTarget(documentElement); text.length() > longestLength) {
+            longestLength = text.length();
+            longestText = WTFMove(text);
+        }
+    }
+
+    if (longestLength >= minimumLengthForSearchableText)
+        return longestText.left(maximumLengthForSearchableText);
+
+    return emptyString();
+}
+
+enum class IsNearbyTarget : bool { No, Yes };
+static TargetedElementInfo targetedElementInfo(Element& element, IsNearbyTarget isNearbyTarget, ElementSelectorCache& cache)
 {
     CheckedPtr renderer = element.renderer();
     return {
@@ -522,12 +574,13 @@ static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint is
         .documentIdentifier = element.document().identifier(),
         .offsetEdges = computeOffsetEdges(renderer->style()),
         .renderedText = TextExtraction::extractRenderedText(element),
+        .searchableText = searchableTextForTarget(element),
         .selectors = selectorsForTarget(element, cache),
         .boundsInRootView = element.boundingBoxInRootViewCoordinates(),
         .boundsInClientCoordinates = computeClientRect(*renderer),
         .positionType = renderer->style().position(),
         .childFrameIdentifiers = collectChildFrameIdentifiers(element),
-        .isUnderPoint = isUnderPoint == IsUnderPoint::Yes,
+        .isNearbyTarget = isNearbyTarget == IsNearbyTarget::Yes,
         .isPseudoElement = element.isPseudoElement(),
         .isInShadowTree = element.isInShadowTree(),
     };
@@ -625,6 +678,18 @@ static inline std::optional<IntRect> inflatedClientRectForAdjustmentRegionTracki
 
 Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElementRequest&& request)
 {
+    auto [nodes, innerElement] = std::visit([this](auto& data) {
+        return findNodes(data);
+    }, request.data);
+
+    if (nodes.isEmpty())
+        return { };
+
+    return extractTargets(WTFMove(nodes), WTFMove(innerElement), request.canIncludeNearbyElements);
+}
+
+std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNodes(FloatPoint pointInRootView)
+{
     RefPtr page = m_page.get();
     if (!page)
         return { };
@@ -641,20 +706,6 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     if (!view)
         return { };
 
-    RefPtr bodyElement = document->body();
-    if (!bodyElement)
-        return { };
-
-    RefPtr documentElement = document->documentElement();
-    if (!documentElement)
-        return { };
-
-    FloatSize viewportSize = view->baseLayoutViewportSize();
-    auto viewportArea = viewportSize.area();
-    if (!viewportArea)
-        return { };
-
-    auto nearbyTargetAreaRatio = maximumAreaRatioForNearbyTargets(viewportArea);
     static constexpr OptionSet hitTestOptions {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::DisallowUserAgentShadowContent,
@@ -663,22 +714,135 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
         HitTestRequest::Type::IncludeAllElementsUnderPoint
     };
 
-    HitTestResult result { LayoutPoint { view->rootViewToContents(request.pointInRootView) } };
+    HitTestResult result { LayoutPoint { view->rootViewToContents(pointInRootView) } };
     document->hitTest(hitTestOptions, result);
 
-    RefPtr hitTestedElement = result.innerNonSharedElement();
+    return { copyToVector(result.listBasedTestResult()), result.innerNonSharedElement() };
+}
+
+static Element* searchForElementContainingText(ContainerNode& container, const String& searchText)
+{
+    auto remainingRange = makeRangeSelectingNodeContents(container);
+    while (is_lt(treeOrder(remainingRange.start, remainingRange.end))) {
+        auto foundRange = findPlainText(remainingRange, searchText, {
+            FindOption::DoNotRevealSelection,
+            FindOption::DoNotSetSelection,
+        });
+
+        if (foundRange.collapsed())
+            break;
+
+        RefPtr target = commonInclusiveAncestor<ComposedTree>(foundRange);
+        if (!target) {
+            remainingRange.start = foundRange.end;
+            continue;
+        }
+
+        CheckedPtr renderer = target->renderer();
+        if (!renderer || renderer->style().isInVisibilityAdjustmentSubtree()) {
+            remainingRange.start = foundRange.end;
+            continue;
+        }
+
+        return ancestorsOfType<Element>(*target).first();
+    }
+
+    auto documentElements = collectDocumentElementsFromChildFrames(container);
+    for (auto& documentElement : documentElements) {
+        if (RefPtr target = searchForElementContainingText(documentElement, searchText))
+            return target.get();
+    }
+
+    return nullptr;
+}
+
+std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNodes(const String& searchText)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return { };
+
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!mainFrame)
+        return { };
+
+    RefPtr document = mainFrame->document();
+    if (!document)
+        return { };
+
+    RefPtr documentElement = document->documentElement();
+    if (!documentElement)
+        return { };
+
+    RefPtr foundElement = searchForElementContainingText(*documentElement, searchText);
+    if (!foundElement)
+        return { };
+
+    while (!foundElement->document().isTopDocument())
+        foundElement = foundElement->document().ownerElement();
+
+    if (!foundElement) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    Vector<Ref<Node>> potentialCandidates;
+    potentialCandidates.append(*foundElement);
+    for (auto& ancestor : ancestorsOfType<Element>(*foundElement))
+        potentialCandidates.append(ancestor);
+
+    return { WTFMove(potentialCandidates), WTFMove(foundElement) };
+}
+
+Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Ref<Node>>&& nodes, RefPtr<Element>&& innerElement, bool canIncludeNearbyElements)
+{
+    RefPtr page = m_page.get();
+    if (!page) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!mainFrame) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    RefPtr document = mainFrame->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    RefPtr view = mainFrame->view();
+    if (!view) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    RefPtr bodyElement = document->body();
+    if (!bodyElement) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    FloatSize viewportSize = view->baseLayoutViewportSize();
+    auto viewportArea = viewportSize.area();
+    if (!viewportArea)
+        return { };
+
     RefPtr onlyMainElement = findOnlyMainElement(*bodyElement);
     auto candidates = [&] {
-        auto& results = result.listBasedTestResult();
         Vector<Ref<Element>> elements;
-        elements.reserveInitialCapacity(results.size());
-        for (auto& node : results) {
-            if (RefPtr element = dynamicDowncast<Element>(node); element && isTargetCandidate(*element, onlyMainElement.get(), hitTestedElement.get()))
+        elements.reserveInitialCapacity(nodes.size());
+        for (auto& node : nodes) {
+            if (RefPtr element = dynamicDowncast<Element>(node); element && isTargetCandidate(*element, onlyMainElement.get(), innerElement.get()))
                 elements.append(element.releaseNonNull());
         }
         return elements;
     }();
 
+    auto nearbyTargetAreaRatio = maximumAreaRatioForNearbyTargets(viewportArea);
     auto addOutOfFlowTargetClientRectIfNeeded = [&](Element& element) {
         if (auto rect = inflatedClientRectForAdjustmentRegionTracking(element, viewportArea))
             m_recentAdjustmentClientRects.set(element.identifier(), *rect);
@@ -727,7 +891,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
         if (!shouldAddTarget)
             continue;
 
-        bool checkForNearbyTargets = request.canIncludeNearbyElements
+        bool checkForNearbyTargets = canIncludeNearbyElements
             && targetRenderer->isOutOfFlowPositioned()
             && targetAreaRatio < nearbyTargetAreaRatio;
 
@@ -771,7 +935,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     Vector<TargetedElementInfo> results;
     results.reserveInitialCapacity(targets.size());
     for (auto iterator = targets.rbegin(); iterator != targets.rend(); ++iterator) {
-        results.append(targetedElementInfo(*iterator, IsUnderPoint::Yes, cache));
+        results.append(targetedElementInfo(*iterator, IsNearbyTarget::No, cache));
         addOutOfFlowTargetClientRectIfNeeded(*iterator);
     }
 
@@ -795,10 +959,10 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
             if (targets.contains(*element))
                 continue;
 
-            if (result.listBasedTestResult().contains(*element))
+            if (nodes.containsIf([&](auto& node) { return node.ptr() == element; }))
                 continue;
 
-            if (!isTargetCandidate(*element, onlyMainElement.get(), hitTestedElement.get()))
+            if (!isTargetCandidate(*element, onlyMainElement.get(), innerElement.get()))
                 continue;
 
             auto boundingBox = element->boundingBoxInRootViewCoordinates();
@@ -814,7 +978,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     }();
 
     for (auto& element : nearbyTargets) {
-        results.append(targetedElementInfo(element, IsUnderPoint::No, cache));
+        results.append(targetedElementInfo(element, IsNearbyTarget::Yes, cache));
         addOutOfFlowTargetClientRectIfNeeded(element);
     }
 

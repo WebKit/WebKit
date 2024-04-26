@@ -109,6 +109,11 @@
     return _info->renderedText();
 }
 
+- (NSString *)searchableText
+{
+    return _info->searchableText();
+}
+
 - (_WKRectEdge)offsetEdges
 {
     _WKRectEdge edges = _WKRectEdgeNone;
@@ -138,9 +143,9 @@
     return _info->isSameElement(*other->_info);
 }
 
-- (BOOL)isUnderPoint
+- (BOOL)isNearbyTarget
 {
-    return _info->isUnderPoint();
+    return _info->isNearbyTarget();
 }
 
 - (BOOL)isPseudoElement

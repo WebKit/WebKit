@@ -38,6 +38,7 @@
 @interface WKWebView (ElementTargeting)
 
 - (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoAt:(CGPoint)point;
+- (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoWithText:(NSString *)searchText;
 - (BOOL)adjustVisibilityForTargets:(NSArray<_WKTargetedElementInfo *> *)targets;
 - (BOOL)resetVisibilityAdjustmentsForTargets:(NSArray<_WKTargetedElementInfo *> *)elements;
 - (void)expectSingleTargetedSelector:(NSString *)expectedSelector at:(CGPoint)point;
@@ -48,18 +49,28 @@
 
 @implementation WKWebView (ElementTargeting)
 
-- (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoAt:(CGPoint)point
+- (NSArray<_WKTargetedElementInfo *> *)_targetedElementInfo:(_WKTargetedElementRequest *)request
 {
     __block RetainPtr<NSArray<_WKTargetedElementInfo *>> result;
-    auto request = adoptNS([_WKTargetedElementRequest new]);
-    [request setPoint:point];
     __block bool done = false;
-    [self _requestTargetedElementInfo:request.get() completionHandler:^(NSArray<_WKTargetedElementInfo *> *elements) {
+    [self _requestTargetedElementInfo:request completionHandler:^(NSArray<_WKTargetedElementInfo *> *elements) {
         result = elements;
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     return result.autorelease();
+}
+
+- (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoAt:(CGPoint)point
+{
+    auto request = adoptNS([[_WKTargetedElementRequest alloc] initWithPoint:point]);
+    return [self _targetedElementInfo:request.get()];
+}
+
+- (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoWithText:(NSString *)searchText
+{
+    auto request = adoptNS([[_WKTargetedElementRequest alloc] initWithSearchText:searchText]);
+    return [self _targetedElementInfo:request.get()];
 }
 
 - (BOOL)adjustVisibilityForTargets:(NSArray<_WKTargetedElementInfo *> *)targets
@@ -192,11 +203,11 @@ TEST(ElementTargeting, NearbyOutOfFlowElements)
 
     RetainPtr elements = [webView targetedElementInfoAt:CGPointMake(100, 100)];
     EXPECT_EQ([elements count], 5U);
-    EXPECT_TRUE([elements objectAtIndex:0].underPoint);
-    EXPECT_TRUE([elements objectAtIndex:1].underPoint);
-    EXPECT_FALSE([elements objectAtIndex:2].underPoint);
-    EXPECT_FALSE([elements objectAtIndex:3].underPoint);
-    EXPECT_FALSE([elements objectAtIndex:4].underPoint);
+    EXPECT_FALSE([elements objectAtIndex:0].nearbyTarget);
+    EXPECT_FALSE([elements objectAtIndex:1].nearbyTarget);
+    EXPECT_TRUE([elements objectAtIndex:2].nearbyTarget);
+    EXPECT_TRUE([elements objectAtIndex:3].nearbyTarget);
+    EXPECT_TRUE([elements objectAtIndex:4].nearbyTarget);
     // The two elements that are directly hit-tested should take precedence over nearby elements.
     EXPECT_WK_STREQ("DIV.fixed.container", [elements firstObject].selectors.firstObject);
     EXPECT_WK_STREQ("DIV.box", [elements objectAtIndex:1].selectors.firstObject);
@@ -432,6 +443,20 @@ TEST(ElementTargeting, ReplacedRendererSizeIgnoresPageScaleAndZoom)
     [webView waitForNextPresentationUpdate];
     RetainPtr targetAfterScaling = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];
     EXPECT_WK_STREQ([targetBeforeScaling renderedText], [targetAfterScaling renderedText]);
+}
+
+TEST(ElementTargeting, RequestTargetedElementsBySearchableText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-7"];
+
+    RetainPtr targetFromHitTest = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];
+    NSString *searchableText = [targetFromHitTest searchableText];
+    EXPECT_GT(searchableText.length, 0U);
+    EXPECT_TRUE([@"Image of a sunset over the 4th floor of Infinite Loop 2" containsString:searchableText]);
+
+    RetainPtr targetFromSearchText = [[webView targetedElementInfoWithText:searchableText] firstObject];
+    EXPECT_TRUE([targetFromSearchText isSameElement:targetFromHitTest.get()]);
 }
 
 } // namespace TestWebKitAPI
