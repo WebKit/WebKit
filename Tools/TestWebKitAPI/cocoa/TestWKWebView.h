@@ -32,6 +32,7 @@
 #import "WKBrowserEngineDefinitions.h"
 @class _WKActivatedElementInfo;
 @class _WKTextInputContext;
+@class UITextSuggestion;
 @protocol UITextInputInternal;
 @protocol UITextInputMultiDocument;
 @protocol UITextInputPrivate;
@@ -90,6 +91,7 @@ struct AutocorrectionContext {
 - (void)extendSelectionToStartOfParagraph;
 - (void)moveSelectionToEndOfParagraph;
 - (void)extendSelectionToEndOfParagraph;
+- (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion;
 #endif // PLATFORM(IOS_FAMILY)
 
 @property (nonatomic, readonly) CGImageRef snapshotAfterScreenUpdates;
