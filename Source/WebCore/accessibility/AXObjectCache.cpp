@@ -1419,7 +1419,7 @@ void AXObjectCache::deferNodeAddedOrRemoved(Node* node)
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 void AXObjectCache::deferAddUnconnectedNode(AccessibilityObject& axObject)
 {
-    m_deferredUnconnectedNodeList.add(axObject);
+    m_deferredUnconnectedObjects.add(axObject);
 
     if (!m_performCacheUpdateTimer.isActive())
         m_performCacheUpdateTimer.startOneShot(0_s);
@@ -4152,11 +4152,12 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
     handleAllDeferredChildrenChanged();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    AXLOGDeferredCollection("UnconnectedNodeList"_s, m_deferredUnconnectedNodeList);
+    AXLOGDeferredCollection("UnconnectedObjects"_s, m_deferredUnconnectedObjects);
     if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
-        m_deferredUnconnectedNodeList.forEach([&tree] (auto& object) {
+        m_deferredUnconnectedObjects.forEach([&tree] (auto& object) {
             tree->addUnconnectedNode(object);
         });
+        m_deferredUnconnectedObjects.clear();
     }
 #endif
 

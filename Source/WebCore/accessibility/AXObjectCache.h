@@ -815,7 +815,7 @@ private:
     WeakHashMap<Element, String, WeakPtrImplWithEventTargetData> m_deferredTextFormControlValue;
     Vector<AttributeChange> m_deferredAttributeChange;
     std::optional<std::pair<WeakPtr<Node, WeakPtrImplWithEventTargetData>, WeakPtr<Node, WeakPtrImplWithEventTargetData>>> m_deferredFocusedNodeChange;
-    WeakHashSet<AccessibilityObject> m_deferredUnconnectedNodeList;
+    WeakHashSet<AccessibilityObject> m_deferredUnconnectedObjects;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     Timer m_buildIsolatedTreeTimer;
