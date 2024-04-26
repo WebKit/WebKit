@@ -188,20 +188,17 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         featuresSize = featuresWithKerning.size();
     }
 
-    // FIXME: Set script on buffer for vertical fonts.
-
     HbUniquePtr<hb_buffer_t> buffer(hb_buffer_create());
     for (unsigned i = 0; i < runCount; ++i) {
         auto& run = runList[m_run.rtl() ? runCount - i - 1 : i];
 
-        if (fontPlatformData.orientation() != FontOrientation::Vertical)
-            hb_buffer_set_script(buffer.get(), hb_icu_script_to_script(run.script));
+        hb_buffer_set_script(buffer.get(), hb_icu_script_to_script(run.script));
+
         if (!m_mayUseNaturalWritingDirection || m_run.directionalOverride())
             hb_buffer_set_direction(buffer.get(), m_run.rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
-        else {
-            // Leaving direction to HarfBuzz to guess is *really* bad, but will do for now.
-            hb_buffer_guess_segment_properties(buffer.get());
-        }
+        else
+            hb_buffer_set_direction(buffer.get(), hb_script_get_horizontal_direction(hb_icu_script_to_script(run.script)));
+
         hb_buffer_add_utf16(buffer.get(), reinterpret_cast<const uint16_t*>(characters.data()), characters.size(), run.startIndex, run.endIndex - run.startIndex);
 
         hb_shape(hbFont, buffer.get(), featuresData, featuresSize);

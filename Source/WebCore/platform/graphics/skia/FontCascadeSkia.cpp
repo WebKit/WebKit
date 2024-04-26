@@ -40,18 +40,37 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     if (!font.platformData().size())
         return;
 
-    const auto& skFont = font.platformData().skFont();
+    const auto& fontPlatformData = font.platformData();
+    const auto& skFont = fontPlatformData.skFont();
     SkTextBlobBuilder builder;
-    float glyphPosition = 0;
-    auto& buffer = builder.allocRunPosH(skFont, glyphCount, 0);
+    bool isVertical = fontPlatformData.orientation() == FontOrientation::Vertical;
+    const auto& buffer = isVertical ? builder.allocRunPos(skFont, glyphCount) : builder.allocRunPosH(skFont, glyphCount, 0);
+
+    FloatSize glyphPosition;
     for (unsigned i = 0; i < glyphCount; ++i) {
         buffer.glyphs[i] = glyphs[i];
-        buffer.pos[i] = glyphPosition;
-        glyphPosition += advances[i].width();
+
+        if (isVertical) {
+            glyphPosition += advances[i];
+            buffer.pos[2 * i] = glyphPosition.height();
+            buffer.pos[2 * i + 1] = glyphPosition.width();
+        } else {
+            buffer.pos[i] = glyphPosition.width();
+            glyphPosition += advances[i];
+        }
     }
+
     auto blob = builder.make();
     auto* canvas = graphicsContext.platformContext();
     auto* skiaGraphicsContext = static_cast<GraphicsContextSkia*>(&graphicsContext);
+
+    if (isVertical) {
+        canvas->save();
+
+        SkMatrix matrix;
+        matrix.setSinCos(-1, 0, position.x(), position.y());
+        canvas->concat(matrix);
+    }
 
     if (graphicsContext.textDrawingMode().contains(TextDrawingMode::Fill)) {
         SkPaint paint = skiaGraphicsContext->createFillPaint();
@@ -67,6 +86,9 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
         skiaGraphicsContext->setupStrokeSource(paint);
         canvas->drawTextBlob(blob, SkFloatToScalar(position.x()), SkFloatToScalar(position.y()), paint);
     }
+
+    if (isVertical)
+        canvas->restore();
 }
 
 bool FontCascade::canReturnFallbackFontsForComplexText()
