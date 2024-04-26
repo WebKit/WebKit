@@ -4491,11 +4491,11 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             CCallHelpers::Address(m_stubInfo->m_baseGPR, JSCell::structureIDOffset()),
             m_scratchGPR);
 
-        Vector<int64_t> caseValues(cases.size());
+        Vector<int64_t, 16> caseValues(cases.size());
         for (unsigned i = 0; i < cases.size(); ++i)
             caseValues[i] = bitwise_cast<int32_t>(cases[i]->structure()->id());
 
-        BinarySwitch binarySwitch(m_scratchGPR, caseValues, BinarySwitch::Int32);
+        BinarySwitch binarySwitch(m_scratchGPR, caseValues.span(), BinarySwitch::Int32);
         while (binarySwitch.advance(jit))
             generate(*cases[binarySwitch.caseIndex()]);
         m_failAndRepatch.append(binarySwitch.fallThrough());

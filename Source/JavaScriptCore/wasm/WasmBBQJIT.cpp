@@ -3680,9 +3680,9 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addSwitch(Value condition, const Vector
 
         fallThrough.link(&m_jit);
     } else {
-        Vector<int64_t> cases(targets.size(), [](size_t i) { return i; });
+        Vector<int64_t, 16> cases(targets.size(), [](size_t i) { return i; });
 
-        BinarySwitch binarySwitch(wasmScratchGPR, cases, BinarySwitch::Int32);
+        BinarySwitch binarySwitch(wasmScratchGPR, cases.span(), BinarySwitch::Int32);
         while (binarySwitch.advance(m_jit)) {
             unsigned value = binarySwitch.caseValue();
             unsigned index = binarySwitch.caseIndex();

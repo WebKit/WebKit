@@ -13437,11 +13437,11 @@ void SpeculativeJIT::emitBinarySwitchStringRecurse(
     }
     characterCases.append(currentCase);
     
-    Vector<int64_t> characterCaseValues;
+    Vector<int64_t, 16> characterCaseValues;
     for (unsigned i = 0; i < characterCases.size(); ++i)
         characterCaseValues.append(characterCases[i].character);
     
-    BinarySwitch binarySwitch(temp, characterCaseValues, BinarySwitch::Int32);
+    BinarySwitch binarySwitch(temp, characterCaseValues.span(), BinarySwitch::Int32);
     while (binarySwitch.advance(*this)) {
         const CharacterCase& myCase = characterCases[binarySwitch.caseIndex()];
         emitBinarySwitchStringRecurse(
@@ -13535,13 +13535,13 @@ void SpeculativeJIT::emitSwitchString(Node* node, SwitchData* data)
         speculateString(node->child1(), op1GPR);
         speculateStringIdentAndLoadStorage(node->child1(), op1GPR, tempGPR);
         
-        Vector<int64_t> identifierCaseValues;
+        Vector<int64_t, 16> identifierCaseValues;
         for (unsigned i = 0; i < data->cases.size(); ++i) {
             identifierCaseValues.append(
                 static_cast<int64_t>(bitwise_cast<intptr_t>(data->cases[i].value.stringImpl())));
         }
         
-        BinarySwitch binarySwitch(tempGPR, identifierCaseValues, BinarySwitch::IntPtr);
+        BinarySwitch binarySwitch(tempGPR, identifierCaseValues.span(), BinarySwitch::IntPtr);
         while (binarySwitch.advance(*this))
             jump(data->cases[binarySwitch.caseIndex()].target.block, ForceJump);
         addBranch(binarySwitch.fallThrough(), data->fallThrough.block);
@@ -15030,11 +15030,11 @@ void SpeculativeJIT::compileMatchStructure(Node* node)
     load32(Address(baseGPR, JSCell::structureIDOffset()), tempGPR);
     
     auto& variants = node->matchStructureData().variants;
-    Vector<int64_t> cases;
+    Vector<int64_t, 16> cases;
     for (MatchStructureVariant& variant : variants)
         cases.append(bitwise_cast<int32_t>(variant.structure->id()));
     
-    BinarySwitch binarySwitch(tempGPR, cases, BinarySwitch::Int32);
+    BinarySwitch binarySwitch(tempGPR, cases.span(), BinarySwitch::Int32);
     JumpList done;
     while (binarySwitch.advance(*this)) {
         boxBooleanPayload(variants[binarySwitch.caseIndex()].result, tempGPR);

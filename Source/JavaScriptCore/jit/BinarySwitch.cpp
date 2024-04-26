@@ -38,19 +38,18 @@ static constexpr bool verbose = false;
 
 static unsigned globalCounter; // We use a different seed every time we are invoked.
 
-BinarySwitch::BinarySwitch(GPRReg value, const Vector<int64_t>& cases, Type type)
-    : m_type(type)
+BinarySwitch::BinarySwitch(GPRReg value, std::span<const int64_t> cases, Type type)
+    : m_weakRandom(globalCounter++)
+    , m_type(type)
     , m_value(value)
-    , m_weakRandom(globalCounter++)
-    , m_index(0)
-    , m_caseIndex(UINT_MAX)
 {
-    if (cases.isEmpty())
+    if (cases.empty())
         return;
 
     if (BinarySwitchInternal::verbose)
         dataLog("Original cases: ", listDump(cases), "\n");
     
+    m_cases.reserveInitialCapacity(cases.size());
     for (unsigned i = 0; i < cases.size(); ++i)
         m_cases.append(Case(cases[i], i));
     
@@ -67,9 +66,7 @@ BinarySwitch::BinarySwitch(GPRReg value, const Vector<int64_t>& cases, Type type
     build(0, false, m_cases.size());
 }
 
-BinarySwitch::~BinarySwitch()
-{
-}
+BinarySwitch::~BinarySwitch() = default;
 
 bool BinarySwitch::advance(MacroAssembler& jit)
 {
@@ -213,7 +210,8 @@ void BinarySwitch::build(unsigned start, bool hardStart, unsigned end)
         if (BinarySwitchInternal::verbose)
             dataLog("allConsecutive = ", allConsecutive, "\n");
         
-        Vector<unsigned, 3> localCaseIndices;
+        Vector<unsigned, 8> localCaseIndices;
+        localCaseIndices.reserveInitialCapacity(size);
         for (unsigned i = 0; i < size; ++i)
             localCaseIndices.append(start + i);
         
