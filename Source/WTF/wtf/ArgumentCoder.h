@@ -34,56 +34,7 @@ namespace IPC {
 class Decoder;
 class Encoder;
 
-#if HAVE(ONLY_MODERN_SERIALIZATION)
 template<typename T, typename = void> struct ArgumentCoder;
-#else
-
-template<typename T, typename I = T, typename = void> struct HasLegacyDecoder : std::false_type { };
-template<typename T, typename I> struct HasLegacyDecoder<T, I, std::void_t<decltype(I::decode(std::declval<Decoder&>(), std::declval<T&>()))>> : std::true_type { };
-template<typename T, typename I = T, typename = void> struct HasModernDecoder : std::false_type { };
-template<typename T, typename I> struct HasModernDecoder<T, I, std::void_t<decltype(I::decode(std::declval<Decoder&>()))>> : std::true_type { };
-
-template<typename T, typename = void> struct ArgumentCoder {
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const T& t)
-    {
-        t.encode(encoder);
-    }
-
-    template<typename Encoder>
-    static void encode(Encoder& encoder, T&& t)
-    {
-        WTFMove(t).encode(encoder);
-    }
-
-    template<typename Decoder>
-    static std::optional<T> decode(Decoder& decoder)
-    {
-        if constexpr(HasModernDecoder<T>::value)
-            return T::decode(decoder);
-        else {
-            T t;
-            if (T::decode(decoder, t))
-                return t;
-            return std::nullopt;
-        }
-    }
-
-    template<typename Decoder>
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, T& t)
-    {
-        if constexpr(HasLegacyDecoder<T>::value)
-            return T::decode(decoder, t);
-        else {
-            std::optional<T> optional = T::decode(decoder);
-            if (!optional)
-                return false;
-            t = WTFMove(*optional);
-            return true;
-        }
-    }
-};
-#endif // HAVE(ONLY_MODERN_SERIALIZATION)
 
 template<>
 struct ArgumentCoder<bool> {

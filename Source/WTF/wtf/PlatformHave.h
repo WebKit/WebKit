@@ -1792,11 +1792,6 @@
 #define HAVE_AUDIO_CONVERTER_SERVICE 1
 #endif
 
-// FIXME: Other platforms should finish migration to *.serialization.in.
-#if PLATFORM(WIN) || PLATFORM(COCOA)
-#define HAVE_ONLY_MODERN_SERIALIZATION 1
-#endif
-
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
 #define HAVE_MOBILE_KEY_BAG 1
 #endif
