@@ -262,7 +262,7 @@ void RemoteDeviceProxy::createComputePipelineAsync(const WebCore::WebGPU::Comput
     }
 
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTFMove(callback), protectedThis = Ref { *this }, label = WTFMove(convertedDescriptor->label)](auto result, String&& error) mutable {
+    auto function = [identifier, callback = WTFMove(callback), protectedThis = Ref { *this }, label = WTFMove(convertedDescriptor->label)](auto result, String&& error) mutable {
         if (!result) {
             callback(nullptr, WTFMove(error));
             return;
@@ -271,8 +271,15 @@ void RemoteDeviceProxy::createComputePipelineAsync(const WebCore::WebGPU::Comput
         auto computePipelineResult = RemoteComputePipelineProxy::create(protectedThis, protectedThis->m_convertToBackingContext, identifier);
         computePipelineResult->setLabel(WTFMove(label));
         callback(WTFMove(computePipelineResult), ""_s);
-    });
-    UNUSED_PARAM(sendResult);
+    };
+    if (RunLoop::isMain()) {
+        auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineAsync(*convertedDescriptor, identifier), WTFMove(function));
+        UNUSED_PARAM(sendResult);
+        return;
+    }
+    auto sendResult = sendSync(Messages::RemoteDevice::CreateComputePipelineAsyncSync(*convertedDescriptor, identifier));
+    auto [result, error] = sendResult.takeReply();
+    function(result, WTFMove(error));
 }
 
 void RemoteDeviceProxy::createRenderPipelineAsync(const WebCore::WebGPU::RenderPipelineDescriptor& descriptor, CompletionHandler<void(RefPtr<WebCore::WebGPU::RenderPipeline>&&, String&&)>&& callback)
@@ -282,7 +289,7 @@ void RemoteDeviceProxy::createRenderPipelineAsync(const WebCore::WebGPU::RenderP
         return callback(nullptr, "GPUDevice.createRenderPipelineAsync() descriptor is invalid"_s);
 
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTFMove(callback), protectedThis = Ref { *this }, label = WTFMove(convertedDescriptor->label)](auto result, String&& error) mutable {
+    auto function = [identifier, callback = WTFMove(callback), protectedThis = Ref { *this }, label = WTFMove(convertedDescriptor->label)](auto result, String&& error) mutable {
         if (!result) {
             callback(nullptr, WTFMove(error));
             return;
@@ -291,8 +298,15 @@ void RemoteDeviceProxy::createRenderPipelineAsync(const WebCore::WebGPU::RenderP
         auto renderPipelineResult = RemoteRenderPipelineProxy::create(protectedThis, protectedThis->m_convertToBackingContext, identifier);
         renderPipelineResult->setLabel(WTFMove(label));
         callback(WTFMove(renderPipelineResult), ""_s);
-    });
-    UNUSED_PARAM(sendResult);
+    };
+    if (RunLoop::isMain()) {
+        auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineAsync(*convertedDescriptor, identifier), WTFMove(function));
+        UNUSED_PARAM(sendResult);
+        return;
+    }
+    auto sendResult = sendSync(Messages::RemoteDevice::CreateRenderPipelineAsyncSync(*convertedDescriptor, identifier));
+    auto [result, error] = sendResult.takeReply();
+    function(result, WTFMove(error));
 }
 
 RefPtr<WebCore::WebGPU::CommandEncoder> RemoteDeviceProxy::createCommandEncoder(const std::optional<WebCore::WebGPU::CommandEncoderDescriptor>& descriptor)
@@ -354,7 +368,7 @@ void RemoteDeviceProxy::pushErrorScope(WebCore::WebGPU::ErrorFilter errorFilter)
 
 void RemoteDeviceProxy::popErrorScope(CompletionHandler<void(bool, std::optional<WebCore::WebGPU::Error>&&)>&& callback)
 {
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::PopErrorScope(), [callback = WTFMove(callback)](bool success, auto error) mutable {
+    auto function = [callback = WTFMove(callback)](bool success, auto error) mutable {
         if (!error) {
             callback(success, std::nullopt);
             return;
@@ -367,8 +381,17 @@ void RemoteDeviceProxy::popErrorScope(CompletionHandler<void(bool, std::optional
         }, [&] (InternalError&& internalError) {
             callback(success, { WebCore::WebGPU::InternalError::create(WTFMove(internalError.message)) });
         });
-    });
-    UNUSED_PARAM(sendResult);
+    };
+
+    if (RunLoop::isMain()) {
+        auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::PopErrorScope(), WTFMove(function));
+        UNUSED_PARAM(sendResult);
+        return;
+    }
+
+    auto sendResult = sendSync(Messages::RemoteDevice::PopErrorScopeSync());
+    auto [success, error] = sendResult.takeReply();
+    function(success, WTFMove(error));
 }
 
 void RemoteDeviceProxy::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebCore::WebGPU::Error>&&)>&& callback)

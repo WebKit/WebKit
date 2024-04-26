@@ -74,26 +74,32 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
     m_pendingMapPromise = promise;
     // FIXME: Should this capture a weak pointer to |this| instead?
     m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset.value_or(0), size, [promise = WTFMove(promise), protectedThis = Ref { *this }, offset, size](bool success) mutable {
-        if (!protectedThis->m_pendingMapPromise) {
-            if (protectedThis->m_destroyed)
-                promise.reject(Exception { ExceptionCode::OperationError, "buffer destroyed during mapAsync"_s });
-            else
+        auto function = [protectedThis = protectedThis.copyRef(), promise = WTFMove(promise), offset, size, success]() mutable {
+            if (!protectedThis->m_pendingMapPromise) {
+                if (protectedThis->m_destroyed)
+                    promise.reject(Exception { ExceptionCode::OperationError, "buffer destroyed during mapAsync"_s });
+                else
+                    promise.resolve(nullptr);
+                return;
+            }
+
+            protectedThis->m_pendingMapPromise = std::nullopt;
+            if (success) {
+                protectedThis->m_mapState = GPUBufferMapState::Mapped;
+                protectedThis->m_mappedRangeOffset = offset.value_or(0);
+                protectedThis->m_mappedRangeSize = size.value_or(protectedThis->m_bufferSize - protectedThis->m_mappedRangeOffset);
                 promise.resolve(nullptr);
-            return;
-        }
+            } else {
+                if (protectedThis->m_mapState == GPUBufferMapState::Pending)
+                    protectedThis->m_mapState = GPUBufferMapState::Unmapped;
 
-        protectedThis->m_pendingMapPromise = std::nullopt;
-        if (success) {
-            protectedThis->m_mapState = GPUBufferMapState::Mapped;
-            protectedThis->m_mappedRangeOffset = offset.value_or(0);
-            protectedThis->m_mappedRangeSize = size.value_or(protectedThis->m_bufferSize - protectedThis->m_mappedRangeOffset);
-            promise.resolve(nullptr);
-        } else {
-            if (protectedThis->m_mapState == GPUBufferMapState::Pending)
-                protectedThis->m_mapState = GPUBufferMapState::Unmapped;
-
-            promise.reject(Exception { ExceptionCode::OperationError, "map async was not successful"_s });
-        }
+                promise.reject(Exception { ExceptionCode::OperationError, "map async was not successful"_s });
+            }
+        };
+        if (RunLoop::isMain())
+            function();
+        else
+            ActiveDOMObject::queueTaskKeepingObjectAlive(*protectedThis->m_device.get(), TaskSource::WebGPU, WTFMove(function));
     });
 }
 

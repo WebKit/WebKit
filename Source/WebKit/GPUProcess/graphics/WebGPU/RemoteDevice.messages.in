@@ -37,11 +37,14 @@ messages -> RemoteDevice NotRefCounted Stream {
     void CreateRenderPipeline(WebKit::WebGPU::RenderPipelineDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void CreateComputePipelineAsync(WebKit::WebGPU::ComputePipelineDescriptor descriptor, WebKit::WebGPUIdentifier identifier) -> (bool success, String error)
     void CreateRenderPipelineAsync(WebKit::WebGPU::RenderPipelineDescriptor descriptor, WebKit::WebGPUIdentifier identifier) -> (bool success, String error)
+    void CreateComputePipelineAsyncSync(WebKit::WebGPU::ComputePipelineDescriptor descriptor, WebKit::WebGPUIdentifier identifier) -> (bool success, String error) Synchronous NotStreamEncodableReply
+    void CreateRenderPipelineAsyncSync(WebKit::WebGPU::RenderPipelineDescriptor descriptor, WebKit::WebGPUIdentifier identifier) -> (bool success, String error) Synchronous NotStreamEncodableReply
     void CreateCommandEncoder(std::optional<WebKit::WebGPU::CommandEncoderDescriptor> descriptor, WebKit::WebGPUIdentifier identifier)
     void CreateRenderBundleEncoder(WebKit::WebGPU::RenderBundleEncoderDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void CreateQuerySet(WebKit::WebGPU::QuerySetDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void PushErrorScope(WebCore::WebGPU::ErrorFilter errorFilter)
     void PopErrorScope() -> (bool success, std::optional<WebKit::WebGPU::Error> error)
+    void PopErrorScopeSync() -> (bool success, std::optional<WebKit::WebGPU::Error> error) Synchronous NotStreamEncodableReply
     void ResolveUncapturedErrorEvent() -> (bool hasUncapturedError, std::optional<WebKit::WebGPU::Error> error)
     void ResolveDeviceLostPromise() -> (WebCore::WebGPU::DeviceLostReason reason)
     void SetLabel(String label)

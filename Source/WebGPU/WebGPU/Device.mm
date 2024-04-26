@@ -439,15 +439,11 @@ bool Device::popErrorScope(CompletionHandler<void(WGPUErrorType, String&&)>&& ca
     }
 
     auto scope = m_errorScopeStack.takeLast();
+    if (scope.error)
+        callback(scope.error->type, WTFMove(scope.error->message));
+    else
+        callback(WGPUErrorType_NoError, { });
 
-    instance().scheduleWork([scope = WTFMove(scope), callback = WTFMove(callback)]() mutable {
-        if (scope.error)
-            callback(scope.error->type, WTFMove(scope.error->message));
-        else
-            callback(WGPUErrorType_NoError, { });
-    });
-
-    // FIXME: Make sure this is the right thing to return.
     return true;
 }
 

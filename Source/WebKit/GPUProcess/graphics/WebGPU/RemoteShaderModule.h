@@ -77,6 +77,7 @@ private:
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void compilationInfo(CompletionHandler<void(Vector<WebGPU::CompilationMessage>&&)>&&);
+    void compilationInfoSync(CompletionHandler<void(Vector<WebGPU::CompilationMessage>&&)>&&);
 
     void setLabel(String&&);
     void destruct();

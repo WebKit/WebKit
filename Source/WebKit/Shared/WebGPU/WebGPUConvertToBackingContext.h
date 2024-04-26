@@ -199,7 +199,7 @@ struct VertexAttribute;
 struct VertexBufferLayout;
 struct VertexState;
 
-class ConvertToBackingContext : public RefCounted<ConvertToBackingContext> {
+class ConvertToBackingContext : public ThreadSafeRefCounted<ConvertToBackingContext> {
 public:
     virtual ~ConvertToBackingContext() = default;
 

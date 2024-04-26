@@ -133,6 +133,8 @@ private:
     void createRenderPipeline(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier);
     void createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool, String&&)>&&);
     void createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool, String&&)>&&);
+    void createComputePipelineAsyncSync(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool, String&&)>&&);
+    void createRenderPipelineAsyncSync(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool, String&&)>&&);
 
     void createCommandEncoder(const std::optional<WebGPU::CommandEncoderDescriptor>&, WebGPUIdentifier);
     void createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDescriptor&, WebGPUIdentifier);
@@ -141,6 +143,7 @@ private:
 
     void pushErrorScope(WebCore::WebGPU::ErrorFilter);
     void popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&);
+    void popErrorScopeSync(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&);
     void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&);
     void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&);
 

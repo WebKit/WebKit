@@ -50,14 +50,20 @@ RemoteShaderModuleProxy::~RemoteShaderModuleProxy()
 
 void RemoteShaderModuleProxy::compilationInfo(CompletionHandler<void(Ref<WebCore::WebGPU::CompilationInfo>&&)>&& callback)
 {
-    auto sendResult = sendWithAsyncReply(Messages::RemoteShaderModule::CompilationInfo(), [callback = WTFMove(callback)](auto messages) mutable {
+    auto function = [callback = WTFMove(callback)](auto messages) mutable {
         auto backingMessages = messages.map([](CompilationMessage compilationMessage) {
             return WebCore::WebGPU::CompilationMessage::create(WTFMove(compilationMessage.message), compilationMessage.type, compilationMessage.lineNum, compilationMessage.linePos, compilationMessage.offset, compilationMessage.length);
         });
         callback(WebCore::WebGPU::CompilationInfo::create(WTFMove(backingMessages)));
-    });
-
-    UNUSED_PARAM(sendResult);
+    };
+    if (RunLoop::isMain()) {
+        auto sendResult = sendWithAsyncReply(Messages::RemoteShaderModule::CompilationInfo(), WTFMove(function));
+        UNUSED_PARAM(sendResult);
+        return;
+    }
+    auto sendResult = sendSync(Messages::RemoteShaderModule::CompilationInfoSync());
+    auto [messages] = sendResult.takeReply();
+    function(WTFMove(messages));
 }
 
 void RemoteShaderModuleProxy::setLabelInternal(const String& label)

@@ -49,14 +49,21 @@ RemoteBufferProxy::~RemoteBufferProxy()
 
 void RemoteBufferProxy::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(bool)>&& callback)
 {
-    auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size), [callback = WTFMove(callback), mapModeFlags, protectedThis = Ref { *this }](auto data) mutable {
+    auto function = [callback = WTFMove(callback), mapModeFlags, protectedThis = Ref { *this }](auto data) mutable {
         if (!data)
             return callback(false);
         protectedThis->m_data = WTFMove(data);
         protectedThis->m_mapModeFlags = mapModeFlags;
         callback(true);
-    });
-    UNUSED_PARAM(sendResult);
+    };
+    if (RunLoop::isMain()) {
+        auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size), WTFMove(function));
+        UNUSED_PARAM(sendResult);
+        return;
+    }
+    auto sendResult = sendSync(Messages::RemoteBuffer::Map(mapModeFlags, offset, size));
+    auto [data] = sendResult.takeReplyOr(std::nullopt);
+    function(WTFMove(data));
 }
 
 static bool offsetOrSizeExceedsBounds(size_t dataSize, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> requestedSize)

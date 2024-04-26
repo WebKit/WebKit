@@ -77,7 +77,7 @@ class Surface;
 class Texture;
 struct TextureDescriptor;
 
-class Device : public RefCounted<Device>, public CanMakeWeakPtr<Device> {
+class Device : public ThreadSafeRefCounted<Device>, public CanMakeWeakPtr<Device> {
 public:
     virtual ~Device() = default;
 

@@ -75,6 +75,11 @@ void RemoteShaderModule::compilationInfo(CompletionHandler<void(Vector<WebGPU::C
     });
 }
 
+void RemoteShaderModule::compilationInfoSync(CompletionHandler<void(Vector<WebGPU::CompilationMessage>&&)>&& callback)
+{
+    return compilationInfo(WTFMove(callback));
+}
+
 void RemoteShaderModule::setLabel(String&& label)
 {
     m_backing->setLabel(WTFMove(label));

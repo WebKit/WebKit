@@ -312,6 +312,15 @@ void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescrip
     });
 }
 
+void RemoteDevice::createComputePipelineAsyncSync(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(bool, String&&)>&& callback)
+{
+    return createComputePipelineAsync(descriptor, identifier, WTFMove(callback));
+}
+void RemoteDevice::createRenderPipelineAsyncSync(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(bool, String&&)>&& callback)
+{
+    return createRenderPipelineAsync(descriptor, identifier, WTFMove(callback));
+}
+
 void RemoteDevice::createCommandEncoder(const std::optional<WebGPU::CommandEncoderDescriptor>& descriptor, WebGPUIdentifier identifier)
 {
     std::optional<WebCore::WebGPU::CommandEncoderDescriptor> convertedDescriptor;
@@ -369,6 +378,11 @@ void RemoteDevice::popErrorScope(CompletionHandler<void(bool, std::optional<WebG
             callback(success, { WebGPU::InternalError { internalError->message() } });
         });
     });
+}
+
+void RemoteDevice::popErrorScopeSync(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&& callback)
+{
+    return popErrorScope(WTFMove(callback));
 }
 
 void RemoteDevice::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&& callback)
