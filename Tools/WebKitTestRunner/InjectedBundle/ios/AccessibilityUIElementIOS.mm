@@ -1110,7 +1110,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
     return [[url absoluteString] createJSStringRef];
 }
 
-bool AccessibilityUIElement::addNotificationListener(JSValueRef functionCallback)
+bool AccessibilityUIElement::addNotificationListener(JSContextRef context, JSValueRef functionCallback)
 {
     if (!functionCallback)
         return false;
@@ -1120,7 +1120,7 @@ bool AccessibilityUIElement::addNotificationListener(JSValueRef functionCallback
     if (m_notificationHandler)
         return false;
 
-    m_notificationHandler = adoptNS([[AccessibilityNotificationHandler alloc] init]);
+    m_notificationHandler = adoptNS([[AccessibilityNotificationHandler alloc] initWithContext:context]);
     [m_notificationHandler setPlatformElement:platformUIElement()];
     [m_notificationHandler setCallback:functionCallback];
     [m_notificationHandler startObserving];

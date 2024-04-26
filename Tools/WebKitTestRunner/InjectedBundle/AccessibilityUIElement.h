@@ -376,7 +376,7 @@ public:
     
     // Notifications
     // Function callback should take one argument, the name of the notification.
-    bool addNotificationListener(JSValueRef functionCallback);
+    bool addNotificationListener(JSContextRef, JSValueRef functionCallback);
     // Make sure you call remove, because you can't rely on objects being deallocated in a timely fashion.
     bool removeNotificationListener();
     

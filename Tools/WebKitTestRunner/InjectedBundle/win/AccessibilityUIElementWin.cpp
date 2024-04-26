@@ -728,7 +728,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
     return nullptr;
 }
 
-bool AccessibilityUIElement::addNotificationListener(JSValueRef functionCallback)
+bool AccessibilityUIElement::addNotificationListener(JSContextRef, JSValueRef functionCallback)
 {
     notImplemented();
     return false;

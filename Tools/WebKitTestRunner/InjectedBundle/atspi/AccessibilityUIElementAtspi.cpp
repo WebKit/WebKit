@@ -1547,7 +1547,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
     return OpaqueJSString::tryCreate(makeString("AXURL: ", stringURL)).leakRef();
 }
 
-bool AccessibilityUIElement::addNotificationListener(JSValueRef functionCallback)
+bool AccessibilityUIElement::addNotificationListener(JSContextRef, JSValueRef functionCallback)
 {
     if (!functionCallback)
         return false;

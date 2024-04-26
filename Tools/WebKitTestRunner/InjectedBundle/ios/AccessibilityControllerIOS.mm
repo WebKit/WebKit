@@ -46,7 +46,7 @@ RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
     return rootElement->focusedElement();
 }
 
-bool AccessibilityController::addNotificationListener(JSValueRef functionCallback)
+bool AccessibilityController::addNotificationListener(JSContextRef context, JSValueRef functionCallback)
 {
     if (!functionCallback)
         return false;
@@ -56,7 +56,7 @@ bool AccessibilityController::addNotificationListener(JSValueRef functionCallbac
     if (m_globalNotificationHandler)
         return false;
 
-    m_globalNotificationHandler = adoptNS([[AccessibilityNotificationHandler alloc] init]);
+    m_globalNotificationHandler = adoptNS([[AccessibilityNotificationHandler alloc] initWithContext:context]);
     [m_globalNotificationHandler setCallback:functionCallback];
     [m_globalNotificationHandler startObserving];
     

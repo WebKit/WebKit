@@ -78,7 +78,7 @@ public:
     void executeOnMainThread(Function<void()>&&);
 #endif
 
-    bool addNotificationListener(JSValueRef functionCallback);
+    bool addNotificationListener(JSContextRef, JSValueRef functionCallback);
     bool removeNotificationListener();
     void injectAccessibilityPreference(JSStringRef domain, JSStringRef key, JSStringRef value);
 
