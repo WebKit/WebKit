@@ -180,6 +180,9 @@ class Tracker(object):
     def set(self, issue, **properties):
         raise NotImplementedError()
 
+    def open(self, issue, why):
+        raise NotImplementedError()
+
     def relate(self, issue, **relations):
         raise NotImplementedError()
 
