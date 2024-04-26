@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderInline {B} at (0,0) size 380x17
+        RenderInline {B} at (0,0) size 380x18
           RenderText {#text} at (0,0) size 380x17
             text run at (0,0) width 380: "(1) Colspanning TD has fixed width equal to table width"
       RenderTable {TABLE} at (0,34) size 340x42 [bgcolor=#FFFFCC] [border: (1px outset #808080)]
@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 221x17
                 text run at (1,1) width 221: "foo bar baz foo bar baz foo bar baz"
       RenderBlock {P} at (0,92) size 784x18
-        RenderInline {B} at (0,0) size 239x17
+        RenderInline {B} at (0,0) size 239x18
           RenderText {#text} at (0,0) size 239x17
             text run at (0,0) width 239: "(2) Colspanning TD has auto width"
       RenderTable {TABLE} at (0,126) size 340x42 [bgcolor=#FFFFCC] [border: (1px outset #808080)]
@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 221x17
                 text run at (1,1) width 221: "foo bar baz foo bar baz foo bar baz"
       RenderBlock {P} at (0,184) size 784x18
-        RenderInline {B} at (0,0) size 255x17
+        RenderInline {B} at (0,0) size 255x18
           RenderText {#text} at (0,0) size 255x17
             text run at (0,0) width 255: "(3) Colspanning TD has width=100px"
       RenderTable {TABLE} at (0,218) size 340x42 [bgcolor=#FFFFCC] [border: (1px outset #808080)]
@@ -55,7 +55,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 221x17
                 text run at (1,1) width 221: "foo bar baz foo bar baz foo bar baz"
       RenderBlock {P} at (0,276) size 784x18
-        RenderInline {B} at (0,0) size 255x17
+        RenderInline {B} at (0,0) size 255x18
           RenderText {#text} at (0,0) size 255x17
             text run at (0,0) width 255: "(4) Colspanning TD has width=200px"
       RenderTable {TABLE} at (0,310) size 340x42 [bgcolor=#FFFFCC] [border: (1px outset #808080)]
@@ -72,7 +72,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 221x17
                 text run at (1,1) width 221: "foo bar baz foo bar baz foo bar baz"
       RenderBlock {P} at (0,368) size 784x18
-        RenderInline {B} at (0,0) size 254x17
+        RenderInline {B} at (0,0) size 254x18
           RenderText {#text} at (0,0) size 254x17
             text run at (0,0) width 254: "(5) Colspanning TD has width=100%"
       RenderTable {TABLE} at (0,402) size 340x42 [bgcolor=#FFFFCC] [border: (1px outset #808080)]

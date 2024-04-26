@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
         RenderTableSection (anonymous) at (0,0) size 42x22
           RenderTableRow (anonymous) at (0,2) size 42x18
             RenderTableCell (anonymous) at (2,2) size 38x18 [r=0 c=0 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 38x17
+              RenderInline {SPAN} at (0,0) size 38x18
                 RenderText {#text} at (0,0) size 38x17
                   text run at (0,0) width 38: "PASS"
-              RenderInline {SPAN} at (37,0) size 0x17
+              RenderInline {SPAN} at (37,0) size 0x18

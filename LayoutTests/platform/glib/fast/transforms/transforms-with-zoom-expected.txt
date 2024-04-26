@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x581
       RenderBlock {P} at (0,0) size 800x22
-        RenderInline {A} at (0,0) size 378x21 [color=#0000EE]
+        RenderInline {A} at (0,0) size 378x22 [color=#0000EE]
           RenderText {#text} at (0,0) size 378x21
             text run at (0,0) width 378: "https://bugs.webkit.org/show_bug.cgi?id=24784"
       RenderBlock {P} at (0,41) size 800x23

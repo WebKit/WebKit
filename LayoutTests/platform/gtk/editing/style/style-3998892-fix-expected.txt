@@ -17,10 +17,10 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x81
           RenderText {#text} at (0,0) size 59x26
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
+          RenderBR {BR} at (58,0) size 1x27
           RenderText {#text} at (0,27) size 113x26
             text run at (0,27) width 113: "Bug fix for "
-          RenderInline {A} at (112,27) size 261x26 [color=#0000EE]
+          RenderInline {A} at (112,27) size 261x27 [color=#0000EE]
             RenderText {#text} at (112,27) size 261x26
               text run at (112,27) width 261: "<rdar://problem/3998892>"
           RenderText {#text} at (0,27) size 698x53
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,111) size 756x54
           RenderText {#text} at (0,0) size 183x26
             text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (182,0) size 1x26
+          RenderBR {BR} at (182,0) size 1x27
           RenderText {#text} at (0,27) size 604x26
             text run at (0,27) width 604: "Should see first line (\"foo\") not bold; second line (\"bar\") bold."
       RenderBlock {DIV} at (0,203) size 784x58
@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 32x26
               text run at (0,0) width 32: "foo"
           RenderBlock {DIV} at (2,29) size 780x27
-            RenderInline {B} at (0,0) size 36x26
+            RenderInline {B} at (0,0) size 36x27
               RenderText {#text} at (0,0) size 36x26
                 text run at (0,0) width 36: "bar"
 selection start: position 3 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

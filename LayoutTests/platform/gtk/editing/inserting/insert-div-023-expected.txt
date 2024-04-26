@@ -33,7 +33,7 @@ layer at (0,0) size 785x678
         RenderText {#text} at (0,0) size 765x53
           text run at (0,0) width 765: "Test inserting paragraphs and managing typing style correctly: \"x\" under \"line "
           text run at (0,27) width 344: "2\" should be bold. Fix for this bug: "
-        RenderInline {A} at (343,27) size 261x26 [color=#0000EE]
+        RenderInline {A} at (343,27) size 261x27 [color=#0000EE]
           RenderText {#text} at (343,27) size 261x26
             text run at (343,27) width 261: "<rdar://problem/3939523>"
         RenderText {#text} at (0,27) size 755x53
@@ -44,20 +44,20 @@ layer at (0,0) size 785x678
         RenderText {#text} at (14,14) size 55x26
           text run at (14,14) width 55: "line 1"
       RenderBlock {P} at (0,196) size 769x55 [border: (2px solid #0000FF)]
-        RenderBR {BR} at (14,14) size 0x26 [bgcolor=#008000]
+        RenderBR {BR} at (14,14) size 0x27 [bgcolor=#008000]
       RenderBlock {P} at (0,275) size 769x55 [border: (2px solid #0000FF)]
-        RenderInline {B} at (14,14) size 56x26
+        RenderInline {B} at (14,14) size 56x27
           RenderText {#text} at (14,14) size 56x26
             text run at (14,14) width 56: "line 2"
       RenderBlock {P} at (0,354) size 769x55 [border: (2px solid #0000FF)]
-        RenderInline {B} at (14,14) size 0x26
-          RenderBR {BR} at (14,14) size 0x26 [bgcolor=#008000]
+        RenderInline {B} at (14,14) size 0x27
+          RenderBR {BR} at (14,14) size 0x27 [bgcolor=#008000]
       RenderBlock {P} at (0,433) size 769x55 [border: (2px solid #0000FF)]
-        RenderInline {B} at (14,14) size 12x26
+        RenderInline {B} at (14,14) size 12x27
           RenderText {#text} at (14,14) size 12x26
             text run at (14,14) width 12: "x"
       RenderBlock {P} at (0,512) size 769x55 [border: (2px solid #0000FF)]
-        RenderBR {BR} at (14,14) size 0x26 [bgcolor=#008000]
+        RenderBR {BR} at (14,14) size 0x27 [bgcolor=#008000]
       RenderBlock {P} at (0,591) size 769x55 [border: (2px solid #0000FF)]
         RenderText {#text} at (14,14) size 55x26
           text run at (14,14) width 55: "line 3"

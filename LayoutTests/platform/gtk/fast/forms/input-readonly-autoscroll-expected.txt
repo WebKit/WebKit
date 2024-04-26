@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 52x17
           text run at (0,0) width 52: "Test for "
-        RenderInline {A} at (51,0) size 69x17 [color=#0000EE]
+        RenderInline {A} at (51,0) size 69x18 [color=#0000EE]
           RenderText {#text} at (51,0) size 69x17
             text run at (51,0) width 69: "bug 11534"
         RenderText {#text} at (119,0) size 5x17
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,92) size 784x18
         RenderText {#text} at (0,0) size 87x17
           text run at (0,0) width 87: "ScrollLeft: 20"
-        RenderBR {BR} at (87,0) size 0x17
+        RenderBR {BR} at (87,0) size 0x18
 layer at (11,79) size 185x18 scrollX 20 scrollWidth 205
   RenderBlock {DIV} at (3,3) size 185x18
     RenderText {#text} at (0,0) size 205x17

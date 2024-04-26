@@ -7,7 +7,7 @@ AXRole: AXLink
 AXParent: AXSection
 AXChildren: 1
 AXPosition: { 8.00000, 99.0000 }
-AXSize: { 280.000, 214.000 }
+AXSize: { 280.000, 215.000 }
 AXTitle: Delicious cake
 AXDescription:
 AXValue: <obj>

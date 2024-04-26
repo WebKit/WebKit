@@ -4,8 +4,8 @@ layer at (0,0) size 785x872
   RenderBlock {HTML} at (0,0) size 785x872
     RenderBody {BODY} at (8,8) size 769x848 [bgcolor=#FFFFFF]
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 332x36
-          text run at (0,0) width 332: "Example 3: Basic Tables"
+        RenderText {#text} at (0,1) size 332x36
+          text run at (0,1) width 332: "Example 3: Basic Tables"
       RenderBlock {H2} at (0,58) size 769x28
         RenderText {#text} at (0,0) size 361x26
           text run at (0,0) width 361: "Simple table, 75% width, border=1"

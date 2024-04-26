@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (2,2) size 117x17
                         text run at (2,2) width 117: "cell of nested table"
       RenderBlock (anonymous) at (0,70) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock (anonymous) at (0,106) size 784x18
         RenderText {#text} at (0,0) size 215x17
           text run at (0,0) width 215: "nested table width includes border"
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (2,2) size 102x17
                         text run at (2,2) width 102: "200 nested table"
       RenderBlock (anonymous) at (0,174) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 215x17
           text run at (0,18) width 215: "nested table width includes border"
       RenderTable {TABLE} at (0,210) size 137x50 [border: (1px outset #808080)]
@@ -47,7 +47,7 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (2,2) size 105x17
                         text run at (2,2) width 105: "auto nested table"
       RenderBlock (anonymous) at (0,260) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 215x17
           text run at (0,18) width 215: "nested table width includes border"
       RenderTable {TABLE} at (0,296) size 784x30 [border: (5px outset #808080)]
@@ -57,7 +57,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 111x17
                 text run at (1,1) width 111: "100% width table"
       RenderBlock (anonymous) at (0,326) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 215x17
           text run at (0,18) width 215: "nested table width includes border"
       RenderTable {TABLE} at (0,362) size 147x50 [border: (1px outset #808080)]

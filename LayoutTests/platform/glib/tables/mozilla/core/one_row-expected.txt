@@ -19,7 +19,7 @@ layer at (0,0) size 785x756
               RenderText {#text} at (2,2) size 22x17
                 text run at (2,2) width 22: "zap"
       RenderBlock (anonymous) at (0,46) size 769x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 163x17
           text run at (0,18) width 163: "Table fixed, no cells fixed"
       RenderTable {TABLE} at (0,82) size 500x28 [border: (1px outset #808080)]
@@ -35,7 +35,7 @@ layer at (0,0) size 785x756
               RenderText {#text} at (2,2) size 22x17
                 text run at (2,2) width 22: "zap"
       RenderBlock (anonymous) at (0,110) size 769x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 163x17
           text run at (0,18) width 163: "Table fixed, no cells fixed"
       RenderTable {TABLE} at (0,146) size 200x64 [border: (1px outset #808080)]
@@ -55,7 +55,7 @@ layer at (0,0) size 785x756
               RenderText {#text} at (2,20) size 22x17
                 text run at (2,2) width 22: "zap"
       RenderBlock (anonymous) at (0,210) size 769x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 154x17
           text run at (0,18) width 154: "Table auto, 1st cell fixed"
       RenderTable {TABLE} at (0,246) size 136x28 [border: (1px outset #808080)]
@@ -68,7 +68,7 @@ layer at (0,0) size 785x756
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "bar"
       RenderBlock (anonymous) at (0,274) size 769x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 159x17
           text run at (0,18) width 159: "Table fixed, 1st cell fixed"
       RenderTable {TABLE} at (0,310) size 500x28 [border: (1px outset #808080)]
@@ -81,7 +81,7 @@ layer at (0,0) size 785x756
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "bar"
       RenderBlock (anonymous) at (0,338) size 769x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 215x17
           text run at (0,18) width 215: "Table auto, 1st cell fixed too small"
       RenderTable {TABLE} at (0,374) size 273x28 [border: (1px outset #808080)]
@@ -94,7 +94,7 @@ layer at (0,0) size 785x756
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "bar"
       RenderBlock (anonymous) at (0,402) size 769x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 220x17
           text run at (0,18) width 220: "Table fixed, 1st cell fixed too small"
       RenderTable {TABLE} at (0,438) size 500x28 [border: (1px outset #808080)]
@@ -107,7 +107,7 @@ layer at (0,0) size 785x756
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "bar"
       RenderBlock (anonymous) at (0,466) size 769x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 170x17
           text run at (0,18) width 170: "Table auto, both cells fixed"
       RenderTable {TABLE} at (0,502) size 216x28 [border: (1px outset #808080)]
@@ -120,7 +120,7 @@ layer at (0,0) size 785x756
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "bar"
       RenderBlock (anonymous) at (0,530) size 769x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 175x17
           text run at (0,18) width 175: "Table fixed, both cells fixed"
       RenderTable {TABLE} at (0,566) size 500x28 [border: (1px outset #808080)]
@@ -133,7 +133,7 @@ layer at (0,0) size 785x756
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "bar"
       RenderBlock (anonymous) at (0,594) size 769x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 284x17
           text run at (0,18) width 284: "Table auto, both cells fixed, 1st one too small"
       RenderTable {TABLE} at (0,630) size 353x28 [border: (1px outset #808080)]
@@ -146,7 +146,7 @@ layer at (0,0) size 785x756
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "bar"
       RenderBlock (anonymous) at (0,658) size 769x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 324x17
           text run at (0,18) width 324: "Table fixed, both cells fixed, 1st cell fixed too small"
       RenderTable {TABLE} at (0,694) size 500x28 [border: (1px outset #808080)]
@@ -159,4 +159,4 @@ layer at (0,0) size 785x756
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "bar"
       RenderBlock (anonymous) at (0,722) size 769x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18

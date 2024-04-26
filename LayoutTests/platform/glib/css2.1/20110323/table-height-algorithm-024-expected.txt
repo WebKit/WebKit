@@ -11,13 +11,13 @@ layer at (0,0) size 800x158
           RenderTableRow {TR} at (0,2) size 347x96
             RenderTableCell {TD} at (2,27) size 59x18 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,26) size 57x16
-                RenderText {#text} at (0,0) size 57x15
-                  text run at (0,0) width 57: "Filler Text"
+                RenderText {#text} at (0,1) size 57x15
+                  text run at (0,1) width 57: "Filler Text"
             RenderTableCell {TD} at (62,15) size 113x33 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,14) size 111x31
-                RenderText {#text} at (0,0) size 111x30
-                  text run at (0,0) width 111: "Filler Text"
+                RenderText {#text} at (0,1) size 111x30
+                  text run at (0,1) width 111: "Filler Text"
             RenderTableCell {TD} at (176,2) size 169x49 [r=0 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 167x47
-                RenderText {#text} at (0,1) size 167x45
-                  text run at (0,1) width 167: "Filler Text"
+                RenderText {#text} at (0,2) size 167x45
+                  text run at (0,2) width 167: "Filler Text"

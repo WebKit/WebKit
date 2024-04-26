@@ -18,10 +18,10 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x81
           RenderText {#text} at (0,0) size 59x26
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
+          RenderBR {BR} at (58,0) size 1x27
           RenderText {#text} at (0,27) size 113x26
             text run at (0,27) width 113: "Bug fix for "
-          RenderInline {A} at (112,27) size 261x26 [color=#0000EE]
+          RenderInline {A} at (112,27) size 261x27 [color=#0000EE]
             RenderText {#text} at (112,27) size 261x26
               text run at (112,27) width 261: "<rdar://problem/4038267>"
           RenderText {#text} at (0,27) size 747x53
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,0) size 756x81
             RenderText {#text} at (0,0) size 183x26
               text run at (0,0) width 183: "Expected Results:"
-            RenderBR {BR} at (182,0) size 1x26
+            RenderBR {BR} at (182,0) size 1x27
             RenderText {#text} at (0,27) size 732x53
               text run at (0,27) width 732: "Should see this content in the red box below (insertion point must be on the"
               text run at (0,54) width 308: "second line, right before \"bar\"):"

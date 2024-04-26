@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
                           RenderTableRow {TR} at (0,2) size 180x200
                             RenderTableCell {TD} at (2,100) size 176x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderBlock (anonymous) at (1,294) size 460x36
-                RenderBR {BR} at (0,0) size 0x17
+                RenderBR {BR} at (0,0) size 0x18
                 RenderText {#text} at (0,18) size 106x17
                   text run at (0,18) width 106: "This is bug 2904"
               RenderTable {TABLE} at (1,330) size 62x48 [border: (1px outset #808080)]

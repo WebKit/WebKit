@@ -2,6 +2,8 @@ two
 lines
 hello
 
-PASS #target > div 1
+FAIL #target > div 1 assert_equals:
+<div data-offset-x="161">two<br>lines</div>
+offsetLeft expected 161 but got 160
 PASS #target > div 2
 

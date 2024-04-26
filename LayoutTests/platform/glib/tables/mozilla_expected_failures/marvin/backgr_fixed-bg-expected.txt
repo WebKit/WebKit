@@ -4,41 +4,41 @@ layer at (0,0) size 785x1661
   RenderBlock {HTML} at (0,0) size 785x1662
     RenderBody {BODY} at (8,17) size 769x1632 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 769x30
-        RenderText {#text} at (0,0) size 528x30
-          text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
+        RenderText {#text} at (0,1) size 528x30
+          text run at (0,1) width 528: "CSS2 Table Backgrounds Test Suite"
       RenderBlock {H2} at (0,47) size 769x23
         RenderText {#text} at (0,0) size 252x22
           text run at (0,0) width 252: "Part E: Special Tests"
       RenderBlock {H3} at (0,85) size 769x19
-        RenderText {#text} at (0,0) size 153x18
-          text run at (0,0) width 153: "Fixed Backgrounds"
+        RenderText {#text} at (0,1) size 153x18
+          text run at (0,1) width 153: "Fixed Backgrounds"
       RenderBlock {UL} at (0,118) size 769x61
         RenderListItem {LI} at (40,0) size 729x45
           RenderListMarker at (-15,0) size 6x15: bullet
-          RenderText {#text} at (0,0) size 704x45
-            text run at (0,0) width 704: "If you scroll the table over the top left corner of the viewport, the first, second, and"
-            text run at (0,15) width 688: "fourth rows as well as cell L should reveal a purple and aqua band forming a 90-degree"
-            text run at (0,30) width 232: "angle in the top left corner."
+          RenderText {#text} at (0,1) size 704x45
+            text run at (0,1) width 704: "If you scroll the table over the top left corner of the viewport, the first, second, and"
+            text run at (0,16) width 688: "fourth rows as well as cell L should reveal a purple and aqua band forming a 90-degree"
+            text run at (0,31) width 232: "angle in the top left corner."
         RenderListItem {LI} at (40,45) size 729x15
           RenderListMarker at (-15,0) size 6x15: bullet
-          RenderText {#text} at (0,0) size 664x15
-            text run at (0,0) width 664: "Cells A and P should have a rainbow background that seems attached to the viewport."
+          RenderText {#text} at (0,1) size 664x15
+            text run at (0,1) width 664: "Cells A and P should have a rainbow background that seems attached to the viewport."
       RenderBlock {DL} at (0,191) size 769x61
         RenderBlock {DT} at (0,0) size 769x15
-          RenderText {#text} at (0,0) size 64x15
-            text run at (0,0) width 64: "previous"
+          RenderText {#text} at (0,1) size 64x15
+            text run at (0,1) width 64: "previous"
         RenderBlock {DD} at (40,15) size 729x15
-          RenderInline {A} at (0,0) size 176x15 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 176x15
-              text run at (0,0) width 176: "Special Tests: opacity"
+          RenderInline {A} at (0,1) size 176x14 [color=#FFFF00]
+            RenderText {#text} at (0,1) size 176x15
+              text run at (0,1) width 176: "Special Tests: opacity"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DT} at (0,30) size 769x15
-          RenderText {#text} at (0,0) size 64x15
-            text run at (0,0) width 64: "contents"
+          RenderText {#text} at (0,1) size 64x15
+            text run at (0,1) width 64: "contents"
         RenderBlock {DD} at (40,45) size 729x15
-          RenderInline {A} at (0,0) size 136x15 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 136x15
-              text run at (0,0) width 136: "Table of Contents"
+          RenderInline {A} at (0,1) size 136x14 [color=#FFFF00]
+            RenderText {#text} at (0,1) size 136x15
+              text run at (0,1) width 136: "Table of Contents"
           RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,264) size 618x467 [color=#000000] [bgcolor=#FFFFFF] [border: (1px dotted #000000)]
         RenderBlock {CAPTION} at (0,0) size 618x22 [color=#FFFFFF]
@@ -155,65 +155,65 @@ layer at (0,0) size 785x1661
               RenderText {#text} at (2,31) size 43x21
                 text run at (2,2) width 43: "TD L"
       RenderBlock {DIV} at (0,1162) size 769x36
-        RenderInline {A} at (0,20) size 88x15 [color=#FFFF00]
+        RenderInline {A} at (0,21) size 88x14 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {ADDRESS} at (0,1197) size 769x16
-        RenderText {#text} at (0,0) size 704x15
-          text run at (0,0) width 704: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"
+        RenderText {#text} at (0,1) size 704x15
+          text run at (0,1) width 704: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"
       RenderBlock {PRE} at (0,1225) size 769x406
-        RenderText {#text} at (0,0) size 1536x405
-          text run at (0,0) width 1536: "................................................................................................................................................................................................"
-          text run at (1536,0) width 0: " "
-          text run at (0,15) width 8: "."
-          text run at (8,15) width 0: " "
-          text run at (0,30) width 8: "."
-          text run at (8,30) width 0: " "
-          text run at (0,45) width 8: "."
-          text run at (8,45) width 0: " "
-          text run at (0,60) width 8: "."
-          text run at (8,60) width 0: " "
-          text run at (0,75) width 8: "."
-          text run at (8,75) width 0: " "
-          text run at (0,90) width 8: "."
-          text run at (8,90) width 0: " "
-          text run at (0,105) width 8: "."
-          text run at (8,105) width 0: " "
-          text run at (0,120) width 8: "."
-          text run at (8,120) width 0: " "
-          text run at (0,135) width 8: "."
-          text run at (8,135) width 0: " "
-          text run at (0,150) width 8: "."
-          text run at (8,150) width 0: " "
-          text run at (0,165) width 8: "."
-          text run at (8,165) width 0: " "
-          text run at (0,180) width 8: "."
-          text run at (8,180) width 0: " "
-          text run at (0,195) width 8: "."
-          text run at (8,195) width 0: " "
-          text run at (0,210) width 8: "."
-          text run at (8,210) width 0: " "
-          text run at (0,225) width 8: "."
-          text run at (8,225) width 0: " "
-          text run at (0,240) width 8: "."
-          text run at (8,240) width 0: " "
-          text run at (0,255) width 8: "."
-          text run at (8,255) width 0: " "
-          text run at (0,270) width 8: "."
-          text run at (8,270) width 0: " "
-          text run at (0,285) width 8: "."
-          text run at (8,285) width 0: " "
-          text run at (0,300) width 8: "."
-          text run at (8,300) width 0: " "
-          text run at (0,315) width 8: "."
-          text run at (8,315) width 0: " "
-          text run at (0,330) width 8: "."
-          text run at (8,330) width 0: " "
-          text run at (0,345) width 8: "."
-          text run at (8,345) width 0: " "
-          text run at (0,360) width 8: "."
-          text run at (8,360) width 0: " "
-          text run at (0,375) width 8: "."
-          text run at (8,375) width 0: " "
-          text run at (0,390) width 8: "."
-          text run at (8,390) width 0: " "
+        RenderText {#text} at (0,1) size 1536x405
+          text run at (0,1) width 1536: "................................................................................................................................................................................................"
+          text run at (1536,1) width 0: " "
+          text run at (0,16) width 8: "."
+          text run at (8,16) width 0: " "
+          text run at (0,31) width 8: "."
+          text run at (8,31) width 0: " "
+          text run at (0,46) width 8: "."
+          text run at (8,46) width 0: " "
+          text run at (0,61) width 8: "."
+          text run at (8,61) width 0: " "
+          text run at (0,76) width 8: "."
+          text run at (8,76) width 0: " "
+          text run at (0,91) width 8: "."
+          text run at (8,91) width 0: " "
+          text run at (0,106) width 8: "."
+          text run at (8,106) width 0: " "
+          text run at (0,121) width 8: "."
+          text run at (8,121) width 0: " "
+          text run at (0,136) width 8: "."
+          text run at (8,136) width 0: " "
+          text run at (0,151) width 8: "."
+          text run at (8,151) width 0: " "
+          text run at (0,166) width 8: "."
+          text run at (8,166) width 0: " "
+          text run at (0,181) width 8: "."
+          text run at (8,181) width 0: " "
+          text run at (0,196) width 8: "."
+          text run at (8,196) width 0: " "
+          text run at (0,211) width 8: "."
+          text run at (8,211) width 0: " "
+          text run at (0,226) width 8: "."
+          text run at (8,226) width 0: " "
+          text run at (0,241) width 8: "."
+          text run at (8,241) width 0: " "
+          text run at (0,256) width 8: "."
+          text run at (8,256) width 0: " "
+          text run at (0,271) width 8: "."
+          text run at (8,271) width 0: " "
+          text run at (0,286) width 8: "."
+          text run at (8,286) width 0: " "
+          text run at (0,301) width 8: "."
+          text run at (8,301) width 0: " "
+          text run at (0,316) width 8: "."
+          text run at (8,316) width 0: " "
+          text run at (0,331) width 8: "."
+          text run at (8,331) width 0: " "
+          text run at (0,346) width 8: "."
+          text run at (8,346) width 0: " "
+          text run at (0,361) width 8: "."
+          text run at (8,361) width 0: " "
+          text run at (0,376) width 8: "."
+          text run at (8,376) width 0: " "
+          text run at (0,391) width 8: "."
+          text run at (8,391) width 0: " "

@@ -5,9 +5,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x39
         RenderBlock (anonymous) at (0,0) size 784x15
-          RenderInline {CODE} at (0,0) size 248x15
-            RenderText {#text} at (0,0) size 248x15
-              text run at (0,0) width 248: "<TABLE border=\"0\" frame=\"void\">"
+          RenderInline {CODE} at (0,1) size 248x14
+            RenderText {#text} at (0,1) size 248x15
+              text run at (0,1) width 248: "<TABLE border=\"0\" frame=\"void\">"
           RenderText {#text} at (0,0) size 0x0
         RenderTable {TABLE} at (0,15) size 71x24
           RenderTableSection {TBODY} at (0,0) size 71x24

@@ -10,6 +10,6 @@ layer at (0,0) size 800x600
         RenderImage {IMG} at (0,0) size 50x50
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,134) size 784x68
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderImage {IMG} at (0,18) size 50x50
         RenderText {#text} at (0,0) size 0x0

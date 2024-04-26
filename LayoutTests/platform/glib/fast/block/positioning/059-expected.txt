@@ -7,7 +7,7 @@ layer at (8,8) size 784x54
     RenderBlock {DIV} at (0,0) size 784x54
       RenderText {#text} at (0,0) size 129x17
         text run at (0,0) width 129: "You should see two "
-      RenderInline {I} at (128,0) size 110x17
+      RenderInline {I} at (128,0) size 110x18
         RenderText {#text} at (128,0) size 110x17
           text run at (128,0) width 110: "vertically stacked"
       RenderText {#text} at (0,0) size 763x53

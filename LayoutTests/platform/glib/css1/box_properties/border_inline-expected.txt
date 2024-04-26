@@ -7,22 +7,22 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x45
-        RenderText {#text} at (0,0) size 256x45
-          text run at (0,0) width 256: ".one {border: 10px teal outset;}"
-          text run at (256,0) width 0: " "
-          text run at (0,15) width 256: ".two {border: 10px olive inset;}"
-          text run at (256,15) width 0: " "
-          text run at (0,30) width 0: " "
+        RenderText {#text} at (0,1) size 256x45
+          text run at (0,1) width 256: ".one {border: 10px teal outset;}"
+          text run at (256,1) width 0: " "
+          text run at (0,16) width 256: ".two {border: 10px olive inset;}"
+          text run at (256,16) width 0: " "
+          text run at (0,31) width 0: " "
       RenderBlock {P} at (0,110) size 784x54 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 677x17
           text run at (0,0) width 677: "This is an unstyled element, save for the background color, and containing inline elements with a classes of "
-        RenderInline {SPAN} at (676,-10) size 78x37 [border: (10px outset #008080)]
+        RenderInline {SPAN} at (676,-10) size 78x38 [border: (10px outset #008080)]
           RenderText {#text} at (686,0) size 58x17
             text run at (686,0) width 58: "class one"
         RenderText {#text} at (0,0) size 758x35
           text run at (753,0) width 5: ","
           text run at (0,18) width 353: "which should result in a 10-pixel outset teal border; and "
-        RenderInline {SPAN} at (353,8) size 78x37 [border: (10px inset #808000)]
+        RenderInline {SPAN} at (353,8) size 78x38 [border: (10px inset #808000)]
           RenderText {#text} at (363,18) size 58x17
             text run at (363,18) width 58: "class two"
         RenderText {#text} at (0,18) size 762x35
@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 782x88
           RenderTableRow {TR} at (0,0) size 782x26
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (4,4) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x62
@@ -43,13 +43,13 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (4,4) size 762x54 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 677x17
                   text run at (0,0) width 677: "This is an unstyled element, save for the background color, and containing inline elements with a classes of "
-                RenderInline {SPAN} at (676,-10) size 78x37 [border: (10px outset #008080)]
+                RenderInline {SPAN} at (676,-10) size 78x38 [border: (10px outset #008080)]
                   RenderText {#text} at (686,0) size 58x17
                     text run at (686,0) width 58: "class one"
                 RenderText {#text} at (0,0) size 758x35
                   text run at (753,0) width 5: ","
                   text run at (0,18) width 353: "which should result in a 10-pixel outset teal border; and "
-                RenderInline {SPAN} at (353,8) size 78x37 [border: (10px inset #808000)]
+                RenderInline {SPAN} at (353,8) size 78x38 [border: (10px inset #808000)]
                   RenderText {#text} at (363,18) size 58x17
                     text run at (363,18) width 58: "class two"
                 RenderText {#text} at (0,18) size 762x35

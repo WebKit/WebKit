@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 106x17
                 text run at (2,2) width 106: "TABLE TEXT1"
       RenderBlock (anonymous) at (0,46) size 784x18
-        RenderInline {FONT} at (0,0) size 47x17
+        RenderInline {FONT} at (0,0) size 47x18
           RenderText {#text} at (0,0) size 47x17
             text run at (0,0) width 47: "TEST2"
       RenderTable {TABLE} at (0,64) size 116x28 [border: (1px outset #808080)]

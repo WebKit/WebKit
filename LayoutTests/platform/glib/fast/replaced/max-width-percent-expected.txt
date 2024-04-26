@@ -6,8 +6,8 @@ layer at (0,0) size 800x214
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 52x17
           text run at (0,0) width 52: "Test for "
-        RenderInline {I} at (0,0) size 774x35
-          RenderInline {A} at (51,0) size 154x17 [color=#0000EE]
+        RenderInline {I} at (0,0) size 774x36
+          RenderInline {A} at (51,0) size 154x18 [color=#0000EE]
             RenderText {#text} at (51,0) size 154x17
               text run at (51,0) width 154: "rdar://problem/5862634"
           RenderText {#text} at (0,0) size 774x35

@@ -11,5 +11,5 @@ layer at (48,144) size 194x114
   RenderBlock (positioned) {div} at (48,144) size 194x114 [bgcolor=#FFFFFF] [border: (1px solid #FFA500)]
 layer at (0,96) size 96x16
   RenderBlock (positioned) {div} at (0,96) size 96x16
-    RenderText {#text} at (0,0) size 96x16
-      text run at (0,0) width 96: "Filler"
+    RenderText {#text} at (0,1) size 96x16
+      text run at (0,1) width 96: "Filler"

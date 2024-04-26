@@ -8,10 +8,10 @@ layer at (0,0) size 800x600
           text run at (0,0) width 611: "This tests for a bug where style would not be applied to a selection that ended just after an image."
       RenderBlock {DIV} at (0,34) size 784x125
         RenderBlock (anonymous) at (0,0) size 784x18
-          RenderInline {B} at (0,0) size 0x17
-            RenderBR {BR} at (0,0) size 0x17
+          RenderInline {B} at (0,0) size 0x18
+            RenderBR {BR} at (0,0) size 0x18
         RenderBlock {DIV} at (0,18) size 784x107
-          RenderInline {B} at (0,89) size 242x17
+          RenderInline {B} at (0,89) size 242x18
             RenderText {#text} at (0,89) size 166x17
               text run at (0,89) width 166: "This text should be bold."
             RenderImage {IMG} at (166,0) size 76x103

@@ -6,7 +6,7 @@ layer at (0,0) size 800x297
       RenderBlock {P} at (0,0) size 784x37
         RenderText {#text} at (0,1) size 496x17
           text run at (0,1) width 496: "There should be a solid blue line directly under every occurrence of the word \""
-        RenderInline {SPAN} at (496,1) size 60x19 [border: none (2px solid #0000FF) none]
+        RenderInline {SPAN} at (496,1) size 60x20 [border: none (2px solid #0000FF) none]
           RenderText {#text} at (496,1) size 60x17
             text run at (496,1) width 60: "HERE \x{21E9}"
         RenderText {#text} at (0,1) size 769x35

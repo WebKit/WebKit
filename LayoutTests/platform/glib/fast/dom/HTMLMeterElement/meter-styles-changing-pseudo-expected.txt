@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {H1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 507x36
-          text run at (0,0) width 507: "Dynamically changing pseudo classes"
+        RenderText {#text} at (0,1) size 507x36
+          text run at (0,1) width 507: "Dynamically changing pseudo classes"
       RenderBlock {P} at (0,58) size 784x19
         RenderText {#text} at (0,0) size 647x17
           text run at (0,0) width 647: "Following meter gauge should be solid green - Changing the paseudo class by changing value attribute"

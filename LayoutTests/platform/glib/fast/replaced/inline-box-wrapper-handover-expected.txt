@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 253x17
           text run at (0,0) width 253: "This test checks for a regression against "
-        RenderInline {I} at (0,0) size 743x35
-          RenderInline {A} at (253,0) size 348x17 [color=#0000EE]
+        RenderInline {I} at (0,0) size 743x36
+          RenderInline {A} at (253,0) size 348x18 [color=#0000EE]
             RenderText {#text} at (253,0) size 348x17
               text run at (253,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6276"
           RenderText {#text} at (0,0) size 743x35
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (41,56) size 15x17
           text run at (41,56) width 15: " C"
       RenderBlock (anonymous) at (0,202) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 43x17
           text run at (0,18) width 43: "Box 2:"
       RenderBlock {DIV} at (0,238) size 67x80 [border: (1px solid #000000)]

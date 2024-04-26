@@ -49,7 +49,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 56x17
                 text run at (2,2) width 56: "Last row"
       RenderBlock (anonymous) at (0,222) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 106x17
           text run at (0,18) width 106: "an additional test"
       RenderTable {TABLE} at (0,258) size 32x54 [border: (1px outset #808080)]

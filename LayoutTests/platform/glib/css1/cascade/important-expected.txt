@@ -7,14 +7,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x60
-        RenderText {#text} at (0,0) size 232x60
-          text run at (0,0) width 232: "P {color: green ! important;}"
-          text run at (232,0) width 0: " "
-          text run at (0,15) width 120: "P {color: red;}"
-          text run at (120,15) width 0: " "
-          text run at (0,30) width 176: "P#id1 {color: purple;}"
-          text run at (176,30) width 0: " "
-          text run at (0,45) width 0: " "
+        RenderText {#text} at (0,1) size 232x60
+          text run at (0,1) width 232: "P {color: green ! important;}"
+          text run at (232,1) width 0: " "
+          text run at (0,16) width 120: "P {color: red;}"
+          text run at (120,16) width 0: " "
+          text run at (0,31) width 176: "P#id1 {color: purple;}"
+          text run at (176,31) width 0: " "
+          text run at (0,46) width 0: " "
       RenderBlock {P} at (0,125) size 784x36 [color=#008000]
         RenderText {#text} at (0,0) size 767x35
           text run at (0,0) width 767: "This sentence should be green, because the declaration marked important should override any other normal declaration for"
@@ -22,9 +22,9 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,177) size 784x36 [color=#008000]
         RenderText {#text} at (0,0) size 403x17
           text run at (0,0) width 403: "This sentence should also be green, even though it has an ID of "
-        RenderInline {TT} at (403,3) size 24x15
-          RenderText {#text} at (403,3) size 24x15
-            text run at (403,3) width 24: "id1"
+        RenderInline {TT} at (403,4) size 24x14
+          RenderText {#text} at (403,4) size 24x15
+            text run at (403,4) width 24: "id1"
         RenderText {#text} at (0,0) size 781x35
           text run at (427,0) width 258: ", which would ordinarily make it purple. "
           text run at (685,0) width 96: "This is because"
@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 782x174
           RenderTableRow {TR} at (0,0) size 782x26
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (4,4) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x148
@@ -53,9 +53,9 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (4,56) size 762x36 [color=#008000]
                 RenderText {#text} at (0,0) size 403x17
                   text run at (0,0) width 403: "This sentence should also be green, even though it has an ID of "
-                RenderInline {TT} at (403,3) size 24x15
-                  RenderText {#text} at (403,3) size 24x15
-                    text run at (403,3) width 24: "id1"
+                RenderInline {TT} at (403,4) size 24x14
+                  RenderText {#text} at (403,4) size 24x15
+                    text run at (403,4) width 24: "id1"
                 RenderText {#text} at (0,0) size 727x35
                   text run at (427,0) width 258: ", which would ordinarily make it purple. "
                   text run at (685,0) width 42: "This is"

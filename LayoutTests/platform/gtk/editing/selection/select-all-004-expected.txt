@@ -17,6 +17,6 @@ layer at (0,0) size 800x585
           RenderTableRow {TR} at (0,2) size 6x20
             RenderTableCell {TD} at (2,2) size 2x20 [r=0 c=0 rs=1 cs=1]
       RenderBlock (anonymous) at (74,146) size 600x48
-        RenderBR {BR} at (0,11) size 0x26
+        RenderBR {BR} at (0,11) size 0x27
 selection start: position 1 of child 2 {#text} of body
 selection end:   position 0 of child 5 {BR} of body

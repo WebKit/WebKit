@@ -1,7 +1,8 @@
 some text
 (repaint rects
-  (rect 144 0 64 116)
-  (rect 0 0 64 116)
-  (rect 144 0 64 116)
+  (rect 144 0 64 117)
+  (rect 0 0 64 117)
+  (rect 0 0 64 117)
+  (rect 144 0 64 117)
 )
 

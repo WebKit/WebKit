@@ -17,14 +17,14 @@ layer at (0,0) size 800x600
       RenderText {#text} at (179,395) size 4x17
         text run at (179,395) width 4: " "
       RenderBlock {DIV} at (183,230) size 452x179 [border: (1px solid #000000)]
-        RenderInline {SPAN} at (18,1) size 415x177 [bgcolor=#C0C0C0] [border: (2px solid #000000)]
-          RenderText {#text} at (20,3) size 111x50
-            text run at (20,3) width 50: "  "
-          RenderBR {BR} at (20,53) size 111x0
-          RenderText {#text} at (170,1) size 111x125
-            text run at (170,1) width 125: "     "
-          RenderBR {BR} at (170,126) size 111x0
-          RenderText {#text} at (320,1) size 111x175
-            text run at (320,1) width 175: "       "
+        RenderInline {SPAN} at (19,1) size 415x177 [bgcolor=#C0C0C0] [border: (2px solid #000000)]
+          RenderText {#text} at (21,3) size 111x50
+            text run at (21,3) width 50: "  "
+          RenderBR {BR} at (21,53) size 111x0
+          RenderText {#text} at (171,1) size 111x125
+            text run at (171,1) width 125: "     "
+          RenderBR {BR} at (171,126) size 111x0
+          RenderText {#text} at (321,1) size 111x175
+            text run at (321,1) width 175: "       "
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

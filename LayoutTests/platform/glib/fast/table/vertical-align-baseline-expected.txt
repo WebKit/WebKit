@@ -35,7 +35,7 @@ layer at (0,0) size 800x512
                     RenderTableCell {TD} at (2,10) size 72x57 [border: (10px solid #0000FF) (1px inset #808080) (5px solid #0000FF) (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,15) size 35x17
                         text run at (2,15) width 35: "tetuer"
-                      RenderBR {BR} at (37,15) size 0x17
+                      RenderBR {BR} at (37,15) size 0x18
                       RenderText {#text} at (2,33) size 68x17
                         text run at (2,33) width 68: "adipiscing."
             RenderTableCell {TD} at (400,2) size 64x4 [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
@@ -56,7 +56,7 @@ layer at (0,0) size 800x512
               RenderBlock (anonymous) at (2,147) size 60x36
                 RenderText {#text} at (0,0) size 51x17
                   text run at (0,0) width 51: "dolor sit"
-                RenderBR {BR} at (51,0) size 0x17
+                RenderBR {BR} at (51,0) size 0x18
                 RenderText {#text} at (0,18) size 34x17
                   text run at (0,18) width 34: "amet."
             RenderTableCell {TD} at (588,42) size 64x64 [border: (1px inset #808080)] [r=0 c=9 rs=1 cs=1]

@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (696,0) size 104x600
-  RenderBlock {HTML} at (0,0) size 104x600 [border: (10px solid #800000)]
-    RenderBody {BODY} at (18,18) size 68x564
+layer at (697,0) size 103x600
+  RenderBlock {HTML} at (0,0) size 103x600 [border: (10px solid #800000)]
+    RenderBody {BODY} at (18,18) size 67x564
       RenderText {#text} at (22,0) size 45x220
         text run at (22,0) width 220: "\x{653B}\x{6BBB} \x{6A5F}\x{52D5}\x{968A} "
       RenderInline {RUBY} at (22,220) size 45x200

@@ -10,5 +10,5 @@ X
 X
 
 PASS Line-height and lh before @font-face loads
-PASS Line-height and lh after @font-face loaded
+FAIL Line-height and lh after @font-face loaded assert_equals: lh and normal line-height both affected expected 269 but got 260
 

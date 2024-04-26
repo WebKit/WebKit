@@ -16,5 +16,5 @@ layer at (11,45) size 186x18
       text run at (0,0) width 86: "Placeholder"
 layer at (11,45) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
-    RenderBR {BR} at (0,0) size 0x17
+    RenderBR {BR} at (0,0) size 0x18
 caret: position 0 of child 0 {BR} of child 1 {DIV} of {#document-fragment} of child 1 {INPUT} of child 3 {DIV} of body

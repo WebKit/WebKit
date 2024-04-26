@@ -14,7 +14,7 @@ layer at (0,0) size 785x2276
               RenderText {#text} at (1,1) size 158x17
                 text run at (1,1) width 158: "20% of table 200px table"
       RenderBlock (anonymous) at (0,199) size 769x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,217) size 769x43 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x40
           RenderTableRow {TR} at (0,0) size 767x20
@@ -26,7 +26,7 @@ layer at (0,0) size 785x2276
               RenderText {#text} at (1,1) size 130x17
                 text run at (1,1) width 130: "20% of 200px tbody"
       RenderBlock (anonymous) at (0,259) size 769x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,277) size 769x43 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x40
           RenderTableRow {TR} at (0,0) size 767x20
@@ -38,7 +38,7 @@ layer at (0,0) size 785x2276
               RenderText {#text} at (1,1) size 130x17
                 text run at (1,1) width 130: "20% of 200px tbody"
       RenderBlock (anonymous) at (0,319) size 769x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,337) size 769x201 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x198
           RenderTableRow {TR} at (0,0) size 767x159
@@ -50,7 +50,7 @@ layer at (0,0) size 785x2276
               RenderText {#text} at (1,1) size 153x17
                 text run at (1,1) width 153: "row 20% of 200px table"
       RenderBlock (anonymous) at (0,537) size 769x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,555) size 769x43 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x40
           RenderTableRow {TR} at (0,0) size 767x20
@@ -62,7 +62,7 @@ layer at (0,0) size 785x2276
               RenderText {#text} at (1,1) size 159x17
                 text run at (1,1) width 159: "row 20% of 200px tbody"
       RenderBlock (anonymous) at (0,597) size 769x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,615) size 769x381 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x378
           RenderTableRow {TR} at (0,0) size 767x378
@@ -80,50 +80,50 @@ layer at (0,0) size 785x2276
                       RenderText {#text} at (0,0) size 110x17
                         text run at (0,0) width 80: "yuiyututuyu "
                         text run at (80,0) width 30: "fesfe"
-                      RenderBR {BR} at (110,0) size 0x17
+                      RenderBR {BR} at (110,0) size 0x18
                       RenderText {#text} at (0,18) size 4x17
                         text run at (0,18) width 4: " "
-                      RenderBR {BR} at (4,18) size 0x17
+                      RenderBR {BR} at (4,18) size 0x18
                       RenderText {#text} at (0,36) size 4x17
                         text run at (0,36) width 4: " "
-                      RenderBR {BR} at (4,36) size 0x17
+                      RenderBR {BR} at (4,36) size 0x18
                       RenderText {#text} at (0,54) size 4x17
                         text run at (0,54) width 4: " "
-                      RenderBR {BR} at (4,54) size 0x17
+                      RenderBR {BR} at (4,54) size 0x18
                       RenderText {#text} at (0,72) size 4x17
                         text run at (0,72) width 4: " "
-                      RenderBR {BR} at (4,72) size 0x17
+                      RenderBR {BR} at (4,72) size 0x18
                       RenderText {#text} at (0,90) size 4x17
                         text run at (0,90) width 4: " "
-                      RenderBR {BR} at (4,90) size 0x17
+                      RenderBR {BR} at (4,90) size 0x18
                       RenderText {#text} at (0,108) size 4x17
                         text run at (0,108) width 4: " "
-                      RenderBR {BR} at (4,108) size 0x17
+                      RenderBR {BR} at (4,108) size 0x18
                       RenderText {#text} at (0,126) size 4x17
                         text run at (0,126) width 4: " "
-                      RenderBR {BR} at (4,126) size 0x17
+                      RenderBR {BR} at (4,126) size 0x18
                       RenderText {#text} at (0,144) size 4x17
                         text run at (0,144) width 4: " "
-                      RenderBR {BR} at (4,144) size 0x17
+                      RenderBR {BR} at (4,144) size 0x18
                       RenderText {#text} at (0,162) size 4x17
                         text run at (0,162) width 4: " "
-                      RenderBR {BR} at (4,162) size 0x17
+                      RenderBR {BR} at (4,162) size 0x18
                       RenderText {#text} at (0,180) size 4x17
                         text run at (0,180) width 4: " "
-                      RenderBR {BR} at (4,180) size 0x17
+                      RenderBR {BR} at (4,180) size 0x18
                       RenderText {#text} at (0,198) size 4x17
                         text run at (0,198) width 4: " "
-                      RenderBR {BR} at (4,198) size 0x17
+                      RenderBR {BR} at (4,198) size 0x18
                       RenderText {#text} at (0,216) size 4x17
                         text run at (0,216) width 4: " "
-                      RenderBR {BR} at (4,216) size 0x17
+                      RenderBR {BR} at (4,216) size 0x18
                       RenderText {#text} at (0,234) size 4x17
                         text run at (0,234) width 4: " "
-                      RenderBR {BR} at (4,234) size 0x17
+                      RenderBR {BR} at (4,234) size 0x18
                       RenderText {#text} at (0,252) size 4x17
                         text run at (0,252) width 4: " "
       RenderBlock (anonymous) at (0,995) size 769x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,1013) size 600x401 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 598x398
           RenderTableRow {TR} at (0,2) size 598x394
@@ -139,7 +139,7 @@ layer at (0,0) size 785x2276
                               RenderText {#text} at (2,178) size 21x17
                                 text run at (2,2) width 21: "foo"
       RenderBlock (anonymous) at (0,1413) size 769x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,1431) size 62x23 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 60x20
           RenderTableRow {TR} at (0,0) size 60x20
@@ -148,7 +148,7 @@ layer at (0,0) size 785x2276
                 text run at (1,1) width 58: "blah blah"
           RenderTableRow {TR} at (0,20) size 60x0
       RenderBlock (anonymous) at (0,1453) size 769x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,1471) size 602x365 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 600x362
           RenderTableRow {TR} at (0,0) size 600x0
@@ -159,7 +159,7 @@ layer at (0,0) size 785x2276
               RenderText {#text} at (72,172) size 25x17
                 text run at (72,1) width 25: "xxx"
       RenderBlock (anonymous) at (0,1835) size 769x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (10,1853) size 749x407 [bgcolor=#808080]
         RenderTableSection {TBODY} at (0,0) size 748x406
           RenderTableRow {TR} at (0,4) size 748x398
@@ -184,45 +184,45 @@ layer at (0,0) size 785x2276
                               RenderText {#text} at (0,0) size 114x17
                                 text run at (0,0) width 80: "yuiyututuyu "
                                 text run at (80,0) width 34: "fesf e"
-                              RenderBR {BR} at (114,0) size 0x17
+                              RenderBR {BR} at (114,0) size 0x18
                               RenderText {#text} at (0,18) size 4x17
                                 text run at (0,18) width 4: " "
-                              RenderBR {BR} at (4,18) size 0x17
+                              RenderBR {BR} at (4,18) size 0x18
                               RenderText {#text} at (0,36) size 4x17
                                 text run at (0,36) width 4: " "
-                              RenderBR {BR} at (4,36) size 0x17
+                              RenderBR {BR} at (4,36) size 0x18
                               RenderText {#text} at (0,54) size 4x17
                                 text run at (0,54) width 4: " "
-                              RenderBR {BR} at (4,54) size 0x17
+                              RenderBR {BR} at (4,54) size 0x18
                               RenderText {#text} at (0,72) size 4x17
                                 text run at (0,72) width 4: " "
-                              RenderBR {BR} at (4,72) size 0x17
+                              RenderBR {BR} at (4,72) size 0x18
                               RenderText {#text} at (0,90) size 4x17
                                 text run at (0,90) width 4: " "
-                              RenderBR {BR} at (4,90) size 0x17
+                              RenderBR {BR} at (4,90) size 0x18
                               RenderText {#text} at (0,108) size 4x17
                                 text run at (0,108) width 4: " "
-                              RenderBR {BR} at (4,108) size 0x17
+                              RenderBR {BR} at (4,108) size 0x18
                               RenderText {#text} at (0,126) size 4x17
                                 text run at (0,126) width 4: " "
-                              RenderBR {BR} at (4,126) size 0x17
+                              RenderBR {BR} at (4,126) size 0x18
                               RenderText {#text} at (0,144) size 4x17
                                 text run at (0,144) width 4: " "
-                              RenderBR {BR} at (4,144) size 0x17
+                              RenderBR {BR} at (4,144) size 0x18
                               RenderText {#text} at (0,162) size 4x17
                                 text run at (0,162) width 4: " "
-                              RenderBR {BR} at (4,162) size 0x17
+                              RenderBR {BR} at (4,162) size 0x18
                               RenderText {#text} at (0,180) size 4x17
                                 text run at (0,180) width 4: " "
-                              RenderBR {BR} at (4,180) size 0x17
+                              RenderBR {BR} at (4,180) size 0x18
                               RenderText {#text} at (0,198) size 4x17
                                 text run at (0,198) width 4: " "
-                              RenderBR {BR} at (4,198) size 0x17
+                              RenderBR {BR} at (4,198) size 0x18
                               RenderText {#text} at (0,216) size 4x17
                                 text run at (0,216) width 4: " "
-                              RenderBR {BR} at (4,216) size 0x17
+                              RenderBR {BR} at (4,216) size 0x18
                               RenderText {#text} at (0,234) size 4x17
                                 text run at (0,234) width 4: " "
-                              RenderBR {BR} at (4,234) size 0x17
+                              RenderBR {BR} at (4,234) size 0x18
                               RenderText {#text} at (0,252) size 4x17
                                 text run at (0,252) width 4: " "

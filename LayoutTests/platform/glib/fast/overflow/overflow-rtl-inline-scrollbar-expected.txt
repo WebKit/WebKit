@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 212x17
           text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 717x35
-          RenderInline {A} at (212,0) size 348x17 [color=#0000EE]
+        RenderInline {I} at (0,0) size 717x36
+          RenderInline {A} at (212,0) size 348x18 [color=#0000EE]
             RenderText {#text} at (212,0) size 348x17
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6618"
           RenderText {#text} at (0,0) size 717x35
@@ -23,7 +23,7 @@ layer at (8,70) size 784x18 clip at (18,70) size 774x18
     RenderText {#text} at (469,0) size 315x17
       text run at (469,0) width 117: "This block should "
       text run at (780,0) width 4 RTL: "."
-    RenderInline {EM} at (586,0) size 20x17
+    RenderInline {EM} at (586,0) size 20x18
       RenderText {#text} at (586,0) size 20x17
         text run at (586,0) width 20: "not"
     RenderText {#text} at (606,0) size 174x17

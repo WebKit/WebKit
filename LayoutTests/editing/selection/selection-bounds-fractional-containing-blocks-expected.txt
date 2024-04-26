@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS selectionBounds.width is 113
-PASS selectionBounds.height is 17
+FAIL selectionBounds.height should be 17. Was 18.
 PASS successfullyParsed is true
 
 TEST COMPLETE

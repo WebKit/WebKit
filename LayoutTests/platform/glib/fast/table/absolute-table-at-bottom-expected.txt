@@ -6,14 +6,14 @@ layer at (0,0) size 800x186
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 107x17
           text run at (0,0) width 107: "Testcase for bug "
-        RenderInline {A} at (106,0) size 33x17 [color=#0000EE]
+        RenderInline {A} at (106,0) size 33x18 [color=#0000EE]
           RenderText {#text} at (106,0) size 33x17
             text run at (106,0) width 33: "4874"
         RenderText {#text} at (138,0) size 416x17
           text run at (138,0) width 416: " - Table with absolute bottom positioning is positioned incorrectly."
       RenderBlock {H1} at (0,39) size 784x38
-        RenderText {#text} at (0,0) size 170x36
-          text run at (0,0) width 170: "Look Down!"
+        RenderText {#text} at (0,1) size 170x36
+          text run at (0,1) width 170: "Look Down!"
       RenderBlock {P} at (0,97) size 784x73
         RenderText {#text} at (0,0) size 781x71
           text run at (0,0) width 507: "At the bottom of the window you should see the word \"Paragraph\" followed by "

@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "foo"
       RenderBlock (anonymous) at (0,46) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,64) size 500x28 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 498x26
           RenderTableRow {TR} at (0,2) size 498x22
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 96x17
                 text run at (2,2) width 96: "foo foo foo foo"
       RenderBlock (anonymous) at (0,92) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,110) size 500x82 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 498x80
           RenderTableRow {TR} at (0,2) size 498x76
@@ -47,7 +47,7 @@ layer at (0,0) size 800x600
                 text run at (2,38) width 21: "foo"
                 text run at (2,56) width 21: "foo"
       RenderBlock (anonymous) at (0,192) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,210) size 784x28 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x26
           RenderTableRow {TR} at (0,2) size 782x22
@@ -61,4 +61,4 @@ layer at (0,0) size 800x600
               RenderText {#text} at (366,2) size 97x17
                 text run at (366,2) width 97: "foo foo foo foo"
       RenderBlock (anonymous) at (0,238) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18

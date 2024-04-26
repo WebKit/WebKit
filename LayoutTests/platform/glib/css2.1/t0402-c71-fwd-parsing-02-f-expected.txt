@@ -33,7 +33,7 @@ layer at (0,0) size 800x560
           RenderText {#text} at (0,0) size 163x17
             text run at (0,0) width 163: "This line should be green."
       RenderBlock {P} at (0,272) size 784x18
-        RenderInline {ACRONYM} at (0,0) size 163x17
+        RenderInline {ACRONYM} at (0,0) size 163x18
           RenderText {#text} at (0,0) size 163x17
             text run at (0,0) width 163: "This line should be green."
         RenderText {#text} at (0,0) size 0x0
@@ -41,7 +41,7 @@ layer at (0,0) size 800x560
         RenderText {#text} at (0,0) size 163x17
           text run at (0,0) width 163: "This line should be green."
       RenderBlock {P} at (0,340) size 784x18
-        RenderInline {SPAN} at (0,0) size 163x17
+        RenderInline {SPAN} at (0,0) size 163x18
           RenderText {#text} at (0,0) size 163x17
             text run at (0,0) width 163: "This line should be green."
         RenderText {#text} at (0,0) size 0x0

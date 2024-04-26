@@ -15,10 +15,10 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x81
           RenderText {#text} at (0,0) size 59x26
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
+          RenderBR {BR} at (58,0) size 1x27
           RenderText {#text} at (0,27) size 162x26
             text run at (0,27) width 162: "Fix for this bug: "
-          RenderInline {A} at (161,27) size 261x26 [color=#0000EE]
+          RenderInline {A} at (161,27) size 261x27 [color=#0000EE]
             RenderText {#text} at (161,27) size 261x26
               text run at (161,27) width 261: "<rdar://problem/4045521>"
           RenderText {#text} at (0,27) size 734x53
@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,0) size 756x81
             RenderText {#text} at (0,0) size 183x26
               text run at (0,0) width 183: "Expected Results:"
-            RenderBR {BR} at (182,0) size 1x26
+            RenderBR {BR} at (182,0) size 1x27
             RenderText {#text} at (0,27) size 711x53
               text run at (0,27) width 711: "Should see this content in the red box below (note that the insertion point"
               text run at (0,54) width 670: "should be at the start of the third line, immediately preceding \"baz\"):"
@@ -36,7 +36,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 32x26
               text run at (0,0) width 32: "foo"
           RenderBlock {DIV} at (0,108) size 756x27
-            RenderBR {BR} at (0,0) size 0x26
+            RenderBR {BR} at (0,0) size 0x27
           RenderBlock {DIV} at (0,135) size 756x27
             RenderText {#text} at (0,0) size 34x26
               text run at (0,0) width 34: "baz"
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 32x26
               text run at (0,0) width 32: "foo"
           RenderBlock {DIV} at (2,29) size 780x27
-            RenderBR {BR} at (0,0) size 0x26
+            RenderBR {BR} at (0,0) size 0x27
           RenderBlock {DIV} at (2,56) size 780x27
             RenderText {#text} at (0,0) size 34x26
               text run at (0,0) width 34: "baz"

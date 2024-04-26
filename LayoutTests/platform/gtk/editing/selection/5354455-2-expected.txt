@@ -5,13 +5,13 @@ layer at (0,0) size 800x600
 layer at (8,8) size 612x142
   RenderBody {BODY} at (8,8) size 612x143 [border: (1px solid #000000)]
     RenderBlock {H1} at (6,6) size 600x37
-      RenderText {#text} at (0,0) size 450x36
-        text run at (0,0) width 450: "Word selection on right click test"
+      RenderText {#text} at (0,1) size 450x36
+        text run at (0,1) width 450: "Word selection on right click test"
     RenderBlock (anonymous) at (6,64) size 600x73
       RenderText {#text} at (0,0) size 597x35
         text run at (0,0) width 597: "This tests to make sure that right clicking non-editable content only creates a word selection for"
         text run at (0,18) width 103: "clicks over text. "
-      RenderInline {SPAN} at (103,18) size 17x17
+      RenderInline {SPAN} at (103,18) size 17x18
         RenderText {#text} at (103,18) size 17x17
           text run at (103,18) width 17: "To"
       RenderText {#text} at (0,18) size 599x53

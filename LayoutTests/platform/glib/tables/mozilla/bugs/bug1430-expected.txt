@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           text run at (0,90) width 54: "crashes. "
           text run at (54,90) width 442: "It's as though NGLayout thinks the Imagemap areas are located a few "
           text run at (496,90) width 160: "hundred pixels to the left."
-        RenderBR {BR} at (656,90) size 0x17
+        RenderBR {BR} at (656,90) size 0x18
       RenderTable {TABLE} at (0,108) size 644x63
         RenderTableSection {TBODY} at (0,0) size 644x63
           RenderTableRow {TR} at (0,2) size 644x59
@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
                               RenderImage {IMG} at (1,45) size 4x1
                               RenderImage {IMG} at (5,6) size 436x35
                               RenderText {#text} at (0,0) size 0x0
-                              RenderInline {MAP} at (441,32) size 0x17
+                              RenderInline {MAP} at (441,32) size 0x18
                                 RenderText {#text} at (0,0) size 0x0
                                 RenderText {#text} at (0,0) size 0x0
                                 RenderText {#text} at (0,0) size 0x0

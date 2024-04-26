@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 8: "b"
           RenderTableRow {TR} at (0,26) size 29x22
             RenderTableCell {TD} at (2,26) size 11x22 [bgcolor=#FF00FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderBR {BR} at (2,2) size 0x17
+              RenderBR {BR} at (2,2) size 0x18
             RenderTableCell {TD} at (15,26) size 12x22 [bgcolor=#088880] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 7x17
                 text run at (2,2) width 7: "c"

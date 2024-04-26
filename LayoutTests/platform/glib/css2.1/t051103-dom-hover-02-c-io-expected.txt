@@ -8,7 +8,7 @@ layer at (0,0) size 800x70
           RenderText {#text} at (0,0) size 170x17
             text run at (0,0) width 170: "Dummy text. Dummy text."
         RenderBlock {DIV} at (0,18) size 784x18
-          RenderInline {SPAN} at (0,0) size 496x17
+          RenderInline {SPAN} at (0,0) size 496x18
             RenderText {#text} at (0,0) size 496x17
               text run at (0,0) width 101: "Hover this text, "
               text run at (101,0) width 168: "then wait till it disappears. "

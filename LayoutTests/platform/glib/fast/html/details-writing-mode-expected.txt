@@ -137,7 +137,7 @@ layer at (0,0) size 785x1478
                     RenderText {#text} at (0,45) size 17x59
                       text run at (0,45) width 58: "summary"
       RenderBlock (anonymous) at (0,352) size 769x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,370) size 612x352 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 610x350
           RenderTableRow {TR} at (0,2) size 610x30
@@ -272,7 +272,7 @@ layer at (0,0) size 785x1478
                     RenderText {#text} at (0,0) size 17x58
                       text run at (0,0) width 58: "summary"
       RenderBlock (anonymous) at (0,722) size 769x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,740) size 612x352 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 610x350
           RenderTableRow {TR} at (0,2) size 610x30
@@ -407,7 +407,7 @@ layer at (0,0) size 785x1478
                     RenderText {#text} at (0,22) size 17x59
                       text run at (0,22) width 58: "summary"
       RenderBlock (anonymous) at (0,1092) size 769x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,1110) size 612x352 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 610x350
           RenderTableRow {TR} at (0,2) size 610x30

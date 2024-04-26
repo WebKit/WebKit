@@ -78,7 +78,7 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (2,2) size 15x17
                         text run at (2,2) width 15: "all"
       RenderBlock (anonymous) at (0,226) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,260) size 784x18
         RenderText {#text} at (0,0) size 113x17
           text run at (0,0) width 113: "Table - no nesting"

@@ -7,28 +7,28 @@ layer at (0,0) size 785x790
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 769x165
-        RenderText {#text} at (0,0) size 576x165
-          text run at (0,0) width 576: "<LINK rel=\"stylesheet\" type=\"text/css\" HREF=\"../resources/linktest.css\">"
-          text run at (576,0) width 0: " "
-          text run at (0,15) width 152: "LI {color: purple;}"
-          text run at (152,15) width 0: " "
-          text run at (0,30) width 160: "UL LI {color: blue;}"
-          text run at (160,30) width 0: " "
-          text run at (0,45) width 184: "UL LI LI {color: gray;}"
-          text run at (184,45) width 0: " "
-          text run at (0,60) width 176: "LI.red {color: green;}"
-          text run at (176,60) width 0: " "
-          text run at (0,75) width 216: "UL LI.mar {color: #660000;}"
-          text run at (216,75) width 0: " "
-          text run at (0,90) width 200: "UL LI#gre {color: green;}"
-          text run at (200,90) width 0: " "
-          text run at (0,105) width 160: ".test {color: blue;}"
-          text run at (160,105) width 0: " "
-          text run at (0,120) width 176: ".test {color: purple;}"
-          text run at (176,120) width 0: " "
-          text run at (0,135) width 296: ".one {text-decoration: line-through;}"
-          text run at (296,135) width 0: " "
-          text run at (0,150) width 0: " "
+        RenderText {#text} at (0,1) size 576x165
+          text run at (0,1) width 576: "<LINK rel=\"stylesheet\" type=\"text/css\" HREF=\"../resources/linktest.css\">"
+          text run at (576,1) width 0: " "
+          text run at (0,16) width 152: "LI {color: purple;}"
+          text run at (152,16) width 0: " "
+          text run at (0,31) width 160: "UL LI {color: blue;}"
+          text run at (160,31) width 0: " "
+          text run at (0,46) width 184: "UL LI LI {color: gray;}"
+          text run at (184,46) width 0: " "
+          text run at (0,61) width 176: "LI.red {color: green;}"
+          text run at (176,61) width 0: " "
+          text run at (0,76) width 216: "UL LI.mar {color: #660000;}"
+          text run at (216,76) width 0: " "
+          text run at (0,91) width 200: "UL LI#gre {color: green;}"
+          text run at (200,91) width 0: " "
+          text run at (0,106) width 160: ".test {color: blue;}"
+          text run at (160,106) width 0: " "
+          text run at (0,121) width 176: ".test {color: purple;}"
+          text run at (176,121) width 0: " "
+          text run at (0,136) width 296: ".one {text-decoration: line-through;}"
+          text run at (296,136) width 0: " "
+          text run at (0,151) width 0: " "
       RenderBlock {UL} at (0,230) size 769x144
         RenderListItem {LI} at (40,0) size 729x18 [color=#0000FF]
           RenderListMarker at (-17,0) size 7x17: bullet
@@ -70,9 +70,9 @@ layer at (0,0) size 785x790
       RenderBlock {P} at (0,424) size 769x18 [color=#800080]
         RenderText {#text} at (0,0) size 204x17
           text run at (0,0) width 204: "This sentence should be purple ["
-        RenderInline {CODE} at (204,3) size 96x15
-          RenderText {#text} at (204,3) size 96x15
-            text run at (204,3) width 96: "class=\"test\""
+        RenderInline {CODE} at (204,4) size 96x14
+          RenderText {#text} at (204,4) size 96x15
+            text run at (204,4) width 96: "class=\"test\""
         RenderText {#text} at (300,0) size 9x17
           text run at (300,0) width 9: "]."
       RenderBlock {P} at (0,458) size 769x18
@@ -82,7 +82,7 @@ layer at (0,0) size 785x790
         RenderTableSection {TBODY} at (1,1) size 703x280
           RenderTableRow {TR} at (0,0) size 703x26
             RenderTableCell {TD} at (0,0) size 703x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (4,4) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 703x254
@@ -131,9 +131,9 @@ layer at (0,0) size 785x790
               RenderBlock {P} at (4,198) size 683x18 [color=#800080]
                 RenderText {#text} at (0,0) size 204x17
                   text run at (0,0) width 204: "This sentence should be purple ["
-                RenderInline {CODE} at (204,3) size 96x15
-                  RenderText {#text} at (204,3) size 96x15
-                    text run at (204,3) width 96: "class=\"test\""
+                RenderInline {CODE} at (204,4) size 96x14
+                  RenderText {#text} at (204,4) size 96x15
+                    text run at (204,4) width 96: "class=\"test\""
                 RenderText {#text} at (300,0) size 9x17
                   text run at (300,0) width 9: "]."
               RenderBlock {P} at (4,232) size 683x18

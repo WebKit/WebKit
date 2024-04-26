@@ -6,8 +6,8 @@ layer at (0,0) size 800x286
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 104x17
           text run at (0,0) width 104: "This is a test for "
-        RenderInline {I} at (0,0) size 743x35
-          RenderInline {A} at (104,0) size 348x17 [color=#0000EE]
+        RenderInline {I} at (0,0) size 743x36
+          RenderInline {A} at (104,0) size 348x18 [color=#0000EE]
             RenderText {#text} at (104,0) size 348x17
               text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9669"
           RenderText {#text} at (0,0) size 743x35
@@ -22,7 +22,7 @@ layer at (0,0) size 800x286
           text run at (0,18) width 192: "adipiscing, enim in scelerisque"
           text run at (0,36) width 64: "convallis, "
           text run at (64,36) width 42: "augue "
-        RenderInline {SPAN} at (106,6) size 35x47 [border: (30px solid #0000FF) none]
+        RenderInline {SPAN} at (106,6) size 35x48 [border: (30px solid #0000FF) none]
           RenderText {#text} at (106,36) size 35x17
             text run at (106,36) width 35: "purus"
         RenderText {#text} at (0,36) size 195x89

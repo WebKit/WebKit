@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x54
         RenderText {#text} at (0,0) size 85x17
           text run at (0,0) width 85: "See this bug: "
-        RenderInline {A} at (85,0) size 167x17 [color=#0000EE]
+        RenderInline {A} at (85,0) size 167x18 [color=#0000EE]
           RenderText {#text} at (85,0) size 167x17
             text run at (85,0) width 167: "<rdar://problem/3918712>"
         RenderText {#text} at (0,0) size 781x53
@@ -42,5 +42,5 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 32x26
             text run at (0,0) width 32: "foo"
         RenderBlock {DIV} at (14,89) size 756x27
-          RenderBR {BR} at (0,0) size 0x26
+          RenderBR {BR} at (0,0) size 0x27
 caret: position 0 of child 0 {BR} of child 1 {DIV} of child 8 {DIV} of body

@@ -4,8 +4,8 @@ layer at (0,0) size 800x402
   RenderBlock {html} at (0,0) size 800x402
     RenderBody {body} at (11,23) size 778x368
       RenderBlock {p} at (0,0) size 777x27 [color=#000080]
-        RenderText {#text} at (0,0) size 719x26
-          text run at (0,0) width 719: "Zoom in and out. The following two squares should always be the same size."
+        RenderText {#text} at (0,1) size 719x26
+          text run at (0,1) width 719: "Zoom in and out. The following two squares should always be the same size."
       RenderBlock {div} at (0,50) size 144x145 [bgcolor=#000080]
       RenderBlock (anonymous) at (0,217) size 777x151
         RenderSVGRoot {svg} at (11,240) size 145x145

@@ -11,7 +11,7 @@ layer at (0,0) size 800x268
 layer at (8,68) size 192x192
   RenderBlock (relative positioned) {DIV} at (0,52) size 192x192 [bgcolor=#FFFF00]
     RenderBlock (anonymous) at (0,0) size 192x18
-      RenderInline {DIV} at (0,0) size 65x17 [bgcolor=#0000FF]
+      RenderInline {DIV} at (0,0) size 65x18 [bgcolor=#0000FF]
         RenderText {#text} at (0,0) size 65x17
           text run at (0,0) width 65: "Filler Text"
     RenderBlock (anonymous) at (0,18) size 192x18
@@ -19,21 +19,21 @@ layer at (8,68) size 192x192
         RenderText {#text} at (0,0) size 65x17
           text run at (0,0) width 65: "Filler Text"
     RenderBlock (anonymous) at (0,36) size 192x18
-      RenderInline {DIV} at (0,0) size 65x17 [bgcolor=#0000FF]
+      RenderInline {DIV} at (0,0) size 65x18 [bgcolor=#0000FF]
     RenderBlock (anonymous) at (0,72) size 192x18
-      RenderInline {DIV} at (0,0) size 65x17 [bgcolor=#0000FF]
+      RenderInline {DIV} at (0,0) size 65x18 [bgcolor=#0000FF]
         RenderText {#text} at (0,0) size 0x0
     RenderBlock (anonymous) at (0,90) size 192x18
       RenderBlock {DIV} at (0,0) size 192x18 [bgcolor=#FFA500]
         RenderText {#text} at (0,0) size 65x17
           text run at (0,0) width 65: "Filler Text"
     RenderBlock (anonymous) at (0,108) size 192x18
-      RenderInline {DIV} at (0,0) size 65x17 [bgcolor=#0000FF]
+      RenderInline {DIV} at (0,0) size 65x18 [bgcolor=#0000FF]
         RenderText {#text} at (0,0) size 65x17
           text run at (0,0) width 65: "Filler Text"
       RenderText {#text} at (0,0) size 0x0
-layer at (8,296) size 65x17
-  RenderInline (relative positioned) {DIV} at (0,0) size 65x17
+layer at (8,296) size 65x18
+  RenderInline (relative positioned) {DIV} at (0,0) size 65x18
     RenderText {#text} at (0,0) size 65x17
       text run at (0,0) width 65: "Filler Text"
 layer at (8,314) size 192x18
@@ -41,7 +41,7 @@ layer at (8,314) size 192x18
     RenderBlock {DIV} at (0,0) size 192x18 [bgcolor=#FFA500]
       RenderText {#text} at (0,0) size 65x17
         text run at (0,0) width 65: "Filler Text"
-layer at (8,332) size 65x17
-  RenderInline (relative positioned) {DIV} at (0,0) size 65x17
+layer at (8,332) size 65x18
+  RenderInline (relative positioned) {DIV} at (0,0) size 65x18
     RenderText {#text} at (0,0) size 65x17
       text run at (0,0) width 65: "Filler Text"

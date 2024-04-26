@@ -13,7 +13,9 @@ line2
 
 PASS #target > div 1
 PASS #target > div 2
-PASS #target > div 3
+FAIL #target > div 3 assert_equals:
+<div data-offset-x="21">line1<br>line2</div>
+offsetLeft expected 21 but got 20
 PASS #target > div 4
 PASS #target > div 5
 PASS #target > div 6

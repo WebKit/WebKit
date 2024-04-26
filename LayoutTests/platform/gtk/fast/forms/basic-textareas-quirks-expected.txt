@@ -661,7 +661,7 @@ layer at (376,929) size 201x42 clip at (377,930) size 184x25 scrollWidth 245 scr
         text run at (243,234) width 0: " "
         text run at (0,252) width 243: "This is a text area with wrap=\"soft\""
         text run at (243,252) width 0: " "
-      RenderBR {BR} at (0,270) size 0x17
+      RenderBR {BR} at (0,270) size 0x18
 layer at (376,990) size 201x42 clip at (377,991) size 184x40 scrollHeight 544
   RenderTextControl {TEXTAREA} at (14,1) size 202x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 180x540
@@ -710,7 +710,7 @@ layer at (376,990) size 201x42 clip at (377,991) size 184x40 scrollHeight 544
         text run at (0,486) width 162: "This is a text area with "
         text run at (0,504) width 81: "wrap=\"soft\""
         text run at (81,504) width 0: " "
-      RenderBR {BR} at (0,522) size 0x17
+      RenderBR {BR} at (0,522) size 0x18
 layer at (376,1051) size 201x42 clip at (377,1052) size 184x40 scrollHeight 544
   RenderTextControl {TEXTAREA} at (14,1) size 202x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 180x540
@@ -759,4 +759,4 @@ layer at (376,1051) size 201x42 clip at (377,1052) size 184x40 scrollHeight 544
         text run at (0,486) width 162: "This is a text area with "
         text run at (0,504) width 81: "wrap=\"soft\""
         text run at (81,504) width 0: " "
-      RenderBR {BR} at (0,522) size 0x17
+      RenderBR {BR} at (0,522) size 0x18

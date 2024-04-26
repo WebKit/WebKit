@@ -4,8 +4,8 @@ layer at (0,0) size 785x1770
   RenderBlock {HTML} at (0,0) size 785x1770 [border: (1px solid #000000)]
     RenderBody {BODY} at (9,9) size 767x1752 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
       RenderBlock {H1} at (1,1) size 765x39 [border: (1px solid #000000)]
-        RenderText {#text} at (1,1) size 286x36
-          text run at (1,1) width 286: "Caption Margin Test"
+        RenderText {#text} at (1,2) size 286x36
+          text run at (1,2) width 286: "Caption Margin Test"
       RenderBlock {DIV} at (1,61) size 102x21 [border: (1px solid #008000)]
         RenderText {#text} at (1,1) size 40x17
           text run at (1,1) width 40: "100px"

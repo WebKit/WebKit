@@ -10,12 +10,12 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (1,1) size 220x54
                 RenderText {#text} at (0,0) size 220x17
                   text run at (0,0) width 220: "This cell has the nowrap parameter"
-                RenderBR {BR} at (220,0) size 0x17
-                RenderBR {BR} at (0,18) size 0x17
+                RenderBR {BR} at (220,0) size 0x18
+                RenderBR {BR} at (0,18) size 0x18
                 RenderText {#text} at (0,36) size 31x17
                   text run at (0,36) width 31: "<hr>"
               RenderBlock (anonymous) at (1,73) size 220x36
-                RenderBR {BR} at (0,0) size 0x17
+                RenderBR {BR} at (0,0) size 0x18
                 RenderText {#text} at (0,18) size 96x17
                   text run at (0,18) width 96: "<hr width=30>"
           RenderTableRow {TR} at (0,132) size 226x20
@@ -27,12 +27,12 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (1,1) size 220x54
                 RenderText {#text} at (0,0) size 102x17
                   text run at (0,0) width 102: "This cell doesn't"
-                RenderBR {BR} at (102,0) size 0x17
-                RenderBR {BR} at (0,18) size 0x17
+                RenderBR {BR} at (102,0) size 0x18
+                RenderBR {BR} at (0,18) size 0x18
                 RenderText {#text} at (0,36) size 31x17
                   text run at (0,36) width 31: "<hr>"
               RenderBlock (anonymous) at (1,73) size 220x36
-                RenderBR {BR} at (0,0) size 0x17
+                RenderBR {BR} at (0,0) size 0x18
                 RenderText {#text} at (0,18) size 96x17
                   text run at (0,18) width 96: "<hr width=30>"
 layer at (11,73) size 220x2 clip at (0,0) size 0x0

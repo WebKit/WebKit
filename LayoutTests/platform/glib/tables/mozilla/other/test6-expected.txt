@@ -4,13 +4,13 @@ layer at (0,0) size 785x1356
   RenderBlock {HTML} at (0,0) size 785x1357
     RenderBody {BODY} at (8,8) size 769x1341
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 391x36
-          text run at (0,0) width 391: "Example 6: Table Stress Test"
+        RenderText {#text} at (0,1) size 391x36
+          text run at (0,1) width 391: "Example 6: Table Stress Test"
       RenderBlock {PRE} at (0,58) size 769x16 [color=#FF0000]
-        RenderText {#text} at (0,0) size 272x15
-          text run at (0,0) width 272: "Resize document for maximum effect"
+        RenderText {#text} at (0,1) size 272x15
+          text run at (0,1) width 272: "Resize document for maximum effect"
       RenderBlock (anonymous) at (0,86) size 769x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock {H2} at (0,124) size 769x28
         RenderText {#text} at (0,0) size 501x26
           text run at (0,0) width 501: "Auto-width tables with spans nested 8 levels deep"
@@ -196,7 +196,7 @@ layer at (0,0) size 785x1356
               RenderText {#text} at (2,2) size 26x17
                 text run at (2,2) width 26: "Cell"
       RenderBlock (anonymous) at (0,539) size 769x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock {H2} at (0,577) size 769x28
         RenderText {#text} at (0,0) size 396x26
           text run at (0,0) width 396: "100% width tables nested 6 levels deep"

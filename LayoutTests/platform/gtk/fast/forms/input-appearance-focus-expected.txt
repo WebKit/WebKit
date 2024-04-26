@@ -13,13 +13,13 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (196,0) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,74) size 784x72
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 320x17
           text run at (0,18) width 320: "Test Passed. Text field 1's onFocus event has fired."
-        RenderBR {BR} at (319,18) size 1x17
+        RenderBR {BR} at (319,18) size 1x18
         RenderText {#text} at (0,36) size 310x17
           text run at (0,36) width 310: "Test Passed. Text field 1's onBlur event has fired."
-        RenderBR {BR} at (309,36) size 1x17
+        RenderBR {BR} at (309,36) size 1x18
         RenderText {#text} at (0,54) size 320x17
           text run at (0,54) width 320: "Test Passed. Text field 2's onFocus event has fired."
       RenderBlock {P} at (0,162) size 784x0

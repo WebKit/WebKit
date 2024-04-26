@@ -15,10 +15,10 @@ layer at (0,0) size 785x532
             RenderTableCell {TD} at (113,30) size 84x86 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (16,16) size 20x17
                 text run at (16,16) width 20: "bar"
-              RenderBR {BR} at (36,16) size 0x17
+              RenderBR {BR} at (36,16) size 0x18
               RenderText {#text} at (16,34) size 22x17
                 text run at (16,34) width 22: "baz"
-              RenderBR {BR} at (38,34) size 0x17
+              RenderBR {BR} at (38,34) size 0x18
               RenderText {#text} at (16,52) size 22x17
                 text run at (16,52) width 22: "zap"
           RenderTableRow {TR} at (0,146) size 227x132

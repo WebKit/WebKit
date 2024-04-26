@@ -44,15 +44,15 @@ layer at (20,66) size 200x444
       text run at (70,409) width 75: "interdum et,"
     RenderText {#text} at (52,427) size 60x17
       text run at (52,427) width 60: " ut lorem."
-layer at (20,66) size 57x17
-  RenderInline (relative positioned) {SPAN} at (44,72) size 57x17 [bgcolor=#FFFF00]
+layer at (20,66) size 57x18
+  RenderInline (relative positioned) {SPAN} at (44,72) size 57x18 [bgcolor=#FFFF00]
     RenderText {#text} at (44,73) size 57x17
       text run at (44,73) width 57: "Vivamus"
-layer at (20,66) size 44x17
-  RenderInline (relative positioned) {SPAN} at (0,198) size 44x17 [bgcolor=#FFFF00]
+layer at (20,66) size 44x18
+  RenderInline (relative positioned) {SPAN} at (0,198) size 44x18 [bgcolor=#FFFF00]
     RenderText {#text} at (0,205) size 44x17
       text run at (0,205) width 44: "Integer"
-layer at (20,66) size 52x17
-  RenderInline (relative positioned) {SPAN} at (0,414) size 52x17 [bgcolor=#FFFF00]
+layer at (20,66) size 52x18
+  RenderInline (relative positioned) {SPAN} at (0,414) size 52x18 [bgcolor=#FFFF00]
     RenderText {#text} at (0,427) size 52x17
       text run at (0,427) width 52: "pulvinar"

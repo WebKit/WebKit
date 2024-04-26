@@ -19,10 +19,10 @@ layer at (0,0) size 800x280
         RenderTableSection {tbody} at (0,150) size 126x38
           RenderTableRow (anonymous) at (0,0) size 126x36
             RenderTableCell (anonymous) at (2,0) size 122x36 [r=0 c=0 rs=1 cs=1]
-              RenderBR {br} at (0,0) size 0x17
+              RenderBR {br} at (0,0) size 0x18
               RenderText {#text} at (0,18) size 122x17
                 text run at (0,18) width 122: "Some body content"
-              RenderBR {br} at (122,18) size 0x17
+              RenderBR {br} at (122,18) size 0x18
         RenderTableSection {tfoot} at (0,190) size 126x20
           RenderTableRow (anonymous) at (0,0) size 126x18
             RenderTableCell (anonymous) at (2,0) size 122x18 [r=0 c=0 rs=1 cs=1]
@@ -53,8 +53,8 @@ layer at (10,196) size 330x18
   RenderBlock (positioned) {caption} at (10,196) size 330x18
     RenderText {#text} at (0,0) size 330x17
       text run at (0,0) width 330: "PASS: Caption with a fixed position and opacity 0.6"
-layer at (8,80) size 118x53
-  RenderInline {a} at (4,0) size 118x53
+layer at (8,80) size 118x54
+  RenderInline {a} at (4,0) size 118x54
     RenderText {#text} at (4,0) size 118x53
       text run at (15,0) width 96: "PASS: Caption"
       text run at (4,18) width 118: "with opacity 0.5 in"

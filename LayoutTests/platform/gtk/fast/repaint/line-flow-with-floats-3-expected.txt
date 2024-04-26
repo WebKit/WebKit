@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
                   text run at (6,78) width 159: "neck nicely straightened "
                   text run at (164,78) width 196: "out, and was going to give the"
                   text run at (6,96) width 240: "hedgehog a blow with its head, it "
-                RenderInline {I} at (245,96) size 40x17
+                RenderInline {I} at (245,96) size 40x18
                   RenderText {#text} at (245,96) size 40x17
                     text run at (245,96) width 40: "would"
                 RenderText {#text} at (6,96) size 406x71
@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (57,258) size 355x35
                   text run at (363,258) width 49: "difficult"
                   text run at (57,276) width 85: "game indeed."
-                RenderBR {BR} at (141,276) size 1x17
+                RenderBR {BR} at (141,276) size 1x18
                 RenderText {#text} at (57,294) size 298x17
                   text run at (57,294) width 298: "The players all played at once without waiting "
                 RenderBlock (floating) {SPAN} at (348,315) size 64x81 [bgcolor=#90EE90]
@@ -59,7 +59,7 @@ layer at (0,0) size 800x600
                   text run at (57,312) width 288: "quarrelling all the while, and fighting for the"
                   text run at (6,330) width 120: "hedgehogs; and in "
                   text run at (125,330) width 110: "a very short time "
-                RenderInline {SPAN} at (234,330) size 66x17
+                RenderInline {SPAN} at (234,330) size 66x18
                   RenderText {#text} at (234,330) size 66x17
                     text run at (234,330) width 66: "the Queen"
                 RenderText {#text} at (6,330) size 339x71
@@ -69,7 +69,7 @@ layer at (0,0) size 800x600
                   text run at (6,366) width 275: "shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with "
                   text run at (280,366) width 65: "her head!\x{2019}"
                   text run at (6,384) width 147: "about once in a minute."
-                RenderBR {BR} at (153,384) size 0x17
+                RenderBR {BR} at (153,384) size 0x18
                 RenderText {#text} at (6,402) size 406x89
                   text run at (6,402) width 387: "Alice began to feel very uneasy: to be sure, she had not as "
                   text run at (393,402) width 19: "yet"

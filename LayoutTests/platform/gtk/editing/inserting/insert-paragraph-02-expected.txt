@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 21x17
                   text run at (2,2) width 21: "foo"
         RenderBlock (anonymous) at (0,28) size 784x36
-          RenderBR {BR} at (0,0) size 0x17
+          RenderBR {BR} at (0,0) size 0x18
           RenderText {#text} at (0,18) size 20x17
             text run at (0,18) width 20: "bar"
 caret: position 0 of child 1 {BR} of child 2 {DIV} of body

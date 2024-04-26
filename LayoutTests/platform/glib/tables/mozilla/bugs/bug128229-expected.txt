@@ -7,17 +7,17 @@ layer at (0,0) size 800x248
         RenderTableSection {TBODY} at (1,1) size 704x230
           RenderTableRow {TR} at (0,2) size 704x226
             RenderTableCell {TD} at (2,2) size 700x226 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderInline {A} at (2,2) size 108x36 [color=#0000EE]
-                RenderText {#text} at (2,2) size 108x36
-                  text run at (2,2) width 108: "Xandros"
-              RenderText {#text} at (2,2) size 664x221
-                text run at (110,2) width 8: " "
-                text run at (118,2) width 545: "in the news. text text text text text text text"
-                text run at (2,39) width 280: "text text text text text "
-                text run at (282,39) width 384: "text text text text text text text"
-                text run at (2,76) width 448: "text text text text text text text text "
-                text run at (450,76) width 216: "text text text text"
-                text run at (2,113) width 616: "text text text text text text text text text text text "
-                text run at (618,113) width 48: "text"
-                text run at (2,150) width 664: "text text text text text text text text text text text text"
-                text run at (2,187) width 56: "text."
+              RenderInline {A} at (2,3) size 108x35 [color=#0000EE]
+                RenderText {#text} at (2,3) size 108x36
+                  text run at (2,3) width 108: "Xandros"
+              RenderText {#text} at (2,3) size 664x221
+                text run at (110,3) width 8: " "
+                text run at (118,3) width 545: "in the news. text text text text text text text"
+                text run at (2,40) width 280: "text text text text text "
+                text run at (282,40) width 384: "text text text text text text text"
+                text run at (2,77) width 448: "text text text text text text text text "
+                text run at (450,77) width 216: "text text text text"
+                text run at (2,114) width 616: "text text text text text text text text text text text "
+                text run at (618,114) width 48: "text"
+                text run at (2,151) width 664: "text text text text text text text text text text text text"
+                text run at (2,188) width 56: "text."

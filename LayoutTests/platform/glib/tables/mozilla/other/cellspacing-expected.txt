@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 44x17
                 text run at (2,2) width 44: "BBBB"
       RenderBlock (anonymous) at (0,74) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 265x17
           text run at (0,18) width 265: "This table should have cell spacing of 5px"
       RenderTable {TABLE} at (0,110) size 105x61 [border: (1px outset #808080)]
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 44x17
                 text run at (2,2) width 44: "BBBB"
       RenderBlock (anonymous) at (0,171) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 398x17
           text run at (0,18) width 398: "This table should have cell spacingX of 5px, spacingY of 10px"
       RenderTable {TABLE} at (0,207) size 105x76 [border: (1px outset #808080)]
@@ -63,7 +63,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 44x17
                 text run at (2,2) width 44: "BBBB"
       RenderBlock (anonymous) at (0,283) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 398x17
           text run at (0,18) width 398: "This table should have cell spacingX of 5px, spacingY of 10px"
       RenderTable {TABLE} at (0,319) size 105x76 [border: (1px outset #808080)]

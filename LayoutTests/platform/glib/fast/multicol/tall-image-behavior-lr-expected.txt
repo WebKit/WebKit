@@ -12,7 +12,7 @@ layer at (10,10) size 650x282
       RenderText {#text} at (1,0) size 36x232
         text run at (1,0) width 232: "This image should not be split across"
         text run at (20,0) width 57: "columns."
-      RenderBR {BR} at (20,57) size 17x0
+      RenderBR {BR} at (19,57) size 18x0
       RenderText {#text} at (39,0) size 74x266
         text run at (39,0) width 265: "The reason it should not be split is that the"
         text run at (58,0) width 259: "line contains no text and so we should be"

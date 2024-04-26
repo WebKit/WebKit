@@ -23,7 +23,7 @@ layer at (0,0) size 800x539
             RenderListMarker at (-19,1) size 15x17: "a"
             RenderText {#text} at (33,1) size 39x17
               text run at (33,1) width 39: "Item a"
-            RenderBR {BR} at (72,1) size 0x17
+            RenderBR {BR} at (72,1) size 0x18
             RenderText {#text} at (33,19) size 88x17
               text run at (33,19) width 88: "Item a, Line 2"
           RenderListItem {DIV} at (33,57) size 692x20 [border: (1px solid #000000)]
@@ -53,7 +53,7 @@ layer at (0,0) size 800x539
             RenderListMarker at (-19,1) size 15x17: "a"
             RenderText {#text} at (33,1) size 39x17
               text run at (33,1) width 39: "Item a"
-            RenderBR {BR} at (72,1) size 0x17
+            RenderBR {BR} at (72,1) size 0x18
             RenderText {#text} at (33,19) size 88x17
               text run at (33,19) width 88: "Item a, Line 2"
           RenderBlock {DIV} at (33,57) size 692x20 [border: (1px solid #000000)]
