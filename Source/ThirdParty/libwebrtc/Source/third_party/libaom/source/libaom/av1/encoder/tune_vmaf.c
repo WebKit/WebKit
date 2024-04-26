@@ -247,7 +247,7 @@ static AOM_INLINE void unsharp(const AV1_COMP *const cpi,
 
 // 8-tap Gaussian convolution filter with sigma = 1.0, sums to 128,
 // all co-efficients must be even.
-DECLARE_ALIGNED(16, static const int16_t, gauss_filter[8]) = { 0,  8, 30, 52,
+DECLARE_ALIGNED(16, static const int16_t, gauss_filter[9]) = { 0,  8, 30, 52,
                                                                30, 8, 0,  0 };
 static AOM_INLINE void gaussian_blur(const int bit_depth,
                                      const YV12_BUFFER_CONFIG *source,
