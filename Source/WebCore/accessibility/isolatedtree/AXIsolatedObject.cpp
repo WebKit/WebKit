@@ -1147,30 +1147,6 @@ VisiblePosition AXIsolatedObject::previousLineStartPosition(const VisiblePositio
     return { };
 }
 
-VisiblePosition AXIsolatedObject::nextSentenceEndPosition(const VisiblePosition&) const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-VisiblePosition AXIsolatedObject::previousSentenceStartPosition(const VisiblePosition&) const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-VisiblePosition AXIsolatedObject::nextParagraphEndPosition(const VisiblePosition&) const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-VisiblePosition AXIsolatedObject::previousParagraphStartPosition(const VisiblePosition&) const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
 VisiblePosition AXIsolatedObject::visiblePositionForIndex(int index) const
 {
     ASSERT(isMainThread());
@@ -1573,20 +1549,6 @@ VisiblePositionRange AXIsolatedObject::visiblePositionRangeForUnorderedPositions
     return axObject ? axObject->visiblePositionRangeForUnorderedPositions(position1, position2) : visiblePositionRange();
 }
 
-VisiblePositionRange AXIsolatedObject::positionOfLeftWord(const VisiblePosition& position) const
-{
-    ASSERT(isMainThread());
-    auto* axObject = associatedAXObject();
-    return axObject ? axObject->positionOfLeftWord(position) : VisiblePositionRange();
-}
-
-VisiblePositionRange AXIsolatedObject::positionOfRightWord(const VisiblePosition& position) const
-{
-    ASSERT(isMainThread());
-    auto* axObject = associatedAXObject();
-    return axObject ? axObject->positionOfRightWord(position) : VisiblePositionRange();
-}
-
 VisiblePositionRange AXIsolatedObject::leftLineVisiblePositionRange(const VisiblePosition& position) const
 {
     ASSERT(isMainThread());
@@ -1601,32 +1563,11 @@ VisiblePositionRange AXIsolatedObject::rightLineVisiblePositionRange(const Visib
     return axObject ? axObject->rightLineVisiblePositionRange(position) : VisiblePositionRange();
 }
 
-VisiblePositionRange AXIsolatedObject::sentenceForPosition(const VisiblePosition& position) const
-{
-    ASSERT(isMainThread());
-    auto* axObject = associatedAXObject();
-    return axObject ? axObject->sentenceForPosition(position) : VisiblePositionRange();
-}
-
-VisiblePositionRange AXIsolatedObject::paragraphForPosition(const VisiblePosition& position) const
-{
-    ASSERT(isMainThread());
-    auto* axObject = associatedAXObject();
-    return axObject ? axObject->paragraphForPosition(position) : VisiblePositionRange();
-}
-
 VisiblePositionRange AXIsolatedObject::styleRangeForPosition(const VisiblePosition& position) const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
     return axObject ? axObject->styleRangeForPosition(position) : VisiblePositionRange();
-}
-
-VisiblePositionRange AXIsolatedObject::visiblePositionRangeForRange(const CharacterRange& plainTextRange) const
-{
-    ASSERT(isMainThread());
-    auto* axObject = associatedAXObject();
-    return axObject ? axObject->visiblePositionRangeForRange(plainTextRange) : VisiblePositionRange();
 }
 
 VisiblePositionRange AXIsolatedObject::lineRangeForPosition(const VisiblePosition& position) const

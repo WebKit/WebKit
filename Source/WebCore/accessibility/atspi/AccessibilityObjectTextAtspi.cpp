@@ -701,11 +701,12 @@ bool AccessibilityObjectAtspi::selectionBounds(int& startOffset, int& endOffset)
 
 void AccessibilityObjectAtspi::setSelectedRange(unsigned utf16Offset, unsigned length)
 {
-    if (!m_coreObject)
+    auto* axObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
+    if (!axObject)
         return;
 
-    auto range = m_coreObject->visiblePositionRangeForRange(CharacterRange(utf16Offset, length));
-    m_coreObject->setSelectedVisiblePositionRange(range);
+    auto range = axObject->visiblePositionRangeForRange(CharacterRange(utf16Offset, length));
+    axObject->setSelectedVisiblePositionRange(range);
 }
 
 bool AccessibilityObjectAtspi::selectRange(int startOffset, int endOffset)

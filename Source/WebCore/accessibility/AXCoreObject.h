@@ -1276,14 +1276,9 @@ public:
 
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const = 0;
     virtual VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const = 0;
-    virtual VisiblePositionRange positionOfLeftWord(const VisiblePosition&) const = 0;
-    virtual VisiblePositionRange positionOfRightWord(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange leftLineVisiblePositionRange(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange rightLineVisiblePositionRange(const VisiblePosition&) const = 0;
-    virtual VisiblePositionRange sentenceForPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePositionRange paragraphForPosition(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePositionRange visiblePositionRangeForRange(const CharacterRange&) const = 0;
     virtual VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const = 0;
 
     virtual std::optional<SimpleRange> rangeForCharacterRange(const CharacterRange&) const = 0;
@@ -1299,13 +1294,9 @@ public:
     virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const = 0;
 
     virtual VisiblePosition visiblePositionForPoint(const IntPoint&) const = 0;
+    virtual VisiblePosition visiblePositionForIndex(unsigned, bool /* lastIndexOK */) const = 0;
     virtual VisiblePosition nextLineEndPosition(const VisiblePosition&) const = 0;
     virtual VisiblePosition previousLineStartPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePosition nextSentenceEndPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePosition previousSentenceStartPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePosition nextParagraphEndPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePosition previousParagraphStartPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePosition visiblePositionForIndex(unsigned, bool /*lastIndexOK */) const = 0;
 
     virtual VisiblePosition visiblePositionForIndex(int) const = 0;
     virtual int indexForVisiblePosition(const VisiblePosition&) const = 0;

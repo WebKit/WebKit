@@ -1486,18 +1486,6 @@ VisiblePositionRange AccessibilityObject::visiblePositionRangeForUnorderedPositi
     return { startPos, endPos };
 }
 
-VisiblePositionRange AccessibilityObject::positionOfLeftWord(const VisiblePosition& visiblePos) const
-{
-    auto start = startOfWord(visiblePos, WordSide::LeftWordIfOnBoundary);
-    return { start, endOfWord(start) };
-}
-
-VisiblePositionRange AccessibilityObject::positionOfRightWord(const VisiblePosition& visiblePos) const
-{
-    auto start = startOfWord(visiblePos, WordSide::RightWordIfOnBoundary);
-    return { start, endOfWord(start) };
-}
-
 static VisiblePosition updateAXLineStartForVisiblePosition(const VisiblePosition& visiblePosition)
 {
     // A line in the accessibility sense should include floating objects, such as aligned image, as part of a line.
@@ -1579,20 +1567,6 @@ VisiblePositionRange AccessibilityObject::rightLineVisiblePositionRange(const Vi
     }
 
     return { startPosition, endPosition };
-}
-
-VisiblePositionRange AccessibilityObject::sentenceForPosition(const VisiblePosition& visiblePos) const
-{
-    // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
-    // Related? <rdar://problem/3927736> Text selection broken in 8A336
-    auto startPosition = startOfSentence(visiblePos);
-    return { startPosition, endOfSentence(startPosition) };
-}
-
-VisiblePositionRange AccessibilityObject::paragraphForPosition(const VisiblePosition& visiblePos) const
-{
-    auto startPosition = startOfParagraph(visiblePos);
-    return { startPosition, endOfParagraph(startPosition) };
 }
 
 static VisiblePosition startOfStyleRange(const VisiblePosition& visiblePos)
@@ -1852,47 +1826,6 @@ std::optional<VisiblePosition> AccessibilityObject::previousLineStartPositionInt
         startPosition = updateAXLineStartForVisiblePosition(startPosition);
 
     return startPosition;
-}
-
-VisiblePosition AccessibilityObject::nextSentenceEndPosition(const VisiblePosition& position) const
-{
-    // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
-    // Related? <rdar://problem/3927736> Text selection broken in 8A336
-
-    // Make sure we move off of a sentence end.
-    auto nextPosition = position.next();
-    auto range = makeSimpleRange(startOfLine(nextPosition), endOfLine(nextPosition));
-    if (!range)
-        return { };
-
-    // An empty line is considered a sentence. If it's skipped, then the sentence parser will not
-    // see this empty line. Instead, return the end position of the empty line.
-    return hasAnyPlainText(*range) ? endOfSentence(nextPosition) : nextPosition;
-}
-
-VisiblePosition AccessibilityObject::previousSentenceStartPosition(const VisiblePosition& position) const
-{
-    // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
-    // Related? <rdar://problem/3927736> Text selection broken in 8A336
-
-    // Make sure we move off of a sentence start.
-    auto previousPosition = position.previous();
-    auto range = makeSimpleRange(startOfLine(previousPosition), endOfLine(previousPosition));
-    if (!range)
-        return { };
-
-    // Treat empty line as a separate sentence.
-    return hasAnyPlainText(*range) ? startOfSentence(previousPosition) : previousPosition;
-}
-
-VisiblePosition AccessibilityObject::nextParagraphEndPosition(const VisiblePosition& position) const
-{
-    return endOfParagraph(position.next());
-}
-
-VisiblePosition AccessibilityObject::previousParagraphStartPosition(const VisiblePosition& position) const
-{
-    return startOfParagraph(position.previous());
 }
 
 OptionSet<SpeakAs> AccessibilityObject::speakAsProperty() const
