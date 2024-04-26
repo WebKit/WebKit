@@ -457,11 +457,7 @@ bool TextUtil::containsStrongDirectionalityText(StringView text)
     if (text.is8Bit())
         return false;
 
-    auto length = text.length();
-    for (size_t position = 0; position < length;) {
-        char32_t character;
-        auto characters = text.span16();
-        U16_NEXT(characters, position, length, character);
+    for (char32_t character : text.codePoints()) {
         if (isStrongDirectionalityCharacter(character))
             return true;
     }

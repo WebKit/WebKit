@@ -645,7 +645,7 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<un
     return characterRangeCodePath(run.span16());
 }
 
-FontCascade::CodePath FontCascade::characterRangeCodePath(std::span<const UChar> characters)
+FontCascade::CodePath FontCascade::characterRangeCodePath(std::span<const UChar> span)
 {
     // FIXME: Should use a UnicodeSet in ports where ICU is used. Note that we 
     // can't simply use UnicodeCharacter Property/class because some characters
@@ -654,7 +654,9 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(std::span<const UChar>
     // list of ranges.
     CodePath result = CodePath::Simple;
     bool previousCharacterIsEmojiGroupCandidate = false;
-    for (size_t i = 0; i < characters.size(); ++i) {
+    size_t size = span.size();
+    auto* characters = span.data();
+    for (size_t i = 0; i < size; ++i) {
         auto c = characters[i];
         if (c == zeroWidthJoiner && previousCharacterIsEmojiGroupCandidate)
             return CodePath::Complex;
@@ -776,7 +778,7 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(std::span<const UChar>
         if (c <= 0xDBFF) {
             // High surrogate
 
-            if (i == characters.size() - 1)
+            if (i + 1 == size)
                 continue;
 
             UChar next = characters[++i];
