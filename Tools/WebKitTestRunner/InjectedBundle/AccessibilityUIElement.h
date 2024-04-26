@@ -89,7 +89,7 @@ public:
     JSRetainPtr<JSStringRef> domIdentifier() const;
 
     RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
-    JSValueRef children() const;
+    JSValueRef children(JSContextRef);
     RefPtr<AccessibilityUIElement> childAtIndex(unsigned);
     unsigned indexOfChild(AccessibilityUIElement*);
     unsigned childrenCount();
@@ -134,16 +134,16 @@ public:
     JSRetainPtr<JSStringRef> stringDescriptionOfAttributeValue(JSStringRef attribute);
     JSRetainPtr<JSStringRef> stringAttributeValue(JSStringRef attribute);
     double numberAttributeValue(JSStringRef attribute);
-    JSValueRef uiElementArrayAttributeValue(JSStringRef attribute) const;
+    JSValueRef uiElementArrayAttributeValue(JSContextRef, JSStringRef attribute);
     RefPtr<AccessibilityUIElement> uiElementAttributeValue(JSStringRef attribute) const;
     bool boolAttributeValue(JSStringRef attribute);
 #if PLATFORM(MAC)
     RetainPtr<id> attributeValue(NSString *) const;
-    void attributeValueAsync(JSStringRef attribute, JSValueRef callback);
+    void attributeValueAsync(JSContextRef, JSStringRef attribute, JSValueRef callback);
     NSArray *actionNames() const;
     void performAction(NSString *) const;
 #else
-    void attributeValueAsync(JSStringRef attribute, JSValueRef callback) { }
+    void attributeValueAsync(JSContextRef, JSStringRef attribute, JSValueRef callback) { }
 #endif
     void setBoolAttributeValue(JSStringRef attribute, bool value);
     bool isAttributeSupported(JSStringRef attribute);
@@ -200,7 +200,7 @@ public:
     void removeSelectionAtIndex(unsigned) const;
     void clearSelectedChildren() const;
     RefPtr<AccessibilityUIElement> activeElement() const;
-    JSValueRef selectedChildren() const;
+    JSValueRef selectedChildren(JSContextRef);
     unsigned selectedChildrenCount() const;
     RefPtr<AccessibilityUIElement> selectedChildAtIndex(unsigned) const;
 
@@ -226,7 +226,7 @@ public:
     JSRetainPtr<JSStringRef> url();
     JSRetainPtr<JSStringRef> classList() const;
     JSRetainPtr<JSStringRef> embeddedImageDescription() const;
-    JSValueRef imageOverlayElements() const;
+    JSValueRef imageOverlayElements(JSContextRef);
 
     // CSS3-speech properties.
     JSRetainPtr<JSStringRef> speakAs();
@@ -235,7 +235,7 @@ public:
     JSRetainPtr<JSStringRef> attributesOfColumnHeaders();
     JSRetainPtr<JSStringRef> attributesOfRowHeaders();
     JSRetainPtr<JSStringRef> attributesOfColumns();
-    JSValueRef columns();
+    JSValueRef columns(JSContextRef);
     JSRetainPtr<JSStringRef> attributesOfRows();
     JSRetainPtr<JSStringRef> attributesOfVisibleCells();
     JSRetainPtr<JSStringRef> attributesOfHeader();
@@ -248,10 +248,10 @@ public:
     JSRetainPtr<JSStringRef> columnIndexRange();
     int rowCount();
     int columnCount();
-    JSValueRef rowHeaders() const;
-    JSValueRef columnHeaders() const;
+    JSValueRef rowHeaders(JSContextRef);
+    JSValueRef columnHeaders(JSContextRef);
     JSRetainPtr<JSStringRef> customContent() const;
-    JSValueRef selectedCells() const;
+    JSValueRef selectedCells(JSContextRef);
 
     // Tree/Outline specific attributes
     RefPtr<AccessibilityUIElement> selectedRowAtIndex(unsigned);
@@ -265,10 +265,10 @@ public:
     RefPtr<AccessibilityUIElement> ariaControlsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaDescribedByElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> descriptionForElementAtIndex(unsigned);
-    JSValueRef detailsElements() const;
+    JSValueRef detailsElements(JSContextRef);
     RefPtr<AccessibilityUIElement> ariaDetailsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> detailsForElementAtIndex(unsigned);
-    JSValueRef errorMessageElements() const;
+    JSValueRef errorMessageElements(JSContextRef);
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> errorMessageForElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> flowFromElementAtIndex(unsigned);
@@ -370,7 +370,7 @@ public:
     JSRetainPtr<JSStringRef> supportedActions() const;
     JSRetainPtr<JSStringRef> mathPostscriptsDescription() const;
     JSRetainPtr<JSStringRef> mathPrescriptsDescription() const;
-    JSValueRef mathRootRadicand() const;
+    JSValueRef mathRootRadicand(JSContextRef);
 
     JSRetainPtr<JSStringRef> pathDescription() const;
     
@@ -461,15 +461,12 @@ private:
 #ifdef __OBJC__
 inline std::optional<RefPtr<AccessibilityUIElement>> makeVectorElement(const RefPtr<AccessibilityUIElement>*, id element) { return { { AccessibilityUIElement::create(element) } }; }
 
-JSObjectRef makeJSArray(NSArray *);
+JSObjectRef makeJSArray(JSContextRef, NSArray *);
 #endif
 
 template<typename T>
-JSObjectRef makeJSArray(const Vector<T>& elements)
+JSObjectRef makeJSArray(JSContextRef context, const Vector<T>& elements)
 {
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
-    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
-
     auto array = JSObjectMakeArray(context, 0, nullptr, nullptr);
     size_t size = elements.size();
     for (size_t i = 0; i < size; ++i)

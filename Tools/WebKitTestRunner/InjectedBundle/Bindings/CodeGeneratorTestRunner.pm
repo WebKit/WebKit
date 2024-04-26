@@ -328,7 +328,7 @@ EOF
             $self->_includeHeaders(\%contentsIncludes, $constant->type);
 
             my $getterName = _constantGetterFunctionName($self->_getterName($constant));
-            my $getterExpression = "impl->${getterName}()";
+            my $getterExpression = "callFunction(context, impl, &${implementationClassName}::${getterName})";
             my $value = $constant->value;
 
             push(@contents, <<EOF);
@@ -391,7 +391,7 @@ EOF
             $self->_includeHeaders(\%contentsIncludes, $attribute->type);
 
             my $getterName = $self->_getterName($attribute);
-            my $getterExpression = "impl->${getterName}()";
+            my $getterExpression = "callFunction(context, impl, &${implementationClassName}::${getterName})";
 
             push(@contents, <<EOF);
 

@@ -127,11 +127,11 @@ void AccessibilityUIElement::setBoolAttributeValue(JSStringRef, bool) { }
 void AccessibilityUIElement::setValue(JSStringRef) { }
 JSValueRef AccessibilityUIElement::searchTextWithCriteria(JSContextRef, JSValueRef, JSStringRef, JSStringRef) { return nullptr; }
 bool AccessibilityUIElement::isOnScreen() const { return true; }
-JSValueRef AccessibilityUIElement::mathRootRadicand() const { return { }; }
+JSValueRef AccessibilityUIElement::mathRootRadicand(JSContextRef) { return { }; }
 unsigned AccessibilityUIElement::numberOfCharacters() const { return 0; }
-JSValueRef AccessibilityUIElement::columns() { return { }; }
+JSValueRef AccessibilityUIElement::columns(JSContextRef) { return { }; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::dateValue() { return nullptr; }
-#endif // !PLATFORM(MAC))
+#endif // !PLATFORM(MAC)
 
 #if !PLATFORM(COCOA)
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const { return nullptr; }
@@ -159,8 +159,8 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextSentenceEndTextMarke
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker(AccessibilityTextMarker*) { return nullptr; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMarkerRange(AccessibilityTextMarkerRange*, bool) { return nullptr; }
 void AccessibilityUIElement::dismiss() { }
-JSValueRef AccessibilityUIElement::children() const { return { }; }
-JSValueRef AccessibilityUIElement::imageOverlayElements() const { return { }; }
+JSValueRef AccessibilityUIElement::children(JSContextRef) { return { }; }
+JSValueRef AccessibilityUIElement::imageOverlayElements(JSContextRef) { return { }; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const { return nullptr; }
 #endif // !PLATFORM(COCOA)
 
@@ -175,17 +175,17 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaLabelledByElementAtIn
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::labelForElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ownerElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::activeElement() const { return nullptr; }
-JSValueRef AccessibilityUIElement::selectedChildren() const { return { }; }
+JSValueRef AccessibilityUIElement::selectedChildren(JSContextRef) { return { }; }
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(WIN) || PLATFORM(PLAYSTATION)
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::controllerElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDescribedByElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::descriptionForElementAtIndex(unsigned) { return nullptr; }
-JSValueRef AccessibilityUIElement::detailsElements() const { return nullptr; }
+JSValueRef AccessibilityUIElement::detailsElements(JSContextRef) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDetailsElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::detailsForElementAtIndex(unsigned) { return nullptr; }
-JSValueRef AccessibilityUIElement::errorMessageElements() const { return nullptr; }
+JSValueRef AccessibilityUIElement::errorMessageElements(JSContextRef) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaErrorMessageElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::errorMessageForElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::flowFromElementAtIndex(unsigned) { return nullptr; }
@@ -193,7 +193,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaLabelledByElementAtIn
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::labelForElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ownerElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::activeElement() const { return nullptr; }
-JSValueRef AccessibilityUIElement::selectedChildren() const { return { }; }
+JSValueRef AccessibilityUIElement::selectedChildren(JSContextRef) { return { }; }
 #endif // PLATFORM(WIN) || PLATFORM(PLAYSTATION)
 
 } // namespace WTR
