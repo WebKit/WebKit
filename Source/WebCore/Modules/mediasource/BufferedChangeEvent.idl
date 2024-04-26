@@ -34,8 +34,9 @@ dictionary BufferedChangeEventInit : EventInit {
 
 [
     Conditional=MEDIA_SOURCE,
+    ConditionalForWorker=MEDIA_SOURCE_IN_WORKERS,
     EnabledBySetting=ManagedMediaSourceEnabled,
-    Exposed=Window
+    Exposed=(Window,DedicatedWorker)
 ]
 interface BufferedChangeEvent : Event {
   constructor([AtomString] DOMString type, BufferedChangeEventInit eventInitDict);
