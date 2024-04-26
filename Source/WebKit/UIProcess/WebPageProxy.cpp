@@ -3935,23 +3935,34 @@ TrackingType WebPageProxy::touchEventTrackingType(const WebTouchEvent& touchStar
 #endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
+void WebPageProxy::sendGestureEvent(FrameIdentifier frameID, const NativeWebGestureEvent& event)
+{
+    sendToProcessContainingFrame(frameID, Messages::EventDispatcher::GestureEvent(frameID, internals().webPageID, event), [protectedThis = Ref { *this }, event] (std::optional<WebEventType> eventType, bool handled, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) {
+        if (!protectedThis->m_pageClient)
+            return;
+        if (!eventType)
+            return;
+        if (remoteUserInputEventData) {
+            protectedThis->sendGestureEvent(remoteUserInputEventData->targetFrameID, event);
+            return;
+        }
+        protectedThis->didReceiveEvent(*eventType, handled);
+    });
+}
+
 void WebPageProxy::handleGestureEvent(const NativeWebGestureEvent& event)
 {
     if (!hasRunningProcess())
+        return;
+
+    if (!m_mainFrame)
         return;
 
     internals().gestureEventQueue.append(event);
     // FIXME: Consider doing some coalescing here.
 
     protectedProcess()->startResponsivenessTimer((event.type() == WebEventType::GestureStart || event.type() == WebEventType::GestureChange) ? WebProcessProxy::UseLazyStop::Yes : WebProcessProxy::UseLazyStop::No);
-
-    sendWithAsyncReply(Messages::EventDispatcher::GestureEvent(internals().webPageID, event), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
-        if (!m_pageClient)
-            return;
-        if (!eventType)
-            return;
-        didReceiveEvent(*eventType, handled);
-    }, 0);
+    sendGestureEvent(m_mainFrame->frameID(), event);
 }
 #endif
 

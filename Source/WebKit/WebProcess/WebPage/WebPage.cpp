@@ -3845,20 +3845,23 @@ void WebPage::touchWithIdentifierWasRemoved(WebCore::PointerID pointerId)
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-static bool handleGestureEvent(const WebGestureEvent& event, Page* page)
+static HandleUserInputEventResult handleGestureEvent(FrameIdentifier frameID, const WebGestureEvent& event, Page* page)
 {
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
-    if (!localMainFrame || !localMainFrame->view())
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
         return false;
 
-    return localMainFrame->eventHandler().handleGestureEvent(platform(event));
+    RefPtr coreLocalFrame = frame->coreLocalFrame();
+    if (!coreLocalFrame)
+        return false;
+    return coreLocalFrame->eventHandler().handleGestureEvent(platform(event));
 }
 
-void WebPage::gestureEvent(const WebGestureEvent& gestureEvent, CompletionHandler<void(std::optional<WebEventType>, bool)>&& completionHandler)
+void WebPage::gestureEvent(FrameIdentifier frameID, const WebGestureEvent& gestureEvent, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
     CurrentEvent currentEvent(gestureEvent);
-    bool handled = handleGestureEvent(gestureEvent, m_page.get());
-    completionHandler(gestureEvent.type(), handled);
+    auto result = handleGestureEvent(frameID, gestureEvent, m_page.get());
+    completionHandler(gestureEvent.type(), result.wasHandled(), result.remoteUserInputEventData());
 }
 #endif
 

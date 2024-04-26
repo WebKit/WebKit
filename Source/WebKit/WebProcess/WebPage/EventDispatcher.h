@@ -29,6 +29,7 @@
 #include "MessageReceiver.h"
 #include "MomentumEventDispatcher.h"
 #include "WebEvent.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/RectEdges.h>
@@ -48,18 +49,14 @@
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include "WebTouchEvent.h"
-#include <WebCore/FrameIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #endif
 
 namespace WebCore {
-struct DisplayUpdate;
 class ThreadedScrollingTree;
-using PlatformDisplayID = uint32_t;
-
-#if ENABLE(IOS_TOUCH_EVENTS)
+struct DisplayUpdate;
 struct RemoteUserInputEventData;
-#endif
+using PlatformDisplayID = uint32_t;
 }
 
 namespace WebKit {
@@ -114,7 +111,7 @@ private:
     void touchEvent(WebCore::PageIdentifier, WebCore::FrameIdentifier, const WebTouchEvent&, CompletionHandler<void(bool, std::optional<WebCore::RemoteUserInputEventData>)>&&);
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
-    void gestureEvent(WebCore::PageIdentifier, const WebGestureEvent&, CompletionHandler<void(std::optional<WebEventType>, bool)>&&);
+    void gestureEvent(WebCore::FrameIdentifier, WebCore::PageIdentifier, const WebGestureEvent&, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<WebCore::RemoteUserInputEventData>)>&&);
 #endif
 
     // This is called on the main thread.
@@ -127,7 +124,7 @@ private:
     void dispatchTouchEvents();
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
-    void dispatchGestureEvent(WebCore::PageIdentifier, const WebGestureEvent&, CompletionHandler<void(std::optional<WebEventType>, bool)>&&);
+    void dispatchGestureEvent(WebCore::FrameIdentifier, WebCore::PageIdentifier, const WebGestureEvent&, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<WebCore::RemoteUserInputEventData>)>&&);
 #endif
 
     static void sendDidReceiveEvent(WebCore::PageIdentifier, WebEventType, bool didHandleEvent);

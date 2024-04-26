@@ -1207,6 +1207,7 @@ public:
 #endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
+    void sendGestureEvent(WebCore::FrameIdentifier, const NativeWebGestureEvent&);
     void handleGestureEvent(const NativeWebGestureEvent&);
 #endif
 
