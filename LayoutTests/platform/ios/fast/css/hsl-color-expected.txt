@@ -34,7 +34,7 @@ layer at (0,0) size 800x1385
       RenderBlock {H1} at (0,477) size 784x39 [color=#00FF00]
         RenderText {#text} at (0,1) size 587x36
           text run at (0,1) width 587: "This should be green: hsl(120, 100%, 50%)"
-      RenderBlock {H1} at (0,536) size 784x39 [color=#FFFFFF]
+      RenderBlock {H1} at (0,536) size 784x39 [color=#EAFFE5]
         RenderText {#text} at (0,1) size 637x36
           text run at (0,1) width 637: "This should be green too: hsl(120, 200%, 50%)"
       RenderBlock (anonymous) at (0,596) size 784x21

@@ -54,13 +54,15 @@ template<typename ColorType> auto colorWithOverriddenAlpha(const ColorType&, flo
 template<typename ColorType> constexpr auto invertedColorWithOverriddenAlpha(const ColorType&, uint8_t overrideAlpha);
 template<typename ColorType> auto invertedColorWithOverriddenAlpha(const ColorType&, float overrideAlpha);
 
-template<typename ColorType, typename std::enable_if_t<UsesLabModel<ColorType> || UsesLCHModel<ColorType> || UsesHSLModel<ColorType>>* = nullptr> constexpr bool isBlack(const ColorType&);
+template<typename ColorType, typename std::enable_if_t<UsesLabModel<ColorType> || UsesLCHModel<ColorType> || UsesOKLabModel<ColorType> || UsesOKLCHModel<ColorType> || UsesHSLModel<ColorType>>* = nullptr> constexpr bool isBlack(const ColorType&);
 template<typename ColorType, typename std::enable_if_t<UsesRGBModel<ColorType>>* = nullptr> constexpr bool isBlack(const ColorType&);
 template<typename ColorType, typename std::enable_if_t<UsesHWBModel<ColorType>>* = nullptr> constexpr bool isBlack(const ColorType&);
 template<WhitePoint W> constexpr bool isBlack(const XYZA<float, W>&);
 
 template<typename ColorType, typename std::enable_if_t<UsesLabModel<ColorType> || UsesLCHModel<ColorType> || UsesHSLModel<ColorType>>* = nullptr> constexpr bool isWhite(const ColorType&);
-template<typename ColorType, typename std::enable_if_t<UsesRGBModel<ColorType>>* = nullptr> constexpr bool isWhite(const ColorType&);
+template<typename ColorType, typename std::enable_if_t<UsesOKLabModel<ColorType> || UsesOKLCHModel<ColorType>>* = nullptr> constexpr bool isWhite(const ColorType&);
+template<typename ColorType, typename std::enable_if_t<UsesRGBModel<ColorType> && std::is_same_v<typename ColorType::ComponentType, float>>* = nullptr> constexpr bool isWhite(const ColorType&);
+template<typename ColorType, typename std::enable_if_t<UsesRGBModel<ColorType> && std::is_same_v<typename ColorType::ComponentType, uint8_t>>* = nullptr> constexpr bool isWhite(const ColorType&);
 template<typename ColorType, typename std::enable_if_t<UsesHWBModel<ColorType>>* = nullptr> constexpr bool isWhite(const ColorType&);
 template<WhitePoint W> constexpr bool isWhite(const XYZA<float, W>&);
 
@@ -151,7 +153,7 @@ template<WhitePoint W> constexpr bool isBlack(const XYZA<float, W>& color)
     return resolvedColor.y == 0 && resolvedColor.alpha == AlphaTraits<float>::opaque;
 }
 
-template<typename ColorType, typename std::enable_if_t<UsesLabModel<ColorType> || UsesLCHModel<ColorType> || UsesHSLModel<ColorType>>*>
+template<typename ColorType, typename std::enable_if_t<UsesLabModel<ColorType> || UsesLCHModel<ColorType> || UsesOKLabModel<ColorType> || UsesOKLCHModel<ColorType> || UsesHSLModel<ColorType>>*>
 constexpr bool isBlack(const ColorType& color)
 {
     auto resolvedColor = color.resolved();
@@ -162,8 +164,7 @@ template<typename ColorType, typename std::enable_if_t<UsesRGBModel<ColorType>>*
 constexpr bool isBlack(const ColorType& color)
 {
     auto [c1, c2, c3, alpha] = color.resolved();
-    constexpr auto componentInfo = ColorType::Model::componentInfo;
-    return c1 == componentInfo[0].min && c2 == componentInfo[1].min && c3 == componentInfo[2].min && alpha == AlphaTraits<typename ColorType::ComponentType>::opaque;
+    return c1 == 0 && c2 == 0 && c3 == 0 && alpha == AlphaTraits<typename ColorType::ComponentType>::opaque;
 }
 
 template<typename ColorType, typename std::enable_if_t<UsesHWBModel<ColorType>>*>
@@ -186,12 +187,25 @@ constexpr bool isWhite(const ColorType& color)
     return resolvedColor.lightness == 100 && resolvedColor.alpha == AlphaTraits<float>::opaque;
 }
 
-template<typename ColorType, typename std::enable_if_t<UsesRGBModel<ColorType>>*>
+template<typename ColorType, typename std::enable_if_t<UsesOKLabModel<ColorType> || UsesOKLCHModel<ColorType>>*>
+constexpr bool isWhite(const ColorType& color)
+{
+    auto resolvedColor = color.resolved();
+    return resolvedColor.lightness == 1 && resolvedColor.alpha == AlphaTraits<float>::opaque;
+}
+
+template<typename ColorType, typename std::enable_if_t<UsesRGBModel<ColorType> && std::is_same_v<typename ColorType::ComponentType, float>>*>
 constexpr bool isWhite(const ColorType& color)
 {
     auto [c1, c2, c3, alpha] = color.resolved();
-    constexpr auto componentInfo = ColorType::Model::componentInfo;
-    return c1 == componentInfo[0].max && c2 == componentInfo[1].max && c3 == componentInfo[2].max && alpha == AlphaTraits<typename ColorType::ComponentType>::opaque;
+    return c1 == 1 && c2 == 1 && c3 == 1 && alpha == AlphaTraits<float>::opaque;
+}
+
+template<typename ColorType, typename std::enable_if_t<UsesRGBModel<ColorType> && std::is_same_v<typename ColorType::ComponentType, uint8_t>>*>
+constexpr bool isWhite(const ColorType& color)
+{
+    auto [c1, c2, c3, alpha] = color.resolved();
+    return c1 == 255 && c2 == 255 && c3 == 255 && alpha == AlphaTraits<uint8_t>::opaque;
 }
 
 template<typename ColorType, typename std::enable_if_t<UsesHWBModel<ColorType>>*>

@@ -1018,18 +1018,19 @@ static Color parseRelativeLabParametersRaw(CSSParserTokenRange& args, ColorParse
     if (!originColor.isValid())
         return { };
 
-    auto originColorAsLab = originColor.toColorTypeLossy<ColorType>().resolved();
+    auto originColorAsLab = originColor.toColorTypeLossy<ColorType>();
+    auto originColorAsLabResolved = originColorAsLab.resolved();
 
     CSSCalcSymbolTable symbolTable {
-        { CSSValueL, CSSUnitType::CSS_NUMBER, originColorAsLab.lightness },
-        { CSSValueA, CSSUnitType::CSS_NUMBER, originColorAsLab.a },
-        { CSSValueB, CSSUnitType::CSS_NUMBER, originColorAsLab.b },
-        { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsLab.alpha * 100.0 }
+        { CSSValueL, CSSUnitType::CSS_NUMBER, originColorAsLabResolved.lightness },
+        { CSSValueA, CSSUnitType::CSS_NUMBER, originColorAsLabResolved.a },
+        { CSSValueB, CSSUnitType::CSS_NUMBER, originColorAsLabResolved.b },
+        { CSSValueAlpha, CSSUnitType::CSS_NUMBER, originColorAsLabResolved.alpha }
     };
 
     auto lightnessConsumer = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
     auto abConsumer = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
-    auto alphaConsumer = [&symbolTable](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto alphaConsumer = [&symbolTable, &originColorAsLab](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable, originColorAsLab.unresolved().alpha); };
 
     return parseLabParametersRaw<ColorType>(args, WTFMove(lightnessConsumer), WTFMove(abConsumer), WTFMove(alphaConsumer));
 }
@@ -1089,8 +1090,8 @@ static Color parseLCHParametersRaw(CSSParserTokenRange& args, ConsumerForLightne
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
     auto normalizedHue = WTF::switchOn(*hue,
-        [] (AngleRaw angle) { return CSSPrimitiveValue::computeDegrees(angle.type, angle.value); },
-        [] (NumberRaw number) { return number.value; },
+        [] (AngleRaw angle) { return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)); },
+        [] (NumberRaw number) { return normalizeHue(number.value); },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
 
@@ -1107,19 +1108,20 @@ static Color parseRelativeLCHParametersRaw(CSSParserTokenRange& args, ColorParse
     if (!originColor.isValid())
         return { };
 
-    auto originColorAsLCH = originColor.toColorTypeLossy<ColorType>().resolved();
+    auto originColorAsLCH = originColor.toColorTypeLossy<ColorType>();
+    auto originColorAsLCHResolved = originColorAsLCH.resolved();
 
     CSSCalcSymbolTable symbolTable {
-        { CSSValueL, CSSUnitType::CSS_NUMBER, originColorAsLCH.lightness },
-        { CSSValueC, CSSUnitType::CSS_NUMBER, originColorAsLCH.chroma },
-        { CSSValueH, CSSUnitType::CSS_DEG, originColorAsLCH.hue },
-        { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsLCH.alpha * 100.0 }
+        { CSSValueL, CSSUnitType::CSS_NUMBER, originColorAsLCHResolved.lightness },
+        { CSSValueC, CSSUnitType::CSS_NUMBER, originColorAsLCHResolved.chroma },
+        { CSSValueH, CSSUnitType::CSS_NUMBER, originColorAsLCHResolved.hue },
+        { CSSValueAlpha, CSSUnitType::CSS_NUMBER, originColorAsLCHResolved.alpha }
     };
 
     auto lightnessConsumer = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
     auto chromaConsumer = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
     auto hueConsumer = [&symbolTable, &state](auto& args) { return consumeAngleOrNumberOrNoneRawAllowingSymbolTableIdent(args, symbolTable, state.mode); };
-    auto alphaConsumer = [&symbolTable](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto alphaConsumer = [&symbolTable, &originColorAsLCH](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable, originColorAsLCH.unresolved().alpha); };
 
     return parseLCHParametersRaw<ColorType>(args, WTFMove(lightnessConsumer), WTFMove(chromaConsumer), WTFMove(hueConsumer), WTFMove(alphaConsumer));
 }
@@ -1179,17 +1181,18 @@ template<typename ColorType> static Color parseRelativeColorFunctionForRGBTypes(
 
     consumeIdentRaw(args);
 
-    auto originColorAsColorType = originColor.toColorTypeLossy<ColorType>().resolved();
+    auto originColorAsRGBType = originColor.toColorTypeLossy<ColorType>();
+    auto originColorAsRGBTypeResolved = originColorAsRGBType.resolved();
 
     CSSCalcSymbolTable symbolTable {
-        { CSSValueR, CSSUnitType::CSS_PERCENTAGE, originColorAsColorType.red * 100.0 },
-        { CSSValueG, CSSUnitType::CSS_PERCENTAGE, originColorAsColorType.green * 100.0 },
-        { CSSValueB, CSSUnitType::CSS_PERCENTAGE, originColorAsColorType.blue * 100.0 },
-        { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsColorType.alpha * 100.0 }
+        { CSSValueR, CSSUnitType::CSS_NUMBER, originColorAsRGBTypeResolved.red },
+        { CSSValueG, CSSUnitType::CSS_NUMBER, originColorAsRGBTypeResolved.green },
+        { CSSValueB, CSSUnitType::CSS_NUMBER, originColorAsRGBTypeResolved.blue },
+        { CSSValueAlpha, CSSUnitType::CSS_NUMBER, originColorAsRGBTypeResolved.alpha }
     };
 
     auto consumeRGB = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable, ValueRange::All); };
-    auto consumeAlpha = [&symbolTable](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto consumeAlpha = [&symbolTable, &originColorAsRGBType](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable, originColorAsRGBType.unresolved().alpha); };
 
     return parseColorFunctionForRGBTypesRaw<ColorType>(args, WTFMove(consumeRGB), WTFMove(consumeAlpha));
 }
@@ -1238,17 +1241,18 @@ template<typename ColorType> static Color parseRelativeColorFunctionForXYZTypes(
 
     consumeIdentRaw(args);
 
-    auto originColorAsXYZ = originColor.toColorTypeLossy<ColorType>().resolved();
+    auto originColorAsXYZType = originColor.toColorTypeLossy<ColorType>();
+    auto originColorAsXYZTypeResolved = originColorAsXYZType.resolved();
 
     CSSCalcSymbolTable symbolTable {
-        { CSSValueX, CSSUnitType::CSS_NUMBER, originColorAsXYZ.x },
-        { CSSValueY, CSSUnitType::CSS_NUMBER, originColorAsXYZ.y },
-        { CSSValueZ, CSSUnitType::CSS_NUMBER, originColorAsXYZ.z },
-        { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsXYZ.alpha * 100.0 }
+        { CSSValueX, CSSUnitType::CSS_NUMBER, originColorAsXYZTypeResolved.x },
+        { CSSValueY, CSSUnitType::CSS_NUMBER, originColorAsXYZTypeResolved.y },
+        { CSSValueZ, CSSUnitType::CSS_NUMBER, originColorAsXYZTypeResolved.z },
+        { CSSValueAlpha, CSSUnitType::CSS_NUMBER, originColorAsXYZTypeResolved.alpha }
     };
 
     auto consumeXYZ = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
-    auto consumeAlpha = [&symbolTable](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto consumeAlpha = [&symbolTable, &originColorAsXYZType](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable, originColorAsXYZType.unresolved().alpha); };
 
     return parseColorFunctionForXYZTypesRaw<ColorType>(args, WTFMove(consumeXYZ), WTFMove(consumeAlpha));
 }
