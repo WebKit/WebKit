@@ -1,0 +1,23 @@
+
+PASS Same-host fetches are strictly same-site
+PASS Subdomain fetches are strictly same-site
+PASS Cross-site fetches are cross-site
+PASS Same-host redirecting to same-host fetches are strictly same-site
+PASS Subdomain redirecting to same-host fetches are strictly same-site
+FAIL Cross-site redirecting to same-host fetches are cross-site assert_equals: Unspecified-SameSite cookies are always included in document.cookie. expected (string) "0.9606381006848304" but got (undefined) undefined
+PASS Same-host redirecting to subdomain fetches are strictly same-site
+PASS Subdomain redirecting to subdomain fetches are strictly same-site
+FAIL Cross-site redirecting to subdomain fetches are cross-site assert_equals: Unspecified-SameSite cookies are always included in document.cookie. expected (string) "0.5854466468483267" but got (undefined) undefined
+PASS Same-host redirecting to cross-site fetches are cross-site
+PASS Subdomain redirecting to cross-site fetches are cross-site
+PASS Cross-site redirecting to cross-site fetches are cross-site
+PASS Same-host navigating to same-host fetches are strictly same-site
+PASS Subdomain navigating to same-host fetches are strictly same-site
+FAIL Cross-site navigating to same-host fetches are cross-site assert_equals: Unspecified-SameSite cookies are always included in document.cookie. expected (string) "0.6950936055481944" but got (undefined) undefined
+PASS Same-host navigating to subdomain fetches are strictly same-site
+PASS Subdomain navigating to subdomain fetches are strictly same-site
+FAIL Cross-site navigating to subdomain fetches are cross-site-site assert_equals: Unspecified-SameSite cookies are always included in document.cookie. expected (string) "0.12703963044154942" but got (undefined) undefined
+PASS Same-host navigating to cross-site fetches are cross-site
+PASS Subdomain navigating to cross-site fetches are cross-site
+PASS Cross-site navigating to cross-site fetches are cross-site
+

@@ -751,10 +751,16 @@ bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type ty
 
     // FIXME: We might want to align the checks done here with the ones done in CachedResourceLoader::requestResource, content extensions blocking in particular.
 
+    Ref requestOrigin = SecurityOrigin::create(request.url());
+    Ref preRedirectOrigin = SecurityOrigin::create(preRedirectURL);
+
+    // https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-rfc6265bis#section-5.2
+    // Any cross-site redirect makes a request not same-site.
+    if (!requestOrigin->isSameSiteAs(preRedirectOrigin))
+        request.setIsSameSite(false);
+
     RefPtr frame = m_documentLoader->frame();
     if (frame && (!frame->document() || !frame->document()->quirks().shouldDisableFetchMetadata())) {
-        Ref requestOrigin = SecurityOrigin::create(request.url());
-
         // In the case of a protocol downgrade we strip all FetchMetadata headers.
         // Otherwise we add or update FetchMetadata.
         if (!requestOrigin->isPotentiallyTrustworthy()) {

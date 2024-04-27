@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: [object MessageEvent]
+CONSOLE MESSAGE: [object MessageEvent]
+CONSOLE MESSAGE: [object MessageEvent]
+
+PASS Reloaded same-host top-level form GETs are strictly same-site
+PASS Reloaded subdomain top-level form GETs are strictly same-site
+PASS Reloaded cross-site top-level form GETs are strictly same-site
+

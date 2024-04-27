@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: [object MessageEvent]
+CONSOLE MESSAGE: [object MessageEvent]
+CONSOLE MESSAGE: [object MessageEvent]
+
+PASS Reloaded same-host auxiliary navigations are strictly same-site.
+PASS Reloaded subdomain auxiliary navigations are strictly same-site.
+PASS Reloaded cross-site auxiliary navigations are strictly same-site
+
