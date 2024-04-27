@@ -2119,8 +2119,8 @@ private:
     void changeFontAttributes(WebCore::FontAttributeChanges&&);
 
 #if PLATFORM(MAC)
-    void performImmediateActionHitTestAtLocation(WebCore::FloatPoint);
-    std::optional<WebCore::SimpleRange> lookupTextAtLocation(WebCore::FloatPoint);
+    void performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier, WebCore::FloatPoint);
+    std::optional<WebCore::SimpleRange> lookupTextAtLocation(WebCore::FrameIdentifier, WebCore::FloatPoint);
     void immediateActionDidUpdate();
     void immediateActionDidCancel();
     void immediateActionDidComplete();

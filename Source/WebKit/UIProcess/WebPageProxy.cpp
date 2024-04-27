@@ -11836,9 +11836,9 @@ void WebPageProxy::setCaretBlinkingSuspended(bool suspended)
     send(Messages::WebPage::SetCaretBlinkingSuspended(suspended));
 }
 
-void WebPageProxy::performImmediateActionHitTestAtLocation(FloatPoint point)
+void WebPageProxy::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier frameID, FloatPoint point)
 {
-    send(Messages::WebPage::PerformImmediateActionHitTestAtLocation(point));
+    sendToProcessContainingFrame(frameID, Messages::WebPage::PerformImmediateActionHitTestAtLocation(frameID, point));
 }
 
 void WebPageProxy::immediateActionDidUpdate()
@@ -11858,6 +11858,11 @@ void WebPageProxy::immediateActionDidComplete()
 
 void WebPageProxy::didPerformImmediateActionHitTest(const WebHitTestResultData& result, bool contentPreventsDefault, const UserData& userData)
 {
+    if (result.remoteUserInputEventData) {
+        // rdar://127120734 Translate coordinates
+        performImmediateActionHitTestAtLocation(result.remoteUserInputEventData->targetFrameID, result.remoteUserInputEventData->transformedPoint);
+        return;
+    }
     protectedPageClient()->didPerformImmediateActionHitTest(result, contentPreventsDefault, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
 }
 

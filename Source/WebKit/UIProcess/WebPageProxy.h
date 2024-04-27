@@ -1792,7 +1792,7 @@ public:
 
 #if PLATFORM(MAC)
     API::HitTestResult* lastMouseMoveHitTestResult() const { return m_lastMouseMoveHitTestResult.get(); }
-    void performImmediateActionHitTestAtLocation(WebCore::FloatPoint);
+    void performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier, WebCore::FloatPoint);
 
     void immediateActionDidUpdate();
     void immediateActionDidCancel();
