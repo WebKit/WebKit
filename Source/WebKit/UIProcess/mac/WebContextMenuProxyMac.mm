@@ -251,12 +251,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
         items = @[ itemProvider.get() ];
         
-    } else if (!m_context.controlledSelectionData().isEmpty()) {
-        auto selectionData = adoptNS([[NSData alloc] initWithBytes:static_cast<const void*>(m_context.controlledSelectionData().data()) length:m_context.controlledSelectionData().size()]);
-        auto selection = adoptNS([[NSAttributedString alloc] initWithRTFD:selectionData.get() documentAttributes:nil]);
-
+    } else if (RetainPtr selection = m_context.controlledSelection().nsAttributedString())
         items = @[ selection.get() ];
-    } else if (isPDFAttachment) {
+    else if (isPDFAttachment) {
         itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:attachment->associatedElementNSData() typeIdentifier:attachment->utiType()]);
         items = @[ itemProvider.get() ];
     } else {

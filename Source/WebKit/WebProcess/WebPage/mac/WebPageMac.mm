@@ -759,14 +759,12 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     if (!range)
         return;
 
-    auto attributedSelection = attributedString(*range).nsAttributedString();
-    if (!attributedSelection)
+    auto selectionString = attributedString(*range);
+    if (selectionString.isNull())
         return;
 
-    NSData *selectionData = [attributedSelection RTFDFromRange:NSMakeRange(0, [attributedSelection length]) documentAttributes:@{ }];
-
     flushPendingEditorStateUpdate();
-    send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, makeVector(selectionData), phoneNumbers, selection.selection().isContentEditable()), UserData()));
+    send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, WTFMove(selectionString), phoneNumbers, selection.selection().isContentEditable()), UserData()));
 }
 
 void WebPage::handleImageServiceClick(const IntPoint& point, Image& image, HTMLImageElement& element)

@@ -230,6 +230,11 @@ static RetainPtr<NSDictionary> toNSDictionary(const HashMap<String, AttributedSt
     return result;
 }
 
+bool AttributedString::isNull() const
+{
+    return string.isNull();
+}
+
 RetainPtr<NSDictionary> AttributedString::documentAttributesAsNSDictionary() const
 {
     if (!documentAttributes)

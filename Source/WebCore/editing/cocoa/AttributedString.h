@@ -150,6 +150,7 @@ struct WEBCORE_EXPORT AttributedString {
     static bool rangesAreSafe(const String&, const Vector<std::pair<Range, HashMap<String, AttributeValue>>>&);
     RetainPtr<NSDictionary> documentAttributesAsNSDictionary() const;
     RetainPtr<NSAttributedString> nsAttributedString() const;
+    bool isNull() const;
 };
 
 } // namespace WebCore
