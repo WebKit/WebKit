@@ -40,6 +40,7 @@
 namespace WebCore {
 struct TextIndicatorData;
 enum class TextIndicatorOption : uint16_t;
+class DocumentMarker;
 class Editor;
 }
 
@@ -77,6 +78,9 @@ public:
     std::optional<WebCore::SimpleRange> contextRangeForSessionWithUUID(const WTF::UUID&) const;
 
 private:
+    std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> findReplacementMarkerContainingRange(const WebCore::SimpleRange&);
+    std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> findReplacementMarkerByUUID(const WebCore::SimpleRange& outerRange, const WTF::UUID& replacementUUID);
+
     void replaceContentsOfRangeInSessionInternal(const WTF::UUID&, const WebCore::SimpleRange&, WTF::Function<void(WebCore::Editor&)>&&);
     void replaceContentsOfRangeInSession(const WTF::UUID&, const WebCore::SimpleRange&, const String&);
     void replaceContentsOfRangeInSession(const WTF::UUID&, const WebCore::SimpleRange&, WebCore::DocumentFragment&);
