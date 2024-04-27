@@ -4099,7 +4099,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             //
             // If we can generate a binary switch, then A->canReplace(B) == B->canReplace(A). So,
             // it doesn't matter that we only do the check in one direction.
-            for (unsigned j = srcIndex; j < poly.m_list.size(); ++j) {
+            for (unsigned j = srcIndex + 1; j < poly.m_list.size(); ++j) {
                 if (poly.m_list[j]->canReplace(*someCase))
                     return;
             }
