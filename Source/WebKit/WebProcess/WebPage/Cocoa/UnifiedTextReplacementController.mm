@@ -121,7 +121,12 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
 
     document->selection().clear();
 
-    int additionalOffset = 0;
+    // The tracking of the additional replacement location offset needs to be scoped to a particular instance
+    // of this class, instead of just this function, because the function may need to be called multiple times.
+    // This ensures that subsequent calls of this function should effectively be treated as just more iterations
+    // of the following for-loop.
+
+    auto& additionalOffset = m_replacementLocationOffsets.add(uuid, 0).iterator->value;
 
     for (const auto& replacementData : replacements) {
         auto sessionRange = contextRangeForSessionWithUUID(uuid);
@@ -256,6 +261,7 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const WTF::U
     m_contextRanges.remove(uuid);
     m_originalDocumentNodes.remove(uuid);
     m_replacedDocumentNodes.remove(uuid);
+    m_replacementLocationOffsets.remove(uuid);
 }
 
 void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID& uuid, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context)
@@ -532,7 +538,7 @@ RefPtr<WebCore::Document> UnifiedTextReplacementController::document() const
     return frame->document();
 }
 
-std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> UnifiedTextReplacementController::findReplacementMarkerByUUID(const WebCore::SimpleRange& outerRange, const WTF::UUID& replacementUUID)
+std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> UnifiedTextReplacementController::findReplacementMarkerByUUID(const WebCore::SimpleRange& outerRange, const WTF::UUID& replacementUUID) const
 {
     RefPtr document = this->document();
     if (!document) {
@@ -560,7 +566,7 @@ std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> UnifiedTextR
     return std::nullopt;
 }
 
-std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> UnifiedTextReplacementController::findReplacementMarkerContainingRange(const WebCore::SimpleRange& range)
+std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> UnifiedTextReplacementController::findReplacementMarkerContainingRange(const WebCore::SimpleRange& range) const
 {
     RefPtr document = this->document();
     if (!document) {
