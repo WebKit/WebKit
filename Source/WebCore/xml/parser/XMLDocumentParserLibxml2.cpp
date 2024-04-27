@@ -444,6 +444,10 @@ static bool shouldAllowExternalLoad(const URL& url)
     if (startsWithLettersIgnoringASCIICase(urlString, "http://www.w3.org/graphics/svg"_s))
         return false;
 
+    // This will crash due a missing XMLDocumentParserScope object in WebKit, or when
+    // a non-WebKit, in-process framework/library uses libxml2 off the main thread.
+    ASSERT(!!XMLDocumentParserScope::currentCachedResourceLoader);
+
     // The libxml doesn't give us a lot of context for deciding whether to
     // allow this request.  In the worst case, this load could be for an
     // external entity and the resulting document could simply read the

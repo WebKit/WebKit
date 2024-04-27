@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Unsafe attempt to load URL 127.0.0.1:8000. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: Unsafe attempt to load URL 127.0.0.1:8000. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: Unsafe attempt to load URL 127.0.0.1:8000. Domains, protocols and ports must match.
+
+ALERT: document() /etc/passwd: /etc/hosts: /etc/group:
+

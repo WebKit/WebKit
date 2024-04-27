@@ -132,15 +132,11 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
         auto* frame = globalProcessor->xslStylesheet()->ownerDocument()->frame();
         if (frame && frame->page())
             console = &frame->page()->console();
-        xmlSetStructuredErrorFunc(console, XSLTProcessor::parseErrorFunc);
-        xmlSetGenericErrorFunc(console, XSLTProcessor::genericErrorFunc);
+        XMLDocumentParserScope scope(globalCachedResourceLoader, XSLTProcessor::genericErrorFunc, XSLTProcessor::parseErrorFunc, console);
 
         // We don't specify an encoding here. Neither Gecko nor WinIE respects
         // the encoding specified in the HTTP headers.
         xmlDocPtr doc = xmlReadMemory(data ? data->dataAsCharPtr() : nullptr, data ? data->size() : 0, (const char*)uri, 0, options);
-
-        xmlSetStructuredErrorFunc(0, 0);
-        xmlSetGenericErrorFunc(0, 0);
 
         return doc;
     }
