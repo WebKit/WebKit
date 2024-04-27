@@ -422,6 +422,13 @@ template<> void encodeObjectDirectly<NSObject<NSSecureCoding>>(Encoder& encoder,
 #endif
 #endif // ENABLE(DATA_DETECTION)
 
+#if USE(PASSKIT)
+    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentMethodClass()]) {
+        [delegate setTransformURLs:NO];
+        [delegate setRewriteMutableArray:YES];
+    }
+#endif
+
     [archiver setDelegate:delegate.get()];
 
     [archiver encodeObject:object forKey:NSKeyedArchiveRootObjectKey];
