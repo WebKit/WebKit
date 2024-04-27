@@ -275,11 +275,6 @@ LayoutRect AccessibilityNodeObject::boundingBoxRect() const
     return { };
 }
 
-void AccessibilityNodeObject::setNode(Node* node)
-{
-    m_node = node;
-}
-
 Document* AccessibilityNodeObject::document() const
 {
     if (!node())

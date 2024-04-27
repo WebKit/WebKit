@@ -81,7 +81,6 @@ public:
 
     bool canSetSelectedAttribute() const override;
 
-    void setNode(Node*);
     Node* node() const override { return m_node.get(); }
     Document* document() const override;
     LocalFrameView* documentFrameView() const override;

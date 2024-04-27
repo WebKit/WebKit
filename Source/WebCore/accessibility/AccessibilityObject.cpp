@@ -3380,7 +3380,6 @@ bool AccessibilityObject::supportsExpanded() const
     case AccessibilityRole::ComboBox:
     case AccessibilityRole::GridCell:
     case AccessibilityRole::Link:
-    case AccessibilityRole::ListBox:
     case AccessibilityRole::MenuItem:
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:

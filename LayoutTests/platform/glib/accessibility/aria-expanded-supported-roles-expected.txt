@@ -5,7 +5,6 @@ AXRole: AXCheckBox is expanded
 AXRole: AXColumnHeader is expanded
 AXRole: AXComboBox is expanded
 AXRole: AXCell is expanded
-AXRole: AXListBox is expanded
 AXRole: AXMenuItem is expanded
 AXRole: AXCheckMenuItem is expanded
 AXRole: AXRadioMenuItem is expanded
