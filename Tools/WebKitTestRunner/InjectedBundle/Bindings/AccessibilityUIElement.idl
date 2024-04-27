@@ -258,6 +258,7 @@ interface AccessibilityUIElement {
     AccessibilityTextMarker previousTextMarker(AccessibilityTextMarker marker);
     AccessibilityTextMarker nextTextMarker(AccessibilityTextMarker marker);
     AccessibilityUIElement accessibilityElementForTextMarker(AccessibilityTextMarker marker);
+    AccessibilityTextMarkerRange textMarkerRangeForLine(long lineIndex);
     DOMString stringForTextMarkerRange(AccessibilityTextMarkerRange range);
     DOMString rectsForTextMarkerRange(AccessibilityTextMarkerRange range, DOMString searchText);
     DOMString attributedStringForTextMarkerRange(AccessibilityTextMarkerRange range);
@@ -266,6 +267,7 @@ interface AccessibilityUIElement {
     boolean attributedStringForTextMarkerRangeContainsAttribute(DOMString attr, AccessibilityTextMarkerRange range);
     long indexForTextMarker(AccessibilityTextMarker marker);
     boolean isTextMarkerValid(AccessibilityTextMarker marker);
+    boolean isTextMarkerRangeValid(AccessibilityTextMarkerRange markerRange);
     boolean isTextMarkerNull(AccessibilityTextMarker marker);
     AccessibilityTextMarker textMarkerForIndex(long textIndex);
     readonly attribute AccessibilityTextMarker startTextMarker;

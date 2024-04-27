@@ -113,6 +113,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned ind
 
 #if !PLATFORM(MAC)
 bool AccessibilityUIElement::isTextMarkerNull(AccessibilityTextMarker* marker) { return !isTextMarkerValid(marker); }
+bool AccessibilityUIElement::isTextMarkerRangeValid(AccessibilityTextMarkerRange*) { return false; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::rightLineTextMarkerRangeForTextMarker(AccessibilityTextMarker*) { return nullptr; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::leftLineTextMarkerRangeForTextMarker(AccessibilityTextMarker*) { return nullptr; }
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousLineStartTextMarkerForTextMarker(AccessibilityTextMarker*) { return nullptr; }
@@ -131,6 +132,7 @@ JSValueRef AccessibilityUIElement::mathRootRadicand(JSContextRef) { return { }; 
 unsigned AccessibilityUIElement::numberOfCharacters() const { return 0; }
 JSValueRef AccessibilityUIElement::columns(JSContextRef) { return { }; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::dateValue() { return nullptr; }
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForLine(long) { return nullptr; }
 #endif // !PLATFORM(MAC)
 
 #if !PLATFORM(COCOA)

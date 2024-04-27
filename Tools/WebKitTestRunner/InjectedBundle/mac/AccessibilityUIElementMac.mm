@@ -2130,6 +2130,19 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextTextMarker(Accessibi
     return nullptr;
 }
 
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForLine(long lineIndex)
+{
+    if (lineIndex < 0)
+        return nullptr;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto textMarkerRange = attributeValueForParameter(@"AXTextMarkerRangeForLine", @(static_cast<unsigned>(lineIndex)));
+    return AccessibilityTextMarkerRange::create(textMarkerRange.get());
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMarkerRange* markerRange)
 {
     if (!markerRange)
@@ -2416,6 +2429,18 @@ bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker* textMark
     BEGIN_AX_OBJC_EXCEPTIONS
     auto value = attributeValueForParameter(@"AXTextMarkerIsValid", textMarker->platformTextMarker());
     return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+
+    return false;
+}
+
+bool AccessibilityUIElement::isTextMarkerRangeValid(AccessibilityTextMarkerRange* textMarkerRange)
+{
+    if (!textMarkerRange)
+        return false;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    return [[m_element accessibilityAttributeValue:@"AXTextMarkerRangeIsValid" forParameter:textMarkerRange->platformTextMarkerRange()] boolValue];
     END_AX_OBJC_EXCEPTIONS
 
     return false;

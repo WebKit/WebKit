@@ -1,0 +1,37 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- Copy existing test, remove after accessibilityThreadTextApisEnabled is enabled by default. -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body" role="group">
+
+Foo
+<div>Bar</div>
+<p style="width:25px;">Wrapping text here, and some more</p>
+
+<script>
+var output = "This test ensures that basic AXTextMarkerRangeForLine functionality works.\n\n";
+
+
+if (window.accessibilityController) {
+    var body = accessibilityController.accessibleElementById("body");
+    let currentLine = 1;
+    while (true) {
+        const range = body.textMarkerRangeForLine(currentLine);
+        if (!range || !body.isTextMarkerRangeValid(range))
+            break;
+
+        const lineString = body.stringForTextMarkerRange(range);
+        if (!lineString)
+            break;
+        output += `Line ${currentLine}: ${lineString}\n`;
+        ++currentLine;
+    }
+    debug(output);
+}
+</script>
+</body>
+</html>
+

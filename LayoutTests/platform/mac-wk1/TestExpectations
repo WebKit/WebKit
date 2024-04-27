@@ -827,6 +827,7 @@ accessibility/announcement-notification.html [ WontFix ]
 accessibility/menuitem-is-selected.html [ WontFix ]
 accessibility/relationships.html [ WontFix ]
 accessibility/shadow-dom-hit-test.html [ WontFix ]
+accessibility/mac/text-marker-range-for-line.html [ WontFix ]
 # Datalist is unsupported in WK1
 accessibility/datalist.html [ WontFix ]
 fast/forms/datalist [ WontFix ]

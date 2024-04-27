@@ -1403,7 +1403,7 @@ CharacterRange AXIsolatedObject::doAXRangeForLine(unsigned lineIndex) const
 {
 #if ENABLE(AX_THREAD_TEXT_APIS)
     if (AXObjectCache::useAXThreadTextApis())
-        return AXTextMarker { treeID(), objectID(), 0 }.rangeForLine(lineIndex);
+        return AXTextMarker { treeID(), objectID(), 0 }.characterRangeForLine(lineIndex);
 #endif
 
     return Accessibility::retrieveValueFromMainThread<CharacterRange>([&lineIndex, this] () -> CharacterRange {

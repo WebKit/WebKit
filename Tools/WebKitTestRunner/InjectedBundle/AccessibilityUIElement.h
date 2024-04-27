@@ -341,6 +341,7 @@ public:
     RefPtr<AccessibilityTextMarker> previousTextMarker(AccessibilityTextMarker*);
     RefPtr<AccessibilityTextMarker> nextTextMarker(AccessibilityTextMarker*);
     RefPtr<AccessibilityUIElement> accessibilityElementForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForLine(long);
     JSRetainPtr<JSStringRef> stringForTextMarkerRange(AccessibilityTextMarkerRange*);
     JSRetainPtr<JSStringRef> rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef);
     JSRetainPtr<JSStringRef> attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*);
@@ -349,6 +350,7 @@ public:
     bool attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*);
     int indexForTextMarker(AccessibilityTextMarker*);
     bool isTextMarkerValid(AccessibilityTextMarker*);
+    bool isTextMarkerRangeValid(AccessibilityTextMarkerRange*);
     bool isTextMarkerNull(AccessibilityTextMarker*);
     RefPtr<AccessibilityTextMarker> textMarkerForIndex(int);
     RefPtr<AccessibilityTextMarker> startTextMarker();

@@ -86,6 +86,7 @@
 using namespace WebCore;
 
 static id attributeValueForTesting(const RefPtr<AXCoreObject>&, NSString *);
+static id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>&, NSString *, id);
 
 #ifndef NSAccessibilityActiveElementAttribute
 #define NSAccessibilityActiveElementAttribute @"AXActiveElement"
@@ -2332,6 +2333,48 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
     return nil;
 }
 
+id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString *attribute, id parameter)
+{
+    // This should've been null-checked already.
+    RELEASE_ASSERT(parameter);
+
+    AXTextMarkerRef markerRef = nil;
+    AXTextMarkerRangeRef markerRangeRef = nil;
+    NSRange nsRange = { 0, 0 };
+
+    if (AXObjectIsTextMarker(parameter))
+        markerRef = (AXTextMarkerRef)parameter;
+    else if (AXObjectIsTextMarkerRange(parameter))
+        markerRangeRef = (AXTextMarkerRangeRef)parameter;
+    else if ([parameter isKindOfClass:[NSValue class]] && !strcmp([(NSValue *)parameter objCType], @encode(NSRange)))
+        nsRange = [(NSValue*)parameter rangeValue];
+    else
+        return nil;
+
+    if ([attribute isEqualToString:@"AXTextMarkerIsNull"])
+        return [NSNumber numberWithBool:AXTextMarker(markerRef).isNull()];
+
+    if ([attribute isEqualToString:@"AXTextMarkerRangeIsValid"]) {
+        AXTextMarkerRange markerRange { markerRangeRef };
+        return [NSNumber numberWithBool:markerRange.start().isValid() && markerRange.end().isValid()];
+    }
+
+    if ([attribute isEqualToString:_AXStartTextMarkerForTextMarkerRangeAttribute]) {
+        AXTextMarkerRange markerRange { markerRangeRef };
+        return markerRange.start().platformData().bridgingAutorelease();
+    }
+
+    if ([attribute isEqualToString:_AXEndTextMarkerForTextMarkerRangeAttribute]) {
+        AXTextMarkerRange markerRange { markerRangeRef };
+        return markerRange.end().platformData().bridgingAutorelease();
+    }
+
+    if ([attribute isEqualToString:_AXTextMarkerRangeForNSRangeAttribute])
+        return backingObject->textMarkerRangeForNSRange(nsRange).platformData().bridgingAutorelease();
+
+    return nil;
+}
+
 - (NSValue *)intersectionWithSelectionRange
 {
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
@@ -3328,9 +3371,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attribute isEqualToString:AXTextMarkerIsValidAttribute])
         return [NSNumber numberWithBool:AXTextMarker(textMarker).isValid()];
 
-    if ([attribute isEqualToString:AXTextMarkerIsNullAttribute])
-        return [NSNumber numberWithBool:AXTextMarker(textMarker).isNull()];
-
     if ([attribute isEqualToString:AXIndexForTextMarkerAttribute]) {
 #if ENABLE(AX_THREAD_TEXT_APIS)
         if (AXObjectCache::useAXThreadTextApis())
@@ -3398,6 +3438,21 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:AXTextMarkerRangeForLineAttribute]) {
+#if ENABLE(AX_THREAD_TEXT_APIS)
+        if (AXObjectCache::useAXThreadTextApis()) {
+            // Unfortunately, the main-thread version of this function expects a 1-indexed line, so callers pass it that way.
+            // The text marker code expects normal 0-based indices, so we need to subtract one from the given value.
+            unsigned lineIndex = [number unsignedIntValue];
+            if (!lineIndex) {
+                // Match the main-thread implementation's behavior.
+                return nil;
+            }
+            if (RefPtr tree = std::get<RefPtr<AXIsolatedTree>>(axTreeForID(backingObject->treeID())))
+                return tree->firstMarker().markerRangeForLineIndex(lineIndex - 1).platformData().bridgingAutorelease();
+            return nil;
+        }
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
+
         return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&number, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
@@ -3732,23 +3787,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         }
     }
 
-    // Private attributes exposed only for testing.
-    if (UNLIKELY([attribute isEqualToString:_AXStartTextMarkerForTextMarkerRangeAttribute])) {
-        AXTextMarkerRange markerRange { textMarkerRange };
-        return markerRange.start().platformData().bridgingAutorelease();
-    }
-
-    if (UNLIKELY([attribute isEqualToString:_AXEndTextMarkerForTextMarkerRangeAttribute])) {
-        AXTextMarkerRange markerRange { textMarkerRange };
-        return markerRange.end().platformData().bridgingAutorelease();
-    }
-
-    if (UNLIKELY([attribute isEqualToString:_AXTextMarkerRangeForNSRangeAttribute]))
-        return backingObject->textMarkerRangeForNSRange(range).platformData().bridgingAutorelease();
-
     if ([attribute isEqualToString:kAXConvertRelativeFrameParameterizedAttribute]) {
         auto* parent = backingObject->parentObject();
         return parent ? [NSValue valueWithRect:parent->convertFrameToSpace(FloatRect(rect), AccessibilityConversionSpace::Page)] : nil;
+    }
+
+    if (AXObjectCache::clientIsInTestMode()) {
+        if (id value = parameterizedAttributeValueForTesting(backingObject, attribute, parameter))
+            return value;
     }
 
     // There are some parameters that super handles that are not explicitly returned by the list of the element's attributes.

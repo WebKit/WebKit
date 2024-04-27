@@ -60,7 +60,6 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 // TextMarker and TextMarkerRange API constants.
 
 // TextMarker attributes:
-#define AXTextMarkerIsNullAttribute @"AXTextMarkerIsNull"
 #define AXTextMarkerIsValidAttribute @"AXTextMarkerIsValid"
 #define AXIndexForTextMarkerAttribute @"AXIndexForTextMarker"
 #define AXTextMarkerForIndexAttribute @"AXTextMarkerForIndex"
