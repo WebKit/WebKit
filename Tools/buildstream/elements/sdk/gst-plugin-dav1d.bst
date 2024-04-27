@@ -36,7 +36,7 @@ sources:
 - kind: git_repo
   url: gitlab_freedesktop_org:gstreamer/gst-plugins-rs.git
   track: main
-  ref: gstreamer-1.23.1-158-g168af88edab195505767c92b90e70792b0c83e5c
+  ref: gstreamer-1.23.1-174-ga87eaa4b7909bff400d1272c83f86db5a72598c1
 - kind: local
   path: files/gst-plugin-dav1d/Cargo.lock
 - kind: local
