@@ -291,7 +291,7 @@ template<typename CharacterType> inline const CharacterType* StringBuilder::char
     if (!m_length)
         return nullptr;
     if (!m_string.isNull())
-        return m_string.characters<CharacterType>();
+        return m_string.span<CharacterType>().data();
     return m_buffer->characters<CharacterType>();
 }
 

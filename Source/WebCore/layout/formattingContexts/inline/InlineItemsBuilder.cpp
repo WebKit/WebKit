@@ -304,7 +304,8 @@ static void replaceNonPreservedNewLineAndTabCharactersAndAppend(const InlineText
         auto isNewLineOrTabCharacter = [&] {
             if (needsUnicodeHandling) {
                 char32_t character;
-                U16_NEXT(textContent.characters16(), position, contentLength, character);
+                auto characters = textContent.span16();
+                U16_NEXT(characters, position, contentLength, character);
                 return character == newlineCharacter || character == tabCharacter;
             }
             auto isNewLineOrTab = textContent[position] == newlineCharacter || textContent[position] == tabCharacter;

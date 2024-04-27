@@ -124,9 +124,9 @@ void StringBuilder::reserveCapacity(unsigned newCapacity)
             if (!m_length)
                 allocateBuffer<LChar>(static_cast<LChar*>(nullptr), newCapacity);
             else if (m_string.is8Bit())
-                allocateBuffer<LChar>(m_string.characters8(), newCapacity);
+                allocateBuffer<LChar>(m_string.span8().data(), newCapacity);
             else
-                allocateBuffer<UChar>(m_string.characters16(), newCapacity);
+                allocateBuffer<UChar>(m_string.span16().data(), newCapacity);
         }
     }
     ASSERT(hasOverflowed() || !newCapacity || m_buffer->length() >= newCapacity);

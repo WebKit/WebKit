@@ -230,7 +230,7 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     EXPECT_EQ(capacity, builder.capacity());
     EXPECT_EQ(String("0123456789"_s), string);
     EXPECT_EQ(string.impl(), builder.toStringPreserveCapacity().impl());
-    EXPECT_EQ(string.characters8(), builder.characters8());
+    EXPECT_EQ(string.span8().data(), builder.characters8());
 
     // Changing the StringBuilder should not affect the original result of toStringPreserveCapacity().
     builder.append("abcdefghijklmnopqrstuvwxyz");
@@ -241,7 +241,7 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     capacity = builder.capacity();
     string = builder.toStringPreserveCapacity();
     EXPECT_EQ(capacity, builder.capacity());
-    EXPECT_EQ(string.characters8(), builder.characters8());
+    EXPECT_EQ(string.span8().data(), builder.characters8());
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"_s), string);
     builder.append("ABC");
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"_s), string);
@@ -250,7 +250,7 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     capacity = builder.capacity();
     String string1 = builder.toStringPreserveCapacity();
     EXPECT_EQ(capacity, builder.capacity());
-    EXPECT_EQ(string1.characters8(), builder.characters8());
+    EXPECT_EQ(string1.span8().data(), builder.characters8());
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);
     string1 = makeStringByReplacingAll(string1, '0', 'a');
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), builder.toStringPreserveCapacity());
@@ -260,7 +260,7 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     capacity = builder.capacity();
     string1 = builder.toStringPreserveCapacity();
     EXPECT_EQ(capacity, builder.capacity());
-    EXPECT_EQ(string.characters8(), builder.characters8());
+    EXPECT_EQ(string.span8().data(), builder.characters8());
     builder.shrink(10);
     builder.append("###");
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);

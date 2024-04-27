@@ -39,10 +39,10 @@ VTTScanner::VTTScanner(const String& line)
     , m_is8Bit(line.is8Bit())
 {
     if (m_is8Bit) {
-        m_data.characters8 = line.characters8();
+        m_data.characters8 = line.span8().data();
         m_end.characters8 = m_data.characters8 + line.length();
     } else {
-        m_data.characters16 = line.characters16();
+        m_data.characters16 = line.span16().data();
         m_end.characters16 = m_data.characters16 + line.length();
     }
 }

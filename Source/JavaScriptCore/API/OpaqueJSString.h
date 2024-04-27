@@ -78,13 +78,13 @@ private:
 
     OpaqueJSString(const String& string)
         : m_string(string.isolatedCopy())
-        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.characters16()))
+        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.span16().data()))
     {
     }
 
     explicit OpaqueJSString(String&& string)
         : m_string(WTFMove(string))
-        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.characters16()))
+        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.span16().data()))
     {
     }
 
@@ -96,7 +96,7 @@ private:
 
     OpaqueJSString(std::span<const UChar> characters)
         : m_string(characters)
-        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.characters16()))
+        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.span16().data()))
     {
     }
 

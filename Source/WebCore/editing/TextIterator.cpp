@@ -1941,10 +1941,8 @@ static inline bool containsKanaLetters(const String& pattern)
 {
     if (pattern.is8Bit())
         return false;
-    const UChar* characters = pattern.characters16();
-    unsigned length = pattern.length();
-    for (unsigned i = 0; i < length; ++i) {
-        if (isKanaLetter(characters[i]))
+    for (auto character : pattern.span16()) {
+        if (isKanaLetter(character))
             return true;
     }
     return false;

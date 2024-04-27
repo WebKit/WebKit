@@ -165,7 +165,7 @@ static bool shouldSelfClose(const Element& element, SerializationSyntax syntax)
 template<typename CharacterType>
 static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& result, const String& source, unsigned offset, unsigned length, OptionSet<EntityMask> entityMask)
 {
-    const CharacterType* text = source.characters<CharacterType>() + offset;
+    auto text = source.span<CharacterType>().subspan(offset);
 
     size_t positionAfterLastEntity = 0;
     for (size_t i = 0; i < length; ++i) {

@@ -157,7 +157,7 @@ static inline String joinStrings(const JSStringJoiner::Entries& strings, std::sp
         break;
     }
     }
-    ASSERT(data == result.characters<OutputCharacterType>() + joinedLength);
+    ASSERT(data == result.span<OutputCharacterType>().data() + joinedLength);
 
     return result;
 }

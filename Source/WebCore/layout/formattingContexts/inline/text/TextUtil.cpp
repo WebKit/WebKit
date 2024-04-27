@@ -475,7 +475,8 @@ size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextBox& inlineTe
     if (inlineTextBox.canUseSimpleFontCodePath()) {
         char32_t character;
         size_t endOfCodePoint = startPosition;
-        U16_NEXT(textContent.characters16(), endOfCodePoint, textContent.length(), character);
+        auto characters = textContent.span16();
+        U16_NEXT(characters, endOfCodePoint, textContent.length(), character);
         ASSERT(endOfCodePoint > startPosition);
         return endOfCodePoint - startPosition;
     }

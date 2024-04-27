@@ -55,7 +55,7 @@ OpaqueJSString::~OpaqueJSString()
     if (!characters)
         return;
 
-    if (!m_string.is8Bit() && m_string.characters16() == characters)
+    if (!m_string.is8Bit() && m_string.span16().data() == characters)
         return;
 
     fastFree(characters);

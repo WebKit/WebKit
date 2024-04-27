@@ -75,13 +75,13 @@ void GStreamerDtlsTransportBackendObserver::stateChanged()
 
             if (remoteCertificate) {
                 auto remoteCertificateString = makeString(remoteCertificate.get());
-                auto jsRemoteCertificate = JSC::ArrayBuffer::create(remoteCertificateString.characters8(), remoteCertificateString.sizeInBytes());
+                auto jsRemoteCertificate = JSC::ArrayBuffer::create(remoteCertificateString.span8());
                 certificates.append(WTFMove(jsRemoteCertificate));
             }
 
             if (certificate) {
                 auto certificateString = makeString(certificate.get());
-                auto jsCertificate = JSC::ArrayBuffer::create(certificateString.characters8(), certificateString.sizeInBytes());
+                auto jsCertificate = JSC::ArrayBuffer::create(certificateString.span8());
                 certificates.append(WTFMove(jsCertificate));
             }
         }

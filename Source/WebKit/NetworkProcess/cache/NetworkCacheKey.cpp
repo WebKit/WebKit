@@ -146,7 +146,7 @@ String Key::hashAsString(const HashType& hash)
     return builder.toString();
 }
 
-template <typename CharType> bool hexDigitsToHash(CharType* characters, Key::HashType& hash)
+template <typename CharType> bool hexDigitsToHash(std::span<const CharType> characters, Key::HashType& hash)
 {
     for (unsigned i = 0; i < sizeof(hash); ++i) {
         auto high = characters[2 * i];
@@ -163,8 +163,8 @@ bool Key::stringToHash(const String& string, HashType& hash)
     if (string.length() != hashStringLength())
         return false;
     if (string.is8Bit())
-        return hexDigitsToHash(string.characters8(), hash);
-    return hexDigitsToHash(string.characters16(), hash);
+        return hexDigitsToHash(string.span8(), hash);
+    return hexDigitsToHash(string.span16(), hash);
 }
 
 bool Key::operator==(const Key& other) const

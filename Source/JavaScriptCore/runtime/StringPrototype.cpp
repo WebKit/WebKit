@@ -282,15 +282,15 @@ void substituteBackreferences(StringBuilder& result, const String& replacement, 
     substituteBackreferencesInline(result, replacement, source, ovector, reg);
 }
 
-static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, JSString* sourceVal, const String& source, const Range<int32_t>* substringRanges, int rangeCount)
+static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, JSString* sourceVal, const String& source, std::span<const Range<int32_t>> substringRanges)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (rangeCount == 1) {
+    if (substringRanges.size() == 1) {
         int sourceSize = source.length();
-        int position = substringRanges[0].begin();
-        int length = substringRanges[0].distance();
+        int position = substringRanges.front().begin();
+        int length = substringRanges.front().distance();
         if (position <= 0 && length >= sourceSize)
             return sourceVal;
         // We could call String::substringSharingImpl(), but this would result in redundant checks.
@@ -302,8 +302,8 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
     // in removeUsingRegExpSearch(). Hence, totalLength cannot exceed
     // String::MaxLength, and therefore, cannot overflow.
     Checked<int, AssertNoOverflow> totalLength = 0;
-    for (int i = 0; i < rangeCount; i++)
-        totalLength += substringRanges[i].distance();
+    for (auto& range : substringRanges)
+        totalLength += range.distance();
     ASSERT(totalLength <= static_cast<int>(String::MaxLength));
 
     if (!totalLength)
@@ -311,17 +311,17 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
 
     if (source.is8Bit()) {
         LChar* buffer;
-        const LChar* sourceData = source.characters8();
+        auto sourceData = source.span8();
         auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
         if (!impl) {
             throwOutOfMemoryError(globalObject, scope);
             return nullptr;
         }
 
-        Checked<int, AssertNoOverflow> bufferPos = 0;
-        for (int i = 0; i < rangeCount; i++) {
-            int srcLen = substringRanges[i].distance();
-            StringImpl::copyCharacters(buffer + bufferPos.value(), { sourceData + substringRanges[i].begin(), static_cast<size_t>(srcLen) });
+        Checked<size_t, AssertNoOverflow> bufferPos = 0;
+        for (auto range : substringRanges) {
+            size_t srcLen = range.distance();
+            StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData.subspan(range.begin(), srcLen));
             bufferPos += srcLen;
         }
 
@@ -329,7 +329,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
     }
 
     UChar* buffer;
-    const UChar* sourceData = source.characters16();
+    auto sourceData = source.span16();
 
     auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
     if (!impl) {
@@ -337,10 +337,10 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
         return nullptr;
     }
 
-    Checked<int, AssertNoOverflow> bufferPos = 0;
-    for (int i = 0; i < rangeCount; i++) {
-        int srcLen = substringRanges[i].distance();
-        StringImpl::copyCharacters(buffer + bufferPos.value(), { sourceData + substringRanges[i].begin(), static_cast<size_t>(srcLen) });
+    Checked<size_t, AssertNoOverflow> bufferPos = 0;
+    for (auto& range : substringRanges) {
+        size_t srcLen = range.distance();
+        StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData.subspan(range.begin(), srcLen));
         bufferPos += srcLen;
     }
 
@@ -392,7 +392,7 @@ static ALWAYS_INLINE JSString* removeUsingRegExpSearch(VM& vm, JSGlobalObject* g
         if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, sourceLen)))
             OUT_OF_MEMORY(globalObject, scope);
     }
-    RELEASE_AND_RETURN(scope, jsSpliceSubstrings(globalObject, string, source, sourceRanges.data(), sourceRanges.size()));
+    RELEASE_AND_RETURN(scope, jsSpliceSubstrings(globalObject, string, source, sourceRanges.span()));
 }
 
 static ALWAYS_INLINE JSString* replaceUsingRegExpSearchWithCache(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp, JSFunction* replaceFunction)
@@ -1028,9 +1028,10 @@ static inline char32_t codePointAt(const String& string, unsigned position, unsi
 {
     RELEASE_ASSERT(position < length);
     if (string.is8Bit())
-        return string.characters8()[position];
+        return string.span8()[position];
     char32_t character;
-    U16_NEXT(string.characters16(), position, length, character);
+    auto characters = string.span16();
+    U16_NEXT(characters, position, length, character);
     return character;
 }
 

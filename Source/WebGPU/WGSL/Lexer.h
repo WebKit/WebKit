@@ -37,11 +37,11 @@ public:
     Lexer(const String& wgsl)
     {
         if constexpr (std::is_same<T, LChar>::value) {
-            m_code = wgsl.characters8();
+            m_code = wgsl.span8().data();
             m_codeEnd = m_code + wgsl.sizeInBytes();
         } else {
             static_assert(std::is_same<T, UChar>::value, "The lexer expects its template parameter to be either LChar or UChar");
-            m_code = wgsl.characters16();
+            m_code = wgsl.span16().data();
             ASSERT(!(wgsl.sizeInBytes() % 2));
             m_codeEnd = m_code + wgsl.sizeInBytes() / 2;
         }

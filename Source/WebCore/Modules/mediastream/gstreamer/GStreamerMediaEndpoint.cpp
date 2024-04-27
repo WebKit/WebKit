@@ -574,7 +574,7 @@ void GStreamerMediaEndpoint::setDescription(const RTCSessionDescription* descrip
             return;
         }
         auto sdp = makeStringByReplacingAll(description->sdp(), "opus"_s, "OPUS"_s);
-        if (gst_sdp_message_new_from_text(reinterpret_cast<const char*>(sdp.characters8()), &message.outPtr()) != GST_SDP_OK) {
+        if (gst_sdp_message_new_from_text(reinterpret_cast<const char*>(sdp.span8().data()), &message.outPtr()) != GST_SDP_OK) {
             failureCallback(nullptr);
             return;
         }
@@ -759,7 +759,7 @@ GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(const GRefPtr<GstCaps>& allow
 std::optional<bool> GStreamerMediaEndpoint::isIceGatheringComplete(const String& currentLocalDescription)
 {
     GUniqueOutPtr<GstSDPMessage> message;
-    if (gst_sdp_message_new_from_text(reinterpret_cast<const char*>(currentLocalDescription.characters8()), &message.outPtr()) != GST_SDP_OK)
+    if (gst_sdp_message_new_from_text(reinterpret_cast<const char*>(currentLocalDescription.span8().data()), &message.outPtr()) != GST_SDP_OK)
         return { };
 
     unsigned numberOfMedias = gst_sdp_message_medias_len(message.get());

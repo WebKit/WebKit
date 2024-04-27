@@ -352,7 +352,7 @@ public:
         m_stringLengths.reserveInitialCapacity(m_strings.size());
         for (auto& string : m_strings) {
             string.convertTo16Bit();
-            m_stringPointers.append(string.characters16());
+            m_stringPointers.append(string.span16().data());
             m_stringLengths.append(string.length());
         }
     }

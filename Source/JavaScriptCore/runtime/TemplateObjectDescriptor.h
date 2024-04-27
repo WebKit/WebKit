@@ -100,9 +100,9 @@ inline unsigned TemplateObjectDescriptor::calculateHash(const StringVector& rawS
     SuperFastHash hasher;
     for (const String& string : rawStrings) {
         if (string.is8Bit())
-            hasher.addCharacters(string.characters8(), string.length());
+            hasher.addCharacters(string.span8());
         else
-            hasher.addCharacters(string.characters16(), string.length());
+            hasher.addCharacters(string.span16());
     }
     return hasher.hash();
 }
