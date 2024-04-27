@@ -1,0 +1,50 @@
+<html>
+<head>
+    <script src="../video-test.js"></script>
+    <script src="../utilities.js"></script>
+    <script>
+    let canvas = null;
+
+    internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    async function load() {
+        canvas = document.getElementById('canvas');
+        findMediaElement();
+        video.srcObject = canvas.captureStream();
+
+        const ctx = canvas.getContext('2d');
+        setInterval(() => {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }, 33);
+
+        await once(video, 'canplaythrough');
+        runWithKeyDown(async () => {
+            await video.requestPictureInPicture();
+            canvas.width = Math.round(Math.random() * 100) + 100;
+            canvas.height = Math.round(Math.random() * 100) + 100;
+
+            video.width = canvas.width;
+            video.height = canvas.height;
+            await waitFor(video, 'resize');
+
+            await document.exitPictureInPicture();
+            
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    }
+    </script>
+    <style type="text/css"></style>
+</head>
+<body onload="load()">
+    <canvas id="canvas" width="100" height="100"></canvas>
+    <video id="video" width="100" height="100" autoplay></video>
+    <p>This test passes if it does not crash.</p>
+</body>
+</html>

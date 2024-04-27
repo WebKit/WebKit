@@ -84,6 +84,7 @@ webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-001.html [ Pass ]
 webkit.org/b/231635 [ Release ] editing/selection/ios/scroll-to-reveal-selection-when-showing-software-keyboard.html [ Timeout ]
 
 media/picture-in-picture [ Pass ]
+media/picture-in-picture/video-resize-requestPictureInPicture-crash.html [ Pass Timeout ]
 media/remove-video-element-in-pip-from-document.html [ Pass ]
 
 http/tests/media/media-source/mediasource-rvfc.html [ Pass ]
