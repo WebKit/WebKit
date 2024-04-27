@@ -50,40 +50,46 @@
             setEnableFeature(false, finishJSTest);
     }
 
-    function initializeStatisticsAndRunTests(step) {
+    async function initializeStatisticsAndRunTests(step) {
         switch (step) {
             // Non-prevalent without user interaction to be pruned first.
             case 1:
-                testRunner.setStatisticsLastSeen(urlsToBePruned[0].url, olderTimestamp, function() { initializeStatisticsAndRunTests(2); });
+                await testRunner.setStatisticsLastSeen(urlsToBePruned[0].url, olderTimestamp);
+                initializeStatisticsAndRunTests(2);
                 break;
             case 2:
-                testRunner.setStatisticsLastSeen(urlsToBePruned[1].url, newerTimestamp, function() { initializeStatisticsAndRunTests(3); });
+                await testRunner.setStatisticsLastSeen(urlsToBePruned[1].url, newerTimestamp);
+                initializeStatisticsAndRunTests(3);
                 break;
             // Prevalent without user interaction to be pruned second.
             case 3:
                 testRunner.setStatisticsPrevalentResource(urlsToBePruned[2].url, true, function() { initializeStatisticsAndRunTests(4); });
                 break;
             case 4:
-                testRunner.setStatisticsLastSeen(urlsToBePruned[2].url, olderTimestamp, function() { initializeStatisticsAndRunTests(5); });
+                await testRunner.setStatisticsLastSeen(urlsToBePruned[2].url, olderTimestamp);
+                initializeStatisticsAndRunTests(5);
                 break;
             case 5:
                 testRunner.setStatisticsPrevalentResource(urlsToBePruned[3].url, true, function() { initializeStatisticsAndRunTests(6); });
                 break;
             case 6:
-                testRunner.setStatisticsLastSeen(urlsToBePruned[3].url, newerTimestamp, function() { initializeStatisticsAndRunTests(7); });
+                await testRunner.setStatisticsLastSeen(urlsToBePruned[3].url, newerTimestamp);
+                initializeStatisticsAndRunTests(7);
                 break;
             // Non-prevalent with user interaction to be pruned third.
             case 7:
                 testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[4].url, true, function() { initializeStatisticsAndRunTests(8); });
                 break;
             case 8:
-                testRunner.setStatisticsLastSeen(urlsToBePruned[4].url, olderTimestamp, function() { initializeStatisticsAndRunTests(9); });
+                await testRunner.setStatisticsLastSeen(urlsToBePruned[4].url, olderTimestamp);
+                initializeStatisticsAndRunTests(9);
                 break;
             case 9:
                 testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[5].url, true, function() { initializeStatisticsAndRunTests(10); });
                 break;
             case 10:
-                testRunner.setStatisticsLastSeen(urlsToBePruned[5].url, newerTimestamp, function() { initializeStatisticsAndRunTests(11); });
+                await testRunner.setStatisticsLastSeen(urlsToBePruned[5].url, newerTimestamp);
+                initializeStatisticsAndRunTests(11);
                 break;
             // Prevalent with user interaction to be pruned last.
             case 11:
@@ -93,7 +99,8 @@
                 testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[6].url, true, function() { initializeStatisticsAndRunTests(13); });
                 break;
             case 13:
-                testRunner.setStatisticsLastSeen(urlsToBePruned[6].url, olderTimestamp, function() { initializeStatisticsAndRunTests(14); });
+                await testRunner.setStatisticsLastSeen(urlsToBePruned[6].url, olderTimestamp);
+                initializeStatisticsAndRunTests(14);
                 break;
             case 14:
                 testRunner.setStatisticsPrevalentResource(urlsToBePruned[7].url, true, function() { initializeStatisticsAndRunTests(15); });
@@ -102,7 +109,8 @@
                 testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[7].url, true, function() { initializeStatisticsAndRunTests(16); });
                 break;
             case 16:
-                testRunner.setStatisticsLastSeen(urlsToBePruned[7].url, newerTimestamp, function() { initializeStatisticsAndRunTests(17); });
+                await testRunner.setStatisticsLastSeen(urlsToBePruned[7].url, newerTimestamp);
+                initializeStatisticsAndRunTests(17);
                 break;
             case 17:
                 checkIfPrevalentAccordingToInitialExpectation(0, urlsToBePruned.length);
@@ -131,10 +139,9 @@
     function runTest() {
         fillerUrl = "http://127.0." + currentTest + ".1:8000/temp";
         testRunner.setStatisticsPrevalentResource(fillerUrl, true, function() {
-            testRunner.setStatisticsHasHadUserInteraction(fillerUrl, true, function() {
-                testRunner.setStatisticsLastSeen(fillerUrl, newestTimestamp, function() {
-                    testRunner.statisticsProcessStatisticsAndDataRecords();
-                });
+            testRunner.setStatisticsHasHadUserInteraction(fillerUrl, true, async function () {
+                await testRunner.setStatisticsLastSeen(fillerUrl, newestTimestamp);
+                testRunner.statisticsProcessStatisticsAndDataRecords();
             });
         });
     }

@@ -316,7 +316,7 @@ interface TestRunner {
     undefined installStatisticsDidScanDataRecordsCallback(object callback);
     undefined setStatisticsDebugMode(boolean value, object completionHandler);
     undefined setStatisticsPrevalentResourceForDebugMode(DOMString hostName, object completionHandler);
-    undefined setStatisticsLastSeen(DOMString hostName, double seconds, object completionHandler);
+    Promise<undefined> setStatisticsLastSeen(DOMString hostName, double seconds);
     undefined setStatisticsMergeStatistic(DOMString hostName, DOMString topFrameDomain1, DOMString topFrameDomain2, double lastSeen, boolean hadUserInteraction, double mostRecentUserInteraction, boolean isGrandfathered, boolean isPrevalent, boolean isVeryPrevalent, unsigned long dataRecordsRemoved, object completionHandler);
     undefined setStatisticsExpiredStatistic(DOMString hostName, unsigned long numberOfOperatingDaysPassed, boolean hadUserInteraction, boolean isScheduledForAllButCookieDataRemoval, boolean isPrevalent, object completionHandler);
     undefined setStatisticsPrevalentResource(DOMString hostName, boolean value, object completionHandler);
@@ -459,5 +459,5 @@ interface TestRunner {
     undefined generateTestReport(DOMString message, DOMString group);
 
     undefined getAndClearReportedWindowProxyAccessDomains(object callback);
-    undefined flushConsoleLogs(object callback);
+    Promise<undefined> flushConsoleLogs();
 };
