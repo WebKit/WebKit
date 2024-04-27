@@ -683,6 +683,77 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithNoReply)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIRuntime, SendMessageFromSubframe)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/main"_s, { { { "Content-Type"_s, "text/html"_s } },
+            "<body><script>"
+            "  document.write('<iframe src=\"http://127.0.0.1:' + location.port + '/subframe\"></iframe>')"
+            "</script></body>"_s
+        } },
+        { "/subframe"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequestMain = server.requestWithLocalhost("/main"_s);
+    auto *urlRequestSubframe = server.request("/subframe"_s);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender) => {",
+        @"  browser.test.assertEq(message?.content, 'Hello from Subframe', 'Should receive the correct message from the subframe content script')",
+        @"  return Promise.resolve({ content: 'Received your message' })",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const response = await browser.runtime.sendMessage({ content: 'Hello from Subframe' })",
+        @"  browser.test.assertEq(response?.content, 'Received your message', 'Should get the response from the background script')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"content_scripts": @[@{
+            @"matches": @[ @"*://127.0.0.1/*" ],
+            @"js": @[ @"content.js" ],
+            @"all_frames": @YES
+        }]
+    };
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequestSubframe.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequestMain];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIRuntime, SendMessageWithTabFrameAndAsyncReply)
 {
     TestWebKitAPI::HTTPServer server({
@@ -866,6 +937,85 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromContentScript)
     [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIRuntime, ConnectFromSubframe)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/main"_s, { { { "Content-Type"_s, "text/html"_s } },
+            "<body><script>"
+            "  document.write('<iframe src=\"http://127.0.0.1:' + location.port + '/subframe\"></iframe>')"
+            "</script></body>"_s
+        } },
+        { "/subframe"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequestMain = server.requestWithLocalhost("/main"_s);
+    auto *urlRequestSubframe = server.request("/subframe"_s);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onConnect.addListener((port) => {",
+        @"  browser.test.assertEq(port.name, 'subframePort', 'Port name should be subframePort')",
+
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message, 'Hello from Subframe', 'Should receive the correct message content from subframe')",
+        @"    port.postMessage('Received from Background')",
+        @"  })",
+        @"})",
+
+        @"browser.test.yield('Load Tab')",
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const port = browser.runtime.connect({ name: 'subframePort' })",
+        @"  port.postMessage('Hello from Subframe')",
+
+        @"  port.onMessage.addListener((response) => {",
+        @"    browser.test.assertEq(response, 'Received from Background', 'Should get the response from the background script')",
+
+        @"    browser.test.notifyPass()",
+        @"  })",
+        @"})()"
+    ]);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"content_scripts": @[@{
+            @"matches": @[ @"*://127.0.0.1/*" ],
+            @"js": @[ @"content.js" ],
+            @"all_frames": @YES
+        }]
+    };
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequestSubframe.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequestMain];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIRuntime, ConnectFromContentScriptWithMultipleListeners)

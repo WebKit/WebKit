@@ -484,27 +484,6 @@ bool WebExtensionContext::isURLForThisExtension(const URL& url) const
     return url.isValid() && protocolHostAndPortAreEqual(baseURL(), url);
 }
 
-bool WebExtensionContext::extensionCanAccessWebPage(WebPageProxyIdentifier webPageProxyIdentifier)
-{
-    RefPtr page = WebProcessProxy::webPage(webPageProxyIdentifier);
-    if (page && isURLForThisExtension(URL { page->pageLoadState().activeURL() }))
-        return true;
-
-    RefPtr tab = getTab(webPageProxyIdentifier);
-    if (!tab) {
-        // FIXME: <https://webkit.org/b/268030> Tab isn't found in the list of opened tabs.
-        return true;
-    }
-
-    if (tab->extensionHasPermission())
-        return true;
-
-    RELEASE_LOG_ERROR(Extensions, "Access to this tab is not allowed for this extension");
-
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 void WebExtensionContext::setUniqueIdentifier(String&& uniqueIdentifier)
 {
     ASSERT(!isLoaded());

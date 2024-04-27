@@ -390,6 +390,60 @@ TEST(WKWebExtensionAPIStorage, StorageAreaOnChanged)
     Util::loadAndRunExtension(storageManifest, @{ @"background.js": backgroundScript });
 }
 
+TEST(WKWebExtensionAPIStorage, StorageFromSubframe)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/main"_s, { { { "Content-Type"_s, "text/html"_s } },
+            "<body><script>"
+            "  document.write('<iframe src=\"http://127.0.0.1:' + location.port + '/subframe\"></iframe>')"
+            "</script></body>"_s
+        } },
+        { "/subframe"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequestMain = server.requestWithLocalhost("/main"_s);
+    auto *urlRequestSubframe = server.request("/subframe"_s);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  await browser.storage.local.set({ key: 'value' })",
+        @"  const result = await browser.storage.local.get('key')",
+        @"  browser.test.assertEq(result?.key, 'value', 'Stored value should be retrievable')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1",
+
+        @"permissions": @[ @"storage" ],
+
+        @"content_scripts": @[@{
+            @"matches": @[ @"*://127.0.0.1/*" ],
+            @"js": @[ @"content.js" ],
+            @"all_frames": @YES
+        }]
+    };
+
+    auto *resources = @{
+        @"content.js": contentScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequestSubframe.URL];
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequestMain];
+
+    [manager loadAndRun];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
