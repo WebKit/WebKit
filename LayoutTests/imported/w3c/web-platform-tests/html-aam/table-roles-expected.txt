@@ -30,7 +30,7 @@ FAIL el-tbody assert_equals: <tbody data-testname="el-tbody" data-expectedrole="
     </tr>
   </tbody> expected "rowgroup" but got ""
 PASS el-tr-tbody
-FAIL el-th-in-row assert_equals: <th data-testname="el-th-in-row" data-expectedrole="rowheader" class="ex">1</th> expected "rowheader" but got "columnheader"
+PASS el-th-in-row
 PASS el-td
 FAIL el-tfoot assert_equals: <tfoot data-testname="el-tfoot" data-expectedrole="rowgroup" class="ex">
     <tr>
