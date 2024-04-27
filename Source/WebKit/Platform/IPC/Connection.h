@@ -661,8 +661,11 @@ Error Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption
 template<typename T>
 Error Connection::send(UniqueID connectionID, T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
 {
-    Locker locker { s_connectionMapLock };
-    RefPtr connection = connectionMap().get(connectionID).get();
+    RefPtr<Connection> connection;
+    {
+        Locker locker { s_connectionMapLock };
+        connection = connectionMap().get(connectionID).get();
+    }
     if (!connection)
         return Error::NoConnectionForIdentifier;
     return connection->send(std::forward<T>(message), destinationID, sendOptions, qos);
