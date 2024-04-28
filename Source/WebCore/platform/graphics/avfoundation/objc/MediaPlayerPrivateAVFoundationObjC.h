@@ -370,7 +370,6 @@ private:
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics(AVPlayerLayer*) const;
 
     void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) final;
-    void clearVideoReceiverEndpoint();
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     const String& defaultSpatialTrackingLabel() const;
@@ -381,6 +380,8 @@ private:
 
     void updateSpatialTrackingLabel();
 #endif
+
+    void isInFullscreenOrPictureInPictureChanged(bool) final;
 
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
