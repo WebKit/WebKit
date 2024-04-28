@@ -1649,8 +1649,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI32Add(Value lhs, Value rhs, Value& 
             m_jit.add32(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
         ),
         BLOCK(
-            m_jit.move(ImmHelpers::regLocation(lhsLocation, rhsLocation).asGPR(), resultLocation.asGPR());
-            m_jit.add32(Imm32(ImmHelpers::imm(lhs, rhs).asI32()), resultLocation.asGPR());
+            m_jit.add32(Imm32(ImmHelpers::imm(lhs, rhs).asI32()), ImmHelpers::regLocation(lhsLocation, rhsLocation).asGPR(), resultLocation.asGPR());
         )
     );
 }
@@ -1696,11 +1695,9 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI32Sub(Value lhs, Value rhs, Value& 
             m_jit.sub32(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
         ),
         BLOCK(
-            if (rhs.isConst()) {
-                // Add a negative if rhs is a constant.
-                m_jit.move(lhsLocation.asGPR(), resultLocation.asGPR());
-                m_jit.add32(Imm32(-rhs.asI32()), resultLocation.asGPR());
-            } else {
+            if (rhs.isConst())
+                m_jit.sub32(lhsLocation.asGPR(), TrustedImm32(rhs.asI32()), resultLocation.asGPR());
+            else {
                 emitMoveConst(lhs, Location::fromGPR(wasmScratchGPR));
                 m_jit.sub32(wasmScratchGPR, rhsLocation.asGPR(), resultLocation.asGPR());
             }
@@ -2147,8 +2144,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI32And(Value lhs, Value rhs, Value& 
             m_jit.and32(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
         ),
         BLOCK(
-            m_jit.move(ImmHelpers::regLocation(lhsLocation, rhsLocation).asGPR(), resultLocation.asGPR());
-            m_jit.and32(Imm32(ImmHelpers::imm(lhs, rhs).asI32()), resultLocation.asGPR());
+            m_jit.and32(Imm32(ImmHelpers::imm(lhs, rhs).asI32()), ImmHelpers::regLocation(lhsLocation, rhsLocation).asGPR(), resultLocation.asGPR());
         )
     );
 }
@@ -2162,8 +2158,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI32Xor(Value lhs, Value rhs, Value& 
             m_jit.xor32(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
         ),
         BLOCK(
-            m_jit.move(ImmHelpers::regLocation(lhsLocation, rhsLocation).asGPR(), resultLocation.asGPR());
-            m_jit.xor32(Imm32(ImmHelpers::imm(lhs, rhs).asI32()), resultLocation.asGPR());
+            m_jit.xor32(Imm32(ImmHelpers::imm(lhs, rhs).asI32()), ImmHelpers::regLocation(lhsLocation, rhsLocation).asGPR(), resultLocation.asGPR());
         )
     );
 }
@@ -2177,8 +2172,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI32Or(Value lhs, Value rhs, Value& r
             m_jit.or32(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
         ),
         BLOCK(
-            m_jit.move(ImmHelpers::regLocation(lhsLocation, rhsLocation).asGPR(), resultLocation.asGPR());
-            m_jit.or32(Imm32(ImmHelpers::imm(lhs, rhs).asI32()), resultLocation.asGPR());
+            m_jit.or32(Imm32(ImmHelpers::imm(lhs, rhs).asI32()), ImmHelpers::regLocation(lhsLocation, rhsLocation).asGPR(), resultLocation.asGPR());
         )
     );
 }
