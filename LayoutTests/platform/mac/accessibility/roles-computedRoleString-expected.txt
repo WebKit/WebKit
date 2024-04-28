@@ -9,7 +9,7 @@ PASS aside -> complementary.
 PASS button -> button.
 PASS code -> code.
 PASS del -> deletion.
-PASS dfn -> definition.
+PASS dfn -> term.
 PASS dl -> .
 PASS footer -> contentinfo.
 PASS form -> form.
