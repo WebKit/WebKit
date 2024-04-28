@@ -32,6 +32,10 @@
 #include <wtf/Seconds.h>
 #include <wtf/ThreadSafetyAnalysis.h>
 
+#if ENABLE(UNFAIR_LOCK)
+#include <os/lock.h>
+#endif
+
 namespace TestWebKitAPI {
 struct LockInspector;
 }
@@ -145,19 +149,43 @@ private:
 // declaration.
 inline void assertIsHeld(const Lock& lock) WTF_ASSERTS_ACQUIRED_LOCK(lock) { ASSERT_UNUSED(lock, lock.isHeld()); }
 
-// Locker specialization to use with Lock.
+#if ENABLE(UNFAIR_LOCK)
+class WTF_CAPABILITY_LOCK UnfairLock {
+    WTF_MAKE_NONCOPYABLE(UnfairLock);
+public:
+    void lock() WTF_ACQUIRES_LOCK()
+    {
+        os_unfair_lock_lock(&m_lock);
+    }
+    void unlock() WTF_RELEASES_LOCK()
+    {
+        os_unfair_lock_unlock(&m_lock);
+    }
+
+    UnfairLock() = default;
+
+private:
+    os_unfair_lock m_lock = OS_UNFAIR_LOCK_INIT;
+};
+#endif // ENABLE(UNFAIR_LOCK)
+
+// Locker specialization to use with Lock and UnfairLock that integrates with thread safety analysis.
 // Non-movable simple scoped lock holder.
 // Example: Locker locker { m_lock };
-template <>
-class WTF_CAPABILITY_SCOPED_LOCK Locker<Lock> : public AbstractLocker {
+template <typename T>
+#if ENABLE(UNFAIR_LOCK)
+class WTF_CAPABILITY_SCOPED_LOCK Locker<T, std::enable_if_t<std::is_same_v<T, Lock> || std::is_same_v<T, UnfairLock>>> : public AbstractLocker {
+#else
+class WTF_CAPABILITY_SCOPED_LOCK Locker<T, std::enable_if_t<std::is_same_v<T, Lock>>> : public AbstractLocker {
+#endif
 public:
-    explicit Locker(Lock& lock) WTF_ACQUIRES_LOCK(lock)
+    explicit Locker(T& lock) WTF_ACQUIRES_LOCK(lock)
         : m_lock(lock)
         , m_isLocked(true)
     {
         m_lock.lock();
     }
-    Locker(AdoptLockTag, Lock& lock) WTF_REQUIRES_LOCK(lock)
+    Locker(AdoptLockTag, T& lock) WTF_REQUIRES_LOCK(lock)
         : m_lock(lock)
         , m_isLocked(true)
     {
@@ -173,8 +201,8 @@ public:
         m_isLocked = false;
         m_lock.unlock();
     }
-    Locker(const Locker<Lock>&) = delete;
-    Locker& operator=(const Locker<Lock>&) = delete;
+    Locker(const Locker<T>&) = delete;
+    Locker& operator=(const Locker<T>&) = delete;
 
 private:
     // Support DropLockForScope even though it doesn't support thread safety analysis.
@@ -193,13 +221,22 @@ private:
         m_lock.unlock();
     }
 
-    Lock& m_lock;
+    T& m_lock;
     bool m_isLocked { false };
 };
 
 Locker(Lock&) -> Locker<Lock>;
 Locker(AdoptLockTag, Lock&) -> Locker<Lock>;
 
+#if ENABLE(UNFAIR_LOCK)
+Locker(UnfairLock&) -> Locker<UnfairLock>;
+Locker(AdoptLockTag, UnfairLock&) -> Locker<UnfairLock>;
+#endif // ENABLE(UNFAIR_LOCK)
+
 } // namespace WTF
 
 using WTF::Lock;
+
+#if ENABLE(UNFAIR_LOCK)
+using WTF::UnfairLock;
+#endif

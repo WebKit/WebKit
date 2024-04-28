@@ -455,8 +455,6 @@ private:
 
     bool isIncomingMessagesThrottlingEnabled() const { return m_incomingMessagesThrottlingLevel.has_value(); }
 
-    static HashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>& connectionMap() WTF_REQUIRES_LOCK(s_connectionMapLock);
-
     DecoderOrError waitForMessage(MessageName, uint64_t destinationID, Timeout, OptionSet<WaitForOption>);
 
     SyncRequestID makeSyncRequestID() { return SyncRequestID::generate(); }
@@ -517,7 +515,6 @@ private:
 
     static constexpr size_t largeOutgoingMessageQueueCountThreshold { 128 };
 
-    static Lock s_connectionMapLock;
     Client* m_client { nullptr };
     std::unique_ptr<SyncMessageState, SyncMessageStateRelease> m_syncState;
     UniqueID m_uniqueID;
@@ -661,11 +658,7 @@ Error Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption
 template<typename T>
 Error Connection::send(UniqueID connectionID, T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
 {
-    RefPtr<Connection> connection;
-    {
-        Locker locker { s_connectionMapLock };
-        connection = connectionMap().get(connectionID).get();
-    }
+    RefPtr connection = Connection::connection(connectionID);
     if (!connection)
         return Error::NoConnectionForIdentifier;
     return connection->send(std::forward<T>(message), destinationID, sendOptions, qos);

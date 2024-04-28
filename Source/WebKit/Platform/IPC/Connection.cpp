@@ -69,7 +69,11 @@ constexpr Seconds largeOutgoingMessageQueueTimeThreshold { 20_s };
 
 std::atomic<unsigned> UnboundedSynchronousIPCScope::unboundedSynchronousIPCCount = 0;
 
-Lock Connection::s_connectionMapLock;
+#if ENABLE(UNFAIR_LOCK)
+static UnfairLock s_connectionMapLock;
+#else
+static Lock s_connectionMapLock;
+#endif
 
 struct Connection::WaitForMessageState {
     WaitForMessageState(MessageName messageName, uint64_t destinationID, OptionSet<WaitForOption> waitForOptions)
@@ -300,7 +304,7 @@ Ref<Connection> Connection::createClientConnection(Identifier identifier)
     return adoptRef(*new Connection(identifier, false));
 }
 
-HashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>& Connection::connectionMap()
+static HashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>& connectionMap() WTF_REQUIRES_LOCK(s_connectionMapLock)
 {
     static NeverDestroyed<HashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>> map;
     return map;
@@ -336,7 +340,6 @@ RefPtr<Connection> Connection::connection(UniqueID uniqueID)
     // FIXME(https://bugs.webkit.org/show_bug.cgi?id=238493): Removing with lock in destructor is not thread-safe.
     Locker locker { s_connectionMapLock };
     return connectionMap().get(uniqueID).get();
-
 }
 
 void Connection::setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool flag)
