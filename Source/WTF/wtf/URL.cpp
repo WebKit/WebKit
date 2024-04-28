@@ -1173,7 +1173,7 @@ ALWAYS_INLINE bool isUNCLikePathImpl(CharacterType data) {
 }
 ALWAYS_INLINE bool isUNCLikePath(StringView path)
 {
-    return path.length() > 2 && (path.is8Bit() ? isUNCLikePathImpl(path.characters8()) : isUNCLikePathImpl(path.characters16()));
+    return path.length() > 2 && (path.is8Bit() ? isUNCLikePathImpl(path.span8().data()) : isUNCLikePathImpl(path.span16().data()));
 }
 #endif // OS(WINDOWS)
 
