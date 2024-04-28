@@ -48,7 +48,6 @@ RefPtr<OpaqueJSString> OpaqueJSString::tryCreate(String&& string)
     return adoptRef(new OpaqueJSString(WTFMove(string)));
 }
 
-
 OpaqueJSString::~OpaqueJSString()
 {
     // m_characters is put in a local here to avoid an extra atomic load.
@@ -66,11 +65,6 @@ String OpaqueJSString::string() const
 {
     // Return a copy of the wrapped string, because the caller may make it an Identifier.
     return m_string.isolatedCopy();
-}
-
-String OpaqueJSString::rawString() const
-{
-    return m_string;
 }
 
 Identifier OpaqueJSString::identifier(VM* vm) const
