@@ -2147,6 +2147,7 @@ public:
     void failedToEnterFullscreen(PlaybackSessionContextIdentifier);
     void didEnterFullscreen(PlaybackSessionContextIdentifier);
     void didExitFullscreen(PlaybackSessionContextIdentifier);
+    void didCleanupFullscreen(PlaybackSessionContextIdentifier);
     void didChangePlaybackRate(PlaybackSessionContextIdentifier);
     void didChangeCurrentTime(PlaybackSessionContextIdentifier);
 #else

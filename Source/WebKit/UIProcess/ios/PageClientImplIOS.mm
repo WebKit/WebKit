@@ -1105,6 +1105,13 @@ void PageClientImpl::didExitFullscreen()
 #endif
 }
 
+void PageClientImpl::didCleanupFullscreen()
+{
+#if ENABLE(FULLSCREEN_API)
+    [[webView() fullScreenWindowController] didCleanupFullscreen];
+#endif
+}
+
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
 #if ENABLE(ATTACHMENT_ELEMENT)

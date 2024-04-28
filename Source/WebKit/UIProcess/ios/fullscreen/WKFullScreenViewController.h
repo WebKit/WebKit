@@ -60,6 +60,9 @@ NS_ASSUME_NONNULL_BEGIN
 #if PLATFORM(VISION)
 - (void)hideCustomControls:(BOOL)hidden;
 #endif
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+- (void)configureEnvironmentPickerButtonView;
+#endif
 @end
 
 NS_ASSUME_NONNULL_END

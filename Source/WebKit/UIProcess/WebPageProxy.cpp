@@ -7615,6 +7615,11 @@ void WebPageProxy::didExitFullscreen(PlaybackSessionContextIdentifier identifier
     }
 }
 
+void WebPageProxy::didCleanupFullscreen(PlaybackSessionContextIdentifier)
+{
+    protectedPageClient()->didCleanupFullscreen();
+}
+
 void WebPageProxy::failedToEnterFullscreen(PlaybackSessionContextIdentifier identifier)
 {
 }

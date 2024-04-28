@@ -730,6 +730,7 @@ public:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     virtual void didEnterFullscreen() = 0;
     virtual void didExitFullscreen() = 0;
+    virtual void didCleanupFullscreen() = 0;
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)

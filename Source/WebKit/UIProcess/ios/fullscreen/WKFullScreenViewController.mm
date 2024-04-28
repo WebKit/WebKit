@@ -386,28 +386,33 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_pipButton setHidden:!isPiPEnabled || !isPiPSupported];
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    if (videoPresentationInterface)
-        [self _configureEnvironmentPickerButtonViewWithPlayableViewController:videoPresentationInterface->playableViewController()];
+    [self configureEnvironmentPickerButtonView];
 #endif
 }
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-- (void)_configureEnvironmentPickerButtonViewWithPlayableViewController:(LMPlayableViewController *)playableViewController
+- (void)configureEnvironmentPickerButtonView
 {
-    if (!self._webView._page->preferences().linearMediaPlayerEnabled())
+    ASSERT(_valid);
+    RefPtr page = self._webView._page.get();
+    if (!page || !page->preferences().linearMediaPlayerEnabled())
+        return;
+
+    RefPtr videoPresentationInterface = page->videoPresentationManager() ? page->videoPresentationManager()->controlsManagerInterface() : nullptr;
+    LMPlayableViewController *playableViewController = videoPresentationInterface ? videoPresentationInterface->playableViewController() : nil;
+    UIViewController *environmentPickerButtonViewController = playableViewController.wks_environmentPickerButtonViewController;
+    UIView *environmentPickerButtonView = environmentPickerButtonViewController.view;
+
+    if (_environmentPickerButtonView != environmentPickerButtonView)
+        [std::exchange(_environmentPickerButtonView, nil) removeFromSuperview];
+
+    if (!environmentPickerButtonViewController)
         return;
 
     playableViewController.wks_automaticallyDockOnFullScreenPresentation = YES;
     playableViewController.wks_dismissFullScreenOnExitingDocking = YES;
 
-    if (_environmentPickerButtonView)
-        return;
-
-    UIViewController *environmentPickerButtonViewController = playableViewController.wks_environmentPickerButtonViewController;
-    if (!environmentPickerButtonViewController)
-        return;
-
-    _environmentPickerButtonView = environmentPickerButtonViewController.view;
+    _environmentPickerButtonView = environmentPickerButtonView;
     [self addChildViewController:environmentPickerButtonViewController];
     [_stackView insertArrangedSubview:_environmentPickerButtonView.get() atIndex:1];
     [environmentPickerButtonViewController didMoveToParentViewController:self];
