@@ -1136,15 +1136,17 @@ void LineLayout::releaseCaches(RenderView& view)
 {
     for (auto& renderer : descendantsOfType<RenderBlockFlow>(view)) {
         if (auto* lineLayout = renderer.modernLineLayout())
-            lineLayout->releaseCaches();
+            lineLayout->releaseCachesAndResetDamage();
     }
 }
 
-void LineLayout::releaseCaches()
+void LineLayout::releaseCachesAndResetDamage()
 {
     m_inlineContentCache.inlineItems().content().clear();
     if (m_inlineContent)
         m_inlineContent->releaseCaches();
+    if (m_lineDamage)
+        Layout::InlineInvalidation::resetInlineDamage(*m_lineDamage);
 }
 
 void LineLayout::clearInlineContent()

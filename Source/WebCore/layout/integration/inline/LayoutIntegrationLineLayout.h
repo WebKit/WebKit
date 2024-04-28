@@ -156,7 +156,7 @@ private:
     const Layout::ElementBox& rootLayoutBox() const;
     Layout::ElementBox& rootLayoutBox();
     void clearInlineContent();
-    void releaseCaches();
+    void releaseCachesAndResetDamage();
 
     LayoutUnit physicalBaselineForLine(const InlineDisplay::Line&) const;
     
