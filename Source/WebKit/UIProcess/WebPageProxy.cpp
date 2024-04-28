@@ -6745,11 +6745,17 @@ void WebPageProxy::didReceiveTitleForFrame(FrameIdentifier frameID, const String
         deviceClassIsSmallScreen = PAL::deviceClassIsSmallScreen();
 #endif
         if (!deviceClassIsSmallScreen) {
-            bool isTitleChangeLikelyDueToUserAction = [&] {
+            bool isTitleChangeLikelyDueToUserAction = false;
+
+#if !PLATFORM(IOS_FAMILY)
+            // Disable this on iPad for now as this regresses youtube.com on PLT5
+            // (rdar://127015092).
+            isTitleChangeLikelyDueToUserAction = [&] {
                 bool hasRecentUserActivation = (MonotonicTime::now() - internals().lastActivationTimestamp) <= 5_s;
                 bool hasRecentlyCommittedLoad = (MonotonicTime::now() - internals().didCommitLoadForMainFrameTimestamp) <= 5_s;
                 return hasRecentUserActivation || hasRecentlyCommittedLoad;
             }();
+#endif
             if (!isTitleChangeLikelyDueToUserAction && !internals().pageAllowedToRunInTheBackgroundActivityDueToTitleChanges && !frame->title().isNull() && frame->title() != title) {
                 WEBPAGEPROXY_RELEASE_LOG(ViewState, "didReceiveTitleForFrame: This page updates its title without user interaction and is allowed to run in the background");
                 internals().pageAllowedToRunInTheBackgroundActivityDueToTitleChanges = process().throttler().backgroundActivity("Page updates its title"_s).moveToUniquePtr();
