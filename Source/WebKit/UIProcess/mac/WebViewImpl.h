@@ -58,6 +58,7 @@ OBJC_CLASS NSImmediateActionGestureRecognizer;
 OBJC_CLASS NSMenu;
 OBJC_CLASS NSPopover;
 OBJC_CLASS NSTextInputContext;
+OBJC_CLASS NSTextPlaceholder;
 OBJC_CLASS NSView;
 OBJC_CLASS QLPreviewPanel;
 OBJC_CLASS WKAccessibilitySettingsObserver;
@@ -527,6 +528,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RefPtr<ViewSnapshot> takeViewSnapshot();
     void saveBackForwardSnapshotForCurrentItem();
     void saveBackForwardSnapshotForItem(WebBackForwardListItem&);
+
+    void insertTextPlaceholderWithSize(CGSize, void(^completionHandler)(NSTextPlaceholder *));
+    void removeTextPlaceholder(NSTextPlaceholder *, bool willInsertText, void(^completionHandler)());
 
     WKSafeBrowsingWarning *safeBrowsingWarning() { return m_safeBrowsingWarning.get(); }
 

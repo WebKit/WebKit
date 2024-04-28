@@ -51,14 +51,16 @@ public:
     WebCore::RectEdges<bool> offsetEdges() const { return m_info.offsetEdges; }
 
     const WTF::String& renderedText() const { return m_info.renderedText; }
-    const Vector<WTF::String>& selectors() const { return m_info.selectors; }
+    const WTF::String& searchableText() const { return m_info.searchableText; }
+    const Vector<Vector<WTF::String>>& selectors() const { return m_info.selectors; }
     WebCore::PositionType positionType() const { return m_info.positionType; }
     WebCore::FloatRect boundsInRootView() const { return m_info.boundsInRootView; }
     WebCore::FloatRect boundsInWebView() const;
     WebCore::FloatRect boundsInClientCoordinates() const { return m_info.boundsInClientCoordinates; }
 
-    bool isUnderPoint() const { return m_info.isUnderPoint; }
+    bool isNearbyTarget() const { return m_info.isNearbyTarget; }
     bool isPseudoElement() const { return m_info.isPseudoElement; }
+    bool isInShadowTree() const { return m_info.isInShadowTree; }
 
     void childFrames(CompletionHandler<void(Vector<Ref<FrameTreeNode>>&&)>&&) const;
 

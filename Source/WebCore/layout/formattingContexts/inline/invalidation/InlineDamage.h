@@ -43,12 +43,12 @@ public:
     ~InlineDamage();
 
     enum class Reason : uint8_t {
-        Append        = 1 << 0,
-        Insert        = 1 << 1,
-        Remove        = 1 << 2,
-        ContentChange = 1 << 3,
-        StyleChange   = 1 << 4,
-        Pagination    = 1 << 5
+        Append                 = 1 << 0,
+        Insert                 = 1 << 1,
+        Remove                 = 1 << 2,
+        ContentChange          = 1 << 3,
+        StyleChange            = 1 << 4,
+        Pagination             = 1 << 5
     };
     OptionSet<Reason> reasons() const { return m_damageReasons; }
 
@@ -65,6 +65,9 @@ public:
 
     void addDetachedBox(UniqueRef<Box>&& layoutBox) { m_detachedLayoutBoxes.append(WTFMove(layoutBox)); }
 
+    bool isInlineItemListDirty() const { return m_isInlineItemListDirty; }
+    void setInlineItemListClean() { m_isInlineItemListDirty = false; }
+
 #ifndef NDEBUG
     bool hasDetachedContent() const { return !m_detachedLayoutBoxes.isEmpty(); }
 #endif
@@ -76,8 +79,10 @@ private:
     void setLayoutStartPosition(LayoutPosition position) { m_layoutStartPosition = position; }
     void resetLayoutPosition();
     void setTrailingDisplayBoxes(TrailingDisplayBoxList&& trailingDisplayBoxes) { m_trailingDisplayBoxes = WTFMove(trailingDisplayBoxes); }
+    void setInlineItemListDirty() { m_isInlineItemListDirty = true; }
 
     OptionSet<Reason> m_damageReasons;
+    bool m_isInlineItemListDirty { false };
     std::optional<LayoutPosition> m_layoutStartPosition;
     TrailingDisplayBoxList m_trailingDisplayBoxes;
     Vector<UniqueRef<Box>> m_detachedLayoutBoxes;

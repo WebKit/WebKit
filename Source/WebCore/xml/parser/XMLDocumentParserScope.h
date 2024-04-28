@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,28 +33,29 @@
 
 namespace WebCore {
 
-    class CachedResourceLoader;
+class CachedResourceLoader;
 
-    class XMLDocumentParserScope {
-        WTF_MAKE_NONCOPYABLE(XMLDocumentParserScope);
-    public:
-        explicit XMLDocumentParserScope(CachedResourceLoader*);
-        ~XMLDocumentParserScope();
+class XMLDocumentParserScope {
+    WTF_MAKE_NONCOPYABLE(XMLDocumentParserScope);
+public:
+    XMLDocumentParserScope() = delete;
+    explicit XMLDocumentParserScope(CachedResourceLoader*);
+    ~XMLDocumentParserScope();
 
-        static CachedResourceLoader* currentCachedResourceLoader;
-
-#if ENABLE(XSLT)
-        XMLDocumentParserScope(CachedResourceLoader*, xmlGenericErrorFunc, xmlStructuredErrorFunc structuredErrorFunc = 0, void* errorContext = nullptr);
-#endif
-
-    private:
-        CachedResourceLoader* m_oldCachedResourceLoader;
+    static WeakPtr<CachedResourceLoader>& currentCachedResourceLoader();
 
 #if ENABLE(XSLT)
-        xmlGenericErrorFunc m_oldGenericErrorFunc;
-        xmlStructuredErrorFunc m_oldStructuredErrorFunc;
-        void* m_oldErrorContext;
+    XMLDocumentParserScope(CachedResourceLoader*, xmlGenericErrorFunc, xmlStructuredErrorFunc = nullptr, void* errorContext = nullptr);
 #endif
-    };
+
+private:
+    WeakPtr<CachedResourceLoader> m_oldCachedResourceLoader;
+
+#if ENABLE(XSLT)
+    xmlGenericErrorFunc m_oldGenericErrorFunc { nullptr };
+    xmlStructuredErrorFunc m_oldStructuredErrorFunc { nullptr };
+    void* m_oldErrorContext { nullptr };
+#endif
+};
 
 } // namespace WebCore

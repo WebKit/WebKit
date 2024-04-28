@@ -6,6 +6,11 @@
 
 #include "libANGLE/renderer/wgpu/wgpu_helpers.h"
 
+#include "libANGLE/renderer/wgpu/ContextWgpu.h"
+#include "libANGLE/renderer/wgpu/DisplayWgpu.h"
+
+namespace rx
+{
 namespace webgpu
 {
 ImageHelper::ImageHelper() {}
@@ -69,4 +74,118 @@ TextureInfo ImageHelper::getWgpuTextureInfo(const gl::ImageIndex &index)
     textureInfo.mipLevelCount = index.getLayerCount();
     return textureInfo;
 }
+
+BufferHelper::BufferHelper() {}
+
+BufferHelper::~BufferHelper() {}
+
+void BufferHelper::reset()
+{
+    mBuffer = nullptr;
+    mMappedState.reset();
+}
+
+angle::Result BufferHelper::initBuffer(wgpu::Device device,
+                                       size_t size,
+                                       wgpu::BufferUsage usage,
+                                       MapAtCreation mappedAtCreation)
+{
+    wgpu::BufferDescriptor descriptor;
+    descriptor.size             = size;
+    descriptor.usage            = usage;
+    descriptor.mappedAtCreation = mappedAtCreation == MapAtCreation::Yes;
+
+    mBuffer = device.CreateBuffer(&descriptor);
+
+    if (mappedAtCreation == MapAtCreation::Yes)
+    {
+        mMappedState = {wgpu::MapMode::Read | wgpu::MapMode::Write, 0, size};
+    }
+    else
+    {
+        mMappedState.reset();
+    }
+
+    return angle::Result::Continue;
+}
+
+angle::Result BufferHelper::mapImmediate(ContextWgpu *context,
+                                         wgpu::MapMode mode,
+                                         size_t offset,
+                                         size_t size)
+{
+    ASSERT(!mMappedState.has_value());
+
+    WGPUBufferMapAsyncStatus mapResult = WGPUBufferMapAsyncStatus_Unknown;
+
+    wgpu::BufferMapCallbackInfo callbackInfo;
+    callbackInfo.mode     = wgpu::CallbackMode::WaitAnyOnly;
+    callbackInfo.callback = [](WGPUBufferMapAsyncStatus status, void *userdata) {
+        *static_cast<WGPUBufferMapAsyncStatus *>(userdata) = status;
+    };
+    callbackInfo.userdata = &mapResult;
+
+    wgpu::FutureWaitInfo waitInfo;
+    waitInfo.future = mBuffer.MapAsync(mode, offset, size, callbackInfo);
+
+    wgpu::Instance instance = context->getDisplay()->getInstance();
+    ANGLE_WGPU_TRY(context, instance.WaitAny(1, &waitInfo, -1));
+    ANGLE_WGPU_TRY(context, mapResult);
+
+    ASSERT(waitInfo.completed);
+
+    mMappedState = {mode, offset, size};
+
+    return angle::Result::Continue;
+}
+
+angle::Result BufferHelper::unmap()
+{
+    ASSERT(mMappedState.has_value());
+    mBuffer.Unmap();
+    mMappedState.reset();
+    return angle::Result::Continue;
+}
+
+uint8_t *BufferHelper::getMapWritePointer(size_t offset, size_t size) const
+{
+    ASSERT(mBuffer.GetMapState() == wgpu::BufferMapState::Mapped);
+    ASSERT(mMappedState.has_value());
+    ASSERT(mMappedState->offset <= offset);
+    ASSERT(mMappedState->offset + mMappedState->size >= offset + size);
+
+    void *mapPtr = mBuffer.GetMappedRange(offset, size);
+    ASSERT(mapPtr);
+
+    return static_cast<uint8_t *>(mapPtr);
+}
+
+const std::optional<BufferMapState> &BufferHelper::getMappedState() const
+{
+    return mMappedState;
+}
+
+bool BufferHelper::canMapForRead() const
+{
+    return (mMappedState.has_value() && (mMappedState->mode & wgpu::MapMode::Read)) ||
+           (mBuffer && (mBuffer.GetUsage() & wgpu::BufferUsage::MapRead));
+}
+
+bool BufferHelper::canMapForWrite() const
+{
+    return (mMappedState.has_value() && (mMappedState->mode & wgpu::MapMode::Write)) ||
+           (mBuffer && (mBuffer.GetUsage() & wgpu::BufferUsage::MapWrite));
+}
+
+wgpu::Buffer &BufferHelper::getBuffer()
+{
+    return mBuffer;
+}
+
+uint64_t BufferHelper::size() const
+{
+    return mBuffer ? mBuffer.GetSize() : 0;
+}
+
 }  // namespace webgpu
+}  // namespace rx

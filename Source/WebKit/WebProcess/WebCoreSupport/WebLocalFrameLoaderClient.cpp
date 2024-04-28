@@ -1505,7 +1505,7 @@ void WebLocalFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame
     m_frameCameFromBackForwardCache = true;
 }
 
-void WebLocalFrameLoaderClient::transitionToCommittedForNewPage()
+void WebLocalFrameLoaderClient::transitionToCommittedForNewPage(InitializingIframe initializingIframe)
 {
     RefPtr webPage = m_frame->page();
 
@@ -1590,7 +1590,8 @@ void WebLocalFrameLoaderClient::transitionToCommittedForNewPage()
     if (webPage->scrollPinningBehavior() != ScrollPinningBehavior::DoNotPin)
         view->setScrollPinningBehavior(webPage->scrollPinningBehavior());
 
-    webPage->scheduleFullEditorStateUpdate();
+    if (initializingIframe == InitializingIframe::No)
+        webPage->scheduleFullEditorStateUpdate();
 
 #if USE(COORDINATED_GRAPHICS)
     if (shouldUseFixedLayout) {

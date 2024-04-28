@@ -777,6 +777,42 @@ void JIT::compileOpStrictEq(const JSInstruction* currentInstruction)
     VirtualRegister src1 = bytecode.m_lhs;
     VirtualRegister src2 = bytecode.m_rhs;
 
+    auto tryGetBitwiseComparableConstant = [&](VirtualRegister src) -> JSValue {
+        if (!src.isConstant())
+            return { };
+        if (!m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src))
+            return { };
+        JSValue value = m_unlinkedCodeBlock->getConstant(src);
+        if (value.isUndefinedOrNull())
+            return value;
+        if (value.isBoolean())
+            return value;
+        return { };
+    };
+
+    auto emitBitwiseComparableConstantFastPath = [&](GPRReg operandGPR, JSValue value) {
+        if constexpr (std::is_same_v<Op, OpStricteq>)
+            compare64(Equal, operandGPR, TrustedImm64(JSValue::encode(value)), jsRegT32.payloadGPR());
+        else {
+            static_assert(std::is_same_v<Op, OpNstricteq>);
+            compare64(NotEqual, operandGPR, TrustedImm64(JSValue::encode(value)), jsRegT32.payloadGPR());
+        }
+        boxBoolean(jsRegT32.payloadGPR(), jsRegT32);
+        emitPutVirtualRegister(dst, jsRegT32);
+    };
+
+    if (JSValue value = tryGetBitwiseComparableConstant(src1)) {
+        emitGetVirtualRegister(src2, regT1);
+        emitBitwiseComparableConstantFastPath(regT1, value);
+        return;
+    }
+
+    if (JSValue value = tryGetBitwiseComparableConstant(src2)) {
+        emitGetVirtualRegister(src1, regT0);
+        emitBitwiseComparableConstantFastPath(regT0, value);
+        return;
+    }
+
     emitGetVirtualRegister(src1, regT0);
     emitGetVirtualRegister(src2, regT1);
 
@@ -883,7 +919,7 @@ void JIT::compileOpStrictEq(const JSInstruction* currentInstruction)
     addSlowCase(branchIfNumber(regT1));
     rightOK.link(this);
 
-    if constexpr (std::is_same<Op, OpStricteq>::value)
+    if constexpr (std::is_same_v<Op, OpStricteq>)
         compare64(Equal, regT1, regT0, regT0);
     else
         compare64(NotEqual, regT1, regT0, regT0);
@@ -910,6 +946,40 @@ void JIT::compileOpStrictEqJump(const JSInstruction* currentInstruction)
     int target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     VirtualRegister src1 = bytecode.m_lhs;
     VirtualRegister src2 = bytecode.m_rhs;
+
+    auto tryGetBitwiseComparableConstant = [&](VirtualRegister src) -> JSValue {
+        if (!src.isConstant())
+            return { };
+        if (!m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src))
+            return { };
+        JSValue value = m_unlinkedCodeBlock->getConstant(src);
+        if (value.isUndefinedOrNull())
+            return value;
+        if (value.isBoolean())
+            return value;
+        return { };
+    };
+
+    auto emitBitwiseComparableConstantFastPath = [&](GPRReg operandGPR, JSValue value) {
+        if constexpr (std::is_same_v<Op, OpJstricteq>)
+            addJump(branch64(Equal, operandGPR, TrustedImm64(JSValue::encode(value))), target);
+        else {
+            static_assert(std::is_same_v<Op, OpJnstricteq>);
+            addJump(branch64(NotEqual, operandGPR, TrustedImm64(JSValue::encode(value))), target);
+        }
+    };
+
+    if (JSValue value = tryGetBitwiseComparableConstant(src1)) {
+        emitGetVirtualRegister(src2, regT1);
+        emitBitwiseComparableConstantFastPath(regT1, value);
+        return;
+    }
+
+    if (JSValue value = tryGetBitwiseComparableConstant(src2)) {
+        emitGetVirtualRegister(src1, regT0);
+        emitBitwiseComparableConstantFastPath(regT0, value);
+        return;
+    }
 
     emitGetVirtualRegister(src1, regT0);
     emitGetVirtualRegister(src2, regT1);

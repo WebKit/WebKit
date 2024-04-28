@@ -573,11 +573,6 @@ void MediaStreamTrack::configureTrackRendering()
     // ... media from the source only flows when a MediaStreamTrack object is both unmuted and enabled
 }
 
-const char* MediaStreamTrack::activeDOMObjectName() const
-{
-    return "MediaStreamTrack";
-}
-
 void MediaStreamTrack::suspend(ReasonForSuspension reason)
 {
     if (reason != ReasonForSuspension::BackForwardCache)

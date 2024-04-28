@@ -109,6 +109,15 @@ public:
         ts.endGroup();
     }
 
+    template<typename T>
+    void dumpProperty(ASCIILiteral name, const T& value)
+    {
+        TextStream& ts = *this;
+        ts.startGroup();
+        ts << name << " "_s << value;
+        ts.endGroup();
+    }
+
     WTF_EXPORT_PRIVATE String release();
     
     WTF_EXPORT_PRIVATE void startGroup();

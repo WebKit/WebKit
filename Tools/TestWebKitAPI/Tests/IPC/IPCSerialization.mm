@@ -147,6 +147,22 @@ std::optional<CFHolderForTesting> CFHolderForTesting::decode(IPC::Decoder& decod
     } };
 }
 
+namespace IPC {
+
+template<> struct ArgumentCoder<CFHolderForTesting> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const CFHolderForTesting& holder)
+    {
+        holder.encode(encoder);
+    }
+    static std::optional<CFHolderForTesting> decode(Decoder& decoder)
+    {
+        return CFHolderForTesting::decode(decoder);
+    }
+};
+
+}
+
 static bool cvPixelBufferRefsEqual(CVPixelBufferRef pixelBuffer1, CVPixelBufferRef pixelBuffer2)
 {
     CVPixelBufferLockBaseAddress(pixelBuffer1, 0);
@@ -453,6 +469,22 @@ std::optional<ObjCHolderForTesting> ObjCHolderForTesting::decode(IPC::Decoder& d
     return { {
         WTFMove(*value)
     } };
+}
+
+namespace IPC {
+
+template<> struct ArgumentCoder<ObjCHolderForTesting> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const ObjCHolderForTesting& holder)
+    {
+        holder.encode(encoder);
+    }
+    static std::optional<ObjCHolderForTesting> decode(Decoder& decoder)
+    {
+        return ObjCHolderForTesting::decode(decoder);
+    }
+};
+
 }
 
 @interface NSDateComponents ()

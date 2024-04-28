@@ -28,6 +28,8 @@
 
 #include <WebCore/Font.h>
 #include <WebCore/FontCustomPlatformData.h>
+#include <WebCore/SharedMemory.h>
+
 // FIXME: Seems like we could use std::tuple to cut down the code below a lot!
 
 namespace IPC {

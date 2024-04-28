@@ -35,7 +35,7 @@ namespace WebCore {
 PlatformImagePtr ImageBackingStore::image() const
 {
     m_pixels->ref();
-    auto info = SkImageInfo::MakeN32(size().width(), size().height(), m_premultiplyAlpha ? kPremul_SkAlphaType : kUnpremul_SkAlphaType);
+    auto info = SkImageInfo::MakeN32(size().width(), size().height(), m_premultiplyAlpha ? kPremul_SkAlphaType : kUnpremul_SkAlphaType, SkColorSpace::MakeSRGB());
     SkPixmap pixmap(info, m_pixelsPtr, info.minRowBytes64());
     return SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
         static_cast<DataSegment*>(context)->deref();

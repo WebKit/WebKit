@@ -156,7 +156,7 @@ public:
     Vector<String> dictationAlternatives() const;
 
     Node* targetNode() const { return innerNode(); }
-    RefPtr<Node> protectedTargetNode() const;
+    WEBCORE_EXPORT RefPtr<Node> protectedTargetNode() const;
     WEBCORE_EXPORT Element* targetElement() const;
     RefPtr<Element> protectedTargetElement() const;
 

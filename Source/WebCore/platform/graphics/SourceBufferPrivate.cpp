@@ -153,7 +153,7 @@ Vector<PlatformTimeRanges> SourceBufferPrivate::trackBuffersRanges() const
     });
 }
 
-void SourceBufferPrivate::reenqueSamples(TrackID trackID)
+void SourceBufferPrivate::reenqueSamples(TrackID trackID, NeedsFlush needsFlush)
 {
     RefPtr client = this->client();
     if (!client)
@@ -163,7 +163,7 @@ void SourceBufferPrivate::reenqueSamples(TrackID trackID)
     if (trackBuffer == m_trackBufferMap.end())
         return;
     trackBuffer->second->setNeedsReenqueueing(true);
-    reenqueueMediaForTime(trackBuffer->second, trackID, currentTime());
+    reenqueueMediaForTime(trackBuffer->second, trackID, currentTime(), needsFlush);
 }
 
 Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivate::computeSeekTime(const SeekTarget& target)
@@ -341,9 +341,10 @@ void SourceBufferPrivate::provideMediaData(TrackBuffer& trackBuffer, TrackID tra
     trySignalAllSamplesInTrackEnqueued(trackBuffer, trackID);
 }
 
-void SourceBufferPrivate::reenqueueMediaForTime(TrackBuffer& trackBuffer, TrackID trackID, const MediaTime& time)
+void SourceBufferPrivate::reenqueueMediaForTime(TrackBuffer& trackBuffer, TrackID trackID, const MediaTime& time, NeedsFlush needsFlush)
 {
-    flush(trackID);
+    if (needsFlush == NeedsFlush::Yes)
+        flush(trackID);
     if (trackBuffer.reenqueueMediaForTime(time, timeFudgeFactor()))
         provideMediaData(trackBuffer, trackID);
 }
@@ -362,7 +363,7 @@ void SourceBufferPrivate::reenqueueMediaIfNeeded(const MediaTime& currentTime)
     }
 }
 
-static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMap::MapType& samples, TrackBuffer& trackBuffer, const char* logPrefix)
+static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMap::MapType& samples, TrackBuffer& trackBuffer, ASCIILiteral logPrefix)
 {
     return trackBuffer.removeSamples(samples, logPrefix);
 }
@@ -1143,7 +1144,7 @@ bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, 
             if (samplesWithHigherDecodeTimes.first != samplesWithHigherDecodeTimes.second)
                 dependentSamples.insert(samplesWithHigherDecodeTimes.first, samplesWithHigherDecodeTimes.second);
 
-            PlatformTimeRanges erasedRanges = removeSamplesFromTrackBuffer(dependentSamples, trackBuffer, "didReceiveSample");
+            PlatformTimeRanges erasedRanges = removeSamplesFromTrackBuffer(dependentSamples, trackBuffer, "didReceiveSample"_s);
 
             // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
             // not yet displayed samples.

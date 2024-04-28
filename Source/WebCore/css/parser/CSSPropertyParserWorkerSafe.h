@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2021 Metrological Group B.V.
  * Copyright (C) 2021 Igalia S.L.
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "CSSParserContext.h"
 #include "CSSPropertyParserHelpers.h"
+#include "FilterOperations.h"
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,11 +38,15 @@ class CSSPrimitiveValue;
 class CSSValue;
 class CSSValueList;
 class CSSValuePool;
+class Document;
+class RenderStyle;
 class ScriptExecutionContext;
 
 class CSSPropertyParserWorkerSafe {
 public:
     static std::optional<CSSPropertyParserHelpers::FontRaw> parseFont(const String&, CSSParserMode = HTMLStandardMode);
+
+    static std::optional<FilterOperations> parseFilterString(const Document&, RenderStyle&, const String&, CSSParserMode = HTMLStandardMode);
 
     static RefPtr<CSSValueList> parseFontFaceSrc(const String&, const CSSParserContext&);
     static RefPtr<CSSValue> parseFontFaceStyle(const String&, ScriptExecutionContext&);

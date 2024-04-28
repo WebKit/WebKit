@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSCalcValue.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CalculationCategory.h"
@@ -32,7 +33,6 @@
 namespace WebCore {
 
 class CSSCalcSymbolTable;
-class CSSCalcValue;
 class CSSPrimitiveValue;
 
 enum CSSParserMode : uint8_t;

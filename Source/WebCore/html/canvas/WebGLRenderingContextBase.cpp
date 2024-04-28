@@ -4727,11 +4727,6 @@ void WebGLRenderingContextBase::stop()
     }
 }
 
-const char* WebGLRenderingContextBase::activeDOMObjectName() const
-{
-    return "WebGLRenderingContext";
-}
-
 void WebGLRenderingContextBase::suspend(ReasonForSuspension)
 {
     m_isSuspended = true;

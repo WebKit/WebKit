@@ -1,0 +1,52 @@
+<style>
+     canvas {
+         width: 340px;
+         height: 340px;
+     }
+ </style>
+ <body>
+    <h3>This tests the canvas repaints the filter bounding rect.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 340;
+        canvas.height = 340;
+
+        ctx.fillStyle = 'green';
+
+        let count = 0;
+
+        function draw(timestamp) {
+            switch(++count) {
+            case 1:
+                ctx.filter = 'drop-shadow(-100px -100px 0 #666)';
+                break;
+            case 2:
+                ctx.filter = 'drop-shadow(100px -100px 0 #666)';
+                break;
+            case 3:
+                ctx.filter = 'drop-shadow(-100px 100px 0 #666)';
+                break;
+            case 4:
+                ctx.filter = 'drop-shadow(100px 100px 0 #666)';
+                break;
+            }
+
+            ctx.fillRect(120, 120, 100, 100);
+
+            if (count == 4) {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+                return;
+            }
+
+            window.requestAnimationFrame(draw);
+        }
+
+        window.requestAnimationFrame(draw);
+    </script>
+</body>

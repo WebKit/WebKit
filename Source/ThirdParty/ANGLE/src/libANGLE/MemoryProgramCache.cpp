@@ -182,8 +182,8 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
         return angle::Result::Continue;
     }
 
-    angle::MemoryBuffer serializedProgram;
-    ANGLE_TRY(program->serialize(context, &serializedProgram));
+    ANGLE_TRY(program->serialize(context));
+    const angle::MemoryBuffer &serializedProgram = program->getSerializedBinary();
 
     angle::MemoryBuffer compressedData;
     if (!angle::CompressBlob(serializedProgram.size(), serializedProgram.data(), &compressedData))

@@ -2814,6 +2814,8 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_VARIABLE_RASTERIZATION_RATE_ANGLE";
                 case 0x96BD:
                     return "GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE";
+                case 0x96BE:
+                    return "GL_PROGRAM_BINARY_READY_ANGLE";
                 case 0x96E0:
                     return "GL_MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE";
                 case 0x96E1:
@@ -22827,6 +22829,7 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_PROGRAM_BINARY_FORMAT_MESA", 0x875F},
     {"GL_PROGRAM_BINARY_LENGTH", 0x8741},
     {"GL_PROGRAM_BINARY_LENGTH_OES", 0x8741},
+    {"GL_PROGRAM_BINARY_READY_ANGLE", 0x96BE},
     {"GL_PROGRAM_BINARY_RETRIEVABLE_HINT", 0x8257},
     {"GL_PROGRAM_BINDING_ARB", 0x8677},
     {"GL_PROGRAM_CACHE_ENABLED_ANGLE", 0x93AC},

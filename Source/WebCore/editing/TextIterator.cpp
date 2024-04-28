@@ -565,7 +565,7 @@ bool TextIterator::handleTextNode()
 
     CheckedRef renderer = *textNode->renderer();
     m_lastTextNode = textNode.ptr();
-    String rendererText = renderer->text();
+    auto rendererText = rendererTextForBehavior(renderer.get());
 
     // handle pre-formatted text
     if (!renderer->style().collapseWhiteSpace()) {
@@ -624,7 +624,7 @@ void TextIterator::handleTextRun()
 
     auto [firstTextRun, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(renderer);
 
-    String rendererText = renderer->text();
+    auto rendererText = rendererTextForBehavior(renderer.get());
     unsigned rangeStart = m_offset;
     auto rangeEnd = std::optional<unsigned> { };
     if (textNode.ptr() == m_endContainer)
@@ -1139,7 +1139,9 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
     String string = m_behaviors.contains(TextIteratorBehavior::EmitsOriginalText) ? renderer.originalText()
         : (m_behaviors.contains(TextIteratorBehavior::EmitsTextsWithoutTranscoding) ? renderer.textWithoutConvertingBackslashToYenSymbol() : renderer.text());
 
-    ASSERT(string.length() >= static_cast<unsigned>(textEndOffset));
+    ASSERT(m_behaviors.contains(TextIteratorBehavior::EmitsOriginalText) || string.length() >= static_cast<unsigned>(textEndOffset));
+
+    textEndOffset = std::min(string.length(), static_cast<unsigned>(textEndOffset));
 
     m_positionNode = &textNode;
     m_positionOffsetBaseNode = nullptr;
@@ -1939,10 +1941,8 @@ static inline bool containsKanaLetters(const String& pattern)
 {
     if (pattern.is8Bit())
         return false;
-    const UChar* characters = pattern.characters16();
-    unsigned length = pattern.length();
-    for (unsigned i = 0; i < length; ++i) {
-        if (isKanaLetter(characters[i]))
+    for (auto character : pattern.span16()) {
+        if (isKanaLetter(character))
             return true;
     }
     return false;

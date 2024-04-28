@@ -195,7 +195,6 @@ private:
 
     // ActiveDOMObject API.
     void stop() final { stopTrack(); }
-    const char* activeDOMObjectName() const override;
     void suspend(ReasonForSuspension) final;
     bool virtualHasPendingActivity() const final;
 
@@ -217,7 +216,7 @@ private:
     bool wantsToCaptureAudio() const final;
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "MediaStreamTrack"; }
+    ASCIILiteral logClassName() const final { return "MediaStreamTrack"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
 

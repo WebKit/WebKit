@@ -69,6 +69,7 @@ public:
     virtual bool isPresentationContextCoreAnimation() const { return false; }
     virtual RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t) { return nullptr; }
 
+    virtual bool isValid() { return false; }
 protected:
     explicit PresentationContext();
 };

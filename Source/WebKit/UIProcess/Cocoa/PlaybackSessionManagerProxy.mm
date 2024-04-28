@@ -797,14 +797,6 @@ void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContex
     if (!xpcConnection)
         return;
 
-    // FIXME 125816935: element fullscreen is expected to exit when switching to LinearMediaPlayer
-    // fullscreen, but in order to do so in a way that's not visible to the user we need an API
-    // from LinearMediaKit to know when its scene swap transition has occurred. For now we just
-    // exit element fullscreen when we receive the video receiver endpoint, but this causes the
-    // element fullscreen window to close before the LinearMediaKit scene is visible.
-    if (endpoint && m_page->fullScreenManager() && m_page->fullScreenManager()->isFullScreen())
-        m_page->fullScreenManager()->requestExitFullScreen();
-
     VideoReceiverEndpointMessage endpointMessage(WTFMove(processIdentifier), WTFMove(playerIdentifier), endpoint);
     xpc_connection_send_message(xpcConnection.get(), endpointMessage.encode().get());
 #else

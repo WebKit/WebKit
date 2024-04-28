@@ -242,6 +242,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_ANGLE_multiview_multisample"] = enableableExtension(&Extensions::multiviewMultisampleANGLE);
         map["GL_ANGLE_polygon_mode"] = enableableExtension(&Extensions::polygonModeANGLE);
         map["GL_ANGLE_program_binary"] = esOnlyExtension(&Extensions::programBinaryANGLE);
+        map["GL_ANGLE_program_binary_readiness_query"] = esOnlyExtension(&Extensions::programBinaryReadinessQueryANGLE);
         map["GL_ANGLE_program_cache_control"] = esOnlyExtension(&Extensions::programCacheControlANGLE);
         map["GL_ANGLE_provoking_vertex"] = enableableExtension(&Extensions::provokingVertexANGLE);
         map["GL_ANGLE_read_only_depth_stencil_feedback_loops"] = enableableExtension(&Extensions::readOnlyDepthStencilFeedbackLoopsANGLE);

@@ -290,7 +290,7 @@ private:
     String computedRoleString() const final;
     bool isValueAutofillAvailable() const final { return boolAttributeValue(AXPropertyName::IsValueAutofillAvailable); }
     AutoFillButtonType valueAutofillButtonType() const final { return static_cast<AutoFillButtonType>(intAttributeValue(AXPropertyName::ValueAutofillButtonType)); }
-    void ariaTreeRows(AccessibilityChildrenVector& children) final { fillChildrenVectorForProperty(AXPropertyName::ARIATreeRows, children); }
+    AccessibilityChildrenVector ariaTreeRows() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::ARIATreeRows)); }
     URL url() const final { return urlAttributeValue(AXPropertyName::URL); }
     String accessKey() const final { return stringAttributeValue(AXPropertyName::AccessKey); }
     String localizedActionVerb() const final { return stringAttributeValue(AXPropertyName::LocalizedActionVerb); }
@@ -384,18 +384,12 @@ private:
     VisiblePositionRange visiblePositionRange() const final;
     AXTextMarkerRange textMarkerRange() const final;
 
-    // TODO: Text ranges and selection.
     String selectedText() const final;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const final;
     VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const final;
-    VisiblePositionRange positionOfLeftWord(const VisiblePosition&) const final;
-    VisiblePositionRange positionOfRightWord(const VisiblePosition&) const final;
     VisiblePositionRange leftLineVisiblePositionRange(const VisiblePosition&) const final;
     VisiblePositionRange rightLineVisiblePositionRange(const VisiblePosition&) const final;
-    VisiblePositionRange sentenceForPosition(const VisiblePosition&) const final;
-    VisiblePositionRange paragraphForPosition(const VisiblePosition&) const final;
     VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const final;
-    VisiblePositionRange visiblePositionRangeForRange(const CharacterRange&) const final;
     VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const final;
     std::optional<SimpleRange> rangeForCharacterRange(const CharacterRange&) const final;
 #if PLATFORM(COCOA)
@@ -409,10 +403,6 @@ private:
     VisiblePosition visiblePositionForPoint(const IntPoint&) const final;
     VisiblePosition nextLineEndPosition(const VisiblePosition&) const final;
     VisiblePosition previousLineStartPosition(const VisiblePosition&) const final;
-    VisiblePosition nextSentenceEndPosition(const VisiblePosition&) const final;
-    VisiblePosition previousSentenceStartPosition(const VisiblePosition&) const final;
-    VisiblePosition nextParagraphEndPosition(const VisiblePosition&) const final;
-    VisiblePosition previousParagraphStartPosition(const VisiblePosition&) const final;
     VisiblePosition visiblePositionForIndex(unsigned, bool lastIndexOK) const final;
     VisiblePosition visiblePositionForIndex(int) const final;
     int indexForVisiblePosition(const VisiblePosition&) const final;

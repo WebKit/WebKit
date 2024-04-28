@@ -791,10 +791,4 @@ frames:
         0: roundRect
         1: (anonymous function)
         2: executeFrameFunction
-  61: (duration)
-    0: commit()
-      trace:
-        0: commit
-        1: (anonymous function)
-        2: executeFrameFunction
 

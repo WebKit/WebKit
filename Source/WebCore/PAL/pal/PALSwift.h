@@ -41,7 +41,7 @@ inline OptionalVectorUInt8 makeOptional(VectorUInt8 val)
     return val;
 }
 
-} // PAL
+} // Cpp
 
 #ifndef __swift__
 #include "PALSwift-Generated.h"

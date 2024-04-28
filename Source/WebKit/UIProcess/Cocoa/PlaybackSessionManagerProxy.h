@@ -146,7 +146,7 @@ private:
     const void* logIdentifier() const final { return m_logIdentifier; }
     const Logger* loggerPtr() const;
 
-    const char* logClassName() const { return "PlaybackSessionModelContext"; };
+    ASCIILiteral logClassName() const { return "PlaybackSessionModelContext"_s; };
     WTFLogChannel& logChannel() const;
 #endif
 
@@ -282,7 +282,7 @@ private:
 
     const Logger& logger() const { return m_logger; }
     const void* logIdentifier() const { return m_logIdentifier; }
-    const char* logClassName() const { return "VideoPresentationManagerProxy"; }
+    ASCIILiteral logClassName() const { return "VideoPresentationManagerProxy"_s; }
     WTFLogChannel& logChannel() const;
 #endif
 

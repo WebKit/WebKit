@@ -67,7 +67,7 @@ public:
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
-    const char* logClassName() const final { return "AudioFileReaderCocoa"; }
+    ASCIILiteral logClassName() const final { return "AudioFileReaderCocoa"_s; }
 #endif
 
 private:

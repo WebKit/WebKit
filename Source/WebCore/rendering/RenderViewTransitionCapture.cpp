@@ -64,7 +64,6 @@ void RenderViewTransitionCapture::paintReplaced(PaintInfo& paintInfo, const Layo
     replacedContentRect.moveBy(paintOffset);
 
     FloatRect paintRect = m_localOverflowRect;
-    paintRect.moveBy(replacedContentRect.location());
 
     InterpolationQualityMaintainer interpolationMaintainer(context, ImageQualityController::interpolationQualityFromStyle(style()));
     if (m_oldImage)
@@ -77,7 +76,34 @@ void RenderViewTransitionCapture::layout()
     m_localOverflowRect = m_overflowRect;
     m_scale = { replacedContentRect().width().toFloat() / intrinsicSize().width().toFloat() , replacedContentRect().height().toFloat() / intrinsicSize().height().toFloat()  };
     m_localOverflowRect.scale(m_scale.width(), m_scale.height());
+    m_localOverflowRect.moveBy(replacedContentRect().location());
     addVisualOverflow(m_localOverflowRect);
+}
+
+void RenderViewTransitionCapture::updateFromStyle()
+{
+    RenderReplaced::updateFromStyle();
+
+    if (effectiveOverflowX() != Overflow::Visible || effectiveOverflowY() != Overflow::Visible)
+        setHasNonVisibleOverflow();
+}
+
+LayoutPoint RenderViewTransitionCapture::captureContentInset() const
+{
+    LayoutPoint location = m_localOverflowRect.location();
+    location.moveBy(-visualOverflowRect().location());
+    return location;
+}
+
+String RenderViewTransitionCapture::debugDescription() const
+{
+    StringBuilder builder;
+
+    builder.append(renderName(), " 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+
+    builder.append(" ::view-transition-"_s, style().pseudoElementType() == PseudoId::ViewTransitionNew ? "new("_s : "old("_s);
+    builder.append(style().pseudoElementNameArgument(), ')');
+    return builder.toString();
 }
 
 } // namespace WebCore

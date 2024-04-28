@@ -576,9 +576,4 @@ void DOMCache::stop()
     m_connection->dereference(m_identifier);
 }
 
-const char* DOMCache::activeDOMObjectName() const
-{
-    return "Cache";
-}
-
 } // namespace WebCore

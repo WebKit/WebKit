@@ -46,8 +46,8 @@ enum class ConversionResult : uint8_t {
 
 WTF_EXPORT_PRIVATE bool convertUTF8ToUTF16(std::span<const char8_t> source, UChar** targetStart, const UChar* targetEnd, bool* isSourceAllASCII = nullptr);
 WTF_EXPORT_PRIVATE bool convertUTF8ToUTF16ReplacingInvalidSequences(std::span<const char8_t> source, UChar** targetStart, const UChar* targetEnd, bool* isSourceAllASCII = nullptr);
-WTF_EXPORT_PRIVATE bool convertLatin1ToUTF8(const LChar** sourceStart, const LChar* sourceEnd, char** targetStart, const char* targetEnd);
-WTF_EXPORT_PRIVATE ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sourceEnd, char** targetStart, const char* targetEnd, bool strict = true);
+WTF_EXPORT_PRIVATE bool convertLatin1ToUTF8(std::span<const LChar> source, char** targetStart, const char* targetEnd);
+WTF_EXPORT_PRIVATE ConversionResult convertUTF16ToUTF8(std::span<const UChar>& source, char** targetStart, const char* targetEnd, bool strict = true);
 WTF_EXPORT_PRIVATE unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(std::span<const char> data, unsigned& dataLength, unsigned& utf16Length);
 
 // Like the other functions above, the computeUTFLengths function is strict.

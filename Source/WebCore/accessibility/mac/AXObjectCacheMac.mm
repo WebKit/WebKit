@@ -480,7 +480,7 @@ void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-static void createIsolatedObjectIfNeeded(AccessibilityObject& object, std::optional<PageIdentifier> pageID)
+void AXObjectCache::createIsolatedObjectIfNeeded(AccessibilityObject& object)
 {
     // The wrapper associated with a published notification may not have an isolated object yet.
     // This should only happen when the live object is ignored, meaning we will never create an isolated object for it.
@@ -492,10 +492,8 @@ static void createIsolatedObjectIfNeeded(AccessibilityObject& object, std::optio
     if (!wrapper || [wrapper hasIsolatedObject])
         return;
 
-    if (object.accessibilityIsIgnored()) {
-        if (auto tree = AXIsolatedTree::treeForPageID(pageID))
-            tree->addUnconnectedNode(object);
-    }
+    if (object.accessibilityIsIgnored())
+        deferAddUnconnectedNode(object);
 }
 #endif
 
@@ -594,7 +592,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     if (id wrapper = object->wrapper()) {
         [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        createIsolatedObjectIfNeeded(*object, m_pageID);
+        createIsolatedObjectIfNeeded(*object);
 #endif
     }
 
@@ -646,19 +644,18 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     postTextReplacementPlatformNotification(object, AXTextEditTypeUnknown, emptyString(), type, text, position);
 }
 
-static void postUserInfoForChanges(AccessibilityObject& rootWebArea, AccessibilityObject& object, NSMutableArray *changes, std::optional<PageIdentifier> pageID)
+void AXObjectCache::postUserInfoForChanges(AccessibilityObject& rootWebArea, AccessibilityObject& object, RetainPtr<NSMutableArray> changes)
 {
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:4]);
     [userInfo setObject:@(platformChangeTypeForWebCoreChangeType(AXTextStateChangeTypeEdit)) forKey:NSAccessibilityTextStateChangeTypeKey];
-    if (changes.count)
-        [userInfo setObject:changes forKey:NSAccessibilityTextChangeValues];
+    auto changesArray = changes.autorelease();
+    if (changesArray.count)
+        [userInfo setObject:changesArray forKey:NSAccessibilityTextChangeValues];
 
     if (id wrapper = object.wrapper()) {
         [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        createIsolatedObjectIfNeeded(object, pageID);
-#else
-        UNUSED_PARAM(pageID);
+        createIsolatedObjectIfNeeded(object);
 #endif
     }
 
@@ -687,7 +684,7 @@ void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*
         [changes addObject:change];
 
     if (RefPtr root = rootWebArea())
-        postUserInfoForChanges(*root, *object, changes.get(), m_pageID);
+        postUserInfoForChanges(*root, *object, changes.get());
 }
 
 void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String& deletedText, const String& insertedText, HTMLTextFormControlElement& textControl)
@@ -710,7 +707,7 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(Access
         [changes addObject:change];
 
     if (RefPtr root = rootWebArea())
-        postUserInfoForChanges(*root, *object, changes.get(), m_pageID);
+        postUserInfoForChanges(*root, *object, changes.get());
 }
 
 void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* axFrameObject, AXLoadingEvent loadingEvent)
@@ -1015,9 +1012,9 @@ void AXObjectCache::onSelectedTextChanged(const VisiblePositionRange& selection)
                 tree->setSelectedTextMarkerRange({ });
             else {
                 if (auto* startObject = get(startPosition.anchorNode()))
-                    createIsolatedObjectIfNeeded(*startObject, m_pageID);
+                    createIsolatedObjectIfNeeded(*startObject);
                 if (auto* endObject = get(endPosition.anchorNode()))
-                    createIsolatedObjectIfNeeded(*endObject, m_pageID);
+                    createIsolatedObjectIfNeeded(*endObject);
 
                 tree->setSelectedTextMarkerRange({ selection });
             }

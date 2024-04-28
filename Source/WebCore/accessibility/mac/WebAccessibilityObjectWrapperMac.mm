@@ -62,6 +62,7 @@
 #import "HTMLImageElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
+#import "IntRect.h"
 #import "LocalFrame.h"
 #import "LocalFrameLoaderClient.h"
 #import "LocalizedStrings.h"
@@ -85,6 +86,7 @@
 using namespace WebCore;
 
 static id attributeValueForTesting(const RefPtr<AXCoreObject>&, NSString *);
+static id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>&, NSString *, id);
 
 #ifndef NSAccessibilityActiveElementAttribute
 #define NSAccessibilityActiveElementAttribute @"AXActiveElement"
@@ -1201,6 +1203,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }();
     static NeverDestroyed outlineAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
+        [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilitySelectedRowsAttribute];
         [tempArray addObject:NSAccessibilityRowsAttribute];
         [tempArray addObject:NSAccessibilityColumnsAttribute];
@@ -1261,6 +1264,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         objectAttributes = anchorAttrs.get().get();
     else if (backingObject->isImage())
         objectAttributes = imageAttrs.get().get();
+    else if (backingObject->isTreeGrid() && backingObject->isTable() && backingObject->isExposable())
+        objectAttributes = [tableAttrs.get().get() arrayByAddingObject:NSAccessibilityOrientationAttribute];
+    else if (backingObject->isTree())
+        objectAttributes = outlineAttrs.get().get();
     else if (backingObject->isTable() && backingObject->isExposable())
         objectAttributes = tableAttrs.get().get();
     else if (backingObject->isTableColumn())
@@ -1273,9 +1280,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             objectAttributes = outlineRowAttrs.get().get();
         else
             objectAttributes = tableRowAttrs.get().get();
-    } else if (backingObject->isTree())
-        objectAttributes = outlineAttrs.get().get();
-    else if (backingObject->isTreeItem()) {
+    } else if (backingObject->isTreeItem()) {
         if (backingObject->supportsCheckedState())
             objectAttributes = [outlineRowAttrs.get() arrayByAddingObject:NSAccessibilityValueAttribute];
         else
@@ -1425,6 +1430,46 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
     return [self bezierPathFromPath:transformedPath];
 }
 
+static NSArray *transformSpecialChildrenCases(AXCoreObject& backingObject)
+{
+#if ENABLE(MODEL_ELEMENT)
+    if (backingObject.isModel()) {
+        auto modelChildren = backingObject.modelElementChildren();
+        if (modelChildren.size()) {
+            return createNSArray(WTFMove(modelChildren), [] (auto&& child) -> id {
+                return child.get();
+            }).autorelease();
+        }
+    }
+#endif
+
+    const auto& children = backingObject.children();
+    if (!children.size()) {
+        if (NSArray *widgetChildren = renderWidgetChildren(backingObject))
+            return widgetChildren;
+    }
+
+    return nil;
+}
+
+static NSArray *children(AXCoreObject& backingObject)
+{
+    NSArray *specialChildren = transformSpecialChildrenCases(backingObject);
+    if (specialChildren.count)
+        return specialChildren;
+
+    // The tree's (AXOutline) children are supposed to be its rows and columns.
+    // The ARIA spec doesn't have columns, so we just need rows.
+    if (backingObject.isTree())
+        return makeNSArray(backingObject.ariaTreeRows());
+
+    // A tree item should only expose its content as its children (not its rows)
+    if (backingObject.isTreeItem())
+        return makeNSArray(backingObject.ariaTreeItemContent());
+
+    return makeNSArray(backingObject.children());
+}
+
 static NSString *roleString(AXCoreObject& backingObject)
 {
     String roleString = backingObject.rolePlatformString();
@@ -1485,33 +1530,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return axScrollView ? [axScrollView->platformWidget() window] : nil;
 }
 
-- (NSArray *)_transformSpecialChildrenCases:(RefPtr<AXCoreObject>)backingObject
-{
-#if ENABLE(MODEL_ELEMENT)
-    if (backingObject->isModel()) {
-        auto modelChildren = backingObject->modelElementChildren();
-        if (modelChildren.size()) {
-            return createNSArray(WTFMove(modelChildren), [] (auto&& child) -> id {
-                return child.get();
-            }).autorelease();
-        }
-    }
-#endif
-
-    const auto& children = backingObject->children();
-    if (!children.size()) {
-        if (NSArray *children = renderWidgetChildren(*backingObject))
-            return children;
-    }
-
-    return nil;
-}
-
 // FIXME: split up this function in a better way.
 // suggestions: Use a hash table that maps attribute names to function calls,
 // or maybe pointers to member functions
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (id)accessibilityAttributeValue:(NSString*)attributeName
+- (id)accessibilityAttributeValue:(NSString *)attributeName
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:", String(attributeName)));
@@ -1564,22 +1587,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return parent->wrapper();
     }
 
-    if ([attributeName isEqualToString:NSAccessibilityChildrenAttribute] || [attributeName isEqualToString:NSAccessibilityChildrenInNavigationOrderAttribute]) {
-        NSArray *specialChildren = [self _transformSpecialChildrenCases:backingObject];
-        if (specialChildren.count)
-            return specialChildren;
-
-        // The tree's (AXOutline) children are supposed to be its rows and columns.
-        // The ARIA spec doesn't have columns, so we just need rows.
-        if (backingObject->isTree())
-            return [self accessibilityAttributeValue:NSAccessibilityRowsAttribute];
-
-        // A tree item should only expose its content as its children (not its rows)
-        if (backingObject->isTreeItem())
-            return makeNSArray(backingObject->ariaTreeItemContent());
-
-        return makeNSArray(backingObject->children());
-    }
+    if ([attributeName isEqualToString:NSAccessibilityChildrenAttribute] || [attributeName isEqualToString:NSAccessibilityChildrenInNavigationOrderAttribute])
+        return children(*backingObject);
 
     if ([attributeName isEqualToString:NSAccessibilitySelectedChildrenAttribute]) {
         auto selectedChildren = backingObject->selectedChildren();
@@ -1591,16 +1600,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return activeDescendant ? activeDescendant->wrapper() : nil;
     }
 
-    if ([attributeName isEqualToString: NSAccessibilityVisibleChildrenAttribute]) {
+    if ([attributeName isEqualToString:NSAccessibilityVisibleChildrenAttribute]) {
         if (backingObject->isListBox())
             return makeNSArray(backingObject->visibleChildren());
-
         if (backingObject->isList())
-            return [self accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
-
+            return children(*backingObject);
         return nil;
     }
-
 
     if (backingObject->isWebArea()) {
         if ([attributeName isEqualToString:@"AXLinkUIElements"])
@@ -1889,11 +1895,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return selectedChildren ? makeNSArray(*selectedChildren) : nil;
         }
 
-        if ([attributeName isEqualToString:NSAccessibilityRowsAttribute]) {
-            AccessibilityObject::AccessibilityChildrenVector rowsCopy;
-            backingObject->ariaTreeRows(rowsCopy);
-            return makeNSArray(rowsCopy);
-        }
+        if ([attributeName isEqualToString:NSAccessibilityRowsAttribute])
+            return makeNSArray(backingObject->ariaTreeRows());
 
         // TreeRoles do not support columns, but Mac AX expects to be able to ask about columns at the least.
         if ([attributeName isEqualToString:NSAccessibilityColumnsAttribute])
@@ -1910,8 +1913,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 return nil;
 
             // Find the index of this item by iterating the parents.
-            AccessibilityObject::AccessibilityChildrenVector rowsCopy;
-            parent->ariaTreeRows(rowsCopy);
+            auto rowsCopy = parent->ariaTreeRows();
             size_t count = rowsCopy.size();
             for (size_t k = 0; k < count; ++k)
                 if (rowsCopy[k]->wrapper() == self)
@@ -2327,6 +2329,48 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
 
     if ([attributeName isEqualToString:@"AXOwners"])
         return makeNSArray(backingObject->owners());
+
+    return nil;
+}
+
+id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString *attribute, id parameter)
+{
+    // This should've been null-checked already.
+    RELEASE_ASSERT(parameter);
+
+    AXTextMarkerRef markerRef = nil;
+    AXTextMarkerRangeRef markerRangeRef = nil;
+    NSRange nsRange = { 0, 0 };
+
+    if (AXObjectIsTextMarker(parameter))
+        markerRef = (AXTextMarkerRef)parameter;
+    else if (AXObjectIsTextMarkerRange(parameter))
+        markerRangeRef = (AXTextMarkerRangeRef)parameter;
+    else if ([parameter isKindOfClass:[NSValue class]] && !strcmp([(NSValue *)parameter objCType], @encode(NSRange)))
+        nsRange = [(NSValue*)parameter rangeValue];
+    else
+        return nil;
+
+    if ([attribute isEqualToString:@"AXTextMarkerIsNull"])
+        return [NSNumber numberWithBool:AXTextMarker(markerRef).isNull()];
+
+    if ([attribute isEqualToString:@"AXTextMarkerRangeIsValid"]) {
+        AXTextMarkerRange markerRange { markerRangeRef };
+        return [NSNumber numberWithBool:markerRange.start().isValid() && markerRange.end().isValid()];
+    }
+
+    if ([attribute isEqualToString:_AXStartTextMarkerForTextMarkerRangeAttribute]) {
+        AXTextMarkerRange markerRange { markerRangeRef };
+        return markerRange.start().platformData().bridgingAutorelease();
+    }
+
+    if ([attribute isEqualToString:_AXEndTextMarkerForTextMarkerRangeAttribute]) {
+        AXTextMarkerRange markerRange { markerRangeRef };
+        return markerRange.end().platformData().bridgingAutorelease();
+    }
+
+    if ([attribute isEqualToString:_AXTextMarkerRangeForNSRangeAttribute])
+        return backingObject->textMarkerRangeForNSRange(nsRange).platformData().bridgingAutorelease();
 
     return nil;
 }
@@ -3239,7 +3283,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         } else if (backingObject->isRemoteFrame()
             && criteria.searchKeys.contains(AccessibilitySearchKey::AnyType)
             && (!criteria.visibleOnly || backingObject->isVisible())) {
-            NSArray *remoteFrameChildren = [self accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
+            NSArray *remoteFrameChildren = children(*backingObject);
             ASSERT(remoteFrameChildren.count == 1);
             if (remoteFrameChildren.count == 1) {
                 NSUInteger includedChildrenCount = std::min([remoteFrameChildren count], NSUInteger(criteria.resultsLimit));
@@ -3327,9 +3371,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attribute isEqualToString:AXTextMarkerIsValidAttribute])
         return [NSNumber numberWithBool:AXTextMarker(textMarker).isValid()];
 
-    if ([attribute isEqualToString:AXTextMarkerIsNullAttribute])
-        return [NSNumber numberWithBool:AXTextMarker(textMarker).isNull()];
-
     if ([attribute isEqualToString:AXIndexForTextMarkerAttribute]) {
 #if ENABLE(AX_THREAD_TEXT_APIS)
         if (AXObjectCache::useAXThreadTextApis())
@@ -3397,6 +3438,21 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:AXTextMarkerRangeForLineAttribute]) {
+#if ENABLE(AX_THREAD_TEXT_APIS)
+        if (AXObjectCache::useAXThreadTextApis()) {
+            // Unfortunately, the main-thread version of this function expects a 1-indexed line, so callers pass it that way.
+            // The text marker code expects normal 0-based indices, so we need to subtract one from the given value.
+            unsigned lineIndex = [number unsignedIntValue];
+            if (!lineIndex) {
+                // Match the main-thread implementation's behavior.
+                return nil;
+            }
+            if (RefPtr tree = std::get<RefPtr<AXIsolatedTree>>(axTreeForID(backingObject->treeID())))
+                return tree->firstMarker().markerRangeForLineIndex(lineIndex - 1).platformData().bridgingAutorelease();
+            return nil;
+        }
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
+
         return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&number, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
@@ -3731,23 +3787,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         }
     }
 
-    // Private attributes exposed only for testing.
-    if (UNLIKELY([attribute isEqualToString:_AXStartTextMarkerForTextMarkerRangeAttribute])) {
-        AXTextMarkerRange markerRange { textMarkerRange };
-        return markerRange.start().platformData().bridgingAutorelease();
-    }
-
-    if (UNLIKELY([attribute isEqualToString:_AXEndTextMarkerForTextMarkerRangeAttribute])) {
-        AXTextMarkerRange markerRange { textMarkerRange };
-        return markerRange.end().platformData().bridgingAutorelease();
-    }
-
-    if (UNLIKELY([attribute isEqualToString:_AXTextMarkerRangeForNSRangeAttribute]))
-        return backingObject->textMarkerRangeForNSRange(range).platformData().bridgingAutorelease();
-
     if ([attribute isEqualToString:kAXConvertRelativeFrameParameterizedAttribute]) {
         auto* parent = backingObject->parentObject();
         return parent ? [NSValue valueWithRect:parent->convertFrameToSpace(FloatRect(rect), AccessibilityConversionSpace::Page)] : nil;
+    }
+
+    if (AXObjectCache::clientIsInTestMode()) {
+        if (id value = parameterizedAttributeValueForTesting(backingObject, attribute, parameter))
+            return value;
     }
 
     // There are some parameters that super handles that are not explicitly returned by the list of the element's attributes.
@@ -3824,8 +3871,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         // Tree items object returns a different set of children than those that are in children()
         // because an AXOutline (the mac role is becomes) has some odd stipulations.
         if (backingObject->isTree() || backingObject->isTreeItem() || backingObject->isRemoteFrame())
-            return [[self accessibilityAttributeValue:NSAccessibilityChildrenAttribute] count];
+            return children(*backingObject).count;
 
+        // FIXME: this is duplicating the logic in children(AXCoreObject&) so it should be reworked.
         auto childrenSize = backingObject->children().size();
         if (!childrenSize) {
 #if ENABLE(MODEL_ELEMENT)
@@ -3859,7 +3907,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
         if (backingObject->children().isEmpty()) {
-            NSArray *children = [self _transformSpecialChildrenCases:backingObject];
+            NSArray *children = transformSpecialChildrenCases(*backingObject);
             if (!children)
                 return nil;
 

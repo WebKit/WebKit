@@ -254,6 +254,7 @@
     macro(size) \
     macro(slice) \
     macro(smallestUnit) \
+    macro(sort) \
     macro(source) \
     macro(sourceCode) \
     macro(sourceURL) \

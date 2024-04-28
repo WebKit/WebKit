@@ -30,6 +30,7 @@
 #include <WebKit/WKBase.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebKit {
 
@@ -42,12 +43,12 @@ public:
 
     WK_EXPORT OSObjectPtr<xpc_endpoint_t> endpoint() const;
 
-    static constexpr auto xpcMessageNameKey = "message-name";
+    static constexpr auto xpcMessageNameKey = "message-name"_s;
 
 private:
-    virtual const char* xpcEndpointMessageNameKey() const = 0;
-    virtual const char* xpcEndpointMessageName() const = 0;
-    virtual const char* xpcEndpointNameKey() const = 0;
+    virtual ASCIILiteral xpcEndpointMessageNameKey() const = 0;
+    virtual ASCIILiteral xpcEndpointMessageName() const = 0;
+    virtual ASCIILiteral xpcEndpointNameKey() const = 0;
     virtual void handleEvent(xpc_connection_t, xpc_object_t) = 0;
 
     OSObjectPtr<xpc_connection_t> m_connection;

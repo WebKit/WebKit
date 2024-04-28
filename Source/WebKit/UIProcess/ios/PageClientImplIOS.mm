@@ -1091,16 +1091,18 @@ void PageClientImpl::showDataDetectorsUIForPositionInformation(const Interaction
     [contentView() _showDataDetectorsUIForPositionInformation:positionInformation];
 }
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-
-void PageClientImpl::didEnterFullscreen()
+void PageClientImpl::hardwareKeyboardAvailabilityChanged()
 {
-    [contentView() _didEnterFullscreen];
+    [contentView() _hardwareKeyboardAvailabilityChanged];
 }
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 
 void PageClientImpl::didExitFullscreen()
 {
-    [contentView() _didExitFullscreen];
+#if ENABLE(FULLSCREEN_API)
+    [[webView() fullScreenWindowController] didExitFullscreen];
+#endif
 }
 
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
@@ -1143,23 +1145,12 @@ void PageClientImpl::runModalJavaScriptDialog(CompletionHandler<void()>&& callba
 WebCore::Color PageClientImpl::contentViewBackgroundColor()
 {
     WebCore::Color color;
-    auto computeContentViewBackgroundColor = [&]() {
+    [[webView() traitCollection] performAsCurrentTraitCollection:[&]() {
         color = WebCore::roundAndClampToSRGBALossy([contentView() backgroundColor].CGColor);
         if (color.isValid())
             return;
-
-#if HAVE(OS_DARK_MODE_SUPPORT)
         color = WebCore::roundAndClampToSRGBALossy(UIColor.systemBackgroundColor.CGColor);
-#else
-        color = { };
-#endif
-    };
-
-#if HAVE(OS_DARK_MODE_SUPPORT)
-    [[webView() traitCollection] performAsCurrentTraitCollection:computeContentViewBackgroundColor];
-#else
-    computeContentViewBackgroundColor();
-#endif
+    }];
 
     return color;
 }
@@ -1167,6 +1158,11 @@ WebCore::Color PageClientImpl::contentViewBackgroundColor()
 Color PageClientImpl::insertionPointColor()
 {
     return roundAndClampToSRGBALossy([webView() _insertionPointColor].CGColor);
+}
+
+bool PageClientImpl::isScreenBeingCaptured()
+{
+    return [contentView() screenIsBeingCaptured];
 }
 
 void PageClientImpl::requestScrollToRect(const FloatRect& targetRect, const FloatPoint& origin)

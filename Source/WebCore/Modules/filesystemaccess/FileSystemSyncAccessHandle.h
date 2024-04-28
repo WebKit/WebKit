@@ -65,7 +65,6 @@ private:
     bool requestSpaceForWrite(uint64_t writeOffset, uint64_t writeLength);
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
     void stop() final;
 
     Ref<FileSystemFileHandle> m_source;

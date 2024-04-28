@@ -79,7 +79,6 @@ private:
     void updatePullStatus() final;
 
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
     String m_name;

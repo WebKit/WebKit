@@ -1277,8 +1277,9 @@ sub determineConfiguredXcodeWorkspaceOrDefault()
     # No configured workspace, time to find the default one.
     # If we're using an internal SDK use the internal workspace.
     if (xcodeSDK() =~ /\.internal$/) {
-        $configuredXcodeWorkspace = Cwd::realpath(sourceDir() . "/../Internal/Safari.xcworkspace");
-        die "using internal SDK but unable to find adjacent Internal directory: $configuredXcodeWorkspace. SDK: $xcodeSDK" unless -e $configuredXcodeWorkspace;
+        my $path = sourceDir() . "/../Internal/Safari.xcworkspace";
+        $configuredXcodeWorkspace = Cwd::realpath($path);
+        die "Using internal SDK but unable to find adjacent Internal directory: $! at $path. SDK: $xcodeSDK" unless (defined $configuredXcodeWorkspace && -e $configuredXcodeWorkspace);
         return;
     }
 

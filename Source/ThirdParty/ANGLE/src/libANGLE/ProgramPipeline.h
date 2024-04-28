@@ -214,7 +214,6 @@ class ProgramPipeline final : public RefCountObject<ProgramPipelineID>,
 
     std::vector<angle::ObserverBinding> mProgramObserverBindings;
     std::vector<angle::ObserverBinding> mProgramExecutableObserverBindings;
-    angle::ObserverBinding mExecutableObserverBinding;
 };
 }  // namespace gl
 

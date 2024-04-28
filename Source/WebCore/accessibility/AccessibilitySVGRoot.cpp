@@ -70,7 +70,7 @@ AccessibilityRole AccessibilitySVGRoot::determineAccessibilityRole()
 {
     if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown)
         return m_ariaRole;
-    return AccessibilityRole::Group;
+    return AccessibilityRole::Generic;
 }
 
 bool AccessibilitySVGRoot::hasAccessibleContent() const

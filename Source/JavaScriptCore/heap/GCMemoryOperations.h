@@ -40,7 +40,7 @@ constexpr size_t mediumCutoff = 4 * 1024;
 
 // This is a forwards loop so gcSafeMemmove can rely on the direction. 
 template <typename T>
-ALWAYS_INLINE void gcSafeMemcpy(T* dst, T* src, size_t bytes)
+ALWAYS_INLINE void gcSafeMemcpy(T* dst, const T* src, size_t bytes)
 {
     static_assert(sizeof(T) == sizeof(JSValue));
     RELEASE_ASSERT(bytes % 8 == 0);
@@ -143,7 +143,7 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, T* src, size_t bytes)
 }
 
 template <typename T>
-ALWAYS_INLINE void gcSafeMemmove(T* dst, T* src, size_t bytes)
+ALWAYS_INLINE void gcSafeMemmove(T* dst, const T* src, size_t bytes)
 {
     static_assert(sizeof(T) == sizeof(JSValue));
     RELEASE_ASSERT(bytes % 8 == 0);

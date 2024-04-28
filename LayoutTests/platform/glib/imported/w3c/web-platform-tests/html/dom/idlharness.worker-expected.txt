@@ -373,7 +373,7 @@ PASS OffscreenCanvasRenderingContext2D interface: attribute shadowOffsetX
 PASS OffscreenCanvasRenderingContext2D interface: attribute shadowOffsetY
 PASS OffscreenCanvasRenderingContext2D interface: attribute shadowBlur
 PASS OffscreenCanvasRenderingContext2D interface: attribute shadowColor
-FAIL OffscreenCanvasRenderingContext2D interface: attribute filter assert_true: The prototype object must have a property "filter" expected true got false
+PASS OffscreenCanvasRenderingContext2D interface: attribute filter
 PASS OffscreenCanvasRenderingContext2D interface: operation clearRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation fillRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation strokeRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)

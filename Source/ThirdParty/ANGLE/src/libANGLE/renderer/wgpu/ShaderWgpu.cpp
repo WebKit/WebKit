@@ -12,9 +12,28 @@
 #include "common/debug.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/ContextImpl.h"
+#include "libANGLE/trace.h"
 
 namespace rx
 {
+
+namespace
+{
+class ShaderTranslateTaskWgpu final : public ShaderTranslateTask
+{
+    bool translate(ShHandle compiler,
+                   const ShCompileOptions &options,
+                   const std::string &source) override
+    {
+        ANGLE_TRACE_EVENT1("gpu.angle", "ShaderTranslateTaskWgpu::translate", "source", source);
+
+        const char *srcStrings[] = {source.c_str()};
+        return sh::Compile(compiler, srcStrings, ArraySize(srcStrings), options);
+    }
+
+    void postTranslate(ShHandle compiler, const gl::CompiledShaderState &compiledState) override {}
+};
+}  // namespace
 
 ShaderWgpu::ShaderWgpu(const gl::ShaderState &data) : ShaderImpl(data) {}
 
@@ -28,7 +47,10 @@ std::shared_ptr<ShaderTranslateTask> ShaderWgpu::compile(const gl::Context *cont
     {
         options->pls = context->getImplementation()->getNativePixelLocalStorageOptions();
     }
-    return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTask);
+
+    options->validateAST = true;
+
+    return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTaskWgpu);
 }
 
 std::string ShaderWgpu::getDebugInfo() const

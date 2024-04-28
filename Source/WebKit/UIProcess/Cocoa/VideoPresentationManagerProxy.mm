@@ -1356,7 +1356,7 @@ const void* VideoPresentationManagerProxy::logIdentifier() const
     return m_playbackSessionManagerProxy->logIdentifier();
 }
 
-const char* VideoPresentationManagerProxy::logClassName() const
+ASCIILiteral VideoPresentationManagerProxy::logClassName() const
 {
     return m_playbackSessionManagerProxy->logClassName();
 }

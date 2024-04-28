@@ -1437,6 +1437,14 @@
    },
    {
       "emails" : [
+         "cbraverman@apple.com"
+      ],
+      "expertise" : "Python, Services",
+      "github" : "bravc",
+      "name" : "Cam Braverman"
+   },
+   {
+      "emails" : [
          "heycam@apple.com",
          "cam@mcc.id.au",
          "cam@webkit.org"
@@ -4495,7 +4503,6 @@
    },
    {
       "emails" : [
-         "justin_michaud@apple.com",
          "justin@justinmichaud.com"
       ],
       "expertise" : "JavaScriptCore",
@@ -6884,7 +6891,7 @@
       "nicks" : [
          "gsnedders"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
@@ -8201,6 +8208,7 @@
       "emails" : [
          "zsun@igalia.com"
       ],
+      "github" : "ziransun",
       "name" : "Ziran Sun",
       "nicks" : [
          "zsun"

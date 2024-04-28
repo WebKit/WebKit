@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Feature policy 'Camera' check failed for element with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Permission policy 'Camera' check failed for element with origin 'http://localhost:8000' and allow attribute ''.
 CONSOLE MESSAGE: Not allowed to call getUserMedia.
 
 

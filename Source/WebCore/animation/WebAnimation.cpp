@@ -1416,11 +1416,6 @@ WebAnimation& WebAnimation::finishedPromiseResolve()
     return *this;
 }
 
-const char* WebAnimation::activeDOMObjectName() const
-{
-    return "Animation";
-}
-
 void WebAnimation::suspend(ReasonForSuspension)
 {
     setSuspended(true);

@@ -31,6 +31,7 @@
 #include "FEGaussianBlur.h"
 #include "Filter.h"
 #include "FilterImage.h"
+#include "GraphicsContext.h"
 #include "NativeImage.h"
 #include <skia/core/SkCanvas.h>
 #include <skia/effects/SkImageFilters.h>
@@ -42,25 +43,22 @@ bool FEGaussianBlurSkiaApplier::apply(const Filter& filter, const FilterImageVec
     ASSERT(inputs.size() == 1);
     auto& input = inputs[0].get();
 
-    auto sourceImage = input.imageBuffer();
-    if (!sourceImage)
+    RefPtr resultImage = result.imageBuffer();
+    RefPtr sourceImage = input.imageBuffer();
+    if (!resultImage || !sourceImage)
         return false;
 
-    auto nativeImage = sourceImage->copyNativeImage();
+    auto nativeImage = sourceImage->createNativeImageReference();
     if (!nativeImage || !nativeImage->platformImage())
         return false;
 
     FloatSize sigma = FloatSize(m_effect.stdDeviationX(), m_effect.stdDeviationY()) * filter.filterScale();
+    auto outsetSize = m_effect.calculateOutsetSize(sigma);
 
     SkPaint paint;
     paint.setImageFilter(SkImageFilters::Blur(sigma.width(), sigma.height(), nullptr));
 
-    auto outsetSize = m_effect.calculateOutsetSize(sigma);
-
-    auto* canvas = result.beginRecording();
-    canvas->drawImage(nativeImage->platformImage(), outsetSize.width(), outsetSize.height(), { }, &paint);
-    result.finishRecording();
-
+    resultImage->context().platformContext()->drawImage(nativeImage->platformImage(), outsetSize.width(), outsetSize.height(), { }, &paint);
     return true;
 }
 

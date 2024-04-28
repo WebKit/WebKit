@@ -79,10 +79,9 @@ static WKArrayRef createCompositionHighlightData(JSContextRef context, JSValueRe
     return result;
 }
 
-void TextInputController::setMarkedText(JSStringRef text, int from, int length, bool suppressUnderline, JSValueRef jsHighlightsValue)
+void TextInputController::setMarkedText(JSContextRef context, JSStringRef text, int from, int length, bool suppressUnderline, JSValueRef jsHighlightsValue)
 {
     auto page = InjectedBundle::singleton().page()->page();
-    auto context = WKBundleFrameGetJavaScriptContext(WKBundlePageGetMainFrame(page));
     auto highlights = adoptWK(createCompositionHighlightData(context, jsHighlightsValue));
     WKBundlePageSetComposition(page, toWK(text).get(), from, length, suppressUnderline, highlights.get());
 }

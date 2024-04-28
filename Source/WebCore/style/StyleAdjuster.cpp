@@ -686,6 +686,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     if (style.hasPseudoStyle(PseudoId::FirstLetter))
         style.setUnique();
 
+    // This should be kept in sync with requiresRenderingConsolidationForViewTransition
     if (style.preserves3D()) {
         bool forceToFlat = style.overflowX() != Overflow::Visible
             || style.hasOpacity()
@@ -696,7 +697,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.hasIsolation()
             || style.hasMask()
             || style.hasBackdropFilter()
-            || style.hasBlendMode();
+            || style.hasBlendMode()
+            || style.viewTransitionName()
+            || (m_element && m_element->capturedInViewTransition());
         style.setTransformStyleForcedToFlat(forceToFlat);
     }
 

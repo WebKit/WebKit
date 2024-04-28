@@ -560,6 +560,9 @@ auto HTMLVideoElement::webkitPresentationMode() const -> VideoPresentationMode
 
 void HTMLVideoElement::didEnterFullscreenOrPictureInPicture(const FloatSize& size)
 {
+    if (RefPtr player = this->player())
+        player->setInFullscreenOrPictureInPicture(true);
+
     if (m_enteringPictureInPicture) {
         m_enteringPictureInPicture = false;
         setChangingVideoFullscreenMode(false);
@@ -586,6 +589,9 @@ void HTMLVideoElement::didEnterFullscreenOrPictureInPicture(const FloatSize& siz
 
 void HTMLVideoElement::didExitFullscreenOrPictureInPicture()
 {
+    if (RefPtr player = this->player())
+        player->setInFullscreenOrPictureInPicture(false);
+
     if (m_exitingPictureInPicture) {
         m_exitingPictureInPicture = false;
         setChangingVideoFullscreenMode(false);

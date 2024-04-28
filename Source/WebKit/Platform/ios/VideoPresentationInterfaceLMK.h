@@ -46,7 +46,7 @@ class VideoPresentationInterfaceLMK final : public VideoPresentationInterfaceIOS
 public:
     static Ref<VideoPresentationInterfaceLMK> create(PlaybackSessionInterfaceIOS&);
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const { return "VideoPresentationInterfaceLMK"; };
+    ASCIILiteral logClassName() const { return "VideoPresentationInterfaceLMK"_s; };
 #endif
     ~VideoPresentationInterfaceLMK();
 
@@ -58,6 +58,7 @@ private:
     bool isPlayingVideoInEnhancedFullscreen() const final { return false; }
     void setupFullscreen(UIView&, const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) final;
     void hasVideoChanged(bool) final { }
+    void finalizeSetup() final;
     void updateRouteSharingPolicy() final { }
     void setupPlayerViewController() final;
     void invalidatePlayerViewController() final;
@@ -70,6 +71,7 @@ private:
     void setContentDimensions(const FloatSize&) final;
     void setAllowsPictureInPicturePlayback(bool) final { }
     bool isExternalPlaybackActive() const final { return false; }
+    bool willRenderToLayer() const final { return false; }
     AVPlayerViewController *avPlayerViewController() const final { return nullptr; }
     void setupCaptionsLayer(CALayer *parent, const FloatSize&) final;
     LMPlayableViewController *playableViewController() final;

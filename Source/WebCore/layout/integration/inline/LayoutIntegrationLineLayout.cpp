@@ -234,6 +234,18 @@ void LineLayout::updateStyle(const RenderObject& renderer)
     BoxTree::updateStyle(renderer);
 }
 
+bool LineLayout::rootStyleWillChange(const RenderBlockFlow& root, const RenderStyle& newStyle)
+{
+    if (!root.layoutBox() || !root.layoutBox()->isElementBox()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    if (!m_inlineContent)
+        return false;
+
+    return Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() }.rootStyleWillChange(downcast<Layout::ElementBox>(*root.layoutBox()), newStyle);
+}
+
 bool LineLayout::styleWillChange(const RenderElement& renderer, const RenderStyle& newStyle)
 {
     if (!renderer.layoutBox()) {
@@ -322,20 +334,11 @@ std::optional<LayoutRect> LineLayout::layout()
 {
     preparePlacedFloats();
 
-    auto isPartialLayout = m_lineDamage && m_lineDamage->layoutStartPosition();
-
-    auto clearInlineContentAndCacheBeforeFullLayoutIfNeeded = [&] {
-        if (isPartialLayout)
-            return;
-        // FIXME: Partial layout should not rely on inline display content, but instead InlineContentCache
-        // should retain all the pieces of data required -and then we can destroy damaged content here instead of after
-        // layout in constructContent.
+    auto isPartialLayout = Layout::InlineInvalidation::mayOnlyNeedPartialLayout(m_lineDamage.get());
+    if (!isPartialLayout) {
+        // FIXME: Partial layout should not rely on previous inline display content.
         clearInlineContent();
-        if (m_lineDamage && m_lineDamage->reasons().contains(Layout::InlineDamage::Reason::StyleChange))
-            releaseCaches();
-        m_lineDamage = { };
-    };
-    clearInlineContentAndCacheBeforeFullLayoutIfNeeded();
+    }
 
     ASSERT(m_inlineContentConstraints);
     auto intrusiveInitialLetterBottom = [&]() -> std::optional<LayoutUnit> {

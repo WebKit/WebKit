@@ -603,6 +603,11 @@ IntSize TileController::tileSize() const
     return tileGrid().tileSize();
 }
 
+FloatRect TileController::rectForTile(TileIndex tileIndex) const
+{
+    return tileGrid().rectForTile(tileIndex);
+}
+
 IntSize TileController::computeTileSize()
 {
     if (m_inLiveResize || m_tileSizeLocked)

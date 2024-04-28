@@ -1588,6 +1588,9 @@
 		7BB62F572AA202FD00C1DDA8 /* ProgramExecutableGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgramExecutableGL.cpp; sourceTree = "<group>"; };
 		7BB62F5A2AA2032500C1DDA8 /* ProgramExecutableMtl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProgramExecutableMtl.mm; sourceTree = "<group>"; };
 		7BB62F5B2AA2032500C1DDA8 /* ProgramExecutableMtl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramExecutableMtl.h; sourceTree = "<group>"; };
+		7BBC97D42BDB11C800628E74 /* SimpleMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleMutex.cpp; sourceTree = "<group>"; };
+		7BBC97D52BDB11C800628E74 /* SimpleMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleMutex.h; sourceTree = "<group>"; };
+		7BBC97D62BDB11C800628E74 /* log_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log_utils.h; sourceTree = "<group>"; };
 		7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = apple_platform_utils.mm; sourceTree = "<group>"; };
 		7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircularBuffer.h; sourceTree = "<group>"; };
 		7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple_platform_utils.h; sourceTree = "<group>"; };
@@ -2741,6 +2744,7 @@
 				5C55D7172282747600B5BA2C /* FixedVector.h */,
 				5CCD81891DBFEA10006066B8 /* Float16ToFloat32.cpp */,
 				5C55D71B2282747700B5BA2C /* hash_utils.h */,
+				7BBC97D62BDB11C800628E74 /* log_utils.h */,
 				5CC7D46119102620000B8C1F /* mathutil.cpp */,
 				5CC7D46219102620000B8C1F /* mathutil.h */,
 				5C55D7142282747600B5BA2C /* matrix_utils.cpp */,
@@ -2761,6 +2765,8 @@
 				5C55D7162282747600B5BA2C /* PoolAlloc.h */,
 				7B359E092A7CFD610016DC59 /* RingBufferAllocator.cpp */,
 				7B359E052A7CFD610016DC59 /* RingBufferAllocator.h */,
+				7BBC97D42BDB11C800628E74 /* SimpleMutex.cpp */,
+				7BBC97D52BDB11C800628E74 /* SimpleMutex.h */,
 				7B359E0B2A7CFD610016DC59 /* Spinlock.h */,
 				5CCD818B1DBFEA10006066B8 /* string_utils.cpp */,
 				5CCD818C1DBFEA10006066B8 /* string_utils.h */,

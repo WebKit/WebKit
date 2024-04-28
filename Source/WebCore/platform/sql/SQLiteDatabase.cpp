@@ -316,18 +316,18 @@ void SQLiteDatabase::close()
 
 void SQLiteDatabase::overrideUnauthorizedFunctions()
 {
-    static const std::pair<const char*, int> functionParameters[] = {
-        { "rtreenode", 2 },
-        { "rtreedepth", 1 },
-        { "eval", 1 },
-        { "eval", 2 },
-        { "printf", -1 },
-        { "fts3_tokenizer", 1 },
-        { "fts3_tokenizer", 2 },
+    static const std::pair<ASCIILiteral, int> functionParameters[] = {
+        { "rtreenode"_s, 2 },
+        { "rtreedepth"_s, 1 },
+        { "eval"_s, 1 },
+        { "eval"_s, 2 },
+        { "printf"_s, -1 },
+        { "fts3_tokenizer"_s, 1 },
+        { "fts3_tokenizer"_s, 2 },
     };
 
     for (auto& functionParameter : functionParameters)
-        sqlite3_create_function(m_db, functionParameter.first, functionParameter.second, SQLITE_UTF8, const_cast<char*>(functionParameter.first), unauthorizedSQLFunction, 0, 0);
+        sqlite3_create_function(m_db, functionParameter.first, functionParameter.second, SQLITE_UTF8, const_cast<char*>(functionParameter.first.characters()), unauthorizedSQLFunction, 0, 0);
 }
 
 void SQLiteDatabase::setFullsync(bool fsync)

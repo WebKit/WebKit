@@ -89,7 +89,7 @@ private:
     DatabaseTaskSynchronizer* m_synchronizer;
 
 #if !LOG_DISABLED
-    virtual const char* debugTaskName() const = 0;
+    virtual ASCIILiteral debugTaskName() const = 0;
 #endif
 
 #if ASSERT_ENABLED
@@ -105,7 +105,7 @@ private:
     void doPerformTask() final;
 
 #if !LOG_DISABLED
-    const char* debugTaskName() const final;
+    ASCIILiteral debugTaskName() const final;
 #endif
 
     bool m_setVersionInNewDatabase;
@@ -120,7 +120,7 @@ private:
     void doPerformTask() final;
 
 #if !LOG_DISABLED
-    const char* debugTaskName() const final;
+    ASCIILiteral debugTaskName() const final;
 #endif
 };
 
@@ -135,7 +135,7 @@ private:
     void doPerformTask() final;
 
 #if !LOG_DISABLED
-    const char* debugTaskName() const final;
+    ASCIILiteral debugTaskName() const final;
 #endif
 
     RefPtr<SQLTransaction> m_transaction;
@@ -150,7 +150,7 @@ private:
     void doPerformTask() final;
 
 #if !LOG_DISABLED
-    const char* debugTaskName() const override;
+    ASCIILiteral debugTaskName() const override;
 #endif
 
     Vector<String>& m_result;

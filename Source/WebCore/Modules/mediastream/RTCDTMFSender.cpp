@@ -151,11 +151,6 @@ void RTCDTMFSender::stop()
     m_toneTimer.stop();
 }
 
-const char* RTCDTMFSender::activeDOMObjectName() const
-{
-    return "RTCDTMFSender";
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

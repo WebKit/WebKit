@@ -15,8 +15,14 @@
 
         test((test) => {
             const method = validPaymentMethod();
-            method.data.features = ["paymentRequestDisbursements"];
-            new PaymentRequest([method], validPaymentDetails());
+            try {
+                method.data.features = ["invalidFeatureThatsNotDisbursements"];
+                new PaymentRequest([method], validPaymentDetails());
+                assert_unreached("Should have thrown with an invalid feature");
+            } catch {
+                method.data.features = ["paymentRequestDisbursements"];
+                new PaymentRequest([method], validPaymentDetails());
+            }
         }, "Should have a feature for `disbursementPaymentRequest`.");
 
         const RESOLVED_PROMISE = Promise.resolve({});
@@ -111,7 +117,45 @@
                     expectedDisbursementPaymentRequest,
                     "check that the `DisbursementPaymentRequest` matches"
                 );
-                await response.compconste("success");
+                await response.complete("success");
+            }, description + " as part of the request.");
+        }
+
+        function testInvalidDisbursementPaymentRequest(
+            description,
+            { disbursementPaymentRequest, expectedErrorType }
+        ) {
+            user_activation_test(async (test) => {
+                const detailsInit = {
+                    total: {
+                        label: "Disbursement",
+                        amount: {
+                            value: "14.85",
+                            currency: "USD",
+                        },
+                    },
+                };
+
+                if (disbursementPaymentRequest) {
+                    detailsInit.modifiers = modifiersWithData(
+                        { disbursementPaymentRequest },
+                        validLineItems
+                    );
+                }
+
+                const request = new PaymentRequest(
+                    [validPaymentMethod()],
+                    detailsInit
+                );
+
+                try {
+                    await request.show();
+                } catch (e) {
+                    assert_true(
+                        e instanceof expectedErrorType,
+                        `Expected ${expectedErrorType}`
+                    );
+                }
             }, description + " as part of the request.");
         }
 
@@ -119,6 +163,28 @@
             initialDisbursementPaymentRequest: {},
             expectedDisbursementPaymentRequest: {},
         });
+
+        testValidDisbursementPaymentRequest(
+            "Should propagate recipient contact information",
+            {
+                initialDisbursementPaymentRequest: {
+                    requiredRecipientContactFields: ["email", "name"],
+                },
+                expectedDisbursementPaymentRequest: {
+                    requiredRecipientContactFields: ["email", "name"],
+                },
+            }
+        );
+
+        testInvalidDisbursementPaymentRequest(
+            "Should error when incorrect `requiredRecipientContactFields` are provided",
+            {
+                disbursementPaymentRequest: {
+                    requiredRecipientContactFields: ["invalid1", "invalid2"],
+                },
+                expectedErrorType: TypeError,
+            }
+        );
 
         // We don't need invalidation tests since a disbursement request is an empty dictionary.
 

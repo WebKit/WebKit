@@ -11,6 +11,7 @@
 img {
     display: block;
     width: 100%;
+    height: auto;
 }
 
 /* --------------------------------------------
@@ -88,6 +89,8 @@ aside.interface {
         color: light-dark(#444, #eee);
         text-wrap-mode: wrap;
         width: max-content;
+        font-size: 104%;
+        line-height: 1.3;
     }
 }
 nav {
@@ -130,10 +133,12 @@ body:has(option[value="six"]:checked) .interface pre.six,
 body:has(option[value="seven"]:checked) .interface pre.seven,
 body:has(option[value="eight"]:checked) .interface pre.eight,
 body:has(option[value="nine"]:checked) .interface pre.nine,
-body:has(option[value="ten"]:checked) .interface pre.ten {
+body:has(option[value="ten"]:checked) .interface pre.ten,
+body:has(option[value="eleven"]:checked) .interface pre.eleven {
     display: block;
 }
 aside pre.code {
     color: #aaa;
     margin-block-start: 0.5lh;
+}
 }

@@ -46,9 +46,6 @@ PageDebuggable::PageDebuggable(Page& page)
 
 String PageDebuggable::name() const
 {
-    if (!m_nameOverride.isNull())
-        return m_nameOverride;
-
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
     if (!localMainFrame)
         return String();

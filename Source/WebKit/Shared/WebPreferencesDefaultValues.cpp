@@ -70,12 +70,12 @@ bool defaultShouldPrintBackgrounds()
 
 bool defaultAlternateFormControlDesignEnabled()
 {
-    return PAL::currentUserInterfaceIdiomIsVisionOrVisionLegacy();
+    return PAL::currentUserInterfaceIdiomIsVision();
 }
 
 bool defaultVideoFullscreenRequiresElementFullscreen()
 {
-    return PAL::currentUserInterfaceIdiomIsVisionOrVisionLegacy();
+    return PAL::currentUserInterfaceIdiomIsVision();
 }
 
 #endif
@@ -227,6 +227,15 @@ bool defaultShouldTakeNearSuspendedAssertion()
     return !newSDK;
 #else
     return true;
+#endif
+}
+
+bool defaultLinearMediaPlayerEnabled()
+{
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    return PAL::currentUserInterfaceIdiomIsVision();
+#else
+    return false;
 #endif
 }
 

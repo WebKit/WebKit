@@ -130,9 +130,6 @@ private:
 
     SWClientConnection& ensureSWClientConnection();
 
-    // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
-    
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::ServiceWorkerContainer; }
     void refEventTarget() final;

@@ -43,15 +43,15 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSVariableData);
 
 template<typename CharacterType> void CSSVariableData::updateBackingStringsInTokens()
 {
-    auto* currentOffset = m_backingString.characters<CharacterType>();
+    auto currentOffset = m_backingString.span<CharacterType>();
     for (auto& token : m_tokens) {
         if (!token.hasStringBacking() || token.isBackedByStringLiteral())
             continue;
         unsigned length = token.value().length();
-        token.updateCharacters(std::span<const CharacterType> { currentOffset, length });
-        currentOffset += length;
+        token.updateCharacters(currentOffset.first(length));
+        currentOffset = currentOffset.subspan(length);
     }
-    ASSERT(currentOffset == m_backingString.characters<CharacterType>() + m_backingString.length());
+    ASSERT(currentOffset.empty());
 }
 
 bool CSSVariableData::operator==(const CSSVariableData& other) const

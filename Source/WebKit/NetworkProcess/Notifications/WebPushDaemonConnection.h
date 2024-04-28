@@ -46,9 +46,9 @@ namespace WebPushD {
 
 struct ConnectionTraits {
     using MessageType = WebPushD::MessageType;
-    static constexpr const char* protocolVersionKey { WebPushD::protocolVersionKey };
+    static constexpr auto protocolVersionKey { WebPushD::protocolVersionKey };
     static constexpr uint64_t protocolVersionValue { WebPushD::protocolVersionValue };
-    static constexpr const char* protocolEncodedMessageKey { WebPushD::protocolEncodedMessageKey };
+    static constexpr auto protocolEncodedMessageKey { WebPushD::protocolEncodedMessageKey };
 };
 
 class Connection : public Daemon::ConnectionToMachService<ConnectionTraits>, public IPC::MessageSender {

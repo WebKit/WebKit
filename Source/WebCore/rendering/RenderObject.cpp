@@ -41,7 +41,6 @@
 #include "HTMLTableElement.h"
 #include "HitTestResult.h"
 #include "LayoutBox.h"
-#include "LayoutIntegrationLineLayout.h"
 #include "LegacyRenderSVGModelObject.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
@@ -140,15 +139,6 @@ void RenderObjectDeleter::operator() (RenderObject* renderer) const
     renderer->destroy();
 }
 
-static bool shouldBeAnonymous(Node& node, RenderObject::TypeSpecificFlags typeSpecificFlags)
-{
-    if (!node.isDocumentNode())
-        return false;
-    if (typeSpecificFlags.kind() != RenderObject::TypeSpecificFlags::Kind::BlockFlow)
-        return true;
-    return typeSpecificFlags.blockFlowFlags() != RenderObject::BlockFlowFlag::IsViewTransitionContainer;
-}
-
 RenderObject::RenderObject(Type type, Node& node, OptionSet<TypeFlag> typeFlags, TypeSpecificFlags typeSpecificFlags)
     : CachedImageClient()
 #if ASSERT_ENABLED
@@ -156,7 +146,7 @@ RenderObject::RenderObject(Type type, Node& node, OptionSet<TypeFlag> typeFlags,
     , m_setNeedsLayoutForbidden(false)
 #endif
     , m_node(node)
-    , m_typeFlags(shouldBeAnonymous(node, typeSpecificFlags) ? (typeFlags | TypeFlag::IsAnonymous) : typeFlags)
+    , m_typeFlags(node.isDocumentNode() ? (typeFlags | TypeFlag::IsAnonymous) : typeFlags)
     , m_type(type)
     , m_typeSpecificFlags(typeSpecificFlags)
 {
@@ -1782,29 +1772,8 @@ void RenderObject::willBeDestroyed()
     removeRareData();
 }
 
-enum class IsRemoval : bool { No, Yes };
-static void invalidateLineLayoutAfterTreeMutationIfNeeded(RenderObject& renderer, IsRemoval isRemoval)
-{
-    CheckedPtr container = LayoutIntegration::LineLayout::blockContainer(renderer);
-    if (!container)
-        return;
-    auto shouldInvalidateLineLayoutPath = [&] {
-        auto* modernLineLayout = container->modernLineLayout();
-        if (!modernLineLayout)
-            return true;
-        if (LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(*container, renderer, *modernLineLayout, isRemoval == IsRemoval::Yes))
-            return true;
-        if (isRemoval == IsRemoval::Yes)
-            return !modernLineLayout->removedFromTree(*renderer.parent(), renderer);
-        return !modernLineLayout->insertedIntoTree(*renderer.parent(), renderer);
-    };
-    if (shouldInvalidateLineLayoutPath())
-        container->invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::InsertionOrRemoval);
-}
-
 void RenderObject::insertedIntoTree()
 {
-    invalidateLineLayoutAfterTreeMutationIfNeeded(*this, IsRemoval::No);
     // FIXME: We should ASSERT(isRooted()) here but generated content makes some out-of-order insertion.
     if (!isFloating() && parent()->childrenInline())
         checkedParent()->dirtyLinesFromChangedChild(*this);
@@ -1812,7 +1781,6 @@ void RenderObject::insertedIntoTree()
 
 void RenderObject::willBeRemovedFromTree()
 {
-    invalidateLineLayoutAfterTreeMutationIfNeeded(*this, IsRemoval::Yes);
     // FIXME: We should ASSERT(isRooted()) but we have some out-of-order removals which would need to be fixed first.
     // Update cached boundaries in SVG renderers, if a child is removed.
     checkedParent()->invalidateCachedBoundaries();

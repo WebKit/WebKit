@@ -30,10 +30,12 @@ endif
 ifneq (,$(SDKROOT))
 	ifneq (,$(OVERRIDE_SDKROOT))
 		ifneq (default,$(OVERRIDE_SDKROOT))
+			CONFIG_OPTIONS += --sdk=$(OVERRIDE_SDKROOT)
 			BUILD_WEBKIT_BASE := $(BUILD_WEBKIT_BASE) --sdk=$(OVERRIDE_SDKROOT)
 		endif
 		OVERRIDE_SDKROOT =
 	else
+		CONFIG_OPTIONS += --sdk=$(SDKROOT)
 		BUILD_WEBKIT_BASE := $(BUILD_WEBKIT_BASE) --sdk=$(SDKROOT)
 	endif
 endif

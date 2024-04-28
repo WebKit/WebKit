@@ -151,7 +151,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const char* logClassName() const override { return "MediaPlayerPrivateAVFoundation"; }
+    ASCIILiteral logClassName() const override { return "MediaPlayerPrivateAVFoundation"_s; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
 #endif

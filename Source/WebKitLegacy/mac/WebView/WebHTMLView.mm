@@ -6130,7 +6130,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     WebFrame *webFrame = [self _frame];
     auto* coreFrame = core(webFrame);
     if (coreFrame && coreFrame->view())
-        coreFrame->view()->updateLayoutAndStyleIfNeededRecursive();
+        coreFrame->view()->updateLayoutAndStyleIfNeededRecursive(WebCore::LayoutOptions::UpdateCompositingLayers);
 }
 
 - (void) _destroyAllWebPlugins

@@ -30,6 +30,7 @@
 
 #include "Filter.h"
 #include "FilterImage.h"
+#include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
 #include <skia/core/SkCanvas.h>
@@ -40,18 +41,12 @@ bool SourceGraphicSkiaApplier::apply(const Filter&, const FilterImageVector& inp
 {
     auto& input = inputs[0].get();
 
-    auto sourceImage = input.imageBuffer();
-    if (!sourceImage)
+    RefPtr resultImage = result.imageBuffer();
+    RefPtr sourceImage = input.imageBuffer();
+    if (!resultImage || !sourceImage)
         return false;
 
-    auto nativeImage = sourceImage->copyNativeImage();
-    if (!nativeImage || !nativeImage->platformImage())
-        return false;
-
-    auto* canvas = result.beginRecording();
-    canvas->drawImage(nativeImage->platformImage(), 0, 0);
-    result.finishRecording();
-
+    resultImage->context().drawImageBuffer(*sourceImage, IntPoint());
     return true;
 }
 

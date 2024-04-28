@@ -44,23 +44,23 @@ from . import send_email
 
 from .layout_test_failures import LayoutTestFailures
 from .steps import (AddReviewerToCommitMessage, AddMergeLabelsToPRs, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
-                   AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
-                   Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStatusOfPR, CheckStyle,
-                   CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
-                   CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, DetermineLabelOwner,
-                   DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
-                   EWS_BUILD_HOSTNAMES, ExtractBuiltProduct, ExtractTestResults,
-                   FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub, GitHubMixin, GenerateS3URL,
-                   InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks,
-                   KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, RemoveAndAddLabels, ReRunAPITests, ReRunWebKitPerlTests, RetrievePRDataFromLabel,
-                   MapBranchAlias, ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
-                   RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
-                   RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
-                   RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
-                   RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree,
-                   RunWebKitTestsRepeatFailuresWithoutChangeRedTree, RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount,
-                   ShowIdentifier, Trigger, TransferToS3, TwistedAdditions, UnApplyPatch, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
-                   UploadFileToS3, UploadTestResults, ValidateCommitMessage, ValidateCommitterAndReviewer, ValidateChange, ValidateRemote, ValidateSquashed)
+                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
+                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStatusOfPR, CheckStyle,
+                    CleanBuild, CleanDerivedSources, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
+                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, DetermineLabelOwner,
+                    DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
+                    EWS_BUILD_HOSTNAMES, ExtractBuiltProduct, ExtractTestResults,
+                    FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub, GitHubMixin, GenerateS3URL,
+                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks,
+                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, RemoveAndAddLabels, ReRunAPITests, ReRunWebKitPerlTests, RetrievePRDataFromLabel,
+                    MapBranchAlias, ReRunWebKitTests, RevertAppliedChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
+                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
+                    RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
+                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
+                    RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree,
+                    RunWebKitTestsRepeatFailuresWithoutChangeRedTree, RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount,
+                    ShowIdentifier, Trigger, TransferToS3, TwistedAdditions, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
+                    UploadFileToS3, UploadTestResults, ValidateCommitMessage, ValidateCommitterAndReviewer, ValidateChange, ValidateRemote, ValidateSquashed)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -1079,6 +1079,30 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Deleted WebKitBuild directory (failure)')
+        return self.runStep()
+
+
+class TestCleanDerivedSources(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CleanDerivedSources())
+        self.setProperty('platform', 'gtk')
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/clean-webkit', '--derived-sources-only'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned derived sources directories')
         return self.runStep()
 
 
@@ -3035,7 +3059,7 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.patch(RunWebKitTestsRedTree, 'evaluateResult', lambda s, r: r)
         self.step.evaluateCommand(FAILURE)
-        self.assertTrue(RevertPullRequestChanges() in next_steps)
+        self.assertTrue(RevertAppliedChanges() in next_steps)
         self.assertTrue(InstallWpeDependencies() in next_steps)
         self.assertTrue(CompileWebKitWithoutChange(retry_build_on_failure=True))
         self.assertTrue(RunWebKitTestsWithoutChangeRedTree() in next_steps)
@@ -3048,7 +3072,7 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.patch(RunWebKitTestsRedTree, 'evaluateResult', lambda s, r: r)
         self.step.evaluateCommand(SUCCESS)
-        self.assertFalse(RevertPullRequestChanges() in next_steps)
+        self.assertFalse(RevertAppliedChanges() in next_steps)
         self.assertFalse(InstallWpeDependencies() in next_steps)
         self.assertFalse(RunWebKitTestsWithoutChangeRedTree() in next_steps)
         self.assertTrue(AnalyzeLayoutTestsResultsRedTree() in next_steps)
@@ -3138,7 +3162,7 @@ class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.patch(RunWebKitTestsRepeatFailuresRedTree, 'evaluateResult', lambda s, r: r)
         self.step.evaluateCommand(FAILURE)
-        self.assertTrue(RevertPullRequestChanges() in next_steps)
+        self.assertTrue(RevertAppliedChanges() in next_steps)
         self.assertTrue(InstallWpeDependencies() in next_steps)
         self.assertTrue(CompileWebKitWithoutChange(retry_build_on_failure=True) in next_steps)
         self.assertTrue(RunWebKitTestsRepeatFailuresWithoutChangeRedTree() in next_steps)
@@ -3152,7 +3176,7 @@ class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.patch(RunWebKitTestsRepeatFailuresRedTree, 'evaluateResult', lambda s, r: r)
         self.step.evaluateCommand(FAILURE)
-        self.assertFalse(RevertPullRequestChanges() in next_steps)
+        self.assertFalse(RevertAppliedChanges() in next_steps)
         self.assertFalse(InstallWpeDependencies() in next_steps)
         self.assertFalse(CompileWebKitWithoutChange(retry_build_on_failure=True) in next_steps)
         self.assertFalse(RunWebKitTestsRepeatFailuresWithoutChangeRedTree() in next_steps)
@@ -4116,7 +4140,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
-class TestUnApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
+class TestRevertAppliedChanges(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -4125,51 +4149,7 @@ class TestUnApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def test_success(self):
-        self.setupStep(UnApplyPatch())
-        self.setProperty('patch_id', 1234)
-        self.expectHidden(False)
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        command=['python3', 'Tools/Scripts/clean-webkit'],
-                        )
-            + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Unapplied patch')
-        return self.runStep()
-
-    def test_failure(self):
-        self.setupStep(UnApplyPatch())
-        self.setProperty('patch_id', 1234)
-        self.expectHidden(False)
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        command=['python3', 'Tools/Scripts/clean-webkit'],
-                        )
-            + ExpectShell.log('stdio', stdout='Unexpected failure.')
-            + 2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Unapplied patch (failure)')
-        return self.runStep()
-
-    def test_skip(self):
-        self.setupStep(UnApplyPatch())
-        self.expectHidden(True)
-        self.expectOutcome(result=SKIPPED, state_string='Unapplied patch (skipped)')
-        return self.runStep()
-
-
-class TestRevertPullRequestChanges(BuildStepMixinAdditions, unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        return self.setUpBuildStep()
-
-    def tearDown(self):
-        return self.tearDownBuildStep()
-
-    def test_success(self):
-        self.setupStep(RevertPullRequestChanges())
+        self.setupStep(RevertAppliedChanges())
         self.setProperty('got_revision', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c')
         self.setProperty('github.number', 1234)
         self.expectHidden(False)
@@ -4186,11 +4166,11 @@ class TestRevertPullRequestChanges(BuildStepMixinAdditions, unittest.TestCase):
                 command=['git', 'checkout', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c'],
             ) + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='Reverted pull request changes')
+        self.expectOutcome(result=SUCCESS, state_string='Reverted applied changes')
         return self.runStep()
 
     def test_failure(self):
-        self.setupStep(RevertPullRequestChanges())
+        self.setupStep(RevertAppliedChanges())
         self.setProperty('ews_revision', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c')
         self.setProperty('github.number', 1234)
         self.expectHidden(False)
@@ -4207,17 +4187,31 @@ class TestRevertPullRequestChanges(BuildStepMixinAdditions, unittest.TestCase):
                 command=['git', 'checkout', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c'],
             ) + ExpectShell.log('stdio', stdout='Unexpected failure.') + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Reverted pull request changes (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Reverted applied changes (failure)')
         return self.runStep()
 
-    def test_skip(self):
-        self.setupStep(RevertPullRequestChanges())
-        self.expectHidden(True)
-        self.expectOutcome(result=SKIPPED, state_string='Reverted pull request changes (skipped)')
+    def test_patch(self):
+        self.setupStep(RevertAppliedChanges())
+        self.setProperty('got_revision', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c')
+        self.expectHidden(False)
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=5 * 60,
+                command=['git', 'clean', '-f', '-d'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=5 * 60,
+                command=['git', 'checkout', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Reverted applied changes')
         return self.runStep()
 
     def test_glib_cleanup(self):
-        self.setupStep(RevertPullRequestChanges())
+        self.setupStep(RevertAppliedChanges())
         self.setProperty('got_revision', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c')
         self.setProperty('github.number', 1234)
         self.setProperty('platform', 'gtk')
@@ -4241,7 +4235,7 @@ class TestRevertPullRequestChanges(BuildStepMixinAdditions, unittest.TestCase):
                 command=['rm', '-f', 'WebKitBuild/GTK/Release/build-webkit-options.txt'],
             ) + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='Reverted pull request changes')
+        self.expectOutcome(result=SUCCESS, state_string='Reverted applied changes')
         return self.runStep()
 
 
@@ -4500,10 +4494,60 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('modified_tests'), ['LayoutTests/http/tests/events/device-orientation-motion-insecure-context.html'])
         return rc
 
+    def test_success_svg(self):
+        self.setupStep(FindModifiedLayoutTests())
+        self.assertEqual(FindModifiedLayoutTests.haltOnFailure, True)
+        self.assertEqual(FindModifiedLayoutTests.flunkOnFailure, True)
+        FindModifiedLayoutTests._get_patch = lambda x: b'+++ LayoutTests/svg/filters/feConvolveMatrix-clipped.svg'
+        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+        )
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('modified_tests'), ['LayoutTests/svg/filters/feConvolveMatrix-clipped.svg'])
+        return rc
+
+    def test_success_xml(self):
+        self.setupStep(FindModifiedLayoutTests())
+        self.assertEqual(FindModifiedLayoutTests.haltOnFailure, True)
+        self.assertEqual(FindModifiedLayoutTests.flunkOnFailure, True)
+        FindModifiedLayoutTests._get_patch = lambda x: b'+++ LayoutTests/fast/table/037.xml'
+        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+        )
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('modified_tests'), ['LayoutTests/fast/table/037.xml'])
+        return rc
+
     def test_ignore_certain_directories(self):
         self.setupStep(FindModifiedLayoutTests())
         dir_names = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.html'.encode('utf-8')
+        self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+        )
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('modified_tests'), None)
+        return rc
+
+    def test_ignore_certain_directories_svg(self):
+        self.setupStep(FindModifiedLayoutTests())
+        dir_names = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
+        FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.svg'.encode('utf-8')
+        self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+        )
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('modified_tests'), None)
+        return rc
+
+    def test_ignore_certain_directories_xml(self):
+        self.setupStep(FindModifiedLayoutTests())
+        dir_names = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
+        FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.xml'.encode('utf-8')
         self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0

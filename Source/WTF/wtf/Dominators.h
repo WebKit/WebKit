@@ -104,9 +104,9 @@ public:
                         continue;
                 
                     if (dominates(fromBlock, toBlock) != naiveDominates(fromBlock, toBlock))
-                        context.reportError(fromBlock, toBlock, "Range-based domination check is broken");
+                        context.reportError(fromBlock, toBlock, "Range-based domination check is broken"_s);
                     if (dominates(fromBlock, toBlock) != context.naiveDominators.dominates(fromBlock, toBlock))
-                        context.reportError(fromBlock, toBlock, "Lengauer-Tarjan domination is broken");
+                        context.reportError(fromBlock, toBlock, "Lengauer-Tarjan domination is broken"_s);
                 }
             }
         
@@ -620,7 +620,7 @@ private:
         {
         }
     
-        void reportError(typename Graph::Node from, typename Graph::Node to, const char* message)
+        void reportError(typename Graph::Node from, typename Graph::Node to, ASCIILiteral message)
         {
             Error error;
             error.from = from;
@@ -681,7 +681,7 @@ private:
 
             typename Graph::Node from;
             typename Graph::Node to;
-            const char* message;
+            ASCIILiteral message;
         };
     
         Vector<Error> errors;

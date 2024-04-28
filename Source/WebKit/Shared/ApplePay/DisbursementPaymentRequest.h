@@ -33,11 +33,12 @@ OBJC_CLASS PKDisbursementPaymentRequest;
 
 namespace WebCore {
 class ApplePaySessionPaymentRequest;
+enum class ApplePayContactField : uint8_t;
 }
 
 namespace WebKit {
 
-RetainPtr<PKDisbursementPaymentRequest> platformDisbursementPaymentRequest(const WebCore::ApplePaySessionPaymentRequest&, const URL& originatingURL);
+RetainPtr<PKDisbursementPaymentRequest> platformDisbursementPaymentRequest(const WebCore::ApplePaySessionPaymentRequest&, const URL& originatingURL, const std::optional<Vector<WebCore::ApplePayContactField>>& requiredrecipientContactFields);
 
 } // namespace WebKit
 

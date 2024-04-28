@@ -1035,9 +1035,7 @@ angle::Result InitDynamicDescriptorPool(Context *context,
 {
     std::vector<VkDescriptorPoolSize> descriptorPoolSizes;
     DescriptorSetLayoutBindingVector bindingVector;
-    std::vector<VkSampler> immutableSamplers;
-
-    descriptorSetLayoutDesc.unpackBindings(&bindingVector, &immutableSamplers);
+    descriptorSetLayoutDesc.unpackBindings(&bindingVector);
 
     for (const VkDescriptorSetLayoutBinding &binding : bindingVector)
     {
@@ -7138,9 +7136,18 @@ bool ImageHelper::updateLayoutAndBarrier(Context *context,
     {
         newLayout = ImageLayout::SharedPresent;
     }
+
     bool barrierModified = false;
     if (newLayout == mCurrentLayout)
     {
+        if (mBarrierQueueSerial == queueSerial)
+        {
+            // If there is no layout change and the previous layout change happened in the same
+            // render pass, then early out do nothing. This can happen when the same image is
+            // attached to the multiple attachments of the framebuffer.
+            return false;
+        }
+
         const ImageMemoryBarrierData &layoutData = kImageMemoryBarrierData[mCurrentLayout];
         // RAR is not a hazard and doesn't require a barrier, especially as the image layout hasn't
         // changed.  The following asserts that such a barrier is not attempted.
@@ -9715,7 +9722,7 @@ void ImageHelper::pruneSupersededUpdatesForLevel(ContextVk *contextVk,
         if (boundingBox[aspectIndex].contains(currentUpdateBox))
         {
             ANGLE_VK_PERF_WARNING(contextVk, GL_DEBUG_SEVERITY_LOW,
-                                  "Dropped update that is superseded by a more recent one");
+                                  "Dropped texture update that is superseded by a more recent one");
 
             // Release the superseded update
             update.release(contextVk->getRenderer());
@@ -9802,7 +9809,6 @@ angle::Result ImageHelper::copyImageDataToBuffer(ContextVk *contextVk,
     ANGLE_TRY(contextVk->initBufferForImageCopy(dstBuffer, bufferSize,
                                                 MemoryCoherency::CachedPreferCoherent,
                                                 imageFormat.id, &dstOffset, outDataPtr));
-    ANGLE_TRY(dstBuffer->invalidate(contextVk->getRenderer()));
     VkBuffer bufferHandle = dstBuffer->getBuffer().getHandle();
 
     LevelIndex sourceLevelVk = toVkLevel(sourceLevelGL);
@@ -10472,7 +10478,6 @@ angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
     ANGLE_TRY(contextVk->initBufferForImageCopy(stagingBuffer, allocationSize,
                                                 MemoryCoherency::CachedPreferCoherent,
                                                 readFormat->id, &stagingOffset, &readPixelBuffer));
-    ANGLE_TRY(stagingBuffer->invalidate(renderer));
     VkBuffer bufferHandle = stagingBuffer->getBuffer().getHandle();
 
     VkBufferImageCopy region = {};
@@ -10506,8 +10511,9 @@ angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
     ANGLE_VK_PERF_WARNING(contextVk, GL_DEBUG_SEVERITY_HIGH, "GPU stall due to ReadPixels");
 
     // Triggers a full finish.
-    // TODO(jmadill): Don't block on asynchronous readback.
     ANGLE_TRY(contextVk->finishImpl(RenderPassClosureReason::GLReadPixels));
+    // invalidate must be called after wait for finish.
+    ANGLE_TRY(stagingBuffer->invalidate(renderer));
 
     return packReadPixelBuffer(contextVk, area, packPixelsParams, getActualFormat(), *readFormat,
                                readPixelBuffer, levelGL, pixels);
@@ -11692,7 +11698,9 @@ angle::Result ShaderProgramHelper::getOrCreateComputePipeline(
     const PipelineLayout &pipelineLayout,
     ComputePipelineFlags pipelineFlags,
     PipelineSource source,
-    PipelineHelper **pipelineOut) const
+    PipelineHelper **pipelineOut,
+    const char *shaderName,
+    VkSpecializationInfo *specializationInfo) const
 {
     PipelineHelper *computePipeline = &(*computePipelines)[pipelineFlags.bits()];
 
@@ -11709,8 +11717,8 @@ angle::Result ShaderProgramHelper::getOrCreateComputePipeline(
     shaderStage.flags               = 0;
     shaderStage.stage               = VK_SHADER_STAGE_COMPUTE_BIT;
     shaderStage.module              = mShaders[gl::ShaderType::Compute].get().getHandle();
-    shaderStage.pName               = "main";
-    shaderStage.pSpecializationInfo = nullptr;
+    shaderStage.pName               = shaderName ? shaderName : "main";
+    shaderStage.pSpecializationInfo = specializationInfo;
 
     createInfo.sType              = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
     createInfo.flags              = 0;

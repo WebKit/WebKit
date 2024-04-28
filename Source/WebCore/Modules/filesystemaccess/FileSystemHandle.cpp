@@ -86,11 +86,6 @@ void FileSystemHandle::move(FileSystemHandle& destinationHandle, const String& n
     });
 }
 
-const char* FileSystemHandle::activeDOMObjectName() const
-{
-    return "FileSystemHandle";
-}
-
 void FileSystemHandle::stop()
 {
     close();

@@ -27,15 +27,17 @@
 
 #ifdef __cplusplus
 
+#include <wtf/text/ASCIILiteral.h>
+
 namespace WebKit::WebPushD {
 
 // If an origin processes more than this many silent pushes, then it will be unsubscribed from push.
 constexpr unsigned maxSilentPushCount = 3;
 
-constexpr const char* protocolVersionKey = "protocol version";
+constexpr auto protocolVersionKey = "protocol version"_s;
 constexpr uint64_t protocolVersionValue = 3;
-constexpr const char* protocolEncodedMessageKey = "encoded message";
-constexpr const char* protocolDebugMessageKey { "debug message" };
+constexpr auto protocolEncodedMessageKey = "encoded message"_s;
+constexpr auto protocolDebugMessageKey = "debug message"_s;
 
 // FIXME: ConnectionToMachService traits requires we have a message type, so keep this placeholder here
 // until we can remove that requirement.

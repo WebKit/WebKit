@@ -59,10 +59,10 @@ class MemoryBuffer final : NonCopyable
 class ScratchBuffer final : NonCopyable
 {
   public:
+    ScratchBuffer();
     // If we request a scratch buffer requesting a smaller size this many times, release and
     // recreate the scratch buffer. This ensures we don't have a degenerate case where we are stuck
     // hogging memory.
-    ScratchBuffer();
     ScratchBuffer(uint32_t lifetime);
     ~ScratchBuffer();
 

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DestinationColorSpace.h"
+#include "NotImplemented.h"
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/TextStream.h>
@@ -32,12 +33,18 @@
 #if USE(CG)
 #include "ColorSpaceCG.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#elif USE(SKIA)
+#include "ColorSpaceSkia.h"
 #endif
 
 namespace WebCore {
 
+#if USE(CG) || USE(SKIA)
 #if USE(CG)
 using KnownColorSpaceAccessor = CGColorSpaceRef();
+#elif USE(SKIA)
+using KnownColorSpaceAccessor = sk_sp<SkColorSpace>();
+#endif
 template<KnownColorSpaceAccessor accessor> static const DestinationColorSpace& knownColorSpace()
 {
     static LazyNeverDestroyed<DestinationColorSpace> colorSpace;
@@ -57,7 +64,7 @@ template<PlatformColorSpace::Name name> static const DestinationColorSpace& know
 
 const DestinationColorSpace& DestinationColorSpace::SRGB()
 {
-#if USE(CG)
+#if USE(CG) || USE(SKIA)
     return knownColorSpace<sRGBColorSpaceRef>();
 #else
     return knownColorSpace<PlatformColorSpace::Name::SRGB>();
@@ -66,7 +73,7 @@ const DestinationColorSpace& DestinationColorSpace::SRGB()
 
 const DestinationColorSpace& DestinationColorSpace::LinearSRGB()
 {
-#if USE(CG)
+#if USE(CG) || USE(SKIA)
     return knownColorSpace<linearSRGBColorSpaceRef>();
 #else
     return knownColorSpace<PlatformColorSpace::Name::LinearSRGB>();
@@ -76,7 +83,7 @@ const DestinationColorSpace& DestinationColorSpace::LinearSRGB()
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
 const DestinationColorSpace& DestinationColorSpace::DisplayP3()
 {
-#if USE(CG)
+#if USE(CG) || USE(SKIA)
     return knownColorSpace<displayP3ColorSpaceRef>();
 #else
     return knownColorSpace<PlatformColorSpace::Name::DisplayP3>();
@@ -87,7 +94,7 @@ const DestinationColorSpace& DestinationColorSpace::DisplayP3()
 DestinationColorSpace::DestinationColorSpace(PlatformColorSpace platformColorSpace)
     : m_platformColorSpace { WTFMove(platformColorSpace) }
 {
-#if USE(CG)
+#if USE(CG) || USE(SKIA)
     ASSERT(m_platformColorSpace);
 #endif
 }
@@ -96,6 +103,8 @@ bool operator==(const DestinationColorSpace& a, const DestinationColorSpace& b)
 {
 #if USE(CG)
     return CGColorSpaceEqualToColorSpace(a.platformColorSpace(), b.platformColorSpace());
+#elif USE(SKIA)
+    return SkColorSpace::Equals(a.platformColorSpace().get(), b.platformColorSpace().get());
 #else
     return a.platformColorSpace() == b.platformColorSpace();
 #endif
@@ -117,6 +126,11 @@ std::optional<DestinationColorSpace> DestinationColorSpace::asRGB() const
 #endif
 
     return DestinationColorSpace(colorSpace);
+
+#elif USE(SKIA)
+    notImplemented();
+    return std::nullopt;
+
 #else
     return *this;
 #endif

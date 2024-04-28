@@ -2,7 +2,7 @@ This test ensures PDFs loaded in embed tags are exposed in the accessibility tre
 
 PASS: pdfEmbedElement.domIdentifier === 'pdfEmbed'
 PASS: pdfEmbedElement.role === 'AXRole: AXGroup'
-PASS: pdfEmbedElement.subrole === 'AXSubrole: '
+PASS: pdfEmbedElement.subrole === 'AXSubrole: AXApplicationGroup'
 PASS: pdfEmbedElement.childrenCount === 1
 PASS: pdfAxObject.stringAttributeValue('AXSubrole') === 'AXPDFPluginSubrole'
 PASS: pdfAxObject.childrenCount === 1

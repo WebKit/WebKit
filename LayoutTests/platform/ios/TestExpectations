@@ -2987,7 +2987,6 @@ media/modern-media-controls/button/button-focus-state.html [ Skip ]
 
 # These tests rely on fullscreen which do not use the WebKit media controls on iOS
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-parent-element.html [ Skip ]
-media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Skip ]
 media/modern-media-controls/css/webkit-cursor-visibility-auto-hide.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-fullscreen-change.html [ Skip ]
@@ -4625,7 +4624,7 @@ imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-hi
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-with-anchor.tentative.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting-anchor.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting-hints.tentative.html [ Failure ]
-imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-open-in-beforetoggle.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-change-type.html [ Failure ]
 
@@ -4644,6 +4643,7 @@ imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-match
 http/tests/site-isolation/mouse-events/ [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/draw-after-navigation.html [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/draw-with-size-after-same-origin-navigation.html [ Skip ]
+webkit.org/b/257904 http/tests/site-isolation/page-zoom.html [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/selection-focus.html [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/basic-iframe-render-output.html [ Failure Timeout Pass ]
 
@@ -6744,8 +6744,6 @@ webkit.org/b/245600 fast/attachment/attachment-wrapping-action.html [ ImageOnlyF
 
 webkit.org/b/245686 fast/text/system-font-fallback.html [ ImageOnlyFailure ]
 
-webkit.org/b/245710 media/video-played-reset.html [ Pass Failure ]
-
 webkit.org/b/237547 fast/canvas/webgl/gl-teximage-imagebitmap-memory.html [ Pass Timeout ]
 
 webkit.org/b/245745 [ Debug ] svg/compositing/inline-svg-non-integer-position-display-inline-composited.html [ Skip ]
@@ -6910,8 +6908,6 @@ webkit.org/b/263044 [ Debug ] imported/w3c/web-platform-tests/webrtc-stats/suppo
 
 webkit.org/b/268422 fast/events/ios/keyboard-should-not-trigger-resize.html [ Pass Failure ]
 
-webkit.org/b/268557 [ Debug ] imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-anchor-attribute-003-crash.tentative.html [ Skip ]
-
 # webkit.org/b/268581 (18 webgl/1.0.3/conformance/textures/* tests are consistently/flakily timing out.)
 webgl/1.0.3/conformance/textures/copy-tex-image-and-sub-image-2d.html [ Pass Timeout ]
 webgl/1.0.3/conformance/textures/gl-teximage.html [ Pass Timeout ]
@@ -6942,31 +6938,7 @@ webkit.org/b/269321 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array
 
 webkit.org/b/269760 mathml/presentation/scripts-underover.html [ Failure ]
 
-webkit.org/b/270477 [ Debug ] accessibility/text-marker/text-marker-range-stale-node-crash.html [ Skip ]
-
-# webkit.org/b/270860 (REGRESSION (275949@main): 18 imported WPT /i18n/.../css-text-line-break* tests are consistent/flaky failures.)
-imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cpm-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-iteration-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-po-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-loose.html [ Pass Failure ]
-
 webkit.org/b/271018 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-012.svg [ ImageOnlyFailure ]
-
-webkit.org/b/271063 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Pass Failure Timeout ]
 
 webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
 
@@ -7020,11 +6992,6 @@ webkit.org/b/271678 imported/w3c/web-platform-tests/css/css-view-transitions/hit
 webkit.org/b/271682 imported/w3c/web-platform-tests/css/css-content/quotes-007.html [ ImageOnlyFailure ] # TODO: uncomment line above with explicit pass expectation for this test when issue is resolved.
 
 webkit.org/b/271712 [ Debug ] fast/forms/datalist/datalist-textinput-dynamically-add-options-on-keydown.html [ Timeout ]
-
-# webkit.org/b/271772 REGRESSION (276683@main): [ iOS ] 3X imported/w3c/web-platform-tests/svg/import/animate tests are consistent failures
-imported/w3c/web-platform-tests/svg/import/animate-elem-30-t-manual.svg [ Failure ]
-imported/w3c/web-platform-tests/svg/import/animate-elem-85-t-manual.svg [ Failure ]
-imported/w3c/web-platform-tests/svg/import/animate-pservers-grad-01-b-manual.svg [ Failure ]
 
 webkit.org/b/271785 media/modern-media-controls/overflow-support/chapters.html [ Timeout ]
 webkit.org/b/271785 media/modern-media-controls/overflow-support/playback-speed.html [ Timeout ]
@@ -7328,10 +7295,6 @@ webkit.org/b/254872 webrtc/video-rotation.html [ Pass Timeout ]
 fast/overflow/infiniteRecursion.html [ Failure Pass ]
 tables/mozilla/bugs/bug2479-2.html [ Failure Pass ]
 
-webkit.org/b/271931 [ Debug ] imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-105.html [ Crash ]
-
-webkit.org/b/271994 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-001.html [ Failure ]
-
 # webkit.org/b/271850 [iOS] 10 fast/forms/switch/click-animation*.html layout tests are passing.
 fast/forms/switch/click-animation-redundant-checked.html [ ImageOnlyFailure ]
 fast/forms/switch/click-animation-redundant-disabled.html [ ImageOnlyFailure ]
@@ -7340,5 +7303,3 @@ fast/forms/switch/click-animation.html [ ImageOnlyFailure ]
 webkit.org/b/271969 accessibility/ios-simulator/inline-prediction-attributed-string.html [ Failure ]
 
 webkit.org/b/272910 fast/scrolling/ios/video-atop-overflow-scroll.html [ Skip ]
-
-webkit.org/b/272944 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-form-controls-crash.html [ Skip ]

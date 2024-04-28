@@ -57,8 +57,8 @@
 
 namespace WebCore {
 
-const char* const quotedPrintable = "quoted-printable";
-const char* const base64 = "base64";
+constexpr auto quotedPrintable = "quoted-printable"_s;
+constexpr auto base64 = "base64"_s;
 
 static String generateRandomBoundary()
 {
@@ -174,24 +174,24 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
         stringBuilder.clear();
         stringBuilder.append(endOfResourceBoundary, "Content-Type: ", resource.mimeType);
 
-        const char* contentEncoding = nullptr;
+        ASCIILiteral contentEncoding;
         if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(resource.mimeType) || MIMETypeRegistry::isSupportedNonImageMIMEType(resource.mimeType))
             contentEncoding = quotedPrintable;
         else
             contentEncoding = base64;
 
-        stringBuilder.append("\r\nContent-Transfer-Encoding: ", contentEncoding, "\r\nContent-Location: ", resource.url.string(), "\r\n\r\n");
+        stringBuilder.append("\r\nContent-Transfer-Encoding: "_s, contentEncoding, "\r\nContent-Location: "_s, resource.url.string(), "\r\n\r\n"_s);
 
         asciiString = stringBuilder.toString().utf8();
         mhtmlData.append(asciiString.span());
 
         // FIXME: ideally we would encode the content as a stream without having to fetch it all.
-        if (!strcmp(contentEncoding, quotedPrintable)) {
+        if (contentEncoding == quotedPrintable) {
             auto encodedData = quotedPrintableEncode(resource.data->span());
             mhtmlData.append(encodedData.span());
             mhtmlData.append("\r\n"_span);
         } else {
-            ASSERT(!strcmp(contentEncoding, base64));
+            ASSERT(contentEncoding == base64);
             // We are not specifying insertLFs = true below as it would cut the lines with LFs and MHTML requires CRLFs.
             auto encodedData = base64EncodeToVector(resource.data->span());
             const size_t maximumLineLength = 76;

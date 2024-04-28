@@ -77,7 +77,6 @@ private:
 
     // ActiveDOMObject API.
     void stop() final;
-    const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension) final;
     bool virtualHasPendingActivity() const final;
 

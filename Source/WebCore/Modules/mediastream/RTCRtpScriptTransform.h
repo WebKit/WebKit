@@ -65,9 +65,6 @@ private:
     bool setupTransformer(Ref<RTCRtpTransformBackend>&&);
     void clear(RTCRtpScriptTransformer::ClearCallback);
 
-    // ActiveDOMObject
-    const char* activeDOMObjectName() const final { return "RTCRtpScriptTransform"; }
-
     Ref<Worker> m_worker;
 
     bool m_isAttached { false };

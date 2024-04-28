@@ -161,13 +161,17 @@ class PortFactory(object):
         platform = platform or '*'
         all_port_names = [
             'gtk',
-            'ios-simulator-16',
-            'ios-simulator-16-wk2',
+            'ios-simulator-17',
+            'ios-simulator-17-wk2',
+            'ipad-simulator-17',
+            'ipad-simulator-17-wk2',
             'mac-monterey-wk1',
             'mac-monterey-wk2',
+            'mac-sonoma-wk1',
+            'mac-sonoma-wk2',
             'mac-ventura-wk1',
             'mac-ventura-wk2',
             'wincairo-win10',
-            'wpe'
+            'wpe',
         ]
         return fnmatch.filter(all_port_names, platform)

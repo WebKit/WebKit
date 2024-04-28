@@ -28,22 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityNotificationHandler_h
-#define AccessibilityNotificationHandler_h
+#pragma once
 
 #import <JavaScriptCore/JSObjectRef.h>
+#import <JavaScriptCore/JSRetainPtr.h>
 
 @interface AccessibilityNotificationHandler : NSObject {
     id m_platformElement;
     JSValueRef m_notificationFunctionCallback;
+    JSRetainPtr<JSGlobalContextRef> m_context;
 }
 
-- (id)init;
+- (id)initWithContext:(JSContextRef)context;
 - (void)setPlatformElement:(id)platformElement;
 - (void)setCallback:(JSValueRef)callback;
 - (void)startObserving;
 - (void)stopObserving;
 
 @end
-
-#endif // AccessibilityNotificationHandler_h

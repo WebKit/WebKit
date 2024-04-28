@@ -59,6 +59,8 @@ public:
     void setCommandEncoder(CommandEncoder&) const;
     bool isDestroyed() const;
 
+    bool isValid() const;
+
 private:
     ExternalTexture(CVPixelBufferRef, WGPUColorSpace, Device&);
     ExternalTexture(Device&);

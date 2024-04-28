@@ -115,11 +115,6 @@ void SpeechSynthesisUtterance::decrementActivityCountForEventDispatch()
     --m_activityCountForEventDispatch;
 }
 
-const char* SpeechSynthesisUtterance::activeDOMObjectName() const
-{
-    return "SpeechSynthesisUtterance";
-}
-
 bool SpeechSynthesisUtterance::virtualHasPendingActivity() const
 {
     return m_activityCountForEventDispatch && hasEventListeners();

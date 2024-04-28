@@ -44,14 +44,14 @@ public:
     static bool isEligibleForSimplifiedInlineLayoutByStyle(const RenderStyle&);
 
 private:
-    InlineItemPosition placeInlineTextContent(const InlineItemRange&);
-    InlineItemPosition placeNonWrappingInlineTextContent(const InlineItemRange&);
-    TextOnlyLineBreakResult handleOverflowingTextContent(const InlineContentBreaker::ContinuousContent&, const InlineItemRange&);
-    TextOnlyLineBreakResult commitCandidateContent(const CandidateTextContent&, const InlineItemRange&);
+    InlineItemPosition placeInlineTextContent(const RenderStyle&, const InlineItemRange&);
+    InlineItemPosition placeNonWrappingInlineTextContent(const RenderStyle&, const InlineItemRange&);
+    TextOnlyLineBreakResult handleOverflowingTextContent(const RenderStyle&, const InlineContentBreaker::ContinuousContent&, const InlineItemRange&);
+    TextOnlyLineBreakResult commitCandidateContent(const RenderStyle&, const CandidateTextContent&, const InlineItemRange&);
     void initialize(const InlineItemRange&, const InlineRect& initialLogicalRect, const std::optional<PreviousLine>&);
-    void handleLineEnding(InlineItemPosition, size_t layoutRangeEndIndex);
-    size_t revertToTrailingItem(const InlineItemRange&, const InlineTextItem&);
-    size_t revertToLastNonOverflowingItem(const InlineItemRange&);
+    void handleLineEnding(const RenderStyle&, InlineItemPosition, size_t layoutRangeEndIndex);
+    size_t revertToTrailingItem(const RenderStyle&, const InlineItemRange&, const InlineTextItem&);
+    size_t revertToLastNonOverflowingItem(const RenderStyle&, const InlineItemRange&);
     InlineLayoutUnit availableWidth() const;
     bool isWrappingAllowed() const { return m_isWrappingAllowed; }
 

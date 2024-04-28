@@ -16,6 +16,8 @@
 #include "util/EGLWindow.h"
 #include "util/OSWindow.h"
 
+constexpr bool kSleepForVisualVerification = false;
+
 using namespace std::chrono_literals;
 
 using namespace angle;
@@ -340,7 +342,10 @@ class EGLProtectedContentTest : public ANGLETest<>
                                 bool isProtectedContext,
                                 bool isProtectedSurface)
     {
-        std::this_thread::sleep_for(1s);
+        if (kSleepForVisualVerification)
+        {
+            std::this_thread::sleep_for(1s);
+        }
         if (isProtectedContext)
         {
             if (isProtectedSurface)

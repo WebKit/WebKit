@@ -217,10 +217,10 @@ void CDMSessionAVContentKeySession::releaseKeys()
     }
 }
 
-static bool isEqual(Uint8Array* data, const char* literal)
+static bool isEqual(Uint8Array* data, ASCIILiteral literal)
 {
     ASSERT(data);
-    ASSERT(literal);
+    ASSERT(!literal.isNull());
     unsigned length = data->length();
 
     for (unsigned i = 0; i < length; ++i) {
@@ -237,7 +237,7 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
 {
     UNUSED_PARAM(nextMessage);
 
-    if (isEqual(key, "acknowledged")) {
+    if (isEqual(key, "acknowledged"_s)) {
         ALWAYS_LOG(LOGIDENTIFIER, "acknowleding secure stop message");
 
         String storagePath = this->storagePath();
@@ -259,7 +259,7 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
         return false;
     }
 
-    bool shouldGenerateKeyRequest = !m_certificate || isEqual(key, "renew");
+    bool shouldGenerateKeyRequest = !m_certificate || isEqual(key, "renew"_s);
     if (!m_certificate) {
         ALWAYS_LOG(LOGIDENTIFIER, "certificate data");
 

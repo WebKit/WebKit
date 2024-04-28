@@ -78,11 +78,13 @@ public:
     bool hasSelectedVideo() const;
 
     void willSeek();
+    void seeked(const MediaTime&);
 
     FloatSize naturalSize() const;
 
     void hasSelectedVideoChanged(SourceBufferPrivateAVFObjC&);
     void setVideoRenderer(WebSampleBufferVideoRendering *);
+    void stageVideoRenderer(WebSampleBufferVideoRendering *);
     void setDecompressionSession(WebCoreDecompressionSession*);
 
     void flushActiveSourceBuffersIfNeeded();
@@ -99,7 +101,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const char* logClassName() const final { return "MediaSourcePrivateAVFObjC"; }
+    ASCIILiteral logClassName() const final { return "MediaSourcePrivateAVFObjC"_s; }
     const void* logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 

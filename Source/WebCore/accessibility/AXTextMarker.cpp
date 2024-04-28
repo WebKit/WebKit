@@ -541,7 +541,7 @@ int AXTextMarker::lineIndex() const
     return index;
 }
 
-CharacterRange AXTextMarker::rangeForLine(unsigned lineIndex) const
+CharacterRange AXTextMarker::characterRangeForLine(unsigned lineIndex) const
 {
     if (!isValid())
         return { };
@@ -569,6 +569,25 @@ CharacterRange AXTextMarker::rangeForLine(unsigned lineIndex) const
         --lineIndex;
     }
     return currentLineRange ? CharacterRange(precedingLength, currentLineRange.toString().length()) : CharacterRange();
+}
+
+AXTextMarkerRange AXTextMarker::markerRangeForLineIndex(unsigned lineIndex) const
+{
+    // This implementation doesn't respect the offset as the only known callsite hardcodes zero. We'll need to make changes to support this if a usecase arrives for it.
+    RELEASE_ASSERT(!offset());
+
+    if (!isValid())
+        return { };
+    if (!isInTextRun())
+        return toTextRunMarker().markerRangeForLineIndex(lineIndex);
+
+    auto currentLineRange = lineRange(LineRangeType::Current);
+    while (lineIndex && currentLineRange) {
+        auto lineEndMarker = currentLineRange.end().nextLineEnd();
+        currentLineRange = { lineEndMarker.previousLineStart(), WTFMove(lineEndMarker) };
+        --lineIndex;
+    }
+    return currentLineRange;
 }
 
 int AXTextMarker::lineNumberForIndex(unsigned index) const

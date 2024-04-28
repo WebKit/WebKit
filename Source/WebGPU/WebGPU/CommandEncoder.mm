@@ -281,9 +281,8 @@ void CommandEncoder::endEncoding(id<MTLCommandEncoder> encoder)
         return;
     }
 
-    ASSERT(encoder == m_existingCommandEncoder || !m_existingCommandEncoder || !encoder);
-    ASSERT(!m_blitCommandEncoder || m_blitCommandEncoder == encoder);
-    [m_existingCommandEncoder endEncoding];
+    if (encoderIsCurrent(m_existingCommandEncoder))
+        [m_existingCommandEncoder endEncoding];
     setExistingEncoder(nil);
     m_blitCommandEncoder = nil;
 }
@@ -417,7 +416,7 @@ void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndCl
             mtlAttachment.texture = t;
             mtlAttachment.level = 0;
             mtlAttachment.slice = 0;
-            mtlAttachment.depthPlane = 0;
+            mtlAttachment.depthPlane = textureAndClearColor.depthPlane;
         }
         clearRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:clearDescriptor];
     }
@@ -1044,9 +1043,12 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
             return;
 
         auto destinationOrigin = MTLOriginMake(destination.origin.x, 0, 0);
+        sourceBytesPerRow = std::min<NSUInteger>(sourceBytesPerRow, widthForMetal * blockSize);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             auto sourceOffset = static_cast<NSUInteger>(source.layout.offset + layer * sourceBytesPerImage);
             NSUInteger destinationSlice = destination.origin.z + layer;
+            if (sourceOffset + sourceBytesPerRow > sourceBuffer.length)
+                continue;
             [m_blitCommandEncoder
                 copyFromBuffer:sourceBuffer
                 sourceOffset:sourceOffset
@@ -1198,33 +1200,25 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
         return;
 
     texture.setPreviouslyCleared(mipLevel, slice);
-    auto logicalSize = texture.logicalMiplevelSpecificTextureExtent(mipLevel);
-    if (!logicalSize.width)
+    auto logicalExtent = texture.logicalMiplevelSpecificTextureExtent(mipLevel);
+    if (!logicalExtent.width)
         return;
-    if (texture.dimension() != WGPUTextureDimension_1D && !logicalSize.height)
+    if (texture.dimension() != WGPUTextureDimension_1D && !logicalExtent.height)
         return;
-    if (texture.dimension() == WGPUTextureDimension_3D && !logicalSize.depthOrArrayLayers)
+    if (texture.dimension() == WGPUTextureDimension_3D && !logicalExtent.depthOrArrayLayers)
         return;
 
-    auto depth = texture.dimension() == WGPUTextureDimension_3D ? logicalSize.depthOrArrayLayers : 1;
     id<MTLTexture> mtlTexture = texture.texture();
     if (!mtlTexture)
         return;
-
-    NSUInteger sourceBytesPerRow = 0;
     auto textureFormat = texture.format();
-    if (mtlTexture.pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || mtlTexture.pixelFormat == MTLPixelFormatX32_Stencil8) {
+    if (mtlTexture.pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || mtlTexture.pixelFormat == MTLPixelFormatX32_Stencil8)
         textureFormat = WGPUTextureFormat_Depth32Float;
-        sourceBytesPerRow = Texture::bytesPerRow(WGPUTextureFormat_Depth32Float, logicalSize.width, texture.sampleCount());
-    } else
-        sourceBytesPerRow = Texture::bytesPerRow(textureFormat, logicalSize.width, texture.sampleCount());
-    auto blockSize = Texture::texelBlockSize(textureFormat);
-    sourceBytesPerRow = std::max<NSUInteger>(blockSize * 12 * (sourceBytesPerRow / logicalSize.width), sourceBytesPerRow);
-    if (Texture::isCompressedFormat(textureFormat))
-        sourceBytesPerRow = roundUpToMultipleOf(blockSize, sourceBytesPerRow);
-
-    NSUInteger sourceBytesPerImage = sourceBytesPerRow * logicalSize.height;
-    NSUInteger bufferLength = sourceBytesPerImage * depth;
+    auto physicalExtent = Texture::physicalTextureExtent(texture.dimension(), textureFormat, logicalExtent);
+    NSUInteger sourceBytesPerRow = Texture::bytesPerRow(textureFormat, physicalExtent.width, texture.sampleCount());
+    NSUInteger depth = texture.dimension() == WGPUTextureDimension_3D ? physicalExtent.depthOrArrayLayers : 1;
+    NSUInteger bytesPerImage = sourceBytesPerRow * physicalExtent.height;
+    NSUInteger bufferLength = bytesPerImage * depth;
     if (!bufferLength)
         return;
     id<MTLBuffer> temporaryBuffer = [device newBufferWithLength:bufferLength options:MTLResourceStorageModeShared];
@@ -1232,17 +1226,19 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
         return;
 
     MTLSize sourceSize;
+    NSUInteger sourceBytesPerImage = 0;
     switch (texture.dimension()) {
     case WGPUTextureDimension_1D:
-        sourceSize = MTLSizeMake(logicalSize.width, 1, 1);
+        sourceSize = MTLSizeMake(logicalExtent.width, 1, 1);
         break;
     case WGPUTextureDimension_2D:
-        sourceSize = MTLSizeMake(logicalSize.width, logicalSize.height, 1);
+        sourceSize = MTLSizeMake(logicalExtent.width, logicalExtent.height, 1);
         break;
     case WGPUTextureDimension_3D:
-        sourceSize = MTLSizeMake(logicalSize.width, logicalSize.height, logicalSize.depthOrArrayLayers);
+        sourceSize = MTLSizeMake(logicalExtent.width, logicalExtent.height, logicalExtent.depthOrArrayLayers);
+        sourceBytesPerImage = bytesPerImage;
+        slice = 0;
         break;
-    default:
     case WGPUTextureDimension_Force32:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -1251,9 +1247,8 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
     if (mtlTexture.pixelFormat == MTLPixelFormatDepth32Float_Stencil8)
         options = MTLBlitOptionDepthFromDepthStencil;
 
-    auto& destinationTexture = texture;
-    if (destinationTexture.dimension() == WGPUTextureDimension_3D)
-        slice = 0;
+    if (slice >= mtlTexture.arrayLength)
+        return;
 
     [blitCommandEncoder
         copyFromBuffer:temporaryBuffer
@@ -1269,7 +1264,7 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
 
     if (options != MTLBlitOptionNone) {
         sourceBytesPerRow /= sizeof(float);
-        sourceBytesPerImage = sourceBytesPerRow * logicalSize.height;
+        sourceBytesPerImage /= sizeof(float);
         [blitCommandEncoder
             copyFromBuffer:temporaryBuffer
             sourceOffset:0
@@ -1432,6 +1427,8 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset + layer * destinationBytesPerImage);
             NSUInteger sourceSlice = source.origin.z + layer;
+            if (destinationOffset + widthForMetal * blockSize > destinationBuffer.length)
+                continue;
             [m_blitCommandEncoder
                 copyFromTexture:sourceTexture.texture()
                 sourceSlice:sourceSlice
@@ -1627,6 +1624,7 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
     }
 
     id<MTLTexture> mtlDestinationTexture = destinationTexture.texture();
+    id<MTLTexture> mtlSourceTexture = fromAPI(source.texture).texture();
 
     // FIXME(PERFORMANCE): Is it actually faster to use the -[MTLBlitCommandEncoder copyFromTexture:...toTexture:...levelCount:]
     // variant, where possible, rather than calling the other variant in a loop?
@@ -1644,8 +1642,10 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             NSUInteger sourceSlice = source.origin.z + layer;
             NSUInteger destinationSlice = destination.origin.z + layer;
+            if (destinationSlice >= mtlDestinationTexture.arrayLength || sourceSlice >= mtlSourceTexture.arrayLength)
+                continue;
             [m_blitCommandEncoder
-                copyFromTexture:fromAPI(source.texture).texture()
+                copyFromTexture:mtlSourceTexture
                 sourceSlice:sourceSlice
                 sourceLevel:source.mipLevel
                 sourceOrigin:sourceOrigin
@@ -1670,8 +1670,10 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             NSUInteger sourceSlice = source.origin.z + layer;
             NSUInteger destinationSlice = destination.origin.z + layer;
+            if (destinationSlice >= mtlDestinationTexture.arrayLength || sourceSlice >= mtlSourceTexture.arrayLength)
+                continue;
             [m_blitCommandEncoder
-                copyFromTexture:fromAPI(source.texture).texture()
+                copyFromTexture:mtlSourceTexture
                 sourceSlice:sourceSlice
                 sourceLevel:source.mipLevel
                 sourceOrigin:sourceOrigin
@@ -1697,7 +1699,7 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, destination.origin.z);
 
         [m_blitCommandEncoder
-            copyFromTexture:fromAPI(source.texture).texture()
+            copyFromTexture:mtlSourceTexture
             sourceSlice:0
             sourceLevel:source.mipLevel
             sourceOrigin:sourceOrigin

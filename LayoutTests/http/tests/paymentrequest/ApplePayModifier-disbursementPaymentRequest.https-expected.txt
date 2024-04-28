@@ -1,4 +1,6 @@
 
 PASS Should have a feature for `disbursementPaymentRequest`.
 PASS Should propagate all data as part of the request.
+PASS Should propagate recipient contact information as part of the request.
+PASS Should error when incorrect `requiredRecipientContactFields` are provided as part of the request.
 

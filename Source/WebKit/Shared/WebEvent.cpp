@@ -31,6 +31,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebKeyboardEvent.h"
 #include <WebCore/WindowsKeyboardCodes.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebKit {
 

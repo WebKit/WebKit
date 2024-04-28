@@ -728,11 +728,6 @@ void HTMLModelElement::setIsMuted(bool isMuted, DOMPromiseDeferred<void>&& promi
     });
 }
 
-const char* HTMLModelElement::activeDOMObjectName() const
-{
-    return "HTMLModelElement";
-}
-
 bool HTMLModelElement::virtualHasPendingActivity() const
 {
     // We need to ensure the JS wrapper is kept alive if a load is in progress and we may yet dispatch

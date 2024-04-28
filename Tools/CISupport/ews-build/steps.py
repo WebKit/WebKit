@@ -1023,6 +1023,18 @@ class CleanWorkingDirectory(shell.ShellCommandNewStyle):
         return super().run()
 
 
+class CleanDerivedSources(shell.ShellCommandNewStyle):
+    name = 'clean-derived-sources'
+    description = ['clean-derived-sources running']
+    descriptionDone = ['Cleaned derived sources directories']
+    command = ['python3', 'Tools/Scripts/clean-webkit', '--derived-sources-only']
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, **kwargs)
+
+    def run(self):
+        return super().run()
+
 class UpdateWorkingDirectory(steps.ShellSequence, ShellMixin):
     name = 'update-working-directory'
     description = ['update-working-directory running']
@@ -1395,7 +1407,7 @@ class FindModifiedLayoutTests(shell.ShellCommandNewStyle, AnalyzeChange):
     name = 'find-modified-layout-tests'
     description = 'find-modified-layout tests running'
     descriptionDone = 'Found modified layout tests'
-    RE_LAYOUT_TEST = br'^(\+\+\+).*(LayoutTests.*\.html)'
+    RE_LAYOUT_TEST = br'^(\+\+\+).*(LayoutTests.*\.html|LayoutTests.*\.svg|LayoutTests.*\.xml)'
     DIRECTORIES_TO_IGNORE = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
     SUFFIXES_TO_IGNORE = ['-expected', '-expected-mismatch', '-ref', '-notref']
     command = ['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']
@@ -1411,7 +1423,7 @@ class FindModifiedLayoutTests(shell.ShellCommandNewStyle, AnalyzeChange):
         rc = yield super().run()
         modified_tests = set()
         log_text = self.log_observer.getStdout()
-        match = re.findall(r'\+(.*\.html)', log_text)
+        match = re.findall(r'\+(.*\.html)', log_text) + re.findall(r'\+(.*\.svg)', log_text) + re.findall(r'\+(.*\.xml)', log_text)
         yield self._addToLog('stdio', '\nLooking for test expectation changes...\n')
         for test in match:
             yield self._addToLog('stdio', f'    LayoutTests/{test}\n')
@@ -1453,7 +1465,7 @@ class FindModifiedLayoutTests(shell.ShellCommandNewStyle, AnalyzeChange):
         for line in patch.splitlines():
             match = re.search(self.RE_LAYOUT_TEST, line, re.IGNORECASE)
             if match:
-                if any((suffix + '.html').encode('utf-8') in line for suffix in self.SUFFIXES_TO_IGNORE):
+                if any(((suffix + '.html').encode('utf-8') or (suffix + '.svg').encode('utf-8') or (suffix + '.xml').encode('utf-8')) in line for suffix in self.SUFFIXES_TO_IGNORE):
                     continue
                 test_name = match.group(2).decode('utf-8')
                 if any(directory in test_name.split('/') for directory in self.DIRECTORIES_TO_IGNORE):
@@ -2289,7 +2301,8 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         return {'step': f"Failed to add '{GitHub.BLOCKED_LABEL}' label to pull request"}
 
     def doStepIf(self, step):
-        return self.getProperty('github.number')
+        # FIXME: Re-enable merging-blocked on mac-ventura after migration is complete.
+        return self.getProperty('github.number') and self.getProperty('fullPlatform', '') != 'mac-ventura'
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -2738,21 +2751,10 @@ class LeaveComment(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         return CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES
 
 
-class UnApplyPatch(CleanWorkingDirectory):
-    name = 'unapply-patch'
-    descriptionDone = ['Unapplied patch']
-
-    def doStepIf(self, step):
-        return self.getProperty('patch_id')
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step)
-
-
-class RevertPullRequestChanges(steps.ShellSequence):
-    name = 'revert-pull-request-changes'
-    description = ['revert-pull-request-changes running']
-    descriptionDone = ['Reverted pull request changes']
+class RevertAppliedChanges(steps.ShellSequence):
+    name = 'revert-applied-changes'
+    description = ['revert-applied-changes running']
+    descriptionDone = ['Reverted applied changes']
     flunkOnFailure = True
     haltOnFailure = True
 
@@ -2775,12 +2777,6 @@ class RevertPullRequestChanges(steps.ShellSequence):
             target = os.path.join("WebKitBuild", platform, config, "build-webkit-options.txt")
             self.commands.append(util.ShellArg(command=['rm', '-f', target], logname='stdio'))
         return super().run()
-
-    def doStepIf(self, step):
-        return self.getProperty('github.number')
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step)
 
 
 class Trigger(trigger.Trigger):
@@ -3274,7 +3270,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
         steps_to_add = self.follow_up_steps()
 
         if cmd.didFail():
-            steps_to_add += [UnApplyPatch(), RevertPullRequestChanges(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+            steps_to_add += [RevertAppliedChanges(), ValidateChange(verifyBugClosed=False, addURLs=False)]
             platform = self.getProperty('platform')
             if platform == 'wpe':
                 steps_to_add.append(InstallWpeDependencies())
@@ -3625,8 +3621,8 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.build.addStepsAfterCurrentStep([UnApplyPatch(),
-                                                RevertPullRequestChanges(),
+            self.build.addStepsAfterCurrentStep([
+                                                RevertAppliedChanges(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 CompileJSCWithoutChange(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
@@ -4114,8 +4110,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
                 ]
             else:
                 steps_to_add += [
-                    UnApplyPatch(),
-                    RevertPullRequestChanges(),
+                    RevertAppliedChanges(),
                     ValidateChange(verifyBugClosed=False, addURLs=False),
                     CompileWebKitWithoutChange(retry_build_on_failure=True),
                     ValidateChange(verifyBugClosed=False, addURLs=False),
@@ -4255,8 +4250,7 @@ class ReRunWebKitTests(RunWebKitTests):
             self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
                                                 UploadTestResults(identifier='rerun'),
                                                 ExtractTestResults(identifier='rerun'),
-                                                UnApplyPatch(),
-                                                RevertPullRequestChanges(),
+                                                RevertAppliedChanges(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 CompileWebKitWithoutChange(retry_build_on_failure=True),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
@@ -4686,7 +4680,7 @@ class RunWebKitTestsRedTree(RunWebKitTests):
             if retry_count < AnalyzeLayoutTestsResultsRedTree.MAX_RETRY:
                 next_steps.append(AnalyzeLayoutTestsResultsRedTree())
             else:
-                next_steps.extend([UnApplyPatch(), RevertPullRequestChanges()])
+                next_steps.extend([RevertAppliedChanges()])
                 if platform == 'wpe':
                     next_steps.append(InstallWpeDependencies())
                 elif platform == 'gtk':
@@ -4730,8 +4724,7 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
             next_steps.extend([
                 ValidateChange(verifyBugClosed=False, addURLs=False),
                 KillOldProcesses(),
-                UnApplyPatch(),
-                RevertPullRequestChanges()])
+                RevertAppliedChanges()])
             if platform == 'wpe':
                 next_steps.append(InstallWpeDependencies())
             elif platform == 'gtk':
@@ -5436,7 +5429,7 @@ class ReRunAPITests(RunAPITests):
     suffix = 'second_run'
 
     def doOnFailure(self):
-        steps_to_add = [UnApplyPatch(), RevertPullRequestChanges(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+        steps_to_add = [RevertAppliedChanges(), ValidateChange(verifyBugClosed=False, addURLs=False)]
         platform = self.getProperty('platform')
         if platform == 'wpe':
             steps_to_add.append(InstallWpeDependencies())

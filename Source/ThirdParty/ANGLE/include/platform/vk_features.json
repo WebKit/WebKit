@@ -1417,14 +1417,6 @@
             "issue": "https://issuetracker.google.com/288119108"
         },
         {
-            "name": "require_cached_bit_for_staging_buffer",
-            "category": "Workarounds",
-            "description": [
-                "use cached bit as required bit instead of preferred bit for staging buffers"
-            ],
-            "issue": "https://issuetracker.google.com/315836169"
-        },
-        {
             "name": "supports_external_format_resolve",
             "category": "Features",
             "description": [

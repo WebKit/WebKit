@@ -250,3 +250,114 @@ void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapt
         callback(status, WebGPU::releaseToAPI(WTFMove(adapter)), message.utf8().data());
     });
 }
+
+// Fuzzer things
+bool wgpuBufferIsValid(WGPUBuffer buffer)
+{
+    return WebGPU::fromAPI(buffer).isValid();
+}
+
+bool wgpuAdapterIsValid(WGPUAdapter adapter)
+{
+    return WebGPU::fromAPI(adapter).isValid();
+}
+
+bool wgpuBindGroupIsValid(WGPUBindGroup bindGroup)
+{
+    return WebGPU::fromAPI(bindGroup).isValid();
+}
+
+bool wgpuBindGroupLayoutIsValid(WGPUBindGroupLayout bindGroupLayout)
+{
+    return WebGPU::fromAPI(bindGroupLayout).isValid();
+}
+
+bool wgpuCommandBufferIsValid(WGPUCommandBuffer commandBuffer)
+{
+    return WebGPU::fromAPI(commandBuffer).isValid();
+}
+
+bool wgpuCommandEncoderIsValid(WGPUCommandEncoder commandEncoder)
+{
+    return WebGPU::fromAPI(commandEncoder).isValid();
+}
+
+bool wgpuComputePassEncoderIsValid(WGPUComputePassEncoder computePassEncoder)
+{
+    return WebGPU::fromAPI(computePassEncoder).isValid();
+}
+
+bool wgpuComputePipelineIsValid(WGPUComputePipeline computePipeline)
+{
+    return WebGPU::fromAPI(computePipeline).isValid();
+}
+
+bool wgpuDeviceIsValid(WGPUDevice device)
+{
+    return WebGPU::fromAPI(device).isValid();
+}
+
+bool wgpuExternalTextureIsValid(WGPUExternalTexture externalTexture)
+{
+    return WebGPU::fromAPI(externalTexture).isValid();
+}
+
+bool wgpuPipelineLayoutIsValid(WGPUPipelineLayout pipelineLayout)
+{
+    return WebGPU::fromAPI(pipelineLayout).isValid();
+}
+
+bool wgpuPresentationContextIsValid(WGPUSurface presentationContext)
+{
+    return WebGPU::fromAPI(presentationContext).isValid();
+}
+
+bool wgpuQuerySetIsValid(WGPUQuerySet querySet)
+{
+    return WebGPU::fromAPI(querySet).isValid();
+}
+
+bool wgpuQueueIsValid(WGPUQueue queue)
+{
+    return WebGPU::fromAPI(queue).isValid();
+}
+
+bool wgpuRenderBundleEncoderIsValid(WGPURenderBundleEncoder renderBundleEncoder)
+{
+    return WebGPU::fromAPI(renderBundleEncoder).isValid();
+}
+
+bool wgpuRenderBundleIsValid(WGPURenderBundle renderBundle)
+{
+    return WebGPU::fromAPI(renderBundle).isValid();
+}
+
+bool wgpuRenderPassEncoderIsValid(WGPURenderPassEncoder renderPassEncoder)
+{
+    return WebGPU::fromAPI(renderPassEncoder).isValid();
+}
+
+bool wgpuRenderPipelineIsValid(WGPURenderPipeline renderPipeline)
+{
+    return WebGPU::fromAPI(renderPipeline).isValid();
+}
+
+bool wgpuSamplerIsValid(WGPUSampler sampler)
+{
+    return WebGPU::fromAPI(sampler).isValid();
+}
+
+bool wgpuShaderModuleIsValid(WGPUShaderModule shaderModule)
+{
+    return WebGPU::fromAPI(shaderModule).isValid();
+}
+
+bool wgpuTextureIsValid(WGPUTexture texture)
+{
+    return WebGPU::fromAPI(texture).isValid();
+}
+
+bool wgpuTextureViewIsValid(WGPUTextureView textureView)
+{
+    return WebGPU::fromAPI(textureView).isValid();
+}

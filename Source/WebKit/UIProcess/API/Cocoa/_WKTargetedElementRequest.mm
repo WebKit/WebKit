@@ -26,15 +26,33 @@
 #import "config.h"
 #import "_WKTargetedElementRequest.h"
 
-@implementation _WKTargetedElementRequest
+@implementation _WKTargetedElementRequest {
+    RetainPtr<NSString> _searchText;
+}
 
-- (instancetype)init
+- (instancetype)initWithSearchText:(NSString *)searchText
 {
     if (!(self = [super init]))
         return nil;
 
+    _searchText = adoptNS(searchText.copy);
     _canIncludeNearbyElements = YES;
     return self;
+}
+
+- (instancetype)initWithPoint:(CGPoint)point
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _point = point;
+    _canIncludeNearbyElements = YES;
+    return self;
+}
+
+- (NSString *)searchText
+{
+    return adoptNS([_searchText copy]).autorelease();
 }
 
 @end

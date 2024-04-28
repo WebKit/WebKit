@@ -320,11 +320,6 @@ RefPtr<HTMLMediaElement> HTMLTrackElement::mediaElement() const
     return dynamicDowncast<HTMLMediaElement>(parentElement());
 }
 
-const char* HTMLTrackElement::activeDOMObjectName() const
-{
-    return "HTMLTrackElement";
-}
-
 void HTMLTrackElement::eventListenersDidChange()
 {
     m_hasRelevantLoadEventsListener = hasEventListeners(eventNames().errorEvent)

@@ -32,12 +32,12 @@ namespace WebKit {
 
 namespace ClientCertificateAuthentication {
 
-const char* const XPCCertificatesKey = "certificates";
-const char* const XPCChallengeIDKey = "challenge-id";
-const char* const XPCMessageNameKey = "message-name";
-const char* const XPCMessageNameValue = "client-certificate-credential";
-const char* const XPCPersistenceKey = "persistence";
-const char* const XPCSecKeyProxyEndpointKey = "sec-key-proxy-endpoint";
+const ASCIILiteral XPCCertificatesKey = "certificates"_s;
+const ASCIILiteral XPCChallengeIDKey = "challenge-id"_s;
+const ASCIILiteral XPCMessageNameKey = "message-name"_s;
+const ASCIILiteral XPCMessageNameValue = "client-certificate-credential"_s;
+const ASCIILiteral XPCPersistenceKey = "persistence"_s;
+const ASCIILiteral XPCSecKeyProxyEndpointKey = "sec-key-proxy-endpoint"_s;
 
 } // namespace ClientCertificateAuthentication
 

@@ -75,9 +75,9 @@ if (window.testRunner)
        var group = accessibilityController.focusedElement;
        shouldBe("group.childrenCount", "5");
        shouldBe("group.childAtIndex(0).description", "'AXLabel: Raman scattering study of the'");
-       shouldBe("group.childAtIndex(1).description", "'AXLabel:  F e sub 1  minus x, end subscript. C o sub x, S b sub 2, math'");
+       shouldBe("group.childAtIndex(1).description", "'AXLabel: F e sub 1 minus x, end subscript. C o sub x, S b sub 2, math'");
        shouldBe("group.childAtIndex(2).description", "'AXLabel: and'");
-       shouldBe("group.childAtIndex(3).description", "'AXLabel:   open, 0  less than or equal to x  less than or equal to 1,  close, math'");
+       shouldBe("group.childAtIndex(3).description", "'AXLabel: open, 0 less than or equal to x less than or equal to 1, close, math'");
        shouldBe("group.childAtIndex(4).description", "'AXLabel: single crystals.'");
 
        shouldBeFalse("group.childAtIndex(0).isIgnored");

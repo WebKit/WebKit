@@ -203,7 +203,7 @@ void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(uint32_t& program
 }
 
 template<bool caseSensitive>
-inline void DFABytecodeInterpreter::interpetJumpTable(std::span<const char> url, uint32_t& urlIndex, uint32_t& programCounter)
+inline void DFABytecodeInterpreter::interpretJumpTable(std::span<const LChar> url, uint32_t& urlIndex, uint32_t& programCounter)
 {
     DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, programCounter);
 
@@ -245,12 +245,12 @@ auto DFABytecodeInterpreter::actionsMatchingEverything() -> Actions
 auto DFABytecodeInterpreter::interpret(const String& urlString, ResourceFlags flags) -> Actions
 {
     CString urlCString;
-    std::span<const char> url;
+    std::span<const LChar> url;
     if (LIKELY(urlString.is8Bit()))
-        url = { reinterpret_cast<const char*>(urlString.characters8()), urlString.length() };
+        url = urlString.span8();
     else {
         urlCString = urlString.utf8();
-        url = { urlCString.data(), urlCString.length() };
+        url = urlCString.span();
     }
     ASSERT(url.data());
     
@@ -330,13 +330,13 @@ auto DFABytecodeInterpreter::interpret(const String& urlString, ResourceFlags fl
                 if (urlIndex > url.size())
                     goto nextDFA;
 
-                interpetJumpTable<false>(url, urlIndex, programCounter);
+                interpretJumpTable<false>(url, urlIndex, programCounter);
                 break;
             case DFABytecodeInstruction::JumpTableCaseSensitive:
                 if (urlIndex > url.size())
                     goto nextDFA;
 
-                interpetJumpTable<true>(url, urlIndex, programCounter);
+                interpretJumpTable<true>(url, urlIndex, programCounter);
                 break;
                     
             case DFABytecodeInstruction::CheckValueRangeCaseSensitive: {

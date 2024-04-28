@@ -934,11 +934,6 @@ void HTMLCanvasElement::clearCopiedImage() const
     m_didClearImageBuffer = false;
 }
 
-const char* HTMLCanvasElement::activeDOMObjectName() const
-{
-    return "HTMLCanvasElement";
-}
-
 bool HTMLCanvasElement::virtualHasPendingActivity() const
 {
 #if ENABLE(WEBGL)

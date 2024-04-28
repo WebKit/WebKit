@@ -107,11 +107,6 @@ void SpeechRecognition::abortRecognition()
     m_state = State::Aborting;
 }
 
-const char* SpeechRecognition::activeDOMObjectName() const
-{
-    return "SpeechRecognition";
-}
-
 void SpeechRecognition::stop()
 {
     abortRecognition();

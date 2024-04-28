@@ -172,7 +172,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
-    const char* logClassName() const final { return "LibWebRTCMediaEndpoint"; }
+    ASCIILiteral logClassName() const final { return "LibWebRTCMediaEndpoint"_s; }
     WTFLogChannel& logChannel() const final;
 
     Seconds statsLogInterval(int64_t) const;

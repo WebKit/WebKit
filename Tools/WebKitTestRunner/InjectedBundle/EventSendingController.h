@@ -48,8 +48,8 @@ public:
 
     void makeWindowObject(JSContextRef);
 
-    void mouseDown(int button, JSValueRef modifierArray, JSStringRef pointerType);
-    void mouseUp(int button, JSValueRef modifierArray, JSStringRef pointerType);
+    void mouseDown(JSContextRef, int button, JSValueRef modifierArray, JSStringRef pointerType);
+    void mouseUp(JSContextRef, int button, JSValueRef modifierArray, JSStringRef pointerType);
     void mouseMoveTo(int x, int y, JSStringRef pointerType);
     void mouseForceClick();
     void startAndCancelMouseForceClick();
@@ -60,19 +60,19 @@ public:
     void mouseScrollByWithWheelAndMomentumPhases(int x, int y, JSStringRef phase, JSStringRef momentum);
     void setWheelHasPreciseDeltas(bool);
     void continuousMouseScrollBy(int x, int y, bool paged);
-    JSValueRef contextClick();
+    JSValueRef contextClick(JSContextRef);
     void leapForward(int milliseconds);
     void scheduleAsynchronousClick();
 
     void monitorWheelEvents(MonitorWheelEventsOptions*);
-    void callAfterScrollingCompletes(JSValueRef functionCallback);
+    void callAfterScrollingCompletes(JSContextRef, JSValueRef functionCallback);
     
     void sentWheelPhaseEndOrCancel() { m_sentWheelPhaseEndOrCancel = true; }
     void sentWheelMomentumPhaseEnd() { m_sentWheelMomentumPhaseEnd = true; }
 
-    void keyDown(JSStringRef key, JSValueRef modifierArray, int location);
-    void rawKeyDown(JSStringRef key, JSValueRef modifierArray, int location);
-    void rawKeyUp(JSStringRef key, JSValueRef modifierArray, int location);
+    void keyDown(JSContextRef, JSStringRef key, JSValueRef modifierArray, int location);
+    void rawKeyDown(JSContextRef, JSStringRef key, JSValueRef modifierArray, int location);
+    void rawKeyUp(JSContextRef, JSStringRef key, JSValueRef modifierArray, int location);
     void scheduleAsynchronousKeyDown(JSStringRef key);
 
     void textZoomIn();

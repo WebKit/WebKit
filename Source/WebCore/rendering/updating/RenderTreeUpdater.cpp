@@ -141,9 +141,10 @@ void RenderTreeUpdater::updateRebuildRoots()
         auto* renderingAncestor = findRenderingAncestor(root);
         if (!renderingAncestor)
             return nullptr;
-        if (!RenderTreeBuilder::isRebuildRootForChildren(*renderingAncestor->renderer()))
-            return nullptr;
-        return renderingAncestor;
+        auto isInsideContinuation = root.renderer() && root.renderer()->parent()->isContinuation();
+        if (isInsideContinuation || RenderTreeBuilder::isRebuildRootForChildren(*renderingAncestor->renderer()))
+            return renderingAncestor;
+        return nullptr;
     };
 
     auto addForRebuild = [&](auto& element) {
@@ -160,7 +161,7 @@ void RenderTreeUpdater::updateRebuildRoots()
 
         auto* parent = composedTreeAncestors(element).first();
         m_styleUpdate->addElement(element, parent, Style::ElementUpdate {
-            RenderStyle::clonePtr(element.renderer()->style()),
+            makeUnique<RenderStyle>(RenderStyle::cloneIncludingPseudoElements(element.renderer()->style())),
             Style::Change::Renderer
         });
         return true;
@@ -235,7 +236,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
             bool didCreateParent = parent().update && parent().update->change == Style::Change::Renderer;
             bool mayNeedUpdateWhitespaceOnlyRenderer = renderingParent().didCreateOrDestroyChildRenderer && text->containsOnlyASCIIWhitespace();
             if (didCreateParent || textUpdate || mayNeedUpdateWhitespaceOnlyRenderer)
-                updateTextRenderer(*text, textUpdate);
+                updateTextRenderer(*text, textUpdate, { });
 
             storePreviousRenderer(*text);
             it.traverseNextSkippingChildren();
@@ -600,7 +601,7 @@ void RenderTreeUpdater::createTextRenderer(Text& textNode, const Style::TextUpda
         textManipulationController->didAddOrCreateRendererForNode(textNode);
 }
 
-void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* textUpdate)
+void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* textUpdate, const ContainerNode* root)
 {
     auto* existingRenderer = text.renderer();
     bool needsRenderer = textRendererIsNeeded(text);
@@ -608,7 +609,7 @@ void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* 
     if (existingRenderer && textUpdate && textUpdate->inheritedDisplayContentsStyle) {
         if (existingRenderer->inlineWrapperForDisplayContents() || *textUpdate->inheritedDisplayContentsStyle) {
             // FIXME: We could update without teardown.
-            tearDownTextRenderer(text, m_builder);
+            tearDownTextRenderer(text, root, m_builder);
             existingRenderer = nullptr;
         }
     }
@@ -619,7 +620,7 @@ void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* 
                 existingRenderer->setTextWithOffset(text.data(), textUpdate->offset, textUpdate->length);
             return;
         }
-        tearDownTextRenderer(text, m_builder);
+        tearDownTextRenderer(text, root, m_builder);
         renderingParent().didCreateOrDestroyChildRenderer = true;
         return;
     }
@@ -688,7 +689,7 @@ void RenderTreeUpdater::tearDownRenderer(Text& text)
         return;
 
     RenderTreeBuilder builder(*view);
-    tearDownTextRenderer(text, builder);
+    tearDownTextRenderer(text, { }, builder);
     invalidateRebuildRootIfNeeded(text);
 }
 
@@ -747,7 +748,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             }
 
             if (auto* renderer = element.renderer()) {
-                builder.destroyAndCleanUpAnonymousWrappers(*renderer);
+                builder.destroyAndCleanUpAnonymousWrappers(*renderer, root.renderer());
                 element.setRenderer(nullptr);
             }
 
@@ -763,7 +764,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
         pop(it.depth());
 
         if (auto* text = dynamicDowncast<Text>(*it)) {
-            tearDownTextRenderer(*text, builder);
+            tearDownTextRenderer(*text, &root, builder);
             continue;
         }
 
@@ -775,12 +776,12 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     tearDownLeftoverPaginationRenderersIfNeeded(root, builder);
 }
 
-void RenderTreeUpdater::tearDownTextRenderer(Text& text, RenderTreeBuilder& builder)
+void RenderTreeUpdater::tearDownTextRenderer(Text& text, const ContainerNode* root, RenderTreeBuilder& builder)
 {
     auto* renderer = text.renderer();
     if (!renderer)
         return;
-    builder.destroyAndCleanUpAnonymousWrappers(*renderer);
+    builder.destroyAndCleanUpAnonymousWrappers(*renderer, root ? root->renderer() : nullptr);
     text.setRenderer(nullptr);
 }
 
@@ -791,7 +792,7 @@ void RenderTreeUpdater::tearDownLeftoverPaginationRenderersIfNeeded(Element& roo
     for (auto* child = root.document().renderView()->firstChild(); child;) {
         auto* nextSibling = child->nextSibling();
         if (is<RenderMultiColumnFlow>(*child) || is<RenderMultiColumnSet>(*child))
-            builder.destroyAndCleanUpAnonymousWrappers(*child);
+            builder.destroyAndCleanUpAnonymousWrappers(*child, root.renderer());
         child = nextSibling;
     }
 }
@@ -802,7 +803,7 @@ void RenderTreeUpdater::tearDownLeftoverChildrenOfComposedTree(Element& element,
         if (!child->renderer())
             continue;
         if (auto* text = dynamicDowncast<Text>(*child)) {
-            tearDownTextRenderer(*text, builder);
+            tearDownTextRenderer(*text, &element, builder);
             continue;
         }
         if (auto* element = dynamicDowncast<Element>(*child))

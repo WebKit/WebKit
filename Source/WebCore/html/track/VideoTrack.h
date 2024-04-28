@@ -92,7 +92,7 @@ private:
     void updateConfigurationFromPrivate();
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "VideoTrack"; }
+    ASCIILiteral logClassName() const final { return "VideoTrack"_s; }
 #endif
 
     WeakPtr<VideoTrackList> m_videoTrackList;

@@ -567,11 +567,6 @@ void ServiceWorkerContainer::destroyJob(ServiceWorkerJob& job)
     m_jobMap.remove(job.identifier());
 }
 
-const char* ServiceWorkerContainer::activeDOMObjectName() const
-{
-    return "ServiceWorkerContainer";
-}
-
 SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
 {
     ASSERT(scriptExecutionContext());

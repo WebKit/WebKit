@@ -1,6 +1,6 @@
-
+CONSOLE MESSAGE: Permission policy 'Geolocation' check failed for element with origin 'https://127.0.0.1:9443' and allow attribute ''.
 
 PASS Permissions-Policy header geolocation=(self) allows the top-level document.
 PASS Permissions-Policy header geolocation=(self) allows same-origin iframes.
-FAIL Permissions-Policy header geolocation=(self) disallows cross-origin iframes. assert_false: geolocation expected false got true
+PASS Permissions-Policy header geolocation=(self) disallows cross-origin iframes.
 

@@ -414,11 +414,6 @@ ExceptionOr<void> WebXRSession::end(EndPromise&& promise)
     return { };
 }
 
-const char* WebXRSession::activeDOMObjectName() const
-{
-    return "XRSession";
-}
-
 void WebXRSession::stop()
 {
 }

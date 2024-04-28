@@ -45,8 +45,11 @@ void GSFontPurgeFontCache(void);
 
 typedef struct __GSKeyboard* GSKeyboardRef;
 uint32_t GSKeyboardGetModifierState(GSKeyboardRef);
-Boolean GSEventIsHardwareKeyboardAttached();
+Boolean GSEventIsHardwareKeyboardAttached(void);
+uint8_t GSEventGetHardwareKeyboardCountry(void);
+uint8_t GSEventGetHardwareKeyboardType(void);
 void GSEventSetHardwareKeyboardAttached(Boolean attached, uint8_t country);
+void GSEventSetHardwareKeyboardAttachedWithCountryCodeAndType(Boolean attached, uint8_t country, uint8_t type);
 
 extern const char *kGSEventHardwareKeyboardAvailabilityChangedNotification;
 

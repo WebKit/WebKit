@@ -80,7 +80,6 @@ private:
     void derefEventTarget() final { deref(); }
 
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
     void stop() final;
 
     SWClientConnection& swConnection();

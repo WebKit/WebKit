@@ -89,7 +89,7 @@ private:
     const Logger& logger() const final;
     const void* logIdentifier() const final;
     WTFLogChannel& logChannel() const final;
-    const char* logClassName() const final { return "MediaControlTextTrackContainerElement"; }
+    ASCIILiteral logClassName() const final { return "MediaControlTextTrackContainerElement"_s; }
     mutable RefPtr<Logger> m_logger;
     mutable const void* m_logIdentifier { nullptr };
 #endif

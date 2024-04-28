@@ -108,10 +108,5 @@ enum EventTargetInterfaceType AudioTrackList::eventTargetInterface() const
     return EventTargetInterfaceType::AudioTrackList;
 }
 
-const char* AudioTrackList::activeDOMObjectName() const
-{
-    return "AudioTrackList";
-}
-
 } // namespace WebCore
 #endif

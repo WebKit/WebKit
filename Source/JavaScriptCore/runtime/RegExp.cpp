@@ -202,7 +202,7 @@ RegExp* RegExp::createWithoutCaching(VM& vm, const String& patternString, Option
 
 RegExp* RegExp::create(VM& vm, const String& patternString, OptionSet<Yarr::Flags> flags)
 {
-    return vm.regExpCache()->lookupOrCreate(patternString, flags);
+    return vm.regExpCache()->lookupOrCreate(vm, patternString, flags);
 }
 
 

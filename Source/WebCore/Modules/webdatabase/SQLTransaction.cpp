@@ -110,7 +110,7 @@ void SQLTransaction::performNextStep()
 void SQLTransaction::performPendingCallback()
 {
     ASSERT(isMainThread());
-    LOG(StorageAPI, "Callback %s\n", debugStepName(m_nextStep));
+    LOG(StorageAPI, "Callback %s\n", debugStepName(m_nextStep).characters());
 
     ASSERT(m_nextStep == &SQLTransaction::deliverTransactionCallback
            || m_nextStep == &SQLTransaction::deliverTransactionErrorCallback
@@ -176,7 +176,7 @@ SQLTransaction::StateFunction SQLTransaction::stateFunctionFor(SQLTransactionSta
 // modify is m_requestedState which is meant for this purpose.
 void SQLTransaction::requestTransitToState(SQLTransactionState nextState)
 {
-    LOG(StorageAPI, "Scheduling %s for transaction %p\n", nameForSQLTransactionState(nextState), this);
+    LOG(StorageAPI, "Scheduling %s for transaction %p\n", nameForSQLTransactionState(nextState).characters(), this);
     m_requestedState = nextState;
     m_database->scheduleTransactionCallback(this);
 }
@@ -218,7 +218,7 @@ void SQLTransaction::scheduleCallback(void (SQLTransaction::*step)())
 {
     m_nextStep = step;
 
-    LOG(StorageAPI, "Scheduling %s for transaction %p\n", debugStepName(step), this);
+    LOG(StorageAPI, "Scheduling %s for transaction %p\n", debugStepName(step).characters(), this);
     m_database->scheduleTransactionCallback(this);
 }
 
@@ -494,7 +494,7 @@ void SQLTransaction::computeNextStateAndCleanupIfNeeded()
             || m_nextState == SQLTransactionState::DeliverQuotaIncreaseCallback
             || m_nextState == SQLTransactionState::DeliverSuccessCallback);
 
-        LOG(StorageAPI, "Callback %s\n", nameForSQLTransactionState(m_nextState));
+        LOG(StorageAPI, "Callback %s\n", nameForSQLTransactionState(m_nextState).characters());
         return;
     } else
         callErrorCallbackDueToInterruption();
@@ -647,31 +647,31 @@ void SQLTransaction::releaseOriginLockIfNeeded()
 }
 
 #if !LOG_DISABLED
-const char* SQLTransaction::debugStepName(void (SQLTransaction::*step)())
+ASCIILiteral SQLTransaction::debugStepName(void (SQLTransaction::*step)())
 {
     if (step == &SQLTransaction::acquireLock)
-        return "acquireLock";
+        return "acquireLock"_s;
     if (step == &SQLTransaction::openTransactionAndPreflight)
-        return "openTransactionAndPreflight";
+        return "openTransactionAndPreflight"_s;
     if (step == &SQLTransaction::runStatements)
-        return "runStatements";
+        return "runStatements"_s;
     if (step == &SQLTransaction::postflightAndCommit)
-        return "postflightAndCommit";
+        return "postflightAndCommit"_s;
     if (step == &SQLTransaction::cleanupAfterTransactionErrorCallback)
-        return "cleanupAfterTransactionErrorCallback";
+        return "cleanupAfterTransactionErrorCallback"_s;
     if (step == &SQLTransaction::deliverTransactionCallback)
-        return "deliverTransactionCallback";
+        return "deliverTransactionCallback"_s;
     if (step == &SQLTransaction::deliverTransactionErrorCallback)
-        return "deliverTransactionErrorCallback";
+        return "deliverTransactionErrorCallback"_s;
     if (step == &SQLTransaction::deliverStatementCallback)
-        return "deliverStatementCallback";
+        return "deliverStatementCallback"_s;
     if (step == &SQLTransaction::deliverQuotaIncreaseCallback)
-        return "deliverQuotaIncreaseCallback";
+        return "deliverQuotaIncreaseCallback"_s;
     if (step == &SQLTransaction::deliverSuccessCallback)
-        return "deliverSuccessCallback";
+        return "deliverSuccessCallback"_s;
 
     ASSERT_NOT_REACHED();
-    return "UNKNOWN";
+    return "UNKNOWN"_s;
 }
 #endif
 

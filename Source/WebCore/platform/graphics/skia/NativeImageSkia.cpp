@@ -61,7 +61,9 @@ bool PlatformImageNativeImageBackend::hasAlpha() const
 
 DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
 {
-    notImplemented();
+    if (auto colorSpace = platformImage()->refColorSpace())
+        return DestinationColorSpace(colorSpace);
+    // No color space means the default - SRGB.
     return DestinationColorSpace::SRGB();
 }
 

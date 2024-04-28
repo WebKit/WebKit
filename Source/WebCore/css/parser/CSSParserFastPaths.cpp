@@ -187,16 +187,16 @@ static RefPtr<CSSValue> parseSimpleLengthValue(CSSPropertyID propertyId, StringV
 // Returns the number of characters which form a valid double
 // and are terminated by the given terminator character
 template <typename CharacterType>
-static int checkForValidDouble(const CharacterType* string, const CharacterType* end, char terminator)
+static size_t checkForValidDouble(std::span<const CharacterType> string, char terminator)
 {
-    int length = end - string;
+    size_t length = string.size();
     if (length < 1)
         return 0;
 
     bool decimalMarkSeen = false;
-    int processedLength = 0;
+    size_t processedLength = 0;
 
-    for (int i = 0; i < length; ++i) {
+    for (size_t i = 0; i < string.size(); ++i) {
         if (string[i] == terminator) {
             processedLength = i;
             break;
@@ -218,13 +218,13 @@ static int checkForValidDouble(const CharacterType* string, const CharacterType*
 // Returns the number of characters consumed for parsing a valid double
 // terminated by the given terminator character
 template <typename CharacterType>
-static int parseDouble(const CharacterType* string, const CharacterType* end, char terminator, double& value)
+static size_t parseDouble(std::span<const CharacterType> string, char terminator, double& value)
 {
-    int length = checkForValidDouble(string, end, terminator);
+    size_t length = checkForValidDouble(string, terminator);
     if (!length)
         return 0;
 
-    int position = 0;
+    size_t position = 0;
     double localValue = 0;
 
     // The consumed characters here are guaranteed to be
@@ -254,67 +254,69 @@ static int parseDouble(const CharacterType* string, const CharacterType* end, ch
 }
 
 template <typename CharacterType>
-static std::optional<uint8_t> parseColorIntOrPercentage(const CharacterType*& string, const CharacterType* end, char terminator, CSSUnitType& expect)
+static std::optional<uint8_t> parseColorIntOrPercentage(std::span<const CharacterType>& string, char terminator, CSSUnitType& expect)
 {
-    auto* current = string;
+    auto current = string;
     double localValue = 0;
     bool negative = false;
-    while (current != end && isASCIIWhitespace<CharacterType>(*current))
-        current++;
-    if (current != end && *current == '-') {
+    while (!current.empty() && isASCIIWhitespace<CharacterType>(current.front()))
+        current = current.subspan(1);
+    if (!current.empty() && current.front() == '-') {
         negative = true;
-        current++;
+        current = current.subspan(1);
     }
-    if (current == end || !isASCIIDigit(*current))
+    if (current.empty() || !isASCIIDigit(current.front()))
         return std::nullopt;
-    while (current != end && isASCIIDigit(*current)) {
-        double newValue = localValue * 10 + *current++ - '0';
+    while (!current.empty() && isASCIIDigit(current.front())) {
+        double newValue = localValue * 10 + current.front() - '0';
+        current = current.subspan(1);
         if (newValue >= 255) {
             // Clamp values at 255.
             localValue = 255;
-            while (current != end && isASCIIDigit(*current))
-                ++current;
+            while (!current.empty() && isASCIIDigit(current.front()))
+                current = current.subspan(1);
             break;
         }
         localValue = newValue;
     }
 
-    if (current == end)
+    if (current.empty())
         return std::nullopt;
 
-    if (expect == CSSUnitType::CSS_NUMBER && (*current == '.' || *current == '%'))
+    if (expect == CSSUnitType::CSS_NUMBER && (current.front() == '.' || current.front() == '%'))
         return std::nullopt;
 
-    if (*current == '.') {
+    if (current.front() == '.') {
         // We already parsed the integral part, try to parse
         // the fraction part of the percentage value.
         double percentage = 0;
-        int numCharactersParsed = parseDouble(current, end, '%', percentage);
+        size_t numCharactersParsed = parseDouble(current, '%', percentage);
         if (!numCharactersParsed)
             return std::nullopt;
-        current += numCharactersParsed;
-        if (*current != '%')
+        current = current.subspan(numCharactersParsed);
+        if (current.front() != '%')
             return std::nullopt;
         localValue += percentage;
     }
 
-    if (expect == CSSUnitType::CSS_PERCENTAGE && *current != '%')
+    if (expect == CSSUnitType::CSS_PERCENTAGE && current.front() != '%')
         return std::nullopt;
 
-    if (*current == '%') {
+    if (current.front() == '%') {
         expect = CSSUnitType::CSS_PERCENTAGE;
         localValue = localValue / 100.0 * 255.0;
         // Clamp values at 255 for percentages over 100%
         if (localValue > 255)
             localValue = 255;
-        current++;
+        current = current.subspan(1);
     } else
         expect = CSSUnitType::CSS_NUMBER;
 
-    while (current != end && isASCIIWhitespace<CharacterType>(*current))
-        current++;
-    if (current == end || *current++ != terminator)
+    while (!current.empty() && isASCIIWhitespace<CharacterType>(current.front()))
+        current = current.subspan(1);
+    if (current.empty() || current.front() != terminator)
         return std::nullopt;
+    current = current.subspan(1);
     string = current;
 
     // Clamp negative values at zero.
@@ -323,72 +325,72 @@ static std::optional<uint8_t> parseColorIntOrPercentage(const CharacterType*& st
 }
 
 template <typename CharacterType>
-static inline bool isTenthAlpha(const CharacterType* string, int length)
+static inline bool isTenthAlpha(std::span<const CharacterType> string)
 {
     // "0.X"
-    if (length == 3 && string[0] == '0' && string[1] == '.' && isASCIIDigit(string[2]))
+    if (string.size() == 3 && string[0] == '0' && string[1] == '.' && isASCIIDigit(string[2]))
         return true;
 
     // ".X"
-    if (length == 2 && string[0] == '.' && isASCIIDigit(string[1]))
+    if (string.size() == 2 && string[0] == '.' && isASCIIDigit(string[1]))
         return true;
 
     return false;
 }
 
 template <typename CharacterType>
-static inline std::optional<uint8_t> parseAlphaValue(const CharacterType*& string, const CharacterType* end, char terminator)
+static inline std::optional<uint8_t> parseAlphaValue(std::span<const CharacterType>& string, char terminator)
 {
-    while (string != end && isASCIIWhitespace<CharacterType>(*string))
-        string++;
+    while (!string.empty() && isASCIIWhitespace<CharacterType>(string.front()))
+        string = string.subspan(1);
 
     bool negative = false;
 
-    if (string != end && *string == '-') {
+    if (!string.empty() && string.front() == '-') {
         negative = true;
-        string++;
+        string = string.subspan(1);
     }
 
-    int length = end - string;
+    size_t length = string.size();
     if (length < 2)
         return std::nullopt;
 
     if (string[length - 1] != terminator || !isASCIIDigit(string[length - 2]))
         return std::nullopt;
 
-    if (string[0] != '0' && string[0] != '1' && string[0] != '.') {
-        if (checkForValidDouble(string, end, terminator)) {
-            string = end;
+    if (string.front() != '0' && string.front() != '1' && string.front() != '.') {
+        if (checkForValidDouble(string, terminator)) {
+            string = { };
             return negative ? 0 : 255;
         }
         return std::nullopt;
     }
 
-    if (length == 2 && string[0] != '.') {
-        uint8_t result = !negative && string[0] == '1' ? 255 : 0;
-        string = end;
+    if (length == 2 && string.front() != '.') {
+        uint8_t result = !negative && string.front() == '1' ? 255 : 0;
+        string = { };
         return result;
     }
 
-    if (isTenthAlpha(string, length - 1)) {
+    if (isTenthAlpha(string.first(length - 1))) {
         static constexpr uint8_t tenthAlphaValues[] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230 };
         uint8_t result = negative ? 0 : tenthAlphaValues[string[length - 2] - '0'];
-        string = end;
+        string = { };
         return result;
     }
 
     double alpha = 0;
-    if (!parseDouble(string, end, terminator, alpha))
+    if (!parseDouble(string, terminator, alpha))
         return std::nullopt;
 
-    string = end;
+    string = { };
     return negative ? 0 : convertFloatAlphaTo<uint8_t>(alpha);
 }
 
 template <typename CharacterType>
-static inline bool mightBeRGBA(const CharacterType* characters, unsigned length)
+static inline bool mightBeRGBA(std::span<const CharacterType> characters)
 {
-    if (length < 5)
+    if (characters.size() < 5)
         return false;
     return characters[4] == '('
         && isASCIIAlphaCaselessEqual(characters[0], 'r')
@@ -398,9 +400,9 @@ static inline bool mightBeRGBA(const CharacterType* characters, unsigned length)
 }
 
 template <typename CharacterType>
-static inline bool mightBeRGB(const CharacterType* characters, unsigned length)
+static inline bool mightBeRGB(std::span<const CharacterType> characters)
 {
-    if (length < 4)
+    if (characters.size() < 4)
         return false;
     return characters[3] == '('
         && isASCIIAlphaCaselessEqual(characters[0], 'r')
@@ -439,70 +441,67 @@ static std::optional<SRGBA<uint8_t>> finishParsingHexColor(uint32_t value, unsig
     return std::nullopt;
 }
 
-template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseHexColorInternal(const CharacterType* characters, unsigned length)
+template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseHexColorInternal(std::span<const CharacterType> characters)
 {
-    if (length != 3 && length != 4 && length != 6 && length != 8)
+    if (characters.size() != 3 && characters.size() != 4 && characters.size() != 6 && characters.size() != 8)
         return std::nullopt;
     uint32_t value = 0;
-    for (unsigned i = 0; i < length; ++i) {
-        auto digit = characters[i];
+    for (auto digit : characters) {
         if (!isASCIIHexDigit(digit))
             return std::nullopt;
         value <<= 4;
         value |= toASCIIHexValue(digit);
     }
-    return finishParsingHexColor(value, length);
+    return finishParsingHexColor(value, characters.size());
 }
 
-template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseNumericColor(const CharacterType* characters, unsigned length, bool strict)
+template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const CharacterType> characters, bool strict)
 {
-    if (length >= 4 && characters[0] == '#') {
-        if (auto hexColor = parseHexColorInternal(characters + 1, length - 1))
+    if (characters.size() >= 4 && characters.front() == '#') {
+        if (auto hexColor = parseHexColorInternal(characters.subspan(1)))
             return *hexColor;
     }
 
-    if (!strict && (length == 3 || length == 6)) {
-        if (auto hexColor = parseHexColorInternal(characters, length))
+    if (!strict && (characters.size() == 3 || characters.size() == 6)) {
+        if (auto hexColor = parseHexColorInternal(characters))
             return *hexColor;
     }
 
     auto expect = CSSUnitType::CSS_UNKNOWN;
 
     // Try rgba() syntax.
-    if (mightBeRGBA(characters, length)) {
-        auto current = characters + 5;
-        auto end = characters + length;
-        auto red = parseColorIntOrPercentage(current, end, ',', expect);
+    if (mightBeRGBA(characters)) {
+        auto current = characters.subspan(5);
+        auto red = parseColorIntOrPercentage(current, ',', expect);
         if (!red)
             return std::nullopt;
-        auto green = parseColorIntOrPercentage(current, end, ',', expect);
+        auto green = parseColorIntOrPercentage(current, ',', expect);
         if (!green)
             return std::nullopt;
-        auto blue = parseColorIntOrPercentage(current, end, ',', expect);
+        auto blue = parseColorIntOrPercentage(current, ',', expect);
         if (!blue)
             return std::nullopt;
-        auto alpha = parseAlphaValue(current, end, ')');
+        auto alpha = parseAlphaValue(current, ')');
         if (!alpha)
             return std::nullopt;
-        if (current != end)
+        if (!current.empty())
             return std::nullopt;
         return SRGBA<uint8_t> { *red, *green, *blue, *alpha };
     }
 
     // Try rgb() syntax.
-    if (mightBeRGB(characters, length)) {
-        auto current = characters + 4;
-        auto end = characters + length;
-        auto red = parseColorIntOrPercentage(current, end, ',', expect);
+    if (mightBeRGB(characters)) {
+        auto current = characters.subspan(4);
+        auto red = parseColorIntOrPercentage(current, ',', expect);
         if (!red)
             return std::nullopt;
-        auto green = parseColorIntOrPercentage(current, end, ',', expect);
+        auto green = parseColorIntOrPercentage(current, ',', expect);
         if (!green)
             return std::nullopt;
-        auto blue = parseColorIntOrPercentage(current, end, ')', expect);
+        auto blue = parseColorIntOrPercentage(current, ')', expect);
         if (!blue)
             return std::nullopt;
-        if (current != end)
+        if (!current.empty())
             return std::nullopt;
         return SRGBA<uint8_t> { *red, *green, *blue };
     }
@@ -514,8 +513,8 @@ static std::optional<SRGBA<uint8_t>> parseNumericColor(StringView string, const 
 {
     bool strict = !isQuirksModeBehavior(context.mode);
     if (string.is8Bit())
-        return parseNumericColor(string.characters8(), string.length(), strict);
-    return parseNumericColor(string.characters16(), string.length(), strict);
+        return parseNumericColor(string.span8(), strict);
+    return parseNumericColor(string.span16(), strict);
 }
 
 static RefPtr<CSSValue> parseColor(StringView string, const CSSParserContext& context)
@@ -541,46 +540,46 @@ static std::optional<SRGBA<uint8_t>> finishParsingNamedColor(char* buffer, unsig
     return asSRGBA(PackedColor::ARGB { namedColor->ARGBValue });
 }
 
-template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseNamedColorInternal(const CharacterType* characters, unsigned length)
+template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseNamedColorInternal(std::span<const CharacterType> characters)
 {
     char buffer[64]; // Easily big enough for the longest color name.
-    if (length > sizeof(buffer) - 1)
+    if (characters.size() > sizeof(buffer) - 1)
         return std::nullopt;
-    for (unsigned i = 0; i < length; ++i) {
+    for (size_t i = 0; i < characters.size(); ++i) {
         auto character = characters[i];
         if (!character || !isASCII(character))
             return std::nullopt;
         buffer[i] = toASCIILower(static_cast<char>(character));
     }
-    return finishParsingNamedColor(buffer, length);
+    return finishParsingNamedColor(buffer, characters.size());
 }
 
-template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseSimpleColorInternal(const CharacterType* characters, unsigned length, bool strict)
+template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseSimpleColorInternal(std::span<const CharacterType> characters, bool strict)
 {
-    if (auto color = parseNumericColor(characters, length, strict))
+    if (auto color = parseNumericColor(characters, strict))
         return color;
-    return parseNamedColorInternal(characters, length);
+    return parseNamedColorInternal(characters);
 }
 
 std::optional<SRGBA<uint8_t>> CSSParserFastPaths::parseSimpleColor(StringView string, bool strict)
 {
     if (string.is8Bit())
-        return parseSimpleColorInternal(string.characters8(), string.length(), strict);
-    return parseSimpleColorInternal(string.characters16(), string.length(), strict);
+        return parseSimpleColorInternal(string.span8(), strict);
+    return parseSimpleColorInternal(string.span16(), strict);
 }
 
 std::optional<SRGBA<uint8_t>> CSSParserFastPaths::parseHexColor(StringView string)
 {
     if (string.is8Bit())
-        return parseHexColorInternal(string.characters8(), string.length());
-    return parseHexColorInternal(string.characters16(), string.length());
+        return parseHexColorInternal(string.span8());
+    return parseHexColorInternal(string.span16());
 }
 
 std::optional<SRGBA<uint8_t>> CSSParserFastPaths::parseNamedColor(StringView string)
 {
     if (string.is8Bit())
-        return parseNamedColorInternal(string.characters8(), string.length());
-    return parseNamedColorInternal(string.characters16(), string.length());
+        return parseNamedColorInternal(string.span8());
+    return parseNamedColorInternal(string.span16());
 }
 
 bool CSSParserFastPaths::isKeywordValidForStyleProperty(CSSPropertyID property, CSSValueID value, const CSSParserContext& context)

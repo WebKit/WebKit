@@ -86,7 +86,7 @@ public:
     void destroyLayers();
 
     const Logger& logger() const final { return m_logger.get(); }
-    const char* logClassName() const override { return "MediaPlayerPrivateMediaStreamAVFObjC"; }
+    ASCIILiteral logClassName() const override { return "MediaPlayerPrivateMediaStreamAVFObjC"_s; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
 

@@ -852,7 +852,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             // FIXME: It is highly unlikely that a style mutation has effect on both the formatting context the box lives in
             // and the one it establishes but calling only one would require to come up with a list of properties that only affects one or the other.
             if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*this); inlineFormattingContextRoot && inlineFormattingContextRoot->modernLineLayout())
-                inlineFormattingContextRoot->modernLineLayout()->styleWillChange(*this, newStyle);
+                inlineFormattingContextRoot->modernLineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, newStyle);
             if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
                 lineLayout->styleWillChange(*this, newStyle);
         }
@@ -1055,7 +1055,9 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
             controller->notifyChildHadSuppressingStyleChange();
     }
 
-    if (diff >= StyleDifference::Repaint && layoutBox())
+    // FIXME: First line change on the block comes in as equal on inline boxes.
+    auto needsLayoutBoxStyleUpdate = (diff >= StyleDifference::Repaint || (is<RenderInline>(*this) && &style() != &firstLineStyle())) && layoutBox();
+    if (needsLayoutBoxStyleUpdate)
         LayoutIntegration::LineLayout::updateStyle(*this);
 }
 
@@ -2071,9 +2073,6 @@ bool RenderElement::hasSelfPaintingLayer() const
 
 bool RenderElement::capturedInViewTransition() const
 {
-    if (!hasViewTransitionName())
-        return false;
-
     return element() && element()->capturedInViewTransition();
 }
 
@@ -2082,9 +2081,9 @@ bool RenderElement::hasViewTransitionName() const
     return !!style().viewTransitionName();
 }
 
-bool RenderElement::isViewTransitionPseudo() const
+bool RenderElement::requiresRenderingConsolidationForViewTransition() const
 {
-    return style().pseudoElementType() == PseudoId::ViewTransitionNew || style().pseudoElementType() == PseudoId::ViewTransitionOld;
+    return hasViewTransitionName() || capturedInViewTransition();
 }
 
 bool RenderElement::checkForRepaintDuringLayout() const

@@ -364,13 +364,13 @@
             "buffer": "R16G16B16A16_FLOAT"
         },
         "D32_FLOAT_S8X24_UINT": {
-            "image": ["D24_UNORM_S8_UINT", "D32_FLOAT_S8X24_UINT"]
+            "image": ["D24_UNORM_S8_UINT"]
         },
         "D24_UNORM_S8_UINT": {
-            "image": ["D32_FLOAT_S8X24_UINT", "D24_UNORM_S8_UINT"]
+            "image": ["D32_FLOAT_S8X24_UINT"]
         },
         "S8_UINT": {
-            "image": ["D24_UNORM_S8_UINT", "D32_FLOAT_S8X24_UINT", "S8_UINT"]
+            "image": ["D24_UNORM_S8_UINT", "D32_FLOAT_S8X24_UINT"]
         },
 
         "R8_USCALED": {

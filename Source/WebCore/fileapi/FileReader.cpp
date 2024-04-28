@@ -70,11 +70,6 @@ FileReader::~FileReader()
         m_loader->cancel();
 }
 
-const char* FileReader::activeDOMObjectName() const
-{
-    return "FileReader";
-}
-
 void FileReader::stop()
 {
     m_pendingTasks.clear();

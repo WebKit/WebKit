@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -39,14 +40,12 @@ class Encoder;
 
 namespace WebKit {
 
-enum class UserMessageType : uint8_t {
-    Null,
-    Message,
-    Error,
-};
-
 struct UserMessage {
-    using Type = UserMessageType;
+    enum class Type : uint8_t {
+        Null,
+        Message,
+        Error,
+    };
 
     UserMessage()
         : type(Type::Null)
@@ -60,14 +59,40 @@ struct UserMessage {
     {
     }
 
-    void encode(IPC::Encoder&) const;
-    static std::optional<UserMessage> decode(IPC::Decoder&);
+    UserMessage(const CString& name, GRefPtr<GVariant>& parameters, GRefPtr<GUnixFDList>& fileDescriptors)
+        : type(Type::Message)
+        , name(name)
+        , parameters(parameters)
+        , fileDescriptors(fileDescriptors)
+    {
+    }
 
     Type type { Type::Null };
     CString name;
     GRefPtr<GVariant> parameters;
     GRefPtr<GUnixFDList> fileDescriptors;
     uint32_t errorCode { 0 };
+
+    struct NullMessage {
+    };
+
+    struct ErrorMessage {
+        CString name;
+        uint32_t errorCode;
+    };
+
+    struct DataMessage {
+        CString name;
+        GRefPtr<GVariant> parameters;
+        GRefPtr<GUnixFDList> fileDescriptors;
+    };
+
+private:
+    friend struct IPC::ArgumentCoder<UserMessage, void>;
+
+    using IPCData = std::variant<NullMessage, ErrorMessage, DataMessage>;
+    static UserMessage fromIPCData(IPCData&&);
+    IPCData toIPCData() const;
 };
 
 } // namespace WebKit

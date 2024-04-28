@@ -632,11 +632,6 @@ void RTCPeerConnection::unregisterFromController()
         m_controller->remove(*this);
 }
 
-const char* RTCPeerConnection::activeDOMObjectName() const
-{
-    return "RTCPeerConnection";
-}
-
 void RTCPeerConnection::suspend(ReasonForSuspension reason)
 {
     if (reason != ReasonForSuspension::BackForwardCache)

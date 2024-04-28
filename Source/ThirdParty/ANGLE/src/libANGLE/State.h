@@ -201,7 +201,6 @@ enum DirtyObjectType
     DIRTY_OBJECT_TEXTURES,  // Top-level dirty bit. Also see mDirtyTextures.
     DIRTY_OBJECT_IMAGES,    // Top-level dirty bit. Also see mDirtyImages.
     DIRTY_OBJECT_SAMPLERS,  // Top-level dirty bit. Also see mDirtySamplers.
-    DIRTY_OBJECT_PROGRAM,
     DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT,
 
     DIRTY_OBJECT_INVALID,
@@ -1459,25 +1458,17 @@ class State : angle::NonCopyable
     angle::Result syncTextures(const Context *context, Command command);
     angle::Result syncImages(const Context *context, Command command);
     angle::Result syncSamplers(const Context *context, Command command);
-    angle::Result syncProgram(const Context *context, Command command);
     angle::Result syncProgramPipelineObject(const Context *context, Command command);
 
     using DirtyObjectHandler = angle::Result (State::*)(const Context *context, Command command);
 
     static constexpr DirtyObjectHandler kDirtyObjectHandlers[state::DIRTY_OBJECT_MAX] = {
-        &State::syncActiveTextures,
-        &State::syncTexturesInit,
-        &State::syncImagesInit,
-        &State::syncReadAttachments,
-        &State::syncDrawAttachments,
-        &State::syncReadFramebuffer,
-        &State::syncDrawFramebuffer,
-        &State::syncVertexArray,
-        &State::syncTextures,
-        &State::syncImages,
-        &State::syncSamplers,
-        &State::syncProgram,
-        &State::syncProgramPipelineObject};
+        &State::syncActiveTextures,  &State::syncTexturesInit,
+        &State::syncImagesInit,      &State::syncReadAttachments,
+        &State::syncDrawAttachments, &State::syncReadFramebuffer,
+        &State::syncDrawFramebuffer, &State::syncVertexArray,
+        &State::syncTextures,        &State::syncImages,
+        &State::syncSamplers,        &State::syncProgramPipelineObject};
 
     // Robust init must happen before Framebuffer init for the Vulkan back-end.
     static_assert(state::DIRTY_OBJECT_ACTIVE_TEXTURES < state::DIRTY_OBJECT_TEXTURES_INIT,
@@ -1507,8 +1498,7 @@ class State : angle::NonCopyable
     static_assert(state::DIRTY_OBJECT_TEXTURES == 8, "check DIRTY_OBJECT_TEXTURES index");
     static_assert(state::DIRTY_OBJECT_IMAGES == 9, "check DIRTY_OBJECT_IMAGES index");
     static_assert(state::DIRTY_OBJECT_SAMPLERS == 10, "check DIRTY_OBJECT_SAMPLERS index");
-    static_assert(state::DIRTY_OBJECT_PROGRAM == 11, "check DIRTY_OBJECT_PROGRAM index");
-    static_assert(state::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT == 12,
+    static_assert(state::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT == 11,
                   "check DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT index");
 
     // Dispatch table for buffer update functions.

@@ -82,12 +82,7 @@ public:
     void outputText(StringView, IsFinalTestOutput = IsFinalTestOutput::No);
     void dumpToStdErr(const String&);
     void postNewBeforeUnloadReturnValue(bool);
-    void postAddChromeInputField();
     void postRemoveChromeInputField();
-    void postSetTextInChromeInputField(const String&);
-    void postSelectChromeInputField();
-    void postGetSelectedTextInChromeInputField();
-    void postFocusWebView();
     void postSetBackingScaleFactor(double);
     void postSetWindowIsKey(bool);
     void postSetViewSize(double width, double height);
@@ -277,6 +272,7 @@ template<typename T> void postSynchronousPageMessage(const char* name, const WKR
     }
 }
 
-void postMessageWithAsyncReply(const char* messageName, JSValueRef callback);
+void postMessageWithAsyncReply(JSContextRef, const char* messageName, JSValueRef callback);
+void postMessageWithAsyncReply(JSContextRef, const char* messageName, WKRetainPtr<WKTypeRef> value, JSValueRef callback);
 
 } // namespace WTR

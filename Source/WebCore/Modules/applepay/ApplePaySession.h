@@ -104,7 +104,6 @@ private:
     ApplePaySession(Document&, unsigned version, ApplePaySessionPaymentRequest&&);
 
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const override;
     void stop() override;
     void suspend(ReasonForSuspension) override;
     bool virtualHasPendingActivity() const final;

@@ -52,6 +52,14 @@ enum class ApplePaySessionPaymentRequestShippingType : uint8_t {
     ServicePickup,
 };
 
+struct ApplePaySessionPaymentRequestContactFields {
+    bool postalAddress { false };
+    bool phone { false };
+    bool email { false };
+    bool name { false };
+    bool phoneticName { false };
+};
+
 class ApplePaySessionPaymentRequest {
 public:
     WEBCORE_EXPORT ApplePaySessionPaymentRequest();
@@ -66,13 +74,7 @@ public:
     const String& currencyCode() const { return m_currencyCode; }
     void setCurrencyCode(const String& currencyCode) { m_currencyCode = currencyCode; }
 
-    struct ContactFields {
-        bool postalAddress { false };
-        bool phone { false };
-        bool email { false };
-        bool name { false };
-        bool phoneticName { false };
-    };
+    using ContactFields = ApplePaySessionPaymentRequestContactFields;
 
     const ContactFields& requiredBillingContactFields() const { return m_requiredBillingContactFields; }
     void setRequiredBillingContactFields(const ContactFields& requiredBillingContactFields) { m_requiredBillingContactFields = requiredBillingContactFields; }

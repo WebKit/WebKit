@@ -2724,26 +2724,26 @@ String Internals::parserMetaData(JSC::JSValue code)
     else
         return String();
 
-    const char* prefix;
+    ASCIILiteral prefix;
     String functionName;
-    const char* suffix = "";
+    ASCIILiteral suffix = ""_s;
 
     if (executable->isFunctionExecutable()) {
-        prefix = "function \"";
+        prefix = "function \""_s;
         functionName = static_cast<FunctionExecutable*>(executable)->ecmaName().string();
-        suffix = "\"";
+        suffix = "\""_s;
     } else if (executable->isEvalExecutable())
-        prefix = "eval";
+        prefix = "eval"_s;
     else if (executable->isModuleProgramExecutable())
-        prefix = "module";
+        prefix = "module"_s;
     else if (executable->isProgramExecutable())
-        prefix = "program";
+        prefix = "program"_s;
     else
         RELEASE_ASSERT_NOT_REACHED();
 
-    return makeString(prefix, functionName, suffix, " { ",
-        executable->firstLine(), ':', executable->startColumn(), " - ",
-        executable->lastLine(), ':', executable->endColumn(), " }");
+    return makeString(prefix, functionName, suffix, " { "_s,
+        executable->firstLine(), ':', executable->startColumn(), " - "_s,
+        executable->lastLine(), ':', executable->endColumn(), " }"_s);
 }
 
 void Internals::updateEditorUINowIfScheduled()
@@ -4126,58 +4126,58 @@ unsigned Internals::layoutCount() const
 }
 
 #if !PLATFORM(IOS_FAMILY)
-static const char* cursorTypeToString(Cursor::Type cursorType)
+static ASCIILiteral cursorTypeToString(Cursor::Type cursorType)
 {
     switch (cursorType) {
-    case Cursor::Type::Pointer: return "Pointer";
-    case Cursor::Type::Cross: return "Cross";
-    case Cursor::Type::Hand: return "Hand";
-    case Cursor::Type::IBeam: return "IBeam";
-    case Cursor::Type::Wait: return "Wait";
-    case Cursor::Type::Help: return "Help";
-    case Cursor::Type::EastResize: return "EastResize";
-    case Cursor::Type::NorthResize: return "NorthResize";
-    case Cursor::Type::NorthEastResize: return "NorthEastResize";
-    case Cursor::Type::NorthWestResize: return "NorthWestResize";
-    case Cursor::Type::SouthResize: return "SouthResize";
-    case Cursor::Type::SouthEastResize: return "SouthEastResize";
-    case Cursor::Type::SouthWestResize: return "SouthWestResize";
-    case Cursor::Type::WestResize: return "WestResize";
-    case Cursor::Type::NorthSouthResize: return "NorthSouthResize";
-    case Cursor::Type::EastWestResize: return "EastWestResize";
-    case Cursor::Type::NorthEastSouthWestResize: return "NorthEastSouthWestResize";
-    case Cursor::Type::NorthWestSouthEastResize: return "NorthWestSouthEastResize";
-    case Cursor::Type::ColumnResize: return "ColumnResize";
-    case Cursor::Type::RowResize: return "RowResize";
-    case Cursor::Type::MiddlePanning: return "MiddlePanning";
-    case Cursor::Type::EastPanning: return "EastPanning";
-    case Cursor::Type::NorthPanning: return "NorthPanning";
-    case Cursor::Type::NorthEastPanning: return "NorthEastPanning";
-    case Cursor::Type::NorthWestPanning: return "NorthWestPanning";
-    case Cursor::Type::SouthPanning: return "SouthPanning";
-    case Cursor::Type::SouthEastPanning: return "SouthEastPanning";
-    case Cursor::Type::SouthWestPanning: return "SouthWestPanning";
-    case Cursor::Type::WestPanning: return "WestPanning";
-    case Cursor::Type::Move: return "Move";
-    case Cursor::Type::VerticalText: return "VerticalText";
-    case Cursor::Type::Cell: return "Cell";
-    case Cursor::Type::ContextMenu: return "ContextMenu";
-    case Cursor::Type::Alias: return "Alias";
-    case Cursor::Type::Progress: return "Progress";
-    case Cursor::Type::NoDrop: return "NoDrop";
-    case Cursor::Type::Copy: return "Copy";
-    case Cursor::Type::None: return "None";
-    case Cursor::Type::NotAllowed: return "NotAllowed";
-    case Cursor::Type::ZoomIn: return "ZoomIn";
-    case Cursor::Type::ZoomOut: return "ZoomOut";
-    case Cursor::Type::Grab: return "Grab";
-    case Cursor::Type::Grabbing: return "Grabbing";
-    case Cursor::Type::Custom: return "Custom";
+    case Cursor::Type::Pointer: return "Pointer"_s;
+    case Cursor::Type::Cross: return "Cross"_s;
+    case Cursor::Type::Hand: return "Hand"_s;
+    case Cursor::Type::IBeam: return "IBeam"_s;
+    case Cursor::Type::Wait: return "Wait"_s;
+    case Cursor::Type::Help: return "Help"_s;
+    case Cursor::Type::EastResize: return "EastResize"_s;
+    case Cursor::Type::NorthResize: return "NorthResize"_s;
+    case Cursor::Type::NorthEastResize: return "NorthEastResize"_s;
+    case Cursor::Type::NorthWestResize: return "NorthWestResize"_s;
+    case Cursor::Type::SouthResize: return "SouthResize"_s;
+    case Cursor::Type::SouthEastResize: return "SouthEastResize"_s;
+    case Cursor::Type::SouthWestResize: return "SouthWestResize"_s;
+    case Cursor::Type::WestResize: return "WestResize"_s;
+    case Cursor::Type::NorthSouthResize: return "NorthSouthResize"_s;
+    case Cursor::Type::EastWestResize: return "EastWestResize"_s;
+    case Cursor::Type::NorthEastSouthWestResize: return "NorthEastSouthWestResize"_s;
+    case Cursor::Type::NorthWestSouthEastResize: return "NorthWestSouthEastResize"_s;
+    case Cursor::Type::ColumnResize: return "ColumnResize"_s;
+    case Cursor::Type::RowResize: return "RowResize"_s;
+    case Cursor::Type::MiddlePanning: return "MiddlePanning"_s;
+    case Cursor::Type::EastPanning: return "EastPanning"_s;
+    case Cursor::Type::NorthPanning: return "NorthPanning"_s;
+    case Cursor::Type::NorthEastPanning: return "NorthEastPanning"_s;
+    case Cursor::Type::NorthWestPanning: return "NorthWestPanning"_s;
+    case Cursor::Type::SouthPanning: return "SouthPanning"_s;
+    case Cursor::Type::SouthEastPanning: return "SouthEastPanning"_s;
+    case Cursor::Type::SouthWestPanning: return "SouthWestPanning"_s;
+    case Cursor::Type::WestPanning: return "WestPanning"_s;
+    case Cursor::Type::Move: return "Move"_s;
+    case Cursor::Type::VerticalText: return "VerticalText"_s;
+    case Cursor::Type::Cell: return "Cell"_s;
+    case Cursor::Type::ContextMenu: return "ContextMenu"_s;
+    case Cursor::Type::Alias: return "Alias"_s;
+    case Cursor::Type::Progress: return "Progress"_s;
+    case Cursor::Type::NoDrop: return "NoDrop"_s;
+    case Cursor::Type::Copy: return "Copy"_s;
+    case Cursor::Type::None: return "None"_s;
+    case Cursor::Type::NotAllowed: return "NotAllowed"_s;
+    case Cursor::Type::ZoomIn: return "ZoomIn"_s;
+    case Cursor::Type::ZoomOut: return "ZoomOut"_s;
+    case Cursor::Type::Grab: return "Grab"_s;
+    case Cursor::Type::Grabbing: return "Grabbing"_s;
+    case Cursor::Type::Custom: return "Custom"_s;
     case Cursor::Type::Invalid: break;
     }
 
     ASSERT_NOT_REACHED();
-    return "UNKNOWN";
+    return "UNKNOWN"_s;
 }
 #endif
 

@@ -50,6 +50,9 @@ class IOSPort(DevicePort):
         return VersionNameMap.map(self.host.platform).to_name(self._os_version, platform=IOSPort.port_name)
 
     def default_baseline_search_path(self, device_type=None):
+        if device_type is None:
+            device_type = self.DEVICE_TYPE
+
         wk_string = 'wk1'
         if self.get_option('webkit_test_runner'):
             wk_string = 'wk2'

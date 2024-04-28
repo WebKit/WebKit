@@ -304,7 +304,8 @@ static void replaceNonPreservedNewLineAndTabCharactersAndAppend(const InlineText
         auto isNewLineOrTabCharacter = [&] {
             if (needsUnicodeHandling) {
                 char32_t character;
-                U16_NEXT(textContent.characters16(), position, contentLength, character);
+                auto characters = textContent.span16();
+                U16_NEXT(characters, position, contentLength, character);
                 return character == newlineCharacter || character == tabCharacter;
             }
             auto isNewLineOrTab = textContent[position] == newlineCharacter || textContent[position] == tabCharacter;
@@ -706,6 +707,8 @@ bool InlineItemsBuilder::buildInlineItemListForTextFromBreakingPositionsCache(co
     auto intialSize = inlineItemList.size();
     auto contentLength = text.length();
     ASSERT(contentLength);
+
+    inlineItemList.reserveCapacity(inlineItemList.size() + breakingPositions->size());
     for (size_t index = 0; index < breakingPositions->size(); ++index) {
         auto startPosition = index ? (*breakingPositions)[index - 1] : 0;
         auto endPosition = (*breakingPositions)[index];
@@ -785,8 +788,9 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
                 // https://www.w3.org/TR/css-text-3/#white-space-phase-1
                 // For break-spaces, a soft wrap opportunity exists after every space and every tab.
                 // FIXME: if this turns out to be a perf hit with too many individual whitespace inline items, we should transition this logic to line breaking.
-                for (size_t i = 0; i < whitespaceContent->length; ++i)
-                    inlineItemList.append(InlineTextItem::createWhitespaceItem(inlineTextBox, currentPosition + i, 1, UBIDI_DEFAULT_LTR, whitespaceContent->isWordSeparator, { }));
+                inlineItemList.appendUsingFunctor(whitespaceContent->length, [&](size_t offset) {
+                    return InlineTextItem::createWhitespaceItem(inlineTextBox, currentPosition + offset, 1, UBIDI_DEFAULT_LTR, whitespaceContent->isWordSeparator, { });
+                });
             } else
                 inlineItemList.append(InlineTextItem::createWhitespaceItem(inlineTextBox, currentPosition, whitespaceContent->length, UBIDI_DEFAULT_LTR, whitespaceContent->isWordSeparator, { }));
             currentPosition += whitespaceContent->length;
@@ -808,8 +812,9 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
             }
             if (startPosition == endPosition)
                 return false;
-            for (auto index = startPosition; index < endPosition; ++index)
-                inlineItemList.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, index, 1, UBIDI_DEFAULT_LTR, { }, { }));
+            inlineItemList.appendUsingFunctor(endPosition - startPosition, [&](size_t offset) {
+                return InlineTextItem::createNonWhitespaceItem(inlineTextBox, startPosition + offset, 1, UBIDI_DEFAULT_LTR, { }, { });
+            });
             currentPosition = endPosition;
             return true;
         };
@@ -878,6 +883,9 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItemLi
 
 void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inlineItemList, const Document& document)
 {
+    if (inlineItemList.size() < TextBreakingPositionCache::minimumRequiredContentBreaks)
+        return;
+
     // Preserve breaking positions across content mutation.
     auto& securityOrigin = document.securityOrigin();
     auto& breakingPositionCache = TextBreakingPositionCache::singleton();

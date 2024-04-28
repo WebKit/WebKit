@@ -42,19 +42,19 @@ SuspendableWorkQueue::SuspendableWorkQueue(ASCIILiteral name, QOS qos, ShouldLog
     ASSERT(isMainThread());
 }
 
-const char* SuspendableWorkQueue::stateString(State state)
+ASCIILiteral SuspendableWorkQueue::stateString(State state)
 {
     switch (state) {
     case State::Running:
-        return "Running";
+        return "Running"_s;
     case State::WillSuspend:
-        return "WillSuspend";
+        return "WillSuspend"_s;
     case State::Suspended:
-        return "Suspended";
+        return "Suspended"_s;
     }
 
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return { };
 }
 
 void SuspendableWorkQueue::suspend(Function<void()>&& suspendFunction, CompletionHandler<void()>&& completionHandler)
@@ -62,7 +62,7 @@ void SuspendableWorkQueue::suspend(Function<void()>&& suspendFunction, Completio
     ASSERT(isMainThread());
     Locker suspensionLocker { m_suspensionLock };
 
-    RELEASE_LOG_IF(m_shouldLog, SuspendableWorkQueue, "%p - SuspendableWorkQueue::suspend current state %" PUBLIC_LOG_STRING, this, stateString(m_state));
+    RELEASE_LOG_IF(m_shouldLog, SuspendableWorkQueue, "%p - SuspendableWorkQueue::suspend current state %" PUBLIC_LOG_STRING, this, stateString(m_state).characters());
     if (m_state == State::Suspended)
         return completionHandler();
 
@@ -84,7 +84,7 @@ void SuspendableWorkQueue::resume()
     ASSERT(isMainThread());
     Locker suspensionLocker { m_suspensionLock };
 
-    RELEASE_LOG_IF(m_shouldLog, SuspendableWorkQueue, "%p - SuspendableWorkQueue::resume current state %" PUBLIC_LOG_STRING, this, stateString(m_state));
+    RELEASE_LOG_IF(m_shouldLog, SuspendableWorkQueue, "%p - SuspendableWorkQueue::resume current state %" PUBLIC_LOG_STRING, this, stateString(m_state).characters());
     if (m_state == State::Running)
         return;
 

@@ -47,23 +47,23 @@ void ArgumentCoder<GRefPtr<GVariant>>::encode(Encoder& encoder, const GRefPtr<GV
 
 std::optional<GRefPtr<GVariant>> ArgumentCoder<GRefPtr<GVariant>>::decode(Decoder& decoder)
 {
-    CString variantTypeString;
-    if (!decoder.decode(variantTypeString))
+    auto variantTypeString = decoder.decode<CString>();
+    if (UNLIKELY(!variantTypeString))
         return std::nullopt;
 
-    if (variantTypeString.isNull())
+    if (variantTypeString->isNull())
         return GRefPtr<GVariant>();
 
-    if (!g_variant_type_string_is_valid(variantTypeString.data()))
+    if (!g_variant_type_string_is_valid(variantTypeString->data()))
         return std::nullopt;
 
-    std::span<const uint8_t> data;
-    if (!decoder.decode(data))
+    auto data = decoder.decode<std::span<const uint8_t>>();
+    if (UNLIKELY(!data))
         return std::nullopt;
 
-    GUniquePtr<GVariantType> variantType(g_variant_type_new(variantTypeString.data()));
-    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(data.data(), data.size()));
-    return std::optional<GRefPtr<GVariant> >(g_variant_new_from_bytes(variantType.get(), bytes.get(), FALSE));
+    GUniquePtr<GVariantType> variantType(g_variant_type_new(variantTypeString->data()));
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(data->data(), data->size()));
+    return g_variant_new_from_bytes(variantType.get(), bytes.get(), FALSE);
 }
 
 void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, const GRefPtr<GTlsCertificate>& certificate)
@@ -109,7 +109,7 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
 {
     std::optional<uint32_t> chainLength;
     decoder >> chainLength;
-    if (!chainLength)
+    if (UNLIKELY(!chainLength))
         return std::nullopt;
 
     if (!*chainLength)
@@ -118,7 +118,7 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
 #if GLIB_CHECK_VERSION(2, 69, 0)
     std::optional<std::span<const uint8_t>> privateKeyData;
     decoder >> privateKeyData;
-    if (!privateKeyData)
+    if (UNLIKELY(!privateKeyData))
         return std::nullopt;
     GRefPtr<GByteArray> privateKey;
     if (privateKeyData->size()) {
@@ -128,7 +128,7 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
 
     std::optional<CString> privateKeyPKCS11Uri;
     decoder >> privateKeyPKCS11Uri;
-    if (!privateKeyPKCS11Uri)
+    if (UNLIKELY(!privateKeyPKCS11Uri))
         return std::nullopt;
 #endif
 
@@ -138,7 +138,7 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
     for (uint32_t i = 0; i < *chainLength; i++) {
         std::optional<std::span<const uint8_t>> certificateDataReference;
         decoder >> certificateDataReference;
-        if (!certificateDataReference)
+        if (UNLIKELY(!certificateDataReference))
             return std::nullopt;
 
         GRefPtr<GByteArray> certificateData = adoptGRef(g_byte_array_sized_new(certificateDataReference->size()));
@@ -167,7 +167,7 @@ void ArgumentCoder<GTlsCertificateFlags>::encode(Encoder& encoder, GTlsCertifica
 std::optional<GTlsCertificateFlags> ArgumentCoder<GTlsCertificateFlags>::decode(Decoder& decoder)
 {
     auto flags = decoder.decode<uint32_t>();
-    if (!flags)
+    if (UNLIKELY(!flags))
         return std::nullopt;
     return static_cast<GTlsCertificateFlags>(*flags);
 }
@@ -192,19 +192,19 @@ void ArgumentCoder<GRefPtr<GUnixFDList>>::encode(Encoder& encoder, const GRefPtr
 std::optional<GRefPtr<GUnixFDList>> ArgumentCoder<GRefPtr<GUnixFDList>>::decode(Decoder& decoder)
 {
     auto hasObject = decoder.decode<bool>();
-    if (!hasObject)
+    if (UNLIKELY(!hasObject))
         return std::nullopt;
     if (!*hasObject)
         return GRefPtr<GUnixFDList> { };
 
     auto attachments = decoder.decode<Vector<UnixFileDescriptor>>();
-    if (!attachments)
+    if (UNLIKELY(!attachments))
         return std::nullopt;
 
     GRefPtr<GUnixFDList> fdList = adoptGRef(g_unix_fd_list_new());
     for (auto& attachment : *attachments) {
         int ret = g_unix_fd_list_append(fdList.get(), attachment.value(), nullptr);
-        if (ret == -1)
+        if (UNLIKELY(ret == -1))
             return std::nullopt;
     }
     return fdList;

@@ -36,30 +36,29 @@ namespace WTF::Unicode {
 
 static constexpr char32_t sentinelCodePoint = U_SENTINEL;
 
-bool convertLatin1ToUTF8(const LChar** sourceStart, const LChar* sourceEnd, char** targetStart, const char* targetEnd)
+bool convertLatin1ToUTF8(std::span<const LChar> source, char** targetStart, const char* targetEnd)
 {
-    const LChar* source;
     char* target = *targetStart;
     int32_t i = 0;
-    for (source = *sourceStart; source < sourceEnd; ++source) {
+    for (auto sourceCharacter : source) {
         UBool sawError = false;
         // Work around bug in either Windows compiler or old version of ICU, where passing a uint8_t to
         // U8_APPEND warns, by converting from uint8_t to a wider type.
-        char32_t character = *source;
+        char32_t character = sourceCharacter;
         U8_APPEND(target, i, targetEnd - *targetStart, character, sawError);
         ASSERT_WITH_MESSAGE(!sawError, "UTF8 destination buffer was not big enough");
         if (sawError)
             return false;
     }
-    *sourceStart = source;
     *targetStart = target + i;
     return true;
 }
 
-ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sourceEnd, char** targetStart, const char* targetEnd, bool strict)
+ConversionResult convertUTF16ToUTF8(std::span<const UChar>& sourceSpan, char** targetStart, const char* targetEnd, bool strict)
 {
     auto result = ConversionResult::Success;
-    const UChar* source = *sourceStart;
+    auto* source = sourceSpan.data();
+    auto* sourceEnd = sourceSpan.data() + sourceSpan.size();
     char* target = *targetStart;
     UBool sawError = false;
     int32_t i = 0;
@@ -85,7 +84,7 @@ ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sour
         }
         source += j;
     }
-    *sourceStart = source;
+    sourceSpan = { source, sourceEnd };
     *targetStart = target + i;
     return result;
 }

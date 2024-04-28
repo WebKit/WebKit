@@ -121,11 +121,9 @@ enum class AccessibilityRole {
     ApplicationAlert,
     ApplicationAlertDialog,
     ApplicationDialog,
-    ApplicationGroup,
     ApplicationLog,
     ApplicationMarquee,
     ApplicationStatus,
-    ApplicationTextGroup,
     ApplicationTimer,
     Audio,
     Blockquote,
@@ -274,16 +272,12 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "ApplicationAlertDialog"_s;
     case AccessibilityRole::ApplicationDialog:
         return "ApplicationDialog"_s;
-    case AccessibilityRole::ApplicationGroup:
-        return "ApplicationGroup"_s;
     case AccessibilityRole::ApplicationLog:
         return "ApplicationLog"_s;
     case AccessibilityRole::ApplicationMarquee:
         return "ApplicationMarquee"_s;
     case AccessibilityRole::ApplicationStatus:
         return "ApplicationStatus"_s;
-    case AccessibilityRole::ApplicationTextGroup:
-        return "ApplicationTextGroup"_s;
     case AccessibilityRole::ApplicationTimer:
         return "ApplicationTimer"_s;
     case AccessibilityRole::Audio:
@@ -1282,14 +1276,9 @@ public:
 
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const = 0;
     virtual VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const = 0;
-    virtual VisiblePositionRange positionOfLeftWord(const VisiblePosition&) const = 0;
-    virtual VisiblePositionRange positionOfRightWord(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange leftLineVisiblePositionRange(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange rightLineVisiblePositionRange(const VisiblePosition&) const = 0;
-    virtual VisiblePositionRange sentenceForPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePositionRange paragraphForPosition(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePositionRange visiblePositionRangeForRange(const CharacterRange&) const = 0;
     virtual VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const = 0;
 
     virtual std::optional<SimpleRange> rangeForCharacterRange(const CharacterRange&) const = 0;
@@ -1305,13 +1294,9 @@ public:
     virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const = 0;
 
     virtual VisiblePosition visiblePositionForPoint(const IntPoint&) const = 0;
+    virtual VisiblePosition visiblePositionForIndex(unsigned, bool /* lastIndexOK */) const = 0;
     virtual VisiblePosition nextLineEndPosition(const VisiblePosition&) const = 0;
     virtual VisiblePosition previousLineStartPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePosition nextSentenceEndPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePosition previousSentenceStartPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePosition nextParagraphEndPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePosition previousParagraphStartPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePosition visiblePositionForIndex(unsigned, bool /*lastIndexOK */) const = 0;
 
     virtual VisiblePosition visiblePositionForIndex(int) const = 0;
     virtual int indexForVisiblePosition(const VisiblePosition&) const = 0;
@@ -1335,7 +1320,8 @@ public:
     virtual AutoFillButtonType valueAutofillButtonType() const = 0;
 
     // Used by an ARIA tree to get all its rows.
-    virtual void ariaTreeRows(AccessibilityChildrenVector&) = 0;
+    // FIXME: this should be folded into rows().
+    virtual AccessibilityChildrenVector ariaTreeRows() = 0;
     // Used by an ARIA tree item to get only its content, and not its child tree items and groups.
     AccessibilityChildrenVector ariaTreeItemContent();
 

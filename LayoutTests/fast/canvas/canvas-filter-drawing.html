@@ -1,0 +1,25 @@
+<meta name="fuzzy" content="maxDifference=0-3; totalPixels=0-4920" />
+<style>
+     canvas {
+         width: 350px;
+         height: 200px;
+     }
+ </style>
+ <body>
+    <h3>This tests the filter is drawn to the canvas.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 350;
+        canvas.height = 200;
+
+        ctx.fillStyle = 'green';
+
+        ctx.filter = 'drop-shadow(10px 10px 0 #666)';
+        ctx.fillRect(20, 20, 100, 100);
+
+        ctx.filter = 'blur(5px)';
+        ctx.fillRect(200, 20, 100, 100);
+    </script>
+</body>

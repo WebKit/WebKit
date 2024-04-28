@@ -131,7 +131,7 @@ RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const Gr
         alphaType = kOpaque_SkAlphaType;
     else if (sourceContextAttributes.premultipliedAlpha)
         alphaType = kPremul_SkAlphaType;
-    auto imageInfo = SkImageInfo::Make(imageSize.width(), imageSize.height(), kRGBA_8888_SkColorType, alphaType);
+    auto imageInfo = SkImageInfo::Make(imageSize.width(), imageSize.height(), kRGBA_8888_SkColorType, alphaType, SkColorSpace::MakeSRGB());
 
     Ref protectedPixelBuffer = pixelBuffer;
     SkPixmap pixmap(imageInfo, pixelBuffer->bytes().data(), imageInfo.minRowBytes());

@@ -30,6 +30,7 @@
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+Percent.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "Length.h"
 #include <optional>
 #include <wtf/RefPtr.h>
 

@@ -84,6 +84,7 @@ bool IsOutputGLSL(ShShaderOutput output);
 bool IsOutputHLSL(ShShaderOutput output);
 bool IsOutputSPIRV(ShShaderOutput output);
 bool IsOutputMSL(ShShaderOutput output);
+bool IsOutputWGSL(ShShaderOutput output);
 
 bool IsInShaderStorageBlock(TIntermTyped *node);
 

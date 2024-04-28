@@ -589,7 +589,7 @@ public:
     const Logger& logger() const final { return *m_logger.get(); }
     Ref<Logger> protectedLogger() const;
     const void* logIdentifier() const final { return m_logIdentifier; }
-    const char* logClassName() const final { return "HTMLMediaElement"; }
+    ASCIILiteral logClassName() const final { return "HTMLMediaElement"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
 
@@ -761,7 +761,6 @@ private:
     void willStopBeingFullscreenElement() override;
 
     // ActiveDOMObject API.
-    const char* activeDOMObjectName() const override;
     void suspend(ReasonForSuspension) override;
     void resume() override;
     void stop() override;
@@ -1076,6 +1075,8 @@ private:
         bool paused;
     };
     void applyConfiguration(const RemotePlaybackConfiguration&);
+
+    bool videoUsesElementFullscreen() const;
 
 #if !RELEASE_LOG_DISABLED
     const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }

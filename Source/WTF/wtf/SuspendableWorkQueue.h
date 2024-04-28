@@ -54,7 +54,7 @@ private:
     using WorkQueue::runLoop;
 #endif
     enum class State : uint8_t { Running, WillSuspend, Suspended };
-    static const char* stateString(State);
+    static ASCIILiteral stateString(State);
 
     Lock m_suspensionLock;
     Condition m_suspensionCondition;

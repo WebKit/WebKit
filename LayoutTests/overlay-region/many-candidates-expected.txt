@@ -270,7 +270,7 @@
                                                               (layer bounds [x: 0 y: 0 width: 90 height: 6])
                                                               (layer position [x: 48 y: 48]))))))))))))))))))))))))))
             (view [class: UIView]
-              (layer bounds [x: 0 y: 0 width: 800 height: 600])
+              (layer bounds [x: 0 y: 0 width: 0 height: 0])
               (layer position [x: 400 y: 400]))
             (view [class: _UILayerHostView]
               (layer bounds [x: 0 y: 0 width: 0 height: 0]))))

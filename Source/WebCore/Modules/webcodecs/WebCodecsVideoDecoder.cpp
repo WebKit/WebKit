@@ -351,11 +351,6 @@ void WebCodecsVideoDecoder::stop()
     m_internalDecoder = nullptr;
 }
 
-const char* WebCodecsVideoDecoder::activeDOMObjectName() const
-{
-    return "VideoDecoder";
-}
-
 bool WebCodecsVideoDecoder::virtualHasPendingActivity() const
 {
     return m_state == WebCodecsCodecState::Configured && (m_decodeQueueSize || m_beingDecodedQueueSize || m_isFlushing);

@@ -64,11 +64,6 @@ IDBIndex::~IDBIndex()
     ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore.transaction().database().originThread()));
 }
 
-const char* IDBIndex::activeDOMObjectName() const
-{
-    return "IDBIndex";
-}
-
 bool IDBIndex::virtualHasPendingActivity() const
 {
     return m_objectStore.hasPendingActivity();

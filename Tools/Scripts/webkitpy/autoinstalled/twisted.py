@@ -33,10 +33,8 @@ if sys.version_info >= (3, 0):
 
     if sys.version_info >= (3, 11):
         AutoInstall.install(Package('twisted', Version(22, 10, 0), pypi_name='Twisted', implicit_deps=['pyparsing']))
-        AutoInstall.install(Package('OpenSSL', Version(23, 2, 0), pypi_name='pyOpenSSL'))
     else:
         AutoInstall.install(Package('twisted', Version(20, 3, 0), pypi_name='Twisted', implicit_deps=['pyparsing']))
-        AutoInstall.install(Package('OpenSSL', Version(20, 0, 0), pypi_name='pyOpenSSL'))
 
     # There are no prebuilt binaries for arm-32 of 'bcrypt' and building it requires cargo/rust
     # Since this dep is not really needed for the current arm-32 bots we skip it instead of
@@ -50,9 +48,7 @@ if sys.version_info >= (3, 0):
 else:
     AutoInstall.install(Package('hyperlink', Version(17, 3, 0), pypi_name='hyperlink'))
     AutoInstall.install(Package('incremental', Version(17, 5, 0), pypi_name='incremental'))
-    AutoInstall.install(Package('twisted', Version(17, 5, 0), pypi_name='Twisted', implicit_deps=['pyparsing']))
-
-    AutoInstall.install(Package('OpenSSL', Version(17, 2, 0), pypi_name='pyOpenSSL'))
+    AutoInstall.install(Package('twisted', Version(17, 5, 0), pypi_name='Twisted', implicit_deps=['OpenSSL', 'pyparsing']))
     AutoInstall.install(Package('pycparser', Version(2, 18)))
 
 sys.modules[__name__] = __import__('twisted')

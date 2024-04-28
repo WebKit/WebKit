@@ -61,7 +61,7 @@ private:
     void playbackStateChanged(MediaSessionPlaybackState) final;
     void trackIdentifierChanged(const String&) final;
 
-    const char* logClassName() const { return "MockMediaSessionCoordinator"; }
+    ASCIILiteral logClassName() const { return "MockMediaSessionCoordinator"_s; }
     WTFLogChannel& logChannel() const;
 
     std::optional<Exception> result() const;

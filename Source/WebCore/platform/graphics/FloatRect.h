@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc.  All rights reserved.
  * Copyright (C) 2005 Nokia.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -308,6 +308,13 @@ constexpr FloatRect operator+(const FloatRect& a, const FloatRect& b)
         a.width() + b.width(),
         a.height() + b.height(),
     };
+}
+
+inline FloatRect operator+(const FloatRect& a, const FloatBoxExtent& b)
+{
+    FloatRect c = a;
+    c.expand(b);
+    return c;
 }
 
 inline bool areEssentiallyEqual(const FloatRect& a, const FloatRect& b)

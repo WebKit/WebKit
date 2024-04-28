@@ -148,12 +148,20 @@ AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
     if (!parentTable || !parentTable->isExposable())
         return defaultRole;
 
+    auto cellRole = parentTable->hasGridAriaRole() ? AccessibilityRole::GridCell : AccessibilityRole::Cell;
+    // It's important that we temporarily set our m_role because:
+    // 1. isColumnHeader() and isRowHeader() call rowIndexRange() and columnIndexRange(), in turn calling
+    //    ensureIndexesUpToDate()
+    // 2. This causes our parentTable() to addChildren(), which causes the rows to addChildren(), then causing cells
+    //    (like `this`) to addChildren(). But it's possible we don't have an m_role yet, meaning `this` cell will be
+    //    erroneously ignored (because it is AccessibilityRole::Unknown until we return from this function to set it).
+    // 3. This causes the AX tree to be wrong.
+    SetForScope temporaryRole(m_role, m_role == AccessibilityRole::Unknown ? cellRole : m_role);
+
     if (isColumnHeader())
         return AccessibilityRole::ColumnHeader;
-    if (isRowHeader())
-        return AccessibilityRole::RowHeader;
 
-    return parentTable->hasGridAriaRole() ? AccessibilityRole::GridCell : AccessibilityRole::Cell;
+    return isRowHeader() ? AccessibilityRole::RowHeader : cellRole;
 }
     
 bool AccessibilityTableCell::isTableHeaderCell() const
@@ -190,14 +198,14 @@ bool AccessibilityTableCell::isColumnHeader() const
     // We are in a situation after checking the scope attribute.
     // It is an attempt to resolve the type of th element without support in the specification.
     // Checking tableTag and tbodyTag allows to check the case of direct row placement in the table and lets stop the loop at the table level.
-    for (Node* parentNode = node(); parentNode; parentNode = parentNode->parentNode()) {
-        if (parentNode->hasTagName(theadTag))
+    for (RefPtr ancestor = node()->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+        if (ancestor->hasTagName(theadTag))
             return true;
-        if (parentNode->hasTagName(tfootTag))
+        if (ancestor->hasTagName(tfootTag))
             return false;
-        if (parentNode->hasTagName(tableTag) || parentNode->hasTagName(tbodyTag)) {
-            auto rowRange = rowIndexRange();
-            if (!rowRange.first)
+        if (ancestor->hasTagName(tableTag) || ancestor->hasTagName(tbodyTag)) {
+            // If we're in the first row, we're a column header.
+            if (!rowIndexRange().first)
                 return true;
             return false;
         }
@@ -218,14 +226,15 @@ bool AccessibilityTableCell::isRowHeader() const
     // We are in a situation after checking the scope attribute.
     // It is an attempt to resolve the type of th element without support in the specification.
     // Checking tableTag allows to check the case of direct row placement in the table and lets stop the loop at the table level.
-    for (Node* parentNode = node(); parentNode; parentNode = parentNode->parentNode()) {
-        if (parentNode->hasTagName(tfootTag) || parentNode->hasTagName(tbodyTag) || parentNode->hasTagName(tableTag)) {
-            auto colRange = columnIndexRange();
-            if (!colRange.first)
+    for (RefPtr ancestor = node()->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+        if (ancestor->hasTagName(tfootTag) || ancestor->hasTagName(tbodyTag) || ancestor->hasTagName(tableTag)) {
+            // If we're in the first column, we're a row header.
+            if (!columnIndexRange().first)
                 return true;
             return false;
         }
-        if (parentNode->hasTagName(theadTag))
+
+        if (ancestor->hasTagName(theadTag))
             return false;
     }
     return false;

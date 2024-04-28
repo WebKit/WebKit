@@ -142,20 +142,20 @@ const uint8_t kBogusChallenge[] = {
 
 // String key values for CTAP request optional parameters and
 // AuthenticatorGetInfo response.
-const char kResidentKeyMapKey[] = "rk";
-const char kUserVerificationMapKey[] = "uv";
-const char kUserPresenceMapKey[] = "up";
-const char kClientPinMapKey[] = "clientPin";
-const char kPlatformDeviceMapKey[] = "plat";
-const char kEntityIdMapKey[] = "id";
+constexpr auto kResidentKeyMapKey = "rk"_s;
+constexpr auto kUserVerificationMapKey = "uv"_s;
+constexpr auto kUserPresenceMapKey = "up"_s;
+constexpr auto kClientPinMapKey = "clientPin"_s;
+constexpr auto kPlatformDeviceMapKey = "plat"_s;
+constexpr auto kEntityIdMapKey = "id"_s;
 constexpr auto kEntityNameMapKey = "name"_s;
 constexpr auto kDisplayNameMapKey = "displayName"_s;
-const char kIconUrlMapKey[] = "icon";
-const char kCredentialTypeMapKey[] = "type";
-const char kCredentialAlgorithmMapKey[] = "alg";
+constexpr auto kIconUrlMapKey = "icon"_s;
+constexpr auto kCredentialTypeMapKey = "type"_s;
+constexpr auto kCredentialAlgorithmMapKey = "alg"_s;
 // Keys for storing credential descriptor information in CBOR map.
-const char kCredentialIdKey[] = "id";
-const char kCredentialTypeKey[] = "type";
+constexpr auto kCredentialIdKey = "id"_s;
+constexpr auto kCredentialTypeKey = "type"_s;
 
 // HID transport specific constants.
 const size_t kHidPacketSize = 64;
@@ -208,15 +208,15 @@ enum class U2fApduInstruction : uint8_t {
 
 // String key values for attestation object as a response to MakeCredential
 // request.
-const char kFormatKey[] = "fmt";
-const char kAttestationStatementKey[] = "attStmt";
-const char kAuthDataKey[] = "authData";
+constexpr auto kFormatKey = "fmt"_s;
+constexpr auto kAttestationStatementKey = "attStmt"_s;
+constexpr auto kAuthDataKey = "authData"_s;
 
 // String representation of public key credential enum.
 // https://w3c.github.io/webauthn/#credentialType
-const char kPublicKey[] = "public-key";
+constexpr auto kPublicKey = "public-key"_s;
 
-const char* publicKeyCredentialTypeToString(WebCore::PublicKeyCredentialType);
+ASCIILiteral publicKeyCredentialTypeToString(WebCore::PublicKeyCredentialType);
 
 // FIXME: Add url to the official spec once it's standardized.
 constexpr auto kCtap2Version = "FIDO_2_0"_s;

@@ -254,11 +254,6 @@ ScriptExecutionContext* ServiceWorkerRegistration::scriptExecutionContext() cons
     return ActiveDOMObject::scriptExecutionContext();
 }
 
-const char* ServiceWorkerRegistration::activeDOMObjectName() const
-{
-    return "ServiceWorkerRegistration";
-}
-
 void ServiceWorkerRegistration::stop()
 {
     removeAllEventListeners();

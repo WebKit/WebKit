@@ -85,12 +85,6 @@ public:
     size_t memoryCostOfCIImage() const;
 #endif
 
-#if USE(SKIA)
-    SkCanvas* beginRecording();
-    void finishRecording();
-    size_t memoryCostOfSkPicture() const;
-#endif
-
 private:
     FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&, ImageBufferAllocator&);
     FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&, ImageBufferAllocator&);
@@ -101,10 +95,6 @@ private:
 
 #if USE(CORE_IMAGE)
     ImageBuffer* imageBufferFromCIImage();
-#endif
-
-#if USE(SKIA)
-    ImageBuffer* imageBufferFromSkPicture();
 #endif
 
     bool requiresPixelBufferColorSpaceConversion(std::optional<DestinationColorSpace>) const;
@@ -124,11 +114,6 @@ private:
 
 #if USE(CORE_IMAGE)
     RetainPtr<CIImage> m_ciImage;
-#endif
-
-#if USE(SKIA)
-    SkPictureRecorder m_pictureRecorder;
-    sk_sp<SkPicture> m_skPicture;
 #endif
 
     ImageBufferAllocator& m_allocator;

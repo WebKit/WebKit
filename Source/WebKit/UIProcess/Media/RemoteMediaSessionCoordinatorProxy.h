@@ -86,7 +86,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     const WTF::Logger& logger() const { return m_logger; }
     const void* logIdentifier() const { return m_logIdentifier; }
-    const char* logClassName() const { return "RemoteMediaSessionCoordinatorProxy"; }
+    ASCIILiteral logClassName() const { return "RemoteMediaSessionCoordinatorProxy"_s; }
     WTFLogChannel& logChannel() const;
 #endif
 

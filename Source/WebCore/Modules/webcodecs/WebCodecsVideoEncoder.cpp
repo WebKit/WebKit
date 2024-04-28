@@ -413,11 +413,6 @@ void WebCodecsVideoEncoder::stop()
     // FIXME: Implement.
 }
 
-const char* WebCodecsVideoEncoder::activeDOMObjectName() const
-{
-    return "VideoEncoder";
-}
-
 bool WebCodecsVideoEncoder::virtualHasPendingActivity() const
 {
     return m_state == WebCodecsCodecState::Configured && (m_encodeQueueSize || m_beingEncodedQueueSize || m_isFlushing);

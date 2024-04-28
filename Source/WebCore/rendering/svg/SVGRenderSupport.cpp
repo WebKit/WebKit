@@ -276,7 +276,7 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
 
         if (layoutSizeChanged) {
             // When selfNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths
-            if (auto* element = dynamicDowncast<SVGElement>(*child.node()); element && element->hasRelativeLengths()) {
+            if (RefPtr element = dynamicDowncast<SVGElement>(child.node()); element && element->hasRelativeLengths()) {
                 // When the layout size changed and when using relative values tell the LegacyRenderSVGShape to update its shape object
                 if (CheckedPtr shape = dynamicDowncast<LegacyRenderSVGShape>(child))
                     shape->setNeedsShapeUpdate();
@@ -447,7 +447,7 @@ bool SVGRenderSupport::pointInClippingArea(const RenderElement& renderer, const 
 
 void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const RenderStyle& style, const RenderElement& renderer)
 {
-    RefPtr element = dynamicDowncast<SVGElement>(renderer.element());
+    auto element = dynamicDowncast<SVGElement>(renderer.protectedElement());
     if (!element) {
         ASSERT_NOT_REACHED();
         return;
@@ -507,15 +507,15 @@ bool SVGRenderSupport::isolatesBlending(const RenderStyle& style)
 
 void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderElement& renderer)
 {
-    ASSERT(renderer.element());
-    ASSERT(renderer.element()->isSVGElement());
-
-    for (auto& ancestor : ancestorsOfType<SVGGraphicsElement>(*renderer.protectedElement())) {
-        auto* style = ancestor.computedStyle();
+    RefPtr element = renderer.element();
+    ASSERT(element);
+    ASSERT(element->isSVGElement());
+    for (Ref ancestor : ancestorsOfType<SVGGraphicsElement>(*element)) {
+        auto* style = ancestor->computedStyle();
         if (!style || !isolatesBlending(*style))
             continue;
         if (style->hasPositionedMask())
-            ancestor.setShouldIsolateBlending(renderer.style().hasBlendMode());
+            ancestor->setShouldIsolateBlending(renderer.style().hasBlendMode());
         return;
     }
 }

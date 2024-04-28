@@ -2,5 +2,5 @@
 Test CanvasFilter() object
 Actual output:
 
-FAIL Test CanvasFilter() object assert_true: ctx.filter == 'none' expected true got false
+FAIL Test CanvasFilter() object Can't find variable: CanvasFilter
 

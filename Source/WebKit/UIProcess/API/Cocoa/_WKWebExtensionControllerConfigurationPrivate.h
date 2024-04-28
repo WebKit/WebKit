@@ -25,9 +25,6 @@
 
 #import <WebKit/_WKWebExtensionControllerConfiguration.h>
 
-// FIXME: Remove once https://commits.webkit.org/275999@main is in the SDK.
-#define HAVE_UPDATED_WEB_EXTENSION_CONTROLLER_STORAGE_DIRECTORY_PATH 1
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKWebExtensionControllerConfiguration ()

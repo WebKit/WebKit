@@ -24,6 +24,14 @@
 #    include "compiler/translator/msl/TranslatorMSL.h"
 #endif  // ANGLE_ENABLE_METAL
 
+#ifdef ANGLE_ENABLE_WEBGPU
+#    include "compiler/translator/msl/TranslatorMSL.h"
+#endif  // ANGLE_ENABLE_METAL
+
+#ifdef ANGLE_ENABLE_WGPU
+#    include "compiler/translator/wgsl/TranslatorWGSL.h"
+#endif
+
 #include "compiler/translator/util.h"
 
 namespace sh
@@ -70,6 +78,13 @@ TCompiler *ConstructCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput 
         return new TranslatorMSL(type, spec, output);
     }
 #endif  // ANGLE_ENABLE_METAL
+
+#ifdef ANGLE_ENABLE_WGPU
+    if (IsOutputWGSL(output))
+    {
+        return new TranslatorWGSL(type, spec, output);
+    }
+#endif  // ANGLE_ENABLE_WGPU
 
     // Unsupported compiler or unknown format. Return nullptr per the sh::ConstructCompiler API.
     return nullptr;

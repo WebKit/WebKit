@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-bool isGLFenceSyncSupported()
+bool GLFence::isSupported()
 {
     static std::once_flag onceFlag;
     static bool supported = false;
@@ -51,14 +51,15 @@ bool isGLFenceSyncSupported()
     return supported;
 }
 
-std::unique_ptr<GLFence> GLFence::create()
+std::unique_ptr<GLFence> GLFence::create(ShouldFlush shouldFlush)
 {
     if (!GLContextWrapper::currentContext())
         return nullptr;
 
-    if (isGLFenceSyncSupported()) {
+    if (isSupported()) {
         if (auto* sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0)) {
-            glFlush();
+            if (shouldFlush == ShouldFlush::Yes)
+                glFlush();
             return makeUnique<GLFence>(sync);
         }
         return nullptr;

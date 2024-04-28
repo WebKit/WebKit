@@ -107,7 +107,7 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
     {
         ANGLE_TRY(executableVk->warmUpPipelineCache(
             contextVk->getRenderer(), contextVk->pipelineRobustness(),
-            contextVk->pipelineProtectedAccess(), vk::GraphicsPipelineSubset::Complete, nullptr));
+            contextVk->pipelineProtectedAccess(), vk::GraphicsPipelineSubset::Complete));
     }
 
     return result;

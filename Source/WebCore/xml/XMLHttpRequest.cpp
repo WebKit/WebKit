@@ -1163,11 +1163,6 @@ void XMLHttpRequest::didReachTimeout()
     dispatchErrorEvents(eventNames().timeoutEvent);
 }
 
-const char* XMLHttpRequest::activeDOMObjectName() const
-{
-    return "XMLHttpRequest";
-}
-
 void XMLHttpRequest::suspend(ReasonForSuspension)
 {
     m_progressEventThrottle.suspend();

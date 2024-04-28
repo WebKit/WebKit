@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NavigationDestination.h"
 
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

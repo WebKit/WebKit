@@ -113,6 +113,7 @@ public:
     void willStartLiveResize() final { };
     void didEndLiveResize() final { };
     IntSize tileSize() const final { return m_tileGrid.tilePixelSize(); }
+    FloatRect rectForTile(TileIndex) const { return { }; }
     void revalidateTiles() final { }
     IntRect tileGridExtent() const final { return { }; }
     void setScrollingPerformanceTestingEnabled(bool flag) final { }

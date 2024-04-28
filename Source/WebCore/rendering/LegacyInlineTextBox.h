@@ -85,7 +85,7 @@ public:
 
 #if ENABLE(TREE_DEBUGGING)
     void outputLineBox(WTF::TextStream&, bool mark, int depth) const final;
-    const char* boxName() const final;
+    ASCIILiteral boxName() const final;
 #endif
 
 private:

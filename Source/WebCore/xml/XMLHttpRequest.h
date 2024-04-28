@@ -154,7 +154,6 @@ private:
     void suspend(ReasonForSuspension) override;
     void resume() override;
     void stop() override;
-    const char* activeDOMObjectName() const override;
     bool virtualHasPendingActivity() const final;
 
     void refEventTarget() override { ref(); }

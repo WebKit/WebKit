@@ -171,8 +171,8 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                 }
                 case NonSemanticClspvReflectionPropertyRequiredWorkgroupSize:
                 {
-                    reflectionData
-                        .kernelCompileWGS[reflectionData.spvStrLookup[spvInstr.words[5]]] = {
+                    reflectionData.kernelCompileWorkgroupSize
+                        [reflectionData.spvStrLookup[spvInstr.words[5]]] = {
                         reflectionData.spvIntLookup[spvInstr.words[6]],
                         reflectionData.spvIntLookup[spvInstr.words[7]],
                         reflectionData.spvIntLookup[spvInstr.words[8]]};

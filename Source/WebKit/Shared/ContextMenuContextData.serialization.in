@@ -30,7 +30,7 @@ class WebKit::ContextMenuContextData {
     String selectedText();
 #if ENABLE(SERVICE_CONTROLS)
     std::optional<WebCore::ShareableBitmapHandle> createControlledImageReadOnlyHandle();
-    Vector<uint8_t> controlledSelectionData();
+    WebCore::AttributedString controlledSelection();
     Vector<String> selectedTelephoneNumbers();
     bool selectionIsEditable();
     WebCore::IntRect controlledImageBounds();

@@ -59,8 +59,6 @@ class ShareableBitmapHandle;
 
 namespace WebKit {
 
-using LayerHostingContextID = uint32_t;
-
 class LayerHostingContext;
 class WebPage;
 class PlaybackSessionInterfaceContext;
@@ -208,7 +206,7 @@ protected:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const;
     const void* logIdentifier() const;
-    const char* logClassName() const;
+    ASCIILiteral logClassName() const;
     WTFLogChannel& logChannel() const;
 #endif
 
@@ -220,7 +218,6 @@ protected:
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     WeakPtr<WebCore::HTMLVideoElement> m_videoElementInPictureInPicture;
     bool m_currentlyInFullscreen { false };
-    WTF::Function<void(LayerHostingContextID, const WebCore::FloatSize&)> m_setupFullscreenHandler;
 };
 
 } // namespace WebKit

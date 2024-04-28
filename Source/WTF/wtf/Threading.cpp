@@ -202,8 +202,9 @@ const char* Thread::normalizeThreadName(const char* threadName)
     if (result.length() > kLinuxThreadNameLimit)
         result = result.right(kLinuxThreadNameLimit);
 #endif
-    ASSERT(result.characters8()[result.length()] == '\0');
-    return reinterpret_cast<const char*>(result.characters8());
+    auto characters = result.span8();
+    ASSERT(characters[characters.size()] == '\0');
+    return reinterpret_cast<const char*>(characters.data());
 #endif
 }
 

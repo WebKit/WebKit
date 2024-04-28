@@ -66,6 +66,9 @@ public:
     Ref<WebCore::MediaTimePromise> waitForTarget(const WebCore::SeekTarget&) final;
     Ref<WebCore::MediaPromise> seekToTime(const MediaTime&) final;
 
+    // Handled by MediaPlayerPrivateRemote:
+    void seeked(const MediaTime&) final { };
+
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(const void*) final;
 #endif

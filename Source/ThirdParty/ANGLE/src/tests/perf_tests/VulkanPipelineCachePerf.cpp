@@ -69,7 +69,7 @@ void VulkanPipelineCachePerfTest::SetUp()
         {
             mCacheHits.push_back(desc);
         }
-        mCache.populate(desc, std::move(pipeline));
+        mCache.populate(desc, std::move(pipeline), nullptr);
     }
 
     for (int missCount = 0; missCount < 10000; ++missCount)

@@ -56,8 +56,6 @@ public:
 
     virtual ~ScriptProcessorNode();
 
-    const char* activeDOMObjectName() const override { return "ScriptProcessorNode"; }
-
     // AudioNode
     void process(size_t framesToProcess) override;
     void initialize() override;

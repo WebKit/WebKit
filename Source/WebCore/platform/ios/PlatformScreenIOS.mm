@@ -127,7 +127,7 @@ FloatRect screenAvailableRect(Widget* widget)
         CGRect screenRect = { CGPointZero, [window availableScreenSize] };
         return enclosingIntRect(screenRect);
     }
-    return enclosingIntRect(FloatRect(FloatPoint(), widget->root()->hostWindow()->availableScreenSize()));
+    return enclosingIntRect(FloatRect(FloatPoint(), widget->root()->hostWindow()->overrideAvailableScreenSize()));
 }
 
 float screenPPIFactor()
@@ -178,6 +178,10 @@ FloatSize availableScreenSize()
 FloatSize overrideScreenSize()
 {
     return screenSize();
+}
+FloatSize overrideAvailableScreenSize()
+{
+    return availableScreenSize();
 }
 #endif
 

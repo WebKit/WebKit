@@ -2489,6 +2489,8 @@ imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-transitio
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-harness.html [ Failure ]
 
+webkit.org/b/273196 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-combinations.html [ Failure ]
+
 compositing/overflow/dynamic-composited-scrolling-status.html [ Failure ]
 http/tests/security/svg-image-with-cached-remote-image.html [ ImageOnlyFailure ]
 fast/scrolling/gtk/repeated-mouse-wheel-smooth.html [ Timeout ]

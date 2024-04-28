@@ -131,7 +131,7 @@ public:
     }
 
     template<typename... Args>
-    JSValue callWithArguments(JSGlobalObject* globalObject, JSValue thisValue, Args... args)
+    ALWAYS_INLINE JSValue callWithArguments(JSGlobalObject* globalObject, JSValue thisValue, Args... args)
     {
         VM& vm = m_vm;
         auto scope = DECLARE_THROW_SCOPE(vm);

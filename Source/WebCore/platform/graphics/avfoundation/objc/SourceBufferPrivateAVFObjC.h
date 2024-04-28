@@ -129,6 +129,8 @@ public:
     void unregisterForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient*);
 
     void setVideoRenderer(WebSampleBufferVideoRendering *);
+    void stageVideoRenderer(WebSampleBufferVideoRendering *);
+
     void setDecompressionSession(WebCoreDecompressionSession*);
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -137,7 +139,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const char* logClassName() const override { return "SourceBufferPrivateAVFObjC"; }
+    ASCIILiteral logClassName() const override { return "SourceBufferPrivateAVFObjC"_s; }
     const void* logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
     const Logger& sourceBufferLogger() const final { return m_logger.get(); }
@@ -207,6 +209,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     void setTrackChangeCallbacks(const InitializationSegment&, bool initialized);
 
+    void configureVideoRenderer(VideoMediaSampleRenderer&);
+    void invalidateVideoRenderer(VideoMediaSampleRenderer&);
+
     StdUnorderedMap<TrackID, RefPtr<VideoTrackPrivate>> m_videoTracks;
     StdUnorderedMap<TrackID, RefPtr<AudioTrackPrivate>> m_audioTracks;
     Vector<SourceBufferPrivateAVFObjCErrorClient*> m_errorClients;
@@ -216,6 +221,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     Deque<std::pair<TrackID, Ref<MediaSampleAVFObjC>>> m_blockedSamples;
 
     RefPtr<VideoMediaSampleRenderer> m_videoRenderer;
+    RefPtr<VideoMediaSampleRenderer> m_expiringVideoRenderer;
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     StdUnorderedMap<TrackID, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
 ALLOW_NEW_API_WITHOUT_GUARDS_END

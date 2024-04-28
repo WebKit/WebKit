@@ -30,6 +30,7 @@
 
 #include "FEColorMatrix.h"
 #include "FilterImage.h"
+#include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
 #include <skia/core/SkCanvas.h>
@@ -42,11 +43,12 @@ bool FEColorMatrixSkiaApplier::apply(const Filter&, const FilterImageVector& inp
     ASSERT(inputs.size() == 1);
     auto& input = inputs[0].get();
 
-    auto sourceImage = input.imageBuffer();
-    if (!sourceImage)
+    RefPtr resultImage = result.imageBuffer();
+    RefPtr sourceImage = input.imageBuffer();
+    if (!resultImage || !sourceImage)
         return false;
 
-    auto nativeImage = sourceImage->copyNativeImage();
+    auto nativeImage = sourceImage->createNativeImageReference();
     if (!nativeImage || !nativeImage->platformImage())
         return false;
 
@@ -95,10 +97,7 @@ bool FEColorMatrixSkiaApplier::apply(const Filter&, const FilterImageVector& inp
     SkPaint paint;
     paint.setColorFilter(SkColorFilters::Matrix(matrix.data()));
 
-    auto* canvas = result.beginRecording();
-    canvas->drawImage(nativeImage->platformImage(), 0, 0, { }, &paint);
-    result.finishRecording();
-
+    resultImage->context().platformContext()->drawImage(nativeImage->platformImage(), 0, 0, { }, &paint);
     return true;
 }
 

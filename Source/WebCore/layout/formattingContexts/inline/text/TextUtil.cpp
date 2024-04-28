@@ -170,11 +170,11 @@ TextUtil::FallbackFontList TextUtil::fallbackFontsForText(StringView textContent
             return;
 
         if (textRun.is8Bit()) {
-            auto textIterator = Latin1TextIterator { textRun.data8(0), 0, textRun.length(), textRun.length() };
+            Latin1TextIterator textIterator { textRun.span8(), 0, textRun.length() };
             fallbackFontsForRunWithIterator(fallbackFonts, style.fontCascade(), textRun, textIterator);
             return;
         }
-        auto textIterator = SurrogatePairAwareTextIterator { textRun.data16(0), 0, textRun.length(), textRun.length() };
+        SurrogatePairAwareTextIterator textIterator { textRun.span16(), 0, textRun.length() };
         fallbackFontsForRunWithIterator(fallbackFonts, style.fontCascade(), textRun, textIterator);
     };
 
@@ -220,10 +220,10 @@ TextUtil::EnclosingAscentDescent TextUtil::enclosingGlyphBoundsForText(StringVie
         return { };
 
     if (textContent.is8Bit()) {
-        auto textIterator = Latin1TextIterator { textContent.characters8(), 0, textContent.length(), textContent.length() };
+        Latin1TextIterator textIterator { textContent.span8(), 0, textContent.length() };
         return enclosingGlyphBoundsForRunWithIterator(style.fontCascade(), !style.isLeftToRightDirection(), textIterator);
     }
-    auto textIterator = SurrogatePairAwareTextIterator { textContent.characters16(), 0, textContent.length(), textContent.length() };
+    SurrogatePairAwareTextIterator textIterator { textContent.span16(), 0, textContent.length() };
     return enclosingGlyphBoundsForRunWithIterator(style.fontCascade(), !style.isLeftToRightDirection(), textIterator);
 }
 
@@ -457,10 +457,7 @@ bool TextUtil::containsStrongDirectionalityText(StringView text)
     if (text.is8Bit())
         return false;
 
-    auto length = text.length();
-    for (size_t position = 0; position < length;) {
-        char32_t character;
-        U16_NEXT(text.characters16(), position, length, character);
+    for (char32_t character : text.codePoints()) {
         if (isStrongDirectionalityCharacter(character))
             return true;
     }
@@ -478,7 +475,8 @@ size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextBox& inlineTe
     if (inlineTextBox.canUseSimpleFontCodePath()) {
         char32_t character;
         size_t endOfCodePoint = startPosition;
-        U16_NEXT(textContent.characters16(), endOfCodePoint, textContent.length(), character);
+        auto characters = textContent.span16();
+        U16_NEXT(characters, endOfCodePoint, textContent.length(), character);
         ASSERT(endOfCodePoint > startPosition);
         return endOfCodePoint - startPosition;
     }
@@ -499,7 +497,8 @@ TextDirection TextUtil::directionForTextContent(StringView content)
 {
     if (content.is8Bit())
         return TextDirection::LTR;
-    return ubidi_getBaseDirection(content.characters16(), content.length()) == UBIDI_RTL ? TextDirection::RTL : TextDirection::LTR;
+    auto characters = content.span16();
+    return ubidi_getBaseDirection(characters.data(), characters.size()) == UBIDI_RTL ? TextDirection::RTL : TextDirection::LTR;
 }
 
 TextRun TextUtil::ellipsisTextRun(bool isHorizontal)
@@ -585,7 +584,7 @@ static bool canUseSimplifiedTextMeasuringForCharacters(std::span<const Character
 
 bool TextUtil::canUseSimplifiedTextMeasuring(StringView textContent, const FontCascade& fontCascade, bool whitespaceIsCollapsed, const RenderStyle* firstLineStyle)
 {
-    ASSERT(textContent.is8Bit() || FontCascade::characterRangeCodePath(textContent.characters16(), textContent.length()) == FontCascade::CodePath::Simple);
+    ASSERT(textContent.is8Bit() || FontCascade::characterRangeCodePath(textContent.span16()) == FontCascade::CodePath::Simple);
     // FIXME: All these checks should be more fine-grained at the inline item level.
     if (fontCascade.wordSpacing() || fontCascade.letterSpacing())
         return false;

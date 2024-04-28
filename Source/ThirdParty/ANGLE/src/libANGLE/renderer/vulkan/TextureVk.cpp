@@ -2142,6 +2142,8 @@ angle::Result TextureVk::copyImageDataToBufferAndGetData(ContextVk *contextVk,
 
     // Explicitly finish. If new use cases arise where we don't want to block we can change this.
     ANGLE_TRY(contextVk->finishImpl(reason));
+    // invalidate must be called after wait for finish.
+    ANGLE_TRY(copyBuffer->invalidate(contextVk->getRenderer()));
 
     return angle::Result::Continue;
 }
@@ -2594,6 +2596,8 @@ angle::Result TextureVk::reinitImageAsRenderable(ContextVk *contextVk, const vk:
         // Explicitly finish. If new use cases arise where we don't want to block we can change
         // this.
         ANGLE_TRY(contextVk->finishImpl(RenderPassClosureReason::TextureReformatToRenderable));
+        // invalidate must be called after wait for finish.
+        ANGLE_TRY(srcBuffer->invalidate(renderer));
 
         size_t dstBufferSize = sourceBox.width * sourceBox.height * sourceBox.depth *
                                dstFormat.pixelBytes * layerCount;

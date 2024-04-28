@@ -35,7 +35,7 @@ public:
     virtual ~LoggerHelper() = default;
 
     virtual const Logger& logger() const = 0;
-    virtual const char* logClassName() const = 0;
+    virtual ASCIILiteral logClassName() const = 0;
     virtual WTFLogChannel& logChannel() const = 0;
     virtual const void* logIdentifier() const = 0;
 

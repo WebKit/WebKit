@@ -367,6 +367,8 @@ public:
     virtual void setSpatialTrackingLabel(const String&) { }
 #endif
 
+    virtual void isInFullscreenOrPictureInPictureChanged(bool) { }
+
 protected:
     mutable PlatformTimeRanges m_seekable;
     bool m_shouldCheckHardwareSupport { false };

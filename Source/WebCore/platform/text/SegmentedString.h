@@ -65,8 +65,8 @@ public:
     void advancePastNewline(); // Faster than calling advance when we know the current character is a newline.
 
     enum AdvancePastResult { DidNotMatch, DidMatch, NotEnoughCharacters };
-    template<unsigned length> AdvancePastResult advancePast(const char (&literal)[length]) { return advancePast<length, false>(literal); }
-    template<unsigned length> AdvancePastResult advancePastLettersIgnoringASCIICase(const char (&literal)[length]) { return advancePast<length, true>(literal); }
+    AdvancePastResult advancePast(ASCIILiteral literal) { return advancePast<false>(literal); }
+    AdvancePastResult advancePastLettersIgnoringASCIICase(ASCIILiteral literal) { return advancePast<true>(literal); }
 
     unsigned numberOfCharactersConsumed() const;
 
@@ -129,8 +129,8 @@ private:
     void decrementAndCheckLength();
 
     template<typename CharacterType> static bool characterMismatch(CharacterType, char, bool lettersIgnoringASCIICase);
-    template<unsigned length, bool lettersIgnoringASCIICase> AdvancePastResult advancePast(const char (&literal)[length]);
-    AdvancePastResult advancePastSlowCase(const char* literal, bool lettersIgnoringASCIICase);
+    template<bool lettersIgnoringASCIICase> AdvancePastResult advancePast(ASCIILiteral);
+    AdvancePastResult advancePastSlowCase(ASCIILiteral, bool lettersIgnoringASCIICase);
 
     Substring m_currentSubstring;
     Deque<Substring> m_otherSubstrings;
@@ -155,9 +155,9 @@ inline SegmentedString::Substring::Substring(StringView passedStringView)
     if (length) {
         is8Bit = passedStringView.is8Bit();
         if (is8Bit)
-            currentCharacter8 = passedStringView.characters8();
+            currentCharacter8 = passedStringView.span8().data();
         else
-            currentCharacter16 = passedStringView.characters16();
+            currentCharacter16 = passedStringView.span16().data();
     }
 }
 
@@ -294,11 +294,11 @@ template<typename CharacterType> ALWAYS_INLINE bool SegmentedString::characterMi
     return lettersIgnoringASCIICase ? !isASCIIAlphaCaselessEqual(a, b) : a != b;
 }
 
-template<unsigned lengthIncludingTerminator, bool lettersIgnoringASCIICase> SegmentedString::AdvancePastResult SegmentedString::advancePast(const char (&literal)[lengthIncludingTerminator])
+template<bool lettersIgnoringASCIICase> SegmentedString::AdvancePastResult SegmentedString::advancePast(ASCIILiteral literal)
 {
-    constexpr unsigned length = lengthIncludingTerminator - 1;
+    unsigned length = literal.length();
     ASSERT(!literal[length]);
-    ASSERT(!strchr(literal, '\n'));
+    ASSERT(!strchr(literal.characters(), '\n'));
     if (length + 1 < m_currentSubstring.length) {
         if (m_currentSubstring.is8Bit) {
             for (unsigned i = 0; i < length; ++i) {

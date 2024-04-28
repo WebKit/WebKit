@@ -39,6 +39,7 @@
 
 #if USE(SKIA)
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkColorSpace.h>
 #include <skia/core/SkPixmap.h>
 IGNORE_CLANG_WARNINGS_END
 #endif
@@ -273,7 +274,7 @@ SkImage* PlatformWebView::windowSnapshotImage()
         return nullptr;
 
     cairo_surface_flush(surface);
-    auto imageInfo = SkImageInfo::MakeN32Premul(cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface));
+    auto imageInfo = SkImageInfo::MakeN32Premul(cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface), SkColorSpace::MakeSRGB());
     SkPixmap pixmap(imageInfo, cairo_image_surface_get_data(surface), cairo_image_surface_get_stride(surface));
     return SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
         cairo_surface_destroy(static_cast<cairo_surface_t*>(context));

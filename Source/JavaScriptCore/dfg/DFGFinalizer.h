@@ -28,9 +28,14 @@
 #if ENABLE(DFG_JIT)
 
 #include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+class JITCode;
+
+namespace DFG {
 
 class Plan;
 

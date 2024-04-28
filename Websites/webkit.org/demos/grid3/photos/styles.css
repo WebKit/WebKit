@@ -7,6 +7,7 @@ figure {
 }
 img { 
 	width: 100%; 
+	height: auto;
 	display: block;
 	border-radius: 1ch;
 }
@@ -214,33 +215,39 @@ body:has(option[value="eight"]:checked) {
 }
 
 /* ---- Horizontal Masonry ---- */
-html:has(option[value="nine"]:checked) {
-	height: 100svh;
-	background: #554
-}
 body:has(option[value="nine"]:checked) {
 	main {
-		background: white;
 		display: grid;
-		gap: 5px;
-		grid-template-rows: repeat(auto-fill, 12svh);
+		gap: 1rem;
+		grid-template-rows: repeat(5, 150px);
 		grid-template-columns: masonry;
-		height: calc(100svh - 240px);
 		overflow: scroll;
 	}
 	img {
 		width: auto;
-		height: 100%;
-	}
-	main::-webkit-scrollbar {
-	width: 5px;
-	height: 0.5lh;
-	background-color: #eee;
-	}
-	main::-webkit-scrollbar-thumb {
-	background: #888;
+		height: 150px;
 	}
 }
+
+
+/* ---- Horizontal Flexbox ---- */
+body:has(option[value="eleven"]:checked) {
+	main {
+		display: flex;
+		flex-flow: row wrap;
+		gap: 1rem;
+	}
+	figure {		
+		flex: auto;
+	}
+	img {
+		height: 200px;
+		width: auto;
+		min-width: 100%;
+		object-fit: cover;
+	}
+}
+
 
 /* --------------------------------------------
    Counters marking items (when enabled)

@@ -165,7 +165,7 @@ static bool shouldSelfClose(const Element& element, SerializationSyntax syntax)
 template<typename CharacterType>
 static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& result, const String& source, unsigned offset, unsigned length, OptionSet<EntityMask> entityMask)
 {
-    const CharacterType* text = source.characters<CharacterType>() + offset;
+    auto text = source.span<CharacterType>().subspan(offset);
 
     size_t positionAfterLastEntity = 0;
     for (size_t i = 0; i < length; ++i) {
@@ -193,12 +193,10 @@ void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result,
         appendCharactersReplacingEntitiesInternal<UChar>(result, source, offset, length, entityMask);
 }
 
-MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax, HashMap<String, String>&& replacementURLStrings, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet, SerializeShadowRoots serializeShadowRoots, Vector<Ref<ShadowRoot>>&& explicitShadowRoots, const Vector<MarkupExclusionRule>& exclusionRules)
+MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax, SerializeShadowRoots serializeShadowRoots, Vector<Ref<ShadowRoot>>&& explicitShadowRoots, const Vector<MarkupExclusionRule>& exclusionRules)
     : m_nodes(nodes)
     , m_resolveURLs(resolveURLs)
     , m_serializationSyntax(serializationSyntax)
-    , m_replacementURLStrings(WTFMove(replacementURLStrings))
-    , m_replacementURLStringsForCSSStyleSheet(WTFMove(replacementURLStringsForCSSStyleSheet))
     , m_serializeShadowRoots(serializeShadowRoots)
     , m_explicitShadowRoots(WTFMove(explicitShadowRoots))
     , m_exclusionRules(exclusionRules)
@@ -208,6 +206,11 @@ MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resol
 
 MarkupAccumulator::~MarkupAccumulator() = default;
 
+void MarkupAccumulator::enableURLReplacement(HashMap<String, String>&& replacementURLStrings, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet)
+{
+    m_urlReplacementData = URLReplacementData { WTFMove(replacementURLStrings), WTFMove(replacementURLStringsForCSSStyleSheet) };
+}
+
 String MarkupAccumulator::serializeNodes(Node& targetNode, SerializedNodes root)
 {
     serializeNodesWithNamespaces(targetNode, root, 0);
@@ -216,18 +219,18 @@ String MarkupAccumulator::serializeNodes(Node& targetNode, SerializedNodes root)
 
 bool MarkupAccumulator::appendContentsForNode(StringBuilder& result, const Node& targetNode)
 {
-    RefPtr styleElement = dynamicDowncast<HTMLStyleElement>(targetNode);
-    if (!styleElement)
+    if (!m_urlReplacementData)
         return false;
 
-    if (m_replacementURLStrings.isEmpty() && m_replacementURLStringsForCSSStyleSheet.isEmpty())
+    RefPtr styleElement = dynamicDowncast<HTMLStyleElement>(targetNode);
+    if (!styleElement)
         return false;
 
     RefPtr cssStyleSheet = styleElement->sheet();
     if (!cssStyleSheet)
         return false;
 
-    result.append(cssStyleSheet->cssTextWithReplacementURLs(m_replacementURLStrings, m_replacementURLStringsForCSSStyleSheet));
+    result.append(cssStyleSheet->cssTextWithReplacementURLs(m_urlReplacementData->replacementURLStrings, m_urlReplacementData->replacementURLStringsForCSSStyleSheet));
     return true;
 }
 
@@ -347,23 +350,23 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
 
 std::pair<String, MarkupAccumulator::IsCreatedByURLReplacement> MarkupAccumulator::resolveURLIfNeeded(const Element& element, const String& urlString) const
 {
-    if (RefPtr link = dynamicDowncast<HTMLLinkElement>(element); link && !m_replacementURLStringsForCSSStyleSheet.isEmpty()) {
+    if (RefPtr link = dynamicDowncast<HTMLLinkElement>(element); link && m_urlReplacementData) {
         if (RefPtr cssStyleSheet = link->sheet()) {
-            auto replacementURLString = m_replacementURLStringsForCSSStyleSheet.get(cssStyleSheet);
+            auto replacementURLString = m_urlReplacementData->replacementURLStringsForCSSStyleSheet.get(cssStyleSheet);
             if (!replacementURLString.isEmpty())
                 return { replacementURLString, IsCreatedByURLReplacement::Yes };
         }
     }
 
-    if (!m_replacementURLStrings.isEmpty()) {
+    if (m_urlReplacementData) {
         if (RefPtr frame = frameForAttributeReplacement(element)) {
-            auto replacementURLString = m_replacementURLStrings.get(frame->frameID().toString());
+            auto replacementURLString = m_urlReplacementData->replacementURLStrings.get(frame->frameID().toString());
             if (!replacementURLString.isEmpty())
                 return { replacementURLString, IsCreatedByURLReplacement::Yes };
         }
 
         auto resolvedURLString = element.resolveURLStringIfNeeded(urlString);
-        auto replacementURLString = m_replacementURLStrings.get(resolvedURLString);
+        auto replacementURLString = m_urlReplacementData->replacementURLStrings.get(resolvedURLString);
         if (!replacementURLString.isEmpty())
             return { replacementURLString, IsCreatedByURLReplacement::Yes };
     }
@@ -574,10 +577,8 @@ static bool isURLAttributeForElement(const Element& element, const Attribute& at
     return element.isURLAttribute(attribute) || element.isHTMLContentAttribute(attribute);
 }
 
-void MarkupAccumulator::appendStartTag(StringBuilder& result, const Element& element, Namespaces* namespaces)
+void MarkupAccumulator::appendStartTagWithURLReplacement(StringBuilder& result, const Element& element, Namespaces* namespaces)
 {
-    appendOpenTag(result, element, namespaces);
-
     bool hasURLAttribute = false;
     bool isURLReplaced = false;
     Vector<Attribute> attributesToAppendIfURLNotReplaced;
@@ -591,6 +592,7 @@ void MarkupAccumulator::appendStartTag(StringBuilder& result, const Element& ele
 
             if (!hasURLAttribute && isURLAttributeForElement(element, attribute))
                 hasURLAttribute = true;
+
             auto updatedAttribute = replaceAttributeIfNecessary(element, attribute);
             if (appendAttribute(result, element, updatedAttribute, namespaces))
                 isURLReplaced = true;
@@ -600,10 +602,27 @@ void MarkupAccumulator::appendStartTag(StringBuilder& result, const Element& ele
     if (!hasURLAttribute && appendURLAttributeForReplacementIfNecessary(result, element, namespaces))
         isURLReplaced = true;
 
-    if (!isURLReplaced) {
-        for (auto& attribute : attributesToAppendIfURLNotReplaced)
-            appendAttribute(result, element, attribute, namespaces);
+    if (isURLReplaced)
+        return;
+
+    for (auto& attribute : attributesToAppendIfURLNotReplaced)
+        appendAttribute(result, element, attribute, namespaces);
+}
+
+void MarkupAccumulator::appendStartTag(StringBuilder& result, const Element& element, Namespaces* namespaces)
+{
+    appendOpenTag(result, element, namespaces);
+
+    if (m_urlReplacementData) {
+        // This function might change ordering of attributes in markup, so it should only be used for URL replacement case.
+        appendStartTagWithURLReplacement(result, element, namespaces);
+    } else {
+        if (element.hasAttributes()) {
+            for (const Attribute& attribute : element.attributesIterator())
+                appendAttribute(result, element, attribute, namespaces);
+        }
     }
+
     // Give an opportunity to subclasses to add their own attributes.
     appendCustomAttributes(result, element, namespaces);
 
@@ -695,7 +714,7 @@ QualifiedName MarkupAccumulator::xmlAttributeSerialization(const Attribute& attr
 
 LocalFrame* MarkupAccumulator::frameForAttributeReplacement(const Element& element) const
 {
-    if (inXMLFragmentSerialization() || m_replacementURLStrings.isEmpty())
+    if (inXMLFragmentSerialization())
         return nullptr;
 
     RefPtr frameElement = dynamicDowncast<HTMLFrameElementBase>(element);
@@ -707,29 +726,35 @@ LocalFrame* MarkupAccumulator::frameForAttributeReplacement(const Element& eleme
 
 Attribute MarkupAccumulator::replaceAttributeIfNecessary(const Element& element, const Attribute& attribute)
 {
+    if (!m_urlReplacementData)
+        return attribute;
+
     if (element.isHTMLContentAttribute(attribute)) {
         RefPtr frame = frameForAttributeReplacement(element);
         if (!frame || !frame->loader().documentLoader()->response().url().isAboutSrcDoc())
             return attribute;
 
-        auto replacementURLString = m_replacementURLStrings.get(frame->frameID().toString());
-        if (replacementURLString.isNull())
+        auto replacementURLString = m_urlReplacementData->replacementURLStrings.get(frame->frameID().toString());
+        if (replacementURLString.isEmpty())
             return attribute;
 
         return { srcAttr, AtomString { replacementURLString } };
     }
 
-    return element.replaceURLsInAttributeValue(attribute, m_replacementURLStrings);
+    return element.replaceURLsInAttributeValue(attribute, m_urlReplacementData->replacementURLStrings);
 }
 
 bool MarkupAccumulator::appendURLAttributeForReplacementIfNecessary(StringBuilder& result, const Element& element, Namespaces* namespaces)
 {
+    if (!m_urlReplacementData)
+        return false;
+
     RefPtr frame = frameForAttributeReplacement(element);
     if (!frame)
         return false;
 
-    auto replacementURLString = m_replacementURLStrings.get(frame->frameID().toString());
-    if (!replacementURLString)
+    auto replacementURLString = m_urlReplacementData->replacementURLStrings.get(frame->frameID().toString());
+    if (replacementURLString.isEmpty())
         return false;
 
     appendAttribute(result, element, Attribute { srcAttr, AtomString { replacementURLString } }, namespaces);

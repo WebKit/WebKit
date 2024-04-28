@@ -79,7 +79,7 @@ public:
     const Logger* loggerPtr() const final;
     WEBCORE_EXPORT const void* logIdentifier() const final;
     WEBCORE_EXPORT const void* nextChildIdentifier() const final;
-    const char* logClassName() const { return "VideoPresentationModelVideoElement"; }
+    ASCIILiteral logClassName() const { return "VideoPresentationModelVideoElement"_s; }
     WTFLogChannel& logChannel() const;
 #endif
 

@@ -253,6 +253,46 @@ EOF
 
 namespace WTR {
 
+template<typename MessageArgumentTypesTuple, typename MethodArgumentTypesTuple> struct MethodSignatureValidationImpl { };
+
+template<typename... MessageArgumentTypes, typename MethodArgumentType, typename... MethodArgumentTypes>
+struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<MethodArgumentType, MethodArgumentTypes...>>
+    : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes..., MethodArgumentType>, std::tuple<MethodArgumentTypes...>> { };
+
+template<typename... MessageArgumentTypes>
+struct MethodSignatureValidationImpl<std::tuple<JSContextRef, MessageArgumentTypes...>, std::tuple<>>
+    : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
+    static constexpr bool expectsContextArgument = true;
+};
+
+template<typename... MessageArgumentTypes>
+struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
+    static constexpr bool expectsContextArgument = false;
+    using MessageArguments = std::tuple<std::remove_cvref_t<MessageArgumentTypes>...>;
+};
+
+template<typename FunctionType> struct MethodSignatureValidation { 
+    static constexpr bool expectsContextArgument = false;
+};
+
+template<typename R, typename... MethodArgumentTypes>
+struct MethodSignatureValidation<R(MethodArgumentTypes...)>
+    : MethodSignatureValidationImpl<std::tuple<>, std::tuple<MethodArgumentTypes...>> { };
+
+template<typename T, typename U, typename MF, typename... Args>
+decltype(auto) callFunction(JSContextRef context, T* object, MF U::* function, Args... args)
+{
+    if constexpr (MethodSignatureValidation<MF>::expectsContextArgument) {
+        return std::apply([&](auto&&... args) {
+            return (object->*function)(std::forward<decltype(args)>(args)...);
+        }, std::tuple_cat(std::make_tuple(context), std::make_tuple(args...)));
+    } else {
+        return std::apply([&](auto&&... args) {
+            return (object->*function)(std::forward<decltype(args)>(args)...);
+        }, std::make_tuple(args...));
+    }
+}
+
 ${implementationClassName}* to${implementationClassName}(JSContextRef context, JSValueRef value)
 {
     if (!context || !value || !${className}::${classRefGetter}() || !JSValueIsObjectOfClass(context, value, ${className}::${classRefGetter}()))
@@ -288,7 +328,7 @@ EOF
             $self->_includeHeaders(\%contentsIncludes, $constant->type);
 
             my $getterName = _constantGetterFunctionName($self->_getterName($constant));
-            my $getterExpression = "impl->${getterName}()";
+            my $getterExpression = "callFunction(context, impl, &${implementationClassName}::${getterName})";
             my $value = $constant->value;
 
             push(@contents, <<EOF);
@@ -325,10 +365,8 @@ EOF
                 my @arguments = ();
                 my @specifiedArguments = @{$operation->arguments};
 
-                $self->_includeHeaders(\%contentsIncludes, $operation->type);
-
-                if ($operation->extendedAttributes->{"PassContext"}) {
-                    push(@arguments, "context");
+                if (not $operation->type->name eq "Promise") {
+                    $self->_includeHeaders(\%contentsIncludes, $operation->type);
                 }
 
                 foreach my $i (0..$#specifiedArguments) {
@@ -341,10 +379,16 @@ EOF
                     push(@arguments, $self->_argumentExpression($argument));
                 }
 
-                $functionCall = "impl->" . $operation->name . "(" . join(", ", @arguments) . ")";
+                if ($operation->type->name eq "Promise") {
+                    push(@contents, "    JSObjectRef resolveFunction = nullptr;\n");
+                    push(@contents, "    JSObjectRef promise = JSObjectMakeDeferredPromise(context, &resolveFunction, nullptr, nullptr);\n\n");
+                    push(@arguments, "resolveFunction");
+                }
+
+                $functionCall = "callFunction(context, impl, &${implementationClassName}::" . $operation->name . (@arguments ? (", " . join(", ", @arguments)) : "") . ")";
             }
             
-            push(@contents, "    ${functionCall};\n\n") if $operation->type->name eq "undefined";
+            push(@contents, "    ${functionCall};\n\n") if $operation->type->name eq "undefined" or $operation->type->name eq "Promise";
             push(@contents, "    return " . $self->_returnExpression($operation->type, $functionCall) . ";\n}\n");
         }
     }
@@ -355,7 +399,7 @@ EOF
             $self->_includeHeaders(\%contentsIncludes, $attribute->type);
 
             my $getterName = $self->_getterName($attribute);
-            my $getterExpression = "impl->${getterName}()";
+            my $getterExpression = "callFunction(context, impl, &${implementationClassName}::${getterName})";
 
             push(@contents, <<EOF);
 
@@ -541,6 +585,7 @@ sub _returnExpression
 {
     my ($self, $returnType, $expression) = @_;
 
+    return "promise" if $returnType->name eq "Promise";
     return "JSValueMakeUndefined(context)" if $returnType->name eq "undefined";
     return "makeValue(context, ${expression})" if $returnType->name eq "boolean" && $returnType->isNullable;
     return "JSValueMakeBoolean(context, ${expression})" if $returnType->name eq "boolean";

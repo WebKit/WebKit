@@ -510,11 +510,6 @@ void CookieStore::cookiesDeleted(const String& host, const Vector<Cookie>& cooki
     queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, CookieChangeEvent::create(eventNames().changeEvent, WTFMove(eventInit), CookieChangeEvent::IsTrusted::Yes));
 }
 
-const char* CookieStore::activeDOMObjectName() const
-{
-    return "CookieStore";
-}
-
 void CookieStore::stop()
 {
     // FIXME: This should work for service worker contexts as well.

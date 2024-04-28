@@ -204,7 +204,6 @@ private:
     void setEffectiveFrameRate(std::optional<FramesPerSecond>);
 
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
     void stop() final;

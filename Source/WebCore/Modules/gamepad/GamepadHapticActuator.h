@@ -65,7 +65,6 @@ private:
     RefPtr<DeferredPromise>& promiseForEffectType(EffectType);
 
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension) final;
     void stop() final;
 

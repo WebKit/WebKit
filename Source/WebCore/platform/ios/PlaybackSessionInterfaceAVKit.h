@@ -54,7 +54,7 @@ public:
     void mutedChanged(bool) final;
     void volumeChanged(double) final;
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final;
+    ASCIILiteral logClassName() const final;
 #endif
 
 private:

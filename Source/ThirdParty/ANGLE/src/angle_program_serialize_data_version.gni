@@ -17,6 +17,7 @@ import("libANGLE/renderer/gl/gl_backend.gni")
 import("libANGLE/renderer/metal/metal_backend.gni")
 import("libANGLE/renderer/null/null_backend.gni")
 import("libANGLE/renderer/vulkan/vulkan_backend.gni")
+import("libANGLE/renderer/wgpu/wgpu_sources.gni")
 import("libGLESv2.gni")
 
 angle_code_affecting_program_serialize = libangle_common_sources
@@ -39,6 +40,7 @@ angle_code_affecting_program_serialize +=
 angle_code_affecting_program_serialize +=
     angle_translator_glsl_symbol_table_sources
 angle_code_affecting_program_serialize += angle_translator_lib_msl_sources
+angle_code_affecting_program_serialize += angle_translator_lib_wgsl_sources
 angle_code_affecting_program_serialize += angle_preprocessor_sources
 
 angle_dependencies_affecting_program_serialize = []
@@ -77,6 +79,12 @@ if (angle_enable_metal) {
     angle_dependencies_affecting_program_serialize +=
         [ "src/libANGLE/renderer/metal:angle_metal_internal_shaders" ]
   }
+}
+
+if (angle_enable_wgpu) {
+  wgpu_backend_dir = "libANGLE/renderer/wgpu/"
+  angle_code_affecting_program_serialize +=
+      rebase_path(wgpu_backend_sources, angle_root, wgpu_backend_dir)
 }
 
 if (angle_has_frame_capture) {

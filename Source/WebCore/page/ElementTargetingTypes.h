@@ -38,7 +38,7 @@
 namespace WebCore {
 
 struct TargetedElementRequest {
-    FloatPoint pointInRootView;
+    std::variant<FloatPoint, String> data;
     bool canIncludeNearbyElements { true };
 };
 
@@ -47,13 +47,15 @@ struct TargetedElementInfo {
     ScriptExecutionContextIdentifier documentIdentifier;
     RectEdges<bool> offsetEdges;
     String renderedText;
-    Vector<String> selectors;
+    String searchableText;
+    Vector<Vector<String>> selectors;
     FloatRect boundsInRootView;
     FloatRect boundsInClientCoordinates;
     PositionType positionType { PositionType::Static };
     Vector<FrameIdentifier> childFrameIdentifiers;
-    bool isUnderPoint { true };
+    bool isNearbyTarget { true };
     bool isPseudoElement { false };
+    bool isInShadowTree { false };
 };
 
 } // namespace WebCore

@@ -1893,33 +1893,7 @@ std::optional<std::pair<CheckedPtr<RenderObject>, FloatRect>> Element::boundingA
 FloatRect Element::boundingClientRect()
 {
     Ref document = this->document();
-    auto needsLayout = [&] {
-        if (!document->haveStylesheetsLoaded())
-            return true;
-
-        if (RefPtr owner = document->ownerElement(); owner && owner->protectedDocument()->needsStyleRecalc())
-            return true;
-
-        document->updateRelevancyOfContentVisibilityElements();
-        document->updateStyleIfNeeded();
-        // FIXME: Expand this optimization to other elements.
-        if (!renderer() || !renderer()->isBody() || !renderer()->containingBlock() || !renderer()->containingBlock()->isDocumentElementRenderer())
-            return true;
-        auto& bodyRenderer = *renderer();
-        if (bodyRenderer.selfNeedsLayout() || bodyRenderer.containingBlock()->selfNeedsLayout() || (document->renderView() && document->renderView()->selfNeedsLayout()))
-            return true;
-        auto& bodyStyle = bodyRenderer.style();
-        if (!bodyStyle.logicalWidth().isFixed() && !bodyStyle.logicalWidth().isPercent())
-            return true;
-        if (!bodyStyle.logicalHeight().isFixed() && !bodyStyle.logicalHeight().isPercent())
-            return true;
-        // FIXME: Add support for scroll position.
-        return bodyStyle.hasViewportConstrainedPosition();
-    };
-
-    if (needsLayout())
-        document->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
-
+    document->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     auto pair = boundingAbsoluteRectWithoutLayout();
     if (!pair)
         return { };
@@ -3829,7 +3803,7 @@ ExceptionOr<void> Element::setHTMLUnsafe(const String& html)
 
 String Element::getHTML(GetHTMLOptions&& options) const
 {
-    return serializeFragment(*this, SerializedNodes::SubtreesOfChildren, nullptr, ResolveURLs::NoExcludingURLsForPrivacy, SerializationSyntax::HTML, { }, { }, options.serializableShadowRoots ? SerializeShadowRoots::Serializable : SerializeShadowRoots::Explicit, WTFMove(options.shadowRoots));
+    return serializeFragment(*this, SerializedNodes::SubtreesOfChildren, nullptr, ResolveURLs::NoExcludingURLsForPrivacy, SerializationSyntax::HTML, options.serializableShadowRoots ? SerializeShadowRoots::Serializable : SerializeShadowRoots::Explicit, WTFMove(options.shadowRoots));
 }
 
 ExceptionOr<void> Element::mergeWithNextTextNode(Text& node)

@@ -140,7 +140,6 @@ private:
     HTMLModelElement& readyPromiseResolve();
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
     // DOM overrides.

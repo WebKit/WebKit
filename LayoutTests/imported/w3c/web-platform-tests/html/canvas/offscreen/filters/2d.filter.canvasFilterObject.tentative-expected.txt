@@ -3,5 +3,5 @@
 Test CanvasFilter() object
 
 
-FAIL Test CanvasFilter() object assert_true: ctx.filter == 'none' expected true got false
+FAIL Test CanvasFilter() object assert_true: ctx.filter == 'blur(5px)' expected true got false
 

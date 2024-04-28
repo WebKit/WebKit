@@ -537,7 +537,7 @@ template<typename ColorType> inline constexpr bool IsLCHA = std::is_same_v<LCHA<
 
 template<typename T> struct OKLab : ColorWithAlphaHelper<OKLab<T>> {
     using ComponentType = T;
-    using Model = LabModel<T>;
+    using Model = OKLabModel<T>;
     static constexpr auto whitePoint = WhitePoint::D65;
     using Reference = XYZA<T, whitePoint>;
 
@@ -571,7 +571,7 @@ template<typename ColorType> inline constexpr bool IsOKLab = std::is_same_v<OKLa
 
 template<typename T> struct OKLCHA : ColorWithAlphaHelper<OKLCHA<T>> {
     using ComponentType = T;
-    using Model = LCHModel<T>;
+    using Model = OKLCHModel<T>;
     static constexpr auto whitePoint = WhitePoint::D65;
     using Reference = OKLab<T>;
 
@@ -642,7 +642,7 @@ template<typename T> struct HWBA : ColorWithAlphaHelper<HWBA<T>> {
     using ComponentType = T;
     using Model = HWBModel<T>;
     static constexpr auto whitePoint = WhitePoint::D65;
-    using Reference = SRGBA<T>;
+    using Reference = ExtendedSRGBA<T>;
 
     constexpr HWBA(T hue, T whiteness, T blackness, T alpha = AlphaTraits<T>::opaque)
         : hue { hue }

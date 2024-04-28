@@ -52,7 +52,7 @@ private:
     void fileFailedToParse() final;
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "InbandWebVTTTextTrack"; }
+    ASCIILiteral logClassName() const final { return "InbandWebVTTTextTrack"_s; }
 #endif
 
     std::unique_ptr<WebVTTParser> m_webVTTParser;

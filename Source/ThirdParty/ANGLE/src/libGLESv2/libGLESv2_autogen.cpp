@@ -3117,6 +3117,8 @@ void GL_APIENTRY glPolygonModeANGLE(GLenum face, GLenum mode)
 
 // GL_ANGLE_program_binary
 
+// GL_ANGLE_program_binary_readiness_query
+
 // GL_ANGLE_program_cache_control
 
 // GL_ANGLE_provoking_vertex

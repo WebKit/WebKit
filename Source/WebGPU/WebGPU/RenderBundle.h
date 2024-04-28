@@ -81,7 +81,7 @@ public:
 
     void replayCommands(RenderPassEncoder&) const;
     void updateMinMaxDepths(float minDepth, float maxDepth);
-    bool validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor&) const;
+    bool validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor&, const Vector<WeakPtr<TextureView>>&, const WeakPtr<TextureView>&) const;
     bool validatePipeline(const RenderPipeline*);
     uint64_t drawCount() const;
     NSString* lastError() const;

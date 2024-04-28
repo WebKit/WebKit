@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-static bool extractEDDSASignatureInteger(Vector<uint8_t>& signature, gcry_sexp_t signatureSexp, const char* integerName, size_t keySizeInBytes)
+static bool extractEDDSASignatureInteger(Vector<uint8_t>& signature, gcry_sexp_t signatureSexp, ASCIILiteral integerName, size_t keySizeInBytes)
 {
     // Retrieve byte data of the specified integer.
     PAL::GCrypt::Handle<gcry_sexp_t> integerSexp(gcry_sexp_find_token(signatureSexp, integerName, 0));
@@ -91,8 +91,8 @@ static ExceptionOr<Vector<uint8_t>> signEd25519(const Vector<uint8_t>& sk, size_
     Vector<uint8_t> signature;
     signature.reserveInitialCapacity(64);
 
-    if (!extractEDDSASignatureInteger(signature, signatureSexp, "r", keySizeInBytes)
-        || !extractEDDSASignatureInteger(signature, signatureSexp, "s", keySizeInBytes))
+    if (!extractEDDSASignatureInteger(signature, signatureSexp, "r"_s, keySizeInBytes)
+        || !extractEDDSASignatureInteger(signature, signatureSexp, "s"_s, keySizeInBytes))
         return Exception { ExceptionCode::OperationError };
 
     return signature;

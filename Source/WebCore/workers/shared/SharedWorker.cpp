@@ -136,11 +136,6 @@ ScriptExecutionContext* SharedWorker::scriptExecutionContext() const
     return ActiveDOMObject::scriptExecutionContext();
 }
 
-const char* SharedWorker::activeDOMObjectName() const
-{
-    return "SharedWorker";
-}
-
 enum EventTargetInterfaceType SharedWorker::eventTargetInterface() const
 {
     return EventTargetInterfaceType::SharedWorker;

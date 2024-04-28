@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionTab.h"
+#import <wtf/BlockPtr.h>
 #import <wtf/URLParser.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -142,6 +143,16 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionContext, WebExtensionContex
 - (void)setInspectable:(BOOL)inspectable
 {
     _webExtensionContext->setInspectable(inspectable);
+}
+
+- (NSString *)inspectionName
+{
+    return _webExtensionContext->backgroundWebViewInspectionName();
+}
+
+- (void)setInspectionName:(NSString *)name
+{
+    _webExtensionContext->setBackgroundWebViewInspectionName(name);
 }
 
 - (NSSet<NSString *> *)unsupportedAPIs
@@ -527,6 +538,11 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     return _webExtensionContext->hasContentModificationRules();
 }
 
+- (void)loadBackgroundContentWithCompletionHandler:(void (^)(NSError *error))completionHandler
+{
+    _webExtensionContext->loadBackgroundContent(makeBlockPtr(completionHandler));
+}
+
 - (_WKWebExtensionAction *)actionForTab:(id<_WKWebExtensionTab>)tab
 {
     if (tab)
@@ -880,6 +896,15 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 {
 }
 
+- (NSString *)inspectionName
+{
+    return nil;
+}
+
+- (void)setInspectionName:(NSString *)name
+{
+}
+
 - (NSSet<NSString *> *)unsupportedAPIs
 {
     return nil;
@@ -1065,6 +1090,10 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 - (BOOL)hasContentModificationRules
 {
     return NO;
+}
+
+- (void)loadBackgroundContentWithCompletionHandler:(void (^)(NSError *error))completionHandler
+{
 }
 
 - (_WKWebExtensionAction *)actionForTab:(id<_WKWebExtensionTab>)tab NS_SWIFT_NAME(action(for:))

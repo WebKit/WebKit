@@ -1940,7 +1940,7 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
         memset(fastCounts.get(), 0, callSlots.size() * sizeof(uint32_t));
     }
 
-    Vector<int64_t> caseValues;
+    Vector<int64_t, 16> caseValues;
     caseValues.reserveInitialCapacity(callSlots.size());
     for (auto& slot : callSlots) {
         int64_t caseValue = bitwise_cast<intptr_t>(slot.m_calleeOrExecutable);
@@ -1989,7 +1989,7 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
         hasExecutable.link(&jit);
     }
 
-    BinarySwitch binarySwitch(comparisonValueGPR, caseValues, BinarySwitch::IntPtr);
+    BinarySwitch binarySwitch(comparisonValueGPR, caseValues.span(), BinarySwitch::IntPtr);
     while (binarySwitch.advance(jit)) {
         size_t caseIndex = binarySwitch.caseIndex();
         auto& slot = callSlots[caseIndex];

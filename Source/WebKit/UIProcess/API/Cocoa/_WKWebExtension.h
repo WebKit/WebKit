@@ -51,7 +51,6 @@ WK_EXTERN NSErrorDomain const _WKWebExtensionErrorDomain NS_SWIFT_NAME(_WKWebExt
  @constant WKWebExtensionErrorInvalidManifestEntry  Indicates that an invalid manifest entry was encountered.
  @constant WKWebExtensionErrorInvalidDeclarativeNetRequestEntry  Indicates that an invalid declarative net request entry was encountered.
  @constant WKWebExtensionErrorInvalidBackgroundPersistence  Indicates that the extension specified background persistence that was not compatible with the platform or features requested.
- @constant WKWebExtensionErrorBackgroundContentFailedToLoad  Indicates that an error occurred loading the background content.
  */
 typedef NS_ERROR_ENUM(_WKWebExtensionErrorDomain, _WKWebExtensionError) {
     _WKWebExtensionErrorUnknown = 1,
@@ -62,7 +61,6 @@ typedef NS_ERROR_ENUM(_WKWebExtensionErrorDomain, _WKWebExtensionError) {
     _WKWebExtensionErrorInvalidManifestEntry,
     _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry,
     _WKWebExtensionErrorInvalidBackgroundPersistence,
-    _WKWebExtensionErrorBackgroundContentFailedToLoad,
 } NS_SWIFT_NAME(_WKWebExtension.Error) WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 /*! @abstract This notification is sent whenever a @link WKWebExtension @/link has new errors or errors were cleared. */

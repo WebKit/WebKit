@@ -55,6 +55,7 @@ struct LogArgument {
     template<typename U = T> static std::enable_if_t<std::is_same_v<typename std::remove_reference_t<U>, String>, String> toString(String argument) { return argument; }
     template<typename U = T> static std::enable_if_t<std::is_same_v<typename std::remove_reference_t<U>, StringBuilder*>, String> toString(StringBuilder* argument) { return argument->toString(); }
     template<typename U = T> static std::enable_if_t<std::is_same_v<U, const char*>, String> toString(const char* argument) { return String::fromLatin1(argument); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<U, ASCIILiteral>, String> toString(ASCIILiteral argument) { return argument; }
 #ifdef __OBJC__
     template<typename U = T> static std::enable_if_t<std::is_base_of_v<NSError, std::remove_pointer_t<U>>, String> toString(NSError *argument) { return String(argument.localizedDescription); }
     template<typename U = T> static std::enable_if_t<std::is_base_of_v<NSObject, std::remove_pointer_t<U>>, String> toString(NSObject *argument) { return String(argument.description); }
@@ -277,7 +278,7 @@ public:
         {
         }
 
-        LogSiteIdentifier(const char* className, const char* methodName, const void* objectPtr)
+        LogSiteIdentifier(ASCIILiteral className, const char* methodName, const void* objectPtr)
             : className { className }
             , methodName { methodName }
             , objectPtr { reinterpret_cast<uintptr_t>(objectPtr) }
@@ -286,7 +287,7 @@ public:
 
         WTF_EXPORT_PRIVATE String toString() const;
 
-        const char* className { nullptr };
+        ASCIILiteral className;
         const char* methodName { nullptr };
         const uintptr_t objectPtr { 0 };
     };

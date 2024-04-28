@@ -1,0 +1,6 @@
+
+reset  submit  type=button
+reset submit type=button
+
+FAIL Button type=reset and type=submit should not run popover algorithms when in a form. assert_true: button-in-form: button should open the popover. expected true got false
+

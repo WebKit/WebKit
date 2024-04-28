@@ -33,14 +33,15 @@
 namespace WebCore {
 
 TransformationMatrix::TransformationMatrix(const SkM44& t)
+    : TransformationMatrix(SkScalarToDouble(t.rc(0, 0)), SkScalarToDouble(t.rc(0, 1)), SkScalarToDouble(t.rc(0, 2)), SkScalarToDouble(t.rc(0, 3)),
+        SkScalarToDouble(t.rc(1, 0)), SkScalarToDouble(t.rc(1, 1)), SkScalarToDouble(t.rc(1, 2)), SkScalarToDouble(t.rc(1, 3)),
+        SkScalarToDouble(t.rc(2, 0)), SkScalarToDouble(t.rc(2, 1)), SkScalarToDouble(t.rc(2, 2)), SkScalarToDouble(t.rc(2, 3)),
+        SkScalarToDouble(t.rc(3, 0)), SkScalarToDouble(t.rc(3, 1)), SkScalarToDouble(t.rc(3, 2)), SkScalarToDouble(t.rc(3, 3)))
 {
-    // FIXME: Check convention.
-    setMatrix(t.rc(0, 0), t.rc(0, 1), t.rc(0, 2), t.rc(0, 3), t.rc(1, 0), t.rc(1, 1), t.rc(1, 2), t.rc(1, 3), t.rc(2, 0), t.rc(2, 1), t.rc(2, 2), t.rc(2, 3), t.rc(3, 0), t.rc(3, 1), t.rc(3, 2), t.rc(3, 3));
 }
 
 TransformationMatrix::operator SkM44() const
 {
-    // FIXME: Check convention.
     return SkM44 {
         SkDoubleToScalar(m11()),
         SkDoubleToScalar(m12()),
@@ -62,9 +63,9 @@ TransformationMatrix::operator SkM44() const
 }
 
 AffineTransform::AffineTransform(const SkMatrix& t)
+    : AffineTransform(SkScalarToDouble(t[SkMatrix::kMScaleX]), SkScalarToDouble(t[SkMatrix::kMSkewY]), SkScalarToDouble(t[SkMatrix::kMSkewX]),  SkScalarToDouble(t[SkMatrix::kMScaleY]),
+        SkScalarToDouble(t[SkMatrix::kMTransX]), SkScalarToDouble(t[SkMatrix::kMTransY]))
 {
-    setMatrix(SkScalarToDouble(t[SkMatrix::kMScaleX]), SkScalarToDouble(t[SkMatrix::kMSkewY]), SkScalarToDouble(t[SkMatrix::kMSkewX]),  SkScalarToDouble(t[SkMatrix::kMScaleY]),
-        SkScalarToDouble(t[SkMatrix::kMTransX]), SkScalarToDouble(t[SkMatrix::kMTransY]));
 }
 
 AffineTransform::operator SkMatrix() const

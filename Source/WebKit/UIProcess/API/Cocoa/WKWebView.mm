@@ -332,8 +332,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     RetainPtr webView { (__bridge WKWebView *)observer };
     if (!webView)
         return;
-    [webView->_contentView _hardwareKeyboardAvailabilityChanged];
-    webView->_page->hardwareKeyboardAvailabilityChanged(GSEventIsHardwareKeyboardAttached());
+    webView->_page->hardwareKeyboardAvailabilityChanged();
 }
 #endif
 
@@ -444,6 +443,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     _unifiedTextReplacementSessions = [NSMapTable strongToWeakObjectsMapTable];
+    _unifiedTextReplacementSessionReplacements = [NSMapTable strongToWeakObjectsMapTable];
 #endif
 }
 
@@ -2842,14 +2842,17 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
 - (void)_requestTargetedElementInfo:(_WKTargetedElementRequest *)request completionHandler:(void(^)(NSArray<_WKTargetedElementInfo *> *))completion
 {
-    WebCore::TargetedElementRequest coreRequest {
+    WebCore::TargetedElementRequest coreRequest;
+    if (request.searchText)
+        coreRequest.data = String { request.searchText };
+    else {
 #if PLATFORM(IOS_FAMILY)
-        [self convertPoint:request.point toView:_contentView.get()],
+        coreRequest.data = [self convertPoint:request.point toView:_contentView.get()];
 #else
-        request.point,
+        coreRequest.data = request.point;
 #endif
-        static_cast<bool>(request.canIncludeNearbyElements)
-    };
+    }
+    coreRequest.canIncludeNearbyElements = !!request.canIncludeNearbyElements;
     _page->requestTargetedElement(WTFMove(coreRequest), [completion = makeBlockPtr(completion)](auto& elements) {
         completion(createNSArray(elements, [](auto& element) {
             return wrapper(element);

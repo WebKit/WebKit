@@ -131,7 +131,7 @@ static int runWGSL(const CommandLine& options)
         WGSL::AST::dumpAST(shaderModule);
 
     String entrypointName = String::fromLatin1(options.entrypoint());
-    auto prepareResult = WGSL::prepare(shaderModule, entrypointName, std::nullopt);
+    auto prepareResult = WGSL::prepare(shaderModule, entrypointName, nullptr);
 
     if (auto* error = std::get_if<WGSL::Error>(&prepareResult)) {
         dataLogLn(*error);

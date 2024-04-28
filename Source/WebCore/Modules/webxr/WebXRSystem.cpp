@@ -566,11 +566,6 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
     });
 }
 
-const char* WebXRSystem::activeDOMObjectName() const
-{
-    return "XRSystem";
-}
-
 void WebXRSystem::stop()
 {
 }

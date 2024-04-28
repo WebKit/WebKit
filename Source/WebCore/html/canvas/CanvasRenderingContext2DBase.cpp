@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
@@ -38,8 +38,10 @@
 #include "CSSMarkup.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParserWorkerSafe.h"
 #include "CSSStyleImageValue.h"
 #include "CachedImage.h"
+#include "CanvasFilterTargetSwitcher.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "ColorConversion.h"
@@ -313,6 +315,7 @@ CanvasRenderingContext2DBase::State::State()
     , textAlign(StartTextAlign)
     , textBaseline(AlphabeticTextBaseline)
     , direction(Direction::Inherit)
+    , filterString("none"_s)
     , unparsedFont(DefaultFont)
 {
 }
@@ -756,6 +759,31 @@ void CanvasRenderingContext2DBase::setGlobalCompositeOperation(const String& ope
     c->setCompositeOperation(op, blendMode);
 }
 
+void CanvasRenderingContext2DBase::setFilterString(const String& filterString)
+{
+    if (state().filterString == filterString)
+        return;
+
+    // Spec: context.filter = "" should leave the current filter unchanged.
+    if (filterString.isEmpty())
+        return;
+
+    // Spec: context.filter = null or context.filter = undefined should leave the current filter unchanged.
+    if (filterString == "null"_s || filterString == "undefined"_s)
+        return;
+
+    auto filterOperations = setFilterStringWithoutUpdatingStyle(filterString);
+    if (!filterOperations)
+        return;
+
+    realizeSaves();
+
+    // Spec: context.filter = "none" filters will be disabled for the context.
+    // Spec: Only parseable inputs should change the current filter.
+    modifiableState().filterString = filterString;
+    modifiableState().filterOperations = WTFMove(*filterOperations);
+}
+
 void CanvasRenderingContext2DBase::scale(double sx, double sy)
 {
     GraphicsContext* c = drawingContext();
@@ -1069,6 +1097,13 @@ static inline IntRect computeImageDataRect(const ImageBuffer& buffer, IntSize so
 
 void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule windingRule)
 {
+    std::unique_ptr<CanvasFilterTargetSwitcher> targetSwitcher;
+    if (!state().filterOperations.isEmpty()) {
+        targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), [&]() {
+            return path.fastBoundingRect();
+        });
+    }
+
     auto* c = drawingContext();
     if (!c)
         return;
@@ -1098,9 +1133,9 @@ void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule
         repaintEntireCanvas = true;
     } else
         c->fillPath(path);
-    
-    didDraw(repaintEntireCanvas, [&] {
-        return path.fastBoundingRect();
+
+    didDraw(repaintEntireCanvas, [&]() {
+        return targetSwitcher ? targetSwitcher->expandedBounds() : path.fastBoundingRect();
     });
 
     c->setFillRule(savedFillRule);
@@ -1108,6 +1143,13 @@ void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule
 
 void CanvasRenderingContext2DBase::strokeInternal(const Path& path)
 {
+    std::unique_ptr<CanvasFilterTargetSwitcher> targetSwitcher;
+    if (!state().filterOperations.isEmpty()) {
+        targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), [&]() {
+            return inflatedStrokeRect(path.fastBoundingRect());
+        });
+    }
+
     auto* c = drawingContext();
     if (!c)
         return;
@@ -1135,10 +1177,8 @@ void CanvasRenderingContext2DBase::strokeInternal(const Path& path)
     } else
         c->strokePath(path);
 
-    didDraw(repaintEntireCanvas, [&] {
-        auto dirtyRect = path.fastBoundingRect();
-        inflateStrokeRect(dirtyRect);
-        return dirtyRect;
+    didDraw(repaintEntireCanvas, [&]() {
+        return targetSwitcher ? targetSwitcher->expandedBounds() : path.fastBoundingRect();
     });
 }
 
@@ -1157,14 +1197,23 @@ void CanvasRenderingContext2DBase::clipInternal(const Path& path, CanvasFillRule
 void CanvasRenderingContext2DBase::beginCompositeLayer()
 {
 #if !USE(CAIRO)
-    drawingContext()->beginTransparencyLayer(1);
+    auto* context = drawingContext();
+    context->beginTransparencyLayer(1);
+#if USE(SKIA)
+    // When on transparency layer, we don't want to blend operations as when layer ends, we blend it as a whole.
+    context->setCompositeOperation(CompositeOperator::SourceOver, BlendMode::Normal);
+#endif
 #endif
 }
 
 void CanvasRenderingContext2DBase::endCompositeLayer()
 {
 #if !USE(CAIRO)
-    drawingContext()->endTransparencyLayer();    
+    auto* context = drawingContext();
+    context->endTransparencyLayer();
+#if USE(SKIA)
+    context->setCompositeOperation(state().globalComposite, state().globalBlend);
+#endif
 #endif
 }
 
@@ -1274,6 +1323,12 @@ void CanvasRenderingContext2DBase::fillRect(double x, double y, double width, do
     if (!validateRectForCanvas(x, y, width, height))
         return;
 
+    FloatRect rect(x, y, width, height);
+
+    std::unique_ptr<CanvasFilterTargetSwitcher> targetSwitcher;
+    if (!state().filterOperations.isEmpty())
+        targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), rect);
+
     auto* c = drawingContext();
     if (!c)
         return;
@@ -1286,8 +1341,6 @@ void CanvasRenderingContext2DBase::fillRect(double x, double y, double width, do
     auto gradient = c->fillGradient();
     if (gradient && gradient->isZeroSize())
         return;
-
-    FloatRect rect(x, y, width, height);
 
     bool repaintEntireCanvas = false;
     if (rectContainsCanvas(rect)) {
@@ -1305,6 +1358,9 @@ void CanvasRenderingContext2DBase::fillRect(double x, double y, double width, do
     } else
         c->fillRect(rect);
 
+    if (targetSwitcher)
+        rect.expand(targetSwitcher->outsets());
+
     didDraw(repaintEntireCanvas, rect);
 }
 
@@ -1312,6 +1368,14 @@ void CanvasRenderingContext2DBase::strokeRect(double x, double y, double width, 
 {
     if (!validateRectForCanvas(x, y, width, height))
         return;
+
+    FloatRect rect(x, y, width, height);
+    FloatRect inflatedStrokeRect = rect;
+    inflatedStrokeRect.inflate(state().lineWidth / 2);
+
+    std::unique_ptr<CanvasFilterTargetSwitcher> targetSwitcher;
+    if (!state().filterOperations.isEmpty())
+        targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), inflatedStrokeRect);
 
     auto* c = drawingContext();
     if (!c)
@@ -1326,7 +1390,6 @@ void CanvasRenderingContext2DBase::strokeRect(double x, double y, double width, 
     if (gradient && gradient->isZeroSize())
         return;
 
-    FloatRect rect(x, y, width, height);
     bool repaintEntireCanvas = false;
     if (isFullCanvasCompositeMode(state().globalComposite)) {
         beginCompositeLayer();
@@ -1340,11 +1403,10 @@ void CanvasRenderingContext2DBase::strokeRect(double x, double y, double width, 
     } else
         c->strokeRect(rect, state().lineWidth);
 
-    didDraw(repaintEntireCanvas, [&] {
-        auto boundingRect = rect;
-        boundingRect.inflate(state().lineWidth / 2);
-        return boundingRect;
-    });
+    if (targetSwitcher)
+        inflatedStrokeRect.expand(targetSwitcher->outsets());
+
+    didDraw(repaintEntireCanvas, inflatedStrokeRect);
 }
 
 void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, const String& colorString, std::optional<float> alpha)
@@ -1636,6 +1698,10 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     if (normalizedDstRect.isEmpty())
         return { };
 
+    std::unique_ptr<CanvasFilterTargetSwitcher> targetSwitcher;
+    if (!state().filterOperations.isEmpty())
+        targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), normalizedDstRect);
+
     GraphicsContext* c = drawingContext();
     if (!c)
         return { };
@@ -1691,6 +1757,9 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     } else
         c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
 
+    if (targetSwitcher)
+        normalizedDstRect.expand(targetSwitcher->outsets());
+
     didDraw(repaintEntireCanvas, normalizedDstRect, shouldPostProcess ? defaultDidDrawOptions() : defaultDidDrawOptionsWithoutPostProcessing());
 
     if (image->drawsSVGImage())
@@ -1718,6 +1787,10 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
 
     if (normalizedDstRect.isEmpty())
         return { };
+
+    std::unique_ptr<CanvasFilterTargetSwitcher> targetSwitcher;
+    if (!state().filterOperations.isEmpty())
+        targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), normalizedDstRect);
 
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1757,6 +1830,9 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
     } else
         c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
 
+    if (targetSwitcher)
+        normalizedDstRect.expand(targetSwitcher->outsets());
+
     auto shouldUseDrawOptionsWithoutPostProcessing = sourceCanvas.renderingContext() && sourceCanvas.renderingContext()->is2d() && !sourceCanvas.havePendingCanvasNoiseInjection();
     didDraw(repaintEntireCanvas, normalizedDstRect, shouldUseDrawOptionsWithoutPostProcessing ? defaultDidDrawOptionsWithoutPostProcessing() : defaultDidDrawOptions());
 
@@ -1784,6 +1860,10 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
     if (normalizedDstRect.isEmpty())
         return { };
 
+    std::unique_ptr<CanvasFilterTargetSwitcher> targetSwitcher;
+    if (!state().filterOperations.isEmpty())
+        targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), normalizedDstRect);
+
     GraphicsContext* c = drawingContext();
     if (!c)
         return { };
@@ -1799,8 +1879,10 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
         if (auto image = video.nativeImageForCurrentTime()) {
             c->drawNativeImage(*image, normalizedDstRect, normalizedSrcRect);
 
-            didDraw(repaintEntireCanvas, normalizedDstRect, defaultDidDrawOptionsWithoutPostProcessing());
+            if (targetSwitcher)
+                normalizedDstRect.expand(targetSwitcher->outsets());
 
+            didDraw(repaintEntireCanvas, normalizedDstRect, defaultDidDrawOptionsWithoutPostProcessing());
             return { };
         }
     }
@@ -1814,8 +1896,10 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
     video.paintCurrentFrameInContext(*c, FloatRect(FloatPoint(), size(video)));
     stateSaver.restore();
 
-    didDraw(repaintEntireCanvas, normalizedDstRect, defaultDidDrawOptionsWithoutPostProcessing());
+    if (targetSwitcher)
+        normalizedDstRect.expand(targetSwitcher->outsets());
 
+    didDraw(repaintEntireCanvas, normalizedDstRect, defaultDidDrawOptionsWithoutPostProcessing());
     return { };
 }
 
@@ -1835,6 +1919,10 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
 
     if (!srcBitmapRect.contains(normalizedSrcRect) || !dstRect.width() || !dstRect.height())
         return { };
+
+    std::unique_ptr<CanvasFilterTargetSwitcher> targetSwitcher;
+    if (!state().filterOperations.isEmpty())
+        targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), dstRect);
 
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1862,7 +1950,10 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
     } else
         c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
 
-    didDraw(repaintEntireCanvas, dstRect, defaultDidDrawOptionsWithoutPostProcessing());
+    if (targetSwitcher)
+        didDraw(repaintEntireCanvas, dstRect + targetSwitcher->outsets(), defaultDidDrawOptionsWithoutPostProcessing());
+    else
+        didDraw(repaintEntireCanvas, dstRect, defaultDidDrawOptionsWithoutPostProcessing());
 
     return { };
 }
@@ -2298,7 +2389,14 @@ const Vector<CanvasRenderingContext2DBase::State, 1>& CanvasRenderingContext2DBa
 
 GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 {
-    return canvasBase().drawingContext();
+    auto* context = canvasBase().drawingContext();
+    if (!context)
+        return nullptr;
+
+    if (UNLIKELY(m_targetSwitcher))
+        return m_targetSwitcher->drawingContext(*context);
+
+    return context;
 }
 
 void CanvasRenderingContext2DBase::prepareForDisplay()
@@ -2521,7 +2619,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
     didDraw(FloatRect { destRect }, options);
 }
 
-void CanvasRenderingContext2DBase::inflateStrokeRect(FloatRect& rect) const
+FloatRect CanvasRenderingContext2DBase::inflatedStrokeRect(const FloatRect& rect) const
 {
     // Fast approximation of the stroke's bounding rect.
     // This yields a slightly oversized rect but is very fast
@@ -2532,7 +2630,9 @@ void CanvasRenderingContext2DBase::inflateStrokeRect(FloatRect& rect) const
         delta *= state().miterLimit;
     else if (state().lineCap == LineCap::Square)
         delta *= root2;
-    rect.inflate(delta);
+    auto inflatedStrokeRect = rect;
+    inflatedStrokeRect.inflate(delta);
+    return inflatedStrokeRect;
 }
 
 static inline InterpolationQuality smoothingToInterpolationQuality(ImageSmoothingQuality quality)
@@ -2684,7 +2784,6 @@ void CanvasRenderingContext2DBase::drawText(const String& text, double x, double
 
 void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, double x, double y, bool fill, std::optional<double> maxWidth)
 {
-    auto* c = drawingContext();
     auto& fontProxy = *this->fontProxy();
     const auto& fontMetrics = fontProxy.metricsOfPrimaryFont();
 
@@ -2700,7 +2799,13 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
     FloatRect textRect = FloatRect(location.x() - fontMetrics.intHeight() / 2, location.y() - fontMetrics.intAscent() - fontMetrics.intLineGap(),
         width + fontMetrics.intHeight(), fontMetrics.intLineSpacing());
     if (!fill)
-        inflateStrokeRect(textRect);
+        textRect = inflatedStrokeRect(textRect);
+
+    std::unique_ptr<CanvasFilterTargetSwitcher> targetSwitcher;
+    if (!state().filterOperations.isEmpty())
+        targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), textRect);
+
+    auto* c = drawingContext();
 
 #if USE(CG)
     const CanvasStyle& drawStyle = fill ? state().fillStyle : state().strokeStyle;
@@ -2789,6 +2894,9 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
         repaintEntireCanvas = true;
     } else
         fontProxy.drawBidiText(*c, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+
+    if (targetSwitcher)
+        textRect.expand(targetSwitcher->outsets());
 
     didDraw(repaintEntireCanvas, textRect);
 }

@@ -1932,6 +1932,7 @@
 		E32D4DE926DAFD4300D4533A /* TemporalCalendar.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */; };
 		E32D4DEA26DAFD4300D4533A /* TemporalCalendarConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */; };
 		E32E1B3128DA8C7A00FCB571 /* IntlDurationFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E319A3E628DA84E900DF18C7 /* IntlDurationFormat.cpp */; };
+		E32EF01E2BD72AEF001675BA /* StableSort.h in Headers */ = {isa = PBXBuildFile; fileRef = E32EF01D2BD72AEF001675BA /* StableSort.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E32F713D281B3C6600AFD21D /* UnifiedSource5-c.c in Sources */ = {isa = PBXBuildFile; fileRef = E32F7138281B3C6600AFD21D /* UnifiedSource5-c.c */; };
 		E32F713E281B3C6600AFD21D /* UnifiedSource4-c.c in Sources */ = {isa = PBXBuildFile; fileRef = E32F7139281B3C6600AFD21D /* UnifiedSource4-c.c */; };
 		E32F713F281B3C6600AFD21D /* UnifiedSource1-c.c in Sources */ = {isa = PBXBuildFile; fileRef = E32F713A281B3C6600AFD21D /* UnifiedSource1-c.c */; };
@@ -5504,6 +5505,7 @@
 		E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendar.h; sourceTree = "<group>"; };
 		E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendarConstructor.h; sourceTree = "<group>"; };
 		E32D4DE526DAFD4300D4533A /* TemporalCalendarConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalCalendarConstructor.cpp; sourceTree = "<group>"; };
+		E32EF01D2BD72AEF001675BA /* StableSort.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StableSort.h; sourceTree = "<group>"; };
 		E32F7138281B3C6600AFD21D /* UnifiedSource5-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "UnifiedSource5-c.c"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource5-c.c"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E32F7139281B3C6600AFD21D /* UnifiedSource4-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "UnifiedSource4-c.c"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource4-c.c"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E32F713A281B3C6600AFD21D /* UnifiedSource1-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "UnifiedSource1-c.c"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource1-c.c"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8676,6 +8678,7 @@
 				425BA1337E4344E1B269A671 /* SourceOrigin.h */,
 				0F0CD4C315F6B6B50032F1C0 /* SparseArrayValueMap.cpp */,
 				0FB7F39215ED8E3800F167B2 /* SparseArrayValueMap.h */,
+				E32EF01D2BD72AEF001675BA /* StableSort.h */,
 				0F3AC751183EA1040032029F /* StackAlignment.h */,
 				0F6DB7E71D6124B200CDBF8E /* StackFrame.cpp */,
 				0F6DB7E81D6124B200CDBF8E /* StackFrame.h */,
@@ -11660,6 +11663,7 @@
 				A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */,
 				0FD82E54141DAEEE00179C94 /* SpeculatedType.h in Headers */,
 				A785F6BC18C553FE00F10626 /* SpillRegistersMode.h in Headers */,
+				E32EF01E2BD72AEF001675BA /* StableSort.h in Headers */,
 				0F3AC752183EA1040032029F /* StackAlignment.h in Headers */,
 				0F6DB7E91D6124B500CDBF8E /* StackFrame.h in Headers */,
 				A7C1EAF217987AB600299DB2 /* StackVisitor.h in Headers */,

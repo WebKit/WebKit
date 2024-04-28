@@ -408,7 +408,7 @@ Ref<CSSRuleSourceData> StyleSheetHandler::popRuleData()
 }
 
 template <typename CharacterType>
-static inline void fixUnparsedProperties(const CharacterType* characters, CSSRuleSourceData* ruleData)
+static inline void fixUnparsedProperties(std::span<const CharacterType> characters, CSSRuleSourceData* ruleData)
 {
     Vector<CSSPropertySourceData>& propertyData = ruleData->styleSourceData->propertyData;
     unsigned size = propertyData.size();
@@ -452,7 +452,7 @@ static inline void fixUnparsedProperties(const CharacterType* characters, CSSRul
                 ++valueStart;
             
             // Need to exclude the trailing ';' from the property value.
-            currentData->value = String({ characters + valueStart, propertyEnd - valueStart + (characters[propertyEnd] == ';' ? 0 : 1) });
+            currentData->value = String(characters.subspan(valueStart, propertyEnd - valueStart + (characters[propertyEnd] == ';' ? 0 : 1)));
         }
     }
 }
@@ -463,11 +463,11 @@ void StyleSheetHandler::fixUnparsedPropertyRanges(CSSRuleSourceData* ruleData)
         return;
     
     if (m_parsedText.is8Bit()) {
-        fixUnparsedProperties<LChar>(m_parsedText.characters8(), ruleData);
+        fixUnparsedProperties<LChar>(m_parsedText.span8(), ruleData);
         return;
     }
     
-    fixUnparsedProperties<UChar>(m_parsedText.characters16(), ruleData);
+    fixUnparsedProperties<UChar>(m_parsedText.span16(), ruleData);
 }
 
 void StyleSheetHandler::observeProperty(unsigned startOffset, unsigned endOffset, bool isImportant, bool isParsed)

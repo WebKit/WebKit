@@ -85,7 +85,7 @@ protected:
     // LoggerHelper API
     const Logger& logger() const final { return m_audioSource->logger(); }
     const void* logIdentifier() const final { return m_audioSource->logIdentifier(); }
-    const char* logClassName() const final { return "RealtimeOutgoingAudioSource"; }
+    ASCIILiteral logClassName() const final { return "RealtimeOutgoingAudioSource"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
 

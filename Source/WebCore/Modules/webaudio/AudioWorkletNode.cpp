@@ -315,11 +315,6 @@ void AudioWorkletNode::fireProcessorErrorOnMainThread(ProcessorError error)
     });
 }
 
-const char* AudioWorkletNode::activeDOMObjectName() const
-{
-    return "AudioWorkletNode";
-}
-
 bool AudioWorkletNode::virtualHasPendingActivity() const
 {
     return !context().isClosed();

@@ -26,6 +26,8 @@
 #include "CSSPropertyParserConsumer+Number.h"
 
 #include "CSSCalcParser.h"
+#include "CSSCalcSymbolTable.h"
+#include "CSSCalcValue.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {

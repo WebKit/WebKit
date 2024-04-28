@@ -96,7 +96,7 @@ void Update::addElement(Element& element, Element* parent, ElementUpdate&& eleme
     m_roots.remove(&element);
     addPossibleRoot(parent);
 
-    if (elementUpdate.change == Change::Renderer)
+    if (elementUpdate.mayNeedRebuildRoot)
         addPossibleRebuildRoot(element, parent);
 
     m_elements.add(&element, WTFMove(elementUpdate));

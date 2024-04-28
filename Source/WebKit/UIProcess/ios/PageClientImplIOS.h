@@ -205,6 +205,8 @@ private:
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&) override;
     void showDataDetectorsUIForPositionInformation(const InteractionInformationAtPosition&) override;
 
+    void hardwareKeyboardAvailabilityChanged() override;
+
     bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, const FrameInfoData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
     bool showShareSheet(const WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&&) override;
     void showContactPicker(const WebCore::ContactsRequestData&, WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&) override;
@@ -320,6 +322,7 @@ private:
 
     WebCore::Color contentViewBackgroundColor() final;
     WebCore::Color insertionPointColor() final;
+    bool isScreenBeingCaptured() final;
 
     String sceneID() final;
 
@@ -335,7 +338,7 @@ private:
     bool hasResizableWindows() const final;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    void didEnterFullscreen() final;
+    void didEnterFullscreen() final { };
     void didExitFullscreen() final;
 #endif
 

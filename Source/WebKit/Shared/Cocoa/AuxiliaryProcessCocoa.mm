@@ -74,6 +74,16 @@ static void initializeTimerCoalescingPolicy()
 }
 #endif
 
+#if PLATFORM(MAC)
+static void disableDowngradeToLayoutManager()
+{
+    NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
+    auto newArguments = adoptNS([existingArguments mutableCopy]);
+    [newArguments setValue:@NO forKey:@"NSTextViewAllowsDowngradeToLayoutManager"];
+    [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments.get() forName:NSArgumentDomain];
+}
+#endif
+
 void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters& parameters)
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -90,6 +100,10 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
 
     WebCore::setApplicationBundleIdentifier(parameters.clientBundleIdentifier);
     setSDKAlignedBehaviors(parameters.clientSDKAlignedBehaviors);
+
+#if PLATFORM(MAC)
+    disableDowngradeToLayoutManager();
+#endif
 
 #if USE(EXTENSIONKIT)
     setProcessIsExtension(!!WKProcessExtension.sharedInstance);

@@ -27,6 +27,7 @@
 
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/ASCIILiteral.h>
 
 #if USE(SYSTEM_MALLOC)
 #define GIGACAGE_ENABLED 0
@@ -51,16 +52,16 @@ inline void removePrimitiveDisableCallback(void (*)(void*), void*) { }
 
 inline void forbidDisablingPrimitiveGigacage() { }
 
-ALWAYS_INLINE const char* name(Kind kind)
+ALWAYS_INLINE ASCIILiteral name(Kind kind)
 {
     switch (kind) {
     case Primitive:
-        return "Primitive";
+        return "Primitive"_s;
     case NumberOfKinds:
         break;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
+    return { };
 }
 
 ALWAYS_INLINE bool contains(const void*) { return false; }

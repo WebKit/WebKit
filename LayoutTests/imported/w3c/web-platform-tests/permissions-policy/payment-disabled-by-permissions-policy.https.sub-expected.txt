@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Feature policy 'Payment' check failed for element with origin 'https://127.0.0.1:9443' and allow attribute ''.
+CONSOLE MESSAGE: Permission policy 'Payment' check failed for element with origin 'https://127.0.0.1:9443' and allow attribute ''.
 
 
 FAIL permissions policy header "payment=()" disallows Payment Request API in top-level document. assert_throws_dom: function "() => {

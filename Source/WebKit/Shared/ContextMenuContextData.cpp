@@ -139,7 +139,7 @@ ContextMenuContextData::ContextMenuContextData(WebCore::ContextMenuContext::Type
     , String&& selectedText
 #if ENABLE(SERVICE_CONTROLS)
     , std::optional<WebCore::ShareableBitmapHandle>&& controlledImageHandle
-    , Vector<uint8_t>&& controlledSelectionData
+    , WebCore::AttributedString&& controlledSelection
     , Vector<String>&& selectedTelephoneNumbers
     , bool selectionIsEditable
     , WebCore::IntRect&& controlledImageBounds
@@ -160,7 +160,7 @@ ContextMenuContextData::ContextMenuContextData(WebCore::ContextMenuContext::Type
     , m_selectedText(WTFMove(selectedText))
     , m_hasEntireImage(hasEntireImage)
 #if ENABLE(SERVICE_CONTROLS)
-    , m_controlledSelectionData(WTFMove(controlledSelectionData))
+    , m_controlledSelection(WTFMove(controlledSelection))
     , m_selectedTelephoneNumbers(WTFMove(selectedTelephoneNumbers))
     , m_selectionIsEditable(selectionIsEditable)
     , m_controlledImageBounds(WTFMove(controlledImageBounds))
@@ -185,7 +185,7 @@ ContextMenuContextData::ContextMenuContextData(WebCore::ContextMenuContext::Type
 #if ENABLE(SERVICE_CONTROLS)
 bool ContextMenuContextData::controlledDataIsEditable() const
 {
-    if (!m_controlledSelectionData.isEmpty() || m_controlledImage || !m_controlledImageAttachmentID.isNull())
+    if (!m_controlledSelection.isNull() || m_controlledImage || !m_controlledImageAttachmentID.isNull())
         return m_selectionIsEditable;
 
     return false;

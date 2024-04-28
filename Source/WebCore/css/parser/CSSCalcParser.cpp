@@ -26,6 +26,7 @@
 #include "CSSCalcParser.h"
 
 #include "CSSCalcValue.h"
+#include "CSSParserMode.h"
 #include "Logging.h"
 
 namespace WebCore {

@@ -46,13 +46,13 @@ template<> struct ArgumentCoder<GUniquePtr<char*>> {
     {
         auto length = decoder.decode<unsigned>();
 
-        if (!length)
+        if (UNLIKELY(!length))
             return std::nullopt;
 
         GUniquePtr<char*>strv(g_new0(char*, *length + 1));
         for (uint32_t i = 0; i < *length; i++) {
             auto strOptional = decoder.decode<CString>();
-            if (!strOptional)
+            if (UNLIKELY(!strOptional))
                 return std::nullopt;
 
             strv.get()[i] = g_strdup(strOptional->data());
@@ -62,4 +62,4 @@ template<> struct ArgumentCoder<GUniquePtr<char*>> {
     }
 };
 
-}
+} // namespace IPC

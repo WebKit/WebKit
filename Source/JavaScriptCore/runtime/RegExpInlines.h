@@ -139,9 +139,9 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
             Yarr::MatchingContextHolder regExpContext(vm, m_regExpJITCode->usesPatternContextBuffer(), this, matchFrom);
 
             if (s.is8Bit())
-                result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length(), offsetVector, &regExpContext).start;
+                result = m_regExpJITCode->execute(s.span8(), startOffset, offsetVector, &regExpContext).start;
             else
-                result = m_regExpJITCode->execute(s.characters16(), startOffset, s.length(), offsetVector, &regExpContext).start;
+                result = m_regExpJITCode->execute(s.span16(), startOffset, offsetVector, &regExpContext).start;
         }
 
         if (result == static_cast<int>(Yarr::JSRegExpResult::JITCodeFailure)) {
@@ -275,9 +275,9 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
             Yarr::MatchingContextHolder regExpContext(vm, m_regExpJITCode->usesPatternContextBuffer(), this, matchFrom);
 
             if (s.is8Bit())
-                result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length(), &regExpContext);
+                result = m_regExpJITCode->execute(s.span8(), startOffset, &regExpContext);
             else
-                result = m_regExpJITCode->execute(s.characters16(), startOffset, s.length(), &regExpContext);
+                result = m_regExpJITCode->execute(s.span16(), startOffset, &regExpContext);
         }
 
 #if ENABLE(REGEXP_TRACING)

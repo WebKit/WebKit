@@ -42,6 +42,8 @@ public:
     bool hasPlatformContext() const final;
     SkCanvas* platformContext() const final;
 
+    const DestinationColorSpace& colorSpace() const final;
+
     void didUpdateState(GraphicsContextState&);
 
     void setLineCap(LineCap) final;
@@ -126,6 +128,7 @@ private:
     CompletionHandler<void()> m_destroyNotify;
     SkiaState m_skiaState;
     Vector<SkiaState, 1> m_skiaStateStack;
+    const DestinationColorSpace m_colorSpace;
 };
 
 } // namespace WebCore

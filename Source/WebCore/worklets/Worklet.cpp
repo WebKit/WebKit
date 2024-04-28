@@ -105,9 +105,4 @@ void Worklet::finishPendingTasks(WorkletPendingTasks& tasks)
     m_pendingTasksSet.remove(&tasks);
 }
 
-const char* Worklet::activeDOMObjectName() const
-{
-    return "Worklet";
-}
-
 } // namespace WebCore

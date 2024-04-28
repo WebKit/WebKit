@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +51,11 @@ public:
     template<typename U>
     RectEdges(U&& top, U&& right, U&& bottom, U&& left)
         : m_sides({ { std::forward<T>(top), std::forward<T>(right), std::forward<T>(bottom), std::forward<T>(left) } })
+    { }
+
+    template<typename U>
+    RectEdges(const RectEdges<U>& other)
+        : RectEdges(other.top(), other.right(), other.bottom(), other.left())
     { }
 
     T& at(BoxSide side) { return m_sides[static_cast<size_t>(side)]; }

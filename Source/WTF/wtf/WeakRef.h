@@ -31,6 +31,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/WeakPtrImpl.h>
 
 namespace WTF {
 
@@ -173,105 +174,6 @@ template<typename P, typename WeakPtrImpl> struct PtrHash<WeakRef<P, WeakPtrImpl
 
 template<typename P, typename WeakPtrImpl> struct DefaultHash<WeakRef<P, WeakPtrImpl>> : PtrHash<WeakRef<P, WeakPtrImpl>> { };
 
-DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakPtrImplBase);
-
-template<typename Derived>
-class WeakPtrImplBase : public ThreadSafeRefCounted<Derived> {
-    WTF_MAKE_NONCOPYABLE(WeakPtrImplBase);
-    WTF_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(WeakPtrImplBase);
-public:
-    ~WeakPtrImplBase() = default;
-
-    template<typename T> typename T::WeakValueType* get()
-    {
-        return static_cast<typename T::WeakValueType*>(m_ptr);
-    }
-
-    explicit operator bool() const { return m_ptr; }
-    void clear() { m_ptr = nullptr; }
-
-#if ASSERT_ENABLED
-    bool wasConstructedOnMainThread() const { return m_wasConstructedOnMainThread; }
-#endif
-
-    template<typename T>
-    explicit WeakPtrImplBase(T* ptr)
-        : m_ptr(static_cast<typename T::WeakValueType*>(ptr))
-#if ASSERT_ENABLED
-        , m_wasConstructedOnMainThread(isMainThread())
-#endif
-    {
-    }
-
-private:
-    void* m_ptr;
-#if ASSERT_ENABLED
-    bool m_wasConstructedOnMainThread;
-#endif
-};
-
-class DefaultWeakPtrImpl final : public WeakPtrImplBase<DefaultWeakPtrImpl> {
-public:
-    template<typename T>
-    explicit DefaultWeakPtrImpl(T* ptr) : WeakPtrImplBase<DefaultWeakPtrImpl>(ptr) { }
-};
-
-DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakPtrImplBaseSingleThread);
-
-template<typename Derived>
-class WeakPtrImplBaseSingleThread {
-    WTF_MAKE_NONCOPYABLE(WeakPtrImplBaseSingleThread);
-    WTF_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(WeakPtrImplBaseSingleThread);
-public:
-    ~WeakPtrImplBaseSingleThread() = default;
-
-    template<typename T> typename T::WeakValueType* get()
-    {
-        return static_cast<typename T::WeakValueType*>(m_ptr);
-    }
-
-    explicit operator bool() const { return m_ptr; }
-    void clear() { m_ptr = nullptr; }
-
-#if ASSERT_ENABLED
-    bool wasConstructedOnMainThread() const { return m_wasConstructedOnMainThread; }
-#endif
-
-    template<typename T>
-    explicit WeakPtrImplBaseSingleThread(T* ptr)
-        : m_ptr(static_cast<typename T::WeakValueType*>(ptr))
-#if ASSERT_ENABLED
-        , m_wasConstructedOnMainThread(isMainThread())
-#endif
-    {
-    }
-
-    uint32_t refCount() const { return m_refCount; }
-    void ref() const { ++m_refCount; }
-    void deref() const
-    {
-        uint32_t tempRefCount = m_refCount - 1;
-        if (!tempRefCount) {
-            delete this;
-            return;
-        }
-        m_refCount = tempRefCount;
-    }
-
-private:
-    mutable SingleThreadIntegralWrapper<uint32_t> m_refCount { 1 };
-    void* m_ptr;
-#if ASSERT_ENABLED
-    bool m_wasConstructedOnMainThread;
-#endif
-};
-
-class SingleThreadWeakPtrImpl final : public WeakPtrImplBaseSingleThread<SingleThreadWeakPtrImpl> {
-public:
-    template<typename T>
-    explicit SingleThreadWeakPtrImpl(T* ptr) : WeakPtrImplBaseSingleThread<SingleThreadWeakPtrImpl>(ptr) { }
-};
-
 template<typename T> using SingleThreadWeakRef = WeakRef<T, SingleThreadWeakPtrImpl>;
 
 template<typename ExpectedType, typename ArgType, typename WeakPtrImpl>
@@ -308,6 +210,5 @@ inline WeakPtr<match_constness_t<Source, Target>, WeakPtrImpl> dynamicDowncast(W
 } // namespace WTF
 
 using WTF::EnableWeakPtrThreadingAssertions;
-using WTF::SingleThreadWeakPtrImpl;
 using WTF::SingleThreadWeakRef;
 using WTF::WeakRef;

@@ -79,7 +79,6 @@ private:
 
     // ActiveDOMObject
     void stop() final;
-    const char* activeDOMObjectName() const final { return "RTCIceTransport"; }
     bool virtualHasPendingActivity() const final;
 
     // RTCIceTransportBackend::Client

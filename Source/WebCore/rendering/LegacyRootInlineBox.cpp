@@ -196,9 +196,9 @@ void LegacyRootInlineBox::outputLineBox(WTF::TextStream& stream, bool mark, int 
     LegacyInlineBox::outputLineBox(stream, mark, depth);
 }
 
-const char* LegacyRootInlineBox::boxName() const
+ASCIILiteral LegacyRootInlineBox::boxName() const
 {
-    return "RootInlineBox";
+    return "RootInlineBox"_s;
 }
 #endif
 

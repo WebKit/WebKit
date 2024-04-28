@@ -211,11 +211,6 @@ RefPtr<Page> Chrome::createWindow(LocalFrame& frame, const WindowFeatures& featu
     if (!newPage)
         return nullptr;
 
-    if (!features.wantsNoOpener()) {
-        Ref page = m_page.get();
-        page->protectedStorageNamespaceProvider()->copySessionStorageNamespace(page, *newPage);
-    }
-
     return newPage;
 }
 
@@ -525,6 +520,11 @@ FloatSize Chrome::availableScreenSize() const
 FloatSize Chrome::overrideScreenSize() const
 {
     return m_client->overrideScreenSize();
+}
+
+FloatSize Chrome::overrideAvailableScreenSize() const
+{
+    return m_client->overrideAvailableScreenSize();
 }
 
 void Chrome::dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>& disabledAdaptations) const

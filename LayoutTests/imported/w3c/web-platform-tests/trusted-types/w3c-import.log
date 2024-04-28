@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Element-insertAdjacentHTML.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Element-insertAdjacentText.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Element-outerHTML.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/Element-setAttribute-respects-Elements-node-documents-globals-CSP.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Element-setAttribute.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Element-setAttributeNS.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/GlobalEventHandlers-onclick.html
@@ -51,6 +52,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getPropertyType.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-isXXX.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-metadata.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Window-TrustedTypes.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-eval.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-importScripts.html
@@ -88,6 +90,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/eval-no-csp-no-tt.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/eval-with-permissive-csp.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/modify-attributes-in-callback.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/no-require-trusted-types-for-report-only.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/no-require-trusted-types-for-report-only.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/no-require-trusted-types-for.html

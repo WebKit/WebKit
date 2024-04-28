@@ -72,26 +72,6 @@ public:
 
     void notifyDownloadDone();
 
-    void didClearStatisticsInMemoryAndPersistentStore();
-    void didClearStatisticsThroughWebsiteDataRemoval();
-    void didSetShouldDowngradeReferrer();
-    void didSetShouldBlockThirdPartyCookies();
-    void didSetFirstPartyWebsiteDataRemovalMode();
-    void didSetToSameSiteStrictCookies();
-    void didSetFirstPartyHostCNAMEDomain();
-    void didSetThirdPartyCNAMEDomain();
-    void didResetStatisticsToConsistentState();
-    void didSetBlockCookiesForHost();
-    void didSetStatisticsDebugMode();
-    void didSetPrevalentResourceForDebugMode();
-    void didSetLastSeen();
-    void didMergeStatistic();
-    void didSetExpiredStatistic();
-    void didSetPrevalentResource();
-    void didSetVeryPrevalentResource();
-    void didSetHasHadUserInteraction();
-    void didReceiveLoadedSubresourceDomains(Vector<String>&& domains);
-
     void didRemoveAllSessionCredentials();
 
     void didSetAppBoundDomains();
@@ -105,6 +85,10 @@ public:
     void dumpPrivateClickMeasurement();
 
     void willCreateNewPage();
+
+    void loadTestInCrossOriginIframe();
+
+    void dumpResourceLoadStatisticsIfNecessary();
 
 private:
     WKRetainPtr<WKMutableDictionaryRef> createTestSettingsDictionary();

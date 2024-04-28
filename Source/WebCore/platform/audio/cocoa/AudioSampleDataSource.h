@@ -98,7 +98,7 @@ private:
     MediaTime hostTime() const;
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "AudioSampleDataSource"; }
+    ASCIILiteral logClassName() const final { return "AudioSampleDataSource"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
 

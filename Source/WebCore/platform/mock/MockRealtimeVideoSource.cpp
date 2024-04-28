@@ -549,49 +549,49 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     context.setFillColor(Color::white);
     context.setTextDrawingMode(TextDrawingMode::Fill);
     auto string = makeString(pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds), '.', pad('0', 3, milliseconds % 1000));
-    context.drawText(drawingState.timeFont(), TextRun((StringView(string))), timeLocation);
+    context.drawText(drawingState.timeFont(), TextRun(StringView(string)), timeLocation);
 
     string = makeString(pad('0', 6, m_frameNumber++));
     timeLocation.move(0, drawingState.baseFontSize());
-    context.drawText(drawingState.timeFont(), TextRun((StringView(string))), timeLocation);
+    context.drawText(drawingState.timeFont(), TextRun(StringView(string)), timeLocation);
 
     FloatPoint statsLocation(captureSize.width() * .45, captureSize.height() * .75);
     string = makeString("Requested frame rate: ", FormattedNumber::fixedWidth(frameRate(), 1), " fps");
-    context.drawText(drawingState.statsFont(), TextRun((StringView(string))), statsLocation);
+    context.drawText(drawingState.statsFont(), TextRun(StringView(string)), statsLocation);
 
     statsLocation.move(0, drawingState.statsFontSize());
     string = makeString("Observed frame rate: ", FormattedNumber::fixedWidth(observedFrameRate(), 1), " fps");
-    context.drawText(drawingState.statsFont(), TextRun((StringView(string))), statsLocation);
+    context.drawText(drawingState.statsFont(), TextRun(StringView(string)), statsLocation);
 
     auto size = this->size();
     statsLocation.move(0, drawingState.statsFontSize());
     string = makeString("Size: ", size.width(), " x ", size.height());
-    context.drawText(drawingState.statsFont(), TextRun((StringView(string))), statsLocation);
+    context.drawText(drawingState.statsFont(), TextRun(StringView(string)), statsLocation);
 
     if (mockCamera()) {
         statsLocation.move(0, drawingState.statsFontSize());
         string = makeString("Preset size: ", captureSize.width(), " x ", captureSize.height());
-        context.drawText(drawingState.statsFont(), TextRun((StringView(string))), statsLocation);
+        context.drawText(drawingState.statsFont(), TextRun(StringView(string)), statsLocation);
 
-        const char* camera;
+        ASCIILiteral camera;
         switch (facingMode()) {
         case VideoFacingMode::User:
-            camera = "User facing";
+            camera = "User facing"_s;
             break;
         case VideoFacingMode::Environment:
-            camera = "Environment facing";
+            camera = "Environment facing"_s;
             break;
         case VideoFacingMode::Left:
-            camera = "Left facing";
+            camera = "Left facing"_s;
             break;
         case VideoFacingMode::Right:
-            camera = "Right facing";
+            camera = "Right facing"_s;
             break;
         case VideoFacingMode::Unknown:
-            camera = "Unknown";
+            camera = "Unknown"_s;
             break;
         }
-        string = makeString("Camera: ", camera);
+        string = makeString("Camera: "_s, camera);
         statsLocation.move(0, drawingState.statsFontSize());
         context.drawText(drawingState.statsFont(), TextRun(string), statsLocation);
     } else if (!name().isNull()) {

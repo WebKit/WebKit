@@ -44,6 +44,61 @@ void main(void) {
    gl_Position = vec4(0.5, 0.5, 0.5, 1.0);
 })";
 
+        static constexpr char kInactiveDeferredVS[] = R"(attribute vec4 a_position;
+attribute vec2 a_texCoord;
+varying vec2 v_texCoord;
+void main()
+{
+    gl_Position = a_position;
+    v_texCoord = a_texCoord;
+})";
+
+        static constexpr char kInactiveDeferredFS[] = R"(precision mediump float;
+varying vec2 v_texCoord;
+uniform sampler2D s_texture;
+void main()
+{
+    gl_FragColor = vec4(0.4, 0.4, 0.4, 1.0);
+    gl_FragColor = texture2D(s_texture, v_texCoord);
+})";
+
+        static constexpr char kActiveDeferredVS[] = R"(attribute vec4 a_position;
+attribute vec2 a_texCoord;
+varying vec2 v_texCoord;
+void main()
+{
+    gl_Position = a_position;
+    v_texCoord = a_texCoord;
+})";
+
+        // Create shaders, program but defer compiling & linking, use before capture starts
+        // (Inactive)
+        lateLinkTestVertShaderInactive                   = glCreateShader(GL_VERTEX_SHADER);
+        const char *lateLinkTestVsSourceArrayInactive[1] = {kInactiveDeferredVS};
+        glShaderSource(lateLinkTestVertShaderInactive, 1, lateLinkTestVsSourceArrayInactive, 0);
+        lateLinkTestFragShaderInactive                   = glCreateShader(GL_FRAGMENT_SHADER);
+        const char *lateLinkTestFsSourceArrayInactive[1] = {kInactiveDeferredFS};
+        glShaderSource(lateLinkTestFragShaderInactive, 1, lateLinkTestFsSourceArrayInactive, 0);
+        lateLinkTestProgramInactive = glCreateProgram();
+        glAttachShader(lateLinkTestProgramInactive, lateLinkTestVertShaderInactive);
+        glAttachShader(lateLinkTestProgramInactive, lateLinkTestFragShaderInactive);
+
+        // Create inactive program having shader shared with deferred linked program
+        glCompileShader(lateLinkTestVertShaderInactive);
+        glCompileShader(lateLinkTestFragShaderInactive);
+        glLinkProgram(lateLinkTestProgramInactive);
+        ASSERT_GL_NO_ERROR();
+
+        // Create vertex shader and program but defer compiling & linking until capture time
+        // (Active) Use fragment shader attached to inactive program
+        lateLinkTestVertShaderActive                   = glCreateShader(GL_VERTEX_SHADER);
+        const char *lateLinkTestVsSourceArrayActive[1] = {kActiveDeferredVS};
+        glShaderSource(lateLinkTestVertShaderActive, 1, lateLinkTestVsSourceArrayActive, 0);
+        lateLinkTestProgramActive = glCreateProgram();
+        glAttachShader(lateLinkTestProgramActive, lateLinkTestVertShaderActive);
+        glAttachShader(lateLinkTestProgramActive, lateLinkTestFragShaderInactive);
+        ASSERT_GL_NO_ERROR();
+
         // Create shader that is unused during capture
         inactiveProgram                    = glCreateProgram();
         inactiveShader                     = glCreateShader(GL_VERTEX_SHADER);
@@ -108,6 +163,11 @@ void main(void) {
         glDeleteShader(inactiveShader);
         glDeleteShader(activeBeforeVertShader);
         glDeleteShader(activeBeforeFragShader);
+        glDeleteProgram(lateLinkTestProgramInactive);
+        glDeleteProgram(lateLinkTestProgramActive);
+        glDeleteShader(lateLinkTestVertShaderInactive);
+        glDeleteShader(lateLinkTestFragShaderInactive);
+        glDeleteShader(lateLinkTestVertShaderActive);
     }
 
     static constexpr char kActiveVS[] = R"(attribute vec4 a_position;
@@ -130,8 +190,16 @@ void main()
     void frame1();
     void frame2();
     void frame3();
+    void frame4();
 
     std::vector<GLuint> mFBOs;
+
+    // For testing deferred compile/link
+    GLuint lateLinkTestVertShaderInactive;
+    GLuint lateLinkTestFragShaderInactive;
+    GLuint lateLinkTestProgramInactive;
+    GLuint lateLinkTestVertShaderActive;
+    GLuint lateLinkTestProgramActive;
 
     GLuint inactiveProgram;
     GLuint inactiveShader;
@@ -226,6 +294,7 @@ void CapturedTest::frame2()
         0,   255, 0,    // Green
         255, 0,   0,    // Red
     };
+
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -297,6 +366,67 @@ void main(void) {
     // Note: RAII destructors called here causing additional GL calls.
 }
 
+void CapturedTest::frame4()
+{
+    GLuint positionLoc;
+    GLuint texCoordLoc;
+    GLuint lateLinkTestTexture;
+    GLint samplerLoc;
+
+    // Deferred compile/link
+    glCompileShader(lateLinkTestVertShaderActive);
+    glLinkProgram(lateLinkTestProgramActive);
+    ASSERT_GL_NO_ERROR();
+
+    // Get the attr/sampler locations
+    positionLoc = glGetAttribLocation(lateLinkTestProgramActive, "a_position");
+    texCoordLoc = glGetAttribLocation(lateLinkTestProgramActive, "a_texCoord");
+    samplerLoc  = glGetUniformLocation(lateLinkTestProgramActive, "s_texture");
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    // Bind the texture object during capture
+    glGenTextures(1, &lateLinkTestTexture);
+    glBindTexture(GL_TEXTURE_2D, lateLinkTestTexture);
+    ASSERT_GL_NO_ERROR();
+
+    const size_t width                 = 2;
+    const size_t height                = 2;
+    GLubyte pixels[width * height * 3] = {
+        255, 255, 0,    // Yellow
+        0,   0,   255,  // Blue
+        0,   255, 0,    // Green
+        255, 0,   0,    // Red
+    };
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLfloat vertices[] = {
+        -0.25f, 0.75f,  0.0f,  // Position 0
+        0.0f,   0.0f,          // TexCoord 0
+        -0.25f, -0.25f, 0.0f,  // Position 1
+        0.0f,   1.0f,          // TexCoord 1
+        0.75f,  -0.25f, 0.0f,  // Position 2
+        1.0f,   1.0f,          // TexCoord 2
+        0.75f,  0.75f,  0.0f,  // Position 3
+        1.0f,   0.0f           // TexCoord 3
+    };
+    GLushort indices[] = {0, 1, 2, 0, 2, 3};
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(lateLinkTestProgramActive);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices);
+    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices + 3);
+    glEnableVertexAttribArray(positionLoc);
+    glEnableVertexAttribArray(texCoordLoc);
+    glUniform1i(samplerLoc, 0);
+
+    // Draw shaders & program created before capture
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_EQ(108, 108, 0, 0, 255, 255);
+}
+
 // Test captured by capture_tests.py
 TEST_P(CapturedTest, MultiFrame)
 {
@@ -309,6 +439,9 @@ TEST_P(CapturedTest, MultiFrame)
 
     swapBuffers();
     frame3();
+
+    swapBuffers();
+    frame4();
 
     // Empty frames to reach capture end.
     for (int i = 0; i < 10; i++)

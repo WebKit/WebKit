@@ -263,11 +263,11 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
     auto codePathToUse = codePath(run);
     if (codePathToUse == CodePath::Complex) {
         ComplexTextController complexIterator(*this, run, false, fallbackFonts);
-        complexIterator.advance(from, nullptr, IncludePartialGlyphs, fallbackFonts);
+        complexIterator.advance(from, nullptr, GlyphIterationStyle::IncludePartialGlyphs, fallbackFonts);
         offsetBeforeRange = complexIterator.runWidthSoFar();
-        complexIterator.advance(to, nullptr, IncludePartialGlyphs, fallbackFonts);
+        complexIterator.advance(to, nullptr, GlyphIterationStyle::IncludePartialGlyphs, fallbackFonts);
         offsetAfterRange = complexIterator.runWidthSoFar();
-        complexIterator.advance(run.length(), nullptr, IncludePartialGlyphs, fallbackFonts);
+        complexIterator.advance(run.length(), nullptr, GlyphIterationStyle::IncludePartialGlyphs, fallbackFonts);
         totalWidth = complexIterator.runWidthSoFar();
     } else {
         WidthIterator simpleIterator(*this, run, fallbackFonts);
@@ -332,17 +332,17 @@ NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDire
     Ref font = primaryFont();
     ASSERT(!font->syntheticBoldOffset()); // This function should only be called when RenderText::computeCanUseSimplifiedTextMeasuring() returns true, and that function requires no synthetic bold.
 
-    auto addGlyphsFromText = [&](GlyphBuffer& glyphBuffer, const Font& font, const auto* characters, unsigned length) {
-        for (unsigned i = 0; i < length; ++i) {
+    auto addGlyphsFromText = [&](GlyphBuffer& glyphBuffer, const Font& font, auto characters) {
+        for (size_t i = 0; i < characters.size(); ++i) {
             auto glyph = font.glyphForCharacter(characters[i]);
             glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
         }
     };
 
     if (text.is8Bit())
-        addGlyphsFromText(glyphBuffer, font, text.characters8(), text.length());
+        addGlyphsFromText(glyphBuffer, font, text.span8());
     else
-        addGlyphsFromText(glyphBuffer, font, text.characters16(), text.length());
+        addGlyphsFromText(glyphBuffer, font, text.span16());
 
     auto initialAdvance = font->applyTransforms(glyphBuffer, 0, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale(), text, textDirection);
     auto width = 0.f;
@@ -642,10 +642,10 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<un
         return CodePath::Simple;
 
     // Start from 0 since drawing and highlighting also measure the characters before run->from.
-    return characterRangeCodePath(run.characters16(), run.length());
+    return characterRangeCodePath(run.span16());
 }
 
-FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* characters, unsigned len)
+FontCascade::CodePath FontCascade::characterRangeCodePath(std::span<const UChar> span)
 {
     // FIXME: Should use a UnicodeSet in ports where ICU is used. Note that we 
     // can't simply use UnicodeCharacter Property/class because some characters
@@ -654,8 +654,10 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
     // list of ranges.
     CodePath result = CodePath::Simple;
     bool previousCharacterIsEmojiGroupCandidate = false;
-    for (unsigned i = 0; i < len; i++) {
-        const UChar c = characters[i];
+    size_t size = span.size();
+    auto* characters = span.data();
+    for (size_t i = 0; i < size; ++i) {
+        auto c = characters[i];
         if (c == zeroWidthJoiner && previousCharacterIsEmojiGroupCandidate)
             return CodePath::Complex;
         
@@ -776,7 +778,7 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
         if (c <= 0xDBFF) {
             // High surrogate
 
-            if (i == len - 1)
+            if (i + 1 == size)
                 continue;
 
             UChar next = characters[++i];
@@ -1268,10 +1270,11 @@ static GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const Gly
         return GlyphUnderlineType::SkipDescenders;
     
     if (textRun.is8Bit())
-        baseCharacter = textRun.characters8()[offsetInString.value()];
-    else
-        U16_GET(textRun.characters16(), 0, static_cast<unsigned>(offsetInString.value()), textRun.length(), baseCharacter);
-    
+        baseCharacter = textRun.span8()[offsetInString.value()];
+    else {
+        auto characters = textRun.span16();
+        U16_GET(characters, 0, static_cast<unsigned>(offsetInString.value()), characters.size(), baseCharacter);
+    }
     // u_getIntPropertyValue with UCHAR_IDEOGRAPHIC doesn't return true for Japanese or Korean codepoints.
     // Instead, we can use the "Unicode allocation block" for the character.
     UBlockCode blockCode = ublock_getCode(baseCharacter);

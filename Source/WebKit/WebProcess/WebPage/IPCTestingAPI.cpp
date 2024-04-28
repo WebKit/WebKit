@@ -67,9 +67,7 @@
 #include <wtf/Scope.h>
 #include <wtf/text/StringConcatenate.h>
 
-namespace WebKit {
-
-namespace IPCTestingAPI {
+namespace WebKit::IPCTestingAPI {
 
 class JSIPC;
 using WebCore::SharedMemory;
@@ -1163,8 +1161,8 @@ JSValueRef JSIPCStreamClientConnection::sendWithAsyncReply(JSContextRef context,
     }
     if (!callback) {
         *exception = createTypeError(context, "Must specify callback as the fifth argument"_s);
-            return JSValueMakeUndefined(context);
-        }
+        return JSValueMakeUndefined(context);
+    }
     if (!jsIPC->prepareToSendOutOfStreamMessage(destinationID, timeout)) {
         *exception = createError(context, "IPC error: prepare failed"_s);
         return JSValueMakeUndefined(context);
@@ -1177,7 +1175,7 @@ JSValueRef JSIPCStreamClientConnection::sendSyncMessage(JSContextRef context, JS
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
         *exception = createTypeError(context, "Wrong type"_s);
-    return JSValueMakeUndefined(context);
+        return JSValueMakeUndefined(context);
     }
     auto info = extractIPCStreamMessageInfo(context, argumentCount, arguments, exception);
     if (!info)
@@ -2181,6 +2179,21 @@ struct VectorEncodeHelper {
     }
 };
 
+} // namespace WebKit::IPCTestingAPI
+
+namespace IPC {
+
+template<> struct ArgumentCoder<WebKit::IPCTestingAPI::VectorEncodeHelper> {
+    static void encode(Encoder& encoder, const WebKit::IPCTestingAPI::VectorEncodeHelper& helper)
+    {
+        helper.encode(encoder);
+    }
+};
+
+} // namespace IPC
+
+namespace WebKit::IPCTestingAPI {
+
 enum class ArrayMode { Tuple, Vector };
 static bool encodeArrayArgument(IPC::Encoder& encoder, ArrayMode arrayMode, JSContextRef context, JSValueRef valueRef, JSValueRef* exception)
 {
@@ -3064,9 +3077,8 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (decoder.isSyncMessage()) {
-        IPC::Connection::SyncRequestID syncRequestID;
-        if (decoder.decode(syncRequestID)) {
-            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "syncRequestID"_s), JSC::JSValue(syncRequestID.toUInt64()));
+        if (auto syncRequestID = decoder.decode<IPC::Connection::SyncRequestID>()) {
+            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "syncRequestID"_s), JSC::JSValue(syncRequestID->toUInt64()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }
@@ -3085,8 +3097,8 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     }
 
     if (!decoder.isSyncMessage() && messageReplyArgumentDescriptions(decoder.messageName())) {
-        if (IPC::Connection::AsyncReplyID asyncReplyID; decoder.decode(asyncReplyID)) {
-            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"_s), JSC::JSValue(asyncReplyID.toUInt64()));
+        if (auto asyncReplyID = decoder.decode<IPC::Connection::AsyncReplyID>()) {
+            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"_s), JSC::JSValue(asyncReplyID->toUInt64()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }
@@ -3107,9 +3119,7 @@ void inject(WebPage& webPage, WebFrame& webFrame, WebCore::DOMWrapperWorld& worl
     scope.clearException();
 }
 
-} // namespace IPCTestingAPI
-
-} // namespace WebKit
+} // namespace WebKit::IPCTestingAPI
 
 namespace IPC {
 

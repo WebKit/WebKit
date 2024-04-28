@@ -69,7 +69,7 @@ protected:
     RealtimeIncomingVideoSource(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "RealtimeIncomingVideoSource"; }
+    ASCIILiteral logClassName() const final { return "RealtimeIncomingVideoSource"_s; }
 #endif
 
     static VideoFrameTimeMetadata metadataFromVideoFrame(const webrtc::VideoFrame&);

@@ -91,7 +91,11 @@ ImageGStreamer::ImageGStreamer(GRefPtr<GstSample>&& sample)
         break;
     }
 
-    auto imageInfo = SkImageInfo::Make(videoFrame->width(), videoFrame->height(), colorType, alphaType);
+    auto toSkiaColorSpace = [](const PlatformVideoColorSpace&) {
+        notImplemented();
+        return SkColorSpace::MakeSRGB();
+    };
+    auto imageInfo = SkImageInfo::Make(videoFrame->width(), videoFrame->height(), colorType, alphaType, toSkiaColorSpace(videoColorSpaceFromInfo(videoInfo)));
     SkPixmap pixmap(imageInfo, videoFrame->planeData(0), videoFrame->planeStride(0));
     auto image = SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
         std::unique_ptr<GstMappedFrame> videoFrame(static_cast<GstMappedFrame*>(context));

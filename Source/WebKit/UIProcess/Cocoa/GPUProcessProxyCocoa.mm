@@ -93,12 +93,18 @@ Vector<SandboxExtension::Handle> GPUProcessProxy::createGPUToolsSandboxExtension
 #if USE(EXTENSIONKIT)
 void GPUProcessProxy::sendBookmarkDataForCacheDirectory()
 {
-    NSError *error = nil;
-    NSURL *directoryURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:&error];
-    auto url = adoptNS([[NSURL alloc] initFileURLWithPath:@"Caches/com.apple.WebKit.GPU/" relativeToURL:directoryURL]);
-    error = nil;
-    NSData* bookmark = [url bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
-    send(Messages::GPUProcess::ResolveBookmarkDataForCacheDirectory(span(bookmark)), 0);
+    RefPtr protectedConnection = connection();
+    ASSERT(protectedConnection);
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([protectedConnection = WTFMove(protectedConnection)] () mutable {
+        NSError *error = nil;
+        RetainPtr directoryURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:&error];
+        RetainPtr url = adoptNS([[NSURL alloc] initFileURLWithPath:@"Caches/com.apple.WebKit.GPU/" relativeToURL:directoryURL.get()]);
+        error = nil;
+        RetainPtr bookmark = [url bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
+        if (protectedConnection)
+            protectedConnection->send(Messages::GPUProcess::ResolveBookmarkDataForCacheDirectory(span(bookmark.get())), 0);
+    }).get());
 }
 #endif
 

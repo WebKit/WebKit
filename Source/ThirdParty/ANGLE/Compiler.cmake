@@ -460,6 +460,8 @@ set(angle_translator_lib_msl_sources
     "src/compiler/translator/tree_ops/msl/WrapMain.h"
 )
 
+set(angle_translator_lib_wgsl_sources "src/compiler/translator/wgsl/TranslatorWGSL.cpp")
+
 set(angle_preprocessor_sources
     "src/compiler/preprocessor/DiagnosticsBase.cpp"
     "src/compiler/preprocessor/DiagnosticsBase.h"

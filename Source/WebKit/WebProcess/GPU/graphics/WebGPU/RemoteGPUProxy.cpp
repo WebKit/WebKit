@@ -221,6 +221,99 @@ void RemoteGPUProxy::paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize
     ASSERT_NOT_REACHED();
 }
 
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::CompositorIntegration&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::Buffer&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::Adapter&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::BindGroup&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::BindGroupLayout&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::CommandBuffer&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::CommandEncoder&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::ComputePassEncoder&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::ComputePipeline&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::Device&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::ExternalTexture&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::PipelineLayout&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::PresentationContext&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::QuerySet&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::Queue&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::RenderBundleEncoder&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::RenderBundle&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::RenderPassEncoder&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::RenderPipeline&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::Sampler&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::ShaderModule&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::Texture&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+bool RemoteGPUProxy::isValid(const WebCore::WebGPU::TextureView&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

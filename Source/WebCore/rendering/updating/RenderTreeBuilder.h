@@ -51,7 +51,11 @@ public:
     enum class CanCollapseAnonymousBlock : bool { No, Yes };
     RenderPtr<RenderObject> detach(RenderElement&, RenderObject&, WillBeDestroyed, CanCollapseAnonymousBlock = CanCollapseAnonymousBlock::Yes) WARN_UNUSED_RETURN;
 
-    enum class IsSubtreeTeardown : bool { No, Yes };
+    enum class TearDownType : uint8_t {
+        Root,                          // destroy root renderer
+        SubtreeWithRootStillAttached,  // subtree teardown when renderers are still attached to the tree (common case)
+        SubtreeWithRootAlreadyDetached // subtree teardown when destroy root gets detached first followed by destroying renderers (e.g. pseudo subtree)
+    };
     void destroy(RenderObject& renderer, CanCollapseAnonymousBlock = CanCollapseAnonymousBlock::Yes);
 
     // NormalizeAfterInsertion::Yes ensures that the destination subtree is consistent after the insertion (anonymous wrappers etc).
@@ -59,7 +63,7 @@ public:
     void move(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, NormalizeAfterInsertion);
 
     void updateAfterDescendants(RenderElement&);
-    void destroyAndCleanUpAnonymousWrappers(RenderObject& child);
+    void destroyAndCleanUpAnonymousWrappers(RenderObject& child, const RenderElement* destroyRoot);
     void normalizeTreeAfterStyleChange(RenderElement&, RenderStyle& oldStyle);
 
     bool hasBrokenContinuation() const { return m_hasBrokenContinuation; }
@@ -149,7 +153,8 @@ private:
     std::unique_ptr<Continuation> m_continuationBuilder;
     bool m_hasBrokenContinuation { false };
     IsInternalMove m_internalMovesType { IsInternalMove::No };
-    IsSubtreeTeardown m_isSubtreeTeardown { IsSubtreeTeardown::No };
+    TearDownType m_tearDownType { TearDownType::Root };
+    CheckedPtr<const RenderElement> m_subtreeDestroyRoot;
 };
 
 }

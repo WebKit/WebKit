@@ -25,11 +25,14 @@
 
 #pragma once
 
-#include <wtf/HashSet.h>
-
 #if ENABLE(DFG_JIT)
 
-namespace JSC { 
+#include "StructureID.h"
+#include "WriteBarrier.h"
+#include <wtf/FixedVector.h>
+#include <wtf/HashSet.h>
+
+namespace JSC {
 
 class CodeBlock;
 class JSCell;
@@ -49,7 +52,7 @@ public:
     void addLazily(JSCell*);
     void addLazily(JSValue);
     bool contains(JSCell*);
-    
+
     void reallyAdd(VM&, CommonData*);
 
     void finalize();

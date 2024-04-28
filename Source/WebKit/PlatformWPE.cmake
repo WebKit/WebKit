@@ -105,6 +105,8 @@ list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/glib/InputMethodState.serialization.in
     Shared/glib/UserMessage.serialization.in
 
+    Shared/skia/CoreIPCSkColorSpace.serialization.in
+
     Shared/soup/WebCoreArgumentCodersSoup.serialization.in
 )
 
@@ -381,6 +383,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/Extensions"
     "${WEBKIT_DIR}/Shared/glib"
     "${WEBKIT_DIR}/Shared/libwpe"
+    "${WEBKIT_DIR}/Shared/skia"
     "${WEBKIT_DIR}/Shared/soup"
     "${WEBKIT_DIR}/Shared/wpe"
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"

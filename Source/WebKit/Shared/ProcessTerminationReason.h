@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 namespace WebKit {
 
 enum class ProcessTerminationReason : uint8_t {
@@ -41,6 +43,6 @@ enum class ProcessTerminationReason : uint8_t {
     RequestedByGPUProcess
 };
 
-const char* processTerminationReasonToString(ProcessTerminationReason);
+ASCIILiteral processTerminationReasonToString(ProcessTerminationReason);
 
 }

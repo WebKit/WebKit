@@ -46,9 +46,9 @@ namespace WebKit {
 using namespace WebCore;
 
 #if !RELEASE_LOG_DISABLED
-static const char* logClassName()
+static ASCIILiteral logClassName()
 {
-    return "MediaKeySystemPermissionRequestManagerProxy";
+    return "MediaKeySystemPermissionRequestManagerProxy"_s;
 }
 
 static WTFLogChannel& logChannel()

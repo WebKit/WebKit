@@ -49,10 +49,12 @@
 
 @implementation AccessibilityNotificationHandler
 
-- (id)init
+- (id)initWithContext:(JSContextRef)context
 {
     if (!(self = [super init]))
         return nil;
+
+    m_context = JSContextGetGlobalContext(context);
 
     return self;
 }
@@ -66,10 +68,7 @@
 {
     [self stopObserving];
 
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(WTR::InjectedBundle::singleton().page()->page());
-    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
-
-    JSValueUnprotect(context, m_notificationFunctionCallback);
+    JSValueUnprotect(m_context.get(), m_notificationFunctionCallback);
     m_notificationFunctionCallback = 0;
 
     [super dealloc];
@@ -81,14 +80,12 @@
         return;
 
     WKAccessibilityEnable();
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(WTR::InjectedBundle::singleton().page()->page());
-    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
 
     if (m_notificationFunctionCallback)
-        JSValueUnprotect(context, m_notificationFunctionCallback);
+        JSValueUnprotect(m_context.get(), m_notificationFunctionCallback);
 
     m_notificationFunctionCallback = callback;
-    JSValueProtect(context, m_notificationFunctionCallback);
+    JSValueProtect(m_context.get(), m_notificationFunctionCallback);
 }
 
 - (void)startObserving
@@ -115,9 +112,7 @@
 
     NSDictionary *userInfo = [[notification userInfo] objectForKey:@"userInfo"];
 
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(WTR::InjectedBundle::singleton().page()->page());
-    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
-
+    auto context = m_context.get();
     JSValueRef notificationNameArgument = JSValueMakeString(context, [notificationName createJSStringRef].get());
     JSValueRef userInfoArgument = WTR::makeValueRefForValue(context, userInfo);
     if (m_platformElement) {

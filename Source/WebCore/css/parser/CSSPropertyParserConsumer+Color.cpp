@@ -27,6 +27,7 @@
 
 #include "CSSCalcSymbolTable.h"
 #include "CSSParser.h"
+#include "CSSParserFastPaths.h"
 #include "CSSParserIdioms.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Angle.h"
@@ -35,9 +36,12 @@
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+Percent.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserHelpers.h"
 #include "CSSResolvedColorMix.h"
+#include "CSSTokenizer.h"
 #include "CSSUnresolvedColor.h"
 #include "CSSUnresolvedColorMix.h"
+#include "CSSValuePool.h"
 #include "Color.h"
 #include "ColorConversion.h"
 #include "ColorInterpolation.h"
@@ -186,6 +190,12 @@ template<> struct NormalizePercentage<ExtendedLinearSRGBA<float>> {
     static constexpr double rgbScaleFactor = 1.0 / 100.0;
 };
 
+template<> struct NormalizePercentage<SRGBA<float>> {
+    //  for R,G,B: 0% = 0.0, 100% = 1.0
+
+    static constexpr double rgbScaleFactor = 1.0 / 100.0;
+};
+
 template<typename ColorType>
 static double normalizeLightnessPercent(double percent)
 {
@@ -274,50 +284,75 @@ static std::optional<double> consumeOptionalAlphaRawAllowingSymbolTableIdent(CSS
     return std::nullopt;
 }
 
-static uint8_t normalizeRGBComponentToSRGBAByte(NumberRaw value)
+// MARK: - rgb() / rgba()
+
+template<typename ColorType>
+static typename ColorType::ComponentType normalizeRGBFunctionComponent(NumberRaw value)
 {
-    return convertPrescaledSRGBAFloatToSRGBAByte(value.value);
+    if constexpr (std::is_same_v<typename ColorType::ComponentType, uint8_t>)
+        return convertPrescaledSRGBAFloatToSRGBAByte(value.value);
+    else if constexpr (IsRGBBoundedType<ColorType>)
+        return std::clamp<typename ColorType::ComponentType>(value.value / 255.0, 0.0, 1.0);
+    else
+        return static_cast<typename ColorType::ComponentType>(value.value / 255.0);
 }
 
-static uint8_t normalizeRGBComponentToSRGBAByte(PercentRaw value)
+template<typename ColorType>
+static typename ColorType::ComponentType normalizeRGBFunctionComponent(PercentRaw value)
 {
-    return convertPrescaledSRGBAFloatToSRGBAByte(value.value / 100.0 * 255.0);
+    if constexpr (std::is_same_v<typename ColorType::ComponentType, uint8_t>)
+        return convertPrescaledSRGBAFloatToSRGBAByte((value.value / 100.0) * 255.0);
+    else if constexpr (IsRGBBoundedType<ColorType>)
+        return std::clamp<typename ColorType::ComponentType>(normalizeRGBPercent<ColorType>(value.value), 0.0, 1.0);
+    else
+        return static_cast<typename ColorType::ComponentType>(normalizeRGBPercent<ColorType>(value.value));
 }
 
-enum class RGBOrHSLSeparatorSyntax { Commas, WhitespaceSlash };
-
-static bool consumeRGBOrHSLSeparator(CSSParserTokenRange& args, RGBOrHSLSeparatorSyntax syntax)
+template<typename ColorType>
+static typename ColorType::ComponentType normalizeRGBFunctionComponent(NoneRaw)
 {
-    if (syntax == RGBOrHSLSeparatorSyntax::Commas)
-        return consumeCommaIncludingWhitespace(args);
-    return true;
+    if constexpr (std::is_same_v<typename ColorType::ComponentType, uint8_t>) {
+        ASSERT_NOT_REACHED("'none' is invalid in contexts converting to bytes");
+        return 0;
+    } else
+        return std::numeric_limits<typename ColorType::ComponentType>::quiet_NaN();
 }
 
-static bool consumeRGBOrHSLAlphaSeparator(CSSParserTokenRange& args, RGBOrHSLSeparatorSyntax syntax)
+template<typename ColorType>
+static typename ColorType::ComponentType normalizeRGBFunctionAlpha(double value)
 {
-    if (syntax == RGBOrHSLSeparatorSyntax::Commas)
-        return consumeCommaIncludingWhitespace(args);
-    return consumeSlashIncludingWhitespace(args);
+    if constexpr (std::is_same_v<typename ColorType::ComponentType, uint8_t>)
+        return convertPrescaledSRGBAFloatToSRGBAByte(value * 255.0);
+    else
+        return static_cast<typename ColorType::ComponentType>(value);
 }
 
-static std::optional<double> consumeRGBOrHSLOptionalAlpha(CSSParserTokenRange& args, RGBOrHSLSeparatorSyntax syntax)
+template<typename ColorType>
+static typename ColorType::ComponentType normalizeRGBFunctionComponent(NumberOrPercentOrNoneRaw value)
 {
-    if (!consumeRGBOrHSLAlphaSeparator(args, syntax))
-        return 1.0;
+    return WTF::switchOn(value, [] (auto value) { return normalizeRGBFunctionComponent<ColorType>(value); } );
+}
 
-    if (auto alphaParameter = consumeNumberOrPercentOrNoneRaw(args)) {
-        return WTF::switchOn(*alphaParameter,
-            [] (NumberRaw number) { return std::clamp(number.value, 0.0, 1.0); },
-            [] (PercentRaw percent) { return std::clamp(normalizeAlphaPercent(percent.value), 0.0, 1.0); },
-            [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
-        );
-    }
-
-    return std::nullopt;
+template<typename ColorType>
+static ColorType normalizeRGBFunctionComponents(auto red, auto green, auto blue, auto alpha)
+{
+    return ColorType {
+        normalizeRGBFunctionComponent<ColorType>(red),
+        normalizeRGBFunctionComponent<ColorType>(green),
+        normalizeRGBFunctionComponent<ColorType>(blue),
+        normalizeRGBFunctionAlpha<ColorType>(alpha)
+    };
 }
 
 static Color parseRelativeRGBParametersRaw(CSSParserTokenRange& args, ColorParserState& state)
 {
+    // <modern-rgb-syntax> = rgb( [ from <color> ]?
+    //         [ <number> | <percentage> | none]{3}
+    //         [ / [<alpha-value> | none] ]?  )
+    // <modern-rgba-syntax> = rgba( [ from <color> ]?
+    //         [ <number> | <percentage> | none]{3}
+    //         [ / [<alpha-value> | none] ]?  )
+
     ASSERT(args.peek().id() == CSSValueFrom);
     consumeIdentRaw(args);
 
@@ -325,182 +360,179 @@ static Color parseRelativeRGBParametersRaw(CSSParserTokenRange& args, ColorParse
     if (!originColor.isValid())
         return { };
 
-    auto originColorAsSRGB = originColor.toColorTypeLossy<SRGBA<float>>().resolved();
+    auto originColorAsSRGB = originColor.toColorTypeLossy<ExtendedSRGBA<float>>();
+    auto originColorAsSRGBResolved = originColorAsSRGB.resolved();
 
     CSSCalcSymbolTable symbolTable {
-        { CSSValueR, CSSUnitType::CSS_PERCENTAGE, originColorAsSRGB.red * 100.0 },
-        { CSSValueG, CSSUnitType::CSS_PERCENTAGE, originColorAsSRGB.green * 100.0 },
-        { CSSValueB, CSSUnitType::CSS_PERCENTAGE, originColorAsSRGB.blue * 100.0 },
-        { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsSRGB.alpha * 100.0 }
+        { CSSValueR, CSSUnitType::CSS_NUMBER, originColorAsSRGBResolved.red * 255.0 },
+        { CSSValueG, CSSUnitType::CSS_NUMBER, originColorAsSRGBResolved.green * 255.0 },
+        { CSSValueB, CSSUnitType::CSS_NUMBER, originColorAsSRGBResolved.blue * 255.0 },
+        { CSSValueAlpha, CSSUnitType::CSS_NUMBER, originColorAsSRGBResolved.alpha }
     };
 
     auto red = consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable);
     if (!red)
         return { };
-
     auto green = consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable);
     if (!green)
         return { };
-
     auto blue = consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable);
     if (!blue)
         return { };
 
-    auto alpha = consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable);
+    // This alpha consumer is a little different than ones for non-relative colors and passes
+    // in the alpha value of the origin color so that we can implement the following rule
+    // from CSS Color 5 (https://drafts.csswg.org/css-color-5/#rcs-intro):
+    //
+    //   § 4.1. Processing Model for Relative Colors
+    //
+    //   "If the alpha value of the relative color is omitted, it defaults to that of the
+    //    origin color (rather than defaulting to 100%, as it does in the absolute syntax)."
+    //
+    auto alpha = consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable, originColorAsSRGB.unresolved().alpha);
     if (!alpha)
         return { };
 
     if (!args.atEnd())
         return { };
 
-    if (std::holds_alternative<NoneRaw>(*red) || std::holds_alternative<NoneRaw>(*green) || std::holds_alternative<NoneRaw>(*blue) || std::isnan(*alpha)) {
-        auto normalizeComponentAllowingNone = [] (auto component) {
-            return WTF::switchOn(component,
-                [] (PercentRaw percent) { return std::clamp(percent.value / 100.0, 0.0, 1.0); },
-                [] (NumberRaw number) { return std::clamp(number.value / 255.0, 0.0, 1.0); },
-                [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
-            );
-        };
-
-        auto normalizedRed = normalizeComponentAllowingNone(*red);
-        auto normalizedGreen = normalizeComponentAllowingNone(*green);
-        auto normalizedBlue = normalizeComponentAllowingNone(*blue);
-
-        // If any component uses "none", we store the value as a SRGBA<float> to allow for storage of the special value as NaN.
-        return SRGBA<float> { static_cast<float>(normalizedRed), static_cast<float>(normalizedGreen), static_cast<float>(normalizedBlue), static_cast<float>(*alpha) };
-    }
-
-    auto normalizeComponentDisallowingNone = [] (auto component) {
-        return WTF::switchOn(component,
-            [] (NumberRaw number) -> uint8_t { return normalizeRGBComponentToSRGBAByte(number); },
-            [] (PercentRaw percent) -> uint8_t { return normalizeRGBComponentToSRGBAByte(percent); },
-            [] (NoneRaw) -> uint8_t { ASSERT_NOT_REACHED(); return 0; }
-        );
-    };
-
-    auto normalizedRed = normalizeComponentDisallowingNone(*red);
-    auto normalizedGreen = normalizeComponentDisallowingNone(*green);
-    auto normalizedBlue = normalizeComponentDisallowingNone(*blue);
-    auto normalizedAlpha = convertFloatAlphaTo<uint8_t>(*alpha);
-
-    return SRGBA<uint8_t> { normalizedRed, normalizedGreen, normalizedBlue, normalizedAlpha };
+    // The `UseColorFunctionSerialization` ensures the relative form serializes as `color(srgb ...)`.
+    return { normalizeRGBFunctionComponents<ExtendedSRGBA<float>>(*red, *green, *blue, *alpha), Color::Flags::UseColorFunctionSerialization };
 }
 
-static Color parseNonRelativeRGBParametersRaw(CSSParserTokenRange& args)
+static Color parseNonRelativeRGBParametersLegacyRaw(CSSParserTokenRange& args, ColorParserState& state, NumberOrPercentOrNoneRaw redOrNone)
 {
-    struct Component {
-        enum class Type { Number, Percentage, Unknown };
+    // <legacy-rgb-syntax> =   rgb( <percentage>#{3} , <alpha-value>? ) |  rgb( <number>#{3} , <alpha-value>? )
+    // <legacy-rgba-syntax> = rgba( <percentage>#{3} , <alpha-value>? ) | rgba( <number>#{3} , <alpha-value>? )
 
-        double value;
-        Type type;
-    };
+    return WTF::switchOn(redOrNone,
+        [&args, &state] (NumberRaw red) -> Color {
+            auto green = consumeNumberRaw(args);
+            if (!green)
+                return { };
 
-    auto consumeComponent = [](auto& args, auto previousComponentType) -> std::optional<Component> {
-        switch (previousComponentType) {
-        case Component::Type::Number:
-            if (auto component = consumeNumberOrNoneRaw(args)) {
-                return WTF::switchOn(*component,
-                    [] (NumberRaw number) -> Component { return { number.value, Component::Type::Number }; },
-                    [] (NoneRaw) -> Component { return { std::numeric_limits<double>::quiet_NaN(), Component::Type::Number }; }
-                );
+            if (!consumeCommaIncludingWhitespace(args))
+                return { };
+
+            auto blue = consumeNumberRaw(args);
+            if (!blue)
+                return { };
+            auto alpha = consumeRGBOrHSLLegacyOptionalAlphaRaw(args);
+            if (!alpha)
+                return { };
+
+            if (!args.atEnd())
+                return { };
+
+            if (state.nestingLevel > 1) {
+                // If the color is being consumed as part of a composition (relative color, color-mix, light-dark, etc.), we store the
+                // value as a SRGB<float> to allow for maximum precision.
+                return normalizeRGBFunctionComponents<SRGBA<float>>(red, *green, *blue, *alpha);
             }
-            return std::nullopt;
-        case Component::Type::Percentage:
-            if (auto component = consumePercentOrNoneRaw(args)) {
-                return WTF::switchOn(*component,
-                    [] (PercentRaw percent) -> Component  { return { percent.value, Component::Type::Percentage }; },
-                    [] (NoneRaw) -> Component { return { std::numeric_limits<double>::quiet_NaN(), Component::Type::Percentage }; }
-                );
+
+            return normalizeRGBFunctionComponents<SRGBA<uint8_t>>(red, *green, *blue, *alpha);
+        },
+        [&args, &state] (PercentRaw red) -> Color {
+            auto green = consumePercentRaw(args);
+            if (!green)
+                return { };
+
+            if (!consumeCommaIncludingWhitespace(args))
+                return { };
+
+            auto blue = consumePercentRaw(args);
+            if (!blue)
+                return { };
+            auto alpha = consumeRGBOrHSLLegacyOptionalAlphaRaw(args);
+            if (!alpha)
+                return { };
+
+            if (!args.atEnd())
+                return { };
+
+            if (state.nestingLevel > 1) {
+                // If the color is being consumed as part of a composition (relative color, color-mix, light-dark, etc.), we store the
+                // value as a SRGB<float> to allow for maximum precision.
+                return normalizeRGBFunctionComponents<SRGBA<float>>(red, *green, *blue, *alpha);
             }
-            return std::nullopt;
-        case Component::Type::Unknown:
-            if (auto component = consumeNumberOrPercentOrNoneRaw(args)) {
-                return WTF::switchOn(*component,
-                    [] (NumberRaw number) -> Component { return { number.value, Component::Type::Number }; },
-                    [] (PercentRaw percent) -> Component  { return { percent.value, Component::Type::Percentage }; },
-                    [] (NoneRaw) -> Component { return { std::numeric_limits<double>::quiet_NaN(), Component::Type::Unknown }; }
-                );
-            }
-            return std::nullopt;
+
+            return normalizeRGBFunctionComponents<SRGBA<uint8_t>>(red, *green, *blue, *alpha);
+        },
+        [] (NoneRaw) -> Color {
+            // `none` is invalid for the legacy syntax.
+            return { };
         }
-        RELEASE_ASSERT_NOT_REACHED();
-    };
+    );
+}
 
-    auto red = consumeComponent(args, Component::Type::Unknown);
+static Color parseNonRelativeRGBParametersModernRaw(CSSParserTokenRange& args, ColorParserState& state, NumberOrPercentOrNoneRaw red)
+{
+    // <modern-rgb-syntax> =   rgb( [ <number> | <percentage> | none]{3} [ / [<alpha-value> | none] ]? )
+    // <modern-rgba-syntax> = rgba( [ <number> | <percentage> | none]{3} [ / [<alpha-value> | none] ]? )
+
+    auto green = consumeNumberOrPercentOrNoneRaw(args);
+    if (!green)
+        return { };
+    auto blue = consumeNumberOrPercentOrNoneRaw(args);
+    if (!blue)
+        return { };
+    auto alpha = consumeOptionalAlphaRaw(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    if (std::holds_alternative<NoneRaw>(red) || std::holds_alternative<NoneRaw>(*green) || std::holds_alternative<NoneRaw>(*blue) || std::isnan(*alpha)) {
+        // If any component uses "none", we store the value as a SRGBA<float> to allow for storage of the special value as NaN.
+        return normalizeRGBFunctionComponents<SRGBA<float>>(red, *green, *blue, *alpha);
+    }
+
+    if (state.nestingLevel > 1) {
+        // If the color is being consumed as part of a composition (relative color, color-mix, light-dark, etc.), we store the
+        // value as a SRGB<float> to allow for maximum precision.
+        return normalizeRGBFunctionComponents<SRGBA<float>>(red, *green, *blue, *alpha);
+    }
+
+    return normalizeRGBFunctionComponents<SRGBA<uint8_t>>(red, *green, *blue, *alpha);
+}
+
+static Color parseNonRelativeRGBParametersRaw(CSSParserTokenRange& args, ColorParserState& state)
+{
+    // rgb() = [ <legacy-rgb-syntax> | <modern-rgb-syntax> ]
+    // rgba() = [ <legacy-rgba-syntax> | <modern-rgba-syntax> ]
+    //
+    // <legacy-rgb-syntax> =   rgb( <percentage>#{3} , <alpha-value>? ) |  rgb( <number>#{3} , <alpha-value>? )
+    // <legacy-rgba-syntax> = rgba( <percentage>#{3} , <alpha-value>? ) | rgba( <number>#{3} , <alpha-value>? )
+    //
+    // <modern-rgb-syntax> =   rgb( [ <number> | <percentage> | none]{3} [ / [<alpha-value> | none] ]? )
+    // <modern-rgba-syntax> = rgba( [ <number> | <percentage> | none]{3} [ / [<alpha-value> | none] ]? )
+
+    // To determine whether this is going to use the modern or legacy syntax, we need to consume
+    // the first component and the separated after it. If the separator is a `comma`, its using
+    // the legacy syntax, if the separator is a space, it is using the modern syntax.
+
+    auto red = consumeNumberOrPercentOrNoneRaw(args);
     if (!red)
         return { };
 
-    auto syntax = consumeCommaIncludingWhitespace(args) ? RGBOrHSLSeparatorSyntax::Commas : RGBOrHSLSeparatorSyntax::WhitespaceSlash;
-
-    auto green = consumeComponent(args, red->type);
-    if (!green)
-        return { };
-
-    if (!consumeRGBOrHSLSeparator(args, syntax))
-        return { };
-
-    auto blue = consumeComponent(args, green->type);
-    if (!blue)
-        return { };
-
-    auto resolvedComponentType = blue->type;
-
-    auto alpha = consumeRGBOrHSLOptionalAlpha(args, syntax);
-    if (!alpha)
-        return { };
-
-    if (!args.atEnd())
-        return { };
-
-    if (std::isnan(red->value) || std::isnan(green->value) || std::isnan(blue->value) || std::isnan(*alpha)) {
-        // "none" values are only allowed with the WhitespaceSlash syntax.
-        if (syntax != RGBOrHSLSeparatorSyntax::WhitespaceSlash)
-            return { };
-
-        auto normalizeNumber = [] (double number) { return std::isnan(number) ? number : std::clamp(number / 255.0, 0.0, 1.0); };
-        auto normalizePercent = [] (double percent) { return std::isnan(percent) ? percent : std::clamp(percent / 100.0, 0.0, 1.0); };
-
-        // If any component uses "none", we store the value as a SRGBA<float> to allow for storage of the special value as NaN.
-        switch (resolvedComponentType) {
-        case Component::Type::Number:
-            return SRGBA<float> { static_cast<float>(normalizeNumber(red->value)), static_cast<float>(normalizeNumber(green->value)), static_cast<float>(normalizeNumber(blue->value)), static_cast<float>(*alpha) };
-        case Component::Type::Percentage:
-            return SRGBA<float> { static_cast<float>(normalizePercent(red->value)), static_cast<float>(normalizePercent(green->value)), static_cast<float>(normalizePercent(blue->value)), static_cast<float>(*alpha) };
-        case Component::Type::Unknown:
-            return SRGBA<float> { static_cast<float>(red->value), static_cast<float>(green->value), static_cast<float>(blue->value), static_cast<float>(*alpha) };
-        }
-
-        ASSERT_NOT_REACHED();
-        return { };
+    if (consumeCommaIncludingWhitespace(args)) {
+        // A `comma` getting successfully consumed means this is using the legacy syntax.
+        return parseNonRelativeRGBParametersLegacyRaw(args, state, *red);
+    } else {
+        // A `comma` NOT getting successfully consumed means this is using the modern syntax.
+        return parseNonRelativeRGBParametersModernRaw(args, state, *red);
     }
-
-    switch (resolvedComponentType) {
-    case Component::Type::Number:
-        return SRGBA<uint8_t> { normalizeRGBComponentToSRGBAByte(NumberRaw { red->value }), normalizeRGBComponentToSRGBAByte(NumberRaw { green->value }), normalizeRGBComponentToSRGBAByte(NumberRaw { blue->value }), convertFloatAlphaTo<uint8_t>(*alpha) };
-    case Component::Type::Percentage:
-        return SRGBA<uint8_t> { normalizeRGBComponentToSRGBAByte(PercentRaw { red->value }), normalizeRGBComponentToSRGBAByte(PercentRaw { green->value }), normalizeRGBComponentToSRGBAByte(PercentRaw { blue->value }), convertFloatAlphaTo<uint8_t>(*alpha) };
-    case Component::Type::Unknown:
-        // The only way the resolvedComponentType can be Component::Type::Unknown is if all the components are "none", which is handled above.
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-
-    ASSERT_NOT_REACHED();
-    return { };
 }
 
-enum class RGBFunctionMode { RGB, RGBA };
-
-template<RGBFunctionMode Mode> static Color parseRGBParametersRaw(CSSParserTokenRange& range, ColorParserState& state)
+static Color parseRGBParametersRaw(CSSParserTokenRange& range, ColorParserState& state)
 {
-    ASSERT(range.peek().functionId() == (Mode == RGBFunctionMode::RGB ? CSSValueRgb : CSSValueRgba));
+    ASSERT(range.peek().functionId() == CSSValueRgb || range.peek().functionId() == CSSValueRgba);
     auto args = consumeFunction(range);
 
-    if constexpr (Mode == RGBFunctionMode::RGB) {
-        if (args.peek().id() == CSSValueFrom)
-            return parseRelativeRGBParametersRaw(args, state);
-    }
-    return parseNonRelativeRGBParametersRaw(args);
+    if (args.peek().id() == CSSValueFrom)
+        return parseRelativeRGBParametersRaw(args, state);
+    return parseNonRelativeRGBParametersRaw(args, state);
 }
 
 // MARK: - hsl() / hsla()
@@ -792,66 +824,71 @@ static Color parseHSLParametersRaw(CSSParserTokenRange& range, ColorParserState&
     return parseNonRelativeHSLParametersRaw(args, state);
 }
 
-template<typename ConsumerForHue, typename ConsumerForWhitenessAndBlackness, typename ConsumerForAlpha>
-static Color parseHWBParametersRaw(CSSParserTokenRange& args, ConsumerForHue&& hueConsumer, ConsumerForWhitenessAndBlackness&& whitenessAndBlacknessConsumer, ConsumerForAlpha&& alphaConsumer)
+// MARK: - hwb()
+
+using ParsedHWBA = std::tuple<AngleOrNumberOrNoneRaw, NumberOrPercentOrNoneRaw, NumberOrPercentOrNoneRaw, double>;
+
+static HWBA<float> normalizeHWBParametersRaw(ParsedHWBA parsedHWBA)
 {
-    auto hue = hueConsumer(args);
-    if (!hue)
-        return { };
+    auto [hue, whiteness, blackness, alpha] = parsedHWBA;
 
-    auto whiteness = whitenessAndBlacknessConsumer(args);
-    if (!whiteness)
-        return { };
-
-    auto blackness = whitenessAndBlacknessConsumer(args);
-    if (!blackness)
-        return { };
-
-    auto alpha = alphaConsumer(args);
-    if (!alpha)
-        return { };
-
-    if (!args.atEnd())
-        return { };
-
-    auto normalizedHue = WTF::switchOn(*hue,
-        [] (AngleRaw angle) { return CSSPrimitiveValue::computeDegrees(angle.type, angle.value); },
+    float normalizedHue = WTF::switchOn(hue,
+        [] (AngleRaw angle) { return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)); },
+        [] (NumberRaw number) { return normalizeHue(number.value); },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
+    float normalizedWhiteness = WTF::switchOn(whiteness,
+        [] (PercentRaw percent) { return percent.value; },
         [] (NumberRaw number) { return number.value; },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
-    auto clampedWhiteness = WTF::switchOn(*whiteness,
-        [] (PercentRaw percent) { return std::clamp(percent.value, 0.0, 100.0); },
-        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
-    );
-    auto clampedBlackness = WTF::switchOn(*blackness,
-        [] (PercentRaw percent) { return std::clamp(percent.value, 0.0, 100.0); },
+    float normalizedBlackness = WTF::switchOn(blackness,
+        [] (PercentRaw percent) { return percent.value; },
+        [] (NumberRaw number) { return number.value; },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
 
-    if (std::isnan(normalizedHue) || std::isnan(clampedWhiteness) || std::isnan(clampedBlackness) || std::isnan(*alpha)) {
-        auto [normalizedWhitness, normalizedBlackness] = normalizeClampedWhitenessBlacknessAllowingNone(clampedWhiteness, clampedBlackness);
+    return  {
+        normalizedHue,
+        normalizedWhiteness,
+        normalizedBlackness,
+        static_cast<float>(alpha)
+    };
+}
 
-        // If any component uses "none", we store the value as a HWBA<float> to allow for storage of the special value as NaN.
-        return HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(*alpha) };
-    }
+template<typename ConsumerForHue, typename ConsumerForWhitenessAndBlackness, typename ConsumerForAlpha>
+static std::optional<ParsedHWBA> parseHWBParametersRaw(CSSParserTokenRange& args, ConsumerForHue&& hueConsumer, ConsumerForWhitenessAndBlackness&& whitenessAndBlacknessConsumer, ConsumerForAlpha&& alphaConsumer)
+{
+    auto hue = hueConsumer(args);
+    if (!hue)
+        return std::nullopt;
 
-    auto [normalizedWhitness, normalizedBlackness] = normalizeClampedWhitenessBlacknessDisallowingNone(clampedWhiteness, clampedBlackness);
+    auto whiteness = whitenessAndBlacknessConsumer(args);
+    if (!whiteness)
+        return std::nullopt;
 
-    if (normalizedHue < 0.0 || normalizedHue > 360.0) {
-        // If 'hue' is not in the [0, 360] range, we store the value as a HWBA<float> to allow for correct interpolation
-        // using the "specified" hue interpolation method.
-        return HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(*alpha) };
-    }
+    auto blackness = whitenessAndBlacknessConsumer(args);
+    if (!blackness)
+        return std::nullopt;
 
-    // The explicit conversion to SRGBA<uint8_t> is an intentional performance optimization that allows storing the
-    // color with no extra allocation for an extended color object. This is permissible due to the historical requirement
-    // that HWBA colors serialize using the legacy color syntax (rgb()/rgba()) and historically have used the 8-bit rgba
-    // internal representation in engines.
-    return convertColor<SRGBA<uint8_t>>(HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(*alpha) });
+    auto alpha = alphaConsumer(args);
+    if (!alpha)
+        return std::nullopt;
+
+    if (!args.atEnd())
+        return std::nullopt;
+
+    return {{ *hue, *whiteness, *blackness, *alpha }};
 }
 
 static Color parseRelativeHWBParametersRaw(CSSParserTokenRange& args, ColorParserState& state)
 {
+    // hwb() = hwb([from <color>]?
+    //         [<hue> | none]
+    //         [<percentage> | <number> | none]
+    //         [<percentage> | <number> | none]
+    //         [ / [<alpha-value> | none] ]? )
+
     ASSERT(args.peek().id() == CSSValueFrom);
     consumeIdentRaw(args);
 
@@ -859,29 +896,62 @@ static Color parseRelativeHWBParametersRaw(CSSParserTokenRange& args, ColorParse
     if (!originColor.isValid())
         return { };
 
-    auto originColorAsHWB = originColor.toColorTypeLossy<HWBA<float>>().resolved();
+    auto originColorAsHWB = originColor.toColorTypeLossy<HWBA<float>>();
+    auto originColorAsHWBResolved = originColorAsHWB.resolved();
 
     CSSCalcSymbolTable symbolTable {
-        { CSSValueH, CSSUnitType::CSS_DEG, originColorAsHWB.hue },
-        { CSSValueW, CSSUnitType::CSS_PERCENTAGE, originColorAsHWB.whiteness },
-        { CSSValueB, CSSUnitType::CSS_PERCENTAGE, originColorAsHWB.blackness },
-        { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsHWB.alpha * 100.0 }
+        { CSSValueH, CSSUnitType::CSS_NUMBER, originColorAsHWBResolved.hue },
+        { CSSValueW, CSSUnitType::CSS_NUMBER, originColorAsHWBResolved.whiteness },
+        { CSSValueB, CSSUnitType::CSS_NUMBER, originColorAsHWBResolved.blackness },
+        { CSSValueAlpha, CSSUnitType::CSS_NUMBER, originColorAsHWBResolved.alpha }
     };
 
     auto hueConsumer = [&symbolTable, &state](auto& args) { return consumeAngleOrNumberOrNoneRawAllowingSymbolTableIdent(args, symbolTable, state.mode); };
-    auto whitenessAndBlacknessConsumer = [&symbolTable](auto& args) { return consumePercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
-    auto alphaConsumer = [&symbolTable](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto whitenessAndBlacknessConsumer = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto alphaConsumer = [&symbolTable, &originColorAsHWB](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable, originColorAsHWB.unresolved().alpha); };
 
-    return parseHWBParametersRaw(args, WTFMove(hueConsumer), WTFMove(whitenessAndBlacknessConsumer), WTFMove(alphaConsumer));
+    auto parsedHWBA = parseHWBParametersRaw(args, WTFMove(hueConsumer), WTFMove(whitenessAndBlacknessConsumer), WTFMove(alphaConsumer));
+    if (!parsedHWBA)
+        return { };
+
+    // The `UseColorFunctionSerialization` ensures the relative form serializes as `color(srgb ...)`.
+    return { normalizeHWBParametersRaw(*parsedHWBA), Color::Flags::UseColorFunctionSerialization };
 }
 
 static Color parseNonRelativeHWBParametersRaw(CSSParserTokenRange& args, ColorParserState& state)
 {
+    // hwb() = hwb(
+    //   [<hue> | none]
+    //   [<percentage> | <number> | none]
+    //   [<percentage> | <number> | none]
+    //   [ / [<alpha-value> | none] ]? )
+
     auto hueConsumer = [&state](auto& args) { return consumeAngleOrNumberOrNoneRaw(args, state.mode); };
-    auto whitenessAndBlacknessConsumer = [](auto& args) { return consumePercentOrNoneRaw(args); };
+    auto whitenessAndBlacknessConsumer = [](auto& args) { return consumeNumberOrPercentOrNoneRaw(args); };
     auto alphaConsumer = [](auto& args) { return consumeOptionalAlphaRaw(args); };
 
-    return parseHWBParametersRaw(args, WTFMove(hueConsumer), WTFMove(whitenessAndBlacknessConsumer), WTFMove(alphaConsumer));
+    auto parsedHWBA = parseHWBParametersRaw(args, WTFMove(hueConsumer), WTFMove(whitenessAndBlacknessConsumer), WTFMove(alphaConsumer));
+    if (!parsedHWBA)
+        return { };
+
+    auto hwba = normalizeHWBParametersRaw(*parsedHWBA);
+
+    if (hwba.unresolved().anyComponentIsNone()) {
+        // If any component uses "none", we store the value as a HWBA<float> to allow for storage of the special value as NaN.
+        return hwba;
+    }
+
+    if (state.nestingLevel > 1) {
+        // If the color is being consumed as part of a composition (relative color, color-mix, light-dark, etc.), we store
+        // the value as a HWBA<float> to allow for maximum precision.
+        return hwba;
+    }
+
+    // The explicit conversion to SRGBA<uint8_t> is an intentional performance optimization that allows storing the
+    // color with no extra allocation for an extended color object. This is permissible due to the historical requirement
+    // that HWBA colors serialize using the legacy color syntax (rgb()/rgba()) and historically have used the 8-bit rgba
+    // internal representation in engines.
+    return convertColor<SRGBA<uint8_t>>(hwba);
 }
 
 static Color parseHWBParametersRaw(CSSParserTokenRange& range, ColorParserState& state)
@@ -894,6 +964,8 @@ static Color parseHWBParametersRaw(CSSParserTokenRange& range, ColorParserState&
         return parseRelativeHWBParametersRaw(args, state);
     return parseNonRelativeHWBParametersRaw(args, state);
 }
+
+// MARK: - lab() / oklab()
 
 template<typename ColorType, typename ConsumerForLightness, typename ConsumerForAB, typename ConsumerForAlpha>
 static Color parseLabParametersRaw(CSSParserTokenRange& args, ConsumerForLightness&& lightnessConsumer, ConsumerForAB&& abConsumer, ConsumerForAlpha&& alphaConsumer)
@@ -946,18 +1018,19 @@ static Color parseRelativeLabParametersRaw(CSSParserTokenRange& args, ColorParse
     if (!originColor.isValid())
         return { };
 
-    auto originColorAsLab = originColor.toColorTypeLossy<ColorType>().resolved();
+    auto originColorAsLab = originColor.toColorTypeLossy<ColorType>();
+    auto originColorAsLabResolved = originColorAsLab.resolved();
 
     CSSCalcSymbolTable symbolTable {
-        { CSSValueL, CSSUnitType::CSS_NUMBER, originColorAsLab.lightness },
-        { CSSValueA, CSSUnitType::CSS_NUMBER, originColorAsLab.a },
-        { CSSValueB, CSSUnitType::CSS_NUMBER, originColorAsLab.b },
-        { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsLab.alpha * 100.0 }
+        { CSSValueL, CSSUnitType::CSS_NUMBER, originColorAsLabResolved.lightness },
+        { CSSValueA, CSSUnitType::CSS_NUMBER, originColorAsLabResolved.a },
+        { CSSValueB, CSSUnitType::CSS_NUMBER, originColorAsLabResolved.b },
+        { CSSValueAlpha, CSSUnitType::CSS_NUMBER, originColorAsLabResolved.alpha }
     };
 
     auto lightnessConsumer = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
     auto abConsumer = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
-    auto alphaConsumer = [&symbolTable](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto alphaConsumer = [&symbolTable, &originColorAsLab](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable, originColorAsLab.unresolved().alpha); };
 
     return parseLabParametersRaw<ColorType>(args, WTFMove(lightnessConsumer), WTFMove(abConsumer), WTFMove(alphaConsumer));
 }
@@ -1017,8 +1090,8 @@ static Color parseLCHParametersRaw(CSSParserTokenRange& args, ConsumerForLightne
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
     auto normalizedHue = WTF::switchOn(*hue,
-        [] (AngleRaw angle) { return CSSPrimitiveValue::computeDegrees(angle.type, angle.value); },
-        [] (NumberRaw number) { return number.value; },
+        [] (AngleRaw angle) { return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)); },
+        [] (NumberRaw number) { return normalizeHue(number.value); },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
 
@@ -1035,19 +1108,20 @@ static Color parseRelativeLCHParametersRaw(CSSParserTokenRange& args, ColorParse
     if (!originColor.isValid())
         return { };
 
-    auto originColorAsLCH = originColor.toColorTypeLossy<ColorType>().resolved();
+    auto originColorAsLCH = originColor.toColorTypeLossy<ColorType>();
+    auto originColorAsLCHResolved = originColorAsLCH.resolved();
 
     CSSCalcSymbolTable symbolTable {
-        { CSSValueL, CSSUnitType::CSS_NUMBER, originColorAsLCH.lightness },
-        { CSSValueC, CSSUnitType::CSS_NUMBER, originColorAsLCH.chroma },
-        { CSSValueH, CSSUnitType::CSS_DEG, originColorAsLCH.hue },
-        { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsLCH.alpha * 100.0 }
+        { CSSValueL, CSSUnitType::CSS_NUMBER, originColorAsLCHResolved.lightness },
+        { CSSValueC, CSSUnitType::CSS_NUMBER, originColorAsLCHResolved.chroma },
+        { CSSValueH, CSSUnitType::CSS_NUMBER, originColorAsLCHResolved.hue },
+        { CSSValueAlpha, CSSUnitType::CSS_NUMBER, originColorAsLCHResolved.alpha }
     };
 
     auto lightnessConsumer = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
     auto chromaConsumer = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
     auto hueConsumer = [&symbolTable, &state](auto& args) { return consumeAngleOrNumberOrNoneRawAllowingSymbolTableIdent(args, symbolTable, state.mode); };
-    auto alphaConsumer = [&symbolTable](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto alphaConsumer = [&symbolTable, &originColorAsLCH](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable, originColorAsLCH.unresolved().alpha); };
 
     return parseLCHParametersRaw<ColorType>(args, WTFMove(lightnessConsumer), WTFMove(chromaConsumer), WTFMove(hueConsumer), WTFMove(alphaConsumer));
 }
@@ -1107,17 +1181,18 @@ template<typename ColorType> static Color parseRelativeColorFunctionForRGBTypes(
 
     consumeIdentRaw(args);
 
-    auto originColorAsColorType = originColor.toColorTypeLossy<ColorType>().resolved();
+    auto originColorAsRGBType = originColor.toColorTypeLossy<ColorType>();
+    auto originColorAsRGBTypeResolved = originColorAsRGBType.resolved();
 
     CSSCalcSymbolTable symbolTable {
-        { CSSValueR, CSSUnitType::CSS_PERCENTAGE, originColorAsColorType.red * 100.0 },
-        { CSSValueG, CSSUnitType::CSS_PERCENTAGE, originColorAsColorType.green * 100.0 },
-        { CSSValueB, CSSUnitType::CSS_PERCENTAGE, originColorAsColorType.blue * 100.0 },
-        { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsColorType.alpha * 100.0 }
+        { CSSValueR, CSSUnitType::CSS_NUMBER, originColorAsRGBTypeResolved.red },
+        { CSSValueG, CSSUnitType::CSS_NUMBER, originColorAsRGBTypeResolved.green },
+        { CSSValueB, CSSUnitType::CSS_NUMBER, originColorAsRGBTypeResolved.blue },
+        { CSSValueAlpha, CSSUnitType::CSS_NUMBER, originColorAsRGBTypeResolved.alpha }
     };
 
     auto consumeRGB = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable, ValueRange::All); };
-    auto consumeAlpha = [&symbolTable](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto consumeAlpha = [&symbolTable, &originColorAsRGBType](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable, originColorAsRGBType.unresolved().alpha); };
 
     return parseColorFunctionForRGBTypesRaw<ColorType>(args, WTFMove(consumeRGB), WTFMove(consumeAlpha));
 }
@@ -1166,17 +1241,18 @@ template<typename ColorType> static Color parseRelativeColorFunctionForXYZTypes(
 
     consumeIdentRaw(args);
 
-    auto originColorAsXYZ = originColor.toColorTypeLossy<ColorType>().resolved();
+    auto originColorAsXYZType = originColor.toColorTypeLossy<ColorType>();
+    auto originColorAsXYZTypeResolved = originColorAsXYZType.resolved();
 
     CSSCalcSymbolTable symbolTable {
-        { CSSValueX, CSSUnitType::CSS_NUMBER, originColorAsXYZ.x },
-        { CSSValueY, CSSUnitType::CSS_NUMBER, originColorAsXYZ.y },
-        { CSSValueZ, CSSUnitType::CSS_NUMBER, originColorAsXYZ.z },
-        { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsXYZ.alpha * 100.0 }
+        { CSSValueX, CSSUnitType::CSS_NUMBER, originColorAsXYZTypeResolved.x },
+        { CSSValueY, CSSUnitType::CSS_NUMBER, originColorAsXYZTypeResolved.y },
+        { CSSValueZ, CSSUnitType::CSS_NUMBER, originColorAsXYZTypeResolved.z },
+        { CSSValueAlpha, CSSUnitType::CSS_NUMBER, originColorAsXYZTypeResolved.alpha }
     };
 
     auto consumeXYZ = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
-    auto consumeAlpha = [&symbolTable](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto consumeAlpha = [&symbolTable, &originColorAsXYZType](auto& args) { return consumeOptionalAlphaRawAllowingSymbolTableIdent(args, symbolTable, originColorAsXYZType.unresolved().alpha); };
 
     return parseColorFunctionForXYZTypesRaw<ColorType>(args, WTFMove(consumeXYZ), WTFMove(consumeAlpha));
 }
@@ -1696,10 +1772,10 @@ static Color parseColorFunctionRaw(CSSParserTokenRange& range, ColorParserState&
     Color color;
     switch (functionId) {
     case CSSValueRgb:
-        color = parseRGBParametersRaw<RGBFunctionMode::RGB>(colorRange, state);
+        color = parseRGBParametersRaw(colorRange, state);
         break;
     case CSSValueRgba:
-        color = parseRGBParametersRaw<RGBFunctionMode::RGBA>(colorRange, state);
+        color = parseRGBParametersRaw(colorRange, state);
         break;
     case CSSValueHsl:
         color = parseHSLParametersRaw(colorRange, state);
@@ -1755,10 +1831,10 @@ static std::optional<ColorOrUnresolvedColor> parseColorFunction(CSSParserTokenRa
     std::optional<ColorOrUnresolvedColor> color;
     switch (functionId) {
     case CSSValueRgb:
-        color = checkColor(parseRGBParametersRaw<RGBFunctionMode::RGB>(colorRange, state));
+        color = checkColor(parseRGBParametersRaw(colorRange, state));
         break;
     case CSSValueRgba:
-        color = checkColor(parseRGBParametersRaw<RGBFunctionMode::RGBA>(colorRange, state));
+        color = checkColor(parseRGBParametersRaw(colorRange, state));
         break;
     case CSSValueHsl:
         color = checkColor(parseHSLParametersRaw(colorRange, state));

@@ -53,6 +53,7 @@ struct WebKit::WebHitTestResultData {
     bool mediaIsInFullscreen;
     WebKit::WebHitTestResultData::ElementType elementType;
     std::optional<WebKit::FrameInfoData> frameInfo;
+    std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData;
     String lookupText;
     String toolTipText;
     String imageText;

@@ -27,33 +27,33 @@
     </section>
     <button class="hide-controls">Hide controls</button>
     <section class="show-code">
-  <pre class="one"><code>main { 
-    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-    grid-template-rows: auto; 
-  }</code></pre>    
-  <pre class="two"><code>main { 
-    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-    grid-template-rows: masonry; 
-  }</code></pre>
-  <pre class="three"><code>main { 
-    grid-template-columns: repeat(auto-fill, minmax(18ch, 1fr) 9ch);
-    grid-template-rows: masonry;
-    article, footer {
-       display: grid;
-       grid-template-columns: subgrid;
-    }
-    header, article { grid-column: span 2; }
-  }</code></pre>
-  <pre class="four"><code>main { 
-    grid-template-columns: repeat(auto-fill, minmax(16ch, 1fr) 8ch);
-    grid-template-rows: masonry;
-    article, footer {
-       display: grid;
-       grid-template-columns: subgrid;
-    }
-    header, article { grid-column: span 2; }
-    article.wide { grid-column: span 4; } /* And lots more */
-  }</code></pre>
+<pre class="one"><code>main { 
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  grid-template-rows: auto; 
+}</code></pre>    
+<pre class="two"><code>main { 
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  grid-template-rows: masonry; 
+}</code></pre>
+<pre class="three"><code>main { 
+  grid-template-columns: repeat(auto-fill, minmax(18ch, 1fr) 9ch);
+  grid-template-rows: masonry;
+  article, footer {
+     display: grid;
+     grid-template-columns: subgrid;
+  }
+  header, article { grid-column: span 2; }
+}</code></pre>
+<pre class="four"><code>main { 
+  grid-template-columns: repeat(auto-fill, minmax(16ch, 1fr) 8ch);
+  grid-template-rows: masonry;
+  article, footer {
+     display: grid;
+     grid-template-columns: subgrid;
+  }
+  header, article { grid-column: span 2; }
+  article.wide { grid-column: span 4; } /* And lots more */
+}</code></pre>
     </section>
   </aside>
 <footer class="warning"><p>View these demos in <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a>, Firefox (after you turn on <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features#masonry_grid_layout">the feature flag</a>), or another browser that 
@@ -61,7 +61,7 @@
 <main>
     <header>
         <h1><a href="https://www.nga.gov"><span>National</span> Gallery of Art</a></h1>
-        <img src="images/National_Gallery_of_Art.png" alt="photo of the outside of the gallery" />
+        <img src="images/National_Gallery_of_Art.png" alt="photo of the outside of the gallery" width="800" height="800">
         <p>The National Gallery of Art is an art museum in Washington, D.C., United States, located on the National Mall, between 3rd and 9th Streets, at Constitution Avenue NW.</p> 
         <p>Open to the public and free of charge, the museum was privately established in 1937 for the American people by a joint resolution of the United States Congress.</p>
         <ul>
@@ -78,7 +78,7 @@
     </header>
     <article>
         <a class="image" href="https://www.nga.gov/collection/art-object-page.42466.html">
-          <img src="images/feeding_the_bird_1953.5.63.jpg">
+          <img src="images/feeding_the_bird_1953.5.63.jpg" width="800" height="1036">
         </a>
         <section>
           <h2 class="title-of-art">
@@ -95,7 +95,7 @@
     </article>
     <article>
         <a class="image" href="https://www.nga.gov/collection/art-object-page.1225.html">
-          <img src="images/keelmen_heaving_in_coals_by_moonlight_1942.9.86.jpg">
+          <img src="images/keelmen_heaving_in_coals_by_moonlight_1942.9.86.jpg" width="800" height="594">
         </a>
         <section>
           <h2 class="title-of-art">
@@ -112,7 +112,7 @@
     </article>
     <article>
         <a class="image" href="https://www.nga.gov/collection/art-object-page.19031.html">
-          <img src="images/retablo_1943.8.6831.jpg">
+          <img src="images/retablo_1943.8.6831.jpg" width="800" height="1029">
         </a>
         <section>
           <h2 class="title-of-art">
@@ -129,7 +129,8 @@
     </article>
     <article>
         <a class="image" href="https://www.nga.gov/collection/art-object-page.55782.html">
-          <img src="images/flowers_in_a_vase_1976.26.2.jpg"></a>       
+          <img src="images/flowers_in_a_vase_1976.26.2.jpg" width="800" height="1067">
+        </a>       
         <section>
           <h2 class="title-of-art">
             <a href="https://www.nga.gov/collection/art-object-page.55782.html">Flowers in a Vase</a>
@@ -144,7 +145,9 @@
         </footer>
     </article>
     <article class ="wide">
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.19715.html"><img src="images/painted_chest_1943.8.7517.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.19715.html">
+          <img src="images/painted_chest_1943.8.7517.jpg" width="800" height="483">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.19715.html">Painted Chest</a></h2>       
           <h3 class="artist">Majel G. Claflin</h3>
@@ -157,7 +160,9 @@
       </footer>
     </article>
     <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.98221.html"><img src="images/study_for__army_boots___verso__1996.121.6.b.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.98221.html">
+          <img src="images/study_for__army_boots___verso__1996.121.6.b.jpg" width="800" height="1108">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.98221.html">Study for "Army Boots"</a></h2>       
           <h3 class="artist">Winslow Homer</h3>
@@ -170,7 +175,9 @@
         </footer>
     </article>    
     <article class ="wide">
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.166436.html"><img src="images/niagara_2014.79.10.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.166436.html">
+          <img src="images/niagara_2014.79.10.jpg" width="800" height="371">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.166436.html">Niagara</a></h2>    
           <h3 class="artist">Frederic Edwin Church</h3>
@@ -184,7 +191,7 @@
     </article>
     <article>
         <a class="image" href="https://www.nga.gov/collection/art-object-page.43633.html">
-          <img src="images/catherine_brower_1956.13.5.jpg">
+          <img src="images/catherine_brower_1956.13.5.jpg" width="800" height="1350">
         </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.43633.html">Catherine Brower</a></h2>       
@@ -198,7 +205,9 @@
         </footer>
     </article>
     <article class ="wide">
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.88615.html"><img src="images/the_island_and_bridge_of_san_bartolomeo_rome_2001.23.1.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.88615.html">
+          <img src="images/the_island_and_bridge_of_san_bartolomeo_rome_2001.23.1.jpg" width="800" height="497">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.88615.html">The Island and Bridge of San Bartolomeo, Rome</a></h2>       
           <h3 class="artist">Jean-Baptiste-Camille Corot</h3>
@@ -211,7 +220,9 @@
         </footer>
     </article>
     <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.74796.html"><img src="images/the_japanese_footbridge_1992.9.1.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.74796.html">
+          <img src="images/the_japanese_footbridge_1992.9.1.jpg" width="800" height="645">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.74796.html">The Japanese Footbridge</a></h2>       
           <h3 class="artist">Claude Monet</h3>
@@ -224,7 +235,9 @@
         </footer>
     </article>
     <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.12201.html"><img src="images/portrait_of_a_man_1943.7.3.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.12201.html">
+          <img src="images/portrait_of_a_man_1943.7.3.jpg" width="800" height="1007">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.12201.html">Portrait of a Man</a></h2>       
           <h3 class="artist">Anonymous Artist</h3>
@@ -237,7 +250,9 @@
         </footer>
     </article>
     <article class ="wide">
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.52276.html"><img src="images/view_of_the_mall_in_saint_jamespark_1970.17.132.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.52276.html">
+          <img src="images/view_of_the_mall_in_saint_jamespark_1970.17.132.jpg" width="800" height="459">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.52276.html">View of the Mall in Saint James's Park</a></h2>       
           <h3 class="artist">Anonymous Artist</h3>
@@ -250,7 +265,9 @@
         </footer>
     </article>
     <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.46684.html"><img src="images/mademoiselle_sicot_1963.10.209.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.46684.html">
+          <img src="images/mademoiselle_sicot_1963.10.209.jpg" width="800" height="1044">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.46684.html">Mademoiselle Sicot</a></h2>       
           <h3 class="artist">Auguste Renoir</h3>
@@ -263,7 +280,9 @@
         </footer>
     </article>
     <article class ="wide">
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.166463.html"><img src="images/the_house_of_representatives_2014.79.27.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.166463.html">
+          <img src="images/the_house_of_representatives_2014.79.27.jpg" width="800" height="525">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.166463.html">The House of Representatives</a></h2>      
           <h3 class="artist">Samuel F. B. Morse</h3>
@@ -276,7 +295,9 @@
         </footer>
     </article>
     <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.41714.html"><img src="images/a_vestal_1952.5.99.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.41714.html">
+          <img src="images/a_vestal_1952.5.99.jpg" width="800" height="1000">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.41714.html">A Vestal</a></h2>       
           <h3 class="artist">Clodion</h3>
@@ -289,7 +310,9 @@
         </footer>
     </article>
     <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.137703.html"><img src="images/john_stuart-wortle_2nd_baron_wharncliffe_2007.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.137703.html">
+          <img src="images/john_stuart-wortle_2nd_baron_wharncliffe_2007.jpg" width="800" height="1099">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.137703.html">John Stuart-Wortley, 2nd Baron Wharncliffe</a></h2>
           <h3 class="artist">David Octavius Hill and Robert Adamson</h3>
@@ -302,7 +325,9 @@
         </footer>
     </article>
     <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.89686.html"><img src="images/the_trap_1994.59.13.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.89686.html">
+          <img src="images/the_trap_1994.59.13.jpg" width="800" height="573">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.89686.html">The Trap</a></h2>       
           <h3 class="artist">Henri de Toulouse-Lautrec</h3>
@@ -315,7 +340,9 @@
         </footer>
     </article>
     <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.18192.html"><img src="images/detail_of_painting_on_altar_panel_1943.8.5992.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.18192.html">
+          <img src="images/detail_of_painting_on_altar_panel_1943.8.5992.jpg" width="800" height="1167">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.18192.html">Detail of Painting on Altar Panel</a></h2>       
           <h3 class="artist">Emery Gellert</h3>
@@ -328,7 +355,9 @@
         </footer>
     </article>
     <article class="wide">
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.19718.html"><img src="images/side_of_chest_1943.8.7520.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.19718.html">
+          <img src="images/side_of_chest_1943.8.7520.jpg" width="800" height="516">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.19718.html">Side of Chest</a></h2>       
           <h3 class="artist">D.P. Jones</h3>
@@ -341,7 +370,9 @@
         </footer>
     </article>
     <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.18737.html"><img src="images/basket_1943.8.6537.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.18737.html">
+          <img src="images/basket_1943.8.6537.jpg" width="800" height="1139">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.18737.html">Basket</a></h2>       
           <h3 class="artist">Gordena Jackson</h3>
@@ -354,7 +385,9 @@
         </footer>
     </article>
     <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.45959.html"><img src="images/boy_in_blue_coat_1959.11.5.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.45959.html">
+          <img src="images/boy_in_blue_coat_1959.11.5.jpg" width="800" height="1172">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.45959.html">Boy in Blue Coat</a></h2>       
           <h3 class="artist">American 18th Century</h3>
@@ -367,7 +400,9 @@
         </footer>
     </article>
     <article class="wide">
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.52246.html"><img src="images/hunting_scene_with_a_pond_1970.17.102.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.52246.html">
+          <img src="images/hunting_scene_with_a_pond_1970.17.102.jpg" width="800" height="405">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.52246.html">Hunting Scene with a Pond</a></h2>       
           <h3 class="artist">American 18th Century artist</h3>
@@ -380,7 +415,9 @@
         </footer>
     </article>
     <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.66418.html"><img src="images/self-portrait_dedicated_to_carriere_1985.64.20.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.66418.html">
+          <img src="images/self-portrait_dedicated_to_carriere_1985.64.20.jpg" width="800" height="989">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.66418.html">Self-Portrait Dedicated to Carrière</a></h2>       
           <h3 class="artist">Paul Gauguin</h3>
@@ -393,7 +430,9 @@
         </footer>
     </article>
     <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.43642.html"><img src="images/miss_van_alen_1956.13.14.jpg"></a>
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.43642.html">
+          <img src="images/miss_van_alen_1956.13.14.jpg" width="800" height="957">
+        </a>
         <section>
           <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.43642.html">Miss Van Alen</a></h2>       
           <h3 class="artist">The Gansevoort Limner</h3>

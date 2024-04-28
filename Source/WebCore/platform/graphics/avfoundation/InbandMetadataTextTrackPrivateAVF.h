@@ -61,7 +61,7 @@ private:
     InbandMetadataTextTrackPrivateAVF(Kind, TrackID, CueFormat);
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "InbandMetadataTextTrackPrivateAVF"; }
+    ASCIILiteral logClassName() const final { return "InbandMetadataTextTrackPrivateAVF"_s; }
 #endif
 
     Kind m_kind;

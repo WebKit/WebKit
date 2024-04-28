@@ -76,11 +76,6 @@ IDBObjectStore::~IDBObjectStore()
     ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 }
 
-const char* IDBObjectStore::activeDOMObjectName() const
-{
-    return "IDBObjectStore";
-}
-
 bool IDBObjectStore::virtualHasPendingActivity() const
 {
     return m_transaction.hasPendingActivity();

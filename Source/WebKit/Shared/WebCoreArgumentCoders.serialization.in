@@ -40,6 +40,7 @@ header: <WebCore/DOMCacheEngine.h>
 
 #if ENABLE(APPLE_PAY)
 header: <WebCore/ApplePayFeature.h>
+header: <WebCore/ApplePayContactField.h>
 enum class WebCore::ApplePayFeature : uint8_t {
 #if ENABLE(APPLE_PAY_LATER)
     ApplePayLater,
@@ -885,7 +886,7 @@ enum class WebCore::ShareDataOriginator : bool
 
 header: <WebCore/ElementTargetingTypes.h>
 [CustomHeader] struct WebCore::TargetedElementRequest {
-    WebCore::FloatPoint pointInRootView
+    std::variant<WebCore::FloatPoint, String> data
     bool canIncludeNearbyElements
 };
 
@@ -895,13 +896,15 @@ header: <WebCore/ElementTargetingTypes.h>
     WebCore::ScriptExecutionContextIdentifier documentIdentifier
     WebCore::RectEdges<bool> offsetEdges
     String renderedText
-    Vector<String> selectors
+    String searchableText
+    Vector<Vector<String>> selectors
     WebCore::FloatRect boundsInRootView
     WebCore::FloatRect boundsInClientCoordinates
     WebCore::PositionType positionType
     Vector<WebCore::FrameIdentifier> childFrameIdentifiers
-    bool isUnderPoint
+    bool isNearbyTarget
     bool isPseudoElement
+    bool isInShadowTree
 };
 
 header: <WebCore/RenderStyleConstants.h>
@@ -1042,11 +1045,6 @@ struct WebCore::ApplePayDeferredPaymentRequest {
     String managementURL
     String paymentDescription
     String tokenNotificationURL
-};
-#endif
-
-#if ENABLE(APPLE_PAY_DISBURSEMENTS)
-struct WebCore::ApplePayDisbursementPaymentRequest {
 };
 #endif
 
@@ -1216,6 +1214,14 @@ enum class WebCore::ApplePayErrorContactField : uint8_t {
     CountryCode,
 };
 
+enum class WebCore::ApplePayContactField : uint8_t {
+    Email,
+    Name,
+    PhoneticName,
+    Phone,
+    PostalAddress,
+};
+
 enum class WebCore::ApplePayErrorCode : uint8_t {
     Unknown,
     ShippingContactInvalid,
@@ -1227,6 +1233,12 @@ enum class WebCore::ApplePayErrorCode : uint8_t {
 #endif
 };
 #endif // ENABLE(APPLE_PAY)
+
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+struct WebCore::ApplePayDisbursementPaymentRequest {
+    std::optional<Vector<WebCore::ApplePayContactField>> requiredRecipientContactFields
+};
+#endif
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
 header: <WebCore/ApplePayInstallmentConfigurationWebCore.h>
@@ -2030,6 +2042,9 @@ enum class WebCore::DiagnosticLoggingDomain : uint8_t {
 #if USE(CG)
 using WebCore::PlatformColorSpace = RetainPtr<CGColorSpaceRef>;
 #else
+#if USE(SKIA)
+using WebCore::PlatformColorSpace = sk_sp<SkColorSpace>;
+#else
 [Nested] enum class WebCore::PlatformColorSpace::Name : uint8_t {
         SRGB
         , LinearSRGB
@@ -2041,6 +2056,7 @@ using WebCore::PlatformColorSpace = RetainPtr<CGColorSpaceRef>;
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::PlatformColorSpace {
     WebCore::PlatformColorSpace::Name get();
 };
+#endif
 #endif
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::DestinationColorSpace {
@@ -2065,7 +2081,7 @@ struct WebCore::WindowFeatures {
 
     std::optional<bool> fullscreen;
     std::optional<bool> dialog;
-    [NotSerialized] std::optional<bool> noopener;
+    std::optional<bool> noopener;
     [NotSerialized] std::optional<bool> noreferrer;
 
     [NotSerialized] Vector<String> additionalFeatures;

@@ -643,37 +643,37 @@ TEST(WTF, fastLog2)
 
 TEST(WTF, negate)
 {
-    auto expected_uint8_t = WTF::negate<int8_t>(0);
-    EXPECT_TRUE((std::is_same_v<uint8_t, decltype(expected_uint8_t)>));
-    auto expected_uint16_t = WTF::negate<int16_t>(0);
-    EXPECT_TRUE((std::is_same_v<uint16_t, decltype(expected_uint16_t)>));
-    auto expected_uint32_t = WTF::negate<int32_t>(0);
-    EXPECT_TRUE((std::is_same_v<uint32_t, decltype(expected_uint32_t)>));
-    auto expected_uint64_t = WTF::negate<int64_t>(0);
-    EXPECT_TRUE((std::is_same_v<uint64_t, decltype(expected_uint64_t)>));
-    auto expected_unsigned_long_long = WTF::negate<long long>(0);
-    EXPECT_TRUE((std::is_same_v<unsigned long long, decltype(expected_unsigned_long_long)>));
+    auto expected_int8_t = WTF::negate<int8_t>(0);
+    EXPECT_TRUE((std::is_same_v<int8_t, decltype(expected_int8_t)>));
+    auto expected_int16_t = WTF::negate<int16_t>(0);
+    EXPECT_TRUE((std::is_same_v<int16_t, decltype(expected_int16_t)>));
+    auto expected_int32_t = WTF::negate<int32_t>(0);
+    EXPECT_TRUE((std::is_same_v<int32_t, decltype(expected_int32_t)>));
+    auto expected_int64_t = WTF::negate<int64_t>(0);
+    EXPECT_TRUE((std::is_same_v<int64_t, decltype(expected_int64_t)>));
+    auto expected_long_long = WTF::negate<long long>(0);
+    EXPECT_TRUE((std::is_same_v<long long, decltype(expected_long_long)>));
 
-    EXPECT_EQ(WTF::negate<int8_t>(std::numeric_limits<int8_t>::min()), static_cast<uint8_t>(std::numeric_limits<int8_t>::max()) + 1U);
-    EXPECT_EQ(WTF::negate<int8_t>(std::numeric_limits<int8_t>::min() + 1), static_cast<uint8_t>(std::numeric_limits<int8_t>::max()));
-    EXPECT_EQ(WTF::negate<int8_t>(-1), 1U);
-    EXPECT_EQ(WTF::negate<int8_t>(0), 0U);
-    EXPECT_EQ(WTF::negate<int16_t>(std::numeric_limits<int16_t>::min()), static_cast<uint16_t>(std::numeric_limits<int16_t>::max()) + 1U);
-    EXPECT_EQ(WTF::negate<int16_t>(std::numeric_limits<int16_t>::min() + 1), static_cast<uint16_t>(std::numeric_limits<int16_t>::max()));
-    EXPECT_EQ(WTF::negate<int16_t>(-1), 1U);
-    EXPECT_EQ(WTF::negate<int16_t>(0), 0U);
-    EXPECT_EQ(WTF::negate<int32_t>(std::numeric_limits<int32_t>::min()), static_cast<uint32_t>(std::numeric_limits<int32_t>::max()) + 1U);
-    EXPECT_EQ(WTF::negate<int32_t>(std::numeric_limits<int32_t>::min() + 1), static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
-    EXPECT_EQ(WTF::negate<int32_t>(-1), 1U);
-    EXPECT_EQ(WTF::negate<int32_t>(0), 0U);
-    EXPECT_EQ(WTF::negate<int64_t>(std::numeric_limits<int64_t>::min()), static_cast<uint64_t>(std::numeric_limits<int64_t>::max()) + 1UL);
-    EXPECT_EQ(WTF::negate<int64_t>(std::numeric_limits<int64_t>::min() + 1L), static_cast<uint64_t>(std::numeric_limits<int64_t>::max()));
-    EXPECT_EQ(WTF::negate<int64_t>(-1L), 1UL);
-    EXPECT_EQ(WTF::negate<int64_t>(0L), 0UL);
-    EXPECT_EQ(WTF::negate<long long>(std::numeric_limits<long long>::min()), static_cast<unsigned long long>(std::numeric_limits<long long>::max()) + 1ULL);
-    EXPECT_EQ(WTF::negate<long long>(std::numeric_limits<long long>::min() + 1LL), static_cast<unsigned long long>(std::numeric_limits<long long>::max()));
-    EXPECT_EQ(WTF::negate<long long>(-1LL), 1ULL);
-    EXPECT_EQ(WTF::negate<long long>(0LL), 0ULL);
+    EXPECT_EQ(WTF::negate<int8_t>(std::numeric_limits<int8_t>::min()), std::numeric_limits<int8_t>::min());
+    EXPECT_EQ(WTF::negate<int8_t>(std::numeric_limits<int8_t>::min() + 1), std::numeric_limits<int8_t>::max());
+    EXPECT_EQ(WTF::negate<int8_t>(-1), 1);
+    EXPECT_EQ(WTF::negate<int8_t>(0), 0);
+    EXPECT_EQ(WTF::negate<int16_t>(std::numeric_limits<int16_t>::min()), std::numeric_limits<int16_t>::min());
+    EXPECT_EQ(WTF::negate<int16_t>(std::numeric_limits<int16_t>::min() + 1), std::numeric_limits<int16_t>::max());
+    EXPECT_EQ(WTF::negate<int16_t>(-1), 1);
+    EXPECT_EQ(WTF::negate<int16_t>(0), 0);
+    EXPECT_EQ(WTF::negate<int32_t>(std::numeric_limits<int32_t>::min()), std::numeric_limits<int32_t>::min());
+    EXPECT_EQ(WTF::negate<int32_t>(std::numeric_limits<int32_t>::min() + 1), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(WTF::negate<int32_t>(-1), 1);
+    EXPECT_EQ(WTF::negate<int32_t>(0), 0);
+    EXPECT_EQ(WTF::negate<int64_t>(std::numeric_limits<int64_t>::min()), std::numeric_limits<int64_t>::min());
+    EXPECT_EQ(WTF::negate<int64_t>(std::numeric_limits<int64_t>::min() + 1L), std::numeric_limits<int64_t>::max());
+    EXPECT_EQ(WTF::negate<int64_t>(-1L), 1L);
+    EXPECT_EQ(WTF::negate<int64_t>(0L), 0L);
+    EXPECT_EQ(WTF::negate<long long>(std::numeric_limits<long long>::min()), std::numeric_limits<long long>::min());
+    EXPECT_EQ(WTF::negate<long long>(std::numeric_limits<long long>::min() + 1LL), std::numeric_limits<long long>::max());
+    EXPECT_EQ(WTF::negate<long long>(-1LL), 1LL);
+    EXPECT_EQ(WTF::negate<long long>(0LL), 0LL);
 }
 
 } // namespace TestWebKitAPI

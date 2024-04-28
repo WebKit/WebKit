@@ -41,8 +41,6 @@ public:
 
     virtual ~OscillatorNode();
 
-    const char* activeDOMObjectName() const final { return "OscillatorNode"; }
-
     OscillatorType typeForBindings() const { ASSERT(isMainThread()); return m_type; }
     ExceptionOr<void> setTypeForBindings(OscillatorType);
 

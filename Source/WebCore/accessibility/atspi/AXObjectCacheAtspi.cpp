@@ -136,8 +136,12 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         wrapper->stateChanged("required", coreObject->isRequired());
         break;
     case AXActiveDescendantChanged:
-        if (auto* descendant = coreObject->activeDescendant())
-            platformHandleFocusedUIElementChanged(nullptr, descendant->node());
+        if (auto* descendant = coreObject->activeDescendant()) {
+            if (coreObject->isComboBox() || coreObject->canBeControlledBy(AccessibilityRole::ComboBox))
+                wrapper->activeDescendantChanged();
+            else
+                platformHandleFocusedUIElementChanged(nullptr, descendant->node());
+        }
         break;
     case AXChildrenChanged:
         coreObject->updateChildrenIfNecessary();

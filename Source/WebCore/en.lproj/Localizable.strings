@@ -79,6 +79,9 @@
 /* Label for an inspectable Web Extension background page */
 "%@ — Extension Background Page" = "%@ — Extension Background Page";
 
+/* Label for an inspectable Web Extension popup page */
+"%@ — Extension Popup Page" = "%@ — Extension Popup Page";
+
 /* Label for an inspectable Web Extension service worker */
 "%@ — Extension Service Worker" = "%@ — Extension Service Worker";
 
@@ -1027,6 +1030,9 @@
 /* Empty select list */
 "No Options Select Popover" = "No Options";
 
+/* WKWebExtensionContextErrorNoBackgroundContent description */
+"No background content is available to load." = "No background content is available to load.";
+
 /* Label for only item in menu that appears when clicking on the search field image, when no searches have been performed */
 "No recent searches" = "No recent searches";
 
@@ -1438,7 +1444,7 @@
 /* WKErrorWebContentProcessTerminated description */
 "The Web Content process was terminated" = "The Web Content process was terminated";
 
-/* WKWebExtensionErrorBackgroundContentFailedToLoad description */
+/* WKWebExtensionContextErrorBackgroundContentFailedToLoad description */
 "The background content failed to load due to an error." = "The background content failed to load due to an error.";
 
 /* WebKitErrorGeolocationLocationUnknown description */

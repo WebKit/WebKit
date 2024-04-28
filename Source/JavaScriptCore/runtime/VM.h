@@ -443,6 +443,7 @@ public:
     EntryFrame* topEntryFrame { nullptr };
 private:
     OptionSet<EntryScopeService> m_entryScopeServices;
+    VMTraps m_traps;
 
     VMIdentifier m_identifier;
     RefPtr<JSLock> m_apiLock;
@@ -827,7 +828,7 @@ public:
 
     std::unique_ptr<Profiler::Database> m_perBytecodeProfiler;
     RefPtr<TypedArrayController> m_typedArrayController;
-    RegExpCache* m_regExpCache;
+    std::unique_ptr<RegExpCache> m_regExpCache;
     BumpPointerAllocator m_regExpAllocator;
     ConcurrentJSLock m_regExpAllocatorLock;
 
@@ -868,7 +869,7 @@ public:
 
     bool hasTimeZoneChange() { return dateCache.hasTimeZoneChange(); }
 
-    RegExpCache* regExpCache() { return m_regExpCache; }
+    RegExpCache* regExpCache() { return m_regExpCache.get(); }
 
     bool isCollectorBusyOnCurrentThread() { return heap.currentThreadIsDoingGCWork(); }
 
@@ -1123,7 +1124,6 @@ private:
     unsigned m_controlFlowProfilerEnabledCount { 0 };
     MicrotaskQueue m_microtaskQueue;
     MallocPtr<EncodedJSValue, VMMalloc> m_exceptionFuzzBuffer;
-    VMTraps m_traps;
     LazyRef<VM, Watchdog> m_watchdog;
     LazyUniqueRef<VM, HeapProfiler> m_heapProfiler;
     LazyUniqueRef<VM, AdaptiveStringSearcherTables> m_stringSearcherTables;

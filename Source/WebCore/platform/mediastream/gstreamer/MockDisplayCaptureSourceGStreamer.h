@@ -38,7 +38,7 @@ public:
     const IntSize size() const final { return m_source->size(); }
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "MockDisplayCaptureSourceGStreamer"; }
+    ASCIILiteral logClassName() const final { return "MockDisplayCaptureSourceGStreamer"_s; }
 #endif
 
 protected:

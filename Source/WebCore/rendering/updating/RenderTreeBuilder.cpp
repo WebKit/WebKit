@@ -29,6 +29,7 @@
 #include "AXObjectCache.h"
 #include "DocumentInlines.h"
 #include "FrameSelection.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LegacyRenderSVGContainer.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
@@ -78,6 +79,23 @@
 namespace WebCore {
 
 RenderTreeBuilder* RenderTreeBuilder::s_current;
+
+enum class IsRemoval : bool { No, Yes };
+static void invalidateLineLayout(RenderObject& renderer, IsRemoval isRemoval)
+{
+    CheckedPtr container = LayoutIntegration::LineLayout::blockContainer(renderer);
+    if (!container)
+        return;
+    auto shouldInvalidateLineLayoutPath = [&](auto& inlinLayout) {
+        if (LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(*container, renderer, inlinLayout, isRemoval == IsRemoval::Yes))
+            return true;
+        if (isRemoval == IsRemoval::Yes)
+            return !inlinLayout.removedFromTree(*renderer.parent(), renderer);
+        return !inlinLayout.insertedIntoTree(*renderer.parent(), renderer);
+    };
+    if (auto* inlinLayout = container->modernLineLayout(); inlinLayout && shouldInvalidateLineLayoutPath(*inlinLayout))
+        container->invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::InsertionOrRemoval);
+}
 
 static void getInlineRun(RenderObject* start, RenderObject* boundary, RenderObject*& inlineRunStart, RenderObject*& inlineRunEnd)
 {
@@ -187,7 +205,7 @@ void RenderTreeBuilder::destroy(RenderObject& renderer, CanCollapseAnonymousBloc
         if (!rendererToDelete)
             return;
 
-        auto isSubtreeTeardown = SetForScope { m_isSubtreeTeardown, IsSubtreeTeardown::Yes };
+        auto subtreeTearDownType = SetForScope { m_tearDownType, TearDownType::SubtreeWithRootAlreadyDetached };
         while (rendererToDelete->firstChild()) {
             auto& firstChild = *rendererToDelete->firstChild();
             if (auto* node = firstChild.node())
@@ -432,6 +450,8 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     }
 
     newChild->insertedIntoTree();
+    invalidateLineLayout(*newChild, IsRemoval::No);
+
     if (m_internalMovesType == IsInternalMove::No) {
         newChild->initializeFragmentedFlowStateOnInsertion();
         if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(newChild->enclosingFragmentedFlow()))
@@ -813,8 +833,11 @@ void RenderTreeBuilder::childFlowStateChangesAndNoLongerAffectsParentBlock(Rende
     removeAnonymousWrappersForInlineChildrenIfNeeded(*child.parent());
 }
 
-void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendererToDestroy)
+void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendererToDestroy, const RenderElement* subtreeDestroyRoot)
 {
+    auto tearDownType = SetForScope { m_tearDownType, !subtreeDestroyRoot || &rendererToDestroy == subtreeDestroyRoot ? TearDownType::Root : TearDownType::SubtreeWithRootStillAttached };
+    auto tearDownDestroyRoot = SetForScope { m_subtreeDestroyRoot, m_tearDownType == TearDownType::SubtreeWithRootStillAttached ? subtreeDestroyRoot : nullptr };
+
     // If the tree is destroyed, there is no need for a clean-up phase.
     if (rendererToDestroy.renderTreeBeingDestroyed()) {
         destroy(rendererToDestroy);
@@ -890,7 +913,7 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
 
     // Anonymous parent might have become empty, try to delete it too.
     if (isAnonymousAndSafeToDelete(*destroyRootParent) && !destroyRootParent->firstChild())
-        destroyAndCleanUpAnonymousWrappers(*destroyRootParent);
+        destroyAndCleanUpAnonymousWrappers(*destroyRootParent, destroyRootParent.get());
     // WARNING: rendererToDestroy is deleted here.
 }
 
@@ -973,13 +996,17 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
     ASSERT(parent.canHaveChildren() || parent.canHaveGeneratedChildren());
     ASSERT(child.parent() == &parent);
-    ASSERT(m_isSubtreeTeardown == IsSubtreeTeardown::No || willBeDestroyed == WillBeDestroyed::Yes);
 
-    if (parent.renderTreeBeingDestroyed() || m_isSubtreeTeardown == IsSubtreeTeardown::Yes)
+    if (parent.renderTreeBeingDestroyed() || m_tearDownType == TearDownType::SubtreeWithRootAlreadyDetached)
         return parent.detachRendererInternal(child);
 
     if (child.everHadLayout())
         resetRendererStateOnDetach(parent, child, willBeDestroyed, m_internalMovesType);
+
+    if (m_tearDownType == RenderTreeBuilder::TearDownType::Root || is<RenderInline>(m_subtreeDestroyRoot)) {
+        // In case of partial damage on the inline content (the block root is not going away), we need to initiate inline layout invalidation on leaf renderers too.
+        invalidateLineLayout(child, IsRemoval::Yes);
+    }
 
     // FIXME: Fragment state should not be such a special case.
     if (m_internalMovesType == IsInternalMove::No)

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DRMDeviceManager.h"
 
+#include <wtf/text/WTFString.h>
+
 #if USE(LIBDRM)
 #include "DRMDeviceNode.h"
 #include <xf86drm.h>
@@ -44,6 +46,22 @@ DRMDeviceManager& DRMDeviceManager::singleton()
 
 DRMDeviceManager::~DRMDeviceManager() = default;
 
+static void drmForeachDevice(Function<bool(drmDevice*)>&& functor)
+{
+    drmDevicePtr devices[64];
+    memset(devices, 0, sizeof(devices));
+
+    int numDevices = drmGetDevices2(0, devices, std::size(devices));
+    if (numDevices <= 0)
+        return;
+
+    for (int i = 0; i < numDevices; ++i) {
+        if (!functor(devices[i]))
+            break;
+    }
+    drmFreeDevices(devices, numDevices);
+}
+
 void DRMDeviceManager::initializeMainDevice(const String& deviceFile)
 {
     RELEASE_ASSERT(!m_mainDevice.isInitialized);
@@ -51,45 +69,36 @@ void DRMDeviceManager::initializeMainDevice(const String& deviceFile)
     if (deviceFile.isEmpty())
         return;
 
-    drmDevicePtr devices[64];
-    memset(devices, 0, sizeof(devices));
-
-    int numDevices = drmGetDevices2(0, devices, std::size(devices));
-    if (numDevices <= 0) {
-        WTFLogAlways("No DRM devices found");
-        return;
-    }
-
-    drmDevice* device = nullptr;
-    for (int i = 0; i < numDevices && !device; ++i) {
-        for (int j = 0; j < DRM_NODE_MAX && !device; ++j) {
-            if (!(devices[i]->available_nodes & (1 << j)))
+    drmForeachDevice([&](drmDevice* device) {
+        for (int i = 0; i < DRM_NODE_MAX; ++i) {
+            if (!(device->available_nodes & (1 << i)))
                 continue;
 
-            if (String::fromUTF8(devices[i]->nodes[j]) == deviceFile)
-                device = devices[i];
+            if (String::fromUTF8(device->nodes[i]) == deviceFile) {
+                RELEASE_ASSERT(device->available_nodes & (1 << DRM_NODE_PRIMARY));
+                if (device->available_nodes & (1 << DRM_NODE_RENDER)) {
+                    m_mainDevice.primaryNode = DRMDeviceNode::create(CString { device->nodes[DRM_NODE_PRIMARY] });
+                    m_mainDevice.renderNode = DRMDeviceNode::create(CString { device->nodes[DRM_NODE_RENDER] });
+                } else
+                    m_mainDevice.primaryNode = DRMDeviceNode::create(CString { device->nodes[DRM_NODE_PRIMARY] });
+                return false;
+            }
         }
-    }
+        return true;
+    });
 
-    if (device) {
-        RELEASE_ASSERT(device->available_nodes & (1 << DRM_NODE_PRIMARY));
-
-        if (device->available_nodes & (1 << DRM_NODE_RENDER)) {
-            m_mainDevice.primaryNode = DRMDeviceNode::create(CString { device->nodes[DRM_NODE_PRIMARY] });
-            m_mainDevice.renderNode = DRMDeviceNode::create(CString { device->nodes[DRM_NODE_RENDER] });
-        } else
-            m_mainDevice.primaryNode = DRMDeviceNode::create(CString { device->nodes[DRM_NODE_PRIMARY] });
-    } else
+    if (!m_mainDevice.primaryNode)
         WTFLogAlways("Failed to find DRM device for %s", deviceFile.utf8().data());
-
-    drmFreeDevices(devices, numDevices);
 }
 
 RefPtr<DRMDeviceNode> DRMDeviceManager::mainDeviceNode(DRMDeviceManager::NodeType nodeType) const
 {
     RELEASE_ASSERT(m_mainDevice.isInitialized);
 
-    return nodeType == NodeType::Primary ? m_mainDevice.primaryNode : m_mainDevice.renderNode;
+    if (nodeType == NodeType::Render)
+        return m_mainDevice.renderNode ? m_mainDevice.renderNode : m_mainDevice.primaryNode;
+
+    return m_mainDevice.primaryNode ? m_mainDevice.primaryNode : m_mainDevice.renderNode;
 }
 
 #if USE(GBM)

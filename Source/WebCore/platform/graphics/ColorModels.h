@@ -39,9 +39,11 @@ template<typename> struct HSLModel;
 template<typename> struct HWBModel;
 template<typename> struct LCHModel;
 template<typename> struct LabModel;
+template<typename> struct OKLCHModel;
+template<typename> struct OKLabModel;
 template<typename> struct XYZModel;
 
-// MARK: Resolved/Unresolved Defintitions
+// MARK: Resolved/Unresolved Definitions
 
 template<typename ColorType, typename ColorModel = typename ColorType::Model> struct ExposedColorType;
 template<typename ColorType> struct ResolvedColorType;
@@ -182,9 +184,9 @@ template<typename ColorType> inline constexpr bool UsesHSLModel = std::is_same_v
 
 template<> struct HWBModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Angle },
-        { 0, 100, ColorComponentType::Percentage },
-        { 0, 100, ColorComponentType::Percentage }
+        { 0, 360, ColorComponentType::Angle },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Percentage },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Percentage }
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;
@@ -208,7 +210,7 @@ template<typename ColorType> inline constexpr bool UsesHWBModel = std::is_same_v
 
 template<> struct LabModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
-        { 0, std::numeric_limits<float>::infinity(), ColorComponentType::Number },
+        { 0, 100, ColorComponentType::Number },
         { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number },
         { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number }
     } };
@@ -234,9 +236,9 @@ template<typename ColorType> inline constexpr bool UsesLabModel = std::is_same_v
 
 template<> struct LCHModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
+        { 0, 100, ColorComponentType::Number },
         { 0, std::numeric_limits<float>::infinity(), ColorComponentType::Number },
-        { 0, std::numeric_limits<float>::infinity(), ColorComponentType::Number },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Angle }
+        { 0, 360, ColorComponentType::Angle }
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;
@@ -255,6 +257,58 @@ template<typename T, typename ColorType> constexpr ColorComponents<T, 4> asColor
 }
 
 template<typename ColorType> inline constexpr bool UsesLCHModel = std::is_same_v<typename ColorType::Model, LCHModel<typename ColorType::ComponentType>>;
+
+// MARK: OKLabModel
+
+template<> struct OKLabModel<float> {
+    static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
+        { 0, 1, ColorComponentType::Number },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number }
+    } };
+    static constexpr bool isInvertible = false;
+    static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::RectangularOrthogonal;
+};
+
+template<typename ColorType> struct ExposedColorType<ColorType, OKLabModel<typename ColorType::ComponentType>> : ColorType {
+    using ColorType::lightness;
+    using ColorType::a;
+    using ColorType::b;
+    using ColorType::alpha;
+};
+
+template<typename T, typename ColorType> constexpr ColorComponents<T, 4> asColorComponents(const ExposedColorType<ColorType, OKLabModel<T>>& c)
+{
+    return { c.lightness, c.a, c.b, c.alpha };
+}
+
+template<typename ColorType> inline constexpr bool UsesOKLabModel = std::is_same_v<typename ColorType::Model, OKLabModel<typename ColorType::ComponentType>>;
+
+// MARK: OKLCHModel
+
+template<> struct OKLCHModel<float> {
+    static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
+        { 0, 1, ColorComponentType::Number },
+        { 0, std::numeric_limits<float>::infinity(), ColorComponentType::Number },
+        { 0, 360, ColorComponentType::Angle }
+    } };
+    static constexpr bool isInvertible = false;
+    static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;
+};
+
+template<typename ColorType> struct ExposedColorType<ColorType, OKLCHModel<typename ColorType::ComponentType>> : ColorType {
+    using ColorType::lightness;
+    using ColorType::chroma;
+    using ColorType::hue;
+    using ColorType::alpha;
+};
+
+template<typename T, typename ColorType> constexpr ColorComponents<T, 4> asColorComponents(const ExposedColorType<ColorType, OKLCHModel<T>>& c)
+{
+    return { c.lightness, c.chroma, c.hue, c.alpha };
+}
+
+template<typename ColorType> inline constexpr bool UsesOKLCHModel = std::is_same_v<typename ColorType::Model, OKLCHModel<typename ColorType::ComponentType>>;
 
 // MARK: RGBModel
 

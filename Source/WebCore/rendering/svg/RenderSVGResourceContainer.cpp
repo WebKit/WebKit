@@ -87,14 +87,14 @@ static inline void notifyResourceChanged(SVGElement& element)
 
 void RenderSVGResourceContainer::registerResource()
 {
-    auto& treeScope = this->treeScopeForSVGReferences();
-    if (!treeScope.isIdOfPendingSVGResource(m_id))
+    Ref treeScope = this->treeScopeForSVGReferences();
+    if (!treeScope->isIdOfPendingSVGResource(m_id))
         return;
 
-    auto elements = copyToVectorOf<Ref<SVGElement>>(treeScope.removePendingSVGResource(m_id));
+    auto elements = copyToVectorOf<Ref<SVGElement>>(treeScope->removePendingSVGResource(m_id));
     for (auto& element : elements) {
         ASSERT(element->hasPendingResources());
-        treeScope.clearHasPendingSVGResourcesIfPossible(element);
+        treeScope->clearHasPendingSVGResourcesIfPossible(element);
         notifyResourceChanged(element.get());
     }
 }

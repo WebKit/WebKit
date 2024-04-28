@@ -180,7 +180,14 @@ class SimulatedDeviceManager(object):
         return result
 
     @staticmethod
-    def _find_exisiting_device_for_request(request):
+    def _find_existing_uninitialized_device_for_request(request):
+        # type: (DeviceRequest) -> DeviceRequest | None
+        '''Finds an existing, eligible, and uninitialized device that satisfies the passed request.
+
+        Arguments:
+            request (`DeviceRequest`): The details of the device request.
+        '''
+
         if not request.use_existing_simulator:
             return None
         for device in SimulatedDeviceManager.AVAILABLE_DEVICES:
@@ -189,7 +196,7 @@ class SimulatedDeviceManager(object):
                 if isinstance(initialized_device, Device) and device == initialized_device:
                     device = None
                     break
-            if device and request.device_type == device.device_type:
+            if device and request.device_type == device.device_type and not device.platform_device.is_booted_or_booting():
                 return device
         return None
 
@@ -277,7 +284,7 @@ class SimulatedDeviceManager(object):
         assert isinstance(request, DeviceRequest)
         host = host or SystemHost.get_default()
 
-        device = cls._find_exisiting_device_for_request(request)
+        device = cls._find_existing_uninitialized_device_for_request(request)
         if device:
             return device
 
@@ -290,7 +297,7 @@ class SimulatedDeviceManager(object):
         assert device_identifier is not None
 
         for device in cls.available_devices(host):
-            if device.platform_device.name == name:
+            if device.platform_device.name == name and device.platform_device.device_type == device_type and device.platform_device.build_version == runtime.build_version:
                 device.platform_device._delete()
                 break
 
@@ -300,7 +307,7 @@ class SimulatedDeviceManager(object):
         # We just added a device, so our list of _available_devices needs to be re-synced.
         cls.populate_available_devices(host)
         for device in cls.available_devices(host):
-            if device.platform_device.name == name:
+            if device.platform_device.name == name and device.platform_device.device_type == device_type and device.platform_device.build_version == runtime.build_version:
                 device.platform_device.managed_by_script = True
                 return device
         return None
@@ -362,7 +369,11 @@ class SimulatedDeviceManager(object):
         host = host or SystemHost.get_default()
         _log.debug(u"Booting device '{}'".format(device.udid))
         device.platform_device.booted_by_script = True
-        host.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'boot', device.udid])
+        try:
+            host.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'boot', device.udid])
+        except ScriptError as e:
+            _log.error('Error: ' + e.message_with_output(output_limit=None))
+            raise e
         SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
         # FIXME: Remove this delay once rdar://77234240 is resolved.
         time.sleep(15)
@@ -383,7 +394,7 @@ class SimulatedDeviceManager(object):
         return 0
 
     @classmethod
-    def initialize_devices(cls, requests, host=None, name_base='Managed', simulator_ui=True, timeout=SIMULATOR_BOOT_TIMEOUT, **kwargs):
+    def initialize_devices(cls, requests, host=None, name_base='Managed', simulator_ui=True, timeout=SIMULATOR_BOOT_TIMEOUT, keep_alive=False, **kwargs):
         host = host or SystemHost.get_default()
         if SimulatedDeviceManager.INITIALIZED_DEVICES is not None:
             return SimulatedDeviceManager.INITIALIZED_DEVICES
@@ -392,7 +403,9 @@ class SimulatedDeviceManager(object):
             return None
 
         SimulatedDeviceManager.INITIALIZED_DEVICES = []
-        atexit.register(SimulatedDeviceManager.tear_down)
+
+        if not keep_alive:
+            atexit.register(SimulatedDeviceManager.tear_down)
 
         # Convert to iterable type
         if not hasattr(requests, '__iter__'):
@@ -467,30 +480,6 @@ class SimulatedDeviceManager(object):
             max_supported_simulators_locally = 1
 
         return min(max_supported_simulators_locally, max_supported_simulators_for_hardware)
-
-    @staticmethod
-    def swap(device, request, host=None, name_base='Managed', timeout=SIMULATOR_BOOT_TIMEOUT):
-        host = host or SystemHost.get_default()
-        if SimulatedDeviceManager.INITIALIZED_DEVICES is None:
-            raise RuntimeError('Cannot swap when there are no initialized devices')
-        if device not in SimulatedDeviceManager.INITIALIZED_DEVICES:
-            raise RuntimeError(u'{} is not initialized, cannot swap it'.format(device))
-
-        index = SimulatedDeviceManager.INITIALIZED_DEVICES.index(device)
-        SimulatedDeviceManager.INITIALIZED_DEVICES[index] = None
-        device.platform_device._tear_down()
-
-        device = SimulatedDeviceManager._create_or_find_device_for_request(request, host, name_base)
-        assert device
-
-        if not device.platform_device.is_booted_or_booting(force_update=True):
-            device.platform_device.booted_by_script = True
-            _log.debug(u"Booting device '{}'".format(device.udid))
-            host.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'boot', device.udid])
-        SimulatedDeviceManager.INITIALIZED_DEVICES[index] = device
-
-        deadline = time.time() + timeout
-        SimulatedDeviceManager._wait_until_device_is_usable(device, max(0, deadline - time.time()))
 
     @staticmethod
     def tear_down(host=None, timeout=SIMULATOR_BOOT_TIMEOUT):

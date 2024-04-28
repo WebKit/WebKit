@@ -66,7 +66,7 @@ static ExceptionOr<Vector<uint8_t>> signEd25519CryptoKit(const Vector<uint8_t>&s
     if (sk.size() != ed25519KeySize)
         return Exception { ExceptionCode::OperationError };
     auto rv = PAL::EdKey::sign(PAL::EdSigningAlgorithm::ed25519(), sk.span(), data.span());
-    if (!rv.getErrCode().isSuccess())
+    if (!rv.getErrorCode().isSuccess())
         return Exception { ExceptionCode::OperationError };
     if (!rv.getSignature())
         return Exception { ExceptionCode::OperationError };
@@ -78,7 +78,7 @@ static ExceptionOr<bool>  verifyEd25519CryptoKit(const Vector<uint8_t>& pubKey, 
     if (pubKey.size() != ed25519KeySize || signature.size() != ed25519SignatureSize)
         return false;
     auto rv = PAL::EdKey::verify(PAL::EdSigningAlgorithm::ed25519(), pubKey.span(), signature.span(), data.span());
-    return rv.getErrCode().isSuccess();
+    return rv.getErrorCode().isSuccess();
 }
 #endif
 

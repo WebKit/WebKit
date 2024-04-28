@@ -110,26 +110,21 @@ public:
         auto result { *this };
 
         if (is8Bit())
-            result.setText(data8(startOffset), length);
+            result.setText(subspan8(startOffset).first(length));
         else
-            result.setText(data16(startOffset), length);
+            result.setText(subspan16(startOffset).first(length));
         return result;
     }
 
     UChar operator[](unsigned i) const { RELEASE_ASSERT(i < m_text.length()); return m_text[i]; }
-    const LChar* data8(unsigned i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < m_text.length()); ASSERT(is8Bit()); return &m_text.characters8()[i]; }
-    const UChar* data16(unsigned i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < m_text.length()); ASSERT(!is8Bit()); return &m_text.characters16()[i]; }
-    std::span<const LChar> span8(unsigned i) { ASSERT(is8Bit()); return m_text.span8().subspan(i); }
-    std::span<const UChar> span16(unsigned i) { ASSERT(!is8Bit()); return m_text.span16().subspan(i); }
-
-    const LChar* characters8() const { ASSERT(is8Bit()); return m_text.characters8(); }
-    const UChar* characters16() const { ASSERT(!is8Bit()); return m_text.characters16(); }
+    std::span<const LChar> span8() const { ASSERT(is8Bit()); return m_text.span8(); }
+    std::span<const UChar> span16() const { ASSERT(!is8Bit()); return m_text.span16(); }
+    std::span<const LChar> subspan8(unsigned i) const { return span8().subspan(i); }
+    std::span<const UChar> subspan16(unsigned i) const { return span16().subspan(i); }
 
     bool is8Bit() const { return m_text.is8Bit(); }
     unsigned length() const { return m_text.length(); }
 
-    void setText(const LChar* text, unsigned length) { setText(std::span { text, length }); }
-    void setText(const UChar* text, unsigned length) { setText(std::span { text, length }); }
     void setText(StringView text) { ASSERT(!text.isNull()); m_text = text.toStringWithoutCopying(); }
 
     float horizontalGlyphStretch() const { return m_horizontalGlyphStretch; }

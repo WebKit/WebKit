@@ -120,9 +120,11 @@ JSC_DEFINE_HOST_FUNCTION(regExpConstructorEscape, (JSGlobalObject* globalObject,
     for (unsigned i = 0; i < string.length();) {
         char32_t codePoint;
         if (string.is8Bit())
-            codePoint = string.characters8()[i++];
-        else
-            U16_NEXT(string.characters16(), i, string.length(), codePoint);
+            codePoint = string.span8()[i++];
+        else {
+            auto characters = string.span16();
+            U16_NEXT(characters, i, string.length(), codePoint);
+        }
 
         if (builder.isEmpty() && isASCIIAlphanumeric(codePoint)) {
             builder.append('\\', 'x', toStringWithRadix(codePoint, 16));

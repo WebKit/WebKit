@@ -33,6 +33,10 @@
 #include <WebCore/ContextMenuContext.h>
 #include <WebCore/ElementContext.h>
 
+#if ENABLE(SERVICE_CONTROLS)
+#include <WebCore/AttributedString.h>
+#endif
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -54,7 +58,7 @@ public:
         , String&& selectedText
 #if ENABLE(SERVICE_CONTROLS)
         , std::optional<WebCore::ShareableBitmapHandle>&& controlledImageHandle
-        , Vector<uint8_t>&& controlledSelectionData
+        , WebCore::AttributedString&& controlledSelection
         , Vector<String>&& selectedTelephoneNumbers
         , bool selectionIsEditable
         , WebCore::IntRect&& controlledImageBounds
@@ -80,10 +84,10 @@ public:
     bool hasEntireImage() const { return m_hasEntireImage; }
 
 #if ENABLE(SERVICE_CONTROLS)
-    ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<uint8_t>& selectionData, const Vector<String>& selectedTelephoneNumbers, bool isEditable)
+    ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::AttributedString&& controlledSelection, const Vector<String>& selectedTelephoneNumbers, bool isEditable)
         : m_type(Type::ServicesMenu)
         , m_menuLocation(menuLocation)
-        , m_controlledSelectionData(selectionData)
+        , m_controlledSelection(WTFMove(controlledSelection))
         , m_selectedTelephoneNumbers(selectedTelephoneNumbers)
         , m_selectionIsEditable(isEditable)
     {
@@ -104,7 +108,7 @@ public:
     WebCore::ShareableBitmap* controlledImage() const { return m_controlledImage.get(); }
     std::optional<WebCore::ShareableBitmap::Handle> createControlledImageReadOnlyHandle() const;
 
-    const Vector<uint8_t>& controlledSelectionData() const { return m_controlledSelectionData; }
+    const WebCore::AttributedString& controlledSelection() const { return m_controlledSelection; }
     const Vector<String>& selectedTelephoneNumbers() const { return m_selectedTelephoneNumbers; }
 
     bool selectionIsEditable() const { return m_selectionIsEditable; }
@@ -141,7 +145,7 @@ private:
     void setImage(WebCore::Image&);
     
     RefPtr<WebCore::ShareableBitmap> m_controlledImage;
-    Vector<uint8_t> m_controlledSelectionData;
+    WebCore::AttributedString m_controlledSelection;
     Vector<String> m_selectedTelephoneNumbers;
     bool m_selectionIsEditable;
     WebCore::IntRect m_controlledImageBounds;

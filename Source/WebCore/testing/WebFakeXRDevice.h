@@ -116,11 +116,11 @@ public:
     void setViews(const Vector<FakeXRViewInit>&);
     void disconnect(DOMPromiseDeferred<void>&&);
     void setViewerOrigin(FakeXRRigidTransformInit origin, bool emulatedPosition = false);
-    void clearViewerOrigin() { m_device.setViewerOrigin(std::nullopt); }
+    void clearViewerOrigin() { m_device->setViewerOrigin(std::nullopt); }
     void simulateVisibilityChange(XRVisibilityState);
-    void setBoundsGeometry(Vector<FakeXRBoundsPoint>&& bounds) { m_device.setNativeBoundsGeometry(WTFMove(bounds)); }
+    void setBoundsGeometry(Vector<FakeXRBoundsPoint>&& bounds) { m_device->setNativeBoundsGeometry(WTFMove(bounds)); }
     void setFloorOrigin(FakeXRRigidTransformInit);
-    void clearFloorOrigin() { m_device.setFloorOrigin(std::nullopt); }
+    void clearFloorOrigin() { m_device->setFloorOrigin(std::nullopt); }
     void simulateResetPose();
     Ref<WebFakeXRInputController> simulateInputSourceConnection(const FakeXRInputSourceInit&);
     static ExceptionOr<Ref<FakeXRView>> parseView(const FakeXRViewInit&);
@@ -133,7 +133,7 @@ public:
 private:
     WebFakeXRDevice();
 
-    SimulatedXRDevice m_device;
+    Ref<SimulatedXRDevice> m_device;
     PlatformXR::InputSourceHandle mInputSourceHandleIndex { 0 };
 };
 

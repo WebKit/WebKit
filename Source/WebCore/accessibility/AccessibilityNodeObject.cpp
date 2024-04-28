@@ -275,11 +275,6 @@ LayoutRect AccessibilityNodeObject::boundingBoxRect() const
     return { };
 }
 
-void AccessibilityNodeObject::setNode(Node* node)
-{
-    m_node = node;
-}
-
 Document* AccessibilityNodeObject::document() const
 {
     if (!node())
@@ -407,7 +402,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::List;
 
     if (element->hasTagName(fieldsetTag))
-        return AccessibilityRole::ApplicationGroup;
+        return AccessibilityRole::Group;
     if (element->hasTagName(figureTag))
         return AccessibilityRole::Figure;
     if (element->hasTagName(pTag))
@@ -429,30 +424,26 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::LandmarkNavigation;
 
     if (element->hasTagName(asideTag)) {
-        if (ariaRoleAttribute() == AccessibilityRole::LandmarkComplementary)
+        if (ariaRoleAttribute() == AccessibilityRole::LandmarkComplementary || !isDescendantOfElementType({ asideTag, articleTag, sectionTag, navTag }))
             return AccessibilityRole::LandmarkComplementary;
-        // The aside element should not assume the complementary role when nested
-        // within the sectioning content elements.
+
         // https://w3c.github.io/html-aam/#el-aside
-        if (isDescendantOfElementType({ asideTag, articleTag, sectionTag, navTag })) {
-            // Return LandmarkComplementary if the aside element has an accessible name.
-            if (hasValidARIALabel() || hasAttribute(aria_labelledbyAttr) || hasAttribute(aria_descriptionAttr) || hasAttribute(aria_describedbyAttr))
-                return AccessibilityRole::LandmarkComplementary;
-            return AccessibilityRole::Generic;
-        }
-        return AccessibilityRole::LandmarkComplementary;
+        // When within a sectioning content elements, complementary landmarks must have accnames to acquire the role.
+        return WebCore::hasAccNameAttribute(*element) ? AccessibilityRole::LandmarkComplementary : AccessibilityRole::Generic;
     }
 
     if (element->hasTagName(searchTag))
         return AccessibilityRole::LandmarkSearch;
 
-    // The default role attribute value for the section element, region, became a landmark in ARIA 1.1.
-    // The HTML AAM spec says it is "strongly recommended" that ATs only convey and provide navigation
-    // for section elements which have names.
-    if (element->hasTagName(sectionTag))
-        return hasValidARIALabel() || hasAttribute(aria_labelledbyAttr) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
+    if (element->hasTagName(sectionTag)) {
+        // https://w3c.github.io/html-aam/#el-section
+        // The default role attribute value for the section element, region, became a landmark in ARIA 1.1.
+        // The HTML AAM spec says it is "strongly recommended" that ATs only convey and provide navigation
+        // for section elements which have names.
+        return WebCore::hasAccNameAttribute(*element) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
+    }
     if (element->hasTagName(addressTag))
-        return AccessibilityRole::ApplicationGroup;
+        return AccessibilityRole::Group;
     if (element->hasTagName(blockquoteTag))
         return AccessibilityRole::Blockquote;
     if (element->hasTagName(captionTag) || element->hasTagName(figcaptionTag))
@@ -471,8 +462,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Group;
 #endif
 
-    // http://rawgit.com/w3c/aria/master/html-aam/html-aam.html
-    // Output elements should be mapped to status role.
+    // https://w3c.github.io/html-aam/#el-output
     if (element->hasTagName(outputTag))
         return AccessibilityRole::ApplicationStatus;
 
@@ -516,7 +506,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     if (element->hasTagName(emTag))
         return AccessibilityRole::Emphasis;
     if (element->hasTagName(hgroupTag))
-        return AccessibilityRole::ApplicationGroup;
+        return AccessibilityRole::Group;
 
     // If the element does not have role, but it has ARIA attributes, or accepts tab focus, accessibility should fallback to exposing it as a group.
     if (supportsARIAAttributes() || canSetFocusAttribute() || element->isFocusable())
@@ -660,7 +650,7 @@ bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
             return true;
 
         // Whitespace only text elements should be ignored when they have no renderer.
-        if (stringValue().containsOnly<isUnicodeWhitespace>())
+        if (stringValue().containsOnly<isASCIIWhitespace>())
             return true;
     }
 
@@ -1757,7 +1747,7 @@ String AccessibilityNodeObject::textAsLabelFor(const AccessibilityObject& labele
             appendNameToStringBuilder(builder, child->textUnderElement());
         }
         if (builder.length())
-            return builder.toString().trim(isUnicodeWhitespace).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
+            return builder.toString().trim(isASCIIWhitespace).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
     }
 
     String text = this->text();
@@ -1940,7 +1930,7 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
 void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) const
 {
     const AtomString& ariaHelp = getAttribute(aria_helpAttr);
-    if (!ariaHelp.isEmpty())
+    if (UNLIKELY(!ariaHelp.isEmpty()))
         textOrder.append(AccessibilityText(ariaHelp, AccessibilityTextSource::Help));
 
 #if !PLATFORM(COCOA)
@@ -2099,7 +2089,7 @@ String AccessibilityNodeObject::helpText() const
         return { };
 
     const auto& ariaHelp = getAttribute(aria_helpAttr);
-    if (!ariaHelp.isEmpty())
+    if (UNLIKELY(!ariaHelp.isEmpty()))
         return ariaHelp;
 
     String describedBy = ariaDescribedByAttribute();
@@ -2172,7 +2162,7 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
     unsigned level = 1;
     for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
         AccessibilityRole parentRole = parent->ariaRoleAttribute();
-        if (parentRole == AccessibilityRole::ApplicationGroup)
+        if (parentRole == AccessibilityRole::Group)
             level++;
         else if (parentRole == AccessibilityRole::Tree)
             break;
@@ -2410,7 +2400,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
 
     auto result = builder.toString();
     return mode.trimWhitespace == TrimWhitespace::Yes
-        ? result.trim(isUnicodeWhitespace).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak)
+        ? result.trim(isASCIIWhitespace).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak)
         : result;
 }
 
@@ -2646,7 +2636,7 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
         if (axObject->accessibleNameDerivesFromContent())
             text = axObject->textUnderElement(TextUnderElementMode(TextUnderElementMode::Children::IncludeNameFromContentsChildren, true, labelledbyNode));
     } else
-        text = (element ? element->innerText() : node.textContent()).simplifyWhiteSpace(isUnicodeWhitespace);
+        text = (element ? element->innerText() : node.textContent()).simplifyWhiteSpace(isASCIIWhitespace);
 
     if (!text.isEmpty())
         return text;
@@ -2724,14 +2714,27 @@ String AccessibilityNodeObject::ariaLabeledByAttribute() const
     return descriptionForElements(ariaLabeledByElements());
 }
 
+bool AccessibilityNodeObject::hasAccNameAttribute() const
+{
+    auto* element = this->element();
+    return element && WebCore::hasAccNameAttribute(*element);
+}
+
 bool AccessibilityNodeObject::hasAttributesRequiredForInclusion() const
 {
-    if (AccessibilityObject::hasAttributesRequiredForInclusion())
+    RefPtr element = this->element();
+    if (!element)
+        return false;
+
+    if (WebCore::hasAccNameAttribute(*element))
         return true;
 
-    // Avoid calculating the actual description here, which is expensive.
-    // This means there might be more accessible elements in the tree if the labelledBy points to invalid elements, but that shouldn't cause any real problems.
-    if (getAttribute(aria_labelledbyAttr).length() || getAttribute(aria_labeledbyAttr).length() || getAttributeTrimmed(aria_labelAttr).length())
+#if ENABLE(MATHML)
+    if (element->attributeWithoutSynchronization(MathMLNames::alttextAttr).length())
+        return true;
+#endif
+
+    if (element->attributeWithoutSynchronization(altAttr).length() || UNLIKELY(element->attributeWithoutSynchronization(aria_helpAttr).length()))
         return true;
 
     return false;
@@ -2899,7 +2902,7 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
     // In situations where an author has not specified names for the form and
     // region landmarks, it is considered an authoring error. The user agent
     // MUST treat such element as if no role had been provided.
-    if ((role == AccessibilityRole::LandmarkRegion || role == AccessibilityRole::Form) && getAttributeTrimmed(aria_labelAttr).isEmpty() && getAttribute(aria_labelledbyAttr).isEmpty() && getAttribute(aria_labeledbyAttr).isEmpty())
+    if ((role == AccessibilityRole::LandmarkRegion || role == AccessibilityRole::Form) && !hasAccNameAttribute())
         role = AccessibilityRole::Unknown;
 
     if (enumToUnderlyingType(role))

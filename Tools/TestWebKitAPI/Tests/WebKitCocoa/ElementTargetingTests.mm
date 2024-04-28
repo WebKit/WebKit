@@ -38,6 +38,7 @@
 @interface WKWebView (ElementTargeting)
 
 - (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoAt:(CGPoint)point;
+- (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoWithText:(NSString *)searchText;
 - (BOOL)adjustVisibilityForTargets:(NSArray<_WKTargetedElementInfo *> *)targets;
 - (BOOL)resetVisibilityAdjustmentsForTargets:(NSArray<_WKTargetedElementInfo *> *)elements;
 - (void)expectSingleTargetedSelector:(NSString *)expectedSelector at:(CGPoint)point;
@@ -48,18 +49,28 @@
 
 @implementation WKWebView (ElementTargeting)
 
-- (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoAt:(CGPoint)point
+- (NSArray<_WKTargetedElementInfo *> *)_targetedElementInfo:(_WKTargetedElementRequest *)request
 {
     __block RetainPtr<NSArray<_WKTargetedElementInfo *>> result;
-    auto request = adoptNS([_WKTargetedElementRequest new]);
-    [request setPoint:point];
     __block bool done = false;
-    [self _requestTargetedElementInfo:request.get() completionHandler:^(NSArray<_WKTargetedElementInfo *> *elements) {
+    [self _requestTargetedElementInfo:request completionHandler:^(NSArray<_WKTargetedElementInfo *> *elements) {
         result = elements;
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     return result.autorelease();
+}
+
+- (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoAt:(CGPoint)point
+{
+    auto request = adoptNS([[_WKTargetedElementRequest alloc] initWithPoint:point]);
+    return [self _targetedElementInfo:request.get()];
+}
+
+- (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoWithText:(NSString *)searchText
+{
+    auto request = adoptNS([[_WKTargetedElementRequest alloc] initWithSearchText:searchText]);
+    return [self _targetedElementInfo:request.get()];
 }
 
 - (BOOL)adjustVisibilityForTargets:(NSArray<_WKTargetedElementInfo *> *)targets
@@ -192,11 +203,11 @@ TEST(ElementTargeting, NearbyOutOfFlowElements)
 
     RetainPtr elements = [webView targetedElementInfoAt:CGPointMake(100, 100)];
     EXPECT_EQ([elements count], 5U);
-    EXPECT_TRUE([elements objectAtIndex:0].underPoint);
-    EXPECT_TRUE([elements objectAtIndex:1].underPoint);
-    EXPECT_FALSE([elements objectAtIndex:2].underPoint);
-    EXPECT_FALSE([elements objectAtIndex:3].underPoint);
-    EXPECT_FALSE([elements objectAtIndex:4].underPoint);
+    EXPECT_FALSE([elements objectAtIndex:0].nearbyTarget);
+    EXPECT_FALSE([elements objectAtIndex:1].nearbyTarget);
+    EXPECT_TRUE([elements objectAtIndex:2].nearbyTarget);
+    EXPECT_TRUE([elements objectAtIndex:3].nearbyTarget);
+    EXPECT_TRUE([elements objectAtIndex:4].nearbyTarget);
     // The two elements that are directly hit-tested should take precedence over nearby elements.
     EXPECT_WK_STREQ("DIV.fixed.container", [elements firstObject].selectors.firstObject);
     EXPECT_WK_STREQ("DIV.box", [elements objectAtIndex:1].selectors.firstObject);
@@ -315,8 +326,7 @@ TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)
 
     auto [webView, window] = setUpWebViewForSnapshotting(webViewFrame);
     RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
-    auto selectors = [NSSet setWithObjects:@"main::before", @"HTML::AFTER", nil];
-    [preferences _setVisibilityAdjustmentSelectors:selectors];
+    [preferences _setVisibilityAdjustmentSelectors:[NSSet setWithObjects:@"main::before", @"HTML::AFTER", nil]];
     RetainPtr delegate = adoptNS([TestUIDelegate new]);
     RetainPtr adjustedSelectors = adoptNS([NSMutableSet new]);
     [delegate setWebViewDidAdjustVisibilityWithSelectors:^(WKWebView *, NSArray<NSString *> *selectors) {
@@ -336,7 +346,53 @@ TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)
     EXPECT_TRUE([adjustedSelectors containsObject:@"HTML::AFTER"]);
 }
 
-TEST(ElementTargeting, ContentInsideShadowRoot)
+TEST(ElementTargeting, AdjustVisibilityForTargetsInShadowRoot)
+{
+    auto webViewFrame = CGRectMake(0, 0, 800, 600);
+    auto [webView, window] = setUpWebViewForSnapshotting(webViewFrame);
+
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    [preferences _setVisibilityAdjustmentSelectorsIncludingShadowHosts:@[
+        @[
+            [NSSet setWithObject:@"MAIN"],
+            [NSSet setWithObject:@"SECTION"],
+            [NSSet setWithObject:@"DIV.green"]
+        ]
+    ]];
+
+    __block bool didAdjustment = false;
+    RetainPtr delegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+    [delegate setWebViewDidAdjustVisibilityWithSelectors:^(WKWebView *, NSArray<NSString *> *selectors) {
+        didAdjustment = true;
+    }];
+
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-8" preferences:preferences.get()];
+    Util::run(&didAdjustment);
+    [webView waitForNextPresentationUpdate];
+
+    {
+        CGImagePixelReader pixelReader { [webView snapshotAfterScreenUpdates] };
+        auto x = static_cast<unsigned>(100 * (pixelReader.width() / CGRectGetWidth(webViewFrame)));
+        auto y = static_cast<unsigned>(300 * (pixelReader.height() / CGRectGetHeight(webViewFrame)));
+        EXPECT_EQ(pixelReader.at(x, y), WebCore::Color::white);
+        EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 1U);
+    }
+
+    RetainPtr elements = [webView targetedElementInfoAt:CGPointMake(100, 100)];
+    EXPECT_EQ([elements count], 1U);
+
+    RetainPtr firstTarget = [elements firstObject];
+    EXPECT_TRUE([firstTarget isInShadowTree]);
+
+    RetainPtr selectors = [firstTarget selectorsIncludingShadowHosts];
+    EXPECT_EQ(3U, [selectors count]);
+    EXPECT_WK_STREQ([selectors objectAtIndex:0][0], @"MAIN");
+    EXPECT_WK_STREQ([selectors objectAtIndex:1][0], @"SECTION");
+    EXPECT_WK_STREQ([selectors objectAtIndex:2][0], @"DIV.red");
+}
+
+TEST(ElementTargeting, TargetContainsShadowRoot)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView synchronouslyLoadTestPageNamed:@"element-targeting-4"];
@@ -387,6 +443,20 @@ TEST(ElementTargeting, ReplacedRendererSizeIgnoresPageScaleAndZoom)
     [webView waitForNextPresentationUpdate];
     RetainPtr targetAfterScaling = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];
     EXPECT_WK_STREQ([targetBeforeScaling renderedText], [targetAfterScaling renderedText]);
+}
+
+TEST(ElementTargeting, RequestTargetedElementsBySearchableText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-7"];
+
+    RetainPtr targetFromHitTest = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];
+    NSString *searchableText = [targetFromHitTest searchableText];
+    EXPECT_GT(searchableText.length, 0U);
+    EXPECT_TRUE([@"Image of a sunset over the 4th floor of Infinite Loop 2" containsString:searchableText]);
+
+    RetainPtr targetFromSearchText = [[webView targetedElementInfoWithText:searchableText] firstObject];
+    EXPECT_TRUE([targetFromSearchText isSameElement:targetFromHitTest.get()]);
 }
 
 } // namespace TestWebKitAPI

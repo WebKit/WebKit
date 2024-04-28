@@ -25,7 +25,11 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Time.h"
 
+#include "CSSCalcParser.h"
+#include "CSSCalcSymbolTable.h"
+#include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+Meta.h"
+#include "Length.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {

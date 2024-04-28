@@ -41,6 +41,7 @@
 #include "PathUtilities.h"
 #include "PlatformMouseEvent.h"
 #include "Region.h"
+#include "RemoteFrame.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderView.h"

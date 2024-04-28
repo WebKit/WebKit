@@ -178,7 +178,7 @@ void RenderMenuList::adjustInnerStyle()
 
     if (m_innerBlock && m_innerBlock->layoutBox()) {
         if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_innerBlock); inlineFormattingContextRoot && inlineFormattingContextRoot->modernLineLayout())
-            inlineFormattingContextRoot->modernLineLayout()->styleWillChange(*m_innerBlock, innerStyle);
+            inlineFormattingContextRoot->modernLineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, innerStyle);
         if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_innerBlock))
             lineLayout->styleWillChange(*m_innerBlock, innerStyle);
         LayoutIntegration::LineLayout::updateStyle(*m_innerBlock);

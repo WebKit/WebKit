@@ -30,7 +30,7 @@
 
 namespace WebGPU {
 
-std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, const PipelineLayout* pipelineLayout, const String& untransformedEntryPoint, NSString *label, uint32_t constantCount, const WGPUConstantEntry* constants, NSError **error)
+std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, const String& untransformedEntryPoint, NSString *label, uint32_t constantCount, const WGPUConstantEntry* constants, NSError **error)
 {
     // FIXME: Remove below line when https://bugs.webkit.org/show_bug.cgi?id=266774 is completed
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
@@ -55,7 +55,7 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
     if (pipelineLayout && pipelineLayout->numberOfBindGroupLayouts())
         wgslPipelineLayout = ShaderModule::convertPipelineLayout(*pipelineLayout);
 
-    auto prepareResult = WGSL::prepare(*ast, entryPoint, wgslPipelineLayout);
+    auto prepareResult = WGSL::prepare(*ast, entryPoint, wgslPipelineLayout ? &*wgslPipelineLayout : nullptr);
     // FIXME: return the actual error
     if (std::holds_alternative<WGSL::Error>(prepareResult))
         return std::nullopt;
@@ -134,6 +134,24 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
         }
     }
 
+    if (pipelineLayout) {
+        for (unsigned i = 0; i < pipelineLayout->numberOfBindGroupLayouts(); ++i) {
+            auto& bindGroupLayout = pipelineLayout->bindGroupLayout(i);
+            auto& wgslBindGroupLayout = wgslPipelineLayout->bindGroupLayouts[i];
+
+            for (unsigned i = 0; i < wgslBindGroupLayout.entries.size(); ++i) {
+                auto& wgslBindGroupLayoutEntry = wgslBindGroupLayout.entries[i];
+                auto it = bindGroupLayout.entries().find(wgslBindGroupLayoutEntry.binding);
+                RELEASE_ASSERT(it != bindGroupLayout.entries().end());
+                auto& bindGroupLayoutEntry = it->value;
+                if (auto* bufferBinding = std::get_if<WGPUBufferBindingLayout>(&bindGroupLayoutEntry.bindingLayout)) {
+                    auto& wgslBufferBinding = std::get<WGSL::BufferBindingLayout>(wgslBindGroupLayoutEntry.bindingMember);
+                    const_cast<WGPUBufferBindingLayout*>(bufferBinding)->minBindingSize = wgslBufferBinding.minBindingSize;
+                }
+            }
+        }
+    }
+
     auto msl = WGSL::generate(*ast, result, wgslConstantValues);
     auto library = ShaderModule::createLibrary(device, msl, label, error);
     if (error && *error)
@@ -152,6 +170,33 @@ id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::E
         WTFLogAlways("Function creation error: %@", error);
     function.label = label;
     return function;
+}
+
+bool validateBindGroup(BindGroup& bindGroup)
+{
+    auto& bindGroupLayoutEntries = bindGroup.bindGroupLayout()->entries();
+    for (const auto& resourceVector : bindGroup.resources()) {
+        for (const auto& resource : resourceVector.resourceUsages) {
+            auto bindingIndex = resource.binding;
+            auto* buffer = get_if<RefPtr<const Buffer>>(&resource.resource);
+            if (!buffer)
+                continue;
+
+            auto it = bindGroupLayoutEntries.find(bindingIndex);
+            RELEASE_ASSERT(it != bindGroupLayoutEntries.end());
+
+            auto* bufferBinding = get_if<WGPUBufferBindingLayout>(&it->value.bindingLayout);
+            if (!bufferBinding)
+                continue;
+
+            auto bufferSize = bufferBinding->minBindingSize;
+            if (bufferSize && buffer->get()) {
+                if (!buffer->get()->isDestroyed() && buffer->get()->buffer().length < bufferSize)
+                    return false;
+            }
+        }
+    }
+    return true;
 }
 
 } // namespace WebGPU

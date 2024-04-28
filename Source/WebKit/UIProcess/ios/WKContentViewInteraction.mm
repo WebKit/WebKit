@@ -1415,7 +1415,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _autocorrectionContextNeedsUpdate = YES;
 
     _page->process().updateTextCheckerState();
-    _page->setScreenIsBeingCaptured([[[self window] screen] isCaptured]);
+    _page->setScreenIsBeingCaptured([self screenIsBeingCaptured]);
 
 #if ENABLE(IMAGE_ANALYSIS)
     [self _setUpImageAnalysis];
@@ -6024,11 +6024,17 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
-    if ([textSuggestion isKindOfClass:[WKDataListTextSuggestion class]]) {
-        _page->setFocusedElementValue(_focusedElementInformation.elementContext, [textSuggestion inputText]);
-        return;
+    if ([_dataListTextSuggestions count] && ![[_formInputSession suggestions] count]) {
+        RetainPtr inputText = [textSuggestion inputText];
+        for (WKBETextSuggestion *dataListTextSuggestion in _dataListTextSuggestions.get()) {
+            if ([inputText isEqualToString:dataListTextSuggestion.inputText]) {
+                _page->setFocusedElementValue(_focusedElementInformation.elementContext, inputText.get());
+                return;
+            }
+        }
     }
 #endif
+
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
     if ([inputDelegate respondsToSelector:@selector(_webView:insertTextSuggestion:inInputSession:)]) {
         auto uiTextSuggestion = [&]() -> RetainPtr<UITextSuggestion> {
@@ -10544,8 +10550,8 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 - (void)removeTextPlaceholder:(UITextPlaceholder *)placeholder willInsertText:(BOOL)willInsertText completionHandler:(void (^)(void))completionHandler
 {
     // FIXME: Implement support for willInsertText. See <https://bugs.webkit.org/show_bug.cgi?id=208747>.
-    if (auto* wkTextPlaceholder = dynamic_objc_cast<WKTextPlaceholder>(placeholder))
-        _page->removeTextPlaceholder(wkTextPlaceholder.elementContext, makeBlockPtr(completionHandler));
+    if (RetainPtr wkTextPlaceholder = dynamic_objc_cast<WKTextPlaceholder>(placeholder))
+        _page->removeTextPlaceholder([wkTextPlaceholder elementContext], makeBlockPtr(completionHandler));
     else
         completionHandler();
 }
@@ -11550,20 +11556,6 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 }
 
 #endif // HAVE(PENCILKIT_TEXT_INPUT)
-
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-
-- (void)_didEnterFullscreen
-{
-    [self _startSuppressingSelectionAssistantForReason:WebKit::SuppressSelectionAssistantReason::ShowingFullscreenVideo];
-}
-
-- (void)_didExitFullscreen
-{
-    [self _stopSuppressingSelectionAssistantForReason:WebKit::SuppressSelectionAssistantReason::ShowingFullscreenVideo];
-}
-
-#endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 

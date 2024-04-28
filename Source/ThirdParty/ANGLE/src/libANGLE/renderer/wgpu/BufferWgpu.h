@@ -12,6 +12,10 @@
 
 #include "libANGLE/renderer/BufferImpl.h"
 
+#include "libANGLE/renderer/wgpu/wgpu_helpers.h"
+
+#include <dawn/webgpu_cpp.h>
+
 namespace rx
 {
 
@@ -21,13 +25,6 @@ class BufferWgpu : public BufferImpl
     BufferWgpu(const gl::BufferState &state);
     ~BufferWgpu() override;
 
-    angle::Result setDataWithUsageFlags(const gl::Context *context,
-                                        gl::BufferBinding target,
-                                        GLeglClientBufferEXT clientBuffer,
-                                        const void *data,
-                                        size_t size,
-                                        gl::BufferUsage usage,
-                                        GLbitfield flags) override;
     angle::Result setData(const gl::Context *context,
                           gl::BufferBinding target,
                           const void *data,
@@ -58,8 +55,8 @@ class BufferWgpu : public BufferImpl
                                 bool primitiveRestartEnabled,
                                 gl::IndexRange *outRange) override;
 
-    uint8_t *getDataPtr();
-    const uint8_t *getDataPtr() const;
+  private:
+    webgpu::BufferHelper mBuffer;
 };
 
 }  // namespace rx

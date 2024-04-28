@@ -49,7 +49,7 @@ WEBCORE_EXPORT void setAuxiliaryProcessType(AuxiliaryProcessType);
 WEBCORE_EXPORT void setAuxiliaryProcessTypeForTesting(std::optional<AuxiliaryProcessType>);
 WEBCORE_EXPORT bool checkAuxiliaryProcessType(AuxiliaryProcessType);
 WEBCORE_EXPORT std::optional<AuxiliaryProcessType> processType();
-WEBCORE_EXPORT const char* processTypeDescription(std::optional<AuxiliaryProcessType>);
+WEBCORE_EXPORT ASCIILiteral processTypeDescription(std::optional<AuxiliaryProcessType>);
 
 WEBCORE_EXPORT bool isInAuxiliaryProcess();
 inline bool isInWebProcess() { return checkAuxiliaryProcessType(AuxiliaryProcessType::WebContent); }

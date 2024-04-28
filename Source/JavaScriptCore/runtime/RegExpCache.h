@@ -49,32 +49,34 @@ class RegExpCache final : private WeakHandleOwner {
     typedef MemoryCompactRobinHoodHashMap<RegExpKey, Weak<RegExp>> RegExpCacheMap;
 
 public:
-    RegExpCache(VM* vm);
+    RegExpCache() = default;
     void deleteAllCode();
 
     RegExp* ensureEmptyRegExp(VM& vm)
     {
         if (LIKELY(m_emptyRegExp))
-            return m_emptyRegExp.get();
+            return m_emptyRegExp;
         return ensureEmptyRegExpSlow(vm);
     }
+
+    DECLARE_VISIT_AGGREGATE;
 
 private:
     static constexpr unsigned maxStrongCacheablePatternLength = 256;
 
-    static constexpr int maxStrongCacheableEntries = 32;
+    static constexpr int maxStrongCacheableEntries = 64;
 
     void finalize(Handle<Unknown>, void* context) final;
 
     RegExp* ensureEmptyRegExpSlow(VM&);
 
-    RegExp* lookupOrCreate(const WTF::String& patternString, OptionSet<Yarr::Flags>);
+    RegExp* lookupOrCreate(VM&, const WTF::String& patternString, OptionSet<Yarr::Flags>);
     void addToStrongCache(RegExp*);
+
     RegExpCacheMap m_weakCache; // Holds all regular expressions currently live.
-    int m_nextEntryInStrongCache;
-    std::array<Strong<RegExp>, maxStrongCacheableEntries> m_strongCache; // Holds a select few regular expressions that have compiled and executed
-    Strong<RegExp> m_emptyRegExp;
-    VM* const m_vm;
+    unsigned m_nextEntryInStrongCache { 0 };
+    std::array<RegExp*, maxStrongCacheableEntries> m_strongCache { }; // Holds a select few regular expressions that have compiled and executed
+    RegExp* m_emptyRegExp { nullptr };
 };
 
 } // namespace JSC

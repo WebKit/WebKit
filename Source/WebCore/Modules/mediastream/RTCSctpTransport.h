@@ -64,7 +64,6 @@ private:
 
     // ActiveDOMObject
     void stop() final;
-    const char* activeDOMObjectName() const final { return "RTCSctpTransport"; }
     bool virtualHasPendingActivity() const final;
 
     // RTCSctpTransport::Client

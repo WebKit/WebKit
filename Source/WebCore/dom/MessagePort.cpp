@@ -380,11 +380,6 @@ bool MessagePort::removeEventListener(const AtomString& eventType, EventListener
     return result;
 }
 
-const char* MessagePort::activeDOMObjectName() const
-{
-    return "MessagePort";
-}
-
 WebCoreOpaqueRoot root(MessagePort* port)
 {
     return WebCoreOpaqueRoot { port };

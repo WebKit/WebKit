@@ -35,6 +35,7 @@
 #include <wtf/Identified.h>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
+#include <wtf/ObjectIdentifier.h>
 
 DECLARE_CORE_MEDIA_TRAITS(SampleCursor);
 
@@ -104,7 +105,7 @@ private:
     OSStatus getPlayableHorizon(CMTime*) const;
 
     const WTF::Logger& logger() const { return m_logger; }
-    const char* logClassName() const { return "MediaSampleCursor"; }
+    ASCIILiteral logClassName() const { return "MediaSampleCursor"_s; }
     const void* logIdentifier() const { return m_logIdentifier; }
     WTFLogChannel& logChannel() const;
 

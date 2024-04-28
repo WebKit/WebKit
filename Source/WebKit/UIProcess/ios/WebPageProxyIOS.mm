@@ -101,6 +101,7 @@ using namespace WebCore;
 
 void WebPageProxy::platformInitialize()
 {
+    internals().hardwareKeyboardState = currentHardwareKeyboardState();
 }
 
 PlatformDisplayID WebPageProxy::generateDisplayIDFromPageID() const
@@ -395,24 +396,6 @@ void WebPageProxy::replaceSelectedText(const String& oldText, const String& newT
     m_process->send(Messages::WebPage::ReplaceSelectedText(oldText, newText), webPageID());
 }
 
-void WebPageProxy::insertTextPlaceholder(const IntSize& size, CompletionHandler<void(const std::optional<ElementContext>&)>&& completionHandler)
-{
-    if (!hasRunningProcess()) {
-        completionHandler({ });
-        return;
-    }
-    sendWithAsyncReply(Messages::WebPage::InsertTextPlaceholder { size }, WTFMove(completionHandler));
-}
-
-void WebPageProxy::removeTextPlaceholder(const ElementContext& placeholder, CompletionHandler<void()>&& completionHandler)
-{
-    if (!hasRunningProcess()) {
-        completionHandler();
-        return;
-    }
-    sendWithAsyncReply(Messages::WebPage::RemoveTextPlaceholder { placeholder }, WTFMove(completionHandler));
-}
-
 void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& callback)
 {
     if (!hasRunningProcess()) {
@@ -637,11 +620,6 @@ void WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground()
     m_process->send(Messages::WebPage::ApplicationDidFinishSnapshottingAfterEnteringBackground(), webPageID());
 }
 
-bool WebPageProxy::isInHardwareKeyboardMode()
-{
-    return [UIKeyboard isInHardwareKeyboardMode];
-}
-
 void WebPageProxy::applicationWillEnterForeground()
 {
     m_lastObservedStateWasBackground = false;
@@ -650,7 +628,8 @@ void WebPageProxy::applicationWillEnterForeground()
     WEBPAGEPROXY_RELEASE_LOG(ViewState, "applicationWillEnterForeground: isSuspendedUnderLock? %d", isSuspendedUnderLock);
 
     m_process->send(Messages::WebPage::ApplicationWillEnterForeground(isSuspendedUnderLock), webPageID());
-    m_process->send(Messages::WebPage::HardwareKeyboardAvailabilityChanged(isInHardwareKeyboardMode()), webPageID());
+
+    hardwareKeyboardAvailabilityChanged();
 }
 
 void WebPageProxy::applicationWillResignActive()
@@ -871,7 +850,7 @@ static FloatSize fullscreenPreferencesScreenSize(CGFloat preferredWidth)
 FloatSize WebPageProxy::availableScreenSize()
 {
 #if PLATFORM(VISION)
-    if (PAL::currentUserInterfaceIdiomIsVisionOrVisionLegacy())
+    if (PAL::currentUserInterfaceIdiomIsVision())
         return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
 #endif
     return WebCore::availableScreenSize();
@@ -880,10 +859,19 @@ FloatSize WebPageProxy::availableScreenSize()
 FloatSize WebPageProxy::overrideScreenSize()
 {
 #if PLATFORM(VISION)
-    if (PAL::currentUserInterfaceIdiomIsVisionOrVisionLegacy())
+    if (PAL::currentUserInterfaceIdiomIsVision())
         return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
 #endif
     return WebCore::overrideScreenSize();
+}
+
+FloatSize WebPageProxy::overrideAvailableScreenSize()
+{
+#if PLATFORM(VISION)
+    if (PAL::currentUserInterfaceIdiomIsVision())
+        return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
+#endif
+    return WebCore::overrideAvailableScreenSize();
 }
 
 float WebPageProxy::textAutosizingWidth()
@@ -1163,10 +1151,18 @@ void WebPageProxy::setIsScrollingOrZooming(bool isScrollingOrZooming)
         m_validationBubble->show();
 }
 
-void WebPageProxy::hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
+void WebPageProxy::hardwareKeyboardAvailabilityChanged()
 {
+    auto hardwareKeyboardState = currentHardwareKeyboardState();
+    if (hardwareKeyboardState == internals().hardwareKeyboardState)
+        return;
+
+    internals().hardwareKeyboardState = hardwareKeyboardState;
+
+    protectedPageClient()->hardwareKeyboardAvailabilityChanged();
+
     updateCurrentModifierState();
-    m_process->send(Messages::WebPage::HardwareKeyboardAvailabilityChanged(keyboardIsAttached), webPageID());
+    m_process->send(Messages::WebPage::HardwareKeyboardAvailabilityChanged(hardwareKeyboardState), webPageID());
 }
 
 void WebPageProxy::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&& callback)

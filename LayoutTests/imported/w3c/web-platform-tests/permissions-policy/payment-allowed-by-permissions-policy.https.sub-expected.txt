@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Feature policy 'Payment' check failed for element with origin 'https://127.0.0.1:9443' and allow attribute ''.
+CONSOLE MESSAGE: Permission policy 'Payment' check failed for element with origin 'https://127.0.0.1:9443' and allow attribute ''.
 
 PASS permissions policy header "payment=*" allows Payment Request API the top-level document.
 PASS permissions policy header "payment=*" allows Payment Request API same-origin iframes.

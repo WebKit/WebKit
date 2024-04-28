@@ -55,7 +55,7 @@ public:
     virtual Kind kind() const { return Kind::None; }
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "VideoTrackPrivate"; }
+    ASCIILiteral logClassName() const final { return "VideoTrackPrivate"_s; }
 #endif
 
     using SelectedChangedCallback = Function<void(VideoTrackPrivate&, bool selected)>;

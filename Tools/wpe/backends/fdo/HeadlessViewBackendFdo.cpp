@@ -38,6 +38,7 @@
 #if defined(USE_SKIA) && USE_SKIA
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-align"
+#include <skia/core/SkColorSpace.h>
 #include <skia/core/SkPixmap.h>
 #pragma GCC diagnostic pop
 #endif
@@ -111,7 +112,7 @@ HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
     }
 #elif defined(USE_SKIA) && USE_SKIA
     {
-        auto info = SkImageInfo::MakeN32Premul(m_width, m_height);
+        auto info = SkImageInfo::MakeN32Premul(m_width, m_height, SkColorSpace::MakeSRGB());
         size_t stride = info.minRowBytes();
         uint8_t* buffer = new uint8_t[stride * m_height];
         memset(buffer, 0, stride * m_height);
@@ -182,7 +183,7 @@ void HeadlessViewBackend::updateSnapshot(PlatformBuffer exportedBuffer)
 #if defined(USE_CAIRO) && USE_CAIRO
     uint32_t bufferStride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, m_width);
 #elif defined(USE_SKIA) && USE_SKIA
-    auto info = SkImageInfo::MakeN32Premul(m_width, m_height);
+    auto info = SkImageInfo::MakeN32Premul(m_width, m_height, SkColorSpace::MakeSRGB());
     uint32_t bufferStride = info.minRowBytes();
 #endif
     uint8_t* buffer = new uint8_t[bufferStride * m_height];

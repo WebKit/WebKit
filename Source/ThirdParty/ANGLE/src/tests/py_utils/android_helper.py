@@ -192,7 +192,7 @@ def _AddRestrictedTracesJson():
 
 def _AddDeqpFiles(suite_name):
     patterns = [
-        '../../third_party/VK-GL-CTS/src/external/openglcts/data/mustpass/*/*/main/*.txt',
+        '../../third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/*/*/main/*.txt',
         '../../src/tests/deqp_support/*.txt'
     ]
     if '_gles2_' in suite_name:

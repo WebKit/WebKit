@@ -453,6 +453,17 @@ const gl::ColorGeneric AdjustBorderColor(const angle::ColorGeneric &borderColorG
                                          const angle::Format &format,
                                          bool stencilMode);
 
+template <typename LargerInt>
+GLint LimitToInt(const LargerInt physicalDeviceValue)
+{
+    static_assert(sizeof(LargerInt) >= sizeof(int32_t), "Incorrect usage of LimitToInt");
+
+    // Limit to INT_MAX / 2 instead of INT_MAX.  If the limit is queried as float, the imprecision
+    // in floating point can cause the value to exceed INT_MAX.  This trips dEQP up.
+    return static_cast<GLint>(std::min(
+        physicalDeviceValue, static_cast<LargerInt>(std::numeric_limits<int32_t>::max() / 2)));
+}
+
 enum class PipelineType
 {
     Graphics = 0,

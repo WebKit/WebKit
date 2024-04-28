@@ -95,6 +95,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESGCM::platformEncrypt(const Crypto
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESGCM::platformDecrypt(const CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
+    // FIXME: Add decrypt with CryptoKit once rdar://92701544 is resolved.
     return decyptAESGCM(parameters.ivVector(), key.key(), cipherText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
 }
 

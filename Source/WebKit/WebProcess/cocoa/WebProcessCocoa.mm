@@ -746,9 +746,9 @@ RetainPtr<NSDictionary> WebProcess::additionalStateForDiagnosticReport() const
     auto stateDictionary = adoptNS([[NSMutableDictionary alloc] init]);
     {
         auto memoryUsageStats = adoptNS([[NSMutableDictionary alloc] init]);
-        for (auto& it : PerformanceLogging::memoryUsageStatistics(ShouldIncludeExpensiveComputations::Yes)) {
-            auto keyString = adoptNS([[NSString alloc] initWithUTF8String:it.key]);
-            [memoryUsageStats setObject:@(it.value) forKey:keyString.get()];
+        for (auto& [key, value] : PerformanceLogging::memoryUsageStatistics(ShouldIncludeExpensiveComputations::Yes)) {
+            auto keyString = adoptNS([[NSString alloc] initWithUTF8String:key]);
+            [memoryUsageStats setObject:@(value) forKey:keyString.get()];
         }
         [stateDictionary setObject:memoryUsageStats.get() forKey:@"Memory Usage Stats"];
     }
@@ -790,12 +790,12 @@ static void prewarmLogs()
     // This would be desirable, since the WebContent process is blocking access to the container manager daemon.
     PublicSuffixStore::singleton().topPrivatelyControlledDomain("apple.com"_s);
 
-    static std::array<std::pair<const char*, const char*>, 5> logs { {
-        { "com.apple.CFBundle", "strings" },
-        { "com.apple.network", "" },
-        { "com.apple.CFNetwork", "ATS" },
-        { "com.apple.coremedia", "" },
-        { "com.apple.SafariShared", "Translation" },
+    static std::array<std::pair<ASCIILiteral, ASCIILiteral>, 5> logs { {
+        { "com.apple.CFBundle"_s, "strings"_s },
+        { "com.apple.network"_s, ""_s },
+        { "com.apple.CFNetwork"_s, "ATS"_s },
+        { "com.apple.coremedia"_s, ""_s },
+        { "com.apple.SafariShared"_s, "Translation"_s },
     } };
 
     for (auto& log : logs) {

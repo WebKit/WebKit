@@ -2917,12 +2917,12 @@ static RefPtr<CSSValue> consumeLinear(CSSParserTokenRange& range)
         }
 
         if (missingInputRunStart) {
-            double inputLow = missingInputRunStart > 0 ? *steps[*missingInputRunStart - 1].input : 0.0;
-            double inputHigh = i < steps.size() ? *steps[i].input : std::max(1.0, largestInput);
-            double inputAverage = (inputLow + inputHigh) / (i - *missingInputRunStart + 1);
-            for (size_t j = *missingInputRunStart; j < i; ++j)
-                points.append({ steps[j].output, inputAverage * (j - *missingInputRunStart + 1) });
-
+            auto startInput = *steps[*missingInputRunStart - 1].input;
+            auto endInput = *steps[i].input;
+            auto numberOfMissingInputs = i - *missingInputRunStart + 1;
+            auto increment = (endInput - startInput) / numberOfMissingInputs;
+            for (auto j = *missingInputRunStart; j < i; ++j)
+                points.append({ steps[j].output, startInput + increment * (j - *missingInputRunStart + 1) });
             missingInputRunStart = std::nullopt;
         }
 

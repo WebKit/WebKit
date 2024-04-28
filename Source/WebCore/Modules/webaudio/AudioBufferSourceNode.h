@@ -80,8 +80,6 @@ public:
     // If we are no longer playing, propogate silence ahead to downstream nodes.
     bool propagatesSilence() const final;
 
-    const char* activeDOMObjectName() const override { return "AudioBufferSourceNode"; }
-
 private:
     AudioBufferSourceNode(BaseAudioContext&);
 

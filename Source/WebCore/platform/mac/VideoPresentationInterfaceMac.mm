@@ -408,6 +408,10 @@ void VideoPresentationInterfaceMac::setMode(HTMLMediaElementEnums::VideoFullscre
         return;
 
     m_mode = newMode;
+
+    if (hasMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && !isMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture))
+        return;
+
     if (auto model = videoPresentationModel())
         model->fullscreenModeChanged(m_mode);
 }
@@ -419,6 +423,10 @@ void VideoPresentationInterfaceMac::clearMode(HTMLMediaElementEnums::VideoFullsc
         return;
 
     m_mode = newMode;
+
+    if (hasMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && !isMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture))
+        return;
+
     if (auto model = videoPresentationModel())
         model->fullscreenModeChanged(m_mode);
 }

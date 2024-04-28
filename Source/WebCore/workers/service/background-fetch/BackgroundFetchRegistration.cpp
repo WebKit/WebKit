@@ -233,11 +233,6 @@ void BackgroundFetchRegistration::updateInformation(const BackgroundFetchInforma
     dispatchEvent(Event::create(eventNames().progressEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-const char* BackgroundFetchRegistration::activeDOMObjectName() const
-{
-    return "BackgroundFetchRegistration";
-}
-
 void BackgroundFetchRegistration::stop()
 {
 }

@@ -4470,6 +4470,8 @@
         "web-platform-tests/css/css-view-transitions/old-content-object-view-box-clip-path-reference-ref.html",
         "web-platform-tests/css/css-view-transitions/old-content-object-view-box-overflow-ref.html",
         "web-platform-tests/css/css-view-transitions/old-root-vertical-writing-mode-ref.html",
+        "web-platform-tests/css/css-view-transitions/pseudo-element-overflow-hidden-ref.html",
+        "web-platform-tests/css/css-view-transitions/pseudo-element-preserve-3d-ref.html",
         "web-platform-tests/css/css-view-transitions/pseudo-rendering-invalidation-ref.html",
         "web-platform-tests/css/css-view-transitions/pseudo-with-classes-ref.html",
         "web-platform-tests/css/css-view-transitions/root-captured-as-different-tag-ref.html",

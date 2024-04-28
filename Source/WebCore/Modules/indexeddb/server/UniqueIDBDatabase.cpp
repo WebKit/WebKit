@@ -181,9 +181,9 @@ void UniqueIDBDatabase::openDatabaseConnection(IDBConnectionToClient& connection
     handleDatabaseOperations();
 }
 
-static inline String quotaErrorMessageName(const char* taskName)
+static inline String quotaErrorMessageName(ASCIILiteral taskName)
 {
-    return makeString("Failed to ", taskName, " in database because not enough space for domain");
+    return makeString("Failed to "_s, taskName, " in database because not enough space for domain"_s);
 }
 
 void UniqueIDBDatabase::performCurrentOpenOperation()
@@ -226,7 +226,7 @@ void UniqueIDBDatabase::performCurrentOpenOperationAfterSpaceCheck(bool isGrante
         if (!m_manager)
             backingStoreOpenError = IDBError { ExceptionCode::InvalidStateError };
         else if (!isGranted)
-            backingStoreOpenError = IDBError { ExceptionCode::QuotaExceededError, quotaErrorMessageName("OpenBackingStore") };
+            backingStoreOpenError = IDBError { ExceptionCode::QuotaExceededError, quotaErrorMessageName("OpenBackingStore"_s) };
         else {
             m_backingStore = m_manager->createBackingStore(m_identifier);
             IDBDatabaseInfo databaseInfo;
@@ -598,7 +598,7 @@ void UniqueIDBDatabase::createObjectStore(UniqueIDBDatabaseTransaction& transact
     }
 
     if (spaceCheckResult != SpaceCheckResult::Pass) {
-        callback(IDBError { ExceptionCode::QuotaExceededError, quotaErrorMessageName("CreateObjectStore") });
+        callback(IDBError { ExceptionCode::QuotaExceededError, quotaErrorMessageName("CreateObjectStore"_s) });
         return;
     }
 
@@ -667,7 +667,7 @@ void UniqueIDBDatabase::renameObjectStore(UniqueIDBDatabaseTransaction& transact
     }
 
     if (spaceCheckResult != SpaceCheckResult::Pass) {
-        callback(IDBError(ExceptionCode::QuotaExceededError, quotaErrorMessageName("RenameObjectStore")));
+        callback(IDBError(ExceptionCode::QuotaExceededError, quotaErrorMessageName("RenameObjectStore"_s)));
         return;
     }
 
@@ -733,7 +733,7 @@ void UniqueIDBDatabase::createIndex(UniqueIDBDatabaseTransaction& transaction, c
     }
 
     if (spaceCheckResult != SpaceCheckResult::Pass) {
-        callback(IDBError { ExceptionCode::QuotaExceededError, quotaErrorMessageName("CreateIndex") });
+        callback(IDBError { ExceptionCode::QuotaExceededError, quotaErrorMessageName("CreateIndex"_s) });
         return;
     }
 
@@ -814,7 +814,7 @@ void UniqueIDBDatabase::renameIndex(UniqueIDBDatabaseTransaction& transaction, u
     }
 
     if (spaceCheckResult != SpaceCheckResult::Pass) {
-        callback(IDBError { ExceptionCode::QuotaExceededError, quotaErrorMessageName("RenameIndex") });
+        callback(IDBError { ExceptionCode::QuotaExceededError, quotaErrorMessageName("RenameIndex"_s) });
         return;
     }
 
@@ -926,7 +926,7 @@ void UniqueIDBDatabase::putOrAddAfterSpaceCheck(const IDBRequestData& requestDat
     });
 
     if (spaceCheckResult != SpaceCheckResult::Pass)
-        return callback(IDBError { ExceptionCode::QuotaExceededError, quotaErrorMessageName("PutOrAdd") }, keyData);
+        return callback(IDBError { ExceptionCode::QuotaExceededError, quotaErrorMessageName("PutOrAdd"_s) }, keyData);
     // If a record already exists in store, then remove the record from store using the steps for deleting records from an object store.
     // This is important because formally deleting it from the object store also removes it from the appropriate indexes.
     IDBError error = m_backingStore->deleteRange(transactionIdentifier, objectStoreIdentifier, keyData);

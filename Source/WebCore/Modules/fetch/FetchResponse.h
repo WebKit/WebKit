@@ -137,7 +137,6 @@ private:
 
     // FetchBodyOwner
     void stop() final;
-    const char* activeDOMObjectName() const final;
     void loadBody() final;
 
     const ResourceResponse& filteredResponse() const;

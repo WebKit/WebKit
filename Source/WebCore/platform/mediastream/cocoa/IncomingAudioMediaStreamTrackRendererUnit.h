@@ -75,7 +75,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper.
     const Logger& logger() const final;
-    const char* logClassName() const final { return "IncomingAudioMediaStreamTrackRendererUnit"; }
+    ASCIILiteral logClassName() const final { return "IncomingAudioMediaStreamTrackRendererUnit"_s; }
     WTFLogChannel& logChannel() const final;
     const void* logIdentifier() const final;
 #endif

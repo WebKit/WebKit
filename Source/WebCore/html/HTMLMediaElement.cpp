@@ -6502,11 +6502,6 @@ void HTMLMediaElement::clearMediaPlayer()
     updateRenderer();
 }
 
-const char* HTMLMediaElement::activeDOMObjectName() const
-{
-    return "HTMLMediaElement";
-}
-
 void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
 {
     INFO_LOG(LOGIDENTIFIER);
@@ -7024,6 +7019,25 @@ void HTMLMediaElement::toggleStandardFullscreenState()
         enterFullscreen();
 }
 
+bool HTMLMediaElement::videoUsesElementFullscreen() const
+{
+#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (document().settings().linearMediaPlayerEnabled())
+        return false;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    if (document().settings().videoFullscreenRequiresElementFullscreen())
+        return true;
+#else
+    return true;
+#endif // PLATFORM(IOS_FAMILY)
+#endif
+
+    return false;
+}
+
 void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
 {
     ALWAYS_LOG(LOGIDENTIFIER, ", m_videoFullscreenMode = ", m_videoFullscreenMode, ", mode = ", mode);
@@ -7046,15 +7060,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     m_changingVideoFullscreenMode = true;
 
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
-#if PLATFORM(IOS_FAMILY)
-    bool videoUsesElementFullscreen = document().settings().videoFullscreenRequiresElementFullscreen();
-#if ENABLE(LINEAR_MEDIA_PLAYER)
-    videoUsesElementFullscreen &= !document().settings().linearMediaPlayerEnabled();
-#endif
-#else
-    constexpr bool videoUsesElementFullscreen = true;
-#endif
-    if (videoUsesElementFullscreen && document().settings().fullScreenEnabled() && isInWindowOrStandardFullscreen(mode)) {
+    if (videoUsesElementFullscreen() && document().settings().fullScreenEnabled() && isInWindowOrStandardFullscreen(mode)) {
         m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
         m_waitingToEnterFullscreen = true;
         protectedDocument()->checkedFullscreenManager()->requestFullscreenForElement(*this, nullptr, FullscreenManager::ExemptIFrameAllowFullscreenRequirement, mode);
@@ -7519,6 +7525,9 @@ void HTMLMediaElement::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 
 bool HTMLMediaElement::shouldForceControlsDisplay() const
 {
+    if (isFullscreen() && videoUsesElementFullscreen())
+        return true;
+
     // Always create controls for autoplay video that requires user gesture due to being in low power mode.
     return isVideo() && autoplay() && mediaSession().hasBehaviorRestriction(MediaElementSession::RequireUserGestureForVideoDueToLowPowerMode);
 }
@@ -7535,7 +7544,7 @@ void HTMLMediaElement::configureMediaControls()
         requireControls = true;
 
     // Always create controls when in full screen mode.
-    if (isFullscreen())
+    if (isFullscreen() && videoUsesElementFullscreen())
         requireControls = true;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

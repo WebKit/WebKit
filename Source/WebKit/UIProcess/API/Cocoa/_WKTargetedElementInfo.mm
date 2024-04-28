@@ -83,12 +83,35 @@
 
 - (NSArray<NSString *> *)selectors
 {
-    return createNSArray(_info->selectors()).autorelease();
+    if (_info->selectors().isEmpty())
+        return @[ ];
+
+    if (_info->isInShadowTree())
+        return @[ ];
+
+    return createNSArray(_info->selectors().first()).autorelease();
+}
+
+- (NSArray<NSArray<NSString *> *> *)selectorsIncludingShadowHosts
+{
+    RetainPtr result = adoptNS([[NSMutableArray alloc] initWithCapacity:_info->selectors().size()]);
+    for (auto& selectors : _info->selectors()) {
+        RetainPtr nsSelectors = adoptNS([[NSMutableArray alloc] initWithCapacity:selectors.size()]);
+        for (auto& selector : selectors)
+            [nsSelectors addObject:selector];
+        [result addObject:nsSelectors.get()];
+    }
+    return result.autorelease();
 }
 
 - (NSString *)renderedText
 {
     return _info->renderedText();
+}
+
+- (NSString *)searchableText
+{
+    return _info->searchableText();
 }
 
 - (_WKRectEdge)offsetEdges
@@ -120,14 +143,19 @@
     return _info->isSameElement(*other->_info);
 }
 
-- (BOOL)isUnderPoint
+- (BOOL)isNearbyTarget
 {
-    return _info->isUnderPoint();
+    return _info->isNearbyTarget();
 }
 
 - (BOOL)isPseudoElement
 {
     return _info->isPseudoElement();
+}
+
+- (BOOL)isInShadowTree
+{
+    return _info->isInShadowTree();
 }
 
 @end

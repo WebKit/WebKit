@@ -53,11 +53,35 @@ def removeFiles(fs, l):
         else:
             fs.remove(each)
 
+# Remove all 'DerivedSources' directories inside 'WebKitBuild'.
+# Also remove '.ninja' files to force re-generation.
+def removeDerivedSources(fs):
+    derived_sources = []
+    ninja_files = []
+    for root, dirs, files in os.walk("WebKitBuild"):
+        for dirname in dirs:
+            if dirname == 'DerivedSources':
+                derived_sources.append(os.path.join(root, dirname))
+        for filename in files:
+            if filename.endswith(".ninja"):
+                path = os.path.join(root, filename)
+                ninja_files.append(path)
+    for each in derived_sources:
+        if fs.isdir(each):
+            fs.rmtree(each)
+    for each in ninja_files:
+        if fs.isfile(each):
+            fs.remove(each)
+
 def main(args):
     fs = FileSystem()
     host = Host()
-    scm = SCMDetector(fs, host.executive).detect_scm_system(fs.getcwd())
 
+    if args.derived_sources_only:
+        removeDerivedSources(fs)
+        return
+
+    scm = SCMDetector(fs, host.executive).detect_scm_system(fs.getcwd())
     scm.discard_working_directory_changes()
     if args.optimize_local_repository:
         scm.cleanup_and_optimize_local_repository()
@@ -80,5 +104,7 @@ if __name__ == "__main__":
                         help="Don't wipe the JHBuild build directories.")
     parser.add_argument('--optimize-local-repository', action='store_true',
                         default=False, help='run `git gc`')
+    parser.add_argument('--derived-sources-only', action='store_true',
+                        default=False, help="Delete only 'DerivedSources' directories")
     args = parser.parse_args()
     sys.exit(main(args))

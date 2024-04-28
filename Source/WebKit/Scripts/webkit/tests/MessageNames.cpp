@@ -29,157 +29,157 @@ namespace IPC::Detail {
 
 const MessageDescription messageDescriptions[static_cast<size_t>(MessageName::Count) + 1] = {
 #if USE(AVFOUNDATION)
-    { "TestWithCVPixelBuffer_ReceiveCVPixelBuffer", ReceiverName::TestWithCVPixelBuffer, false, false },
-    { "TestWithCVPixelBuffer_SendCVPixelBuffer", ReceiverName::TestWithCVPixelBuffer, false, false },
+    { "TestWithCVPixelBuffer_ReceiveCVPixelBuffer"_s, ReceiverName::TestWithCVPixelBuffer, false, false },
+    { "TestWithCVPixelBuffer_SendCVPixelBuffer"_s, ReceiverName::TestWithCVPixelBuffer, false, false },
 #endif
-    { "TestWithEnabledIf_AlwaysEnabled", ReceiverName::TestWithEnabledIf, false, false },
-    { "TestWithEnabledIf_OnlyEnabledIfFeatureEnabled", ReceiverName::TestWithEnabledIf, false, false },
+    { "TestWithEnabledIf_AlwaysEnabled"_s, ReceiverName::TestWithEnabledIf, false, false },
+    { "TestWithEnabledIf_OnlyEnabledIfFeatureEnabled"_s, ReceiverName::TestWithEnabledIf, false, false },
 #if PLATFORM(COCOA) || PLATFORM(GTK)
-    { "TestWithIfMessage_LoadURL", ReceiverName::TestWithIfMessage, false, false },
+    { "TestWithIfMessage_LoadURL"_s, ReceiverName::TestWithIfMessage, false, false },
 #endif
-    { "TestWithImageData_ReceiveImageData", ReceiverName::TestWithImageData, false, false },
-    { "TestWithImageData_SendImageData", ReceiverName::TestWithImageData, false, false },
+    { "TestWithImageData_ReceiveImageData"_s, ReceiverName::TestWithImageData, false, false },
+    { "TestWithImageData_SendImageData"_s, ReceiverName::TestWithImageData, false, false },
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    { "TestWithLegacyReceiver_AddEvent", ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_AddEvent"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
-    { "TestWithLegacyReceiver_Close", ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_CreatePlugin", ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_Close"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_CreatePlugin"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #if ENABLE(DEPRECATED_FEATURE)
-    { "TestWithLegacyReceiver_DeprecatedOperation", ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_DeprecatedOperation"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
 #if PLATFORM(MAC)
-    { "TestWithLegacyReceiver_DidCreateWebProcessConnection", ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_DidCreateWebProcessConnection"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
-    { "TestWithLegacyReceiver_DidReceivePolicyDecision", ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_DidReceivePolicyDecision"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #if ENABLE(FEATURE_FOR_TESTING)
-    { "TestWithLegacyReceiver_ExperimentalOperation", ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_ExperimentalOperation"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
-    { "TestWithLegacyReceiver_GetPlugins", ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_GetPlugins"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #if PLATFORM(MAC)
-    { "TestWithLegacyReceiver_InterpretKeyEvent", ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_InterpretKeyEvent"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    { "TestWithLegacyReceiver_LoadSomething", ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_LoadSomethingElse", ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_LoadSomething"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_LoadSomethingElse"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
-    { "TestWithLegacyReceiver_LoadURL", ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_PreferencesDidChange", ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_RunJavaScriptAlert", ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_SendDoubleAndFloat", ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_SendInts", ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_SetVideoLayerID", ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_TemplateTest", ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_TestParameterAttributes", ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_LoadURL"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_PreferencesDidChange"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_RunJavaScriptAlert"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_SendDoubleAndFloat"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_SendInts"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_SetVideoLayerID"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_TemplateTest"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_TestParameterAttributes"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    { "TestWithLegacyReceiver_TouchEvent", ReceiverName::TestWithLegacyReceiver, false, false },
+    { "TestWithLegacyReceiver_TouchEvent"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
-    { "TestWithSemaphore_ReceiveSemaphore", ReceiverName::TestWithSemaphore, false, false },
-    { "TestWithSemaphore_SendSemaphore", ReceiverName::TestWithSemaphore, false, false },
-    { "TestWithStreamBatched_SendString", ReceiverName::TestWithStreamBatched, true, false },
-    { "TestWithStreamBuffer_SendStreamBuffer", ReceiverName::TestWithStreamBuffer, false, false },
-    { "TestWithStreamServerConnectionHandle_SendStreamServerConnection", ReceiverName::TestWithStreamServerConnectionHandle, false, false },
-    { "TestWithStream_CallWithIdentifier", ReceiverName::TestWithStream, true, false },
+    { "TestWithSemaphore_ReceiveSemaphore"_s, ReceiverName::TestWithSemaphore, false, false },
+    { "TestWithSemaphore_SendSemaphore"_s, ReceiverName::TestWithSemaphore, false, false },
+    { "TestWithStreamBatched_SendString"_s, ReceiverName::TestWithStreamBatched, true, false },
+    { "TestWithStreamBuffer_SendStreamBuffer"_s, ReceiverName::TestWithStreamBuffer, false, false },
+    { "TestWithStreamServerConnectionHandle_SendStreamServerConnection"_s, ReceiverName::TestWithStreamServerConnectionHandle, false, false },
+    { "TestWithStream_CallWithIdentifier"_s, ReceiverName::TestWithStream, true, false },
 #if PLATFORM(COCOA)
-    { "TestWithStream_SendMachSendRight", ReceiverName::TestWithStream, true, false },
+    { "TestWithStream_SendMachSendRight"_s, ReceiverName::TestWithStream, true, false },
 #endif
-    { "TestWithStream_SendString", ReceiverName::TestWithStream, true, false },
-    { "TestWithStream_SendStringAsync", ReceiverName::TestWithStream, true, false },
-    { "TestWithSuperclass_LoadURL", ReceiverName::TestWithSuperclass, false, false },
+    { "TestWithStream_SendString"_s, ReceiverName::TestWithStream, true, false },
+    { "TestWithStream_SendStringAsync"_s, ReceiverName::TestWithStream, true, false },
+    { "TestWithSuperclass_LoadURL"_s, ReceiverName::TestWithSuperclass, false, false },
 #if ENABLE(TEST_FEATURE)
-    { "TestWithSuperclass_TestAsyncMessage", ReceiverName::TestWithSuperclass, false, false },
-    { "TestWithSuperclass_TestAsyncMessageWithConnection", ReceiverName::TestWithSuperclass, false, false },
-    { "TestWithSuperclass_TestAsyncMessageWithMultipleArguments", ReceiverName::TestWithSuperclass, false, false },
-    { "TestWithSuperclass_TestAsyncMessageWithNoArguments", ReceiverName::TestWithSuperclass, false, false },
+    { "TestWithSuperclass_TestAsyncMessage"_s, ReceiverName::TestWithSuperclass, false, false },
+    { "TestWithSuperclass_TestAsyncMessageWithConnection"_s, ReceiverName::TestWithSuperclass, false, false },
+    { "TestWithSuperclass_TestAsyncMessageWithMultipleArguments"_s, ReceiverName::TestWithSuperclass, false, false },
+    { "TestWithSuperclass_TestAsyncMessageWithNoArguments"_s, ReceiverName::TestWithSuperclass, false, false },
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    { "TestWithoutAttributes_AddEvent", ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_AddEvent"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
-    { "TestWithoutAttributes_Close", ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_CreatePlugin", ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_Close"_s, ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_CreatePlugin"_s, ReceiverName::TestWithoutAttributes, false, false },
 #if ENABLE(DEPRECATED_FEATURE)
-    { "TestWithoutAttributes_DeprecatedOperation", ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_DeprecatedOperation"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
 #if PLATFORM(MAC)
-    { "TestWithoutAttributes_DidCreateWebProcessConnection", ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_DidCreateWebProcessConnection"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
-    { "TestWithoutAttributes_DidReceivePolicyDecision", ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_DidReceivePolicyDecision"_s, ReceiverName::TestWithoutAttributes, false, false },
 #if ENABLE(FEATURE_FOR_TESTING)
-    { "TestWithoutAttributes_ExperimentalOperation", ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_ExperimentalOperation"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
-    { "TestWithoutAttributes_GetPlugins", ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_GetPlugins"_s, ReceiverName::TestWithoutAttributes, false, false },
 #if PLATFORM(MAC)
-    { "TestWithoutAttributes_InterpretKeyEvent", ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_InterpretKeyEvent"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    { "TestWithoutAttributes_LoadSomething", ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_LoadSomethingElse", ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_LoadSomething"_s, ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_LoadSomethingElse"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
-    { "TestWithoutAttributes_LoadURL", ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_PreferencesDidChange", ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_RunJavaScriptAlert", ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_SendDoubleAndFloat", ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_SendInts", ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_SetVideoLayerID", ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_TemplateTest", ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_TestParameterAttributes", ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_LoadURL"_s, ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_PreferencesDidChange"_s, ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_RunJavaScriptAlert"_s, ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_SendDoubleAndFloat"_s, ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_SendInts"_s, ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_SetVideoLayerID"_s, ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_TemplateTest"_s, ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_TestParameterAttributes"_s, ReceiverName::TestWithoutAttributes, false, false },
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    { "TestWithoutAttributes_TouchEvent", ReceiverName::TestWithoutAttributes, false, false },
+    { "TestWithoutAttributes_TouchEvent"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
-    { "TestWithoutUsingIPCConnection_MessageWithArgument", ReceiverName::TestWithoutUsingIPCConnection, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply", ReceiverName::TestWithoutUsingIPCConnection, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument", ReceiverName::TestWithoutUsingIPCConnection, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithoutArgument", ReceiverName::TestWithoutUsingIPCConnection, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply", ReceiverName::TestWithoutUsingIPCConnection, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument", ReceiverName::TestWithoutUsingIPCConnection, false, false },
+    { "TestWithoutUsingIPCConnection_MessageWithArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
+    { "TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
+    { "TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
+    { "TestWithoutUsingIPCConnection_MessageWithoutArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
+    { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
+    { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
 #if PLATFORM(COCOA)
-    { "InitializeConnection", ReceiverName::IPC, false, false },
+    { "InitializeConnection"_s, ReceiverName::IPC, false, false },
 #endif
-    { "LegacySessionState", ReceiverName::IPC, false, false },
-    { "ProcessOutOfStreamMessage", ReceiverName::IPC, false, false },
-    { "SetStreamDestinationID", ReceiverName::IPC, false, false },
-    { "SyncMessageReply", ReceiverName::IPC, false, false },
+    { "LegacySessionState"_s, ReceiverName::IPC, false, false },
+    { "ProcessOutOfStreamMessage"_s, ReceiverName::IPC, false, false },
+    { "SetStreamDestinationID"_s, ReceiverName::IPC, false, false },
+    { "SyncMessageReply"_s, ReceiverName::IPC, false, false },
 #if USE(AVFOUNDATION)
-    { "TestWithCVPixelBuffer_ReceiveCVPixelBufferReply", ReceiverName::AsyncReply, false, false },
+    { "TestWithCVPixelBuffer_ReceiveCVPixelBufferReply"_s, ReceiverName::AsyncReply, false, false },
 #endif
-    { "TestWithImageData_ReceiveImageDataReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithLegacyReceiver_CreatePluginReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithLegacyReceiver_GetPluginsReply", ReceiverName::AsyncReply, false, false },
+    { "TestWithImageData_ReceiveImageDataReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithLegacyReceiver_CreatePluginReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithLegacyReceiver_GetPluginsReply"_s, ReceiverName::AsyncReply, false, false },
 #if PLATFORM(MAC)
-    { "TestWithLegacyReceiver_InterpretKeyEventReply", ReceiverName::AsyncReply, false, false },
+    { "TestWithLegacyReceiver_InterpretKeyEventReply"_s, ReceiverName::AsyncReply, false, false },
 #endif
-    { "TestWithLegacyReceiver_RunJavaScriptAlertReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithSemaphore_ReceiveSemaphoreReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithStream_CallWithIdentifierReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithStream_SendStringAsyncReply", ReceiverName::AsyncReply, false, false },
+    { "TestWithLegacyReceiver_RunJavaScriptAlertReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithSemaphore_ReceiveSemaphoreReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithStream_CallWithIdentifierReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithStream_SendStringAsyncReply"_s, ReceiverName::AsyncReply, false, false },
 #if ENABLE(TEST_FEATURE)
-    { "TestWithSuperclass_TestAsyncMessageReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithSuperclass_TestAsyncMessageWithConnectionReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply", ReceiverName::AsyncReply, false, false },
+    { "TestWithSuperclass_TestAsyncMessageReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithSuperclass_TestAsyncMessageWithConnectionReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply"_s, ReceiverName::AsyncReply, false, false },
 #endif
-    { "TestWithoutAttributes_CreatePluginReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithoutAttributes_GetPluginsReply", ReceiverName::AsyncReply, false, false },
+    { "TestWithoutAttributes_CreatePluginReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithoutAttributes_GetPluginsReply"_s, ReceiverName::AsyncReply, false, false },
 #if PLATFORM(MAC)
-    { "TestWithoutAttributes_InterpretKeyEventReply", ReceiverName::AsyncReply, false, false },
+    { "TestWithoutAttributes_InterpretKeyEventReply"_s, ReceiverName::AsyncReply, false, false },
 #endif
-    { "TestWithoutAttributes_RunJavaScriptAlertReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReplyReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgumentReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReplyReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply", ReceiverName::AsyncReply, false, false },
-    { "TestWithLegacyReceiver_GetPluginProcessConnection", ReceiverName::TestWithLegacyReceiver, true, false },
-    { "TestWithLegacyReceiver_TestMultipleAttributes", ReceiverName::TestWithLegacyReceiver, true, false },
+    { "TestWithoutAttributes_RunJavaScriptAlertReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReplyReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgumentReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReplyReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply"_s, ReceiverName::AsyncReply, false, false },
+    { "TestWithLegacyReceiver_GetPluginProcessConnection"_s, ReceiverName::TestWithLegacyReceiver, true, false },
+    { "TestWithLegacyReceiver_TestMultipleAttributes"_s, ReceiverName::TestWithLegacyReceiver, true, false },
 #if PLATFORM(COCOA)
-    { "TestWithStream_ReceiveMachSendRight", ReceiverName::TestWithStream, true, false },
-    { "TestWithStream_SendAndReceiveMachSendRight", ReceiverName::TestWithStream, true, false },
+    { "TestWithStream_ReceiveMachSendRight"_s, ReceiverName::TestWithStream, true, false },
+    { "TestWithStream_SendAndReceiveMachSendRight"_s, ReceiverName::TestWithStream, true, false },
 #endif
-    { "TestWithStream_SendStringSync", ReceiverName::TestWithStream, true, false },
-    { "TestWithSuperclass_TestSyncMessage", ReceiverName::TestWithSuperclass, true, false },
-    { "TestWithSuperclass_TestSynchronousMessage", ReceiverName::TestWithSuperclass, true, false },
-    { "TestWithoutAttributes_GetPluginProcessConnection", ReceiverName::TestWithoutAttributes, true, false },
-    { "TestWithoutAttributes_TestMultipleAttributes", ReceiverName::TestWithoutAttributes, true, false },
-    { "WrappedAsyncMessageForTesting", ReceiverName::IPC, true, false },
-    { "<invalid message name>", ReceiverName::Invalid, false, false }
+    { "TestWithStream_SendStringSync"_s, ReceiverName::TestWithStream, true, false },
+    { "TestWithSuperclass_TestSyncMessage"_s, ReceiverName::TestWithSuperclass, true, false },
+    { "TestWithSuperclass_TestSynchronousMessage"_s, ReceiverName::TestWithSuperclass, true, false },
+    { "TestWithoutAttributes_GetPluginProcessConnection"_s, ReceiverName::TestWithoutAttributes, true, false },
+    { "TestWithoutAttributes_TestMultipleAttributes"_s, ReceiverName::TestWithoutAttributes, true, false },
+    { "WrappedAsyncMessageForTesting"_s, ReceiverName::IPC, true, false },
+    { "<invalid message name>"_s, ReceiverName::Invalid, false, false }
 };
 
 } // namespace IPC::Detail

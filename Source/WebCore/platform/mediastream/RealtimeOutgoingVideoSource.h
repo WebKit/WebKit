@@ -91,7 +91,7 @@ protected:
     // LoggerHelper API
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
-    const char* logClassName() const final { return "RealtimeOutgoingVideoSource"; }
+    ASCIILiteral logClassName() const final { return "RealtimeOutgoingVideoSource"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
 

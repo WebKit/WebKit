@@ -85,7 +85,7 @@ private:
     
     static const void* nextLogIdentifier();
     static WTFLogChannel& logChannel();
-    static const char* logClassName() { return "MediaFormatReader"; }
+    static ASCIILiteral logClassName() { return "MediaFormatReader"_s; }
     const void* logIdentifier() const { return m_logIdentifier; }
 
     RetainPtr<MTPluginByteSourceRef> m_byteSource WTF_GUARDED_BY_LOCK(m_parseTracksLock);

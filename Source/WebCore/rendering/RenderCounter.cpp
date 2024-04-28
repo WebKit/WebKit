@@ -606,7 +606,7 @@ RefPtr<CSSCounterStyle> RenderCounter::counterStyle() const
 
 #if ENABLE(TREE_DEBUGGING)
 
-void showCounterRendererTree(const WebCore::RenderObject* renderer, const char* counterName)
+void showCounterRendererTree(const WebCore::RenderObject* renderer, ASCIILiteral counterName)
 {
     if (!renderer)
         return;
@@ -614,7 +614,7 @@ void showCounterRendererTree(const WebCore::RenderObject* renderer, const char* 
     while (root->parent())
         root = root->parent();
 
-    auto identifier = AtomString::fromLatin1(counterName);
+    AtomString identifier { counterName };
     for (auto* current = root; current; current = current->nextInPreOrder()) {
         auto* element = dynamicDowncast<WebCore::RenderElement>(*current);
         if (!element)
@@ -625,7 +625,7 @@ void showCounterRendererTree(const WebCore::RenderObject* renderer, const char* 
         fprintf(stderr, "%p N:%p P:%p PS:%p NS:%p C:%p\n",
             current, current->node(), current->parent(), current->previousSibling(),
             current->nextSibling(), element->hasCounterNodeMap() ?
-            counterName ? WebCore::counterMaps().find(*downcast<WebCore::RenderElement>(current))->value->get(identifier) : (WebCore::CounterNode*)1 : (WebCore::CounterNode*)0);
+            !counterName.isNull() ? WebCore::counterMaps().find(*downcast<WebCore::RenderElement>(current))->value->get(identifier) : (WebCore::CounterNode*)1 : (WebCore::CounterNode*)0);
     }
     fflush(stderr);
 }

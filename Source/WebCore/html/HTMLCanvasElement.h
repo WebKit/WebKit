@@ -149,7 +149,6 @@ private:
     bool isHTMLCanvasElement() const final { return true; }
 
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
     // EventTarget.

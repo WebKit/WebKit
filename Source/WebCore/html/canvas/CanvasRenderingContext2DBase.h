@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,8 @@
 #include "CanvasTextAlign.h"
 #include "CanvasTextBaseline.h"
 #include "Color.h"
+#include "Filter.h"
+#include "FilterTargetSwitcher.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
 #include "FontSelectorClient.h"
@@ -89,6 +91,7 @@ using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>
 
 class CanvasRenderingContext2DBase : public CanvasRenderingContext, public CanvasPath {
     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2DBase);
+    friend class CanvasFilterTargetSwitcher;
 protected:
     CanvasRenderingContext2DBase(CanvasBase&, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
 
@@ -139,6 +142,9 @@ public:
 
     String globalCompositeOperation() const { return state().globalCompositeOperationString(); }
     void setGlobalCompositeOperation(const String&);
+
+    String filterString() const { return state().filterString; }
+    void setFilterString(const String&);
 
     void save() { ++m_unrealizedSaveCount; }
     void restore();
@@ -287,6 +293,9 @@ public:
         TextBaseline textBaseline;
         Direction direction;
 
+        String filterString;
+        FilterOperations filterOperations;
+
         String unparsedFont;
         FontProxy font;
 
@@ -339,6 +348,13 @@ protected:
     void didDrawEntireCanvas(OptionSet<DidDrawOption> options = defaultDidDrawOptions());
     void didDraw(bool entireCanvas, const FloatRect&, OptionSet<DidDrawOption> options = defaultDidDrawOptions());
     template<typename RectProvider> void didDraw(bool entireCanvas, RectProvider, OptionSet<DidDrawOption> options = defaultDidDrawOptions());
+
+    virtual std::optional<FilterOperations> setFilterStringWithoutUpdatingStyle(const String&) { return std::nullopt; }
+
+    virtual RefPtr<Filter> createFilter(const Function<FloatRect()>&) const { return nullptr; }
+    virtual IntOutsets calculateFilterOutsets(const FloatRect&) const { return { }; }
+
+    void setFilterTargetSwitcher(FilterTargetSwitcher* targetSwitcher) { m_targetSwitcher = targetSwitcher; }
 
     static String normalizeSpaces(const String&);
 
@@ -433,7 +449,7 @@ private:
     template<class T> IntRect calculateCompositingBufferRect(const T&, IntSize*);
     void compositeBuffer(ImageBuffer&, const IntRect&, CompositeOperator);
 
-    void inflateStrokeRect(FloatRect&) const;
+    FloatRect inflatedStrokeRect(const FloatRect&) const;
 
     template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator);
 
@@ -462,6 +478,7 @@ private:
     mutable std::variant<CachedContentsTransparent, CachedContentsUnknown, CachedContentsImageData> m_cachedContents;
     CanvasRenderingContext2DSettings m_settings;
     bool m_hasDeferredOperations { false };
+    FilterTargetSwitcher* m_targetSwitcher { nullptr };
 };
 
 } // namespace WebCore

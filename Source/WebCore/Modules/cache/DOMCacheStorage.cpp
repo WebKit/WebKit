@@ -303,9 +303,4 @@ void DOMCacheStorage::stop()
     m_isStopped = true;
 }
 
-const char* DOMCacheStorage::activeDOMObjectName() const
-{
-    return "CacheStorage";
-}
-
 } // namespace WebCore

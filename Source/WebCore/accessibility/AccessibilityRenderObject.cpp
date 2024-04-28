@@ -627,7 +627,7 @@ String AccessibilityRenderObject::helpText() const
         return AccessibilityNodeObject::helpText();
 
     const auto& ariaHelp = getAttribute(aria_helpAttr);
-    if (!ariaHelp.isEmpty())
+    if (UNLIKELY(!ariaHelp.isEmpty()))
         return ariaHelp;
 
     String describedBy = ariaDescribedByAttribute();
@@ -1231,8 +1231,8 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         // webkit.org/b/173870 - If an image has other alternative text, don't ignore it if alt text is empty.
         // This means we should process title and aria-label first.
 
-        // If an image has the title or label attributes, accessibility should be lenient and allow it to appear in the hierarchy (according to WAI-ARIA).
-        if (!getAttribute(titleAttr).isEmpty() || !getAttribute(aria_labelAttr).isEmpty())
+        // If an image has an accname, accessibility should be lenient and allow it to appear in the hierarchy (according to WAI-ARIA).
+        if (hasAccNameAttribute())
             return false;
 
         // First check the RenderImage's altText (which can be set through a style sheet, or come from the Element).
@@ -2189,7 +2189,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 #if !PLATFORM(COCOA)
     // This block should be deleted for all platforms, but doing so causes a lot of test failures that need to be sorted out.
     if (m_renderer->isRenderBlockFlow())
-        return m_renderer->isAnonymousBlock() ? AccessibilityRole::TextGroup : AccessibilityRole::Group;
+        return m_renderer->isAnonymousBlock() ? AccessibilityRole::TextGroup : AccessibilityRole::Generic;
 #endif
     
     // InlineRole is the final fallback before assigning AccessibilityRole::Unknown to an object. It makes it
@@ -2496,7 +2496,7 @@ void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
         }
 
         if (!menuItemCount)
-            m_role = AccessibilityRole::Group;
+            m_role = AccessibilityRole::Generic;
     }
     if (role == AccessibilityRole::SVGRoot && !children().size())
         m_role = AccessibilityRole::Image;

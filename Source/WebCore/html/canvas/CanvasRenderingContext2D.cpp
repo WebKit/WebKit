@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
@@ -33,6 +33,7 @@
 #include "config.h"
 #include "CanvasRenderingContext2D.h"
 
+#include "CSSFilter.h"
 #include "CSSFontSelector.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserHelpers.h"
@@ -84,6 +85,65 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(CanvasBase& canvas, CanvasRen
 }
 
 CanvasRenderingContext2D::~CanvasRenderingContext2D() = default;
+
+std::optional<FilterOperations> CanvasRenderingContext2D::setFilterStringWithoutUpdatingStyle(const String& filterString)
+{
+    Ref document = canvas().document();
+    if (!document->settings().canvasFiltersEnabled())
+        return std::nullopt;
+
+    document->updateStyleIfNeeded();
+
+    const auto* style = canvas().computedStyle();
+    if (!style)
+        return std::nullopt;
+
+    auto parserMode = strictToCSSParserMode(!usesCSSCompatibilityParseMode());
+    return CSSPropertyParserWorkerSafe::parseFilterString(document, const_cast<RenderStyle&>(*style), filterString, parserMode);
+}
+
+RefPtr<Filter> CanvasRenderingContext2D::createFilter(const Function<FloatRect()>& boundsProvider) const
+{
+    ASSERT(!state().filterOperations.isEmpty());
+
+    auto* context = drawingContext();
+    if (!context)
+        return nullptr;
+
+    CheckedPtr renderer = canvas().renderer();
+    if (!renderer)
+        return nullptr;
+
+    RefPtr page = canvas().document().page();
+    if (!page)
+        return nullptr;
+
+    auto bounds = boundsProvider();
+    if (bounds.isEmpty())
+        return nullptr;
+
+    auto preferredFilterRenderingModes = page->preferredFilterRenderingModes();
+    auto filter = CSSFilter::create(*renderer, state().filterOperations, preferredFilterRenderingModes, { 1, 1 }, bounds, *context);
+    if (!filter)
+        return nullptr;
+
+    auto outsets = calculateFilterOutsets(bounds);
+
+    filter->setFilterRegion(bounds + outsets);
+    return filter;
+}
+
+IntOutsets CanvasRenderingContext2D::calculateFilterOutsets(const FloatRect& bounds) const
+{
+    if (state().filterOperations.isEmpty())
+        return { };
+
+    CheckedPtr renderer = canvas().renderer();
+    if (!renderer)
+        return { };
+
+    return CSSFilter::calculateOutsets(*renderer, state().filterOperations, bounds);
+}
 
 void CanvasRenderingContext2D::drawFocusIfNeeded(Element& element)
 {

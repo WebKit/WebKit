@@ -55,7 +55,8 @@ class GDBCrashLogGenerator(object):
 
     def _get_gdb_output(self, coredump_path):
         process_name = self._filesystem.join(os.path.dirname(str(self._path_to_driver())), self.name)
-        cmd = ['gdb', '-ex', 'thread apply all bt 1024', '--batch', process_name, coredump_path]
+        # GDB may use quite a lot of CPU to generate a backtrace so give it less priority than other tester process to help avoiding timeouts.
+        cmd = ['nice', 'gdb', '-ex', 'thread apply all bt 1024', '--batch', process_name, coredump_path]
         proc = self._executive.popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
         errors = [stderr_line.strip().decode('utf8', 'ignore') for stderr_line in stderr.splitlines()]

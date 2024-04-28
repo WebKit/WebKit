@@ -253,7 +253,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return strings;
 }
 
-static const char* safeTypeForDOMToReadAndWriteForPlatformType(const String& platformType)
+static ASCIILiteral safeTypeForDOMToReadAndWriteForPlatformType(const String& platformType)
 {
     if (platformType == String(legacyStringPasteboardType()) || platformType == String(NSPasteboardTypeString))
         return "text/plain"_s;
@@ -267,7 +267,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return "text/html"_s;
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    return nullptr;
+    return { };
 }
 
 Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& origin) const
@@ -288,11 +288,10 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
 
         if (Pasteboard::isSafeTypeForDOMToReadAndWrite(type))
             domPasteboardTypes.add(type);
-        else if (auto* domType = safeTypeForDOMToReadAndWriteForPlatformType(type)) {
-            auto domTypeAsString = String::fromUTF8(domType);
-            if (domTypeAsString == "text/uri-list"_s && stringForType(legacyURLPasteboardType()).isEmpty())
+        else if (auto domType = safeTypeForDOMToReadAndWriteForPlatformType(type)) {
+            if (domType == "text/uri-list"_s && stringForType(legacyURLPasteboardType()).isEmpty())
                 continue;
-            domPasteboardTypes.add(WTFMove(domTypeAsString));
+            domPasteboardTypes.add(domType);
         }
     }
 

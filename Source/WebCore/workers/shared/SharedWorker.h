@@ -63,7 +63,6 @@ private:
     enum EventTargetInterfaceType eventTargetInterface() const final;
 
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
     void stop() final;
     bool virtualHasPendingActivity() const final;
     void suspend(ReasonForSuspension) final;

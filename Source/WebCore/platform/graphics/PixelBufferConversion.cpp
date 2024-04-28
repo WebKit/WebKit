@@ -33,6 +33,10 @@
 
 #if USE(ACCELERATE) && USE(CG)
 #include <Accelerate/Accelerate.h>
+#elif USE(SKIA)
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkPixmap.h>
+IGNORE_CLANG_WARNINGS_END
 #endif
 
 namespace WebCore {
@@ -135,6 +139,54 @@ static void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& 
         const uint8_t map[4] = { 2, 1, 0, 3 };
         vImagePermuteChannels_ARGB8888(&sourceVImageBuffer, &destinationVImageBuffer, map, kvImageNoFlags);
     }
+}
+
+#elif USE(SKIA)
+
+static void convertImagePixelsSkia(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
+{
+    auto toSkiaColorType = [](const PixelFormat& pixelFormat) {
+        switch (pixelFormat) {
+        case PixelFormat::RGBA8:
+            return SkColorType::kRGBA_8888_SkColorType;
+        case PixelFormat::BGRA8:
+            return SkColorType::kBGRA_8888_SkColorType;
+        case PixelFormat::BGRX8:
+        case PixelFormat::RGB10:
+        case PixelFormat::RGB10A8:
+            break;
+        }
+        ASSERT_NOT_REACHED();
+        return SkColorType::kUnknown_SkColorType;
+    };
+    auto toSkiaAlphaType = [](const AlphaPremultiplication& alphaFormat) {
+        switch (alphaFormat) {
+        case AlphaPremultiplication::Premultiplied:
+            return SkAlphaType::kPremul_SkAlphaType;
+        case AlphaPremultiplication::Unpremultiplied:
+            return SkAlphaType::kUnpremul_SkAlphaType;
+        }
+        ASSERT_NOT_REACHED();
+        return SkAlphaType::kUnknown_SkAlphaType;
+    };
+    SkImageInfo sourceImageInfo = SkImageInfo::Make(
+        destinationSize.width(),
+        destinationSize.height(),
+        toSkiaColorType(source.format.pixelFormat),
+        toSkiaAlphaType(source.format.alphaFormat),
+        source.format.colorSpace.platformColorSpace()
+    );
+    // Utilize SkPixmap which is a raw bytes wrapper capable of performing conversions.
+    SkPixmap sourcePixmap(sourceImageInfo, source.rows, source.bytesPerRow);
+    SkImageInfo destinationImageInfo = SkImageInfo::Make(
+        destinationSize.width(),
+        destinationSize.height(),
+        toSkiaColorType(destination.format.pixelFormat),
+        toSkiaAlphaType(destination.format.alphaFormat),
+        destination.format.colorSpace.platformColorSpace()
+    );
+    // Read pixels from source to destination and convert pixels if necessary.
+    sourcePixmap.readPixels(destinationImageInfo, destination.rows, destination.bytesPerRow);
 }
 
 #endif
@@ -251,6 +303,11 @@ void convertImagePixels(const ConstPixelBufferConversionView& source, const Pixe
             convertImagePixelsUnaccelerated<convertSinglePixelUnpremultipliedToUnpremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
     } else
         convertImagePixelsAccelerated(source, destination, destinationSize);
+#elif USE(SKIA)
+    if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat && source.format.colorSpace == destination.format.colorSpace)
+        memcpy(destination.rows, source.rows, source.bytesPerRow * destinationSize.height());
+    else
+        convertImagePixelsSkia(source, destination, destinationSize);
 #else
     // FIXME: We don't currently support converting pixel data between different color spaces in the non-accelerated path.
     // This could be added using conversion functions from ColorConversion.h.

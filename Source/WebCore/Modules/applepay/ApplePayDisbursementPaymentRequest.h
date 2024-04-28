@@ -33,9 +33,13 @@
 
 namespace WebCore {
 
+enum class ApplePayContactField : uint8_t;
+
 template<typename> class ExceptionOr;
 
 struct ApplePayDisbursementPaymentRequest final {
+    std::optional<Vector<ApplePayContactField>> requiredRecipientContactFields;
+
     ExceptionOr<void> validate() const;
     ExceptionOr<ApplePayDisbursementPaymentRequest> convertAndValidate() &&;
 };

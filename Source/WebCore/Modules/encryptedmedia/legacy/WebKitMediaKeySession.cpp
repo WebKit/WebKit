@@ -246,11 +246,6 @@ void WebKitMediaKeySession::stop()
     close();
 }
 
-const char* WebKitMediaKeySession::activeDOMObjectName() const
-{
-    return "WebKitMediaKeySession";
-}
-
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& WebKitMediaKeySession::logChannel() const
 {

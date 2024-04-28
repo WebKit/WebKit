@@ -153,6 +153,11 @@ public:
     WebCore::WebGPU::Texture* convertTextureFromBacking(WebGPUIdentifier) final;
     WebCore::WebGPU::TextureView* convertTextureViewFromBacking(WebGPUIdentifier) final;
 
+    struct ExistsAndValid {
+        bool exists { false };
+        bool valid { false };
+    };
+    ExistsAndValid objectExistsAndValid(const WebCore::WebGPU::GPU&, WebGPUIdentifier) const;
 private:
     ObjectHeap();
 
@@ -182,6 +187,7 @@ private:
         IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>
     >;
+
     HashMap<WebGPUIdentifier, Object> m_objects;
 };
 

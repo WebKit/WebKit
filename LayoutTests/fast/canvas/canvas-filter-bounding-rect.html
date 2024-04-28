@@ -1,0 +1,81 @@
+<meta name="fuzzy" content="maxDifference=0-26; totalPixels=0-1000" />
+<style>
+     canvas {
+         width: 700px;
+         height: 460px;
+     }
+ </style>
+ <body>
+    <h3>This tests the filter bounding rect is calculated correctly.</h3>
+     <canvas id="canvas"></canvas>
+     <svg style="position: absolute; top: -99999px" xmlns="http://www.w3.org/2000/svg">
+         <filter id="svgDropShadow-left">
+             <feDropShadow dx="-100" dy="0" stdDeviation="0" flood-color="#666"/>
+         </filter>
+    </svg>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 700;
+        canvas.height = 460;
+
+        ctx.font = "120px serif";
+
+        ctx.fillStyle = 'green';
+        ctx.strokeStyle = 'green';
+        ctx.lineWidth = 10;
+
+        ctx.filter = 'drop-shadow(100px 0 0 #666)';
+        ctx.fillRect(20, 70, 100, 100);
+
+        ctx.filter = 'drop-shadow(-100px 0 0 #666)';
+        ctx.strokeRect(345, 75, 90, 90);
+
+        ctx.filter = 'drop-shadow(0 100px 0 #666)';
+        ctx.beginPath();
+        ctx.moveTo(460, 20);
+        ctx.lineTo(560, 20);
+        ctx.lineTo(560, 120);
+        ctx.lineTo(460, 120);
+        ctx.fill();
+
+        ctx.filter = 'drop-shadow(0 -100px 0 #666)';
+        ctx.beginPath();
+        ctx.moveTo(585, 125);
+        ctx.lineTo(675, 125);
+        ctx.lineTo(675, 215);
+        ctx.lineTo(585, 215);
+        ctx.lineTo(585, 120);
+        ctx.stroke();
+
+        ctx.lineWidth = 2;
+
+        ctx.filter = 'drop-shadow(100px 0 0 #666)';
+        ctx.fillText("\u25A0", 30, 380);
+
+        ctx.filter = 'url(#svgDropShadow-left)';
+        ctx.strokeText("\u25A0", 350, 380);
+
+        let image = new Image;
+        image.addEventListener("load", (e) => {
+            ctx.filter = 'drop-shadow(0 100px 0 #666)';
+            ctx.drawImage(image, 460, 240);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+        image.src = "../images/resources/green-100x100.svg"
+
+        var tempCanvas = document.createElement("canvas");
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCanvas .height = 100;
+        tempCanvas.width = 100;
+        tempCtx.fillStyle = 'green';
+        tempCtx.fillRect(0, 0, 100, 100);
+
+        ctx.filter = 'drop-shadow(0 -100px 0 #666)';
+        ctx.drawImage(tempCanvas, 580, 340);
+    </script>
+</body>

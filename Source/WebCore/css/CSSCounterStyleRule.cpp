@@ -112,46 +112,46 @@ CSSCounterStyleRule::~CSSCounterStyleRule() = default;
 String CSSCounterStyleRule::cssText() const
 {
     String systemText = system();
-    const char* systemPrefix = systemText.isEmpty() ? "" : " system: ";
-    const char* systemSuffix = systemText.isEmpty() ? "" : ";";
+    const auto systemPrefix = systemText.isEmpty() ? ""_s : " system: "_s;
+    const auto systemSuffix = systemText.isEmpty() ? ""_s : ";"_s;
 
     String symbolsText = symbols();
-    const char* symbolsPrefix = symbolsText.isEmpty() ? "" : " symbols: ";
-    const char* symbolsSuffix = symbolsText.isEmpty() ? "" : ";";
+    const auto symbolsPrefix = symbolsText.isEmpty() ? ""_s : " symbols: "_s;
+    const auto symbolsSuffix = symbolsText.isEmpty() ? ""_s : ";"_s;
 
     String additiveSymbolsText = additiveSymbols();
-    const char* additiveSymbolsPrefix = additiveSymbolsText.isEmpty() ? "" : " additive-symbols: ";
-    const char* additiveSymbolsSuffix = additiveSymbolsText.isEmpty() ? "" : ";";
+    const auto additiveSymbolsPrefix = additiveSymbolsText.isEmpty() ? ""_s : " additive-symbols: "_s;
+    const auto additiveSymbolsSuffix = additiveSymbolsText.isEmpty() ? ""_s : ";"_s;
 
     String negativeText = negative();
-    const char* negativePrefix = negativeText.isEmpty() ? "" : " negative: ";
-    const char* negativeSuffix = negativeText.isEmpty() ? "" : ";";
+    const auto negativePrefix = negativeText.isEmpty() ? ""_s : " negative: "_s;
+    const auto negativeSuffix = negativeText.isEmpty() ? ""_s : ";"_s;
 
     String prefixText = prefix();
-    const char* prefixTextPrefix = prefixText.isEmpty() ? "" : " prefix: ";
-    const char* prefixTextSuffix = prefixText.isEmpty() ? "" : ";";
+    const auto prefixTextPrefix = prefixText.isEmpty() ? ""_s : " prefix: "_s;
+    const auto prefixTextSuffix = prefixText.isEmpty() ? ""_s : ";"_s;
 
     String suffixText = suffix();
-    const char* suffixTextPrefix = suffixText.isEmpty() ? "" : " suffix: ";
-    const char* suffixTextSuffix = suffixText.isEmpty() ? "" : ";";
+    const auto suffixTextPrefix = suffixText.isEmpty() ? ""_s : " suffix: "_s;
+    const auto suffixTextSuffix = suffixText.isEmpty() ? ""_s : ";"_s;
 
     String padText = pad();
-    const char* padPrefix = padText.isEmpty() ? "" : " pad: ";
-    const char* padSuffix = padText.isEmpty() ? "" : ";";
+    const auto padPrefix = padText.isEmpty() ? ""_s : " pad: "_s;
+    const auto padSuffix = padText.isEmpty() ? ""_s : ";"_s;
 
     String rangeText = range();
-    const char* rangePrefix = rangeText.isEmpty() ? "" : " range: ";
-    const char* rangeSuffix = rangeText.isEmpty() ? "" : ";";
+    const auto rangePrefix = rangeText.isEmpty() ? ""_s : " range: "_s;
+    const auto rangeSuffix = rangeText.isEmpty() ? ""_s : ";"_s;
 
     String fallbackText = fallback();
-    const char* fallbackPrefix = fallbackText.isEmpty() ? "" : " fallback: ";
-    const char* fallbackSuffix = fallbackText.isEmpty() ? "" : ";";
+    const auto fallbackPrefix = fallbackText.isEmpty() ? ""_s : " fallback: "_s;
+    const auto fallbackSuffix = fallbackText.isEmpty() ? ""_s : ";"_s;
 
     String speakAsText = speakAs();
-    const char* speakAsPrefix = speakAsText.isEmpty() ? "" : " speak-as: ";
-    const char* speakAsSuffix = speakAsText.isEmpty() ? "" : ";";
+    const auto speakAsPrefix = speakAsText.isEmpty() ? ""_s : " speak-as: "_s;
+    const auto speakAsSuffix = speakAsText.isEmpty() ? ""_s : ";"_s;
 
-    return makeString("@counter-style ", name(), " {",
+    return makeString("@counter-style "_s, name(), " {"_s,
         systemPrefix, systemText, systemSuffix,
         symbolsPrefix, symbolsText, symbolsSuffix,
         additiveSymbolsPrefix, additiveSymbolsText, additiveSymbolsSuffix,
@@ -162,7 +162,7 @@ String CSSCounterStyleRule::cssText() const
         rangePrefix, rangeText, rangeSuffix,
         fallbackPrefix, fallbackText, fallbackSuffix,
         speakAsPrefix, speakAsText, speakAsSuffix,
-    " }");
+    " }"_s);
 }
 
 void CSSCounterStyleRule::reattach(StyleRuleBase& rule)

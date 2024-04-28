@@ -42,7 +42,9 @@
 
 namespace WebCore {
 
+class Element;
 class Document;
+class Node;
 class Page;
 
 class ElementTargetingController final : public CanMakeCheckedPtr<ElementTargetingController> {
@@ -65,11 +67,16 @@ private:
     void cleanUpAdjustmentClientRects();
     void applyVisibilityAdjustmentFromSelectors(Document&);
 
+    std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(FloatPoint location);
+    std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(const String& searchText);
+
+    Vector<TargetedElementInfo> extractTargets(Vector<Ref<Node>>&&, RefPtr<Element>&& innerElement, bool canIncludeNearbyElements);
+
     SingleThreadWeakPtr<Page> m_page;
     DeferrableOneShotTimer m_recentAdjustmentClientRectsCleanUpTimer;
     HashMap<ElementIdentifier, IntRect> m_recentAdjustmentClientRects;
-    std::optional<HashSet<String>> m_remainingVisibilityAdjustmentSelectors;
     ApproximateTime m_startTimeForSelectorBasedVisibilityAdjustment;
+    std::optional<Vector<Vector<HashSet<String>>>> m_remainingVisibilityAdjustmentSelectors;
     Region m_adjustmentClientRegion;
     Region m_repeatedAdjustmentClientRegion;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_adjustedElements;

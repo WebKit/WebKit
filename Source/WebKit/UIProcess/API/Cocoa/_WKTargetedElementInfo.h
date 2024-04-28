@@ -43,11 +43,14 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly) _WKTargetedElementPosition positionType;
 @property (nonatomic, readonly) CGRect boundsInWebView; // In WKWebView's coordinate space.
 @property (nonatomic, readonly) CGRect boundsInClientCoordinates;
-@property (nonatomic, readonly, getter=isUnderPoint) BOOL underPoint;
+@property (nonatomic, readonly, getter=isNearbyTarget) BOOL nearbyTarget;
 @property (nonatomic, readonly, getter=isPseudoElement) BOOL pseudoElement;
+@property (nonatomic, readonly, getter=isInShadowTree) BOOL inShadowTree;
 
 @property (nonatomic, readonly, copy) NSArray<NSString *> *selectors;
+@property (nonatomic, readonly, copy) NSArray<NSArray<NSString *> *> *selectorsIncludingShadowHosts;
 @property (nonatomic, readonly, copy) NSString *renderedText;
+@property (nonatomic, readonly, copy) NSString *searchableText;
 @property (nonatomic, readonly) _WKRectEdge offsetEdges;
 
 // In root view coordinates. To be deprecated and removed, once clients adopt the more explicit bounds properties above.

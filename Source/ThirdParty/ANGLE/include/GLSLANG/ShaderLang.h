@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 349
+#define ANGLE_SH_VERSION 350
 
 enum ShShaderSpec
 {
@@ -74,6 +74,9 @@ enum ShShaderOutput
 
     // Output for MSL
     SH_MSL_METAL_OUTPUT = 0x8B4D,
+
+    // Output for WGSL
+    SH_WGSL_OUTPUT = 0x8B4E,
 };
 
 struct ShCompileOptionsMetal

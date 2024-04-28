@@ -102,12 +102,11 @@ size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSiz
 
     char* destination = buffer;
     bool failed = false;
-    if (string->is8Bit()) {
-        const LChar* source = string->characters8();
-        convertLatin1ToUTF8(&source, source + string->length(), &destination, destination + bufferSize - 1);
-    } else {
-        const UChar* source = string->characters16();
-        auto result = convertUTF16ToUTF8(&source, source + string->length(), &destination, destination + bufferSize - 1);
+    if (string->is8Bit())
+        convertLatin1ToUTF8(string->span8(), &destination, destination + bufferSize - 1);
+    else {
+        auto characters = string->span16();
+        auto result = convertUTF16ToUTF8(characters, &destination, destination + bufferSize - 1);
         failed = result != ConversionResult::Success && result != ConversionResult::TargetExhausted;
     }
 

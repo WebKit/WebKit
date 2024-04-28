@@ -84,6 +84,7 @@ class MacOSFullscreenMediaControls extends MediaControls
 
     handleEvent(event)
     {
+        event.stopPropagation();
         if (event.type === "mousedown" && event.currentTarget === this.bottomControlsBar.element)
             this._handleMousedown(event);
         else if (event.type === "mousemove" && event.currentTarget === this.element)

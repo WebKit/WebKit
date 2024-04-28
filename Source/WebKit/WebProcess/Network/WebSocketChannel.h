@@ -98,7 +98,7 @@ private:
 
     bool increaseBufferedAmount(size_t);
     void decreaseBufferedAmount(size_t);
-    template<typename T> void sendMessage(T&&, size_t byteLength);
+    template<typename T> void sendMessageInternal(T&&, size_t byteLength);
 
     const WebCore::WebSocketChannelInspector* channelInspector() const final { return &m_inspector; }
     WebCore::WebSocketChannelIdentifier progressIdentifier() const final { return m_inspector.progressIdentifier(); }

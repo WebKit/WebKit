@@ -332,7 +332,7 @@ private:
     Ref<VideoPlaybackQualityMetricsPromise> asyncVideoPlaybackQualityMetrics() final;
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "MediaPlayerPrivateAVFoundationObjC"; }
+    ASCIILiteral logClassName() const final { return "MediaPlayerPrivateAVFoundationObjC"_s; }
 #endif
 
     AVPlayer *objCAVFoundationAVPlayer() const final { return m_avPlayer.get(); }

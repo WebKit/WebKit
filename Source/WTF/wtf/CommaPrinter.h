@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/PrintStream.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WTF {
 

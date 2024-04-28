@@ -2,7 +2,7 @@ This test ensures that lists that are initially empty but gain children later be
 
 #ul-list: Group
 #ul-list: childrenCount 0
-#aria-list: ApplicationGroup
+#aria-list: Group
 #aria-list: childrenCount 0
 
 Adding listitems to both lists.
@@ -16,7 +16,7 @@ Clearing listitems from both lists.
 
 #ul-list: Group
 #ul-list: childrenCount 0
-#aria-list: ApplicationGroup
+#aria-list: Group
 #aria-list: childrenCount 0
 
 PASS successfullyParsed is true

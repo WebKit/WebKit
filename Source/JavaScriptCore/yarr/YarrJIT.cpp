@@ -119,11 +119,11 @@ public:
         unsigned half = string.length() > sampleSize ? (string.length() - sampleSize) / 2 : 0;
         unsigned end = std::min(string.length(), half + sampleSize);
         if (string.is8Bit()) {
-            auto* characters8 = string.characters8();
+            auto characters8 = string.span8();
             for (unsigned i = half; i < end; ++i)
                 add(characters8[i]);
         } else {
-            auto* characters16 = string.characters16();
+            auto characters16 = string.span16();
             for (unsigned i = half; i < end; ++i)
                 add(characters16[i]);
         }
@@ -1467,6 +1467,7 @@ class YarrGenerator final : public YarrJITInfo {
             RELEASE_ASSERT(character == areCanonicallyEquivalentCharArgReg);
             RELEASE_ASSERT(patternCharacter == areCanonicallyEquivalentPattCharArgReg);
             RELEASE_ASSERT(m_regs.regUnicodeInputAndTrail == areCanonicallyEquivalentCanonicalModeArgReg);
+            ASSERT(m_decode16BitForBackreferencesWithCalls);
 
             MacroAssembler::JumpList charactersMatch;
             charactersMatch.append(m_jit.branch32(MacroAssembler::Equal, character, patternCharacter));
@@ -2310,7 +2311,7 @@ class YarrGenerator final : public YarrJITInfo {
 
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs)
-                storeToFrame(m_regs.index, term->frameLocation + BackTrackInfoCharacterClass::beginIndex());
+            storeToFrame(m_regs.index, term->frameLocation + BackTrackInfoCharacterClass::beginIndex());
 #endif
 
         op.m_reentry = m_jit.label();
@@ -4448,7 +4449,7 @@ class YarrGenerator final : public YarrJITInfo {
         }
 #endif
 
-        if (m_decodeSurrogatePairs) {
+        if (mayCall()) {
             pushInEnter(X86Registers::r13);
             pushInEnter(X86Registers::r14);
             pushInEnter(X86Registers::r15);
@@ -4465,7 +4466,7 @@ class YarrGenerator final : public YarrJITInfo {
         UNUSED_VARIABLE(pushInEnter);
         if (!Options::useJITCage())
             m_jit.tagReturnAddress();
-        if (m_decodeSurrogatePairs) {
+        if (mayCall()) {
             if (!Options::useJITCage())
                 pushPairInEnter(MacroAssembler::framePointerRegister, MacroAssembler::linkRegister);
 
@@ -4481,7 +4482,7 @@ class YarrGenerator final : public YarrJITInfo {
         pushInEnter(ARMRegisters::r10);
 #elif CPU(RISCV64)
         UNUSED_VARIABLE(pushInEnter);
-        if (m_decodeSurrogatePairs)
+        if (mayCall())
             pushPairInEnter(MacroAssembler::framePointerRegister, MacroAssembler::linkRegister);
 #else
         UNUSED_VARIABLE(pushInEnter);
@@ -4507,7 +4508,7 @@ class YarrGenerator final : public YarrJITInfo {
         m_jit.store64(m_regs.returnRegister2, MacroAssembler::Address(X86Registers::ecx, sizeof(void*)));
         m_jit.move(X86Registers::ecx, m_regs.returnRegister);
 #endif
-        if (m_decodeSurrogatePairs) {
+        if (mayCall()) {
             m_jit.pop(X86Registers::r15);
             m_jit.pop(X86Registers::r14);
             m_jit.pop(X86Registers::r13);
@@ -4530,7 +4531,7 @@ class YarrGenerator final : public YarrJITInfo {
             m_jit.pop(X86Registers::ebx);
         m_jit.emitFunctionEpilogue();
 #elif CPU(ARM64)
-        if (m_decodeSurrogatePairs) {
+        if (mayCall()) {
             if (!Options::useJITCage())
                 m_jit.popPair(MacroAssembler::framePointerRegister, MacroAssembler::linkRegister);
         }
@@ -4541,7 +4542,7 @@ class YarrGenerator final : public YarrJITInfo {
         m_jit.pop(ARMRegisters::r5);
         m_jit.pop(ARMRegisters::r4);
 #elif CPU(RISCV64)
-        if (m_decodeSurrogatePairs)
+        if (mayCall())
             m_jit.popPair(MacroAssembler::framePointerRegister, MacroAssembler::linkRegister);
 #endif
 
@@ -4590,6 +4591,7 @@ public:
         , m_compileMode(compileMode)
         , m_decodeSurrogatePairs(m_charSize == CharSize::Char16 && m_pattern.eitherUnicode())
         , m_unicodeIgnoreCase(m_pattern.eitherUnicode() && m_pattern.ignoreCase())
+        , m_decode16BitForBackreferencesWithCalls(m_charSize == CharSize::Char16 && m_pattern.m_containsBackreferences && m_pattern.ignoreCase())
         , m_canonicalMode(m_pattern.eitherUnicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
         , m_parenContextSizes(compileMode == JITCompileMode::IncludeSubpatterns ? m_pattern.m_numSubpatterns : 0, compileMode == JITCompileMode::IncludeSubpatterns ? m_pattern.m_numDuplicateNamedCaptureGroups : 0, m_pattern.m_body->m_callFrameSize)
@@ -4611,6 +4613,7 @@ public:
         , m_compileMode(compileMode)
         , m_decodeSurrogatePairs(m_charSize == CharSize::Char16 && m_pattern.eitherUnicode())
         , m_unicodeIgnoreCase(m_pattern.eitherUnicode() && m_pattern.ignoreCase())
+        , m_decode16BitForBackreferencesWithCalls(m_charSize == CharSize::Char16 && m_pattern.m_containsBackreferences && m_pattern.ignoreCase())
         , m_canonicalMode(m_pattern.eitherUnicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
         , m_parenContextSizes(compileMode == JITCompileMode::IncludeSubpatterns ? m_pattern.m_numSubpatterns : 0, compileMode == JITCompileMode::IncludeSubpatterns ? m_pattern.m_numDuplicateNamedCaptureGroups : 0, m_pattern.m_body->m_callFrameSize)
@@ -5165,6 +5168,11 @@ public:
         return 0;
     }
 
+    bool mayCall() const
+    {
+        return m_decodeSurrogatePairs || m_decode16BitForBackreferencesWithCalls;
+    }
+
 private:
     CCallHelpers& m_jit;
     VM* m_vm;
@@ -5183,8 +5191,10 @@ private:
     // supported in the JIT; fall back to the interpreter when this is detected.
     std::optional<JITFailureReason> m_failureReason;
 
-    const bool m_decodeSurrogatePairs;
-    const bool m_unicodeIgnoreCase;
+    const bool m_decodeSurrogatePairs : 1;
+    const bool m_unicodeIgnoreCase : 1;
+    const bool m_decode16BitForBackreferencesWithCalls : 1;
+
     bool m_usesT2 { false };
     const CanonicalMode m_canonicalMode;
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)

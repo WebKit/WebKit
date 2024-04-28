@@ -312,7 +312,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)_effectiveUserInterfaceLevelIsElevated
 {
-#if HAVE(OS_DARK_MODE_SUPPORT) && !PLATFORM(WATCHOS)
+#if !PLATFORM(WATCHOS)
     return self.traitCollection.userInterfaceLevel == UIUserInterfaceLevelElevated;
 #else
     return NO;
@@ -645,26 +645,15 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
         return WebCore::Color::transparentBlack;
 
     WebCore::Color color;
-    auto computeScrollViewBackgroundColor = [&]() {
+    [webView.traitCollection performAsCurrentTraitCollection:[&]() {
         color = baseScrollViewBackgroundColor(webView, allowPageBackgroundColorOverride);
 
         if (!color.isValid() && webView->_contentView)
             color = WebCore::roundAndClampToSRGBALossy([webView->_contentView backgroundColor].CGColor);
 
-        if (!color.isValid()) {
-#if HAVE(OS_DARK_MODE_SUPPORT)
+        if (!color.isValid())
             color = WebCore::roundAndClampToSRGBALossy(UIColor.systemBackgroundColor.CGColor);
-#else
-            color = WebCore::Color::white;
-#endif
-        }
-    };
-
-#if HAVE(OS_DARK_MODE_SUPPORT)
-    [webView.traitCollection performAsCurrentTraitCollection:computeScrollViewBackgroundColor];
-#else
-    computeScrollViewBackgroundColor();
-#endif
+    }];
 
     return color;
 }

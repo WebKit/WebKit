@@ -40,6 +40,7 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "HTMLBodyElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -52,7 +53,10 @@
 #include "Region.h"
 #include "RenderDescendantIterator.h"
 #include "RenderView.h"
+#include "ShadowRoot.h"
+#include "SimpleRange.h"
 #include "TextExtraction.h"
+#include "TextIterator.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibilityAdjustment.h"
 
@@ -61,8 +65,11 @@ namespace WebCore {
 static constexpr auto maximumNumberOfClasses = 5;
 static constexpr auto marginForTrackingAdjustmentRects = 5;
 static constexpr auto minimumDistanceToConsiderEdgesEquidistant = 2;
+static constexpr auto minimumLengthForSearchableText = 25;
+static constexpr auto maximumLengthForSearchableText = 100;
 static constexpr auto selectorBasedVisibilityAdjustmentTimeLimit = 30_s;
 static constexpr auto adjustmentClientRectCleanUpDelay = 15_s;
+static constexpr auto minimumAreaRatioForElementToCoverViewport = 0.95;
 static constexpr auto minimumAreaForInterpolation = 200000;
 static constexpr auto maximumAreaForInterpolation = 800000;
 
@@ -124,9 +131,15 @@ static inline bool elementAndAncestorsAreOnlyRenderedChildren(const Element& ele
     return true;
 }
 
-static inline bool querySelectorMatchesOneElement(Element& element, const String& selector)
+static inline bool querySelectorMatchesOneElement(const Element& element, const String& selector)
 {
-    auto result = element.document().querySelectorAll(selector);
+    Ref container = [&]() -> ContainerNode& {
+        if (RefPtr shadowRoot = element.containingShadowRoot())
+            return *shadowRoot;
+        return element.document();
+    }();
+
+    auto result = container->querySelectorAll(selector);
     if (result.hasException())
         return false;
     return result.returnValue()->length() == 1 && result.returnValue()->item(0) == &element;
@@ -138,11 +151,11 @@ struct ChildElementPosition {
     bool lastOfType { false };
 };
 
-static inline ChildElementPosition findChild(Element& element, Element& parent)
+static inline ChildElementPosition findChild(const Element& element, const Element& parent)
 {
     auto elementTagName = element.tagName();
-    RefPtr<Element> firstOfType;
-    RefPtr<Element> lastOfType;
+    RefPtr<const Element> firstOfType;
+    RefPtr<const Element> lastOfType;
     size_t index = notFound;
     size_t currentChildIndex = 0;
     for (auto& child : childrenOfType<Element>(parent)) {
@@ -159,38 +172,36 @@ static inline ChildElementPosition findChild(Element& element, Element& parent)
     return { index, &element == firstOfType, &element == lastOfType };
 }
 
-static inline String computeIDSelector(Element& element)
+static inline String computeIDSelector(const Element& element)
 {
     if (element.hasID()) {
         auto elementID = element.getIdAttribute();
-        if (auto* matches = element.document().getAllElementsById(elementID); matches && matches->size() == 1)
+        if (auto* matches = element.treeScope().getAllElementsById(elementID); matches && matches->size() == 1)
             return makeString('#', elementID);
     }
     return emptyString();
 }
 
-static inline String computeTagAndAttributeSelector(Element& element)
+static inline String computeTagAndAttributeSelector(const Element& element, const String& suffix = emptyString())
 {
     if (!element.hasAttributes())
         return emptyString();
 
-    static NeverDestroyed attributesToExclude = [] {
-        MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> names;
-        names.add(HTMLNames::classAttr);
-        names.add(HTMLNames::idAttr);
-        names.add(HTMLNames::styleAttr);
-        names.add(HTMLNames::widthAttr);
-        names.add(HTMLNames::heightAttr);
-        names.add(HTMLNames::forAttr);
-        names.add(HTMLNames::aria_labeledbyAttr);
-        names.add(HTMLNames::aria_labelledbyAttr);
-        names.add(HTMLNames::aria_describedbyAttr);
-        return names;
-    }();
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName>> attributesToExclude { std::initializer_list<QualifiedName> {
+        HTMLNames::classAttr,
+        HTMLNames::idAttr,
+        HTMLNames::styleAttr,
+        HTMLNames::widthAttr,
+        HTMLNames::heightAttr,
+        HTMLNames::forAttr,
+        HTMLNames::aria_labeledbyAttr,
+        HTMLNames::aria_labelledbyAttr,
+        HTMLNames::aria_describedbyAttr
+    } };
 
     static constexpr auto maximumNameLength = 16;
-    static constexpr auto maximumValueLength = 100;
-    static constexpr auto maximumValueLengthForExactMatch = 40;
+    static constexpr auto maximumValueLength = 150;
+    static constexpr auto maximumValueLengthForExactMatch = 60;
 
     Vector<std::pair<String, String>> attributesToCheck;
     auto& attributes = element.attributes();
@@ -223,11 +234,11 @@ static inline String computeTagAndAttributeSelector(Element& element)
         String selector;
         if (value.length() > maximumValueLengthForExactMatch) {
             value = value.left(maximumValueLengthForExactMatch);
-            selector = makeString(tagName, '[', name, "^='"_s, value, "']"_s);
+            selector = makeString(tagName, '[', name, "^='"_s, value, "']"_s, suffix);
         } else if (value.isEmpty())
-            selector = makeString(tagName, '[', name, ']');
+            selector = makeString(tagName, '[', name, ']', suffix);
         else
-            selector = makeString(tagName, '[', name, "='"_s, value, "']"_s);
+            selector = makeString(tagName, '[', name, "='"_s, value, "']"_s, suffix);
 
         if (querySelectorMatchesOneElement(element, selector))
             return selector;
@@ -350,12 +361,58 @@ static String parentRelativeSelectorRecursive(Element& element, ElementSelectorC
     return emptyString();
 }
 
-// Returns multiple CSS selectors that uniquely match the target element.
-static Vector<String> selectorsForTarget(Element& element, ElementSelectorCache& cache)
+static String computeHasChildSelector(Element& element)
 {
-    if (element.isInShadowTree())
-        return { };
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName>> tagsToCheckForUniqueAttributes { std::initializer_list<QualifiedName> {
+        HTMLNames::aTag,
+        HTMLNames::imgTag,
+        HTMLNames::timeTag,
+        HTMLNames::pictureTag,
+        HTMLNames::videoTag,
+        HTMLNames::articleTag,
+        HTMLNames::audioTag,
+        HTMLNames::iframeTag,
+        HTMLNames::embedTag,
+        HTMLNames::sourceTag,
+        HTMLNames::formTag,
+        HTMLNames::inputTag,
+        HTMLNames::selectTag,
+        HTMLNames::buttonTag
+    } };
 
+    String selectorSuffix;
+    for (auto& child : descendantsOfType<HTMLElement>(element)) {
+        if (!tagsToCheckForUniqueAttributes->contains(child.tagQName()))
+            continue;
+
+        auto selector = computeTagAndAttributeSelector(child);
+        if (selector.isEmpty())
+            continue;
+
+        selectorSuffix = makeString(":has("_s, WTFMove(selector), ')');
+        break;
+    }
+
+    if (selectorSuffix.isEmpty())
+        return emptyString();
+
+    for (auto& ancestor : lineageOfType<HTMLElement>(element)) {
+        auto selectorWithTag = makeString(ancestor.tagName(), selectorSuffix);
+        if (querySelectorMatchesOneElement(element, selectorWithTag))
+            return selectorWithTag;
+
+        if (auto selector = computeTagAndAttributeSelector(ancestor, selectorSuffix); !selector.isEmpty())
+            return selector;
+
+        selectorSuffix = makeString(" > "_s, WTFMove(selectorWithTag));
+    }
+
+    return emptyString();
+}
+
+// Returns multiple CSS selectors that uniquely match the target element.
+static Vector<Vector<String>> selectorsForTarget(Element& element, ElementSelectorCache& cache)
+{
     if (RefPtr pseudoElement = dynamicDowncast<PseudoElement>(element)) {
         RefPtr host = pseudoElement->hostElement();
         if (!host)
@@ -374,13 +431,27 @@ static Vector<String> selectorsForTarget(Element& element, ElementSelectorCache&
         if (pseudoSelector.isEmpty())
             return { };
 
-        return selectorsForTarget(*host, cache).map([&](auto hostSelector) {
-            return makeString(hostSelector, pseudoSelector);
-        });
+        auto selectors = selectorsForTarget(*host, cache);
+        if (selectors.isEmpty())
+            return { };
+
+        for (auto& selector : selectors.last())
+            selector = makeString(selector, pseudoSelector);
+
+        return selectors;
+    }
+
+    Vector<Vector<String>> selectorsIncludingShadowHost;
+    if (RefPtr shadowHost = element.shadowHost()) {
+        selectorsIncludingShadowHost = selectorsForTarget(*shadowHost, cache);
+        if (selectorsIncludingShadowHost.isEmpty())
+            return { };
     }
 
     Vector<String> selectors;
-    selectors.reserveInitialCapacity(3);
+    selectors.reserveInitialCapacity(5);
+
+    // First, try to compute a selector using only the target element and its attributes.
     if (auto selector = computeIDSelector(element); !selector.isEmpty())
         selectors.append(WTFMove(selector));
 
@@ -395,6 +466,13 @@ static Vector<String> selectorsForTarget(Element& element, ElementSelectorCache&
     }
 
     if (selectors.isEmpty()) {
+        // Next, fall back to using :has(), with a child that can be uniquely identified.
+        if (auto selector = computeHasChildSelector(element); !selector.isEmpty())
+            selectors.append(WTFMove(selector));
+    }
+
+    if (selectors.isEmpty()) {
+        // Finally, fall back on nth-child or sibling selectors.
         if (auto selector = parentRelativeSelectorRecursive(element, cache); !selector.isEmpty())
             selectors.append(WTFMove(selector));
 
@@ -409,7 +487,8 @@ static Vector<String> selectorsForTarget(Element& element, ElementSelectorCache&
     if (!selectors.isEmpty())
         cache.add(element, selectors.first());
 
-    return selectors;
+    selectorsIncludingShadowHost.append(WTFMove(selectors));
+    return selectorsIncludingShadowHost;
 }
 
 static inline RectEdges<bool> computeOffsetEdges(const RenderStyle& style)
@@ -422,7 +501,7 @@ static inline RectEdges<bool> computeOffsetEdges(const RenderStyle& style)
     };
 }
 
-static inline Vector<FrameIdentifier> collectChildFrameIdentifiers(Element& element)
+static inline Vector<FrameIdentifier> collectChildFrameIdentifiers(const Element& element)
 {
     Vector<FrameIdentifier> identifiers;
     for (auto& owner : descendantsOfType<HTMLFrameOwnerElement>(element)) {
@@ -439,8 +518,55 @@ static FloatRect computeClientRect(RenderObject& renderer)
     return rect;
 }
 
-enum class IsUnderPoint : bool { No, Yes };
-static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint isUnderPoint, ElementSelectorCache& cache)
+static Vector<Ref<Element>> collectDocumentElementsFromChildFrames(const ContainerNode& container)
+{
+    Vector<Ref<Element>> documentElements;
+    auto appendElement = [&](const HTMLFrameOwnerElement& owner) {
+        if (RefPtr contentDocument = owner.contentDocument()) {
+            if (RefPtr documentElement = contentDocument->documentElement())
+                documentElements.append(documentElement.releaseNonNull());
+        }
+    };
+
+    if (RefPtr containerAsFrameOwner = dynamicDowncast<HTMLFrameOwnerElement>(container))
+        appendElement(*containerAsFrameOwner);
+
+    for (auto& descendant : descendantsOfType<HTMLFrameOwnerElement>(container))
+        appendElement(descendant);
+
+    return documentElements;
+}
+
+static String searchableTextForTarget(Element& target)
+{
+    auto longestText = emptyString();
+    size_t longestLength = 0;
+    TextIterator iterator { makeRangeSelectingNodeContents(target), { TextIteratorBehavior::EmitsTextsWithoutTranscoding } };
+    for (; !iterator.atEnd(); iterator.advance()) {
+        auto text = iterator.copyableText().text().toString().trim(isASCIIWhitespace);
+        if (text.length() <= longestLength)
+            continue;
+
+        longestLength = text.length();
+        longestText = WTFMove(text);
+    }
+
+    auto documentElements = collectDocumentElementsFromChildFrames(target);
+    for (auto& documentElement : documentElements) {
+        if (auto text = searchableTextForTarget(documentElement); text.length() > longestLength) {
+            longestLength = text.length();
+            longestText = WTFMove(text);
+        }
+    }
+
+    if (longestLength >= minimumLengthForSearchableText)
+        return longestText.left(maximumLengthForSearchableText);
+
+    return emptyString();
+}
+
+enum class IsNearbyTarget : bool { No, Yes };
+static TargetedElementInfo targetedElementInfo(Element& element, IsNearbyTarget isNearbyTarget, ElementSelectorCache& cache)
 {
     CheckedPtr renderer = element.renderer();
     return {
@@ -448,13 +574,15 @@ static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint is
         .documentIdentifier = element.document().identifier(),
         .offsetEdges = computeOffsetEdges(renderer->style()),
         .renderedText = TextExtraction::extractRenderedText(element),
+        .searchableText = searchableTextForTarget(element),
         .selectors = selectorsForTarget(element, cache),
         .boundsInRootView = element.boundingBoxInRootViewCoordinates(),
         .boundsInClientCoordinates = computeClientRect(*renderer),
         .positionType = renderer->style().position(),
         .childFrameIdentifiers = collectChildFrameIdentifiers(element),
-        .isUnderPoint = isUnderPoint == IsUnderPoint::Yes,
+        .isNearbyTarget = isNearbyTarget == IsNearbyTarget::Yes,
         .isPseudoElement = element.isPseudoElement(),
+        .isInShadowTree = element.isInShadowTree(),
     };
 }
 
@@ -550,6 +678,18 @@ static inline std::optional<IntRect> inflatedClientRectForAdjustmentRegionTracki
 
 Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElementRequest&& request)
 {
+    auto [nodes, innerElement] = std::visit([this](auto& data) {
+        return findNodes(data);
+    }, request.data);
+
+    if (nodes.isEmpty())
+        return { };
+
+    return extractTargets(WTFMove(nodes), WTFMove(innerElement), request.canIncludeNearbyElements);
+}
+
+std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNodes(FloatPoint pointInRootView)
+{
     RefPtr page = m_page.get();
     if (!page)
         return { };
@@ -566,20 +706,6 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     if (!view)
         return { };
 
-    RefPtr bodyElement = document->body();
-    if (!bodyElement)
-        return { };
-
-    RefPtr documentElement = document->documentElement();
-    if (!documentElement)
-        return { };
-
-    FloatSize viewportSize = view->baseLayoutViewportSize();
-    auto viewportArea = viewportSize.area();
-    if (!viewportArea)
-        return { };
-
-    auto nearbyTargetAreaRatio = maximumAreaRatioForNearbyTargets(viewportArea);
     static constexpr OptionSet hitTestOptions {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::DisallowUserAgentShadowContent,
@@ -588,22 +714,135 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
         HitTestRequest::Type::IncludeAllElementsUnderPoint
     };
 
-    HitTestResult result { LayoutPoint { view->rootViewToContents(request.pointInRootView) } };
+    HitTestResult result { LayoutPoint { view->rootViewToContents(pointInRootView) } };
     document->hitTest(hitTestOptions, result);
 
-    RefPtr hitTestedElement = result.innerNonSharedElement();
+    return { copyToVector(result.listBasedTestResult()), result.innerNonSharedElement() };
+}
+
+static Element* searchForElementContainingText(ContainerNode& container, const String& searchText)
+{
+    auto remainingRange = makeRangeSelectingNodeContents(container);
+    while (is_lt(treeOrder(remainingRange.start, remainingRange.end))) {
+        auto foundRange = findPlainText(remainingRange, searchText, {
+            FindOption::DoNotRevealSelection,
+            FindOption::DoNotSetSelection,
+        });
+
+        if (foundRange.collapsed())
+            break;
+
+        RefPtr target = commonInclusiveAncestor<ComposedTree>(foundRange);
+        if (!target) {
+            remainingRange.start = foundRange.end;
+            continue;
+        }
+
+        CheckedPtr renderer = target->renderer();
+        if (!renderer || renderer->style().isInVisibilityAdjustmentSubtree()) {
+            remainingRange.start = foundRange.end;
+            continue;
+        }
+
+        return ancestorsOfType<Element>(*target).first();
+    }
+
+    auto documentElements = collectDocumentElementsFromChildFrames(container);
+    for (auto& documentElement : documentElements) {
+        if (RefPtr target = searchForElementContainingText(documentElement, searchText))
+            return target.get();
+    }
+
+    return nullptr;
+}
+
+std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNodes(const String& searchText)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return { };
+
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!mainFrame)
+        return { };
+
+    RefPtr document = mainFrame->document();
+    if (!document)
+        return { };
+
+    RefPtr documentElement = document->documentElement();
+    if (!documentElement)
+        return { };
+
+    RefPtr foundElement = searchForElementContainingText(*documentElement, searchText);
+    if (!foundElement)
+        return { };
+
+    while (!foundElement->document().isTopDocument())
+        foundElement = foundElement->document().ownerElement();
+
+    if (!foundElement) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    Vector<Ref<Node>> potentialCandidates;
+    potentialCandidates.append(*foundElement);
+    for (auto& ancestor : ancestorsOfType<Element>(*foundElement))
+        potentialCandidates.append(ancestor);
+
+    return { WTFMove(potentialCandidates), WTFMove(foundElement) };
+}
+
+Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Ref<Node>>&& nodes, RefPtr<Element>&& innerElement, bool canIncludeNearbyElements)
+{
+    RefPtr page = m_page.get();
+    if (!page) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!mainFrame) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    RefPtr document = mainFrame->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    RefPtr view = mainFrame->view();
+    if (!view) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    RefPtr bodyElement = document->body();
+    if (!bodyElement) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    FloatSize viewportSize = view->baseLayoutViewportSize();
+    auto viewportArea = viewportSize.area();
+    if (!viewportArea)
+        return { };
+
     RefPtr onlyMainElement = findOnlyMainElement(*bodyElement);
     auto candidates = [&] {
-        auto& results = result.listBasedTestResult();
         Vector<Ref<Element>> elements;
-        elements.reserveInitialCapacity(results.size());
-        for (auto& node : results) {
-            if (RefPtr element = dynamicDowncast<Element>(node); element && isTargetCandidate(*element, onlyMainElement.get(), hitTestedElement.get()))
+        elements.reserveInitialCapacity(nodes.size());
+        for (auto& node : nodes) {
+            if (RefPtr element = dynamicDowncast<Element>(node); element && isTargetCandidate(*element, onlyMainElement.get(), innerElement.get()))
                 elements.append(element.releaseNonNull());
         }
         return elements;
     }();
 
+    auto nearbyTargetAreaRatio = maximumAreaRatioForNearbyTargets(viewportArea);
     auto addOutOfFlowTargetClientRectIfNeeded = [&](Element& element) {
         if (auto rect = inflatedClientRectForAdjustmentRegionTracking(element, viewportArea))
             m_recentAdjustmentClientRects.set(element.identifier(), *rect);
@@ -626,6 +865,23 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
         CheckedPtr targetRenderer = target->renderer();
         auto targetBoundingBox = target->boundingBoxInRootViewCoordinates();
         auto targetAreaRatio = computeViewportAreaRatio(targetBoundingBox);
+
+        bool shouldSkipTargetThatCoversViewport = [&] {
+            if (targetAreaRatio < minimumAreaRatioForElementToCoverViewport)
+                return false;
+
+            auto& style = targetRenderer->style();
+            if (style.specifiedZIndex() < 0)
+                return true;
+
+            return targetRenderer->isOutOfFlowPositioned()
+                && (!style.hasBackground() || !style.opacity())
+                && style.usedPointerEvents() == PointerEvents::None;
+        }();
+
+        if (shouldSkipTargetThatCoversViewport)
+            continue;
+
         bool shouldAddTarget = targetRenderer->isFixedPositioned()
             || targetRenderer->isStickilyPositioned()
             || (targetRenderer->isAbsolutelyPositioned() && targetAreaRatio < maximumAreaRatioForAbsolutelyPositionedContent(viewportArea))
@@ -635,7 +891,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
         if (!shouldAddTarget)
             continue;
 
-        bool checkForNearbyTargets = request.canIncludeNearbyElements
+        bool checkForNearbyTargets = canIncludeNearbyElements
             && targetRenderer->isOutOfFlowPositioned()
             && targetAreaRatio < nearbyTargetAreaRatio;
 
@@ -679,7 +935,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     Vector<TargetedElementInfo> results;
     results.reserveInitialCapacity(targets.size());
     for (auto iterator = targets.rbegin(); iterator != targets.rend(); ++iterator) {
-        results.append(targetedElementInfo(*iterator, IsUnderPoint::Yes, cache));
+        results.append(targetedElementInfo(*iterator, IsNearbyTarget::No, cache));
         addOutOfFlowTargetClientRectIfNeeded(*iterator);
     }
 
@@ -703,10 +959,10 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
             if (targets.contains(*element))
                 continue;
 
-            if (result.listBasedTestResult().contains(*element))
+            if (nodes.containsIf([&](auto& node) { return node.ptr() == element; }))
                 continue;
 
-            if (!isTargetCandidate(*element, onlyMainElement.get(), hitTestedElement.get()))
+            if (!isTargetCandidate(*element, onlyMainElement.get(), innerElement.get()))
                 continue;
 
             auto boundingBox = element->boundingBoxInRootViewCoordinates();
@@ -722,7 +978,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     }();
 
     for (auto& element : nearbyTargets) {
-        results.append(targetedElementInfo(element, IsUnderPoint::No, cache));
+        results.append(targetedElementInfo(element, IsNearbyTarget::Yes, cache));
         addOutOfFlowTargetClientRectIfNeeded(element);
     }
 
@@ -978,58 +1234,95 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
     auto viewportArea = m_viewportSizeForVisibilityAdjustment.area();
     Region adjustmentRegion;
     Vector<String> matchingSelectors;
-    for (auto& selectorIncludingPseudo : *m_remainingVisibilityAdjustmentSelectors) {
-        auto [selector, adjustment] = resolveSelectorToQuery(selectorIncludingPseudo);
-        if (selector.isEmpty()) {
-            // FIXME: Handle the case where the full selector is `::after|before`.
+    for (auto& selectorsForElementIncludingShadowHosts : *m_remainingVisibilityAdjustmentSelectors) {
+        if (selectorsForElementIncludingShadowHosts.isEmpty())
             continue;
+
+        bool foundLastTarget = false;
+        Ref<ContainerNode> containerToQuery = document;
+        size_t indexOfSelectorToQuery = 0;
+        for (auto& selectorsToQuery : selectorsForElementIncludingShadowHosts) {
+            bool isLastTarget = ++indexOfSelectorToQuery == selectorsForElementIncludingShadowHosts.size();
+            RefPtr<Element> currentTarget;
+            for (auto& selectorIncludingPseudo : selectorsToQuery) {
+                auto [selector, adjustment] = resolveSelectorToQuery(selectorIncludingPseudo);
+                if (selector.isEmpty()) {
+                    // FIXME: Handle the case where the full selector is `::after|before`.
+                    continue;
+                }
+
+                auto queryResult = containerToQuery->querySelector(selector);
+                if (queryResult.hasException())
+                    continue;
+
+                RefPtr element = queryResult.releaseReturnValue();
+                if (!element)
+                    continue;
+
+                CheckedPtr renderer = element->renderer();
+                if (!renderer)
+                    continue;
+
+                if (adjustment == VisibilityAdjustment::AfterPseudo && !element->afterPseudoElement())
+                    continue;
+
+                if (adjustment == VisibilityAdjustment::BeforePseudo && !element->beforePseudoElement())
+                    continue;
+
+                if (isLastTarget) {
+                    if (computeClientRect(*renderer).isEmpty())
+                        continue;
+
+                    auto currentAdjustment = element->visibilityAdjustment();
+                    if (!currentAdjustment.contains(adjustment)) {
+                        element->setVisibilityAdjustment(currentAdjustment | adjustment);
+
+                        if (adjustment == VisibilityAdjustment::Subtree)
+                            element->invalidateStyleAndRenderersForSubtree();
+                        else
+                            element->invalidateStyle();
+
+                        m_adjustedElements.add(*element);
+
+                        if (auto clientRect = inflatedClientRectForAdjustmentRegionTracking(*element, viewportArea))
+                            adjustmentRegion.unite(*clientRect);
+                    }
+                    matchingSelectors.append(selectorIncludingPseudo);
+                }
+
+                currentTarget = WTFMove(element);
+                break;
+            }
+
+            if (!currentTarget) {
+                // We failed to resolve the targeted element, or one of its shadow hosts.
+                break;
+            }
+
+            if (isLastTarget) {
+                // We resolved the final targeted element.
+                foundLastTarget = true;
+                break;
+            }
+
+            RefPtr nextShadowRoot = currentTarget->shadowRoot();
+            if (!nextShadowRoot)
+                break;
+
+            // Continue the search underneath the next shadow root.
+            containerToQuery = nextShadowRoot.releaseNonNull();
         }
 
-        auto queryResult = document.querySelector(selector);
-        if (queryResult.hasException())
-            continue;
-
-        RefPtr element = queryResult.releaseReturnValue();
-        if (!element)
-            continue;
-
-        CheckedPtr renderer = element->renderer();
-        if (!renderer)
-            continue;
-
-        if (computeClientRect(*renderer).isEmpty())
-            continue;
-
-        if (adjustment == VisibilityAdjustment::AfterPseudo && !element->afterPseudoElement())
-            continue;
-
-        if (adjustment == VisibilityAdjustment::BeforePseudo && !element->beforePseudoElement())
-            continue;
-
-        auto currentAdjustment = element->visibilityAdjustment();
-        if (currentAdjustment.contains(adjustment)) {
-            matchingSelectors.append(selectorIncludingPseudo);
-            continue;
-        }
-
-        element->setVisibilityAdjustment(currentAdjustment | adjustment);
-        if (adjustment == VisibilityAdjustment::Subtree)
-            element->invalidateStyleAndRenderersForSubtree();
-        else
-            element->invalidateStyle();
-
-        m_adjustedElements.add(*element);
-        matchingSelectors.append(selectorIncludingPseudo);
-
-        if (auto clientRect = inflatedClientRectForAdjustmentRegionTracking(*element, viewportArea))
-            adjustmentRegion.unite(*clientRect);
+        if (foundLastTarget)
+            selectorsForElementIncludingShadowHosts.clear();
     }
 
     if (!adjustmentRegion.isEmpty())
         m_adjustmentClientRegion.unite(adjustmentRegion);
 
-    for (auto& selector : matchingSelectors)
-        m_remainingVisibilityAdjustmentSelectors->remove(selector);
+    m_remainingVisibilityAdjustmentSelectors->removeAllMatching([](auto& selectors) {
+        return selectors.isEmpty();
+    });
 
     if (!matchingSelectors.isEmpty())
         page->chrome().client().didAdjustVisibilityWithSelectors(WTFMove(matchingSelectors));

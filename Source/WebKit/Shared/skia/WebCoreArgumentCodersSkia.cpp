@@ -28,6 +28,8 @@
 
 #if USE(SKIA)
 
+#include "CoreIPCSkColorSpace.h"
+#include "StreamConnectionEncoder.h"
 #include <WebCore/Font.h>
 
 namespace IPC {
@@ -52,6 +54,24 @@ bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(De
 {
     ASSERT_NOT_REACHED();
     return false;
+}
+
+void ArgumentCoder<sk_sp<SkColorSpace>>::encode(Encoder& encoder, const sk_sp<SkColorSpace>& colorSpace)
+{
+    encoder << WebKit::CoreIPCSkColorSpace(colorSpace);
+}
+
+void ArgumentCoder<sk_sp<SkColorSpace>>::encode(StreamConnectionEncoder& encoder, const sk_sp<SkColorSpace>& colorSpace)
+{
+    encoder << WebKit::CoreIPCSkColorSpace(colorSpace);
+}
+
+std::optional<sk_sp<SkColorSpace>> ArgumentCoder<sk_sp<SkColorSpace>>::decode(Decoder& decoder)
+{
+    auto colorSpace = decoder.decode<WebKit::CoreIPCSkColorSpace>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return colorSpace->skColorSpace();
 }
 
 } // namespace IPC

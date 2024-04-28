@@ -232,7 +232,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
         graph.ensureSSADominators();
         graph.ensureSSANaturalLoops();
 
-        const char* prefix = "    ";
+        constexpr auto prefix = "    "_s;
 
         DumpContext dumpContext;
         StringPrintStream out;

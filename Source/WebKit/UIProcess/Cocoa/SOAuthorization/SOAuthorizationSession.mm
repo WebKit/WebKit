@@ -49,18 +49,18 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Vector.h>
 
-#define AUTHORIZATIONSESSION_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - [InitiatingAction=%s][State=%s] SOAuthorizationSession::" fmt, this, toString(m_action), stateString(), ##__VA_ARGS__)
+#define AUTHORIZATIONSESSION_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - [InitiatingAction=%s][State=%s] SOAuthorizationSession::" fmt, this, toString(m_action).characters(), stateString().characters(), ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
 
 namespace {
 
-static const char* Redirect = "Redirect";
-static const char* PopUp = "PopUp";
-static const char* SubFrame = "SubFrame";
+static constexpr auto Redirect = "Redirect"_s;
+static constexpr auto PopUp = "PopUp"_s;
+static constexpr auto SubFrame = "SubFrame"_s;
 
-static const char* toString(const SOAuthorizationSession::InitiatingAction& action)
+static ASCIILiteral toString(const SOAuthorizationSession::InitiatingAction& action)
 {
     switch (action) {
     case SOAuthorizationSession::InitiatingAction::Redirect:
@@ -72,7 +72,7 @@ static const char* toString(const SOAuthorizationSession::InitiatingAction& acti
     }
 
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return { };
 }
 
 static Vector<WebCore::Cookie> toCookieVector(NSArray<NSHTTPCookie *> *cookies)
@@ -114,17 +114,17 @@ SOAuthorizationSession::~SOAuthorizationSession()
         dismissViewController();
 }
 
-const char* SOAuthorizationSession::initiatingActionString() const
+ASCIILiteral SOAuthorizationSession::initiatingActionString() const
 {
     return toString(m_action);
 }
 
-const char* SOAuthorizationSession::stateString() const
+ASCIILiteral SOAuthorizationSession::stateString() const
 {
-    static const char* Idle = "Idle";
-    static const char* Active = "Active";
-    static const char* Waiting = "Waiting";
-    static const char* Completed = "Completed";
+    static constexpr auto Idle = "Idle"_s;
+    static constexpr auto Active = "Active"_s;
+    static constexpr auto Waiting = "Waiting"_s;
+    static constexpr auto Completed = "Completed"_s;
 
     switch (m_state) {
     case State::Idle:
@@ -251,7 +251,7 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
 #endif
     [m_soAuthorization setAuthorizationOptions:authorizationOptions];
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if PLATFORM(VISION)
     if (![[m_page->cocoaView() UIDelegate] respondsToSelector:@selector(_presentingViewControllerForWebView:)])
         [m_soAuthorization setEnableEmbeddedAuthorizationViewController:NO];
 #endif
@@ -396,6 +396,10 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
     // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
     // We should call PageClientImpl::presentingViewController() instead.
     UIViewController *presentingViewController = m_page->uiClient().presentingViewController();
+#if !PLATFORM(VISION)
+    if (!presentingViewController)
+        presentingViewController = [m_page->cocoaView() window].rootViewController;
+#endif
     if (!presentingViewController) {
         uiCallback(NO, adoptNS([[NSError alloc] initWithDomain:SOErrorDomain code:kSOErrorAuthorizationPresentationFailed userInfo:nil]).get());
         return;

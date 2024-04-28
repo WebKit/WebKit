@@ -219,9 +219,17 @@ bool PathSkia::applyElements(const PathElementApplier& applier) const
             pathElement.type = PathElement::Type::AddCurveToPoint;
             convertPoints(pathElement.points, &skPoints[1], 3);
             break;
-        case SkPath::kConic_Verb:
-            notImplemented();
-            break;
+        case SkPath::kConic_Verb: {
+            // Approximate conic with two quads.
+            pathElement.type = PathElement::Type::AddQuadCurveToPoint;
+            SkPoint quadPoints[5];
+            SkPath::ConvertConicToQuads(skPoints[0], skPoints[1], skPoints[2], iter.conicWeight(), quadPoints, 1);
+            convertPoints(pathElement.points, &quadPoints[1], 2);
+            applier(pathElement);
+            convertPoints(pathElement.points, &quadPoints[3], 2);
+            applier(pathElement);
+            continue;
+        }
         case SkPath::kClose_Verb:
             pathElement.type = PathElement::Type::CloseSubpath;
             break;

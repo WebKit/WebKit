@@ -95,7 +95,11 @@ def platform_list(platform):
     if apple_additions():
         platform_dirs.append(apple_additions().layout_tests_path())
     if platform == 'all':
-        return list(itertools.chain(*(os.listdir(path) for path in platform_dirs)))
+        existing_dirs = list(itertools.chain(*(os.listdir(path) for path in platform_dirs)))
+        for port_name in host.port_factory.all_port_names():
+            if port_name not in existing_dirs:
+                existing_dirs.append(port_name)
+        return sorted(existing_dirs)
     return [platform]
 
 def find_duplicates_in_path(baseline_search_path):
@@ -120,18 +124,21 @@ def find_duplicates_in_path(baseline_search_path):
     return duplicates
 
 
-def check_platform(options, baseline_search_paths_checked):
+def check_platform(options, baseline_search_paths_checked, webkit_test_runner):
     total = 0
 
     for platform in platform_list(options.platform):
         try:
             _log.debug('Trying to create port for platform {0}'.format(platform))
-            port = host.port_factory.get(platform, options)
+            # Ports sometimes change options, so create a new object.
+            port_options = optparse.Values(defaults={"webkit_test_runner": webkit_test_runner})
+            port = host.port_factory.get(platform, port_options)
         except:
-            _log.debug('Failed to create port object for {0}'.format(platform))
+            _log.warning('Failed to create port object for {0}'.format(platform))
             continue
 
         if not port.supports_layout_tests():
+            _log.warning('Platform {0} does not support layout tests'.format(platform))
             continue
 
         try:
@@ -140,12 +147,12 @@ def check_platform(options, baseline_search_paths_checked):
             _log.warning('Error computing baseline search paths from {0}, {1}'.format(platform, e))
             continue
 
-        _log.info('Checking search paths [{0}]'.format(', '.join(remove_layout_test_path_prefix(p) for p in baseline_search_path[:-1])))
-
         if baseline_search_path in baseline_search_paths_checked:
             continue
 
         baseline_search_paths_checked.add(baseline_search_path)
+
+        _log.info('Checking search paths [{0}]'.format(', '.join(remove_layout_test_path_prefix(p) for p in baseline_search_path[:-1])))
 
         duplicates = find_duplicates_in_path(baseline_search_path)
         if not duplicates:
@@ -160,7 +167,7 @@ def check_platform(options, baseline_search_paths_checked):
         duplicates_len = len(duplicates)
         total += duplicates_len
         _log.info('{0} found in {1} -> generic\n'.format(duplicates_len, ' -> '.join([os.path.basename(p) for p in baseline_search_path[:-1]])))
-    
+
     return total
 
 def main():
@@ -182,11 +189,8 @@ def main():
     total = 0
     baseline_search_paths_checked = set()
 
-    options.webkit_test_runner = False
-    total += check_platform(options, baseline_search_paths_checked)
-
-    options.webkit_test_runner = True
-    total += check_platform(options, baseline_search_paths_checked)
+    total += check_platform(options, baseline_search_paths_checked, webkit_test_runner=False)
+    total += check_platform(options, baseline_search_paths_checked, webkit_test_runner=True)
 
     if total:
         if options.no_delete:

@@ -25,6 +25,8 @@
 
 #pragma once
 
+namespace WTF { class ASCIILiteral; }
+
 namespace WebCore {
 
 class TrustedTypePolicyFactory;
@@ -35,7 +37,7 @@ template<typename> class ExceptionOr;
 
 class WindowOrWorkerGlobalScopeTrustedTypes {
 public:
-    static ASCIILiteral workerGlobalSupplementName();
+    static WTF::ASCIILiteral workerGlobalSupplementName();
     static TrustedTypePolicyFactory* trustedTypes(DOMWindow&);
     static TrustedTypePolicyFactory* trustedTypes(WorkerGlobalScope&);
 };

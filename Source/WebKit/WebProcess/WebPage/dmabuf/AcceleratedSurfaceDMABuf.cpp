@@ -32,6 +32,7 @@
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/GLFence.h>
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/ShareableBitmap.h>
 #include <array>
@@ -134,7 +135,11 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
         return nullptr;
     }
 
-    auto* device = WebCore::DRMDeviceManager::singleton().mainGBMDeviceNode(dmabufFormat.usage == DMABufRendererBufferFormat::Usage::Scanout ? WebCore::DRMDeviceManager::NodeType::Primary : WebCore::DRMDeviceManager::NodeType::Render);
+    auto* device = dmabufFormat.drmDeviceNode ? dmabufFormat.drmDeviceNode->gbmDevice() : nullptr;
+    if (!device) {
+        device = WebCore::DRMDeviceManager::singleton().mainGBMDeviceNode(dmabufFormat.usage == DMABufRendererBufferFormat::Usage::Scanout ?
+            WebCore::DRMDeviceManager::NodeType::Primary : WebCore::DRMDeviceManager::NodeType::Render);
+    }
     if (!device) {
         WTFLogAlways("Failed to create GBM buffer of size %dx%d: no GBM device found", size.width(), size.height());
         return nullptr;
@@ -418,6 +423,13 @@ void AcceleratedSurfaceDMABuf::SwapChain::setupBufferFormat(const Vector<DMABufR
     if (!dmabufFormat.fourcc || dmabufFormat == m_dmabufFormat)
         return;
 
+    if (!dmabufFormat.drmDevice.isNull()) {
+        if (dmabufFormat.drmDevice == m_dmabufFormat.drmDevice)
+            dmabufFormat.drmDeviceNode = m_dmabufFormat.drmDeviceNode;
+        else
+            dmabufFormat.drmDeviceNode = WebCore::DRMDeviceManager::singleton().deviceNode(dmabufFormat.drmDevice);
+    }
+
     m_dmabufFormat = WTFMove(dmabufFormat);
     m_dmabufFormatChanged = true;
 }
@@ -595,7 +607,10 @@ void AcceleratedSurfaceDMABuf::didRenderFrame()
     if (!m_target)
         return;
 
-    glFlush();
+    if (auto fence = WebCore::GLFence::create(WebCore::GLFence::ShouldFlush::No))
+        fence->wait(WebCore::GLFence::FlushCommands::Yes);
+    else
+        glFlush();
 
     m_target->didRenderFrame();
     WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(m_target->id()), m_id);

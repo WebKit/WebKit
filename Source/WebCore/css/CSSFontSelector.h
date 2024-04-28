@@ -117,9 +117,6 @@ private:
 
     void fontModified();
 
-    // ActiveDOMObject
-    const char* activeDOMObjectName() const final { return "CSSFontSelector"_s; }
-
     struct PendingFontFaceRule {
         StyleRuleFontFace& styleRuleFontFace;
         bool isInitiatingElementInUserAgentShadowTree;

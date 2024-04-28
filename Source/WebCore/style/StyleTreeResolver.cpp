@@ -721,8 +721,6 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     if (element.hasInvalidRenderer() || parentChange == Change::Renderer)
         change = Change::Renderer;
 
-    bool shouldRecompositeLayer = animationImpact.contains(AnimationImpact::RequiresRecomposite) || element.styleResolutionShouldRecompositeLayer();
-
     auto animationsAffectedDisplay = [&, animatedDisplay = newStyle->display()]() {
         auto* keyframeEffectStack = styleable.keyframeEffectStack();
         if (!keyframeEffectStack)
@@ -751,7 +749,18 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     if (animationsAffectedDisplay)
         newStyle->setHasDisplayAffectedByAnimations();
 
-    return { WTFMove(newStyle), change, shouldRecompositeLayer };
+    bool shouldRecompositeLayer = animationImpact.contains(AnimationImpact::RequiresRecomposite) || element.styleResolutionShouldRecompositeLayer();
+
+    auto mayNeedRebuildRoot = [&, newStyle = newStyle.get()] {
+        if (change == Change::Renderer)
+            return true;
+        // We may need to rebuild the tree starting from further up if there is a position property change to clean up continuations.
+        if (currentStyle && currentStyle->position() != newStyle->position())
+            return true;
+        return false;
+    }();
+
+    return { WTFMove(newStyle), change, shouldRecompositeLayer, mayNeedRebuildRoot };
 }
 
 std::unique_ptr<RenderStyle> TreeResolver::resolveStartingStyle(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext) const

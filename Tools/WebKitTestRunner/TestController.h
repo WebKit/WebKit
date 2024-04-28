@@ -205,6 +205,7 @@ public:
     void setShouldDownloadContentDispositionAttachments(bool shouldDownload) { m_shouldDownloadContentDispositionAttachments = shouldDownload; }
 
     bool isCurrentInvocation(TestInvocation* invocation) const { return invocation == m_currentInvocation.get(); }
+    TestInvocation* currentInvocation() { return m_currentInvocation.get(); }
 
     void setShouldDecideNavigationPolicyAfterDelay(bool value) { m_shouldDecideNavigationPolicyAfterDelay = value; }
     void setShouldDecideResponsePolicyAfterDelay(bool value) { m_shouldDecideResponsePolicyAfterDelay = value; }
@@ -219,20 +220,20 @@ public:
     bool doesStatisticsDomainIDExistInDatabase(unsigned domainID);
     void setStatisticsEnabled(bool value);
     bool isStatisticsEphemeral();
-    void setStatisticsDebugMode(bool value);
-    void setStatisticsPrevalentResourceForDebugMode(WKStringRef hostName);
-    void setStatisticsLastSeen(WKStringRef hostName, double seconds);
-    void setStatisticsMergeStatistic(WKStringRef host, WKStringRef topFrameDomain1, WKStringRef topFrameDomain2, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, int dataRecordsRemoved);
-    void setStatisticsExpiredStatistic(WKStringRef host, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent);
-    void setStatisticsPrevalentResource(WKStringRef hostName, bool value);
-    void setStatisticsVeryPrevalentResource(WKStringRef hostName, bool value);
+    void setStatisticsDebugMode(bool value, CompletionHandler<void(WKTypeRef)>&&);
+    void setStatisticsPrevalentResourceForDebugMode(WKStringRef hostName, CompletionHandler<void(WKTypeRef)>&&);
+    void setStatisticsLastSeen(WKStringRef hostName, double seconds, CompletionHandler<void(WKTypeRef)>&&);
+    void setStatisticsMergeStatistic(WKStringRef host, WKStringRef topFrameDomain1, WKStringRef topFrameDomain2, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, int dataRecordsRemoved, CompletionHandler<void(WKTypeRef)>&&);
+    void setStatisticsExpiredStatistic(WKStringRef host, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void(WKTypeRef)>&&);
+    void setStatisticsPrevalentResource(WKStringRef hostName, bool value, CompletionHandler<void(WKTypeRef)>&&);
+    void setStatisticsVeryPrevalentResource(WKStringRef hostName, bool value, CompletionHandler<void(WKTypeRef)>&&);
     String dumpResourceLoadStatistics();
     bool isStatisticsPrevalentResource(WKStringRef hostName);
     bool isStatisticsVeryPrevalentResource(WKStringRef hostName);
     bool isStatisticsRegisteredAsSubresourceUnder(WKStringRef subresourceHost, WKStringRef topFrameHost);
     bool isStatisticsRegisteredAsSubFrameUnder(WKStringRef subFrameHost, WKStringRef topFrameHost);
     bool isStatisticsRegisteredAsRedirectingTo(WKStringRef hostRedirectedFrom, WKStringRef hostRedirectedTo);
-    void setStatisticsHasHadUserInteraction(WKStringRef hostName, bool value);
+    void setStatisticsHasHadUserInteraction(WKStringRef hostName, bool value, CompletionHandler<void(WKTypeRef)>&&);
     bool isStatisticsHasHadUserInteraction(WKStringRef hostName);
     bool isStatisticsOnlyInDatabaseOnce(WKStringRef subHost, WKStringRef topHost);
     void setStatisticsGrandfathered(WKStringRef hostName, bool value);
@@ -250,7 +251,7 @@ public:
 #endif
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void statisticsProcessStatisticsAndDataRecords();
-    void statisticsUpdateCookieBlocking();
+    void statisticsUpdateCookieBlocking(CompletionHandler<void(WKTypeRef)>&&);
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
     void setStatisticsTimeAdvanceForTesting(double);
     void setStatisticsIsRunningTest(bool);
@@ -259,19 +260,19 @@ public:
     void setStatisticsGrandfatheringTime(double seconds);
     void setStatisticsMaxStatisticsEntries(unsigned);
     void setStatisticsPruneEntriesDownTo(unsigned);
-    void statisticsClearInMemoryAndPersistentStore();
-    void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);
-    void statisticsClearThroughWebsiteDataRemoval();
+    void statisticsClearInMemoryAndPersistentStore(CompletionHandler<void(WKTypeRef)>&&);
+    void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours, CompletionHandler<void(WKTypeRef)>&&);
+    void statisticsClearThroughWebsiteDataRemoval(CompletionHandler<void(WKTypeRef)>&&);
     void statisticsDeleteCookiesForHost(WKStringRef host, bool includeHttpOnlyCookies);
     bool isStatisticsHasLocalStorage(WKStringRef hostName);
     void setStatisticsCacheMaxAgeCap(double seconds);
     bool hasStatisticsIsolatedSession(WKStringRef hostName);
-    void setStatisticsShouldDowngradeReferrer(bool value);
-    void setStatisticsShouldBlockThirdPartyCookies(bool value, bool onlyOnSitesWithoutUserInteraction);
-    void setStatisticsFirstPartyWebsiteDataRemovalMode(bool value);
-    void setStatisticsToSameSiteStrictCookies(WKStringRef hostName);
-    void setStatisticsFirstPartyHostCNAMEDomain(WKStringRef firstPartyURLString, WKStringRef cnameURLString);
-    void setStatisticsThirdPartyCNAMEDomain(WKStringRef cnameURLString);
+    void setStatisticsShouldDowngradeReferrer(bool value, CompletionHandler<void(WKTypeRef)>&&);
+    void setStatisticsShouldBlockThirdPartyCookies(bool value, bool onlyOnSitesWithoutUserInteraction, CompletionHandler<void(WKTypeRef)>&&);
+    void setStatisticsFirstPartyWebsiteDataRemovalMode(bool value, CompletionHandler<void(WKTypeRef)>&&);
+    void setStatisticsToSameSiteStrictCookies(WKStringRef hostName, CompletionHandler<void(WKTypeRef)>&&);
+    void setStatisticsFirstPartyHostCNAMEDomain(WKStringRef firstPartyURLString, WKStringRef cnameURLString, CompletionHandler<void(WKTypeRef)>&&);
+    void setStatisticsThirdPartyCNAMEDomain(WKStringRef cnameURLString, CompletionHandler<void(WKTypeRef)>&&);
     void setAppBoundDomains(WKArrayRef originURLs);
     void setManagedDomains(WKArrayRef originURLs);
     void statisticsResetToConsistentState();
@@ -280,7 +281,7 @@ public:
 
     void getAllStorageAccessEntries(CompletionHandler<void(WKTypeRef)>&&);
     void setRequestStorageAccessThrowsExceptionUntilReload(bool enabled);
-    void loadedSubresourceDomains();
+    void loadedSubresourceDomains(CompletionHandler<void(WKTypeRef)>&&);
     void clearLoadedSubresourceDomains();
     void clearAppBoundSession();
     void reinitializeAppBoundDomains();

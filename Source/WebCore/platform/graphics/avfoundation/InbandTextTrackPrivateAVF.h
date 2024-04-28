@@ -92,7 +92,7 @@ protected:
 
 private:
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "InbandTextTrackPrivateAVF"; }
+    ASCIILiteral logClassName() const final { return "InbandTextTrackPrivateAVF"_s; }
 #endif
 
     MediaTime m_currentCueStartTime;

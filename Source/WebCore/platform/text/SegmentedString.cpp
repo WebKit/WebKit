@@ -239,11 +239,11 @@ void SegmentedString::setCurrentPosition(OrdinalNumber line, OrdinalNumber colum
     m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed() + prologLength - columnAftreProlog.zeroBasedInt();
 }
 
-SegmentedString::AdvancePastResult SegmentedString::advancePastSlowCase(const char* literal, bool lettersIgnoringASCIICase)
+SegmentedString::AdvancePastResult SegmentedString::advancePastSlowCase(ASCIILiteral literal, bool lettersIgnoringASCIICase)
 {
     constexpr unsigned maxLength = 10;
-    ASSERT(!strchr(literal, '\n'));
-    auto length = strlen(literal);
+    ASSERT(!strchr(literal.characters(), '\n'));
+    auto length = literal.length();
     ASSERT(length <= maxLength);
     if (length > this->length())
         return NotEnoughCharacters;

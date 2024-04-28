@@ -102,9 +102,9 @@ struct HBRun {
     UScriptCode script;
 };
 
-static std::optional<HBRun> findNextRun(const UChar* characters, unsigned length, unsigned offset)
+static std::optional<HBRun> findNextRun(std::span<const UChar> characters, unsigned offset)
 {
-    SurrogatePairAwareTextIterator textIterator(characters + offset, offset, length, length);
+    SurrogatePairAwareTextIterator textIterator(characters.subspan(offset), offset, characters.size());
     char32_t character;
     unsigned clusterLength = 0;
     if (!textIterator.consume(character, clusterLength))
@@ -148,18 +148,18 @@ static std::optional<HBRun> findNextRun(const UChar* characters, unsigned length
     return std::optional<HBRun>({ startIndex, textIterator.currentIndex(), currentScript.value() });
 }
 
-void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* characters, unsigned length, unsigned stringLocation, const Font* font)
+void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const UChar> characters, unsigned stringLocation, const Font* font)
 {
     if (!font) {
         // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), characters, stringLocation, length, 0, length, m_run.ltr()));
+        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), characters.data(), stringLocation, characters.size(), 0, characters.size(), m_run.ltr()));
         return;
     }
 
     Vector<HBRun> runList;
-    unsigned offset = 0;
-    while (offset < length) {
-        auto run = findNextRun(characters, length, offset);
+    size_t offset = 0;
+    while (offset < characters.size()) {
+        auto run = findNextRun(characters, offset);
         if (!run)
             break;
         runList.append(run.value());
@@ -188,24 +188,21 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cha
         featuresSize = featuresWithKerning.size();
     }
 
-    // FIXME: Set script on buffer for vertical fonts.
-
     HbUniquePtr<hb_buffer_t> buffer(hb_buffer_create());
     for (unsigned i = 0; i < runCount; ++i) {
         auto& run = runList[m_run.rtl() ? runCount - i - 1 : i];
 
-        if (fontPlatformData.orientation() != FontOrientation::Vertical)
-            hb_buffer_set_script(buffer.get(), hb_icu_script_to_script(run.script));
+        hb_buffer_set_script(buffer.get(), hb_icu_script_to_script(run.script));
+
         if (!m_mayUseNaturalWritingDirection || m_run.directionalOverride())
             hb_buffer_set_direction(buffer.get(), m_run.rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
-        else {
-            // Leaving direction to HarfBuzz to guess is *really* bad, but will do for now.
-            hb_buffer_guess_segment_properties(buffer.get());
-        }
-        hb_buffer_add_utf16(buffer.get(), reinterpret_cast<const uint16_t*>(characters), length, run.startIndex, run.endIndex - run.startIndex);
+        else
+            hb_buffer_set_direction(buffer.get(), hb_script_get_horizontal_direction(hb_icu_script_to_script(run.script)));
+
+        hb_buffer_add_utf16(buffer.get(), reinterpret_cast<const uint16_t*>(characters.data()), characters.size(), run.startIndex, run.endIndex - run.startIndex);
 
         hb_shape(hbFont, buffer.get(), featuresData, featuresSize);
-        m_complexTextRuns.append(ComplexTextRun::create(buffer.get(), *font, characters, stringLocation, length, run.startIndex, run.endIndex));
+        m_complexTextRuns.append(ComplexTextRun::create(buffer.get(), *font, characters.data(), stringLocation, characters.size(), run.startIndex, run.endIndex));
         hb_buffer_reset(buffer.get());
     }
 }

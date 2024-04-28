@@ -295,11 +295,6 @@ NotificationClient* Notification::clientFromContext()
     return nullptr;
 }
 
-const char* Notification::activeDOMObjectName() const
-{
-    return "Notification";
-}
-
 void Notification::stop()
 {
     ActiveDOMObject::stop();

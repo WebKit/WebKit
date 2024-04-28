@@ -77,7 +77,6 @@ private:
 
     // ActiveDOMObject.
     void stop() final;
-    const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebKitMediaKeySession; }
@@ -86,7 +85,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     const void* logIdentifier() const final { return m_logIdentifier; }
-    const char* logClassName() const { return "WebKitMediaKeySession"; }
+    ASCIILiteral logClassName() const { return "WebKitMediaKeySession"_s; }
     WTFLogChannel& logChannel() const;
 
     Ref<Logger> m_logger;

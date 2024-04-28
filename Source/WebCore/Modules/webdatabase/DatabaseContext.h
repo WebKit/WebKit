@@ -73,7 +73,6 @@ private:
 
     void contextDestroyed() override;
     void stop() override;
-    const char* activeDOMObjectName() const override { return "DatabaseContext"; }
 
     RefPtr<DatabaseThread> m_databaseThread;
     bool m_hasOpenDatabases { false }; // This never changes back to false, even after the database thread is closed.

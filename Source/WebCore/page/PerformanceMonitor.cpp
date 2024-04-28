@@ -255,18 +255,18 @@ void PerformanceMonitor::measurePerActivityStateCPUUsage()
 
 #if !RELEASE_LOG_DISABLED
 
-static inline const char* stringForCPUSamplingActivityState(ActivityStateForCPUSampling activityState)
+static inline ASCIILiteral stringForCPUSamplingActivityState(ActivityStateForCPUSampling activityState)
 {
     switch (activityState) {
     case ActivityStateForCPUSampling::NonVisible:
-        return "NonVisible";
+        return "NonVisible"_s;
     case ActivityStateForCPUSampling::VisibleNonActive:
-        return "VisibleNonActive";
+        return "VisibleNonActive"_s;
     case ActivityStateForCPUSampling::VisibleAndActive:
-        return "VisibleAndActive";
+        return "VisibleAndActive"_s;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return "";
+    return ""_s;
 }
 
 #endif
@@ -292,7 +292,7 @@ void PerformanceMonitor::measureCPUUsageInActivityState(ActivityStateForCPUSampl
 
 #if !RELEASE_LOG_DISABLED
     double cpuUsage = cpuTime.value().percentageCPUUsageSince(*m_perActivityStateCPUTime);
-    PERFMONITOR_RELEASE_LOG(PerformanceLogging, "measureCPUUsageInActivityState: Process is using %.1f%% CPU in state: %s", cpuUsage, stringForCPUSamplingActivityState(activityState));
+    PERFMONITOR_RELEASE_LOG(PerformanceLogging, "measureCPUUsageInActivityState: Process is using %.1f%% CPU in state: %s", cpuUsage, stringForCPUSamplingActivityState(activityState).characters());
 #endif
     page->chrome().client().reportProcessCPUTime((cpuTime.value().systemTime + cpuTime.value().userTime) - (m_perActivityStateCPUTime.value().systemTime + m_perActivityStateCPUTime.value().userTime), activityState);
 

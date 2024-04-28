@@ -222,7 +222,7 @@ angle::Result LinkTaskVk::linkImpl(const gl::ProgramLinkedResources &resources,
                 ? vk::GraphicsPipelineSubset::Shaders
                 : vk::GraphicsPipelineSubset::Complete;
 
-        ANGLE_TRY(executableVk->warmUpPipelineCache(
+        ANGLE_TRY(executableVk->getPipelineCacheWarmUpTasks(
             mRenderer, mPipelineRobustness, mPipelineProtectedAccess, subset, postLinkSubTasksOut));
     }
 

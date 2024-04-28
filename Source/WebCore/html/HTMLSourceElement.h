@@ -65,7 +65,6 @@ private:
     void addCandidateSubresourceURLs(ListHashSet<URL>&) const override;
 
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
     void stop() final;
 
 #if ENABLE(ATTACHMENT_ELEMENT)

@@ -229,12 +229,12 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 
     const URL& documentURL = frame->document()->url();
 
-    auto createBlockedURLSecurityErrorWithMessageSuffix = [&] (const char* suffix) {
-        const char* functionName = stateObjectType == StateObjectType::Replace ? "history.replaceState()" : "history.pushState()";
-        return Exception { ExceptionCode::SecurityError, makeString("Blocked attempt to use ", functionName, " to change session history URL from ", documentURL.stringCenterEllipsizedToLength(), " to ", fullURL.stringCenterEllipsizedToLength(), ". ", suffix) };
+    auto createBlockedURLSecurityErrorWithMessageSuffix = [&] (ASCIILiteral suffix) {
+        const auto functionName = stateObjectType == StateObjectType::Replace ? "history.replaceState()"_s : "history.pushState()"_s;
+        return Exception { ExceptionCode::SecurityError, makeString("Blocked attempt to use "_s, functionName, " to change session history URL from "_s, documentURL.stringCenterEllipsizedToLength(), " to "_s, fullURL.stringCenterEllipsizedToLength(), ". "_s, suffix) };
     };
     if (!protocolHostAndPortAreEqual(fullURL, documentURL) || fullURL.user() != documentURL.user() || fullURL.password() != documentURL.password())
-        return createBlockedURLSecurityErrorWithMessageSuffix("Protocols, domains, ports, usernames, and passwords must match.");
+        return createBlockedURLSecurityErrorWithMessageSuffix("Protocols, domains, ports, usernames, and passwords must match."_s);
 
     if (fullURL.protocolIsFile()
 #if PLATFORM(COCOA)
@@ -242,7 +242,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 #endif
         && !frame->document()->quirks().shouldDisablePushStateFilePathRestrictions()
         && fullURL.fileSystemPath() != documentURL.fileSystemPath()) {
-        return createBlockedURLSecurityErrorWithMessageSuffix("Only differences in query and fragment are allowed for file: URLs.");
+        return createBlockedURLSecurityErrorWithMessageSuffix("Only differences in query and fragment are allowed for file: URLs."_s);
     }
 
     Ref documentSecurityOrigin = frame->document()->securityOrigin();
@@ -252,7 +252,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
         && documentURL.viewWithoutQueryOrFragmentIdentifier() == fullURL.viewWithoutQueryOrFragmentIdentifier();
 
     if (!allowSandboxException && !documentSecurityOrigin->canRequest(fullURL, OriginAccessPatternsForWebProcess::singleton()) && (fullURL.path() != documentURL.path() || fullURL.query() != documentURL.query()))
-        return createBlockedURLSecurityErrorWithMessageSuffix("Paths and fragments must match for a sandboxed document.");
+        return createBlockedURLSecurityErrorWithMessageSuffix("Paths and fragments must match for a sandboxed document."_s);
 
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(frame->page()->mainFrame());
     RefPtr mainWindow = localMainFrame ? localMainFrame->window() : nullptr;

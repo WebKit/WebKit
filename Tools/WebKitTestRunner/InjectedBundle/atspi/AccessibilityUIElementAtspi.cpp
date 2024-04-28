@@ -479,16 +479,13 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
     return OpaqueJSString::tryCreate(m_element->attributes().get("id"_s)).leakRef();
 }
 
-JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attribute) const
+JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSContextRef, JSStringRef attribute)
 {
     return nullptr;
 }
 
-static JSValueRef makeJSArray(const Vector<RefPtr<AccessibilityUIElement>>& elements)
+static JSValueRef makeJSArray(JSContextRef context, const Vector<RefPtr<AccessibilityUIElement>>& elements)
 {
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
-    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
-
     size_t elementCount = elements.size();
     auto valueElements = makeUniqueArray<JSValueRef>(elementCount);
     for (size_t i = 0; i < elementCount; i++)
@@ -497,42 +494,42 @@ static JSValueRef makeJSArray(const Vector<RefPtr<AccessibilityUIElement>>& elem
     return JSObjectMakeArray(context, elementCount, valueElements.get(), nullptr);
 }
 
-JSValueRef AccessibilityUIElement::rowHeaders() const
+JSValueRef AccessibilityUIElement::rowHeaders(JSContextRef context)
 {
     if (m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Table)) {
         m_element->updateBackingStore();
-        return makeJSArray(elementsVector(m_element->rowHeaders()));
+        return makeJSArray(context, elementsVector(m_element->rowHeaders()));
     }
 
     if (m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::TableCell)) {
         m_element->updateBackingStore();
-        return makeJSArray(elementsVector(m_element->cellRowHeaders()));
+        return makeJSArray(context, elementsVector(m_element->cellRowHeaders()));
     }
 
-    return makeJSArray({ });
+    return makeJSArray(context, { });
 }
 
-JSValueRef AccessibilityUIElement::columnHeaders() const
+JSValueRef AccessibilityUIElement::columnHeaders(JSContextRef context)
 {
     if (m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Table)) {
         m_element->updateBackingStore();
-        return makeJSArray(elementsVector(m_element->columnHeaders()));
+        return makeJSArray(context, elementsVector(m_element->columnHeaders()));
     }
 
     if (m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::TableCell)) {
         m_element->updateBackingStore();
-        return makeJSArray(elementsVector(m_element->cellColumnHeaders()));
+        return makeJSArray(context, elementsVector(m_element->cellColumnHeaders()));
     }
 
-    return makeJSArray({ });
+    return makeJSArray(context, { });
 }
 
-JSValueRef AccessibilityUIElement::selectedCells() const
+JSValueRef AccessibilityUIElement::selectedCells(JSContextRef context)
 {
-    return makeJSArray({ });
+    return makeJSArray(context, { });
 }
 
-static JSValueRef elementsForRelation(WebCore::AccessibilityObjectAtspi* element, WebCore::Atspi::Relation relation)
+static JSValueRef elementsForRelation(JSContextRef context, WebCore::AccessibilityObjectAtspi* element, WebCore::Atspi::Relation relation)
 {
     element->updateBackingStore();
     auto relationMap = element->relationMap();
@@ -540,17 +537,17 @@ static JSValueRef elementsForRelation(WebCore::AccessibilityObjectAtspi* element
     if (targets.isEmpty())
         return { };
 
-    return makeJSArray(elementsVector(targets));
+    return makeJSArray(context, elementsVector(targets));
 }
 
-JSValueRef AccessibilityUIElement::detailsElements() const
+JSValueRef AccessibilityUIElement::detailsElements(JSContextRef context)
 {
-    return elementsForRelation(m_element.get(), WebCore::Atspi::Relation::Details);
+    return elementsForRelation(context, m_element.get(), WebCore::Atspi::Relation::Details);
 }
 
-JSValueRef AccessibilityUIElement::errorMessageElements() const
+JSValueRef AccessibilityUIElement::errorMessageElements(JSContextRef context)
 {
-    return elementsForRelation(m_element.get(), WebCore::Atspi::Relation::ErrorMessage);
+    return elementsForRelation(context, m_element.get(), WebCore::Atspi::Relation::ErrorMessage);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
@@ -1508,6 +1505,23 @@ void AccessibilityUIElement::clearSelectedChildren() const
     m_element->clearSelection();
 }
 
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::activeElement() const
+{
+    m_element->updateBackingStore();
+    if (auto* activeDescendant = m_element->activeDescendant())
+        return AccessibilityUIElement::create(activeDescendant);
+    return nullptr;
+}
+
+JSValueRef AccessibilityUIElement::selectedChildren(JSContextRef context)
+{
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Selection))
+        return makeJSArray(context, { });
+
+    m_element->updateBackingStore();
+    return makeJSArray(context, elementsVector(m_element->selectedChildren()));
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
 {
     return JSStringCreateWithCharacters(nullptr, 0);
@@ -1533,7 +1547,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
     return OpaqueJSString::tryCreate(makeString("AXURL: ", stringURL)).leakRef();
 }
 
-bool AccessibilityUIElement::addNotificationListener(JSValueRef functionCallback)
+bool AccessibilityUIElement::addNotificationListener(JSContextRef, JSValueRef functionCallback)
 {
     if (!functionCallback)
         return false;

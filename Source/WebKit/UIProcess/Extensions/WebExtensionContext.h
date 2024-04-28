@@ -227,6 +227,8 @@ public:
         AlreadyLoaded,
         NotLoaded,
         BaseURLAlreadyInUse,
+        NoBackgroundContent,
+        BackgroundContentFailedToLoad,
     };
 
     enum class PermissionState : int8_t {
@@ -281,7 +283,6 @@ public:
     void setBaseURL(URL&&);
 
     bool isURLForThisExtension(const URL&) const;
-    bool extensionCanAccessWebPage(WebPageProxyIdentifier);
 
     bool hasCustomUniqueIdentifier() const { return m_customUniqueIdentifier; }
 
@@ -459,6 +460,11 @@ public:
     WKWebView *backgroundWebView() const { return m_backgroundWebView.get(); }
     bool safeToLoadBackgroundContent() const { return m_safeToLoadBackgroundContent; }
 
+    NSError *backgroundContentLoadError() const { return m_backgroundContentLoadError.get(); }
+
+    NSString *backgroundWebViewInspectionName();
+    void setBackgroundWebViewInspectionName(const String&);
+
     bool decidePolicyForNavigationAction(WKWebView *, WKNavigationAction *);
     void didFinishDocumentLoad(WKWebView *, WKNavigation *);
     void didFailNavigation(WKWebView *, WKNavigation *, NSError *);
@@ -496,6 +502,8 @@ public:
     WebsiteDataStore* websiteDataStore(std::optional<PAL::SessionID> = std::nullopt) const;
 
     void cookiesDidChange(API::HTTPCookieStore&);
+
+    void loadBackgroundContent(CompletionHandler<void(NSError *)>&&);
 
     void wakeUpBackgroundContentIfNecessary(CompletionHandler<void()>&&);
     void wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet&&, CompletionHandler<void()>&&);
@@ -886,7 +894,10 @@ private:
     String m_previousVersion;
 
     RetainPtr<WKWebView> m_backgroundWebView;
+    RetainPtr<NSError> m_backgroundContentLoadError;
     RetainPtr<_WKWebExtensionContextDelegate> m_delegate;
+
+    String m_backgroundWebViewInspectionName;
 
     std::unique_ptr<WebCore::Timer> m_unloadBackgroundWebViewTimer;
     MonotonicTime m_lastBackgroundPortActivityTime;

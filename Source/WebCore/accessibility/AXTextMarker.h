@@ -194,7 +194,9 @@ public:
     // Returns -1 if the index is out of bounds, or this marker isn't valid.
     int lineNumberForIndex(unsigned) const;
     // The location and length of the line that is `lineIndex` lines away from the start of this marker.
-    CharacterRange rangeForLine(unsigned lineIndex) const;
+    CharacterRange characterRangeForLine(unsigned lineIndex) const;
+    // The AXTextMarkerRange of the line that is `lineIndex` lines away from the start of this marker.
+    AXTextMarkerRange markerRangeForLineIndex(unsigned lineIndex) const;
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
 private:

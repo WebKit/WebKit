@@ -33,7 +33,7 @@ namespace WebCore {
 
 Ref<FEFlood> FEFlood::create(const Color& floodColor, float floodOpacity, DestinationColorSpace colorSpace)
 {
-#if USE(CG)
+#if USE(CG) || USE(SKIA)
     return adoptRef(*new FEFlood(floodColor, floodOpacity, colorSpace));
 #else
     UNUSED_PARAM(colorSpace);

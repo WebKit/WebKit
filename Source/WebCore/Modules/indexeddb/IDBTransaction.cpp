@@ -317,12 +317,6 @@ void IDBTransaction::abortOnServerAndCancelRequests(IDBClient::TransactionOperat
     ASSERT(m_pendingTransactionOperationQueue.isEmpty());
 }
 
-const char* IDBTransaction::activeDOMObjectName() const
-{
-    ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-    return "IDBTransaction";
-}
-
 bool IDBTransaction::virtualHasPendingActivity() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()) || Thread::mayBeGCThread());

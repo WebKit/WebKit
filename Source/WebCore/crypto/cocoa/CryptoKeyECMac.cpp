@@ -151,7 +151,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier ide
 #if HAVE(SWIFT_CPP_INTEROP)
     if (useCryptoKit == UseCryptoKit::Yes) {
         auto rv = PAL::ECKey::importX963Pub(keyData.span(), namedCurveToCryptoKitCurve(curve));
-        if (!(rv.getErrCode().isSuccess() && rv.getKey()))
+        if (!(rv.getErrorCode().isSuccess() && rv.getKey()))
             return nullptr;
         return create(identifier, curve, CryptoKeyType::Public, toCKPlatformECKeyContainer(rv.getKey().get()), extractable, usages);
     }
@@ -177,7 +177,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportRaw(UseCryptoKit useCryptoKit) const
         if (!pub)
             return { };
         auto rv = (*pub)->exportX963Pub();
-        if (!(rv.getErrCode().isSuccess() && rv.getKeyBytes()))
+        if (!(rv.getErrorCode().isSuccess() && rv.getKeyBytes()))
             return { };
         if (rv.getKeyBytes()->size() != expectedSize)
             return { };
@@ -225,7 +225,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
 #if HAVE(SWIFT_CPP_INTEROP)
     if (useCryptoKit == UseCryptoKit::Yes) {
         auto rv = PAL::ECKey::importX963Private(binaryInput.span(), namedCurveToCryptoKitCurve(curve));
-        if (!(rv.getErrCode().isSuccess() && rv.getKey()))
+        if (!(rv.getErrorCode().isSuccess() && rv.getKey()))
             return nullptr;
         return create(identifier, curve, CryptoKeyType::Private, toCKPlatformECKeyContainer(rv.getKey().get()), extractable, usages);
     }
@@ -258,14 +258,14 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk, UseCryptoKit useCryp
         switch (type()) {
         case CryptoKeyType::Public: {
             auto rv = (*pubOrPriv)->exportX963Pub();
-            if (!(rv.getErrCode().isSuccess() && rv.getKeyBytes()))
+            if (!(rv.getErrorCode().isSuccess() && rv.getKeyBytes()))
                 return false;
             result = *rv.getKeyBytes();
             break;
         }
         case CryptoKeyType::Private: {
             auto rv = (*pubOrPriv)->exportX963Private();
-            if (!(rv.getErrCode().isSuccess() && rv.getKeyBytes()))
+            if (!(rv.getErrorCode().isSuccess() && rv.getKeyBytes()))
                 return false;
             result = *rv.getKeyBytes();
             break;
@@ -382,7 +382,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
     // CryptoKit can read pure compressed so no need for index++ here.
     if (useCryptoKit == UseCryptoKit::Yes) {
         auto rv = PAL::ECKey::importCompressedPub(keyData.subspan(index, keyData.size() - index), namedCurveToCryptoKitCurve(curve));
-        if (!(rv.getErrCode().isSuccess() && rv.getKey()))
+        if (!(rv.getErrorCode().isSuccess() && rv.getKey()))
             return nullptr;
         return create(identifier, curve, CryptoKeyType::Public, toCKPlatformECKeyContainer(rv.getKey().get()), extractable, usages);
     }
@@ -411,7 +411,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki(UseCryptoKit useCryptoKit) const
         if (!pub)
             return { };
         auto rv = (*pub)->exportX963Pub();
-        if (!(rv.getErrCode().isSuccess() && rv.getKeyBytes()))
+        if (!(rv.getErrorCode().isSuccess() && rv.getKeyBytes()))
             return { };
         if (rv.getKeyBytes()->size() != expectedKeySize)
             return { };
@@ -513,7 +513,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
 #if HAVE(SWIFT_CPP_INTEROP)
     if (useCryptoKit == UseCryptoKit::Yes) {
         auto rv = PAL::ECKey::importX963Private(keyBinary.span(), namedCurveToCryptoKitCurve(curve));
-        if (!(rv.getErrCode().isSuccess() && rv.getKey()))
+        if (!(rv.getErrorCode().isSuccess() && rv.getKey()))
             return nullptr;
         return create(identifier, curve, CryptoKeyType::Private, toCKPlatformECKeyContainer(rv.getKey().get()), extractable, usages);
     }
@@ -542,7 +542,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8(UseCryptoKit useCryptoKit) cons
         if (!priv)
             return { };
         auto rv = (*priv)->exportX963Private();
-        if (!(rv.getErrCode().isSuccess() && rv.getKeyBytes()))
+        if (!(rv.getErrorCode().isSuccess() && rv.getKeyBytes()))
             return { };
         if (rv.getKeyBytes()->size() != expectedKeySize)
             return { };

@@ -112,6 +112,7 @@ public:
     void didEndLiveResize() final;
 
     IntSize tileSize() const final;
+    FloatRect rectForTile(TileIndex) const final;
     IntRect bounds() const final;
     IntRect boundsWithoutMargin() const final;
     bool hasMargins() const final;

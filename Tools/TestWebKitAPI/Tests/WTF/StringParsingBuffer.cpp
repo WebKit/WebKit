@@ -51,8 +51,8 @@ TEST(WTF, StringParsingBufferInitial)
 
     EXPECT_FALSE(parsingBuffer.atEnd());
     EXPECT_TRUE(parsingBuffer.hasCharactersRemaining());
-    EXPECT_EQ(parsingBuffer.position(), string.characters8());
-    EXPECT_EQ(parsingBuffer.end(), string.characters8() + string.length());
+    EXPECT_EQ(parsingBuffer.position(), string.span8().data());
+    EXPECT_EQ(parsingBuffer.end(), string.span8().data() + string.length());
     EXPECT_EQ(parsingBuffer.lengthRemaining(), 3u);
     EXPECT_EQ(*parsingBuffer, 'a');
 }

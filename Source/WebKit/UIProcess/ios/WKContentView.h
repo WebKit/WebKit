@@ -93,6 +93,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)didInterruptScrolling;
 - (void)didZoomToScale:(CGFloat)scale;
 - (void)willStartZoomOrScroll;
+- (BOOL)screenIsBeingCaptured;
 
 - (void)_webViewDestroyed;
 

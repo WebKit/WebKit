@@ -128,7 +128,7 @@ private:
     IntDegrees sensorOrientationFromVideoOutput();
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const override { return "AVVideoCaptureSource"; }
+    ASCIILiteral logClassName() const override { return "AVVideoCaptureSource"_s; }
 #endif
 
     void beginConfiguration();

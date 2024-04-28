@@ -52,10 +52,6 @@ enum class MessageFlags : uint8_t;
 enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t;
 
 template<typename, typename> struct ArgumentCoder;
-#if !HAVE(ONLY_MODERN_SERIALIZATION)
-template<typename, typename, typename> struct HasLegacyDecoder;
-template<typename, typename, typename> struct HasModernDecoder;
-#endif
 
 #ifdef __OBJC__
 template<typename T> using IsObjCObject = std::enable_if_t<std::is_convertible<T *, id>::value, T *>;
@@ -123,28 +119,6 @@ public:
     template<typename T>
     WARN_UNUSED_RETURN std::optional<T> decodeObject();
 
-#if !HAVE(ONLY_MODERN_SERIALIZATION)
-    template<typename T>
-    WARN_UNUSED_RETURN bool decode(T& t)
-    {
-        using Impl = ArgumentCoder<std::remove_cvref_t<T>, void>;
-        if constexpr(HasLegacyDecoder<T, Impl>::value) {
-            if (UNLIKELY(!Impl::decode(*this, t))) {
-                markInvalid();
-                return false;
-            }
-        } else {
-            std::optional<T> optional { decode<T>() };
-            if (UNLIKELY(!optional)) {
-                markInvalid();
-                return false;
-            }
-            t = WTFMove(*optional);
-        }
-        return true;
-    }
-#endif
-
     template<typename T>
     Decoder& operator>>(std::optional<T>& t)
     {
@@ -152,28 +126,13 @@ public:
         return *this;
     }
 
-    // The preferred decode() function. Can decode T which is not default constructible when T
-    // has a modern decoder, e.g decoding function that returns std::optional.
     template<typename T>
     std::optional<T> decode()
     {
-        using Impl = ArgumentCoder<std::remove_cvref_t<T>, void>;
-#if !HAVE(ONLY_MODERN_SERIALIZATION)
-        if constexpr(HasModernDecoder<T, Impl>::value) {
-#endif
-            std::optional<T> t { Impl::decode(*this) };
-            if (UNLIKELY(!t))
-                markInvalid();
-            return t;
-#if !HAVE(ONLY_MODERN_SERIALIZATION)
-        } else {
-            std::optional<T> t { T { } };
-            if (LIKELY(Impl::decode(*this, *t)))
-                return t;
+        std::optional<T> t { ArgumentCoder<std::remove_cvref_t<T>, void>::decode(*this) };
+        if (UNLIKELY(!t))
             markInvalid();
-            return std::nullopt;
-        }
-#endif
+        return t;
     }
 
 #ifdef __OBJC__

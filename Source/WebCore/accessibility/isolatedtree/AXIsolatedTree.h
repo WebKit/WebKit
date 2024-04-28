@@ -519,16 +519,8 @@ inline Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const U& axIDs
     result.reserveInitialCapacity(axIDs.size());
     for (const auto& axID : axIDs) {
         RefPtr object = objectForID(axID);
-        if (object) {
+        if (object)
             result.append(WTFMove(object));
-            continue;
-        }
-
-        object = retrieveObjectForIDFromMainThread(axID);
-        if (object) {
-            m_readerThreadNodeMap.add(axID, *object);
-            result.append(WTFMove(object));
-        }
     }
     result.shrinkToFit();
     return result;

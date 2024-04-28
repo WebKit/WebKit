@@ -88,7 +88,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     void addAudioRenderer(AVSampleBufferAudioRenderer*);
     void removeAudioRenderer(AVSampleBufferAudioRenderer*);
 ALLOW_NEW_API_WITHOUT_GUARDS_END
-    
+
     void removeAudioTrack(AudioTrackPrivate&);
     void removeVideoTrack(VideoTrackPrivate&);
     void removeTextTrack(InbandTextTrackPrivate&);
@@ -120,7 +120,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool timeIsProgressing() const final;
     AVSampleBufferDisplayLayer *sampleBufferDisplayLayer() const { return m_sampleBufferDisplayLayer.get(); }
     WebCoreDecompressionSession *decompressionSession() const { return m_decompressionSession.get(); }
-    WebSampleBufferVideoRendering *sampleBufferVideoRenderer() const;
+    WebSampleBufferVideoRendering *layerOrVideoRenderer() const;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() override;
@@ -131,7 +131,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool requiresTextTrackRepresentation() const override;
     void setTextTrackRepresentation(TextTrackRepresentation*) override;
     void syncTextTrackBounds() override;
-    
+
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void setCDMSession(LegacyCDMSession*) override;
     CDMSessionMediaSourceAVFObjC* cdmSession() const;
@@ -167,7 +167,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const char* logClassName() const override { return "MediaPlayerPrivateMediaSourceAVFObjC"; }
+    ASCIILiteral logClassName() const override { return "MediaPlayerPrivateMediaSourceAVFObjC"_s; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
 
@@ -289,6 +289,10 @@ private:
     void ensureVideoRenderer();
     void destroyVideoRenderer();
 
+    void ensureLayerOrVideoRenderer();
+    void destroyLayerOrVideoRenderer();
+    void configureLayerOrVideoRenderer(WebSampleBufferVideoRendering *);
+
     bool shouldBePlaying() const;
 
     bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) final;
@@ -306,8 +310,7 @@ private:
     void checkNewVideoFrameMetadata(CMTime);
     MediaTime clampTimeToSensicalValue(const MediaTime&) const;
 
-    bool shouldEnsureLayer() const;
-    bool shouldEnsureVideoRenderer() const;
+    bool shouldEnsureLayerOrVideoRenderer() const;
 
     void setShouldDisableHDR(bool) final;
     void playerContentBoxRectChanged(const LayoutRect&) final;
@@ -321,8 +324,19 @@ private:
     void updateSpatialTrackingLabel();
 #endif
 
+    void isInFullscreenOrPictureInPictureChanged(bool) final;
+
     friend class MediaSourcePrivateAVFObjC;
     void bufferedChanged();
+
+    enum class AcceleratedVideoMode: uint8_t {
+        Layer = 0,
+        StagedVideoRenderer,
+        VideoRenderer,
+        StagedLayer
+    };
+
+    AcceleratedVideoMode acceleratedVideoMode() const;
 
     std::optional<SeekTarget> m_pendingSeek;
 

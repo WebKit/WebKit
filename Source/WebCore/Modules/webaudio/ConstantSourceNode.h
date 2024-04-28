@@ -52,8 +52,6 @@ private:
     // If we are no longer playing, propogate silence ahead to downstream nodes.
     bool propagatesSilence() const final;
     
-    const char* activeDOMObjectName() const override { return "ConstantSourceNode"; }
-    
     Ref<AudioParam> m_offset;
     
     // Stores sample-accurate values calculated.

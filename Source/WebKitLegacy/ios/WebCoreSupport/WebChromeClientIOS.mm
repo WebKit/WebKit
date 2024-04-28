@@ -226,6 +226,11 @@ FloatSize WebChromeClientIOS::overrideScreenSize() const
     return screenSize();
 }
 
+FloatSize WebChromeClientIOS::overrideAvailableScreenSize() const
+{
+    return availableScreenSize();
+}
+
 void WebChromeClientIOS::dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments& arguments) const
 {
     [[webView() _UIKitDelegateForwarder] webView:webView() didReceiveViewportArguments:dictionaryForViewportArguments(arguments)];

@@ -155,8 +155,6 @@ public:
 
     void commitToPlaceholderCanvas();
 
-    const char* activeDOMObjectName() const final { return "OffscreenCanvas"_s; }
-
     void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) final;
     void dispatchEvent(Event&) final;
     using RefCounted::ref;

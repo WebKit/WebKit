@@ -86,26 +86,26 @@ void ScrollbarsControllerMock::mouseExitedContentArea()
     ScrollbarsController::mouseExitedContentArea();
 }
 
-const char* ScrollbarsControllerMock::scrollbarPrefix(Scrollbar* scrollbar) const
+ASCIILiteral ScrollbarsControllerMock::scrollbarPrefix(Scrollbar* scrollbar) const
 {
-    return scrollbar == m_verticalScrollbar ? "Vertical" : scrollbar == m_horizontalScrollbar ? "Horizontal" : "Unknown";
+    return scrollbar == m_verticalScrollbar ? "Vertical"_s : scrollbar == m_horizontalScrollbar ? "Horizontal"_s : "Unknown"_s;
 }
 
 void ScrollbarsControllerMock::mouseEnteredScrollbar(Scrollbar* scrollbar) const
 {
-    m_logger(makeString("mouseEntered", scrollbarPrefix(scrollbar), "Scrollbar"));
+    m_logger(makeString("mouseEntered"_s, scrollbarPrefix(scrollbar), "Scrollbar"_s));
     ScrollbarsController::mouseEnteredScrollbar(scrollbar);
 }
 
 void ScrollbarsControllerMock::mouseExitedScrollbar(Scrollbar* scrollbar) const
 {
-    m_logger(makeString("mouseExited", scrollbarPrefix(scrollbar), "Scrollbar"));
+    m_logger(makeString("mouseExited"_s, scrollbarPrefix(scrollbar), "Scrollbar"_s));
     ScrollbarsController::mouseExitedScrollbar(scrollbar);
 }
 
 void ScrollbarsControllerMock::mouseIsDownInScrollbar(Scrollbar* scrollbar, bool isPressed) const
 {
-    m_logger(makeString(isPressed ? "mouseIsDownIn" : "mouseIsUpIn", scrollbarPrefix(scrollbar), "Scrollbar"));
+    m_logger(makeString(isPressed ? "mouseIsDownIn"_s : "mouseIsUpIn"_s, scrollbarPrefix(scrollbar), "Scrollbar"_s));
     ScrollbarsController::mouseIsDownInScrollbar(scrollbar, isPressed);
 }
 

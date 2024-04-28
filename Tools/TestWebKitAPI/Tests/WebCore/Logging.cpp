@@ -102,7 +102,7 @@ public:
     }
 
     const Logger& logger() const final { return m_logger.get(); }
-    const char* logClassName() const final { return "LoggingTest"; }
+    ASCIILiteral logClassName() const final { return "LoggingTest"_s; }
     WTFLogChannel& logChannel() const final { return TestChannel1; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(123456789); }
 
@@ -290,7 +290,7 @@ TEST_F(LoggingTest, DISABLED_Logger)
     logger->debug(TestChannel1, "You're using coconuts!");
     EXPECT_EQ(0u, output().length());
 
-    logger->error(TestChannel1, Logger::LogSiteIdentifier("LoggingTest::Logger", this) , ": test output");
+    logger->error(TestChannel1, Logger::LogSiteIdentifier("LoggingTest::Logger"_s, this) , ": test output");
     EXPECT_TRUE(output().containsIgnoringASCIICase("LoggingTest::Logger("_s));
 
     logger->error(TestChannel1, "What is ", 1, " + " , 12.5F, "?");

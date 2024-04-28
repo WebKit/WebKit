@@ -132,7 +132,7 @@ interface TestRunner {
 
     undefined dumpAllHTTPRedirectedResponseHeaders();
 
-    [PassContext] undefined setValueForUser(object element, DOMString value);
+    undefined setValueForUser(object element, DOMString value);
 
     // UserContent testing.
     undefined addUserScript(DOMString source, boolean runAtStart, boolean allFrames);
@@ -153,7 +153,7 @@ interface TestRunner {
     undefined replaceFindMatchesAtIndices(object matchIndicesArray, DOMString replacementText, boolean selectionOnly);
 
     // Evaluating script in a special context.
-    [PassContext] undefined evaluateScriptInIsolatedWorld(unsigned long worldID, DOMString script);
+    undefined evaluateScriptInIsolatedWorld(unsigned long worldID, DOMString script);
 
     // For Web Inspector tests
     undefined showWebInspector();
@@ -244,7 +244,7 @@ interface TestRunner {
     readonly attribute boolean isDoingMediaCapture;
 
     // Audio testing.
-    [PassContext] undefined setAudioResult(object data);
+    undefined setAudioResult(object data);
 
     boolean callShouldCloseOnWebView();
 
@@ -316,7 +316,7 @@ interface TestRunner {
     undefined installStatisticsDidScanDataRecordsCallback(object callback);
     undefined setStatisticsDebugMode(boolean value, object completionHandler);
     undefined setStatisticsPrevalentResourceForDebugMode(DOMString hostName, object completionHandler);
-    undefined setStatisticsLastSeen(DOMString hostName, double seconds, object completionHandler);
+    Promise<undefined> setStatisticsLastSeen(DOMString hostName, double seconds);
     undefined setStatisticsMergeStatistic(DOMString hostName, DOMString topFrameDomain1, DOMString topFrameDomain2, double lastSeen, boolean hadUserInteraction, double mostRecentUserInteraction, boolean isGrandfathered, boolean isPrevalent, boolean isVeryPrevalent, unsigned long dataRecordsRemoved, object completionHandler);
     undefined setStatisticsExpiredStatistic(DOMString hostName, unsigned long numberOfOperatingDaysPassed, boolean hadUserInteraction, boolean isScheduledForAllButCookieDataRemoval, boolean isPrevalent, object completionHandler);
     undefined setStatisticsPrevalentResource(DOMString hostName, boolean value, object completionHandler);
@@ -459,5 +459,5 @@ interface TestRunner {
     undefined generateTestReport(DOMString message, DOMString group);
 
     undefined getAndClearReportedWindowProxyAccessDomains(object callback);
-    undefined flushConsoleLogs(object callback);
+    Promise<undefined> flushConsoleLogs();
 };

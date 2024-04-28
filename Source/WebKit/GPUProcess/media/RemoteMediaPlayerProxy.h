@@ -372,12 +372,14 @@ private:
     void setSpatialTrackingLabel(const String&);
 #endif
 
+    void isInFullscreenOrPictureInPictureChanged(bool);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
     const void* mediaPlayerLogIdentifier() { return reinterpret_cast<const void*>(m_configuration.logIdentifier); }
     const Logger& logger() { return mediaPlayerLogger(); }
     const void* logIdentifier() { return mediaPlayerLogIdentifier(); }
-    const char* logClassName() const { return "RemoteMediaPlayerProxy"; }
+    ASCIILiteral logClassName() const { return "RemoteMediaPlayerProxy"_s; }
     WTFLogChannel& logChannel() const;
 #endif
 

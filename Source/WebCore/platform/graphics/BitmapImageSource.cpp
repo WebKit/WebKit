@@ -121,7 +121,7 @@ void BitmapImageSource::destroyDecodedData(bool destroyAll)
     unsigned currentFrameIndex = this->currentFrameIndex();
     unsigned decodedSize = 0;
 
-    for (unsigned index = 0, frameCount = this->frameCount(); index < frameCount; ++index) {
+    for (unsigned index = 0, framesSize = m_frames.size(); index < framesSize; ++index) {
         if (!canDestroyDecodedData && (index == primaryFrameIndex || index == currentFrameIndex))
             continue;
 

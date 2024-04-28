@@ -106,13 +106,6 @@ struct DefaultUniformBlockVk final : private angle::NonCopyable
     std::vector<sh::BlockMemberInfo> uniformLayout;
 };
 
-namespace
-{
-class WarmUpTaskCommon;
-class WarmUpComputeTask;
-class WarmUpGraphicsTask;
-}  // namespace
-
 // Performance and resource counters.
 using DescriptorSetCountList   = angle::PackedEnumMap<DescriptorSetIndex, uint32_t>;
 using ImmutableSamplerIndexMap = angle::HashMap<vk::YcbcrConversionDesc, uint32_t>;
@@ -316,7 +309,15 @@ class ProgramExecutableVk : public ProgramExecutableImpl
 
     const ShaderInterfaceVariableInfoMap &getVariableInfoMap() const { return mVariableInfoMap; }
 
-    angle::Result warmUpPipelineCache(
+    angle::Result warmUpPipelineCache(vk::Renderer *renderer,
+                                      vk::PipelineRobustness pipelineRobustness,
+                                      vk::PipelineProtectedAccess pipelineProtectedAccess,
+                                      vk::GraphicsPipelineSubset subset)
+    {
+        return getPipelineCacheWarmUpTasks(renderer, pipelineRobustness, pipelineProtectedAccess,
+                                           subset, nullptr);
+    }
+    angle::Result getPipelineCacheWarmUpTasks(
         vk::Renderer *renderer,
         vk::PipelineRobustness pipelineRobustness,
         vk::PipelineProtectedAccess pipelineProtectedAccess,
@@ -370,6 +371,9 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     }
 
   private:
+    class WarmUpTaskCommon;
+    class WarmUpComputeTask;
+    class WarmUpGraphicsTask;
     friend class ProgramVk;
     friend class ProgramPipelineVk;
     friend class WarmUpComputeTask;
@@ -457,10 +461,6 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     angle::Result initGraphicsShaderPrograms(vk::Context *context,
                                              ProgramTransformOptions transformOptions,
                                              vk::ShaderProgramHelper **shaderProgramOut);
-    angle::Result initGraphicsShaderProgramsForWarmUp(vk::Context *context,
-                                                      vk::GraphicsPipelineSubset subset,
-                                                      ProgramTransformOptions transformOptions,
-                                                      vk::ShaderProgramHelper **shaderProgramOut);
     angle::Result initProgramThenCreateGraphicsPipeline(vk::Context *context,
                                                         ProgramTransformOptions transformOptions,
                                                         vk::GraphicsPipelineSubset pipelineSubset,
@@ -497,7 +497,8 @@ class ProgramExecutableVk : public ProgramExecutableImpl
                                               vk::GraphicsPipelineSubset subset,
                                               const bool isSurfaceRotated,
                                               const vk::GraphicsPipelineDesc &graphicsPipelineDesc,
-                                              const vk::RenderPass &renderPass);
+                                              const vk::RenderPass &renderPass,
+                                              vk::PipelineHelper *placeholderPipelineHelper);
     void waitForPostLinkTasksImpl(ContextVk *contextVk);
 
     angle::Result getOrAllocateDescriptorSet(vk::Context *context,
@@ -521,7 +522,6 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     vk::DescriptorSetArray<VkDescriptorSet> mDescriptorSets;
     vk::DescriptorSetArray<vk::DescriptorPoolPointer> mDescriptorPools;
     vk::DescriptorSetArray<vk::RefCountedDescriptorPoolBinding> mDescriptorPoolBindings;
-    uint32_t mNumDefaultUniformDescriptors;
     vk::BufferSerial mCurrentDefaultUniformBufferSerial;
 
     // We keep a reference to the pipeline and descriptor set layouts. This ensures they don't get

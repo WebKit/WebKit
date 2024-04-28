@@ -372,8 +372,10 @@ static CodePointsMap codePointsFromString(StringView stringView)
         char32_t character = 0;
         if (cluster.is8Bit())
             character = cluster[0];
-        else
-            U16_GET(cluster.characters16(), 0, 0, cluster.length(), character);
+        else {
+            auto characters = cluster.span16();
+            U16_GET(characters, 0, 0, characters.size(), character);
+        }
         result.add(character);
     }
     return result;

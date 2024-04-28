@@ -32,37 +32,37 @@
 namespace WebCore {
 
 #if !LOG_DISABLED
-const char* nameForSQLTransactionState(SQLTransactionState state)
+ASCIILiteral nameForSQLTransactionState(SQLTransactionState state)
 {
     switch (state) {
     case SQLTransactionState::End:
-        return "end";
+        return "end"_s;
     case SQLTransactionState::Idle:
-        return "idle";
+        return "idle"_s;
     case SQLTransactionState::AcquireLock:
-        return "acquireLock";
+        return "acquireLock"_s;
     case SQLTransactionState::OpenTransactionAndPreflight:
-        return "openTransactionAndPreflight";
+        return "openTransactionAndPreflight"_s;
     case SQLTransactionState::RunStatements:
-        return "runStatements";
+        return "runStatements"_s;
     case SQLTransactionState::PostflightAndCommit:
-        return "postflightAndCommit";
+        return "postflightAndCommit"_s;
     case SQLTransactionState::CleanupAndTerminate:
-        return "cleanupAndTerminate";
+        return "cleanupAndTerminate"_s;
     case SQLTransactionState::CleanupAfterTransactionErrorCallback:
-        return "cleanupAfterTransactionErrorCallback";
+        return "cleanupAfterTransactionErrorCallback"_s;
     case SQLTransactionState::DeliverTransactionCallback:
-        return "deliverTransactionCallback";
+        return "deliverTransactionCallback"_s;
     case SQLTransactionState::DeliverTransactionErrorCallback:
-        return "deliverTransactionErrorCallback";
+        return "deliverTransactionErrorCallback"_s;
     case SQLTransactionState::DeliverStatementCallback:
-        return "deliverStatementCallback";
+        return "deliverStatementCallback"_s;
     case SQLTransactionState::DeliverQuotaIncreaseCallback:
-        return "deliverQuotaIncreaseCallback";
+        return "deliverQuotaIncreaseCallback"_s;
     case SQLTransactionState::DeliverSuccessCallback:
-        return "deliverSuccessCallback";
+        return "deliverSuccessCallback"_s;
     default:
-        return "UNKNOWN";
+        return "UNKNOWN"_s;
     }
 }
 #endif

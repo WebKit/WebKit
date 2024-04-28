@@ -142,7 +142,6 @@ private:
     void mediaCanStart(Document&) final;
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
     bool virtualHasPendingActivity() const final;

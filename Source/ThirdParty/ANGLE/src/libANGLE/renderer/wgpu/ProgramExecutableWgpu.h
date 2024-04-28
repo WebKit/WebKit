@@ -12,6 +12,13 @@
 #include "libANGLE/ProgramExecutable.h"
 #include "libANGLE/renderer/ProgramExecutableImpl.h"
 
+#include <dawn/webgpu_cpp.h>
+
+struct TranslatedWGPUShaderModule
+{
+    wgpu::ShaderModule module;
+};
+
 namespace rx
 {
 class ProgramExecutableWgpu : public ProgramExecutableImpl
@@ -74,6 +81,11 @@ class ProgramExecutableWgpu : public ProgramExecutableImpl
     void getUniformfv(const gl::Context *context, GLint location, GLfloat *params) const override;
     void getUniformiv(const gl::Context *context, GLint location, GLint *params) const override;
     void getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const override;
+
+    TranslatedWGPUShaderModule &getShaderModule(gl::ShaderType type);
+
+  private:
+    gl::ShaderMap<TranslatedWGPUShaderModule> mShaderModules;
 };
 
 }  // namespace rx

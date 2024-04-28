@@ -72,6 +72,7 @@ private:
     public:
         NamedCaptureGroups()
         {
+            m_nestedCaptureGroupNames.grow(1);
             m_activeCaptureGroupNames.grow(1);
         }
 
@@ -88,16 +89,19 @@ private:
         void reset()
         {
             m_captureGroupNames.clear();
+            m_nestedCaptureGroupNames.clear();
+            m_nestedCaptureGroupNames.grow(1);
             m_activeCaptureGroupNames.clear();
             m_activeCaptureGroupNames.grow(1);
         }
 
         void nextAlternative()
         {
+            m_nestedCaptureGroupNames.last().formUnion(m_activeCaptureGroupNames.last());
             m_activeCaptureGroupNames.last().clear();
 
             // For nested parenthesis, we need to seed the new alternative with the already seen
-            // named captures for the encompassing alternative.
+            // named captures from the containing alternative.
             if (m_activeCaptureGroupNames.size() > 1)
                 m_activeCaptureGroupNames.last().formUnion(m_activeCaptureGroupNames[m_activeCaptureGroupNames.size() - 2]);
         }
@@ -105,23 +109,37 @@ private:
         void pushParenthesis()
         {
             auto currentTop = m_activeCaptureGroupNames.last();
+            m_nestedCaptureGroupNames.append(GroupNameHashSet());
             m_activeCaptureGroupNames.append(currentTop);
         }
 
         void popParenthesis()
         {
+            ASSERT(m_nestedCaptureGroupNames.size() > 1);
             ASSERT(m_activeCaptureGroupNames.size() > 1);
+            m_nestedCaptureGroupNames.last().formUnion(m_activeCaptureGroupNames.last());
+
+            // Add all the names seen in this parenthesis to the containing alternative.
+            m_activeCaptureGroupNames[m_activeCaptureGroupNames.size() - 2].formUnion(m_nestedCaptureGroupNames.last());
+
+            m_nestedCaptureGroupNames.removeLast();
             m_activeCaptureGroupNames.removeLast();
         }
 
         GroupNameHashSet::AddResult add(String name)
         {
             m_captureGroupNames.add(name);
+
+            // If the name is not new, the caller should flag a syntax error.
             return m_activeCaptureGroupNames.last().add(name);
         }
 
     private:
+        // Names seen in the whole expression up to this point.
         GroupNameHashSet m_captureGroupNames;
+        // All active names from prior alternatives at this nesting level.
+        Vector<GroupNameHashSet, 1> m_nestedCaptureGroupNames;
+        // Names seen in containing disjunction / alternative and the current alternative.
         Vector<GroupNameHashSet, 1> m_activeCaptureGroupNames;
     };
 

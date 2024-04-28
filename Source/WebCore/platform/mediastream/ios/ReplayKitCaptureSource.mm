@@ -80,7 +80,7 @@ using namespace WebCore;
 
 #if !RELEASE_LOG_DISABLED
     if (_callback->loggerPtr()) {
-        auto identifier = Logger::LogSiteIdentifier("ReplayKitCaptureSource", "observeValueForKeyPath", _callback->logIdentifier());
+        auto identifier = Logger::LogSiteIdentifier("ReplayKitCaptureSource"_s, "observeValueForKeyPath"_s, _callback->logIdentifier());
         RetainPtr<NSString> valueString = adoptNS([[NSString alloc] initWithFormat:@"%@", newValue]);
         _callback->logger().logAlways(_callback->logChannel(), identifier, willChange ? "will" : "did", " change '", [keyPath UTF8String], "' to ", [valueString.get() UTF8String]);
     }

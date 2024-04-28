@@ -128,7 +128,6 @@ private:
     void closeActivePaymentHandler();
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final { return "PaymentRequest"; }
     void stop() final;
     void suspend(ReasonForSuspension) final;
 

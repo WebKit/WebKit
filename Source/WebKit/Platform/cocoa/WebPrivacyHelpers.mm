@@ -217,8 +217,13 @@ void LinkDecorationFilteringController::updateStrings(CompletionHandler<void()>&
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request query parameters from WebPrivacy.");
         else {
             auto rules = [data rules];
-            for (WPLinkFilteringRule *rule : rules)
-                result.append(WebCore::LinkDecorationFilteringData { rule.domain, [rule respondsToSelector:@selector(path)] ? rule.path : @"", rule.queryParameter });
+            for (WPLinkFilteringRule *rule : rules) {
+                auto domain = WebCore::RegistrableDomain { URL { makeString("http://", String { rule.domain }) } };
+                // FIXME: This should be removed with rdar://127137181
+                if ([rule.domain hasPrefix:@"http://"])
+                    domain = WebCore::RegistrableDomain { URL { String { rule.domain } } };
+                result.append(WebCore::LinkDecorationFilteringData { WTFMove(domain), [rule respondsToSelector:@selector(path)] ? rule.path : @"", rule.queryParameter });
+            }
             setCachedStrings(WTFMove(result));
         }
 
@@ -259,8 +264,13 @@ void requestLinkDecorationFilteringData(LinkFilteringRulesCallback&& callback)
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request allowed query parameters from WebPrivacy.");
         else {
             auto rules = [data rules];
-            for (WPLinkFilteringRule *rule : rules)
-                result.append(WebCore::LinkDecorationFilteringData { rule.domain, { }, rule.queryParameter });
+            for (WPLinkFilteringRule *rule : rules) {
+                auto domain = WebCore::RegistrableDomain { URL { makeString("http://", String { rule.domain }) } };
+                // FIXME: This should be removed with rdar://127137181
+                if ([rule.domain hasPrefix:@"http://"])
+                    domain = WebCore::RegistrableDomain { URL { String { rule.domain } } };
+                result.append(WebCore::LinkDecorationFilteringData { WTFMove(domain), { }, rule.queryParameter });
+            }
         }
 
         auto callbacks = std::exchange(lookupCallbacks.get(), { });

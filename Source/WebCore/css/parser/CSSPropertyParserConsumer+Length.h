@@ -38,6 +38,19 @@ class CSSParserTokenRange;
 
 namespace CSSPropertyParserHelpers {
 
+inline bool shouldAcceptUnitlessValue(double value, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
+{
+    // FIXME: Presentational HTML attributes shouldn't use the CSS parser for lengths.
+
+    if (!value && unitlessZero == UnitlessZeroQuirk::Allow)
+        return true;
+
+    if (isUnitlessValueParsingEnabledForMode(parserMode))
+        return true;
+
+    return parserMode == HTMLQuirksMode && unitless == UnitlessQuirk::Allow;
+}
+
 // MARK: - Primitive value consumers for callers that know the token type.
 
 // MARK: Length (raw)

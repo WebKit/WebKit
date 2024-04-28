@@ -98,8 +98,8 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
         context.translate(coordinateSystemOriginTranslation);
 
     AffineTransform contentTransform;
-    auto& maskElement = this->maskElement();
-    if (maskElement.maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+    Ref maskElement = this->maskElement();
+    if (maskElement->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         contentTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
         contentTransform.scale(objectBoundingBox.width(), objectBoundingBox.height());
     }
@@ -112,7 +112,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
 
     Ref svgStyle = style().svgStyle();
     if (svgStyle->colorInterpolation() == ColorInterpolation::LinearRGB) {
-#if USE(CG)
+#if USE(CG) || USE(SKIA)
         maskColorSpace = DestinationColorSpace::LinearSRGB();
 #endif
         drawColorSpace = DestinationColorSpace::LinearSRGB();
@@ -133,7 +133,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     if (missingMaskerData) {
         checkedLayer()->paintSVGResourceLayer(maskImage->context(), contentTransform);
 
-#if !USE(CG)
+#if !USE(CG) && !USE(SKIA)
         maskImage->transformToColorSpace(drawColorSpace);
 #else
         UNUSED_PARAM(drawColorSpace);

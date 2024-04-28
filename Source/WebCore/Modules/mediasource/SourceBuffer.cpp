@@ -567,11 +567,6 @@ bool SourceBuffer::virtualHasPendingActivity() const
     return m_source;
 }
 
-const char* SourceBuffer::activeDOMObjectName() const
-{
-    return "SourceBuffer";
-}
-
 bool SourceBuffer::isRemoved() const
 {
     return !m_source;

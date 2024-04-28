@@ -216,26 +216,26 @@ public:
         return builder.toString();
     }
 
-    static const char* prefixForTransformType(SVGTransformType type)
+    static ASCIILiteral prefixForTransformType(SVGTransformType type)
     {
         switch (type) {
         case SVG_TRANSFORM_UNKNOWN:
-            return "";
+            return ""_s;
         case SVG_TRANSFORM_MATRIX:
-            return "matrix(";
+            return "matrix("_s;
         case SVG_TRANSFORM_TRANSLATE:
-            return "translate(";
+            return "translate("_s;
         case SVG_TRANSFORM_SCALE:
-            return "scale(";
+            return "scale("_s;
         case SVG_TRANSFORM_ROTATE:
-            return "rotate(";
+            return "rotate("_s;
         case SVG_TRANSFORM_SKEWX:
-            return "skewX(";
+            return "skewX("_s;
         case SVG_TRANSFORM_SKEWY:
-            return "skewY(";
+            return "skewY("_s;
         }
         ASSERT_NOT_REACHED();
-        return "";
+        return ""_s;
     }
 
 private:

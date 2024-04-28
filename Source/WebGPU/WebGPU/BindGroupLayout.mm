@@ -59,7 +59,6 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
     } else
         descriptor.dataType = MTLDataTypePointer;
 
-    // FIXME: Handle minBindingSize.
     switch (bufferType) {
     case WGPUBufferBindingType_Uniform:
     case WGPUBufferBindingType_ReadOnlyStorage:
@@ -263,7 +262,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             descriptors[3] = createArgumentDescriptor(bufferLayout, *this, entry);
             bindingLayout = WGPUExternalTextureBindingLayout();
         } else if (entry.buffer.type == static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_ArrayLength)) {
-            slotForEntry.set(entry.buffer.minBindingSize, entry.binding);
+            slotForEntry.set(entry.buffer.bufferSizeForBinding, entry.binding);
             hasCompilerGeneratedArrayLengths = true;
             continue;
         } else {
@@ -462,7 +461,7 @@ NSString* BindGroupLayout::errorValidatingDynamicOffsets(const uint32_t* dynamic
 
 static bool isEqual(const WGPUBufferBindingLayout& entry, const WGPUBufferBindingLayout& otherEntry)
 {
-    return entry.type == otherEntry.type && entry.hasDynamicOffset == otherEntry.hasDynamicOffset && entry.minBindingSize == otherEntry.minBindingSize;
+    return entry.type == otherEntry.type && entry.hasDynamicOffset == otherEntry.hasDynamicOffset && entry.minBindingSize == otherEntry.minBindingSize && entry.bufferSizeForBinding == otherEntry.bufferSizeForBinding;
 }
 static bool isEqual(const WGPUSamplerBindingLayout& entry, const WGPUSamplerBindingLayout& otherEntry)
 {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Peter Kelly <pmk@post.com>
- * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
@@ -363,7 +363,7 @@ static int matchFunc(const char*)
 {
     // Only match loads initiated due to uses of libxml2 from within XMLDocumentParser to avoid
     // interfering with client applications that also use libxml2.  http://bugs.webkit.org/show_bug.cgi?id=17353
-    return XMLDocumentParserScope::currentCachedResourceLoader && libxmlLoaderThread == &Thread::current();
+    return XMLDocumentParserScope::currentCachedResourceLoader() && libxmlLoaderThread == &Thread::current();
 }
 
 class OffsetBuffer {
@@ -444,16 +444,21 @@ static bool shouldAllowExternalLoad(const URL& url)
     if (startsWithLettersIgnoringASCIICase(urlString, "http://www.w3.org/graphics/svg"_s))
         return false;
 
+    // This will crash due a missing XMLDocumentParserScope object in WebKit, or when
+    // a non-WebKit, in-process framework/library uses libxml2 off the main thread.
+    ASSERT(!!XMLDocumentParserScope::currentCachedResourceLoader());
+
     // The libxml doesn't give us a lot of context for deciding whether to
     // allow this request.  In the worst case, this load could be for an
     // external entity and the resulting document could simply read the
     // retrieved content.  If we had more context, we could potentially allow
     // the parser to load a DTD.  As things stand, we take the conservative
     // route and allow same-origin requests only.
-    if (!XMLDocumentParserScope::currentCachedResourceLoader || !XMLDocumentParserScope::currentCachedResourceLoader->document())
+    RefPtr currentCachedResourceLoader = XMLDocumentParserScope::currentCachedResourceLoader().get();
+    if (!currentCachedResourceLoader || !currentCachedResourceLoader->document())
         return false;
-    if (!XMLDocumentParserScope::currentCachedResourceLoader->document()->securityOrigin().canRequest(url, OriginAccessPatternsForWebProcess::singleton())) {
-        XMLDocumentParserScope::currentCachedResourceLoader->printAccessDeniedMessage(url);
+    if (!currentCachedResourceLoader->document()->securityOrigin().canRequest(url, OriginAccessPatternsForWebProcess::singleton())) {
+        currentCachedResourceLoader->printAccessDeniedMessage(url);
         return false;
     }
 
@@ -462,11 +467,14 @@ static bool shouldAllowExternalLoad(const URL& url)
 
 static void* openFunc(const char* uri)
 {
-    ASSERT(XMLDocumentParserScope::currentCachedResourceLoader);
+    ASSERT(XMLDocumentParserScope::currentCachedResourceLoader());
     ASSERT(libxmlLoaderThread == &Thread::current());
 
-    CachedResourceLoader& cachedResourceLoader = *XMLDocumentParserScope::currentCachedResourceLoader;
-    Document* document = cachedResourceLoader.document();
+    RefPtr cachedResourceLoader = XMLDocumentParserScope::currentCachedResourceLoader().get();
+    if (!cachedResourceLoader)
+        return &globalDescriptor;
+
+    RefPtr document = cachedResourceLoader->document();
     // Same logic as Document::completeURL(). Keep them in sync.
     auto* encoding = (document && document->decoder()) ? document->decoder()->encodingForURLParsing() : nullptr;
     URL url(document ? document->fallbackBaseURL() : URL(), String::fromLatin1(uri), encoding);
@@ -482,11 +490,11 @@ static void* openFunc(const char* uri)
         XMLDocumentParserScope scope(nullptr);
         // FIXME: We should restore the original global error handler as well.
 
-        if (cachedResourceLoader.frame()) {
+        if (cachedResourceLoader->frame()) {
             FetchOptions options;
             options.mode = FetchOptions::Mode::SameOrigin;
             options.credentials = FetchOptions::Credentials::Include;
-            cachedResourceLoader.frame()->loader().loadResourceSynchronously(url, ClientCredentialPolicy::MayAskClientForCredentials, options, { }, error, response, data);
+            cachedResourceLoader->frame()->loader().loadResourceSynchronously(url, ClientCredentialPolicy::MayAskClientForCredentials, options, { }, error, response, data);
 
             if (response.url().isEmpty()) {
                 if (Page* page = document ? document->page() : nullptr)
@@ -1150,9 +1158,7 @@ static xmlEntityPtr sharedXHTMLEntity()
 static size_t convertUTF16EntityToUTF8(std::span<const UChar> utf16Entity, char* target, size_t targetSize)
 {
     const char* originalTarget = target;
-    auto start = utf16Entity.data();
-    auto end = start + utf16Entity.size();
-    auto conversionResult = WTF::Unicode::convertUTF16ToUTF8(&start, end, &target, target + targetSize);
+    auto conversionResult = WTF::Unicode::convertUTF16ToUTF8(utf16Entity, &target, target + targetSize);
     if (conversionResult != WTF::Unicode::ConversionResult::Success)
         return 0;
 
@@ -1322,7 +1328,7 @@ void XMLDocumentParser::doEnd()
             // Tell libxml we're done.
             {
                 XMLDocumentParserScope scope(&document()->cachedResourceLoader());
-                xmlParseChunk(context(), 0, 0, 1);
+                xmlParseChunk(context(), nullptr, 0, 1);
             }
 
             m_context = nullptr;
@@ -1372,12 +1378,12 @@ xmlDocPtr xmlDocPtrForString(CachedResourceLoader& cachedResourceLoader, const S
     // good error messages.
 
     const bool is8Bit = source.is8Bit();
-    const char* characters = is8Bit ? reinterpret_cast<const char*>(source.characters8()) : reinterpret_cast<const char*>(source.characters16());
+    auto characters = is8Bit ? spanReinterpretCast<const char>(source.span8()) : spanReinterpretCast<const char>(source.span16());
     size_t sizeInBytes = source.length() * (is8Bit ? sizeof(LChar) : sizeof(UChar));
     const char* encoding = is8Bit ? "iso-8859-1" : nativeEndianUTF16Encoding();
 
     XMLDocumentParserScope scope(&cachedResourceLoader, errorFunc);
-    return xmlReadMemory(characters, sizeInBytes, url.latin1().data(), encoding, XSLT_PARSE_OPTIONS);
+    return xmlReadMemory(characters.data(), sizeInBytes, url.latin1().data(), encoding, XSLT_PARSE_OPTIONS);
 }
 #endif
 

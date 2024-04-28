@@ -61,7 +61,7 @@ public:
     void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
     const Logger& logger() const { return m_logger; };
     const void* logIdentifier() const { return m_logIdentifier; }
-    const char* logClassName() const { return "CDMPrivateFairPlayStreaming"; }
+    ASCIILiteral logClassName() const { return "CDMPrivateFairPlayStreaming"_s; }
 #endif
 
     Vector<AtomString> supportedInitDataTypes() const override;

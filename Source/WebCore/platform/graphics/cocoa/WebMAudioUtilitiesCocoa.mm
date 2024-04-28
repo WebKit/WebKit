@@ -48,7 +48,7 @@
 namespace WebCore {
 
 #if ENABLE(VORBIS) || ENABLE(OPUS)
-static bool registerDecoderFactory(const char* decoderName, OSType decoderType)
+static bool registerDecoderFactory(ASCIILiteral decoderName, OSType decoderType)
 {
     AudioComponentDescription desc { kAudioDecoderComponentType, decoderType, 'appl', kAudioComponentFlag_SandboxSafe, 0 };
     AudioComponent comp = PAL::AudioComponentFindNext(0, &desc);
@@ -61,7 +61,7 @@ static bool registerDecoderFactory(const char* decoderName, OSType decoderType)
     if (!handle)
         return false;
 
-    AudioComponentFactoryFunction decoderFactory = reinterpret_cast<AudioComponentFactoryFunction>(dlsym(handle, decoderName));
+    AudioComponentFactoryFunction decoderFactory = reinterpret_cast<AudioComponentFactoryFunction>(dlsym(handle, decoderName.characters()));
     if (!decoderFactory)
         return false;
 
@@ -379,7 +379,7 @@ bool registerOpusDecoderIfNeeded()
 
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        available = registerDecoderFactory("ACOpusDecoderFactory", kAudioFormatOpus);
+        available = registerDecoderFactory("ACOpusDecoderFactory"_s, kAudioFormatOpus);
     });
 
     return available;
@@ -489,7 +489,7 @@ bool registerVorbisDecoderIfNeeded()
 
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        available = registerDecoderFactory("ACVorbisDecoderFactory", kAudioFormatVorbis);
+        available = registerDecoderFactory("ACVorbisDecoderFactory"_s, kAudioFormatVorbis);
     });
 
     return available;

@@ -125,7 +125,7 @@ void BackingStore::incorporateUpdate(UpdateInfo&& updateInfo)
     }
 #elif USE(SKIA)
     cairo_surface_flush(m_surface.get());
-    auto imageInfo = SkImageInfo::MakeN32Premul(cairo_image_surface_get_width(m_surface.get()), cairo_image_surface_get_height(m_surface.get()));
+    auto imageInfo = SkImageInfo::MakeN32Premul(cairo_image_surface_get_width(m_surface.get()), cairo_image_surface_get_height(m_surface.get()) , SkColorSpace::MakeSRGB());
     auto surface = SkSurfaces::WrapPixels(imageInfo, cairo_image_surface_get_data(m_surface.get()), cairo_image_surface_get_stride(m_surface.get()), nullptr);
     SkCanvas* canvas = surface ? surface->getCanvas() : nullptr;
     if (!canvas)

@@ -466,11 +466,6 @@ void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifie
         return;
     }
 
-    if (!tab->extensionHasPermission()) {
-        completionHandler(toWebExtensionError(apiName, nil, @"this extension does not have access to this tab"));
-        return;
-    }
-
     auto targetContentWorldType = isURLForThisExtension(tab->url()) ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript;
 
     auto processes = tab->processes(WebExtensionEventListenerType::RuntimeOnMessage, targetContentWorldType);
@@ -494,11 +489,6 @@ void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, W
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
         completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
-        return;
-    }
-
-    if (!tab->extensionHasPermission()) {
-        completionHandler(toWebExtensionError(apiName, nil, @"this extension does not have access to this tab"));
         return;
     }
 

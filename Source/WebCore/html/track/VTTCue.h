@@ -262,7 +262,7 @@ private:
     const Logger& logger() const final { return *m_logger; }
     const void* logIdentifier() const final;
     WTFLogChannel& logChannel() const final;
-    const char* logClassName() const final { return "VTTCue"; }
+    ASCIILiteral logClassName() const final { return "VTTCue"_s; }
 #endif
 
     String m_content;

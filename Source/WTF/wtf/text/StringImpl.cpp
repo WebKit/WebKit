@@ -1569,24 +1569,22 @@ Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(st
     ASSERT(bufferVector.size() == span.size() * 3);
 
     char* buffer = bufferVector.data();
-    const UChar* characters = span.data();
-    const UChar* const charactersEnd = characters + span.size();
     char* const bufferEnd = buffer + bufferVector.size();
 
     switch (mode) {
     case StrictConversionReplacingUnpairedSurrogatesWithFFFD: {
-        while (characters < charactersEnd) {
+        while (!span.empty()) {
             // Use strict conversion to detect unpaired surrogates.
-            auto result = convertUTF16ToUTF8(&characters, charactersEnd, &buffer, bufferEnd);
+            auto result = convertUTF16ToUTF8(span, &buffer, bufferEnd);
             ASSERT(result != ConversionResult::TargetExhausted);
             // Conversion fails when there is an unpaired surrogate.
             // Put replacement character (U+FFFD) instead of the unpaired surrogate.
             if (result != ConversionResult::Success) {
-                ASSERT(U16_IS_SURROGATE(*characters));
+                ASSERT(U16_IS_SURROGATE(span.front()));
                 // There should be room left, since one UChar hasn't been converted.
                 ASSERT((buffer + 3) <= bufferEnd);
                 putUTF8Triple(buffer, replacementCharacter);
-                ++characters;
+                span = span.subspan(1);
             }
         }
         break;
@@ -1594,16 +1592,16 @@ Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(st
     case StrictConversion:
     case LenientConversion: {
         bool strict = mode == StrictConversion;
-        auto conversionResult = convertUTF16ToUTF8(&characters, charactersEnd, &buffer, bufferEnd, strict);
+        auto conversionResult = convertUTF16ToUTF8(span, &buffer, bufferEnd, strict);
         switch (conversionResult) {
         case ConversionResult::Success:
             break;
         case ConversionResult::SourceExhausted:
             if (strict)
                 return makeUnexpected(UTF8ConversionError::SourceExhausted);
-            ASSERT(characters + 1 == charactersEnd);
-            ASSERT(U16_IS_SURROGATE(*characters));
-            putUTF8Triple(buffer, *characters);
+            ASSERT(span.size() == 1);
+            ASSERT(U16_IS_SURROGATE(span.front()));
+            putUTF8Triple(buffer, span.front());
                 break;
         case ConversionResult::TargetExhausted:
             // (length * 3) should be sufficient for any conversion.

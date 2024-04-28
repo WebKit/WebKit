@@ -75,7 +75,6 @@ private:
     void cookiesDeleted(const String& host, const Vector<Cookie>&) final;
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
     void stop() final;
     bool virtualHasPendingActivity() const final;
 

@@ -87,6 +87,8 @@
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PluginDocument.h>
 #import <WebCore/PointerCharacteristics.h>
+#import <WebCore/RemoteFrameView.h>
+#import <WebCore/RemoteUserInputEventData.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderStyle.h>
@@ -757,14 +759,12 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     if (!range)
         return;
 
-    auto attributedSelection = attributedString(*range).nsAttributedString();
-    if (!attributedSelection)
+    auto selectionString = attributedString(*range);
+    if (selectionString.isNull())
         return;
 
-    NSData *selectionData = [attributedSelection RTFDFromRange:NSMakeRange(0, [attributedSelection length]) documentAttributes:@{ }];
-
     flushPendingEditorStateUpdate();
-    send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, makeVector(selectionData), phoneNumbers, selection.selection().isContentEditable()), UserData()));
+    send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, WTFMove(selectionString), phoneNumbers, selection.selection().isContentEditable()), UserData()));
 }
 
 void WebPage::handleImageServiceClick(const IntPoint& point, Image& image, HTMLImageElement& element)
@@ -818,22 +818,25 @@ OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailableP
     return PointerCharacteristics::Fine;
 }
 
-void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locationInViewCoordinates)
+void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier frameID, WebCore::FloatPoint locationInViewCoordinates)
 {
     layoutIfNeeded();
 
-    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
-    if (!localMainFrame)
+    RefPtr currentFrame = WebProcess::singleton().webFrame(frameID);
+    if (!currentFrame)
         return;
+    RefPtr localCurrentFrame = currentFrame->coreLocalFrame();
+    if (!localCurrentFrame)
+        return;
+    RefPtr currentFrameView = localCurrentFrame->view();
 
-    auto& mainFrame = *localMainFrame;
-    if (!mainFrame.view() || !mainFrame.view()->renderView()) {
+    if (!currentFrameView || !currentFrameView->renderView()) {
         send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(WebHitTestResultData(), false, UserData()));
         return;
     }
 
-    auto locationInContentCoordinates = mainFrame.view()->rootViewToContents(roundedIntPoint(locationInViewCoordinates));
-    auto hitTestResult = mainFrame.eventHandler().hitTestResultAtPoint(locationInContentCoordinates, {
+    auto locationInContentCoordinates = localCurrentFrame->view()->rootViewToContents(roundedIntPoint(locationInViewCoordinates));
+    auto hitTestResult = localCurrentFrame->eventHandler().hitTestResultAtPoint(locationInContentCoordinates, {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::Active,
         HitTestRequest::Type::DisallowUserAgentShadowContentExceptForImageOverlays,
@@ -841,13 +844,24 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     });
 
     bool immediateActionHitTestPreventsDefault = false;
+
     RefPtr element = hitTestResult.targetElement();
 
-    mainFrame.eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
+    localCurrentFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
     if (element)
         immediateActionHitTestPreventsDefault = element->dispatchMouseForceWillBegin();
 
     WebHitTestResultData immediateActionResult(hitTestResult, { });
+
+    auto subframe = EventHandler::subframeForTargetNode(hitTestResult.protectedTargetNode().get());
+    if (auto* remoteFrame = dynamicDowncast<RemoteFrame>(subframe).get()) {
+        if (RefPtr remoteFrameView = remoteFrame->view()) {
+            immediateActionResult.remoteUserInputEventData = RemoteUserInputEventData {
+                remoteFrame->frameID(),
+                remoteFrameView->rootViewToContents(roundedIntPoint(locationInViewCoordinates))
+            };
+        }
+    }
 
     RefPtr focusedOrMainFrame = corePage()->focusController().focusedOrMainFrame();
     if (!focusedOrMainFrame)
@@ -867,7 +881,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
         immediateActionResult.linkTextIndicator = TextIndicator::createWithRange(elementRange, indicatorOptions(elementRange), TextIndicatorPresentationTransition::FadeIn);
     }
 
-    if (auto lookupResult = lookupTextAtLocation(locationInViewCoordinates)) {
+    if (auto lookupResult = lookupTextAtLocation(frameID, locationInViewCoordinates)) {
         auto lookupRange = WTFMove(*lookupResult);
         immediateActionResult.lookupText = plainText(lookupRange);
         if (auto* node = hitTestResult.innerNode()) {
@@ -928,13 +942,14 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(immediateActionResult, immediateActionHitTestPreventsDefault, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-std::optional<WebCore::SimpleRange> WebPage::lookupTextAtLocation(FloatPoint locationInViewCoordinates)
+std::optional<WebCore::SimpleRange> WebPage::lookupTextAtLocation(FrameIdentifier frameID, FloatPoint locationInViewCoordinates)
 {
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame || !localMainFrame->view() || !localMainFrame->view()->renderView())
+    RefPtr currentFrame = WebProcess::singleton().webFrame(frameID);
+    RefPtr localCurrentFrame = dynamicDowncast<LocalFrame>(currentFrame->coreFrame());
+    if (!localCurrentFrame || !localCurrentFrame->view() || !localCurrentFrame->view()->renderView())
         return std::nullopt;
 
-    return DictionaryLookup::rangeAtHitTestResult(localMainFrame->eventHandler().hitTestResultAtPoint(localMainFrame->view()->windowToContents(roundedIntPoint(locationInViewCoordinates)), {
+    return DictionaryLookup::rangeAtHitTestResult(localCurrentFrame->eventHandler().hitTestResultAtPoint(localCurrentFrame->view()->windowToContents(roundedIntPoint(locationInViewCoordinates)), {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::Active,
         HitTestRequest::Type::DisallowUserAgentShadowContentExceptForImageOverlays,

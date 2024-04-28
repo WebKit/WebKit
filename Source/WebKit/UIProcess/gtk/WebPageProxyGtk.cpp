@@ -39,6 +39,7 @@
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/PlatformEvent.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/glib/Sandbox.h>
 
 namespace WebKit {
 
@@ -54,7 +55,9 @@ GtkWidget* WebPageProxy::viewWidget()
 void WebPageProxy::bindAccessibilityTree(const String& plugID)
 {
 #if USE(GTK4)
-    webkitWebViewBaseSetPlugID(WEBKIT_WEB_VIEW_BASE(viewWidget()), plugID);
+    // FIXME(273245): Make a11y work under Flatpak.
+    if (!isInsideFlatpak())
+        webkitWebViewBaseSetPlugID(WEBKIT_WEB_VIEW_BASE(viewWidget()), plugID);
 #else
     auto* accessible = gtk_widget_get_accessible(viewWidget());
     atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(plugID.utf8().data()));

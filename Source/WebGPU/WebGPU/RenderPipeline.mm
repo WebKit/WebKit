@@ -415,75 +415,75 @@ static MTLVertexStepFunction stepFunction(WGPUVertexStepMode stepMode, auto arra
     }
 }
 
-static const char* name(WGPUVertexFormat format)
+static ASCIILiteral name(WGPUVertexFormat format)
 {
     switch (format) {
     case WGPUVertexFormat_Uint8x2:
-        return "UChar2";
+        return "UChar2"_s;
     case WGPUVertexFormat_Uint8x4:
-        return "UChar4";
+        return "UChar4"_s;
     case WGPUVertexFormat_Sint8x2:
-        return "Char2";
+        return "Char2"_s;
     case WGPUVertexFormat_Sint8x4:
-        return "Char4";
+        return "Char4"_s;
     case WGPUVertexFormat_Unorm8x2:
-        return "UChar2Normalized";
+        return "UChar2Normalized"_s;
     case WGPUVertexFormat_Unorm8x4:
-        return "UChar4Normalized";
+        return "UChar4Normalized"_s;
     case WGPUVertexFormat_Snorm8x2:
-        return "Char2Normalized";
+        return "Char2Normalized"_s;
     case WGPUVertexFormat_Snorm8x4:
-        return "Char4Normalized";
+        return "Char4Normalized"_s;
     case WGPUVertexFormat_Uint16x2:
-        return "UShort2";
+        return "UShort2"_s;
     case WGPUVertexFormat_Uint16x4:
-        return "UShort4";
+        return "UShort4"_s;
     case WGPUVertexFormat_Sint16x2:
-        return "Short2";
+        return "Short2"_s;
     case WGPUVertexFormat_Sint16x4:
-        return "Short4";
+        return "Short4"_s;
     case WGPUVertexFormat_Unorm16x2:
-        return "UShort2Normalized";
+        return "UShort2Normalized"_s;
     case WGPUVertexFormat_Unorm16x4:
-        return "UShort4Normalized";
+        return "UShort4Normalized"_s;
     case WGPUVertexFormat_Snorm16x2:
-        return "Short2Normalized";
+        return "Short2Normalized"_s;
     case WGPUVertexFormat_Snorm16x4:
-        return "Short4Normalized";
+        return "Short4Normalized"_s;
     case WGPUVertexFormat_Float16x2:
-        return "Half2";
+        return "Half2"_s;
     case WGPUVertexFormat_Float16x4:
-        return "Half4";
+        return "Half4"_s;
     case WGPUVertexFormat_Float32:
-        return "Float";
+        return "Float"_s;
     case WGPUVertexFormat_Float32x2:
-        return "Float2";
+        return "Float2"_s;
     case WGPUVertexFormat_Float32x3:
-        return "Float3";
+        return "Float3"_s;
     case WGPUVertexFormat_Float32x4:
-        return "Float4";
+        return "Float4"_s;
     case WGPUVertexFormat_Uint32:
-        return "UInt";
+        return "UInt"_s;
     case WGPUVertexFormat_Uint32x2:
-        return "UInt2";
+        return "UInt2"_s;
     case WGPUVertexFormat_Uint32x3:
-        return "UInt3";
+        return "UInt3"_s;
     case WGPUVertexFormat_Uint32x4:
-        return "UInt4";
+        return "UInt4"_s;
     case WGPUVertexFormat_Sint32:
-        return "Int";
+        return "Int"_s;
     case WGPUVertexFormat_Sint32x2:
-        return "Int2";
+        return "Int2"_s;
     case WGPUVertexFormat_Sint32x3:
-        return "Int3";
+        return "Int3"_s;
     case WGPUVertexFormat_Sint32x4:
-        return "Int4";
+        return "Int4"_s;
     case WGPUVertexFormat_Unorm10_10_10_2:
-        return "UInt1010102Normalized";
+        return "UInt1010102Normalized"_s;
     case WGPUVertexFormat_Force32:
     case WGPUVertexFormat_Undefined:
         ASSERT_NOT_REACHED();
-        return "none";
+        return "none"_s;
     }
 }
 
@@ -627,7 +627,7 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, 
             WGPUVertexFormat otherFormat = WGPUVertexFormat_Undefined;
             if (it != stageIn.end())
                 otherFormat = it->value;
-            *error = [NSString stringWithFormat:@"!matchesFormat(attribute(%d), format(%s), size(%zu), otherFormat(%d)", shaderLocation, name(attributeFormat), formatSize, otherFormat];
+            *error = [NSString stringWithFormat:@"!matchesFormat(attribute(%d), format(%s), size(%zu), otherFormat(%d)", shaderLocation, name(attributeFormat).characters(), formatSize, otherFormat];
             return nil;
         }
     }
@@ -803,14 +803,14 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
                 continue;
             }
             WGPUBindGroupLayoutEntry newEntry = { };
-            uint64_t minBindingSize = 0;
+            uint64_t bufferSizeForBinding = 0;
             WGPUBufferBindingType bufferTypeOverride = WGPUBufferBindingType_Undefined;
             if (auto& entryName = entry.name; entryName.length()) {
                 if (entryName.endsWith("_ArrayLength"_s)) {
                     bufferTypeOverride = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_ArrayLength);
                     auto shortName = entryName.substring(2, entryName.length() - (sizeof("_ArrayLength") + 1));
                     if (auto it = entryMap.find(shortName); it != entryMap.end())
-                        minBindingSize = it->value;
+                        bufferSizeForBinding = it->value;
                 } else
                     entryMap.set(entryName, entry.webBinding);
             }
@@ -823,7 +823,8 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
                     .nextInChain = nullptr,
                     .type = (bufferTypeOverride != WGPUBufferBindingType_Undefined) ? bufferTypeOverride : convertBindingType(bufferBinding.type),
                     .hasDynamicOffset = bufferBinding.hasDynamicOffset,
-                    .minBindingSize = minBindingSize ?: bufferBinding.minBindingSize,
+                    .minBindingSize = bufferBinding.minBindingSize,
+                    .bufferSizeForBinding = bufferSizeForBinding,
                 };
             }, [&](const WGSL::SamplerBindingLayout& sampler) {
                 newEntry.sampler = WGPUSamplerBindingLayout {
@@ -900,32 +901,32 @@ static std::pair<Ref<RenderPipeline>, NSString*> returnInvalidRenderPipeline(Web
     return returnInvalidRenderPipeline(object, isAsync, static_cast<NSString*>(error));
 }
 
-static constexpr const char* name(WGPUCompareFunction compare)
+static constexpr ASCIILiteral name(WGPUCompareFunction compare)
 {
     switch (compare) {
-    case WGPUCompareFunction_Undefined: return "undefined";
-    case WGPUCompareFunction_Never: return "never";
-    case WGPUCompareFunction_Less: return "less";
-    case WGPUCompareFunction_LessEqual: return "less-equal";
-    case WGPUCompareFunction_Greater: return "greater";
-    case WGPUCompareFunction_GreaterEqual: return "greater-equal";
-    case WGPUCompareFunction_Equal: return "equal";
-    case WGPUCompareFunction_NotEqual: return "not-equal";
-    case WGPUCompareFunction_Always: return "always";
+    case WGPUCompareFunction_Undefined: return "undefined"_s;
+    case WGPUCompareFunction_Never: return "never"_s;
+    case WGPUCompareFunction_Less: return "less"_s;
+    case WGPUCompareFunction_LessEqual: return "less-equal"_s;
+    case WGPUCompareFunction_Greater: return "greater"_s;
+    case WGPUCompareFunction_GreaterEqual: return "greater-equal"_s;
+    case WGPUCompareFunction_Equal: return "equal"_s;
+    case WGPUCompareFunction_NotEqual: return "not-equal"_s;
+    case WGPUCompareFunction_Always: return "always"_s;
     case WGPUCompareFunction_Force32: RELEASE_ASSERT_NOT_REACHED();
     }
 }
-static constexpr const char* name(WGPUStencilOperation operation)
+static constexpr ASCIILiteral name(WGPUStencilOperation operation)
 {
     switch (operation) {
-    case WGPUStencilOperation_Keep: return "keep";
-    case WGPUStencilOperation_Zero: return "zero";
-    case WGPUStencilOperation_Replace: return "replace";
-    case WGPUStencilOperation_Invert: return "invert";
-    case WGPUStencilOperation_IncrementClamp: return "increment-clamp";
-    case WGPUStencilOperation_DecrementClamp: return "decrement-clamp";
-    case WGPUStencilOperation_IncrementWrap: return "increment-wrap";
-    case WGPUStencilOperation_DecrementWrap: return "decrement-wrap";
+    case WGPUStencilOperation_Keep: return "keep"_s;
+    case WGPUStencilOperation_Zero: return "zero"_s;
+    case WGPUStencilOperation_Replace: return "replace"_s;
+    case WGPUStencilOperation_Invert: return "invert"_s;
+    case WGPUStencilOperation_IncrementClamp: return "increment-clamp"_s;
+    case WGPUStencilOperation_DecrementClamp: return "decrement-clamp"_s;
+    case WGPUStencilOperation_IncrementWrap: return "increment-wrap"_s;
+    case WGPUStencilOperation_DecrementWrap: return "decrement-wrap"_s;
     case WGPUStencilOperation_Force32: RELEASE_ASSERT_NOT_REACHED();
     }
 }
@@ -947,7 +948,7 @@ static NSString* errorValidatingDepthStencilState(const WGPUDepthStencilState& d
     };
     if (!isDefault(depthStencil.stencilFront) || !isDefault(depthStencil.stencilBack)) {
         if (!Texture::stencilOnlyAspectMetalFormat(depthStencil.format)) {
-            NSString *error = [NSString stringWithFormat:@"missing stencil format - stencilFront: compare = %s, failOp = %s, depthFailOp = %s, passOp = %s, stencilBack: compare = %s, failOp = %s, depthFailOp = %s, passOp = %s", name(depthStencil.stencilFront.compare), name(depthStencil.stencilFront.failOp), name(depthStencil.stencilFront.depthFailOp), name(depthStencil.stencilFront.passOp), name(depthStencil.stencilBack.compare), name(depthStencil.stencilBack.failOp), name(depthStencil.stencilBack.depthFailOp), name(depthStencil.stencilBack.passOp)];
+            NSString *error = [NSString stringWithFormat:@"missing stencil format - stencilFront: compare = %s, failOp = %s, depthFailOp = %s, passOp = %s, stencilBack: compare = %s, failOp = %s, depthFailOp = %s, passOp = %s", name(depthStencil.stencilFront.compare).characters(), name(depthStencil.stencilFront.failOp).characters(), name(depthStencil.stencilFront.depthFailOp).characters(), name(depthStencil.stencilFront.passOp).characters(), name(depthStencil.stencilBack.compare).characters(), name(depthStencil.stencilBack.failOp).characters(), name(depthStencil.stencilBack.depthFailOp).characters(), name(depthStencil.stencilBack.passOp).characters()];
             return ERROR_STRING(error);
         }
     }
@@ -1285,7 +1286,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
     mtlRenderPipelineDescriptor.supportIndirectCommandBuffers = YES;
     auto& deviceLimits = limits();
 
-    const PipelineLayout* pipelineLayout = nullptr;
+    PipelineLayout* pipelineLayout = nullptr;
     Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
     if (descriptor.layout) {
         auto& layout = WebGPU::fromAPI(descriptor.layout);
@@ -1698,6 +1699,8 @@ bool RenderPipeline::colorDepthStencilTargetsMatch(const WGPURenderPassDescripto
             return false;
         auto& texture = *depthStencilView.get();
         if (texture.format() != m_descriptor.depthStencil->format)
+            return false;
+        if (texture.texture().pixelFormat == MTLPixelFormatX32_Stencil8 && m_descriptor.depthStencil->format == WGPUTextureFormat_Stencil8)
             return false;
         if (texture.sampleCount() != m_descriptor.multisample.count)
             return false;

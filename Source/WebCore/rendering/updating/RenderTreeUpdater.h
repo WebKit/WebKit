@@ -57,7 +57,7 @@ private:
     class ViewTransition;
 
     void updateRenderTree(ContainerNode& root);
-    void updateTextRenderer(Text&, const Style::TextUpdate*);
+    void updateTextRenderer(Text&, const Style::TextUpdate*, const ContainerNode* root = nullptr);
     void createTextRenderer(Text&, const Style::TextUpdate*);
     void updateElementRenderer(Element&, const Style::ElementUpdate&);
     void updateSVGRenderer(Element&);
@@ -94,7 +94,7 @@ private:
     // FIXME: Use OptionSet.
     enum class TeardownType { Full, FullAfterSlotChange, RendererUpdate, RendererUpdateCancelingAnimations };
     static void tearDownRenderers(Element&, TeardownType, RenderTreeBuilder&);
-    static void tearDownTextRenderer(Text&, RenderTreeBuilder&);
+    static void tearDownTextRenderer(Text&, const ContainerNode* root, RenderTreeBuilder&);
     static void tearDownLeftoverChildrenOfComposedTree(Element&, RenderTreeBuilder&);
     static void tearDownLeftoverPaginationRenderersIfNeeded(Element&, RenderTreeBuilder&);
 

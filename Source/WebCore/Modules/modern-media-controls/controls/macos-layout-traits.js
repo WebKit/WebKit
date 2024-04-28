@@ -42,11 +42,6 @@ class MacOSLayoutTraits extends LayoutTraits
         return "macOS";
     }
 
-    controlsAlwaysAvailable()
-    {
-        return this.isFullscreen;
-    }
-
     controlsNeverAvailable()
     {
         return false;

@@ -28,6 +28,7 @@
 #if USE(LIBDRM)
 
 #include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
 
 #if USE(GBM)
 struct gbm_device;

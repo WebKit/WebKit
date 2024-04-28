@@ -40,7 +40,13 @@ public:
 #endif
 
     WEBCORE_EXPORT explicit DestinationColorSpace(PlatformColorSpace);
+
+#if USE(SKIA)
+    PlatformColorSpaceValue platformColorSpace() const { return m_platformColorSpace; }
+#else
     PlatformColorSpaceValue platformColorSpace() const { return m_platformColorSpace.get(); }
+#endif
+
     PlatformColorSpace serializableColorSpace() const { return m_platformColorSpace; }
 
     WEBCORE_EXPORT std::optional<DestinationColorSpace> asRGB() const;

@@ -160,28 +160,28 @@ static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLaun
 #endif // USE(EXTENSIONKIT)
 
 #if !USE(EXTENSIONKIT) || !PLATFORM(IOS)
-static const char* webContentServiceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
+static ASCIILiteral webContentServiceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
 {
     if (client && client->shouldEnableLockdownMode())
-        return "com.apple.WebKit.WebContent.CaptivePortal";
+        return "com.apple.WebKit.WebContent.CaptivePortal"_s;
 
-    return launchOptions.nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development" : "com.apple.WebKit.WebContent";
+    return launchOptions.nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development"_s : "com.apple.WebKit.WebContent"_s;
 }
 
-static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
+static ASCIILiteral serviceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
 {
     switch (launchOptions.processType) {
     case ProcessLauncher::ProcessType::Web:
         return webContentServiceName(launchOptions, client);
     case ProcessLauncher::ProcessType::Network:
-        return "com.apple.WebKit.Networking";
+        return "com.apple.WebKit.Networking"_s;
 #if ENABLE(GPU_PROCESS)
     case ProcessLauncher::ProcessType::GPU:
-        return "com.apple.WebKit.GPU";
+        return "com.apple.WebKit.GPU"_s;
 #endif
 #if ENABLE(MODEL_PROCESS)
     case ProcessLauncher::ProcessType::Model:
-        return "com.apple.WebKit.Model";
+        return "com.apple.WebKit.Model"_s;
 #endif
     }
 }
@@ -238,7 +238,7 @@ void ProcessLauncher::launchProcess()
                 auto launcher = weakProcessLauncher.get();
                 if (!launcher)
                     return;
-                const char* name = serviceName(launcher->m_launchOptions, launcher->m_client);
+                auto name = serviceName(launcher->m_launchOptions, launcher->m_client);
                 launcher->m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
                 launcher->finishLaunchingProcess(name);
             });
@@ -269,19 +269,19 @@ void ProcessLauncher::launchProcess()
             launcher->m_xpcConnection = WTFMove(xpcConnection);
             launcher->m_process = WTFMove(process);
             launcher->m_launchGrant = WTFMove(launchGrant);
-            launcher->finishLaunchingProcess(name.characters());
+            launcher->finishLaunchingProcess(name);
         });
     };
 
     launchWithExtensionKit(*this, m_launchOptions.processType, m_client, WTFMove(handler));
 #else
-    const char* name = serviceName(m_launchOptions, m_client);
+    auto name = serviceName(m_launchOptions, m_client);
     m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
     finishLaunchingProcess(name);
 #endif
 }
 
-void ProcessLauncher::finishLaunchingProcess(const char* name)
+void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
 {
     uuid_t uuid;
     uuid_generate(uuid);

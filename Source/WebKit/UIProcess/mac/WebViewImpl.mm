@@ -69,6 +69,7 @@
 #import "WKSafeBrowsingWarning.h"
 #import "WKTextIndicatorStyleManager.h"
 #import "WKTextInputWindowController.h"
+#import "WKTextPlaceholder.h"
 #import "WKViewLayoutStrategy.h"
 #import "WKWebViewInternal.h"
 #import "WebBackForwardList.h"
@@ -4545,6 +4546,26 @@ void WebViewImpl::saveBackForwardSnapshotForCurrentItem()
 void WebViewImpl::saveBackForwardSnapshotForItem(WebBackForwardListItem& item)
 {
     m_page->recordNavigationSnapshot(item);
+}
+
+void WebViewImpl::insertTextPlaceholderWithSize(CGSize size, void(^completionHandler)(NSTextPlaceholder *placeholder))
+{
+    m_page->insertTextPlaceholder(WebCore::IntSize { size }, [completionHandler = makeBlockPtr(completionHandler)](const std::optional<WebCore::ElementContext>& placeholder) {
+        if (!placeholder) {
+            completionHandler(nil);
+            return;
+        }
+        completionHandler(adoptNS([[WKTextPlaceholder alloc] initWithElementContext:*placeholder]).get());
+    });
+}
+
+void WebViewImpl::removeTextPlaceholder(NSTextPlaceholder *placeholder, bool willInsertText, void(^completionHandler)())
+{
+    // FIXME: Implement support for willInsertText. See <https://bugs.webkit.org/show_bug.cgi?id=208747>.
+    if (RetainPtr wkTextPlaceholder = dynamic_objc_cast<WKTextPlaceholder>(placeholder))
+        m_page->removeTextPlaceholder([wkTextPlaceholder elementContext], makeBlockPtr(completionHandler));
+    else
+        completionHandler();
 }
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)

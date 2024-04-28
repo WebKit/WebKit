@@ -65,7 +65,7 @@ RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
     return nullptr;
 }
 
-bool AccessibilityController::addNotificationListener(JSValueRef)
+bool AccessibilityController::addNotificationListener(JSContextRef, JSValueRef)
 {
     notImplemented();
     return false;

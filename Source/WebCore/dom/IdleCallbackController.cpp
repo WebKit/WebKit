@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "FrameDestructionObserverInlines.h"
 #include "IdleDeadline.h"
+#include "Page.h"
 #include "Timer.h"
 #include "WindowEventLoop.h"
 

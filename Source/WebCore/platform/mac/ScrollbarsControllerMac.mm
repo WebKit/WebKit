@@ -406,7 +406,6 @@ using WebCore::LogOverlayScrollbars;
     return _scrollbar->supportsUpdateOnSecondaryThread();
 }
 
-#if HAVE(OS_DARK_MODE_SUPPORT)
 - (NSAppearance *)effectiveAppearanceForScrollerImp:(NSScrollerImp *)scrollerImp
 {
     UNUSED_PARAM(scrollerImp);
@@ -421,7 +420,6 @@ using WebCore::LogOverlayScrollbars;
         return appearance;
     return [NSAppearance currentDrawingAppearance];
 }
-#endif
 
 - (void)setUpAlphaAnimation:(RetainPtr<WebScrollbarPartAnimation>&)scrollbarPartAnimation scrollerPainter:(NSScrollerImp *)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
 {

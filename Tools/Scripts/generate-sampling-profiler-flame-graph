@@ -28,6 +28,9 @@ require 'getoptlong'
 
 $rootDirectory = File.expand_path(File.join(File.dirname(__FILE__), "..", ".."))
 
+$flameGraphTitle = ""
+$flameGraphJSBuiltin = false
+
 def render samples, title
     template = <<-RESULT
 <!DOCTYPE html>
@@ -188,15 +191,20 @@ def reconstruct database
         cursor = result
         next if stackTrace["frames"].empty?
         stackTrace["frames"].reverse.map do |frame|
+            jsbuiltin = ""
+            if $flameGraphJSBuiltin
+                flags = frame["flags"]
+                if !flags.nil? && flags & 0b1 != 0
+                    jsbuiltin = "/JSBUILTIN"
+                end
+            end
             hash, category, offset = frame["location"].split(":")
-            cursor = update(cursor, "#{frame["name"]}#{hash}")
+            cursor = update(cursor, "#{frame["name"]}#{hash}#{jsbuiltin}")
         end
         cursor["value"] += 1
     end
     result
 end
-
-$flameGraphTitle = ""
 
 def usage
     puts <<-HELP
@@ -212,24 +220,27 @@ end
 
 GetoptLong.new(
     ['--help', '-h', GetoptLong::NO_ARGUMENT],
-    ['--title', '-t', GetoptLong::REQUIRED_ARGUMENT]
+    ['--title', '-t', GetoptLong::REQUIRED_ARGUMENT],
+    ['--js-builtin', '-b', GetoptLong::NO_ARGUMENT],
 ).each do |opt, arg|
     case opt
     when '--help'
-      usage
+        usage
     when '--title'
-      $flameGraphTitle = arg
+        $flameGraphTitle = arg
+    when '--js-builtin'
+        $flameGraphJSBuiltin = true
     end
 end
 
 def main
-  json = nil
-  if ARGV.empty?
-      json = JSON.parse(STDIN.read)
-  else
-      json = JSON::parse(IO::read(ARGV[0]))
-  end
-  puts render(reconstruct(json), $flameGraphTitle)
+    json = nil
+    if ARGV.empty?
+        json = JSON.parse(STDIN.read)
+    else
+        json = JSON::parse(IO::read(ARGV[0]))
+    end
+    puts render(reconstruct(json), $flameGraphTitle)
 end
 
 main

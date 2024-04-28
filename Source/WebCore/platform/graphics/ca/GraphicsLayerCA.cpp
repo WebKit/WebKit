@@ -2787,21 +2787,21 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
 
 #if !LOG_DISABLED
     if (requiresBacking) {
-        auto reasonForBacking = [&]() -> const char* {
+        auto reasonForBacking = [&] {
             if (m_intersectsCoverageRect)
-                return "intersectsCoverageRect";
+                return "intersectsCoverageRect"_s;
             
             if (!allowsBackingStoreDetaching())
-                return "backing detachment disallowed";
+                return "backing detachment disallowed"_s;
 
             if (commitState.ancestorWithTransformAnimationIntersectsCoverageRect)
-                return "ancestor with transform";
+                return "ancestor with transform"_s;
             
-            return "has transform animation with unknown extent";
+            return "has transform animation with unknown extent"_s;
         };
-        LOG_WITH_STREAM(Layers, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " setBackingStoreAttached: " << requiresBacking << " (" << reasonForBacking() << ")");
+        LOG_WITH_STREAM(Layers, stream << "GraphicsLayerCA "_s << this << " id "_s << primaryLayerID() << " setBackingStoreAttached: "_s << requiresBacking << " ("_s << reasonForBacking() << ')');
     } else
-        LOG_WITH_STREAM(Layers, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " setBackingStoreAttached: " << requiresBacking);
+        LOG_WITH_STREAM(Layers, stream << "GraphicsLayerCA "_s << this << " id "_s << primaryLayerID() << " setBackingStoreAttached: "_s << requiresBacking);
 #endif
 
     m_layer->setBackingStoreAttached(requiresBacking);
@@ -4227,43 +4227,43 @@ void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const
     GraphicsLayer::getDebugBorderInfo(color, width);
 }
 
-const char* GraphicsLayerCA::purposeNameForInnerLayer(PlatformCALayer& layer) const
+ASCIILiteral GraphicsLayerCA::purposeNameForInnerLayer(PlatformCALayer& layer) const
 {
     if (&layer == m_structuralLayer.get())
-        return "structural layer";
+        return "structural layer"_s;
     if (&layer == m_contentsClippingLayer.get())
-        return "contents clipping layer";
+        return "contents clipping layer"_s;
     if (&layer == m_shapeMaskLayer.get())
-        return "shape mask layer";
+        return "shape mask layer"_s;
     if (&layer == m_backdropClippingLayer.get())
-        return "backdrop clipping layer";
+        return "backdrop clipping layer"_s;
     if (&layer == m_contentsLayer.get()) {
         switch (m_contentsLayerPurpose) {
         case ContentsLayerPurpose::None:
-            return "contents layer (none)";
+            return "contents layer (none)"_s;
         case ContentsLayerPurpose::Image:
-            return "contents layer (image)";
+            return "contents layer (image)"_s;
         case ContentsLayerPurpose::Media:
-            return "contents layer (media)";
+            return "contents layer (media)"_s;
         case ContentsLayerPurpose::Canvas:
-            return "contents layer (canvas)";
+            return "contents layer (canvas)"_s;
         case ContentsLayerPurpose::BackgroundColor:
-            return "contents layer (background color)";
+            return "contents layer (background color)"_s;
         case ContentsLayerPurpose::Plugin:
-            return "contents layer (plugin)";
+            return "contents layer (plugin)"_s;
         case ContentsLayerPurpose::Model:
-            return "contents layer (model)";
+            return "contents layer (model)"_s;
         case ContentsLayerPurpose::HostedModel:
-            return "contents layer (hosted model)";
+            return "contents layer (hosted model)"_s;
         case ContentsLayerPurpose::Host:
-            return "contents layer (host)";
+            return "contents layer (host)"_s;
         }
     }
     if (&layer == m_contentsShapeMaskLayer.get())
-        return "contents shape mask layer";
+        return "contents shape mask layer"_s;
     if (&layer == m_backdropLayer.get())
-        return "backdrop layer";
-    return "platform layer";
+        return "backdrop layer"_s;
+    return "platform layer"_s;
 }
 
 void GraphicsLayerCA::dumpInnerLayer(TextStream& ts, PlatformCALayer* layer, OptionSet<PlatformLayerTreeAsTextFlags> flags) const
@@ -4271,29 +4271,29 @@ void GraphicsLayerCA::dumpInnerLayer(TextStream& ts, PlatformCALayer* layer, Opt
     if (!layer)
         return;
 
-    ts << indent << "(" << purposeNameForInnerLayer(*layer) << "\n";
+    ts << indent << '(' << purposeNameForInnerLayer(*layer) << '\n';
 
     {
         TextStream::IndentScope indentScope(ts);
 
         if (flags.contains(PlatformLayerTreeAsTextFlags::Debug))
-            ts << indent << "(id " << layer->layerID() << ")\n";
+            ts << indent << "(id "_s << layer->layerID() << ")\n"_s;
 
-        ts << indent << "(position " << layer->position().x() << " " << layer->position().y() << ")\n";
-        ts << indent << "(bounds " << layer->bounds().width() << " " << layer->bounds().height() << ")\n";
+        ts << indent << "(position "_s << layer->position().x() << ' ' << layer->position().y() << ")\n"_s;
+        ts << indent << "(bounds "_s << layer->bounds().width() << ' ' << layer->bounds().height() << ")\n"_s;
         
         if (layer->opacity() != 1)
-            ts << indent << "(opacity " << layer->opacity() << ")\n";
+            ts << indent << "(opacity "_s << layer->opacity() << ")\n"_s;
 
         if (layer->isHidden())
-            ts << indent << "(hidden)\n";
+            ts << indent << "(hidden)\n"_s;
 
         layer->dumpAdditionalProperties(ts, flags);
 
         if (!flags.contains(PlatformLayerTreeAsTextFlags::IgnoreChildren)) {
             auto sublayers = layer->sublayersForLogging();
             if (sublayers.size()) {
-                ts << indent << "(children " << "\n";
+                ts << indent << "(children "_s << "\n"_s;
 
                 {
                     TextStream::IndentScope indentScope(ts);
@@ -4301,12 +4301,12 @@ void GraphicsLayerCA::dumpInnerLayer(TextStream& ts, PlatformCALayer* layer, Opt
                         dumpInnerLayer(ts, child.get(), flags);
                 }
 
-                ts << indent << ")\n";
+                ts << indent << ")\n"_s;
             }
         }
     }
 
-    ts << indent << ")\n";
+    ts << indent << ")\n"_s;
 }
 
 static TextStream& operator<<(TextStream& textStream, AnimatedProperty propertyID)
@@ -4325,28 +4325,28 @@ static TextStream& operator<<(TextStream& textStream, AnimatedProperty propertyI
     return textStream;
 }
 
-void GraphicsLayerCA::dumpAnimations(WTF::TextStream& textStream, const char* category, const Vector<LayerPropertyAnimation>& animations)
+void GraphicsLayerCA::dumpAnimations(WTF::TextStream& textStream, ASCIILiteral category, const Vector<LayerPropertyAnimation>& animations)
 {
     auto dumpAnimation = [&textStream](const LayerPropertyAnimation& animation) {
-        textStream << indent << "(" << animation.m_name;
+        textStream << indent << '(' << animation.m_name;
         {
             TextStream::IndentScope indentScope(textStream);
-            textStream.dumpProperty("CA animation", animation.m_animation.get());
-            textStream.dumpProperty("property", animation.m_property);
-            textStream.dumpProperty("index", animation.m_index);
-            textStream.dumpProperty("time offset", animation.m_timeOffset);
-            textStream.dumpProperty("begin time", animation.m_beginTime);
-            textStream.dumpProperty("play state", (unsigned)animation.m_playState);
+            textStream.dumpProperty("CA animation"_s, animation.m_animation.get());
+            textStream.dumpProperty("property"_s, animation.m_property);
+            textStream.dumpProperty("index"_s, animation.m_index);
+            textStream.dumpProperty("time offset"_s, animation.m_timeOffset);
+            textStream.dumpProperty("begin time"_s, animation.m_beginTime);
+            textStream.dumpProperty("play state"_s, (unsigned)animation.m_playState);
             if (animation.m_pendingRemoval)
-                textStream.dumpProperty("pending removal", animation.m_pendingRemoval);
-            textStream << ")";
+                textStream.dumpProperty("pending removal"_s, animation.m_pendingRemoval);
+            textStream << ')';
         }
     };
     
     if (animations.isEmpty())
         return;
     
-    textStream << indent << "(" << category << "\n";
+    textStream << indent << '(' << category << '\n';
     {
         TextStream::IndentScope indentScope(textStream);
         for (const auto& animation : animations) {
@@ -4354,67 +4354,67 @@ void GraphicsLayerCA::dumpAnimations(WTF::TextStream& textStream, const char* ca
             dumpAnimation(animation);
         }
 
-        textStream << ")\n";
+        textStream << ")\n"_s;
     }
 }
 
-const char* GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
+ASCIILiteral GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
 {
     switch (layerChange) {
-    case LayerChange::NoChange: return ""; break;
-    case LayerChange::NameChanged: return "NameChanged";
-    case LayerChange::ChildrenChanged: return "ChildrenChanged";
-    case LayerChange::GeometryChanged: return "GeometryChanged";
-    case LayerChange::TransformChanged: return "TransformChanged";
-    case LayerChange::ChildrenTransformChanged: return "ChildrenTransformChanged";
-    case LayerChange::Preserves3DChanged: return "Preserves3DChanged";
-    case LayerChange::MasksToBoundsChanged: return "MasksToBoundsChanged";
-    case LayerChange::DrawsContentChanged: return "DrawsContentChanged";
-    case LayerChange::BackgroundColorChanged: return "BackgroundColorChanged";
-    case LayerChange::ContentsOpaqueChanged: return "ContentsOpaqueChanged";
-    case LayerChange::BackfaceVisibilityChanged: return "BackfaceVisibilityChanged";
-    case LayerChange::OpacityChanged: return "OpacityChanged";
-    case LayerChange::AnimationChanged: return "AnimationChanged";
-    case LayerChange::DirtyRectsChanged: return "DirtyRectsChanged";
-    case LayerChange::ContentsImageChanged: return "ContentsImageChanged";
-    case LayerChange::ContentsPlatformLayerChanged: return "ContentsPlatformLayerChanged";
-    case LayerChange::ContentsColorLayerChanged: return "ContentsColorLayerChanged";
-    case LayerChange::ContentsRectsChanged: return "ContentsRectsChanged";
-    case LayerChange::MaskLayerChanged: return "MaskLayerChanged";
-    case LayerChange::ReplicatedLayerChanged: return "ReplicatedLayerChanged";
-    case LayerChange::ContentsNeedsDisplay: return "ContentsNeedsDisplay";
-    case LayerChange::AcceleratesDrawingChanged: return "AcceleratesDrawingChanged";
-    case LayerChange::ContentsScaleChanged: return "ContentsScaleChanged";
-    case LayerChange::ContentsVisibilityChanged: return "ContentsVisibilityChanged";
-    case LayerChange::CoverageRectChanged: return "CoverageRectChanged";
-    case LayerChange::FiltersChanged: return "FiltersChanged";
-    case LayerChange::BackdropFiltersChanged: return "BackdropFiltersChanged";
-    case LayerChange::BackdropFiltersRectChanged: return "BackdropFiltersRectChanged";
-    case LayerChange::TilingAreaChanged: return "TilingAreaChanged";
-    case LayerChange::DebugIndicatorsChanged: return "DebugIndicatorsChanged";
-    case LayerChange::CustomAppearanceChanged: return "CustomAppearanceChanged";
-    case LayerChange::BlendModeChanged: return "BlendModeChanged";
-    case LayerChange::ShapeChanged: return "ShapeChanged";
-    case LayerChange::WindRuleChanged: return "WindRuleChanged";
-    case LayerChange::UserInteractionEnabledChanged: return "UserInteractionEnabledChanged";
-    case LayerChange::NeedsComputeVisibleAndCoverageRect: return "NeedsComputeVisibleAndCoverageRect";
-    case LayerChange::EventRegionChanged: return "EventRegionChanged";
+    case LayerChange::NoChange: return ""_s; break;
+    case LayerChange::NameChanged: return "NameChanged"_s;
+    case LayerChange::ChildrenChanged: return "ChildrenChanged"_s;
+    case LayerChange::GeometryChanged: return "GeometryChanged"_s;
+    case LayerChange::TransformChanged: return "TransformChanged"_s;
+    case LayerChange::ChildrenTransformChanged: return "ChildrenTransformChanged"_s;
+    case LayerChange::Preserves3DChanged: return "Preserves3DChanged"_s;
+    case LayerChange::MasksToBoundsChanged: return "MasksToBoundsChanged"_s;
+    case LayerChange::DrawsContentChanged: return "DrawsContentChanged"_s;
+    case LayerChange::BackgroundColorChanged: return "BackgroundColorChanged"_s;
+    case LayerChange::ContentsOpaqueChanged: return "ContentsOpaqueChanged"_s;
+    case LayerChange::BackfaceVisibilityChanged: return "BackfaceVisibilityChanged"_s;
+    case LayerChange::OpacityChanged: return "OpacityChanged"_s;
+    case LayerChange::AnimationChanged: return "AnimationChanged"_s;
+    case LayerChange::DirtyRectsChanged: return "DirtyRectsChanged"_s;
+    case LayerChange::ContentsImageChanged: return "ContentsImageChanged"_s;
+    case LayerChange::ContentsPlatformLayerChanged: return "ContentsPlatformLayerChanged"_s;
+    case LayerChange::ContentsColorLayerChanged: return "ContentsColorLayerChanged"_s;
+    case LayerChange::ContentsRectsChanged: return "ContentsRectsChanged"_s;
+    case LayerChange::MaskLayerChanged: return "MaskLayerChanged"_s;
+    case LayerChange::ReplicatedLayerChanged: return "ReplicatedLayerChanged"_s;
+    case LayerChange::ContentsNeedsDisplay: return "ContentsNeedsDisplay"_s;
+    case LayerChange::AcceleratesDrawingChanged: return "AcceleratesDrawingChanged"_s;
+    case LayerChange::ContentsScaleChanged: return "ContentsScaleChanged"_s;
+    case LayerChange::ContentsVisibilityChanged: return "ContentsVisibilityChanged"_s;
+    case LayerChange::CoverageRectChanged: return "CoverageRectChanged"_s;
+    case LayerChange::FiltersChanged: return "FiltersChanged"_s;
+    case LayerChange::BackdropFiltersChanged: return "BackdropFiltersChanged"_s;
+    case LayerChange::BackdropFiltersRectChanged: return "BackdropFiltersRectChanged"_s;
+    case LayerChange::TilingAreaChanged: return "TilingAreaChanged"_s;
+    case LayerChange::DebugIndicatorsChanged: return "DebugIndicatorsChanged"_s;
+    case LayerChange::CustomAppearanceChanged: return "CustomAppearanceChanged"_s;
+    case LayerChange::BlendModeChanged: return "BlendModeChanged"_s;
+    case LayerChange::ShapeChanged: return "ShapeChanged"_s;
+    case LayerChange::WindRuleChanged: return "WindRuleChanged"_s;
+    case LayerChange::UserInteractionEnabledChanged: return "UserInteractionEnabledChanged"_s;
+    case LayerChange::NeedsComputeVisibleAndCoverageRect: return "NeedsComputeVisibleAndCoverageRect"_s;
+    case LayerChange::EventRegionChanged: return "EventRegionChanged"_s;
 #if ENABLE(SCROLLING_THREAD)
-    case LayerChange::ScrollingNodeChanged: return "ScrollingNodeChanged";
+    case LayerChange::ScrollingNodeChanged: return "ScrollingNodeChanged"_s;
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    case LayerChange::SeparatedChanged: return "SeparatedChanged";
+    case LayerChange::SeparatedChanged: return "SeparatedChanged"_s;
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
-    case LayerChange::SeparatedPortalChanged: return "SeparatedPortalChanged";
-    case LayerChange::DescendentOfSeparatedPortalChanged: return "DescendentOfSeparatedPortalChanged";
+    case LayerChange::SeparatedPortalChanged: return "SeparatedPortalChanged"_s;
+    case LayerChange::DescendentOfSeparatedPortalChanged: return "DescendentOfSeparatedPortalChanged"_s;
 #endif
 #endif
-    case LayerChange::ContentsScalingFiltersChanged: return "ContentsScalingFiltersChanged";
-    case LayerChange::VideoGravityChanged: return "VideoGravityChanged";
-    case LayerChange::BackdropRootChanged: return "BackdropRootChanged";
+    case LayerChange::ContentsScalingFiltersChanged: return "ContentsScalingFiltersChanged"_s;
+    case LayerChange::VideoGravityChanged: return "VideoGravityChanged"_s;
+    case LayerChange::BackdropRootChanged: return "BackdropRootChanged"_s;
     }
     ASSERT_NOT_REACHED();
-    return "";
+    return ""_s;
 }
 
 void GraphicsLayerCA::dumpLayerChangeFlags(TextStream& textStream, LayerChangeFlags layerChangeFlags)
@@ -4424,13 +4424,13 @@ void GraphicsLayerCA::dumpLayerChangeFlags(TextStream& textStream, LayerChangeFl
     bool first = true;
     while (layerChangeFlags) {
         if (layerChangeFlags & bit) {
-            textStream << (first ? " " : ", ") << layerChangeAsString(static_cast<LayerChange>(bit));
+            textStream << (first ? " "_s : ", "_s) << layerChangeAsString(static_cast<LayerChange>(bit));
             first = false;
         }
         layerChangeFlags &= ~bit;
         bit <<= 1;
     }
-    textStream << " }";
+    textStream << " }"_s;
 }
 
 void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, OptionSet<LayerTreeAsTextOptions> options) const
@@ -4489,9 +4489,9 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, OptionSet
             textStream << ")\n";
         }
 
-        dumpAnimations(textStream, "animations", m_animations);
-        dumpAnimations(textStream, "base value animations", m_baseValueTransformAnimations);
-        dumpAnimations(textStream, "animation groups", m_animationGroups);
+        dumpAnimations(textStream, "animations"_s, m_animations);
+        dumpAnimations(textStream, "base value animations"_s, m_baseValueTransformAnimations);
+        dumpAnimations(textStream, "animation groups"_s, m_animationGroups);
     }
 }
 

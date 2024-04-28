@@ -508,6 +508,12 @@ void MediaPlayerPrivateRemote::seeked(MediaTimeUpdateData&& timeData)
     m_currentTimeEstimator.setTime(timeData);
     if (auto player = m_player.get())
         player->seeked(timeData.currentTime);
+#if ENABLE(MEDIA_SOURCE)
+    // This message may well have been handled by the MediaSource object before
+    // theis message, which would result in the wrong
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+        return mediaSourcePrivate->seeked(timeData.currentTime);
+#endif
 }
 
 void MediaPlayerPrivateRemote::timeChanged(RemoteMediaPlayerState&& state, MediaTimeUpdateData&& timeData)
@@ -1802,6 +1808,11 @@ void MediaPlayerPrivateRemote::setSpatialTrackingLabel(const String& spatialTrac
     connection().send(Messages::RemoteMediaPlayerProxy::SetSpatialTrackingLabel(m_spatialTrackingLabel), m_id);
 }
 #endif
+
+void MediaPlayerPrivateRemote::isInFullscreenOrPictureInPictureChanged(bool isInFullscreenOrPictureInPicture)
+{
+    connection().send(Messages::RemoteMediaPlayerProxy::IsInFullscreenOrPictureInPictureChanged(isInFullscreenOrPictureInPicture), m_id);
+}
 
 void MediaPlayerPrivateRemote::commitAllTransactions(CompletionHandler<void()>&& completionHandler)
 {

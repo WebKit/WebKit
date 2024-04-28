@@ -777,6 +777,16 @@ void NetworkStorageManager::cloneSessionStorageForWebPage(WebPageProxyIdentifier
     });
 }
 
+void NetworkStorageManager::cloneSessionStorageNamespace(StorageNamespaceIdentifier fromIdentifier, StorageNamespaceIdentifier toIdentifier)
+{
+    assertIsCurrent(workQueue());
+
+    for (auto& manager : m_originStorageManagers.values()) {
+        if (auto* sessionStorageManager = manager->existingSessionStorageManager())
+            sessionStorageManager->cloneStorageArea(fromIdentifier, toIdentifier);
+    }
+}
+
 void NetworkStorageManager::didIncreaseQuota(WebCore::ClientOrigin&& origin, QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)
 {
     ASSERT(RunLoop::isMain());
@@ -1447,16 +1457,6 @@ void NetworkStorageManager::disconnectFromStorageArea(IPC::Connection& connectio
         originStorageManager(storageArea->origin()).sessionStorageManager(*m_storageAreaRegistry).disconnectFromStorageArea(connection.uniqueID(), identifier);
 }
 
-void NetworkStorageManager::cloneSessionStorageNamespace(StorageNamespaceIdentifier fromIdentifier, StorageNamespaceIdentifier toIdentifier)
-{
-    assertIsCurrent(workQueue());
-
-    for (auto& manager : m_originStorageManagers.values()) {
-        if (auto* sessionStorageManager = manager->existingSessionStorageManager())
-            sessionStorageManager->cloneStorageArea(fromIdentifier, toIdentifier);
-    }
-}
-
 void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
@@ -1840,13 +1840,13 @@ void NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(St
         return codePointCompareLessThan(a, b);
     });
     StringBuilder builder;
-    builder.append("{ \"path\": \"", m_customCacheStoragePath, "\", \"origins\": [");
-    const char* divider = "";
+    builder.append("{ \"path\": \""_s, m_customCacheStoragePath, "\", \"origins\": ["_s);
+    ASCIILiteral divider = ""_s;
     for (auto& origin : originStrings) {
         builder.append(divider, origin);
-        divider = ",";
+        divider = ","_s;
     }
-    builder.append("]}");
+    builder.append("]}"_s);
     callback(builder.toString());
 }
 

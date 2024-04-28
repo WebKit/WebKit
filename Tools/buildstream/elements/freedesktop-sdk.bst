@@ -24,3 +24,4 @@ config:
     bootstrap_build_arch: '%{bootstrap_build_arch}'
   overrides:
     components/dav1d.bst: sdk/dav1d.bst
+    components/pango.bst: sdk/pango.bst

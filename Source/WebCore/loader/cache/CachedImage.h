@@ -67,6 +67,9 @@ public:
 
     bool canRender(const RenderElement* renderer, float multiplier) { return !errorOccurred() && !imageSizeForRenderer(renderer, multiplier).isEmpty(); }
 
+    void setAllowsOrientationOverride(bool b) { m_allowsOrientationOverride = b; }
+    bool allowsOrientationOverride() const { return m_allowsOrientationOverride; }
+
     void setContainerContextForClient(const CachedImageClient&, const LayoutSize&, float, const URL&);
     bool usesImageContainerSize() const { return m_image && m_image->usesContainerSize(); }
     bool imageHasRelativeWidth() const { return m_image && m_image->hasRelativeWidth(); }
@@ -208,6 +211,7 @@ private:
     bool m_shouldPaintBrokenImage : 1;
     bool m_forceUpdateImageDataEnabledForTesting : 1;
     bool m_layerBasedSVGEngineEnabled : 1 { false };
+    bool m_allowsOrientationOverride : 1;
 };
 
 } // namespace WebCore

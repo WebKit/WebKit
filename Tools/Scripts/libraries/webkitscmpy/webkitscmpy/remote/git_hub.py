@@ -134,13 +134,13 @@ class GitHub(Scm):
                 yield self.PullRequest(nodeData)
             return
 
-        def create(self, head, title, body=None, commits=None, base=None, draft=None):
+        def create(self, head, title, body=None, commits=None, base=None, draft=None, head_repo=None):
             draft = False if draft is None else draft
             for key, value in dict(head=head, title=title).items():
                 if not value:
                     raise ValueError("Must define '{}' when creating pull-request".format(key))
 
-            if ':' not in head:
+            if ':' not in head and not head_repo:
                 user, _ = self.repository.credentials(required=True)
                 head = '{}:{}'.format(user, head)
             url = '{api_url}/repos/{owner}/{name}/pulls'.format(
@@ -148,16 +148,20 @@ class GitHub(Scm):
                 owner=self.repository.owner,
                 name=self.repository.name,
             )
+            params = dict(
+                title=title,
+                body=PullRequest.create_body(body, commits),
+                base=base or self.repository.default_branch,
+                head=head,
+                draft=draft,
+            )
+            if head_repo:
+                # If specifying a PR from an inter-organization fork, head=branch, head_repo=fork_owner/fork_name
+                params['head_repo'] = head_repo
             response = self.repository.session.post(
                 url, auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
                 headers=dict(Accept=self.repository.ACCEPT_HEADER),
-                json=dict(
-                    title=title,
-                    body=PullRequest.create_body(body, commits),
-                    base=base or self.repository.default_branch,
-                    head=head,
-                    draft=draft,
-                ),
+                json=params,
             )
             if response.status_code == 422:
                 sys.stderr.write(self.repository.tracker.parse_error(response.json()))

@@ -49,9 +49,9 @@ struct SystemMallocStats {
 
 SystemMallocStats WebMemorySampler::sampleSystemMalloc() const
 {
-    static const char* defaultMallocZoneName = "DefaultMallocZone";
-    static const char* dispatchContinuationMallocZoneName = "DispatchContinuations";
-    static const char* purgeableMallocZoneName = "DefaultPurgeableMallocZone";
+    static constexpr auto defaultMallocZoneName = "DefaultMallocZone"_s;
+    static constexpr auto dispatchContinuationMallocZoneName = "DispatchContinuations"_s;
+    static constexpr auto purgeableMallocZoneName = "DefaultPurgeableMallocZone"_s;
     SystemMallocStats mallocStats;
     vm_address_t* zones;
     unsigned count;

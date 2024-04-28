@@ -99,10 +99,6 @@ public:
     std::span<const UChar> span16() const;
     template<typename CharacterType> std::span<const CharacterType> span() const;
 
-    // FIXME: Port call sites to span8() / span16() and remove these.
-    const LChar* characters8() const { return span8().data(); }
-    const UChar* characters16() const { return span16().data(); }
-
     unsigned hash() const;
 
     bool containsOnlyASCII() const;

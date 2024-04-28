@@ -949,11 +949,6 @@ void ApplePaySession::didCancelPaymentSession(PaymentSessionError&& error)
     dispatchEvent(event.get());
 }
 
-const char* ApplePaySession::activeDOMObjectName() const
-{
-    return "ApplePaySession";
-}
-
 bool ApplePaySession::canSuspendWithoutCanceling() const
 {
     switch (m_state) {

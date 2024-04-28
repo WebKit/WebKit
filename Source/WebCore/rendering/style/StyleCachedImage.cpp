@@ -106,7 +106,7 @@ LegacyRenderSVGResourceContainer* StyleCachedImage::uncheckedRenderSVGResource(c
         return nullptr;
     }
 
-    auto& document = renderer->document();
+    Ref document = renderer->document();
     auto reresolvedURL = this->reresolvedURL(document);
 
     if (!m_cachedImage) {

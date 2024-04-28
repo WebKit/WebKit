@@ -405,7 +405,11 @@ static ThreadGroup& activeThreads()
 
 void registerThreadForMachExceptionHandling(Thread& thread)
 {
-    RELEASE_ASSERT(g_wtfConfig.signalHandlers.initState >= SignalHandlers::InitState::Initializing, g_wtfConfig.signalHandlers.initState);
+    const SignalHandlers& signalHandlers = g_wtfConfig.signalHandlers;
+    RELEASE_ASSERT(signalHandlers.initState >= SignalHandlers::InitState::Initializing, signalHandlers.initState);
+    if (!signalHandlers.useMach || !signalHandlers.addedExceptions)
+        return;
+
     Locker locker { activeThreads().getLock() };
     if (activeThreads().add(locker, thread) == ThreadGroupAddResult::NewlyAdded)
         setExceptionPorts(locker, thread);

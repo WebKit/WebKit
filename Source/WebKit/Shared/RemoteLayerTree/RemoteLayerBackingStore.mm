@@ -203,21 +203,21 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 
 void RemoteLayerBackingStoreProperties::dump(TextStream& ts) const
 {
-    auto dumpBuffer = [&](const char* name, const std::optional<BufferAndBackendInfo>& bufferInfo) {
+    auto dumpBuffer = [&](ASCIILiteral name, const std::optional<BufferAndBackendInfo>& bufferInfo) {
         ts.startGroup();
-        ts << name << " ";
+        ts << name << " "_s;
         if (bufferInfo)
-            ts << bufferInfo->resourceIdentifier << " backend generation " << bufferInfo->backendGeneration;
+            ts << bufferInfo->resourceIdentifier << " backend generation "_s << bufferInfo->backendGeneration;
         else
-            ts << "none";
+            ts << "none"_s;
         ts.endGroup();
     };
-    dumpBuffer("front buffer", m_frontBufferInfo);
-    dumpBuffer("back buffer", m_backBufferInfo);
-    dumpBuffer("secondaryBack buffer", m_secondaryBackBufferInfo);
+    dumpBuffer("front buffer"_s, m_frontBufferInfo);
+    dumpBuffer("back buffer"_s, m_backBufferInfo);
+    dumpBuffer("secondaryBack buffer"_s, m_secondaryBackBufferInfo);
 
-    ts.dumpProperty("is opaque", isOpaque());
-    ts.dumpProperty("has buffer handle", !!bufferHandle());
+    ts.dumpProperty("is opaque"_s, isOpaque());
+    ts.dumpProperty("has buffer handle"_s, !!bufferHandle());
 }
 
 bool RemoteLayerBackingStore::layerWillBeDisplayed()

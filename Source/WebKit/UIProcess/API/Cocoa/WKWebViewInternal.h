@@ -238,6 +238,7 @@ struct PerWebProcessState {
     CocoaEdgeInsets _maximumViewportInset;
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    RetainPtr<NSMapTable<NSUUID *, WKWebTextReplacement *>> _unifiedTextReplacementSessionReplacements;
     RetainPtr<NSMapTable<NSUUID *, WKWebTextReplacementSession *>> _unifiedTextReplacementSessions;
 #endif
 

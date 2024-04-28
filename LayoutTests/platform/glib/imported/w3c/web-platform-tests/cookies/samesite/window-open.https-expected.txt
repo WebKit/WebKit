@@ -1,0 +1,14 @@
+
+PASS Same-host auxiliary navigations are strictly same-site
+PASS Subdomain auxiliary navigations are strictly same-site
+PASS Cross-site auxiliary navigations are laxly same-site
+PASS Same-host redirecting to same-host auxiliary navigations are strictly same-site
+PASS Subdomain redirecting to same-host auxiliary navigations are strictly same-site
+PASS Cross-site redirecting to same-host auxiliary navigations are laxly same-site
+PASS Same-host redirecting to subdomain auxiliary navigations are strictly same-site
+PASS Subdomain redirecting to subdomain auxiliary navigations are strictly same-site
+PASS Cross-site redirecting to subdomain auxiliary navigations are laxly same-site
+PASS Same-host redirecting to cross-site auxiliary navigations are laxly same-site
+PASS Subdomain redirecting to cross-site auxiliary navigations are laxly same-site
+PASS Cross-site redirecting to cross-site auxiliary navigations are laxly same-site
+

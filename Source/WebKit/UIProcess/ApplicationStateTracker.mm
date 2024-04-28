@@ -164,8 +164,6 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
     , m_willBeginSnapshotSequenceSelector(willBeginSnapshotSequenceSelector)
     , m_didCompleteSnapshotSequenceSelector(didCompleteSnapshotSequenceSelector)
     , m_isInBackground(true)
-    , m_didEnterBackgroundObserver(nullptr)
-    , m_willEnterForegroundObserver(nullptr)
 {
     ASSERT([m_view.get() respondsToSelector:m_didEnterBackgroundSelector]);
     ASSERT([m_view.get() respondsToSelector:m_willEnterForegroundSelector]);
@@ -191,19 +189,19 @@ void ApplicationStateTracker::removeAllObservers()
 {
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     if (m_didEnterBackgroundObserver) {
-        [notificationCenter removeObserver:m_didEnterBackgroundObserver];
+        [notificationCenter removeObserver:m_didEnterBackgroundObserver.get().get()];
         m_didEnterBackgroundObserver = nil;
     }
     if (m_willEnterForegroundObserver) {
-        [notificationCenter removeObserver:m_willEnterForegroundObserver];
+        [notificationCenter removeObserver:m_willEnterForegroundObserver.get().get()];
         m_willEnterForegroundObserver = nil;
     }
     if (m_willBeginSnapshotSequenceObserver) {
-        [notificationCenter removeObserver:m_willBeginSnapshotSequenceObserver];
+        [notificationCenter removeObserver:m_willBeginSnapshotSequenceObserver.get().get()];
         m_willBeginSnapshotSequenceObserver = nil;
     }
     if (m_didCompleteSnapshotSequenceObserver) {
-        [notificationCenter removeObserver:m_didCompleteSnapshotSequenceObserver];
+        [notificationCenter removeObserver:m_didCompleteSnapshotSequenceObserver.get().get()];
         m_didCompleteSnapshotSequenceObserver = nil;
     }
 }

@@ -39,7 +39,7 @@ class SingleRootGraphNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // We use "#root" to refer to the synthetic root we have created.
-    static const char* rootName() { return "#root"; };
+    static ASCIILiteral rootName() { return "#root"_s; };
 
     SingleRootGraphNode(typename Graph::Node node = typename Graph::Node())
         : m_node(node)
@@ -105,7 +105,7 @@ public:
     void dump(PrintStream& out) const
     {
         if (m_hasRoot)
-            out.print(Node::rootName(), " ");
+            out.print(Node::rootName(), " "_s);
         out.print(m_set);
     }
     

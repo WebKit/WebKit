@@ -98,8 +98,11 @@ class WinPort(ApplePort):
         ApplePort.__init__(self, host, port_name, **kwargs)
         if len(port_name.split('-')) > 1:
             self._os_version = VersionNameMap.map(host.platform).from_name(port_name.split('-')[1])[1]
-        else:
+        elif self.host.platform.is_win():
             self._os_version = self.host.platform.os_version
+
+        if not self._os_version:
+            self._os_version = WinPort.VERSION_MAX
 
     def do_text_results_differ(self, expected_text, actual_text):
         # Sanity was restored in WebKitTestRunner, so we don't need this hack there.
@@ -500,7 +503,10 @@ class WinCairoPort(WinPort):
         wk_version = 'wk2' if self.get_option('webkit_test_runner') else 'wk1'
 
         for version in versions:
-            name = self.port_name + '-' + normalize(to_name(version))
+            version_name = to_name(version)
+            if not version_name:
+                continue
+            name = self.port_name + '-' + normalize(version_name)
             paths.append(name + '-' + wk_version)
             paths.append(name)
 

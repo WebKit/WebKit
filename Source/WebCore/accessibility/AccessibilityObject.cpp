@@ -63,6 +63,7 @@
 #include "HTMLModelElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLSlotElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
 #include "LocalFrame.h"
@@ -85,6 +86,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RenderedPosition.h"
+#include "SVGNames.h"
 #include "Settings.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
@@ -283,7 +285,6 @@ bool AccessibilityObject::accessibleNameDerivesFromContent() const
     case AccessibilityRole::ApplicationAlert:
     case AccessibilityRole::ApplicationAlertDialog:
     case AccessibilityRole::ApplicationDialog:
-    case AccessibilityRole::ApplicationGroup:
     case AccessibilityRole::ApplicationLog:
     case AccessibilityRole::ApplicationMarquee:
     case AccessibilityRole::ApplicationStatus:
@@ -1079,23 +1080,6 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
     return result;
 }
 
-bool AccessibilityObject::hasAttributesRequiredForInclusion() const
-{
-    // These checks are simplified in the interest of execution speed.
-    if (!getAttribute(aria_helpAttr).isEmpty()
-        || !getAttribute(aria_describedbyAttr).isEmpty()
-        || !getAttribute(altAttr).isEmpty()
-        || !getAttribute(titleAttr).isEmpty())
-        return true;
-
-#if ENABLE(MATHML)
-    if (!getAttribute(MathMLNames::alttextAttr).isEmpty())
-        return true;
-#endif
-
-    return false;
-}
-
 bool AccessibilityObject::isARIAInput(AccessibilityRole ariaRole)
 {
     switch (ariaRole) {
@@ -1485,18 +1469,6 @@ VisiblePositionRange AccessibilityObject::visiblePositionRangeForUnorderedPositi
     return { startPos, endPos };
 }
 
-VisiblePositionRange AccessibilityObject::positionOfLeftWord(const VisiblePosition& visiblePos) const
-{
-    auto start = startOfWord(visiblePos, WordSide::LeftWordIfOnBoundary);
-    return { start, endOfWord(start) };
-}
-
-VisiblePositionRange AccessibilityObject::positionOfRightWord(const VisiblePosition& visiblePos) const
-{
-    auto start = startOfWord(visiblePos, WordSide::RightWordIfOnBoundary);
-    return { start, endOfWord(start) };
-}
-
 static VisiblePosition updateAXLineStartForVisiblePosition(const VisiblePosition& visiblePosition)
 {
     // A line in the accessibility sense should include floating objects, such as aligned image, as part of a line.
@@ -1578,20 +1550,6 @@ VisiblePositionRange AccessibilityObject::rightLineVisiblePositionRange(const Vi
     }
 
     return { startPosition, endPosition };
-}
-
-VisiblePositionRange AccessibilityObject::sentenceForPosition(const VisiblePosition& visiblePos) const
-{
-    // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
-    // Related? <rdar://problem/3927736> Text selection broken in 8A336
-    auto startPosition = startOfSentence(visiblePos);
-    return { startPosition, endOfSentence(startPosition) };
-}
-
-VisiblePositionRange AccessibilityObject::paragraphForPosition(const VisiblePosition& visiblePos) const
-{
-    auto startPosition = startOfParagraph(visiblePos);
-    return { startPosition, endOfParagraph(startPosition) };
 }
 
 static VisiblePosition startOfStyleRange(const VisiblePosition& visiblePos)
@@ -1773,7 +1731,7 @@ String AccessibilityObject::stringForRange(const SimpleRange& range) const
             // because a RenderListMarker does not have a Node equivalent and thus does not appear
             // when iterating text.
             // Don't add list marker text for new line character.
-            if (it.text().length() != 1 || !isUnicodeWhitespace(it.text()[0]))
+            if (it.text().length() != 1 || !isASCIIWhitespace(it.text()[0]))
                 builder.append(listMarkerTextForNodeAndPosition(it.node(), makeDeprecatedLegacyPosition(it.range().start)));
             it.appendTextToStringBuilder(builder);
         } else {
@@ -1851,47 +1809,6 @@ std::optional<VisiblePosition> AccessibilityObject::previousLineStartPositionInt
         startPosition = updateAXLineStartForVisiblePosition(startPosition);
 
     return startPosition;
-}
-
-VisiblePosition AccessibilityObject::nextSentenceEndPosition(const VisiblePosition& position) const
-{
-    // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
-    // Related? <rdar://problem/3927736> Text selection broken in 8A336
-
-    // Make sure we move off of a sentence end.
-    auto nextPosition = position.next();
-    auto range = makeSimpleRange(startOfLine(nextPosition), endOfLine(nextPosition));
-    if (!range)
-        return { };
-
-    // An empty line is considered a sentence. If it's skipped, then the sentence parser will not
-    // see this empty line. Instead, return the end position of the empty line.
-    return hasAnyPlainText(*range) ? endOfSentence(nextPosition) : nextPosition;
-}
-
-VisiblePosition AccessibilityObject::previousSentenceStartPosition(const VisiblePosition& position) const
-{
-    // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
-    // Related? <rdar://problem/3927736> Text selection broken in 8A336
-
-    // Make sure we move off of a sentence start.
-    auto previousPosition = position.previous();
-    auto range = makeSimpleRange(startOfLine(previousPosition), endOfLine(previousPosition));
-    if (!range)
-        return { };
-
-    // Treat empty line as a separate sentence.
-    return hasAnyPlainText(*range) ? startOfSentence(previousPosition) : previousPosition;
-}
-
-VisiblePosition AccessibilityObject::nextParagraphEndPosition(const VisiblePosition& position) const
-{
-    return endOfParagraph(position.next());
-}
-
-VisiblePosition AccessibilityObject::previousParagraphStartPosition(const VisiblePosition& position) const
-{
-    return startOfParagraph(position.previous());
 }
 
 OptionSet<SpeakAs> AccessibilityObject::speakAsProperty() const
@@ -2285,10 +2202,12 @@ void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows, Access
     ancestors.removeLast();
 }
 
-void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows)
+AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ariaTreeRows()
 {
+    AccessibilityChildrenVector rows;
     AccessibilityChildrenVector ancestors;
     ariaTreeRows(rows, ancestors);
+    return rows;
 }
     
 AXCoreObject::AccessibilityChildrenVector AccessibilityObject::disclosedRows()
@@ -2301,7 +2220,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::disclosedRows()
             result.append(obj);
         // If it's not a tree item, then descend into the group to find more tree items.
         else 
-            obj->ariaTreeRows(result);
+            result.appendVector(obj->ariaTreeRows());
     }
 
     return result;
@@ -2411,7 +2330,7 @@ String AccessibilityObject::invalidStatus() const
     String undefinedValue = "undefined"_s;
 
     // aria-invalid can return false (default), grammar, spelling, or true.
-    auto ariaInvalid = getAttribute(aria_invalidAttr).string().trim(isASCIIWhitespace);
+    auto ariaInvalid = getAttributeTrimmed(aria_invalidAttr);
 
     if (ariaInvalid.isEmpty()) {
         auto* htmlElement = dynamicDowncast<HTMLElement>(this->node());
@@ -2444,7 +2363,7 @@ bool AccessibilityObject::supportsCurrent() const
 AccessibilityCurrentState AccessibilityObject::currentState() const
 {
     // aria-current can return false (default), true, page, step, location, date or time.
-    auto currentStateValue = getAttribute(aria_currentAttr).string().trim(isASCIIWhitespace);
+    auto currentStateValue = getAttributeTrimmed(aria_currentAttr);
 
     // If "false", empty, or missing, return false state.
     if (currentStateValue.isEmpty() || currentStateValue == "false"_s)
@@ -2660,7 +2579,7 @@ static void initializeRoleMap()
         { "directory"_s, AccessibilityRole::Directory },
         // The 'doc-*' roles are defined the ARIA DPUB mobile: https://www.w3.org/TR/dpub-aam-1.0
         // Editor's draft is currently at https://w3c.github.io/dpub-aam
-        { "doc-abstract"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-abstract"_s, AccessibilityRole::TextGroup },
         { "doc-acknowledgments"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-afterword"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-appendix"_s, AccessibilityRole::LandmarkDocRegion },
@@ -2669,18 +2588,18 @@ static void initializeRoleMap()
         { "doc-bibliography"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-biblioref"_s, AccessibilityRole::WebCoreLink },
         { "doc-chapter"_s, AccessibilityRole::LandmarkDocRegion },
-        { "doc-colophon"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-colophon"_s, AccessibilityRole::TextGroup },
         { "doc-conclusion"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-cover"_s, AccessibilityRole::Image },
-        { "doc-credit"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-credit"_s, AccessibilityRole::TextGroup },
         { "doc-credits"_s, AccessibilityRole::LandmarkDocRegion },
-        { "doc-dedication"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-dedication"_s, AccessibilityRole::TextGroup },
         { "doc-endnote"_s, AccessibilityRole::ListItem },
         { "doc-endnotes"_s, AccessibilityRole::LandmarkDocRegion },
-        { "doc-epigraph"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-epigraph"_s, AccessibilityRole::TextGroup },
         { "doc-epilogue"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-errata"_s, AccessibilityRole::LandmarkDocRegion },
-        { "doc-example"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-example"_s, AccessibilityRole::TextGroup },
         { "doc-footnote"_s, AccessibilityRole::Footnote },
         { "doc-foreword"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-glossary"_s, AccessibilityRole::LandmarkDocRegion },
@@ -2694,8 +2613,8 @@ static void initializeRoleMap()
         { "doc-part"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-preface"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-prologue"_s, AccessibilityRole::LandmarkDocRegion },
-        { "doc-pullquote"_s, AccessibilityRole::ApplicationTextGroup },
-        { "doc-qna"_s, AccessibilityRole::ApplicationTextGroup },
+        { "doc-pullquote"_s, AccessibilityRole::TextGroup },
+        { "doc-qna"_s, AccessibilityRole::TextGroup },
         { "doc-subtitle"_s, AccessibilityRole::Heading },
         { "doc-tip"_s, AccessibilityRole::DocumentNote },
         { "doc-toc"_s, AccessibilityRole::LandmarkNavigation },
@@ -2717,7 +2636,7 @@ static void initializeRoleMap()
         { "feed"_s, AccessibilityRole::Feed },
         { "form"_s, AccessibilityRole::Form },
         { "rowheader"_s, AccessibilityRole::RowHeader },
-        { "group"_s, AccessibilityRole::ApplicationGroup },
+        { "group"_s, AccessibilityRole::Group },
         { "heading"_s, AccessibilityRole::Heading },
         // The "image" role is synonymous with the "img" role. https://w3c.github.io/aria/#image
         { "image"_s, AccessibilityRole::Image },
@@ -2831,15 +2750,15 @@ String AccessibilityObject::computedRoleString() const
     if (role == AccessibilityRole::Image && accessibilityIsIgnored())
         return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Presentational));
 
-    // We do not compute a role string for generic block elements with user-agent assigned roles.
-    if (role == AccessibilityRole::Group || role == AccessibilityRole::TextGroup)
-        return emptyString();
-
     // We do compute a role string for block elements with author-provided roles.
-    if (role == AccessibilityRole::ApplicationTextGroup
+    if (ariaRoleAttribute() == AccessibilityRole::TextGroup
         || role == AccessibilityRole::Footnote
         || role == AccessibilityRole::GraphicsObject)
-        return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::ApplicationGroup));
+        return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Group));
+
+    // We do not compute a role string for generic block elements with user-agent assigned roles.
+    if (role == AccessibilityRole::TextGroup)
+        return emptyString();
 
     if (role == AccessibilityRole::GraphicsDocument)
         return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Document));
@@ -2927,7 +2846,7 @@ String AccessibilityObject::roleDescription() const
 {
     // aria-roledescription takes precedence over any other rule.
     if (supportsARIARoleDescription()) {
-        auto roleDescription = getAttribute(aria_roledescriptionAttr).string().trim(isASCIIWhitespace);
+        auto roleDescription = getAttributeTrimmed(aria_roledescriptionAttr);
         if (!roleDescription.isEmpty())
             return roleDescription;
     }
@@ -3461,7 +3380,6 @@ bool AccessibilityObject::supportsExpanded() const
     case AccessibilityRole::ComboBox:
     case AccessibilityRole::GridCell:
     case AccessibilityRole::Link:
-    case AccessibilityRole::ListBox:
     case AccessibilityRole::MenuItem:
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:
@@ -4266,11 +4184,9 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ariaSelectedRows(
         }
     };
 
-    if (isTree()) {
-        AccessibilityChildrenVector allRows;
-        ariaTreeRows(allRows);
-        rowsIteration(allRows);
-    } else if (auto* axTable = dynamicDowncast<AccessibilityTable>(this)) {
+    if (isTree())
+        rowsIteration(ariaTreeRows());
+    else if (auto* axTable = dynamicDowncast<AccessibilityTable>(this)) {
         if (axTable->supportsSelectedRows() && axTable->isExposable())
             rowsIteration(axTable->rows());
     }
@@ -4385,7 +4301,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::relatedObjects(AX
 bool AccessibilityObject::shouldFocusActiveDescendant() const
 {
     switch (ariaRoleAttribute()) {
-    case AccessibilityRole::ApplicationGroup:
+    case AccessibilityRole::Group:
     case AccessibilityRole::ListBox:
     case AccessibilityRole::Menu:
     case AccessibilityRole::MenuBar:

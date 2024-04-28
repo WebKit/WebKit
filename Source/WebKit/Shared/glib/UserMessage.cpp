@@ -31,57 +31,35 @@
 
 namespace WebKit {
 
-void UserMessage::encode(IPC::Encoder& encoder) const
+UserMessage::IPCData UserMessage::toIPCData() const
 {
-    encoder << type;
-    if (type == Type::Null)
-        return;
-
-    encoder << name;
-    if (type == Type::Error) {
-        encoder << errorCode;
-        return;
+    switch (type) {
+    case Type::Null:
+        return NullMessage { };
+    case Type::Error:
+        return ErrorMessage { name, errorCode };
+    case Type::Message:
+        return DataMessage { name, parameters, fileDescriptors };
     }
 
-    encoder << parameters;
-    encoder << fileDescriptors;
+    ASSERT_NOT_REACHED();
+
+    return NullMessage { };
 }
 
-std::optional<UserMessage> UserMessage::decode(IPC::Decoder& decoder)
+UserMessage UserMessage::fromIPCData(UserMessage::IPCData&& ipcData)
 {
-    UserMessage result;
-    if (!decoder.decode(result.type))
-        return std::nullopt;
-
-    if (result.type == Type::Null)
-        return result;
-
-    if (!decoder.decode(result.name))
-        return std::nullopt;
-
-    if (result.type == Type::Error) {
-        std::optional<uint32_t> errorCode;
-        decoder >> errorCode;
-        if (!errorCode)
-            return std::nullopt;
-
-        result.errorCode = errorCode.value();
-        return result;
-    }
-
-    std::optional<GRefPtr<GVariant>> parameters;
-    decoder >> parameters;
-    if (!parameters)
-        return std::nullopt;
-    result.parameters = WTFMove(*parameters);
-
-    std::optional<GRefPtr<GUnixFDList>> fileDescriptors;
-    decoder >> fileDescriptors;
-    if (!fileDescriptors)
-        return std::nullopt;
-    result.fileDescriptors = WTFMove(*fileDescriptors);
-
-    return result;
+    return WTF::switchOn(WTFMove(ipcData),
+        [&] (NullMessage&&) {
+            return UserMessage { };
+        },
+        [&] (ErrorMessage&& message) {
+            return UserMessage { message.name, message.errorCode };
+        },
+        [&] (DataMessage&& message) {
+            return UserMessage { message.name, message.parameters, message.fileDescriptors };
+        }
+    );
 }
 
 }

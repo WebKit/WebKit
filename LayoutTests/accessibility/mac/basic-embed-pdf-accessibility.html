@@ -54,7 +54,7 @@
             output += expect("pdfEmbedElement.domIdentifier", "'pdfEmbed'");
             output += expect("pdfEmbedElement.role", "'AXRole: AXGroup'");
             // Verify the group that contains the PDF AX object isn't considered empty via an AXEmptyGroup subrole.
-            output += expect("pdfEmbedElement.subrole", "'AXSubrole: '");
+            output += expect("pdfEmbedElement.subrole", "'AXSubrole: AXApplicationGroup'");
             output += expect("pdfEmbedElement.childrenCount", "1");
 
             output += expect("pdfAxObject.stringAttributeValue('AXSubrole')", "'AXPDFPluginSubrole'");

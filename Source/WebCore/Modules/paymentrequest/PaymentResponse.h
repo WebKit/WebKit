@@ -100,7 +100,6 @@ private:
     void finishConstruction();
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final { return "PaymentResponse"; }
     void stop() final;
     void suspend(ReasonForSuspension) final;
 

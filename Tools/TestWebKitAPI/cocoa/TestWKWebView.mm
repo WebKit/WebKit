@@ -255,6 +255,18 @@ static NSString *overrideBundleIdentifier(id, SEL)
     [self.textInputContentView _moveToEndOfParagraph:YES withHistory:nil];
 }
 
+- (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion
+{
+#if USE(BROWSERENGINEKIT)
+    if (id<BETextInput> asyncTextInput = self.asyncTextInput) {
+        RetainPtr beTextSuggestion = adoptNS([[BETextSuggestion alloc] _initWithUIKitTextSuggestion:textSuggestion]);
+        [asyncTextInput insertTextSuggestion:beTextSuggestion.get()];
+        return;
+    }
+#endif
+    [self.textInputContentView insertTextSuggestion:textSuggestion];
+}
+
 #if USE(BROWSERENGINEKIT)
 
 - (id<BETextInput>)asyncTextInput

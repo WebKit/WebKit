@@ -28,6 +28,7 @@
 
 namespace WebGPU {
 
+class BindGroup;
 class ShaderModule;
 
 struct LibraryCreationResult {
@@ -36,8 +37,10 @@ struct LibraryCreationResult {
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
 };
 
-std::optional<LibraryCreationResult> createLibrary(id<MTLDevice>, const ShaderModule&, const PipelineLayout*, const String& entryPointName, NSString *label, uint32_t constantCount, const WGPUConstantEntry* constants, NSError **);
+std::optional<LibraryCreationResult> createLibrary(id<MTLDevice>, const ShaderModule&, PipelineLayout*, const String& entryPointName, NSString *label, uint32_t constantCount, const WGPUConstantEntry* constants, NSError **);
 
 id<MTLFunction> createFunction(id<MTLLibrary>, const WGSL::Reflection::EntryPointInformation&, NSString *label);
+
+bool validateBindGroup(BindGroup&);
 
 } // namespace WebGPU

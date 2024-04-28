@@ -51,9 +51,9 @@ Vector<ASCIILiteral> serializedIdentifiers();
 #endif // ENABLE(IPC_TESTING_API)
 
 struct ArgumentDescription {
-    const char* name;
-    const char* type;
-    const char* enumName;
+    ASCIILiteral name;
+    ASCIILiteral type;
+    ASCIILiteral enumName;
     bool isOptional;
 };
 

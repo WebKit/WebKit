@@ -369,7 +369,7 @@ public:
 
     // A programmatic way to set a name on an AccessibleObject.
     void setAccessibleName(const AtomString&) override { }
-    virtual bool hasAttributesRequiredForInclusion() const;
+    virtual bool hasAttributesRequiredForInclusion() const { return false; }
 
     String title() const override { return { }; }
     String description() const override { return { }; }
@@ -541,7 +541,6 @@ public:
     bool hasAttribute(const QualifiedName&) const;
     const AtomString& getAttribute(const QualifiedName&) const;
     String getAttributeTrimmed(const QualifiedName&) const;
-    bool hasValidARIALabel() const { return !getAttributeTrimmed(HTMLNames::aria_labelAttr).isEmpty(); }
 
     String nameAttribute() const final;
     int getIntegralAttribute(const QualifiedName&) const;
@@ -559,14 +558,10 @@ public:
     static bool replacedNodeNeedsCharacter(Node* replacedNode);
 
     VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const override;
-    VisiblePositionRange positionOfLeftWord(const VisiblePosition&) const override;
-    VisiblePositionRange positionOfRightWord(const VisiblePosition&) const override;
     VisiblePositionRange leftLineVisiblePositionRange(const VisiblePosition&) const override;
     VisiblePositionRange rightLineVisiblePositionRange(const VisiblePosition&) const override;
-    VisiblePositionRange sentenceForPosition(const VisiblePosition&) const override;
-    VisiblePositionRange paragraphForPosition(const VisiblePosition&) const override;
     VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const override;
-    VisiblePositionRange visiblePositionRangeForRange(const CharacterRange&) const override;
+    VisiblePositionRange visiblePositionRangeForRange(const CharacterRange&) const;
     VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const override;
     virtual VisiblePositionRange selectedVisiblePositionRange() const { return { }; }
 
@@ -586,10 +581,6 @@ public:
     VisiblePosition visiblePositionForPoint(const IntPoint&) const final;
     VisiblePosition nextLineEndPosition(const VisiblePosition&) const override;
     VisiblePosition previousLineStartPosition(const VisiblePosition&) const override;
-    VisiblePosition nextSentenceEndPosition(const VisiblePosition&) const override;
-    VisiblePosition previousSentenceStartPosition(const VisiblePosition&) const override;
-    VisiblePosition nextParagraphEndPosition(const VisiblePosition&) const override;
-    VisiblePosition previousParagraphStartPosition(const VisiblePosition&) const override;
     VisiblePosition visiblePositionForIndex(unsigned, bool /*lastIndexOK */) const override { return VisiblePosition(); }
 
     VisiblePosition visiblePositionForIndex(int) const override { return VisiblePosition(); }
@@ -618,7 +609,7 @@ public:
     AutoFillButtonType valueAutofillButtonType() const override;
 
     // Used by an ARIA tree to get all its rows.
-    void ariaTreeRows(AccessibilityChildrenVector&) override;
+    AccessibilityChildrenVector ariaTreeRows() final;
 
     // ARIA live-region features.
     AccessibilityObject* liveRegionAncestor(bool excludeIfOff = true) const final { return Accessibility::liveRegionAncestor(*this, excludeIfOff); }

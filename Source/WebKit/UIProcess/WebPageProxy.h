@@ -945,9 +945,6 @@ public:
         
     void setScreenIsBeingCaptured(bool);
 
-    void insertTextPlaceholder(const WebCore::IntSize&, CompletionHandler<void(const std::optional<WebCore::ElementContext>&)>&&);
-    void removeTextPlaceholder(const WebCore::ElementContext&, CompletionHandler<void()>&&);
-
     double displayedContentScale() const;
     const WebCore::FloatRect& exposedContentRect() const;
     const WebCore::FloatRect& unobscuredContentRect() const;
@@ -967,6 +964,7 @@ public:
     void scrollingNodeScrollDidEndScroll(std::optional<WebCore::ScrollingNodeID>);
 
     WebCore::FloatSize overrideScreenSize();
+    WebCore::FloatSize overrideAvailableScreenSize();
 
     void dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate&);
 
@@ -1045,7 +1043,7 @@ public:
     void storeSelectionForAccessibility(bool);
     void startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow);
     void cancelAutoscroll();
-    void hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached);
+    void hardwareKeyboardAvailabilityChanged();
     bool isScrollingOrZooming() const { return m_isScrollingOrZooming; }
     void requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&&);
     void updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&&);
@@ -1067,6 +1065,11 @@ public:
     void didConcludeDrop();
 #endif
 #endif // PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(COCOA)
+    void insertTextPlaceholder(const WebCore::IntSize&, CompletionHandler<void(const std::optional<WebCore::ElementContext>&)>&&);
+    void removeTextPlaceholder(const WebCore::ElementContext&, CompletionHandler<void()>&&);
+#endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     void getTextIndicatorForID(WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
@@ -1204,6 +1207,7 @@ public:
 #endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
+    void sendGestureEvent(WebCore::FrameIdentifier, const NativeWebGestureEvent&);
     void handleGestureEvent(const NativeWebGestureEvent&);
 #endif
 
@@ -1788,7 +1792,7 @@ public:
 
 #if PLATFORM(MAC)
     API::HitTestResult* lastMouseMoveHitTestResult() const { return m_lastMouseMoveHitTestResult.get(); }
-    void performImmediateActionHitTestAtLocation(WebCore::FloatPoint);
+    void performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier, WebCore::FloatPoint);
 
     void immediateActionDidUpdate();
     void immediateActionDidCancel();
@@ -2276,7 +2280,7 @@ public:
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
 
-    WebProcessProxy* processForRegistrableDomain(const WebCore::RegistrableDomain&, const WebsiteDataStore&);
+    WebProcessProxy* processForRegistrableDomain(const WebCore::RegistrableDomain&);
 
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&, const String& frameName);
     void broadcastMainFrameURLChangeToOtherProcesses(IPC::Connection&, const URL&);
@@ -2443,6 +2447,7 @@ public:
     void nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata&);
 
     void didAdjustVisibilityWithSelectors(Vector<String>&&);
+    BrowsingContextGroup& browsingContextGroup() const { return m_browsingContextGroup; }
 
 private:
     std::optional<Vector<uint8_t>> getWebCryptoMasterKey();
@@ -2966,10 +2971,6 @@ private:
 
     void didFinishServiceWorkerPageRegistration(bool success);
     void callLoadCompletionHandlersIfNecessary(bool success);
-
-#if PLATFORM(IOS_FAMILY)
-    static bool isInHardwareKeyboardMode();
-#endif
 
     void waitForInitialLinkDecorationFilteringData(WebFramePolicyListenerProxy&);
     void sendCachedLinkDecorationFilteringData();

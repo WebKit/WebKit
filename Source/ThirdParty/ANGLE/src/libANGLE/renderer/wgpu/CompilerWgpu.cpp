@@ -20,7 +20,7 @@ CompilerWgpu::~CompilerWgpu() {}
 
 ShShaderOutput CompilerWgpu::getTranslatorOutputType() const
 {
-    return SH_ESSL_OUTPUT;
+    return SH_WGSL_OUTPUT;
 }
 
 }  // namespace rx

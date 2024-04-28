@@ -91,16 +91,16 @@ void RenderSVGResourceMarker::updateLayerTransform()
     ASSERT(hasLayer());
 
     // First update the supplemental layer transform.
-    auto& useMarkerElement = markerElement();
+    Ref useMarkerElement = markerElement();
     auto viewportSize = this->viewportSize();
 
     m_supplementalLayerTransform.makeIdentity();
 
-    if (useMarkerElement.hasAttribute(SVGNames::viewBoxAttr)) {
+    if (useMarkerElement->hasAttribute(SVGNames::viewBoxAttr)) {
         // An empty viewBox disables the rendering -- dirty the visible descendant status!
-        if (useMarkerElement.hasEmptyViewBox())
+        if (useMarkerElement->hasEmptyViewBox())
             layer()->dirtyVisibleContentStatus();
-        else if (auto viewBoxTransform = useMarkerElement.viewBoxToViewTransform(viewportSize.width(), viewportSize.height()); !viewBoxTransform.isIdentity())
+        else if (auto viewBoxTransform = useMarkerElement->viewBoxToViewTransform(viewportSize.width(), viewportSize.height()); !viewBoxTransform.isIdentity())
             m_supplementalLayerTransform = viewBoxTransform;
     }
 
@@ -124,11 +124,11 @@ void RenderSVGResourceMarker::applyTransform(TransformationMatrix& transform, co
 
 LayoutRect RenderSVGResourceMarker::overflowClipRect(const LayoutPoint& location, RenderFragmentContainer*, OverlayScrollbarSizeRelevancy, PaintPhase) const
 {
-    auto& useMarkerElement = markerElement();
+    Ref useMarkerElement = markerElement();
 
     auto clipRect = enclosingLayoutRect(viewport());
-    if (useMarkerElement.hasAttribute(SVGNames::viewBoxAttr)) {
-        if (useMarkerElement.hasEmptyViewBox())
+    if (useMarkerElement->hasAttribute(SVGNames::viewBoxAttr)) {
+        if (useMarkerElement->hasEmptyViewBox())
             return { };
 
         if (!m_supplementalLayerTransform.isIdentity())

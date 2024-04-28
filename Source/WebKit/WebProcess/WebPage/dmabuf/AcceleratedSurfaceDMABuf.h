@@ -36,6 +36,7 @@
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if USE(GBM)
+#include <WebCore/DRMDeviceNode.h>
 #include <atomic>
 #include <wtf/Lock.h>
 typedef void *EGLImage;
@@ -136,6 +137,7 @@ private:
             drmDevice = WTFMove(other.drmDevice);
             fourcc = std::exchange(other.fourcc, 0);
             modifiers = WTFMove(other.modifiers);
+            drmDeviceNode = WTFMove(other.drmDeviceNode);
             return *this;
         }
 
@@ -148,6 +150,7 @@ private:
         CString drmDevice;
         uint32_t fourcc { 0 };
         Vector<uint64_t, 1> modifiers;
+        RefPtr<WebCore::DRMDeviceNode> drmDeviceNode;
     };
 
     class RenderTargetEGLImage final : public RenderTargetColorBuffer {

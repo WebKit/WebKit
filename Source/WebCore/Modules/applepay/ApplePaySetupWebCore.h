@@ -55,7 +55,6 @@ private:
     ApplePaySetup(ScriptExecutionContext&, ApplePaySetupConfiguration&&);
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const final { return "ApplePaySetup"; }
     void stop() final;
     void suspend(ReasonForSuspension) final;
 

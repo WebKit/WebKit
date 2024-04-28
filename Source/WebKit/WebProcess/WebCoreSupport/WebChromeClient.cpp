@@ -102,6 +102,8 @@
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextRecognitionOptions.h>
 
+#include <WebCore/WindowFeatures.h>
+
 #if HAVE(WEBGPU_IMPLEMENTATION)
 #import <WebCore/WebGPUCreateImpl.h>
 #endif
@@ -1334,6 +1336,11 @@ FloatSize WebChromeClient::availableScreenSize() const
 FloatSize WebChromeClient::overrideScreenSize() const
 {
     return protectedPage()->overrideScreenSize();
+}
+
+FloatSize WebChromeClient::overrideAvailableScreenSize() const
+{
+    return protectedPage()->overrideAvailableScreenSize();
 }
 
 #endif

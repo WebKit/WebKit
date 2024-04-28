@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2023 Apple Inc. All rights reserved.
+# Copyright (c) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -1389,7 +1389,7 @@ CanvasColorSpaceEnabled:
 
 CanvasFiltersEnabled:
   type: bool
-  status: unstable
+  status: testable
   category: dom
   webcoreOnChange: setNeedsRelayoutAllFrames
   humanReadableName: "Canvas Filters"
@@ -3692,7 +3692,7 @@ LinearMediaPlayerEnabled:
     WebKit:
       # FIXME: this line can be removed when WebKitSwift is available in Simulators (see rdar://125735304)
       "PLATFORM(IOS_FAMILY_SIMULATOR)": false
-      default: true
+      default: WebKit::defaultLinearMediaPlayerEnabled()
     WebCore:
       default: false
 
@@ -4706,6 +4706,21 @@ NotificationsEnabled:
     WebCore:
       "PLATFORM(IOS_FAMILY)": false
       default: true
+
+OffscreenCanvasDeprecatedCommitEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "OffscreenCanvasRenderingContext2D's deprecated commit() method"
+  humanReadableDescription: "Support for OffscreenCanvasRenderingContext2D's deprecated commit() method"
+  condition: ENABLE(OFFSCREEN_CANVAS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 OffscreenCanvasEnabled:
   type: bool

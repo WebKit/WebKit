@@ -146,7 +146,6 @@ private:
 
     // ActiveDOMObject.
     // FIXME: We probably need to override more methods to make this work properly.
-    const char* activeDOMObjectName() const final { return "GPUDevice"; }
     RefPtr<GPUPipelineLayout> createAutoPipelineLayout();
 
     // EventTarget.

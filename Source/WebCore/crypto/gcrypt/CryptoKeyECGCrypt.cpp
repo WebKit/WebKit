@@ -34,19 +34,20 @@
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
-static const char* curveName(CryptoKeyEC::NamedCurve curve)
+
+static ASCIILiteral curveName(CryptoKeyEC::NamedCurve curve)
 {
     switch (curve) {
     case CryptoKeyEC::NamedCurve::P256:
-        return "NIST P-256";
+        return "NIST P-256"_s;
     case CryptoKeyEC::NamedCurve::P384:
-        return "NIST P-384";
+        return "NIST P-384"_s;
     case CryptoKeyEC::NamedCurve::P521:
-        return "NIST P-521";
+        return "NIST P-521"_s;
     }
 
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return { };
 }
 
 static const uint8_t* curveIdentifier(CryptoKeyEC::NamedCurve curve)
@@ -114,7 +115,7 @@ bool CryptoKeyEC::platformSupportedCurve(NamedCurve curve)
 std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit)
 {
     PAL::GCrypt::Handle<gcry_sexp_t> genkeySexp;
-    gcry_error_t error = gcry_sexp_build(&genkeySexp, nullptr, "(genkey(ecc(curve %s)))", curveName(curve));
+    gcry_error_t error = gcry_sexp_build(&genkeySexp, nullptr, "(genkey(ecc(curve %s)))", curveName(curve).characters());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
@@ -144,7 +145,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier ide
 
     PAL::GCrypt::Handle<gcry_sexp_t> platformKey;
     gcry_error_t error = gcry_sexp_build(&platformKey, nullptr, "(public-key(ecc(curve %s)(q %b)))",
-        curveName(curve), keyData.size(), keyData.data());
+        curveName(curve).characters(), keyData.size(), keyData.data());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return nullptr;
@@ -168,7 +169,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifi
 
     PAL::GCrypt::Handle<gcry_sexp_t> platformKey;
     gcry_error_t error = gcry_sexp_build(&platformKey, nullptr, "(public-key(ecc(curve %s)(q %b)))",
-        curveName(curve), q.size(), q.data());
+        curveName(curve).characters(), q.size(), q.data());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return nullptr;
@@ -192,7 +193,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
 
     PAL::GCrypt::Handle<gcry_sexp_t> platformKey;
     gcry_error_t error = gcry_sexp_build(&platformKey, nullptr, "(private-key(ecc(curve %s)(q %b)(d %b)))",
-        curveName(curve), q.size(), q.data(), d.size(), d.data());
+        curveName(curve).characters(), q.size(), q.data(), d.size(), d.data());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return nullptr;
@@ -316,7 +317,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
 
         // Create an EC context for the specified curve.
         PAL::GCrypt::Handle<gcry_ctx_t> context;
-        gcry_error_t error = gcry_mpi_ec_new(&context, nullptr, curveName(curve));
+        gcry_error_t error = gcry_mpi_ec_new(&context, nullptr, curveName(curve).characters());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return nullptr;
@@ -327,7 +328,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
             return nullptr;
 
         error = gcry_sexp_build(&platformKey, nullptr, "(public-key(ecc(curve %s)(q %b)))",
-            curveName(curve), subjectPublicKey->size(), subjectPublicKey->data());
+            curveName(curve).characters(), subjectPublicKey->size(), subjectPublicKey->data());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return nullptr;
@@ -445,7 +446,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
 
         // Construct the `private-key` expression that will also be used for the EC context.
         gcry_error_t error = gcry_sexp_build(&platformKey, nullptr, "(private-key(ecc(curve %s)(d %b)))",
-            curveName(curve), privateKey->size(), privateKey->data());
+            curveName(curve).characters(), privateKey->size(), privateKey->data());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return nullptr;

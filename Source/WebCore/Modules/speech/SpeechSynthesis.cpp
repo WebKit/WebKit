@@ -339,11 +339,6 @@ void SpeechSynthesis::simulateVoicesListChange()
         voicesDidChange();
 }
 
-const char* SpeechSynthesis::activeDOMObjectName() const
-{
-    return "SpeechSynthesis";
-}
-
 bool SpeechSynthesis::virtualHasPendingActivity() const
 {
     return m_voiceList && m_hasEventListener;

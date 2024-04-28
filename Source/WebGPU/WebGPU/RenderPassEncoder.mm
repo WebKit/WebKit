@@ -33,6 +33,7 @@
 #import "CommandEncoder.h"
 #import "ExternalTexture.h"
 #import "IsValidToUseWith.h"
+#import "Pipeline.h"
 #import "QuerySet.h"
 #import "RenderBundle.h"
 #import "RenderPipeline.h"
@@ -112,18 +113,16 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         if (!textureToClear)
             continue;
         TextureAndClearColor *textureWithClearColor = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
-        bool storeOpDiscardAndLoadOpLoad = false;
         if (attachment.storeOp != WGPUStoreOp_Discard) {
             auto& c = attachment.clearValue;
             textureWithClearColor.clearColor = MTLClearColorMake(c.r, c.g, c.b, c.a);
         } else if (attachment.loadOp == WGPULoadOp_Load) {
-            storeOpDiscardAndLoadOpLoad = true;
             textureWithClearColor.clearColor = MTLClearColorMake(0, 0, 0, 0);
             [m_attachmentsToClear setObject:textureWithClearColor forKey:@(i)];
         }
 
-        if (attachment.loadOp == WGPULoadOp_Clear || storeOpDiscardAndLoadOpLoad)
-            [m_allColorAttachments setObject:textureWithClearColor forKey:@(i)];
+        textureWithClearColor.depthPlane = attachment.depthSlice.value_or(0);
+        [m_allColorAttachments setObject:textureWithClearColor forKey:@(i)];
     }
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {
@@ -208,7 +207,10 @@ void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)
         return;
     }
 
+    if (m_queryBufferUtilizedIndices.contains(queryIndex))
+        return;
     [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeCounting offset:queryIndex];
+    m_queryBufferUtilizedIndices.add(queryIndex);
 }
 
 void RenderPassEncoder::endOcclusionQuery()
@@ -459,6 +461,10 @@ bool RenderPassEncoder::executePreDrawCommands(const Buffer* indirectBuffer)
             return false;
         }
         auto& group = *weakBindGroup.get();
+        if (!validateBindGroup(group)) {
+            makeInvalid(@"buffer is too small");
+            return false;
+        }
         [m_renderCommandEncoder setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:m_device->vertexBufferIndexForBindGroup(groupIndex)];
         [m_renderCommandEncoder setFragmentBuffer:group.fragmentArgumentBuffer() offset:0 atIndex:groupIndex];
     }
@@ -702,7 +708,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
 
         renderBundle.updateMinMaxDepths(m_minDepth, m_maxDepth);
 
-        if (!renderBundle.validateRenderPass(m_depthReadOnly, m_stencilReadOnly, m_descriptor) || !renderBundle.validatePipeline(m_pipeline.get())) {
+        if (!renderBundle.validateRenderPass(m_depthReadOnly, m_stencilReadOnly, m_descriptor, m_colorAttachmentViews, m_depthStencilView) || !renderBundle.validatePipeline(m_pipeline.get())) {
             makeInvalid(@"executeBundles: validation failed");
             return;
         }

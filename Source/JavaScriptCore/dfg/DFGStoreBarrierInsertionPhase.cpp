@@ -37,6 +37,7 @@
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "JSCInlines.h"
+#include "StructureID.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashSet.h>
 

@@ -44,6 +44,7 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
+#include "PermissionsPolicy.h"
 #include "PlatformMediaSessionManager.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "Settings.h"
@@ -267,11 +268,6 @@ void UserMediaRequest::stop()
     auto& document = downcast<Document>(*scriptExecutionContext());
     if (auto* controller = UserMediaController::from(document.page()))
         controller->cancelUserMediaAccessRequest(*this);
-}
-
-const char* UserMediaRequest::activeDOMObjectName() const
-{
-    return "UserMediaRequest";
 }
 
 Document* UserMediaRequest::document() const

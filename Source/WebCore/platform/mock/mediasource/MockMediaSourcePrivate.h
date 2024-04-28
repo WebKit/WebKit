@@ -59,7 +59,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const char* logClassName() const override { return "MockMediaSourcePrivate"; }
+    ASCIILiteral logClassName() const override { return "MockMediaSourcePrivate"_s; }
     const void* logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 

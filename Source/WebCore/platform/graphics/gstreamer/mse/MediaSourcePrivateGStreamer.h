@@ -75,7 +75,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
-    const char* logClassName() const override { return "MediaSourcePrivateGStreamer"; }
+    ASCIILiteral logClassName() const override { return "MediaSourcePrivateGStreamer"_s; }
     const void* logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 
