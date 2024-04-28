@@ -58,6 +58,7 @@ public:
 
     void handleLocalEvents(Event&, EventInvokePhase) const;
 
+    bool isNormalEventContext() const { return m_type == Type::Normal; }
     bool isMouseOrFocusEventContext() const { return m_type == Type::MouseOrFocus; }
     bool isTouchEventContext() const { return m_type == Type::Touch; }
     bool isWindowContext() const { return m_type == Type::Window; }
