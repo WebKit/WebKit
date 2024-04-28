@@ -4,6 +4,8 @@ sources:
   url: gitlab_gnome_org:GNOME/gtk.git
   track: 4.*
   ref: 4.15.0-0-g1a3c5cf420392f76998974f54edc899e526b524d
+- kind: patch
+  path: patches/gtk/0001-wayland-Consistently-handle-enum-type.patch
 build-depends:
 - sdk-build-depends/sassc.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
