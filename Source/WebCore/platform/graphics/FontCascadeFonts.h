@@ -74,7 +74,7 @@ public:
     WidthCache& widthCache() { return m_widthCache; }
     const WidthCache& widthCache() const { return m_widthCache; }
 
-    const Font& primaryFont(FontCascadeDescription&);
+    const Font& primaryFont(const FontCascadeDescription&);
     WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontCascadeDescription&, unsigned fallbackIndex);
 
     void pruneSystemFallbacks();
@@ -144,7 +144,7 @@ inline bool FontCascadeFonts::canTakeFixedPitchFastContentMeasuring(const FontCa
     return m_canTakeFixedPitchFastContentMeasuring == TriState::True;
 }
 
-inline const Font& FontCascadeFonts::primaryFont(FontCascadeDescription& description)
+inline const Font& FontCascadeFonts::primaryFont(const FontCascadeDescription& description)
 {
     ASSERT(m_thread ? m_thread->ptr() == &Thread::current() : isMainThread());
     if (!m_cachedPrimaryFont) {
@@ -164,14 +164,8 @@ inline const Font& FontCascadeFonts::primaryFont(FontCascadeDescription& descrip
                 }
             }
         }
-
-        ASSERT(m_cachedPrimaryFont);
-        auto fontSizeAdjust = description.fontSizeAdjust();
-        if (fontSizeAdjust.isFromFont()) {
-            auto aspectValue = fontSizeAdjust.resolve(description.computedSize(), m_cachedPrimaryFont->fontMetrics());
-            description.setFontSizeAdjust({ fontSizeAdjust.metric, FontSizeAdjust::ValueType::FromFont, aspectValue });
-        }
     }
+    ASSERT(m_cachedPrimaryFont);
     return *m_cachedPrimaryFont;
 }
 
