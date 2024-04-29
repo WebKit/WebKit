@@ -33,8 +33,17 @@
 #include "RenderElement.h"
 #include "RenderWidget.h"
 #include "WindowProxy.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+#if ASSERT_ENABLED
+static HashMap<FrameIdentifier, WeakRef<Frame>>& allFrames()
+{
+    static NeverDestroyed<HashMap<FrameIdentifier, WeakRef<Frame>>> map;
+    return map;
+}
+#endif
 
 Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrameOwnerElement* ownerElement, Frame* parent)
     : m_page(page)
@@ -52,12 +61,28 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
 
     if (ownerElement)
         ownerElement->setContentFrame(*this);
+
+#if ASSERT_ENABLED
+    WeakPtr maybeOldFrame = allFrames().take(frameID);
+    auto addResult = allFrames().add(frameID, *this);
+    ASSERT(addResult.isNewEntry);
+    ASSERT_WITH_MESSAGE(!maybeOldFrame || is<LocalFrame>(maybeOldFrame) != is<LocalFrame>(*this), "The only time there should be two frames with the same ID in the same process is when swapping between local and remote frames.");
+#endif
 }
 
 Frame::~Frame()
 {
     m_windowProxy->detachFromFrame();
     m_navigationScheduler->cancel();
+
+#if ASSERT_ENABLED
+    auto it = allFrames().find(m_frameID);
+    ASSERT(it != allFrames().end());
+    if (it->value.ptr() == this)
+        allFrames().remove(it);
+    else
+        ASSERT_WITH_MESSAGE(is<LocalFrame>(it->value) != is<LocalFrame>(this), "The only time there should be two frames with the same ID in the same process is when swapping between local and remote frames.");
+#endif
 }
 
 std::optional<PageIdentifier> Frame::pageID() const
@@ -123,5 +148,13 @@ RefPtr<FrameView> Frame::protectedVirtualView() const
 {
     return virtualView();
 }
+
+#if ASSERT_ENABLED
+bool Frame::isRootFrameIdentifier(FrameIdentifier identifier)
+{
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(allFrames().get(identifier));
+    return localFrame && localFrame->isRootFrame();
+}
+#endif
 
 } // namespace WebCore

@@ -69,6 +69,9 @@ public:
     Frame& mainFrame() const { return m_mainFrame.get(); }
     bool isMainFrame() const { return this == m_mainFrame.ptr(); }
     virtual bool isRootFrame() const = 0;
+#if ASSERT_ENABLED
+    static bool isRootFrameIdentifier(FrameIdentifier);
+#endif
 
     WEBCORE_EXPORT void detachFromPage();
 
@@ -113,7 +116,7 @@ private:
     mutable FrameTree m_treeNode;
     Ref<WindowProxy> m_windowProxy;
     WeakPtr<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData> m_ownerElement;
-    WeakRef<Frame> m_mainFrame;
+    const WeakRef<Frame> m_mainFrame;
     const Ref<Settings> m_settings;
     FrameType m_frameType;
     mutable UniqueRef<NavigationScheduler> m_navigationScheduler;

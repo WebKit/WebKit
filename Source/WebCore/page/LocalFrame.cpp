@@ -148,12 +148,12 @@ static inline float parentTextZoomFactor(LocalFrame* frame)
     return parent->textZoomFactor();
 }
 
-static bool isRootFrame(const Frame& frame)
+static const LocalFrame& rootFrame(const LocalFrame& frame)
 {
-    if (auto* parent = frame.tree().parent())
-        return is<RemoteFrame>(parent);
-    ASSERT(&frame.mainFrame() == &frame);
-    return true;
+    if (auto* parent = dynamicDowncast<LocalFrame>(frame.tree().parent()))
+        return parent->rootFrame();
+    ASSERT(is<RemoteFrame>(frame.tree().parent()) || frame.isMainFrame());
+    return frame;
 }
 
 LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, Frame* parent, Frame* opener)
@@ -162,7 +162,7 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
     , m_script(makeUniqueRef<ScriptController>(*this))
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
-    , m_isRootFrame(WebCore::isRootFrame(*this))
+    , m_rootFrame(WebCore::rootFrame(*this))
     , m_eventHandler(makeUniqueRef<EventHandler>(*this))
 {
     ProcessWarming::initializeNames();
@@ -183,6 +183,7 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
         page.addRootFrame(*this);
 
     setOpener(opener);
+    ASSERT(isRootFrameIdentifier(frameID()) == isRootFrame());
 }
 
 void LocalFrame::init()
@@ -235,11 +236,6 @@ LocalFrame::~LocalFrame()
         if (auto* page = this->page())
             page->removeRootFrame(*this);
     }
-}
-
-bool LocalFrame::isRootFrame() const
-{
-    return m_isRootFrame;
 }
 
 void LocalFrame::addDestructionObserver(FrameDestructionObserver& observer)
