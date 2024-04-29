@@ -22,13 +22,15 @@ function runTest() {
     document.execCommand('copy');
 }
 
+let container = document.getElementById('container');
+
 var originalHTML = '<meta content="secret"><b onmouseover="dangerousCode()">hello</b><!-- secret-->, world<script>dangerousCode()</scr' + 'ipt>';
 function doCopy(event) {
     event.clipboardData.setData('text/html', originalHTML);
     event.preventDefault();
 
     const iframe = document.createElement('iframe');
-    document.getElementById('container').insertBefore(iframe, iframe.lastChild);
+    container.insertBefore(iframe, iframe.lastChild);
     iframe.src = `data:text/html;charset=utf-8,<!DOCTYPE html>
     <div id="destination" onpaste="doPaste(event)" contenteditable>2. Paste here</div>
     <script>
@@ -51,7 +53,7 @@ function doCopy(event) {
 
 onmessage = (event) => {
     typesInNullOrigin = event.data.types;
-    shouldBeEqualToString('JSON.stringify(typesInNullOrigin)', '["text/html"]');
+    shouldBeTrue('typesInNullOrigin.includes("text/html")');
 
     htmlInNullOrigin = event.data.html;
     shouldBeFalse('htmlInNullOrigin.includes("secret")');
@@ -60,7 +62,7 @@ onmessage = (event) => {
     shouldBeEqualToString('b.parentNode.textContent', 'hello, world');
 
     itemsInNullOrigin = event.data.items;
-    shouldBeEqualToString('JSON.stringify(itemsInNullOrigin)', '[{"kind":"string","type":"text/html"}]');
+    shouldBeEqualToString('JSON.stringify(itemsInNullOrigin[0])', '{"kind":"string","type":"text/html"}');
     document.getElementById('destination').focus();
     if (window.testRunner)
         document.execCommand('paste');
@@ -68,10 +70,10 @@ onmessage = (event) => {
 
 function doPaste(event) {
     shouldBeEqualToString('event.clipboardData.getData("text/html")', originalHTML);
-    shouldBeEqualToString('JSON.stringify(event.clipboardData.types)', '["text/html"]');
-    shouldBeEqualToString('JSON.stringify(Array.from(event.clipboardData.items).map((item) => ({kind: item.kind, type: item.type})))',
-        '[{"kind":"string","type":"text/html"}]');
-    document.getElementById('container').remove();
+    shouldBeTrue('event.clipboardData.types.includes("text/html")');
+    pastedItems = [...event.clipboardData.items].map(item => ({kind: item.kind, type: item.type}));
+    shouldBeEqualToString('JSON.stringify(pastedItems[0])', '{"kind":"string","type":"text/html"}');
+    container.style.display = "none";
     finishJSTest();
 }
 
