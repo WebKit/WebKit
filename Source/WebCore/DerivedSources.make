@@ -2546,6 +2546,7 @@ WebCore_BUILTINS_SOURCES = \
     $(WebCore)/dom/TextEncoderStream.js \
     $(WebCore)/bindings/js/JSDOMBindingInternals.js \
     $(WebCore)/inspector/CommandLineAPIModuleSource.js \
+    $(WebCore)/page/QuirksInternals.js \
 #
 
 BUILTINS_GENERATOR_SCRIPTS = \

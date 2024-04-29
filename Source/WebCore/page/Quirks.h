@@ -191,6 +191,8 @@ public:
 
     bool needsGetElementsByNameQuirk() const;
 
+    bool needsNetflixMediaSessionQuirk() const;
+
 private:
     bool needsQuirks() const;
     bool isDomain(const String&) const;
@@ -262,6 +264,7 @@ private:
     mutable std::optional<bool> m_needsDisableDOMPasteAccessQuirk;
     mutable std::optional<bool> m_shouldDisableElementFullscreen;
     mutable std::optional<bool> m_shouldIgnorePlaysInlineRequirementQuirk;
+    mutable std::optional<bool> m_needsNetflixMediaSessionQuirk;
 
     Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
 };

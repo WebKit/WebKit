@@ -91,7 +91,10 @@
 #include "MediaQueryEvaluator.h"
 #include "MediaResourceLoader.h"
 #include "MediaResourceSniffer.h"
+#include "MediaSession.h"
+#include "MediaSessionAction.h"
 #include "NavigatorMediaDevices.h"
+#include "NavigatorMediaSession.h"
 #include "NetworkingContext.h"
 #include "NodeName.h"
 #include "NowPlayingInfo.h"
@@ -105,6 +108,7 @@
 #include "ProgressTracker.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Quirks.h"
+#include "QuirksInternalsBuiltins.h"
 #include "RegistrableDomain.h"
 #include "RenderBoxInlines.h"
 #include "RenderTheme.h"
@@ -131,6 +135,7 @@
 #include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"
 #include "VideoTrackPrivate.h"
+#include "WebCoreJSBuiltinInternals.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/Uint8Array.h>
 #include <limits>
@@ -533,6 +538,10 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     ALWAYS_LOG(LOGIDENTIFIER);
 
     InspectorInstrumentation::addEventListenersToNode(*this);
+
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] {
+        ensureNetflixMediaSessionQuirkIfNecessary();
+    });
 }
 
 void HTMLMediaElement::initializeMediaSession()
@@ -9492,6 +9501,33 @@ void HTMLMediaElement::defaultSpatialTrackingLabelChanged(const String& defaultS
         m_player->setDefaultSpatialTrackingLabel(defaultSpatialTrackingLabel);
 }
 #endif
+
+void HTMLMediaElement::ensureNetflixMediaSessionQuirkIfNecessary()
+{
+#if ENABLE(MEDIA_SESSION)
+    if (!document().quirks().needsNetflixMediaSessionQuirk())
+        return;
+
+    RefPtr window = document().protectedWindow();
+    if (!window)
+        return;
+
+    if (RefPtr mediaSession = NavigatorMediaSession::mediaSessionIfExists(window->navigator())) {
+        if (mediaSession->hasActionHandler(MediaSessionAction::Seekto))
+            return;
+    }
+
+    setupAndCallJS([](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
+        auto* function = globalObject.builtinInternalFunctions().quirksInternals().m_installNetflixMediaSessionQuirkFunction.get();
+        ASSERT(function);
+
+        JSC::MarkedArgumentBuffer noArguments;
+        ASSERT(!noArguments.hasOverflowed());
+        JSC::call(&lexicalGlobalObject, function, noArguments, ""_s);
+        return true;
+    });
+#endif
+}
 
 } // namespace WebCore
 

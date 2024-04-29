@@ -267,6 +267,12 @@ void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessi
     notifyActionHandlerObservers();
 }
 
+bool MediaSession::hasActionHandler(const MediaSessionAction action) const
+{
+    Locker lock { m_actionHandlersLock };
+    return m_actionHandlers.contains(action);
+}
+
 void MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails, DOMPromiseDeferred<void>&& promise)
 {
     ALWAYS_LOG(LOGIDENTIFIER);

@@ -1078,6 +1078,8 @@ private:
 
     bool videoUsesElementFullscreen() const;
 
+    void ensureNetflixMediaSessionQuirkIfNecessary();
+
 #if !RELEASE_LOG_DISABLED
     const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }
     const Logger& mediaPlayerLogger() final { return logger(); }
