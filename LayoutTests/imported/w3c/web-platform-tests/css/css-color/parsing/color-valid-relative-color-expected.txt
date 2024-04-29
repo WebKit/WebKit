@@ -742,10 +742,7 @@ PASS e.style['color'] = "color(from color(a98-rgb none none none / none) a98-rgb
 PASS e.style['color'] = "color(from color(a98-rgb 0.7 none 0.3) a98-rgb r g b)" should set the property value
 PASS e.style['color'] = "color(from color(a98-rgb 0.7 0.5 0.3 / none) a98-rgb r g b / alpha)" should set the property value
 FAIL e.style['color'] = "color(from currentColor a98-rgb r g b)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['color'] = "color(from color-mix(in xyz, color(a98-rgb 0.7 0.5 0.3), color(a98-rgb 0.7 0.5 0.3)) a98-rgb r g b / alpha)" should set the property value Colors do not match.
-Actual:   color(a98-rgb 0.724466 0.511409 0.324083)
-Expected: color(a98-rgb 0.7 0.5 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.7 +/- 0.01, expected 0.7 but got 0.724466
+PASS e.style['color'] = "color(from color-mix(in xyz, color(a98-rgb 0.7 0.5 0.3), color(a98-rgb 0.7 0.5 0.3)) a98-rgb r g b / alpha)" should set the property value
 PASS e.style['color'] = "color(from color(rec2020 0.7 0.5 0.3) rec2020 r g b)" should set the property value
 PASS e.style['color'] = "color(from color(rec2020 0.7 0.5 0.3) rec2020 r g b / alpha)" should set the property value
 PASS e.style['color'] = "color(from color(rec2020 0.7 0.5 0.3 / 40%) rec2020 r g b)" should set the property value

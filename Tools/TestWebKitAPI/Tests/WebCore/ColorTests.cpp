@@ -373,7 +373,7 @@ TEST(Color, P3ConversionToSRGB)
     auto sRGBAColor = p3Color.toColorTypeLossy<SRGBA<float>>().resolved();
     EXPECT_FLOAT_EQ(sRGBAColor.red, 1.0f);
     EXPECT_FLOAT_EQ(sRGBAColor.green, 0.50120097f);
-    EXPECT_FLOAT_EQ(sRGBAColor.blue, 0.26161569f);
+    EXPECT_FLOAT_EQ(sRGBAColor.blue, 0.2616162f);
     EXPECT_FLOAT_EQ(sRGBAColor.alpha, 0.75f);
 }
 

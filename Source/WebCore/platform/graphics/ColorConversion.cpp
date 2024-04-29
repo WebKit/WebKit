@@ -42,8 +42,13 @@ LCHLike convertToPolarForm(const LabLike& color)
     // https://drafts.csswg.org/css-color/#lab-to-lch
     auto [lightness, a, b, alpha] = color.resolved();
 
-    float hue = rad2deg(atan2(b, a));
+    // Epsilon chosen to ensure `white` (the SRGB named value) is
+    // considered achromatic (e.g. we set hue to NaN) when converted
+    // to lch/oklch.
+    constexpr auto epsilon = 0.02f;
+
     float chroma = std::hypot(a, b);
+    float hue = (std::abs(a) < epsilon && std::abs(b) < epsilon) ? std::numeric_limits<float>::quiet_NaN() : rad2deg(atan2(b, a));
 
     return { lightness, chroma, hue >= 0.0f ? hue : hue + 360.0f, alpha };
 }
@@ -53,6 +58,9 @@ LabLike convertToRectangularForm(const LCHLike& color)
 {
     // https://drafts.csswg.org/css-color/#lch-to-lab
     auto [lightness, chroma, hue, alpha] = color.resolved();
+
+    if (std::isnan(color.unresolved().hue))
+        return { lightness, 0, 0, alpha };
 
     float hueAngleRadians = deg2rad(hue);
     float a = chroma * std::cos(hueAngleRadians);
@@ -199,9 +207,8 @@ ExtendedSRGBA<float> ColorConversion<ExtendedSRGBA<float>, HWBA<float>>::convert
 
 // MARK: Lab conversions.
 
-static constexpr float LABe = 216.0f / 24389.0f;
-static constexpr float LABk = 24389.0f / 27.0f;
-static constexpr float D50WhiteValues[] = { 0.96422f, 1.0f, 0.82521f };
+constexpr float LABe = 216.0 / 24389.0;
+constexpr float LABk = 24389.0 / 27.0;
 
 XYZA<float, WhitePoint::D50> ColorConversion<XYZA<float, WhitePoint::D50>, Lab<float>>::convert(const Lab<float>& color)
 {
@@ -228,9 +235,9 @@ XYZA<float, WhitePoint::D50> ColorConversion<XYZA<float, WhitePoint::D50>, Lab<f
         return t / LABk;
     };
 
-    float x = D50WhiteValues[0] * computeXAndZ(f0);
-    float y = D50WhiteValues[1] * computeY(lightness);
-    float z = D50WhiteValues[2] * computeXAndZ(f2);
+    float x = D50WhitePoint[0] * computeXAndZ(f0);
+    float y = D50WhitePoint[1] * computeY(lightness);
+    float z = D50WhitePoint[2] * computeXAndZ(f2);
 
     return { x, y, z, alpha };
 }
@@ -239,9 +246,9 @@ Lab<float> ColorConversion<Lab<float>, XYZA<float, WhitePoint::D50>>::convert(co
 {
     auto [x, y, z, alpha] = color.resolved();
 
-    float adjustedX = x / D50WhiteValues[0];
-    float adjustedY = y / D50WhiteValues[1];
-    float adjustedZ = z / D50WhiteValues[2];
+    float adjustedX = x / D50WhitePoint[0];
+    float adjustedY = y / D50WhitePoint[1];
+    float adjustedZ = z / D50WhitePoint[2];
 
     auto fTransform = [](float value) {
         return value > LABe ? std::cbrt(value) : (LABk * value + 16.0f) / 116.0f;
@@ -280,16 +287,16 @@ XYZA<float, WhitePoint::D65> ColorConversion<XYZA<float, WhitePoint::D65>, OKLab
 
     // https://bottosson.github.io/posts/oklab/ with XYZ <-> LMS matrices recalculated for consistent reference white in https://github.com/w3c/csswg-drafts/issues/6642#issuecomment-943521484
 
-    static constexpr ColorMatrix<3, 3> LinearLMSToXYZD65 {
-        1.2268798733741557f,  -0.5578149965554813f,  0.28139105017721583f,
-       -0.04057576262431372f,  1.1122868293970594f, -0.07171106666151701f,
-       -0.07637294974672142f, -0.4214933239627914f,  1.5869240244272418f
+    constexpr ColorMatrix<3, 3> LinearLMSToXYZD65 {
+         1.2268798758459243, -0.5578149944602171,  0.2813910456659647,
+        -0.0405757452148008,  1.1122868032803170, -0.0717110580655164,
+        -0.0763729366746601, -0.4214933324022432,  1.5869240198367816,
     };
 
-    static constexpr ColorMatrix<3, 3> OKLabToNonLinearLMS {
-        0.99999999845051981432f,  0.39633779217376785678f,   0.21580375806075880339f,
-        1.0000000088817607767f,  -0.1055613423236563494f,   -0.063854174771705903402f,
-        1.0000000546724109177f,  -0.089484182094965759684f, -1.2914855378640917399f
+    constexpr ColorMatrix<3, 3> OKLabToNonLinearLMS {
+         1.0000000000000000,  0.3963377773761749,  0.2158037573099136,
+         1.0000000000000000, -0.1055613458156586, -0.0638541728258133,
+         1.0000000000000000, -0.0894841775298119, -1.2914855480194092,
     };
 
     auto [lightness, a, b, alpha] = color.resolved();
@@ -316,16 +323,16 @@ OKLab<float> ColorConversion<OKLab<float>, XYZA<float, WhitePoint::D65>>::conver
 
     // https://bottosson.github.io/posts/oklab/ with XYZ <-> LMS matrices recalculated for consistent reference white in https://github.com/w3c/csswg-drafts/issues/6642#issuecomment-943521484
 
-    static constexpr ColorMatrix<3, 3> XYZD65ToLinearLMS {
-        0.8190224432164319f,   0.3619062562801221f, -0.12887378261216414f,
-        0.0329836671980271f,   0.9292868468965546f,  0.03614466816999844f,
-        0.048177199566046255f, 0.26423952494422764f, 0.6335478258136937f
+    constexpr ColorMatrix<3, 3> XYZD65ToLinearLMS {
+        0.8190224379967030,  0.3619062600528904, -0.1288737815209879,
+        0.0329836539323885,  0.9292868615863434,  0.0361446663506424,
+        0.0481771893596242,  0.2642395317527308,  0.6335478284694309,
     };
 
-    static constexpr ColorMatrix<3, 3> NonLinearLMSToOKLab {
-        0.2104542553f,  0.7936177850f, -0.0040720468f,
-        1.9779984951f, -2.4285922050f,  0.4505937099f,
-        0.0259040371f,  0.7827717662f, -0.8086757660f
+    constexpr ColorMatrix<3, 3> NonLinearLMSToOKLab {
+        0.2104542683093140,  0.7936177747023054, -0.0040720430116193,
+        1.9779985324311684, -2.4285922420485799,  0.4505937096174110,
+        0.0259040424655478,  0.7827717124575296, -0.8086757549230774,
     };
 
     auto [x, y, z, alpha] = color.resolved();
