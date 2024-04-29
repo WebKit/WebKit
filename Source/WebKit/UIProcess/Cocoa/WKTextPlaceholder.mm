@@ -49,17 +49,12 @@
     return _elementContext;
 }
 
-#if PLATFORM(IOS_FAMILY)
-- (NSArray<UITextSelectionRect *> *)rects
-#elif PLATFORM(MAC)
-- (NSArray<NSTextSelectionRect *> *)rects
-#endif
+- (NSArray *)rects
+
 {
-#if PLATFORM(IOS_FAMILY)
-    return @[ adoptNS([[WKTextSelectionRect alloc] initWithCGRect:_elementContext.boundingRect]).get() ];
-#else
-    return @[ (NSTextSelectionRect *)adoptNS([[WKTextSelectionRect alloc] initWithCGRect:_elementContext.boundingRect]).get() ];
-#endif
+
+ @[ adoptNS([[WKTextSelectionRect alloc] initWithCGRect:_elementContext.boundingRect]).get() ];
+
 }
 
 @end
