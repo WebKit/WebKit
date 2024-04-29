@@ -1,0 +1,30 @@
+<html class="reftest-wait">
+<meta name="fuzzy" content="maxDifference=1; totalPixels=10000">
+<script>
+    function finishTest() {
+        document.documentElement.classList.remove("reftest-wait");
+    }
+    async function startTest() {
+        document.startViewTransition(() => requestAnimationFrame(() => requestAnimationFrame(finishTest)));
+    }
+    onload = () => requestAnimationFrame(() => requestAnimationFrame(startTest));
+</script>
+<style>
+    .parent {
+        width: 100px;
+        height: 100px;
+        opacity: 0.5;
+    }
+    .target {
+        width: 100px;
+        height: 100px;
+        contain: paint;
+        background: blue;
+        opacity: 0.5;
+        view-transition-name: target;
+    }
+    html::view-transition-group(target) { animation-duration: 300s; }
+    html::view-transition-new(target) { animation: unset; opacity: 0; }
+    html::view-transition-old(target) { animation: unset; opacity: 1; }
+</style>
+<div class="parent"><div class="target"></div></div>
