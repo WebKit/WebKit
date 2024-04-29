@@ -75,7 +75,7 @@ template<typename CharacterType> CharacterType* StringBuilder::extendBufferForAp
 {
     if (m_buffer && requiredLength <= m_buffer->length()) {
         m_string = { };
-        return const_cast<CharacterType*>(m_buffer->characters<CharacterType>()) + std::exchange(m_length, requiredLength);
+        return const_cast<CharacterType*>(m_buffer->span<CharacterType>().data()) + std::exchange(m_length, requiredLength);
     }
     return extendBufferForAppendingSlowCase<CharacterType>(requiredLength);
 }
@@ -88,7 +88,7 @@ template<typename CharacterType> CharacterType* StringBuilder::extendBufferForAp
     reallocateBuffer(expandedCapacity(capacity(), requiredLength));
     if (UNLIKELY(hasOverflowed()))
         return nullptr;
-    return const_cast<CharacterType*>(m_buffer->characters<CharacterType>()) + std::exchange(m_length, requiredLength);
+    return const_cast<CharacterType*>(m_buffer->span<CharacterType>().data()) + std::exchange(m_length, requiredLength);
 }
 
 } // namespace WTF

@@ -303,13 +303,10 @@ public:
     bool isEmpty() const { return !m_length; }
 
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
-    ALWAYS_INLINE const LChar* characters8() const { ASSERT(is8Bit()); return m_data8; }
-    ALWAYS_INLINE const UChar* characters16() const { ASSERT(!is8Bit() || isEmpty()); return m_data16; }
-    ALWAYS_INLINE std::span<const LChar> span8() const { return { characters8(), length() }; }
-    ALWAYS_INLINE std::span<const UChar> span16() const { return { characters16(), length() }; }
+    ALWAYS_INLINE std::span<const LChar> span8() const { ASSERT(is8Bit()); return { m_data8, length() }; }
+    ALWAYS_INLINE std::span<const UChar> span16() const { ASSERT(!is8Bit() || isEmpty()); return { m_data16, length() }; }
 
-    template<typename CharacterType> const CharacterType* characters() const;
-    template<typename CharacterType> std::span<const CharacterType> span() const { return { characters<CharacterType>(), length() }; }
+    template<typename CharacterType> std::span<const CharacterType> span() const;
 
     size_t cost() const;
     size_t costDuringGC();
@@ -550,7 +547,7 @@ private:
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopyingNonEmpty(std::span<const UChar>);
 
     template<class CodeUnitPredicate> Ref<StringImpl> trimMatchedCharacters(CodeUnitPredicate);
-    template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> removeCharactersImpl(const CharacterType* characters, const Predicate&);
+    template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> removeCharactersImpl(std::span<const CharacterType> characters, const Predicate&);
     template<typename CharacterType, class CodeUnitPredicate> Ref<StringImpl> simplifyMatchedCharactersToSpace(CodeUnitPredicate);
     template<typename CharacterType> static Ref<StringImpl> constructInternal(StringImpl&, unsigned);
     template<typename CharacterType> static Ref<StringImpl> createUninitializedInternal(size_t, CharacterType*&);
@@ -672,14 +669,14 @@ template<> ALWAYS_INLINE Ref<StringImpl> StringImpl::constructInternal<UChar>(St
     return adoptRef(*new (NotNull, &string) StringImpl { length });
 }
 
-template<> ALWAYS_INLINE const LChar* StringImpl::characters<LChar>() const
+template<> ALWAYS_INLINE std::span<const LChar> StringImpl::span<LChar>() const
 {
-    return characters8();
+    return span8();
 }
 
-template<> ALWAYS_INLINE const UChar* StringImpl::characters<UChar>() const
+template<> ALWAYS_INLINE std::span<const UChar> StringImpl::span<UChar>() const
 {
-    return characters16();
+    return span16();
 }
 
 template<typename CodeUnit, typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, CodeUnit>>*>
@@ -882,10 +879,10 @@ inline bool StringImpl::containsOnlyLatin1() const
 {
     if (is8Bit())
         return true;
-    auto* characters = characters16();
+    auto characters = span16();
     UChar mergedCharacterBits = 0;
-    for (unsigned i = 0; i < length(); ++i)
-        mergedCharacterBits |= characters[i];
+    for (auto character : characters)
+        mergedCharacterBits |= character;
     return isLatin1(mergedCharacterBits);
 }
 
@@ -1296,9 +1293,9 @@ inline bool equalLettersIgnoringASCIICase(const StringImpl* string, ASCIILiteral
     return string && equalLettersIgnoringASCIICase(*string, literal);
 }
 
-template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> StringImpl::removeCharactersImpl(const CharacterType* characters, const Predicate& findMatch)
+template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> StringImpl::removeCharactersImpl(std::span<const CharacterType> characters, const Predicate& findMatch)
 {
-    auto* from = characters;
+    auto* from = characters.data();
     auto* fromEnd = from + m_length;
 
     // Assume the common case will not remove any characters
@@ -1309,9 +1306,9 @@ template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImp
 
     StringBuffer<CharacterType> data(m_length);
     auto* to = data.characters();
-    unsigned outc = from - characters;
+    unsigned outc = from - characters.data();
 
-    copyCharacters(to, { characters, outc });
+    copyCharacters(to, characters.first(outc));
 
     do {
         while (from != fromEnd && findMatch(*from))
@@ -1330,8 +1327,8 @@ inline Ref<StringImpl> StringImpl::removeCharacters(const Predicate& findMatch)
 {
     static_assert(!std::is_function_v<Predicate>, "Passing a lambda instead of a function pointer helps the compiler with inlining");
     if (is8Bit())
-        return removeCharactersImpl(characters8(), findMatch);
-    return removeCharactersImpl(characters16(), findMatch);
+        return removeCharactersImpl(span8(), findMatch);
+    return removeCharactersImpl(span16(), findMatch);
 }
 
 inline Ref<StringImpl> StringImpl::createByReplacingInCharacters(std::span<const LChar> characters, UChar target, UChar replacement, size_t indexOfFirstTargetCharacter)

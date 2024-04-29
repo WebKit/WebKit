@@ -680,6 +680,12 @@ std::span<T, Extent> spanReinterpretCast(std::span<U, Extent> span)
 }
 
 template<typename T, std::size_t Extent>
+std::span<T, Extent> spanConstCast(std::span<const T, Extent> span)
+{
+    return std::span<T, Extent> { const_cast<T*>(span.data()), span.size() };
+}
+
+template<typename T, std::size_t Extent>
 std::span<const uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> asBytes(std::span<T, Extent> span)
 {
     return std::span<const uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> { reinterpret_cast<const uint8_t*>(span.data()), span.size_bytes() };
@@ -775,6 +781,7 @@ using WTF::roundUpToMultipleOf;
 using WTF::roundUpToMultipleOfNonPowerOfTwo;
 using WTF::roundDownToMultipleOf;
 using WTF::safeCast;
+using WTF::spanConstCast;
 using WTF::spanReinterpretCast;
 using WTF::tryBinarySearch;
 using WTF::valueOrCompute;

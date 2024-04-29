@@ -169,9 +169,9 @@ inline SegmentedString::Substring::Substring(String&& passedString)
     if (length) {
         is8Bit = underlyingString.impl()->is8Bit();
         if (is8Bit)
-            currentCharacter8 = underlyingString.impl()->characters8();
+            currentCharacter8 = underlyingString.impl()->span8().data();
         else
-            currentCharacter16 = underlyingString.impl()->characters16();
+            currentCharacter16 = underlyingString.impl()->span16().data();
     }
 }
 

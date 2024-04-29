@@ -48,7 +48,7 @@ ALWAYS_INLINE AtomString AtomString::convertASCIICase() const
     unsigned length;
     const unsigned localBufferSize = 100;
     if (impl->is8Bit() && (length = impl->length()) <= localBufferSize) {
-        const LChar* characters = impl->characters8();
+        auto characters = impl->span8();
         unsigned failingIndex;
         for (unsigned i = 0; i < length; ++i) {
             if (type == CaseConvertType::Lower ? UNLIKELY(isASCIIUpper(characters[i])) : LIKELY(isASCIILower(characters[i]))) {
