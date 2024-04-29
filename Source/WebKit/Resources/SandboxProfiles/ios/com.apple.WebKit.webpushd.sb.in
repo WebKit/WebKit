@@ -213,3 +213,9 @@
 
 ;; Let SQLite open the parent directory of the database for fsync purposes.
 (allow file-read-data (require-all (vnode-type DIRECTORY) (home-prefix "/Library/WebKit/WebPush")))
+
+;; For MKBDeviceUnlockedSinceBoot.
+(allow iokit-open-service
+    (iokit-registry-entry-class "AppleKeyStore"))
+(allow iokit-open-user-client
+    (iokit-user-client-class "AppleKeyStoreUserClient"))
