@@ -122,6 +122,16 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
             this._fontVariationsGroup.rows = [emptyRow];
         }
+
+        console.log("In Font Details Panel");
+        console.log(this.nodeStyles.usedFonts);
+
+        for (let fontName of this.nodeStyles.usedFonts) {
+            let row = document.createElement("div");
+            row.textContent = fontName;
+            row.style.fontFamily = fontName;
+            this._allFontsGroup.element.appendChild(row);
+        }
     }
 
     // Protected
@@ -220,6 +230,15 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
         let fontVariationPropertiesSection = new WI.DetailsSection("font-variation-properties", WI.UIString("Variation Properties", "Variation Properties @ Font Details Sidebar Section", "Section title for font variation properties."), [this._fontVariationsGroup]);
         this.element.appendChild(fontVariationPropertiesSection.element);
+
+        // All Fonts Properties
+        let allFontsRow = new WI.DetailsSectionSimpleRow(WI.UIString("All Fonts", "All Fonts @ Font Details Sidebar Property", "Font title for the family name of the font."))
+        this._allFontsGroup = new WI.DetailsSectionGroup(allFontsRow);
+
+        let allFontsSection = new WI.DetailsSection("all-fonts-properties", WI.UIString("All Fonts Properties", "All Fonts Properties @ Font Details Sidebar Section", "Section title for all fonts properties."), [this._allFontsGroup]);
+
+        this.element.appendChild(allFontsSection.element);
+
     }
 
     // Private
