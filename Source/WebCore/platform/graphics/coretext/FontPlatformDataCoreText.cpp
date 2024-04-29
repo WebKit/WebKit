@@ -260,12 +260,12 @@ FontPlatformData::Attributes FontPlatformData::attributes() const
     return result;
 }
 
-std::optional<FontPlatformData> FontPlatformData::tryMakeFontPlatformData(float size, WebCore::FontOrientation&& orientation, WebCore::FontWidthVariant&& widthVariant, WebCore::TextRenderingMode&& textRenderingMode, bool syntheticBold, bool syntheticOblique, FontPlatformData::PlatformDataVariant&& platformSerializationData)
+std::optional<FontPlatformData> FontPlatformData::fromIPCData(float size, WebCore::FontOrientation&& orientation, WebCore::FontWidthVariant&& widthVariant, WebCore::TextRenderingMode&& textRenderingMode, bool syntheticBold, bool syntheticOblique, FontPlatformData::IPCData&& toIPCData)
 {
     RetainPtr<CTFontRef> font;
     RefPtr<FontCustomPlatformData> customPlatformData;
 
-    bool dataError = WTF::switchOn(platformSerializationData,
+    bool dataError = WTF::switchOn(toIPCData,
         [&] (const FontPlatformSerializedData& d) {
             font = WebCore::createCTFont(d.attributes.get(), size, d.options, d.referenceURL.get(), d.postScriptName.get());
             if (!font)
@@ -312,7 +312,7 @@ FontPlatformData::FontPlatformData(float size, WebCore::FontOrientation&& orient
 #endif
 }
 
-FontPlatformData::PlatformDataVariant FontPlatformData::platformSerializationData() const
+FontPlatformData::IPCData FontPlatformData::toIPCData() const
 {
     auto ctFont = font();
     auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));

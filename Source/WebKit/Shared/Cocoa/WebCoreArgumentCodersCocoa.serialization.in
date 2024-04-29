@@ -23,16 +23,6 @@
 headers: "ArgumentCodersCocoa.h"
 
 #if USE(CORE_TEXT)
-[CreateUsing=tryMakeFontPlatformData] class WebCore::FontPlatformData {
-    float size();
-    WebCore::FontOrientation orientation();
-    WebCore::FontWidthVariant widthVariant();
-    WebCore::TextRenderingMode textRenderingMode();
-    bool syntheticBold();
-    bool syntheticOblique();
-    std::variant<WebCore::FontPlatformSerializedData, WebCore::FontPlatformSerializedCreationData> platformSerializationData();
-}
-
 header: <WebCore/FontPlatformData.h>
 [CustomHeader] struct WebCore::FontPlatformSerializedCreationData {
     Vector<uint8_t> fontFaceData;
