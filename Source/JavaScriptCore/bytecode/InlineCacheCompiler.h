@@ -238,8 +238,6 @@ public:
     {
     }
 
-    void installWatchpoint(CodeBlock*, const ObjectPropertyCondition&);
-
     void restoreScratch();
     void succeed();
 
@@ -367,7 +365,6 @@ namespace WTF {
 
 void printInternal(PrintStream&, JSC::AccessGenerationResult::Kind);
 void printInternal(PrintStream&, JSC::AccessCase::AccessType);
-void printInternal(PrintStream&, JSC::AccessCase::State);
 void printInternal(PrintStream&, JSC::AccessType);
 
 } // namespace WTF

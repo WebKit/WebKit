@@ -47,9 +47,7 @@ Ref<AccessCase> IntrinsicGetterAccessCase::create(VM& vm, JSCell* owner, Cacheab
 
 Ref<AccessCase> IntrinsicGetterAccessCase::cloneImpl() const
 {
-    auto result = adoptRef(*new IntrinsicGetterAccessCase(*this));
-    result->resetState();
-    return result;
+    return adoptRef(*new IntrinsicGetterAccessCase(*this));
 }
 
 bool IntrinsicGetterAccessCase::doesCalls() const
