@@ -103,7 +103,8 @@ public:
     WebCore::RemoteFrame* coreRemoteFrame() const;
     WebCore::Frame* coreFrame() const;
 
-    void transitionToLocal(std::optional<WebCore::LayerHostingContextIdentifier> = std::nullopt);
+    void transitionToLocal(std::optional<WebCore::LayerHostingContextIdentifier>);
+    void transitionToRemote(std::optional<WebCore::LayerHostingContextIdentifier>);
 
     FrameInfoData info() const;
     FrameTreeNodeData frameTreeData() const;
@@ -116,7 +117,6 @@ public:
     void invalidatePolicyListeners();
     void didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&&);
 
-    void didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier>);
     void didFinishLoadInAnotherProcess();
     void removeFromTree();
 

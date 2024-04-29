@@ -1096,15 +1096,6 @@ void WebPage::getFrameTree(CompletionHandler<void(FrameTreeNodeData&&)>&& comple
     completionHandler(m_mainFrame->frameTreeData());
 }
 
-void WebPage::didCommitLoadInAnotherProcess(WebCore::FrameIdentifier frameID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
-{
-    RefPtr frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame)
-        return;
-    ASSERT(frame->page() == this);
-    frame->didCommitLoadInAnotherProcess(layerHostingContextIdentifier);
-}
-
 void WebPage::didFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
 {
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
@@ -2004,8 +1995,17 @@ void WebPage::transitionFrameToLocal(LocalFrameCreationParameters&& creationPara
         ASSERT_NOT_REACHED();
         return;
     }
-
+    ASSERT(frame->page() == this);
     frame->transitionToLocal(creationParameters.layerHostingContextIdentifier);
+}
+
+void WebPage::transitionFrameToRemote(WebCore::FrameIdentifier frameID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
+{
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+    ASSERT(frame->page() == this);
+    frame->transitionToRemote(layerHostingContextIdentifier);
 }
 
 void WebPage::loadRequest(LoadParameters&& loadParameters)

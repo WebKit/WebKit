@@ -337,7 +337,7 @@ uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunc
     return policyListenerID;
 }
 
-void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
+void WebFrame::transitionToRemote(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
 {
     RefPtr coreFrame = m_coreFrame.get();
     if (!coreFrame) {

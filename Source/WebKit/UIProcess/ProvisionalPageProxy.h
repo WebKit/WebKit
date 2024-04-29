@@ -138,6 +138,8 @@ public:
 
     WebsitePoliciesData* mainFrameWebsitePoliciesData() const { return m_mainFrameWebsitePoliciesData.get(); }
 
+    WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
+
 private:
     RefPtr<WebFrameProxy> protectedMainFrame() const;
 
@@ -208,6 +210,7 @@ private:
     bool m_isProcessSwappingOnNavigationResponse { false };
     bool m_needsCookieAccessAddedInNetworkProcess { false };
     bool m_needsDidStartProvisionalLoad { true };
+    bool m_shouldClosePage { true };
     URL m_provisionalLoadURL;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
     std::unique_ptr<WebsitePoliciesData> m_mainFrameWebsitePoliciesData;

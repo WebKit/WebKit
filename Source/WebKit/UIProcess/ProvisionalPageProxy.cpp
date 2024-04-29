@@ -129,7 +129,7 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
         if (dataStore && dataStore!= &m_page->websiteDataStore())
             process().processPool().pageEndUsingWebsiteDataStore(Ref { m_page.get() }, *dataStore);
 
-        if (process().hasConnection())
+        if (process().hasConnection() && m_shouldClosePage)
             send(Messages::WebPage::Close());
         process().removeVisitedLinkStoreUser(m_page->visitedLinkStore(), m_page->identifier());
     }
@@ -383,7 +383,13 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameI
     m_provisionalLoadURL = { };
 
     // Make sure the Page's main frame's expectedURL gets cleared since we updated it in didStartProvisionalLoad.
-    if (auto* pageMainFrame = m_page->mainFrame())
+    // When site isolation is enabled, we use the same WebFrameProxy so we don't need this duplicate call.
+    // didFailProvisionalLoadForFrameShared will call didFailProvisionalLoad on the same main frame.
+    if (m_page->preferences().siteIsolationEnabled()) {
+        send(Messages::WebPage::TransitionFrameToRemote(m_page->mainFrame()->frameID(), std::nullopt));
+        m_browsingContextGroup->transitionProvisionalPageToRemotePage(*this, RegistrableDomain(request.url()));
+        m_shouldClosePage = false;
+    } else if (auto* pageMainFrame = m_page->mainFrame())
         pageMainFrame->didFailProvisionalLoad();
 
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
@@ -405,7 +411,7 @@ void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameI
             RegistrableDomain openerDomain(openerFrame->url());
             RegistrableDomain openedDomain(request.url());
             if (openerDomain != openedDomain) {
-                page->send(Messages::WebPage::DidCommitLoadInAnotherProcess(page->mainFrame()->frameID(), std::nullopt));
+                page->send(Messages::WebPage::TransitionFrameToRemote(page->mainFrame()->frameID(), std::nullopt));
                 m_browsingContextGroup->transitionPageToRemotePage(page, openerDomain);
             }
         }
