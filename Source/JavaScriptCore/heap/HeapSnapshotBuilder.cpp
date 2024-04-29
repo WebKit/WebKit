@@ -155,9 +155,9 @@ void HeapSnapshotBuilder::analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t in
     m_edges.append(HeapSnapshotEdge(from, to, index));
 }
 
-void HeapSnapshotBuilder::setOpaqueRootReachabilityReasonForCell(JSCell* cell, const char* reason)
+void HeapSnapshotBuilder::setOpaqueRootReachabilityReasonForCell(JSCell* cell, ASCIILiteral reason)
 {
-    if (!reason || !*reason || m_snapshotType != SnapshotType::GCDebuggingSnapshot)
+    if (reason.isEmpty() || m_snapshotType != SnapshotType::GCDebuggingSnapshot)
         return;
 
     Locker locker { m_buildingEdgeMutex };
@@ -591,8 +591,8 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
             json.append(',', result.iterator->value);
 
             unsigned reachabilityReasonIndex = 0;
-            if (it.value.reachabilityFromOpaqueRootReasons) {
-                auto result = labelIndexes.add(String::fromLatin1(it.value.reachabilityFromOpaqueRootReasons), nextLabelIndex);
+            if (!it.value.reachabilityFromOpaqueRootReasons.isNull()) {
+                auto result = labelIndexes.add(it.value.reachabilityFromOpaqueRootReasons, nextLabelIndex);
                 if (result.isNewEntry)
                     nextLabelIndex++;
                 reachabilityReasonIndex = result.iterator->value;

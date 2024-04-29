@@ -125,7 +125,7 @@ public:
     void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName) final;
     void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t index) final;
 
-    void setOpaqueRootReachabilityReasonForCell(JSCell*, const char*) final;
+    void setOpaqueRootReachabilityReasonForCell(JSCell*, ASCIILiteral) final;
     void setWrappedObjectForCell(JSCell*, void*) final;
     void setLabelForCell(JSCell*, const String&) final;
 
@@ -143,7 +143,7 @@ private:
     String descriptionForCell(JSCell*) const;
     
     struct RootData {
-        const char* reachabilityFromOpaqueRootReasons { nullptr };
+        ASCIILiteral reachabilityFromOpaqueRootReasons;
         RootMarkReason markReason { RootMarkReason::None };
     };
     

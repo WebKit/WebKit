@@ -38,10 +38,10 @@ inline WebCoreOpaqueRoot root(CustomPaintCanvas* canvas)
     return WebCoreOpaqueRoot { canvas };
 }
 
-bool JSPaintRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSPaintRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     if (UNLIKELY(reason))
-        *reason = "Canvas is opaque root";
+        *reason = "Canvas is opaque root"_s;
 
     auto* jsPaintRenderingContext = jsCast<JSPaintRenderingContext2D*>(handle.slot()->asCell());
     return containsWebCoreOpaqueRoot(visitor, jsPaintRenderingContext->wrapped().canvas());

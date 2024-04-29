@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-bool JSAbortSignalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, const char** reason)
+bool JSAbortSignalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     auto& abortSignal = JSC::jsCast<JSAbortSignal*>(handle.slot()->asCell())->wrapped();
     if (abortSignal.aborted())
@@ -38,19 +38,19 @@ bool JSAbortSignalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
 
     if (abortSignal.isFollowingSignal()) {
         if (UNLIKELY(reason))
-            *reason = "Is Following Signal";
+            *reason = "Is Following Signal"_s;
         return true;
     }
 
     if (abortSignal.hasAbortEventListener()) {
         if (abortSignal.hasActiveTimeoutTimer()) {
             if (UNLIKELY(reason))
-                *reason = "Has Timeout And Abort Event Listener";
+                *reason = "Has Timeout And Abort Event Listener"_s;
             return true;
         }
         if (!abortSignal.sourceSignals().isEmptyIgnoringNullReferences()) {
             if (UNLIKELY(reason))
-                *reason = "Has Source Signals And Abort Event Listener";
+                *reason = "Has Source Signals And Abort Event Listener"_s;
             return true;
         }
     }
