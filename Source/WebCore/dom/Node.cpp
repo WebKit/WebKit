@@ -109,7 +109,7 @@ WTF_MAKE_COMPACT_ISO_ALLOCATED_IMPL(Node);
 
 using namespace HTMLNames;
 
-struct SameSizeAsNode : EventTarget {
+struct SameSizeAsNode : EventTarget, CanMakeCheckedPtr<SameSizeAsNode> {
 #if ASSERT_ENABLED
     uint32_t m_isAllocatedMemory;
     bool inRemovedLastRefFunction;

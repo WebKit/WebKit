@@ -37,14 +37,14 @@ class ContainerNode : public Node {
 public:
     virtual ~ContainerNode();
 
-    Node* firstChild() const { return m_firstChild; }
-    RefPtr<Node> protectedFirstChild() const { return m_firstChild; }
+    Node* firstChild() const { return m_firstChild.get(); }
+    RefPtr<Node> protectedFirstChild() const { return m_firstChild.get(); }
     static ptrdiff_t firstChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_firstChild); }
-    Node* lastChild() const { return m_lastChild; }
-    RefPtr<Node> protectedLastChild() const { return m_lastChild; }
+    Node* lastChild() const { return m_lastChild.get(); }
+    RefPtr<Node> protectedLastChild() const { return m_lastChild.get(); }
     static ptrdiff_t lastChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_lastChild); }
-    bool hasChildNodes() const { return m_firstChild; }
-    bool hasOneChild() const { return m_firstChild && m_firstChild == m_lastChild; }
+    bool hasChildNodes() const { return !!m_firstChild; }
+    bool hasOneChild() const { return !!m_firstChild && m_firstChild.get() == m_lastChild.get(); }
 
     bool directChildNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DirectChildNeedsStyleResolution); }
     void setDirectChildNeedsStyleRecalc() { setStyleFlag(NodeStyleFlag::DirectChildNeedsStyleResolution); }
@@ -173,8 +173,8 @@ private:
 
     bool isContainerNode() const = delete;
 
-    Node* m_firstChild { nullptr };
-    Node* m_lastChild { nullptr };
+    CheckedPtr<Node> m_firstChild;
+    CheckedPtr<Node> m_lastChild;
 };
 
 inline ContainerNode::ContainerNode(Document& document, NodeType type, OptionSet<TypeFlag> typeFlags)
