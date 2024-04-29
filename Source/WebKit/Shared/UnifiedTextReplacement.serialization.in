@@ -25,7 +25,6 @@ header: "WebTextReplacementData.h"
 [CustomHeader] enum class WebKit::WebTextReplacementDataState : uint8_t {
     Pending,
     Active,
-    Committed,
     Reverted,
     Invalid
 };
