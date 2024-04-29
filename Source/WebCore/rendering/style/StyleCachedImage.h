@@ -34,6 +34,7 @@ class CachedImage;
 class Document;
 class LegacyRenderSVGResourceContainer;
 class RenderElement;
+class RenderSVGResourceContainer;
 class TreeScope;
 
 class StyleCachedImage final : public StyleImage {
@@ -81,7 +82,8 @@ private:
 
     LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(TreeScope&, const AtomString& fragment) const;
     LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(const RenderElement*) const;
-    LegacyRenderSVGResourceContainer* renderSVGResource(const RenderElement*) const;
+    LegacyRenderSVGResourceContainer* legacyRenderSVGResource(const RenderElement*) const;
+    RenderSVGResourceContainer* renderSVGResource(const RenderElement*) const;
     bool isRenderSVGResource(const RenderElement*) const;
 
     Ref<CSSImageValue> m_cssValue;

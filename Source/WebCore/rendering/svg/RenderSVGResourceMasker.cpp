@@ -97,13 +97,6 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     if (!coordinateSystemOriginTranslation.isZero())
         context.translate(coordinateSystemOriginTranslation);
 
-    AffineTransform contentTransform;
-    Ref maskElement = this->maskElement();
-    if (maskElement->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        contentTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
-        contentTransform.scale(objectBoundingBox.width(), objectBoundingBox.height());
-    }
-
     auto repaintBoundingBox = targetRenderer.repaintRectInLocalCoordinates();
     auto absoluteTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
 
@@ -131,7 +124,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     context.beginTransparencyLayer(1);
 
     if (missingMaskerData) {
-        checkedLayer()->paintSVGResourceLayer(maskImage->context(), contentTransform);
+        drawContentIntoContext(maskImage->context(), objectBoundingBox);
 
 #if !USE(CG) && !USE(SKIA)
         maskImage->transformToColorSpace(drawColorSpace);
@@ -184,6 +177,34 @@ void RenderSVGResourceMasker::removeReferencingCSSClient(const RenderElement& cl
 {
     if (auto renderer = dynamicDowncast<RenderLayerModelObject>(client))
         m_masker.remove(renderer);
+}
+
+bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& objectBoundingBox)
+{
+    // Eventually adjust the mask image context according to the target objectBoundingBox.
+    AffineTransform maskContentTransformation;
+
+    if (maskElement().maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+        maskContentTransformation.translate(objectBoundingBox.location());
+        maskContentTransformation.scale(objectBoundingBox.size());
+    }
+
+    // Draw the content into the ImageBuffer.
+    checkedLayer()->paintSVGResourceLayer(context, maskContentTransformation);
+    return true;
+}
+
+bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
+{
+    GraphicsContextStateSaver stateSaver(context);
+    context.setCompositeOperation(options.compositeOperator(), options.blendMode());
+    context.translate(destinationRect.location());
+
+    if (destinationRect.size() != sourceRect.size())
+        context.scale(destinationRect.size() / sourceRect.size());
+
+    context.translate(-sourceRect.location());
+    return drawContentIntoContext(context, { { }, destinationRect.size() });
 }
 
 }
