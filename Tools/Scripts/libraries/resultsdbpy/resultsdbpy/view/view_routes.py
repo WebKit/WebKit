@@ -64,7 +64,7 @@ class ViewRoutes(AuthedBlueprint):
         self.tests_limits = tests_limits or dict(max=50000, default=5000)
         self.suites_limits = suites_limits or dict(max=10000, default=1000)
         self.commits_limits = commits_limits or dict(max=10000, default=1000)
-        self.dashboard_queries = dashboard_queries or {}
+        self.dashboard_queries = dashboard_queries or []
 
         # Protecting js and css with auth doesn't make sense
         self.add_url_rule('/library/<path:path>', 'library', self.library, authed=False, methods=('GET',))
