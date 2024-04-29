@@ -38,7 +38,7 @@ FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group
     , m_browsingContextGroup(group)
     , m_domain(domain)
 {
-    if (preferences.siteIsolationEnabled() || preferences.processSwapOnCrossSiteWindowOpenEnabled())
+    if (preferences.siteIsolationEnabled())
         group.addFrameProcess(*this);
     else
         m_browsingContextGroup = nullptr;

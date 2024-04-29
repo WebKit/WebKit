@@ -5186,21 +5186,6 @@ ProcessSwapOnCrossSiteNavigationEnabled:
       "PLATFORM(PLAYSTATION)": false
       default: true
 
-ProcessSwapOnCrossSiteWindowOpenEnabled:
-   type: bool
-   status: unstable
-   category: networking
-   humanReadableName: "Swap Processes on Cross-Site Window Open"
-   humanReadableDescription: "Swap WebContent Processes on cross-site window.open"
-   exposed: [ WebKit ]
-   defaultValue:
-     WebCore:
-       default: false
-     WebKitLegacy:
-       default: false
-     WebKit:
-       default: false
-
 PunchOutWhiteBackgroundsInDarkMode:
   type: bool
   status: embedder
