@@ -16,7 +16,7 @@ function runTest() {
 function nextStep() {
     document.head.appendChild(del);
     if (window.testRunner)
-        testRunner.forceImmediateCompletion();
+        testRunner.notifyDone();
 }
 </script>
 </head>

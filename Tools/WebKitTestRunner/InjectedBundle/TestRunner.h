@@ -175,9 +175,6 @@ public:
     void setQuota(uint64_t);
     void setOriginQuotaRatioEnabled(bool);
 
-    // Failed load condition testing
-    void forceImmediateCompletion();
-
     // Printing
     bool isPageBoxVisible(JSContextRef, int pageIndex);
     bool isPrinting() { return m_isPrinting; }

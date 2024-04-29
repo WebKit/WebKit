@@ -302,7 +302,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "ForceImmediateCompletion")) {
-        m_testRunner->forceImmediateCompletion();
+        m_testRunner->notifyDone();
         return;
     }
 
