@@ -164,7 +164,7 @@ public:
         return m_index;
     }
 
-    const char* debugName() const;
+    ASCIILiteral debugName() const;
 
     void dump(PrintStream&) const;
 

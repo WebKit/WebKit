@@ -390,7 +390,7 @@ public:
         return indexForRegister[reg];
     }
 
-    static const char* debugName(GPRReg reg)
+    static ASCIILiteral debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
         return MacroAssembler::gprName(reg);
@@ -535,7 +535,7 @@ public:
         return indexForRegister[reg];
     }
 
-    static const char* debugName(GPRReg reg)
+    static ASCIILiteral debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
         return MacroAssembler::gprName(reg);
@@ -631,7 +631,7 @@ public:
         return result;
     }
 
-    static const char* debugName(GPRReg reg)
+    static ASCIILiteral debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
         return MacroAssembler::gprName(reg);
@@ -751,7 +751,7 @@ public:
         return toRegister(index);
     }
 
-    static const char* debugName(GPRReg reg)
+    static ASCIILiteral debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
         return MacroAssembler::gprName(reg);
@@ -878,7 +878,7 @@ public:
         return indexForRegister[reg];
     }
 
-    static const char* debugName(GPRReg reg)
+    static ASCIILiteral debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
         return MacroAssembler::gprName(reg);

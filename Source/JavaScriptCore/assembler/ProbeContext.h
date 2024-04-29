@@ -39,9 +39,9 @@ struct CPUState {
     using SPRegisterID = MacroAssembler::SPRegisterID;
     using FPRegisterID = MacroAssembler::FPRegisterID;
 
-    static inline const char* gprName(RegisterID id) { return MacroAssembler::gprName(id); }
-    static inline const char* sprName(SPRegisterID id) { return MacroAssembler::sprName(id); }
-    static inline const char* fprName(FPRegisterID id) { return MacroAssembler::fprName(id); }
+    static ASCIILiteral gprName(RegisterID id) { return MacroAssembler::gprName(id); }
+    static ASCIILiteral sprName(SPRegisterID id) { return MacroAssembler::sprName(id); }
+    static ASCIILiteral fprName(FPRegisterID id) { return MacroAssembler::fprName(id); }
     inline UCPURegister& gpr(RegisterID);
     inline UCPURegister& spr(SPRegisterID);
     template<SavedFPWidth = SavedFPWidth::DontSaveVectors> inline double& fpr(FPRegisterID);
@@ -240,9 +240,9 @@ public:
 #if CPU(X86_64) || CPU(ARM64)
     v128_t& vector(FPRegisterID id) { return cpu.vector(id); }
 #endif
-    const char* gprName(RegisterID id) { return cpu.gprName(id); }
-    const char* sprName(SPRegisterID id) { return cpu.sprName(id); }
-    const char* fprName(FPRegisterID id) { return cpu.fprName(id); }
+    ASCIILiteral gprName(RegisterID id) { return cpu.gprName(id); }
+    ASCIILiteral sprName(SPRegisterID id) { return cpu.sprName(id); }
+    ASCIILiteral fprName(FPRegisterID id) { return cpu.fprName(id); }
 
     template<typename T> T gpr(RegisterID id) const { return cpu.gpr<T>(id); }
     template<typename T> T spr(SPRegisterID id) const { return cpu.spr<T>(id); }

@@ -96,7 +96,7 @@ public:
         return (FPRReg)index;
     }
 
-    static const char* debugName(FPRReg reg)
+    static ASCIILiteral debugName(FPRReg reg)
     {
         ASSERT(reg != InvalidFPRReg);
         return MacroAssembler::fprName(reg);
@@ -168,7 +168,7 @@ public:
         return static_cast<FPRReg>(index);
     }
 
-    static const char* debugName(FPRReg reg)
+    static ASCIILiteral debugName(FPRReg reg)
     {
         ASSERT(reg != InvalidFPRReg);
         return MacroAssembler::fprName(reg);
@@ -264,7 +264,7 @@ public:
         return static_cast<FPRReg>(index);
     }
 
-    static const char* debugName(FPRReg reg)
+    static ASCIILiteral debugName(FPRReg reg)
     {
         ASSERT(reg != InvalidFPRReg);
         return MacroAssembler::fprName(reg);
@@ -361,7 +361,7 @@ public:
         return indexForRegister[reg];
     }
 
-    static const char* debugName(FPRReg reg)
+    static ASCIILiteral debugName(FPRReg reg)
     {
         ASSERT(reg != InvalidFPRReg);
         return MacroAssembler::fprName(reg);

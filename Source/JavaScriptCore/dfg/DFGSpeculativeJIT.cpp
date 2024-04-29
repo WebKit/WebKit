@@ -1839,7 +1839,7 @@ void SpeculativeJIT::dump(const char* label)
 #endif
             ) {
             ASSERT(info.gpr() != InvalidGPRReg);
-            dataLogF(":%s\n", GPRInfo::debugName(info.gpr()));
+            dataLogF(":%s\n", GPRInfo::debugName(info.gpr()).characters());
         } else
             dataLogF("\n");
     }
