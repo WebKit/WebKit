@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LibWebRTCDav1dDecoder.h"
 
-#if USE(LIBWEBRTC)
+#if USE(LIBWEBRTC) && ENABLE(AV1)
 
 #include "LibWebRTCMacros.h"
 #include "Logging.h"
