@@ -1,10 +1,8 @@
 
 PASS sanity check trustedTypes.getPropertyType for the HTML script element.
 PASS sanity check trustedTypes.getAttributeType.
-FAIL sanity check trustedTypes.getTypeMapping trustedTypes.getTypeMapping is not a function. (In 'trustedTypes.getTypeMapping()', 'trustedTypes.getTypeMapping' is undefined)
 PASS getPropertyType tests adapted from w3c/trusted-types polyfill
 PASS getAttributeType tests adapted from w3c/trusted-types polyfill
-FAIL getTypeMapping tests adapted from w3c/trusted-types polyfill trustedTypes.getTypeMapping is not a function. (In 'trustedTypes.getTypeMapping()', 'trustedTypes.getTypeMapping' is undefined)
 PASS iframe[srcDoc] is defined
 PASS iframe.srcDoc is maybe defined
 PASS IFRAME[srcDoc] is defined

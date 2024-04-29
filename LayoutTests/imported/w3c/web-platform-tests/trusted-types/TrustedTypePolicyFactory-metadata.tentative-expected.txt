@@ -1,5 +1,4 @@
 
-FAIL Prepare parameters for generic test series below. trustedTypes.getTypeMapping is not a function. (In 'trustedTypes.getTypeMapping()', 'trustedTypes.getTypeMapping' is undefined)
 PASS Test assignment of string on madeup.madeup
 PASS Test assignment of string on madeup.setAttribute(madeup,..)
 PASS Test assignment of TrustedHTML on madeup.madeup
