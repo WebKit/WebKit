@@ -76,10 +76,6 @@ public:
 
     bool contains(const RenderElement&) const;
 
-    size_t boxCount() const { return m_renderers.size(); }
-
-    const auto& renderers() const { return m_renderers; }
-
 private:
     Layout::InitialContainingBlock& initialContainingBlock();
 
@@ -91,9 +87,6 @@ private:
     void insertChild(UniqueRef<Layout::Box>, RenderObject&, const RenderObject* beforeChild = nullptr);
 
     RenderBlock& m_rootRenderer;
-    Vector<SingleThreadWeakPtr<RenderObject>, 1> m_renderers;
-
-    HashMap<CheckedRef<const Layout::Box>, SingleThreadWeakPtr<RenderObject>> m_boxToRendererMap;
 };
 
 #if ENABLE(TREE_DEBUGGING)

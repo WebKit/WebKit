@@ -29,6 +29,7 @@
 #include "BlockFormattingState.h"
 #include "BlockLayoutState.h"
 #include "EventRegion.h"
+#include "FormattingContextBoxIterator.h"
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -469,8 +470,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         }
     }
 
-    for (auto& renderObject : m_boxTree.renderers()) {
-        auto& layoutBox = *renderObject->layoutBox();
+    for (auto& layoutBox : formattingContextBoxes(rootLayoutBox())) {
         if (!layoutBox.isFloatingPositioned() && !layoutBox.isOutOfFlowPositioned())
             continue;
         if (layoutBox.isLineBreakBox())
@@ -1064,8 +1064,7 @@ void LineLayout::shiftLinesBy(LayoutUnit blockShift)
         }
     }
 
-    for (auto& object : m_boxTree.renderers()) {
-        Layout::Box& layoutBox = *object->layoutBox();
+    for (auto& layoutBox : formattingContextBoxes(rootLayoutBox())) {
         if (layoutBox.isOutOfFlowPositioned() && layoutBox.style().hasStaticBlockPosition(isHorizontalWritingMode)) {
             CheckedRef renderer = downcast<RenderLayerModelObject>(m_boxTree.rendererForLayoutBox(layoutBox));
             if (!renderer->layer())
