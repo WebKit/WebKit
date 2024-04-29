@@ -15967,7 +15967,7 @@ void SpeculativeJIT::compileToPropertyKeyOrNumber(Node* node)
 
     addSlowPathGenerator(slowPathCall(slowCases, this, operationToPropertyKeyOrNumber, resultRegs, LinkableConstant::globalObject(*this, node), argumentRegs));
 
-    jsValueResult(resultRegs, node, DataFormatJSCell, UseChildrenCalledExplicitly);
+    jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
 }
 
 void SpeculativeJIT::compileToNumeric(Node* node)
