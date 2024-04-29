@@ -52,8 +52,6 @@ public:
 
     bool isPresentationContextCoreAnimation() const override { return true; }
 
-    bool isValid() override { return m_configuration != std::nullopt; }
-
 private:
     PresentationContextCoreAnimation(const WGPUSurfaceDescriptor&);
 

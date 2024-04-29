@@ -53,10 +53,6 @@
 #include "RemoteTexture.h"
 #include "RemoteTextureView.h"
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
-#include <WebCore/WebGPU.h>
-#endif
-
 namespace WebKit::WebGPU {
 
 ObjectHeap::ObjectHeap()
@@ -397,28 +393,6 @@ WebCore::WebGPU::TextureView* ObjectHeap::convertTextureViewFromBacking(WebGPUId
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>>(iterator->value))
         return nullptr;
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>>(iterator->value)->backing();
-}
-
-ObjectHeap::ExistsAndValid ObjectHeap::objectExistsAndValid(const WebCore::WebGPU::GPU& gpu, WebGPUIdentifier identifier) const
-{
-    ExistsAndValid result;
-#if HAVE(WEBGPU_IMPLEMENTATION)
-    auto it = m_objects.find(identifier);
-    if (it == m_objects.end())
-        return result;
-
-    result.exists = true;
-    result.valid = WTF::switchOn(it->value, [&](std::monostate) -> bool {
-        return false;
-    },
-    [&](auto& object) -> bool {
-        return gpu.isValid(object->backing());
-    });
-#else
-    UNUSED_PARAM(gpu);
-    UNUSED_PARAM(identifier);
-#endif
-    return result;
 }
 
 } // namespace WebKit::WebGPU

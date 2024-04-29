@@ -51,7 +51,6 @@ public:
 
     bool isPresentationContextIOSurface() const override { return true; }
 
-    bool isValid() override { return true; }
 private:
     PresentationContextIOSurface(const WGPUSurfaceDescriptor&, const Instance&);
 

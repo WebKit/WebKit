@@ -54,11 +54,6 @@ ExternalTexture::ExternalTexture(Device& device)
 {
 }
 
-bool ExternalTexture::isValid() const
-{
-    return m_pixelBuffer.get() || m_destroyed;
-}
-
 ExternalTexture::~ExternalTexture() = default;
 
 void ExternalTexture::destroy()
