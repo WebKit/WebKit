@@ -3319,3 +3319,10 @@ js/dom/encode-URI-test.html [ Pass Failure ]
 
 # eventSender.leapForward should be reimplemented without Sleep.
 editing/selection/mouse/click-left-of-rtl-wrapping-text.html [ Skip ] # Timeout
+
+# Passes on post-commit Buildbot while fails on EWS
+http/tests/images/jpg-invalid-content-type.html [ ImageOnlyFailure Pass ]
+http/tests/scroll-to-text-fragment/no-iframe-match.html [ ImageOnlyFailure Pass ]
+http/tests/security/shape-outside-and-cached-resources.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/selectors/focus-within-013.html [ ImageOnlyFailure Pass ]
+[ Release ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Timeout Pass ]
