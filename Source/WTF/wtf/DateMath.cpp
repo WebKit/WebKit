@@ -92,12 +92,6 @@
 
 namespace WTF {
 
-// FIXME: Should this function go into StringCommon.h or some other header?
-template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const char* string, const char (&lowercaseLetters)[length])
-{
-    return equalLettersIgnoringASCIICase(string, lowercaseLetters, length - 1);
-}
-
 static Lock innerTimeZoneOverrideLock;
 static Vector<UChar>& innerTimeZoneOverride() WTF_REQUIRES_LOCK(innerTimeZoneOverrideLock)
 {
