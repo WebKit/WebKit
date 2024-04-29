@@ -1509,26 +1509,25 @@ void GlobalObject::promiseRejectionTracker(JSGlobalObject*, JSPromise*, JSPromis
 
 #endif // ENABLE(FUZZILLI)
 
-template <typename T>
-static CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, T& string)
+static CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, Expected<CString, UTF8ConversionError> expectedString)
 {
-    Expected<CString, UTF8ConversionError> expectedString = string.tryGetUTF8();
     if (expectedString)
         return expectedString.value();
     switch (expectedString.error()) {
     case UTF8ConversionError::OutOfMemory:
         throwOutOfMemoryError(globalObject, scope);
-        break;
-    case UTF8ConversionError::IllegalSource:
+        return { };
+    case UTF8ConversionError::Invalid:
         scope.throwException(globalObject, createError(globalObject, "Illegal source encountered during UTF8 conversion"_s));
-        break;
-    case UTF8ConversionError::SourceExhausted:
-        scope.throwException(globalObject, createError(globalObject, "Source exhausted during UTF8 conversion"_s));
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
+        return { };
     }
+    RELEASE_ASSERT_NOT_REACHED();
     return { };
+}
+
+template<typename T> static CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, T& string)
+{
+    return toCString(globalObject, scope, string.tryGetUTF8());
 }
 
 static EncodedJSValue printInternal(JSGlobalObject* globalObject, CallFrame* callFrame, FILE* out, bool pretty)

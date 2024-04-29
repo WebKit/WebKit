@@ -77,22 +77,24 @@ size_t WKStringGetUTF8CStringImpl(WKStringRef stringRef, char* buffer, size_t bu
     if (!bufferSize)
         return 0;
 
-    auto stringView = WebKit::toImpl(stringRef)->stringView();
+    auto string = WebKit::toImpl(stringRef)->stringView();
 
-    char* p = buffer;
-
-    if (stringView.is8Bit()) {
-        if (!WTF::Unicode::convertLatin1ToUTF8(stringView.span8(), &p, p + bufferSize - 1))
-            return 0;
-    } else {
-        auto characters = stringView.span16();
-        auto result = WTF::Unicode::convertUTF16ToUTF8(characters, &p, p + bufferSize - 1, strict);
-        if (result != WTF::Unicode::ConversionResult::Success && result != WTF::Unicode::ConversionResult::TargetExhausted)
-            return 0;
+    std::span<char8_t> target { reinterpret_cast<char8_t*>(buffer), bufferSize - 1 };
+    WTF::Unicode::ConversionResult<char8_t> result;
+    if (string.is8Bit())
+        result = WTF::Unicode::convert(string.span8(), target);
+    else {
+        if constexpr (strict == NonStrict)
+            result = WTF::Unicode::convertReplacingInvalidSequences(string.span16(), target);
+        else {
+            result = WTF::Unicode::convert(string.span16(), target);
+            if (result.code == WTF::Unicode::ConversionResultCode::SourceInvalid)
+                return 0;
+        }
     }
 
-    *p++ = '\0';
-    return p - buffer;
+    buffer[result.buffer.size()] = '\0';
+    return result.buffer.size() + 1;
 }
 
 size_t WKStringGetUTF8CString(WKStringRef stringRef, char* buffer, size_t bufferSize)

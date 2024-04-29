@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef OpaqueJSString_h
-#define OpaqueJSString_h
+#pragma once
 
 #include <atomic>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -105,5 +104,3 @@ private:
     // This will be initialized on demand when characters() is called if the string needs up-conversion.
     std::atomic<UChar*> m_characters;
 };
-
-#endif

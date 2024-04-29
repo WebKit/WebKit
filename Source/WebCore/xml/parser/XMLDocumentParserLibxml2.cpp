@@ -1157,15 +1157,14 @@ static xmlEntityPtr sharedXHTMLEntity()
 
 static size_t convertUTF16EntityToUTF8(std::span<const UChar> utf16Entity, char* target, size_t targetSize)
 {
-    const char* originalTarget = target;
-    auto conversionResult = WTF::Unicode::convertUTF16ToUTF8(utf16Entity, &target, target + targetSize);
-    if (conversionResult != WTF::Unicode::ConversionResult::Success)
+    auto result = WTF::Unicode::convert(utf16Entity, { reinterpret_cast<char8_t*>(target), targetSize });
+    if (result.code != WTF::Unicode::ConversionResultCode::Success)
         return 0;
 
     // Even though we must pass the length, libxml expects the entity string to be null terminated.
-    ASSERT(target >= originalTarget + 1);
-    *target = '\0';
-    return target - originalTarget;
+    ASSERT(!result.buffer.empty());
+    target[result.buffer.size()] = '\0';
+    return result.buffer.size();
 }
 
 static xmlEntityPtr getXHTMLEntity(const xmlChar* name)

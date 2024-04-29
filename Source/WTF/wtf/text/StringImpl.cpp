@@ -1540,16 +1540,6 @@ size_t StringImpl::sizeInBytes() const
     return size + sizeof(*this);
 }
 
-// Helper to write a three-byte UTF-8 code point into the buffer; caller must ensure room is available.
-static inline void putUTF8Triple(char*& buffer, UChar character)
-{
-    ASSERT(character >= 0x0800);
-    int i = 0;
-    U8_APPEND_UNSAFE(buffer, i, character);
-    ASSERT(i == 3);
-    buffer += i;
-}
-
 Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const LChar> source)
 {
     return tryGetUTF8ForCharacters([] (std::span<const char> converted) {
@@ -1567,55 +1557,20 @@ Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<c
 Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(std::span<const UChar> span, ConversionMode mode, Vector<char, 1024>& bufferVector)
 {
     ASSERT(bufferVector.size() == span.size() * 3);
-
-    char* buffer = bufferVector.data();
-    char* const bufferEnd = buffer + bufferVector.size();
-
+    ConversionResult<char8_t> result;
     switch (mode) {
-    case StrictConversionReplacingUnpairedSurrogatesWithFFFD: {
-        while (!span.empty()) {
-            // Use strict conversion to detect unpaired surrogates.
-            auto result = convertUTF16ToUTF8(span, &buffer, bufferEnd);
-            ASSERT(result != ConversionResult::TargetExhausted);
-            // Conversion fails when there is an unpaired surrogate.
-            // Put replacement character (U+FFFD) instead of the unpaired surrogate.
-            if (result != ConversionResult::Success) {
-                ASSERT(U16_IS_SURROGATE(span.front()));
-                // There should be room left, since one UChar hasn't been converted.
-                ASSERT((buffer + 3) <= bufferEnd);
-                putUTF8Triple(buffer, replacementCharacter);
-                span = span.subspan(1);
-            }
-        }
+    case StrictConversion:
+        result = Unicode::convert(span, spanReinterpretCast<char8_t>(bufferVector.mutableSpan()));
+        break;
+    // FIXME: Lenient is exactly the same as "replacing unpaired surrogates with FFFD"; we don't need both.
+    case StrictConversionReplacingUnpairedSurrogatesWithFFFD:
+    case LenientConversion:
+        result = Unicode::convertReplacingInvalidSequences(span, spanReinterpretCast<char8_t>(bufferVector.mutableSpan()));
         break;
     }
-    case StrictConversion:
-    case LenientConversion: {
-        bool strict = mode == StrictConversion;
-        auto conversionResult = convertUTF16ToUTF8(span, &buffer, bufferEnd, strict);
-        switch (conversionResult) {
-        case ConversionResult::Success:
-            break;
-        case ConversionResult::SourceExhausted:
-            if (strict)
-                return makeUnexpected(UTF8ConversionError::SourceExhausted);
-            ASSERT(span.size() == 1);
-            ASSERT(U16_IS_SURROGATE(span.front()));
-            putUTF8Triple(buffer, span.front());
-                break;
-        case ConversionResult::TargetExhausted:
-            // (length * 3) should be sufficient for any conversion.
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-
-        case ConversionResult::SourceIllegal:
-            // Only produced from strict conversion.
-            ASSERT(strict);
-            return makeUnexpected(UTF8ConversionError::IllegalSource);
-        }
-    }
-    }
-    return buffer - bufferVector.data();
+    if (result.code == ConversionResultCode::SourceInvalid)
+        return makeUnexpected(UTF8ConversionError::Invalid);
+    return result.buffer.size();
 }
 
 Expected<CString, UTF8ConversionError> StringImpl::tryGetUTF8(ConversionMode mode) const

@@ -124,6 +124,7 @@ set(TestWTF_SOURCES
     Tests/WTF/Time.cpp
     Tests/WTF/URL.cpp
     Tests/WTF/URLParser.cpp
+    Tests/WTF/UTF8Conversion.cpp
     Tests/WTF/UniqueArray.cpp
     Tests/WTF/UniqueRef.cpp
     Tests/WTF/UniqueRefVector.cpp

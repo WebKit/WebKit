@@ -169,12 +169,13 @@ static inline void setXSLTLoadCallBack(xsltDocLoaderFunc func, XSLTProcessor* pr
 static int writeToStringBuilder(void* context, const char* buffer, int length)
 {
     auto& builder = *static_cast<StringBuilder*>(context);
-    UTF8Adapter adapter({ reinterpret_cast<const char8_t*>(buffer), static_cast<size_t>(length) });
-    ASSERT(!adapter.conversionFailed);
-    if (adapter.conversionFailed)
+    if (!length)
+        return 0;
+    auto checkedString = WTF::Unicode::checkUTF8({ reinterpret_cast<const char8_t*>(buffer), static_cast<size_t>(length) });
+    if (checkedString.characters.empty())
         return -1;
-    builder.append(adapter);
-    return adapter.lengthUTF8;
+    builder.append(checkedString);
+    return checkedString.characters.size();
 }
 
 static bool saveResultToString(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, String& resultString)

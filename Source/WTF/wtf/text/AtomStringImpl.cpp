@@ -109,67 +109,46 @@ struct UCharBufferTranslator {
     }
 };
 
-struct HashAndUTF8Characters {
-    unsigned hash;
-    const char* characters;
-    unsigned length;
-    unsigned utf16Length;
+struct HashedUTF8Characters {
+    std::span<const char8_t> characters;
+    Unicode::UTF16LengthWithHash length;
 };
 
-struct HashAndUTF8CharactersTranslator {
-    static unsigned hash(const HashAndUTF8Characters& buffer)
+struct HashedUTF8CharactersTranslator {
+    static unsigned hash(const HashedUTF8Characters& characters)
     {
-        return buffer.hash;
+        return characters.length.hash;
     }
 
-    static bool equal(AtomStringTable::StringEntry const& passedString, const HashAndUTF8Characters& buffer)
+    static bool equal(const AtomStringTable::StringEntry& passedString, const HashedUTF8Characters& characters)
     {
         auto* string = passedString.get();
-        if (buffer.utf16Length != string->length())
+        if (characters.length.lengthUTF16 != string->length())
             return false;
 
-        // If buffer contains only ASCII characters UTF-8 and UTF16 length are the same.
-        if (buffer.utf16Length != buffer.length) {
+        // If buffer contains only ASCII characters, UTF-8 and UTF16 lengths are the same.
+        if (characters.length.lengthUTF16 != characters.characters.size()) {
             if (string->is8Bit())
-                return equalLatin1WithUTF8(string->characters8(), buffer.characters, buffer.characters + buffer.length);
-
-            return equalUTF16WithUTF8(string->characters16(), buffer.characters, buffer.characters + buffer.length);
+                return Unicode::equal(string->span8(), characters.characters);
+            return Unicode::equal(string->span16(), characters.characters);
         }
 
-        if (string->is8Bit()) {
-            const LChar* stringCharacters = string->characters8();
-
-            for (unsigned i = 0; i < buffer.length; ++i) {
-                ASSERT(isASCII(buffer.characters[i]));
-                if (stringCharacters[i] != buffer.characters[i])
-                    return false;
-            }
-
-            return true;
-        }
-
-        const UChar* stringCharacters = string->characters16();
-
-        for (unsigned i = 0; i < buffer.length; ++i) {
-            ASSERT(isASCII(buffer.characters[i]));
-            if (stringCharacters[i] != buffer.characters[i])
-                return false;
-        }
-
-        return true;
+        auto charactersLatin1 = spanReinterpretCast<const LChar>(characters.characters);
+        if (string->is8Bit())
+            return WTF::equal(string->characters8(), charactersLatin1);
+        return WTF::equal(string->characters16(), charactersLatin1);
     }
 
-    static void translate(AtomStringTable::StringEntry& location, const HashAndUTF8Characters& buffer, unsigned hash)
+    static void translate(AtomStringTable::StringEntry& location, const HashedUTF8Characters& characters, unsigned hash)
     {
         UChar* target;
-        auto newString = StringImpl::createUninitialized(buffer.utf16Length, target);
+        auto newString = StringImpl::createUninitialized(characters.length.lengthUTF16, target);
 
-        bool containsOnlyASCII;
-        if (!convertUTF8ToUTF16({ reinterpret_cast<const char8_t*>(buffer.characters), buffer.length }, &target, target + buffer.utf16Length, &containsOnlyASCII))
-            RELEASE_ASSERT_NOT_REACHED();
+        auto result = Unicode::convert(characters.characters, { target, characters.length.lengthUTF16 });
+        RELEASE_ASSERT(result.code == Unicode::ConversionResultCode::Success);
 
-        if (containsOnlyASCII)
-            newString = StringImpl::create(std::span { buffer.characters, buffer.length });
+        if (result.isAllASCII)
+            newString = StringImpl::create(spanReinterpretCast<const LChar>(characters.characters));
 
         auto* pointer = &newString.leakRef();
         pointer->setHash(hash);
@@ -495,16 +474,12 @@ RefPtr<AtomStringImpl> AtomStringImpl::lookUpSlowCase(StringImpl& string)
     return nullptr;
 }
 
-RefPtr<AtomStringImpl> AtomStringImpl::addUTF8(std::span<const char> characters)
+RefPtr<AtomStringImpl> AtomStringImpl::add(std::span<const char8_t> characters)
 {
-    HashAndUTF8Characters buffer;
-    buffer.characters = characters.data();
-    buffer.hash = calculateStringHashAndLengthFromUTF8MaskingTop8Bits(characters, buffer.length, buffer.utf16Length);
-
-    if (!buffer.hash)
+    HashedUTF8Characters buffer { characters, computeUTF16LengthWithHash(spanReinterpretCast<const char8_t>(characters)) };
+    if (!buffer.length.hash)
         return nullptr;
-
-    return addToStringTable<HashAndUTF8Characters, HashAndUTF8CharactersTranslator>(buffer);
+    return addToStringTable<HashedUTF8Characters, HashedUTF8CharactersTranslator>(buffer);
 }
 
 RefPtr<AtomStringImpl> AtomStringImpl::lookUp(std::span<const LChar> characters)

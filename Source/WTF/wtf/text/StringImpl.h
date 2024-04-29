@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -66,7 +66,7 @@ namespace WTF {
 class SymbolImpl;
 class SymbolRegistry;
 
-struct HashAndUTF8CharactersTranslator;
+struct HashedUTF8CharactersTranslator;
 struct HashTranslatorASCIILiteral;
 struct LCharBufferTranslator;
 struct StringViewHashTranslator;
@@ -185,7 +185,7 @@ class StringImpl : private StringImplShape {
     friend class SymbolImpl;
     friend class ExternalStringImpl;
 
-    friend struct WTF::HashAndUTF8CharactersTranslator;
+    friend struct WTF::HashedUTF8CharactersTranslator;
     friend struct WTF::HashTranslatorASCIILiteral;
     friend struct WTF::LCharBufferTranslator;
     friend struct WTF::StringViewHashTranslator;
@@ -1400,27 +1400,21 @@ inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8Conversio
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
 #if CPU(ARM64)
-    if (const LChar* nonASCII = find8NonASCII(characters)) {
-        size_t prefixLength = nonASCII - characters.data();
+    if (auto* firstNonASCII = find8NonASCII(characters)) {
+        size_t prefixLength = firstNonASCII - characters.data();
         size_t remainingLength = characters.size() - prefixLength;
-
-        Vector<char, 1024> bufferVector(prefixLength + remainingLength * 2);
-        char* buffer = bufferVector.data();
-
-        memcpy(buffer, characters.data(), prefixLength);
-        buffer += prefixLength;
-
-        auto success = Unicode::convertLatin1ToUTF8(characters.subspan(nonASCII - characters.data()), &buffer, buffer + (bufferVector.size() - prefixLength));
-        ASSERT_UNUSED(success, success); // (characters.size() * 2) should be sufficient for any conversion from Latin1
-        return function(std::span(bufferVector.data(), buffer));
+        Vector<char8_t, 1024> buffer(prefixLength + remainingLength * 2);
+        memcpy(buffer.data(), characters.data(), prefixLength);
+        auto result = Unicode::convert(characters.subspan(prefixLength), buffer.mutableSpan().subspan(prefixLength));
+        ASSERT(result.code == Unicode::ConversionResultCode::Success); // 2x is sufficient for any conversion from Latin1
+        return function(std::span(bitwise_cast<const char*>(buffer.data()), prefixLength + result.buffer.size()));
     }
-    return function(std::span(bitwise_cast<const char*>(characters.data()), bitwise_cast<const char*>(characters.data() + characters.size())));
+    return function(std::span(bitwise_cast<const char*>(characters.data()), characters.size()));
 #else
-    Vector<char, 1024> bufferVector(characters.size() * 2);
-    char* buffer = bufferVector.data();
-    bool success = Unicode::convertLatin1ToUTF8(characters, &buffer, buffer + bufferVector.size());
-    ASSERT_UNUSED(success, success); // (characters.size() * 2) should be sufficient for any conversion from Latin1
-    return function(std::span(bufferVector.data(), buffer));
+    Vector<char8_t, 1024> buffer(characters.size() * 2);
+    auto result = Unicode::convert(characters, buffer.mutableSpan());
+    ASSERT(result.code == Unicode::ConversionResultCode::Success); // 2x is sufficient for any conversion from Latin1
+    return function(std::span(bitwise_cast<const char*>(result.buffer.data()), result.buffer.size()));
 #endif
 }
 

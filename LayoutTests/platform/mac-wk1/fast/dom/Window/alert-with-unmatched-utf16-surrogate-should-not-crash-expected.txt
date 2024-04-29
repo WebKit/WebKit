@@ -1,4 +1,4 @@
-ALERT: �
+ALERT: (null)
 PASS successfullyParsed is true
 
 TEST COMPLETE
