@@ -69,6 +69,7 @@ JSC::VM& commonVMSlow()
 #if !PLATFORM(IOS_FAMILY)
     vm.heap.setFullActivityCallback(OpportunisticTaskScheduler::FullGCActivityCallback::create(vm.heap));
     vm.heap.setEdenActivityCallback(OpportunisticTaskScheduler::EdenGCActivityCallback::create(vm.heap));
+    vm.heap.disableStopIfNecessaryTimer(); // Because opportunistic task scheduler and GC timer exists, we do not need StopIfNecessaryTimer.
 #endif
 
     g_commonVMOrNull = &vm;

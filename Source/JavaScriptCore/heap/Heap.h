@@ -330,6 +330,7 @@ public:
 
     JS_EXPORT_PRIVATE void setFullActivityCallback(RefPtr<GCActivityCallback>&&);
     JS_EXPORT_PRIVATE void setEdenActivityCallback(RefPtr<GCActivityCallback>&&);
+    JS_EXPORT_PRIVATE void disableStopIfNecessaryTimer();
 
     JS_EXPORT_PRIVATE void setGarbageCollectionTimerEnabled(bool);
     JS_EXPORT_PRIVATE void scheduleOpportunisticFullCollection();
