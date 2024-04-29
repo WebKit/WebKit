@@ -108,7 +108,7 @@ struct FontPlatformDataAttributes {
         { }
 #endif
 
-#if USE(WIN)
+#if PLATFORM(WIN)
     FontPlatformDataAttributes(float size, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, bool syntheticBold, bool syntheticOblique, LOGFONT font)
         : m_size(size)
         , m_orientation(orientation)
@@ -117,6 +117,18 @@ struct FontPlatformDataAttributes {
         , m_syntheticBold(syntheticBold)
         , m_syntheticOblique(syntheticOblique)
         , m_font(font)
+        { }
+#endif
+
+#if USE(SKIA)
+    FontPlatformDataAttributes(float size, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, bool syntheticBold, bool syntheticOblique, Vector<hb_feature_t>&& features)
+        : m_size(size)
+        , m_orientation(orientation)
+        , m_widthVariant(widthVariant)
+        , m_textRenderingMode(textRenderingMode)
+        , m_syntheticBold(syntheticBold)
+        , m_syntheticOblique(syntheticOblique)
+        , m_features(WTFMove(features))
         { }
 #endif
 

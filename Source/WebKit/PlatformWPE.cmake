@@ -105,6 +105,8 @@ list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/glib/InputMethodState.serialization.in
     Shared/glib/UserMessage.serialization.in
 
+    Shared/harfbuzz/ArgumentCodersHarfBuzz.serialization.in
+
     Shared/skia/CoreIPCSkColorSpace.serialization.in
 
     Shared/soup/WebCoreArgumentCodersSoup.serialization.in
