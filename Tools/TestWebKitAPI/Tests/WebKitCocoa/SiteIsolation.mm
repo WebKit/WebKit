@@ -2852,6 +2852,26 @@ TEST(SiteIsolation, SelectAll)
     while (![webView selectionRangeHasStartOffset:0 endOffset:4 inFrame:childFrameNode.get().info])
         Util::spinRunLoop();
 }
+
+TEST(SiteIsolation, TopContentInsetAfterCrossSiteNavigation)
+{
+    HTTPServer server({
+        { "/source"_s, { "<script> location.href = 'https://webkit.org/destination'; </script>"_s } },
+        { "/destination"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView _setTopContentInset:10];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/source"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"window.innerHeight" completionHandler:^(id result, NSError *) {
+        EXPECT_EQ(-10, [result intValue]);
+        done = true;
+    }];
+    Util::run(&done);
+}
 #endif
 
 TEST(SiteIsolation, PresentationUpdateAfterCrossSiteNavigation)

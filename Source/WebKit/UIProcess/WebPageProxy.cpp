@@ -10070,7 +10070,7 @@ bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
 }
 #endif
 
-WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, std::optional<SubframeProcessPageParameters>&& subframeProcessPageParameters, bool isProcessSwap, RefPtr<API::WebsitePolicies>&& websitePolicies, std::optional<WebCore::FrameIdentifier>&& mainFrameIdentifier, std::optional<float> topContentInset)
+WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, std::optional<SubframeProcessPageParameters>&& subframeProcessPageParameters, bool isProcessSwap, RefPtr<API::WebsitePolicies>&& websitePolicies, std::optional<WebCore::FrameIdentifier>&& mainFrameIdentifier)
 {
     WebPageCreationParameters parameters;
 
@@ -10115,7 +10115,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.viewScaleFactor = m_viewScaleFactor;
     parameters.textZoomFactor = m_textZoomFactor;
     parameters.pageZoomFactor = m_pageZoomFactor;
-    parameters.topContentInset = topContentInset ? *topContentInset : m_topContentInset;
+    parameters.topContentInset = m_topContentInset;
     parameters.mediaVolume = m_mediaVolume;
     parameters.muted = internals().mutedState;
     parameters.openedByDOM = m_openedByDOM;
@@ -10350,8 +10350,7 @@ WebPageCreationParameters WebPageProxy::creationParametersForProvisionalPage(Web
 WebPageCreationParameters WebPageProxy::creationParametersForRemotePage(WebProcessProxy& process, DrawingAreaProxy& drawingArea, SubframeProcessPageParameters&& subframeProcessPageParameters)
 {
     constexpr bool isProcessSwap = true;
-    constexpr float topContentInset = 0.0;
-    return creationParameters(process, drawingArea, WTFMove(subframeProcessPageParameters), isProcessSwap, nullptr, std::nullopt, topContentInset);
+    return creationParameters(process, drawingArea, WTFMove(subframeProcessPageParameters), isProcessSwap, nullptr, std::nullopt);
 }
 
 void WebPageProxy::isJITEnabled(CompletionHandler<void(bool)>&& completionHandler)
