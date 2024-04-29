@@ -5655,4 +5655,15 @@ void Element::setVisibilityAdjustment(OptionSet<VisibilityAdjustment> adjustment
     ensureElementRareData().setVisibilityAdjustment(adjustment);
 }
 
+TextStream& operator<<(TextStream& ts, ContentRelevancy relevancy)
+{
+    switch (relevancy) {
+    case ContentRelevancy::OnScreen: ts << "OnScreen"; break;
+    case ContentRelevancy::Focused: ts << "Focused"; break;
+    case ContentRelevancy::IsInTopLayer: ts << "IsInTopLayer"; break;
+    case ContentRelevancy::Selected: ts << "Selected"; break;
+    }
+    return ts;
+}
+
 } // namespace WebCore

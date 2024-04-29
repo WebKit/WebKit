@@ -1409,10 +1409,14 @@ void RenderLayerCompositor::collectViewTransitionNewContentLayers(RenderLayer& l
         return;
 
     auto* capturedElement = activeViewTransition->namedElements().find(layer.renderer().style().pseudoElementNameArgument());
-    if (!capturedElement || !capturedElement->newElement)
+    if (!capturedElement)
         return;
 
-    auto* capturedRenderer = capturedElement->newElement->renderer();
+    auto newStyleable = capturedElement->newElement.styleable();
+    if (!newStyleable)
+        return;
+
+    auto* capturedRenderer = newStyleable->renderer();
     if (!capturedRenderer || !capturedRenderer->hasLayer())
         return;
 
