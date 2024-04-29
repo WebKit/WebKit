@@ -99,12 +99,9 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement& d
                 descendantsToDelete.append(currentGroup);
             else
                 updatePseudoElementGroup(*style, downcast<RenderElement>(*currentGroup), documentElementRenderer);
-        } else {
+            currentGroup = currentGroup->nextSibling();
+        } else
             buildPseudoElementGroup(name, documentElementRenderer, currentGroup);
-            currentGroup = currentGroup ? currentGroup->previousSibling() : nullptr;
-        }
-
-        currentGroup = currentGroup ? currentGroup->nextSibling() : nullptr;
     }
 
     for (auto& descendant : descendantsToDelete) {
