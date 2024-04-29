@@ -856,7 +856,10 @@ imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/anonymous-b
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/inline-level.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-checked-styling.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-add-label-quirks.html [ Failure ]
+
+#[ iOS MacOS ] imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-add-label-quirks.html(layout-tests) is a constant IMAGE failure
+imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-add-label-quirks.html [ Failure ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-painting-order.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-image-inline-alt.html [ ImageOnlyFailure ]
 webkit.org/b/252594 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-inline-size-containment-no-crash.html [ Skip ]
