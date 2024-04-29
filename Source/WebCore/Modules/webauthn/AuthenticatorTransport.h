@@ -41,24 +41,4 @@ enum class AuthenticatorTransport : uint8_t {
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<typename> struct EnumTraits;
-template<typename E, E...> struct EnumValues;
-
-template<> struct EnumTraits<WebCore::AuthenticatorTransport> {
-    using values = EnumValues<
-        WebCore::AuthenticatorTransport,
-        WebCore::AuthenticatorTransport::Usb,
-        WebCore::AuthenticatorTransport::Nfc,
-        WebCore::AuthenticatorTransport::Ble,
-        WebCore::AuthenticatorTransport::Internal,
-        WebCore::AuthenticatorTransport::Cable,
-        WebCore::AuthenticatorTransport::Hybrid,
-        WebCore::AuthenticatorTransport::SmartCard
-    >;
-};
-
-} // namespace WTF
-
 #endif // ENABLE(WEB_AUTHN)
