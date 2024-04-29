@@ -36,13 +36,7 @@
 #include <skia/core/SkColorSpace.h>
 #endif
 
-#if PLATFORM(GTK)
-#include "ArgumentCodersGtk.h"
-#endif
-
 namespace WebCore {
-
-class Font;
 class FontPlatformData;
 
 } // namespace WebCore
@@ -50,20 +44,13 @@ class FontPlatformData;
 namespace IPC {
 
 #if !USE(CORE_TEXT)
-template<> struct ArgumentCoder<WebCore::Font> {
-    static void encode(Encoder&, const WebCore::Font&);
-    static std::optional<Ref<WebCore::Font>> decode(Decoder&);
-    static void encodePlatformData(Encoder&, const WebCore::Font&);
-    static std::optional<WebCore::FontPlatformData> decodePlatformData(Decoder&);
+template<> struct ArgumentCoder<WebCore::FontPlatformData> {
+    static void encode(Encoder&, const WebCore::FontPlatformData&);
+    static std::optional<WebCore::FontPlatformData> decode(Decoder&);
 };
+#endif
 
-template<> struct ArgumentCoder<WebCore::FontPlatformDataAttributes> {
-    static void encode(Encoder&, const WebCore::FontPlatformDataAttributes&);
-    static std::optional<WebCore::FontPlatformDataAttributes> decode(Decoder&);
-    static void encodePlatformData(Encoder&, const WebCore::FontPlatformDataAttributes&);
-    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::FontPlatformDataAttributes&);
-};
-
+#if OS(WINDOWS)
 template<> struct ArgumentCoder<WebCore::FontCustomPlatformData> {
     static void encode(Encoder&, const WebCore::FontCustomPlatformData&);
     static std::optional<Ref<WebCore::FontCustomPlatformData>> decode(Decoder&);

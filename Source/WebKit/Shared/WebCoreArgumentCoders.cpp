@@ -30,35 +30,11 @@
 #include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/SharedMemory.h>
 
-// FIXME: Seems like we could use std::tuple to cut down the code below a lot!
-
 namespace IPC {
 using namespace WebCore;
 using namespace WebKit;
 
-#if !USE(CORE_TEXT)
-void ArgumentCoder<WebCore::Font>::encode(Encoder& encoder, const WebCore::Font& font)
-{
-    encoder << font.attributes();
-    // Intentionally don't encode m_isBrokenIdeographFallback because it doesn't affect drawGlyphs().
-
-    encodePlatformData(encoder, font);
-}
-
-std::optional<Ref<Font>> ArgumentCoder<Font>::decode(Decoder& decoder)
-{
-    std::optional<Font::Attributes> attributes;
-    decoder >> attributes;
-    if (!attributes)
-        return std::nullopt;
-
-    auto platformData = decodePlatformData(decoder);
-    if (!platformData)
-        return std::nullopt;
-
-    return Font::create(*platformData, attributes->origin, attributes->isInterstitial, attributes->visibility, attributes->isTextOrientationFallback, attributes->renderingResourceIdentifier);
-}
-
+#if OS(WINDOWS)
 void ArgumentCoder<WebCore::FontCustomPlatformData>::encode(Encoder& encoder, const WebCore::FontCustomPlatformData& customPlatformData)
 {
     std::optional<WebCore::SharedMemory::Handle> handle;
@@ -114,57 +90,5 @@ std::optional<Ref<FontCustomPlatformData>> ArgumentCoder<FontCustomPlatformData>
     return fontCustomPlatformData.releaseNonNull();
 }
 
-void ArgumentCoder<WebCore::FontPlatformDataAttributes>::encode(Encoder& encoder, const WebCore::FontPlatformDataAttributes& data)
-{
-    encoder << data.m_orientation;
-    encoder << data.m_widthVariant;
-    encoder << data.m_textRenderingMode;
-    encoder << data.m_size;
-    encoder << data.m_syntheticBold;
-    encoder << data.m_syntheticOblique;
-
-    encodePlatformData(encoder, data);
-}
-
-std::optional<FontPlatformDataAttributes> ArgumentCoder<FontPlatformDataAttributes>::decode(Decoder& decoder)
-{
-    std::optional<WebCore::FontOrientation> orientation;
-    decoder >> orientation;
-    if (!orientation)
-        return std::nullopt;
-
-    std::optional<WebCore::FontWidthVariant> widthVariant;
-    decoder >> widthVariant;
-    if (!widthVariant)
-        return std::nullopt;
-
-    std::optional<WebCore::TextRenderingMode> textRenderingMode;
-    decoder >> textRenderingMode;
-    if (!textRenderingMode)
-        return std::nullopt;
-
-    std::optional<float> size;
-    decoder >> size;
-    if (!size)
-        return std::nullopt;
-
-    std::optional<bool> syntheticBold;
-    decoder >> syntheticBold;
-    if (!syntheticBold)
-        return std::nullopt;
-
-    std::optional<bool> syntheticOblique;
-    decoder >> syntheticOblique;
-    if (!syntheticOblique)
-        return std::nullopt;
-
-    FontPlatformDataAttributes result(size.value(), orientation.value(), widthVariant.value(), textRenderingMode.value(), syntheticBold.value(), syntheticOblique.value());
-
-    if (!decodePlatformData(decoder, result))
-        return std::nullopt;
-
-    return result;
-}
 #endif
-
 } // namespace IPC
