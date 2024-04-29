@@ -29,29 +29,6 @@
 
 namespace WTR {
 
-WKDictionaryRef dictionaryValue(WKTypeRef);
-
-bool booleanValue(WKTypeRef);
-bool booleanValue(const WKRetainPtr<WKTypeRef>&);
-
-double doubleValue(WKTypeRef);
-std::optional<double> optionalDoubleValue(WKTypeRef);
-
-WKStringRef stringValue(WKTypeRef);
-WTF::String toWTFString(WKTypeRef);
-
-uint64_t uint64Value(WKTypeRef);
-uint64_t uint64Value(const WKRetainPtr<WKTypeRef>&);
-
-WKTypeRef value(WKDictionaryRef, const char* key);
-
-bool booleanValue(WKDictionaryRef, const char* key);
-double doubleValue(WKDictionaryRef, const char* key);
-WKStringRef stringValue(WKDictionaryRef, const char* key);
-uint64_t uint64Value(WKDictionaryRef, const char* key);
-
-std::optional<double> optionalDoubleValue(WKDictionaryRef, const char* key);
-
 template<typename T> void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, const WKRetainPtr<T>& value);
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, bool value);
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, const char* value);
@@ -78,6 +55,11 @@ inline bool booleanValue(const WKRetainPtr<WKTypeRef>& value)
 inline WKDictionaryRef dictionaryValue(WKTypeRef value)
 {
     return value && WKGetTypeID(value) == WKDictionaryGetTypeID() ? static_cast<WKDictionaryRef>(value) : nullptr;
+}
+
+inline WKArrayRef arrayValue(WKTypeRef value)
+{
+    return value && WKGetTypeID(value) == WKArrayGetTypeID() ? static_cast<WKArrayRef>(value) : nullptr;
 }
 
 inline double doubleValue(WKTypeRef value)
