@@ -399,11 +399,10 @@ void VideoPresentationManager::enterVideoFullscreenForVideoElement(HTMLVideoElem
     if (blockMediaLayerRehosting) {
         contextID = videoElement.layerHostingContextID();
         if (!contextID) {
-            m_setupFullscreenHandler = WTFMove(setupFullscreen);
-            videoElement.requestHostingContextID([this, protectedThis = Ref { *this }, videoElement = Ref { videoElement }] (auto contextID) {
-                if (!contextID || !m_setupFullscreenHandler)
+            videoElement.requestHostingContextID([protectedThis = Ref { *this }, videoElement = Ref { videoElement }, setupFullscreenHandler = WTFMove(setupFullscreen)] (auto contextID) {
+                if (!contextID)
                     return;
-                m_setupFullscreenHandler(contextID, FloatSize(videoElement->videoWidth(), videoElement->videoHeight()));
+                setupFullscreenHandler(contextID, FloatSize(videoElement->videoWidth(), videoElement->videoHeight()));
             });
             return;
         }
@@ -485,15 +484,6 @@ void VideoPresentationManager::hasVideoChanged(PlaybackSessionContextIdentifier 
 
 void VideoPresentationManager::videoDimensionsChanged(PlaybackSessionContextIdentifier contextId, const FloatSize& videoDimensions)
 {
-    if (m_setupFullscreenHandler) {
-        auto [model, interface] = ensureModelAndInterface(contextId);
-        RefPtr videoElement = model->videoElement();
-        auto layerHostingContextID = videoElement ? videoElement->layerHostingContextID() : 0;
-        if (layerHostingContextID) {
-            m_setupFullscreenHandler(layerHostingContextID, videoDimensions);
-            m_setupFullscreenHandler = nullptr;
-        }
-    }
     if (m_page)
         m_page->send(Messages::VideoPresentationManagerProxy::SetVideoDimensions(contextId, videoDimensions));
 }
