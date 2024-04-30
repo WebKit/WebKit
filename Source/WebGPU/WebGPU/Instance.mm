@@ -252,112 +252,112 @@ void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapt
 }
 
 // Fuzzer things
-bool wgpuBufferIsValid(WGPUBuffer buffer)
+WGPUBool wgpuBufferIsValid(WGPUBuffer buffer)
 {
     return WebGPU::fromAPI(buffer).isValid();
 }
 
-bool wgpuAdapterIsValid(WGPUAdapter adapter)
+WGPUBool wgpuAdapterIsValid(WGPUAdapter adapter)
 {
     return WebGPU::fromAPI(adapter).isValid();
 }
 
-bool wgpuBindGroupIsValid(WGPUBindGroup bindGroup)
+WGPUBool wgpuBindGroupIsValid(WGPUBindGroup bindGroup)
 {
     return WebGPU::fromAPI(bindGroup).isValid();
 }
 
-bool wgpuBindGroupLayoutIsValid(WGPUBindGroupLayout bindGroupLayout)
+WGPUBool wgpuBindGroupLayoutIsValid(WGPUBindGroupLayout bindGroupLayout)
 {
     return WebGPU::fromAPI(bindGroupLayout).isValid();
 }
 
-bool wgpuCommandBufferIsValid(WGPUCommandBuffer commandBuffer)
+WGPUBool wgpuCommandBufferIsValid(WGPUCommandBuffer commandBuffer)
 {
     return WebGPU::fromAPI(commandBuffer).isValid();
 }
 
-bool wgpuCommandEncoderIsValid(WGPUCommandEncoder commandEncoder)
+WGPUBool wgpuCommandEncoderIsValid(WGPUCommandEncoder commandEncoder)
 {
     return WebGPU::fromAPI(commandEncoder).isValid();
 }
 
-bool wgpuComputePassEncoderIsValid(WGPUComputePassEncoder computePassEncoder)
+WGPUBool wgpuComputePassEncoderIsValid(WGPUComputePassEncoder computePassEncoder)
 {
     return WebGPU::fromAPI(computePassEncoder).isValid();
 }
 
-bool wgpuComputePipelineIsValid(WGPUComputePipeline computePipeline)
+WGPUBool wgpuComputePipelineIsValid(WGPUComputePipeline computePipeline)
 {
     return WebGPU::fromAPI(computePipeline).isValid();
 }
 
-bool wgpuDeviceIsValid(WGPUDevice device)
+WGPUBool wgpuDeviceIsValid(WGPUDevice device)
 {
     return WebGPU::fromAPI(device).isValid();
 }
 
-bool wgpuExternalTextureIsValid(WGPUExternalTexture externalTexture)
+WGPUBool wgpuExternalTextureIsValid(WGPUExternalTexture externalTexture)
 {
     return WebGPU::fromAPI(externalTexture).isValid();
 }
 
-bool wgpuPipelineLayoutIsValid(WGPUPipelineLayout pipelineLayout)
+WGPUBool wgpuPipelineLayoutIsValid(WGPUPipelineLayout pipelineLayout)
 {
     return WebGPU::fromAPI(pipelineLayout).isValid();
 }
 
-bool wgpuPresentationContextIsValid(WGPUSurface presentationContext)
+WGPUBool wgpuPresentationContextIsValid(WGPUSurface presentationContext)
 {
     return WebGPU::fromAPI(presentationContext).isValid();
 }
 
-bool wgpuQuerySetIsValid(WGPUQuerySet querySet)
+WGPUBool wgpuQuerySetIsValid(WGPUQuerySet querySet)
 {
     return WebGPU::fromAPI(querySet).isValid();
 }
 
-bool wgpuQueueIsValid(WGPUQueue queue)
+WGPUBool wgpuQueueIsValid(WGPUQueue queue)
 {
     return WebGPU::fromAPI(queue).isValid();
 }
 
-bool wgpuRenderBundleEncoderIsValid(WGPURenderBundleEncoder renderBundleEncoder)
+WGPUBool wgpuRenderBundleEncoderIsValid(WGPURenderBundleEncoder renderBundleEncoder)
 {
     return WebGPU::fromAPI(renderBundleEncoder).isValid();
 }
 
-bool wgpuRenderBundleIsValid(WGPURenderBundle renderBundle)
+WGPUBool wgpuRenderBundleIsValid(WGPURenderBundle renderBundle)
 {
     return WebGPU::fromAPI(renderBundle).isValid();
 }
 
-bool wgpuRenderPassEncoderIsValid(WGPURenderPassEncoder renderPassEncoder)
+WGPUBool wgpuRenderPassEncoderIsValid(WGPURenderPassEncoder renderPassEncoder)
 {
     return WebGPU::fromAPI(renderPassEncoder).isValid();
 }
 
-bool wgpuRenderPipelineIsValid(WGPURenderPipeline renderPipeline)
+WGPUBool wgpuRenderPipelineIsValid(WGPURenderPipeline renderPipeline)
 {
     return WebGPU::fromAPI(renderPipeline).isValid();
 }
 
-bool wgpuSamplerIsValid(WGPUSampler sampler)
+WGPUBool wgpuSamplerIsValid(WGPUSampler sampler)
 {
     return WebGPU::fromAPI(sampler).isValid();
 }
 
-bool wgpuShaderModuleIsValid(WGPUShaderModule shaderModule)
+WGPUBool wgpuShaderModuleIsValid(WGPUShaderModule shaderModule)
 {
     return WebGPU::fromAPI(shaderModule).isValid();
 }
 
-bool wgpuTextureIsValid(WGPUTexture texture)
+WGPUBool wgpuTextureIsValid(WGPUTexture texture)
 {
     return WebGPU::fromAPI(texture).isValid();
 }
 
-bool wgpuTextureViewIsValid(WGPUTextureView textureView)
+WGPUBool wgpuTextureViewIsValid(WGPUTextureView textureView)
 {
     return WebGPU::fromAPI(textureView).isValid();
 }
