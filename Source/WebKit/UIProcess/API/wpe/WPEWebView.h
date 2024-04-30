@@ -172,7 +172,7 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<WebKit::TouchGestureController> m_touchGestureController;
 #if ENABLE(WPE_PLATFORM)
-    HashMap<uint32_t, GRefPtr<WPEEvent>> m_touchEvents;
+    HashMap<uint32_t, GRefPtr<WPEEvent>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_touchEvents;
 #endif
 #endif
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;

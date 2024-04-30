@@ -176,6 +176,7 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
             case WPE_EVENT_TOUCH_CANCEL: {
                 // FIXME: gestures
 #if ENABLE(TOUCH_EVENTS)
+                webView.m_touchEvents.set(wpe_event_touch_get_sequence_id(event), event);
                 auto points = webView.touchPointsForEvent(event);
                 webView.m_touchEvents.remove(wpe_event_touch_get_sequence_id(event));
                 webView.page().handleTouchEvent(NativeWebTouchEvent(event, WTFMove(points)));
