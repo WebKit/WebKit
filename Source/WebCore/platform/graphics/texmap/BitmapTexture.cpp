@@ -51,7 +51,25 @@ static const GLenum s_pixelDataType = GL_UNSIGNED_INT_8_8_8_8_REV;
 static const GLenum s_pixelDataType = GL_UNSIGNED_BYTE;
 #endif
 
+// On GLES3, the format we want for packed depth stencil is GL_DEPTH24_STENCIL8, but when added through
+// the extension this format is called GL_DEPTH24_STENCIL8_OES. In any case they hold the same value 0x88F0
+// so we can just use the first one.
+// These definitions may not exist if this is a GLES1/2 context without the GL_OES_packed_depth_stencil
+// extension. We need to define the one we want to use in order to build on every case.
+#ifndef GL_DEPTH24_STENCIL8
+#define GL_DEPTH24_STENCIL8 0x88F0
+#endif
+
 namespace WebCore {
+
+GLenum depthBufferFormat()
+{
+    auto* glContext = GLContext::current();
+    if (glContext->version() >= 300 || glContext->glExtensions().OES_packed_depth_stencil)
+        return GL_DEPTH24_STENCIL8;
+
+    return GL_DEPTH_COMPONENT16;
+}
 
 BitmapTexture::BitmapTexture(const IntSize& size, OptionSet<Flags> flags, GLint internalFormat)
     : m_flags(flags)
@@ -185,18 +203,29 @@ void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& ta
 
 void BitmapTexture::initializeStencil()
 {
-#if !USE(TEXMAP_DEPTH_STENCIL_BUFFER)
-    if (m_rbo)
+    if (m_flags.contains(Flags::DepthBuffer)) {
+        // We have a depth buffer and we're asked to have a stencil buffer as well. This is only
+        // possible if packed depth stencil is available. If that's the case, just bind the depth
+        // buffer as the stencil one if haven't done so. If packed depth stencil is not available
+        // don't do anything, which will cause stencil clips on this surface to fail.
+        if (depthBufferFormat() == GL_DEPTH24_STENCIL8 && !m_stencilBound) {
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferObject);
+            m_stencilBound = true;
+        }
+        return;
+    }
+
+    // We don't have a depth buffer. Use a stencil only buffer.
+    if (m_stencilBufferObject)
         return;
 
-    glGenRenderbuffers(1, &m_rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
+    glGenRenderbuffers(1, &m_stencilBufferObject);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_stencilBufferObject);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_size.width(), m_size.height());
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_stencilBufferObject);
     glClearStencil(0);
     glClear(GL_STENCIL_BUFFER_BIT);
-#endif
 }
 
 void BitmapTexture::initializeDepthBuffer()
@@ -204,15 +233,9 @@ void BitmapTexture::initializeDepthBuffer()
     if (m_depthBufferObject)
         return;
 
-#if USE(TEXMAP_DEPTH_STENCIL_BUFFER)
-    GLenum format = GL_DEPTH24_STENCIL8_OES;
-#else
-    GLenum format = GL_DEPTH_COMPONENT16;
-#endif
-
     glGenRenderbuffers(1, &m_depthBufferObject);
     glBindRenderbuffer(GL_RENDERBUFFER, m_depthBufferObject);
-    glRenderbufferStorage(GL_RENDERBUFFER, format, m_size.width(), m_size.height());
+    glRenderbufferStorage(GL_RENDERBUFFER, depthBufferFormat(), m_size.width(), m_size.height());
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferObject);
 }
@@ -264,13 +287,11 @@ BitmapTexture::~BitmapTexture()
     if (m_fbo)
         glDeleteFramebuffers(1, &m_fbo);
 
-#if !USE(TEXMAP_DEPTH_STENCIL_BUFFER)
-    if (m_rbo)
-        glDeleteRenderbuffers(1, &m_rbo);
-#endif
-
     if (m_depthBufferObject)
         glDeleteRenderbuffers(1, &m_depthBufferObject);
+
+    if (m_stencilBufferObject)
+        glDeleteRenderbuffers(1, &m_stencilBufferObject);
 }
 
 void BitmapTexture::copyFromExternalTexture(GLuint sourceTextureID)

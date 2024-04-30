@@ -75,6 +75,7 @@ public:
     struct GLExtensions {
         bool OES_texture_npot { false };
         bool EXT_unpack_subimage { false };
+        bool OES_packed_depth_stencil { false };
     };
     const GLExtensions& glExtensions() const;
 
