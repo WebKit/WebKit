@@ -262,11 +262,6 @@ public:
 
     bool checkIfFormActionAllowedByCSP(const URL&, bool didReceiveRedirectResponse, const URL& preRedirectURL) const;
 
-    WEBCORE_EXPORT Frame* opener();
-    WEBCORE_EXPORT const Frame* opener() const;
-    WEBCORE_EXPORT void setOpener(RefPtr<Frame>&&);
-    WEBCORE_EXPORT void detachFromAllOpenedFrames();
-
     void resetMultipleFormSubmissionProtection();
 
     void checkCallImplicitClose();
@@ -512,9 +507,6 @@ private:
     Timer m_checkTimer;
     bool m_shouldCallCheckCompleted { false };
     bool m_shouldCallCheckLoadComplete { false };
-
-    WeakPtr<Frame> m_opener;
-    WeakHashSet<Frame> m_openedFrames;
 
     bool m_loadingFromCachedPage { false };
 

@@ -384,10 +384,15 @@ void WebFrame::transitionToRemote(std::optional<WebCore::LayerHostingContextIden
     auto client = makeUniqueRef<WebRemoteFrameClient>(*this, WTFMove(invalidator));
     auto newFrame = ownerElement
         ? WebCore::RemoteFrame::createSubframeWithContentsInAnotherProcess(*corePage, WTFMove(client), m_frameID, *ownerElement, layerHostingContextIdentifier)
-        : parent ? WebCore::RemoteFrame::createSubframe(*corePage, WTFMove(client), m_frameID, *parent) : WebCore::RemoteFrame::createMainFrame(*corePage, WTFMove(client), m_frameID, localFrame->loader().opener());
+        : parent ? WebCore::RemoteFrame::createSubframe(*corePage, WTFMove(client), m_frameID, *parent) : WebCore::RemoteFrame::createMainFrame(*corePage, WTFMove(client), m_frameID, localFrame->opener());
     if (!parent)
         corePage->setMainFrame(newFrame.copyRef());
     newFrame->takeWindowProxyFrom(*localFrame);
+
+    newFrame->setOpener(localFrame->opener());
+    for (auto& frame : localFrame->openedFrames())
+        frame->setOpener(newFrame.ptr());
+
     newFrame->tree().setSpecifiedName(localFrame->tree().specifiedName());
     if (ownerRenderer)
         ownerRenderer->setWidget(newFrame->view());
@@ -456,6 +461,10 @@ void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdent
     if (localFrame->isMainFrame())
         corePage->setMainFrame(localFrame);
     localFrame->takeWindowProxyFrom(*remoteFrame);
+
+    localFrame->setOpener(remoteFrame->opener());
+    for (auto& frame : remoteFrame->openedFrames())
+        frame->setOpener(localFrame.ptr());
 
     if (corePage->focusController().focusedFrame() == remoteFrame.get())
         corePage->focusController().setFocusedFrame(localFrame.ptr(), FocusController::BroadcastFocusedFrame::No);

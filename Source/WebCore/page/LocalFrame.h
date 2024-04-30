@@ -334,9 +334,7 @@ private:
     FrameView* virtualView() const final;
     void disconnectView() final;
     DOMWindow* virtualWindow() const final;
-    void setOpener(Frame*) final;
-    const Frame* opener() const final;
-    Frame* opener();
+    void reinitializeDocumentSecurityContext() final;
     FrameLoaderClient& loaderClient() final;
     void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) final;
 

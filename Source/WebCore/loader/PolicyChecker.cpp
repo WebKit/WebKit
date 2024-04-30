@@ -277,7 +277,7 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request
     auto documentLoader = frameLoader->loaderForWebsitePolicies();
     auto clientRedirectSourceForHistory = documentLoader ? documentLoader->clientRedirectSourceForHistory() : String();
     auto navigationID = documentLoader ? documentLoader->navigationID() : 0;
-    bool hasOpener = !!frameLoader->opener();
+    bool hasOpener = !!frame->opener();
     auto sandboxFlags = frameLoader->effectiveSandboxFlags();
 
     if (isInitialEmptyDocumentLoad) {

@@ -32,6 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
@@ -68,6 +69,12 @@ public:
     Settings& settings() const { return m_settings.get(); }
     Frame& mainFrame() const { return m_mainFrame.get(); }
     bool isMainFrame() const { return this == m_mainFrame.ptr(); }
+    WEBCORE_EXPORT void setOpener(Frame*);
+    const Frame* opener() const { return m_opener.get(); }
+    Frame* opener() { return m_opener.get(); }
+    WEBCORE_EXPORT Vector<Ref<Frame>> openedFrames();
+    bool hasOpenedFrames() const;
+    WEBCORE_EXPORT void detachFromAllOpenedFrames();
     virtual bool isRootFrame() const = 0;
 #if ASSERT_ENABLED
     static bool isRootFrameIdentifier(FrameIdentifier);
@@ -91,9 +98,6 @@ public:
     virtual FrameView* virtualView() const = 0;
     RefPtr<FrameView> protectedVirtualView() const;
     virtual void disconnectView() = 0;
-    virtual void setOpener(Frame*) = 0;
-    virtual const Frame* opener() const = 0;
-    virtual Frame* opener() = 0;
     virtual FrameLoaderClient& loaderClient() = 0;
     virtual void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) = 0;
 
@@ -103,13 +107,14 @@ public:
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
 
 protected:
-    Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent);
+    Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent, Frame* opener);
     void resetWindowProxy();
 
     virtual void frameWasDisconnectedFromOwner() const { }
 
 private:
     virtual DOMWindow* virtualWindow() const = 0;
+    virtual void reinitializeDocumentSecurityContext() = 0;
 
     SingleThreadWeakPtr<Page> m_page;
     const FrameIdentifier m_frameID;
@@ -120,6 +125,8 @@ private:
     const Ref<Settings> m_settings;
     FrameType m_frameType;
     mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
+    WeakPtr<Frame> m_opener;
+    WeakHashSet<Frame> m_openedFrames;
 };
 
 } // namespace WebCore

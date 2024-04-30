@@ -45,7 +45,7 @@ static HashMap<FrameIdentifier, WeakRef<Frame>>& allFrames()
 }
 #endif
 
-Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrameOwnerElement* ownerElement, Frame* parent)
+Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrameOwnerElement* ownerElement, Frame* parent, Frame* opener)
     : m_page(page)
     , m_frameID(frameID)
     , m_treeNode(*this, parent)
@@ -55,6 +55,7 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
     , m_settings(page.settings())
     , m_frameType(frameType)
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
+    , m_opener(opener)
 {
     if (parent)
         parent->tree().appendChild(*this);
@@ -156,5 +157,37 @@ bool Frame::isRootFrameIdentifier(FrameIdentifier identifier)
     return localFrame && localFrame->isRootFrame();
 }
 #endif
+
+void Frame::setOpener(Frame* opener)
+{
+    if (m_opener)
+        m_opener->m_openedFrames.remove(*this);
+    if (opener) {
+        opener->m_openedFrames.add(*this);
+        if (RefPtr page = this->page())
+            page->setOpenedByDOMWithOpener(true);
+    }
+    m_opener = opener;
+
+    reinitializeDocumentSecurityContext();
+}
+
+void Frame::detachFromAllOpenedFrames()
+{
+    for (auto& frame : std::exchange(m_openedFrames, { }))
+        frame.m_opener = nullptr;
+}
+
+Vector<Ref<Frame>> Frame::openedFrames()
+{
+    return WTF::map(m_openedFrames, [] (auto& frame) {
+        return Ref { frame };
+    });
+}
+
+bool Frame::hasOpenedFrames() const
+{
+    return !m_openedFrames.isEmptyIgnoringNullReferences();
+}
 
 } // namespace WebCore

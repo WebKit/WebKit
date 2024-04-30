@@ -199,7 +199,7 @@ CachedFrame::CachedFrame(Frame& frame)
     if (localFrame) {
         CheckedRef frameLoader = localFrame->loader();
         if (!frame.isMainFrame())
-            frameLoader->detachFromAllOpenedFrames();
+            localFrame->detachFromAllOpenedFrames();
 
         frameLoader->client().savePlatformDataToCachedFrame(this);
 

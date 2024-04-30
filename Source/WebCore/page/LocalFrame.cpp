@@ -157,7 +157,7 @@ static const LocalFrame& rootFrame(const LocalFrame& frame)
 }
 
 LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, Frame* parent, Frame* opener)
-    : Frame(page, identifier, FrameType::Local, ownerElement, parent)
+    : Frame(page, identifier, FrameType::Local, ownerElement, parent, opener)
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
     , m_script(makeUniqueRef<ScriptController>(*this))
     , m_pageZoomFactor(parentPageZoomFactor(this))
@@ -182,7 +182,6 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
     if (isRootFrame())
         page.addRootFrame(*this);
 
-    setOpener(opener);
     ASSERT(isRootFrameIdentifier(frameID()) == isRootFrame());
 }
 
@@ -955,24 +954,15 @@ DOMWindow* LocalFrame::virtualWindow() const
     return window();
 }
 
+void LocalFrame::reinitializeDocumentSecurityContext()
+{
+    if (RefPtr document = this->document())
+        document->initSecurityContext();
+}
+
 void LocalFrame::disconnectView()
 {
     setView(nullptr);
-}
-
-void LocalFrame::setOpener(Frame* opener)
-{
-    loader().setOpener(opener);
-}
-
-const Frame* LocalFrame::opener() const
-{
-    return loader().opener();
-}
-
-Frame* LocalFrame::opener()
-{
-    return loader().opener();
 }
 
 FrameView* LocalFrame::virtualView() const

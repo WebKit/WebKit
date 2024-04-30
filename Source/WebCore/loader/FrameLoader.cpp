@@ -373,8 +373,8 @@ FrameLoader::FrameLoader(LocalFrame& frame, UniqueRef<LocalFrameLoaderClient>&& 
 
 FrameLoader::~FrameLoader()
 {
-    setOpener(nullptr);
-    detachFromAllOpenedFrames();
+    m_frame->setOpener(nullptr);
+    m_frame->detachFromAllOpenedFrames();
 
     if (RefPtr networkingContext = m_networkingContext)
         networkingContext->invalidate();
@@ -388,15 +388,6 @@ LocalFrame& FrameLoader::frame() const
 Ref<LocalFrame> FrameLoader::protectedFrame() const
 {
     return m_frame.get();
-}
-
-void FrameLoader::detachFromAllOpenedFrames()
-{
-    for (auto& frame : m_openedFrames) {
-        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-            localFrame->loader().m_opener = nullptr;
-    }
-    m_openedFrames.clear();
 }
 
 void FrameLoader::init()
@@ -452,16 +443,6 @@ std::optional<PageIdentifier> FrameLoader::pageID() const
 FrameIdentifier FrameLoader::frameID() const
 {
     return m_frame->frameID();
-}
-
-Frame* FrameLoader::opener()
-{
-    return m_opener.get();
-}
-
-const Frame* FrameLoader::opener() const
-{
-    return m_opener.get();
 }
 
 void FrameLoader::setDefersLoading(bool defers)
@@ -705,7 +686,7 @@ static inline bool shouldClearWindowName(const LocalFrame& frame, const Document
     if (!frame.isMainFrame())
         return false;
 
-    if (frame.loader().opener())
+    if (frame.opener())
         return false;
 
     return !newDocument.protectedSecurityOrigin()->isSameOriginAs(frame.document()->protectedSecurityOrigin());
@@ -1167,30 +1148,6 @@ bool FrameLoader::checkIfFormActionAllowedByCSP(const URL& url, bool didReceiveR
 
     auto redirectResponseReceived = didReceiveRedirectResponse ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
     return m_frame->protectedDocument()->checkedContentSecurityPolicy()->allowFormAction(url, redirectResponseReceived, preRedirectURL);
-}
-
-void FrameLoader::setOpener(RefPtr<Frame>&& opener)
-{
-    if (m_opener && !opener)
-        m_client->didDisownOpener();
-
-    if (m_opener) {
-        // When setOpener is called in ~FrameLoader, opener's m_frameLoader is already cleared.
-        if (RefPtrAllowingPartiallyDestroyed<LocalFrame> localOpener = dynamicDowncast<LocalFrame>(m_opener.get())) {
-            Ref frame = m_frame.get();
-            auto& openerFrameLoader = m_opener == frame.ptr() ? *this : localOpener->loader();
-            openerFrameLoader.m_openedFrames.remove(frame.get());
-        }
-    }
-    if (RefPtr localOpener = dynamicDowncast<LocalFrame>(opener)) {
-        localOpener->checkedLoader()->m_openedFrames.add(m_frame);
-        if (RefPtr page = m_frame->page())
-            page->setOpenedByDOMWithOpener(true);
-    }
-    m_opener = WTFMove(opener);
-
-    if (RefPtr document = m_frame->document())
-        document->initSecurityContext();
 }
 
 void FrameLoader::provisionalLoadStarted()
@@ -1872,7 +1829,7 @@ void FrameLoader::clearProvisionalLoadForPolicyCheck()
 
 bool FrameLoader::hasOpenedFrames() const
 {
-    return !m_openedFrames.isEmptyIgnoringNullReferences();
+    return !m_frame->hasOpenedFrames();
 }
 
 void FrameLoader::reportLocalLoadFailed(LocalFrame* frame, const String& url)
@@ -2932,7 +2889,7 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
         // If there is no main document URL, it means that this document is newly opened and just for download purpose.
         // In this case, we need to set the originalURL to this document's opener's main document URL.
         if (originalURL.isEmpty()) {
-            if (RefPtr localOpener = dynamicDowncast<LocalFrame>(opener()); localOpener && localOpener->document()) {
+            if (RefPtr localOpener = dynamicDowncast<LocalFrame>(m_frame->opener()); localOpener && localOpener->document()) {
                 originalURL = localOpener->document()->firstPartyForCookies();
                 initiator = localOpener->document();
             }
@@ -3250,7 +3207,7 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
             if (isMainResource) {
                 RefPtr ownerFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
                 if (!ownerFrame && m_stateMachine.isDisplayingInitialEmptyDocument()) {
-                    if (RefPtr localOpener = dynamicDowncast<LocalFrame>(m_opener.get()))
+                    if (RefPtr localOpener = dynamicDowncast<LocalFrame>(m_frame->opener()))
                         ownerFrame = WTFMove(localOpener);
                 }
                 if (ownerFrame)
@@ -4023,7 +3980,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     mainFrame->protectedPage()->setOpenedByDOM();
     mainFrameLoader->m_client->dispatchShow();
     if (openerPolicy == NewFrameOpenerPolicy::Allow) {
-        mainFrameLoader->setOpener(frame.copyRef());
+        mainFrame->setOpener(frame.ptr());
         mainFrame->protectedDocument()->setReferrerPolicy(frame->document()->referrerPolicy());
     }
 
@@ -4413,7 +4370,7 @@ ReferrerPolicy FrameLoader::effectiveReferrerPolicy() const
 {
     if (RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent()))
         return parentFrame->document()->referrerPolicy();
-    if (RefPtr opener = dynamicDowncast<LocalFrame>(m_opener.get()))
+    if (RefPtr opener = dynamicDowncast<LocalFrame>(m_frame->opener()))
         return opener->document()->referrerPolicy();
     return ReferrerPolicy::Default;
 }
@@ -4710,13 +4667,13 @@ RefPtr<Frame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame, Fra
 void FrameLoader::switchBrowsingContextsGroup()
 {
     // Disown opener.
-    setOpener(nullptr);
+    Ref frame = m_frame.get();
+    frame->setOpener(nullptr);
     if (RefPtr page = m_frame->page())
         page->setOpenedByDOMWithOpener(false);
 
-    detachFromAllOpenedFrames();
+    frame->detachFromAllOpenedFrames();
 
-    Ref frame = m_frame.get();
     frame->tree().clearName();
 
     // Make sure we use fresh Window proxies. The old window proxies will keep pointing to the old window which will be frameless when

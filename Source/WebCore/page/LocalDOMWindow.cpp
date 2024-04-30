@@ -1048,7 +1048,7 @@ RefPtr<HTMLFrameOwnerElement> LocalDOMWindow::protectedFrameElement() const
 void LocalDOMWindow::focus(LocalDOMWindow& incumbentWindow)
 {
     RefPtr frame = this->frame();
-    RefPtr openerFrame = frame ? frame->loader().opener() : nullptr;
+    RefPtr openerFrame = frame ? frame->opener() : nullptr;
     focus([&] {
         if (!openerFrame || openerFrame == frame || incumbentWindow.frame() != openerFrame)
             return false;
@@ -1478,7 +1478,7 @@ void LocalDOMWindow::setStatus(const String& string)
 void LocalDOMWindow::disownOpener()
 {
     if (RefPtr frame = this->frame())
-        frame->checkedLoader()->setOpener(nullptr);
+        frame->setOpener(nullptr);
 }
 
 String LocalDOMWindow::origin() const

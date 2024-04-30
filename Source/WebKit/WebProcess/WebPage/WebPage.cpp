@@ -1954,7 +1954,7 @@ void WebPage::suspendForProcessSwap()
     // main frame is normally re-used for the navigation. However, in the case of process-swapping, the main frame
     // is now hosted in another process and the one in this process is in the cache.
     if (m_mainFrame->coreLocalFrame())
-        m_mainFrame->coreLocalFrame()->loader().detachFromAllOpenedFrames();
+        m_mainFrame->coreLocalFrame()->detachFromAllOpenedFrames();
 
     send(Messages::WebPageProxy::DidSuspendAfterProcessSwap());
 }
@@ -4220,7 +4220,7 @@ void WebPage::suspend(CompletionHandler<void(bool)>&& completionHandler)
     m_cachedPage = BackForwardCache::singleton().suspendPage(*m_page);
     ASSERT(m_cachedPage);
     if (RefPtr mainFrame = m_mainFrame->coreLocalFrame())
-        mainFrame->loader().detachFromAllOpenedFrames();
+        mainFrame->detachFromAllOpenedFrames();
     completionHandler(true);
 }
 
