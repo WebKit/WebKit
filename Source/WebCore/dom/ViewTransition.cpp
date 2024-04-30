@@ -751,10 +751,10 @@ void ViewTransition::stop()
     if (!document())
         return;
 
+    m_phase = ViewTransitionPhase::Done;
+
     if (document()->activeViewTransition() == this)
         clearViewTransition();
-
-    m_phase = ViewTransitionPhase::Done;
 }
 
 }
