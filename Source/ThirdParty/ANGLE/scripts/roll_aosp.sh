@@ -148,7 +148,7 @@ for removal_dir in "${extra_third_party_removal_patterns[@]}"; do
 done
 
 # Sync all of ANGLE's deps so that 'gn gen' works
-python scripts/bootstrap.py
+python3 scripts/bootstrap.py
 gclient sync --reset --force --delete_unversioned_trees
 
 # Delete outdir to ensure a clean gn run.

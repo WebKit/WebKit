@@ -49,6 +49,8 @@ class ScopedMetalObjectRef : angle::NonCopyable
 
     T get() const { return mObject; }
 
+    operator bool() const { return !!mObject; }
+
     // auto cast to T
     operator T() const { return mObject; }
     ScopedMetalObjectRef(const ScopedMetalObjectRef &other)
@@ -110,6 +112,24 @@ using ScopedMetalCommandQueueRef = ScopedMetalObjectRef<id<MTLCommandQueue>>;
 
 }  // anonymous namespace
 
+bool IsDepthOrStencil(MTLPixelFormat format)
+{
+    switch (format)
+    {
+        case MTLPixelFormatDepth16Unorm:
+        case MTLPixelFormatDepth32Float:
+        case MTLPixelFormatStencil8:
+        case MTLPixelFormatDepth24Unorm_Stencil8:
+        case MTLPixelFormatDepth32Float_Stencil8:
+        case MTLPixelFormatX32_Stencil8:
+        case MTLPixelFormatX24_Stencil8:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
 ScopedMetalTextureRef CreateMetalTexture2D(id<MTLDevice> deviceMtl,
                                            int width,
                                            int height,
@@ -123,6 +143,10 @@ ScopedMetalTextureRef CreateMetalTexture2D(id<MTLDevice> deviceMtl,
                                                                                        height:width
                                                                                     mipmapped:NO];
         desc.usage                 = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
+        if (IsDepthOrStencil(format))
+        {
+            desc.storageMode = MTLStorageModePrivate;
+        }
         if (arrayLength)
         {
             desc.arrayLength = arrayLength;
@@ -211,6 +235,7 @@ class ImageTestMetal : public ANGLETest<>
 
         return CreateMetalTexture2D(device, width, height, format, arrayLength);
     }
+
     void getTextureSliceBytes(id<MTLTexture> texture,
                               unsigned bytesPerRow,
                               MTLRegion region,
@@ -280,6 +305,12 @@ class ImageTestMetal : public ANGLETest<>
         glUniform4fv(colorUniformLocation, 1, color.toNormalizedVector().data());
         drawQuad(program, essl1_shaders::PositionAttrib(), 0);
         glUseProgram(0);
+    }
+
+    bool hasDepth24Stencil8PixelFormat()
+    {
+        id<MTLDevice> device = getMtlDevice();
+        return device.depth24Stencil8PixelFormatSupported;
     }
 
     bool hasImageNativeMetalTextureExt() const
@@ -670,9 +701,310 @@ TEST_P(ImageTestMetal, BlitMetalTarget2DArray)
     getTextureSliceBytes(textureMtl, 4, MTLRegionMake2D(0, 0, 1, 1), 0, 1, {result.data(), 4});
     EXPECT_EQ(result, GLColor::yellow);
 }
+
+// Tests that OpenGL can override the internal format for a texture bound with
+// Metal texture.
+TEST_P(ImageTestMetal, OverrideMetalTextureInternalFormat)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+    ANGLE_SKIP_TEST_IF(!hasImageNativeMetalTextureExt());
+    ANGLE_SKIP_TEST_IF(hasDepth24Stencil8PixelFormat());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    // On iOS devices, GL_DEPTH24_STENCIL8 is unavailable and is interally converted into
+    // GL_DEPTH32F_STENCIL8. This tests the ability to attach MTLPixelFormatDepth32Float_Stencil8
+    // and have GL treat it as GL_DEPTH24_STENCIL8 instead of GL_DEPTH32F_STENCIL8.
+    ScopedMetalTextureRef textureMtl =
+        createMtlTexture2DArray(1, 1, 1, MTLPixelFormatDepth32Float_Stencil8);
+    const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_DEPTH24_STENCIL8, EGL_NONE};
+    EGLImageKHR image =
+        eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                          reinterpret_cast<EGLClientBuffer>(textureMtl.get()), attribs);
+    EXPECT_EGL_SUCCESS();
+    EXPECT_NE(image, nullptr);
+}
+
+// Tests that OpenGL can override the internal format for a texture bound with
+// Metal texture and that rendering to the texture is successful.
+TEST_P(ImageTestMetal, RenderingTest)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+    ANGLE_SKIP_TEST_IF(!hasImageNativeMetalTextureExt());
+    ANGLE_SKIP_TEST_IF(hasDepth24Stencil8PixelFormat());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    const int bufferSize = 32;
+    ScopedMetalTextureRef textureMtl =
+        createMtlTexture2DArray(bufferSize, bufferSize, 1, MTLPixelFormatDepth32Float_Stencil8);
+    const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_DEPTH24_STENCIL8, EGL_NONE};
+    EGLImageKHR image =
+        eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                          reinterpret_cast<EGLClientBuffer>(textureMtl.get()), attribs);
+    EXPECT_EGL_SUCCESS();
+    EXPECT_NE(image, nullptr);
+
+    GLRenderbuffer colorBuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, colorBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, bufferSize, bufferSize);
+    EXPECT_GL_NO_ERROR();
+
+    GLRenderbuffer depthStencilBuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencilBuffer);
+    glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, image);
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fb;
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorBuffer);
+    if (getClientMajorVersion() >= 3)
+    {
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                                  depthStencilBuffer);
+    }
+    else
+    {
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+                                  depthStencilBuffer);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                                  depthStencilBuffer);
+    }
+
+    EXPECT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glClearColor(1.f, 0.f, 0.f, 1.f);
+    glClearDepthf(1.f);
+    glClearStencil(0x55);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_EQUAL, 0x55, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    glStencilMask(0xFF);
+
+    // Draw green.
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.95f);
+
+    // Verify that green was drawn.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(0, bufferSize - 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(bufferSize - 1, 0, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(bufferSize - 1, bufferSize - 1, GLColor::green);
+
+    eglDestroyImageKHR(display, image);
+}
+
+// Tests that OpenGL override the with a bad internal format for a texture bound
+// with Metal texture fails.
+TEST_P(ImageTestMetal, OverrideMetalTextureInternalFormatBadFormat)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+    ANGLE_SKIP_TEST_IF(!hasImageNativeMetalTextureExt());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    // On iOS devices, GL_DEPTH24_STENCIL8 is unavailable and is interally converted into
+    // GL_DEPTH32F_STENCIL8. This tests the ability to attach MTLPixelFormatDepth32Float_Stencil8
+    // and have GL treat it as GL_DEPTH24_STENCIL8 instead of GL_DEPTH32F_STENCIL8.
+    ScopedMetalTextureRef textureMtl =
+        createMtlTexture2DArray(1, 1, 1, MTLPixelFormatDepth32Float_Stencil8);
+    const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_TRIANGLES, EGL_NONE};
+    EGLImageKHR image =
+        eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                          reinterpret_cast<EGLClientBuffer>(textureMtl.get()), attribs);
+    EXPECT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+    EXPECT_EQ(image, nullptr);
+}
+
+// Tests that OpenGL override the with an incompatible internal format for a texture bound
+// with Metal texture fails.
+TEST_P(ImageTestMetal, OverrideMetalTextureInternalFormatIncompatibleFormat)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+    ANGLE_SKIP_TEST_IF(!hasImageNativeMetalTextureExt());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    // On iOS devices, GL_DEPTH24_STENCIL8 is unavailable and is interally converted into
+    // GL_DEPTH32F_STENCIL8. This tests the ability to attach MTLPixelFormatDepth32Float_Stencil8
+    // and have GL treat it as GL_DEPTH24_STENCIL8 instead of GL_DEPTH32F_STENCIL8.
+    ScopedMetalTextureRef textureMtl =
+        createMtlTexture2DArray(1, 1, 1, MTLPixelFormatDepth32Float_Stencil8);
+    const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_RGBA8, EGL_NONE};
+    EGLImageKHR image =
+        eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                          reinterpret_cast<EGLClientBuffer>(textureMtl.get()), attribs);
+    EXPECT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+    EXPECT_EQ(image, nullptr);
+}
+
+class ImageClearTestMetal : public ImageTestMetal
+{
+  protected:
+    ImageClearTestMetal() : ImageTestMetal() {}
+
+    void RunUnsizedClearTest(MTLPixelFormat format)
+    {
+        ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+        ANGLE_SKIP_TEST_IF(!hasImageNativeMetalTextureExt());
+
+        EGLWindow *window  = getEGLWindow();
+        EGLDisplay display = window->getDisplay();
+
+        window->makeCurrent();
+
+        const GLint bufferSize = 32;
+        ScopedMetalTextureRef textureMtl =
+            createMtlTexture2DArray(bufferSize, bufferSize, 1, format);
+        EXPECT_TRUE(textureMtl);
+
+        EGLint internalFormat = GL_NONE;
+        switch (format)
+        {
+            case MTLPixelFormatR8Unorm:
+            case MTLPixelFormatR16Unorm:
+                internalFormat = GL_RED_EXT;
+                break;
+            case MTLPixelFormatRG8Unorm:
+            case MTLPixelFormatRG16Unorm:
+                internalFormat = GL_RG_EXT;
+                break;
+            case MTLPixelFormatRGBA8Unorm:
+            case MTLPixelFormatRGBA16Float:
+            case MTLPixelFormatRGB10A2Unorm:
+                internalFormat = GL_RGBA;
+                break;
+            case MTLPixelFormatRGBA8Unorm_sRGB:
+                internalFormat = GL_SRGB_ALPHA_EXT;
+                break;
+            case MTLPixelFormatBGRA8Unorm:
+                internalFormat = GL_BGRA_EXT;
+                break;
+            default:
+                break;
+        }
+
+        const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, internalFormat, EGL_NONE};
+
+        EGLImageKHR image =
+            eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                              reinterpret_cast<EGLClientBuffer>(textureMtl.get()), attribs);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(image, EGL_NO_IMAGE_KHR);
+
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        EXPECT_GL_NO_ERROR();
+
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+        EXPECT_GL_NO_ERROR();
+
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        EXPECT_EQ(glCheckFramebufferStatus(GL_FRAMEBUFFER),
+                  static_cast<unsigned>(GL_FRAMEBUFFER_COMPLETE));
+        EXPECT_GL_NO_ERROR();
+
+        glViewport(0, 0, static_cast<GLsizei>(bufferSize), static_cast<GLsizei>(bufferSize));
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        if (format == MTLPixelFormatRGBA16Float)
+        {
+            EXPECT_PIXEL_32F_EQ(bufferSize / 2, bufferSize / 2, 1.0f, 1.0f, 1.0f, 1.0f);
+        }
+        else
+        {
+            GLuint readColor[4] = {0, 0, 0, 255};
+            switch (format)
+            {
+                case MTLPixelFormatR8Unorm:
+                case MTLPixelFormatR16Unorm:
+                    readColor[0] = 255;
+                    break;
+                case MTLPixelFormatRG8Unorm:
+                case MTLPixelFormatRG16Unorm:
+                    readColor[0] = readColor[1] = 255;
+                    break;
+                case MTLPixelFormatRGBA8Unorm:
+                case MTLPixelFormatRGB10A2Unorm:
+                case MTLPixelFormatRGBA16Float:
+                case MTLPixelFormatRGBA8Unorm_sRGB:
+                case MTLPixelFormatBGRA8Unorm:
+                    readColor[0] = readColor[1] = readColor[2] = 255;
+                    break;
+                default:
+                    break;
+            }
+            // Read back as GL_UNSIGNED_BYTE even though the texture might have more than 8bpc.
+            EXPECT_PIXEL_EQ(bufferSize / 2, bufferSize / 2, readColor[0], readColor[1],
+                            readColor[2], readColor[3]);
+        }
+    }
+};
+
+TEST_P(ImageClearTestMetal, ClearUnsizedRGBA8)
+{
+    RunUnsizedClearTest(MTLPixelFormatRGBA8Unorm);
+}
+
+TEST_P(ImageClearTestMetal, ClearUnsizedsRGBA8)
+{
+    RunUnsizedClearTest(MTLPixelFormatRGBA8Unorm_sRGB);
+}
+
+TEST_P(ImageClearTestMetal, ClearUnsizedBGRA8)
+{
+    RunUnsizedClearTest(MTLPixelFormatBGRA8Unorm);
+}
+
+TEST_P(ImageClearTestMetal, ClearUnsizedR8)
+{
+    RunUnsizedClearTest(MTLPixelFormatR8Unorm);
+}
+
+TEST_P(ImageClearTestMetal, ClearUnsizedRG8)
+{
+    RunUnsizedClearTest(MTLPixelFormatRG8Unorm);
+}
+
+TEST_P(ImageClearTestMetal, ClearUnsizedRGB10A2)
+{
+    RunUnsizedClearTest(MTLPixelFormatRGB10A2Unorm);
+}
+
+TEST_P(ImageClearTestMetal, ClearUnsizedRGBAF16)
+{
+    RunUnsizedClearTest(MTLPixelFormatRGBA16Float);
+}
+
+TEST_P(ImageClearTestMetal, ClearUnsizedR16)
+{
+    RunUnsizedClearTest(MTLPixelFormatR16Unorm);
+}
+
+TEST_P(ImageClearTestMetal, ClearUnsizedRG16)
+{
+    RunUnsizedClearTest(MTLPixelFormatRG16Unorm);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST(ImageTestMetal, ES2_METAL(), ES3_METAL());
-
+ANGLE_INSTANTIATE_TEST(ImageClearTestMetal, ES2_METAL(), ES3_METAL());
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ImageTestMetal);
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ImageClearTestMetal);
 }  // namespace angle

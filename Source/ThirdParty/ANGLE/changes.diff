@@ -68,7 +68,7 @@ index a636c5e7773d4186fc58a665b1a4e6c0cf7cc345..d1624a7c49f745f41ef6d381151e8ae9
              "name": "allow_inline_const_vertex_data",
              "category": "Features",
 diff --git a/scripts/generate_entry_points.py b/scripts/generate_entry_points.py
-index 59d62d8bd8980bc985448ec7ed365d9ca9efbb5c..9fc1fb9c89ca78b9540ac7b89ac9017859984290 100755
+index be01613d38156442d875325cd1b5e4c833d3f13e..cda7afffe7ee3d83c3ea33cefc91e1b00e06ede5 100755
 --- a/scripts/generate_entry_points.py
 +++ b/scripts/generate_entry_points.py
 @@ -988,6 +988,7 @@ FORMAT_DICT = {
@@ -434,7 +434,7 @@ index 3fd1870d19346fbb5dfd4c267f9949f8293c4034..eb30a63f8972247027d2d9a29d333a45
      void acquireTextures(GLuint numTextures, const TextureID *texturesPacked,                      \
                           const GLenum *layouts);                                                   \
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 1f3de17a0d442b8286b1c20f892ed83de3d22867..ac7de443ee0c206038001c2e8491081c1c23cc0e 100644
+index 24169c06636a71725acfa0ef74d95365349884a3..93237f2910e587f3c3cc16f3e4a2dceb59647f7f 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -513,7 +513,7 @@ index 1f3de17a0d442b8286b1c20f892ed83de3d22867..ac7de443ee0c206038001c2e8491081c
              UNREACHABLE();
              break;
 diff --git a/src/libANGLE/State.h b/src/libANGLE/State.h
-index b2aa6749060b673ba72589664ec8a4e0a96b79e3..06fd53d9607f5dfae719133674ac3964cd2ed3d8 100644
+index fa61701b303e41d496aa5af8b8c92f3f79b320a4..72d4e0eff898b5d50954ec523f767170a2a5cdea 100644
 --- a/src/libANGLE/State.h
 +++ b/src/libANGLE/State.h
 @@ -179,7 +179,8 @@ enum ExtendedDirtyBitType
@@ -553,6 +553,24 @@ index b2aa6749060b673ba72589664ec8a4e0a96b79e3..06fd53d9607f5dfae719133674ac3964
      // GLES1 emulation: state specific to GLES1
      GLES1State mGLES1State;
  
+@@ -1470,6 +1484,9 @@ class State : angle::NonCopyable
+             return handlers;
+         }();
+ 
++    // FIXME(djg): On our GCC builds, handler is not a constant expression and
++    // the static_assert fails to compile.
++#if 0
+     static_assert(
+         []() {
+             for (auto handler : kDirtyObjectHandlers)
+@@ -1482,6 +1499,7 @@ class State : angle::NonCopyable
+             return true;
+         }(),
+         "kDirtyObjectHandlers missing a handler");
++#endif
+ 
+     // Robust init must happen before Framebuffer init for the Vulkan back-end.
+     static_assert(state::DIRTY_OBJECT_ACTIVE_TEXTURES < state::DIRTY_OBJECT_TEXTURES_INIT,
 diff --git a/src/libANGLE/capture/capture_gles_ext_autogen.cpp b/src/libANGLE/capture/capture_gles_ext_autogen.cpp
 index 12003aa6b55f6c8d8320a88499438991918fe7c9..445a026e1e7bf788a55752fdccec56ac18d2ca1c 100644
 --- a/src/libANGLE/capture/capture_gles_ext_autogen.cpp
@@ -976,71 +994,6 @@ index b58d7f9d67932bb582c149623aca5054c53333e7..c61d5f65d4e9b6cc85eae02d42f75181
      uint32_t offset = static_cast<uint32_t>(packPixelsParams.offset);
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
-diff --git a/src/libANGLE/renderer/metal/ImageMtl.mm b/src/libANGLE/renderer/metal/ImageMtl.mm
-index 902a38b4d417e224a9bcd35c5809b92eef827aff..438854ea2d261cb9a75dfb3c870ac9aa21eb4352 100644
---- a/src/libANGLE/renderer/metal/ImageMtl.mm
-+++ b/src/libANGLE/renderer/metal/ImageMtl.mm
-@@ -20,6 +20,30 @@
- namespace rx
- {
- 
-+namespace
-+{
-+angle::FormatID intendedFormatForMTLTexture(id<MTLTexture> texture,
-+                                            const egl::AttributeMap &attribs)
-+{
-+    angle::FormatID angleFormatId;
-+    GLenum internalFormat =
-+        static_cast<GLenum>(attribs.get(EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_NONE));
-+    if (internalFormat != GL_NONE)
-+    {
-+        // If EGL_TEXTURE_INTERNAL_FORMAT_ANGLE is provided for eglCreateImageKHR(),
-+        // the provided format will be used for mFormat and intendedFormat.
-+        GLenum type                = gl::GetSizedInternalFormatInfo(internalFormat).type;
-+        GLenum sizedInternalFormat = gl::Format(internalFormat, type).info->sizedInternalFormat;
-+        angleFormatId              = angle::Format::InternalFormatToID(sizedInternalFormat);
-+    }
-+    else
-+    {
-+        angleFormatId = mtl::Format::MetalToAngleFormatID(texture.pixelFormat);
-+    }
-+    return angleFormatId;
-+}
-+}  // anonymous namespace
-+
- // TextureImageSiblingMtl implementation
- TextureImageSiblingMtl::TextureImageSiblingMtl(EGLClientBuffer buffer,
-                                                const egl::AttributeMap &attribs)
-@@ -45,12 +69,18 @@ egl::Error TextureImageSiblingMtl::ValidateClientBuffer(const DisplayMtl *displa
-         return egl::EglBadAttribute();
-     }
- 
--    angle::FormatID angleFormatId = mtl::Format::MetalToAngleFormatID(texture.pixelFormat);
-+    angle::FormatID angleFormatId = intendedFormatForMTLTexture(texture, attribs);
-     const mtl::Format &format     = display->getPixelFormat(angleFormatId);
-     if (!format.valid())
-     {
-         return egl::EglBadAttribute() << "Unrecognized format";
-     }
-+    
-+    if (format.metalFormat != texture.pixelFormat)
-+    {
-+        return egl::EglBadAttribute() << "Incompatible format";
-+    }
-+
-     unsigned textureArraySlice =
-         static_cast<unsigned>(attribs.getAsInt(EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, 0));
-     if (texture.textureType != MTLTextureType2DArray && textureArraySlice > 0)
-@@ -89,8 +119,7 @@ angle::Result TextureImageSiblingMtl::initImpl(DisplayMtl *displayMtl)
-             baseTexture->createSliceMipView(textureArraySlice, mtl::kZeroNativeMipLevel);
-     }
- 
--    angle::FormatID angleFormatId =
--        mtl::Format::MetalToAngleFormatID(mNativeTexture->pixelFormat());
-+    angle::FormatID angleFormatId = intendedFormatForMTLTexture(mNativeTexture->get(), mAttribs);
-     mFormat                       = displayMtl->getPixelFormat(angleFormatId);
- 
-     if (mNativeTexture)
 diff --git a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 index 76281b1fea3e4d85758cbe097b2c7d5f66aa8f1a..ae9a545b29dcabf050b451781e77f9c45f1bb6e5 100644
 --- a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
@@ -1632,27 +1585,6 @@ index e8cd9d6590b4c287da41f4f443c916eb0e394d29..436741d3d6e3cf1be24c189f597fb054
                          default:
                              UNREACHABLE();
                      }
-diff --git a/src/libANGLE/validationEGL.cpp b/src/libANGLE/validationEGL.cpp
-index e598b74be6f88d30502d3f7b9dab159f10ca3eed..56f5da80651018288fae595d7244b460d7474cb3 100644
---- a/src/libANGLE/validationEGL.cpp
-+++ b/src/libANGLE/validationEGL.cpp
-@@ -3483,12 +3483,11 @@ bool ValidateCreateImage(const ValidationContext *val,
-                 break;
- 
-             case EGL_TEXTURE_INTERNAL_FORMAT_ANGLE:
--                if (!displayExtensions.imageD3D11Texture && !displayExtensions.vulkanImageANGLE)
-+                if (!displayExtensions.imageD3D11Texture && !displayExtensions.vulkanImageANGLE && !displayExtensions.mtlTextureClientBuffer)
-                 {
--                    val->setError(
--                        EGL_BAD_PARAMETER,
--                        "EGL_TEXTURE_INTERNAL_FORMAT_ANGLE cannot be used without "
--                        "EGL_ANGLE_image_d3d11_texture or EGL_ANGLE_vulkan_image support.");
-+                    val->setError(EGL_BAD_PARAMETER,
-+                                  "EGL_ANGLE_image_d3d11_texture, EGL_ANGLE_vulkan_image, or "
-+                                  "EGL_ANGLE_metal_texture_client_buffer support.");
-                      return false;
-                  }
-                  break;
 diff --git a/src/libANGLE/validationES2.cpp b/src/libANGLE/validationES2.cpp
 index f75b106cb20997b0d751ca147d6558422afa5284..f707aaed426e48455beb32cba0f97183522543b6 100644
 --- a/src/libANGLE/validationES2.cpp
@@ -1960,10 +1892,10 @@ index 1d97825639c15db5a79b539d29c44801c138a71e..0f85476b8c8b5af8d6ffbafa27061a7a
      window->makeCurrent();
  
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index e5c1e191f0b84ac3490e54a46aed485b51b59968..65da180abed0190c063cd41da5e68713dd9f0e99 100644
+index 678316808ced76e06011f033193c6323ef7022e3..8c3557697132ae75b8cf3089ae980eed42e4f72d 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
-@@ -199,6 +199,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
+@@ -200,6 +200,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
      {Feature::HasShaderStencilOutput, "hasShaderStencilOutput"},
      {Feature::HasStencilAutoResolve, "hasStencilAutoResolve"},
      {Feature::HasTextureSwizzle, "hasTextureSwizzle"},
@@ -1972,10 +1904,10 @@ index e5c1e191f0b84ac3490e54a46aed485b51b59968..65da180abed0190c063cd41da5e68713
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
      {Feature::InjectAsmStatementIntoLoopBodies, "injectAsmStatementIntoLoopBodies"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index 0d969f7213df175ad3b58272798d518f6b917c84..8961e3d904bdf5fa2825d3e8fb4bb9632864d1a7 100644
+index 3e7a582bd52c4933e3e342ddd83ccffcf316306f..5b0ec97e6109d8fe8729fd79fa5e44d24109f1c3 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
-@@ -199,6 +199,7 @@ enum class Feature
+@@ -200,6 +200,7 @@ enum class Feature
      HasShaderStencilOutput,
      HasStencilAutoResolve,
      HasTextureSwizzle,

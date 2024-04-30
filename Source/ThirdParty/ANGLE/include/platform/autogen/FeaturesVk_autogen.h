@@ -1366,6 +1366,15 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/8549"
     };
 
+    FeatureInfo combineAllShadersInPipelineLibrary = {
+        "combineAllShadersInPipelineLibrary",
+        FeatureCategory::VulkanFeatures,
+        "For Vulkan ICDs that support VK_EXT_graphics_pipeline_library the shaders subset of the pipeline"
+        "can either be combined into a single pipeline or can be decoupled into separate pipelines. This feature"
+        "is enabled when the former is the case.",
+        &members, "http://anglebug.com/8601"
+    };
+
 };
 
 inline FeaturesVk::FeaturesVk()  = default;
