@@ -146,9 +146,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
 
         // We don't specify an encoding here. Neither Gecko nor WinIE respects
         // the encoding specified in the HTTP headers.
-        xmlDocPtr doc = xmlReadMemory(data->dataAsCharPtr(), data->size(), (const char*)uri, nullptr, options);
-
-        return doc;
+        return xmlReadMemory(data->dataAsCharPtr(), data->size(), (const char*)uri, nullptr, options);
     }
     case XSLT_LOAD_STYLESHEET:
         return globalProcessor->xslStylesheet()->locateStylesheetSubResource(((xsltStylesheetPtr)ctxt)->doc, uri);
