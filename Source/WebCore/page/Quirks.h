@@ -190,6 +190,7 @@ public:
     WEBCORE_EXPORT bool shouldUseEphemeralPartitionedStorageForDOMCookies(const URL&) const;
 
     bool needsGetElementsByNameQuirk() const;
+    bool needsRelaxedCorsMixedContentCheckQuirk() const;
 
 private:
     bool needsQuirks() const;
@@ -262,6 +263,7 @@ private:
     mutable std::optional<bool> m_needsDisableDOMPasteAccessQuirk;
     mutable std::optional<bool> m_shouldDisableElementFullscreen;
     mutable std::optional<bool> m_shouldIgnorePlaysInlineRequirementQuirk;
+    mutable std::optional<bool> m_needsRelaxedCorsMixedContentCheckQuirk;
 
     Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
 };

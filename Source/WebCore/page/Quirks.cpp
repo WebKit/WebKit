@@ -1845,4 +1845,23 @@ bool Quirks::needsGetElementsByNameQuirk() const
 #endif
 }
 
+bool Quirks::needsRelaxedCorsMixedContentCheckQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (m_needsRelaxedCorsMixedContentCheckQuirk)
+        return *m_needsRelaxedCorsMixedContentCheckQuirk;
+
+    m_needsRelaxedCorsMixedContentCheckQuirk = false;
+
+    auto host = m_document->url().host();
+
+    // FIXME: Remove this quirk when <rdar://127247321> is complete
+    if (host == "tripadvisor.com"_s || host.endsWith(".tripadvisor.com"_s))
+        m_needsRelaxedCorsMixedContentCheckQuirk = true;
+
+    return *m_needsRelaxedCorsMixedContentCheckQuirk;
+}
+
 }
