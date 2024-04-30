@@ -685,7 +685,7 @@ GCGLExternalImage GraphicsContextGLCocoa::createExternalImage(ExternalImageSourc
     Vector<EGLint, 6> attributes;
     attributes.appendList({ EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer });
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-    if (internalFormat != EGL_NONE)
+    if (internalFormat)
         attributes.appendList({ EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, static_cast<EGLint>(internalFormat) });
 #else
     UNUSED_VARIABLE(internalFormat);
