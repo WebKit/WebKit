@@ -759,9 +759,6 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
         ]
         self.build.addStepsAfterCurrentStep(steps_to_add)
 
-        self.failedTestCount = self.countFailures()
-        self.failedTestPluralSuffix = "" if self.failedTestCount == 1 else "s"
-
         return super().run()
 
     def countFailures(self):
@@ -781,6 +778,12 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
             count += int(match.group(1))
 
         return count
+
+    def evaluateCommand(self, cmd):
+        self.failedTestCount = self.countFailures()
+        self.failedTestPluralSuffix = "" if self.failedTestCount == 1 else "s"
+
+        return super().evaluateCommand(cmd)
 
 
 class RunTest262Tests(TestWithFailureCount, CustomFlagsMixin):
