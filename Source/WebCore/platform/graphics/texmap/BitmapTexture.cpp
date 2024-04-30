@@ -52,10 +52,12 @@ static const GLenum s_pixelDataType = GL_UNSIGNED_BYTE;
 #endif
 
 // On GLES3, the format we want for packed depth stencil is GL_DEPTH24_STENCIL8, but when added through
-// the extension this format is called GL_DEPTH24_STENCIL8_OES. In any case they hold the same value 0x88F0
-// so we can just use the first one.
+// the extension this format is called GL_DEPTH24_STENCIL8_{OES,EXT}. In any case they hold the same
+// value 0x88F0 so we can just use the first one.
 // These definitions may not exist if this is a GLES1/2 context without the GL_OES_packed_depth_stencil
-// extension. We need to define the one we want to use in order to build on every case.
+// or the GL_EXT_packed_depth_stencil extensions. We need to define the one we want to use in order to
+// build on every case.
+
 #ifndef GL_DEPTH24_STENCIL8
 #define GL_DEPTH24_STENCIL8 0x88F0
 #endif
