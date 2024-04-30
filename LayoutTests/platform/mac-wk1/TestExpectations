@@ -2844,7 +2844,7 @@ imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties
 
 webkit.org/b/272939 [ Ventura+ ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-strict-policies.sub.html [ Pass Failure ]
 
-webkit.org/b/273212 fonts [ Skip ]
+webkit.org/b/273279 fonts/font-fallback-prefers-pictographs.html [ Skip ]
 
 # rdar://127055453 ([ EWS MacOS WK1 ] http/tests/media/hls/hls-webvtt-style.html is a flaky timeout (273251))
 http/tests/media/hls/hls-webvtt-style.html [ Pass Timeout ]

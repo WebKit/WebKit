@@ -1911,3 +1911,5 @@ webkit.org/b/272685 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/svg/pain
 [ Monterey Ventura ] editing/input/mac/writing-suggestions-textarea-multiple-lines.html [ Skip ]
 
 webkit.org/b/273012 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/svg/painting/reftests/percentage.svg [ ImageOnlyFailure ]
+
+webkit.org/b/273441 fast/forms/select/mac-wk2/inactive-appearance.html [ Skip ]
