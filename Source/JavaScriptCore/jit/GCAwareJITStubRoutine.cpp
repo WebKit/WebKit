@@ -89,7 +89,15 @@ PolymorphicAccessJITStubRoutine::PolymorphicAccessJITStubRoutine(Type type, cons
     , m_vm(vm)
     , m_cases(WTFMove(cases))
     , m_weakStructures(WTFMove(weakStructures))
+    , m_watchpointSet(WatchpointSet::create(IsWatched))
 {
+}
+
+PolymorphicAccessJITStubRoutine::~PolymorphicAccessJITStubRoutine() = default;
+
+void PolymorphicAccessJITStubRoutine::setWatchpoints(std::unique_ptr<WatchpointsOnStructureStubInfo>&& watchpoints)
+{
+    m_watchpoints = WTFMove(watchpoints);
 }
 
 void PolymorphicAccessJITStubRoutine::observeZeroRefCountImpl()
@@ -99,6 +107,12 @@ void PolymorphicAccessJITStubRoutine::observeZeroRefCountImpl()
         m_vm.m_sharedJITStubs->remove(this);
     }
     Base::observeZeroRefCountImpl();
+}
+
+void PolymorphicAccessJITStubRoutine::invalidate()
+{
+    StringFireDetail detail("PolymorphicAccessJITStubRoutine has been invalidated");
+    m_watchpointSet->fireAll(m_vm, detail);
 }
 
 unsigned PolymorphicAccessJITStubRoutine::computeHash(const FixedVector<RefPtr<AccessCase>>& cases)

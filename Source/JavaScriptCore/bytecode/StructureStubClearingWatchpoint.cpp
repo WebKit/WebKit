@@ -35,21 +35,27 @@
 
 namespace JSC {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StructureStubInfoClearingWatchpoint);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AdaptiveValueStructureStubClearingWatchpoint);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(StructureTransitionStructureStubClearingWatchpoint);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WatchpointsOnStructureStubInfo);
 
-void StructureTransitionStructureStubClearingWatchpoint::fireInternal(VM& vm, const FireDetail&)
+void StructureStubInfoClearingWatchpoint::fireInternal(VM&, const FireDetail&)
 {
-    if (!m_holder->isValid())
+    if (!m_owner->isLive())
         return;
 
+    // This will implicitly cause my own demise: stub reset removes all watchpoints.
+    // That works, because deleting a watchpoint removes it from the set's list, and
+    // the set's list traversal for firing is robust against the set changing.
+    ConcurrentJSLocker locker(m_owner->m_lock);
+    m_stubInfo->reset(locker, m_owner.get());
+}
+
+void StructureTransitionStructureStubClearingWatchpoint::fireInternal(VM& vm, const FireDetail&)
+{
     if (!m_key || !m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
-        // This will implicitly cause my own demise: stub reset removes all watchpoints.
-        // That works, because deleting a watchpoint removes it from the set's list, and
-        // the set's list traversal for firing is robust against the set changing.
-        ConcurrentJSLocker locker(m_holder->codeBlock()->m_lock);
-        m_holder->stubInfo()->reset(locker, m_holder->codeBlock());
+        m_holder->stub()->invalidate();
         return;
     }
 
@@ -62,11 +68,6 @@ void StructureTransitionStructureStubClearingWatchpoint::fireInternal(VM& vm, co
     m_key.object()->structure()->addTransitionWatchpoint(this);
 }
 
-inline bool WatchpointsOnStructureStubInfo::isValid() const
-{
-    return m_codeBlock->isLive();
-}
-
 WatchpointsOnStructureStubInfo::Node& WatchpointsOnStructureStubInfo::addWatchpoint(const ObjectPropertyCondition& key)
 {
     if (!key || key.condition().kind() != PropertyCondition::Equivalence)
@@ -75,52 +76,38 @@ WatchpointsOnStructureStubInfo::Node& WatchpointsOnStructureStubInfo::addWatchpo
     return *m_watchpoints.add(std::in_place_type<AdaptiveValueStructureStubClearingWatchpoint>, key, *this);
 }
 
-void WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint(
-    std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef, CodeBlock* codeBlock,
-    StructureStubInfo* stubInfo, const ObjectPropertyCondition& key)
+void WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint(VM& vm, std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef, PolymorphicAccessJITStubRoutine* stub, const ObjectPropertyCondition& key)
 {
     if (!holderRef)
-        holderRef = makeUnique<WatchpointsOnStructureStubInfo>(codeBlock, stubInfo);
-    else {
-        ASSERT(holderRef->m_codeBlock == codeBlock);
-        ASSERT(holderRef->m_stubInfo == stubInfo);
-    }
-    
+        holderRef = makeUnique<WatchpointsOnStructureStubInfo>(stub);
+    else
+        ASSERT(holderRef->m_stub == stub);
+
     ASSERT(!!key);
     auto& watchpointVariant = holderRef->addWatchpoint(key);
     if (key.kind() == PropertyCondition::Equivalence) {
         auto& adaptiveWatchpoint = std::get<AdaptiveValueStructureStubClearingWatchpoint>(watchpointVariant);
-        adaptiveWatchpoint.install(codeBlock->vm());
+        adaptiveWatchpoint.install(vm);
     } else {
         auto* structureTransitionWatchpoint = &std::get<StructureTransitionStructureStubClearingWatchpoint>(watchpointVariant);
         key.object()->structure()->addTransitionWatchpoint(structureTransitionWatchpoint);
     }
 }
 
-Watchpoint* WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(
-    std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef, CodeBlock* codeBlock,
-    StructureStubInfo* stubInfo)
+Watchpoint* WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(VM&, std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef, PolymorphicAccessJITStubRoutine* stub)
 {
     if (!holderRef)
-        holderRef = makeUnique<WatchpointsOnStructureStubInfo>(codeBlock, stubInfo);
+        holderRef = makeUnique<WatchpointsOnStructureStubInfo>(stub);
     else {
-        ASSERT(holderRef->m_codeBlock == codeBlock);
-        ASSERT(holderRef->m_stubInfo == stubInfo);
+        ASSERT(holderRef->m_stub == stub);
     }
-    
+
     return &std::get<StructureTransitionStructureStubClearingWatchpoint>(holderRef->addWatchpoint(ObjectPropertyCondition()));
 }
 
 void AdaptiveValueStructureStubClearingWatchpoint::handleFire(VM&, const FireDetail&)
 {
-    if (!m_holder->isValid())
-        return;
-
-    // This will implicitly cause my own demise: stub reset removes all watchpoints.
-    // That works, because deleting a watchpoint removes it from the set's list, and
-    // the set's list traversal for firing is robust against the set changing.
-    ConcurrentJSLocker locker(m_holder->codeBlock()->m_lock);
-    m_holder->stubInfo()->reset(locker, m_holder->codeBlock());
+    m_holder->stub()->invalidate();
 }
 
 } // namespace JSC

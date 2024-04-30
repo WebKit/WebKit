@@ -1483,11 +1483,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> InlineCacheCompiler::generateSlowPathCode(
     return { };
 }
 
-InlineCacheHandler::InlineCacheHandler(Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<WatchpointsOnStructureStubInfo>&& watchpoints)
+InlineCacheHandler::InlineCacheHandler(Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint)
     : m_callTarget(stubRoutine->code().code().template retagged<JITStubRoutinePtrTag>())
     , m_jumpTarget(CodePtr<NoPtrTag> { m_callTarget.retagged<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC }.template retagged<JITStubRoutinePtrTag>())
     , m_stubRoutine(WTFMove(stubRoutine))
-    , m_watchpoints(WTFMove(watchpoints))
+    , m_watchpoint(WTFMove(watchpoint))
 {
 }
 
@@ -2742,7 +2742,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
         RELEASE_ASSERT(!accessCase.polyProtoAccessChain());
 
         if (condition.isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort::EnsureWatchability)) {
-            WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint(m_watchpoints, codeBlock, m_stubInfo, condition);
+            m_conditions.append(condition);
             continue;
         }
 
@@ -4345,7 +4345,12 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     dataLogLnIf(InlineCacheCompilerInternal::verbose, "Optimized cases: ", listDump(cases));
 
     auto finishCodeGeneration = [&](Ref<PolymorphicAccessJITStubRoutine>&& stub) {
-        auto handler = InlineCacheHandler::create(WTFMove(stub), WTFMove(m_watchpoints));
+        std::unique_ptr<StructureStubInfoClearingWatchpoint> watchpoint;
+        if (stub->watchpoints()) {
+            watchpoint = makeUnique<StructureStubInfoClearingWatchpoint>(codeBlock, m_stubInfo);
+            stub->watchpointSet().add(watchpoint.get());
+        }
+        auto handler = InlineCacheHandler::create(WTFMove(stub), WTFMove(watchpoint));
         dataLogLnIf(InlineCacheCompilerInternal::verbose, "Returning: ", handler->callTarget());
 
         poly.m_list = WTFMove(cases);
@@ -4444,16 +4449,6 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 acceptValueProperty = true;
         } else
             allGuardedByStructureCheck &= entry->guardedByStructureCheckSkippingConstantIdentifierCheck();
-
-        // NOTE: We currently assume that this is relatively rare. It mainly arises for accesses to
-        // properties on DOM nodes. For sure we cache many DOM node accesses, but even in
-        // Real Pages (TM), we appear to spend most of our time caching accesses to properties on
-        // vanilla objects or exotic objects from within JSC (like Arguments, those are super popular).
-        // Those common kinds of JSC object accesses don't hit this case.
-        for (WatchpointSet* set : additionalWatchpointSets) {
-            Watchpoint* watchpoint = WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(m_watchpoints, codeBlock, m_stubInfo);
-            set->add(watchpoint);
-        }
 
         keys[index] = entry;
         ++index;
@@ -4714,7 +4709,6 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     }
 
     RefPtr<PolymorphicAccessJITStubRoutine> stub;
-    FixedVector<StructureID> weakStructures(WTFMove(m_weakStructures));
     if (codeBlock->useDataIC() && canBeShared) {
         SharedJITStubSet::Searcher searcher {
             SharedJITStubSet::stubInfoKey(*m_stubInfo),
@@ -4748,7 +4742,27 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         owner = nullptr;
     }
 
+    FixedVector<StructureID> weakStructures(WTFMove(m_weakStructures));
     stub = createICJITStubRoutine(code, WTFMove(keys), WTFMove(weakStructures), vm(), owner, doesCalls, cellsToMark, WTFMove(m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
+
+    {
+        std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
+
+        for (auto& condition : m_conditions)
+            WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint(vm(), watchpoints, stub.get(), condition);
+
+        // NOTE: We currently assume that this is relatively rare. It mainly arises for accesses to
+        // properties on DOM nodes. For sure we cache many DOM node accesses, but even in
+        // Real Pages (TM), we appear to spend most of our time caching accesses to properties on
+        // vanilla objects or exotic objects from within JSC (like Arguments, those are super popular).
+        // Those common kinds of JSC object accesses don't hit this case.
+        for (WatchpointSet* set : additionalWatchpointSets) {
+            Watchpoint* watchpoint = WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(vm(), watchpoints, stub.get());
+            set->add(watchpoint);
+        }
+
+        stub->setWatchpoints(WTFMove(watchpoints));
+    }
 
     if (handlerICType) {
         ASSERT(codeBlock->useDataIC());
