@@ -1829,7 +1829,7 @@ void FrameLoader::clearProvisionalLoadForPolicyCheck()
 
 bool FrameLoader::hasOpenedFrames() const
 {
-    return !m_frame->hasOpenedFrames();
+    return m_frame->hasOpenedFrames();
 }
 
 void FrameLoader::reportLocalLoadFailed(LocalFrame* frame, const String& url)
