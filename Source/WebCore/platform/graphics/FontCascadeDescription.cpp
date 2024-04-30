@@ -147,11 +147,4 @@ FontSmoothingMode FontCascadeDescription::usedFontSmoothing() const
     return fontSmoothingMode;
 }
 
-void FontCascadeDescription::resolveFontSizeAdjustFromFontIfNeeded(const Font& font)
-{
-    auto fontSizeAdjust = this->fontSizeAdjust();
-    if (fontSizeAdjust.resolveFromFontIfNeeded(computedSize(), font.fontMetrics()))
-        setFontSizeAdjust(fontSizeAdjust);
-}
-
 } // namespace WebCore

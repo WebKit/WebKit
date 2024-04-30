@@ -45,8 +45,6 @@ typedef FontFamilySpecificationNull FontFamilyPlatformSpecification;
 
 typedef std::variant<AtomString, FontFamilyPlatformSpecification> FontFamilySpecification;
 
-class Font;
-
 class FontCascadeDescription : public FontDescription {
 public:
     WEBCORE_EXPORT FontCascadeDescription();
@@ -119,8 +117,6 @@ public:
             && m_isAbsoluteSize == other.m_isAbsoluteSize;
     }
 #endif
-
-    WEBCORE_EXPORT void resolveFontSizeAdjustFromFontIfNeeded(const Font&);
 
     // Initial values for font properties.
     static std::optional<FontSelectionValue> initialItalic() { return std::nullopt; }

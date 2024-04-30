@@ -69,17 +69,8 @@ struct FontSizeAdjust {
             : std::nullopt;
     }
 
-    bool resolveFromFontIfNeeded(float computedSize, const FontMetrics& fontMetrics)
-    {
-        if (!shouldResolveFromFont())
-            return false;
-        value = resolve(computedSize, fontMetrics);
-        return true;
-    }
-
     bool isNone() const { return !value && type != ValueType::FromFont; }
     bool isFromFont() const { return type == ValueType::FromFont; }
-    bool shouldResolveFromFont() const { return isFromFont() && !value; }
 
     Metric metric { Metric::ExHeight };
     ValueType type { ValueType::Number };

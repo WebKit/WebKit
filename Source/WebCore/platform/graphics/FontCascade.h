@@ -373,9 +373,7 @@ private:
 inline const Font& FontCascade::primaryFont() const
 {
     ASSERT(m_fonts);
-    auto& font = protectedFonts()->primaryFont(m_fontDescription);
-    m_fontDescription.resolveFontSizeAdjustFromFontIfNeeded(font);
-    return font;
+    return protectedFonts()->primaryFont(m_fontDescription);
 }
 
 inline const FontRanges& FontCascade::fallbackRangesAt(unsigned index) const
