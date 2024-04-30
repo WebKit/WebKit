@@ -287,8 +287,10 @@ void EditCommandComposition::reapply()
     if (!document->editor().willReapplyEditing(*this))
         return;
 
-    for (auto& command : m_commands)
+    for (size_t i = 0; i < m_commands.size(); ++i) {
+        RefPtr command = m_commands[i].get();
         command->doReapply();
+    }
 
     document->editor().reappliedEditing(*this);
 
@@ -325,8 +327,10 @@ void EditCommandComposition::setRangeDeletedByUnapply(const VisiblePositionIndex
 #ifndef NDEBUG
 void EditCommandComposition::getNodesInCommand(HashSet<Ref<Node>>& nodes)
 {
-    for (auto& command : m_commands)
+    for (size_t i = 0; i < m_commands.size(); ++i) {
+        RefPtr command = m_commands[i].get();
         command->getNodesInCommand(nodes);
+    }
 }
 #endif
 
