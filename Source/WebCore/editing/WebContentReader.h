@@ -133,11 +133,12 @@ struct FragmentAndResources {
     Vector<Ref<ArchiveResource>> resources;
 };
 
-enum class AddResources : bool {
-    No, Yes
+enum class FragmentCreationOptions : uint8_t {
+    IgnoreResources = 1 << 0,
+    NoInterchangeNewlines = 1 << 1
 };
 
-WEBCORE_EXPORT RefPtr<DocumentFragment> createFragment(LocalFrame&, NSAttributedString *, AddResources);
+WEBCORE_EXPORT RefPtr<DocumentFragment> createFragment(LocalFrame&, NSAttributedString *, OptionSet<FragmentCreationOptions> = { });
 #endif
 
 }

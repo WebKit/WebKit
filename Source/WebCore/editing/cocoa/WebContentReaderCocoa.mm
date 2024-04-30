@@ -90,14 +90,14 @@ namespace WebCore {
 
 #if PLATFORM(MACCATALYST)
 
-static FragmentAndResources createFragment(LocalFrame&, NSAttributedString *)
+static FragmentAndResources createFragmentInternal(LocalFrame&, NSAttributedString *, OptionSet<FragmentCreationOptions>)
 {
     return { };
 }
 
 #elif !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
-static NSDictionary *attributesForAttributedStringConversion()
+static NSDictionary *attributesForAttributedStringConversion(bool useInterchangeNewlines)
 {
     // This function needs to be kept in sync with identically named one in WebKitLegacy, which is used on older OS versions.
     RetainPtr<NSMutableArray> excludedElements = adoptNS([[NSMutableArray alloc] initWithObjects:
@@ -127,14 +127,14 @@ static NSDictionary *attributesForAttributedStringConversion()
 
     return @{
         NSExcludedElementsDocumentAttribute: excludedElements.get(),
-        @"InterchangeNewline": @YES,
+        @"InterchangeNewline": @(useInterchangeNewlines),
         @"CoalesceTabSpans": @YES,
         @"OutputBaseURL": baseURL,
         @"WebResourceHandler": adoptNS([WebArchiveResourceWebResourceHandler new]).get(),
     };
 }
 
-static FragmentAndResources createFragment(LocalFrame& frame, NSAttributedString *string)
+static FragmentAndResources createFragmentInternal(LocalFrame& frame, NSAttributedString *string, OptionSet<FragmentCreationOptions> fragmentCreationOptions)
 {
     FragmentAndResources result;
     Document& document = *frame.document();
@@ -145,7 +145,7 @@ static FragmentAndResources createFragment(LocalFrame& frame, NSAttributedString
 #endif
 
     NSArray *subresources = nil;
-    NSString *fragmentString = [string _htmlDocumentFragmentString:NSMakeRange(0, [string length]) documentAttributes:attributesForAttributedStringConversion() subresources:&subresources];
+    NSString *fragmentString = [string _htmlDocumentFragmentString:NSMakeRange(0, [string length]) documentAttributes:attributesForAttributedStringConversion(!fragmentCreationOptions.contains(FragmentCreationOptions::NoInterchangeNewlines)) subresources:&subresources];
     auto fragment = DocumentFragment::create(document);
     auto dummyBodyToForceInBodyInsertionMode = HTMLBodyElement::create(document);
     fragment->parseHTML(fragmentString, dummyBodyToForceInBodyInsertionMode, { });
@@ -160,7 +160,7 @@ static FragmentAndResources createFragment(LocalFrame& frame, NSAttributedString
 #else
 
 // FIXME: Do we really need to keep this legacy code path around for watchOS and tvOS?
-static FragmentAndResources createFragment(LocalFrame& frame, NSAttributedString *string)
+static FragmentAndResources createFragmentInternal(LocalFrame& frame, NSAttributedString *string, OptionSet<FragmentCreationOptions>)
 {
     FragmentAndResources result;
     _WebCreateFragment(*frame.document(), string, result);
@@ -407,7 +407,7 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
 #endif
 }
 
-RefPtr<DocumentFragment> createFragment(LocalFrame& frame, NSAttributedString *string, AddResources addResources)
+RefPtr<DocumentFragment> createFragment(LocalFrame& frame, NSAttributedString *string, OptionSet<FragmentCreationOptions> fragmentCreationOptions)
 {
     if (!frame.page() || !frame.document())
         return nullptr;
@@ -417,11 +417,11 @@ RefPtr<DocumentFragment> createFragment(LocalFrame& frame, NSAttributedString *s
         return nullptr;
 
     DeferredLoadingScope scope(frame);
-    auto fragmentAndResources = createFragment(frame, string);
+    auto fragmentAndResources = createFragmentInternal(frame, string, fragmentCreationOptions);
     if (!fragmentAndResources.fragment)
         return nullptr;
 
-    if (addResources == AddResources::No)
+    if (fragmentCreationOptions.contains(FragmentCreationOptions::IgnoreResources))
         return fragmentAndResources.fragment;
 
     if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
@@ -648,7 +648,7 @@ bool WebContentReader::readRTFD(SharedBuffer& buffer)
         return false;
 
     auto string = adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]);
-    auto fragment = createFragment(frame, string.get(), AddResources::Yes);
+    auto fragment = createFragment(frame, string.get());
     if (!fragment)
         return false;
     addFragment(fragment.releaseNonNull());
@@ -662,7 +662,7 @@ bool WebContentMarkupReader::readRTFD(SharedBuffer& buffer)
     if (!frame->document())
         return false;
     auto string = adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]);
-    auto fragment = createFragment(frame, string.get(), AddResources::Yes);
+    auto fragment = createFragment(frame, string.get());
     if (!fragment)
         return false;
 
@@ -677,7 +677,7 @@ bool WebContentReader::readRTF(SharedBuffer& buffer)
         return false;
 
     auto string = adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]);
-    auto fragment = createFragment(frame, string.get(), AddResources::Yes);
+    auto fragment = createFragment(frame, string.get());
     if (!fragment)
         return false;
     addFragment(fragment.releaseNonNull());
@@ -691,7 +691,7 @@ bool WebContentMarkupReader::readRTF(SharedBuffer& buffer)
     if (!frame->document())
         return false;
     auto string = adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]);
-    auto fragment = createFragment(frame, string.get(), AddResources::Yes);
+    auto fragment = createFragment(frame, string.get());
     if (!fragment)
         return false;
     m_markup = serializeFragment(*fragment, SerializedNodes::SubtreeIncludingNode);
