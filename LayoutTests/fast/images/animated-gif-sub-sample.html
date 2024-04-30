@@ -1,0 +1,18 @@
+<body>
+    <img width="400" src="resources/3720-2584-animated-black.gif">
+    <script>
+        if (window.internals && window.testRunner) {
+            internals.clearMemoryCache();
+            internals.settings.setWebkitImageReadyEventEnabled(true);
+            internals.settings.setAnimatedImageAsyncDecodingEnabled(true);
+            testRunner.waitUntilDone();
+        }
+
+        let image = document.querySelector("img");
+        let framesCount = 0;
+        image.addEventListener("webkitImageFrameReady", function() {
+            if (++framesCount == 2)
+                testRunner.notifyDone();
+        }, false);
+    </script>
+</body>

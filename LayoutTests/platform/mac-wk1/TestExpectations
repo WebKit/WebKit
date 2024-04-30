@@ -1488,6 +1488,7 @@ http/tests/inspector/network/resource-sizes-disk-cache.html
 http/tests/inspector/network/fetch-response-body-304.html [ Skip ]
 
 # Async image decoding is WK2 only
+fast/images/animated-gif-sub-sample.html
 fast/images/async-image-background-change.html
 fast/images/async-image-src-change.html
 fast/images/async-image-composited-show.html

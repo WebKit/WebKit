@@ -143,7 +143,7 @@ private:
     void cacheNativeImageAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&, Ref<NativeImage>&&);
 
     const ImageFrame& frameAtIndex(unsigned index) const;
-    const ImageFrame& frameAtIndexCacheIfNeeded(unsigned index, SubsamplingLevel = SubsamplingLevel::Default);
+    const ImageFrame& frameAtIndexCacheIfNeeded(unsigned index, const std::optional<SubsamplingLevel>& = std::nullopt);
     const ImageFrame& currentImageFrame() final { return frameAtIndexCacheIfNeeded(currentFrameIndex()); }
 
     // NativeImage
