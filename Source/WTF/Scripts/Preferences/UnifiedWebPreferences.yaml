@@ -4999,7 +4999,7 @@ PhotoPickerPrefersOriginalImageFormat:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: true
+      default: false
 
 PictographFontFamily:
   type: String
