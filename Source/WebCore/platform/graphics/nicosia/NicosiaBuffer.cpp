@@ -36,6 +36,7 @@
 #include "GLFence.h"
 #include "PlatformDisplay.h"
 #include <skia/core/SkCanvas.h>
+#include <skia/core/SkColorSpace.h>
 #include <skia/core/SkImage.h>
 #include <skia/core/SkStream.h>
 #include <skia/gpu/GrBackendSurface.h>
