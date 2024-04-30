@@ -3084,6 +3084,7 @@ svg/graphics/SVGImageForContainer.cpp
 svg/graphics/SVGResourceImage.cpp
 svg/graphics/filters/SVGFilter.cpp
 svg/properties/SVGAnimatedProperty.cpp
+svg/properties/SVGAnimatedString.cpp
 svg/properties/SVGAnimationAdditiveValueFunctionImpl.cpp
 svg/properties/SVGAttributeAnimator.cpp
 svg/properties/SVGPropertyTraits.cpp
