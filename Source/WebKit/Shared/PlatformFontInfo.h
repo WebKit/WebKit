@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,38 +25,16 @@
 
 #pragma once
 
-#include "ElementIdentifier.h"
-#include "FloatPoint.h"
-#include "FloatRect.h"
-#include "FrameIdentifier.h"
-#include "RectEdges.h"
-#include "RenderStyleConstants.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#if PLATFORM(COCOA)
+#include <wtf/RetainPtr.h>
+#endif
 
-namespace WebCore {
+namespace WebKit {
 
-struct TargetedElementRequest {
-    std::variant<FloatPoint, String> data;
-    bool canIncludeNearbyElements { true };
-    bool shouldIgnorePointerEventsNone { true };
+struct PlatformFontInfo {
+#if PLATFORM(COCOA)
+    RetainPtr<CFDictionaryRef> fontAttributeDictionary;
+#endif
 };
 
-struct TargetedElementInfo {
-    ElementIdentifier elementIdentifier;
-    ScriptExecutionContextIdentifier documentIdentifier;
-    RectEdges<bool> offsetEdges;
-    String renderedText;
-    String searchableText;
-    Vector<Vector<String>> selectors;
-    FloatRect boundsInRootView;
-    FloatRect boundsInClientCoordinates;
-    PositionType positionType { PositionType::Static };
-    Vector<FrameIdentifier> childFrameIdentifiers;
-    bool isNearbyTarget { true };
-    bool isPseudoElement { false };
-    bool isInShadowTree { false };
-};
-
-} // namespace WebCore
+} // namespace WebKit

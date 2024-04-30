@@ -888,6 +888,7 @@ header: <WebCore/ElementTargetingTypes.h>
 [CustomHeader] struct WebCore::TargetedElementRequest {
     std::variant<WebCore::FloatPoint, String> data
     bool canIncludeNearbyElements
+    bool shouldIgnorePointerEventsNone
 };
 
 header: <WebCore/ElementTargetingTypes.h>

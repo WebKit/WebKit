@@ -24,35 +24,80 @@
  */
 
 #import "config.h"
-#import "_WKTargetedElementRequest.h"
+#import "_WKTargetedElementRequestInternal.h"
 
 @implementation _WKTargetedElementRequest {
     RetainPtr<NSString> _searchText;
 }
 
-- (instancetype)initWithSearchText:(NSString *)searchText
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKTargetedElementRequest.class, self))
+        return;
+    _request->API::TargetedElementRequest::~TargetedElementRequest();
+    [super dealloc];
+}
+
+- (API::Object&)_apiObject
+{
+    return *_request;
+}
+
+- (instancetype)init
 {
     if (!(self = [super init]))
         return nil;
 
-    _searchText = adoptNS(searchText.copy);
-    _canIncludeNearbyElements = YES;
+    API::Object::constructInWrapper<API::TargetedElementRequest>(self, API::TargetedElementRequest { });
+    return self;
+}
+
+- (instancetype)initWithSearchText:(NSString *)searchText
+{
+    if (!(self = [self init]))
+        return nil;
+
+    _request->setSearchText(searchText);
     return self;
 }
 
 - (instancetype)initWithPoint:(CGPoint)point
 {
-    if (!(self = [super init]))
+    if (!(self = [self init]))
         return nil;
 
-    _point = point;
-    _canIncludeNearbyElements = YES;
+    _request->setPoint(point);
     return self;
+}
+
+- (BOOL)canIncludeNearbyElements
+{
+    return _request->canIncludeNearbyElements();
+}
+
+- (void)setCanIncludeNearbyElements:(BOOL)value
+{
+    _request->setCanIncludeNearbyElements(value);
+}
+
+- (BOOL)shouldIgnorePointerEventsNone
+{
+    return _request->shouldIgnorePointerEventsNone();
+}
+
+- (void)setShouldIgnorePointerEventsNone:(BOOL)value
+{
+    _request->setShouldIgnorePointerEventsNone(value);
 }
 
 - (NSString *)searchText
 {
-    return adoptNS([_searchText copy]).autorelease();
+    return _request->searchText();
+}
+
+- (CGPoint)point
+{
+    return _request->point();
 }
 
 @end

@@ -414,7 +414,6 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/EditorState.serialization.in
     Shared/FileSystemSyncAccessHandleInfo.serialization.in
     Shared/FocusedElementInformation.serialization.in
-    Shared/FontInfo.serialization.in
     Shared/FrameInfoData.serialization.in
     Shared/FrameTreeCreationParameters.serialization.in
     Shared/FrameTreeNodeData.serialization.in
@@ -435,6 +434,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/NetworkProcessConnectionParameters.serialization.in
     Shared/NetworkProcessPreferencesForWebProcess.serialization.in
     Shared/Pasteboard.serialization.in
+    Shared/PlatformFontInfo.serialization.in
     Shared/PlatformPopupMenuData.serialization.in
     Shared/PolicyDecision.serialization.in
     Shared/PrintInfo.serialization.in

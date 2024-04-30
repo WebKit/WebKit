@@ -37,10 +37,11 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (instancetype)initWithPoint:(CGPoint)point;
 - (instancetype)initWithSearchText:(NSString *)searchText;
 
-@property (nonatomic) CGPoint point; // This should become readonly, once no internal client relies on the setter.
+@property (nonatomic, readonly) CGPoint point;
 @property (nonatomic, readonly, nullable, copy) NSString *searchText;
 
 @property (nonatomic) BOOL canIncludeNearbyElements;
+@property (nonatomic) BOOL shouldIgnorePointerEventsNone;
 
 @end
 

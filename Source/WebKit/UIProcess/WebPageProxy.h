@@ -66,6 +66,7 @@ class PolicyClient;
 class ResourceLoadClient;
 class SerializedScriptValue;
 class TargetedElementInfo;
+class TargetedElementRequest;
 class UIClient;
 class URL;
 class URLRequest;
@@ -2395,7 +2396,7 @@ public:
 #endif
     void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&&);
 
-    void requestTargetedElement(WebCore::TargetedElementRequest&&, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&&);
+    void requestTargetedElement(const API::TargetedElementRequest&, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&&);
 
     void requestTextExtraction(std::optional<WebCore::FloatRect>&& collectionRectInRootView, CompletionHandler<void(WebCore::TextExtraction::Item&&)>&&);
 

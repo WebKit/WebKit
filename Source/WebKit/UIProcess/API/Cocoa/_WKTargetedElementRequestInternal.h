@@ -25,38 +25,20 @@
 
 #pragma once
 
-#include "ElementIdentifier.h"
-#include "FloatPoint.h"
-#include "FloatRect.h"
-#include "FrameIdentifier.h"
-#include "RectEdges.h"
-#include "RenderStyleConstants.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#import "APITargetedElementRequest.h"
+#import "WKObject.h"
+#import "_WKTargetedElementRequest.h"
 
-namespace WebCore {
+namespace WebKit {
 
-struct TargetedElementRequest {
-    std::variant<FloatPoint, String> data;
-    bool canIncludeNearbyElements { true };
-    bool shouldIgnorePointerEventsNone { true };
+template<> struct WrapperTraits<API::TargetedElementRequest> {
+    using WrapperClass = _WKTargetedElementRequest;
 };
 
-struct TargetedElementInfo {
-    ElementIdentifier elementIdentifier;
-    ScriptExecutionContextIdentifier documentIdentifier;
-    RectEdges<bool> offsetEdges;
-    String renderedText;
-    String searchableText;
-    Vector<Vector<String>> selectors;
-    FloatRect boundsInRootView;
-    FloatRect boundsInClientCoordinates;
-    PositionType positionType { PositionType::Static };
-    Vector<FrameIdentifier> childFrameIdentifiers;
-    bool isNearbyTarget { true };
-    bool isPseudoElement { false };
-    bool isInShadowTree { false };
-};
+}
 
-} // namespace WebCore
+@interface _WKTargetedElementRequest () <WKObject> {
+@package
+    API::ObjectStorage<API::TargetedElementRequest> _request;
+}
+@end

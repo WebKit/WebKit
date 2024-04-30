@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "APITargetedElementRequest.h"
 
-#if PLATFORM(COCOA)
-#include <wtf/RetainPtr.h>
-#endif
+#include "PageClient.h"
+#include "WebPageProxy.h"
 
-namespace WebKit {
+namespace API {
 
-struct FontInfo {
-#if PLATFORM(COCOA)
-    RetainPtr<CFDictionaryRef> fontAttributeDictionary;
-#endif
-};
+WebCore::FloatPoint TargetedElementRequest::point() const
+{
+    if (!std::holds_alternative<WebCore::FloatPoint>(m_request.data))
+        return { };
 
-} // namespace WebKit
+    return std::get<WebCore::FloatPoint>(m_request.data);
+}
+
+void TargetedElementRequest::setPoint(WebCore::FloatPoint point)
+{
+    m_request.data = point;
+}
+
+WTF::String TargetedElementRequest::searchText() const
+{
+    if (!std::holds_alternative<WTF::String>(m_request.data))
+        return { };
+
+    return std::get<WTF::String>(m_request.data);
+}
+
+void TargetedElementRequest::setSearchText(WTF::String&& searchText)
+{
+    m_request.data = WTFMove(searchText);
+}
+
+WebCore::TargetedElementRequest TargetedElementRequest::makeRequest(const WebPageProxy& page) const
+{
+    auto request = m_request;
+    if (std::holds_alternative<WebCore::FloatPoint>(m_request.data))
+        request.data = page.protectedPageClient()->webViewToRootView(point());
+    return request;
+}
+
+} // namespace API

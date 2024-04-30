@@ -347,6 +347,7 @@ private:
     UIViewController *presentingViewController() const final;
 #endif
 
+    WebCore::FloatPoint webViewToRootView(const WebCore::FloatPoint&) const final;
     WebCore::FloatRect rootViewToWebView(const WebCore::FloatRect&) const final;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)

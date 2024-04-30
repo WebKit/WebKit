@@ -25,38 +25,34 @@
 
 #pragma once
 
-#include "ElementIdentifier.h"
-#include "FloatPoint.h"
-#include "FloatRect.h"
-#include "FrameIdentifier.h"
-#include "RectEdges.h"
-#include "RenderStyleConstants.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <WebCore/ElementTargetingTypes.h>
 
-namespace WebCore {
+namespace WebKit {
+class WebPageProxy;
+}
 
-struct TargetedElementRequest {
-    std::variant<FloatPoint, String> data;
-    bool canIncludeNearbyElements { true };
-    bool shouldIgnorePointerEventsNone { true };
+namespace API {
+
+class TargetedElementRequest final : public ObjectImpl<Object::Type::TargetedElementRequest> {
+public:
+
+    bool shouldIgnorePointerEventsNone() const { return m_request.shouldIgnorePointerEventsNone; }
+    void setShouldIgnorePointerEventsNone(bool value) { m_request.shouldIgnorePointerEventsNone = value; }
+
+    bool canIncludeNearbyElements() const { return m_request.canIncludeNearbyElements; }
+    void setCanIncludeNearbyElements(bool value) { m_request.canIncludeNearbyElements = value; }
+
+    WebCore::TargetedElementRequest makeRequest(const WebKit::WebPageProxy&) const;
+
+    WebCore::FloatPoint point() const;
+    void setPoint(WebCore::FloatPoint);
+
+    WTF::String searchText() const;
+    void setSearchText(WTF::String&&);
+
+private:
+    WebCore::TargetedElementRequest m_request;
 };
 
-struct TargetedElementInfo {
-    ElementIdentifier elementIdentifier;
-    ScriptExecutionContextIdentifier documentIdentifier;
-    RectEdges<bool> offsetEdges;
-    String renderedText;
-    String searchableText;
-    Vector<Vector<String>> selectors;
-    FloatRect boundsInRootView;
-    FloatRect boundsInClientCoordinates;
-    PositionType positionType { PositionType::Static };
-    Vector<FrameIdentifier> childFrameIdentifiers;
-    bool isNearbyTarget { true };
-    bool isPseudoElement { false };
-    bool isInShadowTree { false };
-};
 
-} // namespace WebCore
+} // namespace API
