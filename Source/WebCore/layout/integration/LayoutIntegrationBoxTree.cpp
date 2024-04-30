@@ -264,11 +264,11 @@ void BoxTree::buildTreeForFlexContent()
 
 void BoxTree::insertChild(UniqueRef<Layout::Box> childBox, RenderObject& childRenderer, const RenderObject* beforeChild)
 {
-    auto& parentBox = layoutBoxForRenderer(*childRenderer.parent());
-    auto* beforeChildBox = beforeChild ? &layoutBoxForRenderer(*beforeChild) : nullptr;
+    auto& parentBox = *childRenderer.parent()->layoutBox();
+    auto* beforeChildBox = beforeChild ? beforeChild->layoutBox() : nullptr;
 
     childRenderer.setLayoutBox(childBox);
-    parentBox.insertChild(WTFMove(childBox), beforeChildBox);
+    parentBox.insertChild(WTFMove(childBox), const_cast<Layout::Box*>(beforeChildBox));
 }
 
 static void updateContentCharacteristic(const RenderText& rendererText, Layout::InlineTextBox& inlineTextBox)
@@ -332,7 +332,7 @@ void BoxTree::updateStyle(const RenderObject& renderer)
 
 void BoxTree::updateContent(const RenderText& textRenderer)
 {
-    auto& inlineTextBox = downcast<Layout::InlineTextBox>(layoutBoxForRenderer(textRenderer));
+    auto& inlineTextBox = const_cast<Layout::InlineTextBox&>(*textRenderer.layoutBox());
     auto& style = inlineTextBox.style();
     auto isCombinedText = [&] {
         auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(textRenderer);
@@ -355,7 +355,7 @@ const Layout::Box& BoxTree::insert(const RenderElement& parent, RenderObject& ch
     UNUSED_PARAM(parent);
 
     insertChild(createLayoutBox(child), child, beforeChild);
-    return layoutBoxForRenderer(child);
+    return *child.layoutBox();
 }
 
 UniqueRef<Layout::Box> BoxTree::remove(const RenderElement& parent, RenderObject& child)
@@ -379,26 +379,6 @@ Layout::ElementBox& BoxTree::rootLayoutBox()
     return *m_rootRenderer.layoutBox();
 }
 
-Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer)
-{
-    return *const_cast<RenderObject&>(renderer).layoutBox();
-}
-
-const Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer) const
-{
-    return const_cast<BoxTree&>(*this).layoutBoxForRenderer(renderer);
-}
-
-const Layout::ElementBox& BoxTree::layoutBoxForRenderer(const RenderElement& renderer) const
-{
-    return downcast<Layout::ElementBox>(layoutBoxForRenderer(static_cast<const RenderObject&>(renderer)));
-}
-
-Layout::ElementBox& BoxTree::layoutBoxForRenderer(const RenderElement& renderer)
-{
-    return downcast<Layout::ElementBox>(layoutBoxForRenderer(static_cast<const RenderObject&>(renderer)));
-}
-
 bool BoxTree::contains(const RenderElement& rendererToFind) const
 {
     auto* boxToFind = rendererToFind.layoutBox();
@@ -412,21 +392,6 @@ bool BoxTree::contains(const RenderElement& rendererToFind) const
         ancestor = &ancestor->parent();
     }
     return ancestor == &rootLayoutBox();
-}
-
-RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box)
-{
-    return *const_cast<Layout::Box&>(box).rendererForIntegration();
-}
-
-const RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box) const
-{
-    return *box.rendererForIntegration();
-}
-
-bool BoxTree::hasRendererForLayoutBox(const Layout::Box& box) const
-{
-    return !!box.rendererForIntegration();
 }
 
 Layout::InitialContainingBlock& BoxTree::initialContainingBlock()
@@ -482,7 +447,7 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
                 if (isDamaged)
                     inlineBoxStream << " (renderer may be damaged)";
                 else
-                    inlineBoxStream << " renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
+                    inlineBoxStream << " renderer->(" << box.layoutBox().rendererForIntegration() << ")";
                 inlineBoxStream.nextLine();
             } else {
                 addSpacing(runStream);
@@ -504,7 +469,7 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
                 if (isDamaged)
                     runStream << " (renderer may be damaged)";
                 else
-                    runStream << " renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
+                    runStream << " renderer->(" << box.layoutBox().rendererForIntegration() << ")";
                 runStream.nextLine();
             }
         }

@@ -77,10 +77,7 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
     void shrinkToFit();
 
     const LineLayout& lineLayout() const { return *m_lineLayout; }
-    const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& formattingContextRoot() const;
-
-    bool hasRendererForLayoutBox(const Layout::Box&) const;
 
     size_t indexForBox(const InlineDisplay::Box&) const;
 

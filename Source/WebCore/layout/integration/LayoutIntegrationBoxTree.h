@@ -63,17 +63,6 @@ public:
     const Layout::ElementBox& rootLayoutBox() const;
     Layout::ElementBox& rootLayoutBox();
 
-    const Layout::Box& layoutBoxForRenderer(const RenderObject&) const;
-    Layout::Box& layoutBoxForRenderer(const RenderObject&);
-
-    const Layout::ElementBox& layoutBoxForRenderer(const RenderElement&) const;
-    Layout::ElementBox& layoutBoxForRenderer(const RenderElement&);
-
-    const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
-    RenderObject& rendererForLayoutBox(const Layout::Box&);
-
-    bool hasRendererForLayoutBox(const Layout::Box&) const;
-
     bool contains(const RenderElement&) const;
 
 private:

@@ -158,7 +158,7 @@ bool LineLayout::contains(const RenderElement& renderer) const
 {
     if (!m_boxTree.contains(renderer))
         return false;
-    return layoutState().hasBoxGeometry(m_boxTree.layoutBoxForRenderer(renderer));
+    return layoutState().hasBoxGeometry(*renderer.layoutBox());
 }
 
 LineLayout* LineLayout::containing(RenderObject& renderer)
@@ -435,7 +435,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         if (!layoutBox.isAtomicInlineLevelBox())
             continue;
 
-        auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
+        auto& renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
         if (auto* layer = renderer.layer())
             layer->setIsHiddenByOverflowTruncation(box.isFullyTruncated());
 
@@ -475,7 +475,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             continue;
         if (layoutBox.isLineBreakBox())
             continue;
-        auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
+        auto& renderer = downcast<RenderBox>(*layoutBox.rendererForIntegration());
         auto& logicalGeometry = layoutState().geometryForBox(layoutBox);
 
         if (layoutBox.isFloatingPositioned()) {
@@ -800,7 +800,7 @@ InlineIterator::TextBoxIterator LineLayout::textBoxesFor(const RenderText& rende
     if (!m_inlineContent)
         return { };
 
-    auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderText);
+    auto& layoutBox = *renderText.layoutBox();
     auto firstIndex = m_inlineContent->firstBoxIndexForLayoutBox(layoutBox);
     if (!firstIndex)
         return { };
@@ -813,7 +813,7 @@ InlineIterator::LeafBoxIterator LineLayout::boxFor(const RenderElement& renderEl
     if (!m_inlineContent)
         return { };
 
-    auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderElement);
+    auto& layoutBox = *renderElement.layoutBox();
     auto firstIndex = m_inlineContent->firstBoxIndexForLayoutBox(layoutBox);
     if (!firstIndex)
         return { };
@@ -826,7 +826,7 @@ InlineIterator::InlineBoxIterator LineLayout::firstInlineBoxFor(const RenderInli
     if (!m_inlineContent)
         return { };
 
-    auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
+    auto& layoutBox = *renderInline.layoutBox();
     auto* box = m_inlineContent->firstBoxForLayoutBox(layoutBox);
     if (!box)
         return { };
@@ -863,7 +863,7 @@ LayoutRect LineLayout::firstInlineBoxRect(const RenderInline& renderInline) cons
     if (!m_inlineContent)
         return { };
 
-    auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
+    auto& layoutBox = *renderInline.layoutBox();
     auto* firstBox = m_inlineContent->firstBoxForLayoutBox(layoutBox);
     if (!firstBox)
         return { };
@@ -894,7 +894,7 @@ LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInlin
     if (!m_inlineContent->hasContent())
         return { };
 
-    auto borderBoxLogicalRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(layoutState().geometryForBox(m_boxTree.layoutBoxForRenderer(renderInline))) };
+    auto borderBoxLogicalRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(layoutState().geometryForBox(*renderInline.layoutBox())) };
     return WebCore::isHorizontalWritingMode(flow().style().writingMode()) ? borderBoxLogicalRect : borderBoxLogicalRect.transposedRect();
 }
 
@@ -903,7 +903,7 @@ LayoutRect LineLayout::visualOverflowBoundingBoxRectFor(const RenderInline& rend
     if (!m_inlineContent)
         return { };
 
-    auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
+    auto& layoutBox = *renderInline.layoutBox();
 
     LayoutRect result;
     m_inlineContent->traverseNonRootInlineBoxes(layoutBox, [&](auto& inlineBox) {
@@ -918,7 +918,7 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderInline& renderIn
     if (!m_inlineContent)
         return { };
 
-    auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
+    auto& layoutBox = *renderInline.layoutBox();
 
     Vector<FloatRect> result;
     m_inlineContent->traverseNonRootInlineBoxes(layoutBox, [&](auto& inlineBox) {
@@ -926,16 +926,6 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderInline& renderIn
     });
 
     return result;
-}
-
-const RenderObject& LineLayout::rendererForLayoutBox(const Layout::Box& layoutBox) const
-{
-    return m_boxTree.rendererForLayoutBox(layoutBox);
-}
-
-bool LineLayout::hasRendererForLayoutBox(const Layout::Box& layoutBox) const
-{
-    return m_boxTree.hasRendererForLayoutBox(layoutBox);
 }
 
 const Layout::ElementBox& LineLayout::rootLayoutBox() const
@@ -1008,7 +998,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         if (!visibleForHitTesting)
             continue;
 
-        auto& renderer = m_boxTree.rendererForLayoutBox(box.layoutBox());
+        auto& renderer = *box.layoutBox().rendererForIntegration();
 
         if (!layerPaintScope.includes(box))
             continue;
@@ -1059,14 +1049,14 @@ void LineLayout::shiftLinesBy(LayoutUnit blockShift)
             box.moveHorizontally(blockShift);
 
         if (box.isAtomicInlineLevelBox()) {
-            CheckedRef renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(box.layoutBox()));
+            CheckedRef renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
             renderer->move(deltaX, deltaY);
         }
     }
 
     for (auto& layoutBox : formattingContextBoxes(rootLayoutBox())) {
         if (layoutBox.isOutOfFlowPositioned() && layoutBox.style().hasStaticBlockPosition(isHorizontalWritingMode)) {
-            CheckedRef renderer = downcast<RenderLayerModelObject>(m_boxTree.rendererForLayoutBox(layoutBox));
+            CheckedRef renderer = downcast<RenderLayerModelObject>(*layoutBox.rendererForIntegration());
             if (!renderer->layer())
                 continue;
             CheckedRef layer = *renderer->layer();
@@ -1107,7 +1097,7 @@ bool LineLayout::removedFromTree(const RenderElement& parent, RenderObject& chil
         return false;
     }
 
-    auto& childLayoutBox = m_boxTree.layoutBoxForRenderer(child);
+    auto& childLayoutBox = *child.layoutBox();
     auto* childInlineTextBox = dynamicDowncast<Layout::InlineTextBox>(childLayoutBox);
     auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() };
     auto boxIsInvalidated = childInlineTextBox ? invalidation.textWillBeRemoved(*childInlineTextBox) : childLayoutBox.isLineBreakBox() ? invalidation.inlineLevelBoxWillBeRemoved(childLayoutBox) : false;
@@ -1127,7 +1117,7 @@ bool LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset
 
     m_boxTree.updateContent(textRenderer);
     auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() };
-    auto& inlineTextBox = downcast<Layout::InlineTextBox>(m_boxTree.layoutBoxForRenderer(textRenderer));
+    auto& inlineTextBox = *textRenderer.layoutBox();
     return delta >= 0 ? invalidation.textInserted(inlineTextBox, offset) : invalidation.textWillBeRemoved(inlineTextBox, offset);
 }
 

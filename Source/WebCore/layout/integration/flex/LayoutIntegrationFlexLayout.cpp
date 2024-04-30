@@ -98,7 +98,7 @@ void FlexLayout::updateFormattingRootGeometryAndInvalidate()
 void FlexLayout::updateFlexItemDimensions(const RenderBlock& flexItem, LayoutUnit, LayoutUnit)
 {
     auto& rootGeometry = layoutState().geometryForBox(flexBox());
-    auto& layoutBox = m_boxTree.layoutBoxForRenderer(flexItem);
+    auto& layoutBox = *flexItem.layoutBox();
     auto& boxGeometry = layoutState().ensureGeometryForBox(layoutBox);
     auto& style = flexItem.style();
 
