@@ -50,11 +50,12 @@
 }
 
 - (NSArray *)rects
-
 {
-
- @[ adoptNS([[WKTextSelectionRect alloc] initWithCGRect:_elementContext.boundingRect]).get() ];
-
+#if PLATFORM(IOS_FAMILY) || HAVE(NSTEXTPLACEHOLDER_RECTS)
+    return @[ adoptNS([[WKTextSelectionRect alloc] initWithCGRect:_elementContext.boundingRect]).get() ];
+#else
+    return nil;
+#endif
 }
 
 @end
