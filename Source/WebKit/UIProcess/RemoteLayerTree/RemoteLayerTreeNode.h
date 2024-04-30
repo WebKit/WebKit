@@ -141,6 +141,9 @@ public:
     RefPtr<RemoteAcceleratedEffectStack> takeEffectStack() { return std::exchange(m_effectStack, nullptr); }
 #endif
 
+    bool backdropRootIsOpaque() const { return m_backdropRootIsOpaque; }
+    void setBackdropRootIsOpaque(bool backdropRootIsOpaque) { m_backdropRootIsOpaque = backdropRootIsOpaque; }
+
 private:
     void initializeLayer();
 
@@ -182,6 +185,7 @@ private:
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     RefPtr<RemoteAcceleratedEffectStack> m_effectStack;
 #endif
+    bool m_backdropRootIsOpaque { false };
 };
 
 }

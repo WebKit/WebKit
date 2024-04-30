@@ -288,7 +288,7 @@ void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::Acce
     m_effectStack->setBaseValues(WTFMove(clonedBaseValues));
 
 #if PLATFORM(IOS_FAMILY)
-    m_effectStack->applyEffectsFromMainThread(layer(), host.animationCurrentTime(), host.cssUnprefixedBackdropFilterEnabled());
+    m_effectStack->applyEffectsFromMainThread(layer(), host.animationCurrentTime(), backdropRootIsOpaque());
 #else
     m_effectStack->initEffectsFromMainThread(layer(), host.animationCurrentTime());
 #endif

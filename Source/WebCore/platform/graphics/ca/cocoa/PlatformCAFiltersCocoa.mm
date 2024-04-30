@@ -221,7 +221,7 @@ void PlatformCAFilters::updatePresentationModifiers(const FilterOperations& filt
 }
 #endif // PLATFORM(MAC)
 
-void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOperations& filters, bool cssUnprefixedBackdropFilterEnabled)
+void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOperations& filters, bool backdropIsOpaque)
 {
     if (!filters.size()) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -327,16 +327,15 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
                 // If the backdrop is displayed inside a transparent web view over
                 // a material background, we need `normalizeEdgesTransparent`
                 // in order to render correctly.
+                if (backdropIsOpaque)
+                    [filter setValue:@YES forKey:@"inputNormalizeEdges"];
+                else {
 #if PLATFORM(VISION)
-                UNUSED_PARAM(cssUnprefixedBackdropFilterEnabled);
-                [filter setValue:@YES forKey:@"inputNormalizeEdgesTransparent"];
-#else
-                if (cssUnprefixedBackdropFilterEnabled)
                     [filter setValue:@YES forKey:@"inputNormalizeEdgesTransparent"];
-                [filter setValue:@YES forKey:@"inputNormalizeEdges"];
+#else
+                    [filter setValue:@YES forKey:@"inputHardEdges"];
 #endif
-
-
+                }
             }
             [filter setName:filterName];
             return filter;

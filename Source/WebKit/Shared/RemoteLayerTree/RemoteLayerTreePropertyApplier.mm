@@ -270,8 +270,11 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
             [layer _web_clearContents];
     }
 
+    if (properties.changedProperties & LayerChange::BackdropRootIsOpaqueChanged && layerTreeNode)
+        layerTreeNode->setBackdropRootIsOpaque(properties.backdropRootIsOpaque);
+
     if (properties.changedProperties & LayerChange::FiltersChanged)
-        PlatformCAFilters::setFiltersOnLayer(layer, properties.filters ? *properties.filters : FilterOperations(), layerTreeHost->cssUnprefixedBackdropFilterEnabled());
+        PlatformCAFilters::setFiltersOnLayer(layer, properties.filters ? *properties.filters : FilterOperations(), layerTreeNode && layerTreeNode->backdropRootIsOpaque());
 
     if (properties.changedProperties & LayerChange::AnimationsChanged) {
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
