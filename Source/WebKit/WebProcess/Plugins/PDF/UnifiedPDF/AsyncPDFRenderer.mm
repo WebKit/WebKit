@@ -187,6 +187,8 @@ void AsyncPDFRenderer::willRepaintTile(TileGridIndex gridIndex, TileIndex tileIn
     if (haveValidTile(tileInfo))
         return;
 
+    m_rendereredTiles.remove(tileInfo);
+
     // Currently we always do full tile paints when the grid changes.
     UNUSED_PARAM(tileDirtyRect);
     enqueueTilePaintIfNecessary(tileInfo, tileRect);
