@@ -1991,6 +1991,7 @@ class TestNetworkPullRequestGitHub(unittest.TestCase):
         result.pull_requests = [dict(
             number=1,
             state='open',
+            merged=False,
             title='Example Change',
             user=dict(login='tcontributor'),
             body='''#### 95507e3a1a4a919d1a156abbc279fdf6d24b13f5
@@ -2101,10 +2102,22 @@ Reviewed by NOBODY (OOPS!).
             repo = remote.GitHub(self.remote)
             pr = repo.pull_requests.get(1)
             self.assertTrue(pr.opened)
+            self.assertFalse(pr.merged)
             pr.close()
             self.assertFalse(pr.opened)
+            self.assertFalse(pr.merged)
             pr.open()
             self.assertTrue(pr.opened)
+            self.assertFalse(pr.merged)
+
+    def test_merged(self):
+        with self.webserver() as server:
+            server.pull_requests[0]['state'] = 'closed'
+            server.pull_requests[0]['merged'] = True
+
+            repo = remote.GitHub(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertTrue(pr.merged)
 
     def test_review(self):
         with self.webserver():
@@ -2368,10 +2381,23 @@ Reviewed by NOBODY (OOPS!).
             repo = remote.BitBucket(self.remote)
             pr = repo.pull_requests.get(1)
             self.assertTrue(pr.opened)
+            self.assertFalse(pr.merged)
             pr.close()
             self.assertFalse(pr.opened)
+            self.assertFalse(pr.merged)
             pr.open()
             self.assertTrue(pr.opened)
+            self.assertFalse(pr.merged)
+
+    def test_merged(self):
+        with self.webserver() as server:
+            server.pull_requests[0]['open'] = False
+            server.pull_requests[0]['closed'] = True
+            server.pull_requests[0]['state'] = 'MERGED'
+
+            repo = remote.BitBucket(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertTrue(pr.merged)
 
     def test_whoami(self):
         with self.webserver():

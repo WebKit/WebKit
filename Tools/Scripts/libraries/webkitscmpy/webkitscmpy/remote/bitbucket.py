@@ -58,6 +58,7 @@ class BitBucket(Scm):
                 hash=data['fromRef'].get('latestCommit', None),
                 base=data['toRef']['displayId'],
                 opened=True if data.get('open') else (False if data.get('closed') else None),
+                merged=data.get('state', '') == 'MERGED',
                 generator=self,
                 url='{}/pull-requests/{}/overview'.format(self.repository.url, data['id']),
                 draft=False,
