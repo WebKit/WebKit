@@ -38,7 +38,7 @@ CSSStartingStyleRule::CSSStartingStyleRule(StyleRuleStartingStyle& rule, CSSStyl
 String CSSStartingStyleRule::cssText() const
 {
     StringBuilder builder;
-    builder.append("@starting-style ");
+    builder.append("@starting-style"_s);
     appendCSSTextForItems(builder);
     return builder.toString();
 }

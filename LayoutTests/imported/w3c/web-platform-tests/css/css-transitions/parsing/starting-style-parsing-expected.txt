@@ -1,5 +1,5 @@
 
-FAIL @starting-style is valid assert_equals: expected "@starting-style {\n}" but got "@starting-style  {\n}"
+PASS @starting-style is valid
 PASS @starting-style div is not valid
 PASS @starting-style () is not valid
 PASS @starting-style ( {} is not valid
