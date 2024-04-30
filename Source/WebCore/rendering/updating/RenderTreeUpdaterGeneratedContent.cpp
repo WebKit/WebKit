@@ -304,19 +304,19 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         return;
     }
 
-    auto* firstChildText = dynamicDowncast<RenderText>(renderer.firstChild());
-    if (!firstChildText) {
+    CheckedPtr nodeBeforeWritingSuggestionsTextRenderer = dynamicDowncast<RenderText>(nodeBeforeWritingSuggestions->renderer());
+    if (!nodeBeforeWritingSuggestionsTextRenderer) {
         destroyWritingSuggestionsIfNeeded();
         return;
     }
 
-    auto textWithoutSuggestion = firstChildText->text();
+    auto textWithoutSuggestion = nodeBeforeWritingSuggestionsTextRenderer->text();
 
     auto offset = writingSuggestionData->offset();
     auto prefix = textWithoutSuggestion.substring(0, offset);
     auto suffix = textWithoutSuggestion.substring(offset);
 
-    firstChildText->setText(prefix);
+    nodeBeforeWritingSuggestionsTextRenderer->setText(prefix);
 
     auto newStyle = RenderStyle::clone(*style);
     if (auto writingSuggestionsRenderer = editor.writingSuggestionRenderer()) {
@@ -363,7 +363,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         editor.setWritingSuggestionRenderer(*newWritingSuggestionsRenderer.get());
         m_updater.m_builder.attach(renderer, WTFMove(newWritingSuggestionsRenderer), rendererAfterWritingSuggestions.get());
 
-        auto* prefixNode = firstChildText->textNode();
+        auto* prefixNode = nodeBeforeWritingSuggestionsTextRenderer->textNode();
         if (!prefixNode) {
             ASSERT_NOT_REACHED();
             destroyWritingSuggestionsIfNeeded();
