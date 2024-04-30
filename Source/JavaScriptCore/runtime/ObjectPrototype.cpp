@@ -23,7 +23,6 @@
 
 #include "ArrayConstructor.h"
 #include "GetterSetter.h"
-#include "HasOwnPropertyCache.h"
 #include "IntegrityInlines.h"
 #include "JSCInlines.h"
 #include "ObjectPrototypeInlines.h"
@@ -104,9 +103,15 @@ bool objectPrototypeHasOwnProperty(JSGlobalObject* globalObject, JSObject* thisO
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (std::optional<uint32_t> index = parseIndex(propertyName)) {
+        PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
+        RELEASE_AND_RETURN(scope, thisObject->hasOwnProperty(globalObject, index.value()));
+    }
+
+    auto& cache = vm.ensureMegamorphicCache();
     Structure* structure = thisObject->structure();
-    HasOwnPropertyCache& hasOwnPropertyCache = vm.ensureHasOwnPropertyCache();
-    if (std::optional<bool> result = hasOwnPropertyCache.get(structure, propertyName)) {
+    if (std::optional<bool> result = cache.tryGetHasOwn(structure, propertyName.impl())) {
         ASSERT(*result == thisObject->hasOwnProperty(globalObject, propertyName) || vm.hasPendingTerminationException());
         scope.assertNoExceptionExceptTermination();
         return *result;
@@ -115,8 +120,7 @@ bool objectPrototypeHasOwnProperty(JSGlobalObject* globalObject, JSObject* thisO
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
     bool result = thisObject->hasOwnProperty(globalObject, propertyName, slot);
     RETURN_IF_EXCEPTION(scope, false);
-
-    hasOwnPropertyCache.tryAdd(slot, thisObject, propertyName, result);
+    cache.tryAddHasOwn(slot, thisObject, propertyName.impl(), result);
     return result;
 }
 

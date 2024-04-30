@@ -378,7 +378,7 @@ public:
                     // https://bugs.webkit.org/show_bug.cgi?id=159602
                     break;
                 case HasOwnProperty: {
-                    VALIDATE((node), !!m_graph.m_vm.hasOwnPropertyCache());
+                    VALIDATE((node), !!m_graph.m_vm.megamorphicCache());
                     break;
                 }
                 case GetVectorLength: {

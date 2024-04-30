@@ -121,7 +121,6 @@ class ControlFlowProfiler;
 class Exception;
 class ExceptionScope;
 class FuzzerAgent;
-class HasOwnPropertyCache;
 class HeapAnalyzer;
 class HeapProfiler;
 class IntlCache;
@@ -843,10 +842,6 @@ public:
 #endif
 
     Ref<CompactTDZEnvironmentMap> m_compactVariableMap;
-
-    LazyUniqueRef<VM, HasOwnPropertyCache> m_hasOwnPropertyCache;
-    ALWAYS_INLINE HasOwnPropertyCache* hasOwnPropertyCache() { return m_hasOwnPropertyCache.getIfExists(); }
-    HasOwnPropertyCache& ensureHasOwnPropertyCache() { return m_hasOwnPropertyCache.get(*this); }
 
     LazyUniqueRef<VM, MegamorphicCache> m_megamorphicCache;
     ALWAYS_INLINE MegamorphicCache* megamorphicCache() { return m_megamorphicCache.getIfExists(); }

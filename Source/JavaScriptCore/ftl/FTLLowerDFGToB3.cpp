@@ -14755,35 +14755,68 @@ IGNORE_CLANG_WARNINGS_END
 
         ASSERT(keyAsValue);
 
-        // Note that we don't test if the hash is zero here. AtomStringImpl's can't have a zero
-        // hash, however, a SymbolImpl may. But, because this is a cache, we don't care. We only
-        // ever load the result from the cache if the cache entry matches what we are querying for.
-        // So we either get super lucky and use zero for the hash and somehow collide with the entity
-        // we're looking for, or we realize we're comparing against another entity, and go to the
-        // slow path anyways.
-        LValue hash = m_out.lShr(m_out.load32(uniquedStringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::s_flagCount));
+        PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+        patchpoint->appendSomeRegister(object);
+        patchpoint->appendSomeRegister(keyAsValue);
+        patchpoint->appendSomeRegister(uniquedStringImpl);
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
+        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+        patchpoint->numGPScratchRegisters = 3;
 
-        LValue structureID = m_out.load32(object, m_heaps.JSCell_structureID);
-        LValue index = m_out.add(hash, structureID);
-        index = m_out.zeroExtPtr(m_out.bitAnd(index, m_out.constInt32(HasOwnPropertyCache::mask)));
-        ASSERT(vm().hasOwnPropertyCache());
-        LValue cache = m_out.constIntPtr(vm().hasOwnPropertyCache());
+        RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
 
-        IndexedAbstractHeap& heap = m_heaps.HasOwnPropertyCache;
-        LValue sameStructureID = m_out.equal(structureID, m_out.load32(m_out.baseIndex(heap, cache, index, JSValue(), HasOwnPropertyCache::Entry::offsetOfStructureID())));
-        LValue sameImpl = m_out.equal(uniquedStringImpl, m_out.loadPtr(m_out.baseIndex(heap, cache, index, JSValue(), HasOwnPropertyCache::Entry::offsetOfImpl())));
-        ValueFromBlock fastResult = m_out.anchor(m_out.load8ZeroExt32(m_out.baseIndex(heap, cache, index, JSValue(), HasOwnPropertyCache::Entry::offsetOfResult())));
-        LValue cacheHit = m_out.bitAnd(sameStructureID, sameImpl);
+        State* state = &m_ftlState;
+        CodeOrigin nodeSemanticOrigin = m_node->origin.semantic;
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            JIT_COMMENT(jit, "HasOwnProperty");
+            AllowMacroScratchRegisterUsage allowScratch(jit);
 
-        m_out.branch(m_out.notZero32(cacheHit), usually(continuation), rarely(slowCase));
+            CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
+
+            // This is the direct exit target for operation calls.
+            Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+
+            // This is the exit for call IC's created by the IC for getters. We don't have
+            // to do anything weird other than call this, since it will associate the exit with
+            // the callsite index.
+            exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
+
+            GPRReg resultGPR = params[0].gpr();
+            GPRReg baseGPR = params[1].gpr();
+            GPRReg subscriptGPR = params[2].gpr();
+            GPRReg uidGPR = params[3].gpr();
+            GPRReg scratch1GPR = params.gpScratch(0);
+            GPRReg scratch2GPR = params.gpScratch(1);
+            GPRReg scratch3GPR = params.gpScratch(2);
+
+            CCallHelpers::JumpList slowCases;
+
+            slowCases.append(jit.hasOwnMegamorphicProperty(state->vm(), baseGPR, uidGPR, nullptr, resultGPR, scratch1GPR, scratch2GPR, scratch3GPR));
+            CCallHelpers::Label doneForSlow = jit.label();
+
+            params.addLatePath([=](CCallHelpers& jit) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                slowCases.link(&jit);
+                callOperation(
+                    *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
+                    exceptions.get(), operationHasOwnProperty, resultGPR,
+                    CCallHelpers::TrustedImmPtr(globalObject),
+                    baseGPR, subscriptGPR).call();
+                jit.jump().linkTo(doneForSlow, &jit);
+            });
+        });
+
+        ValueFromBlock fastResult = m_out.anchor(patchpoint);
+        m_out.jump(continuation);
 
         m_out.appendTo(slowCase, continuation);
         ValueFromBlock slowResult;
-        slowResult = m_out.anchor(m_out.notZero64(vmCall(Int64, operationHasOwnProperty, weakPointer(globalObject), object, keyAsValue)));
+        slowResult = m_out.anchor(vmCall(Int64, operationHasOwnProperty, weakPointer(globalObject), object, keyAsValue));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
-        setBoolean(m_out.phi(Int32, fastResult, slowResult));
+        setJSValue(m_out.phi(Int64, fastResult, slowResult));
     }
 
     void compileParseInt()

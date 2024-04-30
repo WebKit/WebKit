@@ -3930,7 +3930,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             // we'd ever get to the point where we inline this as an intrinsic without the
             // cache being created, however, it's possible if we always throw exceptions inside
             // hasOwnProperty.
-            if (!m_vm->hasOwnPropertyCache())
+            if (!m_vm->megamorphicCache())
                 return CallOptimizationResult::DidNothing;
 
             insertChecks();

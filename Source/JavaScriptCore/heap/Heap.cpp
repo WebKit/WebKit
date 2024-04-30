@@ -37,7 +37,6 @@
 #include "GCSegmentedArrayInlines.h"
 #include "GCTypeMap.h"
 #include "GigacageAlignedMemoryAllocator.h"
-#include "HasOwnPropertyCache.h"
 #include "HeapHelperPool.h"
 #include "HeapIterationScope.h"
 #include "HeapProfiler.h"
@@ -2217,8 +2216,6 @@ void Heap::finalize()
         sweepInFinalize();
     }
     
-    if (HasOwnPropertyCache* cache = vm().hasOwnPropertyCache())
-        cache->clear();
     if (auto* cache = vm().megamorphicCache())
         cache->age(m_lastCollectionScope && m_lastCollectionScope.value() == CollectionScope::Full ? CollectionScope::Full : CollectionScope::Eden);
 
