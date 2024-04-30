@@ -542,7 +542,7 @@ WebBackForwardListItem* WebBackForwardList::goForwardItemSkippingItemsWithoutUse
 
 #if !LOG_DISABLED
 
-const char* WebBackForwardList::loggingString()
+String WebBackForwardList::loggingString()
 {
     StringBuilder builder;
 
@@ -557,7 +557,7 @@ const char* WebBackForwardList::loggingString()
         builder.append('\n', prefix, m_entries[i]->loggingString());
     }
 
-    return debugString("\n", builder.toString());
+    return makeString("\n", builder.toString());
 }
 
 #endif // !LOG_DISABLED

@@ -444,9 +444,9 @@ int HistoryItem::showTreeWithIndent(unsigned indentLevel) const
 #endif
 
 #if !LOG_DISABLED
-const char* HistoryItem::logString() const
+String HistoryItem::logString() const
 {
-    return debugString("HistoryItem current URL ", urlString(), ", identifier ", m_identifier.toString());
+    return makeString("HistoryItem current URL ", urlString(), ", identifier ", m_identifier.toString());
 }
 #endif
 

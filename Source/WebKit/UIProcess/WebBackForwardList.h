@@ -87,7 +87,7 @@ public:
     Vector<BackForwardListItemState> filteredItemStates(Function<bool(WebBackForwardListItem&)>&&) const;
 
 #if !LOG_DISABLED
-    const char* loggingString();
+    String loggingString();
 #endif
 
 private:
