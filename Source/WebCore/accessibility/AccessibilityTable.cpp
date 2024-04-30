@@ -481,7 +481,7 @@ void AccessibilityTable::addChildren()
     Vector<Ref<Element>> pendingTfootElements;
     // Step 10.
     unsigned yCurrent = 0;
-    RefPtr<HTMLTableCaptionElement> captionElement;
+    bool didAddCaption = false;
 
     struct DownwardGrowingCell {
         WeakRef<AccessibilityTableCell> axObject;
@@ -672,8 +672,12 @@ void AccessibilityTable::addChildren()
         // current element to the next child of the table.
         if (auto* caption = dynamicDowncast<HTMLTableCaptionElement>(node)) {
             // Step 6: Associate the first caption element child of the table element with the table.
-            if (!captionElement)
-                captionElement = caption;
+            if (!didAddCaption) {
+                if (auto* axCaption = cache->getOrCreate(*caption)) {
+                    addChild(axCaption, DescendIfIgnored::No);
+                    didAddCaption = true;
+                }
+            }
             return;
         }
 
@@ -739,8 +743,6 @@ void AccessibilityTable::addChildren()
         processRowGroup(tfootElement.get());
 
     // The remainder of this function is unspecified updating of internal data structures.
-    addChild(cache->getOrCreate(captionElement.get()), DescendIfIgnored::No);
-
     for (unsigned i = 0; i < xWidth; ++i) {
         auto& column = downcast<AccessibilityTableColumn>(*cache->create(AccessibilityRole::Column));
         column.setColumnIndex(i);
