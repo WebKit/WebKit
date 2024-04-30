@@ -14,7 +14,6 @@ accessibility/dynamically-ignored-canvas.html [ Failure ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
 accessibility/keyevents-for-actions-mimic-real-key-events.html [ Failure ]
 accessibility/keyevents-posted-for-increment-actions.html [ Failure ]
-accessibility/mac/area-with-aria-label.html [ Failure ]
 accessibility/mac/document-attributes.html [ Failure ]
 accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Failure ]
 # Fails because of (1) stale focus ID for the iFrame and (2) iFrame #2 being ignored.
