@@ -2137,10 +2137,12 @@ void Editor::removeWritingSuggestionIfNeeded()
 
 void Editor::confirmComposition()
 {
+#if PLATFORM(MAC)
     if (m_isHandlingAcceptedCandidate) {
         removeWritingSuggestionIfNeeded();
         return;
     }
+#endif
 
     if (!m_compositionNode)
         return;
@@ -2170,10 +2172,12 @@ void Editor::confirmOrCancelCompositionAndNotifyClient()
 
 void Editor::cancelComposition()
 {
+#if PLATFORM(MAC)
     if (m_isHandlingAcceptedCandidate) {
         removeWritingSuggestionIfNeeded();
         return;
     }
+#endif
 
     if (!m_compositionNode)
         return;
@@ -2308,7 +2312,7 @@ void Editor::setWritingSuggestion(const String& fullTextWithPrediction, const Ch
         selectedElement->invalidateStyleAndRenderersForSubtree();
 }
 
-void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, unsigned selectionStart, unsigned selectionEnd)
+void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const HashMap<String, Vector<CharacterRange>>& annotations, unsigned selectionStart, unsigned selectionEnd)
 {
     Ref document = protectedDocument();
     SetCompositionScope setCompositionScope(document.copyRef());
@@ -2361,6 +2365,9 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             // We should send a compositionstart event only when the given text is not empty because this
             // function doesn't create a composition node when the text is empty.
             if (!text.isEmpty()) {
+                // When an inline predicition is being offered, there will be text and a non-zero amount of highlights.
+                m_isHandlingAcceptedCandidate = !highlights.isEmpty();
+
                 target->dispatchEvent(CompositionEvent::create(eventNames().compositionstartEvent, document->windowProxy(), originalText));
                 event = CompositionEvent::create(eventNames().compositionupdateEvent, document->windowProxy(), text);
             }
@@ -2374,6 +2381,9 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     // If text is empty, then delete the old composition here.  If text is non-empty, InsertTextCommand::input
     // will delete the old composition with an optimized replace operation.
     if (text.isEmpty()) {
+        // The absence of text implies that there are currently no inline predicitions being offered.
+        m_isHandlingAcceptedCandidate = false;
+
         TypingCommand::deleteSelection(document.copyRef(), TypingCommand::Option::PreventSpellChecking, TypingCommand::TextCompositionType::Pending);
         if (target)
             target->dispatchEvent(CompositionEvent::create(eventNames().compositionendEvent, document->windowProxy(), text));
@@ -2409,6 +2419,12 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             for (auto& highlight : m_customCompositionHighlights) {
                 highlight.startOffset += baseOffset;
                 highlight.endOffset += baseOffset;
+            }
+
+            m_customCompositionAnnotations = annotations;
+            for (auto it = m_customCompositionAnnotations.begin(); it != m_customCompositionAnnotations.end(); ++it) {
+                for (auto& range : it->value)
+                    range.location += baseOffset;
             }
 
             if (auto renderer = baseNode->renderer())

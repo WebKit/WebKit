@@ -5286,7 +5286,7 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
         return;
     }
 
-    m_page->setCompositionAsync(text, WTFMove(underlines), WTFMove(highlights), selectedRange, replacementRange);
+    m_page->setCompositionAsync(text, WTFMove(underlines), WTFMove(highlights), { }, selectedRange, replacementRange);
 }
 
 #if HAVE(INLINE_PREDICTIONS)
