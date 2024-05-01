@@ -80,6 +80,17 @@ class TestGitHub(unittest.TestCase):
         )
         self.assertEqual(tracker.from_string('https://github.example.com/Apple/Swift/issues/1234'), None)
 
+    def test_link_brackets(self):
+        tracker = github.Tracker(self.URL)
+        self.assertEqual(
+            tracker.from_string('<http://github.example.com/WebKit/WebKit/issues/1234>').link,
+            'https://github.example.com/WebKit/WebKit/issues/1234',
+        )
+        self.assertEqual(
+            tracker.from_string('<http://api.github.example.com/repos/WebKit/WebKit/issues/1234>').link,
+            'https://github.example.com/WebKit/WebKit/issues/1234',
+        )
+
     def test_title(self):
         with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
             tracker = github.Tracker(self.URL)

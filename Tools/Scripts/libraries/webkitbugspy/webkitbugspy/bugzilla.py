@@ -44,8 +44,8 @@ requests = webkitcorepy.CallByNeed(lambda: __import__('requests'))
 class Tracker(GenericTracker):
     ROOT_RE = re.compile(r'\Ahttps?://(?P<domain>\S+)\Z')
     RE_TEMPLATES = [
-        r'\Ahttps?://{}/show_bug.cgi\?id=(?P<id>\d+)\Z',
-        r'\A{}/show_bug.cgi\?id=(?P<id>\d+)\Z',
+        r'\A<?https?://{}/show_bug.cgi\?id=(?P<id>\d+)>?\Z',
+        r'\A<?{}/show_bug.cgi\?id=(?P<id>\d+)>?\Z',
     ]
     NAME = 'Bugzilla'
     DEFAULT_TIMEOUT = 30
