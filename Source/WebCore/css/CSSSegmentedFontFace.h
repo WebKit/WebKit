@@ -40,7 +40,7 @@ class FontPaletteValues;
 class FontRanges;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSegmentedFontFace);
-class CSSSegmentedFontFace final : public RefCounted<CSSSegmentedFontFace>, public CSSFontFace::Client {
+class CSSSegmentedFontFace final : public RefCounted<CSSSegmentedFontFace>, public CSSFontFaceClient {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSegmentedFontFace);
 public:
     static Ref<CSSSegmentedFontFace> create()
@@ -55,7 +55,7 @@ public:
 
     Vector<Ref<CSSFontFace>, 1>& constituentFaces() { return m_fontFaces; }
 
-    // CSSFontFace::Client needs to be able to be held in a RefPtr.
+    // CSSFontFaceClient needs to be able to be held in a RefPtr.
     void ref() final { RefCounted<CSSSegmentedFontFace>::ref(); }
     void deref() final { RefCounted<CSSSegmentedFontFace>::deref(); }
 

@@ -30,6 +30,15 @@
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class WebNavigationState;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebNavigationState> : std::true_type { };
+}
+
 namespace API {
 class Navigation;
 struct SubstituteData;

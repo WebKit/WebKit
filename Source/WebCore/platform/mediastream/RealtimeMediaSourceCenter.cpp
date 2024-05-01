@@ -63,7 +63,7 @@ RealtimeMediaSourceCenter::RealtimeMediaSourceCenter()
 
 RealtimeMediaSourceCenter::~RealtimeMediaSourceCenter() = default;
 
-RealtimeMediaSourceCenter::Observer::~Observer() = default;
+RealtimeMediaSourceCenterObserver::~RealtimeMediaSourceCenterObserver() = default;
 
 void RealtimeMediaSourceCenter::createMediaStream(Ref<const Logger>&& logger, NewMediaStreamHandler&& completionHandler, MediaDeviceHashSalts&& hashSalts, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest& request)
 {
@@ -180,13 +180,13 @@ String RealtimeMediaSourceCenter::hashStringWithSalt(const String& id, const Str
     return String::fromLatin1(SHA1::hexDigest(digest).data());
 }
 
-void RealtimeMediaSourceCenter::addDevicesChangedObserver(Observer& observer)
+void RealtimeMediaSourceCenter::addDevicesChangedObserver(RealtimeMediaSourceCenterObserver& observer)
 {
     ASSERT(isMainThread());
     m_observers.add(observer);
 }
 
-void RealtimeMediaSourceCenter::removeDevicesChangedObserver(Observer& observer)
+void RealtimeMediaSourceCenter::removeDevicesChangedObserver(RealtimeMediaSourceCenterObserver& observer)
 {
     ASSERT(isMainThread());
     m_observers.remove(observer);

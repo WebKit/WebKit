@@ -38,7 +38,7 @@ class HidConnection;
 
 class HidService : public FidoService {
 public:
-    explicit HidService(Observer&);
+    explicit HidService(AuthenticatorTransportServiceObserver&);
     ~HidService();
 
     void deviceAdded(IOHIDDeviceRef);

@@ -32,6 +32,17 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+namespace LayoutIntegration {
+class BoxTree;
+}
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LayoutIntegration::BoxTree> : std::true_type { };
+}
+
+namespace WebCore {
 
 class RenderBlock;
 class RenderBoxModelObject;

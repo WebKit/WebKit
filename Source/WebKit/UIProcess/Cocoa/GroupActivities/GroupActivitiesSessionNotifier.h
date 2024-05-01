@@ -35,6 +35,15 @@
 OBJC_CLASS WKGroupSessionObserver;
 
 namespace WebKit {
+class GroupActivitiesSessionNotifier;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::GroupActivitiesSessionNotifier> : std::true_type { };
+}
+
+namespace WebKit {
 
 class WebPageProxy;
 

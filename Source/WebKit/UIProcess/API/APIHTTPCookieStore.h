@@ -37,6 +37,15 @@
 #include "SoupCookiePersistentStorageType.h"
 #endif
 
+namespace API {
+class HTTPCookieStoreObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<API::HTTPCookieStoreObserver> : std::true_type { };
+}
+
 namespace WebCore {
 struct Cookie;
 enum class HTTPCookieAcceptPolicy : uint8_t;
@@ -48,6 +57,14 @@ class WebsiteDataStore;
 }
 
 namespace API {
+
+class HTTPCookieStore;
+
+class HTTPCookieStoreObserver : public CanMakeWeakPtr<HTTPCookieStoreObserver> {
+public:
+    virtual ~HTTPCookieStoreObserver() { }
+    virtual void cookiesDidChange(HTTPCookieStore&) = 0;
+};
 
 class HTTPCookieStore final : public ObjectImpl<Object::Type::HTTPCookieStore> {
 public:
@@ -69,14 +86,8 @@ public:
     void getHTTPCookieAcceptPolicy(CompletionHandler<void(const WebCore::HTTPCookieAcceptPolicy&)>&&);
     void flushCookies(CompletionHandler<void()>&&);
 
-    class Observer : public CanMakeWeakPtr<Observer> {
-    public:
-        virtual ~Observer() { }
-        virtual void cookiesDidChange(HTTPCookieStore&) = 0;
-    };
-
-    void registerObserver(Observer&);
-    void unregisterObserver(Observer&);
+    void registerObserver(HTTPCookieStoreObserver&);
+    void unregisterObserver(HTTPCookieStoreObserver&);
 
     void cookiesDidChange();
 
@@ -96,7 +107,7 @@ private:
 
     PAL::SessionID m_sessionID;
     WeakPtr<WebKit::WebsiteDataStore> m_owningDataStore;
-    WeakHashSet<Observer> m_observers;
+    WeakHashSet<HTTPCookieStoreObserver> m_observers;
 };
 
 }

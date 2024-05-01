@@ -35,7 +35,7 @@
 @class WebView;
 
 namespace WebCore {
-    class ResourceRequest;
+class ResourceRequest;
 }
 
 class WebDocumentLoaderMac : public WebCore::DocumentLoader {

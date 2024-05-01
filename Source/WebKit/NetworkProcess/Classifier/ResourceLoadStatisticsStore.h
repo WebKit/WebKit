@@ -39,6 +39,15 @@
 #include "ResourceLoadStatisticsClassifierCocoa.h"
 #endif
 
+namespace WebKit {
+class ResourceLoadStatisticsStore;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ResourceLoadStatisticsStore> : std::true_type { };
+}
+
 namespace WebCore {
 class KeyedDecoder;
 class KeyedEncoder;

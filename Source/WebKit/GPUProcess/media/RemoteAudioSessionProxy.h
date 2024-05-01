@@ -35,6 +35,15 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/WeakRef.h>
 
+namespace WebKit {
+class RemoteAudioSessionProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteAudioSessionProxy> : std::true_type { };
+}
+
 namespace IPC {
 class Connection;
 }

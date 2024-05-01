@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebGPUCanvasAlphaMode.h"
+#include "WebGPUDevice.h"
 #include "WebGPUPredefinedColorSpace.h"
 #include "WebGPUTextureFormat.h"
 #include "WebGPUTextureUsage.h"
@@ -33,8 +34,6 @@
 #include <wtf/WeakRef.h>
 
 namespace WebCore::WebGPU {
-
-class Device;
 
 struct CanvasConfiguration {
     WeakRef<Device> device;

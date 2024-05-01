@@ -41,13 +41,13 @@ void NowPlayingManager::didReceiveRemoteControlCommand(PlatformMediaSession::Rem
         m_client->didReceiveRemoteControlCommand(type, argument);
 }
 
-void NowPlayingManager::addClient(Client& client)
+void NowPlayingManager::addClient(NowPlayingManagerClient& client)
 {
     m_client = client;
     ensureRemoteCommandListenerCreated();
 }
 
-void NowPlayingManager::removeClient(Client& client)
+void NowPlayingManager::removeClient(NowPlayingManagerClient& client)
 {
     if (m_client.get() != &client)
         return;

@@ -30,6 +30,15 @@
 #include <WebCore/WebLockIdentifier.h>
 #include <WebCore/WebLockMode.h>
 
+namespace WebKit {
+class WebLockRegistryProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebLockRegistryProxy> : std::true_type { };
+}
+
 namespace WebCore {
 struct ClientOrigin;
 struct WebLockManagerSnapshot;

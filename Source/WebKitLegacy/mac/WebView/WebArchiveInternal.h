@@ -30,7 +30,7 @@
 #import <wtf/Forward.h>
 
 namespace WebCore {
-    class LegacyWebArchive;
+class LegacyWebArchive;
 }
 
 @interface WebArchive (WebInternal)

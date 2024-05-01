@@ -47,6 +47,10 @@
 #include <pal/spi/mac/QuarantineSPI.h>
 #endif
 
+#if HAVE(SEC_KEY_PROXY)
+#include "SecKeyProxyStore.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 

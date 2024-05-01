@@ -27,6 +27,7 @@
 
 #include "WebGPUIntegralTypes.h"
 #include "WebGPUOrigin3D.h"
+#include "WebGPUTexture.h"
 #include "WebGPUTextureAspect.h"
 #include <optional>
 #include <wtf/Ref.h>

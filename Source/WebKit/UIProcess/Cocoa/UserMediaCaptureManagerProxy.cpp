@@ -53,17 +53,26 @@
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &m_connectionProxy->connection())
 
 namespace WebKit {
+class UserMediaCaptureManagerProxySourceProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::UserMediaCaptureManagerProxySourceProxy> : std::true_type { };
+}
+
+namespace WebKit {
 using namespace WebCore;
 
-class UserMediaCaptureManagerProxy::SourceProxy final
-    : public RealtimeMediaSource::Observer
+class UserMediaCaptureManagerProxySourceProxy final
+    : public RealtimeMediaSourceObserver
     , private RealtimeMediaSource::AudioSampleObserver
     , private RealtimeMediaSource::VideoFrameObserver
-    , public CanMakeCheckedPtr<UserMediaCaptureManagerProxy::SourceProxy> {
+    , public CanMakeCheckedPtr<UserMediaCaptureManagerProxySourceProxy> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SourceProxy);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(UserMediaCaptureManagerProxySourceProxy);
 public:
-    SourceProxy(RealtimeMediaSourceIdentifier id, Ref<IPC::Connection>&& connection, ProcessIdentity&& resourceOwner, Ref<RealtimeMediaSource>&& source, RefPtr<RemoteVideoFrameObjectHeap>&& videoFrameObjectHeap)
+    UserMediaCaptureManagerProxySourceProxy(RealtimeMediaSourceIdentifier id, Ref<IPC::Connection>&& connection, ProcessIdentity&& resourceOwner, Ref<RealtimeMediaSource>&& source, RefPtr<RemoteVideoFrameObjectHeap>&& videoFrameObjectHeap)
         : m_id(id)
         , m_connection(WTFMove(connection))
         , m_resourceOwner(WTFMove(resourceOwner))
@@ -73,7 +82,7 @@ public:
         m_source->addObserver(*this);
     }
 
-    ~SourceProxy()
+    ~UserMediaCaptureManagerProxySourceProxy()
     {
         switch (m_source->type()) {
         case RealtimeMediaSource::Type::Audio:
@@ -233,7 +242,7 @@ public:
         return *m_settings;
     }
 
-    void copySettings(SourceProxy& proxy)
+    void copySettings(UserMediaCaptureManagerProxySourceProxy& proxy)
     {
         m_settings = proxy.m_settings;
         m_widthConstraint = proxy.m_widthConstraint;
@@ -534,10 +543,10 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     ASSERT(!m_proxies.contains(id));
     Ref connection = m_connectionProxy->connection();
     RefPtr remoteVideoFrameObjectHeap = shouldUseGPUProcessRemoteFrames ? m_connectionProxy->remoteVideoFrameObjectHeap() : nullptr;
-    auto proxy = makeUnique<SourceProxy>(id, WTFMove(connection), ProcessIdentity { m_connectionProxy->resourceOwner() }, WTFMove(source), WTFMove(remoteVideoFrameObjectHeap));
+    auto proxy = makeUnique<UserMediaCaptureManagerProxySourceProxy>(id, WTFMove(connection), ProcessIdentity { m_connectionProxy->resourceOwner() }, WTFMove(source), WTFMove(remoteVideoFrameObjectHeap));
     proxy->observeMedia();
 
-    auto completeSetup = [weakThis = WeakPtr { *this }, this](std::unique_ptr<SourceProxy>&& proxy, RealtimeMediaSourceIdentifier id, CreateSourceCallback&& completionHandler) mutable {
+    auto completeSetup = [weakThis = WeakPtr { *this }, this](std::unique_ptr<UserMediaCaptureManagerProxySourceProxy>&& proxy, RealtimeMediaSourceIdentifier id, CreateSourceCallback&& completionHandler) mutable {
         if (!weakThis) {
             completionHandler({ "Capture proxy disappeared"_s, WebCore::MediaAccessDenialReason::OtherFailure }, { }, { });
             return;
@@ -647,7 +656,7 @@ void UserMediaCaptureManagerProxy::clone(RealtimeMediaSourceIdentifier clonedID,
 
         Ref connection = m_connectionProxy->connection();
         RefPtr remoteVideoFrameObjectHeap = m_connectionProxy->remoteVideoFrameObjectHeap();
-        auto cloneProxy = makeUnique<SourceProxy>(newSourceID, WTFMove(connection), ProcessIdentity { m_connectionProxy->resourceOwner() }, WTFMove(sourceClone), WTFMove(remoteVideoFrameObjectHeap));
+        auto cloneProxy = makeUnique<UserMediaCaptureManagerProxySourceProxy>(newSourceID, WTFMove(connection), ProcessIdentity { m_connectionProxy->resourceOwner() }, WTFMove(sourceClone), WTFMove(remoteVideoFrameObjectHeap));
         cloneProxy->copySettings(*proxy);
         cloneProxy->observeMedia();
         m_proxies.add(newSourceID, WTFMove(cloneProxy));

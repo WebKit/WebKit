@@ -32,6 +32,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class XMLHttpRequestProgressEventThrottle;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::XMLHttpRequestProgressEventThrottle> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Event;
 class XMLHttpRequest;

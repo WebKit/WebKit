@@ -74,7 +74,7 @@ void WebScreenOrientationManager::unlock()
     m_page.send(Messages::WebScreenOrientationManagerProxy::Unlock { });
 }
 
-void WebScreenOrientationManager::addObserver(Observer& observer)
+void WebScreenOrientationManager::addObserver(WebCore::ScreenOrientationManagerObserver& observer)
 {
     bool wasEmpty = m_observers.isEmptyIgnoringNullReferences();
     m_observers.add(observer);
@@ -82,7 +82,7 @@ void WebScreenOrientationManager::addObserver(Observer& observer)
         m_page.send(Messages::WebScreenOrientationManagerProxy::SetShouldSendChangeNotification { true });
 }
 
-void WebScreenOrientationManager::removeObserver(Observer& observer)
+void WebScreenOrientationManager::removeObserver(WebCore::ScreenOrientationManagerObserver& observer)
 {
     m_observers.remove(observer);
     if (m_observers.isEmptyIgnoringNullReferences()) {

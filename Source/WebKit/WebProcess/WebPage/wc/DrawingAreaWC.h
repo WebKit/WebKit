@@ -35,6 +35,15 @@
 #include <WebCore/Timer.h>
 
 namespace WebKit {
+class DrawingAreaWC;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::DrawingAreaWC> : std::true_type { };
+}
+
+namespace WebKit {
 
 class DrawingAreaWC final
     : public DrawingArea

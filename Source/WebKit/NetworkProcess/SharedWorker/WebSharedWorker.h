@@ -37,6 +37,15 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class WebSharedWorker;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSharedWorker> : std::true_type { };
+}
+
 namespace WebCore {
 class RegistrableDomain;
 }

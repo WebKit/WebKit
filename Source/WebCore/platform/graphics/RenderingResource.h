@@ -30,18 +30,27 @@
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
+class RenderingResourceObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::RenderingResourceObserver> : std::true_type { };
+}
+
+namespace WebCore {
+
+class RenderingResourceObserver : public CanMakeWeakPtr<RenderingResourceObserver> {
+public:
+    virtual ~RenderingResourceObserver() = default;
+    virtual void releaseRenderingResource(RenderingResourceIdentifier) = 0;
+protected:
+    RenderingResourceObserver() = default;
+};
 
 class RenderingResource
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RenderingResource> {
 public:
-    class Observer : public CanMakeWeakPtr<Observer> {
-    public:
-        virtual ~Observer() = default;
-        virtual void releaseRenderingResource(RenderingResourceIdentifier) = 0;
-    protected:
-        Observer() = default;
-    };
-
     virtual ~RenderingResource()
     {
         if (!hasValidRenderingResourceIdentifier())
@@ -72,13 +81,13 @@ public:
         return m_renderingResourceIdentifier;
     }
 
-    void addObserver(Observer& observer)
+    void addObserver(RenderingResourceObserver& observer)
     {
         ASSERT(hasValidRenderingResourceIdentifier());
         m_observers.add(observer);
     }
 
-    void removeObserver(Observer& observer)
+    void removeObserver(RenderingResourceObserver& observer)
     {
         ASSERT(hasValidRenderingResourceIdentifier());
         m_observers.remove(observer);
@@ -90,7 +99,7 @@ protected:
     {
     }
 
-    WeakHashSet<Observer> m_observers;
+    WeakHashSet<RenderingResourceObserver> m_observers;
     std::optional<RenderingResourceIdentifier> m_renderingResourceIdentifier;
 };
 

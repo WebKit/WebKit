@@ -3158,6 +3158,11 @@ void JSGlobalObject::setConsoleClient(WeakPtr<ConsoleClient>&& consoleClient)
     m_consoleClient = WTFMove(consoleClient);
 }
 
+WeakPtr<ConsoleClient> JSGlobalObject::consoleClient() const
+{
+    return m_consoleClient;
+}
+
 void JSGlobalObject::setDebugger(Debugger* debugger)
 {
     m_debugger = debugger;

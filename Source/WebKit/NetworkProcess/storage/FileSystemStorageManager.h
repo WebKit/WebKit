@@ -29,6 +29,15 @@
 #include <WebCore/FileSystemHandleIdentifier.h>
 
 namespace WebKit {
+class FileSystemStorageManager;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::FileSystemStorageManager> : std::true_type { };
+}
+
+namespace WebKit {
 
 class FileSystemStorageHandle;
 class FileSystemStorageHandleRegistry;

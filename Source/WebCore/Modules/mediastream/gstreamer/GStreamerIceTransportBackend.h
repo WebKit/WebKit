@@ -26,6 +26,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class GStreamerIceTransportBackend;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::GStreamerIceTransportBackend> : std::true_type { };
+}
+
+namespace WebCore {
 
 class GStreamerIceTransportBackend final : public RTCIceTransportBackend, public CanMakeWeakPtr<GStreamerIceTransportBackend> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -38,7 +47,7 @@ private:
     // RTCIceTransportBackend
     const void* backend() const final { return m_backend.get(); }
 
-    void registerClient(Client&) final;
+    void registerClient(RTCIceTransportBackendClient&) final;
     void unregisterClient() final;
 
     void stateChanged() const;
@@ -48,7 +57,7 @@ private:
 
     GRefPtr<GstWebRTCDTLSTransport> m_backend;
     GRefPtr<GstWebRTCICETransport> m_iceTransport;
-    WeakPtr<Client> m_client;
+    WeakPtr<RTCIceTransportBackendClient> m_client;
 };
 
 } // namespace WebCore

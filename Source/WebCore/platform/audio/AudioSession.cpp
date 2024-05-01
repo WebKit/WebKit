@@ -120,12 +120,12 @@ bool AudioSession::tryToSetActive(bool active)
     return true;
 }
 
-void AudioSession::addInterruptionObserver(InterruptionObserver& observer)
+void AudioSession::addInterruptionObserver(AudioSessionInterruptionObserver& observer)
 {
     m_interruptionObservers.add(observer);
 }
 
-void AudioSession::removeInterruptionObserver(InterruptionObserver& observer)
+void AudioSession::removeInterruptionObserver(AudioSessionInterruptionObserver& observer)
 {
     m_interruptionObservers.remove(observer);
 }
@@ -251,12 +251,12 @@ void AudioSession::audioOutputDeviceChanged()
     notImplemented();
 }
 
-void AudioSession::addConfigurationChangeObserver(ConfigurationChangeObserver&)
+void AudioSession::addConfigurationChangeObserver(AudioSessionConfigurationChangeObserver&)
 {
     notImplemented();
 }
 
-void AudioSession::removeConfigurationChangeObserver(ConfigurationChangeObserver&)
+void AudioSession::removeConfigurationChangeObserver(AudioSessionConfigurationChangeObserver&)
 {
     notImplemented();
 }

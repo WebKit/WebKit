@@ -2467,7 +2467,7 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
         // to the old parser).
         --relativeEndPosition;
 
-        ASSERT(scannerPosition + relativeEndPosition < string.length());
+        ASSERT(static_cast<unsigned>(scannerPosition + relativeEndPosition) < string.length());
 
         m_tree.insertTextNode(string.substring(scannerPosition, relativeStartPosition));
         insertPhoneNumberLink(string.substring(scannerPosition + relativeStartPosition, relativeEndPosition - relativeStartPosition + 1));

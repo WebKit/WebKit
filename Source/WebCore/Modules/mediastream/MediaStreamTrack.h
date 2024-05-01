@@ -55,8 +55,8 @@ class MediaStreamTrack
     : public RefCounted<MediaStreamTrack>
     , public ActiveDOMObject
     , public EventTarget
-    , private MediaStreamTrackPrivate::Observer
-    , private PlatformMediaSession::AudioCaptureSource
+    , private MediaStreamTrackPrivateObserver
+    , private AudioCaptureSource
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -203,7 +203,7 @@ private:
     void derefEventTarget() final { deref(); }
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaStreamTrack; }
 
-    // MediaStreamTrackPrivate::Observer
+    // MediaStreamTrackPrivateObserver
     void trackStarted(MediaStreamTrackPrivate&) final;
     void trackEnded(MediaStreamTrackPrivate&) final;
     void trackMutedChanged(MediaStreamTrackPrivate&) final;
@@ -211,7 +211,7 @@ private:
     void trackEnabledChanged(MediaStreamTrackPrivate&) final;
     void trackConfigurationChanged(MediaStreamTrackPrivate&) final;
 
-    // PlatformMediaSession::AudioCaptureSource
+    // AudioCaptureSource
     bool isCapturingAudio() const final;
     bool wantsToCaptureAudio() const final;
 

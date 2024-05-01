@@ -45,6 +45,15 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class CachedResource;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CachedResource> : std::true_type { };
+}
+
+namespace WebCore {
 
 class CachedResourceClient;
 class CachedResourceHandleBase;

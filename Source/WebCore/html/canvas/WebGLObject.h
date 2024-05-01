@@ -85,7 +85,7 @@ private:
 
 class WebGLObject : public RefCounted<WebGLObject> {
 public:
-    virtual ~WebGLObject() = default;
+    virtual ~WebGLObject();
 
     WebGLRenderingContextBase* context() const;
     GraphicsContextGL* graphicsContextGL() const;

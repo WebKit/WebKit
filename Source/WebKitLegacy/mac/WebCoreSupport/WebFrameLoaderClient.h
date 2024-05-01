@@ -41,6 +41,13 @@
 @class WebHistoryItem;
 @class WebResource;
 
+class WebFrameLoaderClient;
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebFrameLoaderClient> : std::true_type { };
+}
+
 namespace PAL {
 class SessionID;
 }

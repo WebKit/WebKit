@@ -33,6 +33,15 @@
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class MediaKeySystemPermissionRequestManagerProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::MediaKeySystemPermissionRequestManagerProxy> : std::true_type { };
+}
+
 namespace WebCore {
 class SecurityOrigin;
 };

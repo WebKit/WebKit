@@ -58,6 +58,15 @@
 #endif
 
 namespace WebCore {
+class MockDisplayCapturer;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MockDisplayCapturer> : std::true_type { };
+}
+
+namespace WebCore {
 
 static inline Vector<MockMediaDevice> defaultDevices()
 {

@@ -38,6 +38,15 @@
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class StorageAreaMap;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::StorageAreaMap> : std::true_type { };
+}
+
 namespace WebCore {
 class SecurityOrigin;
 class StorageMap;

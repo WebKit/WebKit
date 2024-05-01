@@ -34,26 +34,35 @@ OBJC_CLASS NSSet;
 OBJC_CLASS RBSProcessMonitor;
 
 namespace WebKit {
+class EndowmentStateTrackerClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::EndowmentStateTrackerClient> : std::true_type { };
+}
+
+namespace WebKit {
 
 class WebPageProxy;
+
+class EndowmentStateTrackerClient : public CanMakeWeakPtr<EndowmentStateTrackerClient> {
+public:
+    virtual ~EndowmentStateTrackerClient() = default;
+    virtual void isUserFacingChanged(bool) { }
+    virtual void isVisibleChanged(bool) { }
+};
 
 class EndowmentStateTracker {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static EndowmentStateTracker& singleton();
 
-    class Client : public CanMakeWeakPtr<Client> {
-    public:
-        virtual ~Client() = default;
-        virtual void isUserFacingChanged(bool) { }
-        virtual void isVisibleChanged(bool) { }
-    };
-
     bool isVisible() const { return ensureState().isVisible; }
     bool isUserFacing() const { return ensureState().isUserFacing; }
 
-    void addClient(Client&);
-    void removeClient(Client&);
+    void addClient(EndowmentStateTrackerClient&);
+    void removeClient(EndowmentStateTrackerClient&);
 
     static bool isApplicationForeground(pid_t);
 
@@ -71,7 +80,7 @@ private:
     const State& ensureState() const;
     void setState(State&&);
 
-    WeakHashSet<Client> m_clients;
+    WeakHashSet<EndowmentStateTrackerClient> m_clients;
     RetainPtr<RBSProcessMonitor> m_processMonitor;
     mutable std::optional<State> m_state;
 };

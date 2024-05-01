@@ -33,6 +33,15 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class MediaPlaybackTargetPickerMock;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaPlaybackTargetPickerMock> : std::true_type { };
+}
+
+namespace WebCore {
 
 class MediaPlaybackTargetPickerMock final : public MediaPlaybackTargetPicker, public CanMakeWeakPtr<MediaPlaybackTargetPickerMock> {
     WTF_MAKE_FAST_ALLOCATED;

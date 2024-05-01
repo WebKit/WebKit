@@ -33,6 +33,17 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+namespace LayoutIntegration {
+struct InlineContent;
+}
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LayoutIntegration::InlineContent> : std::true_type { };
+}
+
+namespace WebCore {
 
 class RenderBlockFlow;
 class RenderObject;

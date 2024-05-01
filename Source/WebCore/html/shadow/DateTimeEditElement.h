@@ -34,23 +34,32 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class DateTimeEditElementEditControlOwner;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::DateTimeEditElementEditControlOwner> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Locale;
 
-class DateTimeEditElement final : public HTMLDivElement, public DateTimeFieldElement::FieldOwner {
+class DateTimeEditElementEditControlOwner : public CanMakeWeakPtr<DateTimeEditElementEditControlOwner> {
+public:
+    virtual ~DateTimeEditElementEditControlOwner();
+    virtual void didBlurFromControl() = 0;
+    virtual void didChangeValueFromControl() = 0;
+    virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const = 0;
+    virtual bool isEditControlOwnerDisabled() const = 0;
+    virtual bool isEditControlOwnerReadOnly() const = 0;
+    virtual AtomString localeIdentifier() const = 0;
+};
+
+class DateTimeEditElement final : public HTMLDivElement, public DateTimeFieldElementFieldOwner {
     WTF_MAKE_ISO_ALLOCATED(DateTimeEditElement);
 public:
-    class EditControlOwner : public CanMakeWeakPtr<EditControlOwner> {
-    public:
-        virtual ~EditControlOwner();
-        virtual void didBlurFromControl() = 0;
-        virtual void didChangeValueFromControl() = 0;
-        virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const = 0;
-        virtual bool isEditControlOwnerDisabled() const = 0;
-        virtual bool isEditControlOwnerReadOnly() const = 0;
-        virtual AtomString localeIdentifier() const = 0;
-    };
-
     struct LayoutParameters {
         String dateTimeFormat;
         String fallbackDateTimeFormat;
@@ -63,7 +72,7 @@ public:
         }
     };
 
-    static Ref<DateTimeEditElement> create(Document&, EditControlOwner&);
+    static Ref<DateTimeEditElement> create(Document&, DateTimeEditElementEditControlOwner&);
 
     virtual ~DateTimeEditElement();
     void addField(Ref<DateTimeFieldElement>);
@@ -88,7 +97,7 @@ private:
     // 8. AM/PM
     static constexpr int maximumNumberOfFields = 8;
 
-    DateTimeEditElement(Document&, EditControlOwner&);
+    DateTimeEditElement(Document&, DateTimeEditElementEditControlOwner&);
 
     size_t fieldIndexOf(const DateTimeFieldElement&) const;
     DateTimeFieldElement* focusedFieldElement() const;
@@ -97,7 +106,7 @@ private:
 
     bool focusOnNextFocusableField(size_t startIndex);
 
-    // DateTimeFieldElement::FieldOwner functions:
+    // DateTimeFieldElementFieldOwner functions:
     void didBlurFromField(Event&) final;
     void fieldValueChanged() final;
     bool focusOnNextField(const DateTimeFieldElement&) final;
@@ -109,7 +118,7 @@ private:
     const GregorianDateTime& placeholderDate() const final;
 
     Vector<Ref<DateTimeFieldElement>, maximumNumberOfFields> m_fields;
-    WeakPtr<EditControlOwner> m_editControlOwner;
+    WeakPtr<DateTimeEditElementEditControlOwner> m_editControlOwner;
     GregorianDateTime m_placeholderDate;
 };
 

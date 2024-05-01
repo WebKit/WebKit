@@ -52,7 +52,7 @@ private:
     // RTCDtlsTransportBackend
     const void* backend() const final { return m_backend.get(); }
     UniqueRef<RTCIceTransportBackend> iceTransportBackend() final;
-    void registerClient(Client&) final;
+    void registerClient(RTCDtlsTransportBackendClient&) final;
     void unregisterClient() final;
 
     rtc::scoped_refptr<webrtc::DtlsTransportInterface> m_backend;

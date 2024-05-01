@@ -32,6 +32,15 @@
 #include <WebCore/SpeechSynthesisClient.h>
 
 namespace WebKit {
+class WebSpeechSynthesisClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSpeechSynthesisClient> : std::true_type { };
+}
+
+namespace WebKit {
 
 class WebPage;
     

@@ -30,6 +30,17 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class SpeechSynthesisClientObserver;
+class SpeechSynthesisClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SpeechSynthesisClientObserver> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SpeechSynthesisClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class PlatformSpeechSynthesisUtterance;
 class SpeechSynthesisClientObserver;

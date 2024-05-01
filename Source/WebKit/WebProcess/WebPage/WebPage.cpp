@@ -341,7 +341,6 @@
 #include "WebRemoteObjectRegistry.h"
 #include <WebCore/LegacyWebArchive.h>
 #include <WebCore/TextPlaceholderElement.h>
-#include <pal/cf/CoreTextSoftLink.h>
 #include <pal/spi/cg/ImageIOSPI.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
@@ -447,6 +446,14 @@
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 #include "UnifiedTextReplacementController.h"
+#endif
+
+#if ENABLE(PDF_HUD)
+#include "PDFPluginBase.h"
+#endif
+
+#if PLATFORM(COCOA)
+#include <pal/cf/CoreTextSoftLink.h>
 #endif
 
 namespace WebKit {

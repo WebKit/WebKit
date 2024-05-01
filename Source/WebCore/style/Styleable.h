@@ -179,7 +179,8 @@ struct Styleable {
     void elementWasRemoved() const;
 
     void willChangeRenderer() const;
-    void cancelStyleOriginatedAnimations(const WeakStyleOriginatedAnimations& = { }) const;
+    void cancelStyleOriginatedAnimations() const;
+    void cancelStyleOriginatedAnimations(const WeakStyleOriginatedAnimations&) const;
 
     void animationWasAdded(WebAnimation&) const;
     void animationWasRemoved(WebAnimation&) const;

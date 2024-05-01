@@ -47,7 +47,7 @@ class DateComponents;
 struct DateTimeChooserParameters;
 
 // A super class of date, datetime, datetime-local, month, time, and week types.
-class BaseDateAndTimeInputType : public InputType, private DateTimeChooserClient, private DateTimeEditElement::EditControlOwner {
+class BaseDateAndTimeInputType : public InputType, private DateTimeChooserClient, private DateTimeEditElementEditControlOwner {
 public:
     bool typeMismatchFor(const String&) const final;
     bool valueMissing(const String&) const final;
@@ -133,7 +133,7 @@ private:
     void handleFocusEvent(Node* oldFocusedNode, FocusDirection) final;
     bool accessKeyAction(bool sendMouseEvents) final;
 
-    // DateTimeEditElement::EditControlOwner functions:
+    // DateTimeEditElementEditControlOwner functions:
     void didBlurFromControl() final;
     void didChangeValueFromControl() final;
     bool isEditControlOwnerDisabled() const final;

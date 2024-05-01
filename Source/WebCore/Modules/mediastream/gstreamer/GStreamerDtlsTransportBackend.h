@@ -27,6 +27,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class GStreamerDtlsTransportBackend;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::GStreamerDtlsTransportBackend> : std::true_type { };
+}
+
+namespace WebCore {
 
 class GStreamerDtlsTransportBackendObserver;
 
@@ -41,7 +50,7 @@ private:
     // RTCDtlsTransportBackend
     const void* backend() const final { return m_backend.get(); }
     UniqueRef<RTCIceTransportBackend> iceTransportBackend() final;
-    void registerClient(Client&) final;
+    void registerClient(RTCDtlsTransportBackendClient&) final;
     void unregisterClient() final;
 
     GRefPtr<GstWebRTCDTLSTransport> m_backend;

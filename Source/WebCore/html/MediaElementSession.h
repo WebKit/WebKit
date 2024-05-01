@@ -36,6 +36,15 @@
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
+class MediaElementSession;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaElementSession> : std::true_type { };
+}
+
+namespace WebCore {
 
 enum class MediaSessionMainContentPurpose { MediaControls, Autoplay };
 enum class MediaPlaybackState { Playing, Paused };
@@ -51,7 +60,7 @@ class Document;
 class HTMLMediaElement;
 class MediaMetadata;
 class MediaSession;
-class MediaSessionObserver;
+class MediaElementSessionObserver;
 class SourceBuffer;
 
 struct MediaPositionState;
@@ -241,7 +250,7 @@ private:
     
 #if ENABLE(MEDIA_SESSION)
     bool m_isScrubbing { false };
-    std::unique_ptr<MediaSessionObserver> m_observer;
+    std::unique_ptr<MediaElementSessionObserver> m_observer;
 #endif
 };
 

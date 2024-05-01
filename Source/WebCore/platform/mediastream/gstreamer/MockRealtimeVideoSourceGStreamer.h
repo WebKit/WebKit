@@ -29,12 +29,12 @@
 
 namespace WebCore {
 
-class MockRealtimeVideoSourceGStreamer final : public MockRealtimeVideoSource, GStreamerCapturer::Observer {
+class MockRealtimeVideoSourceGStreamer final : public MockRealtimeVideoSource, GStreamerCapturerObserver {
 public:
     MockRealtimeVideoSourceGStreamer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, PageIdentifier);
     ~MockRealtimeVideoSourceGStreamer();
 
-    // GStreamerCapturer::Observer
+    // GStreamerCapturerObserver
     void captureEnded() final;
 
 private:

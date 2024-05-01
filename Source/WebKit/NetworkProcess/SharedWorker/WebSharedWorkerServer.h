@@ -35,6 +35,15 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class WebSharedWorkerServer;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSharedWorkerServer> : std::true_type { };
+}
+
 namespace PAL {
 class SessionID;
 }

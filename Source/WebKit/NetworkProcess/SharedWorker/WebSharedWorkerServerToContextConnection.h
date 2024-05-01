@@ -35,6 +35,15 @@
 #include <WebCore/TransferredMessagePort.h>
 #include <wtf/CheckedRef.h>
 
+namespace WebKit {
+class WebSharedWorkerServerToContextConnection;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSharedWorkerServerToContextConnection> : std::true_type { };
+}
+
 namespace WebCore {
 class RegistrableDomain;
 class ScriptBuffer;

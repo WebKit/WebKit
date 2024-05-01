@@ -34,7 +34,7 @@ class LocalFrame;
 
 namespace WebKit {
 
-class WebAutomationDOMWindowObserver final : public RefCounted<WebAutomationDOMWindowObserver>, public WebCore::LocalDOMWindow::Observer {
+class WebAutomationDOMWindowObserver final : public RefCounted<WebAutomationDOMWindowObserver>, public WebCore::LocalDOMWindowObserver {
 public:
     static Ref<WebAutomationDOMWindowObserver> create(WebCore::LocalDOMWindow& window, WTF::Function<void(WebAutomationDOMWindowObserver&)>&& callback)
     {

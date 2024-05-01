@@ -30,6 +30,16 @@
 #include <WebCore/ColorChooser.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class WebColorChooser;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebColorChooser> : std::true_type { };
+}
+
+
 namespace WebCore {
 class Color;
 class ColorChooserClient;

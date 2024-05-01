@@ -45,7 +45,7 @@ class TextControlInnerTextElement;
 
 // The class represents types of which UI contain text fields.
 // It supports not only the types for BaseTextInputType but also type=number.
-class TextFieldInputType : public InputType, protected SpinButtonElement::SpinButtonOwner, protected AutoFillButtonElement::AutoFillButtonOwner
+class TextFieldInputType : public InputType, protected SpinButtonOwner, protected AutoFillButtonElement::AutoFillButtonOwner
 #if ENABLE(DATALIST_ELEMENT)
     , private DataListSuggestionsClient, protected DataListButtonElement::DataListButtonOwner
 #endif
@@ -105,7 +105,7 @@ private:
     void updateAutoFillButton() final;
     void elementDidBlur() final;
 
-    // SpinButtonElement::SpinButtonOwner functions.
+    // SpinButtonOwner functions.
     void focusAndSelectSpinButtonOwner() final;
     bool shouldSpinButtonRespondToMouseEvents() const final;
     bool shouldSpinButtonRespondToWheelEvents() const final;

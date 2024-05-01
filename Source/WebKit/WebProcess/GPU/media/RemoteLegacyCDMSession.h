@@ -32,6 +32,15 @@
 #include <WebCore/LegacyCDMSession.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class RemoteLegacyCDMSession;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLegacyCDMSession> : std::true_type { };
+}
+
 namespace WebCore {
 class SharedBuffer;
 }

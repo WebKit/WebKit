@@ -45,6 +45,15 @@ class Logger;
 #endif
 
 namespace WebCore {
+class CDMInstanceClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CDMInstanceClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class CDMInstanceSession;
 struct CDMKeySystemConfiguration;

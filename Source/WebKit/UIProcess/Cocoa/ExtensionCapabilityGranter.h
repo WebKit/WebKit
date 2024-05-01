@@ -35,6 +35,17 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+class ExtensionCapabilityGranter;
+struct ExtensionCapabilityGranterClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ExtensionCapabilityGranter> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ExtensionCapabilityGranterClient> : std::true_type { };
+}
+
+namespace WebKit {
 
 class ExtensionCapability;
 class ExtensionCapabilityGrant;
@@ -43,18 +54,18 @@ class MediaCapability;
 class WebPageProxy;
 class WebProcessProxy;
 
+struct ExtensionCapabilityGranterClient : public CanMakeWeakPtr<ExtensionCapabilityGranterClient> {
+    virtual ~ExtensionCapabilityGranterClient() = default;
+
+    virtual RefPtr<GPUProcessProxy> gpuProcessForCapabilityGranter(const ExtensionCapabilityGranter&) = 0;
+    virtual RefPtr<WebProcessProxy> webProcessForCapabilityGranter(const ExtensionCapabilityGranter&, const String& environmentIdentifier) = 0;
+};
+
 class ExtensionCapabilityGranter : public CanMakeWeakPtr<ExtensionCapabilityGranter> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ExtensionCapabilityGranter);
 public:
-    struct Client : public CanMakeWeakPtr<Client> {
-        virtual ~Client() = default;
-
-        virtual RefPtr<GPUProcessProxy> gpuProcessForCapabilityGranter(const ExtensionCapabilityGranter&) = 0;
-        virtual RefPtr<WebProcessProxy> webProcessForCapabilityGranter(const ExtensionCapabilityGranter&, const String& environmentIdentifier) = 0;
-    };
-
-    static UniqueRef<ExtensionCapabilityGranter> create(Client&);
+    static UniqueRef<ExtensionCapabilityGranter> create(ExtensionCapabilityGranterClient&);
 
     void grant(const ExtensionCapability&);
     void revoke(const ExtensionCapability&);
@@ -63,10 +74,10 @@ public:
     void invalidateGrants(Vector<ExtensionCapabilityGrant>&&);
 
 private:
-    friend UniqueRef<ExtensionCapabilityGranter> WTF::makeUniqueRefWithoutFastMallocCheck(Client&);
-    explicit ExtensionCapabilityGranter(Client&);
+    friend UniqueRef<ExtensionCapabilityGranter> WTF::makeUniqueRefWithoutFastMallocCheck(ExtensionCapabilityGranterClient&);
+    explicit ExtensionCapabilityGranter(ExtensionCapabilityGranterClient&);
 
-    WeakRef<Client> m_client;
+    WeakRef<ExtensionCapabilityGranterClient> m_client;
 };
 
 } // namespace WebKit

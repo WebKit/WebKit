@@ -41,7 +41,7 @@ namespace WebKit {
 class WebPage;
 class RepaintIndicatorLayerClient;
 
-class WebInspectorClient : public WebCore::InspectorClient, private WebCore::PageOverlay::Client {
+class WebInspectorClient : public WebCore::InspectorClient, private WebCore::PageOverlayClient {
     WTF_MAKE_FAST_ALLOCATED;
 friend class RepaintIndicatorLayerClient;
 public:
@@ -79,7 +79,7 @@ private:
     bool setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit) final;
 #endif
 
-    // PageOverlay::Client
+    // PageOverlayClient
     void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
     void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect&) override;

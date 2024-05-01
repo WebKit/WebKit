@@ -33,6 +33,15 @@
 #include <WebCore/WorkerInitializationData.h>
 #include <pal/SessionID.h>
 
+namespace WebKit {
+class WebSharedWorkerServerConnection;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSharedWorkerServerConnection> : std::true_type { };
+}
+
 namespace WebCore {
 class ResourceError;
 struct SharedWorkerKey;

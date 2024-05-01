@@ -33,10 +33,19 @@
 OBJC_CLASS NSData;
 
 namespace WebKit {
+class MockCcidService;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::MockCcidService> : std::true_type { };
+}
+
+namespace WebKit {
 
 class MockCcidService final : public CcidService {
 public:
-    MockCcidService(Observer&, const WebCore::MockWebAuthenticationConfiguration&);
+    MockCcidService(AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
 
     RetainPtr<NSData> nextReply();
 

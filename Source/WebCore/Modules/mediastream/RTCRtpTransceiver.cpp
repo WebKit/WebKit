@@ -50,6 +50,8 @@ RTCRtpTransceiver::RTCRtpTransceiver(Ref<RTCRtpSender>&& sender, Ref<RTCRtpRecei
 {
 }
 
+RTCRtpTransceiver::~RTCRtpTransceiver() = default;
+
 String RTCRtpTransceiver::mid() const
 {
     return m_backend ? m_backend->mid() : String { };

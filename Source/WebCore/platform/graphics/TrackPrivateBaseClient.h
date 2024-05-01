@@ -31,6 +31,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class TrackPrivateBaseClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TrackPrivateBaseClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 using TrackID = uint64_t;
 

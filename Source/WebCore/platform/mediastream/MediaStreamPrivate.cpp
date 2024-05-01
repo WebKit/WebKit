@@ -89,19 +89,19 @@ MediaStreamPrivate::~MediaStreamPrivate()
         track->removeObserver(*this);
 }
 
-void MediaStreamPrivate::addObserver(Observer& observer)
+void MediaStreamPrivate::addObserver(MediaStreamPrivateObserver& observer)
 {
     ASSERT(isMainThread());
     m_observers.add(observer);
 }
 
-void MediaStreamPrivate::removeObserver(Observer& observer)
+void MediaStreamPrivate::removeObserver(MediaStreamPrivateObserver& observer)
 {
     ASSERT(isMainThread());
     m_observers.remove(observer);
 }
 
-void MediaStreamPrivate::forEachObserver(const Function<void(Observer&)>& apply)
+void MediaStreamPrivate::forEachObserver(const Function<void(MediaStreamPrivateObserver&)>& apply)
 {
     ASSERT(isMainThread());
     Ref protectedThis { *this };

@@ -53,7 +53,7 @@ class WeakPtrImplWithEventTargetData;
 enum class RenderingUpdateStep : uint32_t;
 struct GapRects;
 
-class ImageOverlayController final : private PageOverlay::Client
+class ImageOverlayController final : private PageOverlayClient
 #if PLATFORM(MAC)
     , DataDetectorHighlightClient
 #endif

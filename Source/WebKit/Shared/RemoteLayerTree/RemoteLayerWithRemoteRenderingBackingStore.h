@@ -28,6 +28,15 @@
 #include "RemoteLayerBackingStore.h"
 
 namespace WebKit {
+class RemoteLayerWithRemoteRenderingBackingStore;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLayerWithRemoteRenderingBackingStore> : std::true_type { };
+}
+
+namespace WebKit {
 
 class RemoteDisplayListRecorderProxy;
 class RemoteImageBufferSetProxy;

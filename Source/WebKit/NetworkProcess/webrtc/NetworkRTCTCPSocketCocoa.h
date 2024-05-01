@@ -31,6 +31,15 @@
 #include <Network/Network.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class NetworkRTCTCPSocketCocoa;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkRTCTCPSocketCocoa> : std::true_type { };
+}
+
 namespace rtc {
 class SocketAddress;
 }

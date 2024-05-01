@@ -45,7 +45,7 @@ enum class RenderingUpdateStep : uint32_t;
 
 struct GapRects;
 
-class ServicesOverlayController : private DataDetectorHighlightClient, private PageOverlay::Client {
+class ServicesOverlayController : private DataDetectorHighlightClient, private PageOverlayClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ServicesOverlayController(Page&);
@@ -55,7 +55,7 @@ public:
     void selectionRectsDidChange(const Vector<LayoutRect>&, const Vector<GapRects>&, bool isTextOnly);
 
 private:
-    // PageOverlay::Client
+    // PageOverlayClient
     void willMoveToPage(PageOverlay&, Page*) override;
     void didMoveToPage(PageOverlay&, Page*) override;
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;

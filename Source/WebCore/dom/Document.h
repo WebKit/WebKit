@@ -937,7 +937,7 @@ public:
     void setAutofocusProcessed() { m_isAutofocusProcessed = true; }
 
     void appendAutofocusCandidate(Element&);
-    void clearAutofocusCandidates() { m_autofocusCandidates.clear(); }
+    void clearAutofocusCandidates();
     void flushAutofocusCandidates();
 
     void hoveredElementDidDetach(Element&);

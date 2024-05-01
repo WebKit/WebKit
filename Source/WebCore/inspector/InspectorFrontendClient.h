@@ -49,6 +49,15 @@ using ExtensionTabID = String;
 #endif
 
 namespace WebCore {
+class InspectorFrontendClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::InspectorFrontendClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class FloatRect;
 class InspectorFrontendAPIDispatcher;

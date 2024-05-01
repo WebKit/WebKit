@@ -30,6 +30,17 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+namespace PCM {
+class Database;
+}
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PCM::Database> : std::true_type { };
+}
+
 namespace WebKit::PCM {
 
 struct DebugInfo;

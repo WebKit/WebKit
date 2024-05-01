@@ -36,6 +36,15 @@
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
+class AudioMediaStreamTrackRendererUnit;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AudioMediaStreamTrackRendererUnit> : std::true_type { };
+}
+
+namespace WebCore {
 
 class AudioSampleDataSource;
 class AudioSampleBufferList;

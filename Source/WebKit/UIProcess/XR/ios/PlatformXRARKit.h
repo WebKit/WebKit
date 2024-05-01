@@ -67,7 +67,7 @@ private:
     struct Idle {
     };
     struct Active {
-        WeakPtr<PlatformXRCoordinator::SessionEventClient> sessionEventClient;
+        WeakPtr<PlatformXRCoordinatorSessionEventClient> sessionEventClient;
         WebCore::PageIdentifier pageIdentifier;
         Box<RenderState> renderState;
         RefPtr<Thread> renderThread;

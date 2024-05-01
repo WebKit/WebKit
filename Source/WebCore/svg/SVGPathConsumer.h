@@ -29,6 +29,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class SVGPathConsumer;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SVGPathConsumer> : std::true_type { };
+}
+
+namespace WebCore {
 
 enum PathCoordinateMode {
     AbsoluteCoordinates,

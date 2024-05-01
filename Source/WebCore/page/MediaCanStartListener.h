@@ -28,6 +28,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class MediaCanStartListener;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaCanStartListener> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Document;
 

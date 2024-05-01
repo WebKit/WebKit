@@ -39,7 +39,7 @@
 
 namespace WebKit {
 
-MockLocalService::MockLocalService(Observer& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
+MockLocalService::MockLocalService(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
     : LocalService(observer)
     , m_configuration(configuration)
 {

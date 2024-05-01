@@ -37,6 +37,15 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+class PrivateClickMeasurementManager;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PrivateClickMeasurementManager> : std::true_type { };
+}
+
+namespace WebKit {
 
 class PrivateClickMeasurementManager : public PCM::ManagerInterface, public CanMakeWeakPtr<PrivateClickMeasurementManager> {
     WTF_MAKE_FAST_ALLOCATED;

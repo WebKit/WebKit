@@ -48,9 +48,9 @@ enum class VideoFrameRotation : uint16_t;
 class WEBCORE_EXPORT LocalSampleBufferDisplayLayer final : public SampleBufferDisplayLayer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<LocalSampleBufferDisplayLayer> create(Client&);
+    static RefPtr<LocalSampleBufferDisplayLayer> create(SampleBufferDisplayLayerClient&);
 
-    LocalSampleBufferDisplayLayer(RetainPtr<AVSampleBufferDisplayLayer>&&, Client&);
+    LocalSampleBufferDisplayLayer(RetainPtr<AVSampleBufferDisplayLayer>&&, SampleBufferDisplayLayerClient&);
     ~LocalSampleBufferDisplayLayer();
 
     // API used by WebAVSampleBufferStatusChangeListener

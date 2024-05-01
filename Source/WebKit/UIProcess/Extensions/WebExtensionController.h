@@ -213,7 +213,7 @@ private:
     void testYielded(String message, String sourceURL, unsigned lineNumber);
     void testFinished(bool result, String message, String sourceURL, unsigned lineNumber);
 
-    class HTTPCookieStoreObserver : public API::HTTPCookieStore::Observer {
+    class HTTPCookieStoreObserver : public API::HTTPCookieStoreObserver {
         WTF_MAKE_FAST_ALLOCATED;
 
     public:

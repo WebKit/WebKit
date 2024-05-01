@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class JSEventListener : public EventListener, public JSVMClientData::Client {
+class JSEventListener : public EventListener, public JSVMClientDataClient {
 public:
     WEBCORE_EXPORT static Ref<JSEventListener> create(JSC::JSObject& listener, JSC::JSObject& wrapper, bool isAttribute, DOMWrapperWorld&);
 
@@ -74,7 +74,7 @@ private:
     void visitJSFunction(JSC::SlotVisitor&) final;
     virtual String code() const { return String(); }
 
-    // JSVMClientData::Client
+    // JSVMClientDataClient
     void willDestroyVM() final;
 
 protected:

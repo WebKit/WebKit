@@ -38,6 +38,15 @@
 
 OBJC_CLASS CALayer;
 
+namespace WebKit {
+class TiledCoreAnimationDrawingArea;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::TiledCoreAnimationDrawingArea> : std::true_type { };
+}
+
 namespace WebCore {
 class LocalFrameView;
 class PlatformCALayer;

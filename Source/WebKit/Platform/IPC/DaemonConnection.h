@@ -36,6 +36,19 @@
 #endif
 
 namespace WebKit {
+namespace Daemon {
+class Connection;
+template<typename Traits> class ConnectionToMachService;
+}
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::Daemon::Connection> : std::true_type { };
+template<typename Traits> struct IsDeprecatedWeakRefSmartPointerException<WebKit::Daemon::ConnectionToMachService<Traits>> : std::true_type { };
+}
+
+namespace WebKit {
 
 namespace Daemon {
 

@@ -78,6 +78,7 @@ class NavigationAction;
 class NetworkingContext;
 class Node;
 class Page;
+class PolicyChecker;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -104,6 +105,7 @@ class FrameLoader final : public CanMakeCheckedPtr<FrameLoader> {
     WTF_MAKE_NONCOPYABLE(FrameLoader);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameLoader);
+    friend class PolicyChecker;
 public:
     FrameLoader(LocalFrame&, UniqueRef<LocalFrameLoaderClient>&&);
     ~FrameLoader();
@@ -114,7 +116,6 @@ public:
     WEBCORE_EXPORT LocalFrame& frame() const;
     WEBCORE_EXPORT Ref<LocalFrame> protectedFrame() const;
 
-    class PolicyChecker;
     PolicyChecker& policyChecker() const { return *m_policyChecker; }
 
     ResourceLoadNotifier& notifier() const { return m_notifier; }

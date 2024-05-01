@@ -35,6 +35,15 @@
 #include <wtf/Seconds.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class UserMediaPermissionRequestManagerProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::UserMediaPermissionRequestManagerProxy> : std::true_type { };
+}
+
 namespace WebCore {
 class CaptureDevice;
 class SecurityOrigin;

@@ -83,6 +83,13 @@ public:
     {
     }
 
+    ~WeakPtr()
+    {
+        static_assert(
+            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_const_t<T>>::value,
+            "Classes that offer weak pointers should also offer RefPtr or CheckedPtr.");
+    }
+
     RefPtr<WeakPtrImpl, PtrTraits> releaseImpl() { return WTFMove(m_impl); }
 
     T* get() const

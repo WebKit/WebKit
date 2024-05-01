@@ -31,6 +31,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class CSSCalcSymbolTable;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CSSCalcSymbolTable> : std::true_type { };
+}
+
+namespace WebCore {
 
 enum class CSSUnitType : uint8_t;
 

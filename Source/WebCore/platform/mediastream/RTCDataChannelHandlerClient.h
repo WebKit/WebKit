@@ -33,6 +33,15 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class RTCDataChannelHandlerClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::RTCDataChannelHandlerClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class RTCError;
 

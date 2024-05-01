@@ -35,6 +35,15 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class MediaSessionCoordinatorClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaSessionCoordinatorClient> : std::true_type { };
+}
+
 namespace WTF {
 class Logger;
 }

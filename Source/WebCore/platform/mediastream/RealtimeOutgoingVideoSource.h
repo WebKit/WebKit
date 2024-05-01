@@ -51,7 +51,7 @@ namespace WebCore {
 class RealtimeOutgoingVideoSource
     : public ThreadSafeRefCounted<RealtimeOutgoingVideoSource, WTF::DestructionThread::Main>
     , public webrtc::VideoTrackSourceInterface
-    , private MediaStreamTrackPrivate::Observer
+    , private MediaStreamTrackPrivateObserver
     , private RealtimeMediaSource::VideoFrameObserver
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
@@ -106,9 +106,9 @@ private:
     void observeSource();
     void unobserveSource();
 
-    using MediaStreamTrackPrivate::Observer::weakPtrFactory;
-    using MediaStreamTrackPrivate::Observer::WeakValueType;
-    using MediaStreamTrackPrivate::Observer::WeakPtrImplType;
+    using MediaStreamTrackPrivateObserver::weakPtrFactory;
+    using MediaStreamTrackPrivateObserver::WeakValueType;
+    using MediaStreamTrackPrivateObserver::WeakPtrImplType;
 
     // Notifier API
     void RegisterObserver(webrtc::ObserverInterface*) final { }
@@ -135,7 +135,7 @@ private:
     void sourceEnabledChanged();
     void startObservingVideoFrames();
 
-    // MediaStreamTrackPrivate::Observer API
+    // MediaStreamTrackPrivateObserver API
     void trackMutedChanged(MediaStreamTrackPrivate&) final { sourceMutedChanged(); }
     void trackEnabledChanged(MediaStreamTrackPrivate&) final { sourceEnabledChanged(); }
     void trackSettingsChanged(MediaStreamTrackPrivate&) final { initializeFromSource(); }

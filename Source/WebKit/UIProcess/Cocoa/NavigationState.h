@@ -42,6 +42,15 @@
 @protocol WKHistoryDelegatePrivate;
 @protocol WKNavigationDelegate;
 
+namespace WebKit {
+class NavigationState;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NavigationState> : std::true_type { };
+}
+
 namespace API {
 class Navigation;
 }

@@ -38,6 +38,15 @@
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
+namespace WebCore {
+class MutationObserverRegistration;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MutationObserverRegistration> : std::true_type { };
+}
+
 namespace JSC {
 class AbstractSlotVisitor;
 }

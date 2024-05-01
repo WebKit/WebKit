@@ -32,6 +32,15 @@
 #include "XRDeviceProxy.h"
 #include <WebCore/PlatformXR.h>
 
+namespace WebKit {
+class PlatformXRSystemProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PlatformXRSystemProxy> : std::true_type { };
+}
+
 namespace WebCore {
 class SecurityOriginData;
 }

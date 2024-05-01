@@ -41,6 +41,15 @@
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakRef.h>
 
+namespace WebKit {
+class DrawingAreaProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::DrawingAreaProxy> : std::true_type { };
+}
+
 #if PLATFORM(COCOA)
 namespace WTF {
 class MachSendRight;

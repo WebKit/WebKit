@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class MediaPlaybackTargetPickerMac final : public MediaPlaybackTargetPicker, public AVPlaybackTargetPicker::Client {
+class MediaPlaybackTargetPickerMac final : public MediaPlaybackTargetPicker, public AVPlaybackTargetPickerClient {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(MediaPlaybackTargetPickerMac);
 public:
@@ -50,7 +50,7 @@ private:
     bool externalOutputDeviceAvailable() final;
     Ref<MediaPlaybackTarget> playbackTarget() final;
 
-    // AVPlaybackTargetPicker::Client
+    // AVPlaybackTargetPickerClient
     void pickerWasDismissed() final;
     void availableDevicesChanged() final;
     void currentDeviceChanged() final;

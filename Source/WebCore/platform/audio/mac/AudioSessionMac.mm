@@ -559,7 +559,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return muteAddress;
 }
 
-void AudioSessionMac::addConfigurationChangeObserver(ConfigurationChangeObserver& observer)
+void AudioSessionMac::addConfigurationChangeObserver(AudioSessionConfigurationChangeObserver& observer)
 {
     m_configurationChangeObservers.add(observer);
 
@@ -569,7 +569,7 @@ void AudioSessionMac::addConfigurationChangeObserver(ConfigurationChangeObserver
     addMuteChangeObserverIfNeeded();
 }
 
-void AudioSessionMac::removeConfigurationChangeObserver(ConfigurationChangeObserver& observer)
+void AudioSessionMac::removeConfigurationChangeObserver(AudioSessionConfigurationChangeObserver& observer)
 {
     if (m_configurationChangeObservers.computeSize() == 1)
         removeMuteChangeObserverIfNeeded();

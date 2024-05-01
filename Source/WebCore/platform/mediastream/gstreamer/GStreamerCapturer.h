@@ -31,27 +31,35 @@
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
+class GStreamerCapturerObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::GStreamerCapturerObserver> : std::true_type { };
+}
+
+namespace WebCore {
+
+class GStreamerCapturerObserver : public CanMakeWeakPtr<GStreamerCapturerObserver> {
+public:
+    virtual ~GStreamerCapturerObserver();
+
+    virtual void sourceCapsChanged(const GstCaps*) { }
+    virtual void captureEnded() { }
+};
 
 class GStreamerCapturer : public ThreadSafeRefCounted<GStreamerCapturer> {
-
 public:
-    class Observer : public CanMakeWeakPtr<Observer> {
-    public:
-        virtual ~Observer();
-
-        virtual void sourceCapsChanged(const GstCaps*) { }
-        virtual void captureEnded() { }
-    };
-
     GStreamerCapturer(GStreamerCaptureDevice&&, GRefPtr<GstCaps>&&);
     GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>&&, CaptureDevice::DeviceType);
     virtual ~GStreamerCapturer();
 
     void tearDown(bool disconnectSignals = true);
 
-    void addObserver(Observer&);
-    void removeObserver(Observer&);
-    void forEachObserver(const Function<void(Observer&)>&);
+    void addObserver(GStreamerCapturerObserver&);
+    void removeObserver(GStreamerCapturerObserver&);
+    void forEachObserver(const Function<void(GStreamerCapturerObserver&)>&);
 
     void setupPipeline();
     void start();
@@ -88,7 +96,7 @@ protected:
 
 private:
     CaptureDevice::DeviceType m_deviceType;
-    WeakHashSet<Observer> m_observers;
+    WeakHashSet<GStreamerCapturerObserver> m_observers;
 };
 
 } // namespace WebCore

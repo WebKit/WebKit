@@ -34,6 +34,15 @@ OBJC_CLASS NSHTTPCookieStorage;
 OBJC_CLASS WebCookieObserverAdapter;
 
 namespace WebCore {
+class CookieStorageObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CookieStorageObserver> : std::true_type { };
+}
+
+namespace WebCore {
 
 // Use eager initialization for the WeakPtrFactory since we construct WeakPtrs on a non-main thread.
 class WEBCORE_EXPORT CookieStorageObserver : public CanMakeWeakPtr<CookieStorageObserver, WeakPtrFactoryInitialization::Eager> {

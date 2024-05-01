@@ -155,6 +155,11 @@ WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventList
     return result;
 }
 
+WebExtensionMessagePort::~WebExtensionMessagePort()
+{
+    remove();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

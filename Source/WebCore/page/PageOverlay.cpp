@@ -46,12 +46,12 @@ static PageOverlay::PageOverlayID generatePageOverlayID()
     return ++pageOverlayID;
 }
 
-Ref<PageOverlay> PageOverlay::create(Client& client, OverlayType overlayType, AlwaysTileOverlayLayer alwaysTileOverlayLayer)
+Ref<PageOverlay> PageOverlay::create(PageOverlayClient& client, OverlayType overlayType, AlwaysTileOverlayLayer alwaysTileOverlayLayer)
 {
     return adoptRef(*new PageOverlay(client, overlayType, alwaysTileOverlayLayer));
 }
 
-PageOverlay::PageOverlay(Client& client, OverlayType overlayType, AlwaysTileOverlayLayer alwaysTileOverlayLayer)
+PageOverlay::PageOverlay(PageOverlayClient& client, OverlayType overlayType, AlwaysTileOverlayLayer alwaysTileOverlayLayer)
     : m_client(client)
     , m_fadeAnimationTimer(*this, &PageOverlay::fadeAnimationTimerFired)
     , m_fadeAnimationDuration(fadeAnimationDuration)

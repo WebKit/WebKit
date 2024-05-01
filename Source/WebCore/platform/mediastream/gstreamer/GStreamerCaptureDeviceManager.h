@@ -39,7 +39,7 @@ using NodeAndFD = GStreamerVideoCapturer::NodeAndFD;
 
 void teardownGStreamerCaptureDeviceManagers();
 
-class GStreamerCaptureDeviceManager : public CaptureDeviceManager, public RealtimeMediaSourceCenter::Observer {
+class GStreamerCaptureDeviceManager : public CaptureDeviceManager, public RealtimeMediaSourceCenterObserver {
     WTF_MAKE_NONCOPYABLE(GStreamerCaptureDeviceManager)
 public:
     GStreamerCaptureDeviceManager();
@@ -49,7 +49,7 @@ public:
     const Vector<CaptureDevice>& captureDevices() final;
     virtual CaptureDevice::DeviceType deviceType() = 0;
 
-    // RealtimeMediaSourceCenter::Observer interface.
+    // RealtimeMediaSourceCenterObserver interface.
     void devicesChanged() final;
     void deviceWillBeRemoved(const String& persistentId) final;
 

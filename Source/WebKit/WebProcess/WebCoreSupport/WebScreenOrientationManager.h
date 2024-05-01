@@ -49,11 +49,11 @@ private:
     WebCore::ScreenOrientationType currentOrientation() final;
     void lock(WebCore::ScreenOrientationLockType, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
     void unlock() final;
-    void addObserver(Observer&) final;
-    void removeObserver(Observer&) final;
+    void addObserver(WebCore::ScreenOrientationManagerObserver&) final;
+    void removeObserver(WebCore::ScreenOrientationManagerObserver&) final;
 
     WebPage& m_page;
-    WeakHashSet<Observer> m_observers;
+    WeakHashSet<WebCore::ScreenOrientationManagerObserver> m_observers;
     mutable std::optional<WebCore::ScreenOrientationType> m_currentOrientation;
 };
 

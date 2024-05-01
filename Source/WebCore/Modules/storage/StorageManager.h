@@ -41,6 +41,7 @@ class StorageManager : public RefCounted<StorageManager> {
     WTF_MAKE_ISO_ALLOCATED(StorageManager);
 public:
     static Ref<StorageManager> create(NavigatorBase&);
+    ~StorageManager();
     void persisted(DOMPromiseDeferred<IDLBoolean>&&);
     void persist(DOMPromiseDeferred<IDLBoolean>&&);
     using Estimate = StorageEstimate;

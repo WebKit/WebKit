@@ -130,7 +130,7 @@ public:
     virtual OSStatus produceSpeakerSamples(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&) = 0;
 };
 
-class CoreAudioCaptureSourceFactory : public AudioCaptureFactory, public AudioSession::InterruptionObserver {
+class CoreAudioCaptureSourceFactory : public AudioCaptureFactory, public AudioSessionInterruptionObserver {
 public:
     WEBCORE_EXPORT static CoreAudioCaptureSourceFactory& singleton();
 
@@ -149,7 +149,7 @@ public:
     BaseAudioSharedUnit& unit();
 
 private:
-    // AudioSession::InterruptionObserver.
+    // AudioSessionInterruptionObserver
     void beginAudioSessionInterruption() final { beginInterruption(); }
     void endAudioSessionInterruption(AudioSession::MayResume) final { endInterruption(); }
 

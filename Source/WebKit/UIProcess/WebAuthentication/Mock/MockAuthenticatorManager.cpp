@@ -35,7 +35,7 @@ MockAuthenticatorManager::MockAuthenticatorManager(WebCore::MockWebAuthenticatio
 {
 }
 
-UniqueRef<AuthenticatorTransportService> MockAuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
+UniqueRef<AuthenticatorTransportService> MockAuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer) const
 {
     return AuthenticatorTransportService::createMock(transport, observer, m_testConfiguration);
 }

@@ -32,6 +32,17 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class AuthenticatorTransportService;
+class AuthenticatorTransportServiceObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::AuthenticatorTransportService> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::AuthenticatorTransportServiceObserver> : std::true_type { };
+}
+
 namespace WebCore {
 struct MockWebAuthenticationConfiguration;
 }
@@ -40,20 +51,20 @@ namespace WebKit {
 
 class Authenticator;
 
+class AuthenticatorTransportServiceObserver : public CanMakeWeakPtr<AuthenticatorTransportServiceObserver> {
+public:
+    virtual ~AuthenticatorTransportServiceObserver() = default;
+
+    virtual void authenticatorAdded(Ref<Authenticator>&&) = 0;
+    virtual void serviceStatusUpdated(WebAuthenticationStatus) = 0;
+};
+
 class AuthenticatorTransportService : public CanMakeWeakPtr<AuthenticatorTransportService> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AuthenticatorTransportService);
 public:
-    class Observer : public CanMakeWeakPtr<Observer> {
-    public:
-        virtual ~Observer() = default;
-
-        virtual void authenticatorAdded(Ref<Authenticator>&&) = 0;
-        virtual void serviceStatusUpdated(WebAuthenticationStatus) = 0;
-    };
-
-    static UniqueRef<AuthenticatorTransportService> create(WebCore::AuthenticatorTransport, Observer&);
-    static UniqueRef<AuthenticatorTransportService> createMock(WebCore::AuthenticatorTransport, Observer&, const WebCore::MockWebAuthenticationConfiguration&);
+    static UniqueRef<AuthenticatorTransportService> create(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&);
+    static UniqueRef<AuthenticatorTransportService> createMock(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
 
     virtual ~AuthenticatorTransportService() = default;
 
@@ -62,9 +73,9 @@ public:
     void restartDiscovery();
 
 protected:
-    explicit AuthenticatorTransportService(Observer&);
+    explicit AuthenticatorTransportService(AuthenticatorTransportServiceObserver&);
 
-    Observer* observer() const { return m_observer.get(); }
+    AuthenticatorTransportServiceObserver* observer() const { return m_observer.get(); }
 
 private:
     virtual void startDiscoveryInternal() = 0;
@@ -72,7 +83,7 @@ private:
     // Therefore, a restart process is needed to resume polling after exceptions.
     virtual void restartDiscoveryInternal() { };
 
-    WeakPtr<Observer> m_observer;
+    WeakPtr<AuthenticatorTransportServiceObserver> m_observer;
 };
 
 } // namespace WebKit

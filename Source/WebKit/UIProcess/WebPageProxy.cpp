@@ -471,7 +471,7 @@ StorageRequests& StorageRequests::singleton()
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
 
-class WebPageProxyFrameLoadStateObserver final : public FrameLoadState::Observer {
+class WebPageProxyFrameLoadStateObserver final : public FrameLoadStateObserver {
     WTF_MAKE_NONCOPYABLE(WebPageProxyFrameLoadStateObserver);
     WTF_MAKE_FAST_ALLOCATED;
 public:

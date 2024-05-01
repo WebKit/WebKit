@@ -80,13 +80,13 @@ static inline RTCIceGatheringState toRTCIceGatheringState(cricket::IceGatheringS
 
 class LibWebRTCIceTransportBackendObserver final : public ThreadSafeRefCounted<LibWebRTCIceTransportBackendObserver>, public sigslot::has_slots<> {
 public:
-    static Ref<LibWebRTCIceTransportBackendObserver> create(RTCIceTransportBackend::Client& client, rtc::scoped_refptr<webrtc::IceTransportInterface> backend) { return adoptRef(*new LibWebRTCIceTransportBackendObserver(client, WTFMove(backend))); }
+    static Ref<LibWebRTCIceTransportBackendObserver> create(RTCIceTransportBackendClient& client, rtc::scoped_refptr<webrtc::IceTransportInterface> backend) { return adoptRef(*new LibWebRTCIceTransportBackendObserver(client, WTFMove(backend))); }
 
     void start();
     void stop();
 
 private:
-    LibWebRTCIceTransportBackendObserver(RTCIceTransportBackend::Client&, rtc::scoped_refptr<webrtc::IceTransportInterface>&&);
+    LibWebRTCIceTransportBackendObserver(RTCIceTransportBackendClient&, rtc::scoped_refptr<webrtc::IceTransportInterface>&&);
 
     void onIceTransportStateChanged(cricket::IceTransportInternal*);
     void onGatheringStateChanged(cricket::IceTransportInternal*);
@@ -95,10 +95,10 @@ private:
     void processSelectedCandidatePairChanged(const cricket::Candidate&, const cricket::Candidate&);
 
     rtc::scoped_refptr<webrtc::IceTransportInterface> m_backend;
-    WeakPtr<RTCIceTransportBackend::Client> m_client;
+    WeakPtr<RTCIceTransportBackendClient> m_client;
 };
 
-LibWebRTCIceTransportBackendObserver::LibWebRTCIceTransportBackendObserver(RTCIceTransportBackend::Client& client, rtc::scoped_refptr<webrtc::IceTransportInterface>&& backend)
+LibWebRTCIceTransportBackendObserver::LibWebRTCIceTransportBackendObserver(RTCIceTransportBackendClient& client, rtc::scoped_refptr<webrtc::IceTransportInterface>&& backend)
     : m_backend(WTFMove(backend))
     , m_client(client)
 {
@@ -191,7 +191,7 @@ LibWebRTCIceTransportBackend::~LibWebRTCIceTransportBackend()
 {
 }
 
-void LibWebRTCIceTransportBackend::registerClient(Client& client)
+void LibWebRTCIceTransportBackend::registerClient(RTCIceTransportBackendClient& client)
 {
     ASSERT(!m_observer);
     m_observer = LibWebRTCIceTransportBackendObserver::create(client, m_backend);

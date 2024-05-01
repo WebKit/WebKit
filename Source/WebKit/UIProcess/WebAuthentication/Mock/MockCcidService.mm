@@ -67,7 +67,7 @@
 
 namespace WebKit {
 
-MockCcidService::MockCcidService(Observer& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
+MockCcidService::MockCcidService(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
     : CcidService(observer)
     , m_configuration(configuration)
 {

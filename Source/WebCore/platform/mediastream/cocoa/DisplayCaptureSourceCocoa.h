@@ -43,6 +43,15 @@ using CVPixelBufferRef = struct __CVBuffer*;
 using IOSurfaceRef = struct __IOSurface*;
 using CMSampleBufferRef = struct opaqueCMSampleBuffer*;
 
+namespace WebCore {
+class CapturerObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CapturerObserver> : std::true_type { };
+}
+
 namespace WTF {
 class MediaTime;
 }

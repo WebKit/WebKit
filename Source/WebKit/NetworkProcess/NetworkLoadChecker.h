@@ -35,6 +35,15 @@
 #include <variant>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class NetworkLoadChecker;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkLoadChecker> : std::true_type { };
+}
+
 namespace WebCore {
 class ContentSecurityPolicy;
 class OriginAccessPatterns;

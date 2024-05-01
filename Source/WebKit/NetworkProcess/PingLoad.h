@@ -34,6 +34,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+class PingLoad;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PingLoad> : std::true_type { };
+}
+
+namespace WebKit {
 
 class NetworkConnectionToWebProcess;
 class NetworkLoadChecker;

@@ -35,6 +35,15 @@
 #include "AudioSampleDataSource.h"
 #endif
 
+namespace WebCore {
+class SpeechRecognitionCaptureSourceImpl;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SpeechRecognitionCaptureSourceImpl> : std::true_type { };
+}
+
 namespace WTF {
 class MediaTime;
 }
@@ -47,7 +56,7 @@ class SpeechRecognitionUpdate;
 enum class SpeechRecognitionUpdateType : uint8_t;
 
 class SpeechRecognitionCaptureSourceImpl final
-    : public RealtimeMediaSource::Observer
+    : public RealtimeMediaSourceObserver
     , public RealtimeMediaSource::AudioSampleObserver
     , public CanMakeCheckedPtr<SpeechRecognitionCaptureSourceImpl> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -73,7 +82,7 @@ private:
     void pullSamplesAndCallDataCallback(AudioSampleDataSource*, const WTF::MediaTime&, const CAAudioStreamDescription&, size_t sampleCount);
 #endif
 
-    // RealtimeMediaSource::Observer
+    // RealtimeMediaSourceObserver
     void sourceStarted() final;
     void sourceStopped() final;
     void sourceMutedChanged() final;

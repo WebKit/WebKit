@@ -123,16 +123,16 @@ static bool pageExplicitlyAllowsElementToAutoplayInline(const HTMLMediaElement& 
 }
 
 #if ENABLE(MEDIA_SESSION)
-class MediaSessionObserver : public MediaSession::Observer {
+class MediaElementSessionObserver : public MediaSessionObserver {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    MediaSessionObserver(MediaElementSession& session, const Ref<MediaSession>& mediaSession)
+    MediaElementSessionObserver(MediaElementSession& session, const Ref<MediaSession>& mediaSession)
         : m_session(session), m_mediaSession(mediaSession)
     {
         m_mediaSession->addObserver(*this);
     }
-    ~MediaSessionObserver()
+    ~MediaElementSessionObserver()
     {
         m_mediaSession->removeObserver(*this);
     }
@@ -1416,7 +1416,7 @@ void MediaElementSession::ensureIsObservingMediaSession()
     auto* session = mediaSession();
     if (!session || m_observer)
         return;
-    m_observer = makeUnique<MediaSessionObserver>(*this, *session);
+    m_observer = makeUnique<MediaElementSessionObserver>(*this, *session);
 #endif
 }
 

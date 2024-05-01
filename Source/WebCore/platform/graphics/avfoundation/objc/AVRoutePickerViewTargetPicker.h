@@ -34,12 +34,21 @@ OBJC_CLASS AVRoutePickerView;
 OBJC_CLASS WebAVRoutePickerViewHelper;
 
 namespace WebCore {
+class AVRoutePickerViewTargetPicker;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AVRoutePickerViewTargetPicker> : std::true_type { };
+}
+
+namespace WebCore {
 
 class AVRoutePickerViewTargetPicker final : public AVPlaybackTargetPicker {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AVRoutePickerViewTargetPicker);
 public:
-    explicit AVRoutePickerViewTargetPicker(AVPlaybackTargetPicker::Client&);
+    explicit AVRoutePickerViewTargetPicker(AVPlaybackTargetPickerClient&);
     virtual ~AVRoutePickerViewTargetPicker();
     
     static bool isAvailable();

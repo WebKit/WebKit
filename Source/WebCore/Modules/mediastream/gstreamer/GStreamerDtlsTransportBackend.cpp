@@ -31,21 +31,21 @@ namespace WebCore {
 
 class GStreamerDtlsTransportBackendObserver final : public ThreadSafeRefCounted<GStreamerDtlsTransportBackendObserver> {
 public:
-    static Ref<GStreamerDtlsTransportBackendObserver> create(RTCDtlsTransportBackend::Client& client, GRefPtr<GstWebRTCDTLSTransport>&& backend) { return adoptRef(*new GStreamerDtlsTransportBackendObserver(client, WTFMove(backend))); }
+    static Ref<GStreamerDtlsTransportBackendObserver> create(RTCDtlsTransportBackendClient& client, GRefPtr<GstWebRTCDTLSTransport>&& backend) { return adoptRef(*new GStreamerDtlsTransportBackendObserver(client, WTFMove(backend))); }
 
     void start();
     void stop();
 
 private:
-    GStreamerDtlsTransportBackendObserver(RTCDtlsTransportBackend::Client&, GRefPtr<GstWebRTCDTLSTransport>&&);
+    GStreamerDtlsTransportBackendObserver(RTCDtlsTransportBackendClient&, GRefPtr<GstWebRTCDTLSTransport>&&);
 
     void stateChanged();
 
     GRefPtr<GstWebRTCDTLSTransport> m_backend;
-    WeakPtr<RTCDtlsTransportBackend::Client> m_client;
+    WeakPtr<RTCDtlsTransportBackendClient> m_client;
 };
 
-GStreamerDtlsTransportBackendObserver::GStreamerDtlsTransportBackendObserver(RTCDtlsTransportBackend::Client& client, GRefPtr<GstWebRTCDTLSTransport>&& backend)
+GStreamerDtlsTransportBackendObserver::GStreamerDtlsTransportBackendObserver(RTCDtlsTransportBackendClient& client, GRefPtr<GstWebRTCDTLSTransport>&& backend)
     : m_backend(WTFMove(backend))
     , m_client(client)
 {
@@ -119,7 +119,7 @@ UniqueRef<RTCIceTransportBackend> GStreamerDtlsTransportBackend::iceTransportBac
     return makeUniqueRef<GStreamerIceTransportBackend>(GRefPtr<GstWebRTCDTLSTransport>(m_backend));
 }
 
-void GStreamerDtlsTransportBackend::registerClient(Client& client)
+void GStreamerDtlsTransportBackend::registerClient(RTCDtlsTransportBackendClient& client)
 {
     m_observer = GStreamerDtlsTransportBackendObserver::create(client, GRefPtr<GstWebRTCDTLSTransport>(m_backend));
     m_observer->start();

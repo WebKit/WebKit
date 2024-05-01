@@ -30,6 +30,15 @@
 #include "WebsiteDataType.h"
 #include <wtf/text/WTFString.h>
 
+namespace WebKit {
+class OriginStorageManager;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::OriginStorageManager> : std::true_type { };
+}
+
 namespace WebCore {
 struct ClientOrigin;
 struct StorageEstimate;

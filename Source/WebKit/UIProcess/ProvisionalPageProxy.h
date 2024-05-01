@@ -39,6 +39,15 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class ProvisionalPageProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ProvisionalPageProxy> : std::true_type { };
+}
+
 namespace API {
 class Navigation;
 }

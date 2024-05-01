@@ -129,12 +129,12 @@ bool RemoteAudioSession::tryToSetActiveInternal(bool active)
     return succeeded;
 }
 
-void RemoteAudioSession::addConfigurationChangeObserver(ConfigurationChangeObserver& observer)
+void RemoteAudioSession::addConfigurationChangeObserver(AudioSessionConfigurationChangeObserver& observer)
 {
     m_configurationChangeObservers.add(observer);
 }
 
-void RemoteAudioSession::removeConfigurationChangeObserver(ConfigurationChangeObserver& observer)
+void RemoteAudioSession::removeConfigurationChangeObserver(AudioSessionConfigurationChangeObserver& observer)
 {
     m_configurationChangeObservers.remove(observer);
 }

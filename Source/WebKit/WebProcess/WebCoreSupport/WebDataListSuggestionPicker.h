@@ -30,6 +30,15 @@
 #include <WebCore/DataListSuggestionPicker.h>
 #include <wtf/WeakRef.h>
 
+namespace WebKit {
+class WebDataListSuggestionPicker;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebDataListSuggestionPicker> : std::true_type { };
+}
+
 namespace WebCore {
 class DataListSuggestionsClient;
 }

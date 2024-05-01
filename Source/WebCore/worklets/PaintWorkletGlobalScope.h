@@ -31,6 +31,15 @@
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Lock.h>
 
+namespace WebCore {
+struct PaintDefinition;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PaintDefinition> : std::true_type { };
+}
+
 namespace JSC {
 class JSObject;
 class VM;
@@ -39,6 +48,18 @@ class VM;
 namespace WebCore {
 class JSDOMGlobalObject;
 
+// All paint definitions must be destroyed before the vm is destroyed, because otherwise they will point to freed memory.
+struct PaintDefinition : public CanMakeWeakPtr<PaintDefinition> {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&&, Vector<AtomString>&& inputProperties, Vector<String>&& inputArguments);
+
+    const AtomString name;
+    const JSC::JSObject* const paintConstructor;
+    const Ref<CSSPaintCallback> paintCallback;
+    const Vector<AtomString> inputProperties;
+    const Vector<String> inputArguments;
+};
+
 class PaintWorkletGlobalScope final : public WorkletGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(PaintWorkletGlobalScope);
 public:
@@ -46,18 +67,6 @@ public:
 
     ExceptionOr<void> registerPaint(JSC::JSGlobalObject&, const AtomString& name, JSC::Strong<JSC::JSObject> paintConstructor);
     double devicePixelRatio() const;
-
-    // All paint definitions must be destroyed before the vm is destroyed, because otherwise they will point to freed memory.
-    struct PaintDefinition : public CanMakeWeakPtr<PaintDefinition> {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&&, Vector<AtomString>&& inputProperties, Vector<String>&& inputArguments);
-
-        const AtomString name;
-        const JSC::JSObject* const paintConstructor;
-        const Ref<CSSPaintCallback> paintCallback;
-        const Vector<AtomString> inputProperties;
-        const Vector<String> inputArguments;
-    };
 
     HashMap<String, std::unique_ptr<PaintDefinition>>& paintDefinitionMap() WTF_REQUIRES_LOCK(m_paintDefinitionLock);
     Lock& paintDefinitionLock() WTF_RETURNS_LOCK(m_paintDefinitionLock) { return m_paintDefinitionLock; }

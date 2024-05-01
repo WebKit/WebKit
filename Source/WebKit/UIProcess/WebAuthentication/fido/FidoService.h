@@ -33,10 +33,19 @@
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
+class FidoService;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::FidoService> : std::true_type { };
+}
+
+namespace WebKit {
 
 class FidoService : public AuthenticatorTransportService {
 public:
-    explicit FidoService(Observer&);
+    explicit FidoService(AuthenticatorTransportServiceObserver&);
 
 protected:
     void getInfo(std::unique_ptr<CtapDriver>&&);

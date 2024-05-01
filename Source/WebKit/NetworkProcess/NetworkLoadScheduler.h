@@ -34,6 +34,15 @@
 #include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class NetworkLoadScheduler;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkLoadScheduler> : std::true_type { };
+}
+
 namespace WebCore {
 class ResourceError;
 }

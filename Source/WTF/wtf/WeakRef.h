@@ -31,9 +31,12 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/TypeTraits.h>
 #include <wtf/WeakPtrImpl.h>
 
 namespace WTF {
+// Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException : std::false_type { };
 
 enum class EnableWeakPtrThreadingAssertions : bool { No, Yes };
 
@@ -63,6 +66,13 @@ public:
 
     WeakRef(HashTableDeletedValueType) : m_impl(HashTableDeletedValue) { }
     WeakRef(HashTableEmptyValueType) : m_impl(HashTableEmptyValue) { }
+
+    ~WeakRef()
+    {
+        static_assert(
+            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_const_t<T>>::value,
+            "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
+    }
 
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
     bool isHashTableEmptyValue() const { return m_impl.isHashTableEmptyValue(); }

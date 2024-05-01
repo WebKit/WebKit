@@ -95,23 +95,23 @@ void GStreamerCapturer::tearDown(bool disconnectSignals)
     m_pipeline = nullptr;
 }
 
-GStreamerCapturer::Observer::~Observer()
+GStreamerCapturerObserver::~GStreamerCapturerObserver()
 {
 }
 
-void GStreamerCapturer::addObserver(Observer& observer)
+void GStreamerCapturer::addObserver(GStreamerCapturerObserver& observer)
 {
     ASSERT(isMainThread());
     m_observers.add(observer);
 }
 
-void GStreamerCapturer::removeObserver(Observer& observer)
+void GStreamerCapturer::removeObserver(GStreamerCapturerObserver& observer)
 {
     ASSERT(isMainThread());
     m_observers.remove(observer);
 }
 
-void GStreamerCapturer::forEachObserver(const Function<void(Observer&)>& apply)
+void GStreamerCapturer::forEachObserver(const Function<void(GStreamerCapturerObserver&)>& apply)
 {
     ASSERT(isMainThread());
     Ref protectedThis { *this };
@@ -137,7 +137,7 @@ GstElement* GStreamerCapturer::createSource()
                 callOnMainThread([event, capturer = reinterpret_cast<GStreamerCapturer*>(userData)] {
                     GstCaps* caps;
                     gst_event_parse_caps(event, &caps);
-                    capturer->forEachObserver([caps](Observer& observer) {
+                    capturer->forEachObserver([caps](GStreamerCapturerObserver& observer) {
                         observer.sourceCapsChanged(caps);
                     });
                 });

@@ -31,6 +31,15 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebKit {
+class BackgroundFetchStoreManager;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::BackgroundFetchStoreManager> : std::true_type { };
+}
+
 namespace WTF {
 class WorkQueue;
 }

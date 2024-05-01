@@ -49,7 +49,7 @@ class TrackBase
 #endif
 {
 public:
-    virtual ~TrackBase() = default;
+    virtual ~TrackBase();
 
     virtual void didMoveToNewDocument(Document&);
 

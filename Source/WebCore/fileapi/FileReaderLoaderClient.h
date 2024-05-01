@@ -35,6 +35,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class FileReaderLoaderClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::FileReaderLoaderClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class FileReaderLoaderClient : public CanMakeWeakPtr<FileReaderLoaderClient> {
 public:

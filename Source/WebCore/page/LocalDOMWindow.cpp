@@ -506,7 +506,7 @@ void LocalDOMWindow::frameDestroyed()
 
 void LocalDOMWindow::willDestroyCachedFrame()
 {
-    // It is necessary to copy m_observers to a separate vector because the Observer may
+    // It is necessary to copy m_observers to a separate vector because the LocalDOMWindowObserver may
     // unregister themselves from the LocalDOMWindow as a result of the call to willDestroyGlobalObjectInCachedFrame.
     m_observers.forEach([](auto& observer) {
         observer.willDestroyGlobalObjectInCachedFrame();
@@ -515,7 +515,7 @@ void LocalDOMWindow::willDestroyCachedFrame()
 
 void LocalDOMWindow::willDestroyDocumentInFrame()
 {
-    // It is necessary to copy m_observers to a separate vector because the Observer may
+    // It is necessary to copy m_observers to a separate vector because the LocalDOMWindowObserver may
     // unregister themselves from the LocalDOMWindow as a result of the call to willDestroyGlobalObjectInFrame.
     m_observers.forEach([](auto& observer) {
         observer.willDestroyGlobalObjectInFrame();
@@ -529,7 +529,7 @@ void LocalDOMWindow::willDetachDocumentFromFrame()
 
     RELEASE_ASSERT(!m_isSuspendingObservers);
 
-    // It is necessary to copy m_observers to a separate vector because the Observer may
+    // It is necessary to copy m_observers to a separate vector because the LocalDOMWindowObserver may
     // unregister themselves from the LocalDOMWindow as a result of the call to willDetachGlobalObjectFromFrame.
     m_observers.forEach([](auto& observer) {
         observer.willDetachGlobalObjectFromFrame();
@@ -562,12 +562,12 @@ void LocalDOMWindow::decrementGamepadEventListenerCount()
 
 #endif
 
-void LocalDOMWindow::registerObserver(Observer& observer)
+void LocalDOMWindow::registerObserver(LocalDOMWindowObserver& observer)
 {
     m_observers.add(observer);
 }
 
-void LocalDOMWindow::unregisterObserver(Observer& observer)
+void LocalDOMWindow::unregisterObserver(LocalDOMWindowObserver& observer)
 {
     m_observers.remove(observer);
 }

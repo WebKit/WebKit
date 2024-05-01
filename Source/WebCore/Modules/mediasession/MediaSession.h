@@ -41,6 +41,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class MediaSessionObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaSessionObserver> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Document;
 class HTMLMediaElement;
@@ -50,6 +59,20 @@ class MediaSessionCoordinatorPrivate;
 class Navigator;
 template<typename> class DOMPromiseDeferred;
 struct NowPlayingInfo;
+
+class MediaSessionObserver : public CanMakeWeakPtr<MediaSessionObserver> {
+public:
+    virtual ~MediaSessionObserver() = default;
+
+    virtual void metadataChanged(const RefPtr<MediaMetadata>&) { }
+    virtual void positionStateChanged(const std::optional<MediaPositionState>&) { }
+    virtual void playbackStateChanged(MediaSessionPlaybackState) { }
+    virtual void actionHandlersChanged() { }
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    virtual void readyStateChanged(MediaSessionReadyState) { }
+#endif
+};
 
 class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject, public CanMakeWeakPtr<MediaSession> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -103,21 +126,8 @@ public:
     const Logger& logger() const { return *m_logger.get(); }
 #endif
 
-    class Observer : public CanMakeWeakPtr<Observer> {
-    public:
-        virtual ~Observer() = default;
-
-        virtual void metadataChanged(const RefPtr<MediaMetadata>&) { }
-        virtual void positionStateChanged(const std::optional<MediaPositionState>&) { }
-        virtual void playbackStateChanged(MediaSessionPlaybackState) { }
-        virtual void actionHandlersChanged() { }
-
-#if ENABLE(MEDIA_SESSION_COORDINATOR)
-        virtual void readyStateChanged(MediaSessionReadyState) { }
-#endif
-    };
-    void addObserver(Observer&);
-    void removeObserver(Observer&);
+    void addObserver(MediaSessionObserver&);
+    void removeObserver(MediaSessionObserver&);
 
     RefPtr<HTMLMediaElement> activeMediaElement() const;
 
@@ -130,7 +140,7 @@ private:
 
     void updateReportedPosition();
 
-    void forEachObserver(const Function<void(Observer&)>&);
+    void forEachObserver(const Function<void(MediaSessionObserver&)>&);
     void notifyMetadataObservers();
     void notifyPositionStateObservers();
     void notifyPlaybackStateObservers();
@@ -152,7 +162,7 @@ private:
     RefPtr<const Logger> m_logger;
     const void* m_logIdentifier;
 
-    WeakHashSet<Observer> m_observers;
+    WeakHashSet<MediaSessionObserver> m_observers;
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     MediaSessionReadyState m_readyState { MediaSessionReadyState::Havenothing };

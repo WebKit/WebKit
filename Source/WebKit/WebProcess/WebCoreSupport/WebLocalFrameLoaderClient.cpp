@@ -680,7 +680,7 @@ void WebLocalFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceErr
     webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->info(), request, navigationID, coreFrame->loader().provisionalLoadErrorBeingHandledURL().string(), error, willContinueLoading, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), willInternallyHandleFailure));
 
     // If we have a load listener, notify it.
-    if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
+    if (LoadListener* loadListener = m_frame->loadListener())
         loadListener->didFailLoad(m_frame.ptr(), error.isCancellation());
 }
 
@@ -710,7 +710,7 @@ void WebLocalFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     webPage->send(Messages::WebPageProxy::DidFailLoadForFrame(m_frame->frameID(), m_frame->info(), documentLoader->request(), navigationID, error, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 
     // If we have a load listener, notify it.
-    if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
+    if (LoadListener* loadListener = m_frame->loadListener())
         loadListener->didFailLoad(m_frame.ptr(), error.isCancellation());
 }
 
@@ -757,7 +757,7 @@ void WebLocalFrameLoaderClient::dispatchDidFinishLoad()
     webPage->send(Messages::WebPageProxy::DidFinishLoadForFrame(m_frame->frameID(), m_frame->info(), documentLoader->request(), navigationID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 
     // If we have a load listener, notify it.
-    if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
+    if (LoadListener* loadListener = m_frame->loadListener())
         loadListener->didFinishLoad(m_frame.ptr());
 
     webPage->didFinishLoad(m_frame);
@@ -1440,7 +1440,7 @@ void WebLocalFrameLoaderClient::provisionalLoadStarted()
 void WebLocalFrameLoaderClient::didFinishLoad()
 {
     // If we have a load listener, notify it.
-    if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
+    if (LoadListener* loadListener = m_frame->loadListener())
         loadListener->didFinishLoad(m_frame.ptr());
 }
 

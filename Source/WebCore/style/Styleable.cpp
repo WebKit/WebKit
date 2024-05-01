@@ -304,6 +304,11 @@ void Styleable::willChangeRenderer() const
     }
 }
 
+void Styleable::cancelStyleOriginatedAnimations() const
+{
+    cancelStyleOriginatedAnimations({ });
+}
+
 void Styleable::cancelStyleOriginatedAnimations(const WeakStyleOriginatedAnimations& animationsToCancelSilently) const
 {
     if (auto* animations = this->animations()) {

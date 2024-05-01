@@ -36,6 +36,15 @@
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class WebMDNSRegister;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebMDNSRegister> : std::true_type { };
+}
+
 namespace IPC {
 class Connection;
 class Decoder;

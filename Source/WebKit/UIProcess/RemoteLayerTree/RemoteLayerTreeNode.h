@@ -42,6 +42,15 @@ OBJC_CLASS UIView;
 #endif
 
 namespace WebKit {
+class RemoteLayerTreeNode;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLayerTreeNode> : std::true_type { };
+}
+
+namespace WebKit {
 
 class RemoteLayerTreeHost;
 class RemoteLayerTreeScrollbars;

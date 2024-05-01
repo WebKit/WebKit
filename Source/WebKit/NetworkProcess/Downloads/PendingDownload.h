@@ -30,6 +30,15 @@
 #include "NetworkLoadClient.h"
 #include "SandboxExtension.h"
 
+namespace WebKit {
+class PendingDownload;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PendingDownload> : std::true_type { };
+}
+
 namespace IPC {
 class Connection;
 }

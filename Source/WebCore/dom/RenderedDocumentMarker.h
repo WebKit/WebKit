@@ -32,6 +32,15 @@
 #include <wtf/WallTime.h>
 
 namespace WebCore {
+class RenderedDocumentMarker;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::RenderedDocumentMarker> : std::true_type { };
+}
+
+namespace WebCore {
 
 class RenderedDocumentMarker : public DocumentMarker {
 public:

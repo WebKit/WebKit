@@ -53,9 +53,9 @@ namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
 
-template<typename T> void iterateClients(WeakHashSet<CSSFontFace::Client>& clients, T callback)
+template<typename T> void iterateClients(WeakHashSet<CSSFontFaceClient>& clients, T callback)
 {
-    for (auto& client : copyToVectorOf<Ref<CSSFontFace::Client>>(clients))
+    for (auto& client : copyToVectorOf<Ref<CSSFontFaceClient>>(clients))
         callback(client);
 }
 
@@ -153,7 +153,7 @@ void CSSFontFace::setFamilies(CSSValueList& family)
     RefPtr oldFamily = std::exchange(m_families, &family);
     mutableProperties().setProperty(CSSPropertyFontFamily, &family);
 
-    iterateClients(m_clients, [&](Client& client) {
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontPropertyChanged(*this, oldFamily.get());
     });
 }
@@ -193,7 +193,7 @@ void CSSFontFace::setWeight(CSSValue& weight)
 
     m_fontSelectionCapabilities.weight = range;
 
-    iterateClients(m_clients, [&](Client& client) {
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontPropertyChanged(*this);
     });
 }
@@ -228,7 +228,7 @@ void CSSFontFace::setStretch(CSSValue& style)
 
     m_fontSelectionCapabilities.width = range;
 
-    iterateClients(m_clients, [&](Client& client) {
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontPropertyChanged(*this);
     });
 }
@@ -267,7 +267,7 @@ void CSSFontFace::setStyle(CSSValue& style)
 
     m_fontSelectionCapabilities.slope = range;
 
-    iterateClients(m_clients, [&](Client& client) {
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontPropertyChanged(*this);
     });
 }
@@ -286,7 +286,7 @@ void CSSFontFace::setUnicodeRange(CSSValueList& list)
 
     m_ranges = WTFMove(ranges);
 
-    iterateClients(m_clients, [&](Client& client) {
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontPropertyChanged(*this);
     });
 }
@@ -312,7 +312,7 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
 
     m_featureSettings = WTFMove(settings);
 
-    iterateClients(m_clients, [&](Client& client) {
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontPropertyChanged(*this);
     });
 }
@@ -329,7 +329,7 @@ void CSSFontFace::setSizeAdjust(CSSValue& value)
 
     m_sizeAdjust = sizeAdjust;
 
-    iterateClients(m_clients, [&](Client& client) {
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontPropertyChanged(*this);
     });
 }
@@ -345,7 +345,7 @@ void CSSFontFace::setDisplay(CSSPrimitiveValue& loadingBehaviorValue)
 
     m_loadingBehavior = loadingBehavior;
 
-    iterateClients(m_clients, [&](Client& client) {
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontPropertyChanged(*this);
     });
 }
@@ -424,7 +424,7 @@ void CSSFontFace::fontLoadEventOccurred()
     if (m_sourcesPopulated)
         pump(ExternalResourceDownloadPolicy::Forbid);
 
-    iterateClients(m_clients, [&](Client& client) {
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontLoaded(*this);
     });
 }
@@ -471,12 +471,12 @@ bool CSSFontFace::computeFailureState() const
     return true;
 }
 
-void CSSFontFace::addClient(Client& client)
+void CSSFontFace::addClient(CSSFontFaceClient& client)
 {
     m_clients.add(client);
 }
 
-void CSSFontFace::removeClient(Client& client)
+void CSSFontFace::removeClient(CSSFontFaceClient& client)
 {
     ASSERT(m_clients.contains(client));
     m_clients.remove(client);
@@ -579,7 +579,7 @@ void CSSFontFace::setStatus(Status newStatus)
         break;
     }
 
-    iterateClients(m_clients, [&](Client& client) {
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontStateChanged(*this, m_status, newStatus);
     });
 
@@ -757,7 +757,7 @@ bool CSSFontFace::purgeable() const
 
 void CSSFontFace::updateStyleIfNeeded()
 {
-    iterateClients(m_clients, [&](Client& client) {
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.updateStyleIfNeeded(*this);
     });
 }

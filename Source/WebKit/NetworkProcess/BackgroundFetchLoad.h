@@ -34,6 +34,15 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class BackgroundFetchLoad;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::BackgroundFetchLoad> : std::true_type { };
+}
+
 namespace WebCore {
 class ResourceRequest;
 struct BackgroundFetchRequest;
@@ -49,7 +58,7 @@ class NetworkProcess;
 class BackgroundFetchLoad final : public WebCore::BackgroundFetchRecordLoader, public NetworkDataTaskClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BackgroundFetchLoad(NetworkProcess&, PAL::SessionID, Client&, const WebCore::BackgroundFetchRequest&, size_t responseDataSize, const WebCore::ClientOrigin&);
+    BackgroundFetchLoad(NetworkProcess&, PAL::SessionID, WebCore::BackgroundFetchRecordLoaderClient&, const WebCore::BackgroundFetchRequest&, size_t responseDataSize, const WebCore::ClientOrigin&);
     ~BackgroundFetchLoad();
 
 private:
@@ -75,7 +84,7 @@ private:
     void didFinish(const WebCore::ResourceError& = { }, const WebCore::ResourceResponse& response = { });
 
     PAL::SessionID m_sessionID;
-    WeakPtr<Client> m_client;
+    WeakPtr<WebCore::BackgroundFetchRecordLoaderClient> m_client;
     WebCore::ResourceRequest m_request;
     NetworkResourceLoadParameters m_parameters;
     RefPtr<NetworkDataTask> m_task;

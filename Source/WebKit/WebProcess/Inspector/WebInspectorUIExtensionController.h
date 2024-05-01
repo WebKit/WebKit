@@ -38,6 +38,15 @@
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class WebInspectorUIExtensionController;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebInspectorUIExtensionController> : std::true_type { };
+}
+
 namespace JSC {
 class JSValue;
 class JSObject;

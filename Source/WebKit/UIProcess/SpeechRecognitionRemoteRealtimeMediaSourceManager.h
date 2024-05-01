@@ -35,6 +35,15 @@
 #include "SharedCARingBuffer.h"
 #endif
 
+namespace WebKit {
+class SpeechRecognitionRemoteRealtimeMediaSourceManager;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager> : std::true_type { };
+}
+
 namespace WTF {
 class MediaTime;
 }

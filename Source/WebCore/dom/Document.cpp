@@ -5371,6 +5371,11 @@ void Document::appendAutofocusCandidate(Element& candidate)
     m_autofocusCandidates.append(candidate);
 }
 
+void Document::clearAutofocusCandidates()
+{
+    m_autofocusCandidates.clear();
+}
+
 // https://html.spec.whatwg.org/multipage/interaction.html#flush-autofocus-candidates
 void Document::flushAutofocusCandidates()
 {

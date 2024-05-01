@@ -37,6 +37,15 @@ OBJC_CLASS AVStreamDataParser;
 OBJC_CLASS NSError;
 
 namespace WebCore {
+class CDMSessionMediaSourceAVFObjC;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CDMSessionMediaSourceAVFObjC> : std::true_type { };
+}
+
+namespace WebCore {
 
 class CDMPrivateMediaSourceAVFObjC;
 
