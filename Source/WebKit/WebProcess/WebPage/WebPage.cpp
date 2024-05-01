@@ -9513,6 +9513,31 @@ void WebPage::remoteViewPointToRootView(FrameIdentifier frameID, FloatPoint poin
     remoteViewToRootView(frameID, point, WTFMove(completionHandler));
 }
 
+void WebPage::remoteDictionaryPopupInfoToRootView(WebCore::FrameIdentifier frameID, WebCore::DictionaryPopupInfo popupInfo, CompletionHandler<void(WebCore::DictionaryPopupInfo)>&& completionHandler)
+{
+    remoteViewPointToRootView(frameID, popupInfo.origin, [&popupInfo](FloatPoint point) {
+        popupInfo.origin = point;
+    });
+#if PLATFORM(COCOA)
+    remoteViewRectToRootView(frameID, popupInfo.textIndicator.selectionRectInRootViewCoordinates, [&popupInfo](FloatRect rect) {
+        popupInfo.textIndicator.selectionRectInRootViewCoordinates = rect;
+    });
+    remoteViewRectToRootView(frameID, popupInfo.textIndicator.textBoundingRectInRootViewCoordinates, [&popupInfo](FloatRect rect) {
+        popupInfo.textIndicator.textBoundingRectInRootViewCoordinates = rect;
+    });
+    remoteViewRectToRootView(frameID, popupInfo.textIndicator.contentImageWithoutSelectionRectInRootViewCoordinates, [&popupInfo](FloatRect rect) {
+        popupInfo.textIndicator.contentImageWithoutSelectionRectInRootViewCoordinates = rect;
+    });
+    for (auto it = popupInfo.textIndicator.textRectsInBoundingRectCoordinates.begin(); it != popupInfo.textIndicator.textRectsInBoundingRectCoordinates.end(); ++it) {
+        remoteViewRectToRootView(frameID, *it, [&it](FloatRect rect) {
+            *it = rect;
+        });
+    }
+#endif
+    completionHandler(popupInfo);
+}
+
+
 void WebPage::adjustVisibilityForTargetedElements(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>& identifiers, CompletionHandler<void(bool)>&& completion)
 {
     RefPtr page = corePage();
