@@ -134,7 +134,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, frameCounter, ("Frame"));
 
 static inline float parentPageZoomFactor(LocalFrame* frame)
 {
-    LocalFrame* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
+    SUPPRESS_UNCOUNTED_LOCAL auto* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
     if (!parent)
         return 1;
     return parent->pageZoomFactor();
@@ -142,7 +142,7 @@ static inline float parentPageZoomFactor(LocalFrame* frame)
 
 static inline float parentTextZoomFactor(LocalFrame* frame)
 {
-    LocalFrame* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
+    SUPPRESS_UNCOUNTED_LOCAL auto* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
     if (!parent)
         return 1;
     return parent->textZoomFactor();
@@ -150,7 +150,8 @@ static inline float parentTextZoomFactor(LocalFrame* frame)
 
 static const LocalFrame& rootFrame(const LocalFrame& frame)
 {
-    if (auto* parent = dynamicDowncast<LocalFrame>(frame.tree().parent()))
+    SUPPRESS_UNCOUNTED_LOCAL auto* parent = dynamicDowncast<LocalFrame>(frame.tree().parent());
+    if (parent)
         return parent->rootFrame();
     ASSERT(is<RemoteFrame>(frame.tree().parent()) || frame.isMainFrame());
     return frame;
@@ -168,7 +169,7 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
     ProcessWarming::initializeNames();
     StaticCSSValuePool::init();
 
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()); localMainFrame && parent)
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()); localMainFrame && parent)
         localMainFrame->selfOnlyRef();
 
 #ifndef NDEBUG
@@ -176,7 +177,7 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
 #endif
 
     // Pause future ActiveDOMObjects if this frame is being created while the page is in a paused state.
-    if (LocalFrame* parent = dynamicDowncast<LocalFrame>(tree().parent()); parent && parent->activeDOMObjectsAndAnimationsSuspended())
+    if (RefPtr parent = dynamicDowncast<LocalFrame>(tree().parent()); parent && parent->activeDOMObjectsAndAnimationsSuspended())
         suspendActiveDOMObjectsAndAnimations();
 
     if (isRootFrame())
@@ -227,12 +228,12 @@ LocalFrame::~LocalFrame()
     while (auto* destructionObserver = m_destructionObservers.takeAny())
         destructionObserver->frameDestroyed();
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     if (!isMainFrame() && localMainFrame)
         localMainFrame->selfOnlyDeref();
 
     if (isRootFrame()) {
-        if (auto* page = this->page())
+        if (RefPtr page = this->page())
             page->removeRootFrame(*this);
     }
 }
@@ -677,7 +678,7 @@ bool LocalFrame::shouldUsePrintingLayout() const
 {
     // Only top frame being printed should be fit to page size.
     // Subframes should be constrained by parents only.
-    auto* parent = dynamicDowncast<LocalFrame>(tree().parent());
+    SUPPRESS_UNCOUNTED_LOCAL auto* parent = dynamicDowncast<LocalFrame>(tree().parent());
     return m_doc->printing() && (!parent || !parent->m_doc->printing());
 }
 
@@ -765,7 +766,8 @@ RenderView* LocalFrame::contentRenderer() const
 
 LocalFrame* LocalFrame::frameForWidget(const Widget& widget)
 {
-    if (auto* renderer = RenderWidget::find(widget))
+    SUPPRESS_UNCOUNTED_LOCAL auto* renderer = RenderWidget::find(widget);
+    if (renderer)
         return renderer->frameOwnerElement().document().frame();
 
     // Assume all widgets are either a FrameView or owned by a RenderWidget.
@@ -884,7 +886,7 @@ std::optional<SimpleRange> LocalFrame::rangeForPoint(const IntPoint& framePoint)
 {
     auto position = visiblePositionForPoint(framePoint);
 
-    auto containerText = position.deepEquivalent().containerText();
+    SUPPRESS_UNCOUNTED_LOCAL auto containerText = position.deepEquivalent().containerText();
     if (!containerText || !containerText->renderer() || containerText->renderer()->style().usedUserSelect() == UserSelect::None)
         return std::nullopt;
 
@@ -1180,7 +1182,7 @@ String LocalFrame::debugDescription() const
     if (isMainFrame())
         builder.append(" (main frame)"_s);
 
-    if (auto document = this->document())
+    if (RefPtr document = this->document())
         builder.append(' ', document->documentURI());
     
     return builder.toString();
@@ -1217,9 +1219,8 @@ LocalFrame* LocalFrame::contentFrameFromWindowOrFrameElement(JSContextRef contex
 
     JSC::JSGlobalObject* globalObject = toJS(context);
     JSC::JSValue value = toJS(globalObject, valueRef);
-    JSC::VM& vm = globalObject->vm();
 
-    if (auto* window = JSDOMWindow::toWrapped(vm, value))
+    if (RefPtr window = JSDOMWindow::toWrapped(globalObject->vm(), value))
         return dynamicDowncast<LocalFrame>(window->frame());
 
     auto* jsNode = JSC::jsDynamicCast<JSNode*>(value);
