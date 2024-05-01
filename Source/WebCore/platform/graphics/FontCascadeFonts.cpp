@@ -485,12 +485,8 @@ GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCa
     // http://www.unicode.org/Public/MAPPINGS/VENDORS/APPLE/CORPCHAR.TXT
     shouldCheckForPrivateUseAreaCharacters = character != 0xF8FF;
 #endif
-    if (shouldCheckForPrivateUseAreaCharacters && isPrivateUseAreaCharacter(character)) {
-        auto font = FontCache::forCurrentThread().lastResortFallbackFont(description);
-        GlyphData glyphData(0, font.ptr());
-        m_systemFallbackFontSet.add(WTFMove(font));
-        return glyphData; // 0 is the font's reserved .notdef glyph
-    }
+    if (shouldCheckForPrivateUseAreaCharacters && isPrivateUseAreaCharacter(character))
+        return { 0, &primaryFont(description) }; // 0 is the font's reserved .notdef glyph
 
     return glyphDataForSystemFallback(character, description, variant, resolvedEmojiPolicy, fallbackVisibility == FallbackVisibility::Invisible);
 }

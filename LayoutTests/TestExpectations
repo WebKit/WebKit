@@ -7454,5 +7454,3 @@ webkit.org/b/272417 imported/w3c/web-platform-tests/svg/path/property/priority.s
 
 # re-import css/css-align WPT failure
 webkit.org/b/271692 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-020.html [ ImageOnlyFailure ]
-
-webkit.org/b/273233 imported/w3c/web-platform-tests/css/css-fonts/matching/font-unicode-PUA-primary-font.html [ Skip ]
