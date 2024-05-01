@@ -49,6 +49,7 @@ class XMLParserContext : public RefCounted<XMLParserContext> {
 public:
     static RefPtr<XMLParserContext> createMemoryParser(xmlSAXHandlerPtr, void* userData, const CString& chunk);
     static Ref<XMLParserContext> createStringParser(xmlSAXHandlerPtr, void* userData);
+    XMLParserContext() = delete;
     ~XMLParserContext();
     xmlParserCtxtPtr context() const { return m_context; }
 
@@ -72,6 +73,7 @@ public:
         return adoptRef(*new XMLDocumentParser(fragment, WTFMove(prefixToNamespaceMap), defaultNamespaceURI, parserContentPolicy));
     }
 
+    XMLDocumentParser() = delete;
     ~XMLDocumentParser();
 
     // Exposed for callbacks:
@@ -182,6 +184,8 @@ private:
 xmlDocPtr xmlDocPtrForString(CachedResourceLoader&, const String& source, const String& url);
 #endif
 
-std::optional<HashMap<String, String>> parseAttributes(const String&);
+xmlParserInputPtr externalEntityLoader(const char* url, const char* id, xmlParserCtxtPtr);
+
+std::optional<HashMap<String, String>> parseAttributes(CachedResourceLoader&, const String&);
 
 } // namespace WebCore

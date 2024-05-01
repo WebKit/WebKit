@@ -49,6 +49,7 @@ namespace WebCore {
 
     private:
         CachedResourceLoader* m_oldCachedResourceLoader;
+        xmlExternalEntityLoader m_oldEntityLoader { nullptr };
 
 #if ENABLE(XSLT)
         xmlGenericErrorFunc m_oldGenericErrorFunc;

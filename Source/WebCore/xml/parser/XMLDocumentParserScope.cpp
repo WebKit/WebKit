@@ -26,12 +26,15 @@
 #include "config.h"
 #include "XMLDocumentParserScope.h"
 
+#include "XMLDocumentParser.h"
+
 namespace WebCore {
 
 CachedResourceLoader* XMLDocumentParserScope::currentCachedResourceLoader = nullptr;
 
 XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader)
     : m_oldCachedResourceLoader(currentCachedResourceLoader)
+    , m_oldEntityLoader(xmlGetExternalEntityLoader())
 #if ENABLE(XSLT)
     , m_oldGenericErrorFunc(xmlGenericError)
     , m_oldStructuredErrorFunc(xmlStructuredError)
@@ -39,16 +42,19 @@ XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResou
 #endif
 {
     currentCachedResourceLoader = cachedResourceLoader;
+    xmlSetExternalEntityLoader(WebCore::externalEntityLoader);
 }
 
 #if ENABLE(XSLT)
 XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader, xmlGenericErrorFunc genericErrorFunc, xmlStructuredErrorFunc structuredErrorFunc, void* errorContext)
     : m_oldCachedResourceLoader(currentCachedResourceLoader)
+    , m_oldEntityLoader(xmlGetExternalEntityLoader())
     , m_oldGenericErrorFunc(xmlGenericError)
     , m_oldStructuredErrorFunc(xmlStructuredError)
     , m_oldErrorContext(xmlGenericErrorContext)
 {
     currentCachedResourceLoader = cachedResourceLoader;
+    xmlSetExternalEntityLoader(WebCore::externalEntityLoader);
     if (genericErrorFunc)
         xmlSetGenericErrorFunc(errorContext, genericErrorFunc);
     if (structuredErrorFunc)
@@ -59,6 +65,7 @@ XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResou
 XMLDocumentParserScope::~XMLDocumentParserScope()
 {
     currentCachedResourceLoader = m_oldCachedResourceLoader;
+    xmlSetExternalEntityLoader(m_oldEntityLoader);
 #if ENABLE(XSLT)
     xmlSetGenericErrorFunc(m_oldErrorContext, m_oldGenericErrorFunc);
     xmlSetStructuredErrorFunc(m_oldErrorContext, m_oldStructuredErrorFunc);

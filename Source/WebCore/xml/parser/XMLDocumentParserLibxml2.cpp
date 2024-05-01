@@ -545,7 +545,7 @@ static void errorFunc(void*, const char*, ...)
 
 static xmlExternalEntityLoader defaultEntityLoader { nullptr };
 
-static xmlParserInputPtr entityLoader(const char* url, const char* id, xmlParserCtxtPtr context)
+xmlParserInputPtr externalEntityLoader(const char* url, const char* id, xmlParserCtxtPtr context)
 {
     if (!shouldAllowExternalLoad(URL(String::fromUTF8(url))))
         return nullptr;
@@ -560,7 +560,7 @@ static void initializeXMLParser()
         xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, closeFunc);
         xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, closeFunc);
         defaultEntityLoader = xmlGetExternalEntityLoader();
-        xmlSetExternalEntityLoader(entityLoader);
+        RELEASE_ASSERT_WITH_MESSAGE(defaultEntityLoader != WebCore::externalEntityLoader, "XMLDocumentParserScope was created too early");
         libxmlLoaderThread = &Thread::current();
     });
 }
@@ -1313,7 +1313,6 @@ void XMLDocumentParser::initializeParserContext(const CString& chunk)
     m_sawXSLTransform = false;
     m_sawFirstElement = false;
 
-    XMLDocumentParserScope scope(&document()->cachedResourceLoader());
     if (m_parsingFragment)
         m_context = XMLParserContext::createMemoryParser(&sax, this, chunk);
     else {
@@ -1453,6 +1452,7 @@ bool XMLDocumentParser::appendFragmentSource(const String& chunk)
         return false;
 
     initializeParserContext(chunkAsUTF8);
+    XMLDocumentParserScope scope(&document()->cachedResourceLoader());
     xmlParseContent(context());
     endDocument(); // Close any open text nodes.
 
@@ -1496,7 +1496,7 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
     }
 }
 
-std::optional<HashMap<String, String>> parseAttributes(const String& string)
+std::optional<HashMap<String, String>> parseAttributes(CachedResourceLoader& cachedResourceLoader, const String& string)
 {
     String parseString = "<?xml version=\"1.0\"?><attrs " + string + " />";
 
@@ -1509,6 +1509,7 @@ std::optional<HashMap<String, String>> parseAttributes(const String& string)
 
     auto parser = XMLParserContext::createStringParser(&sax, &attributes);
 
+    XMLDocumentParserScope scope(&cachedResourceLoader);
     // FIXME: Can we parse 8-bit strings directly as Latin-1 instead of upconverting to UTF-16?
     xmlParseChunk(parser->context(), reinterpret_cast<const char*>(StringView(parseString).upconvertedCharacters().get()), parseString.length() * sizeof(UChar), 1);
 
