@@ -27,6 +27,7 @@
 #include "Frame.h"
 
 #include "HTMLFrameOwnerElement.h"
+#include "HistoryController.h"
 #include "NavigationScheduler.h"
 #include "Page.h"
 #include "RemoteFrame.h"
@@ -56,6 +57,7 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
     , m_frameType(frameType)
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
     , m_opener(opener)
+    , m_history(makeUniqueRef<HistoryController>(*this))
 {
     if (parent)
         parent->tree().appendChild(*this);
@@ -188,6 +190,11 @@ Vector<Ref<Frame>> Frame::openedFrames()
 bool Frame::hasOpenedFrames() const
 {
     return !m_openedFrames.isEmptyIgnoringNullReferences();
+}
+
+CheckedRef<HistoryController> Frame::checkedHistory() const
+{
+    return m_history.get();
 }
 
 } // namespace WebCore

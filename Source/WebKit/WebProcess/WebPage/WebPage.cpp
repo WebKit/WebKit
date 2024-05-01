@@ -1939,7 +1939,7 @@ void WebPage::suspendForProcessSwap()
     };
 
     // FIXME: Make this work if the main frame is not a LocalFrame.
-    RefPtr currentHistoryItem = m_mainFrame->coreLocalFrame()->loader().history().currentItem();
+    RefPtr currentHistoryItem = m_mainFrame->coreLocalFrame()->history().currentItem();
     if (!currentHistoryItem) {
         failedToSuspend();
         return;
@@ -2260,7 +2260,7 @@ void WebPage::goToBackForwardItemWaitingForProcessLaunch(GoToBackForwardItemPara
 void WebPage::tryRestoreScrollPosition()
 {
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
-        localMainFrame->loader().history().restoreScrollPositionAndViewState();
+        localMainFrame->checkedHistory()->restoreScrollPositionAndViewState();
 }
 
 WebPage* WebPage::fromCorePage(Page& page)
@@ -3210,7 +3210,7 @@ void WebPage::pageStoppedScrolling()
 {
     // Maintain the current history item's scroll position up-to-date.
     if (RefPtr frame = m_mainFrame->coreLocalFrame())
-        frame->loader().history().saveScrollPositionAndViewStateToItem(frame->loader().history().currentItem());
+        frame->checkedHistory()->saveScrollPositionAndViewStateToItem(frame->history().currentItem());
 }
 
 void WebPage::setHasActiveAnimatedScrolls(bool hasActiveAnimatedScrolls)
@@ -3734,7 +3734,7 @@ void WebPage::setCurrentHistoryItemForReattach(WebKit::BackForwardListItemState&
     auto& historyItemRef = historyItem.get();
     static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(itemState.identifier, WTFMove(historyItem), m_identifier, WebBackForwardListProxy::OverwriteExistingItem::Yes);
     if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame()))
-        localMainFrame->loader().history().setCurrentItem(historyItemRef);
+        localMainFrame->checkedHistory()->setCurrentItem(historyItemRef);
 }
 
 void WebPage::requestFontAttributesAtSelectionStart(CompletionHandler<void(const WebCore::FontAttributes&)>&& completionHandler)
@@ -4065,7 +4065,7 @@ void WebPage::visibilityDidChange()
         // We save the document / scroll state when backgrounding a tab so that we are able to restore it
         // if it gets terminated while in the background.
         if (RefPtr frame = m_mainFrame->coreLocalFrame())
-            frame->loader().history().saveDocumentAndScrollState();
+            frame->checkedHistory()->saveDocumentAndScrollState();
     }
 }
 

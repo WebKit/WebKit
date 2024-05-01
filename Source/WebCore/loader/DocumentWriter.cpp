@@ -216,7 +216,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         contentSecurityPolicy->setInsecureNavigationRequestsToUpgrade(ownerContentSecurityPolicy->takeNavigationRequestsToUpgrade());
     } else if (url.protocolIsAbout() || url.protocolIsData()) {
         // https://html.spec.whatwg.org/multipage/origin.html#determining-navigation-params-policy-container
-        RefPtr currentHistoryItem = frameLoader->history().currentItem();
+        RefPtr currentHistoryItem = frame->history().currentItem();
 
         if (currentHistoryItem && currentHistoryItem->policyContainer()) {
             const auto& policyContainerFromHistory = currentHistoryItem->policyContainer();

@@ -42,6 +42,7 @@ class FrameView;
 class FrameLoaderClient;
 class FrameLoadRequest;
 class HTMLFrameOwnerElement;
+class HistoryController;
 class NavigationScheduler;
 class Page;
 class RenderWidget;
@@ -90,6 +91,9 @@ public:
     CheckedRef<NavigationScheduler> checkedNavigationScheduler() const;
     WEBCORE_EXPORT void takeWindowProxyFrom(Frame&);
 
+    HistoryController& history() const { return m_history.get(); }
+    WEBCORE_EXPORT CheckedRef<HistoryController> checkedHistory() const;
+
     virtual void frameDetached() = 0;
     virtual bool preventsParentFromBeingComplete() const = 0;
     virtual void changeLocation(FrameLoadRequest&&) = 0;
@@ -127,6 +131,7 @@ private:
     mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
     WeakPtr<Frame> m_opener;
     WeakHashSet<Frame> m_openedFrames;
+    mutable UniqueRef<HistoryController> m_history;
 };
 
 } // namespace WebCore

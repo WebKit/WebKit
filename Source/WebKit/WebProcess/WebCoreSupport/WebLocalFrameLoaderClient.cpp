@@ -1403,7 +1403,7 @@ void WebLocalFrameLoaderClient::restoreViewState()
 {
 #if PLATFORM(IOS_FAMILY)
     auto& frame = *m_frame->coreLocalFrame();
-    auto* currentItem = frame.loader().history().currentItem();
+    auto* currentItem = frame.history().currentItem();
     if (auto* view = frame.view()) {
         if (m_frame->isMainFrame())
             m_frame->page()->restorePageState(*currentItem);
@@ -1412,7 +1412,7 @@ void WebLocalFrameLoaderClient::restoreViewState()
     }
 #else
     // Inform the UI process of the scale factor.
-    double scaleFactor = m_frame->coreLocalFrame()->loader().history().currentItem()->pageScaleFactor();
+    double scaleFactor = m_frame->coreLocalFrame()->history().currentItem()->pageScaleFactor();
 
     // A scale factor of 0 means the history item has the default scale factor, thus we do not need to update it.
     if (scaleFactor)

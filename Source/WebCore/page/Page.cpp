@@ -505,7 +505,7 @@ void Page::clearPreviousItemFromAllPages(HistoryItem* item)
         if (!localMainFrame)
             return;
 
-        CheckedRef controller = localMainFrame->loader().history();
+        CheckedRef controller = localMainFrame->history();
         if (item == controller->previousItem()) {
             controller->clearPreviousItem();
             return;
@@ -760,12 +760,12 @@ void Page::goToItem(HistoryItem& item, FrameLoadType type, ShouldTreatAsContinui
     if (!localMainFrame)
         return;
 
-    if (localMainFrame->loader().checkedHistory()->shouldStopLoadingForHistoryItem(item)) {
+    if (localMainFrame->checkedHistory()->shouldStopLoadingForHistoryItem(item)) {
         if (localMainFrame)
             localMainFrame->checkedLoader()->stopAllLoadersAndCheckCompleteness();
     }
 
-    localMainFrame->loader().checkedHistory()->goToItem(item, type, shouldTreatAsContinuingLoad);
+    localMainFrame->checkedHistory()->goToItem(item, type, shouldTreatAsContinuingLoad);
 }
 
 void Page::setGroupName(const String& name)

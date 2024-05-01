@@ -1233,7 +1233,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 {
     ASSERT(!WebThreadIsEnabled() || WebThreadIsLocked());
     auto& frameLoader = _private->coreFrame->loader();
-    auto* item = frameLoader.history().currentItem();
+    auto* item = _private->coreFrame->history().currentItem();
     if (item)
         frameLoader.client().saveViewStateToItem(*item);
 }

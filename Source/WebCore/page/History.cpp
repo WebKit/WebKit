@@ -87,7 +87,7 @@ ExceptionOr<History::ScrollRestoration> History::scrollRestoration() const
     if (!isDocumentFullyActive(frame))
         return documentNotFullyActive();
 
-    auto* historyItem = frame->loader().history().currentItem();
+    auto* historyItem = frame->history().currentItem();
     if (!historyItem)
         return ScrollRestoration::Auto;
     
@@ -100,7 +100,7 @@ ExceptionOr<void> History::setScrollRestoration(ScrollRestoration scrollRestorat
     if (!isDocumentFullyActive(frame))
         return documentNotFullyActive();
 
-    auto* historyItem = frame->loader().history().currentItem();
+    auto* historyItem = frame->history().currentItem();
     if (historyItem)
         historyItem->setShouldRestoreScrollPosition(scrollRestoration == ScrollRestoration::Auto);
 
@@ -121,7 +121,7 @@ SerializedScriptValue* History::stateInternal() const
     auto* frame = this->frame();
     if (!frame)
         return nullptr;
-    auto* historyItem = frame->loader().history().currentItem();
+    auto* historyItem = frame->history().currentItem();
     if (!historyItem)
         return nullptr;
     return historyItem->stateObject();
@@ -300,10 +300,10 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
         frame->protectedDocument()->updateURLForPushOrReplaceState(fullURL);
 
     if (stateObjectType == StateObjectType::Push) {
-        frame->loader().history().pushState(WTFMove(data), fullURL.string());
+        frame->checkedHistory()->pushState(WTFMove(data), fullURL.string());
         frame->loader().client().dispatchDidPushStateWithinPage();
     } else if (stateObjectType == StateObjectType::Replace) {
-        frame->loader().history().replaceState(WTFMove(data), fullURL.string());
+        frame->checkedHistory()->replaceState(WTFMove(data), fullURL.string());
         frame->loader().client().dispatchDidReplaceStateWithinPage();
     }
 
