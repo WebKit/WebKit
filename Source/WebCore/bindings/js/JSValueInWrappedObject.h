@@ -56,7 +56,7 @@ private:
     JSC::Weak<JSC::JSCell> m_cell { };
 };
 
-JSC::JSValue cachedPropertyValue(JSC::ThrowScope&, JSC::JSGlobalObject&, const JSDOMObject& owner, JSValueInWrappedObject& cacheSlot, const Function<JSC::JSValue(JSC::ThrowScope&)>&);
+JSC::JSValue cachedPropertyValue(JSC::ThrowScope&, JSC::JSGlobalObject&, const JSDOMObject& owner, JSValueInWrappedObject& cacheSlot, const auto&);
 
 inline JSValueInWrappedObject::JSValueInWrappedObject(JSC::JSValue value)
 {
@@ -109,7 +109,7 @@ inline void JSValueInWrappedObject::clear()
     m_cell.clear();
 }
 
-inline JSC::JSValue cachedPropertyValue(JSC::ThrowScope& throwScope, JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSValueInWrappedObject& cachedValue, const Function<JSC::JSValue(JSC::ThrowScope&)>& function)
+inline JSC::JSValue cachedPropertyValue(JSC::ThrowScope& throwScope, JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSValueInWrappedObject& cachedValue, const auto& function)
 {
     if (cachedValue && isWorldCompatible(lexicalGlobalObject, cachedValue.getValue()))
         return cachedValue.getValue();
