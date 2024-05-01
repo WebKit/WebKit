@@ -491,6 +491,25 @@ class _CommitBank {
             promises.push(this._load(this._endUuid, endUuid));
         return Promise.all(promises);
     }
+    addCommit(ref) {
+        const query = paramsToQuery({
+            branch: [...this._branches],
+            ref: [ref],
+        });
+
+        return fetch(`api/commits?${query}`).then(response => {
+            let self = this;
+            response.json().then(json => {
+                for (const commit of json) {
+                    const uuid = commit.timestamp * 100 + commit.order;
+                    self.add(uuid, uuid);
+                }
+            });
+        }).catch(error => {
+            // If the load fails, log the error and continue
+            console.error(JSON.stringify(error, null, 4));
+        });
+    }
     reload() {
         let needReload = false;
         const params = queryToParams(document.URL.split('?')[1]);
