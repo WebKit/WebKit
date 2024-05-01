@@ -6154,6 +6154,15 @@ void WebPageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameInfo, Web
     didFailProvisionalLoadForFrameShared(protectedProcess(), *frame, WTFMove(frameInfo), WTFMove(request), navigationID, provisionalURL, error, willContinueLoading, userData, willInternallyHandleFailure);
 }
 
+template<typename M>
+void WebPageProxy::sendToWebPageInProcess(WebProcessProxy& process, M&& message)
+{
+    if (auto* remotePage = m_browsingContextGroup->remotePageInProcess(*this, process))
+        return remotePage->send(std::forward<M>(message));
+    ASSERT(process.coreProcessIdentifier() == this->process().coreProcessIdentifier());
+    send(std::forward<M>(message));
+}
+
 void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& process, WebFrameProxy& frame, FrameInfoData&& frameInfo, WebCore::ResourceRequest&& request, uint64_t navigationID, const String& provisionalURL, const ResourceError& error, WillContinueLoading willContinueLoading, const UserData& userData, WillInternallyHandleFailure willInternallyHandleFailure)
 {
     LOG(Loading, "(Loading) WebPageProxy %" PRIu64 " in web process pid %i didFailProvisionalLoadForFrame to provisionalURL %s", internals().identifier.toUInt64(), process->processID(), provisionalURL.utf8().data());
@@ -6208,8 +6217,13 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
     if (m_provisionalPage && m_provisionalPage->mainFrame() == &frame && willContinueLoading == WillContinueLoading::No)
         m_provisionalPage = nullptr;
 
-    if (frame.takeProvisionalFrame())
+    if (auto provisionalFrame = frame.takeProvisionalFrame()) {
+        ASSERT(m_preferences->siteIsolationEnabled());
+        ASSERT(!frame.isMainFrame());
+        ASSERT(provisionalFrame->process().coreProcessIdentifier() != frame.process().coreProcessIdentifier());
+        sendToWebPageInProcess(provisionalFrame->process(), Messages::WebPage::TransitionFrameToRemote(frame.frameID(), std::nullopt));
         frame.notifyParentOfLoadCompletion(process);
+    }
 }
 
 void WebPageProxy::didFinishServiceWorkerPageRegistration(bool success)

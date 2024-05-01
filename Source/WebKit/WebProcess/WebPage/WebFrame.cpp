@@ -339,31 +339,20 @@ uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunc
 
 void WebFrame::transitionToRemote(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
 {
-    RefPtr coreFrame = m_coreFrame.get();
-    if (!coreFrame) {
+    RefPtr localFrame = coreLocalFrame();
+    if (!localFrame) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    RefPtr webPage = m_page.get();
-    if (!webPage) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto* corePage = webPage->corePage();
+    auto* corePage = localFrame->page();
     if (!corePage) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    RefPtr parent = coreFrame->tree().parent();
-
-    RefPtr localFrame = dynamicDowncast<WebCore::LocalFrame>(coreFrame.get());
-    if (!localFrame) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
+    RefPtr parent = localFrame->tree().parent();
+    RefPtr ownerElement = localFrame->ownerElement();
 
     auto* frameLoaderClient = this->localFrameLoaderClient();
     if (!frameLoaderClient) {
@@ -371,16 +360,14 @@ void WebFrame::transitionToRemote(std::optional<WebCore::LayerHostingContextIden
         return;
     }
 
-    RefPtr ownerElement = coreFrame->ownerElement();
-
     auto invalidator = frameLoaderClient->takeFrameInvalidator();
     auto* ownerRenderer = localFrame->ownerRenderer();
     localFrame->setView(nullptr);
 
     if (parent)
-        parent->tree().removeChild(*coreFrame);
+        parent->tree().removeChild(*localFrame);
     if (ownerElement)
-        coreFrame->disconnectOwnerElement();
+        localFrame->disconnectOwnerElement();
     auto client = makeUniqueRef<WebRemoteFrameClient>(*this, WTFMove(invalidator));
     auto newFrame = ownerElement
         ? WebCore::RemoteFrame::createSubframeWithContentsInAnotherProcess(*corePage, WTFMove(client), m_frameID, *ownerElement, layerHostingContextIdentifier)
@@ -446,6 +433,7 @@ void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdent
     }
 
     RefPtr parent = remoteFrame->tree().parent();
+    RefPtr ownerElement = remoteFrame->ownerElement();
 
     if (parent)
         parent->tree().removeChild(*remoteFrame);
@@ -470,6 +458,9 @@ void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdent
         corePage->focusController().setFocusedFrame(localFrame.ptr(), FocusController::BroadcastFocusedFrame::No);
     if (layerHostingContextIdentifier)
         setLayerHostingContextIdentifier(*layerHostingContextIdentifier);
+
+    if (ownerElement)
+        ownerElement->scheduleInvalidateStyleAndLayerComposition();
 }
 
 void WebFrame::didFinishLoadInAnotherProcess()
