@@ -206,8 +206,11 @@ class _CommitBank {
                 continue;
 
             this._representationCache = JSON.parse(cookies[index].substring(COOKIE_NAME.length + 1));
-            callback(this._representationCache);
-            return;
+            if (!this._representationCache.error) {
+                callback(this._representationCache);
+                return;
+            }
+            this._representationCache = null;
         }
 
         fetch('api/commits/representations').then(response => {
