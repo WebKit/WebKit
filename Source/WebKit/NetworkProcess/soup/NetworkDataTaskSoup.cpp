@@ -476,7 +476,7 @@ void NetworkDataTaskSoup::dispatchDidReceiveResponse()
     // FIXME: This cannot be eliminated until other code no longer relies on ResourceResponse's NetworkLoadMetrics.
     m_response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(m_networkLoadMetrics));
 
-    didReceiveResponse(ResourceResponse(m_response), NegotiatedLegacyTLS::No, PrivateRelayed::No, [this, protectedThis = Ref { *this }](PolicyAction policyAction) {
+    didReceiveResponse(ResourceResponse(m_response), NegotiatedLegacyTLS::No, PrivateRelayed::No, std::nullopt, [this, protectedThis = Ref { *this }](PolicyAction policyAction) {
         if (m_state == State::Canceling || m_state == State::Completed) {
             clearRequest();
             return;

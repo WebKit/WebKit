@@ -41,6 +41,7 @@
 
 namespace WebCore {
 class AuthenticationChallenge;
+class IPAddress;
 class ResourceError;
 class ResourceResponse;
 class SharedBuffer;
@@ -97,7 +98,7 @@ public:
     virtual void invalidateAndCancel() = 0;
 
     void didReceiveInformationalResponse(WebCore::ResourceResponse&&);
-    void didReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&&);
+    void didReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, std::optional<WebCore::IPAddress>, ResponseCompletionHandler&&);
     bool shouldCaptureExtraNetworkLoadMetrics() const;
 
     enum class State {
