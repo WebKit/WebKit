@@ -55,7 +55,7 @@ public:
     State state() const { return m_state; }
 
 private:
-    PollResult poll(const AbstractLocker&) final;
+    PollResult poll(const AbstractLocker&, unsigned spinCount) final;
     WorkResult work() final;
 
     void threadDidStart() final;

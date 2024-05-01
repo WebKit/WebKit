@@ -38,7 +38,7 @@ public:
     {
     }
 
-    PollResult poll(const AbstractLocker&) final
+    PollResult poll(const AbstractLocker&, unsigned) final
     {
         if (m_pool.m_tasks.isEmpty())
             return PollResult::Wait;

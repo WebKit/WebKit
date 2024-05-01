@@ -197,17 +197,26 @@ void AutomaticThread::start(const AbstractLocker&)
                 {
                     Locker locker { *m_lock };
                     for (;;) {
-                        PollResult result = poll(locker);
-                        if (result == PollResult::Work)
+                        unsigned spinCount = 0;
+                        while (true) {
+                            PollResult result = poll(locker, spinCount);
+                            if (result == PollResult::Work)
+                                goto work;
+                            if (result == PollResult::Stop)
+                                return stopPermanently(locker);
+                            if (result == PollResult::Yield) {
+                                ++spinCount;
+                                DropLockForScope unlocker { locker };
+                                Thread::yield();
+                                continue;
+                            }
+                            RELEASE_ASSERT(result == PollResult::Wait);
                             break;
-                        if (result == PollResult::Stop)
-                            return stopPermanently(locker);
-                        RELEASE_ASSERT(result == PollResult::Wait);
+                        }
 
                         // Shut the thread down after a timeout.
                         m_isWaiting = true;
-                        bool awokenByNotify =
-                            m_waitCondition.waitFor(*m_lock, m_timeout);
+                        bool awokenByNotify = m_waitCondition.waitFor(*m_lock, m_timeout);
                         if (verbose && !awokenByNotify && !m_isWaiting)
                             dataLog(RawPointer(this), ": waitFor timed out, but notified via m_isWaiting flag!\n");
                         if (m_isWaiting && shouldSleep(locker)) {
@@ -221,7 +230,8 @@ void AutomaticThread::start(const AbstractLocker&)
                         }
                     }
                 }
-                
+
+work:
                 WorkResult result = work();
                 if (result == WorkResult::Stop) {
                     Locker locker { *m_lock };

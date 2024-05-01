@@ -234,7 +234,7 @@ public:
     }
     
 private:
-    PollResult poll(const AbstractLocker& locker) final
+    PollResult poll(const AbstractLocker& locker, unsigned) final
     {
         if (m_heap.m_threadShouldStop) {
             m_heap.notifyThreadStopping(locker);

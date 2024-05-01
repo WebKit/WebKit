@@ -78,7 +78,7 @@ private:
 
     }
 
-    PollResult poll(const AbstractLocker&) final
+    PollResult poll(const AbstractLocker&, unsigned) final
     {
         auto& queue = worklist.m_queue;
         synchronize.notifyAll();

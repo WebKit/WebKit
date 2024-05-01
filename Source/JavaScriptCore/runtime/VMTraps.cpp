@@ -264,7 +264,7 @@ public:
     VMTraps& traps() { return m_vm.traps(); }
 
 private:
-    PollResult poll(const AbstractLocker&) final
+    PollResult poll(const AbstractLocker&, unsigned) final
     {
         if (traps().m_isShuttingDown)
             return PollResult::Stop;

@@ -182,7 +182,7 @@ public:
     }
 
 private:
-    PollResult poll(const AbstractLocker&) final
+    PollResult poll(const AbstractLocker&, unsigned) final
     {
         if (m_pool.m_isDying)
             return PollResult::Stop;

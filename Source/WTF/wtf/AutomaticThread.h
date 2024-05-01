@@ -161,8 +161,8 @@ protected:
     //     }
     // }
     
-    enum class PollResult { Work, Stop, Wait };
-    virtual PollResult poll(const AbstractLocker&) = 0;
+    enum class PollResult { Work, Stop, Wait, Yield };
+    virtual PollResult poll(const AbstractLocker&, unsigned spinCount) = 0;
     
     enum class WorkResult { Continue, Stop };
     virtual WorkResult work() = 0;
