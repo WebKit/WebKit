@@ -2056,6 +2056,7 @@
         "org.WebKit.memoryWarning"
         "org.WebKit.memoryWarning.begin"
         "org.WebKit.memoryWarning.end"
+        "com.apple.webinspectord.available"
 #endif
         "com.apple.accessibility.AirPodsSpatialAudioLockToDeviceChanged"
         "com.apple.webinspectord.availability_check"))

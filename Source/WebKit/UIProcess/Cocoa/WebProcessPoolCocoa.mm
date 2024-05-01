@@ -716,6 +716,7 @@ void WebProcessPool::registerNotificationObservers()
         "com.apple.WebKit.showMemoryCache"_s,
         "com.apple.WebKit.showPaintOrderTree"_s,
         "com.apple.WebKit.showRenderTree"_s,
+        "com.apple.webinspectord.available"_s,
         "com.apple.language.changed"_s,
         "com.apple.mediaaccessibility.captionAppearanceSettingsChanged"_s,
         "com.apple.powerlog.state_changed"_s,
