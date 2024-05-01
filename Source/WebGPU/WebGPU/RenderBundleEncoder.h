@@ -123,7 +123,7 @@ private:
     void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages, const BindGroupEntryUsageData::Resource&);
     void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages);
     bool icbNeedsToBeSplit(const RenderPipeline& a, const RenderPipeline& b);
-    void finalizeRenderCommand();
+    void finalizeRenderCommand(MTLIndirectCommandType);
     bool validToEncodeCommand() const;
     bool returnIfEncodingIsFinished(NSString* errorString);
     bool runIndexBufferValidation(uint32_t firstInstance, uint32_t instanceCount);
