@@ -36,6 +36,6 @@ enum class ReasonCode : uint64_t {
 };
 
 void terminateWithReason(xpc_connection_t, ReasonCode, const char* reason);
-void handleXPCExitMessage(xpc_object_t);
+void handleXPCExitAndErrorMessage(xpc_object_t);
 
 }
