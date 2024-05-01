@@ -456,7 +456,7 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
     auto parseDateImpl = [this](const CString& dateString) {
         if (Options::useV8DateParser()) {
             bool local = false;
-            double value = v8::ParseDateTimeString(dateString.data(), dateString.size(), local);
+            double value = v8::ParseDateTimeString(dateString.data(), dateString.length(), local);
 
             if (local)
                 value -= localTimeOffset(static_cast<int64_t>(value), WTF::LocalTime).offset;

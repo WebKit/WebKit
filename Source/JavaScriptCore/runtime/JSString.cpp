@@ -160,9 +160,9 @@ void JSRopeString::iterRopeInternalNoSubstring(jsstring_iterator* iter) const
         const StringImpl& fiberString = *fiber(i)->valueInternal().impl();
         unsigned length = fiberString.length();
         if (fiberString.is8Bit())
-            StringImpl::iterCharacters(iter, position, fiberString.characters8(), length);
+            StringImpl::iterCharacters(iter, position, fiberString.span8().data(), length);
         else
-            StringImpl::iterCharacters(iter, position, fiberString.characters16(), length);
+            StringImpl::iterCharacters(iter, position, fiberString.span16().data(), length);
         position += length;
     }
 
@@ -320,11 +320,11 @@ void JSRopeString::iterRope(jsstring_iterator *iter) const
         StringImpl *impl = substringBase()->valueInternal().impl();
 
         if (impl->is8Bit()) {
-            auto ptr = impl->characters8() + substringOffset();
+            auto ptr = impl->span8().data() + substringOffset();
             size_t end = length();
             iter->append8(iter, (void*)ptr, end);
         } else {
-            auto ptr = impl->characters16() + substringOffset();
+            auto ptr = impl->span16().data() + substringOffset();
             size_t end = length();
             iter->append16(iter, (void*)ptr, end);
         }
@@ -358,9 +358,9 @@ void JSRopeString::iterRopeSlowCase(jsstring_iterator* iter) const
                 unsigned length = currentFiberAsRope->length();
                 position -= length;
                 if (string->is8Bit())
-                    StringImpl::iterCharacters(iter, position, string->characters8() + offset, length);
+                    StringImpl::iterCharacters(iter, position, string->span8().data() + offset, length);
                 else
-                    StringImpl::iterCharacters(iter, position, string->characters16() + offset, length);
+                    StringImpl::iterCharacters(iter, position, string->span16().data() + offset, length);
                 continue;
             }
             for (size_t i = 0; i < s_maxInternalRopeLength && currentFiberAsRope->fiber(i) && !iter->stop; ++i)
@@ -372,9 +372,9 @@ void JSRopeString::iterRopeSlowCase(jsstring_iterator* iter) const
         unsigned length = string->length();
         position -= length;
         if (string->is8Bit())
-            StringImpl::iterCharacters(iter, position, string->characters8(), length);
+            StringImpl::iterCharacters(iter, position, string->span8().data(), length);
         else
-            StringImpl::iterCharacters(iter, position, string->characters16(), length);
+            StringImpl::iterCharacters(iter, position, string->span16().data(), length);
     }
 
     ASSERT(position == 0 || iter->stop);

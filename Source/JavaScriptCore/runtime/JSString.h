@@ -902,9 +902,11 @@ inline void JSString::value(jsstring_iterator* iterator) const
 
     auto internal = valueInternal().impl();
     if (this->is8Bit()) {
-        iterator->append8(iterator, (void*)internal->characters8(), internal->length());
+        auto span8 = internal->span8();
+        iterator->append8(iterator, (void*)span8.data(), span8.size());
     } else {
-        iterator->append16(iterator, (void*)internal->characters16(), internal->length());
+        auto span16 = internal->span16();
+        iterator->append16(iterator, (void*)span16.data(), span16.size());
     }
 }
 
