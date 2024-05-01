@@ -3550,7 +3550,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
 class CompileJSC(CompileWebKit):
     name = 'compile-jsc'
     descriptionDone = ['Compiled JSC']
-    build_command = ['perl', 'Tools/Scripts/build-jsc']
+    build_command = ['perl', 'Tools/Scripts/build-jsc', '--testing']
 
     def start(self):
         self.setProperty('group', 'jsc')
