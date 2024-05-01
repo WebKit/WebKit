@@ -48,8 +48,8 @@ public:
     void parentStackReserveInitialCapacity(size_t initialCapacity) { m_parentStack.reserveInitialCapacity(initialCapacity); }
 
     using Hashes = std::array<unsigned, 4>;
-    bool fastRejectSelector(const Hashes&) const;
-    static Hashes collectHashes(const CSSSelector&);
+    inline bool fastRejectSelector(const Hashes&) const;
+    inline static Hashes collectHashes(const CSSSelector&);
 
     static void collectElementIdentifierHashes(const Element&, Vector<unsigned, 4>&);
 
@@ -67,8 +67,8 @@ public:
 private:
     void initializeParentStack(Element& parent);
     enum class IncludeRightmost : bool { No, Yes };
-    static void collectSelectorHashes(CollectedSelectorHashes&, const CSSSelector& rightmostSelector, IncludeRightmost);
-    static Hashes chooseSelectorHashesForFilter(const CollectedSelectorHashes&);
+    inline static void collectSelectorHashes(CollectedSelectorHashes&, const CSSSelector& rightmostSelector, IncludeRightmost);
+    inline static Hashes chooseSelectorHashesForFilter(const CollectedSelectorHashes&);
 
     struct ParentStackFrame {
         ParentStackFrame() : element(0) { }
@@ -82,16 +82,5 @@ private:
     static const unsigned bloomFilterKeyBits = 12;
     CountingBloomFilter<bloomFilterKeyBits> m_ancestorIdentifierFilter;
 };
-
-inline bool SelectorFilter::fastRejectSelector(const Hashes& hashes) const
-{
-    for (auto& hash : hashes) {
-        if (!hash)
-            return false;
-        if (!m_ancestorIdentifierFilter.mayContain(hash))
-            return true;
-    }
-    return false;
-}
 
 } // namespace WebCore

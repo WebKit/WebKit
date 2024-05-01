@@ -53,7 +53,7 @@ public:
 
     // Gets the char at lookaheadOffset from the current stream position. Will
     // return NUL (kEndOfFileMarker) if the stream position is at the end.
-    UChar peek(unsigned lookaheadOffset) const
+    inline UChar peek(unsigned lookaheadOffset) const
     {
         if ((m_offset + lookaheadOffset) >= m_stringLength)
             return kEndOfFileMarker;

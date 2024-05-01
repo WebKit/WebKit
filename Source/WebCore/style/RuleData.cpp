@@ -39,7 +39,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SelectorChecker.h"
-#include "SelectorFilter.h"
+#include "SelectorFilterInlines.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
