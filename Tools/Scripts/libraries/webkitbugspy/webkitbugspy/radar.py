@@ -45,6 +45,7 @@ class Tracker(GenericTracker):
         re.compile(r'<?radar://problem/(?P<id>\d+)>?'),
         re.compile(r'<?rdar:\/\/(?P<id>\d+)>?'),
         re.compile(r'<?radar:\/\/(?P<id>\d+)>?'),
+        re.compile(r'<?https:\/\/rdar\.apple\.com\/(?P<id>\d+)>?'),
     ]
 
     OTHER_BUG = 'Other Bug'
