@@ -148,7 +148,7 @@ class Revert(Command):
     @classmethod
     def create_revert_commit_msg(cls, args, commit_objects, **kwargs):
         reverted_changeset = ''
-        commit_identifiers = []
+        reverted_commits = []
         # Retrieve information for commits to be reverted
         for commit in commit_objects:
             commit_title = None
@@ -160,8 +160,9 @@ class Revert(Command):
             reverted_changeset += '\n    {}\n'.format(commit_title)
             reverted_changeset += '\n'.join(bug_urls)
             if commit.identifier and commit.branch:
-                commit_identifiers.append('{}@{}'.format(commit.identifier, commit.branch))
-                reverted_changeset += '\n    https://commits.webkit.org/{}@{}\n'.format(commit.identifier, commit.branch)
+                commit_repr = '{}@{} ({})'.format(commit.identifier, commit.branch, commit.hash[:7])
+                reverted_commits.append(commit_repr)
+                reverted_changeset += '\n    {}\n'.format(commit_repr)
             else:
                 sys.stderr.write('Could not find "{}"'.format(', '.join(args.commit_id)) + '\n')
                 return None, None
@@ -190,10 +191,10 @@ class Revert(Command):
             revert_reason = revert_issue.title
 
         env = os.environ
-        env['COMMIT_MESSAGE_TITLE'] = cls.REVERT_TITLE_TEMPLATE.format(string_utils.join(commit_identifiers))
+        env['COMMIT_MESSAGE_TITLE'] = cls.REVERT_TITLE_TEMPLATE.format(string_utils.join(reverted_commits))
         env['COMMIT_MESSAGE_REVERT'] = '{}\n{}\n\n{}\n\n'.format(revert_bug_link or 'Include a Bugzilla link (OOPS!).', revert_radar_link or 'Include a Radar link (OOPS!).', revert_reason)
-        env['COMMIT_MESSAGE_REVERT'] += 'Reverted {}:\n{}'.format('changes' if len(commit_identifiers) > 1 else 'change', reverted_changeset)
-        return commit_identifiers, revert_reason
+        env['COMMIT_MESSAGE_REVERT'] += 'Reverted {}:\n{}'.format('changes' if len(reverted_commits) > 1 else 'change', reverted_changeset)
+        return reverted_commits, revert_reason
 
     @classmethod
     def revert_commit(cls, args, repository, issue, commit_objects, **kwargs):
