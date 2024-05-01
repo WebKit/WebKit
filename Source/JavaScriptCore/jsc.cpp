@@ -3879,7 +3879,8 @@ static void runInteractive(GlobalObject* globalObject)
 static NO_RETURN void printUsageStatement(bool help = false)
 {
     fprintf(stderr, "Usage: jsc [options] [files] [-- arguments]\n");
-    fprintf(stderr, "  -d         Dumps bytecode (debug builds only)\n");
+    fprintf(stderr, "  -d         Dumps bytecode\n");
+    fprintf(stderr, "  -s         Synchronous compilation (equivalent to `--useConcurrentJIT=0`)\n");
     fprintf(stderr, "  -e         Evaluate argument as script code\n");
     fprintf(stderr, "  -f         Specifies a source file (deprecated)\n");
     fprintf(stderr, "  -h|--help  Prints this help message\n");
@@ -3888,12 +3889,12 @@ static NO_RETURN void printUsageStatement(bool help = false)
 #endif
     fprintf(stderr, "  -i         Enables interactive mode (default if no files are specified)\n");
     fprintf(stderr, "  -m         Execute as a module\n");
-#if OS(UNIX)
-    fprintf(stderr, "  -s         Installs signal handlers that exit on a crash (Unix platforms only, lldb will not work with this option) \n");
-#endif
     fprintf(stderr, "  -p <file>  Outputs profiling data to a file\n");
     fprintf(stderr, "  -x         Output exit code before terminating\n");
     fprintf(stderr, "\n");
+#if OS(UNIX)
+    fprintf(stderr, "  --signal-expected          Installs signal handlers that exit on a crash (Unix platforms only, lldb will not work with this option) \n");
+#endif
     fprintf(stderr, "  --sample                   Collects and outputs sampling profiler data\n");
     fprintf(stderr, "  --test262-async            Check that some script calls the print function with the string 'Test262:AsyncTestComplete'\n");
     fprintf(stderr, "  --strict-file=<file>       Parse the given file as if it were in strict mode (this option may be passed more than once)\n");
@@ -3981,6 +3982,10 @@ void CommandLine::parseArguments(int argc, char** argv)
             m_dump = true;
             continue;
         }
+        if (!strcmp(arg, "-s")) {
+            Options::useConcurrentJIT() = false;
+            continue;
+        }
         if (!strcmp(arg, "-p")) {
             if (++i == argc)
                 printUsageStatement();
@@ -3992,10 +3997,10 @@ void CommandLine::parseArguments(int argc, char** argv)
             m_module = true;
             continue;
         }
-        if (!strcmp(arg, "-s")) {
+        if (!strcmp(arg, "--signal-expected")) {
 #if OS(UNIX)
             SignalAction (*exit)(Signal, SigInfo&, PlatformRegisters&) = [] (Signal, SigInfo&, PlatformRegisters&) {
-                dataLogLn("Signal handler hit. Exiting with status 0");
+                dataLogLn("Signal handler hit. Exiting with status 137");
                 // Deliberate exit with a SIGKILL code greater than 130.
                 terminateProcess(137);
                 return SignalAction::ForceDefault;
