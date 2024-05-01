@@ -974,7 +974,7 @@ bool AccessCase::couldStillSucceed() const
 {
     for (const ObjectPropertyCondition& condition : m_conditionSet) {
         if (condition.condition().kind() == PropertyCondition::Equivalence) {
-            if (!condition.isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort::EnsureWatchability))
+            if (!condition.isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort::EnsureWatchability, Concurrency::MainThread))
                 return false;
         } else {
             if (!condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint(Concurrency::MainThread))

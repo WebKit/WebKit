@@ -107,14 +107,25 @@ bool ObjectPropertyCondition::structureEnsuresValidity(Concurrency concurrency) 
     return structureEnsuresValidity(concurrency, m_object->structure());
 }
 
-bool ObjectPropertyCondition::isWatchableAssumingImpurePropertyWatchpoint(
-    Structure* structure, PropertyCondition::WatchabilityEffort effort) const
+bool ObjectPropertyCondition::isWatchableAssumingImpurePropertyWatchpoint(Structure* structure, PropertyCondition::WatchabilityEffort effort, Concurrency concurrency) const
+{
+    return m_condition.isWatchableAssumingImpurePropertyWatchpoint(structure, m_object, effort, concurrency);
+}
+
+bool ObjectPropertyCondition::isWatchableAssumingImpurePropertyWatchpoint(Structure* structure, PropertyCondition::WatchabilityEffort effort) const
 {
     return m_condition.isWatchableAssumingImpurePropertyWatchpoint(structure, m_object, effort);
 }
 
-bool ObjectPropertyCondition::isWatchableAssumingImpurePropertyWatchpoint(
-    PropertyCondition::WatchabilityEffort effort) const
+bool ObjectPropertyCondition::isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort effort, Concurrency concurrency) const
+{
+    if (!*this)
+        return false;
+
+    return isWatchableAssumingImpurePropertyWatchpoint(m_object->structure(), effort, concurrency);
+}
+
+bool ObjectPropertyCondition::isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort effort) const
 {
     if (!*this)
         return false;

@@ -2741,7 +2741,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
     for (const ObjectPropertyCondition& condition : accessCase.m_conditionSet) {
         RELEASE_ASSERT(!accessCase.polyProtoAccessChain());
 
-        if (condition.isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort::EnsureWatchability)) {
+        if (condition.isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort::EnsureWatchability, Concurrency::MainThread)) {
             m_conditions.append(condition);
             continue;
         }
