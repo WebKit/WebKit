@@ -9491,55 +9491,45 @@ void WebPage::requestTextExtraction(std::optional<FloatRect>&& collectionRectInR
     completion(TextExtraction::extractItem(WTFMove(collectionRectInRootView), Ref { *corePage() }));
 }
 
-template<typename T> void WebPage::remoteViewToRootView(WebCore::FrameIdentifier frameID, T geometry, CompletionHandler<void(T)>&& completionHandler)
+template<typename T> T WebPage::remoteViewToRootView(WebCore::FrameIdentifier frameID, T geometry)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame)
-        return completionHandler(geometry);
+        return geometry;
 
     RefPtr coreRemoteFrame = webFrame->coreRemoteFrame();
     if (!coreRemoteFrame) {
         ASSERT_NOT_REACHED();
-        return completionHandler(geometry);
+        return geometry;
     }
 
     RefPtr view = coreRemoteFrame->view();
     if (!view)
-        return completionHandler(geometry);
+        return geometry;
 
-    completionHandler(view->contentsToRootView(geometry));
+    return view->contentsToRootView(geometry);
 }
 
 void WebPage::remoteViewRectToRootView(FrameIdentifier frameID, FloatRect rect, CompletionHandler<void(FloatRect)>&& completionHandler)
 {
-    remoteViewToRootView(frameID, rect, WTFMove(completionHandler));
+    completionHandler(remoteViewToRootView(frameID, rect));
 }
 
 void WebPage::remoteViewPointToRootView(FrameIdentifier frameID, FloatPoint point, CompletionHandler<void(FloatPoint)>&& completionHandler)
 {
-    remoteViewToRootView(frameID, point, WTFMove(completionHandler));
+    completionHandler(remoteViewToRootView(frameID, point));
 }
 
 void WebPage::remoteDictionaryPopupInfoToRootView(WebCore::FrameIdentifier frameID, WebCore::DictionaryPopupInfo popupInfo, CompletionHandler<void(WebCore::DictionaryPopupInfo)>&& completionHandler)
 {
-    remoteViewPointToRootView(frameID, popupInfo.origin, [&popupInfo](FloatPoint point) {
-        popupInfo.origin = point;
-    });
+    popupInfo.origin = remoteViewToRootView<FloatPoint>(frameID, popupInfo.origin);
 #if PLATFORM(COCOA)
-    remoteViewRectToRootView(frameID, popupInfo.textIndicator.selectionRectInRootViewCoordinates, [&popupInfo](FloatRect rect) {
-        popupInfo.textIndicator.selectionRectInRootViewCoordinates = rect;
-    });
-    remoteViewRectToRootView(frameID, popupInfo.textIndicator.textBoundingRectInRootViewCoordinates, [&popupInfo](FloatRect rect) {
-        popupInfo.textIndicator.textBoundingRectInRootViewCoordinates = rect;
-    });
-    remoteViewRectToRootView(frameID, popupInfo.textIndicator.contentImageWithoutSelectionRectInRootViewCoordinates, [&popupInfo](FloatRect rect) {
-        popupInfo.textIndicator.contentImageWithoutSelectionRectInRootViewCoordinates = rect;
-    });
-    for (auto it = popupInfo.textIndicator.textRectsInBoundingRectCoordinates.begin(); it != popupInfo.textIndicator.textRectsInBoundingRectCoordinates.end(); ++it) {
-        remoteViewRectToRootView(frameID, *it, [&it](FloatRect rect) {
-            *it = rect;
-        });
-    }
+    popupInfo.textIndicator.selectionRectInRootViewCoordinates = remoteViewToRootView<FloatRect>(frameID, popupInfo.textIndicator.selectionRectInRootViewCoordinates);
+    popupInfo.textIndicator.textBoundingRectInRootViewCoordinates = remoteViewToRootView<FloatRect>(frameID, popupInfo.textIndicator.textBoundingRectInRootViewCoordinates);
+    popupInfo.textIndicator.contentImageWithoutSelectionRectInRootViewCoordinates = remoteViewToRootView<FloatRect>(frameID, popupInfo.textIndicator.contentImageWithoutSelectionRectInRootViewCoordinates);
+
+    for (auto it = popupInfo.textIndicator.textRectsInBoundingRectCoordinates.begin(); it != popupInfo.textIndicator.textRectsInBoundingRectCoordinates.end(); ++it)
+        *it = remoteViewToRootView<FloatRect>(frameID, *it);
 #endif
     completionHandler(popupInfo);
 }
