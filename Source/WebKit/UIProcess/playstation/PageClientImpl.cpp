@@ -47,6 +47,13 @@ PageClientImpl::PageClientImpl(PlayStationWebView& view)
 {
 }
 
+#if USE(GRAPHICS_LAYER_WC) && USE(WPE_RENDERER)
+uint64_t PageClientImpl::viewWidget()
+{
+    return 0;
+}
+#endif
+
 // PageClient's pure virtual functions
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& webProcessProxy)
 {
