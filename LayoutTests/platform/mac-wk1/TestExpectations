@@ -2850,3 +2850,5 @@ http/tests/media/hls/hls-webvtt-style.html [ Pass Timeout ]
 # rdar://127302101 ([ Ventura WK1 Debug ] 2x imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode are constant crashes (273501))
 [ Ventura Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-disabled.html [ Skip ]
 [ Ventura Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode.html [ Skip ]
+
+webkit.org/b/273577 [ Ventura ] http/tests/media/hls/track-webvtt-multitracks.html [ Skip ]
