@@ -334,7 +334,7 @@ class TaskPool(object):
         pass
 
     def __init__(
-        self, workers=1, name=None, setup=None, teardown=None, grace_period=5, block_size=1000,
+        self, workers=1, name=None, setup=None, teardown=None, enter_grace_period=60, exit_grace_period=5, block_size=1000,
         setupargs=None, setupkwargs=None,
         teardownargs=None, teardownkwargs=None,
         force_fork=False,
@@ -362,7 +362,8 @@ class TaskPool(object):
         self.callbacks = {}
         self._id_count = 0
         self.pending_count = 0
-        self.grace_period = grace_period
+        self.enter_grace_period = enter_grace_period
+        self.exit_grace_period = exit_grace_period
         self.block_size = block_size
         self.force_fork = force_fork
 
@@ -391,7 +392,7 @@ class TaskPool(object):
             ),
         ) for count in range(self._num_workers)]
 
-        with Timeout(seconds=60, patch=False, handler=self.Exception('Failed to start all workers')):
+        with Timeout(seconds=self.enter_grace_period, patch=False, handler=self.Exception('Failed to start all workers')):
             for worker in self.workers:
                 worker.start()
             while self._started < len(self.workers):
@@ -454,7 +455,7 @@ class TaskPool(object):
                 if worker.is_alive():
                     worker.terminate()
 
-            with Timeout(seconds=self.grace_period):
+            with Timeout(seconds=self.exit_grace_period):
                 try:
                     while self._started:
                         self.queue.receive()(self)

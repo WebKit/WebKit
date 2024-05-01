@@ -171,6 +171,7 @@ class LayoutTestRunner(object):
                     results_directory=self._results_directory,
                     retrying=self._retrying,
                 ), teardown=teardown_shard,
+                enter_grace_period=300, exit_grace_period=30
             ) as pool:
                 for shard in all_shards:
                     pool.do(
