@@ -213,8 +213,10 @@ LayoutRect RenderBox::clientBoxRectInFragment(const RenderFragmentContainer* fra
         return clientBoxRect();
 
     LayoutRect clientBox = borderBoxRectInFragment(fragment);
-    clientBox.setLocation(clientBox.location() + LayoutSize(borderLeft(), borderTop()));
-    clientBox.setSize(clientBox.size() - LayoutSize(borderLeft() + borderRight() + verticalScrollbarWidth(), borderTop() + borderBottom() + horizontalScrollbarHeight()));
+    auto borderWidths = this->borderWidths();
+
+    clientBox.setLocation(clientBox.location() + LayoutSize(borderWidths.left(), borderWidths.top()));
+    clientBox.setSize(clientBox.size() - LayoutSize(borderWidths.left() + borderWidths.right() + verticalScrollbarWidth(), borderWidths.top() + borderWidths.bottom() + horizontalScrollbarHeight()));
 
     return clientBox;
 }
@@ -794,12 +796,19 @@ RoundedRect RenderBox::roundedBorderBoxRect() const
 
 LayoutRect RenderBox::paddingBoxRect() const
 {
-    auto verticalScrollbarWidth = this->verticalScrollbarWidth();
-    LayoutUnit offsetForScrollbar = shouldPlaceVerticalScrollbarOnLeft() ? verticalScrollbarWidth : 0;
+    auto offsetForScrollbar = 0_lu;
+    auto verticalScrollbarWidth = 0_lu;
+    auto horizontalScrollbarHeight = 0_lu;
+    if (hasNonVisibleOverflow()) {
+        verticalScrollbarWidth = this->verticalScrollbarWidth();
+        offsetForScrollbar = shouldPlaceVerticalScrollbarOnLeft() ? verticalScrollbarWidth : 0_lu;
+        horizontalScrollbarHeight = this->horizontalScrollbarHeight();
+    }
 
-    return LayoutRect(borderLeft() + offsetForScrollbar, borderTop(),
-        width() - borderLeft() - borderRight() - verticalScrollbarWidth,
-        height() - borderTop() - borderBottom() - horizontalScrollbarHeight());
+    auto borderWidths = this->borderWidths();
+    return LayoutRect(borderWidths.left() + offsetForScrollbar, borderWidths.top(),
+        width() - borderWidths.left() - borderWidths.right() - verticalScrollbarWidth,
+        height() - borderWidths.top() - borderWidths.bottom() - horizontalScrollbarHeight);
 }
 
 LayoutPoint RenderBox::contentBoxLocation() const
