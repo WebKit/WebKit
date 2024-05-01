@@ -7082,6 +7082,19 @@ Document& Document::topDocument() const
     return *document;
 }
 
+bool Document::isTopDocument() const
+{
+    if (!settings().siteIsolationEnabled())
+        return isTopDocumentLegacy();
+
+    if (WeakPtr currentFrame = frame()) {
+        if (auto localMainFrame = dynamicDowncast<LocalFrame>(currentFrame->mainFrame()))
+            return localMainFrame->document() == this;
+    }
+
+    return false;
+}
+
 ScriptRunner& Document::ensureScriptRunner()
 {
     ASSERT(!m_scriptRunner);
