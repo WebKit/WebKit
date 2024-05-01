@@ -147,4 +147,14 @@ FontSmoothingMode FontCascadeDescription::usedFontSmoothing() const
     return fontSmoothingMode;
 }
 
+void FontCascadeDescription::resolveFontSizeAdjustFromFontIfNeeded(const Font& font)
+{
+    const auto& fontSizeAdjust = this->fontSizeAdjust();
+    if (!fontSizeAdjust.shouldResolveFromFont())
+        return;
+
+    auto aspectValue = fontSizeAdjust.resolve(computedSize(), font.fontMetrics());
+    setFontSizeAdjust({ fontSizeAdjust.metric, FontSizeAdjust::ValueType::FromFont, aspectValue });
+}
+
 } // namespace WebCore
