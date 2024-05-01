@@ -1417,15 +1417,13 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     ASSERT(compositedAncestor == m_owningLayer.ancestorCompositingLayer());
     LayoutRect parentGraphicsLayerRect = computeParentGraphicsLayerRect(compositedAncestor);
 
-    // If our content is being used in a view-transition, then all positioning
-    // is handled using a synthesized 'transform' property on the wrapping
-    // ::view-transition-new element. Move the parent graphics layer rect to our
-    // position so that layer positions are computed relative to our origin.
+    // If our content is being used in a view-transition, then all positioning is handled using a synthesized 'transform' property on the wrapping
+    // ::view-transition-new element. Set the parent graphics layer rect to that of the pseudo, adjusted into coordinates of the parent layer.
     if (renderer().capturedInViewTransition() && renderer().element()) {
         if (RefPtr activeViewTransition = renderer().document().activeViewTransition()) {
             if (CheckedPtr viewTransitionCapture = activeViewTransition->viewTransitionNewPseudoForCapturedElement(renderer())) {
                 ComputedOffsets computedOffsets(m_owningLayer, compositedAncestor, viewTransitionCapture->captureOverflowRect(), { }, { });
-                parentGraphicsLayerRect.move(computedOffsets.fromParentGraphicsLayer());
+                parentGraphicsLayerRect = { { computedOffsets.fromParentGraphicsLayer().width(), computedOffsets.fromParentGraphicsLayer().height() }, viewTransitionCapture->captureOverflowRect().size() };
             }
         }
     }
