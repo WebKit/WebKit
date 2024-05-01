@@ -112,7 +112,7 @@ public:
 
     const WatchpointsOnStructureStubInfo* watchpoints() const { return m_watchpoints.get(); }
     void setWatchpoints(std::unique_ptr<WatchpointsOnStructureStubInfo>&&);
-    WatchpointSet& watchpointSet() { return m_watchpointSet.get(); }
+    WatchpointSet& watchpointSet() { return *m_watchpointSet.get(); }
     void invalidate();
 
 protected:
@@ -123,7 +123,7 @@ private:
     FixedVector<RefPtr<AccessCase>> m_cases;
     FixedVector<StructureID> m_weakStructures;
     FixedVector<Identifier> m_identifiers;
-    Ref<WatchpointSet> m_watchpointSet;
+    RefPtr<WatchpointSet> m_watchpointSet;
     std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
 };
 

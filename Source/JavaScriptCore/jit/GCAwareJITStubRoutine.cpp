@@ -106,13 +106,20 @@ void PolymorphicAccessJITStubRoutine::observeZeroRefCountImpl()
         ASSERT(m_vm.m_sharedJITStubs);
         m_vm.m_sharedJITStubs->remove(this);
     }
+
+    // Now PolymorphicAccessJITStubRoutine is no longer referenced. So Watchpoints inside WatchpointSet do not matter. Let's eagerly clear them
+    m_watchpointSet = nullptr;
+    m_watchpoints = nullptr;
     Base::observeZeroRefCountImpl();
 }
 
 void PolymorphicAccessJITStubRoutine::invalidate()
 {
-    StringFireDetail detail("PolymorphicAccessJITStubRoutine has been invalidated");
-    m_watchpointSet->fireAll(m_vm, detail);
+    if (RefPtr watchpointSet = WTFMove(m_watchpointSet)) {
+        StringFireDetail detail("PolymorphicAccessJITStubRoutine has been invalidated");
+        VM& vm = m_vm;
+        watchpointSet->fireAll(vm, detail);
+    }
 }
 
 unsigned PolymorphicAccessJITStubRoutine::computeHash(const FixedVector<RefPtr<AccessCase>>& cases)
