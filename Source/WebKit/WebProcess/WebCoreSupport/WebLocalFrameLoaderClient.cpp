@@ -2031,6 +2031,12 @@ void WebLocalFrameLoaderClient::didAccessWindowProxyPropertyViaOpener(WebCore::S
 
 #endif
 
+void WebLocalFrameLoaderClient::frameNameChanged(const String& frameName)
+{
+    if (RefPtr page = m_frame->page())
+        page->send(Messages::WebPageProxy::FrameNameChanged(m_frame->frameID(), frameName));
+}
+
 } // namespace WebKit
 
 #undef PREFIX_PARAMETERS

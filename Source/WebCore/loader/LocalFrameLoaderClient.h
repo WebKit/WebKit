@@ -376,6 +376,8 @@ public:
 #endif
 
     virtual void documentLoaderDetached(uint64_t, LoadWillContinueInAnotherProcess) { }
+
+    virtual void frameNameChanged(const String&) { }
 };
 
 } // namespace WebCore

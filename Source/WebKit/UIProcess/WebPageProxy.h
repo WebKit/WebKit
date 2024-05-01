@@ -3046,6 +3046,8 @@ private:
 
     void setTextIndicatorFromFrame(WebCore::FrameIdentifier, WebCore::TextIndicatorData&&, uint64_t);
 
+    void frameNameChanged(IPC::Connection&, WebCore::FrameIdentifier, const String& frameName);
+
     struct Internals;
     Internals& internals() { return m_internals; }
     const Internals& internals() const { return m_internals; }

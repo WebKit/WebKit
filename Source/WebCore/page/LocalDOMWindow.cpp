@@ -1468,6 +1468,7 @@ void LocalDOMWindow::setName(const AtomString& string)
         return;
 
     frame->tree().setSpecifiedName(string);
+    frame->checkedLoader()->client().frameNameChanged(string.string());
 }
 
 void LocalDOMWindow::setStatus(const String& string)

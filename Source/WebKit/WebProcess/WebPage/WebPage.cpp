@@ -9591,6 +9591,15 @@ void WebPage::didAdjustVisibilityWithSelectors(Vector<String>&& selectors)
     send(Messages::WebPageProxy::DidAdjustVisibilityWithSelectors(WTFMove(selectors)));
 }
 
+void WebPage::frameNameWasChangedInAnotherProcess(FrameIdentifier frameID, const String& frameName)
+{
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame)
+        return;
+    if (RefPtr coreFrame = webFrame->coreFrame())
+        coreFrame->tree().setSpecifiedName(AtomString(frameName));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG

@@ -14160,6 +14160,15 @@ void WebPageProxy::didAdjustVisibilityWithSelectors(Vector<String>&& selectors)
     m_uiClient->didAdjustVisibilityWithSelectors(*this, WTFMove(selectors));
 }
 
+void WebPageProxy::frameNameChanged(IPC::Connection& connection, WebCore::FrameIdentifier frameID, const String& frameName)
+{
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        if (!webProcess.hasConnection() || webProcess.connection() == &connection)
+            return;
+        webProcess.send(Messages::WebPage::FrameNameWasChangedInAnotherProcess(frameID, frameName), pageID);
+    });
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

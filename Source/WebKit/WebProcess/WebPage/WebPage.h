@@ -2277,6 +2277,8 @@ private:
     void setDefaultSpatialTrackingLabel(const String&);
 #endif
 
+    void frameNameWasChangedInAnotherProcess(WebCore::FrameIdentifier, const String& frameName);
+
     WebCore::PageIdentifier m_identifier;
 
     RefPtr<WebCore::Page> m_page;
