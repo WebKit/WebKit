@@ -2680,7 +2680,7 @@ private:
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperFontStyle);
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperFontSizeAdjust);
-class PropertyWrapperFontSizeAdjust final : public PropertyWrapperGetter<FontSizeAdjust> {
+class PropertyWrapperFontSizeAdjust final : public PropertyWrapperGetter<const FontSizeAdjust&> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PropertyWrapperFontSizeAdjust);
 public:
     PropertyWrapperFontSizeAdjust()
@@ -2691,8 +2691,8 @@ public:
 private:
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
-        auto fromFontSizeAdjust = from.fontSizeAdjust();
-        auto toFontSizeAdjust = to.fontSizeAdjust();
+        auto& fromFontSizeAdjust = from.fontSizeAdjust();
+        auto& toFontSizeAdjust = to.fontSizeAdjust();
         return fromFontSizeAdjust.metric == toFontSizeAdjust.metric
             && fromFontSizeAdjust.value && toFontSizeAdjust.value;
     }

@@ -365,7 +365,7 @@ static RefPtr<CSSValue> valueForNinePieceImage(CSSPropertyID propertyID, const N
 
 static Ref<CSSValue> fontSizeAdjustFromStyle(const RenderStyle& style)
 {
-    auto fontSizeAdjust = style.fontSizeAdjust();
+    auto& fontSizeAdjust = style.fontSizeAdjust();
     if (fontSizeAdjust.isNone())
         return CSSPrimitiveValue::create(CSSValueNone);
 

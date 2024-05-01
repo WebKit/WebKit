@@ -555,7 +555,7 @@ public:
     inline FontSelectionValue fontStretch() const;
     inline std::optional<FontSelectionValue> fontItalic() const;
     inline FontPalette fontPalette() const;
-    inline FontSizeAdjust fontSizeAdjust() const;
+    inline const FontSizeAdjust& fontSizeAdjust() const;
 
     inline const Length& textIndent() const;
     inline TextAlignMode textAlign() const { return static_cast<TextAlignMode>(m_inheritedFlags.textAlign); }

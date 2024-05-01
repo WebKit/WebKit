@@ -109,7 +109,7 @@ public:
     AllowUserInstalledFonts shouldAllowUserInstalledFonts() const { return static_cast<AllowUserInstalledFonts>(m_shouldAllowUserInstalledFonts); }
     bool shouldDisableLigaturesForSpacing() const { return m_shouldDisableLigaturesForSpacing; }
     FontPalette fontPalette() const { return m_fontPalette; }
-    FontSizeAdjust fontSizeAdjust() const { return m_sizeAdjust; }
+    const FontSizeAdjust& fontSizeAdjust() const { return m_sizeAdjust; }
 
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
     void setTextSpacingTrim(TextSpacingTrim v) { m_textSpacingTrim = v; }
