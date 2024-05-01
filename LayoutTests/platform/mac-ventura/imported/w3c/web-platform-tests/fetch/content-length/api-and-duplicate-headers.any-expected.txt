@@ -1,4 +1,0 @@
-
-PASS fetch() and duplicate Content-Length/Content-Type headers
-PASS XMLHttpRequest and duplicate Content-Length/Content-Type headers
-

@@ -1,4 +1,0 @@
-
-FAIL Synchronous XMLHttpRequest should throw on bad chunk assert_throws_dom: function "() => client.send()" did not throw
-PASS Asynchronous XMLHttpRequest should clear response on bad chunk
-
