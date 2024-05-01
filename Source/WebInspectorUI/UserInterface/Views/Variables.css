@@ -105,7 +105,7 @@
     --yellow-highlight-text-color: var(--text-color);
 
     --console-secondary-text-color: hsla(0, 0%, 0%, 0.33);
-    --console-prompt-min-height: 30px;
+    --console-prompt-min-height: 30px; /* Keep in sync with `WI.QuickConsole.MinimumHeight` */
 
     --message-text-view-font-size: 16px;
     --message-text-view-large-font-size: 28px;
