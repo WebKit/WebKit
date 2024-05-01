@@ -1,0 +1,151 @@
+// swift-interface-format-version: 1.0
+// swift-module-flags: -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -library-level spi -enable-bare-slash-regex -user-module-version 199.100.12 -module-name LinearMediaKit
+
+import Combine
+import Foundation
+@_spi(RealityKit) @_spi(Private) import RealityFoundation
+import Swift
+import UIKit
+
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc(LMPlayableViewController) @_Concurrency.MainActor(unsafe) public class PlayableViewController : UIKit.UIViewController {
+@_Concurrency.MainActor(unsafe) public var prefersAutoDimming: Swift.Bool {
+  get
+  set
+}
+}
+public enum ContentType : Swift.Equatable, Swift.CaseIterable, Swift.Codable, Swift.Sendable {
+ case immersive
+ case spatial
+ case planar
+ case audioOnly
+ public static func == (a: LinearMediaKit.ContentType, b: LinearMediaKit.ContentType) -> Swift.Bool
+ public func hash(into hasher: inout Swift.Hasher)
+ public typealias AllCases = [LinearMediaKit.ContentType]
+ public static var allCases: [LinearMediaKit.ContentType] {
+   get
+ }
+ public func encode(to encoder: any Swift.Encoder) throws
+ public var hashValue: Swift.Int {
+   get
+ }
+ public init(from decoder: any Swift.Decoder) throws
+}
+public enum PresentationMode {
+ case inline
+ case fullscreen
+ case fullscreenFromInline
+ case pip
+ public static func == (a: LinearMediaKit.PresentationMode, b: LinearMediaKit.PresentationMode) -> Swift.Bool
+ public func hash(into hasher: inout Swift.Hasher)
+ public var hashValue: Swift.Int {
+   get
+ }
+}
+public struct RenderingConfiguration : Swift.Equatable {
+ public var contentType: LinearMediaKit.ContentType?
+ public var wantsThumbnailLayerPublished: Swift.Bool
+ public var wantsThumbnailMaterialPublished: Swift.Bool
+ public var wantsVideoLayerPublished: Swift.Bool
+ public var wantsVideoMaterialPublished: Swift.Bool
+ public var wantsVideoAssetPublished: Swift.Bool
+ public var wantsPeculiarEntityPublished: Swift.Bool
+ public static func == (a: LinearMediaKit.RenderingConfiguration, b: LinearMediaKit.RenderingConfiguration) -> Swift.Bool
+}
+public enum ViewingMode {
+ case mono
+ case stereo
+ case immersive
+ public static var unique: LinearMediaKit.ViewingMode {
+   get
+ }
+ case spatial
+ public static var singular: LinearMediaKit.ViewingMode {
+   get
+ }
+ public static func == (a: LinearMediaKit.ViewingMode, b: LinearMediaKit.ViewingMode) -> Swift.Bool
+ public func hash(into hasher: inout Swift.Hasher)
+ public var hashValue: Swift.Int {
+   get
+ }
+}
+public enum PeculiarMode {
+ case portal
+ case immersive
+ public static func == (a: LinearMediaKit.PeculiarMode, b: LinearMediaKit.PeculiarMode) -> Swift.Bool
+ public func hash(into hasher: inout Swift.Hasher)
+ public var hashValue: Swift.Int {
+   get
+ }
+}
+public protocol Peculiarable {
+ func setScreen(width: Swift.Float, height: Swift.Float)
+ var screenMode: LinearMediaKit.PeculiarMode { get set }
+ var supportedScreenModes: [LinearMediaKit.PeculiarMode] { get }
+ var screenGUIDPublisher: Combine.AnyPublisher<Swift.UInt64?, Swift.Never> { get }
+ var shouldDisplayThumbnail: Swift.Bool { get }
+ var preferStereoPlayback: Swift.Bool { get set }
+}
+public typealias PeculiarEntity = RealityFoundation.Entity & LinearMediaKit.Peculiarable
+public enum ContentMode : Swift.Int, Swift.CaseIterable {
+ case scaleAspectFit
+ case scaleAspectFill
+ case scaleToFill
+ public static var `default`: LinearMediaKit.ContentMode
+ public init?(rawValue: Swift.Int)
+ public typealias AllCases = [LinearMediaKit.ContentMode]
+ public typealias RawValue = Swift.Int
+ public static var allCases: [LinearMediaKit.ContentMode] {
+   get
+ }
+ public var rawValue: Swift.Int {
+   get
+ }
+}
+public protocol ContentMetadataKey {
+ associatedtype Value : Swift.Equatable
+ static var name: Swift.String { get }
+}
+public struct ContentMetadata {
+ public enum DisplayTitle : LinearMediaKit.ContentMetadataKey {
+   public typealias Value = Swift.String
+   public static var name: Swift.String
+ }
+ public let displayTitle: LinearMediaKit.ContentMetadata.DisplayTitle
+ public enum DisplaySubtitle : LinearMediaKit.ContentMetadataKey {
+   public typealias Value = Swift.String
+   public static var name: Swift.String
+ }
+ public let displaySubtitle: LinearMediaKit.ContentMetadata.DisplaySubtitle
+ public enum AnticipatedStartDate : LinearMediaKit.ContentMetadataKey {
+   public typealias Value = Foundation.Date
+   public static var name: Swift.String
+ }
+ public let anticipatedStartDate: LinearMediaKit.ContentMetadata.AnticipatedStartDate
+ public enum AnticipatedEndDate : LinearMediaKit.ContentMetadataKey {
+   public typealias Value = Foundation.Date
+   public static var name: Swift.String
+ }
+ public let anticipatedEndDate: LinearMediaKit.ContentMetadata.AnticipatedEndDate
+}
+@dynamicMemberLookup public struct ContentMetadataContainer {
+ public init()
+ public subscript<K>(dynamicMember keyPath: Swift.KeyPath<LinearMediaKit.ContentMetadata, K>) -> K.Value? where K : LinearMediaKit.ContentMetadataKey {
+   get
+   set
+ }
+}
+public struct FullscreenBehaviors : Swift.OptionSet, Swift.CustomStringConvertible {
+ public let rawValue: Swift.Int
+ public init(rawValue: Swift.Int)
+ public static let sceneResize: LinearMediaKit.FullscreenBehaviors
+ public static let sceneSizeRestrictions: LinearMediaKit.FullscreenBehaviors
+ public static let sceneChromeOptions: LinearMediaKit.FullscreenBehaviors
+ public static let hostContentInline: LinearMediaKit.FullscreenBehaviors
+ public static let `default`: [LinearMediaKit.FullscreenBehaviors]
+ public var description: Swift.String {
+   get
+ }
+ public typealias ArrayLiteralElement = LinearMediaKit.FullscreenBehaviors
+ public typealias Element = LinearMediaKit.FullscreenBehaviors
+ public typealias RawValue = Swift.Int
+}

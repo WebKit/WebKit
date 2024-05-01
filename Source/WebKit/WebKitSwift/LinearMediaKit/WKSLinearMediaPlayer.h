@@ -28,6 +28,8 @@
 #if defined(TARGET_OS_VISION) && TARGET_OS_VISION
 
 #import <UIKit/UIKit.h>
+#import <wtf/Platform.h>
+#import <wtf/spi/darwin/XPCSPI.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
