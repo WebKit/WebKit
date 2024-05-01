@@ -633,8 +633,8 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
         if (zeroColorTargets) {
             mtlDescriptor.defaultRasterSampleCount = textureView.sampleCount();
-            mtlDescriptor.renderTargetWidth = textureView.width();
-            mtlDescriptor.renderTargetHeight = textureView.height();
+            mtlDescriptor.renderTargetWidth = metalDepthStencilTexture.width;
+            mtlDescriptor.renderTargetHeight = metalDepthStencilTexture.height;
         }
     }
 

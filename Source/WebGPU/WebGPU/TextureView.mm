@@ -100,6 +100,11 @@ WGPUTextureUsageFlags TextureView::usage() const
     return m_parentTexture->usage();
 }
 
+id<MTLTexture> TextureView::texture() const
+{
+    return isDestroyed() ? parentTexture() : m_texture;
+}
+
 uint32_t TextureView::sampleCount() const
 {
     return m_parentTexture->sampleCount();
@@ -162,7 +167,7 @@ bool TextureView::isValid() const
 
 void TextureView::destroy()
 {
-    m_texture = m_device->placeholderTexture();
+    m_texture = m_device->placeholderTexture(format());
     if (m_commandEncoder && !m_parentTexture->isCanvasBacking())
         m_commandEncoder.get()->makeSubmitInvalid();
 
