@@ -30,6 +30,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class AbstractScriptBufferHolder;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AbstractScriptBufferHolder> : std::true_type { };
+}
+
+namespace WebCore {
 
 class AbstractScriptBufferHolder : public CanMakeWeakPtr<AbstractScriptBufferHolder> {
 public:

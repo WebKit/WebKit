@@ -405,7 +405,7 @@ void JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
     Base::analyzeHeap(cell, analyzer);
 }
 
-bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);

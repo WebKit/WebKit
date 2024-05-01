@@ -80,6 +80,8 @@ struct Styleable {
 
     bool hasRunningAcceleratedAnimations() const;
 
+    bool capturedInViewTransition() const;
+
     KeyframeEffectStack* keyframeEffectStack() const
     {
         return element.keyframeEffectStack(pseudoElementIdentifier);
@@ -177,7 +179,8 @@ struct Styleable {
     void elementWasRemoved() const;
 
     void willChangeRenderer() const;
-    void cancelStyleOriginatedAnimations(const WeakStyleOriginatedAnimations& = { }) const;
+    void cancelStyleOriginatedAnimations() const;
+    void cancelStyleOriginatedAnimations(const WeakStyleOriginatedAnimations&) const;
 
     void animationWasAdded(WebAnimation&) const;
     void animationWasRemoved(WebAnimation&) const;
@@ -186,6 +189,31 @@ struct Styleable {
 
     void updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const Style::ResolutionContext&, WeakStyleOriginatedAnimations&) const;
     void updateCSSTransitions(const RenderStyle& currentStyle, const RenderStyle& newStyle, WeakStyleOriginatedAnimations&) const;
+};
+
+class WeakStyleable {
+public:
+    WeakStyleable() = default;
+
+    explicit operator bool() const { return !!m_element; }
+
+    WeakStyleable& operator=(const Styleable& styleable)
+    {
+        m_element = styleable.element;
+        m_pseudoElementIdentifier = styleable.pseudoElementIdentifier;
+        return *this;
+    }
+
+    std::optional<Styleable> styleable() const
+    {
+        if (!m_element)
+            return std::nullopt;
+        return Styleable(*m_element, m_pseudoElementIdentifier);
+    }
+
+private:
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element;
+    std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;
 };
 
 } // namespace WebCore

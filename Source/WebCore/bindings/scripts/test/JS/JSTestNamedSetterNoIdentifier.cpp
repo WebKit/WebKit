@@ -368,7 +368,7 @@ void JSTestNamedSetterNoIdentifier::analyzeHeap(JSCell* cell, HeapAnalyzer& anal
     Base::analyzeHeap(cell, analyzer);
 }
 
-bool JSTestNamedSetterNoIdentifierOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSTestNamedSetterNoIdentifierOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);

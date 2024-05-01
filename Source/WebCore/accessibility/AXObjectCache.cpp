@@ -1314,6 +1314,7 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
 
     // Go up the existing ancestors chain and fire the appropriate notifications.
     bool shouldUpdateParent = true;
+    bool foundTableCaption = false;
     for (RefPtr parent = &object; parent; parent = parent->parentObjectIfExists()) {
         if (shouldUpdateParent)
             parent->setNeedsToUpdateChildren();
@@ -1336,6 +1337,13 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
         if (parent->isLabel()) {
             // A label's descendant was added or removed. Update its LabelFor relationships.
             handleLabelChanged(parent.get());
+        }
+
+        if (parent->hasTagName(captionTag))
+            foundTableCaption = true;
+        else if (foundTableCaption && parent->isTable()) {
+            postNotification(parent.get(), nullptr, AXTextChanged);
+            foundTableCaption = false;
         }
     }
 

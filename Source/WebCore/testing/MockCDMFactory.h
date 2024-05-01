@@ -40,6 +40,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class MockCDM;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MockCDM> : std::true_type { };
+}
+
+namespace WebCore {
 
 class MockCDMFactory : public RefCounted<MockCDMFactory>, public CanMakeWeakPtr<MockCDMFactory>, private CDMFactory {
 public:

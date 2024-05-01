@@ -121,8 +121,6 @@ public:
     InlineIterator::LineBoxIterator firstLineBox() const;
     InlineIterator::LineBoxIterator lastLineBox() const;
 
-    const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
-    bool hasRendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& flow() const { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
     RenderBlockFlow& flow() { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
 
@@ -156,7 +154,7 @@ private:
     const Layout::ElementBox& rootLayoutBox() const;
     Layout::ElementBox& rootLayoutBox();
     void clearInlineContent();
-    void releaseCaches();
+    void releaseCachesAndResetDamage();
 
     LayoutUnit physicalBaselineForLine(const InlineDisplay::Line&) const;
     

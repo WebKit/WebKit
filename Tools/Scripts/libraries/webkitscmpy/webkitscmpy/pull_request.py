@@ -171,7 +171,8 @@ class PullRequest(object):
         self, number, title=None,
         body=None, author=None,
         head=None, base=None,
-        opened=None, generator=None, metadata=None,
+        opened=None, merged=None,
+        generator=None, metadata=None,
         url=None, draft=None, hash=None,
     ):
         self.number = number
@@ -183,6 +184,7 @@ class PullRequest(object):
         self.draft = draft
         self.hash = hash
         self._opened = opened
+        self._merged = merged
         self._reviewers = None
         self._approvers = None
         self._blockers = None
@@ -229,6 +231,10 @@ class PullRequest(object):
         if not self.generator:
             raise self.Exception('No associated pull-request generator')
         return self.generator.update(self, opened=False)
+
+    @property
+    def merged(self):
+        return self._merged
 
     def comment(self, content):
         if not self.generator:

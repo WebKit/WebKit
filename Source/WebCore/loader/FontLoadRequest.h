@@ -31,6 +31,15 @@
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
+class FontLoadRequestClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::FontLoadRequestClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Font;
 class FontCreationContext;

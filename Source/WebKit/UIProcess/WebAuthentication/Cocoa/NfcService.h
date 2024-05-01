@@ -33,12 +33,21 @@
 OBJC_CLASS NFReaderSession;
 
 namespace WebKit {
+class NfcService;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NfcService> : std::true_type { };
+}
+
+namespace WebKit {
 
 class NfcConnection;
 
 class NfcService : public FidoService {
 public:
-    explicit NfcService(Observer&);
+    explicit NfcService(AuthenticatorTransportServiceObserver&);
     ~NfcService();
 
     static bool isAvailable();

@@ -55,7 +55,7 @@ public:
     RemoteLegacyCDMFactoryProxy* factory() const { return m_factory.get(); }
     WebCore::LegacyCDMSession* session() const { return m_session.get(); }
 
-    void setPlayer(WeakPtr<RemoteMediaPlayerProxy> player) { m_player = WTFMove(player); }
+    void setPlayer(WeakPtr<RemoteMediaPlayerProxy>);
 
     RefPtr<ArrayBuffer> getCachedKeyForKeyId(const String&);
 

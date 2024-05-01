@@ -1629,7 +1629,7 @@ void Internals::selectColorInColorChooser(HTMLInputElement& element, const Strin
 
 ExceptionOr<Vector<AtomString>> Internals::formControlStateOfPreviousHistoryItem()
 {
-    HistoryItem* mainItem = frame()->loader().history().previousItem();
+    HistoryItem* mainItem = frame()->history().previousItem();
     if (!mainItem)
         return Exception { ExceptionCode::InvalidAccessError };
     auto uniqueName = frame()->tree().uniqueName();
@@ -1640,7 +1640,7 @@ ExceptionOr<Vector<AtomString>> Internals::formControlStateOfPreviousHistoryItem
 
 ExceptionOr<void> Internals::setFormControlStateOfPreviousHistoryItem(const Vector<AtomString>& state)
 {
-    HistoryItem* mainItem = frame()->loader().history().previousItem();
+    HistoryItem* mainItem = frame()->history().previousItem();
     if (!mainItem)
         return Exception { ExceptionCode::InvalidAccessError };
     auto uniqueName = frame()->tree().uniqueName();
@@ -3940,8 +3940,8 @@ Ref<MemoryInfo> Internals::memoryInfo() const
 
 Vector<String> Internals::getReferencedFilePaths() const
 {
-    frame()->loader().history().saveDocumentAndScrollState();
-    return FormController::referencedFilePaths(frame()->loader().history().currentItem()->documentState());
+    frame()->history().saveDocumentAndScrollState();
+    return FormController::referencedFilePaths(frame()->history().currentItem()->documentState());
 }
 
 ExceptionOr<void> Internals::startTrackingRepaints()

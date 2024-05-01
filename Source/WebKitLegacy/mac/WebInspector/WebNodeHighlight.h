@@ -39,7 +39,7 @@
 #endif
 
 namespace WebCore {
-    class InspectorController;
+class InspectorController;
 }
 
 #if PLATFORM(IOS_FAMILY)

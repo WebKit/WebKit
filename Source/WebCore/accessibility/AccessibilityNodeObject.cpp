@@ -410,8 +410,13 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
 
     if (is<HTMLLabelElement>(*element))
         return AccessibilityRole::Label;
-    if (element->hasTagName(dfnTag))
-        return AccessibilityRole::Definition;
+    if (element->hasTagName(dfnTag)) {
+        // Confusingly, the `dfn` element represents a term being defined, making it equivalent to the "term" ARIA
+        // role rather than the "definition" ARIA role. The "definition" ARIA role has no HTML equivalent.
+        // https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-dfn-element
+        // https://w3c.github.io/aria/#term and https://w3c.github.io/aria/#definition
+        return AccessibilityRole::Term;
+    }
     if (element->hasTagName(divTag) && !isNonNativeTextControl())
         return AccessibilityRole::Generic;
     if (is<HTMLFormElement>(*element))

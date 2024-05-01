@@ -46,7 +46,7 @@ class Update;
 
 class Adjuster {
 public:
-    Adjuster(const Document&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element*);
+    Adjuster(const Document&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, Element*);
 
     void adjust(RenderStyle&, const RenderStyle* userAgentAppearanceStyle) const;
     void adjustAnimatedStyle(RenderStyle&, OptionSet<AnimationImpact>) const;
@@ -80,7 +80,7 @@ private:
     const Document& m_document;
     const RenderStyle& m_parentStyle;
     const RenderStyle& m_parentBoxStyle;
-    const Element* m_element;
+    Element* m_element;
 };
 
 }

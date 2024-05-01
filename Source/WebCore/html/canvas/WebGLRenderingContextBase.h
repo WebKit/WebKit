@@ -66,6 +66,15 @@
 
 #include "GCGLSpan.h"
 
+namespace WebCore {
+class WebGLRenderingContextBase;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::WebGLRenderingContextBase> : std::true_type { };
+}
+
 namespace JSC {
 class AbstractSlotVisitor;
 }

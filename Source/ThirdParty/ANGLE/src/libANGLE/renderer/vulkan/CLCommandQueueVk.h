@@ -14,6 +14,7 @@
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLEventVk.h"
 #include "libANGLE/renderer/vulkan/CLKernelVk.h"
+#include "libANGLE/renderer/vulkan/CLMemoryVk.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/ShareGroupVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
@@ -225,7 +226,8 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     CLPlatformVk *getPlatform() { return mContext->getPlatform(); }
 
   private:
-    static constexpr size_t kMaxDependencyTrackerSize = 64;
+    static constexpr size_t kMaxDependencyTrackerSize    = 64;
+    static constexpr size_t kMaxHostBufferUpdateListSize = 16;
 
     vk::ProtectionType getProtectionType() const { return vk::ProtectionType::Unprotected; }
 
@@ -235,6 +237,7 @@ class CLCommandQueueVk : public CLCommandQueueImpl
 
     angle::Result submitCommands();
     angle::Result finishInternal();
+    angle::Result syncHostBuffers();
     angle::Result flushComputePassCommands();
     angle::Result processWaitlist(const cl::EventPtrs &waitEvents);
     angle::Result createEvent(CLEventImpl::CreateFunc *createFunc);
@@ -264,6 +267,9 @@ class CLCommandQueueVk : public CLCommandQueueImpl
 
     // Check to see if flush/finish can be skipped
     bool mHasAnyCommandsPendingSubmission;
+
+    // List of buffer refs that need host syncing
+    cl::MemoryPtrs mHostBufferUpdateList;
 };
 
 }  // namespace rx

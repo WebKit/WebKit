@@ -47,7 +47,7 @@ namespace WebCore {
 
 class RTCPeerConnection;
 
-class RTCIceTransport : public RefCounted<RTCIceTransport>, public ActiveDOMObject, public EventTarget, public RTCIceTransportBackend::Client {
+class RTCIceTransport : public RefCounted<RTCIceTransport>, public ActiveDOMObject, public EventTarget, public RTCIceTransportBackendClient {
     WTF_MAKE_ISO_ALLOCATED(RTCIceTransport);
 public:
     static Ref<RTCIceTransport> create(ScriptExecutionContext&, UniqueRef<RTCIceTransportBackend>&&, RTCPeerConnection&);
@@ -81,7 +81,7 @@ private:
     void stop() final;
     bool virtualHasPendingActivity() const final;
 
-    // RTCIceTransportBackend::Client
+    // RTCIceTransportBackendClient
     void onStateChanged(RTCIceTransportState) final;
     void onGatheringStateChanged(RTCIceGatheringState) final;
     void onSelectedCandidatePairChanged(RefPtr<RTCIceCandidate>&&, RefPtr<RTCIceCandidate>&&) final;

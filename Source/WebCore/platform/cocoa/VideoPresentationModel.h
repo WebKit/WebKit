@@ -43,6 +43,15 @@ OBJC_CLASS AVPlayerViewController;
 OBJC_CLASS UIViewController;
 #endif
 
+namespace WebCore {
+class VideoPresentationModelClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::VideoPresentationModelClient> : std::true_type { };
+}
+
 namespace WTF {
 class MachSendRight;
 }

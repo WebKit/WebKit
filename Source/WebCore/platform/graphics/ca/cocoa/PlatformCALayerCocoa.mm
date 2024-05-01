@@ -356,6 +356,7 @@ Ref<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) c
     newLayer->setBackgroundColor(backgroundColor());
     newLayer->setContentsScale(contentsScale());
     newLayer->setCornerRadius(cornerRadius());
+    newLayer->setBackdropRootIsOpaque(backdropRootIsOpaque());
     newLayer->copyFiltersFrom(*this);
     newLayer->updateCustomAppearance(customAppearance());
 
@@ -646,6 +647,16 @@ void PlatformCALayerCocoa::setIsBackdropRoot(bool isBackdropRoot)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+bool PlatformCALayerCocoa::backdropRootIsOpaque() const
+{
+    return m_backdropRootIsOpaque;
+}
+
+void PlatformCALayerCocoa::setBackdropRootIsOpaque(bool backdropRootIsOpaque)
+{
+    m_backdropRootIsOpaque = backdropRootIsOpaque;
+}
+
 bool PlatformCALayerCocoa::isHidden() const
 {
     return [m_layer isHidden];
@@ -867,7 +878,7 @@ void PlatformCALayerCocoa::setOpacity(float value)
 
 void PlatformCALayerCocoa::setFilters(const FilterOperations& filters)
 {
-    PlatformCAFilters::setFiltersOnLayer(platformLayer(), filters, m_owner->platformCALayerCSSUnprefixedBackdropFilterEnabled());
+    PlatformCAFilters::setFiltersOnLayer(platformLayer(), filters, m_backdropRootIsOpaque);
 }
 
 void PlatformCALayerCocoa::copyFiltersFrom(const PlatformCALayer& sourceLayer)

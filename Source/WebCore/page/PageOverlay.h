@@ -40,29 +40,30 @@ class GraphicsContext;
 class GraphicsLayer;
 class LocalFrame;
 class Page;
+class PageOverlay;
 class PageOverlayController;
 class PlatformMouseEvent;
+
+class PageOverlayClient {
+protected:
+    virtual ~PageOverlayClient() = default;
+
+public:
+    virtual void willMoveToPage(PageOverlay&, Page*) = 0;
+    virtual void didMoveToPage(PageOverlay&, Page*) = 0;
+    virtual void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) = 0;
+    virtual bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) = 0;
+    virtual void didScrollFrame(PageOverlay&, LocalFrame&) { }
+
+    virtual bool copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, String&) { return false; }
+    virtual bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&)  { return false; }
+    virtual Vector<String> copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */)  { return { }; }
+};
 
 class PageOverlay final : public RefCounted<PageOverlay>, public CanMakeWeakPtr<PageOverlay> {
     WTF_MAKE_NONCOPYABLE(PageOverlay);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    class Client {
-    protected:
-        virtual ~Client() = default;
-    
-    public:
-        virtual void willMoveToPage(PageOverlay&, Page*) = 0;
-        virtual void didMoveToPage(PageOverlay&, Page*) = 0;
-        virtual void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) = 0;
-        virtual bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) = 0;
-        virtual void didScrollFrame(PageOverlay&, LocalFrame&) { }
-
-        virtual bool copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, String&) { return false; }
-        virtual bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&)  { return false; }
-        virtual Vector<String> copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */)  { return { }; }
-    };
-
     enum class OverlayType : bool {
         View, // Fixed to the view size; does not scale or scroll with the document, repaints on scroll.
         Document, // Scales and scrolls with the document.
@@ -73,7 +74,7 @@ public:
         No,
     };
 
-    WEBCORE_EXPORT static Ref<PageOverlay> create(Client&, OverlayType = OverlayType::View, AlwaysTileOverlayLayer = AlwaysTileOverlayLayer::No);
+    WEBCORE_EXPORT static Ref<PageOverlay> create(PageOverlayClient&, OverlayType = OverlayType::View, AlwaysTileOverlayLayer = AlwaysTileOverlayLayer::No);
     WEBCORE_EXPORT virtual ~PageOverlay();
 
     WEBCORE_EXPORT PageOverlayController* controller() const;
@@ -100,7 +101,7 @@ public:
 
     WEBCORE_EXPORT void clear();
 
-    Client& client() const { return m_client; }
+    PageOverlayClient& client() const { return m_client; }
 
     enum class FadeMode : bool { DoNotFade, Fade };
 
@@ -125,12 +126,12 @@ public:
     void setNeedsSynchronousScrolling(bool needsSynchronousScrolling) { m_needsSynchronousScrolling = needsSynchronousScrolling; }
 
 private:
-    explicit PageOverlay(Client&, OverlayType, AlwaysTileOverlayLayer);
+    explicit PageOverlay(PageOverlayClient&, OverlayType, AlwaysTileOverlayLayer);
 
     void startFadeAnimation();
     void fadeAnimationTimerFired();
 
-    Client& m_client;
+    PageOverlayClient& m_client;
     SingleThreadWeakPtr<Page> m_page;
 
     Timer m_fadeAnimationTimer;

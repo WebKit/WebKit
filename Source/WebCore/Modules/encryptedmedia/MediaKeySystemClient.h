@@ -29,6 +29,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class MediaKeySystemClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaKeySystemClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Document;
 class Page;

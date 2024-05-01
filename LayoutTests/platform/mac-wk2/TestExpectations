@@ -1781,7 +1781,8 @@ webkit.org/b/261356 [ Debug ] fast/mediastream/device-change-event-2.html [ Pass
 
 webkit.org/b/263396 css3/color/text.html [ Skip ]
 
-webkit.org/b/263754 [ Sonoma+ x86_64 ] css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
+# webkit.org/b/273419 [ Ventura ] css3/filters/effect-drop-shadow-clip-abspos.html(layout-tests) is a constant IMAGE failure
+webkit.org/b/263754 [ Ventura+ x86_64 ] css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
 
 # WebGPU
 http/tests/webgpu/webgpu/idl/constructable.html [ Skip ]
@@ -1907,5 +1908,8 @@ webkit.org/b/272685 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/svg/pain
 
 # Inline predictions are only supported on Sonoma and later.
 [ Monterey Ventura ] editing/input/mac/show-inline-prediction-with-adjacent-text.html [ Skip ]
+[ Monterey Ventura ] editing/input/mac/writing-suggestions-textarea-multiple-lines.html [ Skip ]
 
 webkit.org/b/273012 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/svg/painting/reftests/percentage.svg [ ImageOnlyFailure ]
+
+webkit.org/b/273441 fast/forms/select/mac-wk2/inactive-appearance.html [ Skip ]

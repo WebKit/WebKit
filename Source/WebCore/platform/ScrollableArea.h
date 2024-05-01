@@ -38,6 +38,15 @@
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class ScrollableArea;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ScrollableArea> : std::true_type { };
+}
+
 namespace WTF {
 class TextStream;
 }

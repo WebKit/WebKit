@@ -57,6 +57,17 @@
 OBJC_CLASS AVPlayer;
 OBJC_CLASS NSArray;
 
+namespace WebCore {
+class MediaPlayerClient;
+class MediaPlayerFactory;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaPlayerClient> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaPlayerFactory> : std::true_type { };
+}
+
 #if USE(AVFOUNDATION)
 typedef struct __CVBuffer* CVPixelBufferRef;
 #endif

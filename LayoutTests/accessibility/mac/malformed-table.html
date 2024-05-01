@@ -1,23 +1,24 @@
-<!DOCTYPE>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<script src="../../resources/js-test-pre.js"></script>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Table test</title>
-    <style>
-    table {border: 1px solid;}
-    table th {background-color: #eeeeee;}
-    table td {background-color: #dddddd;}
-    .table thead {display:block;}
-    .table tbody {display:block;}
-    .table2 thead {display:block;}
-    .table2 tbody {display:block;}
-    </style>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<head>
+<style>
+table { border: 1px solid; }
+table th { background-color: #eeeeee; }
+table td { background-color: #dddddd; }
+.table thead { display:block; }
+.table tbody { display:block; }
+.table2 thead { display:block; }
+.table2 tbody { display:block; }
+</style>
 </head>
-<body id="body">
+</head>
+<body>
 
 <table role="grid" class="table" id="table">
-    <caption>Table with CSS and ARIA</caption>
+    <caption id="caption1">Table with CSS and ARIA</caption>
     <thead>
         <tr role="row">
             <th role="gridcell">Heading one</th>
@@ -33,7 +34,7 @@
 </table>
 
 <table class="table2" id="table2">
-    <caption>Table with CSS and no ARIA</caption>
+    <caption id="caption2">Table with CSS and no ARIA</caption>
     <thead>
         <tr>
             <th>Heading one</th>
@@ -48,60 +49,57 @@
     <tbody>
 </table>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This tests that contents in malformed tables are accessible.\n\n";
 
-    description("This tests that contents in malformed tables are accessible.");
+if (window.accessibilityController) {
+    var table1 = accessibilityController.accessibleElementById("table");
+    var table2 = accessibilityController.accessibleElementById("table2");
+    var tableArray = [table1, table2];
+    output += expect("table1.role", "'AXRole: AXTable'");
+    output += expect("table2.role", "'AXRole: AXTable'");
 
-    if (window.accessibilityController) {
-        var table1 = accessibilityController.accessibleElementById("table");
-        var table2 = accessibilityController.accessibleElementById("table2");
-        var tableArray = [table1, table2];
-        // check for table role
-        shouldBe("table1.role", "'AXRole: AXTable'");
-        shouldBe("table2.role", "'AXRole: AXTable'");
+    // Check for correct column and row count.
+    var table1ColumnCount = table1.numberAttributeValue("AXColumnCount");
+    var table1RowCount = table1.numberAttributeValue("AXRowCount");
+    var table2ColumnCount = table2.numberAttributeValue("AXColumnCount");
+    var table2RowCount = table2.numberAttributeValue("AXRowCount");
+    output += expect("table1ColumnCount", "2");
+    output += expect("table1RowCount", "2");
+    output += expect("table2ColumnCount", "2");
+    output += expect("table2RowCount", "2");
 
-        // check for correct column and row count
-        var table1ColumnCount = table1.numberAttributeValue("AXColumnCount");
-        var table1RowCount = table1.numberAttributeValue("AXRowCount");
-        var table2ColumnCount = table2.numberAttributeValue("AXColumnCount");
-        var table2RowCount = table2.numberAttributeValue("AXRowCount");
-        shouldBe("table1ColumnCount", "2");
-        shouldBe("table1RowCount", "2");
-        shouldBe("table2ColumnCount", "2");
-        shouldBe("table2RowCount", "2");
+    output += expect("table1.childAtIndex(0).domIdentifier", "'caption1'");
+    output += expect("table2.childAtIndex(0).domIdentifier", "'caption2'");
 
-        // check rows
-        for (var tableIndex = 0; tableIndex < 2; tableIndex++) {
-            debug("\nCheck rows for Table" + (tableIndex+1));
-            var table = tableArray[tableIndex];
-            for (var i = 0; i < 2; i++) {
-                var rowa = table.rowAtIndex(i);
-                var rowb = table.childAtIndex(i);
-                shouldBeTrue("rowa.isEqual(rowb)");
-                shouldBe("rowa.role", "'AXRole: AXRow'");
-            }
-        }
-
-        // check cells
-        for (var tableIndex = 0; tableIndex < 2; tableIndex++) {
-            debug("\nCheck cells for Table" + (tableIndex+1));
-            var table = tableArray[tableIndex];
-            for (var i = 0; i < 2; i++) {
-                for (var j = 0; j < 2; j++) {
-                    var cella = table.cellForColumnAndRow(i, j);
-                    var cellb = table.childAtIndex(j).childAtIndex(i);
-                    shouldBeTrue("cella.isEqual(cellb)");
-                    shouldBe("cella.role", "'AXRole: AXCell'");
-                }
-            }
+    for (let tableIndex = 0; tableIndex < 2; tableIndex++) {
+        output += `\nChecking rows for table ${tableIndex + 1}\n`;
+        const table = tableArray[tableIndex];
+        for (let i = 0; i < 2; i++) {
+            var rowA = table.rowAtIndex(i);
+            // + 1 because the <caption> is before our rows.
+            var rowB = table.childAtIndex(i + 1);
+            output += expect("rowA.isEqual(rowB)", "true");
+            output += expect("rowA.role", "'AXRole: AXRow'");
         }
     }
 
+    for (let tableIndex = 0; tableIndex < 2; tableIndex++) {
+        output += `\nChecking cells for table ${tableIndex + 1}\n`;
+        const table = tableArray[tableIndex];
+        for (let i = 0; i < 2; i++) {
+            for (let j = 0; j < 2; j++) {
+                var cellA = table.cellForColumnAndRow(i, j);
+                // + 1 because the <caption> is before our rows.
+                var cellB = table.childAtIndex(j + 1).childAtIndex(i);
+                output += expect("cellA.isEqual(cellB)", "true");
+                output += expect("cellA.role", "'AXRole: AXCell'");
+            }
+        }
+    }
+    debug(output);
+}
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+

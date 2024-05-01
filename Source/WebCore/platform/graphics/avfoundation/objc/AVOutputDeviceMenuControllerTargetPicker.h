@@ -33,12 +33,21 @@ OBJC_CLASS AVOutputDeviceMenuController;
 OBJC_CLASS WebAVOutputDeviceMenuControllerHelper;
 
 namespace WebCore {
+class AVOutputDeviceMenuControllerTargetPicker;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AVOutputDeviceMenuControllerTargetPicker> : std::true_type { };
+}
+
+namespace WebCore {
 
 class AVOutputDeviceMenuControllerTargetPicker final : public AVPlaybackTargetPicker {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AVOutputDeviceMenuControllerTargetPicker);
 public:
-    explicit AVOutputDeviceMenuControllerTargetPicker(AVPlaybackTargetPicker::Client&);
+    explicit AVOutputDeviceMenuControllerTargetPicker(AVPlaybackTargetPickerClient&);
     virtual ~AVOutputDeviceMenuControllerTargetPicker();
 
     void availableDevicesDidChange();

@@ -208,7 +208,7 @@ void GPUProcess::tryExitIfUnused()
     m_idleExitTimer.stop();
 
     RELEASE_LOG(Process, "GPUProcess::tryExitIfUnused: GPUProcess is exiting because we are under memory pressure and the process is no longer useful.");
-    parentProcessConnection()->send(Messages::GPUProcessProxy::ProcessIsReadyToExit(), 0);
+    protectedParentProcessConnection()->send(Messages::GPUProcessProxy::ProcessIsReadyToExit(), 0);
 }
 
 void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
@@ -452,7 +452,7 @@ void GPUProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapt
     ensureAVCaptureServerConnection();
 #endif
 
-    if (auto* connection = webProcessConnection(processID)) {
+    if (RefPtr connection = webProcessConnection(processID)) {
         connection->updateCaptureAccess(allowAudioCapture, allowVideoCapture, allowDisplayCapture);
         return completionHandler();
     }
@@ -467,7 +467,7 @@ void GPUProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapt
 
 void GPUProcess::updateCaptureOrigin(const WebCore::SecurityOriginData& originData, WebCore::ProcessIdentifier processID)
 {
-    if (auto* connection = webProcessConnection(processID))
+    if (RefPtr connection = webProcessConnection(processID))
         connection->updateCaptureOrigin(originData);
 }
 

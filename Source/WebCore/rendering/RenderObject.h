@@ -718,6 +718,9 @@ public:
     inline bool isTransformed() const;
     inline bool hasTransformOrPerspective() const;
 
+    bool capturedInViewTransition() const { return m_stateBitfields.hasFlag(StateFlag::CapturedInViewTransition); }
+    void setCapturedInViewTransition(bool captured) { m_stateBitfields.setFlag(StateFlag::CapturedInViewTransition, captured); }
+
     inline bool preservesNewline() const;
 
     RenderView& view() const { return *document().renderView(); }
@@ -1215,6 +1218,7 @@ private:
         PaintContainmentApplies = 1 << 18,
         HasSVGTransform = 1 << 19,
         EverHadSkippedContentLayout = 1 << 20,
+        CapturedInViewTransition = 1 << 21
     };
 
     class StateBitfields {
@@ -1226,7 +1230,7 @@ private:
         };
 
     private:
-        uint32_t m_flags : 21 { 0 };
+        uint32_t m_flags : 22 { 0 };
         uint32_t m_positionedState : 2 { IsStaticallyPositioned }; // PositionedState
         uint32_t m_selectionState : 3 { enumToUnderlyingType(HighlightState::None) }; // HighlightState
         uint32_t m_fragmentedFlowState : 1 { enumToUnderlyingType(FragmentedFlowState::NotInsideFlow) }; // FragmentedFlowState

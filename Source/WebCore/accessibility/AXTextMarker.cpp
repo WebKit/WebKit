@@ -396,10 +396,22 @@ bool AXTextMarkerRange::isConfinedTo(AXID objectID) const
 #if ENABLE(AX_THREAD_TEXT_APIS)
 static void appendChildren(RefPtr<AXCoreObject> object, bool isForward, RefPtr<AXCoreObject> startObject, AccessibilityObject::AccessibilityChildrenVector& vector)
 {
-    // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
-    // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
-    const auto& children = object->isTable() && object->isExposable() ? object->rows() : object->children();
+    AccessibilityObject::AccessibilityChildrenVector captionAndRows;
+    bool isExposedTable = object->isTable() && object->isExposable();
+    if (isExposedTable) {
+        // Only consider the caption and rows as potential text-run yielding children. This is necessary because the
+        // current table AX hierarchy scheme involves adding multiple different types of objects (rows, columns) that
+        // each have the same cells (and thus the same text) as their children.
+        for (const auto& child : object->children()) {
+            if (child->roleValue() == AccessibilityRole::Caption) {
+                captionAndRows.append(child);
+                break;
+            }
+        }
+        captionAndRows.appendVector(object->rows());
+    }
 
+    const auto& children = isExposedTable ? captionAndRows : object->children();
     size_t childrenSize = children.size();
 
     size_t startIndex = isForward ? childrenSize : 0;

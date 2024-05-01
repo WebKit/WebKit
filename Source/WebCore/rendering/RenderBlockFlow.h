@@ -32,6 +32,15 @@
 #include <memory>
 
 namespace WebCore {
+struct RenderBlockFlowRareData;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::RenderBlockFlowRareData> : std::true_type { };
+}
+
+namespace WebCore {
 
 class LineBreaker;
 class RenderMultiColumnFlow;
@@ -49,6 +58,66 @@ enum LineCount {
     NOT_SET = 0, NO_LINE = 1, ONE_LINE = 2, MULTI_LINE = 3
 };
 #endif
+
+class MarginValues {
+public:
+    MarginValues(LayoutUnit beforePos, LayoutUnit beforeNeg, LayoutUnit afterPos, LayoutUnit afterNeg)
+        : m_positiveMarginBefore(beforePos)
+        , m_negativeMarginBefore(beforeNeg)
+        , m_positiveMarginAfter(afterPos)
+        , m_negativeMarginAfter(afterNeg)
+    {
+    }
+
+    LayoutUnit positiveMarginBefore() const { return m_positiveMarginBefore; }
+    LayoutUnit negativeMarginBefore() const { return m_negativeMarginBefore; }
+    LayoutUnit positiveMarginAfter() const { return m_positiveMarginAfter; }
+    LayoutUnit negativeMarginAfter() const { return m_negativeMarginAfter; }
+
+    void setPositiveMarginBefore(LayoutUnit pos) { m_positiveMarginBefore = pos; }
+    void setNegativeMarginBefore(LayoutUnit neg) { m_negativeMarginBefore = neg; }
+    void setPositiveMarginAfter(LayoutUnit pos) { m_positiveMarginAfter = pos; }
+    void setNegativeMarginAfter(LayoutUnit neg) { m_negativeMarginAfter = neg; }
+
+private:
+    LayoutUnit m_positiveMarginBefore;
+    LayoutUnit m_negativeMarginBefore;
+    LayoutUnit m_positiveMarginAfter;
+    LayoutUnit m_negativeMarginAfter;
+};
+
+// Allocated only when some of these fields have non-default values
+struct RenderBlockFlowRareData {
+    WTF_MAKE_NONCOPYABLE(RenderBlockFlowRareData); WTF_MAKE_FAST_ALLOCATED;
+public:
+    RenderBlockFlowRareData(const RenderBlockFlow&);
+    ~RenderBlockFlowRareData();
+
+    static LayoutUnit positiveMarginBeforeDefault(const RenderBlock& block)
+    {
+        return std::max<LayoutUnit>(block.marginBefore(), 0);
+    }
+    static LayoutUnit negativeMarginBeforeDefault(const RenderBlock& block)
+    {
+        return std::max<LayoutUnit>(-block.marginBefore(), 0);
+    }
+    static LayoutUnit positiveMarginAfterDefault(const RenderBlock& block)
+    {
+        return std::max<LayoutUnit>(block.marginAfter(), 0);
+    }
+    static LayoutUnit negativeMarginAfterDefault(const RenderBlock& block)
+    {
+        return std::max<LayoutUnit>(-block.marginAfter(), 0);
+    }
+
+    MarginValues m_margins;
+    int m_lineBreakToAvoidWidow;
+    LayoutUnit m_alignContentShift; // Caches negative shifts for overflow calculation.
+
+    SingleThreadWeakPtr<RenderMultiColumnFlow> m_multiColumnFlow;
+
+    bool m_didBreakAtLineToAvoidWidow : 1;
+};
 
 class RenderBlockFlow : public RenderBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderBlockFlow);
@@ -91,70 +160,7 @@ protected:
     void paintColumnRules(PaintInfo&, const LayoutPoint&) override;
 
 public:
-    class MarginValues {
-    public:
-        MarginValues(LayoutUnit beforePos, LayoutUnit beforeNeg, LayoutUnit afterPos, LayoutUnit afterNeg)
-            : m_positiveMarginBefore(beforePos)
-            , m_negativeMarginBefore(beforeNeg)
-            , m_positiveMarginAfter(afterPos)
-            , m_negativeMarginAfter(afterNeg)
-        {
-        }
-        
-        LayoutUnit positiveMarginBefore() const { return m_positiveMarginBefore; }
-        LayoutUnit negativeMarginBefore() const { return m_negativeMarginBefore; }
-        LayoutUnit positiveMarginAfter() const { return m_positiveMarginAfter; }
-        LayoutUnit negativeMarginAfter() const { return m_negativeMarginAfter; }
-        
-        void setPositiveMarginBefore(LayoutUnit pos) { m_positiveMarginBefore = pos; }
-        void setNegativeMarginBefore(LayoutUnit neg) { m_negativeMarginBefore = neg; }
-        void setPositiveMarginAfter(LayoutUnit pos) { m_positiveMarginAfter = pos; }
-        void setNegativeMarginAfter(LayoutUnit neg) { m_negativeMarginAfter = neg; }
-    
-    private:
-        LayoutUnit m_positiveMarginBefore;
-        LayoutUnit m_negativeMarginBefore;
-        LayoutUnit m_positiveMarginAfter;
-        LayoutUnit m_negativeMarginAfter;
-    };
     MarginValues marginValuesForChild(RenderBox& child) const;
-
-    // Allocated only when some of these fields have non-default values
-    struct RenderBlockFlowRareData {
-        WTF_MAKE_NONCOPYABLE(RenderBlockFlowRareData); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        RenderBlockFlowRareData(const RenderBlockFlow& block)
-            : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
-            , m_lineBreakToAvoidWidow(-1)
-            , m_didBreakAtLineToAvoidWidow(false)
-        { 
-        }
-
-        static LayoutUnit positiveMarginBeforeDefault(const RenderBlock& block)
-        { 
-            return std::max<LayoutUnit>(block.marginBefore(), 0);
-        }
-        static LayoutUnit negativeMarginBeforeDefault(const RenderBlock& block)
-        { 
-            return std::max<LayoutUnit>(-block.marginBefore(), 0);
-        }
-        static LayoutUnit positiveMarginAfterDefault(const RenderBlock& block)
-        {
-            return std::max<LayoutUnit>(block.marginAfter(), 0);
-        }
-        static LayoutUnit negativeMarginAfterDefault(const RenderBlock& block)
-        {
-            return std::max<LayoutUnit>(-block.marginAfter(), 0);
-        }
-        
-        MarginValues m_margins;
-        int m_lineBreakToAvoidWidow;
-        LayoutUnit m_alignContentShift; // Caches negative shifts for overflow calculation.
-
-        SingleThreadWeakPtr<RenderMultiColumnFlow> m_multiColumnFlow;
-
-        bool m_didBreakAtLineToAvoidWidow : 1;
-    };
 
     class MarginInfo {
         // Collapsing flags for whether we can collapse our margins with our children's margins.

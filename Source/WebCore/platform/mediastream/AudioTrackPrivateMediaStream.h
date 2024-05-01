@@ -37,7 +37,7 @@ class AudioMediaStreamTrackRenderer;
 
 class AudioTrackPrivateMediaStream final
     : public AudioTrackPrivate
-    , public MediaStreamTrackPrivate::Observer
+    , public MediaStreamTrackPrivateObserver
     , private RealtimeMediaSource::AudioSampleObserver
     , public CanMakeCheckedPtr<AudioTrackPrivateMediaStream> {
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateMediaStream)
@@ -90,7 +90,7 @@ private:
     int trackIndex() const final { return m_index; }
     bool isBackedByMediaStreamTrack() const final { return true; }
 
-    // MediaStreamTrackPrivate::Observer
+    // MediaStreamTrackPrivateObserver
     void trackEnded(MediaStreamTrackPrivate&) final;
     void trackMutedChanged(MediaStreamTrackPrivate&)  final;
     void trackEnabledChanged(MediaStreamTrackPrivate&)  final;

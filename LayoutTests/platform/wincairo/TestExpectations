@@ -2974,7 +2974,6 @@ fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/size/attributes.www.sub.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/size/name-and-value.html [ Failure ]
 
-fast/canvas/webgl/match-page-color-space-p3.html [ ImageOnlyFailure ]
 fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
 fast/text/initial-advance-selected-text.html [ ImageOnlyFailure ]
 
@@ -3319,3 +3318,12 @@ js/dom/encode-URI-test.html [ Pass Failure ]
 
 # eventSender.leapForward should be reimplemented without Sleep.
 editing/selection/mouse/click-left-of-rtl-wrapping-text.html [ Skip ] # Timeout
+
+# Passes on post-commit Buildbot while fails on EWS
+http/tests/images/jpg-invalid-content-type.html [ ImageOnlyFailure Pass ]
+http/tests/scroll-to-text-fragment/no-iframe-match.html [ ImageOnlyFailure Pass ]
+http/tests/security/shape-outside-and-cached-resources.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/selectors/focus-within-013.html [ ImageOnlyFailure Pass ]
+[ Release ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Timeout Pass ]
+
+resize-observer/contain-instrinsic-size-should-not-leak-nodes.html [ Failure Pass ]

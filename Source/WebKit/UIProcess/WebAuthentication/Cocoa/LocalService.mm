@@ -42,7 +42,7 @@
 
 namespace WebKit {
 
-LocalService::LocalService(Observer& observer)
+LocalService::LocalService(AuthenticatorTransportServiceObserver& observer)
     : AuthenticatorTransportService(observer)
 {
 }

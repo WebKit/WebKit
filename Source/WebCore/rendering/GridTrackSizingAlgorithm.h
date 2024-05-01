@@ -31,6 +31,15 @@
 #include "RenderBoxInlines.h"
 
 namespace WebCore {
+class GridTrack;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::GridTrack> : std::true_type { };
+}
+
+namespace WebCore {
 
 static const int infinity = -1;
 

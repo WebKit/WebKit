@@ -32,6 +32,25 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class SpinButtonOwner;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SpinButtonOwner> : std::true_type { };
+}
+
+namespace WebCore {
+
+class SpinButtonOwner : public CanMakeWeakPtr<SpinButtonOwner> {
+public:
+    virtual ~SpinButtonOwner() = default;
+    virtual void focusAndSelectSpinButtonOwner() = 0;
+    virtual bool shouldSpinButtonRespondToMouseEvents() const = 0;
+    virtual bool shouldSpinButtonRespondToWheelEvents() const = 0;
+    virtual void spinButtonStepDown() = 0;
+    virtual void spinButtonStepUp() = 0;
+};
 
 class SpinButtonElement final : public HTMLDivElement, public PopupOpeningObserver {
     WTF_MAKE_ISO_ALLOCATED(SpinButtonElement);
@@ -40,16 +59,6 @@ public:
         Indeterminate, // Hovered, but the event is not handled.
         Down,
         Up,
-    };
-
-    class SpinButtonOwner : public CanMakeWeakPtr<SpinButtonOwner> {
-    public:
-        virtual ~SpinButtonOwner() = default;
-        virtual void focusAndSelectSpinButtonOwner() = 0;
-        virtual bool shouldSpinButtonRespondToMouseEvents() const = 0;
-        virtual bool shouldSpinButtonRespondToWheelEvents() const = 0;
-        virtual void spinButtonStepDown() = 0;
-        virtual void spinButtonStepUp() = 0;
     };
 
     // The owner of SpinButtonElement must call removeSpinButtonOwner

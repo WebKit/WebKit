@@ -96,6 +96,13 @@ class TestBugzilla(unittest.TestCase):
         )
         self.assertEqual(tracker.from_string('http://bugs.other.com/show_bug.cgi?id=1234'), None)
 
+    def test_link_brackets(self):
+        tracker = bugzilla.Tracker(self.URL)
+        self.assertEqual(
+            tracker.from_string('<http://bugs.example.com/show_bug.cgi?id=1234>').link,
+            'https://bugs.example.com/show_bug.cgi?id=1234',
+        )
+
     def test_title(self):
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES):
             tracker = bugzilla.Tracker(self.URL)

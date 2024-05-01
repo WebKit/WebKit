@@ -122,9 +122,9 @@ bool Navigation::currentRequestIsCrossSiteRedirect() const
 
 #if !LOG_DISABLED
 
-const char* Navigation::loggingString() const
+WTF::String Navigation::loggingString() const
 {
-    return debugString("Most recent URL: ", m_currentRequest.url().string(), " Back/forward list item URL: '", m_targetItem ? m_targetItem->url() : WTF::String { }, "' (0x", hex(reinterpret_cast<uintptr_t>(m_targetItem.get())), ')');
+    return makeString("Most recent URL: ", m_currentRequest.url().string(), " Back/forward list item URL: '", m_targetItem ? m_targetItem->url() : WTF::String { }, "' (0x", hex(reinterpret_cast<uintptr_t>(m_targetItem.get())), ')');
 }
 
 #endif

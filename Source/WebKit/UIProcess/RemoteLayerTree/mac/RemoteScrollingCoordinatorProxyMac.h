@@ -31,6 +31,15 @@
 #include "RemoteScrollingCoordinatorProxy.h"
 
 namespace WebKit {
+class RemoteScrollingCoordinatorProxyMac;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteScrollingCoordinatorProxyMac> : std::true_type { };
+}
+
+namespace WebKit {
 
 #if ENABLE(SCROLLING_THREAD)
 class RemoteLayerTreeEventDispatcher;

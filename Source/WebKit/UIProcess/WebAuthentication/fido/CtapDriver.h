@@ -35,6 +35,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+class CtapDriver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::CtapDriver> : std::true_type { };
+}
+
+namespace WebKit {
 
 class CtapDriver : public CanMakeWeakPtr<CtapDriver> {
     WTF_MAKE_FAST_ALLOCATED;

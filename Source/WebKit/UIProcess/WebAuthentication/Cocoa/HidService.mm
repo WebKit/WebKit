@@ -48,7 +48,7 @@ static void deviceRemovedCallback(void* context, IOReturn, void*, IOHIDDeviceRef
     // FIXME(191525)
 }
 
-HidService::HidService(Observer& observer)
+HidService::HidService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
 {
     m_manager = adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));

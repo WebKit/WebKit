@@ -30,6 +30,15 @@
 #endif
 
 namespace WebCore {
+class TextureMapperLayer;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TextureMapperLayer> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Region;
 class TextureMapper;

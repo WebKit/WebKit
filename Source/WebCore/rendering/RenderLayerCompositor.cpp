@@ -122,7 +122,7 @@ struct ScrollingTreeState {
 
 struct RenderLayerCompositor::OverlapExtent {
     LayoutRect bounds;
-    Vector<LayerOverlapMap::LayerAndBounds> clippingScopes;
+    LayerOverlapMap::LayerAndBoundsVector clippingScopes;
 
     bool extentComputed { false };
     bool hasTransformAnimation { false };
@@ -1409,10 +1409,14 @@ void RenderLayerCompositor::collectViewTransitionNewContentLayers(RenderLayer& l
         return;
 
     auto* capturedElement = activeViewTransition->namedElements().find(layer.renderer().style().pseudoElementNameArgument());
-    if (!capturedElement || !capturedElement->newElement)
+    if (!capturedElement)
         return;
 
-    auto* capturedRenderer = capturedElement->newElement->renderer();
+    auto newStyleable = capturedElement->newElement.styleable();
+    if (!newStyleable)
+        return;
+
+    auto* capturedRenderer = newStyleable->renderer();
     if (!capturedRenderer || !capturedRenderer->hasLayer())
         return;
 
@@ -2311,17 +2315,16 @@ void RenderLayerCompositor::computeClippingScopes(const RenderLayer& layer, Over
         return;
 
     // FIXME: constrain the scopes (by composited stacking context ancestor I think).
-    auto enclosingClippingScopes = [] (const RenderLayer& layer, const RenderLayer& rootLayer) {
+    auto populateEnclosingClippingScopes = [](const RenderLayer& layer, const RenderLayer& rootLayer, LayerOverlapMap::LayerAndBoundsVector& clippingScopes) {
 
         auto createsClippingScope = [](const RenderLayer& layer) {
             return layer.hasCompositedScrollableOverflow();
         };
 
-        Vector<LayerOverlapMap::LayerAndBounds> clippingScopes;
         clippingScopes.append({ const_cast<RenderLayer&>(rootLayer), { } });
 
         if (!layer.hasCompositedScrollingAncestor())
-            return clippingScopes;
+            return;
 
         traverseAncestorLayers(layer, [&](const RenderLayer& ancestorLayer, bool inContainingBlockChain, bool) {
             if (inContainingBlockChain && createsClippingScope(ancestorLayer)) {
@@ -2337,11 +2340,9 @@ void RenderLayerCompositor::computeClippingScopes(const RenderLayer& layer, Over
             }
             return AncestorTraversal::Continue;
         });
-
-        return clippingScopes;
     };
 
-    extent.clippingScopes = enclosingClippingScopes(layer, rootRenderLayer());
+    populateEnclosingClippingScopes(layer, rootRenderLayer(), extent.clippingScopes);
     extent.clippingScopesComputed = true;
 }
 

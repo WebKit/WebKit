@@ -35,6 +35,17 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+namespace NetworkCache {
+class SpeculativeLoadManager;
+}
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkCache::SpeculativeLoadManager> : std::true_type { };
+}
+
 namespace WebCore {
 enum class AdvancedPrivacyProtections : uint16_t;
 }

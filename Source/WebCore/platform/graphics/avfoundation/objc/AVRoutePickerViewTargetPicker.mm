@@ -70,7 +70,7 @@ bool AVRoutePickerViewTargetPicker::isAvailable()
     return available;
 }
 
-AVRoutePickerViewTargetPicker::AVRoutePickerViewTargetPicker(AVPlaybackTargetPicker::Client& client)
+AVRoutePickerViewTargetPicker::AVRoutePickerViewTargetPicker(AVPlaybackTargetPickerClient& client)
     : AVPlaybackTargetPicker(client)
     , m_routePickerViewDelegate(adoptNS([[WebAVRoutePickerViewHelper alloc] initWithCallback:*this]))
 {

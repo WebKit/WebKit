@@ -32,6 +32,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class TiledBackingClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TiledBackingClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class FloatPoint;
 class FloatRect;

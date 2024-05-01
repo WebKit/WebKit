@@ -811,7 +811,13 @@ void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZ
             if (!posZOrderList)
                 posZOrderList = makeUnique<Vector<RenderLayer*>>();
 
+            CheckedPtr<RenderLayer> viewTransitionLayer;
+            if (posZOrderList->size() && posZOrderList->last()->renderer().style().pseudoElementType() == PseudoId::ViewTransition)
+                viewTransitionLayer = posZOrderList->takeLast();
+
             posZOrderList->appendVector(topLayerLayers);
+            if (viewTransitionLayer)
+                posZOrderList->append(viewTransitionLayer.get());
         }
     }
 }
@@ -2163,16 +2169,19 @@ bool RenderLayer::cannotBlitToWindow() const
     return parent()->cannotBlitToWindow();
 }
 
-RenderLayer* RenderLayer::transparentPaintingAncestor()
+RenderLayer* RenderLayer::transparentPaintingAncestor(const LayerPaintingInfo& info)
 {
-    if (isComposited())
+    if (this == info.rootLayer || isComposited())
         return nullptr;
-
-    for (RenderLayer* curr = stackingContext(); curr; curr = curr->stackingContext()) {
-        if (curr->isComposited())
-            break;
-        if (curr->isTransparent())
-            return curr;
+    for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
+        if (ancestor->isStackingContext()) {
+            if (ancestor->isComposited())
+                return nullptr;
+            if (ancestor->isTransparent())
+                return ancestor;
+        }
+        if (ancestor == info.rootLayer)
+            return nullptr;
     }
     return nullptr;
 }
@@ -2275,10 +2284,9 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
     if (context.paintingDisabled() || (paintsWithTransparency(paintingInfo.paintBehavior) && m_usedTransparency))
         return;
 
-    RenderLayer* ancestor = transparentPaintingAncestor();
-    if (ancestor)
+    if (auto* ancestor = transparentPaintingAncestor(paintingInfo))
         ancestor->beginTransparencyLayers(context, paintingInfo, dirtyRect);
-    
+
     if (paintsWithTransparency(paintingInfo.paintBehavior)) {
         ASSERT(isStackingContext());
         m_usedTransparency = true;
@@ -2930,7 +2938,7 @@ void RenderLayer::paintLayerWithEffects(GraphicsContext& context, const LayerPai
         // If we have a transparency layer enclosing us and we are the root of a transform, then we need to establish the transparency
         // layer from the parent now, assuming there is a parent
         if (paintFlags & PaintLayerFlag::HaveTransparency) {
-            if (parent())
+            if (this != paintingInfo.rootLayer && parent())
                 parent()->beginTransparencyLayers(context, paintingInfo, paintingInfo.paintDirtyRect);
             else
                 beginTransparencyLayers(context, paintingInfo, paintingInfo.paintDirtyRect);
@@ -3506,7 +3514,7 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
 #endif
 
     for (auto* childLayer : layerIterator) {
-        if (paintFlags.contains(PaintLayerFlag::PaintingSkipDescendantViewTransition) && childLayer->renderer().capturedInViewTransition())
+        if (paintFlags.contains(PaintLayerFlag::PaintingSkipDescendantViewTransition) && childLayer->renderer().capturedInViewTransition() && !childLayer->renderer().isDocumentElementRenderer())
             continue;
         childLayer->paintLayer(context, paintingInfo, paintFlags);
     }

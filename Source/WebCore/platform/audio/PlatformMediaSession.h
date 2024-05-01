@@ -38,6 +38,17 @@
 #include "MediaPlaybackTargetClient.h"
 #endif
 
+namespace WebCore {
+class PlatformMediaSession;
+class AudioCaptureSource;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PlatformMediaSession> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AudioCaptureSource> : std::true_type { };
+}
+
 namespace WTF {
 class MediaTime;
 }
@@ -106,6 +117,13 @@ enum class PlatformMediaSessionEndInterruptionFlags : uint8_t {
 struct PlatformMediaSessionRemoteCommandArgument {
     std::optional<double> time;
     std::optional<bool> fastSeek;
+};
+
+class AudioCaptureSource : public CanMakeWeakPtr<AudioCaptureSource> {
+public:
+    virtual ~AudioCaptureSource() = default;
+    virtual bool isCapturingAudio() const = 0;
+    virtual bool wantsToCaptureAudio() const = 0;
 };
 
 class PlatformMediaSession
@@ -222,13 +240,6 @@ public:
 
     bool canPlayConcurrently(const PlatformMediaSession&) const;
     bool shouldOverridePauseDuringRouteChange() const;
-
-    class AudioCaptureSource : public CanMakeWeakPtr<AudioCaptureSource> {
-    public:
-        virtual ~AudioCaptureSource() = default;
-        virtual bool isCapturingAudio() const = 0;
-        virtual bool wantsToCaptureAudio() const = 0;
-    };
 
     std::optional<NowPlayingInfo> nowPlayingInfo() const;
     bool isNowPlayingEligible() const;

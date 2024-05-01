@@ -46,7 +46,7 @@ IPC::StreamConnectionWorkQueue& remoteGraphicsStreamWorkQueue()
     static LazyNeverDestroyed<IPC::StreamConnectionWorkQueue> instance;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        instance.construct("RemoteWCLayerTreeHost work queue"); // LazyNeverDestroyed owns the initial ref.
+        instance.construct("RemoteWCLayerTreeHost work queue"_s); // LazyNeverDestroyed owns the initial ref.
     });
     return instance.get();
 #endif

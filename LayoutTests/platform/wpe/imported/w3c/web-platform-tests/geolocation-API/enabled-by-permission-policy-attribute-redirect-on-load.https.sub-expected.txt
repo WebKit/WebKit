@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: Permission policy 'Geolocation' check failed for element with origin 'https://not-web-platform.test:9443' and allow attribute ';geolocation'.
-
-
-PASS Permissions-Policy allow="geolocation" allows same-origin relocation
-FAIL Permissions-Policy allow="geolocation" allows cross-origin relocation assert_true: geolocation expected true got false
-

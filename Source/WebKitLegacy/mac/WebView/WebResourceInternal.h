@@ -31,7 +31,7 @@
 #import <wtf/Ref.h>
 
 namespace WebCore {
-    class ArchiveResource;
+class ArchiveResource;
 }
 
 @interface WebResource (WebResourceInternal)

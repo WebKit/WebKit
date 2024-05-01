@@ -31,6 +31,15 @@
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class SampleBufferDisplayLayerClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SampleBufferDisplayLayerClient> : std::true_type { };
+}
+
 namespace WTF {
 class MediaTime;
 }
@@ -43,16 +52,16 @@ enum class VideoFrameRotation : uint16_t;
 
 using LayerHostingContextID = uint32_t;
 
+class SampleBufferDisplayLayerClient : public CanMakeWeakPtr<SampleBufferDisplayLayerClient> {
+public:
+    virtual ~SampleBufferDisplayLayerClient() = default;
+    virtual void sampleBufferDisplayLayerStatusDidFail() = 0;
+};
+
 class SampleBufferDisplayLayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SampleBufferDisplayLayer, WTF::DestructionThread::MainRunLoop> {
 public:
-    class Client : public CanMakeWeakPtr<Client> {
-    public:
-        virtual ~Client() = default;
-        virtual void sampleBufferDisplayLayerStatusDidFail() = 0;
-    };
-
-    WEBCORE_EXPORT static RefPtr<SampleBufferDisplayLayer> create(Client&);
-    using LayerCreator = RefPtr<SampleBufferDisplayLayer> (*)(Client&);
+    WEBCORE_EXPORT static RefPtr<SampleBufferDisplayLayer> create(SampleBufferDisplayLayerClient&);
+    using LayerCreator = RefPtr<SampleBufferDisplayLayer> (*)(SampleBufferDisplayLayerClient&);
     WEBCORE_EXPORT static void setCreator(LayerCreator);
 
     virtual ~SampleBufferDisplayLayer() = default;
@@ -86,15 +95,15 @@ public:
     virtual LayerHostingContextID hostingContextID() const { return 0; }
 
 protected:
-    explicit SampleBufferDisplayLayer(Client&);
+    explicit SampleBufferDisplayLayer(SampleBufferDisplayLayerClient&);
 
-    WeakPtr<Client> m_client;
+    WeakPtr<SampleBufferDisplayLayerClient> m_client;
 
 private:
     static LayerCreator m_layerCreator;
 };
 
-inline SampleBufferDisplayLayer::SampleBufferDisplayLayer(Client& client)
+inline SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerClient& client)
     : m_client(client)
 {
 }

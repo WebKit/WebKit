@@ -375,7 +375,7 @@ void JSTestLegacyOverrideBuiltIns::analyzeHeap(JSCell* cell, HeapAnalyzer& analy
     Base::analyzeHeap(cell, analyzer);
 }
 
-bool JSTestLegacyOverrideBuiltInsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSTestLegacyOverrideBuiltInsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);

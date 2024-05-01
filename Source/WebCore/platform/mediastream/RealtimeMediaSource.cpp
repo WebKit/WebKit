@@ -98,6 +98,10 @@ static RealtimeMediaSource::Type toSourceType(CaptureDevice::DeviceType type)
     return RealtimeMediaSource::Type::Audio;
 }
 
+RealtimeMediaSourceObserver::RealtimeMediaSourceObserver() = default;
+
+RealtimeMediaSourceObserver::~RealtimeMediaSourceObserver() = default;
+
 RealtimeMediaSource::RealtimeMediaSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
     : m_pageIdentifier(pageIdentifier)
     , m_idHashSalts(WTFMove(hashSalts))
@@ -167,13 +171,13 @@ void RealtimeMediaSource::removeVideoFrameObserver(VideoFrameObserver& observer)
     }
 }
 
-void RealtimeMediaSource::addObserver(Observer& observer)
+void RealtimeMediaSource::addObserver(RealtimeMediaSourceObserver& observer)
 {
     ASSERT(isMainThread());
     m_observers.add(observer);
 }
 
-void RealtimeMediaSource::removeObserver(Observer& observer)
+void RealtimeMediaSource::removeObserver(RealtimeMediaSourceObserver& observer)
 {
     ASSERT(isMainThread());
     m_observers.remove(observer);
@@ -218,7 +222,7 @@ void RealtimeMediaSource::setInterruptedForTesting(bool interrupted)
     notifyMutedChange(interrupted);
 }
 
-void RealtimeMediaSource::forEachObserver(const Function<void(Observer&)>& apply)
+void RealtimeMediaSource::forEachObserver(const Function<void(RealtimeMediaSourceObserver&)>& apply)
 {
     ASSERT(isMainThread());
     Ref protectedThis { *this };
@@ -400,7 +404,7 @@ void RealtimeMediaSource::stop()
     stopProducingData();
 }
 
-void RealtimeMediaSource::requestToEnd(Observer& callingObserver)
+void RealtimeMediaSource::requestToEnd(RealtimeMediaSourceObserver& callingObserver)
 {
     bool hasObserverPreventingEnding = false;
     forEachObserver([&](auto& observer) {
@@ -414,7 +418,7 @@ void RealtimeMediaSource::requestToEnd(Observer& callingObserver)
     end(&callingObserver);
 }
 
-void RealtimeMediaSource::end(Observer* callingObserver)
+void RealtimeMediaSource::end(RealtimeMediaSourceObserver* callingObserver)
 {
     ASSERT(isMainThread());
 
@@ -1465,10 +1469,6 @@ auto RealtimeMediaSource::getPhotoCapabilities() -> Ref<PhotoCapabilitiesNativeP
 auto RealtimeMediaSource::getPhotoSettings() -> Ref<PhotoSettingsNativePromise>
 {
     return PhotoSettingsNativePromise::createAndReject("Not supported"_s);
-}
-
-RealtimeMediaSource::Observer::~Observer()
-{
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -33,7 +33,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-    class DOMWrapperWorld;
+class DOMWrapperWorld;
 }
 
 namespace WebKit {

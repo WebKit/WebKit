@@ -782,7 +782,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
 
     // FIXME: Add a load type check.
     auto& policyChecker = frameLoader()->policyChecker();
-    RELEASE_ASSERT(!isBackForwardLoadType(policyChecker.loadType()) || frameLoader()->history().provisionalItem());
+    RELEASE_ASSERT(!isBackForwardLoadType(policyChecker.loadType()) || m_frame->history().provisionalItem());
     policyChecker.checkNavigationPolicy(WTFMove(newRequest), redirectResponse, WTFMove(navigationPolicyCompletionHandler));
 }
 
@@ -797,7 +797,7 @@ std::optional<CrossOriginOpenerPolicyEnforcementResult> DocumentLoader::doCrossO
         return std::nullopt;
 
     URL openerURL;
-    if (auto openerFrame = dynamicDowncast<LocalFrame>(m_frame->loader().opener()))
+    if (auto openerFrame = dynamicDowncast<LocalFrame>(m_frame->opener()))
         openerURL = openerFrame->document() ? openerFrame->document()->url() : URL();
 
     auto currentCoopEnforcementResult = CrossOriginOpenerPolicyEnforcementResult::from(m_frame->document()->url(), m_frame->document()->securityOrigin(), m_frame->document()->crossOriginOpenerPolicy(), m_triggeringAction.requester(), openerURL);

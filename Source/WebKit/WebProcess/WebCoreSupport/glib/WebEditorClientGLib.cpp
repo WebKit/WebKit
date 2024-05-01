@@ -49,7 +49,7 @@ void WebEditorClient::didDispatchInputMethodKeydown(KeyboardEvent& event)
     if (const auto& underlines = platformEvent->preeditUnderlines()) {
         auto rangeStart = platformEvent->preeditSelectionRangeStart().value_or(0);
         auto rangeLength = platformEvent->preeditSelectionRangeLength().value_or(0);
-        frame->editor().setComposition(platformEvent->text(), underlines.value(), { }, rangeStart, rangeStart + rangeLength);
+        frame->editor().setComposition(platformEvent->text(), underlines.value(), { }, { }, rangeStart, rangeStart + rangeLength);
     } else
         frame->editor().confirmComposition(platformEvent->text());
 }

@@ -32,6 +32,15 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class PlatformContentFilter;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PlatformContentFilter> : std::true_type { };
+}
+
+namespace WebCore {
 
 class ContentFilterUnblockHandler;
 class FragmentedSharedBuffer;

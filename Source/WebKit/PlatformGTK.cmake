@@ -9,6 +9,10 @@ if (ENABLE_MODERN_MEDIA_CONTROLS)
     include(ModernMediaControlsGResources.cmake)
 endif ()
 
+if (USE_SKIA)
+    include(Platform/Skia.cmake)
+endif ()
+
 set(WebKit_OUTPUT_NAME webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION})
 set(WebProcess_OUTPUT_NAME WebKitWebProcess)
 set(NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
@@ -69,8 +73,6 @@ list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/glib/UserMessage.serialization.in
 
     Shared/gtk/ArgumentCodersGtk.serialization.in
-
-    Shared/skia/CoreIPCSkColorSpace.serialization.in
 
     Shared/soup/WebCoreArgumentCodersSoup.serialization.in
 )
@@ -283,7 +285,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/glib"
     "${WEBKIT_DIR}/Shared/gtk"
     "${WEBKIT_DIR}/Shared/linux"
-    "${WEBKIT_DIR}/Shared/skia"
     "${WEBKIT_DIR}/Shared/soup"
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT_DIR}/UIProcess/API/C/glib"

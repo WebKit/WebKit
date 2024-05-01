@@ -292,7 +292,7 @@ void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(std::o
     });
 }
 
-#pragma mark - PageOverlay::Client
+#pragma mark - PageOverlayClient
 
 void PDFDataDetectorOverlayController::willMoveToPage(PageOverlay&, Page* page)
 {

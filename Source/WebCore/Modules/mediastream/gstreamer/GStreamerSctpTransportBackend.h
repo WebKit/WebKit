@@ -42,11 +42,11 @@ private :
     // RTCSctpTransportBackend
     const void* backend() const final { return m_backend.get(); }
     UniqueRef<RTCDtlsTransportBackend> dtlsTransportBackend() final;
-    void registerClient(Client&) final;
+    void registerClient(RTCSctpTransportBackendClient&) final;
     void unregisterClient() final;
 
     GRefPtr<GstWebRTCSCTPTransport> m_backend;
-    WeakPtr<Client> m_client;
+    WeakPtr<RTCSctpTransportBackendClient> m_client;
 };
 
 } // namespace WebCore

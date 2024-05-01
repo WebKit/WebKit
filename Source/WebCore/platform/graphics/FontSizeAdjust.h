@@ -71,6 +71,7 @@ struct FontSizeAdjust {
 
     bool isNone() const { return !value && type != ValueType::FromFont; }
     bool isFromFont() const { return type == ValueType::FromFont; }
+    bool shouldResolveFromFont() const { return isFromFont() && !value; }
 
     Metric metric { Metric::ExHeight };
     ValueType type { ValueType::Number };

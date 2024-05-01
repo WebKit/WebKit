@@ -31,6 +31,15 @@
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
+class ImageLoader;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ImageLoader> : std::true_type { };
+}
+
+namespace WebCore {
 
 class DeferredPromise;
 class Document;

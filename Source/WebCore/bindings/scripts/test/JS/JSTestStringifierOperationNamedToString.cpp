@@ -199,7 +199,7 @@ void JSTestStringifierOperationNamedToString::analyzeHeap(JSCell* cell, HeapAnal
     Base::analyzeHeap(cell, analyzer);
 }
 
-bool JSTestStringifierOperationNamedToStringOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSTestStringifierOperationNamedToStringOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);

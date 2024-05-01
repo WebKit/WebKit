@@ -248,7 +248,7 @@ BuilderContext Resolver::builderContext(const State& state)
     };
 }
 
-ResolvedStyle Resolver::styleForElement(const Element& element, const ResolutionContext& context, RuleMatchingBehavior matchingBehavior)
+ResolvedStyle Resolver::styleForElement(Element& element, const ResolutionContext& context, RuleMatchingBehavior matchingBehavior)
 {
     auto state = State(element, context.parentStyle, context.documentElementStyle);
 
@@ -307,7 +307,7 @@ ResolvedStyle Resolver::styleForElement(const Element& element, const Resolution
     return { state.takeStyle(), WTFMove(elementStyleRelations), collector.releaseMatchResult() };
 }
 
-std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, const StyleRuleKeyframe& keyframe, BlendingKeyframe& blendingKeyframe)
+std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, const StyleRuleKeyframe& keyframe, BlendingKeyframe& blendingKeyframe)
 {
     // Add all the animating properties to the keyframe.
     bool hasRevert = false;
@@ -452,7 +452,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     return deduplicatedKeyframes;
 }
 
-void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, BlendingKeyframes& list)
+void Resolver::keyframeStylesForAnimation(Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, BlendingKeyframes& list)
 {
     list.clear();
 
@@ -479,7 +479,7 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
     }
 }
 
-std::optional<ResolvedStyle> Resolver::styleForPseudoElement(const Element& element, const PseudoElementRequest& pseudoElementRequest, const ResolutionContext& context)
+std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, const PseudoElementRequest& pseudoElementRequest, const ResolutionContext& context)
 {
     auto state = State(element, context.parentStyle, context.documentElementStyle);
 

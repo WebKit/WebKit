@@ -228,3 +228,7 @@ testRegExp(/(?<=(^v|\sv?|Rev)+)(?:(?:\d+)\.){2}(?:\d+)/, "Rev v v1.0.123", ["1.0
 
 // Test 96
 testRegExp(/(?<=(ab*?))c/i, "Xbc", null);
+testRegExp(/(?<!(ab*?))c/i, "A", null);
+testRegExp(/(?<!(AB*?))c/, "A", null);
+testRegExp(/(?<!(ab*))c/i, "A", null);
+testRegExp(/(?<!(AB*))c/, "A", null);

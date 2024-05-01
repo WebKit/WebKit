@@ -43,7 +43,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeSymbolicFieldElement);
 
-DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document& document, FieldOwner& fieldOwner, const Vector<String>& symbols, int placeholderIndex)
+DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& symbols, int placeholderIndex)
     : DateTimeFieldElement(document, fieldOwner)
     , m_symbols(symbols)
     , m_placeholderIndex(placeholderIndex)

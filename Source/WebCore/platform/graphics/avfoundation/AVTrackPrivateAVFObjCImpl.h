@@ -44,6 +44,15 @@ OBJC_CLASS AVMediaSelectionOption;
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 
 namespace WebCore {
+class AVTrackPrivateAVFObjCImpl;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AVTrackPrivateAVFObjCImpl> : std::true_type { };
+}
+
+namespace WebCore {
 
 class MediaSelectionOptionAVFObjC;
 struct PlatformVideoTrackConfiguration;

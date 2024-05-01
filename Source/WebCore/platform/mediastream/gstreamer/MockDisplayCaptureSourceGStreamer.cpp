@@ -60,7 +60,7 @@ void MockDisplayCaptureSourceGStreamer::stopProducingData()
     m_source->stop();
 }
 
-void MockDisplayCaptureSourceGStreamer::requestToEnd(Observer& callingObserver)
+void MockDisplayCaptureSourceGStreamer::requestToEnd(RealtimeMediaSourceObserver& callingObserver)
 {
     RealtimeMediaSource::requestToEnd(callingObserver);
     m_source->removeVideoFrameObserver(*this);

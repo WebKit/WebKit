@@ -39,14 +39,14 @@
 namespace WebCore {
 using namespace JSC;
 
-bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     JSTextTrackCue* jsTextTrackCue = jsCast<JSTextTrackCue*>(handle.slot()->asCell());
     TextTrackCue& textTrackCue = jsTextTrackCue->wrapped();
 
     if (!textTrackCue.isContextStopped() && textTrackCue.hasPendingActivity()) {
         if (UNLIKELY(reason))
-            *reason = "TextTrackCue with pending activity";
+            *reason = "TextTrackCue with pending activity"_s;
         return true;
     }
 
@@ -55,7 +55,7 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
         return false;
 
     if (UNLIKELY(reason))
-        *reason = "TextTrack is an opaque root";
+        *reason = "TextTrack is an opaque root"_s;
 
     return containsWebCoreOpaqueRoot(visitor, textTrackCue.track());
 }

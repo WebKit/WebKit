@@ -35,6 +35,15 @@
 #include <wtf/Forward.h>
 #include <wtf/UniqueRef.h>
 
+namespace WebKit {
+class RemoteCDMProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteCDMProxy> : std::true_type { };
+}
+
 namespace WebCore {
 class SharedBuffer;
 enum class CDMRequirement : uint8_t;

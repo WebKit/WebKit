@@ -53,6 +53,15 @@ class Logger;
 #endif
 
 namespace WebCore {
+class AVContentKeySessionDelegateClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AVContentKeySessionDelegateClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class CDMInstanceSessionFairPlayStreamingAVFObjC;
 class CDMPrivateFairPlayStreaming;

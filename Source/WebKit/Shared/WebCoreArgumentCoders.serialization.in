@@ -888,6 +888,7 @@ header: <WebCore/ElementTargetingTypes.h>
 [CustomHeader] struct WebCore::TargetedElementRequest {
     std::variant<WebCore::FloatPoint, String> data
     bool canIncludeNearbyElements
+    bool shouldIgnorePointerEventsNone
 };
 
 header: <WebCore/ElementTargetingTypes.h>
@@ -1421,13 +1422,11 @@ struct WebCore::WebCodecsEncodedAudioChunkData {
 #endif
 
 header: <WebCore/VideoEncoderScalabilityMode.h>
-#if ENABLE(WEB_CODECS)
 enum class WebCore::VideoEncoderScalabilityMode : uint8_t {
     L1T1,
     L1T2,
     L1T3
 }
-#endif
 
 struct WebCore::HTMLModelElementCamera {
     double pitch;
@@ -2465,6 +2464,15 @@ enum class WebCore::PixelFormat : uint8_t {
     BGRA8,
     RGB10,
     RGB10A8,
+};
+
+enum class WebCore::PixelFormatValidated : uint8_t {
+    BGRX8,
+    BGRA8,
+#if HAVE(IOSURFACE_RGB10)
+    RGB10,
+    RGB10A8,
+#endif
 };
 
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PixelBufferFormat {
@@ -3909,13 +3917,6 @@ header: <WebCore/FontAttributes.h>
     Natural
 };
 
-#if USE(CORE_TEXT)
-[RefCounted] class WebCore::Font {
-    WebCore::FontInternalAttributes attributes();
-    WebCore::FontPlatformData platformData();
-}
-#endif
-
 [CustomHeader] struct WebCore::FontAttributes {
     RefPtr<WebCore::Font> font
     WebCore::Color backgroundColor
@@ -3928,6 +3929,27 @@ header: <WebCore/FontAttributes.h>
     bool hasStrikeThrough
     bool hasMultipleFonts
 };
+
+#if USE(CORE_TEXT)
+using WebCore::FontPlatformData::IPCData = std::variant<WebCore::FontPlatformSerializedData, WebCore::FontPlatformSerializedCreationData>;
+#endif
+
+#if USE(CORE_TEXT)
+[RefCounted] class WebCore::Font {
+    WebCore::FontInternalAttributes attributes();
+    WebCore::FontPlatformData platformData();
+}
+
+[CreateUsing=fromIPCData] class WebCore::FontPlatformData {
+    float size();
+    WebCore::FontOrientation orientation();
+    WebCore::FontWidthVariant widthVariant();
+    WebCore::TextRenderingMode textRenderingMode();
+    bool syntheticBold();
+    bool syntheticOblique();
+    WebCore::FontPlatformData::IPCData toIPCData();
+}
+#endif
 
 header: <WebCore/WritingDirection.h>
 enum class WebCore::WritingDirection : uint8_t {
@@ -4542,7 +4564,7 @@ header: <WebCore/ImageBuffer.h>
     WebCore::FloatSize logicalSize;
     float resolutionScale;
     WebCore::DestinationColorSpace colorSpace
-    WebCore::PixelFormat pixelFormat;
+    WebCore::PixelFormatValidated pixelFormatValidated;
     WebCore::RenderingPurpose purpose;
 };
 

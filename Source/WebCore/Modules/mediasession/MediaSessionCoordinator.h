@@ -42,7 +42,7 @@ template<typename> class DOMPromiseDeferred;
 class MediaSessionCoordinator
     : public RefCounted<MediaSessionCoordinator>
     , public MediaSessionCoordinatorClient
-    , public MediaSession::Observer
+    , public MediaSessionObserver
     , public ActiveDOMObject
     , public EventTarget  {
     WTF_MAKE_FAST_ALLOCATED;
@@ -90,7 +90,7 @@ private:
     // ActiveDOMObject
     bool virtualHasPendingActivity() const final;
 
-    // MediaSession::Observer
+    // MediaSessionObserver
     void metadataChanged(const RefPtr<MediaMetadata>&) final;
     void positionStateChanged(const std::optional<MediaPositionState>&) final;
     void playbackStateChanged(MediaSessionPlaybackState) final;

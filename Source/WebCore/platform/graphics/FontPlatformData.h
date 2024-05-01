@@ -224,12 +224,16 @@ public:
 #endif
 
 #if USE(CORE_TEXT)
-    using PlatformDataVariant = std::variant<FontPlatformSerializedData, FontPlatformSerializedCreationData>;
-    WEBCORE_EXPORT static std::optional<FontPlatformData> tryMakeFontPlatformData(float size, WebCore::FontOrientation&&, WebCore::FontWidthVariant&&, WebCore::TextRenderingMode&&, bool syntheticBold, bool syntheticOblique, FontPlatformData::PlatformDataVariant&& platformSerializationData);
-    WEBCORE_EXPORT FontPlatformData(float size, WebCore::FontOrientation&&, WebCore::FontWidthVariant&&, WebCore::TextRenderingMode&&, bool syntheticBold, bool syntheticOblique, RetainPtr<CTFontRef>&&, RefPtr<FontCustomPlatformData>&&);
+    using IPCData = std::variant<FontPlatformSerializedData, FontPlatformSerializedCreationData>;
+    WEBCORE_EXPORT FontPlatformData(float size, FontOrientation&&, FontWidthVariant&&, TextRenderingMode&&, bool syntheticBold, bool syntheticOblique, RetainPtr<CTFontRef>&&, RefPtr<FontCustomPlatformData>&&);
+#endif
 
-    WEBCORE_EXPORT PlatformDataVariant platformSerializationData() const;
+#if USE(CORE_TEXT)
+    WEBCORE_EXPORT static std::optional<FontPlatformData> fromIPCData(float size, FontOrientation&&, FontWidthVariant&&, TextRenderingMode&&, bool syntheticBold, bool syntheticOblique, FontPlatformData::IPCData&& toIPCData);
+    WEBCORE_EXPORT IPCData toIPCData() const;
+#endif
 
+#if USE(CORE_TEXT)
     WEBCORE_EXPORT CTFontRef registeredFont() const; // Returns nullptr iff the font is not registered, such as web fonts (otherwise returns font()).
     static RetainPtr<CFTypeRef> objectForEqualityCheck(CTFontRef);
     RetainPtr<CFTypeRef> objectForEqualityCheck() const;

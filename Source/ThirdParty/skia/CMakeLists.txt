@@ -891,15 +891,14 @@ add_library(Skia STATIC
 if (USE_SYSTEM_MALLOC)
     target_sources(Skia PRIVATE src/ports/SkMemory_malloc.cpp)
 else ()
-    # Using WTF headers needs including Source/WTF/config.h first, and
-    # in turn that needs cmakeconfig.h from the top build directory, so
-    # arrange the include directories accordingly.
-    target_sources(Skia PRIVATE ${WEBCORE_DIR}/platform/skia/SkiaAllocatorFastMalloc.cpp)
-    set_property(
-        SOURCE ${WEBCORE_DIR}/platform/skia/SkiaAllocatorFastMalloc.cpp
-        APPEND PROPERTY INCLUDE_DIRECTORIES ${WTF_DIR} ${CMAKE_BINARY_DIR}
-    )
-    target_link_libraries(Skia PRIVATE WebKit::WTF)
+    target_sources(Skia PRIVATE src/ports/SkMemory_bmalloc.cpp)
+    target_link_libraries(Skia PRIVATE WebKit::bmalloc)
+
+    get_target_property(bmalloc_target_type bmalloc TYPE)
+    if (bmalloc_target_type STREQUAL OBJECT_LIBRARY)
+        target_link_libraries(Skia PRIVATE $<TARGET_OBJECTS:bmalloc>)
+    endif ()
+    unset(bmalloc_target_type)
 endif ()
 
 target_link_libraries(Skia PRIVATE

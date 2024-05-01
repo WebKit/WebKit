@@ -41,7 +41,7 @@ namespace WebKit {
 class WebContextMenuItem;
 class WebPageProxy;
 
-class WebContextMenuProxy : public RefCounted<WebContextMenuProxy>, public WebContextMenuListenerProxy::Client {
+class WebContextMenuProxy : public RefCounted<WebContextMenuProxy>, public WebContextMenuListenerProxyClient {
 public:
     virtual ~WebContextMenuProxy();
 
@@ -61,7 +61,7 @@ public:
 protected:
     WebContextMenuProxy(WebPageProxy&, ContextMenuContextData&&, const UserData&);
 
-    // WebContextMenuListenerProxy::Client
+    // WebContextMenuListenerProxyClient
     void useContextMenuItems(Vector<Ref<WebContextMenuItem>>&&) override;
 
     ContextMenuContextData m_context;

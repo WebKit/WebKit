@@ -32,6 +32,15 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class DataListSuggestionPicker;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::DataListSuggestionPicker> : std::true_type { };
+}
+
+namespace WebCore {
 
 class DataListSuggestionPicker : public CanMakeWeakPtr<DataListSuggestionPicker> {
     WTF_MAKE_FAST_ALLOCATED;

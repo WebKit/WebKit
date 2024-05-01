@@ -201,6 +201,40 @@ class TestBranch(testing.PathTestCase):
             "Created the local development branch 'eng/Example-feature-1'\n",
         )
 
+    def test_manual_radar_cc_http(self):
+        with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA), 'https://rdar.apple.com/problem/4'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            projects=bmocks.PROJECTS,
+            users=bmocks.USERS,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ),
+        ), bmocks.Radar(issues=bmocks.ISSUES), patch('webkitbugspy.Tracker._trackers', [
+            bugzilla.Tracker(self.BUGZILLA, radar_importer=bmocks.USERS['Radar WebKit Bug Importer']),
+            radar.Tracker(),
+        ]), mocks.local.Svn(), MockTime:
+            self.assertEqual(0, program.main(args=('branch', '-v'), path=self.path))
+            self.assertEqual(local.Git(self.path).branch, 'eng/Example-feature-1')
+
+            issue = Tracker.from_string('{}/show_bug.cgi?id=2'.format(self.BUGZILLA))
+            self.assertEqual(len(issue.references), 2)
+            self.assertEqual(issue.references[0].link, 'rdar://4')
+            self.assertEqual(issue.comments[-1].content, '<rdar://problem/4>')
+
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "CCing Radar WebKit Bug Importer\n"
+            "Creating the local development branch 'eng/Example-feature-1'...\n",
+        )
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Enter issue URL or title of new issue: \n"
+            "Existing radar to CC (leave empty to create new radar): \n"
+            "Created the local development branch 'eng/Example-feature-1'\n",
+        )
+
     def test_radar_cc_disabled(self):
         with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '4'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), bmocks.Bugzilla(
             self.BUGZILLA.split('://')[-1],

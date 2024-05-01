@@ -46,16 +46,16 @@ TEST(WTF, StringImplCreationFromLiteral)
     auto programmaticString = StringImpl::createWithoutCopying(span(programmaticStringData));
     ASSERT_EQ(strlen(programmaticStringData), programmaticString->length());
     ASSERT_TRUE(equal(programmaticString.get(), StringView::fromLatin1(programmaticStringData)));
-    ASSERT_EQ(programmaticStringData, reinterpret_cast<const char*>(programmaticString->characters8()));
+    ASSERT_EQ(programmaticStringData, reinterpret_cast<const char*>(programmaticString->span8().data()));
     ASSERT_TRUE(programmaticString->is8Bit());
 
     // AtomStringImpl from createWithoutCopying should use the same underlying string.
     auto atomStringWithTemplate = AtomStringImpl::add(stringWithTemplate.ptr());
     ASSERT_TRUE(atomStringWithTemplate->is8Bit());
-    ASSERT_EQ(atomStringWithTemplate->characters8(), stringWithTemplate->characters8());
+    ASSERT_EQ(atomStringWithTemplate->span8().data(), stringWithTemplate->span8().data());
     auto atomicProgrammaticString = AtomStringImpl::add(programmaticString.ptr());
     ASSERT_TRUE(atomicProgrammaticString->is8Bit());
-    ASSERT_EQ(atomicProgrammaticString->characters8(), programmaticString->characters8());
+    ASSERT_EQ(atomicProgrammaticString->span8().data(), programmaticString->span8().data());
 }
 
 TEST(WTF, StringImplReplaceWithLiteral)
@@ -643,7 +643,7 @@ TEST(WTF, StringImplStaticToAtomString)
     ASSERT_TRUE(original.isStatic());
 
     ASSERT_TRUE(atomic->is8Bit());
-    ASSERT_EQ(atomic->characters8(), original.characters8());
+    ASSERT_EQ(atomic->span8().data(), original.span8().data());
 
     auto result2 = AtomStringImpl::lookUp(&original);
     ASSERT_TRUE(result2);
@@ -774,7 +774,7 @@ TEST(WTF, ExternalStringImplCreate8bit)
         ASSERT_FALSE(external->isSymbol());
         ASSERT_FALSE(external->isAtom());
         ASSERT_EQ(external->length(), bufferStringLength);
-        ASSERT_EQ(external->characters8(), buffer);
+        ASSERT_EQ(external->span8().data(), buffer);
     }
 
     ASSERT_TRUE(freeFunctionCalled);
@@ -796,7 +796,7 @@ TEST(WTF, ExternalStringImplCreate16bit)
         ASSERT_FALSE(external->isSymbol());
         ASSERT_FALSE(external->isAtom());
         ASSERT_EQ(external->length(), bufferStringLength);
-        ASSERT_EQ(external->characters16(), buffer);
+        ASSERT_EQ(external->span16().data(), buffer);
     }
 
     ASSERT_TRUE(freeFunctionCalled);
@@ -825,7 +825,7 @@ TEST(WTF, ExternalStringAtom)
         ASSERT_FALSE(external->isSymbol());
         ASSERT_TRUE(external->is8Bit());
         ASSERT_EQ(external->length(), bufferStringLength);
-        ASSERT_EQ(external->characters8(), buffer);
+        ASSERT_EQ(external->span8().data(), buffer);
 
         auto result = AtomStringImpl::lookUp(external.ptr());
         ASSERT_FALSE(result);
@@ -836,7 +836,7 @@ TEST(WTF, ExternalStringAtom)
         ASSERT_FALSE(atomic->isSymbol());
         ASSERT_TRUE(atomic->is8Bit());
         ASSERT_EQ(atomic->length(), external->length());
-        ASSERT_EQ(atomic->characters8(), external->characters8());
+        ASSERT_EQ(atomic->span8().data(), external->span8().data());
 
         auto result2 = AtomStringImpl::lookUp(external.ptr());
         ASSERT_TRUE(result2);

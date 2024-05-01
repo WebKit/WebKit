@@ -29,7 +29,7 @@
 #import "WebSecurityOriginPrivate.h"
 
 namespace WebCore {
-    class SecurityOrigin;
+class SecurityOrigin;
 }
 
 typedef WebCore::SecurityOrigin WebCoreSecurityOrigin;

@@ -32,6 +32,15 @@
 #include <wtf/Identified.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class FileSystemStorageHandle;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::FileSystemStorageHandle> : std::true_type { };
+}
+
 namespace IPC {
 class SharedFileHandle;
 }

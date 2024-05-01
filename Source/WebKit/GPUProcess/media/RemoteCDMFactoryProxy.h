@@ -39,6 +39,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+class RemoteCDMFactoryProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteCDMFactoryProxy> : std::true_type { };
+}
+
+namespace WebKit {
 
 class RemoteCDMInstanceProxy;
 class RemoteCDMInstanceSessionProxy;

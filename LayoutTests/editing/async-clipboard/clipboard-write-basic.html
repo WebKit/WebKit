@@ -48,7 +48,8 @@
                 await checkClipboardItemString(firstItem, "text/uri-list", "https://www.apple.com/");
 
                 debug("Testing secondItem:");
-                shouldBe("secondItem.types", "['text/uri-list', 'text/html']");
+                shouldBeTrue("secondItem.types.includes('text/uri-list')");
+                shouldBeTrue("secondItem.types.includes('text/html')");
                 await checkClipboardItemString(secondItem, "text/uri-list", "https://webkit.org/");
                 fragment = await loadDocument(await secondItem.getType("text/html"));
                 shouldBeEqualToString("fragment.querySelector('a').href", "https://webkit.org/");

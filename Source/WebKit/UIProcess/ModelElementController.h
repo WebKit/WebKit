@@ -44,6 +44,15 @@ OBJC_CLASS WKModelView;
 #endif
 
 namespace WebKit {
+class ModelElementController;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ModelElementController> : std::true_type { };
+}
+
+namespace WebKit {
 
 class WebPageProxy;
 

@@ -1942,6 +1942,14 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 #endif
 }
 
+- (void)didCleanupFullscreen
+{
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (self.isFullScreen)
+        [_fullscreenViewController configureEnvironmentPickerButtonView];
+#endif
+}
+
 @end
 
 #if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)

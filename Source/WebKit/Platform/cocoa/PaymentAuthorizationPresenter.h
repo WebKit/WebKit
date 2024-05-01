@@ -36,6 +36,15 @@
 OBJC_CLASS UIViewController;
 OBJC_CLASS WKPaymentAuthorizationDelegate;
 
+namespace WebKit {
+class PaymentAuthorizationPresenter;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PaymentAuthorizationPresenter> : std::true_type { };
+}
+
 namespace WebCore {
 class Payment;
 class PaymentContact;

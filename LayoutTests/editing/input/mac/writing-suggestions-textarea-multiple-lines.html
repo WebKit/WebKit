@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+textarea {
+    font-size: 16px;
+    width: 300px;
+    height: 300px;
+    caret-color: transparent;
+}
+</style>
+</head>
+<body>
+<textarea id="textarea">good morning.
+</textarea>
+<script>
+addEventListener("load", async () => {
+    const editor = document.getElementById('textarea');
+
+    const shadowRoot = internals.shadowRoot(editor);
+
+    shadowRoot.childNodes[0].appendChild(document.createTextNode("My na"));
+
+    editor.focus();
+    editor.selectionStart = 20;
+    editor.selectionEnd = 20;
+    testRunner.waitUntilDone();
+
+    await UIHelper.setInlinePrediction("name is", 2);
+    await UIHelper.ensurePresentationUpdate();
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

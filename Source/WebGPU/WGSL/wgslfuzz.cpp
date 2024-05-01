@@ -46,7 +46,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     auto checkResult = WGSL::staticCheck(source, std::nullopt, configuration);
     if (auto* successfulCheck = std::get_if<WGSL::SuccessfulCheck>(&checkResult)) {
         auto& shaderModule = successfulCheck->ast;
-        WGSL::prepare(shaderModule, "main"_str, std::nullopt);
+        WGSL::prepare(shaderModule, "main"_str, nullptr);
     }
 
     return 0;

@@ -362,7 +362,7 @@ void JSTestSetLikeWithOverriddenOperations::analyzeHeap(JSCell* cell, HeapAnalyz
     Base::analyzeHeap(cell, analyzer);
 }
 
-bool JSTestSetLikeWithOverriddenOperationsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSTestSetLikeWithOverriddenOperationsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);

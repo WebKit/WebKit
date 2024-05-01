@@ -158,8 +158,8 @@ void EventPath::setRelatedTarget(Node& origin, Node& relatedNode)
     size_t originalEventPathSize = m_path.size();
     for (unsigned contextIndex = 0; contextIndex < originalEventPathSize; contextIndex++) {
         auto& context = m_path[contextIndex];
-        if (!context.isMouseOrFocusEventContext()) {
-            ASSERT(context.isWindowContext());
+        if (!(context.isMouseOrFocusEventContext() || context.isWindowContext())) {
+            ASSERT(context.isTouchEventContext() || context.isNormalEventContext());
             continue;
         }
 

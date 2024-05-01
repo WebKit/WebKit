@@ -35,7 +35,7 @@ class LocalConnection;
 
 class LocalService : public AuthenticatorTransportService {
 public:
-    explicit LocalService(Observer&);
+    explicit LocalService(AuthenticatorTransportServiceObserver&);
 
     static bool isAvailable();
 

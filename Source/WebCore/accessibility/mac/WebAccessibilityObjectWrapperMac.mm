@@ -938,10 +938,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (NSArray*)accessibilityAttributeNames
+- (NSArray *)accessibilityAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
+    AXTRACE("WebAccessibilityObjectWrapper accessibilityAttributeNames"_s);
+
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return nil;
 

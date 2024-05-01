@@ -37,6 +37,7 @@ class Connection;
 namespace WebKit {
 
 class FrameProcess;
+class ProvisionalPageProxy;
 class RemotePageProxy;
 class WebPageProxy;
 class WebPreferences;
@@ -62,6 +63,7 @@ public:
 
     std::unique_ptr<RemotePageProxy> takeRemotePageInProcessForProvisionalPage(const WebPageProxy&, const WebCore::RegistrableDomain&);
     void transitionPageToRemotePage(WebPageProxy&, const WebCore::RegistrableDomain& openerDomain);
+    void transitionProvisionalPageToRemotePage(ProvisionalPageProxy&, const WebCore::RegistrableDomain& provisionalNavigationFailureDomain);
 
     bool hasRemotePages(const WebPageProxy&);
 

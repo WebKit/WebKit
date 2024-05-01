@@ -1233,7 +1233,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 {
     ASSERT(!WebThreadIsEnabled() || WebThreadIsLocked());
     auto& frameLoader = _private->coreFrame->loader();
-    auto* item = frameLoader.history().currentItem();
+    auto* item = _private->coreFrame->history().currentItem();
     if (item)
         frameLoader.client().saveViewStateToItem(*item);
 }
@@ -1615,7 +1615,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     
     Vector<WebCore::CompositionUnderline> underlines;
     frame->page()->chrome().client().suppressFormNotifications();
-    frame->editor().setComposition(text, underlines, { }, newSelRange.location, NSMaxRange(newSelRange));
+    frame->editor().setComposition(text, underlines, { }, { }, newSelRange.location, NSMaxRange(newSelRange));
     frame->page()->chrome().client().restoreFormNotifications();
 }
 
@@ -1624,9 +1624,9 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     WebCore::LocalFrame *frame = core(self);
     if (!frame)
         return;
-        
+
     Vector<WebCore::CompositionUnderline> underlines;
-    frame->editor().setComposition(text, underlines, { }, 0, [text length]);
+    frame->editor().setComposition(text, underlines, { }, { }, 0, [text length]);
 }
 
 - (void)confirmMarkedText:(NSString *)text
@@ -2201,9 +2201,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_clearOpener
 {
-    auto coreFrame = _private->coreFrame;
-    if (coreFrame)
-        coreFrame->loader().setOpener(nullptr);
+    if (auto coreFrame = _private->coreFrame)
+        coreFrame->setOpener(nullptr);
 }
 
 - (BOOL)hasRichlyEditableDragCaret

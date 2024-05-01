@@ -57,7 +57,7 @@ static NSString *externalOutputDevicePickedKeyName = @"externalOutputDevicePicke
 
 namespace WebCore {
 
-AVOutputDeviceMenuControllerTargetPicker::AVOutputDeviceMenuControllerTargetPicker(AVPlaybackTargetPicker::Client& client)
+AVOutputDeviceMenuControllerTargetPicker::AVOutputDeviceMenuControllerTargetPicker(AVPlaybackTargetPickerClient& client)
     : AVPlaybackTargetPicker(client)
     , m_outputDeviceMenuControllerDelegate(adoptNS([[WebAVOutputDeviceMenuControllerHelper alloc] initWithCallback:*this]))
 {

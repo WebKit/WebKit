@@ -1,53 +1,53 @@
+This tests that contents in malformed tables are accessible.
+
+PASS: table1.role === 'AXRole: AXTable'
+PASS: table2.role === 'AXRole: AXTable'
+PASS: table1ColumnCount === 2
+PASS: table1RowCount === 2
+PASS: table2ColumnCount === 2
+PASS: table2RowCount === 2
+PASS: table1.childAtIndex(0).domIdentifier === 'caption1'
+PASS: table2.childAtIndex(0).domIdentifier === 'caption2'
+
+Checking rows for table 1
+PASS: rowA.isEqual(rowB) === true
+PASS: rowA.role === 'AXRole: AXRow'
+PASS: rowA.isEqual(rowB) === true
+PASS: rowA.role === 'AXRole: AXRow'
+
+Checking rows for table 2
+PASS: rowA.isEqual(rowB) === true
+PASS: rowA.role === 'AXRole: AXRow'
+PASS: rowA.isEqual(rowB) === true
+PASS: rowA.role === 'AXRole: AXRow'
+
+Checking cells for table 1
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+
+Checking cells for table 2
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
 Table with CSS and ARIA
 Heading one	Heading two
 a	b
 Table with CSS and no ARIA
 Heading one	Heading two
 a	b
-This tests that contents in malformed tables are accessible.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS table1.role is 'AXRole: AXTable'
-PASS table2.role is 'AXRole: AXTable'
-PASS table1ColumnCount is 2
-PASS table1RowCount is 2
-PASS table2ColumnCount is 2
-PASS table2RowCount is 2
-
-Check rows for Table1
-PASS rowa.isEqual(rowb) is true
-PASS rowa.role is 'AXRole: AXRow'
-PASS rowa.isEqual(rowb) is true
-PASS rowa.role is 'AXRole: AXRow'
-
-Check rows for Table2
-PASS rowa.isEqual(rowb) is true
-PASS rowa.role is 'AXRole: AXRow'
-PASS rowa.isEqual(rowb) is true
-PASS rowa.role is 'AXRole: AXRow'
-
-Check cells for Table1
-PASS cella.isEqual(cellb) is true
-PASS cella.role is 'AXRole: AXCell'
-PASS cella.isEqual(cellb) is true
-PASS cella.role is 'AXRole: AXCell'
-PASS cella.isEqual(cellb) is true
-PASS cella.role is 'AXRole: AXCell'
-PASS cella.isEqual(cellb) is true
-PASS cella.role is 'AXRole: AXCell'
-
-Check cells for Table2
-PASS cella.isEqual(cellb) is true
-PASS cella.role is 'AXRole: AXCell'
-PASS cella.isEqual(cellb) is true
-PASS cella.role is 'AXRole: AXCell'
-PASS cella.isEqual(cellb) is true
-PASS cella.role is 'AXRole: AXCell'
-PASS cella.isEqual(cellb) is true
-PASS cella.role is 'AXRole: AXCell'
-PASS successfullyParsed is true
-
-TEST COMPLETE
 

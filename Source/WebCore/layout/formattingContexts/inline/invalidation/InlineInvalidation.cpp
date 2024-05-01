@@ -579,5 +579,11 @@ bool InlineInvalidation::restartForPagination(size_t lineIndex, LayoutUnit pageT
     return updateInlineDamage({ lineIndex, *inlineItemPositionForLeadingDisplayBox }, InlineDamage::Reason::Pagination, ShouldApplyRangeLayout::Yes, pageTopAdjustment);
 }
 
+void InlineInvalidation::resetInlineDamage(InlineDamage& inlineDamage)
+{
+    inlineDamage.setInlineItemListDirty();
+    inlineDamage.resetLayoutPosition();
+}
+
 }
 }

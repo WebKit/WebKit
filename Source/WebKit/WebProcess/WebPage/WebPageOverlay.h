@@ -49,7 +49,7 @@ namespace WebKit {
 class WebFrame;
 class WebPage;
 
-class WebPageOverlay : public API::ObjectImpl<API::Object::Type::BundlePageOverlay>, public CanMakeWeakPtr<WebPageOverlay>, private WebCore::PageOverlay::Client {
+class WebPageOverlay : public API::ObjectImpl<API::Object::Type::BundlePageOverlay>, public CanMakeWeakPtr<WebPageOverlay>, private WebCore::PageOverlayClient {
 public:
     struct ActionContext;
 
@@ -101,7 +101,7 @@ public:
 private:
     WebPageOverlay(std::unique_ptr<Client>, WebCore::PageOverlay::OverlayType);
 
-    // WebCore::PageOverlay::Client
+    // WebCore::PageOverlayClient
     void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
     void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;

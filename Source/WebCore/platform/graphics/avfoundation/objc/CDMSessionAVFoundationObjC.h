@@ -36,6 +36,15 @@ OBJC_CLASS AVAssetResourceLoadingRequest;
 OBJC_CLASS WebCDMSessionAVFoundationObjCListener;
 
 namespace WebCore {
+class CDMSessionAVFoundationObjC;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CDMSessionAVFoundationObjC> : std::true_type { };
+}
+
+namespace WebCore {
 
 class MediaPlayerPrivateAVFoundationObjC;
 

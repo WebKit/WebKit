@@ -32,17 +32,26 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+struct WebContextMenuListenerProxyClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebContextMenuListenerProxyClient> : std::true_type { };
+}
+
+namespace WebKit {
 
 class WebContextMenuItem;
 
+struct WebContextMenuListenerProxyClient : CanMakeWeakPtr<WebContextMenuListenerProxyClient> {
+    virtual ~WebContextMenuListenerProxyClient() = default;
+    virtual void useContextMenuItems(Vector<Ref<WebContextMenuItem>>&&) = 0;
+};
+
 class WebContextMenuListenerProxy : public API::ObjectImpl<API::Object::Type::ContextMenuListener> {
 public:
-    struct Client : CanMakeWeakPtr<Client> {
-        virtual ~Client() = default;
-        virtual void useContextMenuItems(Vector<Ref<WebContextMenuItem>>&&) = 0;
-    };
-
-    static Ref<WebContextMenuListenerProxy> create(Client& client)
+    static Ref<WebContextMenuListenerProxy> create(WebContextMenuListenerProxyClient& client)
     {
         return adoptRef(*new WebContextMenuListenerProxy(client));
     }
@@ -52,9 +61,9 @@ public:
     void useContextMenuItems(Vector<Ref<WebContextMenuItem>>&&);
 
 private:
-    explicit WebContextMenuListenerProxy(Client&);
+    explicit WebContextMenuListenerProxy(WebContextMenuListenerProxyClient&);
 
-    WeakPtr<Client> m_client;
+    WeakPtr<WebContextMenuListenerProxyClient> m_client;
 };
 
 } // namespace WebKit

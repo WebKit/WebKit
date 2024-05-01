@@ -2867,7 +2867,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         if (renderer() || hasDisplayContents())
-            RenderTreeUpdater::tearDownRenderers(*this);
+            RenderTreeUpdater::tearDownRenderersForShadowRootInsertion(*this);
 
         ensureElementRareData().setShadowRoot(WTFMove(newShadowRoot));
 
@@ -4829,9 +4829,6 @@ bool Element::isWritingSuggestionsEnabled() const
     if (equalLettersIgnoringASCIICase(autocompleteValue, "off"_s))
         return false;
 
-    if (protectedDocument()->quirks().shouldDisableWritingSuggestionsByDefaultQuirk())
-        return false;
-
     // Otherwise, return `true`.
     return true;
 }
@@ -5656,6 +5653,17 @@ OptionSet<VisibilityAdjustment> Element::visibilityAdjustment() const
 void Element::setVisibilityAdjustment(OptionSet<VisibilityAdjustment> adjustment)
 {
     ensureElementRareData().setVisibilityAdjustment(adjustment);
+}
+
+TextStream& operator<<(TextStream& ts, ContentRelevancy relevancy)
+{
+    switch (relevancy) {
+    case ContentRelevancy::OnScreen: ts << "OnScreen"; break;
+    case ContentRelevancy::Focused: ts << "Focused"; break;
+    case ContentRelevancy::IsInTopLayer: ts << "IsInTopLayer"; break;
+    case ContentRelevancy::Selected: ts << "Selected"; break;
+    }
+    return ts;
 }
 
 } // namespace WebCore

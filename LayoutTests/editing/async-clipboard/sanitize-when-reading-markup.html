@@ -33,14 +33,14 @@
                     testPassed("Read items from the clipboard.");
                     shouldBe("items.length", "2");
 
-                    shouldBe("items[0].types", "['text/html']");
+                    shouldBeTrue("items[0].types.includes('text/html')");
                     fragment1 = await loadDocument(await items[0].getType("text/html"));
                     shouldBeEqualToString("fragment1.documentElement.textContent", "Hello world 1");
                     shouldBeNonNull("fragment1.querySelector('p')");
                     shouldBeNull("fragment1.querySelector('script')");
                     shouldBeNull("fragment1.querySelector('p').onclick");
 
-                    shouldBe("items[1].types", "['text/html']");
+                    shouldBeTrue("items[1].types.includes('text/html')");
                     fragment2 = await loadDocument(await items[1].getType("text/html"));
                     shouldBeEqualToString("fragment2.documentElement.textContent", "Hello world 2");
                     shouldBeNonNull("fragment2.querySelector('span')");

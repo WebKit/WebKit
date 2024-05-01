@@ -29,6 +29,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class PermissionObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PermissionObserver> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Page;
 class ScriptExecutionContext;

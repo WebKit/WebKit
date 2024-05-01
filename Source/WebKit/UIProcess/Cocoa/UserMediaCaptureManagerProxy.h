@@ -40,6 +40,15 @@
 #include <pal/spi/cocoa/TCCSPI.h>
 #include <wtf/UniqueRef.h>
 
+namespace WebKit {
+class UserMediaCaptureManagerProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::UserMediaCaptureManagerProxy> : std::true_type { };
+}
+
 namespace WebCore {
 class PlatformMediaSessionManager;
 class SharedMemory;
@@ -49,6 +58,7 @@ struct VideoPresetData;
 namespace WebKit {
 
 class WebProcessProxy;
+class UserMediaCaptureManagerProxySourceProxy;
 
 class UserMediaCaptureManagerProxy : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -115,9 +125,8 @@ private:
     using SerialAction = Function<Ref<GenericPromise>()>;
     void queueAndProcessSerialAction(SerialAction&&);
 
-    class SourceProxy;
-    friend class SourceProxy;
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<SourceProxy>> m_proxies;
+    friend class UserMediaCaptureManagerProxySourceProxy;
+    HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<UserMediaCaptureManagerProxySourceProxy>> m_proxies;
     UniqueRef<ConnectionProxy> m_connectionProxy;
     WebCore::OrientationNotifier m_orientationNotifier { 0 };
     Ref<GenericPromise> m_pendingAction { GenericPromise::createAndResolve() };

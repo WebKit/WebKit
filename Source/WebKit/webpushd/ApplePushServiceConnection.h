@@ -32,6 +32,15 @@
 #include <wtf/HashMap.h>
 
 namespace WebPushD {
+class ApplePushServiceConnection;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebPushD::ApplePushServiceConnection> : std::true_type { };
+}
+
+namespace WebPushD {
 
 class ApplePushServiceConnection final : public PushServiceConnection {
 public:

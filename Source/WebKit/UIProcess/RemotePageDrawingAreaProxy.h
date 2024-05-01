@@ -30,6 +30,15 @@
 #include "MessageReceiverMap.h"
 
 namespace WebKit {
+class RemotePageDrawingAreaProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemotePageDrawingAreaProxy> : std::true_type { };
+}
+
+namespace WebKit {
 
 class DrawingAreaProxy;
 class WebProcessProxy;

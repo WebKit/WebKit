@@ -40,6 +40,15 @@
 #endif
 
 namespace WebCore {
+class TimerAlignment;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TimerAlignment> : std::true_type { };
+}
+
+namespace WebCore {
 
 class TimerAlignment : public CanMakeWeakPtr<TimerAlignment> {
 public:

@@ -34,6 +34,15 @@
 #else
 
 namespace WebKit {
+class WebSocketTask;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSocketTask> : std::true_type { };
+}
+
+namespace WebKit {
 
 struct SessionSet;
 

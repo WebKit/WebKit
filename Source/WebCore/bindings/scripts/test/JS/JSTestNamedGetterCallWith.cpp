@@ -352,7 +352,7 @@ void JSTestNamedGetterCallWith::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer
     Base::analyzeHeap(cell, analyzer);
 }
 
-bool JSTestNamedGetterCallWithOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSTestNamedGetterCallWithOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);

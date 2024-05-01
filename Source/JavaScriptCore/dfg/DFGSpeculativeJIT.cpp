@@ -1839,7 +1839,7 @@ void SpeculativeJIT::dump(const char* label)
 #endif
             ) {
             ASSERT(info.gpr() != InvalidGPRReg);
-            dataLogF(":%s\n", GPRInfo::debugName(info.gpr()));
+            dataLogF(":%s\n", GPRInfo::debugName(info.gpr()).characters());
         } else
             dataLogF("\n");
     }
@@ -16070,7 +16070,7 @@ void SpeculativeJIT::compileToPropertyKeyOrNumber(Node* node)
 
     addSlowPathGenerator(slowPathCall(slowCases, this, operationToPropertyKeyOrNumber, resultRegs, LinkableConstant::globalObject(*this, node), argumentRegs));
 
-    jsValueResult(resultRegs, node, DataFormatJSCell, UseChildrenCalledExplicitly);
+    jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
 }
 
 void SpeculativeJIT::compileToNumeric(Node* node)

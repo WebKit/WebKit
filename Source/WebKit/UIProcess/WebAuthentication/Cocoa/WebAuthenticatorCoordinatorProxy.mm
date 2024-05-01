@@ -29,6 +29,7 @@
 #import "config.h"
 #import "WebAuthenticatorCoordinatorProxy.h"
 
+#import "ArgumentCoders.h"
 #import "LocalService.h"
 #import "Logging.h"
 #import "PageClient.h"
@@ -48,7 +49,6 @@
 #import <WebCore/WebAuthenticationUtils.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
-#import <wtf/EnumTraits.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>

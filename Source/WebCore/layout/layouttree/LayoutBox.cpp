@@ -32,6 +32,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutPhase.h"
 #include "LayoutState.h"
+#include "RenderObject.h"
 #include "RenderStyleInlines.h"
 #include "Shape.h"
 #include <wtf/IsoMallocInlines.h>
@@ -56,6 +57,8 @@ Box::~Box()
 {
     if (UNLIKELY(m_hasRareData))
         removeRareData();
+    if (m_renderer)
+        m_renderer->clearLayoutBox();
 }
 
 UniqueRef<Box> Box::removeFromParent()

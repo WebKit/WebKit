@@ -586,12 +586,16 @@ class TestDriver(Driver):
         super(TestDriver, self).__init__(*args, **kwargs)
         self.started = False
         self.pid = 0
+        self.is_valid_state = True
 
     def cmd_line(self, pixel_tests, per_test_args):
         pixel_tests_flag = '-p' if pixel_tests else ''
         return [self._port._path_to_driver()] + [pixel_tests_flag] + self._port.get_option('additional_drt_flag', []) + per_test_args
 
     def run_test(self, test_input, stop_when_done):
+        if not self.is_valid_state:
+            raise RuntimeError('Test driver is in an invalid state')
+
         if not self.started:
             self.started = True
             self.pid = TestDriver.next_pid
@@ -641,6 +645,10 @@ class TestDriver(Driver):
             image = None
         else:
             image = test.actual_image
+
+        if test.is_reftest and image is None and audio is None:
+            self.is_valid_state = False
+
         return DriverOutput(actual_text, image, test.actual_checksum, audio,
             crash=test.crash or test.web_process_crash, crashed_process_name=crashed_process_name,
             crashed_pid=crashed_pid, crash_log=crash_log,
@@ -664,3 +672,4 @@ ABANDONED DOCUMENT: file:///test.checkout/LayoutTests/failures/expected/leaky-re
 
     def stop(self):
         self.started = False
+        self.is_valid_state = True

@@ -464,7 +464,7 @@ void JSTestNamedAndIndexedSetterWithIdentifier::analyzeHeap(JSCell* cell, HeapAn
     Base::analyzeHeap(cell, analyzer);
 }
 
-bool JSTestNamedAndIndexedSetterWithIdentifierOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSTestNamedAndIndexedSetterWithIdentifierOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);

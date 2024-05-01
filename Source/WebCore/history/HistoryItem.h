@@ -205,7 +205,7 @@ public:
     bool wasCreatedByJSWithoutUserInteraction() const { return m_wasCreatedByJSWithoutUserInteraction; }
 
 #if !LOG_DISABLED
-    const char* logString() const;
+    String logString() const;
 #endif
 
     const std::optional<PolicyContainer>& policyContainer() const { return m_policyContainer; }

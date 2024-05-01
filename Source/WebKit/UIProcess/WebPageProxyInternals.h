@@ -157,7 +157,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     , WebColorPickerClient
 #endif
 #if PLATFORM(MACCATALYST)
-    , EndowmentStateTracker::Client
+    , EndowmentStateTrackerClient
 #endif
 #if ENABLE(SPEECH_SYNTHESIS)
     , WebCore::PlatformSpeechSynthesisUtteranceClient
@@ -363,7 +363,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 #endif
 
 #if PLATFORM(MACCATALYST)
-    // EndowmentStateTracker::Client
+    // EndowmentStateTrackerClient
     void isUserFacingChanged(bool) final;
 #endif
 

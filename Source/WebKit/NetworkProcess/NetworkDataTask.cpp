@@ -146,16 +146,30 @@ void NetworkDataTask::didReceiveInformationalResponse(ResourceResponse&& headers
         m_client->didReceiveInformationalResponse(WTFMove(headers));
 }
 
-void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, PrivateRelayed privateRelayed, ResponseCompletionHandler&& completionHandler)
+void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, PrivateRelayed privateRelayed, std::optional<IPAddress> resolvedIPAddress, ResponseCompletionHandler&& completionHandler)
 {
+    auto url = response.url();
     if (response.isHTTP09()) {
-        auto url = response.url();
         std::optional<uint16_t> port = url.port();
         if (port && !WTF::isDefaultPortForProtocol(port.value(), url.protocol())) {
             completionHandler(PolicyAction::Ignore);
             cancel();
             if (m_client)
                 m_client->didCompleteWithError({ String(), 0, url, "Cancelled load from '" + url.stringCenterEllipsizedToLength() + "' because it is using HTTP/0.9." });
+            return;
+        }
+    }
+
+    auto lastRequest = m_previousRequest.isNull() ? firstRequest() : m_previousRequest;
+    auto firstPartyURL = lastRequest.firstPartyForCookies();
+    if (!isTopLevelNavigation()
+        && firstPartyURL.protocolIs("https"_s) && !SecurityOrigin::isLocalhostAddress(firstPartyURL.host())
+        && url.protocolIs("http"_s) && SecurityOrigin::isLocalhostAddress(url.host())) {
+        if (resolvedIPAddress && !resolvedIPAddress->isLoopback()) {
+            completionHandler(PolicyAction::Ignore);
+            cancel();
+            if (m_client)
+                m_client->didCompleteWithError({ String(), 0, url, "Cancelled load from '" + url.stringCenterEllipsizedToLength() + "' because localhost did not resolve to a loopback address." });
             return;
         }
     }

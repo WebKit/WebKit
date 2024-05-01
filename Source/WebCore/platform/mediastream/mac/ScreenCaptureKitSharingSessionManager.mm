@@ -550,7 +550,7 @@ std::pair<RetainPtr<SCContentFilter>, RetainPtr<SCContentSharingSession>> Screen
     return std::make_pair(std::exchange(m_pendingContentFilter, { }), std::exchange(m_pendingSession, { }));
 }
 
-RefPtr<ScreenCaptureSessionSource> ScreenCaptureKitSharingSessionManager::createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSource::Observer> observer, SCContentFilter* contentFilter, SCContentSharingSession* sharingSession, SCStreamConfiguration* configuration, SCStreamDelegate* delegate)
+RefPtr<ScreenCaptureSessionSource> ScreenCaptureKitSharingSessionManager::createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSourceObserver> observer, SCContentFilter* contentFilter, SCContentSharingSession* sharingSession, SCStreamConfiguration* configuration, SCStreamDelegate* delegate)
 {
     ASSERT(isMainThread());
 
@@ -603,12 +603,12 @@ void ScreenCaptureKitSharingSessionManager::cleanupSharingSession(SCContentShari
     [sharingSession end];
 }
 
-Ref<ScreenCaptureSessionSource> ScreenCaptureSessionSource::create(WeakPtr<Observer> observer, RetainPtr<SCStream> stream, RetainPtr<SCContentFilter> filter, RetainPtr<SCContentSharingSession> sharingSession, CleanupFunction&& cleanupFunction)
+Ref<ScreenCaptureSessionSource> ScreenCaptureSessionSource::create(WeakPtr<ScreenCaptureSessionSourceObserver> observer, RetainPtr<SCStream> stream, RetainPtr<SCContentFilter> filter, RetainPtr<SCContentSharingSession> sharingSession, CleanupFunction&& cleanupFunction)
 {
     return adoptRef(*new ScreenCaptureSessionSource(WTFMove(observer), WTFMove(stream), WTFMove(filter), WTFMove(sharingSession), WTFMove(cleanupFunction)));
 }
 
-ScreenCaptureSessionSource::ScreenCaptureSessionSource(WeakPtr<Observer>&& observer, RetainPtr<SCStream>&& stream, RetainPtr<SCContentFilter>&& filter, RetainPtr<SCContentSharingSession>&& sharingSession, CleanupFunction&& cleanupFunction)
+ScreenCaptureSessionSource::ScreenCaptureSessionSource(WeakPtr<ScreenCaptureSessionSourceObserver>&& observer, RetainPtr<SCStream>&& stream, RetainPtr<SCContentFilter>&& filter, RetainPtr<SCContentSharingSession>&& sharingSession, CleanupFunction&& cleanupFunction)
     : m_stream(WTFMove(stream))
     , m_contentFilter(WTFMove(filter))
     , m_sharingSession(WTFMove(sharingSession))

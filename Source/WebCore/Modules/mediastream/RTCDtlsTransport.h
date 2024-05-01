@@ -39,7 +39,7 @@ class RTCIceTransport;
 class RTCPeerConnection;
 class ScriptExecutionContext;
 
-class RTCDtlsTransport final : public RefCounted<RTCDtlsTransport>, public ActiveDOMObject, public EventTarget, public RTCDtlsTransportBackend::Client {
+class RTCDtlsTransport final : public RefCounted<RTCDtlsTransport>, public ActiveDOMObject, public EventTarget, public RTCDtlsTransportBackendClient {
     WTF_MAKE_ISO_ALLOCATED(RTCDtlsTransport);
 public:
     static Ref<RTCDtlsTransport> create(ScriptExecutionContext&, UniqueRef<RTCDtlsTransportBackend>&&, Ref<RTCIceTransport>&&);
@@ -69,7 +69,7 @@ private:
     void stop() final;
     bool virtualHasPendingActivity() const final;
 
-    // RTCDtlsTransportBackend::Client
+    // RTCDtlsTransportBackendClient
     void onStateChanged(RTCDtlsTransportState, Vector<Ref<JSC::ArrayBuffer>>&&) final;
     void onError() final;
 

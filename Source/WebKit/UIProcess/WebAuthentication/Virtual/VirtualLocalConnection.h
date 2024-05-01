@@ -32,6 +32,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+class VirtualLocalConnection;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::VirtualLocalConnection> : std::true_type { };
+}
+
+namespace WebKit {
 struct VirtualAuthenticatorConfiguration;
 
 class VirtualLocalConnection final : public CanMakeWeakPtr<VirtualLocalConnection>, public LocalConnection {

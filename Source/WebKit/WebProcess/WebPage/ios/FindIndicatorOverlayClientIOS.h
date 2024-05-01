@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-class FindIndicatorOverlayClientIOS : public WebCore::PageOverlay::Client {
+class FindIndicatorOverlayClientIOS : public WebCore::PageOverlayClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FindIndicatorOverlayClientIOS(WebCore::LocalFrame& frame, WebCore::TextIndicator* textIndicator)

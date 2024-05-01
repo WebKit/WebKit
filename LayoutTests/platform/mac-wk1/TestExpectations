@@ -1488,6 +1488,7 @@ http/tests/inspector/network/resource-sizes-disk-cache.html
 http/tests/inspector/network/fetch-response-body-304.html [ Skip ]
 
 # Async image decoding is WK2 only
+fast/images/animated-gif-sub-sample.html
 fast/images/async-image-background-change.html
 fast/images/async-image-src-change.html
 fast/images/async-image-composited-show.html
@@ -2759,12 +2760,9 @@ fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
 
 webkit.org/b/270133 [ Sonoma+ ] imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
 
-# webkit.org/b/270199 [ Sonoma wk1 ] 5 tests in imported/w3c/web-platform-tests/css/filter-effects are constant failures
+# webkit.org/b/273522 2 backdrop-filter tests in imported/w3c/web-platform-tests/css/filter-effects are constant failures
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filters-grayscale-001.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filters-sepia.html [ ImageOnlyFailure ]
-[ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/filters-grayscale-001-test.html [ ImageOnlyFailure ]
-[ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-grayscale.html [ ImageOnlyFailure ]
-[ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-sepia.html [ ImageOnlyFailure ]
 
 webkit.org/b/270273 [ Monterey+ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Skip ]
 
@@ -2783,8 +2781,6 @@ webkit.org/b/270310 [ Sonoma+ ] imported/w3c/web-platform-tests/html/semantics/i
 [ Sonoma+ ] imported/blink/compositing/will-change/stacking-context-creation.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-001.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html [ ImageOnlyFailure ]
-
-webkit.org/b/270380 [ Ventura+ ] fast/hidpi/filters-drop-shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/270385 [ Sonoma+ ] fast/images/jpegxl-with-color-profile.html [ ImageOnlyFailure ]
 
@@ -2846,7 +2842,13 @@ imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties
 
 webkit.org/b/272939 [ Ventura+ ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-strict-policies.sub.html [ Pass Failure ]
 
-webkit.org/b/273212 fonts [ Skip ]
+webkit.org/b/273279 fonts/font-fallback-prefers-pictographs.html [ Skip ]
 
 # rdar://127055453 ([ EWS MacOS WK1 ] http/tests/media/hls/hls-webvtt-style.html is a flaky timeout (273251))
 http/tests/media/hls/hls-webvtt-style.html [ Pass Timeout ]
+
+# rdar://127302101 ([ Ventura WK1 Debug ] 2x imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode are constant crashes (273501))
+[ Ventura Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-disabled.html [ Skip ]
+[ Ventura Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode.html [ Skip ]
+
+webkit.org/b/273577 [ Ventura ] http/tests/media/hls/track-webvtt-multitracks.html [ Skip ]

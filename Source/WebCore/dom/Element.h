@@ -787,9 +787,6 @@ public:
     bool hasCustomState(const AtomString& state) const;
     CustomStateSet& ensureCustomStateSet();
 
-    bool capturedInViewTransition() const { return hasElementStateFlag(ElementStateFlag::CapturedInViewTransition); }
-    void setCapturedInViewTransition(bool captured) { setElementStateFlag(ElementStateFlag::CapturedInViewTransition, captured); }
-
 protected:
     Element(const QualifiedName&, Document&, OptionSet<TypeFlag>);
 
@@ -980,6 +977,8 @@ inline void Element::disconnectFromResizeObservers()
 
 void invalidateForSiblingCombinators(Element* sibling);
 inline bool isInTopLayerOrBackdrop(const RenderStyle&, const Element*);
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ContentRelevancy);
 
 } // namespace WebCore
 

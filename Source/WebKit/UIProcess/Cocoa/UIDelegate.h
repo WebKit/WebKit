@@ -38,6 +38,15 @@
 @class WKWebView;
 @protocol WKUIDelegate;
 
+namespace WebKit {
+class UIDelegate;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::UIDelegate> : std::true_type { };
+}
+
 namespace API {
 class FrameInfo;
 class SecurityOrigin;

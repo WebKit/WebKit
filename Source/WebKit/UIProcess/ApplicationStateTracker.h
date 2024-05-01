@@ -39,6 +39,15 @@ OBJC_CLASS UIScene;
 OBJC_CLASS WKUIWindowSceneObserver;
 
 namespace WebKit {
+class ApplicationStateTracker;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ApplicationStateTracker> : std::true_type { };
+}
+
+namespace WebKit {
 
 enum class ApplicationType : uint8_t {
     Application,

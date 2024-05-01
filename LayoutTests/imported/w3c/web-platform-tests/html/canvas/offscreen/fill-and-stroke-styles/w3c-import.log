@@ -16,6 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.CSSHSL.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.CSSRGB.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.colormix.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.colormix.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.default.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.default.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.get.halftransparent.html
@@ -118,6 +120,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-clamp-3.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-clamp-4.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-clamp-4.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-clamp-negative-saturation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-clamp-negative-saturation.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-1.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-2.html
@@ -134,6 +138,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-5.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-6.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-6.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-alpha-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-alpha-1.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-alpha-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-alpha-2.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-negative-saturation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-negative-saturation.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.html4.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.html4.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.invalid.css-color-4-hsl-1.html
@@ -466,5 +476,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.infinity.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.invalid.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.strokeStyle.colormix.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.strokeStyle.default.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.strokeStyle.default.worker.js

@@ -36,6 +36,10 @@ class LegacyInlineTextBox;
 struct GlyphOverflow;
 struct WordTrailingSpace;
 
+namespace Layout {
+class InlineTextBox;
+}
+
 namespace LayoutIntegration {
 class LineLayout;
 }
@@ -48,6 +52,9 @@ public:
     RenderText(Type, Document&, const String&);
 
     virtual ~RenderText();
+
+    Layout::InlineTextBox* layoutBox();
+    const Layout::InlineTextBox* layoutBox() const;
 
     WEBCORE_EXPORT Text* textNode() const;
 

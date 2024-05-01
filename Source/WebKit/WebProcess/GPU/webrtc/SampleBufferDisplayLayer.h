@@ -45,7 +45,7 @@ class SampleBufferDisplayLayerManager;
 
 class SampleBufferDisplayLayer final : public WebCore::SampleBufferDisplayLayer, public IPC::MessageReceiver, public GPUProcessConnection::Client, public Identified<SampleBufferDisplayLayerIdentifier> {
 public:
-    static Ref<SampleBufferDisplayLayer> create(SampleBufferDisplayLayerManager&, WebCore::SampleBufferDisplayLayer::Client&);
+    static Ref<SampleBufferDisplayLayer> create(SampleBufferDisplayLayerManager&, WebCore::SampleBufferDisplayLayerClient&);
     ~SampleBufferDisplayLayer();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -57,7 +57,7 @@ public:
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCore::SampleBufferDisplayLayer, WTF::DestructionThread::MainRunLoop>::controlBlock(); }
 
 private:
-    SampleBufferDisplayLayer(SampleBufferDisplayLayerManager&, WebCore::SampleBufferDisplayLayer::Client&);
+    SampleBufferDisplayLayer(SampleBufferDisplayLayerManager&, WebCore::SampleBufferDisplayLayerClient&);
 
     // WebCore::SampleBufferDisplayLayer
     void initialize(bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, CompletionHandler<void(bool)>&&) final;

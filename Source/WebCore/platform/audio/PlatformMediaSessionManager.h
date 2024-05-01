@@ -170,9 +170,9 @@ public:
 
     bool processIsSuspended() const { return m_processIsSuspended; }
 
-    WEBCORE_EXPORT void addAudioCaptureSource(PlatformMediaSession::AudioCaptureSource&);
-    WEBCORE_EXPORT void removeAudioCaptureSource(PlatformMediaSession::AudioCaptureSource&);
-    bool hasAudioCaptureSource(PlatformMediaSession::AudioCaptureSource& source) const { return m_audioCaptureSources.contains(source); }
+    WEBCORE_EXPORT void addAudioCaptureSource(AudioCaptureSource&);
+    WEBCORE_EXPORT void removeAudioCaptureSource(AudioCaptureSource&);
+    bool hasAudioCaptureSource(AudioCaptureSource& source) const { return m_audioCaptureSources.contains(source); }
 
     WEBCORE_EXPORT void processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&);
 
@@ -249,7 +249,7 @@ private:
     bool m_becameActive { false };
 #endif
 
-    WeakHashSet<PlatformMediaSession::AudioCaptureSource> m_audioCaptureSources;
+    WeakHashSet<AudioCaptureSource> m_audioCaptureSources;
     bool m_hasScheduledSessionStateUpdate { false };
 
     WeakHashSet<NowPlayingMetadataObserver> m_nowPlayingMetadataObservers;

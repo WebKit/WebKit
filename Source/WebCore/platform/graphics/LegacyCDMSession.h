@@ -32,6 +32,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class LegacyCDMSessionClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LegacyCDMSessionClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class LegacyCDMSessionClient : public CanMakeWeakPtr<LegacyCDMSessionClient> {
     WTF_MAKE_FAST_ALLOCATED;

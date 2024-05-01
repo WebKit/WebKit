@@ -42,6 +42,15 @@
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+class BackgroundFetchResponseBodyLoader;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::BackgroundFetchResponseBodyLoader> : std::true_type { };
+}
+
+namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BackgroundFetchRegistration);
 

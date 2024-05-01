@@ -80,6 +80,20 @@ bool IPAddress::containsOnlyZeros() const
     }), m_address);
 }
 
+bool IPAddress::isLoopback() const
+{
+    return WTF::switchOn(m_address,
+        [] (const struct in_addr& address) {
+        return address.s_addr == INADDR_LOOPBACK;
+    }, [] (const struct in6_addr& address) {
+        constexpr auto in6addrLoopback = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1";
+        return !memcmp(&address.s6_addr, in6addrLoopback, sizeof(address.s6_addr));
+    }, [] (const WTF::HashTableEmptyValueType&) {
+        ASSERT_NOT_REACHED();
+        return false;
+    });
+}
+
 std::optional<IPAddress> IPAddress::fromString(const String& string)
 {
 #if OS(UNIX)

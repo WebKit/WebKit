@@ -36,14 +36,37 @@
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
+class MediaStreamTrackPrivateObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaStreamTrackPrivateObserver> : std::true_type { };
+}
+
+namespace WebCore {
 
 class GraphicsContext;
 class MediaSample;
+class MediaStreamTrackPrivate;
 class MediaStreamTrackPrivateSourceObserver;
 class RealtimeMediaSourceCapabilities;
 class WebAudioSourceProvider;
 
 struct MediaStreamTrackDataHolder;
+
+class MediaStreamTrackPrivateObserver : public CanMakeWeakPtr<MediaStreamTrackPrivateObserver> {
+public:
+    virtual ~MediaStreamTrackPrivateObserver() = default;
+
+    virtual void trackStarted(MediaStreamTrackPrivate&) { };
+    virtual void trackEnded(MediaStreamTrackPrivate&) = 0;
+    virtual void trackMutedChanged(MediaStreamTrackPrivate&) = 0;
+    virtual void trackSettingsChanged(MediaStreamTrackPrivate&) = 0;
+    virtual void trackConfigurationChanged(MediaStreamTrackPrivate&) { };
+    virtual void trackEnabledChanged(MediaStreamTrackPrivate&) = 0;
+    virtual void readyStateChanged(MediaStreamTrackPrivate&) { };
+};
 
 class MediaStreamTrackPrivate final
     : public RefCounted<MediaStreamTrackPrivate>
@@ -53,19 +76,6 @@ class MediaStreamTrackPrivate final
 #endif
 {
 public:
-    class Observer : public CanMakeWeakPtr<Observer> {
-    public:
-        virtual ~Observer() = default;
-
-        virtual void trackStarted(MediaStreamTrackPrivate&) { };
-        virtual void trackEnded(MediaStreamTrackPrivate&) = 0;
-        virtual void trackMutedChanged(MediaStreamTrackPrivate&) = 0;
-        virtual void trackSettingsChanged(MediaStreamTrackPrivate&) = 0;
-        virtual void trackConfigurationChanged(MediaStreamTrackPrivate&) { };
-        virtual void trackEnabledChanged(MediaStreamTrackPrivate&) = 0;
-        virtual void readyStateChanged(MediaStreamTrackPrivate&) { };
-    };
-
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, UniqueRef<MediaStreamTrackDataHolder>&&, std::function<void(Function<void()>&&)>&&);
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, std::function<void(Function<void()>&&)>&& postTask = { });
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&& postTask = { });
@@ -112,9 +122,9 @@ public:
 
     void endTrack();
 
-    void addObserver(Observer&);
-    void removeObserver(Observer&);
-    bool hasObserver(Observer& observer) const { return m_observers.contains(observer); }
+    void addObserver(MediaStreamTrackPrivateObserver&);
+    void removeObserver(MediaStreamTrackPrivateObserver&);
+    bool hasObserver(MediaStreamTrackPrivateObserver& observer) const { return m_observers.contains(observer); }
 
     const RealtimeMediaSourceSettings& settings() const { return m_settings; }
     const RealtimeMediaSourceCapabilities& capabilities() const { return m_capabilities; }
@@ -142,6 +152,7 @@ public:
 #endif
 
     friend class MediaStreamTrackPrivateSourceObserver;
+    friend class MediaStreamTrackPrivateSourceObserverSourceProxy;
 
     void initializeSettings(RealtimeMediaSourceSettings&& settings) { m_settings = WTFMove(settings); }
     void initializeCapabilities(RealtimeMediaSourceCapabilities&& capabilities) { m_capabilities = WTFMove(capabilities); }
@@ -164,7 +175,7 @@ private:
 
     void updateReadyState();
 
-    void forEachObserver(const Function<void(Observer&)>&);
+    void forEachObserver(const Function<void(MediaStreamTrackPrivateObserver&)>&);
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "MediaStreamTrackPrivate"_s; }
@@ -175,7 +186,7 @@ private:
     bool isOnCreationThread();
 #endif
 
-    WeakHashSet<Observer> m_observers;
+    WeakHashSet<MediaStreamTrackPrivateObserver> m_observers;
     Ref<MediaStreamTrackPrivateSourceObserver> m_sourceObserver;
 
     String m_id;

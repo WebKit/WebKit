@@ -30,6 +30,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WTF {
+template<typename> class Observer;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<typename Out, typename... In> struct IsDeprecatedWeakRefSmartPointerException<WTF::Observer<Out(In...)>> : std::true_type { };
+}
+
+namespace WTF {
 
 template<typename> class Observer;
 

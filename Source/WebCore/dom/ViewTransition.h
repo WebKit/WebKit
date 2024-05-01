@@ -32,6 +32,7 @@
 #include "ImageBuffer.h"
 #include "JSValueInWrappedObject.h"
 #include "MutableStyleProperties.h"
+#include "Styleable.h"
 #include "ViewTransitionUpdateCallback.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
@@ -41,6 +42,7 @@ namespace WebCore {
 
 class DOMPromise;
 class DeferredPromise;
+class RenderLayerModelObject;
 class RenderViewTransitionCapture;
 
 enum class ViewTransitionPhase : uint8_t {
@@ -60,7 +62,7 @@ public:
     LayoutRect oldOverflowRect;
     LayoutSize oldSize;
     RefPtr<MutableStyleProperties> oldProperties;
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> newElement;
+    WeakStyleable newElement;
 
     RefPtr<MutableStyleProperties> groupStyleProperties;
 };
@@ -155,12 +157,12 @@ public:
     Document* document() const { return downcast<Document>(scriptExecutionContext()); }
     RefPtr<Document> protectedDocument() const { return document(); }
 
-    RenderViewTransitionCapture* viewTransitionNewPseudoForCapturedElement(Element&);
+    RenderViewTransitionCapture* viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject&);
 
 private:
     ViewTransition(Document&, RefPtr<ViewTransitionUpdateCallback>&&);
 
-    Ref<MutableStyleProperties> copyElementBaseProperties(Element&, LayoutSize&);
+    Ref<MutableStyleProperties> copyElementBaseProperties(RenderLayerModelObject&, LayoutSize&);
 
     ExceptionOr<void> updatePseudoElementStyles();
     void setupDynamicStyleSheet(const AtomString&, const CapturedElement&);

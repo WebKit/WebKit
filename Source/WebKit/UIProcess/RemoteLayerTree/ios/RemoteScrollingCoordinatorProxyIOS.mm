@@ -429,7 +429,7 @@ void RemoteScrollingCoordinatorProxyIOS::updateAnimations()
     for (auto animatedNodeLayerID : animatedNodeLayerIDs) {
         auto* animatedNode = layerTreeHost.nodeForID(animatedNodeLayerID);
         auto* effectStack = animatedNode->effectStack();
-        effectStack->applyEffectsFromMainThread(animatedNode->layer(), now, layerTreeHost.cssUnprefixedBackdropFilterEnabled());
+        effectStack->applyEffectsFromMainThread(animatedNode->layer(), now, animatedNode->backdropRootIsOpaque());
 
         // We can clear the effect stack if it's empty, but the previous
         // call to applyEffects() is important so that the base values

@@ -149,8 +149,10 @@ static UniqueRef<webrtc::VideoEncoder> createInternalEncoder(LibWebRTCVPXVideoEn
         return makeUniqueRefFromNonNullUniquePtr(webrtc::VP9Encoder::Create());
     case LibWebRTCVPXVideoEncoder::Type::VP9_P2:
         return makeUniqueRefFromNonNullUniquePtr(webrtc::VP9Encoder::Create(cricket::CreateVideoCodec(webrtc::SdpVideoFormat { cricket::kVp9CodecName, { { "profile-id", "2" } } } )));
+#if ENABLE(AV1)
     case LibWebRTCVPXVideoEncoder::Type::AV1:
         return makeUniqueRefFromNonNullUniquePtr(webrtc::CreateLibaomAv1Encoder());
+#endif
     }
 }
 
@@ -214,10 +216,12 @@ int LibWebRTCVPXInternalVideoEncoder::initialize(LibWebRTCVPXVideoEncoder::Type 
         videoCodec.codecType = webrtc::kVideoCodecVP9;
         videoCodec.VP9()->numberOfSpatialLayers = 1;
         break;
+#if ENABLE(AV1)
     case LibWebRTCVPXVideoEncoder::Type::AV1:
         videoCodec.codecType = webrtc::kVideoCodecAV1;
         videoCodec.qpMax = 56; // default qp max
         break;
+#endif
     }
 
     if (auto error = m_internalEncoder->InitEncode(&videoCodec, webrtc::VideoEncoder::Settings { webrtc::VideoEncoder::Capabilities { true }, static_cast<int>(webrtc::CpuInfo::DetectNumberOfCores()), defaultPayloadSize }))

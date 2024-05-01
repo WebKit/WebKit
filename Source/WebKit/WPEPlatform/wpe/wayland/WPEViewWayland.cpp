@@ -70,17 +70,41 @@ struct DMABufFeedback {
         FormatTable(const FormatTable&) = delete;
         FormatTable& operator=(const FormatTable&) = delete;
         FormatTable(FormatTable&& other)
-            : size(other.size)
-            , data(other.data)
         {
-            other.size = 0;
-            other.data = nullptr;
+            *this = WTFMove(other);
         }
 
         FormatTable(unsigned size, Data* data)
             : size(size)
             , data(data)
         {
+        }
+
+        explicit FormatTable() = default;
+        explicit FormatTable(uint32_t size, int fd)
+            : size(size)
+            , data(static_cast<FormatTable::Data*>(mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0)))
+        {
+            if (data == MAP_FAILED) {
+                data = nullptr;
+                size = 0;
+            }
+        }
+
+        explicit operator bool() const
+        {
+            return size && data;
+        }
+
+        FormatTable& operator=(FormatTable&& other)
+        {
+            if (data != other.data) {
+                if (data)
+                    munmap(data, size);
+                data = std::exchange(other.data, nullptr);
+                size = std::exchange(other.size, 0);
+            }
+            return *this;
         }
 
         ~FormatTable()
@@ -93,17 +117,7 @@ struct DMABufFeedback {
         Data* data { nullptr };
     };
 
-    static std::unique_ptr<DMABufFeedback> create(unsigned size, int fd)
-    {
-        auto* data = static_cast<FormatTable::Data*>(mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0));
-        if (data == MAP_FAILED)
-            return nullptr;
-
-        return makeUnique<DMABufFeedback>(FormatTable(size, data));
-    }
-
-    explicit DMABufFeedback(FormatTable&& table)
-        : formatTable(WTFMove(table))
+    DMABufFeedback()
     {
 #if USE(LIBDRM)
         memset(&mainDevice, 0, sizeof(dev_t));
@@ -198,6 +212,10 @@ struct DMABufFeedback {
 
     std::pair<uint32_t, uint64_t> format(uint16_t index)
     {
+        ASSERT(index < formatTable.size);
+        if (UNLIKELY(index >= formatTable.size))
+            return { 0, 0 };
+
         return { formatTable.data[index].format, formatTable.data[index].modifier };
     }
 
@@ -406,6 +424,20 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*)
     {
         auto* view = WPE_VIEW_WAYLAND(data);
+        if (!view->priv->pendingDMABufFeedback)
+            return;
+
+        // The compositor might not have sent the formats table. In that case, try to reuse the previous
+        // one. Return early and skip emitting the signal if there is no usable formats table in the end.
+        if (!view->priv->pendingDMABufFeedback->formatTable) {
+            if (view->priv->committedDMABufFeedback && view->priv->committedDMABufFeedback->formatTable)
+                view->priv->pendingDMABufFeedback->formatTable = WTFMove(view->priv->committedDMABufFeedback->formatTable);
+            else {
+                view->priv->pendingDMABufFeedback.reset();
+                return;
+            }
+        }
+
         view->priv->committedDMABufFeedback = WTFMove(view->priv->pendingDMABufFeedback);
         view->priv->preferredDMABufFormats = nullptr;
         g_signal_emit_by_name(view, "preferred-dma-buf-formats-changed");
@@ -413,17 +445,21 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
     // format_table
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*, int32_t fd, uint32_t size)
     {
+        // The protocol specification is not clear about the ordering of the format_table and main_device
+        // events. Err on the safer side and allow any of them to create the pending feedback instance.
         auto* priv = WPE_VIEW_WAYLAND(data)->priv;
-        priv->pendingDMABufFeedback = DMABufFeedback::create(size, fd);
+        if (!priv->pendingDMABufFeedback)
+            priv->pendingDMABufFeedback = makeUnique<DMABufFeedback>();
+
+        priv->pendingDMABufFeedback->formatTable = DMABufFeedback::FormatTable(size, fd);
         close(fd);
     },
     // main_device
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*, struct wl_array* device)
     {
         auto* priv = WPE_VIEW_WAYLAND(data)->priv;
-        // Compositor might not re-send the format table. In that case, try to reuse the previous one.
-        if (!priv->pendingDMABufFeedback && priv->committedDMABufFeedback)
-            priv->pendingDMABufFeedback = makeUnique<DMABufFeedback>(WTFMove(priv->committedDMABufFeedback->formatTable));
+        if (!priv->pendingDMABufFeedback)
+            priv->pendingDMABufFeedback = makeUnique<DMABufFeedback>();
 
 #if USE(LIBDRM)
         memcpy(&priv->pendingDMABufFeedback->mainDevice, device->data, sizeof(dev_t));
@@ -795,7 +831,8 @@ static WPEBufferDMABufFormats* wpeViewWaylandGetPreferredDMABufFormats(WPEView* 
 
         for (const auto& format : tranche.formats) {
             auto [fourcc, modifier] = priv->committedDMABufFeedback->format(format);
-            wpe_buffer_dma_buf_formats_builder_append_format(builder, fourcc, modifier);
+            if (LIKELY(fourcc))
+                wpe_buffer_dma_buf_formats_builder_append_format(builder, fourcc, modifier);
         }
     }
 

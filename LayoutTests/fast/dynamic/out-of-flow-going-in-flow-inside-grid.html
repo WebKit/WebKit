@@ -1,0 +1,22 @@
+<style>
+.grid {
+  width: 200px;
+
+  display: grid;
+  padding: 100px;
+  position: relative;
+  background-color: green;
+}
+
+#abs {
+  position: absolute;
+  background-color: green;
+  width: 100%;
+  height: 100px;
+}
+</style>
+<!-- PASS if in-flow leaf does not stick out of grid container -->
+<div class=grid><div><div id=abs><script>
+document.body.offsetHeight;
+abs.style.position = "static";
+</script>

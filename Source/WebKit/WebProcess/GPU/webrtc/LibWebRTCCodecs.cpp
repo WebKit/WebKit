@@ -561,6 +561,7 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(VideoCodecType type, co
     return createEncoderInternal(type, { }, parameters, true, true, VideoEncoderScalabilityMode::L1T1, [](auto*) { });
 }
 
+#if ENABLE(WEB_CODECS)
 void LibWebRTCCodecs::createEncoderAndWaitUntilInitialized(VideoCodecType type, const String& codec, const std::map<std::string, std::string>& parameters, const VideoEncoder::Config& config, Function<void(Encoder*)>&& callback)
 {
     createEncoderInternal(type, codec, parameters, config.isRealtime, config.useAnnexB, config.scalabilityMode, [config, callback = WTFMove(callback)] (auto* encoder) {
@@ -572,6 +573,7 @@ void LibWebRTCCodecs::createEncoderAndWaitUntilInitialized(VideoCodecType type, 
         callback(encoder);
     });
 }
+#endif // ENABLE(WEB_CODECS)
 
 static void createRemoteEncoder(LibWebRTCCodecs::Encoder& encoder, IPC::Connection& connection, const Vector<std::pair<String, String>>& parameters, Function<void(bool)>&& callback)
 {
@@ -728,6 +730,7 @@ void LibWebRTCCodecs::registerEncodedVideoFrameCallback(Encoder& encoder, Encode
     encoder.encoderCallback = WTFMove(callback);
 }
 
+#if ENABLE(WEB_CODECS)
 void LibWebRTCCodecs::registerEncoderDescriptionCallback(Encoder& encoder, DescriptionCallback&& callback)
 {
     Locker locker { encoder.encodedImageCallbackLock };
@@ -735,6 +738,7 @@ void LibWebRTCCodecs::registerEncoderDescriptionCallback(Encoder& encoder, Descr
     ASSERT(!encoder.encodedImageCallback);
     encoder.descriptionCallback = WTFMove(callback);
 }
+#endif
 
 void LibWebRTCCodecs::setEncodeRates(Encoder& encoder, uint32_t bitRate, uint32_t frameRate)
 {
@@ -801,12 +805,14 @@ void LibWebRTCCodecs::setEncodingConfiguration(WebKit::VideoEncoderIdentifier id
 
     Locker locker { AdoptLock, encoder->encodedImageCallbackLock };
 
+#if ENABLE(WEB_CODECS)
     if (encoder->descriptionCallback) {
         std::optional<Vector<uint8_t>> decoderDescriptionData;
         if (description.size())
             decoderDescriptionData = Vector<uint8_t> { description };
         encoder->descriptionCallback(WebCore::VideoEncoderActiveConfiguration { { }, { }, { }, { }, { }, WTFMove(decoderDescriptionData), WTFMove(colorSpace) });
     }
+#endif
 }
 
 CVPixelBufferPoolRef LibWebRTCCodecs::pixelBufferPool(size_t width, size_t height, OSType type)

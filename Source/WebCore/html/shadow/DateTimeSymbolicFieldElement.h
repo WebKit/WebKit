@@ -36,7 +36,7 @@ namespace WebCore {
 class DateTimeSymbolicFieldElement : public DateTimeFieldElement, public TypeAheadDataSource {
     WTF_MAKE_ISO_ALLOCATED(DateTimeSymbolicFieldElement);
 protected:
-    DateTimeSymbolicFieldElement(Document&, FieldOwner&, const Vector<String>&, int);
+    DateTimeSymbolicFieldElement(Document&, DateTimeFieldElementFieldOwner&, const Vector<String>&, int);
     size_t symbolsSize() const { return m_symbols.size(); }
     bool hasValue() const final;
     void setEmptyValue(EventBehavior = DispatchNoEvent) override;

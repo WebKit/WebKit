@@ -326,8 +326,8 @@ public:
     
     // This means that it's still valid and we could enforce validity by setting a transition
     // watchpoint on the structure and possibly an impure property watchpoint.
-    bool isWatchableAssumingImpurePropertyWatchpoint(
-        Structure*, JSObject* base, WatchabilityEffort) const;
+    bool isWatchableAssumingImpurePropertyWatchpoint(Structure*, JSObject*, WatchabilityEffort) const;
+    bool isWatchableAssumingImpurePropertyWatchpoint(Structure*, JSObject*, WatchabilityEffort, Concurrency) const;
     
     // This means that it's still valid and we could enforce validity by setting a transition
     // watchpoint on the structure.

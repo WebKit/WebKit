@@ -1105,6 +1105,13 @@ void PageClientImpl::didExitFullscreen()
 #endif
 }
 
+void PageClientImpl::didCleanupFullscreen()
+{
+#if ENABLE(FULLSCREEN_API)
+    [[webView() fullScreenWindowController] didCleanupFullscreen];
+#endif
+}
+
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -1229,6 +1236,11 @@ UIViewController *PageClientImpl::presentingViewController() const
 FloatRect PageClientImpl::rootViewToWebView(const FloatRect& rect) const
 {
     return [webView() convertRect:rect fromView:contentView().get()];
+}
+
+FloatPoint PageClientImpl::webViewToRootView(const FloatPoint& point) const
+{
+    return [webView() convertPoint:point toView:contentView().get()];
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)

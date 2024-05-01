@@ -89,7 +89,15 @@ PolymorphicAccessJITStubRoutine::PolymorphicAccessJITStubRoutine(Type type, cons
     , m_vm(vm)
     , m_cases(WTFMove(cases))
     , m_weakStructures(WTFMove(weakStructures))
+    , m_watchpointSet(WatchpointSet::create(IsWatched))
 {
+}
+
+PolymorphicAccessJITStubRoutine::~PolymorphicAccessJITStubRoutine() = default;
+
+void PolymorphicAccessJITStubRoutine::setWatchpoints(std::unique_ptr<WatchpointsOnStructureStubInfo>&& watchpoints)
+{
+    m_watchpoints = WTFMove(watchpoints);
 }
 
 void PolymorphicAccessJITStubRoutine::observeZeroRefCountImpl()
@@ -98,7 +106,20 @@ void PolymorphicAccessJITStubRoutine::observeZeroRefCountImpl()
         ASSERT(m_vm.m_sharedJITStubs);
         m_vm.m_sharedJITStubs->remove(this);
     }
+
+    // Now PolymorphicAccessJITStubRoutine is no longer referenced. So Watchpoints inside WatchpointSet do not matter. Let's eagerly clear them
+    m_watchpointSet = nullptr;
+    m_watchpoints = nullptr;
     Base::observeZeroRefCountImpl();
+}
+
+void PolymorphicAccessJITStubRoutine::invalidate()
+{
+    if (RefPtr watchpointSet = WTFMove(m_watchpointSet)) {
+        StringFireDetail detail("PolymorphicAccessJITStubRoutine has been invalidated");
+        VM& vm = m_vm;
+        watchpointSet->fireAll(vm, detail);
+    }
 }
 
 unsigned PolymorphicAccessJITStubRoutine::computeHash(const FixedVector<RefPtr<AccessCase>>& cases)

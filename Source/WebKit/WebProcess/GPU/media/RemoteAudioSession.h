@@ -43,7 +43,7 @@ class WebProcess;
 
 class RemoteAudioSession final
     : public WebCore::AudioSession
-    , public WebCore::AudioSession::InterruptionObserver
+    , public WebCore::AudioSessionInterruptionObserver
     , public GPUProcessConnection::Client
     , IPC::MessageReceiver
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession> {
@@ -88,8 +88,8 @@ private:
     size_t preferredBufferSize() const final { return configuration().preferredBufferSize; }
     void setPreferredBufferSize(size_t) final;
         
-    void addConfigurationChangeObserver(ConfigurationChangeObserver&) final;
-    void removeConfigurationChangeObserver(ConfigurationChangeObserver&) final;
+    void addConfigurationChangeObserver(WebCore::AudioSessionConfigurationChangeObserver&) final;
+    void removeConfigurationChangeObserver(WebCore::AudioSessionConfigurationChangeObserver&) final;
 
     void setIsPlayingToBluetoothOverride(std::optional<bool>) final;
 
@@ -110,9 +110,9 @@ private:
 
     // InterruptionObserver
     void beginAudioSessionInterruption() final;
-    void endAudioSessionInterruption(WebCore::AudioSession::MayResume) final;
+    void endAudioSessionInterruption(MayResume) final;
 
-    WeakHashSet<ConfigurationChangeObserver> m_configurationChangeObservers;
+    WeakHashSet<WebCore::AudioSessionConfigurationChangeObserver> m_configurationChangeObservers;
     CategoryType m_category { CategoryType::None };
     Mode m_mode { Mode::Default };
     WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };

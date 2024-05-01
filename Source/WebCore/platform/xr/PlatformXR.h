@@ -39,6 +39,15 @@
 #include <wtf/MachSendRight.h>
 #endif
 
+namespace PlatformXR {
+class TrackingAndRenderingClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<PlatformXR::TrackingAndRenderingClient> : std::true_type { };
+}
+
 namespace WebCore {
 class SecurityOriginData;
 }

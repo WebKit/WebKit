@@ -47,7 +47,7 @@ class FloatRect;
 class IntPoint;
 class IntRect;
 
-class ResourceUsageOverlay final : public PageOverlay::Client {
+class ResourceUsageOverlay final : public PageOverlayClient {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ResourceUsageOverlay);
 public:

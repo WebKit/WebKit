@@ -67,7 +67,7 @@ UniqueRef<RTCDtlsTransportBackend> GStreamerSctpTransportBackend::dtlsTransportB
     return makeUniqueRef<GStreamerDtlsTransportBackend>(WTFMove(transport));
 }
 
-void GStreamerSctpTransportBackend::registerClient(Client& client)
+void GStreamerSctpTransportBackend::registerClient(RTCSctpTransportBackendClient& client)
 {
     ASSERT(!m_client);
     m_client = client;

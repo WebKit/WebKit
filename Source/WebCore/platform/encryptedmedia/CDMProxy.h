@@ -42,6 +42,15 @@
 #endif
 
 namespace WebCore {
+class CDMProxyDecryptionClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CDMProxyDecryptionClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class MediaPlayer;
 class SharedBuffer;

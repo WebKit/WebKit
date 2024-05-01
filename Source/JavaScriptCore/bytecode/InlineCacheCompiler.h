@@ -156,7 +156,6 @@ private:
 
     ListType m_list;
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
-    std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
 };
 
 class InlineCacheHandler final : public RefCounted<InlineCacheHandler> {
@@ -167,9 +166,9 @@ public:
     static ptrdiff_t offsetOfJumpTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_jumpTarget); }
     static ptrdiff_t offsetOfNext() { return OBJECT_OFFSETOF(InlineCacheHandler, m_next); }
 
-    static Ref<InlineCacheHandler> create(Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<WatchpointsOnStructureStubInfo>&& watchpoints)
+    static Ref<InlineCacheHandler> create(Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint)
     {
-        return adoptRef(*new InlineCacheHandler(WTFMove(stubRoutine), WTFMove(watchpoints)));
+        return adoptRef(*new InlineCacheHandler(WTFMove(stubRoutine), WTFMove(watchpoint)));
     }
 
     CodePtr<JITStubRoutinePtrTag> callTarget() const { return m_callTarget; }
@@ -194,14 +193,14 @@ public:
 
 private:
     InlineCacheHandler() = default;
-    InlineCacheHandler(Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<WatchpointsOnStructureStubInfo>&&);
+    InlineCacheHandler(Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&);
 
     static Ref<InlineCacheHandler> createSlowPath(VM&, AccessType);
 
     CodePtr<JITStubRoutinePtrTag> m_callTarget;
     CodePtr<JITStubRoutinePtrTag> m_jumpTarget;
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
-    std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
+    std::unique_ptr<StructureStubInfoClearingWatchpoint> m_watchpoint;
     RefPtr<InlineCacheHandler> m_next;
 };
 
@@ -237,8 +236,6 @@ public:
         , m_jitType(jitType)
     {
     }
-
-    void installWatchpoint(CodeBlock*, const ObjectPropertyCondition&);
 
     void restoreScratch();
     void succeed();
@@ -345,10 +342,10 @@ private:
     MacroAssembler::JumpList m_failAndRepatch;
     MacroAssembler::JumpList m_failAndIgnore;
     ScratchRegisterAllocator::PreservedState m_preservedReusedRegisterState;
-    std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
     GPRReg m_scratchGPR { InvalidGPRReg };
     FPRReg m_scratchFPR { InvalidFPRReg };
     Vector<StructureID> m_weakStructures;
+    Vector<ObjectPropertyCondition> m_conditions;
     Bag<OptimizingCallLinkInfo> m_callLinkInfos;
     ScalarRegisterSet m_liveRegistersToPreserveAtExceptionHandlingCallSite;
     ScalarRegisterSet m_liveRegistersForCall;
@@ -367,7 +364,6 @@ namespace WTF {
 
 void printInternal(PrintStream&, JSC::AccessGenerationResult::Kind);
 void printInternal(PrintStream&, JSC::AccessCase::AccessType);
-void printInternal(PrintStream&, JSC::AccessCase::State);
 void printInternal(PrintStream&, JSC::AccessType);
 
 } // namespace WTF

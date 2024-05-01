@@ -165,7 +165,7 @@ void HTTPCookieStore::flushCookies(CompletionHandler<void()>&& completionHandler
         completionHandler();
 }
 
-void HTTPCookieStore::registerObserver(Observer& observer)
+void HTTPCookieStore::registerObserver(HTTPCookieStoreObserver& observer)
 {
     bool wasObserving = !m_observers.isEmptyIgnoringNullReferences();
     m_observers.add(observer);
@@ -176,7 +176,7 @@ void HTTPCookieStore::registerObserver(Observer& observer)
         networkProcess->send(Messages::WebCookieManager::StartObservingCookieChanges(m_sessionID), 0);
 }
 
-void HTTPCookieStore::unregisterObserver(Observer& observer)
+void HTTPCookieStore::unregisterObserver(HTTPCookieStoreObserver& observer)
 {
     m_observers.remove(observer);
     if (!m_observers.isEmptyIgnoringNullReferences())

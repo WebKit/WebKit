@@ -29,6 +29,24 @@
 #include <wtf/WeakHashSet.h>
 
 namespace WebKit {
+class FrameLoadStateObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::FrameLoadStateObserver> : std::true_type { };
+}
+
+namespace WebKit {
+
+class FrameLoadStateObserver : public CanMakeWeakPtr<FrameLoadStateObserver> {
+public:
+    virtual ~FrameLoadStateObserver() = default;
+    virtual void didReceiveProvisionalURL(const URL&) { }
+    virtual void didCancelProvisionalLoad() { }
+    virtual void didCommitProvisionalLoad() { }
+    virtual void didFinishLoad() { }
+};
 
 class FrameLoadState {
 public:
@@ -40,17 +58,8 @@ public:
         Finished
     };
 
-    class Observer : public CanMakeWeakPtr<Observer> {
-    public:
-        virtual ~Observer() = default;
-        virtual void didReceiveProvisionalURL(const URL&) { }
-        virtual void didCancelProvisionalLoad() { }
-        virtual void didCommitProvisionalLoad() { }
-        virtual void didFinishLoad() { }
-    };
-
-    void addObserver(Observer&);
-    void removeObserver(Observer&);
+    void addObserver(FrameLoadStateObserver&);
+    void removeObserver(FrameLoadStateObserver&);
 
     void didStartProvisionalLoad(const URL&);
     void didExplicitOpen(const URL&);
@@ -78,7 +87,7 @@ private:
     URL m_provisionalURL;
     URL m_unreachableURL;
     URL m_lastUnreachableURL;
-    WeakHashSet<Observer> m_observers;
+    WeakHashSet<FrameLoadStateObserver> m_observers;
 };
 
 } // namespace WebKit

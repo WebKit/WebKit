@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing media fields in SDP when setConfiguration comes after createDataChannel/addTransceiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script src ="routines.js"></script>
+        <script>
+function testMediaInSDP(addTransceiverOrDataChannel, regex) {
+    return async (test) => {
+        const pc = new RTCPeerConnection();
+        addTransceiverOrDataChannel(pc);
+        pc.setConfiguration({});
+        await pc.setLocalDescription();
+        const sdp = pc.localDescription.sdp;
+        assert_true(regex.test(sdp));
+    }
+}
+
+promise_test(testMediaInSDP(
+        pc => pc.createDataChannel("data-channel"),
+        /\r\nm=application.*webrtc-datachannel\r\n/),
+    'setConfiguration after data channel is created');
+
+promise_test(testMediaInSDP(
+        pc => pc.addTransceiver("video"),
+        /\r\nm=video.*\r\n/),
+    'setConfiguration after video transceiver is added');
+
+promise_test(testMediaInSDP(
+        pc => pc.addTransceiver("audio"),
+        /\r\nm=audio.*\r\n/),
+    'setConfiguration after audio transceiver is added');
+        </script>
+    </body>
+</html>

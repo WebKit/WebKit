@@ -61,25 +61,73 @@ template<typename Output, typename Input> inline Output convertColor(const Input
     return ColorConversion<CanonicalColorType<Output>, CanonicalColorType<Input>>::convert(color);
 }
 
+// MARK: White Point.
+
+constexpr float D50WhitePoint[] = { 0.3457 / 0.3585, 1.0, (1.0 - 0.3457 - 0.3585) / 0.3585 };
+constexpr float D65WhitePoint[] = { 0.3127 / 0.3290, 1.0, (1.0 - 0.3127 - 0.3290) / 0.3290 };
 
 // MARK: Chromatic Adaptation conversions.
 
-// http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html
-template<WhitePoint From, WhitePoint To> struct ChromaticAdapation;
+template<WhitePoint From, WhitePoint To> struct ChromaticAdaptation;
 
-template<> struct ChromaticAdapation<WhitePoint::D65, WhitePoint::D50> {
+// Chromatic Adaptation allows conversion from one white point to another.
+//
+// The values we use are pre-calculated for the two white points we support, D50
+// and D65 using the Bradford method's chromatic adaptation transform (CAT), but
+// can be extended to any pair of white points.
+//
+// The process to compute new ones is:
+//
+//  1. Choose a CAT and lookup its values (these are not derivable).
+//     We currently use the Bradford CAT
+//
+//     let toCone =
+//         [  0.8951000,  0.2664000, -0.1614000 ],
+//         [ -0.7502000,  1.7135000,  0.0367000 ],
+//         [  0.0389000, -0.0685000,  1.0296000 ]
+//
+//  2. In addition, you will need the inverse
+//
+//     let fromCone = toCone ^ -1
+//
+//  3. Choose source and destination XYZ white points
+//
+//     let whitePoint_src = [ ... , ... , ... ]
+//     let whitePoint_dst = [ ... , ... , ... ]
+//
+//  4. Convert the white points into the cone response domain (denoted ρ, γ, β)
+//
+//     let [ ρ_src, γ_src, β_src ] = toCone * whitePoint_src
+//     let [ ρ_dst, γ_dst, β_dst ] = toCone * whitePoint_dst
+//
+//  5. Compute a scale transform
+//
+//     let scale =
+//         [ ρ_dst / ρ_src, 0,             0             ],
+//         [ 0,             γ_dst / γ_src, 0             ],
+//         [ 0,             0,             β_dst / β_src ]
+//
+//  6. Finally, use the scale to compute the adaptation transform
+//     (what is stored ChromaticAdaptation.matrix) as the concatenation
+//     of the toCone, scale and fromCone transforms.
+//
+//     let adaptation = fromCone * scale * toCone
+//
+// Additional details and more CATs / white point values can be found at: http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html
+
+template<> struct ChromaticAdaptation<WhitePoint::D65, WhitePoint::D50> {
     static constexpr ColorMatrix<3, 3> matrix {
-         1.0478112f, 0.0228866f, -0.0501270f,
-         0.0295424f, 0.9904844f, -0.0170491f,
-        -0.0092345f, 0.0150436f,  0.7521316f
+         1.0479297925449969,    0.022946870601609652, -0.05019226628920524,
+         0.02962780877005599,   0.9904344267538799,   -0.017073799063418826,
+        -0.009243040646204504,  0.015055191490298152,  0.7518742814281371
     };
 };
 
-template<> struct ChromaticAdapation<WhitePoint::D50, WhitePoint::D65> {
+template<> struct ChromaticAdaptation<WhitePoint::D50, WhitePoint::D65> {
     static constexpr ColorMatrix<3, 3> matrix {
-         0.9555766f, -0.0230393f, 0.0631636f,
-        -0.0282895f,  1.0099416f, 0.0210077f,
-         0.0122982f, -0.0204830f, 1.3299098f
+         0.955473421488075,    -0.02309845494876471,   0.06325924320057072,
+        -0.0283697093338637,    1.0099953980813041,    0.021041441191917323,
+         0.012314014864481998, -0.020507649298898964,  1.330365926242124
     };
 };
 
@@ -168,9 +216,9 @@ struct ClipGamutMapping {
 struct CSSGamutMapping {
     // This implements the CSS gamut mapping algorithm (https://drafts.csswg.org/css-color/#css-gamut-mapping) for RGB
     // colors that are out of gamut for a particular RGB color space. It implements a relative colorimetric intent mapping
-    // for colors that are outside the destionation gamut and leaves colors inside the destination gamut unchanged.
+    // for colors that are outside the destination gamut and leaves colors inside the destination gamut unchanged.
 
-    // A simple optimization over the psuedocode in the specification has been made to avoid unnecessary work in the
+    // A simple optimization over the pseudocode in the specification has been made to avoid unnecessary work in the
     // main bisection loop by checking the gamut using the extended linear color space of the RGB family regardless of
     // of whether the final type is gamma encoded or not. This avoids unnecessary gamma encoding for non final loops.
 
@@ -265,7 +313,7 @@ public:
             return handleToByteConversion(color);
 
         // 2. Handle all color types that are not IsRGBType<T> or IsXYZA<T> for Input and Output. For all
-        //    these other color types, we can uncondtionally convert them to their "reference" color, as
+        //    these other color types, we can unconditionally convert them to their "reference" color, as
         //    either they have already been handled by a ColorConversion specialization or this will
         //    get us closer to the final conversion.
         else if constexpr (!IsRGBType<Input> && !IsXYZA<Input>)
@@ -289,7 +337,7 @@ public:
         else if constexpr (IsRGBBoundedType<Output>)
             return convertColor<Output>(convertColor<typename Output::ExtendedCounterpart>(color));
 
-        // 6. At this point, Input and Output are each either ExtendedLinear-RGB types (of different familes) or XYZA
+        // 6. At this point, Input and Output are each either ExtendedLinear-RGB types (of different families) or XYZA
         //    and therefore all additional conversion can happen via matrix transformation.
         else
             return handleMatrixConversion(color);
@@ -337,7 +385,7 @@ private:
 
     template<typename ColorType> static inline constexpr auto toBounded(const ColorType& color) -> typename ColorType::BoundedCounterpart
     {
-        return CSSGamutMapping::mapToBoundedGamut(color);
+        return ClipGamutMapping::mapToBoundedGamut(color);
     }
 
     static inline constexpr Output handleRGBFamilyConversion(const Input& color)
@@ -423,13 +471,13 @@ private:
                 return applyMatrices(color, Input::linearToXYZ, Output::xyzToLinear);
         } else {
             if constexpr (IsXYZA<Input> && IsXYZA<Output>)
-                return applyMatrices(color, ChromaticAdapation<Input::whitePoint, Output::whitePoint>::matrix);
+                return applyMatrices(color, ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix);
             else if constexpr (IsXYZA<Input>)
-                return applyMatrices(color, ChromaticAdapation<Input::whitePoint, Output::whitePoint>::matrix, Output::xyzToLinear);
+                return applyMatrices(color, ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix, Output::xyzToLinear);
             else if constexpr (IsXYZA<Output>)
-                return applyMatrices(color, Input::linearToXYZ, ChromaticAdapation<Input::whitePoint, Output::whitePoint>::matrix);
+                return applyMatrices(color, Input::linearToXYZ, ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix);
             else
-                return applyMatrices(color, Input::linearToXYZ, ChromaticAdapation<Input::whitePoint, Output::whitePoint>::matrix, Output::xyzToLinear);
+                return applyMatrices(color, Input::linearToXYZ, ChromaticAdaptation<Input::whitePoint, Output::whitePoint>::matrix, Output::xyzToLinear);
         }
     }
 };

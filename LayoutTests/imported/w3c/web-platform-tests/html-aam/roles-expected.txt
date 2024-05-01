@@ -61,7 +61,7 @@ PASS el-code
 PASS el-dd
 PASS el-del
 PASS el-details
-FAIL el-dfn assert_equals: <dfn data-testname="el-dfn" data-expectedrole="term" class="ex">x</dfn> expected "term" but got "definition"
+PASS el-dfn
 PASS el-dt
 PASS el-em
 PASS el-fieldset

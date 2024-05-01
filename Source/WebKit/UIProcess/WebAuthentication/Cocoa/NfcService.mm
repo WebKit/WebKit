@@ -39,7 +39,7 @@
 
 namespace WebKit {
 
-NfcService::NfcService(Observer& observer)
+NfcService::NfcService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
     , m_restartTimer(RunLoop::main(), this, &NfcService::platformStartDiscovery)
 {

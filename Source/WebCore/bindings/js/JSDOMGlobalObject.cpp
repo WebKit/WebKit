@@ -67,6 +67,7 @@
 #include "WorkletGlobalScope.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/CodeBlock.h>
+#include <JavaScriptCore/ConsoleClient.h>
 #include <JavaScriptCore/GetterSetter.h>
 #include <JavaScriptCore/GlobalObjectMethodTable.h>
 #include <JavaScriptCore/JSCustomGetterFunction.h>

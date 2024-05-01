@@ -29,6 +29,15 @@
 #include "ResourceLoaderIdentifier.h"
 
 namespace WebCore {
+class WorkerScriptLoaderClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::WorkerScriptLoaderClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class ResourceResponse;
 

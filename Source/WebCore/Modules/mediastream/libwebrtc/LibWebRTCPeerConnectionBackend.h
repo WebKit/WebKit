@@ -29,6 +29,15 @@
 #include "PeerConnectionBackend.h"
 #include "RealtimeMediaSource.h"
 
+namespace WebCore {
+class LibWebRTCPeerConnectionBackend;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LibWebRTCPeerConnectionBackend> : std::true_type { };
+}
+
 namespace webrtc {
 class IceCandidateInterface;
 }

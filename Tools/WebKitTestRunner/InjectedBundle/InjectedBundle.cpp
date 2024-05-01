@@ -246,16 +246,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "CallRemoveChromeInputFieldCallback")) {
-        m_testRunner->callRemoveChromeInputFieldCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallSetBackingScaleFactorCallback")) {
-        m_testRunner->callSetBackingScaleFactorCallback();
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidBeginSwipeCallback")) {
         m_testRunner->callDidBeginSwipeCallback();
         return;
@@ -273,11 +263,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
 
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidRemoveSwipeSnapshotCallback")) {
         m_testRunner->callDidRemoveSwipeSnapshotCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidRemoveAllSessionCredentialsCallback")) {
-        m_testRunner->callDidRemoveAllSessionCredentialsCallback();
         return;
     }
 
@@ -313,16 +298,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
 
     if (WKStringIsEqualToUTF8CString(messageName, "WebsiteDataScanForRegistrableDomainsFinished")) {
         m_testRunner->statisticsDidScanDataRecordsCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetAppBoundDomains")) {
-        m_testRunner->didSetAppBoundDomainsCallback();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetManagedDomains")) {
-        m_testRunner->didSetManagedDomainsCallback();
         return;
     }
 
@@ -496,16 +471,6 @@ void InjectedBundle::outputText(StringView output, IsFinalTestOutput isFinalTest
 void InjectedBundle::postNewBeforeUnloadReturnValue(bool value)
 {
     postPageMessage("BeforeUnloadReturnValue", value);
-}
-
-void InjectedBundle::postRemoveChromeInputField()
-{
-    postPageMessage("RemoveChromeInputField");
-}
-
-void InjectedBundle::postSetBackingScaleFactor(double backingScaleFactor)
-{
-    postPageMessage("SetBackingScaleFactor", adoptWK(WKDoubleCreate(backingScaleFactor)));
 }
 
 void InjectedBundle::postSetWindowIsKey(bool isKey)

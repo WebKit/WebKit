@@ -38,6 +38,15 @@ enum class Scope;
 }
 
 namespace WebCore {
+class AuthenticatorCoordinator;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AuthenticatorCoordinator> : std::true_type { };
+}
+
+namespace WebCore {
 
 class AbortSignal;
 class AuthenticatorCoordinatorClient;

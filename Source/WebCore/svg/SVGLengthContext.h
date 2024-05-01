@@ -35,6 +35,7 @@ struct Length;
 class SVGLengthContext {
 public:
     explicit SVGLengthContext(const SVGElement*);
+    ~SVGLengthContext();
 
     template<typename T>
     static FloatRect resolveRectangle(const T* context, SVGUnitTypes::SVGUnitType type, const FloatRect& viewport)

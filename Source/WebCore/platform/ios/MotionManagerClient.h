@@ -30,6 +30,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class MotionManagerClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MotionManagerClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class MotionManagerClient : public CanMakeWeakPtr<MotionManagerClient> {
 public:

@@ -480,7 +480,7 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI
         true, /* treatAsSameOriginNavigation */
         false, /* hasOpenedFrames */
         false, /* openedByDOMWithOpener */
-        !!m_frame->coreLocalFrame()->loader().opener(), /* hasOpener */
+        !!m_frame->coreLocalFrame()->opener(), /* hasOpener */
         { }, /* requesterOrigin */
         { }, /* requesterTopOrigin */
         std::nullopt, /* targetBackForwardItemIdentifier */
@@ -680,7 +680,7 @@ void WebLocalFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceErr
     webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->info(), request, navigationID, coreFrame->loader().provisionalLoadErrorBeingHandledURL().string(), error, willContinueLoading, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), willInternallyHandleFailure));
 
     // If we have a load listener, notify it.
-    if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
+    if (LoadListener* loadListener = m_frame->loadListener())
         loadListener->didFailLoad(m_frame.ptr(), error.isCancellation());
 }
 
@@ -710,7 +710,7 @@ void WebLocalFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     webPage->send(Messages::WebPageProxy::DidFailLoadForFrame(m_frame->frameID(), m_frame->info(), documentLoader->request(), navigationID, error, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 
     // If we have a load listener, notify it.
-    if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
+    if (LoadListener* loadListener = m_frame->loadListener())
         loadListener->didFailLoad(m_frame.ptr(), error.isCancellation());
 }
 
@@ -757,7 +757,7 @@ void WebLocalFrameLoaderClient::dispatchDidFinishLoad()
     webPage->send(Messages::WebPageProxy::DidFinishLoadForFrame(m_frame->frameID(), m_frame->info(), documentLoader->request(), navigationID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 
     // If we have a load listener, notify it.
-    if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
+    if (LoadListener* loadListener = m_frame->loadListener())
         loadListener->didFinishLoad(m_frame.ptr());
 
     webPage->didFinishLoad(m_frame);
@@ -1403,7 +1403,7 @@ void WebLocalFrameLoaderClient::restoreViewState()
 {
 #if PLATFORM(IOS_FAMILY)
     auto& frame = *m_frame->coreLocalFrame();
-    auto* currentItem = frame.loader().history().currentItem();
+    auto* currentItem = frame.history().currentItem();
     if (auto* view = frame.view()) {
         if (m_frame->isMainFrame())
             m_frame->page()->restorePageState(*currentItem);
@@ -1412,7 +1412,7 @@ void WebLocalFrameLoaderClient::restoreViewState()
     }
 #else
     // Inform the UI process of the scale factor.
-    double scaleFactor = m_frame->coreLocalFrame()->loader().history().currentItem()->pageScaleFactor();
+    double scaleFactor = m_frame->coreLocalFrame()->history().currentItem()->pageScaleFactor();
 
     // A scale factor of 0 means the history item has the default scale factor, thus we do not need to update it.
     if (scaleFactor)
@@ -1440,7 +1440,7 @@ void WebLocalFrameLoaderClient::provisionalLoadStarted()
 void WebLocalFrameLoaderClient::didFinishLoad()
 {
     // If we have a load listener, notify it.
-    if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
+    if (LoadListener* loadListener = m_frame->loadListener())
         loadListener->didFinishLoad(m_frame.ptr());
 }
 
@@ -2030,6 +2030,12 @@ void WebLocalFrameLoaderClient::didAccessWindowProxyPropertyViaOpener(WebCore::S
 }
 
 #endif
+
+void WebLocalFrameLoaderClient::frameNameChanged(const String& frameName)
+{
+    if (RefPtr page = m_frame->page())
+        page->send(Messages::WebPageProxy::FrameNameChanged(m_frame->frameID(), frameName));
+}
 
 } // namespace WebKit
 

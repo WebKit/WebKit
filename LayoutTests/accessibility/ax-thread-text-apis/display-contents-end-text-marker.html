@@ -54,8 +54,8 @@ if (window.accessibilityController) {
 
     // Fails because:
     //  1. We fail to emit a newline before entering a table, right after "Foo text" (TextIterator::advance() -> TextIterator::handleNonTextNode() -> TextIterator::representNodeOffsetZero() -> shouldEmitNewlineBeforeNode() returns true)
-    //  2. We don't emit spaces between cells
-    //  3. We miss the table caption text entirely (it is rendered and selectable text, so we should be including it)
+    //  2. We don't emit spaces between cells. This happens because we ignore the whitespace-only RenderText that would generate these space text runs for us (they are ignored because they are whitespace only).
+    //     Generating spaces for these runs happens in TextIterator::handleTextRun() at: if (isNewlineOrTab(rendererText[runStart])) { emitCharacter(' ', ...) }
     output += `Web area string for start-to-end text marker range:\n\n${webArea.stringForTextMarkerRange(textMarkerRange)}\n`;
     document.getElementById("test-contents").style.display = "none";
     debug(output);

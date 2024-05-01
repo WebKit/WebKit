@@ -273,8 +273,8 @@ public:
     void setStatisticsToSameSiteStrictCookies(WKStringRef hostName, CompletionHandler<void(WKTypeRef)>&&);
     void setStatisticsFirstPartyHostCNAMEDomain(WKStringRef firstPartyURLString, WKStringRef cnameURLString, CompletionHandler<void(WKTypeRef)>&&);
     void setStatisticsThirdPartyCNAMEDomain(WKStringRef cnameURLString, CompletionHandler<void(WKTypeRef)>&&);
-    void setAppBoundDomains(WKArrayRef originURLs);
-    void setManagedDomains(WKArrayRef originURLs);
+    void setAppBoundDomains(WKArrayRef originURLs, CompletionHandler<void(WKTypeRef)>&&);
+    void setManagedDomains(WKArrayRef originURLs, CompletionHandler<void(WKTypeRef)>&&);
     void statisticsResetToConsistentState();
 
     void removeAllCookies(CompletionHandler<void(WKTypeRef)>&&);
@@ -312,7 +312,7 @@ public:
     void resetStoragePersistedState();
     void clearStorage();
 
-    void removeAllSessionCredentials();
+    void removeAllSessionCredentials(CompletionHandler<void(WKTypeRef)>&&);
 
     void clearIndexedDatabases();
     void clearLocalStorage();
@@ -386,10 +386,6 @@ public:
     void markPrivateClickMeasurementsAsExpiredForTesting();
     void setPCMFraudPreventionValuesForTesting(WKStringRef unlinkableToken, WKStringRef secretToken, WKStringRef signature, WKStringRef keyID);
     void setPrivateClickMeasurementAppBundleIDForTesting(WKStringRef);
-
-    void didSetAppBoundDomains() const;
-
-    void didSetManagedDomains() const;
 
     WKURLRef currentTestURL() const;
 

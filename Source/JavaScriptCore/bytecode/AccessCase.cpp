@@ -307,45 +307,7 @@ JSObject* AccessCase::alternateBaseImpl() const
 
 Ref<AccessCase> AccessCase::cloneImpl() const
 {
-    auto result = adoptRef(*new AccessCase(*this));
-    result->resetState();
-    return result;
-}
-
-Vector<WatchpointSet*, 2> AccessCase::commit(VM& vm)
-{
-    // It's fine to commit something that is already committed. That arises when we switch to using
-    // newly allocated watchpoints. When it happens, it's not efficient - but we think that's OK
-    // because most AccessCases have no extra watchpoints anyway.
-
-    Vector<WatchpointSet*, 2> result;
-    Structure* structure = this->structure();
-    auto append = [&] (auto* set) {
-        ASSERT(set->isStillValid());
-        result.append(set);
-    };
-
-    if (m_identifier) {
-        if ((structure && structure->needImpurePropertyWatchpoint())
-            || m_conditionSet.needImpurePropertyWatchpoint()
-            || (m_polyProtoAccessChain && m_polyProtoAccessChain->needImpurePropertyWatchpoint(vm)))
-            append(vm.ensureWatchpointSetForImpureProperty(m_identifier.uid()));
-    }
-
-    if (additionalSet())
-        append(additionalSet());
-
-    if (structure
-        && structure->hasRareData()
-        && structure->rareData()->hasSharedPolyProtoWatchpoint()
-        && structure->rareData()->sharedPolyProtoWatchpoint()->isStillValid()) {
-        WatchpointSet* set = structure->rareData()->sharedPolyProtoWatchpoint()->inflate();
-        append(set);
-    }
-
-    m_state = Committed;
-
-    return result;
+    return adoptRef(*new AccessCase(*this));
 }
 
 bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
@@ -1012,7 +974,7 @@ bool AccessCase::couldStillSucceed() const
 {
     for (const ObjectPropertyCondition& condition : m_conditionSet) {
         if (condition.condition().kind() == PropertyCondition::Equivalence) {
-            if (!condition.isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort::EnsureWatchability))
+            if (!condition.isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort::EnsureWatchability, Concurrency::MainThread))
                 return false;
         } else {
             if (!condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint(Concurrency::MainThread))
@@ -1211,8 +1173,6 @@ void AccessCase::dump(PrintStream& out) const
 
     Indenter indent;
     CommaPrinter comma;
-
-    out.print(comma, m_state);
 
     out.print(comma, "ident = '"_s, m_identifier, "'"_s);
     if (isValidOffset(m_offset))
@@ -1442,7 +1402,6 @@ void AccessCase::checkConsistency(StructureStubInfo& stubInfo)
 
 bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
 {
-    // We do not care m_state.
     // And we say "false" if either of them have m_polyProtoAccessChain.
     if (lhs.m_polyProtoAccessChain || rhs.m_polyProtoAccessChain)
         return false;

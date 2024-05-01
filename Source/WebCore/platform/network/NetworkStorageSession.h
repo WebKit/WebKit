@@ -72,6 +72,19 @@ OBJC_CLASS NSMutableSet;
 #endif
 
 namespace WebCore {
+class CookieChangeObserver;
+class CookiesEnabledStateObserver;
+class NetworkStorageSession;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CookieChangeObserver> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CookiesEnabledStateObserver> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::NetworkStorageSession> : std::true_type { };
+}
+
+namespace WebCore {
 
 class CurlProxySettings;
 class NetworkingContext;

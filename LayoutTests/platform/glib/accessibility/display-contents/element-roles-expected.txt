@@ -36,8 +36,8 @@ This test ensures elements with CSS display: contents have the correct role.
     AXRole: AXUnknown
 
 <dfn class="testcase" id="dfn"></dfn>
-    AXRole: AXDefinition
-    computedRoleString: definition
+    AXRole: AXDescriptionTerm
+    computedRoleString: term
 
 <div class="testcase" id="div"></div>
     AXRole: AXSection

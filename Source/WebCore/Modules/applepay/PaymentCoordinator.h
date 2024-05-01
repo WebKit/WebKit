@@ -34,6 +34,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class PaymentCoordinator;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PaymentCoordinator> : std::true_type { };
+}
+
+namespace WebCore {
 
 class ApplePaySetupFeature;
 class Document;

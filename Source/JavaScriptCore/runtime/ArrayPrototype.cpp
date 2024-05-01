@@ -43,6 +43,7 @@
 #include "VMEntryScopeInlines.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
+#include <wtf/StdMap.h>
 
 namespace JSC {
 

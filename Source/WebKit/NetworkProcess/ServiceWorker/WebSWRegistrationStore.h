@@ -30,6 +30,15 @@
 #include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
 
+namespace WebKit {
+class WebSWRegistrationStore;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSWRegistrationStore> : std::true_type { };
+}
+
 namespace WebCore {
 class SWServer;
 }

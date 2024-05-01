@@ -28,7 +28,9 @@
 #if ENABLE(JIT)
 
 #include "AdaptiveInferredPropertyValueWatchpointBase.h"
+#include "CodeBlock.h"
 #include "ObjectPropertyCondition.h"
+#include "PackedCellPtr.h"
 #include "Watchpoint.h"
 #include <wtf/Bag.h>
 #include <wtf/Noncopyable.h>
@@ -39,6 +41,24 @@ namespace JSC {
 class CodeBlock;
 class StructureStubInfo;
 class WatchpointsOnStructureStubInfo;
+
+class StructureStubInfoClearingWatchpoint final : public Watchpoint {
+    WTF_MAKE_NONCOPYABLE(StructureStubInfoClearingWatchpoint);
+    WTF_MAKE_TZONE_ALLOCATED(StructureStubInfoClearingWatchpoint);
+public:
+    StructureStubInfoClearingWatchpoint(CodeBlock* owner, StructureStubInfo* stubInfo)
+        : Watchpoint(Watchpoint::Type::StructureStubInfoClearing)
+        , m_owner(owner)
+        , m_stubInfo(stubInfo)
+    {
+    }
+
+    void fireInternal(VM&, const FireDetail&);
+
+private:
+    PackedCellPtr<CodeBlock> m_owner;
+    StructureStubInfo* m_stubInfo { nullptr };
+};
 
 class StructureTransitionStructureStubClearingWatchpoint final : public Watchpoint {
     WTF_MAKE_NONCOPYABLE(StructureTransitionStructureStubClearingWatchpoint);
@@ -82,31 +102,22 @@ class WatchpointsOnStructureStubInfo final {
     WTF_MAKE_NONCOPYABLE(WatchpointsOnStructureStubInfo);
     WTF_MAKE_TZONE_ALLOCATED(WatchpointsOnStructureStubInfo);
 public:
-    WatchpointsOnStructureStubInfo(CodeBlock* codeBlock, StructureStubInfo* stubInfo)
-        : m_codeBlock(codeBlock)
-        , m_stubInfo(stubInfo)
+    WatchpointsOnStructureStubInfo(PolymorphicAccessJITStubRoutine* stub)
+        : m_stub(stub)
     {
     }
-    
+
     using Node = std::variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>;
 
-    Node& addWatchpoint(const ObjectPropertyCondition& key);
-    
-    static void ensureReferenceAndInstallWatchpoint(
-        std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef,
-        CodeBlock*, StructureStubInfo*, const ObjectPropertyCondition& key);
-    static Watchpoint* ensureReferenceAndAddWatchpoint(
-        std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef,
-        CodeBlock*, StructureStubInfo*);
-    
-    CodeBlock* codeBlock() const { return m_codeBlock; }
-    StructureStubInfo* stubInfo() const { return m_stubInfo; }
+    static void ensureReferenceAndInstallWatchpoint(VM&, std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef, PolymorphicAccessJITStubRoutine*, const ObjectPropertyCondition& key);
+    static Watchpoint* ensureReferenceAndAddWatchpoint(VM&, std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef, PolymorphicAccessJITStubRoutine*);
 
-    bool isValid() const;
-    
+    PolymorphicAccessJITStubRoutine* stub() const { return m_stub; }
+
 private:
-    CodeBlock* const m_codeBlock;
-    StructureStubInfo* const m_stubInfo;
+    Node& addWatchpoint(const ObjectPropertyCondition& key);
+
+    PolymorphicAccessJITStubRoutine* m_stub { nullptr };
     // FIXME: use less memory for the entries in this Bag:
     // https://bugs.webkit.org/show_bug.cgi?id=202380
     Bag<std::variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>> m_watchpoints;

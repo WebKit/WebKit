@@ -32,6 +32,17 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+namespace LayoutIntegration {
+class BoxTree;
+}
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LayoutIntegration::BoxTree> : std::true_type { };
+}
+
+namespace WebCore {
 
 class RenderBlock;
 class RenderBoxModelObject;
@@ -63,22 +74,7 @@ public:
     const Layout::ElementBox& rootLayoutBox() const;
     Layout::ElementBox& rootLayoutBox();
 
-    const Layout::Box& layoutBoxForRenderer(const RenderObject&) const;
-    Layout::Box& layoutBoxForRenderer(const RenderObject&);
-
-    const Layout::ElementBox& layoutBoxForRenderer(const RenderElement&) const;
-    Layout::ElementBox& layoutBoxForRenderer(const RenderElement&);
-
-    const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
-    RenderObject& rendererForLayoutBox(const Layout::Box&);
-
-    bool hasRendererForLayoutBox(const Layout::Box&) const;
-
     bool contains(const RenderElement&) const;
-
-    size_t boxCount() const { return m_renderers.size(); }
-
-    const auto& renderers() const { return m_renderers; }
 
 private:
     Layout::InitialContainingBlock& initialContainingBlock();
@@ -91,9 +87,6 @@ private:
     void insertChild(UniqueRef<Layout::Box>, RenderObject&, const RenderObject* beforeChild = nullptr);
 
     RenderBlock& m_rootRenderer;
-    Vector<SingleThreadWeakPtr<RenderObject>, 1> m_renderers;
-
-    HashMap<CheckedRef<const Layout::Box>, SingleThreadWeakPtr<RenderObject>> m_boxToRendererMap;
 };
 
 #if ENABLE(TREE_DEBUGGING)

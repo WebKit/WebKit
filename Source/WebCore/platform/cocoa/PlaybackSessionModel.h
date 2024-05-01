@@ -37,6 +37,17 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class PlaybackSessionModel;
+class PlaybackSessionModelClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PlaybackSessionModel> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PlaybackSessionModelClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class TimeRanges;
 class PlaybackSessionModelClient;

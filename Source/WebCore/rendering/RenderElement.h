@@ -191,7 +191,6 @@ public:
     inline bool hasClipOrNonVisibleOverflow() const;
     inline bool hasClipPath() const;
     inline bool hasHiddenBackface() const;
-    bool capturedInViewTransition() const;
     bool hasViewTransitionName() const;
     bool requiresRenderingConsolidationForViewTransition() const;
     bool hasOutlineAnnotation() const;

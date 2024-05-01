@@ -248,6 +248,9 @@ CoreAudioSharedUnit& CoreAudioSharedUnit::unit()
 CoreAudioSharedUnit::CoreAudioSharedUnit()
     : m_sampleRateCapabilities(8000, 96000)
     , m_verifyCapturingTimer(*this, &CoreAudioSharedUnit::verifyIsCapturing)
+#if PLATFORM(MAC)
+    , m_storedVPIOUnitDeallocationTimer(*this, &CoreAudioSharedUnit::deallocateStoredVPIOUnit)
+#endif
 {
 }
 
@@ -258,7 +261,19 @@ CoreAudioSharedUnit::~CoreAudioSharedUnit()
 #if PLATFORM(MAC)
 void CoreAudioSharedUnit::setStoredVPIOUnit(StoredAudioUnit&& unit)
 {
+    RELEASE_LOG(WebRTC, "CoreAudioSharedUnit::setStoredVPIOUnit");
+
+    static constexpr Seconds delayBeforeStoredVPIOUnitDeallocation = 60_s;
     m_storedVPIOUnit = WTFMove(unit);
+    m_storedVPIOUnitDeallocationTimer.startOneShot(delayBeforeStoredVPIOUnitDeallocation);
+}
+
+CoreAudioSharedUnit::StoredAudioUnit CoreAudioSharedUnit::takeStoredVPIOUnit()
+{
+    RELEASE_LOG(WebRTC, "CoreAudioSharedUnit::takeStoredVPIOUnit");
+
+    m_storedVPIOUnitDeallocationTimer.stop();
+    return std::exchange(m_storedVPIOUnit, nullptr);
 }
 #endif
 
@@ -709,6 +724,17 @@ void CoreAudioSharedUnit::prewarmAudioUnitCreation(CompletionHandler<void()>&& c
     }
 
     m_audioUnitCreationWarmupPromise->whenSettled(RunLoop::main(), WTFMove(callback));
+}
+
+void CoreAudioSharedUnit::deallocateStoredVPIOUnit()
+{
+    if (!m_storedVPIOUnit)
+        return;
+
+    RELEASE_LOG(WebRTC, "CoreAudioSharedUnit::deallocateStoredVPIOUnit");
+
+    m_storedVPIOUnit = { };
+    m_audioUnitCreationWarmupPromise = nullptr;
 }
 #endif
 

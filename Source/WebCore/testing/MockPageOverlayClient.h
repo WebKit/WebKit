@@ -35,7 +35,7 @@ class LocalFrame;
 class Page;
 enum class LayerTreeAsTextOptions : uint16_t;
 
-class MockPageOverlayClient final : public PageOverlay::Client {
+class MockPageOverlayClient final : public PageOverlayClient {
     friend class NeverDestroyed<MockPageOverlayClient>;
 public:
     static MockPageOverlayClient& singleton();

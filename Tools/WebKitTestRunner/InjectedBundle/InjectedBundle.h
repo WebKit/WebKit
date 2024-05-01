@@ -82,8 +82,6 @@ public:
     void outputText(StringView, IsFinalTestOutput = IsFinalTestOutput::No);
     void dumpToStdErr(const String&);
     void postNewBeforeUnloadReturnValue(bool);
-    void postRemoveChromeInputField();
-    void postSetBackingScaleFactor(double);
     void postSetWindowIsKey(bool);
     void postSetViewSize(double width, double height);
     void postSimulateWebNotificationClick(WKDataRef notificationID);

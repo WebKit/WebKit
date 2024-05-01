@@ -35,6 +35,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class RTCDataChannelRemoteHandler;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::RTCDataChannelRemoteHandler> : std::true_type { };
+}
+
+namespace WebCore {
 
 class RTCDataChannelHandlerClient;
 class RTCDataChannelRemoteHandlerConnection;

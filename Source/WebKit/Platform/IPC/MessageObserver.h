@@ -31,6 +31,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
+class MessageObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<IPC::MessageObserver> : std::true_type { };
+}
+
+namespace IPC {
 
 class Decoder;
 class Encoder;

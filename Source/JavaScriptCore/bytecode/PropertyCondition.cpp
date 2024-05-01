@@ -467,11 +467,14 @@ bool PropertyCondition::isWatchableWhenValid(Structure* structure, WatchabilityE
     return true;
 }
 
-bool PropertyCondition::isWatchableAssumingImpurePropertyWatchpoint(
-    Structure* structure, JSObject* base, WatchabilityEffort effort) const
+bool PropertyCondition::isWatchableAssumingImpurePropertyWatchpoint(Structure* structure, JSObject* base, WatchabilityEffort effort, Concurrency concurrency) const
 {
-    return isStillValidAssumingImpurePropertyWatchpoint(watchabilityToConcurrency(effort), structure, base)
-        && isWatchableWhenValid(structure, effort, watchabilityToConcurrency(effort));
+    return isStillValidAssumingImpurePropertyWatchpoint(concurrency, structure, base) && isWatchableWhenValid(structure, effort, concurrency);
+}
+
+bool PropertyCondition::isWatchableAssumingImpurePropertyWatchpoint(Structure* structure, JSObject* base, WatchabilityEffort effort) const
+{
+    return isWatchableAssumingImpurePropertyWatchpoint(structure, base, effort, watchabilityToConcurrency(effort));
 }
 
 bool PropertyCondition::isWatchable(Structure* structure, JSObject* base, WatchabilityEffort effort) const

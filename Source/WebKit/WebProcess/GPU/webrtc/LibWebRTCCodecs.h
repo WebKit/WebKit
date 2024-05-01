@@ -39,6 +39,7 @@
 #include "VideoEncoderIdentifier.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/VideoEncoder.h>
+#include <WebCore/VideoEncoderScalabilityMode.h>
 #include <map>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -113,7 +114,9 @@ public:
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
     void registerDecodedVideoFrameCallback(Decoder&, DecoderCallback&&);
 
+#if ENABLE(WEB_CODECS)
     using DescriptionCallback = Function<void(WebCore::VideoEncoderActiveConfiguration&&)>;
+#endif
     using EncoderCallback = Function<void(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, std::optional<unsigned> temporalIndex)>;
     struct EncoderInitializationData {
         uint16_t width;
@@ -133,7 +136,9 @@ public:
         std::optional<EncoderInitializationData> initializationData;
         void* encodedImageCallback WTF_GUARDED_BY_LOCK(encodedImageCallbackLock) { nullptr };
         EncoderCallback encoderCallback;
+#if ENABLE(WEB_CODECS)
         DescriptionCallback descriptionCallback;
+#endif
         Lock encodedImageCallbackLock;
         RefPtr<IPC::Connection> connection;
         SharedVideoFrameWriter sharedVideoFrameWriter;
@@ -144,7 +149,9 @@ public:
     };
 
     Encoder* createEncoder(VideoCodecType, const std::map<std::string, std::string>&);
+#if ENABLE(WEB_CODECS)
     void createEncoderAndWaitUntilInitialized(VideoCodecType, const String& codec, const std::map<std::string, std::string>&, const WebCore::VideoEncoder::Config&, Function<void(Encoder*)>&&);
+#endif
     int32_t releaseEncoder(Encoder&);
     int32_t initializeEncoder(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
     int32_t encodeFrame(Encoder&, const WebCore::VideoFrame&, int64_t timestamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame, Function<void(bool)>&&);
@@ -152,7 +159,9 @@ public:
     void flushEncoder(Encoder&, Function<void()>&&);
     void registerEncodeFrameCallback(Encoder&, void* encodedImageCallback);
     void registerEncodedVideoFrameCallback(Encoder&, EncoderCallback&&);
+#if ENABLE(WEB_CODECS)
     void registerEncoderDescriptionCallback(Encoder&, DescriptionCallback&&);
+#endif
     void setEncodeRates(Encoder&, uint32_t bitRate, uint32_t frameRate);
 
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType);

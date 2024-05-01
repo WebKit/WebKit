@@ -48,6 +48,15 @@
 #endif
 
 namespace WebCore {
+class RealtimeMediaSourceCenterObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::RealtimeMediaSourceCenterObserver> : std::true_type { };
+}
+
+namespace WebCore {
 
 class CaptureDevice;
 class CaptureDeviceManager;
@@ -56,16 +65,16 @@ class TrackSourceInfo;
 
 struct MediaConstraints;
 
+class WEBCORE_EXPORT RealtimeMediaSourceCenterObserver : public CanMakeWeakPtr<RealtimeMediaSourceCenterObserver> {
+public:
+    virtual ~RealtimeMediaSourceCenterObserver();
+
+    virtual void devicesChanged() = 0;
+    virtual void deviceWillBeRemoved(const String& persistentId) = 0;
+};
+
 class WEBCORE_EXPORT RealtimeMediaSourceCenter : public ThreadSafeRefCounted<RealtimeMediaSourceCenter, WTF::DestructionThread::MainRunLoop> {
 public:
-    class Observer : public CanMakeWeakPtr<Observer> {
-    public:
-        virtual ~Observer();
-
-        virtual void devicesChanged() = 0;
-        virtual void deviceWillBeRemoved(const String& persistentId) = 0;
-    };
-
     ~RealtimeMediaSourceCenter();
 
     WEBCORE_EXPORT static RealtimeMediaSourceCenter& singleton();
@@ -94,8 +103,8 @@ public:
 
     WEBCORE_EXPORT static String hashStringWithSalt(const String& id, const String& hashSalt);
 
-    WEBCORE_EXPORT void addDevicesChangedObserver(Observer&);
-    WEBCORE_EXPORT void removeDevicesChangedObserver(Observer&);
+    WEBCORE_EXPORT void addDevicesChangedObserver(RealtimeMediaSourceCenterObserver&);
+    WEBCORE_EXPORT void removeDevicesChangedObserver(RealtimeMediaSourceCenterObserver&);
 
     void captureDevicesChanged();
     void captureDeviceWillBeRemoved(const String& persistentId);
@@ -134,7 +143,7 @@ private:
     RunLoop::Timer m_debounceTimer;
     void triggerDevicesChangedObservers();
 
-    WeakHashSet<Observer> m_observers;
+    WeakHashSet<RealtimeMediaSourceCenterObserver> m_observers;
 
     AudioCaptureFactory* m_audioCaptureFactoryOverride { nullptr };
     VideoCaptureFactory* m_videoCaptureFactoryOverride { nullptr };

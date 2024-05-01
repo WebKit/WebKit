@@ -38,6 +38,8 @@ DeviceController::DeviceController(DeviceClient& client)
 {
 }
 
+DeviceController::~DeviceController() = default;
+
 void DeviceController::addDeviceEventListener(LocalDOMWindow& window)
 {
     bool wasEmpty = m_listeners.isEmpty();

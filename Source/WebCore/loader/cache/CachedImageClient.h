@@ -26,6 +26,15 @@
 #include "ImageTypes.h"
 
 namespace WebCore {
+class CachedImageClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CachedImageClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class CachedImage;
 class Document;

@@ -38,15 +38,15 @@ namespace WebCore {
 
 class DeferredPromise;
 
-class ScreenOrientation final : public ActiveDOMObject, public EventTarget, public ScreenOrientationManager::Observer, public VisibilityChangeClient, public RefCounted<ScreenOrientation> {
+class ScreenOrientation final : public ActiveDOMObject, public EventTarget, public ScreenOrientationManagerObserver, public VisibilityChangeClient, public RefCounted<ScreenOrientation> {
     WTF_MAKE_ISO_ALLOCATED(ScreenOrientation);
 public:
     static Ref<ScreenOrientation> create(Document*);
     ~ScreenOrientation();
 
-    using ScreenOrientationManager::Observer::weakPtrFactory;
-    using ScreenOrientationManager::Observer::WeakValueType;
-    using ScreenOrientationManager::Observer::WeakPtrImplType;
+    using ScreenOrientationManagerObserver::weakPtrFactory;
+    using ScreenOrientationManagerObserver::WeakValueType;
+    using ScreenOrientationManagerObserver::WeakPtrImplType;
 
     using LockType = ScreenOrientationLockType;
     using Type = ScreenOrientationType;
@@ -70,7 +70,7 @@ private:
     // VisibilityChangeClient
     void visibilityStateChanged() final;
 
-    // ScreenOrientationManager::Observer
+    // ScreenOrientationManagerObserver
     void screenOrientationDidChange(ScreenOrientationType) final;
 
     // EventTarget

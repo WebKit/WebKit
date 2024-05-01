@@ -41,6 +41,7 @@ class AccessCase;
 class CallLinkInfo;
 class JITStubRoutineSet;
 class OptimizingCallLinkInfo;
+class WatchpointsOnStructureStubInfo;
 
 // Use this stub routine if you know that your code might be on stack when
 // either GC or other kinds of stub deletion happen. Basicaly, if your stub
@@ -93,6 +94,7 @@ public:
     friend class JITStubRoutine;
 
     PolymorphicAccessJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner);
+    ~PolymorphicAccessJITStubRoutine();
 
     const FixedVector<RefPtr<AccessCase>>& cases() const { return m_cases; }
     const FixedVector<StructureID>& weakStructures() const { return m_weakStructures; }
@@ -108,6 +110,11 @@ public:
 
     void addedToSharedJITStubSet();
 
+    const WatchpointsOnStructureStubInfo* watchpoints() const { return m_watchpoints.get(); }
+    void setWatchpoints(std::unique_ptr<WatchpointsOnStructureStubInfo>&&);
+    WatchpointSet& watchpointSet() { return *m_watchpointSet.get(); }
+    void invalidate();
+
 protected:
     void observeZeroRefCountImpl();
 
@@ -116,6 +123,8 @@ private:
     FixedVector<RefPtr<AccessCase>> m_cases;
     FixedVector<StructureID> m_weakStructures;
     FixedVector<Identifier> m_identifiers;
+    RefPtr<WatchpointSet> m_watchpointSet;
+    std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
 };
 
 // Use this if you want to mark one additional object during GC if your stub

@@ -387,18 +387,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "RemoveChromeInputField")) {
-        TestController::singleton().mainWebView()->removeChromeInputField();
-        postPageMessage("CallRemoveChromeInputFieldCallback");
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetBackingScaleFactor")) {
-        WKPageSetCustomBackingScaleFactor(TestController::singleton().mainWebView()->page(), doubleValue(messageBody));
-        postPageMessage("CallSetBackingScaleFactorCallback");
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "SimulateWebNotificationClick")) {
         WKDataRef notificationID = dataValue(messageBody);
         TestController::singleton().simulateWebNotificationClick(notificationID);
@@ -682,23 +670,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
     if (WKStringIsEqualToUTF8CString(messageName, "DumpPolicyDelegateCallbacks")) {
         TestController::singleton().dumpPolicyDelegateCallbacks();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllSessionCredentials")) {
-        TestController::singleton().removeAllSessionCredentials();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetAppBoundDomains")) {
-        ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
-        TestController::singleton().setAppBoundDomains(static_cast<WKArrayRef>(messageBody));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetManagedDomains")) {
-        ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
-        TestController::singleton().setManagedDomains(static_cast<WKArrayRef>(messageBody));
         return;
     }
 
@@ -1490,21 +1461,6 @@ void TestInvocation::didRemoveSwipeSnapshot()
 void TestInvocation::notifyDownloadDone()
 {
     postPageMessage("NotifyDownloadDone");
-}
-
-void TestInvocation::didRemoveAllSessionCredentials()
-{
-    postPageMessage("CallDidRemoveAllSessionCredentialsCallback");
-}
-
-void TestInvocation::didSetAppBoundDomains()
-{
-    postPageMessage("CallDidSetAppBoundDomains");
-}
-
-void TestInvocation::didSetManagedDomains()
-{
-    postPageMessage("CallDidSetManagedDomains");
 }
 
 void TestInvocation::dumpResourceLoadStatistics()

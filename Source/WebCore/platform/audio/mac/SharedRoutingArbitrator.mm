@@ -38,12 +38,12 @@ namespace WebCore {
 
 #define TOKEN_LOGIDENTIFIER(token) WTF::Logger::LogSiteIdentifier(logClassName(), __func__, token.logIdentifier())
 
-UniqueRef<SharedRoutingArbitrator::Token> SharedRoutingArbitrator::Token::create()
+UniqueRef<SharedRoutingArbitratorToken> SharedRoutingArbitratorToken::create()
 {
-    return makeUniqueRef<Token>();
+    return makeUniqueRef<SharedRoutingArbitratorToken>();
 }
 
-const void* SharedRoutingArbitrator::Token::logIdentifier() const
+const void* SharedRoutingArbitratorToken::logIdentifier() const
 {
     if (!m_logIdentifier)
         m_logIdentifier = LoggerHelper::uniqueLogIdentifier();
@@ -57,12 +57,12 @@ SharedRoutingArbitrator& SharedRoutingArbitrator::sharedInstance()
     return instance;
 }
 
-bool SharedRoutingArbitrator::isInRoutingArbitrationForToken(const Token& token)
+bool SharedRoutingArbitrator::isInRoutingArbitrationForToken(const SharedRoutingArbitratorToken& token)
 {
     return m_tokens.contains(token);
 }
 
-void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const Token& token, AudioSession::CategoryType requestedCategory, ArbitrationCallback&& callback)
+void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const SharedRoutingArbitratorToken& token, AudioSession::CategoryType requestedCategory, ArbitrationCallback&& callback)
 {
     ASSERT(!isInRoutingArbitrationForToken(token));
 
@@ -137,7 +137,7 @@ void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const Token& token
     }];
 }
 
-void SharedRoutingArbitrator::endRoutingArbitrationForToken(const Token& token)
+void SharedRoutingArbitrator::endRoutingArbitrationForToken(const SharedRoutingArbitratorToken& token)
 {
     ALWAYS_LOG_IF(m_logger, TOKEN_LOGIDENTIFIER(token));
 

@@ -51,6 +51,7 @@
 - (void)webViewDidRemoveFromSuperviewWhileInFullscreen;
 - (void)videoControlsManagerDidChange;
 - (void)didExitFullscreen;
+- (void)didCleanupFullscreen;
 
 #if PLATFORM(VISION)
 - (void)toggleSceneDimming;

@@ -49,7 +49,7 @@ class Document;
 class MediaStream final
     : public EventTarget
     , public ActiveDOMObject
-    , public MediaStreamPrivate::Observer
+    , public MediaStreamPrivateObserver
     , private MediaCanStartListener
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
@@ -78,9 +78,9 @@ public:
 
     RefPtr<MediaStream> clone();
 
-    using MediaStreamPrivate::Observer::weakPtrFactory;
-    using MediaStreamPrivate::Observer::WeakValueType;
-    using MediaStreamPrivate::Observer::WeakPtrImplType;
+    using MediaStreamPrivateObserver::weakPtrFactory;
+    using MediaStreamPrivateObserver::WeakValueType;
+    using MediaStreamPrivateObserver::WeakPtrImplType;
 
     bool active() const { return m_isActive; }
     bool muted() const { return m_private->muted(); }
@@ -124,7 +124,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    // MediaStreamPrivate::Observer
+    // MediaStreamPrivateObserver
     void activeStatusChanged() final;
     void didAddTrack(MediaStreamTrackPrivate&) final;
     void didRemoveTrack(MediaStreamTrackPrivate&) final;

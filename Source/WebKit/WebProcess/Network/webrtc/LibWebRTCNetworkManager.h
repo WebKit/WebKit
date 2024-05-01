@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-class LibWebRTCNetworkManager final : public WebCore::RTCNetworkManager, public rtc::NetworkManagerBase, public webrtc::MdnsResponderInterface, public WebRTCMonitor::Observer {
+class LibWebRTCNetworkManager final : public WebCore::RTCNetworkManager, public rtc::NetworkManagerBase, public webrtc::MdnsResponderInterface, public WebRTCMonitorObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static LibWebRTCNetworkManager* getOrCreate(WebCore::ScriptExecutionContextIdentifier);
@@ -63,7 +63,7 @@ private:
     void CreateNameForAddress(const rtc::IPAddress&, NameCreatedCallback);
     void RemoveNameForAddress(const rtc::IPAddress&, NameRemovedCallback);
 
-    // WebRTCMonitor::Observer
+    // WebRTCMonitorObserver
     void networksChanged(const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&) final;
     void networkProcessCrashed() final;
 

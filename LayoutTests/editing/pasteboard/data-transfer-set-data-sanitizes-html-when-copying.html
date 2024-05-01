@@ -64,13 +64,13 @@ function doCopy(event) {
 
 onmessage = (event) => {
     typesInSameDocument = event.data.types;
-    shouldBeEqualToString('JSON.stringify(typesInSameDocument)', '["text/html"]');
+    shouldBeTrue('typesInSameDocument.includes("text/html")');
     htmlInSameDocument = event.data.html;
     originalHTML = event.data.originalHTML;
     shouldBeEqualToString('htmlInSameDocument', originalHTML);
 
     itemsInSameDocument = event.data.items;
-    shouldBeEqualToString('JSON.stringify(itemsInSameDocument)', '[{"kind":"string","type":"text/html"}]');
+    shouldBeEqualToString('JSON.stringify(itemsInSameDocument[0])', '{"kind":"string","type":"text/html"}');
 
     document.getElementById('destination').focus();
     if (window.testRunner)

@@ -916,7 +916,7 @@ def slow!
 end
 
 def mustCrash!
-    $testSpecificRequiredOptions += ["-s"]
+    $testSpecificRequiredOptions += ["--signal-expected"]
     $runCommandOptions[:mustCrash] = true
 end
 

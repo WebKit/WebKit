@@ -41,12 +41,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeDayFieldElement);
 
-DateTimeDayFieldElement::DateTimeDayFieldElement(Document& document, FieldOwner& fieldOwner)
+DateTimeDayFieldElement::DateTimeDayFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(1, 31), fieldOwner.placeholderDate().monthDay())
 {
 }
 
-Ref<DateTimeDayFieldElement> DateTimeDayFieldElement::create(Document& document, FieldOwner& fieldOwner)
+Ref<DateTimeDayFieldElement> DateTimeDayFieldElement::create(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
 {
     auto element = adoptRef(*new DateTimeDayFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
@@ -71,12 +71,12 @@ void DateTimeDayFieldElement::setValueAsDate(const DateComponents& date)
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeHourFieldElement);
 
-DateTimeHourFieldElement::DateTimeHourFieldElement(Document& document, FieldOwner& fieldOwner, int minimum, int maximum)
+DateTimeHourFieldElement::DateTimeHourFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, int minimum, int maximum)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(minimum, maximum), (maximum >= 12) ? 12 : 11)
 {
 }
 
-Ref<DateTimeHourFieldElement> DateTimeHourFieldElement::create(Document& document, FieldOwner& fieldOwner, int minimum, int maximum)
+Ref<DateTimeHourFieldElement> DateTimeHourFieldElement::create(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, int minimum, int maximum)
 {
     auto element = adoptRef(*new DateTimeHourFieldElement(document, fieldOwner, minimum, maximum));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
@@ -138,12 +138,12 @@ void DateTimeHourFieldElement::setValueAsDate(const DateComponents& date)
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMeridiemFieldElement);
 
-DateTimeMeridiemFieldElement::DateTimeMeridiemFieldElement(Document& document, FieldOwner& fieldOwner, const Vector<String>& labels)
+DateTimeMeridiemFieldElement::DateTimeMeridiemFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& labels)
     : DateTimeSymbolicFieldElement(document, fieldOwner, labels, labels.size() - 1)
 {
 }
 
-Ref<DateTimeMeridiemFieldElement> DateTimeMeridiemFieldElement::create(Document& document, FieldOwner& fieldOwner, const Vector<String>& labels)
+Ref<DateTimeMeridiemFieldElement> DateTimeMeridiemFieldElement::create(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& labels)
 {
     auto element = adoptRef(*new DateTimeMeridiemFieldElement(document, fieldOwner, labels));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
@@ -187,12 +187,12 @@ void DateTimeMeridiemFieldElement::setEmptyValue(EventBehavior eventBehavior)
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMillisecondFieldElement);
 
-DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement(Document& document, FieldOwner& fieldOwner)
+DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(0, 999), 0)
 {
 }
 
-Ref<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::create(Document& document, FieldOwner& fieldOwner)
+Ref<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::create(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
 {
     auto element = adoptRef(*new DateTimeMillisecondFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
@@ -217,12 +217,12 @@ void DateTimeMillisecondFieldElement::setValueAsDate(const DateComponents& date)
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMinuteFieldElement);
 
-DateTimeMinuteFieldElement::DateTimeMinuteFieldElement(Document& document, FieldOwner& fieldOwner)
+DateTimeMinuteFieldElement::DateTimeMinuteFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(0, 59), 30)
 {
 }
 
-Ref<DateTimeMinuteFieldElement> DateTimeMinuteFieldElement::create(Document& document, FieldOwner& fieldOwner)
+Ref<DateTimeMinuteFieldElement> DateTimeMinuteFieldElement::create(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
 {
     auto element = adoptRef(*new DateTimeMinuteFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
@@ -247,12 +247,12 @@ void DateTimeMinuteFieldElement::setValueAsDate(const DateComponents& date)
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMonthFieldElement);
 
-DateTimeMonthFieldElement::DateTimeMonthFieldElement(Document& document, FieldOwner& fieldOwner)
+DateTimeMonthFieldElement::DateTimeMonthFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(1, 12), fieldOwner.placeholderDate().month() + 1)
 {
 }
 
-Ref<DateTimeMonthFieldElement> DateTimeMonthFieldElement::create(Document& document, FieldOwner& fieldOwner)
+Ref<DateTimeMonthFieldElement> DateTimeMonthFieldElement::create(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
 {
     auto element = adoptRef(*new DateTimeMonthFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
@@ -278,12 +278,12 @@ void DateTimeMonthFieldElement::setValueAsDate(const DateComponents& date)
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeSecondFieldElement);
 
-DateTimeSecondFieldElement::DateTimeSecondFieldElement(Document& document, FieldOwner& fieldOwner)
+DateTimeSecondFieldElement::DateTimeSecondFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(0, 59), 0)
 {
 }
 
-Ref<DateTimeSecondFieldElement> DateTimeSecondFieldElement::create(Document& document, FieldOwner& fieldOwner)
+Ref<DateTimeSecondFieldElement> DateTimeSecondFieldElement::create(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
 {
     auto element = adoptRef(*new DateTimeSecondFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
@@ -308,12 +308,12 @@ void DateTimeSecondFieldElement::setValueAsDate(const DateComponents& date)
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeSymbolicMonthFieldElement);
 
-DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement(Document& document, FieldOwner& fieldOwner, const Vector<String>& labels)
+DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& labels)
     : DateTimeSymbolicFieldElement(document, fieldOwner, labels, fieldOwner.placeholderDate().month())
 {
 }
 
-Ref<DateTimeSymbolicMonthFieldElement> DateTimeSymbolicMonthFieldElement::create(Document& document, FieldOwner& fieldOwner, const Vector<String>& labels)
+Ref<DateTimeSymbolicMonthFieldElement> DateTimeSymbolicMonthFieldElement::create(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& labels)
 {
     auto element = adoptRef(*new DateTimeSymbolicMonthFieldElement(document, fieldOwner, labels));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
@@ -338,12 +338,12 @@ void DateTimeSymbolicMonthFieldElement::setValueAsDate(const DateComponents& dat
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeYearFieldElement);
 
-DateTimeYearFieldElement::DateTimeYearFieldElement(Document& document, FieldOwner& fieldOwner)
+DateTimeYearFieldElement::DateTimeYearFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(DateComponents::minimumYear(), DateComponents::maximumYear()), fieldOwner.placeholderDate().year())
 {
 }
 
-Ref<DateTimeYearFieldElement> DateTimeYearFieldElement::create(Document& document, FieldOwner& fieldOwner)
+Ref<DateTimeYearFieldElement> DateTimeYearFieldElement::create(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
 {
     auto element = adoptRef(*new DateTimeYearFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };

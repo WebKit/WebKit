@@ -39,6 +39,15 @@ ALLOW_COMMA_BEGIN
 
 ALLOW_COMMA_END
 
+namespace WebKit {
+class LibWebRTCSocket;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::LibWebRTCSocket> : std::true_type { };
+}
+
 namespace IPC {
 class Connection;
 class Decoder;

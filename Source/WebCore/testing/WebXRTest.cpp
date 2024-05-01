@@ -38,6 +38,11 @@
 
 namespace WebCore {
 
+WebXRTest::WebXRTest(WeakPtr<WebXRSystem, WeakPtrImplWithEventTargetData>&& system)
+    : m_context(WTFMove(system))
+{
+}
+
 WebXRTest::~WebXRTest() = default;
 
 static PlatformXR::Device::FeatureList parseFeatures(const Vector<JSC::JSValue>& featureList, ScriptExecutionContext& context)

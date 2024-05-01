@@ -38,8 +38,6 @@
 
 namespace WTF {
 
-using namespace Unicode;
-
 // Construct a string with UTF-16 data.
 String::String(std::span<const UChar> characters)
     : m_impl(characters.data() ? RefPtr { StringImpl::create(characters) } : nullptr)
@@ -467,7 +465,6 @@ void String::convertTo16Bit()
 template<bool replaceInvalidSequences>
 String fromUTF8Impl(std::span<const LChar> string)
 {
-    // Do this assertion before chopping the size_t down to unsigned.
     RELEASE_ASSERT(string.size() <= String::MaxLength);
 
     if (string.empty())
@@ -477,16 +474,15 @@ String fromUTF8Impl(std::span<const LChar> string)
         return StringImpl::create(string);
 
     Vector<UChar, 1024> buffer(string.size());
-    UChar* bufferStart = buffer.data();
  
-    UChar* bufferCurrent = bufferStart;
-    constexpr auto function = replaceInvalidSequences ? convertUTF8ToUTF16ReplacingInvalidSequences : convertUTF8ToUTF16;
-    if (!function(spanReinterpretCast<const char8_t>(string), &bufferCurrent, bufferCurrent + buffer.size(), nullptr))
-        return String();
+    auto result = replaceInvalidSequences
+        ? Unicode::convertReplacingInvalidSequences(spanReinterpretCast<const char8_t>(string), buffer.mutableSpan())
+        : Unicode::convert(spanReinterpretCast<const char8_t>(string), buffer.mutableSpan());
+    if (result.code != Unicode::ConversionResultCode::Success)
+        return { };
 
-    size_t utf16Length = bufferCurrent - bufferStart;
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(utf16Length <= string.size());
-    return StringImpl::create(std::span { bufferStart, utf16Length });
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(result.buffer.size() <= string.size());
+    return StringImpl::create(result.buffer);
 }
 
 String String::fromUTF8(std::span<const LChar> string)

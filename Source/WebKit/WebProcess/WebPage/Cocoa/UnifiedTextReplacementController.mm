@@ -179,20 +179,16 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         return;
     }
 
-    if (state != WebTextReplacementData::State::Committed && state != WebTextReplacementData::State::Reverted && state != WebTextReplacementData::State::Active)
-        return;
-
     auto nodeAndMarker = findReplacementMarkerByUUID(*sessionRange, replacement.uuid);
-    if (!nodeAndMarker) {
-        ASSERT_NOT_REACHED();
+    if (!nodeAndMarker)
         return;
-    }
 
     auto& [node, marker] = *nodeAndMarker;
 
     auto rangeToReplace = WebCore::makeSimpleRange(node, marker);
 
-    if (state == WebTextReplacementData::State::Active) {
+    switch (state) {
+    case WebTextReplacementData::State::Active: {
         document->selection().setSelection({ rangeToReplace });
 
         auto rect = document->view()->contentsToRootView(WebCore::unionRect(WebCore::RenderObject::absoluteTextRects(rangeToReplace)));
@@ -201,26 +197,20 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         return;
     }
 
-    auto data = std::get<WebCore::DocumentMarker::UnifiedTextReplacementData>(marker.data());
+    case WebTextReplacementData::State::Reverted: {
+        auto data = std::get<WebCore::DocumentMarker::UnifiedTextReplacementData>(marker.data());
 
-    auto offsetRange = WebCore::OffsetRange { marker.startOffset(), marker.endOffset() };
-    document->markers().removeMarkers(node, offsetRange, { WebCore::DocumentMarker::Type::UnifiedTextReplacement });
+        auto offsetRange = WebCore::OffsetRange { marker.startOffset(), marker.endOffset() };
+        document->markers().removeMarkers(node, offsetRange, { WebCore::DocumentMarker::Type::UnifiedTextReplacement });
 
-    auto newText = [&] {
-        switch (state) {
-        case WebTextReplacementData::State::Committed:
-            return replacement.replacement;
+        replaceContentsOfRangeInSession(uuid, rangeToReplace, data.originalText);
 
-        case WebTextReplacementData::State::Reverted:
-            return data.originalText;
+        return;
+    }
 
-        default:
-            ASSERT_NOT_REACHED();
-            return nullString();
-        }
-    }();
-
-    replaceContentsOfRangeInSession(uuid, rangeToReplace, newText);
+    default:
+        return;
+    }
 }
 
 void UnifiedTextReplacementController::didEndTextReplacementSession(const WTF::UUID& uuid, bool accepted)
@@ -318,7 +308,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         m_originalDocumentNodes.set(uuid, contents.returnValue()); // Deep clone.
     }
 
-    RefPtr fragment = WebCore::createFragment(*document->frame(), attributedText.nsAttributedString().get(), WebCore::AddResources::No);
+    RefPtr fragment = WebCore::createFragment(*document->frame(), attributedText.nsAttributedString().get(), { WebCore::FragmentCreationOptions::IgnoreResources, WebCore::FragmentCreationOptions::NoInterchangeNewlines });
     if (!fragment) {
         ASSERT_NOT_REACHED();
         return;

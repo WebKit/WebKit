@@ -33,6 +33,15 @@
 #include <WebCore/WebSocketDeflateFramer.h>
 #include <WebCore/WebSocketFrame.h>
 
+namespace WebKit {
+class WebSocketTask;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSocketTask> : std::true_type { };
+}
+
 namespace WebCore {
 class CertificateInfo;
 class CurlStreamScheduler;

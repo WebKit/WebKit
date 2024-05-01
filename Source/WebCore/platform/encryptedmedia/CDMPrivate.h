@@ -33,6 +33,15 @@
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class CDMPrivate;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CDMPrivate> : std::true_type { };
+}
+
 #if !RELEASE_LOG_DISABLED
 namespace WTF {
 class Logger;

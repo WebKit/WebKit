@@ -78,14 +78,14 @@ private:
     void setPreferredBufferSize(size_t) final;
     bool isMuted() const final;
     void handleMutedStateChange() final;
-    void addConfigurationChangeObserver(ConfigurationChangeObserver&) final;
-    void removeConfigurationChangeObserver(ConfigurationChangeObserver&) final;
+    void addConfigurationChangeObserver(AudioSessionConfigurationChangeObserver&) final;
+    void removeConfigurationChangeObserver(AudioSessionConfigurationChangeObserver&) final;
 
     WTFLogChannel& logChannel() const;
     const void* logIdentifier() const;
 
     std::optional<bool> m_lastMutedState;
-    mutable WeakHashSet<ConfigurationChangeObserver> m_configurationChangeObservers;
+    mutable WeakHashSet<AudioSessionConfigurationChangeObserver> m_configurationChangeObservers;
     AudioSession::CategoryType m_category { AudioSession::CategoryType::None };
     RouteSharingPolicy m_policy { RouteSharingPolicy::Default };
 #if ENABLE(ROUTING_ARBITRATION)

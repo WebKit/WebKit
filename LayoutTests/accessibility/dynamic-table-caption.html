@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<table id="table">
+<caption id="caption">Initial caption</caption>
+<thead>
+    <tr>
+        <th>Author</th>
+        <th>Title</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>Stephen Hawking</td>
+        <td>A Brief History of Time</td>
+    </tr>
+    <tr>
+        <td>Carl Sagan</td>
+        <td>Cosmos</td>
+    </tr>
+</tbody>
+</table>
+
+<script>
+var output = "This test ensures we maintain the right accessibility text for tables after dynamic caption changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var table = accessibilityController.accessibleElementById("table");
+    var text = platformTextAlternatives(table);
+    output += `${text}\n`;
+    output += expect("text.includes('Initial caption')", "true");
+
+    setTimeout(async function() {
+        // Wait for page updates caused by initial load to settle down so we don't pass the test by accident.
+        await sleep(20);
+        document.getElementById("caption").innerText = "Second caption";
+
+        await waitFor(() => {
+            text = platformTextAlternatives(table);
+            return text.includes("Second caption");
+        });
+        output += `${text}\n`;
+        output += expect("text.includes('Second caption')", "true");
+
+        document.getElementById("body").appendChild(document.getElementById("caption"));
+        document.getElementById("caption").innerText = "Final caption";
+
+        await waitFor(() => {
+            text = platformTextAlternatives(table);
+            return !text.includes("caption");
+        });
+        output += `${text}\n`;
+        output += expect("!text.includes('caption')", "true");
+
+        let domTable = document.getElementById("table");
+        domTable.insertBefore(document.getElementById("caption"), domTable.firstElementChild);
+
+        await waitFor(() => {
+            text = platformTextAlternatives(table);
+            return text.includes("Final caption");
+        });
+        output += `${text}\n`;
+        output += expect("text.includes('Final caption')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

@@ -32,6 +32,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class ScrollAnchoringController;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ScrollAnchoringController> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Element;
 class ScrollableArea;

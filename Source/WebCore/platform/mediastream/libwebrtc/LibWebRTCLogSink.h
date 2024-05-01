@@ -36,6 +36,15 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
+class LibWebRTCLogSink;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LibWebRTCLogSink> : std::true_type { };
+}
+
+namespace WebCore {
 
 class LibWebRTCLogSink final : rtc::LogSink, public CanMakeWeakPtr<LibWebRTCLogSink, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_FAST_ALLOCATED;

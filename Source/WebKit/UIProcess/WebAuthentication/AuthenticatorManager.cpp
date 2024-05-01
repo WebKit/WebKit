@@ -402,7 +402,7 @@ void AuthenticatorManager::cancelRequest()
     m_requestTimeOutTimer.stop();
 }
 
-UniqueRef<AuthenticatorTransportService> AuthenticatorManager::createService(AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
+UniqueRef<AuthenticatorTransportService> AuthenticatorManager::createService(AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer) const
 {
     return AuthenticatorTransportService::create(transport, observer);
 }

@@ -39,6 +39,15 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class ProvisionalPageProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ProvisionalPageProxy> : std::true_type { };
+}
+
 namespace API {
 class Navigation;
 }
@@ -138,6 +147,8 @@ public:
 
     WebsitePoliciesData* mainFrameWebsitePoliciesData() const { return m_mainFrameWebsitePoliciesData.get(); }
 
+    WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
+
 private:
     RefPtr<WebFrameProxy> protectedMainFrame() const;
 
@@ -208,6 +219,7 @@ private:
     bool m_isProcessSwappingOnNavigationResponse { false };
     bool m_needsCookieAccessAddedInNetworkProcess { false };
     bool m_needsDidStartProvisionalLoad { true };
+    bool m_shouldClosePage { true };
     URL m_provisionalLoadURL;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
     std::unique_ptr<WebsitePoliciesData> m_mainFrameWebsitePoliciesData;

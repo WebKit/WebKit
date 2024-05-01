@@ -32,6 +32,15 @@
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class RemoteLegacyCDM;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLegacyCDM> : std::true_type { };
+}
+
 namespace WebCore {
 class Settings;
 }

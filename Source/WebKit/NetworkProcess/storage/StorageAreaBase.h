@@ -33,6 +33,15 @@
 #include <wtf/Identified.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class StorageAreaBase;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::StorageAreaBase> : std::true_type { };
+}
+
 namespace WebCore {
 struct ClientOrigin;
 }

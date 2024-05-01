@@ -34,7 +34,7 @@ namespace WebKit {
 
 class MockLocalService final : public LocalService {
 public:
-    MockLocalService(Observer&, const WebCore::MockWebAuthenticationConfiguration&);
+    MockLocalService(AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
 
 private:
     bool platformStartDiscovery() const final;

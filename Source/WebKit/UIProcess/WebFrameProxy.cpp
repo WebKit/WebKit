@@ -449,7 +449,7 @@ void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoDat
 {
     ASSERT(m_page);
     if (m_provisionalFrame) {
-        protectedProcess()->send(Messages::WebPage::DidCommitLoadInAnotherProcess(frameID, m_provisionalFrame->layerHostingContextIdentifier()), m_page->webPageID());
+        protectedProcess()->send(Messages::WebPage::TransitionFrameToRemote(frameID, m_provisionalFrame->layerHostingContextIdentifier()), m_page->webPageID());
         m_frameProcess = std::exchange(m_provisionalFrame, nullptr)->takeFrameProcess();
     }
     protectedPage()->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);

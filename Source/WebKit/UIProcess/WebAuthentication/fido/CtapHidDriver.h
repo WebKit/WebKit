@@ -33,6 +33,51 @@
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
+class CtapHidDriver;
+class CtapHidDriverWorker;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::CtapHidDriver> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::CtapHidDriverWorker> : std::true_type { };
+}
+
+namespace WebKit {
+
+// Worker is the helper that maintains the transaction.
+// https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#arbitration
+// FSM: Idle => Write => Read.
+class CtapHidDriverWorker : public CanMakeWeakPtr<CtapHidDriverWorker> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(CtapHidDriverWorker);
+public:
+    using MessageCallback = Function<void(std::optional<fido::FidoHidMessage>&&)>;
+
+    enum class State : uint8_t  {
+        Idle,
+        Write,
+        Read
+    };
+
+    explicit CtapHidDriverWorker(UniqueRef<HidConnection>&&);
+    ~CtapHidDriverWorker();
+
+    void transact(fido::FidoHidMessage&&, MessageCallback&&);
+    void cancel(fido::FidoHidMessage&&);
+
+private:
+    void write(HidConnection::DataSent);
+    void read(const Vector<uint8_t>&);
+    void returnMessage();
+    void reset();
+
+    UniqueRef<HidConnection> m_connection;
+    State m_state { State::Idle };
+    std::optional<fido::FidoHidMessage> m_requestMessage;
+    std::optional<fido::FidoHidMessage> m_responseMessage;
+    MessageCallback m_callback;
+};
 
 // The following implements the CTAP HID protocol:
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#usb
@@ -53,46 +98,12 @@ public:
     void cancel() final;
 
 private:
-    // Worker is the helper that maintains the transaction.
-    // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#arbitration
-    // FSM: Idle => Write => Read.
-    class Worker : public CanMakeWeakPtr<Worker> {
-        WTF_MAKE_FAST_ALLOCATED;
-        WTF_MAKE_NONCOPYABLE(Worker);
-    public:
-        using MessageCallback = Function<void(std::optional<fido::FidoHidMessage>&&)>;
-
-        enum class State : uint8_t  {
-            Idle,
-            Write,
-            Read
-        };
-
-        explicit Worker(UniqueRef<HidConnection>&&);
-        ~Worker();
-
-        void transact(fido::FidoHidMessage&&, MessageCallback&&);
-        void cancel(fido::FidoHidMessage&&);
-
-    private:
-        void write(HidConnection::DataSent);
-        void read(const Vector<uint8_t>&);
-        void returnMessage();
-        void reset();
-
-        UniqueRef<HidConnection> m_connection;
-        State m_state { State::Idle };
-        std::optional<fido::FidoHidMessage> m_requestMessage;
-        std::optional<fido::FidoHidMessage> m_responseMessage;
-        MessageCallback m_callback;
-    };
-
     void continueAfterChannelAllocated(std::optional<fido::FidoHidMessage>&&);
     void continueAfterResponseReceived(std::optional<fido::FidoHidMessage>&&);
     void returnResponse(Vector<uint8_t>&&);
     void reset();
 
-    UniqueRef<Worker> m_worker;
+    UniqueRef<CtapHidDriverWorker> m_worker;
     State m_state { State::Idle };
     uint32_t m_channelId { fido::kHidBroadcastChannel };
     // One request at a time.

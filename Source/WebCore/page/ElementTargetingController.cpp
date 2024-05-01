@@ -678,9 +678,11 @@ static inline std::optional<IntRect> inflatedClientRectForAdjustmentRegionTracki
 
 Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElementRequest&& request)
 {
-    auto [nodes, innerElement] = std::visit([this](auto& data) {
-        return findNodes(data);
-    }, request.data);
+    auto [nodes, innerElement] = std::visit(WTF::makeVisitor([this](const String& searchText) {
+        return findNodes(searchText);
+    }, [this, &request](const FloatPoint& point) {
+        return findNodes(point, request.shouldIgnorePointerEventsNone);
+    }), request.data);
 
     if (nodes.isEmpty())
         return { };
@@ -688,7 +690,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     return extractTargets(WTFMove(nodes), WTFMove(innerElement), request.canIncludeNearbyElements);
 }
 
-std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNodes(FloatPoint pointInRootView)
+std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNodes(FloatPoint pointInRootView, bool shouldIgnorePointerEventsNone)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -706,13 +708,16 @@ std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNo
     if (!view)
         return { };
 
-    static constexpr OptionSet hitTestOptions {
+    static constexpr OptionSet defaultHitTestOptions {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::DisallowUserAgentShadowContent,
-        HitTestRequest::Type::IgnoreCSSPointerEventsProperty,
         HitTestRequest::Type::CollectMultipleElements,
         HitTestRequest::Type::IncludeAllElementsUnderPoint
     };
+
+    auto hitTestOptions = defaultHitTestOptions;
+    if (shouldIgnorePointerEventsNone)
+        hitTestOptions.add(HitTestRequest::Type::IgnoreCSSPointerEventsProperty);
 
     HitTestResult result { LayoutPoint { view->rootViewToContents(pointInRootView) } };
     document->hitTest(hitTestOptions, result);

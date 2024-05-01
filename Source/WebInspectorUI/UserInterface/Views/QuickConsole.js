@@ -467,3 +467,5 @@ WI.QuickConsole = class QuickConsole extends WI.View
         this.element.classList.toggle("showing-log", WI.isShowingConsoleTab() || WI.isShowingSplitConsole());
     }
 };
+
+WI.QuickConsole.MinimumHeight = 30; /* Keep in sync with `--console-prompt-min-height` */

@@ -453,10 +453,10 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
         return std::numeric_limits<double>::quiet_NaN();
     }
 
-    auto parseDateImpl = [this](const char* dateString, size_t size) {
+    auto parseDateImpl = [this](const CString& dateString) {
         if (Options::useV8DateParser()) {
             bool local = false;
-            double value = v8::ParseDateTimeString(dateString, size, local);
+            double value = v8::ParseDateTimeString(dateString.data(), dateString.size(), local);
 
             if (local)
                 value -= localTimeOffset(static_cast<int64_t>(value), WTF::LocalTime).offset;
@@ -464,13 +464,10 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
             return v8::TimeClip(value);
         }
 
-        double value = 0.0f;
-
         bool isLocalTime;
-        value = WTF::parseES5DateFromNullTerminatedCharacters(dateString, isLocalTime);
-        if (std::isnan(value)) {
-            value = WTF::parseDateFromNullTerminatedCharacters(dateString, isLocalTime);
-        }
+        double value = WTF::parseES5DateFromNullTerminatedCharacters(dateString.data(), isLocalTime);
+        if (std::isnan(value))
+            value = WTF::parseDate(dateString.span(), isLocalTime);
 
         if (isLocalTime && std::isfinite(value))
             value -= localTimeOffset(static_cast<int64_t>(value), WTF::LocalTime).offset;
@@ -478,8 +475,7 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
         return value;
     };
 
-    auto dateUTF8 = expectedString.value();
-    double value = parseDateImpl(dateUTF8.data(), dateUTF8.length());
+    double value = parseDateImpl(expectedString.value());
     m_cachedDateString = date;
     m_cachedDateStringValue = value;
     return value;

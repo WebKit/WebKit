@@ -25,7 +25,7 @@
 #import "WebScriptWorld.h"
 
 namespace WebCore {
-    class DOMWrapperWorld;
+class DOMWrapperWorld;
 }
 
 WebCore::DOMWrapperWorld* core(WebScriptWorld *);

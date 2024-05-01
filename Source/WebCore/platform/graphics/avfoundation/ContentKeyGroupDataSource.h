@@ -38,6 +38,15 @@
 OBJC_CLASS AVContentKey;
 
 namespace WebCore {
+class ContentKeyGroupDataSource;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ContentKeyGroupDataSource> : std::true_type { };
+}
+
+namespace WebCore {
 
 class ContentKeyGroupDataSource : public CanMakeWeakPtr<ContentKeyGroupDataSource> {
 public:

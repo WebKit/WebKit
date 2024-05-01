@@ -30,6 +30,15 @@
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
+class InspectorTarget;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<Inspector::InspectorTarget> : std::true_type { };
+}
+
+namespace Inspector {
 
 // FIXME: Add DedicatedWorker Inspector Targets
 // FIXME: Add ServiceWorker Inspector Targets

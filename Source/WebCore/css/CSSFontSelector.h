@@ -50,7 +50,7 @@ class StyleRuleFontFace;
 class StyleRuleFontFeatureValues;
 class StyleRuleFontPaletteValues;
 
-class CSSFontSelector final : public FontSelector, public CSSFontFace::Client, public ActiveDOMObject {
+class CSSFontSelector final : public FontSelector, public CSSFontFaceClient, public ActiveDOMObject {
 public:
     using FontSelector::weakPtrFactory;
     using FontSelector::WeakValueType;
@@ -95,7 +95,7 @@ public:
 
     void updateStyleIfNeeded();
 
-    // CSSFontFace::Client needs to be able to be held in a RefPtr.
+    // CSSFontFaceClient needs to be able to be held in a RefPtr.
     void ref() final { FontSelector::ref(); }
     void deref() final { FontSelector::deref(); }
 
@@ -111,7 +111,7 @@ private:
     const FontPaletteValues& lookupFontPaletteValues(const AtomString& familyName, const FontDescription&);
     RefPtr<FontFeatureValues> lookupFontFeatureValues(const AtomString& familyName);
 
-    // CSSFontFace::Client
+    // CSSFontFaceClient
     void fontLoaded(CSSFontFace&) final;
     void updateStyleIfNeeded(CSSFontFace&) final;
 

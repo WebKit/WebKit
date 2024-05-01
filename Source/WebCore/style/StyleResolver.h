@@ -91,11 +91,11 @@ public:
     static Ref<Resolver> create(Document&, ScopeType);
     ~Resolver();
 
-    ResolvedStyle styleForElement(const Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
+    ResolvedStyle styleForElement(Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
 
-    void keyframeStylesForAnimation(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, BlendingKeyframes&);
+    void keyframeStylesForAnimation(Element&, const RenderStyle& elementStyle, const ResolutionContext&, BlendingKeyframes&);
 
-    WEBCORE_EXPORT std::optional<ResolvedStyle> styleForPseudoElement(const Element&, const PseudoElementRequest&, const ResolutionContext&);
+    WEBCORE_EXPORT std::optional<ResolvedStyle> styleForPseudoElement(Element&, const PseudoElementRequest&, const ResolutionContext&);
 
     std::unique_ptr<RenderStyle> styleForPage(int pageIndex);
     std::unique_ptr<RenderStyle> defaultStyleForElement(const Element*);
@@ -115,7 +115,7 @@ public:
 
     void addCurrentSVGFontFaceRules();
 
-    std::unique_ptr<RenderStyle> styleForKeyframe(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, const StyleRuleKeyframe&, BlendingKeyframe&);
+    std::unique_ptr<RenderStyle> styleForKeyframe(Element&, const RenderStyle& elementStyle, const ResolutionContext&, const StyleRuleKeyframe&, BlendingKeyframe&);
     bool isAnimationNameValid(const String&);
 
     void setViewTransitionStyles(CSSSelector::PseudoElement, const AtomString&, Ref<MutableStyleProperties>);

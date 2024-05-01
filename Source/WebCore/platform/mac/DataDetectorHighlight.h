@@ -39,6 +39,15 @@
 using DDHighlightRef = struct __DDHighlight*;
 
 namespace WebCore {
+class DataDetectorHighlightClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::DataDetectorHighlightClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class DataDetectorHighlight;
 class FloatRect;

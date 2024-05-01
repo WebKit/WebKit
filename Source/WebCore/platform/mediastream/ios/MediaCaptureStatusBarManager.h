@@ -35,6 +35,15 @@
 OBJC_CLASS WebCoreMediaCaptureStatusBarHandler;
 
 namespace WebCore {
+class MediaCaptureStatusBarManager;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaCaptureStatusBarManager> : std::true_type { };
+}
+
+namespace WebCore {
 
 class MediaCaptureStatusBarManager : public CanMakeWeakPtr<MediaCaptureStatusBarManager> {
     WTF_MAKE_FAST_ALLOCATED;

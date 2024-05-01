@@ -1608,7 +1608,9 @@ def is_context_private_state_command(api, name):
 
 
 def is_lockless_egl_entry_point(cmd_name):
-    if cmd_name in ["eglGetError"]:
+    if cmd_name in [
+            "eglGetError", "eglGetCurrentContext", "eglGetCurrentSurface", "eglGetCurrentDisplay"
+    ]:
         return True
     return False
 

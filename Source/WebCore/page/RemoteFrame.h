@@ -43,16 +43,12 @@ enum class RenderAsTextFlag : uint16_t;
 
 class RemoteFrame final : public Frame {
 public:
-    WEBCORE_EXPORT static Ref<RemoteFrame> createMainFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, Frame* opener = nullptr);
+    WEBCORE_EXPORT static Ref<RemoteFrame> createMainFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, Frame* opener);
     WEBCORE_EXPORT static Ref<RemoteFrame> createSubframe(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, Frame& parent);
     WEBCORE_EXPORT static Ref<RemoteFrame> createSubframeWithContentsInAnotherProcess(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement&, std::optional<LayerHostingContextIdentifier>);
     ~RemoteFrame();
 
     RemoteDOMWindow& window() const;
-
-    void setOpener(Frame* opener) final { m_opener = opener; }
-    Frame* opener() final { return m_opener.get(); }
-    const Frame* opener() const final { return m_opener.get(); }
 
     const RemoteFrameClient& client() const { return m_client.get(); }
     RemoteFrameClient& client() { return m_client.get(); }
@@ -73,7 +69,7 @@ public:
     String customUserAgentAsSiteSpecificQuirks() const final;
 
 private:
-    WEBCORE_EXPORT explicit RemoteFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Markable<LayerHostingContextIdentifier>, Frame* opener = nullptr);
+    WEBCORE_EXPORT explicit RemoteFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Markable<LayerHostingContextIdentifier>, Frame* opener);
 
     void frameDetached() final;
     bool preventsParentFromBeingComplete() const final;
@@ -86,9 +82,9 @@ private:
     void disconnectView() final;
     DOMWindow* virtualWindow() const final;
     FrameLoaderClient& loaderClient() final;
+    void reinitializeDocumentSecurityContext() final { }
 
     Ref<RemoteDOMWindow> m_window;
-    RefPtr<Frame> m_opener;
     RefPtr<RemoteFrameView> m_view;
     UniqueRef<RemoteFrameClient> m_client;
     Markable<LayerHostingContextIdentifier> m_layerHostingContextIdentifier;

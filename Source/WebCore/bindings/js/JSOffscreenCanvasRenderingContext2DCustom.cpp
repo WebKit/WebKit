@@ -32,10 +32,10 @@ inline WebCoreOpaqueRoot root(OffscreenCanvas* canvas)
     return WebCoreOpaqueRoot { canvas };
 }
 
-bool JSOffscreenCanvasRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSOffscreenCanvasRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     if (UNLIKELY(reason))
-        *reason = "Canvas is opaque root";
+        *reason = "Canvas is opaque root"_s;
 
     auto* jsOffscreenCanvasRenderingContext = jsCast<JSOffscreenCanvasRenderingContext2D*>(handle.slot()->asCell());
     return containsWebCoreOpaqueRoot(visitor, jsOffscreenCanvasRenderingContext->wrapped().canvas());

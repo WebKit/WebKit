@@ -39,6 +39,29 @@
 #include <wtf/WeakRef.h>
 
 namespace TestWebKitAPI {
+class Base;
+class Derived;
+struct Int;
+struct Foo;
+class MultipleInheritanceBase1;
+class MultipleInheritanceBase2;
+class MultipleInheritanceDerived;
+class TestType;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<TestWebKitAPI::Base> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<TestWebKitAPI::Derived> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<TestWebKitAPI::Foo> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<TestWebKitAPI::Int> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<TestWebKitAPI::MultipleInheritanceBase1> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<TestWebKitAPI::MultipleInheritanceBase2> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<TestWebKitAPI::MultipleInheritanceDerived> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<TestWebKitAPI::TestType> : std::true_type { };
+}
+
+namespace TestWebKitAPI {
 
 static unsigned s_baseWeakReferences = 0;
 

@@ -50,6 +50,7 @@ public:
 
 private:
     WeakPtr<CachedResourceLoader> m_oldCachedResourceLoader;
+    xmlExternalEntityLoader m_oldEntityLoader { nullptr };
 
 #if ENABLE(XSLT)
     xmlGenericErrorFunc m_oldGenericErrorFunc { nullptr };

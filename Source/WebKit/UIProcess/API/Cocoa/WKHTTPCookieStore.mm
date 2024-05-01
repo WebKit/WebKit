@@ -45,7 +45,7 @@ static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Coo
     }).autorelease();
 }
 
-class WKHTTPCookieStoreObserver : public API::HTTPCookieStore::Observer {
+class WKHTTPCookieStoreObserver : public API::HTTPCookieStoreObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WKHTTPCookieStoreObserver(id<WKHTTPCookieStoreObserver> observer)

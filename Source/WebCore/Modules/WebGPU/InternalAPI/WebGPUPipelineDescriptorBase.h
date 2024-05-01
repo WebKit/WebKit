@@ -26,11 +26,10 @@
 #pragma once
 
 #include "WebGPUObjectDescriptorBase.h"
+#include "WebGPUPipelineLayout.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore::WebGPU {
-
-class PipelineLayout;
 
 struct PipelineDescriptorBase : public ObjectDescriptorBase {
     WeakPtr<PipelineLayout> layout;

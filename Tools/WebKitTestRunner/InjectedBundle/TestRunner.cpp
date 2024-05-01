@@ -599,24 +599,17 @@ static CallbackMap& callbackMap()
 }
 
 enum {
-    RemoveChromeInputFieldCallbackID = 1,
-    SetBackingScaleFactorCallbackID,
-    DidBeginSwipeCallbackID,
+    DidBeginSwipeCallbackID = 1,
     WillEndSwipeCallbackID,
     DidEndSwipeCallbackID,
     DidRemoveSwipeSnapshotCallbackID,
     StatisticsDidModifyDataRecordsCallbackID,
     StatisticsDidScanDataRecordsCallbackID,
-    DidRemoveAllSessionCredentialsCallbackID,
     TextDidChangeInTextFieldCallbackID,
     TextFieldDidBeginEditingCallbackID,
     TextFieldDidEndEditingCallbackID,
-    CustomMenuActionCallbackID,
-    DidSetAppBoundDomainsCallbackID,
-    DidSetManagedDomainsCallbackID,
     EnterFullscreenForElementCallbackID,
     ExitFullscreenForElementCallbackID,
-    AppBoundRequestContextDataForDomainCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -675,8 +668,7 @@ void TestRunner::addChromeInputField(JSContextRef context, JSValueRef callback)
 
 void TestRunner::removeChromeInputField(JSContextRef context, JSValueRef callback)
 {
-    cacheTestRunnerCallback(context, RemoveChromeInputFieldCallbackID, callback);
-    InjectedBundle::singleton().postRemoveChromeInputField();
+    postMessageWithAsyncReply(context, "RemoveChromeInputField", callback);
 }
 
 void TestRunner::setTextInChromeInputField(JSContextRef context, JSStringRef text, JSValueRef callback)
@@ -701,8 +693,7 @@ void TestRunner::focusWebView(JSContextRef context, JSValueRef callback)
 
 void TestRunner::setBackingScaleFactor(JSContextRef context, double backingScaleFactor, JSValueRef callback)
 {
-    cacheTestRunnerCallback(context, SetBackingScaleFactorCallbackID, callback);
-    InjectedBundle::singleton().postSetBackingScaleFactor(backingScaleFactor);
+    postMessageWithAsyncReply(context, "SetBackingScaleFactor", adoptWK(WKDoubleCreate(backingScaleFactor)), callback);
 }
 
 void TestRunner::setWindowIsKey(bool isKey)
@@ -713,16 +704,6 @@ void TestRunner::setWindowIsKey(bool isKey)
 void TestRunner::setViewSize(double width, double height)
 {
     InjectedBundle::singleton().postSetViewSize(width, height);
-}
-
-void TestRunner::callRemoveChromeInputFieldCallback()
-{
-    callTestRunnerCallback(RemoveChromeInputFieldCallbackID);
-}
-
-void TestRunner::callSetBackingScaleFactorCallback()
-{
-    callTestRunnerCallback(SetBackingScaleFactorCallbackID);
 }
 
 void TestRunner::setAlwaysAcceptCookies(bool accept)
@@ -1852,13 +1833,7 @@ void TestRunner::setOpenPanelFilesMediaIcon(JSContextRef context, JSValueRef dat
 
 void TestRunner::removeAllSessionCredentials(JSContextRef context, JSValueRef callback)
 {
-    cacheTestRunnerCallback(context, DidRemoveAllSessionCredentialsCallbackID, callback);
-    postMessage("RemoveAllSessionCredentials", true);
-}
-
-void TestRunner::callDidRemoveAllSessionCredentialsCallback()
-{
-    callTestRunnerCallback(DidRemoveAllSessionCredentialsCallbackID);
+    postMessageWithAsyncReply(context, "RemoveAllSessionCredentials", callback);
 }
 
 void TestRunner::clearDOMCache(JSStringRef origin)
@@ -2061,8 +2036,6 @@ void TestRunner::clearAppBoundSession()
 
 void TestRunner::setAppBoundDomains(JSContextRef context, JSValueRef originArray, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(context, DidSetAppBoundDomainsCallbackID, completionHandler);
-
     if (!JSValueIsArray(context, originArray))
         return;
 
@@ -2082,14 +2055,11 @@ void TestRunner::setAppBoundDomains(JSContextRef context, JSValueRef originArray
         WKArrayAppendItem(originURLs.get(), adoptWK(WKURLCreateWithUTF8CString(originBuffer.get())).get());
     }
 
-    auto messageName = toWK("SetAppBoundDomains");
-    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), originURLs.get());
+    postMessageWithAsyncReply(context, "SetAppBoundDomains", originURLs, completionHandler);
 }
 
 void TestRunner::setManagedDomains(JSContextRef context, JSValueRef originArray, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(context, DidSetManagedDomainsCallbackID, completionHandler);
-
     if (!JSValueIsArray(context, originArray))
         return;
 
@@ -2109,18 +2079,7 @@ void TestRunner::setManagedDomains(JSContextRef context, JSValueRef originArray,
         WKArrayAppendItem(originURLs.get(), adoptWK(WKURLCreateWithUTF8CString(originBuffer.get())).get());
     }
 
-    auto messageName = toWK("SetManagedDomains");
-    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), originURLs.get());
-}
-
-void TestRunner::didSetAppBoundDomainsCallback()
-{
-    callTestRunnerCallback(DidSetAppBoundDomainsCallbackID);
-}
-
-void TestRunner::didSetManagedDomainsCallback()
-{
-    callTestRunnerCallback(DidSetManagedDomainsCallbackID);
+    postMessageWithAsyncReply(context, "SetManagedDomains", originURLs, completionHandler);
 }
 
 bool TestRunner::didLoadAppInitiatedRequest()

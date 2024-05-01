@@ -35,6 +35,15 @@ OBJC_CLASS CHHapticEngine;
 OBJC_CLASS GCController;
 
 namespace WebCore {
+class GameControllerHapticEngines;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::GameControllerHapticEngines> : std::true_type { };
+}
+
+namespace WebCore {
 
 class GameControllerHapticEffect;
 struct GamepadEffectParameters;

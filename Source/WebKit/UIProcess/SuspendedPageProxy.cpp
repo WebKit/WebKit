@@ -237,7 +237,7 @@ void SuspendedPageProxy::closeWithoutFlashing()
 
 void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensionState)
 {
-    LOG(ProcessSwapping, "SuspendedPageProxy %s from process %i finished transition to suspended", loggingString(), m_process->processID());
+    LOG(ProcessSwapping, "SuspendedPageProxy %s from process %i finished transition to suspended", loggingString().utf8().data(), m_process->processID());
     RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::didProcessRequestToSuspend() success? %d", this, newSuspensionState == SuspensionState::Suspended);
 
     ASSERT(m_suspensionState == SuspensionState::Suspending);
@@ -303,9 +303,9 @@ bool SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, 
 
 #if !LOG_DISABLED
 
-const char* SuspendedPageProxy::loggingString() const
+String SuspendedPageProxy::loggingString() const
 {
-    return debugString("(0x", hex(reinterpret_cast<uintptr_t>(this)), " WebPage ID ", m_webPageID.toUInt64(), ", m_suspensionState ", static_cast<unsigned>(m_suspensionState), ')');
+    return makeString("(0x", hex(reinterpret_cast<uintptr_t>(this)), " WebPage ID ", m_webPageID.toUInt64(), ", m_suspensionState ", static_cast<unsigned>(m_suspensionState), ')');
 }
 
 #endif

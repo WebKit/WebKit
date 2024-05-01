@@ -47,6 +47,8 @@ SVGLengthContext::SVGLengthContext(const SVGElement* context, const FloatRect& v
 {
 }
 
+SVGLengthContext::~SVGLengthContext() = default;
+
 FloatRect SVGLengthContext::resolveRectangle(const SVGElement* context, SVGUnitTypes::SVGUnitType type, const FloatRect& viewport, const SVGLengthValue& x, const SVGLengthValue& y, const SVGLengthValue& width, const SVGLengthValue& height)
 {
     ASSERT(type != SVGUnitTypes::SVG_UNIT_TYPE_UNKNOWN);

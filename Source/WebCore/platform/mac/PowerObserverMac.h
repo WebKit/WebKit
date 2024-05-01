@@ -34,6 +34,15 @@
 #import <wtf/WeakPtr.h>
 
 namespace WebCore {
+class PowerObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PowerObserver> : std::true_type { };
+}
+
+namespace WebCore {
 
 class PowerObserver : public CanMakeWeakPtr<PowerObserver, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_NONCOPYABLE(PowerObserver); WTF_MAKE_FAST_ALLOCATED;

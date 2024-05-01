@@ -42,6 +42,15 @@
 OBJC_CLASS PKPaymentSetupViewController;
 OBJC_CLASS UIViewController;
 
+namespace WebKit {
+class WebPaymentCoordinatorProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebPaymentCoordinatorProxy> : std::true_type { };
+}
+
 namespace IPC {
 class Connection;
 enum class ReceiverName : uint8_t;

@@ -804,11 +804,6 @@ static bool doesJSCalls(AccessCase::AccessType type)
     return false;
 }
 
-void InlineCacheCompiler::installWatchpoint(CodeBlock* codeBlock, const ObjectPropertyCondition& condition)
-{
-    WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint(m_watchpoints, codeBlock, m_stubInfo, condition);
-}
-
 void InlineCacheCompiler::restoreScratch()
 {
     m_allocator->restoreReusedRegistersByPopping(*m_jit, m_preservedReusedRegisterState);
@@ -1488,11 +1483,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> InlineCacheCompiler::generateSlowPathCode(
     return { };
 }
 
-InlineCacheHandler::InlineCacheHandler(Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<WatchpointsOnStructureStubInfo>&& watchpoints)
+InlineCacheHandler::InlineCacheHandler(Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint)
     : m_callTarget(stubRoutine->code().code().template retagged<JITStubRoutinePtrTag>())
     , m_jumpTarget(CodePtr<NoPtrTag> { m_callTarget.retagged<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC }.template retagged<JITStubRoutinePtrTag>())
     , m_stubRoutine(WTFMove(stubRoutine))
-    , m_watchpoints(WTFMove(watchpoints))
+    , m_watchpoint(WTFMove(watchpoint))
 {
 }
 
@@ -1530,8 +1525,6 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 
     accessCase.checkConsistency(*m_stubInfo);
 
-    accessCase.m_state = AccessCase::Generated;
-
     JSGlobalObject* globalObject = m_globalObject;
     CCallHelpers& jit = *m_jit;
     JIT_COMMENT(jit, "Begin generateWithGuard");
@@ -1553,11 +1546,11 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     }
 
     auto emitDefaultGuard = [&] () {
-        if (accessCase.m_polyProtoAccessChain) {
+        if (accessCase.polyProtoAccessChain()) {
             ASSERT(!accessCase.viaGlobalProxy());
             GPRReg baseForAccessGPR = m_scratchGPR;
             jit.move(baseGPR, baseForAccessGPR);
-            accessCase.m_polyProtoAccessChain->forEach(vm, accessCase.structure(), [&] (Structure* structure, bool atEnd) {
+            accessCase.polyProtoAccessChain()->forEach(vm, accessCase.structure(), [&](Structure* structure, bool atEnd) {
                 fallThrough.append(
                     jit.branchStructure(
                         CCallHelpers::NotEqual,
@@ -2727,10 +2720,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 void InlineCacheCompiler::generate(AccessCase& accessCase)
 {
     RELEASE_ASSERT(m_stubInfo->hasConstantIdentifier);
-    accessCase.m_state = AccessCase::Generated;
-
     accessCase.checkConsistency(*m_stubInfo);
-
     generateImpl(accessCase);
 }
 
@@ -2738,8 +2728,6 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
 {
     SuperSamplerScope superSamplerScope(false);
     dataLogLnIf(InlineCacheCompilerInternal::verbose, "\n\nGenerating code for: ", accessCase);
-
-    ASSERT(accessCase.m_state == AccessCase::Generated); // We rely on the callers setting this for us.
 
     CCallHelpers& jit = *m_jit;
     VM& vm = m_vm;
@@ -2751,10 +2739,10 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
     GPRReg scratchGPR = m_scratchGPR;
 
     for (const ObjectPropertyCondition& condition : accessCase.m_conditionSet) {
-        RELEASE_ASSERT(!accessCase.m_polyProtoAccessChain);
+        RELEASE_ASSERT(!accessCase.polyProtoAccessChain());
 
-        if (condition.isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort::EnsureWatchability)) {
-            installWatchpoint(codeBlock, condition);
+        if (condition.isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort::EnsureWatchability, Concurrency::MainThread)) {
+            m_conditions.append(condition);
             continue;
         }
 
@@ -2826,7 +2814,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
         GPRReg receiverGPR = baseGPR;
         GPRReg propertyOwnerGPR;
 
-        if (accessCase.m_polyProtoAccessChain) {
+        if (accessCase.polyProtoAccessChain()) {
             // This isn't pretty, but we know we got here via generateWithGuard,
             // and it left the baseForAccess inside scratchGPR. We could re-derive the base,
             // but it'd require emitting the same code to load the base twice.
@@ -4022,20 +4010,6 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static void commit(const GCSafeConcurrentJSLocker&, VM& vm, std::unique_ptr<WatchpointsOnStructureStubInfo>& watchpoints, CodeBlock* codeBlock, StructureStubInfo& stubInfo, AccessCase& accessCase)
-{
-    // NOTE: We currently assume that this is relatively rare. It mainly arises for accesses to
-    // properties on DOM nodes. For sure we cache many DOM node accesses, but even in
-    // Real Pages (TM), we appear to spend most of our time caching accesses to properties on
-    // vanilla objects or exotic objects from within JSC (like Arguments, those are super popular).
-    // Those common kinds of JSC object accesses don't hit this case.
-
-    for (WatchpointSet* set : accessCase.commit(vm)) {
-        Watchpoint* watchpoint = WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(watchpoints, codeBlock, &stubInfo);
-        set->add(watchpoint);
-    }
-}
-
 static inline bool canUseMegamorphicPutFastPath(Structure* structure)
 {
     while (true) {
@@ -4068,7 +4042,37 @@ enum class HandlerICType : uint8_t {
     MegamorphicById,
 };
 
-AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSLocker& locker, PolymorphicAccess& poly, CodeBlock* codeBlock)
+static Vector<WatchpointSet*, 3> collectAdditionalWatchpoints(VM& vm, AccessCase& accessCase)
+{
+    // It's fine to commit something that is already committed. That arises when we switch to using
+    // newly allocated watchpoints. When it happens, it's not efficient - but we think that's OK
+    // because most AccessCases have no extra watchpoints anyway.
+
+    Vector<WatchpointSet*, 3> result;
+    Structure* structure = accessCase.structure();
+
+    if (accessCase.identifier()) {
+        if ((structure && structure->needImpurePropertyWatchpoint())
+            || accessCase.conditionSet().needImpurePropertyWatchpoint()
+            || (accessCase.polyProtoAccessChain() && accessCase.polyProtoAccessChain()->needImpurePropertyWatchpoint(vm)))
+            result.append(vm.ensureWatchpointSetForImpureProperty(accessCase.identifier().uid()));
+    }
+
+    if (WatchpointSet* set  = accessCase.additionalSet())
+        result.append(set);
+
+    if (structure
+        && structure->hasRareData()
+        && structure->rareData()->hasSharedPolyProtoWatchpoint()
+        && structure->rareData()->sharedPolyProtoWatchpoint()->isStillValid()) {
+        WatchpointSet* set = structure->rareData()->sharedPolyProtoWatchpoint()->inflate();
+        result.append(set);
+    }
+
+    return result;
+}
+
+AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSLocker&, PolymorphicAccess& poly, CodeBlock* codeBlock)
 {
     SuperSamplerScope superSamplerScope(false);
 
@@ -4079,6 +4083,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     // m_list in-place because we may still fail, in which case we want the PolymorphicAccess object
     // to be unmutated. For sure, we want it to hang onto any data structures that may be referenced
     // from the code of the current stub (aka previous).
+    Vector<WatchpointSet*, 8> additionalWatchpointSets;
     PolymorphicAccess::ListType cases;
     cases.reserveInitialCapacity(poly.m_list.size());
     unsigned srcIndex = 0;
@@ -4086,6 +4091,12 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         [&] () {
             if (!someCase->couldStillSucceed())
                 return;
+
+            auto sets = collectAdditionalWatchpoints(vm(), *someCase);
+            for (auto* set : sets) {
+                if (!set->isStillValid())
+                    return;
+            }
 
             // Figure out if this is replaced by any later case. Given two cases A and B where A
             // comes first in the case list, we know that A would have triggered first if we had
@@ -4107,11 +4118,12 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             // If the case had been generated, then we have to keep the original in m_list in case we
             // fail to regenerate. That case may have data structures that are used by the code that it
             // had generated. If the case had not been generated, then we want to remove it from m_list.
-            bool isGeneratedAndDoesJSCalls = someCase->state() == AccessCase::Generated && doesJSCalls(someCase->type());
-            if (isGeneratedAndDoesJSCalls)
+            if (doesJSCalls(someCase->type()))
                 cases.append(someCase->clone());
             else
                 cases.append(someCase);
+
+            additionalWatchpointSets.appendVector(sets);
         }();
         ++srcIndex;
     }
@@ -4333,7 +4345,12 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     dataLogLnIf(InlineCacheCompilerInternal::verbose, "Optimized cases: ", listDump(cases));
 
     auto finishCodeGeneration = [&](Ref<PolymorphicAccessJITStubRoutine>&& stub) {
-        auto handler = InlineCacheHandler::create(WTFMove(stub), WTFMove(m_watchpoints));
+        std::unique_ptr<StructureStubInfoClearingWatchpoint> watchpoint;
+        if (stub->watchpoints()) {
+            watchpoint = makeUnique<StructureStubInfoClearingWatchpoint>(codeBlock, m_stubInfo);
+            stub->watchpointSet().add(watchpoint.get());
+        }
+        auto handler = InlineCacheHandler::create(WTFMove(stub), WTFMove(watchpoint));
         dataLogLnIf(InlineCacheCompilerInternal::verbose, "Returning: ", handler->callTarget());
 
         poly.m_list = WTFMove(cases);
@@ -4432,8 +4449,6 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 acceptValueProperty = true;
         } else
             allGuardedByStructureCheck &= entry->guardedByStructureCheckSkippingConstantIdentifierCheck();
-
-        commit(locker, vm(), m_watchpoints, codeBlock, *m_stubInfo, *entry);
 
         keys[index] = entry;
         ++index;
@@ -4694,7 +4709,6 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     }
 
     RefPtr<PolymorphicAccessJITStubRoutine> stub;
-    FixedVector<StructureID> weakStructures(WTFMove(m_weakStructures));
     if (codeBlock->useDataIC() && canBeShared) {
         SharedJITStubSet::Searcher searcher {
             SharedJITStubSet::stubInfoKey(*m_stubInfo),
@@ -4728,7 +4742,27 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         owner = nullptr;
     }
 
+    FixedVector<StructureID> weakStructures(WTFMove(m_weakStructures));
     stub = createICJITStubRoutine(code, WTFMove(keys), WTFMove(weakStructures), vm(), owner, doesCalls, cellsToMark, WTFMove(m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
+
+    {
+        std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
+
+        for (auto& condition : m_conditions)
+            WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint(vm(), watchpoints, stub.get(), condition);
+
+        // NOTE: We currently assume that this is relatively rare. It mainly arises for accesses to
+        // properties on DOM nodes. For sure we cache many DOM node accesses, but even in
+        // Real Pages (TM), we appear to spend most of our time caching accesses to properties on
+        // vanilla objects or exotic objects from within JSC (like Arguments, those are super popular).
+        // Those common kinds of JSC object accesses don't hit this case.
+        for (WatchpointSet* set : additionalWatchpointSets) {
+            Watchpoint* watchpoint = WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(vm(), watchpoints, stub.get());
+            set->add(watchpoint);
+        }
+
+        stub->setWatchpoints(WTFMove(watchpoints));
+    }
 
     if (handlerICType) {
         ASSERT(codeBlock->useDataIC());
@@ -4747,9 +4781,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 PolymorphicAccess::PolymorphicAccess() = default;
 PolymorphicAccess::~PolymorphicAccess() = default;
 
-AccessGenerationResult PolymorphicAccess::addCases(
-    const GCSafeConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
-    Vector<RefPtr<AccessCase>, 2> originalCasesToAdd)
+AccessGenerationResult PolymorphicAccess::addCases(const GCSafeConcurrentJSLocker&, VM& vm, CodeBlock*, StructureStubInfo& stubInfo, Vector<RefPtr<AccessCase>, 2> originalCasesToAdd)
 {
     SuperSamplerScope superSamplerScope(false);
 
@@ -4831,7 +4863,7 @@ AccessGenerationResult PolymorphicAccess::addCases(
     // Now add things to the new list. Note that at this point, we will still have old cases that
     // may be replaced by the new ones. That's fine. We will sort that out when we regenerate.
     for (auto& caseToAdd : casesToAdd) {
-        commit(locker, vm, m_watchpoints, codeBlock, stubInfo, *caseToAdd);
+        collectAdditionalWatchpoints(vm, *caseToAdd);
         m_list.append(WTFMove(caseToAdd));
     }
 
@@ -4952,23 +4984,6 @@ void printInternal(PrintStream& out, AccessCase::AccessType type)
 
 #undef JSC_DEFINE_ACCESS_TYPE_CASE
     }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-void printInternal(PrintStream& out, AccessCase::State state)
-{
-    switch (state) {
-    case AccessCase::Primordial:
-        out.print("Primordial");
-        return;
-    case AccessCase::Committed:
-        out.print("Committed");
-        return;
-    case AccessCase::Generated:
-        out.print("Generated");
-        return;
-    }
-
     RELEASE_ASSERT_NOT_REACHED();
 }
 

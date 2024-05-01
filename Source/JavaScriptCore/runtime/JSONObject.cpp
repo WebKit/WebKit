@@ -1181,7 +1181,7 @@ void FastStringifier<CharType>::append(JSValue value)
             if (needComma)
                 m_buffer[m_length++] = ',';
             m_buffer[m_length] = '"';
-            auto* characters = name.characters8();
+            auto characters = name.span8();
             for (unsigned i = 0; i < nameLength; ++i) {
                 auto character = characters[i];
                 if (UNLIKELY(WTF::escapedFormsForJSON[character])) {

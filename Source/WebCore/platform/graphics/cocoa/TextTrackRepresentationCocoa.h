@@ -32,6 +32,15 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class TextTrackRepresentationCocoa;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TextTrackRepresentationCocoa> : std::true_type { };
+}
+
 @class WebCoreTextTrackRepresentationCocoaHelper;
 
 namespace WebCore {

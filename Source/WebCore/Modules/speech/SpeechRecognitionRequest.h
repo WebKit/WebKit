@@ -29,6 +29,15 @@
 #include "SpeechRecognitionRequestInfo.h"
 
 namespace WebCore {
+class SpeechRecognitionRequest;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SpeechRecognitionRequest> : std::true_type { };
+}
+
+namespace WebCore {
 
 class SpeechRecognitionRequest : public CanMakeWeakPtr<SpeechRecognitionRequest> {
     WTF_MAKE_FAST_ALLOCATED;

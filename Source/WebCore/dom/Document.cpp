@@ -4125,7 +4125,7 @@ URL Document::fallbackBaseURL() const
     if (documentURL.isAboutBlank()) {
         RefPtr creator = parentDocument();
         if (!creator && frame()) {
-            if (RefPtr localOpener = dynamicDowncast<LocalFrame>(frame()->loader().opener()))
+            if (RefPtr localOpener = dynamicDowncast<LocalFrame>(frame()->opener()))
                 creator = localOpener->document();
         }
         if (creator)
@@ -4381,7 +4381,7 @@ bool Document::canNavigateInternal(Frame& targetFrame)
     // and/or "parent" relation). Requiring some sort of relation prevents a
     // document from navigating arbitrary, unrelated top-level frames.
     if (!targetFrame.tree().parent()) {
-        if (&targetFrame == m_frame->loader().opener())
+        if (&targetFrame == m_frame->opener())
             return true;
 
         if (RefPtr localOpener = dynamicDowncast<LocalFrame>(targetFrame.opener())) {
@@ -5369,6 +5369,11 @@ void Document::appendAutofocusCandidate(Element& candidate)
     if (it != m_autofocusCandidates.end())
         m_autofocusCandidates.remove(it);
     m_autofocusCandidates.append(candidate);
+}
+
+void Document::clearAutofocusCandidates()
+{
+    m_autofocusCandidates.clear();
 }
 
 // https://html.spec.whatwg.org/multipage/interaction.html#flush-autofocus-candidates
@@ -7082,6 +7087,19 @@ Document& Document::topDocument() const
     return *document;
 }
 
+bool Document::isTopDocument() const
+{
+    if (!settings().siteIsolationEnabled())
+        return isTopDocumentLegacy();
+
+    if (WeakPtr currentFrame = frame()) {
+        if (auto localMainFrame = dynamicDowncast<LocalFrame>(currentFrame->mainFrame()))
+            return localMainFrame->document() == this;
+    }
+
+    return false;
+}
+
 ScriptRunner& Document::ensureScriptRunner()
 {
     ASSERT(!m_scriptRunner);
@@ -7417,7 +7435,7 @@ void Document::initSecurityContext()
     // If we do not obtain a meaningful origin from the URL, then we try to
     // find one via the frame hierarchy.
     RefPtr parentFrame = m_frame->tree().parent();
-    RefPtr openerFrame = dynamicDowncast<LocalFrame>(m_frame->loader().opener());
+    RefPtr openerFrame = dynamicDowncast<LocalFrame>(m_frame->opener());
 
     RefPtr ownerFrame = dynamicDowncast<LocalFrame>(parentFrame.get());
     if (!ownerFrame)
@@ -7475,7 +7493,7 @@ void Document::initContentSecurityPolicy()
     // delivered with a local scheme (e.g. blob, file, data) should inherit a policy.
     if (!isPluginDocument())
         return;
-    RefPtr openerFrame = dynamicDowncast<LocalFrame>(m_frame->loader().opener());
+    RefPtr openerFrame = dynamicDowncast<LocalFrame>(m_frame->opener());
     bool shouldInhert = parentFrame || (openerFrame && openerFrame->document()->securityOrigin().isSameOriginDomain(securityOrigin()));
     if (!shouldInhert)
         return;

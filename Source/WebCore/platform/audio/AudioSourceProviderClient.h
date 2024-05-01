@@ -28,6 +28,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class AudioSourceProviderClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AudioSourceProviderClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class AudioSourceProviderClient : public CanMakeWeakPtr<AudioSourceProviderClient, WeakPtrFactoryInitialization::Eager> {
 public:

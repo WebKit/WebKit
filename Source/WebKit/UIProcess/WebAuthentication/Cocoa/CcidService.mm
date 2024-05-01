@@ -55,7 +55,7 @@
 
 namespace WebKit {
 
-CcidService::CcidService(Observer& observer)
+CcidService::CcidService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
     , m_restartTimer(RunLoop::main(), this, &CcidService::platformStartDiscovery)
 {

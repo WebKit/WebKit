@@ -34,7 +34,7 @@ class RemoteLayerBackingStore;
 class RemoteLayerBackingStoreProperties;
 
 enum class LayerChangeIndex : size_t {
-    EventRegionChanged = 39,
+    EventRegionChanged = 40,
 #if ENABLE(SCROLLING_THREAD)
     ScrollingNodeIDChanged,
 #endif
@@ -90,6 +90,7 @@ enum class LayerChange : uint64_t {
     ContentsHiddenChanged               = 1LLU << 36,
     UserInteractionEnabledChanged       = 1LLU << 37,
     BackdropRootChanged                 = 1LLU << 38,
+    BackdropRootIsOpaqueChanged         = 1LLU << 39,
     EventRegionChanged                  = 1LLU << static_cast<size_t>(LayerChangeIndex::EventRegionChanged),
 #if ENABLE(SCROLLING_THREAD)
     ScrollingNodeIDChanged              = 1LLU << static_cast<size_t>(LayerChangeIndex::ScrollingNodeIDChanged),
@@ -186,6 +187,7 @@ struct LayerProperties {
     bool contentsHidden { false };
     bool userInteractionEnabled { true };
     bool backdropRoot { false };
+    bool backdropRootIsOpaque { false };
     WebCore::EventRegion eventRegion;
 
 #if ENABLE(SCROLLING_THREAD)

@@ -549,7 +549,7 @@ static void errorFunc(void*, const char*, ...)
 
 static xmlExternalEntityLoader defaultEntityLoader { nullptr };
 
-static xmlParserInputPtr entityLoader(const char* url, const char* id, xmlParserCtxtPtr context)
+xmlParserInputPtr externalEntityLoader(const char* url, const char* id, xmlParserCtxtPtr context)
 {
     if (!shouldAllowExternalLoad(URL(String::fromUTF8(url))))
         return nullptr;
@@ -564,7 +564,7 @@ static void initializeXMLParser()
         xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, closeFunc);
         xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, closeFunc);
         defaultEntityLoader = xmlGetExternalEntityLoader();
-        xmlSetExternalEntityLoader(entityLoader);
+        RELEASE_ASSERT_WITH_MESSAGE(defaultEntityLoader != WebCore::externalEntityLoader, "XMLDocumentParserScope was created too early");
         libxmlLoaderThread = &Thread::current();
     });
 }
@@ -1157,15 +1157,14 @@ static xmlEntityPtr sharedXHTMLEntity()
 
 static size_t convertUTF16EntityToUTF8(std::span<const UChar> utf16Entity, char* target, size_t targetSize)
 {
-    const char* originalTarget = target;
-    auto conversionResult = WTF::Unicode::convertUTF16ToUTF8(utf16Entity, &target, target + targetSize);
-    if (conversionResult != WTF::Unicode::ConversionResult::Success)
+    auto result = WTF::Unicode::convert(utf16Entity, { reinterpret_cast<char8_t*>(target), targetSize });
+    if (result.code != WTF::Unicode::ConversionResultCode::Success)
         return 0;
 
     // Even though we must pass the length, libxml expects the entity string to be null terminated.
-    ASSERT(target >= originalTarget + 1);
-    *target = '\0';
-    return target - originalTarget;
+    ASSERT(!result.buffer.empty());
+    target[result.buffer.size()] = '\0';
+    return result.buffer.size();
 }
 
 static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
@@ -1312,7 +1311,6 @@ void XMLDocumentParser::initializeParserContext(const CString& chunk)
     m_sawXSLTransform = false;
     m_sawFirstElement = false;
 
-    XMLDocumentParserScope scope(&document()->cachedResourceLoader());
     if (m_parsingFragment)
         m_context = XMLParserContext::createMemoryParser(&sax, this, chunk);
     else {
@@ -1452,6 +1450,7 @@ bool XMLDocumentParser::appendFragmentSource(const String& chunk)
         return false;
 
     initializeParserContext(chunkAsUTF8);
+    XMLDocumentParserScope scope(&document()->cachedResourceLoader());
     xmlParseContent(context());
     endDocument(); // Close any open text nodes.
 
@@ -1495,7 +1494,7 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
     }
 }
 
-std::optional<HashMap<String, String>> parseAttributes(const String& string)
+std::optional<HashMap<String, String>> parseAttributes(CachedResourceLoader& cachedResourceLoader, const String& string)
 {
     String parseString = "<?xml version=\"1.0\"?><attrs " + string + " />";
 
@@ -1508,6 +1507,7 @@ std::optional<HashMap<String, String>> parseAttributes(const String& string)
 
     auto parser = XMLParserContext::createStringParser(&sax, &attributes);
 
+    XMLDocumentParserScope scope(&cachedResourceLoader);
     // FIXME: Can we parse 8-bit strings directly as Latin-1 instead of upconverting to UTF-16?
     xmlParseChunk(parser->context(), reinterpret_cast<const char*>(StringView(parseString).upconvertedCharacters().get()), parseString.length() * sizeof(UChar), 1);
 

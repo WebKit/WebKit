@@ -38,6 +38,15 @@ OBJC_CLASS NSError;
 OBJC_CLASS NSString;
 OBJC_CLASS NSDictionary;
 
+namespace WebKit {
+class PushServiceConnection;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PushServiceConnection> : std::true_type { };
+}
+
 namespace WebPushD {
 
 class PushServiceConnection : public CanMakeWeakPtr<PushServiceConnection> {

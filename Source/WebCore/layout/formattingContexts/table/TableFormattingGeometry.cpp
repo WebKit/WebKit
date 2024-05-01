@@ -60,7 +60,7 @@ LayoutUnit TableFormattingGeometry::cellBoxContentHeight(const ElementBox& cellB
     return contentHeightForFormattingContextRoot(cellBox);
 }
 
-BoxGeometry::Edges TableFormattingGeometry::computedCellBorder(const TableGrid::Cell& cell) const
+BoxGeometry::Edges TableFormattingGeometry::computedCellBorder(const TableGridCell& cell) const
 {
     auto& grid = formattingContext().formattingState().tableGrid();
     auto& cellBox = cell.box();
@@ -116,7 +116,7 @@ std::optional<LayoutUnit> TableFormattingGeometry::computedColumnWidth(const Ele
     return columnBox.columnWidth();
 }
 
-IntrinsicWidthConstraints TableFormattingGeometry::intrinsicWidthConstraintsForCellContent(const TableGrid::Cell& cell) const
+IntrinsicWidthConstraints TableFormattingGeometry::intrinsicWidthConstraintsForCellContent(const TableGridCell& cell) const
 {
     auto& cellBox = cell.box();
     if (!cellBox.hasInFlowOrFloatingChild())
@@ -147,7 +147,7 @@ InlineLayoutUnit TableFormattingGeometry::usedBaselineForCell(const ElementBox& 
     return formattingContext().geometryForBox(cellBox).contentBoxBottom();
 }
 
-LayoutUnit TableFormattingGeometry::horizontalSpaceForCellContent(const TableGrid::Cell& cell) const
+LayoutUnit TableFormattingGeometry::horizontalSpaceForCellContent(const TableGridCell& cell) const
 {
     auto& grid = formattingContext().formattingState().tableGrid();
     auto& columnList = grid.columns().list();
@@ -161,7 +161,7 @@ LayoutUnit TableFormattingGeometry::horizontalSpaceForCellContent(const TableGri
     return logicalWidth;
 }
 
-LayoutUnit TableFormattingGeometry::verticalSpaceForCellContent(const TableGrid::Cell& cell, std::optional<LayoutUnit> availableVerticalSpace) const
+LayoutUnit TableFormattingGeometry::verticalSpaceForCellContent(const TableGridCell& cell, std::optional<LayoutUnit> availableVerticalSpace) const
 {
     auto& cellBox = cell.box();
     auto contentHeight = cellBoxContentHeight(cellBox);
