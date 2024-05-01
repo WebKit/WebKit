@@ -393,7 +393,7 @@ static inline double solveEpsilon(double duration) { return 1 / (200 * duration)
 
 const Vector<float>& SVGAnimationElement::keyTimes() const
 {
-    return calcMode() == CalcMode::Paced ? m_keyTimesForPaced : m_keyTimesFromAttribute;
+    return (calcMode() == CalcMode::Paced && animationMode() != AnimationMode::Path) ? m_keyTimesForPaced : m_keyTimesFromAttribute;
 }
 
 unsigned SVGAnimationElement::calculateKeyTimesIndex(float percent) const
@@ -589,7 +589,7 @@ void SVGAnimationElement::startedActiveInterval()
         if (calcMode == CalcMode::Paced && m_animationValid)
             calculateKeyTimesForCalcModePaced();
     } else if (animationMode == AnimationMode::Path)
-        m_animationValid = calcMode == CalcMode::Paced || !hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) || (keyTimes.size() > 1 && keyTimes.size() == m_keyPoints.size());
+        m_animationValid = !hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) || (keyTimes.size() > 1 && keyTimes.size() == m_keyPoints.size());
 }
 
 void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount)
