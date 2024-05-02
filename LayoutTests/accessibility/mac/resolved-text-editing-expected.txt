@@ -1,8 +1,4 @@
-a
 This tests that we can retrieve resolved editing styles from the editable text area.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
 
 {
     bold = 0;
@@ -13,4 +9,4 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+a
