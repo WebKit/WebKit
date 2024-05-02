@@ -2947,4 +2947,45 @@ TEST(SiteIsolation, PresentationUpdateAfterCrossSiteNavigation)
     [webView waitForNextPresentationUpdate];
 }
 
+TEST(SiteIsolation, NavigateIFrameBackForward)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/source'></iframe>"_s } },
+        { "/source"_s, { "<script> alert('done'); </script>"_s } },
+        { "/destination"_s, { "<script> alert('done'); </script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
+
+    __block RetainPtr<WKFrameInfo> childFrameInfo;
+    __block bool done = false;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrameInfo = mainFrame.childFrames.firstObject.info;
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/destination'" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
+
+    [webView goBack];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
+    [webView evaluateJavaScript:@"location.href" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *) {
+        EXPECT_STREQ([result UTF8String], "https://webkit.org/source");
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    [webView goForward];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
+    [webView evaluateJavaScript:@"location.href" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *) {
+        EXPECT_STREQ([result UTF8String], "https://webkit.org/destination");
+        done = true;
+    }];
+    Util::run(&done);
+}
+
 }

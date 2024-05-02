@@ -756,16 +756,12 @@ void Page::goToItem(HistoryItem& item, FrameLoadType type, ShouldTreatAsContinui
     // being deref()-ed. Make sure we can still use it with HistoryController::goToItem later.
     Ref protectedItem { item };
 
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame);
-    if (!localMainFrame)
-        return;
-
-    if (localMainFrame->checkedHistory()->shouldStopLoadingForHistoryItem(item)) {
-        if (localMainFrame)
+    Ref mainFrame = m_mainFrame;
+    if (mainFrame->checkedHistory()->shouldStopLoadingForHistoryItem(item)) {
+        if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame))
             localMainFrame->checkedLoader()->stopAllLoadersAndCheckCompleteness();
     }
-
-    localMainFrame->checkedHistory()->goToItem(item, type, shouldTreatAsContinuingLoad);
+    mainFrame->checkedHistory()->goToItem(item, type, shouldTreatAsContinuingLoad);
 }
 
 void Page::setGroupName(const String& name)
