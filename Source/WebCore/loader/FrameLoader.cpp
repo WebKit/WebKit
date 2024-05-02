@@ -3349,6 +3349,10 @@ void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, con
         request.setIsSameSite(true);
         return;
     }
+    if (initiator->quirks().needsLaxSameSiteCookieQuirk()) {
+        request.setIsSameSite(true);
+        return;
+    }
 #endif
 
     request.setIsSameSite(initiator->isSameSiteForCookies(request.url()));
