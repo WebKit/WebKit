@@ -83,6 +83,15 @@ Vector<CDMProxyFactory*> CDMProxyFactory::platformRegisterFactories()
 }
 #endif
 
+bool KeyHandle::takeValueIfDifferent(KeyHandleValueVariant&& value)
+{
+    if (m_value != value) {
+        m_value = WTFMove(value);
+        return true;
+    }
+    return false;
+}
+
 namespace {
 
 static String vectorToHexString(const Vector<uint8_t>& vec)
@@ -100,135 +109,38 @@ String KeyHandle::idAsString() const
     return makeString("[", vectorToHexString(m_id), "]");
 }
 
-bool KeyHandle::takeValueIfDifferent(KeyHandleValueVariant&& value)
+KeyStoreIDType keyStoreBaseNextID()
 {
-    if (m_value != value) {
-        m_value = WTFMove(value);
-        return true;
+    static KeyStoreIDType nextID = 1;
+    ASSERT(isMainThread());
+    return nextID++;
+}
+
+void ReferenceAwareKeyStore::unrefAllKeysFrom(const KeyStore& otherStore)
+{
+    for (const auto& otherKey : otherStore.values()) {
+        auto findingResult = m_keys.find(otherKey->id());
+        if (findingResult == m_keys.end())
+            continue;
+        const RefPtr<ReferenceAwareKeyHandle>& key = findingResult->value;
+        RELEASE_ASSERT(key);
+        key->removeReference(otherStore.id());
+        if (!key->hasReferences())
+            remove(key);
     }
-    return false;
 }
 
-bool KeyStore::containsKeyID(const KeyIDType& keyID) const
-{
-    return m_keys.findIf([&](const RefPtr<KeyHandle>& storedKey) {
-        return *storedKey == keyID;
-    }) != notFound;
-}
-
-void KeyStore::merge(const KeyStore& other)
+void ReferenceAwareKeyStore::merge(const KeyStore& otherStore)
 {
     ASSERT(isMainThread());
-    LOG(EME, "EME - CDMProxy - merging %u new keys into a key store of %u keys", other.numKeys(), numKeys());
-    for (const auto& key : other)
-        add(key.copyRef());
-
-#if !LOG_DISABLED
-    LOG(EME, "EME - CDMProxy - key store now has %u keys", numKeys());
-    for (const auto& key : m_keys)
-        LOG(EME, "\tEME - CDMProxy - Key ID: %s", key->idAsString().ascii().data());
-#endif // !LOG_DISABLED
-}
-
-CDMInstanceSession::KeyStatusVector KeyStore::allKeysAs(CDMInstanceSession::KeyStatus status) const
-{
-    CDMInstanceSession::KeyStatusVector keyStatusVector = convertToJSKeyStatusVector();
-    for (auto& keyStatus : keyStatusVector)
-        keyStatus.second = status;
-    return keyStatusVector;
-}
-
-bool KeyStore::addKeys(Vector<RefPtr<KeyHandle>>&& newKeys)
-{
-    bool didKeyStoreChange = false;
-    for (auto& key : newKeys) {
-        if (add(WTFMove(key)))
-            didKeyStoreChange = true;
+    for (const auto& otherKey : otherStore.values()) {
+        RefPtr<ReferenceAwareKeyHandle> key = keyHandle(otherKey->id());
+        auto otherReferenceAwareKey = ReferenceAwareKeyHandle::createFrom(otherKey, otherStore.id());
+        if (key)
+            key->updateKeyFrom(WTFMove(otherReferenceAwareKey));
+        else
+            add(WTFMove(otherReferenceAwareKey));
     }
-    return didKeyStoreChange;
-}
-
-bool KeyStore::add(RefPtr<KeyHandle>&& key)
-{
-    bool didStoreChange = false;
-    size_t keyWithMatchingKeyIDIndex = m_keys.findIf([&] (const RefPtr<KeyHandle>& storedKey) {
-        return *key == *storedKey;
-    });
-
-    addSessionReferenceTo(key);
-    if (keyWithMatchingKeyIDIndex != notFound) {
-        auto& keyWithMatchingKeyID = m_keys[keyWithMatchingKeyIDIndex];
-        didStoreChange = keyWithMatchingKeyID != key;
-        if (didStoreChange)
-            keyWithMatchingKeyID->mergeKeyInto(WTFMove(key));
-    } else {
-        LOG(EME, "EME - ClearKey - New key with ID %s getting added to key store", key->idAsString().ascii().data());      
-        m_keys.append(WTFMove(key));
-        didStoreChange = true;
-    }
-
-    if (didStoreChange) {
-        // Sort the keys lexicographically.
-        // NOTE: This is not as pathological as it may seem, for all
-        // practical purposes the store has a maximum of 2 keys.
-        std::sort(m_keys.begin(), m_keys.end(),
-            [](const RefPtr<KeyHandle>& a, const RefPtr<KeyHandle>& b) {
-                return *a < *b;
-            });
-    }
-
-    return didStoreChange;
-}
-
-void KeyStore::unrefAllKeysFrom(const KeyStore& other)
-{
-    for (const auto& key : other)
-        unref(key);
-}
-
-void KeyStore::unrefAllKeys()
-{
-    KeyStore store(*this);
-    unrefAllKeysFrom(store);
-}
-
-bool KeyStore::unref(const RefPtr<KeyHandle>& key)
-{
-    bool storeChanged = false;
-
-    size_t keyWithMatchingKeyIDIndex = m_keys.find(key);
-    LOG(EME, "EME - ClearKey - requested to unref key with ID %s and %d session references", key->idAsString().ascii().data(), key->numSessionReferences());
-
-    if (keyWithMatchingKeyIDIndex != notFound) {
-        auto& keyWithMatchingKeyID = m_keys[keyWithMatchingKeyIDIndex];
-        removeSessionReferenceFrom(keyWithMatchingKeyID);
-        if (!keyWithMatchingKeyID->hasReferences()) {
-            LOG(EME, "EME - ClearKey - unref key with ID %s", keyWithMatchingKeyID->idAsString().ascii().data());
-            m_keys.remove(keyWithMatchingKeyIDIndex);
-            storeChanged = true;
-        }
-    } else
-        LOG(EME, "EME - ClearKey - attempt to unref key with ID %s ignored, does not exist", key->idAsString().ascii().data());
-
-    return storeChanged;
-}
-
-const RefPtr<KeyHandle>& KeyStore::keyHandle(const KeyIDType& keyID) const
-{
-    for (const auto& key : m_keys) {
-        if (*key == keyID)
-            return key;
-    }
-    
-    RELEASE_ASSERT(false && "key must exist to call this method");
-    UNREACHABLE();
-}
-
-CDMInstanceSession::KeyStatusVector KeyStore::convertToJSKeyStatusVector() const
-{
-    return m_keys.map([](auto& key) {
-        return std::pair { key->idAsSharedBuffer(), key->status() };
-    });
 }
 
 void CDMProxy::updateKeyStore(const KeyStore& newKeyStore)
@@ -306,7 +218,7 @@ std::optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& key
             assertIsHeld(m_keysLock);
             if (!client || client->isAborting())
                 return true;
-            wasKeyAvailable = keyAvailableUnlocked(keyID);
+            wasKeyAvailable = isKeyAvailableUnlocked(keyID);
             return wasKeyAvailable;
         });
     }
@@ -321,20 +233,20 @@ std::optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& key
     return std::nullopt;
 }
 
-bool CDMProxy::keyAvailableUnlocked(const KeyIDType& keyID) const
+bool CDMProxy::isKeyAvailableUnlocked(const KeyIDType& keyID) const
 {
     return m_keyStore.containsKeyID(keyID);
 }
 
-bool CDMProxy::keyAvailable(const KeyIDType& keyID) const
+bool CDMProxy::isKeyAvailable(const KeyIDType& keyID) const
 {
     Locker locker { m_keysLock };
-    return keyAvailableUnlocked(keyID);
+    return isKeyAvailableUnlocked(keyID);
 }
 
 std::optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
 {
-    if (!keyAvailable(keyID)) {
+    if (!isKeyAvailable(keyID)) {
         LOG(EME, "EME - CDMProxy key cache does not contain key ID %s", vectorToHexString(keyID).ascii().data());
         return tryWaitForKeyHandle(keyID, WTFMove(client));
     }

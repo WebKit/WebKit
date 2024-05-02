@@ -640,10 +640,9 @@ void CDMInstanceSessionThunder::closeSession(const String& sessionID, CloseSessi
         opencdm_session_close(m_session->get());
         m_session = BoxPtr<OpenCDMSession>();
         auto instance = cdmInstanceThunder();
-        if (instance) {
+        if (instance)
             instance->unrefAllKeysFrom(m_keyStore);
-            m_keyStore.unrefAllKeys();
-        }
+        m_keyStore.clear();
     }
 
     callback();
