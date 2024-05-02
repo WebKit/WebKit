@@ -308,7 +308,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         m_originalDocumentNodes.set(uuid, contents.returnValue()); // Deep clone.
     }
 
-    RefPtr fragment = WebCore::createFragment(*document->frame(), attributedText.nsAttributedString().get(), { WebCore::FragmentCreationOptions::IgnoreResources, WebCore::FragmentCreationOptions::NoInterchangeNewlines });
+    RefPtr fragment = WebCore::createFragment(*document->frame(), attributedText.nsAttributedString().get(), { WebCore::FragmentCreationOptions::NoInterchangeNewlines });
     if (!fragment) {
         ASSERT_NOT_REACHED();
         return;
