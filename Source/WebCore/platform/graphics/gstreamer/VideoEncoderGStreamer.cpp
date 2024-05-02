@@ -287,37 +287,9 @@ GStreamerInternalVideoEncoder::~GStreamerInternalVideoEncoder()
 String GStreamerInternalVideoEncoder::initialize(const String& codecName, const VideoEncoder::Config& config)
 {
     GST_DEBUG_OBJECT(m_harness->element(), "Initializing encoder for codec %s", codecName.ascii().data());
-    GRefPtr<GstCaps> encoderCaps;
-    if (codecName == "vp8"_s)
-        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp8"));
-    else if (codecName.startsWith("vp09"_s))
-        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
-    else if (codecName.startsWith("avc1"_s)) {
-        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
-        auto [profile, level] = GStreamerCodecUtilities::parseH264ProfileAndLevel(codecName);
-        if (profile)
-            gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, profile, nullptr);
-        // FIXME: Set level on caps too?
-        UNUSED_VARIABLE(level);
-    } else if (codecName.startsWith("av01"_s)) {
-        // FIXME: parse codec parameters.
-        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-av1"));
-    } else if (codecName.startsWith("hvc1"_s) || codecName.startsWith("hev1"_s)) {
-        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h265"));
-        if (const char* profile = GStreamerCodecUtilities::parseHEVCProfile(codecName))
-            gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, profile, nullptr);
-    } else
-        return makeString("Unsupported outgoing video encoding: "_s, codecName);
-
-    if (config.width)
-        gst_caps_set_simple(encoderCaps.get(), "width", G_TYPE_INT, static_cast<int>(config.width), nullptr);
-    if (config.height)
-        gst_caps_set_simple(encoderCaps.get(), "height", G_TYPE_INT, static_cast<int>(config.height), nullptr);
-
+    IntSize size { static_cast<int>(config.width), static_cast<int>(config.height) };
     // FIXME: Propagate config.frameRate to caps?
-    gst_caps_set_simple(encoderCaps.get(), "framerate", GST_TYPE_FRACTION, 1, 1, nullptr);
-
-    if (!videoEncoderSetFormat(WEBKIT_VIDEO_ENCODER(m_harness->element()), WTFMove(encoderCaps), codecName))
+    if (!videoEncoderSetCodec(WEBKIT_VIDEO_ENCODER(m_harness->element()), codecName, { size }))
         return "Unable to set encoder format"_s;
 
     if (config.bitRate > 1000)

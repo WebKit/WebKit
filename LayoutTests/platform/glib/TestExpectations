@@ -1196,10 +1196,6 @@ imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.
 
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
 
-# Colorimetry-related failures, to be fixed by proper av01 codec string parsing/handling.
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?av1 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?av1 [ Failure ]
-
 # Our MP3 decoder is not yet spec-compliant (reverse decoding, mostly).
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp3 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp3 [ Failure ]
