@@ -100,6 +100,20 @@ private:
     }
 };
 
+static Vector<RefPtr<MediaSourceTrackGStreamer>> filterOutRepeatingTracks(const Vector<RefPtr<MediaSourceTrackGStreamer>>& tracks)
+{
+    Vector<RefPtr<MediaSourceTrackGStreamer>> uniqueTracks;
+    uniqueTracks.reserveInitialCapacity(tracks.size());
+
+    for (const auto& track : tracks) {
+        if (!uniqueTracks.containsIf([&track](const auto& current) { return track->stringId() == current->stringId(); }))
+            uniqueTracks.append(track);
+    }
+
+    uniqueTracks.shrinkToFit();
+    return uniqueTracks;
+}
+
 void MediaPlayerPrivateGStreamerMSE::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     GST_DEBUG_CATEGORY_INIT(webkit_mse_debug, "webkitmse", 0, "WebKit MSE media player");
@@ -324,8 +338,10 @@ void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)
     webKitMediaSrcSetPlayer(WEBKIT_MEDIA_SRC(sourceElement), ThreadSafeWeakPtr { *this });
     m_source = sourceElement;
 
-    if (m_mediaSourcePrivate && m_mediaSourcePrivate->hasAllTracks())
+    if (m_mediaSourcePrivate && m_mediaSourcePrivate->hasAllTracks()) {
+        m_tracks = filterOutRepeatingTracks(m_tracks);
         webKitMediaSrcEmitStreams(WEBKIT_MEDIA_SRC(m_source.get()), m_tracks);
+    }
 }
 
 size_t MediaPlayerPrivateGStreamerMSE::extraMemoryCost() const
@@ -395,8 +411,8 @@ void MediaPlayerPrivateGStreamerMSE::setInitialVideoSize(const FloatSize& videoS
 
 void MediaPlayerPrivateGStreamerMSE::startSource(const Vector<RefPtr<MediaSourceTrackGStreamer>>& tracks)
 {
-    m_tracks = tracks;
-    webKitMediaSrcEmitStreams(WEBKIT_MEDIA_SRC(m_source.get()), tracks);
+    m_tracks = filterOutRepeatingTracks(tracks);
+    webKitMediaSrcEmitStreams(WEBKIT_MEDIA_SRC(m_source.get()), m_tracks);
 }
 
 void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String>& types)
