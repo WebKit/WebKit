@@ -4595,7 +4595,6 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     CodeBlock* owner = codeBlock;
     if (canBeShared) {
         ASSERT(codeBlock->useDataIC());
-        ASSERT(cellsToMark.isEmpty());
         owner = nullptr;
     }
 
