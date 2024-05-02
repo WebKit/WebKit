@@ -36,18 +36,18 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-void GStreamerTest::SetUp()
+void GStreamerTest::SetUpTestSuite()
 {
-    if (!gst_is_initialized())
-        gst_init(nullptr, nullptr);
+    ASSERT(!gst_is_initialized());
+    gst_init(nullptr, nullptr);
+    ASSERT(gst_is_initialized());
 }
 
-void GStreamerTest::TearDown()
+void GStreamerTest::TearDownTestSuite()
 {
-    // It might be tempting to call gst_deinit() here. However, that
-    // will tear down the whole process from the GStreamer POV, and the
-    // seemingly symmetrical call to gst_init() will fail to
-    // initialize GStreamer correctly.
+    ASSERT(gst_is_initialized());
+    gst_deinit();
+    ASSERT(!gst_is_initialized());
 }
 
 TEST_F(GStreamerTest, gstStructureJSONSerializing)

@@ -295,9 +295,9 @@ TEST_F(GStreamerTest, harnessParseMP4)
         event = stream->pullEvent();
         ASSERT_NOT_NULL(event.get());
         EXPECT_STREQ(GST_EVENT_TYPE_NAME(event.get()), "stream-collection");
-        GstStreamCollection* collection;
-        gst_event_parse_stream_collection(event.get(), &collection);
-        ASSERT_EQ(gst_stream_collection_get_size(collection), 2);
+        GRefPtr<GstStreamCollection> collection;
+        gst_event_parse_stream_collection(event.get(), &collection.outPtr());
+        ASSERT_EQ(gst_stream_collection_get_size(collection.get()), 2);
     }
 
     // We haven't pulled any buffer yet, so our buffer tracker should report empty metrics.
@@ -347,7 +347,7 @@ TEST_F(GStreamerTest, harnessDecodeMP4Video)
 
     size_t totalRead = 0;
     auto size = FileSystem::fileSize(handle).value_or(0);
-    GstStreamCollection* collection = nullptr;
+    GRefPtr<GstStreamCollection> collection;
     RefPtr<GStreamerElementHarness::Stream> harnessedStream;
     while (totalRead < size) {
         size_t bytesToRead = 512;
@@ -366,7 +366,7 @@ TEST_F(GStreamerTest, harnessDecodeMP4Video)
         for (auto& stream : harness->outputStreams()) {
             while (auto event = stream->pullEvent()) {
                 if (GST_EVENT_TYPE(event.get()) == GST_EVENT_STREAM_COLLECTION) {
-                    gst_event_parse_stream_collection(event.get(), &collection);
+                    gst_event_parse_stream_collection(event.get(), &collection.outPtr());
                     harnessedStream = stream;
                     break;
                 }
@@ -380,10 +380,11 @@ TEST_F(GStreamerTest, harnessDecodeMP4Video)
     }
 
     // Process the stream collection, discard all non-video streams.
-    unsigned collectionSize = gst_stream_collection_get_size(collection);
+    ASSERT(collection);
+    unsigned collectionSize = gst_stream_collection_get_size(collection.get());
     GList* streams = nullptr;
     for (unsigned i = 0; i < collectionSize; i++) {
-        auto* stream = gst_stream_collection_get_stream(collection, i);
+        auto stream = gst_stream_collection_get_stream(collection.get(), i);
         auto streamType = gst_stream_get_stream_type(stream);
         if (streamType == GST_STREAM_TYPE_VIDEO) {
             streams = g_list_append(streams, const_cast<char*>(gst_stream_get_stream_id(stream)));
