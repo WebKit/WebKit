@@ -152,6 +152,7 @@ public:
 
     GraphicsLayer* parentForSublayers() const;
     GraphicsLayer* childForSuperlayers() const;
+    GraphicsLayer* childForSuperlayersExcludingViewTransitions() const;
 
     // RenderLayers with backing normally short-circuit paintLayer() because
     // their content is rendered via callbacks from GraphicsLayer. However, the document

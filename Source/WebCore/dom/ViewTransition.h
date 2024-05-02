@@ -44,6 +44,7 @@ class DOMPromise;
 class DeferredPromise;
 class RenderLayerModelObject;
 class RenderViewTransitionCapture;
+class RenderLayerModelObject;
 
 enum class ViewTransitionPhase : uint8_t {
     PendingCapture,
@@ -156,6 +157,8 @@ public:
 
     Document* document() const { return downcast<Document>(scriptExecutionContext()); }
     RefPtr<Document> protectedDocument() const { return document(); }
+
+    bool documentElementIsCaptured() const;
 
     RenderViewTransitionCapture* viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject&);
 

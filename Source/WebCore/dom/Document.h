@@ -1675,6 +1675,7 @@ public:
 
     RefPtr<ViewTransition> startViewTransition(RefPtr<ViewTransitionUpdateCallback>&& = nullptr);
     ViewTransition* activeViewTransition() const;
+    bool activeViewTransitionCapturedDocumentElement() const;
     void setActiveViewTransition(RefPtr<ViewTransition>&&);
 
     bool hasViewTransitionPseudoElementTree() const;

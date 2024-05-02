@@ -1420,9 +1420,14 @@ void RenderLayerCompositor::collectViewTransitionNewContentLayers(RenderLayer& l
     if (!capturedRenderer || !capturedRenderer->hasLayer())
         return;
 
+    if (capturedRenderer->isDocumentElementRenderer()) {
+        capturedRenderer = &capturedRenderer->view();
+        ASSERT(capturedRenderer->hasLayer());
+    }
+
     auto& modelObject = downcast<RenderLayerModelObject>(*capturedRenderer);
     if (RenderLayerBacking* backing = modelObject.layer()->backing())
-        childList.append(*backing->childForSuperlayers());
+        childList.append(*backing->childForSuperlayersExcludingViewTransitions());
 }
 
 void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector<Ref<GraphicsLayer>>& childLayersOfEnclosingLayer, UpdateBackingTraversalState& traversalState, ScrollingTreeState& scrollingTreeState, OptionSet<UpdateLevel> updateLevel)
@@ -1561,7 +1566,13 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
             }
         }
 
-        if (!layer.renderer().capturedInViewTransition())
+        // Layers that are captured in a view transition get manually parented to their pseudo in collectViewTransitionNewContentLayers.
+        // The view transition root (when the document element is captured) gets parented in RenderLayerBacking::childForSuperlayers.
+        bool skipAddToEnclosing = layer.renderer().capturedInViewTransition() && !layer.renderer().isDocumentElementRenderer();
+        if (layer.renderer().isViewTransitionRoot() && layer.renderer().document().activeViewTransitionCapturedDocumentElement())
+            skipAddToEnclosing = true;
+
+        if (!skipAddToEnclosing)
             childLayersOfEnclosingLayer.append(*layerBacking->childForSuperlayers());
 
         if (layerBacking->hasAncestorClippingLayers() && layerBacking->ancestorClippingStack()->hasAnyScrollingLayers())

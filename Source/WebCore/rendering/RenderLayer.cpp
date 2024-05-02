@@ -3514,8 +3514,12 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
 #endif
 
     for (auto* childLayer : layerIterator) {
-        if (paintFlags.contains(PaintLayerFlag::PaintingSkipDescendantViewTransition) && childLayer->renderer().capturedInViewTransition() && !childLayer->renderer().isDocumentElementRenderer())
-            continue;
+        if (paintFlags.contains(PaintLayerFlag::PaintingSkipDescendantViewTransition)) {
+            if (childLayer->renderer().capturedInViewTransition() && !childLayer->renderer().isDocumentElementRenderer())
+                continue;
+            if (childLayer->renderer().isViewTransitionPseudo())
+                continue;
+        }
         childLayer->paintLayer(context, paintingInfo, paintFlags);
     }
 }

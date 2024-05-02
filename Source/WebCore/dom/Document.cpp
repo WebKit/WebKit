@@ -10502,6 +10502,13 @@ ViewTransition* Document::activeViewTransition() const
     return m_activeViewTransition.get();
 }
 
+bool Document::activeViewTransitionCapturedDocumentElement() const
+{
+    if (m_activeViewTransition)
+        return m_activeViewTransition->documentElementIsCaptured();
+    return false;
+}
+
 void Document::setActiveViewTransition(RefPtr<ViewTransition>&& viewTransition)
 {
     m_activeViewTransition = WTFMove(viewTransition);
