@@ -379,8 +379,8 @@ public:
 
     void openNewTab(const WebExtensionTabParameters&, CompletionHandler<void(RefPtr<WebExtensionTab>)>&&);
 
-    WindowVector openWindows() const;
-    TabVector openTabs() const;
+    WindowVector openWindows(IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
+    TabVector openTabs(IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
 
     RefPtr<WebExtensionWindow> focusedWindow(IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
     RefPtr<WebExtensionWindow> frontmostWindow(IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
