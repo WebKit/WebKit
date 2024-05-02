@@ -36,8 +36,6 @@
 
 namespace TestWebKitAPI {
 
-#if HAVE(CFNETWORK_NSURLSESSION_HSTS_WITH_UNTRUSTED_ROOT)
-
 std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> hstsWebViewAndDelegate(const HTTPServer& httpsServer, const HTTPServer& httpServer)
 {
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
@@ -215,7 +213,5 @@ TEST(HSTS, Preconnect)
     [webView _preconnectToServer:[NSURL URLWithString:@"http://example.com/"]];
     TestWebKitAPI::Util::run(&preconnectSuccessful);
 }
-
-#endif // HAVE(CFNETWORK_NSURLSESSION_HSTS_WITH_UNTRUSTED_ROOT)
 
 } // namespace TestWebKitAPI

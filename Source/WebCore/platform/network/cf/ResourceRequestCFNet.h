@@ -34,7 +34,6 @@ namespace WebCore {
 
 class ResourceRequest;
 
-#if HAVE(CFNETWORK_NSURLSESSION_CONNECTION_CACHE_LIMITS)
 inline ResourceLoadPriority toResourceLoadPriority(CFURLRequestPriority priority)
 {
     switch (priority) {
@@ -73,48 +72,6 @@ inline CFURLRequestPriority toPlatformRequestPriority(ResourceLoadPriority prior
     ASSERT_NOT_REACHED();
     return 0;
 }
-
-#else
-
-inline ResourceLoadPriority toResourceLoadPriority(CFURLRequestPriority priority)
-{
-    switch (priority) {
-    case -1:
-        return ResourceLoadPriority::VeryLow;
-    case 0:
-        return ResourceLoadPriority::Low;
-    case 1:
-        return ResourceLoadPriority::Medium;
-    case 2:
-        return ResourceLoadPriority::High;
-    case 3:
-        return ResourceLoadPriority::VeryHigh;
-    default:
-        ASSERT_NOT_REACHED();
-        return ResourceLoadPriority::Lowest;
-    }
-}
-
-inline CFURLRequestPriority toPlatformRequestPriority(ResourceLoadPriority priority)
-{
-    switch (priority) {
-    case ResourceLoadPriority::VeryLow:
-        return -1;
-    case ResourceLoadPriority::Low:
-        return 0;
-    case ResourceLoadPriority::Medium:
-        return 1;
-    case ResourceLoadPriority::High:
-        return 2;
-    case ResourceLoadPriority::VeryHigh:
-        return 3;
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-#endif
-
 
 inline RetainPtr<CFStringRef> httpHeaderValueUsingSuitableEncoding(HTTPHeaderMap::const_iterator::KeyValue header)
 {

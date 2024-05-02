@@ -199,7 +199,6 @@ static NSString* privacyStanceToString(WebCore::PrivacyStance stance)
 }
 #endif
 
-#if HAVE(CFNETWORK_METRICS_APIS_V4)
 static String stringForTLSProtocolVersion(tls_protocol_version_t protocol)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -260,224 +259,6 @@ static String stringForTLSCipherSuite(tls_ciphersuite_t suite)
 
 #undef STRINGIFY_CIPHER
 }
-
-#else // HAVE(CFNETWORK_METRICS_APIS_V4)
-
-static String stringForSSLProtocol(SSLProtocol protocol)
-{
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    switch (protocol) {
-    case kDTLSProtocol1:
-        return "DTLS 1.0"_s;
-    case kSSLProtocol2:
-        return "SSL 2.0"_s;
-    case kSSLProtocol3:
-        return "SSL 3.0"_s;
-    case kSSLProtocol3Only:
-        return "SSL 3.0 (Only)"_s;
-    case kTLSProtocol1:
-        return "TLS 1.0"_s;
-    case kTLSProtocol1Only:
-        return "TLS 1.0 (Only)"_s;
-    case kTLSProtocol11:
-        return "TLS 1.1"_s;
-    case kTLSProtocol12:
-        return "TLS 1.2"_s;
-    case kTLSProtocol13:
-        return "TLS 1.3"_s;
-    case kSSLProtocolAll:
-        return "All"_s;
-    case kSSLProtocolUnknown:
-        return "Unknown"_s;
-    case kTLSProtocolMaxSupported:
-    default:
-        ASSERT_NOT_REACHED();
-        return emptyString();
-    }
-ALLOW_DEPRECATED_DECLARATIONS_END
-}
-
-static String stringForSSLCipher(SSLCipherSuite cipher)
-{
-#define STRINGIFY_CIPHER(cipher) \
-    case cipher: \
-        return "" #cipher ""_s
-
-    switch (cipher) {
-    STRINGIFY_CIPHER(SSL_RSA_EXPORT_WITH_RC4_40_MD5);
-    STRINGIFY_CIPHER(SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5);
-    STRINGIFY_CIPHER(SSL_RSA_WITH_IDEA_CBC_SHA);
-    STRINGIFY_CIPHER(SSL_RSA_EXPORT_WITH_DES40_CBC_SHA);
-    STRINGIFY_CIPHER(SSL_RSA_WITH_DES_CBC_SHA);
-    STRINGIFY_CIPHER(SSL_DH_DSS_EXPORT_WITH_DES40_CBC_SHA);
-    STRINGIFY_CIPHER(SSL_DH_DSS_WITH_DES_CBC_SHA);
-    STRINGIFY_CIPHER(SSL_DH_RSA_EXPORT_WITH_DES40_CBC_SHA);
-    STRINGIFY_CIPHER(SSL_DH_RSA_WITH_DES_CBC_SHA);
-    STRINGIFY_CIPHER(SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA);
-    STRINGIFY_CIPHER(SSL_DHE_DSS_WITH_DES_CBC_SHA);
-    STRINGIFY_CIPHER(SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA);
-    STRINGIFY_CIPHER(SSL_DHE_RSA_WITH_DES_CBC_SHA);
-    STRINGIFY_CIPHER(SSL_DH_anon_EXPORT_WITH_RC4_40_MD5);
-    STRINGIFY_CIPHER(SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA);
-    STRINGIFY_CIPHER(SSL_DH_anon_WITH_DES_CBC_SHA);
-    STRINGIFY_CIPHER(SSL_FORTEZZA_DMS_WITH_NULL_SHA);
-    STRINGIFY_CIPHER(SSL_FORTEZZA_DMS_WITH_FORTEZZA_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_RSA_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DH_DSS_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DH_RSA_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DHE_DSS_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DHE_RSA_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DH_anon_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_RSA_WITH_AES_256_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DH_DSS_WITH_AES_256_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DH_RSA_WITH_AES_256_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DHE_DSS_WITH_AES_256_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DHE_RSA_WITH_AES_256_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DH_anon_WITH_AES_256_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_ECDSA_WITH_NULL_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_ECDSA_WITH_RC4_128_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDHE_ECDSA_WITH_NULL_SHA);
-    STRINGIFY_CIPHER(TLS_ECDHE_ECDSA_WITH_RC4_128_SHA);
-    STRINGIFY_CIPHER(TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_RSA_WITH_NULL_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_RSA_WITH_RC4_128_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_RSA_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_RSA_WITH_AES_256_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDHE_RSA_WITH_NULL_SHA);
-    STRINGIFY_CIPHER(TLS_ECDHE_RSA_WITH_RC4_128_SHA);
-    STRINGIFY_CIPHER(TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_anon_WITH_NULL_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_anon_WITH_RC4_128_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_anon_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_anon_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_ECDH_anon_WITH_AES_256_CBC_SHA);
-    // STRINGIFY_CIPHER(SSL_NULL_WITH_NULL_NULL);
-    STRINGIFY_CIPHER(TLS_NULL_WITH_NULL_NULL);
-    // STRINGIFY_CIPHER(SSL_RSA_WITH_NULL_MD5);
-    STRINGIFY_CIPHER(TLS_RSA_WITH_NULL_MD5);
-    // STRINGIFY_CIPHER(SSL_RSA_WITH_NULL_SHA);
-    STRINGIFY_CIPHER(TLS_RSA_WITH_NULL_SHA);
-    // STRINGIFY_CIPHER(SSL_RSA_WITH_RC4_128_MD5);
-    STRINGIFY_CIPHER(TLS_RSA_WITH_RC4_128_MD5);
-    // STRINGIFY_CIPHER(SSL_RSA_WITH_RC4_128_SHA);
-    STRINGIFY_CIPHER(TLS_RSA_WITH_RC4_128_SHA);
-    // STRINGIFY_CIPHER(SSL_RSA_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_RSA_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_RSA_WITH_NULL_SHA256);
-    STRINGIFY_CIPHER(TLS_RSA_WITH_AES_128_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_RSA_WITH_AES_256_CBC_SHA256);
-    // STRINGIFY_CIPHER(SSL_DH_DSS_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DH_DSS_WITH_3DES_EDE_CBC_SHA);
-    // STRINGIFY_CIPHER(SSL_DH_RSA_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA);
-    // STRINGIFY_CIPHER(SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA);
-    // STRINGIFY_CIPHER(SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DH_DSS_WITH_AES_128_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_DH_RSA_WITH_AES_128_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_DHE_DSS_WITH_AES_128_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_DHE_RSA_WITH_AES_128_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_DH_DSS_WITH_AES_256_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_DH_RSA_WITH_AES_256_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_DHE_DSS_WITH_AES_256_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_DHE_RSA_WITH_AES_256_CBC_SHA256);
-    // STRINGIFY_CIPHER(SSL_DH_anon_WITH_RC4_128_MD5);
-    STRINGIFY_CIPHER(TLS_DH_anon_WITH_RC4_128_MD5);
-    // STRINGIFY_CIPHER(SSL_DH_anon_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DH_anon_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DH_anon_WITH_AES_128_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_DH_anon_WITH_AES_256_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_PSK_WITH_RC4_128_SHA);
-    STRINGIFY_CIPHER(TLS_PSK_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_PSK_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_PSK_WITH_AES_256_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DHE_PSK_WITH_RC4_128_SHA);
-    STRINGIFY_CIPHER(TLS_DHE_PSK_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DHE_PSK_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_DHE_PSK_WITH_AES_256_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_RSA_PSK_WITH_RC4_128_SHA);
-    STRINGIFY_CIPHER(TLS_RSA_PSK_WITH_3DES_EDE_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_RSA_PSK_WITH_AES_128_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_RSA_PSK_WITH_AES_256_CBC_SHA);
-    STRINGIFY_CIPHER(TLS_PSK_WITH_NULL_SHA);
-    STRINGIFY_CIPHER(TLS_DHE_PSK_WITH_NULL_SHA);
-    STRINGIFY_CIPHER(TLS_RSA_PSK_WITH_NULL_SHA);
-    STRINGIFY_CIPHER(TLS_RSA_WITH_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_RSA_WITH_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_DHE_RSA_WITH_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_DHE_RSA_WITH_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_DH_RSA_WITH_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_DH_RSA_WITH_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_DHE_DSS_WITH_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_DHE_DSS_WITH_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_DH_DSS_WITH_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_DH_DSS_WITH_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_DH_anon_WITH_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_DH_anon_WITH_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_PSK_WITH_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_PSK_WITH_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_DHE_PSK_WITH_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_DHE_PSK_WITH_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_RSA_PSK_WITH_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_RSA_PSK_WITH_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_PSK_WITH_AES_128_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_PSK_WITH_AES_256_CBC_SHA384);
-    STRINGIFY_CIPHER(TLS_PSK_WITH_NULL_SHA256);
-    STRINGIFY_CIPHER(TLS_PSK_WITH_NULL_SHA384);
-    STRINGIFY_CIPHER(TLS_DHE_PSK_WITH_AES_128_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_DHE_PSK_WITH_AES_256_CBC_SHA384);
-    STRINGIFY_CIPHER(TLS_DHE_PSK_WITH_NULL_SHA256);
-    STRINGIFY_CIPHER(TLS_DHE_PSK_WITH_NULL_SHA384);
-    STRINGIFY_CIPHER(TLS_RSA_PSK_WITH_AES_128_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_RSA_PSK_WITH_AES_256_CBC_SHA384);
-    STRINGIFY_CIPHER(TLS_RSA_PSK_WITH_NULL_SHA256);
-    STRINGIFY_CIPHER(TLS_RSA_PSK_WITH_NULL_SHA384);
-    STRINGIFY_CIPHER(TLS_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_CHACHA20_POLY1305_SHA256);
-    STRINGIFY_CIPHER(TLS_AES_128_CCM_SHA256);
-    STRINGIFY_CIPHER(TLS_AES_128_CCM_8_SHA256);
-    STRINGIFY_CIPHER(TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384);
-    STRINGIFY_CIPHER(TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384);
-    STRINGIFY_CIPHER(TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384);
-    STRINGIFY_CIPHER(TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256);
-    STRINGIFY_CIPHER(TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384);
-    STRINGIFY_CIPHER(TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256);
-    STRINGIFY_CIPHER(TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384);
-    STRINGIFY_CIPHER(TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256);
-    STRINGIFY_CIPHER(TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256);
-    STRINGIFY_CIPHER(TLS_EMPTY_RENEGOTIATION_INFO_SCSV);
-    STRINGIFY_CIPHER(SSL_RSA_WITH_RC2_CBC_MD5);
-    STRINGIFY_CIPHER(SSL_RSA_WITH_IDEA_CBC_MD5);
-    STRINGIFY_CIPHER(SSL_RSA_WITH_DES_CBC_MD5);
-    STRINGIFY_CIPHER(SSL_RSA_WITH_3DES_EDE_CBC_MD5);
-    STRINGIFY_CIPHER(SSL_NO_SUCH_CIPHERSUITE);
-    default:
-        ASSERT_NOT_REACHED();
-        return emptyString();
-    }
-
-#undef STRINGIFY_CIPHER
-}
-#endif // HAVE(CFNETWORK_METRICS_APIS_V4)
 
 @interface WKNetworkSessionDelegate : NSObject <NSURLSessionDataDelegate, NSURLSessionWebSocketDelegate> {
     WeakPtr<WebKit::NetworkSessionCocoa> _session;
@@ -974,27 +755,14 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
             auto additionalMetrics = WebCore::AdditionalNetworkLoadMetricsForWebInspector::create();
             additionalMetrics->priority = toNetworkLoadPriority(task.priority);
 
-#if HAVE(CFNETWORK_METRICS_APIS_V4)
             if (auto port = [m.remotePort unsignedIntValue])
                 additionalMetrics->remoteAddress = makeString(String(m.remoteAddress), ':', port);
             else
                 additionalMetrics->remoteAddress = m.remoteAddress;
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            additionalMetrics->remoteAddress = String(m._remoteAddressAndPort);
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
             additionalMetrics->connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 
-#if HAVE(CFNETWORK_METRICS_APIS_V4)
             additionalMetrics->tlsProtocol = stringForTLSProtocolVersion((tls_protocol_version_t)[m.negotiatedTLSProtocolVersion unsignedShortValue]);
             additionalMetrics->tlsCipher = stringForTLSCipherSuite((tls_ciphersuite_t)[m.negotiatedTLSCipherSuite unsignedShortValue]);
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            additionalMetrics->tlsProtocol = stringForSSLProtocol(m._negotiatedTLSProtocol);
-            additionalMetrics->tlsCipher = stringForSSLCipher(m._negotiatedTLSCipher);
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
 
             __block WebCore::HTTPHeaderMap requestHeaders;
             [m.request.allHTTPHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSString *value, BOOL *) {
@@ -1006,15 +774,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             uint64_t responseHeaderBytesReceived = 0;
 
             for (NSURLSessionTaskTransactionMetrics *transactionMetrics in metrics.transactionMetrics) {
-#if HAVE(CFNETWORK_METRICS_APIS_V4)
                 requestHeaderBytesSent += transactionMetrics.countOfRequestHeaderBytesSent;
                 responseHeaderBytesReceived += transactionMetrics.countOfResponseHeaderBytesReceived;
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-                requestHeaderBytesSent += transactionMetrics._requestHeaderBytesSent;
-                responseHeaderBytesReceived += transactionMetrics._responseHeaderBytesReceived;
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
             }
 
             additionalMetrics->requestHeaderBytesSent = requestHeaderBytesSent;
@@ -1025,15 +786,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
             networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WTFMove(additionalMetrics);
         }
-#if HAVE(CFNETWORK_METRICS_APIS_V4)
         networkLoadMetrics.responseBodyBytesReceived = m.countOfResponseBodyBytesReceived;
         networkLoadMetrics.responseBodyDecodedSize = m.countOfResponseBodyBytesAfterDecoding;
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        networkLoadMetrics.responseBodyBytesReceived = m._responseBodyBytesReceived;
-        networkLoadMetrics.responseBodyDecodedSize = m._responseBodyBytesDecoded;
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
         // Sometimes the encoded body bytes received contains a few (3 or so) bytes from the header when there is no body.
         // When this happens, trim our metrics to make more sense.
         if (!networkLoadMetrics.responseBodyDecodedSize)
@@ -1246,13 +1000,11 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
-#if HAVE(CFNETWORK_NSURLSESSION_CONNECTION_CACHE_LIMITS)
     if (WebCore::ResourceRequest::resourcePrioritiesEnabled()) {
         configuration._connectionCacheNumPriorityLevels = WebCore::resourceLoadPriorityCount;
         configuration._connectionCacheMinimumFastLanePriority = toPlatformRequestPriority(WebCore::ResourceLoadPriority::Medium);
         configuration._connectionCacheNumFastLanes = 1;
     }
-#endif
 
 #if ENABLE(NETWORK_ISSUE_REPORTING)
     if ([configuration respondsToSelector:@selector(set_skipsStackTraceCapture:)])
@@ -1475,12 +1227,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
     } else
         cookieStorage = storageSession->nsCookieStorage();
 
-#if HAVE(CFNETWORK_OVERRIDE_SESSION_COOKIE_ACCEPT_POLICY)
-    // We still need to check the selector since CFNetwork updates and WebKit updates are separate
-    // on older macOS.
-    if ([cookieStorage respondsToSelector:@selector(_overrideSessionCookieAcceptPolicy)])
-        cookieStorage.get()._overrideSessionCookieAcceptPolicy = YES;
-#endif
+    cookieStorage.get()._overrideSessionCookieAcceptPolicy = YES;
 
     initializeNSURLSessionsInSet(m_defaultSessionSet.get(), configuration);
 
@@ -1929,10 +1676,7 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
     auto addResult2 = m_perPageSessionSets.add(pageID, SessionSet::create());
     ASSERT(addResult2.isNewEntry);
     RetainPtr<NSURLSessionConfiguration> configuration = adoptNS([m_defaultSessionSet->sessionWithCredentialStorage.session.get().configuration copy]);
-#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER) && USE(APPLE_INTERNAL_SDK)
-    if ([configuration respondsToSelector:@selector(_attributedBundleIdentifier)])
-        configuration.get()._attributedBundleIdentifier = parameters.attributedBundleIdentifier();
-#endif
+    configuration.get()._attributedBundleIdentifier = parameters.attributedBundleIdentifier();
     initializeNSURLSessionsInSet(addResult2.iterator->value.get(), configuration.get());
     addResult1.iterator->value = addResult2.iterator->value.get();
 

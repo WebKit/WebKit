@@ -199,9 +199,7 @@ typedef enum {
 - (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
 - (CFHTTPCookieStorageRef)_cookieStorage;
 - (void)_saveCookies:(dispatch_block_t) completionHandler;
-#if HAVE(CFNETWORK_OVERRIDE_SESSION_COOKIE_ACCEPT_POLICY)
 @property (nonatomic, readwrite) BOOL _overrideSessionCookieAcceptPolicy;
-#endif
 @end
 
 @interface NSURLCredentialStorage ()
@@ -322,14 +320,10 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #if HAVE(NETWORK_LOADER)
 @property BOOL _usesNWLoader;
 #endif
-#if HAVE(CFNETWORK_NSURLSESSION_CONNECTION_CACHE_LIMITS)
 @property (readwrite, assign) NSInteger _connectionCacheNumPriorityLevels;
 @property (readwrite, assign) NSInteger _connectionCacheNumFastLanes;
 @property (readwrite, assign) NSInteger _connectionCacheMinimumFastLanePriority;
-#endif
-#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
 @property (nullable, copy) NSString *_attributedBundleIdentifier;
-#endif
 @end
 
 @interface NSURLSessionTask ()
