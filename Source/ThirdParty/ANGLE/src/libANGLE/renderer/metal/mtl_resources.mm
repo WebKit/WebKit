@@ -675,7 +675,9 @@ TextureRef Texture::createCubeFaceView(uint32_t face)
     }
 }
 
-TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &level)
+TextureRef Texture::createSliceMipViewWithCompatibleFormat(uint32_t slice,
+                                                           const MipmapNativeLevel &level,
+                                                           MTLPixelFormat format)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
@@ -684,13 +686,18 @@ TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &
             case MTLTextureTypeCube:
             case MTLTextureType2D:
             case MTLTextureType2DArray:
-                return TextureRef(new Texture(this, pixelFormat(), MTLTextureType2D,
+                return TextureRef(new Texture(this, format, MTLTextureType2D,
                                               NSMakeRange(level.get(), 1), NSMakeRange(slice, 1)));
             default:
                 UNREACHABLE();
                 return nullptr;
         }
     }
+}
+
+TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &level)
+{
+    return createSliceMipViewWithCompatibleFormat(slice, level, pixelFormat());
 }
 
 TextureRef Texture::createMipView(const MipmapNativeLevel &level)

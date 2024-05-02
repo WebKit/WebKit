@@ -163,7 +163,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::FrameData::LayerData& 
     int layerCount = (m_displayLayout == PlatformXR::Layout::Layered) ? 2 : 1;
     for (int layer = 0; layer < layerCount; ++layer) {
         auto colorTextureSource = makeExternalImageSource(std::tuple<MachSendRight, bool> { data.colorTexture });
-        createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].colorBuffer, GL::NONE, WTFMove(colorTextureSource), layer);
+        createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].colorBuffer, GL::BGRA_EXT, WTFMove(colorTextureSource), layer);
         ASSERT(m_displayAttachments[layer].colorBuffer.image);
         if (!m_displayAttachments[layer].colorBuffer.image)
             return;
