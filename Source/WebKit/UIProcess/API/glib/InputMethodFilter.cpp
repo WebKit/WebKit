@@ -215,6 +215,10 @@ void InputMethodFilter::notifyCursorRect(const IntRect& cursorRect)
     if (!isEnabled() || !m_context)
         return;
 
+    // Don't notify cursor area when cursorRect is default-initialized (location and size are all 0).
+    if (!cursorRect.x() && !cursorRect.y() && !cursorRect.width() && !cursorRect.height())
+        return;
+
     // Don't move the window unless the cursor actually moves more than 10
     // pixels. This prevents us from making the window flash during minor
     // cursor adjustments.
