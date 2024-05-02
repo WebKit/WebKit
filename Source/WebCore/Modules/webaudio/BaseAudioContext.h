@@ -161,6 +161,10 @@ public:
     // We schedule deletion of all marked nodes at the end of each realtime render quantum.
     void markForDeletion(AudioNode&);
     void deleteMarkedNodes();
+    // In some cases, a node marked for deletion may get ref'd. We need to make sure we no
+    // longer mark the node for deletion or it may get deleted while someone is holding a
+    // Ref / RefPtr to it.
+    void unmarkForDeletion(AudioNode&);
 
     void addTailProcessingNode(AudioNode&);
     void removeTailProcessingNode(AudioNode&);

@@ -578,6 +578,11 @@ void AudioNode::incrementConnectionCount()
     // In this case, we need to re-enable.
     enableOutputsIfNecessary();
 
+    {
+        Locker locker { context().graphLock() };
+        unmarkNodeForDeletionIfNecessary();
+    }
+
 #if DEBUG_AUDIONODE_REFERENCES
     fprintf(stderr, "%p: %d: AudioNode::incrementConnectionCount() %d %d\n", this, nodeType(), m_normalRefCount, m_connectionRefCount);
 #endif
@@ -640,9 +645,26 @@ void AudioNode::markNodeForDeletionIfNecessary()
     m_isMarkedForDeletion = true;
 }
 
+void AudioNode::unmarkNodeForDeletionIfNecessary()
+{
+    ASSERT(context().isGraphOwner());
+    if (!m_isMarkedForDeletion)
+        return;
+    if (!m_connectionRefCount && !m_normalRefCount)
+        return;
+
+    m_isMarkedForDeletion = false;
+    context().unmarkForDeletion(*this);
+}
+
 void AudioNode::ref()
 {
     ++m_normalRefCount;
+
+    {
+        Locker locker { context().graphLock() };
+        const_cast<AudioNode*>(this)->unmarkNodeForDeletionIfNecessary();
+    }
 
 #if DEBUG_AUDIONODE_REFERENCES
     fprintf(stderr, "%p: %d: AudioNode::ref() %d %d\n", this, nodeType(), m_normalRefCount, m_connectionRefCount);
