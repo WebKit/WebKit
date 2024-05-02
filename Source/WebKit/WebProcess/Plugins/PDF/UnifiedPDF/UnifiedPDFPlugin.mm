@@ -783,7 +783,15 @@ void UnifiedPDFPlugin::paint(GraphicsContext& context, const IntRect&)
     context.translate(-m_scrollOffset.width(), -m_scrollOffset.height());
 
     FloatRect clipRect { FloatPoint(m_scrollOffset), size() };
+
     context.clip(clipRect);
+    context.fillRect(clipRect, WebCore::roundAndClampToSRGBALossy([WebCore::CocoaColor grayColor].CGColor));
+    context.scale(m_scaleFactor);
+
+    auto paddingForCentering = centeringOffset();
+    context.translate(paddingForCentering.width(), paddingForCentering.height());
+
+    clipRect.scale(1.0f / m_scaleFactor);
 
     paintPDFContent(context, clipRect);
 }
