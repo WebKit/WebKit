@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="../../../../resources/js-test.js"></script>
         <script src="../../../../resources/ui-helper.js"></script>
     </head>
 <body>
@@ -11,14 +10,16 @@
 </body>
 <script>
 
-jsTestIsAsync = true;
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 addEventListener("load", async () => {
     if (window.internals)
         window.internals.setPageIsFocusedAndActive(false);
 
     await UIHelper.renderingUpdate();
-    finishJSTest();
+    if (window.testRunner)
+        testRunner.notifyDone();
 });
 
 </script>
