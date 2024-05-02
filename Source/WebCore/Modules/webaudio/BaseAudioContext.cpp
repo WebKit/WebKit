@@ -708,6 +708,15 @@ void BaseAudioContext::markForDeletion(AudioNode& node)
     removeAutomaticPullNode(node);
 }
 
+void BaseAudioContext::unmarkForDeletion(AudioNode& node)
+{
+    ASSERT(isGraphOwner());
+    ASSERT_WITH_MESSAGE(node.nodeType() != AudioNode::NodeTypeDestination, "Destination node is owned by the BaseAudioContext");
+
+    m_nodesToDelete.removeFirst(&node);
+    m_nodesMarkedForDeletion.removeFirst(&node);
+}
+
 void BaseAudioContext::scheduleNodeDeletion()
 {
     bool isGood = m_isInitialized && isGraphOwner();
