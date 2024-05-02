@@ -122,7 +122,6 @@ private:
     VM& m_vm;
     FixedVector<RefPtr<AccessCase>> m_cases;
     FixedVector<StructureID> m_weakStructures;
-    FixedVector<Identifier> m_identifiers;
     RefPtr<WatchpointSet> m_watchpointSet;
     std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
 };
