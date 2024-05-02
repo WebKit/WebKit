@@ -46,6 +46,18 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+// AppServerSupport cannot be safely imported within modules, so avoid putting
+// this SPI declaration in headers.
+#import <AppServerSupport/OSLaunchdJob.h>
+#else
+#import <Foundation/NSError.h>
+@interface OSLaunchdJob : NSObject
+- (instancetype)initWithPlist:(xpc_object_t)plist;
+- (BOOL)submit:(NSError **)errorOut;
+@end
+#endif
+
 namespace TestWebKitAPI {
 
 static RetainPtr<NSURL> currentExecutableLocation()
