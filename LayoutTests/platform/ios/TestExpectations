@@ -7295,3 +7295,14 @@ fast/forms/switch/click-animation-redundant-disabled.html [ ImageOnlyFailure ]
 fast/forms/switch/click-animation.html [ ImageOnlyFailure ]
 
 webkit.org/b/272910 fast/scrolling/ios/video-atop-overflow-scroll.html [ Skip ]
+
+# webkit.org/273595 [macOS iOS] Multiple tests in imported/w3c/web-platform-tests/css* are constant failing
+imported/w3c/web-platform-tests/css/css-break/relpos-inline-hit-testing.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/colspan-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/colspan-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/colspan-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/percent-height-overflow-auto-in-restricted-block-size-cell.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unpainted-element-from-point.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/width-height-004.html [ ImageOnlyFailure ]
