@@ -44,7 +44,7 @@ class WebProtectionSpace;
 class SecKeyProxyStore;
 using WeakPtrSecKeyProxyStore = WeakPtr<SecKeyProxyStore>;
 #else
-using WeakPtrSecKeyProxyStore = nullptr_t;
+using WeakPtrSecKeyProxyStore = std::nullptr_t;
 #endif
 
 class AuthenticationChallengeProxy : public API::ObjectImpl<API::Object::Type::AuthenticationChallenge> {
