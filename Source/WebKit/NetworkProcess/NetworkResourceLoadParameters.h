@@ -87,7 +87,7 @@ public:
         , std::optional<UserContentControllerIdentifier>
 #endif
 #if ENABLE(WK_WEB_EXTENSIONS)
-        , bool pageHasExtensionController
+        , bool pageHasLoadedWebExtensions
 #endif
         , bool linkPreconnectEarlyHintsEnabled
         , bool shouldRecordFrameLoadForStorageAccess
@@ -138,7 +138,7 @@ public:
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    bool pageHasExtensionController { false };
+    bool pageHasLoadedWebExtensions { false };
 #endif
 
     bool linkPreconnectEarlyHintsEnabled { false };

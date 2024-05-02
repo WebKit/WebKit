@@ -73,6 +73,11 @@ public:
     void didFailLoadForFrame(WebPage&, WebFrame&, const URL&);
 
     RefPtr<WebExtensionContextProxy> extensionContext(const String& uniqueIdentifier) const;
+    RefPtr<WebExtensionContextProxy> extensionContext(const URL&) const;
+    RefPtr<WebExtensionContextProxy> extensionContext(WebFrame&, WebCore::DOMWrapperWorld&) const;
+
+    bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
+    const WebExtensionContextProxySet& extensionContexts() const { return m_extensionContexts; }
 #endif
 
 private:
@@ -84,12 +89,6 @@ private:
 #if PLATFORM(COCOA)
     void load(const WebExtensionContextParameters&);
     void unload(WebExtensionContextIdentifier);
-
-    RefPtr<WebExtensionContextProxy> extensionContext(const URL&) const;
-    RefPtr<WebExtensionContextProxy> extensionContext(WebFrame&, WebCore::DOMWrapperWorld&) const;
-
-    bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
-    const WebExtensionContextProxySet& extensionContexts() const { return m_extensionContexts; }
 #endif
 
     WebExtensionControllerIdentifier m_identifier;

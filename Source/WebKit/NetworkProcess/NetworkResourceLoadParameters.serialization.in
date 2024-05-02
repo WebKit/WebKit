@@ -108,7 +108,7 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    bool pageHasExtensionController;
+    bool pageHasLoadedWebExtensions;
 #endif
 
     bool linkPreconnectEarlyHintsEnabled;

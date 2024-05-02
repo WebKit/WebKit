@@ -355,7 +355,7 @@ bool NetworkResourceLoader::shouldSendResourceLoadMessages() const
         return true;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    if (m_parameters.pageHasExtensionController)
+    if (m_parameters.pageHasLoadedWebExtensions)
         return true;
 #endif
 

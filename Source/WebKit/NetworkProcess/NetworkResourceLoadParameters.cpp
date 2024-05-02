@@ -70,7 +70,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
     , std::optional<UserContentControllerIdentifier> userContentControllerIdentifier
 #endif
 #if ENABLE(WK_WEB_EXTENSIONS)
-    , bool pageHasExtensionController
+    , bool pageHasLoadedWebExtensions
 #endif
     , bool linkPreconnectEarlyHintsEnabled
     , bool shouldRecordFrameLoadForStorageAccess
@@ -109,7 +109,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
         , userContentControllerIdentifier(userContentControllerIdentifier)
 #endif
 #if ENABLE(WK_WEB_EXTENSIONS)
-        , pageHasExtensionController(pageHasExtensionController)
+        , pageHasLoadedWebExtensions(pageHasLoadedWebExtensions)
 #endif
         , linkPreconnectEarlyHintsEnabled(linkPreconnectEarlyHintsEnabled)
         , shouldRecordFrameLoadForStorageAccess(shouldRecordFrameLoadForStorageAccess)
