@@ -56,6 +56,20 @@
 #include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
 
+#if WEBRTC_WEBKIT_BUILD
+
+#ifdef __clang__
+#define RTC_PUSH_IGNORING_NARROWING_CONST_REFERENCE() \
+    _Pragma("clang diagnostic push")             \
+    _Pragma("clang diagnostic ignored \"-Wc++11-narrowing-const-reference\"")
+#define RTC_POP_IGNORING_NARROWING_CONST_REFERENCE() _Pragma("clang diagnostic pop")
+#else
+#define RTC_PUSH_IGNORING_NARROWING_CONST_REFERENCE()
+#define RTC_POP_IGNORING_NARROWING_CONST_REFERENCE()
+#endif
+
+#endif // WEBRTC_WEBKIT_BUILD
+
 namespace webrtc {
 namespace {
 
@@ -188,9 +202,11 @@ void ExtractStats(const cricket::VoiceReceiverInfo& info,
       {StatsReport::kStatsValueNameAccelerateRate, info.accelerate_rate},
       {StatsReport::kStatsValueNamePreemptiveExpandRate,
        info.preemptive_expand_rate},
+RTC_PUSH_IGNORING_NARROWING_CONST_REFERENCE()
       {StatsReport::kStatsValueNameTotalAudioEnergy, static_cast<float>(info.total_output_energy)},
       {StatsReport::kStatsValueNameTotalSamplesDuration,
        static_cast<float>(info.total_output_duration)}};
+RTC_POP_IGNORING_NARROWING_CONST_REFERENCE()
 
   const IntForAdd ints[] = {
       {StatsReport::kStatsValueNameCurrentDelayMs, info.delay_estimate_ms},
@@ -243,10 +259,12 @@ void ExtractStats(const cricket::VoiceSenderInfo& info,
 
   SetAudioProcessingStats(report, info.apm_statistics);
 
+RTC_PUSH_IGNORING_NARROWING_CONST_REFERENCE()
   const FloatForAdd floats[] = {
       {StatsReport::kStatsValueNameTotalAudioEnergy, static_cast<float>(info.total_input_energy)},
       {StatsReport::kStatsValueNameTotalSamplesDuration,
        static_cast<float>(info.total_input_duration)}};
+RTC_POP_IGNORING_NARROWING_CONST_REFERENCE()
 
   RTC_DCHECK_GE(info.audio_level, 0);
   const IntForAdd ints[] = {
@@ -340,7 +358,9 @@ void ExtractStats(const cricket::VideoReceiverInfo& info,
       {StatsReport::kStatsValueNamePlisSent, info.plis_sent},
       {StatsReport::kStatsValueNameRenderDelayMs, info.render_delay_ms},
       {StatsReport::kStatsValueNameTargetDelayMs, info.target_delay_ms},
+RTC_PUSH_IGNORING_NARROWING_CONST_REFERENCE()
       {StatsReport::kStatsValueNameFramesDecoded, static_cast<int>(info.frames_decoded)},
+RTC_POP_IGNORING_NARROWING_CONST_REFERENCE()
   };
 
   for (const auto& i : ints)
@@ -384,6 +404,7 @@ void ExtractStats(const cricket::VideoSenderInfo& info,
        info.encode_usage_percent},
       {StatsReport::kStatsValueNameFirsReceived, info.firs_received},
       {StatsReport::kStatsValueNameFrameHeightSent, info.send_frame_height},
+RTC_PUSH_IGNORING_NARROWING_CONST_REFERENCE()
       {StatsReport::kStatsValueNameFrameRateInput, static_cast<int>(round(info.framerate_input))},
       {StatsReport::kStatsValueNameFrameRateSent, info.framerate_sent},
       {StatsReport::kStatsValueNameFrameWidthSent, info.send_frame_width},
@@ -393,6 +414,7 @@ void ExtractStats(const cricket::VideoSenderInfo& info,
       {StatsReport::kStatsValueNamePlisReceived, info.plis_received},
       {StatsReport::kStatsValueNameFramesEncoded, static_cast<int>(info.frames_encoded)},
       {StatsReport::kStatsValueNameHugeFramesSent, static_cast<int>(info.huge_frames_sent)},
+RTC_POP_IGNORING_NARROWING_CONST_REFERENCE()
   };
 
   for (const auto& i : ints)
@@ -779,6 +801,7 @@ StatsReport* LegacyStatsCollector::AddConnectionInfoReport(
   report->AddId(StatsReport::kStatsValueNameRemoteCandidateId,
                 AddCandidateReport(remote_candidate_stats, false)->id());
 
+RTC_PUSH_IGNORING_NARROWING_CONST_REFERENCE()
   const Int64ForAdd int64s[] = {
       {StatsReport::kStatsValueNameBytesReceived,
        static_cast<int64_t>(info.recv_total_bytes)},
@@ -800,6 +823,7 @@ StatsReport* LegacyStatsCollector::AddConnectionInfoReport(
       {StatsReport::kStatsValueNameRecvPingResponses,
        static_cast<int64_t>(info.recv_ping_responses)},
   };
+RTC_POP_IGNORING_NARROWING_CONST_REFERENCE()
   for (const auto& i : int64s)
     report->AddInt64(i.name, i.value);
 
