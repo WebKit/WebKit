@@ -35,11 +35,20 @@ template<typename T> class Handle;
 
 
 class JS_EXPORT_PRIVATE WeakHandleOwner {
-public:
-    virtual ~WeakHandleOwner();
-    // reason will only be non-null when generating a debug GC heap snapshot.
-    virtual bool isReachableFromOpaqueRoots(Handle<Unknown>, void* context, AbstractSlotVisitor&, ASCIILiteral* reason = nullptr);
-    virtual void finalize(Handle<Unknown>, void* context);
+    public:
+
+virtual ~WeakHandleOwner()
+{
+}
+
+virtual bool isReachableFromOpaqueRoots(Handle<Unknown>, void*, AbstractSlotVisitor&, ASCIILiteral*)
+{
+    return false;
+}
+
+virtual void finalize(Handle<Unknown>, void*)
+{
+}
 };
 
 } // namespace JSC
