@@ -156,8 +156,8 @@ public:
     virtual bool searchFieldShouldAppearAsTextField(const RenderStyle&) const { return false; }
 
     // Text selection colors.
-    Color activeSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
-    Color inactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
+    WEBCORE_EXPORT Color activeSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
+    WEBCORE_EXPORT Color inactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
     virtual Color transformSelectionBackgroundColor(const Color&, OptionSet<StyleColorOptions>) const;
     Color activeSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
     Color inactiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const;

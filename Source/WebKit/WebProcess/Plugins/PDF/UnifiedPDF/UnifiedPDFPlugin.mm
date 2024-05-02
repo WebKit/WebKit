@@ -56,6 +56,7 @@
 #include <WebCore/BitmapImage.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ChromeClient.h>
+#include <WebCore/ColorBlending.h>
 #include <WebCore/ColorCocoa.h>
 #include <WebCore/DataDetectorElementInfo.h>
 #include <WebCore/DictionaryLookup.h>
@@ -68,6 +69,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerClient.h>
+#include <WebCore/GraphicsTypes.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/ImageBuffer.h>
@@ -385,6 +387,14 @@ void UnifiedPDFPlugin::setNeedsRepaintInDocumentRect(OptionSet<RepaintRequiremen
             asyncRenderer->pdfContentChangedInRect(m_scaleFactor, contentsRect);
     }
 
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+    if (repaintRequirements.contains(RepaintRequirement::Selection) && canPaintSelectionIntoOwnedLayer()) {
+        RefPtr { m_selectionLayer }->setNeedsDisplayInRect(contentsRect);
+        if (repaintRequirements.hasExactlyOneBitSet())
+            return;
+    }
+#endif
+
     RefPtr { m_contentsLayer }->setNeedsDisplayInRect(contentsRect);
 }
 
@@ -450,6 +460,17 @@ void UnifiedPDFPlugin::ensureLayers()
         m_overflowControlsContainer->setAnchorPoint({ });
         m_rootLayer->addChild(*m_overflowControlsContainer);
     }
+
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+    if (!m_selectionLayer) {
+        m_selectionLayer = createGraphicsLayer("PDF selections"_s, GraphicsLayer::Type::TiledBacking);
+        m_selectionLayer->setAnchorPoint({ });
+        m_selectionLayer->setDrawsContent(true);
+        m_selectionLayer->setAcceleratesDrawing(true);
+        m_selectionLayer->setBlendMode(BlendMode::Multiply);
+        m_scrolledContentsLayer->addChild(*m_selectionLayer);
+    }
+#endif
 }
 
 void UnifiedPDFPlugin::updatePageBackgroundLayers()
@@ -667,6 +688,11 @@ void UnifiedPDFPlugin::updateLayerHierarchy()
     m_contentsLayer->setSize(documentSize());
     m_contentsLayer->setNeedsDisplay();
 
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+    m_selectionLayer->setSize(documentSize());
+    m_selectionLayer->setNeedsDisplay();
+#endif
+
     updatePageBackgroundLayers();
     updateSnapOffsets();
 
@@ -682,6 +708,9 @@ void UnifiedPDFPlugin::updateLayerPositions()
     transform.translate(padding.width(), padding.height());
 
     m_contentsLayer->setTransform(transform);
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+    m_selectionLayer->setTransform(transform);
+#endif
     m_pageBackgroundsContainerLayer->setTransform(transform);
 }
 
@@ -709,6 +738,9 @@ void UnifiedPDFPlugin::didChangeSettings()
     propagateSettingsToLayer(*m_scrolledContentsLayer);
     propagateSettingsToLayer(*m_pageBackgroundsContainerLayer);
     propagateSettingsToLayer(*m_contentsLayer);
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+    propagateSettingsToLayer(*m_selectionLayer);
+#endif
 
     for (auto& pageLayer : m_pageBackgroundsContainerLayer->children()) {
         propagateSettingsToLayer(pageLayer);
@@ -742,6 +774,13 @@ std::optional<float> UnifiedPDFPlugin::customContentsScale(const GraphicsLayer* 
     return { };
 }
 
+bool UnifiedPDFPlugin::layerNeedsPlatformContext(const WebCore::GraphicsLayer*) const
+{
+    // We need a platform context if the plugin can not paint selections into its own layer,
+    // since we would then have to vend a platform context that PDFKit can paint into.
+    return !canPaintSelectionIntoOwnedLayer();
+}
+
 void UnifiedPDFPlugin::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)
 {
     RefPtr page = this->page();
@@ -758,13 +797,21 @@ void UnifiedPDFPlugin::didChangeIsInWindow()
     if (!page || !m_contentsLayer)
         return;
 
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+    if (!m_selectionLayer)
+        return;
+#endif
+
     bool isInWindow = page->isInWindow();
     m_contentsLayer->setIsInWindow(isInWindow);
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+    m_selectionLayer->setIsInWindow(isInWindow);
+#endif
 
     for (auto& pageLayer : m_pageBackgroundsContainerLayer->children()) {
         if (pageLayer->children().size()) {
-            Ref pageContensLayer = pageLayer->children()[0];
-            pageContensLayer->setIsInWindow(isInWindow);
+            Ref pageContentsLayer = pageLayer->children()[0];
+            pageContentsLayer->setIsInWindow(isInWindow);
         }
     }
 }
@@ -833,6 +880,11 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
         return;
     }
 
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+    if (layer == m_selectionLayer.get())
+        return paintPDFSelection(context, clipRect);
+#endif
+
     if (auto backgroundLayerPageIndex = pageIndexForPageBackgroundLayer(layer)) {
         paintBackgroundLayerForPage(layer, context, clipRect, *backgroundLayerPageIndex);
         return;
@@ -883,16 +935,14 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
     if (m_size.isEmpty() || documentSize().isEmpty())
         return;
 
-    bool shouldPaintSelection = behavior == PaintingBehavior::All;
-
     auto stateSaver = GraphicsContextStateSaver(context);
 
     auto showDebugIndicators = shouldShowDebugIndicators();
 
     bool haveSelection = false;
     bool isVisibleAndActive = false;
-    if (m_currentSelection && shouldPaintSelection) {
-        // FIXME: Also test is m_currentSelection is not empty.
+    bool shouldPaintSelection = behavior == PaintingBehavior::All && !canPaintSelectionIntoOwnedLayer();
+    if (m_currentSelection && ![m_currentSelection isEmpty] && shouldPaintSelection) {
         haveSelection = true;
         if (RefPtr page = this->page())
             isVisibleAndActive = page->isVisibleAndActive();
@@ -966,6 +1016,69 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
                 paintHoveredAnnotationOnPage(pageInfo.pageIndex, context, clipRect);
         }
     }
+}
+
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+void UnifiedPDFPlugin::paintPDFSelection(GraphicsContext& context, const FloatRect& clipRect)
+{
+    if (!m_currentSelection || [m_currentSelection isEmpty] || !canPaintSelectionIntoOwnedLayer())
+        return;
+
+    bool isVisibleAndActive = false;
+    if (RefPtr page = this->page())
+        isVisibleAndActive = page->isVisibleAndActive();
+
+    auto selectionColor = [renderer = m_element->renderer(), isVisibleAndActive] {
+        auto& renderTheme = renderer->theme();
+        auto styleColorOptions = renderer->styleColorOptions();
+        auto selectionColor = isVisibleAndActive ? renderTheme.activeSelectionBackgroundColor(styleColorOptions) : renderTheme.inactiveSelectionBackgroundColor(styleColorOptions);
+        return blendSourceOver(Color::white, selectionColor);
+    }();
+
+    auto pageCoverage = pageCoverageForRect(clipRect);
+    auto documentScale = pageCoverage.pdfDocumentScale;
+    for (auto& pageInfo : pageCoverage.pages) {
+        auto page = m_documentLayout.pageAtIndex(pageInfo.pageIndex);
+        if (!page || !shouldDisplayPage(pageInfo.pageIndex))
+            continue;
+
+        auto pageDestinationRect = pageInfo.pageBounds;
+
+        GraphicsContextStateSaver pageStateSaver { context };
+        context.scale(documentScale);
+        context.clip(pageDestinationRect);
+        // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
+        // from this page's drawing origin.
+        context.translate(pageDestinationRect.minXMaxYCorner());
+        context.scale({ 1, -1 });
+
+        auto pageGeometry = m_documentLayout.geometryForPage(page);
+        auto transformForBox = m_documentLayout.toPageTransform(*pageGeometry).inverse().value_or(AffineTransform { });
+        context.concatCTM(transformForBox);
+
+        if ([m_currentSelection respondsToSelector:@selector(enumerateRectsAndTransformsForPage:usingBlock:)]) {
+            [protectedCurrentSelection() enumerateRectsAndTransformsForPage:page.get() usingBlock:[&context, &selectionColor](CGRect cgRect, CGAffineTransform cgTransform) mutable {
+                // FIXME: Perf optimization -- consider coalescing rects by transform.
+                GraphicsContextStateSaver individualRectTransformPairStateSaver { context, /* saveAndRestore */ false };
+
+                if (AffineTransform transform { cgTransform }; !transform.isIdentity()) {
+                    individualRectTransformPairStateSaver.save();
+                    context.concatCTM(transform);
+                }
+
+                context.fillRect({ cgRect }, selectionColor);
+            }];
+        }
+    }
+}
+#endif
+
+bool UnifiedPDFPlugin::canPaintSelectionIntoOwnedLayer() const
+{
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+    return [m_currentSelection respondsToSelector:@selector(enumerateRectsAndTransformsForPage:usingBlock:)];
+#endif
+    return false;
 }
 
 static const WebCore::Color textAnnotationHoverColor()
@@ -1780,6 +1893,9 @@ void UnifiedPDFPlugin::determineCurrentlySnappedPage()
         m_currentlySnappedPage = newSnappedPage;
         updatePageBackgroundLayers();
         m_contentsLayer->setNeedsDisplay();
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+        m_selectionLayer->setNeedsDisplay();
+#endif
     }
 }
 

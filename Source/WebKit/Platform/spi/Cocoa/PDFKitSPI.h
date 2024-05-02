@@ -171,6 +171,14 @@ typedef NS_ENUM(NSUInteger, PDFSelectionGranularity);
 
 #endif
 
+#if HAVE(PDFSELECTION_ENUMERATE_RECTS_AND_TRANSFORMS)
+
+@interface PDFSelection (Staging_125426369)
+- (void)enumerateRectsAndTransformsForPage:(PDFPage *)page usingBlock:(void (^)(CGRect rect, CGAffineTransform transform))block;
+@end
+
+#endif
+
 #endif // ENABLE(UNIFIED_PDF)
 
 // FIXME: Move this declaration inside the !USE(APPLE_INTERNAL_SDK) block once rdar://problem/118903435 is in builds.
