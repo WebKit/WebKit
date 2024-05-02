@@ -110,6 +110,7 @@
 -(instancetype)initWithProvider:(CGDataProviderRef)dataProvider;
 -(void)preloadDataOfPagesInRange:(NSRange)range onQueue:(dispatch_queue_t)queue completion:(void (^)(NSIndexSet* loadedPageIndexes))completionBlock;
 -(void)resetFormFields:(PDFActionResetForm *) action;
+- (NSArray *)annotationsForFieldName:(NSString *)fieldname;
 @property (readwrite, nonatomic) BOOL hasHighLatencyDataProvider;
 @end
 #endif // HAVE(INCREMENTAL_PDF_APIS)
@@ -117,7 +118,6 @@
 #if ENABLE(UNIFIED_PDF)
 @interface PDFDocument (IPI)
 - (PDFDestination *)namedDestination:(NSString *)name;
-- (NSArray *)annotationsForFieldName:(NSString *)fieldname;
 @end
 
 #if HAVE(COREGRAPHICS_WITH_PDF_AREA_OF_INTEREST_SUPPORT)
