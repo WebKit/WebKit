@@ -263,6 +263,8 @@
 		44B28A0728D18ADA0010172C /* VectorCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44B289FC28D18AAA0010172C /* VectorCF.cpp */; };
 		44CDE4D426EE6E4A009F6ACB /* TypeCastsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44CDE4D326EE6E41009F6ACB /* TypeCastsCocoa.mm */; };
 		44CF31FD249941E8009CB6CB /* ContextMenuAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44CF31FB24993F66009CB6CB /* ContextMenuAction.cpp */; };
+		44D3F8402BE1A74200BE0218 /* XMLParsing.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44D3F8382BE1A6BE00BE0218 /* XMLParsing.mm */; };
+		44D3F8432BE1DB0000BE0218 /* test.xml in Copy Resources */ = {isa = PBXBuildFile; fileRef = 44D3F8422BE1DAD800BE0218 /* test.xml */; };
 		44D5008E26FE9ED6000EB12F /* RetainPtrARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44D5008D26FE9ED6000EB12F /* RetainPtrARC.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		4628C8E92367ABD100B073F0 /* WKSecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4628C8E82367ABBC00B073F0 /* WKSecurityOrigin.cpp */; };
 		462B4E8028E7B0E400653230 /* fragment-navigation-before-load-event.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 462B4E7828E7B0AF00653230 /* fragment-navigation-before-load-event.html */; };
@@ -1925,6 +1927,7 @@
 				524BBCA119E30C77002F1AF1 /* test.mp4 in Copy Resources */,
 				49C64FD728349C38005BF0C2 /* test.pages in Copy Resources */,
 				7AE9E5091AE5AE8B00CF874B /* test.pdf in Copy Resources */,
+				44D3F8432BE1DB0000BE0218 /* test.xml in Copy Resources */,
 				5C7101C725DD98B600686200 /* test_print.pdf in Copy Resources */,
 				F45EB60427739F34003571AE /* TestModalContainerControls.mlmodelc in Copy Resources */,
 				2E9896151D8F093800739892 /* text-and-password-inputs.html in Copy Resources */,
@@ -2423,6 +2426,8 @@
 		44C2FBE125E7592C00ABC72F /* WKAppHighlights.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKAppHighlights.mm; sourceTree = "<group>"; };
 		44CDE4D326EE6E41009F6ACB /* TypeCastsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TypeCastsCocoa.mm; sourceTree = "<group>"; };
 		44CF31FB24993F66009CB6CB /* ContextMenuAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMenuAction.cpp; sourceTree = "<group>"; };
+		44D3F8382BE1A6BE00BE0218 /* XMLParsing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XMLParsing.mm; sourceTree = "<group>"; };
+		44D3F8422BE1DAD800BE0218 /* test.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = test.xml; sourceTree = "<group>"; };
 		44D5008D26FE9ED6000EB12F /* RetainPtrARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RetainPtrARC.mm; path = ns/RetainPtrARC.mm; sourceTree = "<group>"; };
 		44DBE9512BD2272900307F65 /* TextPlaceholderTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextPlaceholderTests.mm; sourceTree = "<group>"; };
 		46061545275824B400AB613D /* WebLocks.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebLocks.mm; sourceTree = "<group>"; };
@@ -5596,6 +5601,7 @@
 				C95984F61E36BCD7002C0D45 /* test-without-audio-track.mp4 */,
 				524BBCA019E30C63002F1AF1 /* test.mp4 */,
 				7AE9E5081AE5AE8B00CF874B /* test.pdf */,
+				44D3F8422BE1DAD800BE0218 /* test.xml */,
 				1C51534B261596BD00FBC4FE /* UserInstalledAhem.html */,
 				C9C9A91C21DED79400FDE96E /* video-with-play-button.html */,
 				07CD32F72065B72A0064A4BE /* video.html */,
@@ -5872,6 +5878,7 @@
 				74DEF21D2A946FD700E034A3 /* TestUTIRegistry.cpp */,
 				7498C3CF2A94435F009A387E /* TestUTIUtilities.cpp */,
 				CD89D0381C4EDB2A00040A04 /* WebCoreNSURLSession.mm */,
+				44D3F8382BE1A6BE00BE0218 /* XMLParsing.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -6973,6 +6980,7 @@
 				0DE559ED2A6B0AAF009AA320 /* WKWebViewResize.mm in Sources */,
 				E520A36B25AFB76C00526CB9 /* WKWebViewTitlebarSeparatorTests.mm in Sources */,
 				3545E58927E2AD1300F1910E /* WritingModeTests.cpp in Sources */,
+				44D3F8402BE1A74200BE0218 /* XMLParsing.mm in Sources */,
 				C14D304624B4C3BA00480387 /* XPCEndpoint.mm in Sources */,
 				5C581D3227C8A01C006B3BC4 /* YouTubePluginReplacement.cpp in Sources */,
 			);
