@@ -189,10 +189,8 @@ class MacTest(darwin_testcase.DarwinTest):
 
     def test_sonoma_baseline_search_path(self):
         search_path = self.make_port(port_name='macos-sonoma').default_baseline_search_path()
-        self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-sonoma-wk1')
-        self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac-sonoma')
-        self.assertEqual(search_path[2], '/mock-checkout/LayoutTests/platform/mac-wk1')
-        self.assertEqual(search_path[3], '/mock-checkout/LayoutTests/platform/mac')
+        self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-wk1')
+        self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac')
 
     def test_factory_with_future_version(self):
         port = self.make_port(options=MockOptions(webkit_test_runner=True), os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac')
