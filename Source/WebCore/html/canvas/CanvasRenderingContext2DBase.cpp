@@ -3006,11 +3006,9 @@ OptionSet<ImageBufferOptions> CanvasRenderingContext2DBase::adjustImageBufferOpt
     switch (*m_settings.renderingModeForTesting) {
     case CanvasRenderingContext2DSettings::RenderingMode::Unaccelerated:
         bufferOptions.remove(ImageBufferOptions::Accelerated);
-        bufferOptions.add(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
         break;
     case CanvasRenderingContext2DSettings::RenderingMode::Accelerated:
         bufferOptions.add(ImageBufferOptions::Accelerated);
-        bufferOptions.add(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
         break;
     }
     return bufferOptions;

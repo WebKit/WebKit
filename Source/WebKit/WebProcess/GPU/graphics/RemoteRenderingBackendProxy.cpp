@@ -163,25 +163,29 @@ void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuff
     send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer.logicalSize(), imageBuffer.renderingMode(), imageBuffer.renderingPurpose(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormatValidated(), imageBuffer.renderingResourceIdentifier()));
 }
 
+bool RemoteRenderingBackendProxy::shouldMapAcceleratedImageBufferBackend()
+{
+    // When DOM rendering is in WP and 2D contextrendering is in GPUP
+    // we need to create ImageBuffers that are actually mapped into the
+    // Web Content process, so they can be painted into the tiles.
+    return !WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM);
+}
+
 RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, OptionSet<ImageBufferOptions> options)
 {
     RefPtr<ImageBuffer> imageBuffer;
 
-    bool avoidBackendSizeCheckForTesting = options.contains(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
 
 #if HAVE(IOSURFACE)
     if (options.contains(ImageBufferOptions::Accelerated)) {
-        // Unless DOM rendering is always enabled when any GPU process rendering is enabled,
-        // we need to create ImageBuffers for e.g. Canvas that are actually mapped into the
-        // Web Content process, so they can be painted into the tiles.
-        if (!WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM))
-            imageBuffer = RemoteImageBufferProxy::create<ImageBufferShareableMappedIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this, avoidBackendSizeCheckForTesting);
+        if (shouldMapAcceleratedImageBufferBackend())
+            imageBuffer = RemoteImageBufferProxy::create<ImageBufferShareableMappedIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this);
         else
-            imageBuffer = RemoteImageBufferProxy::create<ImageBufferRemoteIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this, avoidBackendSizeCheckForTesting);
+            imageBuffer = RemoteImageBufferProxy::create<ImageBufferRemoteIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this);
     }
 #endif
     if (!imageBuffer)
-        imageBuffer = RemoteImageBufferProxy::create<ImageBufferShareableBitmapBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this, avoidBackendSizeCheckForTesting);
+        imageBuffer = RemoteImageBufferProxy::create<ImageBufferShareableBitmapBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this);
 
     if (imageBuffer) {
         createRemoteImageBuffer(*imageBuffer);
