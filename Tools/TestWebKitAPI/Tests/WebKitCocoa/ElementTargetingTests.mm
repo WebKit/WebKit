@@ -49,7 +49,7 @@
 
 @implementation WKWebView (ElementTargeting)
 
-- (NSArray<_WKTargetedElementInfo *> *)_targetedElementInfo:(_WKTargetedElementRequest *)request
+- (NSArray<_WKTargetedElementInfo *> *)targetedElementInfo:(_WKTargetedElementRequest *)request
 {
     __block RetainPtr<NSArray<_WKTargetedElementInfo *>> result;
     __block bool done = false;
@@ -64,13 +64,13 @@
 - (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoAt:(CGPoint)point
 {
     auto request = adoptNS([[_WKTargetedElementRequest alloc] initWithPoint:point]);
-    return [self _targetedElementInfo:request.get()];
+    return [self targetedElementInfo:request.get()];
 }
 
 - (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoWithText:(NSString *)searchText
 {
     auto request = adoptNS([[_WKTargetedElementRequest alloc] initWithSearchText:searchText]);
-    return [self _targetedElementInfo:request.get()];
+    return [self targetedElementInfo:request.get()];
 }
 
 - (BOOL)adjustVisibilityForTargets:(NSArray<_WKTargetedElementInfo *> *)targets
@@ -194,6 +194,24 @@ TEST(ElementTargeting, BasicElementTargeting)
         EXPECT_EQ(element.offsetEdges, _WKRectEdgeNone);
         EXPECT_EQ(element.childFrames.count, 0U);
     }
+}
+
+TEST(ElementTargeting, DoNotIgnorePointerEventsNone)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-1"];
+
+    Util::waitForConditionWithLogging([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.subframeLoaded"] boolValue];
+    }, 5, @"Timed out waiting for subframes to finish loading.");
+
+    RetainPtr request = adoptNS([[_WKTargetedElementRequest alloc] initWithPoint:CGPointMake(150, 150)]);
+    [request setShouldIgnorePointerEventsNone:NO];
+
+    RetainPtr targets = [webView targetedElementInfo:request.get()];
+    EXPECT_EQ([targets count], 2U);
+    EXPECT_WK_STREQ("#absolute", [targets firstObject].selectors[0]);
+    EXPECT_WK_STREQ("MAIN > SECTION:first-of-type", [targets lastObject].selectors[0]);
 }
 
 TEST(ElementTargeting, NearbyOutOfFlowElements)

@@ -63,7 +63,7 @@ std::pair<Vector<LineAdjustment>, std::optional<size_t>> computeAdjustmentsForPa
         if (!floatBox.layoutBox())
             continue;
 
-        auto& renderer = downcast<RenderBox>(inlineContent.rendererForLayoutBox(*floatBox.layoutBox()));
+        auto& renderer = downcast<RenderBox>(*floatBox.layoutBox()->rendererForIntegration());
         bool isUsplittable = renderer.isUnsplittableForPagination() || renderer.style().breakInside() == BreakInside::Avoid;
 
         auto placedByLine = floatBox.placedByLine();

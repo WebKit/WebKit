@@ -39,6 +39,15 @@
 #include "ReferrerPolicy.h"
 
 namespace WebCore {
+class LinkLoader;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LinkLoader> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Document;
 class LinkPreloadResourceClient;

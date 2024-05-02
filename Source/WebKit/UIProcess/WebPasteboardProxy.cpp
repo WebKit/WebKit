@@ -40,6 +40,10 @@
 
 namespace WebKit {
 
+#if PLATFORM(COCOA)
+WebPasteboardProxy::PasteboardAccessInformation::~PasteboardAccessInformation() = default;
+#endif
+
 WebPasteboardProxy& WebPasteboardProxy::singleton()
 {
     static std::once_flag onceFlag;

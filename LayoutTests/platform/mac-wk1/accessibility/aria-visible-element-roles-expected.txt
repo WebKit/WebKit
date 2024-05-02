@@ -142,8 +142,8 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 
 <dfn hidden="" aria-hidden="false" id="dfn"></dfn>
     AXRole: AXGroup
-    computedRoleString: definition
-    AXSubrole: AXDefinition
+    computedRoleString: term
+    AXSubrole: AXTerm
 
 <div hidden="" aria-hidden="false" id="div"></div>
     AXRole: AXGroup

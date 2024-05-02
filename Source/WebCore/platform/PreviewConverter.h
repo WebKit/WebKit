@@ -39,6 +39,15 @@ OBJC_CLASS QLPreviewConverter;
 OBJC_CLASS WebPreviewConverterDelegate;
 
 namespace WebCore {
+struct PreviewPlatformDelegate;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PreviewPlatformDelegate> : std::true_type { };
+}
+
+namespace WebCore {
 
 class ResourceError;
 class ResourceRequest;

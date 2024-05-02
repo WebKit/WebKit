@@ -49,8 +49,10 @@ public:
         LayoutRect bounds;
     };
 
-    void add(const RenderLayer&, const LayoutRect&, const Vector<LayerAndBounds>& enclosingClippingLayers);
-    bool overlapsLayers(const RenderLayer&, const LayoutRect&, const Vector<LayerAndBounds>& enclosingClippingLayers) const;
+    using LayerAndBoundsVector = Vector<LayerAndBounds, 2>;
+
+    void add(const RenderLayer&, const LayoutRect&, const LayerAndBoundsVector& enclosingClippingLayers);
+    bool overlapsLayers(const RenderLayer&, const LayoutRect&, const LayerAndBoundsVector& enclosingClippingLayers) const;
     bool isEmpty() const { return m_isEmpty; }
 
     void pushCompositingContainer(const RenderLayer&);

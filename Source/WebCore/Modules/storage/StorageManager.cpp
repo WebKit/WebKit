@@ -54,6 +54,8 @@ StorageManager::StorageManager(NavigatorBase& navigator)
 {
 }
 
+StorageManager::~StorageManager() = default;
+
 struct ConnectionInfo {
     StorageConnection& connection;
     ClientOrigin origin;

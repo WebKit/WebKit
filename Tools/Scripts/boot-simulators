@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2024 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import webkitpy
+
+import argparse
+import logging
+import os
+import sys
+
+from webkitcorepy import arguments
+
+from webkitpy.common.system.executive import ScriptError
+
+from webkitpy.port.ios_simulator import IPhoneSimulatorPort, IPadSimulatorPort
+from webkitpy.port.visionos_simulator import VisionOSSimulatorPort
+from webkitpy.port.watch_simulator import WatchSimulatorPort
+
+from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager
+
+
+def init():
+    parser = argparse.ArgumentParser(description='Boots a specified number of simulators of the default device type.')
+
+    parser.add_argument('number_of_simulators', help='The number of simulators to boot.', type=int)
+
+    sim_type = parser.add_argument_group(title='Simulator Type', description='Specifies which type of simulator(s) to boot.').add_mutually_exclusive_group(required=True)
+    sim_type.add_argument('--ios-simulator', '--iphone-simulator', help='Boot an iOS simulator.', action='store_const', const=IPhoneSimulatorPort)
+    sim_type.add_argument('--ipados-simulator', '--ipad-simulator', help='Boot an iPadOS simulator.', action='store_const', const=IPadSimulatorPort)
+    sim_type.add_argument('--visionos-simulator', '--vision-simulator', help='Boot a visionOS simulator.', action='store_const', const=VisionOSSimulatorPort)
+    sim_type.add_argument('--watchos-simulator', '--watch-simulator', help='Boot a watchOS simulator.', action='store_const', const=WatchSimulatorPort)
+    # FIXME: add tvOS simulator support if/when the port is added to webkitpy.port. (webkit.org/b/273261)
+
+    opt_args = parser.add_argument_group(title='Optional Arguments', description='Optional arguments affecting specific boot behaviors.')
+    opt_args.add_argument('--use-booted',
+                          help='Count booted simulators towards the specified number. Default is to boot the desired number of simulators regardless of if any are already booted.',
+                          action='store_true')
+
+    arguments.LoggingGroup(parser, loggers=[logging.getLogger()])
+    logging.basicConfig(format='%(asctime)s: %(message)s')
+
+    return parser.parse_args()
+
+
+def main():
+    args = init()
+
+    if args.number_of_simulators <= 0:
+        raise ScriptError('Invalid number of simulators to boot.')
+
+    port = args.ios_simulator or args.ipados_simulator or args.visionos_simulator or args.watchos_simulator
+    request = DeviceRequest(device_type=port.DEFAULT_DEVICE_TYPES[0], use_booted_simulator=args.use_booted)
+
+    manager = SimulatedDeviceManager()
+    manager.initialize_devices([request] * args.number_of_simulators, keep_alive=True)
+
+
+if __name__ == '__main__':
+    sys.exit(main())

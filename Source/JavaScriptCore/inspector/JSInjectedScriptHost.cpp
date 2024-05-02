@@ -850,7 +850,7 @@ public:
     void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t) final { analyzeEdge(from, to, RootMarkReason::None); }
 
     void analyzeNode(JSCell*) final { }
-    void setOpaqueRootReachabilityReasonForCell(JSCell*, const char*) final { }
+    void setOpaqueRootReachabilityReasonForCell(JSCell*, ASCIILiteral) final { }
     void setWrappedObjectForCell(JSCell*, void*) final { }
     void setLabelForCell(JSCell*, const String&) final { }
 

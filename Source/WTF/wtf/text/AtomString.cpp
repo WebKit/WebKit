@@ -24,9 +24,9 @@
 #include <wtf/text/AtomString.h>
 
 #include <mutex>
-#include <wtf/text/IntegerToStringConversion.h>
-
+#include <wtf/Algorithms.h>
 #include <wtf/dtoa.h>
+#include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -48,7 +48,7 @@ ALWAYS_INLINE AtomString AtomString::convertASCIICase() const
     unsigned length;
     const unsigned localBufferSize = 100;
     if (impl->is8Bit() && (length = impl->length()) <= localBufferSize) {
-        const LChar* characters = impl->characters8();
+        auto characters = impl->span8();
         unsigned failingIndex;
         for (unsigned i = 0; i < length; ++i) {
             if (type == CaseConvertType::Lower ? UNLIKELY(isASCIIUpper(characters[i])) : LIKELY(isASCIILower(characters[i]))) {
@@ -120,7 +120,7 @@ AtomString AtomString::number(double number)
 AtomString AtomString::fromUTF8Internal(std::span<const char> characters)
 {
     ASSERT(!characters.empty());
-    return AtomStringImpl::addUTF8(characters);
+    return AtomStringImpl::add(spanReinterpretCast<const char8_t>(characters));
 }
 
 #ifndef NDEBUG

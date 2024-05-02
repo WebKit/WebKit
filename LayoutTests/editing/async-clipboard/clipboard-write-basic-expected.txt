@@ -9,7 +9,8 @@ PASS firstItem.types is ['text/plain', 'text/uri-list']
 PASS getType("text/plain") resolved to "The quick brown fox jumped over the lazy dog."
 PASS getType("text/uri-list") resolved to "https://www.apple.com/"
 Testing secondItem:
-PASS secondItem.types is ['text/uri-list', 'text/html']
+PASS secondItem.types.includes('text/uri-list') is true
+PASS secondItem.types.includes('text/html') is true
 PASS getType("text/uri-list") resolved to "https://webkit.org/"
 PASS fragment.querySelector('a').href is "https://webkit.org/"
 Testing thirdItem:

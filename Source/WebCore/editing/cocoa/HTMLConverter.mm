@@ -1291,33 +1291,52 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
         }
     }
     if (fileWrapper || usePlaceholder) {
+        RetainPtr<id> attachment;
+        NSAttributedStringKey attributeName = NSAttachmentAttributeName;
+
         NSUInteger textLength = [_attrStr length];
-        RetainPtr<NSTextAttachment> attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
-
-        if (auto& ariaLabel = element.getAttribute("aria-label"_s); !ariaLabel.isEmpty())
-            attachment.get().accessibilityLabel = ariaLabel;
-        if (auto& altText = element.getAttribute("alt"_s); !altText.isEmpty())
-            attachment.get().accessibilityLabel = altText;
-
-#if PLATFORM(IOS_FAMILY)
-        float verticalAlign = 0.0;
-        _caches->floatPropertyValueForNode(element, CSSPropertyVerticalAlign, verticalAlign);
-        attachment.get().bounds = CGRectMake(0, (verticalAlign / 100) * element.clientHeight(), element.clientWidth(), element.clientHeight());
-#endif
-        RetainPtr<NSString> string = adoptNS([[NSString alloc] initWithFormat:(needsParagraph ? @"%C\n" : @"%C"), static_cast<unichar>(NSAttachmentCharacter)]);
+        RetainPtr string = adoptNS([[NSString alloc] initWithFormat:(needsParagraph ? @"%C\n" : @"%C"), static_cast<unichar>(NSAttachmentCharacter)]);
         NSRange rangeToReplace = NSMakeRange(textLength, 0);
         NSDictionary *attrs;
-        if (fileWrapper) {
-#if PLATFORM(IOS_FAMILY)
-            UNUSED_VARIABLE(ignoreOrientation);
-#else
-            if (ignoreOrientation)
-                [attachment setIgnoresOrientation:YES];
-#endif
-        } else {
-            attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithData:nil ofType:nil]);
-            attachment.get().image = webCoreTextAttachmentMissingPlatformImage();
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+        if (RetainPtr data = [fileWrapper regularFileContents]) {
+            RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element);
+            if (imageElement && imageElement->isMultiRepresentationHEIC())
+                attachment = adoptNS([[PlatformWebMultiRepresentationHEICAttachment alloc] initWithImageContent:data.get()]);
+            if (attachment)
+                attributeName = WebMultiRepresentationHEICAttachmentAttributeName;
         }
+#endif
+
+        if (!attachment) {
+            RetainPtr textAttachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
+
+            if (auto& ariaLabel = element.getAttribute("aria-label"_s); !ariaLabel.isEmpty())
+                [textAttachment setAccessibilityLabel:ariaLabel];
+            if (auto& altText = element.getAttribute("alt"_s); !altText.isEmpty())
+                [textAttachment setAccessibilityLabel:altText];
+
+#if PLATFORM(IOS_FAMILY)
+            float verticalAlign = 0.0;
+            _caches->floatPropertyValueForNode(element, CSSPropertyVerticalAlign, verticalAlign);
+            [textAttachment setBounds:CGRectMake(0, (verticalAlign / 100) * element.clientHeight(), element.clientWidth(), element.clientHeight())];
+#endif
+            if (fileWrapper) {
+#if PLATFORM(IOS_FAMILY)
+                UNUSED_VARIABLE(ignoreOrientation);
+#else
+                if (ignoreOrientation)
+                    [textAttachment setIgnoresOrientation:YES];
+#endif
+            } else {
+                textAttachment = adoptNS([[PlatformNSTextAttachment alloc] initWithData:nil ofType:nil]);
+                [textAttachment setImage:webCoreTextAttachmentMissingPlatformImage()];
+            }
+
+            attachment = textAttachment;
+        }
+
         [_attrStr replaceCharactersInRange:rangeToReplace withString:string.get()];
         rangeToReplace.length = [string length];
         if (rangeToReplace.location < _domRangeStartIndex)
@@ -1326,7 +1345,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
         if (rangeToReplace.length > 0) {
             [_attrStr setAttributes:attrs range:rangeToReplace];
             rangeToReplace.length = 1;
-            [_attrStr addAttribute:NSAttachmentAttributeName value:attachment.get() range:rangeToReplace];
+            [_attrStr addAttribute:attributeName value:attachment.get() range:rangeToReplace];
         }
         _flags.isSoft = NO;
         retval = YES;

@@ -33,6 +33,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+class VirtualAuthenticatorManager;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::VirtualAuthenticatorManager> : std::true_type { };
+}
+
+namespace WebKit {
 struct VirtualCredential;
 
 class VirtualAuthenticatorManager final : public AuthenticatorManager {
@@ -53,7 +62,7 @@ protected:
     
     
 private:
-    UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportService::Observer&) const final;
+    UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&) const final;
     void runPanel() override;
     void filterTransports(TransportSet&) const override { };
 

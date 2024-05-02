@@ -73,11 +73,11 @@ public:
     unsigned skipWhilePredicate(unsigned offset)
     {
         if (m_string->is8Bit()) {
-            const LChar* characters8 = m_string->characters8();
+            auto characters8 = m_string->span8();
             while ((m_offset + offset) < m_stringLength && characterPredicate(characters8[m_offset + offset]))
                 ++offset;
         } else {
-            const UChar* characters16 = m_string->characters16();
+            auto characters16 = m_string->span16();
             while ((m_offset + offset) < m_stringLength && characterPredicate(characters16[m_offset + offset]))
                 ++offset;
         }

@@ -39,6 +39,15 @@ ALLOW_UNUSED_PARAMETERS_END
 ALLOW_COMMA_END
 
 namespace WebCore {
+class LibWebRTCDTMFSenderBackend;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LibWebRTCDTMFSenderBackend> : std::true_type { };
+}
+
+namespace WebCore {
 
 // Use eager initialization for the WeakPtrFactory since we construct WeakPtrs on another thread.
 class LibWebRTCDTMFSenderBackend final : public RTCDTMFSenderBackend, private webrtc::DtmfSenderObserverInterface, public CanMakeWeakPtr<LibWebRTCDTMFSenderBackend, WeakPtrFactoryInitialization::Eager> {

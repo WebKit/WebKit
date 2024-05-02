@@ -36,7 +36,7 @@
 namespace WebCore {
 using namespace JSC;
 
-bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     JSCSSRuleList* jsCSSRuleList = jsCast<JSCSSRuleList*>(handle.slot()->asCell());
     if (!jsCSSRuleList->hasCustomProperties())
@@ -44,14 +44,14 @@ bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
 
     if (CSSStyleSheet* styleSheet = jsCSSRuleList->wrapped().styleSheet()) {
         if (UNLIKELY(reason))
-            *reason = "CSSStyleSheet is opaque root";
+            *reason = "CSSStyleSheet is opaque root"_s;
 
         return containsWebCoreOpaqueRoot(visitor, styleSheet);
     }
     
     if (CSSRule* cssRule = jsCSSRuleList->wrapped().item(0)) {
         if (UNLIKELY(reason))
-            *reason = "CSSRule is opaque root";
+            *reason = "CSSRule is opaque root"_s;
 
         return containsWebCoreOpaqueRoot(visitor, cssRule);
     }

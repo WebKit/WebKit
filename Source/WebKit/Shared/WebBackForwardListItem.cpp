@@ -186,9 +186,9 @@ SuspendedPageProxy* WebBackForwardListItem::suspendedPage() const
 }
 
 #if !LOG_DISABLED
-const char* WebBackForwardListItem::loggingString()
+String WebBackForwardListItem::loggingString()
 {
-    return debugString("Back/forward item ID ", itemID().toString(), ", original URL ", originalURL(), ", current URL ", url(), m_backForwardCacheEntry ? "(has a back/forward cache entry)" : "");
+    return makeString("Back/forward item ID ", itemID().toString(), ", original URL ", originalURL(), ", current URL ", url(), m_backForwardCacheEntry ? "(has a back/forward cache entry)" : "");
 }
 #endif // !LOG_DISABLED
 

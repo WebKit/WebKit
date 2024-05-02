@@ -1153,6 +1153,8 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
 #if ENABLE(AX_THREAD_TEXT_APIS)
             // Preserve whitespace-only text within editable contexts because ignoring it would cause
             // accessibility's representation of text to be different than what is actually rendered.
+            // FIXME: This actually isn't enough — we likely need _all_ whitespace RenderTexts (within an editable or not) to compute StringForTextMarkerRange correctly.
+            // e.g. This is necessary for ax-thread-text-apis/display-contents-end-text-marker.html.
             auto* node = this->node();
             return !node || !node->hasEditableStyle();
 #else

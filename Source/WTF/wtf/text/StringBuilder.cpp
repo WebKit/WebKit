@@ -93,9 +93,9 @@ void StringBuilder::shrink(unsigned newLength)
         }
         // Allocate a fresh buffer, with a copy of the characters we are keeping.
         if (m_buffer->is8Bit())
-            allocateBuffer<LChar>(m_buffer->characters<LChar>(), newLength);
+            allocateBuffer<LChar>(m_buffer->span8().data(), newLength);
         else
-            allocateBuffer<UChar>(m_buffer->characters<UChar>(), newLength);
+            allocateBuffer<UChar>(m_buffer->span16().data(), newLength);
         return;
     }
 
@@ -144,7 +144,7 @@ UChar* StringBuilder::extendBufferForAppendingWithUpconvert(unsigned requiredLen
         allocateBuffer<UChar>(characters<LChar>(), expandedCapacity(capacity(), requiredLength));
         if (UNLIKELY(hasOverflowed()))
             return nullptr;
-        return const_cast<UChar*>(m_buffer->characters<UChar>()) + std::exchange(m_length, requiredLength);
+        return const_cast<UChar*>(m_buffer->span16().data()) + std::exchange(m_length, requiredLength);
     }
     return extendBufferForAppending<UChar>(requiredLength);
 }

@@ -48,7 +48,7 @@ private:
         });
     }
 
-    class PreventSourceFromEndingObserver final : public RealtimeMediaSource::Observer {
+    class PreventSourceFromEndingObserver final : public RealtimeMediaSourceObserver {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         explicit PreventSourceFromEndingObserver(Ref<RealtimeMediaSource>&& source)

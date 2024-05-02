@@ -49,6 +49,7 @@ public:
     void commit(std::unique_ptr<Style::Update>);
 
     static void tearDownRenderers(Element&);
+    static void tearDownRenderersForShadowRootInsertion(Element&);
     static void tearDownRenderersAfterSlotChange(Element& host);
     static void tearDownRenderer(Text&);
 
@@ -92,7 +93,8 @@ private:
     void popParentsToDepth(unsigned depth);
 
     // FIXME: Use OptionSet.
-    enum class TeardownType { Full, FullAfterSlotChange, RendererUpdate, RendererUpdateCancelingAnimations };
+    enum class TeardownType { Full, FullAfterSlotOrShadowRootChange, RendererUpdate, RendererUpdateCancelingAnimations };
+    static void tearDownRenderers(Element&, TeardownType);
     static void tearDownRenderers(Element&, TeardownType, RenderTreeBuilder&);
     static void tearDownTextRenderer(Text&, const ContainerNode* root, RenderTreeBuilder&);
     static void tearDownLeftoverChildrenOfComposedTree(Element&, RenderTreeBuilder&);

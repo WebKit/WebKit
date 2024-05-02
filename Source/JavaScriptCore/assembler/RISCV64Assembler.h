@@ -1490,10 +1490,10 @@ public:
     static constexpr FPRegisterID lastFPRegister() { return RISCV64Registers::f31; }
     static constexpr unsigned numberOfFPRegisters() { return lastFPRegister() - firstFPRegister() + 1; }
 
-    static const char* gprName(RegisterID id)
+    static ASCIILiteral gprName(RegisterID id)
     {
         ASSERT(id >= firstRegister() && id <= lastRegister());
-        static const char* const nameForRegister[numberOfRegisters()] = {
+        static constexpr ASCIILiteral nameForRegister[numberOfRegisters()] = {
 #define REGISTER_NAME(id, name, r, cs) name,
             FOR_EACH_GP_REGISTER(REGISTER_NAME)
 #undef REGISTER_NAME
@@ -1501,10 +1501,10 @@ public:
         return nameForRegister[id];
     }
 
-    static const char* sprName(SPRegisterID id)
+    static ASCIILiteral sprName(SPRegisterID id)
     {
         ASSERT(id >= firstSPRegister() && id <= lastSPRegister());
-        static const char* const nameForRegister[numberOfSPRegisters()] = {
+        static constexpr ASCIILiteral nameForRegister[numberOfSPRegisters()] = {
 #define REGISTER_NAME(id, name) name,
             FOR_EACH_SP_REGISTER(REGISTER_NAME)
 #undef REGISTER_NAME
@@ -1512,10 +1512,10 @@ public:
         return nameForRegister[id];
     }
 
-    static const char* fprName(FPRegisterID id)
+    static ASCIILiteral fprName(FPRegisterID id)
     {
         ASSERT(id >= firstFPRegister() && id <= lastFPRegister());
-        static const char* const nameForRegister[numberOfFPRegisters()] = {
+        static constexpr ASCIILiteral nameForRegister[numberOfFPRegisters()] = {
 #define REGISTER_NAME(id, name, r, cs) name,
             FOR_EACH_FP_REGISTER(REGISTER_NAME)
 #undef REGISTER_NAME

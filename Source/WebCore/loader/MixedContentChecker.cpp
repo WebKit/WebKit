@@ -38,6 +38,7 @@
 #include "LegacySchemeRegistry.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
+#include "Quirks.h"
 #include "SecurityOrigin.h"
 
 #if PLATFORM(IOS_FAMILY)
@@ -161,6 +162,11 @@ bool MixedContentChecker::frameAndAncestorsCanRunInsecureContent(LocalFrame& fra
     return allowed;
 }
 
+static bool destinationIsImageAudioOrVideo(FetchOptions::Destination destination)
+{
+    return destination == FetchOptions::Destination::Audio || destination == FetchOptions::Destination::Image || destination == FetchOptions::Destination::Video;
+}
+
 bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgradable isUpgradable, const URL& url, FetchOptions::Mode mode, FetchOptions::Destination destination, Initiator initiator)
 {
     RefPtr document = frame.document();
@@ -184,11 +190,11 @@ bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgr
         // 4.1.2 request’s URL’s host is an IP address.
         || (!shouldUpgradeIPAddressAndLocalhostForTesting && URL::hostIsIPAddress(url.host()))
         // 4.1.4 request’s destination is not "image", "audio", or "video".
-        || (destination != FetchOptions::Destination::Audio && destination != FetchOptions::Destination::Image && destination != FetchOptions::Destination::Video)
+        || (!destinationIsImageAudioOrVideo(destination))
         // 4.1.5 request’s destination is "image" and request’s initiator is "imageset".
         || (destination == FetchOptions::Destination::Image && initiator == Initiator::Imageset)
         // and CORS is excluded
-        || mode == FetchOptions::Mode::Cors)
+        || (mode == FetchOptions::Mode::Cors && !(document->quirks().needsRelaxedCorsMixedContentCheckQuirk() && destinationIsImageAudioOrVideo(destination))))
         return false;
     logConsoleWarningForUpgrade(frame, /* blocked */ false, url, shouldUpgradeIPAddressAndLocalhostForTesting);
     return true;

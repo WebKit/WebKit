@@ -72,7 +72,7 @@ void BoxGeometryUpdater::updateListMarkerDimensions(const RenderListMarker& list
     if (intrinsicWidthMode)
         return;
 
-    auto& layoutBox = boxTree().layoutBoxForRenderer(listMarker);
+    auto& layoutBox = *listMarker.layoutBox();
     if (layoutBox.isListMarkerOutside()) {
         auto* ancestor = listMarker.containingBlock();
         auto offsetFromParentListItem = [&] {
@@ -218,7 +218,7 @@ static inline LayoutSize scrollbarLogicalSize(const RenderBox& renderer)
 
 void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
-    auto& layoutBox = boxTree().layoutBoxForRenderer(renderBox);
+    auto& layoutBox = const_cast<Layout::ElementBox&>(*renderBox.layoutBox());
     auto isLeftToRightInlineDirection = renderBox.parent()->style().isLeftToRightDirection();
     auto blockFlowDirection = writingModeToBlockFlowDirection(renderBox.parent()->style().writingMode());
     auto isHorizontalWritingMode = blockFlowDirection == BlockFlowDirection::TopToBottom || blockFlowDirection == BlockFlowDirection::BottomToTop;
@@ -293,7 +293,7 @@ void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, s
 void BoxGeometryUpdater::updateLineBreakBoxDimensions(const RenderLineBreak& lineBreakBox)
 {
     // This is just a box geometry reset (see InlineFormattingContext::layoutInFlowContent).
-    auto& boxGeometry = layoutState().ensureGeometryForBox(boxTree().layoutBoxForRenderer(lineBreakBox));
+    auto& boxGeometry = layoutState().ensureGeometryForBox(*lineBreakBox.layoutBox());
 
     boxGeometry.setHorizontalMargin({ });
     boxGeometry.setBorder({ });
@@ -306,7 +306,7 @@ void BoxGeometryUpdater::updateLineBreakBoxDimensions(const RenderLineBreak& lin
 
 void BoxGeometryUpdater::updateInlineBoxDimensions(const RenderInline& renderInline, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
-    auto& boxGeometry = layoutState().ensureGeometryForBox(boxTree().layoutBoxForRenderer(renderInline));
+    auto& boxGeometry = layoutState().ensureGeometryForBox(*renderInline.layoutBox());
 
     // Check if this renderer is part of a continuation and adjust horizontal margin/border/padding accordingly.
     auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.isContinuation();

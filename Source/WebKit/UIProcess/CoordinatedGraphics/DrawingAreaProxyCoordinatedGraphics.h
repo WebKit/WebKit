@@ -35,6 +35,15 @@
 #include "BackingStore.h"
 #endif
 
+namespace WebKit {
+class DrawingAreaProxyCoordinatedGraphics;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::DrawingAreaProxyCoordinatedGraphics> : std::true_type { };
+}
+
 namespace WebCore {
 class Region;
 }

@@ -93,12 +93,12 @@ public:
 
     const RenderObject& renderer() const
     {
-        return m_inlineContent->rendererForLayoutBox(box().layoutBox());
+        return *box().layoutBox().rendererForIntegration();
     }
 
     bool hasRenderer() const
     {
-        return m_inlineContent->hasRendererForLayoutBox(box().layoutBox());
+        return !!box().layoutBox().rendererForIntegration();
     }
 
     const RenderBlockFlow& formattingContextRoot() const

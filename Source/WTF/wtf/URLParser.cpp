@@ -2544,14 +2544,14 @@ template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser
     if (domain.containsOnlyASCII() && !subdomainStartsWithXNDashDash(domain)) {
         size_t length = domain.length();
         if (domain.is8Bit()) {
-            const LChar* characters = domain.characters8();
+            auto characters = domain.span8();
             ascii.appendUsingFunctor(length, [&](size_t i) {
                 if (UNLIKELY(isASCIIUpper(characters[i])))
                     syntaxViolation(iteratorForSyntaxViolationPosition);
                 return toASCIILower(characters[i]);
             });
         } else {
-            const UChar* characters = domain.characters16();
+            auto characters = domain.span16();
             ascii.appendUsingFunctor(length, [&](size_t i) {
                 if (UNLIKELY(isASCIIUpper(characters[i])))
                     syntaxViolation(iteratorForSyntaxViolationPosition);

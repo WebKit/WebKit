@@ -37,27 +37,27 @@
     FOR_EACH_FP_REGISTER(macro)
 
 #define FOR_EACH_GP_REGISTER(macro)             \
-    macro(eax, "eax", 0, 0)                     \
-    macro(ecx, "ecx", 0, 0)                     \
-    macro(edx, "edx", 0, 0)                     \
-    macro(ebx, "ebx", 0, 1)                     \
-    macro(esp, "esp", 0, 0)                     \
-    macro(ebp, "ebp", 0, 1)                     \
-    macro(esi, "esi", 0, 1)                     \
-    macro(edi, "edi", 0, 1)
+    macro(eax, "eax"_s, 0, 0)                     \
+    macro(ecx, "ecx"_s, 0, 0)                     \
+    macro(edx, "edx"_s, 0, 0)                     \
+    macro(ebx, "ebx"_s, 0, 1)                     \
+    macro(esp, "esp"_s, 0, 0)                     \
+    macro(ebp, "ebp"_s, 0, 1)                     \
+    macro(esi, "esi"_s, 0, 1)                     \
+    macro(edi, "edi"_s, 0, 1)
 
 #define FOR_EACH_FP_REGISTER(macro)             \
-    macro(xmm0, "xmm0", 0, 0)                   \
-    macro(xmm1, "xmm1", 0, 0)                   \
-    macro(xmm2, "xmm2", 0, 0)                   \
-    macro(xmm3, "xmm3", 0, 0)                   \
-    macro(xmm4, "xmm4", 0, 0)                   \
-    macro(xmm5, "xmm5", 0, 0)                   \
-    macro(xmm6, "xmm6", 0, 0)                   \
-    macro(xmm7, "xmm7", 0, 0)
+    macro(xmm0, "xmm0"_s, 0, 0)                   \
+    macro(xmm1, "xmm1"_s, 0, 0)                   \
+    macro(xmm2, "xmm2"_s, 0, 0)                   \
+    macro(xmm3, "xmm3"_s, 0, 0)                   \
+    macro(xmm4, "xmm4"_s, 0, 0)                   \
+    macro(xmm5, "xmm5"_s, 0, 0)                   \
+    macro(xmm6, "xmm6"_s, 0, 0)                   \
+    macro(xmm7, "xmm7"_s, 0, 0)
 
 #define FOR_EACH_SP_REGISTER(macro)             \
-    macro(eip,    "eip",    0, 0)               \
-    macro(eflags, "eflags", 0, 0)
+    macro(eip,    "eip"_s,    0, 0)               \
+    macro(eflags, "eflags"_s, 0, 0)
 
 #endif

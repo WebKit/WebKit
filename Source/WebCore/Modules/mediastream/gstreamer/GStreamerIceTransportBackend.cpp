@@ -65,7 +65,7 @@ void GStreamerIceTransportBackend::iceTransportChanged()
     }), this);
 }
 
-void GStreamerIceTransportBackend::registerClient(Client& client)
+void GStreamerIceTransportBackend::registerClient(RTCIceTransportBackendClient& client)
 {
     ASSERT(!m_client);
     m_client = client;

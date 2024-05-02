@@ -32,6 +32,15 @@
 #include <WebCore/PlatformXR.h>
 #include <wtf/Function.h>
 
+namespace WebKit {
+class PlatformXRCoordinatorSessionEventClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PlatformXRCoordinatorSessionEventClient> : std::true_type { };
+}
+
 namespace WebCore {
 class SecurityOriginData;
 }
@@ -39,6 +48,14 @@ class SecurityOriginData;
 namespace WebKit {
 
 class WebPageProxy;
+
+class PlatformXRCoordinatorSessionEventClient : public CanMakeWeakPtr<PlatformXRCoordinatorSessionEventClient> {
+public:
+    virtual ~PlatformXRCoordinatorSessionEventClient() = default;
+
+    virtual void sessionDidEnd(XRDeviceIdentifier) = 0;
+    virtual void sessionDidUpdateVisibilityState(XRDeviceIdentifier, PlatformXR::VisibilityState) = 0;
+};
 
 class PlatformXRCoordinator {
 public:
@@ -53,16 +70,8 @@ public:
     using FeatureListCallback = CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>;
     virtual void requestPermissionOnSessionFeatures(WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, const PlatformXR::Device::FeatureList& /* requiredFeaturesRequested */, const PlatformXR::Device::FeatureList& /* optionalFeaturesRequested */, FeatureListCallback&& completionHandler) { completionHandler(granted); }
 
-    class SessionEventClient : public CanMakeWeakPtr<SessionEventClient> {
-    public:
-        virtual ~SessionEventClient() = default;
-
-        virtual void sessionDidEnd(XRDeviceIdentifier) = 0;
-        virtual void sessionDidUpdateVisibilityState(XRDeviceIdentifier, PlatformXR::VisibilityState) = 0;
-    };
-
     // Session creation/termination.
-    virtual void startSession(WebPageProxy&, WeakPtr<SessionEventClient>&&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&) = 0;
+    virtual void startSession(WebPageProxy&, WeakPtr<PlatformXRCoordinatorSessionEventClient>&&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&) = 0;
     virtual void endSessionIfExists(WebPageProxy&) = 0;
 
     // Session display loop.

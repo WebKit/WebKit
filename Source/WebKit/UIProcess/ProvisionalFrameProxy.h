@@ -31,6 +31,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+class ProvisionalFrameProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ProvisionalFrameProxy> : std::true_type { };
+}
+
+namespace WebKit {
 
 class FrameProcess;
 class VisitedLinkStore;

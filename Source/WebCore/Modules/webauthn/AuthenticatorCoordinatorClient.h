@@ -32,6 +32,15 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class AuthenticatorCoordinatorClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AuthenticatorCoordinatorClient> : std::true_type { };
+}
+
 namespace WebAuthn {
 enum class Scope;
 }

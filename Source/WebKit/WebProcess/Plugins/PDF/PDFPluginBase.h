@@ -87,7 +87,7 @@ using ByteRangeRequestIdentifier = ObjectIdentifier<ByteRangeRequestIdentifierTy
 
 enum class CheckValidRanges : bool { No, Yes };
 
-class PDFPluginBase : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFPluginBase>, public CanMakeThreadSafeCheckedPtr<PDFPluginBase>, public WebCore::ScrollableArea, public PDFScriptEvaluator::Client, public Identified<PDFPluginIdentifier> {
+class PDFPluginBase : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFPluginBase>, public CanMakeThreadSafeCheckedPtr<PDFPluginBase>, public WebCore::ScrollableArea, public PDFScriptEvaluatorClient, public Identified<PDFPluginIdentifier> {
     WTF_MAKE_NONCOPYABLE(PDFPluginBase);
     WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFPluginBase);
@@ -105,9 +105,9 @@ public:
     void incrementPtrCount() const final { CanMakeThreadSafeCheckedPtr::incrementPtrCount(); }
     void decrementPtrCount() const final { CanMakeThreadSafeCheckedPtr::decrementPtrCount(); }
 
-    using WebKit::PDFScriptEvaluator::Client::weakPtrFactory;
-    using WebKit::PDFScriptEvaluator::Client::WeakValueType;
-    using WebKit::PDFScriptEvaluator::Client::WeakPtrImplType;
+    using WebKit::PDFScriptEvaluatorClient::weakPtrFactory;
+    using WebKit::PDFScriptEvaluatorClient::WeakValueType;
+    using WebKit::PDFScriptEvaluatorClient::WeakPtrImplType;
 
     void startLoading();
     void destroy();

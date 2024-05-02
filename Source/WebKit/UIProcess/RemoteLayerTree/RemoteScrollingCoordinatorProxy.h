@@ -41,6 +41,15 @@
 
 OBJC_CLASS UIScrollView;
 
+namespace WebKit {
+class RemoteScrollingCoordinatorProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteScrollingCoordinatorProxy> : std::true_type { };
+}
+
 namespace WebCore {
 class FloatPoint;
 class PlatformWheelEvent;

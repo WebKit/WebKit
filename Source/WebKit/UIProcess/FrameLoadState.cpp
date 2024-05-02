@@ -32,13 +32,13 @@ FrameLoadState::~FrameLoadState()
 {
 }
 
-void FrameLoadState::addObserver(Observer& observer)
+void FrameLoadState::addObserver(FrameLoadStateObserver& observer)
 {
     auto result = m_observers.add(observer);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-void FrameLoadState::removeObserver(Observer& observer)
+void FrameLoadState::removeObserver(FrameLoadStateObserver& observer)
 {
     auto result = m_observers.remove(observer);
     ASSERT_UNUSED(result, result);
@@ -51,7 +51,7 @@ void FrameLoadState::didStartProvisionalLoad(const URL& url)
     m_state = State::Provisional;
     m_provisionalURL = url;
 
-    m_observers.forEach([&url](Observer& observer) {
+    m_observers.forEach([&url](FrameLoadStateObserver& observer) {
         observer.didReceiveProvisionalURL(url);
     });
 }
@@ -61,7 +61,7 @@ void FrameLoadState::didSuspend()
     m_state = State::Finished;
     m_provisionalURL = { };
 
-    m_observers.forEach([](Observer& observer) {
+    m_observers.forEach([](FrameLoadStateObserver& observer) {
         observer.didCancelProvisionalLoad();
     });
 }
@@ -79,7 +79,7 @@ void FrameLoadState::didReceiveServerRedirectForProvisionalLoad(const URL& url)
 
     m_provisionalURL = url;
 
-    m_observers.forEach([&url](Observer& observer) {
+    m_observers.forEach([&url](FrameLoadStateObserver& observer) {
         observer.didReceiveProvisionalURL(url);
     });
 }
@@ -92,7 +92,7 @@ void FrameLoadState::didFailProvisionalLoad()
     m_provisionalURL = { };
     m_unreachableURL = m_lastUnreachableURL;
 
-    m_observers.forEach([](Observer& observer) {
+    m_observers.forEach([](FrameLoadStateObserver& observer) {
         observer.didCancelProvisionalLoad();
     });
 }
@@ -106,7 +106,7 @@ void FrameLoadState::didCommitLoad()
     m_url = m_provisionalURL.isNull() ? aboutBlankURL() : m_provisionalURL;
     m_provisionalURL = { };
 
-    m_observers.forEach([](Observer& observer) {
+    m_observers.forEach([](FrameLoadStateObserver& observer) {
         observer.didCommitProvisionalLoad();
     });
 }
@@ -118,7 +118,7 @@ void FrameLoadState::didFinishLoad()
 
     m_state = State::Finished;
 
-    m_observers.forEach([](Observer& observer) {
+    m_observers.forEach([](FrameLoadStateObserver& observer) {
         observer.didFinishLoad();
     });
 }
@@ -140,7 +140,7 @@ void FrameLoadState::didSameDocumentNotification(const URL& url)
 void FrameLoadState::setURL(const URL& url)
 {
     m_url = url;
-    m_observers.forEach([&url](Observer& observer) {
+    m_observers.forEach([&url](FrameLoadStateObserver& observer) {
         observer.didCancelProvisionalLoad();
         observer.didReceiveProvisionalURL(url);
         observer.didCommitProvisionalLoad();

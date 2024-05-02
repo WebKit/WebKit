@@ -655,7 +655,7 @@ static void invalidateRebuildRootIfNeeded(Node& node)
     ancestor->invalidateRenderer();
 }
 
-void RenderTreeUpdater::tearDownRenderers(Element& root)
+void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType)
 {
     if (!root.renderer() && !root.hasDisplayContents())
         return;
@@ -664,22 +664,25 @@ void RenderTreeUpdater::tearDownRenderers(Element& root)
         return;
 
     RenderTreeBuilder builder(*view);
-    tearDownRenderers(root, TeardownType::Full, builder);
+    tearDownRenderers(root, teardownType, builder);
     invalidateRebuildRootIfNeeded(root);
+}
+
+void RenderTreeUpdater::tearDownRenderers(Element& root)
+{
+    tearDownRenderers(root, TeardownType::Full);
+}
+
+void RenderTreeUpdater::tearDownRenderersForShadowRootInsertion(Element& host)
+{
+    ASSERT(!host.shadowRoot());
+    tearDownRenderers(host, TeardownType::FullAfterSlotOrShadowRootChange);
 }
 
 void RenderTreeUpdater::tearDownRenderersAfterSlotChange(Element& host)
 {
     ASSERT(host.shadowRoot());
-    if (!host.renderer() && !host.hasDisplayContents())
-        return;
-    auto* view = host.document().renderView();
-    if (!view)
-        return;
-
-    RenderTreeBuilder builder(*view);
-    tearDownRenderers(host, TeardownType::FullAfterSlotChange, builder);
-    invalidateRebuildRootIfNeeded(host);
+    tearDownRenderers(host, TeardownType::FullAfterSlotOrShadowRootChange);
 }
 
 void RenderTreeUpdater::tearDownRenderer(Text& text)
@@ -714,7 +717,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
                 tearDownLeftoverChildrenOfComposedTree(element, builder);
 
             switch (teardownType) {
-            case TeardownType::FullAfterSlotChange:
+            case TeardownType::FullAfterSlotOrShadowRootChange:
                 if (&element == &root) {
                     // Keep animations going on the host.
                     styleable.willChangeRenderer();

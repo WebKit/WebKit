@@ -1,3 +1,0 @@
-
-PASS Strokes w/dashes are properly hit-tested, even at large scale factors
-

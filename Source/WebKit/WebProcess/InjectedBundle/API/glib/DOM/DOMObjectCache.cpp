@@ -108,7 +108,7 @@ public:
     }
 
 private:
-    class DOMWindowObserver final : public WebCore::LocalDOMWindow::Observer {
+    class DOMWindowObserver final : public WebCore::LocalDOMWindowObserver {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         DOMWindowObserver(WebCore::LocalDOMWindow& window, DOMObjectCacheFrameObserver& frameObserver)

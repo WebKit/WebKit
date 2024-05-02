@@ -40,7 +40,7 @@ using namespace WebCore;
 
 AudioSessionRoutingArbitratorProxy::AudioSessionRoutingArbitratorProxy(WebProcessProxy& proxy)
     : m_process(proxy)
-    , m_token(SharedRoutingArbitrator::Token::create())
+    , m_token(SharedRoutingArbitratorToken::create())
 {
     m_logIdentifier = m_token->logIdentifier();
     SharedRoutingArbitrator::sharedInstance().setLogger(logger());

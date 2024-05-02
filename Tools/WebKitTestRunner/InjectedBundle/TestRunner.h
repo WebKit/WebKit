@@ -279,9 +279,6 @@ public:
 
     void setViewSize(double width, double height);
 
-    void callRemoveChromeInputFieldCallback();
-    void callSetBackingScaleFactorCallback();
-
     static void overridePreference(JSStringRef preference, JSStringRef value);
 
     // Cookies testing
@@ -487,7 +484,6 @@ public:
     void setUseSeparateServiceWorkerProcess(bool);
 
     void removeAllSessionCredentials(JSContextRef, JSValueRef);
-    void callDidRemoveAllSessionCredentialsCallback();
     
     void getApplicationManifestThen(JSContextRef, JSValueRef);
 
@@ -511,10 +507,7 @@ public:
     bool hasAppBoundSession();
     void clearAppBoundSession();
     void setAppBoundDomains(JSContextRef, JSValueRef originArray, JSValueRef callback);
-    void didSetAppBoundDomainsCallback();
-
     void setManagedDomains(JSContextRef, JSValueRef originArray, JSValueRef callback);
-    void didSetManagedDomainsCallback();
 
     bool didLoadAppInitiatedRequest();
     bool didLoadNonAppInitiatedRequest();

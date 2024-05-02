@@ -31,6 +31,15 @@
 #include <wtf/HashMap.h>
 
 namespace WebKit {
+class SampleBufferDisplayLayerManager;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SampleBufferDisplayLayerManager> : std::true_type { };
+}
+
+namespace WebKit {
 
 class SampleBufferDisplayLayerManager : public CanMakeWeakPtr<SampleBufferDisplayLayerManager> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -42,7 +51,7 @@ public:
     void removeLayer(SampleBufferDisplayLayer&);
 
     void didReceiveLayerMessage(IPC::Connection&, IPC::Decoder&);
-    RefPtr<WebCore::SampleBufferDisplayLayer> createLayer(WebCore::SampleBufferDisplayLayer::Client&);
+    RefPtr<WebCore::SampleBufferDisplayLayer> createLayer(WebCore::SampleBufferDisplayLayerClient&);
 
 private:
     HashMap<SampleBufferDisplayLayerIdentifier, WeakPtr<SampleBufferDisplayLayer>> m_layers;

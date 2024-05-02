@@ -95,6 +95,8 @@ static void appendImplicitSelectorNestingParentIfNeeded(MutableCSSSelector& sele
     }
 }
 
+CSSParserImpl::~CSSParserImpl() = default;
+
 void CSSParserImpl::appendImplicitSelectorIfNeeded(MutableCSSSelector& selector, AncestorRuleType last)
 {
     if (last == AncestorRuleType::Style) {

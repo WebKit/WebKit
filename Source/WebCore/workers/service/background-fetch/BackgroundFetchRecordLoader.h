@@ -29,24 +29,33 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class BackgroundFetchRecordLoaderClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::BackgroundFetchRecordLoaderClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class ResourceError;
 class ResourceResponse;
 class SharedBuffer;
 
+class BackgroundFetchRecordLoaderClient : public CanMakeWeakPtr<BackgroundFetchRecordLoaderClient> {
+public:
+    virtual ~BackgroundFetchRecordLoaderClient() = default;
+
+    virtual void didSendData(uint64_t) = 0;
+    virtual void didReceiveResponse(ResourceResponse&&) = 0;
+    virtual void didReceiveResponseBodyChunk(const SharedBuffer&) = 0;
+    virtual void didFinish(const ResourceError&) = 0;
+};
+
 class BackgroundFetchRecordLoader {
 public:
     virtual ~BackgroundFetchRecordLoader() = default;
-
-    class Client : public CanMakeWeakPtr<Client> {
-    public:
-        virtual ~Client() = default;
-
-        virtual void didSendData(uint64_t) = 0;
-        virtual void didReceiveResponse(ResourceResponse&&) = 0;
-        virtual void didReceiveResponseBodyChunk(const SharedBuffer&) = 0;
-        virtual void didFinish(const ResourceError&) = 0;
-    };
 
     virtual void abort() = 0;
 };

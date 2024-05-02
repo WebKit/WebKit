@@ -28,7 +28,7 @@ This test ensures elements with CSS display: contents have the correct role.
     Summary
 
 <dfn class="testcase" id="dfn"></dfn>
-    Definition
+    Term
 
 <div class="testcase" id="div"></div>
     Generic

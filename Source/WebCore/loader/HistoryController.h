@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class Frame;
 class HistoryItem;
 class HistoryItemClient;
 class LocalFrame;
@@ -50,7 +51,7 @@ class HistoryController final : public CanMakeCheckedPtr<HistoryController> {
 public:
     enum HistoryUpdateType { UpdateAll, UpdateAllExceptBackForwardList };
 
-    explicit HistoryController(LocalFrame&);
+    explicit HistoryController(Frame&);
     ~HistoryController();
 
     WEBCORE_EXPORT void saveScrollPositionAndViewStateToItem(HistoryItem*);
@@ -111,9 +112,9 @@ private:
     void updateBackForwardListClippedAtTarget(bool doClip);
     void updateCurrentItem();
 
-    Ref<LocalFrame> protectedFrame() const;
+    Ref<Frame> protectedFrame() const;
 
-    WeakRef<LocalFrame> m_frame;
+    WeakRef<Frame> m_frame;
 
     RefPtr<HistoryItem> m_currentItem;
     RefPtr<HistoryItem> m_previousItem;

@@ -34,6 +34,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class WebSocketChannelClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::WebSocketChannelClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class WebSocketChannelClient : public CanMakeWeakPtr<WebSocketChannelClient> {
 public:

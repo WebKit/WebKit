@@ -30,6 +30,15 @@
 #include <WebCore/DateTimeChooser.h>
 #include <wtf/WeakRef.h>
 
+namespace WebKit {
+class WebDateTimeChooser;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebDateTimeChooser> : std::true_type { };
+}
+
 namespace WebCore {
 class DateTimeChooserClient;
 struct DateTimeChooserParameters;

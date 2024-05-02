@@ -68,6 +68,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::ClearsWithGapsNeedFlush, "clearsWithGapsNeedFlush"},
     {Feature::ClearToZeroOrOneBroken, "clearToZeroOrOneBroken"},
     {Feature::ClipSrcRegionForBlitFramebuffer, "clipSrcRegionForBlitFramebuffer"},
+    {Feature::CombineAllShadersInPipelineLibrary, "combineAllShadersInPipelineLibrary"},
     {Feature::CompileJobIsThreadSafe, "compileJobIsThreadSafe"},
     {Feature::CompileMetalShaders, "compileMetalShaders"},
     {Feature::CompressVertexData, "compressVertexData"},

@@ -50,10 +50,7 @@ public:
 
     explicit WebExtensionMessagePort(WebExtensionContext&, String applicationIdentifier, WebExtensionPortChannelIdentifier);
 
-    ~WebExtensionMessagePort()
-    {
-        remove();
-    }
+    ~WebExtensionMessagePort();
 
     enum class ErrorType : uint8_t {
         Unknown,

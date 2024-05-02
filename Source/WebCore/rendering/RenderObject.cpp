@@ -160,6 +160,7 @@ RenderObject::RenderObject(Type type, Node& node, OptionSet<TypeFlag> typeFlags,
 
 RenderObject::~RenderObject()
 {
+    clearLayoutBox();
     checkedView()->didDestroyRenderer();
     ASSERT(!m_hasAXObject);
 #ifndef NDEBUG
@@ -176,10 +177,17 @@ CheckedRef<RenderView> RenderObject::checkedView() const
 void RenderObject::setLayoutBox(Layout::Box& box)
 {
     m_layoutBox = &box;
+    m_layoutBox->setRendererForIntegration(this);
 }
 
 void RenderObject::clearLayoutBox()
 {
+    if (!m_layoutBox)
+        return;
+
+    ASSERT(m_layoutBox->rendererForIntegration() == this);
+
+    m_layoutBox->setRendererForIntegration(nullptr);
     m_layoutBox = nullptr;
 }
 

@@ -44,6 +44,15 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class LocalDOMWindowObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LocalDOMWindowObserver> : std::true_type { };
+}
+
 namespace JSC {
 class CallFrame;
 class JSObject;
@@ -53,6 +62,17 @@ class JSValue;
 namespace WebCore {
 
 enum class IncludeTargetOrigin : bool { No, Yes };
+
+class LocalDOMWindowObserver : public CanMakeWeakPtr<LocalDOMWindowObserver> {
+public:
+    virtual ~LocalDOMWindowObserver() { }
+
+    virtual void suspendForBackForwardCache() { }
+    virtual void resumeFromBackForwardCache() { }
+    virtual void willDestroyGlobalObjectInCachedFrame() { }
+    virtual void willDestroyGlobalObjectInFrame() { }
+    virtual void willDetachGlobalObjectFromFrame() { }
+};
 
 class LocalDOMWindow final
     : public DOMWindow
@@ -75,19 +95,8 @@ public:
     // the network load. See also SecurityContext::isSecureTransitionTo.
     void didSecureTransitionTo(Document&);
 
-    class Observer : public CanMakeWeakPtr<Observer> {
-    public:
-        virtual ~Observer() { }
-
-        virtual void suspendForBackForwardCache() { }
-        virtual void resumeFromBackForwardCache() { }
-        virtual void willDestroyGlobalObjectInCachedFrame() { }
-        virtual void willDestroyGlobalObjectInFrame() { }
-        virtual void willDetachGlobalObjectFromFrame() { }
-    };
-
-    WEBCORE_EXPORT void registerObserver(Observer&);
-    WEBCORE_EXPORT void unregisterObserver(Observer&);
+    WEBCORE_EXPORT void registerObserver(LocalDOMWindowObserver&);
+    WEBCORE_EXPORT void unregisterObserver(LocalDOMWindowObserver&);
 
     void resetUnlessSuspendedForDocumentSuspension();
     void suspendForBackForwardCache();
@@ -390,7 +399,7 @@ private:
     bool m_isSuspendingObservers { false };
     std::optional<bool> m_canShowModalDialogOverride;
 
-    WeakHashSet<Observer> m_observers;
+    WeakHashSet<LocalDOMWindowObserver> m_observers;
 
     mutable RefPtr<Crypto> m_crypto;
     mutable RefPtr<History> m_history;

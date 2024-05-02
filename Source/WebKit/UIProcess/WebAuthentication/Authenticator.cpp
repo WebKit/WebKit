@@ -46,7 +46,7 @@ void Authenticator::handleRequest(const WebAuthenticationRequestData& data)
     });
 }
 
-void Authenticator::receiveRespond(Respond&& respond) const
+void Authenticator::receiveRespond(AuthenticatorObserverRespond&& respond) const
 {
     ASSERT(RunLoop::isMain());
     if (!m_observer)

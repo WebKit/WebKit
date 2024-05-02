@@ -90,7 +90,7 @@ public:
     SuspendedPageProxy* suspendedPage() const;
 
 #if !LOG_DISABLED
-    const char* loggingString();
+    String loggingString();
 #endif
 
 private:

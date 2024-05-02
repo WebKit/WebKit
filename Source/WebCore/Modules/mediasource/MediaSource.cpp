@@ -1484,6 +1484,9 @@ void MediaSource::failedToCreateRenderer(RendererType type)
 void MediaSource::seeked(const MediaTime& time)
 {
     ALWAYS_LOG(LOGIDENTIFIER, time);
+#if RELEASE_LOG_DISABLED
+    UNUSED_PARAM(time);
+#endif
     monitorSourceBuffers();
 }
 

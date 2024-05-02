@@ -628,7 +628,7 @@ bool PlatformMediaSessionManager::anyOfSessions(const Function<bool(const Platfo
     });
 }
 
-void PlatformMediaSessionManager::addAudioCaptureSource(PlatformMediaSession::AudioCaptureSource& source)
+void PlatformMediaSessionManager::addAudioCaptureSource(AudioCaptureSource& source)
 {
     ASSERT(!m_audioCaptureSources.contains(source));
     m_audioCaptureSources.add(source);
@@ -636,7 +636,7 @@ void PlatformMediaSessionManager::addAudioCaptureSource(PlatformMediaSession::Au
 }
 
 
-void PlatformMediaSessionManager::removeAudioCaptureSource(PlatformMediaSession::AudioCaptureSource& source)
+void PlatformMediaSessionManager::removeAudioCaptureSource(AudioCaptureSource& source)
 {
     m_audioCaptureSources.remove(source);
     scheduleUpdateSessionState();

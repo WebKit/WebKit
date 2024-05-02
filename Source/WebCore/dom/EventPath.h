@@ -29,6 +29,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class EventPath;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::EventPath> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Touch;
 

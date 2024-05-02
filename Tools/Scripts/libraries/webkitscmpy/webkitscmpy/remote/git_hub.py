@@ -73,6 +73,7 @@ class GitHub(Scm):
                     closed=False,
                     merged=False,
                 ).get(data.get('state').lower(), None),
+                merged=data.get('merged', False),
                 generator=self,
                 metadata=dict(
                     issue=issue,

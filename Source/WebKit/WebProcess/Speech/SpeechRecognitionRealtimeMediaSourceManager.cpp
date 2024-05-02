@@ -55,7 +55,7 @@ namespace WebKit {
 using namespace WebCore;
 
 class SpeechRecognitionRealtimeMediaSourceManager::Source final
-    : private RealtimeMediaSource::Observer
+    : private RealtimeMediaSourceObserver
     , private RealtimeMediaSource::AudioSampleObserver
     , public CanMakeCheckedPtr<SpeechRecognitionRealtimeMediaSourceManager::Source>
 {

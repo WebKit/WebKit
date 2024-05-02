@@ -370,7 +370,7 @@ static Ref<CSSValue> fontSizeAdjustFromStyle(const RenderStyle& style)
         return CSSPrimitiveValue::create(CSSValueNone);
 
     auto metric = fontSizeAdjust.metric;
-    auto value = fontSizeAdjust.isFromFont() ? fontSizeAdjust.resolve(style.computedFontSize(), style.metricsOfPrimaryFont()) : fontSizeAdjust.value.asOptional();
+    auto value = fontSizeAdjust.shouldResolveFromFont() ? fontSizeAdjust.resolve(style.computedFontSize(), style.metricsOfPrimaryFont()) : fontSizeAdjust.value.asOptional();
     if (metric == FontSizeAdjust::Metric::ExHeight)
         return CSSPrimitiveValue::create(*value);
 

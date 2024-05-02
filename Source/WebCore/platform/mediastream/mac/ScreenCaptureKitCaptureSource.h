@@ -49,10 +49,19 @@ OBJC_CLASS WebCoreScreenCaptureKitHelper;
 using CMSampleBufferRef = struct opaqueCMSampleBuffer*;
 
 namespace WebCore {
+class ScreenCaptureKitCaptureSource;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ScreenCaptureKitCaptureSource> : std::true_type { };
+}
+
+namespace WebCore {
 
 class ScreenCaptureKitCaptureSource final
     : public DisplayCaptureSourceCocoa::Capturer
-    , public ScreenCaptureSessionSource::Observer {
+    , public ScreenCaptureSessionSourceObserver {
 public:
     static Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, CaptureSourceError> create(const CaptureDevice&, const MediaConstraints*);
 

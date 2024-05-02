@@ -91,6 +91,8 @@ class CLContextVk : public CLContextImpl, public vk::Context
 
     CLPlatformVk *getPlatform() { return &mContext.getPlatform().getImpl<CLPlatformVk>(); }
 
+    cl::Context &getFrontendObject() { return const_cast<cl::Context &>(mContext); }
+
   private:
     void handleDeviceLost() const;
 

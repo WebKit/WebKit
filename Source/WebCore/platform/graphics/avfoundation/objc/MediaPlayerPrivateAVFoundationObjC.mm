@@ -4081,7 +4081,7 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoReceiverEndpoint(const VideoRec
     assertIsMainThread();
 
     if (!endpoint) {
-        clearVideoReceiverEndpoint();
+        [m_videoLayer setPlayer:m_avPlayer.get()];
         return;
     }
 
@@ -4092,23 +4092,22 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoReceiverEndpoint(const VideoRec
 
     m_videoTarget = adoptCF(videoTarget);
     [m_avPlayer addVideoTarget:m_videoTarget.get()];
-    [m_videoLayer setPlayer:nil];
 #else
     UNUSED_PARAM(endpoint);
 #endif
 }
 
-void MediaPlayerPrivateAVFoundationObjC::clearVideoReceiverEndpoint()
+void MediaPlayerPrivateAVFoundationObjC::isInFullscreenOrPictureInPictureChanged(bool isInFullscreenOrPictureInPicture)
 {
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     assertIsMainThread();
 
-    RetainPtr videoTarget = std::exchange(m_videoTarget, nullptr);
-    if (!videoTarget)
-        return;
-
-    [m_videoLayer setPlayer:m_avPlayer.get()];
-    [m_avPlayer removeVideoTarget:videoTarget.get()];
+    if (isInFullscreenOrPictureInPicture)
+        [m_videoLayer setPlayer:nil];
+    else if (RetainPtr videoTarget = std::exchange(m_videoTarget, nullptr))
+        [m_avPlayer removeVideoTarget:videoTarget.get()];
+#else
+    UNUSED_PARAM(isInFullscreenOrPictureInPicture);
 #endif
 }
 

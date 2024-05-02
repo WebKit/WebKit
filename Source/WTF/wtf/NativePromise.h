@@ -52,6 +52,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WTF {
+class NativePromiseRequest;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WTF::NativePromiseRequest> : std::true_type { };
+}
+
+namespace WTF {
 
 /*
  * A promise manages an asynchronous request that may or may not be able to be fulfilled immediately.

@@ -48,7 +48,7 @@ public:
     };
 
 protected:
-    DateTimeNumericFieldElement(Document&, FieldOwner&, const Range&, int placeholder);
+    DateTimeNumericFieldElement(Document&, DateTimeFieldElementFieldOwner&, const Range&, int placeholder);
 
     int maximum() const;
 

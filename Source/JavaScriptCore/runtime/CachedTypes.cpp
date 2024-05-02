@@ -723,9 +723,9 @@ public:
         unsigned size = m_length;
         const void* payload;
         if (m_is8Bit)
-            payload = impl->characters8();
+            payload = impl->span8().data();
         else {
-            payload = impl->characters16();
+            payload = impl->span16().data();
             size *= 2;
         }
 

@@ -395,6 +395,17 @@ class SingleTestRunner(object):
         test_output.strip_text_start_if_needed(self._port.logging_detectors_to_strip_text_start(self._driver_input().test_name))
         test_output.strip_stderror_patterns(self._port.stderr_patterns_to_strip())
 
+        if test_output.image is None:
+            # The driver is misbehaving, kill it so the error doesn't propagate to subsequent tests
+            self._driver.stop()
+            return TestResult(
+                self._test_input,
+                self._handle_error(test_output) + [test_failures.FailureReftestNoImagesGenerated(self._test_name)],
+                test_output.test_time,
+                test_output.has_stderr(),
+                pid=test_output.pid,
+            )
+
         total_test_time = 0
         reference_output = None
         test_result = None
@@ -414,6 +425,10 @@ class SingleTestRunner(object):
             reference_output.strip_patterns(self._port.logging_patterns_to_strip())
             reference_output.strip_text_start_if_needed(self._port.logging_detectors_to_strip_text_start(self._driver_input().test_name))
             reference_output.strip_stderror_patterns(self._port.stderr_patterns_to_strip())
+
+            if reference_output.image is None:
+                # The driver is misbehaving, kill it so the error doesn't propagate to subsequent tests
+                self._driver.stop()
 
             test_result = self._compare_output_with_reference(reference_output, test_output, reference_filename, expectation == '!=')
 

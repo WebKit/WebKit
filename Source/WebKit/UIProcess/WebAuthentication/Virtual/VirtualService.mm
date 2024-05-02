@@ -43,12 +43,12 @@ namespace WebKit {
 using namespace fido;
 using namespace WebCore;
 
-VirtualService::VirtualService(Observer& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& authenticators)
+VirtualService::VirtualService(AuthenticatorTransportServiceObserver& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& authenticators)
     : AuthenticatorTransportService(observer), m_authenticators(authenticators)
 {
 }
 
-UniqueRef<AuthenticatorTransportService> VirtualService::createVirtual(WebCore::AuthenticatorTransport transport, Observer& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& authenticators)
+UniqueRef<AuthenticatorTransportService> VirtualService::createVirtual(WebCore::AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& authenticators)
 {
     return makeUniqueRef<VirtualService>(observer, authenticators);
 }

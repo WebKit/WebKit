@@ -643,4 +643,6 @@ messages -> WebPageProxy {
     NowPlayingMetadataChanged(struct WebCore::NowPlayingMetadata metadata)
 
     DidAdjustVisibilityWithSelectors(Vector<String> selectors)
+
+    FrameNameChanged(WebCore::FrameIdentifier frameID, String frameName)
 }

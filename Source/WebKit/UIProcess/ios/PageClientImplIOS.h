@@ -340,12 +340,14 @@ private:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     void didEnterFullscreen() final { };
     void didExitFullscreen() final;
+    void didCleanupFullscreen() final;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
     UIViewController *presentingViewController() const final;
 #endif
 
+    WebCore::FloatPoint webViewToRootView(const WebCore::FloatPoint&) const final;
     WebCore::FloatRect rootViewToWebView(const WebCore::FloatRect&) const final;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)

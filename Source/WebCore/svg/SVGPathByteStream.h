@@ -26,6 +26,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class SVGPathByteStream;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SVGPathByteStream> : std::true_type { };
+}
+
+namespace WebCore {
 
 class SVGPathByteStream : public CanMakeSingleThreadWeakPtr<SVGPathByteStream> {
     WTF_MAKE_FAST_ALLOCATED;

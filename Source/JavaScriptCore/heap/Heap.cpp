@@ -2588,6 +2588,11 @@ void Heap::setEdenActivityCallback(RefPtr<GCActivityCallback>&& callback)
     m_edenActivityCallback = WTFMove(callback);
 }
 
+void Heap::disableStopIfNecessaryTimer()
+{
+    m_stopIfNecessaryTimer->disable();
+}
+
 bool Heap::useGenerationalGC()
 {
     return Options::useGenerationalGC() && !VM::isInMiniMode();

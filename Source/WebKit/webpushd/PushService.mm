@@ -35,6 +35,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <notify.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/RunLoop.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
@@ -77,33 +78,46 @@ static bool hasUnlockedAtLeastOnce()
 
 static void performAfterFirstUnlock(Function<void()>&& function)
 {
+    static NeverDestroyed<Vector<Function<void()>>> functions;
+    static int notifyToken = NOTIFY_TOKEN_INVALID;
+
+    RELEASE_ASSERT(RunLoop::isMain());
+
+    auto runFunctions = []() {
+        RELEASE_LOG(Push, "Device has unlocked. Running initialization.");
+
+        for (auto& function : functions.get())
+            WorkQueue::main().dispatch(WTFMove(function));
+        functions->clear();
+
+        if (notifyToken != NOTIFY_TOKEN_INVALID) {
+            notify_cancel(notifyToken);
+            notifyToken = NOTIFY_TOKEN_INVALID;
+        }
+    };
+
     if (hasUnlockedAtLeastOnce()) {
-        function();
+        functions->append(WTFMove(function));
+        runFunctions();
         return;
     }
 
     RELEASE_LOG(Push, "Device is locked. Delaying init until it unlocks for the first time.");
 
-    static dispatch_once_t once;
-    static NeverDestroyed<Vector<Function<void()>>> functions;
-
-    dispatch_once(&once, ^{
-        int notifyToken;
+    if (notifyToken == NOTIFY_TOKEN_INVALID) {
         notify_register_dispatch(kMobileKeyBagLockStatusNotifyToken, &notifyToken, dispatch_get_main_queue(), ^(int token) {
             if (!notify_is_valid_token(token) || !hasUnlockedAtLeastOnce())
                 return;
-
-            RELEASE_LOG(Push, "Device has unlocked. Running delayed initialization.");
-
-            for (auto &function : functions.get())
-                function();
-            functions->clear();
-
-            notify_cancel(token);
+            runFunctions();
         });
-    });
+    }
 
     functions->append(WTFMove(function));
+
+    // Re-check the lock state after registering the notification. This covers the case where the
+    // device unlocked in the time between the initial check and notification registration.
+    if (hasUnlockedAtLeastOnce())
+        runFunctions();
 }
 
 #endif

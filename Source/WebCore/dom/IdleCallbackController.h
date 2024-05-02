@@ -32,6 +32,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class IdleCallbackController;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::IdleCallbackController> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Document;
 class WeakPtrImplWithEventTargetData;

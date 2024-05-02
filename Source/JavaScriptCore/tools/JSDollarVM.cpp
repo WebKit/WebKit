@@ -281,11 +281,11 @@ DEFINE_VISIT_CHILDREN(Element);
 class ElementHandleOwner final : public WeakHandleOwner {
     WTF_MAKE_TZONE_ALLOCATED(ElementHandleOwner);
 public:
-    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason) final
+    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason) final
     {
         DollarVMAssertScope assertScope;
         if (UNLIKELY(reason))
-            *reason = "JSC::Element is opaque root";
+            *reason = "JSC::Element is opaque root"_s;
         Element* element = jsCast<Element*>(handle.slot()->asCell());
         return visitor.containsOpaqueRoot(element->root());
     }

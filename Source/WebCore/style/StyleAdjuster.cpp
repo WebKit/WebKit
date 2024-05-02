@@ -67,6 +67,7 @@
 #include "ShadowRoot.h"
 #include "StyleSelfAlignmentData.h"
 #include "StyleUpdate.h"
+#include "Styleable.h"
 #include "Text.h"
 #include "TouchAction.h"
 #include "TypedElementDescendantIterator.h"
@@ -88,7 +89,7 @@ namespace Style {
 
 using namespace HTMLNames;
 
-Adjuster::Adjuster(const Document& document, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element* element)
+Adjuster::Adjuster(const Document& document, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, Element* element)
     : m_document(document)
     , m_parentStyle(parentStyle)
     , m_parentBoxStyle(parentBoxStyle ? *parentBoxStyle : m_parentStyle)
@@ -698,8 +699,11 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.hasMask()
             || style.hasBackdropFilter()
             || style.hasBlendMode()
-            || style.viewTransitionName()
-            || (m_element && m_element->capturedInViewTransition());
+            || style.viewTransitionName();
+        if (m_element) {
+            auto styleable = Styleable::fromElement(*m_element);
+            forceToFlat |= styleable.capturedInViewTransition();
+        }
         style.setTransformStyleForcedToFlat(forceToFlat);
     }
 

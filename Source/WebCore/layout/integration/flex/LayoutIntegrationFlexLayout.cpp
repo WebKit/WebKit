@@ -28,6 +28,7 @@
 
 #include "FlexFormattingConstraints.h"
 #include "FlexFormattingContext.h"
+#include "FormattingContextBoxIterator.h"
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -97,7 +98,7 @@ void FlexLayout::updateFormattingRootGeometryAndInvalidate()
 void FlexLayout::updateFlexItemDimensions(const RenderBlock& flexItem, LayoutUnit, LayoutUnit)
 {
     auto& rootGeometry = layoutState().geometryForBox(flexBox());
-    auto& layoutBox = m_boxTree.layoutBoxForRenderer(flexItem);
+    auto& layoutBox = *flexItem.layoutBox();
     auto& boxGeometry = layoutState().ensureGeometryForBox(layoutBox);
     auto& style = flexItem.style();
 
@@ -162,9 +163,8 @@ void FlexLayout::layout()
     auto relayoutFlexItems = [&] {
         // Flex items need to be laid out now with their final size (and through setOverridingLogicalWidth/Height)
         // Note that they may re-size themselves.
-        for (auto& renderObject : m_boxTree.renderers()) {
-            auto& renderer = downcast<RenderBox>(*renderObject);
-            auto& layoutBox = *renderer.layoutBox();
+        for (auto& layoutBox : formattingContextBoxes(flexBox())) {
+            auto& renderer = downcast<RenderBox>(*layoutBox.rendererForIntegration());
             auto borderBox = Layout::BoxGeometry::borderBoxRect(layoutState().geometryForBox(layoutBox));
 
             renderer.setWidth(LayoutUnit { });
@@ -186,9 +186,8 @@ void FlexLayout::layout()
 
 void FlexLayout::updateRenderers()
 {
-    for (auto& renderObject : m_boxTree.renderers()) {
-        auto& renderer = downcast<RenderBox>(*renderObject);
-        auto& layoutBox = *renderer.layoutBox();
+    for (auto& layoutBox : formattingContextBoxes(flexBox())) {
+        auto& renderer = downcast<RenderBox>(*layoutBox.rendererForIntegration());
         auto& flexItemGeometry = layoutState().geometryForBox(layoutBox);
         auto borderBox = Layout::BoxGeometry::borderBoxRect(flexItemGeometry);
         renderer.setLocation(borderBox.topLeft());

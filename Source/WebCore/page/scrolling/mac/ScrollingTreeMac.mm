@@ -150,12 +150,15 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
 #endif
 
     if (layersAtPoint.size()) {
-        auto* frontmostLayer = layersAtPoint.first().first;
+        RetainPtr<CALayer> frontmostInteractiveLayer;
         for (size_t i = 0 ; i < layersAtPoint.size() ; i++) {
             auto [layer, point] = layersAtPoint[i];
 
             if (!layerEventRegionContainsPoint(layer, point))
                 continue;
+
+            if (!frontmostInteractiveLayer)
+                frontmostInteractiveLayer = layer;
 
             auto scrollingNodeForLayer = [&] (auto layer, auto point) -> RefPtr<ScrollingTreeNode> {
                 UNUSED_PARAM(point);
@@ -163,7 +166,8 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
                 RefPtr scrollingNode = nodeForID(nodeID);
                 if (!is<ScrollingTreeScrollingNode>(scrollingNode))
                     return nullptr;
-                if (isScrolledBy(*this, nodeID, frontmostLayer)) {
+                ASSERT(frontmostInteractiveLayer);
+                if (isScrolledBy(*this, nodeID, frontmostInteractiveLayer.get())) {
                     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found scrolling node " << nodeID);
                     return scrollingNode;
                 }

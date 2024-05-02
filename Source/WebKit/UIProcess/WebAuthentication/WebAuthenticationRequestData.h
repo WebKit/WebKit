@@ -30,6 +30,7 @@
 #include "APIWebAuthenticationPanel.h"
 #include "FrameInfoData.h"
 #include "WebAuthenticationFlags.h"
+#include "WebPageProxy.h"
 #include <WebCore/CredentialRequestOptions.h>
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>

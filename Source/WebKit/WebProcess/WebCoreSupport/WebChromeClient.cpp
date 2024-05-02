@@ -531,7 +531,7 @@ void WebChromeClient::rootFrameRemoved(const WebCore::LocalFrame& frame)
 
 static bool shouldSuppressJavaScriptDialogs(LocalFrame& frame)
 {
-    if (frame.loader().opener() && frame.loader().stateMachine().isDisplayingInitialEmptyDocument() && frame.loader().provisionalDocumentLoader())
+    if (frame.opener() && frame.loader().stateMachine().isDisplayingInitialEmptyDocument() && frame.loader().provisionalDocumentLoader())
         return true;
 
     return false;

@@ -32,26 +32,37 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class ScreenOrientationManager;
+class ScreenOrientationManagerObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ScreenOrientationManager> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ScreenOrientationManagerObserver> : std::true_type { };
+}
+
+namespace WebCore {
 
 class DeferredPromise;
 class Exception;
 class ScreenOrientation;
 
+class ScreenOrientationManagerObserver : public CanMakeWeakPtr<ScreenOrientationManagerObserver> {
+public:
+    virtual ~ScreenOrientationManagerObserver() { }
+    virtual void screenOrientationDidChange(ScreenOrientationType) = 0;
+};
+
 class ScreenOrientationManager : public CanMakeWeakPtr<ScreenOrientationManager> {
 public:
     WEBCORE_EXPORT virtual ~ScreenOrientationManager();
 
-    class Observer : public CanMakeWeakPtr<Observer> {
-    public:
-        virtual ~Observer() { }
-        virtual void screenOrientationDidChange(ScreenOrientationType) = 0;
-    };
-
     virtual ScreenOrientationType currentOrientation() = 0;
     virtual void lock(ScreenOrientationLockType, CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
     virtual void unlock() = 0;
-    virtual void addObserver(Observer&) = 0;
-    virtual void removeObserver(Observer&) = 0;
+    virtual void addObserver(ScreenOrientationManagerObserver&) = 0;
+    virtual void removeObserver(ScreenOrientationManagerObserver&) = 0;
 
     void setLockPromise(ScreenOrientation&, Ref<DeferredPromise>&&);
     ScreenOrientation* lockRequester() const;

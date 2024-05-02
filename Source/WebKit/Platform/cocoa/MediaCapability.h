@@ -36,6 +36,15 @@
 OBJC_CLASS BEMediaEnvironment;
 
 namespace WebKit {
+class MediaCapability;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::MediaCapability> : std::true_type { };
+}
+
+namespace WebKit {
 
 class ExtensionCapabilityGrant;
 

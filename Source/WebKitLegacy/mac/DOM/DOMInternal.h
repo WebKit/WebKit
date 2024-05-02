@@ -39,7 +39,7 @@ namespace JSC {
 }
 
 namespace WebCore {
-    class NodeFilter;
+class NodeFilter;
     class XPathNSResolver;
 #if ENABLE(TOUCH_EVENTS)
     class Touch;

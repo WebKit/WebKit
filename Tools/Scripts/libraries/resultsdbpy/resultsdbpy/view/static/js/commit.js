@@ -206,8 +206,11 @@ class _CommitBank {
                 continue;
 
             this._representationCache = JSON.parse(cookies[index].substring(COOKIE_NAME.length + 1));
-            callback(this._representationCache);
-            return;
+            if (!this._representationCache.error) {
+                callback(this._representationCache);
+                return;
+            }
+            this._representationCache = null;
         }
 
         fetch('api/commits/representations').then(response => {
@@ -487,6 +490,25 @@ class _CommitBank {
         if (this._endUuid && endUuid > this._endUuid)
             promises.push(this._load(this._endUuid, endUuid));
         return Promise.all(promises);
+    }
+    addCommit(ref) {
+        const query = paramsToQuery({
+            branch: [...this._branches],
+            ref: [ref],
+        });
+
+        return fetch(`api/commits?${query}`).then(response => {
+            let self = this;
+            response.json().then(json => {
+                for (const commit of json) {
+                    const uuid = commit.timestamp * 100 + commit.order;
+                    self.add(uuid, uuid);
+                }
+            });
+        }).catch(error => {
+            // If the load fails, log the error and continue
+            console.error(JSON.stringify(error, null, 4));
+        });
     }
     reload() {
         let needReload = false;

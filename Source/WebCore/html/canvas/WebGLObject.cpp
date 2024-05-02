@@ -43,6 +43,8 @@ WebGLObject::WebGLObject(WebGLRenderingContextBase& context, PlatformGLObject ob
 {
 }
 
+WebGLObject::~WebGLObject() = default;
+
 WebGLRenderingContextBase* WebGLObject::context() const
 {
     return m_context.get();

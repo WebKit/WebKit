@@ -257,11 +257,10 @@ public:
     
     // This means that it's still valid and we could enforce validity by setting a transition
     // watchpoint on the structure and possibly an impure property watchpoint.
-    bool isWatchableAssumingImpurePropertyWatchpoint(
-        Structure*,
-        PropertyCondition::WatchabilityEffort) const;
-    bool isWatchableAssumingImpurePropertyWatchpoint(
-        PropertyCondition::WatchabilityEffort) const;
+    bool isWatchableAssumingImpurePropertyWatchpoint(Structure*, PropertyCondition::WatchabilityEffort, Concurrency) const;
+    bool isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort, Concurrency) const;
+    bool isWatchableAssumingImpurePropertyWatchpoint(Structure*, PropertyCondition::WatchabilityEffort) const;
+    bool isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort) const;
 
     // This means that it's still valid and we could enforce validity by setting a transition
     // watchpoint on the structure, and a value change watchpoint if we're Equivalence.

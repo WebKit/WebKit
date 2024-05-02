@@ -35,6 +35,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakRef.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "Timer.h"
@@ -169,7 +170,8 @@ public:
     CheckedRef<const ScriptController> checkedScript() const;
     void resetScript();
 
-    WEBCORE_EXPORT bool isRootFrame() const final;
+    bool isRootFrame() const final { return m_rootFrame.ptr() == this; }
+    const LocalFrame& rootFrame() const { return m_rootFrame.get(); }
 
     WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
 
@@ -332,9 +334,7 @@ private:
     FrameView* virtualView() const final;
     void disconnectView() final;
     DOMWindow* virtualWindow() const final;
-    void setOpener(Frame*) final;
-    const Frame* opener() const final;
-    Frame* opener();
+    void reinitializeDocumentSecurityContext() final;
     FrameLoaderClient& loaderClient() final;
     void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) final;
 
@@ -376,7 +376,6 @@ private:
     unsigned m_navigationDisableCount { 0 };
     unsigned m_selfOnlyRefCount { 0 };
     bool m_hasHadUserInteraction { false };
-    const bool m_isRootFrame { false };
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
     OptionSet<WindowProxyProperty> m_accessedWindowProxyPropertiesViaOpener;
@@ -384,6 +383,7 @@ private:
 
     FloatSize m_overrideScreenSize;
 
+    const WeakRef<const LocalFrame> m_rootFrame;
     UniqueRef<EventHandler> m_eventHandler;
     HashSet<RegistrableDomain> m_storageAccessExceptionDomains;
 };

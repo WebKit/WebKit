@@ -175,6 +175,7 @@ void PlatformCALayerRemote::updateClonedLayerProperties(PlatformCALayerRemote& c
     clone.setContentsScale(contentsScale());
     clone.setCornerRadius(cornerRadius());
     clone.setVideoGravity(videoGravity());
+    clone.setBackdropRootIsOpaque(backdropRootIsOpaque());
 
     if (!m_properties.shapePath.isEmpty())
         clone.setShapePath(m_properties.shapePath);
@@ -612,6 +613,17 @@ void PlatformCALayerRemote::setIsBackdropRoot(bool isBackdropRoot)
 {
     m_properties.backdropRoot = isBackdropRoot;
     m_properties.notePropertiesChanged(LayerChange::BackdropRootChanged);
+}
+
+bool PlatformCALayerRemote::backdropRootIsOpaque() const
+{
+    return m_properties.backdropRootIsOpaque;
+}
+
+void PlatformCALayerRemote::setBackdropRootIsOpaque(bool backdropRootIsOpaque)
+{
+    m_properties.backdropRootIsOpaque = backdropRootIsOpaque;
+    m_properties.notePropertiesChanged(LayerChange::BackdropRootIsOpaqueChanged);
 }
 
 bool PlatformCALayerRemote::isHidden() const

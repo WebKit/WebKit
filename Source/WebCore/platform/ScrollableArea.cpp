@@ -48,6 +48,15 @@
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+struct SameSizeAsScrollableArea;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SameSizeAsScrollableArea> : std::true_type { };
+}
+
+namespace WebCore {
 
 struct SameSizeAsScrollableArea final : public CanMakeWeakPtr<SameSizeAsScrollableArea> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;

@@ -95,7 +95,7 @@ GstStream* webkitMediaStreamNew(const MediaStreamTrackPrivate& track)
 
 static void webkitMediaStreamSrcCharacteristicsChanged(WebKitMediaStreamSrc*);
 
-class WebKitMediaStreamObserver : public MediaStreamPrivate::Observer {
+class WebKitMediaStreamObserver : public MediaStreamPrivateObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~WebKitMediaStreamObserver() { };
@@ -133,8 +133,8 @@ struct InternalSourcePadProbeData {
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(InternalSourcePadProbeData)
 #endif
 
-class InternalSource final : public MediaStreamTrackPrivate::Observer,
-    public RealtimeMediaSource::Observer,
+class InternalSource final : public MediaStreamTrackPrivateObserver,
+    public RealtimeMediaSourceObserver,
     public RealtimeMediaSource::AudioSampleObserver,
     public RealtimeMediaSource::VideoFrameObserver,
     public CanMakeCheckedPtr<InternalSource> {

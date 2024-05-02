@@ -72,13 +72,13 @@ class FormState;
 class FormSubmission;
 class FrameLoadRequest;
 class FrameNetworkingContext;
-class HistoryController;
 class HistoryItem;
 class LocalFrameLoaderClient;
 class NavigationAction;
 class NetworkingContext;
 class Node;
 class Page;
+class PolicyChecker;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -105,6 +105,7 @@ class FrameLoader final : public CanMakeCheckedPtr<FrameLoader> {
     WTF_MAKE_NONCOPYABLE(FrameLoader);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameLoader);
+    friend class PolicyChecker;
 public:
     FrameLoader(LocalFrame&, UniqueRef<LocalFrameLoaderClient>&&);
     ~FrameLoader();
@@ -115,11 +116,8 @@ public:
     WEBCORE_EXPORT LocalFrame& frame() const;
     WEBCORE_EXPORT Ref<LocalFrame> protectedFrame() const;
 
-    class PolicyChecker;
     PolicyChecker& policyChecker() const { return *m_policyChecker; }
 
-    HistoryController& history() const { return *m_history; }
-    CheckedRef<HistoryController> checkedHistory() const;
     ResourceLoadNotifier& notifier() const { return m_notifier; }
 
     class SubframeLoader;
@@ -261,11 +259,6 @@ public:
     WEBCORE_EXPORT SandboxFlags effectiveSandboxFlags() const;
 
     bool checkIfFormActionAllowedByCSP(const URL&, bool didReceiveRedirectResponse, const URL& preRedirectURL) const;
-
-    WEBCORE_EXPORT Frame* opener();
-    WEBCORE_EXPORT const Frame* opener() const;
-    WEBCORE_EXPORT void setOpener(RefPtr<Frame>&&);
-    WEBCORE_EXPORT void detachFromAllOpenedFrames();
 
     void resetMultipleFormSubmissionProtection();
 
@@ -467,7 +460,6 @@ private:
     UniqueRef<LocalFrameLoaderClient> m_client;
 
     const std::unique_ptr<PolicyChecker> m_policyChecker;
-    const std::unique_ptr<HistoryController> m_history;
     mutable ResourceLoadNotifier m_notifier;
     const std::unique_ptr<SubframeLoader> m_subframeLoader;
     mutable FrameLoaderStateMachine m_stateMachine;
@@ -512,9 +504,6 @@ private:
     Timer m_checkTimer;
     bool m_shouldCallCheckCompleted { false };
     bool m_shouldCallCheckLoadComplete { false };
-
-    WeakPtr<Frame> m_opener;
-    WeakHashSet<Frame> m_openedFrames;
 
     bool m_loadingFromCachedPage { false };
 

@@ -31,6 +31,15 @@
 #import <wtf/WeakPtr.h>
 
 namespace WebCore {
+class SceneKitModelLoaderClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SceneKitModelLoaderClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class ResourceError;
 class SceneKitModel;

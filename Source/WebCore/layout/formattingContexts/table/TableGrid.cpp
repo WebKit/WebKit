@@ -58,14 +58,14 @@ TableGrid::Row::Row(const ElementBox& rowBox)
 {
 }
 
-TableGrid::Cell::Cell(const ElementBox& cellBox, SlotPosition position, CellSpan span)
+TableGridCell::TableGridCell(const ElementBox& cellBox, SlotPosition position, CellSpan span)
     : m_layoutBox(cellBox)
     , m_position(position)
     , m_span(span)
 {
 }
 
-TableGrid::Slot::Slot(Cell& cell, bool isColumnSpanned, bool isRowSpanned)
+TableGrid::Slot::Slot(TableGridCell& cell, bool isColumnSpanned, bool isRowSpanned)
     : m_cell(cell)
     , m_isColumnSpanned(isColumnSpanned)
     , m_isRowSpanned(isRowSpanned)
@@ -104,7 +104,7 @@ void TableGrid::appendCell(const ElementBox& cellBox)
             ++initialSlotPosition.column;
         }
     }
-    auto cell = makeUnique<Cell>(cellBox, initialSlotPosition, CellSpan { columnSpan, rowSpan });
+    auto cell = makeUnique<TableGridCell>(cellBox, initialSlotPosition, CellSpan { columnSpan, rowSpan });
     // Row and column spanners create additional slots.
     for (size_t row = 0; row < rowSpan; ++row) {
         for (auto column = cell->startColumn(); column < cell->endColumn(); ++column) {

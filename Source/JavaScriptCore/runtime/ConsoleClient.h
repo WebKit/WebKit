@@ -29,6 +29,15 @@
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
+namespace JSC {
+class ConsoleClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<JSC::ConsoleClient> : std::true_type { };
+}
+
 namespace Inspector {
 class ScriptArguments;
 }

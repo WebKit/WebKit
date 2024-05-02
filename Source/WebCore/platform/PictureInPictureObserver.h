@@ -30,6 +30,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class PictureInPictureObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PictureInPictureObserver> : std::true_type { };
+}
+
+namespace WebCore {
 
 class IntSize;
 

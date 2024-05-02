@@ -44,6 +44,15 @@ OBJC_CLASS _WKPreviewControllerDelegate;
 OBJC_CLASS _WKSystemPreviewDataTaskDelegate;
 #endif
 
+namespace WebKit {
+class SystemPreviewController;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SystemPreviewController> : std::true_type { };
+}
+
 namespace WebCore {
 class SecurityOriginData;
 }

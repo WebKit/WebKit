@@ -30,8 +30,23 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class RTCSctpTransportBackendClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::RTCSctpTransportBackendClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class RTCDtlsTransportBackend;
+
+class RTCSctpTransportBackendClient : public CanMakeWeakPtr<RTCSctpTransportBackendClient> {
+public:
+    virtual ~RTCSctpTransportBackendClient() = default;
+    virtual void onStateChanged(RTCSctpTransportState, std::optional<double>, std::optional<unsigned short>) = 0;
+};
 
 class RTCSctpTransportBackend {
 public:
@@ -40,12 +55,7 @@ public:
     virtual const void* backend() const = 0;
     virtual UniqueRef<RTCDtlsTransportBackend> dtlsTransportBackend() = 0;
 
-    class Client : public CanMakeWeakPtr<Client> {
-    public:
-        virtual ~Client() = default;
-        virtual void onStateChanged(RTCSctpTransportState, std::optional<double>, std::optional<unsigned short>) = 0;
-    };
-    virtual void registerClient(Client&) = 0;
+    virtual void registerClient(RTCSctpTransportBackendClient&) = 0;
     virtual void unregisterClient() = 0;
 };
 

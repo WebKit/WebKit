@@ -61,6 +61,15 @@ OBJC_CLASS ASCAgentProxy;
 #endif
 
 namespace WebKit {
+class WebAuthenticatorCoordinatorProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebAuthenticatorCoordinatorProxy> : std::true_type { };
+}
+
+namespace WebKit {
 
 class WebPageProxy;
 

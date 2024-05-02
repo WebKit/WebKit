@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-class GPUProcessMainPlayStation final: public AuxiliaryProcessMainBaseNoSingleton<GPUProcess> {
+class GPUProcessMainPlayStation final: public AuxiliaryProcessMainBase<GPUProcess> {
 };
 
 int GPUProcessMain(int argc, char** argv)

@@ -1,0 +1,25 @@
+
+PASS sanity check trustedTypes.getPropertyType for the HTML script element.
+PASS sanity check trustedTypes.getAttributeType.
+PASS getPropertyType tests adapted from w3c/trusted-types polyfill
+PASS getAttributeType tests adapted from w3c/trusted-types polyfill
+PASS iframe[srcDoc] is defined
+PASS iframe.srcDoc is maybe defined
+PASS IFRAME[srcDoc] is defined
+PASS IFRAME.srcDoc is maybe defined
+PASS iFrAmE[srcDoc] is defined
+PASS iFrAmE.srcDoc is maybe defined
+PASS iframe[SRCDOC] is defined
+PASS iframe.SRCDOC is maybe defined
+PASS IFRAME[SRCDOC] is defined
+PASS IFRAME.SRCDOC is maybe defined
+PASS iFrAmE[SRCDOC] is defined
+PASS iFrAmE.SRCDOC is maybe defined
+PASS iframe[srcdoc] is defined
+PASS iframe.srcdoc is maybe defined
+PASS IFRAME[srcdoc] is defined
+PASS IFRAME.srcdoc is maybe defined
+PASS iFrAmE[srcdoc] is defined
+PASS iFrAmE.srcdoc is maybe defined
+PASS getPropertyType vs getAttributeType for event handler.
+

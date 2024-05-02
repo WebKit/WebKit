@@ -38,12 +38,12 @@ public:
     TableFormattingGeometry(const TableFormattingContext&);
 
     LayoutUnit cellBoxContentHeight(const ElementBox&) const;
-    BoxGeometry::Edges computedCellBorder(const TableGrid::Cell&) const;
+    BoxGeometry::Edges computedCellBorder(const TableGridCell&) const;
     std::optional<LayoutUnit> computedColumnWidth(const ElementBox& columnBox) const;
-    IntrinsicWidthConstraints intrinsicWidthConstraintsForCellContent(const TableGrid::Cell&) const;
+    IntrinsicWidthConstraints intrinsicWidthConstraintsForCellContent(const TableGridCell&) const;
     InlineLayoutUnit usedBaselineForCell(const ElementBox& cellBox) const;
-    LayoutUnit horizontalSpaceForCellContent(const TableGrid::Cell&) const;
-    LayoutUnit verticalSpaceForCellContent(const TableGrid::Cell&, std::optional<LayoutUnit> availableVerticalSpace) const;
+    LayoutUnit horizontalSpaceForCellContent(const TableGridCell&) const;
+    LayoutUnit verticalSpaceForCellContent(const TableGridCell&, std::optional<LayoutUnit> availableVerticalSpace) const;
 
 private:
     const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingGeometry::formattingContext()); }

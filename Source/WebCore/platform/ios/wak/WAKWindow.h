@@ -39,7 +39,7 @@
 
 #ifdef __cplusplus
 namespace WebCore {
-    class LegacyTileCache;
+class LegacyTileCache;
 }
 typedef WebCore::LegacyTileCache LegacyTileCache;
 #else

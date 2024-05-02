@@ -146,7 +146,7 @@ static bool canCacheFrame(LocalFrame& frame, DiagnosticLoggingClient& diagnostic
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::httpsNoStoreKey());
         isCacheable = false;
     }
-    if (frame.isMainFrame() && !frameLoader->history().currentItem()) {
+    if (frame.isMainFrame() && !frame.history().currentItem()) {
         PCLOG("   -Main frame has no current history item");
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::noCurrentHistoryItemKey());
         isCacheable = false;

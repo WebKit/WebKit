@@ -81,6 +81,11 @@ static RefPtr<WebCore::SharedBuffer> convertToOptionalSharedBuffer(T array)
     return SharedBuffer::create(array->span());
 }
 
+void RemoteLegacyCDMSessionProxy::setPlayer(WeakPtr<RemoteMediaPlayerProxy> player)
+{
+    m_player = WTFMove(player);
+}
+
 void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, RefPtr<SharedBuffer>&& initData, GenerateKeyCallback&& completion)
 {
     if (!m_session) {

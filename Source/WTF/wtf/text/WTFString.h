@@ -470,7 +470,7 @@ inline UChar String::characterAt(unsigned index) const
 {
     if (!m_impl || index >= m_impl->length())
         return 0;
-    return m_impl->is8Bit() ? m_impl->characters8()[index] : m_impl->characters16()[index];
+    return m_impl->at(index);
 }
 
 inline String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& string, UChar target, UChar replacement)

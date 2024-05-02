@@ -33,6 +33,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+class MockHidConnection;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::MockHidConnection> : std::true_type { };
+}
+
+namespace WebKit {
 
 // The following basically simulates an external HID token that:
 //    1. Supports only one protocol, either CTAP2 or U2F.

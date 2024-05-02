@@ -112,13 +112,13 @@ void EndowmentStateTracker::registerMonitorIfNecessary()
     }];
 }
 
-void EndowmentStateTracker::addClient(Client& client)
+void EndowmentStateTracker::addClient(EndowmentStateTrackerClient& client)
 {
     m_clients.add(client);
     registerMonitorIfNecessary();
 }
 
-void EndowmentStateTracker::removeClient(Client& client)
+void EndowmentStateTracker::removeClient(EndowmentStateTrackerClient& client)
 {
     m_clients.remove(client);
 }

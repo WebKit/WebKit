@@ -32,7 +32,7 @@ namespace WebCore {
 
 using NodeAndFD = GStreamerVideoCapturer::NodeAndFD;
 
-class GStreamerVideoCaptureSource : public RealtimeVideoCaptureSource, GStreamerCapturer::Observer {
+class GStreamerVideoCaptureSource : public RealtimeVideoCaptureSource, GStreamerCapturerObserver {
 public:
     static CaptureSourceOrError create(String&& deviceID, MediaDeviceHashSalts&&, const MediaConstraints*);
     static CaptureSourceOrError createPipewireSource(String&& deviceID, const NodeAndFD&, MediaDeviceHashSalts&&, const MediaConstraints*, CaptureDevice::DeviceType);
@@ -46,7 +46,7 @@ public:
     GstElement* pipeline() { return m_capturer->pipeline(); }
     GStreamerCapturer* capturer() { return m_capturer.get(); }
 
-    // GStreamerCapturer::Observer
+    // GStreamerCapturerObserver
     void sourceCapsChanged(const GstCaps*) final;
     void captureEnded() final;
 

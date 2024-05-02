@@ -148,9 +148,8 @@ WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frameRef)
 
 void WKBundleFrameClearOpener(WKBundleFrameRef frameRef)
 {
-    auto* coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
-    if (coreFrame)
-        coreFrame->loader().setOpener(nullptr);
+    if (auto* coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame())
+        coreFrame->setOpener(nullptr);
 }
 
 void WKBundleFrameStopLoading(WKBundleFrameRef frameRef)

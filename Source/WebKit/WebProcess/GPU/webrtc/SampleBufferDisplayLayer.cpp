@@ -42,12 +42,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(SampleBufferDisplayLayerManager& manager, WebCore::SampleBufferDisplayLayer::Client& client)
+Ref<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(SampleBufferDisplayLayerManager& manager, WebCore::SampleBufferDisplayLayerClient& client)
 {
     return adoptRef(*new SampleBufferDisplayLayer(manager, client));
 }
 
-SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManager& manager, WebCore::SampleBufferDisplayLayer::Client& client)
+SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManager& manager, WebCore::SampleBufferDisplayLayerClient& client)
     : WebCore::SampleBufferDisplayLayer(client)
     , m_gpuProcessConnection(&WebProcess::singleton().ensureGPUProcessConnection())
     , m_manager(manager)

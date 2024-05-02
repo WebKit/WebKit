@@ -356,19 +356,19 @@ void MediaSession::metadataUpdated()
     notifyMetadataObservers();
 }
 
-void MediaSession::addObserver(Observer& observer)
+void MediaSession::addObserver(MediaSessionObserver& observer)
 {
     ASSERT(isMainThread());
     m_observers.add(observer);
 }
 
-void MediaSession::removeObserver(Observer& observer)
+void MediaSession::removeObserver(MediaSessionObserver& observer)
 {
     ASSERT(isMainThread());
     m_observers.remove(observer);
 }
 
-void MediaSession::forEachObserver(const Function<void(Observer&)>& apply)
+void MediaSession::forEachObserver(const Function<void(MediaSessionObserver&)>& apply)
 {
     ASSERT(isMainThread());
     Ref protectedThis { *this };

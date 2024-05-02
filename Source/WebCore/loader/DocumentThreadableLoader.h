@@ -41,7 +41,7 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-    class CachedRawResource;
+class CachedRawResource;
     class ContentSecurityPolicy;
     class Document;
     class ThreadableLoaderClient;

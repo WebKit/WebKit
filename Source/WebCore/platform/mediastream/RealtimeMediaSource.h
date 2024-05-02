@@ -63,6 +63,15 @@
 #include <wtf/glib/GRefPtr.h>
 #endif
 
+namespace WebCore {
+class RealtimeMediaSourceObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::RealtimeMediaSourceObserver> : std::true_type { };
+}
+
 namespace WTF {
 class MediaTime;
 }
@@ -84,29 +93,31 @@ struct CaptureSourceError;
 struct CaptureSourceOrError;
 struct VideoFrameAdaptor;
 
+class RealtimeMediaSourceObserver : public CanMakeWeakPtr<RealtimeMediaSourceObserver> {
+public:
+    WEBCORE_EXPORT RealtimeMediaSourceObserver();
+    WEBCORE_EXPORT virtual ~RealtimeMediaSourceObserver();
+
+    // Source state changes.
+    virtual void sourceStarted() { }
+    virtual void sourceStopped() { }
+    virtual void sourceMutedChanged() { }
+    virtual void sourceSettingsChanged() { }
+    virtual void audioUnitWillStart() { }
+    virtual void sourceConfigurationChanged() { }
+
+    // Observer state queries.
+    virtual bool preventSourceFromEnding() { return false; }
+
+    virtual void hasStartedProducingData() { }
+};
+
 class WEBCORE_EXPORT RealtimeMediaSource
 #if !RELEASE_LOG_DISABLED
     : public LoggerHelper
 #endif
 {
 public:
-    class Observer : public CanMakeWeakPtr<Observer> {
-    public:
-        virtual ~Observer();
-
-        // Source state changes.
-        virtual void sourceStarted() { }
-        virtual void sourceStopped() { }
-        virtual void sourceMutedChanged() { }
-        virtual void sourceSettingsChanged() { }
-        virtual void audioUnitWillStart() { }
-        virtual void sourceConfigurationChanged() { }
-
-        // Observer state queries.
-        virtual bool preventSourceFromEnding() { return false; }
-
-        virtual void hasStartedProducingData() { }
-    };
     class AudioSampleObserver {
     public:
         virtual ~AudioSampleObserver() = default;
@@ -153,7 +164,7 @@ public:
     void start();
     void stop();
     void endImmediatly() { end(nullptr); }
-    virtual void requestToEnd(Observer& callingObserver);
+    virtual void requestToEnd(RealtimeMediaSourceObserver& callingObserver);
     bool isEnded() const { return m_isEnded; }
 
     bool muted() const { return m_muted; }
@@ -167,8 +178,8 @@ public:
 
     double fitnessScore() const { return m_fitnessScore; }
 
-    WEBCORE_EXPORT void addObserver(Observer&);
-    WEBCORE_EXPORT void removeObserver(Observer&);
+    WEBCORE_EXPORT void addObserver(RealtimeMediaSourceObserver&);
+    WEBCORE_EXPORT void removeObserver(RealtimeMediaSourceObserver&);
 
     WEBCORE_EXPORT void addAudioSampleObserver(AudioSampleObserver&);
     WEBCORE_EXPORT void removeAudioSampleObserver(AudioSampleObserver&);
@@ -321,10 +332,10 @@ protected:
     void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata);
     void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
 
-    void forEachObserver(const Function<void(Observer&)>&);
+    void forEachObserver(const Function<void(RealtimeMediaSourceObserver&)>&);
     void forEachVideoFrameObserver(const Function<void(VideoFrameObserver&)>&);
 
-    void end(Observer* = nullptr);
+    void end(RealtimeMediaSourceObserver* = nullptr);
 
     void setType(Type);
 
@@ -362,7 +373,7 @@ private:
     String m_ephemeralHashedID;
     Type m_type;
     String m_name;
-    WeakHashSet<Observer> m_observers;
+    WeakHashSet<RealtimeMediaSourceObserver> m_observers;
 
     mutable Lock m_audioSampleObserversLock;
     HashSet<CheckedPtr<AudioSampleObserver>> m_audioSampleObservers WTF_GUARDED_BY_LOCK(m_audioSampleObserversLock);

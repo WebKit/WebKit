@@ -34,6 +34,15 @@
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+struct FontEventClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::FontEventClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class CSSPrimitiveValue;
 class CSSSegmentedFontFace;
@@ -41,7 +50,14 @@ class FontFaceSet;
 
 template<typename> class ExceptionOr;
 
-class CSSFontFaceSet final : public RefCounted<CSSFontFaceSet>, public CSSFontFace::Client {
+struct FontEventClient : public CanMakeWeakPtr<FontEventClient> {
+    virtual ~FontEventClient() = default;
+    virtual void faceFinished(CSSFontFace&, CSSFontFace::Status) = 0;
+    virtual void startedLoading() = 0;
+    virtual void completedLoading() = 0;
+};
+
+class CSSFontFaceSet final : public RefCounted<CSSFontFaceSet>, public CSSFontFaceClient {
 public:
     static Ref<CSSFontFaceSet> create(CSSFontSelector* owningFontSelector = nullptr)
     {
@@ -52,12 +68,6 @@ public:
     using FontModifiedObserver = Observer<void()>;
     void addFontModifiedObserver(const FontModifiedObserver&);
 
-    struct FontEventClient : public CanMakeWeakPtr<FontEventClient> {
-        virtual ~FontEventClient() = default;
-        virtual void faceFinished(CSSFontFace&, CSSFontFace::Status) = 0;
-        virtual void startedLoading() = 0;
-        virtual void completedLoading() = 0;
-    };
     void addFontEventClient(const FontEventClient&);
 
     // Calling updateStyleIfNeeded() might delete |this|.
@@ -87,7 +97,7 @@ public:
 
     ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> matchingFacesExcludingPreinstalledFonts(const String& font, const String& text);
 
-    // CSSFontFace::Client needs to be able to be held in a RefPtr.
+    // CSSFontFaceClient needs to be able to be held in a RefPtr.
     void ref() final { RefCounted::ref(); }
     void deref() final { RefCounted::deref(); }
     // FIXME: Should this be implemented?

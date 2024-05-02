@@ -41,7 +41,7 @@
 namespace WebKit {
 using namespace fido;
 
-FidoService::FidoService(Observer& observer)
+FidoService::FidoService(AuthenticatorTransportServiceObserver& observer)
     : AuthenticatorTransportService(observer)
 {
 }

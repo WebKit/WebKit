@@ -46,7 +46,7 @@ public:
     virtual void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName) = 0;
     virtual void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t index) = 0;
 
-    virtual void setOpaqueRootReachabilityReasonForCell(JSCell*, const char*) = 0;
+    virtual void setOpaqueRootReachabilityReasonForCell(JSCell*, ASCIILiteral) = 0;
     virtual void setWrappedObjectForCell(JSCell*, void*) = 0;
     virtual void setLabelForCell(JSCell*, const String&) = 0;
 };

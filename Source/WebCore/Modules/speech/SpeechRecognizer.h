@@ -37,6 +37,15 @@ OBJC_CLASS WebSpeechRecognizerTask;
 #endif
 
 namespace WebCore {
+class SpeechRecognizer;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SpeechRecognizer> : std::true_type { };
+}
+
+namespace WebCore {
 
 class SpeechRecognitionRequest;
 class SpeechRecognitionUpdate;

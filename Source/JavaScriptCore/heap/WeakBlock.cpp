@@ -116,8 +116,8 @@ void WeakBlock::specializedVisit(ContainerType& container, Visitor& visitor)
         if (visitor.isMarked(container, jsValue.asCell()))
             continue;
         
-        const char* reason = "";
-        const char** reasonPtr = nullptr;
+        ASCIILiteral reason = ""_s;
+        ASCIILiteral* reasonPtr = nullptr;
         if (UNLIKELY(heapAnalyzer))
             reasonPtr = &reason;
 

@@ -36,6 +36,15 @@
 OBJC_CLASS WKCustomProtocolLoader;
 #endif
 
+namespace WebKit {
+class LegacyCustomProtocolManagerProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::LegacyCustomProtocolManagerProxy> : std::true_type { };
+}
+
 namespace WebCore {
 class ResourceError;
 class ResourceRequest;

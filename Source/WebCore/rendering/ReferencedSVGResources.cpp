@@ -255,6 +255,11 @@ RefPtr<SVGMaskElement> ReferencedSVGResources::referencedMaskElement(TreeScope& 
     if (resourceID.isEmpty())
         return nullptr;
 
+    return referencedMaskElement(treeScope, resourceID);
+}
+
+RefPtr<SVGMaskElement> ReferencedSVGResources::referencedMaskElement(TreeScope& treeScope, const AtomString& resourceID)
+{
     RefPtr element = elementForResourceID(treeScope, resourceID, SVGNames::maskTag);
     return element ? downcast<SVGMaskElement>(WTFMove(element)) : nullptr;
 }

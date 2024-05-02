@@ -142,12 +142,12 @@ static bool finalizeGrant(ExtensionCapabilityGranter& granter, const String& env
     return false;
 }
 
-UniqueRef<ExtensionCapabilityGranter> ExtensionCapabilityGranter::create(Client& client)
+UniqueRef<ExtensionCapabilityGranter> ExtensionCapabilityGranter::create(ExtensionCapabilityGranterClient& client)
 {
     return makeUniqueRef<ExtensionCapabilityGranter>(client);
 }
 
-ExtensionCapabilityGranter::ExtensionCapabilityGranter(Client& client)
+ExtensionCapabilityGranter::ExtensionCapabilityGranter(ExtensionCapabilityGranterClient& client)
     : m_client { client }
 {
 }

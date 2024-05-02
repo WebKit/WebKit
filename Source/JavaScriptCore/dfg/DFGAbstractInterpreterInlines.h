@@ -3000,7 +3000,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
         clobberWorld();
 
-        setTypeForNode(node, SpecString | SpecSymbol);
+        SpeculatedType type = SpecString | SpecSymbol;
+        if (node->op() == ToPropertyKeyOrNumber)
+            type |= SpecBytecodeNumber;
+        setTypeForNode(node, type);
         break;
     }
 

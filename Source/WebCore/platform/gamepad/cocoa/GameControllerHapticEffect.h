@@ -32,6 +32,15 @@
 #import <wtf/WeakPtr.h>
 
 namespace WebCore {
+class GameControllerHapticEffect;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::GameControllerHapticEffect> : std::true_type { };
+}
+
+namespace WebCore {
 
 class GameControllerHapticEngines;
 struct GamepadEffectParameters;

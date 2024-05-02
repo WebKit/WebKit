@@ -81,8 +81,8 @@ public:
     }
 
     // Layers are added in z-order, lazily creating clipping scopes as necessary.
-    void add(const RenderLayer&, const LayoutRect& bounds, const Vector<LayerOverlapMap::LayerAndBounds>& enclosingClippingLayers);
-    bool overlapsLayers(const RenderLayer&, const LayoutRect& bounds, const Vector<LayerOverlapMap::LayerAndBounds>& enclosingClippingLayers) const;
+    void add(const RenderLayer&, const LayoutRect& bounds, const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers);
+    bool overlapsLayers(const RenderLayer&, const LayoutRect& bounds, const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const;
     void append(std::unique_ptr<OverlapMapContainer>&&);
 
     bool isEmpty() const;
@@ -157,8 +157,8 @@ private:
     
     static void mergeClippingScopesRecursive(const ClippingScope& sourceScope, ClippingScope& destScope);
 
-    ClippingScope* ensureClippingScopeForLayers(const Vector<LayerOverlapMap::LayerAndBounds>& enclosingClippingLayers);
-    ClippingScope* findClippingScopeForLayers(const Vector<LayerOverlapMap::LayerAndBounds>& enclosingClippingLayers) const;
+    ClippingScope* ensureClippingScopeForLayers(const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers);
+    ClippingScope* findClippingScopeForLayers(const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const;
 
     void recursiveOutputToStream(TextStream&, const ClippingScope&, unsigned depth) const;
 
@@ -174,13 +174,13 @@ bool OverlapMapContainer::isEmpty() const
     return m_rootScope.rectList.rects.isEmpty() && m_rootScope.children.isEmpty();
 }
 
-void OverlapMapContainer::add(const RenderLayer&, const LayoutRect& bounds, const Vector<LayerOverlapMap::LayerAndBounds>& enclosingClippingLayers)
+void OverlapMapContainer::add(const RenderLayer&, const LayoutRect& bounds, const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers)
 {
     auto* layerScope = ensureClippingScopeForLayers(enclosingClippingLayers);
     layerScope->appendRect(bounds);
 }
 
-bool OverlapMapContainer::overlapsLayers(const RenderLayer&, const LayoutRect& bounds, const Vector<LayerOverlapMap::LayerAndBounds>& enclosingClippingLayers) const
+bool OverlapMapContainer::overlapsLayers(const RenderLayer&, const LayoutRect& bounds, const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const
 {
     if (m_rootScope.rectList.intersects(bounds))
         return true;
@@ -221,7 +221,7 @@ void OverlapMapContainer::append(std::unique_ptr<OverlapMapContainer>&& otherCon
     mergeClippingScopesRecursive(otherContainer->rootScope(), m_rootScope);
 }
 
-OverlapMapContainer::ClippingScope* OverlapMapContainer::ensureClippingScopeForLayers(const Vector<LayerOverlapMap::LayerAndBounds>& enclosingClippingLayers)
+OverlapMapContainer::ClippingScope* OverlapMapContainer::ensureClippingScopeForLayers(const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers)
 {
     ASSERT(enclosingClippingLayers.size());
     ASSERT(enclosingClippingLayers[0].layer.isRenderViewLayer());
@@ -241,7 +241,7 @@ OverlapMapContainer::ClippingScope* OverlapMapContainer::ensureClippingScopeForL
     return const_cast<ClippingScope*>(currScope);
 }
 
-OverlapMapContainer::ClippingScope* OverlapMapContainer::findClippingScopeForLayers(const Vector<LayerOverlapMap::LayerAndBounds>& enclosingClippingLayers) const
+OverlapMapContainer::ClippingScope* OverlapMapContainer::findClippingScopeForLayers(const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const
 {
     ASSERT(enclosingClippingLayers.size());
     ASSERT(enclosingClippingLayers[0].layer.isRenderViewLayer());
@@ -290,7 +290,7 @@ LayerOverlapMap::LayerOverlapMap(const RenderLayer& rootLayer)
 
 LayerOverlapMap::~LayerOverlapMap() = default;
 
-void LayerOverlapMap::add(const RenderLayer& layer, const LayoutRect& bounds, const Vector<LayerAndBounds>& enclosingClippingLayers)
+void LayerOverlapMap::add(const RenderLayer& layer, const LayoutRect& bounds, const LayerAndBoundsVector& enclosingClippingLayers)
 {
     // Layers do not contribute to overlap immediately--instead, they will
     // contribute to overlap as soon as their composited ancestor has been
@@ -308,7 +308,7 @@ void LayerOverlapMap::add(const RenderLayer& layer, const LayoutRect& bounds, co
     m_isEmpty = false;
 }
 
-bool LayerOverlapMap::overlapsLayers(const RenderLayer& layer, const LayoutRect& bounds, const Vector<LayerAndBounds>& enclosingClippingLayers) const
+bool LayerOverlapMap::overlapsLayers(const RenderLayer& layer, const LayoutRect& bounds, const LayerAndBoundsVector& enclosingClippingLayers) const
 {
     if (m_speculativeOverlapStack.isEmpty())
         return m_overlapStack.last()->overlapsLayers(layer, bounds, enclosingClippingLayers);

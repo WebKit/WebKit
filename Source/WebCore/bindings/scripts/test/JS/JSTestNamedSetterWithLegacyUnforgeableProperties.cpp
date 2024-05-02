@@ -429,7 +429,7 @@ void JSTestNamedSetterWithLegacyUnforgeableProperties::analyzeHeap(JSCell* cell,
     Base::analyzeHeap(cell, analyzer);
 }
 
-bool JSTestNamedSetterWithLegacyUnforgeablePropertiesOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSTestNamedSetterWithLegacyUnforgeablePropertiesOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);

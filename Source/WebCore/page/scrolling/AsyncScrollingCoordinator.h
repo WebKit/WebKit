@@ -98,6 +98,8 @@ protected:
 
     bool eventTrackingRegionsDirty() const { return m_eventTrackingRegionsDirty; }
     WEBCORE_EXPORT LocalFrameView* frameViewForScrollingNode(ScrollingNodeID) const;
+    RefPtr<ScrollingStateNode> stateNodeForNodeID(ScrollingNodeID) const;
+    RefPtr<ScrollingStateNode> stateNodeForScrollableArea(const ScrollableArea&) const;
 
 private:
     bool isAsyncScrollingCoordinator() const override { return true; }

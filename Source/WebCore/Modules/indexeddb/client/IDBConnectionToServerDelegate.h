@@ -31,6 +31,17 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+namespace IDBClient {
+class IDBConnectionToServerDelegate;
+}
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::IDBClient::IDBConnectionToServerDelegate> : std::true_type { };
+}
+
+namespace WebCore {
 
 class IDBCursorInfo;
 class IDBIndexInfo;

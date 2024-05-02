@@ -33,6 +33,15 @@
 OBJC_CLASS RBSProcessMonitor;
 
 namespace WebKit {
+class ProcessStateMonitor;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ProcessStateMonitor> : std::true_type { };
+}
+
+namespace WebKit {
 
 class ProcessStateMonitor : public CanMakeWeakPtr<ProcessStateMonitor> {
     WTF_MAKE_FAST_ALLOCATED;

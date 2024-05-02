@@ -67,19 +67,19 @@ namespace WebCore {
 using namespace JSC;
 using namespace HTMLNames;
 
-bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     auto& node = jsCast<JSNode*>(handle.slot()->asCell())->wrapped();
     if (!node.isConnected()) {
         if (GCReachableRefMap::contains(node) || node.isInCustomElementReactionQueue()) {
             if (UNLIKELY(reason))
-                *reason = "Node is scheduled to be used in an async script invocation)";
+                *reason = "Node is scheduled to be used in an async script invocation)"_s;
             return true;
         }
     }
 
     if (UNLIKELY(reason))
-        *reason = "Connected node";
+        *reason = "Connected node"_s;
 
     return containsWebCoreOpaqueRoot(visitor, node);
 }

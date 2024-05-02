@@ -36,6 +36,16 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class TrackListBase;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+// FIXME: TrackListBase inherits from RefCounted, what gives?
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TrackListBase> : std::true_type { };
+}
+
+namespace WebCore {
 
 class TrackBase;
 using TrackID = uint64_t;

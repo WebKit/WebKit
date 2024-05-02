@@ -41,10 +41,10 @@ class Tracker(GenericTracker):
     ISSUE_LINK_RE = re.compile(r'#(?P<id>\d+)')
     USERNAME_RE = re.compile(r'(^|\s|\'|")@(?P<username>[^\s"\'<>]+)')
     RE_TEMPLATES = [
-        r'\Ahttps?://github.{}/{}/{}/issues/(?P<id>\d+)\Z',
-        r'\Agithub.{}/{}/{}/issues/(?P<id>\d+)\Z',
-        r'\Ahttps?://api.github.{}/repos/{}/{}/issues/(?P<id>\d+)\Z',
-        r'\Aapi.github.{}/repos/{}/{}/issues/(?P<id>\d+)\Z',
+        r'\A<?https?://github.{}/{}/{}/issues/(?P<id>\d+)>?\Z',
+        r'\A<?github.{}/{}/{}/issues/(?P<id>\d+)>?\Z',
+        r'\A<?https?://api.github.{}/repos/{}/{}/issues/(?P<id>\d+)>?\Z',
+        r'\A<?api.github.{}/repos/{}/{}/issues/(?P<id>\d+)>?\Z',
     ]
     REFRESH_TOKEN_PROMPT = "Is your API token out of date? Run 'git-webkit setup' to refresh credentials\n"
     DEFAULT_COMPONENT_COLOR = 'FFFFFF'

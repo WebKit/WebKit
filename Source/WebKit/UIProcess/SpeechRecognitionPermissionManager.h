@@ -30,6 +30,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+class SpeechRecognitionPermissionManager;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SpeechRecognitionPermissionManager> : std::true_type { };
+}
+
+namespace WebKit {
 
 class WebPageProxy;
 

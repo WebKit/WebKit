@@ -68,6 +68,7 @@ enum class Feature
     ClearsWithGapsNeedFlush,
     ClearToZeroOrOneBroken,
     ClipSrcRegionForBlitFramebuffer,
+    CombineAllShadersInPipelineLibrary,
     CompileJobIsThreadSafe,
     CompileMetalShaders,
     CompressVertexData,

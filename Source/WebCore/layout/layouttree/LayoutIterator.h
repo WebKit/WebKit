@@ -36,12 +36,15 @@ public:
     LayoutIterator(const ElementBox* root);
     LayoutIterator(const ElementBox* root, const T* current);
 
+    const T& get() const;
+
     const T& operator*() const;
     const T* operator->() const;
 
     bool operator==(const LayoutIterator& other) const;
 
     LayoutIterator& traverseNext();
+    LayoutIterator& traverseNextSkippingChildren();
     LayoutIterator& traverseNextSibling();
 
 private:
@@ -94,6 +97,18 @@ inline const Box* next(const U& current, const ElementBox& stayWithin)
     return nextAncestorSibling(current, stayWithin);
 }
 
+template <typename U>
+inline const Box* nextSkippingChildren(const U& current, const ElementBox& stayWithin)
+{
+    if (&current == &stayWithin)
+        return nullptr;
+
+    if (auto* sibling = current.nextSibling())
+        return sibling;
+
+    return nextAncestorSibling(current, stayWithin);
+}
+
 }
 // Traversal helpers
 namespace Traversal {
@@ -134,6 +149,15 @@ inline const T* next(const U& current, const ElementBox& stayWithin)
     return static_cast<const T*>(descendant);
 }
 
+template <typename T, typename U>
+inline const T* nextSkippingChildren(const U& current, const ElementBox& stayWithin)
+{
+    auto* descendant = LayoutBoxTraversal::nextSkippingChildren(current, stayWithin);
+    while (descendant && !isLayoutBoxOfType<T>(*descendant))
+        descendant = LayoutBoxTraversal::nextSkippingChildren(*descendant, stayWithin);
+    return static_cast<const T*>(descendant);
+}
+
 }
 
 // LayoutIterator
@@ -169,17 +193,30 @@ inline LayoutIterator<T>& LayoutIterator<T>::traverseNext()
 }
 
 template <typename T>
-inline const T& LayoutIterator<T>::operator*() const
+inline LayoutIterator<T>& LayoutIterator<T>::traverseNextSkippingChildren()
 {
     ASSERT(m_current);
-    return *m_current;
+    m_current = Traversal::nextSkippingChildren<T>(*m_current, *m_root);
+    return *this;
+}
+
+template <typename T>
+inline const T& LayoutIterator<T>::operator*() const
+{
+    return get();
 }
 
 template <typename T>
 inline const T* LayoutIterator<T>::operator->() const
 {
+    return &get();
+}
+
+template <typename T>
+inline const T& LayoutIterator<T>::get() const
+{
     ASSERT(m_current);
-    return m_current;
+    return *m_current;
 }
 
 template <typename T>

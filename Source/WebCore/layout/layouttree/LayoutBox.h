@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class Shape;
+class RenderObject;
 
 namespace Layout {
 
@@ -194,6 +195,9 @@ public:
     BoxGeometry* cachedGeometryForLayoutState(const LayoutState&) const;
     void setCachedGeometryForLayoutState(LayoutState&, std::unique_ptr<BoxGeometry>) const;
 
+    RenderObject* rendererForIntegration() const { return m_renderer.get(); }
+    void setRendererForIntegration(RenderObject* renderer) { m_renderer = renderer; }
+
     UniqueRef<Box> removeFromParent();
 
 protected:
@@ -236,7 +240,7 @@ private:
     RenderStyle m_style;
 
     CheckedPtr<ElementBox> m_parent;
-    
+
     std::unique_ptr<Box> m_nextSibling;
     CheckedPtr<Box> m_previousSibling;
 
@@ -244,6 +248,7 @@ private:
     mutable WeakPtr<LayoutState> m_cachedLayoutState;
     mutable std::unique_ptr<BoxGeometry> m_cachedGeometryForLayoutState;
 
+    CheckedPtr<RenderObject> m_renderer;
 };
 
 inline bool Box::isContainingBlockForInFlow() const

@@ -7,12 +7,12 @@ PASS Wrote markup to the clipboard.
 PASS finishedCopying became true
 PASS Read items from the clipboard.
 PASS items.length is 2
-PASS items[0].types is ['text/html']
+PASS items[0].types.includes('text/html') is true
 PASS fragment1.documentElement.textContent is "Hello world 1"
 PASS fragment1.querySelector('p') is non-null.
 PASS fragment1.querySelector('script') is null
 PASS fragment1.querySelector('p').onclick is null
-PASS items[1].types is ['text/html']
+PASS items[1].types.includes('text/html') is true
 PASS fragment2.documentElement.textContent is "Hello world 2"
 PASS fragment2.querySelector('span') is non-null.
 PASS fragment2.querySelector('p') is null

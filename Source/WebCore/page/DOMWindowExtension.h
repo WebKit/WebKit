@@ -36,7 +36,7 @@ namespace WebCore {
 class DOMWrapperWorld;
 class LocalFrame;
 
-class DOMWindowExtension final : public RefCounted<DOMWindowExtension>, public LocalDOMWindow::Observer {
+class DOMWindowExtension final : public RefCounted<DOMWindowExtension>, public LocalDOMWindowObserver {
 public:
     static Ref<DOMWindowExtension> create(LocalDOMWindow* window, DOMWrapperWorld& world)
     {

@@ -34,6 +34,15 @@
 #endif
 
 namespace WebCore {
+class DocumentMarker;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::DocumentMarker> : std::true_type { };
+}
+
+namespace WebCore {
 
 // A range of a node within a document that is "marked", such as the range of a misspelled word.
 // It optionally includes a description that could be displayed in the user interface.

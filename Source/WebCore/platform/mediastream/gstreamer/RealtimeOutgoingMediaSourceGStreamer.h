@@ -32,7 +32,7 @@ namespace WebCore {
 
 class MediaStreamTrack;
 
-class RealtimeOutgoingMediaSourceGStreamer : public ThreadSafeRefCounted<RealtimeOutgoingMediaSourceGStreamer>, public MediaStreamTrackPrivate::Observer {
+class RealtimeOutgoingMediaSourceGStreamer : public ThreadSafeRefCounted<RealtimeOutgoingMediaSourceGStreamer>, public MediaStreamTrackPrivateObserver {
 public:
     ~RealtimeOutgoingMediaSourceGStreamer();
 
@@ -116,7 +116,7 @@ private:
     virtual void unlinkOutgoingSource() { }
     virtual void linkOutgoingSource() { }
 
-    // MediaStreamTrackPrivate::Observer API
+    // MediaStreamTrackPrivateObserver API
     void trackMutedChanged(MediaStreamTrackPrivate&) override { sourceMutedChanged(); }
     void trackEnabledChanged(MediaStreamTrackPrivate&) override { sourceEnabledChanged(); }
     void trackSettingsChanged(MediaStreamTrackPrivate&) override { initializeFromTrack(); }

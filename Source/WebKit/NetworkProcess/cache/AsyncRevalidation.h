@@ -34,6 +34,17 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+namespace NetworkCache {
+class AsyncRevalidation;
+}
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkCache::AsyncRevalidation> : std::true_type { };
+}
+
+namespace WebCore {
 enum class AdvancedPrivacyProtections : uint16_t;
 class ResourceRequest;
 };

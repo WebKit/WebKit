@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,51 @@
 
 #pragma once
 
-#include <unicode/utypes.h>
 #include <wtf/text/LChar.h>
 
 namespace WTF {
 namespace Unicode {
 
-enum class ConversionResult : uint8_t {
+enum class ConversionResultCode : uint8_t {
     Success, // conversion successful
-    SourceExhausted, // partial character in source, but hit end
-    TargetExhausted, // insufficient room in target for conversion
-    SourceIllegal // source sequence is illegal/malformed
+    SourceInvalid, // source sequence is invalid/malformed
+    TargetExhausted // insufficient room in target for conversion
 };
 
-// Conversion functions are strict, except for convertUTF16ToUTF8, which takes
-// "strict" argument. When strict, both illegal sequences and unpaired surrogates
-// will cause an error. When not, illegal sequences and unpaired surrogates are
-// converted to the replacement character, except for an unpaired lead surrogate
-// at the end of the source, which will instead cause a SourceExhausted error.
-
-WTF_EXPORT_PRIVATE bool convertUTF8ToUTF16(std::span<const char8_t> source, UChar** targetStart, const UChar* targetEnd, bool* isSourceAllASCII = nullptr);
-WTF_EXPORT_PRIVATE bool convertUTF8ToUTF16ReplacingInvalidSequences(std::span<const char8_t> source, UChar** targetStart, const UChar* targetEnd, bool* isSourceAllASCII = nullptr);
-WTF_EXPORT_PRIVATE bool convertLatin1ToUTF8(std::span<const LChar> source, char** targetStart, const char* targetEnd);
-WTF_EXPORT_PRIVATE ConversionResult convertUTF16ToUTF8(std::span<const UChar>& source, char** targetStart, const char* targetEnd, bool strict = true);
-WTF_EXPORT_PRIVATE unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(std::span<const char> data, unsigned& dataLength, unsigned& utf16Length);
-
-// Like the other functions above, the computeUTFLengths function is strict.
-// The result can only be Success, SourceExhausted, or SourceIllegal.
-struct ComputeUTFLengthsResult {
-    ConversionResult result { ConversionResult::Success };
-    size_t lengthUTF8 { 0 };
-    size_t lengthUTF16 { 0 };
-    bool isAllASCII { false };
+template<typename CharacterType> struct ConversionResult {
+    ConversionResultCode code { };
+    std::span<CharacterType> buffer { };
+    bool isAllASCII { };
 };
-WTF_EXPORT_PRIVATE ComputeUTFLengthsResult computeUTFLengths(std::span<const char8_t>);
 
-// Callers of these functions must check that the lengths are the same; accordingly we omit an end argument for UTF-16 and Latin-1.
-bool equalUTF16WithUTF8(const UChar* stringInUTF16, const char* stringInUTF8, const char* stringInUTF8End);
-bool equalLatin1WithUTF8(const LChar* stringInLatin1, const char* stringInUTF8, const char* stringInUTF8End);
+WTF_EXPORT_PRIVATE ConversionResult<char16_t> convert(std::span<const char8_t>, std::span<char16_t>);
+WTF_EXPORT_PRIVATE ConversionResult<char8_t> convert(std::span<const char16_t>, std::span<char8_t>);
+WTF_EXPORT_PRIVATE ConversionResult<char8_t> convert(std::span<const LChar>, std::span<char8_t>);
+
+// Invalid sequences are converted to the replacement character.
+WTF_EXPORT_PRIVATE ConversionResult<char16_t> convertReplacingInvalidSequences(std::span<const char8_t>, std::span<char16_t>);
+WTF_EXPORT_PRIVATE ConversionResult<char8_t> convertReplacingInvalidSequences(std::span<const char16_t>, std::span<char8_t>);
+
+WTF_EXPORT_PRIVATE bool equal(std::span<const char16_t>, std::span<const char8_t>);
+WTF_EXPORT_PRIVATE bool equal(std::span<const LChar>, std::span<const char8_t>);
+
+// The checkUTF8 function checks the UTF-8 and returns a span of the valid complete
+// UTF-8 sequences at the start of the passed-in characters, along with the UTF-16
+// length and an indication if all were ASCII.
+struct CheckedUTF8 {
+    std::span<const char8_t> characters { };
+    size_t lengthUTF16 { };
+    bool isAllASCII { };
+};
+WTF_EXPORT_PRIVATE CheckedUTF8 checkUTF8(std::span<const char8_t>);
+
+// The computeUTF16LengthWithHash function returns a length and hash of 0 if the
+// source is exhausted or invalid. The hash is of the computeHashAndMaskTop8Bits variety.
+struct UTF16LengthWithHash {
+    size_t lengthUTF16 { };
+    unsigned hash { };
+};
+WTF_EXPORT_PRIVATE UTF16LengthWithHash computeUTF16LengthWithHash(std::span<const char8_t>);
 
 } // namespace Unicode
 } // namespace WTF

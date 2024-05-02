@@ -138,7 +138,7 @@ static void runWithoutAnimations(const WTF::Function<void()>& function)
     [CATransaction commit];
 }
 
-RefPtr<LocalSampleBufferDisplayLayer> LocalSampleBufferDisplayLayer::create(Client& client)
+RefPtr<LocalSampleBufferDisplayLayer> LocalSampleBufferDisplayLayer::create(SampleBufferDisplayLayerClient& client)
 {
     RetainPtr<AVSampleBufferDisplayLayer> sampleBufferDisplayLayer;
     @try {
@@ -152,7 +152,7 @@ RefPtr<LocalSampleBufferDisplayLayer> LocalSampleBufferDisplayLayer::create(Clie
     return adoptRef(*new LocalSampleBufferDisplayLayer(WTFMove(sampleBufferDisplayLayer), client));
 }
 
-LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleBufferDisplayLayer>&& sampleBufferDisplayLayer, Client& client)
+LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleBufferDisplayLayer>&& sampleBufferDisplayLayer, SampleBufferDisplayLayerClient& client)
     : SampleBufferDisplayLayer(client)
     , m_statusChangeListener(adoptNS([[WebAVSampleBufferStatusChangeListener alloc] initWithParent:this]))
     , m_sampleBufferDisplayLayer(WTFMove(sampleBufferDisplayLayer))

@@ -53,7 +53,7 @@ class CallbackID;
 class PluginView;
 class WebPage;
 
-class FindController final : private WebCore::PageOverlay::Client {
+class FindController final : private WebCore::PageOverlayClient {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FindController);
 
@@ -88,7 +88,7 @@ public:
     void redraw();
 
 private:
-    // PageOverlay::Client.
+    // PageOverlayClient.
     void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
     void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
     bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;

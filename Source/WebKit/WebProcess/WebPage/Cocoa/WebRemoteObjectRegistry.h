@@ -29,6 +29,15 @@
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
+class WebRemoteObjectRegistry;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebRemoteObjectRegistry> : std::true_type { };
+}
+
+namespace WebKit {
 
 class WebPage;
 

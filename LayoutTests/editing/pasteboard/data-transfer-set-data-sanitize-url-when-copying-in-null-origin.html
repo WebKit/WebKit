@@ -58,9 +58,11 @@ onmessage = (event) => {
     htmlReadInSameDocument = event.data.html;
     shouldBeEqualToString('htmlReadInSameDocument', "testing");
     typesInSameDocument = event.data.types;
-    shouldBeEqualToString('JSON.stringify(typesInSameDocument)', '["text/uri-list","text/html"]');
+    shouldBeTrue('typesInSameDocument.includes("text/uri-list")');
+    shouldBeTrue('typesInSameDocument.includes("text/html")');
     itemsInSameDocument = event.data.items;
-    shouldBeEqualToString('JSON.stringify(itemsInSameDocument)', '[{"kind":"string","type":"text/uri-list"},{"kind":"string","type":"text/html"}]');
+    shouldBeEqualToString('JSON.stringify(itemsInSameDocument[0])', '{"kind":"string","type":"text/uri-list"}');
+    shouldBeEqualToString('JSON.stringify(itemsInSameDocument[1])', '{"kind":"string","type":"text/html"}');
     document.getElementById('destination').focus();
     if (window.testRunner)
         document.execCommand('paste');
@@ -68,9 +70,11 @@ onmessage = (event) => {
 
 function doPaste(event) {
     shouldBeEqualToString('event.clipboardData.getData("url")', (new URL(originalURL)).href);
-    shouldBeEqualToString('JSON.stringify(event.clipboardData.types)', '["text/uri-list","text/html"]');
-    shouldBeEqualToString('JSON.stringify(Array.from(event.clipboardData.items).map((item) => ({kind: item.kind, type: item.type})))',
-        '[{"kind":"string","type":"text/uri-list"},{"kind":"string","type":"text/html"}]');
+    shouldBeTrue('event.clipboardData.types.includes("text/uri-list")');
+    shouldBeTrue('event.clipboardData.types.includes("text/html")');
+    pastedItems = [...event.clipboardData.items].map(item => ({ kind: item.kind, type: item.type }));
+    shouldBeEqualToString('JSON.stringify(pastedItems[0])', '{"kind":"string","type":"text/uri-list"}');
+    shouldBeEqualToString('JSON.stringify(pastedItems[1])', '{"kind":"string","type":"text/html"}');
     document.getElementById('destination').remove();
     finishJSTest();
 }

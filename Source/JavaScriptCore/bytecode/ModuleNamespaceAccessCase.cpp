@@ -52,9 +52,7 @@ Ref<AccessCase> ModuleNamespaceAccessCase::create(VM& vm, JSCell* owner, Cacheab
 
 Ref<AccessCase> ModuleNamespaceAccessCase::cloneImpl() const
 {
-    auto result = adoptRef(*new ModuleNamespaceAccessCase(*this));
-    result->resetState();
-    return result;
+    return adoptRef(*new ModuleNamespaceAccessCase(*this));
 }
 
 } // namespace JSC

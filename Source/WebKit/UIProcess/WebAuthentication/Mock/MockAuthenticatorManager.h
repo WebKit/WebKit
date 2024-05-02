@@ -40,7 +40,7 @@ public:
     void setTestConfiguration(WebCore::MockWebAuthenticationConfiguration&& configuration) { m_testConfiguration = WTFMove(configuration); }
 
 private:
-    UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportService::Observer&) const final;
+    UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&) const final;
     void respondReceivedInternal(Respond&&) final;
     void filterTransports(TransportSet&) const;
     void runPresenterInternal(const TransportSet&) final { }

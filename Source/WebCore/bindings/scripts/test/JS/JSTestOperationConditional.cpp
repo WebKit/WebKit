@@ -241,7 +241,7 @@ void JSTestOperationConditional::analyzeHeap(JSCell* cell, HeapAnalyzer& analyze
     Base::analyzeHeap(cell, analyzer);
 }
 
-bool JSTestOperationConditionalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSTestOperationConditionalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);

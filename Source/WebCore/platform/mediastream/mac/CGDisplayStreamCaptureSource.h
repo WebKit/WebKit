@@ -34,6 +34,15 @@
 #include <wtf/Lock.h>
 #include <wtf/OSObjectPtr.h>
 
+namespace WebCore {
+class CGDisplayStreamCaptureSource;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CGDisplayStreamCaptureSource> : std::true_type { };
+}
+
 typedef struct __CVBuffer *CVPixelBufferRef;
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 

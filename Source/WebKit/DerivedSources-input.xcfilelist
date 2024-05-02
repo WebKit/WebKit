@@ -288,7 +288,6 @@ $(PROJECT_DIR)/Shared/Extensions/WebExtensionTabParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionWindow.serialization.in
 $(PROJECT_DIR)/Shared/FileSystemSyncAccessHandleInfo.serialization.in
 $(PROJECT_DIR)/Shared/FocusedElementInformation.serialization.in
-$(PROJECT_DIR)/Shared/FontInfo.serialization.in
 $(PROJECT_DIR)/Shared/FrameInfoData.serialization.in
 $(PROJECT_DIR)/Shared/FrameTreeCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/FrameTreeNodeData.serialization.in
@@ -319,6 +318,7 @@ $(PROJECT_DIR)/Shared/Notifications/NotificationManagerMessageHandler.messages.i
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerProxy.messages.in
 $(PROJECT_DIR)/Shared/PALArgumentCoders.serialization.in
 $(PROJECT_DIR)/Shared/Pasteboard.serialization.in
+$(PROJECT_DIR)/Shared/PlatformFontInfo.serialization.in
 $(PROJECT_DIR)/Shared/PlatformPopupMenuData.serialization.in
 $(PROJECT_DIR)/Shared/PolicyDecision.serialization.in
 $(PROJECT_DIR)/Shared/PrintInfo.serialization.in

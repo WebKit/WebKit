@@ -28,6 +28,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+class WebViewDidMoveToWindowObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebViewDidMoveToWindowObserver> : std::true_type { };
+}
+
+namespace WebKit {
 
 class WebViewDidMoveToWindowObserver : public CanMakeWeakPtr<WebViewDidMoveToWindowObserver> {
 public:

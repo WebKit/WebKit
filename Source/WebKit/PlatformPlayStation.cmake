@@ -155,13 +155,7 @@ if (USE_CAIRO)
         Shared/API/c/cairo/WKImageCairo.h
     )
 elseif (USE_SKIA)
-    list(APPEND WebKit_SOURCES
-        Shared/skia/WebCoreArgumentCodersSkia.cpp
-    )
-
-    list(APPEND WebKit_LIBRARIES
-        Skia
-    )
+    include(Platform/Skia.cmake)
 endif ()
 
 if (USE_COORDINATED_GRAPHICS)

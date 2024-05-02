@@ -35,6 +35,15 @@
 #include <WebCore/SpeechRecognizer.h>
 #include <wtf/Deque.h>
 
+namespace WebKit {
+class SpeechRecognitionServer;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SpeechRecognitionServer> : std::true_type { };
+}
+
 namespace WebCore {
 enum class SpeechRecognitionUpdateType : uint8_t;
 struct CaptureSourceOrError;

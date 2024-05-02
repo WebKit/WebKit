@@ -36,6 +36,15 @@
 using WebKit::WebPushD::PushMessageForTesting;
 
 namespace WebPushTool {
+class Connection;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebPushTool::Connection> : std::true_type { };
+}
+
+namespace WebPushTool {
 
 enum class Action {
     StreamDebugMessages,

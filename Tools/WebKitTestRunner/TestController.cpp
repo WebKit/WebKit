@@ -2124,6 +2124,25 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "RemoveChromeInputField")) {
+        mainWebView()->removeChromeInputField();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetManagedDomains"))
+        return setManagedDomains(arrayValue(messageBody), WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetAppBoundDomains"))
+        return setAppBoundDomains(arrayValue(messageBody), WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetBackingScaleFactor")) {
+        WKPageSetCustomBackingScaleFactor(TestController::singleton().mainWebView()->page(), doubleValue(messageBody));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllSessionCredentials"))
+        return TestController::singleton().removeAllSessionCredentials(WTFMove(completionHandler));
+
     ASSERT_NOT_REACHED();
 }
 
@@ -3420,8 +3439,9 @@ unsigned TestController::imageCountInGeneralPasteboard() const
     return 0;
 }
 
-void TestController::removeAllSessionCredentials()
+void TestController::removeAllSessionCredentials(CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
+    completionHandler(nullptr);
 }
 
 bool TestController::didLoadAppInitiatedRequest()
@@ -4041,52 +4061,14 @@ void TestController::setStatisticsThirdPartyCNAMEDomain(WKStringRef cnameURLStri
     WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(websiteDataStore(), cnameURLString, completionHandler.leak(), adoptAndCallCompletionHandler);
 }
 
-struct AppBoundDomainsCallbackContext {
-    explicit AppBoundDomainsCallbackContext(TestController& controller)
-        : testController(controller)
-    {
-    }
-
-    bool done { false };
-    TestController& testController;
-};
-
-static void didSetAppBoundDomainsCallback(void* callbackContext)
+void TestController::setAppBoundDomains(WKArrayRef originURLs, CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
-    auto* context = static_cast<AppBoundDomainsCallbackContext*>(callbackContext);
-    context->done = true;
+    WKWebsiteDataStoreSetAppBoundDomainsForTesting(originURLs, completionHandler.leak(), adoptAndCallCompletionHandler);
 }
 
-void TestController::setAppBoundDomains(WKArrayRef originURLs)
+void TestController::setManagedDomains(WKArrayRef originURLs, CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
-    AppBoundDomainsCallbackContext context(*this);
-    WKWebsiteDataStoreSetAppBoundDomainsForTesting(originURLs, &context, didSetAppBoundDomainsCallback);
-    runUntil(context.done, noTimeout);
-    m_currentInvocation->didSetAppBoundDomains();
-}
-
-struct ManagedDomainsCallbackContext {
-    explicit ManagedDomainsCallbackContext(TestController& controller)
-        : testController(controller)
-    {
-    }
-
-    bool done { false };
-    TestController& testController;
-};
-
-static void didSetManagedDomainsCallback(void* callbackContext)
-{
-    auto* context = static_cast<ManagedDomainsCallbackContext*>(callbackContext);
-    context->done = true;
-}
-
-void TestController::setManagedDomains(WKArrayRef originURLs)
-{
-    ManagedDomainsCallbackContext context(*this);
-    WKWebsiteDataStoreSetManagedDomainsForTesting(originURLs, &context, didSetManagedDomainsCallback);
-    runUntil(context.done, noTimeout);
-    m_currentInvocation->didSetManagedDomains();
+    WKWebsiteDataStoreSetManagedDomainsForTesting(originURLs, completionHandler.leak(), adoptAndCallCompletionHandler);
 }
 
 void TestController::statisticsResetToConsistentState()

@@ -34,7 +34,6 @@
 #import "APIPageConfiguration.h"
 #import "AppKitSPI.h"
 #import "CoreTextHelpers.h"
-#import "FontInfo.h"
 #import "FullscreenClient.h"
 #import "InsertTextOptions.h"
 #import "Logging.h"
@@ -45,6 +44,7 @@
 #import "PageClient.h"
 #import "PageClientImplMac.h"
 #import "PasteboardTypes.h"
+#import "PlatformFontInfo.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "RemoteLayerTreeDrawingAreaProxyMac.h"
 #import "RemoteObjectRegistry.h"
@@ -5286,7 +5286,7 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
         return;
     }
 
-    m_page->setCompositionAsync(text, WTFMove(underlines), WTFMove(highlights), selectedRange, replacementRange);
+    m_page->setCompositionAsync(text, WTFMove(underlines), WTFMove(highlights), { }, selectedRange, replacementRange);
 }
 
 #if HAVE(INLINE_PREDICTIONS)

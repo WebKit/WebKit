@@ -36,7 +36,7 @@ class RenderElement;
 
 class CustomPaintImage final : public GeneratedImage {
 public:
-    static Ref<CustomPaintImage> create(PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size, const RenderElement& element, const Vector<String>& arguments)
+    static Ref<CustomPaintImage> create(PaintDefinition& definition, const FloatSize& size, const RenderElement& element, const Vector<String>& arguments)
     {
         return adoptRef(*new CustomPaintImage(definition, size, element, arguments));
     }
@@ -45,14 +45,14 @@ public:
     bool isCustomPaintImage() const override { return true; }
 
 private:
-    CustomPaintImage(PaintWorkletGlobalScope::PaintDefinition&, const FloatSize&, const RenderElement&, const Vector<String>& arguments);
+    CustomPaintImage(PaintDefinition&, const FloatSize&, const RenderElement&, const Vector<String>& arguments);
 
     ImageDrawResult doCustomPaint(GraphicsContext&, const FloatSize&);
 
     ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }) final;
     void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
 
-    WeakPtr<PaintWorkletGlobalScope::PaintDefinition> m_paintDefinition;
+    WeakPtr<PaintDefinition> m_paintDefinition;
     Vector<AtomString> m_inputProperties;
     SingleThreadWeakPtr<const RenderElement> m_element;
     Vector<String> m_arguments;

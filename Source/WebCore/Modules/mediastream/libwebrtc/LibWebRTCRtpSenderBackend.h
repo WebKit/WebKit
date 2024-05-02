@@ -41,6 +41,15 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
+class LibWebRTCRtpSenderBackend;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LibWebRTCRtpSenderBackend> : std::true_type { };
+}
+
+namespace WebCore {
 
 class LibWebRTCPeerConnectionBackend;
 

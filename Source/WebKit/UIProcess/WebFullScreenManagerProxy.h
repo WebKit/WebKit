@@ -37,6 +37,15 @@
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>
 
+namespace WebKit {
+class WebFullScreenManagerProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebFullScreenManagerProxy> : std::true_type { };
+}
+
 namespace WebCore {
 class FloatSize;
 class IntRect;

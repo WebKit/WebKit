@@ -49,7 +49,7 @@
 class WebScriptDebugger;
 
 namespace WebCore {
-    class CSSStyleDeclaration;
+class CSSStyleDeclaration;
     class Document;
     class DocumentLoader;
     class Element;

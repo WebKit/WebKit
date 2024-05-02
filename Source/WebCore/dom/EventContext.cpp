@@ -45,7 +45,7 @@ void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
     event.setCurrentTarget(m_currentTarget.copyRef(), m_currentTargetIsInShadowTree);
 
     if (m_relatedTargetIsSet) {
-        ASSERT(!m_relatedTarget || m_type == Type::MouseOrFocus);
+        ASSERT(!m_relatedTarget || isMouseOrFocusEventContext() || isWindowContext());
         event.setRelatedTarget(m_relatedTarget.copyRef());
     }
 

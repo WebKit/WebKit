@@ -31,6 +31,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace PAL {
+class SystemSleepListenerMac;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<PAL::SystemSleepListenerMac> : std::true_type { };
+}
+
+namespace PAL {
 
 class SystemSleepListenerMac : public SystemSleepListener, public CanMakeWeakPtr<SystemSleepListenerMac> {
     WTF_MAKE_FAST_ALLOCATED;

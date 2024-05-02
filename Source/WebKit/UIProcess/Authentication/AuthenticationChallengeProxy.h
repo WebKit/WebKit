@@ -37,13 +37,19 @@ class Connection;
 namespace WebKit {
 
 class AuthenticationDecisionListener;
-class SecKeyProxyStore;
 class WebCredential;
 class WebProtectionSpace;
 
+#if HAVE(SEC_KEY_PROXY)
+class SecKeyProxyStore;
+using WeakPtrSecKeyProxyStore = WeakPtr<SecKeyProxyStore>;
+#else
+using WeakPtrSecKeyProxyStore = nullptr_t;
+#endif
+
 class AuthenticationChallengeProxy : public API::ObjectImpl<API::Object::Type::AuthenticationChallenge> {
 public:
-    static Ref<AuthenticationChallengeProxy> create(WebCore::AuthenticationChallenge&& authenticationChallenge, AuthenticationChallengeIdentifier challengeID, Ref<IPC::Connection>&& connection, WeakPtr<SecKeyProxyStore>&& secKeyProxyStore)
+    static Ref<AuthenticationChallengeProxy> create(WebCore::AuthenticationChallenge&& authenticationChallenge, AuthenticationChallengeIdentifier challengeID, Ref<IPC::Connection>&& connection, WeakPtrSecKeyProxyStore&& secKeyProxyStore)
     {
         return adoptRef(*new AuthenticationChallengeProxy(WTFMove(authenticationChallenge), challengeID, WTFMove(connection), WTFMove(secKeyProxyStore)));
     }
@@ -55,7 +61,7 @@ public:
     const WebCore::AuthenticationChallenge& core() { return m_coreAuthenticationChallenge; }
 
 private:
-    AuthenticationChallengeProxy(WebCore::AuthenticationChallenge&&, AuthenticationChallengeIdentifier, Ref<IPC::Connection>&&, WeakPtr<SecKeyProxyStore>&&);
+    AuthenticationChallengeProxy(WebCore::AuthenticationChallenge&&, AuthenticationChallengeIdentifier, Ref<IPC::Connection>&&, WeakPtrSecKeyProxyStore&&);
 
 #if HAVE(SEC_KEY_PROXY)
     static void sendClientCertificateCredentialOverXpc(IPC::Connection&, SecKeyProxyStore&, AuthenticationChallengeIdentifier, const WebCore::Credential&);

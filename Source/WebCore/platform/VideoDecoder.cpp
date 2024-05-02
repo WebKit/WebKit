@@ -83,10 +83,12 @@ void VideoDecoder::createLocalDecoder(const String& codecName, const Config& con
         LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9_P2, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
+#if ENABLE(AV1)
     if (codecName.startsWith("av01."_s)) {
         LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::AV1, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
+#endif
 #elif USE(GSTREAMER)
     GStreamerVideoDecoder::create(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
     return;

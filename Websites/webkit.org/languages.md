@@ -34,7 +34,7 @@ At some point in the future the Python 2 requirement will be relaxed.
 
 #### Scripts used for developing WebKit
 
-This includes scripts like `configure-xcode-for-embedded-development` and `lint-test-expectations`.
+This includes scripts like `git-webkit` and `lint-test-expectations`.
 
 These scripts must be compatible with Python 3,
 and do not need to be compatible with Python 2.

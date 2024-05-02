@@ -96,8 +96,6 @@ Shared/linux/WebMemorySamplerLinux.cpp
 
 Shared/soup/WebErrorsSoup.cpp
 
-Shared/skia/WebCoreArgumentCodersSkia.cpp
-
 Shared/unix/AuxiliaryProcessMain.cpp
 
 Shared/wpe/GRefPtrWPE.cpp @no-unify
@@ -122,8 +120,6 @@ UIProcess/API/C/glib/WKTextCheckerGLib.cpp
 
 UIProcess/API/C/wpe/WKView.cpp
 UIProcess/API/C/wpe/WKPagePrivateWPE.cpp
-
-Shared/API/c/skia/WKImageSkia.cpp
 
 Shared/API/c/wpe/WKEventWPE.cpp
 
@@ -216,7 +212,6 @@ UIProcess/API/wpe/WebKitWebViewWPE.cpp @no-unify
 UIProcess/API/wpe/WPEWebView.cpp @no-unify
 
 UIProcess/Automation/libwpe/WebAutomationSessionLibWPE.cpp
-UIProcess/Automation/skia/WebAutomationSessionSkia.cpp
 
 UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 

@@ -1380,11 +1380,11 @@ TEST(ProcessSwap, CrossOriginButSameSiteWindowOpenNoOpener)
     EXPECT_NE(pid1, pid2);
 }
 
-static void enableWindowOpenPSON(WKWebViewConfiguration *configuration)
+static void enableSiteIsolationForPSONTest(WKWebViewConfiguration *configuration)
 {
     auto preferences = [configuration preferences];
     for (_WKFeature *feature in [WKPreferences _features]) {
-        if ([feature.key isEqualToString:@"ProcessSwapOnCrossSiteWindowOpenEnabled"]) {
+        if ([feature.key isEqualToString:@"SiteIsolationEnabled"]) {
             [preferences _setEnabled:YES forFeature:feature];
             break;
         }
@@ -1397,7 +1397,7 @@ TEST(ProcessSwap, CrossSiteWindowOpenWithOpener)
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    enableWindowOpenPSON(webViewConfiguration.get());
+    enableSiteIsolationForPSONTest(webViewConfiguration.get());
     [webViewConfiguration setProcessPool:processPool.get()];
     [webViewConfiguration preferences].javaScriptCanOpenWindowsAutomatically = YES;
     auto handler = adoptNS([[PSONScheme alloc] init]);
@@ -7416,7 +7416,7 @@ TEST(ProcessSwap, SameSiteWindowWithOpenerNavigateToFile)
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    enableWindowOpenPSON(webViewConfiguration.get());
+    enableSiteIsolationForPSONTest(webViewConfiguration.get());
     [webViewConfiguration setProcessPool:processPool.get()];
     auto handler = adoptNS([[PSONScheme alloc] init]);
     [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:pageThatOpensBytes];

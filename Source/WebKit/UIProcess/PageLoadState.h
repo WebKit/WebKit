@@ -32,6 +32,15 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+class PageLoadStateObserverBase;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PageLoadStateObserverBase> : std::true_type { };
+}
+
+namespace WebKit {
 
 class WebPageProxy;
 

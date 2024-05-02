@@ -33,6 +33,15 @@
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
+class CacheStorageCache;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::CacheStorageCache> : std::true_type { };
+}
+
+namespace WebKit {
 
 class CacheStorageManager;
 

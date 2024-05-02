@@ -36,6 +36,15 @@ OBJC_CLASS WebAVSampleBufferListenerPrivate;
 OBJC_PROTOCOL(WebSampleBufferVideoRendering);
 
 namespace WebCore {
+class WebAVSampleBufferListenerClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::WebAVSampleBufferListenerClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class WebAVSampleBufferListenerClient : public CanMakeWeakPtr<WebAVSampleBufferListenerClient> {
 public:

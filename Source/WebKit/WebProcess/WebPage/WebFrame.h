@@ -48,6 +48,15 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class LoadListener;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::LoadListener> : std::true_type { };
+}
+
 namespace API {
 class Array;
 }
@@ -81,6 +90,15 @@ struct FrameInfoData;
 struct FrameTreeNodeData;
 struct WebsitePoliciesData;
 
+// Simple listener class used by plug-ins to know when frames finish or fail loading.
+class LoadListener : public CanMakeWeakPtr<LoadListener> {
+public:
+    virtual ~LoadListener() { }
+
+    virtual void didFinishLoad(WebFrame*) = 0;
+    virtual void didFailLoad(WebFrame*, bool wasCancelled) = 0;
+};
+
 class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public CanMakeWeakPtr<WebFrame> {
 public:
     static Ref<WebFrame> create(WebPage& page, WebCore::FrameIdentifier frameID) { return adoptRef(*new WebFrame(page, frameID)); }
@@ -103,7 +121,8 @@ public:
     WebCore::RemoteFrame* coreRemoteFrame() const;
     WebCore::Frame* coreFrame() const;
 
-    void transitionToLocal(std::optional<WebCore::LayerHostingContextIdentifier> = std::nullopt);
+    void transitionToLocal(std::optional<WebCore::LayerHostingContextIdentifier>);
+    void transitionToRemote(std::optional<WebCore::LayerHostingContextIdentifier>);
 
     FrameInfoData info() const;
     FrameTreeNodeData frameTreeData() const;
@@ -116,7 +135,6 @@ public:
     void invalidatePolicyListeners();
     void didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&&);
 
-    void didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier>);
     void didFinishLoadInAnotherProcess();
     void removeFromTree();
 
@@ -194,14 +212,6 @@ public:
     void setTextDirection(const String&);
     void updateRemoteFrameSize(WebCore::IntSize);
 
-    // Simple listener class used by plug-ins to know when frames finish or fail loading.
-    class LoadListener : public CanMakeWeakPtr<LoadListener> {
-    public:
-        virtual ~LoadListener() { }
-
-        virtual void didFinishLoad(WebFrame*) = 0;
-        virtual void didFailLoad(WebFrame*, bool wasCancelled) = 0;
-    };
     void setLoadListener(LoadListener* loadListener) { m_loadListener = loadListener; }
     LoadListener* loadListener() const { return m_loadListener.get(); }
     

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: Permission policy 'Geolocation' check failed for element with origin 'https://not-web-platform.test:9443' and allow attribute ''.
-
-
-FAIL Permissions-Policy header geolocation=() disallows the top-level document. promise_test: Unhandled rejection with value: object "[object GeolocationPosition]"
-FAIL Permissions-Policy header geolocation=() disallows same-origin iframes. assert_false: geolocation expected false got true
-PASS Permissions-Policy header geolocation=() disallows cross-origin iframes.
-

@@ -37,6 +37,15 @@
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class RemoteLayerTreeDrawingArea;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLayerTreeDrawingArea> : std::true_type { };
+}
+
 namespace WebCore {
 class PlatformCALayer;
 class ThreadSafeImageBufferFlusher;

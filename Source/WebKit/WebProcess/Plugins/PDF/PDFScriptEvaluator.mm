@@ -168,7 +168,7 @@ JSValueRef PDFScriptEvaluator::jsPDFDocPrint(JSContextRef ctx, JSObjectRef funct
     return JSValueMakeUndefined(ctx);
 }
 
-void PDFScriptEvaluator::runScripts(CGPDFDocumentRef document, Client& client)
+void PDFScriptEvaluator::runScripts(CGPDFDocumentRef document, PDFScriptEvaluatorClient& client)
 {
     ASSERT(isMainRunLoop());
 

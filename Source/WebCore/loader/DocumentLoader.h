@@ -69,6 +69,15 @@
 #endif
 
 namespace WebCore {
+class DataLoadToken;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::DataLoadToken> : std::true_type { };
+}
+
+namespace WebCore {
 
 class ApplicationCacheHost;
 class ApplicationManifestLoader;
@@ -161,6 +170,11 @@ enum class ColorSchemePreference : uint8_t {
 
 enum class ContentExtensionDefaultEnablement : bool { Disabled, Enabled };
 using ContentExtensionEnablement = std::pair<ContentExtensionDefaultEnablement, HashSet<String>>;
+
+class DataLoadToken : public CanMakeWeakPtr<DataLoadToken> {
+public:
+    void clear() { weakPtrFactory().revokeAll(); }
+};
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentLoader);
 class DocumentLoader
@@ -501,11 +515,6 @@ protected:
     WEBCORE_EXPORT virtual void attachToFrame();
 
 private:
-    class DataLoadToken : public CanMakeWeakPtr<DataLoadToken> {
-    public:
-        void clear() { weakPtrFactory().revokeAll(); }
-    };
-
     Document* document() const;
 
     void matchRegistration(const URL&, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&&);

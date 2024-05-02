@@ -34,6 +34,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class CDMClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CDMClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class CDMInstance;
 class SharedBuffer;

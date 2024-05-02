@@ -54,6 +54,7 @@
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "ViewTransition.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
 #include "WillChangeData.h"
@@ -301,6 +302,11 @@ void Styleable::willChangeRenderer() const
         for (const auto& animation : *animations)
             animation->willChangeRenderer();
     }
+}
+
+void Styleable::cancelStyleOriginatedAnimations() const
+{
+    cancelStyleOriginatedAnimations({ });
 }
 
 void Styleable::cancelStyleOriginatedAnimations(const WeakStyleOriginatedAnimations& animationsToCancelSilently) const
@@ -831,6 +837,22 @@ void Styleable::queryContainerDidChange() const
         if (keyframeEffect && keyframeEffect->blendingKeyframes().usesContainerUnits())
             cssAnimation->keyframesRuleDidChange();
     }
+}
+
+bool Styleable::capturedInViewTransition() const
+{
+    RefPtr activeViewTransition = element.document().activeViewTransition();
+    if (!activeViewTransition || activeViewTransition->phase() != ViewTransitionPhase::Animating)
+        return false;
+
+    for (auto& [name, capturedElement] : activeViewTransition->namedElements().map()) {
+        if (auto newStyleable = capturedElement->newElement.styleable()) {
+            if (*newStyleable == *this)
+                return true;
+        }
+    }
+
+    return false;
 }
 
 } // namespace WebCore

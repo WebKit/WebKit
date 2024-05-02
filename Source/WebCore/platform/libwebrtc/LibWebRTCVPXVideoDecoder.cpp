@@ -163,8 +163,10 @@ static UniqueRef<webrtc::VideoDecoder> createInternalDecoder(LibWebRTCVPXVideoDe
         return makeUniqueRefFromNonNullUniquePtr(webrtc::VP9Decoder::Create());
     case LibWebRTCVPXVideoDecoder::Type::VP9_P2:
         return makeUniqueRefFromNonNullUniquePtr(webrtc::VP9Decoder::Create());
+#if ENABLE(AV1)
     case LibWebRTCVPXVideoDecoder::Type::AV1:
         return createLibWebRTCDav1dDecoder();
+#endif
     }
 }
 

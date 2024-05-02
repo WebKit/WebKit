@@ -72,9 +72,7 @@ GetterSetterAccessCase::GetterSetterAccessCase(const GetterSetterAccessCase& oth
 
 Ref<AccessCase> GetterSetterAccessCase::cloneImpl() const
 {
-    auto result = adoptRef(*new GetterSetterAccessCase(*this));
-    result->resetState();
-    return result;
+    return adoptRef(*new GetterSetterAccessCase(*this));
 }
 
 bool GetterSetterAccessCase::hasAlternateBaseImpl() const

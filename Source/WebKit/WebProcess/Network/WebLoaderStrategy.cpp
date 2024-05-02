@@ -506,7 +506,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.isDisplayingInitialEmptyDocument = frame && frame->loader().stateMachine().isDisplayingInitialEmptyDocument();
     if (frame)
         loadParameters.effectiveSandboxFlags = frame->loader().effectiveSandboxFlags();
-    if (auto* openerFrame = frame ? dynamicDowncast<LocalFrame>(frame->loader().opener()) : nullptr) {
+    if (auto* openerFrame = frame ? dynamicDowncast<LocalFrame>(frame->opener()) : nullptr) {
         if (auto openerDocument = openerFrame->document())
             loadParameters.openerURL = openerDocument->url();
     }

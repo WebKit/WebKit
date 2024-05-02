@@ -39,6 +39,15 @@
 @class WKBEScrollView;
 @class WKScrollingNodeScrollViewDelegate;
 
+namespace WebKit {
+class ScrollingTreeScrollingNodeDelegateIOS;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ScrollingTreeScrollingNodeDelegateIOS> : std::true_type { };
+}
+
 namespace WebCore {
 
 class FloatPoint;

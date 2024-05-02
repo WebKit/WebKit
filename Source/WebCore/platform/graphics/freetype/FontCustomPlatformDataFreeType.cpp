@@ -39,6 +39,7 @@
 #include <mutex>
 
 #ifdef HAVE_HB_FEATURES_H
+#include <hb.h>
 // Workaround https://github.com/harfbuzz/harfbuzz/commit/30c5402e3d0cc156fd5f04560864a88723173cf2
 #define HB_NO_SINGLE_HEADER_ERROR
 #include <hb-features.h>

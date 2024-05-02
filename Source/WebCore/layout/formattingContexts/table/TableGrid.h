@@ -36,8 +36,49 @@
 
 namespace WebCore {
 namespace Layout {
+class TableGridCell;
+}
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::Layout::TableGridCell> : std::true_type { };
+}
+
+namespace WebCore {
+namespace Layout {
 class Box;
 class ElementBox;
+
+// Cell represents a <td> or <th>. It can span multiple slots in the grid.
+class TableGridCell : public CanMakeWeakPtr<TableGridCell> {
+    WTF_MAKE_ISO_ALLOCATED_INLINE(TableGridCell);
+public:
+    TableGridCell(const ElementBox&, SlotPosition, CellSpan);
+
+    size_t startColumn() const { return m_position.column; }
+    size_t endColumn() const { return m_position.column + m_span.column; }
+
+    size_t startRow() const { return m_position.row; }
+    size_t endRow() const { return m_position.row + m_span.row; }
+
+    size_t columnSpan() const { return m_span.column; }
+    size_t rowSpan() const { return m_span.row; }
+
+    SlotPosition position() const { return m_position; }
+    CellSpan span() const { return m_span; }
+
+    void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
+    InlineLayoutUnit baseline() const { return m_baseline; }
+
+    const ElementBox& box() const { return *m_layoutBox.get(); }
+
+private:
+    CheckedPtr<const ElementBox> m_layoutBox;
+    SlotPosition m_position;
+    CellSpan m_span;
+    InlineLayoutUnit m_baseline { 0 };
+};
 
 class TableGrid {
     WTF_MAKE_ISO_ALLOCATED(TableGrid);
@@ -142,44 +183,14 @@ public:
         RowList m_rowList;
     };
 
-    // Cell represents a <td> or <th>. It can span multiple slots in the grid.
-    class Cell : public CanMakeWeakPtr<Cell> {
-        WTF_MAKE_ISO_ALLOCATED_INLINE(Cell);
-    public:
-        Cell(const ElementBox&, SlotPosition, CellSpan);
-
-        size_t startColumn() const { return m_position.column; }
-        size_t endColumn() const { return m_position.column + m_span.column; }
-
-        size_t startRow() const { return m_position.row; }
-        size_t endRow() const { return m_position.row + m_span.row; }
-
-        size_t columnSpan() const { return m_span.column; }
-        size_t rowSpan() const { return m_span.row; }
-
-        SlotPosition position() const { return m_position; }
-        CellSpan span() const { return m_span; }
-
-        void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
-        InlineLayoutUnit baseline() const { return m_baseline; }
-
-        const ElementBox& box() const { return *m_layoutBox.get(); }
-
-    private:
-        CheckedPtr<const ElementBox> m_layoutBox;
-        SlotPosition m_position;
-        CellSpan m_span;
-        InlineLayoutUnit m_baseline { 0 };
-    };
-
     class Slot {
     public:
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         Slot() = default;
-        Slot(Cell&, bool isColumnSpanned, bool isRowSpanned);
+        Slot(TableGridCell&, bool isColumnSpanned, bool isRowSpanned);
 
-        const Cell& cell() const { return *m_cell; }
-        Cell& cell() { return *m_cell; }
+        const TableGridCell& cell() const { return *m_cell; }
+        TableGridCell& cell() { return *m_cell; }
 
         const IntrinsicWidthConstraints& widthConstraints() const { return m_widthConstraints; }
         void setWidthConstraints(const IntrinsicWidthConstraints& widthConstraints) { m_widthConstraints = widthConstraints; }
@@ -196,7 +207,7 @@ public:
         bool isRowSpanned() const { return m_isRowSpanned; }
 
     private:
-        WeakPtr<Cell> m_cell;
+        WeakPtr<TableGridCell> m_cell;
         bool m_isColumnSpanned { false };
         bool m_isRowSpanned { false };
         IntrinsicWidthConstraints m_widthConstraints;
@@ -208,7 +219,7 @@ public:
     const Rows& rows() const { return m_rows; }
     Rows& rows() { return m_rows; }
 
-    using Cells = ListHashSet<std::unique_ptr<Cell>>;
+    using Cells = ListHashSet<std::unique_ptr<TableGridCell>>;
     Cells& cells() { return m_cells; }
 
     Slot* slot(SlotPosition);

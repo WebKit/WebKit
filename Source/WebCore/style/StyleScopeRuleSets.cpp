@@ -238,10 +238,21 @@ void ScopeRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&
 {
     RuleSetBuilder builder(*m_authorStyle, *mediaQueryEvaluator, &m_styleResolver, RuleSetBuilder::ShrinkToFit::Enable, RuleSetBuilder::ShouldResolveNesting::Yes);
 
+    RefPtr<CSSStyleSheet> previous;
     for (auto& cssSheet : styleSheets) {
         ASSERT(!cssSheet->disabled());
+        // In some cases, we have many identical <style> tags. To avoid pathological behavior, we check the one-previous <style> and skip adding a new one when
+        // the content is exact same to the previous one.
+        if (previous) {
+            if (&previous->contents() == &cssSheet->contents() && previous->mediaQueries().isEmpty() && cssSheet->mediaQueries().isEmpty()) {
+                inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet.get());
+                continue;
+            }
+        }
+
         builder.addRulesFromSheet(cssSheet->contents(), cssSheet->mediaQueries());
         inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet.get());
+        previous = cssSheet;
     }
 
     collectFeatures();

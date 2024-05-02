@@ -45,6 +45,15 @@ OBJC_CLASS NSError;
 OBJC_CLASS WKASCAuthorizationPresenterDelegate;
 
 namespace WebKit {
+class AuthenticatorPresenterCoordinator;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::AuthenticatorPresenterCoordinator> : std::true_type { };
+}
+
+namespace WebKit {
 
 class AuthenticatorManager;
 

@@ -2301,8 +2301,7 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         return {'step': f"Failed to add '{GitHub.BLOCKED_LABEL}' label to pull request"}
 
     def doStepIf(self, step):
-        # FIXME: Re-enable merging-blocked on mac-ventura after migration is complete.
-        return self.getProperty('github.number') and self.getProperty('fullPlatform', '') != 'mac-ventura'
+        return self.getProperty('github.number')
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)

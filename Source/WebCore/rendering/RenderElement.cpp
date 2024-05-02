@@ -508,6 +508,9 @@ void RenderElement::initializeStyle()
 
     // It would be nice to assert that !parent() here, but some RenderLayer subrenderers
     // have their parent set before getting a call to initializeStyle() :|
+
+    if (auto styleable = Styleable::fromRenderer(*this))
+        setCapturedInViewTransition(styleable->capturedInViewTransition());
 }
 
 void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDifference)
@@ -2069,11 +2072,6 @@ bool RenderElement::hasSelfPaintingLayer() const
         return false;
     auto& layerModelObject = downcast<RenderLayerModelObject>(*this);
     return layerModelObject.hasSelfPaintingLayer();
-}
-
-bool RenderElement::capturedInViewTransition() const
-{
-    return element() && element()->capturedInViewTransition();
 }
 
 bool RenderElement::hasViewTransitionName() const

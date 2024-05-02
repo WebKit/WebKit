@@ -38,6 +38,15 @@
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
+class AudioFileReader;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AudioFileReader> : std::true_type { };
+}
+
+namespace WebCore {
 
 GST_DEBUG_CATEGORY(webkit_audio_file_reader_debug);
 #define GST_CAT_DEFAULT webkit_audio_file_reader_debug

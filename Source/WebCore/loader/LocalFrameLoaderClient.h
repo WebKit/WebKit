@@ -209,11 +209,6 @@ public:
 
     virtual bool shouldGoToHistoryItem(HistoryItem&) const = 0;
 
-    // This frame has set its opener to null, disowning it for the lifetime of the frame.
-    // See http://html.spec.whatwg.org/#dom-opener.
-    // FIXME: JSC should allow disowning opener. - <https://bugs.webkit.org/show_bug.cgi?id=103913>.
-    virtual void didDisownOpener() { }
-
     // This frame has displayed inactive content (such as an image) from an
     // insecure source.  Inactive content cannot spread to other frames.
     virtual void didDisplayInsecureContent() = 0;
@@ -381,6 +376,8 @@ public:
 #endif
 
     virtual void documentLoaderDetached(uint64_t, LoadWillContinueInAnotherProcess) { }
+
+    virtual void frameNameChanged(const String&) { }
 };
 
 } // namespace WebCore

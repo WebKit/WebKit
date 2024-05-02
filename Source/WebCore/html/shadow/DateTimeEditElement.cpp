@@ -191,9 +191,9 @@ void DateTimeEditBuilder::visitLiteral(String&& text)
     m_editElement.fieldsWrapperElement().appendChild(element);
 }
 
-DateTimeEditElement::EditControlOwner::~EditControlOwner() = default;
+DateTimeEditElementEditControlOwner::~DateTimeEditElementEditControlOwner() = default;
 
-DateTimeEditElement::DateTimeEditElement(Document& document, EditControlOwner& editControlOwner)
+DateTimeEditElement::DateTimeEditElement(Document& document, DateTimeEditElementEditControlOwner& editControlOwner)
     : HTMLDivElement(divTag, document)
     , m_editControlOwner(editControlOwner)
 {
@@ -236,7 +236,7 @@ DateTimeFieldElement* DateTimeEditElement::focusedFieldElement() const
     return m_fields[fieldIndex].ptr();
 }
 
-Ref<DateTimeEditElement> DateTimeEditElement::create(Document& document, EditControlOwner& editControlOwner)
+Ref<DateTimeEditElement> DateTimeEditElement::create(Document& document, DateTimeEditElementEditControlOwner& editControlOwner)
 {
     auto element = adoptRef(*new DateTimeEditElement(document, editControlOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };

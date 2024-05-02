@@ -34,6 +34,15 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class LibWebRTCResolver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::LibWebRTCResolver> : std::true_type { };
+}
+
 namespace IPC {
 class Connection;
 }

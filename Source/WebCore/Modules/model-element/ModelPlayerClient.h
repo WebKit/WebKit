@@ -31,6 +31,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class ModelPlayerClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ModelPlayerClient> : std::true_type { };
+}
+
+namespace WebCore {
 
 class ModelPlayer;
 class ResourceError;

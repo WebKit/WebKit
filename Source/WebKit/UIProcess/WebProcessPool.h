@@ -152,7 +152,7 @@ class WebProcessPool final
     , private PAL::SystemSleepListener::Client
 #endif
 #if ENABLE(EXTENSION_CAPABILITIES)
-    , public ExtensionCapabilityGranter::Client
+    , public ExtensionCapabilityGranterClient
 #endif
 {
 public:

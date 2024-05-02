@@ -56,7 +56,7 @@ enum {
     LAST_SIGNAL
 };
 
-class CookieStoreObserver : public API::HTTPCookieStore::Observer {
+class CookieStoreObserver : public API::HTTPCookieStoreObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CookieStoreObserver(Function<void()>&& callback)

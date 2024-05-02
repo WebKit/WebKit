@@ -43,7 +43,7 @@ class DeviceController : public Supplement<Page>, public CanMakeCheckedPtr<Devic
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceController);
 public:
     explicit DeviceController(DeviceClient&);
-    virtual ~DeviceController() = default;
+    virtual ~DeviceController();
 
     void addDeviceEventListener(LocalDOMWindow&);
     void removeDeviceEventListener(LocalDOMWindow&);

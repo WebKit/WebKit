@@ -1356,12 +1356,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
     StringImpl* separatorImpl = separator.impl();
 
     if (separatorLength == 1) {
-        UChar separatorCharacter;
-        if (separatorImpl->is8Bit())
-            separatorCharacter = separatorImpl->characters8()[0];
-        else
-            separatorCharacter = separatorImpl->characters16()[0];
-
+        UChar separatorCharacter = separatorImpl->at(0);
         if (stringImpl->is8Bit()) {
             if (splitStringByOneCharacterImpl<LChar>(result, stringImpl, separatorCharacter, limit))
                 RELEASE_AND_RETURN(scope, JSValue::encode(cacheAndCreateArray()));

@@ -33,6 +33,17 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+namespace LayoutIntegration {
+struct InlineContent;
+}
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LayoutIntegration::InlineContent> : std::true_type { };
+}
+
+namespace WebCore {
 
 class RenderBlockFlow;
 class RenderObject;
@@ -77,10 +88,7 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
     void shrinkToFit();
 
     const LineLayout& lineLayout() const { return *m_lineLayout; }
-    const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& formattingContextRoot() const;
-
-    bool hasRendererForLayoutBox(const Layout::Box&) const;
 
     size_t indexForBox(const InlineDisplay::Box&) const;
 

@@ -44,11 +44,11 @@ void CSSTokenizerInputStream::advanceUntilNonWhitespace()
 {
     // Using ASCII whitespace here rather than CSS space since we don't do preprocessing
     if (m_string->is8Bit()) {
-        const LChar* characters = m_string->characters8();
+        auto characters = m_string->span8();
         while (m_offset < m_stringLength && isASCIIWhitespace(characters[m_offset]))
             ++m_offset;
     } else {
-        const UChar* characters = m_string->characters16();
+        auto characters = m_string->span16();
         while (m_offset < m_stringLength && isASCIIWhitespace(characters[m_offset]))
             ++m_offset;
     }

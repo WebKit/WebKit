@@ -270,7 +270,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     }
 }
 
-void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, const Function<void(JSGlobalObject*, JSDOMGlobalObject*, MarkedArgumentBuffer&)>& addArguments)
+void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, const auto& addArguments)
 {
     if (!canInvokeCallback())
         return;
@@ -315,7 +315,7 @@ void JSCustomElementInterface::setConnectedCallback(JSC::JSObject* callback)
 
 void JSCustomElementInterface::invokeConnectedCallback(Element& element)
 {
-    invokeCallback(element, m_connectedCallback.get());
+    invokeCallback(element, m_connectedCallback.get(), [](JSC::JSGlobalObject*, JSDOMGlobalObject*, JSC::MarkedArgumentBuffer&) { });
 }
 
 void JSCustomElementInterface::setDisconnectedCallback(JSC::JSObject* callback)
@@ -325,7 +325,7 @@ void JSCustomElementInterface::setDisconnectedCallback(JSC::JSObject* callback)
 
 void JSCustomElementInterface::invokeDisconnectedCallback(Element& element)
 {
-    invokeCallback(element, m_disconnectedCallback.get());
+    invokeCallback(element, m_disconnectedCallback.get(), [](JSC::JSGlobalObject*, JSDOMGlobalObject*, JSC::MarkedArgumentBuffer&) { });
 }
 
 void JSCustomElementInterface::setAdoptedCallback(JSC::JSObject* callback)
@@ -368,7 +368,7 @@ void JSCustomElementInterface::invokeFormAssociatedCallback(Element& element, HT
 
 void JSCustomElementInterface::invokeFormResetCallback(Element& element)
 {
-    invokeCallback(element, m_formResetCallback.get());
+    invokeCallback(element, m_formResetCallback.get(), [](JSC::JSGlobalObject*, JSDOMGlobalObject*, JSC::MarkedArgumentBuffer&) { });
 }
 
 void JSCustomElementInterface::invokeFormDisabledCallback(Element& element, bool isDisabled)

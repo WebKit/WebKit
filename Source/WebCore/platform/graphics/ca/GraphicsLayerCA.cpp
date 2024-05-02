@@ -1860,7 +1860,10 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
             childCommitState.ancestorWithTransformAnimationIntersectsCoverageRect = true;
         affectedByTransformAnimation = true;
     }
-    
+
+    if (isBackdropRoot())
+        commitState.backdropRootIsOpaque = backgroundColor().isOpaque();
+
     if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer.get())) {
         maskLayer->setVisibleAndCoverageRects(rects);
         maskLayer->commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, layerTypeChanged);
@@ -2521,8 +2524,12 @@ void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
     }
 
     // If nothing actually changed, no need to touch the layer properties.
-    if (!(m_uncommittedChanges & BackdropFiltersChanged))
+    if (!(m_uncommittedChanges & BackdropFiltersChanged)) {
+        // Opaque state depends on ancestor state, and is cheap to set, so just unconditionally update it.
+        if (m_backdropLayer)
+            m_backdropLayer->setBackdropRootIsOpaque(commitState.backdropRootIsOpaque);
         return;
+    }
 
     bool madeLayer = !m_backdropLayer;
     if (!m_backdropLayer) {
@@ -2533,13 +2540,14 @@ void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
     }
 
     m_backdropLayer->setHidden(!m_contentsVisible);
+    m_backdropLayer->setBackdropRootIsOpaque(commitState.backdropRootIsOpaque);
     m_backdropLayer->setFilters(m_backdropFilters);
 
     if (m_layerClones) {
-        for (auto& clone : m_layerClones->backdropLayerClones) {
-            PlatformCALayer* cloneLayer = clone.value.get();
-            cloneLayer->setHidden(!m_contentsVisible);
-            cloneLayer->setFilters(m_backdropFilters);
+        for (auto& clone : m_layerClones->backdropLayerClones.values()) {
+            clone->setHidden(!m_contentsVisible);
+            clone->setBackdropRootIsOpaque(commitState.backdropRootIsOpaque);
+            clone->setFilters(m_backdropFilters);
         }
     }
 

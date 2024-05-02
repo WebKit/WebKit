@@ -73,6 +73,7 @@ public:
         SerializedScriptValue,
         String,
         TargetedElementInfo,
+        TargetedElementRequest,
         URL,
         URLRequest,
         URLResponse,

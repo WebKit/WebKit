@@ -37,6 +37,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class AudioMediaStreamTrackRendererCocoa;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AudioMediaStreamTrackRendererCocoa> : std::true_type { };
+}
+
+namespace WebCore {
 
 class AudioSampleDataSource;
 class AudioSampleBufferList;

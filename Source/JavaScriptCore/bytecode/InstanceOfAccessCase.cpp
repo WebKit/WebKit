@@ -48,9 +48,7 @@ void InstanceOfAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Inden
 
 Ref<AccessCase> InstanceOfAccessCase::cloneImpl() const
 {
-    auto result = adoptRef(*new InstanceOfAccessCase(*this));
-    result->resetState();
-    return result;
+    return adoptRef(*new InstanceOfAccessCase(*this));
 }
 
 InstanceOfAccessCase::InstanceOfAccessCase(

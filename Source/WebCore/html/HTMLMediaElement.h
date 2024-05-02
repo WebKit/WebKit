@@ -157,7 +157,7 @@ class HTMLMediaElement
     , private TextTrackClient
     , private VideoTrackClient
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
-    , private AudioSession::ConfigurationChangeObserver
+    , private AudioSessionConfigurationChangeObserver
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
     , private CDMClient

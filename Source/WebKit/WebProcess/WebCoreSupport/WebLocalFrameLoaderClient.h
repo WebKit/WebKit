@@ -313,6 +313,8 @@ private:
 #endif
 
     void dispatchLoadEventToOwnerElementInAnotherProcess() final;
+
+    void frameNameChanged(const String&) final;
 };
 
 // As long as EmptyFrameLoaderClient exists in WebCore, this can return nullptr.

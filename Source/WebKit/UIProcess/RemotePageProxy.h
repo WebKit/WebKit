@@ -34,6 +34,15 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 
+namespace WebKit {
+class RemotePageProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemotePageProxy> : std::true_type { };
+}
+
 namespace IPC {
 class Connection;
 class Decoder;

@@ -35,6 +35,15 @@
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class RemoteCDMFactory;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteCDMFactory> : std::true_type { };
+}
+
 namespace WebCore {
 class Settings;
 }

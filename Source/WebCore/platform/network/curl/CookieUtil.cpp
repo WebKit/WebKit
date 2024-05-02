@@ -80,9 +80,9 @@ bool domainMatch(const String& cookieDomain, const String& host)
     return false;
 }
 
-static std::optional<double> parseExpiresMS(const char* expires)
+static std::optional<double> parseExpiresMS(std::span<const LChar> expires)
 {
-    double tmp = parseDateFromNullTerminatedCharacters(expires);
+    double tmp = parseDate(expires);
     if (isnan(tmp))
         return { };
 
@@ -129,7 +129,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
             result.expires = std::nullopt;
         }
     } else if (equalLettersIgnoringASCIICase(attributeName, "expires"_s) && !hasMaxAge) {
-        if (auto expiryTime = parseExpiresMS(attributeValue.utf8().data())) {
+        if (auto expiryTime = parseExpiresMS(attributeValue.utf8().span())) {
             result.expires = expiryTime.value();
             result.session = false;
         } else if (!hasMaxAge) {

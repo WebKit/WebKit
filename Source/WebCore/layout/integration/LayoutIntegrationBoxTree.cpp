@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationBoxTree.h"
 
+#include "FormattingContextBoxIterator.h"
 #include "InlineWalker.h"
 #include "LayoutElementBox.h"
 #include "LayoutInlineTextBox.h"
@@ -105,27 +106,27 @@ BoxTree::BoxTree(RenderBlock& rootRenderer)
 
 BoxTree::~BoxTree()
 {
-    for (auto& renderer : m_renderers) {
+    Vector<CheckedRef<Layout::Box>> boxesToDetach;
+    for (auto& constLayoutBox : formattingContextBoxes(rootLayoutBox())) {
+        auto& layoutBox = const_cast<Layout::Box&>(constLayoutBox);
+        auto* renderer = layoutBox.rendererForIntegration();
         if (!renderer)
             continue;
 
         auto* renderBlockFlow = dynamicDowncast<RenderBlockFlow>(*renderer);
         auto isLFCInlineBlock = renderBlockFlow && renderBlockFlow->modernLineLayout();
-        if (isLFCInlineBlock) {
-            auto detachedBox = renderBlockFlow->layoutBox()->removeFromParent();
-            initialContainingBlock().appendChild(WTFMove(detachedBox));
-            continue;
-        }
-
-        renderer->clearLayoutBox();
+        if (isLFCInlineBlock)
+            boxesToDetach.append(layoutBox);
     }
 
-    m_boxToRendererMap = { };
+    for (auto& toDetach : boxesToDetach) {
+        auto detachedBox = toDetach->removeFromParent();
+        initialContainingBlock().appendChild(WTFMove(detachedBox));
+    }
 
-    if (&rootLayoutBox().parent() == &initialContainingBlock()) {
-        auto toDelete = rootLayoutBox().removeFromParent();
-        m_rootRenderer.clearLayoutBox();
-    } else
+    if (&rootLayoutBox().parent() == &initialContainingBlock())
+        rootLayoutBox().removeFromParent();
+    else
         rootLayoutBox().destroyChildren();
 }
 
@@ -250,7 +251,6 @@ void BoxTree::buildTreeForInlineContent()
         };
         insertChild(childLayoutBox(), childRenderer, childRenderer.previousSibling());
     }
-    m_renderers.shrinkToFit();
 }
 
 void BoxTree::buildTreeForFlexContent()
@@ -260,18 +260,15 @@ void BoxTree::buildTreeForFlexContent()
         auto flexItem = makeUniqueRef<Layout::ElementBox>(elementAttributes(flexItemRenderer), WTFMove(style));
         insertChild(WTFMove(flexItem), flexItemRenderer, flexItemRenderer.previousSibling());
     }
-    m_renderers.shrinkToFit();
 }
 
 void BoxTree::insertChild(UniqueRef<Layout::Box> childBox, RenderObject& childRenderer, const RenderObject* beforeChild)
 {
-    auto& parentBox = layoutBoxForRenderer(*childRenderer.parent());
-    auto* beforeChildBox = beforeChild ? &layoutBoxForRenderer(*beforeChild) : nullptr;
-
-    m_renderers.append(&childRenderer);
+    auto& parentBox = *childRenderer.parent()->layoutBox();
+    auto* beforeChildBox = beforeChild ? beforeChild->layoutBox() : nullptr;
 
     childRenderer.setLayoutBox(childBox);
-    parentBox.insertChild(WTFMove(childBox), beforeChildBox);
+    parentBox.insertChild(WTFMove(childBox), const_cast<Layout::Box*>(beforeChildBox));
 }
 
 static void updateContentCharacteristic(const RenderText& rendererText, Layout::InlineTextBox& inlineTextBox)
@@ -335,7 +332,7 @@ void BoxTree::updateStyle(const RenderObject& renderer)
 
 void BoxTree::updateContent(const RenderText& textRenderer)
 {
-    auto& inlineTextBox = downcast<Layout::InlineTextBox>(layoutBoxForRenderer(textRenderer));
+    auto& inlineTextBox = const_cast<Layout::InlineTextBox&>(*textRenderer.layoutBox());
     auto& style = inlineTextBox.style();
     auto isCombinedText = [&] {
         auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(textRenderer);
@@ -358,9 +355,7 @@ const Layout::Box& BoxTree::insert(const RenderElement& parent, RenderObject& ch
     UNUSED_PARAM(parent);
 
     insertChild(createLayoutBox(child), child, beforeChild);
-    if (!m_boxToRendererMap.isEmpty())
-        m_boxToRendererMap.add(*child.layoutBox(), child);
-    return layoutBoxForRenderer(child);
+    return *child.layoutBox();
 }
 
 UniqueRef<Layout::Box> BoxTree::remove(const RenderElement& parent, RenderObject& child)
@@ -369,11 +364,8 @@ UniqueRef<Layout::Box> BoxTree::remove(const RenderElement& parent, RenderObject
     ASSERT(child.layoutBox());
 
     auto* layoutBox = child.layoutBox();
-
-    m_boxToRendererMap = { };
     child.clearLayoutBox();
-    // FIXME: Move over to WeakListHashSet if this turns out to be too expensive.
-    m_renderers.removeFirst(&child);
+
     return layoutBox->removeFromParent();
 }
 
@@ -387,77 +379,19 @@ Layout::ElementBox& BoxTree::rootLayoutBox()
     return *m_rootRenderer.layoutBox();
 }
 
-Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer)
-{
-    return *const_cast<RenderObject&>(renderer).layoutBox();
-}
-
-const Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer) const
-{
-    return const_cast<BoxTree&>(*this).layoutBoxForRenderer(renderer);
-}
-
-const Layout::ElementBox& BoxTree::layoutBoxForRenderer(const RenderElement& renderer) const
-{
-    return downcast<Layout::ElementBox>(layoutBoxForRenderer(static_cast<const RenderObject&>(renderer)));
-}
-
-Layout::ElementBox& BoxTree::layoutBoxForRenderer(const RenderElement& renderer)
-{
-    return downcast<Layout::ElementBox>(layoutBoxForRenderer(static_cast<const RenderObject&>(renderer)));
-}
-
 bool BoxTree::contains(const RenderElement& rendererToFind) const
 {
-    if (!rendererToFind.layoutBox())
+    auto* boxToFind = rendererToFind.layoutBox();
+    if (!boxToFind)
         return false;
-    if (m_boxToRendererMap.contains(*rendererToFind.layoutBox()))
-        return true;
-    for (auto& renderer : m_renderers) {
-        if (renderer.get() == &rendererToFind)
-            return true;
+
+    auto* ancestor = &boxToFind->parent();
+    while (true) {
+        if (ancestor->establishesFormattingContext())
+            break;
+        ancestor = &ancestor->parent();
     }
-    return false;
-}
-
-RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box)
-{
-    if (&box == &rootLayoutBox())
-        return m_rootRenderer;
-
-    if (m_renderers.size() <= smallTreeThreshold) {
-        auto index = m_renderers.findIf([&](auto& renderer) {
-            return renderer->layoutBox() == &box;
-        });
-        RELEASE_ASSERT(index != notFound);
-        return *m_renderers[index];
-    }
-
-    if (m_boxToRendererMap.isEmpty()) {
-        for (auto& renderer : m_renderers)
-            m_boxToRendererMap.add(*renderer->layoutBox(), renderer);
-    }
-    return *m_boxToRendererMap.get(&box);
-}
-
-const RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box) const
-{
-    return const_cast<BoxTree&>(*this).rendererForLayoutBox(box);
-}
-
-bool BoxTree::hasRendererForLayoutBox(const Layout::Box& box) const
-{
-    if (&box == &rootLayoutBox())
-        return true;
-
-    if (m_boxToRendererMap.isEmpty()) {
-        for (auto& renderer : m_renderers) {
-            if (renderer->layoutBox() == &box)
-                return true;
-        }
-        return false;
-    }
-    return m_boxToRendererMap.contains(&box);
+    return ancestor == &rootLayoutBox();
 }
 
 Layout::InitialContainingBlock& BoxTree::initialContainingBlock()
@@ -513,7 +447,7 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
                 if (isDamaged)
                     inlineBoxStream << " (renderer may be damaged)";
                 else
-                    inlineBoxStream << " renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
+                    inlineBoxStream << " renderer->(" << box.layoutBox().rendererForIntegration() << ")";
                 inlineBoxStream.nextLine();
             } else {
                 addSpacing(runStream);
@@ -535,7 +469,7 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
                 if (isDamaged)
                     runStream << " (renderer may be damaged)";
                 else
-                    runStream << " renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
+                    runStream << " renderer->(" << box.layoutBox().rendererForIntegration() << ")";
                 runStream.nextLine();
             }
         }

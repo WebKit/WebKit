@@ -32,6 +32,15 @@
 #include <wtf/RefCounted.h>
 
 namespace WebKit {
+class NetworkTransportSession;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkTransportSession> : std::true_type { };
+}
+
+namespace WebKit {
 
 class NetworkConnectionToWebProcess;
 class NetworkTransportBidirectionalStream;

@@ -30,6 +30,15 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class PageGroup;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PageGroup> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Page;
 #if ENABLE(VIDEO)

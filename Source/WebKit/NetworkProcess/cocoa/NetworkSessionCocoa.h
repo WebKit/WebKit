@@ -47,6 +47,24 @@ OBJC_CLASS NSURLCredentialStorage;
 #include <wtf/HashMap.h>
 #include <wtf/Seconds.h>
 
+namespace WebKit {
+struct SessionWrapper;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SessionWrapper> : std::true_type { };
+}
+
+namespace WebCore {
+class SessionWrapper;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SessionWrapper> : std::true_type { };
+}
+
 namespace WebCore {
 enum class AdvancedPrivacyProtections : uint16_t;
 }

@@ -1,0 +1,7 @@
+2d.fillStyle.colormix
+
+color-mix works as color input
+
+
+PASS color-mix works as color input
+

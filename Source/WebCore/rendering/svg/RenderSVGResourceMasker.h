@@ -53,6 +53,9 @@ public:
 
     void removeReferencingCSSClient(const RenderElement&) final;
 
+    bool drawContentIntoContext(GraphicsContext&, const FloatRect& objectBoundingBox);
+    bool drawContentIntoContext(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions);
+
 private:
     void element() const = delete;
 

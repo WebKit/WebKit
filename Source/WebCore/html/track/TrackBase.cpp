@@ -76,6 +76,8 @@ TrackBase::TrackBase(ScriptExecutionContext* context, Type type, const std::opti
 #endif
 }
 
+TrackBase::~TrackBase() = default;
+
 void TrackBase::didMoveToNewDocument(Document& newDocument)
 {
     observeContext(&newDocument.contextDocument());

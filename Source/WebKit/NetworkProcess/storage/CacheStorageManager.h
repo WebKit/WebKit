@@ -29,6 +29,15 @@
 #include <WebCore/DOMCacheEngine.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class CacheStorageManager;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::CacheStorageManager> : std::true_type { };
+}
+
 namespace WebCore {
 struct ClientOrigin;
 }

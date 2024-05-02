@@ -255,7 +255,7 @@ void JSTestDelegateToSharedSyntheticAttribute::analyzeHeap(JSCell* cell, HeapAna
     Base::analyzeHeap(cell, analyzer);
 }
 
-bool JSTestDelegateToSharedSyntheticAttributeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSTestDelegateToSharedSyntheticAttributeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);

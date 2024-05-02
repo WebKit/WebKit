@@ -38,7 +38,7 @@
 namespace WebCore {
 using namespace JSC;
 
-bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
+bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     JSNodeList* jsNodeList = jsCast<JSNodeList*>(handle.slot()->asCell());
     if (!jsNodeList->hasCustomProperties())
@@ -46,21 +46,21 @@ bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
 
     if (jsNodeList->wrapped().isLiveNodeList()) {
         if (UNLIKELY(reason))
-            *reason = "LiveNodeList owner is opaque root";
+            *reason = "LiveNodeList owner is opaque root"_s;
 
         return containsWebCoreOpaqueRoot(visitor, static_cast<LiveNodeList&>(jsNodeList->wrapped()).ownerNode());
     }
 
     if (jsNodeList->wrapped().isChildNodeList()) {
         if (UNLIKELY(reason))
-            *reason = "ChildNodeList owner is opaque root";
+            *reason = "ChildNodeList owner is opaque root"_s;
 
         return containsWebCoreOpaqueRoot(visitor, static_cast<ChildNodeList&>(jsNodeList->wrapped()).ownerNode());
     }
 
     if (jsNodeList->wrapped().isEmptyNodeList()) {
         if (UNLIKELY(reason))
-            *reason = "EmptyNodeList owner is opaque root";
+            *reason = "EmptyNodeList owner is opaque root"_s;
 
         return containsWebCoreOpaqueRoot(visitor, static_cast<EmptyNodeList&>(jsNodeList->wrapped()).ownerNode());
     }

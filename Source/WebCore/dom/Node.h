@@ -652,11 +652,10 @@ protected:
         NeedsSVGRendererUpdate = 1 << 3,
         NeedsUpdateQueryContainerDependentStyle = 1 << 4,
         EverHadSmoothScroll = 1 << 5,
-        CapturedInViewTransition = 1 << 6,
 #if ENABLE(FULLSCREEN_API)
-        IsFullscreen = 1 << 7,
+        IsFullscreen = 1 << 6,
 #endif
-        // 8-bits free.
+        // 9-bits free.
     };
 
     enum class TabIndexState : uint8_t {

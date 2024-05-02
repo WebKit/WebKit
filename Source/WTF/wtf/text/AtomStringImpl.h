@@ -66,7 +66,7 @@ public:
     ALWAYS_INLINE static RefPtr<AtomStringImpl> addCString(const char* s) { return s ? add(WTF::span8(s)) : nullptr; }
 
     // Returns null if the input data contains an invalid UTF-8 sequence.
-    static RefPtr<AtomStringImpl> addUTF8(std::span<const char> start);
+    static RefPtr<AtomStringImpl> add(std::span<const char8_t>);
 
 #if USE(CF)
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(CFStringRef);

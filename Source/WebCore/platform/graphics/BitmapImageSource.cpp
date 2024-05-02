@@ -492,7 +492,7 @@ const ImageFrame& BitmapImageSource::frameAtIndex(unsigned index) const
     return m_frames[index];
 }
 
-const ImageFrame& BitmapImageSource::frameAtIndexCacheIfNeeded(unsigned index, SubsamplingLevel subsamplingLevel)
+const ImageFrame& BitmapImageSource::frameAtIndexCacheIfNeeded(unsigned index, const std::optional<SubsamplingLevel>& subsamplingLevel)
 {
     if (!m_decoder)
         return ImageFrame::defaultFrame();
@@ -500,14 +500,16 @@ const ImageFrame& BitmapImageSource::frameAtIndexCacheIfNeeded(unsigned index, S
     if (index >= m_frames.size())
         return ImageFrame::defaultFrame();
 
-    ImageFrame& frame = m_frames[index];
-    if (frame.isComplete() && frame.subsamplingLevel() == subsamplingLevel)
+    auto& frame = m_frames[index];
+    auto subsamplingLevelValue = subsamplingLevel.value_or(frame.subsamplingLevel());
+
+    if (frame.isComplete() && subsamplingLevelValue == frame.subsamplingLevel())
         return frame;
 
     destroyNativeImageAtIndex(index);
 
     // Retrieve the metadata from ImageDecoder if the ImageFrame isn't complete.
-    cacheMetadataAtIndex(index, subsamplingLevel, { });
+    cacheMetadataAtIndex(index, subsamplingLevelValue, { });
     return frame;
 }
 

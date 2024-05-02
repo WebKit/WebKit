@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
+#if USE(LIBWEBRTC) && ENABLE(AV1)
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
@@ -41,4 +41,4 @@ WEBCORE_EXPORT UniqueRef<webrtc::VideoDecoder> createLibWebRTCDav1dDecoder();
 
 } // namespace WebCore
 
-#endif
+#endif // USE(LIBWEBRTC) && ENABLE(AV1)

@@ -57,7 +57,7 @@ namespace WebCore {
 class RealtimeOutgoingAudioSource
     : public ThreadSafeRefCounted<RealtimeOutgoingAudioSource, WTF::DestructionThread::Main>
     , public webrtc::AudioSourceInterface
-    , private MediaStreamTrackPrivate::Observer
+    , private MediaStreamTrackPrivateObserver
     , private RealtimeMediaSource::AudioSampleObserver
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
@@ -118,7 +118,7 @@ private:
     virtual bool hasBufferedEnoughData() { return false; };
     virtual void sourceUpdated() { }
 
-    // MediaStreamTrackPrivate::Observer API
+    // MediaStreamTrackPrivateObserver API
     void trackMutedChanged(MediaStreamTrackPrivate&) final { sourceMutedChanged(); }
     void trackEnabledChanged(MediaStreamTrackPrivate&) final { sourceEnabledChanged(); }
     void trackEnded(MediaStreamTrackPrivate&) final { }

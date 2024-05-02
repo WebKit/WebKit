@@ -35,6 +35,15 @@ class SQLiteTransaction;
 }
 
 namespace WebKit {
+class SQLiteStorageArea;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SQLiteStorageArea> : std::true_type { };
+}
+
+namespace WebKit {
 
 class SQLiteStorageArea final : public StorageAreaBase {
 public:

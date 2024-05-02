@@ -37,18 +37,18 @@
 namespace WebKit {
 using namespace fido;
 
-CtapHidDriver::Worker::Worker(UniqueRef<HidConnection>&& connection)
+CtapHidDriverWorker::CtapHidDriverWorker(UniqueRef<HidConnection>&& connection)
     : m_connection(WTFMove(connection))
 {
     m_connection->initialize();
 }
 
-CtapHidDriver::Worker::~Worker()
+CtapHidDriverWorker::~CtapHidDriverWorker()
 {
     m_connection->terminate();
 }
 
-void CtapHidDriver::Worker::transact(fido::FidoHidMessage&& requestMessage, MessageCallback&& callback)
+void CtapHidDriverWorker::transact(fido::FidoHidMessage&& requestMessage, MessageCallback&& callback)
 {
     ASSERT(m_state == State::Idle);
     m_state = State::Write;
@@ -66,7 +66,7 @@ void CtapHidDriver::Worker::transact(fido::FidoHidMessage&& requestMessage, Mess
     });
 }
 
-void CtapHidDriver::Worker::write(HidConnection::DataSent sent)
+void CtapHidDriverWorker::write(HidConnection::DataSent sent)
 {
     if (m_state != State::Write)
         return;
@@ -95,7 +95,7 @@ void CtapHidDriver::Worker::write(HidConnection::DataSent sent)
     });
 }
 
-void CtapHidDriver::Worker::read(const Vector<uint8_t>& data)
+void CtapHidDriverWorker::read(const Vector<uint8_t>& data)
 {
     if (m_state != State::Read)
         return;
@@ -128,7 +128,7 @@ void CtapHidDriver::Worker::read(const Vector<uint8_t>& data)
     }
 }
 
-void CtapHidDriver::Worker::returnMessage()
+void CtapHidDriverWorker::returnMessage()
 {
     // Reset state before calling the response callback to avoid being deleted.
     auto callback = WTFMove(m_callback);
@@ -137,7 +137,7 @@ void CtapHidDriver::Worker::returnMessage()
     callback(WTFMove(message));
 }
 
-void CtapHidDriver::Worker::reset()
+void CtapHidDriverWorker::reset()
 {
     m_connection->unregisterDataReceivedCallback();
     m_callback = nullptr;
@@ -148,7 +148,7 @@ void CtapHidDriver::Worker::reset()
 
 // This implements CTAPHID_CANCEL which violates the transaction semantics:
 // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#usb-hid-cancel
-void CtapHidDriver::Worker::cancel(fido::FidoHidMessage&& requestMessage)
+void CtapHidDriverWorker::cancel(fido::FidoHidMessage&& requestMessage)
 {
     reset();
     m_connection->invalidateCache();
@@ -158,7 +158,7 @@ void CtapHidDriver::Worker::cancel(fido::FidoHidMessage&& requestMessage)
 
 CtapHidDriver::CtapHidDriver(UniqueRef<HidConnection>&& connection)
     : CtapDriver(WebCore::AuthenticatorTransport::Usb)
-    , m_worker(makeUniqueRef<Worker>(WTFMove(connection)))
+    , m_worker(makeUniqueRef<CtapHidDriverWorker>(WTFMove(connection)))
     , m_nonce(kHidInitNonceLength)
 {
 }

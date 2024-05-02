@@ -37,7 +37,7 @@ namespace WebCore {
 
 class MediaStreamTrackAudioSourceProviderCocoa final
     : public WebAudioSourceProviderCocoa
-    , MediaStreamTrackPrivate::Observer
+    , MediaStreamTrackPrivateObserver
     , RealtimeMediaSource::AudioSampleObserver
     , public CanMakeCheckedPtr<MediaStreamTrackAudioSourceProviderCocoa> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -61,7 +61,7 @@ private:
     WTF::LoggerHelper& loggerHelper() final { return m_source.get(); }
 #endif
 
-    // MediaStreamTrackPrivate::Observer
+    // MediaStreamTrackPrivateObserver
     void trackEnded(MediaStreamTrackPrivate&) final { }
     void trackMutedChanged(MediaStreamTrackPrivate&) final { }
     void trackSettingsChanged(MediaStreamTrackPrivate&) final { }

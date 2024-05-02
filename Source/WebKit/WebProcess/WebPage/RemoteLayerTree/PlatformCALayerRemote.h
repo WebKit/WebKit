@@ -119,7 +119,9 @@ public:
     WebCore::TransformationMatrix sublayerTransform() const override;
     void setSublayerTransform(const WebCore::TransformationMatrix&) override;
 
-    void setIsBackdropRoot(bool) override;
+    void setIsBackdropRoot(bool) final;
+    bool backdropRootIsOpaque() const final;
+    void setBackdropRootIsOpaque(bool) final;
 
     bool isHidden() const override;
     void setHidden(bool) override;

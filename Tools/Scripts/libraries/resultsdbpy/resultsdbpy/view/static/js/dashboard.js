@@ -360,12 +360,16 @@ class Dashboard {
             let commit_bank = CommitBank;
             if (Object.hasOwn(globalParams, 'branch'))
                 commit_bank = CommitBank.forBranch(globalParams.branch);
-            for (const commit of CommitBank.commits) {
-                if (commit.identifier == globalParams.before_ref[0] || commit.revision == globalParams.before_ref[0] || commit.hash == globalParams.before_ref[0]) {
+            let doesContain = false;
+            for (const commit of commit_bank.commits) {
+                if (commit.identifier == globalParams.before_ref[0] || commit.revision == globalParams.before_ref[0] || commit.hash.startsWith(globalParams.before_ref[0])) {
                     now = Math.min(now, commit.timestamp);
+                    doesContain = true;
                     break;
                 }
             }
+            if (!doesContain && commit_bank.commits)
+                commit_bank.addCommit(globalParams.before_ref[0])
         }
 
         let oldestUuid = now * 100;

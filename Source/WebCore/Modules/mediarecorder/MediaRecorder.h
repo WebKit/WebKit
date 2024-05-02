@@ -46,8 +46,8 @@ class MediaRecorder final
     : public ActiveDOMObject
     , public RefCounted<MediaRecorder>
     , public EventTarget
-    , private MediaStreamPrivate::Observer
-    , private MediaStreamTrackPrivate::Observer {
+    , private MediaStreamPrivateObserver
+    , private MediaStreamTrackPrivateObserver {
     WTF_MAKE_ISO_ALLOCATED(MediaRecorder);
 public:
     enum class RecordingState { Inactive, Recording, Paused };
@@ -115,7 +115,7 @@ private:
 
     void handleTrackChange();
 
-    // MediaStreamTrackPrivate::Observer
+    // MediaStreamTrackPrivateObserver
     void trackEnded(MediaStreamTrackPrivate&) final;
     void trackMutedChanged(MediaStreamTrackPrivate&) final;
     void trackEnabledChanged(MediaStreamTrackPrivate&) final;

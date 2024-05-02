@@ -28,6 +28,19 @@
 #endif
 
 namespace WTF {
+template<typename Value, typename HashFunctions> class ListHashSet;
+template<typename ValueArg> struct ListHashSetNode;
+template<typename ValueArg, typename HashArg> class ListHashSetConstIterator;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<typename Value, typename HashFunctions> struct IsDeprecatedWeakRefSmartPointerException<WTF::ListHashSet<Value, HashFunctions>> : std::true_type { };
+template<typename ValueArg> struct IsDeprecatedWeakRefSmartPointerException<WTF::ListHashSetNode<ValueArg>> : std::true_type { };
+template<typename ValueArg, typename HashArg> struct IsDeprecatedWeakRefSmartPointerException<WTF::ListHashSetConstIterator<ValueArg, HashArg>> : std::true_type { };
+}
+
+namespace WTF {
 
 // ListHashSet: Just like HashSet, this class provides a Set
 // interface - a collection of unique objects with O(1) insertion,

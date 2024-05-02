@@ -93,16 +93,15 @@ static inline AtomString convertPropertyNameToAttributeName(const StringImpl& na
 
     buffer.append(std::span { dataPrefix });
 
-    const CharacterType* characters = name.characters<CharacterType>();
-    for (unsigned i = 0; i < length; ++i) {
-        CharacterType character = characters[i];
+    auto characters = name.span<CharacterType>();
+    for (auto character : characters) {
         if (isASCIIUpper(character)) {
             buffer.append('-');
             buffer.append(toASCIILower(character));
         } else
             buffer.append(character);
     }
-    return AtomString(buffer.span());
+    return buffer.span();
 }
 
 static AtomString convertPropertyNameToAttributeName(const String& name)

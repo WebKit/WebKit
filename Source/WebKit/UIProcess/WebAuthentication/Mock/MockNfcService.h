@@ -33,10 +33,19 @@
 OBJC_CLASS NSData;
 
 namespace WebKit {
+class MockNfcService;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::MockNfcService> : std::true_type { };
+}
+
+namespace WebKit {
 
 class MockNfcService final : public NfcService {
 public:
-    MockNfcService(Observer&, const WebCore::MockWebAuthenticationConfiguration&);
+    MockNfcService(AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
 
     NSData* transceive();
     void receiveStopPolling();

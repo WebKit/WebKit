@@ -29,6 +29,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class ActivityStateChangeObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ActivityStateChangeObserver> : std::true_type { };
+}
+
+namespace WebCore {
 
 class ActivityStateChangeObserver : public CanMakeWeakPtr<ActivityStateChangeObserver> {
 public:

@@ -36,7 +36,7 @@
 @class WebPluginController;
 
 namespace WebCore {
-    class CachedImage;
+class CachedImage;
     class KeyboardEvent;
 }
 

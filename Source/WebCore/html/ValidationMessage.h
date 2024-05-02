@@ -38,6 +38,15 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class ValidationMessage;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ValidationMessage> : std::true_type { };
+}
+
+namespace WebCore {
 
 class WeakPtrImplWithEventTargetData;
 class HTMLElement;

@@ -40,6 +40,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class ContentChangeObserver;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ContentChangeObserver> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Animation;
 class DOMTimer;

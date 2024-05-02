@@ -5,11 +5,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS urlReadInSameDocument is "http://webkit.org/b/🤔?x=8 + 6<"
 PASS htmlReadInSameDocument is "testing"
-PASS JSON.stringify(typesInSameDocument) is "[\"text/uri-list\",\"text/html\"]"
-PASS JSON.stringify(itemsInSameDocument) is "[{\"kind\":\"string\",\"type\":\"text/uri-list\"},{\"kind\":\"string\",\"type\":\"text/html\"}]"
+PASS typesInSameDocument.includes("text/uri-list") is true
+PASS typesInSameDocument.includes("text/html") is true
+PASS JSON.stringify(itemsInSameDocument[0]) is "{\"kind\":\"string\",\"type\":\"text/uri-list\"}"
+PASS JSON.stringify(itemsInSameDocument[1]) is "{\"kind\":\"string\",\"type\":\"text/html\"}"
 PASS event.clipboardData.getData("url") is "http://webkit.org/b/%F0%9F%A4%94?x=8%20+%206%3C"
-PASS JSON.stringify(event.clipboardData.types) is "[\"text/uri-list\",\"text/html\"]"
-PASS JSON.stringify(Array.from(event.clipboardData.items).map((item) => ({kind: item.kind, type: item.type}))) is "[{\"kind\":\"string\",\"type\":\"text/uri-list\"},{\"kind\":\"string\",\"type\":\"text/html\"}]"
+PASS event.clipboardData.types.includes("text/uri-list") is true
+PASS event.clipboardData.types.includes("text/html") is true
+PASS JSON.stringify(pastedItems[0]) is "{\"kind\":\"string\",\"type\":\"text/uri-list\"}"
+PASS JSON.stringify(pastedItems[1]) is "{\"kind\":\"string\",\"type\":\"text/html\"}"
 PASS successfullyParsed is true
 
 TEST COMPLETE

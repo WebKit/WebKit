@@ -34,6 +34,15 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+class ModelProcessModelPlayerManagerProxy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ModelProcessModelPlayerManagerProxy> : std::true_type { };
+}
+
+namespace WebKit {
 
 class ModelProcessModelPlayerProxy;
 

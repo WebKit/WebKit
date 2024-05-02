@@ -386,7 +386,7 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
     }
 
     if (RefPtr frame = document.frame()) {
-        if (RefPtr opener = dynamicDowncast<LocalFrame>(frame->loader().opener())) {
+        if (RefPtr opener = dynamicDowncast<LocalFrame>(frame->opener())) {
             if (RefPtr openerDocument = opener->document()) {
                 if (auto* openerPage = openerDocument->page())
                     requestStorageAccessUnderOpener(topFrameDomain, Ref { *WebPage::fromCorePage(*openerPage) }, *openerDocument);

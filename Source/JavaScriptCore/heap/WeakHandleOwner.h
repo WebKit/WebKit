@@ -41,7 +41,7 @@ virtual ~WeakHandleOwner()
 {
 }
 
-virtual bool isReachableFromOpaqueRoots(Handle<Unknown>, void*, AbstractSlotVisitor&, const char**)
+virtual bool isReachableFromOpaqueRoots(Handle<Unknown>, void*, AbstractSlotVisitor&, ASCIILiteral*)
 {
     return false;
 }

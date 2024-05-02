@@ -44,6 +44,15 @@
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
+class SVGToOTFFontConverter;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SVGToOTFFontConverter> : std::true_type { };
+}
+
+namespace WebCore {
 
 template <typename V>
 static inline void append32(V& result, uint32_t value)

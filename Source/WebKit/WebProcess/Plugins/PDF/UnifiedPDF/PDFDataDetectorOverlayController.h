@@ -54,7 +54,7 @@ class PDFDataDetectorItem;
 class UnifiedPDFPlugin;
 class WebMouseEvent;
 
-class PDFDataDetectorOverlayController final : private PageOverlay::Client, WebCore::DataDetectorHighlightClient {
+class PDFDataDetectorOverlayController final : private PageOverlayClient, WebCore::DataDetectorHighlightClient {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PDFDataDetectorOverlayController);
 public:
@@ -70,7 +70,7 @@ public:
     void didInvalidateHighlightOverlayRects(std::optional<PDFDocumentLayout::PageIndex> = { }, ShouldUpdatePlatformHighlightData = ShouldUpdatePlatformHighlightData::Yes, ActiveHighlightChanged = ActiveHighlightChanged::No);
 
 private:
-    // PageOverlay::Client
+    // PageOverlayClient
     void willMoveToPage(WebCore::PageOverlay&, Page*) final;
     void didMoveToPage(WebCore::PageOverlay&, Page*) final { }
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect&) final { }

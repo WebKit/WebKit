@@ -11,6 +11,8 @@ FAIL space-like mpadded assert_approx_equals: expected 25 +/- 1 but got 0
 PASS non-space-like mpadded
 FAIL space-like merror assert_approx_equals: expected 25 +/- 1 but got 0
 PASS non-space-like merror
+FAIL space-like menclose assert_approx_equals: expected 25 +/- 1 but got 0
+PASS non-space-like menclose
 X
 X
 X
@@ -44,6 +46,16 @@ X
 X
 X
 
+X
+X
+X
+
+X
+X
+X
+X
+
+X
 X
 X
 X

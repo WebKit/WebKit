@@ -39,6 +39,17 @@
 #include <wtf/ListHashSet.h>
 
 namespace WebCore {
+namespace IDBServer {
+class UniqueIDBDatabase;
+}
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::IDBServer::UniqueIDBDatabase> : std::true_type { };
+}
+
+namespace WebCore {
 
 struct ClientOrigin;
 class IDBError;

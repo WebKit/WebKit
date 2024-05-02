@@ -30,6 +30,15 @@
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
+class RTCController;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::RTCController> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Document;
 class RTCPeerConnection;

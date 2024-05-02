@@ -54,43 +54,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
 // An AccessCase describes one of the cases of a PolymorphicAccess. A PolymorphicAccess represents a
 // planned (to generate in future) or generated stub for some inline cache. That stub contains fast
 // path code for some finite number of fast cases, each described by an AccessCase object.
-//
-// An AccessCase object has a lifecycle that proceeds through several states. Note that the states
-// of AccessCase have a lot to do with the global effect epoch (we'll say epoch for short). This is
-// a simple way of reasoning about the state of the system outside this AccessCase. Any observable
-// effect - like storing to a property, changing an object's structure, etc. - increments the epoch.
-// The states are:
-//
-// Primordial:   This is an AccessCase that was just allocated. It does not correspond to any actual
-//               code and it is not owned by any PolymorphicAccess. In this state, the AccessCase
-//               assumes that it is in the same epoch as when it was created. This is important
-//               because it may make claims about itself ("I represent a valid case so long as you
-//               register a watchpoint on this set") that could be contradicted by some outside
-//               effects (like firing and deleting the watchpoint set in question). This is also the
-//               state that an AccessCase is in when it is cloned (AccessCase::clone()).
-//
-// Committed:    This happens as soon as some PolymorphicAccess takes ownership of this AccessCase.
-//               In this state, the AccessCase no longer assumes anything about the epoch. To
-//               accomplish this, PolymorphicAccess calls AccessCase::commit(). This must be done
-//               during the same epoch when the AccessCase was created, either by the client or by
-//               clone(). When created by the client, committing during the same epoch works because
-//               we can be sure that whatever watchpoint sets they spoke of are still valid. When
-//               created by clone(), we can be sure that the set is still valid because the original
-//               of the clone still has watchpoints on it.
-//
-// Generated:    This is the state when the PolymorphicAccess generates code for this case by
-//               calling AccessCase::generate() or AccessCase::generateWithGuard(). At this point
-//               the case object will have some extra stuff in it, like possibly the CallLinkInfo
-//               object associated with the inline cache.
-//               FIXME: Moving into the Generated state should not mutate the AccessCase object or
-//               put more stuff into it. If we fix this, then we can get rid of AccessCase::clone().
-//               https://bugs.webkit.org/show_bug.cgi?id=156456
-//
-// An AccessCase may be destroyed while in any of these states.
-//
-// We will sometimes buffer committed AccessCases in the PolymorphicAccess object before generating
-// code. This allows us to only regenerate once we've accumulated (hopefully) more than one new
-// AccessCase.
 
 #define JSC_FOR_EACH_ACCESS_TYPE(macro) \
     macro(Load) \
@@ -215,12 +178,6 @@ public:
 #undef JSC_DEFINE_ACCESS_TYPE
     };
 
-    enum State : uint8_t {
-        Primordial,
-        Committed,
-        Generated
-    };
-
     template<typename T>
     T& as() { return *static_cast<T*>(this); }
 
@@ -245,7 +202,6 @@ public:
     static RefPtr<AccessCase> fromStructureStubInfo(VM&, JSCell* owner, CacheableIdentifier, StructureStubInfo&);
 
     AccessType type() const { return m_type; }
-    State state() const { return m_state; }
     PropertyOffset offset() const { return m_offset; }
 
     Structure* structure() const
@@ -313,6 +269,8 @@ public:
 
     void dump(PrintStream& out) const;
 
+    PolyProtoAccessChain* polyProtoAccessChain() const { return m_polyProtoAccessChain.get(); }
+
     bool usesPolyProto() const
     {
         return !!m_polyProtoAccessChain;
@@ -350,7 +308,6 @@ protected:
     AccessCase(VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, RefPtr<PolyProtoAccessChain>&&);
     AccessCase(AccessCase&& other)
         : m_type(WTFMove(other.m_type))
-        , m_state(WTFMove(other.m_state))
         , m_viaGlobalProxy(WTFMove(other.m_viaGlobalProxy))
         , m_offset(WTFMove(other.m_offset))
         , m_structureID(WTFMove(other.m_structureID))
@@ -361,7 +318,6 @@ protected:
 
     AccessCase(const AccessCase& other)
         : m_type(other.m_type)
-        , m_state(other.m_state)
         , m_viaGlobalProxy(other.m_viaGlobalProxy)
         , m_offset(other.m_offset)
         , m_structureID(other.m_structureID)
@@ -371,7 +327,6 @@ protected:
     { }
 
     AccessCase& operator=(const AccessCase&) = delete;
-    void resetState() { m_state = Primordial; }
 
     Ref<AccessCase> cloneImpl() const;
     WatchpointSet* additionalSetImpl() const { return nullptr; }
@@ -402,12 +357,7 @@ private:
     // https://bugs.webkit.org/show_bug.cgi?id=156456
     Ref<AccessCase> clone() const;
 
-    // Perform any action that must be performed before the end of the epoch in which the case
-    // was created. Returns a set of watchpoint sets that will need to be watched.
-    Vector<WatchpointSet*, 2> commit(VM&);
-
     AccessType m_type;
-    State m_state { Primordial };
 protected:
     // m_viaGlobalProxy is true only if the instance inherits (or it is) ProxyableAccessCase.
     // We put this value here instead of ProxyableAccessCase to reduce the size of ProxyableAccessCase and its

@@ -682,17 +682,16 @@ GCGLExternalImage GraphicsContextGLCocoa::createExternalImage(ExternalImageSourc
     }
 
     // Create an EGLImage out of the MTLTexture
-#if PLATFORM(IOS_FAMILY_SIMULATOR)
-    UNUSED_VARIABLE(internalFormat);
-    const EGLint attributes[] = { EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer, EGL_NONE };
+    Vector<EGLint, 6> attributes;
+    attributes.appendList({ EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer });
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+    if (internalFormat)
+        attributes.appendList({ EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, static_cast<EGLint>(internalFormat) });
 #else
-    const EGLint attributes[] = {
-        EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer,
-        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, static_cast<EGLint>(internalFormat),
-        EGL_NONE
-    };
+    UNUSED_VARIABLE(internalFormat);
 #endif
-    auto eglImage = EGL_CreateImageKHR(platformDisplay(), EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), attributes);
+    attributes.appendList({ EGL_NONE, EGL_NONE });
+    auto eglImage = EGL_CreateImageKHR(platformDisplay(), EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), attributes.data());
     if (!eglImage) {
         addError(GCGLErrorCode::InvalidOperation);
         return { };

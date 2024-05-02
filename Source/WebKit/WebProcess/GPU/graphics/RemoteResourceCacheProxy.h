@@ -46,7 +46,7 @@ namespace WebKit {
 class RemoteImageBufferProxy;
 class RemoteRenderingBackendProxy;
 
-class RemoteResourceCacheProxy : public WebCore::RenderingResource::Observer {
+class RemoteResourceCacheProxy : public WebCore::RenderingResourceObserver {
 public:
     RemoteResourceCacheProxy(RemoteRenderingBackendProxy&);
     ~RemoteResourceCacheProxy();
