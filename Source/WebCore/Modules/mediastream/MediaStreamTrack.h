@@ -157,8 +157,9 @@ public:
     void addObserver(Observer&);
     void removeObserver(Observer&);
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void setIdForTesting(String&& id) { m_private->setIdForTesting(WTFMove(id)); }
 
@@ -193,7 +194,7 @@ private:
 
     void configureTrackRendering();
 
-    // ActiveDOMObject API.
+    // ActiveDOMObject.
     void stop() final { stopTrack(); }
     void suspend(ReasonForSuspension) final;
     bool virtualHasPendingActivity() const final;

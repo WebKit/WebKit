@@ -94,8 +94,9 @@ public:
     String deviceIdToPersistentId(const String& deviceId) const { return m_audioOutputDeviceIdToPersistentId.get(deviceId); }
     String hashedGroupId(const String& groupId);
 
-    using RefCounted<MediaDevices>::ref;
-    using RefCounted<MediaDevices>::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit MediaDevices(Document&);

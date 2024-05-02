@@ -55,8 +55,8 @@ public:
     virtual void restartRendering() { }
 
     // AudioDestinationNodes are owned by the BaseAudioContext so we forward the refcounting to its BaseAudioContext.
-    void ref() final;
-    void deref() final;
+    void ref() const final;
+    void deref() const final;
 
 protected:
     AudioDestinationNode(BaseAudioContext&, float sampleRate);

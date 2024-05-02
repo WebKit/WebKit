@@ -64,6 +64,10 @@ public:
     static Ref<HTMLModelElement> create(const QualifiedName&, Document&);
     virtual ~HTMLModelElement();
 
+    // ActiveDOMObject.
+    void ref() const final { HTMLElement::ref(); }
+    void deref() const final { HTMLElement::deref(); }
+
     void sourcesChanged();
     const URL& currentSrc() const { return m_sourceURL; }
     bool complete() const { return m_dataComplete; }
@@ -139,7 +143,7 @@ private:
 
     HTMLModelElement& readyPromiseResolve();
 
-    // ActiveDOMObject
+    // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;
 
     // DOM overrides.

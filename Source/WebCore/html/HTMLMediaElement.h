@@ -173,6 +173,10 @@ public:
     using CanMakeWeakPtr<HTMLMediaElement, WeakPtrFactoryInitialization::Eager>::WeakValueType;
     using CanMakeWeakPtr<HTMLMediaElement, WeakPtrFactoryInitialization::Eager>::WeakPtrImplType;
 
+    // ActiveDOMObject.
+    void ref() const final { HTMLElement::ref(); }
+    void deref() const final { HTMLElement::deref(); }
+
     MediaPlayer* player() const { return m_player.get(); }
     RefPtr<MediaPlayer> protectedPlayer() const { return m_player; }
     WEBCORE_EXPORT std::optional<MediaPlayerIdentifier> playerIdentifier() const;
@@ -760,7 +764,7 @@ private:
     void setFullscreenMode(VideoFullscreenMode);
     void willStopBeingFullscreenElement() override;
 
-    // ActiveDOMObject API.
+    // ActiveDOMObject.
     void suspend(ReasonForSuspension) override;
     void resume() override;
     void stop() override;

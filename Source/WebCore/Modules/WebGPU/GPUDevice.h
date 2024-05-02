@@ -89,6 +89,10 @@ public:
 
     virtual ~GPUDevice();
 
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     String label() const;
     void setLabel(String&&);
 
@@ -136,15 +140,11 @@ public:
     void removeBufferToUnmap(GPUBuffer&);
     void addBufferToUnmap(GPUBuffer&);
 
-    using RefCounted::ref;
-    using RefCounted::deref;
-
     WeakPtr<GPUExternalTexture> takeExternalTextureForVideoElement(const HTMLVideoElement&);
 
 private:
     GPUDevice(ScriptExecutionContext*, Ref<WebGPU::Device>&&);
 
-    // ActiveDOMObject.
     // FIXME: We probably need to override more methods to make this work properly.
     RefPtr<GPUPipelineLayout> createAutoPipelineLayout();
 

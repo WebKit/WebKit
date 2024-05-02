@@ -61,8 +61,9 @@ public:
     void remove(String&& name, Ref<DeferredPromise>&&);
     void remove(CookieStoreDeleteOptions&&, Ref<DeferredPromise>&&);
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     using EventTarget::weakPtrFactory;
     using EventTarget::WeakValueType;

@@ -54,6 +54,9 @@ public:
         String display;
         String sizeAdjust;
     };
+
+    using RefCounted::ref;
+    using RefCounted::deref;
     
     using Source = std::variant<String, RefPtr<JSC::ArrayBuffer>, RefPtr<JSC::ArrayBufferView>>;
     static Ref<FontFace> create(ScriptExecutionContext&, const String& family, Source&&, const Descriptors&);
@@ -91,8 +94,9 @@ public:
 
     void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) final;
 
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit FontFace(CSSFontSelector&);

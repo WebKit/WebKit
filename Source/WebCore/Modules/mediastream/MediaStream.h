@@ -97,8 +97,9 @@ public:
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaStream; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    using RefCounted<MediaStream>::ref;
-    using RefCounted<MediaStream>::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void addTrackFromPlatform(Ref<MediaStreamTrack>&&);
 
@@ -135,7 +136,7 @@ private:
     // MediaCanStartListener
     void mediaCanStart(Document&) final;
 
-    // ActiveDOMObject API.
+    // ActiveDOMObject.
     void stop() final;
     bool virtualHasPendingActivity() const final;
 

@@ -53,8 +53,9 @@ public:
     }
     ~BroadcastChannel();
 
-    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref;
-    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref;
+    // ActiveDOMObject.
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     BroadcastChannelIdentifier identifier() const;
     String name() const;
@@ -78,7 +79,7 @@ private:
     void derefEventTarget() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
     void eventListenersDidChange() final;
 
-    // ActiveDOMObject
+    // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;
     void stop() final { close(); }
 

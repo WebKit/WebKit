@@ -72,17 +72,15 @@ public:
 
     void invalidate();
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     WebCoreOpaqueRoot opaqueRootConcurrently() const;
     Node* ownerNode() const;
 
 private:
     explicit RemotePlayback(HTMLMediaElement&);
-
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
 
     void setState(State);
     void establishConnection();
@@ -91,6 +89,8 @@ private:
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RemotePlayback; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger.get(); }

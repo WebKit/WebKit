@@ -91,6 +91,10 @@ public:
     RefPtr<WebFrame> documentFrame();
     RefPtr<WebFrame> htmlIFrameElementContentFrame();
 
+    // ActiveDOMObject.
+    void ref() const final { API::ObjectImpl<API::Object::Type::BundleNodeHandle>::ref(); }
+    void deref() const final { API::ObjectImpl<API::Object::Type::BundleNodeHandle>::deref(); }
+
 private:
     static Ref<InjectedBundleNodeHandle> create(WebCore::Node&);
     InjectedBundleNodeHandle(WebCore::Node&);

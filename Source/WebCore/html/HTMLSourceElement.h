@@ -44,8 +44,9 @@ public:
     static Ref<HTMLSourceElement> create(Document&);
     static Ref<HTMLSourceElement> create(const QualifiedName&, Document&);
 
-    using HTMLElement::ref;
-    using HTMLElement::deref;
+    // ActiveDOMObject.
+    void ref() const final { HTMLElement::ref(); }
+    void deref() const final { HTMLElement::deref(); }
 
     void scheduleErrorEvent();
     void cancelPendingErrorEvent();

@@ -36,6 +36,9 @@ class HTMLCanvasElement;
 class GPUBasedCanvasRenderingContext : public CanvasRenderingContext, public ActiveDOMObject {
     WTF_MAKE_ISO_NONALLOCATABLE(GPUBasedCanvasRenderingContext);
 public:
+    // ActiveDOMObject.
+    void ref() const final { CanvasRenderingContext::ref(); }
+    void deref() const final { CanvasRenderingContext::deref(); }
 
     bool isGPUBased() const override { return true; }
     bool isAccelerated() const override { return true; }

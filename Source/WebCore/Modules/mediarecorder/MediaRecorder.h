@@ -66,8 +66,9 @@ public:
     RecordingState state() const { return m_state; }
     const String& mimeType() const { return m_options.mimeType; }
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
     
     ExceptionOr<void> startRecording(std::optional<unsigned>);
     void stopRecording();
@@ -97,7 +98,7 @@ private:
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaRecorder; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
-    // ActiveDOMObject API.
+    // ActiveDOMObject.
     void suspend(ReasonForSuspension) final;
     void stop() final;
     bool virtualHasPendingActivity() const final;

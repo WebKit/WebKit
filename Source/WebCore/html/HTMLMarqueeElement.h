@@ -34,6 +34,10 @@ class HTMLMarqueeElement final : public HTMLElement, public ActiveDOMObject {
 public:
     static Ref<HTMLMarqueeElement> create(const QualifiedName&, Document&);
 
+    // ActiveDOMObject.
+    void ref() const final { HTMLElement::ref(); }
+    void deref() const final { HTMLElement::deref(); }
+
     int minimumDelay() const;
 
     WEBCORE_EXPORT void start();
@@ -57,6 +61,7 @@ private:
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
+    // ActiveDOMObject.
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
     void suspend(ReasonForSuspension) final;
     void resume() final;

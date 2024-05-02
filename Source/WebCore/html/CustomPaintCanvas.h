@@ -80,8 +80,8 @@ public:
 private:
     CustomPaintCanvas(ScriptExecutionContext&, unsigned width, unsigned height);
 
-    void refCanvasBase() final { ref(); }
-    void derefCanvasBase() final { deref(); }
+    void refCanvasBase() const final { ref(); }
+    void derefCanvasBase() const final { deref(); }
     ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
     void replayDisplayListImpl(GraphicsContext& target) const;
 

@@ -119,8 +119,9 @@ public:
 
     String toJSONString() const;
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     virtual void recalculateStyles() { m_displayTreeNeedsUpdate = true; }
     virtual void setFontSize(int fontSize, bool important);

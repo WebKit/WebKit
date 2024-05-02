@@ -45,8 +45,9 @@ public:
     static Ref<RTCDtlsTransport> create(ScriptExecutionContext&, UniqueRef<RTCDtlsTransportBackend>&&, Ref<RTCIceTransport>&&);
     ~RTCDtlsTransport();
 
-    using RefCounted<RTCDtlsTransport>::ref;
-    using RefCounted<RTCDtlsTransport>::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     RTCIceTransport& iceTransport() { return m_iceTransport.get(); }
     RTCDtlsTransportState state() { return m_state; }

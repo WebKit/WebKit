@@ -75,8 +75,9 @@ public:
     };
     Iterator createIterator(ScriptExecutionContext*) { return Iterator(*this); }
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     struct PendingPromise : RefCounted<PendingPromise> {

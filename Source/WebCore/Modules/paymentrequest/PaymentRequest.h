@@ -103,8 +103,10 @@ public:
     void cancel();
 
     using MethodIdentifier = std::variant<String, URL>;
-    using RefCounted<PaymentRequest>::ref;
-    using RefCounted<PaymentRequest>::deref;
+
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     struct Method {

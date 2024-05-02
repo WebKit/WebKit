@@ -46,6 +46,9 @@ public:
     static ExceptionOr<Ref<SharedWorker>> create(Document&, String&& scriptURL, std::optional<std::variant<String, WorkerOptions>>&&);
     ~SharedWorker();
 
+    void ref() const final { AbstractWorker::ref(); }
+    void deref() const final { AbstractWorker::deref(); }
+
     static SharedWorker* fromIdentifier(SharedWorkerObjectIdentifier);
     MessagePort& port() const { return m_port.get(); }
 
@@ -67,7 +70,6 @@ private:
     bool virtualHasPendingActivity() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
-
 
     SharedWorkerKey m_key;
     Ref<MessagePort> m_port;

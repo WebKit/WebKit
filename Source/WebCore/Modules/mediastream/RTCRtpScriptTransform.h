@@ -50,6 +50,10 @@ public:
     static ExceptionOr<Ref<RTCRtpScriptTransform>> create(JSC::JSGlobalObject&, Worker&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&&);
     ~RTCRtpScriptTransform();
 
+    // ActiveDOMObject.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
+
     void setTransformer(RTCRtpScriptTransformer&);
 
     bool isAttached() const { return m_isAttached; }

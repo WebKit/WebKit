@@ -91,9 +91,6 @@ public:
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) final;
 
-    using ThreadSafeRefCounted<IDBTransaction>::ref;
-    using ThreadSafeRefCounted<IDBTransaction>::deref;
-
     const IDBTransactionInfo& info() const { return m_info; }
     IDBDatabase& database() { return m_database.get(); }
     const IDBDatabase& database() const { return m_database.get(); }
@@ -156,6 +153,8 @@ public:
 
     // ActiveDOMObject.
     void stop() final;
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
 
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest*);

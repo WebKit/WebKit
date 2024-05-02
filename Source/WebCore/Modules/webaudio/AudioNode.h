@@ -94,8 +94,8 @@ public:
     NodeType nodeType() const { return m_nodeType; }
 
     // Can be called from main thread or context's audio thread.
-    virtual void ref();
-    virtual void deref();
+    virtual void ref() const;
+    virtual void deref() const;
     void incrementConnectionCount();
     void decrementConnectionCount();
 
@@ -205,7 +205,8 @@ protected:
     void addOutput(unsigned numberOfChannels);
 
     void markNodeForDeletionIfNecessary();
-    void derefWithLock();
+    void unmarkNodeForDeletionIfNecessary();
+    void derefWithLock() const;
 
     struct DefaultAudioNodeOptions {
         unsigned channelCount;
@@ -255,7 +256,7 @@ private:
 
     // Ref-counting
     // start out with normal refCount == 1 (like WTF::RefCounted class).
-    std::atomic<int> m_normalRefCount { 1 };
+    mutable std::atomic<int> m_normalRefCount { 1 };
     std::atomic<int> m_connectionRefCount { 0 };
     
     bool m_isMarkedForDeletion { false };

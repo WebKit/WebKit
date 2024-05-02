@@ -86,8 +86,9 @@ public:
     bool canDetach() const;
     std::unique_ptr<DetachedRTCDataChannel> detach();
 
-    using RefCounted<RTCDataChannel>::ref;
-    using RefCounted<RTCDataChannel>::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     WEBCORE_EXPORT static std::unique_ptr<RTCDataChannelHandler> handlerFromIdentifier(RTCDataChannelLocalIdentifier);
     void fireOpenEventIfNeeded();
@@ -106,7 +107,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    // ActiveDOMObject API
+    // ActiveDOMObject.
     void stop() final;
     bool virtualHasPendingActivity() const final;
 

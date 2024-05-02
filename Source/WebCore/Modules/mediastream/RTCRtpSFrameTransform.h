@@ -75,8 +75,9 @@ public:
 
     bool hasKey(uint64_t) const;
 
-    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref;
-    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref;
+    // ActiveDOMObject.
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
 private:
     RTCRtpSFrameTransform(ScriptExecutionContext&, Options);

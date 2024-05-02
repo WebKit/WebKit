@@ -42,6 +42,9 @@ class FileSystemHandle : public ActiveDOMObject, public ThreadSafeRefCountedAndC
 public:
     virtual ~FileSystemHandle();
 
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+
     enum class Kind : uint8_t {
         File,
         Directory
@@ -60,7 +63,7 @@ protected:
     FileSystemStorageConnection& connection() { return m_connection.get(); }
 
 private:
-    // ActiveDOMObject
+    // ActiveDOMObject.
     void stop() final;
 
     Kind m_kind { Kind::File };

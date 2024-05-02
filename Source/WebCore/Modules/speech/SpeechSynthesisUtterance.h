@@ -69,8 +69,9 @@ public:
     MonotonicTime startTime() const { return m_platformUtterance->startTime(); }
     void setStartTime(MonotonicTime startTime) { m_platformUtterance->setStartTime(startTime); }
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     PlatformSpeechSynthesisUtterance* platformUtterance() const { return m_platformUtterance.get(); }
 

@@ -136,6 +136,10 @@ public:
     static Ref<ViewTransition> create(Document&, RefPtr<ViewTransitionUpdateCallback>&&);
     ~ViewTransition();
 
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     void skipTransition();
     void skipViewTransition(ExceptionOr<JSC::JSValue>&&);
     void callUpdateCallback();
@@ -170,6 +174,7 @@ private:
     ExceptionOr<void> updatePseudoElementStyles();
     void setupDynamicStyleSheet(const AtomString&, const CapturedElement&);
 
+    // ActiveDOMObject.
     void stop() final;
 
     OrderedNamedElementsMap m_namedElements;
