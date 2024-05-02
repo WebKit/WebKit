@@ -4136,6 +4136,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         switch (m_stubInfo->accessType) {
         case AccessType::InstanceOf: {
             cases.shrink(0);
+            additionalWatchpointSets.clear();
             cases.append(AccessCase::create(vm(), codeBlock, AccessCase::InstanceOfGeneric, nullptr));
             generatedMegamorphicCode = true;
             break;
@@ -4169,6 +4170,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
             if (allAreSimpleLoadOrMiss) {
                 cases.shrink(0);
+                additionalWatchpointSets.clear();
                 cases.append(AccessCase::create(vm(), codeBlock, AccessCase::LoadMegamorphic, identifier));
                 generatedMegamorphicCode = true;
             }
@@ -4200,6 +4202,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
             if (allAreSimpleLoadOrMiss) {
                 cases.shrink(0);
+                additionalWatchpointSets.clear();
                 cases.append(AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicLoad, nullptr));
                 generatedMegamorphicCode = true;
             }
@@ -4238,6 +4241,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
             if (allAreSimpleReplaceOrTransition) {
                 cases.shrink(0);
+                additionalWatchpointSets.clear();
                 cases.append(AccessCase::create(vm(), codeBlock, AccessCase::StoreMegamorphic, identifier));
                 generatedMegamorphicCode = true;
             }
@@ -4271,6 +4275,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
             if (allAreSimpleReplaceOrTransition) {
                 cases.shrink(0);
+                additionalWatchpointSets.clear();
                 cases.append(AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicStore, nullptr));
                 generatedMegamorphicCode = true;
             }
@@ -4304,6 +4309,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
             if (allAreSimpleHitOrMiss) {
                 cases.shrink(0);
+                additionalWatchpointSets.clear();
                 cases.append(AccessCase::create(vm(), codeBlock, AccessCase::InMegamorphic, identifier));
                 generatedMegamorphicCode = true;
             }
@@ -4332,6 +4338,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
             if (allAreSimpleHitOrMiss) {
                 cases.shrink(0);
+                additionalWatchpointSets.clear();
                 cases.append(AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicIn, nullptr));
                 generatedMegamorphicCode = true;
             }
