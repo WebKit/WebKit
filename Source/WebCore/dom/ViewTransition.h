@@ -142,15 +142,9 @@ public:
 
     void skipTransition();
     void skipViewTransition(ExceptionOr<JSC::JSValue>&&);
-    void callUpdateCallback();
 
     void setupViewTransition();
-    ExceptionOr<void> captureOldState();
-    ExceptionOr<void> captureNewState();
-    void setupTransitionPseudoElements();
-    void activateViewTransition();
     void handleTransitionFrame();
-    void clearViewTransition();
 
     DOMPromise& ready();
     DOMPromise& updateCallbackDone();
@@ -171,8 +165,18 @@ private:
 
     Ref<MutableStyleProperties> copyElementBaseProperties(RenderLayerModelObject&, LayoutSize&);
 
-    ExceptionOr<void> updatePseudoElementStyles();
+    // Setup view transition sub-algorithms.
+    void activateViewTransition();
+    ExceptionOr<void> captureOldState();
+    ExceptionOr<void> captureNewState();
+    void setupTransitionPseudoElements();
     void setupDynamicStyleSheet(const AtomString&, const CapturedElement&);
+
+    void callUpdateCallback();
+
+    ExceptionOr<void> updatePseudoElementStyles();
+
+    void clearViewTransition();
 
     // ActiveDOMObject.
     void stop() final;
