@@ -67,13 +67,6 @@ public:
     WeakRef(HashTableDeletedValueType) : m_impl(HashTableDeletedValue) { }
     WeakRef(HashTableEmptyValueType) : m_impl(HashTableEmptyValue) { }
 
-    ~WeakRef()
-    {
-        static_assert(
-            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_const_t<T>>::value,
-            "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
-    }
-
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
     bool isHashTableEmptyValue() const { return m_impl.isHashTableEmptyValue(); }
 
@@ -82,11 +75,19 @@ public:
 
     T* ptrAllowingHashTableEmptyValue() const
     {
+        static_assert(
+            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
+
         return !m_impl.isHashTableEmptyValue() ? static_cast<T*>(m_impl->template get<T>()) : nullptr;
     }
 
     T* ptr() const
     {
+        static_assert(
+            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
+
         auto* ptr = static_cast<T*>(m_impl->template get<T>());
         ASSERT(ptr);
         return ptr;
@@ -94,10 +95,15 @@ public:
 
     T& get() const
     {
+        static_assert(
+            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
+
         auto* ptr = static_cast<T*>(m_impl->template get<T>());
         ASSERT(ptr);
         return *ptr;
     }
+
     operator T&() const { return get(); }
 
     T* operator->() const

@@ -83,17 +83,14 @@ public:
     {
     }
 
-    ~WeakPtr()
-    {
-        static_assert(
-            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_const_t<T>>::value,
-            "Classes that offer weak pointers should also offer RefPtr or CheckedPtr.");
-    }
-
     RefPtr<WeakPtrImpl, PtrTraits> releaseImpl() { return WTFMove(m_impl); }
 
     T* get() const
     {
+        static_assert(
+            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
+
         ASSERT(canSafelyBeUsed());
         return m_impl ? static_cast<T*>(m_impl->template get<T>()) : nullptr;
     }
@@ -114,12 +111,20 @@ public:
 
     T* operator->() const
     {
+        static_assert(
+            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
+
         ASSERT(canSafelyBeUsed());
         return get();
     }
 
     T& operator*() const
     {
+        static_assert(
+            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
+
         ASSERT(canSafelyBeUsed());
         return *get();
     }

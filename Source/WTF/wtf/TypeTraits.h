@@ -107,7 +107,7 @@ template<typename>
 struct SFINAE1True : std::true_type { };
 
 template<class T>
-static auto HasRefPtrMethodsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(&T::ref, &T::deref)>;
+static auto HasRefPtrMethodsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->ref(), static_cast<std::remove_cv_t<T>*>(nullptr)->deref())>;
 template<class>
 static auto HasRefPtrMethodsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
 
@@ -120,7 +120,7 @@ struct HasRefPtrMethods : decltype(detail::HasRefPtrMethodsTest<T>(SFINAE_OVERLO
 namespace detail {
 
 template<class T>
-static auto HasCheckedPtrMethodsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(&T::incrementPtrCount, &T::decrementPtrCount)>;
+static auto HasCheckedPtrMethodsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->incrementPtrCount(), static_cast<std::remove_cv_t<T>*>(nullptr)->decrementPtrCount())>;
 template<class>
 static auto HasCheckedPtrMethodsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
 
