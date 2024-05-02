@@ -202,7 +202,6 @@
     "web-platform-tests/import-maps": "import",
     "web-platform-tests/inert": "import",
     "web-platform-tests/infrastructure": "import",
-    "web-platform-tests/innerText": "import",
     "web-platform-tests/input-device-capabilities": "skip",
     "web-platform-tests/input-events": "skip",
     "web-platform-tests/installedapp": "skip",
