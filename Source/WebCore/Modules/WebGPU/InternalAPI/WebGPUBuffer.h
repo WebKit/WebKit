@@ -58,7 +58,8 @@ public:
     virtual void unmap() = 0;
 
     virtual void destroy() = 0;
-
+    virtual MappedRange getBufferContents() = 0;
+    virtual void copy(Vector<uint8_t>&&, size_t offset) = 0;
 protected:
     Buffer() = default;
 

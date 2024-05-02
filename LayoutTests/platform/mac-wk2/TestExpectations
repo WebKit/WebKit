@@ -1782,6 +1782,18 @@ webkit.org/b/261356 [ Debug ] fast/mediastream/device-change-event-2.html [ Pass
 webkit.org/b/263396 css3/color/text.html [ Skip ]
 
 # WebGPU
+
+[ Release ] http/tests/webgpu/webgpu/api/operation/buffers/map.html [ Pass ]
+[ Release ] http/tests/webgpu/webgpu/api/operation/buffers/map_ArrayBuffer.html [ Pass ]
+[ Release ] http/tests/webgpu/webgpu/api/operation/buffers/map_detach.html [ Pass ]
+[ Release ] http/tests/webgpu/webgpu/api/operation/buffers/map_oom.html [ Pass ]
+[ Release ] http/tests/webgpu/webgpu/api/operation/buffers/threading.html [ Pass ]
+
+[ Release ] http/tests/webgpu/webgpu/api/validation/buffer/create.html [ Pass ]
+[ Release ] http/tests/webgpu/webgpu/api/validation/buffer/destroy.html [ Pass ]
+[ Release ] http/tests/webgpu/webgpu/api/validation/buffer/mapping.html [ Pass ]
+
+# Skip tests until they can be validated to consistently pass in EWS
 http/tests/webgpu/webgpu/idl/constructable.html [ Skip ]
 http/tests/webgpu/webgpu/idl/constants/flags.html [ Skip ]
 

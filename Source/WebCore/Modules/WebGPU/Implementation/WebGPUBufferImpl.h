@@ -60,7 +60,9 @@ private:
 
     void mapAsync(MapModeFlags, Size64 offset, std::optional<Size64> sizeForMap, CompletionHandler<void(bool)>&&) final;
     MappedRange getMappedRange(Size64 offset, std::optional<Size64>) final;
+    MappedRange getBufferContents() final;
     void unmap() final;
+    void copy(Vector<uint8_t>&&, size_t) final;
 
     void destroy() final;
 

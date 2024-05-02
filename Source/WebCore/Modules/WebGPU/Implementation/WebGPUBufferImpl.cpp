@@ -83,6 +83,21 @@ auto BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size) -> Ma
     return { static_cast<uint8_t*>(pointer) - actualOffset, actualSize };
 }
 
+auto BufferImpl::getBufferContents() -> MappedRange
+{
+    if (!m_backing.get())
+        return { nullptr, 0 };
+
+    auto* pointer = wgpuBufferGetBufferContents(m_backing.get());
+    auto bufferSize = wgpuBufferGetSize(m_backing.get());
+    return { static_cast<uint8_t*>(pointer), static_cast<size_t>(bufferSize) };
+}
+
+void BufferImpl::copy(Vector<uint8_t>&&, size_t)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void BufferImpl::unmap()
 {
     wgpuBufferUnmap(m_backing.get());
