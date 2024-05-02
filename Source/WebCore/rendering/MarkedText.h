@@ -63,6 +63,7 @@ struct MarkedText : public CanMakeCheckedPtr<MarkedText> {
 #endif
         Selection,
         DraggedContent,
+        TransparentContent,
     };
 
     enum class PaintPhase {

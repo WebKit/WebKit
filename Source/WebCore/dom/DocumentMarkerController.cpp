@@ -259,6 +259,7 @@ static bool shouldInsertAsSeparateMarker(const DocumentMarker& marker)
         return true;
 #endif
 
+    case DocumentMarker::Type::TransparentContent:
     case DocumentMarker::Type::DraggedContent:
         return is<RenderReplaced>(std::get<RefPtr<Node>>(marker.data())->renderer());
 

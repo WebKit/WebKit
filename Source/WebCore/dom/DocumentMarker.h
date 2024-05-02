@@ -95,6 +95,7 @@ public:
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
         UnifiedTextReplacement = 1 << 16,
 #endif
+        TransparentContent = 1 << 17,
     };
 
     static constexpr OptionSet<Type> allMarkers();
@@ -192,6 +193,7 @@ constexpr auto DocumentMarker::allMarkers() -> OptionSet<Type>
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
         Type::UnifiedTextReplacement,
 #endif
+        Type::TransparentContent,
     };
 }
 

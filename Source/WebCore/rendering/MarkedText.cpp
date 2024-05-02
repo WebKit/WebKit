@@ -296,6 +296,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
 
             BFALLTHROUGH;
 #endif
+        case DocumentMarker::Type::TransparentContent:
         case DocumentMarker::Type::DictationAlternatives:
         case DocumentMarker::Type::Grammar:
 #if PLATFORM(IOS_FAMILY)

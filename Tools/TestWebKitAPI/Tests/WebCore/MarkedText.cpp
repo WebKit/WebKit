@@ -67,6 +67,8 @@ std::ostream& operator<<(std::ostream& os, MarkedText::Type type)
     case MarkedText::Type::UnifiedTextReplacement:
         return os << "UnifiedTextReplacement";
 #endif
+    case MarkedText::Type::TransparentContent:
+        return os << "TransparentContent";
     case MarkedText::Type::Unmarked:
         return os << "Unmarked";
     }
