@@ -26,18 +26,10 @@
 #import "config.h"
 #import "StringUtilities.h"
 
-#import "WKSharedAPICast.h"
-#import "WKStringCF.h"
-#import <JavaScriptCore/RegularExpression.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>
 
 namespace WebKit {
-
-NSString *nsStringFromWebCoreString(const String& string)
-{
-    return string.isEmpty() ? @"" : adoptCF(WKStringCopyCFString(0, toAPI(string.impl()))).bridgingAutorelease();
-}
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
@@ -70,13 +62,6 @@ NSString *formattedPhoneNumberString(NSString *originalPhoneNumber)
         phoneNumberString = adoptCF(CFPhoneNumberCopyUnformattedRepresentation(phoneNumber.get()));
 
     return phoneNumberString.bridgingAutorelease();
-}
-
-#else
-
-NSString *formattedPhoneNumberString(NSString *)
-{
-    return nil;
 }
 
 #endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)

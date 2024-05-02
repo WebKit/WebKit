@@ -25,18 +25,12 @@
 
 #pragma once
 
-#import <WebKit/WKDeclarationSpecifiers.h>
-#import <wtf/Forward.h>
+OBJC_CLASS NSString;
 
 namespace WebKit {
 
-#ifdef __OBJC__
-
-// NOTE: This does not use String::operator NSString*() since that function
-// expects to be called on the thread running WebCore.
-NSString *nsStringFromWebCoreString(const String&);
+#if PLATFORM(MAC)
 NSString *formattedPhoneNumberString(NSString *originalPhoneNumber);
-
-#endif // defined(__OBJC__)
+#endif
 
 }

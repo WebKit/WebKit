@@ -49,7 +49,6 @@
 #import "RemoteLayerTreeDrawingAreaProxyMac.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
-#import "StringUtilities.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
@@ -3767,7 +3766,7 @@ void WebViewImpl::sendToolTipMouseEntered()
 
 NSString *WebViewImpl::stringForToolTip(NSToolTipTag tag)
 {
-    return nsStringFromWebCoreString(m_page->toolTip());
+    return m_page->toolTip();
 }
 
 void WebViewImpl::toolTipChanged(const String& oldToolTip, const String& newToolTip)

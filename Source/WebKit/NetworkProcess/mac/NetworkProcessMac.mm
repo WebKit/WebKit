@@ -34,7 +34,6 @@
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
-#import "StringUtilities.h"
 #import "WKFoundation.h"
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/LocalizedStrings.h>

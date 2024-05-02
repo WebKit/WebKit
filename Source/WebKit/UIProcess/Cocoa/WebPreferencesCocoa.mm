@@ -26,7 +26,6 @@
 #import "config.h"
 #import "WebPreferences.h"
 
-#import "StringUtilities.h"
 #import "WebPreferencesKeys.h"
 #import <WebCore/RealtimeMediaSourceCenter.h>
 #import <wtf/text/StringConcatenate.h>
@@ -180,7 +179,7 @@ void WebPreferences::platformUpdateStringValueForKey(const String& key, const St
     if (!m_identifier)
         return;
 
-    [[NSUserDefaults standardUserDefaults] setObject:nsStringFromWebCoreString(value) forKey:makeKey(m_identifier, m_keyPrefix, key)];
+    [[NSUserDefaults standardUserDefaults] setObject:value forKey:makeKey(m_identifier, m_keyPrefix, key)];
 }
 
 void WebPreferences::platformUpdateBoolValueForKey(const String& key, bool value)
