@@ -210,7 +210,7 @@ public:
 
     void setValue(JSObject* slotBase, unsigned attributes, JSValue value)
     {
-        ASSERT(attributes == attributesForStructure(attributes));
+        ASSERT(attributes == attributesForStructure(attributes) && !(attributes & PropertyAttribute::Accessor));
         
         m_data.value = JSValue::encode(value);
         m_attributes = attributes;
@@ -224,7 +224,7 @@ public:
     
     void setValue(JSObject* slotBase, unsigned attributes, JSValue value, PropertyOffset offset)
     {
-        ASSERT(attributes == attributesForStructure(attributes));
+        ASSERT(attributes == attributesForStructure(attributes) && !(attributes & PropertyAttribute::Accessor));
         
         ASSERT(value);
         m_data.value = JSValue::encode(value);
@@ -240,7 +240,7 @@ public:
 
     void setValue(JSString*, unsigned attributes, JSValue value)
     {
-        ASSERT(attributes == attributesForStructure(attributes));
+        ASSERT(attributes == attributesForStructure(attributes) && !(attributes & PropertyAttribute::Accessor));
         
         ASSERT(value);
         m_data.value = JSValue::encode(value);
