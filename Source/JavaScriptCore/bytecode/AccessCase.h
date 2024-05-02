@@ -219,9 +219,8 @@ public:
 
     ObjectPropertyConditionSet conditionSet() const { return m_conditionSet; }
 
-    bool hasAlternateBase() const;
-    JSObject* alternateBase() const;
-    
+    JSObject* tryGetAlternateBase() const;
+
     WatchpointSet* additionalSet() const;
     bool viaGlobalProxy() const { return m_viaGlobalProxy; }
 
@@ -281,10 +280,6 @@ public:
 
     UniquedStringImpl* uid() const { return m_identifier.uid(); }
     CacheableIdentifier identifier() const { return m_identifier; }
-    void updateIdentifier(CacheableIdentifier identifier)
-    {
-        m_identifier = identifier;
-    }
 
 #if ASSERT_ENABLED
     void checkConsistency(StructureStubInfo&);
@@ -330,9 +325,8 @@ protected:
 
     Ref<AccessCase> cloneImpl() const;
     WatchpointSet* additionalSetImpl() const { return nullptr; }
-    bool hasAlternateBaseImpl() const;
+    JSObject* tryGetAlternateBaseImpl() const;
     void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const { }
-    JSObject* alternateBaseImpl() const;
 
     bool guardedByStructureCheckSkippingConstantIdentifierCheck() const;
 
