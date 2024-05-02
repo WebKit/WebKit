@@ -756,8 +756,8 @@ webkit.org/b/230708 [ Debug ] media/video-ended-seek-crash.html [ Pass Timeout ]
 # https://bugs.webkit.org/show_bug.cgi?id=236113 mathml/presentation/fenced-mi.html is flakey when run with STIX Two
 mathml/presentation/fenced-mi.html [ Pass ImageOnlyFailure ]
 
-# rdar://88981242 ([ Ventura ] media/accessiblity-describes-video.html is a constant timeout)
-media/accessiblity-describes-video.html [ Timeout ]
+# rdar://88981242 ([ Ventura ] media/accessibility-describes-video.html is a constant timeout)
+media/accessibility-describes-video.html [ Timeout ]
 
 # rdar://92286809 ([ Ventura ] 4x editing/spelling (layout-tests) Are constant timeouts)
 
@@ -1801,7 +1801,7 @@ webkit.org/b/228094 imported/w3c/web-platform-tests/mathml/presentation-markup/o
 [ Monterey+ ] media/media-source/media-source-webm-vp8-malformed-header.html [ Pass ]
 
 # rdar://66641405 (REGRESSION (20A2327-20A2348b?): 7 http/tests/media/hls/ tests are timing out)
-[ Monterey+ ] http/tests/media/hls/hls-accessiblity-describes-video.html [ Skip ]
+[ Monterey+ ] http/tests/media/hls/hls-accessibility-describes-video.html [ Skip ]
 [ Monterey+ ] http/tests/media/hls/hls-audio-tracks-has-audio.html [ Skip ]
 [ Monterey+ ] http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Skip ]
 [ Monterey+ ] http/tests/media/hls/hls-audio-tracks.html [ Skip ]

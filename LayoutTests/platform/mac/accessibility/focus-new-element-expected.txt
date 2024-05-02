@@ -1,4 +1,4 @@
-This test ensures that the accessiblity tree properly handles focus for an element who has not yet attached a renderer.
+This test ensures that the accessibility tree properly handles focus for an element who has not yet attached a renderer.
 
 PASS: axButton && axButton.isValid === true
 	AXTitle: BUTTON
