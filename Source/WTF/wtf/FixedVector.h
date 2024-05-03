@@ -192,6 +192,19 @@ public:
 
     Storage* storage() { return m_storage.get(); }
 
+    std::span<const T> span() const { return { data(), size() }; }
+    std::span<T> mutableSpan() { return { data(), size() }; }
+
+    Vector<T> subvector(size_t offset, size_t length = std::dynamic_extent) const
+    {
+        return { span().subspan(offset, length) };
+    }
+
+    std::span<const T> subspan(size_t offset, size_t length = std::dynamic_extent) const
+    {
+        return span().subspan(offset, length);
+    }
+
 private:
     friend class JSC::LLIntOffsetsExtractor;
 

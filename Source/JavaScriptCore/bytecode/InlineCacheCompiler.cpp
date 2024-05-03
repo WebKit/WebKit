@@ -3959,7 +3959,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     // to be unmutated. For sure, we want it to hang onto any data structures that may be referenced
     // from the code of the current stub (aka previous).
     Vector<WatchpointSet*, 8> additionalWatchpointSets;
-    PolymorphicAccess::ListType cases;
+    Vector<RefPtr<AccessCase>, 16> cases;
     cases.reserveInitialCapacity(poly.m_list.size());
     unsigned srcIndex = 0;
     for (auto& someCase : poly.m_list) {
@@ -4233,8 +4233,8 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             stub->watchpointSet().add(watchpoint.get());
         }
 
-        auto& vector = stub->cases();
-        poly.m_list = std::span { vector.begin(), vector.end() };
+        poly.m_list.shrink(0);
+        poly.m_list.append(stub->cases().span());
         auto handler = InlineCacheHandler::create(WTFMove(stub), WTFMove(watchpoint));
         dataLogLnIf(InlineCacheCompilerInternal::verbose, "Returning: ", handler->callTarget());
 
@@ -4260,28 +4260,28 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 return finishCodeGeneration(stub.releaseNonNull());
             }
         }
-    }
 
-    std::sort(cases.begin(), cases.end(), [](auto& lhs, auto& rhs) {
-        if (lhs->type() == rhs->type()) {
-            if (lhs->structure()->id() == rhs->structure()->id())
-                return bitwise_cast<uintptr_t>(lhs->uid()) < bitwise_cast<uintptr_t>(rhs->uid());
-            return lhs->structure()->id() < rhs->structure()->id();
-        }
-        return lhs->type() < rhs->type();
-    });
-    FixedVector<RefPtr<AccessCase>> keys(WTFMove(cases));
-    if (useHandlerIC() && !statelessType) {
-        SharedJITStubSet::Searcher searcher {
-            SharedJITStubSet::stubInfoKey(*m_stubInfo),
-            keys,
-        };
-        if (auto stub = vm().m_sharedJITStubs->find(searcher)) {
-            if (stub->isStillValid()) {
-                dataLogLnIf(InlineCacheCompilerInternal::verbose, "Using ", m_stubInfo->accessType, " / ", listDump(stub->cases()));
-                return finishCodeGeneration(stub.releaseNonNull());
+        std::sort(cases.begin(), cases.end(), [](auto& lhs, auto& rhs) {
+            if (lhs->type() == rhs->type()) {
+                if (lhs->structure()->id() == rhs->structure()->id())
+                    return bitwise_cast<uintptr_t>(lhs->uid()) < bitwise_cast<uintptr_t>(rhs->uid());
+                return lhs->structure()->id() < rhs->structure()->id();
             }
-            vm().m_sharedJITStubs->remove(stub.get());
+            return lhs->type() < rhs->type();
+        });
+
+        if (!statelessType) {
+            SharedJITStubSet::Searcher searcher {
+                SharedJITStubSet::stubInfoKey(*m_stubInfo),
+                cases.span(),
+            };
+            if (auto stub = vm().m_sharedJITStubs->find(searcher)) {
+                if (stub->isStillValid()) {
+                    dataLogLnIf(InlineCacheCompilerInternal::verbose, "Using ", m_stubInfo->accessType, " / ", listDump(stub->cases()));
+                    return finishCodeGeneration(stub.releaseNonNull());
+                }
+                vm().m_sharedJITStubs->remove(stub.get());
+            }
         }
     }
 
@@ -4302,6 +4302,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     bool allGuardedByStructureCheck = true;
     if (!m_stubInfo->hasConstantIdentifier)
         allGuardedByStructureCheck = false;
+    FixedVector<RefPtr<AccessCase>> keys(WTFMove(cases));
     Vector<JSCell*> cellsToMark;
     for (auto& entry : keys) {
         if (!scratchFPR && needsScratchFPR(entry->m_type))
@@ -4792,6 +4793,20 @@ bool InlineCacheHandler::visitWeak(VM& vm) const
     }
 
     return true;
+}
+
+void InlineCacheHandler::addOwner(CodeBlock* codeBlock)
+{
+    if (!m_stubRoutine)
+        return;
+    m_stubRoutine->addOwner(codeBlock);
+}
+
+void InlineCacheHandler::removeOwner(CodeBlock* codeBlock)
+{
+    if (!m_stubRoutine)
+        return;
+    m_stubRoutine->removeOwner(codeBlock);
 }
 
 } // namespace JSC

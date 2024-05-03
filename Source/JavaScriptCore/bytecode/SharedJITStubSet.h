@@ -109,7 +109,7 @@ public:
         };
 
         StructureStubInfoKey m_stubInfoKey;
-        const FixedVector<RefPtr<AccessCase>>& m_cases;
+        std::span<const RefPtr<AccessCase>> m_cases;
     };
 
     struct PointerTranslator {

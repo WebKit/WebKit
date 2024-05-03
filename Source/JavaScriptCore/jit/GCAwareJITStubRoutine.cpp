@@ -84,6 +84,22 @@ IGNORE_GCC_WARNINGS_BEGIN("sequence-point")
 IGNORE_GCC_WARNINGS_END
 }
 
+bool GCAwareJITStubRoutine::removeDeadOwners(VM& vm)
+{
+    if (m_owner)
+        return !vm.heap.isMarked(m_owner);
+
+    if (m_isInSharedJITStubSet) {
+        auto& owners = static_cast<PolymorphicAccessJITStubRoutine*>(this)->m_owners;
+        owners.removeAllIf([&](auto pair) {
+            return !vm.heap.isMarked(pair.key);
+        });
+        return owners.isEmpty();
+    }
+
+    return false;
+}
+
 PolymorphicAccessJITStubRoutine::PolymorphicAccessJITStubRoutine(Type type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, FixedVector<RefPtr<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, JSCell* owner)
     : GCAwareJITStubRoutine(type, code, owner)
     , m_vm(vm)
@@ -122,7 +138,7 @@ void PolymorphicAccessJITStubRoutine::invalidate()
     }
 }
 
-unsigned PolymorphicAccessJITStubRoutine::computeHash(const FixedVector<RefPtr<AccessCase>>& cases)
+unsigned PolymorphicAccessJITStubRoutine::computeHash(std::span<const RefPtr<AccessCase>> cases)
 {
     Hasher hasher;
     for (auto& key : cases)

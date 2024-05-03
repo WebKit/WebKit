@@ -775,7 +775,7 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
         for (unsigned index = 0; index < jitCode->m_unlinkedStubInfos.size(); ++index) {
             BaselineUnlinkedStructureStubInfo& unlinkedStubInfo = jitCode->m_unlinkedStubInfos[index];
             auto& stubInfo = baselineJITData->stubInfo(index);
-            stubInfo.initializeFromUnlinkedStructureStubInfo(vm(), unlinkedStubInfo);
+            stubInfo.initializeFromUnlinkedStructureStubInfo(vm(), this, unlinkedStubInfo);
         }
 
         for (size_t i = 0; i < jitCode->m_constantPool.size(); ++i) {

@@ -1213,10 +1213,129 @@ void AccessCase::dump(PrintStream& out) const
 
 bool AccessCase::visitWeak(VM& vm) const
 {
-    if (isAccessor()) {
+    switch (type()) {
+    case Getter:
+    case Setter: {
         auto& accessor = this->as<GetterSetterAccessCase>();
         if (accessor.callLinkInfo())
             accessor.callLinkInfo()->visitWeak(vm);
+        break;
+    }
+    case ProxyObjectHas:
+    case ProxyObjectLoad:
+    case ProxyObjectStore:
+    case IndexedProxyObjectLoad: {
+        auto& accessor = this->as<ProxyObjectAccessCase>();
+        if (accessor.callLinkInfo())
+            accessor.callLinkInfo()->visitWeak(vm);
+        break;
+    }
+    case CustomValueGetter:
+    case CustomValueSetter:
+    case IntrinsicGetter:
+    case ModuleNamespaceLoad:
+    case InstanceOfHit:
+    case InstanceOfMiss:
+    case CustomAccessorGetter:
+    case CustomAccessorSetter:
+    case Load:
+    case LoadMegamorphic:
+    case StoreMegamorphic:
+    case InMegamorphic:
+    case Transition:
+    case Delete:
+    case DeleteNonConfigurable:
+    case DeleteMiss:
+    case Replace:
+    case Miss:
+    case GetGetter:
+    case InHit:
+    case InMiss:
+    case CheckPrivateBrand:
+    case SetPrivateBrand:
+    case ArrayLength:
+    case StringLength:
+    case DirectArgumentsLength:
+    case ScopedArgumentsLength:
+    case InstanceOfGeneric:
+    case IndexedMegamorphicLoad:
+    case IndexedMegamorphicStore:
+    case IndexedMegamorphicIn:
+    case IndexedInt32Load:
+    case IndexedDoubleLoad:
+    case IndexedContiguousLoad:
+    case IndexedArrayStorageLoad:
+    case IndexedScopedArgumentsLoad:
+    case IndexedDirectArgumentsLoad:
+    case IndexedTypedArrayInt8Load:
+    case IndexedTypedArrayUint8Load:
+    case IndexedTypedArrayUint8ClampedLoad:
+    case IndexedTypedArrayInt16Load:
+    case IndexedTypedArrayUint16Load:
+    case IndexedTypedArrayInt32Load:
+    case IndexedTypedArrayUint32Load:
+    case IndexedTypedArrayFloat32Load:
+    case IndexedTypedArrayFloat64Load:
+    case IndexedResizableTypedArrayInt8Load:
+    case IndexedResizableTypedArrayUint8Load:
+    case IndexedResizableTypedArrayUint8ClampedLoad:
+    case IndexedResizableTypedArrayInt16Load:
+    case IndexedResizableTypedArrayUint16Load:
+    case IndexedResizableTypedArrayInt32Load:
+    case IndexedResizableTypedArrayUint32Load:
+    case IndexedResizableTypedArrayFloat32Load:
+    case IndexedResizableTypedArrayFloat64Load:
+    case IndexedStringLoad:
+    case IndexedNoIndexingMiss:
+    case IndexedInt32Store:
+    case IndexedDoubleStore:
+    case IndexedContiguousStore:
+    case IndexedArrayStorageStore:
+    case IndexedTypedArrayInt8Store:
+    case IndexedTypedArrayUint8Store:
+    case IndexedTypedArrayUint8ClampedStore:
+    case IndexedTypedArrayInt16Store:
+    case IndexedTypedArrayUint16Store:
+    case IndexedTypedArrayInt32Store:
+    case IndexedTypedArrayUint32Store:
+    case IndexedTypedArrayFloat32Store:
+    case IndexedTypedArrayFloat64Store:
+    case IndexedResizableTypedArrayInt8Store:
+    case IndexedResizableTypedArrayUint8Store:
+    case IndexedResizableTypedArrayUint8ClampedStore:
+    case IndexedResizableTypedArrayInt16Store:
+    case IndexedResizableTypedArrayUint16Store:
+    case IndexedResizableTypedArrayInt32Store:
+    case IndexedResizableTypedArrayUint32Store:
+    case IndexedResizableTypedArrayFloat32Store:
+    case IndexedResizableTypedArrayFloat64Store:
+    case IndexedInt32InHit:
+    case IndexedDoubleInHit:
+    case IndexedContiguousInHit:
+    case IndexedArrayStorageInHit:
+    case IndexedScopedArgumentsInHit:
+    case IndexedDirectArgumentsInHit:
+    case IndexedTypedArrayInt8InHit:
+    case IndexedTypedArrayUint8InHit:
+    case IndexedTypedArrayUint8ClampedInHit:
+    case IndexedTypedArrayInt16InHit:
+    case IndexedTypedArrayUint16InHit:
+    case IndexedTypedArrayInt32InHit:
+    case IndexedTypedArrayUint32InHit:
+    case IndexedTypedArrayFloat32InHit:
+    case IndexedTypedArrayFloat64InHit:
+    case IndexedResizableTypedArrayInt8InHit:
+    case IndexedResizableTypedArrayUint8InHit:
+    case IndexedResizableTypedArrayUint8ClampedInHit:
+    case IndexedResizableTypedArrayInt16InHit:
+    case IndexedResizableTypedArrayUint16InHit:
+    case IndexedResizableTypedArrayInt32InHit:
+    case IndexedResizableTypedArrayUint32InHit:
+    case IndexedResizableTypedArrayFloat32InHit:
+    case IndexedResizableTypedArrayFloat64InHit:
+    case IndexedStringInHit:
+    case IndexedNoIndexingInMiss:
+        break;
     }
 
     bool isValid = true;
