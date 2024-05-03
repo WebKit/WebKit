@@ -27,6 +27,7 @@
 #include "FormattingState.h"
 
 #include "LayoutBoxGeometry.h"
+#include "RenderObject.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

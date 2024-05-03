@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PixelFormatValidated.h"
 
+#include "PixelFormat.h"
+
 namespace WebCore {
 
 PixelFormatValidated convertPixelFormatToPixelFormatValidated(PixelFormat format)

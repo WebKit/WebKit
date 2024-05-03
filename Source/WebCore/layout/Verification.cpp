@@ -26,6 +26,8 @@
 #include "config.h"
 #include "LayoutState.h"
 
+#include "RenderObject.h"
+
 #if ASSERT_ENABLED
 
 #include "BlockFormattingState.h"

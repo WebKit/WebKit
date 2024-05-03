@@ -36,6 +36,7 @@
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementInlines.h"
+#include "ElementRareData.h"
 #include "ElementTargetingTypes.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"

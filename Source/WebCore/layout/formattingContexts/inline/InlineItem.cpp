@@ -27,6 +27,7 @@
 #include "InlineItem.h"
 
 #include "InlineTextItem.h"
+#include "RenderObject.h"
 
 namespace WebCore {
 namespace Layout {

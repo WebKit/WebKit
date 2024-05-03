@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <libxml/parser.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
 
 #if ENABLE(XSLT)
 #include <libxml/xmlerror.h>

@@ -33,6 +33,7 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
+#include "RenderObject.h"
 #include "TableFormattingConstraints.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingState.h"

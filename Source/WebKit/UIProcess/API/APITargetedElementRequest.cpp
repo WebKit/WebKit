@@ -57,7 +57,7 @@ void TargetedElementRequest::setSearchText(WTF::String&& searchText)
     m_request.data = WTFMove(searchText);
 }
 
-WebCore::TargetedElementRequest TargetedElementRequest::makeRequest(const WebPageProxy& page) const
+WebCore::TargetedElementRequest TargetedElementRequest::makeRequest(const WebKit::WebPageProxy& page) const
 {
     auto request = m_request;
     if (std::holds_alternative<WebCore::FloatPoint>(m_request.data))
