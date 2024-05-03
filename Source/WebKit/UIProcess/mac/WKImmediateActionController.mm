@@ -175,6 +175,9 @@
     _state = WebKit::ImmediateActionState::Pending;
     immediateActionRecognizer.animationController = nil;
 
+    if (!_page->mainFrame())
+        return;
+
     RefPtr { _page.get() }->performImmediateActionHitTestAtLocation(_page->mainFrame()->frameID(), [immediateActionRecognizer locationInView:immediateActionRecognizer.view]);
 }
 
