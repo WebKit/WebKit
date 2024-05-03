@@ -199,13 +199,23 @@ function notify_entitlements()
 {
     plistbuddy Add :com.apple.developer.web-browser-engine.restrict.notifyd bool YES
     plistbuddy Add :com.apple.private.darwin-notification.introspect array
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:0 string com.apple.language.changed
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:1 string com.apple.mediaaccessibility.captionAppearanceSettingsChanged
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:2 string com.apple.powerlog.state_changed
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:3 string com.apple.system.logging.prefschanged
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:4 string com.apple.system.lowpowermode
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:5 string com.apple.system.timezone
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:6 string com.apple.zoomwindow
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:0 string com.apple.CFPreferences._domainsChangedExternally
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:1 string com.apple.WebKit.LibraryPathDiagnostics
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:2 string com.apple.WebKit.deleteAllCode
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:3 string com.apple.WebKit.fullGC
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:4 string com.apple.accessibility.cache.enhance.text.legibility
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:5 string com.apple.language.changed
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:6 string com.apple.mediaaccessibility.captionAppearanceSettingsChanged
+    if [[ "${WK_PLATFORM_NAME}" != macosx ]]
+    then
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:7 string com.apple.mobile.usermanagerd.foregrounduser_changed
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:8 string com.apple.mobile.keybagd.user_changed
+    fi
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:9 string com.apple.powerlog.state_changed
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:10 string com.apple.system.logging.prefschanged
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:11 string com.apple.system.lowpowermode
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:12 string com.apple.system.timezone
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:13 string com.apple.zoomwindow
 }
 
 function mac_process_webcontent_shared_entitlements()
