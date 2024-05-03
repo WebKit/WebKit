@@ -4631,6 +4631,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         loadParameters.shouldTreatAsContinuingLoad = navigation.currentRequestIsRedirect() ? WebCore::ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted : WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
         loadParameters.frameIdentifier = frame.frameID();
         loadParameters.isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput();
+        loadParameters.lockBackForwardList = LockBackForwardList::Yes;
 
         auto webPageID = webPageIDInProcessForDomain(RegistrableDomain(navigation.currentRequest().url()));
         frame.prepareForProvisionalNavigationInProcess(newProcess, navigation, m_browsingContextGroup, [loadParameters = WTFMove(loadParameters), newProcess = newProcess.copyRef(), webPageID, preventProcessShutdownScope = newProcess->shutdownPreventingScope()] () mutable {

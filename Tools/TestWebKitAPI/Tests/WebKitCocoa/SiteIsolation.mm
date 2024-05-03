@@ -2947,4 +2947,29 @@ TEST(SiteIsolation, PresentationUpdateAfterCrossSiteNavigation)
     [webView waitForNextPresentationUpdate];
 }
 
+TEST(SiteIsolation, CanGoBackAfterLoadingAndNavigatingFrame)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='frame' src='https://webkit.org/source'></iframe>"_s } },
+        { "/source"_s, { ""_s } },
+        { "/destination"_s, { "<script> alert('done'); </script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_FALSE([webView canGoBack]);
+
+    __block RetainPtr<WKFrameInfo> childFrameInfo;
+    __block bool done = false;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrameInfo = mainFrame.childFrames.firstObject.info;
+        done = true;
+    }];
+    Util::run(&done);
+
+    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/destination'" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
+    EXPECT_TRUE([webView canGoBack]);
+}
+
 }

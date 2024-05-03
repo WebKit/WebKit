@@ -858,10 +858,7 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
     if (frame->loader().documentLoader()->urlForHistory().isEmpty())
         return;
 
-    RefPtr mainFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
-    if (!mainFrame)
-        return;
-
+    Ref mainFrame = frame->mainFrame();
     Ref topItem = mainFrame->checkedHistory()->createItemTree(page->historyItemClient(), *frame, doClip);
     LOG(History, "HistoryController %p updateBackForwardListClippedAtTarget: Adding backforward item %p in frame %p (main frame %d) %s", this, topItem.ptr(), frame.get(), frame->isMainFrame(), frame->loader().documentLoader()->url().string().utf8().data());
 
