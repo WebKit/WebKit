@@ -245,6 +245,8 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const WTF::U
         return false;
     });
 
+    m_webPage->removeTextIndicatorStyleForID(uuid);
+
     document->selection().setSelection({ *sessionRange });
 
     m_replacementTypes.remove(uuid);
