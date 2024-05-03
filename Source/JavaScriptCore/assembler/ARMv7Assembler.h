@@ -2504,6 +2504,14 @@ public:
 
         return label();
     }
+
+    AssemblerLabel alignWithNop(int alignment)
+    {
+        while (!m_formatter.isAligned(alignment))
+            nop();
+
+        return label();
+    }
     
     static void* getRelocatedAddress(void* code, AssemblerLabel label)
     {
