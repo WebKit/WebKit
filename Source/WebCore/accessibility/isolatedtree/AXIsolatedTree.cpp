@@ -771,14 +771,18 @@ void AXIsolatedTree::updateDependentProperties(AccessibilityObject& axObject)
 {
     ASSERT(isMainThread());
 
-    auto updateLabeledObjects = [this] (const AccessibilityObject& label) {
-        auto labeledObjects = label.labelForObjects();
-        for (const auto& labeledObject : labeledObjects) {
+    auto updateRelatedObjects = [this] (const AccessibilityObject& object) {
+        for (const auto& labeledObject : object.labelForObjects()) {
             if (RefPtr axObject = downcast<AccessibilityObject>(labeledObject.get()))
                 queueNodeUpdate(axObject->objectID(), NodeUpdateOptions::nodeUpdate());
         }
+
+        for (const auto& describedByObject : object.descriptionForObjects()) {
+            if (RefPtr axObject = downcast<AccessibilityObject>(describedByObject.get()))
+                queueNodeUpdate(axObject->objectID(), { { AXPropertyName::AccessibilityText, AXPropertyName::ExtendedDescription } });
+        }
     };
-    updateLabeledObjects(axObject);
+    updateRelatedObjects(axObject);
 
     // When a row gains or loses cells, the column count of the table can change.
     bool updateTableAncestorColumns = is<AccessibilityTableRow>(axObject);
@@ -798,7 +802,7 @@ void AXIsolatedTree::updateDependentProperties(AccessibilityObject& axObject)
             break;
         }
 
-        updateLabeledObjects(*ancestor);
+        updateRelatedObjects(*ancestor);
     }
 }
 

@@ -480,6 +480,9 @@ accessibility/shadow-dom-hit-test.html [ Skip ]
 # AccessibilityUIElement::isAttributeSupported needs to be updated to handle AXSelectedRows.
 accessibility/aria-table-selection-support.html [ Skip ]
 
+# AccessibilityUIElement::customContent is not implemented.
+accessibility/dynamic-aria-describedby-subtree.html [ Skip ]
+
 # Timing out since added in https://bugs.webkit.org/show_bug.cgi?id=263715
 accessibility/focus-inside-modal.html [ Skip ]
 # Timing out since added in https://bugs.webkit.org/show_bug.cgi?id=249283.
