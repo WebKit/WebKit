@@ -115,7 +115,7 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
         StringBuilder textDirectiveBuilder;
         textDirectiveBuilder.append(textDirectivePrefix);
         textDirectiveBuilder.append(startText);
-        textDirectiveBuilder.append(",");
+        textDirectiveBuilder.append(',');
         textDirectiveBuilder.append(endText);
         url.setFragmentIdentifier(StringView(textDirectiveBuilder));
     }
@@ -132,9 +132,9 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
         StringBuilder textDirectiveBuilder;
         textDirectiveBuilder.append(textDirectivePrefix);
         textDirectiveBuilder.append(percentEncodeFragmentDirectiveSpecialCharacters(prefix));
-        textDirectiveBuilder.append("-,");
+        textDirectiveBuilder.append("-,"_s);
         textDirectiveBuilder.append(percentEncodeFragmentDirectiveSpecialCharacters(textFromRange));
-        textDirectiveBuilder.append(",-");
+        textDirectiveBuilder.append(",-"_s);
         textDirectiveBuilder.append(percentEncodeFragmentDirectiveSpecialCharacters(suffix));
         url.setFragmentIdentifier(StringView(textDirectiveBuilder));
     }

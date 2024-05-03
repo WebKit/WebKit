@@ -323,7 +323,7 @@ String LocaleWin::shortTimeFormat()
         format = getLocaleInfoString(LOCALE_STIMEFORMAT);
         StringBuilder builder;
         builder.append(getLocaleInfoString(LOCALE_STIME));
-        builder.append("ss");
+        builder.append("ss"_s);
         size_t pos = format.reverseFind(builder.toString());
         if (pos != notFound)
             format = makeStringByRemoving(format, pos, builder.length());

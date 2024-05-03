@@ -187,253 +187,253 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 {
     if (m_shaderModule.usesExternalTextures()) {
         m_shaderModule.clearUsesExternalTextures();
-        m_stringBuilder.append("struct texture_external {\n");
+        m_stringBuilder.append("struct texture_external {\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "texture2d<float> FirstPlane;\n");
-            m_stringBuilder.append(m_indent, "texture2d<float> SecondPlane;\n");
-            m_stringBuilder.append(m_indent, "float3x2 UVRemapMatrix;\n");
-            m_stringBuilder.append(m_indent, "float4x3 ColorSpaceConversionMatrix;\n");
-            m_stringBuilder.append(m_indent, "uint get_width(uint lod = 0) const { return FirstPlane.get_width(lod); }\n");
-            m_stringBuilder.append(m_indent, "uint get_height(uint lod = 0) const { return FirstPlane.get_height(lod); }\n");
+            m_stringBuilder.append(m_indent, "texture2d<float> FirstPlane;\n"_s);
+            m_stringBuilder.append(m_indent, "texture2d<float> SecondPlane;\n"_s);
+            m_stringBuilder.append(m_indent, "float3x2 UVRemapMatrix;\n"_s);
+            m_stringBuilder.append(m_indent, "float4x3 ColorSpaceConversionMatrix;\n"_s);
+            m_stringBuilder.append(m_indent, "uint get_width(uint lod = 0) const { return FirstPlane.get_width(lod); }\n"_s);
+            m_stringBuilder.append(m_indent, "uint get_height(uint lod = 0) const { return FirstPlane.get_height(lod); }\n"_s);
         }
-        m_stringBuilder.append("};\n\n");
+        m_stringBuilder.append("};\n\n"_s);
     }
 
     if (m_shaderModule.usesPackArray()) {
         m_shaderModule.clearUsesPackArray();
-        m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n");
-        m_stringBuilder.append(m_indent, "array<typename T::PackedType, N> __pack(array<T, N> unpacked)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s);
+        m_stringBuilder.append(m_indent, "array<typename T::PackedType, N> __pack(array<T, N> unpacked)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "array<typename T::PackedType, N> packed;\n");
-            m_stringBuilder.append(m_indent, "for (size_t i = 0; i < N; ++i)\n");
+            m_stringBuilder.append(m_indent, "array<typename T::PackedType, N> packed;\n"_s);
+            m_stringBuilder.append(m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, "packed[i] = __pack(unpacked[i]);\n");
+                m_stringBuilder.append(m_indent, "packed[i] = __pack(unpacked[i]);\n"_s);
             }
-            m_stringBuilder.append(m_indent, "return packed;\n");
+            m_stringBuilder.append(m_indent, "return packed;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n");
+        m_stringBuilder.append(m_indent, "}\n\n"_s);
     }
 
     if (m_shaderModule.usesUnpackArray()) {
         m_shaderModule.clearUsesUnpackArray();
-        m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n");
-        m_stringBuilder.append(m_indent, "array<typename T::UnpackedType, N> __unpack(array<T, N> packed)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s);
+        m_stringBuilder.append(m_indent, "array<typename T::UnpackedType, N> __unpack(array<T, N> packed)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "array<typename T::UnpackedType, N> unpacked;\n");
-            m_stringBuilder.append(m_indent, "for (size_t i = 0; i < N; ++i)\n");
+            m_stringBuilder.append(m_indent, "array<typename T::UnpackedType, N> unpacked;\n"_s);
+            m_stringBuilder.append(m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, "unpacked[i] = __unpack(packed[i]);\n");
+                m_stringBuilder.append(m_indent, "unpacked[i] = __unpack(packed[i]);\n"_s);
             }
-            m_stringBuilder.append(m_indent, "return unpacked;\n");
+            m_stringBuilder.append(m_indent, "return unpacked;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n");
+        m_stringBuilder.append(m_indent, "}\n\n"_s);
     }
 
     if (m_shaderModule.usesWorkgroupUniformLoad()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n");
-        m_stringBuilder.append(m_indent, "T __workgroup_uniform_load(threadgroup T* const ptr)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "template<typename T>\n"_s);
+        m_stringBuilder.append(m_indent, "T __workgroup_uniform_load(threadgroup T* const ptr)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n");
-            m_stringBuilder.append(m_indent, "auto result = *ptr;\n");
-            m_stringBuilder.append(m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n");
-            m_stringBuilder.append(m_indent, "return result;\n");
+            m_stringBuilder.append(m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n"_s);
+            m_stringBuilder.append(m_indent, "auto result = *ptr;\n"_s);
+            m_stringBuilder.append(m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n"_s);
+            m_stringBuilder.append(m_indent, "return result;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n");
+        m_stringBuilder.append(m_indent, "}\n\n"_s);
     }
 
     if (m_shaderModule.usesDivision()) {
-        m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n");
-        m_stringBuilder.append(m_indent, "V __wgslDiv(T lhs, U rhs)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n"_s);
+        m_stringBuilder.append(m_indent, "V __wgslDiv(T lhs, U rhs)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "auto predicate = V(rhs) == V(0);\n");
-            m_stringBuilder.append(m_indent, "if constexpr (is_signed_v<U>)\n");
+            m_stringBuilder.append(m_indent, "auto predicate = V(rhs) == V(0);\n"_s);
+            m_stringBuilder.append(m_indent, "if constexpr (is_signed_v<U>)\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, "predicate = predicate || (V(lhs) == V(numeric_limits<T>::lowest()) && V(rhs) == V(-1));\n");
+                m_stringBuilder.append(m_indent, "predicate = predicate || (V(lhs) == V(numeric_limits<T>::lowest()) && V(rhs) == V(-1));\n"_s);
             }
-            m_stringBuilder.append(m_indent, "return lhs / select(V(rhs), V(1), predicate);\n");
+            m_stringBuilder.append(m_indent, "return lhs / select(V(rhs), V(1), predicate);\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n");
+        m_stringBuilder.append(m_indent, "}\n\n"_s);
     }
 
     if (m_shaderModule.usesModulo()) {
-        m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n");
-        m_stringBuilder.append(m_indent, "V __wgslMod(T lhs, U rhs)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n"_s);
+        m_stringBuilder.append(m_indent, "V __wgslMod(T lhs, U rhs)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "auto predicate = V(rhs) == V(0);\n");
-            m_stringBuilder.append(m_indent, "if constexpr (is_signed_v<U>)\n");
+            m_stringBuilder.append(m_indent, "auto predicate = V(rhs) == V(0);\n"_s);
+            m_stringBuilder.append(m_indent, "if constexpr (is_signed_v<U>)\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, "predicate = predicate || (V(lhs) == V(numeric_limits<T>::lowest()) && V(rhs) == V(-1));\n");
+                m_stringBuilder.append(m_indent, "predicate = predicate || (V(lhs) == V(numeric_limits<T>::lowest()) && V(rhs) == V(-1));\n"_s);
             }
-            m_stringBuilder.append(m_indent, "return select(lhs % V(rhs), V(0), predicate);\n");
+            m_stringBuilder.append(m_indent, "return select(lhs % V(rhs), V(0), predicate);\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n");
+        m_stringBuilder.append(m_indent, "}\n\n"_s);
     }
 
 
     if (m_shaderModule.usesFrexp()) {
-        m_stringBuilder.append(m_indent, "template<typename T, typename U>\n");
-        m_stringBuilder.append(m_indent, "struct __frexp_result {\n");
+        m_stringBuilder.append(m_indent, "template<typename T, typename U>\n"_s);
+        m_stringBuilder.append(m_indent, "struct __frexp_result {\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "T fract;\n");
-            m_stringBuilder.append(m_indent, "U exp;\n");
+            m_stringBuilder.append(m_indent, "T fract;\n"_s);
+            m_stringBuilder.append(m_indent, "U exp;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "};\n\n");
+        m_stringBuilder.append(m_indent, "};\n\n"_s);
 
-        m_stringBuilder.append(m_indent, "template<typename T, typename U = conditional_t<is_vector_v<T>, vec<int, vec_elements<T>::value ?: 2>, int>>\n");
-        m_stringBuilder.append(m_indent, "__frexp_result<T, U> __wgslFrexp(T value)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "template<typename T, typename U = conditional_t<is_vector_v<T>, vec<int, vec_elements<T>::value ?: 2>, int>>\n"_s);
+        m_stringBuilder.append(m_indent, "__frexp_result<T, U> __wgslFrexp(T value)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "__frexp_result<T, U> result;\n");
-            m_stringBuilder.append(m_indent, "result.fract = frexp(value, result.exp);\n");
-            m_stringBuilder.append(m_indent, "return result;\n");
+            m_stringBuilder.append(m_indent, "__frexp_result<T, U> result;\n"_s);
+            m_stringBuilder.append(m_indent, "result.fract = frexp(value, result.exp);\n"_s);
+            m_stringBuilder.append(m_indent, "return result;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n");
+        m_stringBuilder.append(m_indent, "}\n\n"_s);
     }
 
     if (m_shaderModule.usesModf()) {
-        m_stringBuilder.append(m_indent, "template<typename T, typename U>\n");
-        m_stringBuilder.append(m_indent, "struct __modf_result {\n");
+        m_stringBuilder.append(m_indent, "template<typename T, typename U>\n"_s);
+        m_stringBuilder.append(m_indent, "struct __modf_result {\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "T fract;\n");
-            m_stringBuilder.append(m_indent, "U whole;\n");
+            m_stringBuilder.append(m_indent, "T fract;\n"_s);
+            m_stringBuilder.append(m_indent, "U whole;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "};\n\n");
+        m_stringBuilder.append(m_indent, "};\n\n"_s);
 
-        m_stringBuilder.append(m_indent, "template<typename T>\n");
-        m_stringBuilder.append(m_indent, "__modf_result<T, T> __wgslModf(T value)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "template<typename T>\n"_s);
+        m_stringBuilder.append(m_indent, "__modf_result<T, T> __wgslModf(T value)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "__modf_result<T, T> result;\n");
-            m_stringBuilder.append(m_indent, "result.fract = modf(value, result.whole);\n");
-            m_stringBuilder.append(m_indent, "return result;\n");
+            m_stringBuilder.append(m_indent, "__modf_result<T, T> result;\n"_s);
+            m_stringBuilder.append(m_indent, "result.fract = modf(value, result.whole);\n"_s);
+            m_stringBuilder.append(m_indent, "return result;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n");
+        m_stringBuilder.append(m_indent, "}\n\n"_s);
     }
 
     if (m_shaderModule.usesAtomicCompareExchange()) {
-        m_stringBuilder.append(m_indent, "template<typename T, typename U = bool>\n");
-        m_stringBuilder.append(m_indent, "struct __atomic_compare_exchange_result {\n");
+        m_stringBuilder.append(m_indent, "template<typename T, typename U = bool>\n"_s);
+        m_stringBuilder.append(m_indent, "struct __atomic_compare_exchange_result {\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "T old_value;\n");
-            m_stringBuilder.append(m_indent, "U exchanged;\n");
+            m_stringBuilder.append(m_indent, "T old_value;\n"_s);
+            m_stringBuilder.append(m_indent, "U exchanged;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "};\n\n");
+        m_stringBuilder.append(m_indent, "};\n\n"_s);
 
-        m_stringBuilder.append(m_indent, "#define __wgslAtomicCompareExchangeWeak(atomic, compare, value) \\\n");
+        m_stringBuilder.append(m_indent, "#define __wgslAtomicCompareExchangeWeak(atomic, compare, value) \\\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "({ auto innerCompare = compare; \\\n");
-            m_stringBuilder.append(m_indent, "bool exchanged = atomic_compare_exchange_weak_explicit((atomic), &innerCompare, value, memory_order_relaxed, memory_order_relaxed); \\\n");
-            m_stringBuilder.append(m_indent, "__atomic_compare_exchange_result<decltype(compare)> { innerCompare, exchanged }; \\\n");
-            m_stringBuilder.append(m_indent, "})\n");
+            m_stringBuilder.append(m_indent, "({ auto innerCompare = compare; \\\n"_s);
+            m_stringBuilder.append(m_indent, "bool exchanged = atomic_compare_exchange_weak_explicit((atomic), &innerCompare, value, memory_order_relaxed, memory_order_relaxed); \\\n"_s);
+            m_stringBuilder.append(m_indent, "__atomic_compare_exchange_result<decltype(compare)> { innerCompare, exchanged }; \\\n"_s);
+            m_stringBuilder.append(m_indent, "})\n"_s);
         }
     }
 
     if (m_shaderModule.usesDot()) {
-        m_stringBuilder.append(m_indent, "template<typename T, unsigned N>\n");
-        m_stringBuilder.append(m_indent, "T __wgslDot(vec<T, N> lhs, vec<T, N> rhs)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "template<typename T, unsigned N>\n"_s);
+        m_stringBuilder.append(m_indent, "T __wgslDot(vec<T, N> lhs, vec<T, N> rhs)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "auto result = lhs[0] * rhs[0] + lhs[1] * rhs[1];\n");
-            m_stringBuilder.append(m_indent, "if constexpr (N > 2) result += lhs[2] * rhs[2];\n");
-            m_stringBuilder.append(m_indent, "if constexpr (N > 3) result += lhs[3] * rhs[3];\n");
-            m_stringBuilder.append(m_indent, "return result;\n");
+            m_stringBuilder.append(m_indent, "auto result = lhs[0] * rhs[0] + lhs[1] * rhs[1];\n"_s);
+            m_stringBuilder.append(m_indent, "if constexpr (N > 2) result += lhs[2] * rhs[2];\n"_s);
+            m_stringBuilder.append(m_indent, "if constexpr (N > 3) result += lhs[3] * rhs[3];\n"_s);
+            m_stringBuilder.append(m_indent, "return result;\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n");
+        m_stringBuilder.append(m_indent, "}\n"_s);
     }
 
     if (m_shaderModule.usesDot4I8Packed()) {
-        m_stringBuilder.append(m_indent, "int __wgslDot4I8Packed(uint lhs, uint rhs)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "int __wgslDot4I8Packed(uint lhs, uint rhs)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "auto vec1 = as_type<packed_char4>(lhs);");
-            m_stringBuilder.append(m_indent, "auto vec2 = as_type<packed_char4>(rhs);");
-            m_stringBuilder.append(m_indent, "return vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2] + vec1[3] * vec2[3];");
+            m_stringBuilder.append(m_indent, "auto vec1 = as_type<packed_char4>(lhs);"_s);
+            m_stringBuilder.append(m_indent, "auto vec2 = as_type<packed_char4>(rhs);"_s);
+            m_stringBuilder.append(m_indent, "return vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2] + vec1[3] * vec2[3];"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n");
+        m_stringBuilder.append(m_indent, "}\n"_s);
     }
 
     if (m_shaderModule.usesDot4U8Packed()) {
-        m_stringBuilder.append(m_indent, "uint __wgslDot4U8Packed(uint lhs, uint rhs)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "uint __wgslDot4U8Packed(uint lhs, uint rhs)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "auto vec1 = as_type<packed_uchar4>(lhs);");
-            m_stringBuilder.append(m_indent, "auto vec2 = as_type<packed_uchar4>(rhs);");
-            m_stringBuilder.append(m_indent, "return vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2] + vec1[3] * vec2[3];");
+            m_stringBuilder.append(m_indent, "auto vec1 = as_type<packed_uchar4>(lhs);"_s);
+            m_stringBuilder.append(m_indent, "auto vec2 = as_type<packed_uchar4>(rhs);"_s);
+            m_stringBuilder.append(m_indent, "return vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2] + vec1[3] * vec2[3];"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n");
+        m_stringBuilder.append(m_indent, "}\n"_s);
     }
 
     if (m_shaderModule.usesFirstLeadingBit()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n");
-        m_stringBuilder.append(m_indent, "T __wgslFirstLeadingBit(T e)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "template<typename T>\n"_s);
+        m_stringBuilder.append(m_indent, "T __wgslFirstLeadingBit(T e)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "if constexpr (is_signed_v<T>)\n");
-            m_stringBuilder.append(m_indent, "    return select(T(31 - select(clz(e), clz(~e), e < T(0))), T(-1), e == T(0) || e == T(-1));\n");
-            m_stringBuilder.append(m_indent, "else\n");
-            m_stringBuilder.append(m_indent, "    return select(T(31 - clz(e)), T(-1), e == T(0));\n");
+            m_stringBuilder.append(m_indent, "if constexpr (is_signed_v<T>)\n"_s);
+            m_stringBuilder.append(m_indent, "    return select(T(31 - select(clz(e), clz(~e), e < T(0))), T(-1), e == T(0) || e == T(-1));\n"_s);
+            m_stringBuilder.append(m_indent, "else\n"_s);
+            m_stringBuilder.append(m_indent, "    return select(T(31 - clz(e)), T(-1), e == T(0));\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n");
+        m_stringBuilder.append(m_indent, "}\n"_s);
     }
 
     if (m_shaderModule.usesFirstTrailingBit()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n");
-        m_stringBuilder.append(m_indent, "T __wgslFirstTrailingBit(T e)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "template<typename T>\n"_s);
+        m_stringBuilder.append(m_indent, "T __wgslFirstTrailingBit(T e)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "return select(ctz(e), T(-1), e == T(0));\n");
+            m_stringBuilder.append(m_indent, "return select(ctz(e), T(-1), e == T(0));\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n");
+        m_stringBuilder.append(m_indent, "}\n"_s);
     }
 
     if (m_shaderModule.usesSign()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n");
-        m_stringBuilder.append(m_indent, "T __wgslSign(T e)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "template<typename T>\n"_s);
+        m_stringBuilder.append(m_indent, "T __wgslSign(T e)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "return select(select(T(-1), T(1), e > 0), T(0), e == 0);\n");
+            m_stringBuilder.append(m_indent, "return select(select(T(-1), T(1), e > 0), T(0), e == 0);\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n");
+        m_stringBuilder.append(m_indent, "}\n"_s);
     }
 
     if (m_shaderModule.usesExtractBits()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n");
-        m_stringBuilder.append(m_indent, "T __wgslExtractBits(T e, uint offset, uint count)\n");
-        m_stringBuilder.append(m_indent, "{\n");
+        m_stringBuilder.append(m_indent, "template<typename T>\n"_s);
+        m_stringBuilder.append(m_indent, "T __wgslExtractBits(T e, uint offset, uint count)\n"_s);
+        m_stringBuilder.append(m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "auto o = min(offset, 32u);\n");
-            m_stringBuilder.append(m_indent, "auto c = min(count, 32u - o);\n");
-            m_stringBuilder.append(m_indent, "return extract_bits(e, o, c);\n");
+            m_stringBuilder.append(m_indent, "auto o = min(offset, 32u);\n"_s);
+            m_stringBuilder.append(m_indent, "auto c = min(count, 32u - o);\n"_s);
+            m_stringBuilder.append(m_indent, "return extract_bits(e, o, c);\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n");
+        m_stringBuilder.append(m_indent, "}\n"_s);
     }
 }
 
@@ -448,26 +448,26 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
     // FIXME: visit return attributes
     for (auto& attribute : functionDefinition.attributes()) {
         checkErrorAndVisit(attribute);
-        m_stringBuilder.append(" ");
+        m_stringBuilder.append(' ');
     }
 
     if (functionDefinition.maybeReturnType())
         visit(functionDefinition.maybeReturnType()->inferredType());
     else
-        m_stringBuilder.append("void");
+        m_stringBuilder.append("void"_s);
 
-    m_stringBuilder.append(" ", functionDefinition.name(), "(");
+    m_stringBuilder.append(' ', functionDefinition.name(), '(');
     bool first = true;
     for (auto& parameter : functionDefinition.parameters()) {
         if (!first)
-            m_stringBuilder.append(", ");
+            m_stringBuilder.append(", "_s);
         switch (parameter.role()) {
         case AST::ParameterRole::UserDefined:
             checkErrorAndVisit(parameter);
             break;
         case AST::ParameterRole::StageIn:
             checkErrorAndVisit(parameter);
-            m_stringBuilder.append(" [[stage_in]]");
+            m_stringBuilder.append(" [[stage_in]]"_s);
             break;
         case AST::ParameterRole::BindGroup:
             visitArgumentBufferParameter(parameter);
@@ -480,9 +480,9 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
     m_entryPointStage = std::nullopt;
 
     m_currentFunction = &functionDefinition;
-    m_stringBuilder.append(")\n");
+    m_stringBuilder.append(")\n"_s);
     checkErrorAndVisit(functionDefinition.body());
-    m_stringBuilder.append("\n\n");
+    m_stringBuilder.append("\n\n"_s);
 
     m_currentFunction = nullptr;
 }
@@ -491,74 +491,74 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
 {
     // FIXME: visit struct attributes
     m_structRole = { structDecl.role() };
-    m_stringBuilder.append(m_indent, "struct ", structDecl.name(), " {\n");
+    m_stringBuilder.append(m_indent, "struct "_s, structDecl.name(), " {\n"_s);
     {
         IndentationScope scope(m_indent);
         unsigned paddingID = 0;
         bool shouldPack = structDecl.role() == AST::StructureRole::PackedResource;
         const auto& addPadding = [&](unsigned paddingSize) {
             ASSERT(shouldPack);
-            m_stringBuilder.append(m_indent, "uint8_t __padding", ++paddingID, "[", String::number(paddingSize), "]; \n");
+            m_stringBuilder.append(m_indent, "uint8_t __padding"_s, ++paddingID, '[', String::number(paddingSize), "]; \n"_s);
         };
 
         if (structDecl.role() == AST::StructureRole::PackedResource)
-            m_stringBuilder.append(m_indent, "using UnpackedType = struct ", structDecl.original()->name(), ";\n\n");
+            m_stringBuilder.append(m_indent, "using UnpackedType = struct "_s, structDecl.original()->name(), ";\n\n"_s);
         else if (structDecl.role() == AST::StructureRole::UserDefinedResource)
-            m_stringBuilder.append(m_indent, "using PackedType = struct ", structDecl.packed()->name(), ";\n\n");
+            m_stringBuilder.append(m_indent, "using PackedType = struct "_s, structDecl.packed()->name(), ";\n\n"_s);
 
         for (auto& member : structDecl.members()) {
             auto& name = member.name();
             auto* type = member.type().inferredType();
             if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
-                m_stringBuilder.append(m_indent, "texture2d<float> __", name, "_FirstPlane;\n");
-                m_stringBuilder.append(m_indent, "texture2d<float> __", name, "_SecondPlane;\n");
-                m_stringBuilder.append(m_indent, "float3x2 __", name, "_UVRemapMatrix;\n");
-                m_stringBuilder.append(m_indent, "float4x3 __", name, "_ColorSpaceConversionMatrix;\n");
+                m_stringBuilder.append(m_indent, "texture2d<float> __"_s, name, "_FirstPlane;\n"_s);
+                m_stringBuilder.append(m_indent, "texture2d<float> __"_s, name, "_SecondPlane;\n"_s);
+                m_stringBuilder.append(m_indent, "float3x2 __"_s, name, "_UVRemapMatrix;\n"_s);
+                m_stringBuilder.append(m_indent, "float4x3 __"_s, name, "_ColorSpaceConversionMatrix;\n"_s);
                 continue;
             }
 
             m_stringBuilder.append(m_indent);
             visit(member.type().inferredType());
-            m_stringBuilder.append(" ", name);
+            m_stringBuilder.append(' ', name);
             for (auto &attribute : member.attributes()) {
-                m_stringBuilder.append(" ");
+                m_stringBuilder.append(' ');
                 visit(attribute);
             }
-            m_stringBuilder.append(";\n");
+            m_stringBuilder.append(";\n"_s);
 
             if (shouldPack && member.padding())
                 addPadding(member.padding());
         }
 
         if (structDecl.role() == AST::StructureRole::VertexOutput || structDecl.role() == AST::StructureRole::FragmentOutput) {
-            m_stringBuilder.append("\n");
-            m_stringBuilder.append(m_indent, "template<typename T>\n");
-            m_stringBuilder.append(m_indent, structDecl.name(), "(const thread T& other)\n");
+            m_stringBuilder.append('\n');
+            m_stringBuilder.append(m_indent, "template<typename T>\n"_s);
+            m_stringBuilder.append(m_indent, structDecl.name(), "(const thread T& other)\n"_s);
             {
                 IndentationScope scope(m_indent);
                 char prefix = ':';
                 for (auto& member : structDecl.members()) {
                     auto& name = member.name();
-                    m_stringBuilder.append(m_indent, prefix, " ", name, "(other.", name, ")\n");
+                    m_stringBuilder.append(m_indent, prefix, ' ', name, "(other."_s, name, ")\n"_s);
                     prefix = ',';
                 }
             }
-            m_stringBuilder.append(m_indent, "{ }\n");
+            m_stringBuilder.append(m_indent, "{ }\n"_s);
         } else if (structDecl.role() == AST::StructureRole::FragmentOutputWrapper) {
             ASSERT(structDecl.members().size() == 1);
             auto& member = structDecl.members()[0];
 
-            m_stringBuilder.append("\n");
-            m_stringBuilder.append(m_indent, "template<typename T>\n");
-            m_stringBuilder.append(m_indent, structDecl.name(), "(T value)\n");
+            m_stringBuilder.append('\n');
+            m_stringBuilder.append(m_indent, "template<typename T>\n"_s);
+            m_stringBuilder.append(m_indent, structDecl.name(), "(T value)\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, ": ", member.name(), "(value)\n");
+                m_stringBuilder.append(m_indent, ": "_s, member.name(), "(value)\n"_s);
             }
-            m_stringBuilder.append(m_indent, "{ }\n");
+            m_stringBuilder.append(m_indent, "{ }\n"_s);
         }
     }
-    m_stringBuilder.append(m_indent, "};\n\n");
+    m_stringBuilder.append(m_indent, "};\n\n"_s);
     m_structRole = std::nullopt;
 }
 
@@ -570,37 +570,37 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
     const String& packedName = structure.name();
     auto unpackedName = structure.original()->name();
 
-    m_stringBuilder.append(m_indent, packedName, " __pack(", unpackedName, " unpacked)\n");
-    m_stringBuilder.append(m_indent, "{\n");
+    m_stringBuilder.append(m_indent, packedName, " __pack("_s, unpackedName, " unpacked)\n"_s);
+    m_stringBuilder.append(m_indent, "{\n"_s);
     {
         IndentationScope scope(m_indent);
-        m_stringBuilder.append(m_indent, packedName, " packed;\n");
+        m_stringBuilder.append(m_indent, packedName, " packed;\n"_s);
         for (auto& member : structure.members()) {
             auto& name = member.name();
             if (member.type().inferredType()->packing() == Packing::PackedStruct)
-                m_stringBuilder.append(m_indent, "packed.", name, " = __pack(unpacked.", name, ");\n");
+                m_stringBuilder.append(m_indent, "packed."_s, name, " = __pack(unpacked."_s, name, ");\n"_s);
             else
-                m_stringBuilder.append(m_indent, "packed.", name, " = unpacked.", name, ";\n");
+                m_stringBuilder.append(m_indent, "packed."_s, name, " = unpacked."_s, name, ";\n"_s);
         }
-        m_stringBuilder.append(m_indent, "return packed;\n");
+        m_stringBuilder.append(m_indent, "return packed;\n"_s);
     }
-    m_stringBuilder.append(m_indent, "}\n\n");
+    m_stringBuilder.append(m_indent, "}\n\n"_s);
 
-    m_stringBuilder.append(m_indent, unpackedName, " __unpack(", packedName, " packed)\n");
-    m_stringBuilder.append(m_indent, "{\n");
+    m_stringBuilder.append(m_indent, unpackedName, " __unpack("_s, packedName, " packed)\n"_s);
+    m_stringBuilder.append(m_indent, "{\n"_s);
     {
         IndentationScope scope(m_indent);
-        m_stringBuilder.append(m_indent, unpackedName, " unpacked;\n");
+        m_stringBuilder.append(m_indent, unpackedName, " unpacked;\n"_s);
         for (auto& member : structure.members()) {
             auto& name = member.name();
             if (member.type().inferredType()->packing() == Packing::PackedStruct)
-                m_stringBuilder.append(m_indent, "unpacked.", name, " = __unpack(packed.", name, ");\n");
+                m_stringBuilder.append(m_indent, "unpacked."_s, name, " = __unpack(packed."_s, name, ");\n"_s);
             else
-                m_stringBuilder.append(m_indent, "unpacked.", name, " = packed.", name, ";\n");
+                m_stringBuilder.append(m_indent, "unpacked."_s, name, " = packed."_s, name, ";\n"_s);
         }
-        m_stringBuilder.append(m_indent, "return unpacked;\n");
+        m_stringBuilder.append(m_indent, "return unpacked;\n"_s);
     }
-    m_stringBuilder.append(m_indent, "}\n\n");
+    m_stringBuilder.append(m_indent, "}\n\n"_s);
 }
 
 bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
@@ -618,17 +618,17 @@ bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
     switch (primitive.kind) {
     case Types::Primitive::AbstractInt:
     case Types::Primitive::I32:
-        m_stringBuilder.append("packed_int", String::number(vector.size));
+        m_stringBuilder.append("packed_int"_s, String::number(vector.size));
         break;
     case Types::Primitive::U32:
-        m_stringBuilder.append("packed_uint", String::number(vector.size));
+        m_stringBuilder.append("packed_uint"_s, String::number(vector.size));
         break;
     case Types::Primitive::AbstractFloat:
     case Types::Primitive::F32:
-        m_stringBuilder.append("packed_float", String::number(vector.size));
+        m_stringBuilder.append("packed_float"_s, String::number(vector.size));
         break;
     case Types::Primitive::F16:
-        m_stringBuilder.append("packed_half", String::number(vector.size));
+        m_stringBuilder.append("packed_half"_s, String::number(vector.size));
         break;
     case Types::Primitive::Bool:
     case Types::Primitive::Void:
@@ -676,22 +676,22 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
     const Type* type = variable.storeType();
     if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
         ASSERT(variable.maybeInitializer());
-        m_stringBuilder.append("texture_external ", variable.name(), " { ");
+        m_stringBuilder.append("texture_external "_s, variable.name(), " { "_s);
         visit(*variable.maybeInitializer());
-        m_stringBuilder.append("_FirstPlane, ");
+        m_stringBuilder.append("_FirstPlane, "_s);
         visit(*variable.maybeInitializer());
-        m_stringBuilder.append("_SecondPlane, ");
+        m_stringBuilder.append("_SecondPlane, "_s);
         visit(*variable.maybeInitializer());
-        m_stringBuilder.append("_UVRemapMatrix, ");
+        m_stringBuilder.append("_UVRemapMatrix, "_s);
         visit(*variable.maybeInitializer());
-        m_stringBuilder.append("_ColorSpaceConversionMatrix }");
+        m_stringBuilder.append("_ColorSpaceConversionMatrix }"_s);
         return;
     }
 
     if (auto* qualifier = variable.maybeQualifier()) {
         switch (qualifier->addressSpace()) {
         case AddressSpace::Workgroup:
-            m_stringBuilder.append("threadgroup ");
+            m_stringBuilder.append("threadgroup "_s);
             break;
         case AddressSpace::Function:
         case AddressSpace::Handle:
@@ -703,16 +703,16 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
     }
 
     visit(type);
-    m_stringBuilder.append(" ", variable.name());
+    m_stringBuilder.append(' ', variable.name());
 
     if (variable.flavor() == AST::VariableFlavor::Override)
         return;
 
     if (auto* initializer = variable.maybeInitializer()) {
-        m_stringBuilder.append(" = ");
+        m_stringBuilder.append(" = "_s);
         visit(type, *initializer);
     } else
-        m_stringBuilder.append(" { }");
+        m_stringBuilder.append(" { }"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::Attribute& attribute)
@@ -730,40 +730,40 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
 
     switch (builtin.builtin()) {
     case Builtin::FragDepth:
-        m_stringBuilder.append("[[depth(any)]]");
+        m_stringBuilder.append("[[depth(any)]]"_s);
         break;
     case Builtin::FrontFacing:
-        m_stringBuilder.append("[[front_facing]]");
+        m_stringBuilder.append("[[front_facing]]"_s);
         break;
     case Builtin::GlobalInvocationId:
-        m_stringBuilder.append("[[thread_position_in_grid]]");
+        m_stringBuilder.append("[[thread_position_in_grid]]"_s);
         break;
     case Builtin::InstanceIndex:
-        m_stringBuilder.append("[[instance_id]]");
+        m_stringBuilder.append("[[instance_id]]"_s);
         break;
     case Builtin::LocalInvocationId:
-        m_stringBuilder.append("[[thread_position_in_threadgroup]]");
+        m_stringBuilder.append("[[thread_position_in_threadgroup]]"_s);
         break;
     case Builtin::LocalInvocationIndex:
-        m_stringBuilder.append("[[thread_index_in_threadgroup]]");
+        m_stringBuilder.append("[[thread_index_in_threadgroup]]"_s);
         break;
     case Builtin::NumWorkgroups:
-        m_stringBuilder.append("[[threadgroups_per_grid]]");
+        m_stringBuilder.append("[[threadgroups_per_grid]]"_s);
         break;
     case Builtin::Position:
-        m_stringBuilder.append("[[position]]");
+        m_stringBuilder.append("[[position]]"_s);
         break;
     case Builtin::SampleIndex:
-        m_stringBuilder.append("[[sample_id]]");
+        m_stringBuilder.append("[[sample_id]]"_s);
         break;
     case Builtin::SampleMask:
-        m_stringBuilder.append("[[sample_mask]]");
+        m_stringBuilder.append("[[sample_mask]]"_s);
         break;
     case Builtin::VertexIndex:
-        m_stringBuilder.append("[[vertex_id]]");
+        m_stringBuilder.append("[[vertex_id]]"_s);
         break;
     case Builtin::WorkgroupId:
-        m_stringBuilder.append("[[threadgroup_position_in_grid]]");
+        m_stringBuilder.append("[[threadgroup_position_in_grid]]"_s);
         break;
     }
 }
@@ -773,13 +773,13 @@ void FunctionDefinitionWriter::visit(AST::StageAttribute& stage)
     m_entryPointStage = { stage.stage() };
     switch (stage.stage()) {
     case ShaderStage::Vertex:
-        m_stringBuilder.append("[[vertex]]");
+        m_stringBuilder.append("[[vertex]]"_s);
         break;
     case ShaderStage::Fragment:
-        m_stringBuilder.append("[[fragment]]");
+        m_stringBuilder.append("[[fragment]]"_s);
         break;
     case ShaderStage::Compute:
-        m_stringBuilder.append("[[kernel]]");
+        m_stringBuilder.append("[[kernel]]"_s);
         break;
     }
 }
@@ -792,12 +792,12 @@ void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
         auto max = m_shaderModule.configuration().maxBuffersPlusVertexBuffersForVertexStage - 1;
         bufferIndex = vertexBufferIndexForBindGroup(bufferIndex, max);
     }
-    m_stringBuilder.append("[[buffer(", bufferIndex, ")]]");
+    m_stringBuilder.append("[[buffer("_s, bufferIndex, ")]]"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::BindingAttribute& binding)
 {
-    m_stringBuilder.append("[[id(", binding.binding().constantValue()->integerValue(), ")]]");
+    m_stringBuilder.append("[[id("_s, binding.binding().constantValue()->integerValue(), ")]]"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
@@ -807,7 +807,7 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         switch (role) {
         case AST::StructureRole::VertexOutput:
         case AST::StructureRole::FragmentInput:
-            m_stringBuilder.append("[[user(loc", location.location().constantValue()->integerValue(), ")]]");
+            m_stringBuilder.append("[[user(loc"_s, location.location().constantValue()->integerValue(), ")]]"_s);
             return;
         case AST::StructureRole::BindGroup:
         case AST::StructureRole::UserDefined:
@@ -818,10 +818,10 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         case AST::StructureRole::FragmentOutputWrapper:
             RELEASE_ASSERT_NOT_REACHED();
         case AST::StructureRole::FragmentOutput:
-            m_stringBuilder.append("[[color(", location.location().constantValue()->integerValue(), ")]]");
+            m_stringBuilder.append("[[color("_s, location.location().constantValue()->integerValue(), ")]]"_s);
             return;
         case AST::StructureRole::VertexInput:
-            m_stringBuilder.append("[[attribute(", location.location().constantValue()->integerValue(), ")]]");
+            m_stringBuilder.append("[[attribute("_s, location.location().constantValue()->integerValue(), ")]]"_s);
             break;
         }
     }
@@ -876,7 +876,7 @@ static const char* convertToSampleMode(InterpolationType type, InterpolationSamp
 
 void FunctionDefinitionWriter::visit(AST::InterpolateAttribute& attribute)
 {
-    m_stringBuilder.append("[[", convertToSampleMode(attribute.type(), attribute.sampling()), "]]");
+    m_stringBuilder.append("[["_s, convertToSampleMode(attribute.type(), attribute.sampling()), "]]"_s);
 }
 
 // Types
@@ -888,17 +888,17 @@ void FunctionDefinitionWriter::visit(const Type* type)
             switch (primitive.kind) {
             case Types::Primitive::AbstractInt:
             case Types::Primitive::I32:
-                m_stringBuilder.append("int");
+                m_stringBuilder.append("int"_s);
                 break;
             case Types::Primitive::U32:
-                m_stringBuilder.append("unsigned");
+                m_stringBuilder.append("unsigned"_s);
                 break;
             case Types::Primitive::AbstractFloat:
             case Types::Primitive::F32:
-                m_stringBuilder.append("float");
+                m_stringBuilder.append("float"_s);
                 break;
             case Types::Primitive::F16:
-                m_stringBuilder.append("half");
+                m_stringBuilder.append("half"_s);
                 break;
             case Types::Primitive::Void:
             case Types::Primitive::Bool:
@@ -906,10 +906,10 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 m_stringBuilder.append(*type);
                 break;
             case Types::Primitive::SamplerComparison:
-                m_stringBuilder.append("sampler");
+                m_stringBuilder.append("sampler"_s);
                 break;
             case Types::Primitive::TextureExternal:
-                m_stringBuilder.append("texture_external");
+                m_stringBuilder.append("texture_external"_s);
                 break;
             case Types::Primitive::AccessMode:
             case Types::Primitive::TexelFormat:
@@ -920,42 +920,42 @@ void FunctionDefinitionWriter::visit(const Type* type)
         [&](const Vector& vector) {
             if (emitPackedVector(vector))
                 return;
-            m_stringBuilder.append("vec<");
+            m_stringBuilder.append("vec<"_s);
             visit(vector.element);
-            m_stringBuilder.append(", ", vector.size, ">");
+            m_stringBuilder.append(", "_s, vector.size, '>');
         },
         [&](const Matrix& matrix) {
-            m_stringBuilder.append("matrix<");
+            m_stringBuilder.append("matrix<"_s);
             visit(matrix.element);
-            m_stringBuilder.append(", ", matrix.columns, ", ", matrix.rows, ">");
+            m_stringBuilder.append(", "_s, matrix.columns, ", "_s, matrix.rows, '>');
         },
         [&](const Array& array) {
-            m_stringBuilder.append("array<");
+            m_stringBuilder.append("array<"_s);
             visit(array.element);
-            m_stringBuilder.append(", ");
+            m_stringBuilder.append(", "_s);
             WTF::switchOn(array.size,
                 [&](unsigned size) { m_stringBuilder.append(size); },
                 [&](std::monostate) { m_stringBuilder.append(1); },
                 [&](AST::Expression* size) {
                     visit(*size);
                 });
-            m_stringBuilder.append(">");
+            m_stringBuilder.append('>');
         },
         [&](const Struct& structure) {
             m_stringBuilder.append(structure.structure.name());
             if (m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource && structure.structure.role() == AST::StructureRole::UserDefinedResource)
-                m_stringBuilder.append("::PackedType");
+                m_stringBuilder.append("::PackedType"_s);
         },
         [&](const PrimitiveStruct& structure) {
-            m_stringBuilder.append(structure.name, "<");
+            m_stringBuilder.append(structure.name, '<');
             bool first = true;
             for (auto& value : structure.values) {
                 if (!first)
-                    m_stringBuilder.append(", ");
+                    m_stringBuilder.append(", "_s);
                 first = false;
                 visit(value);
             }
-            m_stringBuilder.append(">");
+            m_stringBuilder.append('>');
         },
         [&](const Texture& texture) {
             const char* type;
@@ -984,9 +984,9 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 access = "read";
                 break;
             }
-            m_stringBuilder.append(type, "<");
+            m_stringBuilder.append(type, '<');
             visit(texture.element);
-            m_stringBuilder.append(", access::", access, ">");
+            m_stringBuilder.append(", access::"_s, access, '>');
         },
         [&](const TextureStorage& texture) {
             const char* base;
@@ -1016,9 +1016,9 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 mode = "read_write";
                 break;
             }
-            m_stringBuilder.append(base, "<");
+            m_stringBuilder.append(base, '<');
             visit(shaderTypeForTexelFormat(texture.format, m_shaderModule.types()));
-            m_stringBuilder.append(", access::", mode, ">");
+            m_stringBuilder.append(", access::"_s, mode, '>');
         },
         [&](const TextureDepth& texture) {
             const char* base;
@@ -1039,7 +1039,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 base = "depth2d_ms";
                 break;
             }
-            m_stringBuilder.append(base, "<float>");
+            m_stringBuilder.append(base, "<float>"_s);
         },
         [&](const Reference& reference) {
             const char* addressSpace = serializeAddressSpace(reference.addressSpace);
@@ -1048,25 +1048,25 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 return;
             }
             if (reference.accessMode == AccessMode::Read)
-                m_stringBuilder.append("const ");
-            m_stringBuilder.append(addressSpace, " ");
+                m_stringBuilder.append("const "_s);
+            m_stringBuilder.append(addressSpace, ' ');
             visit(reference.element);
-            m_stringBuilder.append("&");
+            m_stringBuilder.append('&');
         },
         [&](const Pointer& pointer) {
             const char* addressSpace = serializeAddressSpace(pointer.addressSpace);
             if (pointer.accessMode == AccessMode::Read)
-                m_stringBuilder.append("const ");
+                m_stringBuilder.append("const "_s);
             if (addressSpace)
-                m_stringBuilder.append(addressSpace, " ");
+                m_stringBuilder.append(addressSpace, ' ');
             visit(pointer.element);
-            m_stringBuilder.append("*");
+            m_stringBuilder.append('*');
         },
         [&](const Atomic& atomic) {
             if (atomic.element == m_shaderModule.types().i32Type())
-                m_stringBuilder.append("atomic_int");
+                m_stringBuilder.append("atomic_int"_s);
             else
-                m_stringBuilder.append("atomic_uint");
+                m_stringBuilder.append("atomic_uint"_s);
         },
         [&](const Function&) {
             RELEASE_ASSERT_NOT_REACHED();
@@ -1082,20 +1082,20 @@ void FunctionDefinitionWriter::visit(const Type* type)
 void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
 {
     visit(parameter.typeName().inferredType());
-    m_stringBuilder.append(" ", parameter.name());
+    m_stringBuilder.append(' ', parameter.name());
     for (auto& attribute : parameter.attributes()) {
-        m_stringBuilder.append(" ");
+        m_stringBuilder.append(' ');
         checkErrorAndVisit(attribute);
     }
 }
 
 void FunctionDefinitionWriter::visitArgumentBufferParameter(AST::Parameter& parameter)
 {
-    m_stringBuilder.append("constant ");
+    m_stringBuilder.append("constant "_s);
     visit(parameter.typeName().inferredType());
-    m_stringBuilder.append("& ", parameter.name());
+    m_stringBuilder.append("& "_s, parameter.name());
     for (auto& attribute : parameter.attributes()) {
-        m_stringBuilder.append(" ");
+        m_stringBuilder.append(' ');
         checkErrorAndVisit(attribute);
     }
 }
@@ -1122,42 +1122,42 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::Expression& expressi
 
 static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression& call, unsigned startOffset = 0)
 {
-    writer->stringBuilder().append("(");
+    writer->stringBuilder().append('(');
     for (unsigned i = startOffset; i < call.arguments().size(); ++i) {
         if (i != startOffset)
-            writer->stringBuilder().append(", ");
+            writer->stringBuilder().append(", "_s);
         writer->visit(call.arguments()[i]);
     }
-    writer->stringBuilder().append(")");
+    writer->stringBuilder().append(')');
 }
 
 static void emitTextureDimensions(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     const auto& get = [&](const char* property) {
         writer->visit(call.arguments()[0]);
-        writer->stringBuilder().append(".get_", property, "(");
+        writer->stringBuilder().append(".get_"_s, property, '(');
         if (call.arguments().size() > 1)
             writer->visit(call.arguments()[1]);
-        writer->stringBuilder().append(")");
+        writer->stringBuilder().append(')');
     };
 
     const auto* vector = std::get_if<Types::Vector>(call.inferredType());
     if (!vector) {
-        get("width");
+        get("width"_s);
         return;
     }
 
     auto size = vector->size;
     ASSERT(size >= 2 && size <= 3);
-    writer->stringBuilder().append("uint", String::number(size), "(");
-    get("width");
-    writer->stringBuilder().append(", ");
-    get("height");
+    writer->stringBuilder().append("uint"_s, String::number(size), '(');
+    get("width"_s);
+    writer->stringBuilder().append(", "_s);
+    get("height"_s);
     if (size > 2) {
-        writer->stringBuilder().append(", ");
-        get("depth");
+        writer->stringBuilder().append(", "_s);
+        get("depth"_s);
     }
-    writer->stringBuilder().append(")");
+    writer->stringBuilder().append(')');
 }
 
 static void emitTextureGather(FunctionDefinitionWriter* writer, AST::CallExpression& call)
@@ -1195,24 +1195,24 @@ static void emitTextureGather(FunctionDefinitionWriter* writer, AST::CallExpress
         }
     }
     writer->visit(call.arguments()[offset]);
-    writer->stringBuilder().append(".gather(");
+    writer->stringBuilder().append(".gather("_s);
     for (unsigned i = offset + 1; i < call.arguments().size(); ++i) {
         if (i != offset + 1)
-            writer->stringBuilder().append(", ");
+            writer->stringBuilder().append(", "_s);
         writer->visit(call.arguments()[i]);
     }
     if (!hasOffset)
-        writer->stringBuilder().append(", int2(0)");
+        writer->stringBuilder().append(", int2(0)"_s);
     if (component)
-        writer->stringBuilder().append(", component::", component);
-    writer->stringBuilder().append(")");
+        writer->stringBuilder().append(", component::"_s, component);
+    writer->stringBuilder().append(')');
 }
 
 static void emitTextureGatherCompare(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     ASSERT(call.arguments().size() > 1);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(".gather_compare");
+    writer->stringBuilder().append(".gather_compare"_s);
     visitArguments(writer, call, 1);
 }
 
@@ -1226,8 +1226,8 @@ static void emitTextureLoad(FunctionDefinitionWriter* writer, AST::CallExpressio
     bool isExternalTexture = primitive && primitive->kind == Types::Primitive::TextureExternal;
     if (!isExternalTexture) {
         writer->visit(call.arguments()[0]);
-        writer->stringBuilder().append(".read");
-        writer->stringBuilder().append("(");
+        writer->stringBuilder().append(".read"_s);
+        writer->stringBuilder().append('(');
         bool is1d = true;
         const char* cast = "uint";
         if (const auto* vector = std::get_if<Types::Vector>(call.arguments()[1].inferredType())) {
@@ -1247,59 +1247,59 @@ static void emitTextureLoad(FunctionDefinitionWriter* writer, AST::CallExpressio
         auto argumentCount = call.arguments().size();
         for (unsigned i = 1; i < argumentCount; ++i) {
             if (first) {
-                writer->stringBuilder().append(cast, "(");
+                writer->stringBuilder().append(cast, '(');
                 writer->visit(call.arguments()[i]);
-                writer->stringBuilder().append(")");
+                writer->stringBuilder().append(')');
             } else if (is1d && i == argumentCount - 1) {
                 // From the MSL spec for texture1d::read:
                 // > Since mipmaps are not supported for 1D textures, lod must be 0.
                 continue;
             } else {
-                writer->stringBuilder().append(", ");
+                writer->stringBuilder().append(", "_s);
                 writer->visit(call.arguments()[i]);
             }
             first = false;
         }
-        writer->stringBuilder().append(")");
+        writer->stringBuilder().append(')');
         return;
     }
 
     auto& coordinates = call.arguments()[1];
-    writer->stringBuilder().append("({\n");
+    writer->stringBuilder().append("({\n"_s);
     {
         IndentationScope scope(writer->indent());
         {
-            writer->stringBuilder().append(writer->indent(), "auto __coords = uint2((");
+            writer->stringBuilder().append(writer->indent(), "auto __coords = uint2(("_s);
             writer->visit(texture);
-            writer->stringBuilder().append(".UVRemapMatrix * float3(float2(");
+            writer->stringBuilder().append(".UVRemapMatrix * float3(float2("_s);
             writer->visit(coordinates);
-            writer->stringBuilder().append("), 1)).xy);\n");
+            writer->stringBuilder().append("), 1)).xy);\n"_s);
         }
         {
-            writer->stringBuilder().append(writer->indent(), "auto __y = float(");
+            writer->stringBuilder().append(writer->indent(), "auto __y = float("_s);
             writer->visit(texture);
-            writer->stringBuilder().append(".FirstPlane.read(__coords).r);\n");
+            writer->stringBuilder().append(".FirstPlane.read(__coords).r);\n"_s);
         }
         {
-            writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");
+            writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2("_s);
             writer->visit(texture);
-            writer->stringBuilder().append(".SecondPlane.read(__coords).rg);\n");
+            writer->stringBuilder().append(".SecondPlane.read(__coords).rg);\n"_s);
         }
-        writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n");
+        writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n"_s);
         {
-            writer->stringBuilder().append(writer->indent(), "float4(");
+            writer->stringBuilder().append(writer->indent(), "float4("_s);
             writer->visit(texture);
-            writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
+            writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n"_s);
         }
     }
-    writer->stringBuilder().append(writer->indent(), "})");
+    writer->stringBuilder().append(writer->indent(), "})"_s);
 }
 
 static void emitTextureSample(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     ASSERT(call.arguments().size() > 1);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(".sample");
+    writer->stringBuilder().append(".sample"_s);
     visitArguments(writer, call, 1);
 }
 
@@ -1307,7 +1307,7 @@ static void emitTextureSampleCompare(FunctionDefinitionWriter* writer, AST::Call
 {
     ASSERT(call.arguments().size() > 1);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(".sample_compare");
+    writer->stringBuilder().append(".sample_compare"_s);
     visitArguments(writer, call, 1);
 }
 
@@ -1349,22 +1349,22 @@ static void emitTextureSampleGrad(FunctionDefinitionWriter* writer, AST::CallExp
         break;
     }
     writer->visit(texture);
-    writer->stringBuilder().append(".sample(");
+    writer->stringBuilder().append(".sample("_s);
     for (unsigned i = 1; i < gradientIndex; ++i) {
         if (i != 1)
-            writer->stringBuilder().append(", ");
+            writer->stringBuilder().append(", "_s);
         writer->visit(call.arguments()[i]);
     }
-    writer->stringBuilder().append(", ", gradientFunction, "(");
+    writer->stringBuilder().append(", "_s, gradientFunction, '(');
     writer->visit(call.arguments()[gradientIndex]);
-    writer->stringBuilder().append(", ");
+    writer->stringBuilder().append(", "_s);
     writer->visit(call.arguments()[gradientIndex + 1]);
-    writer->stringBuilder().append(")");
+    writer->stringBuilder().append(')');
     for (unsigned i = gradientIndex + 2; i < call.arguments().size(); ++i) {
-        writer->stringBuilder().append(", ");
+        writer->stringBuilder().append(", "_s);
         writer->visit(call.arguments()[i]);
     }
-    writer->stringBuilder().append(")");
+    writer->stringBuilder().append(')');
 }
 
 static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallExpression& call)
@@ -1410,20 +1410,20 @@ static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallEx
 
     unsigned levelIndex = isArray ? 4 : 3;
     writer->visit(texture);
-    writer->stringBuilder().append(".sample(");
+    writer->stringBuilder().append(".sample("_s);
     for (unsigned i = 1; i < levelIndex; ++i) {
         if (i != 1)
-            writer->stringBuilder().append(",");
+            writer->stringBuilder().append(',');
         writer->visit(call.arguments()[i]);
     }
-    writer->stringBuilder().append(", level(");
+    writer->stringBuilder().append(", level("_s);
     writer->visit(call.arguments()[levelIndex]);
-    writer->stringBuilder().append(")");
+    writer->stringBuilder().append(')');
     for (unsigned i = levelIndex + 1; i < call.arguments().size(); ++i) {
-        writer->stringBuilder().append(",");
+        writer->stringBuilder().append(',');
         writer->visit(call.arguments()[i]);
     }
-    writer->stringBuilder().append(")");
+    writer->stringBuilder().append(')');
 }
 
 static void emitTextureSampleBaseClampToEdge(FunctionDefinitionWriter* writer, AST::CallExpression& call)
@@ -1434,45 +1434,45 @@ static void emitTextureSampleBaseClampToEdge(FunctionDefinitionWriter* writer, A
     if (textureType) {
         // FIXME: this needs to clamp the coordinates
         writer->visit(texture);
-        writer->stringBuilder().append(".sample");
+        writer->stringBuilder().append(".sample"_s);
         visitArguments(writer, call, 1);
         return;
     }
 
     auto& sampler = call.arguments()[1];
     auto& coordinates = call.arguments()[2];
-    writer->stringBuilder().append("({\n");
+    writer->stringBuilder().append("({\n"_s);
     {
         IndentationScope scope(writer->indent());
         {
-            writer->stringBuilder().append(writer->indent(), "auto __coords = (");
+            writer->stringBuilder().append(writer->indent(), "auto __coords = ("_s);
             writer->visit(texture);
-            writer->stringBuilder().append(".UVRemapMatrix * float3(");
+            writer->stringBuilder().append(".UVRemapMatrix * float3("_s);
             writer->visit(coordinates);
-            writer->stringBuilder().append(", 1)).xy;\n");
+            writer->stringBuilder().append(", 1)).xy;\n"_s);
         }
         {
-            writer->stringBuilder().append(writer->indent(), "auto __y = float(");
+            writer->stringBuilder().append(writer->indent(), "auto __y = float("_s);
             writer->visit(texture);
-            writer->stringBuilder().append(".FirstPlane.sample(");
+            writer->stringBuilder().append(".FirstPlane.sample("_s);
             writer->visit(sampler);
-            writer->stringBuilder().append(", __coords).r);\n");
+            writer->stringBuilder().append(", __coords).r);\n"_s);
         }
         {
-            writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");
+            writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2("_s);
             writer->visit(texture);
-            writer->stringBuilder().append(".SecondPlane.sample(");
+            writer->stringBuilder().append(".SecondPlane.sample("_s);
             writer->visit(sampler);
-            writer->stringBuilder().append(", __coords).rg);\n");
+            writer->stringBuilder().append(", __coords).rg);\n"_s);
         }
-        writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n");
+        writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n"_s);
         {
-            writer->stringBuilder().append(writer->indent(), "float4(");
+            writer->stringBuilder().append(writer->indent(), "float4("_s);
             writer->visit(texture);
-            writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
+            writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n"_s);
         }
     }
-    writer->stringBuilder().append(writer->indent(), "})");
+    writer->stringBuilder().append(writer->indent(), "})"_s);
 }
 
 static void emitTextureSampleBias(FunctionDefinitionWriter* writer, AST::CallExpression& call)
@@ -1495,38 +1495,38 @@ static void emitTextureSampleBias(FunctionDefinitionWriter* writer, AST::CallExp
 
     unsigned biasIndex = isArray ? 4 : 3;
     writer->visit(texture);
-    writer->stringBuilder().append(".sample(");
+    writer->stringBuilder().append(".sample("_s);
     for (unsigned i = 1; i < biasIndex; ++i) {
         if (i != 1)
-            writer->stringBuilder().append(", ");
+            writer->stringBuilder().append(", "_s);
         writer->visit(call.arguments()[i]);
     }
-    writer->stringBuilder().append(", bias(");
+    writer->stringBuilder().append(", bias("_s);
     writer->visit(call.arguments()[biasIndex]);
-    writer->stringBuilder().append(")");
+    writer->stringBuilder().append(')');
     for (unsigned i = biasIndex + 1; i < call.arguments().size(); ++i) {
-        writer->stringBuilder().append(", ");
+        writer->stringBuilder().append(", "_s);
         writer->visit(call.arguments()[i]);
     }
-    writer->stringBuilder().append(")");
+    writer->stringBuilder().append(')');
 }
 
 static void emitTextureNumLayers(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(".get_array_size()");
+    writer->stringBuilder().append(".get_array_size()"_s);
 }
 
 static void emitTextureNumLevels(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(".get_num_mip_levels()");
+    writer->stringBuilder().append(".get_num_mip_levels()"_s);
 }
 
 static void emitTextureNumSamples(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(".get_num_samples()");
+    writer->stringBuilder().append(".get_num_samples()"_s);
 }
 
 static void emitTextureStore(FunctionDefinitionWriter* writer, AST::CallExpression& call)
@@ -1557,101 +1557,101 @@ static void emitTextureStore(FunctionDefinitionWriter* writer, AST::CallExpressi
     }
 
     writer->visit(texture);
-    writer->stringBuilder().append(".write(");
+    writer->stringBuilder().append(".write("_s);
     writer->visit(*value);
-    writer->stringBuilder().append(", ", cast, "(");
+    writer->stringBuilder().append(", "_s, cast, '(');
     writer->visit(coords);
-    writer->stringBuilder().append(")");
+    writer->stringBuilder().append(')');
     if (arrayIndex) {
-        writer->stringBuilder().append(", ");
+        writer->stringBuilder().append(", "_s);
         writer->visit(*arrayIndex);
     }
-    writer->stringBuilder().append(")");
+    writer->stringBuilder().append(')');
 }
 
 static void emitStorageBarrier(FunctionDefinitionWriter* writer, AST::CallExpression&)
 {
-    writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_device)");
+    writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_device)"_s);
 }
 
 static void emitTextureBarrier(FunctionDefinitionWriter* writer, AST::CallExpression&)
 {
-    writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_texture)");
+    writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_texture)"_s);
 }
 
 static void emitWorkgroupBarrier(FunctionDefinitionWriter* writer, AST::CallExpression&)
 {
-    writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_threadgroup)");
+    writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_threadgroup)"_s);
 }
 
 static void emitWorkgroupUniformLoad(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append("__workgroup_uniform_load(");
+    writer->stringBuilder().append("__workgroup_uniform_load("_s);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(")");
+    writer->stringBuilder().append(')');
 }
 
 static void atomicFunction(const char* name, FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append(name, "(");
+    writer->stringBuilder().append(name, '(');
     bool first = true;
     for (auto& argument : call.arguments()) {
         if (!first)
-            writer->stringBuilder().append(", ");
+            writer->stringBuilder().append(", "_s);
         first = false;
         writer->visit(argument);
     }
-    writer->stringBuilder().append(", memory_order_relaxed)");
+    writer->stringBuilder().append(", memory_order_relaxed)"_s);
 }
 
 static void emitAtomicLoad(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    atomicFunction("atomic_load_explicit", writer, call);
+    atomicFunction("atomic_load_explicit"_s, writer, call);
 }
 
 static void emitAtomicStore(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    atomicFunction("atomic_store_explicit", writer, call);
+    atomicFunction("atomic_store_explicit"_s, writer, call);
 }
 
 static void emitAtomicAdd(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    atomicFunction("atomic_fetch_add_explicit", writer, call);
+    atomicFunction("atomic_fetch_add_explicit"_s, writer, call);
 }
 
 static void emitAtomicSub(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    atomicFunction("atomic_fetch_sub_explicit", writer, call);
+    atomicFunction("atomic_fetch_sub_explicit"_s, writer, call);
 }
 
 static void emitAtomicMax(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    atomicFunction("atomic_fetch_max_explicit", writer, call);
+    atomicFunction("atomic_fetch_max_explicit"_s, writer, call);
 }
 
 static void emitAtomicMin(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    atomicFunction("atomic_fetch_min_explicit", writer, call);
+    atomicFunction("atomic_fetch_min_explicit"_s, writer, call);
 }
 
 static void emitAtomicAnd(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    atomicFunction("atomic_fetch_and_explicit", writer, call);
+    atomicFunction("atomic_fetch_and_explicit"_s, writer, call);
 }
 
 static void emitAtomicOr(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    atomicFunction("atomic_fetch_or_explicit", writer, call);
+    atomicFunction("atomic_fetch_or_explicit"_s, writer, call);
 }
 
 static void emitAtomicXor(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    atomicFunction("atomic_fetch_xor_explicit", writer, call);
+    atomicFunction("atomic_fetch_xor_explicit"_s, writer, call);
 }
 
 static void emitAtomicExchange(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    atomicFunction("atomic_exchange_explicit", writer, call);
+    atomicFunction("atomic_exchange_explicit"_s, writer, call);
 }
 
 [[noreturn]] static void emitArrayLength(FunctionDefinitionWriter*, AST::CallExpression&)
@@ -1663,11 +1663,11 @@ static void emitDistance(FunctionDefinitionWriter* writer, AST::CallExpression& 
 {
     auto* argumentType = call.arguments()[0].inferredType();
     if (std::holds_alternative<Types::Primitive>(*argumentType)) {
-        writer->stringBuilder().append("abs(");
+        writer->stringBuilder().append("abs("_s);
         writer->visit(call.arguments()[0]);
-        writer->stringBuilder().append(" - ");
+        writer->stringBuilder().append(" - "_s);
         writer->visit(call.arguments()[1]);
-        writer->stringBuilder().append(")");
+        writer->stringBuilder().append(')');
         return;
     }
     writer->visit(call.target());
@@ -1678,17 +1678,17 @@ static void emitLength(FunctionDefinitionWriter* writer, AST::CallExpression& ca
 {
     auto* argumentType = call.arguments()[0].inferredType();
     if (!holds_alternative<Types::Vector>(*argumentType))
-        writer->stringBuilder().append("abs");
+        writer->stringBuilder().append("abs"_s);
     else
-        writer->stringBuilder().append("length");
+        writer->stringBuilder().append("length"_s);
     visitArguments(writer, call);
 }
 
 static void emitDegrees(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append("(");
+    writer->stringBuilder().append('(');
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(" * ", String::number(180 / std::numbers::pi), ")");
+    writer->stringBuilder().append(" * "_s, String::number(180 / std::numbers::pi), ')');
 }
 
 static void emitDynamicOffset(FunctionDefinitionWriter* writer, AST::CallExpression& call)
@@ -1697,71 +1697,71 @@ static void emitDynamicOffset(FunctionDefinitionWriter* writer, AST::CallExpress
     auto& pointer = std::get<Types::Pointer>(*targetType);
     auto* addressSpace = serializeAddressSpace(pointer.addressSpace);
 
-    writer->stringBuilder().append("(*(");
+    writer->stringBuilder().append("(*("_s);
     writer->visit(targetType);
-    writer->stringBuilder().append(")(((", addressSpace, " uint8_t*)&(");
+    writer->stringBuilder().append(")((("_s, addressSpace, " uint8_t*)&("_s);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(")) + __DynamicOffsets[");
+    writer->stringBuilder().append(")) + __DynamicOffsets["_s);
     writer->visit(call.arguments()[1]);
-    writer->stringBuilder().append("]))");
+    writer->stringBuilder().append("]))"_s);
 }
 
 static void emitBitcast(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append("as_type<");
+    writer->stringBuilder().append("as_type<"_s);
     writer->visit(call.target().inferredType());
-    writer->stringBuilder().append(">(");
+    writer->stringBuilder().append(">("_s);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(")");
+    writer->stringBuilder().append(')');
 }
 
 static void emitPack2x16Float(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append("as_type<uint>(half2(");
+    writer->stringBuilder().append("as_type<uint>(half2("_s);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append("))");
+    writer->stringBuilder().append("))"_s);
 }
 
 static void emitUnpack2x16Float(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append("float2(as_type<half2>(");
+    writer->stringBuilder().append("float2(as_type<half2>("_s);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append("))");
+    writer->stringBuilder().append("))"_s);
 }
 
 static void emitPack4xI8(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append("as_type<uint>(char4(");
+    writer->stringBuilder().append("as_type<uint>(char4("_s);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append("))");
+    writer->stringBuilder().append("))"_s);
 }
 
 static void emitPack4xI8Clamp(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append("as_type<uint>(char4(clamp(");
+    writer->stringBuilder().append("as_type<uint>(char4(clamp("_s);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(", -128, 127)))");
+    writer->stringBuilder().append(", -128, 127)))"_s);
 }
 
 static void emitUnpack4xI8(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append("int4(as_type<char4>(");
+    writer->stringBuilder().append("int4(as_type<char4>("_s);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append("))");
+    writer->stringBuilder().append("))"_s);
 }
 
 static void emitPack4xU8(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append("as_type<uint>(uchar4(");
+    writer->stringBuilder().append("as_type<uint>(uchar4("_s);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append("))");
+    writer->stringBuilder().append("))"_s);
 }
 
 static void emitPack4xU8Clamp(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append("as_type<uint>(uchar4(min(");
+    writer->stringBuilder().append("as_type<uint>(uchar4(min("_s);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(", 255)))");
+    writer->stringBuilder().append(", 255)))"_s);
 }
 
 static void emitQuantizeToF16(FunctionDefinitionWriter* writer, AST::CallExpression& call)
@@ -1770,23 +1770,23 @@ static void emitQuantizeToF16(FunctionDefinitionWriter* writer, AST::CallExpress
     String suffix = ""_s;
     if (auto* vectorType = std::get_if<Types::Vector>(argument.inferredType()))
         suffix = String::number(vectorType->size);
-    writer->stringBuilder().append("float", suffix, "(half", suffix, "(");
+    writer->stringBuilder().append("float"_s, suffix, "(half"_s, suffix, '(');
     writer->visit(argument);
-    writer->stringBuilder().append("))");
+    writer->stringBuilder().append("))"_s);
 }
 
 static void emitRadians(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append("(");
+    writer->stringBuilder().append('(');
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(" * ", String::number(std::numbers::pi / 180), ")");
+    writer->stringBuilder().append(" * "_s, String::number(std::numbers::pi / 180), ')');
 }
 
 static void emitUnpack4xU8(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append("uint4(as_type<uchar4>(");
+    writer->stringBuilder().append("uint4(as_type<uchar4>("_s);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append("))");
+    writer->stringBuilder().append("))"_s);
 }
 
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
@@ -1802,12 +1802,12 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
     auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().inferredType());
     if (isArray || isStruct) {
         visit(type);
-        m_stringBuilder.append("(");
+        m_stringBuilder.append('(');
         const Type* arrayElementType = nullptr;
         if (isArray)
             arrayElementType = std::get<Types::Array>(*type).element;
 
-        m_stringBuilder.append("{\n");
+        m_stringBuilder.append("{\n"_s);
         {
             IndentationScope scope(m_indent);
             for (auto& argument : call.arguments()) {
@@ -1816,10 +1816,10 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
                     visit(argument);
                 else
                     visit(arrayElementType, argument);
-                m_stringBuilder.append(",\n");
+                m_stringBuilder.append(",\n"_s);
             }
         }
-        m_stringBuilder.append(m_indent, "})");
+        m_stringBuilder.append(m_indent, "})"_s);
         return;
     }
 
@@ -1930,26 +1930,26 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
 void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
 {
-    m_stringBuilder.append("(");
+    m_stringBuilder.append('(');
     switch (unary.operation()) {
     case AST::UnaryOperation::Complement:
-        m_stringBuilder.append("~");
+        m_stringBuilder.append('~');
         break;
     case AST::UnaryOperation::Negate:
-        m_stringBuilder.append("-");
+        m_stringBuilder.append('-');
         break;
     case AST::UnaryOperation::Not:
-        m_stringBuilder.append("!");
+        m_stringBuilder.append('!');
         break;
     case AST::UnaryOperation::AddressOf:
-        m_stringBuilder.append("&");
+        m_stringBuilder.append('&');
         break;
     case AST::UnaryOperation::Dereference:
-        m_stringBuilder.append("*");
+        m_stringBuilder.append('*');
         break;
     }
     visit(unary.expression());
-    m_stringBuilder.append(")");
+    m_stringBuilder.append(')');
 }
 
 void FunctionDefinitionWriter::serializeBinaryExpression(AST::Expression& lhs, AST::BinaryOperation operation, AST::Expression& rhs)
@@ -1972,78 +1972,78 @@ void FunctionDefinitionWriter::serializeBinaryExpression(AST::Expression& lhs, A
             helperFunction = "fmod";
 
         if (helperFunction) {
-            m_stringBuilder.append(helperFunction, "(");
+            m_stringBuilder.append(helperFunction, '(');
             visit(lhs);
-            m_stringBuilder.append(", ");
+            m_stringBuilder.append(", "_s);
             visit(rhs);
-            m_stringBuilder.append(")");
+            m_stringBuilder.append(')');
             return;
         }
     }
 
-    m_stringBuilder.append("(");
+    m_stringBuilder.append('(');
     visit(lhs);
     switch (operation) {
     case AST::BinaryOperation::Add:
-        m_stringBuilder.append(" + ");
+        m_stringBuilder.append(" + "_s);
         break;
     case AST::BinaryOperation::Subtract:
-        m_stringBuilder.append(" - ");
+        m_stringBuilder.append(" - "_s);
         break;
     case AST::BinaryOperation::Multiply:
-        m_stringBuilder.append(" * ");
+        m_stringBuilder.append(" * "_s);
         break;
     case AST::BinaryOperation::Divide:
-        m_stringBuilder.append(" / ");
+        m_stringBuilder.append(" / "_s);
         break;
     case AST::BinaryOperation::Modulo:
-        m_stringBuilder.append(" % ");
+        m_stringBuilder.append(" % "_s);
         break;
     case AST::BinaryOperation::And:
-        m_stringBuilder.append(" & ");
+        m_stringBuilder.append(" & "_s);
         break;
     case AST::BinaryOperation::Or:
-        m_stringBuilder.append(" | ");
+        m_stringBuilder.append(" | "_s);
         break;
     case AST::BinaryOperation::Xor:
-        m_stringBuilder.append(" ^ ");
+        m_stringBuilder.append(" ^ "_s);
         break;
 
     case AST::BinaryOperation::LeftShift:
-        m_stringBuilder.append(" << ");
+        m_stringBuilder.append(" << "_s);
         break;
     case AST::BinaryOperation::RightShift:
-        m_stringBuilder.append(" >> ");
+        m_stringBuilder.append(" >> "_s);
         break;
 
     case AST::BinaryOperation::Equal:
-        m_stringBuilder.append(" == ");
+        m_stringBuilder.append(" == "_s);
         break;
     case AST::BinaryOperation::NotEqual:
-        m_stringBuilder.append(" != ");
+        m_stringBuilder.append(" != "_s);
         break;
     case AST::BinaryOperation::GreaterThan:
-        m_stringBuilder.append(" > ");
+        m_stringBuilder.append(" > "_s);
         break;
     case AST::BinaryOperation::GreaterEqual:
-        m_stringBuilder.append(" >= ");
+        m_stringBuilder.append(" >= "_s);
         break;
     case AST::BinaryOperation::LessThan:
-        m_stringBuilder.append(" < ");
+        m_stringBuilder.append(" < "_s);
         break;
     case AST::BinaryOperation::LessEqual:
-        m_stringBuilder.append(" <= ");
+        m_stringBuilder.append(" <= "_s);
         break;
 
     case AST::BinaryOperation::ShortCircuitAnd:
-        m_stringBuilder.append(" && ");
+        m_stringBuilder.append(" && "_s);
         break;
     case AST::BinaryOperation::ShortCircuitOr:
-        m_stringBuilder.append(" || ");
+        m_stringBuilder.append(" || "_s);
         break;
     }
     visit(rhs);
-    m_stringBuilder.append(")");
+    m_stringBuilder.append(')');
 }
 
 void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
@@ -2053,25 +2053,25 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
 
 void FunctionDefinitionWriter::visit(AST::PointerDereferenceExpression& pointerDereference)
 {
-    m_stringBuilder.append("(*");
+    m_stringBuilder.append("(*"_s);
     visit(pointerDereference.target());
-    m_stringBuilder.append(")");
+    m_stringBuilder.append(')');
 }
 void FunctionDefinitionWriter::visit(AST::IndexAccessExpression& access)
 {
     visit(access.base());
-    m_stringBuilder.append("[");
+    m_stringBuilder.append('[');
     visit(access.index());
-    m_stringBuilder.append("]");
+    m_stringBuilder.append(']');
 }
 
 void FunctionDefinitionWriter::visit(AST::IdentifierExpression& identifier)
 {
     auto it = m_overrides.find(identifier.identifier());
     if (UNLIKELY(it != m_overrides.end())) {
-        m_stringBuilder.append("(");
+        m_stringBuilder.append('(');
         serializeConstant(identifier.inferredType(), it->value);
-        m_stringBuilder.append(")");
+        m_stringBuilder.append(')');
         return;
     }
     m_stringBuilder.append(identifier.identifier());
@@ -2082,15 +2082,15 @@ void FunctionDefinitionWriter::visit(AST::FieldAccessExpression& access)
     visit(access.base());
     auto* baseType = access.base().inferredType();
     if (baseType && std::holds_alternative<Types::Pointer>(*baseType))
-        m_stringBuilder.append("->");
+        m_stringBuilder.append("->"_s);
     else
-        m_stringBuilder.append(".");
+        m_stringBuilder.append('.');
     m_stringBuilder.append(access.fieldName());
 }
 
 void FunctionDefinitionWriter::visit(AST::BoolLiteral& literal)
 {
-    m_stringBuilder.append(literal.value() ? "true" : "false");
+    m_stringBuilder.append(literal.value() ? "true"_s : "false"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::AbstractIntegerLiteral& literal)
@@ -2098,7 +2098,7 @@ void FunctionDefinitionWriter::visit(AST::AbstractIntegerLiteral& literal)
     m_stringBuilder.append(literal.value());
     auto& primitiveType = std::get<Types::Primitive>(*literal.inferredType());
     if (primitiveType.kind == Types::Primitive::U32)
-        m_stringBuilder.append("u");
+        m_stringBuilder.append('u');
 }
 
 void FunctionDefinitionWriter::visit(AST::Signed32Literal& literal)
@@ -2108,7 +2108,7 @@ void FunctionDefinitionWriter::visit(AST::Signed32Literal& literal)
 
 void FunctionDefinitionWriter::visit(AST::Unsigned32Literal& literal)
 {
-    m_stringBuilder.append(literal.value(), "u");
+    m_stringBuilder.append(literal.value(), 'u');
 }
 
 void FunctionDefinitionWriter::visit(AST::AbstractFloatLiteral& literal)
@@ -2143,7 +2143,7 @@ void FunctionDefinitionWriter::visit(AST::Statement& statement)
 void FunctionDefinitionWriter::visit(AST::AssignmentStatement& assignment)
 {
     visit(assignment.lhs());
-    m_stringBuilder.append(" = ");
+    m_stringBuilder.append(" = "_s);
     const auto* assignmentType = assignment.lhs().inferredType();
     if (!assignmentType) {
         // In theory this should never happen, but the assignments generated by
@@ -2164,18 +2164,18 @@ void FunctionDefinitionWriter::visit(AST::CallStatement& statement)
 void FunctionDefinitionWriter::visit(AST::CompoundAssignmentStatement& statement)
 {
     visit(statement.leftExpression());
-    m_stringBuilder.append(" = ");
+    m_stringBuilder.append(" = "_s);
     serializeBinaryExpression(statement.leftExpression(), statement.operation(), statement.rightExpression());
 }
 
 void FunctionDefinitionWriter::visit(AST::CompoundStatement& statement)
 {
-    m_stringBuilder.append("{\n");
+    m_stringBuilder.append("{\n"_s);
     {
         IndentationScope scope(m_indent);
         visitStatements(statement.statements());
     }
-    m_stringBuilder.append(m_indent, "}");
+    m_stringBuilder.append(m_indent, '}');
 }
 
 void FunctionDefinitionWriter::visitStatements(AST::Statement::List& statements)
@@ -2208,36 +2208,36 @@ void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement
     visit(statement.expression());
     switch (statement.operation()) {
     case AST::DecrementIncrementStatement::Operation::Increment:
-        m_stringBuilder.append("++");
+        m_stringBuilder.append("++"_s);
         break;
     case AST::DecrementIncrementStatement::Operation::Decrement:
-        m_stringBuilder.append("--");
+        m_stringBuilder.append("--"_s);
         break;
     }
 }
 
 void FunctionDefinitionWriter::visit(AST::DiscardStatement&)
 {
-    m_stringBuilder.append("discard_fragment()");
+    m_stringBuilder.append("discard_fragment()"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::IfStatement& statement)
 {
-    m_stringBuilder.append("if (");
+    m_stringBuilder.append("if ("_s);
     visit(statement.test());
-    m_stringBuilder.append(") ");
+    m_stringBuilder.append(") "_s);
     visit(statement.trueBody());
     if (statement.maybeFalseBody()) {
-        m_stringBuilder.append(" else ");
+        m_stringBuilder.append(" else "_s);
         visit(*statement.maybeFalseBody());
     }
 }
 
 void FunctionDefinitionWriter::visit(AST::PhonyAssignmentStatement& statement)
 {
-    m_stringBuilder.append("(void)(");
+    m_stringBuilder.append("(void)("_s);
     visit(statement.rhs());
-    m_stringBuilder.append(")");
+    m_stringBuilder.append(')');
 }
 
 static std::optional<std::pair<String, String>> fragDepthIdentifierForFunction(AST::Function* function)
@@ -2271,42 +2271,42 @@ void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
 {
     auto fragDepthIdentifier = fragDepthIdentifierForFunction(m_currentFunction);
     if (fragDepthIdentifier)
-        m_stringBuilder.append(fragDepthIdentifier->first, " __wgslFragmentReturnResult = ");
+        m_stringBuilder.append(fragDepthIdentifier->first, " __wgslFragmentReturnResult = "_s);
     else
-        m_stringBuilder.append("return");
+        m_stringBuilder.append("return"_s);
     if (statement.maybeExpression()) {
-        m_stringBuilder.append(" ");
+        m_stringBuilder.append(' ');
         visit(*statement.maybeExpression());
     }
 
     if (fragDepthIdentifier) {
-        m_stringBuilder.append(";\n__wgslFragmentReturnResult.", fragDepthIdentifier->second, " = clamp(__wgslFragmentReturnResult.", fragDepthIdentifier->second, ", as_type<float>(__DynamicOffsets[0]), as_type<float>(__DynamicOffsets[1]));\n");
-        m_stringBuilder.append("return __wgslFragmentReturnResult");
+        m_stringBuilder.append(";\n__wgslFragmentReturnResult."_s, fragDepthIdentifier->second, " = clamp(__wgslFragmentReturnResult."_s, fragDepthIdentifier->second, ", as_type<float>(__DynamicOffsets[0]), as_type<float>(__DynamicOffsets[1]));\n"_s);
+        m_stringBuilder.append("return __wgslFragmentReturnResult"_s);
     }
 }
 
 void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
 {
-    m_stringBuilder.append("for (");
+    m_stringBuilder.append("for ("_s);
     if (auto* initializer = statement.maybeInitializer())
         visit(*initializer);
-    m_stringBuilder.append(";");
+    m_stringBuilder.append(';');
     if (auto* test = statement.maybeTest()) {
-        m_stringBuilder.append(" ");
+        m_stringBuilder.append(' ');
         visit(*test);
     }
-    m_stringBuilder.append(";");
+    m_stringBuilder.append(';');
     if (auto* update = statement.maybeUpdate()) {
-        m_stringBuilder.append(" ");
+        m_stringBuilder.append(' ');
         visit(*update);
     }
-    m_stringBuilder.append(") ");
+    m_stringBuilder.append(") "_s);
     visit(statement.body());
 }
 
 void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
 {
-    m_stringBuilder.append("while (true) {\n");
+    m_stringBuilder.append("while (true) {\n"_s);
     {
         auto& continuing = statement.continuing();
         SetForScope continuingScope(m_continuing, continuing.has_value() ? &*continuing : nullptr);
@@ -2319,7 +2319,7 @@ void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
             visit(*continuing);
         }
     }
-    m_stringBuilder.append(m_indent, "}");
+    m_stringBuilder.append(m_indent, '}');
 }
 
 void FunctionDefinitionWriter::visit(AST::Continuing& continuing)
@@ -2327,28 +2327,28 @@ void FunctionDefinitionWriter::visit(AST::Continuing& continuing)
     // Do not emit the same continuing for continue statements within the continuing block
     SetForScope continuingScope(m_continuing, nullptr);
 
-    m_stringBuilder.append("{\n");
+    m_stringBuilder.append("{\n"_s);
     {
         IndentationScope scope(m_indent);
         visitStatements(continuing.body);
 
         if (auto* breakIf = continuing.breakIf) {
-            m_stringBuilder.append(m_indent, "if (");
+            m_stringBuilder.append(m_indent, "if ("_s);
             visit(*breakIf);
-            m_stringBuilder.append(")\n");
+            m_stringBuilder.append(")\n"_s);
 
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "break;\n");
+            m_stringBuilder.append(m_indent, "break;\n"_s);
         }
     }
-    m_stringBuilder.append(m_indent, "}\n");
+    m_stringBuilder.append(m_indent, "}\n"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::WhileStatement& statement)
 {
-    m_stringBuilder.append("while (");
+    m_stringBuilder.append("while ("_s);
     visit(statement.test());
-    m_stringBuilder.append(") ");
+    m_stringBuilder.append(") "_s);
     visit(statement.body());
 }
 
@@ -2356,34 +2356,34 @@ void FunctionDefinitionWriter::visit(AST::SwitchStatement& statement)
 {
     const auto& visitClause = [&](AST::SwitchClause& clause, bool isDefault = false) {
         for (auto& selector : clause.selectors) {
-            m_stringBuilder.append("\n");
-            m_stringBuilder.append(m_indent, "case ");
+            m_stringBuilder.append('\n');
+            m_stringBuilder.append(m_indent, "case "_s);
             visit(selector);
-            m_stringBuilder.append(":");
+            m_stringBuilder.append(':');
         }
         if (isDefault) {
-            m_stringBuilder.append("\n");
-            m_stringBuilder.append(m_indent, "default:");
+            m_stringBuilder.append('\n');
+            m_stringBuilder.append(m_indent, "default:"_s);
         }
-        m_stringBuilder.append(" ");
+        m_stringBuilder.append(' ');
         visit(clause.body);
 
         IndentationScope scope(m_indent);
-        m_stringBuilder.append("\n", m_indent, "break;");
+        m_stringBuilder.append('\n', m_indent, "break;"_s);
     };
 
-    m_stringBuilder.append("switch (");
+    m_stringBuilder.append("switch ("_s);
     visit(statement.value());
-    m_stringBuilder.append(") {");
+    m_stringBuilder.append(") {"_s);
     for (auto& clause : statement.clauses())
         visitClause(clause);
     visitClause(statement.defaultClause(), true);
-    m_stringBuilder.append("\n", m_indent, "}");
+    m_stringBuilder.append('\n', m_indent, '}');
 }
 
 void FunctionDefinitionWriter::visit(AST::BreakStatement&)
 {
-    m_stringBuilder.append("break");
+    m_stringBuilder.append("break"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::ContinueStatement&)
@@ -2392,7 +2392,7 @@ void FunctionDefinitionWriter::visit(AST::ContinueStatement&)
         visit(*m_continuing);
         m_stringBuilder.append(m_indent);
     }
-    m_stringBuilder.append("continue");
+    m_stringBuilder.append("continue"_s);
 }
 
 void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue value)
@@ -2409,7 +2409,7 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
                 m_stringBuilder.append(std::get<int32_t>(value));
                 break;
             case Primitive::U32:
-                m_stringBuilder.append(std::get<uint32_t>(value), "u");
+                m_stringBuilder.append(std::get<uint32_t>(value), 'u');
                 break;
             case Primitive::AbstractFloat: {
                 NumberToStringBuffer buffer;
@@ -2426,11 +2426,11 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
             case Primitive::F16: {
                 NumberToStringBuffer buffer;
                 WTF::numberToStringWithTrailingPoint(std::get<half>(value), buffer);
-                m_stringBuilder.append(&buffer[0], "h");
+                m_stringBuilder.append(&buffer[0], 'h');
                 break;
             }
             case Primitive::Bool:
-                m_stringBuilder.append(std::get<bool>(value) ? "true" : "false");
+                m_stringBuilder.append(std::get<bool>(value) ? "true"_s : "false"_s);
                 break;
             case Primitive::Void:
             case Primitive::Sampler:
@@ -2448,78 +2448,78 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
         [&](const Vector& vectorType) {
             auto& vector = std::get<ConstantVector>(value);
             visit(type);
-            m_stringBuilder.append("(");
+            m_stringBuilder.append('(');
             bool first = true;
             for (auto& element : vector.elements) {
                 if (!first)
-                    m_stringBuilder.append(", ");
+                    m_stringBuilder.append(", "_s);
                 first = false;
                 serializeConstant(vectorType.element, element);
             }
-            m_stringBuilder.append(")");
+            m_stringBuilder.append(')');
         },
         [&](const Array& arrayType) {
             auto& array = std::get<ConstantArray>(value);
             visit(type);
-            m_stringBuilder.append("{");
+            m_stringBuilder.append('{');
             bool first = true;
             for (auto& element : array.elements) {
                 if (!first)
-                    m_stringBuilder.append(", ");
+                    m_stringBuilder.append(", "_s);
                 first = false;
                 serializeConstant(arrayType.element, element);
             }
-            m_stringBuilder.append("}");
+            m_stringBuilder.append('}');
         },
         [&](const Matrix& matrixType) {
             auto& matrix = std::get<ConstantMatrix>(value);
-            m_stringBuilder.append("matrix<");
+            m_stringBuilder.append("matrix<"_s);
             visit(matrixType.element);
-            m_stringBuilder.append(", ", matrixType.columns, ", ", matrixType.rows, ">(");
+            m_stringBuilder.append(", "_s, matrixType.columns, ", "_s, matrixType.rows, ">("_s);
             bool first = true;
             for (auto& element : matrix.elements) {
                 if (!first)
-                    m_stringBuilder.append(", ");
+                    m_stringBuilder.append(", "_s);
                 first = false;
                 serializeConstant(matrixType.element, element);
             }
-            m_stringBuilder.append(")");
+            m_stringBuilder.append(')');
         },
         [&](const Struct& structType) {
             auto& constantStruct = std::get<ConstantStruct>(value);
-            m_stringBuilder.append(structType.structure.name(), " { ");
+            m_stringBuilder.append(structType.structure.name(), " { "_s);
             for (auto& member : structType.structure.members()) {
-                m_stringBuilder.append(".", member.name(), " = ");
+                m_stringBuilder.append('.', member.name(), " = "_s);
                 serializeConstant(structType.fields.get(member.originalName()), constantStruct.fields.get(member.originalName()));
-                m_stringBuilder.append(", ");
+                m_stringBuilder.append(", "_s);
             }
-            m_stringBuilder.append(" }");
+            m_stringBuilder.append(" }"_s);
         },
         [&](const PrimitiveStruct& primitiveStruct) {
             auto& constantStruct = std::get<ConstantStruct>(value);
             const auto& keys = Types::PrimitiveStruct::keys[primitiveStruct.kind];
 
-            m_stringBuilder.append(primitiveStruct.name, "<");
+            m_stringBuilder.append(primitiveStruct.name, '<');
             bool first = true;
             for (auto& value : primitiveStruct.values) {
                 if (!first)
-                    m_stringBuilder.append(", ");
+                    m_stringBuilder.append(", "_s);
                 first = false;
                 visit(value);
             }
-            m_stringBuilder.append("> {");
+            m_stringBuilder.append("> {"_s);
             first = true;
             for (auto& entry : constantStruct.fields) {
                 if (!first)
-                    m_stringBuilder.append(", ");
+                    m_stringBuilder.append(", "_s);
                 first = false;
-                m_stringBuilder.append(".", entry.key, " = ");
+                m_stringBuilder.append('.', entry.key, " = "_s);
                 auto* key = keys.tryGet(entry.key);
                 RELEASE_ASSERT(key);
                 auto* type = primitiveStruct.values[*key];
                 serializeConstant(type, entry.value);
             }
-            m_stringBuilder.append("}");
+            m_stringBuilder.append('}');
         },
         [&](const Pointer&) {
             RELEASE_ASSERT_NOT_REACHED();

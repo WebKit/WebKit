@@ -804,7 +804,7 @@ void WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCor
     auto addIfSet = [&milestones, &builder] (WebCore::LayoutMilestone milestone, const String& toAdd) {
         if (milestones.contains(milestone)) {
             if (!builder.isEmpty())
-                builder.append(", ");
+                builder.append(", "_s);
             builder.append(toAdd);
         }
     };

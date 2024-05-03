@@ -2099,11 +2099,11 @@ String MediaPlayer::lastErrorMessage() const
 String SeekTarget::toString() const
 {
     StringBuilder builder;
-    builder.append("[");
+    builder.append('[');
     builder.append(WTF::LogArgument<MediaTime>::toString(time));
     builder.append(WTF::LogArgument<MediaTime>::toString(negativeThreshold));
     builder.append(WTF::LogArgument<MediaTime>::toString(positiveThreshold));
-    builder.append("]");
+    builder.append(']');
     return builder.toString();
 }
 

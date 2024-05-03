@@ -296,7 +296,7 @@ String createVPCodecParametersString(const VPCodecConfigurationRecord& configura
         || !isValidRange(configuration.videoFullRangeFlag))
         return resultBuilder.toString();
 
-    resultBuilder.append(".0");
+    resultBuilder.append(".0"_s);
     resultBuilder.append(numberToStringUnsigned<String>(configuration.profile));
 
     resultBuilder.append('.');
@@ -319,7 +319,7 @@ String createVPCodecParametersString(const VPCodecConfigurationRecord& configura
         && configuration.matrixCoefficients == defaultConfiguration->matrixCoefficients)
         return resultBuilder.toString();
 
-    resultBuilder.append(".0");
+    resultBuilder.append(".0"_s);
     resultBuilder.append(numberToStringUnsigned<String>(configuration.chromaSubsampling));
 
     resultBuilder.append('.');
@@ -337,7 +337,7 @@ String createVPCodecParametersString(const VPCodecConfigurationRecord& configura
         resultBuilder.append('0');
     resultBuilder.append(numberToStringUnsigned<String>(configuration.matrixCoefficients));
 
-    resultBuilder.append(".0");
+    resultBuilder.append(".0"_s);
     resultBuilder.append(numberToStringUnsigned<String>(configuration.videoFullRangeFlag));
 
     return resultBuilder.toString();

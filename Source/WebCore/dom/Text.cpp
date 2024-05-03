@@ -212,9 +212,9 @@ static void appendTextRepresentation(StringBuilder& builder, const Text& text)
     
     constexpr size_t maxDumpLength = 30;
     if (value.length() > maxDumpLength)
-        builder.append(" \"", StringView(value).left(maxDumpLength - 10), "...\"");
+        builder.append(" \""_s, StringView(value).left(maxDumpLength - 10), "...\""_s);
     else
-        builder.append(" \"", value, '\"');
+        builder.append(" \""_s, value, '\"');
 }
 
 String Text::description() const

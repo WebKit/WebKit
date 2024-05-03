@@ -419,8 +419,8 @@ String Database::privateClickMeasurementToStringForTesting() const
     unsigned attributedNumber = 0;
     while (attributedScopedStatement->step() == SQLITE_ROW) {
         if (!attributedNumber)
-            builder.append(unattributedNumber ? "\n" : "", "Attributed Private Click Measurements:");
-        builder.append("\nWebCore::PrivateClickMeasurement ", ++attributedNumber + unattributedNumber, '\n',
+            builder.append(unattributedNumber ? "\n"_s : ""_s, "Attributed Private Click Measurements:"_s);
+        builder.append("\nWebCore::PrivateClickMeasurement "_s, ++attributedNumber + unattributedNumber, '\n',
             attributionToStringForTesting(buildPrivateClickMeasurementFromDatabase(*attributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed)));
     }
     return builder.toString();
@@ -434,29 +434,29 @@ String Database::attributionToStringForTesting(const WebCore::PrivateClickMeasur
     auto sourceID = pcm.sourceID();
 
     StringBuilder builder;
-    builder.append("Source site: ", sourceSiteDomain, "\nAttribute on site: ", destinationSiteDomain, "\nSource ID: ", sourceID);
+    builder.append("Source site: "_s, sourceSiteDomain, "\nAttribute on site: "_s, destinationSiteDomain, "\nSource ID: "_s, sourceID);
 
     if (auto& triggerData = pcm.attributionTriggerData()) {
         auto attributionTriggerData = triggerData->data;
         auto priority = triggerData->priority;
         auto earliestTimeToSend = pcm.timesToSend().sourceEarliestTimeToSend;
 
-        builder.append("\nAttribution trigger data: ", attributionTriggerData, "\nAttribution priority: ", priority, "\nAttribution earliest time to send: ");
+        builder.append("\nAttribution trigger data: "_s, attributionTriggerData, "\nAttribution priority: "_s, priority, "\nAttribution earliest time to send: "_s);
         if (!earliestTimeToSend)
-            builder.append("Not set");
+            builder.append("Not set"_s);
         else {
             auto secondsUntilSend = *earliestTimeToSend - WallTime::now();
-            builder.append((secondsUntilSend >= 24_h && secondsUntilSend <= 48_h) ? "Within 24-48 hours" : "Outside 24-48 hours");
+            builder.append((secondsUntilSend >= 24_h && secondsUntilSend <= 48_h) ? "Within 24-48 hours"_s : "Outside 24-48 hours"_s);
         }
 
-        builder.append("\nDestination token: ");
+        builder.append("\nDestination token: "_s);
         if (!triggerData->destinationSecretToken)
-            builder.append("Not set");
+            builder.append("Not set"_s);
         else
-            builder.append("\ntoken: ", triggerData->destinationSecretToken->tokenBase64URL, "\nsignature: ", triggerData->destinationSecretToken->signatureBase64URL, "\nkey: ", triggerData->destinationSecretToken->keyIDBase64URL);
+            builder.append("\ntoken: "_s, triggerData->destinationSecretToken->tokenBase64URL, "\nsignature: "_s, triggerData->destinationSecretToken->signatureBase64URL, "\nkey: "_s, triggerData->destinationSecretToken->keyIDBase64URL);
     } else
-        builder.append("\nNo attribution trigger data.");
-    builder.append("\nApplication bundle identifier: ", pcm.sourceApplicationBundleID(), '\n');
+        builder.append("\nNo attribution trigger data."_s);
+    builder.append("\nApplication bundle identifier: "_s, pcm.sourceApplicationBundleID(), '\n');
 
     return builder.toString();
 }

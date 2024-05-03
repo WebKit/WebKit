@@ -320,24 +320,24 @@ String IDBKeyData::loggingString() const
         return "<invalid>"_s;
     case IndexedDB::KeyType::Array: {
         StringBuilder builder;
-        builder.append("<array> - { ");
+        builder.append("<array> - { "_s);
         auto& array = std::get<Vector<IDBKeyData>>(m_value);
         for (size_t i = 0; i < array.size(); ++i) {
             builder.append(array[i].loggingString());
             if (i < array.size() - 1)
-                builder.append(", ");
+                builder.append(", "_s);
         }
-        builder.append(" }");
+        builder.append(" }"_s);
         result = builder.toString();
         break;
     }
     case IndexedDB::KeyType::Binary: {
         StringBuilder builder;
-        builder.append("<binary> - ");
+        builder.append("<binary> - "_s);
 
         auto* data = std::get<ThreadSafeDataBuffer>(m_value).data();
         if (!data) {
-            builder.append("(null)");
+            builder.append("(null)"_s);
             result = builder.toString();
             break;
         }
@@ -350,7 +350,7 @@ String IDBKeyData::loggingString() const
         }
 
         if (data->size() > 8)
-            builder.append("...");
+            builder.append("..."_s);
 
         result = builder.toString();
         break;

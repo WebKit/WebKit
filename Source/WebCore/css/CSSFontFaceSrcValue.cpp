@@ -148,12 +148,12 @@ String CSSFontFaceSrcResourceValue::customCSSText() const
     else
         builder.append(serializeURL(m_location.specifiedURLString));
     if (!m_format.isEmpty())
-        builder.append(" format(", serializeString(m_format), ')');
+        builder.append(" format("_s, serializeString(m_format), ')');
     if (!m_technologies.isEmpty()) {
-        builder.append(" tech(");
+        builder.append(" tech("_s);
         for (size_t i = 0; i < m_technologies.size(); ++i) {
             if (i)
-                builder.append(", ");
+                builder.append(", "_s);
             builder.append(cssTextFromFontTech(m_technologies[i]));
         }
         builder.append(')');

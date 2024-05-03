@@ -176,10 +176,10 @@ String notAFunctionSourceAppender(const String& originalMessage, StringView sour
     StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
     builder.append(base, " is not a function. (In '", sourceText, "', '", base, "' is ");
     if (type == TypeSymbol)
-        builder.append("a Symbol");
+        builder.append("a Symbol"_s);
     else {
         if (type == TypeObject)
-            builder.append("an instance of ");
+            builder.append("an instance of "_s);
         builder.append(displayValue);
     }
     builder.append(')');

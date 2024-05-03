@@ -109,12 +109,12 @@ void SelectionData::setURL(const URL& url, const String& label)
         actualLabel = url.string();
 
     StringBuilder markup;
-    markup.append("<a href=\"");
+    markup.append("<a href=\""_s);
     markup.append(url.string());
-    markup.append("\">");
+    markup.append("\">"_s);
     GUniquePtr<gchar> escaped(g_markup_escape_text(actualLabel.utf8().data(), -1));
     markup.append(String::fromUTF8(escaped.get()));
-    markup.append("</a>");
+    markup.append("</a>"_s);
     setMarkup(markup.toString());
 }
 

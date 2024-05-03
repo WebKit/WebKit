@@ -2098,15 +2098,15 @@ void NetworkSessionCocoa::donateToSKAdNetwork(WebCore::PrivateClickMeasurement&&
         return;
 
     StringBuilder debugString;
-    debugString.append("Submitting potential install attribution for AdamId: ");
+    debugString.append("Submitting potential install attribution for AdamId: "_s);
     debugString.append(makeString(*pcm.adamID()));
-    debugString.append(", adNetworkRegistrableDomain: ");
+    debugString.append(", adNetworkRegistrableDomain: "_s);
     debugString.append(pcm.destinationSite().registrableDomain.string());
-    debugString.append(", impressionId: ");
+    debugString.append(", impressionId: "_s);
     debugString.append(pcm.ephemeralSourceNonce()->nonce);
-    debugString.append(", sourceWebRegistrableDomain: ");
+    debugString.append(", sourceWebRegistrableDomain: "_s);
     debugString.append(pcm.sourceSite().registrableDomain.string());
-    debugString.append(", version: 3");
+    debugString.append(", version: 3"_s);
     networkProcess().broadcastConsoleMessage(sessionID(), MessageSource::PrivateClickMeasurement, MessageLevel::Debug, debugString.toString());
 }
 

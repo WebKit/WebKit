@@ -74,10 +74,10 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
     if (auto result = session.cookieDatabase().searchCookies(firstParty, url, searchHTTPOnly, secure, std::nullopt)) {
         for (const auto& cookie : *result) {
             if (!cookies.isEmpty())
-                cookies.append("; ");
+                cookies.append("; "_s);
             if (!cookie.name.isEmpty()) {
                 cookies.append(cookie.name);
-                cookies.append("=");
+                cookies.append('=');
             }
             if (cookie.secure)
                 didAccessSecureCookies = true;

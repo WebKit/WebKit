@@ -135,7 +135,7 @@ String IDBObjectStoreInfo::loggingString(int indent) const
     StringBuilder builder;
     for (int i = 0; i < indent; ++i)
         builder.append(' ');
-    builder.append("Object store: ", m_name, m_identifier);
+    builder.append("Object store: "_s, m_name, m_identifier);
     for (auto index : m_indexMap.values())
         builder.append(index.loggingString(indent + 1), '\n');
     return builder.toString();

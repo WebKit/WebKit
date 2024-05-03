@@ -791,7 +791,7 @@ String HTMLElement::accessKeyLabel() const
 #else
     // Currently accessKeyModifier in non-cocoa platforms is hardcoded to Alt, so no reason to do extra work here.
     // If this ever becomes configurable, make this code use EventHandler::accessKeyModifiers().
-    result.append("Alt+");
+    result.append("Alt+"_s);
 #endif
 
     result.append(accessKey);

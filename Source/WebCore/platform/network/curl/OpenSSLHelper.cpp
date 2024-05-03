@@ -339,8 +339,8 @@ String canonicalizeIPv6Address(std::span<uint8_t, 16> data)
     for (int j = 0; j < 8; j++) {
         if (j == start && maxZeros > minimum) {
             if (ipAddress.isEmpty())
-                ipAddress.append(":");
-            ipAddress.append(":");
+                ipAddress.append(':');
+            ipAddress.append(':');
 
             j = end.value();
             continue;
@@ -354,7 +354,7 @@ String canonicalizeIPv6Address(std::span<uint8_t, 16> data)
         ipAddress.append(newSection.toString());
 
         if (j != 7)
-            ipAddress.append(":");
+            ipAddress.append(':');
     }
     return ipAddress.toString();
 }

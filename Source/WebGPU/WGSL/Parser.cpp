@@ -101,9 +101,9 @@ struct TemplateTypes<TT> {
     auto name##Expected = consumeType(TokenType::type); \
     if (!name##Expected) { \
         StringBuilder builder; \
-        builder.append("Expected a "); \
+        builder.append("Expected a "_s); \
         builder.append(toString(TokenType::type)); \
-        builder.append(", but got a "); \
+        builder.append(", but got a "_s); \
         builder.append(toString(name##Expected.error())); \
         FAIL(builder.toString()); \
     } \
@@ -114,9 +114,9 @@ struct TemplateTypes<TT> {
         auto expectedToken = consumeType(TokenType::type); \
         if (!expectedToken) { \
             StringBuilder builder; \
-            builder.append("Expected a "); \
+            builder.append("Expected a "_s); \
             builder.append(toString(TokenType::type)); \
-            builder.append(", but got a "); \
+            builder.append(", but got a "_s); \
             builder.append(toString(expectedToken.error())); \
             FAIL(builder.toString()); \
         } \
@@ -126,9 +126,9 @@ struct TemplateTypes<TT> {
     auto name##Expected = consumeTypes<__VA_ARGS__>(); \
     if (!name##Expected) { \
         StringBuilder builder; \
-        builder.append("Expected one of ["); \
+        builder.append("Expected one of ["_s); \
         TemplateTypes<__VA_ARGS__>::appendNameTo(builder); \
-        builder.append("], but got a "); \
+        builder.append("], but got a "_s); \
         builder.append(toString(name##Expected.error())); \
         FAIL(builder.toString()); \
     } \

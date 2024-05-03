@@ -332,21 +332,21 @@ static void initializeDatafileToUseOSLog()
 }
 #endif // OS(DARWIN)
 
-static const char* asString(OSLogType type)
+static ASCIILiteral asString(OSLogType type)
 {
     switch (type) {
     case OSLogType::None:
-        return "none";
+        return "none"_s;
     case OSLogType::Default:
-        return "default";
+        return "default"_s;
     case OSLogType::Info:
-        return "info";
+        return "info"_s;
     case OSLogType::Debug:
-        return "debug";
+        return "debug"_s;
     case OSLogType::Error:
-        return "error";
+        return "error"_s;
     case OSLogType::Fault:
-        return "fault";
+        return "fault"_s;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
@@ -652,23 +652,23 @@ void Options::executeDumpOptions()
     if (level > DumpLevel::Verbose)
         level = DumpLevel::Verbose;
 
-    const char* title = nullptr;
+    ASCIILiteral title;
     switch (level) {
     case DumpLevel::None:
         break;
     case DumpLevel::Overridden:
-        title = "Modified JSC options:";
+        title = "Modified JSC options:"_s;
         break;
     case DumpLevel::All:
-        title = "All JSC options:";
+        title = "All JSC options:"_s;
         break;
     case DumpLevel::Verbose:
-        title = "All JSC options with descriptions:";
+        title = "All JSC options with descriptions:"_s;
         break;
     }
 
     StringBuilder builder;
-    dumpAllOptions(builder, level, title, nullptr, "   ", "\n", DumpDefaults);
+    dumpAllOptions(builder, level, title, nullptr, "   "_s, "\n"_s, DumpDefaults);
     dataLog(builder.toString());
 }
 
@@ -1197,16 +1197,16 @@ bool Options::setOption(const char* arg, bool verify)
 }
 
 
-void Options::dumpAllOptions(StringBuilder& builder, DumpLevel level, const char* title,
-    const char* separator, const char* optionHeader, const char* optionFooter, DumpDefaultsOption dumpDefaultsOption)
+void Options::dumpAllOptions(StringBuilder& builder, DumpLevel level, ASCIILiteral title,
+    ASCIILiteral separator, ASCIILiteral optionHeader, ASCIILiteral optionFooter, DumpDefaultsOption dumpDefaultsOption)
 {
     AllowUnfinalizedAccessScope scope;
-    if (title) {
+    if (!title.isNull()) {
         builder.append(title);
         builder.append('\n');
     }
 
-    for (size_t id = 0; id < NumberOfOptions; id++) {
+    for (size_t id = 0; id < NumberOfOptions; ++id) {
         if (separator && id)
             builder.append(separator);
         dumpOption(builder, level, static_cast<ID>(id), optionHeader, optionFooter, dumpDefaultsOption);
@@ -1215,18 +1215,18 @@ void Options::dumpAllOptions(StringBuilder& builder, DumpLevel level, const char
 
 void Options::dumpAllOptionsInALine(StringBuilder& builder)
 {
-    dumpAllOptions(builder, DumpLevel::All, nullptr, " ", nullptr, nullptr, DontDumpDefaults);
+    dumpAllOptions(builder, DumpLevel::All, { }, " "_s, { }, { }, DontDumpDefaults);
 }
 
-void Options::dumpAllOptions(DumpLevel level, const char* title)
+void Options::dumpAllOptions(DumpLevel level, ASCIILiteral title)
 {
     StringBuilder builder;
-    dumpAllOptions(builder, level, title, nullptr, "   ", "\n", DumpDefaults);
+    dumpAllOptions(builder, level, title, { }, "   "_s, "\n"_s, DumpDefaults);
     dataLog(builder.toString().utf8().data());
 }
 
 void Options::dumpOption(StringBuilder& builder, DumpLevel level, Options::ID id,
-    const char* header, const char* footer, DumpDefaultsOption dumpDefaultsOption)
+    ASCIILiteral header, ASCIILiteral footer, DumpDefaultsOption dumpDefaultsOption)
 {
     RELEASE_ASSERT(static_cast<size_t>(id) < NumberOfOptions);
 
@@ -1241,20 +1241,20 @@ void Options::dumpOption(StringBuilder& builder, DumpLevel level, Options::ID id
     if (level == DumpLevel::Overridden && !wasOverridden)
         return;
 
-    if (header)
+    if (!header.isNull())
         builder.append(header);
     builder.append(option.name(), '=');
     option.dump(builder);
 
     if (wasOverridden && (dumpDefaultsOption == DumpDefaults) && OptionsHelper::hasMetadata()) {
         auto defaultOption = OptionsHelper::defaultFor(id);
-        builder.append(" (default: ");
+        builder.append(" (default: "_s);
         defaultOption.dump(builder);
-        builder.append(")");
+        builder.append(')');
     }
 
     if (needsDescription)
-        builder.append("   ... ", option.description());
+        builder.append("   ... "_s, option.description());
 
     builder.append(footer);
 }
@@ -1319,7 +1319,7 @@ void Option::dump(StringBuilder& builder) const
 {
     switch (type()) {
     case Options::Type::Bool:
-        builder.append(m_bool ? "true" : "false");
+        builder.append(m_bool ? "true"_s : "false"_s);
         break;
     case Options::Type::Unsigned:
         builder.append(m_unsigned);
@@ -1334,10 +1334,10 @@ void Option::dump(StringBuilder& builder) const
         builder.append(m_int32);
         break;
     case Options::Type::OptionRange:
-        builder.append(m_optionRange.rangeString());
+        builder.append(span(m_optionRange.rangeString()));
         break;
     case Options::Type::OptionString:
-        builder.append('"', m_optionString ? m_optionString : "", '"');
+        builder.append('"', m_optionString ? span8(m_optionString) : ""_span, '"');
         break;
     case Options::Type::GCLogLevel:
         builder.append(GCLogging::levelAsString(m_gcLogLevel));

@@ -124,15 +124,15 @@ static String wkMediaCaptureStateString(_WKMediaCaptureStateDeprecated flags)
 {
     StringBuilder string;
     if (flags & _WKMediaCaptureStateDeprecatedActiveMicrophone)
-        string.append("_WKMediaCaptureStateDeprecatedActiveMicrophone + ");
+        string.append("_WKMediaCaptureStateDeprecatedActiveMicrophone + "_s);
     if (flags & _WKMediaCaptureStateDeprecatedActiveCamera)
-        string.append("_WKMediaCaptureStateDeprecatedActiveCamera + ");
+        string.append("_WKMediaCaptureStateDeprecatedActiveCamera + "_s);
     if (flags & _WKMediaCaptureStateDeprecatedMutedMicrophone)
-        string.append("_WKMediaCaptureStateDeprecatedMutedMicrophone + ");
+        string.append("_WKMediaCaptureStateDeprecatedMutedMicrophone + "_s);
     if (flags & _WKMediaCaptureStateDeprecatedMutedCamera)
-        string.append("_WKMediaCaptureStateDeprecatedMutedCamera + ");
+        string.append("_WKMediaCaptureStateDeprecatedMutedCamera + "_s);
     if (string.isEmpty())
-        string.append("_WKMediaCaptureStateDeprecatedNone");
+        string.append("_WKMediaCaptureStateDeprecatedNone"_s);
     else
         string.shrink(string.length() - 2);
     return string.toString();

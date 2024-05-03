@@ -179,7 +179,7 @@ static void appendMessagePrefix(StringBuilder& builder, MessageSource source, Me
         break;
     }
 
-    builder.append("CONSOLE");
+    builder.append("CONSOLE"_s);
     if (!sourceString.isEmpty())
         builder.append(' ', sourceString);
     if (!typeString.isEmpty())
@@ -194,7 +194,7 @@ void ConsoleClient::printConsoleMessage(MessageSource source, MessageType type, 
 
     if (!url.isEmpty()) {
         appendURLAndPosition(builder, url, lineNumber, columnNumber);
-        builder.append(": ");
+        builder.append(": "_s);
     }
 
     appendMessagePrefix(builder, source, type, level);
@@ -214,7 +214,7 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
 
     if (!lastCaller.sourceURL().isEmpty()) {
         appendURLAndPosition(builder, lastCaller.sourceURL(), lastCaller.lineNumber(), lastCaller.columnNumber());
-        builder.append(": ");
+        builder.append(": "_s);
     }
 
     appendMessagePrefix(builder, source, type, level);

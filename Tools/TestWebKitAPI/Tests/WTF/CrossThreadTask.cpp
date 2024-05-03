@@ -46,8 +46,8 @@ struct LifetimeLogger {
         defaultConstructorSet.add(fullName());
     }
 
-    LifetimeLogger(const char* inputName)
-        : name(*inputName)
+    LifetimeLogger(ASCIILiteral inputName)
+        : name(inputName)
     {
         nameConstructorSet.add(fullName());
     }
@@ -82,16 +82,16 @@ struct LifetimeLogger {
     String fullName()
     {
         StringBuilder builder;
-        builder.append(&name);
-        builder.append("-");
+        builder.append(name);
+        builder.append('-');
         builder.append(String::number(copyGeneration));
-        builder.append("-");
+        builder.append('-');
         builder.append(String::number(moveGeneration));
 
         return builder.toString();
     }
 
-    const char& name { *"<default>" };
+    ASCIILiteral name { "<default>"_s };
     int copyGeneration { 0 };
     int moveGeneration { 0 };
 };
@@ -106,7 +106,7 @@ TEST(WTF_CrossThreadTask, Basic)
     {
         LifetimeLogger logger1;
         LifetimeLogger logger2(logger1);
-        LifetimeLogger logger3("logger");
+        LifetimeLogger logger3("logger"_s);
 
         auto task = createCrossThreadTask(testFunction, logger1, logger2, logger3);
         task.performTask();

@@ -238,7 +238,7 @@ static String parseClause(const char* keyword, size_t keywordLength, FILE* file,
             builder.append(std::span { line, p + 1 });
             return builder.toString();
         }
-        builder.append(line);
+        builder.append(span(line));
 
     } while ((line = fgets(buffer, bufferSize, file)));
 

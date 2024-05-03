@@ -55,7 +55,7 @@ void CSSMediaRule::setMediaQueries(MQ::MediaQueryList&& queries)
 String CSSMediaRule::cssText() const
 {
     StringBuilder builder;
-    builder.append("@media ", conditionText());
+    builder.append("@media "_s, conditionText());
     appendCSSTextForItems(builder);
     return builder.toString();
 }
@@ -63,7 +63,7 @@ String CSSMediaRule::cssText() const
 String CSSMediaRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     StringBuilder builder;
-    builder.append("@media ", conditionText());
+    builder.append("@media "_s, conditionText());
     appendCSSTextWithReplacementURLsForItems(builder, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
     return builder.toString();
 }

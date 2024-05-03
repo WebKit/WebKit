@@ -118,7 +118,7 @@ void CSSSelectorList::buildSelectorsText(StringBuilder& stringBuilder) const
     const CSSSelector* firstSubselector = first();
     for (const CSSSelector* subSelector = firstSubselector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
         if (subSelector != firstSubselector)
-            stringBuilder.append(", ");
+            stringBuilder.append(", "_s);
         stringBuilder.append(subSelector->selectorText());
     }
 }

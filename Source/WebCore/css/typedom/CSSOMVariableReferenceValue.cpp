@@ -65,7 +65,7 @@ String CSSOMVariableReferenceValue::toString() const
 
 void CSSOMVariableReferenceValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
 {
-    builder.append("var(");
+    builder.append("var("_s);
     builder.append(m_variable);
     if (m_fallback) {
         builder.append(',');

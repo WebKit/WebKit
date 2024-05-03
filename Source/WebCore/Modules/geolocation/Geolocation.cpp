@@ -335,17 +335,17 @@ int Geolocation::watchPosition(Ref<PositionCallback>&& successCallback, RefPtr<P
 static void logError(const String& target, const bool isSecure, const bool isMixedContent, Document* document)
 {
     StringBuilder message;
-    message.append("[blocked] Access to geolocation was blocked over");
+    message.append("[blocked] Access to geolocation was blocked over"_s);
     
     if (!isSecure)
-        message.append(" insecure connection to ");
+        message.append(" insecure connection to "_s);
     else if (isMixedContent)
-        message.append(" secure connection with mixed content to ");
+        message.append(" secure connection with mixed content to "_s);
     else
         return;
     
     message.append(target);
-    message.append(".\n");
+    message.append(".\n"_s);
     document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message.toString());
 }
     

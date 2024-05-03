@@ -293,7 +293,7 @@ void replaceNewlinesWithWindowsStyleNewlines(String& str)
         if (str[index] != '\n' || (index > 0 && str[index - 1] == '\r'))
             result.append(str[index]);
         else
-            result.append("\r\n");
+            result.append("\r\n"_s);
     }
     str = result.toString();
 }

@@ -494,11 +494,11 @@ void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, StylePr
     // With AnnotateForInterchange::Yes, wrappingStyleForSerialization should have removed -webkit-text-decorations-in-effect
     ASSERT(!shouldAnnotate() || propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
     if (isBlock)
-        out.append("<div style=\"");
+        out.append("<div style=\""_s);
     else
-        out.append("<span style=\"");
+        out.append("<span style=\""_s);
     appendAttributeValue(out, style->asText(), document.isHTMLDocument());
-    out.append("\">");
+    out.append("\">"_s);
 }
 
 const String& StyledMarkupAccumulator::styleNodeCloseTag(bool isBlock)
@@ -650,7 +650,7 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
 
     auto replacementType = spanReplacementForElement(element);
     if (UNLIKELY(replacementType != SpanReplacementType::None))
-        out.append("<span");
+        out.append("<span"_s);
     else
         appendOpenTag(out, element, nullptr);
 
@@ -713,7 +713,7 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
         }
 
         if (!newInlineStyle->isEmpty()) {
-            out.append(" style=\"");
+            out.append(" style=\""_s);
             appendAttributeValue(out, newInlineStyle->style()->asText(), documentIsHTML);
             out.append('"');
         }
@@ -725,7 +725,7 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
 void StyledMarkupAccumulator::appendEndTag(StringBuilder& out, const Element& element)
 {
     if (UNLIKELY(spanReplacementForElement(element) != SpanReplacementType::None))
-        out.append("</span>");
+        out.append("</span>"_s);
     else
         MarkupAccumulator::appendEndTag(out, element);
 }
@@ -1080,7 +1080,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
     
     if (accumulator.needRelativeStyleWrapper() && needsPositionStyleConversion) {
         if (accumulator.needClearingDiv())
-            accumulator.append("<div style=\"clear: both;\"></div>");
+            accumulator.append("<div style=\"clear: both;\"></div>"_s);
         RefPtr<EditingStyle> positionRelativeStyle = styleFromMatchedRulesAndInlineDecl(*body);
         positionRelativeStyle->style()->setProperty(CSSPropertyPosition, CSSValueRelative);
         accumulator.wrapWithStyleNode(positionRelativeStyle->style(), document, true);
@@ -1375,9 +1375,9 @@ String documentTypeString(const Document& document)
 String urlToMarkup(const URL& url, const String& title)
 {
     StringBuilder markup;
-    markup.append("<a href=\"", url.string(), "\">");
+    markup.append("<a href=\""_s, url.string(), "\">"_s);
     MarkupAccumulator::appendCharactersReplacingEntities(markup, title, 0, title.length(), EntityMaskInPCDATA);
-    markup.append("</a>");
+    markup.append("</a>"_s);
     return markup.toString();
 }
 

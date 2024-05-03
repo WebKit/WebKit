@@ -3190,10 +3190,10 @@ void Element::finishParsingChildren()
 static void appendAttributes(StringBuilder& builder, const Element& element)
 {
     if (element.hasID())
-        builder.append(" id=\'", element.getIdAttribute(), '\'');
+        builder.append(" id=\'"_s, element.getIdAttribute(), '\'');
 
     if (element.hasClass()) {
-        builder.append(" class=\'");
+        builder.append(" class=\'"_s);
         size_t classNamesToDump = element.classNames().size();
         constexpr size_t maxNumClassNames = 7;
         bool addEllipsis = false;
@@ -3208,7 +3208,7 @@ static void appendAttributes(StringBuilder& builder, const Element& element)
             builder.append(element.classNames()[i]);
         }
         if (addEllipsis)
-            builder.append(" ...");
+            builder.append(" ..."_s);
         builder.append('\'');
     }
 }

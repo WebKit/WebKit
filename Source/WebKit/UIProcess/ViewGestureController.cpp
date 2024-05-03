@@ -274,25 +274,25 @@ String ViewGestureController::SnapshotRemovalTracker::eventsDescription(Events e
     StringBuilder description;
 
     if (event & ViewGestureController::SnapshotRemovalTracker::VisuallyNonEmptyLayout)
-        description.append("VisuallyNonEmptyLayout ");
+        description.append("VisuallyNonEmptyLayout "_s);
 
     if (event & ViewGestureController::SnapshotRemovalTracker::RenderTreeSizeThreshold)
-        description.append("RenderTreeSizeThreshold ");
+        description.append("RenderTreeSizeThreshold "_s);
 
     if (event & ViewGestureController::SnapshotRemovalTracker::RepaintAfterNavigation)
-        description.append("RepaintAfterNavigation ");
+        description.append("RepaintAfterNavigation "_s);
 
     if (event & ViewGestureController::SnapshotRemovalTracker::MainFrameLoad)
-        description.append("MainFrameLoad ");
+        description.append("MainFrameLoad "_s);
 
     if (event & ViewGestureController::SnapshotRemovalTracker::SubresourceLoads)
-        description.append("SubresourceLoads ");
+        description.append("SubresourceLoads "_s);
 
     if (event & ViewGestureController::SnapshotRemovalTracker::ScrollPositionRestoration)
-        description.append("ScrollPositionRestoration ");
+        description.append("ScrollPositionRestoration "_s);
 
     if (event & ViewGestureController::SnapshotRemovalTracker::SwipeAnimationEnd)
-        description.append("SwipeAnimationEnd ");
+        description.append("SwipeAnimationEnd "_s);
 
     return description.toString();
 }

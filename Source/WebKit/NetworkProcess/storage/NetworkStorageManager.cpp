@@ -1828,7 +1828,7 @@ void NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(St
         auto fetchedTypes = originStorageManager(origin).fetchDataTypesInList(targetTypes, false);
         if (!fetchedTypes.isEmpty()) {
             StringBuilder originBuilder;
-            originBuilder.append("\n{ \"origin\" : { \"topOrigin\" : \"", origin.topOrigin.toString(), "\", \"clientOrigin\": \"", origin.clientOrigin.toString(), "\" }, \"caches\" : ");
+            originBuilder.append("\n{ \"origin\" : { \"topOrigin\" : \""_s, origin.topOrigin.toString(), "\", \"clientOrigin\": \""_s, origin.clientOrigin.toString(), "\" }, \"caches\" : "_s);
             originBuilder.append(originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).representationString());
             originBuilder.append('}');
             originStrings.append(originBuilder.toString());

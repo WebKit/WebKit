@@ -194,11 +194,11 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> vpxCapsFromCodecString(cons
     auto outputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
     auto profile = makeString(parameters->profile);
     gst_caps_set_simple(outputCaps.get(), "profile", G_TYPE_STRING, profile.ascii().data(), nullptr);
-    const char* yuvFormat = "I420";
+    auto yuvFormat = "I420"_s;
     if (parameters->chromaSubsampling == VPConfigurationChromaSubsampling::Subsampling_422)
-        yuvFormat = "I422";
+        yuvFormat = "I422"_s;
     else if (parameters->chromaSubsampling == VPConfigurationChromaSubsampling::Subsampling_444)
-        yuvFormat = "Y444";
+        yuvFormat = "Y444"_s;
     StringBuilder formatBuilder;
     formatBuilder.append(yuvFormat);
     if (parameters->bitDepth > 8 || parameters->profile == 2) {
@@ -326,14 +326,14 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> av1CapsFromCodecString(cons
     auto outputCaps = adoptGRef(gst_caps_new_simple("video/x-av1", "profile", G_TYPE_STRING, profile, "bit-depth-luma", G_TYPE_UINT, configurationRecord->bitDepth, "bit-depth-chroma", G_TYPE_UINT, configurationRecord->bitDepth, nullptr));
 
     const char* chromaFormat = nullptr;
-    const char* yuvFormat = "I420";
+    auto yuvFormat = "I420"_s;
     switch (static_cast<AV1ConfigurationChromaSubsampling>(configurationRecord->chromaSubsampling)) {
     case AV1ConfigurationChromaSubsampling::Subsampling_422:
-        yuvFormat = "I422";
+        yuvFormat = "I422"_s;
         chromaFormat = "4:2:2";
         break;
     case AV1ConfigurationChromaSubsampling::Subsampling_444:
-        yuvFormat = "Y444";
+        yuvFormat = "Y444"_s;
         chromaFormat = "4:4:4";
         break;
     case AV1ConfigurationChromaSubsampling::Subsampling_420_Unknown:

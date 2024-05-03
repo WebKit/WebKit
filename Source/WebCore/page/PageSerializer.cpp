@@ -245,7 +245,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
         if (!itemText.isEmpty()) {
             cssText.append(itemText);
             if (i < styleSheet->length() - 1)
-                cssText.append("\n\n");
+                cssText.append("\n\n"_s);
         }
         Document* document = styleSheet->ownerDocument();
         // Some rules have resources associated with them that we need to retrieve.

@@ -646,7 +646,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
     String errorMessage;
 
     // Build up a new script string that is an async function with arguments, and deserialize those arguments.
-    functionStringBuilder.append("(async function(");
+    functionStringBuilder.append("(async function("_s);
     for (auto argument = parameters.arguments->begin(); argument != parameters.arguments->end();) {
         functionStringBuilder.append(argument->key);
         auto serializedArgument = SerializedScriptValue::createFromWireBytes(WTFMove(argument->value));
@@ -669,7 +669,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
     if (!errorMessage.isEmpty())
         return makeUnexpected(ExceptionDetails { errorMessage });
 
-    functionStringBuilder.append("){", parameters.source, "})");
+    functionStringBuilder.append("){"_s, parameters.source, "})"_s);
 
     auto sourceCode = ScriptSourceCode { functionStringBuilder.toString(), parameters.taintedness, WTFMove(parameters.sourceURL), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()) };
     const auto& jsSourceCode = sourceCode.jsSourceCode();

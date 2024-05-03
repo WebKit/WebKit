@@ -238,7 +238,7 @@ String replaceURLsInSrcsetAttribute(const Element& element, StringView attribute
     StringBuilder result;
     for (const auto& candidate : imageCandidates) {
         if (&candidate != &imageCandidates[0])
-            result.append(", ");
+            result.append(", "_s);
 
         auto resolvedURLString = element.resolveURLStringIfNeeded(candidate.string.toString());
         auto replacementURLString = replacementURLStrings.get(resolvedURLString);

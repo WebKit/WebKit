@@ -111,7 +111,7 @@ static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& arg
             RETURN_IF_EXCEPTION(scope, { });
             auto viewWithString = jsString->viewWithUnderlyingString(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
-            builder.append(",", viewWithString.view);
+            builder.append(',', viewWithString.view);
         }
         if (UNLIKELY(builder.hasOverflowed())) {
             throwOutOfMemoryError(globalObject, scope);
@@ -124,7 +124,7 @@ static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& arg
         RETURN_IF_EXCEPTION(scope, { });
         auto body = bodyString->viewWithUnderlyingString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        builder.append("\n) {\n", body.view, "\n}");
+        builder.append("\n) {\n"_s, body.view, "\n}"_s);
         if (UNLIKELY(builder.hasOverflowed())) {
             throwOutOfMemoryError(globalObject, scope);
             return { };

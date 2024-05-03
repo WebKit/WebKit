@@ -1540,7 +1540,7 @@ ExceptionOr<void> InspectorStyleSheet::setRuleStyleText(const InspectorCSSId& id
             replacementBodyText.append(atRuleIdentifierForType(childRuleSourceData->type));
 
         replacementBodyText.appendSubstring(styleSheetText, childStart, childEnd - childStart);
-        replacementBodyText.append("}\n");
+        replacementBodyText.append("}\n"_s);
     }
 
     auto closingIndentationLineStart = newText.reverseFind('\n');

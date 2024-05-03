@@ -111,9 +111,9 @@ static String encodeProtocolString(const String& protocol)
     StringBuilder builder;
     for (size_t i = 0; i < protocol.length(); i++) {
         if (protocol[i] < 0x20 || protocol[i] > 0x7E)
-            builder.append("\\u", hex(protocol[i], 4));
+            builder.append("\\u"_s, hex(protocol[i], 4));
         else if (protocol[i] == 0x5c)
-            builder.append("\\\\");
+            builder.append("\\\\"_s);
         else
             builder.append(protocol[i]);
     }

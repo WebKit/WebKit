@@ -78,19 +78,19 @@ void ProcessLauncher::launchProcess()
         return;
 
     StringBuilder commandLineBuilder;
-    commandLineBuilder.append("\"");
+    commandLineBuilder.append("\""_s);
     commandLineBuilder.append(String(pathStr));
-    commandLineBuilder.append("\"");
-    commandLineBuilder.append(" -type ");
+    commandLineBuilder.append("\""_s);
+    commandLineBuilder.append(" -type "_s);
     commandLineBuilder.append(String::number(static_cast<int>(m_launchOptions.processType)));
-    commandLineBuilder.append(" -processIdentifier ");
+    commandLineBuilder.append(" -processIdentifier "_s);
     commandLineBuilder.append(String::number(m_launchOptions.processIdentifier.toUInt64()));
-    commandLineBuilder.append(" -clientIdentifier ");
+    commandLineBuilder.append(" -clientIdentifier "_s);
     commandLineBuilder.append(String::number(reinterpret_cast<uintptr_t>(clientIdentifier)));
     if (m_client->shouldConfigureJSCForTesting())
-        commandLineBuilder.append(" -configure-jsc-for-testing");
+        commandLineBuilder.append(" -configure-jsc-for-testing"_s);
     if (!m_client->isJITEnabled())
-        commandLineBuilder.append(" -disable-jit");
+        commandLineBuilder.append(" -disable-jit"_s);
     commandLineBuilder.append('\0');
 
     auto commandLine = commandLineBuilder.toString().wideCharacters();

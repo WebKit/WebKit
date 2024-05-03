@@ -103,53 +103,53 @@ CSSMatrixComponent::CSSMatrixComponent(Ref<DOMMatrixReadOnly>&& matrix, Is2D is2
 void CSSMatrixComponent::serialize(StringBuilder& builder) const
 {
     if (is2D()) {
-        builder.append("matrix(");
+        builder.append("matrix("_s);
         builder.append(String::number(m_matrix->a()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->b()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->c()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->d()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->e()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->f()));
-        builder.append(")");
+        builder.append(')');
     } else {
-        builder.append("matrix3d(");
+        builder.append("matrix3d("_s);
         builder.append(String::number(m_matrix->m11()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m12()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m13()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m14()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m21()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m22()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m23()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m24()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m31()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m32()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m33()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m34()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m41()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m42()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m43()));
-        builder.append(", ");
+        builder.append(", "_s);
         builder.append(String::number(m_matrix->m44()));
-        builder.append(")");
+        builder.append(')');
     }
 }
 

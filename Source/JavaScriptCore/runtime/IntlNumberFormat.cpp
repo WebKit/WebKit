@@ -416,24 +416,24 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         // No skeleton is needed.
         break;
     case Style::Percent:
-        skeletonBuilder.append(" percent scale/100");
+        skeletonBuilder.append(" percent scale/100"_s);
         break;
     case Style::Currency: {
-        skeletonBuilder.append(" currency/", currency);
+        skeletonBuilder.append(" currency/"_s, currency);
 
         // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#unit-width
         switch (m_currencyDisplay) {
         case CurrencyDisplay::Code:
-            skeletonBuilder.append(" unit-width-iso-code");
+            skeletonBuilder.append(" unit-width-iso-code"_s);
             break;
         case CurrencyDisplay::Symbol:
             // Default option. Do not specify unit-width.
             break;
         case CurrencyDisplay::NarrowSymbol:
-            skeletonBuilder.append(" unit-width-narrow");
+            skeletonBuilder.append(" unit-width-narrow"_s);
             break;
         case CurrencyDisplay::Name:
-            skeletonBuilder.append(" unit-width-full-name");
+            skeletonBuilder.append(" unit-width-full-name"_s);
             break;
         }
         break;
@@ -442,24 +442,24 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         // The measure-unit stem takes one required option: the unit identifier of the unit to be formatted.
         // The full unit identifier is required: both the type and the subtype (for example, length-meter).
         // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#unit
-        skeletonBuilder.append(" measure-unit/");
+        skeletonBuilder.append(" measure-unit/"_s);
         auto numeratorUnit = wellFormedUnit->numerator;
         skeletonBuilder.append(numeratorUnit.type, '-', numeratorUnit.subType);
         if (auto denominatorUnitValue = wellFormedUnit->denominator) {
             auto denominatorUnit = denominatorUnitValue.value();
-            skeletonBuilder.append(" per-measure-unit/", denominatorUnit.type, '-', denominatorUnit.subType);
+            skeletonBuilder.append(" per-measure-unit/"_s, denominatorUnit.type, '-', denominatorUnit.subType);
         }
 
         // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#unit-width
         switch (m_unitDisplay) {
         case UnitDisplay::Short:
-            skeletonBuilder.append(" unit-width-short");
+            skeletonBuilder.append(" unit-width-short"_s);
             break;
         case UnitDisplay::Narrow:
-            skeletonBuilder.append(" unit-width-narrow");
+            skeletonBuilder.append(" unit-width-narrow"_s);
             break;
         case UnitDisplay::Long:
-            skeletonBuilder.append(" unit-width-full-name");
+            skeletonBuilder.append(" unit-width-full-name"_s);
             break;
         }
         break;
@@ -473,18 +473,18 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     case IntlNotation::Standard:
         break;
     case IntlNotation::Scientific:
-        skeletonBuilder.append(" scientific");
+        skeletonBuilder.append(" scientific"_s);
         break;
     case IntlNotation::Engineering:
-        skeletonBuilder.append(" engineering");
+        skeletonBuilder.append(" engineering"_s);
         break;
     case IntlNotation::Compact:
         switch (m_compactDisplay) {
         case CompactDisplay::Short:
-            skeletonBuilder.append(" compact-short");
+            skeletonBuilder.append(" compact-short"_s);
             break;
         case CompactDisplay::Long:
-            skeletonBuilder.append(" compact-long");
+            skeletonBuilder.append(" compact-long"_s);
             break;
         }
         break;
@@ -496,33 +496,33 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     switch (m_signDisplay) {
     case SignDisplay::Auto:
         if (useAccounting)
-            skeletonBuilder.append(" sign-accounting");
+            skeletonBuilder.append(" sign-accounting"_s);
         else
-            skeletonBuilder.append(" sign-auto");
+            skeletonBuilder.append(" sign-auto"_s);
         break;
     case SignDisplay::Never:
-        skeletonBuilder.append(" sign-never");
+        skeletonBuilder.append(" sign-never"_s);
         break;
     case SignDisplay::Always:
         if (useAccounting)
-            skeletonBuilder.append(" sign-accounting-always");
+            skeletonBuilder.append(" sign-accounting-always"_s);
         else
-            skeletonBuilder.append(" sign-always");
+            skeletonBuilder.append(" sign-always"_s);
         break;
     case SignDisplay::ExceptZero:
         if (useAccounting)
-            skeletonBuilder.append(" sign-accounting-except-zero");
+            skeletonBuilder.append(" sign-accounting-except-zero"_s);
         else
-            skeletonBuilder.append(" sign-except-zero");
+            skeletonBuilder.append(" sign-except-zero"_s);
         break;
     case SignDisplay::Negative:
         // Only ICU69~ supports negative sign display. Ignore this option if linked ICU does not support it.
         // https://github.com/unicode-org/icu/commit/1aa0dad8e06ecc99bff442dd37f6daa2d39d9a5a
         if (WTF::ICU::majorVersion() >= 69) {
             if (useAccounting)
-                skeletonBuilder.append(" sign-accounting-negative");
+                skeletonBuilder.append(" sign-accounting-negative"_s);
             else
-                skeletonBuilder.append(" sign-negative");
+                skeletonBuilder.append(" sign-negative"_s);
         }
         break;
     }
@@ -531,16 +531,16 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     // https://github.com/unicode-org/icu/blob/main/docs/userguide/format_parse/numbers/skeletons.md#grouping
     switch (m_useGrouping) {
     case UseGrouping::False:
-        skeletonBuilder.append(" group-off");
+        skeletonBuilder.append(" group-off"_s);
         break;
     case UseGrouping::Min2:
-        skeletonBuilder.append(" group-min2");
+        skeletonBuilder.append(" group-min2"_s);
         break;
     case UseGrouping::Auto:
-        skeletonBuilder.append(" group-auto");
+        skeletonBuilder.append(" group-auto"_s);
         break;
     case UseGrouping::Always:
-        skeletonBuilder.append(" group-on-aligned");
+        skeletonBuilder.append(" group-on-aligned"_s);
         break;
     }
 

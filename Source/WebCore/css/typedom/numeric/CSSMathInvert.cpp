@@ -76,8 +76,8 @@ void CSSMathInvert::serialize(StringBuilder& builder, OptionSet<SerializationArg
 {
     // https://drafts.css-houdini.org/css-typed-om/#calc-serialization
     if (!arguments.contains(SerializationArguments::WithoutParentheses))
-        builder.append(arguments.contains(SerializationArguments::Nested) ? "(" : "calc(");
-    builder.append("1 / ");
+        builder.append(arguments.contains(SerializationArguments::Nested) ? "("_s : "calc("_s);
+    builder.append("1 / "_s);
     m_value->serialize(builder, arguments);
     if (!arguments.contains(SerializationArguments::WithoutParentheses))
         builder.append(')');

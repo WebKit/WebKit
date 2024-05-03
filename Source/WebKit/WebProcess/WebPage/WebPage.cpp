@@ -2460,7 +2460,7 @@ void WebPage::setPageZoomFactor(double zoomFactor)
 static void dumpHistoryItem(HistoryItem& item, size_t indent, bool isCurrentItem, StringBuilder& stringBuilder, const String& directoryName)
 {
     if (isCurrentItem)
-        stringBuilder.append("curr->  ");
+        stringBuilder.append("curr->  "_s);
     else {
         for (size_t i = 0; i < indent; ++i)
             stringBuilder.append(' ');
@@ -2473,16 +2473,16 @@ static void dumpHistoryItem(HistoryItem& item, size_t indent, bool isCurrentItem
             start = 0;
         else
             start += directoryName.length();
-        stringBuilder.append("(file test):", StringView { url.string() }.substring(start));
+        stringBuilder.append("(file test):"_s, StringView { url.string() }.substring(start));
     } else
         stringBuilder.append(url.string());
 
     auto& target = item.target();
     if (target.length())
-        stringBuilder.append(" (in frame \"", target, "\")");
+        stringBuilder.append(" (in frame \""_s, target, "\")"_s);
 
     if (item.isTargetItem())
-        stringBuilder.append("  **nav target**");
+        stringBuilder.append("  **nav target**"_s);
 
     stringBuilder.append('\n');
 

@@ -42,13 +42,13 @@ void serializationForCSS(StringBuilder& builder, HueInterpolationMethod hueInter
     case HueInterpolationMethod::Shorter:
         break;
     case HueInterpolationMethod::Longer:
-        builder.append(" longer hue");
+        builder.append(" longer hue"_s);
         break;
     case HueInterpolationMethod::Increasing:
-        builder.append(" increasing hue");
+        builder.append(" increasing hue"_s);
         break;
     case HueInterpolationMethod::Decreasing:
-        builder.append(" decreasing hue");
+        builder.append(" decreasing hue"_s);
         break;
     }
 }

@@ -206,7 +206,7 @@ ExceptionOr<void> FetchHeaders::remove(const String& name)
 ExceptionOr<String> FetchHeaders::get(const String& name) const
 {
     if (!isValidHTTPToken(name))
-        return Exception { ExceptionCode::TypeError, makeString("Invalid header name: '", name, "'") };
+        return Exception { ExceptionCode::TypeError, makeString("Invalid header name: '"_s, name, "'"_s) };
 
     if (equalIgnoringASCIICase(name, "set-cookie"_s)) {
         if (m_setCookieValues.isEmpty())
@@ -214,7 +214,7 @@ ExceptionOr<String> FetchHeaders::get(const String& name) const
         StringBuilder builder;
         for (const auto& value : m_setCookieValues) {
             if (!builder.isEmpty())
-                builder.append(", ");
+                builder.append(", "_s);
             builder.append(value);
         }
         return builder.toString();

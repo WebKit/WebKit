@@ -2047,14 +2047,14 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
                 StringBuilder orderNumbers;
 
                 if (auto index = renderChildrenInDOMOrder.find(renderChild); index != notFound) {
-                    orderNumbers.append("Item #");
+                    orderNumbers.append("Item #"_s);
                     orderNumbers.append(index + 1);
                 }
 
                 if (auto order = renderChild->style().order(); order || hasCustomOrder) {
                     if (!orderNumbers.isEmpty())
                         orderNumbers.append('\n');
-                    orderNumbers.append("order: ");
+                    orderNumbers.append("order: "_s);
                     orderNumbers.append(order);
                 }
 

@@ -88,7 +88,7 @@ ExceptionOr<void> CSSSkewY::setAy(Ref<CSSNumericValue> ay)
 void CSSSkewY::serialize(StringBuilder& builder) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssskewy
-    builder.append("skewY(");
+    builder.append("skewY("_s);
     m_ay->serialize(builder);
     builder.append(')');
 }
