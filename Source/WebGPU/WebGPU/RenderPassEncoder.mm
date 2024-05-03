@@ -725,7 +725,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
             ASSERT(icb.resources);
 
             for (const auto& resource : *icb.resources) {
-                if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))
+                if ((resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment)) && resource.mtlResources.size())
                     [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
 
                 ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
@@ -849,7 +849,7 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
         m_bindGroupDynamicOffsets.set(groupIndex, Vector<uint32_t>(std::span { dynamicOffsets, dynamicOffsetCount }));
 
     for (const auto& resource : group.resources()) {
-        if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))
+        if ((resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment)) && resource.mtlResources.size())
             [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
 
         ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());

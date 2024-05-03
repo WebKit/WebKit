@@ -443,7 +443,7 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& grou
 
     Vector<const BindableResources*> resourceList;
     for (const auto& resource : group.resources()) {
-        if (resource.renderStages == BindGroup::MTLRenderStageCompute)
+        if (resource.renderStages == BindGroup::MTLRenderStageCompute && resource.mtlResources.size())
             [m_computeCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage];
 
         ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());

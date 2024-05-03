@@ -1298,6 +1298,20 @@ void CommandEncoder::makeSubmitInvalid(NSString* errorString)
         m_cachedCommandBuffer->makeInvalid(errorString ?: m_lastErrorString);
 }
 
+static bool hasValidDimensions(WGPUTextureDimension dimension, NSUInteger width, NSUInteger height, NSUInteger depth)
+{
+    switch (dimension) {
+    case WGPUTextureDimension_1D:
+        return !!width;
+    case WGPUTextureDimension_2D:
+        return width && height;
+    case WGPUTextureDimension_3D:
+        return width && height && depth;
+    default:
+        return true;
+    }
+}
+
 void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize)
 {
     if (source.nextInChain || destination.nextInChain || destination.layout.nextInChain)
@@ -1412,6 +1426,9 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
             clearTextureIfNeeded(source, sourceSlice);
     }
 
+    if (!hasValidDimensions(sourceTexture.dimension(), widthForMetal, heightForMetal, depthForMetal))
+        return;
+
     if (destinationBuffer.length < Texture::bytesPerRow(aspectSpecificFormat, widthForMetal, sourceTexture.sampleCount()))
         return;
 
@@ -1420,9 +1437,6 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400756-copyfromtexture?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, 1, 1);
-        if (!widthForMetal)
-            return;
-
         auto sourceOrigin = MTLOriginMake(source.origin.x, 0, 0);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset + layer * destinationBytesPerImage);
@@ -1447,9 +1461,6 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400756-copyfromtexture?language=objc
         // "When you copy to a 2D texture, depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
-        if (!widthForMetal || !heightForMetal)
-            return;
-
         auto sourceOrigin = MTLOriginMake(source.origin.x, source.origin.y, 0);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset + layer * destinationBytesPerImage);
@@ -1470,9 +1481,6 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     }
     case WGPUTextureDimension_3D: {
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, depthForMetal);
-        if (!widthForMetal || !heightForMetal || !depthForMetal)
-            return;
-
         auto sourceOrigin = MTLOriginMake(source.origin.x, source.origin.y, source.origin.z);
         auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset);
             [m_blitCommandEncoder

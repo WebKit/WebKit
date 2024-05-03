@@ -671,6 +671,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
                     auto region = MTLRegionMake1D(destination.origin.x, widthForMetal);
                     for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
                         auto sourceOffset = static_cast<NSUInteger>(dataLayoutOffset + layer * bytesPerImage);
+                        if (sourceOffset % blockSize)
+                            continue;
                         NSUInteger destinationSlice = destination.origin.z + layer;
                         [mtlTexture
                             replaceRegion:region
@@ -689,6 +691,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
                     auto region = MTLRegionMake2D(destination.origin.x, destination.origin.y, widthForMetal, heightForMetal);
                     for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
                         auto sourceOffset = static_cast<NSUInteger>(dataLayoutOffset + layer * bytesPerImage);
+                        if (sourceOffset % blockSize)
+                            continue;
                         NSUInteger destinationSlice = destination.origin.z + layer;
                         [mtlTexture
                             replaceRegion:region
@@ -706,6 +710,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
 
                     auto region = MTLRegionMake3D(destination.origin.x, destination.origin.y, destination.origin.z, widthForMetal, heightForMetal, depthForMetal);
                     auto sourceOffset = static_cast<NSUInteger>(dataLayoutOffset);
+                    if (sourceOffset % blockSize)
+                        break;
                     [mtlTexture
                         replaceRegion:region
                         mipmapLevel:destination.mipLevel
@@ -754,6 +760,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
             NSUInteger destinationSlice = destination.origin.z + layer;
             if (sourceOffset + widthForMetal * blockSize > temporaryBuffer.length)
                 continue;
+            if (sourceOffset % blockSize)
+                continue;
 
             [m_blitCommandEncoder
                 copyFromBuffer:temporaryBuffer
@@ -780,6 +788,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
         for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
             NSUInteger sourceOffset = layer * bytesPerImage;
             NSUInteger destinationSlice = destination.origin.z + layer;
+            if (sourceOffset % blockSize)
+                continue;
             [m_blitCommandEncoder
                 copyFromBuffer:temporaryBuffer
                 sourceOffset:sourceOffset
@@ -800,10 +810,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
         if (!widthForMetal || !heightForMetal || !depthForMetal)
             return;
 
-        NSUInteger sourceOffset = 0;
         [m_blitCommandEncoder
             copyFromBuffer:temporaryBuffer
-            sourceOffset:sourceOffset
+            sourceOffset:0
             sourceBytesPerRow:bytesPerRow
             sourceBytesPerImage:bytesPerImage
             sourceSize:sourceSize
