@@ -118,10 +118,10 @@ inline LayoutRect RenderBox::contentBoxRect() const
 
 inline LayoutRect RenderBox::marginBoxRect() const
 {
-    auto left = computedCSSPadding(style().marginLeft());
-    auto right = computedCSSPadding(style().marginRight());
-    auto top = computedCSSPadding(style().marginTop());
-    auto bottom = computedCSSPadding(style().marginBottom());
+    auto left = resolveLengthPercentageUsingContainerLogicalWidth(style().marginLeft());
+    auto right = resolveLengthPercentageUsingContainerLogicalWidth(style().marginRight());
+    auto top = resolveLengthPercentageUsingContainerLogicalWidth(style().marginTop());
+    auto bottom = resolveLengthPercentageUsingContainerLogicalWidth(style().marginBottom());
     return { -left, -top, size().width() + left + right, size().height() + top + bottom };
 }
 
