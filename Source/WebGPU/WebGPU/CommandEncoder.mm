@@ -526,18 +526,19 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         if (attachment.depthSlice) {
             if (textureDimension != WGPUTextureViewDimension_3D)
                 return RenderPassEncoder::createInvalid(*this, m_device, @"depthSlice specified on 2D texture");
-            depthSliceOrArrayLayer = *attachment.depthSlice;
+            depthSliceOrArrayLayer = textureIsDestroyed ? 0 : *attachment.depthSlice;
             if (depthSliceOrArrayLayer >= texture.depthOrArrayLayers())
                 return RenderPassEncoder::createInvalid(*this, m_device, @"depthSlice is greater than texture's depth or array layers");
 
         } else {
             if (textureDimension == WGPUTextureViewDimension_3D)
                 return RenderPassEncoder::createInvalid(*this, m_device, @"textureDimension is 3D and no depth slice is specified");
-            depthSliceOrArrayLayer = texture.baseArrayLayer();
+            depthSliceOrArrayLayer = textureIsDestroyed ? 0 : texture.baseArrayLayer();
         }
 
         auto* bridgedTexture = (__bridge void*)texture.parentTexture();
-        uint64_t depthAndMipLevel = depthSliceOrArrayLayer | (static_cast<uint64_t>(texture.baseMipLevel()) << 32);
+        auto baseMipLevel = textureIsDestroyed ? 0 : texture.baseMipLevel();
+        uint64_t depthAndMipLevel = depthSliceOrArrayLayer | (static_cast<uint64_t>(baseMipLevel) << 32);
         if (auto it = depthSlices.find(bridgedTexture); it != depthSlices.end()) {
             auto addResult = it->value.add(depthAndMipLevel);
             if (!addResult.isNewEntry)
