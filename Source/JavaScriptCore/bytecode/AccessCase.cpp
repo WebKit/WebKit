@@ -295,24 +295,14 @@ RefPtr<AccessCase> AccessCase::fromStructureStubInfo(
     }
 }
 
-JSObject* AccessCase::tryGetAlternateBaseImpl() const
+bool AccessCase::hasAlternateBaseImpl() const
 {
-    switch (m_type) {
-    case AccessCase::Getter:
-    case AccessCase::Setter:
-    case AccessCase::CustomValueGetter:
-    case AccessCase::CustomAccessorGetter:
-    case AccessCase::CustomValueSetter:
-    case AccessCase::CustomAccessorSetter:
-    case AccessCase::IntrinsicGetter:
-    case AccessCase::Load:
-    case AccessCase::GetGetter:
-        if (!conditionSet().isEmpty())
-            return conditionSet().slotBaseCondition().object();
-        return nullptr;
-    default:
-        return nullptr;
-    }
+    return !conditionSet().isEmpty();
+}
+
+JSObject* AccessCase::alternateBaseImpl() const
+{
+    return conditionSet().slotBaseCondition().object();
 }
 
 Ref<AccessCase> AccessCase::cloneImpl() const
@@ -1412,6 +1402,12 @@ void AccessCase::checkConsistency(StructureStubInfo& stubInfo)
 
 bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
 {
+    // And we say "false" if either of them have m_polyProtoAccessChain.
+    if (lhs.m_polyProtoAccessChain || rhs.m_polyProtoAccessChain)
+        return false;
+    if (lhs.additionalSet() || rhs.additionalSet())
+        return false;
+
     if (lhs.m_type != rhs.m_type)
         return false;
     if (lhs.m_offset != rhs.m_offset)
@@ -1423,17 +1419,6 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     if (lhs.m_identifier != rhs.m_identifier)
         return false;
     if (lhs.m_conditionSet != rhs.m_conditionSet)
-        return false;
-    if (lhs.additionalSet() != rhs.additionalSet())
-        return false;
-    if (lhs.m_polyProtoAccessChain || rhs.m_polyProtoAccessChain) {
-        if (!lhs.m_polyProtoAccessChain || !rhs.m_polyProtoAccessChain)
-            return false;
-        if (*lhs.m_polyProtoAccessChain != *rhs.m_polyProtoAccessChain)
-            return false;
-    }
-
-    if (lhs.tryGetAlternateBase() != rhs.tryGetAlternateBase())
         return false;
 
     switch (lhs.m_type) {
@@ -1536,15 +1521,6 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case InstanceOfGeneric:
         return true;
 
-    case CustomValueGetter:
-    case CustomAccessorGetter:
-    case CustomValueSetter:
-    case CustomAccessorSetter: {
-        auto& lhsd = lhs.as<GetterSetterAccessCase>();
-        auto& rhsd = rhs.as<GetterSetterAccessCase>();
-        return lhsd.m_customAccessor == rhsd.m_customAccessor;
-    }
-
     case Getter:
     case Setter:
     case ProxyObjectHas:
@@ -1552,6 +1528,14 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case ProxyObjectStore:
     case IndexedProxyObjectLoad: {
         // Getter / Setter / ProxyObjectHas / ProxyObjectLoad / ProxyObjectStore / IndexedProxyObjectLoad rely on CodeBlock, which makes sharing impossible.
+        return false;
+    }
+
+    case CustomValueGetter:
+    case CustomAccessorGetter:
+    case CustomValueSetter:
+    case CustomAccessorSetter: {
+        // They are embedding JSGlobalObject that are not tied to sharing JITStubRoutine.
         return false;
     }
 
@@ -1606,11 +1590,20 @@ WatchpointSet* AccessCase::additionalSet() const
     return result;
 }
 
-JSObject* AccessCase::tryGetAlternateBase() const
+bool AccessCase::hasAlternateBase() const
+{
+    bool result = false;
+    const_cast<AccessCase*>(this)->runWithDowncast([&](auto* accessCase) {
+        result = accessCase->hasAlternateBaseImpl();
+    });
+    return result;
+}
+
+JSObject* AccessCase::alternateBase() const
 {
     JSObject* result = nullptr;
     const_cast<AccessCase*>(this)->runWithDowncast([&](auto* accessCase) {
-        result = accessCase->tryGetAlternateBaseImpl();
+        result = accessCase->alternateBaseImpl();
     });
     return result;
 }

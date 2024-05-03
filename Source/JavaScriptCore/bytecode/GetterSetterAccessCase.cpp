@@ -75,11 +75,18 @@ Ref<AccessCase> GetterSetterAccessCase::cloneImpl() const
     return adoptRef(*new GetterSetterAccessCase(*this));
 }
 
-JSObject* GetterSetterAccessCase::tryGetAlternateBaseImpl() const
+bool GetterSetterAccessCase::hasAlternateBaseImpl() const
 {
-    if (auto* object = customSlotBase())
-        return object;
-    return Base::tryGetAlternateBaseImpl();
+    if (customSlotBase())
+        return true;
+    return Base::hasAlternateBaseImpl();
+}
+
+JSObject* GetterSetterAccessCase::alternateBaseImpl() const
+{
+    if (customSlotBase())
+        return customSlotBase();
+    return Base::alternateBaseImpl();
 }
 
 void GetterSetterAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Indenter& indent) const

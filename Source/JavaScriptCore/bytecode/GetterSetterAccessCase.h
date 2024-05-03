@@ -65,7 +65,8 @@ private:
 
     GetterSetterAccessCase(const GetterSetterAccessCase&);
 
-    JSObject* tryGetAlternateBaseImpl() const;
+    bool hasAlternateBaseImpl() const;
+    JSObject* alternateBaseImpl() const;
     void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const;
     Ref<AccessCase> cloneImpl() const;
 

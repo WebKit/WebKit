@@ -332,9 +332,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurr
                 if (!conditionSet.isStillValid())
                     continue;
 
-                Structure* currStructure = access.structure();
-                if (auto* object = access.tryGetAlternateBase())
-                    currStructure = object->structure();
+                Structure* currStructure = access.hasAlternateBase() ? access.alternateBase()->structure() : access.structure();
                 // For now, we only support cases which JSGlobalObject is the same to the currently profiledBlock.
                 if (currStructure->globalObject() != profiledBlock->globalObject())
                     return GetByStatus(JSC::slowVersion(summary), stubInfo);

@@ -115,13 +115,6 @@ public:
     WatchpointSet& watchpointSet() { return *m_watchpointSet.get(); }
     void invalidate();
 
-    bool isStillValid() const
-    {
-        if (!m_watchpointSet)
-            return false;
-        return m_watchpointSet->isStillValid();
-    }
-
 protected:
     void observeZeroRefCountImpl();
 
