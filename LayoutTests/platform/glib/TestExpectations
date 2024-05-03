@@ -3732,7 +3732,7 @@ imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-wi
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/abspos-dialog-layout.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/multiple-centered-dialogs.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-scroll-within.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_hit_test_scroll.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_hit_test_scroll_visible_descendant.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Skip ]
