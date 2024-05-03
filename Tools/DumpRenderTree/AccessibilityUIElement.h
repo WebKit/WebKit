@@ -251,7 +251,6 @@ public:
     bool scrollPageLeft();
     bool scrollPageRight();
     
-    bool hasContainedByFieldsetTrait();
     bool hasTextEntryTrait();
     AccessibilityUIElement fieldsetAncestorElement();
     JSRetainPtr<JSStringRef> attributedStringForElement();

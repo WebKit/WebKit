@@ -316,7 +316,6 @@ interface AccessibilityUIElement {
     readonly attribute boolean isInDescriptionListDetail;
     readonly attribute boolean isInDescriptionListTerm;
 
-    readonly attribute boolean hasContainedByFieldsetTrait;
     readonly attribute boolean hasTextEntryTrait;
     AccessibilityUIElement fieldsetAncestorElement();
     AccessibilityUIElement focusableAncestor();

@@ -406,7 +406,6 @@ public:
     bool isInDescriptionListDetail() const;
     bool isInDescriptionListTerm() const;
 
-    bool hasContainedByFieldsetTrait();
     bool hasTextEntryTrait();
     RefPtr<AccessibilityUIElement> fieldsetAncestorElement();
 

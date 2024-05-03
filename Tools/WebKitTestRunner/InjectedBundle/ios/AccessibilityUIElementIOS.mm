@@ -94,7 +94,6 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)accessibilityARIALiveRegionStatus;
 - (NSString *)accessibilityARIARelevantStatus;
 - (NSString *)accessibilityInvalidStatus;
-- (UIAccessibilityTraits)_axContainedByFieldsetTrait;
 - (UIAccessibilityTraits)_axTextEntryTrait;
 - (id)_accessibilityFieldsetAncestor;
 - (BOOL)_accessibilityHasTouchEventListener;
@@ -865,12 +864,6 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::traits()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::identifier()
 {
     return concatenateAttributeAndValue(@"AXIdentifier", [m_element accessibilityIdentifier]);
-}
-
-bool AccessibilityUIElement::hasContainedByFieldsetTrait()
-{
-    UIAccessibilityTraits traits = [m_element accessibilityTraits];
-    return (traits & [m_element _axContainedByFieldsetTrait]) == [m_element _axContainedByFieldsetTrait];
 }
 
 bool AccessibilityUIElement::hasTextEntryTrait()
