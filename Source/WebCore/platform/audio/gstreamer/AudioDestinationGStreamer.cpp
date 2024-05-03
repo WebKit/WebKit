@@ -23,7 +23,6 @@
 
 #include "AudioDestinationGStreamer.h"
 
-#include "AudioChannel.h"
 #include "AudioSourceProvider.h"
 #include "AudioUtilities.h"
 #include "GStreamerCommon.h"
@@ -170,12 +169,17 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 
     GstElement* audioConvert = makeGStreamerElement("audioconvert", nullptr);
     GstElement* audioResample = makeGStreamerElement("audioresample", nullptr);
-    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_src.get(), audioConvert, audioResample, audioSink.get(), nullptr);
 
-    // Link src pads from webkitAudioSrc to audioConvert ! audioResample ! autoaudiosink.
+    auto queue = gst_element_factory_make("queue", nullptr);
+    g_object_set(queue, "max-size-buffers", 2, "max-size-bytes", 0, "max-size-time", 0, nullptr);
+
+    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_src.get(), audioConvert, audioResample, queue, audioSink.get(), nullptr);
+
+    // Link src pads from webkitAudioSrc to audioConvert ! audioResample ! queue ! autoaudiosink.
     gst_element_link_pads_full(m_src.get(), "src", audioConvert, "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(audioConvert, "src", audioResample, "sink", GST_PAD_LINK_CHECK_NOTHING);
-    gst_element_link_pads_full(audioResample, "src", audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(audioResample, "src", queue, "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(queue, "src", audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
 }
 
 AudioDestinationGStreamer::~AudioDestinationGStreamer()
