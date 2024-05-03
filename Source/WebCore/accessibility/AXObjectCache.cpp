@@ -4922,6 +4922,13 @@ bool AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
     if (relationCausesCycle(origin, target, relationType))
         return false;
 
+    if (relationType == AXRelationType::OwnerFor) {
+        // Before adding the new OwnerFor relationship, that alters the AX parent-child hierarchy, notify the current target-s parent that one child is being removed.
+        RefPtr targetParent = target->parentObject();
+        if (targetParent && targetParent.get() != origin)
+            childrenChanged(targetParent.get());
+    }
+
     AXID originID = origin->objectID();
     AXID targetID = target->objectID();
     auto relationsIterator = m_relations.find(originID);
@@ -4949,8 +4956,6 @@ bool AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
                 continue;
 
             removeRelationByID(oldOwnerIterator->key, targetID, AXRelationType::OwnerFor);
-            if (auto* oldOwner = objectForID(oldOwnerIterator->key))
-                childrenChanged(oldOwner);
         }
 
         childrenChanged(origin);
