@@ -1,0 +1,4 @@
+
+FAIL hit test should not hit unpainted element, but does hit pseudo and unrelated elements assert_equals: expected Element node <body><div id="target" class="after"></div>
+<div id="unre... but got Element node <div id="target" class="after"></div>
+

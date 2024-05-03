@@ -7302,5 +7302,4 @@ imported/w3c/web-platform-tests/css/css-tables/colspan-001.html [ ImageOnlyFailu
 imported/w3c/web-platform-tests/css/css-tables/colspan-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-tables/colspan-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-tables/percent-height-overflow-auto-in-restricted-block-size-cell.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unpainted-element-from-point.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/width-height-004.html [ ImageOnlyFailure ]
