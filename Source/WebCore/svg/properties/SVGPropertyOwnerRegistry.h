@@ -209,7 +209,7 @@ public:
     {
         QualifiedName attributeName = nullQName();
         enumerateRecursively([&](const auto& entry) -> bool {
-            if (!entry.value->matches(m_owner, property))
+            if (!entry.value->matches(m_owner.get(), property))
                 return true;
             attributeName = entry.key;
             return false;
@@ -221,7 +221,7 @@ public:
     {
         QualifiedName attributeName = nullQName();
         enumerateRecursively([&](const auto& entry) -> bool {
-            if (!entry.value->matches(m_owner, animatedProperty))
+            if (!entry.value->matches(m_owner.get(), animatedProperty))
                 return true;
             attributeName = entry.key;
             return false;
@@ -232,7 +232,7 @@ public:
     void setAnimatedPropertyDirty(const QualifiedName& attributeName, SVGAnimatedProperty& animatedProperty) const override
     {
         lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
-            accessor.setDirty(m_owner, animatedProperty);
+            accessor.setDirty(m_owner.get(), animatedProperty);
         });
     }
 
@@ -240,7 +240,7 @@ public:
     void detachAllProperties() const override
     {
         enumerateRecursively([&](const auto& entry) -> bool {
-            entry.value->detach(m_owner);
+            entry.value->detach(m_owner.get());
             return true;
         });
     }
@@ -251,7 +251,7 @@ public:
     {
         std::optional<String> value;
         lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
-            value = accessor.synchronize(m_owner);
+            value = accessor.synchronize(m_owner.get());
         });
         return value;
     }
@@ -262,7 +262,7 @@ public:
     {
         HashMap<QualifiedName, String> map;
         enumerateRecursively([&](const auto& entry) -> bool {
-            if (auto string = entry.value->synchronize(m_owner))
+            if (auto string = entry.value->synchronize(m_owner.get()))
                 map.add(entry.key, *string);
             return true;
         });
@@ -298,7 +298,7 @@ public:
     {
         RefPtr<SVGAttributeAnimator> animator;
         lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
-            animator = accessor.createAnimator(m_owner, attributeName, animationMode, calcMode, isAccumulated, isAdditive);
+            animator = accessor.createAnimator(m_owner.get(), attributeName, animationMode, calcMode, isAccumulated, isAdditive);
         });
         return animator;
     }
@@ -306,7 +306,7 @@ public:
     void appendAnimatedInstance(const QualifiedName& attributeName, SVGAttributeAnimator& animator) const override
     {
         lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
-            accessor.appendAnimatedInstance(m_owner, animator);
+            accessor.appendAnimatedInstance(m_owner.get(), animator);
         });
     }
 
@@ -363,7 +363,7 @@ private:
         return lookupRecursivelyAndApplyBaseTypes<Functor, I + 1>(attributeName, functor);
     }
 
-    OwnerType& m_owner;
+    Ref<OwnerType> m_owner;
 };
 
 }
