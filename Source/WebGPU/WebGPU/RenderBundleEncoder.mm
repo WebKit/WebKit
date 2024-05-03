@@ -1012,7 +1012,7 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
         if (pipeline.sampleMask() != defaultSampleMask)
             m_requiresCommandReplay = true;
 
-        if (m_pipeline && icbNeedsToBeSplit(*m_pipeline, pipeline) && !m_requiresMetalWorkaround)
+        if (m_pipeline && m_currentCommandIndex && icbNeedsToBeSplit(*m_pipeline, pipeline) && !m_requiresMetalWorkaround)
             endCurrentICB();
 
         recordCommand([pipeline = Ref { pipeline }, protectedThis = Ref { *this }] {
