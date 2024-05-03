@@ -4075,8 +4075,12 @@ void UnifiedPDFPlugin::setPDFDisplayModeForTesting(const String& mode)
 
 void UnifiedPDFPlugin::setDisplayModeAndUpdateLayout(PDFDocumentLayout::DisplayMode mode)
 {
+    auto shouldAdjustPageScale = m_shouldUpdateAutoSizeScale == ShouldUpdateAutoSizeScale::Yes ? AdjustScaleAfterLayout::No : AdjustScaleAfterLayout::Yes;
     m_documentLayout.setDisplayMode(mode);
-    updateLayout(AdjustScaleAfterLayout::Yes);
+    {
+        SetForScope scope(m_shouldUpdateAutoSizeScale, ShouldUpdateAutoSizeScale::Yes);
+        updateLayout(shouldAdjustPageScale);
+    }
     resnapAfterLayout();
 }
 
