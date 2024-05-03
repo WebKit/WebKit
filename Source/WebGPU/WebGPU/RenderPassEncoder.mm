@@ -96,6 +96,8 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
             continue;
 
         auto& texture = fromAPI(attachment.view);
+        m_renderTargetWidth = texture.width();
+        m_renderTargetHeight = texture.height();
         texture.setPreviouslyCleared();
         addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
 
@@ -108,8 +110,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
 
         texture.setCommandEncoder(parentEncoder);
         id<MTLTexture> textureToClear = texture.texture();
-        m_renderTargetWidth = textureToClear.width;
-        m_renderTargetHeight = textureToClear.height;
         if (!textureToClear)
             continue;
         TextureAndClearColor *textureWithClearColor = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
@@ -129,12 +129,12 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         auto& textureView = fromAPI(attachment->view);
         textureView.setPreviouslyCleared();
         textureView.setCommandEncoder(parentEncoder);
-        id<MTLTexture> depthTexture = textureView.isDestroyed() ? nil : textureView.texture();
         if (textureView.width() && !m_renderTargetWidth) {
-            m_renderTargetWidth = depthTexture.width;
-            m_renderTargetHeight = depthTexture.height;
+            m_renderTargetWidth = textureView.width();
+            m_renderTargetHeight = textureView.height();
         }
 
+        id<MTLTexture> depthTexture = textureView.texture();
         m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : quantizedDepthValue(attachment->depthClearValue, textureView.format());
         if (!Device::isStencilOnlyFormat(depthTexture.pixelFormat)) {
             m_clearDepthAttachment = depthTexture && attachment->depthStoreOp == WGPUStoreOp_Discard && attachment->depthLoadOp == WGPULoadOp_Load;
@@ -544,12 +544,12 @@ void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount,
         return;
 
     auto firstIndexOffsetInBytes = firstIndex * indexSizeInBytes;
+    id<MTLBuffer> indexBuffer = m_indexBuffer->buffer();
     if (NSString* error = errorValidatingDrawIndexed()) {
         makeInvalid(error);
         return;
     }
 
-    id<MTLBuffer> indexBuffer = m_indexBuffer.get() ? m_indexBuffer->buffer() : nil;
     if (firstIndexOffsetInBytes + indexCount * indexSizeInBytes > m_indexBufferSize) {
         makeInvalid(@"Values to drawIndexed are invalid");
         return;

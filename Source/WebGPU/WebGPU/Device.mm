@@ -200,8 +200,6 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     desc.storageMode = MTLStorageModeShared;
     desc.usage = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
     m_placeholderTexture = [m_device newTextureWithDescriptor:desc];
-    desc.pixelFormat = MTLPixelFormatDepth32Float_Stencil8;
-    m_placeholderDepthStencilTexture = [m_device newTextureWithDescriptor:desc];
 }
 
 Device::Device(Adapter& adapter)
@@ -292,9 +290,9 @@ id<MTLBuffer> Device::placeholderBuffer() const
     return m_placeholderBuffer;
 }
 
-id<MTLTexture> Device::placeholderTexture(WGPUTextureFormat format) const
+id<MTLTexture> Device::placeholderTexture() const
 {
-    return Texture::isDepthOrStencilFormat(format) ? m_placeholderDepthStencilTexture : m_placeholderTexture;
+    return m_placeholderTexture;
 }
 
 Queue& Device::getQueue()
