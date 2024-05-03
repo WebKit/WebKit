@@ -352,6 +352,7 @@ for this property.
 
 @property (nonatomic, weak, setter=_setInputDelegate:) id <_WKInputDelegate> _inputDelegate WK_API_AVAILABLE(macos(10.12), ios(10.0));
 
+@property (nonatomic, readonly, getter=_isDisplayingPDF) BOOL _displayingPDF WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, readonly, getter=_isDisplayingStandaloneImageDocument) BOOL _displayingStandaloneImageDocument;
 @property (nonatomic, readonly, getter=_isDisplayingStandaloneMediaDocument) BOOL _displayingStandaloneMediaDocument;
 
@@ -615,7 +616,6 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 @property (nonatomic, setter=_setAllowsViewportShrinkToFit:) BOOL _allowsViewportShrinkToFit;
 
 // FIXME: Remove these three properties once we expose WKWebViewContentProvider as API.
-@property (nonatomic, readonly, getter=_isDisplayingPDF) BOOL _displayingPDF;
 @property (nonatomic, readonly) NSData *_dataForDisplayedPDF;
 // FIXME: This can be removed once WKNavigation's response property is implemented.
 @property (nonatomic, readonly) NSString *_suggestedFilenameForDisplayedPDF;
