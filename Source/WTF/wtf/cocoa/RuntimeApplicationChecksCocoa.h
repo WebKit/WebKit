@@ -122,6 +122,7 @@ enum class SDKAlignedBehavior {
     ThrowOnKVCInstanceVariableAccess,
     LaxCookieSameSiteAttribute,
     BlockOptionallyBlockableMixedContent,
+    UseCFNetworkNetworkLoader,
 
     NumberOfBehaviors
 };
