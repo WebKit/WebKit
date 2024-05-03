@@ -254,7 +254,7 @@ public:
     virtual void paintSystemPreviewBadge(Image&, const PaintInfo&, const FloatRect&);
 #endif
     virtual Seconds switchAnimationVisuallyOnDuration() const { return 0_s; }
-    virtual Seconds switchAnimationPressedDuration() const { return 0_s; }
+    virtual Seconds switchAnimationHeldDuration() const { return 0_s; }
     float switchPointerTrackingMagnitudeProportion() const { return 0.4f; }
     virtual bool hasSwitchHapticFeedback(SwitchTrigger) const { return false; }
 
