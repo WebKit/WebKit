@@ -1478,6 +1478,7 @@
         "com.apple.powerlog.state_changed"
         "com.apple.system.lowpowermode"
         "com.apple.system.timezone"
+        "com.apple.webinspectord.available"
         "com.apple.zoomwindow"
         "org.WebKit.lowMemory"
         "org.WebKit.lowMemory.begin"
