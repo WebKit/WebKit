@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,8 @@
  */
 
 // On Mac, you can build this like so:
-// xcrun clang++ -o LockFairnessTest Source/WTF/benchmarks/LockFairnessTest.cpp -O3 -W -ISource/WTF -ISource/WTF/icu -ISource/WTF/benchmarks -LWebKitBuild/Release -lWTF -framework Foundation -licucore -std=c++14 -fvisibility=hidden
+// build WebKit until you have WTF.a
+// xcrun clang++ -o LockFairnessTest Source/WTF/benchmarks/LockFairnessTest.cpp -W -ISource/WTF -ISource/WTF/icu -ISource/WTF/benchmarks -LWebKitBuild/Release -lWTF -lbmalloc -lpas -framework Foundation -licucore -std=c++20 -fvisibility=hidden -DNDEBUG -O3 <-arch arm64e if internal>
 
 #include "config.h"
 
@@ -88,7 +89,9 @@ struct Benchmark {
                         usleep(microsecondsInCriticalSection);
                         lock.unlock();
                     }
-                });
+                },
+                ThreadType::Unknown,
+                threadIndex ? Thread::QOS::UserInitiated : Thread::QOS::Background);
         }
     
         sleep(100_ms);
