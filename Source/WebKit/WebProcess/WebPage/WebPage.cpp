@@ -3555,6 +3555,15 @@ void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEven
     completionHandler(mouseEvent.type(), handled, std::nullopt);
 }
 
+void WebPage::setLastKnownMousePosition(WebCore::FrameIdentifier frameID, IntPoint eventPoint, IntPoint globalPoint)
+{
+    auto* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame || !frame->coreLocalFrame() || !frame->coreLocalFrame()->view())
+        return;
+
+    frame->coreLocalFrame()->eventHandler().setLastKnownMousePosition(eventPoint, globalPoint);
+}
+
 void WebPage::flushDeferredDidReceiveMouseEvent()
 {
     if (auto info = std::exchange(m_deferredMouseEventCompletionHandler, std::nullopt))
@@ -7523,6 +7532,9 @@ void WebPage::didCommitLoad(WebFrame* frame)
         if (page && page->pageScaleFactor() != 1)
             scalePage(1, IntPoint());
     }
+
+    // This timer can race with loading and clobber the scroll position saved on the current history item.
+    m_pageScrolledHysteresis.cancel();
 
     m_didUpdateRenderingAfterCommittingLoad = false;
 
