@@ -214,25 +214,25 @@ double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
     return 0;
 }
 
-JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attribute) const
+JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSContextRef, JSStringRef attribute)
 {
     notImplemented();
     return nullptr;
 }
 
-JSValueRef AccessibilityUIElement::rowHeaders() const
+JSValueRef AccessibilityUIElement::rowHeaders(JSContextRef)
 {
     notImplemented();
     return nullptr;
 }
 
-JSValueRef AccessibilityUIElement::columnHeaders() const
+JSValueRef AccessibilityUIElement::columnHeaders(JSContextRef)
 {
     notImplemented();
     return nullptr;
 }
 
-JSValueRef AccessibilityUIElement::selectedCells() const
+JSValueRef AccessibilityUIElement::selectedCells(JSContextRef)
 {
     notImplemented();
     return nullptr;
