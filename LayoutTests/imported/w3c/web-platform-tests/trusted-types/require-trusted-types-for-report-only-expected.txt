@@ -1,10 +1,11 @@
 CONSOLE MESSAGE: The Content Security Policy 'require-trusted-types-for 'script'' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
 CONSOLE MESSAGE: [Report Only] This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-
-Harness Error (TIMEOUT), message = null
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS Require trusted types for 'script' block create HTML.
-TIMEOUT Require trusted types for 'script' block create script. Test timed out
-NOTRUN Require trusted types for 'script' block create script URL.
-NOTRUN Set require trusted types for 'script' without CSP for trusted types don't block policy creation and using.
+PASS Require trusted types for 'script' block create script.
+PASS Require trusted types for 'script' block create script URL.
+PASS Set require trusted types for 'script' without CSP for trusted types don't block policy creation and using.
 

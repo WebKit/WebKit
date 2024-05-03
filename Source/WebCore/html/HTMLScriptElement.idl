@@ -20,14 +20,16 @@
 [
     Exposed=Window
 ] interface HTMLScriptElement : HTMLElement {
-    [CEReactions=NotNeeded] attribute ScriptString text;
+    [CEReactions=NotNeeded] attribute (TrustedScript or DOMString) text;
+    [CEReactions=NotNeeded] attribute (TrustedScript or [LegacyNullToEmptyString] DOMString) innerText;
+    [CEReactions=NotNeeded] attribute (TrustedScript or DOMString)? textContent;
 
     [CEReactions=NotNeeded, Reflect=for] attribute DOMString htmlFor;
     [CEReactions=NotNeeded, Reflect] attribute DOMString event;
     [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
     [CEReactions=NotNeeded] attribute boolean async;
     [CEReactions=NotNeeded, Reflect] attribute boolean defer;
-    [CEReactions=NotNeeded, Reflect, URL] attribute ScriptURLString src;
+    [CEReactions=NotNeeded] attribute (TrustedScriptURL or USVString) src;
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString? crossOrigin;
     [CEReactions=NotNeeded, Reflect] attribute boolean noModule;
@@ -37,6 +39,3 @@
 
     static boolean supports(DOMString type);
 };
-
-typedef [StringContext=TrustedScript] DOMString ScriptString;
-typedef [StringContext=TrustedScriptURL] USVString ScriptURLString;

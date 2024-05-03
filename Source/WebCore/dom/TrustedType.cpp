@@ -173,6 +173,32 @@ ExceptionOr<String> trustedTypeCompliantString(TrustedType expectedType, ScriptE
     return stringValue;
 }
 
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, std::variant<RefPtr<TrustedScript>, String>&& input, const String& sink)
+{
+    return WTF::switchOn(
+        WTFMove(input),
+        [&scriptExecutionContext, &sink](const String& string) -> ExceptionOr<String> {
+            return trustedTypeCompliantString(TrustedType::TrustedScript, scriptExecutionContext, string, sink);
+        },
+        [](const RefPtr<TrustedScript>& script) -> ExceptionOr<String> {
+            return script->toString();
+        }
+    );
+}
+
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, std::variant<RefPtr<TrustedScriptURL>, String>&& input, const String& sink)
+{
+    return WTF::switchOn(
+        WTFMove(input),
+        [&scriptExecutionContext, &sink](const String& string) -> ExceptionOr<String> {
+            return trustedTypeCompliantString(TrustedType::TrustedScriptURL, scriptExecutionContext, string, sink);
+        },
+        [](const RefPtr<TrustedScriptURL>& scriptURL) -> ExceptionOr<String> {
+            return scriptURL->toString();
+        }
+    );
+}
+
 // https://w3c.github.io/trusted-types/dist/spec/#require-trusted-types-for-pre-navigation-check
 ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecutionContext& scriptExecutionContext, const String& urlString)
 {

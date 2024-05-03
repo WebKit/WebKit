@@ -28,6 +28,9 @@
 
 namespace WebCore {
 
+class TrustedScript;
+class TrustedScriptURL;
+
 enum class RequestPriority : uint8_t;
 
 class HTMLScriptElement final : public HTMLElement, public ScriptElement {
@@ -37,8 +40,16 @@ public:
 
     String text() const { return scriptContent(); }
     WEBCORE_EXPORT void setText(String&&);
+    ExceptionOr<void> setText(std::variant<RefPtr<TrustedScript>, String>&&);
 
-    URL src() const;
+    using Node::setTextContent;
+    ExceptionOr<void> setTextContent(std::optional<std::variant<RefPtr<TrustedScript>, String>>&&);
+
+    using HTMLElement::setInnerText;
+    ExceptionOr<void> setInnerText(std::variant<RefPtr<TrustedScript>, String>&&);
+
+    String src() const;
+    ExceptionOr<void> setSrc(std::variant<RefPtr<TrustedScriptURL>, String>&&);
 
     WEBCORE_EXPORT void setAsync(bool);
     WEBCORE_EXPORT bool async() const;
@@ -66,6 +77,8 @@ private:
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
     void childrenChanged(const ChildChange&) final;
+
+    ExceptionOr<void> setTextContent(ExceptionOr<String>);
 
     bool isURLAttribute(const Attribute&) const final;
 

@@ -1,10 +1,9 @@
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS Require trusted types for 'script' block create HTML.
-FAIL Require trusted types for 'script' block create script. assert_throws_js: function "_ => {
-          d.innerText = "a";
-        }" did not throw
+PASS Require trusted types for 'script' block create script.
 PASS Require trusted types for 'script' block create script URL.
 PASS Set require trusted types for 'script' without CSP for trusted types don't block policy creation and using.
 

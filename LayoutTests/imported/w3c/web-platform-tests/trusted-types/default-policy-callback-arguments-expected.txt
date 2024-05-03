@@ -1,6 +1,6 @@
 
 PASS Test callback arguments, case Element innerHTML
-PASS Test callback arguments, case Node textContent
+PASS Test callback arguments, case HTMLScriptElement textContent
 PASS Test callback arguments, case HTMLScriptElement src
 PASS Test callback arguments, case eval
 PASS Test callback arguments, case Function
