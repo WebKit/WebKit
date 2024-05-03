@@ -576,7 +576,7 @@ void ViewGestureController::forceRepaintIfNeeded()
 
     auto pageID = m_webPageProxy.identifier();
     GestureID gestureID = m_currentGestureID;
-    m_webPageProxy.forceRepaint([pageID, gestureID] () {
+    m_webPageProxy.updateRenderingWithForcedRepaint([pageID, gestureID] () {
         if (auto gestureController = controllerForGesture(pageID, gestureID))
             gestureController->removeSwipeSnapshot();
     });

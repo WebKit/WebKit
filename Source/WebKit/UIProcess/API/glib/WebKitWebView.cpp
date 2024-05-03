@@ -5598,7 +5598,7 @@ void webkitWebViewForceRepaintForTesting(WebKitWebView* webView, ForceRepaintCal
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    getPage(webView).forceRepaint([callback, userData]() {
+    getPage(webView).updateRenderingWithForcedRepaint([callback, userData]() {
         callback(userData);
     });
 }

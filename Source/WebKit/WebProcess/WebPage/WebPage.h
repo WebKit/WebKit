@@ -1219,7 +1219,7 @@ public:
     void setDeviceScaleFactor(float);
     float deviceScaleFactor() const;
 
-    void forceRepaintWithoutCallback();
+    void updateRenderingWithForcedRepaintWithoutCallback();
 
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
@@ -1961,7 +1961,7 @@ private:
     void runJavaScript(WebFrame*, WebCore::RunJavaScriptParameters&&, ContentWorldIdentifier, CompletionHandler<void(std::span<const uint8_t>, const std::optional<WebCore::ExceptionDetails>&)>&&);
     void runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters&&, std::optional<WebCore::FrameIdentifier>, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(std::span<const uint8_t>, const std::optional<WebCore::ExceptionDetails>&)>&&);
     void getAccessibilityTreeData(CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&&);
-    void forceRepaint(CompletionHandler<void()>&&);
+    void updateRenderingWithForcedRepaint(CompletionHandler<void()>&&);
     void takeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 
     void preferencesDidChange(const WebPreferencesStore&);

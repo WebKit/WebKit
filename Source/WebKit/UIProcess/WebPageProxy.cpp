@@ -5766,7 +5766,7 @@ void WebPageProxy::getAccessibilityTreeData(CompletionHandler<void(API::Data*)>&
     sendWithAsyncReply(Messages::WebPage::GetAccessibilityTreeData(), toAPIDataCallback(WTFMove(callback)));
 }
 
-void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
+void WebPageProxy::updateRenderingWithForcedRepaint(CompletionHandler<void()>&& callback)
 {
     if (!hasRunningProcess())
         return callback();
@@ -5778,7 +5778,7 @@ void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
         protectedThis->callAfterNextPresentationUpdate(WTFMove(callback));
     });
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        webProcess.sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [aggregator] { }, pageID);
+        webProcess.sendWithAsyncReply(Messages::WebPage::UpdateRenderingWithForcedRepaint(), [aggregator] { }, pageID);
     });
 }
 

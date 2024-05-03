@@ -977,7 +977,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         if (auto* manager = self._manager)
             manager->setAnimatingFullScreen(true);
 
-        page->forceRepaint([protectedSelf = retainPtr(self), self, logIdentifier = logIdentifier] {
+        page->updateRenderingWithForcedRepaint([protectedSelf = retainPtr(self), self, logIdentifier = logIdentifier] {
             if (_exitRequested) {
                 _exitRequested = NO;
                 OBJC_ERROR_LOG(logIdentifier, "repaint completed, but exit requested");
@@ -1312,7 +1312,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
     auto* page = [self._webView _page].get();
     if (page && page->isViewFocused())
-        page->forceRepaint(WTFMove(completionHandler));
+        page->updateRenderingWithForcedRepaint(WTFMove(completionHandler));
     else
         completionHandler();
 

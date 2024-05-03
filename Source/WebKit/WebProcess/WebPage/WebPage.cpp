@@ -4557,14 +4557,14 @@ void WebPage::getAccessibilityTreeData(CompletionHandler<void(const std::optiona
     callback(dataBuffer);
 }
 
-void WebPage::forceRepaintWithoutCallback()
+void WebPage::updateRenderingWithForcedRepaintWithoutCallback()
 {
-    m_drawingArea->forceRepaint();
+    m_drawingArea->updateRenderingWithForcedRepaint();
 }
 
-void WebPage::forceRepaint(CompletionHandler<void()>&& completionHandler)
+void WebPage::updateRenderingWithForcedRepaint(CompletionHandler<void()>&& completionHandler)
 {
-    m_drawingArea->forceRepaintAsync(*this, WTFMove(completionHandler));
+    m_drawingArea->updateRenderingWithForcedRepaintAsync(*this, WTFMove(completionHandler));
 }
 
 void WebPage::preferencesDidChange(const WebPreferencesStore& store)

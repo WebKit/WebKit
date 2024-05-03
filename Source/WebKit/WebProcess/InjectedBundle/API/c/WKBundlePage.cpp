@@ -560,7 +560,7 @@ void WKBundlePageEvaluateScriptInInspectorForTest(WKBundlePageRef page, WKString
 
 void WKBundlePageForceRepaint(WKBundlePageRef page)
 {
-    WebKit::toImpl(page)->forceRepaintWithoutCallback();
+    WebKit::toImpl(page)->updateRenderingWithForcedRepaintWithoutCallback();
 }
 
 void WKBundlePageFlushPendingEditorStateUpdate(WKBundlePageRef page)

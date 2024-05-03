@@ -551,7 +551,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    _page->forceRepaint([weakSelf = WeakObjCPtr<WKFullScreenWindowController>(self)] {
+    _page->updateRenderingWithForcedRepaint([weakSelf = WeakObjCPtr<WKFullScreenWindowController>(self)] {
         [weakSelf completeFinishExitFullScreenAnimation];
     });
 }
