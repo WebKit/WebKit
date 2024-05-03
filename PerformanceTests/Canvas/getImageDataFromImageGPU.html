@@ -12,7 +12,6 @@ let img = new Image();
 img.onload = () => {
     canvas2D.width = img.width;
     canvas2D.height = img.height;
-    console.log(`${img.width}x${img.height}`);
     PerfTestRunner.measureRunsPerSecond({run: function() {
         counter = (counter + 1) % 25;
         ctx2D.drawImage(img, counter, counter);
