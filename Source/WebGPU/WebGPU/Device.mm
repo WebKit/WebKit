@@ -201,6 +201,7 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     desc.usage = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
     m_placeholderTexture = [m_device newTextureWithDescriptor:desc];
     desc.pixelFormat = MTLPixelFormatDepth32Float_Stencil8;
+    desc.storageMode = MTLStorageModePrivate;
     m_placeholderDepthStencilTexture = [m_device newTextureWithDescriptor:desc];
 }
 
