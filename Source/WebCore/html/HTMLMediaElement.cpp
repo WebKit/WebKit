@@ -5273,6 +5273,9 @@ void HTMLMediaElement::updateCaptionContainer()
 void HTMLMediaElement::layoutSizeChanged()
 {
     auto task = [this] {
+        if (isContextStopped())
+            return;
+
         if (RefPtr root = userAgentShadowRoot())
             root->dispatchEvent(Event::create(eventNames().resizeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
