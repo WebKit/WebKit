@@ -32,13 +32,14 @@
 #include "ThreadSafeObjectHeap.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/RenderingResourceIdentifier.h>
+#include <atomic>
 #include <wtf/FastMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
 
-// Class holding GPU process resources per Web Process.
+// Class holding GPU process resources per WebContent process.
 // Thread-safe.
 class RemoteSharedResourceCache final : public ThreadSafeRefCounted<RemoteSharedResourceCache>, IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -48,6 +49,10 @@ public:
 
     void addSerializedImageBuffer(WebCore::RenderingResourceIdentifier, Ref<WebCore::ImageBuffer>);
     RefPtr<WebCore::ImageBuffer> takeSerializedImageBuffer(WebCore::RenderingResourceIdentifier);
+
+    void didAddAcceleratedImageBuffer();
+    void didTakeAcceleratedImageBuffer();
+    WebCore::RenderingMode adjustAcceleratedImageBufferRenderingMode(WebCore::RenderingPurpose) const;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -59,8 +64,8 @@ private:
     void releaseSerializedImageBuffer(WebCore::RenderingResourceIdentifier);
 
     IPC::ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<WebCore::ImageBuffer>> m_serializedImageBuffers;
+    std::atomic<size_t> m_acceleratedImageBufferCount { 0 };
 };
-
 
 } // namespace WebKit
 

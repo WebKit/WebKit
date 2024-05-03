@@ -3915,6 +3915,8 @@ imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change.html 
 
 # Cairo doesn't support hardware acceleration, this test will pass once we switch to Skia.
 fast/canvas/canvas-will-read-frequently.html [ Failure ]
+# Accelerated canvases not implemented for Cairo.
+fast/canvas/image-buffer-backend-count-limit.html [ Skip ]
 
 # End: Common failures between GTK and WPE.
 
