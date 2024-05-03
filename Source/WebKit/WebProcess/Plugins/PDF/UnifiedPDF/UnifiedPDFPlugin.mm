@@ -182,8 +182,11 @@ void UnifiedPDFPlugin::teardown()
 
     PDFPluginBase::teardown();
 
-    if (m_rootLayer)
-        m_rootLayer->removeFromParent();
+    GraphicsLayer::unparentAndClear(m_rootLayer);
+    GraphicsLayer::unparentAndClear(m_contentsLayer);
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+    GraphicsLayer::unparentAndClear(m_selectionLayer);
+#endif
 
     RefPtr page = this->page();
     if (m_scrollingNodeID && page) {
