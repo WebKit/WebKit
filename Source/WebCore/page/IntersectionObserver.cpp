@@ -194,7 +194,7 @@ void IntersectionObserver::observe(Element& target)
     // isReachableFromOpaqueRoots(), so the callback stays alive.
     m_targetsWaitingForFirstObservation.append(target);
 
-    auto* document = trackingDocument();
+    RefPtr document = trackingDocument();
     if (!hadObservationTargets)
         document->addIntersectionObserver(*this);
     document->scheduleInitialIntersectionObservationUpdate();
@@ -210,7 +210,7 @@ void IntersectionObserver::unobserve(Element& target)
     m_targetsWaitingForFirstObservation.removeFirstMatching([&](auto& pendingTarget) { return pendingTarget.ptr() == &target; });
 
     if (!hasObservationTargets()) {
-        if (auto* document = trackingDocument())
+        if (RefPtr document = trackingDocument())
             document->removeIntersectionObserver(*this);
     }
 }
@@ -223,7 +223,7 @@ void IntersectionObserver::disconnect()
     }
 
     removeAllTargets();
-    if (auto* document = trackingDocument())
+    if (RefPtr document = trackingDocument())
         document->removeIntersectionObserver(*this);
 }
 
@@ -237,7 +237,7 @@ void IntersectionObserver::targetDestroyed(Element& target)
     m_observationTargets.removeFirst(&target);
     m_targetsWaitingForFirstObservation.removeFirstMatching([&](auto& pendingTarget) { return pendingTarget.ptr() == &target; });
     if (!hasObservationTargets()) {
-        if (auto* document = trackingDocument())
+        if (RefPtr document = trackingDocument())
             document->removeIntersectionObserver(*this);
     }
 }
@@ -310,14 +310,14 @@ static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const Lay
     if (!intersects)
         return std::nullopt;
 
-    auto* ownerRenderer = renderer->frame().ownerRenderer();
+    RefPtr ownerRenderer = renderer->frame().ownerRenderer();
     if (!ownerRenderer)
         return std::nullopt;
 
     LayoutRect rectInFrameViewSpace { renderer->view().frameView().contentsToView(absoluteClippedRect) };
 
     rectInFrameViewSpace.moveBy(ownerRenderer->contentBoxLocation());
-    return computeClippedRectInRootContentsSpace(rectInFrameViewSpace, ownerRenderer);
+    return computeClippedRectInRootContentsSpace(rectInFrameViewSpace, ownerRenderer.get());
 }
 
 auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRegistration& registration, LocalFrameView& frameView, Element& target, bool applyRootMargin) const -> IntersectionObservationState
@@ -526,15 +526,17 @@ std::optional<ReducedResolutionSeconds> IntersectionObserver::nowTimestamp() con
     if (!m_callback)
         return std::nullopt;
 
-    auto* context = m_callback->scriptExecutionContext();
-    if (!context)
-        return std::nullopt;
-
-    auto& document = downcast<Document>(*context);
-    if (auto* window = document.domWindow())
-        return window->frozenNowTimestamp();
-    
-    return std::nullopt;
+    RefPtr<LocalDOMWindow> window;
+    {
+        auto* context = m_callback->scriptExecutionContext();
+        if (!context)
+            return std::nullopt;
+        auto& document = downcast<Document>(*context);
+        window = document.domWindow();
+        if (!window)
+            return std::nullopt;
+    }
+    return window->frozenNowTimestamp();
 }
 
 void IntersectionObserver::appendQueuedEntry(Ref<IntersectionObserverEntry>&& entry)
@@ -559,7 +561,7 @@ void IntersectionObserver::notify()
     if (!m_callback->hasCallback())
         return;
 
-    auto* context = m_callback->scriptExecutionContext();
+    RefPtr context = m_callback->scriptExecutionContext();
     if (!context)
         return;
 
@@ -579,7 +581,8 @@ void IntersectionObserver::notify()
 bool IntersectionObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visitor) const
 {
     for (auto& target : m_observationTargets) {
-        if (auto* element = target.get(); containsWebCoreOpaqueRoot(visitor, element))
+        SUPPRESS_UNCOUNTED_LOCAL auto* element = target.get();
+        if (containsWebCoreOpaqueRoot(visitor, element))
             return true;
     }
     for (auto& target : m_pendingTargets) {
