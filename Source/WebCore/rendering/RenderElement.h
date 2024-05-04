@@ -291,6 +291,8 @@ public:
     virtual bool establishesIndependentFormattingContext() const;
     bool createsNewFormattingContext() const;
 
+    static void markRendererDirtyAfterTopLayerChange(RenderElement* renderer, RenderBlock* containingBlockBeforeStyleResolution);
+
     bool isSkippedContentRoot() const;
 
     void clearNeedsLayoutForSkippedContent();

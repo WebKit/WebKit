@@ -396,6 +396,16 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         clearOverridingContainingBlockContentSize();
 }
 
+static bool gridStyleHasNotChanged(const RenderStyle& style, const RenderStyle* oldStyle)
+{
+    return (oldStyle->gridItemColumnStart() == style.gridItemColumnStart()
+        && oldStyle->gridItemColumnEnd() == style.gridItemColumnEnd()
+        && oldStyle->gridItemRowStart() == style.gridItemRowStart()
+        && oldStyle->gridItemRowEnd() == style.gridItemRowEnd()
+        && oldStyle->order() == style.order()
+        && oldStyle->hasOutOfFlowPosition() == style.hasOutOfFlowPosition());
+}
+
 void RenderBox::updateGridPositionAfterStyleChange(const RenderStyle& style, const RenderStyle* oldStyle)
 {
     if (!oldStyle)
@@ -404,17 +414,9 @@ void RenderBox::updateGridPositionAfterStyleChange(const RenderStyle& style, con
     if (!parentGrid)
         return;
 
-    if (oldStyle->gridItemColumnStart() == style.gridItemColumnStart()
-        && oldStyle->gridItemColumnEnd() == style.gridItemColumnEnd()
-        && oldStyle->gridItemRowStart() == style.gridItemRowStart()
-        && oldStyle->gridItemRowEnd() == style.gridItemRowEnd()
-        && oldStyle->order() == style.order()
-        && oldStyle->hasOutOfFlowPosition() == style.hasOutOfFlowPosition())
-        return;
-
     // Positioned items don't participate on the layout of the grid,
     // so we don't need to mark the grid as dirty if they change positions.
-    if (oldStyle->hasOutOfFlowPosition() && style.hasOutOfFlowPosition())
+    if ((oldStyle->hasOutOfFlowPosition() && style.hasOutOfFlowPosition()) || gridStyleHasNotChanged(style, oldStyle))
         return;
 
     // It should be possible to not dirty the grid in some cases (like moving an
