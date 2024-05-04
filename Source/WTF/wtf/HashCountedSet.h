@@ -100,6 +100,9 @@ public:
     bool removeAll(iterator);
     bool removeAll(const ValueType&);
 
+    template<typename Functor>
+    bool removeAllIf(const Functor&);
+
     // Clears the whole set.
     void clear();
 
@@ -278,6 +281,12 @@ inline bool HashCountedSet<Value, HashFunctions, Traits>::removeAll(iterator it)
 
     m_impl.remove(it);
     return true;
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+inline bool HashCountedSet<Value, HashFunctions, Traits>::removeAllIf(const auto& functor)
+{
+    return m_impl.removeIf(functor);
 }
 
 template<typename Value, typename HashFunctions, typename Traits>

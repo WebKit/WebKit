@@ -394,29 +394,6 @@ bool InlineAccess::generateSelfInAccess(CodeBlock* codeBlock, StructureStubInfo&
     return linkCodeInline("in access", jit, stubInfo);
 }
 
-void InlineAccess::rewireStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, InlineCacheHandler& handler)
-{
-    stubInfo.m_handler = &handler;
-    if (codeBlock->useDataIC()) {
-        stubInfo.m_codePtr = handler.callTarget();
-        stubInfo.m_inlineAccessBaseStructureID.clear(); // Clear out the inline access code.
-        return;
-    }
-
-    CCallHelpers::replaceWithJump(stubInfo.startLocation.retagged<JSInternalPtrTag>(), CodeLocationLabel { handler.callTarget() });
-}
-
-void InlineAccess::resetStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
-{
-    if (JITCode::isBaselineCode(codeBlock->jitType()) && Options::useHandlerIC()) {
-        auto handler = InlineCacheCompiler::generateSlowPathHandler(codeBlock->vm(), stubInfo.accessType);
-        InlineAccess::rewireStubAsJumpInAccess(codeBlock, stubInfo, handler.get());
-        return;
-    }
-    auto handler = InlineCacheHandler::createNonHandlerSlowPath(stubInfo.slowPathStartLocation);
-    InlineAccess::rewireStubAsJumpInAccess(codeBlock, stubInfo, handler.get());
-}
-
 } // namespace JSC
 
 #endif // ENABLE(JIT)

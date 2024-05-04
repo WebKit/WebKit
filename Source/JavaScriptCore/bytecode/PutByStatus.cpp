@@ -258,7 +258,10 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
                 if (!conditionSet.isStillValid())
                     continue;
 
-                Structure* currStructure = access.hasAlternateBase() ? access.alternateBase()->structure() : access.structure();
+                Structure* currStructure = access.structure();
+                if (auto* object = access.tryGetAlternateBase())
+                    currStructure = object->structure();
+
                 // For now, we only support cases which JSGlobalObject is the same to the currently profiledBlock.
                 if (currStructure->globalObject() != profiledBlock->globalObject())
                     return PutByStatus(JSC::slowVersion(summary), *stubInfo);
