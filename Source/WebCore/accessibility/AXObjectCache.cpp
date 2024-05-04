@@ -1190,8 +1190,7 @@ void AXObjectCache::handleTextChanged(AccessibilityObject* object)
 
         if (isText) {
             bool dependsOnTextUnderElement = ancestor->dependsOnTextUnderElement();
-            auto role = ancestor->roleValue();
-            dependsOnTextUnderElement |= role == AccessibilityRole::ListItem || role == AccessibilityRole::Label;
+            dependsOnTextUnderElement |= ancestor->roleValue() == AccessibilityRole::Label;
 
             // If the starting object is a static text, its underlying text has changed.
             if (dependsOnTextUnderElement) {
