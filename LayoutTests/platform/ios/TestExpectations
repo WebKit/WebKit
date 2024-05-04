@@ -6935,8 +6935,6 @@ webkit.org/b/269033 fast/events/ios/select-all-with-existing-selection.html [ Pa
 
 webkit.org/b/269086 [ Release ] imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-all.https.sub.html [ Pass Failure ]
 
-webkit.org/b/269321 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Timeout ]
-
 webkit.org/b/269760 mathml/presentation/scripts-underover.html [ Failure ]
 
 webkit.org/b/271018 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-012.svg [ ImageOnlyFailure ]
