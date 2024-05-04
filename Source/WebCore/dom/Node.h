@@ -451,10 +451,6 @@ public:
 
     virtual bool shouldSelectOnMouseDown() { return false; }
 
-    // Getting points into and out of screen space
-    FloatPoint convertToPage(const FloatPoint&) const;
-    FloatPoint convertFromPage(const FloatPoint&) const;
-
     // -----------------------------------------------------------------------------
     // Integration with rendering tree
 

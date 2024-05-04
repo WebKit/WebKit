@@ -190,8 +190,6 @@ public:
     ExceptionOr<void> createImageBitmap(ImageBitmap::Source&&, ImageBitmapOptions&&, ImageBitmap::Promise&&);
     ExceptionOr<void> createImageBitmap(ImageBitmap::Source&&, int sx, int sy, int sw, int sh, ImageBitmapOptions&&, ImageBitmap::Promise&&);
     ExceptionOr<RefPtr<CSSRuleList>> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
-    ExceptionOr<RefPtr<WebKitPoint>> webkitConvertPointFromPageToNode(Node*, const WebKitPoint*) const;
-    ExceptionOr<RefPtr<WebKitPoint>> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
     ExceptionOr<Ref<NodeList>> collectMatchingElementsInFlatTree(Node&, const String& selectors);
     ExceptionOr<RefPtr<Element>> matchingElementInFlatTree(Node&, const String& selectors);
     ExceptionOr<void> scrollBy(const ScrollToOptions&) const;
