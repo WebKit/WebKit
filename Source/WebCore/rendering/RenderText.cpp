@@ -1422,7 +1422,7 @@ bool RenderText::containsOnlyCSSWhitespace(unsigned from, unsigned length) const
     return containsOnlyPossiblyCollapsibleWhitespace(text().span16().subspan(from, length));
 }
 
-Vector<std::pair<unsigned, unsigned>> RenderText::draggedContentRangesBetweenOffsets(unsigned startOffset, unsigned endOffset) const
+Vector<std::pair<unsigned, unsigned>> RenderText::contentRangesBetweenOffsetsForType(DocumentMarker::Type type, unsigned startOffset, unsigned endOffset) const
 {
     if (!textNode())
         return { };
@@ -1431,23 +1431,20 @@ Vector<std::pair<unsigned, unsigned>> RenderText::draggedContentRangesBetweenOff
     if (!markerController)
         return { };
 
-    auto markers = markerController->markersFor(*textNode(), DocumentMarker::Type::DraggedContent);
+    auto markers = markerController->markersFor(*textNode(), type);
     if (markers.isEmpty())
         return { };
 
-    Vector<std::pair<unsigned, unsigned>> draggedContentRanges;
+    Vector<std::pair<unsigned, unsigned>> contentRanges;
     for (auto& marker : markers) {
         unsigned markerStart = std::max(marker->startOffset(), startOffset);
         unsigned markerEnd = std::min(marker->endOffset(), endOffset);
         if (markerStart >= markerEnd || markerStart > endOffset || markerEnd < startOffset)
             continue;
 
-        std::pair<unsigned, unsigned> draggedContentRange;
-        draggedContentRange.first = markerStart;
-        draggedContentRange.second = markerEnd;
-        draggedContentRanges.append(draggedContentRange);
+        contentRanges.append({ markerStart, markerEnd });
     }
-    return draggedContentRanges;
+    return contentRanges;
 }
 
 IntPoint RenderText::firstRunLocation() const

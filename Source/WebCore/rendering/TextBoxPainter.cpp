@@ -329,12 +329,15 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
 
             bool shouldPaintDraggedContent = !(m_paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection));
             if (shouldPaintDraggedContent) {
-                auto markedTextsForDraggedContent = MarkedText::collectForDraggedContent(m_renderer, m_selectableRange);
+                auto markedTextsForDraggedContent = MarkedText::collectForDraggedAndTransparentContent(DocumentMarker::Type::DraggedContent, m_renderer, m_selectableRange);
                 if (!markedTextsForDraggedContent.isEmpty()) {
                     shouldPaintSelectionForeground = false;
-                    markedTexts.appendVector(markedTextsForDraggedContent);
+                    markedTexts.appendVector(WTFMove(markedTextsForDraggedContent));
                 }
             }
+            auto markedTextsForTransparentContent = MarkedText::collectForDraggedAndTransparentContent(DocumentMarker::Type::TransparentContent, m_renderer, m_selectableRange);
+            if (!markedTextsForTransparentContent.isEmpty())
+                markedTexts.appendVector(WTFMove(markedTextsForTransparentContent));
         }
     }
     // The selection marked text acts as a placeholder when computing the marked texts for the gaps...
