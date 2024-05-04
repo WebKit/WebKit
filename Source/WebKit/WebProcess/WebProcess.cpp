@@ -361,6 +361,12 @@ void WebProcess::initializeProcess(const AuxiliaryProcessInitializationParameter
 {
     WTF::setProcessPrivileges({ });
 
+    {
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::Options::allowNonSPTagging() = false;
+        JSC::Options::notifyOptionsChanged();
+    }
+
     MessagePortChannelProvider::setSharedProvider(WebMessagePortChannelProvider::singleton());
     
     platformInitializeProcess(parameters);
