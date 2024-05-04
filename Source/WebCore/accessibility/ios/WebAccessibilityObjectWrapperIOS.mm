@@ -287,7 +287,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (uint64_t)_axHasTextCursorTrait { return (1 << 6); }
 - (uint64_t)_axTextOperationsAvailableTrait { return (1 << 7); }
 - (uint64_t)_axImageTrait { return (1 << 8); }
-- (uint64_t)_axTabButtonTrait { return (1 << 9); }
+- (uint64_t)_axTabBarTrait { return (1 << 9); }
 - (uint64_t)_axButtonTrait { return (1 << 10); }
 - (uint64_t)_axToggleTrait { return (1 << 11); }
 - (uint64_t)_axPopupButtonTrait { return (1 << 12); }
@@ -823,8 +823,8 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::Image:
         traits |= [self _axImageTrait];
         break;
-    case AccessibilityRole::Tab:
-        traits |= [self _axTabButtonTrait];
+    case AccessibilityRole::TabList:
+        traits |= [self _axTabBarTrait];
         break;
     case AccessibilityRole::Button:
         traits |= [self _axButtonTrait];

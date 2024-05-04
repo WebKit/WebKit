@@ -1,0 +1,12 @@
+This test ensures the menu item trait is returned correctly.
+
+PASS: accessibilityController.accessibleElementById('menuitem').hasMenuItemTrait === true
+PASS: accessibilityController.accessibleElementById('menuitemcheckbox').hasMenuItemTrait === true
+PASS: accessibilityController.accessibleElementById('menuitemradio').hasMenuItemTrait === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo bar
+Checkbox
+Radio

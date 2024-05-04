@@ -1,0 +1,11 @@
+This test ensures the tab bar trait is returned correctly.
+
+PASS: accessibilityController.accessibleElementById('tablist').hasTabBarTrait === true
+PASS: accessibilityController.accessibleElementById('tab-1').hasTabBarTrait === false
+PASS: accessibilityController.accessibleElementById('panel-1').hasTabBarTrait === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Tab one  Tab two
+First content

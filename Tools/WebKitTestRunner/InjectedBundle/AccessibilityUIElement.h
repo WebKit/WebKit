@@ -407,6 +407,8 @@ public:
     bool isInDescriptionListTerm() const;
 
     bool hasTextEntryTrait();
+    bool hasTabBarTrait();
+    bool hasMenuItemTrait();
     RefPtr<AccessibilityUIElement> fieldsetAncestorElement();
 
     bool isInsertion() const;

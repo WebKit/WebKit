@@ -75,6 +75,8 @@ bool AccessibilityUIElement::scrollPageDown() { return false; }
 bool AccessibilityUIElement::scrollPageLeft() { return false; }
 bool AccessibilityUIElement::scrollPageRight() { return false; }
 bool AccessibilityUIElement::hasTextEntryTrait() { return false; }
+bool AccessibilityUIElement::hasTabBarTrait() { return false; }
+bool AccessibilityUIElement::hasMenuItemTrait() { return false; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::fieldsetAncestorElement() { return nullptr; }
 bool AccessibilityUIElement::isSearchField() const { return false; }
 bool AccessibilityUIElement::isSwitch() const { return false; }
