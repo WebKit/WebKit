@@ -74,8 +74,8 @@ LazyLoadFrameObserver::LazyLoadFrameObserver(HTMLIFrameElement& element)
 
 void LazyLoadFrameObserver::observe(const AtomString& frameURL, const ReferrerPolicy& referrerPolicy)
 {
-    auto& frameObserver = m_element.lazyLoadFrameObserver();
-    auto* intersectionObserver = frameObserver.intersectionObserver(m_element.document());
+    auto& frameObserver = m_element->lazyLoadFrameObserver();
+    auto* intersectionObserver = frameObserver.intersectionObserver(m_element->protectedDocument());
     if (!intersectionObserver)
         return;
     m_frameURL = frameURL;
@@ -85,7 +85,7 @@ void LazyLoadFrameObserver::observe(const AtomString& frameURL, const ReferrerPo
 
 void LazyLoadFrameObserver::unobserve()
 {
-    auto& frameObserver = m_element.lazyLoadFrameObserver();
+    auto& frameObserver = m_element->lazyLoadFrameObserver();
     ASSERT(frameObserver.isObserved(m_element));
     frameObserver.m_observer->unobserve(m_element);
 }

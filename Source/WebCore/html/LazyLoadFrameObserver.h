@@ -48,7 +48,7 @@ private:
     IntersectionObserver* intersectionObserver(Document&);
     bool isObserved(Element&) const;
 
-    HTMLIFrameElement& m_element;
+    WeakRef<HTMLIFrameElement, WeakPtrImplWithEventTargetData> m_element;
     AtomString m_frameURL;
     ReferrerPolicy m_referrerPolicy;
     RefPtr<IntersectionObserver> m_observer;
