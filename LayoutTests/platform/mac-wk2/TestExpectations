@@ -1872,8 +1872,6 @@ webkit.org/b/271059 [ Monterey x86_64 ] imported/w3c/web-platform-tests/webrtc/s
 webkit.org/b/271059 [ Monterey x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/h264.https.html [ Pass Failure ]
 webkit.org/b/271059 [ Monterey x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html [ Pass Failure ]
 
-webkit.org/b/268200 [ Sonoma+ Release ] inspector/console/console-screenshot.html [ Pass Failure ]
-
 webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallback/callback-multiple-calls.html [ Pass Failure ]
 
 # webkit.org/b/269003 Umbrella bug for flaky test failures impacting EWS 
