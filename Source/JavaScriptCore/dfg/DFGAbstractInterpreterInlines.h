@@ -1450,7 +1450,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
             
     case ArithSqrt:
-        executeDoubleUnaryOpEffects(node, [](double value) -> double { return sqrt(value); });
+        executeDoubleUnaryOpEffects(node, sqrt);
         break;
 
     case ArithFRound:
@@ -5504,7 +5504,7 @@ FiltrationResult AbstractInterpreter<AbstractStateType>::filterClassInfo(
 }
 
 template<typename AbstractStateType>
-void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* node, const auto& equivalentFunction)
+void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* node, double(*equivalentFunction)(double))
 {
     JSValue child = forNode(node->child1()).value();
     if (std::optional<double> number = child.toNumberFromPrimitive()) {

@@ -50,7 +50,7 @@ class ExceptionScope {
 public:
     VM& vm() const { return m_vm; }
     unsigned recursionDepth() const { return m_recursionDepth; }
-    ALWAYS_INLINE Exception* exception() const { return m_vm.exception(); }
+    Exception* exception() const { return m_vm.exception(); }
 
     ALWAYS_INLINE void assertNoException() { RELEASE_ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }
     ALWAYS_INLINE void releaseAssertNoException() { RELEASE_ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }

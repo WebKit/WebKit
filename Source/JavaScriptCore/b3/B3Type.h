@@ -65,7 +65,6 @@ public:
 
     ~Type() = default;
 
-    static const unsigned numberOfPrimitiveTypes = V128 + 1;
     static Type tupleFromIndex(unsigned index) { ASSERT(!(index & tupleFlag)); return bitwise_cast<Type>(index | tupleFlag); }
 
     TypeKind kind() const { return m_kind & tupleFlag ? Tuple : m_kind; }

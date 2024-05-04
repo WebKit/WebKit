@@ -115,27 +115,27 @@
 
 #endif // ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 
-#define JSC_DEFINE_JIT_OPERATION_WITHOUT_VARIABLE_IMPL(functionName, returnType, parameters) \
+#define JSC_DEFINE_JIT_OPERATION_WITHOUT_VARIABLE(functionName, returnType, parameters) \
     returnType JIT_OPERATION_ATTRIBUTES functionName parameters
 
-#define JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES_IMPL(functionName, attributes, returnType, parameters) \
+#define JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(functionName, attributes, returnType, parameters) \
     JSC_ANNOTATE_JIT_OPERATION(functionName); \
     attributes returnType JIT_OPERATION_ATTRIBUTES functionName parameters
 
-#define JSC_DEFINE_JIT_OPERATION_IMPL(functionName, returnType, parameters) \
-    JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES_IMPL(functionName, , returnType, parameters)
+#define JSC_DEFINE_JIT_OPERATION(functionName, returnType, parameters) \
+    JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(functionName, , returnType, parameters)
 
-#define JSC_DECLARE_JIT_OPERATION_WITH_ATTRIBUTES_IMPL(functionName, attributes, returnType, parameters) \
+#define JSC_DECLARE_JIT_OPERATION_WITH_ATTRIBUTES(functionName, attributes, returnType, parameters) \
     extern "C" attributes returnType JIT_OPERATION_ATTRIBUTES functionName parameters REFERENCED_FROM_ASM WTF_INTERNAL; \
     JSC_DECLARE_JIT_OPERATION_VALIDATION(functionName) \
 
-#define JSC_DECLARE_JIT_OPERATION_IMPL(functionName, returnType, parameters) \
-    JSC_DECLARE_JIT_OPERATION_WITH_ATTRIBUTES_IMPL(functionName, , returnType, parameters)
+#define JSC_DECLARE_JIT_OPERATION(functionName, returnType, parameters) \
+    JSC_DECLARE_JIT_OPERATION_WITH_ATTRIBUTES(functionName, , returnType, parameters)
 
-#define JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL_IMPL(functionName, returnType, parameters) \
+#define JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(functionName, returnType, parameters) \
     returnType JIT_OPERATION_ATTRIBUTES functionName parameters REFERENCED_FROM_ASM
 
-#define JSC_DECLARE_CUSTOM_GETTER(functionName) JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL_IMPL(functionName, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName))
-#define JSC_DECLARE_CUSTOM_SETTER(functionName) JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL_IMPL(functionName, bool, (JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName))
-#define JSC_DEFINE_CUSTOM_GETTER(functionName, parameters) JSC_DEFINE_JIT_OPERATION_WITHOUT_VARIABLE_IMPL(functionName, JSC::EncodedJSValue, parameters)
-#define JSC_DEFINE_CUSTOM_SETTER(functionName, parameters) JSC_DEFINE_JIT_OPERATION_WITHOUT_VARIABLE_IMPL(functionName, bool, parameters)
+#define JSC_DECLARE_CUSTOM_GETTER(functionName) JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(functionName, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName))
+#define JSC_DECLARE_CUSTOM_SETTER(functionName) JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(functionName, bool, (JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName))
+#define JSC_DEFINE_CUSTOM_GETTER(functionName, parameters) JSC_DEFINE_JIT_OPERATION_WITHOUT_VARIABLE(functionName, JSC::EncodedJSValue, parameters)
+#define JSC_DEFINE_CUSTOM_SETTER(functionName, parameters) JSC_DEFINE_JIT_OPERATION_WITHOUT_VARIABLE(functionName, bool, parameters)

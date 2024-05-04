@@ -28,7 +28,6 @@
 #if ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
 #include "MacroAssembler.h"
 
-#include "OperationResult.h"
 #include "ProbeContext.h"
 #include <wtf/InlineASM.h>
 
@@ -42,10 +41,10 @@
 
 namespace JSC {
 
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
+JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
 JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampoline);
 #if CPU(X86_64)
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(ctiMasmProbeTrampolineSIMD, void, ());
+JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampolineSIMD, void, ());
 JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampolineSIMD);
 #endif
 

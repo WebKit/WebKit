@@ -141,27 +141,18 @@ public:
     }
 
     // Add a call out from JIT code, without an exception check.
-    template<PtrTag tag>
-    requires (tag != NoPtrTag)
-    Call appendCall(const CodePtr<tag> function)
+    Call appendCall(const CodePtr<CFunctionPtrTag> function)
     {
         Call functionCall = call(OperationPtrTag);
-        // FIXME: If we had CustomGetters in JITOperationList we could just call retagged on all
-        // code paths but since we don't register them retagging triggers an ASSERT.
-        if constexpr (tag == OperationPtrTag)
-            m_calls.append(CallLinkRecord(functionCall, function));
-        else
-            m_calls.append(CallLinkRecord(functionCall, function.template retagged<OperationPtrTag>()));
+        m_calls.append(CallLinkRecord(functionCall, function.retagged<OperationPtrTag>()));
         return functionCall;
     }
 
 #if OS(WINDOWS) && CPU(X86_64)
-    template<PtrTag tag>
-    requires (tag != NoPtrTag)
-    JITCompiler::Call appendCallWithUGPRPair(const CodePtr<tag> function)
+    JITCompiler::Call appendCallWithUGPRPair(const CodePtr<CFunctionPtrTag> function)
     {
         Call functionCall = callWithUGPRPair(OperationPtrTag);
-        m_calls.append(CallLinkRecord(functionCall, function.template retagged<OperationPtrTag>()));
+        m_calls.append(CallLinkRecord(functionCall, function.retagged<OperationPtrTag>()));
         return functionCall;
     }
 #endif

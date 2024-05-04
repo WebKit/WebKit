@@ -685,53 +685,47 @@ namespace JSC {
             return hasAnySlowCases(m_slowCases, iter, m_bytecodeIndex);
         }
 
-        template<typename OperationType>
         MacroAssembler::Call appendCallWithExceptionCheck(const CodePtr<CFunctionPtrTag>);
-        template<typename OperationType>
         void appendCallWithExceptionCheck(Address);
-        template<typename OperationType>
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const CodePtr<CFunctionPtrTag>, VirtualRegister result);
-        template<typename OperationType>
         void appendCallWithExceptionCheckSetJSValueResult(Address, VirtualRegister result);
-        template<typename OperationType>
         MacroAssembler::Call appendCallSetJSValueResult(const CodePtr<CFunctionPtrTag>, VirtualRegister result);
-        template<typename OperationType>
         void appendCallSetJSValueResult(Address, VirtualRegister result);
-        template<typename OperationType, typename Bytecode>
+        template<typename Bytecode>
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResultWithProfile(const Bytecode&, const CodePtr<CFunctionPtrTag>, VirtualRegister result);
-        template<typename OperationType, typename Bytecode>
+        template<typename Bytecode>
         void appendCallWithExceptionCheckSetJSValueResultWithProfile(const Bytecode&, Address, VirtualRegister result);
         
         template<typename OperationType, typename... Args>
-        requires OperationHasResult<OperationType>
-        MacroAssembler::Call callOperation(OperationType operation, VirtualRegister result, Args... args)
+        std::enable_if_t<FunctionTraits<OperationType>::hasResult, MacroAssembler::Call>
+        callOperation(OperationType operation, VirtualRegister result, Args... args)
         {
             setupArguments<OperationType>(args...);
-            return appendCallWithExceptionCheckSetJSValueResult<OperationType>(operation, result);
+            return appendCallWithExceptionCheckSetJSValueResult(operation, result);
         }
 
         template<typename OperationType, typename... Args>
-        requires OperationHasResult<OperationType>
-        void callOperation(Address target, VirtualRegister result, Args... args)
+        std::enable_if_t<FunctionTraits<OperationType>::hasResult, void>
+        callOperation(Address target, VirtualRegister result, Args... args)
         {
             setupArgumentsForIndirectCall<OperationType>(target, args...);
-            return appendCallWithExceptionCheckSetJSValueResult<OperationType>(Address(GPRInfo::nonArgGPR0, target.offset), result);
+            return appendCallWithExceptionCheckSetJSValueResult(Address(GPRInfo::nonArgGPR0, target.offset), result);
         }
 
         template<typename OperationType, typename... Args>
-        requires OperationHasResult<OperationType>
-        MacroAssembler::Call callOperationNoExceptionCheck(OperationType operation, VirtualRegister result, Args... args)
+        std::enable_if_t<FunctionTraits<OperationType>::hasResult, MacroAssembler::Call>
+        callOperationNoExceptionCheck(OperationType operation, VirtualRegister result, Args... args)
         {
             setupArguments<OperationType>(args...);
-            return appendCallSetJSValueResult<OperationType>(operation, result);
+            return appendCallSetJSValueResult(operation, result);
         }
 
         template<typename OperationType, typename... Args>
-        requires OperationHasResult<OperationType>
-        void callOperationNoExceptionCheck(Address target, VirtualRegister result, Args... args)
+        std::enable_if_t<FunctionTraits<OperationType>::hasResult, void>
+        callOperationNoExceptionCheck(Address target, VirtualRegister result, Args... args)
         {
             setupArgumentsForIndirectCall<OperationType>(target, args...);
-            return appendCallSetJSValueResult<OperationType>(Address(GPRInfo::nonArgGPR0, target.offset), result);
+            return appendCallSetJSValueResult(Address(GPRInfo::nonArgGPR0, target.offset), result);
         }
 
 #if OS(WINDOWS) && CPU(X86_64)
@@ -751,7 +745,7 @@ namespace JSC {
             setupArguments<OperationType>(args...);
             // x64 Windows cannot use standard call when the return type is larger than 64 bits.
             if constexpr (is64BitType<typename FunctionTraits<OperationType>::ResultType>::value)
-                return appendCallWithExceptionCheck<OperationType>(operation);
+                return appendCallWithExceptionCheck(operation);
             updateTopCallFrame();
             MacroAssembler::Call call = appendCallWithUGPRPair(operation);
             exceptionCheck();
@@ -762,7 +756,7 @@ namespace JSC {
         MacroAssembler::Call callOperation(OperationType operation, Args... args)
         {
             setupArguments<OperationType>(args...);
-            return appendCallWithExceptionCheck<OperationType>(operation);
+            return appendCallWithExceptionCheck(operation);
         }
 #endif // OS(WINDOWS) && CPU(X86_64)
 
@@ -774,31 +768,30 @@ namespace JSC {
             static_assert(is64BitType<typename FunctionTraits<OperationType>::ResultType>::value);
 #endif
             setupArgumentsForIndirectCall<OperationType>(target, args...);
-            appendCallWithExceptionCheck<OperationType>(Address(GPRInfo::nonArgGPR0, target.offset));
+            appendCallWithExceptionCheck(Address(GPRInfo::nonArgGPR0, target.offset));
         }
 
         template<typename Bytecode, typename OperationType, typename... Args>
-        requires OperationHasResult<OperationType>
-        MacroAssembler::Call callOperationWithProfile(const Bytecode& bytecode, OperationType operation, VirtualRegister result, Args... args)
+        std::enable_if_t<FunctionTraits<OperationType>::hasResult, MacroAssembler::Call>
+        callOperationWithProfile(const Bytecode& bytecode, OperationType operation, VirtualRegister result, Args... args)
         {
             setupArguments<OperationType>(args...);
-            return appendCallWithExceptionCheckSetJSValueResultWithProfile<OperationType>(bytecode, operation, result);
+            return appendCallWithExceptionCheckSetJSValueResultWithProfile(bytecode, operation, result);
         }
 
         template<typename OperationType, typename Bytecode, typename... Args>
-        requires OperationHasResult<OperationType>
-        void callOperationWithProfile(const Bytecode& bytecode, Address target, VirtualRegister result, Args... args)
+        std::enable_if_t<FunctionTraits<OperationType>::hasResult, void>
+        callOperationWithProfile(const Bytecode& bytecode, Address target, VirtualRegister result, Args... args)
         {
             setupArgumentsForIndirectCall<OperationType>(target, args...);
-            return appendCallWithExceptionCheckSetJSValueResultWithProfile<OperationType>(bytecode, Address(GPRInfo::nonArgGPR0, target.offset), result);
+            return appendCallWithExceptionCheckSetJSValueResultWithProfile(bytecode, Address(GPRInfo::nonArgGPR0, target.offset), result);
         }
 
         template<typename OperationType, typename... Args>
-        requires OperationHasResult<OperationType>
         MacroAssembler::Call callOperationWithResult(OperationType operation, JSValueRegs resultRegs, Args... args)
         {
             setupArguments<OperationType>(args...);
-            auto result = appendCallWithExceptionCheck<OperationType>(operation);
+            auto result = appendCallWithExceptionCheck(operation);
             setupResults(resultRegs);
             return result;
         }

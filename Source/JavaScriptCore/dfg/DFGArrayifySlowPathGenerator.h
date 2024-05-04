@@ -114,6 +114,7 @@ private:
         }
         for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i]);
+        jit->exceptionCheck();
         
         if (m_op == ArrayifyToStructure) {
             ASSERT(m_structure.get());

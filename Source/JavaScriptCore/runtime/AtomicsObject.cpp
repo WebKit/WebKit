@@ -617,9 +617,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsAdd, EncodedJSValue, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, AddFunc()));
+    return atomicReadModifyWrite(globalObject, vm, args, AddFunc());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsAnd, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand))
@@ -627,9 +626,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsAnd, EncodedJSValue, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, AndFunc()));
+    return atomicReadModifyWrite(globalObject, vm, args, AndFunc());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsCompareExchange, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index, EncodedJSValue expected, EncodedJSValue newValue))
@@ -637,9 +635,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsCompareExchange, EncodedJSValue, (JSGlo
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(expected), JSValue::decode(newValue)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, CompareExchangeFunc()));
+    return atomicReadModifyWrite(globalObject, vm, args, CompareExchangeFunc());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsExchange, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand))
@@ -647,9 +644,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsExchange, EncodedJSValue, (JSGlobalObje
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, ExchangeFunc()));
+    return atomicReadModifyWrite(globalObject, vm, args, ExchangeFunc());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsIsLockFree, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue size))
@@ -657,8 +653,7 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsIsLockFree, EncodedJSValue, (JSGlobalOb
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, isLockFree(globalObject, JSValue::decode(size)));
+    return isLockFree(globalObject, JSValue::decode(size));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsLoad, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index))
@@ -666,9 +661,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsLoad, EncodedJSValue, (JSGlobalObject* 
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, LoadFunc()));
+    return atomicReadModifyWrite(globalObject, vm, args, LoadFunc());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsOr, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand))
@@ -676,9 +670,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsOr, EncodedJSValue, (JSGlobalObject* gl
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, OrFunc()));
+    return atomicReadModifyWrite(globalObject, vm, args, OrFunc());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsStore, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand))
@@ -686,8 +679,7 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsStore, EncodedJSValue, (JSGlobalObject*
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, atomicStore(globalObject, vm, JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)));
+    return atomicStore(globalObject, vm, JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsSub, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand))
@@ -695,9 +687,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsSub, EncodedJSValue, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, SubFunc()));
+    return atomicReadModifyWrite(globalObject, vm, args, SubFunc());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsXor, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand))
@@ -705,9 +696,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsXor, EncodedJSValue, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, XorFunc()));
+    return atomicReadModifyWrite(globalObject, vm, args, XorFunc());
 }
 
 IGNORE_WARNINGS_END

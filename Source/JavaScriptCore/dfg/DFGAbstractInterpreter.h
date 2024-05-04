@@ -271,7 +271,7 @@ private:
     
     void verifyEdge(Node*, Edge);
     void verifyEdges(Node*);
-    void executeDoubleUnaryOpEffects(Node*, const auto& functor);
+    void executeDoubleUnaryOpEffects(Node*, double(*equivalentFunction)(double));
     
     bool handleConstantDivOp(Node*);
 

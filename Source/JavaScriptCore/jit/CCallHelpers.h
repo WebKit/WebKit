@@ -767,7 +767,7 @@ public:
         setupArgumentsEntryImpl<OperationType>(ArgCollection<0, 0, 0, 0, 0, 0, 0, 0>().pushNonArg(address.base, GPRInfo::nonArgGPR0), args...);
     }
 
-    void setupResults(GPRReg destA, GPRReg destB = InvalidGPRReg)
+    void setupResults(GPRReg destA, GPRReg destB)
     {
         GPRReg srcA = GPRInfo::returnValueGPR;
         GPRReg srcB = GPRInfo::returnValueGPR2;
@@ -797,12 +797,6 @@ public:
 #endif
     }
     
-    void setupResults(FPRReg destA)
-    {
-        if (destA != InvalidFPRReg)
-            moveDouble(FPRInfo::returnValueFPR, destA);
-    }
-
     void jumpToExceptionHandler(VM& vm)
     {
         // genericUnwind() leaves the handler CallFrame* in vm->callFrameForCatch,

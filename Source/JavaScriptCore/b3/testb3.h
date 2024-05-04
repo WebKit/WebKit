@@ -68,7 +68,6 @@
 #include "JITCompilation.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
-#include "OperationResult.h"
 #include "PureNaN.h"
 #include <cmath>
 #include <regex>

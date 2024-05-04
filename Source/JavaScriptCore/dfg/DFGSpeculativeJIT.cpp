@@ -292,7 +292,7 @@ void SpeculativeJIT::compileFunction()
     m_graph.m_plan.setFinalizer(WTFMove(finalizer));
 }
 
-void SpeculativeJIT::exceptionCheck(GPRReg exceptionReg)
+void SpeculativeJIT::exceptionCheck()
 {
     // It's important that we use origin.forExit here. Consider if we hoist string
     // addition outside a loop, and that we exit at the point of that concatenation
@@ -319,11 +319,11 @@ void SpeculativeJIT::exceptionCheck(GPRReg exceptionReg)
     bool willCatchException = m_graph.willCatchExceptionInMachineFrame(m_currentNode->origin.forExit, opCatchOrigin, exceptionHandler);
     if (willCatchException) {
         unsigned streamIndex = m_outOfLineStreamIndex ? *m_outOfLineStreamIndex : m_stream.size();
-        Jump hadException = emitNonPatchableExceptionCheck(vm(), exceptionReg);
-        // We assume here that this is called after callOperation()/appendCall() is called.
+        Jump hadException = emitNonPatchableExceptionCheck(vm());
+        // We assume here that this is called after callOpeartion()/appendCall() is called.
         appendExceptionHandlingOSRExit(this, ExceptionCheck, streamIndex, opCatchOrigin, exceptionHandler, m_jitCode->common.codeOrigins->lastCallSite(), hadException);
     } else
-        emitNonPatchableExceptionCheck(vm(), exceptionReg).linkThunk(CodeLocationLabel(vm().getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), this);
+        emitExceptionCheck(vm()).linkThunk(CodeLocationLabel(vm().getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), this);
 }
 
 CallSiteIndex SpeculativeJIT::recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(const CodeOrigin& callSiteCodeOrigin, unsigned eventStreamIndex)
@@ -1479,6 +1479,7 @@ void SpeculativeJIT::compileDeleteById(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     callOperation(node->ecmaMode().isStrict() ? operationDeleteByIdStrictGeneric : operationDeleteByIdSloppyGeneric, resultGPR, LinkableConstant::globalObject(*this, node), baseRegs, node->cacheableIdentifier().rawBits());
+    exceptionCheck();
 
     unblessedBooleanResult(resultGPR, node);
 }
@@ -1561,6 +1562,7 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     callOperation(node->ecmaMode().isStrict() ? operationDeleteByValStrictGeneric : operationDeleteByValSloppyGeneric, resultGPR, LinkableConstant::globalObject(*this, node), baseRegs, keyRegs);
+    exceptionCheck();
 
     unblessedBooleanResult(resultGPR, node);
 }
@@ -1753,7 +1755,7 @@ void SpeculativeJIT::compilePushWithScope(Node* node)
         speculateObject(objectEdge, objectGPR);
 
         flushRegisters();
-        callOperationWithoutExceptionCheck(operationPushWithScopeObject, resultGPR, LinkableConstant::globalObject(*this, node), currentScopeGPR, objectGPR);
+        callOperation(operationPushWithScopeObject, resultGPR, LinkableConstant::globalObject(*this, node), currentScopeGPR, objectGPR);
         // No exception check here as we did not have to call toObject().
     } else {
         ASSERT(objectEdge.useKind() == UntypedUse);
@@ -1762,6 +1764,7 @@ void SpeculativeJIT::compilePushWithScope(Node* node)
 
         flushRegisters();
         callOperation(operationPushWithScope, resultGPR, LinkableConstant::globalObject(*this, node), currentScopeGPR, objectRegs);
+        exceptionCheck();
     }
     
     cellResult(resultGPR, node);
@@ -2208,6 +2211,7 @@ void SpeculativeJIT::compileStringSubstring(Node* node)
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         callOperation(operationStringSubstringWithEnd, resultGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR, endGPR);
+        exceptionCheck();
         cellResult(resultGPR, node);
         return;
     }
@@ -2221,6 +2225,7 @@ void SpeculativeJIT::compileStringSubstring(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     callOperation(operationStringSubstring, resultGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR);
+    exceptionCheck();
     cellResult(resultGPR, node);
 }
 
@@ -2267,6 +2272,7 @@ void SpeculativeJIT::compileToLowerCase(Node* node)
     silentSpillAllRegisters(lengthGPR);
     callOperation(operationToLowerCase, lengthGPR, LinkableConstant::globalObject(*this, node), stringGPR, indexGPR);
     silentFillAllRegisters();
+    exceptionCheck();
     auto done = jump();
 
     loopDone.link(this);
@@ -2975,6 +2981,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
                 callOperation(node->ecmaMode().isStrict() ? operationDirectPutByValStrictGeneric : operationDirectPutByValSloppyGeneric, LinkableConstant::globalObject(*this, node), baseRegs, propertyRegs, valueRegs);
             else
                 callOperation(node->ecmaMode().isStrict() ? operationPutByValStrictGeneric : operationPutByValSloppyGeneric, LinkableConstant::globalObject(*this, node), baseRegs, propertyRegs, valueRegs);
+            exceptionCheck();
 
             noResult(node);
             break;
@@ -3289,6 +3296,7 @@ void SpeculativeJIT::compileFromCharCode(Node* node)
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
         callOperation(operationStringFromCharCodeUntyped, resultRegs, LinkableConstant::globalObject(*this, node), oprRegs);
+        exceptionCheck();
         
         jsValueResult(resultRegs, node);
         return;
@@ -3430,7 +3438,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 #endif
             {
                 silentSpillAllRegisters(resultGpr);
-                callOperationWithoutExceptionCheck(operationToInt32, resultGpr, fpr);
+                callOperation(operationToInt32, resultGpr, fpr);
                 silentFillAllRegisters();
             }
 
@@ -3489,7 +3497,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
                 unboxDouble(tagGPR, payloadGPR, fpr);
 
                 silentSpillAllRegisters(resultGpr);
-                callOperationWithoutExceptionCheck(operationToInt32, resultGpr, fpr);
+                callOperation(operationToInt32, resultGpr, fpr);
                 silentFillAllRegisters();
 
                 converted.append(jump());
@@ -4436,6 +4444,7 @@ void SpeculativeJIT::compileGetByValForObjectWithString(Node* node, const Scoped
     callOperation(operationGetByValObjectString, resultRegs, LinkableConstant::globalObject(*this, node), arg1GPR, arg2GPR);
     if (canUseFlush == CanUseFlush::No)
         silentFillAllRegisters();
+    exceptionCheck();
 
     jsValueResult(resultRegs, node);
 }
@@ -4462,6 +4471,7 @@ void SpeculativeJIT::compileGetByValForObjectWithSymbol(Node* node, const Scoped
     callOperation(operationGetByValObjectSymbol, resultRegs, LinkableConstant::globalObject(*this, node), arg1GPR, arg2GPR);
     if (canUseFlush == CanUseFlush::No)
         silentFillAllRegisters();
+    exceptionCheck();
 
     jsValueResult(resultRegs, node);
 }
@@ -4622,6 +4632,7 @@ void SpeculativeJIT::compilePutByValForCellWithString(Node* node)
             (node->op() == PutByValDirect ? operationPutByValDirectCellStringStrict : operationPutByValCellStringStrict) :
             (node->op() == PutByValDirect ? operationPutByValDirectCellStringSloppy : operationPutByValCellStringSloppy),
         LinkableConstant::globalObject(*this, node), arg1GPR, arg2GPR, arg3Regs);
+    exceptionCheck();
 
     noResult(node);
 }
@@ -4644,6 +4655,7 @@ void SpeculativeJIT::compilePutByValForCellWithSymbol(Node* node)
             ? (node->op() == PutByValDirect ? operationPutByValDirectCellSymbolStrict : operationPutByValCellSymbolStrict)
             : (node->op() == PutByValDirect ? operationPutByValDirectCellSymbolSloppy : operationPutByValCellSymbolSloppy),
         LinkableConstant::globalObject(*this, node), arg1GPR, arg2GPR, arg3Regs);
+    exceptionCheck();
 
     noResult(node);
 }
@@ -4669,6 +4681,7 @@ void SpeculativeJIT::compilePutPrivateName(Node* node)
         flushRegisters();
         auto operation = node->privateFieldPutKind().isDefine() ? operationPutByValDefinePrivateFieldGeneric : operationPutByValSetPrivateFieldGeneric;
         callOperation(operation, LinkableConstant::globalObject(*this, node), baseRegs, CellValue(propertyGPR), valueRegs);
+        exceptionCheck();
 
         noResult(node);
         return;
@@ -4889,6 +4902,7 @@ void SpeculativeJIT::compileParseInt(Node* node)
             JSValueRegsFlushedCallResult result(this);
             JSValueRegs resultRegs = result.regs();
             callOperation(operationParseIntGeneric, resultRegs, LinkableConstant::globalObject(*this, node), valueRegs, radixGPR);
+            exceptionCheck();
             jsValueResult(resultRegs, node);
             return;
         }
@@ -4902,6 +4916,7 @@ void SpeculativeJIT::compileParseInt(Node* node)
             JSValueRegsFlushedCallResult result(this);
             JSValueRegs resultRegs = result.regs();
             callOperation(operationParseIntString, resultRegs, LinkableConstant::globalObject(*this, node), valueGPR, radixGPR);
+            exceptionCheck();
             jsValueResult(resultRegs, node);
             return;
         }
@@ -4914,6 +4929,7 @@ void SpeculativeJIT::compileParseInt(Node* node)
             JSValueRegsFlushedCallResult result(this);
             JSValueRegs resultRegs = result.regs();
             callOperation(operationParseIntInt32, resultRegs, LinkableConstant::globalObject(*this, node), valueGPR, radixGPR);
+            exceptionCheck();
             jsValueResult(resultRegs, node);
             return;
         }
@@ -4926,6 +4942,7 @@ void SpeculativeJIT::compileParseInt(Node* node)
             JSValueRegsFlushedCallResult result(this);
             JSValueRegs resultRegs = result.regs();
             callOperation(operationParseIntDouble, resultRegs, LinkableConstant::globalObject(*this, node), valueFPR, radixGPR);
+            exceptionCheck();
             jsValueResult(resultRegs, node);
             return;
         }
@@ -4945,6 +4962,7 @@ void SpeculativeJIT::compileParseInt(Node* node)
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
         callOperation(operationParseIntGenericNoRadix, resultRegs, LinkableConstant::globalObject(*this, node), valueRegs);
+        exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
@@ -4958,6 +4976,7 @@ void SpeculativeJIT::compileParseInt(Node* node)
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
         callOperation(operationParseIntStringNoRadix, resultRegs, LinkableConstant::globalObject(*this, node), valueGPR);
+        exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
@@ -4970,6 +4989,7 @@ void SpeculativeJIT::compileParseInt(Node* node)
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
         callOperation(operationParseIntDoubleNoRadix, resultRegs, LinkableConstant::globalObject(*this, node), valueFPR);
+        exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
@@ -5150,6 +5170,7 @@ void SpeculativeJIT::compileValueBitNot(Node* node)
         JSValueRegs resultRegs = result.regs();
 
         callOperation(operationBitNotHeapBigInt, resultRegs, LinkableConstant::globalObject(*this, node), operandGPR);
+        exceptionCheck();
         jsValueResult(resultRegs, node);
 
         return;
@@ -5164,6 +5185,7 @@ void SpeculativeJIT::compileValueBitNot(Node* node)
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
     callOperation(operationValueBitNot, resultRegs, LinkableConstant::globalObject(*this, node), operandRegs);
+    exceptionCheck();
 
     jsValueResult(resultRegs, node);
 }
@@ -5203,6 +5225,7 @@ void SpeculativeJIT::emitUntypedOrAnyBigIntBitOp(Node* node)
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
         callOperation(snippetSlowPathFunction, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+        exceptionCheck();
 
         jsValueResult(resultRegs, node);
         return;
@@ -5269,6 +5292,7 @@ void SpeculativeJIT::emitUntypedOrAnyBigIntBitOp(Node* node)
     callOperation(snippetSlowPathFunction, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
 
     silentFillAllRegisters();
+    exceptionCheck();
 
     gen.endJumpList().link(this);
     jsValueResult(resultRegs, node);
@@ -5340,6 +5364,7 @@ void SpeculativeJIT::compileValueBitwiseOp(Node* node)
             RELEASE_ASSERT_NOT_REACHED();
         }
 
+        exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
@@ -5418,6 +5443,7 @@ void SpeculativeJIT::emitUntypedOrBigIntRightShiftBitOp(Node* node)
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
         callOperation(snippetSlowPathFunction, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+        exceptionCheck();
 
         jsValueResult(resultRegs, node);
         return;
@@ -5485,6 +5511,7 @@ void SpeculativeJIT::emitUntypedOrBigIntRightShiftBitOp(Node* node)
     callOperation(snippetSlowPathFunction, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
 
     silentFillAllRegisters();
+    exceptionCheck();
 
     gen.endJumpList().link(this);
     jsValueResult(resultRegs, node);
@@ -5511,6 +5538,7 @@ void SpeculativeJIT::compileValueLShiftOp(Node* node)
         JSValueRegs resultRegs = result.regs();
 
         callOperation(operationBitLShiftHeapBigInt, resultRegs, LinkableConstant::globalObject(*this, node), leftGPR, rightGPR);
+        exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
@@ -5537,6 +5565,7 @@ void SpeculativeJIT::compileValueBitRShift(Node* node)
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
         callOperation(operationBitRShiftHeapBigInt, resultRegs, LinkableConstant::globalObject(*this, node), leftGPR, rightGPR);
+        exceptionCheck();
 
         jsValueResult(resultRegs, node);
         return;
@@ -5624,6 +5653,7 @@ void SpeculativeJIT::compileValueAdd(Node* node)
         JSValueRegs resultRegs = result.regs();
         // FIXME: call a more specialized function
         callOperation(operationValueAddNotNumber, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+        exceptionCheck();
 
         jsValueResult(resultRegs, node);
         return;
@@ -5644,6 +5674,7 @@ void SpeculativeJIT::compileValueAdd(Node* node)
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
         callOperation(operationAddHeapBigInt, resultRegs, LinkableConstant::globalObject(*this, node), leftGPR, rightGPR);
+        exceptionCheck();
 
         jsValueResult(resultRegs, node);
         return;
@@ -5659,6 +5690,7 @@ void SpeculativeJIT::compileValueAdd(Node* node)
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
         callOperation(operationValueAddNotNumber, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+        exceptionCheck();
     
         jsValueResult(resultRegs, node);
         return;
@@ -5721,6 +5753,7 @@ void SpeculativeJIT::compileValueSub(Node* node)
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
         callOperation(operationValueSub, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+        exceptionCheck();
 
         jsValueResult(resultRegs, node);
         return;
@@ -5742,6 +5775,7 @@ void SpeculativeJIT::compileValueSub(Node* node)
 
         callOperation(operationSubHeapBigInt, resultRegs, LinkableConstant::globalObject(*this, node), leftGPR, rightGPR);
 
+        exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
@@ -5851,6 +5885,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
                 addICGenerationState->slowPathCall = callOperation(nonRepatchingFunction, resultRegs, LinkableConstant::globalObject(*this, node), innerLeftRegs, innerRightRegs);
 
             silentFill(savePlans);
+            exceptionCheck();
             jump().linkTo(done, this);
 
             addLinkTask([=] (LinkBuffer& linkBuffer) {
@@ -5877,6 +5912,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
 
         flushRegisters();
         callOperation(nonRepatchingFunction, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+        exceptionCheck();
     }
 
 #if ENABLE(MATH_IC_STATS)
@@ -6168,6 +6204,7 @@ void SpeculativeJIT::compileArithAbs(Node* node)
         flushRegisters();
         FPRResult result(this);
         callOperation(operationArithAbs, result.fpr(), LinkableConstant::globalObject(*this, node), op1Regs);
+        exceptionCheck();
         doubleResult(result.fpr(), node);
         break;
     }
@@ -6191,10 +6228,11 @@ void SpeculativeJIT::compileArithClz32(Node* node)
     GPRReg resultReg = result.gpr();
     flushRegisters();
     callOperation(operationArithClz32, resultReg, LinkableConstant::globalObject(*this, node), op1Regs);
+    exceptionCheck();
     strictInt32Result(resultReg, node);
 }
 
-void SpeculativeJIT::compileArithDoubleUnaryOp(Node* node, Arith::UnaryFunction doubleFunction, Arith::UnaryOperation operation)
+void SpeculativeJIT::compileArithDoubleUnaryOp(Node* node, double (*doubleFunction)(double), double (*operation)(JSGlobalObject*, EncodedJSValue))
 {
     if (node->child1().useKind() == DoubleRepUse) {
         SpeculateDoubleOperand op1(this, node->child1());
@@ -6203,7 +6241,7 @@ void SpeculativeJIT::compileArithDoubleUnaryOp(Node* node, Arith::UnaryFunction 
         flushRegisters();
 
         FPRResult result(this);
-        callOperationWithoutExceptionCheck(doubleFunction, result.fpr(), op1FPR);
+        callOperation(doubleFunction, result.fpr(), op1FPR);
 
         doubleResult(result.fpr(), node);
         return;
@@ -6214,6 +6252,7 @@ void SpeculativeJIT::compileArithDoubleUnaryOp(Node* node, Arith::UnaryFunction 
     flushRegisters();
     FPRResult result(this);
     callOperation(operation, result.fpr(), LinkableConstant::globalObject(*this, node), op1Regs);
+    exceptionCheck();
     doubleResult(result.fpr(), node);
 }
 
@@ -6330,6 +6369,7 @@ void SpeculativeJIT::compileIncOrDec(Node* node)
     JSValueRegs resultRegs = result.regs();
     auto operation = node->op() == Inc ? operationInc : operationDec;
     callOperation(operation, resultRegs, LinkableConstant::globalObject(*this, node), op1Regs);
+    exceptionCheck();
     jsValueResult(resultRegs, node);
 }
 
@@ -6472,6 +6512,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC
                 icGenerationState->slowPathCall = callOperation(nonRepatchingFunction, resultRegs, LinkableConstant::globalObject(*this, node), childRegs);
 
             silentFill(savePlans);
+            exceptionCheck();
             jump().linkTo(done, this);
 
             addLinkTask([=] (LinkBuffer& linkBuffer) {
@@ -6490,6 +6531,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC
     } else {
         flushRegisters();
         callOperation(nonRepatchingFunction, resultRegs, LinkableConstant::globalObject(*this, node), childRegs);
+        exceptionCheck();
     }
 
 #if ENABLE(MATH_IC_STATS)
@@ -6555,6 +6597,7 @@ void SpeculativeJIT::compileValueMul(Node* node)
 
         callOperation(operationMulHeapBigInt, resultRegs, LinkableConstant::globalObject(*this, node), leftGPR, rightGPR);
 
+        exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
@@ -6571,6 +6614,7 @@ void SpeculativeJIT::compileValueMul(Node* node)
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
         callOperation(operationValueMul, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+        exceptionCheck();
 
         jsValueResult(resultRegs, node);
         return;
@@ -6752,6 +6796,7 @@ void SpeculativeJIT::compileValueDiv(Node* node)
 
         callOperation(operationDivHeapBigInt, resultRegs, LinkableConstant::globalObject(*this, node), leftGPR, rightGPR);
 
+        exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
@@ -6768,6 +6813,7 @@ void SpeculativeJIT::compileValueDiv(Node* node)
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
         callOperation(operationValueDiv, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+        exceptionCheck();
 
         jsValueResult(resultRegs, node);
         return;
@@ -6853,6 +6899,7 @@ void SpeculativeJIT::compileValueDiv(Node* node)
     callOperation(operationValueDiv, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
 
     silentFillAllRegisters();
+    exceptionCheck();
 
     gen.endJumpList().link(this);
     jsValueResult(resultRegs, node);
@@ -7015,6 +7062,7 @@ void SpeculativeJIT::compileArithFRound(Node* node)
     flushRegisters();
     FPRResult result(this);
     callOperation(operationArithFRound, result.fpr(), LinkableConstant::globalObject(*this, node), op1Regs);
+    exceptionCheck();
     doubleResult(result.fpr(), node);
 }
 
@@ -7040,6 +7088,7 @@ void SpeculativeJIT::compileValueMod(Node* node)
 
         callOperation(operationModHeapBigInt, resultRegs, LinkableConstant::globalObject(*this, node), leftGPR, rightGPR);
 
+        exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
@@ -7055,6 +7104,7 @@ void SpeculativeJIT::compileValueMod(Node* node)
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
     callOperation(operationValueMod, resultRegs, LinkableConstant::globalObject(*this, node), op1Regs, op2Regs);
+    exceptionCheck();
     jsValueResult(resultRegs, node);
 }
 
@@ -7323,7 +7373,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
         
         FPRResult result(this);
 
-        callOperationWithoutExceptionCheck(Math::fmodDouble, result.fpr(), op1FPR, op2FPR);
+        callOperation(Math::fmodDouble, result.fpr(), op1FPR, op2FPR);
         
         doubleResult(result.fpr(), node);
         return;
@@ -7417,14 +7467,14 @@ void SpeculativeJIT::compileArithRounding(Node* node)
             FPRResult roundedResultAsDouble(this);
             FPRReg resultFPR = roundedResultAsDouble.fpr();
             if (node->op() == ArithRound)
-                callOperationWithoutExceptionCheck(Math::roundDouble, resultFPR, valueFPR);
+                callOperation(Math::roundDouble, resultFPR, valueFPR);
             else if (node->op() == ArithFloor)
-                callOperationWithoutExceptionCheck(Math::floorDouble, resultFPR, valueFPR);
+                callOperation(Math::floorDouble, resultFPR, valueFPR);
             else if (node->op() == ArithCeil)
-                callOperationWithoutExceptionCheck(Math::ceilDouble, resultFPR, valueFPR);
+                callOperation(Math::ceilDouble, resultFPR, valueFPR);
             else {
                 ASSERT(node->op() == ArithTrunc);
-                callOperationWithoutExceptionCheck(Math::truncDouble, resultFPR, valueFPR);
+                callOperation(Math::truncDouble, resultFPR, valueFPR);
             }
             setResult(resultFPR);
         }
@@ -7451,6 +7501,7 @@ void SpeculativeJIT::compileArithRounding(Node* node)
         operation = operationArithTrunc;
     }
     callOperation(operation, resultRegs, LinkableConstant::globalObject(*this, node), argumentRegs);
+    exceptionCheck();
     jsValueResult(resultRegs, node);
 }
 
@@ -7468,7 +7519,7 @@ void SpeculativeJIT::compileArithSqrt(Node* node)
         if (!supportsFloatingPointSqrt() || !Options::useArchitectureSpecificOptimizations()) {
             flushRegisters();
             FPRResult result(this);
-            callOperationWithoutExceptionCheck(Math::sqrtDouble, result.fpr(), op1FPR);
+            callOperation(Math::sqrtDouble, result.fpr(), op1FPR);
             doubleResult(result.fpr(), node);
         } else {
             FPRTemporary result(this, op1);
@@ -7483,6 +7534,7 @@ void SpeculativeJIT::compileArithSqrt(Node* node)
     flushRegisters();
     FPRResult result(this);
     callOperation(operationArithSqrt, result.fpr(), LinkableConstant::globalObject(*this, node), op1Regs);
+    exceptionCheck();
     doubleResult(result.fpr(), node);
 }
 
@@ -7604,7 +7656,7 @@ void SpeculativeJIT::compileArithMinMax(Node* node)
         flushRegisters();
         FPRResult result(this);
         FPRReg resultFPR = result.fpr();
-        callOperationWithoutExceptionCheck(node->op() == ArithMin ? operationArithMinMultipleDouble : operationArithMaxMultipleDouble, resultFPR, bufferGPR, TrustedImm32(node->numChildren()));
+        callOperation(node->op() == ArithMin ? operationArithMinMultipleDouble : operationArithMaxMultipleDouble, resultFPR, bufferGPR, TrustedImm32(node->numChildren()));
         doubleResult(resultFPR, node);
         break;
     }
@@ -7660,6 +7712,7 @@ void SpeculativeJIT::compileValuePow(Node* node)
 
         callOperation(operationPowHeapBigInt, resultRegs, LinkableConstant::globalObject(*this, node), leftGPR, rightGPR);
 
+        exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
@@ -7677,6 +7730,7 @@ void SpeculativeJIT::compileValuePow(Node* node)
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
     callOperation(operationValuePow, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+    exceptionCheck();
 
     jsValueResult(resultRegs, node);
 }
@@ -7705,7 +7759,7 @@ void SpeculativeJIT::compileArithPow(Node* node)
 
         Jump skipFallback = compileArithPowIntegerFastPath(*this, xOperandCopyFpr, counterGpr, resultFpr);
         convertInt32ToDouble(yOperandGpr, yOperandfpr.fpr());
-        callOperationWithoutExceptionCheck(operationMathPow, resultFpr, xOperandfpr, yOperandfpr.fpr());
+        callOperation(operationMathPow, resultFpr, xOperandfpr, yOperandfpr.fpr());
 
         skipFallback.link(this);
         doubleResult(resultFpr, node);
@@ -7800,7 +7854,7 @@ void SpeculativeJIT::compileArithPow(Node* node)
     Jump skipFallback = compileArithPowIntegerFastPath(*this, xOperandCopyFpr, yOperandInteger.gpr(), resultFpr);
     failedExponentConversionToInteger.link(this);
 
-    callOperationWithoutExceptionCheck(operationMathPow, resultFpr, xOperandfpr, yOperandfpr);
+    callOperation(operationMathPow, resultFpr, xOperandfpr, yOperandfpr);
     skipFallback.link(this);
     doubleResult(resultFpr, node);
 }
@@ -8566,6 +8620,7 @@ void SpeculativeJIT::compileStringCompare(Node* node, RelationalCondition condit
 
     flushRegisters();
     callOperation(compareFunction, resultGPR, LinkableConstant::globalObject(*this, node), leftGPR, rightGPR);
+    exceptionCheck();
 
     unblessedBooleanResult(resultGPR, node);
 }
@@ -8603,7 +8658,7 @@ void SpeculativeJIT::compileStringIdentCompare(Node* node, RelationalCondition c
     speculateStringIdentAndLoadStorage(node->child2(), rightGPR, rightTempGPR);
 
     flushRegisters();
-    callOperationWithoutExceptionCheck(compareFunction, resultGPR, leftTempGPR, rightTempGPR);
+    callOperation(compareFunction, resultGPR, leftTempGPR, rightTempGPR);
 
     unblessedBooleanResult(resultGPR, node);
 }
@@ -8666,6 +8721,7 @@ void SpeculativeJIT::compileSameValue(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     callOperation(operationSameValue, resultGPR, LinkableConstant::globalObject(*this, node), arg1Regs, arg2Regs);
+    exceptionCheck();
 
     unblessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
 }
@@ -9218,6 +9274,7 @@ void SpeculativeJIT::compileNewFunction(Node* node)
             callOperation(operationNewAsyncGeneratorFunction, resultGPR, TrustedImmPtr(&vm()), scopeGPR, LinkableConstant(*this, executable));
         else
             callOperation(operationNewFunction, resultGPR, TrustedImmPtr(&vm()), scopeGPR, LinkableConstant(*this, executable));
+        exceptionCheck();
         cellResult(resultGPR, node);
         return;
     }
@@ -9285,6 +9342,7 @@ void SpeculativeJIT::compileSetFunctionName(Node* node)
 
     flushRegisters();
     callOperation(operationSetFunctionName, LinkableConstant::globalObject(*this, node), funcGPR, nameValueRegs);
+    exceptionCheck();
 
     noResult(node);
 }
@@ -9301,6 +9359,7 @@ void SpeculativeJIT::compileVarargsLength(Node* node)
     unlock(GPRInfo::returnValueGPR);
 
     callOperation(operationSizeOfVarargs, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), argumentsRegs, data->offset);
+    exceptionCheck();
 
     lock(GPRInfo::returnValueGPR);
     GPRTemporary argCountIncludingThis(this);
@@ -9337,6 +9396,7 @@ void SpeculativeJIT::compileLoadVarargs(Node* node)
     store32(argumentCountIncludingThis, payloadFor(data->machineCount));
 
     callOperation(operationLoadVarargs, LinkableConstant::globalObject(*this, node), data->machineStart.offset(), argumentsRegs, data->offset, argumentCountIncludingThis, data->mandatoryMinimum);
+    exceptionCheck();
 
     noResult(node);
 }
@@ -9439,6 +9499,7 @@ void SpeculativeJIT::compileCreateActivation(Node* node)
         callOperation(operationCreateActivationDirect,
             resultGPR, TrustedImmPtr(&vm()), structure, scopeGPR, LinkableConstant(*this, table), initializationRegs);
 #endif
+        exceptionCheck();
         cellResult(resultGPR, node);
         return;
     }
@@ -9716,9 +9777,8 @@ void SpeculativeJIT::compileCreateScopedArguments(Node* node)
             loadLinkableConstant(LinkableConstant::globalObject(*this, node), destGPR);
         });
     
-    appendCall(operationCreateScopedArguments);
-    operationExceptionCheck<decltype(operationCreateScopedArguments)>();
-    setupResults(resultGPR);
+    appendCallSetResult(operationCreateScopedArguments, resultGPR);
+    exceptionCheck();
     
     cellResult(resultGPR, node);
 }
@@ -9785,6 +9845,7 @@ void SpeculativeJIT::compileCreateRest(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     callOperation(operationCreateRest, resultGPR, LinkableConstant::globalObject(*this, node), argumentsStartGPR, Imm32(node->numberOfArgumentsToSkip()), arrayLengthGPR);
+    exceptionCheck();
 
     cellResult(resultGPR, node);
 }
@@ -9887,6 +9948,7 @@ void SpeculativeJIT::compileSpread(Node* node)
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         callOperation(operationSpreadFastArray, resultGPR, LinkableConstant::globalObject(*this, node), argument);
+        exceptionCheck();
         cellResult(resultGPR, node);
 #endif // USE(JSVALUE64)
     } else {
@@ -9895,6 +9957,7 @@ void SpeculativeJIT::compileSpread(Node* node)
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         callOperation(operationSpreadGeneric, resultGPR, LinkableConstant::globalObject(*this, node), argument);
+        exceptionCheck();
         cellResult(resultGPR, node);
     }
 }
@@ -9967,6 +10030,7 @@ void SpeculativeJIT::compileNewArray(Node* node)
         flushRegisters();
         GPRFlushedCallResult result(this);
         callOperation(operationNewEmptyArray, result.gpr(), TrustedImmPtr(&vm()), structure);
+        exceptionCheck();
         cellResult(result.gpr(), node);
         return;
     }
@@ -10039,6 +10103,7 @@ void SpeculativeJIT::compileNewArray(Node* node)
     callOperation(
         operationNewArray, resultGPR, LinkableConstant::globalObject(*this, node), m_graph.registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())),
         TrustedImmPtr(buffer), size_t(node->numChildren()));
+    exceptionCheck();
 
     cellResult(resultGPR, node, UseChildrenCalledExplicitly);
 }
@@ -10191,6 +10256,7 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
     GPRReg resultGPR = result.gpr();
 
     callOperation(operationNewArrayWithSpreadSlow, resultGPR, LinkableConstant::globalObject(*this, node), TrustedImmPtr(buffer), node->numChildren());
+    exceptionCheck();
 
     cellResult(resultGPR, node);
 }
@@ -10444,6 +10510,7 @@ void SpeculativeJIT::compileArraySpliceExtract(Node* node)
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
     callOperation(operationArraySpliceExtract, resultRegs, LinkableConstant::globalObject(*this, node), baseGPR, startGPR, deleteCountGPR, TrustedImm32(refCount));
+    exceptionCheck();
     jsValueResult(resultRegs, node);
 }
 
@@ -10558,6 +10625,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         flushRegisters();
 
         callOperation(operationArrayIndexOfString, lengthGPR, LinkableConstant::globalObject(*this, node), storageGPR, searchElementGPR, indexGPR);
+        exceptionCheck();
 
         strictInt32Result(lengthGPR, node);
         return;
@@ -10574,7 +10642,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         ASSERT(node->arrayMode().type() == Array::Contiguous);
 
         flushRegisters();
-        callOperationWithoutExceptionCheck(operationArrayIndexOfNonStringIdentityValueContiguous, lengthGPR, storageGPR, valueRegs, indexGPR);
+        callOperation(operationArrayIndexOfNonStringIdentityValueContiguous, lengthGPR, storageGPR, valueRegs, indexGPR);
         strictInt32Result(lengthGPR, node);
         return;
     }
@@ -10597,6 +10665,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+        exceptionCheck();
 
         strictInt32Result(lengthGPR, node);
         return;
@@ -10880,6 +10949,7 @@ void SpeculativeJIT::compileArrayPush(Node* node)
 
         flushRegisters();
         callOperation(operationArrayPushMultipleSlow, resultRegs, LinkableConstant::globalObject(*this, node), baseGPR, bufferGPR, TrustedImm32(elementCount));
+        exceptionCheck();
 
         jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
         return;
@@ -11016,7 +11086,7 @@ void SpeculativeJIT::compileIsConstructor(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
 
-    callOperationWithoutExceptionCheck(operationIsConstructor, resultGPR, LinkableConstant::globalObject(*this, node), inputRegs);
+    callOperation(operationIsConstructor, resultGPR, LinkableConstant::globalObject(*this, node), inputRegs);
     unblessedBooleanResult(resultGPR, node);
 }
 
@@ -11173,6 +11243,7 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
 
         GPRFlushedCallResult result(this);
         callOperation(operationAllocateComplexPropertyStorageWithInitialCapacity, result.gpr(), TrustedImmPtr(&vm()), baseGPR);
+        exceptionCheck();
         
         storageResult(result.gpr(), node);
         return;
@@ -11216,6 +11287,7 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
 
         GPRFlushedCallResult result(this);
         callOperation(operationAllocateComplexPropertyStorage, result.gpr(), TrustedImmPtr(&vm()), baseGPR, newSize / sizeof(JSValue));
+        exceptionCheck();
 
         storageResult(result.gpr(), node);
         return;
@@ -11375,6 +11447,7 @@ void SpeculativeJIT::compileCallDOM(Node* node)
         break;
     }
 
+    exceptionCheck();
     jsValueResult(resultRegs, node);
 }
 
@@ -11390,16 +11463,22 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
         GPRReg baseGPR = base.gpr();
 
         flushRegisters();
+        if (Options::useJITCage())
+            setupArguments<J_JITOperation_GJIP>(LinkableConstant::globalObject(*this, node), CellValue(baseGPR), TrustedImmPtr(identifierUID(node->callDOMGetterData()->identifierNumber)), TrustedImmPtr(getter.taggedPtr()));
+        else
+            setupArguments<J_JITOperation_GJI>(LinkableConstant::globalObject(*this, node), CellValue(baseGPR), TrustedImmPtr(identifierUID(node->callDOMGetterData()->identifierNumber)));
 
         storePtr(GPRInfo::callFrameRegister, &vm().topCallFrame);
         emitStoreCodeOrigin(m_currentNode->origin.semantic);
         if (Options::useJITCage())
-            callOperation(vmEntryCustomGetter, resultRegs, LinkableConstant::globalObject(*this, node), CellValue(baseGPR), TrustedImmPtr(identifierUID(node->callDOMGetterData()->identifierNumber)), TrustedImmPtr(getter.taggedPtr()));
+            appendCall(vmEntryCustomGetter);
         else {
             CodePtr<OperationPtrTag> bypassedFunction(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(getter.taggedPtr())));
-            callOperation<J_JITOperation_GJI>(bypassedFunction, resultRegs, LinkableConstant::globalObject(*this, node), CellValue(baseGPR), TrustedImmPtr(identifierUID(node->callDOMGetterData()->identifierNumber)));
+            appendOperationCall(bypassedFunction);
         }
+        setupResults(resultRegs);
 
+        exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
@@ -11520,12 +11599,19 @@ void SpeculativeJIT::compileCallCustomAccessorGetter(Node* node)
     JSValueRegs resultRegs = result.regs();
 
     if (Options::useJITCage())
-        callOperation(vmEntryCustomGetter, resultRegs, LinkableConstant::globalObject(*this, node), baseRegs, TrustedImmPtr(uid), TrustedImmPtr(getter.taggedPtr()));
+        setupArguments<GetValueFuncWithPtr>(LinkableConstant::globalObject(*this, node), baseRegs, TrustedImmPtr(uid), TrustedImmPtr(getter.taggedPtr()));
+    else
+        setupArguments<GetValueFunc>(LinkableConstant::globalObject(*this, node), baseRegs, TrustedImmPtr(uid));
+
+    if (Options::useJITCage())
+        appendCall(vmEntryCustomGetter);
     else {
         CodePtr<OperationPtrTag> bypassedFunction(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(getter.taggedPtr())));
-        callOperation<GetValueFunc>(bypassedFunction, resultRegs, LinkableConstant::globalObject(*this, node), baseRegs, TrustedImmPtr(uid));
+        appendOperationCall(bypassedFunction);
     }
+    setupResults(resultRegs);
 
+    exceptionCheck();
     jsValueResult(resultRegs, node);
 }
 
@@ -11546,12 +11632,17 @@ void SpeculativeJIT::compileCallCustomAccessorSetter(Node* node)
     emitStoreCodeOrigin(m_currentNode->origin.semantic);
 
     if (Options::useJITCage())
-        callOperation(vmEntryCustomSetter, LinkableConstant::globalObject(*this, node), baseRegs, valueRegs, TrustedImmPtr(uid), TrustedImmPtr(setter.taggedPtr()));
-    else {
+        setupArguments<PutValueFuncWithPtr>(LinkableConstant::globalObject(*this, node), baseRegs, valueRegs, TrustedImmPtr(uid), TrustedImmPtr(setter.taggedPtr()));
+    else
         setupArguments<PutValueFunc>(LinkableConstant::globalObject(*this, node), baseRegs, valueRegs, TrustedImmPtr(uid));
+
+    if (Options::useJITCage())
+        appendCall(vmEntryCustomSetter);
+    else {
         CodePtr<OperationPtrTag> bypassedFunction(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(setter.taggedPtr())));
         appendOperationCall(bypassedFunction);
     }
+    exceptionCheck();
     noResult(node);
 }
 
@@ -11586,6 +11677,7 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf(Node*
             ASSERT(node->op() == CallStringConstructor);
             callOperation(operationCallStringConstructor, resultGPR, LinkableConstant::globalObject(*this, node), op1Regs);
         }
+        exceptionCheck();
         cellResult(resultGPR, node);
         return;
     }
@@ -11653,6 +11745,7 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf(Node*
             ASSERT(node->op() == CallStringConstructor);
             callOperation(operationCallStringConstructor, resultGPR, LinkableConstant::globalObject(*this, node), op1Regs);
         }
+        exceptionCheck();
         if (done.isSet())
             done.link(this);
         cellResult(resultGPR, node);
@@ -11726,6 +11819,7 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf(Node*
             ASSERT(node->op() == CallStringConstructor);
             callOperation(operationCallStringConstructorOnCell, resultGPR, LinkableConstant::globalObject(*this, node), op1GPR);
         }
+        exceptionCheck();
         if (done.isSet())
             done.link(this);
         cellResult(resultGPR, node);
@@ -11791,6 +11885,7 @@ void SpeculativeJIT::compileNumberToStringWithValidRadixConstant(Node* node, int
     auto callToString = [&] (auto operation, GPRReg resultGPR, auto valueReg) {
         flushRegisters();
         callOperation(operation, resultGPR, LinkableConstant::globalObject(*this, node), valueReg, TrustedImm32(radix));
+        exceptionCheck();
         cellResult(resultGPR, node);
     };
 
@@ -11820,6 +11915,7 @@ void SpeculativeJIT::compileNumberToStringWithValidRadixConstant(Node* node, int
 
             slowCases.link(this);
             callOperation(operationInt32ToStringWithValidRadix, resultGPR, LinkableConstant::globalObject(*this, node), valueGPR, TrustedImm32(10));
+            exceptionCheck();
 
             doneCases.link(this);
             cellResult(resultGPR, node);
@@ -11865,6 +11961,7 @@ void SpeculativeJIT::compileNumberToStringWithRadix(Node* node)
     auto callToString = [&] (auto operation, GPRReg resultGPR, auto valueReg, GPRReg radixGPR) {
         flushRegisters();
         callOperation(operation, resultGPR, LinkableConstant::globalObject(*this, node), valueReg, radixGPR);
+        exceptionCheck();
         cellResult(resultGPR, node);
     };
 
@@ -11937,6 +12034,7 @@ void SpeculativeJIT::compileNewSymbol(Node* node)
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         callOperation(operationNewSymbol, resultGPR, TrustedImmPtr(&vm()));
+        exceptionCheck();
         cellResult(resultGPR, node);
         return;
     }
@@ -11951,6 +12049,7 @@ void SpeculativeJIT::compileNewSymbol(Node* node)
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         callOperation(operationNewSymbolWithStringDescription, resultGPR, LinkableConstant::globalObject(*this, node), stringGPR);
+        exceptionCheck();
         cellResult(resultGPR, node);
         return;
     }
@@ -11961,6 +12060,7 @@ void SpeculativeJIT::compileNewSymbol(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     callOperation(operationNewSymbolWithDescription, resultGPR, LinkableConstant::globalObject(*this, node), inputRegs);
+    exceptionCheck();
     cellResult(resultGPR, node);
 }
 
@@ -13117,7 +13217,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
 
         const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data->switchTableIndex);
         silentSpillAllRegisters(scratch);
-        callOperationWithoutExceptionCheck(operationFindSwitchImmTargetForDouble, scratch, TrustedImmPtr(&vm()), valueRegs, data->switchTableIndex, unlinkedTable.m_min);
+        callOperation(operationFindSwitchImmTargetForDouble, scratch, TrustedImmPtr(&vm()), valueRegs, data->switchTableIndex, unlinkedTable.m_min);
         silentFillAllRegisters();
 
         farJump(scratch, JSSwitchPtrTag);
@@ -13379,6 +13479,7 @@ void SpeculativeJIT::emitSwitchStringOnString(Node* node, SwitchData* data, GPRR
     if (!canDoBinarySwitch || totalLength > Options::maximumBinaryStringSwitchTotalLength()) {
         flushRegisters();
         callOperation(operationSwitchString, string, LinkableConstant::globalObject(*this, node), static_cast<size_t>(data->switchTableIndex), TrustedImmPtr(&unlinkedTable), string);
+        exceptionCheck();
         farJump(string, JSSwitchPtrTag);
         return;
     }
@@ -13416,6 +13517,7 @@ void SpeculativeJIT::emitSwitchStringOnString(Node* node, SwitchData* data, GPRR
     silentSpillAllRegisters(string);
     callOperation(operationSwitchString, string, LinkableConstant::globalObject(*this, node), static_cast<size_t>(data->switchTableIndex), TrustedImmPtr(&unlinkedTable), string);
     silentFillAllRegisters();
+    exceptionCheck();
     farJump(string, JSSwitchPtrTag);
 }
 
@@ -13544,7 +13646,7 @@ void SpeculativeJIT::compileStoreBarrier(Node* node)
         ok.append(barrierBranchWithoutFence(baseGPR));
 
     silentSpillAllRegisters(InvalidGPRReg);
-    callOperationWithoutExceptionCheck(operationWriteBarrierSlowPath, TrustedImmPtr(&vm()), baseGPR);
+    callOperation(operationWriteBarrierSlowPath, TrustedImmPtr(&vm()), baseGPR);
     silentFillAllRegisters();
 
     ok.link(this);
@@ -13562,6 +13664,7 @@ void SpeculativeJIT::compilePutAccessorById(Node* node)
 
     flushRegisters();
     callOperation(node->op() == PutGetterById ? operationPutGetterById : operationPutSetterById, LinkableConstant::globalObject(*this, node), baseGPR, TrustedImmPtr(identifierUID(node->identifierNumber())), node->accessorAttributes(), accessorGPR);
+    exceptionCheck();
 
     noResult(node);
 }
@@ -13592,6 +13695,7 @@ void SpeculativeJIT::compilePutGetterSetterById(Node* node)
     flushRegisters();
     callOperation(operationPutGetterSetter, LinkableConstant::globalObject(*this, node), baseGPR, TrustedImmPtr(identifierUID(node->identifierNumber())), node->accessorAttributes(), getterRegs.payloadGPR(), setterRegs.payloadGPR());
 #endif
+    exceptionCheck();
 
     noResult(node);
 }
@@ -13604,6 +13708,7 @@ void SpeculativeJIT::compileResolveScope(Node* node)
     GPRReg resultGPR = result.gpr();
     flushRegisters();
     callOperation(operationResolveScope, resultGPR, LinkableConstant::globalObject(*this, node), scopeGPR, TrustedImmPtr(identifierUID(node->identifierNumber())));
+    exceptionCheck();
     cellResult(resultGPR, node);
 }
 
@@ -13615,6 +13720,7 @@ void SpeculativeJIT::compileResolveScopeForHoistingFuncDeclInEval(Node* node)
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
     callOperation(operationResolveScopeForHoistingFuncDeclInEval, resultRegs, LinkableConstant::globalObject(*this, node), scopeGPR, TrustedImmPtr(identifierUID(node->identifierNumber())));
+    exceptionCheck();
     jsValueResult(resultRegs, node);
 }
 
@@ -13642,6 +13748,7 @@ void SpeculativeJIT::compileGetDynamicVar(Node* node)
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
     callOperation(operationGetDynamicVar, resultRegs, LinkableConstant::globalObject(*this, node), scopeGPR, TrustedImmPtr(identifierUID(node->identifierNumber())), node->getPutInfo());
+    exceptionCheck();
     jsValueResult(resultRegs, node);
 }
 
@@ -13655,6 +13762,7 @@ void SpeculativeJIT::compilePutDynamicVar(Node* node)
 
     flushRegisters();
     callOperation(node->ecmaMode().isStrict() ? operationPutDynamicVarStrict : operationPutDynamicVarSloppy, LinkableConstant::globalObject(*this, node), scopeGPR, valueRegs, TrustedImmPtr(identifierUID(node->identifierNumber())), node->getPutInfo());
+    exceptionCheck();
     noResult(node);
 }
 
@@ -13720,6 +13828,7 @@ void SpeculativeJIT::compilePutAccessorByVal(Node* node)
 
     flushRegisters();
     callOperation(operation, LinkableConstant::globalObject(*this, node), baseGPR, subscriptRegs, node->accessorAttributes(), accessorGPR);
+    exceptionCheck();
 
     noResult(node);
 }
@@ -13778,6 +13887,7 @@ void SpeculativeJIT::compileRegExpExec(Node* node)
             JSValueRegsFlushedCallResult result(this);
             JSValueRegs resultRegs = result.regs();
             callOperation(operationRegExpExecString, resultRegs, globalObjectGPR, baseGPR, argumentGPR);
+            exceptionCheck();
 
             jsValueResult(resultRegs, node);
 
@@ -13796,6 +13906,7 @@ void SpeculativeJIT::compileRegExpExec(Node* node)
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
         callOperation(operationRegExpExec, resultRegs, globalObjectGPR, baseGPR, argumentRegs);
+        exceptionCheck();
 
         jsValueResult(resultRegs, node);
 
@@ -13813,6 +13924,7 @@ void SpeculativeJIT::compileRegExpExec(Node* node)
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
     callOperation(operationRegExpExecGeneric, resultRegs, globalObjectGPR, baseRegs, argumentRegs);
+    exceptionCheck();
 
     jsValueResult(resultRegs, node);
 
@@ -13837,6 +13949,7 @@ void SpeculativeJIT::compileRegExpTest(Node* node)
             flushRegisters();
             GPRFlushedCallResult result(this);
             callOperation(operationRegExpTestString, result.gpr(), globalObjectGPR, baseGPR, argumentGPR);
+            exceptionCheck();
 
             unblessedBooleanResult(result.gpr(), node);
             return;
@@ -13851,6 +13964,7 @@ void SpeculativeJIT::compileRegExpTest(Node* node)
         flushRegisters();
         GPRFlushedCallResult result(this);
         callOperation(operationRegExpTest, result.gpr(), globalObjectGPR, baseGPR, argumentRegs);
+        exceptionCheck();
 
         unblessedBooleanResult(result.gpr(), node);
         return;
@@ -13864,6 +13978,7 @@ void SpeculativeJIT::compileRegExpTest(Node* node)
     flushRegisters();
     GPRFlushedCallResult result(this);
     callOperation(operationRegExpTestGeneric, result.gpr(), globalObjectGPR, baseRegs, argumentRegs);
+    exceptionCheck();
 
     unblessedBooleanResult(result.gpr(), node);
 }
@@ -13893,6 +14008,7 @@ void SpeculativeJIT::compileStringReplace(Node* node)
             flushRegisters();
             GPRFlushedCallResult result(this);
             callOperation(operationStringProtoFuncReplaceRegExpEmptyStr, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, regExpGPR);
+            exceptionCheck();
             cellResult(result.gpr(), node);
             return;
         }
@@ -13910,6 +14026,7 @@ void SpeculativeJIT::compileStringReplace(Node* node)
         flushRegisters();
         GPRFlushedCallResult result(this);
         callOperation(operationStringProtoFuncReplaceRegExpString, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, regExpGPR, replaceGPR);
+        exceptionCheck();
         cellResult(result.gpr(), node);
         return;
     }
@@ -13929,6 +14046,7 @@ void SpeculativeJIT::compileStringReplace(Node* node)
     flushRegisters();
     GPRFlushedCallResult result(this);
     callOperation(operationStringProtoFuncReplaceGeneric, result.gpr(), LinkableConstant::globalObject(*this, node), stringRegs, searchRegs, replaceRegs);
+    exceptionCheck();
     cellResult(result.gpr(), node);
 }
 
@@ -13956,6 +14074,7 @@ void SpeculativeJIT::compileStringReplaceString(Node* node)
                     callOperation(operationStringReplaceStringEmptyStringWithTable8, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, TrustedImmPtr(tablePointer));
                 else
                     callOperation(operationStringReplaceStringEmptyString, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR);
+                exceptionCheck();
                 cellResult(result.gpr(), node);
                 return;
             }
@@ -13977,6 +14096,7 @@ void SpeculativeJIT::compileStringReplaceString(Node* node)
                     callOperation(operationStringReplaceStringStringWithoutSubstitutionWithTable8, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR, TrustedImmPtr(tablePointer));
                 else
                     callOperation(operationStringReplaceStringStringWithoutSubstitution, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR);
+                exceptionCheck();
                 cellResult(result.gpr(), node);
                 return;
             }
@@ -13998,6 +14118,7 @@ void SpeculativeJIT::compileStringReplaceString(Node* node)
             callOperation(operationStringReplaceStringStringWithTable8, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR, TrustedImmPtr(tablePointer));
         else
             callOperation(operationStringReplaceStringString, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR);
+        exceptionCheck();
         cellResult(result.gpr(), node);
         return;
     }
@@ -14016,6 +14137,7 @@ void SpeculativeJIT::compileStringReplaceString(Node* node)
     flushRegisters();
     GPRFlushedCallResult result(this);
     callOperation(operationStringReplaceStringGeneric, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceRegs);
+    exceptionCheck();
     cellResult(result.gpr(), node);
 }
 
@@ -14034,6 +14156,7 @@ void SpeculativeJIT::compileRegExpExecNonGlobalOrSticky(Node* node)
     callOperation(
         operationRegExpExecNonGlobalOrSticky, resultRegs,
         globalObjectGPR, LinkableConstant(*this, node->cellOperand()->cell()), argumentGPR);
+    exceptionCheck();
 
     jsValueResult(resultRegs, node);
 }
@@ -14053,6 +14176,7 @@ void SpeculativeJIT::compileRegExpMatchFastGlobal(Node* node)
     callOperation(
         operationRegExpMatchFastGlobalString, resultRegs,
         globalObjectGPR, LinkableConstant(*this, node->cellOperand()->cell()), argumentGPR);
+    exceptionCheck();
 
     jsValueResult(resultRegs, node);
 }
@@ -14074,6 +14198,7 @@ void SpeculativeJIT::compileRegExpMatchFast(Node* node)
     callOperation(
         operationRegExpMatchFastString, resultRegs,
         globalObjectGPR, baseGPR, argumentGPR);
+    exceptionCheck();
 
     jsValueResult(resultRegs, node);
 }
@@ -14235,6 +14360,7 @@ void SpeculativeJIT::compileDefineDataProperty(Node* node)
 
         flushRegisters();
         callOperation(operationDefineDataPropertyString, LinkableConstant::globalObject(*this, node), baseGPR, propertyGPR, valueRegs, attributesGPR);
+        exceptionCheck();
         break;
     }
     case StringIdentUse: {
@@ -14251,6 +14377,7 @@ void SpeculativeJIT::compileDefineDataProperty(Node* node)
 
         flushRegisters();
         callOperation(operationDefineDataPropertyStringIdent, LinkableConstant::globalObject(*this, node), baseGPR, identGPR, valueRegs, attributesGPR);
+        exceptionCheck();
         break;
     }
     case SymbolUse: {
@@ -14262,6 +14389,7 @@ void SpeculativeJIT::compileDefineDataProperty(Node* node)
 
         flushRegisters();
         callOperation(operationDefineDataPropertySymbol, LinkableConstant::globalObject(*this, node), baseGPR, propertyGPR, valueRegs, attributesGPR);
+        exceptionCheck();
         break;
     }
     case UntypedUse: {
@@ -14272,6 +14400,7 @@ void SpeculativeJIT::compileDefineDataProperty(Node* node)
 
         flushRegisters();
         callOperation(operationDefineDataProperty, LinkableConstant::globalObject(*this, node), baseGPR, propertyRegs, valueRegs, attributesGPR);
+        exceptionCheck();
         break;
     }
     default:
@@ -14312,6 +14441,7 @@ void SpeculativeJIT::compileDefineAccessorProperty(Node* node)
 
         flushRegisters();
         callOperation(operationDefineAccessorPropertyString, LinkableConstant::globalObject(*this, node), baseGPR, propertyGPR, getterGPR, setterGPR, attributesGPR);
+        exceptionCheck();
         break;
     }
     case StringIdentUse: {
@@ -14328,6 +14458,7 @@ void SpeculativeJIT::compileDefineAccessorProperty(Node* node)
 
         flushRegisters();
         callOperation(operationDefineAccessorPropertyStringIdent, LinkableConstant::globalObject(*this, node), baseGPR, identGPR, getterGPR, setterGPR, attributesGPR);
+        exceptionCheck();
         break;
     }
     case SymbolUse: {
@@ -14339,6 +14470,7 @@ void SpeculativeJIT::compileDefineAccessorProperty(Node* node)
 
         flushRegisters();
         callOperation(operationDefineAccessorPropertySymbol, LinkableConstant::globalObject(*this, node), baseGPR, propertyGPR, getterGPR, setterGPR, attributesGPR);
+        exceptionCheck();
         break;
     }
     case UntypedUse: {
@@ -14349,6 +14481,7 @@ void SpeculativeJIT::compileDefineAccessorProperty(Node* node)
 
         flushRegisters();
         callOperation(operationDefineAccessorProperty, LinkableConstant::globalObject(*this, node), baseGPR, propertyRegs, getterGPR, setterGPR, attributesGPR);
+        exceptionCheck();
         break;
     }
     default:
@@ -14540,6 +14673,7 @@ void SpeculativeJIT::compileThrow(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
     flushRegisters();
     callOperation(operationThrowDFG, LinkableConstant::globalObject(*this, node), valueRegs);
+    exceptionCheck();
     breakpoint();
     noResult(node);
 }
@@ -14551,6 +14685,7 @@ void SpeculativeJIT::compileThrowStaticError(Node* node)
     speculateString(node->child1(), messageGPR);
     flushRegisters();
     callOperation(operationThrowStaticError, LinkableConstant::globalObject(*this, node), messageGPR, node->errorType());
+    exceptionCheck();
     breakpoint();
     noResult(node);
 }
@@ -14688,6 +14823,7 @@ void SpeculativeJIT::compileEnumeratorNextUpdatePropertyName(Node* node)
     }
 
     callOperation(operationEnumeratorNextUpdatePropertyName, resultGPR, LinkableConstant::globalObject(*this, node), index, mode, enumerator);
+    exceptionCheck();
 
     doneCases.link(this);
     cellResult(resultGPR, node);
@@ -14733,6 +14869,7 @@ void SpeculativeJIT::compileEnumeratorHasProperty(Node* node, SlowPathFunctionTy
             callOperation(slowPathFunction, resultRegs, LinkableConstant::globalObject(*this, node), CellValue(baseRegs.payloadGPR()), propertyNameRegs, indexGPR, modeGPR);
         else
             callOperation(slowPathFunction, resultRegs, LinkableConstant::globalObject(*this, node), baseRegs, propertyNameRegs, indexGPR, modeGPR);
+        exceptionCheck();
 
         done.link(this);
 
@@ -14846,6 +14983,7 @@ void SpeculativeJIT::compilePutByIdWithThis(Node* node)
     flushRegisters();
     callOperation(node->ecmaMode().isStrict() ? operationPutByIdWithThisStrict : operationPutByIdWithThis,
         LinkableConstant::globalObject(*this, node), baseRegs, thisRegs, valueRegs, node->cacheableIdentifier().rawBits());
+    exceptionCheck();
 
     noResult(node);
 }
@@ -14985,6 +15123,7 @@ void SpeculativeJIT::compileGetPropertyEnumerator(Node* node)
         silentSpillAllRegisters(scratch1GPR);
         callOperation(operationGetPropertyEnumeratorCell, scratch1GPR, LinkableConstant::globalObject(*this, node), baseRegs.payloadGPR());
         silentFillAllRegisters();
+        exceptionCheck();
 
         doneCases.link(this);
         cellResult(scratch1GPR, node);
@@ -14998,6 +15137,7 @@ void SpeculativeJIT::compileGetPropertyEnumerator(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     callOperation(operationGetPropertyEnumerator, resultGPR, LinkableConstant::globalObject(*this, node), baseRegs);
+    exceptionCheck();
     cellResult(resultGPR, node);
 }
 
@@ -15088,6 +15228,7 @@ void SpeculativeJIT::compileStrCat(Node* node)
         callOperation(operationStrCat3, result.gpr(), LinkableConstant::globalObject(*this, node), op1Regs, op2Regs, op3Regs);
     else
         callOperation(operationStrCat2, result.gpr(), LinkableConstant::globalObject(*this, node), op1Regs, op2Regs);
+    exceptionCheck();
 
     cellResult(result.gpr(), node);
 }
@@ -15124,6 +15265,7 @@ void SpeculativeJIT::compileNewArrayBuffer(Node* node)
     GPRFlushedCallResult result(this);
 
     callOperation(operationNewArrayBuffer, result.gpr(), TrustedImmPtr(&vm()), structure, TrustedImmPtr(node->cellOperand()));
+    exceptionCheck();
 
     cellResult(result.gpr(), node);
 }
@@ -15156,6 +15298,7 @@ void SpeculativeJIT::compileNewArrayWithSize(Node* node)
     move(TrustedImmPtr(m_graph.registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage))), structureGPR);
     done.link(this);
     callOperation(operationNewArrayWithSize, resultGPR, LinkableConstant::globalObject(*this, node), structureGPR, sizeGPR, nullptr);
+    exceptionCheck();
     cellResult(resultGPR, node);
 }
 
@@ -15191,6 +15334,7 @@ void SpeculativeJIT::compileNewArrayWithSpecies(Node* node)
         GPRReg resultGPR = result.gpr();
         callOperation(operationNewArrayWithSpeciesInt32, resultGPR, LinkableConstant::globalObject(*this, node), sizeGPR, arrayGPR, node->indexingType());
 
+        exceptionCheck();
         cellResult(resultGPR, node);
         return;
     }
@@ -15206,6 +15350,7 @@ void SpeculativeJIT::compileNewArrayWithSpecies(Node* node)
     GPRReg resultGPR = result.gpr();
     callOperation(operationNewArrayWithSpecies, resultGPR, LinkableConstant::globalObject(*this, node), sizeRegs, arrayGPR, node->indexingType());
 
+    exceptionCheck();
     cellResult(resultGPR, node);
 }
 
@@ -15230,6 +15375,7 @@ void SpeculativeJIT::compileNewTypedArray(Node* node)
         GPRReg resultGPR = result.gpr();
 
         callOperation(operationNewTypedArrayWithOneArgumentForType(node->typedArrayType()), resultGPR, LinkableConstant::globalObject(*this, node), argumentRegs);
+        exceptionCheck();
 
         cellResult(resultGPR, node);
         break;
@@ -15335,6 +15481,7 @@ void SpeculativeJIT::compileOwnPropertyKeysVariant(Node* node)
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         callOperation(operationOwnPropertyKeysVariantObject(node->op()), resultGPR, LinkableConstant::globalObject(*this, node), objectGPR);
+        exceptionCheck();
 
         cellResult(resultGPR, node);
         break;
@@ -15349,6 +15496,7 @@ void SpeculativeJIT::compileOwnPropertyKeysVariant(Node* node)
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         callOperation(operationOwnPropertyKeysVariant(node->op()), resultGPR, LinkableConstant::globalObject(*this, node), objectRegs);
+        exceptionCheck();
 
         cellResult(resultGPR, node);
         break;
@@ -15390,6 +15538,7 @@ void SpeculativeJIT::compileObjectAssign(Node* node)
 
         genericCases.link(this);
         callOperation(operationObjectAssignObject, LinkableConstant::globalObject(*this, node), targetGPR, sourceGPR);
+        exceptionCheck();
 
         doneCases.link(this);
         noResult(node);
@@ -15403,6 +15552,7 @@ void SpeculativeJIT::compileObjectAssign(Node* node)
 
         flushRegisters();
         callOperation(operationObjectAssignUntyped, LinkableConstant::globalObject(*this, node), targetGPR, sourceRegs);
+        exceptionCheck();
 
         noResult(node);
         return;
@@ -15427,6 +15577,7 @@ void SpeculativeJIT::compileObjectCreate(Node* node)
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         callOperation(operationObjectCreateObject, resultGPR, LinkableConstant::globalObject(*this, node), prototypeGPR);
+        exceptionCheck();
 
         cellResult(resultGPR, node);
         break;
@@ -15441,6 +15592,7 @@ void SpeculativeJIT::compileObjectCreate(Node* node)
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         callOperation(operationObjectCreate, resultGPR, LinkableConstant::globalObject(*this, node), prototypeRegs);
+        exceptionCheck();
 
         cellResult(resultGPR, node);
         break;
@@ -15463,6 +15615,7 @@ void SpeculativeJIT::compileObjectToString(Node* node)
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         callOperation(operationObjectToStringUntyped, resultGPR, LinkableConstant::globalObject(*this, node), argumentRegs);
+        exceptionCheck();
 
         cellResult(resultGPR, node);
         break;
@@ -15945,6 +16098,7 @@ void SpeculativeJIT::compileSetAdd(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     callOperation(operationSetAdd, resultGPR, LinkableConstant::globalObject(*this, node), setGPR, keyRegs, hashGPR);
+    exceptionCheck();
     cellResult(resultGPR, node);
 }
 
@@ -15966,6 +16120,7 @@ void SpeculativeJIT::compileMapSet(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     callOperation(operationMapSet, resultGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyRegs, valueRegs, hashGPR);
+    exceptionCheck();
     cellResult(resultGPR, node);
 }
 
@@ -15990,6 +16145,7 @@ void SpeculativeJIT::compileMapOrSetDelete(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     callOperation(node->child1().useKind() == MapObjectUse ? operationMapDelete : operationSetDelete, resultGPR, LinkableConstant::globalObject(*this, node), mapOrSetGPR, keyRegs, hashGPR);
+    exceptionCheck();
     unblessedBooleanResult(resultGPR, node);
 }
 
@@ -16113,6 +16269,7 @@ void SpeculativeJIT::compileWeakSetAdd(Node* node)
 
     flushRegisters();
     callOperation(operationWeakSetAdd, LinkableConstant::globalObject(*this, node), setGPR, keyGPR, hashGPR);
+    exceptionCheck();
     noResult(node);
 }
 
@@ -16134,6 +16291,7 @@ void SpeculativeJIT::compileWeakMapSet(Node* node)
 
     flushRegisters();
     callOperation(operationWeakMapSet, LinkableConstant::globalObject(*this, node), mapGPR, keyGPR, valueRegs, hashGPR);
+    exceptionCheck();
     noResult(node);
 }
 
@@ -16704,6 +16862,7 @@ void SpeculativeJIT::genericJSValueNonPeepholeCompare(Node* node, RelationalCond
 
         flushRegisters();
         callOperation(helperFunction, resultGPR, LinkableConstant::globalObject(*this, node), arg1Regs, arg2Regs);
+        exceptionCheck();
 
         unblessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
         return;
@@ -16764,6 +16923,7 @@ void SpeculativeJIT::genericJSValuePeepholeBranch(Node* node, Node* branchNode, 
 
         flushRegisters();
         callOperation(helperFunction, resultGPR, LinkableConstant::globalObject(*this, node), arg1Regs, arg2Regs);
+        exceptionCheck();
 
         branchTest32(callResultCondition, resultGPR, taken);
     } else {
@@ -16788,6 +16948,7 @@ void SpeculativeJIT::genericJSValuePeepholeBranch(Node* node, Node* branchNode, 
             silentSpillAllRegisters(resultGPR);
             callOperation(helperFunction, resultGPR, LinkableConstant::globalObject(*this, node), arg1Regs, arg2Regs);
             silentFillAllRegisters();
+            exceptionCheck();
 
             branchTest32(callResultCondition, resultGPR, taken);
         }
@@ -16825,7 +16986,7 @@ void SpeculativeJIT::compileHeapBigIntEquality(Node* node)
     notEqualCase.link(this);
 
     silentSpillAllRegisters(resultGPR);
-    callOperationWithoutExceptionCheck(operationCompareStrictEqCell, resultGPR, LinkableConstant::globalObject(*this, node), leftGPR, rightGPR);
+    callOperation(operationCompareStrictEqCell, resultGPR, LinkableConstant::globalObject(*this, node), leftGPR, rightGPR);
     silentFillAllRegisters();
 
     done.link(this);
@@ -17011,9 +17172,11 @@ void SpeculativeJIT::compileMakeRope(Node* node)
     switch (numOpGPRs) {
     case 2:
         callOperation(operationMakeRope2, resultGPR, LinkableConstant::globalObject(*this, node), opGPRs[0], opGPRs[1]);
+        exceptionCheck();
         break;
     case 3:
         callOperation(operationMakeRope3, resultGPR, LinkableConstant::globalObject(*this, node), opGPRs[0], opGPRs[1], opGPRs[2]);
+        exceptionCheck();
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -17048,12 +17211,15 @@ void SpeculativeJIT::compileMakeAtomString(Node* node)
     switch (numOpGPRs) {
     case 1:
         callOperation(operationMakeAtomString1, resultGPR, LinkableConstant::globalObject(*this, node), opGPRs[0]);
+        exceptionCheck();
         break;
     case 2:
         callOperation(operationMakeAtomString2, resultGPR, LinkableConstant::globalObject(*this, node), opGPRs[0], opGPRs[1]);
+        exceptionCheck();
         break;
     case 3:
         callOperation(operationMakeAtomString3, resultGPR, LinkableConstant::globalObject(*this, node), opGPRs[0], opGPRs[1], opGPRs[2]);
+        exceptionCheck();
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -17188,6 +17354,7 @@ void SpeculativeJIT::compileStringLocaleCompare(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     callOperation(operationStringLocaleCompare, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, argumentGPR);
+    exceptionCheck();
 
     strictInt32Result(resultGPR, node);
 }
@@ -17220,6 +17387,7 @@ void SpeculativeJIT::compileStringIndexOf(Node* node)
             callOperation(operationStringIndexOfWithIndexWithOneChar, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, indexGPR, TrustedImm32(character.value()));
         else
             callOperation(operationStringIndexOfWithIndex, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, argumentGPR, indexGPR);
+        exceptionCheck();
 
         strictInt32Result(resultGPR, node);
         return;
@@ -17241,6 +17409,7 @@ void SpeculativeJIT::compileStringIndexOf(Node* node)
         callOperation(operationStringIndexOfWithOneChar, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, TrustedImm32(character.value()));
     else
         callOperation(operationStringIndexOf, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, argumentGPR);
+    exceptionCheck();
 
     strictInt32Result(resultGPR, node);
 }
@@ -17275,6 +17444,7 @@ void SpeculativeJIT::compileGlobalIsNaN(Node* node)
             isInt32 = branchIfInt32(argumentRegs);
         }
         callOperation(operationIsNaN, scratch1GPR, LinkableConstant::globalObject(*this, node), argumentRegs);
+        exceptionCheck();
         if (mayBeInt32)
             isInt32.link(this);
         unblessedBooleanResult(scratch1GPR, node);
@@ -17338,7 +17508,7 @@ void SpeculativeJIT::compileToIntegerOrInfinity(Node* node)
         flushRegisters();
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
-        callOperationWithoutExceptionCheck(operationToIntegerOrInfinityDouble, resultRegs, argumentFPR);
+        callOperation(operationToIntegerOrInfinityDouble, resultRegs, argumentFPR);
         jsValueResult(resultRegs, node);
         break;
     }
@@ -17358,6 +17528,7 @@ void SpeculativeJIT::compileToIntegerOrInfinity(Node* node)
             isInt32 = branchIfInt32(argumentRegs);
         }
         callOperation(operationToIntegerOrInfinityUntyped, resultRegs, LinkableConstant::globalObject(*this, node), argumentRegs);
+        exceptionCheck();
         if (mayBeInt32)
             isInt32.link(this);
         jsValueResult(resultRegs, node);
@@ -17393,7 +17564,7 @@ void SpeculativeJIT::compileToLength(Node* node)
         flushRegisters();
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
-        callOperationWithoutExceptionCheck(operationToLengthDouble, resultRegs, argumentFPR);
+        callOperation(operationToLengthDouble, resultRegs, argumentFPR);
         jsValueResult(resultRegs, node);
         break;
     }
@@ -17421,6 +17592,7 @@ void SpeculativeJIT::compileToLength(Node* node)
         if (mayBeInt32)
             isNotInt32.link(this);
         callOperation(operationToLengthUntyped, resultRegs, LinkableConstant::globalObject(*this, node), argumentRegs);
+        exceptionCheck();
 
         if (mayBeInt32)
             done.link(this);
