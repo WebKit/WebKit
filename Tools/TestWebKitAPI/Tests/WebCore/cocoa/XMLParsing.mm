@@ -27,21 +27,51 @@
 
 #include "PlatformUtilities.h"
 #include "WebCoreTestSupport.h"
+#include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/ParserContentPolicy.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <libxml/parser.h>
 
 namespace TestWebKitAPI {
 
-TEST(XMLParsing, WebCoreDoesNotBreakLibxml2)
+class XMLParsing : public testing::Test {
+public:
+    void SetUp() final
+    {
+        static std::once_flag onceFlag;
+        std::call_once(
+            onceFlag,
+            [] {
+                WTF::initialize();
+                WTF::initializeMainThread();
+                JSC::initialize();
+                (void)WebCore::Process::identifier();
+            });
+    }
+};
+
+TEST_F(XMLParsing, WebCoreDoesNotBreakLibxml2)
 {
+    xmlExternalEntityLoader origEntityLoader = xmlGetExternalEntityLoader();
+
+    xmlExternalEntityLoader testEntityLoader = reinterpret_cast<xmlExternalEntityLoader>(0xabababab);
+
+    // Set test value.
+    xmlSetExternalEntityLoader(testEntityLoader);
+
     // Parse XHTML in WebKit.
     String chunk = "<x/>"_s;
     auto result = WebCoreTestSupport::testDocumentFragmentParseXML(chunk, WebCore::DefaultParserContentPolicy);
     EXPECT_TRUE(result);
 
-    NSString *resourceURL = [[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"xml" subdirectory:@"TestWebKitAPI.resources"] path];
+    // Verify test value is restored.
+    EXPECT_EQ(testEntityLoader, xmlGetExternalEntityLoader());
+
+    // Restore original value.
+    xmlSetExternalEntityLoader(origEntityLoader);
 
     // Parse an XML document in libxml2.
+    NSString *resourceURL = [[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"xml" subdirectory:@"TestWebKitAPI.resources"] path];
     xmlParserCtxtPtr ctxt = xmlNewParserCtxt();
     EXPECT_TRUE(!!ctxt);
     xmlDocPtr doc = xmlCtxtReadFile(ctxt, resourceURL.UTF8String, nullptr, XML_PARSE_NONET);
