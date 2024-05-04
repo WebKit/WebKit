@@ -901,24 +901,26 @@ void RenderPassEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat for
     addResourceToActiveResources(&buffer, buffer.buffer(), BindGroupEntryUsage::Input);
 }
 
+NSString* RenderPassEncoder::errorValidatingPipeline(const RenderPipeline& pipeline) const
+{
+    if (!isValidToUseWith(pipeline, *this))
+        return @"setPipeline: invalid RenderPipeline";
+
+    if (!pipeline.validateDepthStencilState(m_depthReadOnly, m_stencilReadOnly))
+        return @"setPipeline: invalid depth stencil state";
+
+    if (!colorDepthStencilTargetsMatch(pipeline))
+        return @"setPipeline: color and depth targets from pass do not match pipeline";
+
+    return nil;
+}
+
 void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
 {
     RETURN_IF_FINISHED();
 
-    // FIXME: validation according to
-    // https://gpuweb.github.io/gpuweb/#dom-gpurendercommandsmixin-setpipeline.
-    if (!isValidToUseWith(pipeline, *this)) {
-        makeInvalid(@"setPipeline: invalid RenderPipeline");
-        return;
-    }
-
-    if (!pipeline.validateDepthStencilState(m_depthReadOnly, m_stencilReadOnly)) {
-        makeInvalid(@"setPipeline: invalid depth stencil state");
-        return;
-    }
-
-    if (!colorDepthStencilTargetsMatch(pipeline)) {
-        makeInvalid(@"setPipeline: color and depth targets from pass do not match pipeline");
+    if (NSString *error = errorValidatingPipeline(pipeline)) {
+        makeInvalid(error);
         return;
     }
 

@@ -977,6 +977,11 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
         m_sampleMask = pipeline.sampleMask();
 
         if (m_renderPassEncoder) {
+            if (NSString* error = m_renderPassEncoder->errorValidatingPipeline(pipeline)) {
+                makeInvalid(error);
+                return;
+            }
+
             id<MTLRenderCommandEncoder> commandEncoder = m_renderPassEncoder->renderCommandEncoder();
             id<MTLRenderPipelineState> renderPipeline = m_currentPipelineState;
             if (renderPipeline && previousRenderPipelineState != m_currentPipelineState)
