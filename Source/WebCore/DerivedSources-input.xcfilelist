@@ -138,6 +138,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUQuerySet.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUQuerySetDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUQueryType.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUQueue.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUQueueDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPURenderBundle.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPURenderBundleDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPURenderBundleEncoder.idl

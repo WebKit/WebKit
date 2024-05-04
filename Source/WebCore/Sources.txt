@@ -3688,6 +3688,7 @@ JSGPUQuerySet.cpp
 JSGPUQuerySetDescriptor.cpp
 JSGPUQueryType.cpp
 JSGPUQueue.cpp
+JSGPUQueueDescriptor.cpp
 JSGPURenderBundle.cpp
 JSGPURenderBundleDescriptor.cpp
 JSGPURenderBundleEncoder.cpp
