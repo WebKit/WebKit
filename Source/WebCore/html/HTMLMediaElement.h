@@ -599,6 +599,7 @@ public:
 
     bool willLog(WTFLogLevel) const;
 
+    bool isAudible() const final { return canProduceAudio(); }
     bool isSuspended() const final;
 
     WEBCORE_EXPORT void didBecomeFullscreenElement() final;
@@ -998,7 +999,6 @@ private:
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override;
     bool shouldOverrideBackgroundLoadingRestriction() const override;
     bool canProduceAudio() const final;
-    bool isAudible() const final { return canProduceAudio(); };
     bool isEnded() const final { return ended(); }
     MediaTime mediaSessionDuration() const final;
     bool hasMediaStreamSource() const final;
@@ -1008,6 +1008,7 @@ private:
     std::optional<NowPlayingInfo> nowPlayingInfo() const final;
     WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlatformMediaSession::PlaybackControlsPurpose) final;
 
+    void visibilityAdjustmentStateDidChange() final;
     void pageMutedStateDidChange() override;
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
@@ -1019,7 +1020,7 @@ private:
 
     bool processingUserGestureForMedia() const;
 
-    bool effectiveMuted() const;
+    WEBCORE_EXPORT bool effectiveMuted() const;
     double effectiveVolume() const;
 
     void registerWithDocument(Document&);
@@ -1255,6 +1256,7 @@ private:
     bool m_shouldAudioPlaybackRequireUserGesture : 1;
     bool m_shouldVideoPlaybackRequireUserGesture : 1;
     bool m_volumeLocked : 1;
+    bool m_cachedIsInVisibilityAdjustmentSubtree : 1 { false };
 
     enum class ControlsState : uint8_t { None, Initializing, Ready, PartiallyDeinitialized };
     friend String convertEnumerationToString(HTMLMediaElement::ControlsState enumerationValue);

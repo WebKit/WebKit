@@ -70,6 +70,7 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLDocument.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -5653,6 +5654,40 @@ OptionSet<VisibilityAdjustment> Element::visibilityAdjustment() const
 void Element::setVisibilityAdjustment(OptionSet<VisibilityAdjustment> adjustment)
 {
     ensureElementRareData().setVisibilityAdjustment(adjustment);
+
+    if (!adjustment)
+        return;
+
+    if (RefPtr page = document().page())
+        page->didSetVisibilityAdjustment();
+}
+
+bool Element::isInVisibilityAdjustmentSubtree() const
+{
+    RefPtr page = document().page();
+    if (!page)
+        return false;
+
+    if (!page->hasEverSetVisibilityAdjustment())
+        return false;
+
+    auto lineageIsInAdjustmentSubtree = [this] {
+        for (auto& element : lineageOfType<Element>(*this)) {
+            if (element.visibilityAdjustment().contains(VisibilityAdjustment::Subtree))
+                return true;
+        }
+        return false;
+    };
+
+    if (RefPtr owner = document().ownerElement()) {
+        if (owner->isInVisibilityAdjustmentSubtree())
+            return true;
+
+        ASSERT(!lineageIsInAdjustmentSubtree());
+        return false;
+    }
+
+    return lineageIsInAdjustmentSubtree();
 }
 
 TextStream& operator<<(TextStream& ts, ContentRelevancy relevancy)

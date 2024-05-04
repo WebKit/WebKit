@@ -642,6 +642,7 @@ public:
 
     OptionSet<VisibilityAdjustment> visibilityAdjustment() const;
     void setVisibilityAdjustment(OptionSet<VisibilityAdjustment>);
+    bool isInVisibilityAdjustmentSubtree() const;
 
     bool isSpellCheckingEnabled() const;
     WEBCORE_EXPORT bool isWritingSuggestionsEnabled() const;

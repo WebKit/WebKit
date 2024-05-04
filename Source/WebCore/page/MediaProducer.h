@@ -138,6 +138,7 @@ public:
     static constexpr MutedStateFlags AudioAndVideoCaptureIsMuted = { MutedState::AudioCaptureIsMuted, MutedState::VideoCaptureIsMuted };
     static constexpr MutedStateFlags MediaStreamCaptureIsMuted = { MutedState::AudioCaptureIsMuted, MutedState::VideoCaptureIsMuted, MutedState::ScreenCaptureIsMuted, MutedState::WindowCaptureIsMuted, MutedState::SystemAudioCaptureIsMuted };
 
+    virtual void visibilityAdjustmentStateDidChange() { }
     virtual void pageMutedStateDidChange() = 0;
 
 protected:

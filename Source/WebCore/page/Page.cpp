@@ -1560,6 +1560,8 @@ void Page::didCommitLoad()
     m_isEditableRegionEnabled = false;
 #endif
 
+    m_hasEverSetVisibilityAdjustment = false;
+
     resetSeenPlugins();
     resetSeenMediaEngines();
 

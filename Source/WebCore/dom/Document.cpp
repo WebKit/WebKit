@@ -5253,6 +5253,12 @@ void Document::updateIsPlayingMedia()
 #endif
 }
 
+void Document::visibilityAdjustmentStateDidChange()
+{
+    for (auto& audioProducer : m_audioProducers)
+        audioProducer.visibilityAdjustmentStateDidChange();
+}
+
 void Document::pageMutedStateDidChange()
 {
     for (auto& audioProducer : m_audioProducers)

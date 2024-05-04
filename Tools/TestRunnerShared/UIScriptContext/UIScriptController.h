@@ -420,6 +420,7 @@ public:
     // Element Targeting
     virtual void requestRenderedTextForFrontmostTarget(int, int, JSValueRef) { notImplemented(); }
     virtual void adjustVisibilityForFrontmostTarget(int, int, JSValueRef) { notImplemented(); }
+    virtual void resetVisibilityAdjustments(JSValueRef) { notImplemented(); }
 
 protected:
     explicit UIScriptController(UIScriptContext&);

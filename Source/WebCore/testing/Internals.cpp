@@ -7442,4 +7442,9 @@ const String& Internals::defaultSpatialTrackingLabel() const
     return nullString();
 }
 
+bool Internals::isEffectivelyMuted(const HTMLMediaElement& element)
+{
+    return element.effectiveMuted();
+}
+
 } // namespace WebCore

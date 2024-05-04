@@ -66,6 +66,8 @@ private:
     void cleanUpAdjustmentClientRects();
     void applyVisibilityAdjustmentFromSelectors(Document&);
 
+    void dispatchVisibilityAdjustmentStateDidChange();
+
     std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(FloatPoint location, bool shouldIgnorePointerEventsNone);
     std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(const String& searchText);
 

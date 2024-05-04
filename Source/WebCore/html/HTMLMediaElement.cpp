@@ -131,6 +131,7 @@
 #include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"
 #include "VideoTrackPrivate.h"
+#include "VisibilityAdjustment.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/Uint8Array.h>
 #include <limits>
@@ -963,6 +964,8 @@ void HTMLMediaElement::didFinishInsertingNode()
     if (m_inActiveDocument && m_networkState == NETWORK_EMPTY && !attributeWithoutSynchronization(srcAttr).isEmpty())
         prepareForLoad();
 
+    visibilityAdjustmentStateDidChange();
+
     if (!m_explicitlyMuted) {
         m_explicitlyMuted = true;
         m_muted = hasAttributeWithoutSynchronization(mutedAttr);
@@ -1048,6 +1051,8 @@ void HTMLMediaElement::removedFromAncestor(RemovalType removalType, ContainerNod
         m_mediaSession->clientCharacteristicsChanged(false);
 
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+
+    visibilityAdjustmentStateDidChange();
 }
 
 void HTMLMediaElement::willAttachRenderers()
@@ -9009,6 +9014,25 @@ void HTMLMediaElement::setAutoplayEventPlaybackState(AutoplayEventPlaybackState 
     }
 }
 
+void HTMLMediaElement::visibilityAdjustmentStateDidChange()
+{
+    auto currentValue = isInVisibilityAdjustmentSubtree();
+    if (m_cachedIsInVisibilityAdjustmentSubtree == currentValue)
+        return;
+
+    bool wasMuted = effectiveMuted();
+    m_cachedIsInVisibilityAdjustmentSubtree = currentValue;
+    bool muted = effectiveMuted();
+    if (wasMuted == muted)
+        return;
+
+    RefPtr player = m_player;
+    if (!player)
+        return;
+
+    player->setMuted(muted);
+}
+
 void HTMLMediaElement::pageMutedStateDidChange()
 {
     if (RefPtr page = document().page()) {
@@ -9031,7 +9055,19 @@ double HTMLMediaElement::effectiveVolume() const
 
 bool HTMLMediaElement::effectiveMuted() const
 {
-    return muted() || (m_mediaController && m_mediaController->muted()) || (document().page() && document().page()->isAudioMuted());
+    if (muted())
+        return true;
+
+    if (m_mediaController && m_mediaController->muted())
+        return true;
+
+    if (RefPtr page = document().page(); page && page->isAudioMuted())
+        return true;
+
+    if (m_cachedIsInVisibilityAdjustmentSubtree)
+        return true;
+
+    return false;
 }
 
 bool HTMLMediaElement::doesHaveAttribute(const AtomString& attribute, AtomString* value) const

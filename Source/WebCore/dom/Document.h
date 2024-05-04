@@ -1623,6 +1623,7 @@ public:
     inline bool isCapturing() const;
     WEBCORE_EXPORT void updateIsPlayingMedia();
     void pageMutedStateDidChange();
+    void visibilityAdjustmentStateDidChange();
 
     bool hasEverHadSelectionInsideTextFormControl() const { return m_hasEverHadSelectionInsideTextFormControl; }
     void setHasEverHadSelectionInsideTextFormControl() { m_hasEverHadSelectionInsideTextFormControl = true; }

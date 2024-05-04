@@ -906,6 +906,7 @@ header: <WebCore/ElementTargetingTypes.h>
     bool isNearbyTarget
     bool isPseudoElement
     bool isInShadowTree
+    bool hasAudibleMedia
 };
 
 header: <WebCore/RenderStyleConstants.h>

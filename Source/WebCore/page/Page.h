@@ -1053,6 +1053,9 @@ public:
     void resetImageAnalysisQueue();
 #endif
 
+    bool hasEverSetVisibilityAdjustment() const { return m_hasEverSetVisibilityAdjustment; }
+    void didSetVisibilityAdjustment() { m_hasEverSetVisibilityAdjustment = true; }
+
     WEBCORE_EXPORT StorageConnection& storageConnection();
 
     ModelPlayerProvider& modelPlayerProvider();
@@ -1380,6 +1383,7 @@ private:
     bool m_hasResourceLoadClient { false };
     bool m_delegatesScaling { false };
 
+    bool m_hasEverSetVisibilityAdjustment { false };
 
 #if ENABLE(EDITABLE_REGION)
     bool m_isEditableRegionEnabled { false };

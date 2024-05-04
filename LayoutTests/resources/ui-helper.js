@@ -2184,6 +2184,15 @@ window.UIHelper = class UIHelper {
             })()`, resolve);
         });
     }
+
+    static resetVisibilityAdjustments() {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.resetVisibilityAdjustments(result => uiController.uiScriptComplete(result));", resolve);
+        });
+    }
 }
 
 UIHelper.EventStreamBuilder = class {

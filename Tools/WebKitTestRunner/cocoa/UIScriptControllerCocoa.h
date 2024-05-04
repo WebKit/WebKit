@@ -92,6 +92,7 @@ private:
 
     void requestRenderedTextForFrontmostTarget(int x, int y, JSValueRef callback) final;
     void adjustVisibilityForFrontmostTarget(int x, int y, JSValueRef callback) final;
+    void resetVisibilityAdjustments(JSValueRef callback) final;
 };
 
 } // namespace WTR
