@@ -82,6 +82,8 @@ def make_analyzer_flags(output_dir, args):
         additional_checkers.extend([
             'alpha.webkit.UncountedCallArgsChecker',
             'alpha.webkit.UncountedLocalVarsChecker',
+            'webkit.NoUncountedMemberChecker',
+            'webkit.RefCntblBaseVirtualDtor',
         ])
 
     if additional_checkers:
