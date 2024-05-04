@@ -1635,9 +1635,9 @@ inline void BuilderCustom::applyInitialFontVariantAlternates(BuilderState& build
 
 inline void BuilderCustom::applyValueFontVariantAlternates(BuilderState& builderState, CSSValue& value)
 {
-    auto setAlternates = [&builderState](FontVariantAlternates alternates) {
+    auto setAlternates = [&builderState](const FontVariantAlternates& alternates) {
         auto fontDescription = builderState.fontDescription();
-        fontDescription.setVariantAlternates(WTFMove(alternates));
+        fontDescription.setVariantAlternates(alternates);
         builderState.setFontDescription(WTFMove(fontDescription));
     };
 
@@ -1649,7 +1649,7 @@ inline void BuilderCustom::applyValueFontVariantAlternates(BuilderState& builder
         if (primitiveValue->valueID() == CSSValueHistoricalForms) {
             auto alternates = FontVariantAlternates::Normal();
             alternates.valuesRef().historicalForms = true;
-            setAlternates(WTFMove(alternates));
+            setAlternates(alternates);
             return;
         }
         return;
