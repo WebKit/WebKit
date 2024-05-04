@@ -397,7 +397,17 @@ std::optional<GetColorType<Descriptor>> consumeAndNormalizeAbsoluteComponents(CS
 template<typename Descriptor>
 std::optional<GetColorType<Descriptor>> consumeAndNormalizeRelativeComponents(CSSParserTokenRange& args, ColorParserState& state, Color originColor)
 {
-    auto originColorAsColorType = originColor.toColorTypeLossy<GetColorType<Descriptor>>();
+    // Missing components are carried forward for this conversion as specified in
+    // CSS Color 5 § 4.1 Processing Model for Relative Colors:
+    //
+    //  "Missing components are handled the same way as with CSS Color 4 § 12.2
+    //   Interpolating with Missing Components: the origin colorspace and the
+    //   relative function colorspace are checked for analogous components which
+    //   are then carried forward as missing."
+    //
+    // (https://drafts.csswg.org/css-color-5/#rcs-intro)
+
+    auto originColorAsColorType = originColor.toColorTypeLossyCarryingForwardMissing<GetColorType<Descriptor>>();
 
     auto parsed = consumeRelativeComponents<Descriptor>(args, state, originColorAsColorType);
     if (!parsed)

@@ -124,8 +124,8 @@ Color blend(const Color& from, const Color& to, const BlendingContext& context)
     if (requiresLegacyInterpolationRules(from) && requiresLegacyInterpolationRules(to)) {
         using InterpolationColorSpace = ColorInterpolationMethod::SRGB;
 
-        auto fromComponents = from.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
-        auto toComponents = to.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
+        auto fromComponents = from.toColorTypeLossyCarryingForwardMissing<typename InterpolationColorSpace::ColorType>();
+        auto toComponents = to.toColorTypeLossyCarryingForwardMissing<typename InterpolationColorSpace::ColorType>();
 
         switch (context.compositeOperation) {
         case CompositeOperation::Replace: {
@@ -140,8 +140,8 @@ Color blend(const Color& from, const Color& to, const BlendingContext& context)
     } else {
         using InterpolationColorSpace = ColorInterpolationMethod::OKLab;
 
-        auto fromComponents = from.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
-        auto toComponents = to.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
+        auto fromComponents = from.toColorTypeLossyCarryingForwardMissing<typename InterpolationColorSpace::ColorType>();
+        auto toComponents = to.toColorTypeLossyCarryingForwardMissing<typename InterpolationColorSpace::ColorType>();
 
         switch (context.compositeOperation) {
         case CompositeOperation::Replace:

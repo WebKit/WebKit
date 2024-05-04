@@ -90,9 +90,18 @@ Color interpolateColors(ColorInterpolationMethod colorInterpolationMethod, Color
             using ColorType = typename MethodColorSpace::ColorType;
             switch (colorInterpolationMethod.alphaPremultiplication) {
             case AlphaPremultiplication::Premultiplied:
-                return interpolateColorComponents<AlphaPremultiplication::Premultiplied>(colorSpace, color1.toColorTypeLossy<ColorType>(), color1Multiplier, color2.toColorTypeLossy<ColorType>(), color2Multiplier);
+                return interpolateColorComponents<AlphaPremultiplication::Premultiplied>(
+                    colorSpace,
+                    color1.toColorTypeLossyCarryingForwardMissing<ColorType>(), color1Multiplier,
+                    color2.toColorTypeLossyCarryingForwardMissing<ColorType>(), color2Multiplier
+                );
+
             case AlphaPremultiplication::Unpremultiplied:
-                return interpolateColorComponents<AlphaPremultiplication::Unpremultiplied>(colorSpace, color1.toColorTypeLossy<ColorType>(), color1Multiplier, color2.toColorTypeLossy<ColorType>(), color2Multiplier);
+                return interpolateColorComponents<AlphaPremultiplication::Unpremultiplied>(
+                    colorSpace,
+                    color1.toColorTypeLossyCarryingForwardMissing<ColorType>(), color1Multiplier,
+                    color2.toColorTypeLossyCarryingForwardMissing<ColorType>(), color2Multiplier
+                );
             }
             RELEASE_ASSERT_NOT_REACHED();
         }

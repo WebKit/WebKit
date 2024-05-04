@@ -558,9 +558,9 @@ GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationM
     auto makeData = [&] (auto colorInterpolationMethod, auto& stops) {
         auto convertColorToColorInterpolationSpace = [&] (const Color& color, auto colorInterpolationMethod) -> ColorComponents<float, 4> {
             return WTF::switchOn(colorInterpolationMethod.colorSpace,
-                [&]<typename MethodColorSpace> (const MethodColorSpace&) -> ColorComponents<float, 4> {
+                [&]<typename MethodColorSpace>(const MethodColorSpace&) -> ColorComponents<float, 4> {
                     using ColorType = typename MethodColorSpace::ColorType;
-                    return asColorComponents(color.template toColorTypeLossy<ColorType>().unresolved());
+                    return asColorComponents(color.template toColorTypeLossyCarryingForwardMissing<ColorType>().unresolved());
                 }
             );
         };
