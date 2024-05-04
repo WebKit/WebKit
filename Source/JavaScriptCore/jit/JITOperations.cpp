@@ -830,11 +830,20 @@ JSC_DEFINE_JIT_OPERATION(operationInByValOptimize, EncodedJSValue, (EncodedJSVal
     bool found = baseObject->getPropertySlot(globalObject, propertyName, slot);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    if (CacheableIdentifier::isCacheableIdentifierCell(key) && (key.isSymbol() || !parseIndex(propertyName))) {
-        CodeBlock* codeBlock = callFrame->codeBlock();
-        CacheableIdentifier identifier = CacheableIdentifier::createFromCell(key.asCell());
-        if (stubInfo->considerRepatchingCacheBy(vm, codeBlock, baseObject->structure(), identifier))
-            repatchInBy(globalObject, codeBlock, baseObject, identifier, found, slot, *stubInfo, InByKind::ByVal);
+    if (CacheableIdentifier::isCacheableIdentifierCell(key)) {
+        std::optional<uint32_t> index;
+        if (key.isString()) {
+            index = parseIndex(propertyName);
+            if (profile && index)
+                profile->setMayUseStringArrayIndex();
+        }
+
+        if (key.isSymbol() || !index) {
+            CodeBlock* codeBlock = callFrame->codeBlock();
+            CacheableIdentifier identifier = CacheableIdentifier::createFromCell(key.asCell());
+            if (stubInfo->considerRepatchingCacheBy(vm, codeBlock, baseObject->structure(), identifier))
+                repatchInBy(globalObject, codeBlock, baseObject, identifier, found, slot, *stubInfo, InByKind::ByVal);
+        }
     }
 
     return JSValue::encode(jsBoolean(found));
@@ -1655,7 +1664,15 @@ static ALWAYS_INLINE void putByValOptimize(JSGlobalObject* globalObject, CodeBlo
         if (CacheableIdentifier::isCacheableIdentifierCell(subscript)) {
             const Identifier propertyName = subscript.toPropertyKey(globalObject);
             RETURN_IF_EXCEPTION(scope, void());
-            if (subscript.isSymbol() || !parseIndex(propertyName)) {
+
+            std::optional<uint32_t> index;
+            if (subscript.isString()) {
+                index = parseIndex(propertyName);
+                if (profile && index)
+                    profile->setMayUseStringArrayIndex();
+            }
+
+            if (subscript.isSymbol() || !index) {
                 AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
                 PutPropertySlot slot(baseValue, isStrict, codeBlock->putByIdContext());
 
@@ -1724,7 +1741,15 @@ static ALWAYS_INLINE void directPutByValOptimize(JSGlobalObject* globalObject, C
     if (CacheableIdentifier::isCacheableIdentifierCell(subscript)) {
         const Identifier propertyName = subscript.toPropertyKey(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
-        if (subscript.isSymbol() || !parseIndex(propertyName)) {
+
+        std::optional<uint32_t> index;
+        if (subscript.isString()) {
+            index = parseIndex(propertyName);
+            if (profile && index)
+                profile->setMayUseStringArrayIndex();
+        }
+
+        if (subscript.isSymbol() || !index) {
             AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
             PutPropertySlot slot(baseValue, isStrict, codeBlock->putByIdContext());
 
@@ -3160,11 +3185,18 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValOptimize, EncodedJSValue, (EncodedJSVa
     if (baseValue.isCell() && CacheableIdentifier::isCacheableIdentifierCell(subscript)) {
         const Identifier propertyName = subscript.toPropertyKey(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (subscript.isSymbol() || !parseIndex(propertyName)) {
+
+        std::optional<uint32_t> index;
+        if (subscript.isString()) {
+            index = parseIndex(propertyName);
+            if (profile && index)
+                profile->setMayUseStringArrayIndex();
+        }
+
+        if (subscript.isSymbol() || !index) {
             scope.release();
             return JSValue::encode(baseValue.getPropertySlot(globalObject, propertyName, [&] (bool found, PropertySlot& slot) -> JSValue {
                 LOG_IC((ICEvent::OperationGetByValOptimize, baseValue.classInfoOrNull(), propertyName, baseValue == slot.slotBase())); 
-                
                 CacheableIdentifier identifier = CacheableIdentifier::createFromCell(subscript.asCell());
                 if (stubInfo->considerRepatchingCacheBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
                     repatchGetBy(globalObject, codeBlock, baseValue, identifier, slot, *stubInfo, GetByKind::ByVal);
@@ -3422,7 +3454,15 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValWithThisOptimize, EncodedJSValue, (Enc
     if (baseValue.isCell() && CacheableIdentifier::isCacheableIdentifierCell(subscript)) {
         const Identifier propertyName = subscript.toPropertyKey(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (subscript.isSymbol() || !parseIndex(propertyName)) {
+
+        std::optional<uint32_t> index;
+        if (subscript.isString()) {
+            index = parseIndex(propertyName);
+            if (profile && index)
+                profile->setMayUseStringArrayIndex();
+        }
+
+        if (subscript.isSymbol() || !index) {
             scope.release();
             return JSValue::encode(baseValue.getPropertySlot(globalObject, propertyName, slot, [&] (bool found, PropertySlot& slot) -> JSValue {
                 LOG_IC((ICEvent::OperationGetByValWithThisOptimize, baseValue.classInfoOrNull(), propertyName, baseValue == slot.slotBase()));
@@ -3813,7 +3853,6 @@ static ALWAYS_INLINE size_t deleteByValOptimize(JSGlobalObject* globalObject, VM
     if (baseValue.isObject() && CacheableIdentifier::isCacheableIdentifierCell(subscript)) {
         const Identifier propertyName = subscript.toPropertyKey(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-
         if (subscript.isSymbol() || !parseIndex(propertyName)) {
             CodeBlock* codeBlock = callFrame->codeBlock();
             CacheableIdentifier identifier = CacheableIdentifier::createFromCell(subscript.asCell());
@@ -4206,6 +4245,33 @@ JSC_DEFINE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject* globalObjec
     RETURN_IF_EXCEPTION(throwScope, void());
 
     CommonSlowPaths::tryCachePutToScopeGlobal(globalObject, codeBlock, bytecode, scope, slot, ident);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationStringToArrayIndex, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedValue, ArrayProfile* arrayProfile))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue value = JSValue::decode(encodedValue);
+    if (!value.isString()) {
+        if (!value.isInt32()) {
+            if (arrayProfile)
+                arrayProfile->setMayUseStringNonArrayIndex();
+        }
+        RELEASE_AND_RETURN(scope, JSValue::encode(value));
+    }
+
+    Identifier propertyName = asString(value)->toIdentifier(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (auto index = parseIndex(propertyName))
+        RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(index.value())));
+
+    if (arrayProfile)
+        arrayProfile->setMayUseStringNonArrayIndex();
+    RELEASE_AND_RETURN(scope, JSValue::encode(value));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationThrow, void, (JSGlobalObject* globalObject, EncodedJSValue encodedExceptionValue))

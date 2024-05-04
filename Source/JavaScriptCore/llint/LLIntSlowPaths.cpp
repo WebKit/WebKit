@@ -1137,6 +1137,36 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, JSGlobalObject* globalObject, Code
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    auto getByIndex = [&](uint32_t index) ALWAYS_INLINE_LAMBDA -> JSValue {
+        auto& metadata = bytecode.metadata(codeBlock);
+        ArrayProfile* arrayProfile = &metadata.m_arrayProfile;
+
+        if (isJSString(baseValue)) {
+            if (asString(baseValue)->canGetIndex(index)) {
+                return asString(baseValue)->getIndex(globalObject, index);
+            }
+            arrayProfile->setOutOfBounds();
+        } else if (baseValue.isObject()) {
+            JSObject* object = asObject(baseValue);
+            if (JSValue result = object->tryGetIndexQuickly(index, arrayProfile))
+                return result;
+
+            bool skipMarkingOutOfBounds = false;
+
+            if (object->indexingType() == ArrayWithContiguous && index < object->butterfly()->publicLength()) {
+                // FIXME: expand this to ArrayStorage, Int32, and maybe Double:
+                // https://bugs.webkit.org/show_bug.cgi?id=182940
+                auto* globalObject = object->globalObject();
+                skipMarkingOutOfBounds = globalObject->isOriginalArrayStructure(object->structure()) && globalObject->arrayPrototypeChainIsSane();
+            }
+
+            if (!skipMarkingOutOfBounds && !CommonSlowPaths::canAccessArgumentIndexQuickly(*object, index))
+                arrayProfile->setOutOfBounds();
+        }
+
+        return baseValue.get(globalObject, index);
+    };
+
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
         Structure& structure = *baseValue.asCell()->structure();
         if (JSCell::canUseFastGetOwnProperty(structure)) {
@@ -1148,39 +1178,11 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, JSGlobalObject* globalObject, Code
             }
         }
     }
-    
-    if (std::optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
-        uint32_t i = *index;
-        auto& metadata = bytecode.metadata(codeBlock);
-        ArrayProfile* arrayProfile = &metadata.m_arrayProfile;
 
-        if (isJSString(baseValue)) {
-            if (asString(baseValue)->canGetIndex(i)) {
-                scope.release();
-                return asString(baseValue)->getIndex(globalObject, i);
-            }
-            arrayProfile->setOutOfBounds();
-        } else if (baseValue.isObject()) {
-            JSObject* object = asObject(baseValue);
-            if (JSValue result = object->tryGetIndexQuickly(i, arrayProfile))
-                return result;
+    if (auto index = subscript.tryGetAsUint32Index())
+        RELEASE_AND_RETURN(scope, getByIndex(*index));
 
-            bool skipMarkingOutOfBounds = false;
-
-            if (object->indexingType() == ArrayWithContiguous && i < object->butterfly()->publicLength()) {
-                // FIXME: expand this to ArrayStorage, Int32, and maybe Double:
-                // https://bugs.webkit.org/show_bug.cgi?id=182940
-                auto* globalObject = object->globalObject();
-                skipMarkingOutOfBounds = globalObject->isOriginalArrayStructure(object->structure()) && globalObject->arrayPrototypeChainIsSane();
-            }
-
-            if (!skipMarkingOutOfBounds && !CommonSlowPaths::canAccessArgumentIndexQuickly(*object, i))
-                arrayProfile->setOutOfBounds();
-        }
-
-        scope.release();
-        return baseValue.get(globalObject, i);
-    } else if (subscript.isNumber() && baseValue.isCell()) {
+    if (subscript.isNumber() && baseValue.isCell()) {
         auto& metadata = bytecode.metadata(codeBlock);
         ArrayProfile* arrayProfile = &metadata.m_arrayProfile;
         arrayProfile->setOutOfBounds();
@@ -1194,8 +1196,16 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, JSGlobalObject* globalObject, Code
     RETURN_IF_EXCEPTION(scope, JSValue());
     auto property = subscript.toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue());
-    scope.release();
-    return baseValue.get(globalObject, property);
+
+    if (subscript.isString()) {
+        if (auto index = parseIndex(property)) {
+            auto& metadata = bytecode.metadata(codeBlock);
+            metadata.m_arrayProfile.setMayUseStringArrayIndex();
+            RELEASE_AND_RETURN(scope, getByIndex(*index));
+        }
+    }
+
+    RELEASE_AND_RETURN(scope, baseValue.get(globalObject, property));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_get_by_val)
@@ -1294,21 +1304,33 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
     JSValue value = getOperand(callFrame, bytecode.m_value);
     bool isStrictMode = bytecode.m_ecmaMode.isStrict();
     auto& metadata = bytecode.metadata(codeBlock);
-    
-    if (std::optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
-        uint32_t i = *index;
+
+    auto putByIndex = [&](uint32_t index) ALWAYS_INLINE_LAMBDA {
         if (baseValue.isObject()) {
             JSObject* object = asObject(baseValue);
-            if (!object->trySetIndexQuickly(vm, i, value, &metadata.m_arrayProfile))
-                object->methodTable()->putByIndex(object, globalObject, i, value, isStrictMode);
-            LLINT_END();
+            if (!object->trySetIndexQuickly(vm, index, value, &metadata.m_arrayProfile))
+                object->methodTable()->putByIndex(object, globalObject, index, value, isStrictMode);
+            return;
         }
-        baseValue.putByIndex(globalObject, i, value, isStrictMode);
+        baseValue.putByIndex(globalObject, index, value, isStrictMode);
+    };
+
+    if (std::optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
+        putByIndex(*index);
         LLINT_END();
     }
 
     auto property = subscript.toPropertyKey(globalObject);
     LLINT_CHECK_EXCEPTION();
+
+    if (subscript.isString()) {
+        if (auto index = parseIndex(property)) {
+            metadata.m_arrayProfile.setMayUseStringArrayIndex();
+            putByIndex(*index);
+            LLINT_END();
+        }
+    }
+
     PutPropertySlot slot(baseValue, isStrictMode);
     baseValue.put(globalObject, property, value, slot);
     LLINT_END();
@@ -1319,6 +1341,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
     LLINT_BEGIN();
     
     auto bytecode = pc->as<OpPutByValDirect>();
+    auto& metadata = bytecode.metadata(codeBlock);
     JSValue baseValue = getOperand(callFrame, bytecode.m_base);
     JSValue subscript = getOperand(callFrame, bytecode.m_property);
     JSValue value = getOperand(callFrame, bytecode.m_value);
@@ -1335,9 +1358,11 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
     if (UNLIKELY(throwScope.exception()))
         LLINT_END();
 
-    if (std::optional<uint32_t> index = parseIndex(property))
+    if (std::optional<uint32_t> index = parseIndex(property)) {
+        if (subscript.isString())
+            metadata.m_arrayProfile.setMayUseStringArrayIndex();
         baseObject->putDirectIndex(globalObject, index.value(), value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
-    else {
+    } else {
         PutPropertySlot slot(baseObject, isStrictMode);
         CommonSlowPaths::putDirectWithReify(vm, globalObject, baseObject, property, value, slot);
     }

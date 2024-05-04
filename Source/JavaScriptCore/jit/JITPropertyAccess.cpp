@@ -60,8 +60,22 @@ void JIT::emit_op_get_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::GetByVal::profileGPR;
     using BaselineJITRegisters::GetByVal::scratch1GPR;
 
+    if (bytecode.metadata(m_profiledCodeBlock).m_arrayProfile.mayUseStringArrayIndex()) {
+        emitGetVirtualRegister(property, propertyJSR);
+        JumpList skipCases;
+        skipCases.append(branchIfNotCell(propertyJSR));
+        skipCases.append(branchIfNotString(propertyJSR.payloadGPR()));
+        constexpr GPRReg globalObjectGPR = preferredArgumentGPR<decltype(operationStringToArrayIndex), 0>();
+        constexpr GPRReg arrayProfileGPR = preferredArgumentGPR<decltype(operationStringToArrayIndex), 2>();
+        static_assert(noOverlap(globalObjectGPR, arrayProfileGPR, propertyJSR));
+        loadGlobalObject(globalObjectGPR);
+        materializePointerIntoMetadata(bytecode, OpGetByVal::Metadata::offsetOfArrayProfile(), arrayProfileGPR);
+        callOperation(operationStringToArrayIndex, globalObjectGPR, propertyJSR, arrayProfileGPR);
+        moveValueRegs(JSRInfo::returnValueJSR, propertyJSR);
+        skipCases.link(this);
+    } else
+        emitGetVirtualRegister(property, propertyJSR);
     emitGetVirtualRegister(base, baseJSR);
-    emitGetVirtualRegister(property, propertyJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
@@ -241,8 +255,22 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PutByVal::stubInfoGPR;
     using BaselineJITRegisters::PutByVal::scratch1GPR;
 
+    if (bytecode.metadata(m_profiledCodeBlock).m_arrayProfile.mayUseStringArrayIndex()) {
+        emitGetVirtualRegister(property, propertyJSR);
+        JumpList skipCases;
+        skipCases.append(branchIfNotCell(propertyJSR));
+        skipCases.append(branchIfNotString(propertyJSR.payloadGPR()));
+        constexpr GPRReg globalObjectGPR = preferredArgumentGPR<decltype(operationStringToArrayIndex), 0>();
+        constexpr GPRReg arrayProfileGPR = preferredArgumentGPR<decltype(operationStringToArrayIndex), 2>();
+        static_assert(noOverlap(globalObjectGPR, arrayProfileGPR, propertyJSR));
+        loadGlobalObject(globalObjectGPR);
+        materializePointerIntoMetadata(bytecode, OpGetByVal::Metadata::offsetOfArrayProfile(), arrayProfileGPR);
+        callOperation(operationStringToArrayIndex, globalObjectGPR, propertyJSR, arrayProfileGPR);
+        moveValueRegs(JSRInfo::returnValueJSR, propertyJSR);
+        skipCases.link(this);
+    } else
+        emitGetVirtualRegister(property, propertyJSR);
     emitGetVirtualRegister(base, baseJSR);
-    emitGetVirtualRegister(property, propertyJSR);
     emitGetVirtualRegister(value, valueJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -832,8 +860,22 @@ void JIT::emit_op_in_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::InByVal::profileGPR;
     using BaselineJITRegisters::InByVal::scratch1GPR;
 
+    if (bytecode.metadata(m_profiledCodeBlock).m_arrayProfile.mayUseStringArrayIndex()) {
+        emitGetVirtualRegister(property, propertyJSR);
+        JumpList skipCases;
+        skipCases.append(branchIfNotCell(propertyJSR));
+        skipCases.append(branchIfNotString(propertyJSR.payloadGPR()));
+        constexpr GPRReg globalObjectGPR = preferredArgumentGPR<decltype(operationStringToArrayIndex), 0>();
+        constexpr GPRReg arrayProfileGPR = preferredArgumentGPR<decltype(operationStringToArrayIndex), 2>();
+        static_assert(noOverlap(globalObjectGPR, arrayProfileGPR, propertyJSR));
+        loadGlobalObject(globalObjectGPR);
+        materializePointerIntoMetadata(bytecode, OpGetByVal::Metadata::offsetOfArrayProfile(), arrayProfileGPR);
+        callOperation(operationStringToArrayIndex, globalObjectGPR, propertyJSR, arrayProfileGPR);
+        moveValueRegs(JSRInfo::returnValueJSR, propertyJSR);
+        skipCases.link(this);
+    } else
+        emitGetVirtualRegister(property, propertyJSR);
     emitGetVirtualRegister(base, baseJSR);
-    emitGetVirtualRegister(property, propertyJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
@@ -1645,8 +1687,22 @@ void JIT::emit_op_get_by_val_with_this(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::GetByValWithThis::profileGPR;
     using BaselineJITRegisters::GetByValWithThis::scratch1GPR;
 
+    if (bytecode.metadata(m_profiledCodeBlock).m_arrayProfile.mayUseStringArrayIndex()) {
+        emitGetVirtualRegister(property, propertyJSR);
+        JumpList skipCases;
+        skipCases.append(branchIfNotCell(propertyJSR));
+        skipCases.append(branchIfNotString(propertyJSR.payloadGPR()));
+        constexpr GPRReg globalObjectGPR = preferredArgumentGPR<decltype(operationStringToArrayIndex), 0>();
+        constexpr GPRReg arrayProfileGPR = preferredArgumentGPR<decltype(operationStringToArrayIndex), 2>();
+        static_assert(noOverlap(globalObjectGPR, arrayProfileGPR, propertyJSR));
+        loadGlobalObject(globalObjectGPR);
+        materializePointerIntoMetadata(bytecode, OpGetByVal::Metadata::offsetOfArrayProfile(), arrayProfileGPR);
+        callOperation(operationStringToArrayIndex, globalObjectGPR, propertyJSR, arrayProfileGPR);
+        moveValueRegs(JSRInfo::returnValueJSR, propertyJSR);
+        skipCases.link(this);
+    } else
+        emitGetVirtualRegister(property, propertyJSR);
     emitGetVirtualRegister(base, baseJSR);
-    emitGetVirtualRegister(property, propertyJSR);
     emitGetVirtualRegister(thisValue, thisJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();

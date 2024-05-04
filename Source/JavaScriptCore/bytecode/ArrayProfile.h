@@ -203,6 +203,8 @@ enum class ArrayProfileFlag : uint32_t {
     UsesNonOriginalArrayStructures = 1 << 4,
     MayBeResizableOrGrowableSharedTypedArray = 1 << 5,
     DidPerformFirstRunPruning = 1 << 6,
+    MayUseStringArrayIndex = 1 << 7,
+    MayUseStringNonArrayIndex = 1 << 8,
 };
 
 class ArrayProfile {
@@ -213,7 +215,13 @@ public:
 
     static constexpr uint64_t s_smallTypedArrayMaxLength = std::numeric_limits<int32_t>::max();
     void setMayBeLargeTypedArray() { m_arrayProfileFlags.add(ArrayProfileFlag::MayBeLargeTypedArray); }
-    bool mayBeLargeTypedArray(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeLargeTypedArray); }
+    bool mayBeLargeTypedArray() const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeLargeTypedArray); }
+
+    void setMayUseStringArrayIndex() { m_arrayProfileFlags.add(ArrayProfileFlag::MayUseStringArrayIndex); }
+    bool mayUseStringArrayIndex() const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayUseStringArrayIndex); }
+
+    void setMayUseStringNonArrayIndex() { m_arrayProfileFlags.add(ArrayProfileFlag::MayUseStringNonArrayIndex); }
+    bool mayUseStringNonArrayIndex() const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayUseStringNonArrayIndex); }
 
     bool mayBeResizableOrGrowableSharedTypedArray(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeResizableOrGrowableSharedTypedArray); }
 

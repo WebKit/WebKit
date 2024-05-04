@@ -253,7 +253,7 @@ public:
 
         Array::Speculation speculation = speculationFromProfile(locker, profile, makeSafe);
 
-        bool mayBeLargeTypedArray = profile->mayBeLargeTypedArray(locker);
+        bool mayBeLargeTypedArray = profile->mayBeLargeTypedArray();
         bool mayBeResizableOrGrowableSharedTypedArray = profile->mayBeResizableOrGrowableSharedTypedArray(locker);
         return withArrayClassAndSpeculation(myArrayClass, speculation, mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray);
     }

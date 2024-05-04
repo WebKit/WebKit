@@ -1146,6 +1146,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_by_val_with_this)
     BEGIN();
 
     auto bytecode = pc->as<OpGetByValWithThis>();
+    auto& metadata = bytecode.metadata(codeBlock);
     JSValue baseValue = GET_C(bytecode.m_base).jsValue();
     JSValue thisValue = GET_C(bytecode.m_thisValue).jsValue();
     JSValue subscript = GET_C(bytecode.m_property).jsValue();
@@ -1174,6 +1175,12 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_by_val_with_this)
     baseValue.requireObjectCoercible(globalObject);
     CHECK_EXCEPTION();
     auto property = subscript.toPropertyKey(globalObject);
+
+    if (subscript.isString()) {
+        if (auto index = parseIndex(property))
+            metadata.m_arrayProfile.setMayUseStringArrayIndex();
+    }
+
     CHECK_EXCEPTION();
     RETURN_PROFILED(baseValue.get(globalObject, property, slot));
 }

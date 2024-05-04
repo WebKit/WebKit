@@ -260,6 +260,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ToPrimitive:
     case ToPropertyKey:
     case ToPropertyKeyOrNumber:
+    case StringToArrayIndex:
     case Throw:
     case ThrowStaticError:
     case Unreachable:

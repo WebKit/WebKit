@@ -384,6 +384,8 @@ JSC_DECLARE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSG
 JSC_DECLARE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject*, const JSInstruction* bytecodePC));
 JSC_DECLARE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject*, const JSInstruction* bytecodePC));
 
+JSC_DECLARE_JIT_OPERATION(operationStringToArrayIndex, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, ArrayProfile*));
+
 JSC_DECLARE_JIT_OPERATION(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity, char*, (VM*, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationReallocateButterflyToGrowPropertyStorage, char*, (VM*, JSObject*, size_t newSize));
 

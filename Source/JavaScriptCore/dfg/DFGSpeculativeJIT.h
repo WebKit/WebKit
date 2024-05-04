@@ -1625,6 +1625,7 @@ public:
     void compileToPrimitive(Node*);
     void compileToPropertyKey(Node*);
     void compileToPropertyKeyOrNumber(Node*);
+    void compileStringToArrayIndex(Node*);
     void compileToNumeric(Node*);
     void compileCallNumberConstructor(Node*);
     void compileLogShadowChickenPrologue(Node*);

@@ -15970,6 +15970,26 @@ void SpeculativeJIT::compileToPropertyKeyOrNumber(Node* node)
     jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
 }
 
+void SpeculativeJIT::compileStringToArrayIndex(Node* node)
+{
+    JSValueOperand argument(this, node->child1());
+    JSValueRegsTemporary result(this);
+
+    JSValueRegs argumentRegs = argument.jsValueRegs();
+    JSValueRegs resultRegs = result.regs();
+
+    JumpList doneCases;
+
+    moveValueRegs(argumentRegs, resultRegs);
+    doneCases.append(branchIfNotCell(resultRegs));
+    doneCases.append(branchIfNotString(resultRegs.payloadGPR()));
+
+    addSlowPathGenerator(slowPathCall(jump(), this, operationStringToArrayIndex, resultRegs, LinkableConstant::globalObject(*this, node), resultRegs, TrustedImmPtr(nullptr)));
+
+    doneCases.link(this);
+    jsValueResult(resultRegs, node);
+}
+
 void SpeculativeJIT::compileToNumeric(Node* node)
 {
     DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse, node->child1().useKind());
