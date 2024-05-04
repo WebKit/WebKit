@@ -49,7 +49,7 @@ public:
     {
     }
 
-    LegacyInlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, WordMeasurements&);
+    LegacyInlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&);
 
 private:
     void skipTrailingWhitespace(LegacyInlineIterator&, const LineInfo&);

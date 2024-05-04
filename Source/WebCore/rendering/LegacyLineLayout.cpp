@@ -510,8 +510,7 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(InlineBidiResolver& resolver)
         lineInfo.setEmpty(true);
         lineInfo.resetRunsFromLeadingWhitespace();
 
-        WordMeasurements wordMeasurements;
-        end = lineBreaker.nextLineBreak(resolver, lineInfo, renderTextInfo, wordMeasurements);
+        end = lineBreaker.nextLineBreak(resolver, lineInfo, renderTextInfo);
         m_flow.cachePriorCharactersIfNeeded(renderTextInfo.lineBreakIteratorFactory);
         renderTextInfo.lineBreakIteratorFactory.priorContext().reset();
         if (resolver.position().atEnd()) {
