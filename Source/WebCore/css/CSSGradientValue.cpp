@@ -196,10 +196,10 @@ static bool appendColorInterpolationMethod(StringBuilder& builder, CSSGradientCo
             }
             return false;
         },
-        [&] (const auto& method) {
-            builder.append(needsLeadingSpace ? " " : "", "in ", serializationForCSS(method.interpolationColorSpace));
-            if constexpr (hasHueInterpolationMethod<decltype(method)>)
-                serializationForCSS(builder, method.hueInterpolationMethod);
+        [&]<typename MethodColorSpace> (const MethodColorSpace& methodColorSpace) {
+            builder.append(needsLeadingSpace ? " " : "", "in ", serializationForCSS(methodColorSpace.interpolationColorSpace));
+            if constexpr (hasHueInterpolationMethod<MethodColorSpace>)
+                serializationForCSS(builder, methodColorSpace.hueInterpolationMethod);
             return true;
         }
     );

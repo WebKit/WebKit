@@ -114,9 +114,9 @@ Color mix(const CSSResolvedColorMix& colorMix)
         return { };
 
     return WTF::switchOn(colorMix.colorInterpolationMethod.colorSpace,
-        [&] (auto colorSpace) {
-            return mixColorComponentsUsingColorInterpolationMethod<decltype(colorSpace)>(
-                colorSpace,
+        [&] (const auto& methodColorSpace) {
+            return mixColorComponentsUsingColorInterpolationMethod(
+                methodColorSpace,
                 *mixPercentages,
                 colorMix.mixComponents1.color,
                 colorMix.mixComponents2.color

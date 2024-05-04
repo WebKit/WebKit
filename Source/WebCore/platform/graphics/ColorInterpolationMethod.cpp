@@ -56,9 +56,9 @@ void serializationForCSS(StringBuilder& builder, HueInterpolationMethod hueInter
 void serializationForCSS(StringBuilder& builder, const ColorInterpolationMethod& method)
 {
     WTF::switchOn(method.colorSpace,
-        [&] (auto& type) {
+        [&]<typename MethodColorSpace> (const MethodColorSpace& type) {
             serializationForCSS(builder, type.interpolationColorSpace);
-            if constexpr (hasHueInterpolationMethod<decltype(type)>)
+            if constexpr (hasHueInterpolationMethod<MethodColorSpace>)
                 serializationForCSS(builder, type.hueInterpolationMethod);
         }
     );
@@ -142,9 +142,9 @@ TextStream& operator<<(TextStream& ts, HueInterpolationMethod hueInterpolationMe
 TextStream& operator<<(TextStream& ts, const ColorInterpolationMethod& method)
 {
     WTF::switchOn(method.colorSpace,
-        [&] (auto& type) {
+        [&]<typename ColorSpace> (const ColorSpace& type) {
             ts << type.interpolationColorSpace;
-            if constexpr (hasHueInterpolationMethod<decltype(type)>)
+            if constexpr (hasHueInterpolationMethod<ColorSpace>)
                 ts << ' ' << type.hueInterpolationMethod;
             ts << ' ' << method.alphaPremultiplication;
         }

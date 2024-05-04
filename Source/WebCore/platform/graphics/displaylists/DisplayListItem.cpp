@@ -40,8 +40,7 @@ template<typename T> inline constexpr bool HasIsValid<T, std::void_t<decltype(st
 
 bool isValid(const Item& item)
 {
-    return WTF::switchOn(item, [&](const auto& item) {
-        using T = std::decay_t<decltype(item)>;
+    return WTF::switchOn(item, [&]<typename T> (const T& item) {
         if constexpr (HasIsValid<T>)
             return item.isValid();
         else {
@@ -218,8 +217,8 @@ bool shouldDumpItem(const Item& item, OptionSet<AsTextFlag> flags)
 
 void dumpItem(TextStream& ts, const Item& item, OptionSet<AsTextFlag> flags)
 {
-    WTF::switchOn(item, [&](const auto& item) {
-        ts << std::decay_t<decltype(item)>::name;
+    WTF::switchOn(item, [&]<typename ItemType> (const ItemType& item) {
+        ts << ItemType::name;
         item.dump(ts, flags);
     });
 }

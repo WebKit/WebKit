@@ -382,9 +382,9 @@ void Node::trackForDebugging()
 
 inline void NodeRareData::operator delete(NodeRareData* nodeRareData, std::destroying_delete_t)
 {
-    auto destroyAndFree = [&](auto& value) {
+    auto destroyAndFree = [&]<typename RareDataType> (RareDataType& value) {
         std::destroy_at(&value);
-        std::decay_t<decltype(value)>::freeAfterDestruction(&value);
+        RareDataType::freeAfterDestruction(&value);
     };
 
     if (nodeRareData->m_isElementRareData)

@@ -68,27 +68,29 @@ IDBKeyData::IDBKeyData(const IDBKey* key)
 }
 
 IDBKeyData::IDBKeyData(const IDBKeyData& data, IsolatedCopyTag)
-    : m_value(crossThreadCopy(data.m_value)) { }
+    : m_value(crossThreadCopy(data.m_value))
+{
+}
 
 IndexedDB::KeyType IDBKeyData::type() const
 {
     switch (m_value.index()) {
-    case WTF::alternativeIndexV<std::nullptr_t, decltype(m_value)>:
-    case WTF::alternativeIndexV<Invalid, decltype(m_value)>:
+    case WTF::alternativeIndexV<std::nullptr_t, ValueVariant>:
+    case WTF::alternativeIndexV<Invalid, ValueVariant>:
         return IndexedDB::KeyType::Invalid;
-    case WTF::alternativeIndexV<Vector<IDBKeyData>, decltype(m_value)>:
+    case WTF::alternativeIndexV<Vector<IDBKeyData>, ValueVariant>:
         return IndexedDB::KeyType::Array;
-    case WTF::alternativeIndexV<String, decltype(m_value)>:
+    case WTF::alternativeIndexV<String, ValueVariant>:
         return IndexedDB::KeyType::String;
-    case WTF::alternativeIndexV<double, decltype(m_value)>:
+    case WTF::alternativeIndexV<double, ValueVariant>:
         return IndexedDB::KeyType::Number;
-    case WTF::alternativeIndexV<Date, decltype(m_value)>:
+    case WTF::alternativeIndexV<Date, ValueVariant>:
         return IndexedDB::KeyType::Date;
-    case WTF::alternativeIndexV<ThreadSafeDataBuffer, decltype(m_value)>:
+    case WTF::alternativeIndexV<ThreadSafeDataBuffer, ValueVariant>:
         return IndexedDB::KeyType::Binary;
-    case WTF::alternativeIndexV<Min, decltype(m_value)>:
+    case WTF::alternativeIndexV<Min, ValueVariant>:
         return IndexedDB::KeyType::Min;
-    case WTF::alternativeIndexV<Max, decltype(m_value)>:
+    case WTF::alternativeIndexV<Max, ValueVariant>:
         return IndexedDB::KeyType::Max;
     }
     RELEASE_ASSERT_NOT_REACHED();

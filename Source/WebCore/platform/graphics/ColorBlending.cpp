@@ -99,9 +99,7 @@ Color blendWithWhite(const Color& color)
 
 static bool requiresLegacyInterpolationRules(const Color& color)
 {
-    return color.callOnUnderlyingType([&] (const auto& underlyingColor) {
-        using ColorType = std::decay_t<decltype(underlyingColor)>;
-
+    return color.callOnUnderlyingType([&]<typename ColorType> (const ColorType&) {
         if constexpr (std::is_same_v<ColorType, SRGBA<uint8_t>>)
             return true;
         else if constexpr (std::is_same_v<ColorType, SRGBA<float>>)
