@@ -187,8 +187,9 @@ void Queue::onSubmittedWorkScheduled(Function<void()>&& completionHandler)
 NSString* Queue::errorValidatingSubmit(const Vector<std::reference_wrapper<CommandBuffer>>& commands) const
 {
     for (auto command : commands) {
-        if (!isValidToUseWith(command.get(), *this) || command.get().bufferMapCount())
-            return command.get().lastError() ?: @"Validation failure.";
+        auto& commandBuffer = command.get();
+        if (!isValidToUseWith(commandBuffer, *this) || commandBuffer.bufferMapCount() || commandBuffer.commandBuffer().status >= MTLCommandBufferStatusCommitted)
+            return commandBuffer.lastError() ?: @"Validation failure.";
     }
 
     // FIXME: "Every GPUQuerySet referenced in a command in any element of commandBuffers is in the available state."
