@@ -2,9 +2,9 @@ ARG MARCH_FLAG=""
 ARG WEBKIT_RELEASE_TYPE=Release
 ARG CPU=native
 ARG LTO_FLAG="-flto='full'"
-ARG LLVM_VERSION="17"
+ARG LLVM_VERSION="16"
 
-FROM bitnami/minideb:bookworm as base
+FROM bitnami/minideb:bullseye as base
 
 ARG MARCH_FLAG
 ARG WEBKIT_RELEASE_TYPE
@@ -90,8 +90,8 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld" \
     -DCMAKE_AR=$(which llvm-ar) \
     -DCMAKE_RANLIB=$(which llvm-ranlib) \
-    -DCMAKE_C_FLAGS="$CFLAGS -fno-omit-frame-pointer" \
-    -DCMAKE_CXX_FLAGS="$CXXFLAGS -fno-omit-frame-pointer" \
+    -DCMAKE_C_FLAGS="$CFLAGS --no-omit-frame-pointer" \
+    -DCMAKE_CXX_FLAGS="$CXXFLAGS --no-omit-frame-pointer" \
     -G Ninja \
     /webkit && \
     cd /webkitbuild && \
