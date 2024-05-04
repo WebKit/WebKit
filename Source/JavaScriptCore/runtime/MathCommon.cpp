@@ -409,7 +409,7 @@ ALWAYS_INLINE double mathPowInternal(double x, double y)
 
 #endif
 
-JSC_DEFINE_JIT_OPERATION(operationMathPow, double, (double x, double y))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMathPow, double, (double x, double y))
 {
     if (std::isnan(y))
         return PNaN;
@@ -449,12 +449,12 @@ JSC_DEFINE_JIT_OPERATION(operationMathPow, double, (double x, double y))
     return mathPowInternal(x, y);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationToInt32, UCPUStrictInt32, (double value))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationToInt32, UCPUStrictInt32, (double value))
 {
     return toUCPUStrictInt32(JSC::toInt32(value));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationToInt32SensibleSlow, UCPUStrictInt32, (double number))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationToInt32SensibleSlow, UCPUStrictInt32, (double number))
 {
     return toUCPUStrictInt32(toIntImpl<int32_t, ToIntMode::Int32AfterSensibleConversionAttempt>(number));
 }
@@ -476,7 +476,7 @@ static inline bool isStrictInt32(double value)
 
 extern "C" {
 
-JSC_DEFINE_JIT_OPERATION(jsRound, double, (double value))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(jsRound, double, (double value))
 {
     double integer = ceil(value);
     return integer - (integer - 0.5 > value);
@@ -506,11 +506,11 @@ double log1p(double value)
 }
 
 #define JSC_DEFINE_VIA_STD(capitalizedName, lowerName) \
-    JSC_DEFINE_JIT_OPERATION(lowerName##Double, double, (double value)) \
+    JSC_DEFINE_NOEXCEPT_JIT_OPERATION(lowerName##Double, double, (double value)) \
     { \
         return std::lowerName(value); \
     } \
-    JSC_DEFINE_JIT_OPERATION(lowerName##Float, float, (float value)) \
+    JSC_DEFINE_NOEXCEPT_JIT_OPERATION(lowerName##Float, float, (float value)) \
     { \
         return std::lowerName(value); \
     }
@@ -518,60 +518,60 @@ FOR_EACH_ARITH_UNARY_OP_STD(JSC_DEFINE_VIA_STD)
 #undef JSC_DEFINE_VIA_STD
 
 #define JSC_DEFINE_VIA_CUSTOM(capitalizedName, lowerName) \
-    JSC_DEFINE_JIT_OPERATION(lowerName##Double, double, (double value)) \
+    JSC_DEFINE_NOEXCEPT_JIT_OPERATION(lowerName##Double, double, (double value)) \
     { \
         return lowerName##DoubleImpl(value); \
     } \
-    JSC_DEFINE_JIT_OPERATION(lowerName##Float, float, (float value)) \
+    JSC_DEFINE_NOEXCEPT_JIT_OPERATION(lowerName##Float, float, (float value)) \
     { \
         return lowerName##FloatImpl(value); \
     }
 FOR_EACH_ARITH_UNARY_OP_CUSTOM(JSC_DEFINE_VIA_CUSTOM)
 #undef JSC_DEFINE_VIA_CUSTOM
 
-JSC_DEFINE_JIT_OPERATION(truncDouble, double, (double value))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(truncDouble, double, (double value))
 {
     return std::trunc(value);
 }
-JSC_DEFINE_JIT_OPERATION(truncFloat, float, (float value))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(truncFloat, float, (float value))
 {
     return std::trunc(value);
 }
-JSC_DEFINE_JIT_OPERATION(ceilDouble, double, (double value))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(ceilDouble, double, (double value))
 {
     return std::ceil(value);
 }
-JSC_DEFINE_JIT_OPERATION(ceilFloat, float, (float value))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(ceilFloat, float, (float value))
 {
     return std::ceil(value);
 }
-JSC_DEFINE_JIT_OPERATION(floorDouble, double, (double value))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(floorDouble, double, (double value))
 {
     return std::floor(value);
 }
-JSC_DEFINE_JIT_OPERATION(floorFloat, float, (float value))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(floorFloat, float, (float value))
 {
     return std::floor(value);
 }
-JSC_DEFINE_JIT_OPERATION(sqrtDouble, double, (double value))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(sqrtDouble, double, (double value))
 {
     return std::sqrt(value);
 }
-JSC_DEFINE_JIT_OPERATION(sqrtFloat, float, (float value))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(sqrtFloat, float, (float value))
 {
     return std::sqrt(value);
 }
 
-JSC_DEFINE_JIT_OPERATION(stdPowDouble, double, (double x, double y))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(stdPowDouble, double, (double x, double y))
 {
     return std::pow(x, y);
 }
-JSC_DEFINE_JIT_OPERATION(stdPowFloat, float, (float x, float y))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(stdPowFloat, float, (float x, float y))
 {
     return std::pow(x, y);
 }
 
-JSC_DEFINE_JIT_OPERATION(fmodDouble, double, (double x, double y))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(fmodDouble, double, (double x, double y))
 {
 #if HAVE(ARM_IDIV_INSTRUCTIONS)
     // fmod() does not have exact results for integer on ARMv7.
@@ -601,12 +601,12 @@ static ALWAYS_INLINE double roundDoubleImpl(double value)
     return integer - (integer - 0.5 > value);
 }
 
-JSC_DEFINE_JIT_OPERATION(roundDouble, double, (double value))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(roundDouble, double, (double value))
 {
     return roundDoubleImpl(value);
 }
 
-JSC_DEFINE_JIT_OPERATION(jsRoundDouble, double, (double value))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(jsRoundDouble, double, (double value))
 {
     return roundDoubleImpl(value);
 }
@@ -617,42 +617,42 @@ static ALWAYS_INLINE float roundFloatImpl(float value)
     return integer - (integer - 0.5 > value);
 }
 
-JSC_DEFINE_JIT_OPERATION(roundFloat, float, (float value))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(roundFloat, float, (float value))
 {
     return roundFloatImpl(value);
 }
 
 #if USE(JSVALUE32_64)
-JSC_DEFINE_JIT_OPERATION(f32_nearest, float, (float operand))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_nearest, float, (float operand))
 {
     static_assert(std::numeric_limits<float>::round_style == std::round_to_nearest);
     return std::nearbyint(operand);
 }
 
-JSC_DEFINE_JIT_OPERATION(f64_nearest, double, (double operand))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_nearest, double, (double operand))
 {
     static_assert(std::numeric_limits<float>::round_style == std::round_to_nearest);
     return std::nearbyint(operand);
 }
 
-JSC_DEFINE_JIT_OPERATION(i32_div_s, int32_t, (int32_t a, int32_t b)) { return a / b; }
-JSC_DEFINE_JIT_OPERATION(i32_div_u, uint32_t, (uint32_t a, uint32_t b)) { return a / b; }
-JSC_DEFINE_JIT_OPERATION(i32_rem_s, int32_t, (int32_t a, int32_t b)) { return a % b; }
-JSC_DEFINE_JIT_OPERATION(i32_rem_u, uint32_t, (uint32_t a, uint32_t b)) { return a % b; }
-JSC_DEFINE_JIT_OPERATION(i64_div_s, int64_t, (int64_t a, int64_t b)) { return a / b; }
-JSC_DEFINE_JIT_OPERATION(i64_div_u, uint64_t, (uint64_t a, uint64_t b)) { return a / b; }
-JSC_DEFINE_JIT_OPERATION(i64_rem_s, int64_t, (int64_t a, int64_t b)) { return a % b; }
-JSC_DEFINE_JIT_OPERATION(i64_rem_u, uint64_t, (uint64_t a, uint64_t b)) { return a % b; }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i32_div_s, int32_t, (int32_t a, int32_t b)) { return a / b; }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i32_div_u, uint32_t, (uint32_t a, uint32_t b)) { return a / b; }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i32_rem_s, int32_t, (int32_t a, int32_t b)) { return a % b; }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i32_rem_u, uint32_t, (uint32_t a, uint32_t b)) { return a % b; }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_div_s, int64_t, (int64_t a, int64_t b)) { return a / b; }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_div_u, uint64_t, (uint64_t a, uint64_t b)) { return a / b; }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_rem_s, int64_t, (int64_t a, int64_t b)) { return a % b; }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_rem_u, uint64_t, (uint64_t a, uint64_t b)) { return a % b; }
 
-JSC_DEFINE_JIT_OPERATION(i64_trunc_u_f32, uint64_t, (float operand)) { return static_cast<uint64_t>(operand); }
-JSC_DEFINE_JIT_OPERATION(i64_trunc_s_f32, int64_t, (float operand)) { return static_cast<int64_t>(operand); }
-JSC_DEFINE_JIT_OPERATION(i64_trunc_u_f64, uint64_t, (double operand)) { return static_cast<uint64_t>(operand); }
-JSC_DEFINE_JIT_OPERATION(i64_trunc_s_f64, int64_t, (double operand)) { return static_cast<int64_t>(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_trunc_u_f32, uint64_t, (float operand)) { return static_cast<uint64_t>(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_trunc_s_f32, int64_t, (float operand)) { return static_cast<int64_t>(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_trunc_u_f64, uint64_t, (double operand)) { return static_cast<uint64_t>(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_trunc_s_f64, int64_t, (double operand)) { return static_cast<int64_t>(operand); }
 
-JSC_DEFINE_JIT_OPERATION(f32_convert_u_i64, float, (uint64_t operand)) { return static_cast<float>(operand); }
-JSC_DEFINE_JIT_OPERATION(f32_convert_s_i64, float, (int64_t operand)) { return static_cast<float>(operand); }
-JSC_DEFINE_JIT_OPERATION(f64_convert_u_i64, double, (uint64_t operand)) { return static_cast<double>(operand); }
-JSC_DEFINE_JIT_OPERATION(f64_convert_s_i64, double, (int64_t operand)) { return static_cast<double>(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_convert_u_i64, float, (uint64_t operand)) { return static_cast<float>(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_convert_s_i64, float, (int64_t operand)) { return static_cast<float>(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_convert_u_i64, double, (uint64_t operand)) { return static_cast<double>(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_convert_s_i64, double, (int64_t operand)) { return static_cast<double>(operand); }
 #endif
 
 } // namespace Math

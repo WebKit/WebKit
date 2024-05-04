@@ -29,6 +29,7 @@
 #include "MacroAssembler.h"
 
 #include "JSCPtrTag.h"
+#include "OperationResult.h"
 #include "ProbeContext.h"
 #include <wtf/InlineASM.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -60,9 +61,9 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MacroAssemblerARM64);
 
-JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
 JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampoline);
-JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampolineSIMD, void, ());
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(ctiMasmProbeTrampolineSIMD, void, ());
 JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampolineSIMD);
 
 using namespace ARM64Registers;

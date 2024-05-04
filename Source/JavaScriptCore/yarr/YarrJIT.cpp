@@ -58,7 +58,7 @@ enum class TryReadUnicodeCharCodeLocation { CompiledInline, CompiledAsHelper };
 #endif
 
 #if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
-JSC_DECLARE_JIT_OPERATION(operationAreCanonicallyEquivalent, bool, (unsigned, unsigned, CanonicalMode));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationAreCanonicallyEquivalent, bool, (unsigned, unsigned, CanonicalMode));
 
 // Since the generator areCanonicallyEquivalentThunkGenerator() needs to be static,
 // we set the incoming argument registers to the thunk here and ASSERT at runtime
@@ -5309,7 +5309,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> areCanonicallyEquivalentThunkGenerator(VM&
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, nullptr, "YARR areCanonicallyEquivalent call");
 }
 
-JSC_DEFINE_JIT_OPERATION(operationAreCanonicallyEquivalent, bool, (unsigned a, unsigned b, CanonicalMode canonicalMode))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAreCanonicallyEquivalent, bool, (unsigned a, unsigned b, CanonicalMode canonicalMode))
 {
     return areCanonicallyEquivalent(static_cast<char32_t>(a), static_cast<char32_t>(b), canonicalMode);
 }

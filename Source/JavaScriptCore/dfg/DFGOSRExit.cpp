@@ -136,7 +136,7 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, VM& vm, const Operands<Val
     }
 }
 
-JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame, void* bufferToPreserve))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame, void* bufferToPreserve))
 {
     VM& vm = callFrame->deprecatedVM();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -220,7 +220,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame, v
 
 IGNORE_WARNINGS_BEGIN("frame-address")
 
-JSC_DEFINE_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM* vmPointer, const OSRExitBase* exitPointer, EncodedJSValue* tmpScratch))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM* vmPointer, const OSRExitBase* exitPointer, EncodedJSValue* tmpScratch))
 {
     const OSRExitBase& exit = *exitPointer;
     VM& vm = *vmPointer;
@@ -871,7 +871,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     adjustAndJumpToTarget(vm, jit, exit);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (Probe::Context& context))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (Probe::Context& context))
 {
     auto* debugInfo = context.arg<SpeculationFailureDebugInfo*>();
     CodeBlock* codeBlock = debugInfo->codeBlock;

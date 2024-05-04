@@ -699,10 +699,13 @@ public:
                 VALIDATE(value->numChildren() >= 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == pointerType(), ("At ", *value));
                 if (value->type().isTuple()) {
-                    // FIXME: Right now we only support a pair of register sized values since on every calling
+                    // FIXME: Right now we only support a pair of two GPR values since on every calling
                     // convention we support that's returned in returnValueGPR/returnValueGPR2, respectively.
                     VALIDATE(m_procedure.resultCount(value->type()) == 2, ("At ", *value));
-                    VALIDATE(m_procedure.typeAtOffset(value->type(), 0) == registerType(), ("At ", *value));
+                    if (is32Bit())
+                        VALIDATE(m_procedure.typeAtOffset(value->type(), 0) == registerType(), ("At ", *value));
+                    else
+                        VALIDATE(m_procedure.typeAtOffset(value->type(), 0).isInt(), ("At ", *value));
                     VALIDATE(m_procedure.typeAtOffset(value->type(), 1) == registerType(), ("At ", *value));
                 }
 

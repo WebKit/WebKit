@@ -393,7 +393,8 @@ void Thread::registerGCThread(GCThreadType gcThreadType)
 
 bool Thread::mayBeGCThread()
 {
-    return Thread::current().gcThreadType() != GCThreadType::None;
+    // TODO: FIX THIS
+    return Thread::current().gcThreadType() != GCThreadType::None || Thread::current().m_isCompilationThread;
 }
 
 void Thread::registerJSThread(Thread& thread)

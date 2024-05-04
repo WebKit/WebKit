@@ -1650,9 +1650,8 @@ public:
     
     enum ExceptionCheckKind { NormalExceptionCheck, InvertedExceptionCheck };
     enum ExceptionJumpWidth { NormalJumpWidth, FarJumpWidth };
-    JS_EXPORT_PRIVATE Jump emitExceptionCheck(
-        VM&, ExceptionCheckKind = NormalExceptionCheck, ExceptionJumpWidth = NormalJumpWidth);
-    JS_EXPORT_PRIVATE Jump emitNonPatchableExceptionCheck(VM&);
+    JS_EXPORT_PRIVATE Jump emitExceptionCheck(VM&, ExceptionCheckKind = NormalExceptionCheck, ExceptionJumpWidth = NormalJumpWidth, GPRReg exceptionReg = InvalidGPRReg);
+    JS_EXPORT_PRIVATE Jump emitNonPatchableExceptionCheck(VM&, GPRReg exceptionReg = InvalidGPRReg);
     Jump emitJumpIfException(VM&);
 
 #if ENABLE(SAMPLING_COUNTERS)

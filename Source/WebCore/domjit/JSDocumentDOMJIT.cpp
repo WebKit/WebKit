@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -155,7 +155,8 @@ JSC_DEFINE_JIT_OPERATION(operationToJSElement, JSC::EncodedJSValue, (JSC::JSGlob
     JSC::VM& vm = globalObject->vm();
     JSC::CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JSC::JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return DOMJIT::toWrapperSlowImpl<Element>(globalObject, result);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, DOMJIT::toWrapperSlowImpl<Element>(globalObject, result));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationToJSHTMLElement, JSC::EncodedJSValue, (JSC::JSGlobalObject* globalObject, void* result))
@@ -165,7 +166,8 @@ JSC_DEFINE_JIT_OPERATION(operationToJSHTMLElement, JSC::EncodedJSValue, (JSC::JS
     JSC::VM& vm = globalObject->vm();
     JSC::CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JSC::JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return DOMJIT::toWrapperSlowImpl<HTMLElement>(globalObject, result);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, DOMJIT::toWrapperSlowImpl<HTMLElement>(globalObject, result));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationToJSDocument, JSC::EncodedJSValue, (JSC::JSGlobalObject* globalObject, void* result))
@@ -175,7 +177,8 @@ JSC_DEFINE_JIT_OPERATION(operationToJSDocument, JSC::EncodedJSValue, (JSC::JSGlo
     JSC::VM& vm = globalObject->vm();
     JSC::CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JSC::JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return DOMJIT::toWrapperSlowImpl<Document>(globalObject, result);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, DOMJIT::toWrapperSlowImpl<Document>(globalObject, result));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationToJSNode, JSC::EncodedJSValue, (JSC::JSGlobalObject* globalObject, void* result))
@@ -185,7 +188,8 @@ JSC_DEFINE_JIT_OPERATION(operationToJSNode, JSC::EncodedJSValue, (JSC::JSGlobalO
     JSC::VM& vm = globalObject->vm();
     JSC::CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JSC::JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return DOMJIT::toWrapperSlowImpl<Node>(globalObject, result);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, DOMJIT::toWrapperSlowImpl<Node>(globalObject, result));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationToJSContainerNode, JSC::EncodedJSValue, (JSC::JSGlobalObject* globalObject, void* result))
@@ -195,7 +199,8 @@ JSC_DEFINE_JIT_OPERATION(operationToJSContainerNode, JSC::EncodedJSValue, (JSC::
     JSC::VM& vm = globalObject->vm();
     JSC::CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JSC::JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return DOMJIT::toWrapperSlowImpl<ContainerNode>(globalObject, result);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, DOMJIT::toWrapperSlowImpl<ContainerNode>(globalObject, result));
 }
 
 } } // namespace WebCore::DOMJIT

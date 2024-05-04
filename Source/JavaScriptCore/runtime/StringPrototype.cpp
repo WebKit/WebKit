@@ -779,15 +779,15 @@ JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceRegExpEmptyStr, JSCell*,
     if (regExp->global()) {
         // ES5.1 15.5.4.10 step 8.a.
         searchValue->setLastIndex(globalObject, 0);
-        RETURN_IF_EXCEPTION(scope, nullptr);
+        OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
         String source = thisValue->value(globalObject);
-        RETURN_IF_EXCEPTION(scope, nullptr);
-        RELEASE_AND_RETURN(scope, removeUsingRegExpSearch(vm, globalObject, thisValue, WTFMove(source), regExp));
+        OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
+        OPERATION_RETURN(scope, removeUsingRegExpSearch(vm, globalObject, thisValue, WTFMove(source), regExp));
     }
 
     CallData callData;
     String replacementString = emptyString();
-    RELEASE_AND_RETURN(scope, replaceUsingRegExpSearch(
+    OPERATION_RETURN(scope, replaceUsingRegExpSearch(
         vm, globalObject, thisValue, searchValue, callData, replacementString, JSValue()));
 }
 
@@ -800,8 +800,8 @@ JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceRegExpString, JSCell*, (
 
     CallData callData;
     String replacementString = replaceString->value(globalObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    RELEASE_AND_RETURN(scope, replaceUsingRegExpSearch(
+    OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
+    OPERATION_RETURN(scope, replaceUsingRegExpSearch(
         vm, globalObject, thisValue, searchValue, callData, replacementString, replaceString));
 }
 
@@ -943,8 +943,9 @@ JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceGeneric, JSCell*, (JSGlo
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     
-    return replace(vm, globalObject, JSValue::decode(thisValue), JSValue::decode(searchValue), JSValue::decode(replaceValue));
+    OPERATION_RETURN(scope, replace(vm, globalObject, JSValue::decode(thisValue), JSValue::decode(searchValue), JSValue::decode(replaceValue)));
 }
 
 IGNORE_WARNINGS_END

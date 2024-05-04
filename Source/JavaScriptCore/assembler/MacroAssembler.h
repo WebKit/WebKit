@@ -936,6 +936,11 @@ public:
         return branchTest32(cond, address, mask);
     }
 
+    Jump branchTestPtr(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        return branchTest32(cond, address, mask);
+    }
+
     Jump branchAddPtr(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         return branchAdd32(cond, src, dest);

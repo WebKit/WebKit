@@ -27,6 +27,7 @@
 
 #include "CPU.h"
 #include "JITOperationValidation.h"
+#include "OperationResult.h"
 #include <climits>
 #include <cmath>
 #include <optional>
@@ -34,9 +35,9 @@
 namespace JSC {
 
 const int32_t maxExponentForIntegerMathPow = 1000;
-JSC_DECLARE_JIT_OPERATION(operationMathPow, double, (double x, double y));
-JSC_DECLARE_JIT_OPERATION(operationToInt32, UCPUStrictInt32, (double));
-JSC_DECLARE_JIT_OPERATION(operationToInt32SensibleSlow, UCPUStrictInt32, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMathPow, double, (double x, double y));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationToInt32, UCPUStrictInt32, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationToInt32SensibleSlow, UCPUStrictInt32, (double));
 
 constexpr double maxSafeInteger()
 {
@@ -255,7 +256,7 @@ ALWAYS_INLINE bool canBeInt32(double value)
 }
 
 extern "C" {
-JSC_DECLARE_JIT_OPERATION(jsRound, double, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(jsRound, double, (double));
 }
 
 namespace Math {
@@ -290,56 +291,56 @@ namespace Math {
 
 #define JSC_DEFINE_VIA_STD(capitalizedName, lowerName) \
     using std::lowerName; \
-    JSC_DECLARE_JIT_OPERATION(lowerName##Double, double, (double)); \
-    JSC_DECLARE_JIT_OPERATION(lowerName##Float, float, (float));
+    JSC_DECLARE_NOEXCEPT_JIT_OPERATION(lowerName##Double, double, (double)); \
+    JSC_DECLARE_NOEXCEPT_JIT_OPERATION(lowerName##Float, float, (float));
 FOR_EACH_ARITH_UNARY_OP_STD(JSC_DEFINE_VIA_STD)
 #undef JSC_DEFINE_VIA_STD
 
 #define JSC_DEFINE_VIA_CUSTOM(capitalizedName, lowerName) \
     JS_EXPORT_PRIVATE double lowerName(double); \
-    JSC_DECLARE_JIT_OPERATION(lowerName##Double, double, (double)); \
-    JSC_DECLARE_JIT_OPERATION(lowerName##Float, float, (float));
+    JSC_DECLARE_NOEXCEPT_JIT_OPERATION(lowerName##Double, double, (double)); \
+    JSC_DECLARE_NOEXCEPT_JIT_OPERATION(lowerName##Float, float, (float));
 FOR_EACH_ARITH_UNARY_OP_CUSTOM(JSC_DEFINE_VIA_CUSTOM)
 #undef JSC_DEFINE_VIA_CUSTOM
 
-JSC_DECLARE_JIT_OPERATION(truncDouble, double, (double));
-JSC_DECLARE_JIT_OPERATION(truncFloat, float, (float));
-JSC_DECLARE_JIT_OPERATION(ceilDouble, double, (double));
-JSC_DECLARE_JIT_OPERATION(ceilFloat, float, (float));
-JSC_DECLARE_JIT_OPERATION(floorDouble, double, (double));
-JSC_DECLARE_JIT_OPERATION(floorFloat, float, (float));
-JSC_DECLARE_JIT_OPERATION(sqrtDouble, double, (double));
-JSC_DECLARE_JIT_OPERATION(sqrtFloat, float, (float));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(truncDouble, double, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(truncFloat, float, (float));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(ceilDouble, double, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(ceilFloat, float, (float));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(floorDouble, double, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(floorFloat, float, (float));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(sqrtDouble, double, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(sqrtFloat, float, (float));
 
-JSC_DECLARE_JIT_OPERATION(stdPowDouble, double, (double, double));
-JSC_DECLARE_JIT_OPERATION(stdPowFloat, float, (float, float));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(stdPowDouble, double, (double, double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(stdPowFloat, float, (float, float));
 
-JSC_DECLARE_JIT_OPERATION(fmodDouble, double, (double, double));
-JSC_DECLARE_JIT_OPERATION(roundDouble, double, (double));
-JSC_DECLARE_JIT_OPERATION(jsRoundDouble, double, (double));
-JSC_DECLARE_JIT_OPERATION(roundFloat, float, (float));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(fmodDouble, double, (double, double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(roundDouble, double, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(jsRoundDouble, double, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(roundFloat, float, (float));
 
-JSC_DECLARE_JIT_OPERATION(f32_nearest, float, (float));
-JSC_DECLARE_JIT_OPERATION(f64_nearest, double, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_nearest, float, (float));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_nearest, double, (double));
 
-JSC_DECLARE_JIT_OPERATION(i32_div_s, int32_t, (int32_t, int32_t));
-JSC_DECLARE_JIT_OPERATION(i32_div_u, uint32_t, (uint32_t, uint32_t));
-JSC_DECLARE_JIT_OPERATION(i32_rem_s, int32_t, (int32_t, int32_t));
-JSC_DECLARE_JIT_OPERATION(i32_rem_u, uint32_t, (uint32_t, uint32_t));
-JSC_DECLARE_JIT_OPERATION(i64_div_s, int64_t, (int64_t, int64_t));
-JSC_DECLARE_JIT_OPERATION(i64_div_u, uint64_t, (uint64_t, uint64_t));
-JSC_DECLARE_JIT_OPERATION(i64_rem_s, int64_t, (int64_t, int64_t));
-JSC_DECLARE_JIT_OPERATION(i64_rem_u, uint64_t, (uint64_t, uint64_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i32_div_s, int32_t, (int32_t, int32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i32_div_u, uint32_t, (uint32_t, uint32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i32_rem_s, int32_t, (int32_t, int32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i32_rem_u, uint32_t, (uint32_t, uint32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_div_s, int64_t, (int64_t, int64_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_div_u, uint64_t, (uint64_t, uint64_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_rem_s, int64_t, (int64_t, int64_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_rem_u, uint64_t, (uint64_t, uint64_t));
 
-JSC_DECLARE_JIT_OPERATION(i64_trunc_u_f32, uint64_t, (float));
-JSC_DECLARE_JIT_OPERATION(i64_trunc_s_f32, int64_t, (float));
-JSC_DECLARE_JIT_OPERATION(i64_trunc_u_f64, uint64_t, (double));
-JSC_DECLARE_JIT_OPERATION(i64_trunc_s_f64, int64_t, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_trunc_u_f32, uint64_t, (float));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_trunc_s_f32, int64_t, (float));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_trunc_u_f64, uint64_t, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_trunc_s_f64, int64_t, (double));
 
-JSC_DECLARE_JIT_OPERATION(f32_convert_u_i64, float, (uint64_t));
-JSC_DECLARE_JIT_OPERATION(f32_convert_s_i64, float, (int64_t));
-JSC_DECLARE_JIT_OPERATION(f64_convert_u_i64, double, (uint64_t));
-JSC_DECLARE_JIT_OPERATION(f64_convert_s_i64, double, (int64_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_convert_u_i64, float, (uint64_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_convert_s_i64, float, (int64_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_convert_u_i64, double, (uint64_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_convert_s_i64, double, (int64_t));
 
 } // namespace Math
 } // namespace JSC

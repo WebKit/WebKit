@@ -6061,7 +6061,7 @@ sub GenerateOperationDefinition
 
             my ($nativeValue, $mayThrowException) = ToNativeForFunctionWithoutTypeCheck($interface, $argument, $encodedName, $operation->extendedAttributes->{Conditional});
             push(@$outputArray, "    auto $name = ${nativeValue};\n");
-            push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $mayThrowException;
+            push(@$outputArray, "    OPERATION_RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $mayThrowException;
             $value = "WTFMove($name)";
 
             if ($shouldPassByReference) {
@@ -6070,7 +6070,7 @@ sub GenerateOperationDefinition
             push(@arguments, $value);
         }
         my $functionString = "$implFunctionName(" . join(", ", @arguments) . ")";
-        push(@$outputArray, "    return JSValue::encode(" . NativeToJSValueUsingPointers($operation, $interface, $functionString, "*castedThis->globalObject()") . ");\n");
+        push(@$outputArray, "    OPERATION_RETURN(throwScope, JSValue::encode(" . NativeToJSValueUsingPointers($operation, $interface, $functionString, "*castedThis->globalObject()") . "));\n");
         push(@$outputArray, "}\n\n");
 
         push(@$outputArray, "#endif\n\n") if $conditional;

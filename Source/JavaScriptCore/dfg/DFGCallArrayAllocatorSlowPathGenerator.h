@@ -60,7 +60,6 @@ private:
         jit->callOperation(m_function, m_resultGPR, SpeculativeJIT::TrustedImmPtr(&jit->vm()), m_structure, m_size, m_storageGPR);
         for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i]);
-        jit->exceptionCheck();
         jit->loadPtr(MacroAssembler::Address(m_resultGPR, JSObject::butterflyOffset()), m_storageGPR);
         jumpTo(jit);
     }
@@ -110,7 +109,6 @@ private:
         jit->callOperation(m_function, m_resultGPR, m_globalObject, scratchGPR, m_sizeGPR, m_storageGPR);
         for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i]);
-        jit->exceptionCheck();
         jumpTo(jit);
     }
 
@@ -150,7 +148,6 @@ private:
         jit->callOperation(m_function, m_resultGPR, m_globalObject, m_structureGPR, m_sizeGPR, m_storageGPR);
         for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i]);
-        jit->exceptionCheck();
         jumpTo(jit);
     }
 

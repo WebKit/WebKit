@@ -48,6 +48,7 @@
 #include "JSPromise.h"
 #include "JSString.h"
 #include "LinkBuffer.h"
+#include "OperationResult.h"
 #include "Options.h"
 #include "Parser.h"
 #include "ProbeContext.h"
@@ -1088,7 +1089,7 @@ private:
 
 
 static JSC_DECLARE_CUSTOM_GETTER(domJITGetterCustomGetter);
-extern "C" { static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(domJITGetterSlowCall, EncodedJSValue, (JSGlobalObject*, void*)); }
+JSC_DECLARE_JIT_OPERATION(domJITGetterSlowCall, EncodedJSValue, (JSGlobalObject*, void*));
 
 class DOMJITGetter : public DOMJITNode {
 public:
@@ -1188,12 +1189,13 @@ JSC_DEFINE_JIT_OPERATION(domJITGetterSlowCall, EncodedJSValue, (JSGlobalObject* 
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return JSValue::encode(jsNumber(static_cast<DOMJITGetter*>(pointer)->value()));
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(static_cast<DOMJITGetter*>(pointer)->value())));
 }
 
 
 static JSC_DECLARE_CUSTOM_GETTER(domJITGetterNoEffectCustomGetter);
-extern "C" { static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(domJITGetterNoEffectSlowCall, EncodedJSValue, (JSGlobalObject*, void*)); }
+JSC_DECLARE_JIT_OPERATION(domJITGetterNoEffectSlowCall, EncodedJSValue, (JSGlobalObject*, void*));
 
 class DOMJITGetterNoEffects : public DOMJITNode {
 public:
@@ -1288,11 +1290,12 @@ JSC_DEFINE_JIT_OPERATION(domJITGetterNoEffectSlowCall, EncodedJSValue, (JSGlobal
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return JSValue::encode(jsNumber(static_cast<DOMJITGetterNoEffects*>(pointer)->value()));
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(static_cast<DOMJITGetterNoEffects*>(pointer)->value())));
 }
 
 static JSC_DECLARE_CUSTOM_GETTER(domJITGetterComplexCustomGetter);
-extern "C" { static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(domJITGetterComplexSlowCall, EncodedJSValue, (JSGlobalObject*, void*)); }
+JSC_DECLARE_JIT_OPERATION(domJITGetterComplexSlowCall, EncodedJSValue, (JSGlobalObject*, void*));
 
 class DOMJITGetterComplex : public DOMJITNode {
 public:
@@ -1399,9 +1402,9 @@ JSC_DEFINE_JIT_OPERATION(domJITGetterComplexSlowCall, EncodedJSValue, (JSGlobalO
     auto* domjitGetterComplex = jsDynamicCast<DOMJITGetterComplex*>(object);
     if (domjitGetterComplex) {
         if (domjitGetterComplex->m_enableException)
-            return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "DOMJITGetterComplex slow call exception"_s)));
+            OPERATION_RETURN(scope, JSValue::encode(throwException(globalObject, scope, createError(globalObject, "DOMJITGetterComplex slow call exception"_s))));
     }
-    return JSValue::encode(jsNumber(object->value()));
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(object->value())));
 }
 
 static const DOMJITGetterComplex::DOMJITAttribute DOMJITGetterComplexDOMJIT;
@@ -1416,7 +1419,7 @@ void DOMJITGetterComplex::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "enableException"_s), 0, functionDOMJITGetterComplexEnableException, ImplementationVisibility::Public, NoIntrinsic, 0);
 }
 
-extern "C" { static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(functionDOMJITFunctionObjectWithoutTypeCheck, EncodedJSValue, (JSGlobalObject* globalObject, DOMJITNode*)); }
+JSC_DECLARE_JIT_OPERATION(functionDOMJITFunctionObjectWithoutTypeCheck, EncodedJSValue, (JSGlobalObject* globalObject, DOMJITNode*));
 
 class DOMJITFunctionObject : public DOMJITNode {
 public:
@@ -1485,7 +1488,8 @@ JSC_DEFINE_JIT_OPERATION(functionDOMJITFunctionObjectWithoutTypeCheck, EncodedJS
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return JSValue::encode(jsNumber(node->value()));
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(node->value())));
 }
 
 static const DOMJIT::Signature DOMJITFunctionObjectSignature(functionDOMJITFunctionObjectWithoutTypeCheck, DOMJITFunctionObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange(DOMJIT::HeapRange::ConstExpr, 0, 1)), SpecInt32Only);
@@ -1497,7 +1501,7 @@ void DOMJITFunctionObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "func"_s), 0, functionDOMJITFunctionObjectWithTypeCheck, ImplementationVisibility::Public, NoIntrinsic, &DOMJITFunctionObjectSignature, static_cast<unsigned>(PropertyAttribute::ReadOnly));
 }
 
-extern "C" { static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(functionDOMJITCheckJSCastObjectWithoutTypeCheck, EncodedJSValue, (JSGlobalObject* globalObject, DOMJITNode* node)); }
+JSC_DECLARE_JIT_OPERATION(functionDOMJITCheckJSCastObjectWithoutTypeCheck, EncodedJSValue, (JSGlobalObject* globalObject, DOMJITNode* node));
 
 class DOMJITCheckJSCastObject : public DOMJITNode {
 public:
@@ -1547,7 +1551,8 @@ JSC_DEFINE_JIT_OPERATION(functionDOMJITCheckJSCastObjectWithoutTypeCheck, Encode
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return JSValue::encode(jsNumber(node->value()));
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(node->value())));
 }
 
 static const DOMJIT::Signature DOMJITCheckJSCastObjectSignature(functionDOMJITCheckJSCastObjectWithoutTypeCheck, DOMJITCheckJSCastObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange::top()), SpecInt32Only);
@@ -1560,7 +1565,7 @@ void DOMJITCheckJSCastObject::finishCreation(VM& vm, JSGlobalObject* globalObjec
 }
 
 static JSC_DECLARE_CUSTOM_GETTER(domJITGetterBaseJSObjectCustomGetter);
-extern "C" { static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(domJITGetterBaseJSObjectSlowCall, EncodedJSValue, (JSGlobalObject*, void*)); }
+JSC_DECLARE_JIT_OPERATION(domJITGetterBaseJSObjectSlowCall, EncodedJSValue, (JSGlobalObject*, void*));
 
 class DOMJITGetterBaseJSObject : public DOMJITNode {
 public:
@@ -1654,8 +1659,9 @@ JSC_DEFINE_JIT_OPERATION(domJITGetterBaseJSObjectSlowCall, EncodedJSValue, (JSGl
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* object = static_cast<JSObject*>(pointer);
-    return JSValue::encode(object->getPrototypeDirect());
+    OPERATION_RETURN(scope, JSValue::encode(object->getPrototypeDirect()));
 }
 
 class Message : public ThreadSafeRefCounted<Message> {
