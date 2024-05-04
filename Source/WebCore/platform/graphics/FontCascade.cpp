@@ -1386,7 +1386,7 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
 {
     GlyphBuffer glyphBuffer;
 
-    WidthIterator it(*this, run, 0, false, forTextEmphasis);
+    WidthIterator it(*this, run, 0, false, forTextEmphasis == ForTextEmphasisOrNot::ForTextEmphasis);
     // FIXME: Using separate glyph buffers for the prefix and the suffix is incorrect when kerning or
     // ligatures are enabled.
     GlyphBuffer localGlyphBuffer;
@@ -1422,7 +1422,7 @@ GlyphBuffer FontCascade::layoutComplexText(const TextRun& run, unsigned from, un
 {
     GlyphBuffer glyphBuffer;
 
-    ComplexTextController controller(*this, run, false, 0, forTextEmphasis);
+    ComplexTextController controller(*this, run, false, 0, forTextEmphasis == ForTextEmphasisOrNot::ForTextEmphasis);
     GlyphBuffer dummyGlyphBuffer;
     controller.advance(from, &dummyGlyphBuffer);
     controller.advance(to, &glyphBuffer);
