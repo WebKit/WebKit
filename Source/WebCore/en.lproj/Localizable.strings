@@ -961,6 +961,9 @@
 /* WKWebExtensionErrorInvalidContentScripts description for missing matches entry */
 "Manifest `content_scripts` entry has no specified `matches` entry." = "Manifest `content_scripts` entry has no specified `matches` entry.";
 
+/* WKWebExtensionErrorInvalidContentScripts description for unknown 'css_origin' value */
+"Manifest `content_scripts` entry has unknown `css_origin` value." = "Manifest `content_scripts` entry has unknown `css_origin` value.";
+
 /* WKWebExtensionErrorInvalidContentScripts description for unknown 'run_at' value */
 "Manifest `content_scripts` entry has unknown `run_at` value." = "Manifest `content_scripts` entry has unknown `run_at` value.";
 

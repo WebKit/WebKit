@@ -118,6 +118,9 @@ static NSString * const contentScriptsCSSManifestKey = @"css";
 static NSString * const contentScriptsWorldManifestKey = @"world";
 static NSString * const contentScriptsIsolatedManifestKey = @"ISOLATED";
 static NSString * const contentScriptsMainManifestKey = @"MAIN";
+static NSString * const contentScriptsCSSOriginManifestKey = @"css_origin";
+static NSString * const contentScriptsAuthorManifestKey = @"author";
+static NSString * const contentScriptsUserManifestKey = @"user";
 
 static NSString * const permissionsManifestKey = @"permissions";
 static NSString * const optionalPermissionsManifestKey = @"optional_permissions";
@@ -2057,6 +2060,15 @@ void WebExtension::populateContentScriptPropertiesIfNeeded()
         else
             recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `world` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'world' value")));
 
+        auto styleLevel = WebCore::UserStyleLevel::Author;
+        auto *cssOriginString = objectForKey<NSString>(dictionary, contentScriptsCSSOriginManifestKey).lowercaseString;
+        if (!cssOriginString || [cssOriginString isEqualToString:contentScriptsAuthorManifestKey])
+            styleLevel = WebCore::UserStyleLevel::Author;
+        else if ([cssOriginString isEqualToString:contentScriptsUserManifestKey])
+            styleLevel = WebCore::UserStyleLevel::User;
+        else
+            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `css_origin` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'css_origin' value")));
+
         InjectedContentData injectedContentData;
         injectedContentData.includeMatchPatterns = WTFMove(includeMatchPatterns);
         injectedContentData.excludeMatchPatterns = WTFMove(excludeMatchPatterns);
@@ -2064,6 +2076,7 @@ void WebExtension::populateContentScriptPropertiesIfNeeded()
         injectedContentData.matchesAboutBlank = matchesAboutBlank;
         injectedContentData.injectsIntoAllFrames = injectsIntoAllFrames;
         injectedContentData.contentWorldType = contentWorldType;
+        injectedContentData.styleLevel = styleLevel;
         injectedContentData.scriptPaths = scriptPaths;
         injectedContentData.styleSheetPaths = styleSheetPaths;
         injectedContentData.includeGlobPatternStrings = includeGlobPatternStrings;

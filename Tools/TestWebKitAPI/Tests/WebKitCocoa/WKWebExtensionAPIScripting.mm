@@ -94,6 +94,7 @@ TEST(WKWebExtensionAPIScripting, ErrorsCSS)
         @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: 0 }, files: ['path/to/file'], css: 'css'}), /it cannot specify both 'css' and 'files'./i)",
         @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: 0 }}), /it must specify either 'css' or 'files'./i)",
         @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: '0' }, files: ['path/to/file'], css: 'css'}), /'tabId' is expected to be a number, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: 1 }, css: 'body { color: red }', origin: 'bad' }), /'origin' value is invalid, because it must specify either 'AUTHOR' or 'USER'/i);",
 
         @"browser.test.assertThrows(() => browser.scripting.removeCSS(), /a required argument is missing./i)",
         @"browser.test.assertThrows(() => browser.scripting.removeCSS({}), /missing required keys: 'target'./i)",
@@ -123,8 +124,9 @@ TEST(WKWebExtensionAPIScripting, ErrorsRegisteredContentScript)
         @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [] }]), /it must specify at least one match pattern for script with ID '0'/i)",
 
         @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ] }]), /it must specify at least one 'css' or 'js' file/i)",
-        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], runAt: 'invalid_runAt' }]), /it must be one of the following: 'document_end', 'document_idle', or 'document_start'/i)",
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], runAt: 'invalid_runAt' }]), /it must specify either 'document_start', 'document_end', or 'document_idle'/i)",
         @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], world: 'invalid_world' }]), /it must specify either 'ISOLATED' or 'MAIN'/i)",
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], css: ['style.css'], cssOrigin: 'bad' }]), /'cssOrigin' value is invalid, because it must specify either 'author' or 'user'/i)",
 
         @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '_0' }]), /it must not start with '_'/i)",
         @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '0', matches: [ ], js: ['path/to/file'] }]), /it must not be empty/i)",
@@ -512,6 +514,88 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSSWithFrameIds)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIScripting, CSSUserOrigin)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='color: red'></body>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
+        @"  if (tab.status === 'complete') {",
+        @"    await browser.test.assertSafeResolve(() => browser.scripting.insertCSS({ target: { tabId }, css: 'body { color: green !important }', origin: 'user' }))",
+
+        @"    let results = await browser.test.assertSafeResolve(() => browser.scripting.executeScript({ target: { tabId }, func: () => getComputedStyle(document.body).color }))",
+        @"    browser.test.assertEq(results[0]?.result, 'rgb(0, 128, 0)', 'Color should be green')",
+
+        @"    browser.test.notifyPass()",
+        @"  }",
+        @"})",
+
+        @"browser.test.yield('Load Tab')",
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIScripting, CSSAuthorOrigin)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<style> body { color: red } </style>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
+        @"  if (tab.status === 'complete') {",
+        @"    await browser.test.assertSafeResolve(() => browser.scripting.insertCSS({ target: { tabId }, css: 'body { color: green !important }', origin: 'author' }))",
+
+        @"    let results = await browser.test.assertSafeResolve(() => browser.scripting.executeScript({ target: { tabId }, func: () => getComputedStyle(document.body).color }))",
+        @"    browser.test.assertEq(results[0]?.result, 'rgb(0, 128, 0)', 'Color should be green')",
+
+        @"    browser.test.notifyPass()",
+        @"  }",
+        @"})",
+
+        @"browser.test.yield('Load Tab')",
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIScripting, World)
 {
     TestWebKitAPI::HTTPServer server({
@@ -528,18 +612,19 @@ TEST(WKWebExtensionAPIScripting, World)
 
         @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
         @"  if (tab.status === 'complete') {",
-
-        @"    var results = await browser?.scripting?.executeScript( { target: { tabId: tabId, world: 'ISOLATED'}, func: testWorld })",
+        @"    var results = await browser.scripting.executeScript( { target: { tabId, world: 'ISOLATED'}, func: testWorld })",
         @"    browser.test.assertEq(results[0]?.error, 'A JavaScript exception occurred')",
 
-        @"    await browser?.scripting?.executeScript( { target: { tabId: tabId, world: 'MAIN'}, func: testWorld })",
+        @"    await browser.scripting.executeScript( { target: { tabId, world: 'MAIN'}, func: testWorld })",
+
+        @"    browser.test.notifyPass()",
         @"  }",
         @"})",
 
         @"browser.test.yield('Load Tab')",
     ]);
 
-    static auto *resources = @{
+    auto *resources = @{
         @"background.js": backgroundScript,
     };
 
@@ -547,13 +632,16 @@ TEST(WKWebExtensionAPIScripting, World)
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
-    auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIScripting, RegisterContentScripts)
@@ -623,6 +711,116 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScripts)
     auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIScripting, RegisterContentScriptsWithCSSUserOrigin)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='color: red'></body>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webNavigation.onCompleted.addListener(async (details) => {",
+        @"  const tabId = details.tabId",
+
+        @"  await browser.scripting.registerContentScripts([{",
+        @"    id: 'changeColor',",
+        @"    matches: ['*://localhost/*'],",
+        @"    css: ['changeColor.css'],",
+        @"    cssOrigin: 'user'",
+        @"  }])",
+
+        @"  let results = await browser.test.assertSafeResolve(() =>",
+        @"    browser.scripting.executeScript({",
+        @"      target: { tabId: tabId },",
+        @"      func: () => getComputedStyle(document.body).color",
+        @"    })",
+        @"  )",
+
+        @"  browser.test.assertEq(results[0].result, 'rgb(0, 128, 0)', 'Color should be green')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')",
+    ]);
+
+    auto *css = @"body { color: green !important }";
+
+    auto resources = @{
+        @"background.js": backgroundScript,
+        @"changeColor.css": css
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIScripting, RegisterContentScriptsWithCSSAuthorOrigin)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<style> body { color: red } </style>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webNavigation.onCompleted.addListener(async (details) => {",
+        @"  const tabId = details.tabId",
+
+        @"  await browser.scripting.registerContentScripts([{",
+        @"    id: 'changeColor',",
+        @"    matches: ['*://localhost/*'],",
+        @"    css: ['changeColor.css'],",
+        @"    cssOrigin: 'user'",
+        @"  }])",
+
+        @"  let results = await browser.test.assertSafeResolve(() =>",
+        @"    browser.scripting.executeScript({",
+        @"      target: { tabId: tabId },",
+        @"      func: () => getComputedStyle(document.body).color",
+        @"    })",
+        @"  )",
+
+        @"  browser.test.assertEq(results[0].result, 'rgb(0, 128, 0)', 'Color should be green')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')",
+    ]);
+
+    auto *css = @"body { color: green !important }";
+
+    auto resources = @{
+        @"background.js": backgroundScript,
+        @"changeColor.css": css
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 

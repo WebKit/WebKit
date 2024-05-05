@@ -156,7 +156,7 @@ void executeScript(std::optional<SourcePairs> scriptPairs, WKWebView *webView, A
     }).get()];
 }
 
-void injectStyleSheets(SourcePairs styleSheetPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebCore::UserContentInjectedFrames injectedFrames, WebExtensionContext& context)
+void injectStyleSheets(SourcePairs styleSheetPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebCore::UserStyleLevel styleLevel, WebCore::UserContentInjectedFrames injectedFrames, WebExtensionContext& context)
 {
     auto page = webView._page;
     auto pageID = page->webPageID();
@@ -165,7 +165,7 @@ void injectStyleSheets(SourcePairs styleSheetPairs, WKWebView *webView, API::Con
         if (!styleSheet)
             continue;
 
-        auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheet.value().first, styleSheet.value().second.value_or(URL { }), Vector<String> { }, Vector<String> { }, injectedFrames, WebCore::UserStyleLevel::User, pageID }, executionWorld);
+        auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheet.value().first, styleSheet.value().second.value_or(URL { }), Vector<String> { }, Vector<String> { }, injectedFrames, styleLevel, pageID }, executionWorld);
 
         auto& controller = page.get()->userContentController();
         controller.addUserStyleSheet(userStyleSheet);

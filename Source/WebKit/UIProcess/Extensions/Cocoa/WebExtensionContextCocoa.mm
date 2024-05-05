@@ -4015,6 +4015,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         auto injectionTime = toImpl(injectedContentData.injectionTime);
         auto waitForNotification = WebCore::WaitForNotificationBeforeInjecting::No;
         Ref executionWorld = toContentWorld(injectedContentData.contentWorldType);
+        auto styleLevel = injectedContentData.styleLevel;
 
         auto scriptID = injectedContentData.identifier;
         bool isRegisteredScript = !scriptID.isEmpty();
@@ -4045,7 +4046,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             if (!styleSheetString)
                 continue;
 
-            auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheetString, URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, WebCore::UserStyleLevel::User, std::nullopt }, executionWorld);
+            auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheetString, URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, styleLevel, std::nullopt }, executionWorld);
             originInjectedStyleSheets.append(userStyleSheet);
 
             for (auto& userContentController : userContentControllers)
