@@ -720,7 +720,7 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& in
             continue;
         if (!statusString.isEmpty())
             statusString.append(", "_s);
-        statusString.append(makeString(convertEnumerationToString(statusCount.key), ": "_s, statusCount.value));
+        statusString.append(convertEnumerationToString(statusCount.key), ": "_s, statusCount.value);
     }
     ALWAYS_LOG(LOGIDENTIFIER, "statuses: {", statusString.toString(), "}");
 #endif

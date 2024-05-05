@@ -510,7 +510,7 @@ String CSSCounterStyleDescriptors::symbolsCSSText() const
     StringBuilder builder;
     for (size_t i = 0; i < m_symbols.size(); ++i) {
         if (i)
-            builder.append(" "_s);
+            builder.append(' ');
         builder.append(m_symbols[i].cssText());
     }
     return builder.toString();
@@ -524,9 +524,7 @@ String CSSCounterStyleDescriptors::additiveSymbolsCSSText() const
     for (size_t i = 0; i < m_additiveSymbols.size(); ++i) {
         if (i)
             builder.append(", "_s);
-        builder.append(m_additiveSymbols[i].second);
-        builder.append(" "_s);
-        builder.append(m_additiveSymbols[i].first.cssText());
+        builder.append(m_additiveSymbols[i].second, ' ', m_additiveSymbols[i].first.cssText());
     }
     return builder.toString();
 }

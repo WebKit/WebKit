@@ -187,8 +187,7 @@ void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, cons
 String CSSStyleRule::cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const
 {
     StringBuilder builder;
-    builder.append(selectorText());
-    builder.append(" {"_s);
+    builder.append(selectorText(), " {"_s);
 
     if (declarations.isEmpty() && rules.isEmpty()) {
         builder.append(" }"_s);

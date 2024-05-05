@@ -622,9 +622,7 @@ Vector<char> asciiDebug(StringImpl* impl)
                 buffer.append(ch);
             buffer.append(ch);
         } else {
-            buffer.append('\\');
-            buffer.append('u');
-            buffer.append(hex(ch, 4));
+            buffer.append('\\', 'u', hex(ch, 4));
         }
     }
     CString narrowString = buffer.toString().ascii();

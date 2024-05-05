@@ -100,12 +100,11 @@ struct TemplateTypes<TT> {
 #define CONSUME_TYPE_NAMED(name, type) \
     auto name##Expected = consumeType(TokenType::type); \
     if (!name##Expected) { \
-        StringBuilder builder; \
-        builder.append("Expected a "_s); \
-        builder.append(toString(TokenType::type)); \
-        builder.append(", but got a "_s); \
-        builder.append(toString(name##Expected.error())); \
-        FAIL(builder.toString()); \
+        auto error = makeString("Expected a "_s, \
+            toString(TokenType::type), \
+            ", but got a "_s, \
+            toString(name##Expected.error())); \
+        FAIL(WTFMove(error)); \
     } \
     auto& name = *name##Expected;
 
@@ -113,12 +112,11 @@ struct TemplateTypes<TT> {
     do { \
         auto expectedToken = consumeType(TokenType::type); \
         if (!expectedToken) { \
-            StringBuilder builder; \
-            builder.append("Expected a "_s); \
-            builder.append(toString(TokenType::type)); \
-            builder.append(", but got a "_s); \
-            builder.append(toString(expectedToken.error())); \
-            FAIL(builder.toString()); \
+            auto error = makeString("Expected a "_s, \
+                toString(TokenType::type), \
+                ", but got a "_s, \
+                toString(expectedToken.error())); \
+            FAIL(WTFMove(error)); \
         } \
     } while (false)
 
@@ -128,8 +126,7 @@ struct TemplateTypes<TT> {
         StringBuilder builder; \
         builder.append("Expected one of ["_s); \
         TemplateTypes<__VA_ARGS__>::appendNameTo(builder); \
-        builder.append("], but got a "_s); \
-        builder.append(toString(name##Expected.error())); \
+        builder.append("], but got a "_s, toString(name##Expected.error())); \
         FAIL(builder.toString()); \
     } \
     auto& name = *name##Expected;

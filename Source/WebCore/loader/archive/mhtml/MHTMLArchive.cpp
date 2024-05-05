@@ -151,20 +151,12 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
         // We replace non ASCII characters with '?' characters to match IE's behavior.
         stringBuilder.append(replaceNonPrintableCharacters(localMainFrame->document()->title()));
     }
-    stringBuilder.append("\r\nDate: "_s);
-    stringBuilder.append(dateString);
-    stringBuilder.append("\r\nMIME-Version: 1.0\r\n"_s);
-    stringBuilder.append("Content-Type: multipart/related;\r\n"_s);
-    if (localMainFrame) {
-        stringBuilder.append("\ttype=\""_s);
-        stringBuilder.append(localMainFrame->document()->suggestedMIMEType());
-    }
-    stringBuilder.append("\";\r\n"_s);
-    stringBuilder.append("\tboundary=\""_s);
-    stringBuilder.append(boundary);
-    stringBuilder.append("\"\r\n\r\n"_s);
+    stringBuilder.append("\r\nDate: "_s, dateString,
+        "\r\nMIME-Version: 1.0\r\nContent-Type: multipart/related;\r\n"_s);
+    if (localMainFrame)
+        stringBuilder.append("\ttype=\""_s, localMainFrame->document()->suggestedMIMEType());
+    stringBuilder.append("\";\r\n\tboundary=\""_s, boundary, "\"\r\n\r\n"_s);
 
-    // We use utf8() below instead of ascii() as ascii() replaces CRLFs with ?? (we still only have put ASCII characters in it).
     ASSERT(stringBuilder.toString().containsOnlyASCII());
     CString asciiString = stringBuilder.toString().utf8();
     SharedBufferBuilder mhtmlData;

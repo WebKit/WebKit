@@ -108,8 +108,7 @@ void serialize(StringBuilder& builder, const Feature& feature)
         }
         serializeIdentifier(feature.name, builder);
 
-        builder.append(": "_s);
-        builder.append(feature.rightComparison->value->cssText());
+        builder.append(": "_s, feature.rightComparison->value->cssText());
         break;
 
     case Syntax::Range:

@@ -447,9 +447,7 @@ String ResourceLoadStatistics::toString() const
 
     // User interaction
     appendBoolean(builder, "hadUserInteraction"_s, hadUserInteraction);
-    builder.append('\n');
-    builder.append("    mostRecentUserInteraction: "_s, hasHadRecentUserInteraction(mostRecentUserInteractionTime.secondsSinceEpoch()) ? "within 24 hours" : "-1");
-    builder.append('\n');
+    builder.append("\n    mostRecentUserInteraction: "_s, hasHadRecentUserInteraction(mostRecentUserInteractionTime.secondsSinceEpoch()) ? "within 24 hours\n"_s : "-1\n"_s);
     appendBoolean(builder, "grandfathered"_s, grandfathered);
     builder.append('\n');
 
@@ -476,9 +474,7 @@ String ResourceLoadStatistics::toString() const
     appendBoolean(builder, "isPrevalentResource"_s, isPrevalentResource);
     builder.append('\n');
     appendBoolean(builder, "isVeryPrevalentResource"_s, isVeryPrevalentResource);
-    builder.append('\n');
-    builder.append("    dataRecordsRemoved: "_s, dataRecordsRemoved);
-    builder.append('\n');
+    builder.append("\n    dataRecordsRemoved: "_s, dataRecordsRemoved, '\n');
 
 #if ENABLE(WEB_API_STATISTICS)
     appendHashSet(builder, "fontsFailedToLoad"_s, fontsFailedToLoad);
@@ -488,8 +484,7 @@ String ResourceLoadStatistics::toString() const
     appendScreenAPIOptionSet(builder, screenFunctionsAccessed);
     appendHashSet(builder, "canvasTextWritten"_s, canvasActivityRecord.textWritten);
     appendBoolean(builder, "canvasReadData"_s, canvasActivityRecord.wasDataRead);
-    builder.append('\n');
-    builder.append('\n');
+    builder.append("\n\n"_s);
 #endif
 
     return builder.toString();

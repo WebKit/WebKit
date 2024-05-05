@@ -75,10 +75,8 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
         for (const auto& cookie : *result) {
             if (!cookies.isEmpty())
                 cookies.append("; "_s);
-            if (!cookie.name.isEmpty()) {
-                cookies.append(cookie.name);
-                cookies.append('=');
-            }
+            if (!cookie.name.isEmpty())
+                cookies.append(cookie.name, '=');
             if (cookie.secure)
                 didAccessSecureCookies = true;
             cookies.append(cookie.value);

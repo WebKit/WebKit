@@ -347,8 +347,8 @@ String IDBKeyData::loggingString() const
         size_t i = 0;
         for (; i < 8 && i < data->size(); ++i) {
             uint8_t byte = data->at(i);
-            builder.append(upperNibbleToLowercaseASCIIHexDigit(byte));
-            builder.append(lowerNibbleToLowercaseASCIIHexDigit(byte));
+            builder.append(upperNibbleToLowercaseASCIIHexDigit(byte),
+                lowerNibbleToLowercaseASCIIHexDigit(byte));
         }
 
         if (data->size() > 8)

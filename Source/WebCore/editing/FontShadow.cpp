@@ -41,9 +41,9 @@ String serializationForCSS(const FontShadow& shadow)
         return noneAtom();
 
     StringBuilder builder;
-    builder.append(shadow.offset.width(), "px "_s);
-    builder.append(shadow.offset.height(), "px "_s);
-    builder.append(serializationForCSS(shadow.color));
+    builder.append(shadow.offset.width(), "px "_s,
+        shadow.offset.height(), "px "_s,
+        serializationForCSS(shadow.color));
     if (shadow.blurRadius)
         builder.append(' ', shadow.blurRadius, "px"_s);
     return builder.toString();

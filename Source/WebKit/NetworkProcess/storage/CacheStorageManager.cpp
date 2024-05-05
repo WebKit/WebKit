@@ -526,9 +526,7 @@ String CacheStorageManager::representationString()
         if (!isFirst)
             builder.append(", "_s);
         isFirst = false;
-        builder.append("\""_s);
-        builder.append(cache->name());
-        builder.append("\""_s);
+        builder.append('"', cache->name(), '"');
     }
 
     builder.append("], \"removed\": ["_s);
@@ -537,9 +535,7 @@ String CacheStorageManager::representationString()
         if (!isFirst)
             builder.append(", "_s);
         isFirst = false;
-        builder.append("\""_s);
-        builder.append(cache->name());
-        builder.append("\""_s);
+        builder.append('"', cache->name(), '"');
     }
     builder.append("]}\n"_s);
     return builder.toString();

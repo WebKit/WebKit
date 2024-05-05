@@ -2097,17 +2097,16 @@ void NetworkSessionCocoa::donateToSKAdNetwork(WebCore::PrivateClickMeasurement&&
     if (!m_privateClickMeasurementDebugModeEnabled)
         return;
 
-    StringBuilder debugString;
-    debugString.append("Submitting potential install attribution for AdamId: "_s);
-    debugString.append(makeString(*pcm.adamID()));
-    debugString.append(", adNetworkRegistrableDomain: "_s);
-    debugString.append(pcm.destinationSite().registrableDomain.string());
-    debugString.append(", impressionId: "_s);
-    debugString.append(pcm.ephemeralSourceNonce()->nonce);
-    debugString.append(", sourceWebRegistrableDomain: "_s);
-    debugString.append(pcm.sourceSite().registrableDomain.string());
-    debugString.append(", version: 3"_s);
-    networkProcess().broadcastConsoleMessage(sessionID(), MessageSource::PrivateClickMeasurement, MessageLevel::Debug, debugString.toString());
+    auto debugString = makeString("Submitting potential install attribution for AdamId: "_s,
+        *pcm.adamID(),
+        ", adNetworkRegistrableDomain: "_s,
+        pcm.destinationSite().registrableDomain.string(),
+        ", impressionId: "_s,
+        pcm.ephemeralSourceNonce()->nonce,
+        ", sourceWebRegistrableDomain: "_s,
+        pcm.sourceSite().registrableDomain.string(),
+        ", version: 3"_s);
+    networkProcess().broadcastConsoleMessage(sessionID(), MessageSource::PrivateClickMeasurement, MessageLevel::Debug, debugString);
 }
 
 void NetworkSessionCocoa::deleteAlternativeServicesForHostNames(const Vector<String>& hosts)

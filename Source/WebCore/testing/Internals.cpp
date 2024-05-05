@@ -1183,14 +1183,11 @@ AtomString Internals::imageLastDecodingOptions(HTMLImageElement& element)
 
     auto options = bitmapImage->currentFrameDecodingOptions();
     StringBuilder builder;
-    builder.append("{ decodingMode : "_s);
-    builder.append(options.decodingMode() == DecodingMode::Asynchronous ? "Asynchronous"_s : "Synchronous"_s);
+    builder.append("{ decodingMode : "_s,
+        options.decodingMode() == DecodingMode::Asynchronous ? "Asynchronous"_s : "Synchronous"_s);
     if (auto sizeForDrawing = options.sizeForDrawing()) {
-        builder.append(", sizeForDrawing : { "_s);
-        builder.append(sizeForDrawing->width());
-        builder.append(", "_s);
-        builder.append(sizeForDrawing->height());
-        builder.append(" }"_s);
+        builder.append(", sizeForDrawing : { "_s, sizeForDrawing->width(),
+            ", "_s, sizeForDrawing->height(), " }"_s);
     }
     builder.append(" }"_s);
     return builder.toAtomString();
@@ -7220,10 +7217,8 @@ String Internals::dumpStyleResolvers()
             return currentIdentifier++;
         }).iterator->value;
 
-        result.append('(', name, ' ');
-        result.append("(identifier="_s, identifier, ") "_s);
-        result.append("(author rule count="_s, resolver.ruleSets().authorStyle().ruleCount(), ')');
-        result.append(")\n"_s);
+        result.append('(', name, ' ', "(identifier="_s, identifier, ") (author rule count="_s,
+            resolver.ruleSets().authorStyle().ruleCount(), "))\n"_s);
     };
 
     dumpResolver("document resolver"_s, document->styleScope().resolver());
