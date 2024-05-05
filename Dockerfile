@@ -43,9 +43,9 @@ RUN install_packages \
     lldb-${LLVM_VERSION} \
     pkg-config \
     ruby-dev
-    
+
 RUN for f in /usr/lib/llvm-${LLVM_VERSION}/bin/*; do ln -sf "$f" /usr/bin; done && \
-     ln -sf clang /usr/bin/cc && \
+    ln -sf clang /usr/bin/cc && \
     ln -sf clang /usr/bin/c89 && \
     ln -sf clang /usr/bin/c99 && \
     ln -sf clang++ /usr/bin/c++ && \
@@ -72,8 +72,8 @@ ENV LTO_FLAG=${LTO_FLAG}
 
 
 RUN --mount=type=tmpfs,target=/webkitbuild \
-    export CFLAGS="$CFLAGS $LTO_FLAG" && \
-    export CXXFLAGS="$CXXFLAGS $LTO_FLAG" && \
+    export CFLAGS="$CFLAGS -mno-omit-leaf-frame-pointer -fno-omit-frame-pointer $LTO_FLAG" && \
+    export CXXFLAGS="$CXXFLAGS -mno-omit-leaf-frame-pointer -fno-omit-frame-pointer $LTO_FLAG" && \
     cd /webkitbuild && \
     cmake \
     -DPORT="JSCOnly" \
@@ -90,8 +90,8 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld" \
     -DCMAKE_AR=$(which llvm-ar) \
     -DCMAKE_RANLIB=$(which llvm-ranlib) \
-    -DCMAKE_C_FLAGS="$CFLAGS --no-omit-frame-pointer" \
-    -DCMAKE_CXX_FLAGS="$CXXFLAGS --no-omit-frame-pointer" \
+    -DCMAKE_C_FLAGS="$CFLAGS" \
+    -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
     -G Ninja \
     /webkit && \
     cd /webkitbuild && \
