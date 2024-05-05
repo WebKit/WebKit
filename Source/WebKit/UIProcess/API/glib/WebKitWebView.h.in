@@ -908,6 +908,10 @@ webkit_web_view_get_web_extension_mode               (WebKitWebView             
 WEBKIT_API const gchar*
 webkit_web_view_get_default_content_security_policy  (WebKitWebView             *web_view);
 
+WEBKIT_API void
+webkit_web_view_get_theme_color                      (WebKitWebView             *web_view,
+                                                      WebKitColor               *color);
+
 #if USE(GI_FINISH_FUNC_ANNOTATION)
 /**
  * webkit_web_view_run_async_javascript_function_in_world: (finish-func webkit_web_view_run_javascript_in_world_finish)

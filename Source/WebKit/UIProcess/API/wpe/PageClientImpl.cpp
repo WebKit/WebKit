@@ -374,6 +374,11 @@ void PageClientImpl::didChangeBackgroundColor()
 {
 }
 
+void PageClientImpl::themeColorDidChange()
+{
+    m_view.themeColorDidChange();
+}
+
 void PageClientImpl::refView()
 {
 }

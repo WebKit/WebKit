@@ -144,6 +144,7 @@ private:
     void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
 
     void didChangeBackgroundColor() override;
+    void themeColorDidChange() override;
     void isPlayingAudioWillChange() final { }
     void isPlayingAudioDidChange() final { }
 
