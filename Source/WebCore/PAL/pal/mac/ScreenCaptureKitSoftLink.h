@@ -52,4 +52,9 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoContentSca
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoContentRect, NSString *)
 #define SCStreamFrameInfoContentRect PAL::get_ScreenCaptureKit_SCStreamFrameInfoContentRect()
 
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoPresenterOverlayContentRect, NSString *)
+#define SCStreamFrameInfoPresenterOverlayContentRect PAL::get_ScreenCaptureKit_SCStreamFrameInfoPresenterOverlayContentRect()
+#endif
+
 #endif // HAVE(SCREEN_CAPTURE_KIT)

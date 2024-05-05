@@ -72,6 +72,10 @@ using namespace WebCore;
 - (void)disconnect;
 - (void)stream:(SCStream *)stream didStopWithError:(NSError *)error;
 - (void)stream:(SCStream *)stream didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer ofType:(SCStreamOutputType)type;
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+- (void)outputVideoEffectDidStartForStream:(SCStream *)stream;
+- (void)outputVideoEffectDidStopForStream:(SCStream *)stream;
+#endif
 @end
 
 @implementation WebCoreScreenCaptureKitHelper
@@ -137,6 +141,29 @@ using namespace WebCore;
         strongSelf->_callback->streamDidOutputVideoSampleBuffer(WTFMove(sampleBuffer));
     });
 }
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+- (void)outputVideoEffectDidStartForStream:(SCStream *)stream
+{
+    callOnMainRunLoop([self, strongSelf = RetainPtr { self }]() mutable {
+        if (!_callback)
+            return;
+
+        _callback->outputVideoEffectDidStartForStream();
+    });
+}
+
+- (void)outputVideoEffectDidStopForStream:(SCStream *)stream
+{
+    callOnMainRunLoop([self, strongSelf = RetainPtr { self }]() mutable {
+        if (!_callback)
+            return;
+
+        _callback->outputVideoEffectDidStopForStream();
+    });
+}
+#endif // HAVE(SC_CONTENT_SHARING_PICKER)
+
 @end
 
 #pragma clang diagnostic pop
@@ -494,6 +521,10 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     double contentScale = 1;
     double scaleFactor = 1;
     FloatSize contentSize;
+    auto hasLargePresenterOverlay = false;
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    auto canCheckForOverlayMode = PAL::canLoad_ScreenCaptureKit_SCStreamFrameInfoPresenterOverlayContentRect();
+#endif
     [attachments enumerateObjectsUsingBlock:makeBlockPtr([&] (NSDictionary *attachment, NSUInteger, BOOL *stop) {
         if (auto scaleFactorNumber = (NSNumber *)attachment[SCStreamFrameInfoScaleFactor])
             scaleFactor = [scaleFactorNumber floatValue];
@@ -507,6 +538,15 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
                 contentSize = FloatSize { contentRect.size };
         }
 
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+        if (m_isVideoEffectEnabled && canCheckForOverlayMode) {
+            if (auto overlayRectDictionary = (CFDictionaryRef)attachment[SCStreamFrameInfoPresenterOverlayContentRect]) {
+                CGRect overlayRect;
+                if (CGRectMakeWithDictionaryRepresentation(overlayRectDictionary, &overlayRect))
+                    hasLargePresenterOverlay = overlayRect.origin.x > 0 && overlayRect.origin.x != std::numeric_limits<double>::infinity() && overlayRect.origin.y > 0 && overlayRect.origin.y != std::numeric_limits<double>::infinity();
+            }
+        }
+#endif
         auto statusNumber = (NSNumber *)attachment[SCStreamFrameInfoStatus];
         if (!statusNumber)
             return;
@@ -533,12 +573,15 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     if (contentScale && contentScale != 1)
         contentSize.scale(1 / contentScale);
 
-    if (m_contentSize != contentSize) {
+    // FIXME: for now we will rely on cropping to handle large presenter overlay.
+    // We might further want to reduce calling updateStreamConfiguration once we crop when user is resizing.
+    if (m_contentSize != contentSize && !hasLargePresenterOverlay) {
         m_contentSize = contentSize;
         m_streamConfiguration = nullptr;
         updateStreamConfiguration();
     }
 
+    // FIXME: Check intrinsicSize vs. SCStreamFrameInfoContentRect width, heigh, x and y to decide whether cropping is needed.
     auto intrinsicSize = IntSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get()), true, true));
     if (!m_intrinsicSize || *m_intrinsicSize != intrinsicSize) {
         m_intrinsicSize = intrinsicSize;

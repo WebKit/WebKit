@@ -76,6 +76,8 @@ public:
     using Content = std::variant<RetainPtr<SCWindow>, RetainPtr<SCDisplay>>;
     void streamDidOutputVideoSampleBuffer(RetainPtr<CMSampleBufferRef>);
     void sessionFailedWithError(RetainPtr<NSError>&&, const String&);
+    void outputVideoEffectDidStartForStream() { m_isVideoEffectEnabled = true; }
+    void outputVideoEffectDidStopForStream() { m_isVideoEffectEnabled = false; }
 
 private:
 
@@ -125,6 +127,7 @@ private:
     uint32_t m_height { 0 };
     float m_frameRate { 0 };
     bool m_isRunning { false };
+    bool m_isVideoEffectEnabled { false };
 };
 
 } // namespace WebCore
