@@ -112,6 +112,7 @@ private:
 };
 
 WEBCORE_EXPORT ResourceError internalError(const URL&);
+WEBCORE_EXPORT ResourceError badResponseHeadersError(const URL&);
 
 inline bool operator==(const ResourceError& a, const ResourceError& b) { return ResourceErrorBase::compare(a, b); }
 

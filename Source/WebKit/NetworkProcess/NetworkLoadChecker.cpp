@@ -204,6 +204,9 @@ static std::optional<ResourceError> performCORPCheck(const CrossOriginEmbedderPo
 
 ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& request, ResourceResponse& response)
 {
+    if (response.containsInvalidHTTPHeaders())
+        return badResponseHeadersError(request.url());
+
     if (m_redirectCount)
         response.setRedirected(true);
 

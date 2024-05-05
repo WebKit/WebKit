@@ -211,7 +211,7 @@ public:
     bool isRangeRequested() const { return m_isRangeRequested; }
     void setAsRangeRequested() { m_isRangeRequested = true; }
 
-    bool containsInvalidHTTPHeaders() const;
+    WEBCORE_EXPORT bool containsInvalidHTTPHeaders() const;
 
     WEBCORE_EXPORT static ResourceResponse dataURLResponse(const URL&, const DataURLDecoder::Result&);
     

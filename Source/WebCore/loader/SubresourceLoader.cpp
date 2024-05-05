@@ -386,7 +386,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(policyCompletionHandler));
 
     if (response.containsInvalidHTTPHeaders()) {
-        didFail(ResourceError(errorDomainWebKitInternal, 0, request().url(), "Response contained invalid HTTP headers"_s, ResourceError::Type::General));
+        didFail(badResponseHeadersError(request().url()));
         return;
     }
 
