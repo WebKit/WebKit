@@ -1347,6 +1347,30 @@ namespace WebCore {
 } // namespace WebCore
 ```
 
+### Lambdas
+
+[](#lamda-template-args) Prefer lambdas with explicit template argument lists when the explicit type of a parameter is required in the body.
+
+###### Right:
+
+```cpp
+[]<typename T>(T arg) { 
+    if constexpr (T::isGood)
+        go();
+}
+
+```
+
+###### Wrong:
+
+```cpp
+[](auto arg) {
+    using T = std::decay_t<decltype(arg)>;
+    if constexpr (T::isGood)
+        go();
+}
+```
+
 ### Types
 
 [](#types-unsigned) Omit "int" when using "unsigned" modifier. Do not use "signed" modifier. Use "int" by itself instead.
