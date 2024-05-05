@@ -54,9 +54,6 @@ test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-return-objec
 test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-test/built-ins/DataView/byteOffset-validated-against-initial-buffer-length.js:
-  default: 'Test262Error: Expected a RangeError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a RangeError but got a Test262Error'
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
