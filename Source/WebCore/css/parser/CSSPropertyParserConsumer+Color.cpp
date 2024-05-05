@@ -614,7 +614,7 @@ static Color parseColorFunctionParametersRaw(CSSParserTokenRange& range, ColorPa
         if (!originColor.isValid())
             return { };
 
-        return callWithColorFunction(args.peek().id(), [&]<typename Descriptor> {
+        return callWithColorFunction(args.peek().id(), [&]<typename Descriptor>() {
             consumeIdentRaw(args);
 
             return parseGenericRelativeFunctionParametersRaw<Descriptor>(args, state, WTFMove(originColor));

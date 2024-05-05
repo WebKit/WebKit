@@ -133,7 +133,7 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
 
 template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T, 4>& components, ColorSpace colorSpace, Functor&& functor)
 {
-    return callWithColorType<T>(colorSpace, [&]<typename ColorType> {
+    return callWithColorType<T>(colorSpace, [&]<typename ColorType>() {
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<ColorType>(components));
     });
 }

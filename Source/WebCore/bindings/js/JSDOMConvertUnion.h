@@ -217,7 +217,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         //         (FIXME: Add support for object and step 4.2)
         if (brigand::any<TypeList, IsIDLInterface<brigand::_1>>::value) {
             std::optional<ReturnType> returnValue;
-            forEach<InterfaceTypeList>([&]<typename Type> {
+            forEach<InterfaceTypeList>([&]<typename Type>() {
                 if (returnValue)
                     return;
                 
@@ -289,7 +289,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         constexpr bool hasTypedArrayType = brigand::any<TypeList, IsIDLTypedArray<brigand::_1>>::value;
         if (hasTypedArrayType) {
             std::optional<ReturnType> returnValue;
-            forEach<TypedArrayTypeList>([&]<typename Type> {
+            forEach<TypedArrayTypeList>([&]<typename Type>() {
                 if (returnValue)
                     return;
 
@@ -415,7 +415,7 @@ template<typename... T> struct JSConverter<IDLUnion<T...>> {
         auto index = variant.index();
 
         std::optional<JSC::JSValue> returnValue;
-        forEach<Sequence>([&]<typename I> {
+        forEach<Sequence>([&]<typename I>() {
             if (I::value == index) {
                 ASSERT(!returnValue);
                 returnValue = toJS<brigand::at<TypeList, I>>(lexicalGlobalObject, globalObject, std::get<I::value>(variant));

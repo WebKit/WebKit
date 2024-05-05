@@ -365,9 +365,9 @@ OKLab<float> ColorConversion<OKLab<float>, OKLCHA<float>>::convert(const OKLCHA<
 
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace)
 {
-    return callWithColorType<float>(inputColorSpace, [&]<typename InputColorType> {
+    return callWithColorType<float>(inputColorSpace, [&]<typename InputColorType>() {
         auto inputColor = makeFromComponents<InputColorType>(inputColorComponents);
-        return callWithColorType<float>(outputColorSpace, [&]<typename OutputColorType> {
+        return callWithColorType<float>(outputColorSpace, [&]<typename OutputColorType>() {
             return asColorComponents(convertColor<OutputColorType>(inputColor).resolved());
         });
     });
