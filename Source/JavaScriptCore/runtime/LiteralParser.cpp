@@ -867,8 +867,85 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexString(LiteralParserT
             while (m_ptr < m_end && isSafeStringCharacterForIdentifier<SafeStringCharacterSet::Strict>(*m_ptr, '"'))
                 ++m_ptr;
         } else {
+#if CPU(ARM64) || CPU(X86_64)
+            constexpr size_t stride = 16 / sizeof(CharType);
+            using UnsignedType = std::make_unsigned_t<CharType>;
+            if (static_cast<size_t>(m_end - m_ptr) >= stride) {
+                ([&]() ALWAYS_INLINE_LAMBDA {
+                    if constexpr (sizeof(CharType) == 1) {
+                        constexpr simde_uint8x16_t quoteMask { '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"' };
+                        constexpr simde_uint8x16_t escapeMask { '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\' };
+                        constexpr simde_uint8x16_t controlMask { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
+                        constexpr simde_uint8x16_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+                        for (; m_ptr + (stride - 1) < m_end; m_ptr += stride) {
+                            auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(m_ptr));
+                            auto quotes = WTF::equalBulk(input, quoteMask);
+                            auto escapes = WTF::equalBulk(input, escapeMask);
+                            auto controls = WTF::lessThanBulk(input, controlMask);
+                            auto mask = WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls));
+                            if (WTF::isNonZeroBulk(mask)) {
+                                simde_uint8x16_t ranked = simde_vornq_u8(indexMask, mask);
+                                uint8_t index = simde_vminvq_u8(ranked);
+                                m_ptr += index;
+                                return;
+                            }
+                        }
+                        if (m_ptr < m_end) {
+                            auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(m_end - stride));
+                            auto quotes = WTF::equalBulk(input, quoteMask);
+                            auto escapes = WTF::equalBulk(input, escapeMask);
+                            auto controls = WTF::lessThanBulk(input, controlMask);
+                            auto mask = WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls));
+                            if (WTF::isNonZeroBulk(mask)) {
+                                simde_uint8x16_t ranked = simde_vornq_u8(indexMask, mask);
+                                uint8_t index = simde_vminvq_u8(ranked);
+                                m_ptr = m_end - stride + index;
+                                return;
+                            }
+                            m_ptr = m_end;
+                        }
+                    } else {
+                        constexpr simde_uint16x8_t quoteMask { '"', '"', '"', '"', '"', '"', '"', '"'  };
+                        constexpr simde_uint16x8_t escapeMask { '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\' };
+                        constexpr simde_uint16x8_t controlMask { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
+                        constexpr simde_uint16x8_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7 };
+                        for (; m_ptr + (stride - 1) < m_end; m_ptr += stride) {
+                            auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(m_ptr));
+                            auto quotes = WTF::equalBulk(input, quoteMask);
+                            auto escapes = WTF::equalBulk(input, escapeMask);
+                            auto controls = WTF::lessThanBulk(input, controlMask);
+                            auto mask = WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls));
+                            if (WTF::isNonZeroBulk(mask)) {
+                                simde_uint16x8_t ranked = simde_vornq_u16(indexMask, mask);
+                                uint16_t index = simde_vminvq_u16(ranked);
+                                m_ptr += index;
+                                return;
+                            }
+                        }
+                        if (m_ptr < m_end) {
+                            auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(m_end - stride));
+                            auto quotes = WTF::equalBulk(input, quoteMask);
+                            auto escapes = WTF::equalBulk(input, escapeMask);
+                            auto controls = WTF::lessThanBulk(input, controlMask);
+                            auto mask = WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls));
+                            if (WTF::isNonZeroBulk(mask)) {
+                                simde_uint16x8_t ranked = simde_vornq_u16(indexMask, mask);
+                                uint16_t index = simde_vminvq_u16(ranked);
+                                m_ptr = m_end - stride + index;
+                                return;
+                            }
+                            m_ptr = m_end;
+                        }
+                    }
+                })();
+            } else {
+                while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Strict>(*m_ptr, '"'))
+                    ++m_ptr;
+            }
+#else
             while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Strict>(*m_ptr, '"'))
                 ++m_ptr;
+#endif
         }
     } else {
         while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Sloppy>(*m_ptr, terminator))

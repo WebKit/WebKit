@@ -40,6 +40,7 @@
 #include "VMInlines.h"
 #include <charconv>
 #include <wtf/text/EscapedFormsForJSON.h>
+#include <wtf/text/StringCommon.h>
 #include <wtf/text/StringBuilder.h>
 
 // Turn this on to log information about fastStringify usage, with a focus on why it failed.
@@ -1072,13 +1073,51 @@ void FastStringifier<CharType>::append(JSValue value)
             }
             auto* cursor = m_buffer + m_length;
             *cursor++ = '"';
-            for (auto character : string.span8()) {
-                if (UNLIKELY(WTF::escapedFormsForJSON[character])) {
-                    recordFailure("string character needs escaping"_s);
-                    return;
+
+            if (UNLIKELY(([&]() ALWAYS_INLINE_LAMBDA {
+#if CPU(ARM64) || CPU(X86_64)
+                constexpr size_t stride = 16 / sizeof(CharType);
+                if (stringLength >= stride) {
+                    using UnsignedType = std::make_unsigned_t<CharType>;
+                    using BulkType = decltype(WTF::loadBulk(static_cast<const UnsignedType*>(nullptr)));
+                    constexpr BulkType quoteMask { '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"' };
+                    constexpr BulkType escapeMask { '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\' };
+                    constexpr BulkType controlMask { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
+                    auto span = string.span8();
+                    auto* ptr = span.data();
+                    auto* end = ptr + span.size();
+                    BulkType accumulated { };
+                    for (; ptr + (stride - 1) < end; ptr += stride, cursor += stride) {
+                        auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(ptr));
+                        WTF::storeBulk(input, bitwise_cast<UnsignedType*>(cursor));
+                        auto quotes = WTF::equalBulk(input, quoteMask);
+                        auto escapes = WTF::equalBulk(input, escapeMask);
+                        auto controls = WTF::lessThanBulk(input, controlMask);
+                        accumulated = WTF::mergeBulk(accumulated, WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls)));
+                    }
+                    if (ptr < end) {
+                        auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(end - stride));
+                        cursor += (end - ptr);
+                        WTF::storeBulk(input, bitwise_cast<UnsignedType*>(cursor - stride));
+                        auto quotes = WTF::equalBulk(input, quoteMask);
+                        auto escapes = WTF::equalBulk(input, escapeMask);
+                        auto controls = WTF::lessThanBulk(input, controlMask);
+                        accumulated = WTF::mergeBulk(accumulated, WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls)));
+                    }
+                    return WTF::isNonZeroBulk(accumulated);
                 }
-                *cursor++ = character;
+#endif
+                for (auto character : string.span8()) {
+                    if (UNLIKELY(WTF::escapedFormsForJSON[character]))
+                        return true;
+                    *cursor++ = character;
+                }
+                return false;
+            }()))) {
+                recordFailure("string character needs escaping"_s);
+                return;
             }
+
             *cursor = '"';
             m_length += 1 + stringLength + 1;
         } else {
@@ -1090,24 +1129,101 @@ void FastStringifier<CharType>::append(JSValue value)
             auto* cursor = m_buffer + m_length;
             *cursor++ = '"';
             if (string.is8Bit()) {
-                for (auto character : string.span8()) {
-                    if (UNLIKELY(WTF::escapedFormsForJSON[character])) {
-                        recordFailure("string character needs escaping"_s);
-                        return;
+                if (UNLIKELY(([&]() ALWAYS_INLINE_LAMBDA {
+#if CPU(ARM64) || CPU(X86_64)
+                    constexpr size_t stride = 16 / sizeof(LChar);
+                    if (stringLength >= stride) {
+                        using UnsignedType = std::make_unsigned_t<LChar>;
+                        using BulkType = decltype(WTF::loadBulk(static_cast<const UnsignedType*>(nullptr)));
+                        constexpr BulkType quoteMask { '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"', '"' };
+                        constexpr BulkType escapeMask { '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\' };
+                        constexpr BulkType controlMask { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
+                        constexpr BulkType zeros { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                        auto span = string.span8();
+                        auto* ptr = span.data();
+                        auto* end = ptr + span.size();
+                        BulkType accumulated { };
+                        for (; ptr + (stride - 1) < end; ptr += stride, cursor += stride) {
+                            auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(ptr));
+                            simde_vst2q_u8(bitwise_cast<uint8_t*>(cursor), (simde_uint8x16x2_t { input, zeros }));
+                            auto quotes = WTF::equalBulk(input, quoteMask);
+                            auto escapes = WTF::equalBulk(input, escapeMask);
+                            auto controls = WTF::lessThanBulk(input, controlMask);
+                            accumulated = WTF::mergeBulk(accumulated, WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls)));
+                        }
+                        if (ptr < end) {
+                            auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(end - stride));
+                            cursor += (end - ptr);
+                            simde_vst2q_u8(bitwise_cast<uint8_t*>(cursor - stride), (simde_uint8x16x2_t { input, zeros }));
+                            auto quotes = WTF::equalBulk(input, quoteMask);
+                            auto escapes = WTF::equalBulk(input, escapeMask);
+                            auto controls = WTF::lessThanBulk(input, controlMask);
+                            accumulated = WTF::mergeBulk(accumulated, WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls)));
+                        }
+                        return WTF::isNonZeroBulk(accumulated);
                     }
-                    *cursor++ = character;
+#endif
+                    for (auto character : string.span8()) {
+                        if (UNLIKELY(WTF::escapedFormsForJSON[character]))
+                            return true;
+                        *cursor++ = character;
+                    }
+                    return false;
+                }()))) {
+                    recordFailure("string character needs escaping"_s);
+                    return;
                 }
             } else {
-                for (auto character : string.span16()) {
-                    if (UNLIKELY(U16_IS_SURROGATE(character))) {
-                        recordFailure("string character is surrogate"_s);
-                        return;
+                if (UNLIKELY(([&]() ALWAYS_INLINE_LAMBDA {
+#if CPU(ARM64) || CPU(X86_64)
+                    constexpr size_t stride = 16 / sizeof(CharType);
+                    if (stringLength >= stride) {
+                        using UnsignedType = std::make_unsigned_t<CharType>;
+                        using BulkType = decltype(WTF::loadBulk(static_cast<const UnsignedType*>(nullptr)));
+                        constexpr BulkType quoteMask { '"', '"', '"', '"', '"', '"', '"', '"' };
+                        constexpr BulkType escapeMask { '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\' };
+                        constexpr BulkType controlMask { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
+                        constexpr BulkType surrogateMask { 0xf800, 0xf800, 0xf800, 0xf800, 0xf800, 0xf800, 0xf800, 0xf800 };
+                        constexpr BulkType surrogateCode { 0xd800, 0xd800, 0xd800, 0xd800, 0xd800, 0xd800, 0xd800, 0xd800 };
+                        auto span = string.span16();
+                        auto* ptr = span.data();
+                        auto* end = ptr + span.size();
+                        BulkType accumulated { };
+                        for (; ptr + (stride - 1) < end; ptr += stride, cursor += stride) {
+                            auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(ptr));
+                            WTF::storeBulk(input, bitwise_cast<UnsignedType*>(cursor));
+                            auto quotes = WTF::equalBulk(input, quoteMask);
+                            auto escapes = WTF::equalBulk(input, escapeMask);
+                            auto controls = WTF::lessThanBulk(input, controlMask);
+                            auto surrogates = WTF::equalBulk(simde_vandq_u16(input, surrogateMask), surrogateCode);
+                            accumulated = WTF::mergeBulk(accumulated, WTF::mergeBulk(WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls)), surrogates));
+                        }
+                        if (ptr < end) {
+                            auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(end - stride));
+                            cursor += (end - ptr);
+                            WTF::storeBulk(input, bitwise_cast<UnsignedType*>(cursor - stride));
+                            auto quotes = WTF::equalBulk(input, quoteMask);
+                            auto escapes = WTF::equalBulk(input, escapeMask);
+                            auto controls = WTF::lessThanBulk(input, controlMask);
+                            auto surrogates = WTF::equalBulk(simde_vandq_u16(input, surrogateMask), surrogateCode);
+                            accumulated = WTF::mergeBulk(accumulated, WTF::mergeBulk(WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls)), surrogates));
+                        }
+                        return WTF::isNonZeroBulk(accumulated);
                     }
-                    if (UNLIKELY(character <= 0xff && WTF::escapedFormsForJSON[character])) {
-                        recordFailure("string character needs escaping"_s);
-                        return;
+#endif
+
+                    for (auto character : string.span16()) {
+                        if (UNLIKELY(U16_IS_SURROGATE(character)))
+                            return true;
+                        if (UNLIKELY(character <= 0xff && WTF::escapedFormsForJSON[character]))
+                            return true;
+                        *cursor++ = character;
                     }
-                    *cursor++ = character;
+
+                    return false;
+                }()))) {
+                    recordFailure("string character needs escaping or surrogate pair handling"_s);
+                    return;
                 }
             }
             *cursor = '"';
