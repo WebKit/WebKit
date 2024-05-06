@@ -2192,19 +2192,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
-		535E08C222545AC800DF00CA /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*.h";
-			fileType = pattern.proxy;
-			inputFiles = (
-			);
-			isEditable = 1;
-			outputFiles = (
-				"$(HEADER_OUTPUT_DIR)/$(INPUT_FILE_NAME)",
-			);
-			script = "exec \"${SRCROOT}/Scripts/postprocess-header-rule\"\n";
-		};
 		DD41FA7D27CDA6FE00394D95 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
@@ -2254,6 +2241,19 @@
 			);
 			runOncePerArchitecture = 0;
 			script = "set -e\n\nOFFLINEASM_ARGS=\"\"\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    OFFLINEASM_ARGS=\"${OFFLINEASM_ARGS} --webkit-additions-path=${WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH}\"\nfi\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_settings_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${INPUT_FILE_PATH}\" \"${SCRIPT_OUTPUT_FILE_0}\" \"${ARCHS} C_LOOP\" ${OFFLINEASM_ARGS} --depfile=\"${TARGET_TEMP_DIR}/${INPUT_FILE_BASE}.d\"\n";
+		};
+		DD559E612BE5BD4700C2D03E /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.h";
+			fileType = pattern.proxy;
+			inputFiles = (
+			);
+			isEditable = 1;
+			outputFiles = (
+				"$(HEADER_OUTPUT_DIR)/$(INPUT_FILE_NAME)",
+			);
+			script = "exec \"${SRCROOT}/Scripts/postprocess-header-rule\"\n";
 		};
 /* End PBXBuildRule section */
 
@@ -12122,7 +12122,6 @@
 			);
 			buildRules = (
 				DD41FA7D27CDA6FE00394D95 /* PBXBuildRule */,
-				535E08C222545AC800DF00CA /* PBXBuildRule */,
 			);
 			dependencies = (
 				DD4ABD8429A6D61A00530828 /* PBXTargetDependency */,
@@ -12208,6 +12207,7 @@
 				DDA8F1542A15BEEA00BE8D11 /* Work around rdar://109484516 */,
 			);
 			buildRules = (
+				DD559E612BE5BD4700C2D03E /* PBXBuildRule */,
 			);
 			dependencies = (
 				44F93E112AE7200100FFA37C /* PBXTargetDependency */,
