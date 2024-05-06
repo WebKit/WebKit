@@ -1,0 +1,19 @@
+Test changing font size inside <picture>.
+
+Initial state:
+| <picture>
+|   <source>
+|     srcset="../resources/abe.png"
+|   <img>
+|     src=""
+
+After font size change:
+| <font>
+|   size="7"
+|   <picture>
+|     <source>
+|       srcset="../resources/abe.png"
+|     <#selection-anchor>
+|     <img>
+|       src=""
+|     <#selection-focus>
