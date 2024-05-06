@@ -32,12 +32,7 @@
 
 namespace WebCore {
 
-GPUBuffer::~GPUBuffer()
-{
-    m_bufferSize = 0;
-    m_backing->destroy();
-    m_arrayBuffers.clear();
-}
+GPUBuffer::~GPUBuffer() = default;
 
 GPUBuffer::GPUBuffer(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation, GPUDevice& device)
     : m_backing(WTFMove(backing))
