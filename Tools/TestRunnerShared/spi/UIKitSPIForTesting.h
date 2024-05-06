@@ -311,6 +311,8 @@ typedef NS_ENUM(NSUInteger, UIScrollPhase) {
 };
 
 @interface UIScrollEvent : UIEvent
+- (CGPoint)locationInView:(UIView *)view;
+- (CGVector)_adjustedAcceleratedDeltaInView:(UIView *)view;
 @end
 
 @interface UITextInteractionAssistant : NSObject <UIResponderStandardEditActions>
