@@ -2737,6 +2737,8 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouse
     if (!frameView)
         return std::nullopt;
 
+    auto contextMenuEventRootViewPoint = contextMenuEvent.position();
+
     Vector<PDFContextMenuItem> menuItems;
 
     auto addSeparator = [item = separatorContextMenuItem(), &menuItems] {
@@ -2744,7 +2746,7 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouse
     };
 
     if ([m_pdfDocument allowsCopying] && m_currentSelection) {
-        menuItems.appendVector(selectionContextMenuItems(contextMenuEvent.position()));
+        menuItems.appendVector(selectionContextMenuItems(contextMenuEventRootViewPoint));
         addSeparator();
     }
 
@@ -2760,9 +2762,11 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouse
 
     addSeparator();
 
-    menuItems.appendVector(navigationContextMenuItems());
+    auto contextMenuEventPluginPoint = convertFromRootViewToPlugin(contextMenuEventRootViewPoint);
+    auto contextMenuEventDocumentPoint = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, contextMenuEventPluginPoint);
+    menuItems.appendVector(navigationContextMenuItemsForPageAtIndex(m_documentLayout.nearestPageIndexForDocumentPoint(contextMenuEventDocumentPoint)));
 
-    auto contextMenuPoint = frameView->contentsToScreen(IntRect(frameView->windowToContents(contextMenuEvent.position()), IntSize())).location();
+    auto contextMenuPoint = frameView->contentsToScreen(IntRect(frameView->windowToContents(contextMenuEventRootViewPoint), IntSize())).location();
 
     return PDFContextMenu { contextMenuPoint, WTFMove(menuItems), { enumToUnderlyingType(ContextMenuItemTag::OpenWithPreview) } };
 }
@@ -2877,12 +2881,18 @@ Vector<PDFContextMenuItem> UnifiedPDFPlugin::scaleContextMenuItems() const
     };
 }
 
-Vector<PDFContextMenuItem> UnifiedPDFPlugin::navigationContextMenuItems() const
+Vector<PDFContextMenuItem> UnifiedPDFPlugin::navigationContextMenuItemsForPageAtIndex(PDFDocumentLayout::PageIndex pageIndex) const
 {
-    auto currentPageIndex = indexForCurrentPageInView();
+    auto pageIncrement = m_documentLayout.pagesPerRow();
+    auto effectiveLastPageIndex = [pageCount = m_documentLayout.pageCount(), pageIncrement] {
+        if (pageCount % 2)
+            return pageCount - 1;
+        return pageCount < pageIncrement ? 0 : pageCount - pageIncrement;
+    }();
+
     return {
-        contextMenuItem(ContextMenuItemTag::NextPage, currentPageIndex != m_documentLayout.pageCount() - 1),
-        contextMenuItem(ContextMenuItemTag::PreviousPage, currentPageIndex && currentPageIndex)
+        contextMenuItem(ContextMenuItemTag::NextPage, pageIndex < effectiveLastPageIndex),
+        contextMenuItem(ContextMenuItemTag::PreviousPage, pageIndex > pageIncrement - 1)
     };
 }
 
