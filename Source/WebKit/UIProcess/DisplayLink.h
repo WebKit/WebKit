@@ -44,6 +44,10 @@
 #include "DisplayVBlankMonitor.h"
 #endif
 
+#if USE(WPE_BACKEND_PLAYSTATION)
+struct wpe_playstation_display;
+#endif
+
 namespace WebKit {
 
 class DisplayLink {
@@ -113,6 +117,9 @@ private:
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::unique_ptr<DisplayVBlankMonitor> m_vblankMonitor;
+#endif
+#if USE(WPE_BACKEND_PLAYSTATION)
+    struct wpe_playstation_display* m_display;
 #endif
     Lock m_clientsLock;
     HashMap<CheckedRef<Client>, ClientInfo> m_clients WTF_GUARDED_BY_LOCK(m_clientsLock);
