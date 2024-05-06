@@ -86,6 +86,8 @@ WK_COCOA_TOUCH_watchos = cocoatouch;
 WK_COCOA_TOUCH_watchsimulator = cocoatouch;
 WK_COCOA_TOUCH_appletvos = cocoatouch;
 WK_COCOA_TOUCH_appletvsimulator = cocoatouch;
+WK_COCOA_TOUCH_xros = cocoatouch;
+WK_COCOA_TOUCH_xrsimulator = cocoatouch;
 WK_IS_COCOA_TOUCH = $(WK_NOT_$(WK_EMPTY_$(WK_COCOA_TOUCH)));
 
 WK_FRAMEWORK_VERSION_PREFIX[sdk=macosx*] = Versions/A/;

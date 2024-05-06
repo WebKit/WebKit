@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKWebViewConfiguration;
 @class WKWindowFeatures;
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
 @class WKContextMenuElementInfo;
 @class UIContextMenuConfiguration;
 @protocol UIContextMenuInteractionCommitAnimating;
@@ -202,7 +202,7 @@ typedef NS_ENUM(NSInteger, WKDialogResult) {
 - (void)webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_API_DEPRECATED_WITH_REPLACEMENT("webView:contextMenuForElement:willCommitWithAnimator:", ios(10.0, 13.0));
 #endif // TARGET_OS_IPHONE
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
 
 /**
  * @abstract Called when a context menu interaction begins.
@@ -271,7 +271,7 @@ typedef NS_ENUM(NSInteger, WKDialogResult) {
  */
 - (void)webView:(WKWebView *)webView willDismissEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator WK_API_AVAILABLE(ios(16.4));
 
-#endif // TARGET_OS_IOS
+#endif // TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
 
 #if !TARGET_OS_IPHONE
 

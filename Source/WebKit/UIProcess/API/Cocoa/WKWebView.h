@@ -644,7 +644,7 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 - (void)setMinimumViewportInset:(NSEdgeInsets)minimumViewportInset maximumViewportInset:(NSEdgeInsets)maximumViewportInset WK_API_AVAILABLE(macos(13.0));
 #endif
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
 
 /*! @abstract Enables the web view's built-in find interaction. */
 @property (nonatomic, readwrite, getter=isFindInteractionEnabled) BOOL findInteractionEnabled WK_API_AVAILABLE(ios(16.0));

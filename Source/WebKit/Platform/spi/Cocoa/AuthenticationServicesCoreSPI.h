@@ -282,7 +282,7 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 
 @property (nonatomic, nullable, copy) ASGlobalFrameIdentifier *globalFrameID;
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
 @property (nonatomic, copy) NSString *windowSceneIdentifier;
 #endif
 @end
@@ -360,7 +360,7 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 
 @protocol ASCAgentProtocol <NSObject>
 
-#if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
+#if (TARGET_OS_IOS && !TARGET_OS_MACCATALYST) || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
 - (void)performAuthorizationRequestsForContext:(ASCCredentialRequestContext *)context withCompletionHandler:(void (^)(id <ASCCredentialProtocol> _Nullable credential, NSError * _Nullable error))completionHandler;
 #elif TARGET_OS_OSX || TARGET_OS_MACCATALYST
 - (void)performAuthorizationRequestsForContext:(ASCCredentialRequestContext *)context withClearanceHandler:(void (^)(NSXPCListenerEndpoint * _Nullable daemonEndpoint, NSError * _Nullable error))clearanceHandler;

@@ -1,0 +1,15 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-xros-simulator, arm64-xros-simulator]
+install-name: /System/Library/PrivateFrameworks/LinearMediaKit.framework/LinearMediaKit
+swift-abi-version: 7
+exports:
+-       targets: [x86_64-xros-simulator, arm64-xros-simulator]
+        symbols: [_$s14LinearMediaKit11ContentModeO11scaleToFillyA2CmFWC, _$s14LinearMediaKit11ContentModeO14scaleAspectFityA2CmFWC,
+                _$s14LinearMediaKit11ContentModeO15scaleAspectFillyA2CmFWC, _$s14LinearMediaKit11ContentModeO7defaultACvgZ,
+                _$s14LinearMediaKit11ContentModeOMa, _$s14LinearMediaKit11ContentModeOMn, _$s14LinearMediaKit12PeculiarableMp,
+                _$s14LinearMediaKit16PresentationModeO20fullscreenFromInlineyA2CmFWC, _$s14LinearMediaKit16PresentationModeO6inlineyA2CmFWC,
+                _$s14LinearMediaKit16PresentationModeOMa, _$s14LinearMediaKit16PresentationModeOMn, _$s14LinearMediaKit22PlayableViewControllerC18prefersAutoDimmingSbvsTj,
+                _$s14LinearMediaKit22PlayableViewControllerCMa, _$s14LinearMediaKit22PlayableViewControllerCN, _$s14LinearMediaKit22RenderingConfigurationVMa,
+                _$s14LinearMediaKit22RenderingConfigurationVMn]
+...

@@ -29,8 +29,8 @@
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
 
 #import "PlatformCALayerRemote.h"
+#import "RealitySystemSupportSPI.h"
 #import "RemoteLayerTreeHost.h"
-#import <RealitySystemSupport/RealitySystemSupport.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <wtf/SoftLinking.h>
 
