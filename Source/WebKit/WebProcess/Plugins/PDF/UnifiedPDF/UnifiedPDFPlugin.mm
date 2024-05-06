@@ -1833,8 +1833,9 @@ void UnifiedPDFPlugin::updateSnapOffsets()
     Vector<LayoutRect> snapAreas;
 
     for (PDFDocumentLayout::PageIndex i = 0; i < m_documentLayout.pageCount(); ++i) {
-        // FIXME: Factor out documentToContents from pageToContents?
-        auto destinationRect = pageBoundsInContentsSpace(i);
+        auto pageBoundsInDocumentSpace = m_documentLayout.layoutBoundsForPageAtIndex(i);
+        auto destinationRect = convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::Contents, pageBoundsInDocumentSpace);
+
         snapAreas.append(LayoutRect { destinationRect });
 
         bool isTallerThanViewport = destinationRect.height() > m_size.height();
@@ -1878,11 +1879,13 @@ void UnifiedPDFPlugin::determineCurrentlySnappedPage()
     if (isInDiscreteDisplayMode() && snapOffsetsInfo() && snapOffsetsInfo()->verticalSnapOffsets.size()) {
         std::optional<ElementIdentifier> newSnapIdentifier = snapOffsetsInfo()->verticalSnapOffsets[0].snapTargetID;
 
-        float scrollPositionY = scrollPosition().y();
+        FloatPoint currentScrollPosition = scrollPosition();
+        float scrollPositionYInContentsSpace = convertDown(CoordinateSpace::ScrolledContents, CoordinateSpace::Contents, currentScrollPosition).y();
+
         auto closestDistanceToSnapOffset = std::numeric_limits<float>::max();
         for (const auto& offsetInfo : snapOffsetsInfo()->verticalSnapOffsets) {
             // FIXME: Can this padding be derived from something?
-            auto distance = std::abs(scrollPositionY + 10 - offsetInfo.offset);
+            auto distance = std::abs(scrollPositionYInContentsSpace + 10 - offsetInfo.offset);
             if (distance < closestDistanceToSnapOffset) {
                 closestDistanceToSnapOffset = distance;
                 newSnapIdentifier = offsetInfo.snapTargetID;
@@ -4091,7 +4094,17 @@ void UnifiedPDFPlugin::setDisplayModeAndUpdateLayout(PDFDocumentLayout::DisplayM
         SetForScope scope(m_shouldUpdateAutoSizeScale, ShouldUpdateAutoSizeScale::Yes);
         updateLayout(shouldAdjustPageScale);
     }
-    resnapAfterLayout();
+
+    if (isInDiscreteDisplayMode()) {
+        ASSERT(m_currentlySnappedPage);
+        if (!m_currentlySnappedPage)
+            return;
+
+        auto pageBoundsInDocumentSpace = layoutBoundsForPageAtIndex(m_currentlySnappedPage.value());
+        auto pageBoundsInScrolledContents = convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::ScrolledContents, pageBoundsInDocumentSpace);
+
+        scrollToPointInContentsSpace(pageBoundsInScrolledContents.location());
+    }
 }
 
 } // namespace WebKit
