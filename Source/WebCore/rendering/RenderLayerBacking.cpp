@@ -805,8 +805,15 @@ bool RenderLayerBacking::updateBackdropRoot()
     // Don't try to make the RenderView's layer a backdrop root if it's going to
     // paint into the window since it won't work (WebKitLegacy only).
     bool willBeBackdropRoot = m_owningLayer.isBackdropRoot() && !paintsIntoWindow();
+
+    // If the RenderView is opaque, then that will occlude any pixels behind it and we don't need
+    // to isolate it as a backdrop root.
+    if (m_owningLayer.isRenderViewLayer() && !compositor().viewHasTransparentBackground())
+        willBeBackdropRoot = false;
+
     if (m_graphicsLayer->isBackdropRoot() == willBeBackdropRoot)
         return false;
+
     m_graphicsLayer->setIsBackdropRoot(willBeBackdropRoot);
     return true;
 }

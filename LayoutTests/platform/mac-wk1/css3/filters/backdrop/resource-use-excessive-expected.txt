@@ -23,7 +23,6 @@
           (bounds 1242.00 2208.00)
           (usingTiledLayer 1)
           (drawsContent 1)
-          (backdropRoot 1)
           (structural layer
             (position 621.00 1104.00)
             (bounds 1242.00 2208.00)
@@ -66,7 +65,6 @@
           (bounds 1242.00 2208.00)
           (usingTiledLayer 1)
           (drawsContent 1)
-          (backdropRoot 1)
           (structural layer
             (position 621.00 1104.00)
             (bounds 1242.00 2208.00)
@@ -81,7 +79,6 @@
               (bounds 1242.00 2208.00)
               (usingTiledLayer 1)
               (drawsContent 1)
-              (backdropRoot 1)
               (structural layer
                 (position 622.00 1105.00)
                 (bounds 1242.00 2208.00)
@@ -96,7 +93,6 @@
                   (bounds 1242.00 2208.00)
                   (usingTiledLayer 1)
                   (drawsContent 1)
-                  (backdropRoot 1)
                   (structural layer
                     (position 622.00 1105.00)
                     (bounds 1242.00 2208.00)
@@ -156,7 +152,6 @@
           (bounds 1242.00 2208.00)
           (usingTiledLayer 1)
           (drawsContent 1)
-          (backdropRoot 1)
           (structural layer
             (position 621.00 1104.00)
             (bounds 1242.00 2208.00)

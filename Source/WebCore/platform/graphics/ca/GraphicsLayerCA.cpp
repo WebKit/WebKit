@@ -1460,6 +1460,11 @@ void GraphicsLayerCA::flushCompositingState(const FloatRect& visibleRect)
 
     CommitState commitState;
     commitState.ancestorHadChanges = visibleRect != m_previousCommittedVisibleRect;
+
+    // There is no backdrop root above the root layer, and we can just assume the backing
+    // will be opaque. RenderLayerBacking will force an explicit backdrop root outside
+    // of any filters if needed.
+    commitState.backdropRootIsOpaque = true;
     m_previousCommittedVisibleRect = visibleRect;
 
 #if PLATFORM(IOS_FAMILY)
