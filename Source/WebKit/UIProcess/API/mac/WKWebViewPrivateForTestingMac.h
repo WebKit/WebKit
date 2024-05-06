@@ -34,6 +34,7 @@
 
 @property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager;
 @property (nonatomic, readonly) BOOL _shouldRequestCandidates;
+@property (nonatomic, readonly) BOOL _allowsInlinePredictions;
 @property (nonatomic, readonly) NSMenu *_activeMenu;
 
 - (void)_requestControlledElementID;

@@ -783,8 +783,16 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
         }
 
         postLayoutData.baseWritingDirection = frame.editor().baseWritingDirectionForSelectionStart();
+        postLayoutData.canEnableWritingSuggestions = [&] {
+            if (!selection.canEnableWritingSuggestions())
+                return false;
 
-        postLayoutData.canEnableWritingSuggestions = selection.canEnableWritingSuggestions();
+            if (!m_lastNodeBeforeWritingSuggestions)
+                return true;
+
+            RefPtr currentNode = frame.editor().nodeBeforeWritingSuggestions();
+            return !currentNode || m_lastNodeBeforeWritingSuggestions == currentNode.get();
+        }();
     }
 
     if (RefPtr editableRootOrFormControl = enclosingTextFormControl(selection.start()) ?: selection.rootEditableElement()) {

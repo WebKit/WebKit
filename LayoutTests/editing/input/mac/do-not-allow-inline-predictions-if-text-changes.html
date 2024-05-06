@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+[contenteditable] {
+    font-size: 16px;
+    width: 300px;
+    height: 100px;
+    caret-color: transparent;
+}
+</style>
+</head>
+<body>
+<div contenteditable></div>
+<script>
+let editor = document.querySelector("[contenteditable]");
+if (window.testRunner)
+    testRunner.waitUntilDone();
+addEventListener("load", async () => {
+    editor.focus();
+    if (!window.testRunner)
+        return;
+
+    for (let character of [..."I want to celeb"]) {
+        await UIHelper.typeCharacter(character);
+        await UIHelper.ensurePresentationUpdate();
+    }
+    await UIHelper.setInlinePrediction("celebrate", 5);
+    await UIHelper.ensurePresentationUpdate();
+    testRunner.notifyDone();
+});
+
+let typedText = "";
+editor.addEventListener("keydown", event => {
+    if (event.key.length > 1)
+        return;
+
+    typedText += event.key === " " ? "\xa0" : event.key;
+    setTimeout(() => {
+        for (let childNode of [...editor.childNodes])
+            childNode.remove();
+        const newText = document.createTextNode(typedText);
+        editor.appendChild(newText);
+        getSelection().setPosition(newText, newText.length);
+    });
+});
+</script>
+</body>
+</html>

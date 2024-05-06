@@ -7599,6 +7599,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
     themeColorChanged();
 
+    m_lastNodeBeforeWritingSuggestions = { };
+
     WebProcess::singleton().updateActivePages(m_processDisplayName);
 
     updateMainFrameScrollOffsetPinning();
@@ -9607,6 +9609,15 @@ void WebPage::frameNameWasChangedInAnotherProcess(FrameIdentifier frameID, const
         return;
     if (RefPtr coreFrame = webFrame->coreFrame())
         coreFrame->tree().setSpecifiedName(AtomString(frameName));
+}
+
+void WebPage::updateLastNodeBeforeWritingSuggestions(const KeyboardEvent& event)
+{
+    if (event.type() != eventNames().keydownEvent)
+        return;
+
+    if (RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame())
+        m_lastNodeBeforeWritingSuggestions = frame->editor().nodeBeforeWritingSuggestions();
 }
 
 } // namespace WebKit

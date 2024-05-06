@@ -3098,19 +3098,6 @@ InlineMediaPlaybackRequiresPlaysInlineAttribute:
     WebCore:
       default: false
 
-InlinePredictionsInAllEditableElementsEnabled:
-  type: bool
-  status: internal
-  humanReadableName: "Inline Text Predictions"
-  humanReadableDescription: "Enable Inline Text Predictions in all editable elements"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 InputTypeColorEnabled:
   type: bool
   status: embedder
