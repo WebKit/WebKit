@@ -519,6 +519,7 @@ typedef enum {
 - (void)setInlineCompletionAsMarkedText:(NSAttributedString *)inlineCompletion selectedRange:(NSRange)selectedRange inputString:(NSString *)inputString searchString:(NSString *)searchString;
 @property (nonatomic, readonly) BOOL hasInlineCompletionAsMarkedText;
 @property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
+@property (nonatomic, readonly) BOOL hardwareKeyboardAttached;
 @end
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
