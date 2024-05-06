@@ -295,6 +295,15 @@ static BOOL areEssentiallyEqual(double a, double b)
         [inspector show:sender];
 }
 
+- (void)showWebInspector
+{
+    WebInspector *inspector = _webView.inspector;
+    if (inspector.isOpen)
+        return;
+
+    [inspector show:nil];
+}
+
 - (IBAction)toggleAlwaysShowsHorizontalScroller:(id)sender
 {
     _webView.alwaysShowHorizontalScroller = !_webView.alwaysShowHorizontalScroller;

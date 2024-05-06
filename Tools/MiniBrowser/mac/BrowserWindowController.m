@@ -256,6 +256,11 @@
     [self doesNotRecognizeSelector:_cmd];
 }
 
+- (void)showWebInspector
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
 - (IBAction)togglePictureInPicture:(id)sender
 {
     [self doesNotRecognizeSelector:_cmd];

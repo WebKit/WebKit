@@ -80,6 +80,7 @@
 - (IBAction)dumpSourceToConsole:(id)sender;
 
 - (IBAction)showHideWebInspector:(id)sender;
+- (void)showWebInspector;
 
 - (IBAction)toggleMainThreadStalls:(id)sender;
 - (BOOL)mainThreadStallsEnabled;
