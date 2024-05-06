@@ -364,19 +364,19 @@ unsigned TextUtil::findNextBreakablePosition(CachedLineBreakIteratorFactory& lin
 
     if (keepAllWordsForCJK) {
         if (breakNBSP)
-            return nextBreakablePositionKeepingAllWords(lineBreakIteratorFactory, startPosition);
-        return nextBreakablePositionKeepingAllWordsIgnoringNBSP(lineBreakIteratorFactory, startPosition);
+            return nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::KeepAll, NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
+        return nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::KeepAll, NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
     }
 
     if (lineBreakIteratorFactory.mode() == TextBreakIterator::LineMode::Behavior::Default) {
         if (breakNBSP)
-            return WebCore::nextBreakablePosition(lineBreakIteratorFactory, startPosition);
-        return nextBreakablePositionIgnoringNBSP(lineBreakIteratorFactory, startPosition);
+            return nextBreakablePosition<LineBreakRules::Normal, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
+        return nextBreakablePosition<LineBreakRules::Normal, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
     }
 
     if (breakNBSP)
-        return nextBreakablePositionWithoutShortcut(lineBreakIteratorFactory, startPosition);
-    return nextBreakablePositionIgnoringNBSPWithoutShortcut(lineBreakIteratorFactory, startPosition);
+        return nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
+    return nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
 }
 
 bool TextUtil::shouldPreserveSpacesAndTabs(const Box& layoutBox)
