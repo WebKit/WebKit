@@ -4373,7 +4373,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 JIT_COMMENT(jit, "Cases start (needsInt32PropertyCheck)");
                 for (unsigned i = keys.size(); i--;) {
                     fallThrough.link(&jit);
-                    fallThrough.clear();
+                    fallThrough.shrink(0);
                     if (keys[i]->requiresInt32PropertyCheck())
                         generateWithGuard(*keys[i], fallThrough);
                 }
@@ -4381,7 +4381,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 if (needsStringPropertyCheck || needsSymbolPropertyCheck || acceptValueProperty) {
                     notInt32.link(&jit);
                     fallThrough.link(&jit);
-                    fallThrough.clear();
+                    fallThrough.shrink(0);
                 } else
                     m_failAndRepatch.append(notInt32);
             }
@@ -4406,7 +4406,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 JIT_COMMENT(jit, "Cases start (needsStringPropertyCheck)");
                 for (unsigned i = keys.size(); i--;) {
                     fallThrough.link(&jit);
-                    fallThrough.clear();
+                    fallThrough.shrink(0);
                     if (keys[i]->requiresIdentifierNameMatch() && !keys[i]->uid()->isSymbol())
                         generateWithGuard(*keys[i], fallThrough);
                 }
@@ -4414,7 +4414,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 if (needsSymbolPropertyCheck || acceptValueProperty) {
                     notString.link(&jit);
                     fallThrough.link(&jit);
-                    fallThrough.clear();
+                    fallThrough.shrink(0);
                 } else
                     m_failAndRepatch.append(notString);
             }
@@ -4435,7 +4435,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 JIT_COMMENT(jit, "Cases start (needsSymbolPropertyCheck)");
                 for (unsigned i = keys.size(); i--;) {
                     fallThrough.link(&jit);
-                    fallThrough.clear();
+                    fallThrough.shrink(0);
                     if (keys[i]->requiresIdentifierNameMatch() && keys[i]->uid()->isSymbol())
                         generateWithGuard(*keys[i], fallThrough);
                 }
@@ -4443,7 +4443,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 if (acceptValueProperty) {
                     notSymbol.link(&jit);
                     fallThrough.link(&jit);
-                    fallThrough.clear();
+                    fallThrough.shrink(0);
                 } else
                     m_failAndRepatch.append(notSymbol);
             }
@@ -4452,7 +4452,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 JIT_COMMENT(jit, "Cases start (remaining)");
                 for (unsigned i = keys.size(); i--;) {
                     fallThrough.link(&jit);
-                    fallThrough.clear();
+                    fallThrough.shrink(0);
                     if (!keys[i]->requiresIdentifierNameMatch() && !keys[i]->requiresInt32PropertyCheck())
                         generateWithGuard(*keys[i], fallThrough);
                 }
@@ -4462,7 +4462,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             JIT_COMMENT(jit, "Cases start !(needsInt32PropertyCheck || needsStringPropertyCheck || needsSymbolPropertyCheck)");
             for (unsigned i = keys.size(); i--;) {
                 fallThrough.link(&jit);
-                fallThrough.clear();
+                fallThrough.shrink(0);
                 generateWithGuard(*keys[i], fallThrough);
             }
         }
