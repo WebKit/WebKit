@@ -64,7 +64,6 @@ class ScriptExecutionContext;
 
 enum class ImageBufferOptions : uint8_t {
     Accelerated     = 1 << 0,
-    AvoidBackendSizeCheckForTesting = 1 << 1,
 };
 
 class SerializedImageBuffer;

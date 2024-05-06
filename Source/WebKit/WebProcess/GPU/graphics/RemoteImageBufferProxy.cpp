@@ -137,7 +137,7 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
         auto backendParameters = this->backendParameters(parameters());
 #if HAVE(IOSURFACE)
         if (std::holds_alternative<MachSendRight>(*backendHandle)) {
-            if (canMapBackingStore())
+            if (RemoteRenderingBackendProxy::shouldMapAcceleratedImageBufferBackend())
                 backend = ImageBufferShareableMappedIOSurfaceBackend::create(backendParameters, WTFMove(*backendHandle));
             else
                 backend = ImageBufferRemoteIOSurfaceBackend::create(backendParameters, WTFMove(*backendHandle));
