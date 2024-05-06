@@ -664,13 +664,10 @@ void GPUConnectionToWebProcess::createRenderingBackend(RemoteRenderingBackendCre
     auto streamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle), params);
     MESSAGE_CHECK(streamConnection);
 
-    auto addResult = m_remoteRenderingBackendMap.ensure(creationParameters.identifier, [&, streamConnection] () mutable {
+    auto addResult = m_remoteRenderingBackendMap.ensure(creationParameters.identifier, [&, streamConnection = WTFMove(streamConnection)] () mutable {
         return IPC::ScopedActiveMessageReceiveQueue { RemoteRenderingBackend::create(*this, WTFMove(creationParameters), streamConnection.releaseNonNull()) };
     });
-    if (!addResult.isNewEntry) {
-        streamConnection->invalidate();
-        MESSAGE_CHECK(false);
-    }
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
 void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifier renderingBackendIdentifier)
