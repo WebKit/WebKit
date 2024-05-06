@@ -64,7 +64,7 @@ public:
     const ContentSecurityPolicyDirective* violatedDirectiveForFormAction(const URL&, bool didReceiveRedirectResponse) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForFrame(const URL&, bool didReceiveRedirectResponse) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForFrameAncestor(const LocalFrame&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForFrameAncestorOrigins(const Vector<RefPtr<SecurityOrigin>>&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForFrameAncestorOrigins(const Vector<Ref<SecurityOrigin>>&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForImage(const URL&, bool didReceiveRedirectResponse) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForPrefetch(const URL&, bool didReceiveRedirectResponse) const;
 #if ENABLE(APPLICATION_MANIFEST)

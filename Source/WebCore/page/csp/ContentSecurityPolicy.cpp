@@ -569,7 +569,7 @@ bool ContentSecurityPolicy::overridesXFrameOptions() const
     return false;
 }
 
-bool ContentSecurityPolicy::allowFrameAncestors(const Vector<RefPtr<SecurityOrigin>>& ancestorOrigins, const URL& url, bool overrideContentSecurityPolicy) const
+bool ContentSecurityPolicy::allowFrameAncestors(const Vector<Ref<SecurityOrigin>>& ancestorOrigins, const URL& url, bool overrideContentSecurityPolicy) const
 {
     if (m_policies.isEmpty() || overrideContentSecurityPolicy)
         return true;

@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const URL&);
     WEBCORE_EXPORT static Ref<SecurityOrigin> createForBlobURL(const URL&);
     WEBCORE_EXPORT static Ref<SecurityOrigin> createOpaque();
-    static SecurityOrigin& opaqueOrigin();
+    WEBCORE_EXPORT static SecurityOrigin& opaqueOrigin();
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(const String&);
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, std::optional<uint16_t> port);

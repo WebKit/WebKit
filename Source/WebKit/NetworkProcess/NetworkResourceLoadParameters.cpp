@@ -48,7 +48,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
     , bool shouldRestrictHTTPResponseAccess
     , WebCore::PreflightPolicy preflightPolicy
     , bool shouldEnableCrossOriginResourcePolicy
-    , Vector<RefPtr<WebCore::SecurityOrigin>>&& frameAncestorOrigins
+    , Vector<Ref<WebCore::SecurityOrigin>>&& frameAncestorOrigins
     , bool pageHasResourceLoadClient
     , std::optional<WebCore::FrameIdentifier> parentFrameID
     , bool crossOriginAccessControlCheckEnabled
@@ -136,7 +136,7 @@ RefPtr<SecurityOrigin> NetworkResourceLoadParameters::parentOrigin() const
 {
     if (frameAncestorOrigins.isEmpty())
         return nullptr;
-    return frameAncestorOrigins.first();
+    return frameAncestorOrigins.first().ptr();
 }
 
 std::optional<Vector<SandboxExtension::Handle>> NetworkResourceLoadParameters::sandboxExtensionsIfHttpBody() const

@@ -140,7 +140,7 @@ void SubFrameSOAuthorizationSession::loadRequestToFrame()
     }
 }
 
-bool SubFrameSOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<RefPtr<SecurityOrigin>>&& frameAncestorOrigins, const String& xFrameOptions, const URL& url)
+bool SubFrameSOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<Ref<SecurityOrigin>>&& frameAncestorOrigins, const String& xFrameOptions, const URL& url)
 {
     switch (parseXFrameOptionsHeader(xFrameOptions)) {
     case XFrameOptionsDisposition::None:
@@ -151,7 +151,7 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<
     case XFrameOptionsDisposition::SameOrigin: {
         auto origin = SecurityOrigin::create(url);
         for (auto& ancestorOrigin : frameAncestorOrigins) {
-            if (!ancestorOrigin || !origin->isSameSchemeHostPort(*ancestorOrigin))
+            if (!origin->isSameSchemeHostPort(ancestorOrigin))
                 return true;
         }
         return false;
@@ -173,16 +173,13 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<
 
 bool SubFrameSOAuthorizationSession::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse& response)
 {
-    Vector<RefPtr<SecurityOrigin>> frameAncestorOrigins;
+    Vector<Ref<SecurityOrigin>> frameAncestorOrigins;
 
     ASSERT(navigationAction());
     if (auto* targetFrame = navigationAction()->targetFrame()) {
         if (auto parentFrameHandle = targetFrame->parentFrameHandle()) {
-            for (auto* parent = WebFrameProxy::webFrame(parentFrameHandle->frameID()); parent; parent = parent->parentFrame()) {
-                auto origin = SecurityOrigin::create(parent->url());
-                RefPtr<SecurityOrigin> frameOrigin = origin.ptr();
-                frameAncestorOrigins.append(frameOrigin);
-            }
+            for (auto* parent = WebFrameProxy::webFrame(parentFrameHandle->frameID()); parent; parent = parent->parentFrame())
+                frameAncestorOrigins.append(SecurityOrigin::create(parent->url()));
         }
     }
 
