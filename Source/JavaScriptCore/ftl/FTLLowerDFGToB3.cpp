@@ -6420,8 +6420,8 @@ IGNORE_CLANG_WARNINGS_END
         Edge child1 = m_graph.varArgChild(m_node, 0);
         Edge child2 = m_graph.varArgChild(m_node, 1);
         Edge child3 = m_graph.varArgChild(m_node, 2);
-        Edge child4 = m_graph.varArgChild(m_node, 3);
-        Edge child5 = m_graph.varArgChild(m_node, 4);
+        Edge child4 = m_node->numChildren() >= 4 ? m_graph.varArgChild(m_node, 3) : Edge();
+        Edge child5 = m_node->numChildren() >= 5 ? m_graph.varArgChild(m_node, 4) : Edge();
         
         ArrayMode arrayMode = m_node->arrayMode().modeForPut();
         switch (arrayMode.type()) {

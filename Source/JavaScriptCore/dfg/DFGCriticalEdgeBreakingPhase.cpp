@@ -76,6 +76,9 @@ public:
                     pad->predecessors.append(block);
                     (*successor)->replacePredecessor(block, pad);
                     successorPads.set(*successor, pad);
+
+                    if (m_graph.m_form == SSA)
+                        pad->ssa = makeUnique<BasicBlock::SSAData>(block);
                 } else
                     pad = iter->value;
 
