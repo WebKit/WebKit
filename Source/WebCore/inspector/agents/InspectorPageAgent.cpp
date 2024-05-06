@@ -845,22 +845,34 @@ static Ref<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(c
         .release();
 }
 
+// FIXME: Selects previous string when selecting another string
 Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>> InspectorPageAgent::searchInResources(const String& text, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
 {
     auto result = JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>::create();
 
     auto searchStringType = (isRegex && *isRegex) ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ContainsString;
-    auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(text, caseSensitive && *caseSensitive, searchStringType);
+    auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(text, searchStringType);
+
+    if (!(searchStringType == ContentSearchUtilities::SearchStringType::Regex) && caseSensitive && *caseSensitive)
+        regex->makeMatchCaseInsensitive(false);
+
+    ListHashSet<String> uniqueSearchResults;
 
     for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
+
         for (auto* cachedResource : cachedResourcesForFrame(localFrame)) {
             if (auto textContent = InspectorNetworkAgent::textContentForCachedResource(*cachedResource)) {
                 int matchesCount = ContentSearchUtilities::countRegularExpressionMatches(regex, *textContent);
-                if (matchesCount)
-                    result->addItem(buildObjectForSearchResult(frameId(localFrame), cachedResource->url().string(), matchesCount));
+                if (matchesCount) {
+                    String key = frameId(localFrame) + ":" + cachedResource->url().string() + ":" + localFrame->tree().uniqueIdentifier();
+                    if (!uniqueSearchResults.contains(key)) {
+                        uniqueSearchResults.add(key);
+                        result->addItem(buildObjectForSearchResult(frameId(localFrame), cachedResource->url().string(), matchesCount));
+                    }
+                }
             }
         }
     }
