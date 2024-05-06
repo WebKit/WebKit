@@ -1293,8 +1293,6 @@ webkit.org/b/225498 fast/scrolling/mac/overflow-scrollbars-toggle-dark-mode.html
 
 webkit.org/b/207474 http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure ]
 
-webkit.org/b/225529 [ arm64 ] scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-in-iframe.html [ Pass Failure ]
-
 webkit.org/b/225666 http/tests/cache/disk-cache/redirect-chain-limits.html [ Slow ]
 
 webkit.org/b/225664 editing/selection/move-by-character-brute-force.html [ Slow ]
