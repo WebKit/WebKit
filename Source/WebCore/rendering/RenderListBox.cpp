@@ -484,7 +484,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     const auto& listItems = selectElement().listItems();
     RefPtr listItemElement = listItems[listIndex].get();
 
-    auto itemStyle = listItemElement->computedStyle();
+    auto itemStyle = listItemElement->computedStyleForEditability();
     if (!itemStyle)
         return;
 
@@ -544,7 +544,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
 {
     const auto& listItems = selectElement().listItems();
     RefPtr listItemElement = listItems[listIndex].get();
-    auto itemStyle = listItemElement->computedStyle();
+    auto itemStyle = listItemElement->computedStyleForEditability();
     if (!itemStyle)
         return;
 
