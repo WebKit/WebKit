@@ -4597,6 +4597,9 @@ void WebPage::adjustSettingsForLockdownMode(Settings& settings, const WebPrefere
     Settings::disableGlobalUnstableFeaturesForModernWebKit();
 
     settings.setWebGLEnabled(false);
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    settings.setWebGPUEnabled(false);
+#endif
 #if ENABLE(GAMEPAD)
     settings.setGamepadsEnabled(false);
 #endif
