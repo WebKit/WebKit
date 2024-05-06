@@ -1799,7 +1799,6 @@ imported/w3c/web-platform-tests/imagebitmap-renderingcontext [ Skip ]
 imported/w3c/web-platform-tests/images [ Skip ]
 imported/w3c/web-platform-tests/inert [ Skip ]
 imported/w3c/web-platform-tests/infrastructure [ Skip ]
-imported/w3c/web-platform-tests/innerText [ Skip ]
 imported/w3c/web-platform-tests/interfaces [ Skip ]
 imported/w3c/web-platform-tests/intersection-observer [ Skip ]
 imported/w3c/web-platform-tests/mathml [ Skip ]
@@ -3328,6 +3327,7 @@ http/tests/scroll-to-text-fragment/no-iframe-match.html [ ImageOnlyFailure Pass 
 http/tests/security/shape-outside-and-cached-resources.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/selectors/focus-within-013.html [ ImageOnlyFailure Pass ]
 [ Release ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Timeout Pass ]
+http/tests/loading/reusing-cached-stylesheet-from-different-domain.html [ ImageOnlyFailure Pass ]
 
 resize-observer/contain-instrinsic-size-should-not-leak-nodes.html [ Failure Pass ]
 
