@@ -553,10 +553,11 @@ xmlParserInputPtr externalEntityLoader(const char* url, const char* id, xmlParse
 {
     if (!shouldAllowExternalLoad(URL(String::fromUTF8(url))))
         return nullptr;
+    RELEASE_ASSERT_WITH_MESSAGE(!!defaultEntityLoader, "Missing call to initializeXMLParser()");
     return defaultEntityLoader(url, id, context);
 }
 
-static void initializeXMLParser()
+void initializeXMLParser()
 {
     static std::once_flag flag;
     std::call_once(flag, [&] {

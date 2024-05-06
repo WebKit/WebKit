@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Did not parse external entity resource at '' because cross-origin loads are not allowed.
+CONSOLE MESSAGE: Start tag expected, '<' not found
+
+PASS if no crash
