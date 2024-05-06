@@ -1696,7 +1696,7 @@ private:
     template <typename... Args>
     NEVER_INLINE void logError(bool, Args&&...);
     
-    NEVER_INLINE void updateErrorWithNameAndMessage(const char* beforeMessage, const String& name, const char* afterMessage)
+    NEVER_INLINE void updateErrorWithNameAndMessage(ASCIILiteral beforeMessage, const String& name, ASCIILiteral afterMessage)
     {
         m_errorMessage = makeString(beforeMessage, " '"_s, name, "' "_s, afterMessage);
     }

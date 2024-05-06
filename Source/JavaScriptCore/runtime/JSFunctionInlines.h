@@ -156,7 +156,7 @@ inline double JSFunction::originalLength(VM& vm)
 }
 
 template<typename... StringTypes>
-ALWAYS_INLINE String makeNameWithOutOfMemoryCheck(JSGlobalObject* globalObject, ThrowScope& throwScope, const char* messagePrefix, StringTypes... strings)
+ALWAYS_INLINE String makeNameWithOutOfMemoryCheck(JSGlobalObject* globalObject, ThrowScope& throwScope, ASCIILiteral messagePrefix, StringTypes... strings)
 {
     String name = tryMakeString(strings...);
     if (UNLIKELY(!name)) {
@@ -197,10 +197,10 @@ inline JSString* JSFunction::originalName(JSGlobalObject* globalObject)
         name = ecmaName.string();
 
     if (jsExecutable()->isGetter()) {
-        name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Getter ", "get ", name);
+        name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Getter "_s, "get "_s, name);
         RETURN_IF_EXCEPTION(scope, { });
     } else if (jsExecutable()->isSetter()) {
-        name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Setter ", "set ", name);
+        name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Setter "_s, "set "_s, name);
         RETURN_IF_EXCEPTION(scope, { });
     }
     return jsString(vm, WTFMove(name));

@@ -266,13 +266,13 @@ JSString* JSFunction::toString(JSGlobalObject* globalObject)
     if (inherits<JSBoundFunction>()) {
         JSBoundFunction* function = jsCast<JSBoundFunction*>(this);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        JSValue string = jsMakeNontrivialString(globalObject, "function ", function->nameString(), "() {\n    [native code]\n}");
+        JSValue string = jsMakeNontrivialString(globalObject, "function "_s, function->nameString(), "() {\n    [native code]\n}"_s);
         RETURN_IF_EXCEPTION(scope, nullptr);
         return asString(string);
     } else if (inherits<JSRemoteFunction>()) {
         JSRemoteFunction* function = jsCast<JSRemoteFunction*>(this);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        JSValue string = jsMakeNontrivialString(globalObject, "function ", function->nameString(), "() {\n    [native code]\n}");
+        JSValue string = jsMakeNontrivialString(globalObject, "function "_s, function->nameString(), "() {\n    [native code]\n}"_s);
         RETURN_IF_EXCEPTION(scope, nullptr);
         return asString(string);
     }
@@ -528,7 +528,7 @@ void JSFunction::setFunctionName(JSGlobalObject* globalObject, JSValue value)
         if (uid.isNullSymbol())
             name = emptyString();
         else {
-            name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Function ", '[', String(&uid), ']');
+            name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Function "_s, '[', String(&uid), ']');
             RETURN_IF_EXCEPTION(scope, void());
         }
     } else {
@@ -577,9 +577,9 @@ JSFunction::PropertyStatus JSFunction::reifyName(VM& vm, JSGlobalObject* globalO
     const Identifier& propID = vm.propertyNames->name;
 
     if (jsExecutable()->isGetter())
-        name = makeNameWithOutOfMemoryCheck(globalObject, throwScope, "Getter ", "get ", name);
+        name = makeNameWithOutOfMemoryCheck(globalObject, throwScope, "Getter "_s, "get "_s, name);
     else if (jsExecutable()->isSetter())
-        name = makeNameWithOutOfMemoryCheck(globalObject, throwScope, "Setter ", "set ", name);
+        name = makeNameWithOutOfMemoryCheck(globalObject, throwScope, "Setter "_s, "set "_s, name);
     RETURN_IF_EXCEPTION(throwScope, PropertyStatus::Lazy);
 
     rareData->setHasReifiedName();

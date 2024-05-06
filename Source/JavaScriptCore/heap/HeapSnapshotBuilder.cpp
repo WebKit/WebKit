@@ -280,32 +280,32 @@ static uint8_t edgeTypeToNumber(EdgeType type)
     return static_cast<uint8_t>(type);
 }
 
-static const char* edgeTypeToString(EdgeType type)
+static ASCIILiteral edgeTypeToString(EdgeType type)
 {
     switch (type) {
     case EdgeType::Internal:
-        return "Internal";
+        return "Internal"_s;
     case EdgeType::Property:
-        return "Property";
+        return "Property"_s;
     case EdgeType::Index:
-        return "Index";
+        return "Index"_s;
     case EdgeType::Variable:
-        return "Variable";
+        return "Variable"_s;
     }
     ASSERT_NOT_REACHED();
-    return "Internal";
+    return "Internal"_s;
 }
 
-static const char* snapshotTypeToString(HeapSnapshotBuilder::SnapshotType type)
+static ASCIILiteral snapshotTypeToString(HeapSnapshotBuilder::SnapshotType type)
 {
     switch (type) {
     case HeapSnapshotBuilder::SnapshotType::InspectorSnapshot:
-        return "Inspector";
+        return "Inspector"_s;
     case HeapSnapshotBuilder::SnapshotType::GCDebuggingSnapshot:
-        return "GCDebugging";
+        return "GCDebugging"_s;
     }
     ASSERT_NOT_REACHED();
-    return "Inspector";
+    return "Inspector"_s;
 }
 
 String HeapSnapshotBuilder::json()
@@ -427,7 +427,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
         // <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <flags>, [<labelIndex>, <cellAddress>, <wrappedAddress>]
         json.append(',', node.identifier, ',', node.cell->estimatedSizeInBytes(vm), ',', classNameIndex, ',', flags);
         if (m_snapshotType == SnapshotType::GCDebuggingSnapshot)
-            json.append(',', labelIndex, ",\"0x", hex(reinterpret_cast<uintptr_t>(node.cell), Lowercase), "\",\"0x", hex(reinterpret_cast<uintptr_t>(wrappedAddress), Lowercase), '"');
+            json.append(',', labelIndex, ",\"0x"_s, hex(reinterpret_cast<uintptr_t>(node.cell), Lowercase), "\",\"0x"_s, hex(reinterpret_cast<uintptr_t>(wrappedAddress), Lowercase), '"');
     };
 
     bool firstEdge = true;

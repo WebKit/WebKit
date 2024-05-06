@@ -145,20 +145,20 @@ private:
     HashMap<String, ConstantValue> m_overrides;
 };
 
-static const char* serializeAddressSpace(AddressSpace addressSpace)
+static ASCIILiteral serializeAddressSpace(AddressSpace addressSpace)
 {
     switch (addressSpace) {
     case AddressSpace::Function:
     case AddressSpace::Private:
-        return "thread";
+        return "thread"_s;
     case AddressSpace::Workgroup:
-        return "threadgroup";
+        return "threadgroup"_s;
     case AddressSpace::Uniform:
-        return "constant";
+        return "constant"_s;
     case AddressSpace::Storage:
-        return "device";
+        return "device"_s;
     case AddressSpace::Handle:
-        return nullptr;
+        return { };
     }
 }
 
@@ -840,33 +840,33 @@ void FunctionDefinitionWriter::visit(AST::AlignAttribute&)
     // serializing structs.
 }
 
-static const char* convertToSampleMode(InterpolationType type, InterpolationSampling sampleType)
+static ASCIILiteral convertToSampleMode(InterpolationType type, InterpolationSampling sampleType)
 {
     switch (type) {
     case InterpolationType::Flat:
-        return "flat";
+        return "flat"_s;
     case InterpolationType::Linear:
         switch (sampleType) {
         case InterpolationSampling::Center:
-            return "center_no_perspective";
+            return "center_no_perspective"_s;
         case InterpolationSampling::Centroid:
-            return "centroid_no_perspective";
+            return "centroid_no_perspective"_s;
         case InterpolationSampling::Sample:
-            return "sample_no_perspective";
+            return "sample_no_perspective"_s;
         }
     case InterpolationType::Perspective:
         switch (sampleType) {
         case InterpolationSampling::Center:
-            return "center_perspective";
+            return "center_perspective"_s;
         case InterpolationSampling::Centroid:
-            return "centroid_perspective";
+            return "centroid_perspective"_s;
         case InterpolationSampling::Sample:
-            return "sample_perspective";
+            return "sample_perspective"_s;
         }
     }
 
     ASSERT_NOT_REACHED();
-    return "flat";
+    return "flat"_s;
 }
 
 void FunctionDefinitionWriter::visit(AST::InterpolateAttribute& attribute)
@@ -953,30 +953,30 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append('>');
         },
         [&](const Texture& texture) {
-            const char* type;
-            const char* access = "sample";
+            ASCIILiteral type;
+            ASCIILiteral access = "sample"_s;
             switch (texture.kind) {
             case Types::Texture::Kind::Texture1d:
-                type = "texture1d";
+                type = "texture1d"_s;
                 break;
             case Types::Texture::Kind::Texture2d:
-                type = "texture2d";
+                type = "texture2d"_s;
                 break;
             case Types::Texture::Kind::Texture2dArray:
-                type = "texture2d_array";
+                type = "texture2d_array"_s;
                 break;
             case Types::Texture::Kind::Texture3d:
-                type = "texture3d";
+                type = "texture3d"_s;
                 break;
             case Types::Texture::Kind::TextureCube:
-                type = "texturecube";
+                type = "texturecube"_s;
                 break;
             case Types::Texture::Kind::TextureCubeArray:
-                type = "texturecube_array";
+                type = "texturecube_array"_s;
                 break;
             case Types::Texture::Kind::TextureMultisampled2d:
-                type = "texture2d_ms";
-                access = "read";
+                type = "texture2d_ms"_s;
+                access = "read"_s;
                 break;
             }
             m_stringBuilder.append(type, '<');
@@ -984,31 +984,31 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append(", access::"_s, access, '>');
         },
         [&](const TextureStorage& texture) {
-            const char* base;
-            const char* mode;
+            ASCIILiteral base;
+            ASCIILiteral mode;
             switch (texture.kind) {
             case Types::TextureStorage::Kind::TextureStorage1d:
-                base = "texture1d";
+                base = "texture1d"_s;
                 break;
             case Types::TextureStorage::Kind::TextureStorage2d:
-                base = "texture2d";
+                base = "texture2d"_s;
                 break;
             case Types::TextureStorage::Kind::TextureStorage2dArray:
-                base = "texture2d_array";
+                base = "texture2d_array"_s;
                 break;
             case Types::TextureStorage::Kind::TextureStorage3d:
-                base = "texture3d";
+                base = "texture3d"_s;
                 break;
             }
             switch (texture.access) {
             case AccessMode::Read:
-                mode = "read";
+                mode = "read"_s;
                 break;
             case AccessMode::Write:
-                mode = "write";
+                mode = "write"_s;
                 break;
             case AccessMode::ReadWrite:
-                mode = "read_write";
+                mode = "read_write"_s;
                 break;
             }
             m_stringBuilder.append(base, '<');
@@ -1016,29 +1016,29 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append(", access::"_s, mode, '>');
         },
         [&](const TextureDepth& texture) {
-            const char* base;
+            ASCIILiteral base;
             switch (texture.kind) {
             case TextureDepth::Kind::TextureDepth2d:
-                base = "depth2d";
+                base = "depth2d"_s;
                 break;
             case TextureDepth::Kind::TextureDepth2dArray:
-                base = "depth2d_array";
+                base = "depth2d_array"_s;
                 break;
             case TextureDepth::Kind::TextureDepthCube:
-                base = "depthcube";
+                base = "depthcube"_s;
                 break;
             case TextureDepth::Kind::TextureDepthCubeArray:
-                base = "depthcube_array";
+                base = "depthcube_array"_s;
                 break;
             case TextureDepth::Kind::TextureDepthMultisampled2d:
-                base = "depth2d_ms";
+                base = "depth2d_ms"_s;
                 break;
             }
             m_stringBuilder.append(base, "<float>"_s);
         },
         [&](const Reference& reference) {
-            const char* addressSpace = serializeAddressSpace(reference.addressSpace);
-            if (!addressSpace) {
+            auto addressSpace = serializeAddressSpace(reference.addressSpace);
+            if (addressSpace.isNull()) {
                 visit(reference.element);
                 return;
             }
@@ -1049,7 +1049,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append('&');
         },
         [&](const Pointer& pointer) {
-            const char* addressSpace = serializeAddressSpace(pointer.addressSpace);
+            auto addressSpace = serializeAddressSpace(pointer.addressSpace);
             if (pointer.accessMode == AccessMode::Read)
                 m_stringBuilder.append("const "_s);
             if (addressSpace)
@@ -1128,7 +1128,7 @@ static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression
 
 static void emitTextureDimensions(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    const auto& get = [&](const char* property) {
+    const auto& get = [&](ASCIILiteral property) {
         writer->visit(call.arguments()[0]);
         writer->stringBuilder().append(".get_"_s, property, '(');
         if (call.arguments().size() > 1)
@@ -1159,23 +1159,23 @@ static void emitTextureGather(FunctionDefinitionWriter* writer, AST::CallExpress
 {
     ASSERT(call.arguments().size() > 1);
     unsigned offset = 0;
-    const char* component = nullptr;
+    ASCIILiteral component;
     bool hasOffset = true;
     auto& firstArgument = call.arguments()[0];
     if (std::holds_alternative<Types::Primitive>(*firstArgument.inferredType())) {
         offset = 1;
         switch (firstArgument.constantValue()->integerValue()) {
         case 0:
-            component = "x";
+            component = "x"_s;
             break;
         case 1:
-            component = "y";
+            component = "y"_s;
             break;
         case 2:
-            component = "z";
+            component = "z"_s;
             break;
         case 3:
-            component = "w";
+            component = "w"_s;
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1198,7 +1198,7 @@ static void emitTextureGather(FunctionDefinitionWriter* writer, AST::CallExpress
     }
     if (!hasOffset)
         writer->stringBuilder().append(", int2(0)"_s);
-    if (component)
+    if (!component.isNull())
         writer->stringBuilder().append(", component::"_s, component);
     writer->stringBuilder().append(')');
 }
@@ -1224,15 +1224,15 @@ static void emitTextureLoad(FunctionDefinitionWriter* writer, AST::CallExpressio
         writer->stringBuilder().append(".read"_s);
         writer->stringBuilder().append('(');
         bool is1d = true;
-        const char* cast = "uint";
+        auto cast = "uint"_s;
         if (const auto* vector = std::get_if<Types::Vector>(call.arguments()[1].inferredType())) {
             is1d = false;
             switch (vector->size) {
             case 2:
-                cast = "uint2";
+                cast = "uint2"_s;
                 break;
             case 3:
-                cast = "uint3";
+                cast = "uint3"_s;
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -1314,33 +1314,33 @@ static void emitTextureSampleGrad(FunctionDefinitionWriter* writer, AST::CallExp
     auto& textureType = std::get<Types::Texture>(*texture.inferredType());
 
     unsigned gradientIndex;
-    const char* gradientFunction;
+    ASCIILiteral gradientFunction;
     switch (textureType.kind) {
     case Types::Texture::Kind::Texture1d:
     case Types::Texture::Kind::Texture2d:
     case Types::Texture::Kind::TextureMultisampled2d:
         gradientIndex = 3;
-        gradientFunction = "gradient2d";
+        gradientFunction = "gradient2d"_s;
         break;
 
     case Types::Texture::Kind::Texture3d:
         gradientIndex = 3;
-        gradientFunction = "gradient3d";
+        gradientFunction = "gradient3d"_s;
         break;
 
     case Types::Texture::Kind::TextureCube:
         gradientIndex = 3;
-        gradientFunction = "gradientcube";
+        gradientFunction = "gradientcube"_s;
         break;
 
     case Types::Texture::Kind::Texture2dArray:
         gradientIndex = 4;
-        gradientFunction = "gradient2d";
+        gradientFunction = "gradient2d"_s;
         break;
 
     case Types::Texture::Kind::TextureCubeArray:
         gradientIndex = 4;
-        gradientFunction = "gradientcube";
+        gradientFunction = "gradientcube"_s;
         break;
     }
     writer->visit(texture);
@@ -1526,14 +1526,14 @@ static void emitTextureNumSamples(FunctionDefinitionWriter* writer, AST::CallExp
 
 static void emitTextureStore(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    const char* cast = "uint";
+    auto cast = "uint"_s;
     if (const auto* vector = std::get_if<Types::Vector>(call.arguments()[1].inferredType())) {
         switch (vector->size) {
         case 2:
-            cast = "uint2";
+            cast = "uint2"_s;
             break;
         case 3:
-            cast = "uint3";
+            cast = "uint3"_s;
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1586,7 +1586,7 @@ static void emitWorkgroupUniformLoad(FunctionDefinitionWriter* writer, AST::Call
     writer->stringBuilder().append(')');
 }
 
-static void atomicFunction(const char* name, FunctionDefinitionWriter* writer, AST::CallExpression& call)
+static void atomicFunction(ASCIILiteral name, FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     writer->stringBuilder().append(name, '(');
     bool first = true;
@@ -1690,7 +1690,7 @@ static void emitDynamicOffset(FunctionDefinitionWriter* writer, AST::CallExpress
 {
     auto* targetType = call.target().inferredType();
     auto& pointer = std::get<Types::Pointer>(*targetType);
-    auto* addressSpace = serializeAddressSpace(pointer.addressSpace);
+    auto addressSpace = serializeAddressSpace(pointer.addressSpace);
 
     writer->stringBuilder().append("(*("_s);
     writer->visit(targetType);
@@ -1957,16 +1957,16 @@ void FunctionDefinitionWriter::serializeBinaryExpression(AST::Expression& lhs, A
         if (auto* vectorType = std::get_if<Types::Vector>(rightType))
             rightType = vectorType->element;
 
-        const char* helperFunction = nullptr;
+        ASCIILiteral helperFunction;
         if (satisfies(rightType, Constraints::Integer)) {
             if (isDiv)
-                helperFunction = "__wgslDiv";
+                helperFunction = "__wgslDiv"_s;
             else
-                helperFunction = "__wgslMod";
+                helperFunction = "__wgslMod"_s;
         } else if (isMod)
-            helperFunction = "fmod";
+            helperFunction = "fmod"_s;
 
-        if (helperFunction) {
+        if (!helperFunction.isNull()) {
             m_stringBuilder.append(helperFunction, '(');
             visit(lhs);
             m_stringBuilder.append(", "_s);
@@ -2111,7 +2111,7 @@ void FunctionDefinitionWriter::visit(AST::AbstractFloatLiteral& literal)
     NumberToStringBuffer buffer;
     WTF::numberToStringWithTrailingPoint(literal.value(), buffer);
 
-    m_stringBuilder.append(&buffer[0]);
+    m_stringBuilder.append(span(&buffer[0]));
 }
 
 void FunctionDefinitionWriter::visit(AST::Float32Literal& literal)
@@ -2119,7 +2119,7 @@ void FunctionDefinitionWriter::visit(AST::Float32Literal& literal)
     NumberToStringBuffer buffer;
     WTF::numberToStringWithTrailingPoint(literal.value(), buffer);
 
-    m_stringBuilder.append(&buffer[0]);
+    m_stringBuilder.append(span(&buffer[0]));
 }
 
 void FunctionDefinitionWriter::visit(AST::Float16Literal& literal)
@@ -2127,7 +2127,7 @@ void FunctionDefinitionWriter::visit(AST::Float16Literal& literal)
     NumberToStringBuffer buffer;
     WTF::numberToStringWithTrailingPoint(literal.value(), buffer);
 
-    m_stringBuilder.append(&buffer[0]);
+    m_stringBuilder.append(span(&buffer[0]));
 }
 
 void FunctionDefinitionWriter::visit(AST::Statement& statement)
@@ -2406,19 +2406,19 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
             case Primitive::AbstractFloat: {
                 NumberToStringBuffer buffer;
                 WTF::numberToStringWithTrailingPoint(std::get<double>(value), buffer);
-                m_stringBuilder.append(&buffer[0]);
+                m_stringBuilder.append(span(&buffer[0]));
                 break;
             }
             case Primitive::F32: {
                 NumberToStringBuffer buffer;
                 WTF::numberToStringWithTrailingPoint(std::get<float>(value), buffer);
-                m_stringBuilder.append(&buffer[0]);
+                m_stringBuilder.append(span(&buffer[0]));
                 break;
             }
             case Primitive::F16: {
                 NumberToStringBuffer buffer;
                 WTF::numberToStringWithTrailingPoint(std::get<half>(value), buffer);
-                m_stringBuilder.append(&buffer[0], 'h');
+                m_stringBuilder.append(span(&buffer[0]), 'h');
                 break;
             }
             case Primitive::Bool:

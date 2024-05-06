@@ -1368,7 +1368,7 @@ Vector<String> removeQueryParameters(URL& url, Function<bool(const String&)>&& s
             continue;
         }
 
-        queryWithoutRemovalKeys.append(queryWithoutRemovalKeys.isEmpty() ? "" : "&", bytes);
+        queryWithoutRemovalKeys.append(queryWithoutRemovalKeys.isEmpty() ? ""_s : "&"_s, bytes);
     }
 
     if (!removedParameters.isEmpty())

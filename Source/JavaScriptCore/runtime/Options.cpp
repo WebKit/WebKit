@@ -84,8 +84,8 @@ static LazyNeverDestroyed<std::unique_ptr<Metadata>> g_metadata;
 static LazyNeverDestroyed<WTF::BitSet<NumberOfOptions>> g_optionWasOverridden;
 
 struct ConstMetaData {
-    const char* name;
-    const char* description;
+    ASCIILiteral name;
+    ASCIILiteral description;
     Options::Type type;
     Options::Availability availability;
     uint16_t offsetOfOption;
@@ -94,7 +94,7 @@ struct ConstMetaData {
 // Realize the names for each of the options:
 static const ConstMetaData g_constMetaData[NumberOfOptions] = {
 #define FILL_OPTION_INFO(type_, name_, defaultValue_, availability_, description_) \
-    { #name_, description_, Options::Type::type_, Options::Availability::availability_, offsetof(OptionsStorage, name_) },
+    { #name_ ## _s, description_, Options::Type::type_, Options::Availability::availability_, offsetof(OptionsStorage, name_) },
     FOR_EACH_JSC_OPTION(FILL_OPTION_INFO)
 #undef FILL_OPTION_INFO
 };
@@ -105,8 +105,8 @@ public:
 
     bool operator==(const Option&) const;
 
-    const char* name() const { return g_constMetaData[m_id].name; }
-    const char* description() const { return g_constMetaData[m_id].description; }
+    ASCIILiteral name() const { return g_constMetaData[m_id].name; }
+    ASCIILiteral description() const { return g_constMetaData[m_id].description; }
     Options::Type type() const { return g_constMetaData[m_id].type; }
     Options::Availability availability() const { return g_constMetaData[m_id].availability; }
 
@@ -1142,12 +1142,12 @@ bool Options::setOptionWithoutAlias(const char* arg, bool verify)
     return false; // No option matched.
 }
 
-static const char* invertBoolOptionValue(const char* valueStr)
+static ASCIILiteral invertBoolOptionValue(const char* valueStr)
 {
     std::optional<OptionsStorage::Bool> value = parse<OptionsStorage::Bool>(valueStr);
     if (!value)
-        return nullptr;
-    return value.value() ? "false" : "true";
+        return { };
+    return value.value() ? "false"_s : "true"_s;
 }
 
 
@@ -1168,11 +1168,11 @@ bool Options::setAliasedOption(const char* arg, bool verify)
         && !strncasecmp(arg, #aliasedName_, equalStr - arg)) {          \
         auto unaliasedOption = String::fromLatin1(#unaliasedName_);     \
         if (equivalence == SameOption)                                  \
-            unaliasedOption = unaliasedOption + equalStr;               \
+            unaliasedOption = unaliasedOption + span(equalStr);         \
         else {                                                          \
             ASSERT(equivalence == InvertedOption);                      \
-            auto* invertedValueStr = invertBoolOptionValue(equalStr + 1); \
-            if (!invertedValueStr)                                      \
+            auto invertedValueStr = invertBoolOptionValue(equalStr + 1); \
+            if (invertedValueStr.isNull())                                      \
                 return false;                                           \
             unaliasedOption = makeString(unaliasedOption, '=', invertedValueStr); \
         }                                                               \

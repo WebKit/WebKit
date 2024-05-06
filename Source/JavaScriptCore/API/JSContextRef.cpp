@@ -331,7 +331,7 @@ public:
             StringBuilder& builder = m_builder;
             if (!builder.isEmpty())
                 builder.append('\n');
-            builder.append('#', visitor->index(), ' ', visitor->functionName(), "() at ", visitor->sourceURL());
+            builder.append('#', visitor->index(), ' ', visitor->functionName(), "() at "_s, visitor->sourceURL());
             if (visitor->hasLineAndColumnInfo()) {
                 auto lineColumn = visitor->computeLineAndColumn();
                 builder.append(':', lineColumn.line);

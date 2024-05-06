@@ -1024,7 +1024,7 @@ double parseDate(std::span<const LChar> dateString)
 String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset)
 {
     StringBuilder stringBuilder;
-    stringBuilder.append(weekdayName[dayOfWeek], ", ", day, ' ', monthName[month], ' ', year, ' ');
+    stringBuilder.append(weekdayName[dayOfWeek], ", "_s, day, ' ', monthName[month], ' ', year, ' ');
 
     appendTwoDigitNumber(stringBuilder, hours);
     stringBuilder.append(':');

@@ -165,7 +165,7 @@ String encodeForFileName(const String& inputString)
             if (character <= 0xFF)
                 result.append('%', hex(character, 2));
             else
-                result.append("%+", hex(static_cast<uint8_t>(character >> 8), 2), hex(static_cast<uint8_t>(character), 2));
+                result.append("%+"_s, hex(static_cast<uint8_t>(character >> 8), 2), hex(static_cast<uint8_t>(character), 2));
         } else
             result.append(character);
         previousCharacter = character;

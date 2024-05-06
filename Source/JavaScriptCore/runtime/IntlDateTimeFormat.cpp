@@ -743,7 +743,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             int64_t minutes = minutesValue.value();
             int64_t absMinutes = std::abs(minutes);
             tz = makeString(minutes < 0 ? '-' : '+', pad('0', 2, absMinutes / 60), ':', pad('0', 2, absMinutes % 60));
-            timeZoneForICU = makeString("GMT", minutes < 0 ? '-' : '+', pad('0', 2, absMinutes / 60), pad('0', 2, absMinutes % 60));
+            timeZoneForICU = makeString("GMT"_s, minutes < 0 ? '-' : '+', pad('0', 2, absMinutes / 60), pad('0', 2, absMinutes % 60));
         } else {
             tz = canonicalizeTimeZoneName(originalTz);
             if (tz.isNull()) {
@@ -1429,7 +1429,7 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
     // While the pattern is including right HourCycle patterns, UDateIntervalFormat does not follow.
     // We need to enforce HourCycle by setting "hc" extension if it is specified.
     StringBuilder localeBuilder;
-    localeBuilder.append(m_dataLocale, "-u-ca-", m_calendar, "-nu-", m_numberingSystem);
+    localeBuilder.append(m_dataLocale, "-u-ca-"_s, m_calendar, "-nu-"_s, m_numberingSystem);
     if (m_hourCycle != HourCycle::None)
         localeBuilder.append("-hc-"_s, hourCycleString(m_hourCycle));
     CString dataLocaleWithExtensions = localeBuilder.toString().utf8();

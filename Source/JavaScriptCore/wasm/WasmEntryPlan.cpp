@@ -111,12 +111,12 @@ bool EntryPlan::parseAndValidateModule(std::span<const uint8_t> source)
 void EntryPlan::prepare()
 {
     ASSERT(m_state == State::Validated);
-    dataLogLnIf(WasmEntryPlanInternal::verbose, "Starting preparation");
+    dataLogLnIf(WasmEntryPlanInternal::verbose, "Starting preparation"_s);
 
     const auto& functions = m_moduleInformation->functions;
     m_numberOfFunctions = functions.size();
-    if (!tryReserveCapacity(m_wasmToWasmExitStubs, m_moduleInformation->importFunctionTypeIndices.size(), " WebAssembly to JavaScript stubs")
-        || !tryReserveCapacity(m_unlinkedWasmToWasmCalls, functions.size(), " unlinked WebAssembly to WebAssembly calls"))
+    if (!tryReserveCapacity(m_wasmToWasmExitStubs, m_moduleInformation->importFunctionTypeIndices.size(), " WebAssembly to JavaScript stubs"_s)
+        || !tryReserveCapacity(m_unlinkedWasmToWasmCalls, functions.size(), " unlinked WebAssembly to WebAssembly calls"_s))
         return;
 
     m_unlinkedWasmToWasmCalls.resize(functions.size());
@@ -128,7 +128,7 @@ void EntryPlan::prepare()
         Import* import = &m_moduleInformation->imports[importIndex];
         if (import->kind != ExternalKind::Function)
             continue;
-        dataLogLnIf(WasmEntryPlanInternal::verbose, "Processing import function number ", importFunctionIndex, ": ", makeString(import->module), ": ", makeString(import->field));
+        dataLogLnIf(WasmEntryPlanInternal::verbose, "Processing import function number "_s, importFunctionIndex, ": "_s, makeString(import->module), ": "_s, makeString(import->field));
         auto binding = wasmToWasm(importFunctionIndex);
         if (UNLIKELY(!binding)) {
             switch (binding.error()) {

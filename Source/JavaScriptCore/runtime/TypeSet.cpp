@@ -401,7 +401,7 @@ String StructureShape::stringRepresentation()
     representation.append('{');
     while (curShape) {
         for (auto& field : curShape->m_fields)
-            representation.append(StringView { field.get() }, ", ");
+            representation.append(StringView { field.get() }, ", "_s);
         if (curShape->m_proto)
             representation.append("__proto__ ["_s, curShape->m_proto->m_constructorName, "], "_s);
         curShape = curShape->m_proto;

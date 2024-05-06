@@ -60,7 +60,7 @@ JSC_DEFINE_HOST_FUNCTION(constructWithShadowRealmConstructor, (JSGlobalObject* g
 JSC_DEFINE_HOST_FUNCTION(callShadowRealm, (JSGlobalObject* globalObject, CallFrame*))
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "ShadowRealm"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "ShadowRealm"_s));
 }
 
 } // namespace JSC

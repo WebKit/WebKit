@@ -239,7 +239,7 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
                 functionName = "(unknown)"_s;
 
             StringBuilder callFrameBuilder;
-            callFrameBuilder.append(i, ": ", functionName, '(');
+            callFrameBuilder.append(i, ": "_s, functionName, '(');
             appendURLAndPosition(callFrameBuilder, callFrame.sourceURL(), callFrame.lineNumber(), callFrame.columnNumber());
             callFrameBuilder.append(')');
 

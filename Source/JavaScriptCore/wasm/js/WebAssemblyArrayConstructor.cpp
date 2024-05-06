@@ -51,7 +51,7 @@ JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyArray, (JSGlobalObject* globalObject, 
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "WebAssembly.Array"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "WebAssembly.Array"_s));
 }
 
 WebAssemblyArrayConstructor* WebAssemblyArrayConstructor::create(VM& vm, Structure* structure, WebAssemblyArrayPrototype* thisPrototype)

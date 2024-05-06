@@ -173,7 +173,7 @@ JSString* FunctionExecutable::toStringSlow(JSGlobalObject* globalObject)
     };
 
     if (isBuiltinFunction())
-        return cacheIfNoException(jsMakeNontrivialString(globalObject, "function ", name().string(), "() {\n    [native code]\n}"));
+        return cacheIfNoException(jsMakeNontrivialString(globalObject, "function "_s, name().string(), "() {\n    [native code]\n}"_s));
 
     if (isClass())
         return cache(jsString(vm, classSource().view()));

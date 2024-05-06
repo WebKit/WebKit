@@ -48,7 +48,7 @@ struct TemplateTypes {
 
     static void appendNameTo(StringBuilder& builder)
     {
-        builder.append(toString(TT), ", ");
+        builder.append(toString(TT), ", "_s);
         TemplateTypes<TTs...>::appendNameTo(builder);
     }
 };
@@ -825,7 +825,7 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&&
         PARSE(member, StructureMember);
         auto result = seenMembers.add(member.get().name());
         if (!result.isNewEntry)
-            FAIL(makeString("duplicate member '", member.get().name(), "' in struct '", name, "'"));
+            FAIL(makeString("duplicate member '"_s, member.get().name(), "' in struct '"_s, name, '\''));
         members.append(member);
         if (current().type == TokenType::Comma)
             consume();
@@ -834,7 +834,7 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&&
     }
 
     if (members.isEmpty())
-        FAIL(makeString("structures must have at least one member"));
+        FAIL("structures must have at least one member"_str);
 
     CONSUME_TYPE(BraceRight);
 

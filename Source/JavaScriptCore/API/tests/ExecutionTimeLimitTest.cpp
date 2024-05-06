@@ -501,10 +501,10 @@ int testExecutionTimeLimit()
                     "var startTime = currentCPUTime();"
                     "while (true) {"
                         "for (var i = 0; i < 1000; i++);"
-                            "if (currentCPUTime() - startTime > ", timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
+                            "if (currentCPUTime() - startTime > "_s, timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
                     "}"
                 "}"
-                "foo();"
+                "foo();"_s
             ).utf8();
 
             JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());

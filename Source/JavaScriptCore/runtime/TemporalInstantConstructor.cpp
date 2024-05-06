@@ -108,7 +108,7 @@ JSC_DEFINE_HOST_FUNCTION(callTemporalInstant, (JSGlobalObject* globalObject, Cal
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "Instant"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "Instant"_s));
 }
 
 JSC_DEFINE_HOST_FUNCTION(temporalInstantConstructorFuncFrom, (JSGlobalObject* globalObject, CallFrame* callFrame))

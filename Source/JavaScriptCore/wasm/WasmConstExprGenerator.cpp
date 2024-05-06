@@ -314,11 +314,11 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
 
         if (m_mode == Mode::Evaluate) {
             result = createNewArray(typeIndex, static_cast<uint32_t>(size.getValue()), value);
-            WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array");
+            WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array"_s);
         }
 
         return { };
@@ -326,7 +326,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
 
         if (m_mode == Mode::Evaluate) {
             Ref<TypeDefinition> typeDef = m_info.typeSignatures[typeIndex];
@@ -338,7 +338,7 @@ public:
             if (elementType == Wasm::Types::V128)
                 initValue = { vectorAllZeros() };
             result = createNewArray(typeIndex, static_cast<uint32_t>(size.getValue()), initValue);
-            WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array");
+            WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array"_s);
         }
 
         return { };
@@ -346,19 +346,19 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
 
         if (m_mode == Mode::Evaluate) {
             auto* arrayType = m_info.typeSignatures[typeIndex]->expand().as<ArrayType>();
             if (arrayType->elementType().type.unpacked().isV128()) {
                 result = createNewArray(typeIndex, args.size(), { vectorAllZeros() });
-                WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array");
+                WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array"_s);
                 JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(JSValue::decode(result.getValue()));
                 for (size_t i = 0; i < args.size(); i++)
                     arrayObject->set(i, args[i].getVector());
             } else {
                 result = createNewArray(typeIndex, args.size(), { });
-                WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array");
+                WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array"_s);
                 JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(JSValue::decode(result.getValue()));
                 for (size_t i = 0; i < args.size(); i++)
                     arrayObject->set(i, args[i].getValue());
@@ -390,11 +390,11 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t typeIndex, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
 
         if (m_mode == Mode::Evaluate) {
             result = createNewStruct(typeIndex);
-            WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new struct");
+            WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new struct"_s);
         }
 
         return { };
@@ -402,11 +402,11 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
 
         if (m_mode == Mode::Evaluate) {
             result = createNewStruct(typeIndex);
-            WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new struct");
+            WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new struct"_s);
             JSWebAssemblyStruct* structObject = jsCast<JSWebAssemblyStruct*>(JSValue::decode(result.getValue()));
             for (size_t i = 0; i < args.size(); i++) {
                 if (args[i].type() == ConstExprValue::Vector)
@@ -426,7 +426,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addAnyConvertExtern(ExpressionType reference, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
         if (m_mode == Mode::Evaluate) {
             if (reference.type() == ConstExprValue::Numeric)
                 result = ConstExprValue(externInternalize(reference.getValue()));
@@ -441,7 +441,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addExternConvertAny(ExpressionType reference, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
         result = reference;
         return { };
     }

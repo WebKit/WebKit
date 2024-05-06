@@ -67,19 +67,19 @@ void FunctionConstructor::finishCreation(VM& vm, FunctionPrototype* functionProt
 
 static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, FunctionConstructionMode functionConstructionMode, ThrowScope& scope, std::optional<int>& functionConstructorParametersEndPosition)
 {
-    const char* prefix = nullptr;
+    ASCIILiteral prefix;
     switch (functionConstructionMode) {
     case FunctionConstructionMode::Function:
-        prefix = "function ";
+        prefix = "function "_s;
         break;
     case FunctionConstructionMode::Generator:
-        prefix = "function* ";
+        prefix = "function* "_s;
         break;
     case FunctionConstructionMode::Async:
-        prefix = "async function ";
+        prefix = "async function "_s;
         break;
     case FunctionConstructionMode::AsyncGenerator:
-        prefix = "async function* ";
+        prefix = "async function* "_s;
         break;
     }
 
