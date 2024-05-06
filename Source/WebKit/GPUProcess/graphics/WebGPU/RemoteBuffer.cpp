@@ -71,10 +71,11 @@ void RemoteBuffer::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore:
 
 void RemoteBuffer::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
 {
-    auto mappedRange = m_backing->getMappedRange(offset, size);
-    m_isMapped = true;
+    m_backing->getMappedRange(offset, size, [&] (auto mappedRange) {
+        m_isMapped = true;
 
-    callback(Vector(std::span { static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength }));
+        callback(Vector(std::span { static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength }));
+    });
 }
 
 void RemoteBuffer::unmap()

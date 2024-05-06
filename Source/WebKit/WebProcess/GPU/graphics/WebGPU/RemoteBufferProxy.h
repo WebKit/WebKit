@@ -79,7 +79,7 @@ private:
     }
 
     void mapAsync(WebCore::WebGPU::MapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> sizeForMap, CompletionHandler<void(bool)>&&) final;
-    MappedRange getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64>) final;
+    void getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64>, Function<void(MappedRange)>&&) final;
     MappedRange getBufferContents() final;
     void unmap() final;
     void copy(Vector<uint8_t>&&, size_t offset) final;

@@ -171,16 +171,23 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(std::optional<GPUSi
         m_mappedRanges.compact();
     }
 
-    auto mappedRange = m_backing->getMappedRange(offset, size);
-    if (!mappedRange.source) {
-        m_arrayBuffers.clear();
-        if (m_mappedAtCreation || !size)
-            return makeArrayBuffer(static_cast<size_t>(0U), 0, 1, m_arrayBuffers, m_device, *this);
+    RefPtr<JSC::ArrayBuffer> result;
+    m_backing->getMappedRange(offset, size, [&] (auto mappedRange) {
+        if (!mappedRange.source) {
+            m_arrayBuffers.clear();
+            if (m_mappedAtCreation || !size)
+                result = makeArrayBuffer(static_cast<size_t>(0U), 0, 1, m_arrayBuffers, m_device, *this);
 
+            return;
+        }
+
+        result = makeArrayBuffer(mappedRange.source, offset, size, m_arrayBuffers, m_device, *this);
+    });
+
+    if (!result)
         return Exception { ExceptionCode::OperationError, "getMappedRange failed"_s };
-    }
 
-    return makeArrayBuffer(mappedRange.source, offset, size, m_arrayBuffers, m_device, *this);
+    return result.releaseNonNull();
 }
 
 void GPUBuffer::unmap(ScriptExecutionContext& scriptExecutionContext)

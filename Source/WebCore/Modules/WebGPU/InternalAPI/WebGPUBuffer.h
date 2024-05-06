@@ -54,7 +54,7 @@ public:
         uint8_t* source { nullptr };
         size_t byteLength { 0 };
     };
-    virtual MappedRange getMappedRange(Size64 offset, std::optional<Size64>) = 0;
+    virtual void getMappedRange(Size64 offset, std::optional<Size64>, Function<void(MappedRange)>&&) = 0;
     virtual void unmap() = 0;
 
     virtual void destroy() = 0;

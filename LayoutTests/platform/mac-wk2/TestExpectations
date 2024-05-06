@@ -1783,15 +1783,16 @@ webkit.org/b/263396 css3/color/text.html [ Skip ]
 
 # WebGPU
 
-[ Release ] http/tests/webgpu/webgpu/api/operation/buffers/map.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/buffers/map.html [ Pass ]
+# skipped debug due to https://bugs.webkit.org/show_bug.cgi?id=273716
 [ Release ] http/tests/webgpu/webgpu/api/operation/buffers/map_ArrayBuffer.html [ Pass ]
-[ Release ] http/tests/webgpu/webgpu/api/operation/buffers/map_detach.html [ Pass ]
-[ Release ] http/tests/webgpu/webgpu/api/operation/buffers/map_oom.html [ Pass ]
-[ Release ] http/tests/webgpu/webgpu/api/operation/buffers/threading.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/buffers/map_detach.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/buffers/map_oom.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/buffers/threading.html [ Pass ]
 
-[ Release ] http/tests/webgpu/webgpu/api/validation/buffer/create.html [ Pass ]
-[ Release ] http/tests/webgpu/webgpu/api/validation/buffer/destroy.html [ Pass ]
-[ Release ] http/tests/webgpu/webgpu/api/validation/buffer/mapping.html [ Pass ]
+http/tests/webgpu/webgpu/api/validation/buffer/create.html [ Pass ]
+http/tests/webgpu/webgpu/api/validation/buffer/destroy.html [ Pass ]
+http/tests/webgpu/webgpu/api/validation/buffer/mapping.html [ Pass ]
 
 # Skip tests until they can be validated to consistently pass in EWS
 http/tests/webgpu/webgpu/idl/constructable.html [ Skip ]
