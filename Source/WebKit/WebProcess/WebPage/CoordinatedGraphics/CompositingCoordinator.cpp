@@ -216,7 +216,7 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
     }
 #if HAVE(DISPLAY_LINK)
     else
-        m_client.updateScene();
+        m_client.commitSceneState(nullptr);
 #endif
 
     m_page.didUpdateRendering();
