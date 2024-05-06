@@ -118,3 +118,13 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 }
 }
+
+namespace WTF {
+
+template<>
+struct VectorTraits<WebCore::Layout::InlineItem> : public VectorTraitsBase<false, void> {
+    static constexpr bool canCopyWithMemcpy = true;
+    static constexpr bool canMoveWithMemcpy = true;
+};
+
+}

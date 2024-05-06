@@ -709,9 +709,9 @@ bool InlineItemsBuilder::buildInlineItemListForTextFromBreakingPositionsCache(co
     ASSERT(contentLength);
 
     inlineItemList.reserveCapacity(inlineItemList.size() + breakingPositions->size());
-    for (size_t index = 0; index < breakingPositions->size(); ++index) {
-        auto startPosition = index ? (*breakingPositions)[index - 1] : 0;
-        auto endPosition = (*breakingPositions)[index];
+    size_t previousPosition = 0;
+    for (auto endPosition : *breakingPositions) {
+        auto startPosition = std::exchange(previousPosition, endPosition);
         if (endPosition > contentLength || startPosition >= endPosition) {
             ASSERT_NOT_REACHED();
             if (inlineItemList.size() > intialSize) {
@@ -886,6 +886,16 @@ void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inl
     if (inlineItemList.size() < TextBreakingPositionCache::minimumRequiredContentBreaks)
         return;
 
+    auto inlineTextBoxContentSpan = [](const InlineItemList& inlineItemList, size_t index, const InlineTextBox* inlineTextBox) ALWAYS_INLINE_LAMBDA {
+        size_t length = 0;
+        for (auto& item : inlineItemList.subspan(index)) {
+            if (&item.layoutBox() != inlineTextBox)
+                break;
+            ++length;
+        }
+        return inlineItemList.subspan(index, length);
+    };
+
     // Preserve breaking positions across content mutation.
     auto& securityOrigin = document.securityOrigin();
     auto& breakingPositionCache = TextBreakingPositionCache::singleton();
@@ -897,17 +907,30 @@ void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inl
             continue;
         }
 
-        auto& style = inlineTextBox->style();
+        auto span = inlineTextBoxContentSpan(inlineItemList, index, inlineTextBox);
+        if (span.size() < TextBreakingPositionCache::minimumRequiredContentBreaks) {
+            // Inline text box content's span is too short.
+            index += span.size();
+            continue;
+        }
+
         auto isInlineTextBoxEligibleForBreakingPositionCache = inlineTextBox->content().length() >= TextBreakingPositionCache::minimumRequiredTextLengthForContentBreakCache;
-        if (!isInlineTextBoxEligibleForBreakingPositionCache || breakingPositionCache.get({ inlineTextBox->content(), { style }, securityOrigin.data() })) {
-            // Jump to the end of this inline text box content.
-            for (; index < inlineItemList.size() && &inlineItemList[index].layoutBox() == inlineTextBox; ++index) { };
+        if (!isInlineTextBoxEligibleForBreakingPositionCache) {
+            // Text is too short.
+            index += span.size();
+            continue;
+        }
+
+        TextBreakingPositionContext context { inlineTextBox->style() };
+        if (breakingPositionCache.get({ inlineTextBox->content(), context, securityOrigin.data() })) {
+            // Cache is already populated.
+            index += span.size();
             continue;
         }
 
         TextBreakingPositionCache::List breakingPositionList;
-        for (; index < inlineItemList.size() && &inlineItemList[index].layoutBox() == inlineTextBox; ++index) {
-            auto& inlineItem = inlineItemList[index];
+        breakingPositionList.reserveInitialCapacity(span.size());
+        for (auto& inlineItem : span) {
             if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem))
                 breakingPositionList.append(inlineTextItem->end());
             else if (auto* softLineBreakItem = dynamicDowncast<InlineSoftLineBreakItem>(inlineItem))
@@ -918,9 +941,11 @@ void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inl
                 break;
             }
         }
+
         ASSERT(!breakingPositionList.isEmpty());
         if (breakingPositionList.size() >= TextBreakingPositionCache::minimumRequiredContentBreaks)
-            breakingPositionCache.set({ inlineTextBox->content(), { style }, securityOrigin.data() }, WTFMove(breakingPositionList));
+            breakingPositionCache.set({ inlineTextBox->content(), context, securityOrigin.data() }, WTFMove(breakingPositionList));
+        index += span.size();
     }
 }
 
