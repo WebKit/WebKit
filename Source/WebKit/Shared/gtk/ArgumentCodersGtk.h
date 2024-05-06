@@ -37,14 +37,14 @@ class SelectionData;
 
 namespace IPC {
 
-template<> struct ArgumentCoder<GRefPtr<GtkPrintSettings>> {
-    static void encode(Encoder&, const GRefPtr<GtkPrintSettings>&);
-    static std::optional<GRefPtr<GtkPrintSettings>> decode(Decoder&);
+template<> struct ArgumentCoder<GtkPrintSettings*> {
+    static void encode(Encoder&, GtkPrintSettings*);
+    static std::optional<GtkPrintSettings*> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<GRefPtr<GtkPageSetup>> {
-    static void encode(Encoder&, const GRefPtr<GtkPageSetup>&);
-    static std::optional<GRefPtr<GtkPageSetup>> decode(Decoder&);
+template<> struct ArgumentCoder<GtkPageSetup*> {
+    static void encode(Encoder&, GtkPageSetup*);
+    static std::optional<GtkPageSetup*> decode(Decoder&);
 };
 
 } // namespace IPC

@@ -35,19 +35,19 @@ typedef struct _GVariant GVariant;
 
 namespace IPC {
 
-template<> struct ArgumentCoder<GRefPtr<GByteArray>> {
-    static void encode(Encoder&, const GRefPtr<GByteArray>&);
-    static std::optional<GRefPtr<GByteArray>> decode(Decoder&);
+template<> struct ArgumentCoder<GByteArray*> {
+    static void encode(Encoder&, GByteArray*);
+    static std::optional<GByteArray*> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<GRefPtr<GVariant>> {
-    static void encode(Encoder&, const GRefPtr<GVariant>&);
-    static std::optional<GRefPtr<GVariant>> decode(Decoder&);
+template<> struct ArgumentCoder<GVariant*> {
+    static void encode(Encoder&, GVariant*);
+    static std::optional<GVariant*> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<GRefPtr<GTlsCertificate>> {
-    static void encode(Encoder&, const GRefPtr<GTlsCertificate>&);
-    static std::optional<GRefPtr<GTlsCertificate>> decode(Decoder&);
+template<> struct ArgumentCoder<GTlsCertificate*> {
+    static void encode(Encoder&, GTlsCertificate*);
+    static std::optional<GTlsCertificate*> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<GTlsCertificateFlags> {
@@ -55,9 +55,9 @@ template<> struct ArgumentCoder<GTlsCertificateFlags> {
     static std::optional<GTlsCertificateFlags> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<GRefPtr<GUnixFDList>> {
-    static void encode(Encoder&, const GRefPtr<GUnixFDList>&);
-    static std::optional<GRefPtr<GUnixFDList>> decode(Decoder&);
+template<> struct ArgumentCoder<GUnixFDList*> {
+    static void encode(Encoder&, GUnixFDList*);
+    static std::optional<GUnixFDList*> decode(Decoder&);
 };
 
 } // namespace IPC

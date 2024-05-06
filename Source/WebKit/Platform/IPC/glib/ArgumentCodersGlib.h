@@ -62,4 +62,29 @@ template<> struct ArgumentCoder<GUniquePtr<char*>> {
     }
 };
 
+template<typename T> struct ArgumentCoder<GRefPtr<T>> {
+    template<typename Encoder, typename U = T>
+    static void encode(Encoder& encoder, const GRefPtr<U>& object)
+    {
+        if (object)
+            encoder << true << object.get();
+        else
+            encoder << false;
+    }
+
+    template<typename Decoder, typename U = T>
+    static std::optional<GRefPtr<U>> decode(Decoder& decoder)
+    {
+        auto hasObject = decoder.template decode<bool>();
+        if (!hasObject)
+            return std::nullopt;
+        if (!*hasObject)
+            return GRefPtr<U> { };
+        auto object = decoder.template decode<U *>();
+        if (!object)
+            return std::nullopt;
+        return adoptGRef(*object);
+    }
+};
+
 } // namespace IPC
