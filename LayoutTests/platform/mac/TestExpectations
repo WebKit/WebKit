@@ -407,7 +407,6 @@ svg/stroke/zero-length-path-linecap-rendering.svg [ Failure ]
 svg/stroke/zero-length-subpaths-linecap-rendering.svg [ Failure ]
 
 webkit.org/b/110871 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
-webkit.org/b/114340 [ Monterey ] compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
 webkit.org/b/146523 compositing/masks/compositing-clip-path-origin.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/95027 fast/block/float/016.html [ Failure ]
@@ -1301,10 +1300,6 @@ webkit.org/b/189483 imported/w3c/web-platform-tests/css/css-fonts/variations/sln
 # <rdar://problem/33731086>
 media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
 
-# Tests which pass on Ventura.
-webkit.org/b/247588 [ Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.serviceworker.html [ Failure ]
-webkit.org/b/247588 [ Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.sharedworker.html [ Failure ]
-
 # Flaky subtests. Sometimes fails with Promise rejection, sometimes fails the assertion.
 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tentative.html [ Pass Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.https.sub.tentative.html [ Pass Failure ]
@@ -2009,16 +2004,8 @@ webkit.org/b/225882 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 webkit.org/b/226050 imported/w3c/web-platform-tests/IndexedDB/blob-valid-before-commit.any.html [ Pass Failure ]
 
-# rdar://78477744 (REGRESSION: [ Monterey ] 3 imported/w3c/web-platform-tests/css/css-text-decor (layout-tests) are constant ImageOnlyFailures)
-[ Monterey ] imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-from-font-variable.html [ Pass ImageOnlyFailure ]
-[ Monterey ] imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-variable.html [ Pass ImageOnlyFailure ]
-[ Monterey ] imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-from-font-variable.html [ Pass ImageOnlyFailure ]
-
 # rdar://80340581 ([ Monterey ] http/tests/preload/onload_event.html is a flaky failure)
 http/tests/preload/onload_event.html [ Pass Failure ]
-
-# rdar://80347712 ([ Monterey ] media/video-src-blob-replay.html is a flaky timeout)
-[ Monterey ] media/video-src-blob-replay.html [ Timeout ]
 
 webkit.org/b/271732 [ Ventura+ ] http/tests/workers/service/openwindow-from-notification-click.html [ Pass Failure Crash ]
 
@@ -2042,14 +2029,10 @@ webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-dynamic-remove-style-detached.html [ Pass Failure Timeout ]
 
-# webkit.org/b/228200 Setting multiple test expectations for Monterey on OpenSource:
-[ Monterey Debug arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html [ Pass Failure Crash ]
-
 webkit.org/b/229291 imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print.html [ Pass ImageOnlyFailure ]
 
-#rdar://82146367 ([Mac, iOS Release] imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html is a flaky failure) imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html [ Pass Failure ]
-
-webkit.org/b/228176 [ Monterey ] fast/text/variable-system-font.html [ Pass ]
+#rdar://82146367 ([Mac, iOS Release] imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html is a flaky failure) 
+imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html [ Pass Failure ]
 
 webkit.org/b/261316 [ Monterey+ ] fast/animation/request-animation-frame-throttling-detached-iframe.html [ Pass Failure ]
 
@@ -2103,20 +2086,13 @@ webkit.org/b/231463 fast/css/accent-color/range.html [ ImageOnlyFailure ]
 [ Monterey+ ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.worker.html [ Pass ]
 
-# Encoder specific behavior that is not covered for Monterey.
-[ Monterey ] http/wpt/webcodecs/encoder-task-failing.html [ Failure ]
-
 webkit.org/b/229521 pointer-lock/lock-already-locked.html [ Pass Failure ]
-
-webkit.org/b/228176 [ Monterey ] fast/text/variable-system-font-2.html [ Pass ]
 
 webkit.org/b/230327 imported/w3c/web-platform-tests/css/css-transforms/crashtests/transform-marquee-resize-div-image-001.html [ Pass Failure ]
 
 webkit.org/b/170629  memory/memory-pressure-simulation.html [ Pass Failure Crash ]
 
 webkit.org/b/239091 http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Pass Failure ]
-
-webkit.org/b/237840 [ Monterey ] webgl/2.0.0/conformance2/glsl3/bool-type-cast-bug-uint-ivec-uvec.html [ Pass Crash ]
 
 webkit.org/b/231924 inspector/css/modify-css-property.html [ Pass Failure ]
 
@@ -2131,17 +2107,10 @@ webkit.org/b/248067 imported/w3c/web-platform-tests/html/canvas/element/manual/i
 platform/mac/plugins/testplugin-onnew-onpaint.html [ Skip ]
 platform/mac/plugins/convert-point.html [ Skip ]
 
-webkit.org/b/226826 [ Monterey ] http/tests/ssl/applepay/ApplePayButton.html [ Failure ]
-
 webkit.org/b/235660 [ Debug ] fast/replaced/encrypted-pdf-as-object-and-embed.html [ Skip ]
 
 # This test is specific to Core Text.
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
-
-# These tests require platform support.
-# <rdar://problem/87944426>
-[ Monterey ] fast/text/locale-shaping-2.html [ Pass ImageOnlyFailure ]
-[ Monterey ] fast/text/locale-shaping-3.html [ Pass ImageOnlyFailure ]
 
 # Was in LayoutTests/Expectations, now only happening on Mac
 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure ]
@@ -2271,11 +2240,6 @@ webkit.org/b/254044 imported/w3c/web-platform-tests/feature-policy/reporting/xr-
 
 webkit.org/b/237415 webgl/1.0.x/conformance/rendering/clipping-wide-points.html [ Pass Failure ]
 
-# These are affected by a CoreText bug that is only fixed in Ventura.
-[ Monterey ] imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-13.html [ Skip ]
-[ Monterey ] imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-14.html [ Skip ]
-[ Monterey ] imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust.html [ Skip ]
-
 # webkit.org/b/255178 [ Ventura iOS arm64 ] 3X imported/w3c/web-platform-tests/css/css-color/parsing (layout-tests) are constant text failures
 [ Ventura x86_64 ] imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Failure ]
 
@@ -2312,14 +2276,6 @@ webkit.org/b/259712 [ Monterey+ ] media/media-source/media-source-paint-after-di
 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Crash ]
 
 webkit.org/b/259190 http/tests/images/heic-as-heif.html [ Pass ImageOnlyFailure ]
-
-# webkit.org/b/259373 Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels
-[ Monterey ] imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/mrow-fallback.html [ Pass Failure ]
-[ Monterey ] imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-002.html [ Pass Failure ]
-[ Monterey ] imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-003.html [ Pass Failure ]
-[ Monterey ] imported/w3c/web-platform-tests/mathml/relations/css-styling/floats/not-floating-001.html [ Pass Failure ]
-[ Monterey ] imported/w3c/web-platform-tests/mathml/relations/css-styling/width-height-001.html [ Pass Failure ]
-[ Monterey ] imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Pass Failure ]
 
 webkit.org/b/260224 [ Ventura+ ] compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
 webkit.org/b/260224 [ Ventura+ ] compositing/overlap-blending/opacity-and-infinity.html [ ImageOnlyFailure ]
@@ -2401,15 +2357,6 @@ webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ P
 [ Monterey+ ] imported/w3c/web-platform-tests/css/css-writing-modes/forms/text-input-vertical-overflow-no-scroll.html [ Pass Failure Timeout ]
 [ Monterey+ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/javascript-url-return-value-handling-dynamic.html [ Pass Failure ]
 
-webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/3d-rendering-context-and-z-ordering-001.html [ ImageOnlyFailure ]
-webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-006.html [ ImageOnlyFailure ]
-webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-003.html [ ImageOnlyFailure ]
-webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-scale-004.html [ ImageOnlyFailure ]
-webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-no-perspective.html [ ImageOnlyFailure ]
-[ Monterey ] imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-incoming.html [ ImageOnlyFailure ]
-[ Monterey ] imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-outgoing.html [ ImageOnlyFailure ]
-[ Monterey ] imported/w3c/web-platform-tests/css/css-view-transitions/element-is-grouping-during-animation.html [ ImageOnlyFailure ]
-
 webkit.org/b/261911 media/media-source/media-managedmse-seek.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/261958 [ Release ] inspector/console/timestamp.html [ Pass Failure ]
@@ -2480,8 +2427,6 @@ imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2
 webkit.org/b/266996 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ ImageOnlyFailure ]
 
 fast/gradients/conic-stop-with-offset-zero-in-middle.html [ ImageOnlyFailure ]
-
-webkit.org/b/267352 [ Monterey ] imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003.html [ Failure ]
 
 # Requires (ACCESSIBILITY_NON_BLINKING_CURSOR)
 accessibility/mac/prefers-non-blinking-cursor.html [ Skip ]
