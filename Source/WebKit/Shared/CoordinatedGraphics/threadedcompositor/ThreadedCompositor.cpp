@@ -103,7 +103,7 @@ ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMon
         m_display.updateTimer->startOneShot(Seconds { 1.0 / m_display.displayUpdate.updatesPerSecond });
 #endif
 
-        m_scene = adoptRef(new CoordinatedGraphicsScene(this));
+        m_scene = adoptRef(new CoordinatedGraphicsScene(this, m_client.settings().propagateDamagingInformation()));
         m_nativeSurfaceHandle = m_client.nativeSurfaceHandleForCompositing();
 
         createGLContext();
@@ -277,10 +277,22 @@ void ThreadedCompositor::renderLayerTree()
     m_scene->applyStateChanges(states);
     m_scene->paintToCurrentGLContext(viewportTransform, FloatRect { FloatPoint { }, viewportSize }, m_flipY);
 
-    m_context->swapBuffers();
+    WebCore::Damage boundsDamage;
+    const auto& frameDamage = ([this, &boundsDamage]() -> const WebCore::Damage& {
+        const auto& damage = m_scene->lastDamage();
+        if (m_client.settings().propagateDamagingInformation() && !damage.isInvalid()) {
+            if (m_client.settings().unifyDamagedRegions()) {
+                boundsDamage.add(damage.bounds());
+                return boundsDamage;
+            }
+            return damage;
+        }
+        return WebCore::Damage::invalid();
+    })();
 
+    m_context->swapBuffers();
     if (m_scene->isActive())
-        m_client.didRenderFrame(compositionRequestID);
+        m_client.didRenderFrame(compositionRequestID, frameDamage);
 }
 
 void ThreadedCompositor::sceneUpdateFinished()

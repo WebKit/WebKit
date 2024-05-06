@@ -405,6 +405,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/CallbackID.serialization.in
     Shared/ContextMenuContextData.serialization.in
     Shared/CoordinateSystem.serialization.in
+    Shared/Damage.serialization.in
     Shared/DebuggableInfoData.serialization.in
     Shared/DisplayListArgumentCoders.serialization.in
     Shared/DocumentEditingContext.serialization.in

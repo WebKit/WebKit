@@ -41,6 +41,10 @@
 #include "ThreadedDisplayRefreshMonitor.h"
 #endif
 
+namespace WebCore {
+class Damage;
+}
+
 namespace WebKit {
 
 class ThreadedCompositor : public CoordinatedGraphicsSceneClient, public ThreadSafeRefCounted<ThreadedCompositor> {
@@ -49,6 +53,8 @@ class ThreadedCompositor : public CoordinatedGraphicsSceneClient, public ThreadS
 public:
     class Client {
     public:
+        virtual const WebCore::Settings& settings() = 0;
+
         virtual uint64_t nativeSurfaceHandleForCompositing() = 0;
         virtual void didCreateGLContext() = 0;
         virtual void willDestroyGLContext() = 0;
@@ -57,7 +63,7 @@ public:
         virtual void resize(const WebCore::IntSize&) = 0;
         virtual void willRenderFrame() = 0;
         virtual void clearIfNeeded() = 0;
-        virtual void didRenderFrame(uint32_t) = 0;
+        virtual void didRenderFrame(uint32_t, const WebCore::Damage&) = 0;
         virtual void displayDidRefresh(WebCore::PlatformDisplayID) = 0;
     };
 

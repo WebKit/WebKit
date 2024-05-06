@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Igalia S.L.
+# Copyright (C) 2024 Igalia S.L.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,9 +20,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> AcceleratedBackingStoreDMABuf NotRefCounted {
-    DidCreateBuffer(uint64_t id, WebCore::IntSize size, uint32_t format, Vector<UnixFileDescriptor> fds, Vector<uint32_t> offsets, Vector<uint32_t> strides, uint64_t modifier, WebKit::DMABufRendererBufferFormat::Usage usage)
-    DidCreateBufferSHM(uint64_t id, WebCore::ShareableBitmapHandle handle)
-    DidDestroyBuffer(uint64_t id)
-    Frame(uint64_t id, WebCore::Damage damage)
+header: <WebCore/Damage.h>
+
+class WebCore::Damage {
+    bool isInvalid();
+    WebCore::Region region();
 }

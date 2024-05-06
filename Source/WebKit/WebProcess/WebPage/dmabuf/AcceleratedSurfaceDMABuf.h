@@ -44,6 +44,7 @@ struct gbm_bo;
 #endif
 
 namespace WebCore {
+class Damage;
 class ShareableBitmap;
 class ShareableBitmapHandle;
 }
@@ -72,7 +73,7 @@ private:
     void didCreateGLContext() override;
     void willDestroyGLContext() override;
     void willRenderFrame() override;
-    void didRenderFrame() override;
+    void didRenderFrame(const WebCore::Damage&) override;
 
     void didCreateCompositingRunLoop(WTF::RunLoop&) override;
     void willDestroyCompositingRunLoop() override;
@@ -101,7 +102,7 @@ private:
         uint64_t id() const { return m_id; }
 
         virtual void willRenderFrame() const;
-        virtual void didRenderFrame() { };
+        virtual void didRenderFrame() { }
 
     protected:
         RenderTarget(uint64_t, const WebCore::IntSize&);

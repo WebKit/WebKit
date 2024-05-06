@@ -56,7 +56,7 @@ public:
     void initialize() override;
     void finalize() override;
     void willRenderFrame() override;
-    void didRenderFrame() override;
+    void didRenderFrame(const WebCore::Damage&) override;
 
 private:
     AcceleratedSurfaceLibWPE(WebPage&, Client&);

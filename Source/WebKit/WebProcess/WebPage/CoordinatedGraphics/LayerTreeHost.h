@@ -50,6 +50,7 @@
 
 namespace WebCore {
 class CoordinatedGraphicsLayer;
+class Damage;
 class IntRect;
 class IntSize;
 class GraphicsLayer;
@@ -133,6 +134,7 @@ private:
     void frameComplete() override;
 
     // ThreadedCompositor::Client
+    const WebCore::Settings& settings() override;
     uint64_t nativeSurfaceHandleForCompositing() override;
     void didCreateGLContext() override;
     void willDestroyGLContext() override;
@@ -140,7 +142,7 @@ private:
     void resize(const WebCore::IntSize&) override;
     void willRenderFrame() override;
     void clearIfNeeded() override;
-    void didRenderFrame(uint32_t) override;
+    void didRenderFrame(uint32_t, const WebCore::Damage&) override;
     void displayDidRefresh(WebCore::PlatformDisplayID) override;
 
 #if !HAVE(DISPLAY_LINK)
@@ -166,6 +168,7 @@ private:
     bool m_scheduledWhileWaitingForRenderer { false };
     float m_lastPageScaleFactor { 1 };
     WebCore::IntPoint m_lastScrollPosition;
+    bool m_scrolledSinceLastFrame { false };
     WebCore::GraphicsLayer* m_viewOverlayRootLayer { nullptr };
     std::unique_ptr<AcceleratedSurface> m_surface;
     RefPtr<ThreadedCompositor> m_compositor;

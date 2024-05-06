@@ -94,7 +94,7 @@ static void wpeViewHeadlessDispose(GObject* object)
     G_OBJECT_CLASS(wpe_view_headless_parent_class)->dispose(object);
 }
 
-static gboolean wpeViewHeadlessRenderBuffer(WPEView* view, WPEBuffer* buffer, GError**)
+static gboolean wpeViewHeadlessRenderBuffer(WPEView* view, WPEBuffer* buffer, const WPERectangle*, guint, GError**)
 {
     auto* priv = WPE_VIEW_HEADLESS(view)->priv;
     priv->pendingBuffer = buffer;
