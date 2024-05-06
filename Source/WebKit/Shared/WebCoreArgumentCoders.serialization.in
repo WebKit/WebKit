@@ -2467,15 +2467,6 @@ enum class WebCore::PixelFormat : uint8_t {
     RGB10A8,
 };
 
-enum class WebCore::PixelFormatValidated : uint8_t {
-    BGRX8,
-    BGRA8,
-#if HAVE(IOSURFACE_RGB10)
-    RGB10,
-    RGB10A8,
-#endif
-};
-
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PixelBufferFormat {
     WebCore::AlphaPremultiplication alphaFormat;
     WebCore::PixelFormat pixelFormat;
@@ -4565,7 +4556,7 @@ header: <WebCore/ImageBuffer.h>
     WebCore::FloatSize logicalSize;
     float resolutionScale;
     WebCore::DestinationColorSpace colorSpace
-    WebCore::PixelFormatValidated pixelFormatValidated;
+    WebCore::PixelFormat pixelFormat;
     WebCore::RenderingPurpose purpose;
 };
 
