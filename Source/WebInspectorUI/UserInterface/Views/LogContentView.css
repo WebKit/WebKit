@@ -138,6 +138,7 @@
     outline: none;
     overflow-x: hidden;
     overflow-y: auto;
+    will-change: z-index; /* Workaround for <rdar://125601926> - Content renders on top of the scroll bar */
 }
 
 .console-messages > :first-child {
