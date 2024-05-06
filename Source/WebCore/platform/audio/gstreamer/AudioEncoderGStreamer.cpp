@@ -185,7 +185,7 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::Descr
     , m_encoder(WTFMove(encoderElement))
 {
     static Atomic<uint64_t> counter = 0;
-    auto binName = makeString("audio-encoder-"_s, GST_OBJECT_NAME(m_encoder.get()), '-', counter.exchangeAdd(1));
+    auto binName = makeString("audio-encoder-"_s, span(GST_OBJECT_NAME(m_encoder.get())), '-', counter.exchangeAdd(1));
 
     GRefPtr<GstElement> harnessedElement = gst_bin_new(binName.ascii().data());
     auto audioconvert = gst_element_factory_make("audioconvert", nullptr);

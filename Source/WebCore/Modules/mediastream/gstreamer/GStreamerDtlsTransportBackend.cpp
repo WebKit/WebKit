@@ -73,17 +73,11 @@ void GStreamerDtlsTransportBackendObserver::stateChanged()
             GUniqueOutPtr<char> certificate;
             g_object_get(m_backend.get(), "remote-certificate", &remoteCertificate.outPtr(), "certificate", &certificate.outPtr(), nullptr);
 
-            if (remoteCertificate) {
-                auto remoteCertificateString = makeString(remoteCertificate.get());
-                auto jsRemoteCertificate = JSC::ArrayBuffer::create(remoteCertificateString.span8());
-                certificates.append(WTFMove(jsRemoteCertificate));
-            }
+            if (remoteCertificate)
+                certificates.append(JSC::ArrayBuffer::create(span8(remoteCertificate.get())));
 
-            if (certificate) {
-                auto certificateString = makeString(certificate.get());
-                auto jsCertificate = JSC::ArrayBuffer::create(certificateString.span8());
-                certificates.append(WTFMove(jsCertificate));
-            }
+            if (certificate)
+                certificates.append(JSC::ArrayBuffer::create(span8(certificate.get())));
         }
         m_client->onStateChanged(toRTCDtlsTransportState(state), WTFMove(certificates));
     });

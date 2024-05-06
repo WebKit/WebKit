@@ -521,7 +521,7 @@ void MermaidBuilder::process(GStreamerElementHarness& harness, bool generateFoot
     for (auto& outputStream : harness.outputStreams()) {
         auto pad = outputStream->targetPad();
         auto padId = generatePadId(harness, pad.get());
-        m_stringBuilder.append("subgraph "_s, padId, " [", GST_PAD_NAME(pad.get()), "]\n");
+        m_stringBuilder.append("subgraph "_s, padId, " ["_s, span(GST_PAD_NAME(pad.get())), "]\n"_s);
         m_stringBuilder.append("end\n"_s);
 
         auto downstreamHarness = outputStream->downstreamHarness();
@@ -557,7 +557,7 @@ void MermaidBuilder::dumpPad(GStreamerElementHarness& harness, GstPad* pad)
 {
     if (!pad)
         pad = harness.inputPad();
-    m_stringBuilder.append("subgraph "_s, generatePadId(harness, pad), " ["_s, GST_PAD_NAME(pad), "]\n"_s);
+    m_stringBuilder.append("subgraph "_s, generatePadId(harness, pad), " ["_s, span(GST_PAD_NAME(pad)), "]\n"_s);
 
     if (gst_pad_is_linked(pad)) {
         auto peerPad = adoptGRef(gst_pad_get_peer(pad));
@@ -588,9 +588,9 @@ void MermaidBuilder::dumpElement(GStreamerElementHarness& harness, GstElement* e
 {
     if (!element)
         element= harness.element();
-    auto elementId = makeString(GST_ELEMENT_NAME(element), '_', m_elementCounter);
+    auto elementId = makeString(span(GST_ELEMENT_NAME(element)), '_', m_elementCounter);
     m_elementCounter++;
-    m_stringBuilder.append("subgraph "_s, elementId, " [<center>"_s, G_OBJECT_TYPE_NAME(element), "\\n<small>"_s, GST_ELEMENT_NAME(element), "]\n"_s);
+    m_stringBuilder.append("subgraph "_s, elementId, " [<center>"_s, span(G_OBJECT_TYPE_NAME(element)), "\\n<small>"_s, span(GST_ELEMENT_NAME(element)), "]\n"_s);
 
     if (GST_IS_BIN(element)) {
         for (auto element : GstIteratorAdaptor<GstElement>(GUniquePtr<GstIterator>(gst_bin_iterate_recurse(GST_BIN_CAST(element)))))
@@ -639,7 +639,7 @@ String MermaidBuilder::describeCaps(const GRefPtr<GstCaps>& caps)
         builder.append(gst_structure_get_name(structure), "<br/>"_s);
         if (features && (gst_caps_features_is_any(features) || !gst_caps_features_is_equal(features, GST_CAPS_FEATURES_MEMORY_SYSTEM_MEMORY))) {
             GUniquePtr<char> serializedFeature(gst_caps_features_to_string(features));
-            builder.append('(', serializedFeature.get(), ')');
+            builder.append('(', span(serializedFeature.get()), ')');
         }
 
         gst_structure_foreach(structure, [](GQuark field, const GValue* value, gpointer builderPointer) -> gboolean {

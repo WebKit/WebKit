@@ -174,7 +174,7 @@ bool GStreamerMediaEndpoint::initializePipeline()
         GstWebRTCPeerConnectionState state;
         g_object_get(webrtcBin, "connection-state", &state, nullptr);
         GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_PEER_CONNECTION_STATE, state));
-        auto dotFilename = makeString(GST_ELEMENT_NAME(endPoint->pipeline()), '-', desc.get());
+        auto dotFilename = makeString(span(GST_ELEMENT_NAME(endPoint->pipeline())), '-', span(desc.get()));
         GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(endPoint->pipeline()), GST_DEBUG_GRAPH_SHOW_ALL, dotFilename.ascii().data());
     }), this);
 #endif
@@ -388,7 +388,7 @@ void GStreamerMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
                 if (reply) {
                     GUniqueOutPtr<GError> error;
                     gst_structure_get(reply, "error", G_TYPE_ERROR, &error.outPtr(), nullptr);
-                    auto errorMessage = makeString("Unable to set local description, error: %s", error->message);
+                    auto errorMessage = makeString("Unable to set local description, error: "_s, span(error->message));
                     GST_ERROR_OBJECT(m_webrtcBin.get(), "%s", errorMessage.utf8().data());
                     m_peerConnectionBackend.setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, WTFMove(errorMessage) });
                     return;
@@ -400,7 +400,7 @@ void GStreamerMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
             GUniqueOutPtr<GstWebRTCSessionDescription> sessionDescription;
             gst_structure_get(reply, "offer", GST_TYPE_WEBRTC_SESSION_DESCRIPTION, &sessionDescription.outPtr(), nullptr);
             GUniquePtr<char> sdp(gst_sdp_message_as_text(sessionDescription->sdp));
-            initialDescription = RTCSessionDescription::create(RTCSdpType::Offer, makeString(sdp.get()));
+            initialDescription = RTCSessionDescription::create(RTCSdpType::Offer, span(sdp.get()));
             break;
         }
         case GST_WEBRTC_SIGNALING_STATE_HAVE_LOCAL_PRANSWER:
@@ -412,7 +412,7 @@ void GStreamerMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
                 if (reply) {
                     GUniqueOutPtr<GError> error;
                     gst_structure_get(reply, "error", G_TYPE_ERROR, &error.outPtr(), nullptr);
-                    auto errorMessage = makeString("Unable to set local description, error: %s", error->message);
+                    auto errorMessage = makeString("Unable to set local description, error: "_s, span(error->message));
                     GST_ERROR_OBJECT(m_webrtcBin.get(), "%s", errorMessage.utf8().data());
                     m_peerConnectionBackend.setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, WTFMove(errorMessage) });
                     return;
@@ -424,7 +424,7 @@ void GStreamerMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
             GUniqueOutPtr<GstWebRTCSessionDescription> sessionDescription;
             gst_structure_get(reply, "answer", GST_TYPE_WEBRTC_SESSION_DESCRIPTION, &sessionDescription.outPtr(), nullptr);
             GUniquePtr<char> sdp(gst_sdp_message_as_text(sessionDescription->sdp));
-            initialDescription = RTCSessionDescription::create(RTCSdpType::Answer, makeString(sdp.get()));
+            initialDescription = RTCSessionDescription::create(RTCSdpType::Answer, span(sdp.get()));
             break;
         }
         case GST_WEBRTC_SIGNALING_STATE_CLOSED:
@@ -708,7 +708,7 @@ void GStreamerMediaEndpoint::configureAndLinkSource(RealtimeOutgoingMediaSourceG
 
 #ifndef GST_DISABLE_GST_DEBUG
     GUniquePtr<char> padName(gst_pad_get_name(sinkPad.get()));
-    auto dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), ".outgoing-"_s, padName.get());
+    auto dotFileName = makeString(span(GST_OBJECT_NAME(m_pipeline.get())), ".outgoing-"_s, span(padName.get()));
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
 #endif
 }
@@ -1014,7 +1014,7 @@ void GStreamerMediaEndpoint::connectIncomingTrack(WebRTCTrackData& data)
     gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING);
 
 #ifndef GST_DISABLE_GST_DEBUG
-    auto dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), ".connected-"_s, data.mediaStreamId);
+    auto dotFileName = makeString(span(GST_OBJECT_NAME(m_pipeline.get())), ".connected-"_s, data.mediaStreamId);
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
 #endif
 }
@@ -1035,7 +1035,7 @@ void GStreamerMediaEndpoint::connectPad(GstPad* pad)
     gst_element_sync_state_with_parent(bin);
 
 #ifndef GST_DISABLE_GST_DEBUG
-    auto dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), ".pending-"_s, GST_OBJECT_NAME(pad));
+    auto dotFileName = makeString(span(GST_OBJECT_NAME(m_pipeline.get())), ".pending-"_s, span(GST_OBJECT_NAME(pad)));
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
 #endif
 }
@@ -1490,13 +1490,13 @@ void GStreamerMediaEndpoint::onIceCandidate(guint sdpMLineIndex, gchararray cand
     if (isStopped())
         return;
 
-    auto candidateString = makeString(candidate);
+    String candidateString = span(candidate);
 
     // webrtcbin notifies an empty ICE candidate when gathering is complete.
     if (candidateString.isEmpty())
         return;
 
-    callOnMainThread([protectedThis = Ref(*this), this, sdp = WTFMove(candidateString), sdpMLineIndex]() mutable {
+    callOnMainThread([protectedThis = Ref(*this), this, sdp = WTFMove(candidateString).isolatedCopy(), sdpMLineIndex]() mutable {
         if (isStopped())
             return;
 
@@ -1725,7 +1725,7 @@ std::optional<bool> GStreamerMediaEndpoint::canTrickleIceCandidates() const
         if (g_strcmp0(attribute->key, "ice-options"))
             continue;
 
-        auto values = makeString(attribute->value).split(' ');
+        auto values = makeString(span(attribute->value)).split(' ');
         if (values.contains("trickle"_s))
             return true;
     }

@@ -128,7 +128,7 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
 #if GST_CHECK_VERSION(1, 20, 0)
     GUniquePtr<char> mimeCodec(gst_codec_utils_caps_get_mime_codec(caps.get()));
     if (mimeCodec)
-        configuration.codec = makeString(mimeCodec.get());
+        configuration.codec = span(mimeCodec.get());
 #endif
 
     if (areEncryptedCaps(caps.get())) {
