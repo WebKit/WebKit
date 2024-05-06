@@ -329,6 +329,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case GetWebAssemblyInstanceExports:
     case NumberIsNaN:
     case StringIndexOf:
+    case StringToArrayIndex:
         return true;
 
     case GlobalIsNaN:

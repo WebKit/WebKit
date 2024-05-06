@@ -469,6 +469,7 @@ namespace JSC { namespace DFG {
     macro(FunctionBind, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(MakeRope, NodeResultJS) \
     macro(MakeAtomString, NodeResultJS) \
+    macro(StringToArrayIndex, NodeResultJS) \
     macro(InByVal, NodeResultBoolean | NodeMustGenerate) \
     macro(InByValMegamorphic, NodeResultBoolean | NodeMustGenerate) \
     macro(InById, NodeResultBoolean | NodeMustGenerate) \

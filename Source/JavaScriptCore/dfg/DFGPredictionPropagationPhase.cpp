@@ -740,6 +740,13 @@ private:
             break;
         }
 
+        case StringToArrayIndex: {
+            SpeculatedType child = node->child1()->prediction();
+            if (child)
+                changed |= mergePrediction(resultOfToStringToArrayIndex(child, node->getAdditionalPrediction()));
+            break;
+        }
+
         case NormalizeMapKey: {
             SpeculatedType prediction = node->child1()->prediction();
             if (prediction)
@@ -1494,9 +1501,10 @@ private:
         case ArithAbs:
         case GetByVal:
         case ToThis:
-        case ToPrimitive: 
+        case ToPrimitive:
         case ToPropertyKey:
         case ToPropertyKeyOrNumber:
+        case StringToArrayIndex:
         case NormalizeMapKey:
         case AtomicsAdd:
         case AtomicsAnd:
@@ -1742,6 +1750,17 @@ private:
             return mergeSpeculations(type & SpecSymbol, SpecString);
 
         return SpecFullNumber | SpecString | SpecSymbol;
+    }
+
+    SpeculatedType resultOfToStringToArrayIndex(SpeculatedType type, SpeculatedType additionalPrediction)
+    {
+        if (additionalPrediction)
+            return additionalPrediction;
+
+        if (type & SpecString)
+            return type | SpecBytecodeNumber;
+
+        return type;
     }
 
     Vector<Node*> m_dependentNodes;

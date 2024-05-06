@@ -117,6 +117,16 @@ inline bool opInByVal(JSGlobalObject* globalObject, JSValue baseVal, JSValue pro
 
     auto property = propName.toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
+
+    if (propName.isString()) {
+        if (auto index = parseIndex(property)) {
+            if (arrayProfile)
+                arrayProfile->setMayUseStringArrayIndex();
+            RELEASE_AND_RETURN(scope, baseObj->hasProperty(globalObject, *index));
+        }
+    }
+
+
     RELEASE_AND_RETURN(scope, baseObj->hasProperty(globalObject, property));
 }
 

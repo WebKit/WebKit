@@ -7072,6 +7072,15 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 handleGetById(bytecode.m_dst, prediction, base, identifier, identifierNumber, getByStatus, AccessType::GetById, nextOpcodeIndex());
             else {
                 ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
+                bool mayUseStringArrayIndex = false;
+                if (bytecode.metadata(codeBlock).m_arrayProfile.mayUseStringArrayIndex()) {
+                    SpeculatedType prediction = SpecNone;
+                    if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType) && !bytecode.metadata(codeBlock).m_arrayProfile.mayUseStringNonArrayIndex())
+                        prediction = SpecInt32Only;
+                    mayUseStringArrayIndex = true;
+                    property = addToGraph(StringToArrayIndex, OpInfo(), OpInfo(prediction), property);
+                }
+
                 // FIXME: We could consider making this not vararg, since it only uses three child
                 // slots.
                 // https://bugs.webkit.org/show_bug.cgi?id=184192
@@ -7081,7 +7090,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 Node* getByVal = addToGraph(Node::VarArg, getByStatus.isMegamorphic() ? GetByValMegamorphic : GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
                 m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
                 set(bytecode.m_dst, getByVal);
-                if (!getByStatus.isMegamorphic() && getByStatus.observedStructureStubInfoSlowPath())
+                if (!getByStatus.isMegamorphic() && getByStatus.observedStructureStubInfoSlowPath() && !mayUseStringArrayIndex)
                     m_graph.m_slowGetByVal.add(getByVal);
             }
 
@@ -7097,6 +7106,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* property = get(bytecode.m_property);
 
             GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
+            if (bytecode.metadata(codeBlock).m_arrayProfile.mayUseStringArrayIndex()) {
+                SpeculatedType prediction = SpecNone;
+                if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType) && !bytecode.metadata(codeBlock).m_arrayProfile.mayUseStringNonArrayIndex())
+                    prediction = SpecInt32Only;
+                property = addToGraph(StringToArrayIndex, OpInfo(), OpInfo(prediction), property);
+            }
+
             Node* getByValWithThis = addToGraph(getByStatus.isMegamorphic() ? GetByValWithThisMegamorphic : GetByValWithThis, OpInfo(), OpInfo(prediction), base, thisValue, property);
             set(bytecode.m_dst, getByValWithThis);
 
@@ -9139,6 +9155,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             if (!compiledAsInById) {
                 ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
+                if (bytecode.metadata(codeBlock).m_arrayProfile.mayUseStringArrayIndex()) {
+                    SpeculatedType prediction = SpecNone;
+                    if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType) && !bytecode.metadata(codeBlock).m_arrayProfile.mayUseStringNonArrayIndex())
+                        prediction = SpecInt32Only;
+                    property = addToGraph(StringToArrayIndex, OpInfo(), OpInfo(prediction), property);
+                }
+
                 set(bytecode.m_dst, addToGraph(status.isMegamorphic() ? InByValMegamorphic : InByVal, OpInfo(arrayMode.asWord()), base, property));
             }
             NEXT_OPCODE(op_in_by_val);
@@ -9802,6 +9825,14 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
 
     if (!compiledAsPutById) {
         ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Write);
+        bool mayUseStringArrayIndex = false;
+        if (bytecode.metadata(codeBlock).m_arrayProfile.mayUseStringArrayIndex()) {
+            SpeculatedType prediction = SpecNone;
+            if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType) && !bytecode.metadata(codeBlock).m_arrayProfile.mayUseStringNonArrayIndex())
+                prediction = SpecInt32Only;
+            mayUseStringArrayIndex = true;
+            property = addToGraph(StringToArrayIndex, OpInfo(), OpInfo(prediction), property);
+        }
 
         addVarArgChild(base);
         addVarArgChild(property);
@@ -9810,7 +9841,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
         addVarArgChild(nullptr); // Leave room for length.
         Node* putByVal = addToGraph(Node::VarArg, isDirect ? PutByValDirect : status.isMegamorphic() ? PutByValMegamorphic : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
         m_exitOK = false; // PutByVal and PutByValDirect must be treated as if they clobber exit state, since FixupPhase may make them generic.
-        if (!status.isMegamorphic() && status.observedStructureStubInfoSlowPath())
+        if (!status.isMegamorphic() && status.observedStructureStubInfoSlowPath() && !mayUseStringArrayIndex)
             m_graph.m_slowPutByVal.add(putByVal);
     }
 }

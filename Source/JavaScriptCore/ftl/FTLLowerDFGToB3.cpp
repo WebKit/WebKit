@@ -1287,6 +1287,9 @@ private:
         case ToPropertyKeyOrNumber:
             compileToPropertyKeyOrNumber();
             break;
+        case StringToArrayIndex:
+            compileStringToArrayIndex();
+            break;
         case MakeRope:
             compileMakeRope();
             break;
@@ -9802,7 +9805,31 @@ IGNORE_CLANG_WARNINGS_END
         m_out.appendTo(continuation, lastNext);
         setJSValue(m_out.phi(Int64, fastResult, slowResult));
     }
-    
+
+    void compileStringToArrayIndex()
+    {
+        ASSERT(m_node->child1().useKind() == UntypedUse);
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LValue value = lowJSValue(m_node->child1());
+
+        LBasicBlock isCellCase = m_out.newBlock();
+        LBasicBlock stringCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        ValueFromBlock fastResult = m_out.anchor(value);
+        m_out.branch(isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(continuation));
+
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, stringCase);
+        m_out.branch(isString(value, provenType(m_node->child1())), unsure(stringCase), unsure(continuation));
+
+        m_out.appendTo(stringCase, continuation);
+        ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationStringToArrayIndex, weakPointer(globalObject), value, m_out.intPtrZero));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(Int64, fastResult, slowResult));
+    }
+
     void compileMakeRope()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);

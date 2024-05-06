@@ -3007,6 +3007,28 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case StringToArrayIndex: {
+        JSValue childConst = forNode(node->child1()).value();
+        if (childConst) {
+            if (childConst.isString()) {
+                if (const StringImpl* string = asString(childConst)->tryGetValueImpl()) {
+                    if (auto index = parseIndex(*string)) {
+                        setConstant(node, jsNumber(*index));
+                        break;
+                    }
+                }
+            }
+            setConstant(node, childConst);
+            break;
+        }
+
+        if (forNode(node->child1()).m_type & SpecString)
+            setTypeForNode(node, forNode(node->child1()).m_type | SpecBytecodeNumber);
+        else
+            setForNode(node, forNode(node->child1()));
+        break;
+    }
+
     case ToNumber: {
         if (node->child1().useKind() == StringUse) {
             setNonCellTypeForNode(node, SpecBytecodeNumber);

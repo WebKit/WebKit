@@ -1786,6 +1786,20 @@ private:
             break;
         }
 
+        case StringToArrayIndex: {
+            if (node->child1()->shouldSpeculateInt32()) {
+                fixEdge<Int32Use>(node->child1());
+                node->convertToIdentity();
+                break;
+            }
+            if (node->child1()->shouldSpeculateSymbol()) {
+                fixEdge<SymbolUse>(node->child1());
+                node->convertToIdentity();
+                break;
+            }
+            break;
+        }
+
         case ToNumber:
         case ToNumeric:
         case CallNumberConstructor: {

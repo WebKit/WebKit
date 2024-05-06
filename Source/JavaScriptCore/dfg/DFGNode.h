@@ -2026,6 +2026,28 @@ public:
         m_opInfo2 = prediction;
     }
 
+    bool hasAdditionalPrediction()
+    {
+        switch (op()) {
+        case StringToArrayIndex:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    SpeculatedType getAdditionalPrediction()
+    {
+        ASSERT(hasAdditionalPrediction());
+        return m_opInfo2.as<SpeculatedType>();
+    }
+
+    void setAdditionalPrediction(SpeculatedType prediction)
+    {
+        ASSERT(hasAdditionalPrediction());
+        m_opInfo2 = prediction;
+    }
+
     SpeculatedType getForcedPrediction()
     {
         ASSERT(op() == IdentityWithProfile);

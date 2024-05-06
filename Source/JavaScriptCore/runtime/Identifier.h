@@ -78,7 +78,7 @@ ALWAYS_INLINE std::optional<uint32_t> parseIndex(std::span<const CharType> chara
     return value;
 }
 
-ALWAYS_INLINE std::optional<uint32_t> parseIndex(StringImpl& impl)
+ALWAYS_INLINE std::optional<uint32_t> parseIndex(const StringImpl& impl)
 {
     return impl.is8Bit() ? parseIndex(impl.span8()) : parseIndex(impl.span16());
 }
