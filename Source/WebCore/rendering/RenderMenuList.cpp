@@ -215,7 +215,7 @@ void RenderMenuList::updateOptionsWidth()
         if (theme().popupOptionSupportsTextIndent()) {
             // Add in the option's text indent.  We can't calculate percentage values for now.
             float optionWidth = 0;
-            if (auto* optionStyle = element->computedStyle())
+            if (auto* optionStyle = element->computedStyleForEditability())
                 optionWidth += minimumValueForLength(optionStyle->textIndent(), 0);
             if (!text.isEmpty()) {
                 const FontCascade& font = style().fontCascade();
@@ -265,7 +265,7 @@ void RenderMenuList::setTextFromOption(int optionIndex)
         RefPtr element = listItems[i].get();
         if (is<HTMLOptionElement>(*element)) {
             text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
-            auto* style = element->computedStyle();
+            auto* style = element->computedStyleForEditability();
             m_optionStyle = style ? RenderStyle::clonePtr(*style) : nullptr;
         }
     }
@@ -515,9 +515,12 @@ PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
     bool itemHasCustomBackgroundColor;
     getItemBackgroundColor(listIndex, itemBackgroundColor, itemHasCustomBackgroundColor);
 
-    auto& style = *element->computedStyle();
-    return PopupMenuStyle(style.visitedDependentColorWithColorFilter(CSSPropertyColor), itemBackgroundColor, style.fontCascade(), style.visibility() == Visibility::Visible,
-        style.display() == DisplayType::None, true, style.textIndent(), style.direction(), isOverride(style.unicodeBidi()),
+    auto* style = element->computedStyleForEditability();
+    if (!style)
+        return menuStyle();
+
+    return PopupMenuStyle(style->visitedDependentColorWithColorFilter(CSSPropertyColor), itemBackgroundColor, style->fontCascade(), style->visibility() == Visibility::Visible,
+        style->display() == DisplayType::None, true, style->textIndent(), style->direction(), isOverride(style->unicodeBidi()),
         itemHasCustomBackgroundColor ? PopupMenuStyle::CustomBackgroundColor : PopupMenuStyle::DefaultBackgroundColor);
 }
 
@@ -531,7 +534,10 @@ void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackg
     }
     HTMLElement* element = listItems[listIndex].get();
 
-    Color backgroundColor = element->computedStyle()->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    Color backgroundColor;
+    if (auto* style = element->computedStyleForEditability())
+        backgroundColor = style->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+
     itemHasCustomBackgroundColor = backgroundColor.isValid() && backgroundColor.isVisible();
     // If the item has an opaque background color, return that.
     if (backgroundColor.isOpaque()) {

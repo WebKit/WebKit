@@ -122,7 +122,7 @@ void HTMLSelectElement::optionSelectedByUser(int optionIndex, bool fireOnChangeN
     if (!usesMenuList()) {
         updateSelectedState(optionToListIndex(optionIndex), allowMultipleSelection, false);
         updateValidity();
-        if (auto* renderer = this->renderer())
+        if (CheckedPtr renderer = this->renderer())
             renderer->updateFromElement();
         if (fireOnChangeNow)
             listBoxOnChange();
@@ -912,7 +912,7 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
     updateValidity();
 
     // For the menu list case, this is what makes the selected element appear.
-    if (auto* renderer = this->renderer())
+    if (CheckedPtr renderer = this->renderer())
         renderer->updateFromElement();
 
     scrollToSelection();
