@@ -1739,7 +1739,10 @@ No pre-PR checks to run""")
         )
 
     def test_bitbucket_update(self):
-        with mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
+        with mocks.remote.BitBucket(environment=Environment(**{
+            'BITBUCKET_EXAMPLE_COM_USERNAME': 'timcommitter',
+            'BITBUCKET_EXAMPLE_COM_PASSWORD': 'password',
+        })) as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
         )) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             with OutputCapture():
@@ -1778,7 +1781,10 @@ No pre-PR checks to run""")
         )
 
     def test_bitbucket_append(self):
-        with mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
+        with mocks.remote.BitBucket(environment=Environment(**{
+            'BITBUCKET_EXAMPLE_COM_USERNAME': 'timcommitter',
+            'BITBUCKET_EXAMPLE_COM_PASSWORD': 'password',
+        })) as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
         )) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             with OutputCapture():
@@ -1817,7 +1823,10 @@ No pre-PR checks to run""")
         )
 
     def test_bitbucket_reopen(self):
-        with mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
+        with mocks.remote.BitBucket(environment=Environment(**{
+            'BITBUCKET_EXAMPLE_COM_USERNAME': 'timcommitter',
+            'BITBUCKET_EXAMPLE_COM_PASSWORD': 'password',
+        })) as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
         )) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             with OutputCapture():
@@ -1970,8 +1979,11 @@ class TestNetworkPullRequestGitHub(unittest.TestCase):
     remote = 'https://github.example.com/WebKit/WebKit'
 
     @classmethod
-    def webserver(cls):
-        result = mocks.remote.GitHub()
+    def webserver(cls, user='tcontributor'):
+        result = mocks.remote.GitHub(environment=Environment(
+            GITHUB_EXAMPLE_COM_USERNAME=user,
+            GITHUB_EXAMPLE_COM_TOKEN='password',
+        ))
         result.users.create('Eager Reviewer', 'ereviewer', ['ereviewer@webkit.org'])
         result.users.create('Reluctant Reviewer', 'rreviewer', ['rreviewer@webkit.org'])
         result.users.create('Suspicious Reviewer', 'sreviewer', ['sreviewer@webkit.org'])
@@ -2187,7 +2199,7 @@ Reviewed by NOBODY (OOPS!).
                 '+',
                 '+Reviewed by NOBODY (OOPS!).',
                 '>>>>',
-                'username <?>: We need a review before landing',
+                'tcontributor <?>: We need a review before landing',
                 '<<<<',
                 '+* Source/file.cpp:',
             ], list(pr.diff(comments=True)))
@@ -2202,7 +2214,7 @@ Reviewed by NOBODY (OOPS!).
                 '--- a/ChangeLog',
                 '+++ b/ChangeLog',
                 '>>>>',
-                'username <?>: ChangeLogs are deprecated, please remove',
+                'tcontributor <?>: ChangeLogs are deprecated, please remove',
                 '<<<<',
                 '@@ -1,0 +1,0 @@',
                 '+Example Change',
@@ -2229,8 +2241,8 @@ Reviewed by NOBODY (OOPS!).
                 '--- a/ChangeLog',
                 '+++ b/ChangeLog',
                 '>>>>',
-                'username <?>: Top-level comment 1',
-                'username <?>: Top-level comment 2',
+                'tcontributor <?>: Top-level comment 1',
+                'tcontributor <?>: Top-level comment 2',
                 '<<<<',
                 '@@ -1,0 +1,0 @@',
                 '+Example Change',
@@ -2238,8 +2250,8 @@ Reviewed by NOBODY (OOPS!).
                 '+',
                 '+Reviewed by NOBODY (OOPS!).',
                 '>>>>',
-                'username <?>: Line comment 1',
-                'username <?>: Line comment 2',
+                'tcontributor <?>: Line comment 1',
+                'tcontributor <?>: Line comment 2',
                 '<<<<',
                 '+* Source/file.cpp:',
             ], list(pr.diff(comments=True)))
@@ -2249,8 +2261,11 @@ class TestNetworkPullRequestBitBucket(unittest.TestCase):
     remote = 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit'
 
     @classmethod
-    def webserver(cls):
-        result = mocks.remote.BitBucket()
+    def webserver(cls, user='tcontributor'):
+        result = mocks.remote.BitBucket(environment=Environment(
+            BITBUCKET_EXAMPLE_COM_USERNAME=user,
+            BITBUCKET_EXAMPLE_COM_PASSWORD='password',
+        ))
         result.pull_requests = [dict(
             id=1,
             state='OPEN',
@@ -2406,7 +2421,7 @@ Reviewed by NOBODY (OOPS!).
     def test_whoami(self):
         with self.webserver():
             repo = remote.BitBucket(self.remote)
-            self.assertEqual(repo.whoami(), 'timcommitter')
+            self.assertEqual(repo.whoami(), 'tcontributor')
 
     def test_review(self):
         with self.webserver():

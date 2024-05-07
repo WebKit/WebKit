@@ -25,7 +25,7 @@ import sys
 
 from collections import defaultdict
 from datetime import datetime
-from webkitcorepy import decorators, string_utils, CallByNeed
+from webkitcorepy import decorators, string_utils, CallByNeed, Environment
 from webkitscmpy import Commit, Contributor, PullRequest
 from webkitscmpy.remote.scm import Scm
 
@@ -599,7 +599,10 @@ class BitBucket(Scm):
         return response.text.rstrip()
 
     def credentials(self, required=True, validate=False, save_in_keyring=None):
-        return None, None
+        name = self.domain.replace('.', '_')
+        username = Environment.instance().get('{}_USERNAME'.format(name.upper()))
+        password = Environment.instance().get('{}_PASSWORD'.format(name.upper()))
+        return username, password
 
     @property
     def is_git(self):
