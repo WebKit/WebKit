@@ -129,7 +129,6 @@ private:
         Ref<QuerySet> querySet;
         uint32_t queryIndex;
     };
-    Vector<PendingTimestampWrites> m_pendingTimestampWrites;
     uint64_t m_debugGroupStackSize { 0 };
     WeakPtr<CommandBuffer> m_cachedCommandBuffer;
     NSString* m_lastErrorString { nil };

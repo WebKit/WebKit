@@ -79,15 +79,7 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
             statisticCounterSet = counterSet;
     }
 
-    auto counterSamplingAPI = HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary;
-    if ([device supportsCounterSampling:MTLCounterSamplingPointAtBlitBoundary]
-        && [device supportsCounterSampling:MTLCounterSamplingPointAtDispatchBoundary]
-        && [device supportsCounterSampling:MTLCounterSamplingPointAtDrawBoundary])
-        counterSamplingAPI = HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary;
-    else if ([device supportsCounterSampling:MTLCounterSamplingPointAtStageBoundary])
-        counterSamplingAPI = HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary;
-    else
-        timestampCounterSet = nil;
+    timestampCounterSet = nil;
 
     return {
         .argumentBuffersTier = [device argumentBuffersSupport],
@@ -95,7 +87,6 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
         .timestampCounterSet = timestampCounterSet,
         .statisticCounterSet = statisticCounterSet,
         .canPresentRGB10A2PixelFormats = false, // To be filled in by the caller.
-        .counterSamplingAPI = counterSamplingAPI,
     };
 }
 
@@ -521,14 +512,12 @@ static HardwareCapabilities::BaseCapabilities mergeBaseCapabilities(const Hardwa
     ASSERT(previous.argumentBuffersTier == next.argumentBuffersTier);
     ASSERT((!previous.timestampCounterSet && !next.timestampCounterSet) || [previous.timestampCounterSet isEqual:next.timestampCounterSet]);
     ASSERT(!previous.statisticCounterSet || [previous.statisticCounterSet isEqual:next.statisticCounterSet]);
-    ASSERT(previous.counterSamplingAPI == next.counterSamplingAPI);
     return {
         previous.argumentBuffersTier,
         previous.supportsNonPrivateDepthStencilTextures || next.supportsNonPrivateDepthStencilTextures,
         previous.timestampCounterSet,
         previous.statisticCounterSet,
         previous.canPresentRGB10A2PixelFormats || next.canPresentRGB10A2PixelFormats,
-        previous.counterSamplingAPI,
     };
 }
 

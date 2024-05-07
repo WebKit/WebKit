@@ -80,14 +80,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
 
     m_parentEncoder->lock(true);
 
-    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary) {
-        if (descriptor.timestampWrites) {
-            const auto& timestampWrite = *descriptor.timestampWrites;
-            [m_renderCommandEncoder sampleCountersInBuffer:fromAPI(timestampWrite.querySet).counterSampleBuffer() atSampleIndex:timestampWrite.beginningOfPassWriteIndex withBarrier:NO];
-            m_pendingTimestampWrites.append({ fromAPI(timestampWrite.querySet), timestampWrite.endOfPassWriteIndex });
-        }
-    }
-
     m_attachmentsToClear = [NSMutableDictionary dictionary];
     m_allColorAttachments = [NSMutableDictionary dictionary];
     for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
@@ -640,11 +632,6 @@ void RenderPassEncoder::endPass()
         m_parentEncoder->makeInvalid([NSString stringWithFormat:@"RenderPassEncoder.endPass failure, m_debugGroupStackSize = %llu, m_occlusionQueryActive = %d, isValid = %d, error = %@", m_debugGroupStackSize, m_occlusionQueryActive, passIsValid, m_lastErrorString]);
         return;
     }
-
-    ASSERT(m_pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary);
-    for (const auto& pendingTimestampWrite : m_pendingTimestampWrites)
-        [m_renderCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
-    m_pendingTimestampWrites.clear();
 
     auto endEncoder = ^{
         m_parentEncoder->endEncoding(m_renderCommandEncoder);

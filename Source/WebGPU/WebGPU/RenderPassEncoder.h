@@ -129,7 +129,6 @@ private:
         Ref<QuerySet> querySet;
         uint32_t queryIndex;
     };
-    Vector<PendingTimestampWrites> m_pendingTimestampWrites;
 
     const Ref<Device> m_device;
     WeakPtr<Buffer> m_indexBuffer;

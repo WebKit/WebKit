@@ -131,24 +131,14 @@ id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
         return nil;
     }
 
-    if (m_blitCommandEncoder && m_pendingTimestampWrites.isEmpty()) {
+    if (m_blitCommandEncoder) {
         if (encoderIsCurrent(m_blitCommandEncoder))
             return m_blitCommandEncoder;
 
         finalizeBlitCommandEncoder();
     }
 
-    auto pendingTimestampWrites = std::exchange(m_pendingTimestampWrites, { });
-    if (m_blitCommandEncoder && !pendingTimestampWrites.isEmpty())
-        finalizeBlitCommandEncoder();
-
     MTLBlitPassDescriptor *descriptor = [MTLBlitPassDescriptor new];
-    ASSERT(pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary);
-    for (size_t i = 0; i < pendingTimestampWrites.size(); ++i) {
-        const auto& pendingTimestampWrite = pendingTimestampWrites[i];
-        descriptor.sampleBufferAttachments[i].sampleBuffer = pendingTimestampWrite.querySet->counterSampleBuffer();
-        descriptor.sampleBufferAttachments[i].startOfEncoderSampleIndex = i;
-    }
     m_blitCommandEncoder = [m_commandBuffer blitCommandEncoderWithDescriptor:descriptor];
     setExistingEncoder(m_blitCommandEncoder);
 
@@ -163,12 +153,6 @@ void CommandEncoder::finalizeBlitCommandEncoder()
     endEncoding(m_blitCommandEncoder);
     m_blitCommandEncoder = nil;
     setExistingEncoder(nil);
-
-    if (!m_pendingTimestampWrites.isEmpty()) {
-        ASSERT(m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary);
-        ensureBlitCommandEncoder();
-        finalizeBlitCommandEncoder();
-    }
 }
 
 static auto timestampWriteIndex(auto writeIndex)
@@ -225,38 +209,6 @@ Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDe
 
     MTLComputePassDescriptor* computePassDescriptor = [MTLComputePassDescriptor new];
     computePassDescriptor.dispatchType = MTLDispatchTypeSerial;
-
-    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary
-        && descriptor.timestampWrites) {
-        // rdar://91371495 is about how we can't just naively transform descriptor.timestampWrites into computePassDescriptor.sampleBufferAttachments.
-        // Instead, we can resolve all the information to a dummy counter sample buffer, and then internally remember that the data
-        // is in a different place than where it's supposed to be. Later, when we resolve the data, we can resolve it from our dummy
-        // buffer instead of from where it's supposed to be.
-        //
-        // When rdar://91371495 is fixed, we can delete this indirection, and put the data directly where it's supposed to go.
-
-        MTLCounterSampleBufferDescriptor *counterSampleBufferDescriptor = [MTLCounterSampleBufferDescriptor new];
-        counterSampleBufferDescriptor.counterSet = m_device->baseCapabilities().timestampCounterSet;
-        counterSampleBufferDescriptor.label = @"Dummy compute pass timestamp counter sample buffer";
-        counterSampleBufferDescriptor.storageMode = MTLStorageModePrivate;
-        counterSampleBufferDescriptor.sampleCount = 2;
-        auto counterSampleBuffer = [m_device->device() newCounterSampleBufferWithDescriptor:counterSampleBufferDescriptor error:nil];
-        // FIXME: We should probably do something sensible if the counter sample buffer failed to be created.
-        auto dummyQuerySet = QuerySet::create(counterSampleBuffer, 2, WGPUQueryType_Timestamp, m_device);
-
-        const auto startIndex = 0;
-        const auto endIndex = 1;
-
-        computePassDescriptor.sampleBufferAttachments[0].sampleBuffer = counterSampleBuffer;
-        computePassDescriptor.sampleBufferAttachments[0].startOfEncoderSampleIndex = startIndex;
-        computePassDescriptor.sampleBufferAttachments[0].endOfEncoderSampleIndex = endIndex;
-
-        auto& timestampWrite = *descriptor.timestampWrites;
-        auto& querySet = fromAPI(timestampWrite.querySet);
-        querySet.setCommandEncoder(*this);
-        if (querySet.isValid())
-            querySet.setOverrideLocation(dummyQuerySet, timestampWriteIndex(timestampWrite.beginningOfPassWriteIndex), timestampWriteIndex(timestampWrite.endOfPassWriteIndex));
-    }
 
     id<MTLComputeCommandEncoder> computeCommandEncoder = [m_commandBuffer computeCommandEncoderWithDescriptor:computePassDescriptor];
     setExistingEncoder(computeCommandEncoder);
@@ -680,42 +632,6 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         mtlDescriptor.visibilityResultBuffer = occlusionQuery.visibilityBuffer();
         visibilityResultBuffer = mtlDescriptor.visibilityResultBuffer;
         visibilityResultBufferSize = occlusionQuery.isDestroyed() ? NSUIntegerMax : occlusionQuery.visibilityBuffer().length;
-    }
-
-    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary
-        && descriptor.timestampWrites) {
-        // rdar://91371495 is about how we can't just naively transform descriptor.timestampWrites into computePassDescriptor.sampleBufferAttachments.
-        // Instead, we can resolve all the information to a dummy counter sample buffer, and then internally remember that the data
-        // is in a different place than where it's supposed to be. Later, when we resolve the data, we can resolve it from our dummy
-        // buffer instead of from where it's supposed to be.
-        //
-        // When rdar://91371495 is fixed, we can delete this indirection, and put the data directly where it's supposed to go.
-
-        MTLCounterSampleBufferDescriptor *counterSampleBufferDescriptor = [MTLCounterSampleBufferDescriptor new];
-        counterSampleBufferDescriptor.counterSet = m_device->baseCapabilities().timestampCounterSet;
-        counterSampleBufferDescriptor.label = @"Dummy render pass timestamp counter sample buffer";
-        counterSampleBufferDescriptor.storageMode = MTLStorageModePrivate;
-        counterSampleBufferDescriptor.sampleCount = 4;
-        auto counterSampleBuffer = [m_device->device() newCounterSampleBufferWithDescriptor:counterSampleBufferDescriptor error:nil];
-        // FIXME: We should probably do something sensible if the counter sample buffer failed to be created.
-        auto dummyQuerySet = QuerySet::create(counterSampleBuffer, 4, WGPUQueryType_Timestamp, m_device);
-
-        const auto startVertexIndex = 0;
-        const auto endVertexIndex = 1;
-        const auto startFragmentIndex = 2;
-        const auto endFragmentIndex = 3;
-
-        mtlDescriptor.sampleBufferAttachments[0].sampleBuffer = counterSampleBuffer;
-        mtlDescriptor.sampleBufferAttachments[0].startOfVertexSampleIndex = startVertexIndex;
-        mtlDescriptor.sampleBufferAttachments[0].endOfVertexSampleIndex = endVertexIndex;
-        mtlDescriptor.sampleBufferAttachments[0].startOfFragmentSampleIndex = startFragmentIndex;
-        mtlDescriptor.sampleBufferAttachments[0].endOfFragmentSampleIndex = endFragmentIndex;
-
-        auto& timestampWrite = *descriptor.timestampWrites;
-        auto& querySet = fromAPI(timestampWrite.querySet);
-        querySet.setCommandEncoder(*this);
-        if (querySet.isValid())
-            querySet.setOverrideLocation(dummyQuerySet, timestampWriteIndex(timestampWrite.beginningOfPassWriteIndex), timestampWriteIndex(timestampWrite.endOfPassWriteIndex));
     }
 
     if (attachmentsToClear.count || depthStencilAttachmentToClear) {
@@ -1944,7 +1860,6 @@ void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQue
         break;
     }
     case WGPUQueryType_Timestamp: {
-        querySet.encodeResolveCommands(m_blitCommandEncoder, firstQuery, queryCount, destination, destinationOffset);
         break;
     }
     default:
@@ -1969,15 +1884,6 @@ void CommandEncoder::writeTimestamp(QuerySet& querySet, uint32_t queryIndex)
     }
 
     querySet.setCommandEncoder(*this);
-    switch (m_device->baseCapabilities().counterSamplingAPI) {
-    case HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary:
-        m_pendingTimestampWrites.append({ querySet, queryIndex });
-        break;
-    case HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary:
-        ensureBlitCommandEncoder();
-        [m_blitCommandEncoder sampleCountersInBuffer:querySet.counterSampleBuffer() atSampleIndex:queryIndex withBarrier:NO];
-        break;
-    }
 }
 
 void CommandEncoder::setLabel(String&& label)
