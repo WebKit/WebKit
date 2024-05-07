@@ -107,11 +107,34 @@ private:
         static constexpr int minimumTableSize = 16;
     };
 
+    struct SingleCharArray {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    public:
+        constexpr SingleCharArray()
+        {
+            m_array.fill(std::numeric_limits<float>::quiet_NaN());
+        }
+
+        std::array<float, 256> m_array;
+    };
+
 public:
-    WidthCache()
-        : m_interval(s_maxInterval)
-        , m_countdown(m_interval)
+    WidthCache() = default;
+
+    float* addSingleChar(UChar character, float entry)
     {
+        if (isLatin1(character)) {
+            if (UNLIKELY(!m_singleCharArray))
+                m_singleCharArray = makeUnique<SingleCharArray>();
+            return m_singleCharArray->m_array.data() + character;
+        }
+
+        if (m_countdown > 0) {
+            --m_countdown;
+            return nullptr;
+        }
+
+        return addSingleCharSlowCase(character, entry);
     }
 
     float* add(StringView text, float entry)
@@ -124,6 +147,9 @@ public:
 
         if (length > SmallStringKey::capacity())
             return nullptr;
+
+        if (length == 1)
+            return addSingleChar(text.characterAt(0), entry);
 
         if (m_countdown > 0) {
             --m_countdown;
@@ -153,32 +179,51 @@ public:
 
     void clear()
     {
+        m_singleCharArray = nullptr;
         m_singleCharMap.clear();
         m_map.clear();
     }
 
 private:
+    float* addSingleCharSlowCase(uint32_t character, float entry)
+    {
+        ASSERT(!isLatin1(character));
+
+        // The map use 0 for empty key, thus we do +1 here to avoid conflicting against empty key.
+        // This is fine since the key is uint32_t while character is UChar. So +1 never causes overflow.
+        auto addResult = m_singleCharMap.fastAdd(character + 1, entry);
+        bool isNewEntry = addResult.isNewEntry;
+        auto* value = &addResult.iterator->value;
+
+        // Cache hit: ramp up by sampling the next few words.
+        if (!isNewEntry) {
+            m_interval = s_minInterval;
+            return value;
+        }
+
+        // Cache miss: ramp down by increasing our sampling interval.
+        if (m_interval < s_maxInterval)
+            ++m_interval;
+        m_countdown = m_interval;
+
+        if ((m_singleCharMap.size() + m_map.size()) < s_maxSize)
+            return value;
+
+        // No need to be fancy: we're just trying to avoid pathological growth.
+        m_singleCharMap.clear();
+        m_map.clear();
+        return nullptr;
+
+    }
 
     float* addSlowCase(StringView text, float entry)
     {
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
             return nullptr;
 
-        unsigned length = text.length();
-        bool isNewEntry;
-        float* value;
-        if (length == 1) {
-            // The map use 0 for empty key, thus we do +1 here to avoid conflicting against empty key.
-            // This is fine since the key is uint32_t while character is UChar. So +1 never causes overflow.
-            uint32_t character = text[0];
-            auto addResult = m_singleCharMap.fastAdd(character + 1, entry);
-            isNewEntry = addResult.isNewEntry;
-            value = &addResult.iterator->value;
-        } else {
-            auto addResult = m_map.fastAdd(text, entry);
-            isNewEntry = addResult.isNewEntry;
-            value = &addResult.iterator->value;
-        }
+        auto addResult = m_map.fastAdd(text, entry);
+        bool isNewEntry = addResult.isNewEntry;
+        auto* value = &addResult.iterator->value;
 
         // Cache hit: ramp up by sampling the next few words.
         if (!isNewEntry) {
@@ -207,10 +252,11 @@ private:
     static constexpr int s_maxInterval = 20; // Sampling at this interval has almost no overhead.
     static constexpr unsigned s_maxSize = 500000; // Just enough to guard against pathological growth.
 
-    int m_interval;
-    int m_countdown;
+    std::unique_ptr<SingleCharArray> m_singleCharArray;
     SingleCharMap m_singleCharMap;
     Map m_map;
+    int m_interval { s_maxInterval };
+    int m_countdown { s_maxInterval };
 };
 
 } // namespace WebCore

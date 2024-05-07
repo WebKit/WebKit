@@ -174,7 +174,7 @@ std::tuple<unsigned, UChar> SVGTextMetricsBuilder::measureTextRenderer(RenderSVG
                 if ((valueListPosition + i - skippedCharacters + 1) == defaultPosition)
                     attributes->characterDataMap().set(i + 1, characterData);
 
-                float width = scaledFont.widthForTextUsingSimplifiedMeasuring(view.substring(i, 1), TextDirection::LTR);
+                float width = scaledFont.widthForTextUsingSimplifiedMeasuring(currentCharacter, TextDirection::LTR);
                 float scaledWidth = width / scalingFactor;
                 textMetricsValues->append(SVGTextMetrics(1, scaledWidth, scaledHeight));
                 lastCharacter = currentCharacter;

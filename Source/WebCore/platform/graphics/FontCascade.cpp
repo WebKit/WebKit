@@ -326,7 +326,7 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
         *cacheEntry = result;
     return result;
 }
-NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDirection textDirection, float* cacheEntry) const
+NEVER_INLINE float FontCascade::widthForTextUsingSimplifiedMeasuringSlow(StringView text, TextDirection textDirection, float* cacheEntry) const
 {
     GlyphBuffer glyphBuffer;
     Ref font = primaryFont();

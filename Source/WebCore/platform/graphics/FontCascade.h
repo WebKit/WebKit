@@ -141,6 +141,7 @@ public:
     float widthOfTextRange(const TextRun&, unsigned from, unsigned to, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, float* outWidthBeforeRange = nullptr, float* outWidthAfterRange = nullptr) const;
     WEBCORE_EXPORT float width(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     float widthForTextUsingSimplifiedMeasuring(StringView text, TextDirection = TextDirection::LTR) const;
+    float widthForTextUsingSimplifiedMeasuring(UChar character, TextDirection = TextDirection::LTR) const;
     WEBCORE_EXPORT float widthForSimpleTextWithFixedPitch(StringView text, bool whitespaceIsCollapsed) const;
 
     std::unique_ptr<TextLayout, TextLayoutDeleter> createLayout(RenderText&, float xPos, bool collapseWhiteSpace) const;
@@ -238,7 +239,7 @@ private:
     float widthForSimpleText(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
-    WEBCORE_EXPORT float widthForSimpleTextSlow(StringView text, TextDirection, float*) const;
+    WEBCORE_EXPORT float widthForTextUsingSimplifiedMeasuringSlow(StringView text, TextDirection, float*) const;
 
     std::optional<GlyphData> getEmphasisMarkGlyphData(const AtomString&) const;
     const Font* fontForEmphasisMark(const AtomString&) const;
@@ -428,7 +429,17 @@ inline float FontCascade::widthForTextUsingSimplifiedMeasuring(StringView text, 
     if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 
-    return widthForSimpleTextSlow(text, textDirection, cacheEntry);
+    return widthForTextUsingSimplifiedMeasuringSlow(text, textDirection, cacheEntry);
+}
+
+inline float FontCascade::widthForTextUsingSimplifiedMeasuring(UChar character, TextDirection textDirection) const
+{
+    ASSERT(codePath(TextRun(StringView(std::span { &character, 1 }))) != CodePath::Complex);
+    float* cacheEntry = protectedFonts()->widthCache().addSingleChar(character, std::numeric_limits<float>::quiet_NaN());
+    if (cacheEntry && !std::isnan(*cacheEntry))
+        return *cacheEntry;
+
+    return widthForTextUsingSimplifiedMeasuringSlow(StringView(std::span { &character, 1 }), textDirection, cacheEntry);
 }
 
 bool shouldSynthesizeSmallCaps(bool, const Font*, char32_t, std::optional<char32_t>, FontVariantCaps, bool);
