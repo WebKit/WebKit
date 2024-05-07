@@ -72,6 +72,11 @@ unsigned ImageBufferSkiaSurfaceBackend::bytesPerRow() const
     return m_surface->imageInfo().minRowBytes64();
 }
 
+bool ImageBufferSkiaSurfaceBackend::canMapBackingStore() const
+{
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // USE(SKIA)
