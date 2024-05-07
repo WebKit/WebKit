@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUTextureViewDimension {
+] enum GPUTextureViewDimension {
     "1d",
     "2d",
     "2d-array",

@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUTextureAspect {
+] enum GPUTextureAspect {
     "all",
     "stencil-only",
     "depth-only"

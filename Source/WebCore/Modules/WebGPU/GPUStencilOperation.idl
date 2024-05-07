@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUStencilOperation {
+] enum GPUStencilOperation {
     "keep",
     "zero",
     "replace",

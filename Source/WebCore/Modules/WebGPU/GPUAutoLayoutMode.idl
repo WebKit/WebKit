@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUAutoLayoutMode {
+] enum GPUAutoLayoutMode {
     "auto"
 };

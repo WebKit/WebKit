@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUBlendFactor {
+] enum GPUBlendFactor {
     "zero",
     "one",
     "src",
