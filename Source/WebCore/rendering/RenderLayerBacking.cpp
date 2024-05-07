@@ -892,6 +892,11 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
         return false;
 #endif
 
+    if (renderer().capturedInViewTransition())
+        return false;
+    if (renderer().style().pseudoElementType() == PseudoId::ViewTransitionNew)
+        return false;
+
     if (m_isFrameLayerWithTiledBacking)
         return false;
 

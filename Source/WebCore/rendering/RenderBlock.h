@@ -346,6 +346,8 @@ protected:
 
     static LayoutUnit layoutOverflowLogicalBottom(const RenderBlock&);
 
+    String debugDescription() const override;
+
 public:
     virtual void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false);
     void clearLayoutOverflow();

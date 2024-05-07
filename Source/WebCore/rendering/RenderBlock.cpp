@@ -3108,6 +3108,24 @@ ASCIILiteral RenderBlock::renderName() const
     return "RenderBlock"_s;
 }
 
+String RenderBlock::debugDescription() const
+{
+    if (isViewTransitionPseudo()) {
+        StringBuilder builder;
+
+        builder.append(renderName(), " 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+
+        builder.append(" ::view-transition"_s);
+        if (style().pseudoElementType() != PseudoId::ViewTransition) {
+            builder.append("-"_s, style().pseudoElementType() == PseudoId::ViewTransitionGroup ? "group("_s : "image-pair("_s);
+            builder.append(style().pseudoElementNameArgument(), ')');
+        }
+        return builder.toString();
+    }
+
+    return RenderObject::debugDescription();
+}
+
 TextRun RenderBlock::constructTextRun(StringView stringView, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
 {
     auto textDirection = TextDirection::LTR;

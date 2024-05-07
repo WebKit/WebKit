@@ -2902,7 +2902,7 @@ void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& 
         paintFlags.add(PaintLayerFlag::TemporaryClipRects);
     }
 
-    if (viewportConstrainedNotCompositedReason() == NotCompositedForBoundsOutOfView) {
+    if (viewportConstrainedNotCompositedReason() == NotCompositedForBoundsOutOfView && !(paintingInfo.paintBehavior & PaintBehavior::Snapshotting)) {
         // Don't paint out-of-view viewport constrained layers (when doing prepainting) because they will never be visible
         // unless their position or viewport size is changed.
         ASSERT(renderer().isFixedPositioned());
