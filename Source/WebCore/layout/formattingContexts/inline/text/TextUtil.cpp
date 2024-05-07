@@ -473,12 +473,17 @@ bool TextUtil::isStrongDirectionalityCharacter(char32_t character)
         || bidiCategory == U_POP_DIRECTIONAL_FORMAT;
 }
 
+template<typename CharacterType> ALWAYS_INLINE constexpr bool isNotBidiRTL(CharacterType character)
+{
+    return !mayBeBidiRTL(character);
+}
+
 bool TextUtil::containsStrongDirectionalityText(StringView text)
 {
     if (text.is8Bit())
         return false;
 
-    if (text.containsOnly<[](UChar character) ALWAYS_INLINE_LAMBDA { return !mayBeBidiRTL(character); }>())
+    if (text.containsOnly<isNotBidiRTL>())
         return false;
 
     for (char32_t character : text.codePoints()) {
