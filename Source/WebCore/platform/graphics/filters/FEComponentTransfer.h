@@ -64,6 +64,9 @@ public:
     WEBCORE_EXPORT static Ref<FEComponentTransfer> create(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc, DestinationColorSpace = DestinationColorSpace::SRGB());
     static Ref<FEComponentTransfer> create(ComponentTransferFunctions&&);
 
+    using LookupTable = std::array<uint8_t, 256>;
+    static LookupTable computeLookupTable(const ComponentTransferFunction&);
+
     bool operator==(const FEComponentTransfer&) const;
 
     ComponentTransferFunction redFunction() const { return m_functions[ComponentTransferChannel::Red]; }
