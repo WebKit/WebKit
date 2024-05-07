@@ -210,6 +210,10 @@ class WebCore::PaymentSessionError {
     std::optional<WebCore::ApplePayDeferredPaymentRequest> deferredPaymentRequest();
 #endif
 
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    std::optional<WebCore::ApplePayDisbursementPaymentRequest> disbursementPaymentRequest();
+#endif
+
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
     std::optional<WebCore::ApplePayLaterAvailability> applePayLaterAvailability();
 #endif

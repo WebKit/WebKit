@@ -93,7 +93,7 @@ static PKPaymentErrorCode toPKPaymentErrorCode(WebCore::ApplePayErrorCode code)
 {
     switch (code) {
     case WebCore::ApplePayErrorCode::Unknown:
-        break;
+        return PKPaymentUnknownError;
 
     case WebCore::ApplePayErrorCode::ShippingContactInvalid:
         return PKPaymentShippingContactInvalidError;
@@ -111,15 +111,79 @@ static PKPaymentErrorCode toPKPaymentErrorCode(WebCore::ApplePayErrorCode code)
     case WebCore::ApplePayErrorCode::CouponCodeExpired:
         return PKPaymentCouponCodeExpiredError;
 #endif
+    default:
+        ASSERT_NOT_REACHED();
+        return PKPaymentUnknownError;
     }
 
     return PKPaymentUnknownError;
 }
 
+#if HAVE(PASSKIT_DISBURSEMENTS)
+static PKContactField toPKContactField(WebCore::ApplePayErrorContactField contactField)
+{
+    switch (contactField) {
+    case WebCore::ApplePayErrorContactField::PhoneNumber:
+        return PKContactFieldPhoneNumber;
+
+    case WebCore::ApplePayErrorContactField::EmailAddress:
+        return PKContactFieldEmailAddress;
+
+    case WebCore::ApplePayErrorContactField::Name:
+        return PKContactFieldName;
+
+    case WebCore::ApplePayErrorContactField::PhoneticName:
+        return PKContactFieldPhoneticName;
+
+    case WebCore::ApplePayErrorContactField::PostalAddress:
+        return PKContactFieldPostalAddress;
+
+    case WebCore::ApplePayErrorContactField::AddressLines:
+        return PKContactFieldPostalAddress;
+
+    case WebCore::ApplePayErrorContactField::SubLocality:
+        return PKContactFieldPostalAddress;
+
+    case WebCore::ApplePayErrorContactField::Locality:
+        return PKContactFieldPostalAddress;
+
+    case WebCore::ApplePayErrorContactField::PostalCode:
+        return PKContactFieldPostalAddress;
+
+    case WebCore::ApplePayErrorContactField::SubAdministrativeArea:
+        return PKContactFieldPostalAddress;
+
+    case WebCore::ApplePayErrorContactField::AdministrativeArea:
+        return PKContactFieldPostalAddress;
+
+    case WebCore::ApplePayErrorContactField::Country:
+        return PKContactFieldPostalAddress;
+
+    case WebCore::ApplePayErrorContactField::CountryCode:
+        return PKContactFieldPostalAddress;
+    }
+}
+#endif
+
 static NSError *toNSError(const WebCore::ApplePayError& error)
 {
     auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
     [userInfo setObject:error.message() forKey:NSLocalizedDescriptionKey];
+
+#if HAVE(PASSKIT_DISBURSEMENTS)
+    if (error.domain() == WebCore::ApplePayError::Domain::Disbursement) {
+        switch (error.code()) {
+        case WebCore::ApplePayErrorCode::UnsupportedCard:
+            return [PAL::getPKDisbursementRequestClass() disbursementCardUnsupportedError];
+        case WebCore::ApplePayErrorCode::RecipientContactInvalid:
+            if (error.contactField())
+                return [PAL::getPKDisbursementRequestClass() disbursementContactInvalidErrorWithContactField:toPKContactField(error.contactField().value()) localizedDescription:error.message()];
+            break;
+        default:
+            return [NSError errorWithDomain:PAL::get_PassKitCore_PKDisbursementErrorDomain() code:PKDisbursementUnknownError userInfo:userInfo.get()];
+        }
+    }
+#endif
 
     if (auto contactField = error.contactField()) {
         NSString *pkContactField = nil;
@@ -262,6 +326,7 @@ void PaymentAuthorizationPresenter::completePaymentSession(WebCore::ApplePayPaym
     ASSERT(result.isFinalState());
 
     auto status = toPKPaymentAuthorizationStatus(result.status);
+
     auto errors = toNSErrors(result.errors);
 
 #if HAVE(PASSKIT_PAYMENT_ORDER_DETAILS)

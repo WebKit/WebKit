@@ -1140,10 +1140,15 @@ struct WebCore::ApplePayShippingMethod {
 #endif
 }
 
+[Nested] enum class WebCore::ApplePayError::Domain : uint8_t {
+    Disbursement
+};
+
 [RefCounted] class WebCore::ApplePayError {
     WebCore::ApplePayErrorCode code()
     std::optional<WebCore::ApplePayErrorContactField> contactField()
     String message()
+    std::optional<WebCore::ApplePayError::Domain> domain();
 }
 
 enum class WebCore::ApplePayLogoStyle : bool
@@ -1232,6 +1237,10 @@ enum class WebCore::ApplePayErrorCode : uint8_t {
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     CouponCodeInvalid,
     CouponCodeExpired,
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    UnsupportedCard,
+    RecipientContactInvalid,
 #endif
 };
 #endif // ENABLE(APPLE_PAY)

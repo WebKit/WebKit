@@ -216,6 +216,9 @@ public:
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
         , std::optional<ApplePayDeferredPaymentRequest>&& deferredPaymentRequest
 #endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+        , std::optional<ApplePayDisbursementPaymentRequest>&& disbursementPaymentRequest
+#endif
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
         , std::optional<ApplePayLaterAvailability>&& applePayLaterAvailability
 #endif
@@ -256,6 +259,9 @@ public:
 #endif
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
             , m_deferredPaymentRequest(WTFMove(deferredPaymentRequest))
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+            , m_disbursementPaymentRequest(WTFMove(disbursementPaymentRequest))
 #endif
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
             , m_applePayLaterAvailability(WTFMove(applePayLaterAvailability))

@@ -377,17 +377,17 @@ static ExceptionOr<ApplePayPaymentAuthorizationResult> convertAndValidate(AppleP
 
     case ApplePayPaymentAuthorizationResult::InvalidBillingPostalAddress:
         result.status = ApplePayPaymentAuthorizationResult::Failure;
-        result.errors.insert(0, ApplePayError::create(ApplePayErrorCode::BillingContactInvalid, std::nullopt, nullString()));
+        result.errors.insert(0, ApplePayError::create(ApplePayErrorCode::BillingContactInvalid, std::nullopt, nullString(), { }));
         break;
 
     case ApplePayPaymentAuthorizationResult::InvalidShippingPostalAddress:
         result.status = ApplePayPaymentAuthorizationResult::Failure;
-        result.errors.insert(0, ApplePayError::create(ApplePayErrorCode::ShippingContactInvalid, ApplePayErrorContactField::PostalAddress, nullString()));
+        result.errors.insert(0, ApplePayError::create(ApplePayErrorCode::ShippingContactInvalid, ApplePayErrorContactField::PostalAddress, nullString(), { }));
         break;
 
     case ApplePayPaymentAuthorizationResult::InvalidShippingContact:
         result.status = ApplePayPaymentAuthorizationResult::Failure;
-        result.errors.insert(0, ApplePayError::create(ApplePayErrorCode::ShippingContactInvalid, std::nullopt, nullString()));
+        result.errors.insert(0, ApplePayError::create(ApplePayErrorCode::ShippingContactInvalid, std::nullopt, nullString(), { }));
         break;
 
     default:
@@ -815,7 +815,7 @@ ExceptionOr<void> ApplePaySession::completeShippingContactSelection(unsigned sho
     }
 
     if (errorCode)
-        update.errors = { ApplePayError::create(*errorCode, contactField, { }) };
+        update.errors = { ApplePayError::create(*errorCode, contactField, { }, { }) };
 
     update.newShippingMethods = WTFMove(newShippingMethods);
     update.newTotal = WTFMove(newTotal);
