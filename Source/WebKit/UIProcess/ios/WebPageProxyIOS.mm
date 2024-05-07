@@ -1545,12 +1545,12 @@ void WebPageProxy::Internals::isUserFacingChanged(bool isUserFacing)
 
 #endif
 
-void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory)
+void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory, std::optional<FrameIdentifier> frameID)
 {
     switch (pasteAccessCategory) {
     case DOMPasteAccessCategory::General:
     case DOMPasteAccessCategory::Fonts:
-        grantAccessToCurrentPasteboardData(UIPasteboardNameGeneral);
+        grantAccessToCurrentPasteboardData(UIPasteboardNameGeneral, frameID);
         return;
     }
 }

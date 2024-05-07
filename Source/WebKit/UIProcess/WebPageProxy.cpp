@@ -3103,7 +3103,7 @@ void WebPageProxy::executeEditCommand(const String& commandName, const String& a
         return;
 
     if (auto pasteAccessCategory = pasteAccessCategoryForCommand(commandName))
-        willPerformPasteCommand(*pasteAccessCategory);
+        willPerformPasteCommand(*pasteAccessCategory, focusedFrame->frameID());
 
     if (commandName == ignoreSpellingCommandName)
         ++m_pendingLearnOrIgnoreWordMessageCount;
@@ -13229,7 +13229,7 @@ void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMe
 
 #if !PLATFORM(COCOA)
 
-void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory)
+void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory, std::optional<FrameIdentifier>)
 {
 }
 

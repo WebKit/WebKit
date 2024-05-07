@@ -1534,6 +1534,69 @@ TEST(SiteIsolation, DragEvents)
     EXPECT_WK_STREQ("dragleave", events[2]);
     EXPECT_WK_STREQ("dragend", events[3]);
 }
+
+void writeImageDataToPasteboard(NSString *type, NSData *data)
+{
+    [NSPasteboard.generalPasteboard declareTypes:@[type] owner:nil];
+    [NSPasteboard.generalPasteboard setData:data forType:type];
+}
+
+TEST(SiteIsolation, PasteGIF)
+{
+    auto mainframeHTML = "<script>"
+    "    window.events = [];"
+    "    addEventListener('message', function(event) {"
+    "        window.events.push(event.data);"
+    "    });"
+    "</script>"
+    "<iframe width='300' height='300' src='https://domain2.com/subframe'></iframe>"_s;
+
+    auto subframeHTML = "<body>"
+    "<div id='editor' contenteditable style=\"height:100%; width: 100%;\"></div>"
+    "<script>"
+    "const editor = document.getElementById('editor');"
+    "editor.focus();"
+    "editor.addEventListener('paste', (event) => { window.parent.postMessage(event.clipboardData.files[0].name, '*'); });"
+    "</script>"
+    "</body>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    CGPoint eventLocationInWindow = [webView convertPoint:CGPointMake(20, 20) toView:nil];
+    [webView mouseEnterAtPoint:eventLocationInWindow];
+    [webView mouseMoveToPoint:eventLocationInWindow withFlags:0];
+    [webView mouseDownAtPoint:eventLocationInWindow simulatePressure:NO];
+    [webView mouseUpAtPoint:eventLocationInWindow];
+    [webView waitForPendingMouseEvents];
+
+    auto *data = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-400px" ofType:@"gif" inDirectory:@"TestWebKitAPI.resources"]];
+    writeImageDataToPasteboard((__bridge NSString *)kUTTypeGIF, data);
+    [webView paste:nil];
+
+    [webView mouseEnterAtPoint:eventLocationInWindow];
+    [webView mouseMoveToPoint:eventLocationInWindow withFlags:0];
+    [webView mouseDownAtPoint:eventLocationInWindow simulatePressure:NO];
+    [webView mouseUpAtPoint:eventLocationInWindow];
+    [webView waitForPendingMouseEvents];
+
+    NSArray<NSString *> *events = [webView objectByEvaluatingJavaScript:@"window.events"];
+    EXPECT_EQ(1U, events.count);
+    EXPECT_WK_STREQ("image.gif", events[0]);
+}
+
 #endif
 
 TEST(SiteIsolation, ShutDownFrameProcessesAfterNavigation)

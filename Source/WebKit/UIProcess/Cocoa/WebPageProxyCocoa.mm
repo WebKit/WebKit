@@ -195,12 +195,17 @@ void WebPageProxy::loadRecentSearches(const String& name, CompletionHandler<void
     m_websiteDataStore->loadRecentSearches(name, WTFMove(completionHandler));
 }
 
-void WebPageProxy::grantAccessToCurrentPasteboardData(const String& pasteboardName)
+void WebPageProxy::grantAccessToCurrentPasteboardData(const String& pasteboardName, std::optional<FrameIdentifier> frameID)
 {
     if (!hasRunningProcess())
         return;
-
-    WebPasteboardProxy::singleton().grantAccessToCurrentData(m_process.get(), pasteboardName);
+    if (frameID) {
+        if (auto* frame = WebFrameProxy::webFrame(*frameID)) {
+            WebPasteboardProxy::singleton().grantAccessToCurrentData(frame->process(), pasteboardName);
+            return;
+        }
+    }
+    WebPasteboardProxy::singleton().grantAccessToCurrentData(m_process, pasteboardName);
 }
 
 void WebPageProxy::beginSafeBrowsingCheck(const URL& url, bool forMainFrameNavigation, WebFramePolicyListenerProxy& listener)

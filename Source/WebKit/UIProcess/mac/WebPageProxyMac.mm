@@ -637,15 +637,14 @@ void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMe
 
 #endif
 
-void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory)
+void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory, std::optional<FrameIdentifier> frameID)
 {
     switch (pasteAccessCategory) {
     case DOMPasteAccessCategory::General:
-        grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral);
+        grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral, frameID);
         return;
-
     case DOMPasteAccessCategory::Fonts:
-        grantAccessToCurrentPasteboardData(NSPasteboardNameFont);
+        grantAccessToCurrentPasteboardData(NSPasteboardNameFont, frameID);
         return;
     }
 }
