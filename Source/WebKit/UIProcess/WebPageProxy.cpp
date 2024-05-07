@@ -11887,17 +11887,18 @@ void WebPageProxy::immediateActionDidComplete()
 
 void WebPageProxy::didPerformImmediateActionHitTest(WebHitTestResultData&& result, bool contentPreventsDefault, const UserData& userData)
 {
-    if (result.remoteUserInputEventData) {
-        // rdar://127120734 Translate coordinates
-        performImmediateActionHitTestAtLocation(result.remoteUserInputEventData->targetFrameID, result.remoteUserInputEventData->transformedPoint);
-        return;
-    }
-    if (auto parentFrameID = result.frameInfo->parentFrameID) {
-        sendToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteDictionaryPopupInfoToRootView(result.frameInfo->frameID, result.dictionaryPopupInfo), [protectedThis = Ref { *this }, this, userData, result = WTFMove(result), contentPreventsDefault](WebCore::DictionaryPopupInfo popupInfo) mutable {
-            result.dictionaryPopupInfo = popupInfo;
-            protectedThis->protectedPageClient()->didPerformImmediateActionHitTest(result, contentPreventsDefault, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
-        });
-        return;
+    if (m_preferences->siteIsolationEnabled()) {
+        if (result.remoteUserInputEventData) {
+            performImmediateActionHitTestAtLocation(result.remoteUserInputEventData->targetFrameID, result.remoteUserInputEventData->transformedPoint);
+            return;
+        }
+        if (auto parentFrameID = result.frameInfo->parentFrameID) {
+            sendToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteDictionaryPopupInfoToRootView(result.frameInfo->frameID, result.dictionaryPopupInfo), [protectedThis = Ref { *this }, this, userData, result = WTFMove(result), contentPreventsDefault](WebCore::DictionaryPopupInfo popupInfo) mutable {
+                result.dictionaryPopupInfo = popupInfo;
+                protectedThis->protectedPageClient()->didPerformImmediateActionHitTest(result, contentPreventsDefault, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
+            });
+            return;
+        }
     }
     protectedPageClient()->didPerformImmediateActionHitTest(result, contentPreventsDefault, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
 }
