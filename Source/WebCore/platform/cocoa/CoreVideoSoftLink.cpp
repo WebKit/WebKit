@@ -37,6 +37,8 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreVideo, CVBufferCopyAttachments, CFDic
 #endif
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreVideo, CVBufferGetAttachment, CFTypeRef, (CVBufferRef buffer, CFStringRef key, CVAttachmentMode* attachmentMode), (buffer, key, attachmentMode))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreVideo, CVBufferGetAttachments, CFDictionaryRef, (CVBufferRef buffer, CVAttachmentMode mode), (buffer, mode))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreVideo, CVBufferRemoveAttachment, void, (CVBufferRef buffer, CFStringRef key), (buffer, key))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreVideo, CVBufferSetAttachment, void, (CVBufferRef buffer, CFStringRef key, CFTypeRef value, CVAttachmentMode attachmentMode), (buffer, key, value, attachmentMode))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreVideo, CVPixelBufferGetTypeID, CFTypeID, (), ())
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreVideo, CVPixelBufferGetWidth, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreVideo, CVPixelBufferGetWidthOfPlane, size_t, (CVPixelBufferRef pixelBuffer, size_t planeIndex), (pixelBuffer, planeIndex))
@@ -82,6 +84,12 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferYCbCrMa
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferYCbCrMatrix_P3_D65, CFStringRef)
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferYCbCrMatrix_ITU_R_2020, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferCGColorSpaceKey, CFStringRef)
+
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferCleanApertureKey, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferCleanApertureHeightKey, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferCleanApertureWidthKey, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferCleanApertureHorizontalOffsetKey, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferCleanApertureVerticalOffsetKey, CFStringRef)
 
 #if PLATFORM(IOS_FAMILY)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVPixelBufferOpenGLESCompatibilityKey, CFStringRef)

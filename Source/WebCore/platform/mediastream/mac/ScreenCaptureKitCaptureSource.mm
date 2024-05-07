@@ -29,6 +29,7 @@
 #if HAVE(SCREEN_CAPTURE_KIT)
 
 #import "DisplayCaptureManager.h"
+#import "ImageTransferSessionVT.h"
 #import "Logging.h"
 #import "PlatformMediaSessionManager.h"
 #import "PlatformScreen.h"
@@ -520,7 +521,7 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
 
     double contentScale = 1;
     double scaleFactor = 1;
-    FloatSize contentSize;
+    FloatRect contentRect;
     auto hasLargePresenterOverlay = false;
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     auto canCheckForOverlayMode = PAL::canLoad_ScreenCaptureKit_SCStreamFrameInfoPresenterOverlayContentRect();
@@ -533,9 +534,9 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
             contentScale = [contentScaleNumber floatValue];
 
         if (auto contentRectDictionary = (CFDictionaryRef)attachment[SCStreamFrameInfoContentRect]) {
-            CGRect contentRect;
-            if (CGRectMakeWithDictionaryRepresentation(contentRectDictionary, &contentRect))
-                contentSize = FloatSize { contentRect.size };
+            CGRect cgRect;
+            if (CGRectMakeWithDictionaryRepresentation(contentRectDictionary, &cgRect))
+                contentRect = cgRect;
         }
 
 #if HAVE(SC_CONTENT_SHARING_PICKER)
@@ -569,22 +570,35 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     m_currentFrame = WTFMove(sampleBuffer);
 
     if (scaleFactor != 1)
-        contentSize.scale(scaleFactor);
+        contentRect.scale(scaleFactor);
+
+    auto scaledContentRect = contentRect;
     if (contentScale && contentScale != 1)
-        contentSize.scale(1 / contentScale);
+        scaledContentRect.scale(1 / contentScale);
 
     // FIXME: for now we will rely on cropping to handle large presenter overlay.
     // We might further want to reduce calling updateStreamConfiguration once we crop when user is resizing.
-    if (m_contentSize != contentSize && !hasLargePresenterOverlay) {
-        m_contentSize = contentSize;
+    if (m_contentSize != scaledContentRect.size() && !hasLargePresenterOverlay) {
+        m_contentSize = scaledContentRect.size();
         m_streamConfiguration = nullptr;
         updateStreamConfiguration();
     }
 
-    // FIXME: Check intrinsicSize vs. SCStreamFrameInfoContentRect width, heigh, x and y to decide whether cropping is needed.
-    auto intrinsicSize = IntSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get()), true, true));
-    if (!m_intrinsicSize || *m_intrinsicSize != intrinsicSize) {
-        m_intrinsicSize = intrinsicSize;
+    auto intrinsicSize = FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get()), true, true));
+
+    if (contentRect.size() != intrinsicSize) {
+        if (!m_transferSession)
+            m_transferSession = ImageTransferSessionVT::create(preferedPixelBufferFormat());
+
+        m_transferSession->setCroppingRectangle(contentRect);
+        if (auto newFrame = m_transferSession->convertCMSampleBuffer(m_currentFrame.get(), IntSize { contentRect.size() })) {
+            m_currentFrame = WTFMove(newFrame);
+            intrinsicSize = FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get()), true, true));
+        }
+    }
+
+    if (!m_intrinsicSize || *m_intrinsicSize != IntSize(intrinsicSize)) {
+        m_intrinsicSize = IntSize(intrinsicSize);
         configurationChanged();
     }
 }

@@ -73,6 +73,26 @@ ImageTransferSessionVT::ImageTransferSessionVT(uint32_t pixelFormat, bool should
     m_pixelFormat = pixelFormat;
 }
 
+void ImageTransferSessionVT::setCroppingRectangle(std::optional<FloatRect> rectangle)
+{
+    if (m_croppingRectangle == rectangle)
+        return;
+
+    m_croppingRectangle = rectangle;
+
+    if (!m_croppingRectangle) {
+        m_sourceCroppingDictionary = { };
+        return;
+    }
+
+    m_sourceCroppingDictionary = @{
+        (__bridge NSString *)kCVImageBufferCleanApertureWidthKey: @(rectangle->width()),
+        (__bridge NSString *)kCVImageBufferCleanApertureHeightKey: @(rectangle->height()),
+        (__bridge NSString *)kCVImageBufferCleanApertureVerticalOffsetKey: @(rectangle->x()),
+        (__bridge NSString *)kCVImageBufferCleanApertureHorizontalOffsetKey: @(rectangle->y()),
+    };
+}
+
 bool ImageTransferSessionVT::setSize(const IntSize& size)
 {
     if (m_size == size && m_outputBufferPool)
@@ -87,8 +107,11 @@ bool ImageTransferSessionVT::setSize(const IntSize& size)
 
 RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBufferRef sourceBuffer, const IntSize& size)
 {
-    if (sourceBuffer && m_size == IntSize(CVPixelBufferGetWidth(sourceBuffer), CVPixelBufferGetHeight(sourceBuffer)) && m_pixelFormat == CVPixelBufferGetPixelFormatType(sourceBuffer))
+    if (!m_sourceCroppingDictionary && sourceBuffer && m_size == IntSize(CVPixelBufferGetWidth(sourceBuffer), CVPixelBufferGetHeight(sourceBuffer)) && m_pixelFormat == CVPixelBufferGetPixelFormatType(sourceBuffer))
         return retainPtr(sourceBuffer);
+
+    if (m_sourceCroppingDictionary)
+        CVBufferSetAttachment(sourceBuffer, kCVImageBufferCleanApertureKey, m_sourceCroppingDictionary.get(), kCVAttachmentMode_ShouldPropagate);
 
     if (!sourceBuffer || !setSize(size))
         return nullptr;
@@ -105,6 +128,9 @@ RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBu
         RELEASE_LOG(Media, "ImageTransferSessionVT::convertPixelBuffer, VTPixelTransferSessionTransferImage failed with error %d", static_cast<int>(err));
         return nullptr;
     }
+
+    if (m_sourceCroppingDictionary)
+        CVBufferRemoveAttachment(sourceBuffer, kCVImageBufferCleanApertureKey);
 
     return outputBuffer;
 }

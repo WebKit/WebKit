@@ -40,6 +40,11 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVBufferGetAttachment, CFTypeR
 #define CVBufferGetAttachment softLink_CoreVideo_CVBufferGetAttachment
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVBufferGetAttachments, CFDictionaryRef, (CVBufferRef buffer, CVAttachmentMode mode), (buffer, mode))
 #define CVBufferGetAttachments softLink_CoreVideo_CVBufferGetAttachments
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVBufferRemoveAttachment, void, (CVBufferRef buffer, CFStringRef key), (buffer, key))
+#define CVBufferRemoveAttachment softLink_CoreVideo_CVBufferRemoveAttachment
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVBufferSetAttachment, void, (CVBufferRef buffer, CFStringRef key, CFTypeRef value, CVAttachmentMode attachmentMode), (buffer, key, value, attachmentMode))
+#define CVBufferSetAttachment softLink_CoreVideo_CVBufferSetAttachment
+#define CVBufferGetAttachments softLink_CoreVideo_CVBufferGetAttachments
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVPixelBufferGetTypeID, CFTypeID, (), ())
 #define CVPixelBufferGetTypeID softLink_CoreVideo_CVPixelBufferGetTypeID
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVPixelBufferGetWidth, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
@@ -129,6 +134,16 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVImageBufferTransferFunction
 #define kCVImageBufferTransferFunction_SMPTE_240M_1995 get_CoreVideo_kCVImageBufferTransferFunction_SMPTE_240M_1995()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVImageBufferCGColorSpaceKey, CFStringRef)
 #define kCVImageBufferCGColorSpaceKey get_CoreVideo_kCVImageBufferCGColorSpaceKey()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVImageBufferCleanApertureKey, CFStringRef)
+#define kCVImageBufferCleanApertureKey get_CoreVideo_kCVImageBufferCleanApertureKey()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVImageBufferCleanApertureHeightKey, CFStringRef)
+#define kCVImageBufferCleanApertureHeightKey get_CoreVideo_kCVImageBufferCleanApertureHeightKey()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVImageBufferCleanApertureWidthKey, CFStringRef)
+#define kCVImageBufferCleanApertureWidthKey get_CoreVideo_kCVImageBufferCleanApertureWidthKey()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVImageBufferCleanApertureHorizontalOffsetKey, CFStringRef)
+#define kCVImageBufferCleanApertureHorizontalOffsetKey get_CoreVideo_kCVImageBufferCleanApertureHorizontalOffsetKey()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVImageBufferCleanApertureVerticalOffsetKey, CFStringRef)
+#define kCVImageBufferCleanApertureVerticalOffsetKey get_CoreVideo_kCVImageBufferCleanApertureVerticalOffsetKey()
 
 #if PLATFORM(IOS_FAMILY)
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVPixelBufferOpenGLESCompatibilityKey, CFStringRef)

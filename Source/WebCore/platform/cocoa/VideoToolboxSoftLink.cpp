@@ -65,6 +65,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTSessionSetProperty, OSSta
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, VideoToolbox, kVTPixelTransferPropertyKey_ScalingMode, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, VideoToolbox, kVTScalingMode_Letterbox, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, VideoToolbox, kVTScalingMode_Trim, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, VideoToolbox, kVTScalingMode_CropSourceToCleanAperture, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, VideoToolbox, kVTPixelTransferPropertyKey_EnableHardwareAcceleratedTransfer, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, VideoToolbox, kVTPixelTransferPropertyKey_EnableHighSpeedTransfer, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, VideoToolbox, kVTPixelTransferPropertyKey_RealTime, CFStringRef)
