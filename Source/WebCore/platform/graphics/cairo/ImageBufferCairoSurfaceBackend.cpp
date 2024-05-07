@@ -79,11 +79,6 @@ RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::createNativeImageReference()
     return NativeImage::create(RefPtr { m_surface.get() });
 }
 
-bool ImageBufferCairoSurfaceBackend::canMapBackingStore() const
-{
-    return true;
-}
-
 RefPtr<cairo_surface_t> ImageBufferCairoSurfaceBackend::createCairoSurface()
 {
     return RefPtr { m_surface.get() };

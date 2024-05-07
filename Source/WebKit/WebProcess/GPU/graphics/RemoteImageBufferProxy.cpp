@@ -137,7 +137,7 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
         auto backendParameters = this->backendParameters(parameters());
 #if HAVE(IOSURFACE)
         if (std::holds_alternative<MachSendRight>(*backendHandle)) {
-            if (RemoteRenderingBackendProxy::canMapRemoteImageBufferBackendBackingStore())
+            if (canMapBackingStore())
                 backend = ImageBufferShareableMappedIOSurfaceBackend::create(backendParameters, WTFMove(*backendHandle));
             else
                 backend = ImageBufferRemoteIOSurfaceBackend::create(backendParameters, WTFMove(*backendHandle));
@@ -179,10 +179,7 @@ ImageBufferBackend* RemoteImageBufferProxy::ensureBackend() const
 
 RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage() const
 {
-    auto* backend = ensureBackend();
-    if (!backend)
-        return { };
-    if (backend->canMapBackingStore()) {
+    if (canMapBackingStore()) {
         const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
         return ImageBuffer::copyNativeImage();
     }
@@ -197,10 +194,7 @@ RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage() const
 
 RefPtr<NativeImage> RemoteImageBufferProxy::createNativeImageReference() const
 {
-    auto* backend = ensureBackend();
-    if (!backend)
-        return { };
-    if (backend->canMapBackingStore()) {
+    if (canMapBackingStore()) {
         const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
         return ImageBuffer::createNativeImageReference();
     }
@@ -243,10 +237,7 @@ RefPtr<NativeImage> RemoteImageBufferProxy::filteredNativeImage(Filter& filter)
 
 RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, const ImageBufferAllocator& allocator) const
 {
-    auto* backend = ensureBackend();
-    if (!backend)
-        return { };
-    if (backend->canMapBackingStore()) {
+    if (canMapBackingStore()) {
         const_cast<RemoteImageBufferProxy&>(*this).flushDrawingContext();
         return ImageBuffer::getPixelBuffer(destinationFormat, sourceRect, allocator);
     }
@@ -276,10 +267,7 @@ GraphicsContext& RemoteImageBufferProxy::context() const
 
 void RemoteImageBufferProxy::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    auto* backend = ensureBackend();
-    if (!backend)
-        return;
-    if (backend->canMapBackingStore()) {
+    if (canMapBackingStore()) {
         // Simulate a write so that pending reads migrate the data off of the mapped buffer.
         context().fillRect({ });
         const_cast<RemoteImageBufferProxy&>(*this).flushDrawingContext();
@@ -334,6 +322,8 @@ void RemoteImageBufferProxy::prepareForBackingStoreChange()
 {
     // If the backing store is mapped in the process and the changes happen in the other
     // process, we need to prepare for the backing store change before we let the change happen.
+    if (!canMapBackingStore())
+        return;
     if (auto* backend = ensureBackend())
         backend->ensureNativeImagesHaveCopiedBackingStore();
 }

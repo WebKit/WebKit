@@ -117,6 +117,7 @@ public:
     {
         return {
             BackendType::renderingMode,
+            BackendType::canMapBackingStore,
             BackendType::calculateBaseTransform(parameters, BackendType::isOriginAtBottomLeftCorner),
             BackendType::calculateMemoryCost(parameters),
             BackendType::calculateExternalMemoryCost(parameters)
@@ -161,6 +162,7 @@ public:
     const Parameters& parameters() const { return m_parameters; }
 
     RenderingMode renderingMode() const { return m_backendInfo.renderingMode; }
+    bool canMapBackingStore() const { return m_backendInfo.canMapBackingStore; }
     AffineTransform baseTransform() const { return m_backendInfo.baseTransform; }
     size_t memoryCost() const { return m_backendInfo.memoryCost; }
     size_t externalMemoryCost() const { return m_backendInfo.externalMemoryCost; }

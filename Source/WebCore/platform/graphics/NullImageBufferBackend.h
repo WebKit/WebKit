@@ -46,7 +46,6 @@ public:
     RefPtr<NativeImage> createNativeImageReference() final;
     void getPixelBuffer(const IntRect&, PixelBuffer&) final;
     void putPixelBuffer(const PixelBuffer&, const IntRect&, const IntPoint&, AlphaPremultiplication) final;
-    bool canMapBackingStore() const final;
     String debugDescription() const final;
 
 protected:
