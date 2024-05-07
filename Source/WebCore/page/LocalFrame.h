@@ -120,7 +120,7 @@ public:
     using ClientCreator = CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)>;
     WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, ClientCreator&&, FrameIdentifier, Frame* opener);
     WEBCORE_EXPORT static Ref<LocalFrame> createSubframe(Page&, ClientCreator&&, FrameIdentifier, HTMLFrameOwnerElement&);
-    WEBCORE_EXPORT static Ref<LocalFrame> createSubframeHostedInAnotherProcess(Page&, ClientCreator&&, FrameIdentifier, Frame& parent);
+    WEBCORE_EXPORT static Ref<LocalFrame> createProvisionalSubframe(Page&, ClientCreator&&, FrameIdentifier, Frame& parent);
 
     WEBCORE_EXPORT void init();
 #if PLATFORM(IOS_FAMILY)

@@ -417,7 +417,7 @@ void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& param
     auto clientCreator = [this, protectedThis = Ref { *this }] (auto& localFrame) mutable {
         return makeUniqueRef<WebLocalFrameLoaderClient>(localFrame, WTFMove(protectedThis), makeInvalidator());
     };
-    auto localFrame = parent ? LocalFrame::createSubframeHostedInAnotherProcess(*corePage, WTFMove(clientCreator), m_frameID, *parent) : LocalFrame::createMainFrame(*corePage, WTFMove(clientCreator), m_frameID, remoteFrame->opener());
+    auto localFrame = parent ? LocalFrame::createProvisionalSubframe(*corePage, WTFMove(clientCreator), m_frameID, *parent) : LocalFrame::createMainFrame(*corePage, WTFMove(clientCreator), m_frameID, remoteFrame->opener());
     m_provisionalFrame = localFrame.ptr();
     localFrame->init();
 
@@ -465,6 +465,7 @@ void WebFrame::commitProvisionalFrame()
     m_coreFrame = localFrame.get();
     remoteFrame->setView(nullptr);
     localFrame->tree().setSpecifiedName(remoteFrame->tree().specifiedName());
+    localFrame->setOwnerElement(ownerElement.get());
     if (remoteFrame->isMainFrame())
         corePage->setMainFrame(*localFrame);
     localFrame->takeWindowProxyFrom(*remoteFrame);

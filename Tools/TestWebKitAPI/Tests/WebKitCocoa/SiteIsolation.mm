@@ -2531,8 +2531,6 @@ TEST(SiteIsolation, NavigateIframeToProvisionalNavigationFailure)
 // FIXME: Make a test that tries to access its parent that used to be remote during a provisional navigation of
 // the parent to that domain to verify that even the main frame uses provisional frames.
 
-// FIXME: <rdar://127638179> Call load event on iframe after switching from RemoteFrame to LocalFrame.
-
 TEST(SiteIsolation, OpenThenClose)
 {
     HTTPServer server({

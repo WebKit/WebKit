@@ -201,7 +201,7 @@ Ref<LocalFrame> LocalFrame::createSubframe(Page& page, ClientCreator&& clientCre
     return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, &ownerElement, ownerElement.document().frame(), nullptr));
 }
 
-Ref<LocalFrame> LocalFrame::createSubframeHostedInAnotherProcess(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, Frame& parent)
+Ref<LocalFrame> LocalFrame::createProvisionalSubframe(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, Frame& parent)
 {
     return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, nullptr, &parent, nullptr));
 }
