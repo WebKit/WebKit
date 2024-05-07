@@ -34,13 +34,14 @@ CachedResourceLoader* XMLDocumentParserScope::currentCachedResourceLoader = null
 
 XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader)
     : m_oldCachedResourceLoader(currentCachedResourceLoader)
-    , m_oldEntityLoader(xmlGetExternalEntityLoader())
 #if ENABLE(XSLT)
     , m_oldGenericErrorFunc(xmlGenericError)
     , m_oldStructuredErrorFunc(xmlStructuredError)
     , m_oldErrorContext(xmlGenericErrorContext)
 #endif
 {
+    initializeXMLParser();
+    m_oldEntityLoader = xmlGetExternalEntityLoader();
     currentCachedResourceLoader = cachedResourceLoader;
     xmlSetExternalEntityLoader(WebCore::externalEntityLoader);
 }
@@ -48,11 +49,12 @@ XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResou
 #if ENABLE(XSLT)
 XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader, xmlGenericErrorFunc genericErrorFunc, xmlStructuredErrorFunc structuredErrorFunc, void* errorContext)
     : m_oldCachedResourceLoader(currentCachedResourceLoader)
-    , m_oldEntityLoader(xmlGetExternalEntityLoader())
     , m_oldGenericErrorFunc(xmlGenericError)
     , m_oldStructuredErrorFunc(xmlStructuredError)
     , m_oldErrorContext(xmlGenericErrorContext)
 {
+    initializeXMLParser();
+    m_oldEntityLoader = xmlGetExternalEntityLoader();
     currentCachedResourceLoader = cachedResourceLoader;
     xmlSetExternalEntityLoader(WebCore::externalEntityLoader);
     if (genericErrorFunc)
