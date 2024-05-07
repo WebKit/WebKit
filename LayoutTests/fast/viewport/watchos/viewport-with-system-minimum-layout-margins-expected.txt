@@ -3,7 +3,7 @@ This test verifies that non-zero horizontal system minimum layout margins affect
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS innerWidth is 132
+PASS innerWidth is 174
 PASS successfullyParsed is true
 
 TEST COMPLETE
