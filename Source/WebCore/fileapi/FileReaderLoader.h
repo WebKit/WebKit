@@ -98,6 +98,7 @@ private:
     void failed(ExceptionCode);
     void convertToText();
     void convertToDataURL();
+    bool processResponse(const ResourceResponse&);
 
     static ExceptionCode httpStatusCodeToErrorCode(int);
     static ExceptionCode toErrorCode(BlobResourceHandle::Error);
