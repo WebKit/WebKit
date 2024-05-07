@@ -32,9 +32,12 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NotFound.h>
 #include <wtf/UnalignedAccess.h>
-#include <wtf/simde/simde.h>
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/ASCIILiteral.h>
+
+#if CPU(ARM64)
+#include <arm_neon.h>
+#endif
 
 namespace WTF {
 
@@ -601,9 +604,9 @@ ALWAYS_INLINE const uint8_t* find8(const uint8_t* pointer, uint8_t character, si
     return static_cast<const uint8_t*>(memchr(pointer + index, character, length - index));
 }
 
+#if CPU(ARM64)
 WTF_EXPORT_PRIVATE const uint16_t* find16AlignedImpl(const uint16_t* pointer, uint16_t character, size_t length);
 
-#if CPU(ARM64)
 ALWAYS_INLINE const uint16_t* find16(const uint16_t* pointer, uint16_t character, size_t length)
 {
     // We take `size_t` length instead of `unsigned` because,
@@ -643,9 +646,9 @@ ALWAYS_INLINE const uint16_t* find16(const uint16_t* pointer, uint16_t character
 }
 #endif
 
+#if CPU(ARM64)
 WTF_EXPORT_PRIVATE const uint32_t* find32AlignedImpl(const uint32_t* pointer, uint32_t character, size_t length);
 
-#if CPU(ARM64)
 ALWAYS_INLINE const uint32_t* find32(const uint32_t* pointer, uint32_t character, size_t length)
 {
     constexpr size_t thresholdLength = 32;
@@ -676,9 +679,9 @@ ALWAYS_INLINE const uint32_t* find32(const uint32_t* pointer, uint32_t character
 }
 #endif
 
+#if CPU(ARM64)
 WTF_EXPORT_PRIVATE const uint64_t* find64AlignedImpl(const uint64_t* pointer, uint64_t character, size_t length);
 
-#if CPU(ARM64)
 ALWAYS_INLINE const uint64_t* find64(const uint64_t* pointer, uint64_t character, size_t length)
 {
     constexpr size_t thresholdLength = 32;
@@ -709,9 +712,9 @@ ALWAYS_INLINE const uint64_t* find64(const uint64_t* pointer, uint64_t character
 }
 #endif
 
+#if CPU(ARM64)
 WTF_EXPORT_PRIVATE const float* findFloatAlignedImpl(const float* pointer, float target, size_t length);
 
-#if CPU(ARM64)
 ALWAYS_INLINE const float* findFloat(const float* pointer, float target, size_t length)
 {
     constexpr size_t thresholdLength = 32;
@@ -742,9 +745,9 @@ ALWAYS_INLINE const float* findFloat(const float* pointer, float target, size_t 
 }
 #endif
 
+#if CPU(ARM64)
 WTF_EXPORT_PRIVATE const double* findDoubleAlignedImpl(const double* pointer, double target, size_t length);
 
-#if CPU(ARM64)
 ALWAYS_INLINE const double* findDouble(const double* pointer, double target, size_t length)
 {
     constexpr size_t thresholdLength = 32;
@@ -775,10 +778,9 @@ ALWAYS_INLINE const double* findDouble(const double* pointer, double target, siz
 }
 #endif
 
-WTF_EXPORT_PRIVATE const LChar* find8NonASCIIAlignedImpl(std::span<const LChar>);
-WTF_EXPORT_PRIVATE const UChar* find16NonASCIIAlignedImpl(std::span<const UChar>);
-
 #if CPU(ARM64)
+WTF_EXPORT_PRIVATE const LChar* find8NonASCIIAlignedImpl(std::span<const LChar>);
+
 ALWAYS_INLINE const LChar* find8NonASCII(std::span<const LChar> data)
 {
     constexpr size_t thresholdLength = 16;
@@ -799,6 +801,8 @@ ALWAYS_INLINE const LChar* find8NonASCII(std::span<const LChar> data)
     ASSERT(index < length);
     return find8NonASCIIAlignedImpl({ pointer + index, length - index });
 }
+
+WTF_EXPORT_PRIVATE const UChar* find16NonASCIIAlignedImpl(std::span<const UChar>);
 
 ALWAYS_INLINE const UChar* find16NonASCII(std::span<const UChar> data)
 {
@@ -1005,18 +1009,18 @@ inline void copyElements(uint16_t* __restrict destination, const uint8_t* __rest
     if (length >= memoryAccessSize) {
         constexpr uintptr_t memoryAccessMask = memoryAccessSize - 1;
         const auto* simdEnd = destination + (length & ~memoryAccessMask);
-        simde_uint8x16_t zeros = simde_vdupq_n_u8(0);
+        uint8x16_t zeros = vdupq_n_u8(0);
         do {
-            simde_uint8x16x4_t bytes = simde_vld1q_u8_x4(bitwise_cast<const uint8_t*>(source));
+            uint8x16x4_t bytes = vld1q_u8_x4(bitwise_cast<const uint8_t*>(source));
             source += memoryAccessSize;
 
-            simde_vst2q_u8(bitwise_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[0], zeros }));
+            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[0], zeros }));
             destination += memoryAccessSize / 4;
-            simde_vst2q_u8(bitwise_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[1], zeros }));
+            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[1], zeros }));
             destination += memoryAccessSize / 4;
-            simde_vst2q_u8(bitwise_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[2], zeros }));
+            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[2], zeros }));
             destination += memoryAccessSize / 4;
-            simde_vst2q_u8(bitwise_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[3], zeros }));
+            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[3], zeros }));
             destination += memoryAccessSize / 4;
         } while (destination != simdEnd);
     }
@@ -1210,40 +1214,40 @@ inline void copyElements(LChar* __restrict destination, const UChar* __restrict 
 
 #if CPU(ARM64)
 
-ALWAYS_INLINE simde_uint8x16_t loadBulk(const uint8_t* ptr)
+ALWAYS_INLINE uint8x16_t loadBulk(const uint8_t* ptr)
 {
-    return simde_vld1q_u8(ptr);
+    return vld1q_u8(ptr);
 }
 
-ALWAYS_INLINE simde_uint16x8_t loadBulk(const uint16_t* ptr)
+ALWAYS_INLINE uint16x8_t loadBulk(const uint16_t* ptr)
 {
-    return simde_vld1q_u16(ptr);
+    return vld1q_u16(ptr);
 }
 
-ALWAYS_INLINE simde_uint8x16_t mergeBulk(simde_uint8x16_t accumulated, simde_uint8x16_t input)
+ALWAYS_INLINE uint8x16_t mergeBulk(uint8x16_t accumulated, uint8x16_t input)
 {
-    return simde_vorrq_u8(accumulated, input);
+    return vorrq_u8(accumulated, input);
 }
 
-ALWAYS_INLINE simde_uint16x8_t mergeBulk(simde_uint16x8_t accumulated, simde_uint16x8_t input)
+ALWAYS_INLINE uint16x8_t mergeBulk(uint16x8_t accumulated, uint16x8_t input)
 {
-    return simde_vorrq_u16(accumulated, input);
+    return vorrq_u16(accumulated, input);
 }
 
-ALWAYS_INLINE bool isNonZeroBulk(simde_uint8x16_t accumulated)
+ALWAYS_INLINE bool isNonZeroBulk(uint8x16_t accumulated)
 {
-    return simde_vmaxvq_u8(accumulated);
+    return vmaxvq_u8(accumulated);
 }
 
-ALWAYS_INLINE bool isNonZeroBulk(simde_uint16x8_t accumulated)
+ALWAYS_INLINE bool isNonZeroBulk(uint16x8_t accumulated)
 {
-    return simde_vmaxvq_u16(accumulated);
+    return vmaxvq_u16(accumulated);
 }
 
 template<LChar character, LChar... characters>
-ALWAYS_INLINE simde_uint8x16_t compareBulk(simde_uint8x16_t input)
+ALWAYS_INLINE uint8x16_t compareBulk(uint8x16_t input)
 {
-    auto result = simde_vceqq_u8(input, simde_vmovq_n_u8(character));
+    auto result = vceqq_u8(input, vmovq_n_u8(character));
     if constexpr (!sizeof...(characters))
         return result;
     else
@@ -1251,9 +1255,9 @@ ALWAYS_INLINE simde_uint8x16_t compareBulk(simde_uint8x16_t input)
 }
 
 template<UChar character, UChar... characters>
-ALWAYS_INLINE simde_uint16x8_t compareBulk(simde_uint16x8_t input)
+ALWAYS_INLINE uint16x8_t compareBulk(uint16x8_t input)
 {
-    auto result = simde_vceqq_u16(input, simde_vmovq_n_u16(character));
+    auto result = vceqq_u16(input, vmovq_n_u16(character));
     if constexpr (!sizeof...(characters))
         return result;
     else
