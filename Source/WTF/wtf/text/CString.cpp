@@ -121,7 +121,7 @@ bool operator==(const CString& a, const CString& b)
         return false;
     if (a.length() != b.length())
         return false;
-    return equal(a.dataAsUInt8Ptr(), b.span());
+    return equal(a.span().data(), b.span());
 }
 
 bool operator==(const CString& a, const char* b)

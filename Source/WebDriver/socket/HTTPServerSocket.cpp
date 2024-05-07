@@ -107,8 +107,7 @@ void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID
 void HTTPRequestHandler::sendResponse(HTTPRequestHandler::Response&& response)
 {
     auto& endpoint = RemoteInspectorSocketEndpoint::singleton();
-    auto packet = packHTTPMessage(WTFMove(response));
-    endpoint.send(m_client.value(), packet.utf8().data(), packet.length());
+    endpoint.send(m_client.value(), packHTTPMessage(WTFMove(response)).utf8().span());
     reset();
 }
 

@@ -75,8 +75,6 @@ public:
 
     std::string toStdString() const { return m_buffer ? std::string(m_buffer->data()) : std::string(); }
 
-    const uint8_t* dataAsUInt8Ptr() const { return reinterpret_cast<const uint8_t*>(data()); }
-
     std::span<const uint8_t> span() const
     {
         if (m_buffer)

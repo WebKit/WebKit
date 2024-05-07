@@ -125,8 +125,7 @@ void RemoteInspectorClient::sendWebInspectorEvent(const String& event)
 {
     ASSERT(isMainRunLoop());
     ASSERT(m_connectionID);
-    auto message = event.utf8();
-    send(m_connectionID.value(), message.dataAsUInt8Ptr(), message.length());
+    send(m_connectionID.value(), event.utf8().span());
 }
 
 HashMap<String, Inspector::RemoteInspectorConnectionClient::CallHandler>& RemoteInspectorClient::dispatchMap()

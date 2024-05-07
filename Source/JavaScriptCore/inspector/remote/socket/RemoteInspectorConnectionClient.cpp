@@ -52,14 +52,14 @@ std::optional<ConnectionID> RemoteInspectorConnectionClient::createClient(Platfo
     return endpoint.createClient(socket, *this);
 }
 
-void RemoteInspectorConnectionClient::send(ConnectionID id, const uint8_t* data, size_t size)
+void RemoteInspectorConnectionClient::send(ConnectionID id, std::span<const uint8_t> data)
 {
-    auto message = MessageParser::createMessage(data, size);
+    auto message = MessageParser::createMessage(data);
     if (message.isEmpty())
         return;
 
     auto& endpoint = RemoteInspectorSocketEndpoint::singleton();
-    endpoint.send(id, message.data(), message.size());
+    endpoint.send(id, message);
 }
 
 void RemoteInspectorConnectionClient::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID clientID, Vector<uint8_t>&& data)

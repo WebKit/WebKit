@@ -4565,15 +4565,19 @@ void WebPage::getAccessibilityTreeData(CompletionHandler<void(const std::optiona
         auto stream = adoptCF(CFWriteStreamCreateWithAllocatedBuffers(0, 0));
         CFWriteStreamOpen(stream.get());
 
-        CFWriteStreamWrite(stream.get(), treeData->liveTree.utf8().dataAsUInt8Ptr(), treeData->liveTree.utf8().length());
-        CFWriteStreamWrite(stream.get(), treeData->isolatedTree.utf8().dataAsUInt8Ptr(), treeData->isolatedTree.utf8().length());
+        auto writeTreeToStream = [&stream](auto& tree) {
+            auto utf8 = tree.utf8();
+            auto utf8Span = utf8.span();
+            CFWriteStreamWrite(stream.get(), utf8Span.data(), utf8Span.size());
+        };
+        writeTreeToStream(treeData->liveTree);
+        writeTreeToStream(treeData->isolatedTree);
 
         data = adoptCF(static_cast<CFDataRef>(CFWriteStreamCopyProperty(stream.get(), kCFStreamPropertyDataWritten)));
         CFWriteStreamClose(stream.get());
-    }
 
-    if (data)
         dataBuffer = IPC::SharedBufferReference(SharedBuffer::create(data.get()));
+    }
 #endif
 
     callback(dataBuffer);

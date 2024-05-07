@@ -74,9 +74,7 @@ public:
     void invalidateClient(Client&);
     void invalidateListener(Listener&);
 
-    void send(ConnectionID, const uint8_t* data, size_t);
-    inline void send(ConnectionID id, const Vector<uint8_t>& data) { send(id, data.data(), data.size()); }
-    inline void send(ConnectionID id, const char* data, size_t length) { send(id, reinterpret_cast<const uint8_t*>(data), length); }
+    void send(ConnectionID, std::span<const uint8_t>);
 
     std::optional<ConnectionID> createClient(PlatformSocketType, Client&);
 
