@@ -243,7 +243,7 @@ bool WebFrameProxy::isDisplayingMarkupDocument() const
 
 bool WebFrameProxy::isDisplayingPDFDocument() const
 {
-    return MIMETypeRegistry::isPDFOrPostScriptMIMEType(m_MIMEType);
+    return MIMETypeRegistry::isPDFMIMEType(m_MIMEType);
 }
 
 void WebFrameProxy::didStartProvisionalLoad(const URL& url)

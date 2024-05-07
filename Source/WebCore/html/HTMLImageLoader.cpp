@@ -61,7 +61,7 @@ void HTMLImageLoader::dispatchLoadEvent()
     // firing such events for PDF loads on iOS can cause confusion on some sites.
     // See rdar://107795151.
     if (auto* objectElement = dynamicDowncast<HTMLObjectElement>(element())) {
-        if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(objectElement->serviceType()))
+        if (MIMETypeRegistry::isPDFMIMEType(objectElement->serviceType()))
             return;
     }
 #endif

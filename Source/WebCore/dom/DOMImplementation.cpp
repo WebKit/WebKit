@@ -171,7 +171,7 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Local
 #endif
 
     bool isImage = MIMETypeRegistry::isSupportedImageMIMEType(contentType);
-    if (frame && isImage && !MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType))
+    if (frame && isImage && !MIMETypeRegistry::isPDFMIMEType(contentType))
         return ImageDocument::create(*frame, url);
 
     // The "image documents for subframe PDFs" mode will override a PDF plug-in.

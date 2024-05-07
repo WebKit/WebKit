@@ -1707,7 +1707,7 @@ ObjectContentType WebLocalFrameLoaderClient::objectContentType(const URL& url, c
 
 #if PLATFORM(IOS_FAMILY)
     // iOS can render PDF in <object>/<embed> via PDFDocumentImage.
-    if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(mimeType))
+    if (MIMETypeRegistry::isPDFMIMEType(mimeType))
         return ObjectContentType::Image;
 #endif
 

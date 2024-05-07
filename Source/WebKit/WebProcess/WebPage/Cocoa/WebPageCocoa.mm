@@ -193,7 +193,7 @@ bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) con
     if (!pluginEnabled)
         return false;
 
-    return MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType) || (contentType.isEmpty() && (path.endsWithIgnoringASCIICase(".pdf"_s) || path.endsWithIgnoringASCIICase(".ps"_s)));
+    return MIMETypeRegistry::isPDFMIMEType(contentType) || (contentType.isEmpty() && path.endsWithIgnoringASCIICase(".pdf"_s));
 }
 #endif
 
