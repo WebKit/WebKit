@@ -39,7 +39,7 @@ WeakPtr<CachedResourceLoader>& XMLDocumentParserScope::currentCachedResourceLoad
 
 #if ENABLE(XSLT)
 XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader)
-    : XMLDocumentParserScope(cachedResourceLoader, xmlGenericError, xmlStructuredError, xmlGenericErrorContext)
+    : XMLDocumentParserScope(cachedResourceLoader, xmlGenericError, xmlStructuredError, xmlGenericErrorContext, xmlStructuredErrorContext)
 {
 }
 #else
@@ -54,20 +54,21 @@ XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResou
 #endif // ENABLE(XSLT)
 
 #if ENABLE(XSLT)
-XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader, xmlGenericErrorFunc genericErrorFunc, xmlStructuredErrorFunc structuredErrorFunc, void* errorContext)
+XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader, xmlGenericErrorFunc genericErrorFunc, xmlStructuredErrorFunc structuredErrorFunc, void* genericErrorContext, void* structuredErrorContext)
     : m_oldCachedResourceLoader(currentCachedResourceLoader())
     , m_oldGenericErrorFunc(xmlGenericError)
     , m_oldStructuredErrorFunc(xmlStructuredError)
-    , m_oldErrorContext(xmlGenericErrorContext)
+    , m_oldGenericErrorContext(xmlGenericErrorContext)
+    , m_oldStructuredErrorContext(xmlStructuredErrorContext)
 {
     initializeXMLParser();
     m_oldEntityLoader = xmlGetExternalEntityLoader();
     currentCachedResourceLoader() = cachedResourceLoader;
     xmlSetExternalEntityLoader(WebCore::externalEntityLoader);
     if (genericErrorFunc)
-        xmlSetGenericErrorFunc(errorContext, genericErrorFunc);
+        xmlSetGenericErrorFunc(genericErrorContext, genericErrorFunc);
     if (structuredErrorFunc)
-        xmlSetStructuredErrorFunc(errorContext, structuredErrorFunc);
+        xmlSetStructuredErrorFunc(structuredErrorContext ?: genericErrorContext, structuredErrorFunc);
 }
 #endif
 
@@ -76,8 +77,8 @@ XMLDocumentParserScope::~XMLDocumentParserScope()
     currentCachedResourceLoader() = m_oldCachedResourceLoader;
     xmlSetExternalEntityLoader(m_oldEntityLoader);
 #if ENABLE(XSLT)
-    xmlSetGenericErrorFunc(m_oldErrorContext, m_oldGenericErrorFunc);
-    xmlSetStructuredErrorFunc(m_oldErrorContext, m_oldStructuredErrorFunc);
+    xmlSetGenericErrorFunc(m_oldGenericErrorContext, m_oldGenericErrorFunc);
+    xmlSetStructuredErrorFunc(m_oldStructuredErrorContext, m_oldStructuredErrorFunc);
 #endif
 }
 

@@ -50,6 +50,38 @@ public:
     }
 };
 
+TEST_F(XMLParsing, WebCoreRestoresLibxml2GenericAndStructuredErrorState)
+{
+    void* origGenericErrorContext = xmlGenericErrorContext;
+    void* origStructuredErrorContext = xmlStructuredErrorContext;
+    xmlGenericErrorFunc origGenericErrorFunc = xmlGenericError;
+    xmlStructuredErrorFunc origStructuredErrorFunc = xmlStructuredError;
+
+    void* testGenericErrorContext = reinterpret_cast<void*>(0xaaaaaaaa);
+    void* testStructuredErrorContext = reinterpret_cast<void*>(0xbbbbbbbb);
+    xmlGenericErrorFunc testGenericErrorFunc = reinterpret_cast<xmlGenericErrorFunc>(0xcccccccc);
+    xmlStructuredErrorFunc testStructuredErrorFunc = reinterpret_cast<xmlStructuredErrorFunc>(0xdddddddd);
+
+    // Set test values.
+    xmlSetGenericErrorFunc(testGenericErrorContext, testGenericErrorFunc);
+    xmlSetStructuredErrorFunc(testStructuredErrorContext, testStructuredErrorFunc);
+
+    // Parse XHTML in WebKit.
+    String chunk = "<x/>"_s;
+    auto result = WebCoreTestSupport::testDocumentFragmentParseXML(chunk, WebCore::DefaultParserContentPolicy);
+    EXPECT_TRUE(result);
+
+    // Verify test values are restored.
+    EXPECT_EQ(testGenericErrorContext, xmlGenericErrorContext);
+    EXPECT_EQ(testStructuredErrorContext, xmlStructuredErrorContext);
+    EXPECT_EQ(testGenericErrorFunc, xmlGenericError);
+    EXPECT_EQ(testStructuredErrorFunc, xmlStructuredError);
+
+    // Restore original values.
+    xmlSetGenericErrorFunc(origGenericErrorContext, origGenericErrorFunc);
+    xmlSetStructuredErrorFunc(origStructuredErrorContext, origStructuredErrorFunc);
+}
+
 TEST_F(XMLParsing, WebCoreDoesNotBreakLibxml2)
 {
     xmlExternalEntityLoader origEntityLoader = xmlGetExternalEntityLoader();
