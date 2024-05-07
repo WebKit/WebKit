@@ -50,7 +50,7 @@ class TestRevert(testing.PathTestCase):
             1: dict(
                 number=1,
                 opened=True,
-                title='Unreviewed, reverting 5@main (d8bce26)',
+                title='Unreviewed, reverting 5@main (d8bce26fa65c)',
                 description='?',
                 creator=result.users.create(name='Tim Contributor', username='tcontributor'),
                 timestamp=1639536160,
@@ -61,7 +61,7 @@ class TestRevert(testing.PathTestCase):
         result.pull_requests = [dict(
             number=1,
             state='open',
-            title='Unreviewed, reverting 5@main (d8bce26)',
+            title='Unreviewed, reverting 5@main (d8bce26fa65c)',
             user=dict(login='tcontributor'),
             body='''#### a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd
     <pre>
@@ -102,7 +102,7 @@ class TestRevert(testing.PathTestCase):
             self.assertEqual(0, result)
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
-            self.assertEqual(True, 'Unreviewed, reverting 5@main (d8bce26)' in repo.head.message)
+            self.assertEqual(True, 'Unreviewed, reverting 5@main (d8bce26fa65c)' in repo.head.message)
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
 
         self.assertEqual(
@@ -110,7 +110,7 @@ class TestRevert(testing.PathTestCase):
             "This issue will track the revert and should not be the issue of the commit(s) to be reverted.\n"
             "Enter issue URL or title of new issue (reason for the revert): \n"
             "Created the local development branch 'eng/Example-feature-1'\n"
-            "Created 'PR 1 | Unreviewed, reverting 5@main (d8bce26)'!\n"
+            "Created 'PR 1 | Unreviewed, reverting 5@main (d8bce26fa65c)'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -151,7 +151,7 @@ class TestRevert(testing.PathTestCase):
             self.assertEqual(0, result)
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
-            self.assertEqual(True, 'Unreviewed, reverting 5@main (d8bce26)' in repo.head.message)
+            self.assertEqual(True, 'Unreviewed, reverting 5@main (d8bce26fa65c)' in repo.head.message)
             with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)):
                 result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
             self.assertEqual(0, result)
@@ -162,7 +162,7 @@ class TestRevert(testing.PathTestCase):
             "This issue will track the revert and should not be the issue of the commit(s) to be reverted.\n"
             "Enter issue URL or title of new issue (reason for the revert): \n"
             "Created the local development branch 'eng/Example-feature-1'\n"
-            "Created 'PR 1 | Unreviewed, reverting 5@main (d8bce26)'!\n"
+            "Created 'PR 1 | Unreviewed, reverting 5@main (d8bce26fa65c)'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -204,7 +204,7 @@ class TestRevert(testing.PathTestCase):
             self.assertEqual(0, result)
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
-            self.assertEqual(True, 'Unreviewed, reverting 5@main (d8bce26)' in repo.head.message)
+            self.assertEqual(True, 'Unreviewed, reverting 5@main (d8bce26fa65c)' in repo.head.message)
             with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)):
                 result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
             self.assertEqual(0, result)
@@ -213,7 +213,7 @@ class TestRevert(testing.PathTestCase):
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created the local development branch 'eng/Example-feature-1'\n"
-            "Created 'PR 1 | Unreviewed, reverting 5@main (d8bce26)'!\n"
+            "Created 'PR 1 | Unreviewed, reverting 5@main (d8bce26fa65c)'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -290,9 +290,9 @@ index 05e8751..0bf3c85 100644
             "This issue will track the revert and should not be the issue of the commit(s) to be reverted.\n"
             "Enter issue URL or title of new issue (reason for the revert): \n"
             "Created the local development branch 'eng/Example-feature-1'\n"
-            "Created 'PR 1 | Unreviewed, reverting 5@main (d8bce26)'!\n"
+            "Created 'PR 1 | Unreviewed, reverting 5@main (d8bce26fa65c)'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n"
-            "Updated 'PR 1 | Unreviewed, reverting 5@main (d8bce26)'!\n"
+            "Updated 'PR 1 | Unreviewed, reverting 5@main (d8bce26fa65c)'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -345,11 +345,11 @@ index 05e8751..0bf3c85 100644
             self.assertEqual(0, result)
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
-            self.assertEqual(True, 'Unreviewed, reverting 5@main (d8bce26)' in repo.head.message)
+            self.assertEqual(True, 'Unreviewed, reverting 5@main (d8bce26fa65c)' in repo.head.message)
             self.assertEqual(
                 captured.stdout.getvalue(),
                 "Created the local development branch 'eng/Example-feature-1'\n"
-                "Created 'PR 1 | Unreviewed, reverting 5@main (d8bce26)'!\n"
+                "Created 'PR 1 | Unreviewed, reverting 5@main (d8bce26fa65c)'!\n"
                 "https://github.example.com/WebKit/WebKit/pull/1\n"
             )
 
@@ -396,7 +396,7 @@ index 05e8751..0bf3c85 100644
                 "Pushing 'eng/Example-issue-1' to 'fork'...",
                 "Creating 'eng/Example-issue-1-1' as a reference branch",
                 "Creating pull-request for 'eng/Example-issue-1'...",
-                "Adding 'merge-queue' to 'PR 2 | Unreviewed, reverting 5@main (d8bce26)'",
+                "Adding 'merge-queue' to 'PR 2 | Unreviewed, reverting 5@main (d8bce26fa65c)'",
             ],
         )
 
@@ -443,6 +443,6 @@ index 05e8751..0bf3c85 100644
                 "Pushing 'eng/Example-issue-1' to 'fork'...",
                 "Creating 'eng/Example-issue-1-1' as a reference branch",
                 "Creating pull-request for 'eng/Example-issue-1'...",
-                "Adding 'unsafe-merge-queue' to 'PR 2 | Unreviewed, reverting 5@main (d8bce26)'",
+                "Adding 'unsafe-merge-queue' to 'PR 2 | Unreviewed, reverting 5@main (d8bce26fa65c)'",
             ],
         )

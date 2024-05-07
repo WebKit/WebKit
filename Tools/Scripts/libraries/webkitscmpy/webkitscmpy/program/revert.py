@@ -160,7 +160,7 @@ class Revert(Command):
             reverted_changeset += '\n    {}\n'.format(commit_title)
             reverted_changeset += '\n'.join(bug_urls)
             if commit.identifier and commit.branch:
-                commit_repr = '{}@{} ({})'.format(commit.identifier, commit.branch, commit.hash[:7])
+                commit_repr = '{}@{} ({})'.format(commit.identifier, commit.branch, commit.hash[:commit.HASH_LABEL_SIZE])
                 reverted_commits.append(commit_repr)
                 reverted_changeset += '\n    {}\n'.format(commit_repr)
             else:
