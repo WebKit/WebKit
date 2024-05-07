@@ -4751,10 +4751,13 @@ private:
                     return JSValue();
             }
 
-            if (length && (IntSize(width, height).area() * 4) != length) {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                return JSValue();
+            if (length) {
+                auto area = IntSize(width, height).area<RecordOverflow>() * 4;
+                if (area.hasOverflowed() || area.value() != length) {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    return JSValue();
+                }
             }
 
             if (!m_isDOMGlobalObject)
