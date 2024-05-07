@@ -16,6 +16,7 @@
 #import "RTCVideoFrameReorderQueue.h"
 #import "base/RTCVideoFrame.h"
 #import "base/RTCVideoFrameBuffer.h"
+#import "common_video/h265/h265_common.h"
 #import "common_video/h265/h265_vps_parser.h"
 #import "components/video_frame_buffer/RTCCVPixelBuffer.h"
 #import "helpers.h"
@@ -91,8 +92,9 @@ std::span<const uint8_t> vpsDataFromHvcc(const uint8_t* hvccData, size_t hvccDat
 
   size_t position = (8 + 8 + 32 + 32 + 16 + 8 + 16 + 8 + 8 + 8 + 8 + 16 + 8 + 8) / 8;
   for (uint32_t j = 0; j < numOfArrays; j++) {
-    // NAL_unit_type
-    auto nalUnitType = reader.Read<uint8_t>();
+    // NAL_unit_type: bit(1) array_completeness; unsigned int(1) reserved = 0; unsigned int(6) NAL_unit_type;
+    auto nalUnitType = reader.Read<uint8_t>() & 0x3F;
+    // numNalus
     auto numOfNalus = reader.Read<uint16_t>();
     position += 3;
     if (!reader.Ok()) {
@@ -100,9 +102,11 @@ std::span<const uint8_t> vpsDataFromHvcc(const uint8_t* hvccData, size_t hvccDat
     }
 
     for (uint32_t k = 0; k < numOfNalus; k++) {
+        // nalUnitLength
         auto size = reader.Read<uint16_t>();
 
         position += 2;
+        // nalUnit
         reader.ConsumeBits(8 * size);
 
         static const size_t hevcNalHeaderSize = 2;
