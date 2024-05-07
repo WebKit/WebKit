@@ -29,6 +29,7 @@ namespace WebKit {
 
 struct NetworkProcessPreferencesForWebProcess {
     bool isWebTransportEnabled { false };
+    bool usesSingleWebProcess { false };
 
     friend bool operator==(const NetworkProcessPreferencesForWebProcess&, const NetworkProcessPreferencesForWebProcess&) = default;
 };

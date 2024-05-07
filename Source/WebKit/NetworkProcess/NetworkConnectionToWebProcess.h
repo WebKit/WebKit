@@ -145,6 +145,7 @@ public:
     NetworkProcess& networkProcess() { return m_networkProcess.get(); }
 
     bool isWebTransportEnabled() const { return m_preferencesForWebProcess.isWebTransportEnabled; }
+    bool usesSingleWebProcess() const { return m_preferencesForWebProcess.usesSingleWebProcess; }
 
     void didCleanupResourceLoader(NetworkResourceLoader&);
     void transferKeptAliveLoad(NetworkResourceLoader&);
