@@ -150,6 +150,7 @@ interface TestRunner {
     // Text search testing.
     boolean findString(DOMString target, object optionsArray);
     undefined findStringMatchesInPage(DOMString target, object optionsArray);
+    undefined findInPage(DOMString target, object optionsArray);
     undefined replaceFindMatchesAtIndices(object matchIndicesArray, DOMString replacementText, boolean selectionOnly);
 
     // Evaluating script in a special context.

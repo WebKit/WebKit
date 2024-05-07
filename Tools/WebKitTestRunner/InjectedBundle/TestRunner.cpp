@@ -353,6 +353,16 @@ void TestRunner::findStringMatchesInPage(JSContextRef context, JSStringRef targe
     }
 }
 
+void TestRunner::findInPage(JSContextRef context, JSStringRef target, JSValueRef optionsArrayAsValue)
+{
+    if (auto options = findOptionsFromArray(context, optionsArrayAsValue)) {
+        postPageMessage("FindString", createWKDictionary({
+            { "String", toWK(target) },
+            { "FindOptions", toWK(*options) },
+        }));
+    }
+}
+
 void TestRunner::replaceFindMatchesAtIndices(JSContextRef context, JSValueRef matchIndicesAsValue, JSStringRef replacementText, bool selectionOnly)
 {
     auto& bundle = InjectedBundle::singleton();

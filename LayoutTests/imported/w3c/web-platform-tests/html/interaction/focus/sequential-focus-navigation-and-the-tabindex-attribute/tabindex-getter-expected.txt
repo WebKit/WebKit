@@ -1,5 +1,7 @@
   button button a a
 summary
+second summary
+details
 
 
 PASS input.tabIndex should return 0 by default

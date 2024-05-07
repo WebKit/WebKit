@@ -2352,8 +2352,9 @@ bool LocalFrameView::scrollToFragmentInternal(StringView fragmentIdentifier)
         scrollPositionAnchor = m_frame->document();
     maintainScrollPositionAtAnchor(scrollPositionAnchor.get());
     
-    // If the anchor accepts keyboard focus, move focus there to aid users relying on keyboard navigation.
     if (anchorElement) {
+        anchorElement->expandAllDetailsAncestors();
+        // If the anchor accepts keyboard focus, move focus there to aid users relying on keyboard navigation.
         if (anchorElement->isFocusable())
             document.setFocusedElement(anchorElement.get(), { { }, { }, { }, { }, FocusVisibility::Visible });
         else {

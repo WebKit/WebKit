@@ -1,3 +1,4 @@
+Details Contents
 
 
 FAIL invoking closed details with auto action opens assert_true: expected true got false
