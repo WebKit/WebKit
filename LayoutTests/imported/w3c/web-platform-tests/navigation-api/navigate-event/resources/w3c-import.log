@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/cross-origin-redirect-on-second-visit.py
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/meta-refresh.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/navigatesuccess-cross-document-helper.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/opener-postMessage-onload.html
