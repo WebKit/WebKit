@@ -41,6 +41,25 @@ void WebDragClient::willPerformDragDestinationAction(DragDestinationAction actio
         m_page->mayPerformUploadDragDestinationAction(); // Upload can happen from a drop event handler, so we should prepare early.
 }
 
+void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, const DragData& dragData, FrameIdentifier frameID, CompletionHandler<void()>&& completionHandler)
+{
+#if PLATFORM(COCOA)
+    m_page->fetchSandboxExtensionsForDragAction(frameID, [page = RefPtr { m_page.get() }, action, completionHandler = WTFMove(completionHandler)] () mutable {
+        if (!page) {
+            completionHandler();
+            return;
+        }
+        if (action == DragDestinationAction::Load)
+            page->willPerformLoadDragDestinationAction();
+        else
+            page->mayPerformUploadDragDestinationAction();
+        completionHandler();
+    });
+#else
+    completionHandler();
+#endif
+}
+
 void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&)
 {
 }

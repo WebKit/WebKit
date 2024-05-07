@@ -302,6 +302,8 @@ messages -> WebPageProxy {
 
     # Drag and drop messages
 #if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
+    PropagateDragAndDrop(WebCore::FrameIdentifier frameID, struct WebCore::RemoteUserInputEventData remoteUserInputData) -> (bool handled)
+    FetchSandboxExtensionsForDragAction(WebCore::FrameIdentifier frameID) -> (WebKit::SandboxExtensionHandle sandboxExtensionHandle, Vector<WebKit::SandboxExtensionHandle> sandboxExtensionsForUpload)
     StartDrag(struct WebCore::DragItem dragItem, WebCore::ShareableBitmapHandle dragImage)
     SetPromisedDataForImage(String pasteboardName, WebCore::SharedMemory::Handle imageHandle, String filename, String extension, String title, String url, String visibleURL, WebCore::SharedMemory::Handle archiveHandle, String originIdentifier)
 #endif

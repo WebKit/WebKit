@@ -37,6 +37,7 @@ public:
     bool useLegacyDragClient() override;
 
     void willPerformDragDestinationAction(WebCore::DragDestinationAction, const WebCore::DragData&) override;
+    void willPerformDragDestinationAction(WebCore::DragDestinationAction, const WebCore::DragData&, WebCore::FrameIdentifier, CompletionHandler<void()>&&) override;
     void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&) override;
     OptionSet<WebCore::DragSourceAction> dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) override;
     void startDrag(WebCore::DragItem, WebCore::DataTransfer&, WebCore::Frame&) override;

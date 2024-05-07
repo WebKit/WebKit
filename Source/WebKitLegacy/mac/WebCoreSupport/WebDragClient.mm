@@ -59,6 +59,7 @@
 #import <WebCore/PagePasteboardContext.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PasteboardWriter.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 using namespace WebCore;
@@ -132,6 +133,11 @@ OptionSet<WebCore::DragSourceAction> WebDragClient::dragSourceActionMaskForPoint
 void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction action, const WebCore::IntPoint& mouseDownPoint, WebCore::DataTransfer& dataTransfer)
 {
     [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragSourceAction:kit(action) fromPoint:mouseDownPoint withPasteboard:[NSPasteboard pasteboardWithName:dataTransfer.pasteboard().name()]];
+}
+
+void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction, const DragData&, WebCore::FrameIdentifier, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
 }
 
 void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame& frame)
@@ -220,6 +226,11 @@ void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAct
 {
 }
 
+void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction, const DragData&, WebCore::FrameIdentifier, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
 OptionSet<WebCore::DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
 {
     return { };
@@ -253,6 +264,11 @@ bool WebDragClient::useLegacyDragClient()
 
 void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction, const DragData&)
 {
+}
+
+void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction, const DragData&, WebCore::FrameIdentifier, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
 }
 
 OptionSet<WebCore::DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)

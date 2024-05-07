@@ -48,6 +48,7 @@
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
@@ -1526,6 +1527,93 @@ TEST(SiteIsolation, PasteGIF)
     NSArray<NSString *> *events = [webView objectByEvaluatingJavaScript:@"window.events"];
     EXPECT_EQ(1U, events.count);
     EXPECT_WK_STREQ("image.gif", events[0]);
+}
+
+TEST(SiteIsolation, DragDrop)
+{
+    auto mainframeHTML = "<DOCTYPE !html>"
+    "<html>"
+    "    <head>"
+    "        <meta charset='utf8'>"
+    "        <meta name='viewport' content='width=device-width'>"
+    "        <style>"
+    "            body {"
+    "                width: 100%;"
+    "                height: 100%;"
+    "                margin: 0;"
+    "            }"
+    "        </style>"
+    "        <script>"
+    "            window.events = [];"
+    "            addEventListener('message', function(event) {"
+    "                window.events.push(event.data);"
+    "            });"
+    "        </script>"
+    "    </head>"
+    "    <body>"
+    "        <iframe src='https://domain2.com/subframe'></iframe>"
+    "    </body>"
+    "</html>"_s;
+
+    auto subframeHTML = "<DOCTYPE !html>"
+    "    <html>"
+    "    <head>"
+    "    <meta charset='utf8'>"
+    "    <meta name='viewport' content='width=device-width'>"
+    "    <style>"
+    "        body {"
+    "            width: 100%;"
+    "            height: 100%;"
+    "            margin: 0;"
+    "        }"
+    "        #destination {"
+    "            width: 200px;"
+    "            height: 200px;"
+    "            border: red 1px solid;"
+    "        }"
+    "    </style>"
+    "    <script>"
+    "        function runTest() {"
+    "            document.addEventListener('dragenter', event => event.preventDefault());"
+    "            document.addEventListener('dragover', event => event.preventDefault());"
+    "            document.addEventListener('drop', event => {"
+    "                event.preventDefault();"
+    "                window.parent.postMessage(event.dataTransfer.files[0].name, '*');"
+    "            });"
+    "        }"
+    "    </script>"
+    "    </head>"
+    "    <body onload='runTest()'>"
+    "        <img src='' id='destination'></img>"
+    "    </body>"
+    "    </html>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { { { "Content-Type"_s, "text/html "_s } }, mainframeHTML } },
+        { "/subframe"_s, { { { "Content-Type"_s, "text/html "_s } }, subframeHTML } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+
+    auto webView = [simulator webView];
+    webView.navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    NSURL *imageURL = [NSBundle.mainBundle URLForResource:@"sunset-in-cupertino-400px" withExtension:@"gif" subdirectory:@"TestWebKitAPI.resources"];
+    [simulator writePromisedFiles:@[ imageURL ]];
+    [simulator runFrom:NSMakePoint(0, 0) to:NSMakePoint(75, 75)];
+    [webView waitForNextPresentationUpdate];
+
+    NSArray<NSString *> *events = [webView objectByEvaluatingJavaScript:@"window.events"];
+    EXPECT_EQ(1U, events.count);
+    EXPECT_WK_STREQ("sunset-in-cupertino-400px.gif", events[0]);
 }
 
 #endif

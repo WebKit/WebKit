@@ -29,6 +29,7 @@
 #include "DragData.h"
 #include "DragItem.h"
 #include "FloatPoint.h"
+#include "FrameIdentifier.h"
 #include "IntPoint.h"
 
 namespace WebCore {
@@ -49,6 +50,7 @@ public:
     virtual bool useLegacyDragClient() { return true; }
 
     virtual void willPerformDragDestinationAction(DragDestinationAction, const DragData&) = 0;
+    virtual void willPerformDragDestinationAction(DragDestinationAction, const DragData&, FrameIdentifier, CompletionHandler<void()>&&) = 0;
     virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&) = 0;
     virtual void didConcludeEditDrag() { }
     virtual OptionSet<DragSourceAction> dragSourceActionMaskForPoint(const IntPoint& rootViewPoint) = 0;

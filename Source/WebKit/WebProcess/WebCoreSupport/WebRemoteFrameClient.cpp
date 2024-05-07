@@ -181,4 +181,14 @@ void WebRemoteFrameClient::applyWebsitePolicies(WebsitePoliciesData&& websitePol
     coreFrame->setCustomNavigatorPlatform(websitePolicies.customNavigatorPlatform);
 }
 
+#if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
+void WebRemoteFrameClient::propagateDragAndDrop(FrameIdentifier frameID, WebCore::RemoteUserInputEventData remoteUserInputEventData, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (RefPtr page = m_frame->page())
+        page->sendWithAsyncReply(Messages::WebPageProxy::PropagateDragAndDrop(frameID, WTFMove(remoteUserInputEventData)), WTFMove(completionHandler));
+    else
+        completionHandler(false);
+}
+#endif
+
 }
