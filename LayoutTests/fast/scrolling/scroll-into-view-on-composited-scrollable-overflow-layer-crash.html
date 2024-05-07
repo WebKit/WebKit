@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<style>
+  #scroller {
+      width: 200px;
+      height: 200px;
+      overflow: scroll;
+  }
+  #container {
+      perspective: 1px;
+      margin-left: 150vw;
+  }
+  table {
+      overflow-y: auto;
+  }
+  caption {
+      writing-mode: vertical-lr;
+      opacity: .9;
+  }
+  #fixed {
+      position: fixed;
+  }
+  #rect {
+      width: 500px;
+      height: 200px;
+  }
+</style>
+<p>PASS if no crash or assert.</p>
+<div id="scroller">
+  <div id="container">
+    <table id="table">
+      <caption>
+        <span id="fixed"></span>
+        <div id="rect"></div>
+      </caption>
+    </table>
+  </div>
+</div>
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+  table.scrollIntoView();
+</script>
