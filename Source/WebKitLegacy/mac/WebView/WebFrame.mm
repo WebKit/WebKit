@@ -310,7 +310,9 @@ WebView *getWebView(WebFrame *webFrame)
     WebView *webView = kit(&page);
 
     RetainPtr<WebFrame> frame = adoptNS([[self alloc] _initWithWebFrameView:frameView webView:webView]);
-    auto coreFrame = WebCore::LocalFrame::createSubframe(page, makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate(), ownerElement);
+    auto coreFrame = WebCore::LocalFrame::createSubframe(page, [frame] (auto&) {
+        return makeUniqueRef<WebFrameLoaderClient>(frame.get());
+    }, WebCore::FrameIdentifier::generate(), ownerElement);
     frame->_private->coreFrame = coreFrame.ptr();
 
     coreFrame.get().tree().setSpecifiedName(name);

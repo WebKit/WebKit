@@ -25,12 +25,11 @@
 
 #pragma once
 
-#include <WebCore/FrameIdentifier.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 
 namespace WebKit {
 
-struct LocalFrameCreationParameters {
+struct ProvisionalFrameCreationParameters {
     std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier;
 };
 

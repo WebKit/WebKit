@@ -399,9 +399,9 @@ struct InsertTextOptions;
 struct InteractionInformationAtPosition;
 struct InteractionInformationRequest;
 struct LoadParameters;
-struct LocalFrameCreationParameters;
 struct PlatformFontInfo;
 struct PrintInfo;
+struct ProvisionalFrameCreationParameters;
 struct TextInputContext;
 struct UserMessage;
 struct WebAutocorrectionData;
@@ -1351,7 +1351,7 @@ public:
     void handlePDFServiceClick(const WebCore::IntPoint&, WebCore::HTMLAttachmentElement&);
 #endif
 
-    void didChangeScrollOffsetForFrame(WebCore::LocalFrame*);
+    void didChangeScrollOffsetForFrame(WebCore::LocalFrame&);
 
     void setMainFrameProgressCompleted(bool completed) { m_mainFrameProgressCompleted = completed; }
     bool shouldDispatchFakeMouseMoveEvents() const { return m_shouldDispatchFakeMouseMoveEvents; }
@@ -1861,8 +1861,8 @@ private:
     // Actions
     void tryClose(CompletionHandler<void(bool)>&&);
     void platformDidReceiveLoadParameters(const LoadParameters&);
-    void transitionFrameToLocal(LocalFrameCreationParameters&&, WebCore::FrameIdentifier);
-    void transitionFrameToRemote(WebCore::FrameIdentifier, std::optional<WebCore::LayerHostingContextIdentifier>);
+    void createProvisionalFrame(ProvisionalFrameCreationParameters&&, WebCore::FrameIdentifier);
+    void loadDidCommitInAnotherProcess(WebCore::FrameIdentifier, std::optional<WebCore::LayerHostingContextIdentifier>);
     void loadRequest(LoadParameters&&);
     [[noreturn]] void loadRequestWaitingForProcessLaunch(LoadParameters&&, URL&&, WebPageProxyIdentifier, bool);
     void loadData(LoadParameters&&);

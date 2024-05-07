@@ -4135,12 +4135,14 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
         return ViewportConfiguration::webpageParameters();
     };
 
-    if (!frame) {
+    RefPtr localFrame = frame->coreLocalFrame() ? frame->coreLocalFrame() : frame->provisionalFrame();
+    ASSERT(localFrame);
+    if (!frame || !localFrame) {
         m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
         return;
     }
 
-    RefPtr document = frame->coreLocalFrame()->document();
+    RefPtr document = localFrame->document();
 
     auto updateViewportConfigurationForMobileDocType = [this, document] {
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::xhtmlMobileParameters());

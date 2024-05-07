@@ -572,7 +572,7 @@ public:
 
     Identifier identifier() const;
     WebCore::PageIdentifier webPageID() const;
-    WebCore::PageIdentifier webPageIDInProcessForDomain(const WebCore::RegistrableDomain&) const;
+    WebCore::PageIdentifier webPageIDInProcess(const WebProcessProxy&) const;
 
     PAL::SessionID sessionID() const;
 

@@ -398,12 +398,16 @@ void HTTPServer::respondToRequests(Connection connection, Ref<RequestData> reque
         ASSERT_WITH_MESSAGE(requestData->requestMap.contains(path), "This HTTPServer does not know how to respond to a request for %s", path.utf8().data());
 
         auto response = requestData->requestMap.get(path);
-        if (response.terminateConnection == HTTPResponse::TerminateConnection::Yes)
+        switch (response.behavior) {
+        case HTTPResponse::Behavior::TerminateConnectionAfterReceivingResponse:
             return connection.terminate();
-
-        connection.send(response.serialize(), [connection, requestData] {
-            respondToRequests(connection, requestData);
-        });
+        case HTTPResponse::Behavior::SendResponseNormally:
+            return connection.send(response.serialize(), [connection, requestData] {
+                respondToRequests(connection, requestData);
+            });
+        case HTTPResponse::Behavior::NeverSendResponse:
+            return respondToRequests(connection, requestData);
+        }
     });
 }
 

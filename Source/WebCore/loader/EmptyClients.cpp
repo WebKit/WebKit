@@ -1219,7 +1219,9 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
         adoptRef(*new EmptyBackForwardClient),
         CookieJar::create(adoptRef(*new EmptyStorageSessionProvider)),
         makeUniqueRef<EmptyProgressTrackerClient>(),
-        UniqueRef<LocalFrameLoaderClient>(makeUniqueRef<EmptyFrameLoaderClient>()),
+        CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)> { [] (auto&) {
+            return makeUniqueRef<EmptyFrameLoaderClient>();
+        } },
         FrameIdentifier::generate(),
         nullptr,
         makeUniqueRef<DummySpeechRecognitionProvider>(),

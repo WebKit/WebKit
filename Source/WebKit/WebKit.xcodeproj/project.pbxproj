@@ -346,7 +346,7 @@
 		1AD60F5E18E20F4C0020C034 /* WKWindowFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD60F5C18E20F4C0020C034 /* WKWindowFeatures.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AD60F6018E20F740020C034 /* WKWindowFeaturesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD60F5F18E20F740020C034 /* WKWindowFeaturesInternal.h */; };
 		1AD8790A18B6C38A006CAFD7 /* WKUIDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD8790918B6C38A006CAFD7 /* WKUIDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1ADC268E29E89FDA005990CA /* LocalFrameCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ADC268D29E89FAF005990CA /* LocalFrameCreationParameters.h */; };
+		1ADC268E29E89FDA005990CA /* ProvisionalFrameCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ADC268D29E89FAF005990CA /* ProvisionalFrameCreationParameters.h */; };
 		1ADCB86B189831B30022EE5A /* NavigationActionData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ADCB869189831B30022EE5A /* NavigationActionData.h */; };
 		1ADE46B31954EC61000F7985 /* WKSessionStateRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ADE46B11954EC61000F7985 /* WKSessionStateRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1ADF591B1890528E0043C145 /* WKWebViewConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ADF59191890528E0043C145 /* WKWebViewConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3663,8 +3663,8 @@
 		1AD60F5C18E20F4C0020C034 /* WKWindowFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWindowFeatures.h; sourceTree = "<group>"; };
 		1AD60F5F18E20F740020C034 /* WKWindowFeaturesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWindowFeaturesInternal.h; sourceTree = "<group>"; };
 		1AD8790918B6C38A006CAFD7 /* WKUIDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUIDelegate.h; sourceTree = "<group>"; };
-		1ADC268D29E89FAF005990CA /* LocalFrameCreationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalFrameCreationParameters.h; sourceTree = "<group>"; };
-		1ADC269329E8AD96005990CA /* LocalFrameCreationParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = LocalFrameCreationParameters.serialization.in; sourceTree = "<group>"; };
+		1ADC268D29E89FAF005990CA /* ProvisionalFrameCreationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProvisionalFrameCreationParameters.h; sourceTree = "<group>"; };
+		1ADC269329E8AD96005990CA /* ProvisionalFrameCreationParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProvisionalFrameCreationParameters.serialization.in; sourceTree = "<group>"; };
 		1ADCB869189831B30022EE5A /* NavigationActionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationActionData.h; sourceTree = "<group>"; };
 		1ADE46B01954EC61000F7985 /* WKSessionStateRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKSessionStateRef.cpp; sourceTree = "<group>"; };
 		1ADE46B11954EC61000F7985 /* WKSessionStateRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSessionStateRef.h; sourceTree = "<group>"; };
@@ -9095,8 +9095,6 @@
 				5C37A5BE2970DB6000D222A0 /* LoadedWebArchive.h */,
 				2D10875F1D2C573E00B85F82 /* LoadParameters.h */,
 				46B9E2372B04228A008346A5 /* LoadParameters.serialization.in */,
-				1ADC268D29E89FAF005990CA /* LocalFrameCreationParameters.h */,
-				1ADC269329E8AD96005990CA /* LocalFrameCreationParameters.serialization.in */,
 				462CD80B28204DF100F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h */,
 				49917DB0252E30750050313F /* MediaPlaybackState.h */,
 				2D9BECF82B309E6E00D0AE99 /* MediaPlaybackState.serialization.in */,
@@ -9135,6 +9133,8 @@
 				3D3C76402B6B1E280013828A /* ProcessQualified.serialization.in */,
 				0FEC6E05280915CF008082AC /* ProcessTerminationReason.cpp */,
 				463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */,
+				1ADC268D29E89FAF005990CA /* ProvisionalFrameCreationParameters.h */,
+				1ADC269329E8AD96005990CA /* ProvisionalFrameCreationParameters.serialization.in */,
 				517B5F94275EBA62002DC22D /* PushMessageForTesting.h */,
 				514899722AB4BCFC00943741 /* PushMessageForTesting.serialization.in */,
 				9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */,
@@ -16381,7 +16381,6 @@
 				574217922400E286002B303D /* LocalAuthenticationSPI.h in Headers */,
 				57DCEDAC214C60270016B847 /* LocalAuthenticator.h in Headers */,
 				57DCEDAD214C602C0016B847 /* LocalConnection.h in Headers */,
-				1ADC268E29E89FDA005990CA /* LocalFrameCreationParameters.h in Headers */,
 				57DCEDAE214C60330016B847 /* LocalService.h in Headers */,
 				93E799CF2760497B0074008A /* LocalStorageManager.h in Headers */,
 				4659F25F275FF6B200BBB369 /* LockdownModeObserver.h in Headers */,
@@ -16546,6 +16545,7 @@
 				463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */,
 				86E67A251910B9D100004AB7 /* ProcessThrottler.h in Headers */,
 				2D279E1926955768004B3EEB /* PrototypeToolsSPI.h in Headers */,
+				1ADC268E29E89FDA005990CA /* ProvisionalFrameCreationParameters.h in Headers */,
 				517B5F7D275E97B6002DC22D /* PushClientConnection.h in Headers */,
 				51EE7B5B2A95B5820016FF78 /* PushClientConnectionMessages.h in Headers */,
 				517B5F95275EBA63002DC22D /* PushMessageForTesting.h in Headers */,
