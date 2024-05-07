@@ -757,20 +757,8 @@ Ref<HistoryItem> HistoryController::createItemTree(HistoryItemClient& client, Lo
             item->setDocumentSequenceNumber(previousItem->documentSequenceNumber());
         }
 
-        for (auto* child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
-            RefPtr localChild = dynamicDowncast<LocalFrame>(child);
-            if (!localChild)
-                continue;
-            CheckedRef childLoader = localChild->loader();
-            bool hasChildLoaded = childLoader->frameHasLoaded();
-
-            // If the child is a frame corresponding to an <object> element that never loaded,
-            // we don't want to create a history item, because that causes fallback content
-            // to be ignored on reload.
-            
-            if (!(!hasChildLoaded && localChild->ownerElement() && is<HTMLObjectElement>(localChild->ownerElement())))
-                item->addChildItem(localChild->checkedHistory()->createItemTree(client, targetFrame, clipAtTarget));
-        }
+        for (RefPtr child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling())
+            item->addChildItem(child->checkedHistory()->createItemTree(client, targetFrame, clipAtTarget));
     }
     // FIXME: Eliminate the isTargetItem flag in favor of itemSequenceNumber.
     if (m_frame.ptr() == &targetFrame)
