@@ -1,4 +1,5 @@
-function generateTest(pixelFormat, pixelType, prologue) {
+function generateTest(pixelFormat, pixelType, prologue, errorRange) {
+    errorRange = errorRange || 0;
     var wtu = WebGLTestUtils;
     var gl = null;
     var textureLoc = null;
@@ -29,7 +30,7 @@ function generateTest(pixelFormat, pixelType, prologue) {
         video.play();
     }
 
-    function runOneIteration(videoElement, useTexSubImage2D, flipY, topColor, bottomColor)
+    function runOneIteration(videoElement, useTexSubImage2D, flipY, topColorCheck, bottomColorCheck)
     {
         debug('Testing ' + (useTexSubImage2D ? 'texSubImage2D' : 'texImage2D') +
               ' with flipY=' + flipY);
@@ -63,8 +64,18 @@ function generateTest(pixelFormat, pixelType, prologue) {
         c.height = 16;
         c.style.border = "1px solid black";
         var ctx = c.getContext("2d");
-        ctx.drawImage(videoElement, 0, 0, 16, 16);
+        ctx.drawImage(videoElement, 0, 0, c.width, c.height);
         document.body.appendChild(c);
+        var frame = ctx.getImageData(0, 0, c.width, c.height);
+        var getPixel = (x, y) => { const offset = (y * frame.width + x) * 4; return [ frame.data[offset], frame.data[offset + 1], frame.data[offset + 2] ]; };
+        var topColor = getPixel(4, flipY ? 4 : (c.height - 4));
+        if (!topColorCheck(topColor)) {
+            testFailed("Unexpected 2d top color " + topColor);
+        }
+        var bottomColor = getPixel(4, flipY ? (c.height - 4) : 4);
+        if (!bottomColorCheck(bottomColor)) {
+            testFailed("Unexpected 2d bottom color " + bottomColor);
+        }
 
         // Point the uniform sampler to texture unit 0
         gl.uniform1i(textureLoc, 0);
@@ -74,20 +85,20 @@ function generateTest(pixelFormat, pixelType, prologue) {
         // the right color.
         debug("Checking lower left corner");
         wtu.checkCanvasRect(gl, 4, 4, 2, 2, bottomColor,
-                            "shouldBe " + bottomColor);
+                            "shouldBe " + bottomColor, errorRange);
         debug("Checking upper left corner");
         wtu.checkCanvasRect(gl, 4, gl.canvas.height - 8, 2, 2, topColor,
-                            "shouldBe " + topColor);
+                            "shouldBe " + topColor, errorRange);
     }
 
     function runTest(videoElement)
     {
-        var red = [255, 0, 0];
-        var green = [0, 255, 0];
-        runOneIteration(videoElement, false, true, red, green);
-        runOneIteration(videoElement, false, false, green, red);
-        runOneIteration(videoElement, true, true, red, green);
-        runOneIteration(videoElement, true, false, green, red);
+        var redish = color => color[0] > 192 && color[1] < 64 && color[2] < 64;
+        var greenish = color => color[0] < 64 && color[1] > 192 && color[2] < 64;
+        runOneIteration(videoElement, false, true, redish, greenish);
+        runOneIteration(videoElement, false, false, greenish, redish);
+        runOneIteration(videoElement, true, true, redish, greenish);
+        runOneIteration(videoElement, true, false, greenish, redish);
 
         glErrorShouldBe(gl, gl.NO_ERROR, "should be no errors");
         finishTest();

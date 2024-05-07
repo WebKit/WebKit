@@ -184,6 +184,8 @@ public:
 
     PredefinedColorSpace drawingBufferColorSpace() const { return m_drawingBufferColorSpace; }
     void setDrawingBufferColorSpace(PredefinedColorSpace);
+    PredefinedColorSpace unpackColorSpace() const { return m_unpackColorSpace; }
+    void setUnpackColorSpace(PredefinedColorSpace);
 
     void activeTexture(GCGLenum texture);
     void attachShader(WebGLProgram&, WebGLShader&);
@@ -698,6 +700,7 @@ protected:
     WebGLContextAttributes m_creationAttributes; // "context creation parameters" in WebGL 1 spec.
 
     PredefinedColorSpace m_drawingBufferColorSpace { PredefinedColorSpace::SRGB };
+    PredefinedColorSpace m_unpackColorSpace { PredefinedColorSpace::SRGB };
 
     GCGLfloat m_clearColor[4];
     bool m_scissorEnabled;
