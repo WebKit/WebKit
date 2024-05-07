@@ -16,4 +16,4 @@ async function test() {
     assert.throws(() => {test()}, WebAssembly.RuntimeError, "Unreachable code should not be executed (evaluating 'test()')");
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

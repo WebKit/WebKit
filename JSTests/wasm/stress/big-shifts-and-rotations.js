@@ -150,4 +150,4 @@ async function test() {
     test_non_constant();
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

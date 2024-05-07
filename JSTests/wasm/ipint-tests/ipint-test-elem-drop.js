@@ -48,4 +48,4 @@ async function test() {
     assert.throws(() => {init(0, 0, 1)}, WebAssembly.RuntimeError, "Out of bounds table access (evaluating 'init(0, 0, 1)'")
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

@@ -18,4 +18,4 @@ async function test() {
     assert.throws(() => {test(1, 0)}, WebAssembly.RuntimeError, "Division by zero (evaluating 'test(1, 0)')");
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

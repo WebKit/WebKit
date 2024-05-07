@@ -72,4 +72,4 @@ async function test() {
     await Promise.all(compilations);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

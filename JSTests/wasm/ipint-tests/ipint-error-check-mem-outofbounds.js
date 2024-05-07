@@ -19,4 +19,4 @@ async function test() {
     assert.throws(() => {test(65536)}, WebAssembly.RuntimeError, "Out of bounds memory access (evaluating 'test(65536)')")
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

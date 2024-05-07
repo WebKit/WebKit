@@ -146,4 +146,4 @@ async function test() {
     assert.eq(testI64RemS_1(-9n), 0n);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

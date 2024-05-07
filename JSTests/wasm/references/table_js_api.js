@@ -79,10 +79,10 @@ async function testTableSetForFuncrefTables() {
 }
 
 testTableGrowForExternrefTables();
-assert.asyncTest(testTableGrowForFuncrefTables());
+await assert.asyncTest(testTableGrowForFuncrefTables());
 
 testTableConstructorForExternrefTables();
-assert.asyncTest(testTableConstructorForFuncrefTables());
+await assert.asyncTest(testTableConstructorForFuncrefTables());
 
 testTableSetForExternrefTables();
-assert.asyncTest(testTableSetForFuncrefTables());
+await assert.asyncTest(testTableSetForFuncrefTables());

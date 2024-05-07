@@ -33,5 +33,5 @@ async function testInstantiate() {
     }());
 }
 
-assert.asyncTest(testCompile());
-assert.asyncTest(testInstantiate());
+await assert.asyncTest(testCompile());
+await assert.asyncTest(testInstantiate());

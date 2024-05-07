@@ -140,5 +140,5 @@ async function br_on_non_null() {
   )
 }
 
-assert.asyncTest(br_on_null());
-assert.asyncTest(br_on_non_null());
+await assert.asyncTest(br_on_null());
+await assert.asyncTest(br_on_non_null());

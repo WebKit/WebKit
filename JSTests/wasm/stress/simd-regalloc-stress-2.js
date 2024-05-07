@@ -36,4 +36,4 @@ async function test() {
   try { fn80(null); } catch { }
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

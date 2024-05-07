@@ -107,4 +107,4 @@ async function test() {
     test_f32();
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

@@ -61,4 +61,4 @@ async function test() {
     )`, { x: { v128: exportI64Mut.exports.global } }, { simd: true }), WebAssembly.LinkError, "imported global x:v128 must be a same type (evaluating 'new WebAssembly.Instance(module, imports)')")
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

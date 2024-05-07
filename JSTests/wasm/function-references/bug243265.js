@@ -64,5 +64,5 @@ async function refIndexArgToJS() {
   }
 }
 
-assert.asyncTest(exportRefIndexResultFunc());
-assert.asyncTest(refIndexArgToJS());
+await assert.asyncTest(exportRefIndexResultFunc());
+await assert.asyncTest(refIndexArgToJS());

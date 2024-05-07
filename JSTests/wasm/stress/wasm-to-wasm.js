@@ -44,4 +44,4 @@ async function test() {
         assert.eq(instance.exports.foo(iters), 42 * iters);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

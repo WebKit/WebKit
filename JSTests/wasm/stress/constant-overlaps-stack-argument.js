@@ -32,4 +32,4 @@ async function test() {
   assert.eq(test(), 42n);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

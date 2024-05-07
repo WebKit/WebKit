@@ -16,4 +16,4 @@ async function test() {
     assert.eq(test(), 2.125)
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

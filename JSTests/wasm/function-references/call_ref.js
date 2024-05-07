@@ -94,7 +94,7 @@ async function invalidTypeIndex() {
   );
 }
 
-assert.asyncTest(callFunctionFromTheSameInstance());
-assert.asyncTest(callFunctionFromTheDifferentInstance());
-assert.asyncTest(callFunctionFromJS());
-assert.asyncTest(invalidTypeIndex());
+await assert.asyncTest(callFunctionFromTheSameInstance());
+await assert.asyncTest(callFunctionFromTheDifferentInstance());
+await assert.asyncTest(callFunctionFromJS());
+await assert.asyncTest(invalidTypeIndex());

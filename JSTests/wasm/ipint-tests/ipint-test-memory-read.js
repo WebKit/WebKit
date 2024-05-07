@@ -29,4 +29,4 @@ async function test() {
     assert.eq(test(17), 64);
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

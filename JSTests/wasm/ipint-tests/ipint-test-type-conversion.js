@@ -252,4 +252,4 @@ async function test() {
     assert.eq(i64_extend32_s(4294967295n), -1n);
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

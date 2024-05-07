@@ -47,4 +47,4 @@ async function testInvalidGCConstExprs() {
   );
 }
 
-assert.asyncTest(testInvalidGCConstExprs());
+await assert.asyncTest(testInvalidGCConstExprs());

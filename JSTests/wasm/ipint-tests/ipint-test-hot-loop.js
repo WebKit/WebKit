@@ -52,4 +52,4 @@ async function test() {
     assert.eq(isPrime(1048577), 0);
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

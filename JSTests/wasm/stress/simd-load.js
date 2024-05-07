@@ -66,4 +66,4 @@ async function test() {
     }
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

@@ -34,4 +34,4 @@ async function test() {
     assert.eq(recur(4), 10)
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())
