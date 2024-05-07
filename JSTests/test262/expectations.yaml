@@ -9,48 +9,6 @@ test/annexB/language/eval-code/direct/script-decl-lex-no-collision.js:
   default: "SyntaxError: Can't create duplicate variable: 'test262Fn'"
 test/annexB/language/function-code/block-decl-func-skip-arguments.js:
   default: 'Test262Error: Expected SameValue(«function arguments() {}», «[object Arguments]») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/next/for-await-iterator-next-rejected-promise-close.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/next/for-await-next-rejected-promise-close.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/next/iterator-result-poisoned-wrapper.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/next/next-result-poisoned-wrapper.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/next/yield-iterator-next-rejected-promise-close.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/next/yield-next-rejected-promise-close.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/iterator-result-rejected-promise-close.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-null.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError but got a Object'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError but got a Object'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-result-poisoned-wrapper.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-get-return-undefined.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-poisoned-return.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-return-not-object.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-return-object.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'

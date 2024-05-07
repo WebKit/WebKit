@@ -25,9 +25,17 @@
  */
 
 @linkTimeConstant
-function asyncFromSyncIteratorOnRejected(error, promise)
+function asyncFromSyncIteratorOnRejected(syncIterator, error, promise)
 {
     "use strict";
+
+    var returnMethod;
+    try {
+        returnMethod = syncIterator.return;
+    } catch (e) {
+        return @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
+    }
+    returnMethod.@call(syncIterator);
 
     return @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error);
 }
@@ -65,7 +73,8 @@ function next(value)
     try {
         var nextResult = @argumentCount() === 0 ? nextMethod.@call(syncIterator) : nextMethod.@call(syncIterator, value);
         var onFulfilled = nextResult.done ? @asyncFromSyncIteratorOnFulfilledDone : @asyncFromSyncIteratorOnFulfilledContinue;
-        @resolveWithoutPromiseForAsyncAwait(nextResult.value, onFulfilled, @asyncFromSyncIteratorOnRejected, promise);
+        var onRejected = @getByIdDirectPrivate(this, "onRejected");
+        @resolveWithoutPromiseForAsyncAwait(nextResult.value, onFulfilled, onRejected, promise);
     } catch (e) {
         @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
     }
@@ -109,7 +118,8 @@ function return(value)
         }
 
         var onFulfilled = returnResult.done ? @asyncFromSyncIteratorOnFulfilledDone : @asyncFromSyncIteratorOnFulfilledContinue;
-        @resolveWithoutPromiseForAsyncAwait(returnResult.value, onFulfilled, @asyncFromSyncIteratorOnRejected, promise);
+        var onRejected = @getByIdDirectPrivate(this, "onRejected");
+        @resolveWithoutPromiseForAsyncAwait(returnResult.value, onFulfilled, onRejected, promise);
     } catch (e) {
         @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
     }
@@ -140,7 +150,15 @@ function throw(exception)
     }
 
     if (@isUndefinedOrNull(throwMethod)) {
-        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, exception);
+        var returnMethod;
+        try {
+            returnMethod = syncIterator.return;
+        } catch (e) {
+            @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
+            return promise;
+        }
+        returnMethod.@call(syncIterator);
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError("Iterator should provide a throw method."));
         return promise;
     }
     
@@ -153,7 +171,8 @@ function throw(exception)
         }
         
         var onFulfilled = throwResult.done ? @asyncFromSyncIteratorOnFulfilledDone : @asyncFromSyncIteratorOnFulfilledContinue;
-        @resolveWithoutPromiseForAsyncAwait(throwResult.value, onFulfilled, @asyncFromSyncIteratorOnRejected, promise);
+        var onRejected = @getByIdDirectPrivate(this, "onRejected");
+        @resolveWithoutPromiseForAsyncAwait(throwResult.value, onFulfilled, onRejected, promise);
     } catch (e) {
         @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
     }
@@ -180,4 +199,9 @@ function AsyncFromSyncIterator(syncIterator, nextMethod)
 
     @putByIdDirectPrivate(this, "syncIterator", syncIterator);
     @putByIdDirectPrivate(this, "nextMethod", nextMethod);
+    @putByIdDirectPrivate(this, "onRejected", function (error, promise) {
+        "use strict";
+
+        @asyncFromSyncIteratorOnRejected(syncIterator, error, promise);
+    });
 }
