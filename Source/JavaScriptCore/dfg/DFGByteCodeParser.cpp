@@ -4420,6 +4420,7 @@ bool ByteCodeParser::handleDOMJITGetter(Operand result, const GetByVariant& vari
     CallDOMGetterData* callDOMGetterData = m_graph.m_callDOMGetterData.add();
     callDOMGetterData->customAccessorGetter = variant.customAccessorGetter();
     ASSERT(callDOMGetterData->customAccessorGetter);
+    // JITOperationList::assertIsJITOperation(callDOMGetterData->customAccessorGetter);
     callDOMGetterData->requiredClassInfo = domAttribute->classInfo;
 
     if (const auto* domJIT = domAttribute->domJIT) {
@@ -5221,7 +5222,7 @@ void ByteCodeParser::handleGetById(
 #endif
     }
 
-    // Special path for custom accessors since custom's offset does not have any meanings.
+    // Special path for custom accessors since custom's offset does not have any meaning.
     // So, this is completely different from Simple one. But we have a chance to optimize it when we use DOMJIT.
     if (is64Bit()) {
         if (getByStatus.numVariants() == 1) {

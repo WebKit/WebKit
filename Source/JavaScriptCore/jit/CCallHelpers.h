@@ -30,6 +30,7 @@
 #include "AssemblyHelpers.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
+#include "OperationResult.h"
 #include "StackAlignment.h"
 #include <wtf/FunctionTraits.h>
 #include <wtf/ScopedLambda.h>
@@ -767,7 +768,7 @@ public:
         setupArgumentsEntryImpl<OperationType>(ArgCollection<0, 0, 0, 0, 0, 0, 0, 0>().pushNonArg(address.base, GPRInfo::nonArgGPR0), args...);
     }
 
-    void setupResults(GPRReg destA, GPRReg destB)
+    void setupResults(GPRReg destA, GPRReg destB = InvalidGPRReg)
     {
         GPRReg srcA = GPRInfo::returnValueGPR;
         GPRReg srcB = GPRInfo::returnValueGPR2;
@@ -797,6 +798,12 @@ public:
 #endif
     }
     
+    void setupResults(FPRReg destA)
+    {
+        if (destA != InvalidFPRReg)
+            moveDouble(FPRInfo::returnValueFPR, destA);
+    }
+
     void jumpToExceptionHandler(VM& vm)
     {
         // genericUnwind() leaves the handler CallFrame* in vm->callFrameForCatch,
@@ -804,6 +811,20 @@ public:
         loadPtr(&vm.targetMachinePCForThrow, GPRInfo::regT1);
         farJump(GPRInfo::regT1, ExceptionHandlerPtrTag);
     }
+
+    template<typename T>
+    requires (isExceptionOperationResult<T>)
+    static constexpr GPRReg operationExceptionRegister()
+    {
+        if (std::is_floating_point_v<typename T::ResultType> || std::is_same_v<typename T::ResultType, void>)
+            return GPRInfo::returnValueGPR;
+        return GPRInfo::returnValueGPR2;
+    }
+
+    template<typename T>
+    requires (!isExceptionOperationResult<T>)
+    static constexpr GPRReg operationExceptionRegister() { return InvalidGPRReg; }
+
 
     void prepareForTailCallSlow(RegisterSet preserved = { })
     {

@@ -75,7 +75,6 @@ private:
         jit->callOperation(operationGetByValStringInt, extractResult(m_resultRegs), m_globalObject, m_baseReg, m_propertyReg);
         for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i]);
-        jit->exceptionCheck();
         
         jumpTo(jit);
     }

@@ -73,10 +73,10 @@ void JIT::compileSetupFrame(const Op& bytecode)
         int firstVarArgOffset = bytecode.m_firstVarArg;
 
         {
-            constexpr GPRReg globalObjectGPR = preferredArgumentGPR<Z_JITOperation_GJZZ, 0>();
-            constexpr JSValueRegs argumentsJSR = preferredArgumentJSR<Z_JITOperation_GJZZ, 1>();
+            constexpr GPRReg globalObjectGPR = preferredArgumentGPR<S_JITOperation_GJZZ, 0>();
+            constexpr JSValueRegs argumentsJSR = preferredArgumentJSR<S_JITOperation_GJZZ, 1>();
 
-            Z_JITOperation_GJZZ sizeOperation;
+            S_JITOperation_GJZZ sizeOperation;
             if constexpr (opcodeID == op_tail_call_forward_arguments)
                 sizeOperation = operationSizeFrameForForwardArguments;
             else

@@ -257,12 +257,14 @@ template <typename HashMapBucketType>
 ALWAYS_INLINE HashMapBucketType* HashMapImpl<HashMapBucketType>::addNormalized(JSGlobalObject* globalObject, JSValue key, JSValue value, uint32_t hash)
 {
     VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT_WITH_MESSAGE(normalizeMapKey(key) == key, "We expect normalized values flowing into this function.");
     DEFER_TERMINATION_AND_ASSERT_WITH_MESSAGE(vm, jsMapHash(globalObject, getVM(globalObject), key) == hash, "We expect hash value is what we expect.");
+    scope.assertNoExceptionExceptTermination();
 
-    return addNormalizedInternal(globalObject, key, value, hash, [&] (HashMapBucketType* bucket) {
+    RELEASE_AND_RETURN(scope, addNormalizedInternal(globalObject, key, value, hash, [&] (HashMapBucketType* bucket) {
         return !isDeleted(bucket) && areKeysEqual(globalObject, key, bucket->key());
-    });
+    }));
 }
 
 template <typename HashMapBucketType>

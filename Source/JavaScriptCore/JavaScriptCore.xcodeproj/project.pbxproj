@@ -1028,6 +1028,7 @@
 		535557141D9D9EA5006D583B /* WasmMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 535557131D9D9EA5006D583B /* WasmMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535C24611F78928E006EC40E /* create_regex_tables in Headers */ = {isa = PBXBuildFile; fileRef = A718F8211178EB4B002465A7 /* create_regex_tables */; };
 		535C246C1F7A1778006EC40E /* UnifiedSource136.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 535C246B1F7A1777006EC40E /* UnifiedSource136.cpp */; };
+		535EC0972BCEF71900CCC5F7 /* OperationResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 535EC0962BCEF71900CCC5F7 /* OperationResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53663FDA23562F96005EA68C /* BytecodeIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 53663FD923562F90005EA68C /* BytecodeIndex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		536B310C1F71C5990037FC33 /* UnifiedSource119.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536B30871F71C5380037FC33 /* UnifiedSource119.cpp */; };
 		536B310D1F71C5990037FC33 /* UnifiedSource125.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536B30881F71C5380037FC33 /* UnifiedSource125.cpp */; };
@@ -4083,6 +4084,7 @@
 		535557151D9DFA32006D583B /* WasmMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmMemory.cpp; sourceTree = "<group>"; };
 		535C246B1F7A1777006EC40E /* UnifiedSource136.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource136.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource136.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		535E08C9225460AB00DF00CA /* postprocess-header-rule */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "postprocess-header-rule"; sourceTree = "<group>"; };
+		535EC0962BCEF71900CCC5F7 /* OperationResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OperationResult.h; sourceTree = "<group>"; };
 		5360DABB2356ADCA003F6AB8 /* BytecodeIndex.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BytecodeIndex.cpp; sourceTree = "<group>"; };
 		53663FD923562F90005EA68C /* BytecodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeIndex.h; sourceTree = "<group>"; };
 		53696E5720A3A70200D7E01E /* BytecodeStructs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeStructs.h; sourceTree = "<group>"; };
@@ -6914,6 +6916,7 @@
 				726B91AC26581653008E6F82 /* JITWorklistThread.cpp */,
 				726B91A826581652008E6F82 /* JITWorklistThread.h */,
 				A76C51741182748D00715B05 /* JSInterfaceJIT.h */,
+				535EC0962BCEF71900CCC5F7 /* OperationResult.h */,
 				792CB3471C4EED5C00D13AF3 /* PCToCodeOriginMap.cpp */,
 				792CB3481C4EED5C00D13AF3 /* PCToCodeOriginMap.h */,
 				0FE834151A6EF97B00D04847 /* PolymorphicCallStubRoutine.cpp */,
@@ -11475,6 +11478,7 @@
 				14A4680D216FA56A000D2B1A /* OpcodeSize.h in Headers */,
 				0F2BDC2C151FDE9100CD8910 /* Operands.h in Headers */,
 				A70447EA17A0BD4600F5898E /* OperandsInlines.h in Headers */,
+				535EC0972BCEF71900CCC5F7 /* OperationResult.h in Headers */,
 				BC18C4480E16F5CD00B34460 /* Operations.h in Headers */,
 				0FE228ED1436AB2700196C48 /* Options.h in Headers */,
 				FE3842332324D51B009DD445 /* OptionsList.h in Headers */,

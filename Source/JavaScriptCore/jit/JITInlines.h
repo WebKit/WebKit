@@ -94,60 +94,84 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
     prepareCallOperation(*m_vm);
 }
 
+template<typename OperationType>
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheck(const CodePtr<CFunctionPtrTag> function)
 {
     updateTopCallFrame();
     MacroAssembler::Call call = appendCall(function);
+    using ResultType = typename FunctionTraits<OperationType>::ResultType;
+    if constexpr (isExceptionOperationResult<ResultType>) {
+#if ASSERT_ENABLED
+        Jump ok = branchPtr(Equal, AbsoluteAddress(vm().addressOfException()), operationExceptionRegister<ResultType>());
+        breakpoint();
+        ok.link(this);
+#endif
+        exceptionCheck(branchTestPtr(NonZero, operationExceptionRegister<ResultType>()));
+    } else
     exceptionCheck();
     return call;
 }
 
+template<typename OperationType>
 ALWAYS_INLINE void JIT::appendCallWithExceptionCheck(Address function)
 {
     updateTopCallFrame();
     appendCall(function);
+    using ResultType = typename FunctionTraits<OperationType>::ResultType;
+    if constexpr (isExceptionOperationResult<ResultType>) {
+#if ASSERT_ENABLED
+        Jump ok = branchPtr(Equal, AbsoluteAddress(vm().addressOfException()), operationExceptionRegister<ResultType>());
+        breakpoint();
+        ok.link(this);
+#endif
+        exceptionCheck(branchTestPtr(NonZero, operationExceptionRegister<ResultType>()));
+    } else
     exceptionCheck();
 }
 
+template<typename OperationType>
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallSetJSValueResult(const CodePtr<CFunctionPtrTag> function, VirtualRegister dst)
 {
-    MacroAssembler::Call call = appendCallWithExceptionCheck(function);
+    MacroAssembler::Call call = appendCallWithExceptionCheck<OperationType>(function);
     emitPutVirtualRegister(dst, returnValueJSR);
     return call;
 }
 
+template<typename OperationType>
 ALWAYS_INLINE void JIT::appendCallSetJSValueResult(Address function, VirtualRegister dst)
 {
-    appendCallWithExceptionCheck(function);
+    appendCallWithExceptionCheck<OperationType>(function);
     emitPutVirtualRegister(dst, returnValueJSR);
 }
 
+template<typename OperationType>
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResult(const CodePtr<CFunctionPtrTag> function, VirtualRegister dst)
 {
-    MacroAssembler::Call call = appendCallWithExceptionCheck(function);
+    MacroAssembler::Call call = appendCallWithExceptionCheck<OperationType>(function);
     emitPutVirtualRegister(dst, returnValueJSR);
     return call;
 }
 
+template<typename OperationType>
 ALWAYS_INLINE void JIT::appendCallWithExceptionCheckSetJSValueResult(Address function, VirtualRegister dst)
 {
-    appendCallWithExceptionCheck(function);
+    appendCallWithExceptionCheck<OperationType>(function);
     emitPutVirtualRegister(dst, returnValueJSR);
 }
 
-template<typename Bytecode>
+template<typename OperationType, typename Bytecode>
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(const Bytecode& bytecode, const CodePtr<CFunctionPtrTag> function, VirtualRegister dst)
 {
-    MacroAssembler::Call call = appendCallWithExceptionCheck(function);
+    MacroAssembler::Call call = appendCallWithExceptionCheck<OperationType>(function);
     emitValueProfilingSite(bytecode, returnValueJSR);
     emitPutVirtualRegister(dst, returnValueJSR);
     return call;
 }
 
-template<typename Bytecode>
+template<typename OperationType, typename Bytecode>
 ALWAYS_INLINE void JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(const Bytecode& bytecode, Address function, VirtualRegister dst)
 {
-    appendCallWithExceptionCheck(function);
+    appendCallWithExceptionCheck<OperationType>(function);
     emitValueProfilingSite(bytecode, returnValueJSR);
     emitPutVirtualRegister(dst, returnValueJSR);
 }

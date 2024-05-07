@@ -219,81 +219,81 @@ void dumpSelectorOperationStats()
 
 extern "C" {
 
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAddStyleRelationFunction, void, (SelectorChecker::CheckingContext*, const Element*));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsActive, bool, (const Element*));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsHovered, bool, (const Element*));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsPlaceholderShown, bool, (const Element*));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMakeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown, bool, (const Element*, SelectorChecker::CheckingContext*));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationSynchronizeAllAnimatedSVGAttribute, void, (SVGElement&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationSynchronizeStyleAttributeInternal, void, (StyledElement* styledElement));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationEqualIgnoringASCIICaseNonNull, bool, (const StringImpl*, const StringImpl*));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsTarget, bool, (const Element*));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilled, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledAndObscured, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledStrongPassword, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledStrongPasswordViewable, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsChecked, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDefaultPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDisabledPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesEnabledPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsDefinedElement, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusVisiblePseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusWithinPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsMediaDocument, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsInRange, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesIndeterminatePseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsInvalid, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsOptionalFormControl, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsOutOfRange, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesReadOnlyPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesReadWritePseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsRequiredFormControl, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsValid, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsWindowInactive, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDir, bool, (const Element&, uint32_t));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesLangPseudoClass, bool, (const Element&, const FixedVector<PossiblyQuotedIdentifier>&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAddStyleRelationFunction, void, (SelectorChecker::CheckingContext*, const Element*));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsActive, bool, (const Element*));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsHovered, bool, (const Element*));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsPlaceholderShown, bool, (const Element*));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMakeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown, bool, (const Element*, SelectorChecker::CheckingContext*));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationSynchronizeAllAnimatedSVGAttribute, void, (SVGElement&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationSynchronizeStyleAttributeInternal, void, (StyledElement* styledElement));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationEqualIgnoringASCIICaseNonNull, bool, (const StringImpl*, const StringImpl*));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsTarget, bool, (const Element*));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilled, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledAndObscured, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledStrongPassword, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledStrongPasswordViewable, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsChecked, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDefaultPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDisabledPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesEnabledPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsDefinedElement, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusVisiblePseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusWithinPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsMediaDocument, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsInRange, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesIndeterminatePseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsInvalid, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsOptionalFormControl, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsOutOfRange, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesReadOnlyPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesReadWritePseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsRequiredFormControl, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsValid, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsWindowInactive, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDir, bool, (const Element&, uint32_t));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesLangPseudoClass, bool, (const Element&, const FixedVector<PossiblyQuotedIdentifier>&));
 #if ENABLE(FULLSCREEN_API)
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullscreenPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullscreenDocumentPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesAnimatingFullscreenTransitionPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullscreenPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullscreenDocumentPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesAnimatingFullscreenTransitionPseudoClass, bool, (const Element&));
 #if ENABLE(VIDEO)
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesInWindowFullscreenPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesInWindowFullscreenPseudoClass, bool, (const Element&));
 #endif
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPictureInPicturePseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPictureInPicturePseudoClass, bool, (const Element&));
 #endif
 #if ENABLE(VIDEO)
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFutureCuePseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPastCuePseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPlayingPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPausedPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesSeekingPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesBufferingPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesStalledPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesMutedPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesVolumeLockedPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFutureCuePseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPastCuePseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPlayingPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPausedPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesSeekingPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesBufferingPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesStalledPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesMutedPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesVolumeLockedPseudoClass, bool, (const Element&));
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationHasAttachment, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationHasAttachment, bool, (const Element&));
 #endif
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesHtmlDocumentPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPopoverOpenPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesModalPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserInvalid, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserValid, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesHtmlDocumentPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPopoverOpenPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesModalPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserInvalid, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserValid, bool, (const Element&));
 
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueBeginsWithCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueBeginsWithCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueEndsWithCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueEndsWithCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueMatchHyphenRuleCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueMatchHyphenRuleCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueSpaceSeparatedListContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueSpaceSeparatedListContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueBeginsWithCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueBeginsWithCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueEndsWithCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueEndsWithCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueMatchHyphenRuleCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueMatchHyphenRuleCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueSpaceSeparatedListContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueSpaceSeparatedListContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
 
 } // extern "C"
 
@@ -755,165 +755,165 @@ static FunctionType addNthChildType(const CSSSelector& selector, SelectorContext
     return FunctionType::SelectorCheckerWithCheckingContext;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsAutofilled, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsAutofilled, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsAutofilled);
     return isAutofilled(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsAutofilledAndObscured, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsAutofilledAndObscured, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsAutofilledAndObscured);
     return isAutofilledAndObscured(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsAutofilledStrongPassword, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsAutofilledStrongPassword, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsAutofilledStrongPassword);
     return isAutofilledStrongPassword(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsAutofilledStrongPasswordViewable, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsAutofilledStrongPasswordViewable, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsAutofilledStrongPasswordViewable);
     return isAutofilledStrongPasswordViewable(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsChecked, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsChecked, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsChecked);
     return isChecked(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesDefaultPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesDefaultPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesDefaultPseudoClass);
     return matchesDefaultPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesDisabledPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesDisabledPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesDisabledPseudoClass);
     return matchesDisabledPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesEnabledPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesEnabledPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesEnabledPseudoClass);
     return matchesEnabledPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsDefinedElement, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsDefinedElement, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsDefinedElement);
     return isDefinedElement(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesFocusPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesFocusPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesFocusPseudoClass);
     return matchesFocusPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesFocusVisiblePseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesFocusVisiblePseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesFocusVisiblePseudoClass);
     return matchesFocusVisiblePseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesFocusWithinPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesFocusWithinPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesFocusWithinPseudoClass);
     return matchesFocusWithinPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsMediaDocument, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsMediaDocument, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsMediaDocument);
     return isMediaDocument(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsInRange, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsInRange, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsInRange);
     return isInRange(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesIndeterminatePseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesIndeterminatePseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesIndeterminatePseudoClass);
     return matchesIndeterminatePseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsInvalid, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsInvalid, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsInvalid);
     return isInvalid(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsOptionalFormControl, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsOptionalFormControl, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsOptionalFormControl);
     return isOptionalFormControl(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsOutOfRange, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsOutOfRange, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsOutOfRange);
     return isOutOfRange(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesReadOnlyPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesReadOnlyPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesReadOnlyPseudoClass);
     return matchesReadOnlyPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesReadWritePseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesReadWritePseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesReadWritePseudoClass);
     return matchesReadWritePseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsRequiredFormControl, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsRequiredFormControl, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsRequiredFormControl);
     return isRequiredFormControl(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsValid, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsValid, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsValid);
     return isValid(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsWindowInactive, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsWindowInactive, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsWindowInactive);
     return isWindowInactive(element);
 }
 
 #if ENABLE(FULLSCREEN_API)
-JSC_DEFINE_JIT_OPERATION(operationMatchesFullscreenPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesFullscreenPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesFullscreenPseudoClass);
     return matchesFullscreenPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesFullscreenDocumentPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesFullscreenDocumentPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesFullscreenDocumentPseudoClass);
     return matchesFullscreenDocumentPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesAnimatingFullscreenTransitionPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesAnimatingFullscreenTransitionPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesAnimatingFullscreenTransitionPseudoClass);
     return matchesAnimatingFullscreenTransitionPseudoClass(element);
 }
 
 #if ENABLE(VIDEO)
-JSC_DEFINE_JIT_OPERATION(operationMatchesInWindowFullscreenPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesInWindowFullscreenPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesInWindowFullscreenPseudoClass);
     return matchesInWindowFullscreenPseudoClass(element);
@@ -923,7 +923,7 @@ JSC_DEFINE_JIT_OPERATION(operationMatchesInWindowFullscreenPseudoClass, bool, (c
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
-JSC_DEFINE_JIT_OPERATION(operationMatchesPictureInPicturePseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesPictureInPicturePseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesPictureInPicturePseudoClass);
     return matchesPictureInPicturePseudoClass(element);
@@ -931,55 +931,55 @@ JSC_DEFINE_JIT_OPERATION(operationMatchesPictureInPicturePseudoClass, bool, (con
 #endif
 
 #if ENABLE(VIDEO)
-JSC_DEFINE_JIT_OPERATION(operationMatchesFutureCuePseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesFutureCuePseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesFutureCuePseudoClass);
     return matchesFutureCuePseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesPastCuePseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesPastCuePseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesPastCuePseudoClass);
     return matchesPastCuePseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesPlayingPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesPlayingPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesPlayingPseudoClass);
     return matchesPlayingPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesPausedPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesPausedPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesPausedPseudoClass);
     return matchesPausedPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesSeekingPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesSeekingPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesSeekingPseudoClass);
     return matchesSeekingPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesBufferingPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesBufferingPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesBufferingPseudoClass);
     return matchesBufferingPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesStalledPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesStalledPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesStalledPseudoClass);
     return matchesStalledPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesMutedPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesMutedPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesMutedPseudoClass);
     return matchesMutedPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesVolumeLockedPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesVolumeLockedPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesVolumeLockedPseudoClass);
     return matchesVolumeLockedPseudoClass(element);
@@ -987,50 +987,50 @@ JSC_DEFINE_JIT_OPERATION(operationMatchesVolumeLockedPseudoClass, bool, (const E
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-JSC_DEFINE_JIT_OPERATION(operationHasAttachment, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationHasAttachment, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationHasAttachment);
     return hasAttachment(element);
 }
 #endif
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesDir, bool, (const Element& element, uint32_t direction))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesDir, bool, (const Element& element, uint32_t direction))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesDir);
     return element.effectiveTextDirection() == static_cast<TextDirection>(direction);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesHtmlDocumentPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesHtmlDocumentPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesHtmlDocumentPseudoClass);
     return matchesHtmlDocumentPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesLangPseudoClass, bool, (const Element& element, const FixedVector<PossiblyQuotedIdentifier>& argumentList))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesLangPseudoClass, bool, (const Element& element, const FixedVector<PossiblyQuotedIdentifier>& argumentList))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesLangPseudoClass);
     return matchesLangPseudoClass(element, argumentList);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesPopoverOpenPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesPopoverOpenPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesPopoverOpenPseudoClass);
     return matchesPopoverOpenPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesModalPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesModalPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesModalPseudoClass);
     return matchesModalPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsUserInvalid, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsUserInvalid, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsUserInvalid);
     return matchesUserInvalidPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsUserValid, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsUserValid, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsUserValid);
     return matchesUserValidPseudoClass(element);
@@ -2724,7 +2724,7 @@ void SelectorCodeGenerator::generateAddStyleRelationIfResolvingStyle(Assembler::
     notResolvingStyle.link(&m_assembler);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationAddStyleRelationFunction, void, (SelectorChecker::CheckingContext* checkingContext, const Element* element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAddStyleRelationFunction, void, (SelectorChecker::CheckingContext* checkingContext, const Element* element))
 {
     COUNT_SELECTOR_OPERATION(operationAddStyleRelationFunction);
     checkingContext->styleRelations.append({ *element, { }, 1 });
@@ -3466,61 +3466,61 @@ static bool attributeValueSpaceSeparatedListContains(const Attribute* attribute,
     return false;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationAttributeValueBeginsWithCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAttributeValueBeginsWithCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
 {
     COUNT_SELECTOR_OPERATION(operationAttributeValueBeginsWithCaseSensitive);
     return attributeValueBeginsWith<CaseSensitive>(attribute, expectedString);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationAttributeValueBeginsWithCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAttributeValueBeginsWithCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
 {
     COUNT_SELECTOR_OPERATION(operationAttributeValueBeginsWithCaseInsensitive);
     return attributeValueBeginsWith<CaseInsensitive>(attribute, expectedString);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationAttributeValueContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAttributeValueContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
 {
     COUNT_SELECTOR_OPERATION(operationAttributeValueContainsCaseSensitive);
     return attributeValueContains<CaseSensitive>(attribute, expectedString);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationAttributeValueContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAttributeValueContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
 {
     COUNT_SELECTOR_OPERATION(operationAttributeValueContainsCaseInsensitive);
     return attributeValueContains<CaseInsensitive>(attribute, expectedString);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationAttributeValueEndsWithCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAttributeValueEndsWithCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
 {
     COUNT_SELECTOR_OPERATION(operationAttributeValueEndsWithCaseSensitive);
     return attributeValueEndsWith<CaseSensitive>(attribute, expectedString);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationAttributeValueEndsWithCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAttributeValueEndsWithCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
 {
     COUNT_SELECTOR_OPERATION(operationAttributeValueEndsWithCaseInsensitive);
     return attributeValueEndsWith<CaseInsensitive>(attribute, expectedString);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationAttributeValueMatchHyphenRuleCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAttributeValueMatchHyphenRuleCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
 {
     COUNT_SELECTOR_OPERATION(operationAttributeValueMatchHyphenRuleCaseSensitive);
     return attributeValueMatchHyphenRule<CaseSensitive>(attribute, expectedString);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationAttributeValueMatchHyphenRuleCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAttributeValueMatchHyphenRuleCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
 {
     COUNT_SELECTOR_OPERATION(operationAttributeValueMatchHyphenRuleCaseInsensitive);
     return attributeValueMatchHyphenRule<CaseInsensitive>(attribute, expectedString);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationAttributeValueSpaceSeparatedListContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAttributeValueSpaceSeparatedListContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
 {
     COUNT_SELECTOR_OPERATION(operationAttributeValueSpaceSeparatedListContainsCaseSensitive);
     return attributeValueSpaceSeparatedListContains<CaseSensitive>(attribute, expectedString);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationAttributeValueSpaceSeparatedListContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAttributeValueSpaceSeparatedListContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString))
 {
     COUNT_SELECTOR_OPERATION(operationAttributeValueSpaceSeparatedListContainsCaseInsensitive);
     return attributeValueSpaceSeparatedListContains<CaseInsensitive>(attribute, expectedString);
@@ -3666,7 +3666,7 @@ void SelectorCodeGenerator::generateElementFunctionCallTest(Assembler::JumpList&
     failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationElementIsActive, bool, (const Element* element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationElementIsActive, bool, (const Element* element))
 {
     COUNT_SELECTOR_OPERATION(operationElementIsActive);
     return element->active() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClass::Active);
@@ -3773,7 +3773,7 @@ void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& fai
     successCase.link(&m_assembler);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationElementIsHovered, bool, (const Element* element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationElementIsHovered, bool, (const Element* element))
 {
     COUNT_SELECTOR_OPERATION(operationElementIsHovered);
     return element->hovered() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClass::Hover);
@@ -3943,7 +3943,7 @@ void SelectorCodeGenerator::generateElementIsOnlyChild(Assembler::JumpList& fail
     successCase.link(&m_assembler);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMakeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown, bool, (const Element* element, SelectorChecker::CheckingContext* checkingContext))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMakeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown, bool, (const Element* element, SelectorChecker::CheckingContext* checkingContext))
 {
     COUNT_SELECTOR_OPERATION(operationMakeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown);
     auto* formControl = dynamicDowncast<HTMLTextFormControlElement>(*element);
@@ -3955,26 +3955,26 @@ JSC_DEFINE_JIT_OPERATION(operationMakeContextStyleUniqueIfNecessaryAndTestIsPlac
     return false;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationIsPlaceholderShown, bool, (const Element* element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsPlaceholderShown, bool, (const Element* element))
 {
     COUNT_SELECTOR_OPERATION(operationIsPlaceholderShown);
     auto* formControl = dynamicDowncast<HTMLTextFormControlElement>(*element);
     return formControl && formControl->isPlaceholderVisible();
 }
 
-JSC_DEFINE_JIT_OPERATION(operationSynchronizeStyleAttributeInternal, void, (StyledElement* styledElement))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationSynchronizeStyleAttributeInternal, void, (StyledElement* styledElement))
 {
     COUNT_SELECTOR_OPERATION(operationSynchronizeStyleAttributeInternal);
     styledElement->synchronizeStyleAttributeInternal();
 }
 
-JSC_DEFINE_JIT_OPERATION(operationSynchronizeAllAnimatedSVGAttribute, void, (SVGElement& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationSynchronizeAllAnimatedSVGAttribute, void, (SVGElement& element))
 {
     COUNT_SELECTOR_OPERATION(operationSynchronizeAllAnimatedSVGAttribute);
     element.synchronizeAllAttributes();
 }
 
-JSC_DEFINE_JIT_OPERATION(operationEqualIgnoringASCIICaseNonNull, bool, (const StringImpl* a, const StringImpl* b))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationEqualIgnoringASCIICaseNonNull, bool, (const StringImpl* a, const StringImpl* b))
 {
     COUNT_SELECTOR_OPERATION(operationEqualIgnoringASCIICaseNonNull);
     return WTF::equalIgnoringASCIICaseNonNull(a, b);
@@ -4404,7 +4404,7 @@ void SelectorCodeGenerator::generateElementIsScopeRoot(Assembler::JumpList& fail
     failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, scope, elementAddressRegister));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationElementIsTarget, bool, (const Element* element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationElementIsTarget, bool, (const Element* element))
 {
     COUNT_SELECTOR_OPERATION(operationElementIsTarget);
     return element == element->document().cssTarget() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClass::Target);

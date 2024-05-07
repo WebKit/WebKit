@@ -103,9 +103,9 @@ private:
     SpeculationRecoveryType m_type;
 };
 
-JSC_DECLARE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame*, void*));
-JSC_DECLARE_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (Probe::Context&));
-JSC_DECLARE_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM*, const OSRExitBase*, EncodedJSValue*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame*, void*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (Probe::Context&));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM*, const OSRExitBase*, EncodedJSValue*));
 
 // === OSRExit ===
 //
