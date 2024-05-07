@@ -602,9 +602,6 @@ webkit.org/b/225668 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.htm
 # Inline text positioning
 webkit.org/b/85532 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
 
-# -webkit-flex off-by-one px
-webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
-
 # repaintRectsAsText reports different repaintrects.
 webkit.org/b/131887 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 

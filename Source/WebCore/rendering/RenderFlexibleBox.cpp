@@ -372,9 +372,6 @@ void RenderFlexibleBox::styleDidChange(StyleDifference diff, const RenderStyle* 
 
     auto oldStyleAlignItemsIsStretch = oldStyle->resolvedAlignItems(selfAlignmentNormalBehavior()).position() == ItemPosition::Stretch;
     for (auto& flexItem : childrenOfType<RenderBox>(*this)) {
-        if (flexItem.needsPreferredWidthsRecalculation())
-            flexItem.setPreferredLogicalWidthsDirty(true, MarkingBehavior::MarkOnlyThis);
-
         // Flex items that were previously stretching need to be relayed out so we
         // can compute new available cross axis space. This is only necessary for
         // stretching since other alignment values don't change the size of the
@@ -1709,6 +1706,9 @@ FlexItem RenderFlexibleBox::constructFlexItem(RenderBox& child, bool relayoutChi
     if (childHadLayout && child.hasTrimmedMargin(std::optional<MarginTrimType> { }))
         child.clearTrimmedMarginsMarkings();
     
+    if (child.needsPreferredWidthsRecalculation())
+        child.setPreferredLogicalWidthsDirty(true, MarkingBehavior::MarkOnlyThis);
+
     LayoutUnit borderAndPadding = isHorizontalFlow() ? child.horizontalBorderAndPaddingExtent() : child.verticalBorderAndPaddingExtent();
     LayoutUnit childInnerFlexBaseSize = computeFlexBaseSizeForChild(child, borderAndPadding, relayoutChildren);
     LayoutUnit margin = isHorizontalFlow() ? child.horizontalMarginExtent() : child.verticalMarginExtent();
