@@ -5291,18 +5291,12 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
 #if HAVE(INLINE_PREDICTIONS)
 bool WebViewImpl::allowsInlinePredictions() const
 {
-    const EditorState& editorState = m_page->editorState();
+    auto& editorState = m_page->editorState();
 
     if (editorState.hasPostLayoutData() && editorState.postLayoutData->canEnableWritingSuggestions)
         return NSSpellChecker.isAutomaticInlineCompletionEnabled;
 
-    if (!editorState.isContentEditable)
-        return false;
-
-    if (!inlinePredictionsEnabled() && !m_page->preferences().inlinePredictionsInAllEditableElementsEnabled())
-        return false;
-
-    return NSSpellChecker.isAutomaticInlineCompletionEnabled;
+    return editorState.isContentEditable && inlinePredictionsEnabled() && NSSpellChecker.isAutomaticInlineCompletionEnabled;
 }
 
 void WebViewImpl::showInlinePredictionsForCandidate(NSTextCheckingResult *candidate, NSRange absoluteSelectedRange, NSRange oldRelativeSelectedRange)
