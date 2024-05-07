@@ -744,7 +744,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
             self.command += ['--test-writer=ruby']
 
         self.appendCustomBuildFlags(platform, self.getProperty('fullPlatform'))
-        self.command = ['/bin/sh', '-c', ' '.join(self.command) + ' 2>&1 | python3 Tools/Scripts/filter-jsc-tests.py']
+        self.command = ['/bin/sh', '-c', ' '.join(self.command) + ' 2>&1 | python3 Tools/Scripts/filter-jsc-tests']
 
         steps_to_add = [
             GenerateS3URL(
