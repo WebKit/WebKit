@@ -133,7 +133,7 @@ string(APPEND CMAKE_EXE_LINKER_FLAGS " /DEBUG /OPT:NOICF /OPT:REF")
 
 # We do not use exceptions
 add_definitions(-D_HAS_EXCEPTIONS=0)
-MSVC_ADD_COMPILE_OPTIONS(/EHa- /EHc- /EHs- /fp:except-)
+MSVC_ADD_COMPILE_OPTIONS(/EHsc /fp:except-)
 
 # We have some very large object files that have to be linked
 MSVC_ADD_COMPILE_OPTIONS(/analyze- /bigobj)
@@ -166,8 +166,8 @@ if (NOT ${CMAKE_GENERATOR} MATCHES "Ninja")
     add_definitions(/MP)
 endif ()
 if (NOT ${CMAKE_CXX_FLAGS} STREQUAL "")
-    string(REGEX REPLACE "(/EH[a-z]+) " "\\1- " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable C++ exceptions
-    string(REGEX REPLACE "/EHsc$" "/EHs- /EHc- " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable C++ exceptions
+    string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable C++ exceptions.
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
     string(REGEX REPLACE "/GR " "/GR- " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable RTTI
     # More warnings. /W4 should be specified before -Wno-* options for clang-cl.
     string(REGEX REPLACE "/W3" "" CMAKE_C_FLAGS ${CMAKE_C_FLAGS})

@@ -153,8 +153,8 @@ Write-Host ":: Configuring WebKit"
 
 $env:PATH = $PathWithPerl
 
-$env:CFLAGS = "/Zi /Z7"
-$env:CXXFLAGS = "/Zi /Z7"
+$env:CFLAGS = "/Zi"
+$env:CXXFLAGS = "/Zi"
 
 cmake -S . -B $WebKitBuild `
     -DPORT="JSCOnly" `
@@ -193,7 +193,7 @@ foreach ($file in $batFiles) {
 }
 
 Write-Host ":: Building WebKit"
-cmake --build $WebKitBuild --config Release --target jsc
+cmake --build $WebKitBuild --config Release --target jsc --verbose
 if ($LASTEXITCODE -ne 0) { throw "cmake --build failed with exit code $LASTEXITCODE" }
 
 Write-Host ":: Packaging ${output}"
