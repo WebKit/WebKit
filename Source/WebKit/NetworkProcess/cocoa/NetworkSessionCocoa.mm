@@ -630,7 +630,6 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
             ASSERT_NOT_REACHED();
 
         WebCore::ResourceResponse resourceResponse(response);
-        networkDataTask->checkTAO(resourceResponse);
 
         networkDataTask->willPerformHTTPRedirection(WTFMove(resourceResponse), request, [session = networkDataTask->networkSession(), completionHandler = makeBlockPtr(completionHandler), taskIdentifier, shouldIgnoreHSTS](auto&& request) {
 #if !LOG_DISABLED
@@ -1095,8 +1094,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // Lazy initialization is not helpful in the WebKit2 case because we always end up initializing
         // all the fields when sending the response to the WebContent process over IPC.
         resourceResponse.disableLazyInitialization();
-
-        networkDataTask->checkTAO(resourceResponse);
 
         resourceResponse.setDeprecatedNetworkLoadMetrics(WebCore::copyTimingData(taskMetrics, networkDataTask->networkLoadMetrics()));
 

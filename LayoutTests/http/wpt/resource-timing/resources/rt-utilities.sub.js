@@ -37,12 +37,22 @@ function crossOriginURL(key, path) {
     return `http://localhost:{{ports[http][1]}}/${path}?${key}`;
 }
 
+function simpleCrossOriginURLBase() {
+    return `http://localhost:{{ports[http][1]}}`;
+}
+
 function urlWithRedirectTo(url) {
     return `/common/redirect.py?location=${encodeURIComponent(url)}`;
 }
 
 function addPipeHeaders(url, headers) {
     return `${url}&pipe=${headers.join("|")}`;
+}
+
+function addACAOHeader(url) {
+    return addPipeHeaders(url, [
+        `header(Access-Control-Allow-Origin,*)`,
+    ]);
 }
 
 function addTimingAllowOriginHeader(url, origin) {
