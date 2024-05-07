@@ -130,6 +130,7 @@ protected:
 
     void handlePopoverTargetAction() const;
 
+    InvokeAction invokeAction() const;
     void handleInvokeAction();
 
 private:

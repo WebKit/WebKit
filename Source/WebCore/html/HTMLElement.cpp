@@ -1573,27 +1573,28 @@ void HTMLElement::popoverAttributeChanged(const AtomString& value)
         ensurePopoverData().setPopoverState(newPopoverState);
 }
 
-constexpr ASCIILiteral togglePopoverLiteral = "togglepopover"_s;
-constexpr ASCIILiteral showPopoverLiteral = "showpopover"_s;
-constexpr ASCIILiteral hidePopoverLiteral = "hidepopover"_s;
+bool HTMLElement::isValidInvokeAction(const InvokeAction action)
+{
+    return Element::isValidInvokeAction(action) || action == InvokeAction::TogglePopover || action == InvokeAction::ShowPopover || action == InvokeAction::HidePopover;
+}
 
-bool HTMLElement::handleInvokeInternal(const HTMLFormControlElement& invoker, const AtomString& action)
+bool HTMLElement::handleInvokeInternal(const HTMLFormControlElement& invoker, const InvokeAction& action)
 {
     if (popoverState() == PopoverState::None)
         return false;
 
     if (isPopoverShowing()) {
-        bool shouldHide = action.isEmpty()
-            || equalLettersIgnoringASCIICase(action, togglePopoverLiteral)
-            || equalLettersIgnoringASCIICase(action, hidePopoverLiteral);
+        bool shouldHide = action == InvokeAction::Auto
+            || action == InvokeAction::TogglePopover
+            || action == InvokeAction::HidePopover;
         if (shouldHide) {
             hidePopover();
             return true;
         }
     } else {
-        bool shouldShow = action.isEmpty()
-            || equalLettersIgnoringASCIICase(action, togglePopoverLiteral)
-            || equalLettersIgnoringASCIICase(action, showPopoverLiteral);
+        bool shouldShow = action == InvokeAction::Auto
+            || action == InvokeAction::TogglePopover
+            || action == InvokeAction::ShowPopover;
         if (shouldShow) {
             showPopover(&invoker);
             return true;

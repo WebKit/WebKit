@@ -104,6 +104,18 @@ enum class ShadowRootClonable : bool { No, Yes };
 enum class ShadowRootSerializable : bool { No, Yes };
 enum class VisibilityAdjustment : uint8_t;
 
+// https://github.com/whatwg/html/pull/9841
+enum class InvokeAction: uint8_t {
+    Invalid,
+
+    Auto,
+    Custom,
+
+    TogglePopover,
+    HidePopover,
+    ShowPopover,
+};
+
 struct CheckVisibilityOptions;
 struct FullscreenOptions;
 struct GetAnimationsOptions;
@@ -629,7 +641,8 @@ public:
     void clearPopoverData();
     bool isPopoverShowing() const;
 
-    virtual bool handleInvokeInternal(const HTMLFormControlElement&, const AtomString&) { return false; }
+    virtual bool isValidInvokeAction(const InvokeAction action) { return action == InvokeAction::Auto; }
+    virtual bool handleInvokeInternal(const HTMLFormControlElement&, const InvokeAction&) { return false; }
 
     ExceptionOr<void> setPointerCapture(int32_t);
     ExceptionOr<void> releasePointerCapture(int32_t);
