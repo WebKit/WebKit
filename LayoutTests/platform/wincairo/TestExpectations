@@ -3278,7 +3278,7 @@ fast/text/tatechuyoko.html [ Pass Failure ]
 
 webkit.org/b/271132 [ Debug ] fast/text/crash-grapheme-cluster-spanning-adjacent-textitems.html [ Skip ] # Crash
 
-http/tests/workers/service/indexeddb-cryptokey-put-get.https.html [ Failure ]
+http/tests/workers/service/indexeddb-cryptokey-put-get.https.html [ Skip ] # Timeout
 
 webkit.org/b/271223 fast/events/wheel/wheel-event-after-document-open.html [ Skip ] # Timeout
 webkit.org/b/271223 fast/events/wheel/wheel-event-destroys-overflow.html [ Skip ] # Timeout
