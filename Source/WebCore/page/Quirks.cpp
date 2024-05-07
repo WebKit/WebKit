@@ -221,20 +221,6 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 #endif
 }
 
-// youtube.com https://bugs.webkit.org/show_bug.cgi?id=200609
-bool Quirks::shouldDisableContentChangeObserverTouchEventAdjustment() const
-{
-    if (!needsQuirks())
-        return false;
-
-    auto& topDocument = m_document->topDocument();
-    auto* topDocumentLoader = topDocument.loader();
-    if (!topDocumentLoader || !topDocumentLoader->allowContentChangeObserverQuirk())
-        return false;
-
-    return isDomain("youtube.com"_s);
-}
-
 // covid.cdc.gov https://bugs.webkit.org/show_bug.cgi?id=223620
 bool Quirks::shouldTooltipPreventFromProceedingWithClick(const Element& element) const
 {

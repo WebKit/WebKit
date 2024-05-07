@@ -472,9 +472,6 @@ public:
 
     WEBCORE_EXPORT void applyPoliciesToSettings();
 
-    void setAllowContentChangeObserverQuirk(bool allow) { m_allowContentChangeObserverQuirk = allow; }
-    bool allowContentChangeObserverQuirk() const { return m_allowContentChangeObserverQuirk; }
-
     void setAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> policy) { m_advancedPrivacyProtections = policy; }
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }
 
@@ -733,7 +730,6 @@ private:
     ColorSchemePreference m_colorSchemePreference { ColorSchemePreference::NoPreference };
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
 
-    bool m_allowContentChangeObserverQuirk { false };
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
 
     bool m_isRequestFromClientOrUserInput { false };

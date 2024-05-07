@@ -1435,7 +1435,6 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
     m_preferFasterClickOverDoubleTap = false;
 
     if (!useDesktopBrowsingMode) {
-        policies.setAllowContentChangeObserverQuirk(true);
         policies.setIdempotentModeAutosizingOnlyHonorsPercentages(true);
         return WebContentMode::Mobile;
     }

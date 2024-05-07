@@ -75,7 +75,6 @@ struct WebKit::WebsitePoliciesData {
 #if ENABLE(DEVICE_ORIENTATION)
     WebCore::DeviceOrientationOrMotionPermissionState deviceOrientationAndMotionAccessState;
 #endif
-    bool allowContentChangeObserverQuirk;
     bool idempotentModeAutosizingOnlyHonorsPercentages;
     bool allowPrivacyProxy;
     bool allowSiteSpecificQuirksToOverrideContentMode;
