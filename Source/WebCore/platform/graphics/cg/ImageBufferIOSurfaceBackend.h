@@ -49,6 +49,7 @@ public:
     ~ImageBufferIOSurfaceBackend();
     
     static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
+    bool canMapBackingStore() const final;
 
     IOSurface* surface() override;
     GraphicsContext& context() override;

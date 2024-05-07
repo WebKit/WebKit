@@ -43,7 +43,7 @@ public:
     static size_t calculateMemoryCost(const Parameters&);
 
     static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const ImageBufferCreationContext&);
-
+    bool canMapBackingStore() const final;
     GraphicsContext& context() final;
 
 private:

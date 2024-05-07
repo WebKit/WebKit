@@ -90,6 +90,11 @@ void ImageBufferRemoteIOSurfaceBackend::clearBackendHandle()
     m_handle = { };
 }
 
+bool ImageBufferRemoteIOSurfaceBackend::canMapBackingStore() const
+{
+    return false;
+}
+
 GraphicsContext& ImageBufferRemoteIOSurfaceBackend::context()
 {
     RELEASE_ASSERT_NOT_REACHED();
