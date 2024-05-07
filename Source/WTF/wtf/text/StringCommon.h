@@ -58,6 +58,11 @@ inline std::span<const char> span(const char* string)
     return { string, string ? strlen(string) : 0 };
 }
 
+inline std::span<const char8_t> span(const std::u8string& string)
+{
+    return { string.data(), string.length() };
+}
+
 template<typename CharacterType> inline constexpr bool isLatin1(CharacterType character)
 {
     using UnsignedCharacterType = typename std::make_unsigned<CharacterType>::type;
