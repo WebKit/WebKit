@@ -113,6 +113,26 @@ There is a script to update a WebKit checkout: `Tools/Scripts/update-webkit`.
 
 [See Building WebKit](https://github.com/WebKit/webkit/blob/master/ReadMe.md#building-webkit)
 
+### Building JSOnly
+
+Install cmake
+
+```Bash
+brew install cmake
+```
+
+To build JavaScriptCore only on macos and linux, run:
+
+```Bash
+Tools/Scripts/build-webkit --jsc-only --cmakeargs="-DENABLE_STATIC_JSC=ON -DUSE_THIN_ARCHIVES=OFF --graphviz=test.graph"
+```
+
+optionally provide `--graphviz=test.graph` to generate a graph of the build dependencies.
+
+```Bash
+dot -Tjpg test.graph > out.jpg
+```
+
 ### Getting setup to contribute
 
 If you've followed the steps above, get setup to contribute by running:

@@ -112,6 +112,16 @@ extern "C" {
 */
 JS_EXPORT JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
 
+/* Module Evaluation */
+
+/*!
+@function JSLoadAndEvaluateModule
+@abstract Evaluates a file containing JavaScript Code.
+@param ctx The execution context to use.
+@param filename A JSString containing the path to the module to evaluate.
+*/
+JS_EXPORT void JSLoadAndEvaluateModule(JSContextRef ctx, JSStringRef filename, JSValueRef* exception);
+
 /*!
 @function JSCheckScriptSyntax
 @abstract Checks for syntax errors in a string of JavaScript.

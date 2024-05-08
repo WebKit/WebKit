@@ -27,6 +27,10 @@
 #include "JSBase.h"
 #include "JSBaseInternal.h"
 #include "JSBasePrivate.h"
+#include "JSPromise.h"
+#include "JSFunction.h"
+#include "JSNativeStdFunction.h"
+#include "CallFrame.h"
 
 #include "APICast.h"
 #include "Completion.h"
@@ -89,6 +93,34 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
     SourceCode source = makeSource(script->string(), SourceOrigin { sourceURL }, SourceTaintedOrigin::Untainted, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
 
     return JSEvaluateScriptInternal(locker, ctx, thisObject, source, exception);
+}
+
+void JSLoadAndEvaluateModule(JSContextRef ctx, JSStringRef filename, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+
+    JSInternalPromise* promise = loadAndEvaluateModule(globalObject, filename->string(), jsUndefined(), jsUndefined());
+    
+    JSFunction* fulfillHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [](JSGlobalObject*, CallFrame* callFrame) {
+        // printf("End: %s\n", callFrame->argument(0).toWTFString(globalObject).utf8().data());
+        return JSValue::encode(callFrame->argument(0));
+    });
+
+    JSFunction* rejectHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [exception](JSGlobalObject* globalObject, CallFrame* callFrame) {
+        // printf("End: %s\n", callFrame->argument(0).toWTFString(globalObject).utf8().data());
+        *exception = toRef(globalObject, callFrame->argument(0));
+        return JSValue::encode(callFrame->argument(0));
+    });
+    
+    vm.drainMicrotasks();
+    promise->then(globalObject, fulfillHandler, rejectHandler);
+    vm.drainMicrotasks();
 }
 
 bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourceURLString, int startingLineNumber, JSValueRef* exception)
