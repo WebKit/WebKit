@@ -297,9 +297,34 @@ private:
             // the base's structure. That seems unlikely for the canonical use of instanceof, where
             // the prototype is fixed.
             bool isNewlyAdded = false;
+            StructureID structureID = structure->id();
             {
                 Locker locker { m_bufferedStructuresLock };
-                isNewlyAdded = m_bufferedStructures.add({ structure, impl }).isNewEntry;
+                if (std::holds_alternative<std::monostate>(m_bufferedStructures)) {
+                    if (m_identifier)
+                        m_bufferedStructures = Vector<StructureID>();
+                    else
+                        m_bufferedStructures = Vector<std::tuple<StructureID, CacheableIdentifier>>();
+                }
+                WTF::switchOn(m_bufferedStructures,
+                    [&](std::monostate) { },
+                    [&](Vector<StructureID>& structures) {
+                        for (auto bufferedStructureID : structures) {
+                            if (bufferedStructureID == structureID)
+                                return;
+                        }
+                        structures.append(structureID);
+                        isNewlyAdded = true;
+                    },
+                    [&](Vector<std::tuple<StructureID, CacheableIdentifier>>& structures) {
+                        ASSERT(!m_identifier);
+                        for (auto& [bufferedStructureID, bufferedCacheableIdentifier] : structures) {
+                            if (bufferedStructureID == structureID && bufferedCacheableIdentifier == impl)
+                                return;
+                        }
+                        structures.append(std::tuple { structureID, impl });
+                        isNewlyAdded = true;
+                    });
             }
             if (isNewlyAdded)
                 vm.writeBarrier(codeBlock);
@@ -314,56 +339,15 @@ private:
     void clearBufferedStructures()
     {
         Locker locker { m_bufferedStructuresLock };
-        m_bufferedStructures.clear();
+        WTF::switchOn(m_bufferedStructures,
+            [&](std::monostate) { },
+            [&](Vector<StructureID>& structures) {
+                structures.shrink(0);
+            },
+            [&](Vector<std::tuple<StructureID, CacheableIdentifier>>& structures) {
+                structures.shrink(0);
+            });
     }
-
-    class BufferedStructure {
-    public:
-        static constexpr uintptr_t hashTableDeletedValue = 0x2;
-        BufferedStructure() = default;
-        BufferedStructure(Structure* structure, CacheableIdentifier byValId)
-            : m_structure(structure)
-            , m_byValId(byValId)
-        { }
-        BufferedStructure(WTF::HashTableDeletedValueType)
-            : m_structure(bitwise_cast<Structure*>(hashTableDeletedValue))
-        { }
-
-        bool isHashTableDeletedValue() const { return bitwise_cast<uintptr_t>(m_structure) == hashTableDeletedValue; }
-
-        unsigned hash() const
-        {
-            unsigned hash = PtrHash<Structure*>::hash(m_structure);
-            if (m_byValId)
-                hash += m_byValId.hash();
-            return hash;
-        }
-
-        friend bool operator==(const BufferedStructure&, const BufferedStructure&) = default;
-
-        struct Hash {
-            static unsigned hash(const BufferedStructure& key)
-            {
-                return key.hash();
-            }
-
-            static bool equal(const BufferedStructure& a, const BufferedStructure& b)
-            {
-                return a == b;
-            }
-
-            static constexpr bool safeToCompareToEmptyOrDeleted = false;
-        };
-        using KeyTraits = SimpleClassHashTraits<BufferedStructure>;
-        static_assert(KeyTraits::emptyValueIsZero, "Structure* and CacheableIdentifier are empty if they are zero-initialized");
-
-        Structure* structure() const { return m_structure; }
-        const CacheableIdentifier& byValId() const { return m_byValId; }
-
-    private:
-        Structure* m_structure { nullptr };
-        CacheableIdentifier m_byValId;
-    };
 
     void replaceHandler(CodeBlock*, Ref<InlineCacheHandler>&&);
     void rewireStubAsJumpInAccess(CodeBlock*, InlineCacheHandler&);
@@ -431,7 +415,7 @@ private:
     // Note that it's always safe to clear this. If we clear it prematurely, then if we see the same
     // structure again during this buffering countdown, we will create an AccessCase object for it.
     // That's not so bad - we'll get rid of the redundant ones once we regenerate.
-    HashSet<BufferedStructure, BufferedStructure::Hash, BufferedStructure::KeyTraits> m_bufferedStructures WTF_GUARDED_BY_LOCK(m_bufferedStructuresLock);
+    std::variant<std::monostate, Vector<StructureID>, Vector<std::tuple<StructureID, CacheableIdentifier>>> m_bufferedStructures WTF_GUARDED_BY_LOCK(m_bufferedStructuresLock);
 public:
 
     ScalarRegisterSet usedRegisters;

@@ -336,12 +336,17 @@ void StructureStubInfo::reset(const ConcurrentJSLockerBase& locker, CodeBlock* c
 template<typename Visitor>
 void StructureStubInfo::visitAggregateImpl(Visitor& visitor)
 {
-    {
+    if (!m_identifier) {
         Locker locker { m_bufferedStructuresLock };
-        for (auto& bufferedStructure : m_bufferedStructures)
-            bufferedStructure.byValId().visitAggregate(visitor);
-    }
-    m_identifier.visitAggregate(visitor);
+        WTF::switchOn(m_bufferedStructures,
+            [&](std::monostate) { },
+            [&](Vector<StructureID>&) { },
+            [&](Vector<std::tuple<StructureID, CacheableIdentifier>>& structures) {
+                for (auto& [bufferedStructureID, bufferedCacheableIdentifier] : structures)
+                    bufferedCacheableIdentifier.visitAggregate(visitor);
+            });
+    } else
+        m_identifier.visitAggregate(visitor);
     switch (m_cacheType) {
     case CacheType::Unset:
     case CacheType::ArrayLength:
@@ -366,9 +371,17 @@ void StructureStubInfo::visitWeakReferences(const ConcurrentJSLockerBase& locker
     VM& vm = codeBlock->vm();
     {
         Locker locker { m_bufferedStructuresLock };
-        m_bufferedStructures.removeIf(
-            [&] (auto& entry) -> bool {
-                return !vm.heap.isMarked(entry.structure());
+        WTF::switchOn(m_bufferedStructures,
+            [&](std::monostate) { },
+            [&](Vector<StructureID>& structures) {
+                structures.removeAllMatching([&](StructureID structureID) {
+                    return !vm.heap.isMarked(structureID.decode());
+                });
+            },
+            [&](Vector<std::tuple<StructureID, CacheableIdentifier>>& structures) {
+                structures.removeAllMatching([&](auto& tuple) {
+                    return !vm.heap.isMarked(std::get<0>(tuple).decode());
+                });
             });
     }
 
