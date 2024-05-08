@@ -456,7 +456,10 @@ TEST(ElementTargeting, ReplacedRendererSizeIgnoresPageScaleAndZoom)
     [webView _setPageZoomFactor:2];
     [webView _setPageScale:1.5 withOrigin:CGPointZero];
 #else
-    [[webView scrollView] setZoomScale:3 animated:NO];
+    RetainPtr scrollView = [webView scrollView];
+    [scrollView setZoomScale:3 animated:NO];
+    [scrollView setContentOffset:CGPointZero];
+    [webView waitForNextVisibleContentRectUpdate];
 #endif
     [webView waitForNextPresentationUpdate];
     RetainPtr targetAfterScaling = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];

@@ -949,10 +949,19 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 - (void)waitForNextPresentationUpdate
 {
     __block bool done = false;
-    [self _doAfterNextPresentationUpdate:^() {
+    [self _doAfterNextPresentationUpdate:^{
         done = true;
     }];
 
+    TestWebKitAPI::Util::run(&done);
+}
+
+- (void)waitForNextVisibleContentRectUpdate
+{
+    __block bool done = false;
+    [self _doAfterNextVisibleContentRectUpdate:^{
+        done = true;
+    }];
     TestWebKitAPI::Util::run(&done);
 }
 

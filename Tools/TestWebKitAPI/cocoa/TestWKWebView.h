@@ -144,6 +144,7 @@ struct AutocorrectionContext {
 - (void)performAfterLoading:(dispatch_block_t)actions;
 
 - (void)waitForNextPresentationUpdate;
+- (void)waitForNextVisibleContentRectUpdate;
 - (void)waitUntilActivityStateUpdateDone;
 - (void)forceDarkMode;
 - (NSString *)stylePropertyAtSelectionStart:(NSString *)propertyName;
