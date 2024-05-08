@@ -55,6 +55,11 @@ static inline String bundleName()
 #endif
 } // namespace
 
+static inline RetainPtr<NSData> toNSData(const Vector<uint8_t>& data)
+{
+    return adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
+}
+
 LocalConnection::~LocalConnection()
 {
     // Dismiss any showing LocalAuthentication dialogs.
@@ -197,6 +202,31 @@ RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *cont
         return nullptr;
     }
     return credentialPrivateKey;
+}
+
+RetainPtr<NSArray> LocalConnection::getExistingCredentials(const String& rpId)
+{
+    // Search Keychain for existing credential matched the RP ID.
+    NSDictionary *query = @{
+        (id)kSecClass: (id)kSecClassKey,
+        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+        (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
+        (id)kSecAttrAccessGroup: @(LocalAuthenticatorAccessGroup),
+        (id)kSecAttrLabel: rpId,
+        (id)kSecReturnAttributes: @YES,
+        (id)kSecMatchLimit: (id)kSecMatchLimitAll,
+        (id)kSecUseDataProtectionKeychain: @YES
+    };
+
+    CFTypeRef attributesArrayRef = nullptr;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
+    if (status && status != errSecItemNotFound)
+        return nullptr;
+    auto retainAttributesArray = adoptCF(attributesArrayRef);
+    NSArray *sortedAttributesArray = [(NSArray *)attributesArrayRef sortedArrayUsingComparator:^(NSDictionary *a, NSDictionary *b) {
+        return [b[(id)kSecAttrModificationDate] compare:a[(id)kSecAttrModificationDate]];
+    }];
+    return retainPtr(sortedAttributesArray);
 }
 
 } // namespace WebKit

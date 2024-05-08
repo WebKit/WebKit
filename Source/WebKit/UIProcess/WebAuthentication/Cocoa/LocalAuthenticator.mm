@@ -29,7 +29,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #import "Logging.h"
-#import "AuthenticationServicesCoreSoftLink.h"
+#import "MockLocalConnection.h"
 #import <Security/SecItem.h>
 #import <WebCore/AuthenticatorAssertionResponse.h>
 #import <WebCore/AuthenticatorAttachment.h>
@@ -38,6 +38,7 @@
 #import <WebCore/CBORWriter.h>
 #import <WebCore/ExceptionData.h>
 #import <WebCore/FidoConstants.h>
+#import <WebCore/MediationRequirement.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
 #import <WebCore/WebAuthenticationConstants.h>
@@ -51,6 +52,8 @@
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringHash.h>
+
+#import "AuthenticationServicesCoreSoftLink.h"
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/LocalAuthenticatorAdditions.h>
@@ -106,9 +109,11 @@ static inline HashSet<String> produceHashSet(const Vector<PublicKeyCredentialDes
     return result;
 }
 
-static inline uint8_t authDataFlags(ClientDataType type, LocalConnection::UserVerification verification, bool synchronizable)
+static inline uint8_t authDataFlags(ClientDataType type, LocalConnection::UserVerification verification, bool synchronizable, std::optional<MediationRequirement> mediation)
 {
-    auto flags = userPresenceFlag;
+    auto flags = 0;
+    if (type != ClientDataType::Create || mediation != MediationRequirement::Conditional)
+        flags |= userPresenceFlag;
     if (verification != LocalConnection::UserVerification::Presence)
         flags |= userVerifiedFlag;
     if (type == ClientDataType::Create)
@@ -145,75 +150,6 @@ static inline Ref<ArrayBuffer> toArrayBuffer(const Vector<uint8_t>& data)
     return ArrayBuffer::create(data.data(), data.size());
 }
 
-static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredentials(const String& rpId)
-{
-    // Search Keychain for existing credential matched the RP ID.
-    NSDictionary *query = @{
-        (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
-        (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
-        (id)kSecAttrAccessGroup: @(LocalAuthenticatorAccessGroup),
-        (id)kSecAttrLabel: rpId,
-        (id)kSecReturnAttributes: @YES,
-        (id)kSecMatchLimit: (id)kSecMatchLimitAll,
-        (id)kSecUseDataProtectionKeychain: @YES
-    };
-
-    CFTypeRef attributesArrayRef = nullptr;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
-    if (status && status != errSecItemNotFound)
-        return std::nullopt;
-    auto retainAttributesArray = adoptCF(attributesArrayRef);
-    NSArray *sortedAttributesArray = [(NSArray *)attributesArrayRef sortedArrayUsingComparator:^(NSDictionary *a, NSDictionary *b) {
-        return [b[(id)kSecAttrModificationDate] compare:a[(id)kSecAttrModificationDate]];
-    }];
-
-    Vector<Ref<AuthenticatorAssertionResponse>> result;
-    result.reserveInitialCapacity(sortedAttributesArray.count);
-    for (NSDictionary *attributes in sortedAttributesArray) {
-        auto decodedResponse = cbor::CBORReader::read(makeVector(attributes[(id)kSecAttrApplicationTag]));
-        if (!decodedResponse || !decodedResponse->isMap()) {
-            ASSERT_NOT_REACHED();
-            return std::nullopt;
-        }
-        auto& responseMap = decodedResponse->getMap();
-
-        RefPtr<ArrayBuffer> userHandle;
-        auto it = responseMap.find(CBOR(fido::kEntityIdMapKey));
-        if (it != responseMap.end() && it->second.isByteString()) {
-            userHandle = toArrayBuffer(it->second.getByteString());
-        }
-
-        it = responseMap.find(CBOR(fido::kEntityNameMapKey));
-        if (it == responseMap.end() || !it->second.isString()) {
-            ASSERT_NOT_REACHED();
-            return std::nullopt;
-        }
-        auto& username = it->second.getString();
-
-        auto response = AuthenticatorAssertionResponse::create(toArrayBuffer(attributes[(id)kSecAttrApplicationLabel]), WTFMove(userHandle), String(username), (__bridge SecAccessControlRef)attributes[(id)kSecAttrAccessControl], AuthenticatorAttachment::Platform);
-
-        auto group = groupForAttributes(attributes);
-        if (!group.isNull()) {
-            response->setGroup(group);
-            response->setSynchronizable(true);
-        } else if ([[attributes allKeys] containsObject:bridge_cast(kSecAttrSynchronizable)])
-            response->setSynchronizable([attributes[(id)kSecAttrSynchronizable] isEqual:@YES]);
-        it = responseMap.find(CBOR(fido::kDisplayNameMapKey));
-        if (it != responseMap.end() && it->second.isString())
-            response->setDisplayName(it->second.getString());
-
-        it = responseMap.find(CBOR(kLargeBlobMapKey));
-        if (it != responseMap.end() && it->second.isByteString())
-            response->setLargeBlob(ArrayBuffer::create(it->second.getByteString()));
-
-        response->setAccessGroup(attributes[(id)kSecAttrAccessGroup]);
-
-        result.append(WTFMove(response));
-    }
-    return result;
-}
-
 static Vector<AuthenticatorTransport> transports()
 {
     Vector<WebCore::AuthenticatorTransport> transports = { WebCore::AuthenticatorTransport::Internal };
@@ -244,6 +180,56 @@ LocalAuthenticator::LocalAuthenticator(UniqueRef<LocalConnection>&& connection)
     : m_connection(WTFMove(connection))
 {
 }
+
+std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> LocalAuthenticator::getExistingCredentials(const String& rpId)
+{
+    RetainPtr sortedAttributesArray = m_connection->getExistingCredentials(rpId);
+    Vector<Ref<AuthenticatorAssertionResponse>> result;
+    result.reserveInitialCapacity([sortedAttributesArray count]);
+    for (NSDictionary *attributes in sortedAttributesArray.get()) {
+        auto decodedResponse = cbor::CBORReader::read(makeVector(attributes[(id)kSecAttrApplicationTag]));
+        if (!decodedResponse || !decodedResponse->isMap()) {
+            ASSERT_NOT_REACHED();
+            return std::nullopt;
+        }
+        auto& responseMap = decodedResponse->getMap();
+
+        RefPtr<ArrayBuffer> userHandle;
+        auto it = responseMap.find(CBOR(fido::kEntityIdMapKey));
+        if (it != responseMap.end() && it->second.isByteString()) {
+            userHandle = LocalAuthenticatorInternal::toArrayBuffer(it->second.getByteString());
+        }
+
+        it = responseMap.find(CBOR(fido::kEntityNameMapKey));
+        if (it == responseMap.end() || !it->second.isString()) {
+            ASSERT_NOT_REACHED();
+            return std::nullopt;
+        }
+        auto& username = it->second.getString();
+
+        auto response = AuthenticatorAssertionResponse::create(LocalAuthenticatorInternal::toArrayBuffer(attributes[(id)kSecAttrApplicationLabel]), WTFMove(userHandle), String(username), (__bridge SecAccessControlRef)attributes[(id)kSecAttrAccessControl], AuthenticatorAttachment::Platform);
+
+        auto group = groupForAttributes(attributes);
+        if (!group.isNull()) {
+            response->setGroup(group);
+            response->setSynchronizable(true);
+        } else if ([[attributes allKeys] containsObject:bridge_cast(kSecAttrSynchronizable)])
+            response->setSynchronizable([attributes[(id)kSecAttrSynchronizable] isEqual:@YES]);
+        it = responseMap.find(CBOR(fido::kDisplayNameMapKey));
+        if (it != responseMap.end() && it->second.isString())
+            response->setDisplayName(it->second.getString());
+
+        it = responseMap.find(CBOR(LocalAuthenticatorInternal::kLargeBlobMapKey));
+        if (it != responseMap.end() && it->second.isByteString())
+            response->setLargeBlob(ArrayBuffer::create(it->second.getByteString()));
+
+        response->setAccessGroup(attributes[(id)kSecAttrAccessGroup]);
+
+        result.append(WTFMove(response));
+    }
+    return result;
+}
+
 
 void LocalAuthenticator::makeCredential()
 {
@@ -547,7 +533,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         cosePublicKey = encodeES256PublicKeyAsCBOR(WTFMove(x), WTFMove(y));
     }
 
-    auto flags = authDataFlags(ClientDataType::Create, verification, shouldUpdateQuery());
+    auto flags = authDataFlags(ClientDataType::Create, verification, shouldUpdateQuery(), requestData().mediation);
     // Skip attestation.
     auto authData = buildAuthData(*creationOptions.rp.id, flags, counter, buildAttestedCredentialData(aaguidVector(), credentialId, cosePublicKey));
 
@@ -700,7 +686,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
 
     // Step 10.
     auto requestOptions = std::get<PublicKeyCredentialRequestOptions>(requestData().options);
-    auto flags = authDataFlags(ClientDataType::Get, verification, response->synchronizable());
+    auto flags = authDataFlags(ClientDataType::Get, verification, response->synchronizable(), requestData().mediation);
     auto authData = buildAuthData(requestOptions.rpId, flags, counter, { });
 
     // Step 11.

@@ -38,6 +38,7 @@ public:
     explicit MockLocalConnection(const WebCore::MockWebAuthenticationConfiguration&);
 
 private:
+    RetainPtr<NSArray> getExistingCredentials(const String& rpId) final;
     void verifyUser(const String&, WebCore::ClientDataType, SecAccessControlRef, WebCore::UserVerificationRequirement,  UserVerificationCallback&&) final;
     void verifyUser(SecAccessControlRef, LAContext *, CompletionHandler<void(UserVerification)>&&) final;
     RetainPtr<SecKeyRef> createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const final;

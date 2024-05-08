@@ -152,6 +152,30 @@ void MockLocalConnection::filterResponses(Vector<Ref<AuthenticatorAssertionRespo
     responses.append(WTFMove(response));
 }
 
+RetainPtr<NSArray> MockLocalConnection::getExistingCredentials(const String& rpId)
+{
+    // Search Keychain for existing credential matched the RP ID.
+    NSDictionary *query = @{
+        (id)kSecClass: (id)kSecClassKey,
+        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+        (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
+        (id)kSecAttrLabel: rpId,
+        (id)kSecReturnAttributes: @YES,
+        (id)kSecMatchLimit: (id)kSecMatchLimitAll,
+        (id)kSecUseDataProtectionKeychain: @YES
+    };
+
+    CFTypeRef attributesArrayRef = nullptr;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
+    if (status && status != errSecItemNotFound)
+        return nullptr;
+    auto retainAttributesArray = adoptCF(attributesArrayRef);
+    NSArray *sortedAttributesArray = [(NSArray *)attributesArrayRef sortedArrayUsingComparator:^(NSDictionary *a, NSDictionary *b) {
+        return [b[(id)kSecAttrModificationDate] compare:a[(id)kSecAttrModificationDate]];
+    }];
+    return retainPtr(sortedAttributesArray);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)

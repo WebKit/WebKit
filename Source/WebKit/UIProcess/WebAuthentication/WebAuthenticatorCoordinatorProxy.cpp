@@ -133,7 +133,8 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
         }
     };
 
-    if (shouldRequestConditionalRegistration) {
+    auto& authenticatorManager = m_webPageProxy.websiteDataStore().authenticatorManager();
+    if (shouldRequestConditionalRegistration && !authenticatorManager.isMock() && !authenticatorManager.isVirtual()) {
         m_webPageProxy.uiClient().requestWebAuthenticationConditonalMediationRegistration(WTFMove(username), WTFMove(afterConsent));
         return;
     }
