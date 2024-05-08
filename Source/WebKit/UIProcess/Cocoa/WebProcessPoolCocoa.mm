@@ -717,7 +717,10 @@ void WebProcessPool::registerNotificationObservers()
         "com.apple.WebKit.showPaintOrderTree"_s,
         "com.apple.WebKit.showRenderTree"_s,
         "com.apple.CFPreferences._domainsChangedExternally"_s,
+        "com.apple.accessibility.cache.app.ax"_s,
+        "com.apple.accessibility.cache.ax"_s,
         "com.apple.accessibility.cache.enhance.text.legibility"_s,
+        "com.apple.accessibility.cache.enhance.text.legibilitycom.apple.WebKit.WebContent"_s,
         "com.apple.language.changed"_s,
         "com.apple.mediaaccessibility.captionAppearanceSettingsChanged"_s,
 #if !PLATFORM(MAC)
@@ -725,6 +728,13 @@ void WebProcessPool::registerNotificationObservers()
         "com.apple.mobile.keybagd.user_changed"_s,
 #endif
         "com.apple.powerlog.state_changed"_s,
+#if PLATFORM(MAC)
+        "com.apple.system.DirectoryService.InvalidateCache"_s,
+        "com.apple.system.DirectoryService.InvalidateCache.group"_s,
+        "com.apple.system.DirectoryService.InvalidateCache.host"_s,
+        "com.apple.system.DirectoryService.InvalidateCache.service"_s,
+        "com.apple.system.DirectoryService.InvalidateCache.user"_s,
+#endif
         "com.apple.system.logging.prefschanged"_s,
         "com.apple.system.lowpowermode"_s,
         "com.apple.system.timezone"_s,
