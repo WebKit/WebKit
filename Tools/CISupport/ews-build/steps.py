@@ -3569,7 +3569,7 @@ class CompileJSCWithoutChange(CompileJSC):
         return shell.Compile.evaluateCommand(self, cmd)
 
 
-class RunJavaScriptCoreTests(shell.Test, AddToLogMixin):
+class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
     name = 'jscore-test'
     description = ['jscore-tests running']
     descriptionDone = ['jscore-tests']
@@ -3583,7 +3583,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin):
     NUM_FAILURES_TO_DISPLAY_IN_STATUS = 5
 
     def __init__(self, **kwargs):
-        super().__init__(logEnviron=False, sigtermTime=10, **kwargs)
+        super().__init__(logEnviron=False, sigtermTime=10, timeout=2 * 60 * 60, **kwargs)
         self.binaryFailures = []
         self.stressTestFailures = []
         self.flaky = {}
@@ -3591,7 +3591,8 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin):
     def start(self):
         self.log_observer_json = logobserver.BufferLogObserver()
         self.addLogObserver('json', self.log_observer_json)
-
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
 
         # add remotes configuration file path to the command line if needed
         remotesfile = self.getProperty('remotes', False)
@@ -3610,24 +3611,39 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin):
 
         self.setCommand(self.command + customBuildFlag(self.getProperty('platform'), self.getProperty('fullPlatform')))
         self.command.extend(self.command_extra)
+        self.command = self.shell_command(' '.join(self.command) + ' 2>&1 | python3 Tools/Scripts/filter-jsc-tests')
         return super().start()
 
     def evaluateCommand(self, cmd):
         rc = super().evaluateCommand(cmd)
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'logs.txt',
+                links={self.name: 'Full logs'},
+                content_type='text/plain',
+            )
+        ]
+        if self.countFailures() != 0:
+            rc = FAILURE
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed JSC tests'
             self.descriptionDone = message
             self.build.results = SUCCESS
-            self.build.buildFinished([message], SUCCESS)
         else:
-            self.build.addStepsAfterCurrentStep([
-                                                RevertAppliedChanges(),
-                                                ValidateChange(verifyBugClosed=False, addURLs=False),
-                                                CompileJSCWithoutChange(),
-                                                ValidateChange(verifyBugClosed=False, addURLs=False),
-                                                KillOldProcesses(),
-                                                RunJSCTestsWithoutChange(),
-                                                AnalyzeJSCTestsResults()])
+            steps_to_add += [
+                RevertAppliedChanges(),
+                ValidateChange(verifyBugClosed=False, addURLs=False),
+                CompileJSCWithoutChange(),
+                ValidateChange(verifyBugClosed=False, addURLs=False),
+                KillOldProcesses(),
+                RunJSCTestsWithoutChange(),
+                AnalyzeJSCTestsResults()
+            ]
+        self.build.addStepsAfterCurrentStep(steps_to_add)
         return rc
 
     def commandComplete(self, cmd):
@@ -3680,6 +3696,24 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin):
             return {'step': "Passed JSC tests (%d flaky)" % len(self.flaky)}
 
         return super().getResultSummary()
+
+    def countFailures(self):
+        logText = self.log_observer.getStdout()
+        count = 0
+
+        match = re.search(r'^Results for JSC stress tests:\r?\n\s+(\d+) failure', logText, re.MULTILINE)
+        if match:
+            count += int(match.group(1))
+
+        match = re.search(r'Results for JSC test binaries:\r?\n\s+(\d+) failure', logText, re.MULTILINE)
+        if match:
+            count += int(match.group(1))
+
+        match = re.search(r'^Results for Mozilla tests:\r?\n\s+(\d+) regression', logText, re.MULTILINE)
+        if match:
+            count += int(match.group(1))
+
+        return count
 
 
 class RunJSCTestsWithoutChange(RunJavaScriptCoreTests):
