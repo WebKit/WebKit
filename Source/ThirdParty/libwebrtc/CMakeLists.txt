@@ -1989,6 +1989,12 @@ perlasm(BCM_SOURCES x86_64 x86_64-mont ${FIPS_PATH}/bn/asm/x86_64-mont.pl)
 perlasm(BCM_SOURCES x86_64 x86_64-mont5 ${FIPS_PATH}/bn/asm/x86_64-mont5.pl)
 
 set(CRYPTO_PATH Source/third_party/boringssl/src/crypto)
+set(CRYPTO_SOURCES_ASM
+  ${CRYPTO_PATH}/curve25519/asm/x25519-asm-arm.S
+  ${CRYPTO_PATH}/hrss/asm/poly_rq_mul.S
+  ${CRYPTO_PATH}/poly1305/poly1305_arm_asm.S
+)
+
 perlasm(CRYPTO_SOURCES aarch64 chacha/chacha-armv8 ${CRYPTO_PATH}/chacha/asm/chacha-armv8.pl)
 perlasm(CRYPTO_SOURCES aarch64 cipher_extra/chacha20_poly1305_armv8 ${CRYPTO_PATH}/cipher_extra/asm/chacha20_poly1305_armv8.pl)
 perlasm(CRYPTO_SOURCES aarch64 test/trampoline-armv8 ${CRYPTO_PATH}/test/asm/trampoline-armv8.pl)
