@@ -253,7 +253,7 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(VideoEncoder::Descr
 
         static std::once_flag onceFlag;
         std::call_once(onceFlag, [this] {
-            m_harness->dumpGraph("video-encoder");
+            m_harness->dumpGraph("video-encoder"_s);
         });
 
         std::optional<unsigned> temporalIndex;

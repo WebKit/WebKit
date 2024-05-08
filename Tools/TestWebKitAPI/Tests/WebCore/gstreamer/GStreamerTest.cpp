@@ -131,7 +131,7 @@ TEST_F(GStreamerTest, capsFromCodecString)
     // AV1 levels, per spec valid values range from 00 to 31, but we support only up to 23.
     for (unsigned i = 0; i < 23; i++) {
         GUniquePtr<char> codecString(g_strdup_printf("av01.0.%02dM.08", i));
-        TEST_CAPS_FROM_CODEC(makeString(codecString.get()), "I420", "video/x-av1, profile=(string)main, bit-depth-luma=(uint)8, bit-depth-chroma=(uint)8, chroma-format=(string)4:2:0");
+        TEST_CAPS_FROM_CODEC(makeString(span(codecString.get())), "I420", "video/x-av1, profile=(string)main, bit-depth-luma=(uint)8, bit-depth-chroma=(uint)8, chroma-format=(string)4:2:0");
     }
 
     // AV1 monochrome.

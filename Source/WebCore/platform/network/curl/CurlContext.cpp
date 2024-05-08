@@ -920,7 +920,7 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     additionalMetrics->responseHeaderBytesReceived = responseHeaderSize;
 
     if (ip)
-        additionalMetrics->remoteAddress = port ? makeString(ip, ':', port) : String::fromLatin1(ip);
+        additionalMetrics->remoteAddress = port ? makeString(span(ip), ':', port) : String::fromLatin1(ip);
 
     if (m_tlsConnectionInfo) {
         additionalMetrics->tlsProtocol = m_tlsConnectionInfo->protocol;

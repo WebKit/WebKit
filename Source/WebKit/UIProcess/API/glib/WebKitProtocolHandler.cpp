@@ -347,7 +347,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #if OS(UNIX)
     struct utsname osName;
     uname(&osName);
-    addTableRow(versionObject, "Operating system"_s, makeString(osName.sysname, ' ', osName.release, ' ', osName.version, ' ', osName.machine));
+    addTableRow(versionObject, "Operating system"_s, makeString(span(osName.sysname), ' ', span(osName.release), ' ', span(osName.version), ' ', span(osName.machine)));
 #endif
 
     const char* desktopName = g_getenv("XDG_CURRENT_DESKTOP");
@@ -359,7 +359,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 
 #if USE(GSTREAMER)
     GUniquePtr<char> gstVersion(gst_version_string());
-    addTableRow(versionObject, "GStreamer version"_s, makeString(GST_VERSION_MAJOR, '.', GST_VERSION_MINOR, '.', GST_VERSION_MICRO, " (build) "_s, gstVersion.get(), " (runtime)"_s));
+    addTableRow(versionObject, "GStreamer version"_s, makeString(GST_VERSION_MAJOR, '.', GST_VERSION_MINOR, '.', GST_VERSION_MICRO, " (build) "_s, span(gstVersion.get()), " (runtime)"_s));
 #endif
 
 #if PLATFORM(GTK)
@@ -509,7 +509,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #if USE(GBM)
                 if (platformDisplay->type() == PlatformDisplay::Type::GBM) {
                     if (drmVersion* version = drmGetVersion(gbm_device_get_fd(PlatformDisplay::sharedDisplay().gbmDevice()))) {
-                        addTableRow(hardwareAccelerationObject, "DRM version"_s, makeString(version->name, " ("_s, version->desc, ") "_s, version->version_major, '.', version->version_minor, '.', version->version_patchlevel, ". "_s, version->date));
+                        addTableRow(hardwareAccelerationObject, "DRM version"_s, makeString(span(version->name), " ("_s, span(version->desc), ") "_s, version->version_major, '.', version->version_minor, '.', version->version_patchlevel, ". "_s, span(version->date)));
                         drmFreeVersion(version);
                     }
                 }
@@ -566,7 +566,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #if USE(GBM)
             if (platformDisplay->type() == PlatformDisplay::Type::GBM) {
                 if (drmVersion* version = drmGetVersion(fd.value())) {
-                    addTableRow(hardwareAccelerationObject, "DRM version"_s, makeString(version->name, " ("_s, version->desc, ") "_s, version->version_major, '.', version->version_minor, '.', version->version_patchlevel, ". "_s, version->date));
+                    addTableRow(hardwareAccelerationObject, "DRM version"_s, makeString(span(version->name), " ("_s, span(version->desc), ") "_s, version->version_major, '.', version->version_minor, '.', version->version_patchlevel, ". "_s, span(version->date)));
                     drmFreeVersion(version);
                 }
             }

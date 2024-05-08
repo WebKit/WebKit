@@ -256,7 +256,7 @@ TEST_F(GStreamerTest, harnessParseMP4)
 
     // Feed the contents of a MP4 file to the harnessed parsebin.
     GUniquePtr<char> filePath(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit", "test.mp4", nullptr));
-    auto handle = FileSystem::openFile(makeString(filePath.get()), FileSystem::FileOpenMode::Read);
+    auto handle = FileSystem::openFile(span(filePath.get()), FileSystem::FileOpenMode::Read);
 
     size_t totalRead = 0;
     auto size = FileSystem::fileSize(handle).value_or(0);
@@ -343,7 +343,7 @@ TEST_F(GStreamerTest, harnessDecodeMP4Video)
     // Feed the contents of a MP4 file to the harnessed decodebin3, until it is able to figure out
     // the stream topology.
     GUniquePtr<char> filePath(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit", "test.mp4", nullptr));
-    auto handle = FileSystem::openFile(makeString(filePath.get()), FileSystem::FileOpenMode::Read);
+    auto handle = FileSystem::openFile(span(filePath.get()), FileSystem::FileOpenMode::Read);
 
     size_t totalRead = 0;
     auto size = FileSystem::fileSize(handle).value_or(0);

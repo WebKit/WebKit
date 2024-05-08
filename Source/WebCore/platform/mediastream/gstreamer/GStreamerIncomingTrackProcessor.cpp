@@ -41,7 +41,7 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
 {
     m_endPoint = WTFMove(endPoint);
     m_pad = WTFMove(pad);
-    m_data.mediaStreamBinName = makeString(GST_OBJECT_NAME(m_pad.get()));
+    m_data.mediaStreamBinName = span(GST_OBJECT_NAME(m_pad.get()));
     m_bin = gst_bin_new(m_data.mediaStreamBinName.ascii().data());
 
     auto caps = adoptGRef(gst_pad_get_current_caps(m_pad.get()));

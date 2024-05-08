@@ -224,7 +224,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
 
         static std::once_flag onceFlag;
         std::call_once(onceFlag, [this] {
-            m_harness->dumpGraph("video-decoder");
+            m_harness->dumpGraph("video-decoder"_s);
         });
 
         if (m_presentationSize.isEmpty())
