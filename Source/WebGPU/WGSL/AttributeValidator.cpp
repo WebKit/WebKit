@@ -148,8 +148,10 @@ void AttributeValidator::visit(AST::Function& function)
         error(attribute.span(), "invalid attribute for function return type"_s);
     }
 
-    validateInterpolation(function.maybeReturnType()->span(), function.returnTypeInterpolation(), function.returnTypeLocation());
-    validateInvariant(function.maybeReturnType()->span(), function.returnTypeBuiltin(), function.returnTypeInvariant());
+    if (function.maybeReturnType()) {
+        validateInterpolation(function.maybeReturnType()->span(), function.returnTypeInterpolation(), function.returnTypeLocation());
+        validateInvariant(function.maybeReturnType()->span(), function.returnTypeBuiltin(), function.returnTypeInvariant());
+    }
 
     m_currentFunction = &function;
     AST::Visitor::visit(function);
