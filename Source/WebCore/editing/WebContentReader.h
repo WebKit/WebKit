@@ -135,7 +135,8 @@ struct FragmentAndResources {
 
 enum class FragmentCreationOptions : uint8_t {
     IgnoreResources = 1 << 0,
-    NoInterchangeNewlines = 1 << 1
+    NoInterchangeNewlines = 1 << 1,
+    SanitizeMarkup = 1 << 2
 };
 
 WEBCORE_EXPORT RefPtr<DocumentFragment> createFragment(LocalFrame&, NSAttributedString *, OptionSet<FragmentCreationOptions> = { });
