@@ -10,6 +10,5 @@ PASS successfullyParsed is true
 TEST COMPLETE
 Hello, world.
 
-
 List item 1
 List item 2

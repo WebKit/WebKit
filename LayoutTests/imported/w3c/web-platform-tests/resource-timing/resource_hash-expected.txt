@@ -1,5 +1,4 @@
 Description
-
 This test validates that a hash in an image URL is preserved in resource timing API results.
 
 

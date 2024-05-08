@@ -1,6 +1,5 @@
 Dataset - Get
 
-
 PASS Getting element.dataset['foo'] should return the value of element.getAttribute('data-foo')'
 PASS Getting element.dataset['fooBar'] should return the value of element.getAttribute('data-foo-bar')'
 PASS Getting element.dataset['-'] should return the value of element.getAttribute('data--')'

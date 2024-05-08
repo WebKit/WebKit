@@ -76,9 +76,9 @@ by h3 yields:
 |         <h3>
 |           "<#selection-anchor>hello"
 |           <br>
-|           "world<#selection-focus>"
+|           "world"
 |       <td>
-|         "WebKit"
+|         "<#selection-focus>WebKit"
 | "\n"
 
 Formatting:

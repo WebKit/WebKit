@@ -1,5 +1,4 @@
 2d.transformation.transform.nonfinite
-
 transform() with Infinity/NaN is ignored
 
 

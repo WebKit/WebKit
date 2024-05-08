@@ -9,19 +9,12 @@ serif blue italic text
 
 
 first heading level 1
-
 second heading level 1
-
 heading level 2
-
 heading level 3
-
 heading level 4
-
 heading level 5
-
 heading level 6
-
 landmark
 
 link
@@ -35,7 +28,6 @@ second table heading level 1
 second table body level 1
 tree item
 isVisible test start
-
 test button 1
 test test test test
 test test test test

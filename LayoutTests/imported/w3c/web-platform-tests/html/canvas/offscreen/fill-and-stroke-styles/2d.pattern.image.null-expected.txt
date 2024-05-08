@@ -1,5 +1,4 @@
 2d.pattern.image.null
-
 Defined in "Web IDL" (draft)
 
 

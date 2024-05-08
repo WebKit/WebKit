@@ -1,5 +1,4 @@
 Description
-
 This tests validates that the viewport units work in media queries.
 
 

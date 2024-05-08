@@ -1,84 +1,64 @@
 Tests the #comp_text_node portions of the AccName Name Computation algorithm.
 
 text/element/text nodes, no space
-
 buttonlabel
 headinglabel
 buttonlabel
 headinglabel
-
 linklabel
 text/comment/text nodes, no space
-
 buttonlabel
 headinglabel
 buttonlabel
 headinglabel
-
 linklabel
 text/comment/text nodes, with space
-
 button label
 heading label
 button label
 heading label
-
 link label
 text node, with tab char
-
 button label
 heading label
 button label
 heading label
-
 link label
 text node, with non-breaking space
-
 button label
 heading label
 button label
 heading label
-
 link label
 text node, with extra non-breaking space
-
 button   label
 heading   label
 button   label
 heading   label
-
 link   label
 text node, with leading/trailing non-breaking space
-
  button label 
  heading label 
  button label 
  heading label 
-
  link label 
 text node, with mixed space and non-breaking space
-
 button   label
 heading   label
 button   label
 heading   label
-
 link   label
 text nodes, with deeply nested space
-
 button label
 heading label
 button label
 heading label
-
 link label
 text nodes, with single line break
-
 button label
 heading label
 button label
 heading label
-
 link label
 
 PASS span[role=button] with text/element/text nodes, no space

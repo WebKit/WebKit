@@ -1,5 +1,4 @@
 changed text
-
 new text element
 This tests that ARIA live regions are sending out the correct notifications. We perform two operations to each aria region, at the end it should trigger two live region notifications
 

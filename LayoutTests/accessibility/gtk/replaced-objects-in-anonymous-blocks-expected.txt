@@ -8,7 +8,6 @@ button
 Heading
 button
 
-
 End of test
 AXRole: AXWebArea
     AXRole: AXParagraph AXValue: Paragraph

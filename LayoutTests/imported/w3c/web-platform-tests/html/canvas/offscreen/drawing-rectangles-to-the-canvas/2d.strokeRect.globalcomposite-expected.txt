@@ -1,5 +1,4 @@
 2d.strokeRect.globalcomposite
-
 strokeRect is not affected by globalCompositeOperation
 
 

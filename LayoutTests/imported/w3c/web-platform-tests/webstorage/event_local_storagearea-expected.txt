@@ -1,5 +1,4 @@
 event_local_storageArea
 
-
 PASS storageArea property test of local event - Local event is fired due to an invocation of the setItem() method.
 

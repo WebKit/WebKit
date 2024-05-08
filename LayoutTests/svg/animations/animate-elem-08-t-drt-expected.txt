@@ -1,6 +1,5 @@
 SVG 1.1 dynamic animation tests
 
-
 A copy of the corresponding W3C-SVG-1.1 test, which dumps the animation at certain times
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

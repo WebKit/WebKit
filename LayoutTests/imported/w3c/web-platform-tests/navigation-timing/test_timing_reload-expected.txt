@@ -1,5 +1,4 @@
 Description
-
 This test validates that the window.performance.timing attributes change when a page is reloaded.
 
 This page should be loaded with a green background frame below. The frame will be automatically reloaded and then verified that the window.performance.timing attributes have been updated to the new reloaded navigation timings.

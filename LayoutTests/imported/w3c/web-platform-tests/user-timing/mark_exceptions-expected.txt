@@ -1,5 +1,4 @@
 Description
-
 This test validates that the performance.mark() method throws a SYNTAX_ERR exception whenever a navigation timing attribute is provided for the name parameter.
 
 

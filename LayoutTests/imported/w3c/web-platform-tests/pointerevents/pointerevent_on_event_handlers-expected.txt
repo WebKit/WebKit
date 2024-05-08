@@ -1,7 +1,5 @@
 PointerEvent: Dispatch custom event
-
 Test Description: This test checks if on pointer event handlers through attributes works properly using synthetic pointerevents. For valid results, this test must be run without generating real (trusted) events on the black rectangle below.
-
 
 PASS The default value of onpointerdown is always null
 PASS The onpointerdown content attribute must be compiled into the onpointerdown property

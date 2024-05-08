@@ -2,13 +2,9 @@ outline
 content
 counter
 Heading A
-
 Subheading A
-
 Subheading B
-
 Heading B
-
 PASS computedStyleFor('outline', null, 'outline-offset') is '5px'
 PASS computedStyleFor('content', ':before', 'content') is "\"text\""
 PASS computedStyleFor('content', ':after', 'content') is "\"test \" url(\"data:image/gif;base64,R0lGODlhAQABAJAAAP8AAAAAACwAAAAAAQABAAACAgQBADs=\")"

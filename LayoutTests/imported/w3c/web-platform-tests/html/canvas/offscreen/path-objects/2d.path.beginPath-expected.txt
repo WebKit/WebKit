@@ -1,5 +1,4 @@
 2d.path.beginPath
 
-
 PASS OffscreenCanvas test: 2d.path.beginPath
 

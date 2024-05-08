@@ -10,7 +10,6 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 Alternate stylesheets
-
 This document has 4 stylesheets, with no alternate stylesheets but the "high.css" stylesheet now has a title attribute.
 
 Have a red border at the top of the page

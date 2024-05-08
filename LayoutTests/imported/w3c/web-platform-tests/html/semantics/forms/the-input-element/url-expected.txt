@@ -1,6 +1,5 @@
 Input url
 
-
 PASS url type supported on input element
 PASS The value must not be set with "LF" (U+000A) or "CR" (U+000D)
 PASS The value sanitization algorithm is as follows: Strip line breaks from the value

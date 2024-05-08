@@ -1,5 +1,4 @@
 SVG 1.1 dynamic update tests
-
 Test failed
 Test passed
 Tests dynamic updates of the 'href' attribute of the SVGTRefElement object

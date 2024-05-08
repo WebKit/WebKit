@@ -1,6 +1,5 @@
 input_valueAsNumber_stepping
 
-
 FAIL date should step correctly The object is in an invalid state.
 FAIL time should step correctly The object is in an invalid state.
 FAIL month should step correctly The object is in an invalid state.

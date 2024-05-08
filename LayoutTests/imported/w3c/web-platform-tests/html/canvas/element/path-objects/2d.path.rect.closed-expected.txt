@@ -1,6 +1,9 @@
 2d.path.rect.closed
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Canvas test: 2d.path.rect.closed

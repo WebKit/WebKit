@@ -1,5 +1,4 @@
 2d.clearRect.transform
-
 clearRect is affected by transforms
 
 

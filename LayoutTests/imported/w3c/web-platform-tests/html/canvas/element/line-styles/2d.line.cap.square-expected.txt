@@ -1,7 +1,11 @@
 2d.line.cap.square
 lineCap 'square' is rendered correctly
+
 Actual output:
+
 Expected output:
+
+
 
 
 PASS lineCap 'square' is rendered correctly

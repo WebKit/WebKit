@@ -1,5 +1,4 @@
 2d.path.closePath.nextpoint
 
-
 PASS OffscreenCanvas test: 2d.path.closePath.nextpoint
 

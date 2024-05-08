@@ -1,7 +1,6 @@
 This layer should use 'acceleratesDrawing' after going back to this page.
 
 Before:
-
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -22,7 +21,6 @@ Before:
   )
 )
 After:
-
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 638.00)

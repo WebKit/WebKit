@@ -1,5 +1,4 @@
 Description
-
 This test validates that for a cross origin resource, the timing allow check algorithm will pass when the HTTP response has multiple Timing-Allow-Origin header fields and the subsequent field value is separated by a comma.
 
 

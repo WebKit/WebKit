@@ -1,5 +1,4 @@
 2d.strokeRect.nonfinite
-
 strokeRect() with Infinity/NaN is ignored
 
 

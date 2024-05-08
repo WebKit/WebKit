@@ -1,6 +1,5 @@
 MutationObservers: childList mutations
 
-
 PASS childList Node.nodeValue: no mutation
 PASS childList Node.textContent: replace content mutation
 PASS childList Node.textContent: no previous content mutation

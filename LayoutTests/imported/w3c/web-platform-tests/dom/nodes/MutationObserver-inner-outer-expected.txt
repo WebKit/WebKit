@@ -1,6 +1,5 @@
 MutationObservers: innerHTML, outerHTML mutations
 
-
 PASS innerHTML mutation
 PASS innerHTML with 2 children mutation
 PASS outerHTML mutation

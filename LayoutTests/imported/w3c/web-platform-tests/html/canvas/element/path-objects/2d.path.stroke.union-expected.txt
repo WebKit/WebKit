@@ -1,7 +1,11 @@
 2d.path.stroke.union
 Strokes in opposite directions are unioned, not subtracted
+
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Strokes in opposite directions are unioned, not subtracted

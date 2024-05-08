@@ -1,6 +1,8 @@
 2d.path.isPointInPath.unclosed
 isPointInPath() works on unclosed subpaths
+
 Actual output:
+
 
 PASS isPointInPath() works on unclosed subpaths
 

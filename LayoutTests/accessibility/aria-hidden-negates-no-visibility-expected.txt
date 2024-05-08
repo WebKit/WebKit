@@ -1,7 +1,5 @@
 heading1.2
 
-
-
 This tests ensures that aria-hidden=false will allow a node to be in the AX hierarchy even if it's not rendered or visible
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

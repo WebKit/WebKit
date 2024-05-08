@@ -1,13 +1,10 @@
 Pointer Events Capture Test - setPointerCapture on pointerup
-
 Test Description: This test checks if setPointerCapture works properly. Complete the following actions:
 Press and hold left mouse button over black rectangle
 Release left mouse button
-
 Test passes if the proper behavior of the events is observed.
 
 Pointer Events Capture Test
-
 Test complete: Scroll to Summary to view Pass/Fail Results.
 
 The following pointer types were detected: mouse.

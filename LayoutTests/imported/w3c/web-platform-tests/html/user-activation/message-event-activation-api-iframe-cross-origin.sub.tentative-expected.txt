@@ -1,5 +1,4 @@
 Clicking in iframe has activation state in child via MessageEvent
-
 Click inside the red area.
 
 

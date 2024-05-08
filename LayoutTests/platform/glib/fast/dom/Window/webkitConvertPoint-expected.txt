@@ -1,5 +1,4 @@
 Test 1 - This is a H1 heading.
-
 Test 2 - This is a simple paragraph.
 
 Test 3 - This is a paragraph with a nested element.

@@ -1,5 +1,4 @@
 2d.line.defaults
 
-
 PASS OffscreenCanvas test: 2d.line.defaults
 

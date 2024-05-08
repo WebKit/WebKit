@@ -1,5 +1,4 @@
 Description
-
 This test uses drawFocusIfNeeded does nothing if the element is not a descendant but comparing ImageData from before and after.
 
 Before:

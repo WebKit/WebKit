@@ -1,5 +1,4 @@
 First line of rendered text
-
 Test moving up and down through non-rendered elements. This test should execute quickly if it's working correctly; a timeout is a failure.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

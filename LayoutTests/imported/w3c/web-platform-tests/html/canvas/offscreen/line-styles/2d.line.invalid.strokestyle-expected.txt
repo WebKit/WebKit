@@ -1,5 +1,4 @@
 2d.line.invalid.strokestyle
-
 Verify correct behavior of canvas on an invalid strokeStyle()
 
 

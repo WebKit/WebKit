@@ -1,6 +1,5 @@
 Date and Time Inputs
 
-
 PASS month type support on input element
 PASS [month] The value must be a value that is a valid global date and time string
 PASS [month] The min attribute must have a value that is a valid global date and time string

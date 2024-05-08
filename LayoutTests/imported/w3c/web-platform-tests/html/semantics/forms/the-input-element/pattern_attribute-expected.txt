@@ -1,6 +1,5 @@
 pattern attribute
 
-
 PASS basic <input pattern> support
 PASS <input pattern> is Unicode code point-aware
 PASS <input pattern> supports Unicode property escape syntax

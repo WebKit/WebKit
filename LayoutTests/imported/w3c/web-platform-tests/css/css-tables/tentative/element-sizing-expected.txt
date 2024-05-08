@@ -1,5 +1,4 @@
 TBODY/TR Element sizes and border spacing
-
 Legacy Chrome:TR includes start/end, not before/after. 1st TBODY includes before/after, 2nd TBODY includes only after, not before.
 
 Firefox: TR/TBODY do not include start/end before/after.

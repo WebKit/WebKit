@@ -1,5 +1,4 @@
 2d.path.roundrect.zero.5
 
-
 PASS OffscreenCanvas test: 2d.path.roundrect.zero.5
 

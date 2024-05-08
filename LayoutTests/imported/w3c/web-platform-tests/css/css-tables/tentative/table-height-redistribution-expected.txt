@@ -1,6 +1,6 @@
 Tests for redistribution of table height to row group height.
-
 This algorithm has not been standardized. Browsers implementations disagree a lot. Legacy Chrome used to always distribute all the height to the first tbody.
+
 Major incompatibility: Legacy:
 - ignores any height set on sections.
 - does not size the table unless section has a TR
@@ -10,124 +10,167 @@ FF
 - does not prioritize thead for height distribution most of the time.
 - y offset of multiple tbodies can be incorrect.
 Empty table
-
 Empty tables always grow to specified height in all browsers.
-no sections
-no sections, no border spacing
-collapsed table no sections
-fixed table no sections
-One TBODY
 
+no sections
+
+no sections, no border spacing
+
+collapsed table no sections
+
+fixed table no sections
+
+One TBODY
 The big difference here is between empty TBODY, and a body with an empty TR
+
 FF: always sizes the table, only sizes TBODY if it has TR.
 Legacy: does not size the table unless TBODY has TR
 FF: sizes the table, but tbody size remains 0 unless tbody is not empty.
+
 Legacy table size remains 0, or border-spacing
+
 single empty tbody
+
 b:0
 single tbody+tr
+
 b:100
 border spacing
+
 FF/Legacy do not apply border-spacing
+
 b:100
 collapsed table
+
 b:100
 fixed table
+
 b:100
 tbody has fixed height
+
 FF adds tbody height to table?
+
 b:100
 tbody has fixed height > table
+
 Legacy: table size wins. FF: table size wins, but body grows to 300px?
+
 b:100
 tr has fixed height > table
+
 FF: table size wins, but body is 300.
+
 b:200
 tbody has percentage height > table
+
 b:100
 tr has percentage height > table
+
 FF/Legacy: table wins. FF: body is 200px
+
 b:100
 non-empty tbody
+
 b:100
 non-empty thead
+
 h:0
 THEAD TBODY
-
 empty thead, empty tbody
+
 FF thead/tbody both grow
+
 h:0
 b:100
 sized thead, empty tbody
+
 h:20
 b:80
 thead
 table layout fixed, thead with td, tbody
+
 h:20
 b:80
 thead
 x
 table layout fixed, thead+td, tbody+td
+
 h:20
 b:80
 thead
 x
 thead with td
+
 h:20
 b:80
 thead
 tfoot with td
+
 b:80
 f:20
 tfoot
 Multiple TBODY
-
 Legacy does not distribute any heights when tr is empty.
+
 Legacy always distributes everything to 1st tbody.
+
 2 tbody
+
 b:0
 b:0
 2 tbody, with non-empty tds
+
 Legacy distributes everything to 1st tbody
+
 b:82
 b:18
 x
 x
 2 tbody, 40%, auto, no td
+
 FF: distributes everything to auto when empty. Legacy does not distribute
+
 b:0
 b:0
 2 tbody, 40%, auto, non-empty td
+
 b:82
 b:18
 x
 x
 2 tbody, 40px, auto, non-empty td
+
 FF gets confused with 2nd body placement
+
 b:82
 b:18
 x
 x
 2 tbody, 40%, 40px, non-empty td
+
 FF splits evenly
+
 b:82
 b:18
 x
 x
 Sized THEAD/TBODY
-
 FF does not prioritize TBODY for distribution
+
 20px thead, 30px tbody
+
 h:18
 b:82
 x
 x
 20px thead's tr, 30px tbody's tr
+
 h:20
 b:80
 x
 x
 20px thead's td, 30px tbody's td
+
 h:20
 b:80
 x

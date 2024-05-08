@@ -1,12 +1,9 @@
 Testing accessibility of display: contents
-
 Verifies accessibility behavior of the contents keyword for the CSS display property
 
 Accname
-
 hidden label visible to all users label x x x x label x label label label
 Accessibility roles
-
 x x x x
 x	x
 x	x
@@ -15,7 +12,6 @@ x	x
 x	x
 x	x
 x
-
 x
 x
 x x x x x x x x x x x x x x x x x x x x x x x x x

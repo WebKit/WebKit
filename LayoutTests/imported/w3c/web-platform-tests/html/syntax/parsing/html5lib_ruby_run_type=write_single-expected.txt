@@ -1,6 +1,5 @@
 html5lib Parser Test
 
-
 PASS html5lib_ruby.html 6ee9e8955aa3a8a3af1838c1b728d8392e1cccca
 PASS html5lib_ruby.html 03bbba49b30ec908e06e3c84e1fcede1ac7508ff
 PASS html5lib_ruby.html de7c3ce0c3484dc3a111d00c34c68f7dea8a013a

@@ -1,5 +1,4 @@
 2d.path.moveTo.nonfinite
-
 moveTo() with Infinity/NaN is ignored
 
 

@@ -1,6 +1,5 @@
 The id attribute
 
-
 PASS User agents must associate the element with an id value for purposes of getElementById.
 PASS Association is exact and therefore case-sensitive for getElementById.
 PASS Spaces are allowed in an id and still make an association for getElementByID.

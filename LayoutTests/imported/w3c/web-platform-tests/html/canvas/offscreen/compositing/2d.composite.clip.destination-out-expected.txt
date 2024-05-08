@@ -1,5 +1,4 @@
 2d.composite.clip.destination-out
-
 fill() does not affect pixels outside the clip region.
 
 

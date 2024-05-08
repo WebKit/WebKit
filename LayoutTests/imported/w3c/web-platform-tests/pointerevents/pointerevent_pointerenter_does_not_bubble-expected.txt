@@ -1,7 +1,5 @@
 Pointer Event: pointerenter does not bubble
-
 Test Description: The pointerenter event must not bubble up to parent elements.
-
 Use the mouse or pen to hover over then out of the purple box nested in the black box. Or with touch, tap on the purple box.
 Test complete: Scroll to Summary to view Pass/Fail Results.
 

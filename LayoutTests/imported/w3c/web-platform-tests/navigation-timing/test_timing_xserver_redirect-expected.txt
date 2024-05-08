@@ -1,6 +1,5 @@
 Blocked access to external URL http://www.localhost:8800/common/redirect.py?location=http://localhost:8800/navigation-timing/resources/blank_page_green.html
 Description
-
 This test validates the values of the window.performance.redirectCount and the window.performance.timing.redirectStart/End times for a cross-origin server side redirect navigation.
 
 

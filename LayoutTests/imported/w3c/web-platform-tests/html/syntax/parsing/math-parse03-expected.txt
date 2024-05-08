@@ -1,6 +1,5 @@
 math in html: parsing
 
-
 PASS MATH element name should be lowercased
 PASS MI element name and mathvariant attribute name should be lowercased, attribute value unchanged
 PASS DEFINITIONurl attribute markup should produce a definitionURL attribute, attribute value unchanged

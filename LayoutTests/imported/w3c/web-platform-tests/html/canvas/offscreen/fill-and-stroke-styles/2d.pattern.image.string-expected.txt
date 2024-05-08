@@ -1,5 +1,4 @@
 2d.pattern.image.string
-
 Defined in "Web IDL" (draft)
 
 

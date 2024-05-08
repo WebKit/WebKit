@@ -1,5 +1,4 @@
 Visibility collapse
-
 Spec
 Setting a rowspan to visibility:collapse doesn't change height or width in this case.
 

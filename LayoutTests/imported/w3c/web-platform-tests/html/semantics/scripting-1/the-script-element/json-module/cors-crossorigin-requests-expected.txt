@@ -1,7 +1,6 @@
 json-module-crossorigin
 
 
-
 FAIL Imported JSON module, cross-origin with CORS assert_equals: Unexpected _log value expected "imported JSON: 42" but got ""
 PASS Imported JSON module, cross-origin, missing CORS ACAO header
 FAIL Imported JSON module with parse error, cross-origin, with CORS assert_equals: Unexpected _log value expected "0-0" but got ""

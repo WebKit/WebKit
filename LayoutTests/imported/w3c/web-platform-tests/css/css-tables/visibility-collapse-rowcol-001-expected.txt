@@ -1,5 +1,4 @@
 Visibility collapse
-
 Spec
 Setting row and column to visibility:collapse changes both height and width. The collapsed result should have whitespace in the bottom right corner.
 

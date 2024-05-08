@@ -1,5 +1,4 @@
 2d.shadow.canvas.basic
-
 Shadows are drawn for canvases
 
 

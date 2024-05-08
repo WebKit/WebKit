@@ -1,5 +1,4 @@
 2d.path.clip.basic.1
 
-
 PASS OffscreenCanvas test: 2d.path.clip.basic.1
 

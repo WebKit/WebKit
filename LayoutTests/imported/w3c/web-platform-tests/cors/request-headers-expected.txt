@@ -1,6 +1,5 @@
 Request headers
 
-
 PASS basic request header
 PASS Simple request headers need not be in allow-headers
 PASS Unspecified request headers are disallowed

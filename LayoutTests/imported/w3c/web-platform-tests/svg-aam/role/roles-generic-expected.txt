@@ -2,7 +2,6 @@ Tests ONLY the default generic mappings defined in SVG-AAM: 5.1.2 Including Elem
 
 Simple Elements
 
-
 PASS el-circle
 PASS el-ellipse
 PASS el-foreignObject

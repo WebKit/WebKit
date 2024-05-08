@@ -1,5 +1,4 @@
 2d.gradient.object.compare
 
-
 PASS OffscreenCanvas test: 2d.gradient.object.compare
 

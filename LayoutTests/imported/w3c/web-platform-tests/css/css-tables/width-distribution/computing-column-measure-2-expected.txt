@@ -1,7 +1,5 @@
 Width Distribution
-
 "Computing column measures"
-
 This is testing that the table's auto columns are correctly recalculated after removing and adding a col element. Spec Text
 
 100	200	300

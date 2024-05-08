@@ -1,7 +1,6 @@
 Input tel
 
 
-
 PASS tel type supported on input element
 PASS User agents must not allow users to insert "LF" (U+000A)
 PASS User agents must not allow users to insert "CR" (U+000D)

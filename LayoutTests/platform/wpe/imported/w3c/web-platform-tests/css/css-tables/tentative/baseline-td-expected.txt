@@ -1,17 +1,23 @@
 <TD> baseline tests
-
 All the baseline values. Many text values map to plain baseline.
+
 Xp	Xp	Xp	Xp	Xp	Xp	Xp	Xp	Xp	Xp	Xp	Xp
 All the baseline values. Same as test before, but use display:table/table-cell. Default td alignment is baseline, not middle.
+
 Xp	Xp	Xp	Xp	Xp	Xp	Xp	Xp	Xp	Xp	Xp	Xp
 Baselines with %ge children
+
 FF/Edge fails here
+
 inline table
 
 Baseline and td height If td is baseline aligned, and has a height, how tall should the td be?
+
 Legacy/FF apply height to below baseline?. With baseline alignment, this makes the cell taller.
+
 base	
 Baseline of rowspanned cell rowspanned td's should contribute to baseline, but not to the row height.
+
 Xp	Xp
 Xp
 Xp

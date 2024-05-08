@@ -1,5 +1,4 @@
 Description
-
 This test validates the value of window.performance.getEntriesByType("navigation")[0].(type/unloadEventEnd/unloadEventStart) with a reloaded navigation.
 
 This page should be loaded with a green background frame below. The frame will be automatically reloaded and then verified that

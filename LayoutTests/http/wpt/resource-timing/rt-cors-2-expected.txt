@@ -1,5 +1,4 @@
 Resource Timing: CORS requests
 
-
 PASS Cross-origin redirection with TAO to same origin loads without TAO must have filtered timing data
 

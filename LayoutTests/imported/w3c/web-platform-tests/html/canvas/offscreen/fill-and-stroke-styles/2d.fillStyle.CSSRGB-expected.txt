@@ -1,5 +1,4 @@
 2d.fillStyle.CSSRGB
-
 CSSRGB works as color input
 
 

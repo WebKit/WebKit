@@ -1,6 +1,6 @@
 ROWSPAN > 1 to row distribution
-
 The algorithm has not been standardized. This is my understanding of how it works.
+
 rowspan>1 TDs are sorted:
 If TD span the same rows, taller TD is distributed first.
 If one TD is fully enclosed by another, inner TD is distributed first.
@@ -13,8 +13,11 @@ Unconstrained non-empty rows grow, proportional to their existing height.
 If all rows are empty, last row gets all the height. Justification: ???
 Contstrained rows grow in proportion to current height.
 It is unclear what the existing ChromeLegacy/FF algorithms do for distribution over rowspan>1 and empty cells. FF special cases "there is no cell originating in the row with owspan=1 and there are at least 2 cells spanning the row. Chrome Legacy also tries to do something similar, but they disagree on what. TablesNG will try to ship without special cases.
+
 Safari fails most of these tests
+
 Color scheme
+
 odd rows are yellow
 even rows are orange
 inner divs have a green gradient
@@ -23,77 +26,100 @@ row
 row
 row
 Unconstrained rows
-
 Rows whose height is not fixed or percent are unconstrained.
+
 Unconstrained rows Unconstrained rows are redistributed proportionally. Rows are constrained if their height is fixed, or percent.
+
 0,0	
 0,1
 Unconstrained rows with zero height do not grow.
+
 0,0	
 0,2
 rowspan>1 is zero height, spanned rows have height.
+
 1,0	
 2,0	
 Unconstrained rows are redistributed proportionally to heights
+
 0,0
 0,1
 Fixed rows
-
 Constrained fixed rows do not grow if there are unconstrained ones
+
 Edge grows constrained rows too
+
 0,0 30px	
 0,1
  Constrained fixed rows grow proportionally to their size if there are no unconstrained rows
+
 20	
 20
 40
 Percent rows
-
 Constrained percent rows grow like unconstrained ones when percent resolution size is undefined.
+
 FF always treats percent rows as constrained. Chrome legacy does resolve percentage against final height of the table. I do not think that can work. Edge follows NG.
+
 0,0 30%	
 0,1
 100px
 Percent rows with zero height do not grow.
+
 Legacy Chrome has a strange gap between rows
+
 0,0	
 2,0
 Order of rowspan distribution
-
 If cells span the same rows, bigger cell is distributed first Not sure how to test this, I think it is just an optimization, there is no observable effect.
+
 FF and Legacy Chrome unexpectedly distribute height evenly between rows in the first test case. Edge and TablesNG do not.
+
 bottom	bottom
 bottom	bottom
 bottom	bottom
 If one cell is fully enclosed by another, inner cell wins.
-Not in Edge
-First row wins. rowspan-4 distributes 50 to last empty row, row3. rowspan-3 distributes 100px to only nonempty row, row3.
-Edge disagrees here.
-Rowspan distribution over empty rows.
 
+Not in Edge
+
+First row wins. rowspan-4 distributes 50 to last empty row, row3. rowspan-3 distributes 100px to only nonempty row, row3.
+
+Edge disagrees here.
+
+Rowspan distribution over empty rows.
 Rowspans that span non-existent rows Span is truncated so only existing rows are spanned.
+
 0,0	
 rowspan 5
 1,0
 body 2
 Rowspan spans only empty rows Last spanned row gets all the height.
+
 Edge distributes height to all empty rows, not just last.
+
 first row
 last row
 TD is not considered empty if it has padding, but no content
+
 first row
 last row
 row with an empty tall cell is not considered empty.
+
 rowspan
 Empty rows with border-spacing big enough for rowspan cell rows are 0 height, cell spans the entire table.
+
 row with a non-empty rowspan>0 cell is empty. Distributes to all rows except start row?
+
 rowspan
 rowspan
 rowspan
 yo
 Distribution over rowspan > 1 rows Distribution over rowspan > 1 rows
+
 Distribution of table height over rowspan > 1 rows If there are any unconstrained non-empty rows, they get it. When all rows are empty, last row takes it
+
 Distribution of rowspan over percentage rows Percentage rows are considered empty if they cannot resolve
+
 
 PASS table 1
 FAIL table 2 assert_equals:

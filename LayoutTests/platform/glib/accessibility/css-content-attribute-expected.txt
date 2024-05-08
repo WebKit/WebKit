@@ -1,5 +1,4 @@
 SAMPLE
-
 End of test
 This tests that when the content attribute in CSS is used, the correct values are returned.
 

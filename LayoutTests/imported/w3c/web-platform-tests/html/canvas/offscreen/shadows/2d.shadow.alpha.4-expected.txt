@@ -1,5 +1,4 @@
 2d.shadow.alpha.4
-
 Shadows with alpha components are correctly affected by globalAlpha
 
 

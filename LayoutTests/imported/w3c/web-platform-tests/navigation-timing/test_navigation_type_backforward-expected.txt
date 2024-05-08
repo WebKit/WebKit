@@ -3,7 +3,6 @@ frame "<!--frame1-->" - has 1 onunload handler(s)
 frame "<!--frame1-->" - has 1 onunload handler(s)
 frame "<!--frame1-->" - has 1 onunload handler(s)
 Description
-
 This test validates the value of window.performance.navigation.type with a forward and back navigation.
 
 This page should be loaded with a yellow background frame below. It should turn green for a starting navigation, back to yellow for a back navigation and then back to green again for a forward navigation.

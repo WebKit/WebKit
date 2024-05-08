@@ -1,6 +1,5 @@
 Access-Control-Allow-Origin handling
 
-
 Harness Error (FAIL), message = 1 duplicate test name: "Disallow origin: HTTP://127.0.0.1"
 
 FAIL Allow origin: * assert_equals: Request Origin: should be http://127.0.0.1 expected "http://127.0.0.1" but got "http://127.0.0.1:8800"

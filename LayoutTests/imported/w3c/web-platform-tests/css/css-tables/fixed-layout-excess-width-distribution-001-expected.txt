@@ -1,5 +1,4 @@
 Fixed layout tables with excess width and no auto columns
-
 FF/Edge give excess only to fixed columns, in proportion to their relative widths. This is what the spec dictates.
 Chrome (62) gives excess to ALL columns, in proportion to their contribution to total width.
 

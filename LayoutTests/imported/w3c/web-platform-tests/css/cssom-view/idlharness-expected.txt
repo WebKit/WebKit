@@ -1,7 +1,6 @@
 
 CSSOM View IDL tests
 
-
 PASS idl_test setup
 PASS idl_test validation
 PASS Partial interface Window: original interface defined

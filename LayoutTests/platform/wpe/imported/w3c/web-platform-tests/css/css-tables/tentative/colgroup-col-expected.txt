@@ -1,19 +1,24 @@
 Colgroup col widths
-
 colgroup's purpose is to "group" cols
 one can think of colgroup as always generating max(colgroup.span,1) cols, unless it has <col> children.
 colgroup css_width specifies width of generated cols.
 col.css_width can override colgroup width
 colgroups with spans
+
 cg1	cg2	cg2	cg2	50px
 cols with spans
+
 col1	col2	col2	col2	50px
 colgroups with cols
+
 cg	col1	col2	50px
 colgroups with cols with spans
+
 Legacy fails col with span inside colgroup test.
+
 cg1	col1	col1	cg2	cg2	50px
 0% cols are ignored
+
 01234	
 01234	
 

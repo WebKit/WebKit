@@ -1,5 +1,4 @@
 Description
-
 This test validates that the TYPE_* enumerations of window.performance.navigation exist and their values are correct.
 
 

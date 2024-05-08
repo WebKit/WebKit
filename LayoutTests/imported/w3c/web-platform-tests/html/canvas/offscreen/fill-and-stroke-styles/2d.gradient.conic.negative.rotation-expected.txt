@@ -1,5 +1,4 @@
 2d.gradient.conic.negative.rotation
-
 Conic gradient with negative rotation
 
 

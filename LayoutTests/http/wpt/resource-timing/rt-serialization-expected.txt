@@ -1,5 +1,4 @@
 Resource Timing: Serialization
 
-
 PASS Resource Timing - Serialization
 

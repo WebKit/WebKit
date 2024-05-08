@@ -1,5 +1,4 @@
 2d.line.cap.invalid
-
 Setting lineCap to invalid values is ignored
 
 

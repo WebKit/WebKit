@@ -1,5 +1,4 @@
 2d.text.drawing.style.letterSpacing.measure
-
 Testing letter spacing with different length units
 
 

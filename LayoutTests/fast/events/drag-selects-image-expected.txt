@@ -1,8 +1,6 @@
 Non-editable area
 
-
 Editable area
-
 
 This tests that images are properly left selected or unselected when an image drag is started. Only the image in the editable area should be selected when an image drag is started.
 

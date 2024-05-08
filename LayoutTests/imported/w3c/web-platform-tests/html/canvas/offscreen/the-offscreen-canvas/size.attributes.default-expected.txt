@@ -1,5 +1,4 @@
 size.attributes.default
-
 Default width/height when attributes are missing
 
 

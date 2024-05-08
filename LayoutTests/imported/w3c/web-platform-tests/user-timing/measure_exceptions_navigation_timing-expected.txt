@@ -1,5 +1,4 @@
 Description
-
 window.performance.measure() method throws a InvalidAccessError whenever a navigation timing attribute with a value of zero is provided as the startMark or endMark.
 
 

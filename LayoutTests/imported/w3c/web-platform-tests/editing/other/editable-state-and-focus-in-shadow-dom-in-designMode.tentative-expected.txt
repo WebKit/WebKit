@@ -1,7 +1,5 @@
 open
-
 closed
-
 
 PASS Waiting for load
 PASS Collapse selection into text in the open shadow DOM

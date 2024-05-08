@@ -1,6 +1,5 @@
 =======
 WebKit Bug 74590
-
 Verify type ahead selection fires onchange event.
 Set focus to select element
 Type "c"

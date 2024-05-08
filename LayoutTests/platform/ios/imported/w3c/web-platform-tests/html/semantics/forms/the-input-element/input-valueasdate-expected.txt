@@ -1,6 +1,5 @@
 input_valueAsDate
 
-
 PASS valueAsDate getter on type date (with value: "")
 PASS valueAsDate getter on type date (with value: "0000-12-10")
 PASS valueAsDate getter on type date (with value: "2019-00-12")

@@ -1,7 +1,11 @@
 size.attributes.removed
 Removing content attributes reverts to default size
+
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Removing content attributes reverts to default size

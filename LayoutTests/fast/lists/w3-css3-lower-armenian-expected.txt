@@ -1,7 +1,5 @@
 CSS3 Lower Armenian
-
 lower-armenian
-
 PASS list marker is ա.
 PASS list marker is բ.
 PASS list marker is գ.

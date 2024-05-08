@@ -1,5 +1,4 @@
 2d.state.saverestore.globalCompositeOperation
-
 save()/restore() works for globalCompositeOperation
 
 

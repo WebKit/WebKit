@@ -1,6 +1,5 @@
 html5lib Parser Test
 
-
 PASS html5lib_scriptdata01.html 3fc7e140adb65f9cfdf39219996f98e0749f398d
 PASS html5lib_scriptdata01.html 38ab7bda69dfd05e3ff01788cf5dac2d150a712a
 PASS html5lib_scriptdata01.html 09abe1da30643fd813db75facc7fde7b75762d43

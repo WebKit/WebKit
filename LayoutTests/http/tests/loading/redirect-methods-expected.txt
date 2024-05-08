@@ -115,13 +115,9 @@ This test checks to see what HTTP method is used to fetch the final resource in 
 301, 302, 303, and 307 http redirects are all tested.
 301 redirect
 
-
 302 redirect
-
 
 303 redirect
 
-
 307 redirect
-
 

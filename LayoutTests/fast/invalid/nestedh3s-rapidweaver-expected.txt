@@ -4,6 +4,4 @@ h3.firstChild: A
 h3.nextSibling: DIV
 h3.nextSibling.innerText: content
 header
-
-
 content

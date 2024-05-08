@@ -1,5 +1,4 @@
 2d.reset.state.stroke_style
-
 check that the state is reset
 
 

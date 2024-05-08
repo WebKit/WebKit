@@ -1,6 +1,9 @@
 2d.composite.globalAlpha.image
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Canvas test: 2d.composite.globalAlpha.image

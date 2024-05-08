@@ -132,7 +132,6 @@ PASS <input type="button" value="x" style="overflow: visible; appearance: none;"
 PASS <input type="button" value="x" style="overflow: hidden; appearance: none;">
 FAIL <input type="button" value="x" style="overflow: scroll; appearance: none;"> assert_equals: <span>.offsetTop expected 33 but got 26
 refs
-
 ref-text-input-like x
 ref-checkbox-input-appearance-auto-like
 ref-color-input-like
@@ -140,7 +139,6 @@ ref-file-input-like x
 ref-image-input-showing-alt-overflow-visible-like x
 ref-image-input-showing-image-like
 template table
-
 text
 search
 tel
@@ -164,7 +162,6 @@ image-with-src
 reset
 button
 tests
-
 text
 text
 text

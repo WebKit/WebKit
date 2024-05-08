@@ -1,7 +1,5 @@
 Viewport: Scroll in iframe - no page scale
-
 Test Description: This test checks that window.visualViewport returns correct offset and scroll values without any pinch-zoom page scale applied.
-
 
 frames[0].window.visualViewport's offsetLeft and offsetTop is (0, 0).
 

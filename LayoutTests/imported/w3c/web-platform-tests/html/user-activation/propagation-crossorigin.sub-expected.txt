@@ -1,5 +1,4 @@
 User activation propagation across cross-origin frame boundary
-
 Tests that user activation does not propagate across cross-origin frame boundary.
 
 Click anywhere on the green area (child frame).

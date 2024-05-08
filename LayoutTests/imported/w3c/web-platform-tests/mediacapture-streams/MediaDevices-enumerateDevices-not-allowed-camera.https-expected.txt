@@ -1,5 +1,4 @@
 Description
-
 This test checks for the absence of camera in navigator.mediaDevices.enumerateDevices() method when blocked by the Permissions-Policy header.
 
 

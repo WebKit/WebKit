@@ -1,5 +1,4 @@
 2d.shadow.image.basic
-
 Shadows are drawn for images
 
 

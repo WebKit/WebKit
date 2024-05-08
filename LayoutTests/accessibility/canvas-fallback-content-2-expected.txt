@@ -1,7 +1,6 @@
 Link  Button  Button  Button
 Focusable
 Heading
-
 ARIA button
 ARIA disabled button
 ARIA enabled button

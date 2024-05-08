@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources
+Test Description: Tests that the mouse events with some keys pressed.
+Press Alt, Control, Meta, Shift keys and move the mouse
+
+Harness Error (FAIL), message = Unhandled rejection: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources
+
+FAIL Tests that the mouse events with some keys pressed. assert_true: Timed out waiting for pointermove expected true got false
+

@@ -1,5 +1,4 @@
 Description
-
 This test validates functionality of the interface window.performance.measure using keywords from the Navigation Timing spec.
 
 

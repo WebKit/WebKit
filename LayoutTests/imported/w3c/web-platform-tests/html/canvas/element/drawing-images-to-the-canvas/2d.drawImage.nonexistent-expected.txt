@@ -1,5 +1,6 @@
 2d.drawImage.nonexistent
 Actual output:
 
+
 FAIL Canvas test: 2d.drawImage.nonexistent assert_throws_dom: function "function() { ctx.drawImage(img, 0, 0); }" did not throw
 

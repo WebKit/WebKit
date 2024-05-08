@@ -1,5 +1,4 @@
 Test steps
-
 Focus on the button below by "Tab" key, then press "Enter" key
 
 Test tabIndex

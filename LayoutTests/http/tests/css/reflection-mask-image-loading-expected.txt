@@ -1,4 +1,3 @@
 Resource requests:
 
-
 mask2.jpg

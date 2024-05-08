@@ -1,5 +1,4 @@
 2d.clearRect.globalalpha
-
 clearRect is not affected by globalAlpha
 
 

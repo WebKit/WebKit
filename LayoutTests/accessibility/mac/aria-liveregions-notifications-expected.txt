@@ -1,5 +1,4 @@
 changed text
-
 new text element
 
 This tests that ARIA live regions are sending out the correct notifications. We perform four operations (add, remove, change text, change alt tag), each one should trigger a live region notification

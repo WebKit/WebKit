@@ -2,5 +2,6 @@
 Actual output:
 
 
+
 PASS Canvas test: 2d.pattern.image.incomplete.reload
 

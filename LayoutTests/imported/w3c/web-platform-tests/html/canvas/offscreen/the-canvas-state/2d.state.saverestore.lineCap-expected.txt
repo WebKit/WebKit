@@ -1,5 +1,4 @@
 2d.state.saverestore.lineCap
-
 save()/restore() works for lineCap
 
 

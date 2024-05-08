@@ -1,5 +1,4 @@
 Visibility collapse
-
 Spec
 Setting a row to visibility:collapse changes table height but not width. Here, the spanning cell is the only cell in its row.
 

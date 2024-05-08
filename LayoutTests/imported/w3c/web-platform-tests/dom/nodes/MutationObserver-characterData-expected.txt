@@ -1,6 +1,5 @@
 MutationObservers: characterData mutations
 
-
 PASS characterData Text.data: simple mutation without oldValue
 PASS characterData Text.data: simple mutation
 PASS characterData Text.appendData: simple mutation

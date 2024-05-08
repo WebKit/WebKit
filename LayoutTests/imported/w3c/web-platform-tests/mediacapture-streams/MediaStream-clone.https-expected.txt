@@ -1,7 +1,6 @@
 When prompted, accept to give permission to use your audio and video devices.
 
 Description
-
 This test checks that cloning MediaStreams and MediaStreamTracks works as expected.
 
 

@@ -1,5 +1,4 @@
 SVG 1.1 dynamic update tests
-
 Erode radius = 4
 Tests dynamic updates of the 'in' property of the SVGFEMorphologyElement object
 

@@ -1,5 +1,4 @@
 Event log
-
 ondragstart src
 ondrag src
 ondragenter left target

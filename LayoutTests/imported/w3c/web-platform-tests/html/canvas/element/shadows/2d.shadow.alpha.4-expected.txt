@@ -1,7 +1,11 @@
 2d.shadow.alpha.4
 Shadows with alpha components are correctly affected by globalAlpha
+
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Shadows with alpha components are correctly affected by globalAlpha

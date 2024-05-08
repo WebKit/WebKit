@@ -1,7 +1,5 @@
 CSS3 Upper Armenian
-
 upper-armenian
-
 PASS list marker is Ա.
 PASS list marker is Բ.
 PASS list marker is Գ.

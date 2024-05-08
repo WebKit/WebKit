@@ -1,5 +1,4 @@
 2d.pattern.crosscanvas
 
-
 PASS OffscreenCanvas test: 2d.pattern.crosscanvas
 

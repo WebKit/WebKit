@@ -1,5 +1,4 @@
 Visibility collapse
-
 Spec
 Setting a spanning column to visibility:collapse changes table width but not height. The first column has been collapsed and column width is the widest cell in the column.
 

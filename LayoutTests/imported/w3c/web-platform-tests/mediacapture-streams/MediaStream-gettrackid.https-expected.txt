@@ -1,7 +1,6 @@
 When prompted, accept to share your video stream.
 
 Description
-
 This test checks that MediaStream.getTrackById behaves as expected
 
 

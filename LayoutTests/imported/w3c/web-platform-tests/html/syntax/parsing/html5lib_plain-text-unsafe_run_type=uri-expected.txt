@@ -1,6 +1,5 @@
 html5lib Parser Test
 
-
 PASS html5lib_plain-text-unsafe.html 7e4ca4cb5e73852744a876bf8652dd2c8998d94a
 PASS html5lib_plain-text-unsafe.html e552342bdd3ac62316bd91126556512683f3d4a9
 PASS html5lib_plain-text-unsafe.html 9112cef60139e6988b66334e522777329051442a

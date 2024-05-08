@@ -1,5 +1,4 @@
 Description
-
 The recommended minimum resolution of the Performance interface should be set to 5 microseconds.
 
 

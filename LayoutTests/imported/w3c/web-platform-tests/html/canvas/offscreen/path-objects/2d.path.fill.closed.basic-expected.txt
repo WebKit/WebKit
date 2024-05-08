@@ -1,5 +1,4 @@
 2d.path.fill.closed.basic
 
-
 PASS OffscreenCanvas test: 2d.path.fill.closed.basic
 

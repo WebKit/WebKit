@@ -1,6 +1,5 @@
 Checks that getComputedStyle() on a zoomed element returns the right thing.
 Results while display:block
-
 Property	Pass?	Set Value	Computed Value
 background-position	PASS	10px 10px	10px 10px
 background-size	PASS	400px 300px	400px 300px
@@ -52,7 +51,6 @@ padding-bottom	PASS	10px	10px
 padding-left	PASS	10px	10px
 text-indent	PASS	10px	10px
 Results while display:none
-
 Hidden Property	Pass?	Set Value	Computed Value
 background-position	PASS	10px 10px	10px 10px
 background-size	PASS	400px 300px	400px 300px

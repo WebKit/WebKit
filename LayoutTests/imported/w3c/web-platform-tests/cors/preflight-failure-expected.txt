@@ -1,6 +1,5 @@
 Preflight responds with non-2XX status code
 
-
 PASS Should succeed if preflight has status 200
 PASS Should succeed if preflight has status 299
 PASS Should throw error if preflight has status 300

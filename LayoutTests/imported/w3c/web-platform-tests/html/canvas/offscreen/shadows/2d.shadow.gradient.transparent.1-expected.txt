@@ -1,5 +1,4 @@
 2d.shadow.gradient.transparent.1
-
 Shadows are not drawn for transparent gradient fills
 
 

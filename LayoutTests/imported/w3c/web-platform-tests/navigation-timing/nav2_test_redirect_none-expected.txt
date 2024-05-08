@@ -1,5 +1,4 @@
 Description
-
 This test validates that the value of the window.performance.getEntriesByType("navigation")[0].redirectCount attribute, as well as the window.performance.getEntriesByType("navigation")[0].redirectStart and redirectEnd attributes on a non-redirected navigation.
 
 

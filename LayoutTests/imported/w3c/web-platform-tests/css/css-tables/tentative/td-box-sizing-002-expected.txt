@@ -17,7 +17,6 @@ div with display:table; box-sizing: border-box; border-collapse: separate
 div with display:table;box-sizing: content-box; border-collapse: separate
 
 Same tests, but tables are inline.
-
  box-sizing: border-box; border-collapse: separate
  box-sizing: content-box; border-collapse: separate
  box-sizing: border-box; border-collapse: collapse

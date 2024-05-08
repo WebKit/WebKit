@@ -1,6 +1,8 @@
 2d.path.isPointInStroke.scaleddashes
 isPointInStroke() should return correct results on dashed paths at high scale factors
+
 Actual output:
+
 
 PASS isPointInStroke() should return correct results on dashed paths at high scale factors
 

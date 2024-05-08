@@ -2,7 +2,6 @@ Test for bug 70277. This tests that a link is dragged and dropped properly in an
 
 Test Link
 Editable area
-
 Test Link
 
 PASS

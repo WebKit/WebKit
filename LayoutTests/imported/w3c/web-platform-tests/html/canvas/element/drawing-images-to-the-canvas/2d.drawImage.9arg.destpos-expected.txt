@@ -1,5 +1,6 @@
 2d.drawImage.9arg.destpos
 Actual output:
 
+
 PASS Canvas test: 2d.drawImage.9arg.destpos
 

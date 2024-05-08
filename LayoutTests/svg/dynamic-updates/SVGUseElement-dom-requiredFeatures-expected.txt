@@ -1,5 +1,4 @@
 SVG 1.1 dynamic update tests
-
 Check that setting requiredFeatures to something valid makes it render again
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

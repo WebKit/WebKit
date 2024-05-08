@@ -1,5 +1,4 @@
 Description
-
 This test validates that for a cross origin resource, the timing allow check algorithm will pass when the Timing-Allow-Origin header value list contains a wildcard ("*").
 
 

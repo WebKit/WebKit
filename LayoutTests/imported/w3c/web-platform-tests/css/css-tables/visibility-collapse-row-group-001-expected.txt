@@ -1,5 +1,4 @@
 Visibility collapse
-
 Spec
 Collapsing a row group but making its rows visible should still result in a collapsed row group.
 

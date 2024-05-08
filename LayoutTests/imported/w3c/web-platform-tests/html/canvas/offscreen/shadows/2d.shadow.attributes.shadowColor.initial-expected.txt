@@ -1,5 +1,4 @@
 2d.shadow.attributes.shadowColor.initial
 
-
 PASS OffscreenCanvas test: 2d.shadow.attributes.shadowColor.initial
 

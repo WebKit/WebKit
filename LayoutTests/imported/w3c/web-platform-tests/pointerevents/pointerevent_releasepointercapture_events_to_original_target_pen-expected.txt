@@ -1,7 +1,5 @@
 Pointer Event: releasePointerCapture() - subsequent events follow normal hitting testing mechanisms
-
 Test Description: Use your pointer and press down in the black box. Then move around in the box and release your pointer. After invoking the releasePointerCapture method on an element, subsequent events for the specified pointer must follow normal hit testing mechanisms for determining the event target.
-
 
 
 PASS pen got/lost pointercapture: subsequent events to target

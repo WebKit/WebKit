@@ -28,86 +28,62 @@ Test passes if the X-position of the left edge of the orange box and the right e
 If script is enabled, there should be one or more PASS and no FAIL.
 
 1: Shrink-to-fit inline-block with a child of orthogonal block
-
 HH
 ZZ
 2: Shrink-to-fit inline-block with a child of orthogonal inline
-
 HHZZ
 3: Shrink-to-fit inline-block with a child of orthogonal block with borders
-
 HHH
 ZZ
 4: Shrink-to-fit inline-block with a child of orthogonal inline with borders
-
 HHHZZ
 5: Shrink-to-fit inline-block with a child of orthogonal block in inline-block
-
 HH
 ZZ
 6: Shrink-to-fit inline-block with a child of orthogonal inline in inline-block
-
 HHZZ
 7: Shrink-to-fit inline-block with a child of orthogonal block with borders in inline-block
-
 HHH
 ZZ
 8: Shrink-to-fit inline-block with a child of orthogonal inline with borders in inline-block
-
 HHHZZ
 9: Shrink-to-fit float with a child of orthogonal block
-
 HH
 ZZ
 10: Shrink-to-fit float with a child of orthogonal inline
-
 HHZZ
 11: Shrink-to-fit float with a child of orthogonal block with borders
-
 HHH
 ZZ
 12: Shrink-to-fit float with a child of orthogonal inline with borders
-
 HHHZZ
 13: Shrink-to-fit float with a child of orthogonal block in inline-block
-
 HH
 ZZ
 14: Shrink-to-fit float with a child of orthogonal inline in inline-block
-
 HHZZ
 15: Shrink-to-fit float with a child of orthogonal block with borders in inline-block
-
 HHH
 ZZ
 16: Shrink-to-fit float with a child of orthogonal inline with borders in inline-block
-
 HHHZZ
 17: Shrink-to-fit table-cell with a child of orthogonal block
-
 HH
 ZZ
 18: Shrink-to-fit table-cell with a child of orthogonal inline
-
 HH	ZZ
 19: Shrink-to-fit table-cell with a child of orthogonal block with borders
-
 HHH
 ZZ
 20: Shrink-to-fit table-cell with a child of orthogonal inline with borders
-
 HHH	ZZ
 21: Shrink-to-fit table-cell with a child of orthogonal block in inline-block
-
 HH
 ZZ
 22: Shrink-to-fit table-cell with a child of orthogonal inline in inline-block
-
 HH	ZZ
 23: Shrink-to-fit table-cell with a child of orthogonal block with borders in inline-block
-
 HHH
 ZZ
 24: Shrink-to-fit table-cell with a child of orthogonal inline with borders in inline-block
-
 HHH	ZZ

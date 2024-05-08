@@ -1,5 +1,4 @@
 2d.composite.transparent.clear
 
-
 PASS OffscreenCanvas test: 2d.composite.transparent.clear
 

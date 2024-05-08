@@ -1,5 +1,4 @@
 2d.pattern.image.undefined
-
 Defined in "Web IDL" (draft)
 
 

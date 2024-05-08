@@ -1,5 +1,4 @@
 Simple requests
-
 Simple requests shouldn't trigger preflight
 
 

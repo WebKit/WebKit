@@ -1,10 +1,8 @@
 XHTML Entities Test
-
 Latin-1 Characters (xhtml-lat1.ent)
 Special Characters (xhtml-special.ent)
 Symbols (xhtml-symbol.ent)
 Latin-1 Characters (xhtml-lat1.ent)
-
 𝌌
 decimal	hexadecimal	entity name	&#nnn;	&#xhhh;	&entity;
 160	A0	nbsp	 	 	 
@@ -104,7 +102,6 @@ decimal	hexadecimal	entity name	&#nnn;	&#xhhh;	&entity;
 254	FE	thorn	þ	þ	þ
 255	FF	yuml	ÿ	ÿ	ÿ
 Special Characters (xhtml-special.ent)
-
 decimal	hexadecimal	entity name	&#nnn;	&#xhhh;	&entity;
 34	22	quot	"	"	"
 38	26	amp	&	&	&
@@ -140,7 +137,6 @@ decimal	hexadecimal	entity name	&#nnn;	&#xhhh;	&entity;
 8250	203A	rsaquo	›	›	›
 8364	20AC	euro	€	€	€
 Symbols (xhtml-symbol.ent)
-
 decimal	hexadecimal	entity name	&#nnn;	&#xhhh;	&entity;
 402	192	fnof	ƒ	ƒ	ƒ
 913	391	Alpha	Α	Α	Α
@@ -267,7 +263,6 @@ decimal	hexadecimal	entity name	&#nnn;	&#xhhh;	&entity;
 9829	2665	hearts	♥	♥	♥
 9830	2666	diams	♦	♦	♦
 Multi-byte entities from HTML5
-
 decimal	hexadecimal	entity name	&#nnn;	&#xhhh;	&entity;
 8882	22B2	vltri	⊲	⊲	⊲
 8834 + 8402	2282 + 20D2	sub	⊂⃒	⊂⃒	⊂⃒

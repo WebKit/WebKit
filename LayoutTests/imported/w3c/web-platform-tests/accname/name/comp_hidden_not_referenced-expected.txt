@@ -3,7 +3,6 @@ Tests the #comp_hidden_not_referenced portions of the AccName Name Computation a
 hidden, visible to all users   hidden but referenced, visible to all users   hidden, visible to all users  visible to all users, hidden, hidden but referenced,
 visible to all users, un-hidden for all users
 
-
 PASS button containing a rendered, unreferenced element that is aria-hidden=true, an unreferenced element with the hidden host language attribute, and an unreferenced element that is unconditionally rendered
 PASS button labelled by element that is aria-hidden=true
 PASS button labelled by element with the hidden host language attribute

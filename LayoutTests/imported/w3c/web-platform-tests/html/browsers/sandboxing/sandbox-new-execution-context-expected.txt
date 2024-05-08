@@ -2,6 +2,5 @@ CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "http://localhost:
 Reuse of iframe about:blank document execution context in sandbox="allow-scripts" iframe
 
 
-
 PASS iframe with sandbox should load with new execution context
 

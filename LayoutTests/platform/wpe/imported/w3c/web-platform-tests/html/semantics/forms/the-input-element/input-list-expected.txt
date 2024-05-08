@@ -1,6 +1,5 @@
 input_list
 
-
 FAIL getting .list of input must return the datalist with that id assert_equals: expected (object) Element node <datalist id="thelist">
       <option value="one">one</op... but got (undefined) undefined
 FAIL getting .list of input must return null if it has no list attribute assert_equals: expected (object) null but got (undefined) undefined

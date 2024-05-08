@@ -1,6 +1,5 @@
 Text input element
 
-
 PASS Value returns the current value for text
 PASS Setting value changes the current value for text
 PASS Value sanitization algorithm should strip line breaks for text

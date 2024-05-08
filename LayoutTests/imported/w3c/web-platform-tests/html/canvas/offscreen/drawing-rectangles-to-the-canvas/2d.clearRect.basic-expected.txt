@@ -1,5 +1,4 @@
 2d.clearRect.basic
-
 clearRect clears to transparent black
 
 

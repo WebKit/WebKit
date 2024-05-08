@@ -1,5 +1,4 @@
 Description
-
 Click the button below to trigger pointer lock on an element in a shadow root.
 
 Click Me!

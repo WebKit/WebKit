@@ -5,6 +5,5 @@ Test passes if the X-position of the left edge of the orange box and the right e
 If script is enabled, there should be one or more PASS and no FAIL.
 
 21: Shrink-to-fit table-cell with a child of orthogonal block in inline-block
-
 HH
 ZZ

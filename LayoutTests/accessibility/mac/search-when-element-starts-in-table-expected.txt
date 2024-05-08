@@ -1,8 +1,6 @@
 Column
 heading
-
 outside heading
-
 This tests that when we start searching from an element within a table, we do not get as a result, the same element.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

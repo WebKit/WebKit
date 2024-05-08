@@ -1,6 +1,8 @@
 2d.imageData.get.zero
 getImageData() throws INDEX_SIZE_ERR if size is zero
+
 Actual output:
+
 
 PASS getImageData() throws INDEX_SIZE_ERR if size is zero
 

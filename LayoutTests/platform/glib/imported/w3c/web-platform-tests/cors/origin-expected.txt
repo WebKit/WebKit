@@ -1,6 +1,5 @@
 Access-Control-Allow-Origin handling
 
-
 PASS Allow origin: *
 PASS Allow origin: _*__
 PASS Allow origin: [tab]*

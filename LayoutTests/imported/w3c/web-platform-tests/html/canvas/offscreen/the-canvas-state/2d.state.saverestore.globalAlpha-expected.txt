@@ -1,5 +1,4 @@
 2d.state.saverestore.globalAlpha
-
 save()/restore() works for globalAlpha
 
 

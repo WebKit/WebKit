@@ -1,6 +1,5 @@
 Input Time
 
-
 PASS time element of default time value
 PASS step attribute on default value check
 PASS max  attribute on default value check

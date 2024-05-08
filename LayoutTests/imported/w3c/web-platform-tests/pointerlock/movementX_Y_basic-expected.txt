@@ -1,9 +1,7 @@
 Description
-
 This test if movementX/Y can provide the change in position of the pointer, as if movementX/Y = eNow.screenX/Y-ePrevious.screenX/Y
 
 Manual Test Steps:
-
 Click to start Test1.
 Move the mouse within the window, slow and fast, like a scribble.
 Click again to end test.

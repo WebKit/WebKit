@@ -1,7 +1,5 @@
 Variations on type attribute of script tag
-
 These scripts should execute
-
 no type attribute executed
 empty string executed
 text/javascript executed
@@ -19,7 +17,6 @@ application/javascript executed
 application/ecmascript executed
 application/x-javascript executed
 These scripts should not execute
-
 one space
 text/
 text/vbscript
@@ -91,9 +88,7 @@ disabled_javascript
 xxxjavascriptxxx
 bogus
 Variations on language attribute of script tag
-
 These scripts should execute
-
 no language attribute executed
 empty string executed
 jscript executed
@@ -109,7 +104,6 @@ JavaScript1.3 executed
 JavaScript1.4 executed
 JavaScript1.5 executed
 These scripts should not execute
-
 one space
 vbscript
 livescript1.1
@@ -156,9 +150,7 @@ disabled_javascript
 xxxjavascriptxxx
 bogus
 Variations on combined type and language attributes of script tag
-
 These scripts should execute
-
 empty string type, "javascript" language executed
 empty string language, "text/javascript" type executed
 "javascript" language, "text/javascript" type executed
@@ -166,7 +158,6 @@ empty string language, "text/javascript" type executed
 "livescript" language, "text/javascript" type executed
 "javascript1.2" language, "text/javascript" type executed
 These scripts should not execute
-
 "javascript" language, "bogus" type
 empty string type, "bogus" language executed
 empty string language, "bogus" type

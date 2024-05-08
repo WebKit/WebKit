@@ -1,6 +1,5 @@
 
 *** Handling drop ***
-
 Types => data
 Files => ""
 Item list

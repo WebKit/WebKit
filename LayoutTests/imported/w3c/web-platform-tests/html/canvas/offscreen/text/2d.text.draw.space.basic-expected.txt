@@ -1,5 +1,4 @@
 2d.text.draw.space.basic
-
 U+0020 is rendered the correct size (1em wide)
 
 

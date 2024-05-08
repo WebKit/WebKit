@@ -1,6 +1,9 @@
 2d.drawImage.clip
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Canvas test: 2d.drawImage.clip

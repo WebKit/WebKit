@@ -19,5 +19,4 @@ Other page content with a dummy focusable element
 Display a dialog
 
 Dialog1 heading
-
 OK  New

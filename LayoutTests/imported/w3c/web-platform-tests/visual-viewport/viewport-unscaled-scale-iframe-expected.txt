@@ -1,7 +1,5 @@
 Viewport: Unscaled scale iframe
-
 Test Description: This test checks that the default value for scale inside an iframe is 1.
-
 
 iframe's window.visualViewport.scale is 1.
 

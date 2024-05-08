@@ -1,7 +1,6 @@
 When prompted, accept to share your video stream.
 
 Description
-
 This test checks that the MediaStream object returned by the success callback in getUserMedia has exactly one video track and no audio.
 
 

@@ -1,5 +1,4 @@
 2d.shadow.image.transparent.2
-
 Shadows are not drawn for transparent parts of images
 
 

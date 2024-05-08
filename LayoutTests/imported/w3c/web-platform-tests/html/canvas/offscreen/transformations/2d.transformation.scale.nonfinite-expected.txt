@@ -1,5 +1,4 @@
 2d.transformation.scale.nonfinite
-
 scale() with Infinity/NaN is ignored
 
 

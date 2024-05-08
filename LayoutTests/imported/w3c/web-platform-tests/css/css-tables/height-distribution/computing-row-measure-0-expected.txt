@@ -1,5 +1,4 @@
 "Computing row measures"
-
 This is testing that the table root's minimum is max(table-root width, capmin, gridmin) Spec Text
 
 

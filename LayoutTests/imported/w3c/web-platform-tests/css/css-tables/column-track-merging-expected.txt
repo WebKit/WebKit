@@ -1,5 +1,4 @@
 Column merging investigation
-
 Empty columns is a column that has no originating cells
 Table standard discusses this under "track merging".
 
@@ -13,7 +12,6 @@ Edge17 has a bug where width of a colspanned cell always includes cell width + w
 Safari matches Chrome Legacy. TD-originated columns are always merged.
 Firefox follows the standard, but has a few bugs.
 TD merging
-
 Auto table, and TD.colspan=10
   FF/Chrome Legacy/Safari: Standard. Tracks merge.
   Edge17: Tracks do not merge. Wide cell is 180px (9 * border spacing)
@@ -36,7 +34,6 @@ Fixed(130px) table, and TD.colspan=10
   Edge17: Standard + buggy. Wide cell too wide.
 fixed 130px
 COL merging. Same tests with COL span=10 replacing TD
-
 Auto table
   FF/Chrome Legacy/Safari, Edge17: Standard. wide cell is 50px, tracks do merge.
 auto
@@ -56,7 +53,6 @@ Fixed(130px) table
   Edge17: Non-compliant, collapses columns.
 fixed 130px
 COL merging when COL has specified width.
-
 Chrome Legacy/Edge17/Safari: non-compliant, merge COLs with specified widths.
 Firefox: Standard, unless COL width is 0px. Buggy, does not include border-spacing around columns.
 Auto table, COL width 30px.

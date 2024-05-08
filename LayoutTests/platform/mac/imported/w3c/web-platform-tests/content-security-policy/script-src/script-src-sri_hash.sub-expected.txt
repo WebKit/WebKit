@@ -2,7 +2,6 @@ Blocked access to external URL http://www.localhost:8800/content-security-policy
 Blocked access to external URL http://www.localhost:8800/content-security-policy/script-src/crossoriginScript.js
 External scripts with matching SRI hash should be allowed.
 
-
 PASS Load all the tests.
 PASS matching integrity
 PASS multiple matching integrity

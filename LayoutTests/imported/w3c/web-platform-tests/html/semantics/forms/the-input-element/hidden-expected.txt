@@ -1,6 +1,5 @@
 Hidden input element
 
-
 PASS Value returns the current value for hidden
 PASS Setting value changes the current value for hidden
 PASS files attribute must return null for hidden

@@ -1,5 +1,4 @@
 Add or delete a table in Numbers on iPhone
-
 When you add a table, you choose from a number of predesigned styles that match your template. After you add a table, you can customize it however you like. You can add as many tables as you want to a sheet.
 
 This tests that text elements properly support paths.

@@ -1,5 +1,4 @@
 2d.gradient.interpolate.zerosize.fillRect
 
-
 PASS OffscreenCanvas test: 2d.gradient.interpolate.zerosize.fillRect
 

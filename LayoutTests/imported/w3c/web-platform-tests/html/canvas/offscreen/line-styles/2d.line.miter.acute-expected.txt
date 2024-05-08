@@ -1,5 +1,4 @@
 2d.line.miter.acute
-
 Miter joins are drawn correctly with acute angles
 
 

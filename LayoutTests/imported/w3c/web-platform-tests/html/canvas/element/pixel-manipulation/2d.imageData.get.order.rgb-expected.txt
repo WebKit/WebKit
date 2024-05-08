@@ -1,6 +1,8 @@
 2d.imageData.get.order.rgb
 getImageData() returns R then G then B
+
 Actual output:
+
 
 PASS getImageData() returns R then G then B
 

@@ -1,5 +1,4 @@
 Description
-
 This test checks that getUserMedia with an unknown value in the constraints parameter rejects with a TypeError.
 
 

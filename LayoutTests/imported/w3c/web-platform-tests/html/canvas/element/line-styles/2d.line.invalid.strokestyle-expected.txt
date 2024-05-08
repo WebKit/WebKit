@@ -1,6 +1,8 @@
 2d.line.invalid.strokestyle
 Verify correct behavior of canvas on an invalid strokeStyle()
+
 Actual output:
+
 
 PASS Verify correct behavior of canvas on an invalid strokeStyle()
 

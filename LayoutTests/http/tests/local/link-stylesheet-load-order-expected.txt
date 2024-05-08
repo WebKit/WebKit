@@ -1,7 +1,6 @@
  Test stylesheet load scheduling. Resource loads for screen stylesheets should be scheduled first, others should be scheduled last.
 Resource requests:
 
-
 no-media.css
 media-empty.css
 media-all.css

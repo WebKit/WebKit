@@ -1,7 +1,5 @@
 PointerEvent: Dispatch custom event with coalesced events
-
 Test Description: This test checks if PointerEvent constructor works properly with respect to the coalesced events.
-
 The following pointer types were detected: .
 
 

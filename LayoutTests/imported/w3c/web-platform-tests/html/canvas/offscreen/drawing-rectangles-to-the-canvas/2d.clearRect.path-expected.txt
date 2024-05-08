@@ -1,5 +1,4 @@
 2d.clearRect.path
-
 clearRect does not affect the current path
 
 

@@ -1,7 +1,6 @@
 CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
 html5lib Parser Test
 
-
 PASS html5lib_tests1.html 4235382bf15f93f7dd1096832ae74cc71edef4d7
 PASS html5lib_tests1.html ad8515e9db0abd26469d0d2e46b42cebf606d4f3
 PASS html5lib_tests1.html 2433aa5c088d78da9e7824e499f639177f56625d

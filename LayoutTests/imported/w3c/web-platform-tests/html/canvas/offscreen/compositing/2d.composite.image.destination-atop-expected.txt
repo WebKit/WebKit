@@ -1,5 +1,4 @@
 2d.composite.image.destination-atop
 
-
 PASS OffscreenCanvas test: 2d.composite.image.destination-atop
 

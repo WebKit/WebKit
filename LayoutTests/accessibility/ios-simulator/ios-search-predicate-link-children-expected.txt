@@ -1,7 +1,6 @@
 start text
 
 heading text
-
 sub text
 start text 2
 

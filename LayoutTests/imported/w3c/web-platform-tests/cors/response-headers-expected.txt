@@ -1,6 +1,5 @@
 Response headers
 
-
 PASS getResponseHeader: Expose Access-Control-Expose-Headers (x-custom-header-comma)
 PASS getResponseHeader: Expose second Access-Control-Expose-Headers (x-second-expose)
 PASS getResponseHeader: Don't trim whitespace

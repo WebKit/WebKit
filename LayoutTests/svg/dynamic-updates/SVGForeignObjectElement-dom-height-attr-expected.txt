@@ -1,5 +1,4 @@
 SVG 1.1 dynamic update tests
-
 Test passed
 Tests dynamic updates of the 'height' attribute of the SVGForeignObjectElement object
 

@@ -1,7 +1,5 @@
 PointerEvent: Dispatch custom event
-
 Test Description: This test checks if PointerEvent constructor works properly.
-
 
 FAIL PointerEvent: Constructor test event.getPredictedEvents is not a function. (In 'event.getPredictedEvents()', 'event.getPredictedEvents' is undefined)
 

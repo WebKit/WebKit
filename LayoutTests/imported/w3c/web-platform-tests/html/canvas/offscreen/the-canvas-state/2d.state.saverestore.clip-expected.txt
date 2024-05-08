@@ -1,5 +1,4 @@
 2d.state.saverestore.clip
-
 save()/restore() affects the clipping path
 
 

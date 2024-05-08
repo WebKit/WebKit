@@ -1,7 +1,5 @@
 Viewport: Size in iframe - no page scale
-
 Test Description: This test checks that window.visualViewport returns correct sizes without any pinch-zoom page scale applied but with scrollbars.
-
 
 frames[0].window.visualViewport width and height is (200, 300).
 

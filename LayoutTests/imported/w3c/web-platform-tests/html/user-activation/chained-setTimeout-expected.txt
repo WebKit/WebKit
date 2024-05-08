@@ -1,5 +1,4 @@
 User activation state in chained setTimeout calls
-
 Tests that user activation state is visible in arbitrary call depth of setTimeout.
 
 Click anywhere in the document.

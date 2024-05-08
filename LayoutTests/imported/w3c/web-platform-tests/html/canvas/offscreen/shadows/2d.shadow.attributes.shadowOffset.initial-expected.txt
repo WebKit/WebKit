@@ -1,5 +1,4 @@
 2d.shadow.attributes.shadowOffset.initial
 
-
 PASS OffscreenCanvas test: 2d.shadow.attributes.shadowOffset.initial
 

@@ -1,6 +1,9 @@
 2d.path.lineTo.nextpoint
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Canvas test: 2d.path.lineTo.nextpoint

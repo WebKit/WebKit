@@ -1,5 +1,4 @@
 2d.imageData.object.undefined
-
 ImageData.data converts undefined to 0
 
 

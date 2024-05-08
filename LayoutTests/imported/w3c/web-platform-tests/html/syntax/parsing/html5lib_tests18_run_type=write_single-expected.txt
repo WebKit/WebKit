@@ -4,7 +4,6 @@ CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
 CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
 html5lib Parser Test
 
-
 PASS html5lib_tests18.html 7471f6a45872ac6d70f69fc3f4e10b13c7c1ac45
 PASS html5lib_tests18.html 0d0085749435e0d0ddb56c9db809bfcbbc995767
 PASS html5lib_tests18.html 9052b915187ac505be8958ab5e9f8d4ca0bfde81

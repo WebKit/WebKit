@@ -1,6 +1,5 @@
 Inputs Date
 
-
 PASS date type support on input element
 PASS The value attribute, if specified and not empty, must have a value that is a valid date string.
 PASS The min attribute must be reflected verbatim by the min property.

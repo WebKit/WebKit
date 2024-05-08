@@ -1,6 +1,9 @@
 2d.gradient.interpolate.zerosize.fillRect
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Canvas test: 2d.gradient.interpolate.zerosize.fillRect

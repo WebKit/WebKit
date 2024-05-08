@@ -1,5 +1,4 @@
 2d.path.isPointInPath.transform.1
-
 isPointInPath() handles transformations correctly
 
 

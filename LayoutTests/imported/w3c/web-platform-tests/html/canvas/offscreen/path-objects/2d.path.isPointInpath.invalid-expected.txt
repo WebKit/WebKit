@@ -1,5 +1,4 @@
 2d.path.isPointInpath.invalid
-
 Verify isPointInPath throws exceptions with invalid inputs.
 
 

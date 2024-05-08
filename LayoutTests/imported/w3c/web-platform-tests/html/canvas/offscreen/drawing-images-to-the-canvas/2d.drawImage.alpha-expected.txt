@@ -1,5 +1,4 @@
 2d.drawImage.alpha
 
-
 PASS OffscreenCanvas test: 2d.drawImage.alpha
 

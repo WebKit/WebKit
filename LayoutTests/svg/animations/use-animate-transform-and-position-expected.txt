@@ -1,5 +1,4 @@
 SVG 1.1 dynamic animation tests
-
 Test animation of use element where the instance is also animated with animate and animateTransform
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
