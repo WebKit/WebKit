@@ -53,6 +53,8 @@ if [[ "${JSC_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" != "YES" ]]; then
     if [[ "${PLATFORM_NAME}" == "macosx" ]]; then
         [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET}
         [[ -n ${OSX_VERSION_NUMBER} ]] || OSX_VERSION_NUMBER=${TARGET_MAC_OS_X_VERSION_MAJOR}
+        [[ -n ${XROS_VERSION} ]] || XROS_VERSION="NA"
+        [[ -n ${XROS_VERSION_NUMBER} ]] || XROS_VERSION_NUMBER="0"
 
         if [[ "${WK_PLATFORM_NAME}" == "maccatalyst" && "${LLVM_TARGET_TRIPLE_OS_VERSION}" == ios* ]]; then
             # On Mac Catalyst `LLVM_TARGET_TRIPLE_OS_VERSION` will be in the format `ios{major}.{minor}`.
@@ -63,21 +65,33 @@ if [[ "${JSC_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" != "YES" ]]; then
             [[ -n ${IOS_VERSION} ]] || IOS_VERSION="NA"
             [[ -n ${IOS_VERSION_NUMBER} ]] || IOS_VERSION_NUMBER="0"
         fi
+        [[ -n ${XROS_VERSION_NUMBER} ]] || XROS_VERSION_NUMBER="0"
     elif [[ "${PLATFORM_NAME}" =~ "iphone" ]]; then
         [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET}
+        [[ -n ${IOS_VERSION_NUMBER} ]] || IOS_VERSION_NUMBER=${SDK_VERSION_MAJOR}
         [[ -n ${OSX_VERSION} ]] || OSX_VERSION="NA"
         [[ -n ${OSX_VERSION_NUMBER} ]] || OSX_VERSION_NUMBER="0"
-        [[ -n ${IOS_VERSION_NUMBER} ]] || IOS_VERSION_NUMBER=${SDK_VERSION_MAJOR}
+        [[ -n ${XROS_VERSION} ]] || XROS_VERSION="NA"
+        [[ -n ${XROS_VERSION_NUMBER} ]] || XROS_VERSION_NUMBER="0"
+    elif [[ "${PLATFORM_NAME}" == xr* ]]; then
+        [[ -n ${XROS_VERSION} ]] || XROS_VERSION=${XROS_DEPLOYMENT_TARGET}
+        [[ -n ${XROS_VERSION_NUMBER} ]] || XROS_VERSION_NUMBER=${SDK_VERSION_MAJOR}
+        [[ -n ${IOS_VERSION} ]] || IOS_VERSION="NA"
+        [[ -n ${OSX_VERSION} ]] || OSX_VERSION="NA"
+        [[ -n ${OSX_VERSION_NUMBER} ]] || OSX_VERSION_NUMBER="0"
+        [[ -n ${IOS_VERSION_NUMBER} ]] || IOS_VERSION_NUMBER="0"
     fi
 
     SED_OPTIONS=()
 
-    if [[ -n "$OSX_VERSION" && -n "$IOS_VERSION" ]]; then
+    if [[ -n "$OSX_VERSION" && -n "$IOS_VERSION" && -n "$XROS_VERSION" ]]; then
         SED_OPTIONS+=(
             -e s/JSC_MAC_TBA/${OSX_VERSION}/g
             -e s/JSC_IOS_TBA/${IOS_VERSION}/g
+            -e s/JSC_XROS_TBA/${XROS_VESRION}/g
             -e s/JSC_MAC_VERSION_TBA/${OSX_VERSION_NUMBER}/g
             -e s/JSC_IOS_VERSION_TBA/${IOS_VERSION_NUMBER}/g
+            -e s/JSC_XROS_VERSION_TBA/${XROS_VERSION_NUMBER}/g
             -e s/JSC_API_AVAILABLE/API_AVAILABLE/
             -e s/JSC_API_DEPRECATED/API_DEPRECATED/
             -e "s/^JSC_CLASS_AVAILABLE/JS_EXPORT API_AVAILABLE/"

@@ -26,7 +26,7 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @interface _WKArchiveExclusionRule : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;

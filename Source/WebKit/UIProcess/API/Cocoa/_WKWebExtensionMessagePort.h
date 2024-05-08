@@ -30,7 +30,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*! @abstract Indicates a `_WKWebExtensionMessagePort` error. */
-WK_EXTERN NSErrorDomain const _WKWebExtensionMessagePortErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXTERN NSErrorDomain const _WKWebExtensionMessagePortErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
  @abstract Constants used by NSError to indicate errors in the `_WKWebExtensionMessagePort` domain.
@@ -42,13 +42,13 @@ typedef NS_ERROR_ENUM(_WKWebExtensionMessagePortErrorDomain, _WKWebExtensionMess
     _WKWebExtensionMessagePortErrorUnknown,
     _WKWebExtensionMessagePortErrorNotConnected,
     _WKWebExtensionMessagePortErrorMessageInvalid,
-} NS_SWIFT_NAME(_WKWebExtensionMessagePort.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} NS_SWIFT_NAME(_WKWebExtensionMessagePort.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
  @abstract A `WKWebExtensionMessagePort` object manages message-based communication with a web extension.
  @discussion Contains properties and methods to handle message exchanges with a web extension.
 */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 NS_SWIFT_NAME(_WKWebExtension.MessagePort)
 @interface _WKWebExtensionMessagePort : NSObject
 

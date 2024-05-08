@@ -50,7 +50,7 @@ typedef NS_ENUM(NSInteger, WKWindowProxyProperty) {
     WKWindowProxyPropertyPostMessage,
     WKWindowProxyPropertyClosed,
     WKWindowProxyPropertyOther,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 #define HAVE_WK_WINDOW_PROXY_PROPERTY 1
 

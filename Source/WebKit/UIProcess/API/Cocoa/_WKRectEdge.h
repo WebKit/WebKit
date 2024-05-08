@@ -34,4 +34,4 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
     _WKRectEdgeRight = 1 << CGRectMaxXEdge,
     _WKRectEdgeBottom = 1 << CGRectMaxYEdge,
     _WKRectEdgeAll = _WKRectEdgeLeft | _WKRectEdgeTop | _WKRectEdgeRight | _WKRectEdgeBottom,
-} WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));

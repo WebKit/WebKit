@@ -28,7 +28,7 @@
 
 @class _WKArchiveExclusionRule;
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @interface _WKArchiveConfiguration : NSObject
 
 @property (nonatomic, copy) NSURL *directory;

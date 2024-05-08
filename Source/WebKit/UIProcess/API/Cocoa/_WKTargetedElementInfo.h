@@ -33,11 +33,11 @@ typedef NS_ENUM(NSInteger, _WKTargetedElementPosition) {
     _WKTargetedElementPositionAbsolute,
     _WKTargetedElementPositionSticky,
     _WKTargetedElementPositionFixed
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @class _WKFrameTreeNode;
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @interface _WKTargetedElementInfo : NSObject
 
 @property (nonatomic, readonly) _WKTargetedElementPosition positionType;

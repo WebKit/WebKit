@@ -67,7 +67,7 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic) BOOL resourceLoadStatisticsDebugModeEnabled WK_API_AVAILABLE(macos(13.3), ios(16.4));
 @property (nonatomic, readonly) NSUUID *identifier WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
-@property (nonatomic, setter=_setShouldAcceptInsecureCertificatesForWebSockets:) BOOL _shouldAcceptInsecureCertificatesForWebSockets WK_API_DEPRECATED_WITH_REPLACEMENT("WKNavigationDelegate.didReceiveAuthenticationChallenge", macos(13.0, WK_MAC_TBA), ios(16.0, WK_IOS_TBA));
+@property (nonatomic, setter=_setShouldAcceptInsecureCertificatesForWebSockets:) BOOL _shouldAcceptInsecureCertificatesForWebSockets WK_API_DEPRECATED_WITH_REPLACEMENT("WKNavigationDelegate.didReceiveAuthenticationChallenge", macos(13.0, WK_MAC_TBA), ios(16.0, WK_IOS_TBA), visionos(1.0, WK_XROS_TBA));
 
 // These properties only make sense for persistent data stores, and will throw
 // an exception if set for non-persistent stores.
@@ -100,8 +100,8 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic, nullable, copy, setter=setWebPushPartitionString:) NSString *webPushPartitionString WK_API_AVAILABLE(macos(13.3), ios(16.4));
 @property (nonatomic) _WKUnifiedOriginStorageLevel unifiedOriginStorageLevel WK_API_AVAILABLE(macos(13.3), ios(16.4));
 @property (nonatomic, nullable, copy) NSNumber *volumeCapacityOverride WK_API_AVAILABLE(macos(14.0), ios(17.0));
-@property (nonatomic) BOOL isDeclarativeWebPushEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, nullable, copy) NSNumber *defaultTrackingPreventionEnabledOverride WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL isDeclarativeWebPushEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, nullable, copy) NSNumber *defaultTrackingPreventionEnabledOverride WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 // Testing only.
 @property (nonatomic) BOOL allLoadsBlockedByDeviceManagementRestrictionsForTesting WK_API_AVAILABLE(macos(10.15), ios(13.0));

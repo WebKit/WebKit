@@ -43,15 +43,15 @@ typedef NS_ENUM(NSInteger, _WKProcessState) {
     _WKProcessStateForeground,
     _WKProcessStateBackground,
     _WKProcessStateSuspended,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 typedef NS_ENUM(NSInteger, _WKWebContentProcessState) {
     _WKWebContentProcessStatePrewarmed,
     _WKWebContentProcessStateCached,
     _WKWebContentProcessStateActive,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @interface _WKProcessInfo : NSObject
 @property (nonatomic, readonly) pid_t pid;
 @property (nonatomic, readonly) _WKProcessState state;
@@ -60,7 +60,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly) size_t physicalFootprint;
 @end
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @interface _WKWebContentProcessInfo : _WKProcessInfo
 @property (nonatomic, readonly) _WKWebContentProcessState webContentState;
 @property (nonatomic, readonly) NSArray<WKWebView *> *webViews;

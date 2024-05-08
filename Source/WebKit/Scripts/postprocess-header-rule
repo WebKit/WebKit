@@ -49,6 +49,7 @@ process_definitions "${BUILT_PRODUCTS_DIR}/${DEFINITIONS_PATH}" || process_defin
 if [[ "${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" != "YES" ]]; then
     if [[ "${PLATFORM_NAME}" == "macosx" ]]; then
         [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET}
+        [[ -n ${XROS_VERSION} ]] || XROS_VERSION="NA"
 
         if [[ "${WK_PLATFORM_NAME}" == "maccatalyst" && "${LLVM_TARGET_TRIPLE_OS_VERSION}" == ios* ]]; then
             # On Mac Catalyst `LLVM_TARGET_TRIPLE_OS_VERSION` will be in the format `ios{major}.{minor}`.
@@ -58,15 +59,21 @@ if [[ "${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" != "YES" ]]; then
         fi
     elif [[ "${PLATFORM_NAME}" =~ "iphone" ]]; then
         [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET}
+        [[ -n ${XROS_VERSION} ]] || XROS_VERSION="NA"
+        [[ -n ${OSX_VERSION} ]] || OSX_VERSION="NA"
+    elif [[ "${PLATFORM_NAME}" == xr* ]]; then
+        [[ -n ${XROS_VERSION} ]] || XROS_VERSION=${XROS_DEPLOYMENT_TARGET}
+        [[ -n ${IOS_VERSION} ]] || IOS_VERSION="NA"
         [[ -n ${OSX_VERSION} ]] || OSX_VERSION="NA"
     fi
 
     SED_OPTIONS=()
 
-    if [[ -n "$OSX_VERSION" && -n "$IOS_VERSION" ]]; then
+    if [[ -n "$OSX_VERSION" && -n "$IOS_VERSION" && -n "$XROS_VERSION" ]]; then
         SED_OPTIONS+=(
             -e s/WK_MAC_TBA/${OSX_VERSION}/g
             -e s/WK_IOS_TBA/${IOS_VERSION}/g
+            -e s/WK_XROS_TBA/${XROS_VERSION}/g
             -e s/WK_API_AVAILABLE/API_AVAILABLE/
             -e s/WK_API_UNAVAILABLE/API_UNAVAILABLE/
             -e s/WK_API_DEPRECATED/API_DEPRECATED/

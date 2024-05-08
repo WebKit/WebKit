@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
  can be used by a web extension to perform specific actions within a web extension context, such toggling features, or interacting with
  web content. These commands enhance the functionality of the extension by allowing users to invoke actions quickly.
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 NS_SWIFT_NAME(WKWebExtension.Command)
 @interface _WKWebExtensionCommand : NSObject
 
