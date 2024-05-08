@@ -2377,3 +2377,7 @@ imported/w3c/web-platform-tests/css/css-ruby/line-spacing.html [ Failure ]
 webkit.org/b/273900 compositing/repaint/needs-no-display-volatile-repaint.html [ Skip ]
 
 webkit.org/b/273905 svg/filters/filter-on-root-tile-boundary.html [ Pass ImageOnlyFailure ]
+
+#rdar://127771298 (Mark more tests fixed on main, but still broken on. iOS for 7618-branch (273909))
+fast/images/async-image-intersect-different-size-for-drawing.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/floats/not-floating-001.html [ Failure ]
