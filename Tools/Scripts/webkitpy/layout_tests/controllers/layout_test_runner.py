@@ -570,6 +570,15 @@ class TestShard(object):
 
 
 class Sharder(object):
+    MAX_SIZE = 256
+
+    @classmethod
+    def bucket_for(cls, string, limit=2):
+        result = 0
+        for c in string:
+            result = (result + ord(c)) % limit
+        return result
+
     def __init__(self, test_split_fn):
         self._split = test_split_fn
 
@@ -619,8 +628,15 @@ class Sharder(object):
             tests_by_dir[directory].append(test_input)
 
         for directory, test_inputs in iteritems(tests_by_dir):
-            shard = TestShard(directory, test_inputs)
-            shards.append(shard)
+            shards_for_directory = 1 + len(test_inputs) // 256
+            if shards_for_directory == 1:
+                shards.append(TestShard(directory, test_inputs))
+            else:
+                tests_for_shard = {i: [] for i in range(shards_for_directory)}
+                for test_input in test_inputs:
+                    tests_for_shard[self.bucket_for(test_input.test.test_path, shards_for_directory)].append(test_input)
+                for shard_inputs in tests_for_shard.values():
+                    shards.append(TestShard(directory, shard_inputs))
 
         # Sort the shards by directory name.
         shards.sort(key=lambda shard: shard.name)
