@@ -139,17 +139,16 @@ void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, co
     convertImagePixels(source, destination, destinationRect.size());
 }
 
-AffineTransform ImageBufferBackend::calculateBaseTransform(const Parameters& parameters, bool originAtBottomLeftCorner)
+AffineTransform ImageBufferBackend::calculateBaseTransform(const Parameters& parameters)
 {
     AffineTransform baseTransform;
-
-    if (originAtBottomLeftCorner) {
-        baseTransform.scale(1, -1);
-        baseTransform.translate(0, -parameters.backendSize.height());
-    }
-
+#if USE(CG)
+    // CoreGraphics origin is at bottom left corner. GraphicsContext origin is at top left corner. Flip the drawing with GraphicsContext base
+    // transform.
+    baseTransform.scale(1, -1);
+    baseTransform.translate(0, -parameters.backendSize.height());
+#endif
     baseTransform.scale(parameters.resolutionScale);
-
     return baseTransform;
 }
 

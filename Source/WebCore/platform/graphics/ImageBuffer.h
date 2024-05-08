@@ -117,7 +117,7 @@ public:
     {
         return {
             BackendType::renderingMode,
-            BackendType::calculateBaseTransform(parameters, BackendType::isOriginAtBottomLeftCorner),
+            ImageBufferBackend::calculateBaseTransform(parameters),
             BackendType::calculateMemoryCost(parameters),
             BackendType::calculateExternalMemoryCost(parameters)
         };

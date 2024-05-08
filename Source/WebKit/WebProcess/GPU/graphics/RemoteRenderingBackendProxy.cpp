@@ -200,15 +200,9 @@ std::unique_ptr<RemoteDisplayListRecorderProxy> RemoteRenderingBackendProxy::cre
     ASSERT(WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM));
     ImageBufferParameters parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
     auto renderingMode = RenderingMode::Unaccelerated;
-    auto transform = ImageBufferBackend::calculateBaseTransform(ImageBuffer::backendParameters(parameters), ImageBufferShareableBitmapBackend::isOriginAtBottomLeftCorner);
-
-#if HAVE(IOSURFACE)
-    if (options.contains(ImageBufferOptions::Accelerated)) {
+    auto transform = ImageBufferBackend::calculateBaseTransform(ImageBuffer::backendParameters(parameters));
+    if (options.contains(ImageBufferOptions::Accelerated))
         renderingMode = RenderingMode::Accelerated;
-        transform = ImageBufferBackend::calculateBaseTransform(ImageBuffer::backendParameters(parameters), ImageBufferRemoteIOSurfaceBackend::isOriginAtBottomLeftCorner);
-    }
-#endif
-
     return makeUnique<RemoteDisplayListRecorderProxy>(*this, renderingResourceIdentifier, colorSpace, renderingMode, FloatRect { { }, size }, transform);
 }
 
