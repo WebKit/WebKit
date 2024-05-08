@@ -19,7 +19,7 @@ import multiprocessing
 import sys
 import os
 import platform
-
+import subprocess
 
 script_dir = None
 
@@ -33,6 +33,20 @@ def script_path(*args):
 
 def top_level_path(*args):
     return os.path.join(*((os.path.join(os.path.dirname(__file__), '..', '..'),) + args))
+
+
+def meson_version():
+    try:
+        result = subprocess.run(['meson', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+        if result.returncode == 0:
+            version = result.stdout.strip()
+            major, minor, revision = version.split(".")
+            return int(major) * 100 + int(minor) * 10 + int(revision)
+        else:
+            return None
+    except FileNotFoundError:
+        return none
 
 
 def init(jhbuildrc_globals, jhbuild_platform):
@@ -100,3 +114,7 @@ def init(jhbuildrc_globals, jhbuild_platform):
         jhbuild_enable_thunder = os.environ['JHBUILD_ENABLE_THUNDER'].lower()
         if jhbuild_enable_thunder == 'yes' or jhbuild_enable_thunder == '1' or jhbuild_enable_thunder == 'true':
             jhbuildrc_globals['conditions'].add('Thunder')
+
+    REQUIRED_MESON_VERSION = 622
+    if meson_version() < REQUIRED_MESON_VERSION:
+        conditions.add('require-meson')

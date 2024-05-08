@@ -75,14 +75,16 @@
   <repository type="tarball" name="gnupg.org"
       href="https://www.gnupg.org/ftp/gcrypt/"/>
 
-  <!-- meson 0.62.0  required to build gstreamer-1.22.7 -->
-  <distutils id="meson" python3="1">
-    <branch module="mesonbuild/meson"
-            version="0.62.2"
-            tag="0.62.2"
-            checkoutdir="meson-${version}"
-            repo="github.com"/>
-  </distutils>
+  <!-- meson 0.62.2 required to build gstreamer-1.22.7 -->
+  <if condition-check="require-meson">
+    <distutils id="meson" python3="1">
+      <branch module="mesonbuild/meson"
+              version="0.62.2"
+              tag="0.62.2"
+              checkoutdir="meson-${version}"
+              repo="github.com"/>
+    </distutils>
+  </if>
 
 <!-- This moduleset is used when the environment variable WEBKIT_JHBUILD_MODULESET=minimal is set -->
 <!-- Its intended to allow building WebKit using as much as libraries from your distribution as possible -->

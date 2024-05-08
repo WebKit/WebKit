@@ -430,7 +430,7 @@
                     "workernames": ["gtk-linux-bot-22"]
                   },
                   {
-                    "name": "GTK-Linux-64-bit-Release-Ubuntu-2004-Build", "factory": "NoInstallDependenciesBuildFactory",
+                    "name": "GTK-Linux-64-bit-Release-Ubuntu-2204-Build", "factory": "NoInstallDependenciesBuildFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--no-experimental-features"],
                     "workernames": ["gtk-linux-bot-11"]
@@ -442,9 +442,8 @@
                     "workernames": ["gtk-linux-bot-21"]
                   },
                   {
-                    "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
+                    "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                    "additionalArguments": ["--no-bubblewrap-sandbox"],
                     "workernames": ["gtk-linux-bot-17"]
                   },
                   {
@@ -558,7 +557,7 @@
                     "workernames": ["wpe-linux-bot-6"]
                   },
                   {
-                    "name": "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
+                    "name": "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--no-bubblewrap-sandbox", "--cmakeargs=-DENABLE_WPE_QT_API=OFF"],
                     "workernames": ["wpe-linux-bot-8"]
@@ -570,7 +569,7 @@
                     "workernames": ["wpe-linux-bot-9"]
                   },
                   {
-                    "name": "WPE-Linux-64-bit-Release-Ubuntu-2004-Build", "factory": "NoInstallDependenciesBuildFactory",
+                    "name": "WPE-Linux-64-bit-Release-Ubuntu-2204-Build", "factory": "NoInstallDependenciesBuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--no-experimental-features"],
                     "workernames": ["wpe-linux-bot-10"]
@@ -645,10 +644,10 @@
                                      "GTK-Linux-64-bit-Release-Clang-Build",
                                      "GTK-Linux-64-bit-Release-Debian-11-Build",
                                      "GTK-Linux-64-bit-Release-Debian-Stable-Build",
-                                     "GTK-Linux-64-bit-Release-Ubuntu-2004-Build",
+                                     "GTK-Linux-64-bit-Release-Ubuntu-2204-Build",
                                      "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
                                      "GTK-Linux-64-bit-Release-GTK4-Tests",
-                                     "WPE-Linux-64-bit-Release-Ubuntu-2004-Build",
+                                     "WPE-Linux-64-bit-Release-Ubuntu-2204-Build",
                                      "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build",
                                      "WPE-Linux-RPi4-32bits-Mesa-Release-Perf-Build",
                                      "WPE-Linux-RPi4-64bits-Mesa-Release-Perf-Build",
@@ -843,8 +842,8 @@
                   },
                   { "type": "Nightly", "name": "NightlyScheduler", "change_filter": "main_filter",
                     "branch": "main", "hour": 22, "minute": 0,
-                    "builderNames": ["GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004",
-                                     "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004"]
+                    "builderNames": ["GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204",
+                                     "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204"]
                   }
                 ]
 }

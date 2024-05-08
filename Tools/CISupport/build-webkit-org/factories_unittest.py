@@ -1046,7 +1046,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'GTK-Linux-64-bit-Release-Ubuntu-2004-Build': [
+        'GTK-Linux-64-bit-Release-Ubuntu-2204-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1057,7 +1057,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004': [
+        'GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1435,7 +1435,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'webdriver-test'
         ],
-        'WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004': [
+        'WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1471,7 +1471,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'WPE-Linux-64-bit-Release-Ubuntu-2004-Build': [
+        'WPE-Linux-64-bit-Release-Ubuntu-2204-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
