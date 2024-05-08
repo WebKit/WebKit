@@ -61,8 +61,8 @@ partial interface Document {
     [CEReactions=Needed, CallWith=EntryDocument, ImplementedAs=openForBindings] Document open(optional DOMString unused1, optional DOMString unused2); // both arguments are ignored.
     [CallWith=ActiveWindow&FirstWindow, ImplementedAs=openForBindings] WindowProxy open(USVString url, [AtomString] DOMString name, DOMString features);
     [CEReactions=Needed, ImplementedAs=closeForBindings] undefined close();
-    [CEReactions=Needed, CallWith=EntryDocument] undefined write(HTMLString... text);
-    [CEReactions=Needed, CallWith=EntryDocument] undefined writeln(HTMLString... text);
+    [CEReactions=Needed, CallWith=EntryDocument] undefined write((TrustedHTML or DOMString)... text);
+    [CEReactions=Needed, CallWith=EntryDocument] undefined writeln((TrustedHTML or DOMString)... text);
 
     // user interaction
     [ImplementedAs=windowProxy] readonly attribute WindowProxy? defaultView;

@@ -3937,28 +3937,71 @@ ExceptionOr<void> Document::write(Document* entryDocument, SegmentedString&& tex
     return { };
 }
 
-ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<String>&& strings)
+ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<std::variant<RefPtr<TrustedHTML>, String>>&& strings)
 {
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
         return Exception { ExceptionCode::InvalidStateError };
 
+    auto isTrusted = true;
     SegmentedString text;
-    for (auto& string : strings)
-        text.append(WTFMove(string));
+    for (auto& entry : strings) {
+        text.append(
+            WTF::switchOn(
+                WTFMove(entry),
+                [&isTrusted](const String& string) -> String {
+                    isTrusted = false;
+                    return string;
+                },
+                [](const RefPtr<TrustedHTML>& html) -> String {
+                    return html->toString();
+                }
+            )
+        );
+    }
+
+    if (!isTrusted) {
+        auto stringValueHolder = trustedTypeCompliantString(TrustedType::TrustedHTML, *scriptExecutionContext(), text.toString(), "Document write"_s);
+        if (stringValueHolder.hasException())
+            return stringValueHolder.releaseException();
+        text.clear();
+        text.append(stringValueHolder.releaseReturnValue());
+    }
 
     return write(entryDocument, WTFMove(text));
 }
 
-ExceptionOr<void> Document::writeln(Document* entryDocument, FixedVector<String>&& strings)
+ExceptionOr<void> Document::writeln(Document* entryDocument, FixedVector<std::variant<RefPtr<TrustedHTML>, String>>&& strings)
 {
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
         return Exception { ExceptionCode::InvalidStateError };
 
+    auto isTrusted = true;
     SegmentedString text;
-    for (auto& string : strings)
-        text.append(WTFMove(string));
+    for (auto& entry : strings) {
+        text.append(
+            WTF::switchOn(
+                WTFMove(entry),
+                [&isTrusted](const String& string) -> String {
+                    isTrusted = false;
+                    return string;
+                },
+                [](const RefPtr<TrustedHTML>& html) -> String {
+                    return html->toString();
+                }
+            )
+        );
+    }
+
+    if (!isTrusted) {
+        auto stringValueHolder = trustedTypeCompliantString(TrustedType::TrustedHTML, *scriptExecutionContext(), text.toString(), "Document writeln"_s);
+        if (stringValueHolder.hasException())
+            return stringValueHolder.releaseException();
+        text.clear();
+        text.append(stringValueHolder.releaseReturnValue());
+    }
 
     text.append("\n"_s);
+
     return write(entryDocument, WTFMove(text));
 }
 

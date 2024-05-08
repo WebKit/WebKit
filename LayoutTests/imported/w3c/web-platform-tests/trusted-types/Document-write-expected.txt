@@ -1,4 +1,11 @@
-Quack, I want to be a duck!
+abcdefghijkl
 
 PASS document.write with html assigned via policy (successful transformation).
+PASS document.writeln with html assigned via policy (successful transformation).
+PASS document.write(TrustedHTML, TrustedHTML)
+PASS document.writeln(TrustedHTML, TrustedHTML)
+PASS document.write(TrustedHTML, String)
+PASS document.writeln(TrustedHTML, String)
+PASS document.write(String, String)
+PASS document.writeln(String, String)
 
