@@ -48,7 +48,7 @@ public:
     virtual void changeLocation(FrameLoadRequest&&) = 0;
     virtual String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>) = 0;
     virtual void closePage() = 0;
-    virtual void bindRemoteAccessibilityFrames(int processIdentifier, FrameIdentifier target, std::span<const uint8_t> dataToken, CompletionHandler<void(std::span<const uint8_t>, int)>&&) = 0;
+    virtual void bindRemoteAccessibilityFrames(int processIdentifier, FrameIdentifier target, Vector<uint8_t>&& dataToken, CompletionHandler<void(Vector<uint8_t>, int)>&&) = 0;
     virtual void updateRemoteFrameAccessibilityOffset(FrameIdentifier target, IntPoint) = 0;
     virtual void unbindRemoteAccessibilityFrames(int) = 0;
     virtual void focus() = 0;

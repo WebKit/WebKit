@@ -105,9 +105,9 @@ void RemoteFrame::unbindRemoteAccessibilityFrames(int processIdentifier)
     m_client->unbindRemoteAccessibilityFrames(processIdentifier);
 }
 
-void RemoteFrame::bindRemoteAccessibilityFrames(int processIdentifier, std::span<const uint8_t> dataToken, CompletionHandler<void(std::span<const uint8_t>, int)>&& completionHandler)
+void RemoteFrame::bindRemoteAccessibilityFrames(int processIdentifier, Vector<uint8_t>&& dataToken, CompletionHandler<void(Vector<uint8_t>, int)>&& completionHandler)
 {
-    return m_client->bindRemoteAccessibilityFrames(processIdentifier, frameID(), dataToken, WTFMove(completionHandler));
+    return m_client->bindRemoteAccessibilityFrames(processIdentifier, frameID(), WTFMove(dataToken), WTFMove(completionHandler));
 }
 
 FrameView* RemoteFrame::virtualView() const

@@ -1564,7 +1564,7 @@ void WebPage::platformDidSelectAll()
 #endif // !PLATFORM(IOS_FAMILY)
 
 #if !PLATFORM(COCOA)
-void WebPage::bindRemoteAccessibilityFrames(int, WebCore::FrameIdentifier, std::span<const uint8_t>, CompletionHandler<void(std::span<const uint8_t>, int)>&&)
+void WebPage::bindRemoteAccessibilityFrames(int, WebCore::FrameIdentifier, Vector<uint8_t>, CompletionHandler<void(Vector<uint8_t>, int)>&&)
 {
 }
 

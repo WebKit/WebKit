@@ -583,7 +583,7 @@ void WebPage::accessibilityManageRemoteElementStatus(bool registerStatus, int pr
 #endif
 }
 
-void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, std::span<const uint8_t> dataToken, CompletionHandler<void(std::span<const uint8_t>, int)>&& completionHandler)
+void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, Vector<uint8_t> dataToken, CompletionHandler<void(Vector<uint8_t>, int)>&& completionHandler)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame) {
@@ -603,10 +603,10 @@ void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::Fram
         return completionHandler({ }, 0);
     }
 
-    registerRemoteFrameAccessibilityTokens(processIdentifier, dataToken);
+    registerRemoteFrameAccessibilityTokens(processIdentifier, dataToken.span());
 
     // Get our remote token data and send back to the RemoteFrame.
-    completionHandler(span(accessibilityRemoteTokenData().get()), getpid());
+    completionHandler({ span(accessibilityRemoteTokenData().get()) }, getpid());
 }
 
 #if ENABLE(APPLE_PAY)

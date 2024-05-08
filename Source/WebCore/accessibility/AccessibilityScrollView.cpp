@@ -222,14 +222,13 @@ void AccessibilityScrollView::addRemoteFrameChild()
 
 #if PLATFORM(MAC)
         // Generate a new token and pass it back to the other remote frame so it can bind these objects together.
-        auto generatedToken = m_remoteFrame->generateRemoteToken();
-        auto& remoteFrame = remoteFrameView->frame();
-        remoteFrame.bindRemoteAccessibilityFrames(getpid(), generatedToken, [this, &remoteFrame, protectedAccessbilityRemoteFrame = RefPtr { m_remoteFrame }] (std::span<const uint8_t> token, int processIdentifier) mutable {
-            protectedAccessbilityRemoteFrame->initializePlatformElementWithRemoteToken(token, processIdentifier);
+        Ref remoteFrame = remoteFrameView->frame();
+        remoteFrame->bindRemoteAccessibilityFrames(getpid(), { m_remoteFrame->generateRemoteToken() }, [this, &remoteFrame, protectedAccessbilityRemoteFrame = RefPtr { m_remoteFrame }] (Vector<uint8_t> token, int processIdentifier) mutable {
+            protectedAccessbilityRemoteFrame->initializePlatformElementWithRemoteToken(token.span(), processIdentifier);
 
             // Update the remote side with the offset of this object so it can calculate frames correctly.
             auto location = elementRect().location();
-            remoteFrame.updateRemoteFrameAccessibilityOffset(flooredIntPoint(location));
+            remoteFrame->updateRemoteFrameAccessibilityOffset(flooredIntPoint(location));
         });
 #endif
     } else
