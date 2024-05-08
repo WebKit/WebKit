@@ -14625,6 +14625,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
+				GCC_NO_COMMON_BLOCKS = NO;
 				PRODUCT_NAME = All;
 			};
 			name = Debug;
@@ -14633,6 +14634,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
+				GCC_NO_COMMON_BLOCKS = NO;
 				PRODUCT_NAME = All;
 			};
 			name = Release;
@@ -14641,6 +14643,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
+				GCC_NO_COMMON_BLOCKS = NO;
 				PRODUCT_NAME = All;
 			};
 			name = Production;
@@ -15001,6 +15004,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
+				GCC_NO_COMMON_BLOCKS = NO;
 				PRODUCT_NAME = All;
 			};
 			name = Profiling;
