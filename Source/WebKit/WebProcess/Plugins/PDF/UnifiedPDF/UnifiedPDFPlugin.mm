@@ -1080,7 +1080,7 @@ void UnifiedPDFPlugin::paintPDFSelection(GraphicsContext& context, const FloatRe
 bool UnifiedPDFPlugin::canPaintSelectionIntoOwnedLayer() const
 {
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
-    return [m_currentSelection respondsToSelector:@selector(enumerateRectsAndTransformsForPage:usingBlock:)];
+    return [getPDFSelectionClass() instancesRespondToSelector:@selector(enumerateRectsAndTransformsForPage:usingBlock:)];
 #endif
     return false;
 }
