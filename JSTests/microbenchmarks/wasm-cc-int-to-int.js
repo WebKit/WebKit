@@ -1,4 +1,8 @@
 //@runDefault("--useWebAssembly=1")
+
+if (typeof WebAssembly == "undefined")
+    $vm.exit();
+
 var wasm_code;
 try {
     wasm_code = read('../../JSTests/microbenchmarks/wasm-cc-int-to-int.wasm', 'binary')

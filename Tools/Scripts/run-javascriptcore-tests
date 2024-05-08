@@ -426,7 +426,7 @@ sub configurationForUpload()
         if (!$version) {
             $version = iosVersion();
         }
-    } elsif (index($model, 'watch') != -1 || index(xcodeSDKPlatformName(), "watch") != -1) {
+    } elsif (index(lc($model), 'watch') != -1 || index(lc(xcodeSDKPlatformName()), "watch") != -1) {
         $platform = 'watchos';
         die "No watchOS version specified" if !$version;
     } elsif (index(xcodeSDKPlatformName(), "appletv") != -1) {
