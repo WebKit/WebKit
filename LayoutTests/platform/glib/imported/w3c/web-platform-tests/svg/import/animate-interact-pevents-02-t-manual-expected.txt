@@ -5,18 +5,18 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (24,24) size 752x468
       RenderSVGRect {rect} at (24,24) size 752x468 [stroke={[type=SOLID] [color=#000000] [stroke width=0.25]}] [x=15.00] [y=15.00] [width=450.00] [height=280.00]
-      RenderSVGContainer {g} at (162,27) size 476x67
-        RenderSVGText {text} at (97,16) size 286x18 contains 1 chunk(s)
+      RenderSVGContainer {g} at (162,26) size 476x69
+        RenderSVGText {text} at (97,16) size 286x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 285x17
             chunk 1 (middle anchor) text run 1 at (97.73,30.00) startOffset 0 endOffset 42 width 284.54: "Testing pointer-events and rendering order"
-        RenderSVGText {text} at (144,32) size 192x13 contains 1 chunk(s)
+        RenderSVGText {text} at (144,33) size 192x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 191x12
             chunk 1 (middle anchor) text run 1 at (144.60,42.00) startOffset 0 endOffset 39 width 190.80: "Rectangles should turn RED on mouseover"
-        RenderSVGText {text} at (114,44) size 252x13 contains 1 chunk(s)
+        RenderSVGText {text} at (114,45) size 252x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 251x12
             chunk 1 (middle anchor) text run 1 at (114.60,54.00) startOffset 0 endOffset 56 width 250.80: "Ovals should turn RED if Pointer-Events are set to \"ALL\""
       RenderSVGContainer {g} at (182,105) size 568x375
-        RenderSVGContainer {g} at (583,105) size 167x73 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
+        RenderSVGContainer {g} at (583,105) size 167x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
           RenderSVGText {text} at (352,77) size 96x10 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 96x9
               chunk 1 (middle anchor) text run 1 at (352.00,85.00) startOffset 0 endOffset 26 width 96.00: "Change \"Pointer-Events\" of"

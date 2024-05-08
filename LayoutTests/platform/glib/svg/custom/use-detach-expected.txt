@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 16x14
             chunk 1 (middle anchor) text run 1 at (42.08,31.00) startOffset 0 endOffset 3 width 15.83: "use"
         RenderSVGEllipse {circle} at (220,96) size 24x24 [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=40.00] [r=5.00]
-      RenderSVGContainer {g} at (210,58) size 44x64
-        RenderSVGContainer {use} at (210,58) size 44x38
+      RenderSVGContainer {g} at (210,57) size 44x65
+        RenderSVGContainer {use} at (210,57) size 44x38
           RenderSVGText {text} at (42,20) size 16x14 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 16x14
               chunk 1 (middle anchor) text run 1 at (42.08,31.00) startOffset 0 endOffset 3 width 15.83: "use"

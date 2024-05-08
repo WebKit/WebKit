@@ -17,13 +17,13 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (310,56) size 990x180 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 990x180
           chunk 1 text run 1 at (310.00,200.00) startOffset 0 endOffset 1 width 990.00: "\x{3B2}"
-      RenderSVGText {text} at (60,250) size 25x13 contains 1 chunk(s)
+      RenderSVGText {text} at (60,251) size 25x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 25x12
           chunk 1 text run 1 at (60.00,260.00) startOffset 0 endOffset 5 width 24.60: "1,000"
-      RenderSVGText {text} at (190,250) size 11x13 contains 1 chunk(s)
+      RenderSVGText {text} at (190,251) size 11x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 11x12
           chunk 1 text run 1 at (190.00,260.00) startOffset 0 endOffset 2 width 10.80: "10"
-      RenderSVGText {text} at (320,250) size 30x13 contains 1 chunk(s)
+      RenderSVGText {text} at (320,251) size 30x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 30x12
           chunk 1 text run 1 at (320.00,260.00) startOffset 0 endOffset 6 width 30.00: "10,000"
       RenderSVGText {text} at (110,265) size 197x19 contains 1 chunk(s)

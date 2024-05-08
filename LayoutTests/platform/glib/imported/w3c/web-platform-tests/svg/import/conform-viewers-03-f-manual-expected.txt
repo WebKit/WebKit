@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (83,166) size 434x208
+    RenderSVGContainer {g} at (83,166) size 434x207
       RenderSVGText {text} at (50,203) size 181x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 61x21
+        RenderSVGInlineText {#text} at (0,0) size 61x20
           chunk 1 text run 1 at (50.00,220.00) startOffset 0 endOffset 8 width 60.60: "Status: "
-        RenderSVGTSpan {tspan} at (60,0) size 121x21
-          RenderSVGInlineText {#text} at (60,0) size 120x21
+        RenderSVGTSpan {tspan} at (60,0) size 121x20
+          RenderSVGInlineText {#text} at (60,0) size 120x20
             chunk 1 text run 1 at (110.60,220.00) startOffset 0 endOffset 14 width 120.00: "No exceptions."
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGContainer {g} at (350,166) size 167x168

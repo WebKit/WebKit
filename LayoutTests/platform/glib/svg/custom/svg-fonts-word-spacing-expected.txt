@@ -15,75 +15,75 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,110) size 784x20
         RenderText {#text} at (0,1) size 266x18
           text run at (0,1) width 18: "abc"
-          text run at (117,1) width 25: " abc"
-          text run at (241,1) width 25: " abc"
+          text run at (118,1) width 24: " abc"
+          text run at (242,1) width 24: " abc"
       RenderBlock {P} at (0,148) size 784x20
         RenderText {#text} at (0,1) size 124x18
           text run at (0,1) width 18: "abc"
-          text run at (117,1) width 7: " "
-        RenderInline {SPAN} at (123,1) size 14x18
-          RenderText {#text} at (123,1) size 14x18
-            text run at (123,1) width 14: "ab"
-        RenderText {#text} at (136,1) size 130x18
-          text run at (136,1) width 6: "c"
-          text run at (241,1) width 25: " abc"
+          text run at (118,1) width 6: " "
+        RenderInline {SPAN} at (124,1) size 13x18
+          RenderText {#text} at (124,1) size 13x18
+            text run at (124,1) width 13: "ab"
+        RenderText {#text} at (137,1) size 129x18
+          text run at (137,1) width 5: "c"
+          text run at (242,1) width 24: " abc"
       RenderBlock {P} at (0,186) size 784x20
         RenderText {#text} at (0,1) size 124x18
           text run at (0,1) width 18: "abc"
-          text run at (117,1) width 7: " "
-        RenderInline {SPAN} at (123,1) size 8x18
-          RenderText {#text} at (123,1) size 8x18
-            text run at (123,1) width 8: "a"
-        RenderInline {SPAN} at (130,1) size 7x18
-          RenderText {#text} at (130,1) size 7x18
-            text run at (130,1) width 7: "b"
-        RenderText {#text} at (136,1) size 130x18
-          text run at (136,1) width 6: "c"
-          text run at (241,1) width 25: " abc"
+          text run at (118,1) width 6: " "
+        RenderInline {SPAN} at (124,1) size 7x18
+          RenderText {#text} at (124,1) size 7x18
+            text run at (124,1) width 7: "a"
+        RenderInline {SPAN} at (131,1) size 6x18
+          RenderText {#text} at (131,1) size 6x18
+            text run at (131,1) width 6: "b"
+        RenderText {#text} at (137,1) size 129x18
+          text run at (137,1) width 5: "c"
+          text run at (242,1) width 24: " abc"
       RenderBlock {P} at (0,224) size 784x20
         RenderText {#text} at (0,1) size 124x18
           text run at (0,1) width 18: "abc"
-          text run at (117,1) width 7: " "
-        RenderInline {SPAN} at (123,1) size 8x18
-          RenderText {#text} at (123,1) size 8x18
-            text run at (123,1) width 8: "a"
-        RenderText {#text} at (130,1) size 7x18
-          text run at (130,1) width 7: "b"
-        RenderInline {SPAN} at (136,1) size 6x18
-          RenderText {#text} at (136,1) size 6x18
-            text run at (136,1) width 6: "c"
-        RenderText {#text} at (241,1) size 25x18
-          text run at (241,1) width 25: " abc"
+          text run at (118,1) width 6: " "
+        RenderInline {SPAN} at (124,1) size 7x18
+          RenderText {#text} at (124,1) size 7x18
+            text run at (124,1) width 7: "a"
+        RenderText {#text} at (131,1) size 6x18
+          text run at (131,1) width 6: "b"
+        RenderInline {SPAN} at (137,1) size 5x18
+          RenderText {#text} at (137,1) size 5x18
+            text run at (137,1) width 5: "c"
+        RenderText {#text} at (242,1) size 24x18
+          text run at (242,1) width 24: " abc"
       RenderBlock {P} at (0,262) size 784x20
         RenderText {#text} at (0,1) size 131x18
           text run at (0,1) width 18: "abc"
-          text run at (117,1) width 14: " a"
-        RenderInline {SPAN} at (130,1) size 7x18
-          RenderText {#text} at (130,1) size 7x18
-            text run at (130,1) width 7: "b"
-        RenderInline {SPAN} at (136,1) size 6x18
-          RenderText {#text} at (136,1) size 6x18
-            text run at (136,1) width 6: "c"
-        RenderText {#text} at (241,1) size 25x18
-          text run at (241,1) width 25: " abc"
+          text run at (118,1) width 13: " a"
+        RenderInline {SPAN} at (131,1) size 6x18
+          RenderText {#text} at (131,1) size 6x18
+            text run at (131,1) width 6: "b"
+        RenderInline {SPAN} at (137,1) size 5x18
+          RenderText {#text} at (137,1) size 5x18
+            text run at (137,1) width 5: "c"
+        RenderText {#text} at (242,1) size 24x18
+          text run at (242,1) width 24: " abc"
       RenderBlock {P} at (0,300) size 784x20
         RenderText {#text} at (0,1) size 131x18
           text run at (0,1) width 18: "abc"
-          text run at (117,1) width 14: " a"
-        RenderInline {SPAN} at (130,1) size 7x18
-          RenderText {#text} at (130,1) size 7x18
-            text run at (130,1) width 7: "b"
-        RenderText {#text} at (136,1) size 130x18
-          text run at (136,1) width 6: "c"
-          text run at (241,1) width 25: " abc"
+          text run at (118,1) width 13: " a"
+        RenderInline {SPAN} at (131,1) size 6x18
+          RenderText {#text} at (131,1) size 6x18
+            text run at (131,1) width 6: "b"
+        RenderText {#text} at (137,1) size 129x18
+          text run at (137,1) width 5: "c"
+          text run at (242,1) width 24: " abc"
       RenderBlock {P} at (0,338) size 784x20
         RenderText {#text} at (0,1) size 124x18
           text run at (0,1) width 18: "abc"
-          text run at (117,1) width 7: " "
-        RenderInline {SPAN} at (123,1) size 0x18
-        RenderText {#text} at (123,1) size 125x18
-          text run at (123,1) width 19: "abc"
-          text run at (241,1) width 7: " "
-        RenderInline {SPAN} at (247,1) size 0x18
-        RenderText {#text} at (247,1) size 19x18
-          text run at (247,1) width 19: "abc"
+          text run at (118,1) width 6: " "
+        RenderInline {SPAN} at (124,1) size 0x18
+        RenderText {#text} at (124,1) size 124x18
+          text run at (124,1) width 18: "abc"
+          text run at (242,1) width 6: " "
+        RenderInline {SPAN} at (248,1) size 0x18
+        RenderText {#text} at (248,1) size 18x18
+          text run at (248,1) width 18: "abc"

@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x38
         RenderText {#text} at (0,1) size 132x17
           text run at (0,1) width 132: "This is a test for "
-        RenderInline {I} at (0,1) size 772x36
-          RenderText {#text} at (0,1) size 772x36
-            text run at (132,1) width 640: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5980 Bidi properties of an inline"
+        RenderInline {I} at (0,1) size 771x36
+          RenderText {#text} at (0,1) size 771x36
+            text run at (132,1) width 639: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5980 Bidi properties of an inline"
             text run at (0,20) width 478: "container whose first child is an inline container are ignored"
         RenderText {#text} at (478,20) size 5x17
           text run at (478,20) width 5: "."

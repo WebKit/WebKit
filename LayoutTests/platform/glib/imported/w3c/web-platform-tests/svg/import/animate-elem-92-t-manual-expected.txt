@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (137,19) size 443x328
-      RenderSVGText {text} at (146,11) size 188x24 contains 1 chunk(s)
+    RenderSVGContainer {g} at (137,20) size 443x327
+      RenderSVGText {text} at (146,12) size 188x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 188x23
           chunk 1 (middle anchor) text run 1 at (146.40,30.00) startOffset 0 endOffset 21 width 187.20: "discrete to-animation"
       RenderSVGContainer {g} at (137,77) size 443x270 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,70.00)}]

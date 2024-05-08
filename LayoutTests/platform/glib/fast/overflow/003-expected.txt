@@ -28,11 +28,11 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1165
       RenderInline {title} at (10,11) size 144x14
         RenderText {#text} at (10,11) size 144x14
           text run at (10,11) width 144: "DOM and Extended Entries"
-      RenderText {#text} at (153,11) size 4x14
-        text run at (153,11) width 4: " "
+      RenderText {#text} at (154,11) size 3x14
+        text run at (154,11) width 3: " "
       RenderInline {description} at (10,11) size 238x59
         RenderText {#text} at (10,11) size 238x59
-          text run at (156,11) width 92: "Aarondot: A Better"
+          text run at (157,11) width 91: "Aarondot: A Better"
           text run at (10,26) width 234: "Way To Display Extended Entries. Very cool, and"
           text run at (10,41) width 202: "uses the DOM and JavaScript to reveal the"
           text run at (10,56) width 51: "extended..."
@@ -42,11 +42,11 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1165
       RenderInline {title} at (10,11) size 129x14
         RenderText {#text} at (10,11) size 129x14
           text run at (10,11) width 129: "cellspacing and the DOM"
-      RenderText {#text} at (138,11) size 4x14
-        text run at (138,11) width 4: " "
+      RenderText {#text} at (139,11) size 3x14
+        text run at (139,11) width 3: " "
       RenderInline {description} at (10,11) size 238x44
         RenderText {#text} at (10,11) size 238x44
-          text run at (141,11) width 100: "By the way, if you're"
+          text run at (142,11) width 99: "By the way, if you're"
           text run at (10,26) width 238: "using the DOM to generate TABLE elements, you"
           text run at (10,41) width 173: "have to use setAttribute() to set the..."
       RenderText {#text} at (0,0) size 0x0
@@ -95,11 +95,11 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1165
       RenderInline {title} at (10,11) size 120x14
         RenderText {#text} at (10,11) size 120x14
           text run at (10,11) width 120: "!lineDraw bookmarklet"
-      RenderText {#text} at (129,11) size 4x14
-        text run at (129,11) width 4: " "
+      RenderText {#text} at (130,11) size 3x14
+        text run at (130,11) width 3: " "
       RenderInline {description} at (10,11) size 222x44
         RenderText {#text} at (10,11) size 222x44
-          text run at (132,11) width 88: "Milov's !lineDraw"
+          text run at (133,11) width 87: "Milov's !lineDraw"
           text run at (10,26) width 222: "bookmarklet is in fact the Coolest Bookmarklet"
           text run at (10,41) width 34: "Ever...."
       RenderText {#text} at (0,0) size 0x0
@@ -148,11 +148,11 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1165
       RenderInline {title} at (10,11) size 141x14
         RenderText {#text} at (10,11) size 141x14
           text run at (10,11) width 141: "Conditional Script Loading"
-      RenderText {#text} at (150,11) size 4x14
-        text run at (150,11) width 4: " "
+      RenderText {#text} at (151,11) size 3x14
+        text run at (151,11) width 3: " "
       RenderInline {description} at (10,11) size 212x44
         RenderText {#text} at (10,11) size 212x44
-          text run at (153,11) width 69: "Webreference:"
+          text run at (154,11) width 68: "Webreference:"
           text run at (10,26) width 205: "DOM-Based Conditional Script Loading in"
           text run at (10,41) width 58: "JavaScript..."
       RenderText {#text} at (0,0) size 0x0
@@ -174,11 +174,11 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1165
       RenderInline {title} at (10,11) size 132x14
         RenderText {#text} at (10,11) size 132x14
           text run at (10,11) width 132: "Whole Lotto Gecko Links"
-      RenderText {#text} at (141,11) size 4x14
-        text run at (141,11) width 4: " "
+      RenderText {#text} at (142,11) size 3x14
+        text run at (142,11) width 3: " "
       RenderInline {description} at (10,11) size 238x59
         RenderText {#text} at (10,11) size 238x59
-          text run at (144,11) width 104: "AOL Gecko Browser"
+          text run at (145,11) width 103: "AOL Gecko Browser"
           text run at (10,26) width 199: "Detection Tips Establishing Dreamweaver"
           text run at (10,41) width 216: "compatibility with Netscape 6 Stylesheets and"
           text run at (10,56) width 120: "MIME Types in Gecko..."

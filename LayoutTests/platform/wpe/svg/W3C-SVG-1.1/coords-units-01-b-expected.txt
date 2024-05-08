@@ -42,7 +42,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (30,115) size 349x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 349x18
           chunk 1 text run 1 at (30.00,130.00) startOffset 0 endOffset 54 width 348.60: "Bounding box relative length (percentage and fraction)"
-      RenderSVGContainer {g} at (50,233) size 325x123 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,140.00)}]
+      RenderSVGContainer {g} at (50,233) size 325x124 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,140.00)}]
         RenderSVGRect {rect} at (50,233) size 100x101 [fill={[type=RADIAL-GRADIENT] [id="radialBoundingBoxPercentage"]}] [x=0.00] [y=0.00] [width=60.00] [height=60.00]
         RenderSVGRect {rect} at (151,233) size 101x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(61.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [id="radialBoundingBoxFraction"]}] [x=0.00] [y=0.00] [width=60.00] [height=60.00]
         RenderSVGRect {rect} at (253,233) size 101x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(122.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [id="radialUserSpace"]}] [x=0.00] [y=0.00] [width=60.00] [height=60.00]
@@ -82,6 +82,6 @@ layer at (0,0) size 800x600
             chunk 1 text run 1 at (360.00,20.00) startOffset 0 endOffset 10 width 72.60: "User Space"
       RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 264x45
+      RenderSVGInlineText {#text} at (0,0) size 264x44
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.40: "$Revision: 1.5 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

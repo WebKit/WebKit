@@ -1481,6 +1481,9 @@ webkit.org/b/236926 webrtc/vp8-then-h264-gpu-process-crash.html [ Timeout Pass ]
 
 media/media-source/media-source-rendering-update-count.html [ Skip ]
 
+# Failing with skia
+compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # UNSORTED Expectations. When in doubt, put it here.
 #////////////////////////////////////////////////////////////////////////////////////////

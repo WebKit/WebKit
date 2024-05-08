@@ -2195,6 +2195,9 @@ imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-ord
 # Failing preload tests
 imported/w3c/web-platform-tests/preload/preload-time-to-fetch.https.html [ Failure ]
 
+# Failing with skia only with swrast
+webkit.org/b/273396 platform/gtk/fonts/webkit-font-smoothing.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

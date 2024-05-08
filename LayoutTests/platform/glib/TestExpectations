@@ -32,6 +32,7 @@
 # * PageOverlay
 # * Perf
 # * Scrolling
+# * Skia
 # * SVG
 # * WebAnimations
 # * WebAudio
@@ -1490,6 +1491,233 @@ http/tests/security/contentSecurityPolicy/report-only-from-header.py [ DumpJSCon
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
+# Skia-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+# Canvas tests that fail only with skia-gpu.
+webkit.org/b/272582 fast/canvas/canvas-strokePath-gradient-shadow.html [ Failure ]
+webkit.org/b/272582 fast/canvas/canvas-strokeRect-alpha-shadow.html [ Failure ]
+webkit.org/b/272582 fast/canvas/canvas-strokeRect-gradient-shadow.html [ Failure ]
+
+webkit.org/b/273239 fast/canvas/canvas-scale-shadowBlur.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.composite.1.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.composite.2.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.enable.blur.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.enable.x.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.enable.y.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.composite.1.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.composite.1.worker.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.composite.2.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.composite.2.worker.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.enable.blur.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.enable.blur.worker.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.enable.x.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.enable.x.worker.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.enable.y.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.enable.y.worker.html [ Failure ]
+
+# Minor reftest image differences introduced with skia.
+http/tests/css/css-masking/mask-external-svg-fragment.html [ ImageOnlyFailure ]
+http/tests/css/css-masking/mask-external-svg-image.html [ ImageOnlyFailure ]
+http/tests/css/css-masking/mask-external-svg-mask.html [ ImageOnlyFailure ]
+http/tests/css/css-masking/mask-inline-svg-image.html [ ImageOnlyFailure ]
+http/tests/css/css-masking/mask-inline-svg-mask.html [ ImageOnlyFailure ]
+imported/blink/svg/as-image/svgview-references.html [ ImageOnlyFailure ]
+imported/blink/svg/custom/focus-ring-text.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/marker-viewBox-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/pattern-live-01b.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text-scale-02.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text-scale-03.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/text-shadow.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-objectboundingbox-content-clip-transform.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-userspaceonuse-content-clip-transform.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-011.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change-root.html [ ImageOnlyFailure ]
+svg/animations/animateMotion-additive-2a.svg [ ImageOnlyFailure ]
+svg/animations/animateMotion-additive-2c.svg [ ImageOnlyFailure ]
+svg/as-image/svg-image-with-data-uri-from-canvas.html [ ImageOnlyFailure ]
+svg/filters/feDiffuseLighting-feSpotLight-dynamic-update.svg [ ImageOnlyFailure ]
+svg/filters/feGaussianBlur-clipped.svg [ ImageOnlyFailure ]
+svg/filters/feSpecularLighting-fePointLight-dynamic-update.svg [ ImageOnlyFailure ]
+svg/masking/mask-transformed-text-missing.svg [ ImageOnlyFailure ]
+svg/text/tspan-outline.html [ ImageOnlyFailure ]
+svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
+svg/zoom/page/text-with-non-scaling-stroke.html [ ImageOnlyFailure ]
+
+# Test failing only with swrast
+webkit.org/b/273396 css3/background/background-repeat-space-content.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/color-filters/color-filter-color-text-decorations.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/color-filters/color-filter-text-decoration-shadow.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/filters/effect-blur-hw.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/filters/effect-blur.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/filters/effect-combined.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/filters/svg-blur-filter-clipped.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/masking/clip-path-border-radius-border-box-000.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/masking/clip-path-border-radius-content-box-001.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/masking/clip-path-border-radius-fill-box-001.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/masking/clip-path-border-radius-padding-box-001.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/masking/clip-path-border-radius-stroke-box-000.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/masking/clip-path-border-radius-view-box-000.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/masking/clip-path-inset-corners.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/masking/clip-path-inset.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/block/float/floats-offset-image-quirk-lineheight.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/block/float/floats-offset-image-quirk.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/block/float/floats-offset-image-strict-lineheight.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/block/float/floats-offset-image-strict.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/borders/outline-border-radius-simple.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/canvas/canvas-filter-drawing.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/clip/overflow-hidden-with-border-radius-overflow-clipping-parent.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/css/ignore-empty-focus-ring-rects.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/encoding/denormalised-voiced-japanese-chars.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/filter-image/filter-image-blur.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/images/animated-avif.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/inline/hidpi-outline-inline-box-writing-modes.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/lists/list-type-translucent-color.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/masking/clip-path-inset-large-radii.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/multicol/clipped-video-in-second-column.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/multicol/float-paginate.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/multicol/vertical-lr/float-paginate.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/multicol/vertical-rl/float-paginate.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/text/canvas-color-fonts/stroke-gradient-COLR.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/text/international/kana-voiced-sound-marks-1.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/text/international/kana-voiced-sound-marks-2.html [ ImageOnlyFailure ]
+webkit.org/b/273396 http/tests/security/svg-image-with-css-cross-domain.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/blink/fast/multicol/client-rects-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph-background-image.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-with-text.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-cover-zoomed-1.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-028.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-030.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-031.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-backgrounds/css-border-radius-001.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-025.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-symbolic.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-img-horiz-001.xhtml [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-img-vert-001.xhtml [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-012.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-013.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2a.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-invalidation-002.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-invalidation-007.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-011.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-custom-timing-function.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-transition.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/two-clip-path-animation-diff-length3.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-borderBox-1a.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-contentBox-1e.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-fillBox-1b.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-paddingBox-1e.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-003.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-round-zero-size.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3h.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-pseudo/first-line-change-inline-color-nested.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-pseudo/first-line-change-inline-color.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-negcoord.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-opacity.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/multiple-noblur.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-vertical-001.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-012.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-transforms/skew-test1.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-transforms/transform-box/view-box-mutation-002.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-transforms/transform-input-018.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-ui/accent-color-invalidation-currentcolor.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-animated.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-offscreen-child.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-visibility-hidden-child.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-visibility-mixed-descendants.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-spans.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edge.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/filter-effects/background-image-blur-repaint.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-003.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-007.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-002.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-002.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.line.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.line.w.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.misc.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.misc.w.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.miter_limit.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.miter_limit.w.html [ ImageOnlyFailure ]
+webkit.org/b/273396 mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailure ]
+webkit.org/b/273396 svg/animations/animateMotion-accumulate-1a.svg [ ImageOnlyFailure ]
+webkit.org/b/273396 svg/animations/animateMotion-accumulate-1b.svg [ ImageOnlyFailure ]
+
+webkit.org/b/273471 fast/canvas/canvas-composite-stroke-alpha.html [ Failure ]
+
+webkit.org/b/273472 fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]
+
+webkit.org/b/273474 fast/text/emoji-variation-selector.html [ ImageOnlyFailure ]
+webkit.org/b/273474 imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-1.html [ ImageOnlyFailure ]
+
+webkit.org/b/273475 fast/text/font-cursive-italic-cjk.html [ ImageOnlyFailure ]
+webkit.org/b/273475 fast/text/system-font-japanese-synthetic-italic.html [ ImageOnlyFailure ]
+
+webkit.org/b/273476 fast/text/thai-joiner.html [ Failure ]
+
+webkit.org/b/273477 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
+
+webkit.org/b/273479 imported/blink/svg/filters/feColorMatrix-subregion.html [ ImageOnlyFailure ]
+
+webkit.org/b/273480 imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html [ Failure ]
+
+webkit.org/b/273481 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/2d.text.draw.generic.family.html [ Failure ]
+
+webkit.org/b/273482 imported/w3c/web-platform-tests/svg/shapes/scripted/stroke-dashes-hit-at-high-scale.svg [ Failure ]
+
+webkit.org/b/273483 imported/w3c/web-platform-tests/svg/text/scripted/transform-dynamic-update.html [ Failure ]
+
+webkit.org/b/273484 inspector/model/font-calculate-properties.html [ Failure ]
+
+webkit.org/b/273485 svg/dom/SVGGeometry-circle.xhtml [ Failure ]
+
+webkit.org/b/273486 svg/filters/svg-gaussianblur-edgeMode-duplicate.svg [ ImageOnlyFailure ]
+
+webkit.org/b/273487 svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
+
+compositing/repaint/become-overlay-composited-layer.html  [ Pass Failure ]
+
+fast/images/object-image-hide-show.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-018.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-019.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.jpg.html [ Failure ]
+
+imported/w3c/web-platform-tests/svg/import/filters-displace-01-f-manual.svg [ Failure ]
+
+imported/w3c/web-platform-tests/svg/path/distance/pathlength-path.svg [ Failure ]
+
+fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
+
+fast/mediastream/mediastreamtrack-video-zoom.html [ Failure ]
+
+fast/mediastream/resize-trim.html [ Failure ]
+
+http/wpt/webcodecs/videoFrame-video-element.html [ Failure ]
+
+imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.any.html [ Failure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Skia-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
 # SOUP and Networking-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
@@ -2247,8 +2475,6 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line
 
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-with-padding-001.html [ ImageOnlyFailure ]
 
-webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2a.html [ Pass ]
-
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/conic-gradient-center.html [ Pass ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic-2.html [ Pass ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/tiled-conic-gradients.html [ Pass ]
@@ -2766,6 +2992,9 @@ media/track/in-band/track-in-band-kate-ogg-cues-added-once.html [ Skip ]
 media/track/in-band/track-in-band-kate-ogg-kind.html [ Skip ]
 media/track/in-band/track-in-band-kate-ogg-language.html [ Skip ]
 media/track/in-band/track-in-band-kate-ogg-track-order.html [ Skip ]
+
+# This only works with GPU process.
+fast/canvas/image-buffer-backend-count-limit.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
@@ -3918,11 +4147,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-v
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-left-of-viewport-offscreen-old.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change.html [ ImageOnlyFailure ]
-
-# Cairo doesn't support hardware acceleration, this test will pass once we switch to Skia.
-fast/canvas/canvas-will-read-frequently.html [ Failure ]
-# Accelerated canvases not implemented for Cairo.
-fast/canvas/image-buffer-backend-count-limit.html [ Skip ]
 
 # End: Common failures between GTK and WPE.
 

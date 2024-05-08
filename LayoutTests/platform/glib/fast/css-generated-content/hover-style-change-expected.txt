@@ -9,7 +9,7 @@ layer at (0,0) size 800x391
       RenderBlock {div} at (18,61) size 732x29
         RenderText {#text} at (0,0) size 574x14
           text run at (0,0) width 574: "error on line 43 at column 8: Opening and ending tag mismatch: hr line 29 and body"
-          text run at (573,0) width 1: " "
+          text run at (574,0) width 0: " "
         RenderInline (generated) at (0,14) size 147x14
           RenderText at (0,14) size 147x14
             text run at (0,14) width 147: "and generated content"

@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderSVGPath {line} at (529,414) size 108x155 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=380.00] [y1=250.00] [x2=320.00] [y2=340.00]
         RenderSVGPath {polygon} at (0,0) size 167x167 [fill={[type=SOLID] [color=#0000FF]}] [points="0 0 0 100 100 100 100 0"]
         RenderSVGPath {path} at (416,416) size 101x168 [fill={[type=SOLID] [color=#0000FF]}] [data="M 280 250 L 250 350 L 310 330 Z"]
-        RenderSVGText {text} at (10,229) size 67x113 contains 1 chunk(s)
+        RenderSVGText {text} at (10,229) size 67x112 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 67x112
             chunk 1 text run 1 at (10.00,320.00) startOffset 0 endOffset 1 width 66.60: "X"
         RenderSVGImage {image} at (600,200) size 167x167

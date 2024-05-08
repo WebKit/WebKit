@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
         RenderListBox {SELECT} at (0,19) size 100x37 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderBR {BR} at (100,35) size 0x17
       RenderBlock {DIV} at (0,110) size 100x19
-        RenderText {#text} at (12,1) size 88x17
-          text run at (12,1) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+        RenderText {#text} at (13,1) size 87x17
+          text run at (13,1) width 58 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
           text run at (71,1) width 29: "a\x{300}bc"
       RenderBlock (anonymous) at (0,129) size 784x74
         RenderBR {BR} at (0,0) size 0x17
@@ -27,9 +27,9 @@ layer at (0,0) size 800x600
         RenderListBox {SELECT} at (0,37) size 100x37 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderBR {BR} at (100,53) size 0x17
       RenderBlock {DIV} at (0,203) size 100x19
-        RenderText {#text} at (0,1) size 88x17
+        RenderText {#text} at (0,1) size 87x17
           text run at (0,1) width 29: "a\x{300}bc"
-          text run at (29,1) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+          text run at (29,1) width 58 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
       RenderBlock (anonymous) at (0,222) size 784x74
         RenderBR {BR} at (0,0) size 0x17
         RenderText {#text} at (0,19) size 85x17
@@ -38,8 +38,8 @@ layer at (0,0) size 800x600
         RenderListBox {SELECT} at (0,37) size 100x37 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderBR {BR} at (100,53) size 0x17
       RenderBlock {DIV} at (0,296) size 100x19
-        RenderText {#text} at (0,1) size 88x17
+        RenderText {#text} at (0,1) size 87x17
           text run at (0,1) width 29: "a\x{300}bc"
-          text run at (29,1) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+          text run at (29,1) width 58 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
       RenderBlock (anonymous) at (0,315) size 784x18
         RenderBR {BR} at (0,0) size 0x17

@@ -9,17 +9,17 @@ layer at (-4042,0) size 4842x585 backgroundClip at (0,0) size 4842x585 clip at (
       RenderBlock {div} at (18,61) size 511x15
         RenderText {#text} at (0,0) size 511x14
           text run at (0,0) width 511: "error on line 62 at column 1671: Extra content at the end of the document"
-          text run at (510,0) width 1: " "
+          text run at (511,0) width 0: " "
       RenderBlock {h3} at (18,94) size 511x23
         RenderText {#text} at (0,0) size 410x21
           text run at (0,0) width 410: "Below is a rendering of the page up to the first error."
     RenderBody {body} at (621,46) size 4163x493
       RenderBlock {h1} at (0,0) size 48x492
-        RenderText {#text} at (6,0) size 36x66
-          text run at (6,0) width 66: "\x{8349}\x{6795}"
+        RenderText {#text} at (6,0) size 36x64
+          text run at (6,0) width 64: "\x{8349}\x{6795}"
       RenderBlock {h2} at (69,0) size 37x492
-        RenderText {#text} at (5,0) size 26x100
-          text run at (5,0) width 100: "\x{590F}\x{76EE}\x{6F31}\x{77F3}"
+        RenderText {#text} at (5,0) size 26x96
+          text run at (5,0) width 96: "\x{590F}\x{76EE}\x{6F31}\x{77F3}"
       RenderBlock {div} at (125,0) size 4037x492
         RenderBlock (anonymous) at (0,0) size 2275x492
           RenderBR {br} at (0,0) size 17x0
@@ -141,11 +141,11 @@ layer at (-4042,0) size 4842x585 backgroundClip at (0,0) size 4842x585 clip at (
           RenderBR {br} at (209,400) size 18x0
           RenderText {#text} at (227,0) size 18x16
             text run at (227,0) width 17: "\x{3000}"
-          RenderInline {strong} at (227,16) size 18x51
-            RenderText {#text} at (227,16) size 18x51
-              text run at (227,16) width 52: "\x{4EBA}\x{306E}\x{4E16}"
-          RenderText {#text} at (227,0) size 45x483
-            text run at (227,67) width 417: "\x{3092}\x{4F5C}\x{3063}\x{305F}\x{3082}\x{306E}\x{306F}\x{795E}\x{3067}\x{3082}\x{306A}\x{3051}\x{308C}\x{3070}\x{9B3C}\x{3067}\x{3082}\x{306A}\x{3044}\x{3002}\x{3084}\x{306F}\x{308A}\x{5411}\x{3046}\x{4E09}"
+          RenderInline {strong} at (227,16) size 18x48
+            RenderText {#text} at (227,16) size 18x48
+              text run at (227,16) width 49: "\x{4EBA}\x{306E}\x{4E16}"
+          RenderText {#text} at (227,0) size 45x480
+            text run at (227,64) width 417: "\x{3092}\x{4F5C}\x{3063}\x{305F}\x{3082}\x{306E}\x{306F}\x{795E}\x{3067}\x{3082}\x{306A}\x{3051}\x{308C}\x{3070}\x{9B3C}\x{3067}\x{3082}\x{306A}\x{3044}\x{3002}\x{3084}\x{306F}\x{308A}\x{5411}\x{3046}\x{4E09}"
             text run at (255,0) width 16: "\x{8ED2}"
           RenderInline {ruby} at (255,16) size 17x45
             RenderInline (generated) at (255,11) size 17x46
@@ -157,28 +157,28 @@ layer at (-4042,0) size 4842x585 backgroundClip at (0,0) size 4842x585 clip at (
                 text run at (0,0) width 45: "\x{308A}\x{3087}\x{3046}\x{3069}\x{306A}"
           RenderText {#text} at (255,52) size 17x384
             text run at (255,52) width 384: "\x{308A}\x{306B}\x{3061}\x{3089}\x{3061}\x{3089}\x{3059}\x{308B}\x{305F}\x{3060}\x{306E}\x{4EBA}\x{3067}\x{3042}\x{308B}\x{3002}\x{305F}\x{3060}\x{306E}\x{4EBA}\x{304C}\x{4F5C}\x{3063}\x{305F}"
-          RenderInline {strong} at (255,0) size 35x470
-            RenderText {#text} at (255,0) size 35x470
-              text run at (255,436) width 34: "\x{4EBA}\x{306E}"
-              text run at (273,0) width 17: "\x{4E16}"
-          RenderText {#text} at (273,17) size 17x368
-            text run at (273,17) width 368: "\x{304C}\x{4F4F}\x{307F}\x{306B}\x{304F}\x{3044}\x{304B}\x{3089}\x{3068}\x{3066}\x{3001}\x{8D8A}\x{3059}\x{56FD}\x{306F}\x{3042}\x{308B}\x{307E}\x{3044}\x{3002}\x{3042}\x{308C}\x{3070}"
-          RenderInline {strong} at (273,385) size 17x68
-            RenderText {#text} at (273,385) size 17x68
-              text run at (273,385) width 68: "\x{4EBA}\x{3067}\x{306A}\x{3057}"
-          RenderText {#text} at (273,0) size 35x485
-            text run at (273,453) width 32: "\x{306E}\x{56FD}"
+          RenderInline {strong} at (255,0) size 35x468
+            RenderText {#text} at (255,0) size 35x468
+              text run at (255,436) width 32: "\x{4EBA}\x{306E}"
+              text run at (273,0) width 16: "\x{4E16}"
+          RenderText {#text} at (273,16) size 17x368
+            text run at (273,16) width 368: "\x{304C}\x{4F4F}\x{307F}\x{306B}\x{304F}\x{3044}\x{304B}\x{3089}\x{3068}\x{3066}\x{3001}\x{8D8A}\x{3059}\x{56FD}\x{306F}\x{3042}\x{308B}\x{307E}\x{3044}\x{3002}\x{3042}\x{308C}\x{3070}"
+          RenderInline {strong} at (273,384) size 17x64
+            RenderText {#text} at (273,384) size 17x64
+              text run at (273,384) width 64: "\x{4EBA}\x{3067}\x{306A}\x{3057}"
+          RenderText {#text} at (273,0) size 35x480
+            text run at (273,448) width 32: "\x{306E}\x{56FD}"
             text run at (291,0) width 128: "\x{3078}\x{884C}\x{304F}\x{3070}\x{304B}\x{308A}\x{3060}\x{3002}"
-          RenderInline {strong} at (291,128) size 17x68
-            RenderText {#text} at (291,128) size 17x68
-              text run at (291,128) width 68: "\x{4EBA}\x{3067}\x{306A}\x{3057}"
-          RenderText {#text} at (291,196) size 17x48
-            text run at (291,196) width 48: "\x{306E}\x{56FD}\x{306F}"
-          RenderInline {strong} at (291,244) size 17x51
-            RenderText {#text} at (291,244) size 17x51
-              text run at (291,244) width 51: "\x{4EBA}\x{306E}\x{4E16}"
-          RenderText {#text} at (291,0) size 35x471
-            text run at (291,295) width 176: "\x{3088}\x{308A}\x{3082}\x{306A}\x{304A}\x{4F4F}\x{307F}\x{306B}\x{304F}\x{304B}\x{308D}"
+          RenderInline {strong} at (291,128) size 17x64
+            RenderText {#text} at (291,128) size 17x64
+              text run at (291,128) width 64: "\x{4EBA}\x{3067}\x{306A}\x{3057}"
+          RenderText {#text} at (291,192) size 17x48
+            text run at (291,192) width 48: "\x{306E}\x{56FD}\x{306F}"
+          RenderInline {strong} at (291,240) size 17x48
+            RenderText {#text} at (291,240) size 17x48
+              text run at (291,240) width 48: "\x{4EBA}\x{306E}\x{4E16}"
+          RenderText {#text} at (291,0) size 35x464
+            text run at (291,288) width 176: "\x{3088}\x{308A}\x{3082}\x{306A}\x{304A}\x{4F4F}\x{307F}\x{306B}\x{304F}\x{304B}\x{308D}"
             text run at (309,0) width 32: "\x{3046}\x{3002}"
           RenderBR {br} at (309,32) size 17x0
           RenderText {#text} at (327,0) size 45x464

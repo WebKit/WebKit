@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (25,5) size 419x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 419x18
           chunk 1 text run 1 at (25.00,20.00) startOffset 0 endOffset 60 width 418.20: "Basics of tspan: changing visual properties and positioning."
-      RenderSVGContainer {g} at (78,82) size 520x133
+      RenderSVGContainer {g} at (78,82) size 520x132
         RenderSVGText {text} at (74,49) size 141x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 50x18
             chunk 1 text run 1 at (74.00,63.75) startOffset 0 endOffset 7 width 49.88: "You are"
@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (65,76) size 190x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 189x18
             chunk 1 text run 1 at (65.25,90.75) startOffset 0 endOffset 29 width 188.92: "Text: \"You are not a banana.\""
-        RenderSVGText {text} at (65,93) size 257x19 contains 1 chunk(s)
+        RenderSVGText {text} at (65,93) size 257x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 257x18
             chunk 1 text run 1 at (65.25,108.00) startOffset 0 endOffset 43 width 256.56: "'tspan' changes visual attributes of \"not\","
         RenderSVGText {text} at (65,110) size 92x19 contains 1 chunk(s)
@@ -34,12 +34,12 @@ layer at (0,0) size 800x600
           RenderSVGTSpan {tspan} at (81,0) size 23x18
             RenderSVGInlineText {#text} at (81,0) size 22x18
               chunk 1 text run 1 at (339.42,143.00) startOffset 0 endOffset 3 width 21.44: "are"
-          RenderSVGTSpan {tspan} at (103,25) size 58x19
+          RenderSVGTSpan {tspan} at (103,25) size 58x18
             RenderSVGInlineText {#text} at (103,25) size 58x18
               chunk 1 text run 1 at (360.86,168.50) startOffset 0 endOffset 9 width 57.64: " a peach!"
           RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGRect {rect} at (374,297) size 411x92 [stroke={[type=SOLID] [color=#000000]}] [x=225.00] [y=179.00] [width=245.50] [height=53.50]
-        RenderSVGText {text} at (238,180) size 182x19 contains 1 chunk(s)
+        RenderSVGText {text} at (238,180) size 182x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 182x18
             chunk 1 text run 1 at (238.00,195.00) startOffset 0 endOffset 28 width 181.36: "Text: \"But you are a peach!\""
         RenderSVGText {text} at (238,197) size 205x19 contains 1 chunk(s)
@@ -61,7 +61,7 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (147.50,200.00) startOffset 0 endOffset 1 width 7.80: "n"
               chunk 1 text run 1 at (166.25,200.00) startOffset 0 endOffset 2 width 11.84: "d "
           RenderSVGInlineText {#text} at (0,0) size 0x0
-          RenderSVGTSpan {tspan} at (28,30) size 88x19
+          RenderSVGTSpan {tspan} at (28,30) size 88x18
             RenderSVGInlineText {#text} at (28,30) size 87x18
               chunk 1 text run 1 at (63.13,230.50) startOffset 0 endOffset 1 width 6.00: "f"
               chunk 1 text run 1 at (81.88,230.50) startOffset 0 endOffset 1 width 7.00: "u"
@@ -70,7 +70,7 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (138.13,230.50) startOffset 0 endOffset 2 width 12.00: "y."
           RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGRect {rect} at (28,407) size 562x91 [stroke={[type=SOLID] [color=#000000]}] [x=17.50] [y=244.75] [width=335.50] [height=53.50]
-        RenderSVGText {text} at (25,243) size 151x19 contains 1 chunk(s)
+        RenderSVGText {text} at (25,243) size 151x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 150x18
             chunk 1 text run 1 at (25.25,258.00) startOffset 0 endOffset 23 width 149.80: "Text: \"Cute and fuzzy.\""
         RenderSVGText {text} at (25,260) size 291x19 contains 1 chunk(s)

@@ -41,7 +41,7 @@ layer at (0,0) size 800x600
           [filter="BlendDarken"] RenderSVGResourceFilter {filter} at (30,75) size 120x10
         RenderSVGRect {rect} at (150,440) size 600x50 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=88.00] [width=120.00] [height=10.00]
           [filter="BlendLighten"] RenderSVGResourceFilter {filter} at (30,88) size 120x10
-        RenderSVGContainer {g} at (25,53) size 120x430
+        RenderSVGContainer {g} at (25,52) size 120x431
           RenderSVGText {text} at (5,10) size 23x9 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 23x8
               chunk 1 text run 1 at (5.00,17.00) startOffset 0 endOffset 6 width 22.40: "Normal"

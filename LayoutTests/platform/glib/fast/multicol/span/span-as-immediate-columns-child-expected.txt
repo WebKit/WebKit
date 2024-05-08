@@ -175,7 +175,7 @@ layer at (13,1235) size 367x693
         text run at (0,243) width 345: "an original display of inline in the"
         text run at (0,270) width 294: "middle of the columns block."
     RenderText {#text} at (0,277) size 363x415
-      text run at (293,277) width 47: " Lorem"
+      text run at (294,277) width 46: " Lorem"
       text run at (0,297) width 347: "ipsum dolor sit amet, consectetuer adipiscing elit. Nulla"
       text run at (0,315) width 356: "varius enim ac mi. Curabitur sollicitudin felis quis lectus."
       text run at (0,333) width 324: "Quisque adipiscing rhoncus sem. Proin nulla purus,"

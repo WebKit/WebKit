@@ -41,13 +41,13 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 26x14
             chunk 1 (end anchor) text run 1 at (-25.20,200.00) startOffset 0 endOffset 5 width 25.20: "color"
       RenderSVGContainer {g} at (280,75) size 414x27 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,-20.00)}]
-        RenderSVGText {text} at (-2,-10) size 44x17 contains 1 chunk(s)
+        RenderSVGText {text} at (-2,-10) size 44x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 44x16
             chunk 1 (middle anchor) text run 1 at (-1.60,3.00) startOffset 0 endOffset 7 width 43.20: "element"
-        RenderSVGText {text} at (118,-10) size 24x17 contains 1 chunk(s)
+        RenderSVGText {text} at (118,-10) size 24x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 23x16
             chunk 1 (middle anchor) text run 1 at (118.60,3.00) startOffset 0 endOffset 3 width 22.80: "<g>"
-        RenderSVGText {text} at (224,-10) size 22x17 contains 1 chunk(s)
+        RenderSVGText {text} at (224,-10) size 22x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 22x16
             chunk 1 (middle anchor) text run 1 at (224.20,3.00) startOffset 0 endOffset 3 width 21.60: "<a>"
       RenderSVGContainer {g} at (258,115) size 475x357 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
@@ -302,6 +302,6 @@ layer at (0,0) size 800x600
           RenderSVGContainer {a} at (650,458) size 14x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,0.00)}]
             RenderSVGRect {rect} at (650,458) size 14x14 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 264x45
+      RenderSVGInlineText {#text} at (0,0) size 264x44
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.40: "$Revision: 1.9 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

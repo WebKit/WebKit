@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (85,19) size 595x345
-      RenderSVGText {text} at (184,11) size 112x24 contains 1 chunk(s)
+    RenderSVGContainer {g} at (85,20) size 595x344
+      RenderSVGText {text} at (184,12) size 112x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 112x23
           chunk 1 (middle anchor) text run 1 at (184.20,30.00) startOffset 0 endOffset 11 width 111.60: "repeatCount"
       RenderSVGContainer {g} at (85,153) size 595x211 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,80.00)}]

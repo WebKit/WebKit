@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (33,30) size 720x535
+    RenderSVGContainer {g} at (33,30) size 720x536
       RenderSVGPath {path} at (33,30) size 67x6 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 20 20 L 40 20 L 60 20"]
       RenderSVGPath {path} at (33,30) size 67x6 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 20 20 L 40 20 L 60 20"]
       RenderSVGPath {path} at (33,64) size 67x6 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 20 40 L 40 40 L 60 40"]
@@ -20,14 +20,14 @@ layer at (0,0) size 800x600
       RenderSVGPath {path} at (80,122) size 506x128 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 150 C 50 50 200 50 200 150 C 200 50 350 50 350 150"]
       RenderSVGPath {path} at (80,205) size 506x129 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 50 200 C 50 100 200 100 200 200 C 200 100 350 100 350 200"]
       RenderSVGPath {path} at (80,205) size 506x129 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 200 C 50 100 200 100 200 200 C 200 100 350 100 350 200"]
-      RenderSVGPath {path} at (81,377) size 504x67 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 50 250 C 50 250 125 200 200 250 C 275 300 275 200 350 250"]
-      RenderSVGPath {path} at (81,377) size 504x67 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 250 C 50 250 125 200 200 250 C 275 300 275 200 350 250"]
+      RenderSVGPath {path} at (81,376) size 504x68 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 50 250 C 50 250 125 200 200 250 C 275 300 275 200 350 250"]
+      RenderSVGPath {path} at (81,376) size 504x68 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 250 C 50 250 125 200 200 250 C 275 300 275 200 350 250"]
       RenderSVGPath {path} at (81,418) size 504x67 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 50 275 C 50 275 125 225 200 275 C 275 325 275 225 350 275"]
       RenderSVGPath {path} at (81,418) size 504x67 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 275 C 50 275 125 225 200 275 C 275 325 275 225 350 275"]
       RenderSVGPath {path} at (82,476) size 503x48 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 50 300 C 100 283.333 150 283.333 200 300 C 250 316.667 300 316.667 350 300"]
       RenderSVGPath {path} at (82,476) size 503x48 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 300 C 100 283.333 150 283.333 200 300 C 250 316.667 300 316.667 350 300"]
-      RenderSVGPath {path} at (82,518) size 503x47 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 50 325 C 100 308.333 150 308.333 200 325 C 250 341.667 300 341.667 350 325"]
-      RenderSVGPath {path} at (82,518) size 503x47 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 325 C 100 308.333 150 308.333 200 325 C 250 341.667 300 341.667 350 325"]
+      RenderSVGPath {path} at (82,518) size 503x48 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 50 325 C 100 308.333 150 308.333 200 325 C 250 341.667 300 341.667 350 325"]
+      RenderSVGPath {path} at (82,518) size 503x48 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 325 C 100 308.333 150 308.333 200 325 C 250 341.667 300 341.667 350 325"]
       RenderSVGPath {path} at (705,41) size 6x168 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 425 25 C 425 25 425 41.6667 425 75 C 425 108.333 425 125 425 125"]
       RenderSVGPath {path} at (705,41) size 6x168 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 425 25 C 425 25 425 41.6667 425 75 C 425 108.333 425 125 425 125"]
       RenderSVGPath {path} at (747,41) size 6x168 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 450 25 C 450 25 450 41.6667 450 75 C 450 108.333 450 125 450 125"]

@@ -10,10 +10,10 @@ layer at (0,0) size 800x320
         RenderText {#text} at (40,40) size 280x102
           text run at (40,40) width 280: "xxxx xxxx xxxx"
           text run at (40,80) width 280: "xxxx xxxx xxxx"
-          text run at (40,121) width 100: "xxxx "
+          text run at (40,122) width 100: "xxxx "
         RenderImage {IMG} at (130,80) size 100x100 [border: (20px solid #FFFFFF)]
-        RenderText {#text} at (40,121) size 280x101
-          text run at (220,121) width 20: " "
-          text run at (240,121) width 80: "xxxx"
+        RenderText {#text} at (40,122) size 280x100
+          text run at (220,122) width 20: " "
+          text run at (240,122) width 80: "xxxx"
           text run at (40,162) width 280: "xxxx xxxx xxxx"
           text run at (40,202) width 280: "xxxx xxxx xxxx"

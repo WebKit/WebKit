@@ -27,43 +27,43 @@ layer at (0,0) size 800x600
             text run at (0,0) width 38: "Test Button"
       RenderText {#text} at (204,4) size 5x17
         text run at (204,4) width 5: " "
-      RenderButton {BUTTON} at (208,6) size 65x19 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-        RenderBlock (anonymous) at (8,4) size 49x10
-          RenderText {#text} at (0,0) size 49x10
-            text run at (0,0) width 49: "Test Button"
-      RenderText {#text} at (272,4) size 5x17
-        text run at (272,4) width 5: " "
-      RenderButton {BUTTON} at (276,5) size 70x20 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderButton {BUTTON} at (208,6) size 64x19 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderBlock (anonymous) at (8,4) size 48x10
+          RenderText {#text} at (0,0) size 48x10
+            text run at (0,0) width 48: "Test Button"
+      RenderText {#text} at (271,4) size 5x17
+        text run at (271,4) width 5: " "
+      RenderButton {BUTTON} at (275,5) size 70x20 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 53x11
           RenderText {#text} at (0,0) size 53x11
             text run at (0,0) width 53: "Test Button"
-      RenderText {#text} at (345,4) size 5x17
-        text run at (345,4) width 5: " "
-      RenderButton {BUTTON} at (349,4) size 71x21 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (344,4) size 5x17
+        text run at (344,4) width 5: " "
+      RenderButton {BUTTON} at (348,4) size 71x21 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 55x12
           RenderText {#text} at (0,0) size 55x12
             text run at (0,0) width 55: "Test Button"
-      RenderText {#text} at (419,4) size 5x17
-        text run at (419,4) width 5: " "
-      RenderButton {INPUT} at (423,0) size 97x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (418,4) size 5x17
+        text run at (418,4) width 5: " "
+      RenderButton {INPUT} at (422,0) size 97x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 80x18
           RenderText at (0,0) size 80x17
             text run at (0,0) width 80: "Test Button"
-      RenderText {#text} at (519,4) size 5x17
-        text run at (519,4) width 5: " "
-      RenderButton {BUTTON} at (523,3) size 76x23 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (518,4) size 5x17
+        text run at (518,4) width 5: " "
+      RenderButton {BUTTON} at (522,3) size 76x23 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 60x14
           RenderText {#text} at (0,0) size 60x14
             text run at (0,0) width 60: "Test Button"
-      RenderText {#text} at (598,4) size 5x17
-        text run at (598,4) width 5: " "
-      RenderButton {BUTTON} at (602,2) size 84x24 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (597,4) size 5x17
+        text run at (597,4) width 5: " "
+      RenderButton {BUTTON} at (601,2) size 84x24 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 67x15
           RenderText {#text} at (0,0) size 67x15
             text run at (0,0) width 67: "Test Button"
-      RenderText {#text} at (685,4) size 5x17
-        text run at (685,4) width 5: " "
-      RenderButton {BUTTON} at (689,1) size 88x25 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (684,4) size 5x17
+        text run at (684,4) width 5: " "
+      RenderButton {BUTTON} at (688,1) size 88x25 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 72x16
           RenderText {#text} at (0,0) size 72x16
             text run at (0,0) width 72: "Test Button"

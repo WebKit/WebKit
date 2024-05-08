@@ -1,5 +1,5 @@
 SUCCESS: click received at: 30, 100
-FAILURE: NO click received at: 30, 50
+SUCCESS: click received at: 30, 50
 SUCCESS: click received at: 30, 150
 SUCCESS: click received at: 300, 100
 SUCCESS: click received at: 300, 50

@@ -32,8 +32,8 @@ layer at (0,0) size 800x600
         RenderSVGResourceFilter {filter} [id="spotLightH"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
           [feDiffuseLighting surfaceScale="10.00" diffuseConstant="1.00" kernelUnitLength="0.00, 0.00"]
             [SourceGraphic]
-      RenderSVGContainer {g} at (116,186) size 559x239 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-20.00)}]
-        RenderSVGContainer {g} at (116,186) size 489x184 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,110.00)}]
+      RenderSVGContainer {g} at (116,185) size 559x240 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-20.00)}]
+        RenderSVGContainer {g} at (116,185) size 489x185 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,110.00)}]
           RenderSVGText {text} at (70,21) size 10x11 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 10x11
               chunk 1 text run 1 at (70.00,30.00) startOffset 0 endOffset 2 width 9.60: "30"
@@ -42,11 +42,11 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (165.00,30.00) startOffset 0 endOffset 2 width 9.60: "20"
           RenderSVGText {text} at (260,21) size 65x11 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 65x11
-              chunk 1 text run 1 at (260.00,30.00) startOffset 0 endOffset 16 width 64.80: "Animated (0..50)"
+              chunk 1 text run 1 at (260.00,30.00) startOffset 0 endOffset 16 width 64.20: "Animated (0..50)"
           RenderSVGText {text} at (355,21) size 5x11 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 5x11
               chunk 1 text run 1 at (355.00,30.00) startOffset 0 endOffset 1 width 4.80: "5"
-          RenderSVGContainer {g} at (116,353) size 489x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
+          RenderSVGContainer {g} at (116,352) size 489x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
             RenderSVGText {text} at (70,21) size 13x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 13x11
                 chunk 1 text run 1 at (70.00,30.00) startOffset 0 endOffset 3 width 12.60: "-30"
@@ -55,7 +55,7 @@ layer at (0,0) size 800x600
                 chunk 1 text run 1 at (165.00,30.00) startOffset 0 endOffset 3 width 12.60: "-20"
             RenderSVGText {text} at (260,21) size 68x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 68x11
-                chunk 1 text run 1 at (260.00,30.00) startOffset 0 endOffset 17 width 67.80: "Animated (0..-50)"
+                chunk 1 text run 1 at (260.00,30.00) startOffset 0 endOffset 17 width 67.20: "Animated (0..-50)"
             RenderSVGText {text} at (355,21) size 8x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 8x11
                 chunk 1 text run 1 at (355.00,30.00) startOffset 0 endOffset 2 width 7.80: "-5"

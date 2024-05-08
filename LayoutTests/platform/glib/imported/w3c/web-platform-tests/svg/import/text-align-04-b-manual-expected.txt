@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (8,12) size 594x427
+    RenderSVGContainer {g} at (8,12) size 594x428
       RenderSVGText {text} at (5,7) size 310x41 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 310x41
           chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 21 width 309.21: "Test of 'text-anchor'"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (0,-17) size 95x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 95x21
+          RenderSVGInlineText {#text} at (0,0) size 95x20
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 13 width 94.80: "end text tref"
         RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M -5 260 L 220 260"]
-      RenderSVGText {text} at (20,52) size 217x35 contains 1 chunk(s)
+      RenderSVGText {text} at (20,53) size 217x34 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 217x34
           chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 17 width 216.87: "Tspan, tref, toap"
       RenderSVGPath {line} at (365,200) size 3x234 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=220.00] [y1=120.00] [x2=220.00] [y2=260.00]
-      RenderSVGContainer {g} at (23,209) size 579x230
+      RenderSVGContainer {g} at (23,209) size 579x231
         RenderSVGText {text} at (220,125) size 141x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 65x18
             chunk 1 text run 1 at (220.00,140.00) startOffset 0 endOffset 11 width 64.20: "start text "

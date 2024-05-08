@@ -29,16 +29,16 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (58,0) size 1x26
           RenderText {#text} at (0,27) size 162x26
             text run at (0,27) width 162: "Fix for this bug: "
-          RenderInline {A} at (161,27) size 558x26 [color=#0000EE]
-            RenderText {#text} at (161,27) size 558x26
-              text run at (161,27) width 558: "<http://bugzilla.opendarwin.org/show_bug.cgi?id=3429>"
+          RenderInline {A} at (162,27) size 557x26 [color=#0000EE]
+            RenderText {#text} at (162,27) size 557x26
+              text run at (162,27) width 557: "<http://bugzilla.opendarwin.org/show_bug.cgi?id=3429>"
           RenderText {#text} at (0,54) size 728x26
             text run at (0,54) width 728: "Text transformed with text-transform does not copy with transform applied"
         RenderBlock {DIV} at (14,111) size 756x156
           RenderBlock (anonymous) at (0,0) size 756x54
             RenderText {#text} at (0,0) size 183x26
               text run at (0,0) width 183: "Expected Results:"
-            RenderBR {BR} at (182,0) size 1x26
+            RenderBR {BR} at (183,0) size 0x26
             RenderText {#text} at (0,27) size 202x26
               text run at (0,27) width 202: "Should see the string"
           RenderBlock {PRE} at (0,78) size 756x27

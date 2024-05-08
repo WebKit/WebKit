@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
       RenderSVGContainer {switch} at (50,33) size 700x217
         RenderSVGContainer {g} at (50,33) size 700x217
           RenderSVGRect {rect} at (50,33) size 700x217 [fill={[type=SOLID] [color=#20B2AA]}] [x=30.00] [y=20.00] [width=420.00] [height=130.00]
-          RenderSVGText {text} at (71,81) size 338x24 contains 1 chunk(s)
+          RenderSVGText {text} at (71,82) size 338x23 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 338x23
               chunk 1 (middle anchor) text run 1 at (71.17,100.00) startOffset 0 endOffset 35 width 337.66: "This viewer does more than SVG Tiny"
       RenderSVGContainer {switch} at (50,266) size 700x218 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]

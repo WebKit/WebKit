@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (16,185) size 402x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 402x18
           chunk 1 text run 1 at (16.00,200.00) startOffset 0 endOffset 57 width 401.41: "Truecolor and indexed, various bit depths, two with alpha"
-      RenderSVGText {text} at (16,238) size 239x28 contains 1 chunk(s)
+      RenderSVGText {text} at (16,238) size 239x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 239x27
           chunk 1 text run 1 at (16.00,260.00) startOffset 0 endOffset 21 width 238.20: "Non-interlaced images"
     RenderSVGContainer {g} at (16,518) size 388x60

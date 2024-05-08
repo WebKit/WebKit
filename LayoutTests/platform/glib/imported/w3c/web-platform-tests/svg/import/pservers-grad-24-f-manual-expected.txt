@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderSVGResourceRadialGradient {radialGradient} [id="testRadial"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50] [focalRadius=0.00]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
       RenderSVGText {text} at (10,33) size 193x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 193x21
+        RenderSVGInlineText {#text} at (0,0) size 193x20
           chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 23 width 192.60: "There should be no red."
       RenderSVGContainer {use} at (0,0) size 0x0
       RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
@@ -25,6 +25,6 @@ layer at (0,0) size 800x600
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGContainer {g} at (0,0) size 800x38
       RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
-      RenderSVGText {text} at (206,-1) size 68x24 contains 1 chunk(s)
+      RenderSVGText {text} at (206,0) size 68x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 68x23
           chunk 1 (middle anchor) text run 1 at (206.40,18.00) startOffset 0 endOffset 5 width 67.20: "DRAFT"

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (63,19) size 668x481
+    RenderSVGContainer {g} at (63,20) size 668x480
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceLinearGradient {linearGradient} [id="grad1"] [gradientUnits=objectBoundingBox] [start=(0.50,-0.03)] [end=(0.50,1.06)]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
@@ -75,7 +75,7 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (341,282) size 74x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 73x16
             chunk 1 (middle anchor) text run 1 at (341.70,295.00) startOffset 0 endOffset 11 width 72.60: "StrokePaint"
-      RenderSVGText {text} at (174,11) size 132x24 contains 1 chunk(s)
+      RenderSVGText {text} at (174,12) size 132x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 131x23
           chunk 1 (middle anchor) text run 1 at (174.60,30.00) startOffset 0 endOffset 17 width 130.80: "Filter input test"
     RenderSVGContainer {g} at (16,518) size 388x60

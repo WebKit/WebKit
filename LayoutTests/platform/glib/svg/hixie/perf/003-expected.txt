@@ -2,14 +2,14 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 400x400
   RenderSVGRoot {svg} at (0,0) size 400x400
-    RenderSVGText {text} at (10,10) size 50x7 contains 1 chunk(s)
+    RenderSVGText {text} at (10,10) size 50x6 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 50x6
         chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 21 width 49.75: "SVG Performance test."
-    RenderSVGText {text} at (10,90) size 33x7 contains 1 chunk(s)
+    RenderSVGText {text} at (10,90) size 33x6 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 33x6
         chunk 1 text run 1 at (10.00,95.00) startOffset 0 endOffset 14 width 32.29: "Test completed"
     RenderSVGRect {rect} at (0,0) size 400x400 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-    RenderSVGText {text} at (9,37) size 3x7 contains 1 chunk(s)
+    RenderSVGText {text} at (9,37) size 3x6 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 3x6
         chunk 1 text run 1 at (9.00,42.00) startOffset 0 endOffset 1 width 2.50: "0"
     RenderSVGText {text} at (65,77) size 2x4 contains 1 chunk(s)
@@ -36,7 +36,7 @@ layer at (0,0) size 400x400
     RenderSVGText {text} at (79,-6) size 4x10 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 4x9
         chunk 1 text run 1 at (79.00,2.00) startOffset 0 endOffset 1 width 4.00: "8"
-    RenderSVGText {text} at (10,74) size 3x7 contains 1 chunk(s)
+    RenderSVGText {text} at (10,74) size 3x6 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 3x6
         chunk 1 text run 1 at (10.00,79.00) startOffset 0 endOffset 1 width 2.50: "9"
     RenderSVGText {text} at (77,36) size 1x2 contains 1 chunk(s)
@@ -72,7 +72,7 @@ layer at (0,0) size 400x400
     RenderSVGText {text} at (42,26) size 1x2 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 1x2
         chunk 1 text run 1 at (42.00,27.00) startOffset 0 endOffset 2 width 1.00: "20"
-    RenderSVGText {text} at (11,76) size 5x7 contains 1 chunk(s)
+    RenderSVGText {text} at (11,76) size 5x6 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 5x6
         chunk 1 text run 1 at (11.00,81.00) startOffset 0 endOffset 2 width 5.00: "21"
     RenderSVGText {text} at (15,25) size 1x2 contains 1 chunk(s)
@@ -87,7 +87,7 @@ layer at (0,0) size 400x400
     RenderSVGText {text} at (49,5) size 1x2 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 1x2
         chunk 1 text run 1 at (49.00,6.00) startOffset 0 endOffset 2 width 1.00: "25"
-    RenderSVGText {text} at (50,57) size 5x7 contains 1 chunk(s)
+    RenderSVGText {text} at (50,57) size 5x6 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 5x6
         chunk 1 text run 1 at (50.00,62.00) startOffset 0 endOffset 2 width 5.00: "26"
     RenderSVGText {text} at (30,60) size 7x9 contains 1 chunk(s)
@@ -111,19 +111,19 @@ layer at (0,0) size 400x400
     RenderSVGText {text} at (85,86) size 2x3 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 2x3
         chunk 1 text run 1 at (85.00,88.00) startOffset 0 endOffset 2 width 2.00: "33"
-    RenderSVGText {text} at (54,95) size 5x7 contains 1 chunk(s)
+    RenderSVGText {text} at (54,95) size 5x6 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 5x6
         chunk 1 text run 1 at (54.00,100.00) startOffset 0 endOffset 2 width 5.00: "34"
     RenderSVGText {text} at (26,96) size 3x4 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 3x4
         chunk 1 text run 1 at (26.00,99.00) startOffset 0 endOffset 2 width 3.00: "35"
-    RenderSVGText {text} at (15,42) size 5x7 contains 1 chunk(s)
+    RenderSVGText {text} at (15,42) size 5x6 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 5x6
         chunk 1 text run 1 at (15.00,47.00) startOffset 0 endOffset 2 width 5.00: "36"
     RenderSVGText {text} at (56,85) size 3x4 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 3x4
         chunk 1 text run 1 at (56.00,88.00) startOffset 0 endOffset 2 width 3.00: "37"
-    RenderSVGText {text} at (18,21) size 5x7 contains 1 chunk(s)
+    RenderSVGText {text} at (18,21) size 5x6 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 5x6
         chunk 1 text run 1 at (18.00,26.00) startOffset 0 endOffset 2 width 5.00: "38"
     RenderSVGText {text} at (92,44) size 2x3 contains 1 chunk(s)
@@ -162,7 +162,7 @@ layer at (0,0) size 400x400
     RenderSVGText {text} at (48,81) size 3x4 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 3x4
         chunk 1 text run 1 at (48.00,84.00) startOffset 0 endOffset 2 width 3.00: "50"
-    RenderSVGText {text} at (57,19) size 5x7 contains 1 chunk(s)
+    RenderSVGText {text} at (57,19) size 5x6 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 5x6
         chunk 1 text run 1 at (57.00,24.00) startOffset 0 endOffset 2 width 5.00: "51"
     RenderSVGText {text} at (61,34) size 8x10 contains 1 chunk(s)
@@ -195,7 +195,7 @@ layer at (0,0) size 400x400
     RenderSVGText {text} at (20,45) size 8x10 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 8x9
         chunk 1 text run 1 at (20.00,53.00) startOffset 0 endOffset 2 width 8.00: "61"
-    RenderSVGText {text} at (8,74) size 5x7 contains 1 chunk(s)
+    RenderSVGText {text} at (8,74) size 5x6 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 5x6
         chunk 1 text run 1 at (8.00,79.00) startOffset 0 endOffset 2 width 5.00: "62"
     RenderSVGText {text} at (2,53) size 3x4 contains 1 chunk(s)
@@ -222,7 +222,7 @@ layer at (0,0) size 400x400
     RenderSVGText {text} at (85,9) size 3x4 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 3x4
         chunk 1 text run 1 at (85.00,12.00) startOffset 0 endOffset 2 width 3.00: "70"
-    RenderSVGText {text} at (48,75) size 5x7 contains 1 chunk(s)
+    RenderSVGText {text} at (48,75) size 5x6 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 5x6
         chunk 1 text run 1 at (48.00,80.00) startOffset 0 endOffset 2 width 5.00: "71"
     RenderSVGText {text} at (52,34) size 8x10 contains 1 chunk(s)
