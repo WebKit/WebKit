@@ -289,12 +289,6 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
         }
 
 #if ENABLE(ASYNC_SCROLLING)
-#if PLATFORM(IOS_FAMILY)
-        if (!layerTreeTransaction.isMainFrameProcessTransaction()) {
-            // TODO: rdar://123104203 Making scrolling trees work with site isolation on iOS.
-            return;
-        }
-#endif
         requestedScroll = webPageProxy->scrollingCoordinatorProxy()->commitScrollingTreeState(scrollingTreeTransaction, layerTreeTransaction.remoteContextHostedIdentifier());
 #endif
     };
