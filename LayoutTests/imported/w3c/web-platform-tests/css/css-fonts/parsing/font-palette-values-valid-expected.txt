@@ -32,4 +32,5 @@ PASS CSS Fonts Module Level 4: parsing @font-palette-values 29
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 30
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 31
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 32
+FAIL CSS Fonts Module Level 4: parsing @font-palette-values 33 assert_equals: expected "0 color-mix(in lch, red, blue)" but got "0 rgba(0, 0, 0, 0)"
 

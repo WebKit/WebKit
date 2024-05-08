@@ -1,0 +1,4 @@
+
+FAIL e.style['font-synthesis-position'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['font-synthesis-position'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
+

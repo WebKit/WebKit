@@ -1,5 +1,10 @@
 
 PASS e.style['font-variant'] = "normal none" should not set the property value
+PASS e.style['font-variant'] = "none normal" should not set the property value
+FAIL e.style['font-variant'] = "small-caps normal" should not set the property value assert_equals: expected "" but got "small-caps"
+PASS e.style['font-variant'] = "normal small-caps" should not set the property value
+PASS e.style['font-variant'] = "small-caps none" should not set the property value
+PASS e.style['font-variant'] = "none small-caps" should not set the property value
 PASS e.style['font-variant'] = "common-ligatures no-common-ligatures" should not set the property value
 PASS e.style['font-variant'] = "discretionary-ligatures no-discretionary-ligatures" should not set the property value
 PASS e.style['font-variant'] = "historical-ligatures no-historical-ligatures" should not set the property value
