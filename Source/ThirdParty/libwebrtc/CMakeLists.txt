@@ -3,6 +3,8 @@ set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(libwebrtc_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/libwebrtc/DerivedSources")
 file(MAKE_DIRECTORY ${libwebrtc_DERIVED_SOURCES_DIR})
 
+enable_language(ASM)
+
 if (NOT APPLE)
     find_package(LibVpx 1.10.0)
     if (NOT LIBVPX_FOUND)
@@ -221,6 +223,7 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/cpu_aarch64_fuchsia.c
     Source/third_party/boringssl/src/crypto/cpu_aarch64_linux.c
     Source/third_party/boringssl/src/crypto/cpu_aarch64_win.c
+    Source/third_party/boringssl/src/crypto/cpu_arm.c
     Source/third_party/boringssl/src/crypto/cpu_arm_linux.c
     Source/third_party/boringssl/src/crypto/cpu_intel.c
     Source/third_party/boringssl/src/crypto/crypto.c
@@ -1878,6 +1881,130 @@ if (WTF_CPU_ARM64)
     add_definitions(-DWEBRTC_ARCH_ARM64)
 endif ()
 
+# Source/third_party/boringssl/src/cmake/perlasm.cmake cannot be re-used as-is, so vendor the
+# adapted version here.
+
+macro(append_to_parent_scope var)
+  foreach(arg IN ITEMS ${ARGN})
+    list(APPEND ${var} "${CMAKE_BINARY_DIR}/Source/ThirdParty/libwebrtc/${arg}")
+  endforeach()
+  set(${var} "${${var}}" PARENT_SCOPE)
+endmacro()
+
+function(add_perlasm_target dest src)
+  add_custom_command(
+    OUTPUT ${dest}
+    COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${src} ${ARGN}
+            ${dest}
+    DEPENDS
+    ${src}
+    Source/third_party/boringssl/src/crypto/perlasm/arm-xlate.pl
+    Source/third_party/boringssl/src/crypto/perlasm/x86_64-xlate.pl
+    Source/third_party/boringssl/src/crypto/perlasm/x86asm.pl
+    Source/third_party/boringssl/src/crypto/perlasm/x86gas.pl
+    Source/third_party/boringssl/src/crypto/perlasm/x86masm.pl
+    Source/third_party/boringssl/src/crypto/perlasm/x86nasm.pl
+    WORKING_DIRECTORY .
+  )
+endfunction()
+
+# perlasm generates perlasm output from a given file. arch specifies the
+# architecture. dest specifies the basename of the output file. The list of
+# generated files will be appended to ${var}_ASM and ${var}_NASM depending on
+# the assembler used.
+function(perlasm var arch dest src)
+  if(arch STREQUAL "aarch64")
+    add_perlasm_target("${dest}-apple.S" ${src} ios64)
+    add_perlasm_target("${dest}-linux.S" ${src} linux64)
+    add_perlasm_target("${dest}-win.S" ${src} win64)
+    append_to_parent_scope("${var}_ASM" "${dest}-apple.S" "${dest}-linux.S" "${dest}-win.S")
+  elseif(arch STREQUAL "arm")
+    add_perlasm_target("${dest}-apple.S" ${src} ios32)
+    add_perlasm_target("${dest}-linux.S" ${src} linux32)
+    append_to_parent_scope("${var}_ASM" "${dest}-apple.S" "${dest}-linux.S")
+  elseif(arch STREQUAL "x86")
+    add_perlasm_target("${dest}-apple.S" ${src} macosx -fPIC -DOPENSSL_IA32_SSE2)
+    add_perlasm_target("${dest}-linux.S" ${src} elf -fPIC -DOPENSSL_IA32_SSE2)
+    add_perlasm_target("${dest}-win.asm" ${src} win32n -DOPENSSL_IA32_SSE2)
+    append_to_parent_scope("${var}_ASM" "${dest}-apple.S" "${dest}-linux.S")
+    append_to_parent_scope("${var}_NASM" "${dest}-win.asm")
+  elseif(arch STREQUAL "x86_64")
+    add_perlasm_target("${dest}-apple.S" ${src} macosx)
+    add_perlasm_target("${dest}-linux.S" ${src} elf)
+    add_perlasm_target("${dest}-win.asm" ${src} nasm)
+    append_to_parent_scope("${var}_ASM" "${dest}-apple.S" "${dest}-linux.S")
+    append_to_parent_scope("${var}_NASM" "${dest}-win.asm")
+  else()
+    message(FATAL_ERROR "Unknown perlasm architecture: $arch")
+  endif()
+endfunction()
+
+set(FIPS_PATH Source/third_party/boringssl/src/crypto/fipsmodule)
+perlasm(BCM_SOURCES aarch64 aesv8-armv8 ${FIPS_PATH}/aes/asm/aesv8-armx.pl)
+perlasm(BCM_SOURCES aarch64 aesv8-gcm-armv8 ${FIPS_PATH}/modes/asm/aesv8-gcm-armv8.pl)
+perlasm(BCM_SOURCES aarch64 armv8-mont ${FIPS_PATH}/bn/asm/armv8-mont.pl)
+perlasm(BCM_SOURCES aarch64 bn-armv8 ${FIPS_PATH}/bn/asm/bn-armv8.pl)
+perlasm(BCM_SOURCES aarch64 ghash-neon-armv8 ${FIPS_PATH}/modes/asm/ghash-neon-armv8.pl)
+perlasm(BCM_SOURCES aarch64 ghashv8-armv8 ${FIPS_PATH}/modes/asm/ghashv8-armx.pl)
+perlasm(BCM_SOURCES aarch64 p256_beeu-armv8-asm ${FIPS_PATH}/ec/asm/p256_beeu-armv8-asm.pl)
+perlasm(BCM_SOURCES aarch64 p256-armv8-asm ${FIPS_PATH}/ec/asm/p256-armv8-asm.pl)
+perlasm(BCM_SOURCES aarch64 sha1-armv8 ${FIPS_PATH}/sha/asm/sha1-armv8.pl)
+perlasm(BCM_SOURCES aarch64 sha256-armv8 ${FIPS_PATH}/sha/asm/sha512-armv8.pl)
+perlasm(BCM_SOURCES aarch64 sha512-armv8 ${FIPS_PATH}/sha/asm/sha512-armv8.pl)
+perlasm(BCM_SOURCES aarch64 vpaes-armv8 ${FIPS_PATH}/aes/asm/vpaes-armv8.pl)
+perlasm(BCM_SOURCES arm aesv8-armv7 ${FIPS_PATH}/aes/asm/aesv8-armx.pl)
+perlasm(BCM_SOURCES arm armv4-mont ${FIPS_PATH}/bn/asm/armv4-mont.pl)
+perlasm(BCM_SOURCES arm bsaes-armv7 ${FIPS_PATH}/aes/asm/bsaes-armv7.pl)
+perlasm(BCM_SOURCES arm ghash-armv4 ${FIPS_PATH}/modes/asm/ghash-armv4.pl)
+perlasm(BCM_SOURCES arm ghashv8-armv7 ${FIPS_PATH}/modes/asm/ghashv8-armx.pl)
+perlasm(BCM_SOURCES arm sha1-armv4-large ${FIPS_PATH}/sha/asm/sha1-armv4-large.pl)
+perlasm(BCM_SOURCES arm sha256-armv4 ${FIPS_PATH}/sha/asm/sha256-armv4.pl)
+perlasm(BCM_SOURCES arm sha512-armv4 ${FIPS_PATH}/sha/asm/sha512-armv4.pl)
+perlasm(BCM_SOURCES arm vpaes-armv7 ${FIPS_PATH}/aes/asm/vpaes-armv7.pl)
+perlasm(BCM_SOURCES x86 aesni-x86 ${FIPS_PATH}/aes/asm/aesni-x86.pl)
+perlasm(BCM_SOURCES x86 bn-586 ${FIPS_PATH}/bn/asm/bn-586.pl)
+perlasm(BCM_SOURCES x86 co-586 ${FIPS_PATH}/bn/asm/co-586.pl)
+perlasm(BCM_SOURCES x86 ghash-ssse3-x86 ${FIPS_PATH}/modes/asm/ghash-ssse3-x86.pl)
+perlasm(BCM_SOURCES x86 ghash-x86 ${FIPS_PATH}/modes/asm/ghash-x86.pl)
+perlasm(BCM_SOURCES x86 md5-586 ${FIPS_PATH}/md5/asm/md5-586.pl)
+perlasm(BCM_SOURCES x86 sha1-586 ${FIPS_PATH}/sha/asm/sha1-586.pl)
+perlasm(BCM_SOURCES x86 sha256-586 ${FIPS_PATH}/sha/asm/sha256-586.pl)
+perlasm(BCM_SOURCES x86 sha512-586 ${FIPS_PATH}/sha/asm/sha512-586.pl)
+perlasm(BCM_SOURCES x86 vpaes-x86 ${FIPS_PATH}/aes/asm/vpaes-x86.pl)
+perlasm(BCM_SOURCES x86 x86-mont ${FIPS_PATH}/bn/asm/x86-mont.pl)
+perlasm(BCM_SOURCES x86_64 aesni-gcm-x86_64 ${FIPS_PATH}/modes/asm/aesni-gcm-x86_64.pl)
+perlasm(BCM_SOURCES x86_64 aesni-x86_64 ${FIPS_PATH}/aes/asm/aesni-x86_64.pl)
+perlasm(BCM_SOURCES x86_64 ghash-ssse3-x86_64 ${FIPS_PATH}/modes/asm/ghash-ssse3-x86_64.pl)
+perlasm(BCM_SOURCES x86_64 ghash-x86_64 ${FIPS_PATH}/modes/asm/ghash-x86_64.pl)
+perlasm(BCM_SOURCES x86_64 md5-x86_64 ${FIPS_PATH}/md5/asm/md5-x86_64.pl)
+perlasm(BCM_SOURCES x86_64 p256_beeu-x86_64-asm ${FIPS_PATH}/ec/asm/p256_beeu-x86_64-asm.pl)
+perlasm(BCM_SOURCES x86_64 p256-x86_64-asm ${FIPS_PATH}/ec/asm/p256-x86_64-asm.pl)
+perlasm(BCM_SOURCES x86_64 rdrand-x86_64 ${FIPS_PATH}/rand/asm/rdrand-x86_64.pl)
+perlasm(BCM_SOURCES x86_64 rsaz-avx2 ${FIPS_PATH}/bn/asm/rsaz-avx2.pl)
+perlasm(BCM_SOURCES x86_64 sha1-x86_64 ${FIPS_PATH}/sha/asm/sha1-x86_64.pl)
+perlasm(BCM_SOURCES x86_64 sha256-x86_64 ${FIPS_PATH}/sha/asm/sha512-x86_64.pl)
+perlasm(BCM_SOURCES x86_64 sha512-x86_64 ${FIPS_PATH}/sha/asm/sha512-x86_64.pl)
+perlasm(BCM_SOURCES x86_64 vpaes-x86_64 ${FIPS_PATH}/aes/asm/vpaes-x86_64.pl)
+perlasm(BCM_SOURCES x86_64 x86_64-mont ${FIPS_PATH}/bn/asm/x86_64-mont.pl)
+perlasm(BCM_SOURCES x86_64 x86_64-mont5 ${FIPS_PATH}/bn/asm/x86_64-mont5.pl)
+
+set(CRYPTO_PATH Source/third_party/boringssl/src/crypto)
+perlasm(CRYPTO_SOURCES aarch64 chacha/chacha-armv8 ${CRYPTO_PATH}/chacha/asm/chacha-armv8.pl)
+perlasm(CRYPTO_SOURCES aarch64 cipher_extra/chacha20_poly1305_armv8 ${CRYPTO_PATH}/cipher_extra/asm/chacha20_poly1305_armv8.pl)
+perlasm(CRYPTO_SOURCES aarch64 test/trampoline-armv8 ${CRYPTO_PATH}/test/asm/trampoline-armv8.pl)
+perlasm(CRYPTO_SOURCES arm chacha/chacha-armv4 ${CRYPTO_PATH}/chacha/asm/chacha-armv4.pl)
+perlasm(CRYPTO_SOURCES arm test/trampoline-armv4 ${CRYPTO_PATH}/test/asm/trampoline-armv4.pl)
+perlasm(CRYPTO_SOURCES x86 chacha/chacha-x86 ${CRYPTO_PATH}/chacha/asm/chacha-x86.pl)
+perlasm(CRYPTO_SOURCES x86 test/trampoline-x86 ${CRYPTO_PATH}/test/asm/trampoline-x86.pl)
+perlasm(CRYPTO_SOURCES x86_64 chacha/chacha-x86_64 ${CRYPTO_PATH}/chacha/asm/chacha-x86_64.pl)
+perlasm(CRYPTO_SOURCES x86_64 cipher_extra/aes128gcmsiv-x86_64 ${CRYPTO_PATH}/cipher_extra/asm/aes128gcmsiv-x86_64.pl)
+perlasm(CRYPTO_SOURCES x86_64 cipher_extra/chacha20_poly1305_x86_64 ${CRYPTO_PATH}/cipher_extra/asm/chacha20_poly1305_x86_64.pl)
+perlasm(CRYPTO_SOURCES x86_64 test/trampoline-x86_64 ${CRYPTO_PATH}/test/asm/trampoline-x86_64.pl)
+
+# TODO: _NASM support for platforms that require it.
+list(APPEND webrtc_SOURCES ${BCM_SOURCES_ASM})
+list(APPEND webrtc_SOURCES ${CRYPTO_SOURCES_ASM})
+
 if (WTF_CPU_ARM OR WTF_CPU_ARM64)
     list(APPEND webrtc_neon_SOURCES
         Source/webrtc/common_audio/fir_filter_neon.cc
@@ -2200,7 +2327,7 @@ target_compile_definitions(webrtc PRIVATE
   JSON_USE_EXCEPTION=0
   NON_WINDOWS_DEFINE
   NO_MAIN_THREAD_WRAPPING
-  OPENSSL_NO_ASM
+  OPENSSL_ASM
   OPUS_BUILD
   OPUS_EXPORT=
   RTC_ENABLE_VP9
@@ -2226,6 +2353,7 @@ target_compile_definitions(webrtc PRIVATE
   WEBRTC_USE_H265=1
   WTF_USE_DYNAMIC_ANNOTATIONS=1
   _GNU_SOURCE
+  HWAES
 )
 
 if (APPLE)
