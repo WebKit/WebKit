@@ -34,6 +34,7 @@
 #include <mutex>
 #include <unicode/uidna.h>
 #include <unicode/uscript.h>
+#include <wtf/IteratorRange.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -398,14 +399,14 @@ void initializeDefaultIDNAllowedScriptList()
         addScriptToIDNAllowedScriptList(script);
 }
 
-static bool allCharactersInAllowedIDNScriptList(const UChar* buffer, int32_t length)
+static bool allCharactersInAllowedIDNScriptList(std::span<const UChar> buffer)
 {
     loadIDNAllowedScriptList();
-    int32_t i = 0;
+    size_t i = 0;
     std::optional<char32_t> previousCodePoint;
-    while (i < length) {
+    while (i < buffer.size()) {
         char32_t c;
-        U16_NEXT(buffer, i, length, c);
+        U16_NEXT(buffer, i, buffer.size(), c);
         UErrorCode error = U_ZERO_ERROR;
         UScriptCode script = uscript_getScript(c, &error);
         if (error != U_ZERO_ERROR) {
@@ -432,13 +433,11 @@ static bool allCharactersInAllowedIDNScriptList(const UChar* buffer, int32_t len
 }
 
 template<typename Func>
-static inline bool isSecondLevelDomainNameAllowedByTLDRules(const UChar* buffer, int32_t length, Func characterIsAllowed)
+static inline bool isSecondLevelDomainNameAllowedByTLDRules(std::span<const UChar> buffer, Func characterIsAllowed)
 {
-    ASSERT(length > 0);
+    ASSERT(!buffer.empty());
 
-    for (int32_t i = length - 1; i >= 0; --i) {
-        UChar ch = buffer[i];
-        
+    for (auto ch : makeReversedRange(buffer)) {
         if (characterIsAllowed(ch))
             continue;
         
@@ -454,8 +453,8 @@ static inline bool isSecondLevelDomainNameAllowedByTLDRules(const UChar* buffer,
 #define CHECK_RULES_IF_SUFFIX_MATCHES(suffix, function) \
     { \
         static const int32_t suffixLength = sizeof(suffix) / sizeof(suffix[0]); \
-        if (length > suffixLength && !memcmp(buffer + length - suffixLength, suffix, sizeof(suffix))) \
-            return isSecondLevelDomainNameAllowedByTLDRules(buffer, length - suffixLength, function); \
+        if (buffer.size() > suffixLength && !memcmp(buffer.last(suffixLength).data(), suffix, sizeof(suffix))) \
+            return isSecondLevelDomainNameAllowedByTLDRules(buffer.first(buffer.size() - suffixLength), function); \
     }
 
 static bool isRussianDomainNameCharacter(UChar ch)
@@ -464,11 +463,11 @@ static bool isRussianDomainNameCharacter(UChar ch)
     return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || isASCIIDigit(ch) || ch == '-';
 }
 
-static bool allCharactersAllowedByTLDRules(const UChar* buffer, int32_t length)
+static bool allCharactersAllowedByTLDRules(std::span<const UChar> buffer)
 {
     // Skip trailing dot for root domain.
-    if (buffer[length - 1] == '.')
-        length--;
+    if (buffer.back() == '.')
+        buffer = buffer.first(buffer.size() - 1);
 
     // http://cctld.ru/files/pdf/docs/rules_ru-rf.pdf
     static const UChar cyrillicRF[] = {
@@ -653,21 +652,22 @@ std::optional<String> mapHostName(const String& hostName, URLDecodeFunction deco
         return std::nullopt;
     auto sourceBuffer = expectedSourceBuffer->span();
 
-    UChar destinationBuffer[URLParser::hostnameBufferLength];
+    std::array<UChar, URLParser::hostnameBufferLength> destinationBuffer;
     UErrorCode uerror = U_ZERO_ERROR;
     UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
-    int32_t numCharactersConverted = (decodeFunction ? uidna_nameToASCII : uidna_nameToUnicode)(&URLParser::internationalDomainNameTranscoder(), sourceBuffer.data(), length, destinationBuffer, URLParser::hostnameBufferLength, &processingDetails, &uerror);
+    size_t numCharactersConverted = (decodeFunction ? uidna_nameToASCII : uidna_nameToUnicode)(&URLParser::internationalDomainNameTranscoder(), sourceBuffer.data(), length, destinationBuffer.data(), destinationBuffer.size(), &processingDetails, &uerror);
     int allowedErrors = decodeFunction ? 0 : URLParser::allowedNameToASCIIErrors;
     if (length && (U_FAILURE(uerror) || processingDetails.errors & ~allowedErrors))
         return std::nullopt;
-    
-    if (numCharactersConverted == static_cast<int32_t>(length) && equal(sourceBuffer.data(), { destinationBuffer, length }))
+
+    auto span = std::span { destinationBuffer }.first(numCharactersConverted);
+    if (numCharactersConverted == length && equal(sourceBuffer.data(), span))
         return String();
 
-    if (!decodeFunction && !allCharactersInAllowedIDNScriptList(destinationBuffer, numCharactersConverted) && !allCharactersAllowedByTLDRules(destinationBuffer, numCharactersConverted))
+    if (!decodeFunction && !allCharactersInAllowedIDNScriptList(span) && !allCharactersAllowedByTLDRules(span))
         return String();
 
-    return String({ destinationBuffer, static_cast<size_t>(numCharactersConverted) });
+    return String { span };
 }
 
 using MappingRangesVector = std::optional<Vector<std::tuple<unsigned, unsigned, String>>>;
