@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        .scroller {
+            width: 100px;
+            height: 100px;
+            border: 1px solid black;
+            overflow: scroll;
+        }
+        .contents {
+            width: 100%;
+            height: 200%;
+        }
+    </style>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+
+        if (window.internals)
+            internals.setUsesOverlayScrollbars(true);
+
+        async function doTest()
+        {
+            description('Ensure scrollbars controller state is correct for scroller type');
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+            await UIHelper.renderingUpdate();
+            svgScroller = document.getElementById('svgScroller');
+            shouldBeEqualToString('window.internals.scrollbarsControllerTypeForNode(svgScroller)', 'ScrollbarsControllerMac');
+
+            scroller = document.getElementById('scroller');
+            shouldBeEqualToString('window.internals.scrollbarsControllerTypeForNode(scroller)', window.internals.isUsingUISideCompositing() ? 'RemoteScrollbarsController' : 'ScrollbarsControllerMac');
+            shouldBeEqualToString('window.internals.scrollbarsControllerTypeForNode()', window.internals.isUsingUISideCompositing() ? 'RemoteScrollbarsController' : 'ScrollbarsControllerMac');
+
+            testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="scroller" class="scroller">
+        <div class="contents"></div>
+    </div>
+
+    <svg id="hello" width="400" height="400">
+        <foreignObject x="0" y="0" width="400" height="400">
+
+            <div id="svgScroller" class="scroller">
+                <div class="contents">
+                </div>
+            </div>
+        </foreignObject>
+    </svg>
+    <div id="console"></div>
+</body>
+</html>

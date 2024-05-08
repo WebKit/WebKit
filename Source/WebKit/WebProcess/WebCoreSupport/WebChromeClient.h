@@ -297,7 +297,7 @@ private:
 #endif
 
 #if PLATFORM(MAC)
-    std::unique_ptr<WebCore::ScrollbarsController> createScrollbarsController(WebCore::Page&, WebCore::ScrollableArea&) const final;
+    void ensureScrollbarsController(WebCore::Page&, WebCore::ScrollableArea&) const final;
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)

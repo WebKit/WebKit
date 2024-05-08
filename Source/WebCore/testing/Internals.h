@@ -515,6 +515,8 @@ public:
     ExceptionOr<String> horizontalScrollbarState(Node*) const;
     ExceptionOr<String> verticalScrollbarState(Node*) const;
 
+    ExceptionOr<String> scrollbarsControllerTypeForNode(Node*) const;
+
     ExceptionOr<String> scrollingStateTreeAsText() const;
     ExceptionOr<String> scrollingTreeAsText() const;
     ExceptionOr<bool> haveScrollingTree() const;

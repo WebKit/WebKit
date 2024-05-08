@@ -49,6 +49,8 @@ public:
     explicit ScrollbarsControllerMac(ScrollableArea&);
     ~ScrollbarsControllerMac();
 
+    bool isScrollbarsControllerMac() const final { return true; }
+
     void notifyContentAreaScrolled(const FloatSize& delta) final;
 
     void cancelAnimations() final;
@@ -124,5 +126,9 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ScrollbarsControllerMac)
+    static bool isType(const WebCore::ScrollbarsController& controller) { return controller.isScrollbarsControllerMac(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // PLATFORM(MAC)

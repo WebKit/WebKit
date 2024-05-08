@@ -52,6 +52,10 @@ public:
     bool scrollbarAnimationsUnsuspendedByUserInteraction() const { return m_scrollbarAnimationsUnsuspendedByUserInteraction; }
     void setScrollbarAnimationsUnsuspendedByUserInteraction(bool unsuspended) { m_scrollbarAnimationsUnsuspendedByUserInteraction = unsuspended; }
     
+    WEBCORE_EXPORT virtual bool isRemoteScrollbarsController() const { return false; }
+    WEBCORE_EXPORT virtual bool isScrollbarsControllerMac() const { return false; }
+    WEBCORE_EXPORT virtual bool isScrollbarsControllerMock() const { return false; }
+
     bool shouldSuspendScrollbarAnimations() const;
 
     virtual void notifyContentAreaScrolled(const FloatSize&) { }
@@ -92,7 +96,7 @@ public:
 
     WEBCORE_EXPORT virtual String horizontalScrollbarStateForTesting() const { return emptyString(); }
     WEBCORE_EXPORT virtual String verticalScrollbarStateForTesting() const { return emptyString(); }
-    
+
     WEBCORE_EXPORT virtual void setScrollbarVisibilityState(ScrollbarOrientation, bool) { }
 
     WEBCORE_EXPORT virtual bool shouldDrawIntoScrollbarLayer(Scrollbar&) const { return true; }

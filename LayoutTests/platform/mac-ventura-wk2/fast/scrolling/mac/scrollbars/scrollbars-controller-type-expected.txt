@@ -1,0 +1,9 @@
+Ensure scrollbars controller state is correct for scroller type
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.internals.scrollbarsControllerTypeForNode(svgScroller) is "ScrollbarsControllerMac"
+PASS window.internals.scrollbarsControllerTypeForNode(scroller) is "ScrollbarsControllerMac"
+PASS window.internals.scrollbarsControllerTypeForNode() is "ScrollbarsControllerMac"
+

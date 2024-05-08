@@ -101,7 +101,6 @@
 #include <WebCore/Settings.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextRecognitionOptions.h>
-
 #include <WebCore/WindowFeatures.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
@@ -156,6 +155,7 @@
 
 #if PLATFORM(MAC)
 #include "RemoteScrollbarsController.h"
+#include <WebCore/ScrollbarsControllerMock.h>
 #endif
 
 namespace WebKit {
@@ -1173,22 +1173,31 @@ RefPtr<WebCore::ScrollingCoordinator> WebChromeClient::createScrollingCoordinato
 #endif
 
 #if PLATFORM(MAC)
-std::unique_ptr<ScrollbarsController> WebChromeClient::createScrollbarsController(Page& corePage, ScrollableArea& area) const
+void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea& area) const
 {
     auto page = protectedPage();
     ASSERT(page->corePage() == &corePage);
-    
-    if (area.mockScrollbarsControllerEnabled())
-        return nullptr;
+    auto* currentScrollbarsController = area.existingScrollbarsController();
+    if (area.mockScrollbarsControllerEnabled()) {
+        ASSERT(!currentScrollbarsController || is<ScrollbarsControllerMock>(currentScrollbarsController));
+        return;
+    }
     
     switch (page->drawingArea()->type()) {
-    case DrawingAreaType::RemoteLayerTree:
-        return makeUnique<RemoteScrollbarsController>(area, corePage.scrollingCoordinator());
-    default:
-        return nullptr;
+    case DrawingAreaType::RemoteLayerTree: {
+        if (!area.usesAsyncScrolling() && (!currentScrollbarsController || is<RemoteScrollbarsController>(currentScrollbarsController)))
+            area.setScrollbarsController(ScrollbarsController::create(area));
+        else if (area.usesAsyncScrolling() && (!currentScrollbarsController || !is<RemoteScrollbarsController>(currentScrollbarsController)))
+            area.setScrollbarsController(makeUnique<RemoteScrollbarsController>(area, corePage.scrollingCoordinator()));
+        return;
     }
-    return nullptr;
+    default: {
+        if (!currentScrollbarsController)
+            area.setScrollbarsController(ScrollbarsController::create(area));
+    }
+    }
 }
+
 #endif
 
 

@@ -199,6 +199,7 @@
 #include "SWClientConnection.h"
 #include "ScriptController.h"
 #include "ScriptedAnimationController.h"
+#include "ScrollbarsControllerMock.h"
 #include "ScrollingCoordinator.h"
 #include "ScrollingMomentumCalculator.h"
 #include "SecurityOrigin.h"
@@ -356,6 +357,7 @@
 
 #if PLATFORM(MAC)
 #include "GraphicsChecksMac.h"
+#include "ScrollbarsControllerMac.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -3381,6 +3383,27 @@ ExceptionOr<String> Internals::verticalScrollbarState(Node* node) const
 
     auto* scrollableArea = areaOrException.releaseReturnValue();
     return scrollableArea->verticalScrollbarStateForTesting();
+}
+
+static String scrollbarsControllerTypeString(ScrollbarsController& controller)
+{
+#if PLATFORM(MAC)
+    if (is<ScrollbarsControllerMac>(controller))
+        return "ScrollbarsControllerMac"_s;
+#endif
+    if (is<ScrollbarsControllerMock>(controller))
+        return "ScrollbarsControllerMock"_s;
+    return "RemoteScrollbarsController"_s;
+}
+
+ExceptionOr<String> Internals::scrollbarsControllerTypeForNode(Node* node) const
+{
+    auto areaOrException = scrollableAreaForNode(node);
+    if (areaOrException.hasException())
+        return areaOrException.releaseException();
+
+    auto* scrollableArea = areaOrException.releaseReturnValue();
+    return scrollbarsControllerTypeString(scrollableArea->scrollbarsController());
 }
 
 ExceptionOr<String> Internals::scrollingStateTreeAsText() const

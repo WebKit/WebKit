@@ -5303,6 +5303,8 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
             if (auto* scrollableArea = layer.scrollableArea())
                 scrollingCoordinator->setScrollingNodeScrollableAreaGeometry(newNodeID, *scrollableArea);
         }
+        if (auto* scrollableArea = layer.scrollableArea())
+            page().chrome().client().ensureScrollbarsController(page(), *scrollableArea);
     }
 
     return newNodeID;
