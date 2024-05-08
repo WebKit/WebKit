@@ -110,12 +110,7 @@ TEST(IndexedDB, IndexedDBPersistencePrivate)
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBPersistence-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
 
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
     RetainPtr<NSString> string1 = (NSString *)[getNextMessage() body];
-
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
     RetainPtr<NSString> string2 = (NSString *)[getNextMessage() body];
 
     auto webViewPid1 = [webView _webProcessIdentifier];
@@ -127,9 +122,6 @@ TEST(IndexedDB, IndexedDBPersistencePrivate)
 
     request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBPersistence-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
     RetainPtr<NSString> string3 = (NSString *)[getNextMessage() body];
 
     auto webViewPid2 = [webView _webProcessIdentifier];
