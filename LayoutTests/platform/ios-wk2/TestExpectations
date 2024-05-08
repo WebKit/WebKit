@@ -2366,3 +2366,10 @@ editing/async-clipboard/clipboard-write-basic.html [ Failure ]
 editing/async-clipboard/sanitize-when-reading-markup.html [ Failure ]
 editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html [ Failure ]
 editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying.html [ Failure ]
+
+# rdar://127763127 (Mark expectations on the 7618-branch for test failures occurring on main with existing bugs
+http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Failure ]
+http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Failure ]
+http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Failure ]
+http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-ruby/line-spacing.html [ Failure ]
