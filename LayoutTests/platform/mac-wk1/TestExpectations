@@ -2768,4 +2768,7 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.ht
 #test uses test helper functions not implemented on WK1
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
 
-
+# rdar://127759603 (Mark expectations for bugs that are failing on branch, but fixed on main.
+fast/hidpi/filters-drop-shadow.html [ ImageOnlyFailure ] 
+media/track/track-in-band-layout.html [ Skip ]
+media/track/track-paint-on-captions.html [ Skip ]

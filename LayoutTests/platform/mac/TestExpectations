@@ -2589,3 +2589,7 @@ webkit.org/b/268947 [ Ventura+ ] imported/w3c/web-platform-tests/mathml/relation
 
 # Enable after rdar://120859525 is available on bots
 http/tests/media/fairplay/fps-mse-unmuxed-mpts.html [ Skip ]
+
+# rdar://127759603 (Mark expectations for bugs that are failing on branch, but fixed on main.
+[ Sonoma ] fast/url/idna2008.html [ Failure ]
+[ Sonoma ] fast/url/url-hostname-encoding.html [ Failure ]
