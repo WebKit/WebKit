@@ -3534,6 +3534,7 @@ void WebPageProxy::processNextQueuedMouseEvent()
 
 #if ENABLE(CONTEXT_MENUS)
     if (m_waitingForContextMenuToShow) {
+        WEBPAGEPROXY_RELEASE_LOG(MouseHandling, "processNextQueuedMouseEvent: Waiting for context menu to show.");
         mouseEventHandlingCompleted(event.type(), false);
         return;
     }
