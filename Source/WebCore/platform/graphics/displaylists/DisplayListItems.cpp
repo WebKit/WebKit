@@ -339,9 +339,9 @@ DrawDisplayListItems::DrawDisplayListItems(Vector<Item>&& items, const FloatPoin
 {
 }
 
-void DrawDisplayListItems::apply(GraphicsContext& context, const ResourceHeap& resourceHeap) const
+void DrawDisplayListItems::apply(GraphicsContext& context, const ResourceHeap& resourceHeap, ControlFactory& controlFactory) const
 {
-    context.drawDisplayListItems(m_items, resourceHeap, m_destination);
+    context.drawDisplayListItems(m_items, resourceHeap, controlFactory, m_destination);
 }
 
 NO_RETURN_DUE_TO_ASSERT void DrawDisplayListItems::apply(GraphicsContext&) const
@@ -838,8 +838,9 @@ DrawControlPart::DrawControlPart(ControlPart& part, const FloatRoundedRect& bord
 {
 }
 
-void DrawControlPart::apply(GraphicsContext& context) const
+void DrawControlPart::apply(GraphicsContext& context, ControlFactory& controlFactory) const
 {
+    m_part->setControlFactory(controlFactory);
     context.drawControlPart(m_part, m_borderRect, m_deviceScaleFactor, m_style);
 }
 

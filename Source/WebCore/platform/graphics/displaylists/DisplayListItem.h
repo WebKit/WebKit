@@ -35,6 +35,7 @@ class TextStream;
 
 namespace WebCore {
 
+class ControlFactory;
 class GraphicsContext;
 
 namespace DisplayList {
@@ -216,7 +217,7 @@ enum class AsTextFlag : uint8_t {
 
 bool isValid(const Item&);
 
-ApplyItemResult applyItem(GraphicsContext&, const ResourceHeap&, const Item&);
+ApplyItemResult applyItem(GraphicsContext&, const ResourceHeap&, ControlFactory&, const Item&);
 
 bool shouldDumpItem(const Item&, OptionSet<AsTextFlag>);
 

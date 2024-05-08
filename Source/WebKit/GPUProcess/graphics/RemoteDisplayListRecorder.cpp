@@ -62,6 +62,13 @@ RemoteResourceCache& RemoteDisplayListRecorder::resourceCache() const
     return m_renderingBackend->remoteResourceCache();
 }
 
+ControlFactory& RemoteDisplayListRecorder::controlFactory()
+{
+    if (!m_controlFactory)
+        m_controlFactory = ControlFactory::create();
+    return *m_controlFactory;
+}
+
 RefPtr<ImageBuffer> RemoteDisplayListRecorder::imageBuffer(RenderingResourceIdentifier identifier) const
 {
     return m_renderingBackend->imageBuffer(identifier);
@@ -326,7 +333,7 @@ void RemoteDisplayListRecorder::drawDecomposedGlyphs(RenderingResourceIdentifier
 
 void RemoteDisplayListRecorder::drawDisplayListItems(Vector<WebCore::DisplayList::Item>&& items, const FloatPoint& destination)
 {
-    handleItem(DisplayList::DrawDisplayListItems(WTFMove(items), destination), resourceCache().resourceHeap());
+    handleItem(DisplayList::DrawDisplayListItems(WTFMove(items), destination), resourceCache().resourceHeap(), controlFactory());
 }
 
 void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, ImagePaintingOptions options)
@@ -601,10 +608,7 @@ void RemoteDisplayListRecorder::clearRect(const FloatRect& rect)
 
 void RemoteDisplayListRecorder::drawControlPart(Ref<ControlPart> part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
-    if (!m_controlFactory)
-        m_controlFactory = ControlFactory::createControlFactory();
-    part->setControlFactory(m_controlFactory.get());
-    handleItem(DisplayList::DrawControlPart(WTFMove(part), borderRect, deviceScaleFactor, style));
+    handleItem(DisplayList::DrawControlPart(WTFMove(part), borderRect, deviceScaleFactor, style), controlFactory());
 }
 
 #if USE(CG)
