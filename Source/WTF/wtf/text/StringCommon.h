@@ -58,10 +58,12 @@ inline std::span<const char> span(const char* string)
     return { string, string ? strlen(string) : 0 };
 }
 
+#if !HAVE(MISSING_U8STRING)
 inline std::span<const char8_t> span(const std::u8string& string)
 {
     return { string.data(), string.length() };
 }
+#endif
 
 template<typename CharacterType> inline constexpr bool isLatin1(CharacterType character)
 {

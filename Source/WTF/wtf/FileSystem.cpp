@@ -52,7 +52,7 @@ namespace WTF::FileSystemImpl {
 
 static std::filesystem::path toStdFileSystemPath(StringView path)
 {
-#if HAVE(MISSING_STD_FILESYSTEM_PATH_CONSTRUCTOR)
+#if HAVE(MISSING_U8STRING)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return std::filesystem::u8path(path.utf8().data());
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -63,7 +63,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static String fromStdFileSystemPath(const std::filesystem::path& path)
 {
+#if HAVE(MISSING_U8STRING)
+    return String::fromUTF8(span8(path.u8string().c_str()));
+#else
     return String::fromUTF8(span(path.u8string()));
+#endif
 }
 
 #endif // HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)

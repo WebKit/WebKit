@@ -117,7 +117,7 @@
 #endif
 
 #if PLATFORM(PLAYSTATION)
-#define HAVE_MISSING_STD_FILESYSTEM_PATH_CONSTRUCTOR 1
+#define HAVE_MISSING_U8STRING 1
 #endif
 
 /* FIXME: Remove after CMake build enabled on Darwin */
