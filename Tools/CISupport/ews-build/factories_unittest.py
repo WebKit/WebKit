@@ -405,7 +405,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'clean-derived-sources',
             'compile-webkit'
         ],
-        'WPE-Skia-Build-EWS': [
+        'WPE-Cairo-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',

@@ -1570,7 +1570,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'benchmark-test'
         ],
-        'WPE-Linux-64-bit-Release-Skia-Build': [
+        'WPE-Linux-64-bit-Release-Cairo-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',

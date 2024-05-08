@@ -284,7 +284,7 @@ class WPEBuildFactory(BuildFactory):
     branches = [r'main', r'webkit.+']
 
 
-class WPESkiaBuildFactory(WPEBuildFactory):
+class WPECairoBuildFactory(WPEBuildFactory):
     skipUpload = True
 
 
