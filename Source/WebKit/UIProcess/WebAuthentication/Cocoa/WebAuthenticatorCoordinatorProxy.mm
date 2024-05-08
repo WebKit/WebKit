@@ -387,6 +387,8 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
                 request.get().largeBlob.dataToWrite = WebCore::toNSData(*largeBlob->write).get();
         }
 
+        request.get().userVerificationPreference = toASUserVerificationPreference(options.userVerification).get();
+
         AUTHENTICATOR_COORDINATOR_ASSERTION_REQUEST_ADDITIONS
 
         [requests addObject:request.leakRef()];
