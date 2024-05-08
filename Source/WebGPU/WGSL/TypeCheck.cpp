@@ -904,7 +904,7 @@ void TypeChecker::visit(AST::IfStatement& statement)
     auto* test = infer(statement.test(), Evaluation::Runtime);
 
     if (!unify(test, m_types.boolType()))
-        typeError(statement.test().span(), "expected 'bool', found "_s, *test);
+        typeError(InferBottom::No, statement.test().span(), "expected 'bool', found '"_s, *test, "'"_s);
 
     visit(statement.trueBody());
     if (statement.maybeFalseBody())
