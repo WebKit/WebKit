@@ -29,6 +29,9 @@
 
 namespace WebCore {
 
+GST_DEBUG_CATEGORY(webkit_webrtc_dtls_transport_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_dtls_transport_debug
+
 class GStreamerDtlsTransportBackendObserver final : public ThreadSafeRefCounted<GStreamerDtlsTransportBackendObserver> {
 public:
     static Ref<GStreamerDtlsTransportBackendObserver> create(RTCDtlsTransportBackendClient& client, GRefPtr<GstWebRTCDTLSTransport>&& backend) { return adoptRef(*new GStreamerDtlsTransportBackendObserver(client, WTFMove(backend))); }
@@ -63,6 +66,11 @@ void GStreamerDtlsTransportBackendObserver::stateChanged()
 
         GstWebRTCDTLSTransportState state;
         g_object_get(m_backend.get(), "state", &state, nullptr);
+
+#ifndef GST_DISABLE_GST_DEBUG
+        GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_DTLS_TRANSPORT_STATE, state));
+        GST_DEBUG_OBJECT(m_backend.get(), "DTLS transport state changed to %s", desc.get());
+#endif
 
         Vector<Ref<JSC::ArrayBuffer>> certificates;
 
@@ -105,6 +113,10 @@ void GStreamerDtlsTransportBackendObserver::stop()
 GStreamerDtlsTransportBackend::GStreamerDtlsTransportBackend(GRefPtr<GstWebRTCDTLSTransport>&& transport)
     : m_backend(WTFMove(transport))
 {
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_dtls_transport_debug, "webkitwebrtcdtls", 0, "WebKit WebRTC DTLS Transport");
+    });
     ASSERT(m_backend);
     ASSERT(isMainThread());
 }
@@ -130,6 +142,8 @@ void GStreamerDtlsTransportBackend::unregisterClient()
     if (m_observer)
         m_observer->stop();
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

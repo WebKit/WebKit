@@ -29,10 +29,18 @@
 
 namespace WebCore {
 
+GST_DEBUG_CATEGORY(webkit_webrtc_ice_transport_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_ice_transport_debug
+
 GStreamerIceTransportBackend::GStreamerIceTransportBackend(GRefPtr<GstWebRTCDTLSTransport>&& transport)
     : m_backend(WTFMove(transport))
 {
     ASSERT(m_backend);
+
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_ice_transport_debug, "webkitwebrtcice", 0, "WebKit WebRTC ICE Transport");
+    });
 
     iceTransportChanged();
     g_signal_connect_swapped(m_backend.get(), "notify::transport", G_CALLBACK(+[](GStreamerIceTransportBackend* backend) {
@@ -78,6 +86,11 @@ void GStreamerIceTransportBackend::registerClient(RTCIceTransportBackendClient& 
         if (!weakThis || !weakThis->m_client)
             return;
 
+#ifndef GST_DISABLE_GST_DEBUG
+        GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_ICE_CONNECTION_STATE, transportState));
+        GST_DEBUG_OBJECT(weakThis->m_backend.get(), "Initial ICE transport state: %s", desc.get());
+#endif
+
         // We start observing a bit late and might miss the checking state. Synthesize it as needed.
         if (transportState > GST_WEBRTC_ICE_CONNECTION_STATE_CHECKING && transportState != GST_WEBRTC_ICE_CONNECTION_STATE_CLOSED)
             weakThis->m_client->onStateChanged(RTCIceTransportState::Checking);
@@ -100,6 +113,12 @@ void GStreamerIceTransportBackend::stateChanged() const
 
     GstWebRTCICEConnectionState transportState;
     g_object_get(m_iceTransport.get(), "state", &transportState, nullptr);
+
+#ifndef GST_DISABLE_GST_DEBUG
+    GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_ICE_CONNECTION_STATE, transportState));
+    GST_DEBUG_OBJECT(m_backend.get(), "ICE transport state changed to %s", desc.get());
+#endif
+
     callOnMainThread([weakThis = WeakPtr { *this }, transportState] {
         if (!weakThis || !weakThis->m_client)
             return;
@@ -127,6 +146,8 @@ void GStreamerIceTransportBackend::selectedCandidatePairChanged()
     // https://github.com/WebKit/WebKit/commit/0692fae10c8e53deba214fd080a35f7c54bd6985
     notImplemented();
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 
