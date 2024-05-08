@@ -2148,7 +2148,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return AccessibilityRole::WebArea;
     if (m_renderer->isRenderTextControlSingleLine()) {
         if (RefPtr input = dynamicDowncast<HTMLInputElement>(node))
-            return input->isSearchField() ? AccessibilityRole::SearchField : AccessibilityRole::TextField;
+            return roleFromInputElement(*input);
     }
     if (m_renderer->isRenderTextControlMultiLine())
         return AccessibilityRole::TextArea;

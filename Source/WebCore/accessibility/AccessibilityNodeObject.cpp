@@ -309,6 +309,8 @@ bool AccessibilityNodeObject::matchesTextAreaRole() const
 
 AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(TreatStyleFormatGroupAsInline treatStyleFormatGroupAsInline) const
 {
+    AXTRACE("AccessibilityNodeObject::determineAccessibilityRoleFromNode"_s);
+
     RefPtr node = this->node();
     if (!node)
         return AccessibilityRole::Unknown;
@@ -336,32 +338,8 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     if (element->hasTagName(canvasTag))
         return AccessibilityRole::Canvas;
 
-    if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element)) {
-        if (input->isFileUpload())
-            return AccessibilityRole::Button;
-        if (input->isSwitch())
-            return AccessibilityRole::Switch;
-        if (input->isCheckbox())
-            return AccessibilityRole::Checkbox;
-        if (input->isRadioButton())
-            return AccessibilityRole::RadioButton;
-        if (input->isTextButton())
-            return buttonRoleType();
-        if (input->isDateField() || input->isDateTimeLocalField() || input->isMonthField() || input->isTimeField() || input->isWeekField())
-            return AccessibilityRole::DateTime;
-#if ENABLE(INPUT_TYPE_COLOR)
-        if (input->isColorControl())
-            return AccessibilityRole::ColorWell;
-#endif
-        if (input->isInputTypeHidden())
-            return AccessibilityRole::Ignored;
-        if (input->isRangeControl())
-            return AccessibilityRole::Slider;
-        if (input->isSearchField())
-            return AccessibilityRole::SearchField;
-
-        return AccessibilityRole::TextField;
-    }
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element))
+        return roleFromInputElement(*input);
 
     if (matchesTextAreaRole())
         return AccessibilityRole::TextArea;
@@ -518,6 +496,55 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Group;
 
     return AccessibilityRole::Unknown;
+}
+
+AccessibilityRole AccessibilityNodeObject::roleFromInputElement(const HTMLInputElement& input) const
+{
+    AXTRACE("AccessibilityNodeObject::roleFromInputElement"_s);
+    ASSERT(dynamicDowncast<HTMLInputElement>(node()) == &input);
+
+    if (input.isTextButton())
+        return buttonRoleType();
+    if (input.isSwitch())
+        return AccessibilityRole::Switch;
+    if (input.isCheckbox())
+        return AccessibilityRole::Checkbox;
+    if (input.isRadioButton())
+        return AccessibilityRole::RadioButton;
+
+    if (input.isTextField()) {
+        // Text fields may have a combobox ancestor, in which case we want to return role combobox.
+        // This was ARIA 1.1 practice, but it has been recommended against since. Keeping this heuristics here in order to support those sites that are still using this structure.
+        bool foundCombobox = false;
+        for (RefPtr ancestor = parentObject(); ancestor; ancestor = ancestor->parentObject()) {
+            if (ancestor->isComboBox()) {
+                foundCombobox = true;
+                break;
+            }
+            if (!ancestor->isGroup() && ancestor->roleValue() != AccessibilityRole::Generic)
+                break;
+        }
+        if (foundCombobox)
+            return AccessibilityRole::ComboBox;
+
+        return input.isSearchField() ? AccessibilityRole::SearchField : AccessibilityRole::TextField;
+    }
+
+    if (input.isDateField() || input.isDateTimeLocalField() || input.isMonthField() || input.isTimeField() || input.isWeekField())
+        return AccessibilityRole::DateTime;
+    if (input.isFileUpload())
+        return AccessibilityRole::Button;
+#if ENABLE(INPUT_TYPE_COLOR)
+    if (input.isColorControl())
+        return AccessibilityRole::ColorWell;
+#endif
+    if (input.isInputTypeHidden())
+        return AccessibilityRole::Ignored;
+    if (input.isRangeControl())
+        return AccessibilityRole::Slider;
+
+    // All other input type is treated as a text field.
+    return AccessibilityRole::TextField;
 }
 
 bool AccessibilityNodeObject::isDescendantOfElementType(const HashSet<QualifiedName>& tagNames) const
