@@ -1707,7 +1707,7 @@ bool Quirks::shouldDisableNavigatorStandaloneQuirk() const
 // FIXME: find the reference radars and/or bugs.webkit.org issues on why these were added in the first place.
 // FIXME: There is no check currently on needsQuirks(), this needs to be fixed so it makes it easier
 // to deactivate them for testing.
-bool Quirks::needsIpadMiniUserAgent(const URL& url)
+bool Quirks::needsIPadMiniUserAgent(const URL& url)
 {
     auto host = url.host();
 
@@ -1787,6 +1787,16 @@ bool Quirks::needsIpadMiniUserAgent(const URL& url)
     return false;
 }
 
+bool Quirks::needsIPhoneUserAgent(const URL& url)
+{
+#if PLATFORM(IOS_FAMILY)
+    if (url.host() == "shopee.sg"_s && url.path() == "/payment/account-linking/landing"_s)
+        return true;
+#else
+    UNUSED_PARAM(url);
+#endif
+    return false;
+}
 
 bool Quirks::shouldIgnorePlaysInlineRequirementQuirk() const
 {
