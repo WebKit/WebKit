@@ -2733,8 +2733,8 @@ void printPaintOrderTreeForLiveDocuments()
         if (!document->renderView())
             continue;
         if (document->frame() && document->frame()->isMainFrame())
-            fprintf(stderr, "----------------------main frame--------------------------\n");
-        fprintf(stderr, "%s", document->url().string().utf8().data());
+            WTFLogAlways("----------------------main frame--------------------------\n");
+        WTFLogAlways("%s", document->url().string().utf8().data());
         showPaintOrderTree(document->renderView());
     }
 }
@@ -2745,8 +2745,8 @@ void printRenderTreeForLiveDocuments()
         if (!document->renderView())
             continue;
         if (document->frame() && document->frame()->isMainFrame())
-            fprintf(stderr, "----------------------main frame--------------------------\n");
-        fprintf(stderr, "%s", document->url().string().utf8().data());
+            WTFLogAlways("----------------------main frame--------------------------\n");
+        WTFLogAlways("%s", document->url().string().utf8().data());
         showRenderTree(document->renderView());
     }
 }
@@ -2757,8 +2757,8 @@ void printLayerTreeForLiveDocuments()
         if (!document->renderView())
             continue;
         if (document->frame() && document->frame()->isMainFrame())
-            fprintf(stderr, "----------------------main frame--------------------------\n");
-        fprintf(stderr, "%s", document->url().string().utf8().data());
+            WTFLogAlways("----------------------main frame--------------------------\n");
+        WTFLogAlways("%s", document->url().string().utf8().data());
         showLayerTree(document->renderView());
     }
 }
