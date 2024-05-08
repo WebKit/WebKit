@@ -1,5 +1,4 @@
 Description
-
 NOTE: Due to caching behavior in the browser, it is possible that when revisiting this page, some resources may not have to be fetched from the network. As a result, the performance timeline will not contain entries for these resources. This test will fail if any entries are missing to ensure that all resources are fetched from the network and entries for these resources exist in the Performance Timeline. If revisiting this page, please either perform a full reload of the page or clear the cache between visits.
 
 

@@ -1,5 +1,4 @@
 Visibility hidden
-
 Spec
 Setting a column of cells to visibility:hidden.
 

@@ -1,6 +1,8 @@
 2d.imageData.object.round
 ImageData.data rounds numbers with round-to-zero
+
 Actual output:
+
 
 PASS ImageData.data rounds numbers with round-to-zero
 

@@ -1,5 +1,4 @@
 2d.imageData.get.unaffected
-
 getImageData() is not affected by context state
 
 

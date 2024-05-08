@@ -1,5 +1,4 @@
 SVG 1.1 dynamic update tests
-
 Stretched text
 Tests dynamic updates of the 'textLength' property of the SVGTextElement object
 

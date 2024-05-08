@@ -1,5 +1,4 @@
 2d.path.roundrect.closed
 
-
 PASS OffscreenCanvas test: 2d.path.roundrect.closed
 

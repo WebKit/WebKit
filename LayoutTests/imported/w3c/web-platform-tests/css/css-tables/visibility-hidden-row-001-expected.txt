@@ -1,5 +1,4 @@
 Visibility hidden
-
 Spec
 Setting a row to visibility:hidden doesn't change table height or width.
 

@@ -1,5 +1,4 @@
 Test that Accessory bar next/previous buttons work on inputs which is not assigned to any slot in shadow tree
-
 To manually test, do following steps.
 
 Focus the 1st of input, then Accessory bar will shown.

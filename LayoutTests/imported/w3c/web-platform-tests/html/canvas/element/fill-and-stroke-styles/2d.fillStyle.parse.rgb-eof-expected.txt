@@ -1,6 +1,9 @@
 2d.fillStyle.parse.rgb-eof
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Canvas test: 2d.fillStyle.parse.rgb-eof

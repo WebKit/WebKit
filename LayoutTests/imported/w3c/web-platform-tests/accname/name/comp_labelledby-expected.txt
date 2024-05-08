@@ -1,11 +1,9 @@
 Tests the #comp_labelledby portions of the AccName Name Computation algorithm.
 
 first heading
-
 text inside div group
 
 + first heading
-
 text inside div group
 
 verifyspacesFAIL IF INCLUDEDbetweenforeach

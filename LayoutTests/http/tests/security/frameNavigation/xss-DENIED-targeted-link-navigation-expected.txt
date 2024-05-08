@@ -8,9 +8,7 @@ CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with
 Frame: '<!--frame1-->'
 --------
 Frame-with-link-to-navigate
-
 localhost
-
 Test PASSED
 Click me
 

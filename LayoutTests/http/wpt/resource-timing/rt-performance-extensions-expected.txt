@@ -1,6 +1,5 @@
 Resource Timing: Performance Extensions
 
-
 PASS performance.clearResourceTimings clears the buffer
 PASS performance.clearResourceTimings called multiple times is okay
 PASS resourcetimingbufferfull event should not trigger for a small number of resources (browser default buffer size)

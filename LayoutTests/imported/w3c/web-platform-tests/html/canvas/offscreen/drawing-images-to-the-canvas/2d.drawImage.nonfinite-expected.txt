@@ -1,5 +1,4 @@
 2d.drawImage.nonfinite
-
 drawImage() with Infinity/NaN is ignored
 
 

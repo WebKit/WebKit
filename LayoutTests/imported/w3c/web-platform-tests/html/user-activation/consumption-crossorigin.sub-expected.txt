@@ -1,5 +1,4 @@
 User activation consumption across cross-origin frame boundary
-
 Tests that user activation consumption resets the transient states in all cross-origin frames.
 
 Click anywhere on the yellow area.

@@ -1,5 +1,4 @@
 2d.imageData.get.clamp
-
 getImageData() clamps colors to the range [0, 255]
 
 

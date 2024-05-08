@@ -1,5 +1,4 @@
 2d.drawImage.zerosource
-
 drawImage with zero-sized source rectangle draws nothing without exception
 
 

@@ -1,5 +1,4 @@
 Description
-
 This test validates the values of the window.navigation.redirectCount and the window.performance.timing.redirectStart/End times on a client side redirect.
 
 

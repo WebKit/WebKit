@@ -1,6 +1,9 @@
 2d.fillStyle.invalidtype
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Canvas test: 2d.fillStyle.invalidtype

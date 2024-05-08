@@ -1,6 +1,5 @@
 Basic requestIdleCallback Tests
 
-
 PASS window.requestIdleCallback is defined
 PASS window.cancelIdleCallback is defined
 PASS window.requestIdleCallback() returns a number

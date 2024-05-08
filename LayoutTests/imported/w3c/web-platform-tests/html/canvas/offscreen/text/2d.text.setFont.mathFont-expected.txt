@@ -1,5 +1,4 @@
 2d.text.setFont.mathFont
-
 crbug.com/1212190, make sure offscreencanvas doesn't crash with Math Font
 
 

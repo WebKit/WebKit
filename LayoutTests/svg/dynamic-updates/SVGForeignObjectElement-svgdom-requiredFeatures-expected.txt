@@ -1,5 +1,4 @@
 SVG 1.1 dynamic update tests
-
 Check that SVGForeignObjectElement is initially displayed
 PASS document.defaultView.getComputedStyle(foreignObjectElement, null).display is "block"
 Check that setting requiredFeatures to something invalid makes it not render

@@ -1,6 +1,5 @@
 LookupNamespaceURI and IsDefaultNamespace
 
-
 PASS DocumentFragment should have null namespace, prefix null
 PASS DocumentFragment should have null namespace, prefix ""
 PASS DocumentFragment should have null namespace, prefix "foo"

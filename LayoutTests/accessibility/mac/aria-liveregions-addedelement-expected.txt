@@ -1,5 +1,4 @@
 text
-
 hellonew text element
 This tests that adding an element to a live region will trigger the right notification.
 

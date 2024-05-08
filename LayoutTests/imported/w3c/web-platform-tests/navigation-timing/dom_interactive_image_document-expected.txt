@@ -1,5 +1,4 @@
 Description
-
 This tests that a image document has positive-value domInteractive.
 
 

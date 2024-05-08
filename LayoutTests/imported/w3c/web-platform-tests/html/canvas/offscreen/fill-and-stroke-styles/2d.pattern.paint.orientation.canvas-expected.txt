@@ -1,5 +1,4 @@
 2d.pattern.paint.orientation.canvas
-
 Canvas patterns do not get flipped when painted
 
 

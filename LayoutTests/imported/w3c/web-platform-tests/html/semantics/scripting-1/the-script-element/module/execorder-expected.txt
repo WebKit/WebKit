@@ -1,6 +1,5 @@
 html-script-module-execOrder
 
-
 PASS Unordered module script execution (parsed, unordered #1)
 PASS Unordered module script execution (parsed, unordered #2)
 PASS Unordered module script execution (dynamic, unordered #1)

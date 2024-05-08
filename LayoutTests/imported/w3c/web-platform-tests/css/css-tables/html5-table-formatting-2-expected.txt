@@ -1,20 +1,14 @@
 HTML5 Table Formatting algorithm (row/column grid computation)
-
 Verifies how browsers deal with explicit tracks from which no cell does originate
 
 This should be a 100px by 100px blue square:
+
 The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
 
 The consecutive tracks are not merged together because they are all defined explicitely by a table-column or a table-row
 
 This should be a 175px by 175px blue square:
-The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
 
-The consecutive tracks are not merged together because they are all defined explicitely by a table-column or a table-row
-
-Three 25px border-spacing causes the addition of 75px
-
-This should be a 175px by 175px blue square:
 The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
 
 The consecutive tracks are not merged together because they are all defined explicitely by a table-column or a table-row
@@ -22,6 +16,7 @@ The consecutive tracks are not merged together because they are all defined expl
 Three 25px border-spacing causes the addition of 75px
 
 This should be a 175px by 175px blue square:
+
 The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
 
 The consecutive tracks are not merged together because they are all defined explicitely by a table-column or a table-row
@@ -29,6 +24,7 @@ The consecutive tracks are not merged together because they are all defined expl
 Three 25px border-spacing causes the addition of 75px
 
 This should be a 175px by 175px blue square:
+
 The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
 
 The consecutive tracks are not merged together because they are all defined explicitely by a table-column or a table-row
@@ -36,6 +32,15 @@ The consecutive tracks are not merged together because they are all defined expl
 Three 25px border-spacing causes the addition of 75px
 
 This should be a 175px by 175px blue square:
+
+The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+The consecutive tracks are not merged together because they are all defined explicitely by a table-column or a table-row
+
+Three 25px border-spacing causes the addition of 75px
+
+This should be a 175px by 175px blue square:
+
 The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
 
 The consecutive tracks are not merged together because they are all defined explicitely by a table-column or a table-row

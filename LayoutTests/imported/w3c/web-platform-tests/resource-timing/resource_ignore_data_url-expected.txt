@@ -1,5 +1,4 @@
 Description
-
 This test validates that resources with data: URIs aren't present in the Resource Timing buffer.
 
 

@@ -1,5 +1,4 @@
 2d.pattern.transform.identity
 
-
 PASS OffscreenCanvas test: 2d.pattern.transform.identity
 

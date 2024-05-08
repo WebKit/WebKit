@@ -1,5 +1,4 @@
 2d.path.fill.winding.subtract.1
 
-
 PASS OffscreenCanvas test: 2d.path.fill.winding.subtract.1
 

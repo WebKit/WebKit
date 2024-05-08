@@ -1,5 +1,4 @@
 Description
-
 This test validates all exception scenarios of method window.performance.measure in User Timing API
 
 

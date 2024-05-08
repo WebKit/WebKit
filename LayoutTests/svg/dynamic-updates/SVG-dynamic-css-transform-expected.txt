@@ -1,7 +1,6 @@
 
 
 SVG 1.1 dynamic update tests
-
 Tests dynamic updates of the '-webkit-transform' on SVG element
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

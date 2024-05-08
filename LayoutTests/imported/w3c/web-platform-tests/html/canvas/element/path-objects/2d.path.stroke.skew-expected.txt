@@ -1,7 +1,11 @@
 2d.path.stroke.skew
 Strokes lines are skewed by the current transformation matrix
+
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Strokes lines are skewed by the current transformation matrix

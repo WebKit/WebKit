@@ -2,6 +2,5 @@ CONSOLE MESSAGE: Blocked autofocusing on a form control in a cross-origin subfra
 Autofocus shouldn't work in cross-origin iframe.
 
 
-
 PASS Autofocus shouldn't work in cross-origin iframe
 

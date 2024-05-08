@@ -4,7 +4,6 @@ CONSOLE MESSAGE: Not allowed to request resource
 CONSOLE MESSAGE: EventSource cannot load http://invalid/ due to access control checks.
 HTML IDL tests
 
-
 PASS idl_test setup
 PASS idl_test validation
 PASS Partial interface Document: original interface defined

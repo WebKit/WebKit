@@ -1,9 +1,6 @@
 Pointer Events touch-action attribute support
-
 Test Description: Test will automatically check parsing behaviour of various touch-action combinations.
-
 touch-action: basic verification
-
 
 PASS default
 PASS stylesheet-none

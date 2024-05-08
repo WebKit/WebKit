@@ -10,7 +10,6 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 Alternate stylesheets
-
 This document has 3 stylesheets, with 1 alternate stylesheet which now has the added title attribute. It should:
 
 Have a green border at the top of the page

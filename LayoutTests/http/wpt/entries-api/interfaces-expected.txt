@@ -1,6 +1,5 @@
 Entries API IDL tests
 
-
 PASS Partial interface File: original interface defined
 PASS Partial interface File: member names are unique
 PASS Partial interface HTMLInputElement: original interface defined

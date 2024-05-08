@@ -1,5 +1,4 @@
 2d.path.transformation.basic
 
-
 PASS OffscreenCanvas test: 2d.path.transformation.basic
 

@@ -1,13 +1,9 @@
 Both
 
-
 Just horizontal
 
-
 Just vertical
-
 None visible
-
 
 (scrolling tree
   (frame scrolling node

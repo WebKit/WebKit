@@ -1,6 +1,5 @@
 Text input element
 
-
 PASS Unset minlength is -1
 PASS Negative minlength is always -1
 PASS Non-numeric minlength is -1

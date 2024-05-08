@@ -1,6 +1,5 @@
 Resource Timing: CORS requests
 
-
 PASS Same Origin request must have timing data
 PASS Cross Origin resource without Timing-Allow-Origin must have filtered timing data
 PASS Cross Origin resource with Timing-Allow-Origin null value must have filtered timing data

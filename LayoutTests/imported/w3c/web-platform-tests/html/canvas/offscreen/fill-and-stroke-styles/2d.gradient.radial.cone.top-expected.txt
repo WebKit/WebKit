@@ -1,5 +1,4 @@
 2d.gradient.radial.cone.top
 
-
 PASS OffscreenCanvas test: 2d.gradient.radial.cone.top
 

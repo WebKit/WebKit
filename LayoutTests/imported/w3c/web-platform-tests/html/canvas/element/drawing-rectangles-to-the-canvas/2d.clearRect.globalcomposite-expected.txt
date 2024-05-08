@@ -1,7 +1,11 @@
 2d.clearRect.globalcomposite
 clearRect is not affected by globalCompositeOperation
+
 Actual output:
+
 Expected output:
+
+
 
 
 PASS clearRect is not affected by globalCompositeOperation

@@ -1,6 +1,5 @@
 html5lib Parser Test
 
-
 PASS html5lib_entities02.html ea66863900b0b42deee5a77c58a432c2215c32ac
 PASS html5lib_entities02.html bc2a229b7c801ad045da76f411faf1d4c89886d0
 PASS html5lib_entities02.html e30755b30108f65919767f57a2200097b638f2b4

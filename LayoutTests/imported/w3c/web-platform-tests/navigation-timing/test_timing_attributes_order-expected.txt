@@ -1,6 +1,5 @@
 frame "<!--frame1-->" - has 1 onunload handler(s)
 Description
-
 This test validates the ordering of the window.performance.timing attributes.
 
 This page should be loaded with a yellow background frame below which contains an unload event handler.
@@ -10,7 +9,6 @@ After the page loads, the frame is navigated to a new blank page with a green ba
 This test passes if all of the checks to the frame.window.performance.timing attributes are correct throughout the navigation scenario and the frame below ends with a green background. Otherwise, this test fails.
 
 Setup
-
 
 PASS window.performance is defined
 PASS window.performance.timing is defined

@@ -1,7 +1,11 @@
 2d.line.join.miter
 lineJoin 'miter' is rendered correctly
+
 Actual output:
+
 Expected output:
+
+
 
 
 PASS lineJoin 'miter' is rendered correctly

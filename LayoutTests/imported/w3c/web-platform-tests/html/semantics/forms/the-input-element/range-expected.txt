@@ -1,6 +1,5 @@
 Input Range
 
-
 PASS range type support on input element
 PASS min attribute support on input element
 PASS max attribute support on input element

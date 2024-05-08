@@ -1,5 +1,4 @@
 2d.imageData.object.properties
-
 ImageData objects have the right properties
 
 

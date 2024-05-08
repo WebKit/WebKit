@@ -1,5 +1,4 @@
 Rotate via JS
 
-
 PASS JS test: Rotate via javascript must show the correct computed rotation
 

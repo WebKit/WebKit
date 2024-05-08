@@ -1,5 +1,4 @@
 Description
-
 This test validates that the window.performance object is read/write.
 
 

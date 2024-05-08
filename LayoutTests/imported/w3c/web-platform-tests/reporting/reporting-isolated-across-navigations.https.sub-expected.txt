@@ -4,6 +4,5 @@ CONSOLE MESSAGE: Refused to load https://localhost:9443/reporting/resources/miss
 Bug test main frame
 
 
-
 PASS Reports should be sent to the correct endpoints
 

@@ -67,7 +67,6 @@ grid-template-columns: minmax(auto, 25px); item border width: 10px;
 grid-template-columns: minmax(auto, 0px); item width + margin + border + padding: 10px;
 grid-template-columns: minmax(auto, 25px); item width + margin + border + padding: 10px;
 grid content writing-mode: vertical-lr;
-
 grid-template-columns: auto;
 XXXXXXXXXX
 grid-template-columns: 0px;
@@ -91,7 +90,6 @@ grid-template-columns: minmax(auto, 25px); item border height: 10px;
 grid-template-columns: minmax(auto, 0px); item height + margin + border + padding: 10px;
 grid-template-columns: minmax(auto, 25px); item height + margin + border + padding: 10px;
 grid content writing-mode: vertical-rl;
-
 grid-template-columns: auto;
 XXXXXXXXXX
 grid-template-columns: 0px;

@@ -1,5 +1,4 @@
 2d.canvas.readonly
-
 canvas is readonly
 
 

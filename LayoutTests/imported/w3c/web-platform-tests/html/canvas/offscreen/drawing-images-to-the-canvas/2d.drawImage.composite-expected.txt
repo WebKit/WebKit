@@ -1,5 +1,4 @@
 2d.drawImage.composite
 
-
 PASS OffscreenCanvas test: 2d.drawImage.composite
 

@@ -1,5 +1,4 @@
 2d.strokeRect.path
-
 strokeRect does not affect the current path
 
 

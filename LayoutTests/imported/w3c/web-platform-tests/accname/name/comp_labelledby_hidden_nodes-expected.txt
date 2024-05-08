@@ -1,19 +1,14 @@
 Tests hidden node name computation as part of the #comp_labelledby portion of the AccName Name Computation algorithm.
 
 Testing with display:none
-
 x  x  x foo  x  x foo  x
 Testing with visibility:hidden
-
 x  x  x foo  x  x foo    x barbaz
 Testing with visibility:collapse
-
 x  x  x foo bar baz  x  x foo    x barbaz
 Testing with aria-hidden
-
 x foo bar  x foo bar baz  x foo bar baz  x foo bar baz
 Testing with hidden attribute
-
 x  x  x foo  x  x foo
 
 PASS button with aria-labelledby using display:none hidden span (with nested span)

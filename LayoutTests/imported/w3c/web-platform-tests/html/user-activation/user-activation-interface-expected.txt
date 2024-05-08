@@ -1,5 +1,4 @@
 Basic test for navigator.userActivation interface
-
 Tests that navigator.userActivation shows user activation states.
 
 Click anywhere in the document.

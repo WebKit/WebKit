@@ -1,7 +1,6 @@
  Test stylesheet load scheduling with preload scanner. Resource loads for screen stylesheets should be scheduled first, others should be scheduled last.
 Resource requests:
 
-
 script.js
 no-media.css
 media-empty.css

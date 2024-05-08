@@ -1,5 +1,4 @@
 <TABLE> baseline tests
-
 Empty table's baseline is bottom of table's border box.
 
 Xp

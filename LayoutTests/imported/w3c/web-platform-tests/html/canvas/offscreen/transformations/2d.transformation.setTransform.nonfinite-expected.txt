@@ -1,5 +1,4 @@
 2d.transformation.setTransform.nonfinite
-
 setTransform() with Infinity/NaN is ignored
 
 

@@ -1,5 +1,4 @@
 Visibility collapse
-
 Spec
 Setting row group to visibility:collapse changes table height but not width.
 

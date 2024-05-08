@@ -1,5 +1,4 @@
 2d.fillStyle.get.semitransparent
 
-
 PASS OffscreenCanvas test: 2d.fillStyle.get.semitransparent
 

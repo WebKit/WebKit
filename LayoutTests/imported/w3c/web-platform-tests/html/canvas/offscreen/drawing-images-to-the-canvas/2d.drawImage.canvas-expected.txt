@@ -1,5 +1,4 @@
 2d.drawImage.canvas
 
-
 PASS OffscreenCanvas test: 2d.drawImage.canvas
 

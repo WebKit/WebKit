@@ -1,4 +1,3 @@
 Resource requests:
 
-
 border2.jpg

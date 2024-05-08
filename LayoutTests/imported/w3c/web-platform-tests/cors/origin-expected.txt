@@ -1,6 +1,5 @@
 Access-Control-Allow-Origin handling
 
-
 Harness Error (FAIL), message = 1 duplicate test name: "Disallow origin: localhost:8800"
 
 PASS Allow origin: *

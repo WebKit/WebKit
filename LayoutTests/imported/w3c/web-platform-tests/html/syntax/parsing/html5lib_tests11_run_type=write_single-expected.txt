@@ -3,7 +3,6 @@ CONSOLE MESSAGE: Warning: Problem parsing viewBox=""
 CONSOLE MESSAGE: Warning: Problem parsing viewBox=""
 html5lib Parser Test
 
-
 PASS html5lib_tests11.html ba7a66dfcf59885c08e8638d15b01df3878531e7
 PASS html5lib_tests11.html e69c7c08a54ca868ab33b2825d998fa6c3cac90e
 PASS html5lib_tests11.html 0e5897aafe87e460f84576c2d1d983504d12a7db

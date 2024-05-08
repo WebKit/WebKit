@@ -4,6 +4,5 @@ CONSOLE MESSAGE: Refused to load https://web-platform.test:9443/reporting/resour
 Bug test main frame
 
 
-
 PASS Reports should be sent to the correct endpoints
 

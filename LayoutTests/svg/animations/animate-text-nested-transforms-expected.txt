@@ -1,5 +1,4 @@
 SVG 1.1 dynamic animation tests
-
 This is some text.
 test to determine whether auto-rotate animateMotion path animations pre-muliply or post-multiply animation transform matrix
 

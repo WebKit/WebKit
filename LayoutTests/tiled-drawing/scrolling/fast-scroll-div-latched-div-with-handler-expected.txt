@@ -1,6 +1,5 @@
 Put mouse here and flick downwards
 Scrollable Region
-
 Scrolled content
 Tests that a scrollable div doesn't pass wheel events to main frame when scrolling at bottom
 

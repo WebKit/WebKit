@@ -1,6 +1,5 @@
 html5lib Parser Test
 
-
 PASS html5lib_innerHTML_svg.html 9de06fc8491759163a4b2a4e17015c94cab31f13
 PASS html5lib_innerHTML_svg.html f4ffd3073d887daeb6b5d293547f3596a6bbe2b3
 PASS html5lib_innerHTML_svg.html 3abfcccd524311a4afcc0057334c8364616fd830

@@ -1,5 +1,4 @@
 2d.line.join.round
-
 lineJoin 'round' is rendered correctly
 
 

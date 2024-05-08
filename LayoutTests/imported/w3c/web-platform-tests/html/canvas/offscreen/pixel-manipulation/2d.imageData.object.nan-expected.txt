@@ -1,5 +1,4 @@
 2d.imageData.object.nan
-
 ImageData.data converts NaN to 0
 
 

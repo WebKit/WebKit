@@ -1,6 +1,8 @@
 2d.getcontext.exists
 The 2D context is implemented
+
 Actual output:
+
 
 PASS The 2D context is implemented
 

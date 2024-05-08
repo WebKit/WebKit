@@ -2,7 +2,6 @@
 H1 Test
 
 
-
 This test ensures that textfields return their content in accessibilityValue, and label in axLabel. Likewise, other elements and text still return their info through axLabel.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,7 +1,6 @@
 Copy me
 
 *** Handling copy ***
-
 Types => data
 text/html => "HTML data written using setData"
 text/plain => "plain text data written using items.add"
@@ -21,7 +20,6 @@ Item list
 File list
 
 *** Handling paste ***
-
 Types => data
 text/html => "HTML data written using setData"
 text/plain => "plain text data written using items.add"

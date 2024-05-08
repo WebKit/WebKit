@@ -1,5 +1,4 @@
 text
-
 This tests that a div element with nothing in, but one that has an ARIA role, will not be ignored by accessibility.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

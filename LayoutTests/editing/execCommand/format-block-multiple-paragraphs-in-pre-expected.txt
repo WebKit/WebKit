@@ -28,7 +28,7 @@ Formatting all but the last paragraph by h3 yields:
 |     "\n"
 |     "world"
 |     "\n"
-|   "<#selection-focus>webkit\n"
+|   "w<#selection-focus>ebkit\n"
 | "\n"
 
 Undo yields:

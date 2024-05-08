@@ -1,17 +1,13 @@
 SVG-AAM: Label Tests
-
 Tests SVG-specific host language label rules (title element and xlink:title attr) in SVG-AAM Â§8.1 Name and Description, but note the open issues in SVG-AAM #31.
 
 SVG * > title
 
 
-
 SVG a[xlink:title][href]
 
 
-
 SVG a[xlink:title][xlink:href]:not([href])
-
 
 
 

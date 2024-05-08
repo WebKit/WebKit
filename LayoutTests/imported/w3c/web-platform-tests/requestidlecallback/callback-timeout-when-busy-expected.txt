@@ -1,6 +1,5 @@
 Test of requestIdleCallback timeout behavior
 
-
 PASS requestIdleCallback not scheduled when event loop is busy.
 PASS requestIdleCallback scheduled with timeout when event loop is busy.
 

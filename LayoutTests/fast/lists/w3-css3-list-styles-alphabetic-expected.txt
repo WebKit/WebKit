@@ -1,7 +1,5 @@
 CSS3 Alphabetic list-style-types
-
 afar
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -21,7 +19,6 @@ PASS list marker is ገ.
 PASS list marker is ጸ.
 PASS list marker is ፈ.
 ethiopic-halehame-aa-et
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -41,7 +38,6 @@ PASS list marker is ገ.
 PASS list marker is ጸ.
 PASS list marker is ፈ.
 ethiopic-halehame-aa-er
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -61,7 +57,6 @@ PASS list marker is ገ.
 PASS list marker is ጸ.
 PASS list marker is ፈ.
 amharic
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -96,7 +91,6 @@ PASS list marker is ፀ.
 PASS list marker is ፈ.
 PASS list marker is ፐ.
 ethiopic-halehame-am-et
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -131,7 +125,6 @@ PASS list marker is ፀ.
 PASS list marker is ፈ.
 PASS list marker is ፐ.
 amharic-abegede
-
 PASS list marker is አ.
 PASS list marker is በ.
 PASS list marker is ገ.
@@ -166,7 +159,6 @@ PASS list marker is ፀ.
 PASS list marker is ጰ.
 PASS list marker is ፐ.
 ethiopic-abegede-am-et
-
 PASS list marker is አ.
 PASS list marker is በ.
 PASS list marker is ገ.
@@ -201,7 +193,6 @@ PASS list marker is ፀ.
 PASS list marker is ጰ.
 PASS list marker is ፐ.
 cjk-earthly-branch
-
 PASS list marker is 子.
 PASS list marker is 丑.
 PASS list marker is 寅.
@@ -215,7 +206,6 @@ PASS list marker is 酉.
 PASS list marker is 戌.
 PASS list marker is 亥.
 cjk-heavenly-stem
-
 PASS list marker is 甲.
 PASS list marker is 乙.
 PASS list marker is 丙.
@@ -227,7 +217,6 @@ PASS list marker is 辛.
 PASS list marker is 壬.
 PASS list marker is 癸.
 ethiopic
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -255,7 +244,6 @@ PASS list marker is ፀ.
 PASS list marker is ፈ.
 PASS list marker is ፐ.
 ethiopic-halehame-gez
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -283,7 +271,6 @@ PASS list marker is ፀ.
 PASS list marker is ፈ.
 PASS list marker is ፐ.
 ethiopic-abegede
-
 PASS list marker is አ.
 PASS list marker is በ.
 PASS list marker is ገ.
@@ -311,7 +298,6 @@ PASS list marker is ፀ.
 PASS list marker is ጰ.
 PASS list marker is ፐ.
 ethiopic-abegede-gez
-
 PASS list marker is አ.
 PASS list marker is በ.
 PASS list marker is ገ.
@@ -339,7 +325,6 @@ PASS list marker is ፀ.
 PASS list marker is ጰ.
 PASS list marker is ፐ.
 hangul-consonant
-
 PASS list marker is ㄱ.
 PASS list marker is ㄴ.
 PASS list marker is ㄷ.
@@ -355,7 +340,6 @@ PASS list marker is ㅌ.
 PASS list marker is ㅍ.
 PASS list marker is ㅎ.
 hangul
-
 PASS list marker is 가.
 PASS list marker is 나.
 PASS list marker is 다.
@@ -371,7 +355,6 @@ PASS list marker is 타.
 PASS list marker is 파.
 PASS list marker is 하.
 hiragana-iroha
-
 PASS list marker is い.
 PASS list marker is ろ.
 PASS list marker is は.
@@ -420,7 +403,6 @@ PASS list marker is も.
 PASS list marker is せ.
 PASS list marker is す.
 hiragana
-
 PASS list marker is あ.
 PASS list marker is い.
 PASS list marker is う.
@@ -470,7 +452,6 @@ PASS list marker is ゑ.
 PASS list marker is を.
 PASS list marker is ん.
 katakana-iroha
-
 PASS list marker is イ.
 PASS list marker is ロ.
 PASS list marker is ハ.
@@ -519,7 +500,6 @@ PASS list marker is モ.
 PASS list marker is セ.
 PASS list marker is ス.
 katakana
-
 PASS list marker is ア.
 PASS list marker is イ.
 PASS list marker is ウ.
@@ -569,7 +549,6 @@ PASS list marker is ヱ.
 PASS list marker is ヲ.
 PASS list marker is ン.
 lower-alpha
-
 PASS list marker is a.
 PASS list marker is b.
 PASS list marker is c.
@@ -597,7 +576,6 @@ PASS list marker is x.
 PASS list marker is y.
 PASS list marker is z.
 lower-latin
-
 PASS list marker is a.
 PASS list marker is b.
 PASS list marker is c.
@@ -625,7 +603,6 @@ PASS list marker is x.
 PASS list marker is y.
 PASS list marker is z.
 lower-greek
-
 PASS list marker is α.
 PASS list marker is β.
 PASS list marker is γ.
@@ -651,7 +628,6 @@ PASS list marker is χ.
 PASS list marker is ψ.
 PASS list marker is ω.
 lower-norwegian
-
 PASS list marker is a.
 PASS list marker is b.
 PASS list marker is c.
@@ -682,7 +658,6 @@ PASS list marker is æ.
 PASS list marker is ø.
 PASS list marker is å.
 oromo
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is መ.
@@ -709,7 +684,6 @@ PASS list marker is ጸ.
 PASS list marker is ጰ.
 PASS list marker is ፈ.
 ethiopic-halehame-om-et
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is መ.
@@ -736,7 +710,6 @@ PASS list marker is ጸ.
 PASS list marker is ጰ.
 PASS list marker is ፈ.
 sidama
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -764,7 +737,6 @@ PASS list marker is ጸ.
 PASS list marker is ጰ.
 PASS list marker is ፈ.
 ethiopic-halehame-sid-et
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -792,7 +764,6 @@ PASS list marker is ጸ.
 PASS list marker is ጰ.
 PASS list marker is ፈ.
 somali
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -816,7 +787,6 @@ PASS list marker is ገ.
 PASS list marker is ጸ.
 PASS list marker is ፈ.
 ethiopic-halehame-so-et
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -840,7 +810,6 @@ PASS list marker is ገ.
 PASS list marker is ጸ.
 PASS list marker is ፈ.
 tigre
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -869,7 +838,6 @@ PASS list marker is ጰ.
 PASS list marker is ፈ.
 PASS list marker is ፐ.
 ethiopic-halehame-tig
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -898,7 +866,6 @@ PASS list marker is ጰ.
 PASS list marker is ፈ.
 PASS list marker is ፐ.
 tigrinya-er
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -931,7 +898,6 @@ PASS list marker is ጸ.
 PASS list marker is ፈ.
 PASS list marker is ፐ.
 ethiopic-halehame-ti-er
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -964,7 +930,6 @@ PASS list marker is ጸ.
 PASS list marker is ፈ.
 PASS list marker is ፐ.
 tigrinya-er-abegede
-
 PASS list marker is አ.
 PASS list marker is በ.
 PASS list marker is ገ.
@@ -997,7 +962,6 @@ PASS list marker is ቸ.
 PASS list marker is ጰ.
 PASS list marker is ፐ.
 ethiopic-abegede-ti-er
-
 PASS list marker is አ.
 PASS list marker is በ.
 PASS list marker is ገ.
@@ -1030,7 +994,6 @@ PASS list marker is ቸ.
 PASS list marker is ጰ.
 PASS list marker is ፐ.
 tigrinya-et
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -1066,7 +1029,6 @@ PASS list marker is ፀ.
 PASS list marker is ፈ.
 PASS list marker is ፐ.
 ethiopic-halehame-ti-et
-
 PASS list marker is ሀ.
 PASS list marker is ለ.
 PASS list marker is ሐ.
@@ -1102,7 +1064,6 @@ PASS list marker is ፀ.
 PASS list marker is ፈ.
 PASS list marker is ፐ.
 tigrinya-et-abegede
-
 PASS list marker is አ.
 PASS list marker is በ.
 PASS list marker is ገ.
@@ -1138,7 +1099,6 @@ PASS list marker is ፀ.
 PASS list marker is ጰ.
 PASS list marker is ፐ.
 ethiopic-abegede-ti-et
-
 PASS list marker is አ.
 PASS list marker is በ.
 PASS list marker is ገ.
@@ -1174,7 +1134,6 @@ PASS list marker is ፀ.
 PASS list marker is ጰ.
 PASS list marker is ፐ.
 upper-alpha
-
 PASS list marker is A.
 PASS list marker is B.
 PASS list marker is C.
@@ -1202,7 +1161,6 @@ PASS list marker is X.
 PASS list marker is Y.
 PASS list marker is Z.
 upper-latin
-
 PASS list marker is A.
 PASS list marker is B.
 PASS list marker is C.
@@ -1230,7 +1188,6 @@ PASS list marker is X.
 PASS list marker is Y.
 PASS list marker is Z.
 upper-greek
-
 PASS list marker is Α.
 PASS list marker is Β.
 PASS list marker is Γ.
@@ -1256,7 +1213,6 @@ PASS list marker is Χ.
 PASS list marker is Ψ.
 PASS list marker is Ω.
 upper-norwegian
-
 PASS list marker is A.
 PASS list marker is B.
 PASS list marker is C.

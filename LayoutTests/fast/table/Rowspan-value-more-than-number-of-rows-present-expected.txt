@@ -1,7 +1,5 @@
 Test for bugzilla bug : 18092. 'Baseline of last row cells in the table' is not aligned with 'baseline of rowspan cell' when 'rowspan value' is greater than 'number of remaining rows after rowspan cell + 1'.
-
 'Baseline of last cell aligned with rowspan cell' should aligned with 'baseline of rowspan cell'.
-
 Test 1 :
 PASS (document.getElementById('T1-1').offsetTop + document.getElementById('T1-1').offsetHeight) is (document.getElementById('T1-2').offsetTop + document.getElementById('T1-2').offsetHeight)
 

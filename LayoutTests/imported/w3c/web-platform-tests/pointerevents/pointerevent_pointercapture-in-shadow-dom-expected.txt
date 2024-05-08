@@ -1,5 +1,4 @@
 PointerCapture by Shadow DOM element
-
 The light gray box below is part of Shadow DOM.
 Click left mouse button inside the box and keep mouse button depressed
 Move the mouse

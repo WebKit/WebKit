@@ -1,7 +1,11 @@
 2d.transformation.setTransform.nonfinite
 setTransform() with Infinity/NaN is ignored
+
 Actual output:
+
 Expected output:
+
+
 
 
 PASS setTransform() with Infinity/NaN is ignored

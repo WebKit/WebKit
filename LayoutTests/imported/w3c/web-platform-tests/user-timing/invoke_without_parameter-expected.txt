@@ -1,5 +1,4 @@
 Description
-
 This test validates exception scenarios of invoking mark() and measure() without parameter.
 
 

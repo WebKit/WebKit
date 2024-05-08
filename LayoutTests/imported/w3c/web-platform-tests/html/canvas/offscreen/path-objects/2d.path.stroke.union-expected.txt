@@ -1,5 +1,4 @@
 2d.path.stroke.union
-
 Strokes in opposite directions are unioned, not subtracted
 
 

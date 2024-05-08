@@ -8,11 +8,9 @@ whose ID is:"".
 Cell A1	Cell B1
 Cell A2	Cell B2
 Section 1
-
 text.
 
 Section 2
-
 text.
 
 Here is a positioned element.

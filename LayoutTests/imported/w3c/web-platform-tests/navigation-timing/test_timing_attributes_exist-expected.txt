@@ -1,5 +1,4 @@
 Description
-
 This test validates that all of the window.performance.timing attributes exist (but does not validate that their values are correct).
 
 

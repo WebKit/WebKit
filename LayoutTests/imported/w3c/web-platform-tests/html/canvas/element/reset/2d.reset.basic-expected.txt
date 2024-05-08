@@ -1,6 +1,8 @@
 2d.reset.basic
 reset clears to transparent black
+
 Actual output:
+
 
 PASS reset clears to transparent black
 

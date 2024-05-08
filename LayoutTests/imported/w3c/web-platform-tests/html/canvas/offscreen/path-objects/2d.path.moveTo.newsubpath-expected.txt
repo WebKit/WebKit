@@ -1,5 +1,4 @@
 2d.path.moveTo.newsubpath
 
-
 PASS OffscreenCanvas test: 2d.path.moveTo.newsubpath
 

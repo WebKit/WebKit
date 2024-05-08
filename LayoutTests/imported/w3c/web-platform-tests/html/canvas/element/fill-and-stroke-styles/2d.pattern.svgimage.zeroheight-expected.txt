@@ -1,5 +1,6 @@
 2d.pattern.svgimage.zeroheight
 Actual output:
 
+
 PASS Canvas test: 2d.pattern.svgimage.zeroheight
 

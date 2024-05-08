@@ -1,6 +1,8 @@
 2d.imageData.get.source.size
 getImageData() returns bigger ImageData for bigger source rectangle
+
 Actual output:
+
 
 PASS getImageData() returns bigger ImageData for bigger source rectangle
 

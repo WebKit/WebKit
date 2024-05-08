@@ -1,5 +1,4 @@
 2d.path.rect.nonfinite
-
 rect() with Infinity/NaN is ignored
 
 

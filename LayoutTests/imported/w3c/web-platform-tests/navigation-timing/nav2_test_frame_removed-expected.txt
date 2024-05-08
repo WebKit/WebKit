@@ -1,6 +1,5 @@
 frame "<!--frame1-->" - has 1 onunload handler(s)
 Description
-
 This test validates that PerformanceNavigationTiming::type()'s default value is navigate
 
 

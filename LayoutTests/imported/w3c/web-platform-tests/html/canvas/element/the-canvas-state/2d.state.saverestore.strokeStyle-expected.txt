@@ -1,6 +1,8 @@
 2d.state.saverestore.strokeStyle
 save()/restore() works for strokeStyle
+
 Actual output:
+
 
 PASS save()/restore() works for strokeStyle
 

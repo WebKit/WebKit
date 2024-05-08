@@ -1,5 +1,4 @@
 2d.text.baseline.invalid
 
-
 PASS OffscreenCanvas test: 2d.text.baseline.invalid
 

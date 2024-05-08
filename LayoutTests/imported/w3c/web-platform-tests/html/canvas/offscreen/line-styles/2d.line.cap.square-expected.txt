@@ -1,5 +1,4 @@
 2d.line.cap.square
-
 lineCap 'square' is rendered correctly
 
 

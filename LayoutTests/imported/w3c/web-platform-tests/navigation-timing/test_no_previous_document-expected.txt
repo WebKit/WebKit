@@ -1,5 +1,4 @@
 Description
-
 This test validates the unload event times are 0 when there is no previous document.
 
 

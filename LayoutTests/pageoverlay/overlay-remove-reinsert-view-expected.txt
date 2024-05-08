@@ -1,5 +1,4 @@
 Initial layers
-
 View-relative:
 (GraphicsLayer
   (children 1
@@ -30,7 +29,6 @@ Document-relative:
   )
 )
 Layers after removal
-
 View-relative:
 (GraphicsLayer
   (children 1
@@ -61,7 +59,6 @@ Document-relative:
   )
 )
 Layers after re-insertion
-
 View-relative:
 (GraphicsLayer
   (children 1

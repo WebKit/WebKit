@@ -1,5 +1,4 @@
 Dynamic Visibility collapse
-
 Spec
 Setting a column to visibility:collapse changes table width but not height. Bottom table is identical to top except left column has been collapsed.
 

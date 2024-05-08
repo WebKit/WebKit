@@ -1,3 +1,2 @@
 Linear gradient with 1px border-bottom. Should not crash
 
-

@@ -1,5 +1,6 @@
 2d.pattern.image.nonexistent-but-loading
 Actual output:
 
+
 PASS Canvas test: 2d.pattern.image.nonexistent-but-loading
 

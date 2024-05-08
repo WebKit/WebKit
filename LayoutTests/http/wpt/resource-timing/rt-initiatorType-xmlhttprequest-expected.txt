@@ -1,6 +1,5 @@
 Resource Timing: XMLHttpRequest initiatorType
 
-
 PASS Type: xmlhttprequest (asynchronous)
 PASS Timing: xmlhttprequest (asynchronous)
 PASS Type: xmlhttprequest (synchronous)

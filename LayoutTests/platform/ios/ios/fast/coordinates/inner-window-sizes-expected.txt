@@ -1,5 +1,8 @@
 This tests "scroll" offsets when unscaled, scaled, and panned.
+
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 unscaled
 PASS window.innerWidth is 800
 PASS window.innerHeight is 600

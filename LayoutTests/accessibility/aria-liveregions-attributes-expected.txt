@@ -34,12 +34,10 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 no live region
-
 test
 test
 test
 test
 test
 h3
-
 

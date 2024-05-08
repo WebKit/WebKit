@@ -8,7 +8,6 @@ PASS .tablecell 6
 PASS .tablecell 7
 PASS .tablecell 8
 Maximum and minimim inline sizes in blocks
-
 inline-size < min-inline-size
 
 min-inline-size < inline-size ≤ max-inline-size
@@ -16,13 +15,11 @@ min-inline-size < inline-size ≤ max-inline-size
 inline-size > max-inline-size
 
 Overridance of width and inline-size
-
 Check that width overrides inline-size
 
 Check that inline-size overrides width
 
 Maximum and minimim inline sizes in table cells
-
 inline-size < min-inline-size
 
 min-inline-size < inline-size ≤ max-inline-size

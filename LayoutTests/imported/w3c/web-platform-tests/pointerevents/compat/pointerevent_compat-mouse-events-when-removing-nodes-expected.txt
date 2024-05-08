@@ -1,5 +1,4 @@
 Verifies the compatibility mouse events are sent correctly when the node is deleted on pointer event handler.
-
 Done
 
 PASS Compat mouse events with no node removal

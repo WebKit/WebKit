@@ -1,6 +1,5 @@
 input_valueAsNumber
 
-
 PASS valueAsNumber getter on type date (actual value: , expected valueAsNumber: NaN)
 PASS valueAsNumber getter on type date (actual value: 0000-12-10, expected valueAsNumber: NaN)
 PASS valueAsNumber getter on type date (actual value: 2019-00-12, expected valueAsNumber: NaN)

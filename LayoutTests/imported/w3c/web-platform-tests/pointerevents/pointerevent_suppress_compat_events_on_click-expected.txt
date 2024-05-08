@@ -1,7 +1,5 @@
 Pointer Event: Suppress compatibility mouse events on click
-
 When a pointerdown is canceled, a click/tap shouldn't fire any compatibility mouse events except click event.
-
 Click or tap on Target0.
 Click or tap on Target1.
 Click Done.

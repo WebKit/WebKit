@@ -1,5 +1,4 @@
 Description
-
 This test validates that the navigation and timing attributes exist for window.performance (but does not validate that their values are correct).
 
 

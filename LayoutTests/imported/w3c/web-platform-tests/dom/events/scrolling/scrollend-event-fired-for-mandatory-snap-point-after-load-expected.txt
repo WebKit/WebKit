@@ -1,5 +1,4 @@
 scrollend + mandatory scroll snap test
-
 Page 1
 
 Page 2

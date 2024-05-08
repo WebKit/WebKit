@@ -1,5 +1,4 @@
 2d.line.width.transformed
-
 Line stroke widths are affected by scale transformations
 
 

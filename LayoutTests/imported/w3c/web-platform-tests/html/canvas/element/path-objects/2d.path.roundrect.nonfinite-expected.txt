@@ -1,7 +1,11 @@
 2d.path.roundrect.nonfinite
 roundRect() with Infinity/NaN is ignored
+
 Actual output:
+
 Expected output:
+
+
 
 
 PASS roundRect() with Infinity/NaN is ignored

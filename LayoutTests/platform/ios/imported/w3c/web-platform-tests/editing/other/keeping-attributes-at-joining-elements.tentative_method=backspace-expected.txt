@@ -1,7 +1,6 @@
 abc
 def
 
-
 FAIL Joining <div id="left"> and <div id="right"> assert_equals: One should stay in the document and the other should be disconnected (<div id="left">abc</div><div id="right">def</div>, Joining <div id="left"> and <div id="right">) expected 1 but got 0
 FAIL Joining <div class="left"> and <div class="right"> assert_equals: One should stay in the document and the other should be disconnected (<div class="left">abc</div><div class="right">def</div>, Joining <div class="left"> and <div class="right">) expected 1 but got 0
 FAIL Joining <div style="font-size:0.8rem"> and <div style="font-weight:bold"> assert_equals: One should stay in the document and the other should be disconnected (<div style="font-size:0.8rem">abc</div><div style="font-weight:bold">def</div>, Joining <div style="font-size:0.8rem"> and <div style="font-weight:bold">) expected 1 but got 0

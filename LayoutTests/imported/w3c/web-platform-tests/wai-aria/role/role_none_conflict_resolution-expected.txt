@@ -1,19 +1,14 @@
 Verifies conflict resolution requirements for the ARIA none and presentation roles.
 
 x
-
 x
 
 x
 
 x
-
 x
-
 x
-
 Sample Content
-
 
 PASS heading role none with global attr aria-label
 PASS p role none with global attr aria-label (prohibited role)

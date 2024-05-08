@@ -1,7 +1,6 @@
 When prompted, use the accept button to give permission to use your audio and video devices.
 
 Description
-
 This test checks that generating video MediaStreamTracks works as expected.
 
 

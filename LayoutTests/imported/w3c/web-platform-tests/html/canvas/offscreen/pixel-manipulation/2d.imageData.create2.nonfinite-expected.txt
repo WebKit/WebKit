@@ -1,5 +1,4 @@
 2d.imageData.create2.nonfinite
-
 createImageData() throws TypeError if arguments are not finite
 
 Defined in "Web IDL" (draft)

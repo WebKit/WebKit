@@ -1,5 +1,4 @@
 2d.clearRect.clip
-
 clearRect is affected by clipping regions
 
 

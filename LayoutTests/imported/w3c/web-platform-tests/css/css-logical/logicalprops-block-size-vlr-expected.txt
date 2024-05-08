@@ -8,7 +8,6 @@ PASS .tablecell 6
 PASS .tablecell 7
 PASS .tablecell 8
 Maximum and minimim block sizes in blocks with vertical-lr
-
 block-size < min-block-size
 
 min-block-size < block-size ≤ max-block-size
@@ -16,13 +15,11 @@ min-block-size < block-size ≤ max-block-size
 block-size > max-block-size
 
 Overridance of width and block-size in vertical-lr
-
 Check that width overrides block-size
 
 Check that block-size overrides width
 
 Maximum and minimim block sizes in table cells with vertical-lr
-
 block-size < min-block-size
 
 min-block-size < block-size ≤ max-block-size

@@ -1,7 +1,6 @@
 This test exercises a bunch of alpha composition operations on text. The top-left rectangles are the source images and bottom-right rectangles are the destination images.
 
 Tests for fill text
-
 src 255, 0, 0, 255	src 255, 0, 0, 255	src 255, 0, 0, 255	src 0, 255, 0, 0	src 0, 255, 0, 1	src 255, 0, 0, 0	src 255, 0, 0, 127	src 255, 0, 0, 255	src 255, 0, 0, 127	src 127, 0, 0, 255	src 127, 0, 0, 127	src 255, 0, 0, 127	src 255, 127, 0, 32	src 255, 0, 0, 191	src 255, 0, 255, 191
 dst 0, 255, 0, 255	dst 0, 255, 0, 0	dst 0, 255, 0, 1	dst 255, 0, 0, 255	dst 255, 0, 0, 255	dst 0, 255, 0, 255	dst 0, 255, 0, 127	dst 0, 255, 0, 127	dst 0, 255, 0, 255	dst 0, 127, 0, 127	dst 0, 127, 0, 255	dst 255, 0, 0, 63	dst 255, 63, 0, 63	dst 0, 255, 0, 127	dst 0, 255, 255, 127
 source-over																														
@@ -181,7 +180,6 @@ PASS
 PASS
 PASS
 Tests for stroke text
-
 src 255, 0, 0, 255	src 255, 0, 0, 255	src 255, 0, 0, 255	src 0, 255, 0, 0	src 0, 255, 0, 1	src 255, 0, 0, 0	src 255, 0, 0, 127	src 255, 0, 0, 255	src 255, 0, 0, 127	src 127, 0, 0, 255	src 127, 0, 0, 127	src 255, 0, 0, 127	src 255, 127, 0, 32	src 255, 0, 0, 191	src 255, 0, 255, 191
 dst 0, 255, 0, 255	dst 0, 255, 0, 0	dst 0, 255, 0, 1	dst 255, 0, 0, 255	dst 255, 0, 0, 255	dst 0, 255, 0, 255	dst 0, 255, 0, 127	dst 0, 255, 0, 127	dst 0, 255, 0, 255	dst 0, 127, 0, 127	dst 0, 127, 0, 255	dst 255, 0, 0, 63	dst 255, 63, 0, 63	dst 0, 255, 0, 127	dst 0, 255, 255, 127
 source-over																														

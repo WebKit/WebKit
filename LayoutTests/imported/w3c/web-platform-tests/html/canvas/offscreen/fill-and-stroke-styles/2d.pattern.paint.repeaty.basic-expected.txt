@@ -1,5 +1,4 @@
 2d.pattern.paint.repeaty.basic
 
-
 PASS OffscreenCanvas test: 2d.pattern.paint.repeaty.basic
 

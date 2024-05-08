@@ -1,7 +1,11 @@
 2d.transformation.scale.nonfinite
 scale() with Infinity/NaN is ignored
+
 Actual output:
+
 Expected output:
+
+
 
 
 PASS scale() with Infinity/NaN is ignored

@@ -1,5 +1,4 @@
 2d.line.join.valid
-
 Setting lineJoin to valid values works
 
 

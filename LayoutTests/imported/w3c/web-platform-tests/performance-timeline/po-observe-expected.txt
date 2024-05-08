@@ -1,5 +1,4 @@
 PerformanceObservers: PerformanceObserverInit.buffered
-
 PerformanceObserverInit.buffered should retrieve previously buffered entries
 
 

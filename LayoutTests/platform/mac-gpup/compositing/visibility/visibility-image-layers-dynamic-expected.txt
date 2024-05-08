@@ -2,7 +2,6 @@
 
 
 Initial
-
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 785.00 626.00)
@@ -58,7 +57,6 @@ Initial
   )
 )
 After step 1
-
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 785.00 1456.00)
@@ -113,7 +111,6 @@ After step 1
   )
 )
 After step 2
-
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 785.00 2270.00)

@@ -1,5 +1,4 @@
 SVG 1.1 dynamic update tests
-
 Text content
 Tests dynamic updates of the 'y' property of the SVGTextElement object
 

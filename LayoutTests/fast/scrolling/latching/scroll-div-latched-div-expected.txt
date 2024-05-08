@@ -9,5 +9,4 @@ PASS successfullyParsed is true
 TEST COMPLETE
 Put mouse here and flick downwards
 Scrollable Region
-
 Scrolled contents

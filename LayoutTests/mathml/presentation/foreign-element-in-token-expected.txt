@@ -472,53 +472,33 @@ mo
 
 h1:
 mi
-
 mi
-
 mn
-
 mo
-
 
 h2:
 mi
-
 mi
-
 mn
-
 mo
-
 
 h3:
 mi
-
 mi
-
 mn
-
 mo
-
 
 h4:
 mi
-
 mi
-
 mn
-
 mo
-
 
 h6:
 mi
-
 mi
-
 mn
-
 mo
-
 
 blockquote:
 mi

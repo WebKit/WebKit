@@ -1,5 +1,6 @@
 2d.pattern.repeat.unrecognisednull
 Actual output:
 
+
 PASS Canvas test: 2d.pattern.repeat.unrecognisednull
 

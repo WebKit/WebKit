@@ -1,5 +1,4 @@
 2d.imageData.put.alpha
-
 putImageData() puts non-solid image data correctly
 
 

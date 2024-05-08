@@ -1,8 +1,6 @@
 Spin In Multi-Coulumn
-
 This is test cases for BUG 70898.
 No outer
-
 
 
 
@@ -10,9 +8,7 @@ DIV outer
 
 
 
-
 SPAN outer
-
 
 
 
@@ -20,9 +16,7 @@ TABLE outer
 
 
 
-
 Results
-
 PASSED c00
 PASSED c01
 PASSED c02

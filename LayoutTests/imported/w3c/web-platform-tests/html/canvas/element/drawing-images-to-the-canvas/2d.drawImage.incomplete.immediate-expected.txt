@@ -1,6 +1,9 @@
 2d.drawImage.incomplete.immediate
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Canvas test: 2d.drawImage.incomplete.immediate

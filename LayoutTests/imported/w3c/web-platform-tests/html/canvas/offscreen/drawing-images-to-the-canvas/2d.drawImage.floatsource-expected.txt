@@ -1,5 +1,4 @@
 2d.drawImage.floatsource
 
-
 PASS OffscreenCanvas test: 2d.drawImage.floatsource
 

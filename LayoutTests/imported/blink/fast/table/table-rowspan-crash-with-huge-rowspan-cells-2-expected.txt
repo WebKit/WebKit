@@ -1,7 +1,5 @@
 Test for chromium bug : 296003. Heap-buffer-overflow in void std::__final_insertion_sort.
-
 For this test to PASS, it should not crash.
-
 row0col0 (rowspan=3)	row0col1 (rowspan=3)	row0col2 (rowspan=6)	row0col3 (rowspan=4)	row0col4 (rowspan=16)	row0col5 (rowspan=4)	row0col6 (rowspan=12)	row0col7 (rowspan=4)	row0col8 (rowspan=12)
 row1col9
 row2col9 (rowspan=3)	row2col10 (rowspan=8)	row2col11 (rowspan=8)	row2col12 (rowspan=8)	row2col13 (rowspan=8)

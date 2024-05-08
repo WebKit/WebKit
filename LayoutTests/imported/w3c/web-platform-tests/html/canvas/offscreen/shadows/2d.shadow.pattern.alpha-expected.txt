@@ -1,5 +1,4 @@
 2d.shadow.pattern.alpha
-
 Shadows are drawn correctly for partially-transparent fill patterns
 
 

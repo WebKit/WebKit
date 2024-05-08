@@ -1,5 +1,4 @@
 2d.filter.canvasFilterObject.blur.exceptions.tentative
-
 Test exceptions on CanvasFilter() blur.object
 
 

@@ -1,12 +1,9 @@
 AccName: Host Language Label Tests
-
 Tests the #comp_host_language_label portions of the AccName Name Computation algorithm.
 
 HTML input with value, alt, etc.
 
-
 HTML input label/for
-
 checkbox label
 color label
 date label
@@ -24,7 +21,6 @@ time label
 url label
 week label
 HTML input label encapsulation
-
 checkbox label
 color label
 date label
@@ -42,18 +38,14 @@ time label
 url label
 week label
 HTML select
-
 select label
 select label
 HTML img/picture
 
-
 HTML fieldset/legend
-
 fieldset legend label
 
 HTML table/caption
-
 table caption label
 a	b	c
 1	2	3

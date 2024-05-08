@@ -1,6 +1,5 @@
 Meter Element
 
-
 PASS Default values
 PASS Setting values to min, max, low, high and optimum
 PASS max < min

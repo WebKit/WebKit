@@ -1,5 +1,4 @@
 2d.composite.clip.copy
-
 fill() does not affect pixels outside the clip region.
 
 

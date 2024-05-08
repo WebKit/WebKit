@@ -1,6 +1,5 @@
 html5lib Parser Test
 
-
 PASS html5lib_innerHTML_tests6.html ccb245e2f1d9fe1580235854daa1a124525aca61
 PASS html5lib_innerHTML_tests6.html ed2b0f8fe477e3a6a0d9052b46bd94e628fb666a
 PASS html5lib_innerHTML_tests6.html ed4acc4544b7ee83072a3c2ae078e3cbaf8303fb

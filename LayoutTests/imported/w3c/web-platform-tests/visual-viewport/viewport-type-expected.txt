@@ -1,7 +1,5 @@
 Viewport: window.visualViewport type
-
 Test Description: This test checks that window.visualViewport is an object of type VisualViewport.
-
 window.visualViewport is of type: object.
 
 

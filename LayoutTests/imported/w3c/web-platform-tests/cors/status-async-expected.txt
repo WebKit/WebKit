@@ -1,6 +1,5 @@
 Status returned
 
-
 PASS Status on GET 200
 PASS Status on GET 201
 PASS Status on GET 202

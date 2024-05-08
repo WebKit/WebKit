@@ -1,5 +1,4 @@
 2d.clearRect.negative
-
 clearRect of negative sizes works
 
 

@@ -2,7 +2,6 @@ Tests the mappings defined in SVG-AAM: 6.2 Element Mapping.
 
 Simple Elements With aria-label to Ensure Tree Inclusion
 
-
 PASS el-a[href]
 PASS el-a[xlink:href]
 PASS el-g

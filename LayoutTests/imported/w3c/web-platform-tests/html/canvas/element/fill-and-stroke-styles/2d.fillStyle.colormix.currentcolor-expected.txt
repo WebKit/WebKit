@@ -1,6 +1,8 @@
 2d.fillStyle.colormix.currentcolor
 color-mix works as color input with currentcolor
+
 Actual output:
+
 
 FAIL color-mix works as color input with currentcolor assert_equals: ctx.fillStyle === 'color(srgb 0.5 0 0.5)' (got #000000[string], expected color(srgb 0.5 0 0.5)[string]) expected "color(srgb 0.5 0 0.5)" but got "#000000"
 

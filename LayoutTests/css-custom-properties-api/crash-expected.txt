@@ -1,6 +1,5 @@
 This is text
 
-
 PASS Fallback is handled correctly, and we don't crash
 PASS Setting the inline style is handled correctly
 PASS CSS.registerProperty

@@ -1,5 +1,4 @@
 2d.reset.state.font_variant_caps
-
 check that the state is reset
 
 

@@ -8,5 +8,4 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 H1
-
 H2

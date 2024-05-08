@@ -1,7 +1,5 @@
 Width Distribution
-
 "Distribution Algorithm - min-content-specified guess"
-
 Tests that the size of the column as the spec states that if the cell is constrained then the Spec Text
 
 Cell 2

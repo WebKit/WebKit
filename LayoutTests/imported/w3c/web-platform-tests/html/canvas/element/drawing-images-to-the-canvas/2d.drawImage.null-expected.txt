@@ -1,5 +1,6 @@
 2d.drawImage.null
 Actual output:
 
+
 PASS Canvas test: 2d.drawImage.null
 

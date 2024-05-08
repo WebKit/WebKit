@@ -23,7 +23,6 @@ Fruit
 Delicious
 Nutritious
 Title
-
 Next
 Content2
 Content1
@@ -31,7 +30,6 @@ Parent
 Child 1
 Child 2
 Light DOM Heading
-
 Light DOM text
 
 Light DOM text

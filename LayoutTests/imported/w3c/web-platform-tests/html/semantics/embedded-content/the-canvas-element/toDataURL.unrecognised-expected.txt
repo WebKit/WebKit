@@ -1,6 +1,8 @@
 toDataURL.unrecognised
 toDataURL with an unhandled type returns a PNG
+
 Actual output:
+
 
 PASS toDataURL with an unhandled type returns a PNG
 

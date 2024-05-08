@@ -1,5 +1,4 @@
 2d.filter.canvasFilterObject.dropShadow.exceptions.tentative
-
 Test exceptions on CanvasFilter() dropShadow object
 
 

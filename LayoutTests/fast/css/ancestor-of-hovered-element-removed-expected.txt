@@ -1,5 +1,8 @@
 Verify the hovered state is updated correctly when an ancestor of the hovered element is detached from the document's tree
+
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 
     Initial state
 PASS elementsWithHoverStyle() is ["html", "body", "prime-ancestor"]

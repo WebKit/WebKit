@@ -1,5 +1,4 @@
 Description
-
 This test validates that all of the different types of script loads are reported with the correct initiator.
 
 

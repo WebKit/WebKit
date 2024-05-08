@@ -1,6 +1,5 @@
 html5lib Parser Test
 
-
 PASS html5lib_comments01.html 3dbda8330033c3fbf3185a55e963075328099578
 PASS html5lib_comments01.html 7476098e9823b3deee1857739daf719ff18e37b4
 PASS html5lib_comments01.html eca7f97a4659eab6da4127c225420f1664b6c0c4

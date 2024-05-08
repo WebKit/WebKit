@@ -1,6 +1,5 @@
 input_valueAsDate
 
-
 PASS valueAsDate getter on type date (actual value: , expected valueAsDate: null)
 PASS valueAsDate getter on type date (actual value: 0000-12-10, expected valueAsDate: null)
 PASS valueAsDate getter on type date (actual value: 2019-00-12, expected valueAsDate: null)

@@ -1,5 +1,4 @@
 2d.line.miter.invalid
-
 Setting miterLimit to invalid values is ignored
 
 

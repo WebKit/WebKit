@@ -42,5 +42,4 @@ PASS successfullyParsed is true
 TEST COMPLETE
 
 Enter the characters in the image below.
-
 Switch to audio  Try another

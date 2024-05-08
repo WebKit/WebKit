@@ -1,7 +1,11 @@
 2d.strokeRect.shadow
 strokeRect draws shadows
+
 Actual output:
+
 Expected output:
+
+
 
 
 PASS strokeRect draws shadows

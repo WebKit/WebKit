@@ -1,7 +1,11 @@
 2d.fillRect.nonfinite
 fillRect() with Infinity/NaN is ignored
+
 Actual output:
+
 Expected output:
+
+
 
 
 PASS fillRect() with Infinity/NaN is ignored

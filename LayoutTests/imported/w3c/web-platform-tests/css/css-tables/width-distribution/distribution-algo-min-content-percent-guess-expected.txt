@@ -1,7 +1,5 @@
 Width Distribution
-
 "Distribution Algorithm - min-content-percent guess"
-
 Tests that the size of the column is given the max(%width, min-content width) Spec Text
 
 Cell 1	Cell 2

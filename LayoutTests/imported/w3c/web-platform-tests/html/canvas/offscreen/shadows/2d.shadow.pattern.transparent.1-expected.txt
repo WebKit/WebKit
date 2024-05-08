@@ -1,5 +1,4 @@
 2d.shadow.pattern.transparent.1
-
 Shadows are not drawn for transparent fill patterns
 
 

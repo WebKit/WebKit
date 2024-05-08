@@ -1,5 +1,4 @@
 Infinite intrinsic table widths
-
 Originally, algorithm for computing intrinsic table inline size had a special case:
 If table is fixed, and has a width:%, its intrinsic inline size was "infinite".
 This ensured that fixed table with 100% width inside block layout would expand to container's width.
@@ -7,7 +6,6 @@ This ensured that fixed table with 100% width inside block layout would expand t
 Different containers do not have reasonable handling of intrinsic infinitely sized children. For those, table's intrinsic size should never be infinite, but instead default to regular max size.
 
 Flexbox
-
 flex width:auto
 
 flex
@@ -19,7 +17,6 @@ flex div
 flex width:min-content
 
 Grid
-
 grid width:auto
 
 grid
@@ -27,10 +24,8 @@ grid width:max-content
 
 grid
 Table
-
 table
 Absolute
-
 absolute
 
 PASS table's width inside flexbox width:auto is not infinite

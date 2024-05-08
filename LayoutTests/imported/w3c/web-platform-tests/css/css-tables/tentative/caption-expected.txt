@@ -1,38 +1,46 @@
 Caption sizing and positioning
-
 There is a fundamental disagreement between Chrome Legacy and Firefox on caption size influence on table width. Chrome uses caption min width as lower limit of table's grid box, FF does not. Firefox also does not support multiple captions.
-Caption width limits
 
+Caption width limits
 Caption minmax and grid width caption.min is lower limit of grid min.
+
 auto
 Caption.min vs caption.css_width Caption.css_width is upper limit of caption.min Caption.css_width is lower limit of caption.min
+
 auto
 auto
 Caption width:50% Percent width is resolved wrt to table width.
+
 auto
 auto
 Caption and size of empty table Larger of table borders, and caption min size.
+
 cc
 Caption height:80% github spec issue. TablesNG will not resolve percentage heights per spec. FF agrees.
+
 auto
 Multiple captions Do we allow multiple captions? There are 4 in this test.
+
 over1
 over2
 under1
 under2
 2 above me, 2 below me?
 Caption margins Margins between captions do not collapse
+
 20px margins
 1 caption
 20px margins
 20px margins
 2 captions
 Caption margins auto auto margins center captions that are less wide than the table.
+
 auto margins
 1 caption
 auto margins
 1 caption
 Vertical writing mode caption
+
 vertical caption bigger than table
 vertical!
 

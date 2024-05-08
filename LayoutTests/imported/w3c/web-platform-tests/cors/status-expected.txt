@@ -1,5 +1,4 @@
 The returned status code in different scenarios
-
    allowed  preflight  response  | status |
    -------  ---------  --------  | ------ |
  1      no          x       400  |      0 |

@@ -1,6 +1,5 @@
 visible text visible text visible text
 text1link
-
 This tests that if heading has aria-label, it will override the visible text as necessary.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

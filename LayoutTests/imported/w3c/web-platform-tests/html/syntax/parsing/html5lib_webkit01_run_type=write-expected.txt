@@ -2,7 +2,6 @@ CONSOLE MESSAGE: PASS
 CONSOLE MESSAGE: FOO<span>BAR</span>BAZ
 html5lib Parser Test
 
-
 PASS html5lib_webkit01.html 4235382bf15f93f7dd1096832ae74cc71edef4d7
 PASS html5lib_webkit01.html 9906bb30ae08654f4c67bf6d97040abbca91082d
 PASS html5lib_webkit01.html 97974a9c541d97c7bb5bd8ba97c2ccbe0c6e55bd

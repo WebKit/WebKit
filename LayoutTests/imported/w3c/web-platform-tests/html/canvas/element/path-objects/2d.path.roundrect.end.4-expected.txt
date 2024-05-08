@@ -1,6 +1,9 @@
 2d.path.roundrect.end.4
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Canvas test: 2d.path.roundrect.end.4

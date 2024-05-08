@@ -1,5 +1,4 @@
 2d.state.saverestore.fillStyle
-
 save()/restore() works for fillStyle
 
 

@@ -1,7 +1,5 @@
 Height Distribution
-
 "Computing row measures"
-
 This is testing intermediate min-content height for span 2
 
 

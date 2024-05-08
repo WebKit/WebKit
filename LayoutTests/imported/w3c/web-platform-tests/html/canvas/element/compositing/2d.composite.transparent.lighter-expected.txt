@@ -1,6 +1,9 @@
 2d.composite.transparent.lighter
 Actual output:
+
 Expected output:
+
+
 
 
 PASS Canvas test: 2d.composite.transparent.lighter

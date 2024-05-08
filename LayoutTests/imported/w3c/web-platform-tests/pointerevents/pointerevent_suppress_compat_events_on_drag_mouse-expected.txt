@@ -1,7 +1,5 @@
 Pointer Event: Suppress compatibility mouse events on drag
-
 When a pointerdown is canceled, a mouse drag shouldn't fire any compatibility mouse events.
-
 Drag mouse within Target0 & release.
 Drag mouse within Target1 & release.
 Click Done.

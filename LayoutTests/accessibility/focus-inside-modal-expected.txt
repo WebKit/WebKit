@@ -9,5 +9,4 @@ PASS successfullyParsed is true
 TEST COMPLETE
 Show dialog
 Just an example.
-
   OK

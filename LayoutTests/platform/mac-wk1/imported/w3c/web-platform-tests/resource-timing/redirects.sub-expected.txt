@@ -1,6 +1,5 @@
 CONSOLE MESSAGE: NetworkError:  A network error occurred.
 Description
-
 This test validates that redirects do not alter the URL.
 
 

@@ -1,5 +1,4 @@
 2d.shadow.attributes.shadowBlur.initial
 
-
 PASS OffscreenCanvas test: 2d.shadow.attributes.shadowBlur.initial
 

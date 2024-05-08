@@ -1,5 +1,4 @@
 Test of requestIdleCallback idle period behavior
-
 This test validates that window.requestIdleCallback deals with callbacks during idle periods correctly.
 
 

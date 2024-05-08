@@ -1,5 +1,4 @@
 Description
-
 This test validates that the performance.measure() method is working properly. This test creates the following measures to test this method:
 
 "measure_no_start_no_end": created using a measure() call without a startMark or endMark provided

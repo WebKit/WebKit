@@ -1,8 +1,8 @@
 Bounding box computation
-
 Checks that all table-internal boxes are positioned correctly
 
 The all table-internal elements of this table shoud be 100px and 100px wide tall:
+
 Table size is 120px. There are two 10px border-spacing, one at each side.
 
 

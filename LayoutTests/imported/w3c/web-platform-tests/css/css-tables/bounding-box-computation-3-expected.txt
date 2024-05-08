@@ -1,8 +1,8 @@
 Bounding box computation
-
 Checks that all table-internal boxes are positioned correctly
 
 The first table-row-group should have width and height 0:
+
 The first tbody is empty, and should return an height of 0px. The second one should be 100px tall.
 
 

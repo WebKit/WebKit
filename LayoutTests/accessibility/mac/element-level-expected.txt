@@ -1,9 +1,7 @@
 blockquote level 1
 blockquote level 2
 heading level 1
-
 heading level 2
-
 table heading level 1
 table heading level 2
 table body level 2

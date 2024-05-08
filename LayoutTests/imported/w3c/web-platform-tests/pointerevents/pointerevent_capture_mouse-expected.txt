@@ -1,5 +1,4 @@
 Pointer Events capture test
-
 Test Description: This test checks if setCapture/releaseCapture functions works properly. Complete the following actions:
 Move your mouse over the black rectangle. pointermove event should be logged in the black rectangle
 Move your mouse over the purple rectangle. pointerover event should be logged in the purple rectangle
@@ -8,13 +7,11 @@ Move your mouse anywhere. pointermove should be logged in the black rectangle
 Move your mouse over the purple rectangle. Nothig should happen
 Move your mouse over the black rectangle. pointermove should be logged in the black rectangle
 Release left mouse button. "lostpointercapture" should be logged in the black rectangle
-
 Test passes if the proper behaviour of the events is observed.
 
 
 
 Pointer Events Capture Test
-
 The following pointer types were detected: mouse.
 
 The following events were logged: pointermove@target0, pointermove@target1, gotpointercapture@target0, pointermove@target0, pointermove@target0, lostpointercapture@target0.

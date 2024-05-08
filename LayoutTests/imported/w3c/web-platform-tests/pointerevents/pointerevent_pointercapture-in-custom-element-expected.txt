@@ -1,5 +1,4 @@
 PointerCapture by Custom Element's Shadow DOM
-
 The magenta box below is part of a custom element's Shadow DOM.
 Click left mouse button inside the box and keep mouse button depressed
 Move the mouse

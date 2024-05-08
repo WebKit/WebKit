@@ -3,7 +3,6 @@ CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-A
 CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/WebKit/resource-timing/resources/data.json?cors-denied due to access control checks.
 Resource Timing: Error cases
 
-
 PASS Content-Security-Policy rejections do not create entries
 PASS CORS preflight failures do not create entries
 

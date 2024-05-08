@@ -1,5 +1,4 @@
 Description
-
 This test checks that getUserMedia with no value in the options parameter raises a TypeError exception.
 
 

@@ -7,10 +7,13 @@ li
 li
 foo inline
 inline
+
 foo inline-block
 inline-block
+
 rubyrt
 rubyrt
+
 
 FAIL .table assert_equals: .table height expected "40px" but got "60px"
 FAIL .caption assert_equals: .caption display expected "table-caption" but got "block"

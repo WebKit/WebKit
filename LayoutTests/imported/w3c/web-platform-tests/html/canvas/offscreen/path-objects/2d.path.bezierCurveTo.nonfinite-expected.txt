@@ -1,5 +1,4 @@
 2d.path.bezierCurveTo.nonfinite
-
 bezierCurveTo() with Infinity/NaN is ignored
 
 

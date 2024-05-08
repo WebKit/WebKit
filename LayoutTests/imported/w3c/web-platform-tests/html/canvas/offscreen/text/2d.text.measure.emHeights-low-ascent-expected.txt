@@ -1,5 +1,4 @@
 2d.text.measure.emHeights-low-ascent
-
 Testing emHeights with reduced ascent metric
 
 

@@ -1,5 +1,4 @@
 2d.drawImage.9arg.destpos
 
-
 PASS OffscreenCanvas test: 2d.drawImage.9arg.destpos
 

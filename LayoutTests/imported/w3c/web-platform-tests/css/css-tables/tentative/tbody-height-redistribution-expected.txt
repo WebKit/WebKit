@@ -1,5 +1,4 @@
 TBODY/THEAD/TFOOT height redistribution.
-
 FF passes most of the tests.
 Legacy Chrome does not distribute TBODY height to rows.
 At the time this test was written, there was no spec. Currently, spec is in the process of being written.

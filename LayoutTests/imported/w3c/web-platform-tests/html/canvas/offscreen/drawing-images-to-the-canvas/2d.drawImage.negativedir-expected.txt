@@ -1,5 +1,4 @@
 2d.drawImage.negativedir
-
 Negative dimensions do not affect the direction of the image
 
 

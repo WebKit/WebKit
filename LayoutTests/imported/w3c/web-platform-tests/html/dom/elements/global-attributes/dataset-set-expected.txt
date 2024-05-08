@@ -1,6 +1,5 @@
 Dataset - Set
 
-
 PASS Setting element.dataset['foo'] should also change the value of element.getAttribute('data-foo')
 PASS Setting element.dataset['fooBar'] should also change the value of element.getAttribute('data-foo-bar')
 PASS Setting element.dataset['-'] should also change the value of element.getAttribute('data--')

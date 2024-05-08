@@ -1,5 +1,4 @@
 Description
-
 This test validates that the values of nav timing 2 instance's timing-related attributes are in certain order and the others are of expected values.
 
 

@@ -1,6 +1,5 @@
 MutationObservers: attributes mutations
 
-
 PASS attributes Element.id: update, no oldValue, mutation
 PASS attributes Element.id: update mutation
 PASS attributes Element.id: empty string update mutation

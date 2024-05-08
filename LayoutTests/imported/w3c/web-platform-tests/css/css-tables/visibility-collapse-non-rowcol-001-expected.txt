@@ -1,5 +1,4 @@
 Visibility collapse
-
 Spec
 When setting any element that is not a row, col, row group, or col group, visibility:collapse is equivalent to visibility:hidden.
 

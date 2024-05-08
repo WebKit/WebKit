@@ -1,5 +1,4 @@
 BeforeText
 heading
-
 SpanTextAfterText
 ParaText

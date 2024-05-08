@@ -1,5 +1,4 @@
 2d.path.bezierCurveTo.shape
 
-
 PASS OffscreenCanvas test: 2d.path.bezierCurveTo.shape
 

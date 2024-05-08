@@ -1,5 +1,4 @@
 I18N Tests: list-style-type
-
 This page tests support for the CSS list-style-type property, as defined in CSS2.0.
 
 Note: The CSS2.0 specification does not specify in any detail the mechanism for implementing the numbering schemes defined. Expectations for behaviour are based on the version of the CSS3 Lists module current at the time this test was last updated. In most cases, however, these tests simply allow you to see whether and how a particular user agent implements these features, rather than testing against the requirements of the specification.
@@ -9,7 +8,6 @@ Check whether the numbering of the lists is what you would expect.
 The start attribute is used on ol to skip to higher numbers.
 
 lower-latin
-
 CSS says: list-style-type: lower-latin; .
 
 The CSS2.0 specification specifies the set of characters as "a, b, c, ... z". It doesn't specify what happens after z.
@@ -29,7 +27,6 @@ az fifty-two, undefined
 ba fifty-three, undefined
 bb fifty-four, undefined
 upper-latin
-
 CSS says: list-style-type: upper-latin;
 
 The CSS2.0 specification specifies the set of characters as "A, B, C, ... Z". It doesn't specify what happens after Z.
@@ -49,7 +46,6 @@ AZ fifty-two, undefined
 BA fifty-three, undefined
 BB fifty-four, undefined
 lower-alpha
-
 CSS says: list-style-type: lower-alpha;
 
 The CSS2.0 specification specifies the set of characters as "a, b, c, ... z". It doesn't specify what happens after z.
@@ -69,7 +65,6 @@ az fifty-two, undefined
 ba fifty-three, undefined
 bb fifty-four, undefined
 upper-alpha
-
 CSS says: list-style-type: upper-alpha;
 
 The CSS2.0 specification specifies the set of characters as "A, B, C, ... Z". It doesn't specify what happens after Z.
@@ -89,7 +84,6 @@ AZ fifty-two, undefined
 BA fifty-three, undefined
 BB fifty-four, undefined
 lower-greek
-
 CSS says: list-style-type: lower-greek;
 
 The CSS2.0 specification doesn't explicitly define the set of characters in the list, nor what happens after the list is exhausted, but does say "Lowercase classical Greek alpha, beta, gamma, ... (έ, ή, ί, ...)".
@@ -109,7 +103,6 @@ The CSS2.0 specification doesn't explicitly define the set of characters in the 
 βα forty-nine, undefined
 ββ fifty, undefined
 hiragana
-
 CSS says: list-style-type: hiragana;
 
 The CSS 2.0 specification doesn't explicitly define the set of characters in the list, nor what happens after the list is exhausted.
@@ -129,7 +122,6 @@ The CSS 2.0 specification doesn't explicitly define the set of characters in the
 いあ ninety-seven, undefined
 いい ninety-eight, undefined
 hiragana-iroha
-
 CSS says: list-style-type: hiragana-iroha;
 
 The CSS 2.0 specification doesn't explicitly define the set of characters in the list, nor what happens after the list is exhausted.
@@ -149,7 +141,6 @@ The CSS 2.0 specification doesn't explicitly define the set of characters in the
 ろい ninety-five, undefined
 ろろ ninety-six, undefined
 katakana
-
 CSS says: list-style-type: katakana;
 
 The CSS 2.0 specification doesn't explicitly define the set of characters in the list, nor what happens after the list is exhausted.
@@ -169,7 +160,6 @@ The CSS 2.0 specification doesn't explicitly define the set of characters in the
 イア ninety-seven, undefined
 イイ ninety-eight, undefined
 katakana-iroha
-
 CSS says: list-style-type: katakana-iroha;
 
 The CSS 2.0 specification doesn't explicitly define the set of characters in the list, nor what happens after the list is exhausted.
@@ -189,7 +179,6 @@ The CSS 2.0 specification doesn't explicitly define the set of characters in the
 ロイ ninety-five, undefined
 ロロ ninety-six, undefined
 cjk-ideographic
-
 CSS says: list-style-type: cjk-ideographic;
 
 The CSS2.0 specification doesn't define what characters should be used to create each number - there are multiple alternatives. Note that the characters specified in the CSS3 Lists module as of the date of publication of this page are not those expected below.
@@ -211,7 +200,6 @@ The CSS2.0 specification doesn't define what characters should be used to create
 零 zero, undefined
 一 one
 hebrew
-
 CSS says: list-style-type: hebrew;
 
 The CSS2.0 specification doesn't define the algorithm for the Hebrew numbering.
@@ -232,7 +220,6 @@ The CSS2.0 specification doesn't define the algorithm for the Hebrew numbering.
 0 zero, undefined, may show אפס
 א one, should show א
 georgian
-
 CSS says: list-style-type: georgian;
 
 The CSS2.0 specification doesn't define the algorithm for Georgian numbering in detail.
@@ -256,7 +243,6 @@ The CSS2.0 specification doesn't define the algorithm for Georgian numbering in 
 რ hundred, undefined, may show რ
 რა a hundred and one, undefined, may show რა
 armenian
-
 CSS says: list-style-type: armenian;
 
 The CSS2.0 specification doesn't define the algorithm for Armenian numbering in detail.

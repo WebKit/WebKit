@@ -1,5 +1,4 @@
 2d.shadow.offset.positiveX
-
 Shadows can be offset with positive x
 
 

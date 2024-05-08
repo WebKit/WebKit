@@ -1,5 +1,4 @@
 SVG 1.1 dynamic update tests
-
 Check that SVGLineElement is initially displayed
 PASS document.defaultView.getComputedStyle(lineElement, null).display is "inline"
 Check that setting requiredFeatures to something invalid makes it not render

@@ -1,5 +1,4 @@
 Description
-
 This test validates the values of the window.performance.now() are based on the current document's navigationStart.
 
 

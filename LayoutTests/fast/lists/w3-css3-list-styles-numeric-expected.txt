@@ -1,7 +1,5 @@
 CSS3 Numeric list-style-type
-
 arabic-indic
-
 PASS list marker is ١.
 PASS list marker is ٢.
 PASS list marker is ٣.
@@ -17,7 +15,6 @@ PASS list marker is ١.
 PASS list marker is -٢١٤٧٤٨٣٦٤٨.
 PASS list marker is -٢١٤٧٤٨٣٦٤٧.
 binary
-
 PASS list marker is 1.
 PASS list marker is 10.
 PASS list marker is 0.
@@ -25,7 +22,6 @@ PASS list marker is 1.
 PASS list marker is -10000000000000000000000000000000.
 PASS list marker is -1111111111111111111111111111111.
 bengali
-
 PASS list marker is ১.
 PASS list marker is ২.
 PASS list marker is ৩.
@@ -41,7 +37,6 @@ PASS list marker is ১.
 PASS list marker is -২১৪৭৪৮৩৬৪৮.
 PASS list marker is -২১৪৭৪৮৩৬৪৭.
 cambodian
-
 PASS list marker is ១.
 PASS list marker is ២.
 PASS list marker is ៣.
@@ -57,7 +52,6 @@ PASS list marker is ១.
 PASS list marker is -២១៤៧៤៨៣៦៤៨.
 PASS list marker is -២១៤៧៤៨៣៦៤៧.
 khmer
-
 PASS list marker is ១.
 PASS list marker is ២.
 PASS list marker is ៣.
@@ -73,7 +67,6 @@ PASS list marker is ១.
 PASS list marker is -២១៤៧៤៨៣៦៤៨.
 PASS list marker is -២១៤៧៤៨៣៦៤៧.
 decimal
-
 PASS list marker is 1.
 PASS list marker is 2.
 PASS list marker is 3.
@@ -89,7 +82,6 @@ PASS list marker is 1.
 PASS list marker is -2147483648.
 PASS list marker is -2147483647.
 decimal-leading-zero
-
 PASS list marker is 01.
 PASS list marker is 02.
 PASS list marker is 03.
@@ -105,7 +97,6 @@ PASS list marker is 01.
 PASS list marker is -2147483648.
 PASS list marker is -2147483647.
 devanagari
-
 PASS list marker is १.
 PASS list marker is २.
 PASS list marker is ३.
@@ -121,7 +112,6 @@ PASS list marker is १.
 PASS list marker is -२१४७४८३६४८.
 PASS list marker is -२१४७४८३६४७.
 gujarati
-
 PASS list marker is ૧.
 PASS list marker is ૨.
 PASS list marker is ૩.
@@ -137,7 +127,6 @@ PASS list marker is ૧.
 PASS list marker is -૨૧૪૭૪૮૩૬૪૮.
 PASS list marker is -૨૧૪૭૪૮૩૬૪૭.
 gurmukhi
-
 PASS list marker is ੧.
 PASS list marker is ੨.
 PASS list marker is ੩.
@@ -153,7 +142,6 @@ PASS list marker is ੧.
 PASS list marker is -੨੧੪੭੪੮੩੬੪੮.
 PASS list marker is -੨੧੪੭੪੮੩੬੪੭.
 kannada
-
 PASS list marker is ೧.
 PASS list marker is ೨.
 PASS list marker is ೩.
@@ -169,7 +157,6 @@ PASS list marker is ೧.
 PASS list marker is -೨೧೪೭೪೮೩೬೪೮.
 PASS list marker is -೨೧೪೭೪೮೩೬೪೭.
 lower-hexadecimal
-
 PASS list marker is 1.
 PASS list marker is 2.
 PASS list marker is 3.
@@ -191,7 +178,6 @@ PASS list marker is 1.
 PASS list marker is -80000000.
 PASS list marker is -7fffffff.
 lao
-
 PASS list marker is ໑.
 PASS list marker is ໒.
 PASS list marker is ໓.
@@ -207,7 +193,6 @@ PASS list marker is ໑.
 PASS list marker is -໒໑໔໗໔໘໓໖໔໘.
 PASS list marker is -໒໑໔໗໔໘໓໖໔໗.
 malayalam
-
 PASS list marker is ൧.
 PASS list marker is ൨.
 PASS list marker is ൩.
@@ -223,7 +208,6 @@ PASS list marker is ൧.
 PASS list marker is -൨൧൪൭൪൮൩൬൪൮.
 PASS list marker is -൨൧൪൭൪൮൩൬൪൭.
 mongolian
-
 PASS list marker is ᠑.
 PASS list marker is ᠒.
 PASS list marker is ᠓.
@@ -239,7 +223,6 @@ PASS list marker is ᠑.
 PASS list marker is -᠒᠑᠔᠗᠔᠘᠓᠖᠔᠘.
 PASS list marker is -᠒᠑᠔᠗᠔᠘᠓᠖᠔᠗.
 myanmar
-
 PASS list marker is ၁.
 PASS list marker is ၂.
 PASS list marker is ၃.
@@ -255,7 +238,6 @@ PASS list marker is ၁.
 PASS list marker is -၂၁၄၇၄၈၃၆၄၈.
 PASS list marker is -၂၁၄၇၄၈၃၆၄၇.
 octal
-
 PASS list marker is 1.
 PASS list marker is 2.
 PASS list marker is 3.
@@ -269,7 +251,6 @@ PASS list marker is 1.
 PASS list marker is -20000000000.
 PASS list marker is -17777777777.
 oriya
-
 PASS list marker is ୧.
 PASS list marker is ୨.
 PASS list marker is ୩.
@@ -285,7 +266,6 @@ PASS list marker is ୧.
 PASS list marker is -୨୧୪୭୪୮୩୬୪୮.
 PASS list marker is -୨୧୪୭୪୮୩୬୪୭.
 persian
-
 PASS list marker is ۱.
 PASS list marker is ۲.
 PASS list marker is ۳.
@@ -301,7 +281,6 @@ PASS list marker is ۱.
 PASS list marker is -۲۱۴۷۴۸۳۶۴۸.
 PASS list marker is -۲۱۴۷۴۸۳۶۴۷.
 urdu
-
 PASS list marker is ۱.
 PASS list marker is ۲.
 PASS list marker is ۳.
@@ -317,7 +296,6 @@ PASS list marker is ۱.
 PASS list marker is -۲۱۴۷۴۸۳۶۴۸.
 PASS list marker is -۲۱۴۷۴۸۳۶۴۷.
 telugu
-
 PASS list marker is ౧.
 PASS list marker is ౨.
 PASS list marker is ౩.
@@ -333,7 +311,6 @@ PASS list marker is ౧.
 PASS list marker is -౨౧౪౭౪౮౩౬౪౮.
 PASS list marker is -౨౧౪౭౪౮౩౬౪౭.
 tibetan
-
 PASS list marker is ༡.
 PASS list marker is ༢.
 PASS list marker is ༣.
@@ -349,7 +326,6 @@ PASS list marker is ༡.
 PASS list marker is -༢༡༤༧༤༨༣༦༤༨.
 PASS list marker is -༢༡༤༧༤༨༣༦༤༧.
 thai
-
 PASS list marker is ๑.
 PASS list marker is ๒.
 PASS list marker is ๓.
@@ -365,7 +341,6 @@ PASS list marker is ๑.
 PASS list marker is -๒๑๔๗๔๘๓๖๔๘.
 PASS list marker is -๒๑๔๗๔๘๓๖๔๗.
 upper-hexadecimal
-
 PASS list marker is 1.
 PASS list marker is 2.
 PASS list marker is 3.
@@ -387,7 +362,6 @@ PASS list marker is 1.
 PASS list marker is -80000000.
 PASS list marker is -7FFFFFFF.
 ethiopic-numeric
-
 PASS list marker is ፩.
 PASS list marker is ፪.
 PASS list marker is ፫.

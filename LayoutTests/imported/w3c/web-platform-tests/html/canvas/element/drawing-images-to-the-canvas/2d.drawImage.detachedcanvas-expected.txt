@@ -1,6 +1,8 @@
 2d.drawImage.detachedcanvas
 drawImage with detached OffscreenCanvas as the source should throw exception
+
 Actual output:
+
 
 PASS drawImage with detached OffscreenCanvas as the source should throw exception
 

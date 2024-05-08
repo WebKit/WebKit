@@ -1,5 +1,8 @@
 This tests Element.getBoundingClientRects and getClientRects positions when unscaled, scaled, and panned.
+
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 
 unscaled
 PASS rectString(document.getElementById('box').getBoundingClientRect()) is "(100,100 100x100)"

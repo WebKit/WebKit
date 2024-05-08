@@ -1,5 +1,4 @@
 Verifies that mouse activities on an object fire pointerevents. It expected to get pointerup when the pointerdown happened on the object for compatibility with flash objects.
-
 To test that when clicking inside the blue rectangle all compat mouse events are correct:
 
 Click once in the blue rectangle

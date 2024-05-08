@@ -1,7 +1,11 @@
 2d.clearRect.shadow
 clearRect does not draw shadows
+
 Actual output:
+
 Expected output:
+
+
 
 
 PASS clearRect does not draw shadows

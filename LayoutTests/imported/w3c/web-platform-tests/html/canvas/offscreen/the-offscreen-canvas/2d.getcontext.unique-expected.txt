@@ -1,5 +1,4 @@
 2d.getcontext.unique
-
 getContext('2d') returns the same object
 
 
