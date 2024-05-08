@@ -79,6 +79,8 @@ public:
         RGB10,
         RGB10A8,
 #endif
+        RGBA, // NOLINT
+        RGBX, // NOLINT
     };
 
     WEBCORE_EXPORT static IOSurface::Format formatForPixelFormat(WebCore::PixelFormat);

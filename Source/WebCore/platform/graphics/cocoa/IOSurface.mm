@@ -243,6 +243,10 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSu
     case Format::YUV422:
         options = optionsForBiplanarSurface(size, '422f', 1, 1, name);
         break;
+    case Format::RGBX:
+    case Format::RGBA:
+        options = optionsFor32BitSurface(size, 'RGBA', name);
+        break;
     }
     m_surface = adoptCF(IOSurfaceCreate((CFDictionaryRef)options));
     success = !!m_surface;
@@ -269,6 +273,9 @@ static std::optional<IOSurface::Format> formatFromSurface(IOSurfaceRef surface)
 
     if (pixelFormat == '422f')
         return IOSurface::Format::YUV422;
+
+    if (pixelFormat == 'RGBA')
+        return IOSurface::Format::RGBA;
 
     return { };
 }
@@ -422,6 +429,11 @@ IOSurface::BitmapConfiguration IOSurface::bitmapConfiguration() const
 #endif
     case Format::YUV422:
         ASSERT_NOT_REACHED();
+        break;
+    case Format::RGBX:
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaNoneSkipFirst) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
+        break;
+    case Format::RGBA:
         break;
     }
 
@@ -720,6 +732,12 @@ TextStream& operator<<(TextStream& ts, IOSurface::Format format)
         ts << "RGB10A8";
         break;
 #endif
+    case IOSurface::Format::RGBX:
+        ts << "RGBX";
+        break;
+    case IOSurface::Format::RGBA:
+        ts << "RGBA";
+        break;
     }
     return ts;
 }
