@@ -36,12 +36,12 @@ namespace WebKit::WebGPU {
 
 std::optional<ExternalTextureBindingLayout> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ExternalTextureBindingLayout& externalTextureBindingLayout)
 {
-    return { { } };
+    return { ExternalTextureBindingLayout { } };
 }
 
 std::optional<WebCore::WebGPU::ExternalTextureBindingLayout> ConvertFromBackingContext::convertFromBacking(const ExternalTextureBindingLayout& externalTextureBindingLayout)
 {
-    return { { } };
+    return { WebCore::WebGPU::ExternalTextureBindingLayout { } };
 }
 
 } // namespace WebKit
