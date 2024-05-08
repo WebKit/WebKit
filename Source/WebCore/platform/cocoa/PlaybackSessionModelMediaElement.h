@@ -102,7 +102,7 @@ public:
     Vector<MediaSelectionOption> audioMediaSelectionOptions() const final;
     uint64_t audioMediaSelectedIndex() const final;
     Vector<MediaSelectionOption> legibleMediaSelectionOptions() const final;
-    uint64_t legibleMediaSelectedIndex() const final;
+    WEBCORE_EXPORT uint64_t legibleMediaSelectedIndex() const final;
     bool externalPlaybackEnabled() const final;
     ExternalPlaybackTargetType externalPlaybackTargetType() const final;
     String externalPlaybackLocalizedDeviceName() const final;

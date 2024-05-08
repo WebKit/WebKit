@@ -512,7 +512,12 @@ void PlaybackSessionManager::selectAudioMediaOption(PlaybackSessionContextIdenti
 void PlaybackSessionManager::selectLegibleMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).selectLegibleMediaOption(index);
+    Ref model = ensureModel(contextId);
+    model->selectLegibleMediaOption(index);
+
+    // Selecting a text track may not result in a call to legibleMediaSelectionIndexChanged(), so just
+    // artificially trigger it here:
+    legibleMediaSelectionIndexChanged(contextId, model->legibleMediaSelectedIndex());
 }
 
 void PlaybackSessionManager::handleControlledElementIDRequest(PlaybackSessionContextIdentifier contextId)
