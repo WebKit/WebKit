@@ -1,0 +1,3 @@
+
+FAIL NavigationHistoryEntry properties after detach assert_equals: expected (object) null but got (string) "http://web-platform.test:8800/common/blank.html"
+

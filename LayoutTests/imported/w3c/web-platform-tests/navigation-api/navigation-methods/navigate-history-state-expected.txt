@@ -1,3 +1,5 @@
 
-FAIL history.state should be nulled by navigate() assert_equals: expected "#2" but got "#1"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT history.state should be nulled by navigate() Test timed out
 

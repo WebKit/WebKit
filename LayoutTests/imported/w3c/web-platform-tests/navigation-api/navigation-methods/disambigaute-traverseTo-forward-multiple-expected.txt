@@ -1,4 +1,6 @@
 
 
-FAIL navigation.traverseTo() goes to the nearest entry when going forward promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'navigation.currentEntry.index')"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT navigation.traverseTo() goes to the nearest entry when going forward Test timed out
 

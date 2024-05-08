@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: expected 1 but got 0
+
+
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: expected 1 but got 0
+
+TIMEOUT navigate() with an invalid URL inside onpagehide throws "SyntaxError", not "InvalidStateError" Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: expected 1 but got 0
+
+TIMEOUT navigate() with an invalid URL inside onpagehide throws "SyntaxError", not "InvalidStateError" Test timed out
+

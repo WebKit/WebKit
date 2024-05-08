@@ -1,3 +1,3 @@
 
-FAIL entry.getState() after history.pushState() null is not an object (evaluating 'navigation.currentEntry.getState')
+FAIL entry.getState() after history.pushState() undefined is not an object (evaluating 'navigation.currentEntry.getState().data')
 

@@ -1,6 +1,10 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: Cannot go back
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: Cannot go back
 
+
+Harness Error (TIMEOUT), message = null
 
 PASS cross-document reload() must leave transition null
 PASS cross-document navigate() must leave transition null
-PASS cross-document back() must leave transition null
+TIMEOUT cross-document back() must leave transition null Test timed out
 

@@ -1,4 +1,3 @@
 
-
-FAIL NavigationHistoryEntry properties after detach null is not an object (evaluating 'i_entry.sameDocument')
+FAIL NavigationHistoryEntry properties after detach assert_equals: expected (object) null but got (string) "http://localhost:8800/common/blank.html"
 

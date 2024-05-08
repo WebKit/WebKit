@@ -1,4 +1,4 @@
 
 
-FAIL NavigationHistoryEntry's key and id after location.replace() null is not an object (evaluating 'i.contentWindow.navigation.currentEntry.key')
+FAIL NavigationHistoryEntry's key and id after location.replace() assert_equals: expected "8ea1a174-726c-42bd-b039-e8a4c1bf3523" but got "d54c00de-4c4e-401b-b5b8-b1d27e7f1dc6"
 

@@ -1,4 +1,4 @@
 
 
-FAIL entries() after navigation to a javascript: URL null is not an object (evaluating 'i.contentWindow.navigation.currentEntry.key')
+FAIL entries() after navigation to a javascript: URL assert_equals: expected 2 but got 1
 

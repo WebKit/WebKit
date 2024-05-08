@@ -1,3 +1,5 @@
 
-FAIL currententrychange does not fire when onnavigate preventDefault() is called assert_unreached: Should have rejected: undefined Reached unreachable code
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT currententrychange does not fire when onnavigate preventDefault() is called Test timed out
 

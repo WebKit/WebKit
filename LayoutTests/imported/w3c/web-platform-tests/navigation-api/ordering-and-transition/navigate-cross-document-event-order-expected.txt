@@ -1,4 +1,4 @@
 
 
-FAIL navigate() event ordering for cross-document navigation undefined is not an object (evaluating 'i.contentWindow.navigation.navigate("?1").committed.then')
+FAIL navigate() event ordering for cross-document navigation assert_array_equals: lengths differ, expected array ["onnavigate", "onunload", "readystateinteractive", "domcontentloaded", "readystatecomplete", "onload", "onpageshow"] length 7, got ["onunload", "readystateinteractive", "domcontentloaded", "readystatecomplete", "onload", "onpageshow"] length 6
 

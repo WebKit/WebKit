@@ -1,3 +1,2 @@
-
-FAIL if navigate() is called inside onnavigate, the previous navigation and navigate event are cancelled promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'navigation.currentEntry.index')"
+FAIL: Timed out waiting for notifyDone to be called
 

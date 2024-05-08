@@ -1,4 +1,4 @@
 
 
-FAIL Default behavior for entry.getState() for a non-current cross-document entry assert_equals: expected 1 but got 0
+FAIL Default behavior for entry.getState() for a non-current cross-document entry assert_equals: expected 2 but got 1
 

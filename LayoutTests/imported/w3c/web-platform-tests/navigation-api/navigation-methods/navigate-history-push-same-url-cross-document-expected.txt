@@ -1,4 +1,4 @@
 
 
-FAIL navigate() to the current URL with history: 'push' and allow it to go cross document assert_equals: expected 1 but got 0
+FAIL navigate() to the current URL with history: 'push' and allow it to go cross document assert_equals: expected (string) "push" but got (undefined) undefined
 

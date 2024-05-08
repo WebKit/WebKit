@@ -1,4 +1,3 @@
+FAIL: Timed out waiting for notifyDone to be called
 
-FAIL navigate() navigates same-document and fires onnavigate (async) assert_true: expected true got false
-PASS navigate() navigates same-document and fires onnavigate (sync)
 

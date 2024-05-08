@@ -1,4 +1,4 @@
 
 
-FAIL submitting a <form> element that navigates same-document targeting a same-origin window assert_true: destination.sameDocument expected true got false
+FAIL submitting a <form> element that navigates same-document targeting a same-origin window assert_equals: navigationType expected "push" but got "replace"
 

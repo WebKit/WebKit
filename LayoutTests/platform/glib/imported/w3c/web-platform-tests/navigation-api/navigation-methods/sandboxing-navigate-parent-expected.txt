@@ -1,0 +1,4 @@
+
+
+FAIL A sandboxed iframe can use its sibling's navigation object to call navigate(), as long as allow-same-origin is present assert_equals: expected "http://web-platform.test:8800/navigation-api/navigation-methods/sandboxing-navigate-parent.html#2" but got "http://web-platform.test:8800/navigation-api/navigation-methods/sandboxing-navigate-parent.html"
+

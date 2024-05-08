@@ -1,4 +1,6 @@
 
 
-FAIL traverseTo() promise rejections when detaching an iframe inside onnavigate (same-document) assert_equals: expected 1 but got 0
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT traverseTo() promise rejections when detaching an iframe inside onnavigate (same-document) Test timed out
 

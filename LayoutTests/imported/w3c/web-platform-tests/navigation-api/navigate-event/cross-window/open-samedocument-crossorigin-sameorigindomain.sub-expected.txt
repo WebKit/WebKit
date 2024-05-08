@@ -1,4 +1,4 @@
 
 
-FAIL using window.open() to navigate same-document targeting a same-origin-domain (but cross-origin) window assert_true: destination.sameDocument expected true got false
+FAIL using window.open() to navigate same-document targeting a same-origin-domain (but cross-origin) window assert_equals: navigationType expected "push" but got "replace"
 

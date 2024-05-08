@@ -1,4 +1,4 @@
 
 
-FAIL navigation.traverseTo() in an iframe with same-document preventDefault in its parent promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'navigation.currentEntry.index')"
+FAIL navigation.traverseTo() in an iframe with same-document preventDefault in its parent assert_unreached: finished must not fulfill Reached unreachable code
 

@@ -1,4 +1,4 @@
 
 
-FAIL location API on another window fires navigate event in the target window only assert_true: expected true got false
+FAIL location API on another window fires navigate event in the target window only assert_equals: expected "push" but got "replace"
 

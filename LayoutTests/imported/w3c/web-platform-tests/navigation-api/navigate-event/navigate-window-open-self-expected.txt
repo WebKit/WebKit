@@ -1,3 +1,3 @@
 
-FAIL window.open() fires navigate event when targeting self assert_true: expected true got false
+FAIL window.open() fires navigate event when targeting self assert_equals: expected "push" but got "replace"
 

@@ -1,3 +1,4 @@
 
-FAIL Removing a currentEntry from the joint session history shouldn't dispose it promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'navigation.currentEntry.index')"
+
+FAIL Removing a currentEntry from the joint session history shouldn't dispose it assert_equals: expected 1 but got 2
 

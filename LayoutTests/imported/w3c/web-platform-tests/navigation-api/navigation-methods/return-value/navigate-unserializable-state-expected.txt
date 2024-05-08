@@ -1,4 +1,4 @@
 
 PASS navigate() with an unserializable state (WritableStream)
-FAIL navigate() with an unserializable state (SharedArrayBuffer) assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
+FAIL navigate() with an unserializable state (SharedArrayBuffer) assert_unreached: finished must not fulfill Reached unreachable code
 

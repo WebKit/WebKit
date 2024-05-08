@@ -1,4 +1,4 @@
 
 
-FAIL event and promise ordering when navigate() is called to a cross-document destination, interrupting another navigate() to a cross-document destination promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'result.committed.then')"
+FAIL event and promise ordering when navigate() is called to a cross-document destination, interrupting another navigate() to a cross-document destination assert_array_equals: lengths differ, expected array ["navigate", "AbortSignal abort", "navigateerror", "navigate", "committed rejected 1", "finished rejected 1", "promise microtask"] length 7, got ["finished fulfilled 1", "finished fulfilled 2", "promise microtask"] length 3
 

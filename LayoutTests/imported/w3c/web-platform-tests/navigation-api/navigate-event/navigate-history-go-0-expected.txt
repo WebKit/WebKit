@@ -1,4 +1,6 @@
 
 
-FAIL history.go(0) fires the navigate event assert_equals: expected "reload" but got "push"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT history.go(0) fires the navigate event Test timed out
 

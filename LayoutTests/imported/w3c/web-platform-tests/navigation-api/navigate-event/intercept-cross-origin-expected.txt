@@ -68,7 +68,6 @@ images
 import-maps
 inert
 infrastructure
-innerText
 interfaces
 intersection-observer
 lint.ignore
@@ -124,6 +123,7 @@ storage
 streams
 subresource-integrity
 svg
+svg-aam
 tools
 touch-events
 trusted-types
