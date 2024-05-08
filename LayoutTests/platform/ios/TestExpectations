@@ -7294,3 +7294,5 @@ fast/forms/switch/click-animation-redundant-disabled.html [ ImageOnlyFailure ]
 fast/forms/switch/click-animation.html [ ImageOnlyFailure ]
 
 webkit.org/b/272910 fast/scrolling/ios/video-atop-overflow-scroll.html [ Skip ]
+
+webkit.org/b/273848 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-multiple-times.html [ Pass Failure ]
