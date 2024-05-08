@@ -2373,3 +2373,5 @@ http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Failure ]
 http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Failure ]
 http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-ruby/line-spacing.html [ Failure ]
+
+webkit.org/b/273900 compositing/repaint/needs-no-display-volatile-repaint.html [ Skip ]
