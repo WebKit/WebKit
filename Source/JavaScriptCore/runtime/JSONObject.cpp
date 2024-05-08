@@ -1067,9 +1067,9 @@ void FastStringifier<CharType>::append(JSValue value)
             if (span.size() >= stride) {
                 using UnsignedType = std::make_unsigned_t<CharType>;
                 using BulkType = decltype(WTF::loadBulk(static_cast<const UnsignedType*>(nullptr)));
-                constexpr auto quoteMask = WTF::splatBulk(static_cast<UnsignedType>('"'));
-                constexpr auto escapeMask = WTF::splatBulk(static_cast<UnsignedType>('\\'));
-                constexpr auto controlMask = WTF::splatBulk(static_cast<UnsignedType>(' '));
+                const auto quoteMask = WTF::splatBulk(static_cast<UnsignedType>('"'));
+                const auto escapeMask = WTF::splatBulk(static_cast<UnsignedType>('\\'));
+                const auto controlMask = WTF::splatBulk(static_cast<UnsignedType>(' '));
                 const auto* ptr = span.data();
                 const auto* end = ptr + span.size();
                 auto* cursorEnd = cursor + span.size();
@@ -1082,8 +1082,8 @@ void FastStringifier<CharType>::append(JSValue value)
                     auto controls = WTF::lessThanBulk(input, controlMask);
                     accumulated = WTF::mergeBulk(accumulated, WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls)));
                     if constexpr (sizeof(CharType) != 1) {
-                        constexpr auto surrogateMask = WTF::splatBulk(static_cast<UnsignedType>(0xf800));
-                        constexpr auto surrogateCheckMask = WTF::splatBulk(static_cast<UnsignedType>(0xd800));
+                        const auto surrogateMask = WTF::splatBulk(static_cast<UnsignedType>(0xf800));
+                        const auto surrogateCheckMask = WTF::splatBulk(static_cast<UnsignedType>(0xd800));
                         accumulated = WTF::mergeBulk(accumulated, WTF::equalBulk(simde_vandq_u16(input, surrogateMask), surrogateCheckMask));
                     }
                 }
@@ -1095,8 +1095,8 @@ void FastStringifier<CharType>::append(JSValue value)
                     auto controls = WTF::lessThanBulk(input, controlMask);
                     accumulated = WTF::mergeBulk(accumulated, WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls)));
                     if constexpr (sizeof(CharType) != 1) {
-                        constexpr auto surrogateMask = WTF::splatBulk(static_cast<UnsignedType>(0xf800));
-                        constexpr auto surrogateCheckMask = WTF::splatBulk(static_cast<UnsignedType>(0xd800));
+                        const auto surrogateMask = WTF::splatBulk(static_cast<UnsignedType>(0xf800));
+                        const auto surrogateCheckMask = WTF::splatBulk(static_cast<UnsignedType>(0xd800));
                         accumulated = WTF::mergeBulk(accumulated, WTF::equalBulk(simde_vandq_u16(input, surrogateMask), surrogateCheckMask));
                     }
                 }
@@ -1121,10 +1121,10 @@ void FastStringifier<CharType>::append(JSValue value)
             if (span.size() >= stride) {
                 using UnsignedType = std::make_unsigned_t<LChar>;
                 using BulkType = decltype(WTF::loadBulk(static_cast<const UnsignedType*>(nullptr)));
-                constexpr auto quoteMask = WTF::splatBulk(static_cast<UnsignedType>('"'));
-                constexpr auto escapeMask = WTF::splatBulk(static_cast<UnsignedType>('\\'));
-                constexpr auto controlMask = WTF::splatBulk(static_cast<UnsignedType>(' '));
-                constexpr auto zeros = WTF::splatBulk(static_cast<UnsignedType>(0));
+                const auto quoteMask = WTF::splatBulk(static_cast<UnsignedType>('"'));
+                const auto escapeMask = WTF::splatBulk(static_cast<UnsignedType>('\\'));
+                const auto controlMask = WTF::splatBulk(static_cast<UnsignedType>(' '));
+                const auto zeros = WTF::splatBulk(static_cast<UnsignedType>(0));
                 const auto* ptr = span.data();
                 const auto* end = ptr + span.size();
                 auto* cursorEnd = cursor + span.size();
