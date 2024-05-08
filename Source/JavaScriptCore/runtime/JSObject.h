@@ -1514,9 +1514,11 @@ ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure* struc
         JSType type = cell->type();
         switch (type) {
         case GetterSetterType:
+            ASSERT(attributes & PropertyAttribute::Accessor);
             fillGetterPropertySlot(vm, slot, cell, attributes, offset);
             return true;
         case CustomGetterSetterType:
+            ASSERT(attributes & PropertyAttribute::CustomAccessorOrValue);
             fillCustomGetterPropertySlot(slot, jsCast<CustomGetterSetter*>(cell), attributes, structure);
             return true;
         default:
