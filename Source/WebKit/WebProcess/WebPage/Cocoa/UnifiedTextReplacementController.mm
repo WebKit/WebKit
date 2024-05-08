@@ -287,6 +287,21 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const WTF::U
     m_originalDocumentNodes.remove(uuid);
     m_replacedDocumentNodes.remove(uuid);
     m_replacementLocationOffsets.remove(uuid);
+
+    removeTransparentMarkersForSession(uuid, *sessionRange);
+}
+
+void UnifiedTextReplacementController::removeTransparentMarkersForSession(const WTF::UUID& uuid, WebCore::SimpleRange& range)
+{
+    RefPtr document = this->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    document->markers().filterMarkers(range, [&] (const WebCore::DocumentMarker& marker) {
+        return std::get<WebCore::DocumentMarker::TransparentContentData>(marker.data()).uuid == uuid ? WebCore::FilterMarkerResult::Remove : WebCore::FilterMarkerResult::Keep;
+    }, { WebCore::DocumentMarker::Type::TransparentContent });
 }
 
 void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID& uuid, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context)

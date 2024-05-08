@@ -2248,7 +2248,7 @@ private:
 
     void textReplacementSessionDidReceiveEditAction(const WTF::UUID&, WebKit::WebTextReplacementDataEditAction);
 
-    std::optional<WebCore::SimpleRange> getRangeforUUID(const WTF::UUID&);
+    std::optional<WebCore::SimpleRange> getRangeForUUID(const WTF::UUID&);
 
     void getTextIndicatorForID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
 

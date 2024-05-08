@@ -126,6 +126,10 @@ public:
     };
 #endif
 
+    struct TransparentContentData {
+        WTF::UUID uuid;
+    };
+
     using Data = std::variant<
         String
         , DictationData // DictationAlternatives
@@ -140,6 +144,7 @@ public:
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
         , UnifiedTextReplacementData // UnifiedTextReplacement
 #endif
+        , TransparentContentData // TransparentContent
     >;
 
     DocumentMarker(Type, OffsetRange, Data&& = { });
