@@ -27,6 +27,7 @@
 
 #if USE(EXTENSIONKIT)
 
+#import <BrowserEngineKit/BECapability.h>
 #import <BrowserEngineKit/BrowserEngineKit.h>
 
 #import <Foundation/Foundation.h>
@@ -148,6 +149,12 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)assertionWithDomain:(NSString *)domain name:(NSString *)name environmentIdentifier:(NSString *)environmentIdentifier;
 + (instancetype)assertionWithDomain:(NSString *)domain name:(NSString *)name environmentIdentifier:(NSString *)environmentIdentifier willInvalidate:(void (^)())willInvalidateBlock didInvalidate:(void (^)())didInvalidateBlock;
 @property (nonatomic, readonly) NSString *mediaEnvironment;
+@end
+
+@interface BEProcessCapability (InvalidationHandler)
++(instancetype)background:(void (^)(void))didInvalidate;
++(instancetype)foreground:(void (^)(void))didInvalidate;
++(instancetype)suspended:(void (^)(void))didInvalidate;
 @end
 
 NS_ASSUME_NONNULL_END
